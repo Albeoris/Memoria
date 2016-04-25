@@ -12,12 +12,12 @@ Final Fantasy IX tools
 6. Download "Mono.Cecil" package manualy or enable automaticaly package downloads.
 
 
-**Patch:**
+# Patch:
 1. Memoria.Patcher.exe - will patch game files using path from the windows registry
 2. Memoria.Patcher.exe <gameDirectory> - will patch game files using a provided path
 
 
-**First run:**
+# First run:
 1. Run game.
 2. If there is no error you will see "Memoria.ini" file in the game directory.
 3. If something went wrong you will see error in the "Memoria.log"
@@ -25,7 +25,7 @@ Final Fantasy IX tools
 5.If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
 
-**Configuration:**
+# Configuration:
 Now you can change font and export text resources.
 
 Change "Enabled" value from "0" to "1", specify other params and try run the game.
