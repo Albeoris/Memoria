@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A00A1A48-8C9D-4D46-99A8-F53665A6B519}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Memoria</RootNamespace>
+    <AssemblyName>Memoria</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <FrameworkPathOverride>C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\</FrameworkPathOverride>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp, Version=1.0.5938.33853, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\ArgumentEmptyException.cs" />
+    <Compile Include="Common\FileCommander.cs" />
+    <Compile Include="Common\Exceptions.cs" />
+    <Compile Include="Common\IListExm.cs" />
+    <Compile Include="Common\Log.cs" />
+    <Compile Include="Common\ReplaceTextDelegate.cs" />
+    <Compile Include="Common\StreamExm.cs" />
+    <Compile Include="Common\StringBuilderExm.cs" />
+    <Compile Include="Common\TextReplacement.cs" />
+    <Compile Include="Configuration\Configuration.Access.cs" />
+    <Compile Include="Configuration\Configuration.Loading.cs" />
+    <Compile Include="Configuration\Configuration.Structure.cs" />
+    <Compile Include="Configuration\Ini.cs" />
+    <Compile Include="Configuration\IniArray.cs" />
+    <Compile Include="Configuration\IniFormatValue.cs" />
+    <Compile Include="Configuration\IniReader.cs" />
+    <Compile Include="Configuration\IniSection.cs" />
+    <Compile Include="Configuration\IniTryParseValue.cs" />
+    <Compile Include="Configuration\IniValue.cs" />
+    <Compile Include="Configuration\StringIniValue.cs" />
+    <Compile Include="Resources\ResourceExporter.cs" />
+    <Compile Include="Resources\Text\Export\ETC\EtcTextResource.cs" />
+    <Compile Include="Resources\Text\ModTextResources.cs" />
+    <Compile Include="Resources\Text\EmbadedTextResources.cs" />
+    <Compile Include="Resources\Text\Export\Fields\FieldTags.cs" />
+    <Compile Include="Resources\Text\Export\Fields\FieldCharacterNames.cs" />
+    <Compile Include="Resources\Text\Export\Fields\FieldFormatter.cs" />
+    <Compile Include="Resources\Text\Export\Fields\FieldLoader.cs" />
+    <Compile Include="Resources\Text\Export\ETC\EtcFormatter.cs" />
+    <Compile Include="Resources\Text\Export\ETC\EtcLoader.cs" />
+    <Compile Include="Resources\Text\Export\Battle\BattleFormatter.cs" />
+    <Compile Include="Resources\Text\Export\Battle\BattleLoader.cs" />
+    <Compile Include="Resources\Text\Export\Fields\UsFieldCharacterNames.cs" />
+    <Compile Include="Resources\Text\Export\KeyItems\KeyItemFormatter.cs" />
+    <Compile Include="Resources\Text\Export\KeyItems\KeyItemLoader.cs" />
+    <Compile Include="Resources\Text\Export\Items\ItemLoader.cs" />
+    <Compile Include="Resources\Text\Export\Items\ItemFormatter.cs" />
+    <Compile Include="Resources\Text\Export\Abilities\CommandLoader.cs" />
+    <Compile Include="Resources\Text\Export\LocationNames\LocationNameFormatter.cs" />
+    <Compile Include="Resources\Text\Export\Abilities\AbilityFormatter.cs" />
+    <Compile Include="Resources\Text\Export\LocationNames\LocationNameLoader.cs" />
+    <Compile Include="Resources\Text\Export\EmbadedTextLoader.cs" />
+    <Compile Include="Resources\Text\Export\Abilities\AbilityLoader.cs" />
+    <Compile Include="Resources\Text\Export\Abilities\SkillLoader.cs" />
+    <Compile Include="Common\StringExm.cs" />
+    <Compile Include="Expressions.cs" />
+    <Compile Include="Resources\Text\Export\TextResourceExporter.cs" />
+    <Compile Include="FF9TextToolAccessor.cs" />
+    <Compile Include="FF9TextToolInterceptor.cs" />
+    <Compile Include="TitleUIInterceptor.cs" />
+    <Compile Include="FontInterceptor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Text\Strings\ITxtFormatter.cs" />
+    <Compile Include="Resources\Text\Strings\StringsFormatter.cs" />
+    <Compile Include="Resources\Text\Strings\TxtEntry.cs" />
+    <Compile Include="Resources\Text\Strings\TxtReader.cs" />
+    <Compile Include="Resources\Text\Strings\TxtWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Text\Import\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\Memoria.ini" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
