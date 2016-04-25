@@ -14,7 +14,7 @@ Final Fantasy IX tools
 
 # Patch:
 1. Memoria.Patcher.exe - will patch game files using path from the windows registry
-2. Memoria.Patcher.exe <gameDirectory> - will patch game files using a provided path
+2. Memoria.Patcher.exe gameDirectory - will patch game files using a provided path
 
 
 # First run:
@@ -22,7 +22,7 @@ Final Fantasy IX tools
 2. If there is no error you will see "Memoria.ini" file in the game directory.
 3. If something went wrong you will see error in the "Memoria.log"
 4. If you not see "Memoria.log" try to run game with administrator rights
-5.If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
+5. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
 
 # Configuration:
