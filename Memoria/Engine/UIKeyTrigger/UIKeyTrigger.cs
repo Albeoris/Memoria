@@ -166,12 +166,7 @@ public class UIKeyTrigger : MonoBehaviour
     public void HandleBoosterButton(BoosterType triggerType = BoosterType.None)
     {
         if (!Configuration.Cheats.Enabled)
-        {
-            FF9Sfx.FF9SFX_Play(102);
-            Log.Message("[Cheats] Cheats was disabled.");
             return;
-        }
-
         if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.PreEnding || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Ending || !MBG.IsNull && !MBG.Instance.IsFinished()))
             return;
         if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode)
