@@ -30,6 +30,12 @@ Final Fantasy IX tools
 4. If you not see "Memoria.log" try to run game with administrator rights
 5. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
+# Features:
+1. Disable/Enable cheats
+2. Load anywhere (Alt+F9)
+3. Change the game font
+4. Export text resources
+
 
 # Configuration:
 Now you can:
