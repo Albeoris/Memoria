@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -71,11 +72,7 @@ namespace Memoria.Patcher
                 String assemblyPath = Path.Combine(directory, "Assembly-CSharp.dll");
                 String backupPath = Path.Combine(directory, "Assembly-CSharp.bak");
 
-                if (File.Exists(backupPath))
-                {
-                    File.Delete(assemblyPath);
-                    File.Copy(backupPath, assemblyPath);
-                }
+                RollbackPreviousPatches(assemblyPath, backupPath);
 
                 InitializePatches();
 
@@ -111,6 +108,30 @@ namespace Memoria.Patcher
                 String message = $"Failed to patch assembly from a directory [{directory}]";
                 Console.WriteLine(message);
                 Log.Error(ex, message);
+            }
+        }
+
+        private static void RollbackPreviousPatches(String assemblyPath, String backupPath)
+        {
+            AssemblyDefinition unknown = AssemblyDefinition.ReadAssembly(assemblyPath);
+            if (unknown.MainModule.AssemblyReferences.FirstOrDefault(a => a.Name == "Memoria") == null)
+            {
+                if (File.Exists(backupPath))
+                    File.Delete(backupPath);
+
+                File.Copy(assemblyPath, backupPath);
+            }
+            else
+            {
+                if (File.Exists(backupPath))
+                {
+                    File.Delete(assemblyPath);
+                    File.Copy(backupPath, assemblyPath);
+                }
+                else
+                {
+                    throw new FileNotFoundException("Assembly alreday patched and backup not found. Restore original files and try again. Expected file: " + backupPath, backupPath);
+                }
             }
         }
 
