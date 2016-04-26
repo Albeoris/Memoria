@@ -10,6 +10,7 @@ namespace Memoria.Patcher
     class Program
     {
         public static volatile Boolean Changed;
+
         public static readonly PatchCollection<TypePatch> Patches = InitializePatches();
 
         private static PatchCollection<TypePatch> InitializePatches()
@@ -32,7 +33,7 @@ namespace Memoria.Patcher
                 {
                     Console.WriteLine();
                     Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
-                    Console.WriteLine("Press any key to exit...");
+                    Console.WriteLine("Press enter to exit...");
                     Console.ReadLine();
                     Environment.Exit(1);
                 }
@@ -48,7 +49,7 @@ namespace Memoria.Patcher
                 Log.Error(ex, "Unexpected error.");
             }
 
-            Console.WriteLine("Press any key to exit...");
+            Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }
 
@@ -83,8 +84,13 @@ namespace Memoria.Patcher
                     PreparePatch(module);
 
                 AssemblyDefinition victim = AssemblyDefinition.ReadAssembly(assemblyPath);
+
+                //JunkChecker.Check(victim, backupPath);
+
                 foreach (ModuleDefinition module in victim.Modules)
                     PatchModule(module);
+
+                TypeReplacers.RedirectTypes(mod, victim);
 
                 if (Changed)
                 {
@@ -169,8 +175,6 @@ namespace Memoria.Patcher
                     continue;
 
                 throw new InvalidDataException();
-                //references.RemoveAt(i);
-                //Changed = true;
             }
         }
 
@@ -210,19 +214,12 @@ namespace Memoria.Patcher
                 if (result == true)
                 {
                     patch.Patch(method);
-                    //Mark(method, patch);
                     Changed = true;
                 }
 
                 if (++count >= patches.Count)
                     break;
             }
-        }
-
-        private static void Mark(MethodDefinition method, MethodPatch patch)
-        {
-            method.Body.Instructions.Insert(0, Instruction.Create(OpCodes.Pop));
-            method.Body.Instructions.Insert(0, Instruction.Create(OpCodes.Ldstr, patch.Label));
         }
 
         private static bool? IsApplicable(MethodDefinition method, MethodPatch patch)
@@ -252,5 +249,7 @@ namespace Memoria.Patcher
             Collection<Instruction> instructions = method.Body.Instructions;
             return (instructions.Count < 1 || instructions[0].Operand as String != patch.Label) ? (bool?)true : null;
         }
+
+        
     }
 }

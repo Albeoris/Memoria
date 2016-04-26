@@ -85,17 +85,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Junk\Checker.cs" />
+    <Compile Include="Patches\TypeHash.cs" />
+    <Compile Include="Patches\TypeReplacers.cs" />
+    <Compile Include="Patches\Common\TypeReplacer.cs" />
     <Compile Include="GameInfo\GameLocationSteamRegistryProvider.cs" />
     <Compile Include="GameInfo\GameLocationInfo.cs" />
-    <Compile Include="IPatch.cs" />
-    <Compile Include="LegacyJunk.cs" />
-    <Compile Include="PatchCollection.cs" />
+    <Compile Include="Patches\Common\IPatch.cs" />
+    <Compile Include="Junk\LegacyJunk.cs" />
+    <Compile Include="Patches\Common\PatchCollection.cs" />
     <Compile Include="Patches\TitleUIPatch.cs" />
     <Compile Include="Patches\FF9TextToolPatch.cs" />
     <Compile Include="Patches\DefaultFontPatch.cs" />
     <Compile Include="ILProcessorExm.cs" />
-    <Compile Include="MethodPatch.cs" />
-    <Compile Include="TypePatch.cs" />
+    <Compile Include="Patches\Common\MethodPatch.cs" />
+    <Compile Include="Patches\Common\TypePatch.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeDefinitionExm.cs" />

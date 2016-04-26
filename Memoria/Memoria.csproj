@@ -68,6 +68,13 @@
     <Compile Include="Configuration\IniTryParseValue.cs" />
     <Compile Include="Configuration\IniValue.cs" />
     <Compile Include="Configuration\StringIniValue.cs" />
+    <Compile Include="Engine\ConfigUI\ConfigUI.cs" />
+    <Compile Include="Engine\ConfigUI\ConfigField.cs" />
+    <Compile Include="Engine\ConfigUI\SnapDragScrollView.cs" />
+    <Compile Include="Engine\ConfigUI\ControllerType.cs" />
+    <Compile Include="Engine\UIKeyTrigger\ScrollItemKeyNavigation.cs" />
+    <Compile Include="Engine\UIKeyTrigger\SettingsState.cs" />
+    <Compile Include="Engine\UIKeyTrigger\UIKeyTrigger.cs" />
     <Compile Include="Resources\ResourceExporter.cs" />
     <Compile Include="Resources\Text\Export\ETC\EtcTextResource.cs" />
     <Compile Include="Resources\Text\ModTextResources.cs" />
