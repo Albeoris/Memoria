@@ -5,9 +5,7 @@ Final Fantasy IX tools
 1. Update the game to the last version.
 2. Update Memoria to the last version.
 3. Delete "Memoria.ini" from the game directory.
-4. **[IMPORTANT]** If "\FINAL FANTASY IX\x64(or x86)\FF9_Data\Managed\Assembly-CSharp.dll" was changed by update...
-4.1 Delete "Assembly-CSharp.bak"
-4.2 Patch again
+4. Patch again
 
 
 # Build
