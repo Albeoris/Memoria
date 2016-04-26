@@ -121,7 +121,15 @@ namespace Memoria.Patcher
                 GameLocationInfo result;
                 if (args.IsNullOrEmpty())
                 {
-                    result = GameLocationSteamRegistryProvider.TryLoad();
+                    if (File.Exists(GameLocationInfo.LauncherName))
+                    {
+                        result = new GameLocationInfo(Environment.CurrentDirectory);
+                        result.Validate();
+                    }
+                    else
+                    {
+                        result = GameLocationSteamRegistryProvider.TryLoad();
+                    }
                 }
                 else
                 {

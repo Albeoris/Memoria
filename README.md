@@ -21,7 +21,7 @@ Final Fantasy IX tools
 
 
 # Patch:
-1. Memoria.Patcher.exe - will patch game files using path from the windows registry
+1. Memoria.Patcher.exe - will patch game files using current directory or path from the windows registry
 2. Memoria.Patcher.exe gameDirectory - will patch game files using a provided path
 
 
@@ -34,8 +34,10 @@ Final Fantasy IX tools
 
 
 # Configuration:
-Now you can change font and export text resources.
-
+Now you can:
+1. Disable cheats
+2. Change font
+3. Export text resources.
 Change "Enabled" value from "0" to "1", specify other params and try run the game.
 
 
