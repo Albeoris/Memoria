@@ -53,8 +53,9 @@ public class UIKeyTrigger : MonoBehaviour
     }
 
     private bool F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
-
     private bool F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
+    private bool F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
+    private bool F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
 
     public UIKeyTrigger()
     {
@@ -135,9 +136,9 @@ public class UIKeyTrigger : MonoBehaviour
         if (!UnityXInput.Input.anyKey && !isLockLazyInput)
             ResetKeyCode();
         AccelerateKeyNavigation();
-        HandleBoosterButton();
         if (handleMenuControlKeyPressCustomInput())
             return;
+        HandleBoosterButton();
         handleDialogControlKeyPressCustomInput();
     }
 
@@ -291,6 +292,7 @@ public class UIKeyTrigger : MonoBehaviour
     {
         if (PersistenSingleton<UIManager>.Instance.IsLoading || PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
             return;
+
         PersistenSingleton<UIManager>.Instance.QuitScene.SetPreviousActiveGroup();
         if (scene != null)
         {
@@ -298,7 +300,32 @@ public class UIKeyTrigger : MonoBehaviour
             scene.OnKeyQuit();
         }
         else
+        {
             PersistenSingleton<UIManager>.Instance.QuitScene.Show(null);
+        }
+    }
+
+    public void OnBackToMainMenuCommandDetected(UIScene scene)
+    {
+        if (PersistenSingleton<UIManager>.Instance.IsLoading || PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
+            return;
+
+        FF9Sfx.FF9SFX_Play(103);
+        if (scene != null)
+        {
+            Log.Message("Yuppy!");
+            scene.Hide(OnLoadGameButtonClick);
+        }
+        else
+        {
+            Log.Message("Oh now!");
+        }
+    }
+
+    private static void OnLoadGameButtonClick()
+    {
+        PersistenSingleton<UIManager>.Instance.SaveLoadScene.Type = SaveLoadUI.SerializeType.Load;
+        PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Serialize);
     }
 
     public void OnQuitCommandDetected()
@@ -387,10 +414,33 @@ public class UIKeyTrigger : MonoBehaviour
                 return true;
             }
         }
-        if ((!AltKey || !F4KeyDown) && (!AltKeyDown || !F4Key))
-            return false;
-        OnQuitCommandDetected(sceneFromState);
-        return true;
+        if (AltKey)
+        {
+            if (F4KeyDown)
+            {
+                OnQuitCommandDetected(sceneFromState);
+                return true;
+            }
+            if (F9KeyDown)
+            {
+                OnBackToMainMenuCommandDetected(sceneFromState);
+                return true;
+            }
+        }
+        if (AltKeyDown)
+        {
+            if (F4Key)
+            {
+                OnQuitCommandDetected(sceneFromState);
+                return true;
+            }
+            if (F9Key)
+            {
+                OnBackToMainMenuCommandDetected(sceneFromState);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleDialogControlKeyPressCustomInput(GameObject activeButton = null)

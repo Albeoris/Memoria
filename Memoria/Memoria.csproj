@@ -72,6 +72,7 @@
     <Compile Include="Engine\ConfigUI\ConfigField.cs" />
     <Compile Include="Engine\ConfigUI\SnapDragScrollView.cs" />
     <Compile Include="Engine\ConfigUI\ControllerType.cs" />
+    <Compile Include="Engine\QuitUI\QuitUI.cs" />
     <Compile Include="Engine\UIKeyTrigger\ScrollItemKeyNavigation.cs" />
     <Compile Include="Engine\UIKeyTrigger\SettingsState.cs" />
     <Compile Include="Engine\UIKeyTrigger\UIKeyTrigger.cs" />
