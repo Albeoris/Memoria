@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Sources.Scripts.UI.Common;
@@ -313,42 +311,6 @@ namespace Memoria
                 }
             }
             return strArray1;
-        }
-
-        private static void ReplaceFieldText(String[] originalSource, Int32 fieldZoneId)
-        {
-            const String directoryPath = @"Resources\Fields";
-
-            Log.Message("ReplaceFieldText");
-            Directory.CreateDirectory(directoryPath);
-
-            String zoneKey = fieldZoneId.ToString("D4", CultureInfo.InvariantCulture);
-            String fileName = Path.Combine(directoryPath, zoneKey + ".strings");
-            if (File.Exists(fileName))
-            {
-                Log.Message($"File [{fileName}] is exist. Loading...");
-                using (FileStream input = File.OpenRead(fileName))
-                {
-                    String storedName;
-                    TxtEntry[] entries = new TxtReader(input, StringsFormatter.Instance).Read(out storedName);
-                    if (originalSource?.Length == entries.Length)
-                    {
-                        for (int i = 0; i < entries.Length; i++)
-                            originalSource[i] = entries[i].Value;
-                    }
-                }
-                Log.Message("Success!");
-            }
-            else
-            {
-                Log.Message($"File [{fileName}] does not exist. Creating...");
-                using (FileStream output = File.Create(fileName))
-                {
-                    TxtEntry[] entries = originalSource.Select(s => new TxtEntry {Prefix = zoneKey, Value = s}).ToArray();
-                    new TxtWriter(output, StringsFormatter.Instance).Write(fileName, entries);
-                }
-                Log.Message("Success!");
-            }
         }
 
         private sealed class TextLoader

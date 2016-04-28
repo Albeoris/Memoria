@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Collections.Generic;
@@ -10,6 +11,8 @@ namespace Memoria.Patcher
         private readonly String _fullName;
         private readonly TypeReference _newReference;
         private readonly TypeDefinition _newDefination;
+        private readonly List<ArrayType> _newArrayReferences;
+        private readonly Dictionary<TypeReference, TypeDefinition> _arrayDefinitions;
 
         private ModuleDefinition _module;
         private MethodDefinition _method;
@@ -19,6 +22,8 @@ namespace Memoria.Patcher
             _fullName = fullName;
             _newReference = newReference;
             _newDefination = newReference.Resolve();
+            _newArrayReferences = new List<ArrayType>();
+            _arrayDefinitions = new Dictionary<TypeReference, TypeDefinition>();
         }
 
         public void Replace(ModuleDefinition module)
@@ -52,8 +57,9 @@ namespace Memoria.Patcher
         {
             foreach (PropertyDefinition p in type.Properties)
             {
-                if (p.PropertyType.FullName == _fullName)
-                    p.PropertyType = _newReference;
+                TypeReference newType;
+                if (TryGetNewType(p.PropertyType, out newType))
+                    p.PropertyType = newType;
             }
         }
 
@@ -61,8 +67,9 @@ namespace Memoria.Patcher
         {
             foreach (FieldDefinition f in type.Fields)
             {
-                if (f.FieldType.FullName == _fullName)
-                    f.FieldType = _newReference;
+                TypeReference newType;
+                if (TryGetNewType(f.FieldType, out newType))
+                    f.FieldType = newType;
             }
         }
 
@@ -77,8 +84,9 @@ namespace Memoria.Patcher
 
         private void ProcessMethod()
         {
-            if (_method.ReturnType.FullName == _fullName)
-                _method.ReturnType = _newReference;
+            TypeReference newType;
+            if (TryGetNewType(_method.ReturnType, out newType))
+                _method.ReturnType = newType;
 
             ProcessMethodParameters();
             ProcessMethodBody();
@@ -91,8 +99,9 @@ namespace Memoria.Patcher
 
             foreach (ParameterDefinition p in _method.Parameters)
             {
-                if (p.ParameterType.FullName == _fullName)
-                    p.ParameterType = _newReference;
+                TypeReference newType;
+                if (TryGetNewType(p.ParameterType, out newType))
+                    p.ParameterType = newType;
             }
         }
 
@@ -112,13 +121,15 @@ namespace Memoria.Patcher
 
             foreach (VariableDefinition v in _method.Body.Variables)
             {
-                if (v.VariableType.FullName == _fullName)
-                    v.VariableType = _newReference;
+                TypeReference newType;
+                if (TryGetNewType(v.VariableType, out newType))
+                    v.VariableType = newType;
             }
         }
 
         private void ProcessMethodBodyInstructions()
         {
+            TypeReference newType;
             MethodBody body = _method.Body;
             Collection<Instruction> instructions = body.Instructions;
             for (int i = 0; i < instructions.Count; i++)
@@ -140,56 +151,98 @@ namespace Memoria.Patcher
                 {
                     for (int g = 0; g < genericInstance.GenericArguments.Count; g++)
                     {
-                        if (genericInstance.GenericArguments[g].FullName == _fullName)
-                            genericInstance.GenericArguments[g] = _newReference;
+                        if (TryGetNewType(genericInstance.GenericArguments[g], out newType))
+                            genericInstance.GenericArguments[g] = newType;
                     }
                 }
 
                 TypeReference typeReference = inst.Operand as TypeReference;
                 if (typeReference != null)
                 {
-                    if (typeReference.FullName == _fullName)
-                        instructions.Replace(i, RecreateTypeOperand(inst));
+                    if (TryGetNewType(typeReference, out newType))
+                        instructions.Replace(i, RecreateTypeOperand(inst, newType));
                     continue;
                 }
 
                 MethodReference methodReference = inst.Operand as MethodReference;
                 if (methodReference != null)
                 {
-                    if (methodReference.DeclaringType.FullName == _fullName)
-                        instructions.Replace(i, RecreateMethodOperand(inst));
+                    if (TryGetNewType(methodReference.DeclaringType, out newType))
+                        instructions.Replace(i, RecreateMethodOperand(inst, newType));
                     continue;
                 }
 
                 FieldReference fieldReference = inst.Operand as FieldReference;
                 if (fieldReference != null)
                 {
-                    if (fieldReference.DeclaringType.FullName == _fullName)
-                        instructions.Replace(i, RecreateFieldOperand(inst));
+                    if (TryGetNewType(fieldReference.DeclaringType, out newType))
+                        instructions.Replace(i, RecreateFieldOperand(inst, newType));
+
                     continue;
                 }
 
             }
         }
 
-        private Instruction RecreateMethodOperand(Instruction inst)
+        private Instruction RecreateMethodOperand(Instruction inst, TypeReference newType)
         {
-            MethodDefinition method = _newDefination.GetMethod((MethodReference)inst.Operand);
+            MethodDefinition method = ResolveType(newType).GetMethod((MethodReference)inst.Operand);
             MethodReference methodReference = _module.Import(method);
             return Instruction.Create(inst.OpCode, methodReference);
         }
 
-        private Instruction RecreateFieldOperand(Instruction inst)
+        private Instruction RecreateFieldOperand(Instruction inst, TypeReference newType)
         {
             String oldName = ((FieldReference)inst.Operand).Name;
-            FieldDefinition field = _newDefination.GetField(oldName);
+            FieldDefinition field = ResolveType(newType).GetField(oldName);
             FieldReference fieldReference = _module.Import(field);
             return Instruction.Create(inst.OpCode, fieldReference);
         }
 
-        private Instruction RecreateTypeOperand(Instruction inst)
+        private Instruction RecreateTypeOperand(Instruction inst, TypeReference newType)
         {
-            return Instruction.Create(inst.OpCode, _newReference);
+            return Instruction.Create(inst.OpCode, newType);
+        }
+
+        private Boolean TryGetNewType(TypeReference oldType, out TypeReference newType)
+        {
+            Int32 rank = 0;
+            while (oldType.IsArray)
+            {
+                rank++;
+                oldType = oldType.GetElementType();
+            }
+
+            if (oldType.FullName == _fullName)
+            {
+                newType = rank > 0 ? GetArrayType(rank) : _newReference;
+                return true;
+            }
+
+            newType = null;
+            return false;
+        }
+
+        private TypeDefinition ResolveType(TypeReference type)
+        {
+            if (type == _newReference)
+                return _newDefination;
+
+            TypeDefinition definition;
+            if (!_arrayDefinitions.TryGetValue(type, out definition))
+            {
+                definition = type.Resolve();
+                _arrayDefinitions.Add(type, definition);
+            }
+            return definition;
+        }
+
+        private ArrayType GetArrayType(int rank)
+        {
+            for (int i = _newArrayReferences.Count; i <= rank; i++)
+                _newArrayReferences.Add(new ArrayType(_newReference, i + 1));
+
+            return _newArrayReferences[rank];
         }
     }
 }

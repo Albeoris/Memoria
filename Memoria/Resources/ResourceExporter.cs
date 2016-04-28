@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Memoria
 {
@@ -15,6 +16,7 @@ namespace Memoria
                 }
 
                 TextResourceExporter.ExportSafe();
+                FieldSceneExporter.ExportSafe();
             }
             catch (Exception ex)
             {

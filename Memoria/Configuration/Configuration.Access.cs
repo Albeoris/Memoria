@@ -38,6 +38,13 @@ namespace Memoria
             public static Boolean Enabled => Instance._export.Enabled.Value;
             public static String Path => Instance._export.Path.Value;
             public static Boolean Text => Instance._export.Text.Value;
+            public static Boolean Field => Instance._export.Field.Value;
+        }
+
+        public static class Hacks
+        {
+            public static Boolean Enabled => Instance._hacks.Enabled.Value;
+            public static Boolean AllCharactersAvailable => Instance._hacks.AllCharactersAvailable.Value;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Memoria.Patcher
             return new PatchCollection<TypePatch>(
                 new TypePatch[]
                 {
+                    new SceneDirectorPatch(),
                     new TitleUIPatch(),
                     new DefaultFontPatch(),
                     new FF9TextToolPatch()

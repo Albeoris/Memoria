@@ -66,7 +66,7 @@ namespace Memoria
             {"%DataPath%", Application.dataPath},
             {"%PersistentDataPath%", Application.persistentDataPath},
             {"%TemporaryCachePath%", Application.temporaryCachePath},
-            {"%StreamingAssets%", Application.streamingAssetsPath}
+            {"%StreamingAssets%", AssetManagerUtil.GetStreamingAssetsPath()}
         }.ToArray();
 
         private static bool TryParsePath(string rawstring, out String value)

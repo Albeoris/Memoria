@@ -6,16 +6,23 @@ using UnityEngine;
 #pragma warning disable 414
 #pragma warning disable 649
 
+// ReSharper disable ArrangeThisQualifier
+// ReSharper disable CompareOfFloatsByEqualityOperator
+// ReSharper disable StringCompareToIsCultureSpecific
 // ReSharper disable MemberCanBeMadeStatic.Local
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable FieldCanBeMadeReadOnly.Local
+// ReSharper disable CollectionNeverUpdated.Local
+// ReSharper disable CollectionNeverQueried.Global
 // ReSharper disable UnassignedField.Global
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable ConvertToConstant.Global
+// ReSharper disable ConvertToConstant.Local
 // ReSharper disable UnusedParameter.Global
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
@@ -200,7 +207,7 @@ public class QuitUI : MonoBehaviour
 
     public void DisplayWindowBackground(GameObject go, UIAtlas forceColor = null)
     {
-        UIAtlas uIAtlas = (!(forceColor != null)) ? Assets.Sources.Scripts.UI.Common.FF9UIDataTool.WindowAtlas : forceColor;
+        UIAtlas uIAtlas = (!(forceColor != null)) ? (UIAtlas)(UnityEngine.Object)Assets.Sources.Scripts.UI.Common.FF9UIDataTool.WindowAtlas : forceColor;
         UISprite[] componentsInChildren = go.GetComponentsInChildren<UISprite>(true);
         UISprite[] array = componentsInChildren;
         for (int i = 0; i < array.Length; i++)
@@ -214,10 +221,6 @@ public class QuitUI : MonoBehaviour
 
     public void Awake()
     {
-        Log.Message("============");
-        Log.Message(WarningDialog.GetType().FullName);
-        Log.Message(WarningDialog.GetChild(0).GetType().FullName);
-        Log.Message(WarningDialog.GetChild(0).GetChild(2).GetType().FullName);
         UIEventListener expr_17 = UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2));
         expr_17.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_17.onClick, new UIEventListener.VoidDelegate(onClick));
         UIEventListener expr_4F = UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3));

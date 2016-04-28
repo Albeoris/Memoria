@@ -11,7 +11,7 @@ namespace Memoria
         // Keep signature
         public static Font LoadFont(Font originalFont)
         {
-            Log.Message("[FontInterceptor] Changing font [Original: {0}]", originalFont);
+            Log.Message("[FontInterceptor] Loading font [Original: {0}]", originalFont);
             try
             {
                 return DefaultFont ?? originalFont;
@@ -25,8 +25,6 @@ namespace Memoria
 
         private static Font InitializeFont()
         {
-            OnApplicationStartSafe();
-
             Log.Message("[FontInterceptor] Dynamic font initialization.");
             try
             {
@@ -49,18 +47,6 @@ namespace Memoria
             {
                 Log.Error(ex, "[FontInterceptor] Failed to create a dynamic font.");
                 return null;
-            }
-        }
-
-        private static void OnApplicationStartSafe()
-        {
-            try
-            {
-                ResourceExporter.ExportSafe();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
             }
         }
     }

@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Junk\Checker.cs" />
+    <Compile Include="Patches\SceneDirectorPatch.cs" />
     <Compile Include="Patches\TypeHash.cs" />
     <Compile Include="Patches\TypeReplacers.cs" />
     <Compile Include="Patches\Common\TypeReplacer.cs" />

@@ -7,16 +7,23 @@ using UnityEngine;
 #pragma warning disable 414
 #pragma warning disable 649
 
+// ReSharper disable ArrangeThisQualifier
+// ReSharper disable CompareOfFloatsByEqualityOperator
+// ReSharper disable StringCompareToIsCultureSpecific
 // ReSharper disable MemberCanBeMadeStatic.Local
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable FieldCanBeMadeReadOnly.Local
+// ReSharper disable CollectionNeverUpdated.Local
+// ReSharper disable CollectionNeverQueried.Global
 // ReSharper disable UnassignedField.Global
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable ConvertToConstant.Global
+// ReSharper disable ConvertToConstant.Local
 // ReSharper disable UnusedParameter.Global
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
@@ -115,6 +122,8 @@ public class UIKeyTrigger : MonoBehaviour
 
     private void Update()
     {
+        GameLoopManager.RaiseUpdateEvent();
+
         if (UnityXInput.Input.GetAxis("Mouse X") < 1.0 / 1000.0 && UnityXInput.Input.GetAxis("Mouse Y") < 1.0 / 1000.0)
         {
             disableMouseCounter += Time.deltaTime;
@@ -311,15 +320,7 @@ public class UIKeyTrigger : MonoBehaviour
             return;
 
         FF9Sfx.FF9SFX_Play(103);
-        if (scene != null)
-        {
-            Log.Message("Yuppy!");
-            scene.Hide(OnLoadGameButtonClick);
-        }
-        else
-        {
-            Log.Message("Oh now!");
-        }
+        scene?.Hide(OnLoadGameButtonClick);
     }
 
     private static void OnLoadGameButtonClick()
@@ -584,5 +585,7 @@ public class UIKeyTrigger : MonoBehaviour
     private void Start()
     {
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, (UICamera.KeyCodeDelegate)OnKeyNavigate);
+
+        GameLoopManager.RaiseStartEvent();
     }
 }

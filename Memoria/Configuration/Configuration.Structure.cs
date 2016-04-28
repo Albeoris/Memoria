@@ -9,6 +9,7 @@ namespace Memoria
         private readonly CheatsSection _cheats = new CheatsSection();
         private readonly ImportSection _import = new ImportSection();
         private readonly ExportSection _export = new ExportSection();
+        private readonly HacksSection _hacks = new HacksSection();
 
         internal override IEnumerable<IniSection> GetSections()
         {
@@ -16,6 +17,7 @@ namespace Memoria
             yield return _cheats;
             yield return _import;
             yield return _export;
+            yield return _hacks;
         }
 
         private sealed class FontSection : IniSection
@@ -98,7 +100,7 @@ namespace Memoria
             public ImportSection() : base("Import")
             {
                 Enabled.Value = false;
-                Path.Value = "StreamingAssets";
+                Path.Value = "%StreamingAssets%";
                 Text.Value = true;
             }
 
@@ -115,11 +117,12 @@ namespace Memoria
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<String> Path = IniValue.Path(nameof(Path));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
+            public readonly IniValue<Boolean> Field = IniValue.Boolean(nameof(Field));
 
             public ExportSection() : base("Export")
             {
                 Enabled.Value = false;
-                Path.Value = "StreamingAssets";
+                Path.Value = "%StreamingAssets%";
                 Text.Value = true;
             }
 
@@ -128,6 +131,25 @@ namespace Memoria
                 yield return Enabled;
                 yield return Path;
                 yield return Text;
+                yield return Field;
+            }
+        }
+
+        private sealed class HacksSection : IniSection
+        {
+            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Boolean> AllCharactersAvailable = IniValue.Boolean(nameof(AllCharactersAvailable));
+
+            public HacksSection() : base("Hacks")
+            {
+                Enabled.Value = false;
+                AllCharactersAvailable.Value = false;
+            }
+
+            internal override IEnumerable<IniValue> GetValues()
+            {
+                yield return Enabled;
+                yield return AllCharactersAvailable;
             }
         }
     }
