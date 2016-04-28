@@ -2,9 +2,9 @@
 Final Fantasy IX tools
 
 # Updates
-1. Update the game to the last version.
-2. Update Memoria to the last version.
-3. Delete "Memoria.ini" from the game directory.
+1. Update the game to the latest version.
+2. Update Memoria to the latest version.
+3. **Delete** "Memoria.ini" from the game directory.
 4. Patch again
 
 
@@ -30,19 +30,20 @@ Final Fantasy IX tools
 4. If you not see "Memoria.log" try to run game with administrator rights
 5. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
+
 # Features:
 1. Disable/Enable cheats
 2. Load anywhere (Alt+F9)
-3. Change the game font
-4. Export text resources
+3. All of the characters available
+4. Change the game font
+5. Export text resources and field backgrounds
 
 
 # Configuration:
-Now you can:
-1. Disable cheats
-2. Change font
-3. Export text resources.
-Change "Enabled" value from "0" to "1", specify other params and try run the game.
+1. Open Memoria.ini
+2. Change "Enabled" value from "0" to "1" for what you need
+3. Specify other params.
+4. Save your edits and try run the game.
 
 
 # Exported types (for developers)
