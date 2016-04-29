@@ -52,15 +52,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\ArgumentEmptyException.cs" />
+    <Compile Include="Common\Exceptions\ArgumentEmptyException.cs" />
+    <Compile Include="Common\Threading\ActionTask.cs" />
+    <Compile Include="Common\Threading\Task.cs" />
     <Compile Include="Common\FileCommander.cs" />
-    <Compile Include="Common\Exceptions.cs" />
+    <Compile Include="Common\Exceptions\Exceptions.cs" />
     <Compile Include="Common\IListExm.cs" />
     <Compile Include="Common\Log.cs" />
-    <Compile Include="Common\ReplaceTextDelegate.cs" />
+    <Compile Include="Common\Text\ReplaceTextDelegate.cs" />
     <Compile Include="Common\StreamExm.cs" />
-    <Compile Include="Common\StringBuilderExm.cs" />
-    <Compile Include="Common\TextReplacement.cs" />
+    <Compile Include="Common\Text\StringBuilderExm.cs" />
+    <Compile Include="Common\Text\TextReplacement.cs" />
+    <Compile Include="Common\Threading\FunctionTask.cs" />
+    <Compile Include="Common\Threading\TaskState.cs" />
     <Compile Include="Configuration\Configuration.Access.cs" />
     <Compile Include="Configuration\Configuration.Loading.cs" />
     <Compile Include="Configuration\Configuration.Structure.cs" />
@@ -113,7 +117,7 @@
     <Compile Include="Resources\Text\Export\EmbadedTextLoader.cs" />
     <Compile Include="Resources\Text\Export\Abilities\AbilityLoader.cs" />
     <Compile Include="Resources\Text\Export\Abilities\SkillLoader.cs" />
-    <Compile Include="Common\StringExm.cs" />
+    <Compile Include="Common\Text\StringExm.cs" />
     <Compile Include="Expressions.cs" />
     <Compile Include="Resources\Text\Export\TextResourceExporter.cs" />
     <Compile Include="Accessors\FF9TextToolAccessor.cs" />
