@@ -82,6 +82,7 @@
     <Compile Include="Engine\ConfigUI\SnapDragScrollView.cs" />
     <Compile Include="Engine\ConfigUI\ControllerType.cs" />
     <Compile Include="Engine\FF9Play\ff9play.cs" />
+    <Compile Include="Engine\PartySettingsUI\PartySettingUI.cs" />
     <Compile Include="Engine\QuitUI\QuitUI.cs" />
     <Compile Include="Engine\UIAtlas\UIAtlas.cs" />
     <Compile Include="Engine\UIAtlas\UISprite.cs" />
@@ -95,6 +96,10 @@
     <Compile Include="Resources\TextureResources.cs" />
     <Compile Include="Resources\Text\Export\ETC\EtcTextResource.cs" />
     <Compile Include="Resources\Grahpics\Export\FieldSceneExporter.cs" />
+    <Compile Include="Resources\Text\Import\Abilities\AbilityFormatter.cs" />
+    <Compile Include="Resources\Text\Import\Abilities\AbilityLoader.cs" />
+    <Compile Include="Resources\Text\Import\Abilities\CommandLoader.cs" />
+    <Compile Include="Resources\Text\Import\Abilities\SkillLoader.cs" />
     <Compile Include="Resources\Text\ModTextResources.cs" />
     <Compile Include="Resources\Text\EmbadedTextResources.cs" />
     <Compile Include="Resources\Text\Export\Fields\FieldTags.cs" />
@@ -135,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Grahpics\Import\" />
-    <Folder Include="Resources\Text\Import\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\Memoria.ini" />

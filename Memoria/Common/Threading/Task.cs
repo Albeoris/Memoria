@@ -33,6 +33,13 @@ namespace Memoria
             return task;
         }
 
+        public static Task<T> Run<T>(Func<T> function)
+        {
+            Task<T> task = new FunctionTask<T>(function);
+            task.Run();
+            return task;
+        }
+
         public static Task<T> Run<TState, T>(Func<TState, T> function, TState state)
         {
             Task<T> task = new FunctionTask<TState, T>(function, state);
@@ -42,6 +49,7 @@ namespace Memoria
 
         public TaskState State { get; private set; }
         public Exception Exception { get; private set; }
+        public Boolean IsCompleted => State > TaskState.Running;
 
         private readonly ManualResetEvent _completedEvent;
 
@@ -61,7 +69,7 @@ namespace Memoria
 
         public Boolean Wait(Int32 millisecondsTimeout = -1)
         {
-            if (State > TaskState.Running)
+            if (IsCompleted)
             {
                 CheckFaulted();
                 return true;
@@ -94,7 +102,7 @@ namespace Memoria
             {
                 State = TaskState.Running;
                 Invoke();
-                State = TaskState.Completed;
+                State = TaskState.Success;
             }
             catch (OperationCanceledException ex)
             {

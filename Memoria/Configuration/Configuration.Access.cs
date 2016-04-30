@@ -31,6 +31,8 @@ namespace Memoria
             public static Boolean Enabled => Instance._import.Enabled.Value;
             public static String Path => Instance._import.Path.Value;
             public static Boolean Text => Instance._import.Text.Value;
+
+            public static Boolean IsText => Enabled && Text;
         }
 
         public static class Export
@@ -39,12 +41,17 @@ namespace Memoria
             public static String Path => Instance._export.Path.Value;
             public static Boolean Text => Instance._export.Text.Value;
             public static Boolean Field => Instance._export.Field.Value;
+
+            public static Boolean IsText => Enabled && Text;
+            public static Boolean IsField => Enabled && Field;
         }
 
         public static class Hacks
         {
             public static Boolean Enabled => Instance._hacks.Enabled.Value;
             public static Boolean AllCharactersAvailable => Instance._hacks.AllCharactersAvailable.Value;
+
+            public static Boolean IsAllCharactersAvailable => Enabled && AllCharactersAvailable;
         }
     }
 }

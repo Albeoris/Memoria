@@ -176,12 +176,12 @@ public class ff9play
         FF9StateSystem.Common.FF9.player[slot_id].info.party = 0;
     }
 
-    private static bool TryHackCharacterAvailability()
+    internal static bool TryHackCharacterAvailability()
     {
-        if (!Configuration.Hacks.Enabled || !Configuration.Hacks.AllCharactersAvailable)
+        if (!Configuration.Hacks.IsAllCharactersAvailable)
             return false;
 
-        for (int i = 0; i < 9; i++)
+        for (byte i = 0; i < 9; i++)
             FF9StateSystem.Common.FF9.player[i].info.party = 1;
 
         return true;

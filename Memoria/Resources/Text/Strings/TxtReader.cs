@@ -54,5 +54,12 @@ namespace Memoria
                 return result;
             }
         }
+
+        public static TxtEntry[] ReadStrings(String inputPath)
+        {
+            String name;
+            using (FileStream output = File.Create(inputPath))
+                return new TxtReader(output, StringsFormatter.Instance).Read(out name);
+        }
     }
 }

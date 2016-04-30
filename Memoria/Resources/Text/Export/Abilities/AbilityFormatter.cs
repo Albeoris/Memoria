@@ -41,5 +41,10 @@ namespace Memoria
             sb.Append(abilityHelp.ReplaceAll(Tags));
             return sb.ToString();
         }
+
+        public static void Parse(TxtEntry[] entreis, out string[] skillNames, out string[] skillHelps)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

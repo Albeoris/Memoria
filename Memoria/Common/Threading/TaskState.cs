@@ -5,7 +5,7 @@ namespace Memoria
         Created = 0,
         WaitingToRun,
         Running,
-        Completed,
+        Success,
         Canceled,
         Faulted
     }
