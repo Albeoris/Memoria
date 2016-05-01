@@ -52,3 +52,6 @@ Final Fantasy IX tools
 3. Run patcher
 4. Copy hash of type from console or Memoria.log and past to the TypeReplacers
 5. Run the game, test all of you can and see output_log.txt for errors.
+
+# Knowledge base
+Please [visit our knowledge base](../../wiki#knowledge-base) before using this software.
