@@ -109,7 +109,7 @@ namespace Memoria
             for (int i = 0; i < entreis.Length; i++)
             {
                 String value = entreis[i].Value;
-                Int32 helpIndex = value.IndexOf(Environment.NewLine, StringComparison.Ordinal);
+                Int32 helpIndex = value.IndexOf('\n');
                 if (helpIndex < 0)
                 {
                     skillNames[i] = value;
@@ -123,7 +123,7 @@ namespace Memoria
                 else
                 {
                     skillNames[i] = value.Substring(0, helpIndex);
-                    helpIndex += 2;
+                    helpIndex += 1;
                     skillHelps[i] = helpIndex < value.Length
                         ? value.Substring(helpIndex).ReplaceAll(Replacements.Backward)
                         : String.Empty;

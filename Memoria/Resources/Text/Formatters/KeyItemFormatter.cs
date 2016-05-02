@@ -71,8 +71,8 @@ namespace Memoria
             for (int i = 0; i < entreis.Length; i++)
             {
                 String value = entreis[i].Value;
-                Int32 newLineIndex = value.IndexOf(Environment.NewLine, StringComparison.Ordinal);
-                Int32 helpIndex = newLineIndex + Environment.NewLine.Length;
+                Int32 newLineIndex = value.IndexOf('\n');
+                Int32 helpIndex = newLineIndex + 1;
                 if (newLineIndex < 0 || helpIndex >= value.Length)
                 {
                     itemNames[i] = value;
@@ -86,7 +86,7 @@ namespace Memoria
                 else
                     itemNames[i] = value.Substring(0, newLineIndex);
 
-                Int32 separatorIndex = value.IndexOf(Separator, helpIndex, StringComparison.Ordinal) - Environment.NewLine.Length;
+                Int32 separatorIndex = value.IndexOf(Separator, helpIndex, StringComparison.Ordinal) - 1;
                 if (separatorIndex < 0)
                 {
                     itemHelps[i] = value.Substring(helpIndex).ReplaceAll(Replacements.Backward);
@@ -99,7 +99,7 @@ namespace Memoria
                 else
                     itemHelps[i] = value.Substring(helpIndex, separatorIndex - helpIndex).ReplaceAll(Replacements.Backward);
 
-                Int32 itemDesc = separatorIndex + Separator.Length + Environment.NewLine.Length * 2;
+                Int32 itemDesc = separatorIndex + Separator.Length + 2;
                 if (itemDesc >= value.Length)
                     itemDescs[i] = String.Empty;
                 else
