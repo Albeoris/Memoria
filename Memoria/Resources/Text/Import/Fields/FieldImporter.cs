@@ -20,7 +20,7 @@ namespace Memoria
         private String _fieldFileName;
         private String[] _original;
         private TxtEntry[] _external;
-        private Dictionary<String, UInt64> _dic;
+        private Dictionary<String, LinkedList<UInt64>> _dic;
         private IList<KeyValuePair<String, TextReplacement>> _customTags;
         private IList<KeyValuePair<String, TextReplacement>> _fieldReplacements;
 
@@ -44,7 +44,7 @@ namespace Memoria
 
             try
             {
-                _dic = new Dictionary<String, UInt64>();
+                _dic = new Dictionary<String, LinkedList<UInt64>>();
                 _customTags = LoadCustomTags();
                 Dictionary<String, IList<KeyValuePair<String, TextReplacement>>> fieldTags = LoadFieldTags();
 
@@ -146,7 +146,7 @@ namespace Memoria
         {
             Int32 currentZoneId = -1;
             String[] currentText = null;
-            foreach (KeyValuePair<String, UInt64> pair in _dic)
+            foreach (KeyValuePair<String, LinkedList<UInt64>> pair in _dic)
             {
                 Int32 zoneId, lineId;
                 String target = pair.Key;
@@ -192,10 +192,13 @@ namespace Memoria
                     target = currentText[lineId];
                 } while (target.StartsWith("{$"));
 
-                zoneId = (Int32)(pair.Value >> 32);
-                lineId = (Int32)(pair.Value & UInt32.MaxValue);
+                foreach (UInt64 value in pair.Value)
+                {
+                    zoneId = (Int32)(value >> 32);
+                    lineId = (Int32)(value & UInt32.MaxValue);
 
-                _cache[zoneId][lineId] = target;
+                    _cache[zoneId][lineId] = target;
+                }
             }
         }
 
@@ -214,7 +217,13 @@ namespace Memoria
                 String external = _external[index].Value;
                 if (external.StartsWith("{$"))
                 {
-                    _dic[external] = ((UInt64)_fieldZoneId << 32) | (UInt32)index;
+                    LinkedList<UInt64> list;
+                    if (!_dic.TryGetValue(external, out list))
+                    {
+                        list = new LinkedList<UInt64>();
+                        _dic[external] = list;
+                    }
+                    list.AddLast(((UInt64)_fieldZoneId << 32) | (UInt32)index);
                     result[index] = external;
                     continue;
                 }
