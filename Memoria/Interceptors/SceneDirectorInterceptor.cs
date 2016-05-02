@@ -17,6 +17,7 @@ namespace Memoria
         private static void Initialize()
         {
             ResourceExporter.ExportSafe();
+            ResourceImporter.Initialize();
         }
     }
 }

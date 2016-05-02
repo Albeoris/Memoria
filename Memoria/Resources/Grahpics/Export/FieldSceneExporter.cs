@@ -42,7 +42,7 @@ namespace Memoria
                 String outputPath = outputDirectory + "Atlas.png";
                 if (File.Exists(outputPath))
                 {
-                    Log.Warning($"[FieldSceneExporter] Export was skipped bacause file already exists: [{outputPath}].");
+                    Log.Warning($"[FieldSceneExporter] Export was skipped bacause a file already exists: [{outputPath}].");
                     return;
                 }
 

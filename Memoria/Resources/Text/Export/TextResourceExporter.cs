@@ -16,28 +16,38 @@ namespace Memoria
                     return;
                 }
 
-                foreach (IExporter exporter in EnumerateExporters())
-                    exporter.Export();
+                foreach (String symbol in Configuration.Export.Languages)
+                {
+                    EmbadedTextResources.CurrentSymbol = symbol;
+                    ModTextResources.Export.CurrentSymbol = symbol;
+                    foreach (IExporter exporter in EnumerateExporters())
+                        exporter.Export();
+                }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to export text resources.");
+            }
+            finally
+            {
+                EmbadedTextResources.CurrentSymbol = null;
+                ModTextResources.Export.CurrentSymbol = null;
             }
         }
 
         private static IEnumerable<IExporter> EnumerateExporters()
         {
             foreach (EtcTextResource value in Enum.GetValues(typeof(EtcTextResource)))
-                yield return new EtcLoader(value);
+                yield return new EtcExporter(value);
 
-            yield return new CommandLoader();
-            yield return new AbilityLoader();
-            yield return new SkillLoader();
-            yield return new ItemLoader();
-            yield return new KeyItemLoader();
-            yield return new BattleLoader();
-            yield return new LocationNameLoader();
-            yield return new FieldLoader();
+            yield return new CommandExporter();
+            yield return new AbilityExporter();
+            yield return new SkillExporter();
+            yield return new ItemExporter();
+            yield return new KeyItemExporter();
+            yield return new BattleExporter();
+            yield return new LocationNameExporter();
+            yield return new FieldExporter();
         }
     }
 
@@ -60,7 +70,7 @@ namespace Memoria
                 String exportPath = ExportPath;
                 if (File.Exists(exportPath))
                 {
-                    Log.Warning($"[{TypeName}] Export was skipped bacause file already exists: [{exportPath}].");
+                    Log.Warning($"[{TypeName}] Export was skipped bacause a file already exists: [{exportPath}].");
                     return;
                 }
 

@@ -102,6 +102,12 @@ namespace Memoria
                         break;
                     }
                     case '\r':
+                    {
+                        if (!block)
+                            continue;
+
+                        break;
+                    }
                     case '\n':
                     {
                         if (!block)
@@ -117,8 +123,8 @@ namespace Memoria
 
                         if (line > 0)
                         {
-                            for (int i = 0; i < (line + 1) / 2; i++)
-                                sb.Append(Environment.NewLine);
+                            for (int i = 0; i < line; i++)
+                                sb.Append('\n');
                             line = 0;
                         }
 

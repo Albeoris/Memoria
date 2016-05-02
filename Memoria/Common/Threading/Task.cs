@@ -67,13 +67,10 @@ namespace Memoria
             ThreadPool.QueueUserWorkItem(RunSafe);
         }
 
-        public Boolean Wait(Int32 millisecondsTimeout = -1)
+        public Boolean WaitSafe(Int32 millisecondsTimeout = -1)
         {
             if (IsCompleted)
-            {
-                CheckFaulted();
                 return true;
-            }
 
             if (millisecondsTimeout > -1)
                 return _completedEvent.WaitOne(millisecondsTimeout);
@@ -88,6 +85,17 @@ namespace Memoria
             }
 
             return true;
+        }
+
+        public Boolean Wait(Int32 millisecondsTimeout = -1)
+        {
+            if (WaitSafe(millisecondsTimeout))
+            {
+                CheckFaulted();
+                return true;
+            }
+
+            return false;
         }
 
         public void CheckFaulted()

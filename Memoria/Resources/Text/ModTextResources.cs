@@ -27,6 +27,7 @@ namespace Memoria
 
         public static class Export
         {
+            public static String CurrentSymbol { get; set; }
             public static String Abilities => GetCurrentPath(AbilitiesPath);
             public static String Commands => GetCurrentPath(CommandsPath);
             public static String Skills => GetCurrentPath(SkillsPath);
@@ -51,7 +52,7 @@ namespace Memoria
                 if (sb.Length > 0 && sb[sb.Length - 1] != '/' && sb[sb.Length - 1] != '\\')
                     sb.Append('/');
                 sb.Append("Text/");
-                sb.Append(Localization.GetSymbol());
+                sb.Append(CurrentSymbol ?? Localization.GetSymbol());
                 sb.Append(relativePath);
                 return sb.ToString();
             }

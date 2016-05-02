@@ -5,6 +5,25 @@ namespace Memoria
 {
     public static class ResourceImporter
     {
+        public static void Initialize()
+        {
+            try
+            {
+                if (!Configuration.Import.Enabled)
+                {
+                    Log.Message("[ResourceImporter] Pass through {Configuration.Import.Enabled = 0}.");
+                    return;
+                }
+
+                FF9TextToolInterceptor.BattleImporter.InitializeAsync();
+                FF9TextToolInterceptor.FieldImporter.InitializeAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ResourceImporter] Failed to import resources.");
+            }
+        }
+
         public static Texture2D ImportTexture(String relativePath)
         {
             WWW videoStreamer = new WWW(GetURLForImport() + relativePath);

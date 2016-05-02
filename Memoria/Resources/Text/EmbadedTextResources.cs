@@ -4,6 +4,8 @@ namespace Memoria
 {
     public static class EmbadedTextResources
     {
+        public static String CurrentSymbol { get; set; }
+
         private const String AbilityNamesPath = "/Ability/sa_name.mes";
         private const String AbilityHelpsPath = "/Ability/sa_help.mes";
         private const String CommandNamesPath = "/Command/com_name.mes";
@@ -48,7 +50,7 @@ namespace Memoria
 
         public static String GetCurrentPath(String relativePath)
         {
-            return Localization.GetPath() + relativePath;
+            return "EmbeddedAsset/Text/" + (CurrentSymbol ?? Localization.GetSymbol()) + relativePath;
         }
     }
 }

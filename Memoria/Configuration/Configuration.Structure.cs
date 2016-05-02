@@ -116,6 +116,7 @@ namespace Memoria
         {
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<String> Path = IniValue.Path(nameof(Path));
+            public readonly IniArray<String> Languages = IniValue.StringArray(nameof(Languages));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
             public readonly IniValue<Boolean> Field = IniValue.Boolean(nameof(Field));
 
@@ -123,6 +124,7 @@ namespace Memoria
             {
                 Enabled.Value = false;
                 Path.Value = "%StreamingAssets%";
+                Languages.Value = new[] {"US", "UK", "JP", "ES", "FR", "GR", "IT"};
                 Text.Value = true;
             }
 
@@ -130,6 +132,7 @@ namespace Memoria
             {
                 yield return Enabled;
                 yield return Path;
+                yield return Languages;
                 yield return Text;
                 yield return Field;
             }

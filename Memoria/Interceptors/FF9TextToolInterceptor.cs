@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
 
 namespace Memoria
 {
     public static class FF9TextToolInterceptor
     {
+        public static readonly BattleImporter BattleImporter = new BattleImporter();
+        public static readonly FieldImporter FieldImporter = new FieldImporter();
+
         public static IEnumerator InitializeFieldText()
         {
             Log.Message(nameof(InitializeFieldText));
+            FieldImporter.InitializationTask?.WaitSafe();
             return InitializeFieldTextInternal().GetEnumerator();
         }
 
@@ -43,6 +45,7 @@ namespace Memoria
         public static IEnumerator InitializeBattleText()
         {
             Log.Message(nameof(InitializeBattleText));
+            BattleImporter.InitializationTask?.WaitSafe();
             return InitializeBattleTextInternal().GetEnumerator();
         }
 
@@ -62,40 +65,11 @@ namespace Memoria
         {
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/ETC/minista.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetCardName(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/ETC/ff9choco.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetChocoUiText(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/ETC/card.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetCardLvName(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/ETC/cmdtitle.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetCmdTitleText(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/ETC/follow.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetFollowText(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/ETC/libra.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetLibraText(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/ETC/worldloc.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetWorldLocationText(loader.ExtractSentenseEnd());
+            foreach (EtcImporter importer in EtcImporter.EnumerateImporters())
+            {
+                foreach (var state in importer.LoadAsync())
+                    yield return state;
+            }
 
             FF9TextTool.IsLoading = false;
         }
@@ -104,23 +78,9 @@ namespace Memoria
         {
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/Location/loc_name.mes");
-            while (loader.Loading)
-                yield return 0;
-
-            Dictionary<int, string> locationNames = FF9TextToolAccessor.GetLocationName();
-            String[] array = loader.Text.Split('\r');
-            for (int i = 0; i < array.Length; i++)
-            {
-                String str = array[i];
-                str = str.Replace("\n", string.Empty);
-                if (!String.IsNullOrEmpty(str))
-                {
-                    string key = str.Split(':')[0];
-                    string value = str.Split(':')[1];
-                    locationNames[int.Parse(key)] = FF9TextTool.RemoveOpCode(value);
-                }
-            }
+            LocationNameImporter importer = new LocationNameImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
 
             FF9TextTool.IsLoading = false;
         }
@@ -137,11 +97,8 @@ namespace Memoria
 
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/Battle/" + battleZoneId + ".mes");
-            while (loader.Loading)
-                yield return 0;
-            if (loader.Text != null)
-                FF9TextToolAccessor.SetBattleText(loader.ExtractSentenseEnd());
+            foreach (var state in BattleImporter.LoadAsync())
+                yield return state;
 
             FF9TextTool.IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
@@ -151,15 +108,9 @@ namespace Memoria
         {
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/Command/com_name.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetCommandName(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/Command/com_help.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetCommandHelpDesc(loader.ExtractSentenseEnd());
+            CommandImporter importer = new CommandImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
 
             FF9TextTool.IsLoading = false;
         }
@@ -168,25 +119,13 @@ namespace Memoria
         {
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/Ability/sa_help.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetSupportAbilityHelpDesc(loader.ExtractSentenseEnd());
+            SingleFileImporter importer = new AbilityImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
 
-            loader = new TextLoader("/Ability/sa_name.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetSupportAbilityName(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/Ability/aa_help.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetActionAbilityHelpDesc(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/Ability/aa_name.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetActionAbilityName(loader.ExtractSentenseEnd());
+            importer = new SkillImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
 
             FF9TextTool.IsLoading = false;
         }
@@ -195,20 +134,9 @@ namespace Memoria
         {
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/KeyItem/imp_help.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetImportantItemHelpDesc(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/KeyItem/imp_name.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetImportantItemName(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/KeyItem/imp_skin.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetImportantSkinDesc(loader.ExtractSentenseEnd());
+            KeyItemImporter importer = new KeyItemImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
 
             FF9TextTool.IsLoading = false;
         }
@@ -217,26 +145,17 @@ namespace Memoria
         {
             FF9TextTool.IsLoading = true;
 
-            TextLoader loader = new TextLoader("/Item/itm_btl.mes");
-            while (loader.Loading)
-                yield return 0;
-
-            FF9TextToolAccessor.SetItemBattleDesc(loader.ExtractSentenseEnd());
-            loader = new TextLoader("/Item/itm_help.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetItemHelpDesc(loader.ExtractSentenseEnd());
-
-            loader = new TextLoader("/Item/itm_name.mes");
-            while (loader.Loading)
-                yield return 0;
-            FF9TextToolAccessor.SetItemName(loader.ExtractSentenseEnd());
+            ItemImporter importer = new ItemImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
 
             FF9TextTool.IsLoading = false;
         }
 
         private static IEnumerable InitializeFieldTextInternal()
         {
+            PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
+
             Int32 fieldZoneId = FF9TextToolAccessor.GetFieldZoneId();
             if (fieldZoneId == -1)
             {
@@ -246,17 +165,23 @@ namespace Memoria
             }
 
             FF9TextTool.IsLoading = true;
-            TextLoader loader = new TextLoader("/Field/" + GetFieldTextFileName(fieldZoneId) + ".mes");
-            while (loader.Loading)
-                yield return 0;
 
-            if (loader.Text != null)
+            foreach (var state in FieldImporter.LoadAsync())
             {
-                String source = TextOpCodeModifier.Modify(loader.Text);
-                String[] text = ExtractSentense(source);
-                FF9TextToolAccessor.SetFieldText(text);
-                FF9TextToolAccessor.SetTableText(ExtractTableText(text));
+                yield return state;
             }
+
+            //TextLoader loader = new TextLoader("/Field/" + GetFieldTextFileName(fieldZoneId) + ".mes");
+            //while (loader.Loading)
+            //    yield return 0;
+
+            //if (loader.Text != null)
+            //{
+            //    String source = TextOpCodeModifier.Modify(loader.Text);
+            //    String[] text = ExtractSentense(source);
+            //    FF9TextToolAccessor.SetFieldText(text);
+            //    FF9TextToolAccessor.SetTableText(ExtractTableText(text));
+            //}
 
             FF9TextTool.IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
@@ -311,37 +236,6 @@ namespace Memoria
                 }
             }
             return strArray1;
-        }
-
-        private sealed class TextLoader
-        {
-            private readonly AssetManagerRequest _request;
-
-            public String Text { get; private set; }
-            public Boolean Loading => IsLoading();
-
-            public TextLoader(String relativePath)
-            {
-                String fileName = Localization.GetPath() + relativePath;
-                _request = AssetManager.LoadAsync<TextAsset>(fileName);
-            }
-
-            public String[] ExtractSentenseEnd()
-            {
-                return FF9TextToolInterceptor.ExtractSentenseEnd(Text);
-            }
-
-            private Boolean IsLoading()
-            {
-                if (!_request.isDone)
-                    return true;
-
-                TextAsset asset = (TextAsset)_request.asset;
-                if (asset != null)
-                    Text = asset.text;
-
-                return false;
-            }
         }
     }
 }

@@ -25,5 +25,16 @@ namespace Memoria
 
             return -1;
         }
+
+        public static Int32 IndexFromEnd(this StringBuilder self, Int32 offset, Char ch)
+        {
+            for (int i = offset; i >= 0; i--)
+            {
+                if (self[i] == ch)
+                    return i;
+            }
+
+            return -1;
+        }
     }
 }

@@ -4,7 +4,7 @@ Final Fantasy IX tools
 # Updates
 1. Update the game to the latest version.
 2. Update Memoria to the latest version.
-3. **Delete** "Memoria.ini" from the game directory.
+3. **Delete** "Memoria.ini" from the game directory (otherwise you will not see new settings).
 4. Patch again
 
 
@@ -14,7 +14,7 @@ Final Fantasy IX tools
 3. Set a correct path to the Unity library folder in the Memoria.csproj (Notepad)
 <FrameworkPathOverride>C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\</FrameworkPathOverride>
 4. Create the "\References" folder in the root solution directory.
-5. Copy "Assembly-CSharp.dll" and "UnityEngine.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to "\References"
+5. Copy "Assembly-CSharp.dll", "UnityEngine.dll" and "XInputDotNetPure.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to "\References"
 6. Download "Mono.Cecil" package manualy or enable automaticaly package downloads.
 
 
@@ -37,6 +37,7 @@ Final Fantasy IX tools
 3. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
 4. Change the game font
 5. Export text resources and field backgrounds
+6. Import text resources
 
 
 # Configuration:

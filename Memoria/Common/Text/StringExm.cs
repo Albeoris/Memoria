@@ -1,63 +1,114 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Memoria
 {
     public static class StringExm
     {
-        public static String ReplaceAll(this String str, KeyValuePair<String, TextReplacement>[] map)
+        public static String ReplaceChars(this String str, String target, params Char[] source)
+        {
+            if (String.IsNullOrEmpty(str))
+                return str;
+            if (source.IsNullOrEmpty())
+                return str;
+
+            StringBuilder sb = new StringBuilder(str.Length);
+            foreach (var ch in str)
+            {
+                Boolean finded = false;
+                for (int i = 0; i < source.Length; i++)
+                {
+                    if (ch == source[i])
+                    {
+                        sb.Append(target);
+                        finded = true;
+                        break;
+                    }
+                }
+
+                if (finded)
+                    continue;
+
+                sb.Append(ch);
+            }
+
+            return sb.ToString();
+        }
+
+        public static String ReplaceAll(this String str, params IList<KeyValuePair<String, TextReplacement>>[] mapArray)
         {
             if (String.IsNullOrEmpty(str))
                 return str;
 
-            Exceptions.CheckArgumentNullOrEmprty(map, nameof(map));
+            Exceptions.CheckArgumentNull(mapArray, nameof(mapArray));
+
+            mapArray = mapArray.Where(m => !m.IsNullOrEmpty()).ToArray();
+            if (mapArray.Length == 0)
+                return str;
 
             StringBuilder result = new StringBuilder(str.Length);
             StringBuilder word = new StringBuilder(str.Length);
-            Int32[] indices = new Int32[map.Length];
+            Int32[][] indicesArray = new Int32[mapArray.Length][];
+            for (int k = 0; k < indicesArray.Length; k++)
+                indicesArray[k] = new Int32[mapArray[k].Count];
 
             for (Int32 characterIndex = 0; characterIndex < str.Length; characterIndex++)
             {
                 Char c = str[characterIndex];
                 word.Append(c);
 
-                for (var i = 0; i < map.Length; i++)
+                for (int n = 0; n < indicesArray.Length; n++)
                 {
-                    String old = map[i].Key;
-                    if (word.Length - 1 != indices[i])
-                        continue;
+                    int[] indices = indicesArray[n];
+                    var map = mapArray[n];
 
-                    if (old.Length == word.Length && old[word.Length - 1] == c)
+                    for (var i = 0; i < indices.Length; i++)
                     {
-                        indices[i] = -old.Length;
-                        continue;
-                    }
+                        String old = map[i].Key;
+                        if (word.Length - 1 != indices[i])
+                            continue;
 
-                    if (old.Length > word.Length && old[word.Length - 1] == c)
-                    {
-                        indices[i]++;
-                        continue;
-                    }
+                        if (old.Length == word.Length && old[word.Length - 1] == c)
+                        {
+                            indices[i] = -old.Length;
+                            continue;
+                        }
 
-                    indices[i] = 0;
+                        if (old.Length > word.Length && old[word.Length - 1] == c)
+                        {
+                            indices[i]++;
+                            continue;
+                        }
+
+                        indices[i] = 0;
+                    }
                 }
 
-                Int32 length = 0, index = -1;
+                Int32 length = 0, array = -1, index = -1;
                 Boolean exists = false;
-                for (int i = 0; i < indices.Length; i++)
+                for (int n = 0; n < indicesArray.Length; n++)
                 {
-                    if (indices[i] > 0)
+                    int[] indices = indicesArray[n];
+                    for (int i = 0; i < indices.Length; i++)
                     {
-                        exists = true;
-                        break;
+                        if (indices[i] > 0)
+                        {
+                            exists = true;
+                            break;
+                        }
+
+                        if (-indices[i] > length)
+                        {
+                            length = -indices[i];
+                            index = i;
+                            array = n;
+                        }
                     }
 
-                    if (-indices[i] > length)
-                    {
-                        length = -indices[i];
-                        index = i;
-                    }
+                    if (exists)
+                        break;
                 }
 
                 if (exists)
@@ -65,7 +116,7 @@ namespace Memoria
 
                 if (index >= 0)
                 {
-                    String value = map[index].Value.Replace(str, word, ref characterIndex, ref length);
+                    String value = mapArray[array][index].Value.Replace(str, word, ref characterIndex, ref length);
                     word.Remove(0, length);
                     result.Append(value);
 
@@ -78,9 +129,16 @@ namespace Memoria
 
                 result.Append(word);
                 word.Length = 0;
-                for (int i = 0; i < indices.Length; i++)
-                    indices[i] = 0;
+                for (int n = 0; n < indicesArray.Length; n++)
+                {
+                    int[] indices = indicesArray[n];
+                    for (int i = 0; i < indices.Length; i++)
+                        indices[i] = 0;
+                }
             }
+
+            if (word.Length > 0)
+                result.Append(word);
 
             return result.ToString();
         }

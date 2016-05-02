@@ -22,6 +22,7 @@ namespace Memoria
             using (StreamReader sr = new StreamReader(_input, Encoding.UTF8, true, 4096))
             {
                 name = sr.ReadLine();
+
                 if (_formatter is StringsFormatter) // TEMP
                     name = name.Substring(2, name.Length - 4);
 
@@ -58,7 +59,7 @@ namespace Memoria
         public static TxtEntry[] ReadStrings(String inputPath)
         {
             String name;
-            using (FileStream output = File.Create(inputPath))
+            using (FileStream output = File.OpenRead(inputPath))
                 return new TxtReader(output, StringsFormatter.Instance).Read(out name);
         }
     }
