@@ -186,9 +186,25 @@ namespace Memoria.Patcher
 
         private Instruction RecreateMethodOperand(Instruction inst, TypeReference newType)
         {
-            MethodDefinition method = ResolveType(newType).GetMethod((MethodReference)inst.Operand);
-            MethodReference methodReference = _module.Import(method);
-            return Instruction.Create(inst.OpCode, methodReference);
+            MethodReference operandMethod = (MethodReference)inst.Operand;
+            GenericInstanceMethod operandGeneric = operandMethod as GenericInstanceMethod;
+            if (operandGeneric != null)
+            {
+                MethodDefinition method = ResolveType(newType).GetMethod(operandGeneric.ElementMethod);
+                MethodReference methodReference = _module.Import(method);
+
+                GenericInstanceMethod methodInstance = new GenericInstanceMethod(methodReference);
+                foreach (TypeReference genericArg in operandGeneric.GenericArguments)
+                    methodInstance.GenericArguments.Add(_module.Import(genericArg));
+
+                return Instruction.Create(inst.OpCode, methodInstance);
+            }
+            else
+            {
+                MethodDefinition method = ResolveType(newType).GetMethod((MethodReference)inst.Operand);
+                MethodReference methodReference = _module.Import(method);
+                return Instruction.Create(inst.OpCode, methodReference);
+            }
         }
 
         private Instruction RecreateFieldOperand(Instruction inst, TypeReference newType)
@@ -217,6 +233,17 @@ namespace Memoria.Patcher
             {
                 newType = rank > 0 ? GetArrayType(rank) : _newReference;
                 return true;
+            }
+
+            GenericInstanceType genericType = oldType as GenericInstanceType;
+            if (genericType != null)
+            {
+                for (int index = 0; index < genericType.GenericArguments.Count; index++)
+                {
+                    TypeReference argument = genericType.GenericArguments[index];
+                    if (TryGetNewType(argument, out newType))
+                        genericType.GenericArguments[index] = newType;
+                }
             }
 
             newType = null;

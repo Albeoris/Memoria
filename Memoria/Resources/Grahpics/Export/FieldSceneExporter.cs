@@ -50,7 +50,11 @@ namespace Memoria
 
                 BGSCENE_DEF scene = new BGSCENE_DEF(true);
                 scene.LoadEBG(null, relativePath, mapName);
-                TextureResources.WriteTextureToFile(scene.atlas, outputPath);
+
+                String directoryPath = Path.GetDirectoryName(outputPath);
+                if (directoryPath != null)
+                    Directory.CreateDirectory(directoryPath);
+                TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(scene.atlas), outputPath);
 
                 Log.Message("[FieldSceneExporter] Exporting completed successfully.");
             }

@@ -76,12 +76,16 @@
     <Compile Include="Configuration\IniTryParseValue.cs" />
     <Compile Include="Configuration\IniValue.cs" />
     <Compile Include="Configuration\StringIniValue.cs" />
+    <Compile Include="Engine\AssetManager\AssetManager.cs" />
     <Compile Include="Engine\BGSCENE\BGSCENE_DEF.cs" />
+    <Compile Include="Engine\HonoluluBattleMain\HonoluluBattleMain.cs" />
     <Compile Include="Engine\ConfigUI\ConfigUI.cs" />
     <Compile Include="Engine\ConfigUI\ConfigField.cs" />
     <Compile Include="Engine\ConfigUI\SnapDragScrollView.cs" />
     <Compile Include="Engine\ConfigUI\ControllerType.cs" />
     <Compile Include="Engine\FF9Play\ff9play.cs" />
+    <Compile Include="Engine\HonoluluBattleMain\EventEngineUtilsAccessor.cs" />
+    <Compile Include="Engine\HonoluluBattleMain\DebugGuiSkin.cs" />
     <Compile Include="Engine\PartySettingsUI\PartySettingUI.cs" />
     <Compile Include="Engine\QuitUI\QuitUI.cs" />
     <Compile Include="Engine\UIAtlas\UIAtlas.cs" />
@@ -91,9 +95,10 @@
     <Compile Include="Engine\UIKeyTrigger\UIKeyTrigger.cs" />
     <Compile Include="GameLoop\GameLoopManager.cs" />
     <Compile Include="Interceptors\SceneDirectorInterceptor.cs" />
+    <Compile Include="Resources\Grahpics\Export\GraphicResourceExporter.cs" />
     <Compile Include="Resources\ResourceExporter.cs" />
     <Compile Include="Resources\ResourceImporter.cs" />
-    <Compile Include="Resources\TextureResources.cs" />
+    <Compile Include="Resources\TextureHelper.cs" />
     <Compile Include="Resources\Text\EtcTextResource.cs" />
     <Compile Include="Resources\Grahpics\Export\FieldSceneExporter.cs" />
     <Compile Include="Resources\Text\Import\AbilityImporter.cs" />
@@ -109,6 +114,7 @@
     <Compile Include="Resources\Text\Import\SingleFileImporter.cs" />
     <Compile Include="Resources\Text\Import\SkillImporter.cs" />
     <Compile Include="Resources\Text\Import\TextImporter.cs" />
+    <Compile Include="Resources\Text\GraphicResources.cs" />
     <Compile Include="Resources\Text\ModTextResources.cs" />
     <Compile Include="Resources\Text\EmbadedTextResources.cs" />
     <Compile Include="Resources\Text\Export\Fields\ExportFieldTags.cs" />

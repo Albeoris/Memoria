@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Memoria;
+using Memoria.TexturePackerLoader;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -63,23 +65,17 @@ public class UIAtlas : MonoBehaviour
         TexCoords
     }
 
-    [HideInInspector, SerializeField]
-    private Material material;
+    [HideInInspector, SerializeField] private Material material;
 
-    [HideInInspector, SerializeField]
-    private List<UISpriteData> mSprites = new List<UISpriteData>();
+    [HideInInspector, SerializeField] private List<UISpriteData> mSprites = new List<UISpriteData>();
 
-    [HideInInspector, SerializeField]
-    private float mPixelSize = 1f;
+    [HideInInspector, SerializeField] private float mPixelSize = 1f;
 
-    [HideInInspector, SerializeField]
-    private UIAtlas mReplacement;
+    [HideInInspector, SerializeField] private UIAtlas mReplacement;
 
-    [HideInInspector, SerializeField]
-    private Coordinates mCoordinates;
+    [HideInInspector, SerializeField] private Coordinates mCoordinates;
 
-    [HideInInspector, SerializeField]
-    private List<Sprite> sprites = new List<Sprite>();
+    [HideInInspector, SerializeField] private List<Sprite> sprites = new List<Sprite>();
 
     private int mPMA = -1;
 
@@ -87,26 +83,60 @@ public class UIAtlas : MonoBehaviour
 
     public UIAtlas()
     {
-        //Log.Message("UIAtlas constucted: {0}", name);
-        //GameLoopManager.Start += OnStart;
+        if (Configuration.Import.Enabled && Configuration.Import.Graphics)
+            GameLoopManager.Start += OverrideAtlas;
     }
 
-    private void OnStart()
+    private void OverrideAtlas()
     {
-        //Log.Message("UIAtlas started: {0}", name);
-        //if (material)
-        //{
-        //    Log.Message("UIAtlas material: {0}", material.mainTexture.name);
-        //    TextureResources.WriteTextureToFile(material.mainTexture as Texture2D, Path.Combine(Configuration.Export.Path, material.mainTexture.name + ".png"));
-        //}
+        GameLoopManager.Start -= OverrideAtlas;
+
+        try
+        {
+            String inputPath = GraphicResources.Import.GetAtlasPath(name);
+            String tpsheetPath = inputPath + ".tpsheet";
+            if (!File.Exists(tpsheetPath))
+                return;
+
+            TPSpriteSheetLoader loader = new TPSpriteSheetLoader(tpsheetPath);
+            SpriteSheet spriteSheet = loader.Load();
+
+            Dictionary<String, UISpriteData> original = mSprites.ToDictionary(s => s.name);
+            Dictionary<String, UnityEngine.Sprite> external = spriteSheet.sheet.ToDictionary(s => s.name);
+            if (original.Count != external.Count)
+            {
+                Log.Warning("[UIAtlas] Invalid sprite number: {0}, expected: {1}", external.Count, original.Count);
+                return;
+            }
+
+            Texture2D newTexture = spriteSheet.sheet[0].texture;
+            foreach (KeyValuePair<String, UISpriteData> pair in original)
+            {
+                UISpriteData target = pair.Value;
+                UnityEngine.Sprite source = external[pair.Key];
+
+                target.x = (int)source.rect.x;
+                target.y = (int)(newTexture.height - source.rect.height - source.rect.y);
+                target.width = (int)source.rect.width;
+                target.height = (int)source.rect.height;
+            }
+
+            //this.material = new Material(Shader.Find("Unlit/Transparent Colored")) { mainTexture = newTexture };
+            this.texture = newTexture;
+            mReplacement = null;
+            //Log.Message("this.material: " + this.material);
+            //Log.Message("this.shader: " + this.material.shader);
+            //Log.Message("[UIAtlas]: {0}", name);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[UIAtlas] Faield to oveeride atlas.");
+        }
     }
 
     public Material spriteMaterial
     {
-        get
-        {
-            return !(this.mReplacement != null) ? this.material : this.mReplacement.spriteMaterial;
-        }
+        get { return !(this.mReplacement != null) ? this.material : this.mReplacement.spriteMaterial; }
         set
         {
             if (this.mReplacement != null)
@@ -172,14 +202,21 @@ public class UIAtlas : MonoBehaviour
         }
     }
 
-    public Texture texture => (!(this.mReplacement != null)) ? this.material?.mainTexture : this.mReplacement.texture;
+    public Texture texture
+    {
+        get { return (!(this.mReplacement != null)) ? this.material?.mainTexture : this.mReplacement.texture; }
+        set
+        {
+            if (mReplacement == null)
+                material.mainTexture = value;
+            else
+                mReplacement.texture = value;
+        }
+    }
 
     public float pixelSize
     {
-        get
-        {
-            return this.mReplacement?.pixelSize ?? this.mPixelSize;
-        }
+        get { return this.mReplacement?.pixelSize ?? this.mPixelSize; }
         set
         {
             if (this.mReplacement != null)
@@ -200,10 +237,7 @@ public class UIAtlas : MonoBehaviour
 
     public UIAtlas replacement
     {
-        get
-        {
-            return this.mReplacement;
-        }
+        get { return this.mReplacement; }
         set
         {
             UIAtlas uIAtlas = value;

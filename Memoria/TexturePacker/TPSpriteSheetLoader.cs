@@ -25,10 +25,10 @@ namespace Memoria.TexturePackerLoader
         private Int32 _textureHeight;
         private LinkedList<Sprite> _sprites;
 
-        public TPSpriteSheetLoader(String texturePath)
+        public TPSpriteSheetLoader(String tpsheetPath)
         {
-            _texturePath = texturePath;
-            _tpsheetPath = Path.ChangeExtension(texturePath, ".tpsheet");
+            _tpsheetPath = Path.ChangeExtension(tpsheetPath, ".tpsheet");
+            _texturePath = Path.ChangeExtension(tpsheetPath, ".png");
 
             Exceptions.CheckFileNotFoundException(_texturePath);
             Exceptions.CheckFileNotFoundException(_tpsheetPath);
@@ -159,8 +159,8 @@ namespace Memoria.TexturePackerLoader
             Int32 frameY = Int32.Parse(parts[2], CultureInfo.InvariantCulture);
             Int32 frameW = Int32.Parse(parts[3], CultureInfo.InvariantCulture);
             Int32 frameH = Int32.Parse(parts[4], CultureInfo.InvariantCulture);
-            Int32 pivotX = Int32.Parse(parts[5], CultureInfo.InvariantCulture);
-            Int32 pivotY = Int32.Parse(parts[6], CultureInfo.InvariantCulture);
+            Single pivotX = Single.Parse(parts[5], CultureInfo.InvariantCulture);
+            Single pivotY = Single.Parse(parts[6], CultureInfo.InvariantCulture);
 
             Sprite sprite = Sprite.Create(_texture, new Rect(frameX, frameY, frameW, frameH), new Vector2(pivotX, pivotY));
             sprite.name = name;

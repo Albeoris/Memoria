@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace Memoria
@@ -67,12 +68,16 @@ namespace Memoria
     {
         public static Texture2D LoadTexture2D(String path)
         {
-            WWW videoStreamer = new WWW(FormatUrl(path));
-            return videoStreamer.texture;
+            Byte[] data = File.ReadAllBytes(path);
+            Texture2D tex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            tex.LoadImage(data);
+            tex.wrapMode = TextureWrapMode.Clamp;
+            return tex;
         }
 
         public static String FormatUrl(String path)
         {
+            path = Path.GetFullPath(path);
             switch (Application.platform)
             {
                 case RuntimePlatform.WindowsPlayer:

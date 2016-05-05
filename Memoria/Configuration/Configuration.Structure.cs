@@ -96,12 +96,14 @@ namespace Memoria
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<String> Path = IniValue.Path(nameof(Path));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
+            public readonly IniValue<Boolean> Graphics = IniValue.Boolean(nameof(Graphics));
 
             public ImportSection() : base("Import")
             {
                 Enabled.Value = false;
                 Path.Value = "%StreamingAssets%";
                 Text.Value = true;
+                Graphics.Value = true;
             }
 
             internal override IEnumerable<IniValue> GetValues()
@@ -109,6 +111,7 @@ namespace Memoria
                 yield return Enabled;
                 yield return Path;
                 yield return Text;
+                yield return Graphics;
             }
         }
 
@@ -118,6 +121,7 @@ namespace Memoria
             public readonly IniValue<String> Path = IniValue.Path(nameof(Path));
             public readonly IniArray<String> Languages = IniValue.StringArray(nameof(Languages));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
+            public readonly IniValue<Boolean> Graphics = IniValue.Boolean(nameof(Graphics));
             public readonly IniValue<Boolean> Field = IniValue.Boolean(nameof(Field));
 
             public ExportSection() : base("Export")
@@ -126,6 +130,8 @@ namespace Memoria
                 Path.Value = "%StreamingAssets%";
                 Languages.Value = new[] {"US", "UK", "JP", "ES", "FR", "GR", "IT"};
                 Text.Value = true;
+                Graphics.Value = true;
+                Field.Value = false;
             }
 
             internal override IEnumerable<IniValue> GetValues()
@@ -134,6 +140,7 @@ namespace Memoria
                 yield return Path;
                 yield return Languages;
                 yield return Text;
+                yield return Graphics;
                 yield return Field;
             }
         }

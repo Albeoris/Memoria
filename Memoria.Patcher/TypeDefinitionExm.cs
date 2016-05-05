@@ -23,8 +23,32 @@ namespace Memoria.Patcher
                 if (method.Name != descriptor.Name)
                     continue;
 
-                if (method.ReturnType.FullName != descriptor.ReturnType.FullName)
+                if (method.ReturnType.IsGenericParameter)
+                {
+                    if (!descriptor.ReturnType.IsGenericParameter)
+                        continue;
+                }
+                else if (descriptor.ReturnType.IsGenericParameter)
+                {
                     continue;
+                }
+                else
+                {
+                    if (method.ReturnType.IsArray)
+                    {
+                        if (!descriptor.ReturnType.IsArray)
+                            continue;
+                    }
+                    else if (descriptor.ReturnType.IsArray)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (method.ReturnType.FullName != descriptor.ReturnType.FullName)
+                            continue;
+                    }
+                }
 
                 if (method.HasGenericParameters)
                 {
@@ -33,12 +57,6 @@ namespace Memoria.Patcher
 
                     if (method.GenericParameters.Count != descriptor.GenericParameters.Count)
                         continue;
-
-                    for (int i = 0; i < method.GenericParameters.Count; i++)
-                    {
-                        if (method.GenericParameters[i].FullName != descriptor.GenericParameters[i].FullName)
-                            continue;
-                    }
                 }
                 else if (descriptor.HasGenericParameters)
                 {
