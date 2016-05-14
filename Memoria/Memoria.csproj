@@ -96,6 +96,7 @@
     <Compile Include="Configuration\StringIniValue.cs" />
     <Compile Include="Engine\AssetManager\AssetManager.cs" />
     <Compile Include="Engine\BGSCENE\BGSCENE_DEF.cs" />
+    <Compile Include="Engine\EBin\EBin.cs" />
     <Compile Include="Engine\HonoluluBattleMain\HonoluluBattleMain.cs" />
     <Compile Include="Engine\ConfigUI\ConfigUI.cs" />
     <Compile Include="Engine\ConfigUI\ConfigField.cs" />

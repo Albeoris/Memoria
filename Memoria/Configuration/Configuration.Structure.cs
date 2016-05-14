@@ -149,17 +149,20 @@ namespace Memoria
         {
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<Boolean> AllCharactersAvailable = IniValue.Boolean(nameof(AllCharactersAvailable));
+            public readonly IniValue<Int32> RopeJumpingIncrement = IniValue.Int32(nameof(RopeJumpingIncrement));
 
             public HacksSection() : base("Hacks")
             {
                 Enabled.Value = false;
                 AllCharactersAvailable.Value = false;
+                RopeJumpingIncrement.Value = 1;
             }
 
             internal override IEnumerable<IniValue> GetValues()
             {
                 yield return Enabled;
                 yield return AllCharactersAvailable;
+                yield return RopeJumpingIncrement;
             }
         }
     }

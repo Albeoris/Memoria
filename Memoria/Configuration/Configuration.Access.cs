@@ -49,6 +49,7 @@ namespace Memoria
         {
             public static Boolean Enabled => Instance._hacks.Enabled.Value;
             public static Boolean AllCharactersAvailable => Instance._hacks.AllCharactersAvailable.Value;
+            public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement.Value;
 
             public static Boolean IsAllCharactersAvailable => Enabled && AllCharactersAvailable;
         }
