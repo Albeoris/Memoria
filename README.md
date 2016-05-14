@@ -35,9 +35,10 @@ Final Fantasy IX tools
 1. Disable/Enable cheats
 2. Load anywhere (Alt+F9)
 3. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-4. Change the game font
-5. Export text resources and field backgrounds
-6. Import text resources
+4. Easy rope jumping
+5. Change the game font
+6. Export text resources and field backgrounds
+7. Import text resources
 
 
 # Configuration:
