@@ -149,7 +149,7 @@ namespace Memoria
 
         private static String ParseValue(String line)
         {
-            return line.ReplaceAll(ValueTextTags.Forward, ValueSmartTagsBackward);
+            return line.ReplaceAll(ValueTextTags.Backward, ValueSmartTagsBackward);
         }
 
         private static String ReturnStartSentenseTag(String str, StringBuilder word, ref Int32 index, ref Int32 length)
