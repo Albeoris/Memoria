@@ -29,15 +29,20 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/NGUI Sprite"), ExecuteInEditMode]
 public class UISprite : UIBasicSprite
 {
-    [HideInInspector, SerializeField] private UIAtlas mAtlas;
+    [HideInInspector, SerializeField]
+    private UIAtlas mAtlas;
 
-    [HideInInspector, SerializeField] private string mSpriteName;
+    [HideInInspector, SerializeField]
+    private string mSpriteName;
 
-    [HideInInspector, SerializeField] private bool mFillCenter = true;
+    [HideInInspector, SerializeField]
+    private bool mFillCenter = true;
 
-    [NonSerialized] protected UISpriteData mSprite;
+    [NonSerialized]
+    protected UISpriteData mSprite;
 
-    [NonSerialized] private bool mSpriteSet;
+    [NonSerialized]
+    private bool mSpriteSet;
 
     public override Material material => this.mAtlas?.spriteMaterial;
 

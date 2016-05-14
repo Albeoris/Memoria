@@ -553,31 +553,31 @@ public class BGSCENE_DEF
 
     private void CreateMaterials()
     {
-        Material material = new Material(Shader.Find("PSX/FieldMap_Abr_None")) {mainTexture = this.atlas};
+        Material material = new Material(Shader.Find("PSX/FieldMap_Abr_None")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_none", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_0")) {mainTexture = this.atlas};
+        material = new Material(Shader.Find("PSX/FieldMap_Abr_0")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_0", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_1")) {mainTexture = this.atlas};
+        material = new Material(Shader.Find("PSX/FieldMap_Abr_1")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_1", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_2")) {mainTexture = this.atlas};
+        material = new Material(Shader.Find("PSX/FieldMap_Abr_2")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_2", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_3")) {mainTexture = this.atlas};
+        material = new Material(Shader.Find("PSX/FieldMap_Abr_3")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);

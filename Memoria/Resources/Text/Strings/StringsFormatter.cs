@@ -121,6 +121,12 @@ namespace Memoria
                         if (!block)
                             continue;
 
+                        if (escape)
+                        {
+                            sb.Append('\\');
+                            escape = false;
+                        }
+
                         if (line > 0)
                         {
                             for (int i = 0; i < line; i++)

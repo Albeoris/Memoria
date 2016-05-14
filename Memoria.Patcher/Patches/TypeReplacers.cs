@@ -88,11 +88,16 @@ namespace Memoria.Patcher
                 }
 
                 ReplaceType(victimModule, newType, oldType, modModule, modReference);
+                ExportedType exportedType = new ExportedType(oldType.Namespace, oldType.Name, modModule, modReference);
+                victimModule.Types.Remove(oldType);
+                victimModule.ExportedTypes.Add(exportedType);
             }
         }
 
         private static void ReplaceType(ModuleDefinition victimModule, TypeDefinition newType, TypeDefinition oldType, ModuleDefinition modModule, AssemblyNameReference modReference)
         {
+            TypeReference newReference = victimModule.Import(newType);
+
             if (oldType.HasNestedTypes)
             {
                 foreach (TypeDefinition oldNested in oldType.NestedTypes)
@@ -105,11 +110,7 @@ namespace Memoria.Patcher
                 }
             }
 
-            TypeReference newReference = victimModule.Import(newType);
             new TypeReplacer(oldType.FullName, newReference).Replace(victimModule);
-            victimModule.Types.Remove(oldType);
-            ExportedType exportedType = new ExportedType(oldType.Namespace, oldType.Name, modModule, modReference);
-            victimModule.ExportedTypes.Add(exportedType);
         }
 
         private static Dictionary<String, TypeDefinition> GetRedirectionTypes(AssemblyDefinition assembly)

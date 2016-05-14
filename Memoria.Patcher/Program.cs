@@ -116,6 +116,7 @@ namespace Memoria.Patcher
         private static void RollbackPreviousPatches(String assemblyPath, String backupPath)
         {
             AssemblyDefinition unknown = AssemblyDefinition.ReadAssembly(assemblyPath);
+
             if (unknown.MainModule.AssemblyReferences.FirstOrDefault(a => a.Name == "Memoria") == null)
             {
                 if (File.Exists(backupPath))

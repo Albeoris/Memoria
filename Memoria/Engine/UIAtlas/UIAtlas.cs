@@ -65,17 +65,23 @@ public class UIAtlas : MonoBehaviour
         TexCoords
     }
 
-    [HideInInspector, SerializeField] private Material material;
+    [HideInInspector, SerializeField]
+    private Material material;
 
-    [HideInInspector, SerializeField] private List<UISpriteData> mSprites = new List<UISpriteData>();
+    [HideInInspector, SerializeField]
+    private List<UISpriteData> mSprites = new List<UISpriteData>();
 
-    [HideInInspector, SerializeField] private float mPixelSize = 1f;
+    [HideInInspector, SerializeField]
+    private float mPixelSize = 1f;
 
-    [HideInInspector, SerializeField] private UIAtlas mReplacement;
+    [HideInInspector, SerializeField]
+    private UIAtlas mReplacement;
 
-    [HideInInspector, SerializeField] private Coordinates mCoordinates;
+    [HideInInspector, SerializeField]
+    private Coordinates mCoordinates;
 
-    [HideInInspector, SerializeField] private List<Sprite> sprites = new List<Sprite>();
+    [HideInInspector, SerializeField]
+    private List<Sprite> sprites = new List<Sprite>();
 
     private int mPMA = -1;
 

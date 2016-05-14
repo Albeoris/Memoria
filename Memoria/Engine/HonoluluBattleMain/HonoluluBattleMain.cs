@@ -82,10 +82,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         int[][] numArray1 = new int[4][];
         numArray1[0] = new int[1];
         int index1 = 1;
-        int[] numArray2 = {316, -316};
+        int[] numArray2 = { 316, -316 };
         numArray1[index1] = numArray2;
         int index2 = 2;
-        int[] numArray3 = {632, 0, -632};
+        int[] numArray3 = { 632, 0, -632 };
         numArray1[index2] = numArray3;
         int index3 = 3;
         int[] numArray4 =
@@ -260,7 +260,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             SB2_MON_PARM sb2MonParm = this.btlScene.MonAddr[num];
             string path = FF9BattleDB.GEO[sb2MonParm.Geo];
             //var vector3 = new Vector3(sb2Pattern.Put[index2 - 4].Xpos, sb2Pattern.Put[index2 - 4].Ypos * -1, sb2Pattern.Put[index2 - 4].Zpos);
-            btlDataArray[index2] = new BTL_DATA {gameObject = ModelFactory.CreateModel(path, true)};
+            btlDataArray[index2] = new BTL_DATA { gameObject = ModelFactory.CreateModel(path, true) };
             if (ModelFactory.IsUseAsEnemyCharacter(path))
             {
                 if (path.Contains("GEO_MON_B3_168"))
@@ -401,7 +401,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 sub_no = 1U;
             if ((int)cmd_no == 0)
                 return;
-            CMD_DATA cmd = new CMD_DATA {regist = btlData};
+            CMD_DATA cmd = new CMD_DATA { regist = btlData };
             btl_cmd.SetCommand(cmd, cmd_no, sub_no, (ushort)target, 0U);
         }
     }
