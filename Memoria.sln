@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{27033090-5B63-4E6B-AD90-1344C66331CC}"
 	ProjectSection(SolutionItems) = preProject
 		References\Assembly-CSharp.dll = References\Assembly-CSharp.dll
+		References\MemoriaPostBuild.cmd = References\MemoriaPostBuild.cmd
 		References\UnityEngine.dll = References\UnityEngine.dll
 		References\XInputDotNetPure.dll = References\XInputDotNetPure.dll
 	EndProjectSection

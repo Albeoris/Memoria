@@ -61,6 +61,8 @@ public class UIKeyTrigger : MonoBehaviour
 
     private bool F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
     private bool F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
+    private bool F5Key => UnityXInput.Input.GetKey(KeyCode.F5);
+    private bool F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private bool F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
     private bool F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
 
@@ -314,13 +316,29 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    public void OnBackToMainMenuCommandDetected(UIScene scene)
+    public void OnLoadSceneCommandDetected(UIScene scene, SaveLoadUI.SerializeType type)
     {
         if (PersistenSingleton<UIManager>.Instance.IsLoading || PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
             return;
 
-        FF9Sfx.FF9SFX_Play(103);
-        scene?.Hide(OnLoadGameButtonClick);
+        switch (type)
+        {
+            case SaveLoadUI.SerializeType.Save:
+                FF9Sfx.FF9SFX_Play(103);
+                scene?.Hide(OnSaveGameButtonClick);
+                break;
+
+            case SaveLoadUI.SerializeType.Load:
+                FF9Sfx.FF9SFX_Play(103);
+                scene?.Hide(OnLoadGameButtonClick);
+                break;
+        }
+    }
+
+    private static void OnSaveGameButtonClick()
+    {
+        PersistenSingleton<UIManager>.Instance.SaveLoadScene.Type = SaveLoadUI.SerializeType.Save;
+        PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Serialize);
     }
 
     private static void OnLoadGameButtonClick()
@@ -422,9 +440,14 @@ public class UIKeyTrigger : MonoBehaviour
                 OnQuitCommandDetected(sceneFromState);
                 return true;
             }
+            if (F5KeyDown)
+            {
+                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
+                return true;
+            }
             if (F9KeyDown)
             {
-                OnBackToMainMenuCommandDetected(sceneFromState);
+                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
                 return true;
             }
         }
@@ -435,9 +458,14 @@ public class UIKeyTrigger : MonoBehaviour
                 OnQuitCommandDetected(sceneFromState);
                 return true;
             }
+            if (F5Key)
+            {
+                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
+                return true;
+            }
             if (F9Key)
             {
-                OnBackToMainMenuCommandDetected(sceneFromState);
+                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
                 return true;
             }
         }
