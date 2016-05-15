@@ -33,7 +33,7 @@ Final Fantasy IX tools
 
 # Features:
 1. Disable/Enable cheats
-2. Load anywhere (Alt+F9)
+2. Save/Load anywhere (Alt+F5, Alt+F9)
 3. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
 4. Easy rope jumping
 5. Change the game font
