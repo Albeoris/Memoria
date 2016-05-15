@@ -67,6 +67,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private static float frameTime;
     private bool isKeyFrame;
 
+    public static bool ForceNextTurn;
+
     public static float FrameTime => frameTime;
     public static float FPS => fps;
 
@@ -406,64 +408,121 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         }
     }
 
-    private void YMenu_ManagerAt()
+    private void YMenu_ManagerActiveTime()
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next;
+        if (IsEnableAtb())
+            ProcessActiveTime(btl);
+    }
+
+    private bool IsEnableAtb()
+    {
         if (!UIManager.Battle.FF9BMenu_IsEnableAtb())
-            return;
+            return false;
 
-        for (; btl != null; btl = btl.next)
+        if (UIManager.Battle.CurrentPlayerIndex == -1 || Configuration.Hacks.BattleSpeed != 2)
+            return true;
+
+        if (!ForceNextTurn)
+            return false;
+
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.cur.hp == 0 || btl.bi.atb == 0)
+            if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.cur.hp == 0 || btl.bi.atb == 0 || btl.bi.player == 0)
                 continue;
 
-            POINTS points1 = btl.cur;
-            POINTS points2 = btl.max;
-            points1.at += (short)(points1.at_coef * 4);
-            if (points1.at < points2.at)
-                continue;
+            if (btl.cur.at < btl.max.at)
+                return true;
+        }
 
-            points1.at = points2.at;
-            if (btl_stat.CheckStatus(btl, 33685506U))
-                continue;
+        return false;
+    }
 
-            if (btl.bi.player != 0)
+    private void ProcessActiveTime(BTL_DATA btl)
+    {
+        int battleSpeed = Configuration.Hacks.BattleSpeed;
+
+        BTL_DATA source = btl;
+        bool canContinute = false;
+        bool needContinue = battleSpeed > 0;
+        do
+        {
+            for (btl = source; btl != null; btl = btl.next)
             {
-                if (btl_stat.CheckStatus(btl, 3072U))
+                if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.cur.hp == 0 || btl.bi.atb == 0)
+                    continue;
+
+                POINTS current = btl.cur;
+                POINTS maximum = btl.max;
+
+                Boolean changed = false;
+                if (current.at < maximum.at)
                 {
-                    int num = 0;
-                    while (1 << num != btl.btl_id)
-                        ++num;
-                    if (!UIManager.Battle.InputFinishList.Contains(num))
+                    canContinute = true;
+                    changed = true;
+                    current.at += (short)(current.at_coef * 4);
+                }
+
+                if (current.at < maximum.at)
+                    continue;
+
+                if (battleSpeed == 2 && btl.bi.player != 0)
+                {
+                    if (changed)
                     {
-                        btl.sel_mode = 1;
-                        btl_cmd.SetAutoCommand(btl);
+                        ForceNextTurn = false;
+                        needContinue = false;
                     }
                 }
                 else
                 {
-                    int playerId = 0;
-                    while (1 << playerId != btl.btl_id)
-                        ++playerId;
-                    if (!UIManager.Battle.ReadyQueue.Contains(playerId))
-                        UIManager.Battle.AddPlayerToReady(playerId);
+                    needContinue = false;
+                }
+
+                if (!Configuration.Fixes.IsKeepRestTimeInBattle)
+                    current.at = maximum.at;
+
+                if (btl_stat.CheckStatus(btl, 33685506U))
+                    continue;
+
+                if (btl.bi.player != 0)
+                {
+                    if (btl_stat.CheckStatus(btl, 3072U))
+                    {
+                        int num = 0;
+                        while (1 << num != btl.btl_id)
+                            ++num;
+                        if (!UIManager.Battle.InputFinishList.Contains(num))
+                        {
+                            btl.sel_mode = 1;
+                            btl_cmd.SetAutoCommand(btl);
+                        }
+                    }
+                    else
+                    {
+                        int playerId = 0;
+                        while (1 << playerId != btl.btl_id)
+                            ++playerId;
+                        if (!UIManager.Battle.ReadyQueue.Contains(playerId))
+                            UIManager.Battle.AddPlayerToReady(playerId);
+                    }
+                }
+                else if (!FF9StateSystem.Battle.isDebug)
+                {
+                    if (PersistenSingleton<EventEngine>.Instance.RequestAction(47, btl.btl_id, 0, 0) != 0)
+                        btl.sel_mode = 1;
+                }
+                else
+                {
+                    if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.GetBtlDataPtr(btl.btl_id).typeNo]) < 0)
+                        Debug.LogError("Index out of range");
+
+                    UnityEngine.Random.Range(0, 4);
+                    if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
+                        break;
                 }
             }
-            else if (!FF9StateSystem.Battle.isDebug)
-            {
-                if (PersistenSingleton<EventEngine>.Instance.RequestAction(47, btl.btl_id, 0, 0) != 0)
-                    btl.sel_mode = 1;
-            }
-            else
-            {
-                if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.GetBtlDataPtr(btl.btl_id).typeNo]) < 0)
-                    Debug.LogError("Index out of range");
-
-                UnityEngine.Random.Range(0, 4);
-                if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
-                    break;
-            }
-        }
+        } while (canContinute && needContinue);
     }
 
     private void Update()
@@ -496,7 +555,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (!FF9StateSystem.Battle.isDebug)
         {
             if (UIManager.Battle.FF9BMenu_IsEnable())
-                this.YMenu_ManagerAt();
+                this.YMenu_ManagerActiveTime();
+
             if ((long)this.battleResult == 1L)
             {
                 PersistenSingleton<FF9StateSystem>.Instance.mode = 8;

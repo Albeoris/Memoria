@@ -45,6 +45,13 @@ namespace Memoria
             public static Boolean Field => Instance._export.Field.Value;
         }
 
+        public static class Fixes
+        {
+            public static Boolean Enabled => Instance._fixes.Enabled.Value;
+
+            public static Boolean IsKeepRestTimeInBattle => Enabled && Instance._fixes.KeepRestTimeInBattle.Value;
+        }
+
         public static class Hacks
         {
             public static Boolean Enabled => Instance._hacks.Enabled.Value;
@@ -52,6 +59,7 @@ namespace Memoria
             public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement.Value;
 
             public static Boolean IsAllCharactersAvailable => Enabled && AllCharactersAvailable;
+            public static Int32 BattleSpeed => Enabled ? Math.Min(Math.Max(0, Instance._hacks.BattleSpeed.Value), 2) : 0;
         }
     }
 }

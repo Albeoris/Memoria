@@ -33,12 +33,13 @@ Final Fantasy IX tools
 
 # Features:
 1. Disable/Enable cheats
-2. Save/Load anywhere (Alt+F5, Alt+F9)
-3. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-4. Easy rope jumping
-5. Change the game font
-6. Export text resources and field backgrounds
-7. Import text resources
+2. Fast battles (Skip waiting or turn-based)
+3. Save/Load anywhere (Alt+F5, Alt+F9) 
+4. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
+5. Easy rope jumping
+6. Change the game font
+7. Export text resources and field backgrounds
+8. Import text resources
 
 
 # Configuration:

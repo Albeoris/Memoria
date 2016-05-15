@@ -9,6 +9,7 @@ namespace Memoria
         private readonly CheatsSection _cheats = new CheatsSection();
         private readonly ImportSection _import = new ImportSection();
         private readonly ExportSection _export = new ExportSection();
+        private readonly FixesSection _fixes = new FixesSection();
         private readonly HacksSection _hacks = new HacksSection();
 
         internal override IEnumerable<IniSection> GetSections()
@@ -17,6 +18,7 @@ namespace Memoria
             yield return _cheats;
             yield return _import;
             yield return _export;
+            yield return _fixes;
             yield return _hacks;
         }
 
@@ -145,15 +147,35 @@ namespace Memoria
             }
         }
 
+        private sealed class FixesSection : IniSection
+        {
+            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Boolean> KeepRestTimeInBattle = IniValue.Boolean(nameof(KeepRestTimeInBattle));
+
+            public FixesSection() : base("Fixes")
+            {
+                Enabled.Value = false;
+                KeepRestTimeInBattle.Value = true;
+            }
+
+            internal override IEnumerable<IniValue> GetValues()
+            {
+                yield return Enabled;
+                yield return KeepRestTimeInBattle;
+            }
+        }
+
         private sealed class HacksSection : IniSection
         {
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Int32> BattleSpeed = IniValue.Int32(nameof(BattleSpeed));
             public readonly IniValue<Boolean> AllCharactersAvailable = IniValue.Boolean(nameof(AllCharactersAvailable));
             public readonly IniValue<Int32> RopeJumpingIncrement = IniValue.Int32(nameof(RopeJumpingIncrement));
 
             public HacksSection() : base("Hacks")
             {
                 Enabled.Value = false;
+                BattleSpeed.Value = 1;
                 AllCharactersAvailable.Value = false;
                 RopeJumpingIncrement.Value = 1;
             }
@@ -161,6 +183,7 @@ namespace Memoria
             internal override IEnumerable<IniValue> GetValues()
             {
                 yield return Enabled;
+                yield return BattleSpeed;
                 yield return AllCharactersAvailable;
                 yield return RopeJumpingIncrement;
             }

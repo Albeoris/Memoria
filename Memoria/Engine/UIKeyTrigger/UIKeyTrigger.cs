@@ -422,6 +422,7 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(6) || keyCommand == Control.LeftTrigger)
             {
+                HonoluluBattleMain.ForceNextTurn = true;
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftTrigger(activeButton);
                 return true;
