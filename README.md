@@ -33,7 +33,7 @@ Final Fantasy IX tools
 
 # Features:
 1. Disable/Enable cheats
-2. Fast battles (Skip waiting or turn-based)
+2. Fast battles (Change FPS, skip waiting or turn-based)
 3. Save/Load anywhere (Alt+F5, Alt+F9) 
 4. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
 5. Easy rope jumping

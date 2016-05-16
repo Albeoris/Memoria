@@ -6,6 +6,7 @@ namespace Memoria
     public sealed partial class Configuration : Ini
     {
         private readonly FontSection _font = new FontSection();
+        private readonly GraphicsSection _graphics = new GraphicsSection();
         private readonly CheatsSection _cheats = new CheatsSection();
         private readonly ImportSection _import = new ImportSection();
         private readonly ExportSection _export = new ExportSection();
@@ -15,6 +16,7 @@ namespace Memoria
         internal override IEnumerable<IniSection> GetSections()
         {
             yield return _font;
+            yield return _graphics;
             yield return _cheats;
             yield return _import;
             yield return _export;
@@ -39,6 +41,24 @@ namespace Memoria
                 yield return Enabled;
                 yield return Names;
                 yield return Size;
+            }
+        }
+
+        private sealed class GraphicsSection : IniSection
+        {
+            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Int32> BattleFPS = IniValue.Int32(nameof(BattleFPS));
+
+            public GraphicsSection() : base("Graphics")
+            {
+                Enabled.Value = false;
+                BattleFPS.Value = 30;
+            }
+
+            internal override IEnumerable<IniValue> GetValues()
+            {
+                yield return Enabled;
+                yield return BattleFPS;
             }
         }
 

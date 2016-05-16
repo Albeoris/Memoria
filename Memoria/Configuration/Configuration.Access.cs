@@ -11,6 +11,12 @@ namespace Memoria
             public static Int32 Size => Instance._font.Size.Value;
         }
 
+        public static class Graphics
+        {
+            public static Boolean Enabled => Instance._graphics.Enabled.Value;
+            public static Int32 BattleFPS => Enabled ? Instance._graphics.BattleFPS.Value : 15;
+        }
+
         public static class Cheats
         {
             public static Boolean Enabled => Instance._cheats.Enabled.Value;

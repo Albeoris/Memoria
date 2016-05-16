@@ -339,21 +339,13 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             if (btlData.gameObject == null)
                 return;
-            IEnumerator enumerator = btlData.gameObject.GetComponent<Animation>().GetEnumerator();
-            try
+
+            foreach (object item in btlData.gameObject.GetComponent<Animation>())
             {
-                while (enumerator.MoveNext())
-                {
-                    // do nothing?
-                }
-            }
-            finally
-            {
-                IDisposable disposable = enumerator as IDisposable;
-                disposable?.Dispose();
+                // do nothing?
             }
         }
-        fps = 15 * _speed;
+        fps = Configuration.Graphics.BattleFPS * _speed;
         frameTime = 1f / fps;
     }
 
@@ -460,7 +452,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 {
                     canContinute = true;
                     changed = true;
-                    current.at += (short)(current.at_coef * 4);
+                    current.at += (short)(Math.Max(1, current.at_coef * 4 * 15 / fps)); // 15 - default fps
                 }
 
                 if (current.at < maximum.at)
