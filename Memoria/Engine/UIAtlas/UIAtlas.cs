@@ -34,6 +34,7 @@ using Object = UnityEngine.Object;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("³îíĨ(!!!Û[ħNĲßķÓĹÏĵ}àÿĮĦ_I¨°W:¤*+!!!¿XğĸæĨĝêD*ĥėpĪėĆVáGēë«/~#bĮěĵÞgĬôĈ×¤8!!!ĿéòíøUd¨ġĕu·¾g>eē0İĎ²·áþ¶ĽĂod=tùăİ!ÙRÏíĒS0C¡¦&Õĳß(sÂÄÏį=wñiķlĬTĘRĿkô0öĹČĬīČ~¸ĤĲfČēÍĂĆïÅÇ$!!!įĊ8ć#!!!½çüę*!!!ĸªČ'ĉ`ļďļxįĨ_bÔµ'į«ĂģĘa¶'ÛÈùMØĆÖ$!!!Ó¼G%¯»(ĠńńńńmŁĿeńńńń%!!!õ¬ĢŁsĖ(S>:aóńńńńńńńń")]
 [AddComponentMenu("NGUI/UI/Atlas")]
 public class UIAtlas : MonoBehaviour
 {

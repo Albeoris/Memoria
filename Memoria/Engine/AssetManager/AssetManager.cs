@@ -9,6 +9,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable NotAccessedField.Global
 
+[ExportedType("×čĖìńńńń&!!!rQmÐÅı&êJ·čĢá#rº)!!!Þòð¦Ôúéİã²ďħ¡¬Ċě¯ě%ÑÓ¨ĜSòÝM¶#!!!È2fÉńńńń%!!!ńÄ^ħþÑġºjðuČ#!!!è¥T-ńńńń")]
 public static class AssetManager
 {
     public static Boolean UseBundles;

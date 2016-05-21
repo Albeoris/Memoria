@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Memoria;
+using UnityEngine;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -25,6 +26,7 @@
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("¢1pĭńńńń(!!!;ùĈÅßÔ{ĭ8Ęėû×Ãu½ß.&÷ĭ#Iè#!!!Ò+Wĩńńńń")]
 public class ConfigField
 {
     public ConfigUI.Configurator Configurator;

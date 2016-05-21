@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using Memoria;
+using UnityEngine;
 
+// ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 // ReSharper disable ArrangeThisQualifier
 // ReSharper disable PossibleLossOfFraction
 
 namespace Assets.Sources.Scripts.Common
 {
+    [ExportedType("ĚĶ*üńńńń&!!!hëºČþĠ,ŀĵB;êtĀċŀ*!!!ĵÔÊÚµgùĺĨÇöwÛ¼>vÞh²²oĔĈ9ĊĢ§bêĝÎºńńńń")]
     internal class DebugGuiSkin
     {
         private static DebugGuiSkin instance = new DebugGuiSkin();

@@ -27,6 +27,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("@ĮMĔńńńńńńńńI!!!ĄÀļě¯ĩń}'Ĉĺā¨M­oÄĲĄ_£ĲkĸcďËĢ`·±DsĦËčâĎÀÿĈ`āy-ĦÖ1bčâ5-ó½Á»ĝSÖđxløý¬ďN'Äıī&Ęêyô§:Æ­ĭE¾$ÄĺėÞÂUòýÇ3%ď¼ÜLñ±1ÝđAOXKaĒįuÐėªÏ|üôóĩ4#gkkoö&Į´<HĮġFāłÝŁlŀpÈëbzr÷Ä$eÍÃRńńńń")]
 public class btl_cmd
 {
     public btl_cmd()

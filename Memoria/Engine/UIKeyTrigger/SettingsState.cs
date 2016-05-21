@@ -31,6 +31,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("®Ēßđ.!!!xĥQ¡ÊSeÛºý=±ł8J§âŁŃD«9Þð_ęĆ^ģÝáĈX¼öfãďþ0Q¹·Zè6³ĺ+!!!¦Mŀ6®ÌĿÕ=ÇðøĠVáýĮ8ËÍĴĪÔĥ{¢ûºMTÜ¸ĸlĬěB!!!į­ÍJìP'Ġd:ĕÎjzĐĐģČõĬ/¤^C~vīĬĪ­ł¦ĉõ°ēÂĈ9»LtđüóÑĀGý>«Ģī2LzÙuá^ĥ#ĭvó[äÄhäü²Òě¢į#ċÕa÷ĆûčăBġV¦Ynÿöêv$Į£Í®ĥO!¡ĂqbVôĩ¦mĳĨįèrP¶lļd3àĴkºA%!!!čºÐ¬ńńńń$!!!ĔóĖ°ĜıĞ·$!!!ĄÀļě¯£üGńńńńĈīmĻńńńń%!!!|¦_æĔóĖ°ĜıĞ·$!!!ĄÀļěEç©eńńńń¤+łeńńńń%!!!ī¸QÚĔóĖ°ĜıĞ·$!!!ĄÀļě¼êy°ńńńń")]
 public class SettingsState : MonoBehaviour
 {
     public FF9CFG cfg;

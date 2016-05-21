@@ -33,6 +33,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("TÏuć$!!!¨´ęM*@°ĿB!!!ÞêèĆÜ]ó/NÀAõ1*ĿBēĘĴıhÊĵÂô¤º[ŃC²Ģ`Ĺ«Jø%õ°ĿaīļrğýÝÞüÅÆÂíp]Ë^ĂfNþ¡Åč'×:ì{ļÓĢĆĜķĘM©íĴÙlČįa.ĹĮ=jS°ěĸÑRZØêxk²đ¹ąłû.ĸ{ĜÆ»đÚēÈYå­Ù?¨ċÛćq;!!!ÛńéÿĎÇøċ5V@¨µ¹§3hÍ¤ĔĵP¾ĥěęÑQw{»ĥ|$łÔr,ÉßÖĤLZ>ğĄÛĳíĕ4lòmô¶){ÜÂ!2ÍRºyrĈ¡ĶAYÂāìùÌ_LħėĦ«èY/¢nªĆãõPn©­Ð¾¦#!!!¸é}Ýńńńń%!!!õ¬ĢŁĤ8ß¯ġĞÑ¥ńńńńńńńń")]
 public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 {
     public BTL_SCENE btlScene;
@@ -139,10 +140,13 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         byte num = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Camera;
         FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = (int)num >= 3 ? (byte)UnityEngine.Random.Range(0, 3) : num;
         SFX.StartBattle();
+
         if ((long)FF9StateSystem.Settings.cfg.skip_btl_camera == 0L && FF9StateSystem.Battle.isRandomEncounter)
             SFX.SkipCameraAnimation(-1);
+
         if (!FF9StateSystem.Battle.isNoBoosterMap())
             return;
+
         FF9StateSystem.Settings.IsBoosterButtonActive[0] = false;
         FF9StateSystem.Settings.SetBoosterHudToCurrentState();
         PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.BattleAssistance, false);

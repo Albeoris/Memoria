@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Collections.Generic;
@@ -83,13 +82,12 @@ namespace Memoria.Patcher
                     PreparePatch(module);
 
                 AssemblyDefinition victim = AssemblyDefinition.ReadAssembly(assemblyPath);
-
                 //JunkChecker.Check(victim, backupPath);
 
                 foreach (ModuleDefinition module in victim.Modules)
                     PatchModule(module);
 
-                TypeReplacers.RedirectTypes(mod, victim);
+                TypeExporters.Export(mod, victim);
 
                 if (Changed)
                 {
@@ -282,6 +280,6 @@ namespace Memoria.Patcher
             return (instructions.Count < 1 || instructions[0].Operand as String != patch.Label) ? (bool?)true : null;
         }
 
-        
+
     }
 }

@@ -34,6 +34,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("¬dtòńńńńV!!!Ê²Og$ÐĳçÙþ;qî}PĞĤ±äĖĆÀĽ¢¡ĂĖ¬ąÍ5òĔ³hĠï4rÐj©DìÅ£(ģń¦ğiTv0nsķ»QċĖÈĪT.mĖÏ~Ĵ­=Á¿b¡,ĊĚ¾±.ÄŃĈ-d@°çså^Ĕ®ā'ĻWðÑ)Đ´~Þ¼LLAĠì8½k#Y^ËĎÂ¥ÀÌmĨ«ĢVÄĠrU@jÒ*rÈ4Ĩ@#,SßÊöĕWĹBÍmö+ZēŀćTİ<©=ČġīDĸ,Þ¥mbä|+ß}Î2íĝ+{:¨ġęjĽġÁÀ¤¾¿ÀĳĢ¬ÀÒīªÀ[!!!·ØĚdÀdďEě×ĢWuAv¬Q7ÅG1åHĨ%ă÷Ò¼G­]¬ĦW90óĪ¦hJÔ&ÔÇ<C¢tĖÕł£Ĭòĭĥî·ēĤ2²ªÐv25ğÊĹ¡¶9hŃÿòłuiĄ´m!ÏěýôİeÖÍ0Dµľħõ[ÿÇÀBĪTZ%:¨ėł8Ò^ãčŀd6útğsÒí3©uí¸ă&>Ðó[ĔĻġ]ęÂ×|»ăwüfĒsĘT°ôē¶:°T¾bčĩìĄĽÓÙĒŀ)üÏ×Ęí#ĺÝo§´Ęæ!TîĖÐıĺ5å.æÇ=Ćī}h¿9ĥþĥr·kü2OÞ{­;_QğęZÇ®Qý(!!!kĈĩDńńńń4!!!õ¬ĢŁĬ#V8JëPĻDýuãŁDĉ*¬ÑßĞĤÓm7_¤ĩÜäÏ°xĮ§$ÄĦ¤Ę]/3`ä7%bĢ>Ċ.ËÄB1NùĿĶĸñÖġ%°¨ĎhńńńńńńńńDġă[$!!!ÁńhîĹµÏr%!!!Þ¤łĤ¿ĐWĖæA;ĳ(!!!ĄÀļěIĔ2wĄìhĿĄ,ÑĊg>ÒåjÅpZńńńńÞ`{7ńńńń#!!!ŀ>ÇË$!!!ĄÀļěªVð4ńńńń1ěpmńńńń#!!!ŀ>ÇË$!!!ĄÀļěĮĻ%1ńńńńJ4ºÍńńńń#!!!ŀ>ÇË$!!!ĄÀļěJĵ*öńńńńķĥBğńńńń#!!!³ØÊ´$!!!ĄÀļěLĻ×eńńńń")]
 public class ConfigUI : UIScene
 {
     public enum Configurator

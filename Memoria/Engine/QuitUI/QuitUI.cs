@@ -27,6 +27,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("wįńĠńńńń/!!!ĭÉ)ĐĽ0ßħ¡,ĊĚYę7Kn0ù£yĭđīáû*Ä¹÷q;]ñVf.Öĝ;EËĻćXi¾jàµ_ĥ-!!!»Ú·»Ńī*SCBġ´V]Ļ¢ıã#¿zeĺĹ¹Åġú´¨ÌtlÈÏþÈÆ_ĪĢńĩSńńńń")]
 public class QuitUI : MonoBehaviour
 {
     public static string WarningMenuGroupButton = "Quit.Warning";

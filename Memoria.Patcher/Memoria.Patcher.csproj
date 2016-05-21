@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -85,10 +86,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base256.cs" />
     <Compile Include="Junk\Checker.cs" />
     <Compile Include="Patches\SceneDirectorPatch.cs" />
+    <Compile Include="Patches\TypeExporter.cs" />
     <Compile Include="Patches\TypeHash.cs" />
-    <Compile Include="Patches\TypeReplacers.cs" />
+    <Compile Include="Patches\TypeExporters.cs" />
     <Compile Include="Patches\Common\TypeReplacer.cs" />
     <Compile Include="GameInfo\GameLocationSteamRegistryProvider.cs" />
     <Compile Include="GameInfo\GameLocationInfo.cs" />

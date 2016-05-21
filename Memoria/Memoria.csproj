@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -106,6 +107,8 @@
     <Compile Include="Engine\FF9Play\ff9play.cs" />
     <Compile Include="Engine\Battle\EventEngineUtilsAccessor.cs" />
     <Compile Include="Engine\Battle\DebugGuiSkin.cs" />
+    <Compile Include="Engine\Localization\Localization.cs" />
+    <Compile Include="Engine\Localization\LocalizationDictionary.cs" />
     <Compile Include="Engine\PartySettingsUI\PartySettingUI.cs" />
     <Compile Include="Engine\QuitUI\QuitUI.cs" />
     <Compile Include="Engine\UIAtlas\UIAtlas.cs" />
@@ -113,6 +116,7 @@
     <Compile Include="Engine\UIKeyTrigger\ScrollItemKeyNavigation.cs" />
     <Compile Include="Engine\UIKeyTrigger\SettingsState.cs" />
     <Compile Include="Engine\UIKeyTrigger\UIKeyTrigger.cs" />
+    <Compile Include="ExportedTypeAttribute.cs" />
     <Compile Include="GameLoop\GameLoopManager.cs" />
     <Compile Include="Interceptors\SceneDirectorInterceptor.cs" />
     <Compile Include="Resources\Grahpics\Export\GraphicResourceExporter.cs" />

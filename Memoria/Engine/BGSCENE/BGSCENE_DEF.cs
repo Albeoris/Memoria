@@ -29,6 +29,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("4ĥÝİńńńńH!!!ıØĠ-wU@ØÑ¯³²M9ñA¼¹dĲ@jgÝJĝUĆnĬčZ1ÔĻyīÑG«ČĠıÄAö(ČĖÄWð¯$ÆĚĺĪæàÝou¶Eį¢Ł7nl~Ļu0uýøłTø$àđi®rçĸªČ'.ā~C[Ļþ5E{[ª|í´ėÖÿ¸ÆķË±zOMÍïEĽĵīIËŃ´l·3ÞJ¥Ná-Z#Ve¸»VeĨn±ĤġĴï2!!!&>Ê`5èĸdá¯4;Ký½[½jį×Ü!ĬěTj@ěĞÊ~Å§ěĴĠĬT.ºæğ°ĩ>ĲÅ#,Ĩe@#Ö_ŁĠñČqēĘðrńńńń")]
 public class BGSCENE_DEF
 {
     public ushort sceneLength;

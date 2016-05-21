@@ -114,7 +114,7 @@ namespace Memoria.Patcher
 
         #region Serialization
 
-        public String ToBase64()
+        public Char[] ToBase256()
         {
             using (MemoryStream ms = new MemoryStream(4 + 4 * (_properties?.Length ?? 0) + 4 * (_fields?.Length ?? 0) + 4 * (_methods?.Length ?? 0)))
             using (BinaryWriter bw = new BinaryWriter(ms))
@@ -122,13 +122,16 @@ namespace Memoria.Patcher
                 Serialize(bw);
                 bw.Flush();
 
-                return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
+                return Base256.Encode(ms.GetBuffer(), 0, (int)ms.Length);
             }
         }
 
-        public static TypeHash FromBase64(String base64String)
+        public static TypeHash FromBase256(String base64String)
         {
-            using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(base64String)))
+            if (base64String == null)
+                return null;
+
+            using (MemoryStream ms = new MemoryStream(Base256.Decode(base64String)))
             using (BinaryReader br = new BinaryReader(ms))
             {
                 TypeHash hash = new TypeHash();

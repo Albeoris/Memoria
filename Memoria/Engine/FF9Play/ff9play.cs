@@ -32,6 +32,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("ęďěĖńńńń,!!!ğ¯ïďb'á<čĒ1ÜĪàI}9×ý®µXăĖWÝįh)Ý0{·nĚ®ãåDd=!!!ĄÀļěę5ĦÍÍs±ûb¥ĲêZıÅġĬ=ÕòĂNø°ġ¢Ëâ/®Aĥc÷ð9āYNÚ·ńÄ[îĄ»©ġ?ęgìÊĮ³8¼?ý*ĞvåýĮÅ­Ė¦!¶£įÕI¾3ČĶĆãÀľĞ¦8Ò¯éđ×Ļ_KN<d^@ÈÅÖÐ#!!!Ì»àÔńńńń&!!!jđS9Ķ8ıÅ0ĝMª,g¹Ò#!!!łĹÙ-ńńńń")]
 public class ff9play
 {
     public const int FF9PLAY_HP_MAX = 9999;

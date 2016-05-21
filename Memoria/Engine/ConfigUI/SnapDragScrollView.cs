@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Memoria;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -27,6 +28,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("đïĪ7#!!!R.zĖ-!!!ó#Ļĭġį{ĜÑ§ªÝ¿Æĩ$ÞÏ7cľÊ|ÉýŃæß;4ØV=ĩ)ðuùĸËďðįĮ+!!!ĶĠ:Ĳ¡Æóàİä«iĠfÄHygĴf;Ċ²ěĲăk~pOÚ-E_Ódńńńń")]
 internal class SnapDragScrollView : MonoBehaviour
 {
     public ScrollButton ScrollButton;

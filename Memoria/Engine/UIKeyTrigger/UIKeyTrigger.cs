@@ -28,6 +28,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("¯AÅ+&!!!ÌĴ³Ĩ5ñĒĜëYĨuÕķľÈ*!!!F;a¬uø$KĘær³ê*ZRäī²êÑr÷ôđ/ÕNĦÿ3t@!!!Ó¥ēëı9ñÿL#ĥã¶ÈĂUn¥4ßÏ¨ĭQ´Ăyk@KZÀĂĳ.Ĳġ©ªĵeŃÄJĳĜ@»ńĐh%RzĂôõÅAıvÏļåüďgh4Ø·Ĕ84i·sS+Ûĳ«ÄoÆêĆªbĬ'Ġ=´båĨÜĳ[ÏRĸā·WĆĪĦV,Óĵ1ĥóì@ĮĂńńńń")]
 public class UIKeyTrigger : MonoBehaviour
 {
     private Control keyCommand;
@@ -316,23 +317,53 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    public void OnLoadSceneCommandDetected(UIScene scene, SaveLoadUI.SerializeType type)
+    public void OnSaveLoadSceneCommandDetected(UIScene scene, SaveLoadUI.SerializeType type)
     {
-        if (PersistenSingleton<UIManager>.Instance.IsLoading || PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
+        UIManager uiManager = PersistenSingleton<UIManager>.Instance;
+        if (uiManager.IsLoading || uiManager.QuitScene.isShowQuitUI || uiManager.State == UIManager.UIState.Serialize)
+        {
+            FF9Sfx.FF9SFX_Play(102);
             return;
+        }
+
+        if (!uiManager.IsMenuControlEnable)
+        {
+            FF9Sfx.FF9SFX_Play(102);
+            return;
+        }
 
         switch (type)
         {
             case SaveLoadUI.SerializeType.Save:
-                FF9Sfx.FF9SFX_Play(103);
-                scene?.Hide(OnSaveGameButtonClick);
+                TryShowSaveScene(scene);
                 break;
 
             case SaveLoadUI.SerializeType.Load:
-                FF9Sfx.FF9SFX_Play(103);
-                scene?.Hide(OnLoadGameButtonClick);
+                TryShowLoadScene(scene);
                 break;
         }
+    }
+
+    private static void TryShowSaveScene(UIScene scene)
+    {
+        switch (PersistenSingleton<UIManager>.Instance.State)
+        {
+            case UIManager.UIState.FieldHUD:
+            case UIManager.UIState.WorldHUD:
+                break;
+            default:
+                FF9Sfx.FF9SFX_Play(102);
+                return;
+        }
+
+        FF9Sfx.FF9SFX_Play(103);
+        scene?.Hide(OnSaveGameButtonClick);
+    }
+
+    private static void TryShowLoadScene(UIScene scene)
+    {
+        FF9Sfx.FF9SFX_Play(103);
+        scene?.Hide(OnLoadGameButtonClick);
     }
 
     private static void OnSaveGameButtonClick()
@@ -443,12 +474,12 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (F5KeyDown)
             {
-                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
+                OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
                 return true;
             }
             if (F9KeyDown)
             {
-                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
+                OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
                 return true;
             }
         }
@@ -461,12 +492,12 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (F5Key)
             {
-                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
+                OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
                 return true;
             }
             if (F9Key)
             {
-                OnLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
+                OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
                 return true;
             }
         }

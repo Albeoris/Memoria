@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Memoria;
+using UnityEngine;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -25,6 +26,7 @@
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
+[ExportedType("ÚppĦ#!!!ĜRæÀ-!!!]Q½2µ]#ĜKċĽD¨¸Wi(~ßıĠèģėó#Ļĭ_HĪÝçüæóz=ęT4?$Ď.!!!Ă÷ÉĀvċÅ§zÑHàąąĈÌĳmď¾ĩıKĒFBy0¦é¿Ĝ$ĐooãĨĸZþĉĐĒp%ð*ńńńń")]
 internal class ScrollItemKeyNavigation : MonoBehaviour
 {
     public int ID;
