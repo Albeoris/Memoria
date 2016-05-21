@@ -33,7 +33,7 @@ Final Fantasy IX tools
 
 # Features:
 1. Disable/Enable cheats
-2. Fast battles (Change FPS, skip waiting or turn-based)
+2. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
 3. Save/Load anywhere (Alt+F5, Alt+F9) 
 4. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
 5. Easy rope jumping
@@ -50,10 +50,10 @@ Final Fantasy IX tools
 
 
 # Exported types (for developers)
-1. Write you own type. Keep all members and its signature (private fields too), name **and namespace**.
-2. Add **FullName** of type to the TypeReplacers without hash
+1. Write you own type. Keep all members and its signature (private SerializeField too), name **and namespace**.
+2. Mark it with ExportedTypeAttribute
 3. Run patcher
-4. Copy hash of type from console or Memoria.log and past to the TypeReplacers
+4. Copy hash of type from console or Memoria.log and past to the ExportedTypeAttribute
 5. Run the game, test all of you can and see output_log.txt for errors.
 
 # Knowledge base
