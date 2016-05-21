@@ -15,6 +15,7 @@ namespace Memoria
         {
             public static Boolean Enabled => Instance._graphics.Enabled.Value;
             public static Int32 BattleFPS => Enabled ? Instance._graphics.BattleFPS.Value : 15;
+            public static Int32 BattleSwirlFrames => Enabled ? Instance._graphics.BattleSwirlFrames.Value : 115;
         }
 
         public static class Cheats

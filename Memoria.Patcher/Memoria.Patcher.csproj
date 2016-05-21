@@ -88,7 +88,6 @@
   <ItemGroup>
     <Compile Include="Base256.cs" />
     <Compile Include="Junk\Checker.cs" />
-    <Compile Include="Patches\SceneDirectorPatch.cs" />
     <Compile Include="Patches\TypeExporter.cs" />
     <Compile Include="Patches\TypeHash.cs" />
     <Compile Include="Patches\TypeExporters.cs" />
