@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Memoria;
 using UnityEngine;
 
@@ -34,7 +33,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
-[ExportedType("TÏuć$!!!¨´ęM*@°ĿB!!!ÞêèĆÜ]ó/NÀAõ1*ĿBēĘĴıhÊĵÂô¤º[ŃC²Ģ`Ĺ«Jø%õ°ĿaīļrğýÝÞüÅÆÂíp]Ë^ĂfNþ¡Åč'×:ì{ļÓĢĆĜķĘM©íĴÙlČįa.ĹĮ=jS°ěĸÑRZØêxk²đ¹ąłû.ĸ{ĜÆ»đÚēÈYå­Ù?¨ċÛćq;!!!ÛńéÿĎÇøċ5V@¨µ¹§3hÍ¤ĔĵP¾ĥěęÑQw{»ĥ|$łÔr,ÉßÖĤLZ>ğĄÛĳíĕ4lòmô¶){ÜÂ!2ÍRºyrĈ¡ĶAYÂāìùÌ_LħėĦ«èY/¢nªĆãõPn©­Ð¾¦#!!!¸é}Ýńńńń%!!!õ¬ĢŁĤ8ß¯ġĞÑ¥ńńńńńńńń")]
+[ExportedType("TÏuć$!!!¨´ęM*@°ĿB!!!ÞêèĆÜ]ó/NÀAõ1*ĿBēĘĴıhÊĵÂô¤º[ŃC²Ģ`Ĺ«Jø%õ°ĿaīļrğýÝÞüÅÆÂíp]Ë^ĂfNþ¡Åč'×:ì{ļÓĢĆĜķĘM©íĴÙlČįa.ĹĮ=jS°ěĸÑRZØêxk²đ¹ąłû.ĸ{ĜÆ»đÚēÈYå­Ù?¨ċÛćq;!!!;iñĥĎÇøċ5V@¨µ¹§3²^/ĶĵP¾ĥěęÑQw{»ĥ|$łÔr,ÉßÖĤLZ>ğĄÛĳíĕ4lòmô¶){ÜÂ!2ÍRºyrĈ¡ĶAYÂāìùÌ_LĤoÝ®èY/¢nªĆãõPn©Ñq¢V#!!!¸é}Ýńńńń%!!!õ¬ĢŁĤ8ß¯ġĞÑ¥ńńńńńńńń")]
 public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 {
     public BTL_SCENE btlScene;
@@ -68,8 +67,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private static int fps;
     private static float frameTime;
     private bool isKeyFrame;
-
-    public static bool ForceNextTurn;
 
     public static float FrameTime => frameTime;
     public static float FPS => fps;
@@ -408,31 +405,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void YMenu_ManagerActiveTime()
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next;
-        if (IsEnableAtb())
+        if (UIManager.Battle.FF9BMenu_IsEnableAtb())
             ProcessActiveTime(btl);
-    }
-
-    private bool IsEnableAtb()
-    {
-        if (!UIManager.Battle.FF9BMenu_IsEnableAtb())
-            return false;
-
-        if (UIManager.Battle.CurrentPlayerIndex == -1 || Configuration.Hacks.BattleSpeed != 2)
-            return true;
-
-        if (!ForceNextTurn)
-            return false;
-
-        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-        {
-            if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.cur.hp == 0 || btl.bi.atb == 0 || btl.bi.player == 0)
-                continue;
-
-            if (btl.cur.at < btl.max.at)
-                return true;
-        }
-
-        return false;
     }
 
     private void ProcessActiveTime(BTL_DATA btl)
@@ -467,7 +441,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 {
                     if (changed)
                     {
-                        ForceNextTurn = false;
+                        BattleHUD.ForceNextTurn = false;
                         needContinue = false;
                     }
                 }
@@ -682,6 +656,35 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void OnDestroy()
     {
         SFX.EndBattle();
+        for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
+        {
+            if (btlData.texanimptr != null)
+            {
+                using (Dictionary<int, RenderTexture>.Enumerator enumerator = btlData.texanimptr.RenderTexMapping.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                        enumerator.Current.Value.Release();
+                }
+                btlData.texanimptr.RenderTexMapping.Clear();
+            }
+            if ((int)btlData.bi.player != 0 && btlData.tranceTexanimptr != null)
+            {
+                using (Dictionary<int, RenderTexture>.Enumerator enumerator = btlData.tranceTexanimptr.RenderTexMapping.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                        enumerator.Current.Value.Release();
+                }
+                btlData.tranceTexanimptr.RenderTexMapping.Clear();
+            }
+        }
+
+        if (battlebg.nf_BbgTabAddress == null)
+            return;
+
+        foreach (RenderTexture value in battlebg.nf_BbgTabAddress.RenderTexMapping.Values)
+            value.Release();
+
+        FF9StateSystem.Battle.FF9Battle.map.btlBGTexAnimPtr.RenderTexMapping.Clear();
     }
 
     public void SetActive(bool active)

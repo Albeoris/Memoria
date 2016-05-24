@@ -31,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -97,6 +98,8 @@
     <Compile Include="Configuration\StringIniValue.cs" />
     <Compile Include="Engine\AssetManager\AssetManager.cs" />
     <Compile Include="Engine\Battle\BattleSwirl.cs" />
+    <Compile Include="Engine\Battle\BattleHUD.cs" />
+    <Compile Include="Engine\Battle\UIEventListener.cs" />
     <Compile Include="Engine\Battle\SFX_Rush.cs" />
     <Compile Include="Engine\BGSCENE\BGSCENE_DEF.cs" />
     <Compile Include="Engine\EBin\EBin.cs" />

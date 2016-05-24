@@ -28,7 +28,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
-[ExportedType("¯AÅ+&!!!ÌĴ³Ĩ5ñĒĜëYĨuÕķľÈ*!!!F;a¬uø$KĘær³ê*ZRäī²êÑr÷ôđ/ÕNĦÿ3t@!!!Ó¥ēëı9ñÿL#ĥã¶ÈĂUn¥4ßÏ¨ĭQ´Ăyk@KZÀĂĳ.Ĳġ©ªĵeŃÄJĳĜ@»ńĐh%RzĂôõÅAıvÏļåüďgh4Ø·Ĕ84i·sS+Ûĳ«ÄoÆêĆªbĬ'Ġ=´båĨÜĳ[ÏRĸā·WĆĪĦV,Óĵ1ĥóì@ĮĂńńńń")]
+[ExportedType("¯AÅ+&!!!ÌĴ³Ĩ5ñĒĜëYĨuÕķľÈ*!!!F;a¬uø$KĘær³ê*ZRäī²êÑr÷ôđ/ÕNĦÿ3t@!!!Ó¥ēëı9ñÿL#ĥã¶ÈĂUn¥4ßÏ¨ĭQ´Ăyk@KZÀĂĳ.Ĳġ©ªĵeŃÄJĳĜ@»ńĐh%RzĂôõÅAıvÏļåüďgh4Ø·ĔÆĳOısS+Ûĳ«ÄoÆêĆªbĬ'Ġ=´båĨÜĳ[ÏRĸā·WĆĪĦV,ÓÂâėkì@ĮĂńńńń")]
 public class UIKeyTrigger : MonoBehaviour
 {
     private Control keyCommand;
@@ -429,7 +429,9 @@ public class UIKeyTrigger : MonoBehaviour
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(2) || keyCommand == Control.Menu)
             {
                 keyCommand = Control.None;
-                if (PersistenSingleton<UIManager>.Instance.IsMenuControlEnable)
+                if (FF9StateSystem.AndroidTVPlatform && FF9StateSystem.EnableAndroidTVJoystickMode && (PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Menu) == SourceControl.Joystick && PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause))
+                    sceneFromState.OnKeyMenu(activeButton);
+                else if (PersistenSingleton<UIManager>.Instance.IsMenuControlEnable)
                     sceneFromState.OnKeyMenu(activeButton);
                 return true;
             }
@@ -453,7 +455,7 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(6) || keyCommand == Control.LeftTrigger)
             {
-                HonoluluBattleMain.ForceNextTurn = true;
+                BattleHUD.ForceNextTurn = true;
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftTrigger(activeButton);
                 return true;
@@ -633,19 +635,15 @@ public class UIKeyTrigger : MonoBehaviour
 
     public bool ContainsAndroidQuitKey()
     {
-        bool flag = false;
-        if (Application.platform == RuntimePlatform.Android && !FF9StateSystem.AndroidTVPlatform)
+        if (Application.platform != RuntimePlatform.Android || !UnityXInput.Input.GetKey(KeyCode.Escape))
         {
-            flag = PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Cancel) == SourceControl.KeyBoard;
-            Debug.Log("There is android quit key : " + flag);
         }
-        return flag;
+        return false;
     }
 
     private void Start()
     {
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, (UICamera.KeyCodeDelegate)OnKeyNavigate);
-
         GameLoopManager.RaiseStartEvent();
     }
 }

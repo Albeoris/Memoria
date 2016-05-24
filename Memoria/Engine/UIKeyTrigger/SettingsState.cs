@@ -31,7 +31,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
-[ExportedType("®Ēßđ.!!!xĥQ¡ÊSeÛºý=±ł8J§âŁŃD«9Þð_ęĆ^ģÝáĈX¼öfãďþ0Q¹·Zè6³ĺ+!!!¦Mŀ6®ÌĿÕ=ÇðøĠVáýĮ8ËÍĴĪÔĥ{¢ûºMTÜ¸ĸlĬěB!!!į­ÍJìP'Ġd:ĕÎjzĐĐģČõĬ/¤^C~vīĬĪ­ł¦ĉõ°ēÂĈ9»LtđüóÑĀGý>«Ģī2LzÙuá^ĥ#ĭvó[äÄhäü²Òě¢į#ċÕa÷ĆûčăBġV¦Ynÿöêv$Į£Í®ĥO!¡ĂqbVôĩ¦mĳĨįèrP¶lļd3àĴkºA%!!!čºÐ¬ńńńń$!!!ĔóĖ°ĜıĞ·$!!!ĄÀļě¯£üGńńńńĈīmĻńńńń%!!!|¦_æĔóĖ°ĜıĞ·$!!!ĄÀļěEç©eńńńń¤+łeńńńń%!!!ī¸QÚĔóĖ°ĜıĞ·$!!!ĄÀļě¼êy°ńńńń")]
+[ExportedType("®Ēßđ.!!!xĥQ¡ÊSeÛºý=±ł8J§âŁŃD«9Þð_ęĆ^ģÝáĈX¼öfãďþ0Q¹·Zè6³ĺ+!!!¦Mŀ6®ÌĿÕ=ÇðøĠVáýĮ8ËÍĴĪÔĥ{¢ûºMTÜ¸ĸlĬěC!!!į­ÍJìP'Ġd:ĕÎjzĐĐģČõĬ/¤^C~vīĬĪ­ł¦ĉõ°ēÂĈ9»LtđüóÑĀGý>«Ģī2LzoÝÊ!ĥ#ĭvó[äÄhäü²Òě¢įKğĭluönÇăBġV¦Ynÿöêv$(ĖĦĽĥO!¡ĂqbV¢ħ@¦*Ëø/ĳĨįèrP¶lļd3àĴkºA%!!!ZăÐ¬ńńńń$!!!ĔóĖ°ĜıĞ·$!!!ĄÀļě6Łµèńńńń5Ð½ôńńńń%!!!|¦_æĔóĖ°ĜıĞ·$!!!ĄÀļěĂt5ĴńńńńĔA2ińńńń%!!!ī¸QÚĔóĖ°ĜıĞ·$!!!ĄÀļěò0e1ńńńń")]
 public class SettingsState : MonoBehaviour
 {
     public FF9CFG cfg;
@@ -265,6 +265,7 @@ public class SettingsState : MonoBehaviour
                 FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
                 SetATBFull();
                 SetHPFull();
+                SetTranceBarFull();
                 break;
             case BoosterType.HighSpeedMode:
                 SetFastForward(setActive);
@@ -327,7 +328,7 @@ public class SettingsState : MonoBehaviour
             return;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.t_gauge != 0 && btl.bi.player != 0 && (!Status.checkCurStat(btl, 33575235U) && btl.cmd[4] != btl_util.getCurCmdPtr()) && !SFX.isRunning)
+            if (btl.bi.t_gauge != 0 && btl.bi.player != 0 && !Status.checkCurStat(btl, 33575235U) && btl.cmd[4] != btl_util.getCurCmdPtr() && !SFX.isRunning)
             {
                 if (!Status.checkCurStat(btl, 16384U))
                 {
@@ -337,6 +338,18 @@ public class SettingsState : MonoBehaviour
                 else
                     btl.trance = byte.MaxValue;
             }
+        }
+    }
+
+    public void SetTranceBarFull()
+    {
+        if (!this.IsTranceFull || !SceneDirector.IsBattleScene())
+            return;
+
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        {
+            if (Status.checkCurStat(btl, 16384U))
+                btl.trance = byte.MaxValue;
         }
     }
 

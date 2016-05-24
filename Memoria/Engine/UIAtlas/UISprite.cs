@@ -27,8 +27,8 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
-[ExportedType("2âī9-!!!ĴVğĸÍ;ĤÝe»Póøk:*Âc8²£VĶĕ_I¨°ĠÈÎŁùåĩ1ÎĻ¬#ĲßķÓ'!!!ĿØáÍāzĭaļÃÓüĚ)2¾LĘ{Ć7!!!ěĽ£Ï½iıµ¿|ÐV¨¹ĭğÝdëÓ|Iàâd@ùÐÐÜĨW½ĺĻù]WzªĠPĺÖ¯k»Ĕ¥SëßkcoøĥĊ5ÌR>v¿áÇÖï¿UĂuBXĐ-SgěazéĢèńńńń")]
 [AddComponentMenu("NGUI/UI/NGUI Sprite"), ExecuteInEditMode]
+[ExportedType("2âī9-!!!ĴVğĸÍ;ĤÝe»Póøk:*Âc8²£VĶĕ_I¨°ĠÈÎŁùåĩ1ÎĻ¬#ĲßķÓ'!!!ĿØáÍāzĭaļÃÓüĚ)2¾LĘ{Ć7!!!ěĽ£Ï½iıµ¿|ÐV¨¹ĭğÝdëÓ|Iàâd@ùÐÐÜĨW½ĺĻù]WzªĠPĺÖ¯k»Ĕ¥SëßkcoøĥĊ5ÌR>v¿áÇÖï¿UĂuBXĐ-SgěazéĢèńńńń")]
 public class UISprite : UIBasicSprite
 {
     [HideInInspector, SerializeField]
