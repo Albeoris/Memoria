@@ -3222,7 +3222,7 @@ public class BattleHUD : UIScene
         return false;
     }
 
-    private bool IsNativeEnableAtb()
+    internal bool IsNativeEnableAtb()
     {
         if (!_commandEnable)
             return false;

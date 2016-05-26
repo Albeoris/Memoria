@@ -5,6 +5,7 @@ using System.Linq;
 using Memoria;
 using UnityEngine;
 
+// ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
 // ReSharper disable ArrangeThisQualifier
 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -416,7 +417,8 @@ public class btl_cmd
             CMD_DATA cmd = btlsys.cmd_queue.next;
             while (cmd != null && (cmd.cmd_no <= 59 && cmd.cmd_no != 56 && (cmd.cmd_no != 58 && Status.checkCurStat(cmd.regist, 33558531U)) || cmd.cmd_no == 57 && Status.checkCurStat(cmd.regist, 256U)))
                 cmd = cmd.next;
-            if (cmd == null || !FF9StateSystem.Battle.isDebug && !UIManager.Battle.FF9BMenu_IsEnableAtb() && cmd.cmd_no < 48)
+
+            if (cmd == null || !FF9StateSystem.Battle.isDebug && !((BattleHUD)(object)UIManager.Battle).IsNativeEnableAtb() && cmd.cmd_no < 48)
                 return;
             if (cmd.cmd_no < 55)
             {
