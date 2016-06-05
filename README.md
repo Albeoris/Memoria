@@ -28,18 +28,21 @@ Final Fantasy IX tools
 2. If there is no error you will see "Memoria.ini" file in the game directory.
 3. If something went wrong you will see error in the "Memoria.log"
 4. If you not see "Memoria.log" try to run game with administrator rights
-5. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
+5. If you see "Sharing violation on path" then close applications that hold this file
+6. If you see "at Memoria.CsvReader.Read" then fix files in the StreamingAssets\Data directory or delete them and patch again.
+7. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
 
 # Features:
 1. Disable/Enable cheats
 2. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
 3. Save/Load anywhere (Alt+F5, Alt+F9) 
-4. All of the characters available [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-5. Easy rope jumping
-6. Change the game font
-7. Export text resources and field backgrounds
-8. Import text resources
+4. Edit game data (look at the "StreamingAssets\Data" folder)
+5. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
+6. Easy rope jumping
+7. Change the game font
+8. Export text resources and field backgrounds
+9. Import text resources
 
 
 # Configuration:
