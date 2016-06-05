@@ -1,0 +1,55 @@
+# This file contains a set of learnable Garnet's abilities.
+# You must set 48 different items.
+# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# -----------------------------------
+# Id;AP
+# UInt8;UInt8
+# -----------------------------------
+49;20;# Shiva
+51;35;# Ifrit
+53;30;# Ramuh
+55;30;# Atomos
+58;30;# Odin
+60;40;# Leviathan
+62;80;# Bahamut
+64;100;# Ark
+1;30;# Cure
+2;50;# Cura
+3;155;# Curaga
+5;30;# Life
+7;25;# Scan
+8;15;# Panacea
+9;25;# Stona
+11;35;# Shell
+12;30;# Protect
+14;30;# Silence
+15;40;# Mini
+16;20;# Reflect
+17;35;# Confuse
+18;30;# Berserk
+19;40;# Blind
+20;20;# Float
+192;75;# Auto-Reflect
+193;20;# Auto-Float
+194;55;# Auto-Haste
+195;35;# Auto-Regen
+196;105;# Auto-Life
+200;45;# MP+20%
+216;30;# Healer
+219;15;# Chemist
+222;45;# Reflect-Null
+225;80;# Concentrate
+226;125;# Half MP
+227;30;# High Tide
+232;25;# Body Temp
+235;50;# Level Up
+236;60;# Ability Up
+240;25;# Insomniac
+241;15;# Antibody
+243;20;# Loudmouth
+245;40;# Jelly
+248;20;# Auto-Potion
+249;30;# Locomotion
+250;25;# Clear Headed
+251;190;# Boost
+252;50;# Odin’s Sword

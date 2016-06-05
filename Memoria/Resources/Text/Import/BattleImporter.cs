@@ -53,7 +53,7 @@ namespace Memoria
 
         private Boolean TryLoadReplacements(out Dictionary<String, String> dic)
         {
-            String importPath = ModTextResources.Export.Battle;
+            String importPath = ModTextResources.Import.Battle;
             if (!File.Exists(importPath))
             {
                 Log.Warning($"[{TypeName}] Import was skipped bacause a file does not exist: [{importPath}].");

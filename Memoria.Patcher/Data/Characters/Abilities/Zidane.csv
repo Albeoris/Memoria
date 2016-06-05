@@ -1,0 +1,55 @@
+# This file contains a set of learnable Zidane's abilities.
+# You must set 48 different items.
+# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# -----------------------------------
+# Id;AP
+# UInt8;UInt8
+# -----------------------------------
+101;40;# Flee
+102;40;# Detect
+103;40;# What’s That!?
+104;35;# Soul Blade
+105;50;# Annoy
+106;55;# Sacrifice
+107;85;# Lucky Seven
+108;100;# Thievery
+192;95;# Auto-Reflect
+193;20;# Auto-Float
+194;55;# Auto-Haste
+195;25;# Auto-Regen
+196;130;# Auto-Life
+198;40;# HP+20%
+201;30;# Accuracy+
+202;30;# Distract
+203;170;# Long Reach
+204;45;# MP Attack
+205;20;# Bird Killer
+206;35;# Bug Killer
+207;30;# Stone Killer
+208;45;# Undead Killer
+210;25;# Devil Killer
+211;30;# Beast Killer
+212;25;# Man Eater
+214;50;# Master Thief
+215;40;# Steal Gil
+217;35;# Add Status
+218;20;# Gamble Defense
+227;35;# High Tide
+228;70;# Counter
+230;35;# Protect Girls
+231;60;# Eye 4 Eye
+232;25;# Body Temp
+233;40;# Alert
+235;75;# Level Up
+236;95;# Ability Up
+238;45;# Flee-Gil
+240;30;# Insomniac
+241;20;# Antibody
+242;35;# Bright Eyes
+244;85;# Restore HP
+245;35;# Jelly
+248;30;# Auto-Potion
+249;30;# Locomotion
+250;25;# Clear Headed
+253;65;# Mug
+254;40;# Bandit

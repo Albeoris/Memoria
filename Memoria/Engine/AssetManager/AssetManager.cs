@@ -104,8 +104,11 @@ public static class AssetManager
 
     public static T Load<T>(String name, Boolean suppressError = false) where T : UnityEngine.Object
     {
-        //Log.Message(typeof(T).Name + ": " + name);
-        //Log.Message(Environment.StackTrace);
+        //if (!name.EndsWith(".mes"))
+        //{
+        //    Log.Message(typeof(T).Name + ": " + name);
+        //    Log.Message(Environment.StackTrace);
+        //}
 
         if (AssetManagerForObb.IsUseOBB)
             return AssetManagerForObb.Load<T>(name, suppressError);
@@ -143,8 +146,11 @@ public static class AssetManager
 
     public static AssetManagerRequest LoadAsync<T>(String name) where T : UnityEngine.Object
     {
-        //Log.Message(typeof(T).Name + ": " + name);
-        //Log.Message(Environment.StackTrace);
+        //if (!name.EndsWith(".mes"))
+        //{
+        //    Log.Message(typeof(T).Name + ": " + name);
+        //    Log.Message(Environment.StackTrace);
+        //}
 
         if (AssetManagerForObb.IsUseOBB)
             return AssetManagerForObb.LoadAsync<T>(name);
@@ -188,8 +194,11 @@ public static class AssetManager
 
     public static T[] LoadAll<T>(String name) where T : UnityEngine.Object
     {
-        //Log.Message(typeof(T).Name + ": " + name);
-        //Log.Message(Environment.StackTrace);
+        //if (!name.EndsWith(".mes"))
+        //{
+        //    Log.Message(typeof(T).Name + ": " + name);
+        //    Log.Message(Environment.StackTrace);
+        //}
 
         if (AssetManagerForObb.IsUseOBB)
             return AssetManagerForObb.LoadAll<T>(name);

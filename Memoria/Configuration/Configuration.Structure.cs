@@ -192,14 +192,14 @@ namespace Memoria
         {
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<Int32> BattleSpeed = IniValue.Int32(nameof(BattleSpeed));
-            public readonly IniValue<Boolean> AllCharactersAvailable = IniValue.Boolean(nameof(AllCharactersAvailable));
+            public readonly IniValue<Int32> AllCharactersAvailable = IniValue.Int32(nameof(AllCharactersAvailable));
             public readonly IniValue<Int32> RopeJumpingIncrement = IniValue.Int32(nameof(RopeJumpingIncrement));
 
             public HacksSection() : base("Hacks")
             {
                 Enabled.Value = false;
                 BattleSpeed.Value = 1;
-                AllCharactersAvailable.Value = false;
+                AllCharactersAvailable.Value = 0;
                 RopeJumpingIncrement.Value = 1;
             }
 

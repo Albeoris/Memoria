@@ -72,6 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Exceptions\AggregateException.cs" />
     <Compile Include="Common\Exceptions\ArgumentEmptyException.cs" />
     <Compile Include="Common\Threading\ActionTask.cs" />
     <Compile Include="Common\Threading\Task.cs" />
@@ -96,6 +97,20 @@
     <Compile Include="Configuration\IniTryParseValue.cs" />
     <Compile Include="Configuration\IniValue.cs" />
     <Compile Include="Configuration\StringIniValue.cs" />
+    <Compile Include="Engine\Battle\ff9abil.cs" />
+    <Compile Include="Engine\Battle\BattleCommands.cs" />
+    <Compile Include="Engine\Scenes\AbilityUI\AbilityUI.cs" />
+    <Compile Include="Engine\Scenes\StatusUI\StatusUI.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterAbility.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterCommand.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterCommandType.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterCommandSet.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterExtraPresetId.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterPresetId.cs" />
+    <Compile Include="Resources\Data\CsvParser.cs" />
+    <Compile Include="Resources\Data\CsvReader.cs" />
+    <Compile Include="Resources\Data\CsvWriter.cs" />
+    <Compile Include="Resources\Data\ICsvEntry.cs" />
     <Compile Include="Engine\AssetManager\AssetManager.cs" />
     <Compile Include="Engine\Battle\BattleSwirl.cs" />
     <Compile Include="Engine\Battle\BattleHUD.cs" />
@@ -128,8 +143,10 @@
     <Compile Include="Resources\ResourceExporter.cs" />
     <Compile Include="Resources\ResourceImporter.cs" />
     <Compile Include="Resources\TextureHelper.cs" />
+    <Compile Include="Resources\Text\DataResources.cs" />
     <Compile Include="Resources\Text\EtcTextResource.cs" />
     <Compile Include="Resources\Grahpics\Export\FieldSceneExporter.cs" />
+    <Compile Include="Resources\Text\Export\LocalizationExporter.cs" />
     <Compile Include="Resources\Text\Import\AbilityImporter.cs" />
     <Compile Include="Resources\Text\Import\BattleImporter.cs" />
     <Compile Include="Resources\Text\Import\CommandLoader.cs" />

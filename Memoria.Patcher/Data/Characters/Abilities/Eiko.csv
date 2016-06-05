@@ -1,0 +1,55 @@
+# This file contains a set of learnable Eiko's abilities.
+# You must set 48 different items.
+# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# -----------------------------------
+# Id;AP
+# UInt8;UInt8
+# -----------------------------------
+68;35;# Carbuncle
+66;55;# Fenrir
+72;40;# Phoenix
+74;120;# Madeen
+1;20;# Cure
+2;40;# Cura
+3;80;# Curaga
+4;25;# Regen
+5;35;# Life
+6;90;# Full-Life
+8;15;# Panacea
+9;25;# Stona
+10;80;# Esuna
+11;20;# Shell
+12;20;# Protect
+13;30;# Haste
+14;25;# Silence
+15;35;# Mini
+16;25;# Reflect
+20;25;# Float
+21;35;# Dispel
+22;25;# Might
+23;50;# Jewel
+24;110;# Holy
+192;70;# Auto-Reflect
+193;25;# Auto-Float
+194;65;# Auto-Haste
+195;35;# Auto-Regen
+196;100;# Auto-Life
+199;15;# MP+10%
+200;50;# MP+20%
+216;20;# Healer
+222;55;# Reflect-Null
+225;90;# Concentrate
+226;120;# Half MP
+227;30;# High Tide
+232;20;# Body Temp
+235;65;# Level Up
+236;55;# Ability Up
+239;30;# Guardian Mog
+240;25;# Insomniac
+241;20;# Antibody
+243;15;# Loudmouth
+245;35;# Jelly
+248;30;# Auto-Potion
+249;15;# Locomotion
+250;15;# Clear Headed
+251;150;# Boost

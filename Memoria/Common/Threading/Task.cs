@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using UnityEngine;
 
 namespace Memoria
 {
@@ -52,6 +53,7 @@ namespace Memoria
         public Boolean IsCompleted => State > TaskState.Running;
 
         private readonly ManualResetEvent _completedEvent;
+        private Thread _currentThread;
 
         protected Task()
         {
@@ -108,6 +110,8 @@ namespace Memoria
         {
             try
             {
+                _currentThread = Thread.CurrentThread;
+                GameLoopManager.Quit += OnApplicationQuitSafe;
                 State = TaskState.Running;
                 Invoke();
                 State = TaskState.Success;
@@ -125,6 +129,21 @@ namespace Memoria
             finally
             {
                 _completedEvent.Set();
+                GameLoopManager.Quit -= OnApplicationQuitSafe;
+                _currentThread = null;
+            }
+        }
+
+        private void OnApplicationQuitSafe()
+        {
+            try
+            {
+                _currentThread.Abort();
+                _currentThread.Join(2000);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to abort task.");
             }
         }
     }

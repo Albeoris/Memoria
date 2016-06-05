@@ -490,16 +490,28 @@ public class PartySettingUI : UIScene
 
     private static void TryHackPartyInfo(FF9PARTY_INFO partyInfo)
     {
-        if (!Configuration.Hacks.IsAllCharactersAvailable)
+        if (Configuration.Hacks.AllCharactersAvailable < 1)
             return;
+
+        if (Configuration.Hacks.AllCharactersAvailable == 2)
+        {
+            foreach (PLAYER player in FF9StateSystem.Common.FF9.player)
+                TryHackPlayer(player, (byte)(player.category & ~16));
+        }
+        else if (Configuration.Hacks.AllCharactersAvailable == 3)
+        {
+            foreach (PLAYER player in FF9StateSystem.Common.FF9.player)
+                TryHackPlayer(player, (byte)(player.category | 16));
+        }
 
         int availabilityMask = -1;
 
         for (int memberIndex = 0; memberIndex < 4; ++memberIndex)
         {
-            if (FF9StateSystem.Common.FF9.party.member[memberIndex] != null)
+            PLAYER member = FF9StateSystem.Common.FF9.party.member[memberIndex];
+            if (member != null)
             {
-                partyInfo.menu[memberIndex] = FF9StateSystem.Common.FF9.party.member[memberIndex].info.slot_no;
+                partyInfo.menu[memberIndex] = member.info.slot_no;
                 availabilityMask &= ~(1 << partyInfo.menu[memberIndex]);
             }
             else
@@ -518,5 +530,41 @@ public class PartySettingUI : UIScene
             ++slotIndex;
             availabilityMask >>= 1;
         }
+    }
+
+    private static void TryHackPlayer(PLAYER player, Byte category)
+    {
+        if (player.category == category)
+            return;
+
+        player.category = category;
+        switch ((CharacterPresetId)player.info.menu_type)
+        {
+            case CharacterPresetId.Quina:
+                player.info.menu_type = (byte)CharacterPresetId.Cinna2;
+                break;
+            case CharacterPresetId.Eiko:
+                player.info.menu_type = (byte)CharacterPresetId.Marcus2;
+                break;
+            case CharacterPresetId.Amarant:
+                player.info.menu_type = (byte)CharacterPresetId.Blank2;
+                break;
+
+            case CharacterPresetId.Cinna1:
+            case CharacterPresetId.Cinna2:
+                player.info.menu_type = (byte)CharacterPresetId.Quina;
+                break;
+            case CharacterPresetId.Marcus1:
+            case CharacterPresetId.Marcus2:
+                player.info.menu_type = (byte)CharacterPresetId.Eiko;
+                break;
+            case CharacterPresetId.Blank1:
+            case CharacterPresetId.Blank2:
+                player.info.menu_type = (byte)CharacterPresetId.Amarant;
+                break;
+        }
+
+        Int32 equipId = ff9play.FF9Play_GetCharID3(player);
+        ff9play.FF9Play_Change(player.info.slot_no, true, equipId);
     }
 }

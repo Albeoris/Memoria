@@ -140,37 +140,37 @@ public class QuitUI : MonoBehaviour
 
     public void onPress(GameObject go, bool isDown)
     {
-        if (!isDown)
+        if (isDown)
+            return;
+
+        int currentTouchID = UICamera.currentTouchID;
+        switch (currentTouchID + 2)
         {
-            int currentTouchID = UICamera.currentTouchID;
-            switch (currentTouchID + 2)
-            {
-                case 1:
+            case 1:
+                OnKeyConfirm(go);
+                break;
+            case 2:
+            case 3:
+                if (ButtonGroupState.ContainButtonInSecondaryGroup(go))
+                {
                     OnKeyConfirm(go);
-                    break;
-                case 2:
-                case 3:
-                    if (ButtonGroupState.ContainButtonInSecondaryGroup(go))
+                }
+                else
+                {
+                    ButtonGroupState component = go.GetComponent<ButtonGroupState>();
+                    if (component)
                     {
-                        OnKeyConfirm(go);
-                    }
-                    else
-                    {
-                        ButtonGroupState component = go.GetComponent<ButtonGroupState>();
-                        if (component)
-                        {
-                            if (component.ProcessTouch())
-                            {
-                                OnKeyConfirm(go);
-                            }
-                        }
-                        else
+                        if (component.ProcessTouch())
                         {
                             OnKeyConfirm(go);
                         }
                     }
-                    break;
-            }
+                    else
+                    {
+                        OnKeyConfirm(go);
+                    }
+                }
+                break;
         }
     }
 
@@ -222,9 +222,7 @@ public class QuitUI : MonoBehaviour
 
     public void Awake()
     {
-        UIEventListener expr_17 = UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2));
-        expr_17.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_17.onClick, new UIEventListener.VoidDelegate(onClick));
-        UIEventListener expr_4F = UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3));
-        expr_4F.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_4F.onClick, new UIEventListener.VoidDelegate(onClick));
+        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).Click += onClick;
+        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).Click += onClick;
     }
 }

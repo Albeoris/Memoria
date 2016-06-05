@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Memoria
 {
     public static class ModTextResources
     {
+        public const String SystemPath = "/System.strings";
         private const String AbilitiesPath = "/Abilities.strings";
         private const String CommandsPath = "/Commands.strings";
         private const String SkillsPath = "/Skills.strings";
@@ -28,6 +27,7 @@ namespace Memoria
         public static class Export
         {
             public static String CurrentSymbol { get; set; }
+            public static String System => GetCurrentPath(SystemPath);
             public static String Abilities => GetCurrentPath(AbilitiesPath);
             public static String Commands => GetCurrentPath(CommandsPath);
             public static String Skills => GetCurrentPath(SkillsPath);
@@ -79,12 +79,17 @@ namespace Memoria
 
             public static String GetCurrentPath(String relativePath)
             {
+                return GetSymbolPath(Localization.GetSymbol(), relativePath);
+            }
+
+            public static String GetSymbolPath(String symbol, String relativePath)
+            {
                 StringBuilder sb = new StringBuilder(64);
                 sb.Append(Configuration.Import.Path);
                 if (sb.Length > 0 && sb[sb.Length - 1] != '/' && sb[sb.Length - 1] != '\\')
                     sb.Append('/');
                 sb.Append("Text/");
-                sb.Append(Localization.GetSymbol());
+                sb.Append(symbol);
                 sb.Append(relativePath);
                 return sb.ToString();
             }

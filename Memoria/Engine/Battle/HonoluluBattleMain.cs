@@ -334,27 +334,29 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         return num3;
     }
 
-    public static void UpdateFrameTime(int _speed)
+    public static void UpdateFrameTime(int newSpeed)
     {
-        Speed = _speed;
+        Speed = newSpeed;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
             if (btlData.gameObject == null)
                 return;
 
-            foreach (object item in btlData.gameObject.GetComponent<Animation>())
-            {
-                // do nothing?
-            }
+            //foreach (object item in btlData.gameObject.GetComponent<Animation>())
+            //{
+            //    // do nothing?
+            //}
         }
-        fps = Configuration.Graphics.BattleFPS * _speed;
+        fps = Configuration.Graphics.BattleFPS * newSpeed;
         frameTime = 1f / fps;
     }
 
     public static void playCommand(int characterNo, int slotNo, int target, bool isTrance = false)
     {
         if (slotNo < 0 || slotNo > 6)
+        {
             Debug.LogError("slot number value can be only 0 to 5");
+        }
         else if (characterNo < 0 || characterNo > 4)
         {
             Debug.LogError("character number value can be only 1 to 4");
@@ -362,22 +364,22 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         else
         {
             BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[characterNo];
-            byte num = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
+            byte presetId = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
             uint cmd_no = 0;
             uint sub_no = 0;
             switch (slotNo)
             {
                 case 0:
                     cmd_no = 1U;
-                    sub_no = (uint)rdata._FF9FAbil_ComData[cmd_no].ability;
+                    sub_no = BattleCommands.Commands[cmd_no].Ability;
                     break;
                 case 1:
-                    cmd_no = !isTrance ? (uint)rdata._FF9BMenu_MenuNormal[num, 0] : rdata._FF9BMenu_MenuTrance[num, 0];
-                    sub_no = (uint)rdata._FF9FAbil_ComData[cmd_no].ability;
+                    cmd_no = (UInt32)BattleCommands.CommandSets[presetId].Get(isTrance, 0);
+                    sub_no = BattleCommands.Commands[cmd_no].Ability;
                     break;
                 case 2:
-                    cmd_no = !isTrance ? (uint)rdata._FF9BMenu_MenuNormal[num, 1] : rdata._FF9BMenu_MenuTrance[num, 1];
-                    sub_no = (uint)rdata._FF9FAbil_ComData[cmd_no].ability;
+                    cmd_no = (UInt32)BattleCommands.CommandSets[presetId].Get(isTrance, 1);
+                    sub_no = BattleCommands.Commands[cmd_no].Ability;
                     break;
                 case 3:
                     cmd_no = 14U;
@@ -388,16 +390,17 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     break;
                 case 5:
                     cmd_no = 7U;
-                    sub_no = (uint)rdata._FF9FAbil_ComData[cmd_no].ability;
+                    sub_no = BattleCommands.Commands[cmd_no].Ability;
                     break;
             }
-            if (rdata._FF9FAbil_ComData[cmd_no].type == 1)
-                sub_no = (uint)rdata._FF9BMenu_ComAbil[sub_no];
-            else if (rdata._FF9FAbil_ComData[cmd_no].type == 3)
+
+            if (BattleCommands.Commands[cmd_no].Type == CharacterCommandType.Throw)
                 sub_no = 1U;
+
             if ((int)cmd_no == 0)
                 return;
-            CMD_DATA cmd = new CMD_DATA { regist = btlData };
+
+            CMD_DATA cmd = new CMD_DATA {regist = btlData};
             btl_cmd.SetCommand(cmd, cmd_no, sub_no, (ushort)target, 0U);
         }
     }
@@ -656,43 +659,39 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void OnDestroy()
     {
         SFX.EndBattle();
+
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
             if (btlData.texanimptr != null)
             {
-                using (Dictionary<int, RenderTexture>.Enumerator enumerator = btlData.texanimptr.RenderTexMapping.GetEnumerator())
-                {
-                    while (enumerator.MoveNext())
-                        enumerator.Current.Value.Release();
-                }
+                foreach (RenderTexture value in btlData.texanimptr.RenderTexMapping.Values)
+                    value.Release();
                 btlData.texanimptr.RenderTexMapping.Clear();
             }
-            if ((int)btlData.bi.player != 0 && btlData.tranceTexanimptr != null)
+            if (btlData.bi.player != 0 && btlData.tranceTexanimptr != null)
             {
-                using (Dictionary<int, RenderTexture>.Enumerator enumerator = btlData.tranceTexanimptr.RenderTexMapping.GetEnumerator())
-                {
-                    while (enumerator.MoveNext())
-                        enumerator.Current.Value.Release();
-                }
+                foreach (RenderTexture value in btlData.tranceTexanimptr.RenderTexMapping.Values)
+                    value.Release();
                 btlData.tranceTexanimptr.RenderTexMapping.Clear();
             }
         }
 
-        if (battlebg.nf_BbgTabAddress == null)
-            return;
+        if (battlebg.nf_BbgTabAddress != null)
+        {
+            foreach (RenderTexture value in battlebg.nf_BbgTabAddress.RenderTexMapping.Values)
+                value.Release();
+        }
 
-        foreach (RenderTexture value in battlebg.nf_BbgTabAddress.RenderTexMapping.Values)
-            value.Release();
-
-        FF9StateSystem.Battle.FF9Battle.map.btlBGTexAnimPtr.RenderTexMapping.Clear();
+        if (FF9StateSystem.Battle.FF9Battle.map.btlBGTexAnimPtr != null)
+            FF9StateSystem.Battle.FF9Battle.map.btlBGTexAnimPtr.RenderTexMapping.Clear();
     }
 
     public void SetActive(bool active)
     {
         if (active)
-            this.ResumeBattle();
+            ResumeBattle();
         else
-            this.PauseBattle();
+            PauseBattle();
     }
 
     private void PauseBattle()

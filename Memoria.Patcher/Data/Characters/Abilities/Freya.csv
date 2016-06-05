@@ -1,0 +1,55 @@
+# This file contains a set of learnable Freya's abilities.
+# You must set 48 different items.
+# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# -----------------------------------
+# Id;AP
+# UInt8;UInt8
+# -----------------------------------
+117;20;# Lancer
+118;40;# Reis’s Wind
+119;205;# Dragon Breath
+120;90;# White Draw
+121;30;# Luna
+122;25;# Six Dragons
+123;40;# Cherry Blossom
+124;45;# Dragon’s Crest
+192;95;# Auto-Reflect
+193;20;# Auto-Float
+194;75;# Auto-Haste
+195;25;# Auto-Regen
+196;125;# Auto-Life
+197;30;# HP+10%
+198;75;# HP+20%
+199;35;# MP+10%
+201;30;# Accuracy+
+202;25;# Distract
+203;210;# Long Reach
+204;20;# MP Attack
+205;30;# Bird Killer
+206;25;# Bug Killer
+207;20;# Stone Killer
+208;20;# Undead Killer
+209;70;# Dragon Killer
+210;30;# Devil Killer
+211;25;# Beast Killer
+212;20;# Man Eater
+213;75;# High Jump
+217;25;# Add Status
+218;20;# Gamble Defense
+219;35;# Chemist
+227;20;# High Tide
+228;85;# Counter
+229;30;# Cover
+231;35;# Eye 4 Eye
+232;20;# Body Temp
+234;95;# Initiative
+235;40;# Level Up
+236;65;# Ability Up
+240;30;# Insomniac
+241;15;# Antibody
+242;20;# Bright Eyes
+244;85;# Restore HP
+245;30;# Jelly
+248;30;# Auto-Potion
+249;25;# Locomotion
+250;35;# Clear Headed

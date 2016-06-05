@@ -12,6 +12,7 @@ namespace Memoria.Patcher
     {
         private readonly Dictionary<String, TypeExporter> _exporters = new Dictionary<String, TypeExporter>();
         private readonly Dictionary<String, TypeReplacer> _replacers = new Dictionary<String, TypeReplacer>();
+        private readonly Dictionary<String, TypeDefinition> _terminators = new Dictionary<String, TypeDefinition>();
 
         private readonly AssemblyDefinition _exportedAssembly;
         private readonly AssemblyDefinition _victimAssembly;
@@ -57,11 +58,18 @@ namespace Memoria.Patcher
 
         private void InitializeVictimTypes()
         {
+            _terminators.Add("rdata", null);
+
             foreach (TypeDefinition type in _victimAssembly.MainModule.Types)
             {
                 TypeExporter exporter;
                 if (!_exporters.TryGetValue(type.FullName, out exporter))
+                {
+                    if (_terminators.ContainsKey(type.FullName))
+                        _terminators[type.FullName] = type;
+
                     continue;
+                }
 
                 exporter.VictimType = type;
                 exporter.VictimHash = new TypeHash(type);
@@ -104,17 +112,23 @@ namespace Memoria.Patcher
 
                 _replacers.Add(oldType.FullName, new TypeReplacer(newReference));
 
-                if (oldType.HasNestedTypes)
-                {
-                    foreach (TypeDefinition oldNested in oldType.NestedTypes)
-                    {
-                        if (oldNested.IsNestedPrivate)
-                            continue;
+                if (!oldType.HasNestedTypes)
+                    continue;
 
-                        TypeDefinition newNested = newType.NestedTypes.First(t => t.Name == oldNested.Name);
-                        newReference = oldNested.Module.Import(newNested);
-                        _replacers.Add(oldNested.FullName, new TypeReplacer(newReference));
+                foreach (TypeDefinition oldNested in oldType.NestedTypes)
+                {
+                    if (oldNested.IsNestedPrivate)
+                        continue;
+
+                    TypeDefinition newNested = newType.NestedTypes.FirstOrDefault(t => t.Name == oldNested.Name);
+                    if (newNested == null)
+                    {
+                        Log.Message("Cannot find a nested type with name [{0}]", oldNested.FullName);
+                        continue;
                     }
+
+                    newReference = oldNested.Module.Import(newNested);
+                    _replacers.Add(oldNested.FullName, new TypeReplacer(newReference));
                 }
             }
         }
@@ -124,6 +138,9 @@ namespace Memoria.Patcher
             ModuleDefinition victimModule = _victimAssembly.MainModule;
             ModuleDefinition exportedModule = _exportedAssembly.MainModule;
             AssemblyNameReference modReference = victimModule.AssemblyReferences.First(r => r.FullName == _exportedAssembly.MainModule.Assembly.Name.FullName);
+
+            foreach (TypeDefinition oldType in _terminators.Values)
+                victimModule.Types.Remove(oldType);
 
             foreach (TypeExporter exporter in _exporters.Values)
             {
@@ -145,6 +162,8 @@ namespace Memoria.Patcher
         private void ProcessType(TypeDefinition type)
         {
             if (_replacers.ContainsKey(type.FullName))
+                return;
+            if (_terminators.ContainsKey(type.FullName))
                 return;
 
             ProcessProperties(type);

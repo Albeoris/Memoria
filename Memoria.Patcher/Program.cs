@@ -28,30 +28,60 @@ namespace Memoria.Patcher
         static void Main(String[] args)
         {
             try
-            {
-                GameLocationInfo gameLocation = GetGameLocation(args);
-                if (gameLocation == null)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
-                    Console.WriteLine("Press enter to exit...");
-                    Console.ReadLine();
-                    Environment.Exit(1);
+                    GameLocationInfo gameLocation = GetGameLocation(args);
+                    if (gameLocation == null)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
+                        Console.WriteLine("Press enter to exit...");
+                        Console.ReadLine();
+                        Environment.Exit(1);
+                    }
+
+
+                    CopyData(gameLocation.StreamingAssetsPath);
+                    Patch(gameLocation.ManagedPathX64);
+                    Patch(gameLocation.ManagedPathX86);
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Unexpected error has occurred. See [{Log.LogFileName}] for details.");
+                    Console.WriteLine(ex);
 
-                Patch(gameLocation.ManagedPathX64);
-                Patch(gameLocation.ManagedPathX86);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Unexpected error has occurred. See [{Log.LogFileName}] for details.");
-                Console.WriteLine(ex);
-
-                Log.Error(ex, "Unexpected error.");
-            }
+                    Log.Error(ex, "Unexpected error.");
+                }
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
+        }
+
+        private static void CopyData(String targetDirectory)
+        {
+            String sourceDirectory = Path.GetFullPath("Data");
+            if (!Directory.Exists(sourceDirectory))
+                throw new DirectoryNotFoundException("Data files was not found: " + sourceDirectory);
+            if (!Directory.Exists(targetDirectory))
+                throw new DirectoryNotFoundException("StreamingAssets directory does not exist: " + targetDirectory);
+            targetDirectory = Path.Combine(targetDirectory, "Data");
+
+            Console.WriteLine("Copy data files...");
+
+            foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, "*.csv", SearchOption.AllDirectories))
+            {
+                String targetFile = targetDirectory + sourceFile.Substring(sourceDirectory.Length);
+                if (File.Exists(targetFile))
+                    continue;
+
+                String directoryName = Path.GetDirectoryName(targetFile);
+                if (directoryName != null)
+                    Directory.CreateDirectory(directoryName);
+
+                File.Copy(sourceFile, targetFile);
+                Console.WriteLine("Copied: " + targetFile);
+            }
+
+            Console.WriteLine("Data files was copied!");
         }
 
         private static void Patch(String directory)

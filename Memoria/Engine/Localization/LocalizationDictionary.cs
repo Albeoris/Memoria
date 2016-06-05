@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Memoria
@@ -7,7 +8,7 @@ namespace Memoria
     internal sealed class LocalizationDictionary
     {
         private readonly object _lock = new object();
-        private readonly Dictionary<String, String> _replacement = new Dictionary<String, String>();
+        private Dictionary<String, String> _replacement = new Dictionary<String, String>();
 
         private Dictionary<String, String> _oldDictionary = new Dictionary<String, String>();
         private Dictionary<String, String[]> _dictionary = new Dictionary<String, String[]>();
@@ -15,6 +16,8 @@ namespace Memoria
         private Int32 _languageIndex = -1;
         private Boolean _merging;
         private String _language;
+
+        public Int32 CurrentLanguageIndex => _languageIndex;
 
         public Boolean TryLoadCSV(Byte[] bytes, Boolean merge)
         {
@@ -145,6 +148,12 @@ namespace Memoria
             }
         }
 
+        public void SetReplacement(Dictionary<String, String> dic)
+        {
+            lock (_replacement)
+                _replacement = dic;
+        }
+
         public void ReplaceKey(String key, String val)
         {
             lock (_replacement)
@@ -256,6 +265,55 @@ namespace Memoria
 
                 return _dictionary.ContainsKey(key) || _oldDictionary.ContainsKey(key);
             }
+        }
+
+        private void ReplaceDictionary()
+        {
+            try
+            {
+                if (_languageIndex < 0)
+                    return;
+
+                if (!Configuration.Import.Enabled || !Configuration.Import.Text)
+                    return;
+
+                String importPath = ModTextResources.Import.GetCurrentPath(ModTextResources.SystemPath);
+                if (!File.Exists(importPath))
+                {
+                    Log.Warning($"[LocalizationDictionary] Loading was skipped because a file does not exists: [{importPath}]...");
+                }
+
+                Log.Message($"[LocalizationDictionary] Loading from [{importPath}]...");
+
+                TxtEntry[] entries = TxtReader.ReadStrings(importPath);
+                Dictionary<string, string> dic = CreateReplaceDictionary(entries);
+
+                Log.Message("[LocalizationDictionary] Loading completed successfully.");
+                SetReplacement(dic);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[LocalizationDictionary] Failed to load text.");
+            }
+        }
+
+        private static Dictionary<String, String> CreateReplaceDictionary(TxtEntry[] entries)
+        {
+            Dictionary<String, String> dic = new Dictionary<String, String>();
+            foreach (TxtEntry entry in entries)
+            {
+                switch (entry.Prefix)
+                {
+                    case "KEY":
+                    case "Symbol":
+                    case "Name":
+                    case "":
+                        continue;
+                }
+
+                dic[entry.Prefix] = entry.Value;
+            }
+            return dic;
         }
 
         private Dictionary<String, Int32> PrepareLanguages(Boolean merge, BetterList<String> betterList, out String[] newLanguages)
@@ -469,22 +527,29 @@ namespace Memoria
 
         private void LoadAndSelect(string value)
         {
-            if (!String.IsNullOrEmpty(value))
+            try
             {
-                if (_dictionary.Count == 0 && !LoadDictionary(value))
+                if (!String.IsNullOrEmpty(value))
+                {
+                    if (_dictionary.Count == 0 && !LoadDictionary(value))
+                        return;
+                    if (SelectLanguage(value))
+                        return;
+                }
+
+                if (_oldDictionary.Count > 0)
                     return;
-                if (SelectLanguage(value))
-                    return;
+
+                _oldDictionary.Clear();
+                _dictionary.Clear();
+
+                if (String.IsNullOrEmpty(value))
+                    PlayerPrefs.DeleteKey("Language");
             }
-
-            if (_oldDictionary.Count > 0)
-                return;
-
-            _oldDictionary.Clear();
-            _dictionary.Clear();
-
-            if (String.IsNullOrEmpty(value))
-                PlayerPrefs.DeleteKey("Language");
+            finally
+            {
+                ReplaceDictionary();
+            }
         }
     }
 }

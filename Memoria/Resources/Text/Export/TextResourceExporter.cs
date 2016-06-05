@@ -37,6 +37,8 @@ namespace Memoria
 
         private static IEnumerable<IExporter> EnumerateExporters()
         {
+            yield return new LocalizationExporter();
+
             foreach (EtcTextResource value in Enum.GetValues(typeof(EtcTextResource)))
                 yield return new EtcExporter(value);
 

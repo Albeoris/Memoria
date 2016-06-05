@@ -33,7 +33,7 @@ namespace Memoria
 
         private void Initialize()
         {
-            String directory = ModTextResources.Export.FieldsDirectory;
+            String directory = ModTextResources.Import.FieldsDirectory;
             if (!Directory.Exists(directory))
             {
                 Log.Warning($"[{TypeName}] Import was skipped bacause a directory does not exist: [{directory}].");

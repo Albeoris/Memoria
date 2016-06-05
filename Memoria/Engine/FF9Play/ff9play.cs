@@ -107,6 +107,7 @@ public class ff9play
         PLAYER player = ff9StateGlobal.party.member[party_id];
         if (slot_id >= 9)
             slot_id = -1;
+
         if (0 > slot_id)
         {
             ff9StateGlobal.party.member[party_id] = null;
@@ -116,8 +117,10 @@ public class ff9play
             FF9Play_Add(slot_id);
             ff9StateGlobal.party.member[party_id] = ff9StateGlobal.player[slot_id];
         }
+
         if (player == ff9StateGlobal.party.member[party_id])
             return;
+
         FF9Play_SetFaceDirty(true);
     }
 
@@ -152,40 +155,27 @@ public class ff9play
                 ++num1;
             }
         }
+
         if (num1 == 0)
             return 1;
+
         return num2 / num1;
     }
 
     public static void FF9Play_Add(int slot_id)
     {
-        if (TryHackCharacterAvailability())
-            return;
-
         if (slot_id < 0 || slot_id >= 9)
             return;
+
         FF9StateSystem.Common.FF9.player[slot_id].info.party = 1;
     }
 
     public static void FF9Play_Delete(int slot_id)
     {
-        if (TryHackCharacterAvailability())
-            return;
-
         if (slot_id < 0 || slot_id >= 9)
             return;
+
         FF9StateSystem.Common.FF9.player[slot_id].info.party = 0;
-    }
-
-    internal static bool TryHackCharacterAvailability()
-    {
-        if (!Configuration.Hacks.IsAllCharactersAvailable)
-            return false;
-
-        for (byte i = 0; i < 9; i++)
-            FF9StateSystem.Common.FF9.player[i].info.party = 1;
-
-        return true;
     }
 
     public static void FF9Play_Build(int slot_id, int lv, PLAYER_INFO init, bool lvup)

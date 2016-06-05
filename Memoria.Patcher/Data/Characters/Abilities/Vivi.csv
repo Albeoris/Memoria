@@ -1,0 +1,55 @@
+# This file contains a set of learnable Vivi's abilities.
+# You must set 48 different items.
+# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# -----------------------------------
+# Id;AP
+# UInt8;UInt8
+# -----------------------------------
+25;25;# Fire
+26;50;# Fira
+27;75;# Firaga
+28;20;# Sleep
+29;25;# Blizzard
+30;50;# Blizzara
+31;85;# Blizzaga
+32;20;# Slow
+33;25;# Thunder
+34;50;# Thundara
+35;80;# Thundaga
+36;25;# Stop
+37;35;# Poison
+38;40;# Bio
+39;70;# Osmose
+40;60;# Drain
+41;30;# Demi
+42;55;# Comet
+43;45;# Death
+44;30;# Break
+45;55;# Water
+46;95;# Meteor
+47;95;# Flare
+48;150;# Doomsday
+192;70;# Auto-Reflect
+193;20;# Auto-Float
+194;55;# Auto-Haste
+195;30;# Auto-Regen
+196;70;# Auto-Life
+200;30;# MP+20%
+216;20;# Healer
+217;25;# Add Status
+222;30;# Reflect-Null
+223;110;# Reflectx2
+224;115;# Mag Elem Null
+226;140;# Half MP
+227;25;# High Tide
+232;15;# Body Temp
+235;30;# Level Up
+236;55;# Ability Up
+240;25;# Insomniac
+241;30;# Antibody
+243;40;# Loudmouth
+245;25;# Jelly
+246;90;# Return Magic
+248;10;# Auto-Potion
+249;35;# Locomotion
+250;15;# Clear Headed

@@ -6,6 +6,7 @@ namespace Memoria
     {
         public static event Action Start;
         public static event Action Update;
+        public static event Action Quit;
 
         public static void RaiseStartEvent()
         {
@@ -16,6 +17,12 @@ namespace Memoria
         public static void RaiseUpdateEvent()
         {
             Update?.Invoke();
+        }
+
+        public static void RaiseQuitEvent()
+        {
+            Log.Message("[GameLoopManager] RaiseQuitEvent");
+            Quit?.Invoke();
         }
     }
 }

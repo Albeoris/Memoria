@@ -60,11 +60,13 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
+    private bool F2Key => UnityXInput.Input.GetKey(KeyCode.F2);
     private bool F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
-    private bool F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
     private bool F5Key => UnityXInput.Input.GetKey(KeyCode.F5);
-    private bool F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private bool F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
+    private bool F2KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F2);
+    private bool F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
+    private bool F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private bool F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
 
     public UIKeyTrigger()
@@ -287,10 +289,15 @@ public class UIKeyTrigger : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Bundle || quitConfirm)
-            return;
-        Application.CancelQuit();
-        OnQuitCommandDetected();
+        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Bundle && !quitConfirm)
+        {
+            Application.CancelQuit();
+            OnQuitCommandDetected();
+        }
+        else
+        {
+            GameLoopManager.RaiseQuitEvent();
+        }
     }
 
     public void ConfirmQuit()
@@ -317,7 +324,36 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    public void OnSaveLoadSceneCommandDetected(UIScene scene, SaveLoadUI.SerializeType type)
+    private void OnPartySceneCommandDetected(UIScene scene)
+    {
+        UIManager uiManager = PersistenSingleton<UIManager>.Instance;
+        if (uiManager.IsLoading || uiManager.QuitScene.isShowQuitUI || uiManager.State == UIManager.UIState.Serialize)
+        {
+            FF9Sfx.FF9SFX_Play(102);
+            return;
+        }
+
+        if (!uiManager.IsMenuControlEnable)
+        {
+            FF9Sfx.FF9SFX_Play(102);
+            return;
+        }
+
+        switch (PersistenSingleton<UIManager>.Instance.State)
+        {
+            case UIManager.UIState.FieldHUD:
+            case UIManager.UIState.WorldHUD:
+                break;
+            default:
+                FF9Sfx.FF9SFX_Play(102);
+                return;
+        }
+
+        FF9Sfx.FF9SFX_Play(103);
+        scene?.Hide(UISceneHelper.OpenPartyMenu);
+    }
+
+    private static void OnSaveLoadSceneCommandDetected(UIScene scene, SaveLoadUI.SerializeType type)
     {
         UIManager uiManager = PersistenSingleton<UIManager>.Instance;
         if (uiManager.IsLoading || uiManager.QuitScene.isShowQuitUI || uiManager.State == UIManager.UIState.Serialize)
@@ -467,8 +503,38 @@ public class UIKeyTrigger : MonoBehaviour
                 return true;
             }
         }
+
+        //if (AltKeyDown)
+        //{
+        //    if (F2Key)
+        //    {
+        //        OnPartySceneCommandDetected(sceneFromState);
+        //        return true;
+        //    }
+        //    if (F4Key)
+        //    {
+        //        OnQuitCommandDetected(sceneFromState);
+        //        return true;
+        //    }
+        //    if (F5Key)
+        //    {
+        //        OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
+        //        return true;
+        //    }
+        //    if (F9Key)
+        //    {
+        //        OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
+        //        return true;
+        //    }
+        //}
+
         if (AltKey)
         {
+            if (F2KeyDown)
+            {
+                OnPartySceneCommandDetected(sceneFromState);
+                return true;
+            }
             if (F4KeyDown)
             {
                 OnQuitCommandDetected(sceneFromState);
@@ -485,24 +551,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return true;
             }
         }
-        if (AltKeyDown)
-        {
-            if (F4Key)
-            {
-                OnQuitCommandDetected(sceneFromState);
-                return true;
-            }
-            if (F5Key)
-            {
-                OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
-                return true;
-            }
-            if (F9Key)
-            {
-                OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
-                return true;
-            }
-        }
+
         return false;
     }
 
@@ -594,13 +643,17 @@ public class UIKeyTrigger : MonoBehaviour
     {
         UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
         sceneFromState?.OnItemSelect(go);
+
         if (PersistenSingleton<UIManager>.Instance.Dialogs != null)
             PersistenSingleton<UIManager>.Instance.Dialogs.OnItemSelect(go);
+
         if (!go.GetComponent<ScrollItemKeyNavigation>())
             return;
+
         ScrollItemKeyNavigation component = go.GetComponent<ScrollItemKeyNavigation>();
         if (!component || !component.ListPopulator)
             return;
+
         component.ListPopulator.itemHasChanged(go);
     }
 
@@ -645,5 +698,66 @@ public class UIKeyTrigger : MonoBehaviour
     {
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, (UICamera.KeyCodeDelegate)OnKeyNavigate);
         GameLoopManager.RaiseStartEvent();
+    }
+}
+
+
+namespace Memoria
+{
+    public static class UISceneHelper
+    {
+        public static void OpenPartyMenu()
+        {
+            FF9PARTY_INFO party = new FF9PARTY_INFO();
+
+            Int32 availableChatacters = 0;
+            if (Configuration.Hacks.AllCharactersAvailable > 0)
+            {
+                availableChatacters = 0x1FF;
+                party.party_ct = 4;
+            }
+            else
+            {
+                for (int characterIndex = 8; characterIndex >= 0; --characterIndex)
+                {
+                    Boolean isAvailable = (FF9StateSystem.Common.FF9.player[characterIndex].info.party != 0);
+                    if (isAvailable)
+                        party.party_ct++;
+
+                    availableChatacters = availableChatacters << 1 | (isAvailable ? 1 : 0);
+                }
+
+                if (party.party_ct > 4)
+                    party.party_ct = 4;
+            }
+
+            for (int memberIndex = 0; memberIndex < 4; ++memberIndex)
+            {
+                if (FF9StateSystem.Common.FF9.party.member[memberIndex] != null)
+                {
+                    Byte characterId = FF9StateSystem.Common.FF9.party.member[memberIndex].info.slot_no;
+                    party.menu[memberIndex] = characterId;
+                    availableChatacters &= ~(1 << characterId);
+                }
+                else
+                {
+                    party.menu[memberIndex] = Byte.MaxValue;
+                }
+            }
+
+            Byte availableSlot = 0;
+            for (Byte characterId = 0; characterId < 9 && availableSlot < PartySettingUI.FF9PARTY_PLAYER_MAX && availableChatacters > 0; ++characterId)
+            {
+                if ((availableChatacters & 1) > 0)
+                    party.select[availableSlot++] = characterId;
+
+                availableChatacters >>= 1;
+            }
+
+            while (availableSlot < PartySettingUI.FF9PARTY_PLAYER_MAX)
+                party.select[availableSlot++] = PartySettingUI.FF9PARTY_NONE;
+
+            EventService.OpenPartyMenu(party);
+        }
     }
 }

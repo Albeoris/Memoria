@@ -15,7 +15,7 @@ public static class Localization
 
     public delegate void OnLocalizeNotification();
 
-    private static readonly LocalizationDictionary _provider = new LocalizationDictionary();
+    internal static readonly LocalizationDictionary Provider = new LocalizationDictionary();
 
     public static bool localizationHasBeenSet;
     public static LoadFunction loadFunction;
@@ -24,60 +24,60 @@ public static class Localization
     [Obsolete("Localization is now always active. You no longer need to check this property.")]
     public static Boolean isActive => true;
 
-    public static String[] knownLanguages => _provider.ProvideLanguages();
+    public static String[] knownLanguages => Provider.ProvideLanguages();
 
     public static Dictionary<String, String[]> dictionary
     {
-        get { return _provider.ProvideDictionary(); }
-        set { _provider.SetDictionary(value); }
+        get { return Provider.ProvideDictionary(); }
+        set { Provider.SetDictionary(value); }
     }
 
     public static String language
     {
-        get { return _provider.ProvideLanguage(); }
-        set { _provider.SetLanguage(value); }
+        get { return Provider.ProvideLanguage(); }
+        set { Provider.SetLanguage(value); }
     }
 
     public static void Load(TextAsset asset)
     {
         ByteReader byteReader = new ByteReader(asset);
-        _provider.Set(asset.name, byteReader.ReadDictionary());
+        Provider.Set(asset.name, byteReader.ReadDictionary());
     }
 
     public static void Set(string languageName, byte[] bytes)
     {
         ByteReader byteReader = new ByteReader(bytes);
-        _provider.Set(languageName, byteReader.ReadDictionary());
+        Provider.Set(languageName, byteReader.ReadDictionary());
     }
 
     public static void Set(String key, String value)
     {
-        _provider.Set(key, value);
+        Provider.Set(key, value);
     }
 
     public static void ReplaceKey(string key, string val)
     {
-        _provider.ReplaceKey(key, val);
+        Provider.ReplaceKey(key, val);
     }
 
     public static void ClearReplacements()
     {
-        _provider.ClearReplacements();
+        Provider.ClearReplacements();
     }
 
     public static Boolean LoadCSV(TextAsset asset, Boolean merge = false)
     {
-        return _provider.TryLoadCSV(asset.bytes, merge);
+        return Provider.TryLoadCSV(asset.bytes, merge);
     }
 
     public static Boolean LoadCSV(byte[] bytes, Boolean merge = false)
     {
-        return _provider.TryLoadCSV(bytes, merge);
+        return Provider.TryLoadCSV(bytes, merge);
     }
 
     public static void Set(String languageName, Dictionary<String, String> dic)
     {
-        _provider.Set(languageName, dic);
+        Provider.Set(languageName, dic);
     }
 
     public static String GetPath()
@@ -92,7 +92,7 @@ public static class Localization
 
     public static String Get(String key)
     {
-        return _provider.Get(key);
+        return Provider.Get(key);
     }
 
     public static String Format(String key, params object[] parameters)
@@ -102,7 +102,7 @@ public static class Localization
 
     public static bool Exists(string key)
     {
-        return _provider.Exists(key);
+        return Provider.Exists(key);
     }
 
     [Obsolete("Use Localization.Get instead")]

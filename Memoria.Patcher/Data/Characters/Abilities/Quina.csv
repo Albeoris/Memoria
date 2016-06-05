@@ -1,0 +1,55 @@
+# This file contains a set of learnable Quina's abilities.
+# You must set 48 different items.
+# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# -----------------------------------
+# Id;AP
+# UInt8;UInt8
+# -----------------------------------
+77;1;# Goblin Punch
+78;1;# LV5 Death
+79;1;# LV4 Holy
+80;1;# LV3 Def-less
+81;1;# Doom
+82;1;# Roulette
+83;1;# Aqua Breath
+84;1;# Mighty Guard
+85;1;# Matra Magic
+86;1;# Bad Breath
+87;1;# Limit Glove
+88;1;# 1,000 Needles
+89;1;# Pumpkin Head
+90;1;# Night
+91;1;# Twister
+92;1;# Earth Shake
+93;1;# Angel’s Snack
+94;1;# Frog Drop
+95;1;# White Wind
+96;1;# Vanish
+97;1;# Frost
+98;1;# Mustard Bomb
+99;1;# Magic Hammer
+100;1;# Auto-Life
+192;75;# Auto-Reflect
+193;40;# Auto-Float
+194;70;# Auto-Haste
+195;30;# Auto-Regen
+196;165;# Auto-Life
+199;50;# MP+10%
+216;60;# Healer
+217;35;# Add Status
+218;40;# Gamble Defense
+226;90;# Half MP
+227;250;# High Tide
+228;55;# Counter
+232;20;# Body Temp
+235;60;# Level Up
+236;40;# Ability Up
+237;100;# Millionaire
+240;40;# Insomniac
+241;20;# Antibody
+243;30;# Loudmouth
+245;35;# Jelly
+247;80;# Absorb MP
+248;30;# Auto-Potion
+249;20;# Locomotion
+250;25;# Clear Headed
