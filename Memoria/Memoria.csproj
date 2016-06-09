@@ -32,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -60,7 +61,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -97,15 +97,18 @@
     <Compile Include="Configuration\IniTryParseValue.cs" />
     <Compile Include="Configuration\IniValue.cs" />
     <Compile Include="Configuration\StringIniValue.cs" />
-    <Compile Include="Engine\Battle\ff9abil.cs" />
+    <Compile Include="Engine\Data\ff9item.cs" />
+    <Compile Include="Engine\Data\ff9abil.cs" />
     <Compile Include="Engine\Battle\BattleCommands.cs" />
     <Compile Include="Engine\Scenes\AbilityUI\AbilityUI.cs" />
     <Compile Include="Engine\Scenes\StatusUI\StatusUI.cs" />
+    <Compile Include="Resources\Data\Battle\BattleAtion.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterAbility.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterCommand.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterCommandType.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterCommandSet.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterExtraPresetId.cs" />
+    <Compile Include="Resources\Data\Charactes\CharacterId.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterPresetId.cs" />
     <Compile Include="Resources\Data\CsvParser.cs" />
     <Compile Include="Resources\Data\CsvReader.cs" />
@@ -139,6 +142,12 @@
     <Compile Include="Engine\UIKeyTrigger\UIKeyTrigger.cs" />
     <Compile Include="ExportedTypeAttribute.cs" />
     <Compile Include="GameLoop\GameLoopManager.cs" />
+    <Compile Include="Resources\Data\Battle\EffectElement.cs" />
+    <Compile Include="Resources\Data\Items\ItemEffect.cs" />
+    <Compile Include="Resources\Data\Items\ItemInfo.cs" />
+    <Compile Include="Resources\Data\Battle\BattleStatus.cs" />
+    <Compile Include="Resources\Data\Battle\TargetDisplay.cs" />
+    <Compile Include="Resources\Data\Battle\TargetType.cs" />
     <Compile Include="Resources\Grahpics\Export\GraphicResourceExporter.cs" />
     <Compile Include="Resources\ResourceExporter.cs" />
     <Compile Include="Resources\ResourceImporter.cs" />

@@ -1,0 +1,63 @@
+﻿using System;
+
+namespace Memoria
+{
+    [Flags]
+    public enum BattleStatus : uint
+    {
+        Stone = 1 << 0, // 1,
+        Poison2 = 1 << 1, //2
+        Virus = 1 << 2, //4,
+        Silence = 1 << 3, //8,
+        Dark = 1 << 4, //16,
+        Trouble = 1 << 5, //32,
+        Zombie = 1 << 6, //64,
+        Safety = 1 << 7, //128,
+        Disable = 1 << 8, //256,
+        Dying = 1 << 9, //512,
+        Confu = 1 << 10, //1024,
+        Berserk = 1 << 11, //2048,
+        Stop = 1 << 12, //4096,
+        Reraise = 1 << 13, //8192,
+        Transform = 1 << 14, //16384,
+        Defence = 1 << 15, //32768,
+        Poison = 1 << 16, //65536,
+        Sleep = 1 << 17, //131072,
+        Regene = 1 << 18, //262144,
+        Haste = 1 << 19, //524288,
+        Slow = 1 << 20, //1048576,
+        Levitate = 1 << 21, //2097152,
+        Shell = 1 << 22, //4194304,
+        Protes = 1 << 23, //8388608,
+        Heat = 1 << 24, //16777216,
+        Freeze = 1 << 25, //33554432,
+        Banish = 1 << 26, //67108864,
+        Condemn = 1 << 27, //134217728,
+        Mini = 1 << 28, //268435456,
+        Reflec = 1 << 29, //536870912,
+        Jump = 1 << 30, //1073741824,
+        Stoning = 1u << 31, //2147483648,
+
+        Achievement = 3221176191,
+        ContiGood1 = 619446272,
+        ContiGood2 = 1073741824,
+        ContiBad = 2601713664,
+        OprCount = 327682,
+        NoInput = 1107434755,
+        CmdCancel = 134403,
+        IdleDying = 197122,
+        StopCmd = 33558531,
+        StopAnim = 1107300355,
+        StopAtb = 1073746177,
+        NoMagic = 318905611,
+        ChgPolyCol = 50333760,
+        NotEscape = 1107431747,
+        NoTrance = 33575235,
+        NoReset = 2281766783,
+        BtlEnd = 4355,
+        CancelPhysics = 132096,
+        TimeOpr = 2282045442,
+        NoReaction = 1107300611,
+        CancelEvent = 33592320,
+    }
+}

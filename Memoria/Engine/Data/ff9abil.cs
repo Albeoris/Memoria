@@ -172,6 +172,9 @@ namespace FF9
             if ((play.category & 16) == 0 && play.info.menu_type < 8)
                 return true;
 
+            if (play.info.menu_type >= _FF9Abil_PaData.Length)
+                return false;
+
             return _FF9Abil_PaData[play.info.menu_type].Any(pa => pa.max_ap > 0);
         }
 

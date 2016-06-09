@@ -39,12 +39,27 @@ namespace Memoria
             }
         }
 
+        public void Boolean(Boolean value)
+        {
+            String((value ? 1 : 0).ToString(CultureInfo.InvariantCulture));
+        }
+
         public void Byte(Byte value)
         {
             String(value.ToString(CultureInfo.InvariantCulture));
         }
 
+        public void Int16(Int16 value)
+        {
+            String(value.ToString(CultureInfo.InvariantCulture));
+        }
+
         public void UInt16(UInt16 value)
+        {
+            String(value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public void UInt32(UInt32 value)
         {
             String(value.ToString(CultureInfo.InvariantCulture));
         }

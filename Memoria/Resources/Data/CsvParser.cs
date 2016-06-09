@@ -26,9 +26,19 @@ namespace Memoria
             return System.Byte.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
         }
 
+        public static Int16 Int16(String raw)
+        {
+            return System.Int16.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
+        }
+
         public static UInt16 UInt16(String raw)
         {
             return System.UInt16.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
+        }
+
+        public static UInt32 UInt32(String raw)
+        {
+            return System.UInt32.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
         }
 
         public static Byte[] ByteArray(String raw)
