@@ -176,7 +176,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             string ebFileName = "EVT_BATTLE_" + battleSceneName;
             FF9StateBattleMap ff9StateBattleMap = FF9StateSystem.Battle.FF9Battle.map;
-            ff9StateBattleMap.evtPtr = EventEngineUtilsAccessor.LoadEventData(ebFileName, "Battle/");
+            ff9StateBattleMap.evtPtr = EventEngineUtils.loadEventData(ebFileName, "Battle/");
             PersistenSingleton<EventEngine>.Instance.StartEvents(ff9StateBattleMap.evtPtr);
             PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
         }

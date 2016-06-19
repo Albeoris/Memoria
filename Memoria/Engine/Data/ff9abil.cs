@@ -107,6 +107,12 @@ namespace FF9
                 new SA_DATA(0, 5, 645, 2038, 8306),
                 new SA_DATA(0, 20, 652, 2068, 4096)
             };
+
+            //String[] skillNames = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.SkillNames);
+            //using (var writer = new CsvWriter("D:\\SkillCrys.csv"))
+            //{
+
+            //}
         }
 
         public ff9abil()

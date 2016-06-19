@@ -534,6 +534,35 @@ public class PartySettingUI : UIScene
 
     private static void TryHackPlayer(PLAYER player, Byte category)
     {
+        switch ((CharacterExtraPresetId)player.info.menu_type)
+        {
+            case CharacterExtraPresetId.StageZidane:
+                player.info.menu_type = (byte)CharacterPresetId.Zidane;
+                break;
+            case CharacterExtraPresetId.StageCinna:
+                player.info.menu_type = (byte)CharacterPresetId.Cinna2;
+                break;
+            case CharacterExtraPresetId.StageMarcus:
+                player.info.menu_type = (byte)CharacterPresetId.Marcus2;
+                break;
+            case CharacterExtraPresetId.StageBlank:
+                player.info.menu_type = (byte)CharacterPresetId.Blank2;
+                break;
+        }
+
+        switch ((CharacterPresetId)player.info.menu_type)
+        {
+            case CharacterPresetId.Cinna1:
+                player.info.menu_type = (byte)CharacterPresetId.Cinna2;
+                break;
+            case CharacterPresetId.Marcus1:
+                player.info.menu_type = (byte)CharacterPresetId.Marcus2;
+                break;
+            case CharacterPresetId.Blank1:
+                player.info.menu_type = (byte)CharacterPresetId.Blank2;
+                break;
+        }
+
         if (player.category == category)
             return;
 
@@ -550,15 +579,12 @@ public class PartySettingUI : UIScene
                 player.info.menu_type = (byte)CharacterPresetId.Blank2;
                 break;
 
-            case CharacterPresetId.Cinna1:
             case CharacterPresetId.Cinna2:
                 player.info.menu_type = (byte)CharacterPresetId.Quina;
                 break;
-            case CharacterPresetId.Marcus1:
             case CharacterPresetId.Marcus2:
                 player.info.menu_type = (byte)CharacterPresetId.Eiko;
                 break;
-            case CharacterPresetId.Blank1:
             case CharacterPresetId.Blank2:
                 player.info.menu_type = (byte)CharacterPresetId.Amarant;
                 break;

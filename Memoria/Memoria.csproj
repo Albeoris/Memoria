@@ -72,6 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\TypeCache.cs" />
     <Compile Include="Common\Exceptions\AggregateException.cs" />
     <Compile Include="Common\Exceptions\ArgumentEmptyException.cs" />
     <Compile Include="Common\Threading\ActionTask.cs" />
@@ -100,6 +101,28 @@
     <Compile Include="Engine\Data\ff9item.cs" />
     <Compile Include="Engine\Data\ff9abil.cs" />
     <Compile Include="Engine\Battle\BattleCommands.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.Constructor.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.TreadQuad.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.Static.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.DoCalcOperationExt.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.OperatorAll.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.ProcessAnime.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.MoveToward.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.GetSysvar.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.Initialize.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.turnOffTriManually.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.updateModelsToBeAdded.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.ProcessTurn.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.ProcessNeck.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.ProcessEvents.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.OperatorExtract.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.DoEventCodeWorld.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.DoEventCodeField.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.DoEventCodeBattle.cs" />
+    <Compile Include="Engine\EventEngine\EIcon.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.DoEventCode.cs" />
+    <Compile Include="Engine\EventEngine\EventEngineUtils.cs" />
+    <Compile Include="Engine\EventEngine\EventEngine.cs" />
     <Compile Include="Engine\Scenes\AbilityUI\AbilityUI.cs" />
     <Compile Include="Engine\Scenes\StatusUI\StatusUI.cs" />
     <Compile Include="Resources\Data\Battle\BattleAtion.cs" />
@@ -124,7 +147,6 @@
     <Compile Include="Engine\Battle\btl_cmd.cs" />
     <Compile Include="Engine\Battle\HonoluluBattleMain.cs" />
     <Compile Include="Engine\FF9Play\ff9play.cs" />
-    <Compile Include="Engine\Battle\EventEngineUtilsAccessor.cs" />
     <Compile Include="Engine\Battle\DebugGuiSkin.cs" />
     <Compile Include="Engine\Localization\Localization.cs" />
     <Compile Include="Engine\Localization\LocalizationDictionary.cs" />
@@ -197,6 +219,30 @@
     <Compile Include="Resources\Text\Export\TextResourceExporter.cs" />
     <Compile Include="Accessors\FF9TextToolAccessor.cs" />
     <Compile Include="Interceptors\FF9TextToolInterceptor.cs" />
+    <Compile Include="Scenes\BattleHUD\GOAllMenuPanel.cs" />
+    <Compile Include="Scenes\BattleHUD\SOLogger.cs" />
+    <Compile Include="Scenes\GOArray.cs" />
+    <Compile Include="Scenes\GOForegroundWidget.cs" />
+    <Compile Include="Scenes\GOLocalizableLabel.cs" />
+    <Compile Include="Scenes\GONavigationButton.cs" />
+    <Compile Include="Scenes\GOPanel.cs" />
+    <Compile Include="Scenes\GOProgressBar.cs" />
+    <Compile Include="Scenes\GOScrollBar.cs" />
+    <Compile Include="Scenes\GOScrollButton.cs" />
+    <Compile Include="Scenes\GOSpriteButton.cs" />
+    <Compile Include="Scenes\GOSubPanel.cs" />
+    <Compile Include="Scenes\GOTable.cs" />
+    <Compile Include="Scenes\GOThinBackground.cs" />
+    <Compile Include="Scenes\GOThinSpriteBackground.cs" />
+    <Compile Include="Scenes\GOWidget.cs" />
+    <Compile Include="Scenes\GOWidgetButton.cs" />
+    <Compile Include="Scenes\BattleHUD\SOBattleHUD.cs" />
+    <Compile Include="Scenes\ExtensionMethodsGameObject.cs" />
+    <Compile Include="Scenes\GOAnimatedSprite.cs" />
+    <Compile Include="Scenes\GOBase.cs" />
+    <Compile Include="Scenes\GOBlinkedLabel.cs" />
+    <Compile Include="Scenes\GOLabel.cs" />
+    <Compile Include="Scenes\GOSprite.cs" />
     <Compile Include="TexturePacker\TPSpriteSheetLoader.cs" />
     <Compile Include="TexturePacker\TPSheetSpriteNameFormatter.cs" />
     <Compile Include="Interceptors\TitleUIInterceptor.cs" />
