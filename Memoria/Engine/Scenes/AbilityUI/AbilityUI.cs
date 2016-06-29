@@ -20,7 +20,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable SuspiciousTypeConversion.Global
 
-[ExportedType("Q¦ĥğ#!!!ŁüĸĘV!!!ēpìÐ@°çsĝ+ÓÈĖëĤñÏ~Ĵ­ĠċĳUċĚĂåüĘjŀ¤*ÕĔÄ2:íğçÐÇTÆÝĭĭ*óv-WĚÈ=Á¿b?:E_¢Y»ĨīfÈÜĜãĆ«²ģ¬ĻĜ$k#£ĂûĘĒ2ıHĦ£QġĢÍĳ/ñļIv¤ķjĖ¾'iíiĝÝĸĵUēß¹°ÃĭıCdaõĜĥôîĺ4āã¾ß1Ø§GCēíyè`sĴÆØA1¥Ē)łďôĽa4ÎfĕOº>=X¹áæĩĊ[ġ=īDĸ,É8:û»kłþĩ-EA8Q5õĿá>lĳĢ¬ÀO!!!F|èÅuě8;kļ>ĝĈÉãçW¡¯ĮæºSā­·Þ9mķ!ĽĮËÎ@ĩġĄìt=ĈĨw·ïÿÉPTÃób6Ġoħ³Áċ^ĕþÎðĎ'§mÜøBĦĞøòÚńăÌĥcrXdĹ¯=ÐĢ¼Hão6ČR_ĄďĿ(vîcĎÊý¥£Ö7jĦĥIPĨĐŀiĝ°ZďIn×ĀęŁ·ğĽW0>H}À.*(PĹäè;?¢(líĶTU¹ô­!já|ĆĶĊÔß=©3ĴP~GEUúĵ&!!!ÛĂ×Éńńńń&!!!ëÎ¼Ĉ8ĘėûxĪÜĤ½ú¼³$!!!ó]eðĘ¬s£ńńńńëm];ńńńń&!!!õ¬ĢŁÎEóÚ¡üÚ4<jNDńńńńńńńńKamÛńńńń)!!!õ¬ĢŁc`g8ÜxēF¼$7®ĕhhè>vØTpFjñńńńńńńńńĔĦÒĩńńńń$!!!ßR/ğĜwāİ#!!!é}3®ńńńń")]
+[ExportedType("Q¦ĥğ#!!!ŁüĸĘV!!!ēpìÐ@°çsĝ+ÓÈĖëĤñÏ~Ĵ­ĠċĳUċĚĂåüĘjŀ¤*ÕĔÄ2:íğçÐÇTÆÝĭĭ*óv-WĚÈ=Á¿b?:E_¢Y»ĨīfÈÜĜãĆ«²ģ¬ĻĜ$k#£ĂûĘĒ2ıHĦ£QġĢÍĳ/ñļIv¤ķjĖ¾'iíiĝÝĸĵUēß¹°ÃĭıCdaõĜĥôîĺ4āã¾ß1Ø§GCēíyè`sĴÆØA1¥Ē)łďôĽa4ÎfĕOº>=X¹áæĩĊ[ġ=īDĸ,É8:û»kłþĩ-EA8Q5õĿá>lĳĢ¬ÀO!!!F|èÅuě8;kļ>ĝĈÉãçW¡¯ĮæºSā­·Þ9mķ!ĽĮËÎ@ĩġĄìt=ĈĨw·ïÿÉPTÃób6Ġ³ºį´ċ^ĕþÎðĎ'§mÜøBĦĞøòÚńăÌĥcrXdĹ¯=ÐĢ¼Hão6ČR_ĄďĿ(vîcĎÊý¥£Ö7jĦĥIPĨĐŀiĝ°ZďIn×ĀęŁ·ğĽW0>H}À.*(PĹäèĺ|É¬líĶTU¹ô­!já|ĆĶĊÔß=©3ĴP~GEUúĵ&!!!ÛĂ×Éńńńń&!!!ëÎ¼Ĉ8ĘėûxĪÜĤ½ú¼³$!!!ó]eðĘ¬s£ńńńńëm];ńńńń&!!!õ¬ĢŁÎEóÚ¡üÚ4<jNDńńńńńńńńKamÛńńńń)!!!õ¬ĢŁc`g8ÜxēF¼$7®ĕhhè>vØTpFjñńńńńńńńńĔĦÒĩńńńń$!!!ßR/ğĜwāİ#!!!é}3®ńńńń")]
 public class AbilityUI : UIScene
 {
     public const int FF9FABIL_EVENT_NOMAGIC = 227;
@@ -534,12 +534,12 @@ public class AbilityUI : UIScene
         ButtonGroupState component1 = this.UseSubMenu.GetComponent<ButtonGroupState>();
         ButtonGroupState component2 = this.EquipSubMenu.GetComponent<ButtonGroupState>();
         string str1 = Localization.Get("UseAbilityHelp");
-        string str2 = FF9StateSystem.EventState.gEventGlobal[227] == 0 ? str1 + (this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatus") : Localization.Get("UseAbilityHelpForever")) : str1 + Localization.Get("UseAbilityNoMagic");
+        string str2 = (int)FF9StateSystem.EventState.gEventGlobal[227] == 0 ? (!FF9StateSystem.MobilePlatform ? str1 + (this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatus") : Localization.Get("UseAbilityHelpForever")) : str1 + (this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatusMobile") : Localization.Get("UseAbilityHelpForeverMobile"))) : (!FF9StateSystem.MobilePlatform ? str1 + Localization.Get("UseAbilityNoMagic") : str1 + Localization.Get("UseAbilityNoMagicMobile"));
         component1.Help.Text = str2;
         string str3 = Localization.Get("EquipAbilityHelp");
 
         if (!ff9abil.FF9Abil_HasAp(play))
-            str3 += (play.category & 16) != 0 ? Localization.Get("EquipAbilityHelpNow") : Localization.Get("EquipAbilityForever");
+            str3 = !FF9StateSystem.MobilePlatform ? str3 + (((int)play.category & 16) != 0 ? Localization.Get("EquipAbilityHelpNow") : Localization.Get("EquipAbilityForever")) : str3 + (((int)play.category & 16) != 0 ? Localization.Get("EquipAbilityHelpNowMobile") : Localization.Get("EquipAbilityForeverMobile"));
 
         component2.Help.Text = str3;
         this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
@@ -1093,6 +1093,8 @@ public class AbilityUI : UIScene
             UIEventListener uiEventListener3 = UIEventListener.Get(obj);
             uiEventListener3.Click += this.onClick;
             this.targetHudList.Add(new CharacterDetailHUD(obj, true));
+            if (FF9StateSystem.MobilePlatform)
+                gameObject.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
         }
 
         this.targetListPanelComponent = this.TargetListPanel.GetComponent<UIPanel>();

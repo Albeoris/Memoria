@@ -31,6 +31,11 @@ public partial class EventEngine
         int num1;
         int num2;
         int num3;
+
+        //string stttt = eventCodeBinary.ToString();
+        //if (!stttt.StartsWith("BG"))
+        //    Memoria.Log.Message(stttt);
+
         switch (eventCodeBinary)
         {
             case EBin.event_code_binary.NOP:
@@ -216,13 +221,16 @@ public partial class EventEngine
                 int flags1 = this.getv1();
                 this.SetFollow(this.gCur, (int)this.gCur.winnum, flags1);
                 int index1 = this.getv2();
+                //Memoria.Log.Message($"MES: Map: ${(int)FF9StateSystem.Common.FF9.fldMapNo}, v1: {this.gCur.winnum}, flag: {flags1}, index: {index1}");
                 if ((int)FF9StateSystem.Common.FF9.fldMapNo == 1757 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6740 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 30)
                 {
+                    //Memoria.Log.Message($"MES: stay");
                     this.stay();
                     return 1;
                 }
                 if ((int)FF9StateSystem.Common.FF9.fldMapNo == 1060)
                 {
+                    //Memoria.Log.Message($"MES: 1060");
                     string symbol = Localization.GetSymbol();
                     Dictionary<int, int> dictionary = (Dictionary<int, int>)null;
                     if (symbol == "JP")
@@ -259,13 +267,16 @@ public partial class EventEngine
                 int flags2 = this.getv1();
                 this.SetFollow(this.gCur, (int)this.gCur.winnum, flags2);
                 int index2 = this.getv2();
+                //Memoria.Log.Message($"MESN: Map: {(int)FF9StateSystem.Common.FF9.fldMapNo}, v1: {this.gCur.winnum}, flag: {flags2}, index: {index2}");
                 if ((int)FF9StateSystem.Common.FF9.fldMapNo == 1757 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6740 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 30)
                 {
+                    //Memoria.Log.Message($"MESN: stay");
                     this.stay();
                     return 1;
                 }
                 if ((int)FF9StateSystem.Common.FF9.fldMapNo == 1060)
                 {
+                    //Memoria.Log.Message($"MESN: 1060");
                     string symbol = Localization.GetSymbol();
                     Dictionary<int, int> dictionary = (Dictionary<int, int>)null;
                     if (symbol == "JP")
@@ -298,8 +309,17 @@ public partial class EventEngine
                 this.eTb.NewMesWin(index2, (int)this.gCur.winnum, flags2, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 return 0;
             case EBin.event_code_binary.CLOSE:
-                this.eTb.DisposWindowByID(this.getv1());
-                return 0;
+                if ((int)FF9StateSystem.Common.FF9.fldMapNo == 62 || (int)FF9StateSystem.Common.FF9.fldMapNo == 63)
+                {
+                    goto case EBin.event_code_binary.WAITMES;
+                }
+                else
+                {
+                    var v1 = this.getv1();
+                    //Memoria.Log.Message($"CLOSE: " + v1);
+                    this.eTb.DisposWindowByID(v1);
+                    return 0;
+                }
             case EBin.event_code_binary.MOVE:
                 int num11 = this.getv2();
                 int num12 = this.getv2();

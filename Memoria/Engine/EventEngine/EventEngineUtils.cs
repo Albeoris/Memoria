@@ -15,7 +15,7 @@ using UnityEngine;
 #pragma warning disable 414
 #pragma warning disable 169
 
-[ExportedType("Ò?%Æńńńń.!!!ÞÕÑ©ĦĖª¢ĕ;ĭċYĊŁİĸyāøä¨åóTăæáĿħ£ķp6Iùí&_³RĦßŁÁ`ĵċ6!!!ĄÀļě|Xé8©Ł=ÀÞ*bSýSaĖsá{oæĳċþĎ¬óÝç¤8¢ĖĸGĬl´>Ŀěg[ĪĪ¶çzçáA1Éô÷Ú°îH]$Ė¶$:¡zLhéĿÖÍ°{ĵ#!!!g°oÌńńńń+!!!õ¬ĢŁYVđāoÜ%Èjaęğī*oĖĦN±KÝ²dĠèĴ«UełėÏńńńńńńńń")]
+[ExportedType("Ò?%Æńńńń.!!!ÞÕÑ©ĦĖª¢ĕ;ĭċYĊŁİĸyāøä¨åóTăæáĿħ£ķp6Iùí&_³RĦßŁÁ`ĵċ6!!!ĄÀļěí)~Q©Ł=ÀÞ*bSýSaĖsá{oæĳċþĎ¬óÝç¤8¢ĖĸGĬl´>Ŀěg[ĪĪ¶çzçáA1Éô÷Ú°îH]$Ė¶$:¡zLhéĿÖÍ°{ĵ#!!!g°oÌńńńń+!!!õ¬ĢŁYVđāoÜ%Èjaęğī*oĖĦN±KÝ²dĠèĴ«UełėÏńńńńńńńń")]
 internal class EventEngineUtils
 {
     public static bool showDebugUI = true;
@@ -1709,7 +1709,8 @@ internal class EventEngineUtils
         {1902005, 2},
         {2108006, 4},
         {2103008, 9},
-        {2802024, 29}
+        {2802024, 29},
+        {2109010, 5}
     };
 
     public static Dictionary<int, int> MogCallAddressData = new Dictionary<int, int>()
@@ -1731,7 +1732,7 @@ internal class EventEngineUtils
         {2950023, new QuadCircle(new Vector3(-1304f, 0.0f, -1758f), 300f)},
         {2950022, new QuadCircle(new Vector3(1837.4f, 0.0f, -522f), 216.5f)},
         {2952022, new QuadCircle(new Vector3(594.333f, 0.0f, -2385.833f), 480f)},
-        {2255002, new QuadCircle(new Vector3(-42.85714f, 0.0f, -2880f), 538f)},
+        {2255002, new QuadCircle(new Vector3(-42.85714f, 0.0f, 3517f), 6688f, true)},
         {561008, new QuadCircle(new Vector3(335f, 0.0f, 451.6f), 351f)}
     };
 

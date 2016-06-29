@@ -34,7 +34,7 @@ using UnityEngine;
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
 // ReSharper disable InconsistentNaming
 
-[ExportedType("¬dtòńńńńV!!!Ê²Og$ÐĳçÙþ;qî}PĞĤ±äĖĆÀĽ¢¡ĂĖ¬ąÍ5òĔ³hĠï4rÐj©DìÅ£(ģń¦ğiTv0nsķ»QċĖÈĪT.mĖÏ~Ĵ­=Á¿b¡,ĊĚ¾±.ÄŃĈ-d@°çså^Ĕ®ā'ĻWðÑ)Đ´~Þ¼LLAĠì8½k#Y^ËĎÂ¥ÀÌmĨ«ĢVÄĠrU@jÒ*rÈ4Ĩ@#,SßÊöĕWĹBÍmö+ZēŀćTİ<©=ČġīDĸ,Þ¥mbä|+ß}Î2íĝ+{:¨ġęjĽġÁÀ¤¾¿ÀĳĢ¬ÀÒīªÀ[!!!Ê&qUÀdďEãïhUuAv¬Q7ÅG1åHĨ%ă÷Ò¼G­]¬ĦW90óĪ¦hJÔ&ÔÇ<C¢tĖÕł£Ĭòĭĥî·ēĤ2²ªÐv25ğÊĹ¡¶9hŃÿòłuiĄ´m!ÏěýôİeÖÍ0Dµľħõā±ĜŀBĪTZĞý¦uł8Ò^6©ûæ6útğÑě@Ä©uí¸ă&>Ðó[ĔĻõÕÔë¨ĕuěīýi¯sĘT°ôē¶:°T¾bčĩìĄĽÓÙĒŀ)üÏ;_jÅĺÝo§´Ęæ!TîĖÐWT3věìĀÇ´/OdFþ&B×ġMZĊë¬0³{6õľoį÷NĲ¼R(!!!kĈĩDńńńń4!!!õ¬ĢŁĬ#V8JëPĻDýuãŁDĉ*¬ÑßĞĤÓm7_¤ĩÜäÏ°xĮ§$ÄĦ¤Ę]/3`ä7%bĢ>Ċ.ËÄB1NùĿĶĸñÖġ%°¨Ďhńńńńńńńń}Ĝ'ń$!!!ÁńhîĹµÏr%!!!Þ¤łĤ¿ĐWĖæA;ĳ(!!!ĄÀļěÎ:ńĄ3µï3´©¥Ġāf¬[jÅpZńńńńN¦Ĭuńńńń#!!!ŀ>ÇË$!!!ĄÀļě¯ĤhĆńńńńćĸ?Íńńńń#!!!ŀ>ÇË$!!!ĄÀļěçĢĬuńńńń?«êmńńńń#!!!ŀ>ÇË$!!!ĄÀļěĀ¤ü¸ńńńńÎöĴÎńńńń#!!!³ØÊ´$!!!ĄÀļěĳ%ĵĎńńńń")]
+[ExportedType("¬dtòńńńńV!!!Ê²Og$ÐĳçÙþ;qî}PĞĤ±äĖĆÀĽ¢¡ĂĖ¬ąÍ5òĔ³hĠï4rÐj©DìÅ£(ģń¦ğiTv0nsķ»QċĖÈĪT.mĖÏ~Ĵ­=Á¿b¡,ĊĚ¾±.ÄŃĈ-d@°çså^Ĕ®ā'ĻWðÑ)Đ´~Þ¼LLAĠì8½k#Y^ËĎÂ¥ÀÌmĨ«ĢVÄĠrU@jÒ*rÈ4Ĩ@#,SßÊöĕWĹBÍmö+ZēŀćTİ<©=ČġīDĸ,Þ¥mbä|+ß}Î2íĝ+{:¨ġęjĽġÁÀ¤¾¿ÀĳĢ¬ÀÒīªÀ[!!!Ê&qUÀdďEãïhUuAv¬Q7ÅG1åHĨ%ă÷Ò¼G­]¬ĦW90óĪ¦hJÔ&ÔÇ<C¢tĖÕł£Ĭòĭĥî·ēĤ2²ªÐv25ğÊĹ¡¶9hŃÿòłuiĄ´ħ3ÿĄ8ëúģÖÍ0DµľħõĺÔ·àN&ĊēĞý¦uł8Ò^6©ûæēË3ķÑě@Ä©uí¸ă&>Ðó[ĔĻõÕÔë¨ĕuěīýi¯sĘT°ôē¶:°T¾bčĩìĄĽÓÙĒSÍìÚ;_jÅĺÝo§´Ęæ!TîĖÐWT3věìĀÇ´/OdFþ&B×ġMZĊë¬0³{6õľoį÷NĲ¼R(!!!kĈĩDńńńń4!!!õ¬ĢŁĬ#V8JëPĻDýuãŁDĉ*¬ÑßĞĤÓm7_¤ĩÜäÏ°xĮ§$ÄĦ¤Ę]/3`ä7%bĢ>Ċ.ËÄB1NùĿĶĸñÖġ%°¨Ďhńńńńńńńń}Ĝ'ń$!!!ÁńhîĹµÏr%!!!Þ¤łĤ¿ĐWĖæA;ĳ(!!!ĄÀļěÎ:ńĄ3µï3/ÐÒ¦āf¬[jÅpZńńńńN¦Ĭuńńńń#!!!ŀ>ÇË$!!!ĄÀļě¯ĤhĆńńńńćĸ?Íńńńń#!!!ŀ>ÇË$!!!ĄÀļěçĢĬuńńńń?«êmńńńń#!!!ŀ>ÇË$!!!ĄÀļěĀ¤ü¸ńńńńÎöĴÎńńńń#!!!³ØÊ´$!!!ĄÀļěĳ%ĵĎńńńń")]
 public class ConfigUI : UIScene
 {
     public enum Configurator
@@ -201,7 +201,7 @@ public class ConfigUI : UIScene
     [DebuggerHidden]
     private IEnumerator ShowButtonGroupDalay()
     {
-        if (FF9StateSystem.VitaPlatform || FF9StateSystem.IOSPlatform)
+        if (FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
         {
             ButtonGroupState.RemoveCursorMemorize(CustomControllerGroupButton);
             ButtonGroupState.ActiveGroup = CustomControllerGroupButton;
@@ -447,7 +447,7 @@ public class ConfigUI : UIScene
         {
             return;
         }
-        if (FF9StateSystem.PCPlatform || FF9StateSystem.VitaPlatform || Application.isEditor)
+        if (FF9StateSystem.PCPlatform || FF9StateSystem.aaaaPlatform || Application.isEditor) // aaaa is Vita
         {
             CheckPCVitaJoystickKeys();
         }
@@ -577,6 +577,7 @@ public class ConfigUI : UIScene
         }
         ButtonGroupState.HelpEnabled = false;
         HelpDespLabelGameObject.SetActive(false);
+        NGUIText.ForceShowButton = true;
     }
 
     public override void Hide(SceneVoidDelegate afterFinished = null)
@@ -588,6 +589,7 @@ public class ConfigUI : UIScene
             PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
             RemoveCursorMemorize();
         }
+        NGUIText.ForceShowButton = false;
     }
 
     private void RemoveCursorMemorize()
@@ -792,7 +794,7 @@ public class ConfigUI : UIScene
         {
             FF9Sfx.FF9SFX_Play(101);
             SetControllerSettings();
-            if (FF9StateSystem.VitaPlatform || FF9StateSystem.IOSPlatform)
+            if (FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
             {
                 ButtonGroupState.ActiveGroup = ConfigGroupButton;
                 CloseCustomControllerPanel(ControllerType.Joystick);
@@ -1216,7 +1218,7 @@ public class ConfigUI : UIScene
     {
         ValidateKeyboard();
         ValidateController();
-        if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || FF9StateSystem.VitaPlatform || FF9StateSystem.IOSPlatform)
+        if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
         {
             currentControllerType = ControllerType.Joystick;
         }

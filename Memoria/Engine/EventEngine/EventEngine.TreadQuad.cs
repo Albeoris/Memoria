@@ -41,9 +41,14 @@ public partial class EventEngine
     {
         if (this.gMode != 1)
             return this.IsInQuad(quad, x, z);
-        int npcid = EMinigame.CreateNPCID(FF9StateSystem.Common.FF9.fldMapNo, quad.sid);
-        if (EventEngineUtils.QuadCircleData.ContainsKey(npcid))
-            return EventEngineUtils.QuadCircleData[npcid].IsCollisionEnter(x, z);
-        return this.IsInQuad(quad, x, z);
+        int npcid = EMinigame.CreateNPCID((int)FF9StateSystem.Common.FF9.fldMapNo, (int)quad.sid);
+        if (!EventEngineUtils.QuadCircleData.ContainsKey(npcid))
+            return this.IsInQuad(quad, x, z);
+        QuadCircle quadCircle = EventEngineUtils.QuadCircleData[npcid];
+        if (!quadCircle.UseOriginalArea)
+            return quadCircle.IsCollisionEnter(x, z);
+        if (!quadCircle.IsCollisionEnter(x, z))
+            return this.IsInQuad(quad, x, z);
+        return true;
     }
 }

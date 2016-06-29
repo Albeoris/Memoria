@@ -166,6 +166,7 @@ public class EBin
                                 else
                                 {
                                     bool flag = _eTb.MesWinActive(_a0);
+                                    //Log.Message($"Waiting: {flag}, a0: {_a0}");
                                     _a0 = 255;
                                     if (flag)
                                     {
