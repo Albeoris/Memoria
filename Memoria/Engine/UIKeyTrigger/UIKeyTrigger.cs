@@ -559,12 +559,14 @@ public class UIKeyTrigger : MonoBehaviour
     {
         if (activeButton == null)
             activeButton = UICamera.selectedObject;
+
         if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(0) || keyCommand == Control.Confirm)
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyConfirm(activeButton);
             if (PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() || !PersistenSingleton<UIManager>.Instance.Dialogs.CompletlyVisible)
                 return;
+
             triggleEventDialog = true;
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(1) || keyCommand == Control.Cancel)

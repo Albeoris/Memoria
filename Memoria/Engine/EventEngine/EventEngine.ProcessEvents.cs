@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FF9;
+using Memoria;
 using UnityEngine;
 
 public partial class EventEngine
