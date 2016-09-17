@@ -18,6 +18,7 @@ namespace Memoria
                 TextResourceExporter.ExportSafe();
                 GraphicResourceExporter.ExportSafe();
                 FieldSceneExporter.ExportSafe();
+                BattleSceneExporter.ExportSafe();
             }
             catch (Exception ex)
             {

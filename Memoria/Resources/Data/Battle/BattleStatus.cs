@@ -19,7 +19,7 @@ namespace Memoria
         Berserk = 1 << 11, //2048,
         Stop = 1 << 12, //4096,
         Reraise = 1 << 13, //8192,
-        Transform = 1 << 14, //16384,
+        Trans = 1 << 14, //16384,
         Defence = 1 << 15, //32768,
         Poison = 1 << 16, //65536,
         Sleep = 1 << 17, //131072,

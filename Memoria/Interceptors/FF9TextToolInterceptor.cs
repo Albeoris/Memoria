@@ -13,7 +13,7 @@ namespace Memoria
 
         public static IEnumerator InitializeFieldText()
         {
-            Log.Message(nameof(InitializeFieldText));
+            //Log.Message(nameof(InitializeFieldText));
             FieldImporter.InitializationTask?.WaitSafe();
             return InitializeFieldTextInternal().GetEnumerator();
         }

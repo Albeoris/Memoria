@@ -50,6 +50,7 @@ namespace Memoria
             public static Int32 TextFormat = 1;
             public static Boolean Graphics => Instance._export.Graphics.Value;
             public static Boolean Field => Instance._export.Field.Value;
+            public static Boolean Battle => Instance._export.Battle.Value;
         }
 
         public static class Fixes

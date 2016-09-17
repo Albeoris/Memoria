@@ -40,7 +40,7 @@ namespace Memoria.Patcher
                     }
 
 
-                    CopyData(gameLocation.StreamingAssetsPath);
+                    CopyExternalFiles(gameLocation.StreamingAssetsPath);
                     Patch(gameLocation.ManagedPathX64);
                     Patch(gameLocation.ManagedPathX86);
                 }
@@ -56,18 +56,44 @@ namespace Memoria.Patcher
             Console.ReadLine();
         }
 
+        private static void CopyExternalFiles(String targetDirectory)
+        {
+            if (!Directory.Exists(targetDirectory))
+                throw new DirectoryNotFoundException("StreamingAssets directory does not exist: " + targetDirectory);
+
+            CopyData(targetDirectory);
+            CopyScripts(targetDirectory);
+        }
+
         private static void CopyData(String targetDirectory)
         {
             String sourceDirectory = Path.GetFullPath("Data");
             if (!Directory.Exists(sourceDirectory))
                 throw new DirectoryNotFoundException("Data files was not found: " + sourceDirectory);
-            if (!Directory.Exists(targetDirectory))
-                throw new DirectoryNotFoundException("StreamingAssets directory does not exist: " + targetDirectory);
+
             targetDirectory = Path.Combine(targetDirectory, "Data");
 
             Console.WriteLine("Copy data files...");
+            CopyFiles(targetDirectory, sourceDirectory, "*.csv");
+            Console.WriteLine("Data files was copied!");
+        }
 
-            foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, "*.csv", SearchOption.AllDirectories))
+        private static void CopyScripts(String targetDirectory)
+        {
+            String sourceDirectory = Path.GetFullPath("Scripts");
+            if (!Directory.Exists(sourceDirectory))
+                throw new DirectoryNotFoundException("Script files was not found: " + sourceDirectory);
+
+            targetDirectory = Path.Combine(targetDirectory, "Scripts");
+
+            Console.WriteLine("Copy script files...");
+            CopyFiles(targetDirectory, sourceDirectory, "*.*");
+            Console.WriteLine("Script files was copied!");
+        }
+
+        private static void CopyFiles(String targetDirectory, String sourceDirectory, String extensions)
+        {
+            foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, extensions, SearchOption.AllDirectories))
             {
                 String targetFile = targetDirectory + sourceFile.Substring(sourceDirectory.Length);
                 if (File.Exists(targetFile))
@@ -80,8 +106,6 @@ namespace Memoria.Patcher
                 File.Copy(sourceFile, targetFile);
                 Console.WriteLine("Copied: " + targetFile);
             }
-
-            Console.WriteLine("Data files was copied!");
         }
 
         private static void Patch(String directory)

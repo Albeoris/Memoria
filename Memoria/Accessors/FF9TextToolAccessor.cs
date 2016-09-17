@@ -51,5 +51,20 @@ namespace Memoria
         {
             return Expressions.MakeStaticGetter<Int32>(Type.GetField(fieldName, SearchFlags));
         }
+
+        public static String ActionAbilityName(Int32 abilityId)
+        {
+            return FF9TextTool.ActionAbilityName(abilityId);
+        }
+
+        public static String SupportAbilityName(Int32 abilityId)
+        {
+            return FF9TextTool.SupportAbilityName(abilityId);
+        }
+
+        public static String ItemName(Int32 itemId)
+        {
+            return FF9TextTool.ItemName(itemId);
+        }
     }
 }

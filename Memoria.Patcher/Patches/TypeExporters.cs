@@ -59,6 +59,7 @@ namespace Memoria.Patcher
         private void InitializeVictimTypes()
         {
             _terminators.Add("rdata", null);
+            _terminators.Add("btl_calc", null);
 
             foreach (TypeDefinition type in _victimAssembly.MainModule.Types)
             {

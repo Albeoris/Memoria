@@ -615,7 +615,19 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._context.inited = (byte)this.gMode;
         this._context.lastmap = this.gMode != 1 ? (this.gMode != 3 ? (ushort)0 : (ushort)this._ff9.wldMapNo) : (ushort)this._ff9.fldMapNo;
         br.Close();
+
+        SpawnCustomChatacters();
+
         PersistenSingleton<CheatingManager>.Instance.ApplyDataWhenEventStart();
+    }
+
+    private void SpawnCustomChatacters()
+    {
+        CharacterBuilder builer = new CharacterBuilder(this);
+        if (_ff9.fldMapNo == 102)
+        {
+            builer.Spawn(new MyCharacter());
+        }
     }
 
     private void EnterBattleEnd()

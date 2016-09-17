@@ -203,11 +203,21 @@ namespace FF9
             return -1;
         }
 
+        public static bool FF9Abil_IsMaster(CharacterPresetId presetId, Int32 abilityId)
+        {
+            return FF9Abil_IsMaster((Int32)presetId, abilityId);
+        }
+
         public static bool FF9Abil_IsMaster(int slot_id, int abil_id)
         {
             int ap = FF9Abil_GetAp(slot_id, abil_id);
             int max = FF9Abil_GetMax(slot_id, abil_id);
             return ap >= 0 && max >= 0 && ap >= max;
+        }
+
+        public static bool FF9Abil_SetMaster(CharacterPresetId presetId, Int32 abilityId)
+        {
+            return FF9Abil_SetMaster((Int32)presetId, abilityId);
         }
 
         public static bool FF9Abil_SetMaster(int slot_id, int abil_id)

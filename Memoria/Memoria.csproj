@@ -60,9 +60,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\UnityEngine.dll</HintPath>
@@ -72,6 +69,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\EnumCache.cs" />
+    <Compile Include="Common\EnumFlags.cs" />
+    <Compile Include="Common\Json\JsonEncoder.cs" />
     <Compile Include="Common\TypeCache.cs" />
     <Compile Include="Common\Exceptions\AggregateException.cs" />
     <Compile Include="Common\Exceptions\ArgumentEmptyException.cs" />
@@ -98,9 +98,37 @@
     <Compile Include="Configuration\IniTryParseValue.cs" />
     <Compile Include="Configuration\IniValue.cs" />
     <Compile Include="Configuration\StringIniValue.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleCalcFlags.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleCalculator.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleCommand.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleScriptFactory.cs" />
+    <Compile Include="Engine\Battle\Calculator\CalcAttackBonus.cs" />
+    <Compile Include="Engine\Battle\Calculator\CalcCasterCommand.cs" />
+    <Compile Include="Engine\Battle\Calculator\CalcContext.cs" />
+    <Compile Include="Engine\Battle\Calculator\GameRandom.cs" />
+    <Compile Include="Engine\Battle\Calculator\MutableBattleCommand.cs" />
+    <Compile Include="Engine\Battle\Calculator\SBattleCalculator.cs" />
+    <Compile Include="Engine\Battle\btl_sys.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleCaster.cs" />
+    <Compile Include="Engine\Battle\Calculator\CalcFlag.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleTarget.cs" />
+    <Compile Include="Engine\Battle\Calculator\CalcTargetCommand.cs" />
+    <Compile Include="Engine\Battle\Calculator\BattleUnit.cs" />
+    <Compile Include="Engine\Battle\btl_stat.cs" />
+    <Compile Include="Engine\Battle\btl_para.cs" />
+    <Compile Include="Resources\Scripts\ScriptsLoader.cs" />
+    <Compile Include="Engine\Battle\Calculator\Weapon.cs" />
+    <Compile Include="Engine\Battle\Scripts\BattleScriptAttribute.cs" />
+    <Compile Include="Engine\Battle\Scripts\IBattleScript.cs" />
+    <Compile Include="Engine\Characters\ActorFlags.cs" />
+    <Compile Include="Engine\Characters\CharacterAnimation.cs" />
+    <Compile Include="Engine\Characters\ICharacterDescriptor.cs" />
+    <Compile Include="Engine\Characters\MyCharacter.cs" />
+    <Compile Include="Engine\Characters\ObjectFlags.cs" />
     <Compile Include="Engine\Data\ff9item.cs" />
     <Compile Include="Engine\Data\ff9abil.cs" />
     <Compile Include="Engine\Battle\BattleCommands.cs" />
+    <Compile Include="Engine\Characters\CharacterBuilder.cs" />
     <Compile Include="Engine\EventEngine\EventEngine.Constructor.cs" />
     <Compile Include="Engine\EventEngine\EventEngine.TreadQuad.cs" />
     <Compile Include="Engine\EventEngine\EventEngine.Static.cs" />
@@ -124,8 +152,22 @@
     <Compile Include="Engine\EventEngine\EventEngineUtils.cs" />
     <Compile Include="Engine\EventEngine\EventEngine.cs" />
     <Compile Include="Engine\Scenes\AbilityUI\AbilityUI.cs" />
+    <Compile Include="Engine\Scenes\NameSettingUI\NameSettingUI.cs" />
     <Compile Include="Engine\Scenes\StatusUI\StatusUI.cs" />
+    <Compile Include="Resources\Data\Battle\BattleAbilityId.cs" />
     <Compile Include="Resources\Data\Battle\BattleAtion.cs" />
+    <Compile Include="Resources\Data\Battle\BattleCommandId.cs" />
+    <Compile Include="Resources\Data\Battle\BattleMesages.cs" />
+    <Compile Include="Resources\Data\Battle\BattleStatusId.cs" />
+    <Compile Include="Resources\Data\Battle\EnemyCategory.cs" />
+    <Compile Include="Resources\Data\Battle\GemItem.cs" />
+    <Compile Include="Resources\Data\Battle\PlayerCategory.cs" />
+    <Compile Include="Resources\Data\Battle\SpecialEffect.cs" />
+    <Compile Include="Resources\Data\Battle\SupportAbility.cs" />
+    <Compile Include="Resources\Data\Battle\SupportAbility1.cs" />
+    <Compile Include="Resources\Data\Battle\SupportAbility2.cs" />
+    <Compile Include="Resources\Data\Battle\WeaponCategory.cs" />
+    <Compile Include="Resources\Data\Battle\WeaponItem.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterAbility.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterCommand.cs" />
     <Compile Include="Resources\Data\Charactes\CharacterCommandType.cs" />
@@ -170,6 +212,10 @@
     <Compile Include="Resources\Data\Battle\BattleStatus.cs" />
     <Compile Include="Resources\Data\Battle\TargetDisplay.cs" />
     <Compile Include="Resources\Data\Battle\TargetType.cs" />
+    <Compile Include="Resources\Grahpics\Export\Battle\ActionComparer.cs" />
+    <Compile Include="Resources\Grahpics\Export\Battle\BattleSceneExporter.cs" />
+    <Compile Include="Resources\Grahpics\Export\Battle\BtlRefEqualityComparer.cs" />
+    <Compile Include="Resources\Grahpics\Export\Battle\CmdInfoEqualityComparer.cs" />
     <Compile Include="Resources\Grahpics\Export\GraphicResourceExporter.cs" />
     <Compile Include="Resources\ResourceExporter.cs" />
     <Compile Include="Resources\ResourceImporter.cs" />
@@ -259,6 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\Memoria.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Characters\AnimationList.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

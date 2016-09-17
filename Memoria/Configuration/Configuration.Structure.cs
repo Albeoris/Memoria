@@ -148,6 +148,7 @@ namespace Memoria
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
             public readonly IniValue<Boolean> Graphics = IniValue.Boolean(nameof(Graphics));
             public readonly IniValue<Boolean> Field = IniValue.Boolean(nameof(Field));
+            public readonly IniValue<Boolean> Battle = IniValue.Boolean(nameof(Battle));
 
             public ExportSection() : base("Export")
             {
@@ -157,6 +158,7 @@ namespace Memoria
                 Text.Value = true;
                 Graphics.Value = true;
                 Field.Value = false;
+                Battle.Value = false;
             }
 
             internal override IEnumerable<IniValue> GetValues()
@@ -167,6 +169,7 @@ namespace Memoria
                 yield return Text;
                 yield return Graphics;
                 yield return Field;
+                yield return Battle;
             }
         }
 

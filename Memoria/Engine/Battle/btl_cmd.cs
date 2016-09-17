@@ -185,7 +185,7 @@ public class btl_cmd
                             {
                                 if ((int)num1 == 2)
                                 {
-                                    if (((int)btl.sa[1] & 536870912) != 0)
+                                    if (HasSupportAbility(btl, SupportAbility2.Mug))
                                         sub_no = 181U;
                                     cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
                                     break;
@@ -630,7 +630,7 @@ public class btl_cmd
     public static ushort CheckReflec(CMD_DATA cmd)
     {
         ushort num1 = 0;
-        if (cmd.cmd_no != 14 && cmd.cmd_no != 15 && (cmd.cmd_no != 51 && (cmd.aa.Category & 1) != 0) && ((int)cmd.regist.sa[0] & 1073741824) == 0)
+        if (cmd.cmd_no != 14 && cmd.cmd_no != 15 && (cmd.cmd_no != 51 && (cmd.aa.Category & 1) != 0) && !HasSupportAbility(cmd.regist, SupportAbility1.ReflectNull))
         {
             uint num2 = cmd.tar_id >= 16 ? 1U : 0U;
             ushort[] numArray = new ushort[4];
@@ -711,7 +711,7 @@ public class btl_cmd
             }
             if (battle.GARNET_DEPRESS_FLAG != 0 && btlData.bi.player != 0 && (btlData.bi.slot_no == 2 && cmd.cmd_no < 48) && Comn.random8() < 64)
             {
-                UIManager.Battle.SetBattleFollowMessage(27);
+                UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.DaggerCannotConcentrate);
                 return false;
             }
             if (!CheckMagicCondition(cmd))
@@ -736,25 +736,23 @@ public class btl_cmd
                 label_14:
                 if (ff9item.FF9Item_GetCount(cmd.sub_no) == 0)
                 {
-                    UIManager.Battle.SetBattleFollowMessage(24);
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughItems);
                     return false;
                 }
                 if (cmd.cmd_no == 51)
                 {
-                    UIManager.Battle.SetBattleFollowMessage(9);
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.AutoPotion);
                 }
                 break;
             case 16:
             case 18:
             case 20:
-                btl_calc.DecideSummonType(cmd);
+                DecideSummonType(cmd);
                 break;
             case 22:
             case 23:
                 if (cmd.sub_no == 46)
-                {
-                    btl_calc.DecideMeteor(cmd);
-                }
+                    DecideMeteor(cmd);
                 break;
             case 24:
                 if (cmd.sub_no == 82)
@@ -764,7 +762,7 @@ public class btl_cmd
                 }
                 if (cmd.sub_no == 93 && ff9item.FF9Item_GetCount(cmd.aa.Ref.power) < btl_util.SumOfTarget(1U))
                 {
-                    UIManager.Battle.SetBattleFollowMessage(24);
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughItems);
                     return false;
                 }
                 break;
@@ -775,7 +773,7 @@ public class btl_cmd
                     uint num3 = cmd.aa.Ref.power * (uint)btlData.level;
                     if (num3 > ff9StateGlobal.party.gil)
                     {
-                        UIManager.Battle.SetBattleFollowMessage(20);
+                        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughGil);
                         return false;
                     }
                     ff9StateGlobal.party.gil -= num3;
@@ -787,7 +785,7 @@ public class btl_cmd
                 }
                 break;
             case 31:
-                return btl_calc.DecideMagicSword(btlData, cmd.aa.MP);
+                return DecideMagicSword(btlData, cmd.aa.MP);
             default:
                 switch (num1)
                 {
@@ -797,31 +795,31 @@ public class btl_cmd
                             return false;
                         if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.category & 1) != 0)
                         {
-                            UIManager.Battle.SetBattleFollowMessage(23);
+                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                             return false;
                         }
                         if (cmd.cmd_no == 49)
                         {
-                            UIManager.Battle.SetBattleFollowMessage(7);
+                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
                         }
                         break;
                     case 50:
                         BTL_DATA btlDataPtr2;
                         if ((btlDataPtr2 = btl_scrp.GetBtlDataPtr(cmd.tar_id)) == null || btlDataPtr2.bi.target == 0 || Status.checkCurStat(btlDataPtr2, 256U))
                             return false;
-                        UIManager.Battle.SetBattleFollowMessage(8);
+                        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.ReturnMagic);
                         break;
                     case 51:
                         goto label_14;
                     case 52:
                         if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.category & 1) != 0)
                         {
-                            UIManager.Battle.SetBattleFollowMessage(23);
+                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                             return false;
                         }
                         if (cmd.cmd_no == 49)
                         {
-                            UIManager.Battle.SetBattleFollowMessage(7);
+                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
                         }
                         break;
                     case 56:
@@ -863,7 +861,7 @@ public class btl_cmd
                     case 59:
                         if (Status.checkCurStat(btlData, 16384U))
                         {
-                            UIManager.Battle.SetBattleFollowMessage(6);
+                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.Trance);
                             btlData.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(btlData) + 19);
                         }
                         else
@@ -896,7 +894,7 @@ public class btl_cmd
                             case 1:
                                 if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.category & 1) != 0 && cmd.tar_id > 15)
                                 {
-                                    UIManager.Battle.SetBattleFollowMessage(23);
+                                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                                     return false;
                                 }
                                 break;
@@ -916,7 +914,7 @@ public class btl_cmd
     {
         if (!Status.checkCurStat(cmd.regist, 8U) || (cmd.aa.Category & 2) == 0)
             return true;
-        UIManager.Battle.SetBattleFollowMessage(21);
+        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotCast);
         return false;
     }
 
@@ -984,9 +982,9 @@ public class btl_cmd
         short mp = cmd.aa.MP;
         if (battle.GARNET_SUMMON_FLAG != 0 && (cmd.aa.Type & 4) != 0)
             mp *= 4;
-        if (cmd.cmd_no == 50 || btl_calc.ConsumeMp(cmd.regist, mp))
+        if (cmd.cmd_no == 50 || ConsumeMp(cmd.regist, mp))
             return true;
-        UIManager.Battle.SetBattleFollowMessage(22);
+        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughMp);
         return false;
     }
 
@@ -1249,11 +1247,11 @@ public class btl_cmd
                 case 14:
                     label_8:
                     UIManager.Battle.ItemUse(curCmdPtr.sub_no);
-                    btl_calc.CalcMain(caster, target, curCmdPtr, ff9item._FF9Item_Info[btl_util.btlItemNum(curCmdPtr.sub_no)].Ref.prog_no);
+                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), ff9item._FF9Item_Info[btl_util.btlItemNum(curCmdPtr.sub_no)].Ref.prog_no);
                     break;
                 case 15:
                     UIManager.Battle.ItemUse(curCmdPtr.sub_no);
-                    btl_calc.CalcMain(caster, target, curCmdPtr, curCmdPtr.aa.Ref.prog_no);
+                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.prog_no);
                     break;
                 default:
                     switch (num)
@@ -1261,7 +1259,7 @@ public class btl_cmd
                         case 49:
                         case 52:
                             label_6:
-                            btl_calc.CalcMain(caster, target, curCmdPtr, caster.weapon.Ref.prog_no);
+                            SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), caster.weapon.Ref.prog_no);
                             return;
                         case 51:
                             goto label_8;
@@ -1288,10 +1286,10 @@ public class btl_cmd
                                                 KillAllCommand(btlsys);
                                             }
                                         }
-                                        btl_calc.CalcMain(caster, target, curCmdPtr, curCmdPtr.aa.Ref.prog_no);
+                                        SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.prog_no);
                                         return;
                                     }
-                                    btl_calc.CalcMain(caster, target, curCmdPtr, curCmdPtr.aa.Ref.prog_no);
+                                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.prog_no);
                                     return;
                             }
                     }
@@ -1308,4 +1306,98 @@ public class btl_cmd
         float num = (float)((((btlsys.btl_cnt & 15) << 8) + 1265) % 4096 / 4096.0 * 360.0);
         gameObject.transform.localRotation = Quaternion.Euler(eulerAngles.x, -num, eulerAngles.z);
     }
+
+    private static void DecideSummonType(CMD_DATA cmd)
+    {
+        AchievementState achievement = FF9StateSystem.Achievement;
+        if (cmd.sub_no == 49 && !achievement.summon_shiva ||
+            cmd.sub_no == 51 && !achievement.summon_ifrit ||
+            cmd.sub_no == 53 && !achievement.summon_ramuh ||
+            cmd.sub_no == 55 && !achievement.summon_atomos ||
+            cmd.sub_no == 58 && !achievement.summon_odin ||
+            cmd.sub_no == 60 && !achievement.summon_leviathan ||
+            cmd.sub_no == 62 && !achievement.summon_bahamut ||
+            cmd.sub_no == 64 && !achievement.summon_arc ||
+            cmd.sub_no == 68 && !achievement.summon_carbuncle_haste ||
+            cmd.sub_no == 69 && !achievement.summon_carbuncle_protect ||
+            cmd.sub_no == 70 && !achievement.summon_carbuncle_reflector ||
+            cmd.sub_no == 71 && !achievement.summon_carbuncle_shell ||
+            cmd.sub_no == 66 && !achievement.summon_fenrir_earth ||
+            cmd.sub_no == 67 && achievement.summon_fenrir_wind ||
+            cmd.sub_no == 72 && !achievement.summon_phoenix ||
+            cmd.sub_no == 74 && !achievement.summon_madeen ||
+            HasSupportAbility(cmd.regist, SupportAbility2.Boost))
+            return;
+
+        if (cmd.regist.cur.mp > cmd.aa.MP * 2)
+        {
+            if (Comn.random8() >= 230)
+                return;
+            cmd.info.short_summon = 1;
+        }
+        else
+        {
+            if (Comn.random8() >= 170)
+                return;
+            cmd.info.short_summon = 1;
+        }
+    }
+
+    private static bool DecideMagicSword(BTL_DATA steiner, short mp)
+    {
+        if (steiner.cur.mp >= mp)
+        {
+            for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+            {
+                if (btl_util.getSerialNumber(next) == 2)
+                {
+                    if (!Status.checkCurStat(next, 318905611U) && !Status.checkCurStat(steiner, 318905611U))
+                        return true;
+                    break;
+                }
+            }
+        }
+        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CombinationFailed);
+        return false;
+    }
+
+    private static void DecideMeteor(CMD_DATA cmd)
+    {
+        if (cmd.regist.level / 2 + cmd.regist.elem.wpr >= Comn.random16() % 100)
+            return;
+        cmd.info.meteor_miss = 1;
+    }
+
+    private static bool ConsumeMp(BTL_DATA btl, short mp)
+    {
+        if (btl == null)
+            return false;
+
+        BattleUnit unit = new BattleUnit(btl);
+        if (unit.HasSupportAbility(SupportAbility2.HalfMP))
+            mp /= 2;
+
+        if (unit.CurrentMp < mp)
+            return false;
+
+        if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
+            btl.cur.mp -= mp;
+
+        return true;
+    }
+
+    #region Memoria
+
+    public static Boolean HasSupportAbility(BTL_DATA btl, SupportAbility1 ability)
+    {
+        return (btl.sa[0] & (uint)ability) != 0;
+    }
+
+    public static Boolean HasSupportAbility(BTL_DATA btl, SupportAbility2 ability)
+    {
+        return (btl.sa[1] & (uint)ability) != 0;
+    }
+
+    #endregion
+
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -52,7 +53,7 @@ public partial class EventEngine
                     sid1 = (int)this._context.partyUID[sid1 - 251];
                 Actor actor2 = new Actor(sid1, uid1, EventEngine.sizeOfActor);
                 if (this.gMode == 3)
-                    Singleton<WMWorld>.Instance.addWMActorOnly(actor2);
+                    Singleton<WMWorld>.Instance.addWMActorOnly((Actor)actor2);
                 if (this.gMode == 1)
                     this.turnOffTriManually(sid1);
                 this.gArgUsed = 1;
@@ -154,7 +155,7 @@ public partial class EventEngine
                     FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
                     if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
                     {
-                        component.walkMesh.BGI_charSetActive(component, 1U);
+                       component.walkMesh.BGI_charSetActive(component, 1U);
                         if ((int)FF9StateSystem.Common.FF9.fldMapNo == 2050 && (int)po.sid == 5)
                             component.walkMesh.BGI_charSetActive(component, 0U);
                         else if ((int)FF9StateSystem.Common.FF9.fldMapNo == 2917 && (int)po.sid == 4)
@@ -591,12 +592,13 @@ public partial class EventEngine
                 }
                 return 0;
             case EBin.event_code_binary.MODEL:
-                po.model = (ushort)this.getv2();
+                po.model = (ushort)this.getv2();                
                 this.gExec.flags |= (byte)1;
                 po.eye = (short)(-4 * this.getv1());
                 if (this.gMode == 1)
                 {
                     string str = FF9BattleDB.GEO[(int)po.model];
+
                     po.go = ModelFactory.CreateModel(str, false);
                     GeoTexAnim.addTexAnim(po.go, str);
                     if (ModelFactory.garnetShortHairTable.Contains(str))
@@ -605,29 +607,22 @@ public partial class EventEngine
                         ushort uint16 = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
                         po.shortHair = (int)uint16 >= 10300;
                     }
-                    if ((UnityEngine.Object)po.go != (UnityEngine.Object)null)
+                    if (po.go != (UnityEngine.Object)null)
                     {
                         int length = 0;
-                        IEnumerator enumerator = po.go.transform.GetEnumerator();
-                        try
+                        foreach (UnityEngine.Object child in po.go.transform)
                         {
-                            while (enumerator.MoveNext())
-                            {
-                                if (((UnityEngine.Object)enumerator.Current).name.Contains("mesh"))
-                                    ++length;
-                            }
+                            if (child.name.Contains("mesh"))
+                                ++length;
                         }
-                        finally
-                        {
-                            IDisposable disposable = enumerator as IDisposable;
-                            if (disposable != null)
-                                disposable.Dispose();
-                        }
+
                         if (po.garnet)
                             ++length;
+
                         po.meshIsRendering = new bool[length];
                         for (int index4 = 0; index4 < length; ++index4)
                             po.meshIsRendering[index4] = true;
+
                         FF9Char ff9Char = new FF9Char();
                         ff9Char.geo = po.go;
                         ff9Char.evt = po;
@@ -2277,7 +2272,7 @@ public partial class EventEngine
         instance.attr |= 8U;
     }
 
-    private void SetActorPosition(PosObj po, float x, float y, float z)
+    internal void SetActorPosition(PosObj po, float x, float y, float z)
     {
         po.pos[0] = po.lastx = x;
         po.pos[1] = po.lasty = y;

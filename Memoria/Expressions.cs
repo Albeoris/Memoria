@@ -41,5 +41,19 @@ namespace Memoria
 
             return (Func<T1, T2, TResult>)dm.CreateDelegate(typeof(Func<T1, T2, TResult>));
         }
+
+        public static DynamicMethod MakeConstructor<T1>(Type type, ConstructorInfo constructor)
+        {
+            DynamicMethod dm = new DynamicMethod(constructor.Name + "_publicConstructor", type, new[] {typeof(T1)}, type);
+            ILGenerator cg = dm.GetILGenerator();
+
+            cg.Emit(OpCodes.Ldarg, 0);
+            cg.Emit(OpCodes.Newobj, constructor);
+            cg.Emit(OpCodes.Ret);
+
+            return dm;
+
+            //return (Func<T1, TResult>)dm.CreateDelegate(typeof(Func<T1, TResult>));
+        }
     }
 }

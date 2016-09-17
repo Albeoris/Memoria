@@ -54,7 +54,7 @@ public class EBin
     private static int _s2;
     private static int _s3;
     private static int _s5;
-    private static int _s6;
+    private static int _nextCodeIndex;
     private static CalcStack _s4;
     private static CalcStack _s7;
     private static CalcStack _tempS4;
@@ -69,7 +69,7 @@ public class EBin
     private byte[] _instance;
     private int _instanceVOfs;
     private bool _exprLoop;
-    private bool _loop1Loop;
+    private bool _objectExists;
     private bool _nextLoop;
     private byte[] _ratanTbl;
 
@@ -105,106 +105,100 @@ public class EBin
     public int ProcessCode(ObjList objList)
     {
         int result = -1;
-        _loop1Loop = true;
+        _objectExists = true;
         s0 = objList;
         next1();
-        while (_loop1Loop)
+        while (_objectExists)
         {
             s1 = s0.obj;
             _a1 = s1.state;
-            _a0 = EventEngine.stateNew;
-            if (_a1 == _a0)
+            if (_a1 == EventEngine.stateNew)
             {
-                _a0 = EventEngine.stateSuspend;
                 _a0 = EventEngine.stateInit;
                 s1.state = (byte)_a0;
                 next0();
+                continue;
             }
-            else
+
+            _a0 = EventEngine.stateSuspend;
+            _s2 = 0;
+            if (_a1 == _a0)
             {
-                _a0 = EventEngine.stateSuspend;
-                _s2 = 0;
-                if (_a1 == _a0)
+                next0();
+                continue;
+            }
+
+            _nextCodeIndex = s1.ip;
+            _a0 = s1.wait;
+            if (_nextCodeIndex == _eventEngine.nil)
+            {
+                next0();
+                continue;
+            }
+
+            _a2 = 1;
+            if (_a0 != 0)
+            {
+                _a1 = 255;
+                if (_a0 != 254)
                 {
-                    next0();
-                }
-                else
-                {
-                    _s6 = s1.ip;
-                    _a0 = s1.wait;
-                    if (_s6 == _eventEngine.nil)
+                    if (_a0 == _a1)
                     {
                         next0();
                     }
                     else
                     {
-                        _a2 = 1;
-                        if (_a0 != 0)
+                        _a0 = s1.wait;
+                        _a0--;
+                        s1.wait = (byte)_a0;
+                        next0();
+                    }
+                }
+                else
+                {
+                    _a0 = s1.winnum;
+                    if (_a0 == 255)
+                    {
+                        ad4();
+                    }
+                    else
+                    {
+                        bool flag = _eTb.MesWinActive(_a0);
+                        _a0 = 255;
+                        if (flag)
                         {
-                            _a1 = 255;
-                            if (_a0 != 254)
-                            {
-                                if (_a0 == _a1)
-                                {
-                                    next0();
-                                }
-                                else
-                                {
-                                    _a0 = s1.wait;
-                                    _a0--;
-                                    s1.wait = (byte)_a0;
-                                    next0();
-                                }
-                            }
-                            else
-                            {
-                                _a0 = s1.winnum;
-                                if (_a0 == 255)
-                                {
-                                    ad4();
-                                }
-                                else
-                                {
-                                    bool flag = _eTb.MesWinActive(_a0);
-                                    _a0 = 255;
-                                    if (flag)
-                                    {
-                                        next0();
-                                    }
-                                    else
-                                    {
-                                        s1.winnum = (byte)_a0;
-                                        ad4();
-                                    }
-                                }
-                            }
+                            next0();
                         }
                         else
                         {
-                            _a1 = s1.vofs;
-                            _eventEngine.gExec = s1;
-                            _a1 <<= 2;
-                            _a0 = s1.cid;
-                            _instance = s1.buffer;
-                            _instanceVOfs = _a1;
-                            objV0 = s1;
-                            _v0 = s1.ip;
-                            if (_a0 != _a2)
-                            {
-                                result = ad3(_a0);
-                            }
-                            else
-                            {
-                                _a0 = s1.uid;
-                                _a0 -= 64;
-                                objV0 = _eventEngine.FindObjByUID(_a0);
-                                result = ad3(_a0);
-                            }
-                            objV0 = null;
+                            s1.winnum = (byte)_a0;
+                            ad4();
                         }
                     }
                 }
+                continue;
             }
+
+            _a1 = s1.vofs;
+            _eventEngine.gExec = s1;
+            _a1 <<= 2;
+            _a0 = s1.cid;
+            _instance = s1.buffer;
+            _instanceVOfs = _a1;
+            objV0 = s1;
+            _v0 = s1.ip;
+            if (_a0 != _a2)
+            {
+                result = ad3(_a0);
+            }
+            else
+            {
+                _a0 = s1.uid;
+                _a0 -= 64;
+                objV0 = _eventEngine.FindObjByUID(_a0);
+                result = ad3(_a0);
+            }
+            objV0 = null;
         }
         return result;
     }
@@ -212,7 +206,7 @@ public class EBin
     private void adFin()
     {
         _nextLoop = false;
-        _loop1Loop = false;
+        _objectExists = false;
     }
 
     public int ad3(int arg0)
@@ -340,9 +334,6 @@ public class EBin
         {
             getVarManually(6357);
             s0 = s0.next;
-            if (s0 != null)
-            {
-            }
         }
         next1();
     }
@@ -357,7 +348,7 @@ public class EBin
         else
         {
             _nextLoop = false;
-            _loop1Loop = false;
+            _objectExists = false;
         }
     }
 
@@ -1256,7 +1247,7 @@ public class EBin
             }
             else
             {
-                _a0 = _s6 + _v0;
+                _a0 = _nextCodeIndex + _v0;
                 _a1 = s1.getByteIP(_v0 + 5);
                 _a2 = s1.getByteIP(_v0 + 6);
                 s1.ip += _a1;
@@ -1286,12 +1277,12 @@ public class EBin
         _v0 = _eventEngine.DoEventCode();
         _s2 = _v0;
         _a0 = _eventEngine.gArgUsed;
-        _s6 = s1.ip;
+        _nextCodeIndex = s1.ip;
         s1.ip = ip;
         _a0 = ((0 >= _a0) ? 0 : 1);
         _a0 ^= 1;
-        _s6 -= _a0;
-        s1.ip = _s6;
+        _nextCodeIndex -= _a0;
+        s1.ip = _nextCodeIndex;
         return 0;
     }
 
@@ -1434,95 +1425,30 @@ public class EBin
 
     public float angleAsm(float deltaX, float deltaZ)
     {
-        int num = (int)deltaX;
+        int num1 = (int)deltaX;
         int num2 = (int)deltaZ;
-        if (num == 0 && num2 == 0)
-        {
-            return 0f;
-        }
+        if (num1 == 0 && num2 == 0)
+            return 0.0f;
         int num3 = num2 << 10;
-        int num4 = num << 10;
+        int num4 = num1 << 10;
+        int num5;
         if (num2 >= 0)
         {
-            int num5 = num - num2;
-            if (num < 0)
-            {
-                num5 = 0 - num;
-                num5 -= num2;
-                if (num5 >= 0)
-                {
-                    num = num3 / num;
-                    num3 = 1024;
-                    num <<= 1;
-                    num = GetUShortFromATanTable(-num);
-                    num4 = num3 + num;
-                }
-                else
-                {
-                    num = num4 / num2;
-                    num3 = 2048;
-                    num <<= 1;
-                    num = GetUShortFromATanTable(-num);
-                    num4 = num3 - num;
-                }
-            }
-            else if (num5 < 0)
-            {
-                num = num4 / num2;
-                num3 = -2048;
-                num <<= 1;
-                num = GetUShortFromATanTable(num);
-                num4 = num3 + num;
-            }
-            else
-            {
-                num = num3 / num;
-                num3 = -1024;
-                num <<= 1;
-                num = GetUShortFromATanTable(num);
-                num4 = num3 - num;
-            }
+            int num6 = num1 - num2;
+            num5 = num1 >= 0 ? (num6 >= 0 ? -1024 - (int)this.GetUShortFromATanTable(num3 / num1 << 1) : (int)this.GetUShortFromATanTable(num4 / num2 << 1) - 2048) : (-num1 - num2 < 0 ? 2048 - (int)this.GetUShortFromATanTable(-(num4 / num2 << 1)) : 1024 + (int)this.GetUShortFromATanTable(-(num3 / num1 << 1)));
         }
         else
         {
-            int num5 = num - num2;
-            if (num >= 0)
+            int num6 = num1 - num2;
+            if (num1 >= 0)
             {
-                num5 = 0 - num2;
-                num5 = num - num5;
-                if (num5 >= 0)
-                {
-                    num = num3 / num;
-                    num3 = -1024;
-                    num <<= 1;
-                    num = GetUShortFromATanTable(-num);
-                    num4 = num3 + num;
-                }
-                else
-                {
-                    num = num4 / num2;
-                    num3 = 0;
-                    num <<= 1;
-                    num = GetUShortFromATanTable(-num);
-                    num4 = num3 - num;
-                }
-            }
-            else if (num5 >= 0)
-            {
-                num = num4 / num2;
-                num <<= 1;
-                num4 = GetUShortFromATanTable(num);
+                int num7 = -num2;
+                num5 = num1 - num7 < 0 ? -this.GetUShortFromATanTable(-(num4 / num2 << 1)) : (int)this.GetUShortFromATanTable(-(num3 / num1 << 1)) - 1024;
             }
             else
-            {
-                num = num3 / num;
-                num3 = 1024;
-                num <<= 1;
-                num = GetUShortFromATanTable(num);
-                num4 = num3 - num;
-            }
+                num5 = num6 < 0 ? 1024 - (int)this.GetUShortFromATanTable(num3 / num1 << 1) : (int)this.GetUShortFromATanTable(num4 / num2 << 1);
         }
-        return ConvertFixedPointAngleToDegree((short)num4);
+        return EventEngineUtils.ConvertFixedPointAngleToDegree((short)num5);
     }
 
     private static float ConvertFixedPointAngleToDegree(short fixedPointAngle)
@@ -1832,7 +1758,7 @@ public class EBin
 
     public void SetVariableSpec(ref int arg0)
     {
-        _s6 = s1.getByteIP();
+        _nextCodeIndex = s1.getByteIP();
         arg0 = s1.getByteIP();
     }
 
@@ -1840,13 +1766,13 @@ public class EBin
     {
         Obj obj = s1;
         int num = _s3;
-        int num2 = _s6;
+        int num2 = _nextCodeIndex;
         CalcStack calcStack = _s7;
         s1 = _eventEngine.gExec;
         expr();
         s1 = obj;
         _s3 = num;
-        _s6 = num2;
+        _nextCodeIndex = num2;
         _s7 = calcStack;
         return 0;
     }
