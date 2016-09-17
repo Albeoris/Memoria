@@ -55,12 +55,13 @@ Final Fantasy IX tools
 
 
 # Scripting (for modmakers)
-Now you can change mechanics of battle actions. In the future I will add more scriptable entries.
 1. Make a copy of an existing item from the "StreamingAssets\Scripts" folder.
 2. Add the "using Memoria;" and change a namespace to your own.
 3. To make some changes.
 4. Run Memoria.Compiler.exe from the "Compiler".
 5. Run the game, test all of you can and see Memoria.log and output_log.txt for errors.
+
+Now you can change mechanics of battle actions. In the future I will add more scriptable entries.
 Also you can use a Visual Studio project from the "Project" folder. It will load every .cs file from the "Sources\Battle" folder.
 Be careful - future updates could remove your changes. To make your own copies if it possible.
 https://www.youtube.com/watch?v=cU4T3GSIjxs
