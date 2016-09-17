@@ -30,7 +30,8 @@ Final Fantasy IX tools
 4. If you not see "Memoria.log" try to run game with administrator rights
 5. If you see "Sharing violation on path" then close applications that hold this file
 6. If you see "at Memoria.CsvReader.Read" then fix files in the StreamingAssets\Data directory or delete them and patch again.
-7. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
+7. If you see "at Memoria.ScriptsLoader.Initialize" then fix files in the StreamingAssets\Scripts directory or delete them and patch again.
+8. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
 
 # Features:
@@ -38,11 +39,12 @@ Final Fantasy IX tools
 2. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
 3. Save/Load anywhere (Alt+F5, Alt+F9) 
 4. Edit game data (look at the "StreamingAssets\Data" folder)
-5. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-6. Easy rope jumping
-7. Change the game font
-8. Export text resources and field backgrounds
-9. Import text resources
+5. Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
+6. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
+7. Easy rope jumping
+8. Change the game font
+9. Export text resources and field backgrounds
+10. Import text resources
 
 
 # Configuration:
@@ -50,6 +52,18 @@ Final Fantasy IX tools
 2. Change "Enabled" value from "0" to "1" for what you need
 3. Specify other params.
 4. Save your edits and try run the game.
+
+
+# Scripting (for modmakers)
+Now you can change mechanics of battle actions. In the future I will add more scriptable entries.
+1. Make a copy of an existing item from the "StreamingAssets\Scripts" folder.
+2. Add the "using Memoria;" and change a namespace to your own.
+3. To make some changes.
+4. Run Memoria.Compiler.exe from the "Compiler".
+5. Run the game, test all of you can and see Memoria.log and output_log.txt for errors.
+Also you can use a Visual Studio project from the "Project" folder. It will load every .cs file from the "Sources\Battle" folder.
+Be careful - future updates could remove your changes. To make your own copies if it possible.
+https://www.youtube.com/watch?v=cU4T3GSIjxs
 
 
 # Exported types (for developers)
