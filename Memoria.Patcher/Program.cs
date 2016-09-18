@@ -19,7 +19,6 @@ namespace Memoria.Patcher
             return new PatchCollection<TypePatch>(
                 new TypePatch[]
                 {
-                    new TitleUIPatch(),
                     new DefaultFontPatch(),
                     new FF9TextToolPatch()
                 });
@@ -38,7 +37,6 @@ namespace Memoria.Patcher
                         Console.ReadLine();
                         Environment.Exit(1);
                     }
-
 
                     CopyExternalFiles(gameLocation.StreamingAssetsPath);
                     Patch(gameLocation.ManagedPathX64);

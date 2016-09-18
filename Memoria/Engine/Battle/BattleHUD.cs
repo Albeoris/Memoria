@@ -2,11 +2,8 @@
 using FF9;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Memoria;
 using UnityEngine;
 
@@ -642,7 +639,6 @@ public class BattleHUD : UIScene
     public void SetBattleCommandTitle(CMD_DATA pCmd)
     {
         string str1 = string.Empty;
-        string str2 = Localization.GetSymbol() != "JP" ? " " : string.Empty;
         switch (pCmd.cmd_no)
         {
             case 14:
@@ -658,8 +654,8 @@ public class BattleHUD : UIScene
                     int id = CmdTitleTable[pCmd.sub_no];
                     switch (id)
                     {
-                        case 254:
-                            str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no) + str2 + FF9TextTool.BattleCommandTitleText(0);
+                        case 254: // Magic sword
+                            str1 = FormatMagicSwordAbility(pCmd);
                             break;
                         case byte.MaxValue:
                             str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no);
@@ -678,6 +674,44 @@ public class BattleHUD : UIScene
             return;
 
         SetBattleTitle(str1, 1);
+    }
+
+    private static string FormatMagicSwordAbility(CMD_DATA pCmd)
+    {
+        // TODO: Move it to an external file
+        String abilityName = FF9TextTool.ActionAbilityName(pCmd.sub_no);
+        switch (abilityName)
+        {
+            case "Огонь":
+                return "Огненный клинок";
+            case "Огонь II":
+                return "Огненный клинок II";
+            case "Огонь III":
+                return "Огненный клинок III";
+            case "Буран":
+                return "Ледяной клинок";
+            case "Буран II":
+                return "Ледяной клинок II";
+            case "Буран III":
+                return "Ледяной клинок III";
+            case "Молния":
+                return "Электрический клинок";
+            case "Молния II":
+                return "Электрический клинок II";
+            case "Молния III":
+                return "Электрический клинок III";
+            case "Био":
+                return "Ядовитый клинок";
+            case "Вода":
+                return "Водный клинок";
+            case "Взрыв":
+                return "Взрывной клинок";
+            case "Судный день":
+                return "Клинок Судного дня";
+        }
+
+        String str2 = Localization.GetSymbol() == "JP" ? String.Empty : " ";
+        return abilityName + str2 + FF9TextTool.BattleCommandTitleText(0);
     }
 
     public string BtlGetAttrName(int pAttr)

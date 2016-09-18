@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
         {
             if (!_v.Target.CanBeRevived())
                 return;
-
+            
             if (_v.Target.IsZombie)
             {
                 if ((_v.Target.CurrentHp = (UInt16)(GameRandom.Next8() % 10)) == 0)

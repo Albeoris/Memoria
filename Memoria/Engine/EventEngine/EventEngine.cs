@@ -420,12 +420,12 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void printEObj()
     {
-        if (this._context.activeObj.next == null)
-            Debug.Log("E.activeObj.next == null");
-        else
-            Debug.Log("E.activeObj.next.obj.uid = " + (object)this._context.activeObj.next.obj.uid);
-
-        Debug.Log(this._context.freeObj == null ? "E.freeObj == null" : "E.freeObj is NOT null");
+        //if (this._context.activeObj.next == null)
+        //    Debug.Log("E.activeObj.next == null");
+        //else
+        //    Debug.Log("E.activeObj.next.obj.uid = " + (object)this._context.activeObj.next.obj.uid);
+        //
+        //Debug.Log(this._context.freeObj == null ? "E.freeObj == null" : "E.freeObj is NOT null");
     }
 
     public void stay()
@@ -500,7 +500,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public void StartEvents(byte[] ebFileData)
     {
         EventEngine.resyncBGMSignal = 0;
-        Debug.Log("Reset resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal);
+        //Debug.Log("Reset resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal);
         this._ff9 = FF9StateSystem.Common.FF9;
         this._ff9.charArray.Clear();
         this._ff9Sys = PersistenSingleton<FF9StateSystem>.Instance;

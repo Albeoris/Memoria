@@ -212,7 +212,7 @@ namespace Memoria
 
         public Boolean CanBeRevived()
         {
-            if (!IsUnderStatus(BattleStatus.Stone | BattleStatus.Disable | BattleStatus.Zombie))
+            if (IsUnderStatus(BattleStatus.Stone | BattleStatus.Disable | BattleStatus.Zombie))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;

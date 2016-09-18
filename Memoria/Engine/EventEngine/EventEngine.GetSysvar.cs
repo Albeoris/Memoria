@@ -75,7 +75,7 @@ public partial class EventEngine
                 break;
             case 19:
                 num = FF9StateSystem.MiniGame.GetNumberOfCards();
-                Debug.Log((object)("num of cards = " + (object)num));
+                //Debug.Log((object)("num of cards = " + (object)num));
                 break;
             case 20:
                 num = Convert.ToInt32(FF9StateSystem.Settings.time);

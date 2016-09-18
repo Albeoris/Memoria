@@ -53,7 +53,7 @@ public partial class EventEngine
                     }
                     else
                     {
-                        Debug.Log((object)("o.uid = " + (object)objUid.uid + ", o.sid = " + (object)objUid.sid));
+                        //Debug.Log((object)("o.uid = " + (object)objUid.uid + ", o.sid = " + (object)objUid.sid));
                         objUid.go.name = "obj" + (object)current;
                     }
                     FF9Char ff9Char = new FF9Char();

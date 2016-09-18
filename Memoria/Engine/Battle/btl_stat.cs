@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using FF9;
 using Memoria;
 
@@ -422,77 +423,100 @@ public class btl_stat
         return ((int)btl.stat.permanent & (int)status) != 0 || ((int)btl.stat.cur & (int)status) != 0;
     }
 
-    public static void CheckStatusLoop(BTL_DATA btl)
+    public static void CheckStatusLoop(BTL_DATA btl, Boolean ignoreAtb)
+    {
+        CheckStatuses(btl, ignoreAtb);
+        RotateAfterCheckStatusLoop(btl);
+    }
+
+    private static void CheckStatuses(BTL_DATA btl, Boolean ignoreAtb)
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         STAT_INFO stat = btl.stat;
         SetStatusVfx(btl);
-        if (Status.checkCurStat(btl, 256U))
-            btl_mot.DieSequence(btl);
-        else if (!Status.checkCurStat(btl, 1U))
+
+        BattleUnit unit = new BattleUnit(btl);
+        if (unit.IsUnderStatus(BattleStatus.Disable))
         {
-            if (!Status.checkCurStat(btl, 1073746177U))
-                btl.bi.atb = 1;
-            if (UIManager.Battle.FF9BMenu_IsEnableAtb())
-            {
-                if (btl.bi.atb != 0)
-                {
-                    if (Status.checkCurStat(btl, 2U))
-                    {
-                        if (stat.cnt.opr[0] <= 0)
-                        {
-                            SetOprStatusCount(btl, 1U);
-                            btl_para.SetPoisonDamage(btl);
-                            btl_para.SetPoisonMpDamage(btl);
-                            btl2d.Btl2dStatReq(btl);
-                        }
-                        else
-                            stat.cnt.opr[0] -= btl.cur.at_coef;
-                    }
-                    if (Status.checkCurStat(btl, 65536U))
-                    {
-                        if (stat.cnt.opr[1] <= 0)
-                        {
-                            SetOprStatusCount(btl, 16U);
-                            btl_para.SetPoisonDamage(btl);
-                            btl2d.Btl2dStatReq(btl);
-                        }
-                        else
-                            stat.cnt.opr[1] -= btl.cur.at_coef;
-                    }
-                    if (CheckStatus(btl, 262144U))
-                    {
-                        if (stat.cnt.opr[2] <= 0)
-                        {
-                            SetOprStatusCount(btl, 18U);
-                            btl_para.SetRegeneRecover(btl);
-                            btl2d.Btl2dStatReq(btl);
-                        }
-                        else
-                            stat.cnt.opr[2] -= btl.cur.at_coef;
-                    }
-                    if (Status.checkCurStat(btl, 16384U) && btl.bi.slot_no == 2 && ((ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0))
-                    {
-                        if (ff9Battle.phantom_cnt <= 0)
-                        {
-                            btl_cmd.SetCommand(btl.cmd[3], 57U, ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
-                            ff9Battle.cmd_status |= 8;
-                        }
-                        else
-                            ff9Battle.phantom_cnt -= btl.cur.at_coef;
-                    }
-                    ActiveTimeStatus(btl);
-                }
-                else if (Status.checkCurStat(btl, 1073741824U) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
-                {
-                    if (btl.cmd[3].cmd_no == 3)
-                        btl_cmd.SetCounter(btl, 10U, 185, btl.cmd[3].tar_id);
-                    else
-                        btl_cmd.SetCounter(btl, 11U, 186, btl.cmd[3].tar_id);
-                }
-            }
+            btl_mot.DieSequence(btl);
+            return;
         }
 
+        if (unit.IsUnderStatus(BattleStatus.Stone))
+            return;
+
+        if (!unit.IsUnderStatus(BattleStatus.Stop | BattleStatus.Jump))
+            btl.bi.atb = 1;
+
+        if (!ignoreAtb && !UIManager.Battle.FF9BMenu_IsEnableAtb())
+            return;
+
+        if (btl.bi.atb == 0)
+        {
+            if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
+            {
+                if (btl.cmd[3].cmd_no == 3)
+                    btl_cmd.SetCounter(btl, 10U, 185, btl.cmd[3].tar_id);
+                else
+                    btl_cmd.SetCounter(btl, 11U, 186, btl.cmd[3].tar_id);
+            }
+
+            return;
+        }
+
+        if (unit.IsUnderStatus(BattleStatus.Poison2))
+        {
+            if (stat.cnt.opr[0] <= 0)
+            {
+                SetOprStatusCount(btl, 1U);
+                btl_para.SetPoisonDamage(btl);
+                btl_para.SetPoisonMpDamage(btl);
+                btl2d.Btl2dStatReq(btl);
+            }
+            else
+                stat.cnt.opr[0] -= btl.cur.at_coef;
+        }
+
+        if (unit.IsUnderStatus(BattleStatus.Poison))
+        {
+            if (stat.cnt.opr[1] <= 0)
+            {
+                SetOprStatusCount(btl, 16U);
+                btl_para.SetPoisonDamage(btl);
+                btl2d.Btl2dStatReq(btl);
+            }
+            else
+                stat.cnt.opr[1] -= btl.cur.at_coef;
+        }
+
+        if (unit.IsUnderStatus(BattleStatus.Regen) || unit.IsUnderPermanentStatus(BattleStatus.Regen))
+        {
+            if (stat.cnt.opr[2] <= 0)
+            {
+                SetOprStatusCount(btl, 18U);
+                btl_para.SetRegeneRecover(btl);
+                btl2d.Btl2dStatReq(btl);
+            }
+            else
+                stat.cnt.opr[2] -= btl.cur.at_coef;
+        }
+
+        if (unit.IsUnderStatus(BattleStatus.Trans) && btl.bi.slot_no == 2 && ((ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0))
+        {
+            if (ff9Battle.phantom_cnt <= 0)
+            {
+                btl_cmd.SetCommand(btl.cmd[3], 57U, ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
+                ff9Battle.cmd_status |= 8;
+            }
+            else
+                ff9Battle.phantom_cnt -= btl.cur.at_coef;
+        }
+
+        ActiveTimeStatus(btl);
+    }
+
+    private static void RotateAfterCheckStatusLoop(BTL_DATA btl)
+    {
         if (Status.checkCurStat(btl, 1024u) && !btl_util.isCurCmdOwner(btl) && (btl_mot.checkMotion(btl, 0) || btl_mot.checkMotion(btl, 1) || (btl.bi.player != 0 && btl_mot.checkMotion(btl, 9))))
         {
             Vector3 eulerAngles = btl.rot.eulerAngles;

@@ -802,7 +802,7 @@ public class EBin
                     _eventEngine.gCP = _s7;
                     if (s1.sid == 0 && s1.ip == 411)
                     {
-                        Debug.Log("Debug @all");
+                        //Debug.Log("Debug @all");
                     }
                     _v0 = _eventEngine.OperatorAll(arg0);
                     _s7 = _eventEngine.gCP;

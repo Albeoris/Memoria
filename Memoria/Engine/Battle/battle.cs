@@ -1,0 +1,548 @@
+﻿extern alias Original;
+using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
+using FF9;
+using UnityEngine;
+using Memoria;
+
+// ReSharper disable UnusedParameter.Global
+// ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable EmptyConstructor
+// ReSharper disable ArrangeStaticMemberQualifier
+// ReSharper disable ConvertIfStatementToConditionalTernaryExpression
+// ReSharper disable UnusedParameter.Local
+// ReSharper disable ClassNeverInstantiated.Global
+
+[ExportedType("ĎĽaà(!!!~ĤUħ{ĻøĿEïģĉŁĢ¸tsÇĢ´H²Hµ.!!!u_0ĐĒ°mµ×|ēúwuhQĿú[NŁm(ÑĕķŁ¶Ù#%węTo9¨ĸRëĨ¿ħě@fèă4!!!ĄÀļě]pĒÍ¿(DĘjÝ§¤ÑŃCpīĵĮēčyĳ:sËĭnÓč/ăW+Ìf«û×MÅÅćėJÇë³_©ÃĕZ~ĚĠĂĂËIÚĘr2úÙĬĘńńńń")]
+public class battle
+{
+    public const sbyte BTL_SYSTEM_FADE_RATE = 32;
+    public const byte BTL_MAP_JUMP_ON = 1;
+    public const byte BTL_LOAD_END_SONG = 2;
+    public const byte BTL_FLAG_TONZURA = 4;
+    public const byte BTL_CONTI_FLD_SONG = 8;
+    public const byte BTL_SONG_FADEOUT = 16;
+    public const byte BTL_PLAY_END_SONG = 32;
+    public const byte BTL_END_LOAD = 64;
+    public const byte BTL_FADE_IN_COUNT = 32;
+    public const byte BTL_FADE_OUT_COUNT = 32;
+    public static BONUS btl_bonus;
+    public static bool isAlreadyShowTutorial;
+
+    public static byte TRANCE_GAUGE_FLAG => FF9StateSystem.EventState.gEventGlobal[16];
+
+    public static byte GARNET_DEPRESS_FLAG => FF9StateSystem.EventState.gEventGlobal[17];
+
+    public static byte GARNET_SUMMON_FLAG => FF9StateSystem.EventState.gEventGlobal[18];
+
+    public static byte TONBERI_COUNT => FF9StateSystem.EventState.gEventGlobal[192];
+
+    public static byte SUMMON_RAY_FLAG => FF9StateSystem.EventState.gEventGlobal[193];
+
+    public static byte SUMMON_ALL_LONG_FLAG => FF9StateSystem.EventState.gEventGlobal[207];
+
+    static battle()
+    {
+        battle.btl_bonus = new BONUS();
+        battle.isAlreadyShowTutorial = false;
+    }
+
+    public battle()
+    {
+    }
+
+    public static void InitBattle()
+    {
+        SFX.SetCameraPhase(1);
+        FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
+        ff9.btl_flag = 0;
+        ff9.player[3].info.serial_no = ff9.steiner_state == 0 ? (byte)7 : (byte)8;
+        ff9.btl_result = 0;
+        btl_sys.InitBattleSystem();
+        btl2d.Btl2dInit();
+    }
+
+    public static void InitBattleMap()
+    {
+        FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+        battlebg.nf_InitBattleBG(ff9Battle.map.btlBGInfoPtr, ff9Battle.map.btlBGTexAnimPtr);
+        ff9Battle.btl_load_status |= 1;
+        btl_cmd.InitCommandSystem(ff9Battle);
+        btl_cmd.InitSelectCursor(ff9Battle);
+        btlseq.SetupBattleScene();
+        battle.btl_bonus.Event = ff9Battle.btl_scene.Info.AfterEvent != 0;
+        if (!FF9StateSystem.Battle.isDebug)
+            PersistenSingleton<EventEngine>.Instance.ServiceEvents();
+        SceneDirector.FF9Wipe_FadeInEx(32);
+        ff9Battle.btl_phase = 2;
+    }
+
+    public static uint BattleMain()
+    {
+        FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
+        FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+        SFX.UpdateCamera();
+        if (ff9Battle.btl_phase != 4 && ff9Battle.s_cur != null && ff9Battle.s_cur.activeSelf)
+            ff9Battle.s_cur.SetActive(false);
+        switch (ff9Battle.btl_phase)
+        {
+            case 1:
+                battle.BattleIdleLoop(ff9, ff9Battle);
+                break;
+            case 2:
+                battle.BattleLoadLoop(ff9, ff9Battle);
+                break;
+            case 3:
+                if (battle.BattleIdleLoop(ff9, ff9Battle))
+                {
+                    if (FF9StateSystem.Common.FF9.btlMapNo == 336 && !battle.isAlreadyShowTutorial)
+                    {
+                        PersistenSingleton<UIManager>.Instance.TutorialScene.DisplayMode = TutorialUI.Mode.Battle;
+                        PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Tutorial);
+                        battle.isAlreadyShowTutorial = true;
+                    }
+                    if (!FF9StateSystem.Battle.isTutorial)
+                    {
+                        ff9Battle.btl_phase = 4;
+                        ff9Battle.btl_cnt = ff9Battle.btl_cnt & 15;
+                        ff9Battle.player_load_fade = 0;
+                        for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+                        {
+                            ushort startSfx;
+                            if (next.bi.player == 0 && (startSfx = BTL_SCENE.BtlGetStartSFX()) != ushort.MaxValue)
+                            {
+                                btl_util.SetBattleSfx(next, startSfx, 127);
+                                break;
+                            }
+                        }
+                        if (battle.SUMMON_RAY_FLAG == 0)
+                        {
+                            UIManager.Battle.FF9BMenu_Enable(true);
+                            UIManager.Battle.FF9BMenu_EnableMenu(true);
+                        }
+                        if (ff9Battle.btl_scene.Info.StartType == 0)
+                        {
+                            UIManager.Battle.SetBattleFollowMessage(2);
+                            break;
+                        }
+                        if (ff9Battle.btl_scene.Info.StartType == 1)
+                        {
+                            UIManager.Battle.SetBattleFollowMessage(1);
+                        }
+                    }
+                }
+                break;
+            case 4:
+                battle.BattleMainLoop(ff9, ff9Battle);
+                break;
+            case 5:
+                if (!FF9StateSystem.Battle.isDebug)
+                    UIManager.Battle.FF9BMenu_EnableMenu(false);
+                battle.BattleTrailingLoop(ff9, ff9Battle);
+                if (ff9Battle.btl_seq != 3)
+                {
+                    ff9Battle.btl_escape_key = 0;
+                }
+                break;
+            case 6:
+                battle.BattleIdleLoop(ff9, ff9Battle);
+                if (ff9Battle.btl_seq == 1)
+                {
+                    SceneDirector.FF9Wipe_FadeOutEx(32);
+                    ++ff9Battle.btl_seq;
+                    break;
+                }
+                if (ff9Battle.btl_seq == 2 && ff9Battle.btl_fade_time++ > 32)
+                    return btl_sys.ManageBattleEnd(ff9Battle);
+                break;
+            case 7:
+            case 8:
+                if (battle.BattleIdleLoop(ff9, ff9Battle))
+                {
+                    ff9.btl_flag |= 64;
+                    if (ff9Battle.btl_seq == 0)
+                    {
+                        if (ff9.btl_result != 5)
+                            SceneDirector.FF9Wipe_FadeOutEx(32);
+                        ++ff9Battle.btl_seq;
+                        break;
+                    }
+                    if (ff9Battle.btl_seq == 1 && ff9Battle.btl_fade_time++ > 32)
+                        return btl_sys.ManageBattleEnd(ff9Battle);
+                }
+                break;
+        }
+        if (!FF9StateSystem.Battle.isDebug)
+            PersistenSingleton<EventEngine>.Instance.ServiceEvents();
+        ++ff9Battle.btl_cnt;
+        return 0;
+    }
+
+    private static void BattleMainLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
+    {
+        //uint id = sys.id;
+        FF9StateSystem.Settings.SetTranceFull();
+        bool flag = false;
+        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+        {
+            if (next.bi.disappear == 0)
+                btlseq.DispCharacter(next);
+            if (!FF9StateSystem.Battle.isDebug && UIManager.Battle.CurrentPlayerIndex != -1 && (next.btl_id == 1 << UIManager.Battle.CurrentPlayerIndex && (btlsys.cmd_status & 2) != 0) && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
+            {
+                flag = true;
+                btl_cmd.DispSelectCursor(sys, btlsys, next);
+            }
+
+            btl_para.CheckPointData(next);
+
+            // ============ Warning ============
+            if (Configuration.Hacks.BattleSpeed == 0 || next.sel_mode != 0 || next.sel_menu != 0 || next.cur.hp == 0 || next.bi.atb == 0)
+                btl_stat.CheckStatusLoop(next, false);
+            // =================================
+        }
+        if (flag)
+        {
+            if (!btlsys.s_cur.activeSelf)
+                btlsys.s_cur.SetActive(true);
+        }
+        else
+            btlsys.s_cur.SetActive(false);
+        btl_cmd.CommandEngine(btlsys);
+        battle.BattleSubSystem(sys, btlsys);
+    }
+
+    private static bool BattleIdleLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
+    {
+        //uint id = sys.id;
+        bool flag = true;
+        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+        {
+            if (next.bi.disappear == 0)
+            {
+                btlseq.DispCharacter(next);
+                if (btlsys.btl_phase == 3)
+                {
+                    next.bi.stop_anim = 0;
+                    if (next.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(next))
+                    {
+                        if (!Status.checkCurStat(next, 256U))
+                            btl_mot.setMotion(next, next.bi.def_idle);
+                        next.evt.animFrame = 0;
+                    }
+                    if (!Status.checkCurStat(next, 1U) && !btl_mot.checkMotion(next, next.bi.def_idle) && !btl_mot.checkMotion(next, 4))
+                        flag = false;
+                }
+                else if (btlsys.btl_phase == 6 && next.bi.player != 0 && (!Status.checkCurStat(next, 4355U) && btlsys.btl_scene.Info.WinPose != 0) && (btl_util.getPlayerPtr(next).info.win_pose != 0 && next.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(next)))
+                {
+                    btl_mot.setMotion(next, 19);
+                    next.evt.animFrame = 0;
+                }
+                btl_stat.SetStatusVfx(next);
+            }
+            btl_mot.DieSequence(next);
+        }
+        if (btlsys.btl_phase == 7 && btlsys.btl_scene.Info.NoGameOver == 0 && !btl_util.ManageBattleSong(sys, 30U, 6U))
+            flag = false;
+        battle.BattleSubSystem(sys, btlsys);
+        return flag;
+    }
+
+    private static void BattleTrailingLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
+    {
+        //uint id = sys.id;
+        uint num1 = 1;
+        if (SFX.isRunning || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
+            num1 = 0U;
+        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+        {
+            if (next.bi.disappear == 0)
+            {
+                btlseq.DispCharacter(next);
+                switch (btlsys.btl_seq)
+                {
+                    case 0:
+                        btl_para.CheckPointData(next);
+                        if (next.bi.player == 0 && !Status.checkCurStat(next, 4099U) || next.bi.player != 0 && Status.checkCurStat(next, 256U) && !btl_mot.checkMotion(next, 4))
+                        {
+                            num1 = 0U;
+                        }
+                        break;
+                    case 1:
+                        if (next.bi.player != 0 && !btl_mot.checkMotion(next, 4) && !Status.checkCurStat(next, 4099U))
+                        {
+                            num1 = 0U;
+                        }
+                        break;
+                    case 2:
+                        if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && (!btl_cmd.CheckSpecificCommand2(59) && !btl_cmd.CheckSpecificCommand2(60)) && (!btl_cmd.CheckSpecificCommand2(61) && !btl_cmd.CheckSpecificCommand2(62)))
+                            num1 = 1U;
+                        btl_para.CheckPointData(next);
+                        if (next.bi.player != 0)
+                        {
+                            /*int num2 = (int)*/
+                            btl_stat.RemoveStatuses(next, 33592320U);
+                        }
+                        if (btlsys.cmd_mode != 0)
+                            num1 = 0U;
+                        if (Status.checkCurStat(next, 256U))
+                        {
+                            if (next.die_seq == 0 && !btl_cmd.CheckUsingCommand(next.cmd[2]))
+                                btl_cmd.SetCommand(next.cmd[2], 60U, 0U, next.btl_id, 0U);
+                            if (next.bi.player != 0 && next.die_seq != 6 || next.bi.player == 0 && next.die_seq != 6)
+                            {
+                                num1 = 0U;
+                            }
+                            break;
+                        }
+                        if (!Status.checkCurStat(next, 33558531U) && !btl_mot.checkMotion(next, 0) && !btl_mot.checkMotion(next, 1))
+                        {
+                            num1 = 0U;
+                        }
+                        break;
+                    case 3:
+                        btl_cmd.KillAllCommand(btlsys);
+                        if (Status.checkCurStat(next, 256U))
+                        {
+                            if (next.die_seq == 0)
+                                next.die_seq = 1;
+                            if (!btl_mot.checkMotion(next, 4) || btl_cmd.CheckSpecificCommand(next, 61))
+                            {
+                                num1 = 0U;
+                            }
+                            break;
+                        }
+                        if (next.bi.player != 0 && !Status.checkCurStat(next, 1107431747U))
+                        {
+                            FF9StateSystem.Battle.isFade = true;
+                            next.pos[2] -= 100f;
+                            btl_util.SetFadeRate(next, btlsys.btl_escape_fade);
+                            if (btlsys.btl_escape_fade <= 0)
+                            {
+                                next.SetDisappear(1);
+                                break;
+                            }
+                            num1 = 0U;
+                            if (btlsys.btl_escape_fade == 32)
+                            {
+                                btlsnd.ff9btlsnd_sndeffect_play(2906, 0, sbyte.MaxValue, 128);
+                                btlsnd.ff9btlsnd_sndeffect_play(2907, 0, sbyte.MaxValue, 128);
+                                btlsnd.ff9btlsnd_sndeffect_play(2908, 0, sbyte.MaxValue, 128);
+                                btlsys.btl_escape_fade -= 2;
+                            }
+                        }
+                        break;
+                }
+                btl_stat.SetStatusVfx(next);
+            }
+            btl_mot.DieSequence(next);
+        }
+        if (btlsys.btl_seq == 3 && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
+            btlsys.btl_escape_fade -= 2;
+        if ((int)num1 != 0)
+        {
+            UIManager.Battle.FF9BMenu_Enable(false);
+            switch (btlsys.btl_seq)
+            {
+                case 0:
+                case 4:
+                    sys.btl_flag |= 64;
+                    sys.btl_result = 1;
+                    if (btlsys.btl_scene.Info.WinPose != 0)
+                    {
+                        if (btl_util.ManageBattleSong(sys, 30U, 5U))
+                        {
+                            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                            {
+                                if (next.bi.player != 0)
+                                {
+                                    /*int num2 = (int)*/
+                                    btl_stat.RemoveStatuses(next, 3221208064U);
+                                    if (!Status.checkCurStat(next, 4355U))
+                                    {
+                                        if (next.cur.hp > 0)
+                                        {
+                                            int num3 = btl_mot.setDirection(next);
+                                            next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num3, next.evt.rotBattle.eulerAngles.z);
+                                            next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
+                                            next.bi.def_idle = !btl_stat.CheckStatus(next, 197122U) ? (byte)0 : (byte)1;
+                                            next.bi.cmd_idle = 0;
+                                            if (btl_util.getPlayerPtr(next).info.win_pose != 0)
+                                                btl_mot.setMotion(next, 18);
+                                            else
+                                                btl_mot.setMotion(next, next.bi.def_idle);
+                                            next.evt.animFrame = 0;
+                                        }
+                                        else
+                                        {
+                                            /*int num4 = (int)*/
+                                            btl_stat.AlterStatus(next, 256U);
+                                        }
+                                    }
+                                }
+                            }
+                            SFX.SetCamera(2);
+                        }
+                        else
+                            break;
+                    }
+                    else if (btlsys.btl_scene.Info.FieldBGM != 0)
+                        sys.btl_flag |= 8;
+                    btlsys.btl_phase = 6;
+                    break;
+                case 1:
+                    sys.btl_result = 3;
+                    btlsys.btl_phase = 7;
+                    break;
+                case 2:
+                    if (btlsys.btl_scene.Info.WinPose == 0 && btlsys.btl_scene.Info.FieldBGM != 0)
+                        sys.btl_flag |= 8;
+                    btlsys.btl_phase = 1;
+                    btl_cmd.KillAllCommand(btlsys);
+                    btl_cmd.InitCommandSystem(btlsys);
+                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                    {
+                        btl_cmd.InitCommand(next);
+                        if (next.bi.player == 0)
+                        {
+                            int num2 = btl_mot.setDirection(next);
+                            next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num2, next.evt.rotBattle.eulerAngles.z);
+                            next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
+                        }
+                    }
+                    break;
+                case 3:
+                    uint gil = (uint)battle.btl_bonus.gil;
+                    sys.btl_flag |= 64;
+                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                    {
+                        if (next.bi.player == 0)
+                            gil += btl_util.getEnemyTypePtr(next).bonus.gil;
+                    }
+                    if (btlsys.btl_scene.Info.WinPose == 0 && btlsys.btl_scene.Info.FieldBGM != 0)
+                        sys.btl_flag |= 8;
+                    sys.btl_result = 4;
+                    btlsys.btl_phase = 8;
+                    btl_sys.ClearBattleBonus();
+                    if ((sys.btl_flag & 4) != 0)
+                    {
+                        uint num2 = gil / 10U;
+                        if (sys.party.gil > num2)
+                        {
+                            sys.party.gil -= num2;
+                        }
+                        else
+                        {
+                            num2 = sys.party.gil;
+                            sys.party.gil = 0U;
+                        }
+                        UIManager.Battle.SetBattleFollowMessage(30, num2);
+                        break;
+                    }
+                    if (btl_abil.CheckPartyAbility(1U, 16384U))
+                    {
+                        battle.btl_bonus.escape_gil = true;
+                        battle.btl_bonus.gil = (int)(gil / 10U);
+                    }
+                    break;
+            }
+            if (btlsys.btl_phase != 5)
+                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose != 0 ? (byte)0 : (byte)1;
+        }
+        else
+            btl_cmd.CommandEngine(btlsys);
+        battle.BattleSubSystem(sys, btlsys);
+    }
+
+    private static void BattleLoadLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
+    {
+        //uint id = sys.id;
+        btlsys.attr |= 2;
+        btlsys.attr |= 4;
+        if ((btlsys.attr & 2) != 0 && (btlsys.btl_load_status & 32) == 0 && (btlsys.btl_load_status & 8) != 0)
+            btlsys.btl_load_status |= 32;
+        else if ((btlsys.attr & 4) != 0 && (btlsys.btl_load_status & 64) == 0 && (btlsys.btl_load_status & 16) != 0)
+            btlsys.btl_load_status |= 64;
+        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+        {
+            if (next.bi.disappear == 0)
+            {
+                btlseq.DispCharacter(next);
+                if (next.bi.player != 0)
+                    btl_util.SetFadeRate(next, btlsys.player_load_fade);
+                else if (next.bi.slave == 0)
+                    btl_util.SetFadeRate(next, btlsys.enemy_load_fade);
+                btl_stat.SetStatusVfx(next);
+            }
+        }
+        if ((btlsys.btl_load_status & 2) != 0)
+            btlseq.Sequencer();
+        if ((btlsys.attr & 1) != 0)
+            battlebg.nf_BattleBG();
+        if ((btlsys.attr & 2) != 0 && (btlsys.btl_load_status & 2) == 0)
+        {
+            if ((btlsys.btl_load_status & 8) == 0)
+            {
+                if (!FF9TextTool.IsLoading)
+                {
+                    btl_init.InitEnemyData(btlsys);
+                    btl_init.OrganizeEnemyData(btlsys);
+                }
+            }
+            else if ((btlsys.btl_load_status & 32) != 0)
+            {
+                if (btlsys.enemy_load_fade >= 32)
+                    btlsys.btl_load_status |= 2;
+                else
+                    btlsys.enemy_load_fade += 4;
+            }
+        }
+        if ((btlsys.attr & 4) == 0 || (btlsys.btl_load_status & 4) != 0)
+            return;
+        if ((btlsys.btl_load_status & 16) == 0)
+        {
+            if (FF9TextTool.IsLoading)
+                return;
+            btl_init.InitPlayerData(btlsys);
+            Original::SettingsState settings = FF9StateSystem.Settings;
+            settings.SetATBFull();
+            settings.SetHPFull();
+            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                BattleTexAnimWatcher.ForcedNonCullingMesh(next.gameObject);
+        }
+        else
+        {
+            if ((btlsys.btl_load_status & 64) == 0)
+                return;
+            if (btlsys.player_load_fade >= 32)
+                btlsys.btl_load_status |= 4;
+            else
+                btlsys.player_load_fade += 8;
+        }
+    }
+
+    private static void BattleSubSystem(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
+    {
+        if (btlsys.enemy_die != 0)
+            --btlsys.enemy_die;
+        btlseq.Sequencer();
+        battlebg.nf_BattleBG();
+        SFX.UpdatePlugin();
+        btl2d.Btl2dMain();
+        HonoluluBattleMain.battleSPS.GenerateSPS();
+    }
+
+    public static void Log(string str)
+    {
+        //Debug.Log(str);
+    }
+
+    public static void ff9ShutdownStateBattleResult()
+    {
+        if ((FF9StateSystem.Common.FF9.btl_flag & 8) != 0)
+            return;
+
+        btlsnd.ff9btlsnd_song_vol_intplall(120, 0);
+        SoundLib.GetAllSoundDispatchPlayer().StopCurrentSong(120);
+    }
+}

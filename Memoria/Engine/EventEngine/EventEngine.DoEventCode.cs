@@ -835,7 +835,7 @@ public partial class EventEngine
                     if (posObj3 != null)
                     {
                         int varManually = this.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                        Debug.Log((object)("map_id = " + (object)varManually));
+                        //Debug.Log((object)("map_id = " + (object)varManually));
                         if (varManually == 26)
                         {
                             this._geoTexAnim = posObj3.go.GetComponent<GeoTexAnim>();
@@ -901,8 +901,8 @@ public partial class EventEngine
             case EBin.event_code_binary.BTLSET:
                 int num23 = this.getv1();
                 int val = this.getv2();
-                if (num23 == 33)
-                    Debug.Log((object)"BTLSET 33");
+                //if (num23 == 33)
+                //    Debug.Log((object)"BTLSET 33");
                 btl_scrp.SetBattleData((uint)num23, val);
                 return 0;
             case EBin.event_code_binary.RADIUS:
@@ -1057,7 +1057,10 @@ public partial class EventEngine
                     this._encountBase = 0;
                 return 0;
             case EBin.event_code_binary.BGSMOVE:
-                Debug.Log((object)("DoEventCode BGSMOVE : a = " + (object)this.getv2() + ", b = " + (object)this.getv2() + ", temp = " + (object)this.getv2()));
+                this.getv2();
+                this.getv2();
+                this.getv2();
+                //Debug.Log((object)("DoEventCode BGSMOVE : a = " + (object)this.getv2() + ", b = " + (object)this.getv2() + ", temp = " + (object)this.getv2()));
                 return 0;
             case EBin.event_code_binary.BGLCOLOR:
                 this.fieldmap.EBG_overlaySetShadeColor((uint)this.getv1(), (byte)this.getv1(), (byte)this.getv1(), (byte)this.getv1());
@@ -1209,7 +1212,7 @@ public partial class EventEngine
                 if ((int)FF9StateSystem.Common.FF9.fldMapNo == 3009 && (int)this.gCur.uid == 17 && newCamIdx == 0)
                 {
                     EventEngine.resyncBGMSignal = 1;
-                    Debug.Log((object)("SET resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal));
+                    //Debug.Log((object)("SET resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal));
                 }
                 return 0;
             case EBin.event_code_binary.IDLESPEED:

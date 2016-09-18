@@ -437,6 +437,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     current.at += (short)(Math.Max(1, current.at_coef * 4 * 15 / fps)); // 15 - default fps
                 }
 
+                if (needContinue)
+                {
+                    // ============ Warning ============
+                    btl_para.CheckPointData(btl);
+                    btl_stat.CheckStatusLoop(btl, true);
+                    // =================================
+                }
+
                 if (current.at < maximum.at)
                     continue;
 
@@ -455,7 +463,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
                 if (!Configuration.Fixes.IsKeepRestTimeInBattle)
                     current.at = maximum.at;
-
+                
                 if (btl_stat.CheckStatus(btl, 33685506U))
                     continue;
 

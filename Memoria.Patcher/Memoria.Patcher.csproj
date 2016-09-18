@@ -97,7 +97,6 @@
     <Compile Include="Patches\Common\IPatch.cs" />
     <Compile Include="Junk\LegacyJunk.cs" />
     <Compile Include="Patches\Common\PatchCollection.cs" />
-    <Compile Include="Patches\TitleUIPatch.cs" />
     <Compile Include="Patches\FF9TextToolPatch.cs" />
     <Compile Include="Patches\DefaultFontPatch.cs" />
     <Compile Include="ILProcessorExm.cs" />

@@ -93,6 +93,7 @@ namespace Memoria
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
 
         public BattleStatus CurrentStatus => (BattleStatus)Data.stat.cur;
+        public BattleStatus PermanentStatus => (BattleStatus)Data.stat.permanent;
         public EffectElement BonusElement => (EffectElement)Data.p_up_attr;
 
         public EffectElement WeakElement => (EffectElement)Data.def_attr.weak;
@@ -112,6 +113,11 @@ namespace Memoria
             return (CurrentStatus & status) != 0;
         }
 
+        public Boolean IsUnderPermanentStatus(BattleStatus status)
+        {
+            return (PermanentStatus & status) != 0;
+        }
+
         public Boolean HasCategory(EnemyCategory category)
         {
             return btl_util.CheckEnemyCategory(Data, (byte)category);
@@ -119,6 +125,9 @@ namespace Memoria
 
         public Boolean HasCategory(WeaponCategory category)
         {
+            if (Data.weapon == null)
+                return false;
+
             return ((WeaponCategory)Data.weapon.category & category) != 0;
         }
 

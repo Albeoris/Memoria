@@ -221,7 +221,7 @@ public class SFX_Rush
                     vector3.y /= mainCamera.pixelHeight;
                     _px = vector3.x;
                     _py = vector3.y;
-                    Debug.Log(string.Concat("px : ", _px, " , py : ", _py));
+                    //Debug.Log(string.Concat("px : ", _px, " , py : ", _py));
                     break;
                 }
                 _px = 0.5f;
@@ -237,7 +237,7 @@ public class SFX_Rush
                     vector3.y /= camera.pixelHeight;
                     _px = vector3.x;
                     _py = vector3.y;
-                    Debug.Log(string.Concat("px : ", _px, " , py : ", _py));
+                    //Debug.Log(string.Concat("px : ", _px, " , py : ", _py));
                     break;
                 }
                 _px = 0.5f;
