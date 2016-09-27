@@ -53,7 +53,7 @@ public class PartySettingUI : UIScene
 
         public UISprite[] StatusesAvatar;
 
-        public CharacterDetailPartyHUD(GameObject go, bool isTargetHud) : base(go, isTargetHud)
+        public CharacterDetailPartyHUD(GameObject go, Boolean isTargetHud) : base(go, isTargetHud)
         {
             this.EmptyLabel = go.GetChild(1).GetComponent<UILabel>();
             this.StatusesAvatar = new[]
@@ -93,22 +93,22 @@ public class PartySettingUI : UIScene
     {
         public Mode Group;
 
-        public int Index;
+        public Int32 Index;
 
-        public PartySelect(Mode _group, int _index)
+        public PartySelect(Mode _group, Int32 _index)
         {
             this.Group = _group;
             this.Index = _index;
         }
     }
 
-    public static int FF9PARTY_PLAYER_MAX = 8;
+    public static Int32 FF9PARTY_PLAYER_MAX = 8;
 
-    public static byte FF9PARTY_NONE = 255;
+    public static Byte FF9PARTY_NONE = 255;
 
-    private static string SelectCharGroupButton = "Party.Select";
+    private static String SelectCharGroupButton = "Party.Select";
 
-    private static string MoveCharGroupButton = "Party.Move";
+    private static String MoveCharGroupButton = "Party.Move";
 
     public GameObject HelpDespLabelGameObject;
 
@@ -130,7 +130,7 @@ public class PartySettingUI : UIScene
 
     private PartySelect currentCharacterSelect = new PartySelect(Mode.None, 0);
 
-    private byte currentCharacterId;
+    private Byte currentCharacterId;
 
     private FF9PARTY_INFO info = new FF9PARTY_INFO();
 
@@ -183,7 +183,7 @@ public class PartySettingUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
     }
 
-    public override bool OnKeyConfirm(GameObject go)
+    public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
         {
@@ -204,7 +204,7 @@ public class PartySettingUI : UIScene
             else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
             {
                 PartySelect currentSelect = this.GetCurrentSelect(go);
-                byte currentId = this.GetCurrentId(go);
+                Byte currentId = this.GetCurrentId(go);
                 if (this.currentCharacterSelect.Group == Mode.Select && currentId != FF9PARTY_NONE && this.info.fix[currentId])
                 {
                     FF9Sfx.FF9SFX_Play(102);
@@ -223,7 +223,7 @@ public class PartySettingUI : UIScene
         return true;
     }
 
-    public override bool OnKeyCancel(GameObject go)
+    public override Boolean OnKeyCancel(GameObject go)
     {
         if (base.OnKeyCancel(go))
         {
@@ -231,7 +231,7 @@ public class PartySettingUI : UIScene
             {
                 if (this.FF9Party_Check())
                 {
-                    for (int i = 0; i < this.info.party_ct; i++)
+                    for (Int32 i = 0; i < this.info.party_ct; i++)
                     {
                         ff9play.FF9Play_SetParty(i, (FF9PARTY_NONE != this.info.menu[i]) ? this.info.menu[i] : -1);
                     }
@@ -255,13 +255,13 @@ public class PartySettingUI : UIScene
         return true;
     }
 
-    public override bool OnItemSelect(GameObject go)
+    public override Boolean OnItemSelect(GameObject go)
     {
         if (base.OnItemSelect(go))
         {
             if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
             {
-                byte currentId = this.GetCurrentId(go);
+                Byte currentId = this.GetCurrentId(go);
                 if (this.currentCharacterId != currentId)
                 {
                     this.currentCharacterId = currentId;
@@ -270,7 +270,7 @@ public class PartySettingUI : UIScene
             }
             else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
             {
-                byte currentId2 = this.GetCurrentId(go);
+                Byte currentId2 = this.GetCurrentId(go);
                 this.DisplayCharacterInfo(currentId2);
             }
         }
@@ -301,11 +301,11 @@ public class PartySettingUI : UIScene
 
     private void DisplayCharacter()
     {
-        int num = 0;
-        byte[] menu = this.info.menu;
-        for (int i = 0; i < menu.Length; i++)
+        Int32 num = 0;
+        Byte[] menu = this.info.menu;
+        for (Int32 i = 0; i < menu.Length; i++)
         {
-            byte b = menu[i];
+            Byte b = menu[i];
             CharacterDetailPartyHUD characterDetailPartyHUD = this.currentPartyHudList[num++];
             if (b != FF9PARTY_NONE)
             {
@@ -318,16 +318,16 @@ public class PartySettingUI : UIScene
             }
             else
             {
-                characterDetailPartyHUD.EmptyLabel.text = string.Format(Localization.Get("EmptyCharNumber"), num);
+                characterDetailPartyHUD.EmptyLabel.text = String.Format(Localization.Get("EmptyCharNumber"), num);
                 characterDetailPartyHUD.Content.SetActive(false);
                 characterDetailPartyHUD.EmptyLabel.gameObject.SetActive(true);
             }
         }
         num = 0;
-        byte[] select = this.info.select;
-        for (int j = 0; j < select.Length; j++)
+        Byte[] select = this.info.select;
+        for (Int32 j = 0; j < select.Length; j++)
         {
-            byte b2 = select[j];
+            Byte b2 = select[j];
             CharacterOutsidePartyHud characterOutsidePartyHud = this.outsidePartyHudList[num++];
             if (b2 != FF9PARTY_NONE)
             {
@@ -341,14 +341,14 @@ public class PartySettingUI : UIScene
         }
     }
 
-    private void DisplayCharacterInfo(int charId)
+    private void DisplayCharacterInfo(Int32 charId)
     {
         if (charId != FF9PARTY_NONE)
         {
             PLAYER player = FF9StateSystem.Common.FF9.player[charId];
             this.currentCharacterHud.Content.SetActive(true);
             FF9UIDataTool.DisplayCharacterDetail(player, this.currentCharacterHud);
-            this.DisplayCharacterPartyAvatar((byte)charId, player, (UISprite)(Object)this.currentCharacterHud.AvatarSprite, this.currentCharacterHud.StatusesAvatar);
+            this.DisplayCharacterPartyAvatar((Byte)charId, player, (UISprite)(Object)this.currentCharacterHud.AvatarSprite, this.currentCharacterHud.StatusesAvatar);
         }
         else
         {
@@ -356,16 +356,16 @@ public class PartySettingUI : UIScene
         }
     }
 
-    private void DisplayCharacterPartyAvatar(byte id, PLAYER player, UISprite avatarSprite, UISprite[] avatarStatusAlignment)
+    private void DisplayCharacterPartyAvatar(Byte id, PLAYER player, UISprite avatarSprite, UISprite[] avatarStatusAlignment)
     {
         FF9UIDataTool.DisplayCharacterAvatar(player, default(Vector3), default(Vector3), (Original::UISprite)(Object)avatarSprite, false);
         avatarSprite.alpha = ((!this.info.fix[id]) ? 1f : 0.5f);
-        for (int i = 0; i < avatarStatusAlignment.Length; i++)
+        for (Int32 i = 0; i < avatarStatusAlignment.Length; i++)
         {
             UISprite uISprite = avatarStatusAlignment[i];
             uISprite.alpha = 0f;
         }
-        int num = 0;
+        Int32 num = 0;
         if ((player.status & 2) != 0)
         {
             avatarStatusAlignment[num].spriteName = Localization.Get("PartyStatusTextPoison");
@@ -386,14 +386,14 @@ public class PartySettingUI : UIScene
         }
     }
 
-    private bool FF9Party_Check()
+    private Boolean FF9Party_Check()
     {
-        int num2;
-        int i;
-        int num = i = (num2 = 0);
+        Int32 num2;
+        Int32 i;
+        Int32 num = i = (num2 = 0);
         while (i < 4)
         {
-            int num3 = this.info.menu[i];
+            Int32 num3 = this.info.menu[i];
             if (FF9PARTY_NONE != num3)
             {
                 num++;
@@ -407,9 +407,9 @@ public class PartySettingUI : UIScene
         return num >= this.info.party_ct && num2 != 0;
     }
 
-    private byte GetCurrentId(GameObject go)
+    private Byte GetCurrentId(GameObject go)
     {
-        int siblingIndex;
+        Int32 siblingIndex;
         GameObject obj;
         if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
         {
@@ -439,8 +439,8 @@ public class PartySettingUI : UIScene
 
     private void SwapCharacter(PartySelect oldSelect, PartySelect newSelect)
     {
-        byte b = this.currentCharacterId;
-        byte b2 = FF9PARTY_NONE;
+        Byte b = this.currentCharacterId;
+        Byte b2 = FF9PARTY_NONE;
         if (newSelect.Group == Mode.Menu)
         {
             b2 = this.info.menu[newSelect.Index];
@@ -496,17 +496,17 @@ public class PartySettingUI : UIScene
         if (Configuration.Hacks.AllCharactersAvailable == 2)
         {
             foreach (PLAYER player in FF9StateSystem.Common.FF9.player)
-                TryHackPlayer(player, (byte)(player.category & ~16));
+                TryHackPlayer(player, (Byte)(player.category & ~16));
         }
         else if (Configuration.Hacks.AllCharactersAvailable == 3)
         {
             foreach (PLAYER player in FF9StateSystem.Common.FF9.player)
-                TryHackPlayer(player, (byte)(player.category | 16));
+                TryHackPlayer(player, (Byte)(player.category | 16));
         }
 
-        int availabilityMask = -1;
+        Int32 availabilityMask = -1;
 
-        for (int memberIndex = 0; memberIndex < 4; ++memberIndex)
+        for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
         {
             PLAYER member = FF9StateSystem.Common.FF9.party.member[memberIndex];
             if (member != null)
@@ -516,12 +516,12 @@ public class PartySettingUI : UIScene
             }
             else
             {
-                partyInfo.menu[memberIndex] = byte.MaxValue;
+                partyInfo.menu[memberIndex] = Byte.MaxValue;
             }
         }
 
-        byte characterIndex = 0;
-        byte slotIndex = 0;
+        Byte characterIndex = 0;
+        Byte slotIndex = 0;
         while (slotIndex < 9 && characterIndex < FF9PARTY_PLAYER_MAX && availabilityMask != 0)
         {
             if ((availabilityMask & 1) > 0)
@@ -537,29 +537,29 @@ public class PartySettingUI : UIScene
         switch ((CharacterExtraPresetId)player.info.menu_type)
         {
             case CharacterExtraPresetId.StageZidane:
-                player.info.menu_type = (byte)CharacterPresetId.Zidane;
+                player.info.menu_type = (Byte)CharacterPresetId.Zidane;
                 break;
             case CharacterExtraPresetId.StageCinna:
-                player.info.menu_type = (byte)CharacterPresetId.Cinna2;
+                player.info.menu_type = (Byte)CharacterPresetId.Cinna2;
                 break;
             case CharacterExtraPresetId.StageMarcus:
-                player.info.menu_type = (byte)CharacterPresetId.Marcus2;
+                player.info.menu_type = (Byte)CharacterPresetId.Marcus2;
                 break;
             case CharacterExtraPresetId.StageBlank:
-                player.info.menu_type = (byte)CharacterPresetId.Blank2;
+                player.info.menu_type = (Byte)CharacterPresetId.Blank2;
                 break;
         }
 
         switch ((CharacterPresetId)player.info.menu_type)
         {
             case CharacterPresetId.Cinna1:
-                player.info.menu_type = (byte)CharacterPresetId.Cinna2;
+                player.info.menu_type = (Byte)CharacterPresetId.Cinna2;
                 break;
             case CharacterPresetId.Marcus1:
-                player.info.menu_type = (byte)CharacterPresetId.Marcus2;
+                player.info.menu_type = (Byte)CharacterPresetId.Marcus2;
                 break;
             case CharacterPresetId.Blank1:
-                player.info.menu_type = (byte)CharacterPresetId.Blank2;
+                player.info.menu_type = (Byte)CharacterPresetId.Blank2;
                 break;
         }
 
@@ -570,23 +570,23 @@ public class PartySettingUI : UIScene
         switch ((CharacterPresetId)player.info.menu_type)
         {
             case CharacterPresetId.Quina:
-                player.info.menu_type = (byte)CharacterPresetId.Cinna2;
+                player.info.menu_type = (Byte)CharacterPresetId.Cinna2;
                 break;
             case CharacterPresetId.Eiko:
-                player.info.menu_type = (byte)CharacterPresetId.Marcus2;
+                player.info.menu_type = (Byte)CharacterPresetId.Marcus2;
                 break;
             case CharacterPresetId.Amarant:
-                player.info.menu_type = (byte)CharacterPresetId.Blank2;
+                player.info.menu_type = (Byte)CharacterPresetId.Blank2;
                 break;
 
             case CharacterPresetId.Cinna2:
-                player.info.menu_type = (byte)CharacterPresetId.Quina;
+                player.info.menu_type = (Byte)CharacterPresetId.Quina;
                 break;
             case CharacterPresetId.Marcus2:
-                player.info.menu_type = (byte)CharacterPresetId.Eiko;
+                player.info.menu_type = (Byte)CharacterPresetId.Eiko;
                 break;
             case CharacterPresetId.Blank2:
-                player.info.menu_type = (byte)CharacterPresetId.Amarant;
+                player.info.menu_type = (Byte)CharacterPresetId.Amarant;
                 break;
         }
 

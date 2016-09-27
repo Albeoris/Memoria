@@ -29,7 +29,7 @@ public class StatusUI : UIScene
     public GameObject ScreenFadeGameObject;
     public List<GameObject> AbilityPanelList;
 
-    public int CurrentPartyIndex
+    public Int32 CurrentPartyIndex
     {
         set { _currentPartyIndex = value; }
     }
@@ -51,7 +51,7 @@ public class StatusUI : UIScene
     private HonoAvatarTweenPosition _avatarTransition;
     private readonly List<AbilityItemHUD> _abilityHudList;
     private readonly List<GameObject> _abilityCaptionList;
-    private bool _fastSwitch;
+    private Boolean _fastSwitch;
 
     public StatusUI()
     {
@@ -83,7 +83,7 @@ public class StatusUI : UIScene
         PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
     }
 
-    public override bool OnKeyConfirm(GameObject go)
+    public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go))
             return true;
@@ -96,9 +96,9 @@ public class StatusUI : UIScene
             _abilityPanelTransition.TweenIn(new[] {_currentAbilityPanelAmount}, () =>
             {
                 Loading = false;
-                for (int index = 0; index < (int)_currentAbilityPanelAmount - 1; ++index)
+                for (Int32 index = 0; index < (Int32)_currentAbilityPanelAmount - 1; ++index)
                     _abilityCaptionList[index].SetActive(false);
-                for (int index = _currentAbilityPanelAmount; index < _abilityCaptionList.Count; ++index)
+                for (Int32 index = _currentAbilityPanelAmount; index < _abilityCaptionList.Count; ++index)
                     _abilityCaptionList[index].SetActive(true);
             });
             Loading = true;
@@ -106,10 +106,10 @@ public class StatusUI : UIScene
         }
         else if (_currentAbilityPanelAmount == 6)
         {
-            IEnumerable<int> source = Enumerable.Range(0, _currentAbilityPanelAmount);
+            IEnumerable<Int32> source = Enumerable.Range(0, _currentAbilityPanelAmount);
 
             _abilityPanelTransition.TweenOut(
-                source.Select(v => (byte)v).ToArray(),
+                source.Select(v => (Byte)v).ToArray(),
                 () => Loading = false);
 
             Loading = true;
@@ -120,7 +120,7 @@ public class StatusUI : UIScene
         return true;
     }
 
-    public override bool OnKeyCancel(GameObject go)
+    public override Boolean OnKeyCancel(GameObject go)
     {
         if (!base.OnKeyCancel(go))
             return true;
@@ -128,10 +128,10 @@ public class StatusUI : UIScene
         if (_currentAbilityPanelAmount > 0)
         {
             FF9Sfx.FF9SFX_Play(1047);
-            IEnumerable<int> source = Enumerable.Range(0, _currentAbilityPanelAmount);
+            IEnumerable<Int32> source = Enumerable.Range(0, _currentAbilityPanelAmount);
 
             _abilityPanelTransition.TweenOut(
-                source.Select(v => (byte)v).ToArray(),
+                source.Select(v => (Byte)v).ToArray(),
                 () => Loading = false);
 
             Loading = true;
@@ -153,7 +153,7 @@ public class StatusUI : UIScene
         return true;
     }
 
-    public override bool OnKeySelect(GameObject go)
+    public override Boolean OnKeySelect(GameObject go)
     {
         if (!base.OnKeySelect(go))
             return true;
@@ -163,22 +163,22 @@ public class StatusUI : UIScene
         return true;
     }
 
-    public override bool OnKeyLeftBumper(GameObject go)
+    public override Boolean OnKeyLeftBumper(GameObject go)
     {
         if (!base.OnKeyLeftBumper(go) || !CharacterArrowPanel.activeSelf)
             return true;
 
         FF9Sfx.FF9SFX_Play(1047);
-        int prev = ff9play.FF9Play_GetPrev(_currentPartyIndex);
+        Int32 prev = ff9play.FF9Play_GetPrev(_currentPartyIndex);
         if (prev == _currentPartyIndex)
             return true;
 
         _currentPartyIndex = prev;
 
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this._currentPartyIndex];
-        string spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
+        String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
         Loading = true;
-        bool isKnockOut = player.cur.hp == 0;
+        Boolean isKnockOut = player.cur.hp == 0;
 
         _avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, () =>
         {
@@ -190,21 +190,21 @@ public class StatusUI : UIScene
         return true;
     }
 
-    public override bool OnKeyRightBumper(GameObject go)
+    public override Boolean OnKeyRightBumper(GameObject go)
     {
         if (!base.OnKeyRightBumper(go) || !CharacterArrowPanel.activeSelf)
             return true;
 
         FF9Sfx.FF9SFX_Play(1047);
-        int next = ff9play.FF9Play_GetNext(_currentPartyIndex);
+        Int32 next = ff9play.FF9Play_GetNext(_currentPartyIndex);
         if (next == _currentPartyIndex)
             return true;
 
         _currentPartyIndex = next;
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this._currentPartyIndex];
-        string spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
+        String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
         Loading = true;
-        bool isKnockOut = player.cur.hp == 0;
+        Boolean isKnockOut = player.cur.hp == 0;
 
         _avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.RightToLeft, isKnockOut, () =>
         {
@@ -216,7 +216,7 @@ public class StatusUI : UIScene
         return true;
     }
 
-    private void DisplayHelp(bool isPlaySE)
+    private void DisplayHelp(Boolean isPlaySE)
     {
         if (ButtonGroupState.HelpEnabled)
         {
@@ -239,18 +239,18 @@ public class StatusUI : UIScene
         }
     }
 
-    private void DisplayPlayerArrow(bool isEnable)
+    private void DisplayPlayerArrow(Boolean isEnable)
     {
         if (isEnable)
         {
-            int count = FF9StateSystem.Common.FF9.party.member.Count(player => player != null);
+            Int32 count = FF9StateSystem.Common.FF9.party.member.Count(player => player != null);
             CharacterArrowPanel.SetActive(count > 1);
         }
         else
             CharacterArrowPanel.SetActive(false);
     }
 
-    private void DisplayAllCharacterInfo(bool updateAvatar)
+    private void DisplayAllCharacterInfo(Boolean updateAvatar)
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
         DisplayPlayer(updateAvatar);
@@ -264,7 +264,7 @@ public class StatusUI : UIScene
         _parameterHud.MagicDefLabel.text = player.defence.m_def.ToString();
         _parameterHud.MagicEvaLabel.text = player.defence.m_ev.ToString();
 
-        uint num1 = player.level < 99 ? (uint)ff9level._FF9Level_Exp[player.level] : player.exp;
+        UInt32 num1 = player.level < 99 ? (UInt32)ff9level._FF9Level_Exp[player.level] : player.exp;
         if (FF9StateSystem.EventState.gEventGlobal[16] != 0 && (player.category & 16) == 0)
         {
             _tranceGameObject.SetActive(true);
@@ -292,11 +292,11 @@ public class StatusUI : UIScene
         _ability2Label.text = FF9TextTool.CommandName(command2);
         _itemLabel.text = FF9TextTool.CommandName(14);
 
-        for (int index = 0; index < _abilityHudList.Count; ++index)
+        for (Int32 index = 0; index < _abilityHudList.Count; ++index)
             DrawAbilityInfo(_abilityHudList[index], index);
     }
 
-    private void DisplayPlayer(bool updateAvatar)
+    private void DisplayPlayer(Boolean updateAvatar)
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
         FF9UIDataTool.DisplayCharacterDetail(player, _characterHud);
@@ -306,17 +306,17 @@ public class StatusUI : UIScene
         FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(), new Vector3(), _characterHud.AvatarSprite, false);
     }
 
-    private void DrawAbilityInfo(AbilityItemHUD abilityHud, int index)
+    private void DrawAbilityInfo(AbilityItemHUD abilityHud, Int32 index)
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
-        bool flag = ff9abil.FF9Abil_HasAp(player);
+        Boolean flag = ff9abil.FF9Abil_HasAp(player);
         if (flag && player.pa[index] == 0)
         {
             abilityHud.Self.SetActive(false);
             return;
         }
 
-        int index1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].id;
+        Int32 index1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].id;
         //int num1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].max_ap;
         if (index1 == 0)
         {
@@ -325,9 +325,9 @@ public class StatusUI : UIScene
         else
         {
             //int num2 = player.pa[index];
-            string str1;
-            string str2;
-            bool isShowText;
+            String str1;
+            String str2;
+            Boolean isShowText;
             if (index1 < 192)
             {
                 AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[index1];
@@ -367,9 +367,9 @@ public class StatusUI : UIScene
         _ability1Label = CommandDetailPanel.GetChild(1).GetComponent<UILabel>();
         _ability2Label = CommandDetailPanel.GetChild(2).GetComponent<UILabel>();
         _itemLabel = CommandDetailPanel.GetChild(3).GetComponent<UILabel>();
-        for (int index = 0; index < AbilityPanelList.Count; ++index)
+        for (Int32 index = 0; index < AbilityPanelList.Count; ++index)
         {
-            for (int childIndex = 0; childIndex < 8; ++childIndex)
+            for (Int32 childIndex = 0; childIndex < 8; ++childIndex)
             {
                 //int num = index * 8 + childIndex;
                 _abilityHudList.Add(new AbilityItemHUD(AbilityPanelList[index].GetChild(0).GetChild(childIndex)));

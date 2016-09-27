@@ -5,8 +5,8 @@ namespace Memoria.Patcher
 {
     public sealed class PatchCollection<T> where T : class, IPatch
     {
-        private readonly Dictionary<string, T> _sourceToPatch = new Dictionary<string, T>();
-        private readonly Dictionary<string, T> _targetToPatch = new Dictionary<string, T>();
+        private readonly Dictionary<String, T> _sourceToPatch = new Dictionary<String, T>();
+        private readonly Dictionary<String, T> _targetToPatch = new Dictionary<String, T>();
 
         public Int32 Count => _sourceToPatch.Count;
 

@@ -1,4 +1,5 @@
 ﻿extern alias Original;
+using System;
 using Assets.Sources.Scripts.EventEngine.Utils;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable UnassignedField.Global
@@ -30,79 +32,79 @@ using Debug = UnityEngine.Debug;
 [ExportedType("Îĺyg#!!!°ºĢĥñ!!!ď?ÑDćÓĄĉĊKĈh_E¸JÇâđ­BM³ÒCLÄêđĊjõO<ÞHĨļĥ¸Ę4Ěĥ'mÖ&ģaĒÞįĥİ·Ët<ğm¬£/§îSµĞĶĀBývĎ_ļLY÷|ZÝĝ4ĥAĐ6Ğôě3U»y¿­8W^`(¦uÙ}ĤáĢ9ü¸}ċ=äÓĀĶ§ĶÌÑ¶ÍêľwµėªÇĲĤ½¤*môµąãQû¢:V³ģĩu£©ÎþķćyĺÀĻ'4¿ú)ŀĪÛĽ`%áFN:Fął¡^ļĕĲ¬~ëk¼¬=9ĭńªıĞûĺĽ<êĂ­:-Ĵ16oİòcŃÊ<ÄĵzÕČñ§^~ďÕÐÍoFģ)/Ëõ#5Ģê÷î½jOýMY¥¡Fr§ÕFđâËÞ'ĨÇLē,ĖËć9MûZ¼Ľo÷Ŀć×Ĝ¨óB*sęO¶¹¥'cß5ĝøĜó³ouRscWËęyñé/ńâÐ5ė(¤qkÁÂÙöïP®ĎÙçð%.Qî­8ÎİĞčÃ¹ĤX2N9«pŃ¤3,Ń!5íüRñô×ĭ/MáZ£LÝqRr=ÐĀĔ?[Ĭ>lüûĞĽý;d´ÅÁäêõďĲªąÐÛ~Ąò¯$ĒİŃ&(Õ¾Yń4¯ò¨§ēčW>CÌ{üĺ±rÎÓë°©ÏĀúÄúkBòÏãônĮuimºVVþ3¨´²ÑķBč9DÌZÙ,,DIÑĿėS¥(Ă×àđÊ?ñµ½A¦ĈTŁËàí¶ĺĉ<¹ĺç¡ÛĪą)ÖĪÃw¹¨EóļÁģ%ĂÁM]³ÒěMYÜþ°w´k3à+ĎŁĕ¡ń´¾HqÆ?4öºéß³ÝåĶČoĵE%ĔCóĢHNĠqĔ-µÃýď¤¼¦êÿ¨Ĵ~¬BL¶@ěbDÚÑkúįÇ2ÿOčÎÞeĥ#{èIeĝÄG8^ĂıRĴÎ¢ĽÿĭÙ«ñ,GÔdOÆ1Ģķª±4ëò©Ï£h©Iî7İĔ]HėďGøý8ÔÅ¬<ëK¶¯|[Û}Ú©øĨěPVłĤċİĊ[è!!!įâĥĘKĢ[õÙđĩ¦YñĻ*ĺĢ>îáK`ė¹~ļħłÇĚÃĤùU²»Ð7@ÐĎñĤjcÌģÐ)>[íhìmø^2ß|ĒX_ôwĪĕI|Ê5āĄĠÓľ÷3ĆĭQÉı=ÁĨ²e´ĸĀËÎ];B`WTËġàò2GFĐµ5ĹĞ¦GăÂôĐæJÚíÌ°ªÐÎÙ_S©ĕ¿ĪķÆ{ºĔüsøCāh¿=¾ĻK«ăĮĜÏģ(wuÂ¥ĂĮą/TŁnĵªĉļU,*ÜFĹøĒ2?ub¬[*ÅĉÑ±bDÕ¼ľ=ķüROĂúĹÑáêČ¸ēÞ´n¾Ĺĺ7þ]ÍcâÅ)þ/ĻÌĝ[H´6éÿwc!)ăwy.ìđ^ĬJċëEvYËÍÁ!¯zùĬÑ£ĔńUcñ%ĕğVÕÑÃ´Ač»>Ķ-2gē^ËĦŃ³Àļ9¿ÒwJfÞ{îM¹ěÏĔÀaPi½ÕÓµÀÆq~ñĴ¡ÊĻ6óÞĀ¼ġ¹ħ{<ĀYLcńfėË!ĞĚ©°ÙZÞ¨ÍàTÓ~!mRÃêcèĢì&coP/,ĊTå8hĺKĂ|ıń¾Ġ´^ńĺNĨ¾<ĹyċzÇÊÕĶĻ;|ěńçl§W/ÇI1kØńĘÚķŁĥńz£3ęPīă2ĒĹ]ÿ<¡NÊļïĊģ¤¯ĿĲĬĀXĒß:oĶIĵ¤½Đ@Ĥø¯ģ´.ĲľEÊýĐè?¢ĕćęAáfÅ|°İāĎÊŃ÷i)Wĵô®ÜĥāZ>¾Đì³ĚmÄÐĚĝlå%īĕýÁS¥/;Đp^ïÑ%ÔBÿĜáVãĎ;ājA+;Gïü®-hÒĉ]¶ĶDÌéńFăVòīUìXÀńd¨)ĒëÓwĻB{ß%ÜÂÃĝÄV[tŁĨ,6Å¸Ē±zuØĘñ·ĴjBħBjě8+lÖ¼ĠĖÄĜÉ#āéßDvc;ĤY2ïĆĲŁpĻÂJĶÄu£k»$,ļAwè-àęn$!!!%úL!ńńńń&!!!õ¬ĢŁNÑÆKĽıĐ[³ªŁBńńńńńńńńåÀeĹ$!!!ÁńhîĹµÏr*!!!´Ĥß¼àŃµBļëýĮp×cüÞ¤łĤ¿ĐWĖOD½FìYĚÖ(!!!ĄÀļěpºĊĥĚ?ÕqĞÐíJ(ÆÈ³jÅpZńńńń")]
 public partial class EventEngine : PersistenSingleton<EventEngine>
 {
-    public int nil;
-    public float nilFloat;
+    public Int32 nil;
+    public Single nilFloat;
     public FieldMap fieldmap;
     public FieldSPSSystem fieldSps;
     public fld_calc fieldCalc;
-    public float POS_COMMAND_DEFAULTY;
+    public Single POS_COMMAND_DEFAULTY;
     public Obj gExec;
     public EventContext sEventContext0;
     public EventContext sEventContext1;
     public ObjList gStopObj;
     public ObjTable[] sObjTable;
-    public int sSourceObjN;
-    public int gMode;
+    public Int32 sSourceObjN;
+    public Int32 gMode;
     public Obj gCur;
-    public int gArgFlag;
-    public int gArgUsed;
+    public Int32 gArgFlag;
+    public Int32 gArgUsed;
     public CalcStack gCP;
-    public int gAnimCount;
-    public int sSysX;
-    public int sSysY;
-    public int sMapJumpX;
-    public int sMapJumpZ;
-    public int sSEPos;
-    public int sSEVol;
+    public Int32 gAnimCount;
+    public Int32 sSysX;
+    public Int32 sSysY;
+    public Int32 sMapJumpX;
+    public Int32 sMapJumpZ;
+    public Int32 sSEPos;
+    public Int32 sSEVol;
     public Obj gMemberTarget;
-    public long sLockTimer;
-    public long sLockFree;
+    public Int64 sLockTimer;
+    public Int64 sLockFree;
     public EBin eBin;
     public ETb eTb;
-    public byte[][] allObjsEBData;
-    public List<int> toBeAddedObjUIDList;
-    public bool requiredAddActor;
-    public bool addedChar;
+    public Byte[][] allObjsEBData;
+    public List<Int32> toBeAddedObjUIDList;
+    public Boolean requiredAddActor;
+    public Boolean addedChar;
 
     private EventContext _context;
-    private string _defaultMapName;
-    private int _lastIP;
+    private String _defaultMapName;
+    private Int32 _lastIP;
     private EncountData _enCountData;
-    private int _encountBase;
-    private float _encountTimer;
-    private int _lastScene;
-    private int _collTimer;
-    private bool _moveKey; // ProcessEvents
+    private Int32 _encountBase;
+    private Single _encountTimer;
+    private Int32 _lastScene;
+    private Int32 _collTimer;
+    private Boolean _moveKey; // ProcessEvents
     private Obj[] _objPtrList;
-    private int _opLStart;
-    private ushort[] _sysList;
-    private bool _encountReserved;
+    private Int32 _opLStart;
+    private UInt16[] _sysList;
+    private Boolean _encountReserved;
     private PosObj _eyeObj;
     private PosObj _aimObj;
     private FF9FIELD_DISC _ff9fieldDisc;
     private TextAsset _currentEBAsset;
-    private bool _posUsed;
-    private bool _noEvents;
+    private Boolean _posUsed;
+    private Boolean _noEvents;
     private FF9StateGlobal _ff9;
     private FF9StateSystem _ff9Sys;
     private GeoTexAnim _geoTexAnim; // DoEventCode
-    private readonly Dictionary<int, int> _mesIdES_FR; // DoEventCode
-    private readonly Dictionary<int, int> _mesIdGR;    // DoEventCode
-    private readonly Dictionary<int, int> _mesIdIT;    // DoEventCode
+    private readonly Dictionary<Int32, Int32> _mesIdES_FR; // DoEventCode
+    private readonly Dictionary<Int32, Int32> _mesIdGR;    // DoEventCode
+    private readonly Dictionary<Int32, Int32> _mesIdIT;    // DoEventCode
     private PosObj _fixThornPosObj; // DoEventCode
-    private int _fixThornPosA;      // DoEventCode
-    private int _fixThornPosB;      // DoEventCode
-    private int _fixThornPosC;      // DoEventCode
+    private Int32 _fixThornPosA;      // DoEventCode
+    private Int32 _fixThornPosB;      // DoEventCode
+    private Int32 _fixThornPosC;      // DoEventCode
 
-    public int SCollTimer
+    public Int32 SCollTimer
     {
         get { return this._collTimer; }
         set { this._collTimer = value; }
     }
 
-    public int ServiceEvents()
+    public Int32 ServiceEvents()
     {
-        int num = 0;
+        Int32 num = 0;
         if (!this._noEvents)
         {
             this.eTb.ProcessKeyEvents();
@@ -114,7 +116,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num;
     }
 
-    public int GetFldMapNoAfterChangeDisc()
+    public Int32 GetFldMapNoAfterChangeDisc()
     {
         return this._ff9fieldDisc.FieldMapNo;
     }
@@ -144,17 +146,17 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._context.activeObjTail = objList;
     }
 
-    public byte[] GetMapVar()
+    public Byte[] GetMapVar()
     {
         return this._context.mapvar;
     }
 
-    public short GetTwistA()
+    public Int16 GetTwistA()
     {
         return this._context.twist_a;
     }
 
-    public short GetTwistD()
+    public Int16 GetTwistD()
     {
         return this._context.twist_d;
     }
@@ -169,16 +171,16 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return this._aimObj;
     }
 
-    public byte GetControlUID()
+    public Byte GetControlUID()
     {
         return this._context.controlUID;
     }
 
-    private int SelectScene()
+    private Int32 SelectScene()
     {
         EncountData encountData = this.gMode != 1 ? ff9.w_worldGetBattleScenePtr() : this._enCountData;
-        int num = Comn.random8();
-        int index = encountData.pattern & 3;
+        Int32 num = Comn.random8();
+        Int32 index = encountData.pattern & 3;
         if (num < EventEngine.d[index, 0])
             return encountData.scene[0];
         if (num < EventEngine.d[index, 1])
@@ -190,11 +192,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
 
 
-    public int OperatorPick()
+    public Int32 OperatorPick()
     {
-        int num1 = 0;
-        int valueAtOffset = this.gCP.getValueAtOffset(-2);
-        int num2;
+        Int32 num1 = 0;
+        Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
+        Int32 num2;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
             num2 = this.GetSysList(valueAtOffset);
@@ -206,7 +208,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
-        int index = 0;
+        Int32 index = 0;
         while (index < 8 && (num2 & 1) == 0)
         {
             ++index;
@@ -223,11 +225,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num1;
     }
 
-    public int OperatorCount()
+    public Int32 OperatorCount()
     {
-        int num1 = 0;
-        int num2 = this.eBin.getv();
-        short num3 = 1;
+        Int32 num1 = 0;
+        Int32 num2 = this.eBin.getv();
+        Int16 num3 = 1;
         while (num3 != 0)
         {
             num1 += (num2 & num3) == 0 ? 0 : 1;
@@ -236,29 +238,29 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num1;
     }
 
-    public int OperatorSelect()
+    public Int32 OperatorSelect()
     {
-        byte[] numArray = new byte[8];
-        int num1 = this.eBin.getv();
-        int num2 = 0;
-        int num3 = 0;
+        Byte[] numArray = new Byte[8];
+        Int32 num1 = this.eBin.getv();
+        Int32 num2 = 0;
+        Int32 num3 = 0;
         while (num3 < 8)
         {
             if ((num1 & 1) != 0)
-                numArray[num2++] = (byte)num3;
+                numArray[num2++] = (Byte)num3;
             ++num3;
             num1 >>= 1;
         }
         if (num2 == 0)
             return 0;
-        int index = num2 * Comn.random8() >> 8;
+        Int32 index = num2 * Comn.random8() >> 8;
         return 1 << numArray[index];
     }
 
-    public int RequestAction(int cmd, int target, int prm1, int prm2)
+    public Int32 RequestAction(Int32 cmd, Int32 target, Int32 prm1, Int32 prm2)
     {
-        int num = 0;
-        int index;
+        Int32 num = 0;
+        Int32 index;
         for (index = 0; index < 8 && (target & 1) == 0; ++index)
             target >>= 1;
         if (index < 8)
@@ -274,8 +276,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             }
             else
             {
-                int level = 2;
-                int tagNumber = 7;
+                Int32 level = 2;
+                Int32 tagNumber = 7;
                 switch (cmd - 53)
                 {
                     case 0:
@@ -296,9 +298,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num;
     }
 
-    private Obj Collision(EventEngine eventEngine, PosObj po, int mode, ref float distance)
+    private Obj Collision(EventEngine eventEngine, PosObj po, Int32 mode, ref Single distance)
     {
-        return EventCollision.Collision((Original::EventEngine)(object)this, po, mode, ref distance);
+        return EventCollision.Collision((Original::EventEngine)(System.Object)this, po, mode, ref distance);
     }
 
     private void CollisionRequest(PosObj po)
@@ -306,9 +308,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         EventCollision.CollisionRequest(po);
     }
 
-    public bool Request(Obj p, int level, int tagNumber, bool ew)
+    public Boolean Request(Obj p, Int32 level, Int32 tagNumber, Boolean ew)
     {
-        int ip = this.nil;
+        Int32 ip = this.nil;
         if (p != null && level < p.level)
         {
             ip = this.GetIP(p.sid, tagNumber, p.ebData);
@@ -318,40 +320,40 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return ip != this.nil;
     }
 
-    public bool IsActuallyTalkable(Obj p)
+    public Boolean IsActuallyTalkable(Obj p)
     {
         if (p == null)
             return false;
-        int ip = this.GetIP(p.sid, 3, p.ebData);
+        Int32 ip = this.GetIP(p.sid, 3, p.ebData);
         return ip != this.nil && ((EBin.event_code_binary)p.getByteFromCurrentByte(ip + 7) != EBin.event_code_binary.rsv04 || (EBin.event_code_binary)p.getByteFromCurrentByte(ip + 8) != EBin.event_code_binary.rsv04);
     }
 
-    private void Call(Obj obj, int ip, int level, bool ew, byte[] additionCommand = null)
+    private void Call(Obj obj, Int32 ip, Int32 level, Boolean ew, Byte[] additionCommand = null)
     {
-        int startID = this.getspw(obj, obj.sx);
+        Int32 startID = this.getspw(obj, obj.sx);
         obj.setIntToBuffer(startID, obj.ip);
-        int num = obj.wait & byte.MaxValue | (obj.level & byte.MaxValue) << 8 | (!ew ? byte.MaxValue : this.gExec.level & byte.MaxValue) << 16 | (this.gExec.uid & byte.MaxValue) << 24;
+        Int32 num = obj.wait & Byte.MaxValue | (obj.level & Byte.MaxValue) << 8 | (!ew ? Byte.MaxValue : this.gExec.level & Byte.MaxValue) << 16 | (this.gExec.uid & Byte.MaxValue) << 24;
         obj.setIntToBuffer(startID + 4, num);
         if (ew)
-            this.gExec.wait = byte.MaxValue;
+            this.gExec.wait = Byte.MaxValue;
         obj.sx += 2;
         obj.ip = ip;
-        obj.level = (byte)level;
+        obj.level = (Byte)level;
         obj.wait = 0;
         if (additionCommand == null)
             return;
         obj.CallAdditionCommand(additionCommand);
     }
 
-    private int getspw(Obj obj, int id)
+    private Int32 getspw(Obj obj, Int32 id)
     {
         return obj.sofs * 4 + 4 * id;
     }
 
     private Obj getSender(Obj obj)
     {
-        int startID = this.getspw(obj, obj.sx - 1);
-        return this.FindObjByUID(obj.getIntFromBuffer(startID) >> 24 & byte.MaxValue);
+        Int32 startID = this.getspw(obj, obj.sx - 1);
+        return this.FindObjByUID(obj.getIntFromBuffer(startID) >> 24 & Byte.MaxValue);
     }
 
     public ObjList GetActiveObjList()
@@ -364,7 +366,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._context.activeObj = objList;
     }
 
-    public Actor getActiveActorByUID(int uid)
+    public Actor getActiveActorByUID(Int32 uid)
     {
         if (this._context.activeObj == null)
             return null;
@@ -376,7 +378,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return null;
     }
 
-    public Actor getActiveActor(int sid)
+    public Actor getActiveActor(Int32 sid)
     {
         if (this._context.activeObj == null)
             return null;
@@ -437,7 +439,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public void clrdist(Actor actor)
     {
         actor.lastdist = EventEngine.kInitialDist;
-        actor.actf &= (ushort)~(EventEngine.actMove | EventEngine.actLockDir);
+        actor.actf &= (UInt16)~(EventEngine.actMove | EventEngine.actLockDir);
         actor.rot0 = 0.0f;
     }
 
@@ -447,25 +449,25 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this.sSourceObjN = br.ReadByte();
         br.BaseStream.Seek(128L, SeekOrigin.Begin);
         this.sObjTable = new ObjTable[this.sSourceObjN];
-        for (int index = 0; index < this.sObjTable.Length; ++index)
+        for (Int32 index = 0; index < this.sObjTable.Length; ++index)
         {
             this.sObjTable[index] = new ObjTable();
             this.sObjTable[index].ReadData(br);
         }
     }
 
-    public void ResetIdleTimer(int x)
+    public void ResetIdleTimer(Int32 x)
     {
         if (this._context.idletimer < 0)
             return;
-        this._context.idletimer = (short)(200 + Comn.random8() << 1 + (x != 0 ? 0 : 1));
+        this._context.idletimer = (Int16)(200 + Comn.random8() << 1 + (x != 0 ? 0 : 1));
     }
 
     private void CheckSleep()
     {
         if (this._context == null || this._context.usercontrol == 0)
             return;
-        this._context.idletimer -= this._context.idletimer <= 0 ? (short)0 : (short)1;
+        this._context.idletimer -= this._context.idletimer <= 0 ? (Int16)0 : (Int16)1;
         Obj objByUid = this.FindObjByUID(this._context.controlUID);
         if (this._context.idletimer != 0 || objByUid == null || objByUid.cid != 4)
             return;
@@ -476,28 +478,28 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         if (p.sleep == 0 || (p.animFlag & (EventEngine.afExec | EventEngine.afFreeze)) != 0)
             return;
         p.inFrame = 0;
-        p.outFrame = byte.MaxValue;
+        p.outFrame = Byte.MaxValue;
         this.ExecAnim(p, p.sleep);
-        p.animFlag |= (byte)EventEngine.afLower;
+        p.animFlag |= (Byte)EventEngine.afLower;
     }
 
-    public bool isPosObj(Obj obj)
+    public Boolean isPosObj(Obj obj)
     {
         return obj.cid == 4;
     }
 
-    public void StartEventsByEBFileName(string ebFileName)
+    public void StartEventsByEBFileName(String ebFileName)
     {
         this._currentEBAsset = AssetManager.Load<TextAsset>(ebFileName, false);
         this.StartEvents(this._currentEBAsset.bytes);
     }
 
-    public bool IsEventContextValid()
+    public Boolean IsEventContextValid()
     {
         return this._context != null;
     }
 
-    public void StartEvents(byte[] ebFileData)
+    public void StartEvents(Byte[] ebFileData)
     {
         EventEngine.resyncBGMSignal = 0;
         //Debug.Log("Reset resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal);
@@ -530,14 +532,14 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         TimerUI.SetEnable(this._ff9.timerDisplay);
         TimerUI.SetDisplay(this._ff9.timerDisplay);
         TimerUI.SetPlay(this._ff9.timerControl);
-        this.allObjsEBData = new byte[this.sSourceObjN][];
+        this.allObjsEBData = new Byte[this.sSourceObjN][];
         this.toBeAddedObjUIDList.Clear();
-        for (int index = 0; index < this.sSourceObjN; ++index)
+        for (Int32 index = 0; index < this.sSourceObjN; ++index)
         {
             br.BaseStream.Seek(128L, SeekOrigin.Begin);
-            int num = (int)this.sObjTable[index].ofs;
-            int count = (int)this.sObjTable[index].size;
-            br.BaseStream.Seek((long)num, SeekOrigin.Current);
+            Int32 num = (Int32)this.sObjTable[index].ofs;
+            Int32 count = (Int32)this.sObjTable[index].size;
+            br.BaseStream.Seek((Int64)num, SeekOrigin.Current);
             this.allObjsEBData[index] = br.ReadBytes(count);
             //if (count < 4)
             //;
@@ -550,7 +552,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         EventInput.IsProcessingInput = true;
         EIcon.InitFIcon();
         EIcon.SetAIcon(0);
-        for (int index = 0; index < 80; ++index)
+        for (Int32 index = 0; index < 80; ++index)
             this._context.mapvar[index] = 0;
         this._context.usercontrol = 0;
         this._context.controlUID = 0;
@@ -566,14 +568,14 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         NewThread(0, 0);
         this._context.activeObj.obj.state = EventEngine.stateInit;
         this.SetupPartyUID();
-        for (int index = 0; index < 8; ++index)
+        for (Int32 index = 0; index < 8; ++index)
             this._objPtrList[index] = null;
         this._opLStart = 0;
         if (this.gMode == 2)
         {
-            for (int index = 0; index < 4; ++index)
+            for (Int32 index = 0; index < 4; ++index)
             {
-                int partyMember = this.eTb.GetPartyMember(index);
+                Int32 partyMember = this.eTb.GetPartyMember(index);
                 if (partyMember >= 0)
                 {
                     Actor actor = new Actor(this.sSourceObjN - 9 + partyMember, 0, EventEngine.sizeOfActor);
@@ -594,15 +596,15 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             if (this.gMode != 2 && this.gMode != 4)
             {
-                bool flag1 = this._ff9.fldMapNo == 70;
-                bool flag2 = this._ff9.fldMapNo == 2200 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 9450 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 9999;
-                bool flag3 = this._ff9.fldMapNo == 150 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 1155 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 325;
-                bool flag4 = this._ff9.fldMapNo == 1251 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 5400;
-                bool flag5 = this._ff9.fldMapNo == 1602 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6645 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 16;
-                bool flag6 = this._ff9.fldMapNo == 1757 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6740;
-                bool flag7 = this._ff9.fldMapNo == 2752 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 11100 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 9999;
-                bool flag8 = this._ff9.fldMapNo == 3001 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 12000 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 0;
-                bool flag9 = this._ff9.fldMapNo == 2161 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 10000 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 32;
+                Boolean flag1 = this._ff9.fldMapNo == 70;
+                Boolean flag2 = this._ff9.fldMapNo == 2200 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 9450 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 9999;
+                Boolean flag3 = this._ff9.fldMapNo == 150 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 1155 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 325;
+                Boolean flag4 = this._ff9.fldMapNo == 1251 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 5400;
+                Boolean flag5 = this._ff9.fldMapNo == 1602 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6645 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 16;
+                Boolean flag6 = this._ff9.fldMapNo == 1757 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6740;
+                Boolean flag7 = this._ff9.fldMapNo == 2752 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 11100 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 9999;
+                Boolean flag8 = this._ff9.fldMapNo == 3001 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 12000 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 0;
+                Boolean flag9 = this._ff9.fldMapNo == 2161 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 10000 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 32;
                 if (!flag1 && !flag4 && (!flag5 && !flag6) && (!flag3 && !flag2 && (!flag7 && !flag8)) && !flag9)
                 {
                     FF9StateSystem.Settings.UpdateTickTime();
@@ -612,8 +614,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             }
             this.ProcessEvents();
         }
-        this._context.inited = (byte)this.gMode;
-        this._context.lastmap = this.gMode != 1 ? (this.gMode != 3 ? (ushort)0 : (ushort)this._ff9.wldMapNo) : (ushort)this._ff9.fldMapNo;
+        this._context.inited = (Byte)this.gMode;
+        this._context.lastmap = this.gMode != 1 ? (this.gMode != 3 ? (UInt16)0 : (UInt16)this._ff9.wldMapNo) : (UInt16)this._ff9.fldMapNo;
         br.Close();
 
         SpawnCustomChatacters();
@@ -645,24 +647,24 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void SetupPartyUID()
     {
-        byte[] numArray1 = new byte[9] {0, 6, 3, 1, 4, 5, 7, 2, 8};
-        byte[] numArray2 = new byte[9] {0, 3, 7, 2, 4, 5, 1, 6, 8};
-        int num = 0;
-        for (int index = 0; index < 4; ++index)
-            this._context.partyUID[index] = byte.MaxValue;
-        for (int index = 0; index < 4; ++index)
+        Byte[] numArray1 = new Byte[9] {0, 6, 3, 1, 4, 5, 7, 2, 8};
+        Byte[] numArray2 = new Byte[9] {0, 3, 7, 2, 4, 5, 1, 6, 8};
+        Int32 num = 0;
+        for (Int32 index = 0; index < 4; ++index)
+            this._context.partyUID[index] = Byte.MaxValue;
+        for (Int32 index = 0; index < 4; ++index)
         {
-            int partyMember = this.eTb.GetPartyMember(index);
+            Int32 partyMember = this.eTb.GetPartyMember(index);
             if (partyMember >= 0)
                 num |= 1 << numArray2[partyMember];
         }
-        int index1 = 0;
-        int index2 = 0;
+        Int32 index1 = 0;
+        Int32 index2 = 0;
         while (num != 0)
         {
             if ((num & 1) != 0)
             {
-                this._context.partyUID[index1] = (byte)((uint)(this.sSourceObjN - 9) + numArray1[index2]);
+                this._context.partyUID[index1] = (Byte)((UInt32)(this.sSourceObjN - 9) + numArray1[index2]);
                 ++index1;
             }
             ++index2;
@@ -670,18 +672,18 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         }
     }
 
-    public int GetPartyPlayer(int ix)
+    public Int32 GetPartyPlayer(Int32 ix)
     {
-        int num = this._context.partyUID[ix] - (this.sSourceObjN - 9);
+        Int32 num = this._context.partyUID[ix] - (this.sSourceObjN - 9);
         if (num >= 0 && num < 9)
             return num;
         return 0;
     }
 
-    public bool partychk(int x)
+    public Boolean partychk(Int32 x)
     {
-        int num = this.chr2slot(x);
-        int index;
+        Int32 num = this.chr2slot(x);
+        Int32 index;
         for (index = 0; index < 4; ++index)
         {
             PLAYER player = FF9StateSystem.Common.FF9.party.member[index];
@@ -691,21 +693,21 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return index < 4;
     }
 
-    public bool partyadd(long a)
+    public Boolean partyadd(Int64 a)
     {
-        long num = 0;
-        if (!this.partychk((int)a))
+        Int64 num = 0;
+        if (!this.partychk((Int32)a))
         {
-            a = this.chr2slot((int)a);
+            a = this.chr2slot((Int32)a);
             if (a >= 0L && a < 9L)
             {
-                long index = 0;
+                Int64 index = 0;
                 while (index < 4L && this._ff9.party.member[index] != null)
                     ++index;
                 num = index < 4L ? 0L : 1L;
                 if (num == 0L)
                 {
-                    ff9play.FF9Play_SetParty((int)index, (int)a);
+                    ff9play.FF9Play_SetParty((Int32)index, (Int32)a);
                     BattleAchievement.UpdateParty();
                     this.SetupPartyUID();
                 }
@@ -716,16 +718,16 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num != 0L;
     }
 
-    private int chr2slot(int x)
+    private Int32 chr2slot(Int32 x)
     {
         if (x < 9)
             return x;
         return x - 4;
     }
 
-    public int GetNumberNPC()
+    public Int32 GetNumberNPC()
     {
-        int num = 0;
+        Int32 num = 0;
         if (this._context != null)
         {
             for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
@@ -738,7 +740,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num;
     }
 
-    public Obj GetObjIP(int ip)
+    public Obj GetObjIP(Int32 ip)
     {
         ObjList objList = this._context.activeObj;
         while (objList != null && objList.obj.ip != ip)
@@ -747,13 +749,13 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return objList?.obj;
     }
 
-    public Obj GetObjUID(int uid)
+    public Obj GetObjUID(Int32 uid)
     {
-        if (uid == byte.MaxValue)
+        if (uid == Byte.MaxValue)
             return this.gCur;
         if (uid == 250)
             uid = this._context.controlUID;
-        else if (uid >= 251 && uid < byte.MaxValue)
+        else if (uid >= 251 && uid < Byte.MaxValue)
             uid = this._context.partyUID[uid - 251];
         ObjList objList = this._context.activeObj;
         while (objList != null && objList.obj.uid != uid)
@@ -762,7 +764,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return objList?.obj;
     }
 
-    public int GetSysList(int num)
+    public Int32 GetSysList(Int32 num)
     {
         num &= 7;
         switch (num)
@@ -782,7 +784,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public void ProcessCodeExt(Obj obj)
     {
-        int index = 0;
+        Int32 index = 0;
         while (index < 8 && this._objPtrList[index] != obj)
             ++index;
         if (index >= 8)
@@ -790,9 +792,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this.SetSysList(1, 1 << index);
     }
 
-    public void SetSysList(int num, int value)
+    public void SetSysList(Int32 num, Int32 value)
     {
-        this._sysList[num & 7] = (ushort)value;
+        this._sysList[num & 7] = (UInt16)value;
     }
 
     private void InitMP()
@@ -801,7 +803,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void InitObj()
     {
-        int index;
+        Int32 index;
         for (index = 0; index < 31; ++index)
         {
             ObjList objList = this._context.objlist[index];
@@ -815,42 +817,42 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._context.activeObj = this._context.activeObjTail = null;
     }
 
-    private static Obj NewThread(int sid, int uid)
+    private static Obj NewThread(Int32 sid, Int32 uid)
     {
         return new Obj(sid, uid, EventEngine.sizeOfObj, 16) {cid = 2};
     }
 
-    public int GetBattleCharData(Obj obj, int kind)
+    public Int32 GetBattleCharData(Obj obj, Int32 kind)
     {
-        int num = 0;
-        int index = 0;
+        Int32 num = 0;
+        Int32 index = 0;
         while (index < 8 && this._objPtrList[index] != obj)
             ++index;
         if (index < 8)
         {
-            BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr((ushort)(1 << index));
+            BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr((UInt16)(1 << index));
             if (btlDataPtr != null)
-                num = (int)btl_scrp.GetCharacterData(btlDataPtr, (uint)kind);
+                num = (Int32)btl_scrp.GetCharacterData(btlDataPtr, (UInt32)kind);
         }
         return num;
     }
 
-    private void SetBattleCharData(Obj obj, int kind, int value)
+    private void SetBattleCharData(Obj obj, Int32 kind, Int32 value)
     {
-        int index = 0;
+        Int32 index = 0;
         while (index < 8 && this._objPtrList[index] != obj)
             ++index;
         if (index >= 8)
             return;
-        BTL_DATA btl = kind != 32 ? btl_scrp.GetBtlDataPtr((ushort)(1 << index)) : btl_scrp.GetBtlDataPtrUnlimited((ushort)(1 << index));
+        BTL_DATA btl = kind != 32 ? btl_scrp.GetBtlDataPtr((UInt16)(1 << index)) : btl_scrp.GetBtlDataPtrUnlimited((UInt16)(1 << index));
         if (btl == null)
             return;
-        btl_scrp.SetCharacterData(btl, (uint)kind, (uint)value);
+        btl_scrp.SetCharacterData(btl, (UInt32)kind, (UInt32)value);
     }
 
-    private int getNumOfObjsInObjList(ObjList list)
+    private Int32 getNumOfObjsInObjList(ObjList list)
     {
-        int num = 0;
+        Int32 num = 0;
         for (; list != null; list = list.next)
             ++num;
         return num;
@@ -880,7 +882,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         //}
     }
 
-    public int GetIP(int objID, int tagID, byte[] eventData)
+    public Int32 GetIP(Int32 objID, Int32 tagID, Byte[] eventData)
     {
         if (eventData.Length == 0)
             return this.nil;
@@ -889,13 +891,13 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             using (BinaryReader binaryReader = new BinaryReader(memoryStream))
             {
                 binaryReader.ReadByte();
-                byte num1 = binaryReader.ReadByte();
-                ushort num2 = 0;
-                int num3;
+                Byte num1 = binaryReader.ReadByte();
+                UInt16 num2 = 0;
+                Int32 num3;
                 for (num3 = num1; num3 > 0; --num3)
                 {
-                    ushort num4 = (ushort)binaryReader.ReadInt16();
-                    num2 = (ushort)binaryReader.ReadInt16();
+                    UInt16 num4 = (UInt16)binaryReader.ReadInt16();
+                    num2 = (UInt16)binaryReader.ReadInt16();
                     if (num4 == tagID)
                         break;
                 }
@@ -944,7 +946,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
     }
 
-    public Obj FindObjByUID(int uid)
+    public Obj FindObjByUID(Int32 uid)
     {
         ObjList objList = this._context.activeObj;
         while (objList != null && objList.obj.uid != uid)
@@ -953,45 +955,45 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return objList?.obj;
     }
 
-    public bool objIsVisible(Obj obj)
+    public Boolean objIsVisible(Obj obj)
     {
         if (obj.state == EventEngine.stateRunning)
             return (obj.flags & 1) != 0;
         return false;
     }
 
-    public void putvobj(Obj obj, int type, int v)
+    public void putvobj(Obj obj, Int32 type, Int32 v)
     {
         if (obj == null)
             return;
         if (type == 2)
         {
-            short fixedPointAngle = (short)(v << 4);
+            Int16 fixedPointAngle = (Int16)(v << 4);
             ((PosObj)obj).rotAngle[1] = EventEngineUtils.ConvertFixedPointAngleToDegree(fixedPointAngle);
         }
         else
             this.SetBattleCharData(obj, type, v);
     }
 
-    public int BGI_systemSetAttributeMask(byte mask)
+    public Int32 BGI_systemSetAttributeMask(Byte mask)
     {
         this.fieldmap.bgi.attributeMask = mask;
         return 1;
     }
 
-    private float dist64(float deltaX, float deltaY, float deltaZ)
+    private Single dist64(Single deltaX, Single deltaY, Single deltaZ)
     {
-        return (float)(deltaX * (double)deltaX + deltaY * (double)deltaY + deltaZ * (double)deltaZ);
+        return (Single)(deltaX * (Double)deltaX + deltaY * (Double)deltaY + deltaZ * (Double)deltaZ);
     }
 
-    private float disdif64(float deltaX, float deltaZ, float deltaR)
+    private Single disdif64(Single deltaX, Single deltaZ, Single deltaR)
     {
-        return (float)(deltaX * (double)deltaX + deltaZ * (double)deltaZ + deltaR * (double)deltaR);
+        return (Single)(deltaX * (Double)deltaX + deltaZ * (Double)deltaZ + deltaR * (Double)deltaR);
     }
 
-    private float distance(float deltaX, float deltaY, float deltaZ)
+    private Single distance(Single deltaX, Single deltaY, Single deltaZ)
     {
-        return Mathf.Sqrt((float)(deltaX * (double)deltaX + deltaY * (double)deltaY + deltaZ * (double)deltaZ));
+        return Mathf.Sqrt((Single)(deltaX * (Double)deltaX + deltaY * (Double)deltaY + deltaZ * (Double)deltaZ));
     }
 
     private void ExitBattleEnd()
@@ -1008,33 +1010,33 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
         if (obj.sx > 1)
         {
-            int startID1 = this.getspw(obj, obj.sx) - 4;
-            int intFromBuffer = obj.getIntFromBuffer(startID1);
+            Int32 startID1 = this.getspw(obj, obj.sx) - 4;
+            Int32 intFromBuffer = obj.getIntFromBuffer(startID1);
             if (obj.uid == 0 && obj.level == 0)
                 this.ExitBattleEnd();
-            int startID2 = startID1 - 4;
+            Int32 startID2 = startID1 - 4;
             obj.ip = obj.getIntFromBuffer(startID2);
             obj.sx -= 2;
-            obj.wait = (byte)(intFromBuffer & byte.MaxValue);
-            obj.level = (byte)(intFromBuffer >> 8 & byte.MaxValue);
-            if ((intFromBuffer >> 16 & byte.MaxValue) != byte.MaxValue)
+            obj.wait = (Byte)(intFromBuffer & Byte.MaxValue);
+            obj.level = (Byte)(intFromBuffer >> 8 & Byte.MaxValue);
+            if ((intFromBuffer >> 16 & Byte.MaxValue) != Byte.MaxValue)
             {
-                Obj objByUid = this.FindObjByUID(intFromBuffer >> 24 & byte.MaxValue);
+                Obj objByUid = this.FindObjByUID(intFromBuffer >> 24 & Byte.MaxValue);
                 if (objByUid != null)
                 {
-                    if (objByUid.wait == byte.MaxValue)
+                    if (objByUid.wait == Byte.MaxValue)
                     {
                         objByUid.wait = 0;
                     }
                     else
                     {
-                        int num1 = this.getspw(objByUid, 0);
-                        int startID3 = this.getspw(objByUid, objByUid.sx - 1);
-                        while (startID3 > num1 && (objByUid.getByteFromBuffer(startID3) & byte.MaxValue) != byte.MaxValue)
+                        Int32 num1 = this.getspw(objByUid, 0);
+                        Int32 startID3 = this.getspw(objByUid, objByUid.sx - 1);
+                        while (startID3 > num1 && (objByUid.getByteFromBuffer(startID3) & Byte.MaxValue) != Byte.MaxValue)
                             startID3 -= 8;
                         if (startID3 > num1)
                         {
-                            byte num2 = (byte)(objByUid.getByteFromBuffer(startID3) & 4294967040U);
+                            Byte num2 = (Byte)(objByUid.getByteFromBuffer(startID3) & 4294967040U);
                             objByUid.setByteToBuffer(startID3, num2);
                         }
                     }
@@ -1045,7 +1047,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             obj.state = EventEngine.stateRunning;
             obj.ip = this.GetIP(obj.sid, 1, obj.ebData);
-            obj.level = (byte)(EventEngine.cEventLevelN - 1);
+            obj.level = (Byte)(EventEngine.cEventLevelN - 1);
         }
         else
             obj.ip = this.nil;
@@ -1054,7 +1056,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         obj.RetunCall();
     }
 
-    public void SetFollow(Obj obj, int winnum, int flags)
+    public void SetFollow(Obj obj, Int32 winnum, Int32 flags)
     {
         if ((flags & 160) != 128 || !this.isPosObj(obj))
             return;
@@ -1062,24 +1064,24 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             Obj obj1 = objList.obj;
             if (this.isPosObj(obj1) && ((PosObj)obj1).follow == winnum)
-                ((PosObj)obj1).follow = byte.MaxValue;
+                ((PosObj)obj1).follow = Byte.MaxValue;
         }
-        ((PosObj)obj).follow = (byte)winnum;
+        ((PosObj)obj).follow = (Byte)winnum;
         EventEngine.sLastTalker = (PosObj)obj;
         EventEngine.sTalkTimer = 0;
     }
 
-    public void SetNextMap(int MapNo)
+    public void SetNextMap(Int32 MapNo)
     {
         this.FF9ChangeMap(MapNo);
     }
 
-    private void SetBattleScene(int SceneNo)
+    private void SetBattleScene(Int32 SceneNo)
     {
         this.FF9ChangeMap(SceneNo);
     }
 
-    private void FF9ChangeMap(int MapNo)
+    private void FF9ChangeMap(Int32 MapNo)
     {
         FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
@@ -1087,27 +1089,27 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         switch (this._ff9Sys.mode)
         {
             case 1:
-                stateFieldSystem.loc.map.nextMapNo = (short)MapNo;
+                stateFieldSystem.loc.map.nextMapNo = (Int16)MapNo;
                 break;
             case 2:
-                stateBattleSystem.map.nextMapNo = (short)MapNo;
+                stateBattleSystem.map.nextMapNo = (Int16)MapNo;
                 break;
             case 3:
-                stateWorldSystem.map.nextMapNo = (short)MapNo;
+                stateWorldSystem.map.nextMapNo = (Int16)MapNo;
                 break;
         }
     }
 
-    private int geti()
+    private Int32 geti()
     {
-        int num = this.gExec.getByteIP();
+        Int32 num = this.gExec.getByteIP();
         ++this.gExec.ip;
         return num;
     }
 
-    private int getv1()
+    private Int32 getv1()
     {
-        int num;
+        Int32 num;
         if ((this.gArgFlag & 1) != 0)
         {
             this.eBin.CalcExpr();
@@ -1120,9 +1122,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num;
     }
 
-    private int getv2()
+    private Int32 getv2()
     {
-        int num;
+        Int32 num;
         if ((this.gArgFlag & 1) != 0)
         {
             this.eBin.CalcExpr();
@@ -1135,9 +1137,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num;
     }
 
-    private int getv3()
+    private Int32 getv3()
     {
-        int num;
+        Int32 num;
         if ((this.gArgFlag & 1) != 0)
         {
             this.eBin.CalcExpr();
@@ -1150,34 +1152,34 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return num;
     }
 
-    private void ExecAnim(Actor p, int anim)
+    private void ExecAnim(Actor p, Int32 anim)
     {
         if ((p.animFlag & EventEngine.afExec) != 0 && (p.flags & 128) != 0)
             this.FinishTurn(p);
-        p.anim = (ushort)anim;
+        p.anim = (UInt16)anim;
         p.animFrame = p.inFrame;
-        byte num1 = (byte)~(EventEngine.afDir | EventEngine.afLower | EventEngine.afFreeze);
+        Byte num1 = (Byte)~(EventEngine.afDir | EventEngine.afLower | EventEngine.afFreeze);
         p.animFlag &= num1;
-        byte num2 = p.inFrame <= p.outFrame ? (byte)EventEngine.afExec : (byte)(EventEngine.afExec | EventEngine.afDir);
+        Byte num2 = p.inFrame <= p.outFrame ? (Byte)EventEngine.afExec : (Byte)(EventEngine.afExec | EventEngine.afDir);
         p.animFlag |= num2;
         p.frameDif = 0;
-        p.frameN = (byte)EventEngineUtils.GetCharAnimFrame(p.go, anim);
+        p.frameN = (Byte)EventEngineUtils.GetCharAnimFrame(p.go, anim);
         p.aspeed = p.aspeed0;
         if (p.uid != this._context.controlUID)
             return;
         ++this.gAnimCount;
     }
 
-    public bool GetUserControl()
+    public Boolean GetUserControl()
     {
         return this._context?.usercontrol == 1;
     }
 
-    public void SetUserControl(bool isEnable)
+    public void SetUserControl(Boolean isEnable)
     {
         if (this._context == null)
             return;
-        this._context.usercontrol = !isEnable ? (byte)0 : (byte)1;
+        this._context.usercontrol = !isEnable ? (Byte)0 : (Byte)1;
     }
 
     public void BackupPosObjData()
@@ -1190,16 +1192,16 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 FieldMapActorController component = obj.go.GetComponent<FieldMapActorController>();
                 ((PosObj)obj).posField = component.curPos;
                 ((PosObj)obj).rotField = obj.go.transform.localRotation;
-                ((PosObj)obj).charFlags = (short)component.charFlags;
-                ((PosObj)obj).activeTri = (short)component.activeTri;
-                ((PosObj)obj).activeFloor = (byte)component.activeFloor;
-                ((PosObj)obj).bgiRad = (byte)(component.radius / 4.0);
+                ((PosObj)obj).charFlags = (Int16)component.charFlags;
+                ((PosObj)obj).activeTri = (Int16)component.activeTri;
+                ((PosObj)obj).activeFloor = (Byte)component.activeFloor;
+                ((PosObj)obj).bgiRad = (Byte)(component.radius / 4.0);
                 this.fieldmap.isBattleBackupPos = true;
             }
         }
     }
 
-    public int GetDashInh()
+    public Int32 GetDashInh()
     {
         if (this._context != null)
             return this._context.dashinh;
@@ -1215,6 +1217,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private class FF9FIELD_DISC
     {
-        public short FieldMapNo;
+        public Int16 FieldMapNo;
     }
 }

@@ -8,161 +8,161 @@ namespace Memoria
         /// <summary>
         /// Automatically casts {b}Reflect{/b} in battle.
         /// </summary>
-        AutoReflect = (uint)SupportAbility.AutoReflect, // 1
+        AutoReflect = (UInt32)SupportAbility.AutoReflect, // 1
 
         /// <summary>
         /// Automatically casts {b}Float{/b} in battle.
         /// </summary>
-        AutoFloat = (uint)SupportAbility.AutoFloat, // 2
+        AutoFloat = (UInt32)SupportAbility.AutoFloat, // 2
 
         /// <summary>
         /// Automatically casts {b}Haste{/b} in battle.
         /// </summary>
-        AutoHaste = (uint)SupportAbility.AutoHaste, // 4
+        AutoHaste = (UInt32)SupportAbility.AutoHaste, // 4
 
         /// <summary>
         /// Automatically casts {b}Regen{/b} in battle.
         /// </summary>
-        AutoRegen = (uint)SupportAbility.AutoRegen, // 8
+        AutoRegen = (UInt32)SupportAbility.AutoRegen, // 8
 
         /// <summary>
         /// Automatically casts {b}Life{/b} in battle.
         /// </summary>
-        AutoLife = (uint)SupportAbility.AutoLife, // 16
+        AutoLife = (UInt32)SupportAbility.AutoLife, // 16
 
         /// <summary>
         /// Increases HP by 10%.
         /// </summary>
-        HP10 = (uint)SupportAbility.HP10, // 32
+        HP10 = (UInt32)SupportAbility.HP10, // 32
 
         /// <summary>
         /// Increases HP by 20%.
         /// </summary>
-        HP20 = (uint)SupportAbility.HP20, // 64
+        HP20 = (UInt32)SupportAbility.HP20, // 64
 
         /// <summary>
         /// Increases MP by 10%.
         /// </summary>
-        MP10 = (uint)SupportAbility.MP10, // 128
+        MP10 = (UInt32)SupportAbility.MP10, // 128
 
         /// <summary>
         /// Increases MP by 20%.
         /// </summary>
-        MP20 = (uint)SupportAbility.MP20, // 256
+        MP20 = (UInt32)SupportAbility.MP20, // 256
 
         /// <summary>
         /// Raises physical attack accuracy.
         /// </summary>
-        Accuracy = (uint)SupportAbility.Accuracy, // 512
+        Accuracy = (UInt32)SupportAbility.Accuracy, // 512
 
         /// <summary>
         /// Lowers enemy’s physical attack accuracy.
         /// </summary>
-        Distract = (uint)SupportAbility.Distract, // 1024
+        Distract = (UInt32)SupportAbility.Distract, // 1024
 
         /// <summary>
         /// Back row attacks like front row.
         /// </summary>
-        LongReach = (uint)SupportAbility.LongReach, // 2048
+        LongReach = (UInt32)SupportAbility.LongReach, // 2048
 
         /// <summary>
         /// Uses own MP to raise {b}Attack Pwr{/b}.
         /// </summary>
-        MPAttack = (uint)SupportAbility.MPAttack, // 4096
+        MPAttack = (UInt32)SupportAbility.MPAttack, // 4096
 
         /// <summary>
         /// Deals lethal damage to flying enemies.
         /// </summary>
-        BirdKiller = (uint)SupportAbility.BirdKiller, // 8192
+        BirdKiller = (UInt32)SupportAbility.BirdKiller, // 8192
 
         /// <summary>
         /// Deals lethal damage to insects.
         /// </summary>
-        BugKiller = (uint)SupportAbility.BugKiller, // 16384
+        BugKiller = (UInt32)SupportAbility.BugKiller, // 16384
 
         /// <summary>
         /// Deals lethal damage to stone enemies.
         /// </summary>
-        StoneKiller = (uint)SupportAbility.StoneKiller, // 32768
+        StoneKiller = (UInt32)SupportAbility.StoneKiller, // 32768
 
         /// <summary>
         /// Deals lethal damage to undead enemies.
         /// </summary>
-        UndeadKiller = (uint)SupportAbility.UndeadKiller, // 65536
+        UndeadKiller = (UInt32)SupportAbility.UndeadKiller, // 65536
 
         /// <summary>
         /// Deals lethal damage to dragons.
         /// </summary>
-        DragonKiller = (uint)SupportAbility.DragonKiller, // 131072
+        DragonKiller = (UInt32)SupportAbility.DragonKiller, // 131072
 
         /// <summary>
         /// Deals lethal damage to demons.
         /// </summary>
-        DevilKiller = (uint)SupportAbility.DevilKiller, // 262144
+        DevilKiller = (UInt32)SupportAbility.DevilKiller, // 262144
 
         /// <summary>
         /// Deals lethal damage to beasts.
         /// </summary>
-        BeastKiller = (uint)SupportAbility.BeastKiller, // 524288
+        BeastKiller = (UInt32)SupportAbility.BeastKiller, // 524288
 
         /// <summary>
         /// Deals lethal damage to humans.
         /// </summary>
-        ManEater = (uint)SupportAbility.ManEater, // 1048576
+        ManEater = (UInt32)SupportAbility.ManEater, // 1048576
 
         /// <summary>
         /// Jump higher to raise jump attack power.
         /// </summary>
-        HighJump = (uint)SupportAbility.HighJump, // 2097152
+        HighJump = (UInt32)SupportAbility.HighJump, // 2097152
 
         /// <summary>
         /// Steal better items.
         /// </summary>
-        MasterThief = (uint)SupportAbility.MasterThief, // 4194304
+        MasterThief = (UInt32)SupportAbility.MasterThief, // 4194304
 
         /// <summary>
         /// Steal Gil along with items.
         /// </summary>
-        StealGil = (uint)SupportAbility.StealGil, // 8388608
+        StealGil = (UInt32)SupportAbility.StealGil, // 8388608
 
         /// <summary>
         /// Restores target’s HP.
         /// </summary>
-        Healer = (uint)SupportAbility.Healer, // 16777216
+        Healer = (UInt32)SupportAbility.Healer, // 16777216
 
         /// <summary>
         /// Adds weapon’s status effect (Add ST) when you Attack.
         /// </summary>
-        AddStatus = (uint)SupportAbility.AddStatus, // 33554432
+        AddStatus = (UInt32)SupportAbility.AddStatus, // 33554432
 
         /// <summary>
         /// Raises {b}Defence{/b} occasionally.
         /// </summary>
-        GambleDefence = (uint)SupportAbility.GambleDefence, // 67108864
+        GambleDefence = (UInt32)SupportAbility.GambleDefence, // 67108864
 
         /// <summary>
         /// Doubles the potency of medicinal items.
         /// </summary>
-        Chemist = (uint)SupportAbility.Chemist, // 134217728
+        Chemist = (UInt32)SupportAbility.Chemist, // 134217728
 
         /// <summary>
         /// Raises the strength of Throw.
         /// </summary>
-        PowerThrow = (uint)SupportAbility.PowerThrow, // 268435456
+        PowerThrow = (UInt32)SupportAbility.PowerThrow, // 268435456
         
         /// <summary>
         /// Raises the strength of Chakra.
         /// </summary>
-        PowerUp = (uint)SupportAbility.PowerUp, // 536870912
+        PowerUp = (UInt32)SupportAbility.PowerUp, // 536870912
 
         /// <summary>
         /// Nullifies {b}Reflect{/b} and attacks.
         /// </summary>
-        ReflectNull = (uint)SupportAbility.ReflectNull, // 1073741824
+        ReflectNull = (UInt32)SupportAbility.ReflectNull, // 1073741824
 
         /// <summary>
         /// Doubles the strength of spells by using {b}Reflect{/b}.
         /// </summary>
-        Reflectx2 = (uint)SupportAbility.Reflectx2, // 2147483648
+        Reflectx2 = (UInt32)SupportAbility.Reflectx2, // 2147483648
     }
 }

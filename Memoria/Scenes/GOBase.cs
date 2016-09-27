@@ -111,11 +111,11 @@ namespace Memoria
         {
             StringBuilder sb = new StringBuilder(256);
             sb.Append("new Matrix4x4 {");
-            for (int c = 0; c < 4; c++)
+            for (Int32 c = 0; c < 4; c++)
             {
-                for (int r = 0; r < 4; r++)
+                for (Int32 r = 0; r < 4; r++)
                 {
-                    sb.Append(Init('m' + F((float)r) + F((float)c), F(value[r, c])));
+                    sb.Append(Init('m' + F((Single)r) + F((Single)c), F(value[r, c])));
                     sb.Append(", ");
                 }
             }

@@ -7,7 +7,7 @@ namespace Memoria
 {
     public static class TextureHelper
     {
-        public static Texture2D GetFragment(Texture2D texture, int x, int y, int width, int height)
+        public static Texture2D GetFragment(Texture2D texture, Int32 x, Int32 y, Int32 width, Int32 height)
         {
             if (texture == null)
                 return null;

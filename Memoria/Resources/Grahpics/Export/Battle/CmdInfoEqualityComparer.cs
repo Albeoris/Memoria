@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Memoria
@@ -6,7 +7,7 @@ namespace Memoria
     {
         public static readonly CmdInfoEqualityComparer Instance = new CmdInfoEqualityComparer();
 
-        public bool Equals(CMD_INFO x, CMD_INFO y)
+        public Boolean Equals(CMD_INFO x, CMD_INFO y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null)) return false;
@@ -15,7 +16,7 @@ namespace Memoria
             return x.cursor == y.cursor && x.def_cur == y.def_cur && x.sub_win == y.sub_win && x.vfx_no == y.vfx_no && x.sfx_no == y.sfx_no && x.dead == y.dead && x.def_cam == y.def_cam && x.def_dead == y.def_dead;
         }
 
-        public int GetHashCode(CMD_INFO obj)
+        public Int32 GetHashCode(CMD_INFO obj)
         {
             unchecked
             {

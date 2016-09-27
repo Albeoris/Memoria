@@ -69,7 +69,7 @@ public class ff9item
                 throw new NotSupportedException($"You must set 256 items, but there {items.Length}. Any number of items will be available after a game stabilization."); // TODO
 
             FF9ITEM_DATA[] result = new FF9ITEM_DATA[items.Length];
-            for (int i = 0; i < result.Length; i++)
+            for (Int32 i = 0; i < result.Length; i++)
                 result[i] = items[i].ToItemData();
 
             return result;
@@ -95,7 +95,7 @@ public class ff9item
                 throw new NotSupportedException($"You must set 32 actions, but there {effects.Length}. Any number of actions will be available after a game stabilization."); // TODO
 
             ITEM_DATA[] result = new ITEM_DATA[effects.Length];
-            for (int i = 0; i < result.Length; i++)
+            for (Int32 i = 0; i < result.Length; i++)
                 result[i] = effects[i].ToItemData();
 
             return result;
@@ -119,11 +119,11 @@ public class ff9item
             new FF9ITEM(247, 2),
             new FF9ITEM(249, 1),
             new FF9ITEM(253, 1),
-            new FF9ITEM(byte.MaxValue, 0)
+            new FF9ITEM(Byte.MaxValue, 0)
         };
         FF9Item_InitNormal();
         FF9Item_InitImportant();
-        for (int index = 0; ff9ItemArray[index].id != byte.MaxValue; ++index)
+        for (Int32 index = 0; ff9ItemArray[index].id != Byte.MaxValue; ++index)
         {
             FF9ITEM ff9Item = ff9ItemArray[index];
             FF9Item_Add(ff9Item.id, ff9Item.count);
@@ -132,20 +132,20 @@ public class ff9item
 
     public static void FF9Item_InitNormal()
     {
-        for (int index = 0; index < 256; ++index)
+        for (Int32 index = 0; index < 256; ++index)
             FF9StateSystem.Common.FF9.item[index] = new FF9ITEM(0, 0);
     }
 
     public static void FF9Item_InitImportant()
     {
-        for (int index = 0; index < 64; ++index)
+        for (Int32 index = 0; index < 64; ++index)
             FF9StateSystem.Common.FF9.rare_item[index] = 0;
     }
 
-    public static FF9ITEM FF9Item_GetPtr(int id)
+    public static FF9ITEM FF9Item_GetPtr(Int32 id)
     {
         FF9ITEM[] ff9ItemArray = FF9StateSystem.Common.FF9.item;
-        for (int index = 0; index < 256; ++index)
+        for (Int32 index = 0; index < 256; ++index)
         {
             FF9ITEM ff9Item = ff9ItemArray[index];
             if (ff9Item.count != 0 && ff9Item.id == id)
@@ -154,7 +154,7 @@ public class ff9item
         return null;
     }
 
-    public static int FF9Item_GetCount(int id)
+    public static Int32 FF9Item_GetCount(Int32 id)
     {
         FF9ITEM ptr = FF9Item_GetPtr(id);
         if (ptr == null)
@@ -162,12 +162,12 @@ public class ff9item
         return ptr.count;
     }
 
-    public static int FF9Item_Add(int id, int count)
+    public static Int32 FF9Item_Add(Int32 id, Int32 count)
     {
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
-        if (id == byte.MaxValue)
+        if (id == Byte.MaxValue)
             return 0;
-        int index1 = 0;
+        Int32 index1 = 0;
         FF9ITEM[] ff9ItemArray1 = ff9StateGlobal.item;
         for (; index1 < 256; ++index1)
         {
@@ -176,20 +176,20 @@ public class ff9item
             {
                 if (ff9Item.count + count > 99)
                     count = 99 - ff9Item.count;
-                ff9Item.count += (byte)count;
+                ff9Item.count += (Byte)count;
                 FF9Item_Achievement(ff9Item.id, ff9Item.count);
                 return count;
             }
         }
-        int index2 = 0;
+        Int32 index2 = 0;
         FF9ITEM[] ff9ItemArray2 = ff9StateGlobal.item;
         for (; index2 < 256; ++index2)
         {
             FF9ITEM ff9Item = ff9ItemArray2[index2];
             if (ff9Item.count == 0)
             {
-                ff9Item.id = (byte)id;
-                ff9Item.count = (byte)count;
+                ff9Item.id = (Byte)id;
+                ff9Item.count = (Byte)count;
                 FF9Item_Achievement(ff9Item.id, ff9Item.count);
                 return count;
             }
@@ -197,27 +197,27 @@ public class ff9item
         return 0;
     }
 
-    public static int FF9Item_Remove(int id, int count)
+    public static Int32 FF9Item_Remove(Int32 id, Int32 count)
     {
         FF9ITEM[] ff9ItemArray = FF9StateSystem.Common.FF9.item;
-        for (int index = 0; index < 256; ++index)
+        for (Int32 index = 0; index < 256; ++index)
         {
             FF9ITEM ff9Item = ff9ItemArray[index];
             if (ff9Item.count != 0 && ff9Item.id == id)
             {
                 if (ff9Item.count < count)
                     count = ff9Item.count;
-                ff9Item.count -= (byte)count;
+                ff9Item.count -= (Byte)count;
                 return count;
             }
         }
         return 0;
     }
 
-    public static int FF9Item_GetEquipPart(int id)
+    public static Int32 FF9Item_GetEquipPart(Int32 id)
     {
         FF9ITEM_DATA ff9ItemData = _FF9Item_Data[id];
-        byte[] numArray = new byte[5]
+        Byte[] numArray = new Byte[5]
         {
             128,
             32,
@@ -225,7 +225,7 @@ public class ff9item
             16,
             8
         };
-        for (int index = 0; index < 5; ++index)
+        for (Int32 index = 0; index < 5; ++index)
         {
             if ((ff9ItemData.type & numArray[index]) != 0)
                 return index;
@@ -233,14 +233,14 @@ public class ff9item
         return -1;
     }
 
-    public static int FF9Item_GetEquipCount(int id)
+    public static Int32 FF9Item_GetEquipCount(Int32 id)
     {
-        int num = 0;
-        for (int index1 = 0; index1 < 9; ++index1)
+        Int32 num = 0;
+        for (Int32 index1 = 0; index1 < 9; ++index1)
         {
             if (FF9StateSystem.Common.FF9.player[index1].info.party != 0)
             {
-                for (int index2 = 0; index2 < 5; ++index2)
+                for (Int32 index2 = 0; index2 < 5; ++index2)
                 {
                     if (id == FF9StateSystem.Common.FF9.player[index1].equip[index2])
                         ++num;
@@ -250,41 +250,41 @@ public class ff9item
         return num;
     }
 
-    public static void FF9Item_AddImportant(int id)
+    public static void FF9Item_AddImportant(Int32 id)
     {
-        FF9StateSystem.Common.FF9.rare_item[id >> 2] |= (byte)(1 << (((byte)id & 3) << 1));
-        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (byte)~(1 << (((byte)id & 3) << 1) + 1);
+        FF9StateSystem.Common.FF9.rare_item[id >> 2] |= (Byte)(1 << (((Byte)id & 3) << 1));
+        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (Byte)~(1 << (((Byte)id & 3) << 1) + 1);
     }
 
-    public static void FF9Item_RemoveImportant(int id)
+    public static void FF9Item_RemoveImportant(Int32 id)
     {
-        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (byte)~(1 << (((byte)id & 3) << 1));
-        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (byte)~(1 << (((byte)id & 3) << 1) + 1);
+        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (Byte)~(1 << (((Byte)id & 3) << 1));
+        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (Byte)~(1 << (((Byte)id & 3) << 1) + 1);
     }
 
-    public static void FF9Item_UseImportant(int id)
+    public static void FF9Item_UseImportant(Int32 id)
     {
-        FF9StateSystem.Common.FF9.rare_item[id >> 2] |= (byte)(1 << (((byte)id & 3) << 1) + 1);
+        FF9StateSystem.Common.FF9.rare_item[id >> 2] |= (Byte)(1 << (((Byte)id & 3) << 1) + 1);
     }
 
-    public static void FF9Item_UnuseImportant(int id)
+    public static void FF9Item_UnuseImportant(Int32 id)
     {
-        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (byte)~(1 << (((byte)id & 3) << 1) + 1);
+        FF9StateSystem.Common.FF9.rare_item[id >> 2] &= (Byte)~(1 << (((Byte)id & 3) << 1) + 1);
     }
 
-    public static bool FF9Item_IsExistImportant(int id)
+    public static Boolean FF9Item_IsExistImportant(Int32 id)
     {
-        return (FF9StateSystem.Common.FF9.rare_item[(byte)id >> 2] & (byte)(1 << (((byte)id & 3) << 1))) != 0;
+        return (FF9StateSystem.Common.FF9.rare_item[(Byte)id >> 2] & (Byte)(1 << (((Byte)id & 3) << 1))) != 0;
     }
 
-    public static bool FF9Item_IsUsedImportant(int id)
+    public static Boolean FF9Item_IsUsedImportant(Int32 id)
     {
-        return (FF9StateSystem.Common.FF9.rare_item[(byte)id >> 2] & (byte)(1 << (((byte)id & 3) << 1) + 1)) != 0;
+        return (FF9StateSystem.Common.FF9.rare_item[(Byte)id >> 2] & (Byte)(1 << (((Byte)id & 3) << 1) + 1)) != 0;
     }
 
-    private static void FF9Item_Achievement(int id, int count)
+    private static void FF9Item_Achievement(Int32 id, Int32 count)
     {
-        int num = id;
+        Int32 num = id;
         switch (num)
         {
             case 28:
@@ -359,16 +359,16 @@ public class ff9item
         }
     }
 
-    public static int IncreaseMoonStoneCount()
+    public static Int32 IncreaseMoonStoneCount()
     {
-        int num = FF9StateSystem.Achievement.EvtReservedArray[0] + 1;
+        Int32 num = FF9StateSystem.Achievement.EvtReservedArray[0] + 1;
         FF9StateSystem.Achievement.EvtReservedArray[0] = num;
         return num;
     }
 
-    public static int DecreaseMoonStoneCount()
+    public static Int32 DecreaseMoonStoneCount()
     {
-        int num = FF9StateSystem.Achievement.EvtReservedArray[0] - 1;
+        Int32 num = FF9StateSystem.Achievement.EvtReservedArray[0] - 1;
         FF9StateSystem.Achievement.EvtReservedArray[0] = num;
         return num;
     }

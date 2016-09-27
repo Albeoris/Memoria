@@ -32,53 +32,53 @@ using UnityEngine;
 [ExportedType("4ĥÝİńńńńH!!!ıØĠ-wU@ØÑ¯³²M9ñA¼¹dĲ@jgÝJĝUĆnĬčZ1ÔĻyīÑG«ČĠıÄAö(ČĖÄWð¯$ÆĚĺĪæàÝou¶Eį¢Ł7nl~Ļu0uýøłTø$àđi®rçĸªČ'.ā~C[Ļþ5E{[ª|í´ėÖÿ¸ÆķË±zOMÍïEĽĵīIËŃ´l·3ÞJ¥Ná-Z#Ve¸»VeĨn±ĤġĴï2!!!&>Ê`5èĸdá¯4;Ký½[½jį×Ü!ĬěTj@ěĞÊ~Å§ěĴĠĬT.ºæğ°ĩ>ĲÅ#,Ĩe@#Ö_ŁĠñČqēĘðrńńńń")]
 public class BGSCENE_DEF
 {
-    public ushort sceneLength;
+    public UInt16 sceneLength;
 
-    public ushort depthBitShift;
+    public UInt16 depthBitShift;
 
-    public ushort animCount;
+    public UInt16 animCount;
 
-    public ushort overlayCount;
+    public UInt16 overlayCount;
 
-    public ushort lightCount;
+    public UInt16 lightCount;
 
-    public ushort cameraCount;
+    public UInt16 cameraCount;
 
-    public uint animOffset;
+    public UInt32 animOffset;
 
-    public uint overlayOffset;
+    public UInt32 overlayOffset;
 
-    public uint lightOffset;
+    public UInt32 lightOffset;
 
-    public uint cameraOffset;
+    public UInt32 cameraOffset;
 
-    public short orgZ;
+    public Int16 orgZ;
 
-    public short curZ;
+    public Int16 curZ;
 
-    public short orgX;
+    public Int16 orgX;
 
-    public short orgY;
+    public Int16 orgY;
 
-    public short curX;
+    public Int16 curX;
 
-    public short curY;
+    public Int16 curY;
 
-    public short minX;
+    public Int16 minX;
 
-    public short maxX;
+    public Int16 maxX;
 
-    public short minY;
+    public Int16 minY;
 
-    public short maxY;
+    public Int16 maxY;
 
-    public short scrX;
+    public Int16 scrX;
 
-    public short scrY;
+    public Int16 scrY;
 
-    public string name;
+    public String name;
 
-    public byte[] ebgBin;
+    public Byte[] ebgBin;
 
     public List<BGOVERLAY_DEF> overlayList;
 
@@ -88,7 +88,7 @@ public class BGSCENE_DEF
 
     public List<BGCAM_DEF> cameraList;
 
-    public Dictionary<string, Material> materialList;
+    public Dictionary<String, Material> materialList;
 
     public PSXVram vram;
 
@@ -96,34 +96,34 @@ public class BGSCENE_DEF
 
     public Texture2D atlasAlpha;
 
-    public uint SPRITE_W = 16u;
+    public UInt32 SPRITE_W = 16u;
 
-    public uint SPRITE_H = 16u;
+    public UInt32 SPRITE_H = 16u;
 
-    public uint ATLAS_W = 1024u;
+    public UInt32 ATLAS_W = 1024u;
 
-    public uint ATLAS_H = 1024u;
+    public UInt32 ATLAS_H = 1024u;
 
-    private int spriteCount;
+    private Int32 spriteCount;
 
-    private bool useUpscaleFM;
+    private Boolean useUpscaleFM;
 
-    public BGSCENE_DEF(bool useUpscaleFm)
+    public BGSCENE_DEF(Boolean useUpscaleFm)
     {
         this.useUpscaleFM = useUpscaleFm;
-        this.name = string.Empty;
+        this.name = String.Empty;
         this.ebgBin = null;
         this.overlayList = new List<BGOVERLAY_DEF>();
         this.animList = new List<BGANIM_DEF>();
         this.lightList = new List<BGLIGHT_DEF>();
         this.cameraList = new List<BGCAM_DEF>();
-        this.materialList = new Dictionary<string, Material>();
+        this.materialList = new Dictionary<String, Material>();
     }
 
     private void InitPSXTextureAtlas()
     {
         this.vram = new PSXVram(true);
-        this.atlas = new Texture2D((int)this.ATLAS_W, (int)this.ATLAS_H)
+        this.atlas = new Texture2D((Int32)this.ATLAS_W, (Int32)this.ATLAS_H)
         {
             filterMode = FilterMode.Point,
             wrapMode = TextureWrapMode.Clamp
@@ -172,7 +172,7 @@ public class BGSCENE_DEF
     private void ExtractCameraData(BinaryReader reader)
     {
         reader.BaseStream.Seek(this.cameraOffset, SeekOrigin.Begin);
-        for (int i = 0; i < (int)this.cameraCount; i++)
+        for (Int32 i = 0; i < (Int32)this.cameraCount; i++)
         {
             BGCAM_DEF bGCAM_DEF = new BGCAM_DEF();
             bGCAM_DEF.ReadData(reader);
@@ -183,7 +183,7 @@ public class BGSCENE_DEF
     private void ExtractLightData(BinaryReader reader)
     {
         reader.BaseStream.Seek(this.lightOffset, SeekOrigin.Begin);
-        for (int i = 0; i < (int)this.lightCount; i++)
+        for (Int32 i = 0; i < (Int32)this.lightCount; i++)
         {
             BGLIGHT_DEF bGLIGHT_DEF = new BGLIGHT_DEF();
             bGLIGHT_DEF.ReadData(reader);
@@ -193,11 +193,11 @@ public class BGSCENE_DEF
 
     private void ExtractAnimationFrameData(BinaryReader reader)
     {
-        for (int i = 0; i < (int)this.animCount; i++)
+        for (Int32 i = 0; i < (Int32)this.animCount; i++)
         {
             BGANIM_DEF bGANIM_DEF = this.animList[i];
             reader.BaseStream.Seek(bGANIM_DEF.offset, SeekOrigin.Begin);
-            for (int j = 0; j < bGANIM_DEF.frameCount; j++)
+            for (Int32 j = 0; j < bGANIM_DEF.frameCount; j++)
             {
                 BGANIMFRAME_DEF bGANIMFRAME_DEF = new BGANIMFRAME_DEF();
                 bGANIMFRAME_DEF.ReadData(reader);
@@ -209,7 +209,7 @@ public class BGSCENE_DEF
     private void ExtractAnimationData(BinaryReader reader)
     {
         reader.BaseStream.Seek(this.animOffset, SeekOrigin.Begin);
-        for (int i = 0; i < (int)this.animCount; i++)
+        for (Int32 i = 0; i < (Int32)this.animCount; i++)
         {
             BGANIM_DEF bGANIM_DEF = new BGANIM_DEF();
             bGANIM_DEF.ReadData(reader);
@@ -220,37 +220,37 @@ public class BGSCENE_DEF
     private void ExtractSpriteData(BinaryReader reader)
     {
         this.spriteCount = 0;
-        for (int i = 0; i < (int)this.overlayCount; i++)
+        for (Int32 i = 0; i < (Int32)this.overlayCount; i++)
         {
             BGOVERLAY_DEF bGOVERLAY_DEF = this.overlayList[i];
             this.spriteCount += bGOVERLAY_DEF.spriteCount;
         }
         if (this.useUpscaleFM)
         {
-            this.ATLAS_H = (uint)this.atlas.height;
-            this.ATLAS_W = (uint)this.atlas.width;
+            this.ATLAS_H = (UInt32)this.atlas.height;
+            this.ATLAS_W = (UInt32)this.atlas.width;
         }
-        int num = this.atlas.width / 36;
-        int num2 = 0;
-        for (int j = 0; j < (int)this.overlayCount; j++)
+        Int32 num = this.atlas.width / 36;
+        Int32 num2 = 0;
+        for (Int32 j = 0; j < (Int32)this.overlayCount; j++)
         {
             BGOVERLAY_DEF bGOVERLAY_DEF2 = this.overlayList[j];
             reader.BaseStream.Seek(bGOVERLAY_DEF2.prmOffset, SeekOrigin.Begin);
-            for (int k = 0; k < (int)bGOVERLAY_DEF2.spriteCount; k++)
+            for (Int32 k = 0; k < (Int32)bGOVERLAY_DEF2.spriteCount; k++)
             {
                 BGSPRITE_LOC_DEF bGSPRITE_LOC_DEF = new BGSPRITE_LOC_DEF();
                 bGSPRITE_LOC_DEF.ReadData_BGSPRITE_DEF(reader);
                 bGOVERLAY_DEF2.spriteList.Add(bGSPRITE_LOC_DEF);
             }
             reader.BaseStream.Seek(bGOVERLAY_DEF2.locOffset, SeekOrigin.Begin);
-            for (int l = 0; l < (int)bGOVERLAY_DEF2.spriteCount; l++)
+            for (Int32 l = 0; l < (Int32)bGOVERLAY_DEF2.spriteCount; l++)
             {
                 BGSPRITE_LOC_DEF bGSPRITE_LOC_DEF2 = bGOVERLAY_DEF2.spriteList[l];
                 bGSPRITE_LOC_DEF2.ReadData_BGSPRITELOC_DEF(reader);
                 if (this.useUpscaleFM)
                 {
-                    bGSPRITE_LOC_DEF2.atlasX = (ushort)(2 + num2 % num * 36);
-                    bGSPRITE_LOC_DEF2.atlasY = (ushort)(2 + num2 / num * 36);
+                    bGSPRITE_LOC_DEF2.atlasX = (UInt16)(2 + num2 % num * 36);
+                    bGSPRITE_LOC_DEF2.atlasY = (UInt16)(2 + num2 / num * 36);
                     bGSPRITE_LOC_DEF2.w = 32;
                     bGSPRITE_LOC_DEF2.h = 32;
                     num2++;
@@ -262,7 +262,7 @@ public class BGSCENE_DEF
     private void ExtractOverlayData(BinaryReader reader)
     {
         reader.BaseStream.Seek(this.overlayOffset, SeekOrigin.Begin);
-        for (int i = 0; i < (int)this.overlayCount; i++)
+        for (Int32 i = 0; i < (Int32)this.overlayCount; i++)
         {
             BGOVERLAY_DEF bGOVERLAY_DEF = new BGOVERLAY_DEF();
             bGOVERLAY_DEF.ReadData(reader);
@@ -274,10 +274,10 @@ public class BGSCENE_DEF
         }
     }
 
-    private void _LoadDummyEBG(BGSCENE_DEF sceneUS, string path, string newName, FieldMapLocalizeAreaTitleInfo info, string localizeSymbol)
+    private void _LoadDummyEBG(BGSCENE_DEF sceneUS, String path, String newName, FieldMapLocalizeAreaTitleInfo info, String localizeSymbol)
     {
         this.name = newName;
-        TextAsset textAsset = AssetManager.Load<TextAsset>(string.Concat(path, newName, "_", localizeSymbol, ".bgs"), false);
+        TextAsset textAsset = AssetManager.Load<TextAsset>(String.Concat(path, newName, "_", localizeSymbol, ".bgs"), false);
         if (textAsset == null)
         {
             return;
@@ -287,45 +287,45 @@ public class BGSCENE_DEF
         {
             this.ExtractHeaderData(binaryReader);
             this.ExtractOverlayData(binaryReader);
-            int atlasWidth = info.atlasWidth;
-            int startOvrIdx = info.startOvrIdx;
-            int endOvrIdx = info.endOvrIdx;
-            int spriteStartIndex = info.GetSpriteStartIndex(localizeSymbol);
-            int num = atlasWidth / 36;
-            int num2 = spriteStartIndex;
-            for (int i = startOvrIdx; i <= endOvrIdx; i++)
+            Int32 atlasWidth = info.atlasWidth;
+            Int32 startOvrIdx = info.startOvrIdx;
+            Int32 endOvrIdx = info.endOvrIdx;
+            Int32 spriteStartIndex = info.GetSpriteStartIndex(localizeSymbol);
+            Int32 num = atlasWidth / 36;
+            Int32 num2 = spriteStartIndex;
+            for (Int32 i = startOvrIdx; i <= endOvrIdx; i++)
             {
                 BGOVERLAY_DEF bGOVERLAY_DEF = this.overlayList[i];
                 binaryReader.BaseStream.Seek(bGOVERLAY_DEF.prmOffset, SeekOrigin.Begin);
-                for (int j = 0; j < (int)bGOVERLAY_DEF.spriteCount; j++)
+                for (Int32 j = 0; j < (Int32)bGOVERLAY_DEF.spriteCount; j++)
                 {
                     BGSPRITE_LOC_DEF bGSPRITE_LOC_DEF = new BGSPRITE_LOC_DEF();
                     bGSPRITE_LOC_DEF.ReadData_BGSPRITE_DEF(binaryReader);
                     bGOVERLAY_DEF.spriteList.Add(bGSPRITE_LOC_DEF);
                 }
                 binaryReader.BaseStream.Seek(bGOVERLAY_DEF.locOffset, SeekOrigin.Begin);
-                for (int k = 0; k < (int)bGOVERLAY_DEF.spriteCount; k++)
+                for (Int32 k = 0; k < (Int32)bGOVERLAY_DEF.spriteCount; k++)
                 {
                     BGSPRITE_LOC_DEF bGSPRITE_LOC_DEF2 = bGOVERLAY_DEF.spriteList[k];
                     bGSPRITE_LOC_DEF2.ReadData_BGSPRITELOC_DEF(binaryReader);
                     if (this.useUpscaleFM)
                     {
-                        bGSPRITE_LOC_DEF2.atlasX = (ushort)(2 + num2 % num * 36);
-                        bGSPRITE_LOC_DEF2.atlasY = (ushort)(2 + num2 / num * 36);
+                        bGSPRITE_LOC_DEF2.atlasX = (UInt16)(2 + num2 % num * 36);
+                        bGSPRITE_LOC_DEF2.atlasY = (UInt16)(2 + num2 / num * 36);
                         bGSPRITE_LOC_DEF2.w = 32;
                         bGSPRITE_LOC_DEF2.h = 32;
                         num2++;
                     }
                 }
             }
-            for (int l = startOvrIdx; l <= endOvrIdx; l++)
+            for (Int32 l = startOvrIdx; l <= endOvrIdx; l++)
             {
                 sceneUS.overlayList[l] = this.overlayList[l];
             }
         }
     }
 
-    public void LoadEBG(FieldMap fieldMap, string path, string newName)
+    public void LoadEBG(FieldMap fieldMap, String path, String newName)
     {
         this.name = newName;
         if (!this.useUpscaleFM)
@@ -382,7 +382,7 @@ public class BGSCENE_DEF
         {
             this.ReadData(binaryReader);
         }
-        string symbol = Localization.GetSymbol();
+        String symbol = Localization.GetSymbol();
         if (symbol != "US")
         {
             FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(newName);
@@ -406,7 +406,7 @@ public class BGSCENE_DEF
             this.CreateScene(fieldMap, this.useUpscaleFM);
     }
 
-    private static Rect CalculateExpectedTextureAtlasSize(int spriteCount)
+    private static Rect CalculateExpectedTextureAtlasSize(Int32 spriteCount)
     {
         Rect[] array =
         {
@@ -424,11 +424,11 @@ public class BGSCENE_DEF
             new Rect(0f, 0f, 2048f, 2048f)
         };
         Rect[] array2 = array;
-        for (int i = 0; i < array2.Length; i++)
+        for (Int32 i = 0; i < array2.Length; i++)
         {
             Rect result = array2[i];
-            int num = (int)result.width / 36;
-            int num2 = (int)result.height / 36;
+            Int32 num = (Int32)result.width / 36;
+            Int32 num2 = (Int32)result.height / 36;
             if (num * num2 >= spriteCount)
             {
                 return result;
@@ -439,34 +439,34 @@ public class BGSCENE_DEF
 
     private void GenerateAtlasFromBinary()
     {
-        uint num = this.ATLAS_W * this.ATLAS_H;
+        UInt32 num = this.ATLAS_W * this.ATLAS_H;
         Color32[] array = new Color32[num];
-        uint num2 = 0u;
-        uint num3 = 1u;
-        for (int i = 0; i < (int)this.overlayCount; i++)
+        UInt32 num2 = 0u;
+        UInt32 num3 = 1u;
+        for (Int32 i = 0; i < (Int32)this.overlayCount; i++)
         {
             BGOVERLAY_DEF bGOVERLAY_DEF = this.overlayList[i];
-            for (int j = 0; j < (int)bGOVERLAY_DEF.spriteCount; j++)
+            for (Int32 j = 0; j < (Int32)bGOVERLAY_DEF.spriteCount; j++)
             {
                 BGSPRITE_LOC_DEF bGSPRITE_LOC_DEF = bGOVERLAY_DEF.spriteList[j];
-                bGSPRITE_LOC_DEF.atlasX = (ushort)num2;
-                bGSPRITE_LOC_DEF.atlasY = (ushort)num3;
+                bGSPRITE_LOC_DEF.atlasX = (UInt16)num2;
+                bGSPRITE_LOC_DEF.atlasY = (UInt16)num3;
                 if (bGSPRITE_LOC_DEF.res == 0)
                 {
-                    int index = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.clutX * 16, bGSPRITE_LOC_DEF.clutY, (int)this.vram.width, (int)this.vram.height);
-                    for (uint num4 = 0u; num4 < (uint)bGSPRITE_LOC_DEF.h; num4 += 1u)
+                    Int32 index = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.clutX * 16, bGSPRITE_LOC_DEF.clutY, (Int32)this.vram.width, (Int32)this.vram.height);
+                    for (UInt32 num4 = 0u; num4 < (UInt32)bGSPRITE_LOC_DEF.h; num4 += 1u)
                     {
-                        int index2 = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.texX * 64 + bGSPRITE_LOC_DEF.u / 4, (int)(bGSPRITE_LOC_DEF.texY * 256u + bGSPRITE_LOC_DEF.v + num4), (int)this.vram.width, (int)this.vram.height);
-                        int index3 = ArrayUtil.GetIndex((int)num2, (int)(num3 + num4), (int)this.ATLAS_W, (int)this.ATLAS_H);
-                        uint num5 = 0u;
-                        while (num5 < (ulong)(bGSPRITE_LOC_DEF.w / 2))
+                        Int32 index2 = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.texX * 64 + bGSPRITE_LOC_DEF.u / 4, (Int32)(bGSPRITE_LOC_DEF.texY * 256u + bGSPRITE_LOC_DEF.v + num4), (Int32)this.vram.width, (Int32)this.vram.height);
+                        Int32 index3 = ArrayUtil.GetIndex((Int32)num2, (Int32)(num3 + num4), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                        UInt32 num5 = 0u;
+                        while (num5 < (UInt64)(bGSPRITE_LOC_DEF.w / 2))
                         {
-                            byte b = this.vram.rawData[index2 * 2 + (int)num5];
-                            byte b2 = (byte)(b & 15);
-                            byte b3 = (byte)(b >> 4 & 15);
-                            int num6 = (index + b2) * 2;
-                            ushort num7 = (ushort)(this.vram.rawData[num6] | this.vram.rawData[num6 + 1] << 8);
-                            int num8 = index3 + (int)(num5 * 2u);
+                            Byte b = this.vram.rawData[index2 * 2 + (Int32)num5];
+                            Byte b2 = (Byte)(b & 15);
+                            Byte b3 = (Byte)(b >> 4 & 15);
+                            Int32 num6 = (index + b2) * 2;
+                            UInt16 num7 = (UInt16)(this.vram.rawData[num6] | this.vram.rawData[num6 + 1] << 8);
+                            Int32 num8 = index3 + (Int32)(num5 * 2u);
                             ConvertColor16toColor32(num7, out array[num8]);
                             if (bGSPRITE_LOC_DEF.trans != 0 && num7 != 0)
                             {
@@ -480,8 +480,8 @@ public class BGSCENE_DEF
                                 }
                             }
                             num6 = (index + b3) * 2;
-                            num7 = (ushort)(this.vram.rawData[num6] | this.vram.rawData[num6 + 1] << 8);
-                            num8 = index3 + (int)(num5 * 2u) + 1;
+                            num7 = (UInt16)(this.vram.rawData[num6] | this.vram.rawData[num6 + 1] << 8);
+                            num8 = index3 + (Int32)(num5 * 2u) + 1;
                             ConvertColor16toColor32(num7, out array[num8]);
                             if (bGSPRITE_LOC_DEF.trans != 0 && num7 != 0)
                             {
@@ -500,17 +500,17 @@ public class BGSCENE_DEF
                 }
                 else if (bGSPRITE_LOC_DEF.res == 1)
                 {
-                    int index4 = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.clutX * 16, bGSPRITE_LOC_DEF.clutY, (int)this.vram.width, (int)this.vram.height);
-                    for (uint num9 = 0u; num9 < (uint)bGSPRITE_LOC_DEF.h; num9 += 1u)
+                    Int32 index4 = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.clutX * 16, bGSPRITE_LOC_DEF.clutY, (Int32)this.vram.width, (Int32)this.vram.height);
+                    for (UInt32 num9 = 0u; num9 < (UInt32)bGSPRITE_LOC_DEF.h; num9 += 1u)
                     {
-                        int index5 = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.texX * 64 + bGSPRITE_LOC_DEF.u / 2, (int)(bGSPRITE_LOC_DEF.texY * 256u + bGSPRITE_LOC_DEF.v + num9), (int)this.vram.width, (int)this.vram.height);
-                        int index6 = ArrayUtil.GetIndex((int)num2, (int)(num3 + num9), (int)this.ATLAS_W, (int)this.ATLAS_H);
-                        for (uint num10 = 0u; num10 < (uint)bGSPRITE_LOC_DEF.w; num10 += 1u)
+                        Int32 index5 = ArrayUtil.GetIndex(bGSPRITE_LOC_DEF.texX * 64 + bGSPRITE_LOC_DEF.u / 2, (Int32)(bGSPRITE_LOC_DEF.texY * 256u + bGSPRITE_LOC_DEF.v + num9), (Int32)this.vram.width, (Int32)this.vram.height);
+                        Int32 index6 = ArrayUtil.GetIndex((Int32)num2, (Int32)(num3 + num9), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                        for (UInt32 num10 = 0u; num10 < (UInt32)bGSPRITE_LOC_DEF.w; num10 += 1u)
                         {
-                            byte b4 = this.vram.rawData[index5 * 2 + (int)num10];
-                            int num11 = (index4 + b4) * 2;
-                            ushort num12 = (ushort)(this.vram.rawData[num11] | this.vram.rawData[num11 + 1] << 8);
-                            int num13 = index6 + (int)num10;
+                            Byte b4 = this.vram.rawData[index5 * 2 + (Int32)num10];
+                            Int32 num11 = (index4 + b4) * 2;
+                            UInt16 num12 = (UInt16)(this.vram.rawData[num11] | this.vram.rawData[num11 + 1] << 8);
+                            Int32 num13 = index6 + (Int32)num10;
                             ConvertColor16toColor32(num12, out array[num13]);
                             if (bGSPRITE_LOC_DEF.trans != 0 && num12 != 0)
                             {
@@ -526,19 +526,19 @@ public class BGSCENE_DEF
                         }
                     }
                 }
-                for (uint num14 = 0u; num14 < (uint)bGSPRITE_LOC_DEF.h; num14 += 1u)
+                for (UInt32 num14 = 0u; num14 < (UInt32)bGSPRITE_LOC_DEF.h; num14 += 1u)
                 {
-                    int index7 = ArrayUtil.GetIndex((int)(num2 + this.SPRITE_W), (int)(num3 + num14), (int)this.ATLAS_W, (int)this.ATLAS_H);
+                    Int32 index7 = ArrayUtil.GetIndex((Int32)(num2 + this.SPRITE_W), (Int32)(num3 + num14), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
                     array[index7] = array[index7 - 1];
                 }
-                for (uint num15 = 0u; num15 < (uint)bGSPRITE_LOC_DEF.w; num15 += 1u)
+                for (UInt32 num15 = 0u; num15 < (UInt32)bGSPRITE_LOC_DEF.w; num15 += 1u)
                 {
-                    int index8 = ArrayUtil.GetIndex((int)(num2 + num15), (int)num3, (int)this.ATLAS_W, (int)this.ATLAS_H);
-                    int index9 = ArrayUtil.GetIndex((int)(num2 + num15), (int)(num3 - 1u), (int)this.ATLAS_W, (int)this.ATLAS_H);
+                    Int32 index8 = ArrayUtil.GetIndex((Int32)(num2 + num15), (Int32)num3, (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                    Int32 index9 = ArrayUtil.GetIndex((Int32)(num2 + num15), (Int32)(num3 - 1u), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
                     array[index9] = array[index8];
                 }
-                int index10 = ArrayUtil.GetIndex((int)(num2 + this.SPRITE_W - 1u), (int)num3, (int)this.ATLAS_W, (int)this.ATLAS_H);
-                int index11 = ArrayUtil.GetIndex((int)(num2 + this.SPRITE_W), (int)(num3 - 1u), (int)this.ATLAS_W, (int)this.ATLAS_H);
+                Int32 index10 = ArrayUtil.GetIndex((Int32)(num2 + this.SPRITE_W - 1u), (Int32)num3, (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                Int32 index11 = ArrayUtil.GetIndex((Int32)(num2 + this.SPRITE_W), (Int32)(num3 - 1u), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
                 array[index11] = array[index10];
                 num2 += this.SPRITE_W + 1u;
                 if (num2 >= this.ATLAS_W || this.ATLAS_W - num2 < this.SPRITE_W + 1u)
@@ -586,16 +586,16 @@ public class BGSCENE_DEF
         this.materialList.Add("abr_3", material);
     }
 
-    private void CreateScene(FieldMap fieldMap, bool UseUpscalFM)
+    private void CreateScene(FieldMap fieldMap, Boolean UseUpscalFM)
     {
         GameObject gameObject = new GameObject("Background");
         gameObject.transform.parent = fieldMap.transform;
         gameObject.transform.localPosition = new Vector3(this.curX - 160f, -(this.curY - 112f), this.curZ);
         gameObject.transform.localScale = new Vector3(1f, -1f, 1f);
-        for (int i = 0; i < this.cameraList.Count; i++)
+        for (Int32 i = 0; i < this.cameraList.Count; i++)
         {
             BGCAM_DEF bGCAM_DEF = this.cameraList[i];
-            GameObject gameObject2 = new GameObject(string.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + 160f, " x ", bGCAM_DEF.vrpMaxY + 112f));
+            GameObject gameObject2 = new GameObject(String.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + 160f, " x ", bGCAM_DEF.vrpMaxY + 112f));
             Transform transform = gameObject2.transform;
             transform.parent = gameObject.transform;
             bGCAM_DEF.transform = transform;
@@ -604,18 +604,18 @@ public class BGSCENE_DEF
         }
         List<Vector3> list = new List<Vector3>();
         List<Vector2> list2 = new List<Vector2>();
-        List<int> list3 = new List<int>();
-        for (int j = 0; j < this.overlayList.Count; j++)
+        List<Int32> list3 = new List<Int32>();
+        for (Int32 j = 0; j < this.overlayList.Count; j++)
         {
             BGOVERLAY_DEF bGOVERLAY_DEF = this.overlayList[j];
-            string str = "Overlay_" + j.ToString("D2");
+            String str = "Overlay_" + j.ToString("D2");
             GameObject gameObject3 = new GameObject(str);
             Transform transform2 = gameObject3.transform;
             transform2.parent = this.cameraList[bGOVERLAY_DEF.camNdx].transform;
             transform2.localPosition = new Vector3(bGOVERLAY_DEF.curX * 1f, bGOVERLAY_DEF.curY * 1f, bGOVERLAY_DEF.curZ);
             transform2.localScale = new Vector3(1f, 1f, 1f);
             bGOVERLAY_DEF.transform = transform2;
-            for (int k = 0; k < bGOVERLAY_DEF.spriteList.Count; k++)
+            for (Int32 k = 0; k < bGOVERLAY_DEF.spriteList.Count; k++)
             {
                 BGSPRITE_LOC_DEF bGSPRITE_LOC_DEF = bGOVERLAY_DEF.spriteList[k];
                 var num = bGSPRITE_LOC_DEF.depth;
@@ -634,15 +634,15 @@ public class BGSCENE_DEF
                 list.Add(new Vector3(16f, -16f, 0f));
                 list.Add(new Vector3(16f, 0f, 0f));
                 list.Add(new Vector3(0f, 0f, 0f));
-                float num2 = this.ATLAS_W;
-                float num3 = this.ATLAS_H;
-                float x;
-                float y;
-                float x2;
-                float y2;
+                Single num2 = this.ATLAS_W;
+                Single num3 = this.ATLAS_H;
+                Single x;
+                Single y;
+                Single x2;
+                Single y2;
                 if (UseUpscalFM)
                 {
-                    float num4 = 0.5f;
+                    Single num4 = 0.5f;
                     x = (bGSPRITE_LOC_DEF.atlasX - num4) / num2;
                     y = (this.ATLAS_H - bGSPRITE_LOC_DEF.atlasY + num4) / num3;
                     x2 = (bGSPRITE_LOC_DEF.atlasX + this.SPRITE_W - num4) / num2;
@@ -650,7 +650,7 @@ public class BGSCENE_DEF
                 }
                 else
                 {
-                    float num5 = 0.5f;
+                    Single num5 = 0.5f;
                     x = (bGSPRITE_LOC_DEF.atlasX + num5) / num2;
                     y = (bGSPRITE_LOC_DEF.atlasY + num5) / num3;
                     x2 = (bGSPRITE_LOC_DEF.atlasX + this.SPRITE_W - num5) / num2;
@@ -675,10 +675,10 @@ public class BGSCENE_DEF
                 MeshRenderer meshRenderer = gameObject4.AddComponent<MeshRenderer>();
                 MeshFilter meshFilter = gameObject4.AddComponent<MeshFilter>();
                 meshFilter.mesh = mesh;
-                int num6 = this.curZ + (short)bGOVERLAY_DEF.curZ + bGSPRITE_LOC_DEF.depth;
+                Int32 num6 = this.curZ + (Int16)bGOVERLAY_DEF.curZ + bGSPRITE_LOC_DEF.depth;
                 GameObject expr_5B4 = gameObject4;
                 expr_5B4.name = expr_5B4.name + "_Depth(" + num6.ToString("D5") + ")";
-                string text;
+                String text;
                 if (bGSPRITE_LOC_DEF.trans != 0)
                 {
                     if (bGSPRITE_LOC_DEF.alpha == 0)
@@ -712,27 +712,27 @@ public class BGSCENE_DEF
             }
             bGOVERLAY_DEF.transform.gameObject.SetActive((bGOVERLAY_DEF.flags & 2) != 0);
         }
-        for (int l = 0; l < this.animList.Count; l++)
+        for (Int32 l = 0; l < this.animList.Count; l++)
         {
             BGANIM_DEF bGANIM_DEF = this.animList[l];
-            for (int m = 0; m < bGANIM_DEF.frameList.Count; m++)
+            for (Int32 m = 0; m < bGANIM_DEF.frameList.Count; m++)
             {
                 GameObject gameObject5 = this.overlayList[bGANIM_DEF.frameList[m].target].transform.gameObject;
                 GameObject expr_754 = gameObject5;
                 expr_754.name = expr_754.name + "_[anim_" + l.ToString("D2") + "]";
                 GameObject expr_77C = gameObject5;
-                string text2 = expr_77C.name;
-                expr_77C.name = string.Concat(text2, "_[frame_", m.ToString("D2"), "_of_", bGANIM_DEF.frameList.Count.ToString("D2"), "]");
+                String text2 = expr_77C.name;
+                expr_77C.name = String.Concat(text2, "_[frame_", m.ToString("D2"), "_of_", bGANIM_DEF.frameList.Count.ToString("D2"), "]");
             }
         }
     }
 
-    private static void ConvertColor16toColor32(ushort raw, out Color32 col)
+    private static void ConvertColor16toColor32(UInt16 raw, out Color32 col)
     {
-        byte num1 = (byte)((raw >> 10 & 31) << 3);
-        byte num2 = (byte)((raw >> 5 & 31) << 3);
-        byte num3 = (byte)((raw & 31) << 3);
-        byte num4 = byte.MaxValue;
+        Byte num1 = (Byte)((raw >> 10 & 31) << 3);
+        Byte num2 = (Byte)((raw >> 5 & 31) << 3);
+        Byte num3 = (Byte)((raw & 31) << 3);
+        Byte num4 = Byte.MaxValue;
         if (raw == 0)
             num4 = 0;
         col.a = num4;

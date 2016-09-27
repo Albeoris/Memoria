@@ -5,7 +5,7 @@ namespace Memoria
 {
     public static class StringBuilderExm
     {
-        public static StringBuilder AppendFormatLine(this StringBuilder self, string format, params object[] args)
+        public static StringBuilder AppendFormatLine(this StringBuilder self, String format, params Object[] args)
         {
             Exceptions.CheckArgumentNull(self, "self");
 
@@ -17,7 +17,7 @@ namespace Memoria
 
         public static Int32 IndexOf(this StringBuilder self, Int32 offset, Char ch)
         {
-            for (int i = offset; i < self.Length; i++)
+            for (Int32 i = offset; i < self.Length; i++)
             {
                 if (self[i] == ch)
                     return i;
@@ -28,7 +28,7 @@ namespace Memoria
 
         public static Int32 IndexFromEnd(this StringBuilder self, Int32 offset, Char ch)
         {
-            for (int i = offset; i >= 0; i--)
+            for (Int32 i = offset; i >= 0; i--)
             {
                 if (self[i] == ch)
                     return i;

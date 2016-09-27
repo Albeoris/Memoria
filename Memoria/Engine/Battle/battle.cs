@@ -1,4 +1,5 @@
 ﻿extern alias Original;
+using System;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -17,30 +18,30 @@ using Memoria;
 [ExportedType("ĎĽaà(!!!~ĤUħ{ĻøĿEïģĉŁĢ¸tsÇĢ´H²Hµ.!!!u_0ĐĒ°mµ×|ēúwuhQĿú[NŁm(ÑĕķŁ¶Ù#%węTo9¨ĸRëĨ¿ħě@fèă4!!!ĄÀļě]pĒÍ¿(DĘjÝ§¤ÑŃCpīĵĮēčyĳ:sËĭnÓč/ăW+Ìf«û×MÅÅćėJÇë³_©ÃĕZ~ĚĠĂĂËIÚĘr2úÙĬĘńńńń")]
 public class battle
 {
-    public const sbyte BTL_SYSTEM_FADE_RATE = 32;
-    public const byte BTL_MAP_JUMP_ON = 1;
-    public const byte BTL_LOAD_END_SONG = 2;
-    public const byte BTL_FLAG_TONZURA = 4;
-    public const byte BTL_CONTI_FLD_SONG = 8;
-    public const byte BTL_SONG_FADEOUT = 16;
-    public const byte BTL_PLAY_END_SONG = 32;
-    public const byte BTL_END_LOAD = 64;
-    public const byte BTL_FADE_IN_COUNT = 32;
-    public const byte BTL_FADE_OUT_COUNT = 32;
+    public const SByte BTL_SYSTEM_FADE_RATE = 32;
+    public const Byte BTL_MAP_JUMP_ON = 1;
+    public const Byte BTL_LOAD_END_SONG = 2;
+    public const Byte BTL_FLAG_TONZURA = 4;
+    public const Byte BTL_CONTI_FLD_SONG = 8;
+    public const Byte BTL_SONG_FADEOUT = 16;
+    public const Byte BTL_PLAY_END_SONG = 32;
+    public const Byte BTL_END_LOAD = 64;
+    public const Byte BTL_FADE_IN_COUNT = 32;
+    public const Byte BTL_FADE_OUT_COUNT = 32;
     public static BONUS btl_bonus;
-    public static bool isAlreadyShowTutorial;
+    public static Boolean isAlreadyShowTutorial;
 
-    public static byte TRANCE_GAUGE_FLAG => FF9StateSystem.EventState.gEventGlobal[16];
+    public static Byte TRANCE_GAUGE_FLAG => FF9StateSystem.EventState.gEventGlobal[16];
 
-    public static byte GARNET_DEPRESS_FLAG => FF9StateSystem.EventState.gEventGlobal[17];
+    public static Byte GARNET_DEPRESS_FLAG => FF9StateSystem.EventState.gEventGlobal[17];
 
-    public static byte GARNET_SUMMON_FLAG => FF9StateSystem.EventState.gEventGlobal[18];
+    public static Byte GARNET_SUMMON_FLAG => FF9StateSystem.EventState.gEventGlobal[18];
 
-    public static byte TONBERI_COUNT => FF9StateSystem.EventState.gEventGlobal[192];
+    public static Byte TONBERI_COUNT => FF9StateSystem.EventState.gEventGlobal[192];
 
-    public static byte SUMMON_RAY_FLAG => FF9StateSystem.EventState.gEventGlobal[193];
+    public static Byte SUMMON_RAY_FLAG => FF9StateSystem.EventState.gEventGlobal[193];
 
-    public static byte SUMMON_ALL_LONG_FLAG => FF9StateSystem.EventState.gEventGlobal[207];
+    public static Byte SUMMON_ALL_LONG_FLAG => FF9StateSystem.EventState.gEventGlobal[207];
 
     static battle()
     {
@@ -57,7 +58,7 @@ public class battle
         SFX.SetCameraPhase(1);
         FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
         ff9.btl_flag = 0;
-        ff9.player[3].info.serial_no = ff9.steiner_state == 0 ? (byte)7 : (byte)8;
+        ff9.player[3].info.serial_no = ff9.steiner_state == 0 ? (Byte)7 : (Byte)8;
         ff9.btl_result = 0;
         btl_sys.InitBattleSystem();
         btl2d.Btl2dInit();
@@ -78,7 +79,7 @@ public class battle
         ff9Battle.btl_phase = 2;
     }
 
-    public static uint BattleMain()
+    public static UInt32 BattleMain()
     {
         FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
@@ -109,8 +110,8 @@ public class battle
                         ff9Battle.player_load_fade = 0;
                         for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                         {
-                            ushort startSfx;
-                            if (next.bi.player == 0 && (startSfx = BTL_SCENE.BtlGetStartSFX()) != ushort.MaxValue)
+                            UInt16 startSfx;
+                            if (next.bi.player == 0 && (startSfx = BTL_SCENE.BtlGetStartSFX()) != UInt16.MaxValue)
                             {
                                 btl_util.SetBattleSfx(next, startSfx, 127);
                                 break;
@@ -183,7 +184,7 @@ public class battle
     {
         //uint id = sys.id;
         FF9StateSystem.Settings.SetTranceFull();
-        bool flag = false;
+        Boolean flag = false;
         for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
         {
             if (next.bi.disappear == 0)
@@ -212,10 +213,10 @@ public class battle
         battle.BattleSubSystem(sys, btlsys);
     }
 
-    private static bool BattleIdleLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
+    private static Boolean BattleIdleLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
         //uint id = sys.id;
-        bool flag = true;
+        Boolean flag = true;
         for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
         {
             if (next.bi.disappear == 0)
@@ -251,7 +252,7 @@ public class battle
     private static void BattleTrailingLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
         //uint id = sys.id;
-        uint num1 = 1;
+        UInt32 num1 = 1;
         if (SFX.isRunning || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
             num1 = 0U;
         for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
@@ -325,9 +326,9 @@ public class battle
                             num1 = 0U;
                             if (btlsys.btl_escape_fade == 32)
                             {
-                                btlsnd.ff9btlsnd_sndeffect_play(2906, 0, sbyte.MaxValue, 128);
-                                btlsnd.ff9btlsnd_sndeffect_play(2907, 0, sbyte.MaxValue, 128);
-                                btlsnd.ff9btlsnd_sndeffect_play(2908, 0, sbyte.MaxValue, 128);
+                                btlsnd.ff9btlsnd_sndeffect_play(2906, 0, SByte.MaxValue, 128);
+                                btlsnd.ff9btlsnd_sndeffect_play(2907, 0, SByte.MaxValue, 128);
+                                btlsnd.ff9btlsnd_sndeffect_play(2908, 0, SByte.MaxValue, 128);
                                 btlsys.btl_escape_fade -= 2;
                             }
                         }
@@ -339,7 +340,7 @@ public class battle
         }
         if (btlsys.btl_seq == 3 && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
             btlsys.btl_escape_fade -= 2;
-        if ((int)num1 != 0)
+        if ((Int32)num1 != 0)
         {
             UIManager.Battle.FF9BMenu_Enable(false);
             switch (btlsys.btl_seq)
@@ -362,10 +363,10 @@ public class battle
                                     {
                                         if (next.cur.hp > 0)
                                         {
-                                            int num3 = btl_mot.setDirection(next);
+                                            Int32 num3 = btl_mot.setDirection(next);
                                             next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num3, next.evt.rotBattle.eulerAngles.z);
                                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                            next.bi.def_idle = !btl_stat.CheckStatus(next, 197122U) ? (byte)0 : (byte)1;
+                                            next.bi.def_idle = !btl_stat.CheckStatus(next, 197122U) ? (Byte)0 : (Byte)1;
                                             next.bi.cmd_idle = 0;
                                             if (btl_util.getPlayerPtr(next).info.win_pose != 0)
                                                 btl_mot.setMotion(next, 18);
@@ -405,14 +406,14 @@ public class battle
                         btl_cmd.InitCommand(next);
                         if (next.bi.player == 0)
                         {
-                            int num2 = btl_mot.setDirection(next);
+                            Int32 num2 = btl_mot.setDirection(next);
                             next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num2, next.evt.rotBattle.eulerAngles.z);
                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
                         }
                     }
                     break;
                 case 3:
-                    uint gil = (uint)battle.btl_bonus.gil;
+                    UInt32 gil = (UInt32)battle.btl_bonus.gil;
                     sys.btl_flag |= 64;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                     {
@@ -426,7 +427,7 @@ public class battle
                     btl_sys.ClearBattleBonus();
                     if ((sys.btl_flag & 4) != 0)
                     {
-                        uint num2 = gil / 10U;
+                        UInt32 num2 = gil / 10U;
                         if (sys.party.gil > num2)
                         {
                             sys.party.gil -= num2;
@@ -442,12 +443,12 @@ public class battle
                     if (btl_abil.CheckPartyAbility(1U, 16384U))
                     {
                         battle.btl_bonus.escape_gil = true;
-                        battle.btl_bonus.gil = (int)(gil / 10U);
+                        battle.btl_bonus.gil = (Int32)(gil / 10U);
                     }
                     break;
             }
             if (btlsys.btl_phase != 5)
-                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose != 0 ? (byte)0 : (byte)1;
+                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose != 0 ? (Byte)0 : (Byte)1;
         }
         else
             btl_cmd.CommandEngine(btlsys);
@@ -532,7 +533,7 @@ public class battle
         HonoluluBattleMain.battleSPS.GenerateSPS();
     }
 
-    public static void Log(string str)
+    public static void Log(String str)
     {
         //Debug.Log(str);
     }

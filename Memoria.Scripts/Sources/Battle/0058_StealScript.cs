@@ -65,7 +65,7 @@ namespace Memoria.Scripts.Battle
         private static Boolean HasStealableItems(BattleEnemy enemy)
         {
             Boolean hasStealableItems = false;
-            for (short index = 0; index < 4; ++index)
+            for (Int16 index = 0; index < 4; ++index)
             {
                 if (enemy.StealableItems[index] != Byte.MaxValue)
                     hasStealableItems = true;

@@ -35,7 +35,7 @@ namespace Memoria
         public static readonly Action<String[]> SetWorldLocationText = StaticArraySetter("worldLocationText");
         public static readonly Func<Int32> GetFieldZoneId = StaticInt32Getter("fieldZoneId");
         public static readonly Func<Int32> GetBattleZoneId = StaticInt32Getter("battleZoneId");
-        public static readonly Func<Dictionary<int, string>> GetLocationName = Expressions.MakeStaticGetter<Dictionary<int, string>>(Type.GetField("locationName", SearchFlags));
+        public static readonly Func<Dictionary<Int32, String>> GetLocationName = Expressions.MakeStaticGetter<Dictionary<Int32, String>>(Type.GetField("locationName", SearchFlags));
 
         private static Action<String[]> StaticArraySetter(String fieldName)
         {

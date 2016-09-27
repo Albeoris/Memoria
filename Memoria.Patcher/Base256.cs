@@ -9,7 +9,7 @@ namespace Memoria.Patcher
         private static readonly Char[] Alphabet = "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃń".ToArray();
         private static readonly Byte[] Reversed = Reverse(Alphabet);
 
-        public static Char[] Encode(Byte[] array, long offset, long length)
+        public static Char[] Encode(Byte[] array, Int64 offset, Int64 length)
         {
             if (array == null)
                 return null;
@@ -27,7 +27,7 @@ namespace Memoria.Patcher
                 fixed (Char* map = &Alphabet[0])
                 fixed (Char* target = &result[0])
                 {
-                    for (int i = 0; i < result.Length; i++)
+                    for (Int32 i = 0; i < result.Length; i++)
                         target[i] = map[source[i]];
                 }
             }
@@ -77,7 +77,7 @@ namespace Memoria.Patcher
         {
             fixed (Byte* map = &Reversed[0])
             {
-                for (int i = 0; i < length; i++)
+                for (Int32 i = 0; i < length; i++)
                     target[i] = map[source[i] - '!'];
             }
         }
@@ -85,8 +85,8 @@ namespace Memoria.Patcher
         private static Byte[] Reverse(Char[] alphabet)
         {
             Byte[] result = new Byte['ń' - '!' + 1];
-            for (int i = 0; i < 256; i++)
-                result[alphabet[i] - '!'] = (byte)i;
+            for (Int32 i = 0; i < 256; i++)
+                result[alphabet[i] - '!'] = (Byte)i;
             return result;
         }
     }

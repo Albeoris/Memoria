@@ -32,18 +32,18 @@ using UnityEngine;
 internal class SnapDragScrollView : MonoBehaviour
 {
     public ScrollButton ScrollButton;
-    public int Speed;
-    public int VisibleItem;
-    public int MaxItem;
-    public int ItemHeight;
-    private float startPosY;
-    private bool isScrollMove;
-    private bool isStartMove;
+    public Int32 Speed;
+    public Int32 VisibleItem;
+    public Int32 MaxItem;
+    public Int32 ItemHeight;
+    private Single startPosY;
+    private Boolean isScrollMove;
+    private Boolean isStartMove;
     private UIPanel scrollViewPanel;
     private UIScrollView draggablePanel;
     private RecycleListPopulator populator;
 
-    public float StartPostionY
+    public Single StartPostionY
     {
         set
         {
@@ -104,12 +104,12 @@ internal class SnapDragScrollView : MonoBehaviour
         isScrollMove = false;
     }
 
-    public void ScrollToIndex(int index)
+    public void ScrollToIndex(Int32 index)
     {
-        float num1 = 0.0f;
+        Single num1 = 0.0f;
         if (index > VisibleItem - 1)
         {
-            int num2 = MaxItem - VisibleItem;
+            Int32 num2 = MaxItem - VisibleItem;
             num1 = (index + 1f - VisibleItem) / num2;
         }
         draggablePanel.verticalScrollBar.value = num1;
@@ -121,8 +121,8 @@ internal class SnapDragScrollView : MonoBehaviour
         if (!enabled)
             return;
         isStartMove = false;
-        float f = scrollViewPanel.transform.localPosition.y - startPosY;
-        float num1 = scrollViewPanel.baseClipRegion.w;
+        Single f = scrollViewPanel.transform.localPosition.y - startPosY;
+        Single num1 = scrollViewPanel.baseClipRegion.w;
         if (Mathf.RoundToInt(f) % Mathf.RoundToInt(ItemHeight) != 0)
         {
             if (isScrollMove)
@@ -131,8 +131,8 @@ internal class SnapDragScrollView : MonoBehaviour
                 DestroyImmediate(SpringPanel.current);
             }
             isScrollMove = true;
-            int num2 = (int)(f / (double)ItemHeight) * ItemHeight;
-            if (f % (double)ItemHeight > ItemHeight / 2)
+            Int32 num2 = (Int32)(f / (Double)ItemHeight) * ItemHeight;
+            if (f % (Double)ItemHeight > ItemHeight / 2)
                 num2 += ItemHeight;
             // ISSUE: method pointer
             SpringPanel.Begin(scrollViewPanel.cachedGameObject, new Vector3(scrollViewPanel.transform.localPosition.x, startPosY + num2, scrollViewPanel.transform.localPosition.z), Speed).onFinished = OnSnapFinish;

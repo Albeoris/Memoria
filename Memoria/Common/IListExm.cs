@@ -9,16 +9,16 @@ namespace Memoria
     {
         public static void InitializeElements<T>(this IList<T> list) where T : new()
         {
-            for (int i = 0; i < list.Count; i++)
+            for (Int32 i = 0; i < list.Count; i++)
                 list[i] = new T();
         }
 
-        public static bool IsNullOrEmpty<T>(this IList<T> list)
+        public static Boolean IsNullOrEmpty<T>(this IList<T> list)
         {
             return list == null || list.Count == 0;
         }
 
-        public static void Replace<T>(this IList<T> list, int index, T item, T defaultValue = default(T))
+        public static void Replace<T>(this IList<T> list, Int32 index, T item, T defaultValue = default(T))
         {
             while (list.Count < index)
                 list.Add(defaultValue);
@@ -29,12 +29,12 @@ namespace Memoria
                 list[index] = item;
         }
 
-        public static int Insert<T>(this IList<T> list, T item, IComparer<T> comparer = null)
+        public static Int32 Insert<T>(this IList<T> list, T item, IComparer<T> comparer = null)
         {
             if (comparer == null)
                 comparer = Comparer<T>.Default;
 
-            int i = 0;
+            Int32 i = 0;
             while (i < list.Count && comparer.Compare(list[i], item) < 0)
                 i++;
 
@@ -42,14 +42,14 @@ namespace Memoria
             return i;
         }
 
-        public static void Swap<T>(this IList<T> list, int firstIndex, int secondIndex)
+        public static void Swap<T>(this IList<T> list, Int32 firstIndex, Int32 secondIndex)
         {
             T tmp = list[firstIndex];
             list[firstIndex] = list[secondIndex];
             list[secondIndex] = tmp;
         }
 
-        public static T GetOrCreate<T>(this IList<T> list, int index, Func<int, T> fabric) where T : class
+        public static T GetOrCreate<T>(this IList<T> list, Int32 index, Func<Int32, T> fabric) where T : class
         {
             T result = list[index];
             if (result == null)

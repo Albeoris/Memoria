@@ -5,11 +5,11 @@ namespace Memoria
 {
     public sealed class EtcExporter : SingleFileExporter
     {
-        protected override string TypeName { get; }
-        protected override string ExportPath { get; }
+        protected override String TypeName { get; }
+        protected override String ExportPath { get; }
 
-        private readonly string _prefix;
-        private readonly string _embadedPath;
+        private readonly String _prefix;
+        private readonly String _embadedPath;
 
         public EtcExporter(EtcTextResource resource)
         {

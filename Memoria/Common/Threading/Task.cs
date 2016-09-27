@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria
 {
@@ -78,7 +79,7 @@ namespace Memoria
                 return _completedEvent.WaitOne(millisecondsTimeout);
 
             DateTime startTime = DateTime.UtcNow;
-            for (int i = 0; i < 6; i++)
+            for (Int32 i = 0; i < 6; i++)
             {
                 if (_completedEvent.WaitOne(5 * 60 * 1000))
                     break;
@@ -106,7 +107,7 @@ namespace Memoria
                 throw new Exception("Asynchronous operation failed.", Exception);
         }
 
-        private void RunSafe(object state)
+        private void RunSafe(Object state)
         {
             try
             {

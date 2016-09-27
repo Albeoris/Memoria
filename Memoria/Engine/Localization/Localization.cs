@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Memoria;
 using UnityEngine;
+using Object = System.Object;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnassignedField.Global
@@ -17,7 +18,7 @@ public static class Localization
 
     internal static readonly LocalizationDictionary Provider = new LocalizationDictionary();
 
-    public static bool localizationHasBeenSet;
+    public static Boolean localizationHasBeenSet;
     public static LoadFunction loadFunction;
     public static OnLocalizeNotification onLocalize;
 
@@ -44,7 +45,7 @@ public static class Localization
         Provider.Set(asset.name, byteReader.ReadDictionary());
     }
 
-    public static void Set(string languageName, byte[] bytes)
+    public static void Set(String languageName, Byte[] bytes)
     {
         ByteReader byteReader = new ByteReader(bytes);
         Provider.Set(languageName, byteReader.ReadDictionary());
@@ -55,7 +56,7 @@ public static class Localization
         Provider.Set(key, value);
     }
 
-    public static void ReplaceKey(string key, string val)
+    public static void ReplaceKey(String key, String val)
     {
         Provider.ReplaceKey(key, val);
     }
@@ -70,7 +71,7 @@ public static class Localization
         return Provider.TryLoadCSV(asset.bytes, merge);
     }
 
-    public static Boolean LoadCSV(byte[] bytes, Boolean merge = false)
+    public static Boolean LoadCSV(Byte[] bytes, Boolean merge = false)
     {
         return Provider.TryLoadCSV(bytes, merge);
     }
@@ -95,12 +96,12 @@ public static class Localization
         return Provider.Get(key);
     }
 
-    public static String Format(String key, params object[] parameters)
+    public static String Format(String key, params Object[] parameters)
     {
         return String.Format(Get(key), parameters);
     }
 
-    public static bool Exists(string key)
+    public static Boolean Exists(String key)
     {
         return Provider.Exists(key);
     }

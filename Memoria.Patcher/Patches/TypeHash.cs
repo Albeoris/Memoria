@@ -76,7 +76,7 @@ namespace Memoria.Patcher
                 }
                 else
                 {
-                    for (int i = 0; i < self.Length; i++)
+                    for (Int32 i = 0; i < self.Length; i++)
                     {
                         if (self[i] != other[i])
                             sb.AppendLine($"[{prefix}] Different hash of element: " + i);
@@ -104,7 +104,7 @@ namespace Memoria.Patcher
                 }
                 else
                 {
-                    for (int i = 0; i < self.Length; i++)
+                    for (Int32 i = 0; i < self.Length; i++)
                         self[i].Compare(other[i], sb);
                 }
             }
@@ -122,7 +122,7 @@ namespace Memoria.Patcher
                 Serialize(bw);
                 bw.Flush();
 
-                return Base256.Encode(ms.GetBuffer(), 0, (int)ms.Length);
+                return Base256.Encode(ms.GetBuffer(), 0, (Int32)ms.Length);
             }
         }
 
@@ -148,7 +148,7 @@ namespace Memoria.Patcher
             else
             {
                 bw.Write(_properties.Length);
-                foreach (int hash in _properties)
+                foreach (Int32 hash in _properties)
                     bw.Write(hash);
             }
 
@@ -157,7 +157,7 @@ namespace Memoria.Patcher
             else
             {
                 bw.Write(_fields.Length);
-                foreach (int hash in _fields)
+                foreach (Int32 hash in _fields)
                     bw.Write(hash);
             }
 
@@ -166,7 +166,7 @@ namespace Memoria.Patcher
             else
             {
                 bw.Write(_methods.Length);
-                foreach (int hash in _methods)
+                foreach (Int32 hash in _methods)
                     bw.Write(hash);
             }
 
@@ -188,7 +188,7 @@ namespace Memoria.Patcher
             if (propertiesLength > -1)
             {
                 _properties = new Int32[propertiesLength];
-                for (int i = 0; i < propertiesLength; i++)
+                for (Int32 i = 0; i < propertiesLength; i++)
                     _properties[i] = br.ReadInt32();
             }
 
@@ -196,7 +196,7 @@ namespace Memoria.Patcher
             if (fieldsLength > -1)
             {
                 _fields = new Int32[fieldsLength];
-                for (int i = 0; i < fieldsLength; i++)
+                for (Int32 i = 0; i < fieldsLength; i++)
                     _fields[i] = br.ReadInt32();
             }
 
@@ -204,7 +204,7 @@ namespace Memoria.Patcher
             if (methodsLength > -1)
             {
                 _methods = new Int32[methodsLength];
-                for (int i = 0; i < methodsLength; i++)
+                for (Int32 i = 0; i < methodsLength; i++)
                     _methods[i] = br.ReadInt32();
             }
 
@@ -212,7 +212,7 @@ namespace Memoria.Patcher
             if (nestedLength > -1)
             {
                 _nestedTypes = new TypeHash[nestedLength];
-                for (int i = 0; i < nestedLength; i++)
+                for (Int32 i = 0; i < nestedLength; i++)
                 {
                     TypeHash nested = new TypeHash();
                     nested.Deserialize(br);
@@ -231,7 +231,7 @@ namespace Memoria.Patcher
                 return;
 
             _nestedTypes = new TypeHash[type.NestedTypes.Count];
-            for (int index = 0; index < type.NestedTypes.Count; index++)
+            for (Int32 index = 0; index < type.NestedTypes.Count; index++)
             {
                 TypeDefinition nested = type.NestedTypes[index];
                 _nestedTypes[index] = new TypeHash(nested);
@@ -244,7 +244,7 @@ namespace Memoria.Patcher
                 return;
 
             _properties = new Int32[type.Properties.Count];
-            for (int index = 0; index < type.Properties.Count; index++)
+            for (Int32 index = 0; index < type.Properties.Count; index++)
             {
                 PropertyDefinition p = type.Properties[index];
                 _properties[index] = CalcProcessPropertyHash(p);
@@ -265,14 +265,14 @@ namespace Memoria.Patcher
                 return;
 
             _fields = new Int32[type.Fields.Count];
-            for (int index = 0; index < type.Fields.Count; index++)
+            for (Int32 index = 0; index < type.Fields.Count; index++)
             {
                 FieldDefinition f = type.Fields[index];
                 _fields[index] = CalcFieldHash(f);
             }
         }
 
-        private static int CalcFieldHash(FieldDefinition fieldDefinition)
+        private static Int32 CalcFieldHash(FieldDefinition fieldDefinition)
         {
             Int32 hash = fieldDefinition.Name.GetHashCode();
             hash = (hash * 397) ^ fieldDefinition.Attributes.GetHashCode();
@@ -286,14 +286,14 @@ namespace Memoria.Patcher
                 return;
 
             _methods = new Int32[type.Methods.Count];
-            for (int index = 0; index < type.Methods.Count; index++)
+            for (Int32 index = 0; index < type.Methods.Count; index++)
             {
                 MethodDefinition m = type.Methods[index];
                 _methods[index] = CalcMethodHash(m);
             }
         }
 
-        private static int CalcMethodHash(MethodDefinition m)
+        private static Int32 CalcMethodHash(MethodDefinition m)
         {
             Int32 hash = m.Name.GetHashCode();
             hash = (hash * 397) ^ m.Attributes.GetHashCode();
@@ -303,7 +303,7 @@ namespace Memoria.Patcher
             return hash;
         }
 
-        private static int CalcMethodParametersHash(MethodDefinition m)
+        private static Int32 CalcMethodParametersHash(MethodDefinition m)
         {
             if (!m.HasParameters)
                 return 0;
@@ -315,7 +315,7 @@ namespace Memoria.Patcher
             return hash;
         }
 
-        private static int CalcMethodBodyHash(MethodDefinition m)
+        private static Int32 CalcMethodBodyHash(MethodDefinition m)
         {
             if (!m.HasBody)
                 return 0;
@@ -326,7 +326,7 @@ namespace Memoria.Patcher
             return hash;
         }
 
-        private static int CalcMethodBodyVariablesHash(MethodDefinition m)
+        private static Int32 CalcMethodBodyVariablesHash(MethodDefinition m)
         {
             if (!m.Body.HasVariables)
                 return 0;
@@ -337,12 +337,12 @@ namespace Memoria.Patcher
             return hash;
         }
 
-        private static int CalcMethodBodyInstructionsHash(MethodDefinition m)
+        private static Int32 CalcMethodBodyInstructionsHash(MethodDefinition m)
         {
             MethodBody body = m.Body;
             Collection<Instruction> instructions = body.Instructions;
             Int32 hash = instructions.Count;
-            for (int i = 0; i < instructions.Count; i++)
+            for (Int32 i = 0; i < instructions.Count; i++)
             {
                 Instruction inst = instructions[i];
                 hash = (hash * 397) ^ inst.OpCode.GetHashCode();
@@ -361,7 +361,7 @@ namespace Memoria.Patcher
                 if (genericInstance != null && genericInstance.HasGenericArguments)
                 {
                     hash = (hash * 397) ^ genericInstance.GenericArguments.Count;
-                    for (int g = 0; g < genericInstance.GenericArguments.Count; g++)
+                    for (Int32 g = 0; g < genericInstance.GenericArguments.Count; g++)
                         hash = (hash * 397) ^ genericInstance.GenericArguments[g].FullName.GetHashCode();
                 }
 

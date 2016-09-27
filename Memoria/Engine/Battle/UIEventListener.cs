@@ -1,6 +1,7 @@
 ﻿using System;
 using Memoria;
 using UnityEngine;
+using Object = System.Object;
 
 // ReSharper disable EventNeverSubscribedTo.Global
 // ReSharper disable InconsistentNaming
@@ -14,7 +15,7 @@ using UnityEngine;
 [ExportedType("ò¿W¦#!!!ËÚĀ_3!!!Ĝ¿ÝCĘpOª®QºĦ&@ľķü^²`ćŃĤDłX.kÛÇðyüĠ.ĺ*SqéĆ³w$/KĊ©ĝę¬8ĬÑªhÏg*Łc3üFËÊúĐ5!!!»Ú·»Á¯ıĠĕQĀ0ğán=9Ŀw¨9Į6}}éhÖĲÆĹ¸Í³ô{,ĿJjīĞĮ-u]ë+ÛÈĥBê»ĺ÷æMy¤ė¨·ĦġQĔÅËłQĕ¦kµī(!!!Ŀñ@¢ńńńńńńńń&!!!~đVĸëÄČfªdF¢Ç.JŃńńńńĝJÙĥńńńńńńńń&!!!~đVĸėHĉĎòWíPÇ.JŃńńńńā&ºÄńńńńńńńń&!!!~đVĸJÇñ;IĖ½ÚÇ.JŃńńńńWĔWLńńńńńńńń&!!!~đVĸÒgćM<ÀÒ<Ç.JŃńńńńlģĵMńńńńńńńń&!!!~đVĸOÄĮ`]ÓÙáÇ.JŃńńńńcÌ_ńńńńńńńńń&!!!~đVĸÉÛĨĘĈ:Ø­Ç.JŃńńńń")]
 public class UIEventListener : MonoBehaviour
 {
-    public object parameter;
+    public Object parameter;
     public VoidDelegate onSubmit;
     public VoidDelegate onClick;
     public VoidDelegate onDoubleClick;
@@ -132,7 +133,7 @@ public class UIEventListener : MonoBehaviour
 
     #endregion
 
-    private bool isColliderEnabled
+    private Boolean isColliderEnabled
     {
         get
         {
@@ -167,28 +168,28 @@ public class UIEventListener : MonoBehaviour
         onDoubleClick(gameObject);
     }
 
-    private void OnHover(bool isOver)
+    private void OnHover(Boolean isOver)
     {
         if (!isColliderEnabled || onHover == null)
             return;
         onHover(gameObject, isOver);
     }
 
-    private void OnPress(bool isPressed)
+    private void OnPress(Boolean isPressed)
     {
         if (!isColliderEnabled || onPress == null)
             return;
         onPress(gameObject, isPressed);
     }
 
-    private void OnSelect(bool selected)
+    private void OnSelect(Boolean selected)
     {
         if (!isColliderEnabled || onSelect == null)
             return;
         onSelect(gameObject, selected);
     }
 
-    private void OnScroll(float delta)
+    private void OnScroll(Single delta)
     {
         if (!isColliderEnabled || onScroll == null)
             return;
@@ -243,7 +244,7 @@ public class UIEventListener : MonoBehaviour
         onNavigate?.Invoke(gameObject, key);
     }
 
-    private void OnTooltip(bool show)
+    private void OnTooltip(Boolean show)
     {
         if (!isColliderEnabled || onTooltip == null)
             return;
@@ -258,9 +259,9 @@ public class UIEventListener : MonoBehaviour
 
     public delegate void VoidDelegate(GameObject go);
 
-    public delegate void BoolDelegate(GameObject go, bool state);
+    public delegate void BoolDelegate(GameObject go, Boolean state);
 
-    public delegate void FloatDelegate(GameObject go, float delta);
+    public delegate void FloatDelegate(GameObject go, Single delta);
 
     public delegate void VectorDelegate(GameObject go, Vector2 delta);
 

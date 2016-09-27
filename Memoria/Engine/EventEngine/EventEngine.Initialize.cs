@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using Assets.Scripts.Common;
 using UnityEngine;
 
 public partial class EventEngine
@@ -6,7 +7,7 @@ public partial class EventEngine
     private void InitEncount()
     {
         this._encountTimer = -1440f;
-        this._context.encratio = (byte)0;
+        this._context.encratio = (Byte)0;
         this._encountBase = 0;
         this._encountReserved = false;
     }
@@ -16,16 +17,16 @@ public partial class EventEngine
         this.InitEvents(1);
     }
 
-    public void InitEvents(int gModeVal)
+    public void InitEvents(Int32 gModeVal)
     {
         this.eTb = new ETb();
         this.sEventContext0 = new EventContext();
         this.sEventContext1 = new EventContext();
         this.eBin = new EBin(this);
         this.gMode = gModeVal;
-        this.eTb.gMesValue = new int[8];
+        this.eTb.gMesValue = new Int32[8];
         this._objPtrList = new Obj[8];
-        this._sysList = new ushort[8];
+        this._sysList = new UInt16[8];
         this._enCountData = new EncountData();
         this.eTb.InitKeyEvents();
         this.InitEventsSub();
@@ -36,30 +37,30 @@ public partial class EventEngine
     public void NewGame()
     {
         FF9StateSystem.EventState.gStepCount = 0;
-        FF9StateSystem.EventState.gEventGlobal = new byte[2048];
-        FF9StateSystem.Common.FF9.fldMapNo = (short)70;
-        FF9StateSystem.Common.FF9.fldLocNo = (short)EventEngineUtils.eventIDToMESID[70];
+        FF9StateSystem.EventState.gEventGlobal = new Byte[2048];
+        FF9StateSystem.Common.FF9.fldMapNo = (Int16)70;
+        FF9StateSystem.Common.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[70];
         FF9StateSystem.Settings.time = 0.0;
         this.ReplaceFieldMap();
     }
 
     public void ReplaceFieldMap()
     {
-        PersistenSingleton<FF9StateSystem>.Instance.mode = (byte)1;
-        FF9StateSystem.Settings.StartGameTime = (double)Time.time;
+        PersistenSingleton<FF9StateSystem>.Instance.mode = (Byte)1;
+        FF9StateSystem.Settings.StartGameTime = (Double)Time.time;
         this.InitializeFlags();
         PersistenSingleton<EventEngine>.Instance.InitEvents();
     }
 
     public void ReplaceLoadMap()
     {
-        if ((int)PersistenSingleton<FF9StateSystem>.Instance.mode == 1)
+        if ((Int32)PersistenSingleton<FF9StateSystem>.Instance.mode == 1)
             SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
         else
             SceneDirector.Replace("WorldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
-        FF9StateSystem.Settings.StartGameTime = (double)Time.time;
+        FF9StateSystem.Settings.StartGameTime = (Double)Time.time;
         this.InitializeFlags();
-        PersistenSingleton<EventEngine>.Instance.InitEvents((int)PersistenSingleton<FF9StateSystem>.Instance.mode);
+        PersistenSingleton<EventEngine>.Instance.InitEvents((Int32)PersistenSingleton<FF9StateSystem>.Instance.mode);
     }
 
     public void InitializeFlags()

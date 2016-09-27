@@ -4,6 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using Memoria;
 using UnityEngine;
 
@@ -24,15 +26,15 @@ using UnityEngine;
 [ExportedType("MNēĝńńńń©!!!¨6Lį>·®!+@§đ~¤Ģrě+$$ĩŁŀþ©ĴĭDÞÎĄÄâìĩsįĐdīĜe![UāħÜwĲL8Ĳà1éĄwóÞrùcćĎ·ğtüvěÏ¥Ļ%!ĊįĴrDÞĮrMSÎNZđÐNÕĻcļòôĐP¸¡öµĵ¥ğ3ĶĢ¶ĪĒzĭ_čq¥ĖğkĞ;ķZĜķÉX!ÔMPĠï¨<%ċ23RM#îå¼İ®ĭqßõnĹ~UM[½&´{´ĎèĖ7¬ĖbµĮÿľ²ïBßġĸ8Ï=Á¿b9imm¿}ÎĬ5³ĮİæÑúZ(ćăúď«ĲĠÔĀ)ĲkeªĲ¶·¨Cð_r¨~RGÝÔFqłüÏËă±JĽĠī3®ÅăÃóć#,~áImÜĪ§QĻL([àÔÛMı¬¨ĈÆĚPľYâìēx!FdŀþÙ²ÝKUMÈGJàĐÆĥúlö4¸&ĒP¾čĄK¿Êĵ¿³3'¯`+|VðW)İùôvğRÀùI'ģRñæĭ5ġ1÷čŁăöĻ8Vĉľ«ãc]&ªĠÇ§pãü~,öĉÒó®īKľāĉ:.ÿĉÞĞ¶ÃsäĆĬøðĝĬÇ#ğĬm!!!đdÒımvm¼4åąðÖÓú»Ïÿ_ý-ĘîùÁøļ?oæí¿©CĘKģWdþĲ:J*ĈÖg¹ł8Ò^ó¾µW$Å£ĔÍî7ı¬s_ËOĩ³ĹĀíÛðĘĎ±ċąÒ¶ŀÞ³^úå¢¹èy¼1Pðw{6wĐķÒ9­l¼Æ,Â:ĚCýïØîõQÒĖĦ½c(×?Ĉð])ô'õ9ýzÄĚ19½ě³ëÄÏ4í[cùüŁĩ¹°[ájÖÖ¼VfĐŃ¿Cf½¿×â=ÊÝTAĊm»ÔÞNïķ>ě¾!?ĔDĻ¸DvĕDêħN(øİ7OôtĲŀ2ĽÌb¶ŀY¯Ěē`ĸńäĘėŁûÈþćĸÅyÅŁKÈSJáĦÙ<â¿±Ŀ½¤|#_òKĳę#ěÊÙÆnfÏuÅnļc3ò¿Ė-ê=ģvvąxfý@TªIę*[ûæ,!!!ąèłĈ#!!!Yì¿ÀB!!!ÂhoĂĩ~į÷Úaĭ÷BĠ¢åĩđrMīă(ÁKB#ÁRĭÖú¸âØúÙ_<YókÍPÛļIFrŁĒ»ĪÒË@ªċĖč2=ÇEĞ;^àÂùNç¤ESàÉ2ĔĩŃáÎAĭ·çýÍ©¬QkÙęĀø|]_$fİěåĸþİDçà¼ÁÈ:c,A2TWâ2kHÉ«Ò+!!!æuh2ìGı(İG@ćpPÕİČ¼ĉ×5µRÕ²ĒĂgGHļèĽtĝ=$!!!gõ¯Ĭńńńń)!!!ĉċĐ>Ė#bĂiÃbì¾W'ìĪâŁÂsmåĘüQĔĬńńńńńńńńï°¹~ńńńń)!!!ækļėĬQĔ¿ńÕË@ïÒ@Ăsü3u(ĺ7glÆdŃ/!!!ĄÀļěğg!¾{®YĄÉĕĸN^Č{96>Ú±Õ*Â­¼ª=ĹĒġĸ¢ąe»ÝĶĵæĜ2Ċ-¼§q?ÕńńńńfďîÔńńńń$!!!üµÇËėuĩQ%!!!à<Tâ;ãðĒ¥yĤć#!!!áĜðkńńńń$!!!!bĚĠäLĦċ$!!!ĄÀļěĪiħĪńńńń5Ď8ķńńńń&!!!ă20:µvuÎ9ËßĂÞĞÎy)!!!Ĥ:Ĺó¸Ħ¶Ü§ÎÄĐ0Ī!gģđ§¶ķU¡¹Ë·ÕèńńńńĶàt÷$!!!ÁńhîĹµÏr%!!!Þ¤łĤ¿ĐWĖÒkħġ(!!!ĄÀļěñD}MVm1Êĝ¡üķÈ­ûDjÅpZńńńń¾¤°4$!!!ÁńhîĹµÏr%!!!Þ¤łĤ¿ĐWĖÒkħġ(!!!ĄÀļěH£ëVăXĸßýs,&Ĕ1ĻkjÅpZńńńń­¯mĂ$!!!ÁńhîĹµÏr%!!!Þ¤łĤ¿ĐWĖÒkħġ(!!!ĄÀļěGĉ^ĥĂñ³qäaĔċÇTº1jÅpZńńńńĬġìKńńńń$!!!ŀ>ÇËÒkħġ#!!!ĄÀļěńńńń,ėìKńńńń%!!!ĻĶ.ÐY«váÒkħġ$!!!ĄÀļě²Zċrńńńńoø¥Lńńńń&!!!Ï¡pïækļėĬQĔ¿Òkħġ'!!!ĄÀļěQ£åN3^Yþ_ąu[İÒŃ¢ńńńń+q×Éńńńń%!!!ĽĨČhÒkħġ×£6Ľ)!!!ĄÀļě±Yă3Ěû´Q´ÚÕî÷ńÞ¯9ļıĨU<Ãßńńńń")]
 public class TitleUI : UIScene
 {
-    private static string MenuGroupButton = "Title.Menu";
+    private static String MenuGroupButton = "Title.Menu";
 
-    private static string LanguageGroupButton = "Title.MenuLanguage";
+    private static String LanguageGroupButton = "Title.MenuLanguage";
 
-    private static string StaffRollGroupButton = "Title.MenuStaffRoll";
+    private static String StaffRollGroupButton = "Title.MenuStaffRoll";
 
-    private static string LicenseGroupButton = "Title.MenuLicense";
+    private static String LicenseGroupButton = "Title.MenuLicense";
 
-    private static string MovieGalleryGroupButton = "MovieGallery.Thumbnail";
+    private static String MovieGalleryGroupButton = "MovieGallery.Thumbnail";
 
     public GameObject MenuPanelObject;
 
@@ -150,13 +152,13 @@ public class TitleUI : UIScene
 
     private UISprite cloudButtonSprite;
 
-    private bool canSync;
+    private Boolean canSync;
 
-    private bool canContinue;
+    private Boolean canContinue;
 
     private SlideShow idleScreen;
 
-    public float idleTime = 20f;
+    public Single idleTime = 20f;
 
     private Timer timer;
 
@@ -164,9 +166,9 @@ public class TitleUI : UIScene
 
     public GameObject SlideShowFadingObject;
 
-    public bool SplashScreenEnabled = true;
+    public Boolean SplashScreenEnabled = true;
 
-    public bool ForceCheckingAutoSave;
+    public Boolean ForceCheckingAutoSave;
 
     public UILabel SpashText;
 
@@ -174,23 +176,23 @@ public class TitleUI : UIScene
 
     private SlashScreen slashScreen;
 
-    private bool IsJustLaunchApp = true;
+    private Boolean IsJustLaunchApp = true;
 
-    private float staffScrollingTime = 180f;
+    private Single staffScrollingTime = 180f;
 
-    private bool isStaffScene;
+    private Boolean isStaffScene;
 
-    private bool isLicenseScene;
+    private Boolean isLicenseScene;
 
-    private bool isPlayingMovie;
+    private Boolean isPlayingMovie;
 
-    private int currentMoviePageIndex;
+    private Int32 currentMoviePageIndex;
 
     private ButtonGroupState[] movieThumbnails;
 
     private List<GameObject> movieThumbnailList;
 
-    private static readonly string[] MovieFiles =
+    private static readonly String[] MovieFiles =
     {
         "FMV001",
         "FMV002",
@@ -238,32 +240,53 @@ public class TitleUI : UIScene
 
     private GameObject selectedMovieThumbnail;
 
-    private bool fromAchievementPage;
+    private Boolean fromAchievementPage;
 
-    private bool authenticatedBeforeClickingAchievementPage;
+    private Boolean authenticatedBeforeClickingAchievementPage;
 
-    private int licensePageNum;
+    private Int32 licensePageNum;
 
-    private bool playSoundFMV000 = true;
+    private Boolean playSoundFMV000 = true;
 
-    private float clickedTimer = -1f;
+    private Single clickedTimer = -1f;
 
-    private bool isPaused;
+    private Boolean isPaused;
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
-        //UI2DSprite sprite2D = this.MenuPanelObject.GetChild(0).GetComponent<UI2DSprite>();
-        ////Texture2D texture = StreamingResources.LoadTexture2D("StreamingAssets/UI/Sprites/US/" + sprite2D.name + ".png");
-        ////Log.Message("texture: " + texture);
-        //Sprite sprite = sprite2D.sprite2D;
-        ////sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
-        //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(sprite.texture), "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png");
-        //
-        //UITexture logo = this.MenuPanelObject.GetChild(1).GetComponent<UITexture>();
-        ////logo.mainTexture = StreamingResources.LoadTexture2D("StreamingAssets/UI/Sprites/US/" + logo.name + ".png");
-        //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(logo.mainTexture), "StreamingAssets/UI/Sprites/US/" + logo.name + ".png");
-        //
-        //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(this.LogoSprite.mainTexture), "StreamingAssets/UI/Sprites/US/" + this.LogoSprite.name + ".png");
+        // ====================================
+        // TEMP
+        try
+        {
+            UI2DSprite sprite2D = this.MenuPanelObject.GetChild(0).GetComponent<UI2DSprite>();
+            Sprite sprite = sprite2D.sprite2D;
+            String externalPath = "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png";
+            if (File.Exists(externalPath))
+            {
+                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
+                sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
+                sprite2D.sprite2D.name = sprite.name;
+            }
+            else
+            {
+                //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(sprite.texture), "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png");
+            }
+            //
+            UITexture logo = this.MenuPanelObject.GetChild(1).GetComponent<UITexture>();
+            externalPath = "StreamingAssets/UI/Sprites/US/" + logo.name + ".png";
+            if (File.Exists(externalPath))
+            {
+                logo.mainTexture = StreamingResources.LoadTexture2D("StreamingAssets/UI/Sprites/US/" + logo.name + ".png");
+            }
+            else
+            {
+                //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(logo.mainTexture), "StreamingAssets/UI/Sprites/US/" + logo.name + ".png");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex);
+        }
         ////===================
 
         ExpansionVerifier.printLog("TitleUI: Show");
@@ -341,7 +364,7 @@ public class TitleUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MenuGroupButton);
     }
 
-    public override bool OnKeyConfirm(GameObject go)
+    public override Boolean OnKeyConfirm(GameObject go)
     {
         if (base.OnKeyConfirm(go))
         {
@@ -407,7 +430,7 @@ public class TitleUI : UIScene
                 MenuLanguage menuLanguageFromGameObject = this.GetMenuLanguageFromGameObject(go);
                 if (menuLanguageFromGameObject != MenuLanguage.None)
                 {
-                    string language;
+                    String language;
                     switch (menuLanguageFromGameObject)
                     {
                         case MenuLanguage.EnglishUS:
@@ -432,7 +455,7 @@ public class TitleUI : UIScene
                             language = "English(UK)";
                             break;
                         default:
-                            language = string.Empty;
+                            language = String.Empty;
                             break;
                     }
                     EventInput.ChangeInputLayout(language);
@@ -450,10 +473,10 @@ public class TitleUI : UIScene
                     }
                     if (this.movieThumbnailList.Contains(go))
                     {
-                        int siblingIndex = go.transform.parent.parent.GetSiblingIndex();
-                        int siblingIndex2 = go.transform.GetSiblingIndex();
-                        int num = siblingIndex * 6 + siblingIndex2;
-                        string movieName = MovieFiles[num];
+                        Int32 siblingIndex = go.transform.parent.parent.GetSiblingIndex();
+                        Int32 siblingIndex2 = go.transform.GetSiblingIndex();
+                        Int32 num = siblingIndex * 6 + siblingIndex2;
+                        String movieName = MovieFiles[num];
                         Loading = true;
                         this.isPlayingMovie = true;
                         FF9Sfx.FF9SFX_Play(103);
@@ -505,7 +528,7 @@ public class TitleUI : UIScene
         this.clickedTimer = -1f;
     }
 
-    private bool OnDoubleClickGalleryMovie()
+    private Boolean OnDoubleClickGalleryMovie()
     {
         if (this.clickedTimer < 0f)
         {
@@ -513,7 +536,7 @@ public class TitleUI : UIScene
         }
         else
         {
-            float num = Time.realtimeSinceStartup - this.clickedTimer;
+            Single num = Time.realtimeSinceStartup - this.clickedTimer;
             this.clickedTimer = -1f;
             if (num <= 0.2f && this.isPlayingMovie && !Loading)
             {
@@ -524,7 +547,7 @@ public class TitleUI : UIScene
         return false;
     }
 
-    public override bool OnKeyCancel(GameObject go)
+    public override Boolean OnKeyCancel(GameObject go)
     {
         if (base.OnKeyCancel(go))
         {
@@ -567,7 +590,7 @@ public class TitleUI : UIScene
         return true;
     }
 
-    public override bool OnKeySpecial(GameObject go)
+    public override Boolean OnKeySpecial(GameObject go)
     {
         if (base.OnKeySpecial(go) && this.isStaffScene)
         {
@@ -580,7 +603,7 @@ public class TitleUI : UIScene
         return true;
     }
 
-    public override bool OnItemSelect(GameObject go)
+    public override Boolean OnItemSelect(GameObject go)
     {
         if (base.OnItemSelect(go))
         {
@@ -602,7 +625,7 @@ public class TitleUI : UIScene
         return true;
     }
 
-    public override bool OnKeyRightBumper(GameObject go)
+    public override Boolean OnKeyRightBumper(GameObject go)
     {
         if (ButtonGroupState.ActiveGroup == MovieGalleryGroupButton && this.currentMoviePageIndex < this.MoviePageGrid.GetChildList().Count - 1 && !this.isPlayingMovie)
         {
@@ -612,7 +635,7 @@ public class TitleUI : UIScene
         return true;
     }
 
-    public override bool OnKeyLeftBumper(GameObject go)
+    public override Boolean OnKeyLeftBumper(GameObject go)
     {
         if (ButtonGroupState.ActiveGroup == MovieGalleryGroupButton && this.currentMoviePageIndex > 0 && !this.isPlayingMovie)
         {
@@ -622,7 +645,7 @@ public class TitleUI : UIScene
         return true;
     }
 
-    public override bool OnKeySelect(GameObject go)
+    public override Boolean OnKeySelect(GameObject go)
     {
         return false;
     }
@@ -644,7 +667,7 @@ public class TitleUI : UIScene
     {
         if (this.isLicenseScene)
         {
-            int siblingIndex = this.LicenseCenterOnChild.centeredObject.transform.GetSiblingIndex();
+            Int32 siblingIndex = this.LicenseCenterOnChild.centeredObject.transform.GetSiblingIndex();
             GameObject parent = this.LicenseCenterOnChild.centeredObject.GetParent();
             if (key != KeyCode.RightArrow)
             {
@@ -720,9 +743,9 @@ public class TitleUI : UIScene
 
     private void CloseMoviePanel()
     {
-        int movieSoundIndex = SoundLib.GetMovieSoundIndex("FMV000");
+        Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex("FMV000");
         SoundProfile activeMovieAudioSoundProfile = SoundLib.GetActiveMovieAudioSoundProfile();
-        int num = -1;
+        Int32 num = -1;
         if (activeMovieAudioSoundProfile != null)
         {
             num = SoundLib.GetMovieSoundIndex(activeMovieAudioSoundProfile.Name);
@@ -755,7 +778,7 @@ public class TitleUI : UIScene
         }
     }
 
-    public void PlayGalleryMovie(string movieName)
+    public void PlayGalleryMovie(String movieName)
     {
         this.isPaused = false;
         this.MovieHitArea.SetActive(true);
@@ -807,9 +830,9 @@ public class TitleUI : UIScene
             {
                 Loading = false;
                 this.isPlayingMovie = false;
-                int movieSoundIndex = SoundLib.GetMovieSoundIndex("FMV000");
+                Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex("FMV000");
                 SoundProfile activeMovieAudioSoundProfile = SoundLib.GetActiveMovieAudioSoundProfile();
-                int num = -1;
+                Int32 num = -1;
                 if (activeMovieAudioSoundProfile != null)
                 {
                     num = SoundLib.GetMovieSoundIndex(activeMovieAudioSoundProfile.Name);
@@ -847,12 +870,12 @@ public class TitleUI : UIScene
         this.LicensePanel.SetActive(false);
     }
 
-    private void UpdateLicenseText(string text)
+    private void UpdateLicenseText(String text)
     {
         String[] array = text.Split('♀');
         GameObject obj = this.LicenseCenterOnChild.gameObject;
         this.licensePageNum = array.Length;
-        for (int i = 0; i < this.licensePageNum; i++)
+        for (Int32 i = 0; i < this.licensePageNum; i++)
         {
             GameObject child = obj.GetChild(i);
             UILabel component = child.GetChild(0).GetComponent<UILabel>();
@@ -863,10 +886,10 @@ public class TitleUI : UIScene
 
     private void OnCenterLicensePage(GameObject centeredObject)
     {
-        int siblingIndex = centeredObject.transform.GetSiblingIndex();
+        Int32 siblingIndex = centeredObject.transform.GetSiblingIndex();
         this.LicensePageIndicator.text = (siblingIndex + 1).ToString() + "/" + this.licensePageNum;
         GameObject parent = centeredObject.GetParent();
-        for (int i = 0; i < parent.transform.childCount; i++)
+        for (Int32 i = 0; i < parent.transform.childCount; i++)
         {
             GameObject child = parent.GetChild(i).GetChild(0);
             child.SetActive(false);
@@ -887,9 +910,9 @@ public class TitleUI : UIScene
         this.SlideShowHitArea.SetActive(false);
         this.MenuPanelObject.SetActive(true);
         this.CheckCloudAvalability();
-        int movieSoundIndex = SoundLib.GetMovieSoundIndex("FMV000");
+        Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex("FMV000");
         SoundProfile activeMovieAudioSoundProfile = SoundLib.GetActiveMovieAudioSoundProfile();
-        int num = -1;
+        Int32 num = -1;
         if (activeMovieAudioSoundProfile != null)
         {
             num = SoundLib.GetMovieSoundIndex(activeMovieAudioSoundProfile.Name);
@@ -913,7 +936,7 @@ public class TitleUI : UIScene
         if (this.canContinue)
         {
             FF9Sfx.FF9SFX_Play(1261);
-            FF9StateSystem.Serializer.Autoload(null, delegate(DataSerializerErrorCode errNo, bool success)
+            FF9StateSystem.Serializer.Autoload(null, delegate(DataSerializerErrorCode errNo, Boolean success)
             {
                 if (!success)
                     return;
@@ -987,7 +1010,7 @@ public class TitleUI : UIScene
             this.movieThumbnailList = new List<GameObject>();
             this.movieThumbnails = this.MoviePageGrid.GetComponentsInChildren<ButtonGroupState>();
             ButtonGroupState[] array = this.movieThumbnails;
-            for (int i = 0; i < array.Length; i++)
+            for (Int32 i = 0; i < array.Length; i++)
             {
                 ButtonGroupState buttonGroupState = array[i];
                 this.movieThumbnailList.Add(buttonGroupState.gameObject);
@@ -1020,7 +1043,7 @@ public class TitleUI : UIScene
     private void OnFaqsButtonClick()
     {
         FF9Sfx.FF9SFX_Play(103);
-        string language = Localization.language;
+        String language = Localization.language;
         switch (language)
         {
             case "English(US)":
@@ -1050,7 +1073,7 @@ public class TitleUI : UIScene
     private void OnSquareEnixButtonClick()
     {
         FF9Sfx.FF9SFX_Play(103);
-        string language = Localization.language;
+        String language = Localization.language;
         switch (language)
         {
             case "English(US)":
@@ -1107,7 +1130,7 @@ public class TitleUI : UIScene
         Screen.orientation = (ScreenOrientation)FF9StateSystem.Settings.ScreenRotation;
     }
 
-    private void CheckAutoSaveSlot(DataSerializerErrorCode errNo, bool isSuccess)
+    private void CheckAutoSaveSlot(DataSerializerErrorCode errNo, Boolean isSuccess)
     {
         this.canContinue = isSuccess;
         this.continueButtonSprite.color = ((!isSuccess) ? new Color(1f, 1f, 1f, 0.5f) : new Color(1f, 1f, 1f, 1f));
@@ -1123,7 +1146,7 @@ public class TitleUI : UIScene
         this.cloudButtonSprite.color = ((!this.canSync) ? new Color(1f, 1f, 1f, 0.5f) : new Color(1f, 1f, 1f, 1f));
     }
 
-    private void CheckGameFinishFlag(DataSerializerErrorCode errNo, bool isLoadSuccess, bool isFinished)
+    private void CheckGameFinishFlag(DataSerializerErrorCode errNo, Boolean isLoadSuccess, Boolean isFinished)
     {
         if (errNo == DataSerializerErrorCode.Success)
         {
@@ -1201,7 +1224,7 @@ public class TitleUI : UIScene
 
     private GameObject GetGameObjectFromCurrentLanguage()
     {
-        string language = Localization.language;
+        String language = Localization.language;
         switch (language)
         {
             case "English(US)":
@@ -1222,7 +1245,7 @@ public class TitleUI : UIScene
         return null;
     }
 
-    private void SetLanguage(string selectedLanguage)
+    private void SetLanguage(String selectedLanguage)
     {
         FF9Sfx.FF9SFX_Play(103);
         this.BlockInput();
@@ -1350,7 +1373,7 @@ public class TitleUI : UIScene
         this.CheckCloudAvalability();
     }
 
-    private void OnApplicationPause(bool pauseStatus)
+    private void OnApplicationPause(Boolean pauseStatus)
     {
         if (!pauseStatus)
         {
@@ -1562,11 +1585,11 @@ public class TitleUI : UIScene
 
         protected HonoFading honoFading;
 
-        private int listIndex;
+        private Int32 listIndex;
 
-        private int index;
+        private Int32 index;
 
-        private bool stopEnable;
+        private Boolean stopEnable;
 
         private Type type;
 
@@ -1574,17 +1597,17 @@ public class TitleUI : UIScene
 
         private UISprite logoSprite;
 
-        private int logoIndex;
+        private Int32 logoIndex;
 
-        protected float blackTime = 2f;
+        protected Single blackTime = 2f;
 
-        protected float whiteTime = 8f;
+        protected Single whiteTime = 8f;
 
-        protected float fadeInterval = 2f;
+        protected Single fadeInterval = 2f;
 
-        protected float menuFadeInTime = 0.5f;
+        protected Single menuFadeInTime = 0.5f;
 
-        protected float skipFadeInTime = 0.2f;
+        protected Single skipFadeInTime = 0.2f;
 
         private SceneVoidDelegate beforeFirstCharacterFadeIn;
 
@@ -1606,7 +1629,7 @@ public class TitleUI : UIScene
 
         private SceneVoidDelegate onLogoFinish;
 
-        public bool isActive => this.slideShowObject.activeInHierarchy || MBG.Instance.gameObject.activeInHierarchy || this.logoContainer.activeInHierarchy;
+        public Boolean isActive => this.slideShowObject.activeInHierarchy || MBG.Instance.gameObject.activeInHierarchy || this.logoContainer.activeInHierarchy;
 
         public SlideShow(Sprite[] pictureList1, Sprite[] pictureList2, GameObject slideShowObject, GameObject screenFadeGameObject, GameObject titleImageTextObject0, GameObject titleImageTextObject1, GameObject titleImageTextJpObject0, GameObject titleImageTextJpObject1)
         {
@@ -1669,7 +1692,7 @@ public class TitleUI : UIScene
             return null;
         }
 
-        public Sprite GetTitleText(int seqIndex, int idx, int textId)
+        public Sprite GetTitleText(Int32 seqIndex, Int32 idx, Int32 textId)
         {
             //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/US/title_image_00_text0").texture), "StreamingAssets/UI/Sprites/US/title_image_00_text0.png");
             //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/US/title_image_00_text1").texture), "StreamingAssets/UI/Sprites/US/title_image_00_text1.png");
@@ -1688,72 +1711,34 @@ public class TitleUI : UIScene
             //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/US/title_image_07_text0").texture), "StreamingAssets/UI/Sprites/US/title_image_07_text0.png");
             //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/US/title_image_07_text1").texture), "StreamingAssets/UI/Sprites/US/title_image_07_text1.png");
 
-            string text = Localization.GetSymbol();
+            String text = Localization.GetSymbol();
             if (text.Equals("JP"))
             {
                 text = "US";
             }
-            if (seqIndex == 0)
+            if (seqIndex != 0)
             {
-                switch (idx)
-                {
-                    case 0:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_00_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_00_text1");
-                    case 1:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_01_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_01_text1");
-                    case 2:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_02_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_02_text1");
-                    case 3:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_03_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_03_text1");
-                }
+                idx += 4;
             }
-            else
+
+            return LoadSprite("UI/Sprites/" + text + "/title_image_0" + idx.ToString(CultureInfo.InvariantCulture) + "_text" + textId.ToString(CultureInfo.InvariantCulture));
+        }
+
+        private Sprite LoadSprite(String relativePath)
+        {
+            Sprite result = Resources.Load<Sprite>("EmbeddedAsset/" + relativePath);
+
+            try
             {
-                switch (idx)
-                {
-                    case 0:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_04_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_04_text1");
-                    case 1:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_05_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_05_text1");
-                    case 2:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_06_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_06_text1");
-                    case 3:
-                        if (textId == 0)
-                        {
-                            return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_07_text0");
-                        }
-                        return Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + text + "/title_image_07_text1");
-                }
+                String externalPath = "StreamingAssets/" + relativePath + ".png";
+                if (File.Exists(externalPath))
+                    return Sprite.Create(StreamingResources.LoadTexture2D(externalPath), result.rect, result.pivot, result.pixelsPerUnit, 0, SpriteMeshType.Tight, result.border);
             }
-            return null;
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[TitleUI] Failed to load sprite: " + relativePath);
+            }
+            return result;
         }
 
         public void Play(Type kind, SceneVoidDelegate postMenuFadeOut, SceneVoidDelegate postIdleScreenFadeOut, SceneVoidDelegate postMenuFadeIn)
@@ -1860,7 +1845,7 @@ public class TitleUI : UIScene
             this.preCharacterFadeOut = delegate
             {
                 this.index++;
-                int num = (kind != Type.SplashScreen) ? 4 : 1;
+                Int32 num = (kind != Type.SplashScreen) ? 4 : 1;
                 if (this.index < num)
                 {
                     this.honoFading.Fade(0f, 1f, this.fadeInterval, this.whiteTime, this.honoFading.fadeInCurve, this.preCharacterFadeIn);
@@ -1964,8 +1949,8 @@ public class TitleUI : UIScene
         public void FadeToBlack(SceneVoidDelegate onFinish)
         {
             this.honoFading.Stop();
-            float value = this.honoFading.tweenAlpha.value;
-            float num = (1f - value) * this.fadeInterval;
+            Single value = this.honoFading.tweenAlpha.value;
+            Single num = (1f - value) * this.fadeInterval;
             this.honoFading.Fade(value, 1f, num / 4f, 0f, this.honoFading.fadeOutCurve, onFinish);
         }
 
@@ -1977,7 +1962,7 @@ public class TitleUI : UIScene
             }
         }
 
-        private void ChangeLogo(bool isSkip)
+        private void ChangeLogo(Boolean isSkip)
         {
             this.logoSprite.spriteName = this.logoIndex == 0 ? "logo_sqex" : "logo_sst";
             this.stopEnable = false;
@@ -2004,7 +1989,7 @@ public class TitleUI : UIScene
         public void Play(SceneVoidDelegate postSplashScreenFadeOut, SceneVoidDelegate postMenuFadeIn)
         {
             this.honoFading.tweenAlpha.value = 1f;
-            string text = Localization.GetSymbol();
+            String text = Localization.GetSymbol();
             if (text.Equals("JP"))
             {
                 text = "US";
@@ -2026,15 +2011,15 @@ public class TitleUI : UIScene
 
     private class Timer
     {
-        public float time;
+        public Single time;
 
-        public bool pauseTimer;
+        public Boolean pauseTimer;
 
-        private float timeout;
+        private Single timeout;
 
         private Action timeoutAction;
 
-        public Timer(float timeout, Action timeoutAction)
+        public Timer(Single timeout, Action timeoutAction)
         {
             this.timeout = timeout;
             this.timeoutAction = timeoutAction;

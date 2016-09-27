@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Memoria
@@ -6,7 +7,7 @@ namespace Memoria
     {
         public static readonly BtlRefEqualityComparer Instance = new BtlRefEqualityComparer();
 
-        public bool Equals(BTL_REF x, BTL_REF y)
+        public Boolean Equals(BTL_REF x, BTL_REF y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null)) return false;
@@ -14,7 +15,7 @@ namespace Memoria
             return x.prog_no == y.prog_no && x.power == y.power && x.attr == y.attr && x.rate == y.rate;
         }
 
-        public int GetHashCode(BTL_REF obj)
+        public Int32 GetHashCode(BTL_REF obj)
         {
             unchecked
             {

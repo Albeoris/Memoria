@@ -35,42 +35,42 @@ using UnityEngine;
 public class SettingsState : MonoBehaviour
 {
     public FF9CFG cfg;
-    public double time;
-    public double StartGameTime;
-    public string CurrentLanguage;
-    public byte[] SystemAchievementStatuses;
-    public byte ScreenRotation;
-    public int LatestSlot;
-    public int LatestSave;
-    public bool[] IsBoosterButtonActive;
+    public Double time;
+    public Double StartGameTime;
+    public String CurrentLanguage;
+    public Byte[] SystemAchievementStatuses;
+    public Byte ScreenRotation;
+    public Int32 LatestSlot;
+    public Int32 LatestSave;
+    public Boolean[] IsBoosterButtonActive;
 
-    public bool IsATBFull => IsBoosterButtonActive[0];
+    public Boolean IsATBFull => IsBoosterButtonActive[0];
 
-    public bool IsHpMpFull => IsBoosterButtonActive[0];
+    public Boolean IsHpMpFull => IsBoosterButtonActive[0];
 
-    public bool IsTranceFull => IsBoosterButtonActive[0];
+    public Boolean IsTranceFull => IsBoosterButtonActive[0];
 
-    public bool IsDmg9999 => IsBoosterButtonActive[3];
+    public Boolean IsDmg9999 => IsBoosterButtonActive[3];
 
-    public bool IsNoEncounter => IsBoosterButtonActive[4];
+    public Boolean IsNoEncounter => IsBoosterButtonActive[4];
 
-    public bool IsFastForward => IsBoosterButtonActive[1];
+    public Boolean IsFastForward => IsBoosterButtonActive[1];
 
-    public bool IsMasterSkill => IsBoosterButtonActive[7];
+    public Boolean IsMasterSkill => IsBoosterButtonActive[7];
 
-    public bool IsAutoRotation => IsBoosterButtonActive[2];
+    public Boolean IsAutoRotation => IsBoosterButtonActive[2];
 
-    public bool IsPerspectCamera => IsBoosterButtonActive[5];
+    public Boolean IsPerspectCamera => IsBoosterButtonActive[5];
 
-    public bool IsFastTrophyMode => false;
+    public Boolean IsFastTrophyMode => false;
 
-    public static int FastForwardGameSpeed => Configuration.Cheats.SpeedFactor;
+    public static Int32 FastForwardGameSpeed => Configuration.Cheats.SpeedFactor;
 
-    public int FastForwardFactor
+    public Int32 FastForwardFactor
     {
         get
         {
-            string str = PersistenSingleton<SceneDirector>.Instance.CurrentScene;
+            String str = PersistenSingleton<SceneDirector>.Instance.CurrentScene;
             if (str == "Movie" || IsFastForward && str != "QuadMist")
                 return FastForwardGameSpeed;
             return 1;
@@ -79,7 +79,7 @@ public class SettingsState : MonoBehaviour
 
     public SettingsState()
     {
-        bool[] flagArray = new bool[8];
+        Boolean[] flagArray = new Boolean[8];
         flagArray[2] = true;
         IsBoosterButtonActive = flagArray;
     }
@@ -156,7 +156,7 @@ public class SettingsState : MonoBehaviour
         StartGameTime = Time.time;
         time = 0.0;
         cfg = new FF9CFG();
-        bool[] flagArray = new bool[8];
+        Boolean[] flagArray = new Boolean[8];
         flagArray[2] = true;
         IsBoosterButtonActive = flagArray;
         SetSound();
@@ -177,12 +177,12 @@ public class SettingsState : MonoBehaviour
 
     public void UpdateTickTime()
     {
-        double num = Time.time;
+        Double num = Time.time;
         time = Math.Min(time + (num - StartGameTime), 2160001.0);
         StartGameTime = num;
     }
 
-    public string GetSystemLanguage()
+    public String GetSystemLanguage()
     {
         SystemLanguage systemLanguage = Application.systemLanguage;
         switch (systemLanguage)
@@ -200,7 +200,7 @@ public class SettingsState : MonoBehaviour
         }
     }
 
-    public void SetMenuLanguage(string language, Action callback)
+    public void SetMenuLanguage(String language, Action callback)
     {
         ISharedDataSerializer.OnSetSelectedLanguage func = errNo =>
         {
@@ -215,7 +215,7 @@ public class SettingsState : MonoBehaviour
         FF9StateSystem.Serializer.SetSelectedLanguage(LanguageName.ConvertToLanguageCode(language), func);
     }
 
-    public void SetScreenRotation(byte screenRotation, Action callback)
+    public void SetScreenRotation(Byte screenRotation, Action callback)
     {
         ISharedDataSerializer.OnSetScreenRotation func = errNo =>
         {
@@ -234,7 +234,7 @@ public class SettingsState : MonoBehaviour
 
     public void SetSound()
     {
-        if ((long)cfg.sound == 0L)
+        if ((Int64)cfg.sound == 0L)
             SoundLib.EnableMusic();
         else
             SoundLib.DisableMusic();
@@ -242,7 +242,7 @@ public class SettingsState : MonoBehaviour
 
     public void SetSoundEffect()
     {
-        if ((long)cfg.sound_effect == 0L)
+        if ((Int64)cfg.sound_effect == 0L)
             SoundLib.EnableSoundEffect();
         else
             SoundLib.DisableSoundEffect();
@@ -257,12 +257,12 @@ public class SettingsState : MonoBehaviour
         PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.MasterSkill, FF9StateSystem.Settings.IsBoosterButtonActive[7]);
     }
 
-    public void CallBoosterButtonFuntion(BoosterType buttonType, bool setActive = true)
+    public void CallBoosterButtonFuntion(BoosterType buttonType, Boolean setActive = true)
     {
         switch (buttonType)
         {
             case BoosterType.BattleAssistance:
-                FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
+                FF9StateSystem.Settings.IsBoosterButtonActive[(Int32)buttonType] = setActive;
                 SetATBFull();
                 SetHPFull();
                 SetTranceBarFull();
@@ -271,21 +271,21 @@ public class SettingsState : MonoBehaviour
                 SetFastForward(setActive);
                 break;
             case BoosterType.Rotation:
-                FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
+                FF9StateSystem.Settings.IsBoosterButtonActive[(Int32)buttonType] = setActive;
                 UIManager.Input.SendKeyCode(Control.LeftTrigger, true);
                 break;
             case BoosterType.Attack9999:
-                FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
+                FF9StateSystem.Settings.IsBoosterButtonActive[(Int32)buttonType] = setActive;
                 break;
             case BoosterType.NoRandomEncounter:
-                FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
+                FF9StateSystem.Settings.IsBoosterButtonActive[(Int32)buttonType] = setActive;
                 break;
             case BoosterType.Perspective:
-                FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
+                FF9StateSystem.Settings.IsBoosterButtonActive[(Int32)buttonType] = setActive;
                 UIManager.Input.SendKeyCode(Control.RightTrigger, true);
                 break;
             case BoosterType.MasterSkill:
-                FF9StateSystem.Settings.IsBoosterButtonActive[(int)buttonType] = setActive;
+                FF9StateSystem.Settings.IsBoosterButtonActive[(Int32)buttonType] = setActive;
                 SetMasterSkill();
                 break;
             case BoosterType.LvMax:
@@ -332,11 +332,11 @@ public class SettingsState : MonoBehaviour
             {
                 if (!Status.checkCurStat(btl, 16384U))
                 {
-                    btl.trance = byte.MaxValue;
+                    btl.trance = Byte.MaxValue;
                     btl_stat.AlterStatus(btl, 16384U);
                 }
                 else
-                    btl.trance = byte.MaxValue;
+                    btl.trance = Byte.MaxValue;
             }
         }
     }
@@ -349,11 +349,11 @@ public class SettingsState : MonoBehaviour
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (Status.checkCurStat(btl, 16384U))
-                btl.trance = byte.MaxValue;
+                btl.trance = Byte.MaxValue;
         }
     }
 
-    public void SetFastForward(bool isFastForward)
+    public void SetFastForward(Boolean isFastForward)
     {
         FF9StateSystem.Settings.IsBoosterButtonActive[1] = isFastForward;
         if (isFastForward)
@@ -393,37 +393,37 @@ public class SettingsState : MonoBehaviour
     {
         if (!IsMasterSkill)
             return;
-        bool flag = false;
-        for (int index1 = 0; index1 < 9; ++index1)
+        Boolean flag = false;
+        for (Int32 index1 = 0; index1 < 9; ++index1)
         {
             PLAYER player = FF9StateSystem.Common.FF9.player[index1];
             foreach (FF9ITEM ff9Item in FF9StateSystem.Common.FF9.item)
             {
                 if (ff9Item.count > 0 && ff9item.FF9Item_GetEquipPart(ff9Item.id) > -1)
                 {
-                    foreach (byte num in ff9item._FF9Item_Data[ff9Item.id].ability)
+                    foreach (Byte num in ff9item._FF9Item_Data[ff9Item.id].ability)
                     {
-                        int index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, num);
+                        Int32 index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, num);
                         if (index2 > -1)
                         {
-                            player.pa[index2] = (byte)ff9abil.FF9Abil_GetMax(player.info.slot_no, num);
+                            player.pa[index2] = (Byte)ff9abil.FF9Abil_GetMax(player.info.slot_no, num);
                             if (BattleAchievement.UpdateAbilitiesAchievement(num, false))
                                 flag = true;
                         }
                     }
                 }
             }
-            for (int index2 = 0; index2 < 5; ++index2)
+            for (Int32 index2 = 0; index2 < 5; ++index2)
             {
-                byte num1 = player.equip[index2];
-                if (num1 != byte.MaxValue)
+                Byte num1 = player.equip[index2];
+                if (num1 != Byte.MaxValue)
                 {
-                    foreach (byte num2 in ff9item._FF9Item_Data[num1].ability)
+                    foreach (Byte num2 in ff9item._FF9Item_Data[num1].ability)
                     {
-                        int index3 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, num2);
+                        Int32 index3 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, num2);
                         if (index3 > -1)
                         {
-                            player.pa[index3] = (byte)ff9abil.FF9Abil_GetMax(player.info.slot_no, num2);
+                            player.pa[index3] = (Byte)ff9abil.FF9Abil_GetMax(player.info.slot_no, num2);
                             if (BattleAchievement.UpdateAbilitiesAchievement(num2, false))
                                 flag = true;
                         }
@@ -436,7 +436,7 @@ public class SettingsState : MonoBehaviour
                 {
                     if (paData.id != 0 && paData.id < 192)
                     {
-                        int index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, paData.id);
+                        Int32 index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, paData.id);
                         player.pa[index2] = paData.max_ap;
                         if (BattleAchievement.UpdateAbilitiesAchievement(paData.id, false))
                             flag = true;
@@ -451,14 +451,14 @@ public class SettingsState : MonoBehaviour
 
     private void SetLvMax()
     {
-        for (int slot_id = 0; slot_id < 9; ++slot_id)
+        for (Int32 slot_id = 0; slot_id < 9; ++slot_id)
         {
             PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
             player.SetMaxBonusBasisStatus();
             ff9play.FF9Play_ChangeLevel(slot_id, 99, false);
-            int num = player.max.capa - player.cur.capa;
+            Int32 num = player.max.capa - player.cur.capa;
             player.max.capa = 99;
-            player.cur.capa = (byte)(99 - num);
+            player.cur.capa = (Byte)(99 - num);
         }
         AchievementManager.ReportAchievement(AcheivementKey.CharLv99, 1);
     }

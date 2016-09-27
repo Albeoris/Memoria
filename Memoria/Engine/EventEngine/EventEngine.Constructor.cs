@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public partial class EventEngine
@@ -8,11 +9,11 @@ public partial class EventEngine
         this.nil = -1;
         this.nilFloat = -1f;
         this.POS_COMMAND_DEFAULTY = 32768f;
-        this.toBeAddedObjUIDList = new List<int>();
-        Dictionary<int, int> dictionary1 = new Dictionary<int, int>
+        this.toBeAddedObjUIDList = new List<Int32>();
+        Dictionary<Int32, Int32> dictionary1 = new Dictionary<Int32, Int32>
         {
             {246, 254},
-            {247, (int)byte.MaxValue},
+            {247, (Int32)Byte.MaxValue},
             {248, 256},
             {249, 257},
             {250, 258},
@@ -20,7 +21,7 @@ public partial class EventEngine
             {252, 260},
             {253, 261},
             {254, 262},
-            {(int)byte.MaxValue, 263},
+            {(Int32)Byte.MaxValue, 263},
             {256, 264},
             {257, 265},
             {258, 266},
@@ -33,10 +34,10 @@ public partial class EventEngine
             {265, 273}
         };
         this._mesIdES_FR = dictionary1;
-        Dictionary<int, int> dictionary2 = new Dictionary<int, int>
+        Dictionary<Int32, Int32> dictionary2 = new Dictionary<Int32, Int32>
         {
             {246, 254},
-            {247, (int)byte.MaxValue},
+            {247, (Int32)Byte.MaxValue},
             {248, 256},
             {249, 257},
             {250, 258},
@@ -44,7 +45,7 @@ public partial class EventEngine
             {252, 260},
             {253, 261},
             {254, 262},
-            {(int)byte.MaxValue, 263},
+            {(Int32)Byte.MaxValue, 263},
             {256, 264},
             {257, 265},
             {258, 266},
@@ -57,10 +58,10 @@ public partial class EventEngine
             {265, 275}
         };
         this._mesIdGR = dictionary2;
-        Dictionary<int, int> dictionary3 = new Dictionary<int, int>
+        Dictionary<Int32, Int32> dictionary3 = new Dictionary<Int32, Int32>
         {
             {246, 254},
-            {247, (int)byte.MaxValue},
+            {247, (Int32)Byte.MaxValue},
             {248, 256},
             {249, 257},
             {250, 258},
@@ -68,7 +69,7 @@ public partial class EventEngine
             {252, 260},
             {253, 261},
             {254, 262},
-            {(int)byte.MaxValue, 263},
+            {(Int32)Byte.MaxValue, 263},
             {256, 264},
             {257, 265},
             {258, 266},
@@ -93,8 +94,8 @@ public partial class EventEngine
 
     protected override void Awake()
     {
-        int[] array = EventEngineUtils.eventIDToFBGID.Keys.ToArray<int>();
-        EventEngine.testEventIDs = (int[])null;
+        Int32[] array = EventEngineUtils.eventIDToFBGID.Keys.ToArray<Int32>();
+        EventEngine.testEventIDs = (Int32[])null;
         EventEngine.testEventIDs = array;
         this.fieldCalc = new fld_calc();
         this._ff9fieldDisc = new FF9FIELD_DISC();

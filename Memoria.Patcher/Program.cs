@@ -27,31 +27,96 @@ namespace Memoria.Patcher
         static void Main(String[] args)
         {
             try
+            {
+                GameLocationInfo gameLocation = GetGameLocation(args);
+                if (gameLocation == null)
                 {
-                    GameLocationInfo gameLocation = GetGameLocation(args);
-                    if (gameLocation == null)
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
-                        Console.WriteLine("Press enter to exit...");
-                        Console.ReadLine();
-                        Environment.Exit(1);
-                    }
-
-                    CopyExternalFiles(gameLocation.StreamingAssetsPath);
-                    Patch(gameLocation.ManagedPathX64);
-                    Patch(gameLocation.ManagedPathX86);
+                    Console.WriteLine();
+                    Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
+                    Console.WriteLine("Press enter to exit...");
+                    Console.ReadLine();
+                    Environment.Exit(1);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Unexpected error has occurred. See [{Log.LogFileName}] for details.");
-                    Console.WriteLine(ex);
 
-                    Log.Error(ex, "Unexpected error.");
-                }
+                ReplaceLauncher(gameLocation);
+                ReplaceDebugger(gameLocation);
+                CopyExternalFiles(gameLocation.StreamingAssetsPath);
+                Patch(gameLocation.ManagedPathX64);
+                Patch(gameLocation.ManagedPathX86);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error has occurred. See [{Log.LogFileName}] for details.");
+                Console.WriteLine(ex);
+
+                Log.Error(ex, "Unexpected error.");
+            }
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
+        }
+
+        private static void ReplaceLauncher(GameLocationInfo gameLocation)
+        {
+            String sourceDirectory = Path.GetFullPath("Launcher");
+            if (!Directory.Exists(sourceDirectory))
+                throw new DirectoryNotFoundException("Launcher's directory was not found: " + sourceDirectory);
+
+            String backupPath = Path.ChangeExtension(gameLocation.LauncherPath, ".bak");
+            if (!File.Exists(backupPath))
+            {
+                Console.WriteLine("Back up a launcher.");
+                File.Copy(gameLocation.LauncherPath, backupPath);
+            }
+
+            Console.WriteLine("Copy a launcher...");
+            foreach (String sourcePath in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.TopDirectoryOnly))
+            {
+                if (!sourcePath.StartsWith(sourceDirectory))
+                    throw new InvalidDataException(sourcePath);
+
+                String relativePath = sourcePath.Substring(sourceDirectory.Length);
+                relativePath = relativePath.Replace("Memoria.Launcher", "FF9_Launcher");
+                String targetPath = gameLocation.RootDirectory + relativePath;
+
+                File.Copy(sourcePath, targetPath, true);
+                Console.WriteLine("Copied: " + targetPath);
+
+            }
+            Console.WriteLine("The launcher was copied!");
+        }
+
+        private static void ReplaceDebugger(GameLocationInfo gameLocation)
+        {
+            String sourceDirectory = Path.GetFullPath("Debugger");
+            if (!Directory.Exists(sourceDirectory))
+                throw new DirectoryNotFoundException("Debugger's directory was not found: " + sourceDirectory);
+
+            Console.WriteLine("Copy a debugger...");
+
+            String targetDirectory = Path.Combine(gameLocation.RootDirectory, "Debugger");
+            Directory.CreateDirectory(targetDirectory);
+
+            foreach (String sourcePath in Directory.EnumerateFileSystemEntries(sourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                if (!sourcePath.StartsWith(sourceDirectory))
+                    throw new InvalidDataException(sourcePath);
+
+                String relativePath = sourcePath.Substring(sourceDirectory.Length);
+                String targetPath = targetDirectory + relativePath;
+
+                if ((File.GetAttributes(sourcePath) & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    Directory.CreateDirectory(targetPath);
+                }
+                else
+                {
+                    File.Copy(sourcePath, targetPath, true);
+                    Console.WriteLine("Copied: " + targetPath);
+                }
+
+            }
+            Console.WriteLine("The debugger was copied!");
         }
 
         private static void CopyExternalFiles(String targetDirectory)
@@ -120,6 +185,7 @@ namespace Memoria.Patcher
 
                 String modPath = Path.Combine(directory, "Memoria.dll");
                 File.Copy("Memoria.dll", modPath, true);
+                File.Copy("Memoria.dll.mdb", modPath + ".mdb", true);
 
                 String assemblyPath = Path.Combine(directory, "Assembly-CSharp.dll");
                 String backupPath = Path.Combine(directory, "Assembly-CSharp.bak");
@@ -226,7 +292,7 @@ namespace Memoria.Patcher
 
         private static void PrepareTypePatches(Collection<TypeDefinition> types)
         {
-            int count = 0;
+            Int32 count = 0;
             foreach (TypeDefinition type in types)
             {
                 var patch = Patches.FindByTarget(type.FullName);
@@ -247,7 +313,7 @@ namespace Memoria.Patcher
 
         private static void PatchReferences(Collection<AssemblyNameReference> references)
         {
-            for (int i = references.Count - 1; i >= 0; i--)
+            for (Int32 i = references.Count - 1; i >= 0; i--)
             {
                 AssemblyNameReference reference = references[i];
                 if (reference.Name != "mscorlib")
@@ -261,7 +327,7 @@ namespace Memoria.Patcher
 
         private static void PatchTypes(Collection<TypeDefinition> types)
         {
-            int count = 0;
+            Int32 count = 0;
             foreach (TypeDefinition type in types)
             {
                 TypePatch patch = Patches.FindBySource(type.FullName);
@@ -281,14 +347,14 @@ namespace Memoria.Patcher
 
         private static void PatchMethods(Collection<MethodDefinition> methods, PatchCollection<MethodPatch> patches)
         {
-            int count = 0;
+            Int32 count = 0;
             foreach (MethodDefinition method in methods)
             {
                 MethodPatch patch = patches.FindBySource(method.Name);
                 if (patch == null)
                     continue;
 
-                bool? result = IsApplicable(method, patch);
+                Boolean? result = IsApplicable(method, patch);
                 if (result == false)
                     continue;
 
@@ -303,7 +369,7 @@ namespace Memoria.Patcher
             }
         }
 
-        private static bool? IsApplicable(MethodDefinition method, MethodPatch patch)
+        private static Boolean? IsApplicable(MethodDefinition method, MethodPatch patch)
         {
             if (method.ReturnType.FullName != patch.ExpectedReturnType)
                 return false;
@@ -316,7 +382,7 @@ namespace Memoria.Patcher
                 if (method.Parameters.Count != patch.ExpectedParameterTypes.Length)
                     return false;
 
-                for (int i = 0; i < method.Parameters.Count; i++)
+                for (Int32 i = 0; i < method.Parameters.Count; i++)
                 {
                     if (method.Parameters[i].ParameterType.FullName != patch.ExpectedParameterTypes[i])
                         return false;
@@ -328,7 +394,7 @@ namespace Memoria.Patcher
             }
 
             Collection<Instruction> instructions = method.Body.Instructions;
-            return (instructions.Count < 1 || instructions[0].Operand as String != patch.Label) ? (bool?)true : null;
+            return (instructions.Count < 1 || instructions[0].Operand as String != patch.Label) ? (Boolean?)true : null;
         }
 
 

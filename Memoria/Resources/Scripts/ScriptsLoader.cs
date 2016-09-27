@@ -22,7 +22,7 @@ namespace Memoria
             return GetResult(r => r.BattleBaseScripts);
         }
 
-        public static Dictionary<int, BattleScriptFactory> GetExtendedScripts()
+        public static Dictionary<Int32, BattleScriptFactory> GetExtendedScripts()
         {
             return GetResult(r => r.BattleExtendedScripts);
         }
@@ -51,7 +51,7 @@ namespace Memoria
 
         private static void ProcessType(Type type, Result result)
         {
-            foreach (object attribute in type.GetCustomAttributes(false))
+            foreach (Object attribute in type.GetCustomAttributes(false))
             {
                 Type attributeType = attribute.GetType();
                 if (attributeType == TypeCache<BattleScriptAttribute>.Type)
@@ -59,7 +59,7 @@ namespace Memoria
             }
         }
 
-        private static void ProcessBattleScript(Type type, Result result, object attribute)
+        private static void ProcessBattleScript(Type type, Result result, Object attribute)
         {
             BattleScriptAttribute bsa = (BattleScriptAttribute)attribute;
             ConstructorInfo constructor = type.GetConstructor(new[] {TypeCache<BattleCalculator>.Type});

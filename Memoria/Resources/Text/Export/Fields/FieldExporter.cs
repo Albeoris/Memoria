@@ -53,7 +53,7 @@ namespace Memoria
             }
         }
 
-        private static void ExportTags(string directory, FieldFormatter formatter)
+        private static void ExportTags(String directory, FieldFormatter formatter)
         {
             if (directory == null)
                 return;
@@ -69,7 +69,7 @@ namespace Memoria
                 TxtWriter.WriteStrings(ModTextResources.Export.FieldTags, generalNames);
         }
 
-        private static void ExportFieldTags(string directory, FieldFormatter formatter)
+        private static void ExportFieldTags(String directory, FieldFormatter formatter)
         {
             Dictionary<String, TxtEntry[]> fieldNames = formatter.Names.Fields;
             if (fieldNames == null)
@@ -82,9 +82,9 @@ namespace Memoria
             }
         }
 
-        private static string GetFieldTextFileName(int fieldZoneId)
+        private static String GetFieldTextFileName(Int32 fieldZoneId)
         {
-            string str = fieldZoneId.ToString();
+            String str = fieldZoneId.ToString();
             if (FF9StateSystem.MobilePlatform && fieldZoneId == 71)
                 str += "m";
             return str;

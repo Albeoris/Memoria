@@ -31,7 +31,7 @@ namespace Memoria
             return videoStreamer.texture;
         }
 
-        public static string GetURLForImport()
+        public static String GetURLForImport()
         {
             switch (Application.platform)
             {
@@ -47,7 +47,7 @@ namespace Memoria
             }
         }
 
-        public static string FormatUrl(String path)
+        public static String FormatUrl(String path)
         {
             switch (Application.platform)
             {

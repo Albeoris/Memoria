@@ -7,16 +7,16 @@ namespace Memoria
 {
     public sealed class ImportFieldTags : FieldTags
     {
-        public readonly IList<KeyValuePair<string, TextReplacement>> ComplexTags;
+        public readonly IList<KeyValuePair<String, TextReplacement>> ComplexTags;
 
         public ImportFieldTags()
         {
             ComplexTags = GetComplexTags();
         }
 
-        private IList<KeyValuePair<string, TextReplacement>> GetComplexTags()
+        private IList<KeyValuePair<String, TextReplacement>> GetComplexTags()
         {
-            return new Dictionary<string, TextReplacement>
+            return new Dictionary<String, TextReplacement>
             {
                 {"{W", (ReplaceTextDelegate)ReplaceComplexTag},
                 {"{Variable ", (ReplaceTextDelegate)ReplaceComplexTag},

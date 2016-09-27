@@ -63,7 +63,7 @@ namespace Memoria
             TypeName = $"{nameof(EtcImporter)}({resource})";
         }
 
-        protected override bool LoadInternal()
+        protected override Boolean LoadInternal()
         {
             String[] strings = EmbadedSentenseLoader.LoadSentense(_embadedPath);
 

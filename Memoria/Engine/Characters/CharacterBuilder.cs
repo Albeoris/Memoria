@@ -70,7 +70,7 @@ namespace Memoria
             };
 
             Array.Resize(ref _engine.allObjsEBData, _engine.allObjsEBData.Length + 1);
-            _engine.allObjsEBData[_engine.allObjsEBData.Length - 1] = new byte[0];
+            _engine.allObjsEBData[_engine.allObjsEBData.Length - 1] = new Byte[0];
 
             return characterId;
         }
@@ -94,8 +94,8 @@ namespace Memoria
         {
             Int32 length = modelObject.transform.Cast<Object>().Count(child => child.name.Contains("mesh"));
 
-            Boolean[] meshIsRendering = new bool[length];
-            for (int i = 0; i < length; ++i)
+            Boolean[] meshIsRendering = new Boolean[length];
+            for (Int32 i = 0; i < length; ++i)
                 meshIsRendering[i] = true;
 
             return meshIsRendering;

@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
 
 namespace Memoria
 {
@@ -251,7 +250,7 @@ namespace Memoria
                 writer.WriteUInt16("pad2", enemy.Pad2);
 
                 writer.BeginComplexArray("messages");
-                for (int i = 0; i < enemy.MesCnt; i++)
+                for (Int32 i = 0; i < enemy.MesCnt; i++)
                     writer.WriteStringValue(text[currentMessage++]);
                 writer.EndComplexArray();
                 writer.EndObject();
@@ -266,7 +265,7 @@ namespace Memoria
             {
                 String name = text[currentText++];
 
-                Actions.Add(new KeyValuePair<string, AA_DATA>(name, action));
+                Actions.Add(new KeyValuePair<String, AA_DATA>(name, action));
 
                 writer.BeginObject();
                 writer.WriteString("name", name);
@@ -302,8 +301,8 @@ namespace Memoria
 
                 foreach (var group in Actions.GroupBy(p => p.Key))
                 {
-                    KeyValuePair<string, AA_DATA>[] items = group.OrderBy(v => ActionComparer.CalcDiff(v, group)).ToArray();
-                    KeyValuePair<string, AA_DATA> baseItem = items.First();
+                    KeyValuePair<String, AA_DATA>[] items = group.OrderBy(v => ActionComparer.CalcDiff(v, group)).ToArray();
+                    KeyValuePair<String, AA_DATA> baseItem = items.First();
                     csv.WriteEntry(new ActionEntry(id, baseItem.Value), baseItem.Key);
 
                     String name = group.Key;
@@ -356,9 +355,9 @@ namespace Memoria
         private class ActionEntry : ICsvEntry
         {
             private AA_DATA aaData;
-            private ushort _index;
+            private UInt16 _index;
 
-            public ActionEntry(ushort index, AA_DATA baseItemValue)
+            public ActionEntry(UInt16 index, AA_DATA baseItemValue)
             {
                 _index = index;
                 aaData = baseItemValue;
@@ -374,7 +373,7 @@ namespace Memoria
                 return null;
             }
 
-            public void ParseEntry(string[] raw)
+            public void ParseEntry(String[] raw)
             {
                 throw new NotImplementedException();
             }
@@ -407,12 +406,12 @@ namespace Memoria
 
     internal class MonsterComparer : IEqualityComparer<SB2_MON_PARM>
     {
-        public bool Equals(SB2_MON_PARM x, SB2_MON_PARM y)
+        public Boolean Equals(SB2_MON_PARM x, SB2_MON_PARM y)
         {
             throw new NotImplementedException();
         }
 
-        public int GetHashCode(SB2_MON_PARM obj)
+        public Int32 GetHashCode(SB2_MON_PARM obj)
         {
             throw new NotImplementedException();
         }
@@ -450,7 +449,6 @@ namespace Memoria
         private readonly Stack<Boolean> _isArray = new Stack<Boolean>();
         private readonly Stack<Boolean> _isArrayFirst = new Stack<Boolean>();
         private Int32 _level;
-        private Boolean _hasTag = false;
 
         public JsonWriter(String outputPath)
         {
@@ -558,7 +556,7 @@ namespace Memoria
             WriteLine();
         }
 
-        private void WriteBooleanValue(bool value)
+        private void WriteBooleanValue(Boolean value)
         {
             AtValueBegin();
             _streamWriter.Write(value.ToString(CultureInfo.InvariantCulture));
@@ -593,7 +591,7 @@ namespace Memoria
             WriteLine();
         }
 
-        private void WriteInt16Value(short value)
+        private void WriteInt16Value(Int16 value)
         {
             AtValueBegin();
             _streamWriter.Write(value.ToString(CultureInfo.InvariantCulture));
@@ -628,7 +626,7 @@ namespace Memoria
             WriteLine();
         }
 
-    private void WriteUInt32Value(uint value)
+    private void WriteUInt32Value(UInt32 value)
         {
             AtValueBegin();
             _streamWriter.Write(value.ToString(CultureInfo.InvariantCulture));
@@ -662,9 +660,9 @@ namespace Memoria
             BeginArrayValue();
             UInt64 flags = EnumCache<T>.ToUInt64(value);
             Boolean first = true;
-            for (int index = 0; index < EnumFlags<T>.Integers.Length; index++)
+            for (Int32 index = 0; index < EnumFlags<T>.Integers.Length; index++)
             {
-                ulong flg = EnumFlags<T>.Integers[index];
+                UInt64 flg = EnumFlags<T>.Integers[index];
 
                 if ((flags & flg) == flg)
                 {
@@ -701,7 +699,6 @@ namespace Memoria
 
         private void WriteTag(String tag)
         {
-            _hasTag = true;
             PadLeft();
             _streamWriter.Write('"');
             _streamWriter.Write(tag);
@@ -719,7 +716,6 @@ namespace Memoria
 
         private void AtValueEnd()
         {
-            _hasTag = false;
         }
 
         private void BeginArrayValue()
@@ -734,7 +730,7 @@ namespace Memoria
 
         private void PadLeft()
         {
-            for (int i = 0; i < _level; i++)
+            for (Int32 i = 0; i < _level; i++)
                 _streamWriter.Write('\t');
         }
 

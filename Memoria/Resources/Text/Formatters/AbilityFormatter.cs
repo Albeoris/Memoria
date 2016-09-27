@@ -75,7 +75,7 @@ namespace Memoria
         public static TxtEntry[] Build(String prefix, String[] abilityNames, String[] abilityHelps)
         {
             TxtEntry[] abilities = new TxtEntry[Math.Max(abilityNames.Length, abilityHelps.Length)];
-            for (int i = 0; i < abilities.Length; i++)
+            for (Int32 i = 0; i < abilities.Length; i++)
             {
                 String name = i < abilityNames.Length ? abilityNames[i] : String.Empty;
                 String help = i < abilityHelps.Length ? abilityHelps[i] : String.Empty;
@@ -106,7 +106,7 @@ namespace Memoria
             skillNames = new String[entreis.Length];
             skillHelps = new String[entreis.Length];
 
-            for (int i = 0; i < entreis.Length; i++)
+            for (Int32 i = 0; i < entreis.Length; i++)
             {
                 String value = entreis[i].Value;
                 Int32 helpIndex = value.IndexOf('\n');

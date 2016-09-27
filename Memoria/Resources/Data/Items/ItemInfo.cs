@@ -16,7 +16,7 @@ namespace Memoria
 
         public void ParseEntry(String[] raw)
         {
-            int index = 0;
+            Int32 index = 0;
 
             Price = CsvParser.UInt16(raw[index++]);
             GraphicsId = CsvParser.Byte(raw[index++]);
@@ -26,7 +26,7 @@ namespace Memoria
             AbilityIds = CsvParser.ByteArray(raw[index++]);
 
             Byte type = 0;
-            for (int i = 0; i < 8; i++)
+            for (Int32 i = 0; i < 8; i++)
             {
                 type <<= 1;
                 type |= CsvParser.Byte(raw[index++]);
@@ -36,7 +36,7 @@ namespace Memoria
             Order = CsvParser.Byte(raw[index++]);
 
             UInt16 equippable = 0;
-            for (int i = 0; i < 12; i++)
+            for (Int32 i = 0; i < 12; i++)
             {
                 equippable <<= 1;
                 equippable |= CsvParser.Byte(raw[index++]);
@@ -81,7 +81,7 @@ namespace Memoria
 
         public FF9ITEM_DATA ToItemData()
         {
-            return new FF9ITEM_DATA(0, 0, Price, (ushort)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, (byte)TypeMask, Order, 0);
+            return new FF9ITEM_DATA(0, 0, Price, (UInt16)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, (Byte)TypeMask, Order, 0);
         }
 
         public static ItemInfo FromItemData(FF9ITEM_DATA entry)

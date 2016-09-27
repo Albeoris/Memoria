@@ -64,9 +64,9 @@ public class SFX_Rush
         GL.MultMatrix(Matrix4x4.Scale(new Vector3(1f, 2f, 1f)));
         GL.Viewport(new Rect(0.0f, 0.0f, Screen.width, Screen.height));
 
-        for (int index = 0; index < 2; ++index)
+        for (Int32 index = 0; index < 2; ++index)
         {
-            _texture[index] = new RenderTexture((int)screenSize.width, (int)screenSize.height, 0, RenderTextureFormat.ARGB32)
+            _texture[index] = new RenderTexture((Int32)screenSize.width, (Int32)screenSize.height, 0, RenderTextureFormat.ARGB32)
             {
                 enableRandomWrite = false,
                 wrapMode = TextureWrapMode.Clamp,
@@ -83,7 +83,7 @@ public class SFX_Rush
 
     public void ReleaseRenderTarget()
     {
-        for (int index = 0; index < 2; ++index)
+        for (Int32 index = 0; index < 2; ++index)
         {
             if (_texture[index] != null)
             {
@@ -93,7 +93,7 @@ public class SFX_Rush
         }
     }
 
-    public bool update()
+    public Boolean update()
     {
         if (_rushSeq++ > RushParamLastFrame)
             return true;
@@ -130,7 +130,7 @@ public class SFX_Rush
 
             if (!_isRandomEncounter)
             {
-                float num = (float)Math.Sin(_rushSeq * 14.0 * Math.PI / 180.0);
+                Single num = (Single)Math.Sin(_rushSeq * 14.0 * Math.PI / 180.0);
                 _px += num * (0.5f - _px);
                 _py += num * (0.5f - _py);
             }
@@ -180,20 +180,20 @@ public class SFX_Rush
     public static void CreateScreen()
     {
         Rect screenSize = GetScreenSize();
-        Int32 screenX = (int)screenSize.x;
-        Int32 screenY = (int)screenSize.y;
-        Int32 screenW = (int)screenSize.width;
-        Int32 screenH = (int)screenSize.height;
-        _result = new Texture2D((int)screenSize.width, (int)screenSize.height, TextureFormat.ARGB32, false);
+        Int32 screenX = (Int32)screenSize.x;
+        Int32 screenY = (Int32)screenSize.y;
+        Int32 screenW = (Int32)screenSize.width;
+        Int32 screenH = (Int32)screenSize.height;
+        _result = new Texture2D((Int32)screenSize.width, (Int32)screenSize.height, TextureFormat.ARGB32, false);
 
         Color color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-        for (int x = 0; x < screenW; ++x)
+        for (Int32 x = 0; x < screenW; ++x)
         {
             _result.SetPixel(x, 0, color);
             _result.SetPixel(x, screenH - 1, color);
         }
 
-        for (int y = 1; y < screenH - 1; ++y)
+        for (Int32 y = 1; y < screenH - 1; ++y)
         {
             _result.SetPixel(0, y, color);
             _result.SetPixel(screenW - 1, y, color);
@@ -203,7 +203,7 @@ public class SFX_Rush
         _result.Apply();
     }
 
-    public static void SetCenterPosition(int type)
+    public static void SetCenterPosition(Int32 type)
     {
         switch (type)
         {
@@ -257,7 +257,7 @@ public class SFX_Rush
         return vector3;
     }
 
-    private static Vector3 PSXCalculateGTE_RTPT_POS(Vector3 vertex, Matrix4x4 localRTS, Matrix4x4 globalRT, Single viewDist, Vector2 offset, bool useAbsZ)
+    private static Vector3 PSXCalculateGTE_RTPT_POS(Vector3 vertex, Matrix4x4 localRTS, Matrix4x4 globalRT, Single viewDist, Vector2 offset, Boolean useAbsZ)
     {
         Vector3 v = localRTS.MultiplyPoint(vertex);
         v.y *= -1f;

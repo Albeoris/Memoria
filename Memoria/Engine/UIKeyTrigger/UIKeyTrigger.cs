@@ -33,14 +33,14 @@ public class UIKeyTrigger : MonoBehaviour
 {
     private Control keyCommand;
     private Control lazyKeyCommand;
-    private bool isLockLazyInput;
-    private float disableMouseCounter;
-    private bool firstTimeInput;
-    private float fastEventCounter;
-    private bool triggleEventDialog;
-    private bool quitConfirm;
+    private Boolean isLockLazyInput;
+    private Single disableMouseCounter;
+    private Boolean firstTimeInput;
+    private Single fastEventCounter;
+    private Boolean triggleEventDialog;
+    private Boolean quitConfirm;
 
-    private bool AltKey
+    private Boolean AltKey
     {
         get
         {
@@ -50,7 +50,7 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    private bool AltKeyDown
+    private Boolean AltKeyDown
     {
         get
         {
@@ -60,14 +60,14 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    private bool F2Key => UnityXInput.Input.GetKey(KeyCode.F2);
-    private bool F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
-    private bool F5Key => UnityXInput.Input.GetKey(KeyCode.F5);
-    private bool F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
-    private bool F2KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F2);
-    private bool F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
-    private bool F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
-    private bool F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
+    private Boolean F2Key => UnityXInput.Input.GetKey(KeyCode.F2);
+    private Boolean F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
+    private Boolean F5Key => UnityXInput.Input.GetKey(KeyCode.F5);
+    private Boolean F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
+    private Boolean F2KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F2);
+    private Boolean F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
+    private Boolean F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
+    private Boolean F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
 
     public UIKeyTrigger()
     {
@@ -75,14 +75,14 @@ public class UIKeyTrigger : MonoBehaviour
         lazyKeyCommand = Control.None;
     }
 
-    public static bool IsOnlyTouchAndLeftClick()
+    public static Boolean IsOnlyTouchAndLeftClick()
     {
         if (UICamera.currentTouchID > -2)
             return UICamera.currentTouchID < 2;
         return false;
     }
 
-    public static bool IsNeedToRemap()
+    public static Boolean IsNeedToRemap()
     {
         return Application.platform == RuntimePlatform.Android && PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() && (PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && EventHUD.CurrentHUD == MinigameHUD.None);
     }
@@ -92,7 +92,7 @@ public class UIKeyTrigger : MonoBehaviour
         triggleEventDialog = false;
     }
 
-    public bool GetKey(Control key)
+    public Boolean GetKey(Control key)
     {
         if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.QuadMistBattle) && PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.EndGame)
             return false;
@@ -104,20 +104,20 @@ public class UIKeyTrigger : MonoBehaviour
         return (key != Control.Cancel || !PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog()) &&
                (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD ||
                 !PersistenSingleton<UIManager>.Instance.Booster.IsSliderActive && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || !(UICamera.selectedObject == UIManager.World.RotationLockButtonGameObject) && !(UICamera.selectedObject == UIManager.World.PerspectiveButtonGameObject)) && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || !(UICamera.selectedObject == gameObject))) &&
-               (PersistenSingleton<HonoInputManager>.Instance.IsInput((int)key) || lazyKeyCommand == key || key == Control.Confirm && UnityXInput.Input.GetMouseButtonDown(0) && (EventHUD.CurrentHUD == MinigameHUD.None && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.EndGame) && (PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && lazyKeyCommand == Control.None));
+               (PersistenSingleton<HonoInputManager>.Instance.IsInput((Int32)key) || lazyKeyCommand == key || key == Control.Confirm && UnityXInput.Input.GetMouseButtonDown(0) && (EventHUD.CurrentHUD == MinigameHUD.None && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.EndGame) && (PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && lazyKeyCommand == Control.None));
     }
 
-    public bool GetKeyTrigger(Control key)
+    public Boolean GetKeyTrigger(Control key)
     {
         if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.QuadMistBattle) && PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.EndGame ||
             (key == Control.Cancel && PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD && ff9.m_GetIDEvent(ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index].id) != 0 && (key == Control.LeftBumper || key == Control.RightBumper)))
             return false;
         if (UnityXInput.Input.GetMouseButtonDown(0) || UnityXInput.Input.GetMouseButtonDown(1) || UnityXInput.Input.GetMouseButtonDown(2))
         {
-            if (key != Control.Left && key != Control.Right && (key != Control.Up && key != Control.Down) && PersistenSingleton<HonoInputManager>.Instance.IsInputUp((int)key))
+            if (key != Control.Left && key != Control.Right && (key != Control.Up && key != Control.Down) && PersistenSingleton<HonoInputManager>.Instance.IsInputUp((Int32)key))
                 return true;
         }
-        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown((int)key))
+        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown((Int32)key))
             return true;
         if (lazyKeyCommand != key)
             return false;
@@ -158,7 +158,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     private void AccelerateKeyNavigation()
     {
-        if (!UnityXInput.Input.anyKey && PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() <= (double)HonoInputManager.AnalogThreadhold && (PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() >= -(double)HonoInputManager.AnalogThreadhold && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() <= (double)HonoInputManager.AnalogThreadhold) && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() >= -(double)HonoInputManager.AnalogThreadhold)
+        if (!UnityXInput.Input.anyKey && PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() <= (Double)HonoInputManager.AnalogThreadhold && (PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() >= -(Double)HonoInputManager.AnalogThreadhold && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() <= (Double)HonoInputManager.AnalogThreadhold) && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() >= -(Double)HonoInputManager.AnalogThreadhold)
         {
             if (!firstTimeInput)
                 UICamera.EventWaitTime = 0.175f;
@@ -172,7 +172,7 @@ public class UIKeyTrigger : MonoBehaviour
                 fastEventCounter = RealTime.time;
                 firstTimeInput = false;
             }
-            if (RealTime.time - (double)fastEventCounter <= 0.300000011920929)
+            if (RealTime.time - (Double)fastEventCounter <= 0.300000011920929)
                 return;
             UICamera.EventWaitTime = 0.1f;
         }
@@ -193,7 +193,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            bool flag = !FF9StateSystem.Settings.IsBoosterButtonActive[1];
+            Boolean flag = !FF9StateSystem.Settings.IsBoosterButtonActive[1];
             FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.HighSpeedMode, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.HighSpeedMode, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.HighSpeedMode, flag);
@@ -209,7 +209,7 @@ public class UIKeyTrigger : MonoBehaviour
 
             if ((FF9StateSystem.Battle.isNoBoosterMap() || FF9StateSystem.Battle.FF9Battle.btl_escape_fade != 32) && SceneDirector.IsBattleScene())
                 return;
-            bool flag = !FF9StateSystem.Settings.IsBoosterButtonActive[0];
+            Boolean flag = !FF9StateSystem.Settings.IsBoosterButtonActive[0];
             FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.BattleAssistance, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.BattleAssistance, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.BattleAssistance, flag);
@@ -223,7 +223,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            bool flag = !FF9StateSystem.Settings.IsBoosterButtonActive[3];
+            Boolean flag = !FF9StateSystem.Settings.IsBoosterButtonActive[3];
             FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.Attack9999, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.Attack9999, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.Attack9999, flag);
@@ -239,7 +239,7 @@ public class UIKeyTrigger : MonoBehaviour
 
             if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause)
                 return;
-            bool flag = !FF9StateSystem.Settings.IsBoosterButtonActive[4];
+            Boolean flag = !FF9StateSystem.Settings.IsBoosterButtonActive[4];
             FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.NoRandomEncounter, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.NoRandomEncounter, flag);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.NoRandomEncounter, flag);
@@ -419,7 +419,7 @@ public class UIKeyTrigger : MonoBehaviour
         OnQuitCommandDetected(PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State));
     }
 
-    private static void BroadcastAll(string method)
+    private static void BroadcastAll(String method)
     {
         foreach (GameObject gameObject in (GameObject[])FindObjectsOfType(typeof(GameObject)))
         {
@@ -428,7 +428,7 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    private bool handleMenuControlKeyPressCustomInput(GameObject activeButton = null)
+    private Boolean handleMenuControlKeyPressCustomInput(GameObject activeButton = null)
     {
         UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
         if (ButtonGroupState.ActiveButton && ButtonGroupState.ActiveButton != PersistenSingleton<UIManager>.Instance.gameObject)
@@ -592,7 +592,7 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    protected virtual void OnSelect(bool selected)
+    protected virtual void OnSelect(Boolean selected)
     {
         if (!selected || PersistenSingleton<UIManager>.Instance.IsLoading || (!(ButtonGroupState.ActiveButton != null) || !(ButtonGroupState.ActiveButton != gameObject)) || (ButtonGroupState.AllTargetEnabled || !ButtonGroupState.ActiveButton.GetComponent<ButtonGroupState>().enabled))
             return;
@@ -611,7 +611,7 @@ public class UIKeyTrigger : MonoBehaviour
         isLockLazyInput = false;
     }
 
-    public void SendKeyCode(Control control, bool isLock = false)
+    public void SendKeyCode(Control control, Boolean isLock = false)
     {
         lazyKeyCommand = control;
         isLockLazyInput = isLock;
@@ -659,7 +659,7 @@ public class UIKeyTrigger : MonoBehaviour
         component.ListPopulator.itemHasChanged(go);
     }
 
-    public static string ControlToString(Control control)
+    public static String ControlToString(Control control)
     {
         switch (control)
         {
@@ -684,11 +684,11 @@ public class UIKeyTrigger : MonoBehaviour
             case Control.Select:
                 return "Select";
             default:
-                return string.Empty;
+                return String.Empty;
         }
     }
 
-    public bool ContainsAndroidQuitKey()
+    public Boolean ContainsAndroidQuitKey()
     {
         if (Application.platform != RuntimePlatform.Android || !UnityXInput.Input.GetKey(KeyCode.Escape))
         {
@@ -720,7 +720,7 @@ namespace Memoria
             }
             else
             {
-                for (int characterIndex = 8; characterIndex >= 0; --characterIndex)
+                for (Int32 characterIndex = 8; characterIndex >= 0; --characterIndex)
                 {
                     Boolean isAvailable = (FF9StateSystem.Common.FF9.player[characterIndex].info.party != 0);
                     if (isAvailable)
@@ -733,7 +733,7 @@ namespace Memoria
                     party.party_ct = 4;
             }
 
-            for (int memberIndex = 0; memberIndex < 4; ++memberIndex)
+            for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
             {
                 if (FF9StateSystem.Common.FF9.party.member[memberIndex] != null)
                 {

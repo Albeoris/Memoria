@@ -15,7 +15,7 @@ namespace Memoria
             List<T> values = new List<T>(EnumCache<T>.Values.Length);
             List<UInt64> integers = new List<UInt64>(EnumCache<T>.Integers.Length);
 
-            for (int index = 0; index < EnumCache<T>.Integers.Length; index++)
+            for (Int32 index = 0; index < EnumCache<T>.Integers.Length; index++)
             {
                 UInt64 integer = EnumCache<T>.Integers[index];
                 if (integer == 0)
@@ -38,7 +38,7 @@ namespace Memoria
         {
             bits = bits - ((bits >> 1) & 0x5555555555555555UL);
             bits = (bits & 0x3333333333333333UL) + ((bits >> 2) & 0x3333333333333333UL);
-            return (int)(unchecked(((bits + (bits >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
+            return (Int32)(unchecked(((bits + (bits >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
         }
     }
 }

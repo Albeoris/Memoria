@@ -7,6 +7,7 @@ using System.Linq;
 using Memoria;
 using Memoria.TexturePackerLoader;
 using UnityEngine;
+using Object = System.Object;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -74,7 +75,7 @@ public class UIAtlas : MonoBehaviour
         }
     }
 
-    public bool premultipliedAlpha
+    public Boolean premultipliedAlpha
     {
         get
         {
@@ -118,7 +119,7 @@ public class UIAtlas : MonoBehaviour
         }
     }
 
-    public float pixelSize
+    public Single pixelSize
     {
         get
         {
@@ -134,8 +135,8 @@ public class UIAtlas : MonoBehaviour
             }
             else
             {
-                float num = Mathf.Clamp(value, 0.25f, 4f);
-                if (this.mPixelSize == (double)num)
+                Single num = Mathf.Clamp(value, 0.25f, 4f);
+                if (this.mPixelSize == (Double)num)
                     return;
                 this.mPixelSize = num;
                 this.MarkAsChanged();
@@ -170,7 +171,7 @@ public class UIAtlas : MonoBehaviour
         this.mPixelSize = 1f;
         this.sprites = new List<Sprite>();
         this.mPMA = -1;
-        this.mSpriteIndices = new Dictionary<string, int>();
+        this.mSpriteIndices = new Dictionary<String, Int32>();
         if (Configuration.Import.Enabled && Configuration.Import.Graphics)
             GameLoopManager.Start += OverrideAtlas;
     }
@@ -204,10 +205,10 @@ public class UIAtlas : MonoBehaviour
                 UISpriteData target = pair.Value;
                 UnityEngine.Sprite source = external[pair.Key];
 
-                target.x = (int)source.rect.x;
-                target.y = (int)(newTexture.height - source.rect.height - source.rect.y);
-                target.width = (int)source.rect.width;
-                target.height = (int)source.rect.height;
+                target.x = (Int32)source.rect.x;
+                target.y = (Int32)(newTexture.height - source.rect.height - source.rect.y);
+                target.width = (Int32)source.rect.width;
+                target.height = (Int32)source.rect.height;
             }
 
             mReplacement = null;
@@ -227,11 +228,11 @@ public class UIAtlas : MonoBehaviour
             this.material.mainTexture = newTexture;
     }
 
-    public UISpriteData GetSprite(string spriteName)
+    public UISpriteData GetSprite(String spriteName)
     {
         if (this.mReplacement != null)
             return this.mReplacement.GetSprite(spriteName);
-        if (!string.IsNullOrEmpty(spriteName))
+        if (!String.IsNullOrEmpty(spriteName))
         {
             if (this.mSprites.Count == 0)
                 this.Upgrade();
@@ -239,7 +240,7 @@ public class UIAtlas : MonoBehaviour
                 return null;
             if (this.mSpriteIndices.Count != this.mSprites.Count)
                 this.MarkSpriteListAsChanged();
-            int index1;
+            Int32 index1;
             if (this.mSpriteIndices.TryGetValue(spriteName, out index1))
             {
                 if (index1 > -1 && index1 < this.mSprites.Count)
@@ -249,11 +250,11 @@ public class UIAtlas : MonoBehaviour
                     return this.mSprites[index1];
                 return null;
             }
-            int index2 = 0;
-            for (int count = this.mSprites.Count; index2 < count; ++index2)
+            Int32 index2 = 0;
+            for (Int32 count = this.mSprites.Count; index2 < count; ++index2)
             {
                 UISpriteData uiSpriteData = this.mSprites[index2];
-                if (!string.IsNullOrEmpty(uiSpriteData.name) && spriteName == uiSpriteData.name)
+                if (!String.IsNullOrEmpty(uiSpriteData.name) && spriteName == uiSpriteData.name)
                 {
                     this.MarkSpriteListAsChanged();
                     return uiSpriteData;
@@ -263,12 +264,12 @@ public class UIAtlas : MonoBehaviour
         return null;
     }
 
-    public string GetRandomSprite(string startsWith)
+    public String GetRandomSprite(String startsWith)
     {
         if (this.GetSprite(startsWith) != null)
             return startsWith;
         List<UISpriteData> spritesData = this.spriteList;
-        List<string> list = new List<string>();
+        List<String> list = new List<String>();
         using (List<UISpriteData>.Enumerator enumerator = spritesData.GetEnumerator())
         {
             while (enumerator.MoveNext())
@@ -286,8 +287,8 @@ public class UIAtlas : MonoBehaviour
     public void MarkSpriteListAsChanged()
     {
         this.mSpriteIndices.Clear();
-        int index = 0;
-        for (int count = this.mSprites.Count; index < count; ++index)
+        Int32 index = 0;
+        for (Int32 count = this.mSprites.Count; index < count; ++index)
             this.mSpriteIndices[this.mSprites[index].name] = index;
     }
 
@@ -297,15 +298,15 @@ public class UIAtlas : MonoBehaviour
         list.Sort((s1, s2) => s1.name.CompareTo(s2.name));
     }
 
-    public BetterList<string> GetListOfSprites()
+    public BetterList<String> GetListOfSprites()
     {
         if (this.mReplacement != null)
             return this.mReplacement.GetListOfSprites();
         if (this.mSprites.Count == 0)
             this.Upgrade();
-        BetterList<string> betterList = new BetterList<string>();
-        int index = 0;
-        for (int count = this.mSprites.Count; index < count; ++index)
+        BetterList<String> betterList = new BetterList<String>();
+        Int32 index = 0;
+        for (Int32 count = this.mSprites.Count; index < count; ++index)
         {
             UISpriteData uiSpriteData = this.mSprites[index];
             if (!String.IsNullOrEmpty(uiSpriteData?.name))
@@ -314,37 +315,37 @@ public class UIAtlas : MonoBehaviour
         return betterList;
     }
 
-    public BetterList<string> GetListOfSprites(string match)
+    public BetterList<String> GetListOfSprites(String match)
     {
         if (this.mReplacement)
             return this.mReplacement.GetListOfSprites(match);
-        if (string.IsNullOrEmpty(match))
+        if (String.IsNullOrEmpty(match))
             return this.GetListOfSprites();
         if (this.mSprites.Count == 0)
             this.Upgrade();
-        BetterList<string> betterList = new BetterList<string>();
-        int index1 = 0;
-        for (int count = this.mSprites.Count; index1 < count; ++index1)
+        BetterList<String> betterList = new BetterList<String>();
+        Int32 index1 = 0;
+        for (Int32 count = this.mSprites.Count; index1 < count; ++index1)
         {
             UISpriteData uiSpriteData = this.mSprites[index1];
-            if (!string.IsNullOrEmpty(uiSpriteData?.name) && string.Equals(match, uiSpriteData.name, StringComparison.OrdinalIgnoreCase))
+            if (!String.IsNullOrEmpty(uiSpriteData?.name) && String.Equals(match, uiSpriteData.name, StringComparison.OrdinalIgnoreCase))
             {
                 betterList.Add(uiSpriteData.name);
                 return betterList;
             }
         }
-        string[] strArray = match.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-        for (int index2 = 0; index2 < strArray.Length; ++index2)
+        String[] strArray = match.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+        for (Int32 index2 = 0; index2 < strArray.Length; ++index2)
             strArray[index2] = strArray[index2].ToLower();
-        int index3 = 0;
-        for (int count = this.mSprites.Count; index3 < count; ++index3)
+        Int32 index3 = 0;
+        for (Int32 count = this.mSprites.Count; index3 < count; ++index3)
         {
             UISpriteData uiSpriteData = this.mSprites[index3];
-            if (!string.IsNullOrEmpty(uiSpriteData?.name))
+            if (!String.IsNullOrEmpty(uiSpriteData?.name))
             {
-                string str = uiSpriteData.name.ToLower();
-                int num = 0;
-                for (int index2 = 0; index2 < strArray.Length; ++index2)
+                String str = uiSpriteData.name.ToLower();
+                Int32 num = 0;
+                for (Int32 index2 = 0; index2 < strArray.Length; ++index2)
                 {
                     if (str.Contains(strArray[index2]))
                         ++num;
@@ -356,7 +357,7 @@ public class UIAtlas : MonoBehaviour
         return betterList;
     }
 
-    private bool References(UIAtlas atlas)
+    private Boolean References(UIAtlas atlas)
     {
         if (atlas == null)
             return false;
@@ -367,7 +368,7 @@ public class UIAtlas : MonoBehaviour
         return false;
     }
 
-    public static bool CheckIfRelated(UIAtlas a, UIAtlas b)
+    public static Boolean CheckIfRelated(UIAtlas a, UIAtlas b)
     {
         if (a == null || b == null)
             return false;
@@ -380,8 +381,8 @@ public class UIAtlas : MonoBehaviour
     {
         this.mReplacement?.MarkAsChanged();
         UISprite[] active1 = NGUITools.FindActive<UISprite>();
-        int index1 = 0;
-        for (int length = active1.Length; index1 < length; ++index1)
+        Int32 index1 = 0;
+        for (Int32 length = active1.Length; index1 < length; ++index1)
         {
             UISprite uiSprite = active1[index1];
             if (CheckIfRelated(this, uiSprite.atlas))
@@ -392,11 +393,11 @@ public class UIAtlas : MonoBehaviour
             }
         }
         UIFont[] uiFontArray = (UIFont[])Resources.FindObjectsOfTypeAll(typeof(UIFont));
-        int index2 = 0;
-        for (int length = uiFontArray.Length; index2 < length; ++index2)
+        Int32 index2 = 0;
+        for (Int32 length = uiFontArray.Length; index2 < length; ++index2)
         {
             UIFont uiFont = uiFontArray[index2];
-            if (CheckIfRelated(this, (UIAtlas)(object)uiFont.atlas))
+            if (CheckIfRelated(this, (UIAtlas)(Object)uiFont.atlas))
             {
                 Original::UIAtlas atlas = uiFont.atlas;
                 uiFont.atlas = null;
@@ -404,11 +405,11 @@ public class UIAtlas : MonoBehaviour
             }
         }
         UILabel[] active2 = NGUITools.FindActive<UILabel>();
-        int index3 = 0;
-        for (int length = active2.Length; index3 < length; ++index3)
+        Int32 index3 = 0;
+        for (Int32 length = active2.Length; index3 < length; ++index3)
         {
             UILabel uiLabel = active2[index3];
-            if (uiLabel.bitmapFont != null && CheckIfRelated(this, (UIAtlas)(object)uiLabel.bitmapFont.atlas))
+            if (uiLabel.bitmapFont != null && CheckIfRelated(this, (UIAtlas)(Object)uiLabel.bitmapFont.atlas))
             {
                 UIFont bitmapFont = uiLabel.bitmapFont;
                 uiLabel.bitmapFont = null;
@@ -417,16 +418,16 @@ public class UIAtlas : MonoBehaviour
         }
     }
 
-    private bool Upgrade()
+    private Boolean Upgrade()
     {
         if (this.mReplacement)
             return this.mReplacement.Upgrade();
         if (this.mSprites.Count != 0 || this.sprites.Count <= 0 || !this.material)
             return false;
         Texture mainTexture = this.material.mainTexture;
-        int width = mainTexture?.width ?? 512;
-        int height = mainTexture?.height ?? 512;
-        for (int index = 0; index < this.sprites.Count; ++index)
+        Int32 width = mainTexture?.width ?? 512;
+        Int32 height = mainTexture?.height ?? 512;
+        for (Int32 index = 0; index < this.sprites.Count; ++index)
         {
             Sprite sprite = this.sprites[index];
             Rect rect1 = sprite.outer;
@@ -461,16 +462,16 @@ public class UIAtlas : MonoBehaviour
     [Serializable]
     private class Sprite
     {
-        public string name;
+        public String name;
         public Rect outer;
         public Rect inner;
-        public bool rotated;
-        public float paddingLeft;
-        public float paddingRight;
-        public float paddingTop;
-        public float paddingBottom;
+        public Boolean rotated;
+        public Single paddingLeft;
+        public Single paddingRight;
+        public Single paddingTop;
+        public Single paddingBottom;
 
-        public bool hasPadding
+        public Boolean hasPadding
         {
             get
             {

@@ -18,15 +18,15 @@ using UnityEngine;
 [ExportedType("Ò?%Æńńńń.!!!ÞÕÑ©ĦĖª¢ĕ;ĭċYĊŁİĸyāøä¨åóTăæáĿħ£ķp6Iùí&_³RĦßŁÁ`ĵċ6!!!ĄÀļěí)~Q©Ł=ÀÞ*bSýSaĖsá{oæĳċþĎ¬óÝç¤8¢ĖĸGĬl´>Ŀěg[ĪĪ¶çzçáA1Éô÷Ú°îH]$Ė¶$:¡zLhéĿÖÍ°{ĵ#!!!g°oÌńńńń+!!!õ¬ĢŁYVđāoÜ%Èjaęğī*oĖĦN±KÝ²dĠèĴ«UełėÏńńńńńńńń")]
 internal class EventEngineUtils
 {
-    public static bool showDebugUI = true;
+    public static Boolean showDebugUI = true;
     public static showLogLevelEnum showLogLevel = showLogLevelEnum.levelMinus1;
-    public static string ebFilePath = "CommonAsset/EventEngine/EventBinary/";
-    public static string ebSubFolderField = "Field/";
-    public static string ebSubFolderBattle = "Battle/";
-    public static string ebSubFolderWorld = "World/";
-    public static string ebFileExt = ".eb";
+    public static String ebFilePath = "CommonAsset/EventEngine/EventBinary/";
+    public static String ebSubFolderField = "Field/";
+    public static String ebSubFolderBattle = "Battle/";
+    public static String ebSubFolderWorld = "World/";
+    public static String ebFileExt = ".eb";
 
-    public static Dictionary<int, string> eventIDToFBGID = new Dictionary<int, string>
+    public static Dictionary<Int32, String> eventIDToFBGID = new Dictionary<Int32, String>
     {
         {50, "FBG_N00_TSHP_MAP002_TH_CGR_1"},
         {51, "FBG_N00_TSHP_MAP001_TH_CGR_0"},
@@ -848,7 +848,7 @@ internal class EventEngineUtils
         {3059, "FBG_N30_BMVL_MAP540_BV_ITM_0"}
     };
 
-    public static Dictionary<int, int> eventIDToMESID = new Dictionary<int, int>()
+    public static Dictionary<Int32, Int32> eventIDToMESID = new Dictionary<Int32, Int32>()
     {
         {50, 2},
         {51, 2},
@@ -1683,7 +1683,7 @@ internal class EventEngineUtils
         {9012, 68}
     };
 
-    public static Dictionary<int, int> QuadTalkableData = new Dictionary<int, int>()
+    public static Dictionary<Int32, Int32> QuadTalkableData = new Dictionary<Int32, Int32>()
     {
         {111005, 4},
         {1860008, 7},
@@ -1713,12 +1713,12 @@ internal class EventEngineUtils
         {2109010, 5}
     };
 
-    public static Dictionary<int, int> MogCallAddressData = new Dictionary<int, int>()
+    public static Dictionary<Int32, Int32> MogCallAddressData = new Dictionary<Int32, Int32>()
     {
         {9002, 8149}
     };
 
-    public static Dictionary<int, QuadCircle> QuadCircleData = new Dictionary<int, QuadCircle>()
+    public static Dictionary<Int32, QuadCircle> QuadCircleData = new Dictionary<Int32, QuadCircle>()
     {
         {2222004, new QuadCircle(new Vector3(11f, 0.0f, 165f), 398f)},
         {2901007, new QuadCircle(new Vector3(-157f, 0.0f, -2937f), 157f)},
@@ -1737,21 +1737,21 @@ internal class EventEngineUtils
     };
 
     [Conditional("EVENT_ENGINE_UTILS_LOG")]
-    public static void E_Log(string message, showLogLevelEnum messageLevel = showLogLevelEnum.level5)
+    public static void E_Log(String message, showLogLevelEnum messageLevel = showLogLevelEnum.level5)
     {
     }
 
     [Conditional("EVENT_ENGINE_UTILS_LOG")]
-    public static void LogToFile(string message)
+    public static void LogToFile(String message)
     {
     }
 
     [Conditional("EVENT_ENGINE_UTILS_LOG")]
-    public static void LogToFileNC(string message)
+    public static void LogToFileNC(String message)
     {
     }
 
-    public static void E_Error(string message)
+    public static void E_Error(String message)
     {
     }
 
@@ -1765,25 +1765,25 @@ internal class EventEngineUtils
         showLogLevel = showLogLevelEnum.level0;
     }
 
-    public static bool Are2FloatsDifferent(float a, float b)
+    public static Boolean Are2FloatsDifferent(Single a, Single b)
     {
         return Math.Abs(a - b) >= 9.99999974737875E-05;
     }
 
-    public static bool nearlyEqual(float a, float b)
+    public static Boolean nearlyEqual(Single a, Single b)
     {
-        float num1 = 1E-05f;
-        float num2 = Math.Abs(a);
-        float num3 = Math.Abs(b);
-        float num4 = Math.Abs(a - b);
-        if (a == (double)b)
+        Single num1 = 1E-05f;
+        Single num2 = Math.Abs(a);
+        Single num3 = Math.Abs(b);
+        Single num4 = Math.Abs(a - b);
+        if (a == (Double)b)
             return true;
         if (a == 0.0 || b == 0.0 || num4 < 1.40129846432482E-45)
             return num4 < num1 * 1.40129846432482E-45;
-        return num4 / (double)Math.Min(num2 + num3, float.MaxValue) < num1;
+        return num4 / (Double)Math.Min(num2 + num3, Single.MaxValue) < num1;
     }
 
-    public static float ClampAngle(float angle)
+    public static Single ClampAngle(Single angle)
     {
         if (angle < 0.0)
             angle += 360f;
@@ -1792,27 +1792,27 @@ internal class EventEngineUtils
         return angle;
     }
 
-    public static Vector3 ConvertFixedPointAngleToDegree(short[] fixedPointAngle)
+    public static Vector3 ConvertFixedPointAngleToDegree(Int16[] fixedPointAngle)
     {
-        return new Vector3((float)(((int)fixedPointAngle[0] >> 4) / 256.0 * 360.0), (float)(((int)fixedPointAngle[1] >> 4) / 256.0 * 360.0), (float)(((int)fixedPointAngle[2] >> 4) / 256.0 * 360.0));
+        return new Vector3((Single)(((Int32)fixedPointAngle[0] >> 4) / 256.0 * 360.0), (Single)(((Int32)fixedPointAngle[1] >> 4) / 256.0 * 360.0), (Single)(((Int32)fixedPointAngle[2] >> 4) / 256.0 * 360.0));
     }
 
-    public static float ConvertFixedPointAngleToDegree(short fixedPointAngle)
+    public static Single ConvertFixedPointAngleToDegree(Int16 fixedPointAngle)
     {
-        return (float)(((int)fixedPointAngle >> 4) / 256.0 * 360.0);
+        return (Single)(((Int32)fixedPointAngle >> 4) / 256.0 * 360.0);
     }
 
-    public static float ConvertFixedPointAngleToDegreeWithOutShiftRight(short fixedPointAngle)
+    public static Single ConvertFixedPointAngleToDegreeWithOutShiftRight(Int16 fixedPointAngle)
     {
-        return (float)(fixedPointAngle / 4096.0 * 360.0);
+        return (Single)(fixedPointAngle / 4096.0 * 360.0);
     }
 
-    public static int ConvertFloatAngleToFixedPoint(float floatAngle)
+    public static Int32 ConvertFloatAngleToFixedPoint(Single floatAngle)
     {
-        float f = (float)(floatAngle / 360.0 * 4096.0);
-        int int1 = Mathf.FloorToInt(f);
-        int int2 = Mathf.CeilToInt(f);
-        int int3 = Mathf.RoundToInt(f);
+        Single f = (Single)(floatAngle / 360.0 * 4096.0);
+        Int32 int1 = Mathf.FloorToInt(f);
+        Int32 int2 = Mathf.CeilToInt(f);
+        Int32 int3 = Mathf.RoundToInt(f);
         if (int3 == int2)
             return int2;
         if (int3 == int1)
@@ -1820,11 +1820,11 @@ internal class EventEngineUtils
         return -1;
     }
 
-    public static int CastFloatToIntWithChecking(float floatValue)
+    public static Int32 CastFloatToIntWithChecking(Single floatValue)
     {
-        int int1 = Mathf.FloorToInt(floatValue);
-        int int2 = Mathf.CeilToInt(floatValue);
-        int int3 = Mathf.RoundToInt(floatValue);
+        Int32 int1 = Mathf.FloorToInt(floatValue);
+        Int32 int2 = Mathf.CeilToInt(floatValue);
+        Int32 int3 = Mathf.RoundToInt(floatValue);
         if (int3 == int2)
             return int2;
         if (int3 == int1)
@@ -1832,16 +1832,16 @@ internal class EventEngineUtils
         return -1;
     }
 
-    public static int GetCharAnimFrame(GameObject go, int AnmNo)
+    public static Int32 GetCharAnimFrame(GameObject go, Int32 AnmNo)
     {
-        string name = FF9DBAll.AnimationDB[AnmNo];
+        String name = FF9DBAll.AnimationDB[AnmNo];
         if (go.GetComponent<Animation>().GetClip(name) == null)
             return -1;
-        float f = go.GetComponent<Animation>()[name].clip.length * go.GetComponent<Animation>()[name].clip.frameRate;
-        int int1 = Mathf.CeilToInt(f);
-        int int2 = Mathf.FloorToInt(f);
-        int int3 = Mathf.RoundToInt(f);
-        int num = int1;
+        Single f = go.GetComponent<Animation>()[name].clip.length * go.GetComponent<Animation>()[name].clip.frameRate;
+        Int32 int1 = Mathf.CeilToInt(f);
+        Int32 int2 = Mathf.FloorToInt(f);
+        Int32 int3 = Mathf.RoundToInt(f);
+        Int32 num = int1;
         if (int3 == int1)
             num = int1;
         else if (int3 == int2)
@@ -1849,7 +1849,7 @@ internal class EventEngineUtils
         return num + 1;
     }
 
-    public static byte[] loadEventData(string ebFileName, string ebSubFolder)
+    public static Byte[] loadEventData(String ebFileName, String ebSubFolder)
     {
         if (ebFileName == null)
         {
@@ -1871,7 +1871,7 @@ internal class EventEngineUtils
         return null;
     }
 
-    public static Matrix4x4 PsxMatrix2UnityMatrixRT(float[] rotation3x3, float[] translatation3x1)
+    public static Matrix4x4 PsxMatrix2UnityMatrixRT(Single[] rotation3x3, Single[] translatation3x1)
     {
         Matrix4x4 identity = Matrix4x4.identity;
         identity.m00 = rotation3x3[0];
@@ -1889,10 +1889,10 @@ internal class EventEngineUtils
         return identity;
     }
 
-    public static bool IsMogCalled(EventEngine eventEngine)
+    public static Boolean IsMogCalled(EventEngine eventEngine)
     {
-        short num = FF9StateSystem.Common.FF9.wldMapNo;
-        int var = !MogCallAddressData.ContainsKey(num) ? 7893 : MogCallAddressData[num];
+        Int16 num = FF9StateSystem.Common.FF9.wldMapNo;
+        Int32 var = !MogCallAddressData.ContainsKey(num) ? 7893 : MogCallAddressData[num];
         return eventEngine.eBin.getVarManually(var) == 1;
     }
 

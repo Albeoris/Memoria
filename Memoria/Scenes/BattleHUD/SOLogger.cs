@@ -3,15 +3,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria
 {
     public class SOLogger
     {
         private StreamWriter _output;
-        private int _index = 0;
+        private Int32 _index = 0;
 
-        public void Do(object obj)
+        public void Do(Object obj)
         {
             if (obj == null)
                 return;
@@ -38,7 +39,7 @@ namespace Memoria
             }
         }
 
-        public static bool IsAutoProperty(PropertyInfo prop)
+        public static Boolean IsAutoProperty(PropertyInfo prop)
         {
             if (!prop.CanRead)
                 return false;
@@ -51,7 +52,7 @@ namespace Memoria
                 .Any(f => f.Name.Contains("<" + prop.Name + ">"));
         }
 
-        private void Do(String name, object value)
+        private void Do(String name, Object value)
         {
             Component component = value as Component;
             if (component != null)
@@ -62,7 +63,7 @@ namespace Memoria
                 DoGameObject(gameObject.name, gameObject);
         }
 
-        private void DoGameObject(string name, GameObject gameObject)
+        private void DoGameObject(String name, GameObject gameObject)
         {
             if (gameObject == null)
             {
@@ -76,7 +77,7 @@ namespace Memoria
             foreach (Component component in gameObject.GetComponents<Component>())
                 DoComponent(component.name, component);
 
-            for (int i = 0; i < gameObject.transform.childCount; i++)
+            for (Int32 i = 0; i < gameObject.transform.childCount; i++)
             {
                 GameObject child = gameObject.GetChild(i);
                 DoGameObject(child.name, child);
@@ -84,7 +85,7 @@ namespace Memoria
             _index--;
         }
 
-        private void DoComponent(string name, Component component)
+        private void DoComponent(String name, Component component)
         {
             if (component == null)
             {
@@ -97,7 +98,7 @@ namespace Memoria
 
         private void WriteLine(String text)
         {
-            for (int i = 0; i < _index; i++)
+            for (Int32 i = 0; i < _index; i++)
                 _output.Write('\t');
 
             _output.WriteLine(text);

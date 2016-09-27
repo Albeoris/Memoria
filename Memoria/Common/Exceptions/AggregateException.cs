@@ -33,7 +33,7 @@ namespace Memoria
         /// a specified error message.
         /// </summary> 
         /// <param name="message">The error message that explains the reason for the exception.</param> 
-        public AggregateException(string message)
+        public AggregateException(String message)
             : base(message)
         {
             _innerExceptions = new ReadOnlyCollection<Exception>(new Exception[0]);
@@ -47,7 +47,7 @@ namespace Memoria
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="innerException"/> argument
         /// is null.</exception>
-        public AggregateException(string message, Exception innerException)
+        public AggregateException(String message, Exception innerException)
             : base(message, innerException)
         {
             if (innerException == null)
@@ -96,7 +96,7 @@ namespace Memoria
         /// is null.</exception>
         /// <exception cref="T:System.ArgumentException">An element of <paramref name="innerExceptions"/> is 
         /// null.</exception> 
-        public AggregateException(string message, IEnumerable<Exception> innerExceptions)
+        public AggregateException(String message, IEnumerable<Exception> innerExceptions)
             : this(message, innerExceptions == null ? null : new List<Exception>(innerExceptions))
         {
         }
@@ -111,7 +111,7 @@ namespace Memoria
         /// is null.</exception>
         /// <exception cref="T:System.ArgumentException">An element of <paramref name="innerExceptions"/> is
         /// null.</exception> 
-        public AggregateException(string message, params Exception[] innerExceptions) :
+        public AggregateException(String message, params Exception[] innerExceptions) :
             this(message, (IList<Exception>)innerExceptions)
         {
         }
@@ -125,7 +125,7 @@ namespace Memoria
         /// is null.</exception> 
         /// <exception cref="T:System.ArgumentException">An element of <paramref name="innerExceptions"/> is
         /// null.</exception> 
-        private AggregateException(string message, IList<Exception> innerExceptions)
+        private AggregateException(String message, IList<Exception> innerExceptions)
             : base(message, innerExceptions != null && innerExceptions.Count > 0 ? innerExceptions[0] : null)
         {
             if (innerExceptions == null)
@@ -138,7 +138,7 @@ namespace Memoria
             // the list passed in to it. We don't want callers subsequently mutating.
             Exception[] exceptionsCopy = new Exception[innerExceptions.Count];
 
-            for (int i = 0; i < exceptionsCopy.Length; i++)
+            for (Int32 i = 0; i < exceptionsCopy.Length; i++)
             {
                 exceptionsCopy[i] = innerExceptions[i];
 
@@ -244,13 +244,13 @@ namespace Memoria
         /// cref="AggregateException"/> was not handled.</exception>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="predicate"/> argument is 
         /// null.</exception> 
-        public void Handle(Func<Exception, bool> predicate)
+        public void Handle(Func<Exception, Boolean> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
             List<Exception> unhandledExceptions = null;
-            for (int i = 0; i < _innerExceptions.Count; i++)
+            for (Int32 i = 0; i < _innerExceptions.Count; i++)
             {
                 // If the exception was not handled, lazily allocate a list of unhandled 
                 // exceptions (to be rethrown later) and add it.
@@ -295,7 +295,7 @@ namespace Memoria
 
             // Create a list to remember all aggregates to be flattened, this will be accessed like a FIFO queue
             List<AggregateException> exceptionsToFlatten = new List<AggregateException> {this};
-            int nDequeueIndex = 0;
+            Int32 nDequeueIndex = 0;
 
             // Continue removing and recursively flattening exceptions, until there are no more.
             while (exceptionsToFlatten.Count > nDequeueIndex)
@@ -303,7 +303,7 @@ namespace Memoria
                 // dequeue one from exceptionsToFlatten 
                 IList<Exception> currentInnerExceptions = exceptionsToFlatten[nDequeueIndex++].InnerExceptions;
 
-                for (int i = 0; i < currentInnerExceptions.Count; i++)
+                for (Int32 i = 0; i < currentInnerExceptions.Count; i++)
                 {
                     Exception currentInnerException = currentInnerExceptions[i];
 
@@ -335,11 +335,11 @@ namespace Memoria
         /// Creates and returns a string representation of the current <see cref="AggregateException"/>. 
         /// </summary>
         /// <returns>A string representation of the current exception.</returns>
-        public override string ToString()
+        public override String ToString()
         {
-            string text = base.ToString();
+            String text = base.ToString();
 
-            for (int i = 0; i < _innerExceptions.Count; i++)
+            for (Int32 i = 0; i < _innerExceptions.Count; i++)
             {
                 text = String.Format(
                     CultureInfo.InvariantCulture,

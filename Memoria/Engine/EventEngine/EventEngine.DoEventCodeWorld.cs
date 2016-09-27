@@ -1,9 +1,11 @@
-﻿public partial class EventEngine
+﻿using System;
+
+public partial class EventEngine
 {
-    public int DoEventCodeWorld(PosObj po, int code)
+    public Int32 DoEventCodeWorld(PosObj po, Int32 code)
     {
-        int num1;
-        int num2;
+        Int32 num1;
+        Int32 num2;
         switch ((EBin.event_code_binary)code)
         {
             case EBin.event_code_binary.SHADOWON:
@@ -27,10 +29,10 @@
                 num1 = this.getv1();
                 return 0;
             case EBin.event_code_binary.RAIN:
-                int strength = this.getv1();
-                int speed = this.getv1();
+                Int32 strength = this.getv1();
+                Int32 speed = this.getv1();
                 ff9.rainRenderer.SetRainParam(strength, speed);
-                this._ff9.btl_rain = (byte)strength;
+                this._ff9.btl_rain = (Byte)strength;
                 return 0;
             default:
                 return 1;

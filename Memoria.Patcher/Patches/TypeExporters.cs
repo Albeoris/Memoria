@@ -260,7 +260,7 @@ namespace Memoria.Patcher
         {
             MethodBody body = _method.Body;
             Collection<Instruction> instructions = body.Instructions;
-            for (int i = 0; i < instructions.Count; i++)
+            for (Int32 i = 0; i < instructions.Count; i++)
             {
                 Instruction inst = instructions[i];
                 switch (inst.OpCode.OperandType)
@@ -278,7 +278,7 @@ namespace Memoria.Patcher
                 TypeReference newType;
                 if (genericInstance != null && genericInstance.HasGenericArguments)
                 {
-                    for (int g = 0; g < genericInstance.GenericArguments.Count; g++)
+                    for (Int32 g = 0; g < genericInstance.GenericArguments.Count; g++)
                     {
                         if (TryGetNewType(genericInstance.GenericArguments[g], out newType))
                             genericInstance.GenericArguments[g] = newType;
@@ -337,7 +337,7 @@ namespace Memoria.Patcher
             GenericInstanceType genericType = oldType as GenericInstanceType;
             if (genericType != null)
             {
-                for (int index = 0; index < genericType.GenericArguments.Count; index++)
+                for (Int32 index = 0; index < genericType.GenericArguments.Count; index++)
                 {
                     TypeReference argument = genericType.GenericArguments[index];
                     if (TryGetNewType(argument, out replacer, out newType))

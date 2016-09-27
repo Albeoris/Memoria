@@ -49,7 +49,7 @@ namespace Memoria
                 return null;
 
             KeyValuePair<String, TextReplacement>[] dic = new KeyValuePair<String, TextReplacement>[source.Length];
-            for (int i = 0; i < source.Length; i++)
+            for (Int32 i = 0; i < source.Length; i++)
                 dic[i] = new KeyValuePair<String, TextReplacement>(source[i], (ReplaceTextDelegate)ReplaceText);
             return dic;
         }
@@ -71,7 +71,7 @@ namespace Memoria
                 return null;
 
             TxtEntry[] array = new TxtEntry[general.Length];
-            for (int i = 0; i < general.Length; i++)
+            for (Int32 i = 0; i < general.Length; i++)
                 array[i] = new TxtEntry {Index = i, Prefix = '{' + general[i] + '}', Value = general[i]};
             return array;
         }

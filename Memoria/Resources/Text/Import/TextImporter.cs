@@ -8,7 +8,7 @@ namespace Memoria
     {
         public IEnumerable LoadAsync()
         {
-            Task<bool> task;
+            Task<Boolean> task;
             if (Configuration.Import.Enabled && Configuration.Import.Text)
             {
                 task = Task.Run(LoadExternal);

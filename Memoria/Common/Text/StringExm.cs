@@ -18,7 +18,7 @@ namespace Memoria
             foreach (var ch in str)
             {
                 Boolean finded = false;
-                for (int i = 0; i < source.Length; i++)
+                for (Int32 i = 0; i < source.Length; i++)
                 {
                     if (ch == source[i])
                     {
@@ -51,7 +51,7 @@ namespace Memoria
             StringBuilder result = new StringBuilder(str.Length);
             StringBuilder word = new StringBuilder(str.Length);
             Int32[][] indicesArray = new Int32[mapArray.Length][];
-            for (int k = 0; k < indicesArray.Length; k++)
+            for (Int32 k = 0; k < indicesArray.Length; k++)
                 indicesArray[k] = new Int32[mapArray[k].Count];
 
             for (Int32 characterIndex = 0; characterIndex < str.Length; characterIndex++)
@@ -59,9 +59,9 @@ namespace Memoria
                 Char c = str[characterIndex];
                 word.Append(c);
 
-                for (int n = 0; n < indicesArray.Length; n++)
+                for (Int32 n = 0; n < indicesArray.Length; n++)
                 {
-                    int[] indices = indicesArray[n];
+                    Int32[] indices = indicesArray[n];
                     var map = mapArray[n];
 
                     for (var i = 0; i < indices.Length; i++)
@@ -88,10 +88,10 @@ namespace Memoria
 
                 Int32 length = 0, array = -1, index = -1;
                 Boolean exists = false;
-                for (int n = 0; n < indicesArray.Length; n++)
+                for (Int32 n = 0; n < indicesArray.Length; n++)
                 {
-                    int[] indices = indicesArray[n];
-                    for (int i = 0; i < indices.Length; i++)
+                    Int32[] indices = indicesArray[n];
+                    for (Int32 i = 0; i < indices.Length; i++)
                     {
                         if (indices[i] > 0)
                         {
@@ -129,10 +129,10 @@ namespace Memoria
 
                 result.Append(word);
                 word.Length = 0;
-                for (int n = 0; n < indicesArray.Length; n++)
+                for (Int32 n = 0; n < indicesArray.Length; n++)
                 {
-                    int[] indices = indicesArray[n];
-                    for (int i = 0; i < indices.Length; i++)
+                    Int32[] indices = indicesArray[n];
+                    for (Int32 i = 0; i < indices.Length; i++)
                         indices[i] = 0;
                 }
             }

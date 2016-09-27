@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria
 {
     internal sealed class LocalizationDictionary
     {
-        private readonly object _lock = new object();
+        private readonly Object _lock = new Object();
         private Dictionary<String, String> _replacement = new Dictionary<String, String>();
 
         private Dictionary<String, String> _oldDictionary = new Dictionary<String, String>();
@@ -36,14 +37,14 @@ namespace Memoria
                 Dictionary<String, Int32> languageIndices = PrepareLanguages(merge, betterList, out newLanguages);
                 while (true)
                 {
-                    BetterList<string> newValues;
+                    BetterList<String> newValues;
                     do
                     {
                         newValues = byteReader.ReadCSV();
                         if (newValues == null || newValues.size == 0)
                             goto label_33;
 
-                    } while (string.IsNullOrEmpty(newValues[0]));
+                    } while (String.IsNullOrEmpty(newValues[0]));
 
                     AddCSV(newValues, newLanguages, languageIndices);
                 }
@@ -82,7 +83,7 @@ namespace Memoria
             }
         }
 
-        public void Set(string key, string value)
+        public void Set(String key, String value)
         {
             lock (_lock)
             {
@@ -93,7 +94,7 @@ namespace Memoria
             }
         }
 
-        public Dictionary<string, string[]> ProvideDictionary()
+        public Dictionary<String, String[]> ProvideDictionary()
         {
             lock (_lock)
             {
@@ -104,7 +105,7 @@ namespace Memoria
             }
         }
 
-        public void SetDictionary(Dictionary<string, string[]> value)
+        public void SetDictionary(Dictionary<String, String[]> value)
         {
             lock (_lock)
             {
@@ -193,7 +194,7 @@ namespace Memoria
                 String lang = Localization.language;
                 if (_languageIndex == -1)
                 {
-                    for (int index = 0; index < _languages.Length; ++index)
+                    for (Int32 index = 0; index < _languages.Length; ++index)
                     {
                         if (_languages[index] != lang)
                             continue;
@@ -227,7 +228,7 @@ namespace Memoria
 
                         break;
                     case UICamera.ControlScheme.Controller:
-                        string key2 = key + " Controller";
+                        String key2 = key + " Controller";
                         if (TryGetReplacement(key2, out str1))
                             return str1;
                         if (_languageIndex != -1 && _dictionary.TryGetValue(key2, out strArray) && _languageIndex < strArray.Length)
@@ -256,7 +257,7 @@ namespace Memoria
             }
         }
 
-        public bool Exists(string key)
+        public Boolean Exists(String key)
         {
             lock (_lock)
             {
@@ -286,7 +287,7 @@ namespace Memoria
                 Log.Message($"[LocalizationDictionary] Loading from [{importPath}]...");
 
                 TxtEntry[] entries = TxtReader.ReadStrings(importPath);
-                Dictionary<string, string> dic = CreateReplaceDictionary(entries);
+                Dictionary<String, String> dic = CreateReplaceDictionary(entries);
 
                 Log.Message("[LocalizationDictionary] Loading completed successfully.");
                 SetReplacement(dic);
@@ -340,10 +341,10 @@ namespace Memoria
         private String[] MergeLanguages(BetterList<String> betterList)
         {
             String[] newLanguages = new String[betterList.size];
-            for (int index = 0; index < betterList.size; ++index)
+            for (Int32 index = 0; index < betterList.size; ++index)
                 newLanguages[index] = betterList[index];
 
-            for (int index = 0; index < betterList.size; ++index)
+            for (Int32 index = 0; index < betterList.size; ++index)
             {
                 if (HasLanguage(betterList[index]))
                     continue;
@@ -366,7 +367,7 @@ namespace Memoria
             return newLanguages;
         }
 
-        private void LoadLanguages(BetterList<string> betterList)
+        private void LoadLanguages(BetterList<String> betterList)
         {
             _dictionary.Clear();
             _languages = new String[betterList.size];
@@ -434,8 +435,8 @@ namespace Memoria
 
         private Boolean HasLanguage(String languageName)
         {
-            int index = 0;
-            for (int length = _languages.Length; index < length; ++index)
+            Int32 index = 0;
+            for (Int32 length = _languages.Length; index < length; ++index)
             {
                 if (_languages[index] == languageName)
                     return true;
@@ -501,14 +502,14 @@ namespace Memoria
             return result;
         }
 
-        private bool SelectLanguage(String lang)
+        private Boolean SelectLanguage(String lang)
         {
             _languageIndex = -1;
             if (_dictionary.Count == 0)
                 return false;
 
-            int index = 0;
-            for (int length = _languages.Length; index < length; ++index)
+            Int32 index = 0;
+            for (Int32 length = _languages.Length; index < length; ++index)
             {
                 if (_languages[index] != lang)
                     continue;
@@ -525,7 +526,7 @@ namespace Memoria
             return false;
         }
 
-        private void LoadAndSelect(string value)
+        private void LoadAndSelect(String value)
         {
             try
             {

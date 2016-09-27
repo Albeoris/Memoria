@@ -6,12 +6,12 @@ namespace Memoria.TexturePackerLoader
 {
     public static class TPSheetSpriteNameFormatter
     {
-        private static readonly KeyValuePair<string, TextReplacement>[] EscapeMap;
-        private static readonly KeyValuePair<string, TextReplacement>[] UnescapeMap;
+        private static readonly KeyValuePair<String, TextReplacement>[] EscapeMap;
+        private static readonly KeyValuePair<String, TextReplacement>[] UnescapeMap;
 
         static TPSheetSpriteNameFormatter()
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>(4)
+            Dictionary<String, String> dic = new Dictionary<String, String>(4)
             {
                 {"%", "%25"},
                 {"#", "%23"},
@@ -19,8 +19,8 @@ namespace Memoria.TexturePackerLoader
                 {";", "%3B"},
             };
 
-            EscapeMap = dic.Select(p => new KeyValuePair<string, TextReplacement>(p.Key, p.Value)).ToArray();
-            UnescapeMap = dic.Select(p => new KeyValuePair<string, TextReplacement>(p.Value, p.Key)).ToArray();
+            EscapeMap = dic.Select(p => new KeyValuePair<String, TextReplacement>(p.Key, p.Value)).ToArray();
+            UnescapeMap = dic.Select(p => new KeyValuePair<String, TextReplacement>(p.Value, p.Key)).ToArray();
         }
 
         public static String EscapeSpecialChars(String name)

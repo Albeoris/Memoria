@@ -26,14 +26,14 @@ namespace Memoria
                 if (_formatter is StringsFormatter) // TEMP
                     name = name.Substring(2, name.Length - 4);
 
-                string countStr = sr.ReadLine();
+                String countStr = sr.ReadLine();
                 if (_formatter is StringsFormatter) // TEMP
                     countStr = countStr.Substring(2, countStr.Length - 4);
-                int count = int.Parse(countStr, CultureInfo.InvariantCulture);
+                Int32 count = Int32.Parse(countStr, CultureInfo.InvariantCulture);
                 TxtEntry[] result = new TxtEntry[count];
 
-                int offset = 0;
-                for (int i = 0; i < count && !sr.EndOfStream; i++)
+                Int32 offset = 0;
+                for (Int32 i = 0; i < count && !sr.EndOfStream; i++)
                 {
                     TxtEntry entry = _formatter.Read(sr);
                     if (entry == null)

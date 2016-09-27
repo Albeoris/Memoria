@@ -21,7 +21,7 @@ namespace Memoria
         public static TxtEntry[] Build(String prefix, String[] itemNames, String[] itemHelps, String[] itemDescriptions)
         {
             List<TxtEntry> abilities = new List<TxtEntry>(80);
-            for (int i = 0; i < itemNames.Length; i++)
+            for (Int32 i = 0; i < itemNames.Length; i++)
             {
                 String name = i < itemNames.Length ? itemNames[i] : String.Empty;
                 if (String.IsNullOrEmpty(name))
@@ -68,7 +68,7 @@ namespace Memoria
             itemHelps = new String[entreis.Length];
             itemDescs = new String[entreis.Length];
 
-            for (int i = 0; i < entreis.Length; i++)
+            for (Int32 i = 0; i < entreis.Length; i++)
             {
                 String value = entreis[i].Value;
                 Int32 newLineIndex = value.IndexOf('\n');

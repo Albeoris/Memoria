@@ -16,11 +16,11 @@ namespace Memoria
             }
 
             StringBuilder b = null;
-            int startIndex = 0;
-            int count = 0;
-            for (int i = 0; i < value.Length; i++)
+            Int32 startIndex = 0;
+            Int32 count = 0;
+            for (Int32 i = 0; i < value.Length; i++)
             {
-                char c = value[i];
+                Char c = value[i];
 
                 if (CharRequiresJavaScriptEncoding(c))
                 {
@@ -80,13 +80,13 @@ namespace Memoria
             return b.ToString();
         }
 
-        private static void AppendCharAsUnicodeJavaScript(StringBuilder builder, char c)
+        private static void AppendCharAsUnicodeJavaScript(StringBuilder builder, Char c)
         {
             builder.Append("\\u");
-            builder.Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+            builder.Append(((Int32)c).ToString("x4", CultureInfo.InvariantCulture));
         }
 
-        private static bool CharRequiresJavaScriptEncoding(char c)
+        private static Boolean CharRequiresJavaScriptEncoding(Char c)
         {
             return c < 0x20 // control chars always have to be encoded
                    || c == '\"' // chars which must be encoded per JSON spec

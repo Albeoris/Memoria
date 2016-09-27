@@ -35,16 +35,16 @@ using UnityEngine;
 [ExportedType("ęďěĖńńńń,!!!ğ¯ïďb'á<čĒ1ÜĪàI}9×ý®µXăĖWÝįh)Ý0{·nĚ®ãåDd=!!!ĄÀļěę5ĦÍÍs±ûb¥ĲêZıÅġĬ=ÕòĂNø°ġ¢Ëâ/®Aĥc÷ð9āYNÚ2ā-ĤîĄ»©ġ?ęgìÊĮ³Oćª[*ĞvåýĮÅ­Ĉđ{ĭ£įÕI¾3ČĶĆãÀľĞ¦8Ò¯éđ×+W>ī<d^@$¯û§#!!!Ì»àÔńńńń&!!!jđS9Ķ8ıÅ0ĝMª,g¹Ò#!!!łĹÙ-ńńńń")]
 public class ff9play
 {
-    public const int FF9PLAY_HP_MAX = 9999;
-    public const int FF9PLAY_MP_MAX = 999;
-    public const int FF9PLAY_WEAPON_VAL_MAX = 999;
-    public const int FF9PLAY_DEF_LEVEL = 1;
-    public const int FF9PLAY_DEF_GIL = 500;
-    public const int FF9PLAY_DEF_AT = 10;
-    public const int FF9PLAY_NAME_MAX = 10;
-    public const int FF9PLAY_FLD_STATUS_MAX = 7;
-    public const int FF9PLAY_EQUIP_ID_NONE = 255;
-    private static bool _FF9Play_Face;
+    public const Int32 FF9PLAY_HP_MAX = 9999;
+    public const Int32 FF9PLAY_MP_MAX = 999;
+    public const Int32 FF9PLAY_WEAPON_VAL_MAX = 999;
+    public const Int32 FF9PLAY_DEF_LEVEL = 1;
+    public const Int32 FF9PLAY_DEF_GIL = 500;
+    public const Int32 FF9PLAY_DEF_AT = 10;
+    public const Int32 FF9PLAY_NAME_MAX = 10;
+    public const Int32 FF9PLAY_FLD_STATUS_MAX = 7;
+    public const Int32 FF9PLAY_EQUIP_ID_NONE = 255;
+    private static Boolean _FF9Play_Face;
 
     public ff9play()
     {
@@ -54,7 +54,7 @@ public class ff9play
     {
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         FF9Play_SetFaceDirty(false);
-        for (int slot_id = 0; slot_id < 9; ++slot_id)
+        for (Int32 slot_id = 0; slot_id < 9; ++slot_id)
             FF9Play_New(slot_id);
         FF9Play_Add(0);
         FF9Play_Add(1);
@@ -72,7 +72,7 @@ public class ff9play
         ff9StateGlobal.party.summon_flag = 0;
     }
 
-    public static void FF9Play_New(int slot_id)
+    public static void FF9Play_New(Int32 slot_id)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_id];
         PLAYER_INFO[] playerInfoArray =
@@ -89,19 +89,19 @@ public class ff9play
         };
         play.info = playerInfoArray[slot_id];
         play.status = 0;
-        play.category = (byte)FF9Play_GetCategory(play.info.menu_type);
+        play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
         play.bonus = new FF9LEVEL_BONUS();
-        int charId3 = FF9Play_GetCharID3(play);
+        Int32 charId3 = FF9Play_GetCharID3(play);
         play.name = FF9TextTool.CharacterDefaultName(play.info.menu_type);
         FF9Play_SetDefEquips(play.equip, charId3);
-        play.info.serial_no = (byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
         FF9Play_Build(slot_id, 1, playerInfoArray[slot_id], false);
         play.cur.hp = play.max.hp;
         play.cur.mp = play.max.mp;
         play.cur.capa = play.max.capa;
     }
 
-    public static void FF9Play_SetParty(int party_id, int slot_id)
+    public static void FF9Play_SetParty(Int32 party_id, Int32 slot_id)
     {
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         PLAYER player = ff9StateGlobal.party.member[party_id];
@@ -124,7 +124,7 @@ public class ff9play
         FF9Play_SetFaceDirty(true);
     }
 
-    public static int FF9Play_GetPrev(int id)
+    public static Int32 FF9Play_GetPrev(Int32 id)
     {
         do
         {
@@ -133,7 +133,7 @@ public class ff9play
         return id;
     }
 
-    public static int FF9Play_GetNext(int id)
+    public static Int32 FF9Play_GetNext(Int32 id)
     {
         do
         {
@@ -142,12 +142,12 @@ public class ff9play
         return id;
     }
 
-    private static int FF9Play_GetAvgLevel(int slot_id)
+    private static Int32 FF9Play_GetAvgLevel(Int32 slot_id)
     {
-        int num1 = 0;
-        int num2 = 0;
+        Int32 num1 = 0;
+        Int32 num2 = 0;
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
-        for (int index = 0; index < 9; ++index)
+        for (Int32 index = 0; index < 9; ++index)
         {
             if (slot_id != index && ff9StateGlobal.player[index].info.party != 0)
             {
@@ -162,7 +162,7 @@ public class ff9play
         return num2 / num1;
     }
 
-    public static void FF9Play_Add(int slot_id)
+    public static void FF9Play_Add(Int32 slot_id)
     {
         if (slot_id < 0 || slot_id >= 9)
             return;
@@ -170,7 +170,7 @@ public class ff9play
         FF9StateSystem.Common.FF9.player[slot_id].info.party = 1;
     }
 
-    public static void FF9Play_Delete(int slot_id)
+    public static void FF9Play_Delete(Int32 slot_id)
     {
         if (slot_id < 0 || slot_id >= 9)
             return;
@@ -178,31 +178,31 @@ public class ff9play
         FF9StateSystem.Common.FF9.player[slot_id].info.party = 0;
     }
 
-    public static void FF9Play_Build(int slot_id, int lv, PLAYER_INFO init, bool lvup)
+    public static void FF9Play_Build(Int32 slot_id, Int32 lv, PLAYER_INFO init, Boolean lvup)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_id];
         if (!lvup && play.level != lv)
-            play.exp = (uint)ff9level._FF9Level_Exp[lv - 1];
-        play.level = (byte)lv;
-        long num1 = play.max.capa - play.cur.capa;
-        long num2 = play.cur.hp;
-        long num3 = play.cur.mp;
-        long num4 = play.cur.capa;
-        long num5 = play.max.capa;
+            play.exp = (UInt32)ff9level._FF9Level_Exp[lv - 1];
+        play.level = (Byte)lv;
+        Int64 num1 = play.max.capa - play.cur.capa;
+        Int64 num2 = play.cur.hp;
+        Int64 num3 = play.cur.mp;
+        Int64 num4 = play.cur.capa;
+        Int64 num5 = play.max.capa;
         play.cur = new POINTS();
         play.max = new POINTS();
         play.cur.at_coef = 10;
-        play.basis.dex = (byte)ff9level.FF9Level_GetDex(slot_id, play.level, lvup);
-        play.basis.str = (byte)ff9level.FF9Level_GetStr(slot_id, play.level, lvup);
-        play.basis.mgc = (byte)ff9level.FF9Level_GetMgc(slot_id, play.level, lvup);
-        play.basis.wpr = (byte)ff9level.FF9Level_GetWpr(slot_id, play.level, lvup);
-        play.max.hp = (ushort)ff9level.FF9Level_GetHp(play.level, play.basis.str);
-        play.basis.max_hp = (short)play.max.hp;
-        play.max.mp = play.basis.max_mp = (short)ff9level.FF9Level_GetMp(play.level, play.basis.mgc);
-        play.max.capa = (byte)ff9level.FF9Level_GetCap(slot_id, play.level, lvup);
-        play.cur.hp = (ushort)ccommon.min((int)num2, play.max.hp);
-        play.cur.mp = (short)ccommon.min((int)num3, play.max.mp);
-        play.cur.capa = (byte)(play.max.capa - (ulong)num1);
+        play.basis.dex = (Byte)ff9level.FF9Level_GetDex(slot_id, play.level, lvup);
+        play.basis.str = (Byte)ff9level.FF9Level_GetStr(slot_id, play.level, lvup);
+        play.basis.mgc = (Byte)ff9level.FF9Level_GetMgc(slot_id, play.level, lvup);
+        play.basis.wpr = (Byte)ff9level.FF9Level_GetWpr(slot_id, play.level, lvup);
+        play.max.hp = (UInt16)ff9level.FF9Level_GetHp(play.level, play.basis.str);
+        play.basis.max_hp = (Int16)play.max.hp;
+        play.max.mp = play.basis.max_mp = (Int16)ff9level.FF9Level_GetMp(play.level, play.basis.mgc);
+        play.max.capa = (Byte)ff9level.FF9Level_GetCap(slot_id, play.level, lvup);
+        play.cur.hp = (UInt16)ccommon.min((Int32)num2, play.max.hp);
+        play.cur.mp = (Int16)ccommon.min((Int32)num3, play.max.mp);
+        play.cur.capa = (Byte)(play.max.capa - (UInt64)num1);
         if (init != null)
         {
             play.cur.hp = play.max.hp;
@@ -212,13 +212,13 @@ public class ff9play
         FF9Play_Update(play);
         if (lvup)
         {
-            play.cur.hp = (ushort)ccommon.min((int)num2, play.max.hp);
-            play.cur.mp = (short)ccommon.min((int)num3, play.max.mp);
+            play.cur.hp = (UInt16)ccommon.min((Int32)num2, play.max.hp);
+            play.cur.mp = (Int16)ccommon.min((Int32)num3, play.max.mp);
         }
         if (num5 == 99L)
         {
-            play.cur.capa = (byte)num4;
-            play.max.capa = (byte)num5;
+            play.cur.capa = (Byte)num4;
+            play.max.capa = (Byte)num5;
         }
         if (num1 <= play.max.capa)
             return;
@@ -231,36 +231,36 @@ public class ff9play
         FF9PLAY_SKILL skill = new FF9PLAY_SKILL();
         info.Base = play.basis;
         info.cur_hp = play.cur.hp;
-        info.cur_mp = (ushort)play.cur.mp;
-        for (int index = 0; index < 1; ++index)
+        info.cur_mp = (UInt16)play.cur.mp;
+        for (Int32 index = 0; index < 1; ++index)
             info.sa[index] = play.sa[index];
-        for (int index = 0; index < 5; ++index)
+        for (Int32 index = 0; index < 5; ++index)
             info.equip[index] = play.equip[index];
         FF9Play_GetSkill(ref info, ref skill);
         play.elem.dex = skill.Base[0];
         play.elem.str = skill.Base[1];
         play.elem.mgc = skill.Base[2];
         play.elem.wpr = skill.Base[3];
-        play.defence.p_def = (byte)skill.weapon[1];
-        play.defence.p_ev = (byte)skill.weapon[2];
-        play.defence.m_def = (byte)skill.weapon[3];
-        play.defence.m_ev = (byte)skill.weapon[4];
+        play.defence.p_def = (Byte)skill.weapon[1];
+        play.defence.p_ev = (Byte)skill.weapon[2];
+        play.defence.m_def = (Byte)skill.weapon[3];
+        play.defence.m_ev = (Byte)skill.weapon[4];
         play.cur.hp = skill.cur_hp;
-        play.cur.mp = (short)skill.cur_mp;
+        play.cur.mp = (Int16)skill.cur_mp;
         play.max.hp = skill.max_hp;
-        play.max.mp = (short)skill.max_mp;
+        play.max.mp = (Int16)skill.max_mp;
     }
 
     public static FF9PLAY_SKILL FF9Play_GetSkill(ref FF9PLAY_INFO info, ref FF9PLAY_SKILL skill)
     {
-        byte[] numArray1 = {197, 198, 199, 200};
-        byte[] numArray2 = {50, 99, 99, 50};
+        Byte[] numArray1 = {197, 198, 199, 200};
+        Byte[] numArray2 = {50, 99, 99, 50};
         skill = new FF9PLAY_SKILL
         {
             cur_hp = info.cur_hp,
             cur_mp = info.cur_mp,
-            max_hp = (ushort)info.Base.max_hp,
-            max_mp = (ushort)info.Base.max_mp,
+            max_hp = (UInt16)info.Base.max_hp,
+            max_mp = (UInt16)info.Base.max_mp,
             Base =
             {
                 [0] = info.Base.dex,
@@ -269,13 +269,13 @@ public class ff9play
                 [3] = info.Base.wpr
             }
         };
-        int index1;
-        if ((index1 = info.equip[0]) != byte.MaxValue)
+        Int32 index1;
+        if ((index1 = info.equip[0]) != Byte.MaxValue)
             skill.weapon[0] = ff9weap._FF9Weapon_Data[index1].Ref.power;
-        for (int index2 = 0; index2 < 4; ++index2)
+        for (Int32 index2 = 0; index2 < 4; ++index2)
         {
-            int num;
-            if ((num = info.equip[1 + index2]) != byte.MaxValue && num >= 88 && num < 224)
+            Int32 num;
+            if ((num = info.equip[1 + index2]) != Byte.MaxValue && num >= 88 && num < 224)
             {
                 DEF_PARAMS defParams = ff9armor._FF9Armor_Data[num - 88];
                 skill.weapon[1] += defParams.p_def;
@@ -284,10 +284,10 @@ public class ff9play
                 skill.weapon[4] += defParams.m_ev;
             }
         }
-        for (int index2 = 0; index2 < 5; ++index2)
+        for (Int32 index2 = 0; index2 < 5; ++index2)
         {
-            int index3;
-            if ((index3 = info.equip[index2]) != byte.MaxValue)
+            Int32 index3;
+            if ((index3 = info.equip[index2]) != Byte.MaxValue)
             {
                 FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[index3];
                 EQUIP_PRIVILEGE equipPrivilege = ff9equip._FF9EquipBonus_Data[ff9ItemData.bonus];
@@ -297,35 +297,35 @@ public class ff9play
                 skill.Base[3] += equipPrivilege.wpr;
             }
         }
-        for (int index2 = 0; index2 < 4; ++index2)
+        for (Int32 index2 = 0; index2 < 4; ++index2)
         {
             if (ff9abil.FF9Abil_IsEnableSA(info.sa, numArray1[index2]))
             {
                 switch (numArray1[index2])
                 {
                     case 197:
-                        skill.max_hp = (ushort)(skill.max_hp + skill.max_hp / 10U);
+                        skill.max_hp = (UInt16)(skill.max_hp + skill.max_hp / 10U);
                         continue;
                     case 198:
-                        skill.max_hp = (ushort)(skill.max_hp + skill.max_hp / 5U);
+                        skill.max_hp = (UInt16)(skill.max_hp + skill.max_hp / 5U);
                         continue;
                     case 199:
-                        skill.max_mp = (ushort)(skill.max_mp + skill.max_mp / 10U);
+                        skill.max_mp = (UInt16)(skill.max_mp + skill.max_mp / 10U);
                         continue;
                     case 200:
-                        skill.max_mp = (ushort)(skill.max_mp + skill.max_mp / 5U);
+                        skill.max_mp = (UInt16)(skill.max_mp + skill.max_mp / 5U);
                         continue;
                     default:
                         continue;
                 }
             }
         }
-        for (int index2 = 0; index2 < 4; ++index2)
+        for (Int32 index2 = 0; index2 < 4; ++index2)
         {
             if (skill.Base[index2] > numArray2[index2])
                 skill.Base[index2] = numArray2[index2];
         }
-        for (int index2 = 0; index2 < 5; ++index2)
+        for (Int32 index2 = 0; index2 < 5; ++index2)
         {
             if (skill.weapon[index2] > 999)
                 skill.weapon[index2] = 999;
@@ -341,7 +341,7 @@ public class ff9play
         return skill;
     }
 
-    public static int FF9Play_GetCharID(int menu_type)
+    public static Int32 FF9Play_GetCharID(Int32 menu_type)
     {
         switch (menu_type)
         {
@@ -382,119 +382,119 @@ public class ff9play
         }
     }
 
-    public static int FF9Play_GetCharID2(int slot_id, bool sub_pc)
+    public static Int32 FF9Play_GetCharID2(Int32 slot_id, Boolean sub_pc)
     {
-        byte[][] numArray1 = new byte[9][];
-        numArray1[0] = new byte[2];
-        int index1 = 1;
-        byte[] numArray2 = {1, 1};
+        Byte[][] numArray1 = new Byte[9][];
+        numArray1[0] = new Byte[2];
+        Int32 index1 = 1;
+        Byte[] numArray2 = {1, 1};
         numArray1[index1] = numArray2;
-        int index2 = 2;
-        byte[] numArray3 = {2, 2};
+        Int32 index2 = 2;
+        Byte[] numArray3 = {2, 2};
         numArray1[index2] = numArray3;
-        int index3 = 3;
-        byte[] numArray4 =
+        Int32 index3 = 3;
+        Byte[] numArray4 =
         {
             3, 3
         };
         numArray1[index3] = numArray4;
-        int index4 = 4;
-        byte[] numArray5 = {4, 4};
+        Int32 index4 = 4;
+        Byte[] numArray5 = {4, 4};
         numArray1[index4] = numArray5;
-        int index5 = 5;
-        byte[] numArray6 = {5, 8};
+        Int32 index5 = 5;
+        Byte[] numArray6 = {5, 8};
         numArray1[index5] = numArray6;
-        int index6 = 6;
-        byte[] numArray7 = {6, 9};
+        Int32 index6 = 6;
+        Byte[] numArray7 = {6, 9};
         numArray1[index6] = numArray7;
-        int index7 = 7;
-        byte[] numArray8 = {7, 10};
+        Int32 index7 = 7;
+        Byte[] numArray8 = {7, 10};
         numArray1[index7] = numArray8;
-        int index8 = 8;
-        byte[] numArray9 = {11, 11};
+        Int32 index8 = 8;
+        Byte[] numArray9 = {11, 11};
         numArray1[index8] = numArray9;
         return numArray1[slot_id][!sub_pc ? 0 : 1];
     }
 
-    public static int FF9Play_GetCharID3(PLAYER play)
+    public static Int32 FF9Play_GetCharID3(PLAYER play)
     {
-        byte[][] numArray1 = new byte[9][];
-        numArray1[0] = new byte[2];
-        int index1 = 1;
-        byte[] numArray2 = {1, 1};
+        Byte[][] numArray1 = new Byte[9][];
+        numArray1[0] = new Byte[2];
+        Int32 index1 = 1;
+        Byte[] numArray2 = {1, 1};
         numArray1[index1] = numArray2;
-        int index2 = 2;
-        byte[] numArray3 = {2, 2};
+        Int32 index2 = 2;
+        Byte[] numArray3 = {2, 2};
         numArray1[index2] = numArray3;
-        int index3 = 3;
-        byte[] numArray4 = {3, 3};
+        Int32 index3 = 3;
+        Byte[] numArray4 = {3, 3};
         numArray1[index3] = numArray4;
-        int index4 = 4;
-        byte[] numArray5 = {4, 4};
+        Int32 index4 = 4;
+        Byte[] numArray5 = {4, 4};
         numArray1[index4] = numArray5;
-        int index5 = 5;
-        byte[] numArray6 = {5, 8};
+        Int32 index5 = 5;
+        Byte[] numArray6 = {5, 8};
         numArray1[index5] = numArray6;
-        int index6 = 6;
-        byte[] numArray7 = {6, 9};
+        Int32 index6 = 6;
+        Byte[] numArray7 = {6, 9};
         numArray1[index6] = numArray7;
-        int index7 = 7;
-        byte[] numArray8 =
+        Int32 index7 = 7;
+        Byte[] numArray8 =
         {
             7, 10
         };
         numArray1[index7] = numArray8;
-        int index8 = 8;
-        byte[] numArray9 = {11, 11};
+        Int32 index8 = 8;
+        Byte[] numArray9 = {11, 11};
         numArray1[index8] = numArray9;
-        return numArray1[play.info.slot_no][((int)play.category & 16) == 0 ? 0 : 1];
+        return numArray1[play.info.slot_no][((Int32)play.category & 16) == 0 ? 0 : 1];
     }
 
-    public static int FF9Play_GetCategory(int menu_type)
+    public static Int32 FF9Play_GetCategory(Int32 menu_type)
     {
-        return new byte[] {9, 5, 6, 5, 6, 5, 6, 5, 21, 21, 21, 22}[FF9Play_GetCharID(menu_type)];
+        return new Byte[] {9, 5, 6, 5, 6, 5, 6, 5, 21, 21, 21, 22}[FF9Play_GetCharID(menu_type)];
     }
 
-    public static void FF9Play_SetFaceDirty(bool dirty)
+    public static void FF9Play_SetFaceDirty(Boolean dirty)
     {
         _FF9Play_Face = dirty;
     }
 
-    private bool FF9Play_GetFaceDirty()
+    private Boolean FF9Play_GetFaceDirty()
     {
         return _FF9Play_Face;
     }
 
-    public static void FF9Play_SetDefEquips(byte[] equip, int eqp_id)
+    public static void FF9Play_SetDefEquips(Byte[] equip, Int32 eqp_id)
     {
-        byte[][] numArray =
+        Byte[][] numArray =
         {
-            new byte[] {1, 112, 88, 149, byte.MaxValue},
-            new byte[] {70, 112, byte.MaxValue, 149, byte.MaxValue},
-            new byte[] {57, byte.MaxValue, byte.MaxValue, 150, byte.MaxValue},
-            new byte[] {16, 137, byte.MaxValue, 177, byte.MaxValue},
-            new byte[] {31, 136, 102, 178, byte.MaxValue},
-            new byte[] {79, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue},
-            new byte[] {64, 114, 90, 150, 232},
-            new byte[] {41, byte.MaxValue, 89, 155, 194},
-            new byte[] {0, 112, byte.MaxValue, byte.MaxValue, byte.MaxValue},
-            new byte[] {16, 112, 88, 149, byte.MaxValue},
-            new byte[] {16, byte.MaxValue, byte.MaxValue, 150, byte.MaxValue},
-            new byte[] {26, 138, 104, 179, 192},
-            new byte[] {17, 114, 88, 151, byte.MaxValue},
-            new byte[] {26, 142, 105, 181, 212},
-            new byte[] {17, 112, byte.MaxValue, 150, byte.MaxValue},
-            new[] {byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue}
+            new Byte[] {1, 112, 88, 149, Byte.MaxValue},
+            new Byte[] {70, 112, Byte.MaxValue, 149, Byte.MaxValue},
+            new Byte[] {57, Byte.MaxValue, Byte.MaxValue, 150, Byte.MaxValue},
+            new Byte[] {16, 137, Byte.MaxValue, 177, Byte.MaxValue},
+            new Byte[] {31, 136, 102, 178, Byte.MaxValue},
+            new Byte[] {79, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue},
+            new Byte[] {64, 114, 90, 150, 232},
+            new Byte[] {41, Byte.MaxValue, 89, 155, 194},
+            new Byte[] {0, 112, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue},
+            new Byte[] {16, 112, 88, 149, Byte.MaxValue},
+            new Byte[] {16, Byte.MaxValue, Byte.MaxValue, 150, Byte.MaxValue},
+            new Byte[] {26, 138, 104, 179, 192},
+            new Byte[] {17, 114, 88, 151, Byte.MaxValue},
+            new Byte[] {26, 142, 105, 181, 212},
+            new Byte[] {17, 112, Byte.MaxValue, 150, Byte.MaxValue},
+            new[] {Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue}
         };
-        for (int index = 0; index < 5; ++index)
+        for (Int32 index = 0; index < 5; ++index)
             equip[index] = numArray[eqp_id][index];
     }
 
-    public static int FF9Play_GetSerialID(int slot_id, bool sub_pc, byte[] equip)
+    public static Int32 FF9Play_GetSerialID(Int32 slot_id, Boolean sub_pc, Byte[] equip)
     {
-        int charId2 = FF9Play_GetCharID2(slot_id, sub_pc);
-        int num = ff9item._FF9Item_Data[equip[0]].shape;
-        ushort uint16 = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
+        Int32 charId2 = FF9Play_GetCharID2(slot_id, sub_pc);
+        Int32 num = ff9item._FF9Item_Data[equip[0]].shape;
+        UInt16 uint16 = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
         switch (charId2)
         {
             case 0:
@@ -520,7 +520,7 @@ public class ff9play
             case 9:
                 return 15;
             case 10:
-                return 1500 <= (int)uint16 && 1600 > (int)uint16 ? 17 : 16;
+                return 1500 <= (Int32)uint16 && 1600 > (Int32)uint16 ? 17 : 16;
             case 11:
                 return 18;
             default:
@@ -528,17 +528,17 @@ public class ff9play
         }
     }
 
-    public static int FF9Play_GrowLevel(int slot_id, int lv)
+    public static Int32 FF9Play_GrowLevel(Int32 slot_id, Int32 lv)
     {
-        int num = FF9StateSystem.Common.FF9.player[slot_id].level;
+        Int32 num = FF9StateSystem.Common.FF9.player[slot_id].level;
         FF9Play_Build(slot_id, lv, null, true);
         return num;
     }
 
-    public static int FF9Play_ChangeLevel(int slot_id, int lv, bool max_hpmp)
+    public static Int32 FF9Play_ChangeLevel(Int32 slot_id, Int32 lv, Boolean max_hpmp)
     {
         PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
-        int num = player.level;
+        Int32 num = player.level;
         player.level = 0;
         FF9Play_Build(slot_id, lv, null, false);
         if (max_hpmp)
@@ -551,9 +551,9 @@ public class ff9play
 
     private static void FF9Play_UpdateSA(PLAYER play)
     {
-        int slot_id = play.info.slot_no;
+        Int32 slot_id = play.info.slot_no;
         play.cur.capa = play.max.capa;
-        for (int index = 0; index < 64; ++index)
+        for (Int32 index = 0; index < 64; ++index)
         {
             if (ff9abil.FF9Abil_GetEnableSA(slot_id, 192 + index))
             {
@@ -565,51 +565,51 @@ public class ff9play
         }
     }
 
-    public static void FF9Play_Change(int slot_no, bool update_lv, int eqp_id)
+    public static void FF9Play_Change(Int32 slot_no, Boolean update_lv, Int32 eqp_id)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_no];
-        if (eqp_id != byte.MaxValue)
+        if (eqp_id != Byte.MaxValue)
             FF9Play_SetDefEquips(play.equip, eqp_id);
-        play.info.serial_no = (byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
-        if (!update_lv && eqp_id == byte.MaxValue)
+        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+        if (!update_lv && eqp_id == Byte.MaxValue)
             return;
         if (update_lv)
         {
-            int avgLevel = FF9Play_GetAvgLevel(slot_no);
-            int lv = (int)play.info.serial_no == 10 || (int)play.info.serial_no == 11 ? avgLevel : Mathf.Max(play.level, avgLevel);
+            Int32 avgLevel = FF9Play_GetAvgLevel(slot_no);
+            Int32 lv = (Int32)play.info.serial_no == 10 || (Int32)play.info.serial_no == 11 ? avgLevel : Mathf.Max(play.level, avgLevel);
             FF9Play_Build(slot_no, lv, null, false);
         }
         else
             FF9Play_Update(play);
     }
 
-    private static void FF9Play_DebugEquip(int slot_no)
+    private static void FF9Play_DebugEquip(Int32 slot_no)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_no];
-        byte[][] numArray =
+        Byte[][] numArray =
         {
-            new byte[] {15, 135, 101, 167, 192},
-            new byte[] {78, 135, 101, 175, 192},
-            new byte[] {63, 135, 101, 175, 192},
-            new byte[] {30, 147, 111, 191, 192},
-            new byte[] {40, 147, 111, 191, 192},
-            new byte[] {84, 135, 101, 175, 192},
-            new byte[] {69, 135, 101, 175, 232},
-            new byte[] {50, 135, 101, 167, 194},
-            new byte[] {0, 135, 101, 167, 192},
-            new byte[] {25, 135, 101, 167, 192},
-            new byte[] {25, 135, 101, 167, 192},
-            new byte[] {26, 147, 111, 191, 192}
+            new Byte[] {15, 135, 101, 167, 192},
+            new Byte[] {78, 135, 101, 175, 192},
+            new Byte[] {63, 135, 101, 175, 192},
+            new Byte[] {30, 147, 111, 191, 192},
+            new Byte[] {40, 147, 111, 191, 192},
+            new Byte[] {84, 135, 101, 175, 192},
+            new Byte[] {69, 135, 101, 175, 232},
+            new Byte[] {50, 135, 101, 167, 194},
+            new Byte[] {0, 135, 101, 167, 192},
+            new Byte[] {25, 135, 101, 167, 192},
+            new Byte[] {25, 135, 101, 167, 192},
+            new Byte[] {26, 147, 111, 191, 192}
         };
-        int charId3 = FF9Play_GetCharID3(play);
-        for (int index = 0; index < 5; ++index)
+        Int32 charId3 = FF9Play_GetCharID3(play);
+        for (Int32 index = 0; index < 5; ++index)
             play.equip[index] = numArray[charId3][index];
-        play.info.serial_no = (byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
         FF9Play_Update(play);
         FF9Play_UpdateSA(play);
     }
 
-    public static void FF9Dbg_SetCharacter(int player, int slot)
+    public static void FF9Dbg_SetCharacter(Int32 player, Int32 slot)
     {
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         FF9DBG_CHAR[] ff9DbgCharArray =
@@ -627,7 +627,7 @@ public class ff9play
             new FF9DBG_CHAR(7, true, 12),
             new FF9DBG_CHAR(8, true, 14)
         };
-        if (player == byte.MaxValue)
+        if (player == Byte.MaxValue)
         {
             ff9StateGlobal.party.member[slot] = null;
         }
@@ -638,23 +638,23 @@ public class ff9play
             if (ff9DbgChar.menu_type >= 0)
             {
                 if (player != FF9Play_GetCharID(play.info.menu_type))
-                    play.info.menu_type = (byte)ff9DbgChar.menu_type;
-                play.category = (byte)FF9Play_GetCategory(play.info.menu_type);
+                    play.info.menu_type = (Byte)ff9DbgChar.menu_type;
+                play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
                 if (!FF9Dbg_CheckEquip(play))
                     FF9Play_SetDefEquips(play.equip, FF9Play_GetCharID3(play));
-                play.info.serial_no = (byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+                play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
             }
-            play.category = (byte)FF9Play_GetCategory(play.info.menu_type);
+            play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
         }
     }
 
-    private static bool FF9Dbg_CheckEquip(PLAYER play)
+    private static Boolean FF9Dbg_CheckEquip(PLAYER play)
     {
-        ushort num = (ushort)(1 << (11 - FF9Play_GetCharID3(play)));
-        for (int index1 = 0; index1 < 5; ++index1)
+        UInt16 num = (UInt16)(1 << (11 - FF9Play_GetCharID3(play)));
+        for (Int32 index1 = 0; index1 < 5; ++index1)
         {
-            int index2;
-            if ((index2 = play.equip[index1]) != byte.MaxValue && (ff9item._FF9Item_Data[index2].equip & num) == 0)
+            Int32 index2;
+            if ((index2 = play.equip[index1]) != Byte.MaxValue && (ff9item._FF9Item_Data[index2].equip & num) == 0)
                 return false;
         }
         return true;
@@ -662,12 +662,12 @@ public class ff9play
 
     public class FF9DBG_CHAR
     {
-        public byte slot_no;
-        public bool sub;
-        public sbyte menu_type;
-        public byte pad;
+        public Byte slot_no;
+        public Boolean sub;
+        public SByte menu_type;
+        public Byte pad;
 
-        public FF9DBG_CHAR(byte slot_no, bool sub, sbyte menu_type)
+        public FF9DBG_CHAR(Byte slot_no, Boolean sub, SByte menu_type)
         {
             this.slot_no = slot_no;
             this.sub = sub;

@@ -42,16 +42,16 @@ namespace FF9
             btlBonus.gil = 0;
             btlBonus.exp = 0U;
             btlBonus.ap = 0;
-            for (int index = 0; index < 16; ++index)
-                btlBonus.item[index] = byte.MaxValue;
-            btlBonus.card = byte.MaxValue;
+            for (Int32 index = 0; index < 16; ++index)
+                btlBonus.item[index] = Byte.MaxValue;
+            btlBonus.card = Byte.MaxValue;
             btlBonus.escape_gil = false;
         }
 
         public static void CheckBattlePhase(BTL_DATA btl)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            int num1 = 6; /*btl.bi.player == 0 ? 6 : 6*/
+            Int32 num1 = 6; /*btl.bi.player == 0 ? 6 : 6*/
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
                 if (next.bi.player == btl.bi.player && (!Status.checkCurStat(next, 4355U) || Status.checkCurStat(next, 256U) && next.die_seq != num1))
@@ -59,7 +59,7 @@ namespace FF9
             }
             if (btl.bi.player == 0)
             {
-                int num2 = 0;
+                Int32 num2 = 0;
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
                     if (next.bi.player != 0 && (!Status.checkCurStat(next, 4355U) || (next.cur.hp == 0 || Status.checkCurStat(next, 256U)) && Status.checkCurStat(next, 8192U) || btl_cmd.CheckSpecificCommand(next, 61)))
@@ -136,7 +136,7 @@ namespace FF9
             ff9Battle.btl_escape_key = 0;
         }
 
-        public static uint ManageBattleEnd(FF9StateBattleSystem btlsys)
+        public static UInt32 ManageBattleEnd(FF9StateBattleSystem btlsys)
         {
             FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
@@ -168,9 +168,9 @@ namespace FF9
             return 1;
         }
 
-        public static byte StartType(BTL_SCENE_INFO info)
+        public static Byte StartType(BTL_SCENE_INFO info)
         {
-            byte num1 = 2;
+            Byte num1 = 2;
             if (info.SpecialStart != 0)
             {
                 if (info.BackAttack != 0)
@@ -178,18 +178,18 @@ namespace FF9
             }
             else
             {
-                byte num2 = 24;
+                Byte num2 = 24;
                 if (btl_abil.CheckPartyAbility(1U, 512U))
                     num2 = 0;
                 else if (info.BackAttack != 0)
-                    num2 = byte.MaxValue;
+                    num2 = Byte.MaxValue;
                 if (Comn.random8() < num2)
                 {
                     num1 = 0;
                 }
                 else
                 {
-                    byte num3 = 16;
+                    Byte num3 = 16;
                     if (btl_abil.CheckPartyAbility(1U, 1024U))
                         num3 = 85;
                     if (Comn.random8() < num3)
@@ -206,47 +206,47 @@ namespace FF9
             BONUS btlBonus = battle.btl_bonus;
             btlBonus.gil += et.bonus.gil;
             btlBonus.exp += et.bonus.exp;
-            byte num1 = 0;
-            while (num1 < 16 && btlBonus.item[num1] != byte.MaxValue)
+            Byte num1 = 0;
+            while (num1 < 16 && btlBonus.item[num1] != Byte.MaxValue)
                 ++num1;
             if (num1 < 16)
             {
-                if (Comn.random8() < 1 && et.bonus.item[3] != byte.MaxValue)
+                if (Comn.random8() < 1 && et.bonus.item[3] != Byte.MaxValue)
                 {
                     btlBonus.item[num1++] = et.bonus.item[3];
-                    et.bonus.item[3] = byte.MaxValue;
+                    et.bonus.item[3] = Byte.MaxValue;
                 }
-                else if (Comn.random8() < 32 && et.bonus.item[2] != byte.MaxValue)
+                else if (Comn.random8() < 32 && et.bonus.item[2] != Byte.MaxValue)
                 {
                     btlBonus.item[num1++] = et.bonus.item[2];
-                    et.bonus.item[2] = byte.MaxValue;
+                    et.bonus.item[2] = Byte.MaxValue;
                 }
-                else if (Comn.random8() < 96 && et.bonus.item[1] != byte.MaxValue)
+                else if (Comn.random8() < 96 && et.bonus.item[1] != Byte.MaxValue)
                 {
                     btlBonus.item[num1++] = et.bonus.item[1];
-                    et.bonus.item[1] = byte.MaxValue;
+                    et.bonus.item[1] = Byte.MaxValue;
                 }
-                if (et.bonus.item[0] != byte.MaxValue)
+                if (et.bonus.item[0] != Byte.MaxValue)
                 {
-                    byte[] numArray = btlBonus.item;
-                    int index = num1;
+                    Byte[] numArray = btlBonus.item;
+                    Int32 index = num1;
                     //int num2 = 1;
                     //byte num3 = (byte)(index + num2);
-                    int num4 = et.bonus.item[0];
-                    numArray[index] = (byte)num4;
+                    Int32 num4 = et.bonus.item[0];
+                    numArray[index] = (Byte)num4;
                 }
             }
-            if (btlBonus.card != byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= 32)
+            if (btlBonus.card != Byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= 32)
                 return;
-            btlBonus.card = (byte)et.bonus.card;
+            btlBonus.card = (Byte)et.bonus.card;
         }
 
-        public static void SavePlayerData(BTL_DATA btl, uint flag)
+        public static void SavePlayerData(BTL_DATA btl, UInt32 flag)
         {
             PLAYER playerPtr = btl_util.getPlayerPtr(btl);
-            playerPtr.trance = !Status.checkCurStat(btl, 16384U) ? btl.trance : (byte)0;
+            playerPtr.trance = !Status.checkCurStat(btl, 16384U) ? btl.trance : (Byte)0;
             btl_init.CopyPoints(playerPtr.cur, btl.cur);
-            if (btl_cmd.HasSupportAbility(btl, SupportAbility2.GuardianMog) && (int)flag == 0)
+            if (btl_cmd.HasSupportAbility(btl, SupportAbility2.GuardianMog) && (Int32)flag == 0)
             {
                 playerPtr.status = 0;
             }
@@ -287,7 +287,7 @@ namespace FF9
             }
         }
 
-        public static void CheckEscape(bool calc_check)
+        public static void CheckEscape(Boolean calc_check)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             if ((ff9Battle.cmd_status & 1) != 0)

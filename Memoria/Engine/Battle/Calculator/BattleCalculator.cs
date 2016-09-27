@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FF9;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria
 {
@@ -12,7 +13,7 @@ namespace Memoria
             UIManager.Battle.SetBattleFollowMessage((Int32)message, UIManager.Battle.BtlGetAttrName((Int32)element));
         }
 
-        public static void SetBattleFollowFormatMessage(BattleMesages message, params object[] args)
+        public static void SetBattleFollowFormatMessage(BattleMesages message, params Object[] args)
         {
             UIManager.Battle.SetBattleFollowMessage((Int32)message, args);
         }

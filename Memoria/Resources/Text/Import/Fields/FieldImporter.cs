@@ -205,7 +205,7 @@ namespace Memoria
         private String[] MergeEntries()
         {
             String[] result = new String[_original.Length];
-            for (int index = 0; index < result.Length; index++)
+            for (Int32 index = 0; index < result.Length; index++)
             {
                 String original = _original[index];
                 if (String.IsNullOrEmpty(original))
@@ -241,7 +241,7 @@ namespace Memoria
         public static String GetEnding(String str)
         {
             StringBuilder sb = new StringBuilder(6);
-            for (int i = str.Length - 1; i >= 0; i--)
+            for (Int32 i = str.Length - 1; i >= 0; i--)
             {
                 Char ch = str[i];
                 if (ch == '\n' || ch == ' ')
@@ -250,7 +250,7 @@ namespace Memoria
                     continue;
                 }
 
-                int offset = i - EndingLength + 1;
+                Int32 offset = i - EndingLength + 1;
                 if (offset < 0)
                     continue;
 
@@ -277,7 +277,7 @@ namespace Memoria
             return !entries.IsNullOrEmpty();
         }
 
-        protected override bool LoadInternal()
+        protected override Boolean LoadInternal()
         {
             Int32 fieldZoneId = FF9TextToolAccessor.GetFieldZoneId();
 
@@ -291,7 +291,7 @@ namespace Memoria
             return true;
         }
 
-        private static bool ReadEmbadedText(int fieldZoneId, out String[] text)
+        private static Boolean ReadEmbadedText(Int32 fieldZoneId, out String[] text)
         {
             String path = EmbadedTextResources.GetCurrentPath("/Field/" + FF9TextToolInterceptor.GetFieldTextFileName(fieldZoneId) + ".mes");
             String raw = EmbadedSentenseLoader.LoadText(path);
@@ -307,7 +307,7 @@ namespace Memoria
             return false;
         }
 
-        protected override bool LoadExternal()
+        protected override Boolean LoadExternal()
         {
             try
             {

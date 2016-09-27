@@ -1,4 +1,5 @@
-﻿using Memoria;
+﻿using System;
+using Memoria;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -33,8 +34,8 @@ public class ConfigField
     public GameObject ConfigParent;
     public ButtonGroupState Button;
     public BetterList<GameObject> ConfigChoice;
-    public bool IsSlider;
-    public float Value;
+    public Boolean IsSlider;
+    public Single Value;
 
     public ConfigField()
     {

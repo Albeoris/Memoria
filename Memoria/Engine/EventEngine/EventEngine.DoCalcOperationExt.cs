@@ -1,19 +1,21 @@
-﻿public partial class EventEngine
+﻿using System;
+
+public partial class EventEngine
 {
-    public int DoCalcOperationExt(int code)
+    public Int32 DoCalcOperationExt(Int32 code)
     {
-        int frameNdx = 0;
-        short triNdx1 = 0;
-        short floorNdx1 = 0;
+        Int32 frameNdx = 0;
+        Int16 triNdx1 = 0;
+        Int16 floorNdx1 = 0;
         EBin.op_binary opBinary = (EBin.op_binary)code;
         switch (opBinary)
         {
             case EBin.op_binary.B_HAVE_ITEM:
-                int id = this.eBin.getv();
+                Int32 id = this.eBin.getv();
                 frameNdx = id >= EventEngine.kSItemOfs ? (id >= EventEngine.kCItemOfs ? QuadMistDatabase.MiniGame_GetCardCount(id - EventEngine.kCItemOfs) : (!ff9item.FF9Item_IsExistImportant(id - EventEngine.kSItemOfs) ? 0 : 1)) : ff9item.FF9Item_GetCount(id);
                 break;
             case EBin.op_binary.B_BAFRAME:
-                this.fieldmap.walkMesh.BGI_animGetFrame((uint)this.eBin.getv(), ref frameNdx);
+                this.fieldmap.walkMesh.BGI_animGetFrame((UInt32)this.eBin.getv(), ref frameNdx);
                 break;
             case EBin.op_binary.B_FRAME:
                 frameNdx = EventEngineUtils.GetCharAnimFrame(this.gCur.go, this.eBin.getv());
@@ -23,20 +25,20 @@
                 this.eBin.getv();
                 break;
             case EBin.op_binary.B_CURMP:
-                frameNdx = (int)this._ff9.player[this.chr2slot(this.eBin.getv())].cur.mp;
+                frameNdx = (Int32)this._ff9.player[this.chr2slot(this.eBin.getv())].cur.mp;
                 break;
             case EBin.op_binary.B_MAXMP:
-                frameNdx = (int)this._ff9.player[this.chr2slot(this.eBin.getv())].max.mp;
+                frameNdx = (Int32)this._ff9.player[this.chr2slot(this.eBin.getv())].max.mp;
                 break;
             case EBin.op_binary.B_BGIID:
-                short triNdx2 = -1;
+                Int16 triNdx2 = -1;
                 BGI.BGI_charGetInfo(this.eBin.getv(), ref triNdx2, ref floorNdx1);
-                frameNdx = (int)triNdx2;
+                frameNdx = (Int32)triNdx2;
                 break;
             case EBin.op_binary.B_BGIFLOOR:
-                short floorNdx2 = -1;
+                Int16 floorNdx2 = -1;
                 BGI.BGI_charGetInfo(this.eBin.getv(), ref triNdx1, ref floorNdx2);
-                frameNdx = (int)floorNdx2;
+                frameNdx = (Int32)floorNdx2;
                 break;
             default:
                 switch (opBinary - 67)
@@ -83,13 +85,13 @@
                                             }
                                             else
                                             {
-                                                frameNdx = (int)this._ff9.player[this.chr2slot(this.eBin.getv())].max.hp;
+                                                frameNdx = (Int32)this._ff9.player[this.chr2slot(this.eBin.getv())].max.hp;
                                                 break;
                                             }
                                         }
                                         else
                                         {
-                                            frameNdx = (int)this._ff9.player[this.chr2slot(this.eBin.getv())].cur.hp;
+                                            frameNdx = (Int32)this._ff9.player[this.chr2slot(this.eBin.getv())].cur.hp;
                                             break;
                                         }
                                 }

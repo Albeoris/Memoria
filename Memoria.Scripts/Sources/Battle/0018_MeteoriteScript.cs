@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
 
         private void InitializeAttackParams()
         {
-            _v.Context.Attack = (short)(GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level));
+            _v.Context.Attack = (Int16)(GameRandom.Next16() % (_v.Caster.Magic + _v.Caster.Level));
             _v.SetCommandPower();
             _v.Context.DefensePower = 0;
         }

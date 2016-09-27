@@ -10,7 +10,7 @@ namespace Memoria
         public String TypeName => nameof(LocationNameImporter);
         public String ImportDirectory => ModTextResources.Import.LocationNamesDirectory;
 
-        protected override bool LoadExternal()
+        protected override Boolean LoadExternal()
         {
             try
             {
@@ -40,13 +40,13 @@ namespace Memoria
             }
         }
 
-        protected override bool LoadInternal()
+        protected override Boolean LoadInternal()
         {
             String text = EmbadedSentenseLoader.LoadText(EmbadedTextResources.LocationNames);
 
             Dictionary<Int32, String> locationNames = FF9TextToolAccessor.GetLocationName();
             String[] array = text.Split('\r');
-            for (int i = 0; i < array.Length; i++)
+            for (Int32 i = 0; i < array.Length; i++)
             {
                 String str = array[i];
                 str = str.Replace("\n", String.Empty);
@@ -54,7 +54,7 @@ namespace Memoria
                 {
                     String key = str.Split(':')[0];
                     String value = str.Split(':')[1];
-                    locationNames[int.Parse(key)] = FF9TextTool.RemoveOpCode(value);
+                    locationNames[Int32.Parse(key)] = FF9TextTool.RemoveOpCode(value);
                 }
             }
             return true;

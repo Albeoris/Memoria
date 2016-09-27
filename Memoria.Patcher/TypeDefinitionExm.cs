@@ -71,7 +71,7 @@ namespace Memoria.Patcher
                     if (method.Parameters.Count != descriptor.Parameters.Count)
                         continue;
 
-                    for (int i = 0; i < method.Parameters.Count; i++)
+                    for (Int32 i = 0; i < method.Parameters.Count; i++)
                     {
                         ParameterDefinition p1 = method.Parameters[i];
                         ParameterDefinition p2 = descriptor.Parameters[i];

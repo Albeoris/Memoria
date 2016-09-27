@@ -7,8 +7,8 @@ namespace Memoria
     {
         private const String Prefix = "$ability";
 
-        protected override string TypeName => nameof(AbilityExporter);
-        protected override string ExportPath => ModTextResources.Export.Abilities;
+        protected override String TypeName => nameof(AbilityExporter);
+        protected override String ExportPath => ModTextResources.Export.Abilities;
 
         protected override TxtEntry[] PrepareEntries()
         {

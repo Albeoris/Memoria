@@ -18,18 +18,18 @@ using UnityEngine;
 [ExportedType("ĄÕ:õńńńń[!!!:Ĕ¶įçJĜ*ĈHáĞr¶ĈĂĊd÷łtÎĄĉĉ¸ĉłyċ42J±G+ĄĤ3Ĥ'rx1ê6³äñXĨĒçBĕĶīll7Üıh7õIf7ĶĿ/ĨġR¯Ķ9±@QĢğqĶcÁħQYºĬNßóß}¶²>NĩËĔ}»ĊĊcĊÈďh6X¯Rzę@ê*ÒäĪĤÞġķĹAøFÏİĔľ_DN/ħS´ĶG²%Qg¥*NÄáĀ}ěë?L+ėöcÍËûh¨/¯ŁmÁķHÒðê¡`L£ĿĚāď¤ęßJF°*ÐŁÚĹĹþxHĿTĠ9bòîiċv¤¹5?Û¹Åø>rçÓħ²ĉZP!!!©ö3°B¨Î+Ð3¥öĈĊ|ÚćVg~Á»ji:ĲxėPTğßê+f¾déDĀáöČêĩ8©J¯£¹µ8¬ĭŀzüĆä¸·õbxªĻëĪÇľĲPļèĠ5Đĺwîģ2Ĥzæ±ñÍ6³5Ĩ{$O=H*k$¢4T=$+dR^SĄLĮª½įåħõç11Xr2ëV¢bĸĳđäJĲÊýĐèÙÀľ7ÒÄh'1bĠĎ,ÐĲQc5¶B$ĲÀĘ?Ĩ7H#ĶĤĂģOjRĩČlD¹ouQ%!!!Ìöl)ńńńń##!!õ¬ĢŁÏăÔķľı´ĥ8Ĵ¼ĥzw·ĥVZÀĥıĸUgÇ6ÄĥÐāÄØĖ9º.ıËĂ~ĸÉûZi_ÈĨÌ¦ÆĨ©hËĨr`ÆZñĠËZdtĩôăÛāÉü¯VćŁÖÈÉ`çç<m±ÌÉĲąÏÄ­úÏÉĨ©´ĠĻ/ÓÉ¶GR©ğĝô@q¡Îġrĸ'.¢ù(ąñ`xÕëĔÿě¾ĹÂŃ_ĝĲĀãınkDÚÿĦZĹ,m9ēÀ{üĚĻ©]?ó¢ē²¢Åvę~:Ā6,ĤĈáõ#ēW@>õ8ÍĒŁwÒĽüĖĸB&{Îd%Y¡ĿķļāM¨ĴĆB[Ĳ~đ)ÂĢêÙćļËĸ·ÇĢÒW5¿á|q'÷ĉķ1#ãĄúîèÎAEUĴHĂ»Ì!¡ĽAěú·ĝÒ¶Øy|ŁNLğ'qyµĞ´łĥ$ĲÎý­VØġ¨¦ľ+7*vÕMqsI-Ċ?tānĂóF¤&ĄÛzØĳĎ·l8øq9+1U§<ð7aªÎò5¼Ğû®Òöµh}ēQĈĥĄjýè±E,ćCÝ;8®ÏFm£čŀıqN/Å)áēh»íĝĈüÂ{ľĞ¾ļuSċÞċ¦ĿjÚýk¼.ÆöDósÈĥ7ĂØ¬ü8ì°:ÿ-¥4yHB-ï]«þpØĂËěĩ©ĥ¥Ĺpý}Ĥĵ®ýw7Ĩĝæ+Đ¼oä0@H$UH¨Ħ¸C¾ºĸköØ]ąÛĎĿZ°3kĸÆĔāĆ«.ØÂĨª»Øĺ{F´ÊWč°ÖńHăl-ĦRċvr@|İQfxČĝkzĐĸ³ĚÒ@dG*÷Ąð¢Áµs8lµď£·éÓĕA58¢ÞħaĈłŀĔ!0OĳýNLđp]¾Ý~xÈĠĘÝĞ¾ëĈâĉrÚO¨ā^BīĴĽ>Ïè^Čnl¼òĩx`ęßz~ĘąĪ£BċnĆÂĳéýĠÞüÔ4ĮXzA>ăĳT:¼¡ßċķ¾ĎŁěZ&Ł&hrĚĴļôĀ[ù_ķġĀ¤|_ıùFDºäÅùL´ĭ3gÚYKÉĜńÂĂ[Ñg¸wYĥ%ıÏ÷Ô»~ãÏ'Øę@¿ďĩ|Kèĕ¹įYĠÏ[OIÿBúD4º<*ô×¦ìĚěGL!TtPéXďúã²ġåÇ@ĦÇ~jĶK=ÉjĀqöċüÃŀuČĥ»ĿĬĎnsē:ĳàĵĲď?ŁĝĔ?¶*č9dU[ļÃUy³gUÜĘeUĮzÉıĢÌĈd%Èģĸgăxķ3ıÌû¥)Î°ÑļHĦ4øÓć¢ďÃúzFĘ-2VÝĦİxĜĆÞ¾Ń£ńYèĩr:âHYöÐĂďĖ}ºĄBæ·īĆĖċěºë÷åéĪ¾9D¬Ĵ#ĠQò%*Ê£ğ=Ä»5@ªËĺ#ġBÓëĘX,¬ĐMīqñüĳÀ=$9ģĔÜćÎ`stWñ´wďÒêĴą4¯kĹhĄİľ_Đõĕą-µĘEÙ/ÜÙ^ÙâľİÞàľä0ńJèÎo»rãv¦ùŃØ¥|¡¸ĳ#OHčĐõ>©¬8ĠóŃ¬Gùı±ģĉöpºÌâ·£ç®ńńńńńńńńp¯ıįńńńń5!!!õ¬ĢŁ&=đhÌÓv^ùďoü©VwC!Ü»~ãÒ$AôQÏÚĉGaęĺ¿Đçý´~$®ăéĖăóBäĳ7Ð_ùlê×Båĭ¢M:łępĥ¹BZâ£÷ńńńńńńńńTFÇčńńńńÁ!!!õ¬ĢŁęç.ø~ĆW:ÓIħrĪ¯!ûċsď<Ç¥f+tQě<¬ħĴÙ·Ď!ĆÛYÖ_-©İ·¾ÝĐÙ©ĒÛþéģ¿¡íVĀÃV¸XµñzĄö¨:ubğÞĵ0¢ĭÔ=GČ;ĈnīĥăŀČÀ,gåuRä­í¸­CÓ¸JąHü'¿=üÚgĪW{ĸ¸WĽ0~đrđĔą¬>6¹įēCüOĴðñċT²ĒÍlÄĝÝé¦¿ăpï®QĠ[½9ķ½@è,Nm÷¹`ŀ×'XĩÉMģ3BöÆ&É÷Í&Úį÷¡éGæË)Tm39vä±êµlĻĲė§_qĄľİĈĿ+Ąg6ôßpÚĆö?ø6ĎU6Ĭŀ°ă¹ïçĔĦīē`õÖ0ÑK(ÑÁtķăÕjMÏv¦ı±zjÁ}<tMPR­ı:ĒE3ĩÃ³cäĝĶyòQÞąãī°ıĀc¿«İP«Č3×F«ĔÑĕÿîĸđkĺ!KÖĶË,gFü%ģYrmÖĴÁ<ĻÅğwpĩáě§FgAêīÐ¤µĔçĠ:£ęYAĀħÁä¦×*¢ÝKŃēD=¸įÕéAĶºU]ìĔ#ģ_ĦÏĽr¬T~9PÜOÄČĔ·ńêĝįİ:IÌÏóâĻ¥pľ/´N,,´c£zŀlrėÂ)uô$w6ÎĲa0GQã§Öķ·é0ŀEÎ$|çĦÉćíÀę&YZģÚèûġÌÅ:ĜlçEêĦīLÝı«©H}w8pjńńńńńńńń")]
 public class EBin
 {
-    public const int RET = 4;
-    public const int CTRL_ACTOR = 250;
-    public const int PARTY_ACTOR = 251;
-    public const int PARTYN = 4;
-    public const int THIS = 255;
-    public const int vcSysList = 5;
+    public const Int32 RET = 4;
+    public const Int32 CTRL_ACTOR = 250;
+    public const Int32 PARTY_ACTOR = 251;
+    public const Int32 PARTYN = 4;
+    public const Int32 THIS = 255;
+    public const Int32 vcSysList = 5;
 
     public static ObjList s0;
     public static Obj s1;
     public static Obj objV0;
-    public static int SC_COUNTER_SVR = 220;
-    public static int MAP_INDEX_SVR = 728;
+    public static Int32 SC_COUNTER_SVR = 220;
+    public static Int32 MAP_INDEX_SVR = 728;
 
     public CalcStack calcstack = new CalcStack();
 
@@ -46,32 +46,32 @@ public class EBin
     //private const int Vt0 = 8;
     //private const int KAtn45 = 10;
 
-    private static int _v0;
-    private static int _a0;
-    private static int _a1;
-    private static int _a2;
-    private static int _a3;
-    private static int _s2;
-    private static int _s3;
-    private static int _s5;
-    private static int _nextCodeIndex;
+    private static Int32 _v0;
+    private static Int32 _a0;
+    private static Int32 _a1;
+    private static Int32 _a2;
+    private static Int32 _a3;
+    private static Int32 _s2;
+    private static Int32 _s3;
+    private static Int32 _s5;
+    private static Int32 _nextCodeIndex;
     private static CalcStack _s4;
     private static CalcStack _s7;
     private static CalcStack _tempS4;
     private static CalcStack _tempStack = new CalcStack();
-    private static int _t0;
-    private static int _t2;
-    private static int _t3;
-    private static int _t4;
+    private static Int32 _t0;
+    private static Int32 _t2;
+    private static Int32 _t3;
+    private static Int32 _t4;
 
     private readonly EventEngine _eventEngine;
     private readonly ETb _eTb;
-    private byte[] _instance;
-    private int _instanceVOfs;
-    private bool _exprLoop;
-    private bool _objectExists;
-    private bool _nextLoop;
-    private byte[] _ratanTbl;
+    private Byte[] _instance;
+    private Int32 _instanceVOfs;
+    private Boolean _exprLoop;
+    private Boolean _objectExists;
+    private Boolean _nextLoop;
+    private Byte[] _ratanTbl;
 
     public EBin(EventEngine ee)
     {
@@ -91,20 +91,20 @@ public class EBin
         }
         MemoryStream memoryStream = new MemoryStream(textAsset.bytes);
         BinaryReader binaryReader = new BinaryReader(memoryStream);
-        _ratanTbl = new byte[binaryReader.BaseStream.Length];
+        _ratanTbl = new Byte[binaryReader.BaseStream.Length];
         binaryReader.Read(_ratanTbl, 0, _ratanTbl.Length);
         binaryReader.Close();
     }
 
-    private ushort GetUShortFromATanTable(int offset)
+    private UInt16 GetUShortFromATanTable(Int32 offset)
     {
-        ushort num = _ratanTbl[offset];
-        return (ushort)(num | (ushort)(_ratanTbl[offset + 1] << 8));
+        UInt16 num = _ratanTbl[offset];
+        return (UInt16)(num | (UInt16)(_ratanTbl[offset + 1] << 8));
     }
 
-    public int ProcessCode(ObjList objList)
+    public Int32 ProcessCode(ObjList objList)
     {
-        int result = -1;
+        Int32 result = -1;
         _objectExists = true;
         s0 = objList;
         next1();
@@ -115,7 +115,7 @@ public class EBin
             if (_a1 == EventEngine.stateNew)
             {
                 _a0 = EventEngine.stateInit;
-                s1.state = (byte)_a0;
+                s1.state = (Byte)_a0;
                 next0();
                 continue;
             }
@@ -150,7 +150,7 @@ public class EBin
                     {
                         _a0 = s1.wait;
                         _a0--;
-                        s1.wait = (byte)_a0;
+                        s1.wait = (Byte)_a0;
                         next0();
                     }
                 }
@@ -163,7 +163,7 @@ public class EBin
                     }
                     else
                     {
-                        bool flag = _eTb.MesWinActive(_a0);
+                        Boolean flag = _eTb.MesWinActive(_a0);
                         _a0 = 255;
                         if (flag)
                         {
@@ -171,7 +171,7 @@ public class EBin
                         }
                         else
                         {
-                            s1.winnum = (byte)_a0;
+                            s1.winnum = (Byte)_a0;
                             ad4();
                         }
                     }
@@ -209,12 +209,12 @@ public class EBin
         _objectExists = false;
     }
 
-    public int ad3(int arg0)
+    public Int32 ad3(Int32 arg0)
     {
         _a0 = _eventEngine.gMode;
         _eventEngine.gCur = objV0;
         _a1 = 2;
-        int result;
+        Int32 result;
         if (_a0 != _a1)
         {
             result = next(_a0);
@@ -230,11 +230,11 @@ public class EBin
     private void ad4()
     {
         _a0 = 0;
-        s1.wait = (byte)_a0;
+        s1.wait = (Byte)_a0;
         next0();
     }
 
-    public int next(int arg0)
+    public Int32 next(Int32 arg0)
     {
         _nextLoop = true;
         while (_nextLoop)
@@ -245,7 +245,7 @@ public class EBin
                 if (s1.sid == 1 || s1.sid == 0)
                 {
                 }
-                int num = _a0 << 2;
+                Int32 num = _a0 << 2;
                 _a2 = num - 440;
                 if (_a2 >= 0)
                 {
@@ -352,7 +352,7 @@ public class EBin
         }
     }
 
-    public int expr()
+    public Int32 expr()
     {
         _s7 = calcstack;
         _tempS4 = _s4;
@@ -361,7 +361,7 @@ public class EBin
         _exprLoop = true;
         while (_exprLoop)
         {
-            sbyte b = (sbyte)s1.getByteIP();
+            SByte b = (SByte)s1.getByteIP();
             if (s1.sid == 11)
             {
             }
@@ -402,7 +402,7 @@ public class EBin
         return 0;
     }
 
-    private int expr_varSpec(int arg0)
+    private Int32 expr_varSpec(Int32 arg0)
     {
         _v0 = (arg0 & 3);
         _v0 <<= 26;
@@ -423,15 +423,15 @@ public class EBin
         return _v0;
     }
 
-    public int setVarManually(int var, int value)
+    public Int32 setVarManually(Int32 var, Int32 value)
     {
-        int num = var & 255;
-        int num2 = num & 3;
+        Int32 num = var & 255;
+        Int32 num2 = num & 3;
         num2 <<= 26;
-        int num3 = num & 28;
+        Int32 num3 = num & 28;
         num3 <<= 27;
         num2 |= num3;
-        int num4 = (var & 65280) >> 8;
+        Int32 num4 = (var & 65280) >> 8;
         num &= 32;
         if (num != 0)
         {
@@ -449,18 +449,18 @@ public class EBin
         return num2;
     }
 
-    public int getVarManually(int var)
+    public Int32 getVarManually(Int32 var)
     {
         CalcStack calcStack = _s7;
         _s7 = _tempStack;
         _s7.emptyCalcStack();
-        int num = var & 255;
-        int num2 = num & 3;
+        Int32 num = var & 255;
+        Int32 num2 = num & 3;
         num2 <<= 26;
-        int num3 = num & 28;
+        Int32 num3 = num & 28;
         num3 <<= 27;
         num2 |= num3;
-        int num4 = (var & 65280) >> 8;
+        Int32 num4 = (var & 65280) >> 8;
         num &= 32;
         if (num != 0)
         {
@@ -470,12 +470,12 @@ public class EBin
         }
         num2 |= num4;
         _s7.push(num2);
-        int result = getvi();
+        Int32 result = getvi();
         _s7 = calcStack;
         return result;
     }
 
-    private void expr_jumpToSubCommand(int arg0)
+    private void expr_jumpToSubCommand(Int32 arg0)
     {
         if (arg0 >= 0 && arg0 <= 127)
         {
@@ -929,7 +929,7 @@ public class EBin
                     expr_ad0();
                     break;
                 case 79:
-                    _t3 = (int)ETb.KeyOn();
+                    _t3 = (Int32)ETb.KeyOn();
                     _v0 = getvi();
                     _v0 &= _t3;
                     if (s1.sid == 5)
@@ -949,14 +949,14 @@ public class EBin
                     expr_ad0();
                     break;
                 case 88:
-                    _t3 = (int)ETb.KeyOff();
+                    _t3 = (Int32)ETb.KeyOff();
                     _v0 = getvi();
                     _v0 &= _t3;
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
                     expr_ad0();
                     break;
                 case 89:
-                    _t3 = (int)_eTb.PadReadE();
+                    _t3 = (Int32)_eTb.PadReadE();
                     _v0 = getvi();
                     _v0 &= _t3;
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
@@ -971,12 +971,12 @@ public class EBin
                     if (actor.fieldMapActorController == null)
                     {
                     }
-                    float num = actor.pos[0];
-                    float num2 = actor.pos[2];
+                    Single num = actor.pos[0];
+                    Single num2 = actor.pos[2];
                     num = _v0 - num;
                     num2 = _t3 - num2;
-                    float floatAngle = angleAsm(num, num2);
-                    int num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                    Single floatAngle = angleAsm(num, num2);
+                    Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
                     _v0 = 0;
                     _v0 = num3;
                     _v0 <<= 20;
@@ -990,12 +990,12 @@ public class EBin
                     _v0 = getvi();
                     Obj gCur = _eventEngine.gCur;
                     Actor actor = (Actor)gCur;
-                    float num4 = actor.pos[0];
-                    float num5 = actor.pos[2];
+                    Single num4 = actor.pos[0];
+                    Single num5 = actor.pos[2];
                     num4 = _v0 - num4;
                     num5 = _t3 - num5;
                     _a1 = 0;
-                    _v0 = (int)distance(num4, _a1, num5);
+                    _v0 = (Int32)distance(num4, _a1, num5);
                     expr_ad0();
                     break;
                 }
@@ -1012,12 +1012,12 @@ public class EBin
                 {
                     _v0 = getvi();
                     Obj objUID2 = _eventEngine.GetObjUID(_v0);
-                    float num6 = ((PosObj)objUID2).pos[0];
-                    float num7 = ((PosObj)objUID2).pos[2];
-                    float num8 = ((PosObj)_eventEngine.gCur).pos[0];
-                    float num9 = ((PosObj)_eventEngine.gCur).pos[2];
-                    float floatAngle = angleAsm(num6 - num8, num7 - num9);
-                    int num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                    Single num6 = ((PosObj)objUID2).pos[0];
+                    Single num7 = ((PosObj)objUID2).pos[2];
+                    Single num8 = ((PosObj)_eventEngine.gCur).pos[0];
+                    Single num9 = ((PosObj)_eventEngine.gCur).pos[2];
+                    Single floatAngle = angleAsm(num6 - num8, num7 - num9);
+                    Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
                     _v0 = num3 >> 4;
                     expr_ad0();
                     break;
@@ -1029,10 +1029,10 @@ public class EBin
                     Obj gCur = _eventEngine.gCur;
                     Actor actor = (Actor)gCur;
                     _a0 = 524288000;
-                    float num4 = ((Actor)objUID2).pos[0] - actor.pos[0];
-                    float num5 = ((Actor)objUID2).pos[2] - actor.pos[2];
+                    Single num4 = ((Actor)objUID2).pos[0] - actor.pos[0];
+                    Single num5 = ((Actor)objUID2).pos[2] - actor.pos[2];
                     _a1 = 0;
-                    _v0 = (int)distance(num4, _a1, num5);
+                    _v0 = (Int32)distance(num4, _a1, num5);
                     expr_ad0();
                     break;
                 }
@@ -1053,8 +1053,8 @@ public class EBin
                     _t3 = getvi();
                     _a0 = getvi();
                     _a1 = _t3;
-                    float floatAngle = angleAsm(_a0, _a1);
-                    int num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                    Single floatAngle = angleAsm(_a0, _a1);
+                    Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
                     _v0 = num3 >> 4;
                     expr_ad0();
                     break;
@@ -1120,12 +1120,12 @@ public class EBin
         }
     }
 
-    private static int ConvertFloatAngleToFixedPoint(float floatAngle)
+    private static Int32 ConvertFloatAngleToFixedPoint(Single floatAngle)
     {
-        float f = (float)(floatAngle / 360.0 * 4096.0);
-        int int1 = Mathf.FloorToInt(f);
-        int int2 = Mathf.CeilToInt(f);
-        int int3 = Mathf.RoundToInt(f);
+        Single f = (Single)(floatAngle / 360.0 * 4096.0);
+        Int32 int1 = Mathf.FloorToInt(f);
+        Int32 int2 = Mathf.CeilToInt(f);
+        Int32 int3 = Mathf.RoundToInt(f);
         if (int3 == int2)
             return int2;
         if (int3 == int1)
@@ -1145,15 +1145,15 @@ public class EBin
         expr_ad0();
     }
 
-    public int bra()
+    public Int32 bra()
     {
-        short shortIP = s1.getShortIP();
+        Int16 shortIP = s1.getShortIP();
         s1.ip += 2;
         s1.ip += shortIP;
         return 0;
     }
 
-    public int beq()
+    public Int32 beq()
     {
         _v0 = getvi();
         if (_v0 != 0)
@@ -1162,14 +1162,14 @@ public class EBin
         }
         else
         {
-            int uShortIP = s1.getUShortIP();
+            Int32 uShortIP = s1.getUShortIP();
             s1.ip += 2;
             s1.ip += uShortIP;
         }
         return 0;
     }
 
-    public int bne()
+    public Int32 bne()
     {
         _v0 = getvi();
         if (_v0 == 0)
@@ -1183,14 +1183,14 @@ public class EBin
         return 0;
     }
 
-    public int wait()
+    public Int32 wait()
     {
         _s5 = s1.getByteIP();
         s1.ip++;
         _v0 = getv1i();
         if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
         {
-            string symbol = Localization.GetSymbol();
+            String symbol = Localization.GetSymbol();
             if (symbol != "US" && symbol != "JP")
             {
                 if (_v0 == 82)
@@ -1205,7 +1205,7 @@ public class EBin
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 3009)
         {
-            string symbol2 = Localization.GetSymbol();
+            String symbol2 = Localization.GetSymbol();
             if (symbol2 != "US" && symbol2 != "JP" && s1.uid == 17 && _v0 == 15)
             {
                 _v0 = 20;
@@ -1219,7 +1219,7 @@ public class EBin
             {
                 _v0 = 253;
             }
-            s1.wait = (byte)_v0;
+            s1.wait = (Byte)_v0;
             _s2 = 1;
         }
         return 0;
@@ -1228,7 +1228,7 @@ public class EBin
     private void ad2()
     {
         _t3 = s1.getByteIP(1);
-        _t4 = (sbyte)s1.getByteIP(2);
+        _t4 = (SByte)s1.getByteIP(2);
         _t4 <<= 8;
         _v0 = getvi();
         _v0 -= _t3;
@@ -1264,16 +1264,16 @@ public class EBin
         s1.ip += _a1;
     }
 
-    public int commandDefault()
+    public Int32 commandDefault()
     {
         s1.ip--;
         commandDefault2();
         return 0;
     }
 
-    public int commandDefault2()
+    public Int32 commandDefault2()
     {
-        int ip = s1.ip;
+        Int32 ip = s1.ip;
         _v0 = _eventEngine.DoEventCode();
         _s2 = _v0;
         _a0 = _eventEngine.gArgUsed;
@@ -1293,7 +1293,7 @@ public class EBin
             _t2--;
             _t4 = s1.getByteIP(1 + _a0);
             _t3 = s1.getByteIP(0 + _a0);
-            int num = _t3 | _t4 << 8;
+            Int32 num = _t3 | _t4 << 8;
             num -= _v0;
             _a0 += 4;
             if (num == 0)
@@ -1326,7 +1326,7 @@ public class EBin
         _s2 = 2;
     }
 
-    public int jumpToCommand(int arg0)
+    public Int32 jumpToCommand(Int32 arg0)
     {
         if (arg0 >= 0 && arg0 <= 109)
         {
@@ -1423,48 +1423,48 @@ public class EBin
         return -1;
     }
 
-    public float angleAsm(float deltaX, float deltaZ)
+    public Single angleAsm(Single deltaX, Single deltaZ)
     {
-        int num1 = (int)deltaX;
-        int num2 = (int)deltaZ;
+        Int32 num1 = (Int32)deltaX;
+        Int32 num2 = (Int32)deltaZ;
         if (num1 == 0 && num2 == 0)
             return 0.0f;
-        int num3 = num2 << 10;
-        int num4 = num1 << 10;
-        int num5;
+        Int32 num3 = num2 << 10;
+        Int32 num4 = num1 << 10;
+        Int32 num5;
         if (num2 >= 0)
         {
-            int num6 = num1 - num2;
-            num5 = num1 >= 0 ? (num6 >= 0 ? -1024 - (int)this.GetUShortFromATanTable(num3 / num1 << 1) : (int)this.GetUShortFromATanTable(num4 / num2 << 1) - 2048) : (-num1 - num2 < 0 ? 2048 - (int)this.GetUShortFromATanTable(-(num4 / num2 << 1)) : 1024 + (int)this.GetUShortFromATanTable(-(num3 / num1 << 1)));
+            Int32 num6 = num1 - num2;
+            num5 = num1 >= 0 ? (num6 >= 0 ? -1024 - (Int32)this.GetUShortFromATanTable(num3 / num1 << 1) : (Int32)this.GetUShortFromATanTable(num4 / num2 << 1) - 2048) : (-num1 - num2 < 0 ? 2048 - (Int32)this.GetUShortFromATanTable(-(num4 / num2 << 1)) : 1024 + (Int32)this.GetUShortFromATanTable(-(num3 / num1 << 1)));
         }
         else
         {
-            int num6 = num1 - num2;
+            Int32 num6 = num1 - num2;
             if (num1 >= 0)
             {
-                int num7 = -num2;
-                num5 = num1 - num7 < 0 ? -this.GetUShortFromATanTable(-(num4 / num2 << 1)) : (int)this.GetUShortFromATanTable(-(num3 / num1 << 1)) - 1024;
+                Int32 num7 = -num2;
+                num5 = num1 - num7 < 0 ? -this.GetUShortFromATanTable(-(num4 / num2 << 1)) : (Int32)this.GetUShortFromATanTable(-(num3 / num1 << 1)) - 1024;
             }
             else
-                num5 = num6 < 0 ? 1024 - (int)this.GetUShortFromATanTable(num3 / num1 << 1) : (int)this.GetUShortFromATanTable(num4 / num2 << 1);
+                num5 = num6 < 0 ? 1024 - (Int32)this.GetUShortFromATanTable(num3 / num1 << 1) : (Int32)this.GetUShortFromATanTable(num4 / num2 << 1);
         }
-        return EventEngineUtils.ConvertFixedPointAngleToDegree((short)num5);
+        return EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num5);
     }
 
-    private static float ConvertFixedPointAngleToDegree(short fixedPointAngle)
+    private static Single ConvertFixedPointAngleToDegree(Int16 fixedPointAngle)
     {
-        return (float)((fixedPointAngle >> 4) / 256.0 * 360.0);
+        return (Single)((fixedPointAngle >> 4) / 256.0 * 360.0);
     }
 
-    public int CollisionAngle(PosObj po, PosObj pot, float myrot)
+    public Int32 CollisionAngle(PosObj po, PosObj pot, Single myrot)
     {
-        float num = po.pos[0];
-        float num2 = pot.pos[0];
-        float num3 = po.pos[2];
-        float num4 = pot.pos[2];
-        float deltaX = num2 - num;
-        float deltaZ = num4 - num3;
-        float num5 = angleAsm(deltaX, deltaZ);
+        Single num = po.pos[0];
+        Single num2 = pot.pos[0];
+        Single num3 = po.pos[2];
+        Single num4 = pot.pos[2];
+        Single deltaX = num2 - num;
+        Single deltaZ = num4 - num3;
+        Single num5 = angleAsm(deltaX, deltaZ);
         num = myrot - num5;
         if (num > 180f)
         {
@@ -1477,7 +1477,7 @@ public class EBin
         return ConvertFloatAngleToFixedPoint(num);
     }
 
-    public int getvi()
+    public Int32 getvi()
     {
         _s7.pop(ref _t0);
         _a2 = getTypeAndVarClass(_t0);
@@ -1519,9 +1519,9 @@ public class EBin
         return 0;
     }
 
-    private int getvobj(Obj obj, int type)
+    private Int32 getvobj(Obj obj, Int32 type)
     {
-        int result;
+        Int32 result;
         switch (type)
         {
             case 0:
@@ -1565,7 +1565,7 @@ public class EBin
             }
             case 3:
             {
-                float floatAngle = 0f;
+                Single floatAngle = 0f;
                 if (_eventEngine.gMode == 1)
                 {
                     floatAngle = ((Actor)obj).rotAngle[1];
@@ -1574,8 +1574,8 @@ public class EBin
                 {
                     floatAngle = ((Actor)obj).wmActor.rot1;
                 }
-                int num = ConvertFloatAngleToFixedPoint(floatAngle);
-                int num2 = num >> 4 & 255;
+                Int32 num = ConvertFloatAngleToFixedPoint(floatAngle);
+                Int32 num2 = num >> 4 & 255;
                 result = num2;
                 break;
             }
@@ -1598,11 +1598,11 @@ public class EBin
         return result;
     }
 
-    private static int CastFloatToIntWithChecking(float floatValue)
+    private static Int32 CastFloatToIntWithChecking(Single floatValue)
     {
-        int int1 = Mathf.FloorToInt(floatValue);
-        int int2 = Mathf.CeilToInt(floatValue);
-        int int3 = Mathf.RoundToInt(floatValue);
+        Int32 int1 = Mathf.FloorToInt(floatValue);
+        Int32 int2 = Mathf.CeilToInt(floatValue);
+        Int32 int3 = Mathf.RoundToInt(floatValue);
         if (int3 == int2)
             return int2;
         if (int3 == int1)
@@ -1610,12 +1610,12 @@ public class EBin
         return -1;
     }
 
-    private float distance(float x, float y, float z)
+    private Single distance(Single x, Single y, Single z)
     {
         return Mathf.Sqrt(x * x + y * y + z * z);
     }
 
-    public int getvsub(byte[] buffer, int ofs, int type, int bufferOffset = 0)
+    public Int32 getvsub(Byte[] buffer, Int32 ofs, Int32 type, Int32 bufferOffset = 0)
     {
         _v0 = (type & 56) >> 3;
         switch ((VariableType)_v0)
@@ -1623,14 +1623,14 @@ public class EBin
             case VariableType.SBit:
             case VariableType.Bit:
                 _v0 = ofs >> 3; // 5
-                _a0 = (sbyte)buffer[_v0 + bufferOffset];
+                _a0 = (SByte)buffer[_v0 + bufferOffset];
                 _v0 = (ofs & 7); // 3
                 _a0 >>= _v0;
                 _v0 = (_a0 & 1);
                 return _v0;
             case VariableType.Int24:
             case VariableType.UInt24:
-                _v0 = (sbyte)buffer[ofs + 2 + bufferOffset];
+                _v0 = (SByte)buffer[ofs + 2 + bufferOffset];
                 _a1 = buffer[ofs + 1 + bufferOffset];
                 _v0 = (_v0 << 8 | _a1);
                 _a1 = buffer[ofs + bufferOffset];
@@ -1638,13 +1638,13 @@ public class EBin
                 _v0 |= _a1;
                 return _v0;
             case VariableType.SByte:
-                _v0 = (sbyte)buffer[ofs + bufferOffset];
+                _v0 = (SByte)buffer[ofs + bufferOffset];
                 return _v0;
             case VariableType.Byte:
                 _v0 = buffer[ofs + bufferOffset];
                 return _v0;
             case VariableType.Int16:
-                _v0 = (sbyte)buffer[ofs + 1 + bufferOffset];
+                _v0 = (SByte)buffer[ofs + 1 + bufferOffset];
                 _a0 = buffer[ofs + bufferOffset];
                 _v0 <<= 8;
                 _v0 |= _a0;
@@ -1660,7 +1660,7 @@ public class EBin
         }
     }
 
-    public int getv1i()
+    public Int32 getv1i()
     {
         _v0 = (_s5 & 1);
         _s5 >>= 1;
@@ -1675,7 +1675,7 @@ public class EBin
         return _v0;
     }
 
-    public int putvi(int arg0)
+    public Int32 putvi(Int32 arg0)
     {
         _s7.pop(ref _t0);
         _a3 = arg0;
@@ -1708,7 +1708,7 @@ public class EBin
         return 0;
     }
 
-    public int putvsub(byte[] buffer, int ofs, int type, int value, int bufferOffset = 0)
+    public Int32 putvsub(Byte[] buffer, Int32 ofs, Int32 type, Int32 value, Int32 bufferOffset = 0)
     {
         _v0 = (type & 56) >> 3;
         switch ((VariableType)_v0)
@@ -1717,20 +1717,20 @@ public class EBin
             case VariableType.Bit:
             {
                 _v0 = (ofs & 7);
-                int num = ofs >> 3;
-                _a1 = (sbyte)buffer[num + bufferOffset];
+                Int32 num = ofs >> 3;
+                _a1 = (SByte)buffer[num + bufferOffset];
                 _a2 = 1;
                 _a2 <<= _v0;
                 if (value == 0)
                 {
                     _a2 ^= 255;
                     _a1 &= _a2;
-                    buffer[num + bufferOffset] = (byte)_a1;
+                    buffer[num + bufferOffset] = (Byte)_a1;
                 }
                 else
                 {
                     _a1 |= _a2;
-                    buffer[num + bufferOffset] = (byte)_a1;
+                    buffer[num + bufferOffset] = (Byte)_a1;
                 }
                 break;
             }
@@ -1739,34 +1739,34 @@ public class EBin
                 if (EventHUD.CurrentHUD == MinigameHUD.JumpingRope && Configuration.Hacks.Enabled && (ofs == 43 || ofs == 59))
                     value = value - 1 + Configuration.Hacks.RopeJumpingIncrement;
 
-                buffer[ofs + bufferOffset] = (byte)(value & 255);
-                buffer[ofs + 1 + bufferOffset] = (byte)((value & 65280) >> 8);
-                buffer[ofs + 2 + bufferOffset] = (byte)((value & 16711680) >> 16);
+                buffer[ofs + bufferOffset] = (Byte)(value & 255);
+                buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
+                buffer[ofs + 2 + bufferOffset] = (Byte)((value & 16711680) >> 16);
                 break;
             case VariableType.SByte:
             case VariableType.Byte:
-                buffer[ofs + bufferOffset] = (byte)_a3;
+                buffer[ofs + bufferOffset] = (Byte)_a3;
                 break;
             case VariableType.Int16:
             case VariableType.UInt16:
-                buffer[ofs + bufferOffset] = (byte)(value & 255);
-                buffer[ofs + 1 + bufferOffset] = (byte)((value & 65280) >> 8);
+                buffer[ofs + bufferOffset] = (Byte)(value & 255);
+                buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
                 break;
         }
         return 0;
     }
 
-    public void SetVariableSpec(ref int arg0)
+    public void SetVariableSpec(ref Int32 arg0)
     {
         _nextCodeIndex = s1.getByteIP();
         arg0 = s1.getByteIP();
     }
 
-    public int CalcExpr()
+    public Int32 CalcExpr()
     {
         Obj obj = s1;
-        int num = _s3;
-        int num2 = _nextCodeIndex;
+        Int32 num = _s3;
+        Int32 num2 = _nextCodeIndex;
         CalcStack calcStack = _s7;
         s1 = _eventEngine.gExec;
         expr();
@@ -1777,7 +1777,7 @@ public class EBin
         return 0;
     }
 
-    public int getv()
+    public Int32 getv()
     {
         CalcStack calcStack = _s7;
         _s7 = _eventEngine.gCP;
@@ -1786,7 +1786,7 @@ public class EBin
         return _v0;
     }
 
-    public int putv(int a)
+    public Int32 putv(Int32 a)
     {
         CalcStack calcStack = _s7;
         _s7 = _eventEngine.gCP;
@@ -1795,18 +1795,18 @@ public class EBin
         return _v0;
     }
 
-    private int getVarClass(int value)
+    private Int32 getVarClass(Int32 value)
     {
-        int typeAndVarClass = getTypeAndVarClass(value);
+        Int32 typeAndVarClass = getTypeAndVarClass(value);
         return typeAndVarClass & 7;
     }
 
-    private int getTypeAndVarClass(int value)
+    private Int32 getTypeAndVarClass(Int32 value)
     {
         return value >> 26;
     }
 
-    private int encodeTypeAndVarClass(int typeAndClass)
+    private Int32 encodeTypeAndVarClass(Int32 typeAndClass)
     {
         return typeAndClass << 10 << 16;
     }

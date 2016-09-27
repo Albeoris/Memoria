@@ -30,19 +30,19 @@ using UnityEngine;
 [ExportedType("wįńĠńńńń/!!!ĭÉ)ĐĽ0ßħ¡,ĊĚYę7Kn0ù£yĭđīáû*Ä¹÷q;]ñVf.Öĝ;EËĻćXi¾jàµ_ĥ-!!!»Ú·»Ńī*SCBġ´V]Ļ¢ıã#¿zeĺĹ¹Åġú´¨ÌtlÈÏþÈÆ_ĪĢńĩSńńńń")]
 public class QuitUI : MonoBehaviour
 {
-    public static string WarningMenuGroupButton = "Quit.Warning";
-    public static bool AcceptQuit = true;
+    public static String WarningMenuGroupButton = "Quit.Warning";
+    public static Boolean AcceptQuit = true;
     public GameObject WarningDialog;
-    public bool isShowQuitUI;
+    public Boolean isShowQuitUI;
 
-    private string previousActiveGroup;
-    private bool previousPlayerControlEnable;
-    private bool previousMenuControlEnable;
-    private bool previousEventEnable;
-    private bool previousDisablePrimaryKey;
-    private float previousTimescale;
-    private float previousVibLeft;
-    private float previousVibRight;
+    private String previousActiveGroup;
+    private Boolean previousPlayerControlEnable;
+    private Boolean previousMenuControlEnable;
+    private Boolean previousEventEnable;
+    private Boolean previousDisablePrimaryKey;
+    private Single previousTimescale;
+    private Single previousVibLeft;
+    private Single previousVibRight;
     private Action onFinishHideQuitUI;
 
     public void Show(Action onFinishHideQuitUICallback)
@@ -94,7 +94,7 @@ public class QuitUI : MonoBehaviour
         }
         isShowQuitUI = false;
         gameObject.SetActive(false);
-        if (string.IsNullOrEmpty(previousActiveGroup))
+        if (String.IsNullOrEmpty(previousActiveGroup))
         {
             ButtonGroupState.DisableAllGroup();
         }
@@ -130,20 +130,20 @@ public class QuitUI : MonoBehaviour
 
     public void SetPreviousActiveGroup()
     {
-        string text = ButtonGroupState.ActiveGroup;
+        String text = ButtonGroupState.ActiveGroup;
         if (text.Equals(WarningMenuGroupButton))
         {
-            text = string.Empty;
+            text = String.Empty;
         }
         previousActiveGroup = text;
     }
 
-    public void onPress(GameObject go, bool isDown)
+    public void onPress(GameObject go, Boolean isDown)
     {
         if (isDown)
             return;
 
-        int currentTouchID = UICamera.currentTouchID;
+        Int32 currentTouchID = UICamera.currentTouchID;
         switch (currentTouchID + 2)
         {
             case 1:
@@ -179,12 +179,12 @@ public class QuitUI : MonoBehaviour
         onPress(go, false);
     }
 
-    public bool OnKeyConfirm(GameObject go)
+    public Boolean OnKeyConfirm(GameObject go)
     {
         if (ButtonGroupState.ActiveGroup == WarningMenuGroupButton)
         {
-            int siblingIndex = go.transform.GetSiblingIndex();
-            int num = siblingIndex;
+            Int32 siblingIndex = go.transform.GetSiblingIndex();
+            Int32 num = siblingIndex;
             if (num != 2)
             {
                 if (num == 3)
@@ -200,7 +200,7 @@ public class QuitUI : MonoBehaviour
         return true;
     }
 
-    public bool OnKeyCancel(GameObject go)
+    public Boolean OnKeyCancel(GameObject go)
     {
         Hide();
         return true;
@@ -211,7 +211,7 @@ public class QuitUI : MonoBehaviour
         UIAtlas uIAtlas = (!(forceColor != null)) ? (UIAtlas)(UnityEngine.Object)Assets.Sources.Scripts.UI.Common.FF9UIDataTool.WindowAtlas : forceColor;
         UISprite[] componentsInChildren = go.GetComponentsInChildren<UISprite>(true);
         UISprite[] array = componentsInChildren;
-        for (int i = 0; i < array.Length; i++)
+        for (Int32 i = 0; i < array.Length; i++)
         {
             UISprite uISprite = array[i];
             GameObject obj = uISprite.gameObject;

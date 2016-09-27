@@ -19,7 +19,7 @@ namespace Memoria
 
                 Dictionary<Int32, String> locationNames = new Dictionary<Int32, String>();
                 String[] array = text.Split('\r');
-                for (int i = 0; i < array.Length; i++)
+                for (Int32 i = 0; i < array.Length; i++)
                 {
                     String str = array[i];
                     str = str.Replace("\n", String.Empty);
@@ -27,7 +27,7 @@ namespace Memoria
                     {
                         String key = str.Split(':')[0];
                         String value = str.Split(':')[1];
-                        locationNames[int.Parse(key)] = FF9TextTool.RemoveOpCode(value);
+                        locationNames[Int32.Parse(key)] = FF9TextTool.RemoveOpCode(value);
                     }
                 }
 

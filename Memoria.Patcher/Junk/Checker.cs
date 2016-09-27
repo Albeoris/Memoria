@@ -12,7 +12,7 @@ namespace Memoria.Patcher
             var m1 = backup.MainModule.GetType("ConfigUI").GetMethod("OnKeyConfirm");
 
             var m2 = victim.MainModule.GetType("ConfigUI").GetMethod("OnKeyConfirm");
-            for (int i = 0; i < Math.Max(m1.Body.Instructions.Count, m2.Body.Instructions.Count); i++)
+            for (Int32 i = 0; i < Math.Max(m1.Body.Instructions.Count, m2.Body.Instructions.Count); i++)
             {
                 var i1 = m1.Body.Instructions[i];
                 var i2 = m2.Body.Instructions[i];
@@ -21,7 +21,7 @@ namespace Memoria.Patcher
             }
         }
 
-        public static int GetPushDelta(Instruction instruction)
+        public static Int32 GetPushDelta(Instruction instruction)
         {
             OpCode opCode = instruction.OpCode;
             switch (opCode.StackBehaviourPush)
@@ -45,17 +45,17 @@ namespace Memoria.Patcher
             throw new NotSupportedException();
         }
 
-        public static int? GetPopDelta(Instruction instruction, MethodDefinition methodDef)
+        public static Int32? GetPopDelta(Instruction instruction, MethodDefinition methodDef)
         {
             OpCode opCode = instruction.OpCode;
             switch (opCode.StackBehaviourPop)
             {
                 case StackBehaviour.Pop0:
-                    return new int?(0);
+                    return new Int32?(0);
                 case StackBehaviour.Pop1:
                 case StackBehaviour.Popi:
                 case StackBehaviour.Popref:
-                    return new int?(1);
+                    return new Int32?(1);
                 case StackBehaviour.Pop1_pop1:
                 case StackBehaviour.Popi_pop1:
                 case StackBehaviour.Popi_popi:
@@ -64,28 +64,28 @@ namespace Memoria.Patcher
                 case StackBehaviour.Popi_popr8:
                 case StackBehaviour.Popref_pop1:
                 case StackBehaviour.Popref_popi:
-                    return new int?(2);
+                    return new Int32?(2);
                 case StackBehaviour.Popi_popi_popi:
                 case StackBehaviour.Popref_popi_popi:
                 case StackBehaviour.Popref_popi_popi8:
                 case StackBehaviour.Popref_popi_popr4:
                 case StackBehaviour.Popref_popi_popr8:
                 case StackBehaviour.Popref_popi_popref:
-                    return new int?(3);
+                    return new Int32?(3);
                 case StackBehaviour.PopAll:
-                    return new int?();
+                    return new Int32?();
                 case StackBehaviour.Varpop:
                     if (opCode == OpCodes.Ret)
-                        return new int?(methodDef.ReturnType.Name == "Void" ? 0 : 1);
+                        return new Int32?(methodDef.ReturnType.Name == "Void" ? 0 : 1);
                     if (opCode.FlowControl == FlowControl.Call)
                     {
                         IMethodSignature methodSignature = (IMethodSignature)instruction.Operand;
-                        int num = methodSignature.HasParameters ? methodSignature.Parameters.Count : 0;
+                        Int32 num = methodSignature.HasParameters ? methodSignature.Parameters.Count : 0;
                         if (methodSignature.HasThis && opCode != OpCodes.Newobj)
                             ++num;
                         if (opCode == OpCodes.Calli)
                             ++num;
-                        return new int?(num);
+                        return new Int32?(num);
                     }
                     break;
             }

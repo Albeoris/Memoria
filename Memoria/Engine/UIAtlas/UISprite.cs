@@ -35,16 +35,16 @@ public class UISprite : UIBasicSprite
     private UIAtlas mAtlas;
 
     [HideInInspector, SerializeField]
-    private string mSpriteName;
+    private String mSpriteName;
 
     [HideInInspector, SerializeField]
-    private bool mFillCenter = true;
+    private Boolean mFillCenter = true;
 
     [NonSerialized]
     protected UISpriteData mSprite;
 
     [NonSerialized]
-    private bool mSpriteSet;
+    private Boolean mSpriteSet;
 
     public override Material material => this.mAtlas?.spriteMaterial;
 
@@ -59,15 +59,15 @@ public class UISprite : UIBasicSprite
                 this.mAtlas = value;
                 this.mSpriteSet = false;
                 this.mSprite = null;
-                if (string.IsNullOrEmpty(this.mSpriteName) && this.mAtlas != null && this.mAtlas.spriteList.Count > 0)
+                if (String.IsNullOrEmpty(this.mSpriteName) && this.mAtlas != null && this.mAtlas.spriteList.Count > 0)
                 {
                     this.SetAtlasSprite(this.mAtlas.spriteList[0]);
                     this.mSpriteName = this.mSprite.name;
                 }
-                if (!string.IsNullOrEmpty(this.mSpriteName))
+                if (!String.IsNullOrEmpty(this.mSpriteName))
                 {
-                    string sprName = this.mSpriteName;
-                    this.mSpriteName = string.Empty;
+                    String sprName = this.mSpriteName;
+                    this.mSpriteName = String.Empty;
                     this.spriteName = sprName;
                     this.MarkAsChanged();
                 }
@@ -75,18 +75,18 @@ public class UISprite : UIBasicSprite
         }
     }
 
-    public string spriteName
+    public String spriteName
     {
         get { return this.mSpriteName; }
         set
         {
-            if (string.IsNullOrEmpty(value))
+            if (String.IsNullOrEmpty(value))
             {
-                if (string.IsNullOrEmpty(this.mSpriteName))
+                if (String.IsNullOrEmpty(this.mSpriteName))
                 {
                     return;
                 }
-                this.mSpriteName = string.Empty;
+                this.mSpriteName = String.Empty;
                 this.mSprite = null;
                 this.mChanged = true;
                 this.mSpriteSet = false;
@@ -101,10 +101,10 @@ public class UISprite : UIBasicSprite
         }
     }
 
-    public bool isValid => this.GetAtlasSprite() != null;
+    public Boolean isValid => this.GetAtlasSprite() != null;
 
     [Obsolete("Use 'centerType' instead")]
-    public bool fillCenter
+    public Boolean fillCenter
     {
         get { return this.centerType != AdvancedType.Invisible; }
         set
@@ -130,17 +130,17 @@ public class UISprite : UIBasicSprite
         }
     }
 
-    public override float pixelSize => this.mAtlas?.pixelSize ?? 1f;
+    public override Single pixelSize => this.mAtlas?.pixelSize ?? 1f;
 
-    public override int minWidth
+    public override Int32 minWidth
     {
         get
         {
             if (this.type == Type.Sliced || this.type == Type.Advanced)
             {
-                float pxSize = this.pixelSize;
+                Single pxSize = this.pixelSize;
                 Vector4 vector = this.border * this.pixelSize;
-                int num = Mathf.RoundToInt(vector.x + vector.z);
+                Int32 num = Mathf.RoundToInt(vector.x + vector.z);
                 UISpriteData atlasSprite = this.GetAtlasSprite();
                 if (atlasSprite != null)
                 {
@@ -152,14 +152,14 @@ public class UISprite : UIBasicSprite
         }
     }
 
-    public override int minHeight
+    public override Int32 minHeight
     {
         get
         {
             if (this.type == Type.Sliced || this.type == Type.Advanced)
             {
                 Vector4 vector = this.border * this.pixelSize;
-                int num = Mathf.RoundToInt(vector.y + vector.w);
+                Int32 num = Mathf.RoundToInt(vector.y + vector.w);
                 UISpriteData atlasSprite = this.GetAtlasSprite();
                 if (atlasSprite != null)
                 {
@@ -176,17 +176,17 @@ public class UISprite : UIBasicSprite
         get
         {
             Vector2 pivOffset = this.pivotOffset;
-            float num = -pivOffset.x * this.mWidth;
-            float num2 = -pivOffset.y * this.mHeight;
-            float num3 = num + this.mWidth;
-            float num4 = num2 + this.mHeight;
+            Single num = -pivOffset.x * this.mWidth;
+            Single num2 = -pivOffset.y * this.mHeight;
+            Single num3 = num + this.mWidth;
+            Single num4 = num2 + this.mHeight;
             if (this.GetAtlasSprite() != null && this.mType != Type.Tiled)
             {
-                int num5 = this.mSprite.paddingLeft;
-                int num6 = this.mSprite.paddingBottom;
-                int num7 = this.mSprite.paddingRight;
-                int num8 = this.mSprite.paddingTop;
-                float pixSize = this.pixelSize;
+                Int32 num5 = this.mSprite.paddingLeft;
+                Int32 num6 = this.mSprite.paddingBottom;
+                Int32 num7 = this.mSprite.paddingRight;
+                Int32 num8 = this.mSprite.paddingTop;
+                Single pixSize = this.pixelSize;
                 if (pixSize != 1f)
                 {
                     num5 = Mathf.RoundToInt(pixSize * num5);
@@ -194,10 +194,10 @@ public class UISprite : UIBasicSprite
                     num7 = Mathf.RoundToInt(pixSize * num7);
                     num8 = Mathf.RoundToInt(pixSize * num8);
                 }
-                int num9 = this.mSprite.width + num5 + num7;
-                int num10 = this.mSprite.height + num6 + num8;
-                float num11 = 1f;
-                float num12 = 1f;
+                Int32 num9 = this.mSprite.width + num5 + num7;
+                Int32 num10 = this.mSprite.height + num6 + num8;
+                Single num11 = 1f;
+                Single num12 = 1f;
                 if (num9 > 0 && num10 > 0 && (this.mType == Type.Simple || this.mType == Type.Filled))
                 {
                     if ((num9 & 1) != 0)
@@ -233,17 +233,17 @@ public class UISprite : UIBasicSprite
                 }
             }
             Vector4 vector = (!(this.mAtlas != null)) ? Vector4.zero : (this.border * this.pixelSize);
-            float num13 = vector.x + vector.z;
-            float num14 = vector.y + vector.w;
-            float x = Mathf.Lerp(num, num3 - num13, this.mDrawRegion.x);
-            float y = Mathf.Lerp(num2, num4 - num14, this.mDrawRegion.y);
-            float z = Mathf.Lerp(num + num13, num3, this.mDrawRegion.z);
-            float w = Mathf.Lerp(num2 + num14, num4, this.mDrawRegion.w);
+            Single num13 = vector.x + vector.z;
+            Single num14 = vector.y + vector.w;
+            Single x = Mathf.Lerp(num, num3 - num13, this.mDrawRegion.x);
+            Single y = Mathf.Lerp(num2, num4 - num14, this.mDrawRegion.y);
+            Single z = Mathf.Lerp(num + num13, num3, this.mDrawRegion.z);
+            Single w = Mathf.Lerp(num2 + num14, num4, this.mDrawRegion.w);
             return new Vector4(x, y, z, w);
         }
     }
 
-    public override bool premultipliedAlpha => this.mAtlas != null && this.mAtlas.premultipliedAlpha;
+    public override Boolean premultipliedAlpha => this.mAtlas != null && this.mAtlas.premultipliedAlpha;
 
     public UISpriteData GetAtlasSprite()
     {
@@ -253,7 +253,7 @@ public class UISprite : UIBasicSprite
         }
         if (this.mSprite == null && this.mAtlas != null)
         {
-            if (!string.IsNullOrEmpty(this.mSpriteName))
+            if (!String.IsNullOrEmpty(this.mSpriteName))
             {
                 UISpriteData sprite = this.mAtlas.GetSprite(this.mSpriteName);
                 if (sprite == null)
@@ -292,7 +292,7 @@ public class UISprite : UIBasicSprite
         }
         else
         {
-            this.mSpriteName = ((this.mSprite == null) ? string.Empty : this.mSprite.name);
+            this.mSpriteName = ((this.mSprite == null) ? String.Empty : this.mSprite.name);
             this.mSprite = null;
         }
     }
@@ -320,8 +320,8 @@ public class UISprite : UIBasicSprite
         }
         if ((this.mType == Type.Simple || this.mType == Type.Filled || !atlasSprite.hasBorder))
         {
-            int num = Mathf.RoundToInt(this.pixelSize * (atlasSprite.width + atlasSprite.paddingLeft + atlasSprite.paddingRight));
-            int num2 = Mathf.RoundToInt(this.pixelSize * (atlasSprite.height + atlasSprite.paddingTop + atlasSprite.paddingBottom));
+            Int32 num = Mathf.RoundToInt(this.pixelSize * (atlasSprite.width + atlasSprite.paddingLeft + atlasSprite.paddingRight));
+            Int32 num2 = Mathf.RoundToInt(this.pixelSize * (atlasSprite.height + atlasSprite.paddingTop + atlasSprite.paddingBottom));
             if ((num & 1) == 1)
             {
                 num++;
@@ -375,7 +375,7 @@ public class UISprite : UIBasicSprite
         Rect rect2 = new Rect((this.mSprite.x + this.mSprite.borderLeft), (this.mSprite.y + this.mSprite.borderTop), (this.mSprite.width - this.mSprite.borderLeft - this.mSprite.borderRight), (this.mSprite.height - this.mSprite.borderBottom - this.mSprite.borderTop));
         rect = NGUIMath.ConvertToTexCoords(rect, mainTxture.width, mainTxture.height);
         rect2 = NGUIMath.ConvertToTexCoords(rect2, mainTxture.width, mainTxture.height);
-        int size = verts.size;
+        Int32 size = verts.size;
         Fill(verts, uvs, cols, rect, rect2);
         this.onPostFill?.Invoke(this, size, verts, uvs, cols);
     }

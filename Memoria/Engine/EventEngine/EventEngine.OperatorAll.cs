@@ -1,10 +1,12 @@
-﻿public partial class EventEngine
+﻿using System;
+
+public partial class EventEngine
 {
-    public int OperatorAll(int op)
+    public Int32 OperatorAll(Int32 op)
     {
-        int a = 0;
-        int valueAtOffset = this.gCP.getValueAtOffset(-3);
-        int num1;
+        Int32 a = 0;
+        Int32 valueAtOffset = this.gCP.getValueAtOffset(-3);
+        Int32 num1;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
             num1 = this.GetSysList(valueAtOffset);
@@ -18,9 +20,9 @@
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
-        int num2 = this.eBin.getv();
+        Int32 num2 = this.eBin.getv();
         EBin.op_binary opBinary = (EBin.op_binary)op;
-        for (int index = 0; index < 8; ++index)
+        for (Int32 index = 0; index < 8; ++index)
         {
             if ((num1 & 1) != 0)
             {
@@ -81,11 +83,11 @@
         return a;
     }
 
-    private int OperatorAll1(int op)
+    private Int32 OperatorAll1(Int32 op)
     {
-        int a = 0;
-        int valueAtOffset = this.gCP.getValueAtOffset(-2);
-        int num;
+        Int32 a = 0;
+        Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
+        Int32 num;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
             num = this.GetSysList(valueAtOffset);
@@ -98,7 +100,7 @@
             this.gCP.advanceTopOfStack();
         }
         EBin.op_binary opBinary = (EBin.op_binary)op;
-        for (int index = 0; index < 8; ++index)
+        for (Int32 index = 0; index < 8; ++index)
         {
             if ((num & 1) != 0)
             {

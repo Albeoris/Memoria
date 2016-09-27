@@ -16,7 +16,7 @@ namespace Memoria
         public static TxtEntry[] Build(String prefix, String[] itemNames, String[] itemHelps, String[] itemBattle)
         {
             TxtEntry[] abilities = new TxtEntry[Math.Max(itemNames.Length, itemHelps.Length)];
-            for (int i = 0; i < abilities.Length; i++)
+            for (Int32 i = 0; i < abilities.Length; i++)
             {
                 String name = i < itemNames.Length ? itemNames[i] : String.Empty;
                 String help = i < itemHelps.Length ? itemHelps[i] : String.Empty;
@@ -35,7 +35,7 @@ namespace Memoria
             };
         }
 
-        private static string FormatValue(String itemName, String itemHelp, String itemBattle)
+        private static String FormatValue(String itemName, String itemHelp, String itemBattle)
         {
             StringBuilder sb = new StringBuilder(itemName.Length + itemHelp.Length + itemBattle.Length + 8);
             sb.AppendLine(itemName);
@@ -51,7 +51,7 @@ namespace Memoria
             itemHelps = new String[entreis.Length];
             itemBattle = new String[entreis.Length];
 
-            for (int i = 0; i < entreis.Length; i++)
+            for (Int32 i = 0; i < entreis.Length; i++)
             {
                 String value = entreis[i].Value;
                 Int32 newLineIndex = value.IndexOf('\n');

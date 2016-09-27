@@ -9,7 +9,7 @@ namespace Memoria
 
         public readonly ReplaceTextDelegate Replace;
 
-        private TextReplacement(string replacement)
+        private TextReplacement(String replacement)
         {
             _replacement = replacement;
             Replace = GetReplacement;
@@ -20,7 +20,7 @@ namespace Memoria
             Replace = replacement;
         }
 
-        private String GetReplacement(String str, StringBuilder word, ref int index, ref int length)
+        private String GetReplacement(String str, StringBuilder word, ref Int32 index, ref Int32 length)
         {
             return _replacement;
         }

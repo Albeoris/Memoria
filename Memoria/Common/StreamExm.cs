@@ -1,13 +1,14 @@
+using System;
 using System.IO;
 
 namespace Memoria
 {
     internal static class StreamExm
     {
-        public static void CopyTo(this Stream self, Stream destination, int bufferSize)
+        public static void CopyTo(this Stream self, Stream destination, Int32 bufferSize)
         {
-            int count;
-            byte[] buffer = new byte[bufferSize];
+            Int32 count;
+            Byte[] buffer = new Byte[bufferSize];
             while ((count = self.Read(buffer, 0, buffer.Length)) != 0)
                 destination.Write(buffer, 0, count);
         }

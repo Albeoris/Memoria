@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>Memoria.Launcher</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Output\Launcher\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Output\Launcher\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ff9.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Memoria\FrameworkElementExm.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="Ini\IniFile.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Memoria\GameSettingsControl.cs" />
+    <Compile Include="Memoria\JunctionPoint.cs" />
+    <Compile Include="Memoria\UiButton.cs" />
+    <Compile Include="Memoria\UiCheckBox.cs" />
+    <Compile Include="Memoria\UiCheckBoxFactory.cs" />
+    <Compile Include="Memoria\UiComboBox.cs" />
+    <Compile Include="Memoria\UiComboBoxFactory.cs" />
+    <Compile Include="Memoria\UiGrid.cs" />
+    <Compile Include="Memoria\UiHelper.cs" />
+    <Compile Include="Memoria\UiLauncherExitButton.cs" />
+    <Compile Include="Memoria\UiLauncherPlayButton.cs" />
+    <Compile Include="Memoria\UiLauncherButton.xaml.cs">
+      <DependentUpon>UiLauncherButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Memoria\UiRadioButton.cs" />
+    <Compile Include="Memoria\UiRadioButtonFactory.cs" />
+    <Compile Include="Memoria\UiTextBlock.cs" />
+    <Compile Include="Memoria\UiTextBlockFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pc_launcher_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Memoria\UiLauncherButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ff9.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

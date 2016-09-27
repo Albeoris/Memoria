@@ -4,10 +4,10 @@ using UnityEngine;
 
 public partial class EventEngine
 {
-    public int GetSysvar(int code)
+    public Int32 GetSysvar(Int32 code)
     {
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
-        int num;
+        Int32 num;
         switch (code)
         {
             case 0:
@@ -17,7 +17,7 @@ public partial class EventEngine
                 num = this.fieldmap.GetCurrentCameraIndex();
                 break;
             case 2:
-                num = (int)this._context.usercontrol;
+                num = (Int32)this._context.usercontrol;
                 break;
             case 3:
                 num = FF9Snd.ff9fldsnd_sync();
@@ -30,12 +30,12 @@ public partial class EventEngine
                 num = -1;
                 if (sender != null)
                 {
-                    num = (int)sender.sid - (this.sSourceObjN - 9);
+                    num = (Int32)sender.sid - (this.sSourceObjN - 9);
                     break;
                 }
                 break;
             case 6:
-                num = (int)this._ff9.party.gil;
+                num = (Int32)this._ff9.party.gil;
                 break;
             case 7:
                 num = FF9StateSystem.EventState.gStepCount;
@@ -65,7 +65,7 @@ public partial class EventEngine
                 num = fldfmv.FF9FieldFMVSync();
                 break;
             case 16:
-                num = (int)this._ff9.frog_no;
+                num = (Int32)this._ff9.frog_no;
                 break;
             case 17:
                 num = Convert.ToInt32(TimerUI.Time);
@@ -95,7 +95,7 @@ public partial class EventEngine
                 num = this.sSEVol;
                 break;
             case 24:
-                num = (int)this._ff9.btlMapNo;
+                num = (Int32)this._ff9.btlMapNo;
                 break;
             case 25:
                 num = !btlseq.BtlSeqBusy() ? 0 : 1;
@@ -104,24 +104,24 @@ public partial class EventEngine
                 num = this.gMode != 4 ? 0 : 1;
                 break;
             case 27:
-                num = (int)this._ff9.btl_result;
+                num = (Int32)this._ff9.btl_result;
                 break;
             case 28:
-                num = EventEngine._btlCmdPrm >> 8 & (int)byte.MaxValue;
+                num = EventEngine._btlCmdPrm >> 8 & (Int32)Byte.MaxValue;
                 break;
             case 29:
-                num = EventEngine._btlCmdPrm & (int)byte.MaxValue;
+                num = EventEngine._btlCmdPrm & (Int32)Byte.MaxValue;
                 break;
             case 30:
-                num = (int)stateBattleSystem.btl_phase;
+                num = (Int32)stateBattleSystem.btl_phase;
                 break;
             case 31:
-                num = (int)stateBattleSystem.btl_scene.PatNum;
+                num = (Int32)stateBattleSystem.btl_scene.PatNum;
                 break;
             default:
-                if ((int)this.gCur.sid != 3 || this.gCur.ip != 791)
+                if ((Int32)this.gCur.sid != 3 || this.gCur.ip != 791)
                     ;
-                num = code < 192 ? (int)btl_scrp.GetBattleData(code) : ff9.w_frameGetParameter(code);
+                num = code < 192 ? (Int32)btl_scrp.GetBattleData(code) : ff9.w_frameGetParameter(code);
                 break;
         }
         return num;

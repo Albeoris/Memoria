@@ -187,48 +187,48 @@ namespace Memoria
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
         }
 
-        public static string GetFieldTextFileName(int fieldZoneId)
+        public static String GetFieldTextFileName(Int32 fieldZoneId)
         {
-            string str = fieldZoneId.ToString();
+            String str = fieldZoneId.ToString();
             if (FF9StateSystem.MobilePlatform && fieldZoneId == 71)
                 str += "m";
             return str;
         }
 
-        public static string[] ExtractSentense(string text)
+        public static String[] ExtractSentense(String text)
         {
             String[] strArray1 = Regex.Split(text, "\\[STRT\\=");
-            String[] strArray2 = new string[strArray1.Length - 1];
-            for (int index = 1; index < strArray1.Length; ++index)
+            String[] strArray2 = new String[strArray1.Length - 1];
+            for (Int32 index = 1; index < strArray1.Length; ++index)
                 strArray2[index - 1] = "[STRT=" + strArray1[index];
             return strArray2;
         }
 
-        public static string[] ExtractSentenseEnd(string text)
+        public static String[] ExtractSentenseEnd(String text)
         {
             return text.Split(new[] {"[ENDN]"}, StringSplitOptions.None);
         }
 
-        public static string[][] ExtractTableText(string[] extactedList)
+        public static String[][] ExtractTableText(String[] extactedList)
         {
-            string[] array = extactedList.Where(t => t.Contains("[TBLE=")).ToArray();
-            int length = array.Length;
+            String[] array = extactedList.Where(t => t.Contains("[TBLE=")).ToArray();
+            Int32 length = array.Length;
             if (length <= 0)
                 return null;
 
-            string[][] strArray1 = new string[length][];
-            for (int index = 0; index < length; ++index)
+            String[][] strArray1 = new String[length][];
+            for (Int32 index = 0; index < length; ++index)
             {
-                string str = array[index];
-                for (int startIndex1 = 0; startIndex1 < str.Length && startIndex1 + 5 <= str.Length; ++startIndex1)
+                String str = array[index];
+                for (Int32 startIndex1 = 0; startIndex1 < str.Length && startIndex1 + 5 <= str.Length; ++startIndex1)
                 {
-                    int num1 = startIndex1;
+                    Int32 num1 = startIndex1;
                     if (str.Substring(startIndex1, 5) == "[" + NGUIText.TableStart)
                     {
-                        int num2 = str.IndexOf(']', startIndex1 + 4);
-                        int startIndex2 = num2 + 1;
-                        int num3 = str.IndexOf('[', startIndex2);
-                        string[] strArray3 = str.Substring(startIndex2, num3 - num2 - 1).Split('\n');
+                        Int32 num2 = str.IndexOf(']', startIndex1 + 4);
+                        Int32 startIndex2 = num2 + 1;
+                        Int32 num3 = str.IndexOf('[', startIndex2);
+                        String[] strArray3 = str.Substring(startIndex2, num3 - num2 - 1).Split('\n');
                         strArray1[index] = strArray3;
                         num1 = num3 - 1;
                     }

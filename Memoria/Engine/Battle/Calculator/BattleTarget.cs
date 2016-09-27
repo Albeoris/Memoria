@@ -113,13 +113,13 @@ namespace Memoria
         public void BonusWeakElement(EffectElement element)
         {
             if (IsWeakElement(element))
-                _context.Attack = (short)(_context.Attack * 3 >> 1);
+                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }
 
         private void BonusSleepOrMiniAttack()
         {
             if (IsUnderStatus(BattleStatus.Sleep | BattleStatus.Mini))
-                _context.Attack = (short)(_context.Attack * 3 >> 1);
+                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }
 
         public Boolean IsGuardElement(EffectElement element)

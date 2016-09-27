@@ -71,9 +71,9 @@ namespace Memoria.Patcher
             return definition;
         }
 
-        public ArrayType GetArrayType(int rank)
+        public ArrayType GetArrayType(Int32 rank)
         {
-            for (int i = _newArrayReferences.Count; i <= rank; i++)
+            for (Int32 i = _newArrayReferences.Count; i <= rank; i++)
                 _newArrayReferences.Add(new ArrayType(NewReference, i + 1));
 
             return _newArrayReferences[rank];

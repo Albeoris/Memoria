@@ -14,7 +14,7 @@ namespace Memoria
         {
             String postfix = '$' + name + '_';
             List<TxtEntry> entries = new List<TxtEntry>(lines.Length);
-            for (int i = 0; i < lines.Length; i++)
+            for (Int32 i = 0; i < lines.Length; i++)
             {
                 String key;
                 String line = GetLine(lines, ref i);
@@ -62,18 +62,18 @@ namespace Memoria
             return sb.ToString();
         }
 
-        private string FormatValue(String name, String line)
+        private String FormatValue(String name, String line)
         {
             line = Tags.Replace(line);
             line = Names.Replace(name, line);
             return RemoveInternalTags(line);
         }
 
-        private static string RemoveInternalTags(String str)
+        private static String RemoveInternalTags(String str)
         {
             StringBuilder sb = new StringBuilder(str.Length);
-            int counter = 0;
-            foreach (char ch in str)
+            Int32 counter = 0;
+            foreach (Char ch in str)
             {
                 if (ch == '{')
                 {

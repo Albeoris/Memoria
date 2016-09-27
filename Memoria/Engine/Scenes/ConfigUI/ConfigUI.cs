@@ -76,7 +76,7 @@ public class ConfigUI : UIScene
 
     private List<ControllerField> ControllerJoystickList = new List<ControllerField>();
 
-    private bool[] inputBool =
+    private Boolean[] inputBool =
     {
         true,
         true,
@@ -88,7 +88,7 @@ public class ConfigUI : UIScene
         true
     };
 
-    private bool[] hasJoyAxisSignal =
+    private Boolean[] hasJoyAxisSignal =
     {
         true,
         true,
@@ -100,13 +100,13 @@ public class ConfigUI : UIScene
         true
     };
 
-    private int customControllerCount = 8;
+    private Int32 customControllerCount = 8;
 
-    private int currentControllerIndex;
+    private Int32 currentControllerIndex;
 
     private ControllerType currentControllerType;
 
-    private string[] PCJoystickNormalButtons =
+    private String[] PCJoystickNormalButtons =
     {
         "JoystickButton0",
         "JoystickButton1",
@@ -116,7 +116,7 @@ public class ConfigUI : UIScene
         "JoystickButton5"
     };
 
-    private string[] iOSJoystickNormalButtons =
+    private String[] iOSJoystickNormalButtons =
     {
         "JoystickButton13",
         "JoystickButton14",
@@ -144,13 +144,13 @@ public class ConfigUI : UIScene
 
     public GameObject ControlPanelGroup;
 
-    private static string ConfigGroupButton = "Config.Config";
+    private static String ConfigGroupButton = "Config.Config";
 
-    private static string WarningMenuGroupButton = "Config.Warning";
+    private static String WarningMenuGroupButton = "Config.Warning";
 
-    private static string CustomControllerGroupButton = "Config.Controller";
+    private static String CustomControllerGroupButton = "Config.Controller";
 
-    private static string ControllerTypeGroupButton = "Config.ControllerType";
+    private static String ControllerTypeGroupButton = "Config.ControllerType";
 
     private static List<Configurator> ConfigSliderIdList = new List<Configurator>(new[]
     {
@@ -184,19 +184,19 @@ public class ConfigUI : UIScene
 
     private HonoTweenClipping warningTransition;
 
-    private float fieldMessageSliderStep = 6f;
+    private Single fieldMessageSliderStep = 6f;
 
-    private float battleSpeedSliderStep = 2f;
+    private Single battleSpeedSliderStep = 2f;
 
-    private bool fastSwitch;
+    private Boolean fastSwitch;
 
-    private bool cursorInList = true;
+    private Boolean cursorInList = true;
 
-    private bool is_vibe;
+    private Boolean is_vibe;
 
-    private int vibe_tick;
+    private Int32 vibe_tick;
 
-    private bool helpEnable;
+    private Boolean helpEnable;
 
     [DebuggerHidden]
     private IEnumerator ShowButtonGroupDalay()
@@ -276,22 +276,22 @@ public class ConfigUI : UIScene
         backButtonGameObject.GetComponent<OnScreenButton>().KeyCommand = Control.Cancel;
     }
 
-    private void DrawNormalButton(int index, KeyCode keycode)
+    private void DrawNormalButton(Int32 index, KeyCode keycode)
     {
         FF9UIDataTool.DrawLabel(ControllerKeyboardList[index].NormalController.GetChild(0), keycode);
     }
 
-    private void DrawNewButton(int index, KeyCode keycode)
+    private void DrawNewButton(Int32 index, KeyCode keycode)
     {
         FF9UIDataTool.DrawLabel(ControllerKeyboardList[index].NewController.GetChild(0), keycode);
     }
 
-    private void DrawNormalButton(int index, string key)
+    private void DrawNormalButton(Int32 index, String key)
     {
         FF9UIDataTool.DrawSprite(ControllerJoystickList[index].NormalController, FF9UIDataTool.IconAtlas, FF9UIDataTool.GetJoystickSpriteByName(key));
     }
 
-    private void DrawNewButton(int index, string key)
+    private void DrawNewButton(Int32 index, String key)
     {
         FF9UIDataTool.DrawSprite(ControllerJoystickList[index].NewController, FF9UIDataTool.IconAtlas, FF9UIDataTool.GetJoystickSpriteByName(key));
     }
@@ -310,7 +310,7 @@ public class ConfigUI : UIScene
         customControllerCount = CustomControllerKeyboardPanel.GetChild(0).transform.childCount;
         foreach (Transform trans in CustomControllerKeyboardPanel.GetChild(0).transform)
         {
-            int siblingIndex = trans.GetSiblingIndex();
+            Int32 siblingIndex = trans.GetSiblingIndex();
             ControllerField controllerField = new ControllerField();
             GameObject obj = trans.gameObject;
             controllerField.NewController = obj.GetChild(0);
@@ -327,7 +327,7 @@ public class ConfigUI : UIScene
         customControllerCount = value.GetChild(0).transform.childCount;
         foreach (Transform trans in value.GetChild(0).transform)
         {
-            int siblingIndex = trans.GetSiblingIndex();
+            Int32 siblingIndex = trans.GetSiblingIndex();
             ControllerField controllerField = new ControllerField();
             GameObject obj = trans.gameObject;
             controllerField.NewController = obj.GetChild(0);
@@ -341,7 +341,7 @@ public class ConfigUI : UIScene
     private void SetCurrentKeyboardKey()
     {
         KeyCode[] inputKeysPrimary = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary;
-        for (int i = 0; i < customControllerCount; i++)
+        for (Int32 i = 0; i < customControllerCount; i++)
         {
             FF9StateSystem.Settings.cfg.control_data_keyboard[i] = inputKeysPrimary[i];
             DrawNewButton(i, FF9StateSystem.Settings.cfg.control_data_keyboard[i]);
@@ -350,8 +350,8 @@ public class ConfigUI : UIScene
 
     private void SetCurrentJoystickKey()
     {
-        string[] joystickKeysPrimary = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary;
-        for (int i = 0; i < customControllerCount; i++)
+        String[] joystickKeysPrimary = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary;
+        for (Int32 i = 0; i < customControllerCount; i++)
         {
             FF9StateSystem.Settings.cfg.control_data_joystick[i] = joystickKeysPrimary[i];
             DrawNewButton(i, FF9StateSystem.Settings.cfg.control_data_joystick[i]);
@@ -360,7 +360,7 @@ public class ConfigUI : UIScene
 
     private void CheckDuplicate(KeyCode newKey)
     {
-        for (int i = 0; i < customControllerCount; i++)
+        for (Int32 i = 0; i < customControllerCount; i++)
         {
             if (newKey == FF9StateSystem.Settings.cfg.control_data_keyboard[i])
             {
@@ -370,9 +370,9 @@ public class ConfigUI : UIScene
         }
     }
 
-    private void CheckDuplicate(string newKey)
+    private void CheckDuplicate(String newKey)
     {
-        for (int i = 0; i < customControllerCount; i++)
+        for (Int32 i = 0; i < customControllerCount; i++)
         {
             if (newKey == FF9StateSystem.Settings.cfg.control_data_joystick[i])
             {
@@ -415,19 +415,19 @@ public class ConfigUI : UIScene
     {
     }
 
-    private void ChangeCustomKey(string keyCode, int controllerIndex)
+    private void ChangeCustomKey(String keyCode, Int32 controllerIndex)
     {
         CheckDuplicate(keyCode);
         FF9StateSystem.Settings.cfg.control_data_joystick[controllerIndex] = keyCode;
         DrawNewButton(controllerIndex, keyCode);
     }
 
-    private bool CheckJoystickNormalButton(string[] buttonNames, int controllerIndex)
+    private Boolean CheckJoystickNormalButton(String[] buttonNames, Int32 controllerIndex)
     {
-        bool result = false;
-        for (int i = 0; i < buttonNames.Length; i++)
+        Boolean result = false;
+        for (Int32 i = 0; i < buttonNames.Length; i++)
         {
-            string text = buttonNames[i];
+            String text = buttonNames[i];
             if (UnityXInput.Input.GetButtonDown(text))
             {
                 result = true;
@@ -464,7 +464,7 @@ public class ConfigUI : UIScene
     [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     private void CheckPCVitaJoystickKeys()
     {
-        bool flag = CheckJoystickNormalButton(PCJoystickNormalButtons, currentControllerIndex);
+        Boolean flag = CheckJoystickNormalButton(PCJoystickNormalButtons, currentControllerIndex);
         if (UnityXInput.Input.GetAxisRaw("LeftTrigger") != 0f && !hasJoyAxisSignal[0])
         {
             flag = true;
@@ -499,7 +499,7 @@ public class ConfigUI : UIScene
     [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
     private void CheckAndroidJoystickKeys()
     {
-        bool flag = CheckJoystickNormalButton(PCJoystickNormalButtons, currentControllerIndex);
+        Boolean flag = CheckJoystickNormalButton(PCJoystickNormalButtons, currentControllerIndex);
         if (UnityXInput.Input.GetAxisRaw("LeftTrigger Android") != 0f && !hasJoyAxisSignal[0])
         {
             flag = true;
@@ -533,7 +533,7 @@ public class ConfigUI : UIScene
 
     private void CheckiOSJoystickKeys()
     {
-        bool flag = CheckJoystickNormalButton(iOSJoystickNormalButtons, currentControllerIndex);
+        Boolean flag = CheckJoystickNormalButton(iOSJoystickNormalButtons, currentControllerIndex);
         if (PersistenSingleton<HonoInputManager>.Instance.IsRightAnalogDown)
         {
             flag = true;
@@ -599,12 +599,12 @@ public class ConfigUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(ConfigGroupButton);
     }
 
-    public override bool OnKeySelect(GameObject go)
+    public override Boolean OnKeySelect(GameObject go)
     {
         return false;
     }
 
-    public override bool OnKeyConfirm(GameObject go)
+    public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go))
             return true;
@@ -617,7 +617,7 @@ public class ConfigUI : UIScene
             }
             else
             {
-                int siblingIndex = go.transform.GetSiblingIndex();
+                Int32 siblingIndex = go.transform.GetSiblingIndex();
                 if (siblingIndex == 2)
                 {
                     FF9Sfx.FF9SFX_Play(103);
@@ -679,8 +679,8 @@ public class ConfigUI : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == WarningMenuGroupButton)
         {
-            int siblingIndex2 = go.transform.GetSiblingIndex();
-            int num = siblingIndex2;
+            Int32 siblingIndex2 = go.transform.GetSiblingIndex();
+            Int32 num = siblingIndex2;
             if (num != 2)
             {
                 if (num == 3)
@@ -788,7 +788,7 @@ public class ConfigUI : UIScene
         }
     }
 
-    public override bool OnKeyPause(GameObject go)
+    public override Boolean OnKeyPause(GameObject go)
     {
         if (base.OnKeyPause(go) && ButtonGroupState.ActiveGroup == CustomControllerGroupButton)
         {
@@ -808,7 +808,7 @@ public class ConfigUI : UIScene
         return true;
     }
 
-    public override bool OnKeyCancel(GameObject go)
+    public override Boolean OnKeyCancel(GameObject go)
     {
         if (base.OnKeyCancel(go))
         {
@@ -847,7 +847,7 @@ public class ConfigUI : UIScene
         return true;
     }
 
-    public override bool OnKeyLeftBumper(GameObject go)
+    public override Boolean OnKeyLeftBumper(GameObject go)
     {
         if (Loading)
         {
@@ -861,7 +861,7 @@ public class ConfigUI : UIScene
         return true;
     }
 
-    public override bool OnKeyRightBumper(GameObject go)
+    public override Boolean OnKeyRightBumper(GameObject go)
     {
         if (Loading)
         {
@@ -875,7 +875,7 @@ public class ConfigUI : UIScene
         return true;
     }
 
-    public override bool OnItemSelect(GameObject go)
+    public override Boolean OnItemSelect(GameObject go)
     {
         if (base.OnItemSelect(go))
         {
@@ -966,12 +966,12 @@ public class ConfigUI : UIScene
             }
             else if (configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && (key == KeyCode.LeftArrow || key == KeyCode.RightArrow))
             {
-                setConfigValue(configField.ConfigParent, ((int)configField.Value + 1) % 2, false);
+                setConfigValue(configField.ConfigParent, ((Int32)configField.Value + 1) % 2, false);
             }
         }
     }
 
-    public void OnSelectValue(GameObject go, bool isSelected)
+    public void OnSelectValue(GameObject go, Boolean isSelected)
     {
         if (isSelected && UIKeyTrigger.IsOnlyTouchAndLeftClick() && ButtonGroupState.ActiveGroup == ConfigGroupButton)
         {
@@ -1043,8 +1043,8 @@ public class ConfigUI : UIScene
             UIPanel component = configScrollView.gameObject.GetComponent<UIPanel>();
             Transform child = configScrollView.transform.GetChild(0);
             GameObject obj = child.GetChild(0).gameObject;
-            bool flag = false;
-            for (int i = 0; i < child.childCount; i++)
+            Boolean flag = false;
+            for (Int32 i = 0; i < child.childCount; i++)
             {
                 GameObject gameObject2 = child.GetChild(i).gameObject;
                 UIWidget component2 = gameObject2.GetComponent<UIWidget>();
@@ -1079,7 +1079,7 @@ public class ConfigUI : UIScene
 
     private void DisplayHelp()
     {
-        string str = (!FF9StateSystem.MobilePlatform) ? "PC" : "Mobile";
+        String str = (!FF9StateSystem.MobilePlatform) ? "PC" : "Mobile";
         foreach (ConfigField current in ConfigFieldList)
         {
             switch (current.Configurator)
@@ -1231,11 +1231,11 @@ public class ConfigUI : UIScene
     }
 
     [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
-    private void setConfigValue(GameObject configGameObject, float value, bool isForceSet = false)
+    private void setConfigValue(GameObject configGameObject, Single value, Boolean isForceSet = false)
     {
         ConfigField configField = ConfigFieldList.First(field => field.ConfigParent == configGameObject);
-        float value2 = configField.Value;
-        bool flag = true;
+        Single value2 = configField.Value;
+        Boolean flag = true;
         if (value2 != value || isForceSet)
         {
             if (isForceSet)
@@ -1272,11 +1272,11 @@ public class ConfigUI : UIScene
                 switch (configField.Configurator)
                 {
                     case Configurator.Sound:
-                        FF9StateSystem.Settings.cfg.sound = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.sound = (UInt64)configField.Value;
                         FF9StateSystem.Settings.SetSound();
                         break;
                     case Configurator.SoundEffect:
-                        FF9StateSystem.Settings.cfg.sound_effect = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.sound_effect = (UInt64)configField.Value;
                         FF9StateSystem.Settings.SetSoundEffect();
                         if (FF9StateSystem.Settings.cfg.sound_effect == 1uL)
                         {
@@ -1284,40 +1284,40 @@ public class ConfigUI : UIScene
                         }
                         break;
                     case Configurator.Controller:
-                        FF9StateSystem.Settings.cfg.control = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.control = (UInt64)configField.Value;
                         SetControllerSettings();
                         break;
                     case Configurator.Cursor:
-                        FF9StateSystem.Settings.cfg.cursor = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.cursor = (UInt64)configField.Value;
                         break;
                     case Configurator.ATB:
-                        FF9StateSystem.Settings.cfg.atb = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.atb = (UInt64)configField.Value;
                         break;
                     case Configurator.BattleCamera:
-                        FF9StateSystem.Settings.cfg.camera = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.camera = (UInt64)configField.Value;
                         break;
                     case Configurator.SkipBattleCamera:
-                        FF9StateSystem.Settings.cfg.skip_btl_camera = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.skip_btl_camera = (UInt64)configField.Value;
                         break;
                     case Configurator.Movement:
-                        FF9StateSystem.Settings.cfg.move = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.move = (UInt64)configField.Value;
                         break;
                     case Configurator.FieldMessage:
-                        FF9StateSystem.Settings.cfg.fld_msg = (ulong)Math.Round(configField.Value * fieldMessageSliderStep);
+                        FF9StateSystem.Settings.cfg.fld_msg = (UInt64)Math.Round(configField.Value * fieldMessageSliderStep);
                         break;
                     case Configurator.BattleSpeed:
-                        FF9StateSystem.Settings.cfg.btl_speed = (ulong)Math.Round(configField.Value * battleSpeedSliderStep);
+                        FF9StateSystem.Settings.cfg.btl_speed = (UInt64)Math.Round(configField.Value * battleSpeedSliderStep);
                         break;
                     case Configurator.HereIcon:
-                        FF9StateSystem.Settings.cfg.here_icon = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.here_icon = (UInt64)configField.Value;
                         break;
                     case Configurator.WindowColor:
-                        FF9StateSystem.Settings.cfg.win_type = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.win_type = (UInt64)configField.Value;
                         DisplayWindowBackground();
                         DisplayWindowBackground(PersistenSingleton<UIManager>.Instance.MainMenuScene.SubMenuPanel, null);
                         break;
                     case Configurator.Vibration:
-                        FF9StateSystem.Settings.cfg.vibe = (ulong)configField.Value;
+                        FF9StateSystem.Settings.cfg.vibe = (UInt64)configField.Value;
                         if (FF9StateSystem.Settings.cfg.vibe == FF9CFG.FF9CFG_VIBE_ON)
                         {
                             is_vibe = true;
@@ -1359,12 +1359,12 @@ public class ConfigUI : UIScene
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         ConfigFieldList = new List<ConfigField>();
-        int num = ConfigList.GetChild(1).GetChild(0).transform.childCount;
+        Int32 num = ConfigList.GetChild(1).GetChild(0).transform.childCount;
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
             ConfigField configField = new ConfigField();
             GameObject obj = trans.gameObject;
-            int iD = obj.GetComponent<ScrollItemKeyNavigation>().ID;
+            Int32 iD = obj.GetComponent<ScrollItemKeyNavigation>().ID;
             if (!FF9StateSystem.Editor && !FF9StateSystem.PCPlatform)
             {
                 if (iD == 12)
@@ -1419,10 +1419,10 @@ public class ConfigUI : UIScene
         }
         if (!FF9StateSystem.Editor && !FF9StateSystem.PCPlatform)
         {
-            int num3 = 12;
+            Int32 num3 = 12;
             ConfigFieldList[num3 - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = ConfigFieldList[num3 + 1].ConfigParent;
             ConfigFieldList[num3 + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = ConfigFieldList[num3 - 1].ConfigParent;
-            int num4 = 16;
+            Int32 num4 = 16;
             ConfigFieldList[num4 - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = BoosterPanel.GetChild(0);
         }
         configScrollButton = ConfigList.GetChild(0).GetComponent<ScrollButton>();

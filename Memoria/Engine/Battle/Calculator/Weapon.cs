@@ -14,7 +14,7 @@ namespace Memoria
 
         public static Character Find(BattleUnit unit)
         {
-            PLAYER data = FF9StateSystem.Common.FF9.player[(int)unit.PresetId];
+            PLAYER data = FF9StateSystem.Common.FF9.player[(Int32)unit.PresetId];
             return new Character(data);
         }
 

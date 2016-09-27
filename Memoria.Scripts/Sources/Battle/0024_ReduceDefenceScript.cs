@@ -22,9 +22,9 @@ namespace Memoria.Scripts.Battle
             if (_v.TargetCommand.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
                 if (_v.Target.PhisicalDefence != 0)
-                    _v.Target.PhisicalDefence = (byte)((uint)GameRandom.Next16() % _v.Target.PhisicalDefence);
+                    _v.Target.PhisicalDefence = (Byte)((UInt32)GameRandom.Next16() % _v.Target.PhisicalDefence);
                 if (_v.Target.MagicDefence != 0)
-                    _v.Target.MagicDefence = (byte)((uint)GameRandom.Next16() % _v.Target.MagicDefence);
+                    _v.Target.MagicDefence = (Byte)((UInt32)GameRandom.Next16() % _v.Target.MagicDefence);
             }
         }
     }

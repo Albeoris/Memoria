@@ -7,8 +7,8 @@ namespace Memoria
 {
     public sealed class BattleExporter : SingleFileExporter
     {
-        protected override string TypeName => nameof(BattleExporter);
-        protected override string ExportPath => ModTextResources.Export.Battle;
+        protected override String TypeName => nameof(BattleExporter);
+        protected override String ExportPath => ModTextResources.Export.Battle;
 
         protected override TxtEntry[] PrepareEntries()
         {

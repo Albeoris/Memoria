@@ -25,14 +25,14 @@ public sealed class NameSettingUI : UIScene
     public GameObject ConfirmButton;
     public GameObject Warning;
     public GameObject ScreenFadeGameObject;
-    private bool _isDefaultName;
-    private int _subNumber;
-    private int _currentCharId;
-    private int _currentSlotId;
-    private readonly int[] _idChar;
-    private readonly byte[] _slot;
+    private Boolean _isDefaultName;
+    private Int32 _subNumber;
+    private Int32 _currentCharId;
+    private Int32 _currentSlotId;
+    private readonly Int32[] _idChar;
+    private readonly Byte[] _slot;
 
-    public int SubNo
+    public Int32 SubNo
     {
         get { return _subNumber; }
         set { _subNumber = value; }
@@ -40,8 +40,8 @@ public sealed class NameSettingUI : UIScene
 
     public NameSettingUI()
     {
-        _idChar = new int[12] {0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10};
-        _slot = new byte[12] {0, 1, 2, 3, 4, 5, 6, 7, 5, 6, 7, 8};
+        _idChar = new Int32[12] {0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10};
+        _slot = new Byte[12] {0, 1, 2, 3, 4, 5, 6, 7, 5, 6, 7, 8};
     }
 
     public override void Show(SceneVoidDelegate afterFinished = null)
@@ -65,7 +65,7 @@ public sealed class NameSettingUI : UIScene
         PersistenSingleton<HonoInputManager>.Instance.DisablePrimaryKey = false;
     }
 
-    public override bool OnKeyConfirm(GameObject go)
+    public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go))
             return true;
@@ -78,7 +78,7 @@ public sealed class NameSettingUI : UIScene
         return true;
     }
 
-    public override bool OnKeyMenu(GameObject go)
+    public override Boolean OnKeyMenu(GameObject go)
     {
         if (base.OnKeyMenu(go))
             OnResetButtonClick();
@@ -86,7 +86,7 @@ public sealed class NameSettingUI : UIScene
         return true;
     }
 
-    public override bool OnKeyCancel(GameObject go)
+    public override Boolean OnKeyCancel(GameObject go)
     {
         if (base.OnKeyCancel(go))
             OnFocusTextFieldButtonClick();
@@ -103,7 +103,7 @@ public sealed class NameSettingUI : UIScene
     public void OnConfirmButtonClick()
     {
         NameInputField.value = NameInputField.value.Trim();
-        if (NameInputField.value == string.Empty)
+        if (NameInputField.value == String.Empty)
         {
             FF9Sfx.FF9SFX_Play(102);
             Warning.SetActive(true);
@@ -138,14 +138,14 @@ public sealed class NameSettingUI : UIScene
     private void SetData()
     {
         Background.sprite2D = Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath());
-        MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? string.Empty : Localization.Get("MaxCharacters2"));
+        MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
         CharacterProfile.text = FF9TextTool.CharacterProfile(_currentCharId);
         NameInputField.value = _isDefaultName
                                    ? FF9TextTool.CharacterDefaultName(_currentCharId)
                                    : FF9StateSystem.Common.FF9.player[_currentSlotId].name;
     }
 
-    private string GetBackgroundSpritePath()
+    private String GetBackgroundSpritePath()
     {
         switch (_currentCharId)
         {
@@ -166,7 +166,7 @@ public sealed class NameSettingUI : UIScene
             case 7:
                 return "name07";
             default:
-                return string.Empty;
+                return String.Empty;
         }
     }
 
@@ -176,21 +176,21 @@ public sealed class NameSettingUI : UIScene
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.FieldHUD));
     }
 
-    private char ValidateInput(string text, int charIndex, char addedChar)
+    private Char ValidateInput(String text, Int32 charIndex, Char addedChar)
     {
         if (Char.IsLetter(addedChar))
             return addedChar;
         if (Regex.IsMatch(addedChar.ToString(), "[^\\u3041-\\u3096\\u30A0-\\u30FF\\u3400-\\u4DB5\\u4E00-\\u9FCB\\uF900-\\uFA6A\\u0021-\\u007E\\u00C0-\\u00FF\\uFF41-\\uFF5A]"))
-            return char.MinValue;
+            return Char.MinValue;
         return addedChar;
     }
 
-    private int FF9Name_EventToChar(int eventID)
+    private Int32 FF9Name_EventToChar(Int32 eventID)
     {
         return _idChar[eventID];
     }
 
-    private int FF9Name_CharToSlot(int charID)
+    private Int32 FF9Name_CharToSlot(Int32 charID)
     {
         return _slot[charID];
     }

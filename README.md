@@ -74,5 +74,11 @@ https://www.youtube.com/watch?v=cU4T3GSIjxs
 4. Copy hash of type from console or Memoria.log and past to the ExportedTypeAttribute
 5. Run the game, test all of you can and see output_log.txt for errors.
 
+
+# Debugging (for developers)
+1. Check the "Debuggable" checkbox in the Launcher.
+2. Attach to the game process (Debug -> Attach Unity Debugger in the Visual Studio 2015 Tools for Unity)
+
+
 # Knowledge base
 Please [visit our knowledge base](../../wiki#knowledge-base) before using this software.

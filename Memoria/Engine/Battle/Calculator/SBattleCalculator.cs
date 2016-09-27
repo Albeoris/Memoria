@@ -38,7 +38,7 @@ namespace Memoria
         {
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
-            bool counterAtk = false;
+            Boolean counterAtk = false;
             if (target.bi.player != 0 && caster.bi.player == 0)
                 counterAtk = btl_abil.CheckCounterAbility(target, caster, v.Command.Data);
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
@@ -52,7 +52,7 @@ namespace Memoria
                     {
                         btl_mot.setMotion(target, 16);
                         target.evt.animFrame = 0;
-                        int num = btl_mot.setDirection(target);
+                        Int32 num = btl_mot.setDirection(target);
                         target.evt.rotBattle.eulerAngles = new Vector3(target.evt.rotBattle.eulerAngles.x, num, target.evt.rotBattle.eulerAngles.z);
                         target.rot.eulerAngles = new Vector3(target.rot.eulerAngles.x, num, target.rot.eulerAngles.z);
                     }
@@ -79,13 +79,13 @@ namespace Memoria
 
                 if (v.Target.Flags != 0)
                 {
-                    target.fig_info |= (ushort)v.Target.Flags;
+                    target.fig_info |= (UInt16)v.Target.Flags;
                     if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                     {
                         if (v.Command.Data.info.reflec == 1)
                         {
-                            ushort num1 = 0;
-                            for (ushort index = 0; index < 4; ++index)
+                            UInt16 num1 = 0;
+                            for (UInt16 index = 0; index < 4; ++index)
                             {
                                 if ((caster.reflec.tar_id[index] & target.btl_id) != 0)
                                     ++num1;
@@ -93,7 +93,7 @@ namespace Memoria
                             if (v.Target.HpDamage * num1 > 9999)
                                 v.Target.HpDamage = 9999;
                             else
-                                v.Target.HpDamage *= (short)num1;
+                                v.Target.HpDamage *= (Int16)num1;
                             if (v.Caster.HasSupportAbility(SupportAbility1.PowerThrow) && (v.Target.HpDamage *= 2) > 9999)
                                 v.Target.HpDamage = 9999;
                         }
@@ -105,7 +105,7 @@ namespace Memoria
                         {
                             if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != 41 && v.Command.Data.cmd_no != 42) && (v.Command.Data.cmd_no != 43 && v.Command.Data.cmd_no != 44))
                                 v.Target.HpDamage = 9999;
-                            btl_para.SetDamage(target, v.Target.HpDamage, !CheckDamageMotion(v) ? (byte)0 : (byte)1);
+                            btl_para.SetDamage(target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1);
                             CheckDamageReaction(v, counterAtk);
                         }
                     }
@@ -126,7 +126,7 @@ namespace Memoria
                 }
                 if (v.Caster.Flags != 0)
                 {
-                    caster.fig_info |= (ushort)v.Caster.Flags;
+                    caster.fig_info |= (UInt16)v.Caster.Flags;
                     if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
                     {
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
@@ -142,7 +142,7 @@ namespace Memoria
                             btl_para.SetMpDamage(caster, v.Caster.MpDamage);
                     }
                 }
-                if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && (((int)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.add_no] & 256) == 0 || !v.Target.IsUnderStatus(BattleStatus.Safety)))
+                if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && (((Int32)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.add_no] & 256) == 0 || !v.Target.IsUnderStatus(BattleStatus.Safety)))
                 {
                     v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.add_no], false);
                 }
@@ -154,8 +154,8 @@ namespace Memoria
             }
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
-            ushort num5 = target.bi.slave == 0 ? target.btl_id : (ushort)16;
-            ushort num6 = (ushort)((uint)v.Command.Data.cmd_no << 8 | v.Command.Data.sub_no);
+            UInt16 num5 = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
+            UInt16 num6 = (UInt16)((UInt32)v.Command.Data.cmd_no << 8 | v.Command.Data.sub_no);
             if (caster.bi.player != 0 && !Status.checkCurStat(target, 33558531U))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
@@ -175,12 +175,12 @@ namespace Memoria
             return ExtendedScripts.TryGetValue(scriptId, out result) ? result : null;
         }
 
-        private static bool CheckDamageMotion(BattleCalculator v)
+        private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || ((int)FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.add_no] & 1107300611) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, 1107333379U) && v.Caster.Data != v.Target.Data);
+            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || ((Int32)FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.add_no] & 1107300611) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, 1107333379U) && v.Caster.Data != v.Target.Data);
         }
 
-        private static void CheckDamageReaction(BattleCalculator v, bool counterAtk)
+        private static void CheckDamageReaction(BattleCalculator v, Boolean counterAtk)
         {
             if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
                 return;
@@ -191,11 +191,11 @@ namespace Memoria
                 return;
 
 
-            byte num1 = v.Target.HasSupportAbility(SupportAbility2.HighTide)
+            Byte num1 = v.Target.HasSupportAbility(SupportAbility2.HighTide)
                 ? v.Target.Data.elem.wpr
-                : (byte)((uint)Comn.random16() % v.Target.Data.elem.wpr);
+                : (Byte)((UInt32)Comn.random16() % v.Target.Data.elem.wpr);
 
-            if (v.Target.Data.trance + num1 < byte.MaxValue)
+            if (v.Target.Data.trance + num1 < Byte.MaxValue)
             {
                 v.Target.Data.trance += num1;
             }
@@ -204,7 +204,7 @@ namespace Memoria
                 if (FF9StateSystem.Battle.isDebug)
                     return;
 
-                v.Target.Data.trance = byte.MaxValue;
+                v.Target.Data.trance = Byte.MaxValue;
                 btl_stat.AlterStatus(v.Target.Data, 16384U);
             }
         }

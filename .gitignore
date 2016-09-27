@@ -5,7 +5,13 @@
 bin/
 obj/
 /packages/
+/Output/
 *.suo
 *.user
 *.DotSettings*
 *.dgml
+*.VC.opendb
+*.VC.db
+*.idb
+*.sdf
+*.tlog

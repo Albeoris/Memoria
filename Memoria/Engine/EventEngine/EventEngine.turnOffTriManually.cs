@@ -1,19 +1,20 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public partial class EventEngine
 {
-    private void turnOffTriManually(int sid)
+    private void turnOffTriManually(Int32 sid)
     {
-        if ((int)FF9StateSystem.Common.FF9.fldMapNo == 1900)
+        if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1900)
         {
             if (sid != 4)
                 return;
             this.fieldmap.walkMesh.BGI_triSetActive(56U, 0U);
         }
-        else if ((int)FF9StateSystem.Common.FF9.fldMapNo == 900)
+        else if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 900)
         {
-            int varManually1 = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-            int varManually2 = this.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+            Int32 varManually1 = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+            Int32 varManually2 = this.eBin.getVarManually(EBin.MAP_INDEX_SVR);
             switch (sid)
             {
                 case 8:
@@ -28,7 +29,7 @@ public partial class EventEngine
                     break;
             }
         }
-        else if ((int)FF9StateSystem.Common.FF9.fldMapNo == 1455)
+        else if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1455)
         {
             if (sid != 5)
                 return;
@@ -36,9 +37,9 @@ public partial class EventEngine
         }
         else
         {
-            if ((int)FF9StateSystem.Common.FF9.fldMapNo != 2803 || sid != 20)
+            if ((Int32)FF9StateSystem.Common.FF9.fldMapNo != 2803 || sid != 20)
                 return;
-            uint isActive = this.eBin.getVarManually(761060) != 1 ? 0U : 1U;
+            UInt32 isActive = this.eBin.getVarManually(761060) != 1 ? 0U : 1U;
             this.fieldmap.walkMesh.BGI_triSetActive(105U, isActive);
             this.fieldmap.walkMesh.BGI_triSetActive(106U, isActive);
         }

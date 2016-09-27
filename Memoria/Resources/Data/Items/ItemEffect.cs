@@ -41,7 +41,7 @@ namespace Memoria
 
         public void ParseEntry(String[] raw)
         {
-            int index = 0;
+            Int32 index = 0;
 
             Targets = (TargetType)CsvParser.Byte(raw[index++]);
             DefaultAlly = CsvParser.Boolean(raw[index++]);

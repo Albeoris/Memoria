@@ -91,7 +91,7 @@ namespace Memoria
                 locationNames[firstEntry.Index] = firstEntry.Value;
 
                 String prefix = firstEntry.Value + '/';
-                for (int i = 1; i < entries.Length; i++)
+                for (Int32 i = 1; i < entries.Length; i++)
                 {
                     TxtEntry entry = entries[i];
                     locationNames[entry.Index] = prefix + entry.Value;

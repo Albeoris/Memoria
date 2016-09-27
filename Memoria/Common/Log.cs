@@ -29,35 +29,35 @@ namespace Memoria
 
         #endregion
 
-        public static void Message(string format, params object[] args)
+        public static void Message(String format, params Object[] args)
         {
             Instance.Write('M', 0, format, args);
         }
 
-        public static void Warning(string format, params object[] args)
+        public static void Warning(String format, params Object[] args)
         {
             Instance.Write('W', 0, format, args);
         }
 
-        public static void Error(string format, params object[] args)
+        public static void Error(String format, params Object[] args)
         {
             Instance.Write('E', 0, format, args);
         }
 
-        public static void Warning(Exception ex, string format = null, params object[] args)
+        public static void Warning(Exception ex, String format = null, params Object[] args)
         {
             Instance.Write('W', 0, FormatException(ex, format, args));
         }
 
-        public static void Error(Exception ex, string format = null, params object[] args)
+        public static void Error(Exception ex, String format = null, params Object[] args)
         {
             Instance.Write('E', 0, FormatException(ex, format, args));
         }
 
-        private static string FormatException(Exception ex, string format, params object[] args)
+        private static String FormatException(Exception ex, String format, params Object[] args)
         {
             StringBuilder sb = new StringBuilder(256);
-            if (!string.IsNullOrEmpty(format))
+            if (!String.IsNullOrEmpty(format))
             {
                 if (args.IsNullOrEmpty())
                     sb.AppendLine(format);
@@ -79,22 +79,22 @@ namespace Memoria
             _sw = new StreamWriter(stream);
         }
 
-        public void Write(char type, int offset, string format, params object[] args)
+        public void Write(Char type, Int32 offset, String format, params Object[] args)
         {
             Monitor.Enter(_sw);
             try
             {
-                if (string.IsNullOrEmpty(format))
+                if (String.IsNullOrEmpty(format))
                     return;
 
                 DateTime time = DateTime.Now;
-                string text = args.IsNullOrEmpty() ? format : String.Format(format, args);
+                String text = args.IsNullOrEmpty() ? format : String.Format(format, args);
 
                 WritePrefix(time, type, offset);
 
-                for (int i = 0; i < text.Length; i++)
+                for (Int32 i = 0; i < text.Length; i++)
                 {
-                    char ch = text[i];
+                    Char ch = text[i];
                     if (ch == '\n')
                     {
                         _sw.WriteLine();
@@ -119,7 +119,7 @@ namespace Memoria
             }
         }
 
-        private void WritePrefix(DateTime time, char type, int offset)
+        private void WritePrefix(DateTime time, Char type, Int32 offset)
         {
             _sw.Write(time.ToString("dd.MM.yyyy hh:mm:ss "));
             _sw.Write('|');

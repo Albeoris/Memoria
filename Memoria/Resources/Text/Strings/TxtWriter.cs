@@ -31,7 +31,7 @@ namespace Memoria
                     sw.WriteLine(entries.Length.ToString("D4", CultureInfo.InvariantCulture));
                 }
 
-                for (int i = 0; i < entries.Length; i++)
+                for (Int32 i = 0; i < entries.Length; i++)
                 {
                     TxtEntry entry = entries[i];
                     entry.TryUpdateIndex(i);

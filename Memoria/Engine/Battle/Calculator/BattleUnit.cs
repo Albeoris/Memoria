@@ -120,7 +120,7 @@ namespace Memoria
 
         public Boolean HasCategory(EnemyCategory category)
         {
-            return btl_util.CheckEnemyCategory(Data, (byte)category);
+            return btl_util.CheckEnemyCategory(Data, (Byte)category);
         }
 
         public Boolean HasCategory(WeaponCategory category)

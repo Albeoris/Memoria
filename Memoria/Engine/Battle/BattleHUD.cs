@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Memoria;
 using UnityEngine;
+using Object = System.Object;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBeMadeStatic.Global
@@ -160,59 +161,59 @@ public class BattleHUD : UIScene
 
     static BattleHUD()
     {
-        BattleMessageTimeTick = new byte[7] { 54, 46, 48, 30, 24, 18, 12 };
+        BattleMessageTimeTick = new Byte[7] { 54, 46, 48, 30, 24, 18, 12 };
 
-        CmdTitleTable = new byte[192]
+        CmdTitleTable = new Byte[192]
         {
             0,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
             153,
             254,
             154,
@@ -237,122 +238,122 @@ public class BattleHUD : UIScene
             197,
             198,
             73,
-            byte.MaxValue,
+            Byte.MaxValue,
             187,
             254,
             254,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
             192,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
             0,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            0,
-            0,
-            0,
-            byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
             0,
             0,
-            byte.MaxValue,
+            0,
+            Byte.MaxValue,
             0,
             0,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
-            byte.MaxValue,
+            Byte.MaxValue,
+            0,
+            0,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
+            Byte.MaxValue,
             254,
             0,
             254
@@ -368,7 +369,7 @@ public class BattleHUD : UIScene
         ATEOrange = "battle_bar_haste";
         DefaultPartyPanelPosY = -350f;
         PartyItemHeight = 82f;
-        BadIconDict = new Dictionary<uint, byte>
+        BadIconDict = new Dictionary<UInt32, Byte>
         {
             {1U, 154},
             {4096U, 145},
@@ -388,7 +389,7 @@ public class BattleHUD : UIScene
             {1048576U, 139}
         };
 
-        GoodIconDict = new Dictionary<uint, byte>
+        GoodIconDict = new Dictionary<UInt32, Byte>
         {
             {8192U, 131},
             {262144U, 138},
@@ -407,15 +408,15 @@ public class BattleHUD : UIScene
 
     public BattleHUD()
     {
-        _abilityDetailDict = new Dictionary<int, AbilityPlayerDetail>();
+        _abilityDetailDict = new Dictionary<Int32, AbilityPlayerDetail>();
         _magicSwordCond = new MagicSwordCondition();
         _enemyCount = -1;
         _playerCount = -1;
         _currentCharacterHp = new List<ParameterStatus>();
-        _currentEnemyDieState = new List<bool>();
+        _currentEnemyDieState = new List<Boolean>();
         _hpInfoVal = new List<InfoVal>();
         _mpInfoVal = new List<InfoVal>();
-        _currentTrancePlayer = new List<int>();
+        _currentTrancePlayer = new List<Int32>();
         _currentMpValue = -1;
         _tranceTextColor = new[]
         {
@@ -435,26 +436,26 @@ public class BattleHUD : UIScene
             new Color(1f, 0.2156863f, 0.3176471f)
         };
 
-        _currentButtonGroup = string.Empty;
+        _currentButtonGroup = String.Empty;
         CurrentPlayerIndex = -1;
         _currentTargetIndex = -1;
-        _targetIndexList = new List<int>();
-        ReadyQueue = new List<int>();
-        InputFinishList = new List<int>();
-        _unconsciousStateList = new List<int>();
+        _targetIndexList = new List<Int32>();
+        ReadyQueue = new List<Int32>();
+        InputFinishList = new List<Int32>();
+        _unconsciousStateList = new List<Int32>();
         _firstCommand = new CommandDetail();
-        _commandCursorMemorize = new Dictionary<int, CommandMenu>();
-        _ability1CursorMemorize = new Dictionary<int, int>();
-        _ability2CursorMemorize = new Dictionary<int, int>();
-        _itemCursorMemorize = new Dictionary<int, int>();
-        _matchBattleIdPlayerList = new List<int>();
-        _matchBattleIdEnemyList = new List<int>();
-        _itemIdList = new List<int>();
+        _commandCursorMemorize = new Dictionary<Int32, CommandMenu>();
+        _ability1CursorMemorize = new Dictionary<Int32, Int32>();
+        _ability2CursorMemorize = new Dictionary<Int32, Int32>();
+        _itemCursorMemorize = new Dictionary<Int32, Int32>();
+        _matchBattleIdPlayerList = new List<Int32>();
+        _matchBattleIdEnemyList = new List<Int32>();
+        _itemIdList = new List<Int32>();
         _targetHudList = new List<TargetHUD>();
         _oneTime = true;
     }
 
-    public bool AndroidTVOnKeyRightTrigger(GameObject go)
+    public Boolean AndroidTVOnKeyRightTrigger(GameObject go)
     {
         return CheckAndroidTVModule(Control.RightTrigger);
     }
@@ -464,9 +465,9 @@ public class BattleHUD : UIScene
         HonoInputManager instance = PersistenSingleton<HonoInputManager>.Instance;
         if (!FF9StateSystem.AndroidTVPlatform || !instance.IsControllerConnect || !FF9StateSystem.EnableAndroidTVJoystickMode)
             return;
-        float axisRaw = Input.GetAxisRaw(instance.SpecificPlatformRightTriggerKey);
-        bool button = Input.GetButton(instance.DefaultJoystickInputKeys[2]);
-        bool flag = axisRaw > 0.189999997615814 && button;
+        Single axisRaw = Input.GetAxisRaw(instance.SpecificPlatformRightTriggerKey);
+        Boolean button = Input.GetButton(instance.DefaultJoystickInputKeys[2]);
+        Boolean flag = axisRaw > 0.189999997615814 && button;
         if (flag && lastFrameRightTriggerAxis > 0.189999997615814 && lastFramePressOnMenu)
             flag = false;
         if (flag && !_hidingHud)
@@ -496,18 +497,18 @@ public class BattleHUD : UIScene
         DisplayMessagePeeping();
     }
 
-    private void DisplayBattleMessage(string str, bool isRect)
+    private void DisplayBattleMessage(String str, Boolean isRect)
     {
         BattleDialogGameObject.SetActive(false);
         if (isRect)
         {
-            _battleDialogWidget.width = (int)(128.0 * UIManager.ResourceXMultipier);
+            _battleDialogWidget.width = (Int32)(128.0 * UIManager.ResourceXMultipier);
             _battleDialogWidget.height = 120;
             _battleDialogWidget.transform.localPosition = new Vector3(0.0f, 445f, 0.0f);
         }
         else
         {
-            _battleDialogWidget.width = (int)(240.0 * UIManager.ResourceXMultipier);
+            _battleDialogWidget.width = (Int32)(240.0 * UIManager.ResourceXMultipier);
             if (str.Contains("\n"))
             {
                 _battleDialogWidget.height = 200;
@@ -520,7 +521,7 @@ public class BattleHUD : UIScene
             }
         }
 
-        float additionalWidth = 0.0f;
+        Single additionalWidth = 0.0f;
         _battleDialogLabel.text = _battleDialogLabel.PhrasePreOpcodeSymbol(str, ref additionalWidth);
         BattleDialogGameObject.SetActive(true);
     }
@@ -530,7 +531,7 @@ public class BattleHUD : UIScene
         if (_libraBtlData == null)
             return;
 
-        String str = string.Empty;
+        String str = String.Empty;
         if (_currentLibraMessageNumber == 1)
         {
             str = (_libraBtlData.bi.player == 0 ? btl_util.getEnemyPtr(_libraBtlData).et.name : btl_util.getPlayerPtr(_libraBtlData).name) + FF9TextTool.BattleLibraText(10) + _libraBtlData.level.ToString();
@@ -546,11 +547,11 @@ public class BattleHUD : UIScene
         {
             if (_libraBtlData.bi.player == 0)
             {
-                int num1 = FF9StateSystem.Battle.FF9Battle.enemy[_libraBtlData.bi.slot_no].et.category;
-                int id;
+                Int32 num1 = FF9StateSystem.Battle.FF9Battle.enemy[_libraBtlData.bi.slot_no].et.category;
+                Int32 id;
                 do
                 {
-                    byte num2 = _currentLibraMessageCount++;
+                    Byte num2 = _currentLibraMessageCount++;
                     if ((id = num2) >= 8)
                         goto label_11;
                 } while ((num1 & 1 << id) == 0);
@@ -564,11 +565,11 @@ public class BattleHUD : UIScene
 
         if (_currentLibraMessageNumber == 4)
         {
-            int num1 = _libraBtlData.def_attr.weak & ~_libraBtlData.def_attr.invalid;
-            int num2;
+            Int32 num1 = _libraBtlData.def_attr.weak & ~_libraBtlData.def_attr.invalid;
+            Int32 num2;
             do
             {
-                byte num3 = _currentLibraMessageCount++;
+                Byte num3 = _currentLibraMessageCount++;
                 if ((num2 = num3) >= 8)
                     goto label_17;
             } while ((num1 & 1 << num2) == 0);
@@ -596,16 +597,16 @@ public class BattleHUD : UIScene
         if (_peepingEnmData == null)
             return;
 
-        int id;
+        Int32 id;
         do
         {
-            byte num1 = _currentPeepingMessageCount++;
-            int num2;
+            Byte num1 = _currentPeepingMessageCount++;
+            Int32 num2;
             if ((num2 = num1) < _peepingEnmData.steal_item.Length + 1)
                 id = _peepingEnmData.steal_item[_peepingEnmData.steal_item.Length - num2];
             else
                 goto label_5;
-        } while (id == byte.MaxValue);
+        } while (id == Byte.MaxValue);
 
         SetBattleMessage(Localization.GetSymbol() != "JP"
             ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id)
@@ -617,20 +618,20 @@ public class BattleHUD : UIScene
         _currentPeepingMessageCount = 0;
     }
 
-    public void SetBattleFollowMessage(int pMesNo, params object[] args)
+    public void SetBattleFollowMessage(Int32 pMesNo, params Object[] args)
     {
-        string str1 = FF9TextTool.BattleFollowText(pMesNo + 7);
-        if (string.IsNullOrEmpty(str1))
+        String str1 = FF9TextTool.BattleFollowText(pMesNo + 7);
+        if (String.IsNullOrEmpty(str1))
             return;
 
-        byte priority = (byte)char.GetNumericValue(str1[0]);
-        string str2 = str1.Substring(1);
+        Byte priority = (Byte)Char.GetNumericValue(str1[0]);
+        String str2 = str1.Substring(1);
 
         if (args.Length > 0)
         {
-            string str3 = args[0].ToString();
-            int result;
-            str2 = !int.TryParse(str3, out result) ? str2.Replace("%", str3) : str2.Replace("&", str3);
+            String str3 = args[0].ToString();
+            Int32 result;
+            str2 = !Int32.TryParse(str3, out result) ? str2.Replace("%", str3) : str2.Replace("&", str3);
         }
 
         SetBattleMessage(str2, priority);
@@ -638,7 +639,7 @@ public class BattleHUD : UIScene
 
     public void SetBattleCommandTitle(CMD_DATA pCmd)
     {
-        string str1 = string.Empty;
+        String str1 = String.Empty;
         switch (pCmd.cmd_no)
         {
             case 14:
@@ -651,13 +652,13 @@ public class BattleHUD : UIScene
             default:
                 if (pCmd.sub_no < 192)
                 {
-                    int id = CmdTitleTable[pCmd.sub_no];
+                    Int32 id = CmdTitleTable[pCmd.sub_no];
                     switch (id)
                     {
                         case 254: // Magic sword
                             str1 = FormatMagicSwordAbility(pCmd);
                             break;
-                        case byte.MaxValue:
+                        case Byte.MaxValue:
                             str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no);
                             break;
                         case 0:
@@ -670,13 +671,13 @@ public class BattleHUD : UIScene
                 break;
         }
 
-        if (string.IsNullOrEmpty(str1))
+        if (String.IsNullOrEmpty(str1))
             return;
 
         SetBattleTitle(str1, 1);
     }
 
-    private static string FormatMagicSwordAbility(CMD_DATA pCmd)
+    private static String FormatMagicSwordAbility(CMD_DATA pCmd)
     {
         // TODO: Move it to an external file
         String abilityName = FF9TextTool.ActionAbilityName(pCmd.sub_no);
@@ -714,9 +715,9 @@ public class BattleHUD : UIScene
         return abilityName + str2 + FF9TextTool.BattleCommandTitleText(0);
     }
 
-    public string BtlGetAttrName(int pAttr)
+    public String BtlGetAttrName(Int32 pAttr)
     {
-        int id = 0;
+        Int32 id = 0;
         while ((pAttr >>= 1) != 0)
             ++id;
 
@@ -736,10 +737,10 @@ public class BattleHUD : UIScene
             return;
 
         _peepingEnmData = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
-        bool flag = false;
-        for (int index = 0; index < 4; ++index)
+        Boolean flag = false;
+        for (Int32 index = 0; index < 4; ++index)
         {
-            if (_peepingEnmData.steal_item[index] == byte.MaxValue)
+            if (_peepingEnmData.steal_item[index] == Byte.MaxValue)
                 continue;
 
             flag = true;
@@ -758,7 +759,7 @@ public class BattleHUD : UIScene
         }
     }
 
-    public void SetBattleTitle(string str, byte priority)
+    public void SetBattleTitle(String str, Byte priority)
     {
         if (_currentMessagePriority > priority)
             return;
@@ -768,7 +769,7 @@ public class BattleHUD : UIScene
         DisplayBattleMessage(str, true);
     }
 
-    public void SetBattleMessage(string str, byte priority)
+    public void SetBattleMessage(String str, Byte priority)
     {
         if (_currentMessagePriority > priority)
             return;
@@ -781,7 +782,7 @@ public class BattleHUD : UIScene
     private void DisplayCommand()
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
-        byte presetId = FF9StateSystem.Common.FF9.party.member[btl.bi.line_no].info.menu_type;
+        Byte presetId = FF9StateSystem.Common.FF9.party.member[btl.bi.line_no].info.menu_type;
         command_tags command1;
         command_tags command2;
 
@@ -801,8 +802,8 @@ public class BattleHUD : UIScene
             _isTranceMenu = false;
         }
 
-        String str1 = FF9TextTool.CommandName((byte)command1);
-        String str2 = FF9TextTool.CommandName((byte)command2);
+        String str1 = FF9TextTool.CommandName((Byte)command1);
+        String str2 = FF9TextTool.CommandName((Byte)command2);
         Boolean flag1 = command1 != 0;
         Boolean flag2 = command2 != 0;
 
@@ -810,7 +811,7 @@ public class BattleHUD : UIScene
         {
             if (!_magicSwordCond.IsViviExist)
             {
-                str2 = string.Empty;
+                str2 = String.Empty;
                 flag2 = false;
             }
             else if (_magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini)
@@ -827,8 +828,8 @@ public class BattleHUD : UIScene
         {
             _commandDetailHUD.Skill1Component.Label.color = FF9TextTool.White;
             _commandDetailHUD.Skill1Component.ButtonGroup.Help.Enable = true;
-            _commandDetailHUD.Skill1Component.ButtonGroup.Help.TextKey = string.Empty;
-            _commandDetailHUD.Skill1Component.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription((byte)command1);
+            _commandDetailHUD.Skill1Component.ButtonGroup.Help.TextKey = String.Empty;
+            _commandDetailHUD.Skill1Component.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription((Byte)command1);
         }
         else
         {
@@ -845,8 +846,8 @@ public class BattleHUD : UIScene
         {
             _commandDetailHUD.Skill2Component.Label.color = FF9TextTool.White;
             _commandDetailHUD.Skill2Component.ButtonGroup.Help.Enable = true;
-            _commandDetailHUD.Skill2Component.ButtonGroup.Help.TextKey = string.Empty;
-            _commandDetailHUD.Skill2Component.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription((byte)command2);
+            _commandDetailHUD.Skill2Component.ButtonGroup.Help.TextKey = String.Empty;
+            _commandDetailHUD.Skill2Component.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription((Byte)command2);
         }
         else
         {
@@ -859,13 +860,13 @@ public class BattleHUD : UIScene
         _commandDetailHUD.DefendComponent.Label.text = FF9TextTool.CommandName(4);
         _commandDetailHUD.ItemComponent.Label.text = FF9TextTool.CommandName(14);
         _commandDetailHUD.ChangeComponent.Label.text = FF9TextTool.CommandName(7);
-        _commandDetailHUD.AttackComponent.ButtonGroup.Help.TextKey = string.Empty;
+        _commandDetailHUD.AttackComponent.ButtonGroup.Help.TextKey = String.Empty;
         _commandDetailHUD.AttackComponent.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(1);
-        _commandDetailHUD.DefendComponent.ButtonGroup.Help.TextKey = string.Empty;
+        _commandDetailHUD.DefendComponent.ButtonGroup.Help.TextKey = String.Empty;
         _commandDetailHUD.DefendComponent.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(4);
-        _commandDetailHUD.ItemComponent.ButtonGroup.Help.TextKey = string.Empty;
+        _commandDetailHUD.ItemComponent.ButtonGroup.Help.TextKey = String.Empty;
         _commandDetailHUD.ItemComponent.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(14);
-        _commandDetailHUD.ChangeComponent.ButtonGroup.Help.TextKey = string.Empty;
+        _commandDetailHUD.ChangeComponent.ButtonGroup.Help.TextKey = String.Empty;
         _commandDetailHUD.ChangeComponent.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(7);
         if (ButtonGroupState.ActiveGroup != CommandGroupButton)
             return;
@@ -873,13 +874,13 @@ public class BattleHUD : UIScene
         SetCommandVisibility(true, false);
     }
 
-    private void DisplayStatus(byte subMode)
+    private void DisplayStatus(Byte subMode)
     {
         StatusContainer.SetActive(true);
         _status.SetActive(false);
         _partyDetail.SetActive(true);
 
-        List<int> list = new List<int>(new[] { 0, 1, 2, 3 });
+        List<Int32> list = new List<Int32>(new[] { 0, 1, 2, 3 });
         switch (subMode)
         {
             case 1:
@@ -887,14 +888,14 @@ public class BattleHUD : UIScene
                 _partyDetail.SetActive(false);
                 for (BTL_DATA bd = FF9StateSystem.Battle.FF9Battle.btl_list.next; bd != null; bd = bd.next)
                 {
-                    int num = 0;
+                    Int32 num = 0;
                     while (1 << num != bd.btl_id)
                         ++num;
 
                     if (bd.bi.player == 0 || !_matchBattleIdPlayerList.Contains(num))
                         continue;
 
-                    int index = _matchBattleIdPlayerList.IndexOf(num);
+                    Int32 index = _matchBattleIdPlayerList.IndexOf(num);
                     NumberSubModeHUD numberSubModeHud = _status.HpStatusHudList[index];
                     numberSubModeHud.Self.SetActive(true);
                     numberSubModeHud.Current.text = bd.cur.hp.ToString();
@@ -914,7 +915,7 @@ public class BattleHUD : UIScene
                     list.Remove(index);
                 }
 
-                foreach (int index in list)
+                foreach (Int32 index in list)
                     _status.HpStatusHudList[index].Self.SetActive(false);
 
                 break;
@@ -923,14 +924,14 @@ public class BattleHUD : UIScene
                 _partyDetail.SetActive(false);
                 for (BTL_DATA bd = FF9StateSystem.Battle.FF9Battle.btl_list.next; bd != null; bd = bd.next)
                 {
-                    int num = 0;
+                    Int32 num = 0;
                     while (1 << num != bd.btl_id)
                         ++num;
 
                     if (bd.bi.player == 0 || !_matchBattleIdPlayerList.Contains(num))
                         continue;
 
-                    int index = _matchBattleIdPlayerList.IndexOf(num);
+                    Int32 index = _matchBattleIdPlayerList.IndexOf(num);
                     NumberSubModeHUD numberSubModeHud = _status.MpStatusHudList[index];
                     numberSubModeHud.Self.SetActive(true);
                     numberSubModeHud.Current.text = bd.cur.mp.ToString();
@@ -939,7 +940,7 @@ public class BattleHUD : UIScene
                     list.Remove(index);
                 }
 
-                foreach (int index in list)
+                foreach (Int32 index in list)
                     _status.MpStatusHudList[index].Self.SetActive(false);
 
                 break;
@@ -948,24 +949,24 @@ public class BattleHUD : UIScene
                 _partyDetail.SetActive(false);
                 for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
                 {
-                    int num1 = 0;
+                    Int32 num1 = 0;
                     while (1 << num1 != btlData.btl_id)
                         ++num1;
 
                     if (btlData.bi.player == 0 || !_matchBattleIdPlayerList.Contains(num1))
                         continue;
 
-                    int index1 = _matchBattleIdPlayerList.IndexOf(num1);
+                    Int32 index1 = _matchBattleIdPlayerList.IndexOf(num1);
                     StatusSubModeHUD statusSubModeHud = _status.BadStatusHudList[index1];
-                    uint num2 = btlData.stat.cur | btlData.stat.permanent;
+                    UInt32 num2 = btlData.stat.cur | btlData.stat.permanent;
                     statusSubModeHud.Self.SetActive(true);
                     foreach (UISprite uiWidget in statusSubModeHud.SpriteList)
                         uiWidget.alpha = 0.0f;
 
-                    int index2 = 0;
-                    foreach (KeyValuePair<uint, byte> current in BadIconDict)
+                    Int32 index2 = 0;
+                    foreach (KeyValuePair<UInt32, Byte> current in BadIconDict)
                     {
-                        if (((int)num2 & (int)current.Key) != 0)
+                        if (((Int32)num2 & (Int32)current.Key) != 0)
                         {
                             statusSubModeHud.SpriteList[0, index2].alpha = 1f;
                             statusSubModeHud.SpriteList[0, index2].spriteName = FF9UIDataTool.IconSpriteName[current.Value];
@@ -977,7 +978,7 @@ public class BattleHUD : UIScene
                     list.Remove(index1);
                 }
 
-                foreach (int index in list)
+                foreach (Int32 index in list)
                     _status.BadStatusHudList[index].Self.SetActive(false);
 
                 break;
@@ -987,24 +988,24 @@ public class BattleHUD : UIScene
                 _partyDetail.SetActive(false);
                 for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
                 {
-                    int num1 = 0;
+                    Int32 num1 = 0;
                     while (1 << num1 != btlData.btl_id)
                         ++num1;
 
                     if (btlData.bi.player == 0 || !_matchBattleIdPlayerList.Contains(num1))
                         continue;
 
-                    int index1 = _matchBattleIdPlayerList.IndexOf(num1);
+                    Int32 index1 = _matchBattleIdPlayerList.IndexOf(num1);
                     StatusSubModeHUD statusSubModeHud = _status.GoodStatusHudList[index1];
-                    uint num2 = btlData.stat.cur | btlData.stat.permanent;
+                    UInt32 num2 = btlData.stat.cur | btlData.stat.permanent;
                     statusSubModeHud.Self.SetActive(true);
                     foreach (UISprite uiWidget in statusSubModeHud.SpriteList)
                         uiWidget.alpha = 0.0f;
 
-                    int index2 = 0;
-                    foreach (KeyValuePair<uint, byte> current in GoodIconDict)
+                    Int32 index2 = 0;
+                    foreach (KeyValuePair<UInt32, Byte> current in GoodIconDict)
                     {
-                        if (((int)num2 & (int)current.Key) == 0)
+                        if (((Int32)num2 & (Int32)current.Key) == 0)
                             continue;
 
                         statusSubModeHud.SpriteList[0, index2].alpha = 1f;
@@ -1017,7 +1018,7 @@ public class BattleHUD : UIScene
                     list.Remove(index1);
                 }
 
-                foreach (int index in list)
+                foreach (Int32 index in list)
                     _status.GoodStatusHudList[index].Self.SetActive(false);
 
                 break;
@@ -1049,7 +1050,7 @@ public class BattleHUD : UIScene
         DisplayItem(BattleCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
     }
 
-    private void DisplayItem(bool isThrow)
+    private void DisplayItem(Boolean isThrow)
     {
         _itemIdList.Clear();
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
@@ -1082,11 +1083,11 @@ public class BattleHUD : UIScene
 
         if (inDataList.Count == 0)
         {
-            _itemIdList.Add(byte.MaxValue);
+            _itemIdList.Add(Byte.MaxValue);
             BattleItemListData battleItemListData = new BattleItemListData
             {
                 Count = 0,
-                Id = byte.MaxValue
+                Id = Byte.MaxValue
             };
             inDataList.Add(battleItemListData);
         }
@@ -1106,28 +1107,28 @@ public class BattleHUD : UIScene
         }
     }
 
-    public void DisplayItemDetail(Transform item, ListDataTypeBase data, int index, bool isInit)
+    public void DisplayItemDetail(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
     {
         BattleItemListData battleItemListData = (BattleItemListData)data;
         ItemListDetailWithIconHUD detailWithIconHud = new ItemListDetailWithIconHUD(item.gameObject, true);
         if (isInit)
             DisplayWindowBackground(item.gameObject, null);
 
-        if (battleItemListData.Id == byte.MaxValue)
+        if (battleItemListData.Id == Byte.MaxValue)
         {
             detailWithIconHud.IconSprite.alpha = 0.0f;
-            detailWithIconHud.NameLabel.text = string.Empty;
-            detailWithIconHud.NumberLabel.text = string.Empty;
+            detailWithIconHud.NameLabel.text = String.Empty;
+            detailWithIconHud.NumberLabel.text = String.Empty;
             detailWithIconHud.Button.Help.Enable = false;
-            detailWithIconHud.Button.Help.TextKey = string.Empty;
-            detailWithIconHud.Button.Help.Text = string.Empty;
+            detailWithIconHud.Button.Help.TextKey = String.Empty;
+            detailWithIconHud.Button.Help.Text = String.Empty;
         }
         else
         {
             FF9UIDataTool.DisplayItem(battleItemListData.Id, detailWithIconHud.IconSprite, detailWithIconHud.NameLabel, true);
             detailWithIconHud.NumberLabel.text = battleItemListData.Count.ToString();
             detailWithIconHud.Button.Help.Enable = true;
-            detailWithIconHud.Button.Help.TextKey = string.Empty;
+            detailWithIconHud.Button.Help.TextKey = String.Empty;
             detailWithIconHud.Button.Help.Text = FF9TextTool.ItemBattleDescription(battleItemListData.Id);
         }
     }
@@ -1160,7 +1161,7 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void DisplayAbilityDetail(Transform item, ListDataTypeBase data, int index, bool isInit)
+    private void DisplayAbilityDetail(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
     {
         BattleAbilityListData battleAbilityListData = (BattleAbilityListData)data;
 
@@ -1168,7 +1169,7 @@ public class BattleHUD : UIScene
         if (isInit)
             DisplayWindowBackground(item.gameObject, null);
 
-        int abilityId = battleAbilityListData.Id;
+        Int32 abilityId = battleAbilityListData.Id;
         AbilityStatus abilityState = GetAbilityState(abilityId);
         AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilityId];
 
@@ -1176,15 +1177,15 @@ public class BattleHUD : UIScene
         {
             itemListDetailHud.Content.SetActive(false);
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, false);
-            itemListDetailHud.Button.Help.TextKey = string.Empty;
-            itemListDetailHud.Button.Help.Text = string.Empty;
+            itemListDetailHud.Button.Help.TextKey = String.Empty;
+            itemListDetailHud.Button.Help.Text = String.Empty;
         }
         else
         {
             itemListDetailHud.Content.SetActive(true);
             itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(abilityId);
-            int mp = GetMp(aaData);
-            itemListDetailHud.NumberLabel.text = mp == 0 ? string.Empty : mp.ToString();
+            Int32 mp = GetMp(aaData);
+            itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
 
             if (abilityState == AbilityStatus.Disable)
             {
@@ -1199,7 +1200,7 @@ public class BattleHUD : UIScene
                 ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, true);
             }
 
-            itemListDetailHud.Button.Help.TextKey = string.Empty;
+            itemListDetailHud.Button.Help.TextKey = String.Empty;
             itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(abilityId);
         }
     }
@@ -1211,10 +1212,10 @@ public class BattleHUD : UIScene
 
     private void DisplayParty()
     {
-        int index = 0;
+        Int32 index = 0;
         for (BTL_DATA bd = FF9StateSystem.Battle.FF9Battle.btl_list.next; bd != null; bd = bd.next)
         {
-            int num = 0;
+            Int32 num = 0;
             while (1 << num != bd.btl_id)
                 ++num;
 
@@ -1241,7 +1242,7 @@ public class BattleHUD : UIScene
 
     public void DisplayPartyRealtime()
     {
-        int index = 0;
+        Int32 index = 0;
         for (BTL_DATA bd = FF9StateSystem.Battle.FF9Battle.btl_list.next; bd != null; bd = bd.next)
         {
             if (bd.bi.player == 0)
@@ -1257,11 +1258,11 @@ public class BattleHUD : UIScene
 
     private void DisplayTarget()
     {
-        bool flag1 = false;
-        int enCount = _enemyCount;
-        int plCount = _playerCount;
-        int num3 = 0;
-        int num4 = 0;
+        Boolean flag1 = false;
+        Int32 enCount = _enemyCount;
+        Int32 plCount = _playerCount;
+        Int32 num3 = 0;
+        Int32 num4 = 0;
 
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
@@ -1287,11 +1288,11 @@ public class BattleHUD : UIScene
             _playerCount = num4;
         }
 
-        int index1 = 0;
-        int index2 = 0;
+        Int32 index1 = 0;
+        Int32 index2 = 0;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
-            int num5 = 0;
+            Int32 num5 = 0;
             while (1 << num5 != btlData.btl_id)
                 ++num5;
 
@@ -1316,7 +1317,7 @@ public class BattleHUD : UIScene
             }
             else
             {
-                bool flag2 = Status.checkCurStat(btlData, 256U);
+                Boolean flag2 = Status.checkCurStat(btlData, 256U);
                 if (index2 >= _currentEnemyDieState.Count)
                 {
                     _currentEnemyDieState.Add(flag2);
@@ -1342,8 +1343,8 @@ public class BattleHUD : UIScene
         }
 
         GameObject obj = null;
-        int index3 = 0;
-        int index4 = 4;
+        Int32 index3 = 0;
+        Int32 index4 = 4;
         if (_cursorType == CursorGroup.Individual)
             obj = ButtonGroupState.ActiveButton;
 
@@ -1368,7 +1369,7 @@ public class BattleHUD : UIScene
                             ButtonGroupState.SetButtonEnable(go, false);
                             if (go == obj)
                             {
-                                int firstPlayer = GetFirstPlayer();
+                                Int32 firstPlayer = GetFirstPlayer();
                                 if (firstPlayer != -1)
                                 {
                                     _currentTargetIndex = firstPlayer;
@@ -1403,7 +1404,7 @@ public class BattleHUD : UIScene
                 TargetHUD targetHud = _targetHudList[index4];
                 GameObject go = targetHud.Self;
                 UILabel uiLabel = targetHud.NameLabel;
-                float additionalWidth = 0.0f;
+                Single additionalWidth = 0.0f;
                 go.SetActive(true);
                 uiLabel.text = uiLabel.PhrasePreOpcodeSymbol(btl_util.getEnemyPtr(btl).et.name, ref additionalWidth);
                 if (_currentEnemyDieState[index4 - 4])
@@ -1415,13 +1416,13 @@ public class BattleHUD : UIScene
                         {
                             if (go == obj)
                             {
-                                int index5 = GetFirstEnemy() + HonoluluBattleMain.EnemyStartIndex;
+                                Int32 index5 = GetFirstEnemy() + HonoluluBattleMain.EnemyStartIndex;
                                 if (index5 != -1)
                                 {
                                     if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform && _enemyCount > 1)
                                     {
-                                        int num5 = _currentTargetIndex != index5 ? index5 : index5 + 1;
-                                        int firstIndex = num5 >= _targetHudList.Count ? index5 : num5;
+                                        Int32 num5 = _currentTargetIndex != index5 ? index5 : index5 + 1;
+                                        Int32 firstIndex = num5 >= _targetHudList.Count ? index5 : num5;
                                         ValidateDefaultTarget(ref firstIndex);
                                         index5 = firstIndex;
                                     }
@@ -1481,19 +1482,19 @@ public class BattleHUD : UIScene
                 playerHud.TranceBlink = false;
                 break;
             case ParameterStatus.Critical:
-                playerHud.ATBSlider.value = bd.cur.at / (float)bd.max.at;
+                playerHud.ATBSlider.value = bd.cur.at / (Single)bd.max.at;
                 playerHud.HPLabel.color = FF9TextTool.Yellow;
                 playerHud.NameLabel.color = FF9TextTool.Yellow;
                 break;
             default:
-                playerHud.ATBSlider.value = bd.cur.at / (float)bd.max.at;
+                playerHud.ATBSlider.value = bd.cur.at / (Single)bd.max.at;
                 playerHud.HPLabel.color = FF9TextTool.White;
                 playerHud.NameLabel.color = FF9TextTool.White;
                 break;
         }
 
         playerHud.MPLabel.color = CheckMPState(bd) == ParameterStatus.Critical ? FF9TextTool.Yellow : FF9TextTool.White;
-        string str = ATENormal;
+        String str = ATENormal;
 
         if (btl_stat.CheckStatus(bd, 1052672U))
             str = ATEGray;
@@ -1508,7 +1509,7 @@ public class BattleHUD : UIScene
         if (parameterStatus == ParameterStatus.Empty)
             return;
 
-        if (bd.trance == byte.MaxValue && !playerHud.TranceBlink)
+        if (bd.trance == Byte.MaxValue && !playerHud.TranceBlink)
         {
             playerHud.TranceBlink = true;
             if (_currentTrancePlayer.Contains(bd.bi.line_no))
@@ -1518,7 +1519,7 @@ public class BattleHUD : UIScene
         }
         else
         {
-            if (bd.trance == byte.MaxValue)
+            if (bd.trance == Byte.MaxValue)
                 return;
             playerHud.TranceBlink = false;
             if (!_currentTrancePlayer.Contains(bd.bi.line_no))
@@ -1528,7 +1529,7 @@ public class BattleHUD : UIScene
         }
     }
 
-    public void AddPlayerToReady(int playerId)
+    public void AddPlayerToReady(Int32 playerId)
     {
         if (_unconsciousStateList.Contains(playerId))
             return;
@@ -1537,9 +1538,9 @@ public class BattleHUD : UIScene
         _partyDetail.List.First(h => h.PlayerId == playerId).ATBBlink = true;
     }
 
-    public void RemovePlayerFromAction(int btlId, bool isNeedToClearCommand)
+    public void RemovePlayerFromAction(Int32 btlId, Boolean isNeedToClearCommand)
     {
-        int num = 0;
+        Int32 num = 0;
         while (1 << num != btlId)
             ++num;
 
@@ -1558,7 +1559,7 @@ public class BattleHUD : UIScene
 
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
-            int index = 0;
+            Int32 index = 0;
             while (1 << index != btlData.btl_id)
                 ++index;
 
@@ -1588,7 +1589,7 @@ public class BattleHUD : UIScene
         return bd.cur.mp <= bd.max.mp / 6.0 ? ParameterStatus.Critical : ParameterStatus.Normal;
     }
 
-    private void CheckDoubleCast(int battleIndex, CursorGroup cursorGroup)
+    private void CheckDoubleCast(Int32 battleIndex, CursorGroup cursorGroup)
     {
         if (IsDoubleCast && _doubleCastCount == 2 || !IsDoubleCast)
         {
@@ -1615,7 +1616,7 @@ public class BattleHUD : UIScene
     {
         for (BTL_DATA cur = FF9StateSystem.Battle.FF9Battle.btl_list.next; cur != null; cur = cur.next)
         {
-            int num = 0;
+            Int32 num = 0;
             while (1 << num != cur.btl_id)
                 ++num;
 
@@ -1634,7 +1635,7 @@ public class BattleHUD : UIScene
         }
     }
 
-    public void ActivateTurnForPlayer(int playerId)
+    public void ActivateTurnForPlayer(Int32 playerId)
     {
         PlayerDetailHUD playerDetailHud = _partyDetail.List.Find(h => h.PlayerId == playerId);
         playerDetailHud.Component.UIBoxCollider.enabled = false;
@@ -1643,7 +1644,7 @@ public class BattleHUD : UIScene
         SetCommandVisibility(true, false);
     }
 
-    private void SwitchPlayer(int playerId)
+    private void SwitchPlayer(Int32 playerId)
     {
         SetIdle();
         FF9Sfx.FF9SFX_Play(1044);
@@ -1655,7 +1656,7 @@ public class BattleHUD : UIScene
     {
         _blinkAlphaCounter += RealTime.deltaTime * 3f;
         _blinkAlphaCounter = _blinkAlphaCounter <= 2.0 ? _blinkAlphaCounter : 0.0f;
-        float num = _blinkAlphaCounter > 1.0 ? 2f - _blinkAlphaCounter : _blinkAlphaCounter;
+        Single num = _blinkAlphaCounter > 1.0 ? 2f - _blinkAlphaCounter : _blinkAlphaCounter;
         if (!_commandEnable)
             return;
 
@@ -1728,7 +1729,7 @@ public class BattleHUD : UIScene
                 if (ItemPanel.activeSelf)
                     DisplayItemRealTime();
 
-                if ((int)_currentCommandId == 31 && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
+                if ((Int32)_currentCommandId == 31 && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
                 {
                     FF9Sfx.FF9SFX_Play(101);
                     ResetToReady();
@@ -1747,7 +1748,7 @@ public class BattleHUD : UIScene
         if (ReadyQueue.Count <= 0 || CurrentPlayerIndex != -1)
             return;
 
-        for (int index = ReadyQueue.Count - 1; index >= 0; --index)
+        for (Int32 index = ReadyQueue.Count - 1; index >= 0; --index)
         {
             if (!_unconsciousStateList.Contains(ReadyQueue[index]))
                 continue;
@@ -1756,11 +1757,11 @@ public class BattleHUD : UIScene
             RemovePlayerFromAction(btl.btl_id, btl_stat.CheckStatus(btl, 134403U));
         }
 
-        using (List<int>.Enumerator enumerator = ReadyQueue.GetEnumerator())
+        using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
         {
             while (enumerator.MoveNext())
             {
-                int current = enumerator.Current;
+                Int32 current = enumerator.Current;
                 if (InputFinishList.Contains(current) || _unconsciousStateList.Contains(current))
                     continue;
 
@@ -1776,20 +1777,20 @@ public class BattleHUD : UIScene
         }
     }
 
-    private AbilityStatus CheckAbilityStatus(int subMenuIndex)
+    private AbilityStatus CheckAbilityStatus(Int32 subMenuIndex)
     {
         CharacterCommand command = BattleCommands.Commands[_currentCommandId];
         if (subMenuIndex >= command.Abilities.Length)
             return AbilityStatus.None;
 
-        int abilityId = command.Abilities[subMenuIndex];
+        Int32 abilityId = command.Abilities[subMenuIndex];
         return GetAbilityState(abilityId);
     }
 
     public void YMenu_ManagerHpMp()
     {
         BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next;
-        int index1 = 0;
+        Int32 index1 = 0;
         for (; btlData != null; btlData = btlData.next)
         {
             if (btlData.bi.player == 0)
@@ -1797,7 +1798,7 @@ public class BattleHUD : UIScene
 
             InfoVal infoVal1 = _hpInfoVal[index1];
             InfoVal infoVal2 = _mpInfoVal[index1];
-            for (int index2 = 0; index2 < 2; ++index2)
+            for (Int32 index2 = 0; index2 < 2; ++index2)
             {
                 InfoVal infoVal3 = index2 != 0 ? infoVal2 : infoVal1;
                 if (infoVal3.anim_frm != 0)
@@ -1828,14 +1829,14 @@ public class BattleHUD : UIScene
                 }
                 else
                 {
-                    int num1 = index2 != 0 ? btlData.cur.mp : (short)btlData.cur.hp;
-                    int num2 = index2 != 0 ? btlData.max.mp : (short)btlData.max.hp;
-                    int num3;
+                    Int32 num1 = index2 != 0 ? btlData.cur.mp : (Int16)btlData.cur.hp;
+                    Int32 num2 = index2 != 0 ? btlData.max.mp : (Int16)btlData.max.hp;
+                    Int32 num3;
                     if ((num3 = num1 - infoVal3.disp_val) == 0)
                         continue;
 
-                    int num4 = Mathf.Abs(num3);
-                    infoVal3.req_val = (short)num1;
+                    Int32 num4 = Mathf.Abs(num3);
+                    infoVal3.req_val = (Int16)num1;
                     if (num4 < YINFO_ANIM_HPMP_MIN)
                     {
                         infoVal3.anim_frm = num4;
@@ -1895,10 +1896,10 @@ public class BattleHUD : UIScene
         }
     }
 
-    private bool ManageTargetCommand()
+    private Boolean ManageTargetCommand()
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
-        if ((int)_currentCommandId == 31 && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
+        if ((Int32)_currentCommandId == 31 && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
         {
             FF9Sfx.FF9SFX_Play(101);
             ResetToReady();
@@ -1919,7 +1920,7 @@ public class BattleHUD : UIScene
                 return true;
 
             AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[PatchAbility(command.Abilities[_currentSubMenuIndex])];
-            int num2 = ff9abil.FF9Abil_GetEnableSA(btl.bi.slot_no, AbilSaMpHalf) ? aaData.MP >> 1 : aaData.MP;
+            Int32 num2 = ff9abil.FF9Abil_GetEnableSA(btl.bi.slot_no, AbilSaMpHalf) ? aaData.MP >> 1 : aaData.MP;
 
             if (btl.cur.mp < num2)
             {
@@ -1983,7 +1984,7 @@ public class BattleHUD : UIScene
         {
             InfoVal infoVal1 = new InfoVal();
             InfoVal infoVal2 = new InfoVal();
-            infoVal1.req_val = infoVal1.disp_val = (short)btlData.cur.hp;
+            infoVal1.req_val = infoVal1.disp_val = (Int16)btlData.cur.hp;
             infoVal2.req_val = infoVal2.disp_val = btlData.cur.mp;
             infoVal1.anim_frm = infoVal2.anim_frm = 0;
             infoVal1.inc_val = infoVal2.inc_val = 0;
@@ -1992,10 +1993,10 @@ public class BattleHUD : UIScene
         }
     }
 
-    private int GetMp(AA_DATA aaData)
+    private Int32 GetMp(AA_DATA aaData)
     {
-        int num = aaData.MP;
-        int slotId = FF9StateSystem.Common.FF9.party.member[FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].bi.line_no].info.slot_no;
+        Int32 num = aaData.MP;
+        Int32 slotId = FF9StateSystem.Common.FF9.party.member[FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].bi.line_no].info.slot_no;
         if ((aaData.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
             num <<= 2;
 
@@ -2005,7 +2006,7 @@ public class BattleHUD : UIScene
         return num;
     }
 
-    private AbilityStatus GetAbilityState(int abilId)
+    private AbilityStatus GetAbilityState(Int32 abilId)
     {
         AbilityPlayerDetail abilityPlayerDetail = _abilityDetailDict[CurrentPlayerIndex];
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
@@ -2024,9 +2025,9 @@ public class BattleHUD : UIScene
             return;
 
         PA_DATA[] paDataArray = ff9abil._FF9Abil_PaData[player.info.menu_type];
-        for (int abilId = 0; abilId < 192; ++abilId)
+        for (Int32 abilId = 0; abilId < 192; ++abilId)
         {
-            int index;
+            Int32 index;
             if ((index = ff9abil.FF9Abil_GetIndex(player.info.slot_no, abilId)) < 0)
                 continue;
 
@@ -2038,16 +2039,16 @@ public class BattleHUD : UIScene
     private static void SetAbilityEquip(AbilityPlayerDetail abilityPlayer)
     {
         PLAYER player = abilityPlayer.Player;
-        for (int index1 = 0; index1 < 5; ++index1)
+        for (Int32 index1 = 0; index1 < 5; ++index1)
         {
-            int index2 = player.equip[index1];
-            if (index2 == byte.MaxValue)
+            Int32 index2 = player.equip[index1];
+            if (index2 == Byte.MaxValue)
                 continue;
 
             FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[index2];
-            for (int index3 = 0; index3 < 3; ++index3)
+            for (Int32 index3 = 0; index3 < 3; ++index3)
             {
-                int index4 = ff9ItemData.ability[index3];
+                Int32 index4 = ff9ItemData.ability[index3];
                 if (index4 != 0 && 192 > index4)
                     abilityPlayer.AbilityEquipList[index4] = true;
             }
@@ -2061,17 +2062,17 @@ public class BattleHUD : UIScene
         if (!ff9abil.FF9Abil_HasAp(play))
             return;
 
-        for (int k = 0; k < 2; k++)
+        for (Int32 k = 0; k < 2; k++)
         {
             command_tags normalCommandId = BattleCommands.CommandSets[presetId].GetRegular(k);
             command_tags tranceCommandId = BattleCommands.CommandSets[presetId].GetTrance(k);
             if (normalCommandId == tranceCommandId)
                 continue;
 
-            CharacterCommand normalCommand = BattleCommands.Commands[(byte)normalCommandId];
-            CharacterCommand tranceCommand = BattleCommands.Commands[(byte)tranceCommandId];
+            CharacterCommand normalCommand = BattleCommands.Commands[(Byte)normalCommandId];
+            CharacterCommand tranceCommand = BattleCommands.Commands[(Byte)tranceCommandId];
             Int32 count = Math.Min(normalCommand.Abilities.Length, tranceCommand.Abilities.Length);
-            for (int i = 0; i < count; ++i)
+            for (Int32 i = 0; i < count; ++i)
             {
                 Int32 normalId = normalCommand.Abilities[i];
                 Int32 tranceId = tranceCommand.Abilities[i];
@@ -2093,19 +2094,19 @@ public class BattleHUD : UIScene
     private static void SetAbilityMagic(AbilityPlayerDetail abilityPlayer)
     {
         PLAYER character = abilityPlayer.Player;
-        if (character.info.slot_no != (int)CharacterPresetId.Steiner)
+        if (character.info.slot_no != (Int32)CharacterPresetId.Steiner)
             return;
 
-        CharacterCommand magicSwordCommand = BattleCommands.Commands[(int)command_tags.CMD_MAGIC_SWORD];
-        PLAYER player2 = FF9StateSystem.Common.FF9.player[(int)CharacterPresetId.Vivi];
-        PA_DATA[] paDataArray = ff9abil._FF9Abil_PaData[(int)CharacterPresetId.Vivi];
+        CharacterCommand magicSwordCommand = BattleCommands.Commands[(Int32)command_tags.CMD_MAGIC_SWORD];
+        PLAYER player2 = FF9StateSystem.Common.FF9.player[(Int32)CharacterPresetId.Vivi];
+        PA_DATA[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)CharacterPresetId.Vivi];
         Int32[] abilities = { 25, 26, 27, 29, 30, 31, 33, 34, 35, 38, 45, 47, 48 }; // TODO: Move to the resource file
 
         Int32 count = Math.Min(magicSwordCommand.Abilities.Length, abilities.Length);
-        for (int i = 0; i < count; ++i)
+        for (Int32 i = 0; i < count; ++i)
         {
-            int abilityId = magicSwordCommand.Abilities[i];
-            int index = ff9abil.FF9Abil_GetIndex(1, abilities[i]);
+            Int32 abilityId = magicSwordCommand.Abilities[i];
+            Int32 index = ff9abil.FF9Abil_GetIndex(1, abilities[i]);
             if (index > -1)
             {
                 abilityPlayer.AbilityPaList[abilityId] = player2.pa[index];
@@ -2113,25 +2114,25 @@ public class BattleHUD : UIScene
             }
         }
 
-        for (int equipSlot = 0; equipSlot < 5; ++equipSlot)
+        for (Int32 equipSlot = 0; equipSlot < 5; ++equipSlot)
         {
-            int equipId = player2.equip[equipSlot];
-            if (equipId == byte.MaxValue)
+            Int32 equipId = player2.equip[equipSlot];
+            if (equipId == Byte.MaxValue)
                 continue;
 
             FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[equipId];
-            for (int equipAbilitySlot = 0; equipAbilitySlot < 3; ++equipAbilitySlot)
+            for (Int32 equipAbilitySlot = 0; equipAbilitySlot < 3; ++equipAbilitySlot)
             {
-                int equipAbilityId = ff9ItemData.ability[equipAbilitySlot];
+                Int32 equipAbilityId = ff9ItemData.ability[equipAbilitySlot];
                 if (equipAbilityId == 0 || equipAbilityId >= 192)
                     continue;
 
-                for (int i = 0; i < count; ++i)
+                for (Int32 i = 0; i < count; ++i)
                 {
                     if (equipAbilityId != abilities[i])
                         continue;
 
-                    int abilityId = magicSwordCommand.Abilities[i];
+                    Int32 abilityId = magicSwordCommand.Abilities[i];
                     abilityPlayer.AbilityEquipList[abilityId] = true;
                 }
             }
@@ -2192,7 +2193,7 @@ public class BattleHUD : UIScene
         ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
     }
 
-    public override bool OnKeyConfirm(GameObject go)
+    public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go) || _hidingHud)
             return true;
@@ -2201,7 +2202,7 @@ public class BattleHUD : UIScene
         {
             FF9Sfx.FF9SFX_Play(103);
             _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
-            _currentCommandId = (uint)GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
+            _currentCommandId = (UInt32)GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
             _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
             _subMenuType = SubMenuType.Normal;
             if (IsDoubleCast && _doubleCastCount < 2)
@@ -2262,7 +2263,7 @@ public class BattleHUD : UIScene
             FF9Sfx.FF9SFX_Play(103);
             if (_cursorType == CursorGroup.Individual)
             {
-                int index = _targetHudList.IndexOf(_targetHudList.Single(h => h.Self == go));
+                Int32 index = _targetHudList.IndexOf(_targetHudList.Single(h => h.Self == go));
                 if (index < HonoluluBattleMain.EnemyStartIndex)
                 {
                     if (index < _matchBattleIdPlayerList.Count)
@@ -2293,7 +2294,7 @@ public class BattleHUD : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == ItemGroupButton)
         {
-            if (_itemIdList[_currentSubMenuIndex] != byte.MaxValue)
+            if (_itemIdList[_currentSubMenuIndex] != Byte.MaxValue)
             {
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
@@ -2307,7 +2308,7 @@ public class BattleHUD : UIScene
         return true;
     }
 
-    public override bool OnKeyCancel(GameObject go)
+    public override Boolean OnKeyCancel(GameObject go)
     {
         if (base.OnKeyCancel(go) && !_hidingHud && ButtonGroupState.ActiveGroup != CommandGroupButton)
         {
@@ -2359,26 +2360,26 @@ public class BattleHUD : UIScene
                 SetItemPanelVisibility(false, false);
                 SetCommandVisibility(true, true);
             }
-            else if (ButtonGroupState.ActiveGroup == string.Empty && UIManager.Input.ContainsAndroidQuitKey())
+            else if (ButtonGroupState.ActiveGroup == String.Empty && UIManager.Input.ContainsAndroidQuitKey())
                 OnKeyQuit();
         }
         return true;
     }
 
-    public override bool OnKeyMenu(GameObject go)
+    public override Boolean OnKeyMenu(GameObject go)
     {
         if (base.OnKeyMenu(go) && !_hidingHud && ButtonGroupState.ActiveGroup == CommandGroupButton)
         {
             if (ReadyQueue.Count > 1)
             {
-                int num = ReadyQueue[0];
+                Int32 num = ReadyQueue[0];
                 ReadyQueue.RemoveAt(0);
                 ReadyQueue.Add(num);
-                using (List<int>.Enumerator enumerator = ReadyQueue.GetEnumerator())
+                using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
-                        int current = enumerator.Current;
+                        Int32 current = enumerator.Current;
                         if (!InputFinishList.Contains(current) && !_unconsciousStateList.Contains(current) && current != CurrentPlayerIndex)
                         {
                             if (ReadyQueue.IndexOf(current) > 0)
@@ -2398,7 +2399,7 @@ public class BattleHUD : UIScene
         return true;
     }
 
-    public override bool OnKeyPause(GameObject go)
+    public override Boolean OnKeyPause(GameObject go)
     {
         if (base.OnKeyPause(go) && FF9StateSystem.Battle.FF9Battle.btl_seq != 2 && FF9StateSystem.Battle.FF9Battle.btl_seq != 1)
         {
@@ -2423,7 +2424,7 @@ public class BattleHUD : UIScene
         ShowQuitUI(_onResumeFromQuit);
     }
 
-    public override bool OnKeyLeftBumper(GameObject go)
+    public override Boolean OnKeyLeftBumper(GameObject go)
     {
         if (base.OnKeyLeftBumper(go) && !_hidingHud && ButtonGroupState.ActiveGroup == TargetGroupButton && (_targetCursor == 3 || _targetCursor == 5 || _targetCursor == 4))
         {
@@ -2436,7 +2437,7 @@ public class BattleHUD : UIScene
         return true;
     }
 
-    public override bool OnKeyRightBumper(GameObject go)
+    public override Boolean OnKeyRightBumper(GameObject go)
     {
         if (base.OnKeyRightBumper(go) && !_hidingHud && ButtonGroupState.ActiveGroup == TargetGroupButton && (_targetCursor == 3 || _targetCursor == 5 || _targetCursor == 4))
         {
@@ -2449,20 +2450,20 @@ public class BattleHUD : UIScene
         return true;
     }
 
-    public override bool OnKeyRightTrigger(GameObject go)
+    public override Boolean OnKeyRightTrigger(GameObject go)
     {
         if (base.OnKeyRightTrigger(go) && !_hidingHud && !AndroidTVOnKeyRightTrigger(go))
             ProcessAutoBattleInput();
         return true;
     }
 
-    public override bool OnItemSelect(GameObject go)
+    public override Boolean OnItemSelect(GameObject go)
     {
         if (base.OnItemSelect(go))
         {
             if (ButtonGroupState.ActiveGroup == CommandGroupButton)
             {
-                int siblingIndex = go.transform.GetSiblingIndex();
+                Int32 siblingIndex = go.transform.GetSiblingIndex();
                 _currentCommandIndex = (CommandMenu)siblingIndex;
             }
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
@@ -2473,8 +2474,8 @@ public class BattleHUD : UIScene
                 {
                     if (_cursorType == CursorGroup.Individual)
                     {
-                        int num = go.GetComponent<ModelButton>().index;
-                        int index = num >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(num) + 4 : _matchBattleIdPlayerList.IndexOf(num);
+                        Int32 num = go.GetComponent<ModelButton>().index;
+                        Int32 index = num >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(num) + 4 : _matchBattleIdPlayerList.IndexOf(num);
                         if (index != -1)
                         {
                             TargetHUD targetHud = _targetHudList[index];
@@ -2485,7 +2486,7 @@ public class BattleHUD : UIScene
                 }
                 else if (go.transform.parent.parent == TargetPanel.transform && _cursorType == CursorGroup.Individual)
                 {
-                    int siblingIndex = go.transform.GetSiblingIndex();
+                    Int32 siblingIndex = go.transform.GetSiblingIndex();
                     if (go.GetParent().transform.GetSiblingIndex() == 1)
                         siblingIndex += HonoluluBattleMain.EnemyStartIndex;
                     if (_currentTargetIndex != siblingIndex)
@@ -2499,7 +2500,7 @@ public class BattleHUD : UIScene
         return true;
     }
 
-    private void OnAllTargetHover(GameObject go, bool isHover)
+    private void OnAllTargetHover(GameObject go, Boolean isHover)
     {
         if (!isHover || _cursorType != CursorGroup.AllEnemy && _cursorType != CursorGroup.AllPlayer)
             return;
@@ -2586,13 +2587,13 @@ public class BattleHUD : UIScene
 
 
 
-    private void OnRunPress(GameObject go, bool isDown)
+    private void OnRunPress(GameObject go, Boolean isDown)
     {
         _runCounter = 0.0f;
         _isTryingToRun = isDown;
     }
 
-    private bool OnAllTargetToggleValidate(bool choice)
+    private Boolean OnAllTargetToggleValidate(Boolean choice)
     {
         if (_isAllTarget != _allTargetToggle.value)
             return true;
@@ -2601,7 +2602,7 @@ public class BattleHUD : UIScene
         return false;
     }
 
-    private bool OnAutoToggleValidate(bool choice)
+    private Boolean OnAutoToggleValidate(Boolean choice)
     {
         if (_isAutoAttack != _autoBattleToggle.value)
             return true;
@@ -2642,7 +2643,7 @@ public class BattleHUD : UIScene
         InitHpMp();
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
-            int num = 0;
+            Int32 num = 0;
             while (1 << num != btlData.btl_id)
                 ++num;
             if (btlData.bi.target != 0)
@@ -2653,12 +2654,12 @@ public class BattleHUD : UIScene
                     _matchBattleIdEnemyList.Add(num);
             }
         }
-        int num1 = 0;
-        using (List<int>.Enumerator enumerator = _matchBattleIdPlayerList.GetEnumerator())
+        Int32 num1 = 0;
+        using (List<Int32>.Enumerator enumerator = _matchBattleIdPlayerList.GetEnumerator())
         {
             while (enumerator.MoveNext())
             {
-                int current = enumerator.Current;
+                Int32 current = enumerator.Current;
                 if (num1 != current)
                 {
                     Debug.LogWarning("This Battle, player index and id not the same. Please be careful.");
@@ -2687,7 +2688,7 @@ public class BattleHUD : UIScene
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.GameOver));
     }
 
-    private void SendAutoAttackCommand(int playerIndex)
+    private void SendAutoAttackCommand(Int32 playerIndex)
     {
         BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[playerIndex];
         CMD_DATA cmd = btlData.cmd[0];
@@ -2701,7 +2702,7 @@ public class BattleHUD : UIScene
         CurrentPlayerIndex = -1;
     }
 
-    private CommandDetail ProcessCommand(int target, CursorGroup cursor)
+    private CommandDetail ProcessCommand(Int32 target, CursorGroup cursor)
     {
         CommandDetail commandDetail = new CommandDetail
         {
@@ -2715,13 +2716,13 @@ public class BattleHUD : UIScene
 
         if (commandType == CharacterCommandType.Ability)
         {
-            int abilityId = BattleCommands.Commands[commandDetail.CommandId].Abilities[_currentSubMenuIndex];
-            commandDetail.SubId = (uint)PatchAbility(abilityId);
+            Int32 abilityId = BattleCommands.Commands[commandDetail.CommandId].Abilities[_currentSubMenuIndex];
+            commandDetail.SubId = (UInt32)PatchAbility(abilityId);
         }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
         {
-            int num2 = _itemIdList[_currentSubMenuIndex];
-            commandDetail.SubId = (uint)num2;
+            Int32 num2 = _itemIdList[_currentSubMenuIndex];
+            commandDetail.SubId = (UInt32)num2;
         }
 
         commandDetail.TargetId = 0;
@@ -2729,7 +2730,7 @@ public class BattleHUD : UIScene
         switch (cursor)
         {
             case CursorGroup.Individual:
-                commandDetail.TargetId = (ushort)(1 << target);
+                commandDetail.TargetId = (UInt16)(1 << target);
                 break;
             case CursorGroup.AllPlayer:
                 commandDetail.TargetId = 15;
@@ -2738,11 +2739,11 @@ public class BattleHUD : UIScene
                 commandDetail.TargetId = 240;
                 break;
             case CursorGroup.All:
-                commandDetail.TargetId = byte.MaxValue;
+                commandDetail.TargetId = Byte.MaxValue;
                 break;
         }
 
-        commandDetail.TargetType = (uint)GetSelectMode(cursor);
+        commandDetail.TargetType = (UInt32)GetSelectMode(cursor);
         return commandDetail;
     }
 
@@ -2779,7 +2780,7 @@ public class BattleHUD : UIScene
         playerDetailHud.TranceBlink = false;
     }
 
-    private command_tags GetCommandFromCommandIndex(CommandMenu commandIndex, int playerIndex)
+    private command_tags GetCommandFromCommandIndex(CommandMenu commandIndex, Int32 playerIndex)
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[playerIndex];
         Int32 presetId = FF9StateSystem.Common.FF9.party.member[btl.bi.line_no].info.menu_type;
@@ -2802,7 +2803,7 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetCommandVisibility(bool isVisible, bool forceCursorMemo)
+    private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)
     {
         GameObject go = _commandDetailHUD.Attack;
         SetPartySwapButtonActive(isVisible);
@@ -2813,7 +2814,7 @@ public class BattleHUD : UIScene
             {
                 _commandDetailHUD.Self.SetActive(true);
                 ButtonGroupState.RemoveCursorMemorize(CommandGroupButton);
-                if (_commandCursorMemorize.ContainsKey(CurrentPlayerIndex) && (long)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
+                if (_commandCursorMemorize.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
                     go = _commandDetailHUD.GetGameObjectFromCommand(_commandCursorMemorize[CurrentPlayerIndex]);
 
                 ButtonGroupState.SetCursorMemorize(go.GetComponent<ButtonGroupState>().enabled
@@ -2822,7 +2823,7 @@ public class BattleHUD : UIScene
             }
             else
             {
-                if (_commandCursorMemorize.ContainsKey(CurrentPlayerIndex) && (long)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
+                if (_commandCursorMemorize.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
                     go = _commandDetailHUD.GetGameObjectFromCommand(_commandCursorMemorize[CurrentPlayerIndex]);
                 ButtonGroupState.ActiveButton = !go.GetComponent<ButtonGroupState>().enabled ? _commandDetailHUD.Attack : go;
             }
@@ -2838,13 +2839,13 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetItemPanelVisibility(bool isVisible, bool forceCursorMemo)
+    private void SetItemPanelVisibility(Boolean isVisible, Boolean forceCursorMemo)
     {
         if (isVisible)
         {
             ItemPanel.SetActive(true);
             ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
-            if (_itemCursorMemorize.ContainsKey(CurrentPlayerIndex) && (long)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
+            if (_itemCursorMemorize.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
                 _itemScrollList.JumpToIndex(_itemCursorMemorize[CurrentPlayerIndex], true);
             else
                 _itemScrollList.JumpToIndex(0, false);
@@ -2859,16 +2860,16 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetAbilityPanelVisibility(bool isVisible, bool forceCursorMemo)
+    private void SetAbilityPanelVisibility(Boolean isVisible, Boolean forceCursorMemo)
     {
         if (isVisible)
         {
             if (!AbilityPanel.activeSelf)
             {
                 AbilityPanel.SetActive(true);
-                Dictionary<int, int> dictionary = _currentCommandIndex != CommandMenu.Ability1 ? _ability2CursorMemorize : _ability1CursorMemorize;
+                Dictionary<Int32, Int32> dictionary = _currentCommandIndex != CommandMenu.Ability1 ? _ability2CursorMemorize : _ability1CursorMemorize;
                 ButtonGroupState.RemoveCursorMemorize(AbilityGroupButton);
-                if (dictionary.ContainsKey(CurrentPlayerIndex) && (long)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
+                if (dictionary.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
                     _abilityScrollList.JumpToIndex(dictionary[CurrentPlayerIndex], true);
                 else
                     _abilityScrollList.JumpToIndex(0, true);
@@ -2892,12 +2893,12 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetTargetVisibility(bool isVisible)
+    private void SetTargetVisibility(Boolean isVisible)
     {
         if (isVisible)
         {
-            byte cursor = 0;
-            byte subMode = 0;
+            Byte cursor = 0;
+            Byte subMode = 0;
             _defaultTargetCursor = 0;
             _defaultTargetDead = 0;
             _targetDead = 0;
@@ -2948,7 +2949,7 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetTargetAvalability(byte cursor)
+    private void SetTargetAvalability(Byte cursor)
     {
         _targetCursor = cursor;
         if (cursor == 0)
@@ -3030,13 +3031,13 @@ public class BattleHUD : UIScene
 
     private void SetTargetDefault()
     {
-        int index1 = 0;
-        int index2 = 4;
+        Int32 index1 = 0;
+        Int32 index2 = 4;
         if (_targetDead == 0)
         {
             for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
             {
-                int num = 0;
+                Int32 num = 0;
                 while (1 << num != btl.btl_id)
                     ++num;
 
@@ -3072,7 +3073,7 @@ public class BattleHUD : UIScene
             else
             {
                 //int num = HonoluluBattleMain.EnemyStartIndex;
-                int firstIndex;
+                Int32 firstIndex;
                 if (_defaultTargetDead != 0)
                 {
                     firstIndex = GetDead(false);
@@ -3097,7 +3098,7 @@ public class BattleHUD : UIScene
             if (_targetCursor != 13)
                 return;
 
-            int currentPlayerIndex = CurrentBattlePlayerIndex;
+            Int32 currentPlayerIndex = CurrentBattlePlayerIndex;
             ButtonGroupState.SetCursorStartSelect(_targetHudList[currentPlayerIndex].Self, TargetGroupButton);
             _currentTargetIndex = currentPlayerIndex;
             ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
@@ -3106,8 +3107,8 @@ public class BattleHUD : UIScene
 
     private void SetTargetHelp()
     {
-        string str1 = string.Empty;
-        bool flag = _targetCursor < 6 || _targetCursor > 12;
+        String str1 = String.Empty;
+        Boolean flag = _targetCursor < 6 || _targetCursor > 12;
         switch (_targetCursor)
         {
             case 0:
@@ -3171,8 +3172,8 @@ public class BattleHUD : UIScene
             }
         }
 
-        int index1 = 0;
-        int index2 = 4;
+        Int32 index1 = 0;
+        Int32 index2 = 4;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.btl_id == 0 || btl.bi.target == 0)
@@ -3181,7 +3182,7 @@ public class BattleHUD : UIScene
             if (btl.bi.player != 0)
             {
                 TargetHUD targetHud = _targetHudList[index1];
-                string str2 = !flag ? string.Empty : btl_util.getPlayerPtr(btl).name;
+                String str2 = !flag ? String.Empty : btl_util.getPlayerPtr(btl).name;
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = str1 + "\n" + str2;
                 ++index1;
@@ -3189,8 +3190,8 @@ public class BattleHUD : UIScene
             else
             {
                 TargetHUD targetHud = _targetHudList[index2];
-                float additionalWidth = 0.0f;
-                string str2 = !flag ? string.Empty : Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(btl_util.getEnemyPtr(btl).et.name, ref additionalWidth);
+                Single additionalWidth = 0.0f;
+                String str2 = !flag ? String.Empty : Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(btl_util.getEnemyPtr(btl).et.name, ref additionalWidth);
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = str1 + "\n" + str2;
                 ++index2;
@@ -3198,14 +3199,14 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetHelpMessageVisibility(bool active)
+    private void SetHelpMessageVisibility(Boolean active)
     {
         if (!ButtonGroupState.HelpEnabled)
             return;
         Singleton<HelpDialog>.Instance.gameObject.SetActive(active && (CommandPanel.activeSelf || ItemPanel.activeSelf || AbilityPanel.activeSelf || TargetPanel.activeSelf));
     }
 
-    private void SetHudVisibility(bool active)
+    private void SetHudVisibility(Boolean active)
     {
         if (_hidingHud != active)
             return;
@@ -3251,14 +3252,14 @@ public class BattleHUD : UIScene
         }
     }
 
-    public bool FF9BMenu_IsEnable()
+    public Boolean FF9BMenu_IsEnable()
     {
         return _commandEnable;
     }
 
-    public static bool ForceNextTurn;
+    public static Boolean ForceNextTurn;
 
-    public bool FF9BMenu_IsEnableAtb()
+    public Boolean FF9BMenu_IsEnableAtb()
     {
         if (!IsNativeEnableAtb())
             return false;
@@ -3281,21 +3282,21 @@ public class BattleHUD : UIScene
         return false;
     }
 
-    internal bool IsNativeEnableAtb()
+    internal Boolean IsNativeEnableAtb()
     {
         if (!_commandEnable)
             return false;
 
-        if ((long)FF9StateSystem.Settings.cfg.atb != 1L)
+        if ((Int64)FF9StateSystem.Settings.cfg.atb != 1L)
             return true;
 
         if (_hidingHud)
-            return CurrentPlayerIndex == -1 || _currentButtonGroup == CommandGroupButton || _currentButtonGroup == string.Empty;
+            return CurrentPlayerIndex == -1 || _currentButtonGroup == CommandGroupButton || _currentButtonGroup == String.Empty;
 
-        return CurrentPlayerIndex == -1 || ButtonGroupState.ActiveGroup == CommandGroupButton || ButtonGroupState.ActiveGroup == string.Empty;
+        return CurrentPlayerIndex == -1 || ButtonGroupState.ActiveGroup == CommandGroupButton || ButtonGroupState.ActiveGroup == String.Empty;
     }
 
-    public void FF9BMenu_EnableMenu(bool active)
+    public void FF9BMenu_EnableMenu(Boolean active)
     {
         if (PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
             return;
@@ -3327,11 +3328,11 @@ public class BattleHUD : UIScene
         }
     }
 
-    public void FF9BMenu_Enable(bool enable)
+    public void FF9BMenu_Enable(Boolean enable)
     {
     }
 
-    private int PatchAbility(int id)
+    private Int32 PatchAbility(Int32 id)
     {
         if (AbilCarbuncle == id)
         {
@@ -3350,18 +3351,18 @@ public class BattleHUD : UIScene
         }
         else if (AbilFenril == id)
         {
-            byte num = FF9StateSystem.Common.FF9.party.member[FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].bi.line_no].equip[4];
+            Byte num = FF9StateSystem.Common.FF9.party.member[FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].bi.line_no].equip[4];
             id += num != 222 ? 0 : 1;
         }
         return id;
     }
 
-    private ushort GetDead(bool player)
+    private UInt16 GetDead(Boolean player)
     {
-        ushort num = 0;
+        UInt16 num = 0;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
-            if (btlData.bi.target == 0 || ((int)btlData.stat.cur & 256) == 0)
+            if (btlData.bi.target == 0 || ((Int32)btlData.stat.cur & 256) == 0)
                 continue;
 
             if (player && btlData.bi.player != 0 || !player && btlData.bi.player == 0)
@@ -3369,12 +3370,12 @@ public class BattleHUD : UIScene
 
             ++num;
         }
-        return (ushort)CurrentBattlePlayerIndex;
+        return (UInt16)CurrentBattlePlayerIndex;
     }
 
-    private static int GetFirstPlayer()
+    private static Int32 GetFirstPlayer()
     {
-        int num = -1;
+        Int32 num = -1;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
             if (btlData.bi.player != 0)
@@ -3385,9 +3386,9 @@ public class BattleHUD : UIScene
         return num;
     }
 
-    private static int GetFirstEnemy()
+    private static Int32 GetFirstEnemy()
     {
-        int num = -1;
+        Int32 num = -1;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
             if (btlData.bi.player == 0)
@@ -3408,43 +3409,43 @@ public class BattleHUD : UIScene
         return null;
     }
 
-    public void ItemRequest(int id)
+    public void ItemRequest(Int32 id)
     {
         _needItemUpdate = true;
     }
 
-    public void ItemUse(int id)
-    {
-        if (ff9item.FF9Item_Remove(id, 1) == 0)
-            return;
-        _needItemUpdate = true;
-    }
-
-    public void ItemUnuse(int id)
-    {
-        _needItemUpdate = true;
-    }
-
-    public void ItemRemove(int id)
+    public void ItemUse(Int32 id)
     {
         if (ff9item.FF9Item_Remove(id, 1) == 0)
             return;
         _needItemUpdate = true;
     }
 
-    public void ItemAdd(int id)
+    public void ItemUnuse(Int32 id)
+    {
+        _needItemUpdate = true;
+    }
+
+    public void ItemRemove(Int32 id)
+    {
+        if (ff9item.FF9Item_Remove(id, 1) == 0)
+            return;
+        _needItemUpdate = true;
+    }
+
+    public void ItemAdd(Int32 id)
     {
         if (ff9item.FF9Item_Add(id, 1) == 0)
             return;
         _needItemUpdate = true;
     }
 
-    private bool IsEnableInput(BTL_DATA cur)
+    private Boolean IsEnableInput(BTL_DATA cur)
     {
         return cur != null && cur.cur.hp != 0 && (!btl_stat.CheckStatus(cur, 1107434755U) && (battle.btl_bonus.member_flag & 1 << cur.bi.line_no) != 0);
     }
 
-    private int GetSelectMode(CursorGroup cursor)
+    private Int32 GetSelectMode(CursorGroup cursor)
     {
         if (_targetCursor == 9 || _targetCursor == 10 || _targetCursor == 11)
             return 2;
@@ -3458,7 +3459,7 @@ public class BattleHUD : UIScene
             if (btlData.bi.target == 0)
                 continue;
 
-            int index = 0;
+            Int32 index = 0;
             while (1 << index != btlData.btl_id)
                 ++index;
 
@@ -3474,7 +3475,7 @@ public class BattleHUD : UIScene
 
     private void ClearModelPointer()
     {
-        using (List<int>.Enumerator enumerator = _targetIndexList.GetEnumerator())
+        using (List<Int32>.Enumerator enumerator = _targetIndexList.GetEnumerator())
         {
             while (enumerator.MoveNext())
                 Singleton<PointerManager>.Instance.RemovePointerFromGameObject(modelButtonManager.GetGameObject(enumerator.Current));
@@ -3482,10 +3483,10 @@ public class BattleHUD : UIScene
         _targetIndexList.Clear();
     }
 
-    private void PointToModel(CursorGroup selectType, int targetIndex = 0)
+    private void PointToModel(CursorGroup selectType, Int32 targetIndex = 0)
     {
         ClearModelPointer();
-        bool isBlink = false;
+        Boolean isBlink = false;
         switch (selectType)
         {
             case CursorGroup.Individual:
@@ -3513,7 +3514,7 @@ public class BattleHUD : UIScene
                 break;
         }
 
-        foreach (int index in _targetIndexList)
+        foreach (Int32 index in _targetIndexList)
         {
             GameObject obj = modelButtonManager.GetGameObject(index);
             Singleton<PointerManager>.Instance.PointerDepth = 0;
@@ -3575,7 +3576,7 @@ public class BattleHUD : UIScene
             if (_cursorType == CursorGroup.AllPlayer)
             {
                 List<GameObject> goList = new List<GameObject>();
-                for (int index = 0; index < _playerCount; ++index)
+                for (Int32 index = 0; index < _playerCount; ++index)
                 {
                     if (_currentCharacterHp[index] != ParameterStatus.Empty || _targetDead != 0)
                         goList.Add(_targetHudList[index].Self);
@@ -3585,7 +3586,7 @@ public class BattleHUD : UIScene
             else if (_cursorType == CursorGroup.AllEnemy)
             {
                 List<GameObject> goList = new List<GameObject>();
-                for (int index = 0; index < _enemyCount; ++index)
+                for (Int32 index = 0; index < _enemyCount; ++index)
                 {
                     if (!_currentEnemyDieState[index] || _targetDead != 0)
                         goList.Add(_targetHudList[index + HonoluluBattleMain.EnemyStartIndex].Self);
@@ -3625,7 +3626,7 @@ public class BattleHUD : UIScene
         SetCommandVisibility(true, false);
     }
 
-    public void SetPartySwapButtonActive(bool isActive)
+    public void SetPartySwapButtonActive(Boolean isActive)
     {
         _partyDetail.SetPartySwapButtonActive(isActive);
     }
@@ -3662,7 +3663,7 @@ public class BattleHUD : UIScene
 
     public void ForceClearReadyQueue()
     {
-        for (int index = ReadyQueue.Count - 1; index >= 0; --index)
+        for (Int32 index = ReadyQueue.Count - 1; index >= 0; --index)
         {
             //BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[ReadyQueue[index]];
             if (InputFinishList.Contains(ReadyQueue[index]))
@@ -3671,11 +3672,11 @@ public class BattleHUD : UIScene
         }
     }
 
-    public void VerifyTarget(int modelIndex)
+    public void VerifyTarget(Int32 modelIndex)
     {
         if (_hidingHud || !_commandEnable || _cursorType != CursorGroup.Individual)
             return;
-        int index = modelIndex >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(modelIndex) + 4 : _matchBattleIdPlayerList.IndexOf(modelIndex);
+        Int32 index = modelIndex >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(modelIndex) + 4 : _matchBattleIdPlayerList.IndexOf(modelIndex);
         if (index == -1)
             return;
         FF9Sfx.FF9SFX_Play(103);
@@ -3684,7 +3685,7 @@ public class BattleHUD : UIScene
         CheckDoubleCast(modelIndex, CursorGroup.Individual);
     }
 
-    private void SetTarget(int battleIndex)
+    private void SetTarget(Int32 battleIndex)
     {
         if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
@@ -3694,9 +3695,9 @@ public class BattleHUD : UIScene
         SetIdle();
     }
 
-    private void ValidateDefaultTarget(ref int firstIndex)
+    private void ValidateDefaultTarget(ref Int32 firstIndex)
     {
-        for (int index = firstIndex; index < _targetHudList.Count; ++index)
+        for (Int32 index = firstIndex; index < _targetHudList.Count; ++index)
         {
             TargetHUD targetHud = _targetHudList[index];
             if (targetHud.Self.activeSelf && targetHud.NameLabel.color != FF9TextTool.Gray)
@@ -3779,7 +3780,7 @@ public class BattleHUD : UIScene
             AllEnemyButton = buttons.GetChild(1);
         }
 
-        public void SetActive(bool value)
+        public void SetActive(Boolean value)
         {
             AllEnemyButton.SetActive(value);
             AllPlayerButton.SetActive(value);
@@ -3816,7 +3817,7 @@ public class BattleHUD : UIScene
             AtbCaption.SetActive(value);
         }
 
-        public void SetBlink(bool value)
+        public void SetBlink(Boolean value)
         {
             foreach (PlayerDetailHUD current in List)
             {
@@ -3907,7 +3908,7 @@ public class BattleHUD : UIScene
             GetSubModels(BadStatusPanel, BadStatusHudList);
         }
 
-        public void SetActive(bool value)
+        public void SetActive(Boolean value)
         {
             HpStatusPanel.SetActive(value);
             MpStatusPanel.SetActive(value);
@@ -4057,11 +4058,11 @@ public class BattleHUD : UIScene
 
     public class InfoVal
     {
-        public int inc_val;
-        public int disp_val;
-        public int req_val;
-        public int anim_frm;
-        public byte pad;
+        public Int32 inc_val;
+        public Int32 disp_val;
+        public Int32 req_val;
+        public Int32 anim_frm;
+        public Byte pad;
 
         public InfoVal()
         {
@@ -4070,8 +4071,8 @@ public class BattleHUD : UIScene
 
     public class BattleItemListData : ListDataTypeBase
     {
-        public int Id;
-        public int Count;
+        public Int32 Id;
+        public Int32 Count;
 
         public BattleItemListData()
         {
@@ -4080,7 +4081,7 @@ public class BattleHUD : UIScene
 
     public class BattleAbilityListData : ListDataTypeBase
     {
-        public int Id;
+        public Int32 Id;
 
         public BattleAbilityListData()
         {
@@ -4294,7 +4295,7 @@ public class BattleHUD : UIScene
             TranceHighlightSprite = go.GetChild(4).GetChild(0).GetChild(0).GetComponent<UISprite>();
         }
 
-        public bool ATBBlink
+        public Boolean ATBBlink
         {
             get { return _atbBlink; }
             set
@@ -4305,7 +4306,7 @@ public class BattleHUD : UIScene
             }
         }
 
-        public bool TranceBlink
+        public Boolean TranceBlink
         {
             get { return _tranceBlink; }
             set
@@ -4354,7 +4355,7 @@ public class BattleHUD : UIScene
             SpriteList = new UISprite[1, 8];
 
             GameObject child = go.GetChild(0);
-            for (int i = 0; i < 8; i++)
+            for (Int32 i = 0; i < 8; i++)
                 SpriteList[0, i] = child.GetChild(i).GetComponent<UISprite>();
         }
     }
@@ -4407,11 +4408,11 @@ public class BattleHUD : UIScene
 
     private class MagicSwordCondition
     {
-        public bool IsViviExist;
-        public bool IsViviDead;
-        public bool IsSteinerMini;
+        public Boolean IsViviExist;
+        public Boolean IsViviDead;
+        public Boolean IsSteinerMini;
 
-        public bool Changed(MagicSwordCondition other)
+        public Boolean Changed(MagicSwordCondition other)
         {
             return IsViviExist != other.IsViviExist || IsViviDead != other.IsViviDead || IsSteinerMini != other.IsSteinerMini;
         }

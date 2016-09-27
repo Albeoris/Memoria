@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Memoria
 {
-    internal sealed class ActionComparer : IEqualityComparer<KeyValuePair<string, AA_DATA>>
+    internal sealed class ActionComparer : IEqualityComparer<KeyValuePair<String, AA_DATA>>
     {
         public static readonly ActionComparer Instance = new ActionComparer();
 
-        public static Int32 CalcDiff(KeyValuePair<string, AA_DATA> item, IEnumerable<KeyValuePair<string, AA_DATA>> other)
+        public static Int32 CalcDiff(KeyValuePair<String, AA_DATA> item, IEnumerable<KeyValuePair<String, AA_DATA>> other)
         {
             Int32 total = 0;
-            string xn = item.Key;
+            String xn = item.Key;
             AA_DATA x = item.Value;
-            foreach (KeyValuePair<string, AA_DATA> data in other)
+            foreach (KeyValuePair<String, AA_DATA> data in other)
             {
                 AA_DATA y = data.Value;
                 if (x == y)
@@ -58,7 +58,7 @@ namespace Memoria
             return total;
         }
 
-        public bool Equals(KeyValuePair<string, AA_DATA> x, KeyValuePair<string, AA_DATA> y)
+        public Boolean Equals(KeyValuePair<String, AA_DATA> x, KeyValuePair<String, AA_DATA> y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null)) return false;
@@ -68,7 +68,7 @@ namespace Memoria
                 CmdInfoEqualityComparer.Instance.Equals(x.Value.Info, y.Value.Info) && BtlRefEqualityComparer.Instance.Equals(x.Value.Ref, y.Value.Ref) && x.Value.Category == y.Value.Category && x.Value.AddNo == y.Value.AddNo && x.Value.MP == y.Value.MP && x.Value.Type == y.Value.Type && x.Value.Vfx2 == y.Value.Vfx2;
         }
 
-        public int GetHashCode(KeyValuePair<string, AA_DATA> obj)
+        public Int32 GetHashCode(KeyValuePair<String, AA_DATA> obj)
         {
             unchecked
             {

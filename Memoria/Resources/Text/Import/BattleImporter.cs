@@ -9,7 +9,7 @@ namespace Memoria
         private String TypeName => nameof(BattleImporter);
 
         private volatile Boolean _initialized;
-        private readonly Dictionary<Int32, String[]> _cache = new Dictionary<int, string[]>();
+        private readonly Dictionary<Int32, String[]> _cache = new Dictionary<Int32, String[]>();
 
         public Task InitializationTask { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Memoria
                 String[] text = EmbadedSentenseLoader.LoadSentense(path);
                 if (text != null)
                 {
-                    for (int i = 0; i < text.Length; i++)
+                    for (Int32 i = 0; i < text.Length; i++)
                     {
                         String key = BattleFormatter.GetKey(text[i]);
                         String value;

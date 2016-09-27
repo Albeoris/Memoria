@@ -92,7 +92,7 @@ namespace Assets.Scripts.Common
             return true;
         }
 
-        public static void ReplaceNow(string nextScene)
+        public static void ReplaceNow(String nextScene)
         {
             MemoriaExport();
             if (nextScene != "MainMenu")
@@ -110,13 +110,13 @@ namespace Assets.Scripts.Common
             Application.LoadLevel(Instance.NextScene);
             Instance.LastScene = Instance.CurrentScene;
             Instance.CurrentScene = Instance.NextScene;
-            Instance.PendingCurrentScene = string.Empty;
-            Instance.PendingNextScene = string.Empty;
-            Instance.NextScene = string.Empty;
+            Instance.PendingCurrentScene = String.Empty;
+            Instance.PendingNextScene = String.Empty;
+            Instance.NextScene = String.Empty;
             UnityEngine.Debug.Log("---------- Current Scene : " + Instance.CurrentScene + " ----------");
         }
 
-        public static void Replace(string nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, bool needFade = true)
+        public static void Replace(String nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
         {
             if (nextScene != "MainMenu")
             {
@@ -142,7 +142,7 @@ namespace Assets.Scripts.Common
             }
         }
 
-        public static void ReplacePending(SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, bool needFade = true)
+        public static void ReplacePending(SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
         {
             Instance.NextScene = Instance.PendingNextScene;
             Instance.Transition = transition;
@@ -165,7 +165,7 @@ namespace Assets.Scripts.Common
         }
 
         // ReSharper disable once UnusedMember.Local
-        private void OnApplicationFocus(bool focusStatus)
+        private void OnApplicationFocus(Boolean focusStatus)
         {
             hasFocus = focusStatus;
         }
@@ -175,8 +175,8 @@ namespace Assets.Scripts.Common
             base.Awake();
 
             abrColor = new Color32[2];
-            abrColor[0] = new Color32(0, 0, 0, byte.MaxValue);
-            abrColor[1] = new Color32(0, 0, 0, byte.MaxValue);
+            abrColor[0] = new Color32(0, 0, 0, Byte.MaxValue);
+            abrColor[1] = new Color32(0, 0, 0, Byte.MaxValue);
             ClearFadeColor();
             String loadedLevelName = Application.loadedLevelName;
             LastScene = String.Empty;
@@ -250,7 +250,7 @@ namespace Assets.Scripts.Common
         }
 
         [DebuggerHidden]
-        private IEnumerator FadeIterator(float fadeOutTime, float fadeInTime, Color fadeColor, bool needChangeScene = true)
+        private IEnumerator FadeIterator(Single fadeOutTime, Single fadeInTime, Color fadeColor, Boolean needChangeScene = true)
         {
             IsFading = true;
             IsReady = false;
@@ -349,13 +349,13 @@ namespace Assets.Scripts.Common
             SetTargetFrameRateForCurrentScene();
         }
 
-        private void Replace(bool needFade)
+        private void Replace(Boolean needFade)
         {
             NeedFade = needFade;
             if (IsFading)
                 return;
 
-            float num = 1f / FF9StateSystem.Settings.FastForwardFactor;
+            Single num = 1f / FF9StateSystem.Settings.FastForwardFactor;
             IEnumerator enumerator;
             switch (Transition)
             {
@@ -373,13 +373,13 @@ namespace Assets.Scripts.Common
             StartCoroutine(enumerator);
         }
 
-        public float GetFadeDuration()
+        public Single GetFadeDuration()
         {
             return NeedFade ? DefaultFadeTime : 0.01f;
         }
 
         // ReSharper disable once UnusedParameter.Global
-        public void Swirl(string nextScene, SceneTransition transition)
+        public void Swirl(String nextScene, SceneTransition transition)
         {
             if (IsFading)
                 return;
@@ -388,7 +388,7 @@ namespace Assets.Scripts.Common
         }
 
         [DebuggerHidden]
-        private IEnumerator SwirlIterator(string nextScene)
+        private IEnumerator SwirlIterator(String nextScene)
         {
             PendingCurrentScene = CurrentScene;
             PendingNextScene = nextScene;
@@ -411,7 +411,7 @@ namespace Assets.Scripts.Common
             LastScene = CurrentScene;
             CurrentScene = "SwirlScene";
             UnityEngine.Debug.Log("---------- Current Scene : " + Instance.CurrentScene + " ----------");
-            NextScene = string.Empty;
+            NextScene = String.Empty;
             yield return new WaitForEndOfFrame();
 
             Resources.UnloadUnusedAssets();
@@ -424,14 +424,14 @@ namespace Assets.Scripts.Common
         {
             SetFadeMode(mode);
             String propertyName = "_FadeColor_ABR" + (fadeMode + 1);
-            abrColor[(int)fadeMode] = target;
+            abrColor[(Int32)fadeMode] = target;
             Shader.SetGlobalColor(propertyName, target);
         }
 
-        public static void ToggleFadeAll(bool isEnable)
+        public static void ToggleFadeAll(Boolean isEnable)
         {
             if (isEnable)
-                Shader.SetGlobalInt("_FadeMode", (int)fadeMode);
+                Shader.SetGlobalInt("_FadeMode", (Int32)fadeMode);
             else
                 Shader.SetGlobalInt("_FadeMode", -1);
         }
@@ -442,7 +442,7 @@ namespace Assets.Scripts.Common
             if (PersistenSingleton<EventEngine>.Instance.IsEventContextValid() && FF9StateSystem.Common.FF9.fldMapNo == 60 && (PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(6357) == 5 && mode == FadeMode.Add) && FF9StateSystem.Settings.IsFastForward || PersistenSingleton<EventEngine>.Instance.IsEventContextValid() && FF9StateSystem.Common.FF9.fldMapNo == 1661 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6930 && mode == FadeMode.Add)
                 Instance.StartCoroutine(SetGlobalFade());
             else
-                Shader.SetGlobalInt("_FadeMode", (int)mode);
+                Shader.SetGlobalInt("_FadeMode", (Int32)mode);
         }
 
         [DebuggerHidden]
@@ -451,7 +451,7 @@ namespace Assets.Scripts.Common
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
-            Shader.SetGlobalInt("_FadeMode", (int)fadeMode);
+            Shader.SetGlobalInt("_FadeMode", (Int32)fadeMode);
         }
 
         public static void ClearFadeColor()
@@ -460,45 +460,45 @@ namespace Assets.Scripts.Common
             Shader.SetGlobalColor("_FadeColor_ABR" + 2, new Color(0.0f, 0.0f, 0.0f));
         }
 
-        public static void InitFade(FadeMode mode, int frame, Color32 target)
+        public static void InitFade(FadeMode mode, Int32 frame, Color32 target)
         {
             _curFrame = 0.0f;
             _targetFrame = frame;
             _targetColor = target;
             SetFadeMode(mode);
-            _prevColor = abrColor[(int)fadeMode];
+            _prevColor = abrColor[(Int32)fadeMode];
         }
 
         public static void ServiceFade()
         {
-            if (_curFrame++ > (double)_targetFrame)
+            if (_curFrame++ > (Double)_targetFrame)
                 return;
 
             String propertyName = "_FadeColor_ABR" + (fadeMode + 1);
             Color32 color32 = Color32.Lerp(_prevColor, _targetColor, _curFrame / _targetFrame);
-            abrColor[(int)fadeMode] = color32;
+            abrColor[(Int32)fadeMode] = color32;
             Shader.SetGlobalColor(propertyName, color32);
         }
 
-        public static void FF9Wipe_FadeInEx(int frame)
+        public static void FF9Wipe_FadeInEx(Int32 frame)
         {
             FadeEventSetColor(FadeMode.Sub, Color.white);
             InitFade(FadeMode.Sub, frame, Color.black);
         }
 
-        public static void FF9Wipe_FadeOutEx(int frame)
+        public static void FF9Wipe_FadeOutEx(Int32 frame)
         {
             FadeEventSetColor(FadeMode.Sub, Color.black);
             InitFade(FadeMode.Sub, frame, Color.white);
         }
 
-        public static void FF9Wipe_WhiteInEx(int frame)
+        public static void FF9Wipe_WhiteInEx(Int32 frame)
         {
             FadeEventSetColor(FadeMode.Add, Color.white);
             InitFade(FadeMode.Add, frame, Color.black);
         }
 
-        public static void FF9Wipe_WhiteOutEx(int frame)
+        public static void FF9Wipe_WhiteOutEx(Int32 frame)
         {
             FadeEventSetColor(FadeMode.Add, Color.black);
             InitFade(FadeMode.Add, frame, Color.white);

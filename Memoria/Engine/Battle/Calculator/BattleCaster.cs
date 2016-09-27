@@ -15,17 +15,17 @@ namespace Memoria
 
         public void SetMagicAttack()
         {
-            _context.Attack = (short)(Magic + Comn.random16() % (1 + (Level + Magic >> 3)));
+            _context.Attack = (Int16)(Magic + Comn.random16() % (1 + (Level + Magic >> 3)));
         }
 
         public void SetPhisicalAttack()
         {
-            _context.Attack = (short)(Strength + Comn.random16() % (1 + (Level + Strength >> 2)));
+            _context.Attack = (Int16)(Strength + Comn.random16() % (1 + (Level + Strength >> 2)));
         }
 
         public void SetLowPhisicalAttack()
         {
-            _context.Attack = (short)(Strength + Comn.random16() % (1 + (Level + Strength >> 3)));
+            _context.Attack = (Int16)(Strength + Comn.random16() % (1 + (Level + Strength >> 3)));
         }
 
         public void PhysicalPenaltyAndBonusAttack()
@@ -36,7 +36,7 @@ namespace Memoria
             }
             else if (IsUnderStatus(BattleStatus.Berserk | BattleStatus.Trans))
             {
-                _context.Attack = (short)(_context.Attack * 3 >> 1);
+                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
             }
         }
 

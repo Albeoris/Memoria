@@ -38,7 +38,7 @@ namespace Memoria
             Int32 line = 0;
             while (true)
             {
-                int value = sr.Read();
+                Int32 value = sr.Read();
                 if (value < 0)
                 {
                     if (sb.Length == 0)
@@ -47,7 +47,7 @@ namespace Memoria
                     throw Exceptions.CreateException("Неожиданный конец потока.");
                 }
 
-                char ch = (char)value;
+                Char ch = (Char)value;
                 switch (ch)
                 {
                     case '\\':
@@ -82,7 +82,7 @@ namespace Memoria
                                     if (sb.Length > 4)
                                         result.Prefix = sb.ToString(0, sb.Length - 4);
 
-                                    index = int.Parse(sb.ToString(sb.Length - 4, 4), CultureInfo.InvariantCulture);
+                                    index = Int32.Parse(sb.ToString(sb.Length - 4, 4), CultureInfo.InvariantCulture);
                                     key = false;
                                 }
                                 else
@@ -129,7 +129,7 @@ namespace Memoria
 
                         if (line > 0)
                         {
-                            for (int i = 0; i < line; i++)
+                            for (Int32 i = 0; i < line; i++)
                                 sb.Append('\n');
                             line = 0;
                         }

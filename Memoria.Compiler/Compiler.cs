@@ -33,7 +33,6 @@ namespace Memoria.Compiler
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "mscorlib.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "System.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "System.Core.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "System.Data.DataSetExtensions.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "Memoria.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "UnityEngine.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "XInputDotNetPure.dll"))

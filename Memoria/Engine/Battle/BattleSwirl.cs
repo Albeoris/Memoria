@@ -94,8 +94,8 @@ public class BattleSwirl : MonoBehaviour
 
         Int32 index = FF9StateSystem.Common.FF9.fldMapNo;
         FF9StateFieldMap ff9StateFieldMap = FF9StateSystem.Field.FF9Field.loc.map;
-        Dictionary<int, int> dictionary = FF9SndMetaData.BtlBgmMapperForFieldMap[index];
-        int currentMusicId = FF9Snd.GetCurrentMusicId();
+        Dictionary<Int32, Int32> dictionary = FF9SndMetaData.BtlBgmMapperForFieldMap[index];
+        Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
         FF9StateSystem.Battle.IsPlayFieldBGMInCurrentBattle = true;
         if (dictionary.Count == 0 || !dictionary.ContainsKey(ff9StateFieldMap.nextMapNo))
             return;
@@ -113,12 +113,12 @@ public class BattleSwirl : MonoBehaviour
     {
         Int32 index = FF9StateSystem.Common.FF9.wldMapNo;
         FF9StateWorldMap ff9StateWorldMap = FF9StateSystem.World.FF9World.map;
-        Dictionary<int, int> dictionary = FF9SndMetaData.BtlBgmMapperForWorldMap[index];
+        Dictionary<Int32, Int32> dictionary = FF9SndMetaData.BtlBgmMapperForWorldMap[index];
         Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
         if (dictionary.Count == 0 || !dictionary.ContainsKey(ff9StateWorldMap.nextMapNo))
             return;
 
-        Int32 songid = dictionary[(int)ff9StateWorldMap.nextMapNo];
+        Int32 songid = dictionary[(Int32)ff9StateWorldMap.nextMapNo];
         if (songid == currentMusicId)
             return;
 

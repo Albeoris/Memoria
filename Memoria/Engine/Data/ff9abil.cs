@@ -119,53 +119,53 @@ namespace FF9
         {
         }
 
-        public static bool FF9Abil_IsEnableSA(uint[] sa, int abil_id)
+        public static Boolean FF9Abil_IsEnableSA(UInt32[] sa, Int32 abil_id)
         {
-            int num = abil_id - 192;
+            Int32 num = abil_id - 192;
             return (sa[num >> 5] & 1 << num) != 0L;
         }
 
-        public static void FF9Abil_SetEnableSA(int slot_id, int abil_id, bool enable)
+        public static void FF9Abil_SetEnableSA(Int32 slot_id, Int32 abil_id, Boolean enable)
         {
-            uint[] numArray = FF9StateSystem.Common.FF9.player[slot_id].sa;
-            int num = abil_id - 192;
+            UInt32[] numArray = FF9StateSystem.Common.FF9.player[slot_id].sa;
+            Int32 num = abil_id - 192;
             if (enable)
-                numArray[num >> 5] |= (uint)(1 << num);
+                numArray[num >> 5] |= (UInt32)(1 << num);
             else
-                numArray[num >> 5] &= (uint)~(1 << num);
+                numArray[num >> 5] &= (UInt32)~(1 << num);
         }
 
-        public static bool FF9Abil_GetEnableSA(int slot_id, int abil_id)
+        public static Boolean FF9Abil_GetEnableSA(Int32 slot_id, Int32 abil_id)
         {
             return FF9Abil_IsEnableSA(FF9StateSystem.Common.FF9.player[slot_id].sa, abil_id);
         }
 
-        public static int FF9Abil_GetAp(int slot_id, int abil_id)
+        public static Int32 FF9Abil_GetAp(Int32 slot_id, Int32 abil_id)
         {
-            int index = FF9Abil_GetIndex(slot_id, abil_id);
+            Int32 index = FF9Abil_GetIndex(slot_id, abil_id);
             if (index < 0)
                 return -1;
             return FF9StateSystem.Common.FF9.player[slot_id].pa[index];
         }
 
-        public static int FF9Abil_SetAp(int slot_id, int abil_id, int ap)
+        public static Int32 FF9Abil_SetAp(Int32 slot_id, Int32 abil_id, Int32 ap)
         {
-            int index = FF9Abil_GetIndex(slot_id, abil_id);
+            Int32 index = FF9Abil_GetIndex(slot_id, abil_id);
             if (index < 0)
                 return -1;
-            int num = FF9StateSystem.Common.FF9.player[slot_id].pa[index];
-            FF9StateSystem.Common.FF9.player[slot_id].pa[index] = (byte)ap;
+            Int32 num = FF9StateSystem.Common.FF9.player[slot_id].pa[index];
+            FF9StateSystem.Common.FF9.player[slot_id].pa[index] = (Byte)ap;
             return num;
         }
 
-        public static int FF9Abil_ClearAp(int slot_id, int abil_id)
+        public static Int32 FF9Abil_ClearAp(Int32 slot_id, Int32 abil_id)
         {
             return FF9Abil_SetAp(slot_id, abil_id, 0);
         }
 
-        public static int FF9Abil_GetMax(int slot_id, int abil_id)
+        public static Int32 FF9Abil_GetMax(Int32 slot_id, Int32 abil_id)
         {
-            int index = FF9Abil_GetIndex(slot_id, abil_id);
+            Int32 index = FF9Abil_GetIndex(slot_id, abil_id);
             if (index < 0)
                 return 0;
 
@@ -173,7 +173,7 @@ namespace FF9
             return _FF9Abil_PaData[player.info.menu_type][index].max_ap;
         }
 
-        public static bool FF9Abil_HasAp(PLAYER play)
+        public static Boolean FF9Abil_HasAp(PLAYER play)
         {
             if ((play.category & 16) == 0 && play.info.menu_type < 8)
                 return true;
@@ -184,7 +184,7 @@ namespace FF9
             return _FF9Abil_PaData[play.info.menu_type].Any(pa => pa.max_ap > 0);
         }
 
-        public static int FF9Abil_GetIndex(int slot_id, int abil_id)
+        public static Int32 FF9Abil_GetIndex(Int32 slot_id, Int32 abil_id)
         {
             if (slot_id >= 9)
                 return -1;
@@ -194,7 +194,7 @@ namespace FF9
                 return -1;
 
             PA_DATA[] array = _FF9Abil_PaData[player.info.menu_type];
-            for (int index = 0; index < array.Length; ++index)
+            for (Int32 index = 0; index < array.Length; ++index)
             {
                 if (_FF9Abil_PaData[player.info.menu_type][index].id == abil_id)
                     return index;
@@ -203,26 +203,26 @@ namespace FF9
             return -1;
         }
 
-        public static bool FF9Abil_IsMaster(CharacterPresetId presetId, Int32 abilityId)
+        public static Boolean FF9Abil_IsMaster(CharacterPresetId presetId, Int32 abilityId)
         {
             return FF9Abil_IsMaster((Int32)presetId, abilityId);
         }
 
-        public static bool FF9Abil_IsMaster(int slot_id, int abil_id)
+        public static Boolean FF9Abil_IsMaster(Int32 slot_id, Int32 abil_id)
         {
-            int ap = FF9Abil_GetAp(slot_id, abil_id);
-            int max = FF9Abil_GetMax(slot_id, abil_id);
+            Int32 ap = FF9Abil_GetAp(slot_id, abil_id);
+            Int32 max = FF9Abil_GetMax(slot_id, abil_id);
             return ap >= 0 && max >= 0 && ap >= max;
         }
 
-        public static bool FF9Abil_SetMaster(CharacterPresetId presetId, Int32 abilityId)
+        public static Boolean FF9Abil_SetMaster(CharacterPresetId presetId, Int32 abilityId)
         {
             return FF9Abil_SetMaster((Int32)presetId, abilityId);
         }
 
-        public static bool FF9Abil_SetMaster(int slot_id, int abil_id)
+        public static Boolean FF9Abil_SetMaster(Int32 slot_id, Int32 abil_id)
         {
-            int index = FF9Abil_GetIndex(slot_id, abil_id);
+            Int32 index = FF9Abil_GetIndex(slot_id, abil_id);
             if (index < 0)
                 return false;
 
@@ -269,7 +269,7 @@ namespace FF9
                     throw new NotSupportedException($"You must set 48 abilities, but there {abilities.Length}. Any number of abilities will be available after a game stabilization."); // TODO Json, Player, SettingsState, EqupUI, ff9feqp
 
                 PA_DATA[] result = new PA_DATA[abilities.Length];
-                for (int i = 0; i < abilities.Length; i++)
+                for (Int32 i = 0; i < abilities.Length; i++)
                 {
                     CharacterAbility source = abilities[i];
                     result[i] = new PA_DATA(source.Id, source.Ap);

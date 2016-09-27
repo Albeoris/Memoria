@@ -1,11 +1,12 @@
+using System;
 using Microsoft.Win32;
 
 namespace Memoria.Patcher
 {
     public sealed class GameLocationSteamRegistryProvider
     {
-        public const string SteamRegistyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840";
-        public const string SteamGamePathTag = @"InstallLocation";
+        public const String SteamRegistyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 377840";
+        public const String SteamGamePathTag = @"InstallLocation";
 
         public static GameLocationInfo TryLoad()
         {
@@ -26,7 +27,7 @@ namespace Memoria.Patcher
                 if (registryKey == null)
                     return null;
 
-                GameLocationInfo result = new GameLocationInfo((string)registryKey.GetValue(SteamGamePathTag));
+                GameLocationInfo result = new GameLocationInfo((String)registryKey.GetValue(SteamGamePathTag));
                 result.Validate();
 
                 return result;

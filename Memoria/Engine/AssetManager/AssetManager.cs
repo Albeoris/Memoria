@@ -88,7 +88,7 @@ public static class AssetManager
     public static void ClearCache()
     {
         Caching.CleanCache();
-        using (Dictionary<string, AssetBundleRef>.Enumerator enumerator = DictAssetBundleRefs.GetEnumerator())
+        using (Dictionary<String, AssetBundleRef>.Enumerator enumerator = DictAssetBundleRefs.GetEnumerator())
         {
             while (enumerator.MoveNext())
             {

@@ -6,17 +6,17 @@ namespace Memoria
 {
     public static class Exceptions
     {
-        public static Exception CreateException(string message, params object[] args)
+        public static Exception CreateException(String message, params Object[] args)
         {
             return new Exception(String.Format(message, args));
         }
 
-        public static Exception CreateArgumentException(string paramName, string message, params object[] args)
+        public static Exception CreateArgumentException(String paramName, String message, params Object[] args)
         {
             return new ArgumentException(String.Format(message, args), paramName);
         }
 
-        public static T CheckArgumentNull<T>(T arg, string name) where T : class
+        public static T CheckArgumentNull<T>(T arg, String name) where T : class
         {
             if (ReferenceEquals(arg, null))
                 throw new ArgumentNullException(name);
@@ -24,17 +24,17 @@ namespace Memoria
             return arg;
         }
 
-        public static string CheckArgumentNullOrEmprty(string arg, string name)
+        public static String CheckArgumentNullOrEmprty(String arg, String name)
         {
             if (ReferenceEquals(arg, null))
                 throw new ArgumentNullException(name);
-            if (arg == string.Empty)
+            if (arg == String.Empty)
                 throw new ArgumentEmptyException(name);
 
             return arg;
         }
 
-        public static T CheckArgumentNullOrEmprty<T>(T arg, string name) where T : IList
+        public static T CheckArgumentNullOrEmprty<T>(T arg, String name) where T : IList
         {
             if (ReferenceEquals(arg, null))
                 throw new ArgumentNullException(name);
@@ -44,7 +44,7 @@ namespace Memoria
             return arg;
         }
 
-        public static string CheckFileNotFoundException(string fullName)
+        public static String CheckFileNotFoundException(String fullName)
         {
             CheckArgumentNullOrEmprty(fullName, "fullName");
             if (!File.Exists(fullName))
@@ -53,7 +53,7 @@ namespace Memoria
             return fullName;
         }
 
-        public static string CheckDirectoryNotFoundException(string fullName)
+        public static String CheckDirectoryNotFoundException(String fullName)
         {
             CheckArgumentNullOrEmprty(fullName, "fullName");
             if (!Directory.Exists(fullName))
@@ -62,14 +62,14 @@ namespace Memoria
             return fullName;
         }
 
-        public static T CheckArgumentOutOfRangeException<T>(T value, string name, T minValue, T maxValue) where T : IComparable<T>
+        public static T CheckArgumentOutOfRangeException<T>(T value, String name, T minValue, T maxValue) where T : IComparable<T>
         {
             if (value.CompareTo(minValue) < 0 || value.CompareTo(maxValue) > 0)
                 throw new ArgumentOutOfRangeException(name, value, $"Значение аргумента ({name} = {value}) выходит за пределы допустимого диапазона: ({minValue}~{maxValue}).");
             return value;
         }
 
-        public static T CheckReadableStream<T>(T stream, string name) where T : Stream
+        public static T CheckReadableStream<T>(T stream, String name) where T : Stream
         {
             CheckArgumentNull(stream, name);
 
@@ -83,7 +83,7 @@ namespace Memoria
             return stream;
         }
 
-        public static T CheckWritableStream<T>(T stream, string name) where T : Stream
+        public static T CheckWritableStream<T>(T stream, String name) where T : Stream
         {
             CheckArgumentNull(stream, name);
 

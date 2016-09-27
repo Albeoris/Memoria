@@ -1,4 +1,5 @@
-﻿using Memoria;
+﻿using System;
+using Memoria;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -29,11 +30,11 @@ using UnityEngine;
 [ExportedType("ÚppĦ#!!!ĜRæÀ-!!!]Q½2µ]#ĜKċĽD¨¸Wi(~ßıĠèģėó#Ļĭ_HĪÝçüæóz=ęT4?$Ď.!!!Ă÷ÉĀvċÅ§zÑHàąąĈÌĳmď¾ĩıKĒFBy0¦é¿Ĝ$ĐooãĨĸZþĉĐĒp%ð*ńńńń")]
 internal class ScrollItemKeyNavigation : MonoBehaviour
 {
-    public int ID;
-    public float Speed;
-    public bool HidePointerOnMoving;
-    public static bool IsScrollMove;
-    private float itemHeight;
+    public Int32 ID;
+    public Single Speed;
+    public Boolean HidePointerOnMoving;
+    public static Boolean IsScrollMove;
+    private Single itemHeight;
     public UIPanel ScrollPanel;
     public ScrollButton ScrollButton;
     public UIWidget VisionCheckWidget;
@@ -49,12 +50,12 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
         Speed = 24f;
     }
 
-    public void OnOtherObjectSelect(GameObject go, bool selected)
+    public void OnOtherObjectSelect(GameObject go, Boolean selected)
     {
         OnSelect(selected);
     }
 
-    private void OnSelect(bool selected)
+    private void OnSelect(Boolean selected)
     {
         if (!selected || !enabled || !(scrollView != null))
             return;
@@ -64,7 +65,7 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
         Vector3 pos = -ScrollPanel.cachedTransform.InverseTransformPoint(transform.position);
         if (!scrollView.canMoveHorizontally)
             pos.x = ScrollPanel.cachedTransform.localPosition.x;
-        pos.y = (double)pos.y <= (double)ScrollPanel.cachedTransform.localPosition.y ? ScrollPanel.cachedTransform.localPosition.y - itemHeight : ScrollPanel.cachedTransform.localPosition.y + itemHeight;
+        pos.y = (Double)pos.y <= (Double)ScrollPanel.cachedTransform.localPosition.y ? ScrollPanel.cachedTransform.localPosition.y - itemHeight : ScrollPanel.cachedTransform.localPosition.y + itemHeight;
         IsScrollMove = true;
         // ISSUE: method pointer
         SpringPanel.Begin(ScrollPanel.cachedGameObject, pos, Speed).onFinished = onScrollFinished;
@@ -129,11 +130,11 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 
     private void ChangeSelectItem()
     {
-        int childCount = ScrollPanel.transform.GetChild(0).childCount;
-        int siblingIndex = transform.GetSiblingIndex();
+        Int32 childCount = ScrollPanel.transform.GetChild(0).childCount;
+        Int32 siblingIndex = transform.GetSiblingIndex();
         if (siblingIndex > 0)
         {
-            int childIndex = siblingIndex - 1;
+            Int32 childIndex = siblingIndex - 1;
             GameObject child = ScrollPanel.gameObject.GetChild(0).GetChild(childIndex);
             while (childIndex > 0)
             {
@@ -151,7 +152,7 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
         }
         if (siblingIndex >= childCount - 2)
             return;
-        int childIndex1 = siblingIndex + 1;
+        Int32 childIndex1 = siblingIndex + 1;
         GameObject child1 = ScrollPanel.gameObject.GetChild(0).GetChild(childIndex1);
         while (childIndex1 < childCount - 1)
         {

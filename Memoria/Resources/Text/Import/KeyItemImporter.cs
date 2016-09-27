@@ -5,7 +5,7 @@ namespace Memoria
 {
     public sealed class KeyItemImporter : SingleFileImporter
     {
-        protected override string TypeName => nameof(KeyItemImporter);
+        protected override String TypeName => nameof(KeyItemImporter);
         protected override String ImportPath => ModTextResources.Import.KeyItems;
 
         protected override void ProcessEntries(TxtEntry[] entreis)

@@ -48,6 +48,7 @@ for %%p in (x64 x86) do (
   if EXIST "!targetDirectory!" (
     copy /y "%sourceFilePath%.dll" "!targetDirectory!\%sourceFileName%.dll"
     copy /y "%sourceFilePath%.pdb" "!targetDirectory!\%sourceFileName%.pdb"
+    copy /y "%sourceFilePath%.dll.mdb" "!targetDirectory!\%sourceFileName%.dll.mdb"
     echo Refreshed "!targetDirectory!\%sourceFileName%.dll"
   )
 )

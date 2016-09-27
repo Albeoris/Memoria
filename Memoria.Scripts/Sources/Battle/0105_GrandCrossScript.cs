@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                 return;
 
             UInt32 status = 1;
-            for (int i = 0; i < 32; i++, status <<= 1)
+            for (Int32 i = 0; i < 32; i++, status <<= 1)
             {
                 if (GameRandom.Next8() >> 5 != 0)
                     continue;

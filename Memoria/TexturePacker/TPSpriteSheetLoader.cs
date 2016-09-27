@@ -170,7 +170,7 @@ namespace Memoria.TexturePackerLoader
             {
                 parts = general[1].Split(';');
                 vertices = new Vector2[Int32.Parse(parts[0], CultureInfo.InvariantCulture)];
-                for (int i = 0; i < vertices.Length; i++)
+                for (Int32 i = 0; i < vertices.Length; i++)
                 {
                     Single x = Single.Parse(parts[1 + 2 * i], CultureInfo.InvariantCulture);
                     Single y = Single.Parse(parts[2 + 2 * i], CultureInfo.InvariantCulture);
@@ -183,7 +183,7 @@ namespace Memoria.TexturePackerLoader
             {
                 parts = general[2].Split(';');
                 triangleIndices = new UInt16[3 * Int32.Parse(parts[0], CultureInfo.InvariantCulture)];
-                for (int i = 0; i < triangleIndices.Length; i++)
+                for (Int32 i = 0; i < triangleIndices.Length; i++)
                     triangleIndices[i] = UInt16.Parse(parts[1 + i], CultureInfo.InvariantCulture);
             }
 

@@ -1,11 +1,13 @@
-﻿public partial class EventEngine
+﻿using System;
+
+public partial class EventEngine
 {
-    public int OperatorExtract(int op)
+    public Int32 OperatorExtract(Int32 op)
     {
-        int num1 = 0;
-        int num2 = 0;
-        int valueAtOffset = this.gCP.getValueAtOffset(-3);
-        int num3;
+        Int32 num1 = 0;
+        Int32 num2 = 0;
+        Int32 valueAtOffset = this.gCP.getValueAtOffset(-3);
+        Int32 num3;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
             num3 = this.GetSysList(valueAtOffset);
@@ -19,8 +21,8 @@
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
-        int num4 = this.eBin.getv();
-        for (int index = 0; index < 8; ++index)
+        Int32 num4 = this.eBin.getv();
+        for (Int32 index = 0; index < 8; ++index)
         {
             num1 >>= 1;
             if ((num3 & 1) != 0)
@@ -75,12 +77,12 @@
         return num1;
     }
 
-    private int OperatorExtract1(int op)
+    private Int32 OperatorExtract1(Int32 op)
     {
-        int num1 = 0;
-        int num2 = 0;
-        int valueAtOffset = this.gCP.getValueAtOffset(-2);
-        int num3;
+        Int32 num1 = 0;
+        Int32 num2 = 0;
+        Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
+        Int32 num3;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
             num3 = this.GetSysList(valueAtOffset);
@@ -95,13 +97,13 @@
         switch ((EBin.op_binary)op)
         {
             case EBin.op_binary.B_LMAX:
-                int num4 = (int)short.MinValue;
-                for (int index = 0; index < 8; ++index)
+                Int32 num4 = (Int32)Int16.MinValue;
+                for (Int32 index = 0; index < 8; ++index)
                 {
                     if ((num3 & 1) != 0)
                     {
                         this.gMemberTarget = this._objPtrList[index];
-                        int num5 = this.eBin.getv();
+                        Int32 num5 = this.eBin.getv();
                         this.gCP.advanceTopOfStack();
                         if (num4 < num5)
                         {
@@ -114,13 +116,13 @@
                 num1 = 1 << num2;
                 break;
             case EBin.op_binary.B_LMIN:
-                int num6 = (int)short.MaxValue;
-                for (int index = 0; index < 8; ++index)
+                Int32 num6 = (Int32)Int16.MaxValue;
+                for (Int32 index = 0; index < 8; ++index)
                 {
                     if ((num3 & 1) != 0)
                     {
                         this.gMemberTarget = this._objPtrList[index];
-                        int num5 = this.eBin.getv();
+                        Int32 num5 = this.eBin.getv();
                         this.gCP.advanceTopOfStack();
                         if (num6 > num5)
                         {
@@ -133,7 +135,7 @@
                 num1 = 1 << num2;
                 break;
             case EBin.op_binary.B_NOT_E:
-                for (int index = 0; index < 8; ++index)
+                for (Int32 index = 0; index < 8; ++index)
                 {
                     num1 >>= 1;
                     if ((num3 & 1) != 0)
@@ -151,11 +153,11 @@
         return num1;
     }
 
-    private int OperatorExtractLet(int op)
+    private Int32 OperatorExtractLet(Int32 op)
     {
-        int a = 0;
-        int valueAtOffset = this.gCP.getValueAtOffset(-2);
-        int num;
+        Int32 a = 0;
+        Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
+        Int32 num;
         if ((valueAtOffset >> 26 & 7) == 5)
         {
             num = this.GetSysList(valueAtOffset);
@@ -167,7 +169,7 @@
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
-        for (int index = 0; index < 8; ++index)
+        for (Int32 index = 0; index < 8; ++index)
         {
             a >>= 1;
             if ((num & 1) != 0)

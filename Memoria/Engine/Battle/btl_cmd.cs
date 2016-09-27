@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Memoria;
 using UnityEngine;
+using Object = System.Object;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -55,7 +56,7 @@ public class btl_cmd
 
     public static void ClearReflecData(BTL_DATA btl)
     {
-        for (int index = 0; index < 4; ++index)
+        for (Int32 index = 0; index < 4; ++index)
             btl.reflec.tar_id[index] = 0;
     }
 
@@ -71,18 +72,18 @@ public class btl_cmd
 
     public static void InitSelectCursor(FF9StateBattleSystem btlsys)
     {
-        uint num1 = (uint)((FF9StateSystem.Battle.FF9Battle.btl_cnt & 15) << 8);
+        UInt32 num1 = (UInt32)((FF9StateSystem.Battle.FF9Battle.btl_cnt & 15) << 8);
         List<Vector3> vector3List1 = new List<Vector3>();
         List<Vector3> vector3List2 = new List<Vector3>();
         List<Color32> color32List = new List<Color32>();
-        List<int> intList = new List<int>();
+        List<Int32> intList = new List<Int32>();
         Vector3 vector3_1 = new Vector3(0.0f, 0.0f, 0.0f);
         vector3List1.Add(vector3_1);
-        int num2 = 0;
+        Int32 num2 = 0;
         while (num2 < 3)
         {
-            float f = (float)(num1 / 4096.0 * 360.0);
-            Vector3 vector3_2 = new Vector3(vector3_1.x - (int)(68.0 * Mathf.Cos(f)), vector3_1.y - 133f, vector3_1.z - (int)(68.0 * Mathf.Sin(f)));
+            Single f = (Single)(num1 / 4096.0 * 360.0);
+            Vector3 vector3_2 = new Vector3(vector3_1.x - (Int32)(68.0 * Mathf.Cos(f)), vector3_1.y - 133f, vector3_1.z - (Int32)(68.0 * Mathf.Sin(f)));
             vector3_2.y *= -1f;
             vector3List1.Add(vector3_2);
             ++num2;
@@ -100,11 +101,11 @@ public class btl_cmd
         vector3List2.Add(vector3List1[1]);
         vector3List2.Add(vector3List1[2]);
         vector3List2.Add(vector3List1[3]);
-        for (int index = 0; index < vector3List2.Count; ++index)
+        for (Int32 index = 0; index < vector3List2.Count; ++index)
         {
-            byte num3 = (byte)Mathf.Floor(index / 3f);
-            byte num4 = index >= 9 ? (byte)160 : (byte)(188 - 60 * num3);
-            color32List.Add(new Color32(num4, num4, 0, byte.MaxValue));
+            Byte num3 = (Byte)Mathf.Floor(index / 3f);
+            Byte num4 = index >= 9 ? (Byte)160 : (Byte)(188 - 60 * num3);
+            color32List.Add(new Color32(num4, num4, 0, Byte.MaxValue));
             intList.Add(index);
         }
         Mesh mesh = new Mesh
@@ -131,7 +132,7 @@ public class btl_cmd
         btl.finger_disp = false;
         //int index1 = btl.bi.player == 0 ? 24 + (btl.bi.line_no - 4) * 3 : btl.bi.line_no * 6;
         //CMD_DATA cmdData = stateBattleSystem.cmd_buffer[index1];
-        for (int index2 = 0; index2 < 6; ++index2)
+        for (Int32 index2 = 0; index2 < 6; ++index2)
         {
             if (btl.bi.player != 0 || index2 < 3)
             {
@@ -144,16 +145,16 @@ public class btl_cmd
         ClearReflecData(btl);
     }
 
-    public static void SetCommand(CMD_DATA cmd, uint cmd_no, uint sub_no, ushort tar_id, uint cursor)
+    public static void SetCommand(CMD_DATA cmd, UInt32 cmd_no, UInt32 sub_no, UInt16 tar_id, UInt32 cursor)
     {
         BTL_DATA btl = cmd.regist;
-        uint num1 = cmd_no;
+        UInt32 num1 = cmd_no;
         switch (num1)
         {
             case 56:
                 if ((FF9StateSystem.Battle.FF9Battle.cmd_status & 1) != 0)
                 {
-                    cmd.sub_no = (byte)sub_no;
+                    cmd.sub_no = (Byte)sub_no;
                     return;
                 }
                 FF9StateSystem.Battle.FF9Battle.cmd_status |= 1;
@@ -179,11 +180,11 @@ public class btl_cmd
                         cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[190];
                         break;
                     default:
-                        if ((int)num1 != 50)
+                        if ((Int32)num1 != 50)
                         {
-                            if ((int)num1 != 51)
+                            if ((Int32)num1 != 51)
                             {
-                                if ((int)num1 == 2)
+                                if ((Int32)num1 == 2)
                                 {
                                     if (HasSupportAbility(btl, SupportAbility2.Mug))
                                         sub_no = 181U;
@@ -202,9 +203,9 @@ public class btl_cmd
         }
 
         cmd.tar_id = tar_id;
-        cmd.cmd_no = (byte)cmd_no;
-        cmd.sub_no = (byte)sub_no;
-        cmd.info.cursor = (byte)cursor;
+        cmd.cmd_no = (Byte)cmd_no;
+        cmd.sub_no = (Byte)sub_no;
+        cmd.info.cursor = (Byte)cursor;
         cmd.info.cover = 0;
         cmd.info.dodge = 0;
         cmd.info.reflec = 0;
@@ -242,23 +243,23 @@ public class btl_cmd
         EnqueueCommand(cmd);
     }
 
-    public static void SetCounter(BTL_DATA btl, uint cmd_no, int sub_no, ushort tar_id)
+    public static void SetCounter(BTL_DATA btl, UInt32 cmd_no, Int32 sub_no, UInt16 tar_id)
     {
         if (Status.checkCurStat(btl, 33689603U) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
             return;
-        SetCommand(btl.cmd[1], cmd_no, (uint)sub_no, tar_id, 0U);
+        SetCommand(btl.cmd[1], cmd_no, (UInt32)sub_no, tar_id, 0U);
     }
 
-    public static short setPhantomCount(BTL_DATA btl)
+    public static Int16 setPhantomCount(BTL_DATA btl)
     {
-        return (short)((60 - btl.elem.wpr) * 4 * 50);
+        return (Int16)((60 - btl.elem.wpr) * 4 * 50);
     }
 
     public static void SetAutoCommand(BTL_DATA btl)
     {
         if (Status.checkCurStat(btl, 1024U))
         {
-            SetCommand(btl.cmd[0], 1U, 176U, btl_util.GetRandomBtlID((uint)(Comn.random8() & 1)), 0U);
+            SetCommand(btl.cmd[0], 1U, 176U, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
         }
         else
         {
@@ -268,14 +269,14 @@ public class btl_cmd
         }
     }
 
-    public static void SetEnemyCommandBySequence(ushort tar_id, uint cmd_no, uint sub_no)
+    public static void SetEnemyCommandBySequence(UInt16 tar_id, UInt32 cmd_no, UInt32 sub_no)
     {
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         BTL_DATA btl = btl_scrp.GetBtlDataPtr(16);
         BTL_DATA[] btlDataArray = stateBattleSystem.btl_data;
         SEQ_WORK_SET seqWorkSet = stateBattleSystem.seq_work_set;
-        int num1 = Array.IndexOf(seqWorkSet.AnmOfsList.Distinct().ToArray(), seqWorkSet.AnmOfsList[sub_no]);
-        for (int index = 0; index < btlDataArray.Length; ++index)
+        Int32 num1 = Array.IndexOf(seqWorkSet.AnmOfsList.Distinct().ToArray(), seqWorkSet.AnmOfsList[sub_no]);
+        for (Int32 index = 0; index < btlDataArray.Length; ++index)
         {
             if (num1 == btlDataArray[index].typeNo)
             {
@@ -292,7 +293,7 @@ public class btl_cmd
         else
         {
             CMD_DATA cmd;
-            if ((int)cmd_no == 47)
+            if ((Int32)cmd_no == 47)
             {
                 if (stateBattleSystem.btl_phase != 4)
                 {
@@ -302,7 +303,7 @@ public class btl_cmd
                 cmd = btl.cmd[0];
                 if (Status.checkCurStat(btl, 1024U))
                 {
-                    tar_id = btl_util.GetRandomBtlID((uint)(Comn.random8() & 1));
+                    tar_id = btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1));
                     sub_no = btl_util.getEnemyTypePtr(btl).p_atk_no;
                 }
                 else if (Status.checkCurStat(btl, 2048U))
@@ -311,9 +312,9 @@ public class btl_cmd
                     sub_no = btl_util.getEnemyTypePtr(btl).p_atk_no;
                 }
             }
-            else if ((int)cmd_no == 53)
+            else if ((Int32)cmd_no == 53)
                 cmd = btl.cmd[1];
-            else if ((int)cmd_no == 54)
+            else if ((Int32)cmd_no == 54)
             {
                 cmd = btl.cmd[1];
             }
@@ -325,9 +326,9 @@ public class btl_cmd
             cmd.aa = stateBattleSystem.enemy_attack[sub_no];
             cmd.aa.Ref.prog_no = 26;
             cmd.tar_id = tar_id;
-            cmd.cmd_no = (byte)cmd_no;
-            cmd.sub_no = (byte)sub_no;
-            cmd.info.cursor = cmd.aa.Info.cursor < 6 || cmd.aa.Info.cursor >= 13 ? (byte)0 : (byte)1;
+            cmd.cmd_no = (Byte)cmd_no;
+            cmd.sub_no = (Byte)sub_no;
+            cmd.info.cursor = cmd.aa.Info.cursor < 6 || cmd.aa.Info.cursor >= 13 ? (Byte)0 : (Byte)1;
             if (cmd_no > 48U)
             {
                 cmd.info.priority = 1;
@@ -345,7 +346,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetEnemyCommand(ushort own_id, ushort tar_id, uint cmd_no, uint sub_no)
+    public static void SetEnemyCommand(UInt16 own_id, UInt16 tar_id, UInt32 cmd_no, UInt32 sub_no)
     {
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr(own_id);
@@ -356,7 +357,7 @@ public class btl_cmd
         else
         {
             CMD_DATA cmd;
-            if ((int)cmd_no == 47)
+            if ((Int32)cmd_no == 47)
             {
                 if (stateBattleSystem.btl_phase != 4)
                 {
@@ -366,7 +367,7 @@ public class btl_cmd
                 cmd = btlDataPtr.cmd[0];
                 if (Status.checkCurStat(btlDataPtr, 1024U))
                 {
-                    tar_id = btl_util.GetRandomBtlID((uint)(Comn.random8() & 1));
+                    tar_id = btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1));
                     sub_no = btl_util.getEnemyTypePtr(btlDataPtr).p_atk_no;
                 }
                 else if (Status.checkCurStat(btlDataPtr, 2048U))
@@ -375,9 +376,9 @@ public class btl_cmd
                     sub_no = btl_util.getEnemyTypePtr(btlDataPtr).p_atk_no;
                 }
             }
-            else if ((int)cmd_no == 53)
+            else if ((Int32)cmd_no == 53)
                 cmd = btlDataPtr.cmd[1];
-            else if ((int)cmd_no == 54)
+            else if ((Int32)cmd_no == 54)
             {
                 cmd = btlDataPtr.cmd[1];
             }
@@ -388,9 +389,9 @@ public class btl_cmd
             }
             cmd.aa = stateBattleSystem.enemy_attack[sub_no];
             cmd.tar_id = tar_id;
-            cmd.cmd_no = (byte)cmd_no;
-            cmd.sub_no = (byte)sub_no;
-            cmd.info.cursor = cmd.aa.Info.cursor < 6 || cmd.aa.Info.cursor >= 13 ? (byte)0 : (byte)1;
+            cmd.cmd_no = (Byte)cmd_no;
+            cmd.sub_no = (Byte)sub_no;
+            cmd.info.cursor = cmd.aa.Info.cursor < 6 || cmd.aa.Info.cursor >= 13 ? (Byte)0 : (Byte)1;
             if (cmd_no > 48U)
             {
                 cmd.info.priority = 1;
@@ -418,7 +419,7 @@ public class btl_cmd
             while (cmd != null && (cmd.cmd_no <= 59 && cmd.cmd_no != 56 && (cmd.cmd_no != 58 && Status.checkCurStat(cmd.regist, 33558531U)) || cmd.cmd_no == 57 && Status.checkCurStat(cmd.regist, 256U)))
                 cmd = cmd.next;
 
-            if (cmd == null || !FF9StateSystem.Battle.isDebug && !((BattleHUD)(object)UIManager.Battle).IsNativeEnableAtb() && cmd.cmd_no < 48)
+            if (cmd == null || !FF9StateSystem.Battle.isDebug && !((BattleHUD)(Object)UIManager.Battle).IsNativeEnableAtb() && cmd.cmd_no < 48)
                 return;
             if (cmd.cmd_no < 55)
             {
@@ -507,9 +508,9 @@ public class btl_cmd
         }
     }
 
-    public static bool KillCommand2(BTL_DATA btl)
+    public static Boolean KillCommand2(BTL_DATA btl)
     {
-        bool flag = false;
+        Boolean flag = false;
         btl.bi.cmd_idle = 0;
         CMD_DATA cmd1 = FF9StateSystem.Battle.FF9Battle.cmd_queue;
         while (cmd1 != null)
@@ -535,7 +536,7 @@ public class btl_cmd
         UIManager.Battle.ItemUnuse(cmd.sub_no);
     }
 
-    private static void DequeueCommand(CMD_DATA cmd, bool escape_check)
+    private static void DequeueCommand(CMD_DATA cmd, Boolean escape_check)
     {
         CMD_DATA cmdData = cmd.next;
         cmd.next = cmdData.next;
@@ -546,7 +547,7 @@ public class btl_cmd
         FF9StateSystem.Battle.FF9Battle.cmd_status &= 65534;
     }
 
-    public static bool CheckSpecificCommand(BTL_DATA btl, byte cmd_no)
+    public static Boolean CheckSpecificCommand(BTL_DATA btl, Byte cmd_no)
     {
         for (CMD_DATA cmdData = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmdData != null; cmdData = cmdData.next)
         {
@@ -557,9 +558,9 @@ public class btl_cmd
         return curCmdPtr != null && curCmdPtr.cmd_no == cmd_no;
     }
 
-    public static bool CheckSpecificCommand2(byte cmd_no)
+    public static Boolean CheckSpecificCommand2(Byte cmd_no)
     {
-        bool flag = false;
+        Boolean flag = false;
         for (CMD_DATA cmdData = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmdData != null; cmdData = cmdData.next)
         {
             if (cmdData.cmd_no == cmd_no)
@@ -571,7 +572,7 @@ public class btl_cmd
         return flag;
     }
 
-    public static bool CheckUsingCommand(CMD_DATA cmd)
+    public static Boolean CheckUsingCommand(CMD_DATA cmd)
     {
         for (CMD_DATA cmdData = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmdData != null; cmdData = cmdData.next)
         {
@@ -627,15 +628,15 @@ public class btl_cmd
         cmd.info.stat = 1;
     }
 
-    public static ushort CheckReflec(CMD_DATA cmd)
+    public static UInt16 CheckReflec(CMD_DATA cmd)
     {
-        ushort num1 = 0;
+        UInt16 num1 = 0;
         if (cmd.cmd_no != 14 && cmd.cmd_no != 15 && (cmd.cmd_no != 51 && (cmd.aa.Category & 1) != 0) && !HasSupportAbility(cmd.regist, SupportAbility1.ReflectNull))
         {
-            uint num2 = cmd.tar_id >= 16 ? 1U : 0U;
-            ushort[] numArray = new ushort[4];
-            short num3;
-            short num4 = num3 = 0;
+            UInt32 num2 = cmd.tar_id >= 16 ? 1U : 0U;
+            UInt16[] numArray = new UInt16[4];
+            Int16 num3;
+            Int16 num4 = num3 = 0;
             for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
             {
                 if ((btl.btl_id & cmd.tar_id) != 0)
@@ -646,13 +647,13 @@ public class btl_cmd
                         ++num4;
                     }
                 }
-                else if (!Status.checkCurStat(btl, 256U) && btl.bi.player == (int)num2 && btl.bi.target != 0)
+                else if (!Status.checkCurStat(btl, 256U) && btl.bi.player == (Int32)num2 && btl.bi.target != 0)
                     numArray[num3++] = btl.btl_id;
             }
             if (num4 != 0 && num3 != 0)
             {
-                for (int index = 0; index < 4; ++index)
-                    cmd.regist.reflec.tar_id[index] = index >= num4 ? (ushort)0 : numArray[Comn.random8() % num3];
+                for (Int32 index = 0; index < 4; ++index)
+                    cmd.regist.reflec.tar_id[index] = index >= num4 ? (UInt16)0 : numArray[Comn.random8() % num3];
                 if (num1 == cmd.tar_id)
                 {
                     cmd.info.reflec = 1;
@@ -661,7 +662,7 @@ public class btl_cmd
                 else
                 {
                     cmd.info.reflec = 2;
-                    cmd.tar_id = (ushort)(cmd.tar_id & (uint)~num1);
+                    cmd.tar_id = (UInt16)(cmd.tar_id & (UInt32)~num1);
                 }
             }
         }
@@ -684,7 +685,7 @@ public class btl_cmd
         }
     }
 
-    public static void KillSpecificCommand(BTL_DATA btl, byte cmd_no)
+    public static void KillSpecificCommand(BTL_DATA btl, Byte cmd_no)
     {
         for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
         {
@@ -697,7 +698,7 @@ public class btl_cmd
     }
 
     // ReSharper disable PossibleNullReferenceException
-    public static bool CheckCommandCondition(FF9StateBattleSystem btlsys, CMD_DATA cmd)
+    public static Boolean CheckCommandCondition(FF9StateBattleSystem btlsys, CMD_DATA cmd)
     {
         BTL_DATA btlData = cmd.regist;
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
@@ -705,7 +706,7 @@ public class btl_cmd
         {
             if (cmd.cmd_no < 55)
             {
-                int num = btl_mot.setDirection(btlData);
+                Int32 num = btl_mot.setDirection(btlData);
                 btlData.evt.rotBattle.eulerAngles = new Vector3(btlData.evt.rotBattle.eulerAngles.x, num, btlData.evt.rotBattle.eulerAngles.z);
                 btlData.rot.eulerAngles = new Vector3(btlData.rot.eulerAngles.x, num, btlData.rot.eulerAngles.z);
             }
@@ -717,7 +718,7 @@ public class btl_cmd
             if (!CheckMagicCondition(cmd))
                 return false;
         }
-        byte num1 = cmd.cmd_no;
+        Byte num1 = cmd.cmd_no;
         switch (num1)
         {
             case 11:
@@ -757,7 +758,7 @@ public class btl_cmd
             case 24:
                 if (cmd.sub_no == 82)
                 {
-                    cmd.tar_id = btl_util.GetRandomBtlID((uint)(Comn.random8() & 1));
+                    cmd.tar_id = btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1));
                     break;
                 }
                 if (cmd.sub_no == 93 && ff9item.FF9Item_GetCount(cmd.aa.Ref.power) < btl_util.SumOfTarget(1U))
@@ -770,7 +771,7 @@ public class btl_cmd
             case 29:
                 if (cmd.sub_no == 126 || cmd.sub_no == 134)
                 {
-                    uint num3 = cmd.aa.Ref.power * (uint)btlData.level;
+                    UInt32 num3 = cmd.aa.Ref.power * (UInt32)btlData.level;
                     if (num3 > ff9StateGlobal.party.gil)
                     {
                         UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughGil);
@@ -781,7 +782,7 @@ public class btl_cmd
                 }
                 if (cmd.sub_no == 129 || cmd.sub_no == 137)
                 {
-                    cmd.aa.Ref.attr = (byte)(1 << Comn.random8() % 8);
+                    cmd.aa.Ref.attr = (Byte)(1 << Comn.random8() % 8);
                 }
                 break;
             case 31:
@@ -870,7 +871,7 @@ public class btl_cmd
                     case 60:
                         btl_sys.CheckBattleMenuOff(btlData);
                         if (btlData.die_seq == 0)
-                            btlData.die_seq = btlData.bi.player == 0 ? btlData.bi.slave != 0 || btlData.bi.death_f == 0 ? (byte)1 : (byte)3 : (!btl_mot.checkMotion(btlData, 4) ? (byte)1 : (byte)5);
+                            btlData.die_seq = btlData.bi.player == 0 ? btlData.bi.slave != 0 || btlData.bi.death_f == 0 ? (Byte)1 : (Byte)3 : (!btl_mot.checkMotion(btlData, 4) ? (Byte)1 : (Byte)5);
                         return false;
                     case 61:
                         btlData.cur.hp = 1;
@@ -910,7 +911,7 @@ public class btl_cmd
 
     // ReSharper restore PossibleNullReferenceException
 
-    public static bool CheckMagicCondition(CMD_DATA cmd)
+    public static Boolean CheckMagicCondition(CMD_DATA cmd)
     {
         if (!Status.checkCurStat(cmd.regist, 8U) || (cmd.aa.Category & 2) == 0)
             return true;
@@ -943,7 +944,7 @@ public class btl_cmd
                 cp = ncp;
         }
         btlsys.cmd_status &= 65523;
-        btlsys.phantom_no = (byte)(btlsys.phantom_cnt = 0);
+        btlsys.phantom_no = (Byte)(btlsys.phantom_cnt = 0);
     }
 
     public static void ClearSysPhantom(BTL_DATA btl)
@@ -977,9 +978,9 @@ public class btl_cmd
         DequeueCommand(cp, true);
     }
 
-    private static bool CheckMpCondition(CMD_DATA cmd)
+    private static Boolean CheckMpCondition(CMD_DATA cmd)
     {
-        short mp = cmd.aa.MP;
+        Int16 mp = cmd.aa.MP;
         if (battle.GARNET_SUMMON_FLAG != 0 && (cmd.aa.Type & 4) != 0)
             mp *= 4;
         if (cmd.cmd_no == 50 || ConsumeMp(cmd.regist, mp))
@@ -988,12 +989,12 @@ public class btl_cmd
         return false;
     }
 
-    private static bool CheckTargetCondition(FF9StateBattleSystem btlsys, CMD_DATA cmd)
+    private static Boolean CheckTargetCondition(FF9StateBattleSystem btlsys, CMD_DATA cmd)
     {
-        ushort num1 = 0;
+        UInt16 num1 = 0;
         if (cmd.tar_id == 0)
             return false;
-        ushort num2;
+        UInt16 num2;
         switch (cmd.cmd_no)
         {
             case 14:
@@ -1032,7 +1033,7 @@ public class btl_cmd
         if (cmd.info.reflec == 2)
         {
             cmd.tar_id = MargeReflecTargetID(cmd.regist.reflec);
-            btl_vfx.SetBattleVfx(cmd, (uint)cmd.aa.Info.vfx_no, null);
+            btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.vfx_no, null);
             stateBattleSystem.cmd_mode = 2;
         }
         else
@@ -1073,7 +1074,7 @@ public class btl_cmd
             }
             if (Status.checkCurStat(btl1, 16384U) && cmd.cmd_no != 3 && cmd.cmd_no != 12)
             {
-                byte num1 = (byte)((300 - btl1.level) / btl1.elem.wpr * 10);
+                Byte num1 = (Byte)((300 - btl1.level) / btl1.elem.wpr * 10);
                 if (cmd.cmd_no == 21 || cmd.cmd_no == 23)
                     num1 /= 2;
                 if (FF9StateSystem.Settings.IsTranceFull)
@@ -1130,7 +1131,7 @@ public class btl_cmd
         btlsys.cur_cmd = null;
         btlsys.cmd_mode = 0;
         if (btl1 != null && btl1.bi.player != 0 && FF9StateSystem.Settings.IsATBFull)
-            btl1.cur.at = (short)(btl1.max.at - 1);
+            btl1.cur.at = (Int16)(btl1.max.at - 1);
         if (FF9StateSystem.Battle.isDebug)
             return;
         HonoluluBattleMain.playerEnterCommand = true;
@@ -1139,17 +1140,17 @@ public class btl_cmd
     private static void ResetCurrentBattlerActiveTime(BTL_DATA btl1)
     {
         if (Configuration.Fixes.IsKeepRestTimeInBattle && btl1.max.at > 0)
-            btl1.cur.at = (short)Math.Max(0, btl1.cur.at - btl1.max.at);
+            btl1.cur.at = (Int16)Math.Max(0, btl1.cur.at - btl1.max.at);
         else
             btl1.cur.at = 0;
 
         btl1.sel_mode = 0;
     }
 
-    public static ushort MargeReflecTargetID(REFLEC_DATA reflec)
+    public static UInt16 MargeReflecTargetID(REFLEC_DATA reflec)
     {
-        int index = 0;
-        ushort num = 0;
+        Int32 index = 0;
+        UInt16 num = 0;
         for (; index < 4; ++index)
             num |= reflec.tar_id[index];
         return num;
@@ -1178,16 +1179,16 @@ public class btl_cmd
                 {
                     if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData, btlData.currentAnimationName))
                         return;
-                    btl_mot.setMotion(btlData, (byte)(29U + btlData.bi.row));
+                    btl_mot.setMotion(btlData, (Byte)(29U + btlData.bi.row));
                     btlData.evt.animFrame = 0;
                 }
-                if (btl_mot.checkMotion(btlData, (byte)(29U + btlData.bi.row)))
+                if (btl_mot.checkMotion(btlData, (Byte)(29U + btlData.bi.row)))
                 {
-                    ushort numFrames = GeoAnim.geoAnimGetNumFrames(btlData);
-                    ushort num1 = btlData.evt.animFrame;
+                    UInt16 numFrames = GeoAnim.geoAnimGetNumFrames(btlData);
+                    UInt16 num1 = btlData.evt.animFrame;
                     if (num1 < numFrames)
                     {
-                        ushort num2 = (ushort)(num1 + 1U);
+                        UInt16 num2 = (UInt16)(num1 + 1U);
                         btlData.pos[2] = btlData.bi.row == 0 ? 400 * num2 / numFrames - 1960 : -400 * num2 / numFrames - 1560;
                         btlData.gameObject.transform.localPosition = btlData.pos;
                         return;
@@ -1236,7 +1237,7 @@ public class btl_cmd
         else
         {
             BTL_DATA caster = curCmdPtr.regist;
-            byte num = curCmdPtr.cmd_no;
+            Byte num = curCmdPtr.cmd_no;
             switch (num)
             {
                 case 12:
@@ -1273,8 +1274,8 @@ public class btl_cmd
                                 default:
                                     if (num == 58)
                                     {
-                                        ushort battleId = btl_scrp.GetBattleID(1U);
-                                        ushort statusBtlId = btl_util.GetStatusBtlID(1U, 4355U);
+                                        UInt16 battleId = btl_scrp.GetBattleID(1U);
+                                        UInt16 statusBtlId = btl_util.GetStatusBtlID(1U, 4355U);
                                         if (battleId == 0 || battleId == statusBtlId)
                                         {
                                             FF9StateBattleSystem btlsys = FF9StateSystem.Battle.FF9Battle;
@@ -1303,7 +1304,7 @@ public class btl_cmd
         Vector3 localPosition = btl.gameObject.transform.localPosition;
         Vector3 eulerAngles = gameObject.transform.localRotation.eulerAngles;
         gameObject.transform.localPosition = new Vector3(localPosition.x, localPosition.y + btl.height, localPosition.z);
-        float num = (float)((((btlsys.btl_cnt & 15) << 8) + 1265) % 4096 / 4096.0 * 360.0);
+        Single num = (Single)((((btlsys.btl_cnt & 15) << 8) + 1265) % 4096 / 4096.0 * 360.0);
         gameObject.transform.localRotation = Quaternion.Euler(eulerAngles.x, -num, eulerAngles.z);
     }
 
@@ -1343,7 +1344,7 @@ public class btl_cmd
         }
     }
 
-    private static bool DecideMagicSword(BTL_DATA steiner, short mp)
+    private static Boolean DecideMagicSword(BTL_DATA steiner, Int16 mp)
     {
         if (steiner.cur.mp >= mp)
         {
@@ -1368,7 +1369,7 @@ public class btl_cmd
         cmd.info.meteor_miss = 1;
     }
 
-    private static bool ConsumeMp(BTL_DATA btl, short mp)
+    private static Boolean ConsumeMp(BTL_DATA btl, Int16 mp)
     {
         if (btl == null)
             return false;
@@ -1390,12 +1391,12 @@ public class btl_cmd
 
     public static Boolean HasSupportAbility(BTL_DATA btl, SupportAbility1 ability)
     {
-        return (btl.sa[0] & (uint)ability) != 0;
+        return (btl.sa[0] & (UInt32)ability) != 0;
     }
 
     public static Boolean HasSupportAbility(BTL_DATA btl, SupportAbility2 ability)
     {
-        return (btl.sa[1] & (uint)ability) != 0;
+        return (btl.sa[1] & (UInt32)ability) != 0;
     }
 
     #endregion

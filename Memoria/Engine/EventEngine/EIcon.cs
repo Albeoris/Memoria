@@ -1,4 +1,5 @@
-﻿using Memoria;
+﻿using System;
+using Memoria;
 using UnityEngine;
 
 #pragma warning disable 414
@@ -11,33 +12,33 @@ using UnityEngine;
 [ExportedType("Ñ¢čy*!!!ĥŀbĠÒæÃûìĠª¥*pñĀÜķËŃv×°¦Àľéþ¬»Xī@!!!VĲ0A÷ĄNĨ'Åû»J5üİY/ĕĞÒĢðąē(Kłohlċ<#$Öoÿ÷Ð{­/ĦĹJĸMãRÏÏÃ©$¹ÑġÉ«ėÝk°ěÁÎrí9i`JôÍÙó§@ĭľġ¡úĦT+´çìÒlòÖË6~äĭvĭKR¿£33)!aĶŁ6çčĆÇÇÿwB!!!ĄÀļěþkēÚí¤sôþ¾ĩĉÛ°G°'S©QÃ=(xĂ¸ĴÈąLÁÞĨV)§cß¿áa¼čäĎĄćOÍÊâ8ċ-?ĝęĿ°­/7ĤŃ5!ªÙ¡ęy^M_ĊäjvÃģpoj1_5Ćh1ĉČį9I7ö¸Ćùâ®¥ĀÕßìĪÈÁMîÛV«-H¯ļ·ĘvÒîÁ#!!!(6§Gńńńń%!!!õ¬ĢŁ<Ė'Ì»Ĵ]vńńńńńńńń")]
 internal class EIcon
 {
-    public const int kHereIconTime = 60;
-    public const int questionIcon = 0;
-    public const int exclamationIcon = 1;
-    public const int cardIcon = 2;
-    public const int beachIcon = 3;
-    public const int exclamationAndBeachIcon = 4;
+    public const Int32 kHereIconTime = 60;
+    public const Int32 questionIcon = 0;
+    public const Int32 exclamationIcon = 1;
+    public const Int32 cardIcon = 2;
+    public const Int32 beachIcon = 3;
+    public const Int32 exclamationAndBeachIcon = 4;
     //private const int kAIconInterval = 44;
     //private const int kAIconInterval2 = 15;
     //private const int kAIconForce = 4;
     //private const int kAIconModeMask = 3;
-    private static bool sFIconPolled;
-    private static bool sFIconLastPolled;
-    private static int sFIconType;
-    private static int sFIconLastType;
+    private static Boolean sFIconPolled;
+    private static Boolean sFIconLastPolled;
+    private static Int32 sFIconType;
+    private static Int32 sFIconLastType;
     private static PollType lastPollType;
-    private static bool dialogBubble;
-    private static bool dialogAlternativeKey;
-    private static bool processFIcon;
-    private static bool recheckScript; // Don't remove it!
-    private static bool hereIconShow;
-    private static int sHereIconTimer;
-    private static bool sHereIconForce; // Don't remove it!
+    private static Boolean dialogBubble;
+    private static Boolean dialogAlternativeKey;
+    private static Boolean processFIcon;
+    private static Boolean recheckScript; // Don't remove it!
+    private static Boolean hereIconShow;
+    private static Int32 sHereIconTimer;
+    private static Boolean sHereIconForce; // Don't remove it!
     public static readonly Vector3 worldActorOffset;
     private static Camera worldCamera;
     private static FieldMap currentFieldMap;
-    private static int sAIconMode;
-    private static int sAIconTimer;
+    private static Int32 sAIconMode;
+    private static Int32 sAIconTimer;
     private static ATEType currentATE;
 
     public static FieldMap FieldMap
@@ -52,19 +53,19 @@ internal class EIcon
 
     public static Camera WorldCamera => worldCamera ?? (worldCamera = GameObject.Find("WorldCamera").GetComponent<Camera>());
 
-    public static float ShowDelay { get; set; }
+    public static Single ShowDelay { get; set; }
 
-    public static float HideDelay { get; set; }
+    public static Single HideDelay { get; set; }
 
-    public static bool IsProcessingFIcon
+    public static Boolean IsProcessingFIcon
     {
         get { return processFIcon; }
         set { processFIcon = value; }
     }
 
-    public static bool IsDialogBubble => dialogBubble;
+    public static Boolean IsDialogBubble => dialogBubble;
 
-    public static int SFIconType => sFIconType;
+    public static Int32 SFIconType => sFIconType;
 
     public static ATEType CurrentATE => currentATE;
 
@@ -92,7 +93,7 @@ internal class EIcon
         HideDelay = 0.0f;
     }
 
-    public static void PollFIcon(int type)
+    public static void PollFIcon(Int32 type)
     {
         lastPollType = PollType.EVENT_SCRIPT;
         sFIconPolled = true;
@@ -100,16 +101,16 @@ internal class EIcon
         CloseHereIcon();
     }
 
-    public static bool PollCollisionIcon(Obj targetObject)
+    public static Boolean PollCollisionIcon(Obj targetObject)
     {
-        bool flag1 = false;
+        Boolean flag1 = false;
         if (EventHUD.CurrentHUD == MinigameHUD.MogTutorial)
             return false;
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         if (instance.gMode == 1)
         {
-            bool flag2 = instance.GetIP(targetObject.sid, 3, targetObject.ebData) != instance.nil && 1 < targetObject.level;
-            bool flag3 = instance.GetIP(targetObject.sid, 8, targetObject.ebData) != instance.nil && 1 < targetObject.level;
+            Boolean flag2 = instance.GetIP(targetObject.sid, 3, targetObject.ebData) != instance.nil && 1 < targetObject.level;
+            Boolean flag3 = instance.GetIP(targetObject.sid, 8, targetObject.ebData) != instance.nil && 1 < targetObject.level;
             if (flag2 && flag3)
             {
                 PollFIcon(2);
@@ -143,7 +144,7 @@ internal class EIcon
             return;
         if (!instance2.gameObject.activeSelf)
             instance2.gameObject.SetActive(true);
-        int num = 0;
+        Int32 num = 0;
         if (!sFIconLastPolled && sFIconPolled)
             num = 1;
         else if (sFIconLastPolled && !sFIconPolled)
@@ -170,7 +171,7 @@ internal class EIcon
             HideBubble();
         else if (!hereIconShow && instance2.IsActive)
         {
-            bool flag = sFIconType != sFIconLastType;
+            Boolean flag = sFIconType != sFIconLastType;
             if (flag)
             {
                 HideBubble();
@@ -222,7 +223,7 @@ internal class EIcon
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         BubbleUI.Flag[] bubbleFlagData = GetBubbleFlagData(sFIconType);
-        System.Action<PosObj, Obj, uint>[] listener = new System.Action<PosObj, Obj, uint>[1] {EventCollision.BubbleUIListener};
+        System.Action<PosObj, Obj, UInt32>[] listener = new System.Action<PosObj, Obj, UInt32>[1] {EventCollision.BubbleUIListener};
         PosObj controlChar = instance.GetControlChar();
         Vector3 uiDefaultOffset = BubbleUI.UIDefaultOffset;
         if (controlChar.go == null)
@@ -240,7 +241,7 @@ internal class EIcon
         Singleton<BubbleUI>.Instance.Show(controlChar.go.transform, controlChar, null, WorldCamera, actorOffset, uiDefaultOffset, bubbleFlagData, listener);
     }
 
-    public static void ShowDialogBubble(bool useAlternativeKey = false)
+    public static void ShowDialogBubble(Boolean useAlternativeKey = false)
     {
         dialogBubble = true;
         dialogAlternativeKey = useAlternativeKey;
@@ -279,7 +280,7 @@ internal class EIcon
         return actorOffset;
     }
 
-    public static BubbleUI.Flag[] GetBubbleFlagData(int pollCode)
+    public static BubbleUI.Flag[] GetBubbleFlagData(Int32 pollCode)
     {
         switch (pollCode)
         {
@@ -310,7 +311,7 @@ internal class EIcon
         }
     }
 
-    public static void SetHereIcon(int f)
+    public static void SetHereIcon(Int32 f)
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         if (f <= 0 || EventHUD.CurrentHUD == MinigameHUD.ChocoHot)
@@ -320,8 +321,8 @@ internal class EIcon
         }
         else
         {
-            ulong num = FF9StateSystem.Settings.cfg.here_icon > 0UL ? 0UL : 1UL;
-            if (f <= 2 && (!instance.GetUserControl() || num <= 1UL && ((long)num != 1L || f != 2 && instance.gAnimCount <= 0 && instance.eTb.gMesCount < 3)))
+            UInt64 num = FF9StateSystem.Settings.cfg.here_icon > 0UL ? 0UL : 1UL;
+            if (f <= 2 && (!instance.GetUserControl() || num <= 1UL && ((Int64)num != 1L || f != 2 && instance.gAnimCount <= 0 && instance.eTb.gMesCount < 3)))
                 return;
             sHereIconTimer = 60;
         }
@@ -390,12 +391,12 @@ internal class EIcon
             ShowAIcon(false, currentATE);
     }
 
-    public static void ShowAIcon(bool isActive, ATEType type)
+    public static void ShowAIcon(Boolean isActive, ATEType type)
     {
         UIManager.Field.EnableATE(isActive, type);
     }
 
-    public static void SetAIcon(int mode)
+    public static void SetAIcon(Int32 mode)
     {
         if (mode == 0)
             ShowAIcon(false, CurrentATE);
