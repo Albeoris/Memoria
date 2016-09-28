@@ -74,20 +74,23 @@ namespace Memoria.Launcher
                     {
                         ProcessStartInfo gameStartInfo = new ProcessStartInfo(executablePath, arguments) {UseShellExecute = false};
                         if (GameSettings.IsDebugMode)
-                            gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "0";
+                            gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
 
                         Process gameProcess = new Process {StartInfo = gameStartInfo};
                         gameProcess.Start();
 
-                        Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
-                        if (debuggerProcess == null)
+                        if (GameSettings.IsDebugMode)
                         {
-                            String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
-                            String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
-                            String debuggerArgs = "10000"; // Timeout: 10 seconds
-                            ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) {WorkingDirectory = debuggerDirectory };
-                            debuggerProcess = new Process {StartInfo = debuggerStartInfo};
-                            debuggerProcess.Start();
+                            Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
+                            if (debuggerProcess == null)
+                            {
+                                String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
+                                String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
+                                String debuggerArgs = "10000"; // Timeout: 10 seconds
+                                ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) {WorkingDirectory = debuggerDirectory};
+                                debuggerProcess = new Process {StartInfo = debuggerStartInfo};
+                                debuggerProcess.Start();
+                            }
                         }
                     }
                 );
