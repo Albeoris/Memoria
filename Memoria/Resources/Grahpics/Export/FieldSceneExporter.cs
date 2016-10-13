@@ -174,8 +174,8 @@ namespace Memoria
                 for (Int32 y = 0; y < h; y++)
                     for (Int32 x = 0; x < w; x++)
                     {
-                        Int32 sourceOffset = y * w + x;
-                        Int32 targetOffset = (ty + y - h) * textureWidth + tx + x;
+                        Int32 sourceOffset = (h - y - 1) * w + x;
+                        Int32 targetOffset = (s.offY * factor + y) * textureWidth + tx + x;
 
                         Color color = pixels[sourceOffset];
                         r.ImageData[targetOffset] = (Byte)(color.r * 255);
