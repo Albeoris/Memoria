@@ -60,17 +60,18 @@ namespace Memoria
                 Directory.CreateDirectory(outputDirectory);
 
                 Texture2D atlasTexture = TextureHelper.CopyAsReadable(scene.atlas);
-                //Int32 textureWidth = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offY * 2) + scene.SPRITE_H);
-                //Int32 textureHeight = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offX * 2) + scene.SPRITE_W);
+                Int32 factor = (Int32)scene.SPRITE_W / 16;
+                Int32 textureWidth = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offY * factor) + scene.SPRITE_H);
+                Int32 textureHeight = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offX * factor) + scene.SPRITE_W);
 
                 using (Stream output = File.Create(outputDirectory + "test.psd"))
                 {
-                    PsdFile file = new PsdFile(PsdFileVersion.Psd);
+                    PsdFile file = new PsdFile();
                     file.BitDepth = 8;
-                    file.ChannelCount = 3;
+                    file.ChannelCount = 4;
                     file.ColorMode = PsdColorMode.Rgb;
-                    file.RowCount = (Int32)(scene.maxY + scene.SPRITE_H);
-                    file.ColumnCount = (Int32)(scene.maxX + scene.SPRITE_W);
+                    file.RowCount = textureWidth;
+                    file.ColumnCount = textureHeight;
                     file.Resolution = new ResolutionInfo
                     {
                         Name = "ResolutionInfo ",
@@ -85,7 +86,7 @@ namespace Memoria
                     };
 
                     file.BaseLayer.Name = "Base";
-                    for (Int16 i = 0; i < 3; i++)
+                    for (Int16 i = 0; i < 4; i++)
                     {
                         Channel channel = new Channel(i, file.BaseLayer);
                         channel.ImageCompression = file.ImageCompression;
@@ -137,17 +138,21 @@ namespace Memoria
             Channel r = new Channel(0, layer);
             Channel g = new Channel(1, layer);
             Channel b = new Channel(2, layer);
+            Channel a = new Channel(3, layer);
             layer.Channels.Add(r);
             layer.Channels.Add(g);
             layer.Channels.Add(b);
+            layer.Channels.Add(a);
 
             Int32 channelSize = textureWidth * textureHeight;
             r.Length = channelSize;
             g.Length = channelSize;
             b.Length = channelSize;
+            a.Length = channelSize;
             r.ImageData = new Byte[channelSize];
             g.ImageData = new Byte[channelSize];
             b.ImageData = new Byte[channelSize];
+            a.ImageData = new Byte[channelSize];
 
             foreach (BGSPRITE_LOC_DEF s in overlay.spriteList)
             {
@@ -174,6 +179,7 @@ namespace Memoria
                         r.ImageData[targetOffset] = (Byte)(color.r * 255);
                         g.ImageData[targetOffset] = (Byte)(color.g * 255);
                         b.ImageData[targetOffset] = (Byte)(color.b * 255);
+                        a.ImageData[targetOffset] = (Byte)(color.a * 255);
                     }
 
                 //result.ReadPixels(new Rect(s.atlasX, s.atlasY, scene.SPRITE_W, scene.SPRITE_H), s.offX * factor, textureHeight - s.offY * factor);
@@ -181,53 +187,11 @@ namespace Memoria
             TextureHelper.WriteTextureToFile(result, outputPath);
 
             layer.Name = Path.GetFileNameWithoutExtension(outputPath);
+            layer.Opacity = 255;
             layer.Rect = new System.Drawing.Rectangle(overlay.curX, overlay.curY, textureWidth, textureHeight);
             layer.Masks = new MaskInfo();
             layer.BlendingRangesData = new BlendingRanges(layer);
             layer.CreateMissingChannels();
-        }
-
-        private static void ExportOverlay(BGOVERLAY_DEF overlay, Texture2D atlas, String outputPath, Int32 textureWidth, Int32 textureHeight, BGSCENE_DEF scene)
-        {
-            RenderTexture oldTarget = Camera.main.targetTexture;
-            RenderTexture oldActive = RenderTexture.active;
-
-            textureWidth = (Int32)(overlay.spriteList.Max(s => s.offX * 2) + scene.SPRITE_W);
-            textureHeight = (Int32)(overlay.spriteList.Max(s => s.offY * 2) + scene.SPRITE_H);
-
-            Texture2D result = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
-            RenderTexture rt = RenderTexture.GetTemporary(textureHeight, textureWidth, 0, RenderTextureFormat.ARGB32);
-            try
-            {
-                Camera.main.targetTexture = rt;
-                Graphics.Blit(atlas, rt);
-
-                //Log.Message("--------------------------------");
-                Log.Message(overlay.transform?.name);
-                Log.Message($"SPRITE_H: {scene.SPRITE_H:D2} SPRITE_W {scene.SPRITE_W:D2}");
-                //Log.Message("alpha;atlasX;atlasY;clutX;clutY;depth;h;w;u;v;offX;offY;oriData;pad;res;startOffset;texX;texY;trans;localPosition;name");
-                RenderTexture.active = rt;
-                //Color[] colors = new Color[scene.SPRITE_H * scene.SPRITE_W];
-                /*for(int i = 0; i < scene.SPRITE_H * scene.SPRITE_W; i++)
-                {
-                    colors[i] = new Color(1, 1, 1);
-                }*/
-                foreach (BGSPRITE_LOC_DEF s in overlay.spriteList)
-                {
-                    Log.Message($"rt height: {rt.height}, rt width: {rt.width}");
-                    //Log.Message($"{s.alpha};{s.atlasX};{s.atlasY};{s.clutX};{s.clutY};{s.depth};{s.h};{s.w};{s.u};{s.v};{s.offX};{s.offY};{s.oriData};{s.pad};{s.res};{s.startOffset};{s.texX};{s.texY};{s.trans};{s.transform?.localPosition};{s.transform?.name}");
-                    //Log.Message($"s.offX: {s.offX}; s.offY: {s.offY}; s.atlasX: {s.atlasX}; s.atlasY: {s.atlasY}");
-                    //result.SetPixels(s.offX * 2, s.offY * 2, 32, 32, colors);
-                    result.ReadPixels(new Rect(s.atlasX, s.atlasY, scene.SPRITE_W, scene.SPRITE_H), s.offX * 2, textureHeight - s.offY * 2);
-                }
-            }
-            finally
-            {
-                RenderTexture.active = oldActive;
-                Camera.main.targetTexture = oldTarget;
-                RenderTexture.ReleaseTemporary(rt);
-            }
-            TextureHelper.WriteTextureToFile(result, outputPath);
         }
 
         private static IEnumerable<String> CreateMapList()
