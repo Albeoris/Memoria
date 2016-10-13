@@ -95,6 +95,8 @@ namespace Memoria
                         file.BaseLayer.Channels.Add(channel);
                     }
 
+                    file.BaseLayer.Channels.Last().ID = -1;
+
                     for (Int32 index = 0; index < scene.overlayList.Count; index++) //scene.overlayList.Count
                     {
                         BGOVERLAY_DEF overlay = scene.overlayList[index];
@@ -138,7 +140,7 @@ namespace Memoria
             Channel r = new Channel(0, layer);
             Channel g = new Channel(1, layer);
             Channel b = new Channel(2, layer);
-            Channel a = new Channel(3, layer);
+            Channel a = new Channel(-1, layer);
             layer.Channels.Add(r);
             layer.Channels.Add(g);
             layer.Channels.Add(b);
