@@ -97,7 +97,7 @@ namespace Memoria
 
                     file.BaseLayer.Channels.Last().ID = -1;
 
-                    for (Int32 index = 0; index < scene.overlayList.Count; index++) //scene.overlayList.Count
+                    for (Int32 index = scene.overlayList.Count - 1; index >= 0; index--) //scene.overlayList.Count
                     {
                         BGOVERLAY_DEF overlay = scene.overlayList[index];
                         String outputPath = outputDirectory + $"Overlay{index}.png";
@@ -190,7 +190,7 @@ namespace Memoria
 
             layer.Name = Path.GetFileNameWithoutExtension(outputPath);
             layer.Opacity = 255;
-            layer.Rect = new System.Drawing.Rectangle(overlay.curX, overlay.curY, textureWidth, textureHeight);
+            layer.Rect = new System.Drawing.Rectangle(overlay.curX * factor, overlay.curY * factor, textureWidth, textureHeight);
             layer.Masks = new MaskInfo();
             layer.BlendingRangesData = new BlendingRanges(layer);
             layer.CreateMissingChannels();
