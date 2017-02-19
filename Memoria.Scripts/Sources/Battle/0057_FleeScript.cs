@@ -1,5 +1,6 @@
 using System;
 using FF9;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {

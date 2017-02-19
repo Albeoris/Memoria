@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <FrameworkPathOverride>C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\</FrameworkPathOverride>
+    <FrameworkPathOverride>..\References\</FrameworkPathOverride>
     <AllowedReferenceRelatedFileExtensions>.pdb</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,8 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <Reference Include="mscorlib" >
+	  <HintPath>..\References\mscorlib.dll</HintPath>
+      <Private>False</Private>
+	</Reference>
+    <Reference Include="System" >
+	  <HintPath>..\References\System.dll</HintPath>
+      <Private>False</Private>
+	</Reference>
+	<Reference Include="System.Core" >
+	  <HintPath>..\References\System.Core.dll</HintPath>
+      <Private>False</Private>
+	</Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\References\UnityEngine.dll</HintPath>
       <Private>False</Private>
@@ -358,9 +368,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Memoria\Memoria.csproj">
-      <Project>{a00a1a48-8c9d-4d46-99a8-f53665a6b519}</Project>
-      <Name>Memoria</Name>
+    <ProjectReference Include="..\Assembly-CSharp\Assembly-CSharp.csproj">
+      <Project>{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}</Project>
+      <Name>Assembly-CSharp</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

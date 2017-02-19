@@ -1,21 +1,17 @@
 # Memoria
-Final Fantasy IX tools
+Final Fantasy IX Engine
 
 # Updates
-1. Update the game to the latest version.
-2. Update Memoria to the latest version.
+1. Update the game to the **latest** version.
+2. Update Memoria to the **latest** version.
 3. **Delete** "Memoria.ini" from the game directory (otherwise you will not see new settings).
 4. Patch again
 
 
 # Build
-1. Use Visual Studio 2015
-2. Install Unity: https://unity3d.com/
-3. Set a correct path to the Unity library folder in the Memoria.csproj (Notepad)
-<FrameworkPathOverride>C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\</FrameworkPathOverride>
-4. Create the "\References" folder in the root solution directory.
-5. Copy "Assembly-CSharp.dll", "UnityEngine.dll" and "XInputDotNetPure.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to "\References"
-6. Download "Mono.Cecil" package manualy or enable automaticaly package downloads.
+1. Use Visual Studio 2015 or JetBrains Rider.
+2. Copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
+3. Resture NuGet packages manualy or enable automaticaly package downloads.
 
 
 # Patch:
@@ -30,7 +26,7 @@ Final Fantasy IX tools
 4. If you not see "Memoria.log" try to run game with administrator rights
 5. If you see "Sharing violation on path" then close applications that hold this file
 6. If you see "at Memoria.CsvReader.Read" then fix files in the StreamingAssets\Data directory or delete them and patch again.
-7. If you see "at Memoria.ScriptsLoader.Initialize" then fix files in the StreamingAssets\Scripts directory or delete them and patch again.
+7. If you see "at Memoria.ScriptsLoader.Initialize" then fix files in the StreamingAssets\Scripts directory and recompile scripts or delete them and patch again.
 8. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
 
 
@@ -56,23 +52,20 @@ Final Fantasy IX tools
 
 # Scripting (for modmakers)
 1. Make a copy of an existing item from the "StreamingAssets\Scripts" folder.
-2. Add the "using Memoria;" and change a namespace to your own.
-3. To make some changes.
+2. Change a namespace to your own.
+3. Make some changes.
 4. Run Memoria.Compiler.exe from the "Compiler".
 5. Run the game, test all of you can and see Memoria.log and output_log.txt for errors.
 
 Now you can change mechanics of battle actions. In the future I will add more scriptable entries.
 Also you can use a Visual Studio project from the "Project" folder. It will load every .cs file from the "Sources\Battle" folder.
-Be careful - future updates could remove your changes. To make your own copies if it possible.
+Be careful - future updates could remove your changes. Please make your own copies if it possible.
 https://www.youtube.com/watch?v=cU4T3GSIjxs
 
 
-# Exported types (for developers)
-1. Write you own type. Keep all members and its signature (private SerializeField too), name **and namespace**.
-2. Mark it with ExportedTypeAttribute
-3. Run patcher
-4. Copy hash of type from console or Memoria.log and past to the ExportedTypeAttribute
-5. Run the game, test all of you can and see output_log.txt for errors.
+# Restrictions (for developers)
+1. **Please** don't change any data that can be sent to the game server developers! We don't want any trouble.
+2. Don't change a serializable data that can be deserialized by a Unity Engine. The game will crash or corrupt.
 
 
 # Debugging (for developers)

@@ -33,7 +33,8 @@ namespace Memoria.Compiler
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "mscorlib.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "System.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "System.Core.dll")),
-                MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "Memoria.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "Assembly-CSharp.dll")),
+                MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "Memoria.Prime.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "UnityEngine.dll")),
                 MetadataReference.CreateFromFile(Path.Combine(_referencesDirectoryPath, "XInputDotNetPure.dll"))
             };
@@ -85,7 +86,8 @@ namespace Memoria.Compiler
         {
             CSharpCompilationOptions options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
                 optimizationLevel: OptimizationLevel.Release,
-                allowUnsafe: true);
+                allowUnsafe: true,
+                assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default);
 
             CSharpCompilation compilation = CSharpCompilation.Create("Memoria.Scripts")
                 .WithOptions(options)

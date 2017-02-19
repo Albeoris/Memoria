@@ -49,7 +49,7 @@ namespace Memoria.Compiler
             String outputFileName = DefaultOutputName;
             if (String.IsNullOrWhiteSpace(outputFileName))
                 throw new InvalidDataException("You must specify a name for output file.");
-
+            
             Compiler compiler = new Compiler(referencesDirectoryPath, sourcesDirectoryPath, outputDirectoryPath, outputFileName);
             compiler.Compile();
         }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Memoria.Prime.Exceptions;
 
 namespace Memoria.Patcher
 {

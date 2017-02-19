@@ -1,0 +1,441 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Object = System.Object;
+
+public class BattleSPSSystem : MonoBehaviour
+{
+	public List<BattleSPS> GetSPSList()
+	{
+		return this._spsList;
+	}
+
+	public void Init()
+	{
+		this.rot = new Vector3(0f, 0f, 0f);
+		this._isReady = false;
+		this._spsList = new List<BattleSPS>();
+		this._spsBinDict = new Dictionary<Int32, KeyValuePair<Int32, Byte[]>>();
+		for (Int32 i = 0; i < 96; i++)
+		{
+			GameObject gameObject = new GameObject("SPS_" + i.ToString("D4"));
+			gameObject.transform.parent = base.transform;
+			gameObject.transform.localScale = Vector3.one;
+			gameObject.transform.localPosition = Vector3.zero;
+			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+			BattleSPS battleSPS = gameObject.AddComponent<BattleSPS>();
+			battleSPS.Init();
+			battleSPS.spsIndex = i;
+			battleSPS.spsTransform = gameObject.transform;
+			battleSPS.meshRenderer = meshRenderer;
+			battleSPS.meshFilter = meshFilter;
+			this._spsList.Add(battleSPS);
+		}
+		this.MapName = FF9StateSystem.Field.SceneName;
+		this._isReady = this._loadSPSTexture();
+	}
+
+	public void Service()
+	{
+		if (!this._isReady)
+		{
+			return;
+		}
+		for (Int32 i = 0; i < this._spsList.Count; i++)
+		{
+			BattleSPS battleSPS = this._spsList[i];
+			if ((battleSPS.type != 0 || battleSPS.spsBin != null) && (battleSPS.attr & 1) != 0)
+			{
+				if (battleSPS.lastFrame != -1)
+				{
+					battleSPS.lastFrame = battleSPS.curFrame;
+					battleSPS.curFrame += battleSPS.frameRate;
+					if (battleSPS.curFrame >= battleSPS.frameCount)
+					{
+						battleSPS.curFrame = 0;
+					}
+					else if (battleSPS.curFrame < 0)
+					{
+						battleSPS.curFrame = (battleSPS.frameCount >> 4) - 1 << 4;
+					}
+				}
+			}
+		}
+	}
+
+	public void GenerateSPS()
+	{
+		if (!this._isReady)
+		{
+			return;
+		}
+		for (Int32 i = 0; i < this._spsList.Count; i++)
+		{
+			BattleSPS battleSPS = this._spsList[i];
+			if ((battleSPS.type != 0 || battleSPS.spsBin != null) && (battleSPS.attr & 1) != 0)
+			{
+				if (battleSPS.type == 0)
+				{
+					if (battleSPS.charTran != (UnityEngine.Object)null && battleSPS.boneTran != (UnityEngine.Object)null)
+					{
+						battleSPS.pos = battleSPS.boneTran.position + battleSPS.posOffset;
+					}
+					if (battleSPS.isUpdate)
+					{
+						battleSPS.meshRenderer.enabled = true;
+						battleSPS.GenerateSPS();
+						battleSPS.isUpdate = false;
+					}
+					else
+					{
+						battleSPS.meshRenderer.enabled = false;
+					}
+				}
+				else
+				{
+					battleSPS.AnimateSHP();
+				}
+				battleSPS.lastFrame = battleSPS.curFrame;
+			}
+		}
+	}
+
+	private Boolean _loadSPSTexture()
+	{
+		for (Int32 i = 0; i < (Int32)BattleSPSSystem.statusTextures.Length; i++)
+		{
+			BattleSPSSystem.SPSTexture spstexture = BattleSPSSystem.statusTextures[i];
+			for (Int32 j = 0; j < (Int32)spstexture.textures.Length; j++)
+			{
+				String str;
+				if (spstexture.type == "shp")
+				{
+					str = String.Concat(new Object[]
+					{
+						spstexture.name,
+						"/",
+						spstexture.name,
+						"_",
+						j + 1
+					});
+				}
+				else
+				{
+					str = spstexture.name;
+				}
+				Texture2D texture2D = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/Status/" + str, false);
+				if (!(texture2D != (UnityEngine.Object)null))
+				{
+					return false;
+				}
+				spstexture.textures[j] = texture2D;
+			}
+		}
+		return true;
+	}
+
+	private Int32 _GetSpsFrameCount(Byte[] spsBin)
+	{
+		return (Int32)(BitConverter.ToUInt16(spsBin, 0) & 32767) << 4;
+	}
+
+	private Boolean _loadSPSBin(Int32 spsNo)
+	{
+		if (this._spsBinDict.ContainsKey(spsNo))
+		{
+			return true;
+		}
+		String[] array = new String[]
+		{
+			"st_doku",
+			"st_mdoku",
+			"st_slow",
+			"st_heis",
+			"st_nemu",
+			"st_heat",
+			"st_friz",
+			"st_rif",
+			"st_moku",
+			"st_moum",
+			"st_meiwa",
+			"st_basak"
+		};
+		TextAsset textAsset = AssetManager.Load<TextAsset>("BattleMap/BattleSPS/" + array[spsNo] + ".sps", false);
+		if (textAsset == (UnityEngine.Object)null)
+		{
+			return false;
+		}
+		Byte[] bytes = textAsset.bytes;
+		Int32 key = this._GetSpsFrameCount(bytes);
+		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, bytes));
+		return true;
+	}
+
+	public void FF9FieldSPSSetObjParm(Int32 ObjNo, Int32 ParmType, Int32 Arg0, Int32 Arg1, Int32 Arg2)
+	{
+		BattleSPS battleSPS = this._spsList[ObjNo];
+		if (ParmType == 130)
+		{
+			if (Arg0 != -1)
+			{
+				if (this._loadSPSBin(Arg0))
+				{
+					battleSPS.spsBin = this._spsBinDict[Arg0].Value;
+					battleSPS.curFrame = 0;
+					battleSPS.frameCount = this._spsBinDict[Arg0].Key;
+				}
+				battleSPS.refNo = Arg0;
+			}
+			else
+			{
+				battleSPS.spsBin = null;
+				battleSPS.meshRenderer.enabled = false;
+			}
+		}
+		else if (ParmType == 131)
+		{
+			if (Arg1 != 0)
+			{
+				BattleSPS battleSPS2 = battleSPS;
+				battleSPS2.attr = (Byte)(battleSPS2.attr | (Byte)Arg0);
+			}
+			else
+			{
+				BattleSPS battleSPS3 = battleSPS;
+				battleSPS3.attr = (Byte)(battleSPS3.attr & (Byte)(~(Byte)Arg0));
+			}
+			if ((battleSPS.attr & 1) == 0)
+			{
+				battleSPS.meshRenderer.enabled = false;
+			}
+			else
+			{
+				battleSPS.meshRenderer.enabled = true;
+			}
+		}
+		else if (ParmType == 135)
+		{
+			battleSPS.pos = new Vector3((Single)Arg0, (Single)(Arg1 * -1), (Single)Arg2);
+		}
+		else if (ParmType == 140)
+		{
+			battleSPS.rot = new Vector3((Single)Arg0 / 4096f * 360f, (Single)Arg1 / 4096f * 360f, (Single)Arg2 / 4096f * 360f);
+		}
+		else if (ParmType == 145)
+		{
+			battleSPS.scale = Arg0;
+		}
+		else if (ParmType == 150)
+		{
+			Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(Arg0);
+			battleSPS.charNo = Arg0;
+			battleSPS.boneNo = Arg1;
+			battleSPS.charTran = objUID.go.transform;
+			battleSPS.boneTran = objUID.go.transform.GetChildByName("bone" + battleSPS.boneNo.ToString("D3"));
+		}
+		else if (ParmType == 155)
+		{
+			battleSPS.fade = (Byte)Arg0;
+		}
+		else if (ParmType == 156)
+		{
+			battleSPS.arate = (Byte)Arg0;
+		}
+		else if (ParmType == 160)
+		{
+			battleSPS.frameRate = Arg0;
+		}
+		else if (ParmType == 161)
+		{
+			battleSPS.curFrame = Arg0 << 4;
+		}
+		else if (ParmType == 165)
+		{
+			battleSPS.posOffset = new Vector3((Single)Arg0, (Single)(-(Single)Arg1), (Single)Arg2);
+		}
+		else if (ParmType == 170)
+		{
+			battleSPS.depthOffset = Arg0;
+		}
+	}
+
+	public void SetBtlStatus(Int32 ObjNo, Int32 StatusNo, Byte abr = 0, Int32 type = 0)
+	{
+		BattleSPS battleSPS = this._spsList[ObjNo];
+		if (StatusNo != -1)
+		{
+			battleSPS.type = type;
+			if (type == 0)
+			{
+				if (this._loadSPSBin(StatusNo))
+				{
+					battleSPS.spsBin = this._spsBinDict[StatusNo].Value;
+					battleSPS.curFrame = 0;
+					battleSPS.frameCount = this._spsBinDict[StatusNo].Key;
+					battleSPS.arate = abr;
+					BattleSPS battleSPS2 = battleSPS;
+					battleSPS2.attr = (Byte)(battleSPS2.attr & 254);
+					if ((battleSPS.attr & 1) == 0)
+					{
+						battleSPS.meshRenderer.enabled = false;
+					}
+					battleSPS.refNo = StatusNo;
+					battleSPS.spsScale = BattleSPSSystem.statusTextures[battleSPS.refNo].spsScale;
+					battleSPS.spsDistance = BattleSPSSystem.statusTextures[battleSPS.refNo].spsDistance;
+				}
+			}
+			else
+			{
+				battleSPS.refNo = StatusNo;
+				if (battleSPS.shpGo == null)
+				{
+					battleSPS.GenerateSHP();
+				}
+			}
+		}
+		else
+		{
+			battleSPS.spsBin = null;
+			battleSPS.meshRenderer.enabled = false;
+			if (battleSPS.type == 1)
+			{
+				battleSPS.type = 0;
+				for (Int32 i = 0; i < (Int32)battleSPS.shpGo.Length; i++)
+				{
+					battleSPS.shpGo[i].SetActive(false);
+				}
+			}
+		}
+	}
+
+	public static Quaternion QuaternionFromMatrix(Matrix4x4 m)
+	{
+		Quaternion result = default(Quaternion);
+		result.w = Mathf.Sqrt(Mathf.Max(0f, 1f + m[0, 0] + m[1, 1] + m[2, 2])) / 2f;
+		result.x = Mathf.Sqrt(Mathf.Max(0f, 1f + m[0, 0] - m[1, 1] - m[2, 2])) / 2f;
+		result.y = Mathf.Sqrt(Mathf.Max(0f, 1f - m[0, 0] + m[1, 1] - m[2, 2])) / 2f;
+		result.z = Mathf.Sqrt(Mathf.Max(0f, 1f - m[0, 0] - m[1, 1] + m[2, 2])) / 2f;
+		result.x *= Mathf.Sign(result.x * (m[2, 1] - m[1, 2]));
+		result.y *= Mathf.Sign(result.y * (m[0, 2] - m[2, 0]));
+		result.z *= Mathf.Sign(result.z * (m[1, 0] - m[0, 1]));
+		return result;
+	}
+
+	public void UpdateBtlStatus(BTL_DATA btl, UInt32 status, Vector3 pos, Vector3 rot, Int32 frame)
+	{
+		Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);
+		BattleSPS battleSPS = this._spsList[objSpsIndex];
+		battleSPS.pos = new Vector3(pos.x, pos.y, pos.z);
+		battleSPS.curFrame = frame << 4;
+		if ((battleSPS.attr & 1) == 0)
+		{
+			BattleSPS battleSPS2 = battleSPS;
+			battleSPS2.attr = (Byte)(battleSPS2.attr | 1);
+		}
+		battleSPS.isUpdate = true;
+	}
+
+	public Int32 GetStatusSPSIndex(UInt32 status)
+	{
+		Int32 result = 0;
+		for (Int32 i = 0; i < (Int32)btl2d.wStatIconTbl.Length; i++)
+		{
+			if (btl2d.wStatIconTbl[i].Mask == status)
+			{
+				result = i;
+				break;
+			}
+		}
+		return result;
+	}
+
+	public Int32 GetObjSpsIndex(BTL_DATA btl, UInt32 status)
+	{
+		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
+		return (Int32)(btl.bi.line_no * 12) + statusSPSIndex;
+	}
+
+	public void AddBtlSPSObj(BTL_DATA btl, UInt32 status)
+	{
+		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
+		Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);
+		btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[statusSPSIndex];
+		this.SetBtlStatus(objSpsIndex, statusSPSIndex, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
+	}
+
+	public void RemoveBtlSPSObj(BTL_DATA btl, UInt32 status)
+	{
+		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
+		Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);
+		btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[statusSPSIndex];
+		this.SetBtlStatus(objSpsIndex, -1, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
+	}
+
+	public void SetActiveSHP(Boolean active)
+	{
+		for (Int32 i = 0; i < this._spsList.Count; i++)
+		{
+			BattleSPS battleSPS = this._spsList[i];
+			if (battleSPS.shpGo == null)
+			{
+				return;
+			}
+			for (Int32 j = 0; j < (Int32)battleSPS.shpGo.Length; j++)
+			{
+				battleSPS.shpGo[j].SetActive(active);
+			}
+		}
+	}
+
+	public String MapName;
+
+	private Boolean _isReady;
+
+	private List<BattleSPS> _spsList;
+
+	private Dictionary<Int32, KeyValuePair<Int32, Byte[]>> _spsBinDict;
+
+	public Vector3 rot;
+
+	public static BattleSPSSystem.SPSTexture[] statusTextures = new BattleSPSSystem.SPSTexture[]
+	{
+		new BattleSPSSystem.SPSTexture("poison", "sps", 1, Vector3.zero, 6f, 4f),
+		new BattleSPSSystem.SPSTexture("venom", "sps", 1, Vector3.zero, 2f, 1.5f),
+		new BattleSPSSystem.SPSTexture("slow", "shp", 6, new Vector3(212f, 0f, 0f), 4f, 5f),
+		new BattleSPSSystem.SPSTexture("haste", "shp", 6, new Vector3(-148f, 0f, 0f), 4f, 5f),
+		new BattleSPSSystem.SPSTexture("sleep", "sps", 1, Vector3.zero, 2.5f, 4.5f),
+		new BattleSPSSystem.SPSTexture("heat", "sps", 1, Vector3.zero, 4f, 5f),
+		new BattleSPSSystem.SPSTexture("freeze", "sps", 1, Vector3.zero, 4f, 5f),
+		new BattleSPSSystem.SPSTexture("reflect", "sps", 1, Vector3.zero, 3f, 3f),
+		new BattleSPSSystem.SPSTexture("silence", "shp", 3, new Vector3(-92f, 0f, 0f), 4f, 5f),
+		new BattleSPSSystem.SPSTexture("blind", "sps", 1, Vector3.zero, 5f, 5.5f),
+		new BattleSPSSystem.SPSTexture("trouble", "shp", 4, new Vector3(92f, 0f, 0f), 4f, 5f),
+		new BattleSPSSystem.SPSTexture("berserk", "sps", 1, Vector3.zero, 3f, 2f)
+	};
+
+	public class SPSTexture
+	{
+		public SPSTexture(String name, String type, Int32 textureNum, Vector3 extraPos, Single scale = 4f, Single distance = 5f)
+		{
+			this.name = name;
+			this.type = type;
+			this.textures = new Texture2D[textureNum];
+			this.extraPos = extraPos;
+			this.spsScale = scale;
+			this.spsDistance = distance;
+		}
+
+		public String name;
+
+		public String type;
+
+		public Texture2D[] textures;
+
+		public Vector3 extraPos;
+
+		public Single spsScale;
+
+		public Single spsDistance;
+	}
+}

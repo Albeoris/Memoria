@@ -1,5 +1,7 @@
 using System;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -44,7 +46,7 @@ namespace Memoria.Scripts.Battle
 
             ff9abil.FF9Abil_SetMaster(_v.Caster.PresetId, blueMagicId);
             BattleState.RaiseAbilitiesAchievement(blueMagicId);
-            UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextToolAccessor.ActionAbilityName(blueMagicId));
+            UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.ActionAbilityName(blueMagicId));
         }
     }
 }

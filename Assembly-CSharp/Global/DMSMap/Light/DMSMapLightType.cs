@@ -1,0 +1,9 @@
+﻿using System;
+
+public enum DMSMapLightType : sbyte
+{
+	DMS_MAPLIGHT_TYPE_FLOOR,
+	DMS_MAPLIGHT_TYPE_DEFAULT,
+	DMS_MAPLIGHT_TYPE_LADDER,
+	DMS_MAPLIGHT_TYPE_COUNT
+}

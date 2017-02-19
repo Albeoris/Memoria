@@ -1,4 +1,6 @@
 using System;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -86,7 +88,7 @@ namespace Memoria.Scripts.Battle
             GameState.Thefts++;
 
             BattleItem.AddToInventory(itemId);
-            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextToolAccessor.ItemName(itemId));
+            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(itemId));
             if (_v.Caster.HasSupportAbility(SupportAbility2.Mug))
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;

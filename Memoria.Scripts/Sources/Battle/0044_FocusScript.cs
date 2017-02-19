@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.Magic = (Byte)Math.Min(99, _v.Target.Magic / _v.Command.Power);
+            _v.Target.Magic = (Byte)Math.Min(99, _v.Target.Magic + _v.Target.Magic / _v.Command.Power);
         }
     }
 }

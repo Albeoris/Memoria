@@ -1,0 +1,849 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
+using UnityEngine;
+using Object = System.Object;
+
+public class MainMenuUI : UIScene
+{
+	public Vector3 FrontRowPosition
+	{
+		get
+		{
+			return new Vector3(-418f, 0f, 0f);
+		}
+	}
+
+	public Vector3 BackRowPosition
+	{
+		get
+		{
+			return new Vector3(-392f, 0f, 0f);
+		}
+	}
+
+	public MainMenuUI.SubMenu CurrentSubMenu
+	{
+		get
+		{
+			return this.currentMenu;
+		}
+		set
+		{
+			this.currentMenu = value;
+			ButtonGroupState.SetCursorStartSelect(this.GetGameObjectFromSubMenu(this.currentMenu), MainMenuUI.SubMenuGroupButton);
+			ButtonGroupState.RemoveCursorMemorize(MainMenuUI.SubMenuGroupButton);
+		}
+	}
+
+	public Boolean NeedTweenAndHideSubMenu
+	{
+		set
+		{
+			this.isNeedCharacterTween = value;
+			this.isNeedHideSubMenu = value;
+		}
+	}
+
+	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
+	{
+		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		{
+			this.AfterShowCharacter();
+		};
+		if (afterFinished != null)
+		{
+			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
+		}
+		SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
+		base.Show(sceneVoidDelegate);
+		PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
+		FF9StateSystem.Settings.SetMasterSkill();
+		this.DisplayWindowBackground(this.SubMenuPanel, (UIAtlas)null);
+		this.DisplayCharacter();
+		this.DisplayGeneralInfo();
+		this.DisplayTime(true);
+		if (this.isNeedCharacterTween)
+		{
+			this.SubMenuPanel.SetActive(true);
+			if (FF9StateSystem.PCPlatform)
+			{
+				this.HelpDespLabelGameObject.SetActive(true);
+			}
+			else
+			{
+				this.HelpDespLabelGameObject.SetActive(false);
+			}
+			base.Loading = true;
+			this.characterTransition.TweenIn(new Byte[]
+			{
+				0,
+				1,
+				2,
+				3
+			}, delegate
+			{
+				base.Loading = false;
+			});
+		}
+	}
+
+	public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
+	{
+		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		{
+			if (this.isNeedHideSubMenu)
+			{
+				SceneDirector.FF9Wipe_FadeInEx(12);
+				this.SubMenuPanel.SetActive(false);
+			}
+		};
+		if (afterFinished != null)
+		{
+			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
+		}
+		if (this.isNeedCharacterTween)
+		{
+			this.screenFadePanel.depth = 10;
+			this.RemoveCursorMemorize();
+		}
+		else
+		{
+			this.screenFadePanel.depth = 7;
+			this.submenuTransition.AnimationTime = ((!FF9StateSystem.Settings.IsFastForward) ? 0.2f : 0.1f);
+			this.submenuTransition.TweenOut((Action)null);
+		}
+		base.Hide(sceneVoidDelegate);
+	}
+
+	public void StartSubmenuTweenIn()
+	{
+		this.submenuTransition.AnimationTime = ((!FF9StateSystem.Settings.IsFastForward) ? 0.2f : 0.1f);
+		this.submenuTransition.TweenIn((Action)null);
+	}
+
+	public void SetSubmenuVisibility(Boolean isVisible)
+	{
+		this.SubMenuPanel.SetActive(isVisible);
+	}
+
+	private void RemoveCursorMemorize()
+	{
+		this.characterMemorize = (GameObject)null;
+		this.characterOrderMemorize = (GameObject)null;
+		this.currentMenu = MainMenuUI.SubMenu.Item;
+		ButtonGroupState.RemoveCursorMemorize(MainMenuUI.SubMenuGroupButton);
+		ButtonGroupState.RemoveCursorMemorize(MainMenuUI.CharacterGroupButton);
+		ButtonGroupState.RemoveCursorMemorize(MainMenuUI.OrderGroupButton);
+		ButtonGroupState.DisableAllGroup(false);
+	}
+
+	public override Boolean OnKeyConfirm(GameObject go)
+	{
+		if (base.OnKeyConfirm(go))
+		{
+			if (ButtonGroupState.ActiveGroup == MainMenuUI.SubMenuGroupButton)
+			{
+				FF9Sfx.FF9SFX_Play(103);
+				this.currentMenu = this.GetSubMenuFromGameObject(go);
+				switch (this.currentMenu)
+				{
+				case MainMenuUI.SubMenu.Item:
+					this.NeedTweenAndHideSubMenu = false;
+					this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f);
+					this.ItemSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+					this.Hide(delegate
+					{
+						PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Item);
+						base.Loading = true;
+					});
+					break;
+				case MainMenuUI.SubMenu.Ability:
+				case MainMenuUI.SubMenu.Equip:
+				case MainMenuUI.SubMenu.Status:
+					this.SetAvalableCharacter(false);
+					this.DisplayHelp(this.currentMenu);
+					if (this.characterMemorize != (UnityEngine.Object)null && !this.characterMemorize.GetComponent<ButtonGroupState>().enabled)
+					{
+						this.characterMemorize = this.CharacterHUDList[this.GetFirstPlayer()].Self;
+					}
+					ButtonGroupState.SetCursorMemorize(this.characterMemorize, MainMenuUI.CharacterGroupButton);
+					ButtonGroupState.ActiveGroup = MainMenuUI.CharacterGroupButton;
+					ButtonGroupState.SetSecondaryOnGroup(MainMenuUI.SubMenuGroupButton);
+					ButtonGroupState.HoldActiveStateOnGroup(MainMenuUI.SubMenuGroupButton);
+					break;
+				case MainMenuUI.SubMenu.Order:
+					this.SetAvalableCharacter(true);
+					this.DisplayHelp(this.currentMenu);
+					ButtonGroupState.SetCursorMemorize(this.characterOrderMemorize, MainMenuUI.CharacterGroupButton);
+					ButtonGroupState.ActiveGroup = MainMenuUI.CharacterGroupButton;
+					ButtonGroupState.SetSecondaryOnGroup(MainMenuUI.SubMenuGroupButton);
+					ButtonGroupState.HoldActiveStateOnGroup(MainMenuUI.SubMenuGroupButton);
+					break;
+				case MainMenuUI.SubMenu.Card:
+					this.NeedTweenAndHideSubMenu = false;
+					this.submenuTransition.ShiftContentClip = new Vector2(0f, 499f);
+					this.CardSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+					this.Hide(delegate
+					{
+						PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Card);
+						base.Loading = true;
+					});
+					break;
+				case MainMenuUI.SubMenu.Config:
+					this.NeedTweenAndHideSubMenu = false;
+					this.submenuTransition.ShiftContentClip = new Vector2(0f, 597f);
+					this.ConfigSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+					this.Hide(delegate
+					{
+						PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Config);
+						base.Loading = true;
+					});
+					break;
+				}
+			}
+			else if (ButtonGroupState.ActiveGroup == MainMenuUI.CharacterGroupButton)
+			{
+				if (ButtonGroupState.ContainButtonInGroup(go, MainMenuUI.CharacterGroupButton))
+				{
+					FF9Sfx.FF9SFX_Play(103);
+					this.currentCharacterIndex = go.transform.GetSiblingIndex();
+					PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentCharacterIndex];
+					if (player != null)
+					{
+						switch (this.currentMenu)
+						{
+						case MainMenuUI.SubMenu.Ability:
+							this.characterMemorize = go;
+							this.NeedTweenAndHideSubMenu = false;
+							this.submenuTransition.ShiftContentClip = new Vector2(0f, 107f);
+							this.AbilitySubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+							this.Hide(delegate
+							{
+								PersistenSingleton<UIManager>.Instance.AbilityScene.CurrentPartyIndex = this.currentCharacterIndex;
+								PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Ability);
+							});
+							break;
+						case MainMenuUI.SubMenu.Equip:
+							this.characterMemorize = go;
+							this.NeedTweenAndHideSubMenu = false;
+							this.submenuTransition.ShiftContentClip = new Vector2(0f, 205f);
+							this.EquipSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+							this.Hide(delegate
+							{
+								PersistenSingleton<UIManager>.Instance.EquipScene.CurrentPartyIndex = this.currentCharacterIndex;
+								PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Equip);
+							});
+							break;
+						case MainMenuUI.SubMenu.Status:
+							this.characterMemorize = go;
+							this.NeedTweenAndHideSubMenu = false;
+							this.submenuTransition.ShiftContentClip = new Vector2(0f, 303f);
+							this.StatusSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+							this.Hide(delegate
+							{
+								PersistenSingleton<UIManager>.Instance.StatusScene.CurrentPartyIndex = this.currentCharacterIndex;
+								PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Status);
+							});
+							break;
+						case MainMenuUI.SubMenu.Order:
+							this.characterOrderMemorize = go;
+							ButtonGroupState.SetCursorMemorize(this.CharacterOrderGameObjectList[this.currentCharacterIndex], MainMenuUI.OrderGroupButton);
+							ButtonGroupState.ActiveGroup = MainMenuUI.OrderGroupButton;
+							ButtonGroupState.HoldActiveStateOnGroup(MainMenuUI.CharacterGroupButton);
+							break;
+						}
+					}
+					else if (this.currentMenu == MainMenuUI.SubMenu.Order)
+					{
+						this.characterOrderMemorize = go;
+						ButtonGroupState.SetCursorMemorize(this.CharacterOrderGameObjectList[this.currentCharacterIndex], MainMenuUI.OrderGroupButton);
+						ButtonGroupState.ActiveGroup = MainMenuUI.OrderGroupButton;
+						ButtonGroupState.HoldActiveStateOnGroup(MainMenuUI.CharacterGroupButton);
+					}
+				}
+				else
+				{
+					this.OnSecondaryGroupClick(go);
+				}
+			}
+			else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
+			{
+				if (ButtonGroupState.ContainButtonInGroup(go, MainMenuUI.OrderGroupButton))
+				{
+					FF9Sfx.FF9SFX_Play(103);
+					this.currentOrder = go.transform.parent.GetSiblingIndex();
+					this.ToggleOrder();
+					this.DisplayCharacter();
+					ButtonGroupState.SetCursorMemorize(this.CharacterHUDList[this.currentOrder].Self, MainMenuUI.CharacterGroupButton);
+					ButtonGroupState.ActiveGroup = MainMenuUI.CharacterGroupButton;
+				}
+				else
+				{
+					this.OnSecondaryGroupClick(go);
+				}
+			}
+		}
+		return true;
+	}
+
+	public override Boolean OnKeyCancel(GameObject go)
+	{
+		if (base.OnKeyCancel(go))
+		{
+			if (ButtonGroupState.ActiveGroup == MainMenuUI.SubMenuGroupButton)
+			{
+				FF9Sfx.FF9SFX_Play(101);
+				this.NeedTweenAndHideSubMenu = true;
+				this.Hide(delegate
+				{
+					if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
+					{
+						PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.WorldHUD);
+					}
+					else
+					{
+						PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.FieldHUD);
+					}
+				});
+			}
+			else if (ButtonGroupState.ActiveGroup == MainMenuUI.CharacterGroupButton)
+			{
+				FF9Sfx.FF9SFX_Play(101);
+				if (this.currentMenu == MainMenuUI.SubMenu.Order)
+				{
+					this.characterOrderMemorize = go;
+				}
+				else
+				{
+					this.characterMemorize = go;
+				}
+				ButtonGroupState.ActiveGroup = MainMenuUI.SubMenuGroupButton;
+			}
+			else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
+			{
+				FF9Sfx.FF9SFX_Play(101);
+				ButtonGroupState.ActiveGroup = MainMenuUI.CharacterGroupButton;
+			}
+		}
+		return true;
+	}
+
+	public override Boolean OnItemSelect(GameObject go)
+	{
+		if (base.OnItemSelect(go))
+		{
+			if (ButtonGroupState.ActiveGroup == MainMenuUI.CharacterGroupButton)
+			{
+				Int32 siblingIndex = go.transform.GetSiblingIndex();
+				if (this.currentCharacterIndex != siblingIndex)
+				{
+					this.currentCharacterIndex = siblingIndex;
+				}
+			}
+			else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
+			{
+				Int32 siblingIndex2 = go.transform.parent.GetSiblingIndex();
+				if (this.currentOrder != siblingIndex2)
+				{
+					this.currentOrder = siblingIndex2;
+				}
+			}
+		}
+		return true;
+	}
+
+	private void OnSecondaryGroupClick(GameObject go)
+	{
+		ButtonGroupState.HoldActiveStateOnGroup(go, MainMenuUI.SubMenuGroupButton);
+		if (ButtonGroupState.ActiveGroup == MainMenuUI.CharacterGroupButton)
+		{
+			FF9Sfx.muteSfx = true;
+			this.OnKeyCancel(this.CharacterListPanel.GetChild(this.currentCharacterIndex));
+			FF9Sfx.muteSfx = false;
+			this.OnKeyConfirm(go);
+		}
+		else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
+		{
+			FF9Sfx.muteSfx = true;
+			GameObject child = this.CharacterListPanel.GetChild(this.currentOrder);
+			this.OnKeyCancel(child.GetChild(1));
+			this.OnKeyCancel(this.CharacterListPanel.GetChild(this.currentCharacterIndex));
+			FF9Sfx.muteSfx = false;
+			this.OnKeyConfirm(go);
+		}
+	}
+
+	public void AfterShowCharacter()
+	{
+		ButtonGroupState.SetCursorStartSelect(this.GetGameObjectFromSubMenu(this.currentMenu), MainMenuUI.SubMenuGroupButton);
+		ButtonGroupState.RemoveCursorMemorize(MainMenuUI.SubMenuGroupButton);
+		ButtonGroupState.SetPointerDepthToGroup(10, MainMenuUI.SubMenuGroupButton);
+		ButtonGroupState.SetPointerDepthToGroup(12, MainMenuUI.OrderGroupButton);
+		ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0f), MainMenuUI.CharacterGroupButton);
+		ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, -28f), MainMenuUI.OrderGroupButton);
+		ButtonGroupState.ActiveGroup = MainMenuUI.SubMenuGroupButton;
+	}
+
+	private void DisplayHelp(MainMenuUI.SubMenu currentMenu)
+	{
+		if (currentMenu == MainMenuUI.SubMenu.Ability || currentMenu == MainMenuUI.SubMenu.Order)
+		{
+			foreach (CharacterDetailHUD characterDetailHUD in this.CharacterHUDList)
+			{
+				ButtonGroupState component = characterDetailHUD.Self.GetComponent<ButtonGroupState>();
+				component.Help.TextKey = ((!FF9StateSystem.MobilePlatform) ? "TargetHelp" : "TargetHelpMobile");
+			}
+		}
+		else if (currentMenu == MainMenuUI.SubMenu.Equip)
+		{
+			Int32 num = 0;
+			foreach (CharacterDetailHUD characterDetailHUD2 in this.CharacterHUDList)
+			{
+				ButtonGroupState component2 = characterDetailHUD2.Self.GetComponent<ButtonGroupState>();
+				String text = Localization.Get((!FF9StateSystem.MobilePlatform) ? "TargetHelp" : "TargetHelpMobile") + "\n";
+				PLAYER player = FF9StateSystem.Common.FF9.party.member[num];
+				if (player != null)
+				{
+					for (Int32 i = 0; i < 5; i++)
+					{
+						text = text + "[ICON=" + (625 + i).ToString() + "] [FEED=1]:[FEED=2]";
+						Int32 num2 = (Int32)player.equip[i];
+						if (num2 != 255)
+						{
+							FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[num2];
+							String itemIconSpriteName = "item" + ff9ITEM_DATA.shape.ToString("0#") + "_" + ff9ITEM_DATA.color.ToString("0#");
+							Int32 key = FF9UIDataTool.IconSpriteName.FirstOrDefault((KeyValuePair<Int32, String> pair) => pair.Value == itemIconSpriteName).Key;
+							String text2 = text;
+							text = String.Concat(new String[]
+							{
+								text2,
+								"[ICON=",
+								key.ToString(),
+								"] [FEED=1]",
+								FF9TextTool.ItemName(num2)
+							});
+						}
+						if (i < 4)
+						{
+							text += "\n";
+						}
+					}
+				}
+				component2.Help.TextKey = String.Empty;
+				component2.Help.Text = text;
+				num++;
+			}
+		}
+		else if (currentMenu == MainMenuUI.SubMenu.Status)
+		{
+			Int32 num3 = 0;
+			foreach (CharacterDetailHUD characterDetailHUD3 in this.CharacterHUDList)
+			{
+				ButtonGroupState component3 = characterDetailHUD3.Self.GetComponent<ButtonGroupState>();
+				String text3 = Localization.Get((!FF9StateSystem.MobilePlatform) ? "TargetHelp" : "TargetHelpMobile") + "\n";
+				PLAYER player2 = FF9StateSystem.Common.FF9.party.member[num3];
+				if (player2 != null)
+				{
+					UInt32 num4 = (UInt32)((player2.level < 99) ? ((UInt32)ff9level._FF9Level_Exp[(Int32)player2.level]) : player2.exp);
+					Int32 num5;
+					if (Localization.language == "English(US)" || Localization.language == "English(UK)" || Localization.language == "German")
+					{
+						num5 = 82;
+					}
+					else
+					{
+						num5 = 64;
+					}
+					String text2 = text3;
+					text3 = String.Concat(new Object[]
+					{
+						text2,
+						Localization.Get("EXP"),
+						"[XTAB=",
+						num5,
+						"]",
+						player2.exp.ToString(),
+						"\n"
+					});
+					text2 = text3;
+					text3 = String.Concat(new Object[]
+					{
+						text2,
+						Localization.Get("NextLevel"),
+						" [XTAB=",
+						num5,
+						"]",
+						(num4 - player2.exp).ToString()
+					});
+				}
+				component3.Help.TextKey = String.Empty;
+				component3.Help.Text = text3;
+				num3++;
+			}
+		}
+	}
+
+	private void DisplayCharacter()
+	{
+		Int32 num = 0;
+		PLAYER[] member = FF9StateSystem.Common.FF9.party.member;
+		for (Int32 i = 0; i < (Int32)member.Length; i++)
+		{
+			PLAYER player = member[i];
+			CharacterDetailHUD characterDetailHUD = this.CharacterHUDList[num++];
+			characterDetailHUD.Self.SetActive(true);
+			if (player != null)
+			{
+				characterDetailHUD.Content.SetActive(true);
+				FF9UIDataTool.DisplayCharacterDetail(player, characterDetailHUD);
+				FF9UIDataTool.DisplayCharacterAvatar(player, this.FrontRowPosition, this.BackRowPosition, characterDetailHUD.AvatarSprite, true);
+			}
+			else
+			{
+				characterDetailHUD.Content.SetActive(false);
+			}
+		}
+	}
+
+	private void DisplayGeneralInfo()
+	{
+		this.gilLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
+		this.locationNameLabel.text = FF9StateSystem.Common.FF9.mapNameStr;
+	}
+
+	private void DisplayTime(Boolean ForceUpdateColor)
+	{
+		Color color = FF9TextTool.White;
+		Double num = FF9StateSystem.Settings.time % 360000.0;
+		switch ((Int32)(FF9StateSystem.Settings.time / 360000.0))
+		{
+		case 0:
+			color = FF9TextTool.White;
+			break;
+		case 1:
+			color = FF9TextTool.Red;
+			break;
+		case 2:
+			color = FF9TextTool.Yellow;
+			break;
+		case 3:
+			color = FF9TextTool.Cyan;
+			break;
+		case 4:
+			color = FF9TextTool.Magenta;
+			break;
+		case 5:
+			color = FF9TextTool.Green;
+			break;
+		default:
+			num = 359999.0;
+			color = FF9TextTool.Green;
+			break;
+		}
+		this.hourLabel.text = ((Int32)(num / 3600.0)).ToString("0#");
+		this.minuteLabel.text = ((Int32)(num / 60.0) % 60).ToString("0#");
+		this.secondLabel.text = ((Int32)num % 60).ToString("0#");
+		if ((Single)((Int32)FF9StateSystem.Settings.time) % 360000f == 0f || ForceUpdateColor)
+		{
+			this.hourLabel.color = color;
+			this.minuteLabel.color = color;
+			this.secondLabel.color = color;
+			UILabel[] array = this.colonLabel;
+			for (Int32 i = 0; i < (Int32)array.Length; i++)
+			{
+				UILabel uilabel = array[i];
+				uilabel.color = color;
+			}
+		}
+	}
+
+	private GameObject GetGameObjectFromSubMenu(MainMenuUI.SubMenu subMenu)
+	{
+		switch (subMenu)
+		{
+		case MainMenuUI.SubMenu.Item:
+			return this.ItemSubMenu;
+		case MainMenuUI.SubMenu.Ability:
+			return this.AbilitySubMenu;
+		case MainMenuUI.SubMenu.Equip:
+			return this.EquipSubMenu;
+		case MainMenuUI.SubMenu.Status:
+			return this.StatusSubMenu;
+		case MainMenuUI.SubMenu.Order:
+			return this.OrderSubMenu;
+		case MainMenuUI.SubMenu.Card:
+			return this.CardSubMenu;
+		case MainMenuUI.SubMenu.Config:
+			return this.ConfigSubMenu;
+		default:
+			return this.ItemSubMenu;
+		}
+	}
+
+	private MainMenuUI.SubMenu GetSubMenuFromGameObject(GameObject go)
+	{
+		if (go == this.ItemSubMenu)
+		{
+			return MainMenuUI.SubMenu.Item;
+		}
+		if (go == this.ConfigSubMenu)
+		{
+			return MainMenuUI.SubMenu.Config;
+		}
+		if (go == this.CardSubMenu)
+		{
+			return MainMenuUI.SubMenu.Card;
+		}
+		if (go == this.AbilitySubMenu)
+		{
+			return MainMenuUI.SubMenu.Ability;
+		}
+		if (go == this.EquipSubMenu)
+		{
+			return MainMenuUI.SubMenu.Equip;
+		}
+		if (go == this.StatusSubMenu)
+		{
+			return MainMenuUI.SubMenu.Status;
+		}
+		if (go == this.OrderSubMenu)
+		{
+			return MainMenuUI.SubMenu.Order;
+		}
+		return MainMenuUI.SubMenu.None;
+	}
+
+	private Int32 GetFirstPlayer()
+	{
+		Int32 num = 0;
+		PLAYER[] member = FF9StateSystem.Common.FF9.party.member;
+		for (Int32 i = 0; i < (Int32)member.Length; i++)
+		{
+			PLAYER player = member[i];
+			if (player != null)
+			{
+				return num;
+			}
+			num++;
+		}
+		return num;
+	}
+
+	private void ToggleOrder()
+	{
+		if (this.currentCharacterIndex == this.currentOrder)
+		{
+			if (FF9StateSystem.Common.FF9.party.member[this.currentCharacterIndex] != null)
+			{
+				PLAYER_INFO info = FF9StateSystem.Common.FF9.party.member[this.currentCharacterIndex].info;
+				info.row = (Byte)(info.row ^ 1);
+			}
+		}
+		else
+		{
+			PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentCharacterIndex];
+			FF9StateSystem.Common.FF9.party.member[this.currentCharacterIndex] = FF9StateSystem.Common.FF9.party.member[this.currentOrder];
+			FF9StateSystem.Common.FF9.party.member[this.currentOrder] = player;
+		}
+	}
+
+	private void SetAvalableCharacter(Boolean includeEmpty)
+	{
+		List<CharacterDetailHUD> list = new List<CharacterDetailHUD>();
+		if (!includeEmpty)
+		{
+			foreach (CharacterDetailHUD characterDetailHUD in this.CharacterHUDList)
+			{
+				if (characterDetailHUD.Content.activeSelf)
+				{
+					list.Add(characterDetailHUD);
+					ButtonGroupState.SetButtonEnable(characterDetailHUD.Self, true);
+				}
+				else
+				{
+					ButtonGroupState.SetButtonEnable(characterDetailHUD.Self, false);
+				}
+			}
+		}
+		else
+		{
+			foreach (CharacterDetailHUD characterDetailHUD2 in this.CharacterHUDList)
+			{
+				list.Add(characterDetailHUD2);
+				ButtonGroupState.SetButtonEnable(characterDetailHUD2.Self, true);
+			}
+		}
+		for (Int32 i = 0; i < list.Count; i++)
+		{
+			Int32 index = i - 1;
+			Int32 index2 = i + 1;
+			if (i == 0)
+			{
+				index = list.Count - 1;
+			}
+			if (i == list.Count - 1)
+			{
+				index2 = 0;
+			}
+			UIKeyNavigation component = list[i].Self.GetComponent<UIKeyNavigation>();
+			component.onUp = list[index].Self;
+			component.onDown = list[index2].Self;
+		}
+	}
+
+	protected void Update()
+	{
+		FF9StateSystem.Settings.UpdateTickTime();
+		this.DisplayTime(false);
+	}
+
+	private void OnGUI()
+	{
+	}
+
+	protected void Awake()
+	{
+		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
+		this.ItemSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(0);
+		this.AbilitySubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(1);
+		this.EquipSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(2);
+		this.StatusSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(3);
+		this.OrderSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(4);
+		this.CardSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(5);
+		this.ConfigSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(6);
+		UIEventListener uieventListener = UIEventListener.Get(this.ItemSubMenu);
+		uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener uieventListener2 = UIEventListener.Get(this.AbilitySubMenu);
+		uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener uieventListener3 = UIEventListener.Get(this.EquipSubMenu);
+		uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener uieventListener4 = UIEventListener.Get(this.StatusSubMenu);
+		uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener uieventListener5 = UIEventListener.Get(this.OrderSubMenu);
+		uieventListener5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener5.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener uieventListener6 = UIEventListener.Get(this.CardSubMenu);
+		uieventListener6.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener6.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener uieventListener7 = UIEventListener.Get(this.ConfigSubMenu);
+		uieventListener7.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener7.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		foreach (Object obj in this.CharacterListPanel.transform)
+		{
+			Transform transform = (Transform)obj;
+			GameObject gameObject = transform.gameObject;
+			UIEventListener uieventListener8 = UIEventListener.Get(gameObject);
+			uieventListener8.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener8.onClick, new UIEventListener.VoidDelegate(this.onClick));
+			CharacterDetailHUD item = new CharacterDetailHUD(gameObject, false);
+			this.CharacterHUDList.Add(item);
+			GameObject child = gameObject.GetChild(1);
+			UIEventListener uieventListener9 = UIEventListener.Get(child);
+			uieventListener9.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener9.onClick, new UIEventListener.VoidDelegate(this.onClick));
+			this.CharacterOrderGameObjectList.Add(child);
+			if (FF9StateSystem.MobilePlatform)
+			{
+				gameObject.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
+			}
+		}
+		this.gilLabel = this.GenericInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
+		this.hourLabel = this.GenericInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
+		this.minuteLabel = this.GenericInfoPanel.GetChild(0).GetChild(3).GetComponent<UILabel>();
+		this.secondLabel = this.GenericInfoPanel.GetChild(0).GetChild(5).GetComponent<UILabel>();
+		this.colonLabel = new UILabel[]
+		{
+			this.GenericInfoPanel.GetChild(0).GetChild(2).GetComponent<UILabel>(),
+			this.GenericInfoPanel.GetChild(0).GetChild(4).GetComponent<UILabel>()
+		};
+		this.locationNameLabel = this.LocationInfoPanel.GetChild(0).GetComponent<UILabel>();
+		this.characterTransition = this.TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
+		this.submenuTransition = this.SubMenuTransitionGameObject.GetComponent<HonoTweenClipping>();
+		this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
+		this.characterMemorize = this.CharacterHUDList[this.GetFirstPlayer()].Self;
+		this.characterOrderMemorize = this.CharacterHUDList[0].Self;
+	}
+
+	public GameObject SubMenuPanel;
+
+	public GameObject TransitionGroup;
+
+	public GameObject CharacterListPanel;
+
+	public GameObject GenericInfoPanel;
+
+	public GameObject LocationInfoPanel;
+
+	public GameObject HelpDespLabelGameObject;
+
+	public GameObject ScreenFadeGameObject;
+
+	public GameObject SubMenuTransitionGameObject;
+
+	private static String SubMenuGroupButton = "MainMenu.SubMenu";
+
+	private static String CharacterGroupButton = "MainMenu.Character";
+
+	private static String OrderGroupButton = "MainMenu.Order";
+
+	private GameObject ItemSubMenu;
+
+	private GameObject AbilitySubMenu;
+
+	private GameObject EquipSubMenu;
+
+	private GameObject StatusSubMenu;
+
+	private GameObject OrderSubMenu;
+
+	private GameObject CardSubMenu;
+
+	private GameObject ConfigSubMenu;
+
+	private UILabel gilLabel;
+
+	private UILabel hourLabel;
+
+	private UILabel minuteLabel;
+
+	private UILabel secondLabel;
+
+	private UILabel[] colonLabel;
+
+	private UILabel locationNameLabel;
+
+	private UIPanel screenFadePanel;
+
+	private HonoTweenPosition characterTransition;
+
+	private HonoTweenClipping submenuTransition;
+
+	private Boolean isNeedCharacterTween = true;
+
+	private Boolean isNeedHideSubMenu = true;
+
+	private MainMenuUI.SubMenu currentMenu;
+
+	private Int32 currentCharacterIndex = -1;
+
+	private Int32 currentOrder = -1;
+
+	private List<CharacterDetailHUD> CharacterHUDList = new List<CharacterDetailHUD>();
+
+	private List<GameObject> CharacterOrderGameObjectList = new List<GameObject>();
+
+	private GameObject characterMemorize;
+
+	private GameObject characterOrderMemorize;
+
+	public enum SubMenu
+	{
+		Item,
+		Ability,
+		Equip,
+		Status,
+		Order,
+		Card,
+		Config,
+		None
+	}
+}

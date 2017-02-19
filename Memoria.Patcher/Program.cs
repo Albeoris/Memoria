@@ -1,29 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
-using Mono.Collections.Generic;
+using Memoria.Prime;
 
 namespace Memoria.Patcher
 {
-    class Program
+    static class Program
     {
-        public static volatile Boolean Changed;
-
-        public static readonly PatchCollection<TypePatch> Patches = InitializePatches();
-
-        private static PatchCollection<TypePatch> InitializePatches()
-        {
-            return new PatchCollection<TypePatch>(
-                new TypePatch[]
-                {
-                    new DefaultFontPatch(),
-                    new FF9TextToolPatch()
-                });
-        }
-
         static void Main(String[] args)
         {
             try
@@ -80,7 +63,7 @@ namespace Memoria.Patcher
                 String targetPath = gameLocation.RootDirectory + relativePath;
 
                 File.Copy(sourcePath, targetPath, true);
-                Console.WriteLine("Copied: " + targetPath);
+                Console.WriteLine("Copied: " + targetPath.Substring(gameLocation.RootDirectory.Length));
 
             }
             Console.WriteLine("The launcher was copied!");
@@ -112,7 +95,7 @@ namespace Memoria.Patcher
                 else
                 {
                     File.Copy(sourcePath, targetPath, true);
-                    Console.WriteLine("Copied: " + targetPath);
+                    Console.WriteLine("Copied: " + targetPath.Substring(targetDirectory.Length));
                 }
 
             }
@@ -158,16 +141,17 @@ namespace Memoria.Patcher
         {
             foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, extensions, SearchOption.AllDirectories))
             {
+                DateTime sourceFileTime = File.GetCreationTimeUtc(sourceFile);
                 String targetFile = targetDirectory + sourceFile.Substring(sourceDirectory.Length);
-                if (File.Exists(targetFile))
+                if (File.Exists(targetFile) && File.GetCreationTimeUtc(targetFile) == sourceFileTime)
                     continue;
 
                 String directoryName = Path.GetDirectoryName(targetFile);
-                if (directoryName != null)
-                    Directory.CreateDirectory(directoryName);
+                Directory.CreateDirectory(directoryName);
 
-                File.Copy(sourceFile, targetFile);
-                Console.WriteLine("Copied: " + targetFile);
+                File.Copy(sourceFile, targetFile, true);
+                File.SetCreationTimeUtc(targetFile, sourceFileTime);
+                Console.WriteLine("Copied: " + targetFile.Substring(targetDirectory.Length));
             }
         }
 
@@ -183,40 +167,18 @@ namespace Memoria.Patcher
 
                 Console.WriteLine("Patching...");
 
-                String modPath = Path.Combine(directory, "Memoria.dll");
-                File.Copy("Memoria.dll", modPath, true);
-                File.Copy("Memoria.dll.mdb", modPath + ".mdb", true);
-
                 String assemblyPath = Path.Combine(directory, "Assembly-CSharp.dll");
                 String backupPath = Path.Combine(directory, "Assembly-CSharp.bak");
 
-                RollbackPreviousPatches(assemblyPath, backupPath);
+                if (!File.Exists(backupPath))
+                    File.Copy(assemblyPath, backupPath);
 
-                InitializePatches();
+                String modPath = Path.Combine(directory, "Memoria.Prime.dll");
+                File.Copy("Memoria.Prime.dll", modPath, true);
+                File.Copy("Memoria.Prime.dll.mdb", modPath + ".mdb", true);
 
-                AssemblyDefinition mod = AssemblyDefinition.ReadAssembly(modPath);
-                foreach (ModuleDefinition module in mod.Modules)
-                    PreparePatch(module);
-
-                AssemblyDefinition victim = AssemblyDefinition.ReadAssembly(assemblyPath);
-                //JunkChecker.Check(victim, backupPath);
-
-                foreach (ModuleDefinition module in victim.Modules)
-                    PatchModule(module);
-
-                TypeExporters.Export(mod, victim);
-
-                if (Changed)
-                {
-                    String tmpPath = Path.Combine(directory, "Assembly-CSharp.tmp");
-                    victim.Write(tmpPath);
-
-                    if (!File.Exists(backupPath))
-                        File.Copy(assemblyPath, backupPath);
-
-                    File.Delete(assemblyPath);
-                    File.Move(tmpPath, assemblyPath);
-                }
+                File.Copy("Assembly-CSharp.dll", assemblyPath, true);
+                File.Copy("Assembly-CSharp.dll.mdb", assemblyPath + ".mdb", true);
 
                 Console.WriteLine("Success!");
             }
@@ -225,31 +187,6 @@ namespace Memoria.Patcher
                 String message = $"Failed to patch assembly from a directory [{directory}]";
                 Console.WriteLine(message);
                 Log.Error(ex, message);
-            }
-        }
-
-        private static void RollbackPreviousPatches(String assemblyPath, String backupPath)
-        {
-            AssemblyDefinition unknown = AssemblyDefinition.ReadAssembly(assemblyPath);
-
-            if (unknown.MainModule.AssemblyReferences.FirstOrDefault(a => a.Name == "Memoria") == null)
-            {
-                if (File.Exists(backupPath))
-                    File.Delete(backupPath);
-
-                File.Copy(assemblyPath, backupPath);
-            }
-            else
-            {
-                if (File.Exists(backupPath))
-                {
-                    File.Delete(assemblyPath);
-                    File.Copy(backupPath, assemblyPath);
-                }
-                else
-                {
-                    throw new FileNotFoundException("Assembly alreday patched and backup not found. Restore original files and try again. Expected file: " + backupPath, backupPath);
-                }
             }
         }
 
@@ -284,119 +221,5 @@ namespace Memoria.Patcher
                 return null;
             }
         }
-
-        private static void PreparePatch(ModuleDefinition module)
-        {
-            PrepareTypePatches(module.Types);
-        }
-
-        private static void PrepareTypePatches(Collection<TypeDefinition> types)
-        {
-            Int32 count = 0;
-            foreach (TypeDefinition type in types)
-            {
-                var patch = Patches.FindByTarget(type.FullName);
-                if (patch == null)
-                    continue;
-
-                patch.TargetType = type;
-                if (++count >= Patches.Count)
-                    break;
-            }
-        }
-
-        private static void PatchModule(ModuleDefinition module)
-        {
-            PatchTypes(module.Types);
-            PatchReferences(module.AssemblyReferences);
-        }
-
-        private static void PatchReferences(Collection<AssemblyNameReference> references)
-        {
-            for (Int32 i = references.Count - 1; i >= 0; i--)
-            {
-                AssemblyNameReference reference = references[i];
-                if (reference.Name != "mscorlib")
-                    continue;
-                if (reference.Version == new Version(2, 0, 5, 0))
-                    continue;
-
-                throw new InvalidDataException();
-            }
-        }
-
-        private static void PatchTypes(Collection<TypeDefinition> types)
-        {
-            Int32 count = 0;
-            foreach (TypeDefinition type in types)
-            {
-                TypePatch patch = Patches.FindBySource(type.FullName);
-                if (patch == null)
-                    continue;
-
-                PatchType(type, patch);
-                if (++count >= Patches.Count)
-                    break;
-            }
-        }
-
-        private static void PatchType(TypeDefinition type, TypePatch patch)
-        {
-            PatchMethods(type.Methods, patch.GetMethodPatches());
-        }
-
-        private static void PatchMethods(Collection<MethodDefinition> methods, PatchCollection<MethodPatch> patches)
-        {
-            Int32 count = 0;
-            foreach (MethodDefinition method in methods)
-            {
-                MethodPatch patch = patches.FindBySource(method.Name);
-                if (patch == null)
-                    continue;
-
-                Boolean? result = IsApplicable(method, patch);
-                if (result == false)
-                    continue;
-
-                if (result == true)
-                {
-                    patch.Patch(method);
-                    Changed = true;
-                }
-
-                if (++count >= patches.Count)
-                    break;
-            }
-        }
-
-        private static Boolean? IsApplicable(MethodDefinition method, MethodPatch patch)
-        {
-            if (method.ReturnType.FullName != patch.ExpectedReturnType)
-                return false;
-
-            if (method.HasParameters)
-            {
-                if (patch.ExpectedParameterTypes.IsNullOrEmpty())
-                    return false;
-
-                if (method.Parameters.Count != patch.ExpectedParameterTypes.Length)
-                    return false;
-
-                for (Int32 i = 0; i < method.Parameters.Count; i++)
-                {
-                    if (method.Parameters[i].ParameterType.FullName != patch.ExpectedParameterTypes[i])
-                        return false;
-                }
-            }
-            else if (!patch.ExpectedParameterTypes.IsNullOrEmpty())
-            {
-                return false;
-            }
-
-            Collection<Instruction> instructions = method.Body.Instructions;
-            return (instructions.Count < 1 || instructions[0].Operand as String != patch.Label) ? (Boolean?)true : null;
-        }
-
-
     }
 }

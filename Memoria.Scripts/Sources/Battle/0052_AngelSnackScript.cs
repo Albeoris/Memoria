@@ -1,4 +1,6 @@
 using System;
+using Memoria.Data;
+
 // ReSharper disable UseObjectOrCollectionInitializer
 
 namespace Memoria.Scripts.Battle

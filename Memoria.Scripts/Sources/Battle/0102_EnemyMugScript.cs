@@ -1,4 +1,6 @@
 using System;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -38,7 +40,7 @@ namespace Memoria.Scripts.Battle
             else
             {
                 BattleItem.RemoveFromInventory(itemId);
-                UiState.SetBattleFollowFormatMessage(BattleMesages.WasStolen, FF9TextToolAccessor.ItemName(itemId));
+                UiState.SetBattleFollowFormatMessage(BattleMesages.WasStolen, FF9TextTool.ItemName(itemId));
             }
         }
     }

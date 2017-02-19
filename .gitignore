@@ -6,6 +6,7 @@ bin/
 obj/
 /packages/
 /Output/
+/.idea/
 *.suo
 *.user
 *.DotSettings*

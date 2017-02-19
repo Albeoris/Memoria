@@ -1,3 +1,5 @@
+using Memoria.Data;
+
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
