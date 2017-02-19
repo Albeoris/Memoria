@@ -1,6 +1,80 @@
 ﻿using System;
+using Memoria;
+using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
+
+public sealed class HonoEventObjectLabel : MonoBehaviour
+{
+    private HonoEventObject _eventObject;
+    private FieldMapActorController _actorControler;
+    private Vector3 _position;
+
+    private void Awake()
+    {
+        _eventObject = gameObject.GetComponent<HonoEventObject>();
+
+        if (_eventObject == null)
+        {
+            Log.Warning("An event object [{0}, eo: {1}, ac: {2}] cannot be signed.");
+            this.enabled = false;
+        }
+    }
+
+    private void Update()
+    {
+        try
+        {
+            if (!_eventObject.IsEnabled())
+            {
+                _position = Vector3.zero;
+                return;
+            }
+
+            if (_actorControler == null)
+            {
+                _actorControler = gameObject.GetComponent<FieldMapActorController>();
+                if (_actorControler == null)
+                    return;
+
+                if (!_actorControler.IsActive())
+                    return;
+            }
+
+            Camera mainCamera = _actorControler.fieldMap.GetMainCamera();
+            BGCAM_DEF currentBgCamera = _actorControler.fieldMap.GetCurrentBgCamera();
+
+            Vector3 position = PSX.CalculateGTE_RTPT(
+                this.gameObject.transform.position,
+                Matrix4x4.identity,
+                currentBgCamera.GetMatrixRT(),
+                currentBgCamera.GetViewDistance(),
+                _actorControler.fieldMap.GetProjectionOffset());
+
+            position = mainCamera.WorldToScreenPoint(position);
+            position.y = Screen.height - position.y;
+
+            _position = position;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to update {0}", this);
+            _position = Vector3.zero;
+        }
+    }
+
+    private void OnGUI()
+    {
+        const Int32 rectSize = 80;
+
+        if (_position == Vector3.zero)
+            return;
+
+        Rect rect = new Rect(_position.x - rectSize / 2f, _position.y - rectSize, rectSize, rectSize);
+
+        GUI.Box(rect, this.gameObject.name);
+    }
+}
 
 public class HonoBehavior : MonoBehaviour
 {
@@ -17,10 +91,16 @@ public class HonoBehavior : MonoBehaviour
 	private void Awake()
 	{
 		this.RegisterHonoBehavior();
-		if (base.GetComponent<HonoEventObject>() == (UnityEngine.Object)null)
+
+		if (base.GetComponent<HonoEventObject>() == null)
 		{
 			base.gameObject.AddComponent<HonoEventObject>();
 		}
+
+	    if (Configuration.Debug.SigningEventObjects && base.GetComponent<HonoEventObjectLabel>() == null)
+	    {
+            base.gameObject.AddComponent<HonoEventObjectLabel>();
+        }
 	}
 
 	public void HonoDefaultStartFastForwardMode()

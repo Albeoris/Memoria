@@ -43,7 +43,7 @@
       <HintPath>..\References\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-	<Reference Include="mscorlib">
+    <Reference Include="mscorlib">
       <HintPath>..\References\mscorlib.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -986,6 +986,7 @@
     <Compile Include="Memoria\Scenes\BattleHUD\GOAllMenuPanel.cs" />
     <Compile Include="Memoria\Scenes\BattleHUD\SOBattleHUD.cs" />
     <Compile Include="Memoria\Scenes\BattleHUD\SOLogger.cs" />
+    <Compile Include="Memoria\Scenes\DebugRectAroundObjectFactory.cs" />
     <Compile Include="Memoria\Scenes\ExtensionMethodsGameObject.cs" />
     <Compile Include="Memoria\Scenes\ExtensionMethodsIEnumerable.cs" />
     <Compile Include="Memoria\Scenes\GOAnimatedSprite.cs" />

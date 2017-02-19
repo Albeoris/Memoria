@@ -76,5 +76,11 @@ namespace Memoria
 
             public static Int32 BattleSpeed => Enabled ? Math.Min(Math.Max(0, Instance._hacks.BattleSpeed.Value), 2) : 0;
         }
+
+        public static class Debug
+        {
+            public static Boolean Enabled => Instance._debug.Enabled.Value;
+            public static Boolean SigningEventObjects => Enabled && Instance._debug.SigningEventObjects.Value;
+        }
     }
 }

@@ -746,29 +746,33 @@ public class ShopUI : UIScene
 			for (Int32 j = 0; j < this.mixItemList.Count; j++)
 			{
 				FF9MIX_DATA ff9MIX_DATA = this.mixItemList[j];
-				Boolean flag2 = ff9item.FF9Item_GetCount((Int32)ff9MIX_DATA.dst) < 99 && FF9StateSystem.Common.FF9.party.gil >= (UInt32)ff9MIX_DATA.price;
-				for (Int32 k = 0; k < ff9mix.FF9MIX_SRC_MAX; k++)
-				{
-					if (ff9MIX_DATA.src[k] == 255)
-					{
-						flag2 &= true;
-					}
-					else if (ff9MIX_DATA.src[0] == ff9MIX_DATA.src[1])
-					{
-						flag2 &= (ff9item.FF9Item_GetCount((Int32)ff9MIX_DATA.src[k]) > k);
-					}
-					else
-					{
-						flag2 = (((flag2 ? 1 : 0) & ff9item.FF9Item_GetCount((Int32)ff9MIX_DATA.src[k])) != 0);
-					}
-				}
-				this.itemIdList.Add((Int32)ff9MIX_DATA.dst);
-				this.isItemEnableList.Add(flag2);
+				Boolean canBeSynthesized = ff9item.FF9Item_GetCount((Int32)ff9MIX_DATA.dst) < 99 && FF9StateSystem.Common.FF9.party.gil >= (UInt32)ff9MIX_DATA.price;
+
+			    if (ff9MIX_DATA.src[0] == ff9MIX_DATA.src[1] && ff9MIX_DATA.src[0] != 255)
+			    {
+			        Byte itemId = ff9MIX_DATA.src[0]; // Fix it if you change ff9mix.FF9MIX_SRC_MAX
+			        if (ff9item.FF9Item_GetCount(itemId) < 2)
+			            canBeSynthesized = false;
+			    }
+			    else
+			    {
+			        for (Int32 k = 0; canBeSynthesized && k < ff9mix.FF9MIX_SRC_MAX; k++)
+			        {
+			            if (ff9MIX_DATA.src[k] == 255)
+			                continue;
+
+                        Byte itemId = ff9MIX_DATA.src[k];
+			            if (ff9item.FF9Item_GetCount(itemId) < 1)
+			                canBeSynthesized = false;
+			        }
+			    }
+			    this.itemIdList.Add((Int32)ff9MIX_DATA.dst);
+				this.isItemEnableList.Add(canBeSynthesized);
 				list.Add(new ShopUI.ShopItemListData
 				{
 					Id = (Int32)ff9MIX_DATA.dst,
 					Price = (Int32)ff9MIX_DATA.price,
-					Enable = flag2
+					Enable = canBeSynthesized
 				});
 			}
 		}

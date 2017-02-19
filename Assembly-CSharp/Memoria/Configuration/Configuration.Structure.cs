@@ -14,6 +14,7 @@ namespace Memoria
         private readonly TetraMasterSection _tetraMaster = new TetraMasterSection();
         private readonly FixesSection _fixes = new FixesSection();
         private readonly HacksSection _hacks = new HacksSection();
+        private readonly DebugSection _debug = new DebugSection();
 
         public override IEnumerable<IniSection> GetSections()
         {
@@ -25,6 +26,7 @@ namespace Memoria
             yield return _tetraMaster;
             yield return _fixes;
             yield return _hacks;
+            yield return _debug;
         }
 
         private sealed class FontSection : IniSection
@@ -233,6 +235,24 @@ namespace Memoria
                 yield return BattleSpeed;
                 yield return AllCharactersAvailable;
                 yield return RopeJumpingIncrement;
+            }
+        }
+
+        private sealed class DebugSection : IniSection
+        {
+            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Boolean> SigningEventObjects = IniValue.Boolean(nameof(SigningEventObjects));
+
+            public DebugSection() : base("Debug")
+            {
+                Enabled.Value = false;
+                SigningEventObjects.Value = false;
+            }
+
+            protected override IEnumerable<IniValue> GetValues()
+            {
+                yield return Enabled;
+                yield return SigningEventObjects;
             }
         }
     }

@@ -2,6 +2,7 @@
 using System;
 using Memoria;
 using Memoria.Prime;
+using Memoria.Scenes;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -679,6 +680,7 @@ public class UIKeyTrigger : MonoBehaviour
     {
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, (UICamera.KeyCodeDelegate)OnKeyNavigate);
         GameLoopManager.RaiseStartEvent();
+        //DebugRectAroundObjectFactory.Run();
     }
 }
 
