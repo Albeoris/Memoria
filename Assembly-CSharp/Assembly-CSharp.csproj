@@ -458,9 +458,9 @@
     <Compile Include="Global\NGUIText.cs" />
     <Compile Include="Global\NGUITools.cs" />
     <Compile Include="Global\NoneUI.cs" />
-    <Compile Include="Global\Obj\Obj.cs" />
-    <Compile Include="Global\Obj\ObjList.cs" />
-    <Compile Include="Global\Obj\ObjTable.cs" />
+    <Compile Include="Global\Objects\Obj.cs" />
+    <Compile Include="Global\Objects\ObjList.cs" />
+    <Compile Include="Global\Objects\ObjTable.cs" />
     <Compile Include="Global\On\OnScreenButton.cs" />
     <Compile Include="Global\On\OnScreenLog.cs" />
     <Compile Include="Global\OSDLogger.cs" />
