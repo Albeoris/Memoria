@@ -1953,8 +1953,6 @@ public partial class EventEngine
                 Int32 characterIndex = this.chr2slot(this.getv1());
                 if (characterIndex >= 0 && characterIndex < 9)
                 {
-                    SetHpLabel:
-
                     PLAYER player = FF9StateSystem.Common.FF9.player[characterIndex];
                     Int32 newHp = this.getv2();
                     if (newHp > player.max.hp)
@@ -1966,8 +1964,8 @@ public partial class EventEngine
                     // https://github.com/Albeoris/Memoria/issues/22
                     if (characterIndex == 6 && newHp == player.max.hp)
                     {
-                        characterIndex = 8;
-                        goto SetHpLabel;
+                        player = FF9StateSystem.Common.FF9.player[8];
+                        player.cur.hp = player.max.hp;
                     }
                 }
                 return 0;
@@ -1977,8 +1975,6 @@ public partial class EventEngine
                 Int32 characterIndex = this.chr2slot(this.getv1());
                 if (characterIndex >= 0 && characterIndex < 9)
                 {
-                    SetMpLabel:
-
                     PLAYER player = FF9StateSystem.Common.FF9.player[characterIndex];
                     Int32 newMp = this.getv2();
                     if (newMp > player.max.mp)
@@ -1990,8 +1986,8 @@ public partial class EventEngine
                     // https://github.com/Albeoris/Memoria/issues/22
                     if (characterIndex == 6 && newMp == player.max.mp)
                     {
-                        characterIndex = 8;
-                        goto SetMpLabel;
+                        player = FF9StateSystem.Common.FF9.player[8];
+                        player.cur.mp = player.max.mp;
                     }
                 }
                 return 0;
