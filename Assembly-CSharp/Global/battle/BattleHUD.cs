@@ -3286,7 +3286,13 @@ public class BattleHUD : UIScene
         if (!IsNativeEnableAtb())
             return false;
 
-        if (UIManager.Battle.CurrentPlayerIndex == -1 || Configuration.Hacks.BattleSpeed != 2)
+        if (Configuration.Hacks.BattleSpeed != 2)
+            return true;
+
+        if (FF9StateSystem.Battle.FF9Battle.cmd_queue.next != null || FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
+            return false;
+
+        if (UIManager.Battle.CurrentPlayerIndex == -1)
             return true;
 
         if (!ForceNextTurn)
