@@ -43,12 +43,9 @@ namespace Memoria.Assets
 
         protected override Boolean LoadInternal()
         {
-            Log.Message("1: " + EmbadedTextResources.LocationNames);
             String text = EmbadedSentenseLoader.LoadText(EmbadedTextResources.LocationNames);
 
-            Log.Message("2: " + text);
             Dictionary<Int32, String> locationNames = FF9TextTool.LocationNames;
-            Log.Message("3: " + locationNames);
             String[] array = text.Split('\r');
             for (Int32 i = 0; i < array.Length; i++)
             {

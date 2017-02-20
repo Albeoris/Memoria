@@ -36,7 +36,7 @@ namespace Memoria
             if (File.Exists(ConfigurationFileName))
                 return;
 
-            using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.Configuration." + ConfigurationFileName))
+            using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Assembly-CSharp.Memoria.Configuration." + ConfigurationFileName))
             using (Stream output = File.Create(ConfigurationFileName))
                 input.CopyTo(output, 8192);
         }

@@ -1061,7 +1061,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Memoria\Characters\AnimationList.csv" />
-    <None Include="Memoria\Configuration\Memoria.ini" />
+    <EmbeddedResource Include="Memoria\Configuration\Memoria.ini" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
