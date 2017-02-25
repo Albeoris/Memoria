@@ -928,7 +928,7 @@ public class btlseq
 		SEQ_WORK_SET seq_WORK_SET = ff9Battle.seq_work_set;
 		if (btlseq.wSeqCode != 32)
 		{
-			if (pSeqWork.CmdPtr.aa.Info.def_cam == 0)
+			if (pSeqWork.CmdPtr.aa.Info.DefaultCamera == false)
 			{
 				if (FF9StateSystem.Settings.cfg.camera == 1UL)
 				{

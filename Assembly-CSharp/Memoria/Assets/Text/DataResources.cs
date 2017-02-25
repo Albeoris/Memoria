@@ -5,20 +5,48 @@ namespace Memoria.Assets
 {
     public static class DataResources
     {
-        private const String Items = "Items/";
-        private const String Characters = "Characters/";
-        private const String Abilities = "Abilities/";
-        private const String Scripts = "Scripts/";
+        public static readonly String DataDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Data/";
+        public static readonly String ScriptsDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Scripts/";
 
-        public static readonly String DataDirectoryPath = AssetManagerUtil.GetStreamingAssetsPath() + "/Data/";
-        public static readonly String ItemsDirectory = DataDirectoryPath + Items;
-        public static readonly String CharactersDirectory = DataDirectoryPath + Characters;
-        public static readonly String CharacterAbilitiesDirectory = CharactersDirectory + Abilities;
-        public static readonly String ScriptsDirectory = AssetManagerUtil.GetStreamingAssetsPath() + '/' + Scripts;
-
-        public static String GetCsvCharacterAbilitiesPath(CharacterPresetId presetId)
+        public static class Items
         {
-            return CharacterAbilitiesDirectory + presetId + ".csv";
+            public static readonly String Directory = DataDirectory + "Items/";
+
+            public static String ItemsFile => Directory + "Items.csv";
+            public static String ItemEffectsFile => Directory + "ItemEffects.csv";
+            public static String ShopItems => Directory + "ShopItems.csv";
+        }
+
+        public static class Characters
+        {
+            public static readonly String Directory = DataDirectory + "Characters/";
+
+            public static String CommandsFile => Directory + "Commands.csv";
+            public static String CommandSetsFile => Directory + "CommandSets.csv";
+            public static String DefaultEquipmentsFile => Directory + "DefaultEquipment.csv";
+            public static String BaseStatsFile => Directory + "BaseStats.csv";
+            public static String Leveling => Directory + "Leveling.csv";
+
+            public static class Abilities
+            {
+                // ReSharper disable once MemberHidesStaticFromOuterClass
+                public static readonly String Directory = Characters.Directory + "Abilities/";
+
+                public static String GemsFile => Directory + "AbilityGems.csv";
+
+                public static String GetPresetAbilitiesPath(CharacterPresetId presetId)
+                {
+                    return Directory + presetId + ".csv";
+                }
+            }
+        }
+
+        public static class Battle
+        {
+            public static readonly String Directory = DataDirectory + "Battle/";
+
+            public static String StatusSetsFile => Directory + "StatusSets.csv";
+            public static String ActionsFile => Directory + "Actions.csv";
         }
     }
 }

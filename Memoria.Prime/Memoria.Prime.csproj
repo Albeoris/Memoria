@@ -63,7 +63,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caster.cs" />
     <Compile Include="Collections\BetterList.cs" />
+    <Compile Include="Collections\EntryCollection.cs" />
     <Compile Include="CSV\CsvParseException.cs" />
     <Compile Include="CSV\CsvParser.cs" />
     <Compile Include="CSV\CsvReader.cs" />

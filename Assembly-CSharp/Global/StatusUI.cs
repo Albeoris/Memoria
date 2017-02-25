@@ -258,13 +258,13 @@ public class StatusUI : UIScene
         _parameterHud.StrengthLabel.text = player.elem.str.ToString();
         _parameterHud.MagicLabel.text = player.elem.mgc.ToString();
         _parameterHud.SpiritLabel.text = player.elem.wpr.ToString();
-        _parameterHud.AttackLabel.text = ff9weap._FF9Weapon_Data[player.equip[0]].Ref.power.ToString();
+        _parameterHud.AttackLabel.text = ff9weap._FF9Weapon_Data[player.equip[0]].Ref.Power.ToString();
         _parameterHud.DefendLabel.text = player.defence.p_def.ToString();
         _parameterHud.EvadeLabel.text = player.defence.p_ev.ToString();
         _parameterHud.MagicDefLabel.text = player.defence.m_def.ToString();
         _parameterHud.MagicEvaLabel.text = player.defence.m_ev.ToString();
 
-        UInt32 num1 = player.level < 99 ? (UInt32)ff9level._FF9Level_Exp[player.level] : player.exp;
+        UInt32 exp = player.level < 99 ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
         if (FF9StateSystem.EventState.gEventGlobal[16] != 0 && (player.category & 16) == 0)
         {
             _tranceGameObject.SetActive(true);
@@ -276,7 +276,7 @@ public class StatusUI : UIScene
         }
 
         _expLabel.text = player.exp.ToString();
-        _nextLvLabel.text = (num1 - player.exp).ToString();
+        _nextLvLabel.text = (exp - player.exp).ToString();
 
         FF9UIDataTool.DisplayItem(player.equip[0], _equipmentHud.Weapon.IconSprite, _equipmentHud.Weapon.NameLabel, true);
         FF9UIDataTool.DisplayItem(player.equip[1], _equipmentHud.Head.IconSprite, _equipmentHud.Head.NameLabel, true);
@@ -285,8 +285,8 @@ public class StatusUI : UIScene
         FF9UIDataTool.DisplayItem(player.equip[4], _equipmentHud.Accessory.IconSprite, _equipmentHud.Accessory.NameLabel, true);
 
         Byte presetId = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].info.menu_type;
-        Byte command1 = (Byte)BattleCommands.CommandSets[presetId].Regular1;
-        Byte command2 = (Byte)BattleCommands.CommandSets[presetId].Regular2;
+        Byte command1 = (Byte)CharacterCommands.CommandSets[presetId].Regular1;
+        Byte command2 = (Byte)CharacterCommands.CommandSets[presetId].Regular2;
         _attackLabel.text = FF9TextTool.CommandName(1);
         _ability1Label.text = FF9TextTool.CommandName(command1);
         _ability2Label.text = FF9TextTool.CommandName(command2);
@@ -316,7 +316,7 @@ public class StatusUI : UIScene
             return;
         }
 
-        Int32 index1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].id;
+        Int32 index1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].Id;
         //int num1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].max_ap;
         if (index1 == 0)
         {

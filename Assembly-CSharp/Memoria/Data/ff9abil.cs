@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
 
 // ReSharper disable InconsistentNaming
@@ -15,7 +15,7 @@ using Memoria.Prime.CSV;
 
 namespace FF9
 {
-    public class ff9abil
+    public static class ff9abil
     {
         //private const Byte FF9ABIL_PLAYER_MAX = 8;
         //private const Byte FF9ABIL_EQUIP_MAX = 3;
@@ -37,89 +37,13 @@ namespace FF9
         //private const Byte FF9ABIL_SA_ESCAPE_GIL = 238;
         //private const Byte FF9ABIL_EVENT_SUMMON_GARNET = 18;
 
-        public static PA_DATA[][] _FF9Abil_PaData;
-        public static SA_DATA[] _FF9Abil_SaData;
+        public static CharacterAbility[][] _FF9Abil_PaData;
+        public static EntryCollection<CharacterAbilityGems> _FF9Abil_SaData;
 
         static ff9abil()
         {
             _FF9Abil_PaData = LoadCharacterAbilities();
-            _FF9Abil_SaData = new SA_DATA[64]
-            {
-                new SA_DATA(0, 15, 0, 0, 8301),
-                new SA_DATA(0, 6, 13, 43, 8301),
-                new SA_DATA(0, 9, 24, 84, 8301),
-                new SA_DATA(0, 10, 35, 125, 8301),
-                new SA_DATA(0, 12, 46, 166, 8301),
-                new SA_DATA(0, 4, 56, 206, 4218),
-                new SA_DATA(0, 8, 63, 227, 4218),
-                new SA_DATA(0, 4, 70, 248, 4219),
-                new SA_DATA(0, 8, 77, 269, 4219),
-                new SA_DATA(0, 2, 84, 290, 8292),
-                new SA_DATA(0, 5, 94, 323, 8330),
-                new SA_DATA(0, 16, 103, 364, 8317),
-                new SA_DATA(0, 5, 114, 397, 8311),
-                new SA_DATA(0, 3, 124, 434, 8303),
-                new SA_DATA(0, 2, 136, 473, 8303),
-                new SA_DATA(0, 4, 147, 505, 8303),
-                new SA_DATA(0, 2, 160, 543, 8303),
-                new SA_DATA(0, 3, 174, 582, 8303),
-                new SA_DATA(0, 2, 188, 614, 8303),
-                new SA_DATA(0, 4, 201, 645, 8303),
-                new SA_DATA(0, 2, 214, 676, 8303),
-                new SA_DATA(0, 4, 224, 707, 8306),
-                new SA_DATA(0, 5, 234, 747, 4202),
-                new SA_DATA(0, 5, 247, 767, 4238),
-                new SA_DATA(0, 2, 257, 795, 4220),
-                new SA_DATA(0, 3, 264, 817, 8354),
-                new SA_DATA(0, 1, 275, 871, 4259),
-                new SA_DATA(0, 4, 290, 904, 8323),
-                new SA_DATA(0, 19, 298, 944, 8302),
-                new SA_DATA(0, 3, 310, 974, 8302),
-                new SA_DATA(0, 7, 319, 1005, 8280),
-                new SA_DATA(0, 17, 332, 1040, 8325),
-                new SA_DATA(0, 13, 342, 1093, 4224),
-                new SA_DATA(0, 10, 356, 1118, 8302),
-                new SA_DATA(0, 11, 368, 1149, 8301),
-                new SA_DATA(0, 8, 376, 1180, 4258),
-                new SA_DATA(0, 8, 386, 1209, 8311),
-                new SA_DATA(0, 6, 394, 1250, 8301),
-                new SA_DATA(0, 4, 400, 1287, 8301),
-                new SA_DATA(0, 5, 414, 1323, 8282),
-                new SA_DATA(0, 4, 424, 1355, 4250),
-                new SA_DATA(0, 4, 434, 1389, 4231),
-                new SA_DATA(0, 5, 440, 1412, 8310),
-                new SA_DATA(0, 7, 451, 1447, 4252),
-                new SA_DATA(0, 3, 460, 1475, 8289),
-                new SA_DATA(0, 5, 471, 1510, 8285),
-                new SA_DATA(0, 3, 483, 1541, 8316),
-                new SA_DATA(0, 3, 492, 1584, 8294),
-                new SA_DATA(0, 5, 505, 1617, 4186),
-                new SA_DATA(0, 4, 515, 1637, 4253),
-                new SA_DATA(0, 4, 524, 1672, 4207),
-                new SA_DATA(0, 4, 536, 1695, 4195),
-                new SA_DATA(0, 8, 546, 1717, 8339),
-                new SA_DATA(0, 4, 557, 1764, 8307),
-                new SA_DATA(0, 9, 563, 1810, 8300),
-                new SA_DATA(0, 6, 576, 1839, 4251),
-                new SA_DATA(0, 3, 586, 1865, 8334),
-                new SA_DATA(0, 4, 598, 1909, 4181),
-                new SA_DATA(0, 5, 609, 1928, 4208),
-                new SA_DATA(0, 12, 622, 1952, 4254),
-                new SA_DATA(0, 5, 628, 1981, 4241),
-                new SA_DATA(0, 3, 641, 2008, 8280),
-                new SA_DATA(0, 5, 645, 2038, 8306),
-                new SA_DATA(0, 20, 652, 2068, 4096)
-            };
-
-            //String[] skillNames = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.SkillNames);
-            //using (var writer = new CsvWriter("D:\\SkillCrys.csv"))
-            //{
-
-            //}
-        }
-
-        public ff9abil()
-        {
+            _FF9Abil_SaData = LoadCharacterAbilityGems();
         }
 
         public static Boolean FF9Abil_IsEnableSA(UInt32[] sa, Int32 abil_id)
@@ -173,7 +97,7 @@ namespace FF9
                 return 0;
 
             PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
-            return _FF9Abil_PaData[player.info.menu_type][index].max_ap;
+            return _FF9Abil_PaData[player.info.menu_type][index].Ap;
         }
 
         public static Boolean FF9Abil_HasAp(PLAYER play)
@@ -184,7 +108,7 @@ namespace FF9
             if (play.info.menu_type >= _FF9Abil_PaData.Length)
                 return false;
 
-            return _FF9Abil_PaData[play.info.menu_type].Any(pa => pa.max_ap > 0);
+            return _FF9Abil_PaData[play.info.menu_type].Any(pa => pa.Ap > 0);
         }
 
         public static Int32 FF9Abil_GetIndex(Int32 slot_id, Int32 abil_id)
@@ -196,10 +120,10 @@ namespace FF9
             if (player.info.menu_type >= 16)
                 return -1;
 
-            PA_DATA[] array = _FF9Abil_PaData[player.info.menu_type];
+            CharacterAbility[] array = _FF9Abil_PaData[player.info.menu_type];
             for (Int32 index = 0; index < array.Length; ++index)
             {
-                if (_FF9Abil_PaData[player.info.menu_type][index].id == abil_id)
+                if (_FF9Abil_PaData[player.info.menu_type][index].Id == abil_id)
                     return index;
             }
 
@@ -230,19 +154,19 @@ namespace FF9
                 return false;
 
             PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
-            player.pa[index] = _FF9Abil_PaData[player.info.menu_type][index].max_ap;
+            player.pa[index] = _FF9Abil_PaData[player.info.menu_type][index].Ap;
             return true;
         }
 
-        private static PA_DATA[][] LoadCharacterAbilities()
+        private static CharacterAbility[][] LoadCharacterAbilities()
         {
             try
             {
-                if (!Directory.Exists(DataResources.CharacterAbilitiesDirectory))
-                    throw new DirectoryNotFoundException($"[ff9abil] Cannot load character abilities because a directory does not exist: [{DataResources.CharacterAbilitiesDirectory}].");
+                if (!Directory.Exists(DataResources.Characters.Abilities.Directory))
+                    throw new DirectoryNotFoundException($"[ff9abil] Cannot load character abilities because a directory does not exist: [{DataResources.Characters.Abilities.Directory}].");
 
-                CharacterPresetId[] presetIds = (CharacterPresetId[])Enum.GetValues(typeof(CharacterPresetId));
-                PA_DATA[][] result = new PA_DATA[presetIds.Length][];
+                CharacterPresetId[] presetIds = CharacterPresetId.GetWellKnownPresetIds();
+                CharacterAbility[][] result = new CharacterAbility[presetIds.Length][];
                 for (Int32 id = 0; id < result.Length; id++)
                 {
                     CharacterPresetId presetId = presetIds[id];
@@ -258,11 +182,33 @@ namespace FF9
             }
         }
 
-        private static PA_DATA[] LoadCharacterAbilities(CharacterPresetId presetId)
+        private static EntryCollection<CharacterAbilityGems> LoadCharacterAbilityGems()
         {
             try
             {
-                String inputPath = DataResources.GetCsvCharacterAbilitiesPath(presetId);
+                String inputPath = DataResources.Characters.Abilities.GemsFile;
+                if (!File.Exists(inputPath))
+                    throw new FileNotFoundException($"File with ability gems not found: [{inputPath}]");
+
+                CharacterAbilityGems[] gems = CsvReader.Read<CharacterAbilityGems>(inputPath);
+                if (gems.Length != 64)
+                    throw new NotSupportedException($"You must set number of gems for 64 abilities, but there {gems.Length}. Any number of abilities will be available after a game stabilization.");
+
+                return EntryCollection.CreateWithDefaultElement(gems, g => g.Id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ff9abil] Load abilitiy gems failed.");
+                UIManager.Input.ConfirmQuit();
+                return null;
+            }
+        }
+
+        private static CharacterAbility[] LoadCharacterAbilities(CharacterPresetId presetId)
+        {
+            try
+            {
+                String inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId);
 
                 if (!File.Exists(inputPath))
                     throw new FileNotFoundException($"File with {presetId}'s abilities not found: [{inputPath}]");
@@ -271,13 +217,7 @@ namespace FF9
                 if (abilities.Length != 48)
                     throw new NotSupportedException($"You must set 48 abilities, but there {abilities.Length}. Any number of abilities will be available after a game stabilization."); // TODO Json, Player, SettingsState, EqupUI, ff9feqp
 
-                PA_DATA[] result = new PA_DATA[abilities.Length];
-                for (Int32 i = 0; i < abilities.Length; i++)
-                {
-                    CharacterAbility source = abilities[i];
-                    result[i] = new PA_DATA(source.Id, source.Ap);
-                }
-                return result;
+                return abilities;
             }
             catch (Exception ex)
             {

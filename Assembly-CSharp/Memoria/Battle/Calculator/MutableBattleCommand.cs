@@ -30,19 +30,19 @@ namespace Memoria
         public new Byte ScriptId
         {
             get { return base.ScriptId; }
-            set { Data.aa.Ref.prog_no = value; }
+            set { Data.aa.Ref.ScriptId = value; }
         }
 
         public new Byte HitRate
         {
             get { return base.HitRate; }
-            set { Data.aa.Ref.rate = value; }
+            set { Data.aa.Ref.Rate = value; }
         }
 
         public new Byte Power
         {
             get { return base.Power; }
-            set { Data.aa.Ref.power = value; }
+            set { Data.aa.Ref.Power = value; }
         }
 
         public new Boolean IsManyTarget
@@ -54,25 +54,25 @@ namespace Memoria
         public new TargetType TargetType
         {
             get { return base.TargetType; }
-            set { Data.aa.Info.cursor = (Byte)value; }
+            set { Data.aa.Info.Target = value; }
         }
 
-        public new BattleStatusId AbilityStatusId
+        public new BattleStatusIndex AbilityStatusIndex
         {
-            get { return base.AbilityStatusId; }
+            get { return base.AbilityStatusIndex; }
             set { Data.aa.AddNo = (Byte)value; }
         }
 
         public new EffectElement Element
         {
             get { return base.Element; }
-            set { Data.aa.Ref.attr = (Byte)value; }
+            set { Data.aa.Ref.Elements = (Byte)value; }
         }
 
         public new SpecialEffect SpecialEffect
         {
             get { return base.SpecialEffect; }
-            set { Data.aa.Info.vfx_no = (Int16)value; }
+            set { Data.aa.Info.VfxIndex = (Int16)value; }
         }
 
         public new Boolean IsMeteorMiss
@@ -91,26 +91,25 @@ namespace Memoria
         {
             AA_DATA original = FF9StateSystem.Battle.FF9Battle.aa_data[Data.sub_no];
 
-            CMD_INFO originalInfo = original.Info;
-            CMD_INFO newInfo = new CMD_INFO
+            BattleCommandInfo originalInfo = original.Info;
+            BattleCommandInfo newInfo = new BattleCommandInfo
             {
-                cursor = originalInfo.cursor,
-                def_cur = originalInfo.def_cur,
-                sub_win = originalInfo.sub_win,
-                vfx_no = originalInfo.vfx_no,
-                sfx_no = originalInfo.sfx_no,
-                dead = originalInfo.dead,
-                def_cam = originalInfo.def_cam,
-                def_dead = originalInfo.def_dead
+                Target = originalInfo.Target,
+                DefaultAlly = originalInfo.DefaultAlly,
+                DisplayStats = originalInfo.DisplayStats,
+                VfxIndex = originalInfo.VfxIndex,
+                ForDead = originalInfo.ForDead,
+                DefaultCamera = originalInfo.DefaultCamera,
+                DefaultOnDead = originalInfo.DefaultOnDead
             };
 
             BTL_REF originalRef = original.Ref;
             BTL_REF newRef = new BTL_REF
             {
-                prog_no = originalRef.prog_no,
-                power = originalRef.power,
-                attr = originalRef.attr,
-                rate = originalRef.rate
+                ScriptId = originalRef.ScriptId,
+                Power = originalRef.Power,
+                Elements = originalRef.Elements,
+                Rate = originalRef.Rate
             };
 
             AA_DATA newData = new AA_DATA

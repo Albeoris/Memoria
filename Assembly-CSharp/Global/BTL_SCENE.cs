@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Memoria.Data;
 using UnityEngine;
 
 public class BTL_SCENE
@@ -130,22 +131,22 @@ public class BTL_SCENE
 			for (Int32 num8 = 0; num8 < (Int32)this.header.AtkCount; num8++)
 			{
 				AA_DATA aa_DATA = this.atk[num8] = new AA_DATA();
-				CMD_INFO cmd_INFO = aa_DATA.Info = new CMD_INFO();
+				BattleCommandInfo cmd_INFO = aa_DATA.Info = new BattleCommandInfo();
 				UInt32 input = binaryReader.ReadUInt32();
 				Byte b = 0;
-				cmd_INFO.cursor = (Byte)BitUtil.ReadBits(input, ref b, 4);
-				cmd_INFO.def_cur = (Byte)BitUtil.ReadBits(input, ref b, 1);
-				cmd_INFO.sub_win = (Byte)BitUtil.ReadBits(input, ref b, 3);
-				cmd_INFO.vfx_no = (Int16)BitUtil.ReadBits(input, ref b, 9);
-				cmd_INFO.sfx_no = (Int16)BitUtil.ReadBits(input, ref b, 12);
-				cmd_INFO.dead = (Byte)BitUtil.ReadBits(input, ref b, 1);
-				cmd_INFO.def_cam = (Byte)BitUtil.ReadBits(input, ref b, 1);
-				cmd_INFO.def_dead = (Byte)BitUtil.ReadBits(input, ref b, 1);
+				cmd_INFO.Target = (TargetType)BitUtil.ReadBits(input, ref b, 4);
+				cmd_INFO.DefaultAlly = BitUtil.ReadBits(input, ref b, 1) != 0;
+				cmd_INFO.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref b, 3);
+				cmd_INFO.VfxIndex = (Int16)BitUtil.ReadBits(input, ref b, 9);
+				//cmd_INFO.sfx_no = (Int16)BitUtil.ReadBits(input, ref b, 12);
+				cmd_INFO.ForDead = BitUtil.ReadBits(input, ref b, 1) != 0;
+				cmd_INFO.DefaultCamera = BitUtil.ReadBits(input, ref b, 1) != 0;
+				cmd_INFO.DefaultOnDead = BitUtil.ReadBits(input, ref b, 1) != 0;
 				BTL_REF btl_REF = aa_DATA.Ref = new BTL_REF();
-				btl_REF.prog_no = binaryReader.ReadByte();
-				btl_REF.power = binaryReader.ReadByte();
-				btl_REF.attr = binaryReader.ReadByte();
-				btl_REF.rate = binaryReader.ReadByte();
+				btl_REF.ScriptId = binaryReader.ReadByte();
+				btl_REF.Power = binaryReader.ReadByte();
+				btl_REF.Elements = binaryReader.ReadByte();
+				btl_REF.Rate = binaryReader.ReadByte();
 				aa_DATA.Category = binaryReader.ReadByte();
 				aa_DATA.AddNo = binaryReader.ReadByte();
 				aa_DATA.MP = binaryReader.ReadByte();

@@ -20,7 +20,7 @@ namespace Memoria
         }
 
         public Byte Row => _data.info.row;
-        public PlayerCategory Category => (PlayerCategory)_data.category;
+        public CharacterCategory Category => (CharacterCategory)_data.category;
     }
 
     public sealed class Weapon
@@ -33,12 +33,12 @@ namespace Memoria
         }
 
         public WeaponCategory Category => (WeaponCategory)_data.category;
-        public BattleStatus Status => (BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[_data.add_no];
+        public BattleStatus Status => FF9StateSystem.Battle.FF9Battle.add_status[_data.add_no].Value;
         public UInt16 ModelId => _data.model_no;
-        public Byte ScriptId => _data.Ref.prog_no;
-        public Byte Power => _data.Ref.power;
-        public EffectElement Element => (EffectElement)_data.Ref.attr;
-        public Byte HitRate => _data.Ref.rate;
+        public Byte ScriptId => _data.Ref.ScriptId;
+        public Byte Power => _data.Ref.Power;
+        public EffectElement Element => (EffectElement)_data.Ref.Elements;
+        public Byte HitRate => _data.Ref.Rate;
 
         public static Weapon Find(Byte weaponId)
         {

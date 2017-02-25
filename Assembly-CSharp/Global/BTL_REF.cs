@@ -2,27 +2,20 @@
 
 public class BTL_REF
 {
-	public BTL_REF()
+    public Byte ScriptId;
+    public Byte Power;
+    public Byte Elements;
+    public Byte Rate;
+
+    public BTL_REF()
 	{
-		this.prog_no = 0;
-		this.power = 0;
-		this.attr = 0;
-		this.rate = 0;
 	}
 
-	public BTL_REF(Byte prog_no, Byte power, Byte attr, Byte rate)
+	public BTL_REF(Byte scriptId, Byte power, Byte elements, Byte rate)
 	{
-		this.prog_no = prog_no;
-		this.power = power;
-		this.attr = attr;
-		this.rate = rate;
+		ScriptId = scriptId;
+		Power = power;
+		Elements = elements;
+		Rate = rate;
 	}
-
-	public Byte prog_no;
-
-	public Byte power;
-
-	public Byte attr;
-
-	public Byte rate;
 }

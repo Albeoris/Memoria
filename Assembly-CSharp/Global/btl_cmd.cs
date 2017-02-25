@@ -324,11 +324,11 @@ public class btl_cmd
                 return;
             }
             cmd.aa = stateBattleSystem.enemy_attack[sub_no];
-            cmd.aa.Ref.prog_no = 26;
+            cmd.aa.Ref.ScriptId = 26;
             cmd.tar_id = tar_id;
             cmd.cmd_no = (Byte)cmd_no;
             cmd.sub_no = (Byte)sub_no;
-            cmd.info.cursor = cmd.aa.Info.cursor < 6 || cmd.aa.Info.cursor >= 13 ? (Byte)0 : (Byte)1;
+            cmd.info.cursor = (Int32)cmd.aa.Info.Target < 6 || (Int32)cmd.aa.Info.Target >= 13 ? (Byte)0 : (Byte)1;
             if (cmd_no > 48U)
             {
                 cmd.info.priority = 1;
@@ -391,7 +391,7 @@ public class btl_cmd
             cmd.tar_id = tar_id;
             cmd.cmd_no = (Byte)cmd_no;
             cmd.sub_no = (Byte)sub_no;
-            cmd.info.cursor = cmd.aa.Info.cursor < 6 || cmd.aa.Info.cursor >= 13 ? (Byte)0 : (Byte)1;
+            cmd.info.cursor = (Int32)cmd.aa.Info.Target < 6 || (Int32)cmd.aa.Info.Target >= 13 ? (Byte)0 : (Byte)1;
             if (cmd_no > 48U)
             {
                 cmd.info.priority = 1;
@@ -761,7 +761,7 @@ public class btl_cmd
                     cmd.tar_id = btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1));
                     break;
                 }
-                if (cmd.sub_no == 93 && ff9item.FF9Item_GetCount(cmd.aa.Ref.power) < btl_util.SumOfTarget(1U))
+                if (cmd.sub_no == 93 && ff9item.FF9Item_GetCount(cmd.aa.Ref.Power) < btl_util.SumOfTarget(1U))
                 {
                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughItems);
                     return false;
@@ -771,7 +771,7 @@ public class btl_cmd
             case 29:
                 if (cmd.sub_no == 126 || cmd.sub_no == 134)
                 {
-                    UInt32 num3 = cmd.aa.Ref.power * (UInt32)btlData.level;
+                    UInt32 num3 = cmd.aa.Ref.Power * (UInt32)btlData.level;
                     if (num3 > ff9StateGlobal.party.gil)
                     {
                         UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughGil);
@@ -782,7 +782,7 @@ public class btl_cmd
                 }
                 if (cmd.sub_no == 129 || cmd.sub_no == 137)
                 {
-                    cmd.aa.Ref.attr = (Byte)(1 << Comn.random8() % 8);
+                    cmd.aa.Ref.Elements = (Byte)(1 << Comn.random8() % 8);
                 }
                 break;
             case 31:
@@ -994,22 +994,22 @@ public class btl_cmd
         UInt16 num1 = 0;
         if (cmd.tar_id == 0)
             return false;
-        UInt16 num2;
+        Boolean forDead;
         switch (cmd.cmd_no)
         {
             case 14:
             case 51:
-                num2 = ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.dead;
+                forDead = ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.ForDead;
                 break;
             case 59:
                 return true;
             default:
-                num2 = cmd.aa.Info.dead;
+                forDead = cmd.aa.Info.ForDead;
                 break;
         }
         for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (num2 != 0 && btl.bi.player != 0 || !Status.checkCurStat(btl, 256U)))
+            if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !Status.checkCurStat(btl, 256U)))
                 num1 |= btl.btl_id;
         }
         if (num1 != 0)
@@ -1017,7 +1017,7 @@ public class btl_cmd
             cmd.tar_id = num1;
             return true;
         }
-        if (cmd.info.cursor == 0 && num2 == 0)
+        if (cmd.info.cursor == 0 && forDead == false)
         {
             cmd.tar_id = btl_util.GetRandomBtlID(cmd.tar_id & 15U);
             if (cmd.tar_id != 0)
@@ -1033,7 +1033,7 @@ public class btl_cmd
         if (cmd.info.reflec == 2)
         {
             cmd.tar_id = MargeReflecTargetID(cmd.regist.reflec);
-            btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.vfx_no, null);
+            btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
             stateBattleSystem.cmd_mode = 2;
         }
         else
@@ -1248,11 +1248,11 @@ public class btl_cmd
                 case 14:
                     label_8:
                     UIManager.Battle.ItemUse(curCmdPtr.sub_no);
-                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), ff9item._FF9Item_Info[btl_util.btlItemNum(curCmdPtr.sub_no)].Ref.prog_no);
+                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), ff9item._FF9Item_Info[btl_util.btlItemNum(curCmdPtr.sub_no)].Ref.ScriptId);
                     break;
                 case 15:
                     UIManager.Battle.ItemUse(curCmdPtr.sub_no);
-                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.prog_no);
+                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.ScriptId);
                     break;
                 default:
                     switch (num)
@@ -1260,7 +1260,7 @@ public class btl_cmd
                         case 49:
                         case 52:
                             label_6:
-                            SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), caster.weapon.Ref.prog_no);
+                            SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), caster.weapon.Ref.ScriptId);
                             return;
                         case 51:
                             goto label_8;
@@ -1287,10 +1287,10 @@ public class btl_cmd
                                                 KillAllCommand(btlsys);
                                             }
                                         }
-                                        SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.prog_no);
+                                        SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.ScriptId);
                                         return;
                                     }
-                                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.prog_no);
+                                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(curCmdPtr), curCmdPtr.aa.Ref.ScriptId);
                                     return;
                             }
                     }

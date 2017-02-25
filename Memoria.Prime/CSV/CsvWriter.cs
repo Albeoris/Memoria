@@ -67,6 +67,11 @@ namespace Memoria.Prime.CSV
             String(value.ToString(CultureInfo.InvariantCulture));
         }
 
+        public void Int32(Int32 value)
+        {
+            String(value.ToString(CultureInfo.InvariantCulture));
+        }
+
         public void UInt16(UInt16 value)
         {
             String(value.ToString(CultureInfo.InvariantCulture));
@@ -85,13 +90,36 @@ namespace Memoria.Prime.CSV
             String(value.ToString(CultureInfo.InvariantCulture));
         }
 
+        public void UInt64(UInt64 value)
+        {
+            String(value.ToString(CultureInfo.InvariantCulture));
+        }
+
         public void ByteArray(Byte[] array)
         {
             String(System.String.Join(", ", array.Select(v => v.ToString(CultureInfo.InvariantCulture)).ToArray()));
         }
 
+        public void EnumValue<T>(T value) where T : struct
+        {
+            UInt64 integer = EnumCache<T>.ToUInt64(value);
+
+            if (_sb.Length > 0)
+                _sb.Append(';');
+
+            _sb.Append(value);
+            _sb.Append('(');
+            _sb.Append(integer.ToString(CultureInfo.InvariantCulture));
+            _sb.Append(')');
+        }
+
         public void String(String value)
         {
+            if (value == null)
+                value = "<null>";
+            else if (value == System.String.Empty)
+                value = "\"\"";
+
             if (_sb.Length > 0)
                 _sb.Append(';');
 

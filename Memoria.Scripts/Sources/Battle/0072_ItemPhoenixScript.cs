@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             }
             else if (_v.Target.CheckIsPlayer())
             {
-                if (_v.Target.IsUnderStatus(BattleStatus.Disable))
+                if (_v.Target.IsUnderStatus(BattleStatus.Death))
                     _v.Target.CurrentHp = (UInt16)(1 + GameRandom.Next8() % 10);
 
                 _v.TargetCommand.TryRemoveItemStatuses();

@@ -4,34 +4,29 @@ public class AA_DATA
 {
 	public AA_DATA()
 	{
-		this.Info = new CMD_INFO();
+		this.Info = new BattleCommandInfo();
 		this.Ref = new BTL_REF();
 	}
 
-	public AA_DATA(CMD_INFO Info, BTL_REF Ref, Byte Category, Byte AddNo, Byte MP, Byte Type, UInt16 Vfx2, UInt16 Name)
+	public AA_DATA(BattleCommandInfo info, BTL_REF @ref, Byte category, Byte statusSetIndex, Byte mp, Byte type, UInt16 vfx2)
 	{
-		this.Info = Info;
-		this.Ref = Ref;
-		this.Category = Category;
-		this.AddNo = AddNo;
-		this.MP = MP;
-		this.Type = Type;
-		this.Vfx2 = Vfx2;
+		Info = info;
+		Ref = @ref;
+		Category = category;
+		AddNo = statusSetIndex;
+		MP = mp;
+		Type = type;
+		Vfx2 = vfx2;
 	}
 
-	public CMD_INFO Info;
-
+	public BattleCommandInfo Info;
 	public BTL_REF Ref;
-
 	public Byte Category;
-
 	public Byte AddNo;
-
 	public Byte MP;
-
-	public Byte Type;
-
+    public Byte Type;
 	public UInt16 Vfx2;
 
-	public String Name;
+    // Delayed initialization
+    public String Name;
 }

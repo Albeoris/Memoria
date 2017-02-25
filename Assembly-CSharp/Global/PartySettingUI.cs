@@ -504,63 +504,35 @@ public class PartySettingUI : UIScene
 
     private static void TryHackPlayer(PLAYER player, Byte category)
     {
-        switch ((CharacterExtraPresetId)player.info.menu_type)
-        {
-            case CharacterExtraPresetId.StageZidane:
-                player.info.menu_type = (Byte)CharacterPresetId.Zidane;
-                break;
-            case CharacterExtraPresetId.StageCinna:
-                player.info.menu_type = (Byte)CharacterPresetId.Cinna2;
-                break;
-            case CharacterExtraPresetId.StageMarcus:
-                player.info.menu_type = (Byte)CharacterPresetId.Marcus2;
-                break;
-            case CharacterExtraPresetId.StageBlank:
-                player.info.menu_type = (Byte)CharacterPresetId.Blank2;
-                break;
-        }
+        CharacterPresetId presetId = player.PresetId;
 
-        switch ((CharacterPresetId)player.info.menu_type)
-        {
-            case CharacterPresetId.Cinna1:
-                player.info.menu_type = (Byte)CharacterPresetId.Cinna2;
-                break;
-            case CharacterPresetId.Marcus1:
-                player.info.menu_type = (Byte)CharacterPresetId.Marcus2;
-                break;
-            case CharacterPresetId.Blank1:
-                player.info.menu_type = (Byte)CharacterPresetId.Blank2;
-                break;
-        }
+        if (presetId == CharacterPresetId.StageZidane)
+            player.PresetId = presetId = CharacterPresetId.Zidane;
+        else if (presetId == CharacterPresetId.Cinna1 || presetId == CharacterPresetId.StageCinna)
+            player.PresetId = presetId = CharacterPresetId.Cinna2;
+        else if (presetId == CharacterPresetId.Marcus1 || presetId == CharacterPresetId.StageMarcus)
+            player.PresetId = presetId = CharacterPresetId.Marcus2;
+        else if (presetId == CharacterPresetId.Blank1 || presetId == CharacterPresetId.StageBlank)
+            player.PresetId = presetId = CharacterPresetId.Blank2;
 
         if (player.category == category)
             return;
 
         player.category = category;
-        switch ((CharacterPresetId)player.info.menu_type)
-        {
-            case CharacterPresetId.Quina:
-                player.info.menu_type = (Byte)CharacterPresetId.Cinna2;
-                break;
-            case CharacterPresetId.Eiko:
-                player.info.menu_type = (Byte)CharacterPresetId.Marcus2;
-                break;
-            case CharacterPresetId.Amarant:
-                player.info.menu_type = (Byte)CharacterPresetId.Blank2;
-                break;
+        if (presetId == CharacterPresetId.Quina)
+            player.PresetId = CharacterPresetId.Cinna2;
+        else if (presetId == CharacterPresetId.Eiko)
+            player.PresetId = CharacterPresetId.Marcus2;
+        else if (presetId == CharacterPresetId.Amarant)
+            player.PresetId = CharacterPresetId.Blank2;
+        else if (presetId == CharacterPresetId.Cinna2)
+            player.PresetId = CharacterPresetId.Quina;
+        else if (presetId == CharacterPresetId.Marcus2)
+            player.PresetId = CharacterPresetId.Eiko;
+        else if (presetId == CharacterPresetId.Blank2)
+            player.PresetId = CharacterPresetId.Amarant;
 
-            case CharacterPresetId.Cinna2:
-                player.info.menu_type = (Byte)CharacterPresetId.Quina;
-                break;
-            case CharacterPresetId.Marcus2:
-                player.info.menu_type = (Byte)CharacterPresetId.Eiko;
-                break;
-            case CharacterPresetId.Blank2:
-                player.info.menu_type = (Byte)CharacterPresetId.Amarant;
-                break;
-        }
-
-        Int32 equipId = ff9play.FF9Play_GetCharID3(player);
+        CharacterId equipId = ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter);
         ff9play.FF9Play_Change(player.info.slot_no, true, equipId);
     }
 }

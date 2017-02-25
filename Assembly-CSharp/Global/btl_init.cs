@@ -67,12 +67,9 @@ public class btl_init
 				btl_DATA2.weapon_geo = (GameObject)null;
 			}
 			btl_DATA2.sa = btl_init.enemy_dummy_sa;
-			Int32[] array = FF9BattleDB.HeightRadiusData.FirstOrDefault((Int32[] x) => x[0] == (Int32)geoID);
-			if (array != null)
-			{
-				btl_DATA2.height = array[1];
-				btl_DATA2.radius = array[2];
-			}
+
+		    FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl_DATA2.height, ref btl_DATA2.radius);
+            
 			if (btl_DATA != null)
 			{
 				btl_DATA.next = btl_DATA2;
@@ -474,13 +471,10 @@ public class btl_init
 		Int16 geoID = btl.dms_geo_id;
 		btl.height = 0;
 		btl.radius = 0;
-		Int32[] array = FF9BattleDB.HeightRadiusData.FirstOrDefault((Int32[] x) => x[0] == (Int32)geoID);
-		if (array != null)
-		{
-			btl.height = array[1];
-			btl.radius = array[2];
-		}
-		if (btl.cur.hp == 0 && btl_stat.AlterStatus(btl, 256u) == 2u)
+
+        FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl.height, ref btl.radius);
+
+        if (btl.cur.hp == 0 && btl_stat.AlterStatus(btl, 256u) == 2u)
 		{
 			btl.die_seq = 5;
 			btl_mot.DecidePlayerDieSequence(btl);

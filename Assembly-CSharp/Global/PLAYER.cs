@@ -5,14 +5,14 @@ using Memoria.Data;
 
 public class PLAYER
 {
-	public PLAYER()
+    public PLAYER()
 	{
 		this.cur = new POINTS();
 		this.max = new POINTS();
 		this.elem = new ELEMENT();
 		this.defence = new DEF_PARAMS();
 		this.basis = new PLAYER_BASE();
-		this.equip = new Byte[5];
+	    this.equip = new CharacterEquipment();
 		this.bonus = new FF9LEVEL_BONUS();
 		this.pa = new Byte[48];
 		this.sa = new UInt32[2];
@@ -20,7 +20,22 @@ public class PLAYER
 		this.sa[1] = 0u;
 	}
 
-	public void ValidateSupportAbility()
+    public CharacterIndex Index => info.slot_no;
+    public Boolean IsSubCharacter => (Category & CharacterCategory.Subpc) == CharacterCategory.Subpc;
+
+    public CharacterPresetId PresetId
+    {
+        get { return info.menu_type; }
+        set { info.menu_type = value; }
+    }
+
+    public CharacterCategory Category
+    {
+        get { return (CharacterCategory)category; }
+        set { category = (Byte)value; }
+    }
+
+    public void ValidateSupportAbility()
 	{
 		Int32 activeSupportAbilityPoint = this.GetActiveSupportAbilityPoint();
 		if ((Int32)this.cur.capa != (Int32)this.max.capa - activeSupportAbilityPoint)
@@ -82,8 +97,8 @@ public class PLAYER
 			{
 				if (num4 % 2u == 1u)
 				{
-					SA_DATA sa_DATA = ff9abil._FF9Abil_SaData[num2];
-					num += (Int32)sa_DATA.capa_val;
+					CharacterAbilityGems sa_DATA = ff9abil._FF9Abil_SaData[num2];
+					num += (Int32)sa_DATA.GemsCount;
 				}
 				num4 >>= 1;
 				num2++;
@@ -136,31 +151,9 @@ public class PLAYER
 
 	public const Int32 PARTY_MAX = 4;
 
-	public const Int32 ZIDANE = 0;
+    // CharacterIndex
 
-	public const Int32 VIVI = 1;
-
-	public const Int32 GARNET = 2;
-
-	public const Int32 STEINER = 3;
-
-	public const Int32 FREIJA = 4;
-
-	public const Int32 KUINA = 5;
-
-	public const Int32 CINNA = 5;
-
-	public const Int32 EIKO = 6;
-
-	public const Int32 MARCUS = 6;
-
-	public const Int32 SALAMANDER = 7;
-
-	public const Int32 BLANK = 7;
-
-	public const Int32 BEATRIX = 8;
-
-	public const Int32 PLAYER_NAME_MAX = 10;
+    public const Int32 PLAYER_NAME_MAX = 10;
 
 	public const Int32 EQUIP_WEAPON = 0;
 
@@ -228,39 +221,24 @@ public class PLAYER
 
     private void GetDefaultName(out String mainName, out String altName)
     {
-        switch ((CharacterExtraPresetId)info.menu_type)
+        CharacterPresetId presetId = PresetId;
+        if (presetId == CharacterPresetId.Cinna1 || presetId == CharacterPresetId.Cinna2 || presetId == CharacterPresetId.StageCinna)
         {
-            case CharacterExtraPresetId.StageCinna:
-                mainName = FF9TextTool.CharacterDefaultName((Int32)CharacterPresetId.Quina);
-                altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-                return;
-            case CharacterExtraPresetId.StageMarcus:
-                mainName = FF9TextTool.CharacterDefaultName((Int32)CharacterPresetId.Eiko);
-                altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-                return;
-            case CharacterExtraPresetId.StageBlank:
-                mainName = FF9TextTool.CharacterDefaultName((Int32)CharacterPresetId.Amarant);
-                altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-                return;
+            mainName = FF9TextTool.CharacterDefaultName(CharacterPresetId.Quina);
+            altName = FF9TextTool.CharacterDefaultName(info.menu_type);
+            return;
         }
-
-        switch ((CharacterPresetId)info.menu_type)
+        if (presetId == CharacterPresetId.Marcus1 || presetId == CharacterPresetId.Marcus2 || presetId == CharacterPresetId.StageMarcus)
         {
-            case CharacterPresetId.Cinna1:
-            case CharacterPresetId.Cinna2:
-                mainName = FF9TextTool.CharacterDefaultName((Int32)CharacterPresetId.Quina);
-                altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-                return;
-            case CharacterPresetId.Marcus1:
-            case CharacterPresetId.Marcus2:
-                mainName = FF9TextTool.CharacterDefaultName((Int32)CharacterPresetId.Eiko);
-                altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-                return;
-            case CharacterPresetId.Blank1:
-            case CharacterPresetId.Blank2:
-                mainName = FF9TextTool.CharacterDefaultName((Int32)CharacterPresetId.Amarant);
-                altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-                return;
+            mainName = FF9TextTool.CharacterDefaultName(CharacterPresetId.Eiko);
+            altName = FF9TextTool.CharacterDefaultName(info.menu_type);
+            return;
+        }
+        if (presetId == CharacterPresetId.Blank1 || presetId == CharacterPresetId.Blank2 || presetId == CharacterPresetId.StageBlank)
+        {
+            mainName = FF9TextTool.CharacterDefaultName(CharacterPresetId.Amarant);
+            altName = FF9TextTool.CharacterDefaultName(info.menu_type);
+            return;
         }
 
         mainName = FF9TextTool.CharacterDefaultName(info.menu_type);
@@ -291,7 +269,7 @@ public class PLAYER
 
 	public Byte status;
 
-	public Byte[] equip;
+	public CharacterEquipment equip;
 
 	public FF9LEVEL_BONUS bonus;
 

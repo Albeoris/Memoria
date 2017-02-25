@@ -1,5 +1,6 @@
 ﻿using System;
 using FF9;
+using Memoria.Data;
 
 public class ff9feqp
 {
@@ -33,7 +34,8 @@ public class ff9feqp
 			16,
 			8
 		};
-		UInt16 num2 = array[ff9play.FF9Play_GetCharID3(FF9StateSystem.Common.FF9.party.member[(Int32)ff9feqp._FF9FEqp.player])];
+	    PLAYER play = FF9StateSystem.Common.FF9.party.member[(Int32)ff9feqp._FF9FEqp.player];
+	    UInt16 num2 = array[(CharacterId)ff9play.FF9Play_GetCharID2(play.Index, play.IsSubCharacter)];
 		Byte b = array2[(Int32)ff9feqp._FF9FEqp.equip];
 		for (Int32 i = 0; i < 256; i++)
 		{
@@ -55,15 +57,15 @@ public class ff9feqp
 			currentItemIndex = num - 1;
 		}
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[(Int32)ff9feqp._FF9FEqp.player];
-		Int32 num3 = (Int32)player.equip[(Int32)ff9feqp._FF9FEqp.equip];
-		Int32 id = (Int32)ff9feqp._FF9FEqp.item[currentItemIndex].id;
-		if (num3 != 255)
+		Int32 itemId1 = (Int32)player.equip[(Int32)ff9feqp._FF9FEqp.equip];
+		Int32 itemId2 = (Int32)ff9feqp._FF9FEqp.item[currentItemIndex].id;
+		if (itemId1 != CharacterEquipment.EmptyItemId)
 		{
-			ff9item.FF9Item_Add(num3, 1);
+			ff9item.FF9Item_Add(itemId1, 1);
 		}
-		if (ff9item.FF9Item_Remove(id, 1) != 0)
+		if (ff9item.FF9Item_Remove(itemId2, 1) != 0)
 		{
-			player.equip[(Int32)ff9feqp._FF9FEqp.equip] = (Byte)id;
+			player.equip[(Int32)ff9feqp._FF9FEqp.equip] = (Byte)itemId2;
 			ff9feqp.FF9FEqp_UpdatePlayer(player);
 		}
 	}
@@ -72,7 +74,7 @@ public class ff9feqp
 	{
 		ff9feqp.FF9FEqp_UpdateSA(play);
 		ff9play.FF9Play_Update(play);
-		play.info.serial_no = (Byte)ff9play.FF9Play_GetSerialID((Int32)play.info.slot_no, (play.category & 16) != 0, play.equip);
+		play.info.serial_no = (Byte)ff9play.FF9Play_GetSerialID(play.info.slot_no, play.IsSubCharacter, play.equip);
 	}
 
 	private static void FF9FEqp_UpdateSA(PLAYER play)
@@ -97,13 +99,13 @@ public class ff9feqp
 				}
 			}
 		}
-		PA_DATA[] array2 = ff9abil._FF9Abil_PaData[(Int32)play.info.menu_type];
+		CharacterAbility[] array2 = ff9abil._FF9Abil_PaData[(Int32)play.info.menu_type];
 		for (Int32 i = 0; i < 48; i++)
 		{
-			if (192 <= array2[i].id && ff9abil.FF9Abil_GetEnableSA((Int32)play.info.slot_no, (Int32)array2[i].id) && !array[(Int32)(array2[i].id - 192)] && play.pa[i] < array2[i].max_ap)
+			if (192 <= array2[i].Id && ff9abil.FF9Abil_GetEnableSA((Int32)play.info.slot_no, (Int32)array2[i].Id) && !array[(Int32)(array2[i].Id - 192)] && play.pa[i] < array2[i].Ap)
 			{
-				ff9abil.FF9Abil_SetEnableSA((Int32)play.info.slot_no, (Int32)array2[i].id, false);
-				Int32 capa_val = (Int32)ff9abil._FF9Abil_SaData[(Int32)(array2[i].id - 192)].capa_val;
+				ff9abil.FF9Abil_SetEnableSA((Int32)play.info.slot_no, (Int32)array2[i].Id, false);
+				Int32 capa_val = (Int32)ff9abil._FF9Abil_SaData[(Int32)(array2[i].Id - 192)].GemsCount;
 				if ((Int32)(play.max.capa - play.cur.capa) >= capa_val)
 				{
 					POINTS cur = play.cur;

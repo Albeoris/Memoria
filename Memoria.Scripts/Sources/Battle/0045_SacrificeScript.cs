@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.IsUnderStatus(BattleStatus.Disable) || _v.Caster.IsUnderStatus(BattleStatus.Stone | BattleStatus.Disable))
+            if (_v.Target.IsUnderStatus(BattleStatus.Death) || _v.Caster.IsUnderStatus(BattleStatus.Petrify | BattleStatus.Death))
             {
                 _v.Context.Flags |= BattleCalcFlags.Miss;
                 return;

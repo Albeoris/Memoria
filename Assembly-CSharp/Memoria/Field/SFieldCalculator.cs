@@ -33,7 +33,7 @@ namespace Memoria.Field
             {
                 case 62:
                 case 73:
-                    if (tbl.Info.vfx_no == 289)
+                    if (tbl.Info.VfxIndex == 289)
                         return PersistenSingleton<UIManager>.Instance.ItemScene.FF9FItem_Vegetable();
                     FldCalcSub_305(v);
                     goto case 64;
@@ -182,14 +182,14 @@ namespace Memoria.Field
         private static void FldCalcSub_137(Context v)
         {
             v.AttackNumber = (Int16)(v.Caster.elem.mgc + Comn.random16() % (1 + (v.Caster.level + v.Caster.elem.mgc >> 3)));
-            v.AttackPower = v.Tbl.Ref.power;
+            v.AttackPower = v.Tbl.Ref.Power;
             v.DefencePower = v.Target.defence.m_def;
         }
 
         private static void FldCalcSub_171(Context v)
         {
             v.AttackNumber = 10;
-            v.AttackPower = v.Tbl.Ref.power;
+            v.AttackPower = v.Tbl.Ref.Power;
             v.DefencePower = 0;
         }
 
@@ -209,7 +209,7 @@ namespace Memoria.Field
 
         private static void FldCalcSub_156(Context v)
         {
-            if ((Int32)v.Cursor != 1 || v.Tbl.Info.cursor <= 2 || v.Tbl.Info.cursor >= 6)
+            if ((Int32)v.Cursor != 1 || (Int32)v.Tbl.Info.Target <= 2 || (Int32)v.Tbl.Info.Target >= 6)
                 return;
             v.AttackNumber /= 2;
         }
@@ -224,7 +224,7 @@ namespace Memoria.Field
 
         private static void FldCalcSub_204(Context v)
         {
-            Int32 num1 = v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.power);
+            Int32 num1 = v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power);
             Int32 num2 = ((Int32)v.Caster.sa[1] & 2) == 0 ? num1 / 100 : num1 / 50;
             if (num2 > 9999)
                 num2 = 9999;
@@ -318,7 +318,7 @@ namespace Memoria.Field
 
         private sealed class ItemActionData
         {
-            public CMD_INFO Info;
+            public BattleCommandInfo Info;
             public BTL_REF Ref;
             public Byte Category;
             public Byte AddNo;

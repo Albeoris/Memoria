@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Field;
 using Memoria.Prime;
 using Memoria.Scenes.BattleHUD;
@@ -241,9 +242,9 @@ public class ItemUI : UIScene
                             {
                                 if (!_usedItemIdList.Contains(itemId))
                                 {
-                                    if ((FF9FITEM_ID_VEGETABLE != itemId ? tbl.info.sub_win : 0) == 0)
+                                    if ((FF9FITEM_ID_VEGETABLE != itemId ? tbl.info.DisplayStats : 0) == 0)
                                     {
-                                        if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.prog_no, 0U))
+                                        if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.ScriptId, 0U))
                                         {
                                             FF9Sfx.FF9SFX_Play(106);
                                             ff9item.FF9Item_Remove(itemId, 1);
@@ -329,7 +330,7 @@ public class ItemUI : UIScene
                     Int32 itemId = _itemIdList[_currentItemIndex];
                     PLAYER player = FF9StateSystem.Common.FF9.party.member[siblingIndex];
                     ITEM_DATA tbl = ff9item._FF9Item_Info[itemId - 224];
-                    if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.prog_no, 0U))
+                    if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.ScriptId, 0U))
                     {
                         FF9Sfx.FF9SFX_Play(106);
                         ff9item.FF9Item_Remove(itemId, 1);
@@ -687,17 +688,17 @@ public class ItemUI : UIScene
                 targetHud.Content.SetActive(true);
                 FF9UIDataTool.DisplayCharacterDetail(player, targetHud);
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), targetHud.AvatarSprite, false);
-                switch (ff9item._FF9Item_Info[_itemIdList[_currentItemIndex] - 224].info.sub_win)
+                switch (ff9item._FF9Item_Info[_itemIdList[_currentItemIndex] - 224].info.DisplayStats)
                 {
-                    case 0:
-                    case 1:
-                    case 2:
+                    case TargetDisplay.None:
+                    case TargetDisplay.Hp:
+                    case TargetDisplay.Mp:
                         targetHud.HPPanel.SetActive(true);
                         targetHud.MPPanel.SetActive(true);
                         targetHud.StatusesPanel.SetActive(false);
                         continue;
-                    case 3:
-                    case 4:
+                    case TargetDisplay.Debufs:
+                    case TargetDisplay.Bufs:
                         targetHud.HPPanel.SetActive(false);
                         targetHud.MPPanel.SetActive(false);
                         targetHud.StatusesPanel.SetActive(true);

@@ -149,10 +149,10 @@ public class BattleHUD : UIScene
     private Single _runCounter;
     private Boolean _hidingHud;
     private CursorGroup _cursorType;
-    private Byte _defaultTargetCursor;
-    private Byte _defaultTargetDead;
-    private Byte _targetDead;
-    private Byte _targetCursor;
+    private Boolean _defaultTargetCursor;
+    private Boolean _defaultTargetDead;
+    private Boolean _targetDead;
+    private TargetType _targetCursor;
     private Boolean _isTryingToRun;
     private Boolean _isAutoAttack;
     private Boolean _isAllTarget;
@@ -810,15 +810,15 @@ public class BattleHUD : UIScene
 
         if (Status.checkCurStat(btl, 16384U))
         {
-            command1 = BattleCommands.CommandSets[presetId].Trance1;
-            command2 = BattleCommands.CommandSets[presetId].Trance2;
+            command1 = CharacterCommands.CommandSets[presetId].Trance1;
+            command2 = CharacterCommands.CommandSets[presetId].Trance2;
             _commandDetailHUD.CaptionLabel.text = Localization.Get("TranceCaption");
             _isTranceMenu = true;
         }
         else
         {
-            command1 = BattleCommands.CommandSets[presetId].Regular1;
-            command2 = BattleCommands.CommandSets[presetId].Regular2;
+            command1 = CharacterCommands.CommandSets[presetId].Regular1;
+            command2 = CharacterCommands.CommandSets[presetId].Regular2;
             _commandDetailHUD.CaptionLabel.text = Localization.Get("CommandCaption");
             _commandDetailHUD.CaptionLabel.color = FF9TextTool.White;
             _isTranceMenu = false;
@@ -896,7 +896,7 @@ public class BattleHUD : UIScene
         SetCommandVisibility(true, false);
     }
 
-    private void DisplayStatus(Byte subMode)
+    private void DisplayStatus(TargetDisplay subMode)
     {
         StatusContainer.SetActive(true);
         _status.SetActive(false);
@@ -905,7 +905,7 @@ public class BattleHUD : UIScene
         List<Int32> list = new List<Int32>(new[] { 0, 1, 2, 3 });
         switch (subMode)
         {
-            case 1:
+            case TargetDisplay.Hp:
                 _status.HpStatusPanel.SetActive(true);
                 _partyDetail.SetActive(false);
                 for (BTL_DATA bd = FF9StateSystem.Battle.FF9Battle.btl_list.next; bd != null; bd = bd.next)
@@ -941,7 +941,7 @@ public class BattleHUD : UIScene
                     _status.HpStatusHudList[index].Self.SetActive(false);
 
                 break;
-            case 2:
+            case TargetDisplay.Mp:
                 _status.MpStatusPanel.SetActive(true);
                 _partyDetail.SetActive(false);
                 for (BTL_DATA bd = FF9StateSystem.Battle.FF9Battle.btl_list.next; bd != null; bd = bd.next)
@@ -966,7 +966,7 @@ public class BattleHUD : UIScene
                     _status.MpStatusHudList[index].Self.SetActive(false);
 
                 break;
-            case 3:
+            case TargetDisplay.Debufs:
                 _status.BadStatusPanel.SetActive(true);
                 _partyDetail.SetActive(false);
                 for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
@@ -1005,7 +1005,7 @@ public class BattleHUD : UIScene
 
                 break;
 
-            case 4:
+            case TargetDisplay.Bufs:
                 _status.GoodStatusPanel.SetActive(true);
                 _partyDetail.SetActive(false);
                 for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
@@ -1069,7 +1069,7 @@ public class BattleHUD : UIScene
             return;
 
         _needItemUpdate = false;
-        DisplayItem(BattleCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
+        DisplayItem(CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
     }
 
     private void DisplayItem(Boolean isThrow)
@@ -1157,7 +1157,7 @@ public class BattleHUD : UIScene
 
     private void DisplayAbility()
     {
-        CharacterCommand ff9Command = BattleCommands.Commands[_currentCommandId];
+        CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
         SetAbilityAp(_abilityDetailDict[CurrentPlayerIndex]);
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
 
@@ -1386,7 +1386,7 @@ public class BattleHUD : UIScene
                 {
                     if (_cursorType == CursorGroup.Individual)
                     {
-                        if (_targetDead == 0)
+                        if (_targetDead == false)
                         {
                             ButtonGroupState.SetButtonEnable(go, false);
                             if (go == obj)
@@ -1434,7 +1434,7 @@ public class BattleHUD : UIScene
                     if (_cursorType == CursorGroup.Individual)
                     {
                         ButtonGroupState.SetButtonEnable(go, false);
-                        if (_targetDead == 0)
+                        if (_targetDead == false)
                         {
                             if (go == obj)
                             {
@@ -1801,7 +1801,7 @@ public class BattleHUD : UIScene
 
     private AbilityStatus CheckAbilityStatus(Int32 subMenuIndex)
     {
-        CharacterCommand command = BattleCommands.Commands[_currentCommandId];
+        CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
         if (subMenuIndex >= command.Abilities.Length)
             return AbilityStatus.None;
 
@@ -1937,7 +1937,7 @@ public class BattleHUD : UIScene
 
         if (_subMenuType == SubMenuType.Ability)
         {
-            CharacterCommand command = BattleCommands.Commands[_currentCommandId];
+            CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
             if (_currentSubMenuIndex >= command.Abilities.Length)
                 return true;
 
@@ -2046,7 +2046,7 @@ public class BattleHUD : UIScene
         if (!abilityPlayer.HasAp)
             return;
 
-        PA_DATA[] paDataArray = ff9abil._FF9Abil_PaData[player.info.menu_type];
+        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[player.info.menu_type];
         for (Int32 abilId = 0; abilId < 192; ++abilId)
         {
             Int32 index;
@@ -2054,7 +2054,7 @@ public class BattleHUD : UIScene
                 continue;
 
             abilityPlayer.AbilityPaList[abilId] = player.pa[index];
-            abilityPlayer.AbilityMaxPaList[abilId] = paDataArray[index].max_ap;
+            abilityPlayer.AbilityMaxPaList[abilId] = paDataArray[index].Ap;
         }
     }
 
@@ -2086,13 +2086,13 @@ public class BattleHUD : UIScene
 
         for (Int32 k = 0; k < 2; k++)
         {
-            command_tags normalCommandId = BattleCommands.CommandSets[presetId].GetRegular(k);
-            command_tags tranceCommandId = BattleCommands.CommandSets[presetId].GetTrance(k);
+            command_tags normalCommandId = CharacterCommands.CommandSets[presetId].GetRegular(k);
+            command_tags tranceCommandId = CharacterCommands.CommandSets[presetId].GetTrance(k);
             if (normalCommandId == tranceCommandId)
                 continue;
 
-            CharacterCommand normalCommand = BattleCommands.Commands[(Byte)normalCommandId];
-            CharacterCommand tranceCommand = BattleCommands.Commands[(Byte)tranceCommandId];
+            CharacterCommand normalCommand = CharacterCommands.Commands[(Byte)normalCommandId];
+            CharacterCommand tranceCommand = CharacterCommands.Commands[(Byte)tranceCommandId];
             Int32 count = Math.Min(normalCommand.Abilities.Length, tranceCommand.Abilities.Length);
             for (Int32 i = 0; i < count; ++i)
             {
@@ -2119,9 +2119,9 @@ public class BattleHUD : UIScene
         if (character.info.slot_no != (Int32)CharacterPresetId.Steiner)
             return;
 
-        CharacterCommand magicSwordCommand = BattleCommands.Commands[(Int32)command_tags.CMD_MAGIC_SWORD];
+        CharacterCommand magicSwordCommand = CharacterCommands.Commands[(Int32)command_tags.CMD_MAGIC_SWORD];
         PLAYER player2 = FF9StateSystem.Common.FF9.player[(Int32)CharacterPresetId.Vivi];
-        PA_DATA[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)CharacterPresetId.Vivi];
+        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)CharacterPresetId.Vivi];
         Int32[] abilities = { 25, 26, 27, 29, 30, 31, 33, 34, 35, 38, 45, 47, 48 }; // TODO: Move to the resource file
 
         Int32 count = Math.Min(magicSwordCommand.Abilities.Length, abilities.Length);
@@ -2132,7 +2132,7 @@ public class BattleHUD : UIScene
             if (index > -1)
             {
                 abilityPlayer.AbilityPaList[abilityId] = player2.pa[index];
-                abilityPlayer.AbilityMaxPaList[abilityId] = paDataArray[index].max_ap;
+                abilityPlayer.AbilityMaxPaList[abilityId] = paDataArray[index].Ap;
             }
         }
 
@@ -2244,7 +2244,7 @@ public class BattleHUD : UIScene
                 case CommandMenu.Ability1:
                 case CommandMenu.Ability2:
                     //int num = currentCommandIndex != CommandMenu.Ability2 ? 0 : 1;
-                    CharacterCommand ff9Command = BattleCommands.Commands[_currentCommandId];
+                    CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
                     if (ff9Command.Type == CharacterCommandType.Normal)
                     {
                         _subMenuType = SubMenuType.Normal;
@@ -2448,7 +2448,7 @@ public class BattleHUD : UIScene
 
     public override Boolean OnKeyLeftBumper(GameObject go)
     {
-        if (base.OnKeyLeftBumper(go) && !_hidingHud && ButtonGroupState.ActiveGroup == TargetGroupButton && (_targetCursor == 3 || _targetCursor == 5 || _targetCursor == 4))
+        if (base.OnKeyLeftBumper(go) && !_hidingHud && ButtonGroupState.ActiveGroup == TargetGroupButton && (_targetCursor == TargetType.ManyAny || _targetCursor == TargetType.ManyEnemy || _targetCursor == TargetType.ManyAlly))
         {
             FF9Sfx.FF9SFX_Play(103);
             _isAllTarget = !_isAllTarget;
@@ -2461,7 +2461,7 @@ public class BattleHUD : UIScene
 
     public override Boolean OnKeyRightBumper(GameObject go)
     {
-        if (base.OnKeyRightBumper(go) && !_hidingHud && ButtonGroupState.ActiveGroup == TargetGroupButton && (_targetCursor == 3 || _targetCursor == 5 || _targetCursor == 4))
+        if (base.OnKeyRightBumper(go) && !_hidingHud && ButtonGroupState.ActiveGroup == TargetGroupButton && (_targetCursor == TargetType.ManyAny || _targetCursor == TargetType.ManyEnemy || _targetCursor == TargetType.ManyAlly))
         {
             FF9Sfx.FF9SFX_Play(103);
             _isAllTarget = !_isAllTarget;
@@ -2549,7 +2549,7 @@ public class BattleHUD : UIScene
     {
         if (_cursorType == CursorGroup.AllEnemy)
         {
-            if (_targetCursor != 3 || key != KeyCode.RightArrow)
+            if (_targetCursor != TargetType.ManyAny || key != KeyCode.RightArrow)
                 return;
             FF9Sfx.FF9SFX_Play(103);
             _cursorType = CursorGroup.AllPlayer;
@@ -2557,7 +2557,7 @@ public class BattleHUD : UIScene
         }
         else
         {
-            if (_cursorType != CursorGroup.AllPlayer || _targetCursor != 3 || key != KeyCode.LeftArrow)
+            if (_cursorType != CursorGroup.AllPlayer || _targetCursor != TargetType.ManyAny || key != KeyCode.LeftArrow)
                 return;
             FF9Sfx.FF9SFX_Play(103);
             _cursorType = CursorGroup.AllEnemy;
@@ -2732,13 +2732,13 @@ public class BattleHUD : UIScene
             SubId = 0U
         };
 
-        CharacterCommandType commandType = BattleCommands.Commands[commandDetail.CommandId].Type;
+        CharacterCommandType commandType = CharacterCommands.Commands[commandDetail.CommandId].Type;
         if (commandType == CharacterCommandType.Normal)
-            commandDetail.SubId = BattleCommands.Commands[commandDetail.CommandId].Ability;
+            commandDetail.SubId = CharacterCommands.Commands[commandDetail.CommandId].Ability;
 
         if (commandType == CharacterCommandType.Ability)
         {
-            Int32 abilityId = BattleCommands.Commands[commandDetail.CommandId].Abilities[_currentSubMenuIndex];
+            Int32 abilityId = CharacterCommands.Commands[commandDetail.CommandId].Abilities[_currentSubMenuIndex];
             commandDetail.SubId = (UInt32)PatchAbility(abilityId);
         }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
@@ -2813,9 +2813,9 @@ public class BattleHUD : UIScene
             case CommandMenu.Defend:
                 return command_tags.CMD_DEFEND;
             case CommandMenu.Ability1:
-                return BattleCommands.CommandSets[presetId].Get(Status.checkCurStat(btl, 16384U), 0);
+                return CharacterCommands.CommandSets[presetId].Get(Status.checkCurStat(btl, 16384U), 0);
             case CommandMenu.Ability2:
-                return BattleCommands.CommandSets[presetId].Get(Status.checkCurStat(btl, 16384U), 1);
+                return CharacterCommands.CommandSets[presetId].Get(Status.checkCurStat(btl, 16384U), 1);
             case CommandMenu.Item:
                 return command_tags.CMD_ITEM;
             case CommandMenu.Change:
@@ -2919,29 +2919,29 @@ public class BattleHUD : UIScene
     {
         if (isVisible)
         {
-            Byte cursor = 0;
-            Byte subMode = 0;
-            _defaultTargetCursor = 0;
-            _defaultTargetDead = 0;
-            _targetDead = 0;
+            TargetType cursor = 0;
+            TargetDisplay subMode = 0;
+            _defaultTargetCursor = false;
+            _defaultTargetDead = false;
+            _targetDead = false;
             if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
             {
-                CharacterCommand ff9Command = BattleCommands.Commands[_currentCommandId];
+                CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
                 AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]];
-                cursor = aaData.Info.cursor;
-                _defaultTargetCursor = aaData.Info.def_cur;
-                _defaultTargetDead = aaData.Info.def_dead;
-                _targetDead = aaData.Info.dead;
-                subMode = aaData.Info.sub_win;
+                cursor = aaData.Info.Target;
+                _defaultTargetCursor = aaData.Info.DefaultAlly;
+                _defaultTargetDead = aaData.Info.DefaultOnDead;
+                _targetDead = aaData.Info.ForDead;
+                subMode = aaData.Info.DisplayStats;
             }
             else if (_currentCommandIndex != CommandMenu.Attack && _currentCommandIndex == CommandMenu.Item)
             {
                 ITEM_DATA itemData = ff9item._FF9Item_Info[_itemIdList[_currentSubMenuIndex] - 224];
-                cursor = itemData.info.cursor;
-                _defaultTargetCursor = itemData.info.def_cur;
-                _defaultTargetDead = itemData.info.dead;
-                _targetDead = itemData.info.dead;
-                subMode = itemData.info.sub_win;
+                cursor = itemData.info.Target;
+                _defaultTargetCursor = itemData.info.DefaultAlly;
+                _defaultTargetDead = itemData.info.ForDead;
+                _targetDead = itemData.info.ForDead;
+                subMode = itemData.info.DisplayStats;
             }
             _isAllTarget = false;
             TargetPanel.SetActive(true);
@@ -2971,40 +2971,40 @@ public class BattleHUD : UIScene
         }
     }
 
-    private void SetTargetAvalability(Byte cursor)
+    private void SetTargetAvalability(TargetType cursor)
     {
         _targetCursor = cursor;
-        if (cursor == 0)
+        if (cursor == TargetType.SingleAny)
         {
             _cursorType = CursorGroup.Individual;
 
             ChangeTargetAvalability(player: true, enemy: true, all: false, allPlayers: false, allEnemies: false);
         }
-        else if (cursor == 2)
+        else if (cursor == TargetType.SingleEnemy)
         {
             _cursorType = CursorGroup.Individual;
 
             ChangeTargetAvalability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: false);
         }
-        else if (cursor == 1)
+        else if (cursor == TargetType.SingleAlly)
         {
             _cursorType = CursorGroup.Individual;
 
             ChangeTargetAvalability(player: true, enemy: false, all: false, allPlayers: false, allEnemies: false);
         }
-        else if (cursor == 3)
+        else if (cursor == TargetType.ManyAny)
         {
             ChangeTargetAvalability(player: true, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
-        else if (cursor == 5)
+        else if (cursor == TargetType.ManyEnemy)
         {
             ChangeTargetAvalability(player: false, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
-        else if (cursor == 4)
+        else if (cursor == TargetType.ManyAlly)
         {
             ChangeTargetAvalability(player: true, enemy: false, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
-        else if (cursor == 8 || cursor == 11)
+        else if (cursor == TargetType.AllEnemy || cursor == TargetType.RandomEnemy)
         {
             _cursorType = CursorGroup.AllEnemy;
 
@@ -3012,7 +3012,7 @@ public class BattleHUD : UIScene
 
             _isAllTarget = true;
         }
-        else if (cursor == 7 || cursor == 10)
+        else if (cursor == TargetType.AllAlly || cursor == TargetType.RandomAlly)
         {
             _cursorType = CursorGroup.AllPlayer;
 
@@ -3020,7 +3020,7 @@ public class BattleHUD : UIScene
 
             _isAllTarget = true;
         }
-        else if (cursor == 6 || cursor == 12 || cursor == 9)
+        else if (cursor == TargetType.All || cursor == TargetType.Everyone || cursor == TargetType.Random)
         {
             _cursorType = CursorGroup.All;
 
@@ -3028,7 +3028,7 @@ public class BattleHUD : UIScene
 
             _isAllTarget = true;
         }
-        else if (cursor == 13)
+        else if (cursor == TargetType.Self)
         {
             _cursorType = CursorGroup.Individual;
 
@@ -3055,7 +3055,7 @@ public class BattleHUD : UIScene
     {
         Int32 index1 = 0;
         Int32 index2 = 4;
-        if (_targetDead == 0)
+        if (_targetDead == false)
         {
             for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
             {
@@ -3081,11 +3081,17 @@ public class BattleHUD : UIScene
             }
         }
 
-        if (_targetCursor == 0 || _targetCursor == 1 || (_targetCursor == 2 || _targetCursor == 3) || (_targetCursor == 4 || _targetCursor == 5))
+        
+        if (_targetCursor == TargetType.SingleAny
+            ||_targetCursor == TargetType.SingleAlly
+            ||_targetCursor == TargetType.SingleEnemy
+            ||_targetCursor == TargetType.ManyAny
+            ||_targetCursor == TargetType.ManyAlly
+            ||_targetCursor == TargetType.ManyEnemy)
         {
-            if (_defaultTargetCursor == 1)
+            if (_defaultTargetCursor)
             {
-                ButtonGroupState.SetCursorStartSelect(_defaultTargetDead != 0
+                ButtonGroupState.SetCursorStartSelect(_defaultTargetDead
                     ? _targetHudList[GetDead(true)].Self
                     : _targetHudList[CurrentBattlePlayerIndex].Self, TargetGroupButton);
 
@@ -3096,7 +3102,7 @@ public class BattleHUD : UIScene
             {
                 //int num = HonoluluBattleMain.EnemyStartIndex;
                 Int32 firstIndex;
-                if (_defaultTargetDead != 0)
+                if (_defaultTargetDead)
                 {
                     firstIndex = GetDead(false);
                     ButtonGroupState.SetCursorStartSelect(_targetHudList[firstIndex].Self, TargetGroupButton);
@@ -3117,7 +3123,7 @@ public class BattleHUD : UIScene
         }
         else
         {
-            if (_targetCursor != 13)
+            if (_targetCursor != TargetType.Self)
                 return;
 
             Int32 currentPlayerIndex = CurrentBattlePlayerIndex;
@@ -3130,49 +3136,49 @@ public class BattleHUD : UIScene
     private void SetTargetHelp()
     {
         String str1 = String.Empty;
-        Boolean flag = _targetCursor < 6 || _targetCursor > 12;
+        Boolean flag = (Int32)_targetCursor < 6 || (Int32)_targetCursor > 12;
         switch (_targetCursor)
         {
-            case 0:
+            case TargetType.SingleAny:
                 str1 = Localization.Get("BattleTargetHelpIndividual");
                 break;
-            case 1:
+            case TargetType.SingleAlly:
                 str1 = Localization.Get("BattleTargetHelpIndividualPC");
                 break;
-            case 2:
+            case TargetType.SingleEnemy:
                 str1 = Localization.Get("BattleTargetHelpIndividualNPC");
                 break;
-            case 3:
+            case TargetType.ManyAny:
                 str1 = Localization.Get("BattleTargetHelpMultiS");
                 break;
-            case 4:
+            case TargetType.ManyAlly:
                 str1 = Localization.Get("BattleTargetHelpMultiPCS");
                 break;
-            case 5:
+            case TargetType.ManyEnemy:
                 str1 = Localization.Get("BattleTargetHelpMultiNPCS");
                 break;
-            case 6:
+            case TargetType.All:
                 str1 = Localization.Get("BattleTargetHelpAll");
                 break;
-            case 7:
+            case TargetType.AllAlly:
                 str1 = Localization.Get("BattleTargetHelpAllPC");
                 break;
-            case 8:
+            case TargetType.AllEnemy:
                 str1 = Localization.Get("BattleTargetHelpAllNPC");
                 break;
-            case 9:
+            case TargetType.Random:
                 str1 = Localization.Get("BattleTargetHelpRand");
                 break;
-            case 10:
+            case TargetType.RandomAlly:
                 str1 = Localization.Get("BattleTargetHelpRandPC");
                 break;
-            case 11:
+            case TargetType.RandomEnemy:
                 str1 = Localization.Get("BattleTargetHelpRandNPC");
                 break;
-            case 12:
+            case TargetType.Everyone:
                 str1 = Localization.Get("BattleTargetHelpWhole");
                 break;
-            case 13:
+            case TargetType.Self:
                 str1 = Localization.Get("BattleTargetHelpSelf");
                 break;
         }
@@ -3182,13 +3188,13 @@ public class BattleHUD : UIScene
             flag = false;
             switch (_targetCursor)
             {
-                case 3:
+                case TargetType.ManyAny:
                     str1 = Localization.Get("BattleTargetHelpMultiM");
                     break;
-                case 4:
+                case TargetType.ManyAlly:
                     str1 = Localization.Get("BattleTargetHelpMultiPCM");
                     break;
-                case 5:
+                case TargetType.ManyEnemy:
                     str1 = Localization.Get("BattleTargetHelpMultiNPCM");
                     break;
             }
@@ -3475,7 +3481,7 @@ public class BattleHUD : UIScene
 
     private Int32 GetSelectMode(CursorGroup cursor)
     {
-        if (_targetCursor == 9 || _targetCursor == 10 || _targetCursor == 11)
+        if (_targetCursor == TargetType.Random || _targetCursor == TargetType.RandomAlly || _targetCursor == TargetType.RandomEnemy)
             return 2;
         return cursor == CursorGroup.Individual ? 0 : 1;
     }
@@ -3606,7 +3612,7 @@ public class BattleHUD : UIScene
                 List<GameObject> goList = new List<GameObject>();
                 for (Int32 index = 0; index < _playerCount; ++index)
                 {
-                    if (_currentCharacterHp[index] != ParameterStatus.Empty || _targetDead != 0)
+                    if (_currentCharacterHp[index] != ParameterStatus.Empty || _targetDead)
                         goList.Add(_targetHudList[index].Self);
                 }
                 ButtonGroupState.SetMultipleTarget(goList, true);
@@ -3616,7 +3622,7 @@ public class BattleHUD : UIScene
                 List<GameObject> goList = new List<GameObject>();
                 for (Int32 index = 0; index < _enemyCount; ++index)
                 {
-                    if (!_currentEnemyDieState[index] || _targetDead != 0)
+                    if (!_currentEnemyDieState[index] || _targetDead)
                         goList.Add(_targetHudList[index + HonoluluBattleMain.EnemyStartIndex].Self);
                 }
                 ButtonGroupState.SetMultipleTarget(goList, true);

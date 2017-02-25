@@ -27,31 +27,29 @@ namespace Memoria.Assets
                     total++;
                 if (x.Vfx2 != y.Vfx2)
                     total++;
-                if (x.Info.cursor != y.Info.cursor)
+                if (x.Info.Target != y.Info.Target)
                     total++;
-                if (x.Info.cursor != y.Info.cursor)
+                if (x.Info.Target != y.Info.Target)
                     total++;
-                if (x.Info.def_cur != y.Info.def_cur)
+                if (x.Info.DefaultAlly != y.Info.DefaultAlly)
                     total++;
-                if (x.Info.sub_win != y.Info.sub_win)
+                if (x.Info.DisplayStats != y.Info.DisplayStats)
                     total++;
-                if (x.Info.vfx_no != y.Info.vfx_no)
+                if (x.Info.VfxIndex != y.Info.VfxIndex)
                     total++;
-                if (x.Info.sfx_no != y.Info.sfx_no)
+                if (x.Info.ForDead != y.Info.ForDead)
                     total++;
-                if (x.Info.dead != y.Info.dead)
+                if (x.Info.DefaultCamera != y.Info.DefaultCamera)
                     total++;
-                if (x.Info.def_cam != y.Info.def_cam)
+                if (x.Info.DefaultOnDead != y.Info.DefaultOnDead)
                     total++;
-                if (x.Info.def_dead != y.Info.def_dead)
+                if (x.Ref.Elements != y.Ref.Elements)
                     total++;
-                if (x.Ref.attr != y.Ref.attr)
+                if (x.Ref.ScriptId != y.Ref.ScriptId)
                     total++;
-                if (x.Ref.prog_no != y.Ref.prog_no)
+                if (x.Ref.Power != y.Ref.Power)
                     total++;
-                if (x.Ref.power != y.Ref.power)
-                    total++;
-                if (x.Ref.rate != y.Ref.rate)
+                if (x.Ref.Rate != y.Ref.Rate)
                     total++;
             }
             return total;

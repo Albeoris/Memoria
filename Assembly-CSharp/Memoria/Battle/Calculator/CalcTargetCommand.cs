@@ -116,7 +116,7 @@ namespace Memoria
         {
             BattleStatus status = _command.AbilityStatus;
             if (!_command.IsShortSummon && _command.Id == BattleCommandId.Summon2)
-                status |= BattleStatus.Protes;
+                status |= BattleStatus.Protect;
 
             _target.TryAlterStatuses(status, true);
         }
@@ -141,7 +141,7 @@ namespace Memoria
                 return;
             }
 
-            if (_target.IsUnderStatus(BattleStatus.Disable))
+            if (_target.IsUnderStatus(BattleStatus.Death))
             {
                 _context.Flags |= BattleCalcFlags.Miss;
                 return;

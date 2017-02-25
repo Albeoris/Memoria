@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Data;
 
 public class FF9PLAY_INFO
 {
@@ -6,7 +7,7 @@ public class FF9PLAY_INFO
 	{
 		this.Base = new PLAYER_BASE();
 		this.sa = new UInt32[2];
-		this.equip = new Byte[5];
+	    this.equip = new CharacterEquipment();
 	}
 
 	public PLAYER_BASE Base;
@@ -17,5 +18,5 @@ public class FF9PLAY_INFO
 
 	public UInt16 cur_mp;
 
-	public Byte[] equip;
+	public CharacterEquipment equip;
 }

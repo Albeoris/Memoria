@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -221,13 +222,13 @@ public class BattleResultUI : UIScene
 			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
 			if (player != null)
 			{
-				UInt64 num = (UInt64)((player.level >= 99) ? ((UInt64)player.exp) : ff9level._FF9Level_Exp[(Int32)player.level]);
+				UInt64 num = (player.level >= 99) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
 				BattleResultUI.CharacterBattleResultInfoHUD characterBattleResultInfoHUD = this.characterBRInfoHudList[i];
 				characterBattleResultInfoHUD.Content.SetActive(true);
 				characterBattleResultInfoHUD.NameLabel.text = player.name;
 				characterBattleResultInfoHUD.LevelLabel.text = player.level.ToString();
 				characterBattleResultInfoHUD.ExpLabel.text = player.exp.ToString();
-				characterBattleResultInfoHUD.NextLvLabel.text = (num - (UInt64)player.exp).ToString();
+				characterBattleResultInfoHUD.NextLvLabel.text = (num - player.exp).ToString();
 				FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterBattleResultInfoHUD.AvatarSprite, false);
 				UISprite[] statusesSpriteList = characterBattleResultInfoHUD.StatusesSpriteList;
 				for (Int32 j = 0; j < (Int32)statusesSpriteList.Length; j++)
@@ -613,7 +614,7 @@ public class BattleResultUI : UIScene
 								}
 								if (99 > player.level)
 								{
-									for (UInt64 num2 = ff9level._FF9Level_Exp[(Int32)player.level]; num2 <= (UInt64)player.exp; num2 = ff9level._FF9Level_Exp[(Int32)player.level])
+									for (UInt32 exp = ff9level.CharacterLevelUps[player.level].ExperienceToLevel; exp <= player.exp; exp = ff9level.CharacterLevelUps[player.level].ExperienceToLevel)
 									{
 										this.DisplayLevelup(i);
 										if (player.level >= 99)
@@ -676,7 +677,7 @@ public class BattleResultUI : UIScene
 						Int32 num = ff9abil.FF9Abil_GetIndex((Int32)player.info.slot_no, (Int32)ff9ITEM_DATA.ability[j]);
 						if (num >= 0)
 						{
-							Int32 max_ap = (Int32)ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type][num].max_ap;
+							Int32 max_ap = (Int32)ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type][num].Ap;
 							Int32 num2 = (Int32)player.pa[num];
 							if (max_ap > num2)
 							{

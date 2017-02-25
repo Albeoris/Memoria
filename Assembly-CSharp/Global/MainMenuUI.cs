@@ -448,7 +448,7 @@ public class MainMenuUI : UIScene
 				PLAYER player2 = FF9StateSystem.Common.FF9.party.member[num3];
 				if (player2 != null)
 				{
-					UInt32 num4 = (UInt32)((player2.level < 99) ? ((UInt32)ff9level._FF9Level_Exp[(Int32)player2.level]) : player2.exp);
+					UInt32 exp = (player2.level < 99) ? ff9level.CharacterLevelUps[player2.level].ExperienceToLevel : player2.exp;
 					Int32 num5;
 					if (Localization.language == "English(US)" || Localization.language == "English(UK)" || Localization.language == "German")
 					{
@@ -477,7 +477,7 @@ public class MainMenuUI : UIScene
 						" [XTAB=",
 						num5,
 						"]",
-						(num4 - player2.exp).ToString()
+						(exp - player2.exp).ToString()
 					});
 				}
 				component3.Help.TextKey = String.Empty;

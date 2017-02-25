@@ -12,17 +12,17 @@ namespace Memoria.Assets
             if (ReferenceEquals(x, y)) return true;
             if (ReferenceEquals(x, null)) return false;
             if (ReferenceEquals(y, null)) return false;
-            return x.prog_no == y.prog_no && x.power == y.power && x.attr == y.attr && x.rate == y.rate;
+            return x.ScriptId == y.ScriptId && x.Power == y.Power && x.Elements == y.Elements && x.Rate == y.Rate;
         }
 
         public Int32 GetHashCode(BTL_REF obj)
         {
             unchecked
             {
-                var hashCode = obj.prog_no.GetHashCode();
-                hashCode = (hashCode * 397) ^ obj.power.GetHashCode();
-                hashCode = (hashCode * 397) ^ obj.attr.GetHashCode();
-                hashCode = (hashCode * 397) ^ obj.rate.GetHashCode();
+                var hashCode = obj.ScriptId.GetHashCode();
+                hashCode = (hashCode * 397) ^ obj.Power.GetHashCode();
+                hashCode = (hashCode * 397) ^ obj.Elements.GetHashCode();
+                hashCode = (hashCode * 397) ^ obj.Rate.GetHashCode();
                 return hashCode;
             }
         }

@@ -56,7 +56,7 @@ namespace Memoria
 
         public void PenaltyDefenceAttack()
         {
-            if (IsUnderStatus(BattleStatus.Defence | BattleStatus.Protes))
+            if (IsUnderStatus(BattleStatus.Defend | BattleStatus.Protect))
                 _context.Attack >>= 1;
         }
 
@@ -74,7 +74,7 @@ namespace Memoria
 
         public void PenaltyDefenceHitRate()
         {
-            if (IsUnderStatus(BattleStatus.Defence))
+            if (IsUnderStatus(BattleStatus.Defend))
                 _context.HitRate /= 2;
         }
 
@@ -86,14 +86,14 @@ namespace Memoria
 
         public void PenaltyBanishHitRate()
         {
-            if (IsUnderStatus(BattleStatus.Banish))
+            if (IsUnderStatus(BattleStatus.Vanish))
                 _context.HitRate = 0;
         }
 
         public void PenaltyPhysicalEvade()
         {
-            const BattleStatus status = BattleStatus.Stone | BattleStatus.Poison2 | BattleStatus.Virus
-                                        | BattleStatus.Dark | BattleStatus.Confu | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze;
+            const BattleStatus status = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus
+                                        | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze;
 
             if (IsUnderStatus(status))
                 _context.Evade = 0;
@@ -204,7 +204,7 @@ namespace Memoria
 
         public Boolean CanBeAttacked()
         {
-            if (!IsUnderStatus(BattleStatus.Stone | BattleStatus.Disable))
+            if (!IsUnderStatus(BattleStatus.Petrify | BattleStatus.Death))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -213,7 +213,7 @@ namespace Memoria
 
         public Boolean CanBeRevived()
         {
-            if (IsUnderStatus(BattleStatus.Stone | BattleStatus.Disable | BattleStatus.Zombie))
+            if (IsUnderStatus(BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Zombie))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -222,7 +222,7 @@ namespace Memoria
 
         public Boolean CanBeHealed()
         {
-            if (!IsUnderStatus(BattleStatus.Disable))
+            if (!IsUnderStatus(BattleStatus.Death))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -231,7 +231,7 @@ namespace Memoria
 
         public Boolean CheckUnsafetyOrMiss()
         {
-            if (!IsUnderStatus(BattleStatus.Safety))
+            if (!IsUnderStatus(BattleStatus.EasyKill))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -240,7 +240,7 @@ namespace Memoria
 
         public Boolean CheckUnsafetyOrGuard()
         {
-            if (!IsUnderStatus(BattleStatus.Safety))
+            if (!IsUnderStatus(BattleStatus.EasyKill))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Guard;
@@ -258,7 +258,7 @@ namespace Memoria
 
         public Boolean TryKillFrozen()
         {
-            if (!IsUnderStatus(BattleStatus.Freeze) || IsUnderStatus(BattleStatus.Stone))
+            if (!IsUnderStatus(BattleStatus.Freeze) || IsUnderStatus(BattleStatus.Petrify))
                 return false;
 
             btl_cmd.KillSpecificCommand(Data, 62);

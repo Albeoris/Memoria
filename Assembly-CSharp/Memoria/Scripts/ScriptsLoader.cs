@@ -91,7 +91,7 @@ namespace Memoria.Scripts
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[SBattleCalculatorInitializer] Failed to get battle calculator's script.");
+                Log.Error(ex, "[ScriptsLoader] Failed to get battle calculator's script.");
                 UIManager.Input.ConfirmQuit();
                 return null;
             }

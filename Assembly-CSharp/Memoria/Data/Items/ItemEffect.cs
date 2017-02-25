@@ -24,17 +24,17 @@ namespace Memoria.Data
         {
             return new ItemEffect
             {
-                Targets = (TargetType)data.info.cursor,
-                DefaultAlly = data.info.def_cur == 1,
-                Display = (TargetDisplay)data.info.sub_win,
-                AnimationId = data.info.vfx_no,
-                Dead = data.info.dead != 0,
-                DefaultDead = data.info.def_dead != 0,
+                Targets = (TargetType)data.info.Target,
+                DefaultAlly = data.info.DefaultAlly,
+                Display = (TargetDisplay)data.info.DisplayStats,
+                AnimationId = data.info.VfxIndex,
+                Dead = data.info.ForDead,
+                DefaultDead = data.info.DefaultOnDead,
 
-                ScriptId = data.Ref.prog_no,
-                Power = data.Ref.power,
-                Element = (EffectElement)data.Ref.attr,
-                Rate = data.Ref.rate,
+                ScriptId = data.Ref.ScriptId,
+                Power = data.Ref.Power,
+                Element = (EffectElement)data.Ref.Elements,
+                Rate = data.Ref.Rate,
 
                 Status = (BattleStatus)data.status
             };
@@ -79,7 +79,7 @@ namespace Memoria.Data
         public ITEM_DATA ToItemData()
         {
             return new ITEM_DATA(
-                new CMD_INFO((Byte)Targets, (Byte)(DefaultAlly ? 1 : 0), (Byte)Display, AnimationId, 0, (Byte)(Dead ? 1 : 0), 0, (Byte)(DefaultDead ? 1 : 0)),
+                new BattleCommandInfo(Targets, DefaultAlly, Display, AnimationId, Dead, false, DefaultDead),
                 new BTL_REF(ScriptId, Power, (Byte)Element, Rate),
                 (UInt32)Status);
         }

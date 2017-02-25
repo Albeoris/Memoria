@@ -653,7 +653,24 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             Int32 partyMember = this.eTb.GetPartyMember(index);
             if (partyMember >= 0)
+            {
+                // https://github.com/Albeoris/Memoria/issues/3
+                // Tirlititi: If Beatrix is in the team, we make it so the engine thinks it's another member instead
+                if (partyMember == 8)
+                {
+                    if (!partychk(1))
+                        partyMember = 1;
+                    else if (!partychk(2))
+                        partyMember = 2;
+                    else if (!partychk(3))
+                        partyMember = 3;
+                    else
+                        partyMember = 0;
+                }
+                // *********************
+
                 num |= 1 << numArray2[partyMember];
+            }
         }
         Int32 index1 = 0;
         Int32 index2 = 0;

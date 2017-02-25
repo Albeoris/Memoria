@@ -83,13 +83,13 @@ namespace Memoria
             set { Data.fig = value; }
         }
 
-        public Byte WeaponRate => Data.weapon.Ref.rate;
-        public Byte WeaponPower => Data.weapon.Ref.power;
-        public EffectElement WeaponElement => (EffectElement)Data.weapon.Ref.attr;
-        public BattleStatus WeaponStatus => (BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.add_no];
+        public Byte WeaponRate => Data.weapon.Ref.Rate;
+        public Byte WeaponPower => Data.weapon.Ref.Power;
+        public EffectElement WeaponElement => (EffectElement)Data.weapon.Ref.Elements;
+        public BattleStatus WeaponStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.add_no].Value;
 
         public Character Player => Character.Find(this);
-        public PlayerCategory PlayerCategory => Player.Category;
+        public CharacterCategory PlayerCategory => Player.Category;
         public ENEMY Enemy => btl_util.getEnemyPtr(Data);
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
 
@@ -102,7 +102,7 @@ namespace Memoria
         public EffectElement AbsorbElement => (EffectElement)Data.def_attr.absorb;
         public EffectElement HalfElement => (EffectElement)Data.def_attr.half;
 
-        public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderStatus(BattleStatus.Levitate);
+        public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderStatus(BattleStatus.Float);
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderStatus(BattleStatus.Zombie);
         public Boolean HasLongReach => HasSupportAbility(SupportAbility1.LongReach) || HasCategory(WeaponCategory.LongRange);
 

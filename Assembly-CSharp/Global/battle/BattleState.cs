@@ -54,8 +54,8 @@ public class BattleState : MonoBehaviour
 		battle.isAlreadyShowTutorial = false;
 		this.FF9Battle = new FF9StateBattleSystem();
 		this.FF9Battle.status_data = FF9BattleDB.status_data;
-		this.FF9Battle.aa_data = FF9BattleDB.aa_data;
-		this.FF9Battle.add_status = FF9BattleDB.add_status;
+		this.FF9Battle.aa_data = FF9BattleDB.CharacterActions;
+		this.FF9Battle.add_status = FF9BattleDB.StatusSets;
 		this.fadeShader = Shader.Find("PSX/BattleMap_Abr_1");
 		this.battleShader = Shader.Find("PSX/BattleMap_StatusEffect");
 		this.shadowShader = Shader.Find("PSX/BattleMap_Abr_2");

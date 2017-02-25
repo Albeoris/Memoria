@@ -9,8 +9,8 @@ namespace Memoria.Data
         public Byte Id;
         public Byte Ap;
 
-        public Byte SkillId => Id;
-        public Byte AbilityId => checked((Byte)(Id - 192));
+        public Byte ActiveId => Id;
+        public Byte PassiveId => checked((Byte)(Id - 192));
         public Boolean IsPassive => Id >= 192;
 
         public void ParseEntry(String[] raw)
@@ -23,17 +23,6 @@ namespace Memoria.Data
         {
             writer.Byte(Id);
             writer.Byte(Ap);
-        }
-
-        public void ToPaData(PA_DATA target)
-        {
-            target.id = Id;
-            target.max_ap = Ap;
-        }
-
-        public static CharacterAbility FromPaData(PA_DATA entry)
-        {
-            return new CharacterAbility {Id = entry.id, Ap = entry.max_ap};
         }
     }
 }

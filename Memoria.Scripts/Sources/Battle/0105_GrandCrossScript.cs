@@ -21,9 +21,9 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             const UInt32 alteringStatuses = (UInt32)
-            (BattleStatus.Stone | BattleStatus.Silence | BattleStatus.Dark | BattleStatus.Trouble | BattleStatus.Zombie
-             | BattleStatus.Disable | BattleStatus.Confu | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison
-             | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Condemn | BattleStatus.Mini);
+            (BattleStatus.Petrify | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie
+             | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison
+             | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini);
 
             if (!_v.Target.CanBeAttacked())
                 return;
@@ -38,7 +38,7 @@ namespace Memoria.Scripts.Battle
                 {
                     _v.Target.AlterStatus((BattleStatus)status);
                 }
-                else if ((status & (UInt32)BattleStatus.Dying) != 0 && !_v.Target.IsUnderStatus(BattleStatus.Disable))
+                else if ((status & (UInt32)BattleStatus.LowHP) != 0 && !_v.Target.IsUnderStatus(BattleStatus.Death))
                 {
                     _v.Context.Flags |= BattleCalcFlags.DirectHP;
                     _v.Target.CurrentHp = (UInt16)(1 + GameRandom.Next8() % 9);

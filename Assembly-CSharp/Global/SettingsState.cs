@@ -5,6 +5,7 @@ using FF9;
 using System;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -432,13 +433,13 @@ public class SettingsState : MonoBehaviour
             }
             if (player.info.serial_no == 9)
             {
-                foreach (PA_DATA paData in ff9abil._FF9Abil_PaData[player.info.menu_type])
+                foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.info.menu_type])
                 {
-                    if (paData.id != 0 && paData.id < 192)
+                    if (paData.Id != 0 && paData.Id < 192)
                     {
-                        Int32 index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, paData.id);
-                        player.pa[index2] = paData.max_ap;
-                        if (BattleAchievement.UpdateAbilitiesAchievement(paData.id, false))
+                        Int32 index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, paData.Id);
+                        player.pa[index2] = paData.Ap;
+                        if (BattleAchievement.UpdateAbilitiesAchievement(paData.Id, false))
                             flag = true;
                     }
                 }

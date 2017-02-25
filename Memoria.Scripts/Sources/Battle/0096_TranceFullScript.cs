@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Trance = Byte.MaxValue;
-            _v.Target.AlterStatus(BattleStatus.Trans);
+            _v.Target.AlterStatus(BattleStatus.Trance);
         }
     }
 }

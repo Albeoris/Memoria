@@ -1,7 +1,14 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using System;
+using System.IO;
+using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
+using Memoria.Prime.Collections;
+using Memoria.Prime.CSV;
 using UnityEngine;
+using Object = System.Object;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -42,7 +49,9 @@ public class ff9play
     public const Int32 FF9PLAY_NAME_MAX = 10;
     public const Int32 FF9PLAY_FLD_STATUS_MAX = 7;
     public const Int32 FF9PLAY_EQUIP_ID_NONE = 255;
+
     private static Boolean _FF9Play_Face;
+    private static EntryCollection<CharacterEquipment> DefaultEquipment;
 
     public ff9play()
     {
@@ -50,6 +59,8 @@ public class ff9play
 
     public static void FF9Play_Init()
     {
+        DefaultEquipment = LoadCharacterDefaultEquipment();
+
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         FF9Play_SetFaceDirty(false);
         for (Int32 slot_id = 0; slot_id < 9; ++slot_id)
@@ -70,12 +81,34 @@ public class ff9play
         ff9StateGlobal.party.summon_flag = 0;
     }
 
+    private static EntryCollection<CharacterEquipment> LoadCharacterDefaultEquipment()
+    {
+        try
+        {
+            String inputPath = DataResources.Characters.DefaultEquipmentsFile;
+            if (!File.Exists(inputPath))
+                throw new FileNotFoundException($"File with characters default equipments not found: [{inputPath}]");
+
+            CharacterEquipment[] equipment = CsvReader.Read<CharacterEquipment>(inputPath);
+            if (equipment.Length < 15)
+                throw new NotSupportedException($"You must set at least 15 different entries, but there {equipment.Length}.");
+
+            return EntryCollection.CreateWithDefaultElement(equipment, e => e.Id);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ff9play] Load characters default equipments failed.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
+    }
+
     public static void FF9Play_New(Int32 slot_id)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_id];
         PLAYER_INFO[] playerInfoArray =
         {
-            new PLAYER_INFO(0, 1, 1, 1, 0, 0),
+            new PLAYER_INFO(CharacterIndex.Zidane, 1, 1, 1, 0, 0),
             new PLAYER_INFO(1, 2, 0, 1, 0, 1),
             new PLAYER_INFO(2, 3, 0, 1, 0, 2),
             new PLAYER_INFO(3, 7, 1, 1, 0, 3),
@@ -89,10 +122,10 @@ public class ff9play
         play.status = 0;
         play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
         play.bonus = new FF9LEVEL_BONUS();
-        Int32 charId3 = FF9Play_GetCharID3(play);
+        CharacterId charId3 = FF9Play_GetCharID2(play.Index, play.IsSubCharacter);
         play.name = FF9TextTool.CharacterDefaultName(play.info.menu_type);
         FF9Play_SetDefEquips(play.equip, charId3);
-        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, play.IsSubCharacter, play.equip);
         FF9Play_Build(slot_id, 1, playerInfoArray[slot_id], false);
         play.cur.hp = play.max.hp;
         play.cur.mp = play.max.mp;
@@ -180,7 +213,7 @@ public class ff9play
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_id];
         if (!lvup && play.level != lv)
-            play.exp = (UInt32)ff9level._FF9Level_Exp[lv - 1];
+            play.exp = ff9level.CharacterLevelUps[lv - 1].ExperienceToLevel;
         play.level = (Byte)lv;
         Int64 num1 = play.max.capa - play.cur.capa;
         Int64 num2 = play.cur.hp;
@@ -232,8 +265,7 @@ public class ff9play
         info.cur_mp = (UInt16)play.cur.mp;
         for (Int32 index = 0; index < 1; ++index)
             info.sa[index] = play.sa[index];
-        for (Int32 index = 0; index < 5; ++index)
-            info.equip[index] = play.equip[index];
+        info.equip.Absorb(play.equip);
         FF9Play_GetSkill(ref info, ref skill);
         play.elem.dex = skill.Base[0];
         play.elem.str = skill.Base[1];
@@ -269,7 +301,7 @@ public class ff9play
         };
         Int32 index1;
         if ((index1 = info.equip[0]) != Byte.MaxValue)
-            skill.weapon[0] = ff9weap._FF9Weapon_Data[index1].Ref.power;
+            skill.weapon[0] = ff9weap._FF9Weapon_Data[index1].Ref.Power;
         for (Int32 index2 = 0; index2 < 4; ++index2)
         {
             Int32 num;
@@ -339,116 +371,49 @@ public class ff9play
         return skill;
     }
 
-    public static Int32 FF9Play_GetCharID(Int32 menu_type)
+    public static CharacterId FF9Play_GetCharID(CharacterPresetId presetId)
     {
-        switch (menu_type)
+        if (presetId >= 0 && presetId < 9)
         {
-            case 0:
-            case 16:
-                return 0;
-            case 1:
-                return 1;
-            case 2:
-                return 2;
-            case 3:
-                return 3;
-            case 4:
-                return 4;
-            case 5:
-                return 5;
-            case 6:
-                return 6;
-            case 7:
-                return 7;
-            case 8:
-            case 9:
-            case 17:
-                return 8;
-            case 10:
-            case 11:
-            case 18:
-                return 9;
-            case 12:
-            case 13:
-            case 19:
-                return 10;
-            case 14:
-            case 15:
-                return 11;
-            default:
-                return -1;
+            Int32 id = presetId;
+            return id;
         }
+
+        if (presetId == CharacterPresetId.Marcus1 || presetId == CharacterPresetId.Marcus2 || presetId == CharacterPresetId.StageMarcus)
+            return CharacterId.Marcus;
+        if (presetId == CharacterPresetId.Blank1 || presetId == CharacterPresetId.Blank2 || presetId == CharacterPresetId.StageBlank)
+            return CharacterId.Blank;
+        if (presetId == CharacterPresetId.Cinna1 || presetId == CharacterPresetId.Cinna2 || presetId == CharacterPresetId.StageCinna)
+            return CharacterId.Cinna;
+
+        if (presetId == CharacterPresetId.Beatrix1 || presetId == CharacterPresetId.Beatrix2)
+            return CharacterId.Beatrix;
+
+        if (presetId == CharacterPresetId.StageZidane || presetId == CharacterPresetId.Zidane)
+            return CharacterId.Zidane;
+
+        throw new NotSupportedException(presetId.ToString());
     }
 
-    public static Int32 FF9Play_GetCharID2(Int32 slot_id, Boolean sub_pc)
+    public static CharacterId FF9Play_GetCharID2(CharacterIndex characterIndex, Boolean isSubCharacter)
     {
-        Byte[][] numArray1 = new Byte[9][];
-        numArray1[0] = new Byte[2];
-        Int32 index1 = 1;
-        Byte[] numArray2 = { 1, 1 };
-        numArray1[index1] = numArray2;
-        Int32 index2 = 2;
-        Byte[] numArray3 = { 2, 2 };
-        numArray1[index2] = numArray3;
-        Int32 index3 = 3;
-        Byte[] numArray4 =
-        {
-            3, 3
-        };
-        numArray1[index3] = numArray4;
-        Int32 index4 = 4;
-        Byte[] numArray5 = { 4, 4 };
-        numArray1[index4] = numArray5;
-        Int32 index5 = 5;
-        Byte[] numArray6 = { 5, 8 };
-        numArray1[index5] = numArray6;
-        Int32 index6 = 6;
-        Byte[] numArray7 = { 6, 9 };
-        numArray1[index6] = numArray7;
-        Int32 index7 = 7;
-        Byte[] numArray8 = { 7, 10 };
-        numArray1[index7] = numArray8;
-        Int32 index8 = 8;
-        Byte[] numArray9 = { 11, 11 };
-        numArray1[index8] = numArray9;
-        return numArray1[slot_id][!sub_pc ? 0 : 1];
+        Int32 index = characterIndex;
+        if (index < CharacterIndex.Quina) // < 5
+            return index;
+
+        if (index == CharacterIndex.Beatrix) // == 8
+            return CharacterId.Beatrix;
+
+        if (index > CharacterIndex.Beatrix) // >> 8
+            throw new NotSupportedException(characterIndex.ToString());
+
+        // 5-7
+        return isSubCharacter
+            ? index + 3 // Sub characters
+            : index; // Main characters
     }
 
-    public static Int32 FF9Play_GetCharID3(PLAYER play)
-    {
-        Byte[][] numArray1 = new Byte[9][];
-        numArray1[0] = new Byte[2];
-        Int32 index1 = 1;
-        Byte[] numArray2 = { 1, 1 };
-        numArray1[index1] = numArray2;
-        Int32 index2 = 2;
-        Byte[] numArray3 = { 2, 2 };
-        numArray1[index2] = numArray3;
-        Int32 index3 = 3;
-        Byte[] numArray4 = { 3, 3 };
-        numArray1[index3] = numArray4;
-        Int32 index4 = 4;
-        Byte[] numArray5 = { 4, 4 };
-        numArray1[index4] = numArray5;
-        Int32 index5 = 5;
-        Byte[] numArray6 = { 5, 8 };
-        numArray1[index5] = numArray6;
-        Int32 index6 = 6;
-        Byte[] numArray7 = { 6, 9 };
-        numArray1[index6] = numArray7;
-        Int32 index7 = 7;
-        Byte[] numArray8 =
-        {
-            7, 10
-        };
-        numArray1[index7] = numArray8;
-        Int32 index8 = 8;
-        Byte[] numArray9 = { 11, 11 };
-        numArray1[index8] = numArray9;
-        return numArray1[play.info.slot_no][((Int32)play.category & 16) == 0 ? 0 : 1];
-    }
-
-    public static Int32 FF9Play_GetCategory(Int32 menu_type)
+    public static Int32 FF9Play_GetCategory(Byte menu_type)
     {
         return new Byte[] { 9, 5, 6, 5, 6, 5, 6, 5, 21, 21, 21, 22 }[FF9Play_GetCharID(menu_type)];
     }
@@ -463,32 +428,13 @@ public class ff9play
         return _FF9Play_Face;
     }
 
-    public static void FF9Play_SetDefEquips(Byte[] equip, Int32 eqp_id)
+    public static void FF9Play_SetDefEquips(CharacterEquipment target, CharacterId setId)
     {
-        Byte[][] numArray =
-        {
-            new Byte[] {1, 112, 88, 149, Byte.MaxValue},
-            new Byte[] {70, 112, Byte.MaxValue, 149, Byte.MaxValue},
-            new Byte[] {57, Byte.MaxValue, Byte.MaxValue, 150, Byte.MaxValue},
-            new Byte[] {16, 137, Byte.MaxValue, 177, Byte.MaxValue},
-            new Byte[] {31, 136, 102, 178, Byte.MaxValue},
-            new Byte[] {79, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue},
-            new Byte[] {64, 114, 90, 150, 232},
-            new Byte[] {41, Byte.MaxValue, 89, 155, 194},
-            new Byte[] {0, 112, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue},
-            new Byte[] {16, 112, 88, 149, Byte.MaxValue},
-            new Byte[] {16, Byte.MaxValue, Byte.MaxValue, 150, Byte.MaxValue},
-            new Byte[] {26, 138, 104, 179, 192},
-            new Byte[] {17, 114, 88, 151, Byte.MaxValue},
-            new Byte[] {26, 142, 105, 181, 212},
-            new Byte[] {17, 112, Byte.MaxValue, 150, Byte.MaxValue},
-            new[] {Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue}
-        };
-        for (Int32 index = 0; index < 5; ++index)
-            equip[index] = numArray[eqp_id][index];
+        CharacterEquipment newSet = DefaultEquipment[setId];
+        target.Absorb(newSet);
     }
 
-    public static Int32 FF9Play_GetSerialID(Int32 slot_id, Boolean sub_pc, Byte[] equip)
+    public static Int32 FF9Play_GetSerialID(Byte slot_id, Boolean sub_pc, CharacterEquipment equip)
     {
         Int32 charId2 = FF9Play_GetCharID2(slot_id, sub_pc);
         Int32 num = ff9item._FF9Item_Data[equip[0]].shape;
@@ -555,8 +501,8 @@ public class ff9play
         {
             if (ff9abil.FF9Abil_GetEnableSA(slot_id, 192 + index))
             {
-                if (play.cur.capa >= ff9abil._FF9Abil_SaData[index].capa_val)
-                    play.cur.capa -= ff9abil._FF9Abil_SaData[index].capa_val;
+                if (play.cur.capa >= ff9abil._FF9Abil_SaData[index].GemsCount)
+                    play.cur.capa -= ff9abil._FF9Abil_SaData[index].GemsCount;
                 else
                     ff9abil.FF9Abil_SetEnableSA(slot_id, 192 + index, false);
             }
@@ -568,7 +514,7 @@ public class ff9play
         PLAYER play = FF9StateSystem.Common.FF9.player[slot_no];
         if (eqp_id != Byte.MaxValue)
             FF9Play_SetDefEquips(play.equip, eqp_id);
-        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, play.IsSubCharacter, play.equip);
         if (!update_lv && eqp_id == Byte.MaxValue)
             return;
         if (update_lv)
@@ -579,32 +525,6 @@ public class ff9play
         }
         else
             FF9Play_Update(play);
-    }
-
-    private static void FF9Play_DebugEquip(Int32 slot_no)
-    {
-        PLAYER play = FF9StateSystem.Common.FF9.player[slot_no];
-        Byte[][] numArray =
-        {
-            new Byte[] {15, 135, 101, 167, 192},
-            new Byte[] {78, 135, 101, 175, 192},
-            new Byte[] {63, 135, 101, 175, 192},
-            new Byte[] {30, 147, 111, 191, 192},
-            new Byte[] {40, 147, 111, 191, 192},
-            new Byte[] {84, 135, 101, 175, 192},
-            new Byte[] {69, 135, 101, 175, 232},
-            new Byte[] {50, 135, 101, 167, 194},
-            new Byte[] {0, 135, 101, 167, 192},
-            new Byte[] {25, 135, 101, 167, 192},
-            new Byte[] {25, 135, 101, 167, 192},
-            new Byte[] {26, 147, 111, 191, 192}
-        };
-        Int32 charId3 = FF9Play_GetCharID3(play);
-        for (Int32 index = 0; index < 5; ++index)
-            play.equip[index] = numArray[charId3][index];
-        play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
-        FF9Play_Update(play);
-        FF9Play_UpdateSA(play);
     }
 
     public static void FF9Dbg_SetCharacter(Int32 player, Int32 slot)
@@ -639,8 +559,8 @@ public class ff9play
                     play.info.menu_type = (Byte)ff9DbgChar.menu_type;
                 play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
                 if (!FF9Dbg_CheckEquip(play))
-                    FF9Play_SetDefEquips(play.equip, FF9Play_GetCharID3(play));
-                play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, (play.category & 16) != 0, play.equip);
+                    FF9Play_SetDefEquips(play.equip, (CharacterId)FF9Play_GetCharID2(play.Index, play.IsSubCharacter));
+                play.info.serial_no = (Byte)FF9Play_GetSerialID(play.info.slot_no, play.IsSubCharacter, play.equip);
             }
             play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
         }
@@ -648,7 +568,7 @@ public class ff9play
 
     private static Boolean FF9Dbg_CheckEquip(PLAYER play)
     {
-        UInt16 num = (UInt16)(1 << (11 - FF9Play_GetCharID3(play)));
+        UInt16 num = (UInt16)(1 << (11 - (CharacterId)FF9Play_GetCharID2(play.Index, play.IsSubCharacter)));
         for (Int32 index1 = 0; index1 < 5; ++index1)
         {
             Int32 index2;

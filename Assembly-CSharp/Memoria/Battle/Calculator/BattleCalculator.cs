@@ -214,7 +214,7 @@ namespace Memoria
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
                 BattleUnit unit = new BattleUnit(next);
-                const BattleStatus status = BattleStatus.Stone | BattleStatus.Poison | BattleStatus.Zombie | BattleStatus.Disable | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
+                const BattleStatus status = BattleStatus.Petrify | BattleStatus.Poison | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
                 if (next.bi.player != 0 && !unit.IsUnderStatus(status))
                     return true;
             }

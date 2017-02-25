@@ -352,7 +352,7 @@ public class btl_scrp
 		case 38:
 			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null && ff9Battle.cur_cmd.regist.weapon != null)
 			{
-				result = (UInt32)ff9Battle.cur_cmd.regist.weapon.Ref.attr;
+				result = (UInt32)ff9Battle.cur_cmd.regist.weapon.Ref.Elements;
 			}
 			break;
 		case 39:
@@ -364,7 +364,7 @@ public class btl_scrp
 				}
 				else
 				{
-					result = (UInt32)ff9Battle.cur_cmd.aa.Ref.attr;
+					result = (UInt32)ff9Battle.cur_cmd.aa.Ref.Elements;
 				}
 			}
 			break;

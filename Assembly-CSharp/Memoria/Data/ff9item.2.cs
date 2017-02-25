@@ -62,7 +62,7 @@ public class ff9item
     {
         try
         {
-            String inputPath = DataResources.ItemsDirectory + "Items.csv";
+            String inputPath = DataResources.Items.ItemsFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"[ff9item] Cannot load items because a file does not exist: [{inputPath}].", inputPath);
 
@@ -78,7 +78,7 @@ public class ff9item
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[ff9abil] Load character commands failed.");
+            Log.Error(ex, "[ff9item] Load items failed.");
             UIManager.Input.ConfirmQuit();
             return null;
         }
@@ -88,7 +88,7 @@ public class ff9item
     {
         try
         {
-            String inputPath = DataResources.ItemsDirectory + "ItemEffects.csv";
+            String inputPath = DataResources.Items.ItemEffectsFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"[ff9item] Cannot load item actions because a file does not exist: [{inputPath}].", inputPath);
 
@@ -104,7 +104,7 @@ public class ff9item
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[ff9item] Load character commands failed.");
+            Log.Error(ex, "[ff9item] Load item effects failed.");
             UIManager.Input.ConfirmQuit();
             return null;
         }

@@ -29,6 +29,16 @@ namespace Memoria.Prime.CSV
                     try
                     {
                         String[] raw = line.Split(';');
+                        for (Int32 i = 0; i < raw.Length; i++)
+                        {
+                            String col = raw[i];
+                            if (col.Length > 0 && col[0] == '#')
+                            {
+                                Array.Resize(ref raw, i);
+                                break;
+                            }
+                        }
+
                         T entry = new T();
                         entry.ParseEntry(raw);
                         entries.AddLast(entry);

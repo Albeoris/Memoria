@@ -35,7 +35,7 @@ namespace Memoria
             {
                 _context.Attack = 1;
             }
-            else if (IsUnderStatus(BattleStatus.Berserk | BattleStatus.Trans))
+            else if (IsUnderStatus(BattleStatus.Berserk | BattleStatus.Trance))
             {
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
             }
@@ -49,7 +49,7 @@ namespace Memoria
 
         public void PenaltyPhysicalHitRate()
         {
-            if (IsUnderStatus(BattleStatus.Dark | BattleStatus.Confu))
+            if (IsUnderStatus(BattleStatus.Blind | BattleStatus.Confuse))
                 _context.HitRate /= 2;
         }
 
@@ -61,7 +61,7 @@ namespace Memoria
 
         public void BonusPhysicalEvade()
         {
-            if (IsUnderStatus(BattleStatus.Trans | BattleStatus.Banish))
+            if (IsUnderStatus(BattleStatus.Trance | BattleStatus.Vanish))
                 _context.Evade = 0;
         }
 

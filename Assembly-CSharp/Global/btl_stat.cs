@@ -436,13 +436,13 @@ public class btl_stat
         SetStatusVfx(btl);
 
         BattleUnit unit = new BattleUnit(btl);
-        if (unit.IsUnderStatus(BattleStatus.Disable))
+        if (unit.IsUnderStatus(BattleStatus.Death))
         {
             btl_mot.DieSequence(btl);
             return;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Stone))
+        if (unit.IsUnderStatus(BattleStatus.Petrify))
             return;
 
         if (!unit.IsUnderStatus(BattleStatus.Stop | BattleStatus.Jump))
@@ -464,7 +464,7 @@ public class btl_stat
             return;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Poison2))
+        if (unit.IsUnderStatus(BattleStatus.Venom))
         {
             if (stat.cnt.opr[0] <= 0)
             {
@@ -501,7 +501,7 @@ public class btl_stat
                 stat.cnt.opr[2] -= btl.cur.at_coef;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Trans) && btl.bi.slot_no == 2 && ((ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0))
+        if (unit.IsUnderStatus(BattleStatus.Trance) && btl.bi.slot_no == 2 && ((ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0))
         {
             if (ff9Battle.phantom_cnt <= 0)
             {

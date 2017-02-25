@@ -1,5 +1,7 @@
 ﻿using System;
 using FF9;
+using Memoria.Data;
+using Memoria.Prime.Collections;
 using UnityEngine;
 
 public class FF9StateBattleSystem
@@ -43,12 +45,8 @@ public class FF9StateBattleSystem
 		this.btl_scene = new BTL_SCENE();
 		this.btl2d_work_set = new BTL2D_WORK();
 		this.status_data = new STAT_DATA[32];
-		this.aa_data = new AA_DATA[192];
-		for (Int32 m = 0; m < (Int32)this.aa_data.Length; m++)
-		{
-			this.aa_data[m] = new AA_DATA();
-		}
-		this.add_status = new UInt32[64];
+	    this.aa_data = EntryCollection.CreateWithDefaultElement<AA_DATA>(192);
+	    this.add_status = EntryCollection.CreateWithDefaultElement<BattleStatusEntry>(64);
 		this.map = new FF9StateBattleMap();
 	}
 
@@ -118,7 +116,7 @@ public class FF9StateBattleSystem
 
 	public STAT_DATA[] status_data;
 
-	public AA_DATA[] aa_data;
+	public EntryCollection<AA_DATA> aa_data;
 
-	public UInt32[] add_status;
+	public EntryCollection<BattleStatusEntry> add_status;
 }

@@ -317,15 +317,15 @@ namespace Memoria.Assets
 
                 writer.BeginObject();
                 writer.WriteString("name", names["US"]);
-                writer.WriteEnum("targets", (TargetType)action.Info.cursor);
-                writer.WriteBoolean("defaultAlly", action.Info.def_cur == 1);
-                writer.WriteBoolean("defaultCamera", action.Info.def_cam != 0);
-                writer.WriteInt16("animationId1", action.Info.vfx_no);
+                writer.WriteEnum("targets", (TargetType)action.Info.Target);
+                writer.WriteBoolean("defaultAlly", action.Info.DefaultAlly);
+                writer.WriteBoolean("defaultCamera", action.Info.DefaultCamera);
+                writer.WriteInt16("animationId1", action.Info.VfxIndex);
                 writer.WriteUInt16("animationId2", action.Vfx2);
-                writer.WriteByte("scriptId", action.Ref.prog_no);
-                writer.WriteByte("power", action.Ref.power);
-                writer.WriteFlags("elements", (EffectElement)action.Ref.attr);
-                writer.WriteByte("rate", action.Ref.rate);
+                writer.WriteByte("scriptId", action.Ref.ScriptId);
+                writer.WriteByte("power", action.Ref.Power);
+                writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
+                writer.WriteByte("rate", action.Ref.Rate);
                 writer.WriteByte("category", action.Category);
                 writer.WriteByte("addNo", action.AddNo);
                 writer.WriteByte("mp", action.MP);
@@ -656,16 +656,16 @@ namespace Memoria.Assets
                 foreach (KeyValuePair<Dictionary<String, String>, AA_DATA> key in Actions.Where(a => a.Value.Locations.Count < 2).Select(a => a.Key).ToArray())
                     Actions.Remove(key);
 
-                foreach (var group in Actions.Keys.OrderByDescending(v => v.Value.Ref.attr)
-                    .ThenBy(v => v.Value.Ref.prog_no == 64)
-                    .ThenBy(v => v.Value.Ref.prog_no < 9)
+                foreach (var group in Actions.Keys.OrderByDescending(v => v.Value.Ref.Elements)
+                    .ThenBy(v => v.Value.Ref.ScriptId == 64)
+                    .ThenBy(v => v.Value.Ref.ScriptId < 9)
                     .ThenByDescending(v => v.Value.MP > 0)
                     .ThenBy(v => v.Value.Type)
                     .ThenBy(v => v.Value.AddNo)
-                    .ThenByDescending(v => v.Value.Ref.prog_no)
-                    .ThenBy(v => v.Value.Ref.power)
-                    .ThenBy(v => v.Value.Info.cursor)
-                    .ThenBy(v => v.Value.Info.def_cur)
+                    .ThenByDescending(v => v.Value.Ref.ScriptId)
+                    .ThenBy(v => v.Value.Ref.Power)
+                    .ThenBy(v => v.Value.Info.Target)
+                    .ThenBy(v => v.Value.Info.DefaultAlly)
                     .ThenBy(v => v.Value.Category)
                     .ThenBy(v => v.Key["US"])
                     .ThenBy(v => v.Value.MP)
@@ -690,23 +690,23 @@ namespace Memoria.Assets
                             writer.BeginObject();
                             writer.WriteUInt16("id", id);
                             writer.WriteString("name", RemovePrefix(names["US"]));
-                            if (baseItem.Value.Info.cursor != action.Info.cursor)
-                                writer.WriteEnum("targets", (TargetType)action.Info.cursor);
-                            if (baseItem.Value.Info.def_cur != action.Info.def_cur)
-                                writer.WriteBoolean("defaultAlly", action.Info.def_cur == 1);
-                            if (baseItem.Value.Info.vfx_no != action.Info.vfx_no)
-                                writer.WriteInt16("animationId1", action.Info.vfx_no);
+                            if (baseItem.Value.Info.Target != action.Info.Target)
+                                writer.WriteEnum("targets", (TargetType)action.Info.Target);
+                            if (baseItem.Value.Info.DefaultAlly != action.Info.DefaultAlly)
+                                writer.WriteBoolean("defaultAlly", action.Info.DefaultAlly);
+                            if (baseItem.Value.Info.VfxIndex != action.Info.VfxIndex)
+                                writer.WriteInt16("animationId1", action.Info.VfxIndex);
                             if (baseItem.Value.Vfx2 != action.Vfx2)
                                 writer.WriteUInt16("animationId2", action.Vfx2);
 
-                            if (baseItem.Value.Ref.prog_no != action.Ref.prog_no)
-                                writer.WriteByte("scriptId", action.Ref.prog_no);
-                            if (baseItem.Value.Ref.power != action.Ref.power)
-                                writer.WriteByte("power", action.Ref.power);
-                            if (baseItem.Value.Ref.attr != action.Ref.attr)
-                                writer.WriteFlags("elements", (EffectElement)action.Ref.attr);
-                            if (baseItem.Value.Ref.rate != action.Ref.rate)
-                                writer.WriteByte("rate", action.Ref.rate);
+                            if (baseItem.Value.Ref.ScriptId != action.Ref.ScriptId)
+                                writer.WriteByte("scriptId", action.Ref.ScriptId);
+                            if (baseItem.Value.Ref.Power != action.Ref.Power)
+                                writer.WriteByte("power", action.Ref.Power);
+                            if (baseItem.Value.Ref.Elements != action.Ref.Elements)
+                                writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
+                            if (baseItem.Value.Ref.Rate != action.Ref.Rate)
+                                writer.WriteByte("rate", action.Ref.Rate);
 
                             if (baseItem.Value.Category != action.Category)
                                 writer.WriteByte("category", action.Category);
@@ -770,15 +770,15 @@ namespace Memoria.Assets
                 sw.UInt16(_index);
                 var cmdInfo = _aaData.Info;
                 var btlRef = _aaData.Ref;
-                sw.Byte(cmdInfo.cursor);
-                sw.Byte(cmdInfo.def_cur);
-                sw.Byte(cmdInfo.def_cam);
-                sw.Int16(cmdInfo.vfx_no);
+                sw.EnumValue(cmdInfo.Target);
+                sw.Boolean(cmdInfo.DefaultAlly);
+                sw.Boolean(cmdInfo.DefaultCamera);
+                sw.Int16(cmdInfo.VfxIndex);
                 sw.UInt16(_aaData.Vfx2);
-                sw.Byte(btlRef.prog_no);
-                sw.Byte(btlRef.power);
-                sw.Byte(btlRef.attr);
-                sw.Byte(btlRef.rate);
+                sw.Byte(btlRef.ScriptId);
+                sw.Byte(btlRef.Power);
+                sw.Byte(btlRef.Elements);
+                sw.Byte(btlRef.Rate);
                 sw.Byte(_aaData.Category);
                 sw.Byte(_aaData.AddNo);
                 sw.Byte(_aaData.MP);

@@ -4,6 +4,7 @@ using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -108,7 +109,7 @@ public class EquipUI : UIScene
 									ff9item.DecreaseMoonStoneCount();
 								}
 								ff9item.FF9Item_Add(num, 1);
-								player.equip[this.currentEquipPart] = Byte.MaxValue;
+							    player.equip[this.currentEquipPart] = CharacterEquipment.EmptyItemId;
 								this.UpdateCharacterData(player);
 								flag = true;
 							}
@@ -365,10 +366,10 @@ public class EquipUI : UIScene
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
 		Int32 num = 0;
-		Byte[] equip = player.equip;
-		for (Int32 i = 0; i < (Int32)equip.Length; i++)
+        CharacterEquipment equip = player.equip;
+		for (Int32 i = 0; i < CharacterEquipment.Length; i++)
 		{
-			Byte b = equip[i];
+			Byte itemId = equip[i];
 			ButtonGroupState buttonGroupState = (ButtonGroupState)null;
 			switch (num)
 			{
@@ -388,10 +389,10 @@ public class EquipUI : UIScene
 				buttonGroupState = this.equipmentHud.Accessory.Button;
 				break;
 			}
-			if (b != 255)
+			if (itemId != 255)
 			{
 				buttonGroupState.Help.TextKey = String.Empty;
-				buttonGroupState.Help.Text = FF9TextTool.ItemHelpDescription((Int32)b);
+				buttonGroupState.Help.Text = FF9TextTool.ItemHelpDescription(itemId);
 			}
 			else
 			{
@@ -466,7 +467,7 @@ public class EquipUI : UIScene
 		this.parameterHud.ParameterLabel[1].text = player.elem.str.ToString();
 		this.parameterHud.ParameterLabel[2].text = player.elem.mgc.ToString();
 		this.parameterHud.ParameterLabel[3].text = player.elem.wpr.ToString();
-		this.parameterHud.ParameterLabel[4].text = ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.power.ToString();
+		this.parameterHud.ParameterLabel[4].text = ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.Power.ToString();
 		this.parameterHud.ParameterLabel[5].text = player.defence.p_def.ToString();
 		this.parameterHud.ParameterLabel[6].text = player.defence.p_ev.ToString();
 		this.parameterHud.ParameterLabel[7].text = player.defence.m_def.ToString();
@@ -502,7 +503,7 @@ public class EquipUI : UIScene
 			ff9PLAY_SKILL.Base[1] = player.elem.str;
 			ff9PLAY_SKILL.Base[2] = player.elem.mgc;
 			ff9PLAY_SKILL.Base[3] = player.elem.wpr;
-			ff9PLAY_SKILL.weapon[0] = (UInt16)ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.power;
+			ff9PLAY_SKILL.weapon[0] = (UInt16)ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.Power;
 			ff9PLAY_SKILL.weapon[1] = (UInt16)player.defence.p_def;
 			ff9PLAY_SKILL.weapon[2] = (UInt16)player.defence.p_ev;
 			ff9PLAY_SKILL.weapon[3] = (UInt16)player.defence.m_def;
@@ -733,7 +734,7 @@ public class EquipUI : UIScene
 	private void DisplayInventory()
 	{
 		PLAYER play = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-		Int32 num = (Int32)this.charMask[ff9play.FF9Play_GetCharID3(play)];
+		Int32 num = (Int32)this.charMask[(CharacterId)ff9play.FF9Play_GetCharID2(play.Index, play.IsSubCharacter)];
 		Int32 num2 = (Int32)this.partMask[this.currentEquipPart];
 		Int32 num3 = 0;
 		switch (this.currentEquipPart)
@@ -882,7 +883,7 @@ public class EquipUI : UIScene
 	{
 		this.UpdateCharacterSA(player);
 		ff9play.FF9Play_Update(player);
-		player.info.serial_no = (Byte)ff9play.FF9Play_GetSerialID((Int32)player.info.slot_no, (player.category & 16) != 0, player.equip);
+		player.info.serial_no = (Byte)ff9play.FF9Play_GetSerialID(player.info.slot_no, (player.category & 16) != 0, player.equip);
 	}
 
 	private void UpdateCharacterSA(PLAYER player)
@@ -907,13 +908,13 @@ public class EquipUI : UIScene
 				}
 			}
 		}
-		PA_DATA[] array = ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type];
+		CharacterAbility[] array = ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type];
 		for (Int32 k = 0; k < 48; k++)
 		{
-			if (192 <= array[k].id && ff9abil.FF9Abil_GetEnableSA((Int32)player.info.slot_no, (Int32)array[k].id) && !list.Contains((Int32)(array[k].id - 192)) && player.pa[k] < array[k].max_ap)
+			if (192 <= array[k].Id && ff9abil.FF9Abil_GetEnableSA((Int32)player.info.slot_no, (Int32)array[k].Id) && !list.Contains((Int32)(array[k].Id - 192)) && player.pa[k] < array[k].Ap)
 			{
-				ff9abil.FF9Abil_SetEnableSA((Int32)player.info.slot_no, (Int32)array[k].id, false);
-				Byte capa_val = ff9abil._FF9Abil_SaData[(Int32)(array[k].id - 192)].capa_val;
+				ff9abil.FF9Abil_SetEnableSA((Int32)player.info.slot_no, (Int32)array[k].Id, false);
+				Byte capa_val = ff9abil._FF9Abil_SaData[(Int32)(array[k].Id - 192)].GemsCount;
 				if (player.max.capa - player.cur.capa >= capa_val)
 				{
 					POINTS cur = player.cur;
@@ -930,8 +931,8 @@ public class EquipUI : UIScene
 	private void EquipStrongest()
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-		Int32 num = 0;
-		Int32 num2 = ff9play.FF9Play_GetCharID3(player);
+		Int32 itemId = 0;
+		Int32 num2 = (CharacterId)ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter);
 		for (Int32 i = 0; i < 5; i++)
 		{
 			Int32 num3 = (Int32)((player.equip[i] == Byte.MaxValue) ? -1 : ((Int32)ff9item._FF9Item_Data[(Int32)player.equip[i]].eq_lv));
@@ -945,7 +946,7 @@ public class EquipUI : UIScene
 					if ((ff9ITEM_DATA.type & this.partMask[i]) != 0 && (ff9ITEM_DATA.equip & this.charMask[num2]) != 0 && (Int32)ff9ITEM_DATA.eq_lv > num4)
 					{
 						num4 = (Int32)ff9ITEM_DATA.eq_lv;
-						num = (Int32)ff9ITEM.id;
+						itemId = (Int32)ff9ITEM.id;
 					}
 				}
 				ff9ITEM = FF9StateSystem.Common.FF9.item[j];
@@ -960,9 +961,9 @@ public class EquipUI : UIScene
 					}
 					ff9item.FF9Item_Add((Int32)player.equip[i], 1);
 				}
-				if (ff9item.FF9Item_Remove(num, 1) != 0)
+				if (ff9item.FF9Item_Remove(itemId, 1) != 0)
 				{
-					player.equip[i] = (Byte)num;
+					player.equip[i] = (Byte)itemId;
 				}
 			}
 		}
@@ -975,34 +976,31 @@ public class EquipUI : UIScene
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
 		FF9PLAY_INFO ff9PLAY_INFO = new FF9PLAY_INFO();
 		FF9PLAY_SKILL result = new FF9PLAY_SKILL();
-		Byte b;
+		Byte itemId;
 		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
 		{
-			b = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
+			itemId = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
 		}
 		else
 		{
-			b = player.equip[this.currentEquipPart];
+			itemId = player.equip[this.currentEquipPart];
 		}
 		ff9PLAY_INFO.Base = player.basis;
 		ff9PLAY_INFO.cur_hp = player.cur.hp;
 		ff9PLAY_INFO.cur_mp = (UInt16)player.cur.mp;
-		for (Int32 i = 0; i < (Int32)player.equip.Length; i++)
-		{
-			ff9PLAY_INFO.equip[i] = player.equip[i];
-		}
-		for (Int32 j = 0; j < (Int32)player.sa.Length; j++)
+        ff9PLAY_INFO.equip.Absorb(player.equip);
+        for (Int32 j = 0; j < (Int32)player.sa.Length; j++)
 		{
 			ff9PLAY_INFO.sa[j] = player.sa[j];
 		}
 		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
 		{
-			ff9PLAY_INFO.equip[this.currentEquipPart] = b;
+			ff9PLAY_INFO.equip[this.currentEquipPart] = itemId;
 			ff9play.FF9Play_GetSkill(ref ff9PLAY_INFO, ref result);
 		}
 		else if (this.currentMenu == EquipUI.SubMenu.Off && ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentEquipPart != 0)
 		{
-			ff9PLAY_INFO.equip[this.currentEquipPart] = Byte.MaxValue;
+		    ff9PLAY_INFO.equip[this.currentEquipPart] = CharacterEquipment.EmptyItemId;
 			ff9play.FF9Play_GetSkill(ref ff9PLAY_INFO, ref result);
 		}
 		return result;

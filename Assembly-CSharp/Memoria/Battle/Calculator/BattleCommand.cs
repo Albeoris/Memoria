@@ -18,9 +18,9 @@ namespace Memoria
             return new BattleItem(ff9item._FF9Item_Info[btl_util.btlItemNum(itemId)]);
         }
 
-        public Byte ScriptId => _data.Ref.prog_no;
-        public Byte HitRate => _data.Ref.rate;
-        public Byte Power => _data.Ref.power;
+        public Byte ScriptId => _data.Ref.ScriptId;
+        public Byte HitRate => _data.Ref.Rate;
+        public Byte Power => _data.Ref.Power;
         public BattleStatus Status => (BattleStatus)_data.status;
 
         public static void AddToInventory(Int32 itemId)
@@ -81,19 +81,19 @@ namespace Memoria
 
         public BattleCommandId Id => (BattleCommandId)Data.cmd_no;
         public BattleAbilityId AbilityId => (BattleAbilityId)Data.sub_no;
-        public Byte ScriptId => Data.aa.Ref.prog_no;
-        public Byte HitRate => Data.aa.Ref.rate;
-        public Byte Power => Data.aa.Ref.power;
+        public Byte ScriptId => Data.aa.Ref.ScriptId;
+        public Byte HitRate => Data.aa.Ref.Rate;
+        public Byte Power => Data.aa.Ref.Power;
         public Boolean IsManyTarget => Data.info.cursor == 1;
-        public TargetType TargetType => (TargetType)Data.aa.Info.cursor;
-        public BattleStatusId AbilityStatusId => (BattleStatusId)Data.aa.AddNo;
-        public EffectElement Element => (EffectElement)Data.aa.Ref.attr;
-        public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.vfx_no;
+        public TargetType TargetType => (TargetType)Data.aa.Info.Target;
+        public BattleStatusIndex AbilityStatusIndex => (BattleStatusIndex)Data.aa.AddNo;
+        public EffectElement Element => (EffectElement)Data.aa.Ref.Elements;
+        public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
         public Boolean IsShortSummon => Data.info.short_summon != 0;
 
-        public BattleStatus AbilityStatus => (BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[Data.aa.AddNo];
-        public Boolean IsDevided => IsManyTarget && Data.aa.Info.cursor > 2 && Data.aa.Info.cursor < 6;
+        public BattleStatus AbilityStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.aa.AddNo].Value;
+        public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;
 
         public BattleItem Item => BattleItem.Find((Byte)AbilityId);
         public BattleStatus ItemStatus => Item.Status;

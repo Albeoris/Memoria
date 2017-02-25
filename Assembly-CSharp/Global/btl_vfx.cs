@@ -229,24 +229,24 @@ public class btl_vfx
 						ff9Battle.phantom_no = 160;
 						break;
 					}
-					if ((cmd.aa.Info.cursor == 3 && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == 32 || cmd.cmd_no == 33)
+					if ((cmd.aa.Info.Target ==  Memoria.Data.TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == 32 || cmd.cmd_no == 33)
 					{
 						btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Vfx2, null);
 					}
 					else
 					{
-						btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.vfx_no, null);
+						btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
 					}
 					return;
 				}
 				}
-				if ((cmd.aa.Info.cursor == 3 && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == 32 || cmd.cmd_no == 33)
+				if ((cmd.aa.Info.Target == Memoria.Data.TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == 32 || cmd.cmd_no == 33)
 				{
 					btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Vfx2, null);
 				}
 				else
 				{
-					btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.vfx_no, null);
+					btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
 				}
 				return;
 			case 4:
@@ -282,7 +282,7 @@ public class btl_vfx
 		btl_vfx.SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
 		return;
 		IL_168:
-		btl_vfx.SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum((Int32)cmd.sub_no)].info.vfx_no, null);
+		btl_vfx.SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum((Int32)cmd.sub_no)].info.VfxIndex, null);
 	}
 
 	public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)

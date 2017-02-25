@@ -571,12 +571,14 @@ public class FieldMap : HonoBehavior
 		FieldMapActor fieldMapActor = FieldMapActor.CreateFieldMapActor(playerGO, actorOfObj);
 		FieldMapActorController fieldMapActorController = playerGO.AddComponent<FieldMapActorController>();
 		actorOfObj.fieldMapActorController = fieldMapActorController;
-		Int32[] array = FF9BattleDB.HeightRadiusData.FirstOrDefault((Int32[] x) => x[0] == (Int32)actorOfObj.model);
-		actorOfObj.neckBoneIndex = array[3];
+
+        FF9BattleDBHeightAndRadius.TryFindNeckBoneIndex(actorOfObj.model, ref actorOfObj.neckBoneIndex);
+
 		if (needRestore)
 		{
 			this.RestoreModels(playerGO, actorOfObj);
 		}
+
 		fieldMapActorController.fieldMap = this;
 		fieldMapActorController.walkMesh = this.walkMesh;
 		fieldMapActorController.actor = fieldMapActor;

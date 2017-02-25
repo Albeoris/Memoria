@@ -1478,9 +1478,7 @@ public class JsonParser : ISharedDataParser
 					for (Int32 j = 0; j < asObject["equip"].Count; j++)
 					{
 						if (asObject["equip"][j] != null)
-						{
 							player.equip[j] = (Byte)asObject["equip"][j].AsInt;
-						}
 					}
 				}
 				JSONClass asObject8 = asObject["bonus"].AsObject;

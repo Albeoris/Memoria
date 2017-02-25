@@ -372,15 +372,15 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             {
                 case 0:
                     cmd_no = 1U;
-                    sub_no = BattleCommands.Commands[cmd_no].Ability;
+                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
                     break;
                 case 1:
-                    cmd_no = (UInt32)BattleCommands.CommandSets[presetId].Get(isTrance, 0);
-                    sub_no = BattleCommands.Commands[cmd_no].Ability;
+                    cmd_no = (UInt32)CharacterCommands.CommandSets[presetId].Get(isTrance, 0);
+                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
                     break;
                 case 2:
-                    cmd_no = (UInt32)BattleCommands.CommandSets[presetId].Get(isTrance, 1);
-                    sub_no = BattleCommands.Commands[cmd_no].Ability;
+                    cmd_no = (UInt32)CharacterCommands.CommandSets[presetId].Get(isTrance, 1);
+                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
                     break;
                 case 3:
                     cmd_no = 14U;
@@ -391,11 +391,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     break;
                 case 5:
                     cmd_no = 7U;
-                    sub_no = BattleCommands.Commands[cmd_no].Ability;
+                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
                     break;
             }
 
-            if (BattleCommands.Commands[cmd_no].Type == CharacterCommandType.Throw)
+            if (CharacterCommands.Commands[cmd_no].Type == CharacterCommandType.Throw)
                 sub_no = 1U;
 
             if ((Int32)cmd_no == 0)

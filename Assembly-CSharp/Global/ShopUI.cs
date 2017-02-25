@@ -6,6 +6,7 @@ using Assets.SiliconSocial;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Assets;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -114,29 +115,22 @@ public class ShopUI : UIScene
 		this.mixItemList.Clear();
 		this.type = (ShopUI.ShopType)ff9shop.FF9Shop_GetType(this.id);
 		this.isGrocery = false;
-		if (this.type == ShopUI.ShopType.Item)
-		{
-			for (Int32 i = 0; i < 32; i++)
-			{
-				try
-				{
-					if (ff9buy._FF9Buy_Data[this.id][i] != 255)
-					{
-						Byte b = ff9item._FF9Item_Data[(Int32)ff9buy._FF9Buy_Data[this.id][i]].type;
-						if ((b & 240) > 0)
-						{
-							this.isGrocery = true;
-							this.type = ShopUI.ShopType.Weapon;
-							break;
-						}
-					}
-				}
-				catch
-				{
-				}
-			}
-		}
-		if (this.type == ShopUI.ShopType.Synthesis)
+	    if (this.type == ShopUI.ShopType.Item)
+	    {
+	        ShopItems assortiment = ff9buy.ShopItems[this.id];
+	        for (Int32 i = 0; i < assortiment.Length; i++)
+	        {
+	            Byte itemId = assortiment[i];
+	            Byte itemType = ff9item._FF9Item_Data[itemId].type;
+	            if ((itemType & ff9buy.FF9BUY_TYPE_WEAPON) != 0)
+	            {
+	                this.isGrocery = true;
+	                this.type = ShopUI.ShopType.Weapon;
+	                break;
+	            }
+	        }
+	    }
+	    if (this.type == ShopUI.ShopType.Synthesis)
 		{
 			this.AnalyzeArgument();
 			this.UpdatePartyInfo();
@@ -655,20 +649,18 @@ public class ShopUI : UIScene
 		this.itemIdList.Clear();
 		this.isItemEnableList.Clear();
 		List<ListDataTypeBase> list = new List<ListDataTypeBase>();
-		for (Int32 i = 0; i < (Int32)ff9buy._FF9Buy_Data[this.id].Length; i++)
+	    ShopItems assortiment = ff9buy.ShopItems[this.id];
+
+        for (Int32 i = 0; i < assortiment.Length; i++)
 		{
-			Int32 num = (Int32)ff9buy._FF9Buy_Data[this.id][i];
-			if (num == 255)
-			{
-				break;
-			}
-			FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[num];
-			Boolean flag = ff9item.FF9Item_GetCount(num) < 99 && FF9StateSystem.Common.FF9.party.gil >= (UInt32)ff9ITEM_DATA.price;
+			Int32 itemId = assortiment[i];
+			FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[itemId];
+			Boolean flag = ff9item.FF9Item_GetCount(itemId) < 99 && FF9StateSystem.Common.FF9.party.gil >= (UInt32)ff9ITEM_DATA.price;
 			this.isItemEnableList.Add(flag);
-			this.itemIdList.Add(num);
+			this.itemIdList.Add(itemId);
 			list.Add(new ShopUI.ShopItemListData
 			{
-				Id = num,
+				Id = itemId,
 				Price = (Int32)ff9ITEM_DATA.price,
 				Enable = flag
 			});
@@ -722,20 +714,18 @@ public class ShopUI : UIScene
 		List<ListDataTypeBase> list = new List<ListDataTypeBase>();
 		if (this.type == ShopUI.ShopType.Weapon)
 		{
-			for (Int32 i = 0; i < (Int32)ff9buy._FF9Buy_Data[this.id].Length; i++)
+		    ShopItems assortiment = ff9buy.ShopItems[this.id];
+
+            for (Int32 i = 0; i < assortiment.Length; i++)
 			{
-				Int32 num = (Int32)ff9buy._FF9Buy_Data[this.id][i];
-				if (num == 255)
-				{
-					break;
-				}
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[num];
-				Boolean flag = ff9item.FF9Item_GetCount(num) < 99 && FF9StateSystem.Common.FF9.party.gil >= (UInt32)ff9ITEM_DATA.price;
+				Int32 itemId = assortiment[i];
+				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[itemId];
+				Boolean flag = ff9item.FF9Item_GetCount(itemId) < 99 && FF9StateSystem.Common.FF9.party.gil >= (UInt32)ff9ITEM_DATA.price;
 				this.isItemEnableList.Add(flag);
-				this.itemIdList.Add(num);
+				this.itemIdList.Add(itemId);
 				list.Add(new ShopUI.ShopItemListData
 				{
-					Id = num,
+					Id = itemId,
 					Price = (Int32)ff9ITEM_DATA.price,
 					Enable = flag
 				});
@@ -893,10 +883,10 @@ public class ShopUI : UIScene
 		{
 			return;
 		}
-		Int32 num = this.itemIdList[this.currentItemIndex];
-		Int32 num2 = ff9item.FF9Item_GetEquipPart(num);
-		Boolean flag = num2 > 0;
-		if (num2 < 0)
+		Int32 cureentItemId = this.itemIdList[this.currentItemIndex];
+		Int32 equipPart = ff9item.FF9Item_GetEquipPart(cureentItemId);
+		Boolean flag = equipPart > 0;
+		if (equipPart < 0)
 		{
 			return;
 		}
@@ -906,47 +896,43 @@ public class ShopUI : UIScene
 		{
 			ShopUI.CharacterWeaponInfoHUD characterWeaponInfoHUD = this.charInfoHud[num3++];
 			PLAYER player = FF9StateSystem.Common.FF9.player[num4];
-			Boolean flag2 = (ff9item._FF9Item_Data[num].equip & this.charMask[ff9play.FF9Play_GetCharID3(player)]) != 0;
+			Boolean flag2 = (ff9item._FF9Item_Data[cureentItemId].equip & this.charMask[(CharacterId)ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter)]) != 0;
 			characterWeaponInfoHUD.AvatarSprite.gameObject.SetActive(true);
 			FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterWeaponInfoHUD.AvatarSprite, false);
 			if (flag2)
 			{
-				Int32 num5;
-				Int32 num6;
+				Int32 oldRating;
+				Int32 newRating;
 				if (!flag)
 				{
-					num5 = (Int32)ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.power;
-					num6 = (Int32)ff9weap._FF9Weapon_Data[num].Ref.power;
+					oldRating = (Int32)ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.Power;
+					newRating = (Int32)ff9weap._FF9Weapon_Data[cureentItemId].Ref.Power;
 				}
 				else
 				{
-					Byte[] array = new Byte[5];
-					for (Int32 i = 0; i < 5; i++)
-					{
-						array[i] = player.equip[i];
-					}
-					array[num2] = (Byte)num;
-					num5 = ff9shop.FF9Shop_GetDefence(num2, player.equip);
-					num6 = ff9shop.FF9Shop_GetDefence(num2, array);
+				    CharacterEquipment array = player.equip.Clone();
+					array[equipPart] = (Byte)cureentItemId;
+					oldRating = ff9shop.FF9Shop_GetDefence(equipPart, player.equip);
+					newRating = ff9shop.FF9Shop_GetDefence(equipPart, array);
 				}
 				characterWeaponInfoHUD.AvatarSprite.color = new Color(1f, 1f, 1f, 1f);
 				characterWeaponInfoHUD.EquipmentTypeSprite.gameObject.SetActive(true);
-				characterWeaponInfoHUD.EquipmentTypeSprite.spriteName = "shop_icon_part_" + num2.ToString();
+				characterWeaponInfoHUD.EquipmentTypeSprite.spriteName = "shop_icon_part_" + equipPart.ToString();
 				characterWeaponInfoHUD.ParamValueLabel.gameObject.SetActive(true);
-				if (num2 == 4)
+				if (equipPart == 4)
 				{
 					characterWeaponInfoHUD.ParamValueLabel.text = "???";
 					characterWeaponInfoHUD.ChangeArrowSprite.gameObject.SetActive(false);
 				}
 				else
 				{
-					characterWeaponInfoHUD.ParamValueLabel.text = num6.ToString();
-					if (num5 < num6)
+					characterWeaponInfoHUD.ParamValueLabel.text = newRating.ToString();
+					if (oldRating < newRating)
 					{
 						characterWeaponInfoHUD.ChangeArrowSprite.gameObject.SetActive(true);
 						characterWeaponInfoHUD.ChangeArrowSprite.spriteName = "shop_icon_parameter_up";
 					}
-					else if (num5 > num6)
+					else if (oldRating > newRating)
 					{
 						characterWeaponInfoHUD.ChangeArrowSprite.gameObject.SetActive(true);
 						characterWeaponInfoHUD.ChangeArrowSprite.spriteName = "shop_icon_parameter_down";
@@ -1528,11 +1514,11 @@ public class ShopUI : UIScene
 
 	public enum ShopType
 	{
-		Item,
-		Weapon,
-		Synthesis,
-		Sell,
-		None
+		Item = 0,
+		Weapon = 1,
+		Synthesis = 2,
+		Sell = 3,
+		None = 4
 	}
 
 	public class ShopItemListData : ListDataTypeBase
