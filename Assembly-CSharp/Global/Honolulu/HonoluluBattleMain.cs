@@ -424,8 +424,22 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             for (btl = source; btl != null; btl = btl.next)
             {
-                if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.cur.hp == 0 || btl.bi.atb == 0)
+                if (btl.cur.hp == 0)
                     continue;
+
+                if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.bi.atb == 0)
+                {
+                    // We need to refresh status for any alive characters in the fast or the turn-based mode
+                    if (needContinue)
+                    {
+                        // ============ Warning ============
+                        btl_para.CheckPointData(btl);
+                        btl_stat.CheckStatusLoop(btl, true);
+                        // =================================
+                    }
+
+                    continue;
+                }
 
                 POINTS current = btl.cur;
                 POINTS maximum = btl.max;
