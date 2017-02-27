@@ -256,6 +256,11 @@ public partial class EventEngine
                     if (dictionary != null && dictionary.ContainsKey(index1))
                         index1 = dictionary[index1];
                 }
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && index1 == 91 && this.gCur.sid == 1 && this.gCur.ip == 145 && EIcon.AIconMode == 0)
+                {
+                    DialogManager.SelectChoice = 15;
+                    return 0;
+                }
                 this.eTb.NewMesWin(index1, (Int32)this.gCur.winnum, flags1, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 this.gCur.wait = (Byte)254;
                 return 1;
@@ -473,8 +478,10 @@ public partial class EventEngine
                     if ((Int32)po.sid == 8 && num11 == -4000 && num12 == -200 && (Double)(new Vector2(po.pos[0], po.pos[2]) - new Vector2((Single)num11, (Single)num12)).sqrMagnitude > 100.0)
                         flag1 = true;
                 }
-                if ((Int32)po.sid != 15)
-                    ;
+                else if (FF9StateSystem.Common.FF9.fldMapNo == 1800 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 10100 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 1 && actor1.sid == 11 && num11 == 510 && num12 == 3054)
+                {
+                    num12 = 2970;
+                }
                 Boolean flag2 = this.MoveToward_mixed((Single)num11, 0.0f, (Single)num12, 0, (PosObj)null);
                 eulerAngles1 = po.go.transform.localRotation.eulerAngles;
                 if (flag2)
@@ -514,6 +521,10 @@ public partial class EventEngine
                                 num14 = (Byte)25;
                         }
                     }
+                }
+                if (FF9StateSystem.Common.FF9.fldMapNo == 658 && actor1.sid == 18 && num14 == 30 && actor1.ip == 323)
+                {
+                    num14 = 25;
                 }
                 actor1.speed = num14;
                 return 0;
@@ -555,8 +566,19 @@ public partial class EventEngine
                 Actor activeActorByUid = this.getActiveActorByUID((Int32)this._context.controlUID);
                 if (activeActorByUid != null && this.gMode == 1)
                 {
-                    activeActorByUid.fieldMapActorController.isPlayer = false;
-                    activeActorByUid.fieldMapActorController.gameObject.name = "obj" + (Object)activeActorByUid.uid;
+                    if (FF9StateSystem.Common.FF9.fldMapNo == 1607)
+                    {
+                        if (this.gExec.uid != activeActorByUid.uid)
+                        {
+                            activeActorByUid.fieldMapActorController.isPlayer = false;
+                            activeActorByUid.fieldMapActorController.gameObject.name = "obj" + activeActorByUid.uid;
+                        }
+                    }
+                    else
+                    {
+                        activeActorByUid.fieldMapActorController.isPlayer = false;
+                        activeActorByUid.fieldMapActorController.gameObject.name = "obj" + activeActorByUid.uid;
+                    }
                 }
                 this._context.controlUID = this.gExec.uid;
                 return 0;
@@ -1052,6 +1074,10 @@ public partial class EventEngine
                     actor1 = (Actor)this.GetObj1();
                 Int32 num30 = this.getv1() << 4;
                 Int32 tspeed2 = this.getv1();
+                if (FF9StateSystem.Common.FF9.fldMapNo == 1209 && actor1.sid == 9 && num30 == 2048)
+                {
+                    num3 = 0;
+                }
                 this.StartTurn(actor1, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num30), true, tspeed2);
                 return 0;
             case EBin.event_code_binary.ENCRATE:
@@ -1099,6 +1125,10 @@ public partial class EventEngine
             case EBin.event_code_binary.SETROW:
                 num1 = this.chr2slot(this.getv1());
                 num2 = this.getv1();
+                if (num1 >= 0 && num1 < 9)
+                {
+                    FF9StateSystem.Common.FF9.player[num1].info.row = (byte)num2;
+                }
                 return 0;
             case EBin.event_code_binary.BGAWAIT:
                 this.fieldmap.EBG_animSetFrameWait(this.getv1(), this.getv1(), this.getv1());
@@ -1208,7 +1238,6 @@ public partial class EventEngine
                 return 0;
             case EBin.event_code_binary.SETCAM:
                 Int32 newCamIdx = this.getv1();
-                this.fieldmap.GetCurrentBgCamera().projectedWalkMesh.SetActive(false);
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3)
                     this.SetActorPosition(this._fixThornPosObj, (Single)this._fixThornPosA, (Single)this._fixThornPosB, (Single)this._fixThornPosC);
@@ -1544,10 +1573,18 @@ public partial class EventEngine
                 }
                 return 0;
             case EBin.event_code_binary.MENUON:
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
+                {
+                    return 0;
+                }
                 EventInput.PSXCntlClearPadMask(0, 262144U);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
                 return 0;
             case EBin.event_code_binary.MENUOFF:
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
+                {
+                    return 0;
+                }
                 EventInput.PSXCntlSetPadMask(0, 262144U);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;

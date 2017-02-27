@@ -74,4 +74,6 @@ public class BGSPRITE_LOC_DEF
 	public UInt32 oriData;
 
 	public Transform transform;
+
+    public Vector3 cacheLocalPos;
 }

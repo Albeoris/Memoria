@@ -913,7 +913,11 @@ public class BattleResultUI : UIScene
 		{
 			this.AllPanel.GetChild(3).GetChild(0).GetComponent<UILocalize>().key = "TouchToConfirm";
 		}
-	}
+        GameObject child2 = this.GilAndItemPhrasePanel.GetChild(0);
+        GameObject child3 = this.GilAndItemPhrasePanel.GetChild(0).GetChild(0);
+        child2.GetComponent<UIPanel>().depth = 2;
+        child3.GetComponent<UIPanel>().depth = 3;
+    }
 
 	public GameObject AllPanel;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 public class SfxSoundPlayer : SoundPlayer
 {
@@ -80,53 +81,103 @@ public class SfxSoundPlayer : SoundPlayer
 		}
 	}
 
-	public SoundProfile PlaySfxSound(Int32 soundIndexInSpecialEffect, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
-	{
-		SoundProfile soundProfile;
-		if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
-		{
-			soundProfile = this.residentSoundDatabase.Read(soundIndexInSpecialEffect);
-		}
-		else
-		{
-			soundProfile = this.soundDatabase.Read(this.GetSoundIndex(this.CurrentSpecialEffectID, soundIndexInSpecialEffect, 0));
-		}
-		if (soundProfile == null)
-		{
-			SoundLib.LogError("PlaySfxSound, soundProfile is null");
-			return (SoundProfile)null;
-		}
-		soundProfile.SoundVolume = soundVolume;
-		soundProfile.Panning = panning;
-		soundProfile.Pitch = pitch;
-		base.CreateSound(soundProfile);
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
-		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
-		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.playerVolume, 0);
-			SoundLib.Log("Panning: " + soundProfile.Panning);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
-			Int32 fastForwardFactor = HonoBehaviorSystem.Instance.GetFastForwardFactor();
-			if (fastForwardFactor != 1)
-			{
-				Single pitch2 = (Single)fastForwardFactor * soundProfile.Pitch;
-				soundProfile.Pitch = pitch2;
-			}
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-		}
-		else
-		{
-			SoundLib.Log("failed to play sound");
-			soundProfile.SoundID = 0;
-		}
-		if (!this.playingDict.ContainsKey(soundProfile.SoundID))
-		{
-			this.playingDict.Add(soundProfile.SoundID, soundProfile);
-		}
-		return soundProfile;
-	}
+    public SoundProfile PlaySfxSound(Int32 soundIndexInSpecialEffect, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+    {
+        SoundProfile soundProfile;
+        if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
+        {
+            soundProfile = this.residentSoundDatabase.Read(soundIndexInSpecialEffect);
+        }
+        else
+        {
+            soundProfile = this.soundDatabase.Read(this.GetSoundIndex(this.CurrentSpecialEffectID, soundIndexInSpecialEffect, 0));
+        }
+        if (soundProfile == null)
+        {
+            SoundLib.LogError("PlaySfxSound, soundProfile is null");
+            return (SoundProfile)null;
+        }
+        if (this.lastSfxSoundIndex == soundProfile.SoundIndex)
+        {
+            if (this.playingAtFrameCount == Time.frameCount)
+            {
+                this.playingSameSfxCount++;
+                if (this.playingSameSfxCount >= 3)
+                {
+                    return (SoundProfile)null;
+                }
+            }
+            else
+            {
+                this.playingSameSfxCount = 1;
+            }
+        }
+        else
+        {
+            this.playingSameSfxCount = 1;
+        }
+        this.lastSfxSoundIndex = soundProfile.SoundIndex;
+        this.playingAtFrameCount = Time.frameCount;
+        Int32 limitNumber = (Int32)((!FF9StateSystem.Settings.IsFastForward) ? 3 : 2);
+        this.LimitPlayingSfx(soundProfile.SoundIndex, limitNumber);
+        soundProfile.SoundVolume = soundVolume;
+        soundProfile.Panning = panning;
+        soundProfile.Pitch = pitch;
+        soundProfile.StartPlayTime = Time.time;
+        base.CreateSound(soundProfile);
+        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+        if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
+        {
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.playerVolume, 0);
+            SoundLib.Log("Panning: " + soundProfile.Panning);
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
+            Int32 fastForwardFactor = HonoBehaviorSystem.Instance.GetFastForwardFactor();
+            if (fastForwardFactor != 1)
+            {
+                Single pitch2 = (Single)fastForwardFactor * soundProfile.Pitch;
+                soundProfile.Pitch = pitch2;
+            }
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+        }
+        else
+        {
+            SoundLib.Log("failed to play sound");
+            soundProfile.SoundID = 0;
+        }
+        if (!this.playingDict.ContainsKey(soundProfile.SoundID))
+        {
+            this.playingDict.Add(soundProfile.SoundID, soundProfile);
+        }
+        return soundProfile;
+    }
 
-	public Boolean IsPlaying(Int32 soundIndexInSpecialEffect)
+
+    private void LimitPlayingSfx(Int32 soundIndex, Int32 limitNumber)
+    {
+        SoundProfile soundProfile = (SoundProfile)null;
+        Single num = Single.MaxValue;
+        Int32 num2 = 0;
+        foreach (KeyValuePair<Int32, SoundProfile> keyValuePair in this.playingDict)
+        {
+            SoundProfile value = keyValuePair.Value;
+            if (value.SoundIndex == soundIndex)
+            {
+                num2++;
+                if (value.StartPlayTime < num)
+                {
+                    soundProfile = value;
+                    num = value.StartPlayTime;
+                }
+            }
+        }
+        if (num2 >= limitNumber)
+        {
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+            this.playingDict.Remove(soundProfile.SoundID);
+        }
+    }
+
+    public Boolean IsPlaying(Int32 soundIndexInSpecialEffect)
 	{
 		SoundProfile soundProfile;
 		if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
@@ -308,7 +359,13 @@ public class SfxSoundPlayer : SoundPlayer
 
 	private List<Int32> playingRemoveList = new List<Int32>();
 
-	private Single playerVolume = 1f;
+    private Int32 lastSfxSoundIndex = -1;
+
+    private Int32 playingSameSfxCount;
+
+    private Int32 playingAtFrameCount;
+
+    private Single playerVolume = 1f;
 
 	private SoundProfile loadingSoundProfile;
 }

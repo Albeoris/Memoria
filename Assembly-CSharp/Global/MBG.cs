@@ -221,7 +221,8 @@ public class MBG : HonoBehavior
 			FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.HighSpeedMode, false);
 			PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.HighSpeedMode, false);
 		}
-		this.played = true;
+        this.isWaitForPause = false;
+        this.played = true;
 		this.movieMaterial.Play();
 	}
 
@@ -236,12 +237,42 @@ public class MBG : HonoBehavior
 			}
 			else
 			{
-				this.movieMaterial.Resume();
+                this.isWaitForPause = false;
+                this.movieMaterial.Resume();
 			}
 		}
-	}
+        else if (this.played)
+        {
+            if (doPause)
+            {
+                if (!this.isWaitForPause)
+                {
+                    this.isWaitForPause = true;
+                    base.StartCoroutine(this.WaitForPause());
+                }
+            }
+            else
+            {
+                this.isWaitForPause = false;
+            }
+        }
+    }
 
-	public void Stop()
+    private IEnumerator WaitForPause()
+    {
+        while ((MBG.Instance.IsPlaying() & 2UL) == 0UL)
+        {
+            yield return null;
+        }
+        if (this.isWaitForPause)
+        {
+            vib.VIB_actuatorReset(0);
+            this.movieMaterial.Pause();
+        }
+        yield break;
+    }
+
+    public void Stop()
 	{
 		if (PersistenSingleton<FF9StateSystem>.Instance.mode == 1 || PersistenSingleton<FF9StateSystem>.Instance.mode == 5)
 		{
@@ -588,7 +619,12 @@ public class MBG : HonoBehavior
 		return this.movieMaterial == null || !this.movieMaterial.GetFirstFrame || (this.movieMaterial.GetFirstFrame && this.movieMaterial.Frame >= this.movieMaterial.TotalFrame) || this.isSkip;
 	}
 
-	public Int32 GetFrame
+    public bool IsFinishedForDisableBooster()
+    {
+        return !this.played || this.isSkip;
+    }
+
+    public Int32 GetFrame
 	{
 		get
 		{
@@ -707,7 +743,8 @@ public class MBG : HonoBehavior
 		this.isEnding = false;
 		this.isTitle = false;
 		this.isMovieGallery = false;
-	}
+        this.isSkip = false;
+    }
 
 	public Int32 GetFrameCount
 	{
@@ -1028,7 +1065,9 @@ public class MBG : HonoBehavior
 
 	private Boolean played;
 
-	public static Boolean MarkCharacterDepth = false;
+    private Boolean isWaitForPause;
+
+    public static Boolean MarkCharacterDepth = false;
 
 	private Boolean tempVirtualAnalogStatus;
 

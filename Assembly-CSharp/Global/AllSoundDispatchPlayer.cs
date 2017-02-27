@@ -454,7 +454,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SNDEFFECT_PLAY(Int32 ObjNo, Int32 attr, Int32 pos, Int32 vol)
 	{
-		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
+        this.LimitPlayingSfxByObjNo(ObjNo, 2295, 1);
+        this.LimitPlayingSfxByObjNo(ObjNo, 1966, 3);
+        this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
 		{
 			this.CreateSound(soundProfile);
 			soundProfile.Pitch = 1f;
@@ -470,11 +472,40 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			playingSfx.SndEffectVol = vol;
 			playingSfx.Pitch = soundProfile.Pitch;
 			playingSfx.IsFastForwardedPitch = (HonoBehaviorSystem.Instance.GetFastForwardFactor() != 1);
-			this.sfxChanels.Add(playingSfx);
+            playingSfx.StartPlayTime = Time.time;
+            this.sfxChanels.Add(playingSfx);
 		});
 	}
 
-	private Int32 TuneUpSoundEffectByObjNo(Int32 ObjNo, SoundProfile soundProfile)
+    private void LimitPlayingSfxByObjNo(int ObjNo, int limitObjNo, int limitNumber)
+    {
+        if (ObjNo == limitObjNo)
+        {
+            AllSoundDispatchPlayer.PlayingSfx playingSfx = (AllSoundDispatchPlayer.PlayingSfx)null;
+            float num = float.MaxValue;
+            int num2 = 0;
+            for (int i = 0; i < this.sfxChanels.Count; i++)
+            {
+                AllSoundDispatchPlayer.PlayingSfx playingSfx2 = this.sfxChanels[i];
+                if (playingSfx2.ObjNo == ObjNo)
+                {
+                    num2++;
+                    if (playingSfx2.StartPlayTime < num)
+                    {
+                        playingSfx = playingSfx2;
+                        num = playingSfx2.StartPlayTime;
+                    }
+                }
+            }
+            if (num2 >= limitNumber)
+            {
+                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(playingSfx.SoundID, 0);
+                this.sfxChanels.Remove(playingSfx);
+            }
+        }
+    }
+
+    private Int32 TuneUpSoundEffectByObjNo(Int32 ObjNo, SoundProfile soundProfile)
 	{
 		if (ObjNo == 1748)
 		{
@@ -1390,7 +1421,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			this.IsSuspend = false;
 			this.Pitch = 1f;
 			this.IsFastForwardedPitch = false;
-		}
+            this.StartPlayTime = 0f;
+        }
 
 		public Int32 ObjNo;
 
@@ -1407,7 +1439,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		public Single Pitch;
 
 		public Boolean IsFastForwardedPitch;
-	}
+
+        public float StartPlayTime;
+    }
 
 	public delegate void OnSndEffectResPlay(Int32 slot, Int32 ObjNo, Int32 attr, Int32 pos, Int32 vol);
 

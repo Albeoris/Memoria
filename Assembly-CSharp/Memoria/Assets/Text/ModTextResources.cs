@@ -27,6 +27,7 @@ namespace Memoria.Assets
 
         private const String ManifestDirectoryPath = "/Manifest";
         private const String CreditsAmazonPath = "/StaffCredits_Amazon.txt";
+        private const String CreditsAndroidPath = "/StaffCredits_AndroidSQEXMarket.txt";
         private const String CreditsMobilePath = "/StaffCredits_Mobile.txt";
         private const String CreditsEStorePath = "/StaffCredits_EStore.txt";
         private const String CreditsSteamPath = "/StaffCredits_Steam.txt";
@@ -96,6 +97,7 @@ namespace Memoria.Assets
             public static String ManifestDirectory => GetCurrentPath(ManifestDirectoryPath);
 
             public static String CreditsAmazon => ManifestDirectory + CreditsAmazonPath;
+            public static String CreditsAndroid => ManifestDirectory + CreditsAndroidPath;
             public static String CreditsMobile => ManifestDirectory + CreditsMobilePath;
             public static String CreditsEStore => ManifestDirectory + CreditsEStorePath;
             public static String CreditsSteam => ManifestDirectory + CreditsSteamPath;

@@ -430,7 +430,12 @@ internal class EIcon
 		}, null);
 	}
 
-	public static ATEType CurrentATE
+    public static int AIconMode
+    {
+        get { return EIcon.sAIconMode; }
+    }
+
+    public static ATEType CurrentATE
 	{
 		get
 		{

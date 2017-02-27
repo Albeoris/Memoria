@@ -114,9 +114,12 @@ public class MouseInputHandler : InputHandler
 			if (playerHand.Select == -1)
 			{
 				playerHand.Select = select;
-				playerHand.ForceUpdateCursor();
-				playerHand.UpdateShadowCard(playerHand.Select);
-			}
+                if (playerHand.CardAnimatingCount == 0)
+                {
+                    playerHand.ForceUpdateCursor();
+                    playerHand.UpdateShadowCard(playerHand.Select);
+                }
+            }
 		}
 		if (playerHand.IsDragged)
 		{

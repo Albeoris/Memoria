@@ -136,8 +136,8 @@ namespace Assets.SiliconSocial
 		{
 			if (!Social.IsSocialPlatformAuthenticated())
 			{
-				Debug.Log("Player try to resync system achievement but he did not login yet!!!");
-				return;
+                Debug.Log("Player try to resync system achievement but he did not login or social was disabled!!!");
+                return;
 			}
 			Debug.Log("ResyncSystemAchievements START");
 			AchievementManager.ResyncAchievementsWithLocalStatus(Social.steamAchievementData, true);
@@ -148,8 +148,8 @@ namespace Assets.SiliconSocial
 		{
 			if (!Social.IsSocialPlatformAuthenticated())
 			{
-				Debug.Log("Player try to resync normal achievement but he did not login yet!!!");
-				return;
+                Debug.Log("Player try to resync normal achievement but he did not login or social was disabled!!!");
+                return;
 			}
 			Debug.Log("ResyncNormalAchievements START");
 			AchievementManager.ResyncAchievementsWithLocalStatus(Social.steamAchievementData, false);

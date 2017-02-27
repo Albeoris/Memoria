@@ -173,7 +173,7 @@ public class UIScene : MonoBehaviour
 		{
 			return false;
 		}
-		ButtonGroupState.ToggleHelp();
+		ButtonGroupState.ToggleHelp(true);
 		return true;
 	}
 

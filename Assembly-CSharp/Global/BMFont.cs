@@ -142,28 +142,28 @@ public class BMFont
 		}
 	}
 
-	[HideInInspector]
 	[SerializeField]
+    [HideInInspector]
 	private Int32 mSize = 16;
 
-	[HideInInspector]
 	[SerializeField]
+    [HideInInspector]
 	private Int32 mBase;
 
 	[SerializeField]
 	[HideInInspector]
 	private Int32 mWidth;
 
-	[HideInInspector]
 	[SerializeField]
+    [HideInInspector]
 	private Int32 mHeight;
 
-	[HideInInspector]
 	[SerializeField]
+    [HideInInspector]
 	private String mSpriteName;
 
-	[HideInInspector]
 	[SerializeField]
+    [HideInInspector]
 	private List<BMGlyph> mSaved = new List<BMGlyph>();
 
 	private Dictionary<Int32, BMGlyph> mDict = new Dictionary<Int32, BMGlyph>();

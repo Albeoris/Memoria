@@ -16,7 +16,8 @@ public class SoundProfile
 		this.Pitch = 0f;
 		this.SoundProfileState = SoundProfileState.Idle;
 		this.SoundProfileType = SoundProfileType.Default;
-	}
+        this.StartPlayTime = 0f;
+    }
 
 	public String Code;
 
@@ -41,4 +42,6 @@ public class SoundProfile
 	public SoundProfileState SoundProfileState;
 
 	public SoundProfileType SoundProfileType;
+
+    public Single StartPlayTime;
 }

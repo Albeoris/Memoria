@@ -1257,13 +1257,13 @@ public class QuadMistGame : MonoBehaviour
         {
             QuadMistCardUI atkUi = board.GetCardUI(result.attacker);
             QuadMistCardUI defUi = board.GetCardUI(result.defender);
-            StartCoroutine(BattleNumberTextAnimation(result, BATTLE_NUMBER_TIME + 32, BATTLE_COUNTDOWN_TIME + BATTLE_NUMBER_TIME, 60));
+            StartCoroutine(BattleNumberTextAnimation(result, BATTLE_NUMBER_TIME + 32, BATTLE_COUNTDOWN_TIME + BATTLE_NUMBER_TIME, 45));
             yield return StartCoroutine(Anim.Tick(BATTLE_NUMBER_TIME));
 
             StartCoroutine(BattleMotionAnimation(atkUi, defUi, 7, 15));
             yield return StartCoroutine(BombAnimation(atkUi, defUi, 32));
 
-            yield return StartCoroutine(Anim.Tick(23));
+            yield return StartCoroutine(Anim.Tick(53));
 
             if (result.type == BattleResult.Type.WIN)
             {

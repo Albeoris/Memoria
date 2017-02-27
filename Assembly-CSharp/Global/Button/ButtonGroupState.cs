@@ -620,8 +620,8 @@ public class ButtonGroupState : MonoBehaviour
 		return (GameObject)null;
 	}
 
-	public static void ToggleHelp()
-	{
+	public static void ToggleHelp(bool playSFX = true)
+    {
 		if (ButtonGroupState.activeGroup != String.Empty && ButtonGroupState.activeGroup != QuitUI.WarningMenuGroupButton && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD)
 		{
 			ButtonGroupState.helpEnabled = !ButtonGroupState.helpEnabled;
@@ -633,13 +633,16 @@ public class ButtonGroupState : MonoBehaviour
 			if (!ButtonGroupState.helpEnabled)
 			{
 				Singleton<HelpDialog>.Instance.HideDialog();
-				FF9Sfx.FF9SFX_Play(101);
-			}
-			else
-			{
-				FF9Sfx.FF9SFX_Play(682);
-			}
-		}
+                if (playSFX)
+                {
+                    FF9Sfx.FF9SFX_Play(101);
+                }
+            }
+            else if (playSFX)
+            {
+                FF9Sfx.FF9SFX_Play(682);
+            }
+        }
 	}
 
 	public static void UpdateActiveButton()

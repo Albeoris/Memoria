@@ -41,7 +41,8 @@ public class ExpansionVerifier : MonoBehaviour
 
 	public static void printLog(String mes)
 	{
-	}
+        global::Debug.Log(mes);
+    }
 
 	private const String OBB2_TMP_FILE_NAME = "OBB2.tmp";
 

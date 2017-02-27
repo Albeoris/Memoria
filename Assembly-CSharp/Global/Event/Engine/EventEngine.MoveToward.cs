@@ -3,219 +3,318 @@ using UnityEngine;
 
 public partial class EventEngine
 {
-    private Boolean MoveToward_mixed(Single x, Single y, Single z, Int32 flags, PosObj flagsPosObj)
+    private bool MoveToward_mixed(float x, float y, float z, int flags, PosObj flagsPosObj)
     {
         Actor actor = (Actor)this.gCur;
-        if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1823 && (Int32)actor.sid == 13 && ((Int32)x == -365 && (Int32)z == -373))
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1823 && actor.sid == 13 && (int)x == -365 && (int)z == -373)
         {
             x = -389f;
             z = -600f;
         }
-        if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1550 && (Int32)actor.sid == 15 && ((Int32)x == -1109 && (Int32)z == -1014))
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1550 && actor.sid == 15 && (int)x == -1109 && (int)z == -1014)
         {
             x = -1155f;
             z = -1070f;
         }
-
-
-        Single num1 = (Single)actor.speed;
-        Single distance = 0.0f;
+        GameObject go = this.gCur.go;
+        float num = (float)actor.speed;
+        float num2 = 0f;
         PosObj posObj = (PosObj)null;
         FieldMapActorController fieldMapActorController = (FieldMapActorController)null;
-        WMActor wmActor = (WMActor)null;
-        Single x1 = 0.0f;
-        Single y1 = 0.0f;
-        Single z1 = 0.0f;
-        Vector3 vector3_1 = Vector3.zero;
+        WMActor wmactor = (WMActor)null;
+        float num3 = 0f;
+        float num4 = 0f;
+        float num5 = 0f;
+        Vector3 vector = Vector3.zero;
         if (this.gMode == 1)
         {
             fieldMapActorController = actor.fieldMapActorController;
-            if ((UnityEngine.Object)fieldMapActorController == (UnityEngine.Object)null)
+            if (fieldMapActorController == (UnityEngine.Object)null)
             {
-                x1 = actor.pos[0];
-                y1 = actor.pos[1];
-                z1 = actor.pos[2];
+                num3 = actor.pos[0];
+                num4 = actor.pos[1];
+                num5 = actor.pos[2];
             }
             else
             {
-                x1 = fieldMapActorController.curPos.x;
-                y1 = fieldMapActorController.curPos.y;
-                z1 = fieldMapActorController.curPos.z;
+                num3 = fieldMapActorController.curPos.x;
+                num4 = fieldMapActorController.curPos.y;
+                num5 = fieldMapActorController.curPos.z;
             }
-            vector3_1 = actor.rotAngle;
+            vector = actor.rotAngle;
         }
         else if (this.gMode == 3)
         {
-            wmActor = actor.wmActor;
-            x1 = actor.pos[0];
-            y1 = actor.pos[1];
-            z1 = actor.pos[2];
+            wmactor = actor.wmActor;
+            num3 = actor.pos[0];
+            num4 = actor.pos[1];
+            num5 = actor.pos[2];
         }
-        Single deltaX = x - x1;
-        Single num2 = y - y1;
-        Single deltaZ = z - z1;
-        Single num3;
-        if (((Int32)actor.actf & EventEngine.actLockDir) != 0)
+        float deltaX = x - num3;
+        float num6 = y - num4;
+        float deltaZ = z - num5;
+        float num7;
+        if (((int)actor.actf & EventEngine.actLockDir) != 0)
         {
-            num3 = EventEngineUtils.ClampAngle(this.gMode != 1 ? wmActor.rot1 : vector3_1.y);
+            num7 = ((this.gMode != 1) ? wmactor.rot1 : vector.y);
+            num7 = EventEngineUtils.ClampAngle(num7);
         }
         else
         {
-            num3 = this.eBin.angleAsm(deltaX, deltaZ);
+            num7 = this.eBin.angleAsm(deltaX, deltaZ);
             if ((flags & 1) == 0 || flagsPosObj != null)
             {
-                Single num4 = EventEngineUtils.ClampAngle(this.gMode != 1 ? wmActor.rot1 : vector3_1.y);
-                Single a = num3 - num4;
-                if ((Double)a < -180.0)
-                    a += 360f;
-                if ((Double)a > 180.0 || EventEngineUtils.nearlyEqual(a, 180f))
-                    a -= 360f;
-                if (((Int32)FF9StateSystem.Common.FF9.fldMapNo != 307 || (Int32)this.gCur.sid != 11) && ((Int32)FF9StateSystem.Common.FF9.fldMapNo != 610 || (Int32)this.gCur.sid != 3) && EventEngineUtils.nearlyEqual(a, 0.0f))
-                    actor.actf |= (UInt16)EventEngine.actLockDir;
-                Single withOutShiftRight = EventEngineUtils.ConvertFixedPointAngleToDegreeWithOutShiftRight((Int16)((Int32)actor.omega << 3));
-                if ((Double)a > 0.0)
+                float num8 = (this.gMode != 1) ? wmactor.rot1 : vector.y;
+                num8 = EventEngineUtils.ClampAngle(num8);
+                float num9 = num7 - num8;
+                if (num9 < -180f)
                 {
-                    if ((Double)a > (Double)withOutShiftRight)
-                        num3 = num4 + withOutShiftRight;
+                    num9 += 360f;
                 }
-                else if ((Double)a < -(Double)withOutShiftRight)
-                    num3 = num4 - withOutShiftRight;
-                num3 = EventEngineUtils.ClampAngle(num3);
+                if (num9 > 180f || EventEngineUtils.nearlyEqual(num9, 180f))
+                {
+                    num9 -= 360f;
+                }
+                if ((FF9StateSystem.Common.FF9.fldMapNo != 307 || this.gCur.sid != 11) && (FF9StateSystem.Common.FF9.fldMapNo != 610 || this.gCur.sid != 3) && EventEngineUtils.nearlyEqual(num9, 0f))
+                {
+                    Actor actor2 = actor;
+                    actor2.actf = (ushort)(actor2.actf | (ushort)EventEngine.actLockDir);
+                }
+                int num10 = (int)actor.omega << 3;
+                float num11 = EventEngineUtils.ConvertFixedPointAngleToDegreeWithOutShiftRight((short)num10);
+                if (num9 > 0f)
+                {
+                    if (num9 > num11)
+                    {
+                        num7 = num8 + num11;
+                    }
+                }
+                else if (num9 < -num11)
+                {
+                    num7 = num8 - num11;
+                }
+                num7 = EventEngineUtils.ClampAngle(num7);
                 if (this.gMode == 1)
                 {
-                    vector3_1.y = num3;
-                    actor.rotAngle[1] = num3;
+                    vector.y = num7;
+                    actor.rotAngle[1] = num7;
                 }
                 else if (this.gMode == 3)
-                    wmActor.rot1 = num3;
+                {
+                    wmactor.rot1 = num7;
+                }
             }
         }
-        Single deltaY;
-        Single rotx;
+        float num13;
         if ((flags & 2) != 0 && flagsPosObj == null)
         {
-            deltaY = y - y1;
-            Single num4 = this.distance(deltaX, 0.0f, deltaZ);
-            Single angle = EventEngineUtils.ClampAngle(this.eBin.angleAsm(-deltaY, -num4));
-            Single num5 = EventEngineUtils.ClampAngle(actor.rot0);
-            Single a = angle - num5;
-            if ((Double)a < -180.0)
-                a += 360f;
-            else if ((Double)a > 180.0 || EventEngineUtils.nearlyEqual(a, 180f))
-                a -= 360f;
-            Single withOutShiftRight = EventEngineUtils.ConvertFixedPointAngleToDegreeWithOutShiftRight((Int16)((Int32)actor.omega << 3));
-            if ((Double)a > 0.0)
+            num6 = y - num4;
+            float num12 = this.distance(deltaX, 0f, deltaZ);
+            num13 = this.eBin.angleAsm(-num6, -num12);
+            num13 = EventEngineUtils.ClampAngle(num13);
+            float num8 = actor.rot0;
+            num8 = EventEngineUtils.ClampAngle(num8);
+            float num9 = num13 - num8;
+            if (num9 < -180f)
             {
-                if ((Double)a > (Double)withOutShiftRight)
-                    angle = num5 + withOutShiftRight;
+                num9 += 360f;
             }
-            else if ((Double)a < -(Double)withOutShiftRight)
-                angle = num5 - withOutShiftRight;
-            rotx = EventEngineUtils.ClampAngle(angle);
-            actor.rot0 = rotx;
+            else if (num9 > 180f || EventEngineUtils.nearlyEqual(num9, 180f))
+            {
+                num9 -= 360f;
+            }
+            int num10 = (int)actor.omega << 3;
+            float num14 = EventEngineUtils.ConvertFixedPointAngleToDegreeWithOutShiftRight((short)num10);
+            if (num9 > 0f)
+            {
+                if (num9 > num14)
+                {
+                    num13 = num8 + num14;
+                }
+            }
+            else if (num9 < -num14)
+            {
+                num13 = num8 - num14;
+            }
+            num13 = EventEngineUtils.ClampAngle(num13);
+            actor.rot0 = num13;
         }
         else
         {
-            rotx = 0.0f;
-            deltaY = 0.0f;
+            num13 = 0f;
+            num6 = 0f;
         }
-        Vector3 oVector;
-        GetMoveVector(out oVector, rotx, num3, (Single)actor.speed);
-        if ((UnityEngine.Object)fieldMapActorController != (UnityEngine.Object)null && fieldMapActorController.name == fieldMapActorController.fieldMap.debugObjName)
+        Vector3 vector2;
+        EventEngine.GetMoveVector(out vector2, num13, num7, (float)actor.speed);
+        if (fieldMapActorController != (UnityEngine.Object)null && fieldMapActorController.name == fieldMapActorController.fieldMap.debugObjName)
         {
-            Vector3 vector3_2 = new Vector3(x1, y1, z1);
-            Vector3 vector3_3 = oVector;
-            Vector3 vector3_4 = vector3_3.normalized * 100f * vector3_3.magnitude;
-            Vector3 vector3_5 = new Vector3(0.0f, 100f, 0.0f);
-            Vector3 vector3_6 = new Vector3(x, y, z);
-            Debug.DrawLine(vector3_2 + vector3_5, vector3_2 + vector3_4 + vector3_5, Color.magenta, 2f, true);
-            Debug.DrawLine(vector3_2 + vector3_5, vector3_2 + Vector3.up * 50f + vector3_5, Color.blue, 2f, true);
+            Vector3 a = new Vector3(num3, num4, num5);
+            Vector3 vector3 = vector2;
+            Vector3 b = vector3.normalized * 100f * vector3.magnitude;
+            Vector3 b2 = new Vector3(0f, 100f, 0f);
+            Vector3 vector4 = new Vector3(x, y, z);
+            global::Debug.DrawLine(a + b2, a + b + b2, Color.magenta, 2f, true);
+            global::Debug.DrawLine(a + b2, a + Vector3.up * 50f + b2, Color.blue, 2f, true);
         }
-        Vector3 vector3_7 = new Vector3(x1, y1, z1) + oVector;
+        Vector3 vector5 = new Vector3(num3, num4, num5) + vector2;
         if (this.gMode == 1)
         {
             fieldMapActorController = actor.fieldMapActorController;
-            if ((UnityEngine.Object)fieldMapActorController == (UnityEngine.Object)null)
+            if (fieldMapActorController == (UnityEngine.Object)null)
             {
-                actor.pos[0] = vector3_7.x;
-                actor.pos[1] = vector3_7.y;
-                actor.pos[2] = vector3_7.z;
+                actor.pos[0] = vector5.x;
+                actor.pos[1] = vector5.y;
+                actor.pos[2] = vector5.z;
             }
             else
             {
-                fieldMapActorController.curPos = fieldMapActorController.curPos + oVector;
+                fieldMapActorController.curPos += vector2;
                 fieldMapActorController.SyncPosToTransform();
             }
         }
         else if (this.gMode == 3)
-            wmActor.SetPosition(vector3_7.x, vector3_7.y, vector3_7.z);
-        if (this.gMode == 1 && (UnityEngine.Object)fieldMapActorController != (UnityEngine.Object)null)
         {
-            if ((Int32)fieldMapActorController.originalActor.uid == 2 && (Int32)FF9StateSystem.Common.FF9.fldMapNo == 1605 && this.eBin.getVarManually(220) == 6622)
-                fieldMapActorController.originalActor.collRad = (Byte)10;
-            if ((Int32)fieldMapActorController.originalActor.uid == 18 && (Int32)FF9StateSystem.Common.FF9.fldMapNo == 575 && this.eBin.getVarManually(220) == 3165)
-                fieldMapActorController.originalActor.collRad = (Byte)34;
-            posObj = fieldMapActorController.walkMesh.Collision(fieldMapActorController, 0, out distance);
-            if (posObj != null && ((Double)distance < 0.0 || EventEngineUtils.nearlyEqual(distance, 0.0f)))
-                fieldMapActorController.curPos = fieldMapActorController.curPos - oVector;
+            wmactor.SetPosition(vector5.x, vector5.y, vector5.z);
+        }
+        if (this.gMode == 1 && fieldMapActorController != (UnityEngine.Object)null)
+        {
+            if (fieldMapActorController.originalActor.uid == 2 && FF9StateSystem.Common.FF9.fldMapNo == 1605 && this.eBin.getVarManually(220) == 6622)
+            {
+                fieldMapActorController.originalActor.collRad = 10;
+            }
+            if (fieldMapActorController.originalActor.uid == 18 && FF9StateSystem.Common.FF9.fldMapNo == 575 && this.eBin.getVarManually(220) == 3165)
+            {
+                fieldMapActorController.originalActor.collRad = 34;
+            }
+            posObj = fieldMapActorController.walkMesh.Collision(fieldMapActorController, 0, out num2);
+            if (posObj != null && (num2 < 0f || EventEngineUtils.nearlyEqual(num2, 0f)))
+            {
+                fieldMapActorController.curPos -= vector2;
+            }
         }
         else if (this.gMode == 3)
         {
-            posObj = (PosObj)this.Collision(this, (PosObj)actor, 0, ref distance);
-            if (posObj != null && ((Double)distance < 0.0 || EventEngineUtils.nearlyEqual(distance, 0.0f)))
-                wmActor.SetPosition(x1, y1, z1);
-            actor.pos[0] = vector3_7[0];
-            actor.pos[1] = vector3_7[1];
-            actor.pos[2] = vector3_7[2];
+            posObj = (PosObj)this.Collision(this, actor, 0, ref num2);
+            if (posObj != null && (num2 < 0f || EventEngineUtils.nearlyEqual(num2, 0f)))
+            {
+                wmactor.SetPosition(num3, num4, num5);
+            }
+            actor.pos[0] = vector5[0];
+            actor.pos[1] = vector5[1];
+            actor.pos[2] = vector5[2];
         }
-        if ((Int32)actor.loopCount != 0 && (Int32)actor.loopCount != (Int32)Byte.MaxValue)
-            --actor.loopCount;
-        Boolean flag1 = (Int32)actor.loopCount != 0;
-        if (flagsPosObj != null)
-            flag1 = posObj != flagsPosObj || (Double)distance > 0.0;
-        Single a1 = this.dist64(deltaX, deltaY, deltaZ);
-        if ((Double)a1 < (Double)num1 * (Double)num1 || ((Int32)actor.actf & EventEngine.actMove) != 0 && (Double)a1 > (Double)actor.lastdist)
+        if (actor.loopCount != 0 && actor.loopCount != 255)
         {
-            if ((Double)a1 < (Double)num1 * (Double)num1 && (Int32)FF9StateSystem.Common.FF9.fldMapNo != 2204 && ((Int32)FF9StateSystem.Common.FF9.fldMapNo != 2209 || PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(220) != 9850) && (this.gMode == 1 && (UnityEngine.Object)fieldMapActorController != (UnityEngine.Object)null))
+            Actor actor3 = actor;
+            actor3.loopCount = (byte)(actor3.loopCount - 1);
+        }
+        bool flag = actor.loopCount != 0;
+        if (flagsPosObj != null)
+        {
+            bool flag2 = posObj != flagsPosObj;
+            bool flag3 = num2 > 0f;
+            flag = (flag2 || flag3);
+        }
+        num2 = this.dist64(deltaX, num6, deltaZ);
+        bool flag4 = num2 > actor.lastdist;
+        if (FF9StateSystem.Common.FF9.fldMapNo == 456 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
+        {
+            if (actor.sid == 2)
+            {
+                flag4 = (!EventEngineUtils.nearlyEqual(num2, actor.lastdist) && num2 > actor.lastdist);
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 455 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
+        {
+            if (actor.sid == 1)
+            {
+                flag4 = (!EventEngineUtils.nearlyEqual(num2, actor.lastdist) && num2 > actor.lastdist);
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 1055 && actor.sid == 11)
+        {
+            flag4 = (!EventEngineUtils.nearlyEqual(num2, actor.lastdist) && num2 > actor.lastdist);
+        }
+        if (num2 < num * num || (((int)actor.actf & EventEngine.actMove) != 0 && flag4))
+        {
+            if (num2 < num * num && FF9StateSystem.Common.FF9.fldMapNo != 2204 && (FF9StateSystem.Common.FF9.fldMapNo != 2209 || PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(220) != 9850) && this.gMode == 1 && fieldMapActorController != (UnityEngine.Object)null)
             {
                 fieldMapActorController.curPos.x = x;
                 fieldMapActorController.curPos.z = z;
                 fieldMapActorController.SyncPosToTransform();
             }
-            flag1 = false;
+            flag = false;
         }
-        Boolean flag2 = false;
-        if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 901)
+        bool flag5 = false;
+        if (FF9StateSystem.Common.FF9.fldMapNo == 901)
         {
-            if ((Int32)actor.sid == 1)
-                flag2 = true;
+            if (actor.sid == 1)
+            {
+                flag5 = true;
+            }
         }
-        else if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1808)
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 1808)
         {
-            if ((Int32)actor.sid == 4 || (Int32)actor.sid == 5)
-                flag2 = true;
+            if (actor.sid == 4 || actor.sid == 5)
+            {
+                flag5 = true;
+            }
         }
-        else if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1810 && (Int32)actor.sid == 5)
-            flag2 = true;
-        if (flag2 && (Double)a1 > (Double)actor.lastdist && (posObj != null && (Int32)posObj.uid == (Int32)this.GetControlUID()))
-            flag1 = true;
-        if ((Double)actor.lastdist < (Double)EventEngine.kInitialDist && (Double)a1 < (Double)actor.lastdist)
-            actor.actf |= (UInt16)EventEngine.actMove;
-        if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 571 && (Int32)actor.sid == 4 && (EventEngineUtils.nearlyEqual(x, 887f) && EventEngineUtils.nearlyEqual(z, 1419f)) && (Double)a1 > (Double)actor.lastdist)
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 1810)
+        {
+            if (actor.sid == 5)
+            {
+                flag5 = true;
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 456 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
+        {
+            if (actor.sid == 2)
+            {
+                flag5 = true;
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 455 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
+        {
+            if (actor.sid == 1)
+            {
+                flag5 = true;
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 1055 && actor.sid == 11)
+        {
+            flag5 = true;
+        }
+        if (flag5 && flag4 && posObj != null && posObj.uid == this.GetControlUID())
+        {
+            flag = true;
+        }
+        if (actor.lastdist < (float)EventEngine.kInitialDist && num2 < actor.lastdist)
+        {
+            Actor actor4 = actor;
+            actor4.actf = (ushort)(actor4.actf | (ushort)EventEngine.actMove);
+        }
+        if (FF9StateSystem.Common.FF9.fldMapNo == 571 && actor.sid == 4 && EventEngineUtils.nearlyEqual(x, 887f) && EventEngineUtils.nearlyEqual(z, 1419f) && num2 > actor.lastdist)
         {
             fieldMapActorController.curPos.x = 887f;
             fieldMapActorController.curPos.z = 1419f;
             fieldMapActorController.SyncPosToTransform();
             return true;
         }
-        actor.lastdist = a1;
-        if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2954 && (Int32)actor.sid == 11 && EventEngineUtils.nearlyEqual(a1, 32420f))
+        actor.lastdist = num2;
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2954 && actor.sid == 11 && EventEngineUtils.nearlyEqual(num2, 32420f))
+        {
             return false;
-        if (!flag1)
+        }
+        if (!flag)
+        {
             this.clrdist(actor);
-        if ((Int32)actor.uid == (Int32)this._context.controlUID)
-            ++this.gAnimCount;
-        return flag1;
+        }
+        if (actor.uid == this._context.controlUID)
+        {
+            this.gAnimCount++;
+        }
+        return flag;
     }
 
     private static void GetMoveVector(out Vector3 oVector, Single rotx, Single roty, Single speed)

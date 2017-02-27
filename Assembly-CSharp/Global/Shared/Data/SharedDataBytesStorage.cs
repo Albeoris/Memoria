@@ -37,7 +37,17 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
         String fileName;
 		String str2 = "/Steam/EncryptedSavedData";
-		SharedDataBytesStorage.MetaData.DirPath = Application.persistentDataPath + str2;
+
+        if (FF9StateSystem.PCEStorePlatform)
+        {
+            String text2 = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            text2 = text2.Replace('\\', '/');
+            SharedDataBytesStorage.MetaData.DirPath = text2 + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
+        }
+        else
+        {
+            SharedDataBytesStorage.MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + str2;
+        }
 
 	    String[] saveDataFiles = Directory.GetFiles(SharedDataBytesStorage.MetaData.DirPath, "SavedData_??.dat");
 	    if (saveDataFiles.Length == 0)
@@ -77,8 +87,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
     private void SetOtherPlatformPath()
 	{
-		SharedDataBytesStorage.MetaData.FilePath = Application.persistentDataPath + "/EncryptedSavedData/SavedData.dat";
-		SharedDataBytesStorage.MetaData.DirPath = Application.persistentDataPath + "/EncryptedSavedData";
+		SharedDataBytesStorage.MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
+		SharedDataBytesStorage.MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData";
 	}
 
 	private void SetEditorPath()

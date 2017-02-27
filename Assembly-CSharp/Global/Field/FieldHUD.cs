@@ -428,8 +428,8 @@ public class FieldHUD : UIScene
     {
         if (choice == 0)
         {
-            fldfmv.FF9FieldFMVShutdown();
             MBG.IsSkip = true;
+            fldfmv.FF9FieldFMVShutdown();
         }
         else if (!MBG.IsNull && !MBG.Instance.IsFinished())
         {

@@ -70,7 +70,10 @@ public class PosObj : Obj
 		this.meshflags = po.meshflags;
 		this.garnet = po.garnet;
 		this.shortHair = po.shortHair;
-		Actor actor = (Actor)po;
+        this.attatchTargetUid = po.attatchTargetUid;
+        this.attachTargetBoneIndex = po.attachTargetBoneIndex;
+        this.isShadowOff = po.isShadowOff;
+        Actor actor = (Actor)po;
 		this.charFlags = actor.charFlags;
 		this.activeTri = actor.activeTri;
 		this.activeFloor = actor.activeFloor;
@@ -228,4 +231,10 @@ public class PosObj : Obj
 	public UInt16 geo_struct_flags;
 
 	public Vector3 geo_struct_lookat;
+
+    public Int32 attatchTargetUid = -1;
+
+    public Int32 attachTargetBoneIndex = -1;
+
+    public Boolean isShadowOff;
 }

@@ -227,8 +227,8 @@ public class WMBlock : MonoBehaviour
 			Int32[] triangles = mesh.Triangles;
 			Vector4[] tangents = mesh.Tangents;
 			mapid = (Int32)tangents[triangles[hit.triangleIndex * 3]].x;
-			return mapid != 12782;
-		}
+            return mapid != 12782 || ff9.w_moveCHRControlPtr.type == 1;
+        }
 		mapid = 0;
 		return false;
 	}
@@ -248,8 +248,8 @@ public class WMBlock : MonoBehaviour
 		if (WMPhysics.RaycastOnSpecifiedTriangle(ray, mesh, triangleIndex, out hit))
 		{
 			mapid = (Int32)tangents[triangles[hit.triangleIndex * 3]].x;
-			return mapid != 12782;
-		}
+            return mapid != 12782 || ff9.w_moveCHRControlPtr.type == 1;
+        }
 		mapid = 0;
 		return false;
 	}

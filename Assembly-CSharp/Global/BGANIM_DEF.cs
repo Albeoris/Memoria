@@ -22,9 +22,23 @@ public class BGANIM_DEF
 		this.frameRate = reader.ReadInt16();
 		this.counter = reader.ReadUInt16();
 		this.offset = reader.ReadUInt32();
-	}
+        this.CalculateActualFrameCount();
+    }
 
-	public Byte flags;
+    public void CalculateActualFrameCount()
+    {
+        Int32 num = 256;
+        Int32 num2 = (this.frameCount - 1) * (Int32)this.frameRate;
+        Int32 num3 = (this.frameCount - 1) * num;
+        this.actualFrameCount = this.frameCount;
+        Int32 num4 = num2 - num3;
+        if (num4 >= num)
+        {
+            this.actualFrameCount = this.frameCount - num4 / num;
+        }
+    }
+
+    public Byte flags;
 
 	public Int32 frameCount;
 
@@ -38,5 +52,7 @@ public class BGANIM_DEF
 
 	public UInt32 offset;
 
-	public List<BGANIMFRAME_DEF> frameList;
+    public Int32 actualFrameCount;
+
+    public List<BGANIMFRAME_DEF> frameList;
 }

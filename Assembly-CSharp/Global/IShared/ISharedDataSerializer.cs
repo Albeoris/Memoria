@@ -53,24 +53,19 @@ public abstract class ISharedDataSerializer : MonoBehaviour
 
 	public static DataSerializerErrorCode ConvertCloudStatusToDataSerializerErrorCode(SiliconStudio.Social.ResponseData.Status input)
 	{
-		DataSerializerErrorCode result;
-		switch (input)
-		{
-		case SiliconStudio.Social.ResponseData.Status.UnknownError:
-			result = DataSerializerErrorCode.CloudDataUnknownError;
-			break;
-		case SiliconStudio.Social.ResponseData.Status.DocumentNotFound:
-			result = DataSerializerErrorCode.CloudFileNotFound;
-			break;
-		case SiliconStudio.Social.ResponseData.Status.DownloadTimeout:
-			result = DataSerializerErrorCode.CloudConnectionTimeout;
-			break;
-		default:
-			result = DataSerializerErrorCode.Success;
-			break;
-		}
-		return result;
-	}
+        switch (input)
+        {
+            case SiliconStudio.Social.ResponseData.Status.UnknownError:
+                return DataSerializerErrorCode.CloudDataUnknownError;
+            case SiliconStudio.Social.ResponseData.Status.DocumentNotFound:
+                return DataSerializerErrorCode.CloudFileNotFound;
+            case SiliconStudio.Social.ResponseData.Status.DownloadTimeout:
+                return DataSerializerErrorCode.CloudConnectionTimeout;
+            case SiliconStudio.Social.ResponseData.Status.ConnectionError:
+                return DataSerializerErrorCode.CloudConnectionError;
+        }
+        return DataSerializerErrorCode.Success;
+    }
 
 	public static DataSerializerErrorCode LastErrno;
 

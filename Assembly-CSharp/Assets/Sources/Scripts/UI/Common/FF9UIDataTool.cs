@@ -424,14 +424,18 @@ namespace Assets.Sources.Scripts.UI.Common
 					break;
 				}
 			}
-			if (!checkFromConfig && FF9StateSystem.PCPlatform && !global::GamePad.GetState(PlayerIndex.One).IsConnected)
-			{
-				if (key == Control.Pause)
-				{
-					spriteName = "keyboard_button_backspace";
-				}
-			}
-			return FF9UIDataTool.GetSpriteSize(spriteName);
+            if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
+            {
+                bool flag = !global::GamePad.GetState(PlayerIndex.One).IsConnected;
+                if (flag)
+                {
+                    if (key == Control.Pause)
+                    {
+                        spriteName = "keyboard_button_backspace";
+                    }
+                }
+            }
+            return FF9UIDataTool.GetSpriteSize(spriteName);
 		}
 
 		private static Vector2 GetSpriteSize(String spriteName)

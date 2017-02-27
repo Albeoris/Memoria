@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteDisplay))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteDisplay))]
 public class SpriteClickable : MonoBehaviour
 {
 	public Boolean Contains(Vector3 worldPoint)

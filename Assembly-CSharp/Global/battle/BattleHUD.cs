@@ -1688,6 +1688,10 @@ public class BattleHUD : UIScene
                 continue;
 
             BTL_DATA cur = FF9StateSystem.Battle.FF9Battle.btl_data[current.PlayerId];
+            if ((Status.checkCurStat(cur, 1024u) || Status.checkCurStat(cur, 2048u)) && current.ATBBlink)
+            {
+                current.ATBBlink = false;
+            }
             if (IsEnableInput(cur) && !_isAutoAttack)
             {
                 if (current.ATBBlink)
@@ -2332,6 +2336,11 @@ public class BattleHUD : UIScene
 
     public override Boolean OnKeyCancel(GameObject go)
     {
+        if (UIManager.Input.GetKey(Control.Special))
+        {
+            return true;
+        }
+
         if (base.OnKeyCancel(go) && !_hidingHud && ButtonGroupState.ActiveGroup != CommandGroupButton)
         {
             if (ButtonGroupState.ActiveGroup == TargetGroupButton)

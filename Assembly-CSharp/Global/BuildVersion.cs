@@ -2,5 +2,5 @@
 
 public static class BuildVersion
 {
-	public const String VERSION = "(6/22/2016 3:25:24 PM)";
+    public const string VERSION = "(12/23/2016 2:44:33 PM)";
 }

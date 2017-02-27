@@ -214,7 +214,8 @@ public class WMScriptDirector : HonoBehavior
 				EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
 				Obj objUID = eventEngine.GetObjUID(250);
 				PosObj posObj = (PosObj)objUID;
-				SoundLib.StopAllSounds();
+                EventInput.IsProcessingInput = false;
+                SoundLib.StopAllSounds();
 				SFX_Rush.SetCenterPosition(1);
 				SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
 			}

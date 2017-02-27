@@ -378,6 +378,39 @@ public class StatusUI : UIScene
         }
         _abilityPanelTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
         _avatarTransition = CharacterDetailPanel.GetChild(0).GetChild(6).GetChild(0).GetComponent<HonoAvatarTweenPosition>();
+
+        this._characterHud.MagicStoneLabel.SetAnchor((Transform)null);
+        this._characterHud.MagicStoneLabel.width = 60;
+        this._characterHud.MagicStoneLabel.height = 52;
+        this._parameterHud.SpeedLabel.SetAnchor((Transform)null);
+        this._parameterHud.StrengthLabel.SetAnchor((Transform)null);
+        this._parameterHud.MagicLabel.SetAnchor((Transform)null);
+        this._parameterHud.SpiritLabel.SetAnchor((Transform)null);
+        this._parameterHud.AttackLabel.SetAnchor((Transform)null);
+        this._parameterHud.DefendLabel.SetAnchor((Transform)null);
+        this._parameterHud.EvadeLabel.SetAnchor((Transform)null);
+        this._parameterHud.MagicDefLabel.SetAnchor((Transform)null);
+        this._parameterHud.MagicEvaLabel.SetAnchor((Transform)null);
+
+        // Update 27.02.2017
+        this._parameterHud.SpeedLabel.width = 90;
+        this._parameterHud.StrengthLabel.width = 90;
+        this._parameterHud.MagicLabel.width = 90;
+        this._parameterHud.SpiritLabel.width = 90;
+        this._parameterHud.AttackLabel.width = 90;
+        this._parameterHud.DefendLabel.width = 90;
+        this._parameterHud.EvadeLabel.width = 90;
+        this._parameterHud.MagicDefLabel.width = 90;
+        this._parameterHud.MagicEvaLabel.width = 90;
+        this._parameterHud.SpeedLabel.height = 40;
+        this._parameterHud.StrengthLabel.height = 40;
+        this._parameterHud.MagicLabel.height = 40;
+        this._parameterHud.SpiritLabel.height = 40;
+        this._parameterHud.AttackLabel.height = 40;
+        this._parameterHud.DefendLabel.height = 40;
+        this._parameterHud.EvadeLabel.height = 40;
+        this._parameterHud.MagicDefLabel.height = 40;
+        this._parameterHud.MagicEvaLabel.height = 40;
     }
 
     public class ParameterDetailHUD

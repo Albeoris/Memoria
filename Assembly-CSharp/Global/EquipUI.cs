@@ -760,15 +760,19 @@ public class EquipUI : UIScene
 		}
 		List<FF9ITEM> list = this.itemIdList[this.currentEquipPart];
 		list.Clear();
-		for (Int32 i = 0; i < 256; i++)
+        int num4 = 0;
+        for (Int32 i = 0; i < 256; i++)
 		{
 			if (FF9StateSystem.Common.FF9.item[i].count > 0)
 			{
 				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)FF9StateSystem.Common.FF9.item[i].id];
 				if (((Int32)ff9ITEM_DATA.equip & num) != 0 && ((Int32)ff9ITEM_DATA.type & num2) != 0)
 				{
-					list.Add(FF9StateSystem.Common.FF9.item[i]);
-				}
+                    this.tempItemList[num4].id = FF9StateSystem.Common.FF9.item[i].id;
+                    this.tempItemList[num4].count = FF9StateSystem.Common.FF9.item[i].count;
+                    list.Add(this.tempItemList[num4]);
+                    num4++;
+                }
 			}
 		}
 		for (Int32 j = 0; j < list.Count - 1; j++)
@@ -1058,7 +1062,12 @@ public class EquipUI : UIScene
 		this.itemIdList.Add(new List<FF9ITEM>());
 		this.itemIdList.Add(new List<FF9ITEM>());
 		this.itemIdList.Add(new List<FF9ITEM>());
-		this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
+        this.tempItemList = new FF9ITEM[45];
+        for (int i = 0; i < (int)this.tempItemList.Length; i++)
+        {
+            this.tempItemList[i] = new FF9ITEM(byte.MaxValue, 0);
+        }
+        this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
 		if (FF9StateSystem.MobilePlatform)
 		{
 			this.EquipSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "EquipDetailHelpForMobile";
@@ -1127,7 +1136,9 @@ public class EquipUI : UIScene
 
 	private List<List<FF9ITEM>> itemIdList = new List<List<FF9ITEM>>();
 
-	private Int32 currentPartyIndex;
+    private FF9ITEM[] tempItemList;
+
+    private Int32 currentPartyIndex;
 
 	private EquipUI.SubMenu currentMenu = EquipUI.SubMenu.None;
 

@@ -513,7 +513,15 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 		base.StartCoroutine(Anim.MoveLerp(t, mov, time, true));
 	}
 
-	private IEnumerator SlideCardBackToTheFormerPosition(Transform origin, Vector3 target, Single duration)
+    public int CardAnimatingCount
+    {
+        get
+        {
+            return this.cardAnimatingCount;
+        }
+    }
+
+    private IEnumerator SlideCardBackToTheFormerPosition(Transform origin, Vector3 target, Single duration)
 	{
 		this.cardAnimatingCount++;
 		yield return base.StartCoroutine(Anim.MoveLerp(origin, target, duration, true));

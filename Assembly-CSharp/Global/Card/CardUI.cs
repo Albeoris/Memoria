@@ -401,8 +401,8 @@ public class CardUI : UIScene
 			this.offset[i] = 0;
 		}
 		this.FF9FCard_GetPoint();
-		this.lv_collector = CardUI.FF9FCAZRD_LV_MAX;
-		for (Int32 j = 1; j < CardUI.FF9FCAZRD_LV_MAX; j++)
+        this.lv_collector = CardUI.FF9FCAZRD_LV_MAX - 1;
+        for (Int32 j = 1; j < CardUI.FF9FCAZRD_LV_MAX; j++)
 		{
 			if (this.point < (Int32)array[j])
 			{
@@ -512,7 +512,11 @@ public class CardUI : UIScene
 		uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		this.cardDetailTransition = this.TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
 		this.deleteDialogTransition = this.TransitionPanel.GetChild(1).GetComponent<HonoTweenClipping>();
-	}
+        UILabel component = this.PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetComponent<UILabel>();
+        component.SetAnchor((Transform)null);
+        component.width = 332;
+        component.height = 40;
+    }
 
 	private static String CardGroupButton = "Card.Card";
 

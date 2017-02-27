@@ -188,8 +188,8 @@ public class BetterList<T>
 		return this.buffer;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public void Sort(BetterList<T>.CompareFunc comparer)
 	{
 		Int32 num = 0;

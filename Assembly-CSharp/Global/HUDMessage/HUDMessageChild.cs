@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+[RequireComponent(typeof(UILabel))]
 [RequireComponent(typeof(TweenPosition))]
 [RequireComponent(typeof(TweenAlpha))]
-[RequireComponent(typeof(UILabel))]
 public class HUDMessageChild : MonoBehaviour
 {
 	public HUDMessage.MessageStyle DisplayStyle

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Collections;
 using Object = System.Object;
 
 public class SoundLibWndProc : MonoBehaviour
@@ -20,29 +21,48 @@ public class SoundLibWndProc : MonoBehaviour
 	[DllImport("user32.dll")]
 	private static extern IntPtr GetActiveWindow();
 
-	public Boolean Is64Bit()
+    [DllImport("user32.dll")]
+    public static extern IntPtr FindWindow(string className, string windowName);
+
+    public Boolean Is64Bit()
 	{
 		String environmentVariable = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
 		return !String.IsNullOrEmpty(environmentVariable) && !(environmentVariable.Substring(0, 3) == "x86");
 	}
 
-	private void Start()
-	{
-		IntPtr windowHandle = SoundLibWndProc.GetWindowHandle();
-		this.hMainWindow = SoundLibWndProc.GetForegroundWindow();
-		this.newWndProc = new WndProcDelegate(this.WndProc);
-		this.newWndProcPtr = Marshal.GetFunctionPointerForDelegate(this.newWndProc);
-		if (this.Is64Bit())
-		{
-			this.oldWndProcPtr = SoundLibWndProc.SetWindowLongPtr(this.hMainWindow, -4, this.newWndProcPtr);
-		}
-		else
-		{
-			this.oldWndProcPtr = SoundLibWndProc.SetWindowLong(this.hMainWindow, -4, this.newWndProcPtr);
-		}
-	}
+    private void Start()
+    {
+        base.StartCoroutine(this.CaptureWindowProc());
+    }
 
-	public static IntPtr GetWindowHandle()
+
+    private IEnumerator CaptureWindowProc()
+    {
+        while (this.hMainWindow == IntPtr.Zero)
+        {
+            this.hMainWindow = SoundLibWndProc.FindWindow((string)null, Application.productName);
+            if (this.hMainWindow != IntPtr.Zero)
+            {
+                this.newWndProc = new WndProcDelegate(this.WndProc);
+                this.newWndProcPtr = Marshal.GetFunctionPointerForDelegate(this.newWndProc);
+                if (this.Is64Bit())
+                {
+                    this.oldWndProcPtr = SoundLibWndProc.SetWindowLongPtr(this.hMainWindow, -4, this.newWndProcPtr);
+                }
+                else
+                {
+                    this.oldWndProcPtr = SoundLibWndProc.SetWindowLong(this.hMainWindow, -4, this.newWndProcPtr);
+                }
+            }
+            else
+            {
+                yield return new WaitForEndOfFrame();
+            }
+        }
+        yield break;
+    }
+
+    public static IntPtr GetWindowHandle()
 	{
 		return SoundLibWndProc.GetActiveWindow();
 	}

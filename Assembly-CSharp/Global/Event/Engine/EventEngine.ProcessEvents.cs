@@ -60,12 +60,18 @@ public partial class EventEngine
                             Single distance = 0.0f;
                             this._moveKey = ff9.w_frameEncountEnable;
                             this.CollisionRequest((PosObj)obj);
-                            PosObj posObj = (PosObj)this.Collision(this, (PosObj)actor, 0, ref distance);
-                            if (posObj != null)
+                            PosObj posObj = (PosObj)this.Collision(this, actor, 0, ref distance);
+                            if (posObj != null && distance <= 0f)
                             {
                                 WMActor wmActor = actor.wmActor;
-                                if (posObj.objParent == null || (Int32)posObj.objParent.sid != (Int32)obj.sid)
+                                WMActor wmActor2 = ((Actor)posObj).wmActor;
+                                Vector2 from = new Vector2(wmActor.pos0 - wmActor.lastx, wmActor.pos2 - wmActor.lastz);
+                                Vector2 to = new Vector2(wmActor2.pos0 - wmActor.pos0, wmActor2.pos2 - wmActor.pos2);
+                                float num2 = Vector2.Angle(from, to);
+                                if (num2 >= 0f && num2 <= 90f)
+                                {
                                     wmActor.transform.position = new Vector3(wmActor.lastx, wmActor.lasty, wmActor.lastz);
+                                }
                             }
                         }
                         if (this._moveKey)

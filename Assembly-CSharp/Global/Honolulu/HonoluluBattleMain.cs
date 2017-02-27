@@ -62,6 +62,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     public static BattleSPSSystem battleSPS;
     private String scaleEdit;
     private String distanceEdit;
+    private Boolean needClampTime;
     private UInt32 counter;
     private Single cumulativeTime;
     public static Int32 Speed;
@@ -112,6 +113,15 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         this.monsterMaterials = new List<Material>();
         FF9StateSystem.Battle.isFade = false;
         this.animationName = new String[8];
+        this.needClampTime = false;
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            string deviceModel = SystemInfo.deviceModel;
+            if (string.Compare("Asus Nexus Player", deviceModel, true) == 0)
+            {
+                this.needClampTime = true;
+            }
+        }
         FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
         FF9StateSystem.Battle.FF9Battle.map.nextMode = instance.prevMode;
         if (instance.prevMode == 1)
@@ -534,6 +544,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void UpdateFrames()
     {
         this.cumulativeTime += Time.deltaTime;
+        if (this.needClampTime)
+            this.cumulativeTime = Mathf.Min(this.cumulativeTime, HonoluluBattleMain.frameTime * (float)SettingsState.FastForwardGameSpeed * 1.2f);
+
         while (this.cumulativeTime >= (Double)frameTime)
         {
             this.cumulativeTime -= frameTime;

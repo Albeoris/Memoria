@@ -13,7 +13,16 @@ public static class AssetManagerUtil
 		return Application.streamingAssetsPath;
 	}
 
-	public static String GetBundleExtension()
+    public static string GetPersistentDataPath()
+    {
+        if (FF9StateSystem.PCEStorePlatform)
+        {
+            return string.Empty;
+        }
+        return Application.persistentDataPath;
+    }
+
+    public static String GetBundleExtension()
 	{
 		return ".bin";
 	}

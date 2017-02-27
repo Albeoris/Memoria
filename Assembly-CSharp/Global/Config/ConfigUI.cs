@@ -37,6 +37,16 @@ using UnityEngine;
 
 public class ConfigUI : UIScene
 {
+    private enum TriggerState
+    {
+
+        Idle,
+
+        Waiting,
+
+        Triggered
+    }
+
     public enum Configurator
     {
         Sound,
@@ -127,6 +137,16 @@ public class ConfigUI : UIScene
         "JoystickButton10",
         "JoystickButton11"
     };
+
+    private ConfigUI.TriggerState leftTrigger;
+
+    private ConfigUI.TriggerState rightTrigger;
+
+    private float leftTriggerTime;
+
+    private float rightTriggerTime;
+
+    private float triggerDelay = 0.1f;
 
     public GameObject ConfigList;
 
@@ -305,7 +325,14 @@ public class ConfigUI : UIScene
     {
         if (FF9StateSystem.MobilePlatform)
         {
-            CustomControllerKeyboardPanel.GetChild(2).GetChild(0).GetComponent<UILocalize>().key = "MobileControlPressStart";
+            if (FF9StateSystem.AndroidPlatform)
+            {
+                this.CustomControllerKeyboardPanel.GetChild(2).GetChild(0).GetComponent<UILocalize>().key = "ControlPressBackspace";
+            }
+            else
+            {
+                this.CustomControllerKeyboardPanel.GetChild(2).GetChild(0).GetComponent<UILocalize>().key = "MobileControlPressStart";
+            }
         }
         customControllerCount = CustomControllerKeyboardPanel.GetChild(0).transform.childCount;
         foreach (Transform trans in CustomControllerKeyboardPanel.GetChild(0).transform)
@@ -324,6 +351,14 @@ public class ConfigUI : UIScene
     private void InitializeCustomControllerJoystick()
     {
         GameObject value = (!FF9StateSystem.MobilePlatform) ? CustomControllerJoystickPanel : CustomControllerMobilePanel;
+        if (FF9StateSystem.MobilePlatform)
+        {
+            value = this.CustomControllerMobilePanel;
+            if (FF9StateSystem.AndroidTVPlatform)
+            {
+                value.GetChild(2).GetChild(0).GetComponent<UILocalize>().key = "AndroidTVControlPressStart";
+            }
+        }
         customControllerCount = value.GetChild(0).transform.childCount;
         foreach (Transform trans in value.GetChild(0).transform)
         {
@@ -453,7 +488,14 @@ public class ConfigUI : UIScene
         }
         else if (Application.platform == RuntimePlatform.Android)
         {
-            CheckAndroidJoystickKeys();
+            if (FF9StateSystem.AndroidTVPlatform)
+            {
+                this.CheckAndroidTVJoystickKeys();
+            }
+            else
+            {
+                this.CheckAndroidJoystickKeys();
+            }
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer)
         {
@@ -524,6 +566,70 @@ public class ConfigUI : UIScene
         {
             flag = true;
             ChangeCustomKey("Empty", currentControllerIndex);
+        }
+        if (flag)
+        {
+            FF9Sfx.FF9SFX_Play(103);
+        }
+    }
+
+    private void CheckAndroidTVJoystickKeys()
+    {
+        bool flag = this.CheckJoystickNormalButton(this.PCJoystickNormalButtons, this.currentControllerIndex);
+        if (UnityXInput.Input.GetAxisRaw("LeftTrigger Android") != 0f)
+        {
+            ConfigUI.TriggerState triggerState = this.leftTrigger;
+            if (triggerState != ConfigUI.TriggerState.Idle)
+            {
+                if (triggerState == ConfigUI.TriggerState.Waiting)
+                {
+                    if (Time.realtimeSinceStartup - this.leftTriggerTime > this.triggerDelay)
+                    {
+                        flag = true;
+                        this.leftTrigger = ConfigUI.TriggerState.Triggered;
+                        this.ChangeCustomKey("LeftTrigger Android", this.currentControllerIndex);
+                    }
+                }
+            }
+            else
+            {
+                this.leftTrigger = ConfigUI.TriggerState.Waiting;
+                this.leftTriggerTime = Time.realtimeSinceStartup;
+            }
+        }
+        if (UnityXInput.Input.GetAxisRaw("LeftTrigger Android") == 0f)
+        {
+            this.leftTrigger = ConfigUI.TriggerState.Idle;
+        }
+        if (UnityXInput.Input.GetAxisRaw("RightTrigger Android") != 0f)
+        {
+            ConfigUI.TriggerState triggerState = this.rightTrigger;
+            if (triggerState != ConfigUI.TriggerState.Idle)
+            {
+                if (triggerState == ConfigUI.TriggerState.Waiting)
+                {
+                    if (Time.realtimeSinceStartup - this.rightTriggerTime > this.triggerDelay)
+                    {
+                        flag = true;
+                        this.rightTrigger = ConfigUI.TriggerState.Triggered;
+                        this.ChangeCustomKey("RightTrigger Android", this.currentControllerIndex);
+                    }
+                }
+            }
+            else
+            {
+                this.rightTrigger = ConfigUI.TriggerState.Waiting;
+                this.rightTriggerTime = Time.realtimeSinceStartup;
+            }
+        }
+        if (UnityXInput.Input.GetAxisRaw("RightTrigger Android") == 0f)
+        {
+            this.rightTrigger = ConfigUI.TriggerState.Idle;
+        }
+        if (PersistenSingleton<HonoInputManager>.Instance.IsRightAnalogDown)
+        {
+            flag = true;
+            this.ChangeCustomKey("Empty", this.currentControllerIndex);
         }
         if (flag)
         {

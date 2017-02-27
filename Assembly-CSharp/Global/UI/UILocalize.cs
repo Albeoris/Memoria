@@ -12,7 +12,17 @@ public class UILocalize : MonoBehaviour
 		lbl.PrintIconAfterProcessedText = true;
 	}
 
-	public String value
+    private string OverwriteText(string rawText)
+    {
+        string result = rawText;
+        if (this.key == "Collector" && Localization.language == "German")
+        {
+            result = rawText.Substring(0, rawText.Length - 1);
+        }
+        return result;
+    }
+
+    public String value
 	{
 		set
 		{
@@ -32,8 +42,10 @@ public class UILocalize : MonoBehaviour
 					{
 						Single num = 0f;
 						this.EnablePrintIcon(uilabel);
-						uilabel.text = uilabel.PhrasePreOpcodeSymbol(value, ref num);
-					}
+                        string text = uilabel.PhrasePreOpcodeSymbol(value, ref num);
+                        text = this.OverwriteText(text);
+                        uilabel.text = text;
+                    }
 				}
 				else if (uisprite != (UnityEngine.Object)null)
 				{

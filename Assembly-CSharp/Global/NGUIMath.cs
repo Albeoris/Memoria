@@ -11,15 +11,15 @@ public static class NGUIMath
 		return from * (1f - factor) + to * factor;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Int32 ClampIndex(Int32 val, Int32 max)
 	{
 		return (Int32)((val >= 0) ? ((Int32)((val >= max) ? (max - 1) : val)) : 0);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Int32 RepeatIndex(Int32 val, Int32 max)
 	{
 		if (max < 1)
@@ -37,8 +37,8 @@ public static class NGUIMath
 		return val;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Single WrapAngle(Single angle)
 	{
 		while (angle > 180f)
@@ -52,15 +52,15 @@ public static class NGUIMath
 		return angle;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Single Wrap01(Single val)
 	{
 		return val - (Single)Mathf.FloorToInt(val);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Int32 HexToDecimal(Char ch)
 	{
 		switch (ch)
@@ -144,31 +144,31 @@ public static class NGUIMath
 		return (Char)(65 + num - 10);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static String DecimalToHex8(Int32 num)
 	{
 		num &= 255;
 		return num.ToString("X2");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static String DecimalToHex24(Int32 num)
 	{
 		num &= 16777215;
 		return num.ToString("X6");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static String DecimalToHex32(Int32 num)
 	{
 		return num.ToString("X8");
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Int32 ColorToInt(Color c)
 	{
 		Int32 num = 0;
@@ -178,8 +178,8 @@ public static class NGUIMath
 		return num | Mathf.RoundToInt(c.a * 255f);
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Color IntToColor(Int32 val)
 	{
 		Single num = 0.003921569f;
@@ -191,8 +191,8 @@ public static class NGUIMath
 		return black;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static String IntToBinary(Int32 val, Int32 bits)
 	{
 		String text = String.Empty;
@@ -208,8 +208,8 @@ public static class NGUIMath
 		return text;
 	}
 
-	[DebuggerStepThrough]
 	[DebuggerHidden]
+    [DebuggerStepThrough]
 	public static Color HexToColor(UInt32 val)
 	{
 		return NGUIMath.IntToColor((Int32)val);

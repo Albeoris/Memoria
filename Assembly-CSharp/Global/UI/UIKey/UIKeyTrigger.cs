@@ -89,8 +89,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     public Boolean GetKeyTrigger(Control key)
     {
-        if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.QuadMistBattle) && PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.EndGame ||
-            (key == Control.Cancel && PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD && ff9.m_GetIDEvent(ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index].id) != 0 && (key == Control.LeftBumper || key == Control.RightBumper)))
+        if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.QuadMistBattle && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Title && PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.EndGame)
             return false;
         if (UnityXInput.Input.GetMouseButtonDown(0) || UnityXInput.Input.GetMouseButtonDown(1) || UnityXInput.Input.GetMouseButtonDown(2))
         {
@@ -162,7 +161,7 @@ public class UIKeyTrigger : MonoBehaviour
     {
         if (!Configuration.Cheats.Enabled)
             return;
-        if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.PreEnding || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Ending || !MBG.IsNull && !MBG.Instance.IsFinished()))
+        if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Title || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.PreEnding || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Ending || !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster()))
             return;
         if (UnityXInput.Input.GetKeyDown(KeyCode.F1) || triggerType == BoosterType.HighSpeedMode)
         {
@@ -217,7 +216,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
-            if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause)
+            if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.FieldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause)
                 return;
             Boolean flag = !FF9StateSystem.Settings.IsBoosterButtonActive[4];
             FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.NoRandomEncounter, flag);
@@ -290,6 +289,9 @@ public class UIKeyTrigger : MonoBehaviour
     public void OnQuitCommandDetected(UIScene scene)
     {
         if (PersistenSingleton<UIManager>.Instance.IsLoading || PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
+            return;
+
+        if (PersistenSingleton<UIManager>.Instance.TitleScene != null && PersistenSingleton<UIManager>.Instance.TitleScene.IsSplashTextActive && FF9StateSystem.PCPlatform)
             return;
 
         PersistenSingleton<UIManager>.Instance.QuitScene.SetPreviousActiveGroup();
@@ -417,6 +419,14 @@ public class UIKeyTrigger : MonoBehaviour
             activeButton = UICamera.selectedObject;
         if (sceneFromState != null && (!PersistenSingleton<UIManager>.Instance.Dialogs.Activate || PersistenSingleton<UIManager>.Instance.IsPause))
         {
+            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(8))
+            {
+                if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
+                {
+                    sceneFromState.OnKeyPause(activeButton);
+                }
+                return true;
+            }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(1) || keyCommand == Control.Cancel)
             {
                 keyCommand = Control.None;
@@ -604,6 +614,9 @@ public class UIKeyTrigger : MonoBehaviour
 
     public void OnKeyNavigate(GameObject go, KeyCode key)
     {
+        if (PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource() != SourceControl.Touch)
+            return;
+
         switch (key)
         {
             case KeyCode.UpArrow:

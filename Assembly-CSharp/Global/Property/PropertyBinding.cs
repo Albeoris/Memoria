@@ -2,8 +2,8 @@
 using UnityEngine;
 using Object = System.Object;
 
-[AddComponentMenu("NGUI/Internal/Property Binding")]
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Internal/Property Binding")]
 public class PropertyBinding : MonoBehaviour
 {
 	private void Start()

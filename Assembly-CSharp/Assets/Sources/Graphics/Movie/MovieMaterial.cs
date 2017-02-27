@@ -161,26 +161,51 @@ namespace Assets.Sources.Graphics.Movie
 				this.m_hasFinished = MovieMaterial.HasFinished(this.m_nativeContext);
 				if (!this.m_hasFinished)
 				{
-					if (this.advance)
-					{
-						Double elapsedTime = this.m_elapsedTime;
-						this.m_elapsedTime += (Double)(Mathf.Min(Time.deltaTime, 0.067f) * Mathf.Max(this.playSpeed, 0f));
-						if (this.shouldSync)
-						{
-							SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
-							this.shouldSync = false;
-						}
-						if (this.playSpeed > 1f)
-						{
-							this.syncElapsed += Time.deltaTime;
-							if (this.syncElapsed >= 4f)
-							{
-								SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
-								this.syncElapsed = 0f;
-							}
-						}
-					}
-				}
+                    if (this.advance)
+                    {
+                        double elapsedTime = this.m_elapsedTime;
+                        float num = Mathf.Max(this.playSpeed, 0f);
+                        bool flag = false;
+                        flag |= this.isFMV;
+                        if (flag)
+                        {
+                            if (this.preciseTimeCycleCounter == 0)
+                            {
+                                this.m_elapsedTime += 0.066 * (double)this.playSpeed;
+                            }
+                            else
+                            {
+                                this.m_elapsedTime += 0.067 * (double)this.playSpeed;
+                            }
+                            if (this.preciseTimeCycleCounter == 2)
+                            {
+                                this.preciseTimeCycleCounter = 0;
+                            }
+                            else
+                            {
+                                this.preciseTimeCycleCounter++;
+                            }
+                        }
+                        else
+                        {
+                            this.m_elapsedTime += (double)(Mathf.Min(Time.deltaTime, 0.067f) * num);
+                        }
+                        if (this.shouldSync)
+                        {
+                            SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
+                            this.shouldSync = false;
+                        }
+                        if (this.playSpeed > 1f)
+                        {
+                            this.syncElapsed += Time.deltaTime;
+                            if (this.syncElapsed >= 4f)
+                            {
+                                SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
+                                this.syncElapsed = 0f;
+                            }
+                        }
+                    }
+                }
 				else
 				{
 					if (this.loopCount - 1 <= 0 && this.loopCount != -1)
@@ -202,22 +227,26 @@ namespace Assets.Sources.Graphics.Movie
 					this.m_hasFinished = false;
 				}
 				MovieMaterial.SetTargetDisplayDecodeTime(this.m_nativeContext, this.m_elapsedTime);
-				if (!this.getFirstFrame)
-				{
-					Double uploadedFrameTime = MovieMaterial.GetUploadedFrameTime(this.m_nativeContext);
-					Double num = 0.066666666666666666;
-					if (uploadedFrameTime > num)
-					{
-						this.m_elapsedTime = 0.0;
-						this.getFirstFrame = true;
-						if (this.Material != (UnityEngine.Object)null)
-						{
-							this.Material.SetColor("_TintColor", this.tintColor);
-						}
-						SoundLib.PlayMovieMusic(this.movieKey, 0);
-					}
-				}
-			}
+                if (!this.getFirstFrame)
+                {
+                    double uploadedFrameTime = MovieMaterial.GetUploadedFrameTime(this.m_nativeContext);
+                    double num2 = 0.066666666666666666;
+                    if (uploadedFrameTime > num2)
+                    {
+                        this.m_elapsedTime = 0.0;
+                        this.preciseTimeCycleCounter = 0;
+                        this.getFirstFrame = true;
+                        if (this.Material != null)
+                        {
+                            this.Material.SetColor("_TintColor", this.tintColor);
+                        }
+                        if (this.advance)
+                        {
+                            SoundLib.PlayMovieMusic(this.movieKey, 0);
+                        }
+                    }
+                }
+            }
 		}
 
 		private void Open()
@@ -253,7 +282,8 @@ namespace Assets.Sources.Graphics.Movie
 			default:
 				goto IL_2A;
 			}
-			if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, text, (Int32)num, (Int32)num2, false, this.scanDuration, 16))
+            this.isFMV = this.MovieFile.StartsWith("FMV");
+            if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, text, (Int32)num, (Int32)num2, false, this.scanDuration, 16))
 			{
 				this.Width = MovieMaterial.GetPicWidth(this.m_nativeContext);
 				this.Height = MovieMaterial.GetPicHeight(this.m_nativeContext);
@@ -408,7 +438,11 @@ namespace Assets.Sources.Graphics.Movie
 		{
 			get
 			{
-				return Mathf.FloorToInt((Single)(this.currentFPS * this.m_elapsedTime));
+                if (this.isFMV)
+                {
+                    return Mathf.RoundToInt((float)(this.currentFPS * this.m_elapsedTime));
+                }
+                return Mathf.FloorToInt((Single)(this.currentFPS * this.m_elapsedTime));
 			}
 		}
 
@@ -480,7 +514,8 @@ namespace Assets.Sources.Graphics.Movie
 				this.Stop();
 			}
 			this.getFirstFrame = false;
-			this.movieKey = movieKey;
+            this.preciseTimeCycleCounter = 0;
+            this.movieKey = movieKey;
 			try
 			{
 				this.m_elapsedTime = 0.0;
@@ -616,7 +651,11 @@ namespace Assets.Sources.Graphics.Movie
 
 		private Double currentDuration;
 
-		public static readonly Vector3 ScaleVector = Vector3.one;
+        private int preciseTimeCycleCounter;
+
+        private bool isFMV;
+
+        public static readonly Vector3 ScaleVector = Vector3.one;
 
 		private Color tintColor = new Color(1f, 1f, 1f, 1f);
 

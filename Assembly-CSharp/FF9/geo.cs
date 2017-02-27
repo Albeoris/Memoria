@@ -107,7 +107,10 @@ namespace FF9
 				if (component != (UnityEngine.Object)null && component2 != (UnityEngine.Object)null && childByName != (UnityEngine.Object)null)
 				{
 					component.GeoAttach(component2, childByName);
-				}
+                    PosObj actor = component.actor;
+                    actor.attatchTargetUid = (int)component2.actor.uid;
+                    actor.attachTargetBoneIndex = bone_index;
+                }
 			}
 			else if (PersistenSingleton<EventEngine>.Instance.gMode == 3)
 			{

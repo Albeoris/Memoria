@@ -168,106 +168,104 @@ namespace SiliconStudio
 			return Social.IsSteamCloudEnabled();
 		}
 
-		public static IEnumerator Cloud_Save(MonoBehaviour owner, Byte[] data, TimeSpan playTime, Action<Boolean, Social.ResponseData.Status> callback)
-		{
-			Boolean isSuccess = false;
-			Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
-			Object result = null;
-			if (Application.platform == RuntimePlatform.IPhonePlayer)
-			{
-				Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.iCloud_Save(data));
-				yield return cd.coroutine;
-				result = cd.result;
-			}
-			else if (Application.platform != RuntimePlatform.Android)
-			{
-				if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-				{
-					Social.CoroutineWithData cd2 = new Social.CoroutineWithData(owner, Social.Steam_Save(data));
-					yield return cd2.coroutine;
-					result = cd2.result;
-				}
-			}
-			if (result != null)
-			{
-				Social.ResponseData resultData = (Social.ResponseData)result;
-				if (resultData.m_data != null)
-				{
-					isSuccess = (Boolean)resultData.m_data;
-				}
-				status = resultData.m_status;
-			}
-			callback(isSuccess, status);
-			yield break;
-		}
+        public static IEnumerator Cloud_Save(MonoBehaviour owner, byte[] data, TimeSpan playTime, Action<bool, Social.ResponseData.Status> callback)
+        {
+            bool isSuccess = false;
+            Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
+            object result = null;
+            if (Application.platform != RuntimePlatform.IPhonePlayer)
+            {
+                if (Application.platform != RuntimePlatform.Android)
+                {
+                    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+                    {
+                        Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_Save(data));
+                        yield return cd.coroutine;
+                        result = cd.result;
+                    }
+                }
+            }
+            if (result != null)
+            {
+                Social.ResponseData resultData = (Social.ResponseData)result;
+                if (resultData.m_data != null)
+                {
+                    isSuccess = (bool)resultData.m_data;
+                }
+                status = resultData.m_status;
+            }
+            callback(isSuccess, status);
+            yield break;
+        }
 
-		public static IEnumerator Cloud_Load(MonoBehaviour owner, Action<Byte[], Social.ResponseData.Status> callback)
-		{
-			Object result = null;
-			Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
-			Byte[] readBytes = null;
-			if (Application.platform == RuntimePlatform.IPhonePlayer)
-			{
-				Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.iCloud_Load());
-				yield return cd.coroutine;
-				result = cd.result;
-			}
-			else if (Application.platform != RuntimePlatform.Android)
-			{
-				if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-				{
-					Social.CoroutineWithData cd2 = new Social.CoroutineWithData(owner, Social.Steam_Load());
-					yield return cd2.coroutine;
-					result = cd2.result;
-				}
-			}
-			if (result != null)
-			{
-				Social.ResponseData resultData = (Social.ResponseData)result;
-				if (resultData.m_data != null)
-				{
-					readBytes = (Byte[])resultData.m_data;
-				}
-				status = resultData.m_status;
-			}
-			callback(readBytes, status);
-			yield break;
-		}
+        public static IEnumerator Cloud_Load(MonoBehaviour owner, Action<byte[], Social.ResponseData.Status> callback)
+        {
+            global::Debug.Log("in Cloud_Load 1");
+            global::Debug.Log("in Cloud_Load 2");
+            object result = null;
+            Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
+            byte[] readBytes = null;
+            if (Application.platform != RuntimePlatform.IPhonePlayer)
+            {
+                if (Application.platform != RuntimePlatform.Android)
+                {
+                    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+                    {
+                        Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_Load());
+                        yield return cd.coroutine;
+                        result = cd.result;
+                    }
+                }
+            }
+            global::Debug.Log("in Cloud_Load 5");
+            if (result != null)
+            {
+                Social.ResponseData resultData = (Social.ResponseData)result;
+                if (resultData.m_data != null)
+                {
+                    readBytes = (byte[])resultData.m_data;
+                }
+                status = resultData.m_status;
+            }
+            global::Debug.Log("in Cloud_Load 6");
+            callback(readBytes, status);
+            yield break;
+        }
 
-		public static IEnumerator Cloud_IsFileExist(MonoBehaviour owner, Action<Boolean, Social.ResponseData.Status> callback)
-		{
-			Boolean isSuccess = false;
-			Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
-			Object result = null;
-			if (Application.platform == RuntimePlatform.IPhonePlayer)
-			{
-				Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.iCloud_FileExist());
-				yield return cd.coroutine;
-				result = cd.result;
-			}
-			else if (Application.platform != RuntimePlatform.Android)
-			{
-				if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-				{
-					Social.CoroutineWithData cd2 = new Social.CoroutineWithData(owner, Social.Steam_FileExist());
-					yield return cd2.coroutine;
-					result = cd2.result;
-				}
-			}
-			if (result != null)
-			{
-				Social.ResponseData resultData = (Social.ResponseData)result;
-				if (resultData.m_data != null)
-				{
-					isSuccess = (Boolean)resultData.m_data;
-				}
-				status = resultData.m_status;
-			}
-			callback(isSuccess, status);
-			yield break;
-		}
+        public static IEnumerator Cloud_IsFileExist(MonoBehaviour owner, Action<bool, Social.ResponseData.Status> callback)
+        {
+            global::Debug.Log("IN CLOUD_ISFILEEXIST1");
+            bool isSuccess = false;
+            Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
+            object result = null;
+            if (Application.platform != RuntimePlatform.IPhonePlayer)
+            {
+                if (Application.platform != RuntimePlatform.Android)
+                {
+                    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+                    {
+                        Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_FileExist());
+                        yield return cd.coroutine;
+                        result = cd.result;
+                    }
+                }
+            }
+            global::Debug.Log("IN CLOUD_ISFILEEXIST3");
+            if (result != null)
+            {
+                Social.ResponseData resultData = (Social.ResponseData)result;
+                if (resultData.m_data != null)
+                {
+                    isSuccess = (bool)resultData.m_data;
+                }
+                status = resultData.m_status;
+            }
+            global::Debug.Log("IN CLOUD_ISFILEEXIST4");
+            callback(isSuccess, status);
+            yield break;
+        }
 
-		private static void ClearTempData()
+        private static void ClearTempData()
 		{
 			Array.Clear(Social._saveData, 0, (Int32)Social._saveData.Length);
 			Array.Clear(Social._loadData, 0, (Int32)Social._loadData.Length);
@@ -286,115 +284,84 @@ namespace SiliconStudio
             return "FF9_CloudSaveFile_ww.sav";
 	    }
 
-	    private static IEnumerator iCloud_Save(Byte[] data)
-		{
-			JCloudDocumentOperation operation = JCloudDocument.DirectoryExists("FF9_SaveDocument");
-			while (!operation.finished)
-			{
-				yield return null;
-			}
-			if (operation.error != null)
-			{
-				Social.HandleDocumentError(operation.error.Value);
-				yield return new Social.ResponseData(false, operation.error.Value);
-				yield break;
-			}
-			if (!(Boolean)operation.result)
-			{
-				operation = JCloudDocument.DirectoryCreate("FF9_SaveDocument");
-				while (!operation.finished)
-				{
-					yield return null;
-				}
-				if (operation.error != null)
-				{
-					Social.HandleDocumentError(operation.error.Value);
-					yield return new Social.ResponseData(false, operation.error.Value);
-					yield break;
-				}
-			}
-		    operation = JCloudDocument.FileWriteAllBytes("FF9_SaveDocument/" + GetCloudSaveFileName(), data);
-			while (!operation.finished)
-			{
-				yield return null;
-			}
-			if (operation.error != null)
-			{
-				Social.HandleDocumentError(operation.error.Value);
-				yield return new Social.ResponseData(false, operation.error.Value);
-				yield break;
-			}
-			yield return new Social.ResponseData(true, null);
-			yield break;
-		}
+	 //   private static IEnumerator iCloud_Save(Byte[] data)
+		//{
+		//	JCloudDocumentOperation operation = JCloudDocument.DirectoryExists("FF9_SaveDocument");
+		//	while (!operation.finished)
+		//	{
+		//		yield return null;
+		//	}
+		//	if (operation.error != null)
+		//	{
+		//		Social.HandleDocumentError(operation.error.Value);
+		//		yield return new Social.ResponseData(false, operation.error.Value);
+		//		yield break;
+		//	}
+		//	if (!(Boolean)operation.result)
+		//	{
+		//		operation = JCloudDocument.DirectoryCreate("FF9_SaveDocument");
+		//		while (!operation.finished)
+		//		{
+		//			yield return null;
+		//		}
+		//		if (operation.error != null)
+		//		{
+		//			Social.HandleDocumentError(operation.error.Value);
+		//			yield return new Social.ResponseData(false, operation.error.Value);
+		//			yield break;
+		//		}
+		//	}
+		//    operation = JCloudDocument.FileWriteAllBytes("FF9_SaveDocument/" + GetCloudSaveFileName(), data);
+		//	while (!operation.finished)
+		//	{
+		//		yield return null;
+		//	}
+		//	if (operation.error != null)
+		//	{
+		//		Social.HandleDocumentError(operation.error.Value);
+		//		yield return new Social.ResponseData(false, operation.error.Value);
+		//		yield break;
+		//	}
+		//	yield return new Social.ResponseData(true, null);
+		//	yield break;
+		//}
 
-		private static IEnumerator iCloud_Load()
-		{
-			JCloudDocumentOperation operation = JCloudDocument.FileReadAllBytes("FF9_SaveDocument/" + GetCloudSaveFileName());
-			while (!operation.finished)
-			{
-				yield return null;
-			}
-			if (operation.error != null)
-			{
-				Social.HandleDocumentError(operation.error.Value);
-				yield return new Social.ResponseData(null, operation.error.Value);
-				yield break;
-			}
-			Social._icloudError = (String)null;
-			Byte[] gameBytes = operation.result as Byte[];
-			yield return new Social.ResponseData(gameBytes, null);
-			yield break;
-		}
+		//private static IEnumerator iCloud_Load()
+		//{
+		//	JCloudDocumentOperation operation = JCloudDocument.FileReadAllBytes("FF9_SaveDocument/" + GetCloudSaveFileName());
+		//	while (!operation.finished)
+		//	{
+		//		yield return null;
+		//	}
+		//	if (operation.error != null)
+		//	{
+		//		Social.HandleDocumentError(operation.error.Value);
+		//		yield return new Social.ResponseData(null, operation.error.Value);
+		//		yield break;
+		//	}
+		//	Social._icloudError = (String)null;
+		//	Byte[] gameBytes = operation.result as Byte[];
+		//	yield return new Social.ResponseData(gameBytes, null);
+		//	yield break;
+		//}
 
-		private static IEnumerator iCloud_FileExist()
-		{
-			JCloudDocumentOperation operation = JCloudDocument.FileExists("FF9_SaveDocument/" + GetCloudSaveFileName());
-			while (!operation.finished)
-			{
-				yield return null;
-			}
-			if (operation.error != null)
-			{
-				Social.HandleDocumentError(operation.error.Value);
-				yield return new Social.ResponseData(null, operation.error.Value);
-				yield break;
-			}
-			Social._icloudError = (String)null;
-			yield return new Social.ResponseData(operation.result, null);
-			yield break;
-		}
-
-		private static void HandleDocumentError(JCloudDocumentError documentError)
-		{
-			switch (documentError)
-			{
-			case JCloudDocumentError.PluginError:
-				Social._icloudError = "PluginError!";
-				break;
-			case JCloudDocumentError.InvalidArguments:
-				Social._icloudError = "An error ocurred while loading game data. Please retry. Error: " + documentError;
-				break;
-			case JCloudDocumentError.DocumentNotFound:
-				Social._icloudError = "There is no saved game present on this device. Start a new game.";
-				break;
-			case JCloudDocumentError.NativeError:
-				Social._icloudError = "NativeError!";
-				break;
-			case JCloudDocumentError.InvalidVersionIdentifier:
-				Social._icloudError = "InvalidVersionIdentifier!";
-				break;
-			case JCloudDocumentError.InvalidVersionsHash:
-				Social._icloudError = "An error occured while handling conflict versions of your save game data. Please retry.";
-				break;
-			case JCloudDocumentError.DownloadTimeout:
-				Social._icloudError = "Could not download the save game data. Please retry.";
-				break;
-			case JCloudDocumentError.InvalidPlatform:
-				Social._icloudError = "No file access allowed on this platform.";
-				break;
-			}
-		}
+		//private static IEnumerator iCloud_FileExist()
+		//{
+		//	JCloudDocumentOperation operation = JCloudDocument.FileExists("FF9_SaveDocument/" + GetCloudSaveFileName());
+		//	while (!operation.finished)
+		//	{
+		//		yield return null;
+		//	}
+		//	if (operation.error != null)
+		//	{
+		//		Social.HandleDocumentError(operation.error.Value);
+		//		yield return new Social.ResponseData(null, operation.error.Value);
+		//		yield break;
+		//	}
+		//	Social._icloudError = (String)null;
+		//	yield return new Social.ResponseData(operation.result, null);
+		//	yield break;
+		//}
 
 		private static IEnumerator Steam_Save(Byte[] data)
 		{
@@ -461,8 +428,6 @@ namespace SiliconStudio
 
 		private const Boolean AllowDelete = true;
 
-		private const String DocumentName_iCloud = "FF9_SaveDocument";
-
 		private const String SteamCloudRootDir = "Square Enix\\FINAL FANTASY IX";
 
 		private static Boolean m_isAuthenticated;
@@ -485,8 +450,6 @@ namespace SiliconStudio
 
 		private static Social.SavedGamesCloudStatus _checkFileStatus;
 
-		private static String _icloudError;
-
 		private enum SavedGamesCloudStatus
 		{
 			None,
@@ -501,7 +464,8 @@ namespace SiliconStudio
 		{
 			public CoroutineWithData(MonoBehaviour owner, IEnumerator target)
 			{
-				this.target = target;
+                global::Debug.Log("IN COUROUTINEWITHDATA1");
+                this.target = target;
 				this.coroutine = owner.StartCoroutine(this.Run());
 			}
 
@@ -545,30 +509,8 @@ namespace SiliconStudio
 				}
 				else if (Application.platform != RuntimePlatform.Android)
 				{
-					if (Application.platform == RuntimePlatform.IPhonePlayer)
-					{
-						JCloudDocumentError jcloudDocumentError = (JCloudDocumentError)((Int32)status);
-						JCloudDocumentError jcloudDocumentError2 = jcloudDocumentError;
-						if (jcloudDocumentError2 != JCloudDocumentError.DocumentNotFound)
-						{
-							if (jcloudDocumentError2 != JCloudDocumentError.DownloadTimeout)
-							{
-								this.m_status = Social.ResponseData.Status.UnknownError;
-							}
-							else
-							{
-								this.m_status = Social.ResponseData.Status.DownloadTimeout;
-							}
-						}
-						else
-						{
-							this.m_status = Social.ResponseData.Status.DocumentNotFound;
-						}
-					}
-					else
-					{
-						this.m_status = Social.ResponseData.Status.UnknownError;
-					}
+				    if (Application.platform != RuntimePlatform.IPhonePlayer)
+				        this.m_status = Social.ResponseData.Status.UnknownError;
 				}
 			}
 
@@ -582,8 +524,9 @@ namespace SiliconStudio
 				UnknownError,
 				DocumentNotFound,
 				DownloadTimeout,
-				AutenticationError
-			}
+				AutenticationError,
+                ConnectionError
+            }
 		}
 
 		public unsafe delegate Int32 SendAchievementToCSCallback(void* p);

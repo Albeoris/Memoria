@@ -10,5 +10,6 @@ public enum DataSerializerErrorCode
 	CloudDataCorruption,
 	CloudConnectionTimeout,
 	CloudFileNotFound,
-	CloudDataUnknownError
+	CloudDataUnknownError,
+    CloudConnectionError
 }

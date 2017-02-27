@@ -396,9 +396,10 @@ public class AbilityUI : UIScene
                         this.ShowPointerWhenLoading = true;
                         this.Loading = true;
                         Boolean isKnockOut = player.cur.hp == 0;
-                        // ISSUE: method pointer
+                        
                         this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, () =>
                         {
+                            this.DisplayHelp();
                             this.DisplayCharacter(true);
                             this.Loading = false;
                             this.ShowPointerWhenLoading = false;
@@ -438,6 +439,7 @@ public class AbilityUI : UIScene
                         Boolean isKnockOut = player.cur.hp == 0;
                         this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.RightToLeft, isKnockOut, () =>
                         {
+                            this.DisplayHelp();
                             this.DisplayCharacter(true);
                             this.Loading = false;
                             this.ShowPointerWhenLoading = false;
@@ -530,19 +532,59 @@ public class AbilityUI : UIScene
 
     private void DisplayHelp()
     {
-        PLAYER play = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-        ButtonGroupState component1 = this.UseSubMenu.GetComponent<ButtonGroupState>();
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+        ButtonGroupState component = this.UseSubMenu.GetComponent<ButtonGroupState>();
         ButtonGroupState component2 = this.EquipSubMenu.GetComponent<ButtonGroupState>();
-        String str1 = Localization.Get("UseAbilityHelp");
-        String str2 = (Int32)FF9StateSystem.EventState.gEventGlobal[227] == 0 ? (!FF9StateSystem.MobilePlatform ? str1 + (this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatus") : Localization.Get("UseAbilityHelpForever")) : str1 + (this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatusMobile") : Localization.Get("UseAbilityHelpForeverMobile"))) : (!FF9StateSystem.MobilePlatform ? str1 + Localization.Get("UseAbilityNoMagic") : str1 + Localization.Get("UseAbilityNoMagicMobile"));
-        component1.Help.Text = str2;
-        String str3 = Localization.Get("EquipAbilityHelp");
-
-        if (!ff9abil.FF9Abil_HasAp(play))
-            str3 = !FF9StateSystem.MobilePlatform ? str3 + (((Int32)play.category & 16) != 0 ? Localization.Get("EquipAbilityHelpNow") : Localization.Get("EquipAbilityForever")) : str3 + (((Int32)play.category & 16) != 0 ? Localization.Get("EquipAbilityHelpNowMobile") : Localization.Get("EquipAbilityForeverMobile"));
-
-        component2.Help.Text = str3;
-        this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
+        string text = Localization.Get("UseAbilityHelp");
+        if (FF9StateSystem.EventState.gEventGlobal[227] != 0)
+        {
+            if (FF9StateSystem.MobilePlatform)
+            {
+                text += Localization.Get("UseAbilityNoMagicMobile");
+            }
+            else
+            {
+                text += Localization.Get("UseAbilityNoMagic");
+            }
+        }
+        else if (FF9StateSystem.MobilePlatform)
+        {
+            text += ((this.aaIdList.Count != 0) ? Localization.Get("UseAbilityHelpStatusMobile") : Localization.Get("UseAbilityHelpForeverMobile"));
+        }
+        else
+        {
+            text += ((this.aaIdList.Count != 0) ? Localization.Get("UseAbilityHelpStatus") : Localization.Get("UseAbilityHelpForever"));
+        }
+        component.Help.Text = text;
+        text = Localization.Get("EquipAbilityHelp");
+        if (!ff9abil.FF9Abil_HasAp(player))
+        {
+            if (FF9StateSystem.MobilePlatform)
+            {
+                text += (((player.category & 16) != 0) ? Localization.Get("EquipAbilityHelpNowMobile") : Localization.Get("EquipAbilityForeverMobile"));
+            }
+            else
+            {
+                text += (((player.category & 16) != 0) ? Localization.Get("EquipAbilityHelpNow") : Localization.Get("EquipAbilityForever"));
+            }
+        }
+        else if (FF9StateSystem.MobilePlatform)
+        {
+            text += Localization.Get("EquipAbilityPlayerMobile");
+        }
+        else
+        {
+            text += Localization.Get("EquipAbilityPlayer");
+        }
+        component2.Help.Text = text;
+        if (FF9StateSystem.PCPlatform)
+        {
+            this.HelpDespLabelGameObject.SetActive(true);
+        }
+        else
+        {
+            this.HelpDespLabelGameObject.SetActive(false);
+        }
     }
 
     private void DisplaySubMenuArrow(Boolean isEnable)

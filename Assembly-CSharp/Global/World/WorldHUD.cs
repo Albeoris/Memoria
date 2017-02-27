@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
+using Assets.Scripts.Common;
 using UnityEngine;
 using Object = System.Object;
 
@@ -240,7 +241,11 @@ public class WorldHUD : UIScene
 			{
 				return false;
 			}
-			if (this.isSelectEnable)
+            if (!PersistenSingleton<SceneDirector>.Instance.PendingNextScene.Equals(string.Empty) || !PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene.Equals(string.Empty))
+            {
+                return false;
+            }
+            if (this.isSelectEnable)
 			{
 				if (this.currentState == WorldHUD.State.HUD && this.enableMapButton)
 				{
@@ -903,7 +908,16 @@ public class WorldHUD : UIScene
 		}
 	}
 
-	public void SetContinentTitleSprite(SByte titleId)
+    public void ClearFullMapLocations()
+    {
+        if (this.mapLocationPointerPanel != (UnityEngine.Object)null)
+        {
+            this.mapLocationPointerPanel.transform.DestroyChildren();
+        }
+        this.locationPointerList.Clear();
+    }
+
+    public void SetContinentTitleSprite(SByte titleId)
 	{
 		this.continentTitleText.sprite2D = FF9UIDataTool.LoadWorldTitle(titleId, false);
 		this.continentTitleShadow.sprite2D = FF9UIDataTool.LoadWorldTitle(titleId, true);

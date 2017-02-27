@@ -10,7 +10,9 @@ public class BGOVERLAY_DEF
 		this.startOffset = 0L;
 		this.spriteList = new List<BGSPRITE_LOC_DEF>();
 		this.isSpecialParallax = false;
-	}
+        this.canCombine = true;
+        this.isCreated = false;
+    }
 
 	public void SetFlags(Byte flags, Boolean isSet)
 	{
@@ -131,7 +133,11 @@ public class BGOVERLAY_DEF
 
 	public Transform transform;
 
-	public Boolean isSpecialParallax;
+    public bool canCombine;
+
+    public bool isCreated;
+
+    public Boolean isSpecialParallax;
 
 	public Single parallaxCurX;
 

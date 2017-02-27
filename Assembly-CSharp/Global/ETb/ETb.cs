@@ -133,12 +133,41 @@ public class ETb
 			}
 		}
 		EventHUD.CheckSpecialHUDFromMesId(mes, true);
-		Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, new Dialog.DialogIntDelegate(this.OnDialogFinish), captionType);
-		if (FF9StateSystem.Common.FF9.fldMapNo == 1657 && (mes == 166 || mes == 183))
-		{
-			dialog.FocusToActor = false;
-		}
-		if (dialog == (UnityEngine.Object)null)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (mes == 147 || mes == 148))
+        {
+            NGUIText.ForceShowButton = true;
+        }
+        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, new Dialog.DialogIntDelegate(this.OnDialogFinish), captionType);
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
+        {
+            switch (FF9StateSystem.Settings.CurrentLanguage)
+            {
+                case "English(US)":
+                case "English(UK)":
+                case "Spanish":
+                case "German":
+                case "Italian":
+                    if (mes == 183 || mes == 166)
+                    {
+                        dialog.FocusToActor = false;
+                    }
+                    break;
+                case "Japanese":
+                    if (mes == 187 || mes == 170)
+                    {
+                        dialog.FocusToActor = false;
+                    }
+                    break;
+                case "French":
+                    if (mes == 185 || mes == 168)
+                    {
+                        dialog.FocusToActor = false;
+                    }
+                    break;
+            }
+        }
+
+        if (dialog == (UnityEngine.Object)null)
 		{
 			return;
 		}
@@ -409,24 +438,28 @@ public class ETb
 		}
 	}
 
-	public static void ProcessWorldDialog(Dialog dialog)
-	{
-		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-		if (instance == (UnityEngine.Object)null)
-		{
-			return;
-		}
-		if (instance.gMode == 3)
-		{
-			if (dialog.TextId == 40 || dialog.TextId == 41)
-			{
-				EIcon.HideDialogBubble();
-			}
-			ETb.CheckVehicleTutorial(dialog);
-		}
-	}
+    public static void ProcessDialog(Dialog dialog)
+    {
+        EventEngine instance = PersistenSingleton<EventEngine>.Instance;
+        if (instance == (UnityEngine.Object)null)
+        {
+            return;
+        }
+        if (instance.gMode == 3)
+        {
+            if (dialog.TextId == 40 || dialog.TextId == 41)
+            {
+                EIcon.HideDialogBubble();
+            }
+            ETb.CheckVehicleTutorial(dialog);
+        }
+        else if (instance.gMode == 1 && FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (dialog.TextId == 147 || dialog.TextId == 148))
+        {
+            NGUIText.ForceShowButton = false;
+        }
+    }
 
-	public static void ProcessATEDialog(Dialog dialog)
+    public static void ProcessATEDialog(Dialog dialog)
 	{
 		if (dialog.CapType == Dialog.CaptionType.ActiveTimeEvent)
 		{

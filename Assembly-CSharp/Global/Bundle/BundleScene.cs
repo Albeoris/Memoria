@@ -356,9 +356,9 @@ public class BundleScene : MonoBehaviour
 
 	public const String SskkServerPath = "http://203.172.121.116:8080/";
 
-	public static String BundleVersion = "ver49_160412_1222";
+    public static string BundleVersion = "ver50_160720_1124";
 
-	private static Int32 bundleVersionInt = -999;
+    private static Int32 bundleVersionInt = -999;
 
 	private String _statusText;
 

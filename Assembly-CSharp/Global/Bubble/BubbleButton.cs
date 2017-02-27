@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(TimeoutHandler))]
-[RequireComponent(typeof(UIWidget))]
 [RequireComponent(typeof(OnScreenButton))]
+[RequireComponent(typeof(UIWidget))]
 public class BubbleButton : MonoBehaviour
 {
 	public Single Timeout

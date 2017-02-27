@@ -26,7 +26,9 @@ public class EndGameHUD : UIScene
 			this.splitButtonGo,
 			this.backButtonGo
 		};
-		foreach (GameObject go in this.buttonGoList)
+        this.BankRollLabel.text = EndGameMain.Instance.bankRoll.ToString();
+        this.WageAmountLabel.text = EndGameMain.Instance.wager.ToString();
+        foreach (GameObject go in this.buttonGoList)
 		{
 			UIEventListener uieventListener = UIEventListener.Get(go);
 			uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));

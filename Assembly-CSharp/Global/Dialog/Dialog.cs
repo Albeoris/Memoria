@@ -856,7 +856,8 @@ public class Dialog : MonoBehaviour
 		this.SetMessageSpeed(-1, 0);
 		this.currentState = Dialog.State.OpenAnimation;
 		this.dialogAnimator.ShowDialog();
-		this.StartSignalProcess();
+        PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId = this.textId;
+        this.StartSignalProcess();
 	}
 
 	public void Hide()
@@ -887,7 +888,11 @@ public class Dialog : MonoBehaviour
 		}
 		this.currentState = Dialog.State.CloseAnimation;
 		this.dialogAnimator.HideDialog();
-	}
+        if (this.CapType == Dialog.CaptionType.Mognet && this.StartChoiceRow > -1)
+        {
+            UIManager.Input.ResetTriggerEvent();
+        }
+    }
 
 	public void AfterShown()
 	{
@@ -940,8 +945,8 @@ public class Dialog : MonoBehaviour
 	public void AfterHidden()
 	{
 		EventHUD.CheckSpecialHUDFromMesId(this.textId, false);
-		ETb.ProcessWorldDialog(this);
-		ETb.ProcessATEDialog(this);
+        ETb.ProcessDialog(this);
+        ETb.ProcessATEDialog(this);
 		Singleton<DialogManager>.Instance.ReleaseDialogToPool(this);
 		if (this.AfterDialogHidden != null)
 		{
@@ -960,7 +965,31 @@ public class Dialog : MonoBehaviour
 
 	public void OnKeyConfirm(GameObject go)
 	{
-		if (this.currentState == Dialog.State.CompleteAnimation)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952)
+        {
+            string symbol = Localization.GetSymbol();
+            if (symbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
+            {
+                return;
+            }
+            if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 227)
+            {
+                return;
+            }
+        }
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
+        {
+            string symbol2 = Localization.GetSymbol();
+            if (symbol2 == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
+            {
+                return;
+            }
+            if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
+            {
+                return;
+            }
+        }
+        if (this.currentState == Dialog.State.CompleteAnimation)
 		{
 			if (this.startChoiceRow > -1)
 			{

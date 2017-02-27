@@ -124,8 +124,8 @@ public class BoosterSlider : MonoBehaviour
 
 	private Boolean canSlideBooster()
 	{
-		Boolean flag = !MBG.IsNull && !MBG.Instance.IsFinished();
-		return (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && !flag) || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause && !flag);
+        Boolean flag = !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster();
+        return (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && !flag) || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause && !flag);
 	}
 
 	private void AfterTweenIn()
@@ -160,43 +160,30 @@ public class BoosterSlider : MonoBehaviour
 	{
 		if (this.canSlideBooster())
 		{
-			this.animateHide = false;
-			this.OutsideBoosterHitPoint.SetActive(false);
-			base.StopCoroutine("WaitAndHideArrow");
-			this.boosterTween.StopAnimation();
-			this.ClearBooster();
-			if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
-			{
-				this.boosterList[4].Self.SetActive(true);
-				Int32[] buttonId = new Int32[]
-				{
-					0,
-					1,
-					3,
-					4
-				};
-				this.GetButtonCurrentStatus(buttonId);
-			}
-			else
-			{
-				Int32[] buttonId2 = new Int32[]
-				{
-					0,
-					1,
-					3
-				};
-				this.GetButtonCurrentStatus(buttonId2);
-			}
-			this.ArrowHitPoint.SetActive(false);
-			this.isArrowHitPointActive = false;
-			this.waitForDrag = false;
-			this.isSliderActive = true;
-			if (!this.boosterSliderPanel.activeSelf)
-			{
-				this.boosterSliderPanel.SetActive(true);
-			}
-			this.boosterSliderPanel.transform.localPosition = this.boosterTween.DestinationPosition[0];
-		}
+            this.animateHide = false;
+            this.OutsideBoosterHitPoint.SetActive(false);
+            base.StopCoroutine("WaitAndHideArrow");
+            this.boosterTween.StopAnimation();
+            this.ClearBooster();
+            this.boosterList[4].Self.SetActive(true);
+            int[] buttonId = new int[]
+            {
+                0,
+                1,
+                3,
+                4
+            };
+            this.GetButtonCurrentStatus(buttonId);
+            this.ArrowHitPoint.SetActive(false);
+            this.isArrowHitPointActive = false;
+            this.waitForDrag = false;
+            this.isSliderActive = true;
+            if (!this.boosterSliderPanel.activeSelf)
+            {
+                this.boosterSliderPanel.SetActive(true);
+            }
+            this.boosterSliderPanel.transform.localPosition = this.boosterTween.DestinationPosition[0];
+        }
 	}
 
 	public void CloseBoosterPanelImmediately()

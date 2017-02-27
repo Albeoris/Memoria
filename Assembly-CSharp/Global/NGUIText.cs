@@ -539,7 +539,7 @@ public static class NGUIText
 				{
 					num2 = text.IndexOf(']', i + 4);
 					String text6 = text.Substring(i + 6, num2 - i - 6);
-					if (!FF9StateSystem.MobilePlatform || text3 == "[" + NGUIText.JoyStickButtonIcon || text3 == "[" + NGUIText.KeyboardButtonIcon)
+					if (!FF9StateSystem.MobilePlatform || text3 == "[" + NGUIText.JoyStickButtonIcon || text3 == "[" + NGUIText.KeyboardButtonIcon || NGUIText.ForceShowButton)
 					{
 						String text5 = text2;
 						text2 = String.Concat(new String[]
@@ -659,8 +659,8 @@ public static class NGUIText
 				else if (text3 == "[" + NGUIText.MobileIcon)
 				{
 					Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					if (FF9StateSystem.MobilePlatform)
-					{
+					if (FF9StateSystem.MobilePlatform && !NGUIText.ForceShowButton)
+                    {
 						String text5 = text2;
 						text2 = String.Concat(new Object[]
 						{
@@ -1174,18 +1174,24 @@ public static class NGUIText
 		return dialogImage;
 	}
 
-	public static Dialog.DialogImage CreateIconImage(Int32 iconId)
-	{
-		return new Dialog.DialogImage
-		{
-			Size = FF9UIDataTool.GetIconSize(iconId),
-			Offset = new Vector3(0f, -10f),
-			Id = iconId,
-			IsButton = false
-		};
-	}
+    public static Dialog.DialogImage CreateIconImage(int iconId)
+    {
+        Dialog.DialogImage dialogImage = new Dialog.DialogImage();
+        dialogImage.Size = FF9UIDataTool.GetIconSize(iconId);
+        if (iconId == 180)
+        {
+            dialogImage.Offset = new Vector3(0f, -15.2f);
+        }
+        else
+        {
+            dialogImage.Offset = new Vector3(0f, -10f);
+        }
+        dialogImage.Id = iconId;
+        dialogImage.IsButton = false;
+        return dialogImage;
+    }
 
-	public static Int32 GetOneParameterFromTag(String fullText, Int32 currentIndex, ref Int32 closingBracket)
+    public static Int32 GetOneParameterFromTag(String fullText, Int32 currentIndex, ref Int32 closingBracket)
 	{
 		Int32 result = 0;
 		try

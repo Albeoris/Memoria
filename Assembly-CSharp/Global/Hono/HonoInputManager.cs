@@ -619,11 +619,10 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		{
 			return false;
 		}
-		Int32 id = Process.GetCurrentProcess().Id;
-		Int32 num;
-		HonoInputManager.GetWindowThreadProcessId(foregroundWindow, out num);
-		return num == id;
-	}
+        int num;
+        HonoInputManager.GetWindowThreadProcessId(foregroundWindow, out num);
+        return num == HonoInputManager.procId;
+    }
 
 	private Boolean CheckRawXInput(String unityButton, GamePadState padState)
 	{
@@ -717,7 +716,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		return global::GamePad.GetState(PlayerIndex.One).IsConnected;
 	}
 
-	private Boolean IsMobileJoystickConnect()
+    private void InitializeProcID()
+    {
+        HonoInputManager.procId = Process.GetCurrentProcess().Id;
+    }
+
+    private Boolean IsMobileJoystickConnect()
 	{
 		String[] joystickNames = UnityXInput.Input.GetJoystickNames();
 		return (Int32)joystickNames.Length > 0 && joystickNames[0].Length > 0;
@@ -727,7 +731,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	{
 		base.Awake();
 		this.InitialInput();
-	}
+        this.InitializeProcID();
+    }
 
 	private void Start()
 	{
@@ -1385,7 +1390,9 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	public static Single AnalogThreadhold = 0.1f;
 
-	[SerializeField]
+    private static Int32 procId;
+
+    [SerializeField]
 	private String[] KeyName = new String[]
 	{
 		"Confirm",

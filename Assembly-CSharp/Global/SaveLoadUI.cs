@@ -109,7 +109,11 @@ public class SaveLoadUI : UIScene
 				SceneDirector.FF9Wipe_FadeInEx(24);
 			}
 		};
-		if (afterFinished != null)
+        if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.WorldHUD && ButtonGroupState.HelpEnabled)
+        {
+            ButtonGroupState.ToggleHelp(false);
+        }
+        if (afterFinished != null)
 		{
 			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
 		}
@@ -465,30 +469,29 @@ public class SaveLoadUI : UIScene
 	private void DisplayCorruptAccessDialog(String group, SaveLoadUI.SerializeType serializeType, DataSerializerErrorCode errorCode)
 	{
 		String key;
-		if (errorCode != DataSerializerErrorCode.FileCorruption)
-		{
-			if (errorCode != DataSerializerErrorCode.DataCorruption)
-			{
-				key = "CorruptSaveData";
-			}
-			else if (serializeType == SaveLoadUI.SerializeType.Load)
-			{
-				key = "LocalDecryptFailed";
-			}
-			else
-			{
-				key = "CorruptSaveData";
-			}
-		}
-		else if (serializeType == SaveLoadUI.SerializeType.Load)
-		{
-			key = "LocalLoadFailed";
-		}
-		else
-		{
-			key = "LocalSaveFailed";
-		}
-		this.noSaveDataDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
+        switch (errorCode)
+        {
+            case DataSerializerErrorCode.FileCorruption:
+            case DataSerializerErrorCode.DataCorruption:
+                key = "LocalDecryptFailed";
+                break;
+            case DataSerializerErrorCode.CloudDataCorruption:
+                key = "CloudDataCorrupt";
+                break;
+            case DataSerializerErrorCode.CloudConnectionTimeout:
+                key = "CloudConnectionTimeout";
+                break;
+            case DataSerializerErrorCode.CloudFileNotFound:
+                key = "CloudFileNotFound";
+                break;
+            case DataSerializerErrorCode.CloudConnectionError:
+                key = "CloudDataUnknownError";
+                break;
+            default:
+                key = "CloudDataUnknownError";
+                break;
+        }
+        this.noSaveDataDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
 		ButtonGroupState.DisableAllGroup(true);
 		base.Loading = true;
 		base.StartCoroutine(this.HideSaveInfoDialog(group));
@@ -588,7 +591,8 @@ public class SaveLoadUI : UIScene
 			yield break;
 		}
 		FF9Sfx.FF9SFX_Play(1046);
-		FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
+        global::Debug.Log("DISPLAYING CORRUPT DIALOG 1");
+        FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
 		this.LoadingPreviewDialog.SetActive(false);
 		this.DisplayCorruptAccessDialog(SaveLoadUI.SlotGroupButton, SaveLoadUI.SerializeType.Load, errNo);
 		this.slotNameLabelList[slotID].color = FF9TextTool.Red;
@@ -661,7 +665,8 @@ public class SaveLoadUI : UIScene
 		else
 		{
 			FF9Sfx.FF9SFX_Play(1046);
-			FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpBlock");
+            global::Debug.Log("DISPLAYING CORRUPT DIALOG 2");
+            FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpBlock");
 			global::Debug.LogError("Cannot save file");
 			this.DisplayCorruptAccessDialog(SaveLoadUI.FileGroupButton, SaveLoadUI.SerializeType.Save, errNo);
 			this.isFileCorrupt[saveID] = true;

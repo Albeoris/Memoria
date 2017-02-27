@@ -3,36 +3,47 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using FF9;
 using Object = System.Object;
 
 public class FieldMap : HonoBehavior
 {
-	public FieldMap()
-	{
-		this.debugObjName = "Player";
-		this.debugTriIdx = -1;
-		this.CharArray = new FF9Char[]
-		{
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char(),
-			new FF9Char()
-		};
-		}
+    public FieldMap()
+    {
+        this.debugObjName = "Player";
+        this.debugTriIdx = -1;
+        this.CharArray = new FF9Char[]
+        {
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char(),
+            new FF9Char()
+        };
+    }
 
-	public static String GetMapResourcePath(String mapName)
+    public bool IsCurrentFieldMapHasCombineMeshProblem()
+    {
+        return false;
+    }
+
+    public FieldMap.EbgCombineMeshData GetCurrentCombineMeshData()
+    {
+        return (FieldMap.EbgCombineMeshData)null;
+    }
+
+    public static String GetMapResourcePath(String mapName)
 	{
 		return "FieldMaps/" + mapName + "/";
 	}
@@ -564,7 +575,37 @@ public class FieldMap : HonoBehavior
 		component.activeTri = (Int32)actorOfObj.activeTri;
 	}
 
-	public void AddFieldChar(GameObject playerGO, Vector3 pos, Quaternion rot, Boolean isPlayer, Actor actorOfObj, Boolean needRestore = false)
+    public void RestoreAttachModel(GameObject playerGO, Actor actorOfObj)
+    {
+        if (actorOfObj.attatchTargetUid != -1)
+        {
+            Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(actorOfObj.attatchTargetUid);
+            geo.geoAttach(playerGO, objUID.go, actorOfObj.attachTargetBoneIndex);
+        }
+    }
+
+    public void RestoreShadowOff(int actorUid, Actor actorOfObj)
+    {
+        if (actorOfObj.isShadowOff)
+        {
+            ff9shadow.FF9ShadowOffField(actorUid);
+        }
+    }
+
+    private void SetCharScale(Actor actorOfObj, int sx, int sy, int sz)
+    {
+        int num = 18;
+        if (actorOfObj != null)
+        {
+            if (actorOfObj.go != (UnityEngine.Object)null)
+            {
+                geo.geoScaleSetXYZ(actorOfObj.go, sx << 24 >> num, sy << 24 >> num, sz << 24 >> num);
+            }
+            actorOfObj.scaley = (byte)sy;
+        }
+    }
+
+    public void AddFieldChar(GameObject playerGO, Vector3 pos, Quaternion rot, Boolean isPlayer, Actor actorOfObj, Boolean needRestore = false)
 	{
 		playerGO.transform.parent = base.transform;
 		playerGO.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -587,7 +628,20 @@ public class FieldMap : HonoBehavior
 		fieldMapActorController.SetPosition(pos, true, !needRestore);
 		fieldMapActorController.radius = (Single)actorOfObj.bgiRad * 4f;
 		playerGO.transform.localRotation = rot;
-		if (isPlayer)
+
+        if (needRestore)
+        {
+            if (FF9StateSystem.Common.FF9.fldMapNo == 1508)
+            {
+                this.RestoreAttachModel(playerGO, actorOfObj);
+            }
+            if (FF9StateSystem.Common.FF9.fldMapNo == 1508 || FF9StateSystem.Common.FF9.fldMapNo == 1706)
+            {
+                this.RestoreShadowOff((int)fieldMapActor.actor.uid, actorOfObj);
+            }
+        }
+
+        if (isPlayer)
 		{
 			this.player = fieldMapActor;
 			this.playerController = fieldMapActorController;
@@ -634,7 +688,18 @@ public class FieldMap : HonoBehavior
 				}
 			}
 		}
-		if (FF9StateSystem.Common.FF9.fldMapNo == 2924 && fieldMapActorController.originalActor.sid == 8)
+        if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706)
+        {
+            if (fieldMapActor.actor.uid == 4 && FF9StateSystem.Settings.CurrentLanguage == "Japanese")
+            {
+                this.SetCharScale(fieldMapActor.actor, 40, 40, 40);
+            }
+            else if (fieldMapActor.actor.uid == 3 || fieldMapActor.actor.uid == 5)
+            {
+                this.SetCharScale(fieldMapActor.actor, 80, 80, 80);
+            }
+        }
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2924 && fieldMapActorController.originalActor.sid == 8)
 		{
 			fieldMapActor.SetRenderQueue(2000);
 		}
@@ -874,7 +939,11 @@ public class FieldMap : HonoBehavior
 		{
 			BGOVERLAY_DEF bgoverlay_DEF2 = bgoverlay_DEF;
 			bgoverlay_DEF2.flags = (Byte)(bgoverlay_DEF2.flags | 4);
-		}
+            if (this.scene.combineMeshes)
+            {
+                this.scene.CreateSeparateOverlay(this, this.UseUpscalFM, overlayNdx);
+            }
+        }
 		else
 		{
 			BGOVERLAY_DEF bgoverlay_DEF3 = bgoverlay_DEF;
@@ -912,7 +981,11 @@ public class FieldMap : HonoBehavior
 		{
 			BGOVERLAY_DEF bgoverlay_DEF2 = bgoverlay_DEF;
 			bgoverlay_DEF2.flags = (Byte)(bgoverlay_DEF2.flags | 128);
-		}
+            if (this.scene.combineMeshes)
+            {
+                this.scene.CreateSeparateOverlay(this, this.UseUpscalFM, overlayNdx);
+            }
+        }
 		else
 		{
 			BGOVERLAY_DEF bgoverlay_DEF3 = bgoverlay_DEF;
@@ -1008,7 +1081,8 @@ public class FieldMap : HonoBehavior
 		BGSCENE_DEF bgscene_DEF = this.scene;
 		BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
 		bganim_DEF.frameRate = (Int16)frameRate;
-		return 1;
+        bganim_DEF.CalculateActualFrameCount();
+        return 1;
 	}
 
 	public Int32 EBG_animSetFrameWaitAll(UInt32 animNdx, Int32 frameWait)
@@ -1110,34 +1184,48 @@ public class FieldMap : HonoBehavior
 		return 1;
 	}
 
-	public Int32 EBG_overlaySetSpriteShadeColorOffScreen(BGSCENE_DEF scenePtr, UInt32 overlayNdx, Byte r, Byte g, Byte b)
-	{
-		BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(Int32)overlayNdx];
-		List<BGSPRITE_LOC_DEF> spriteList = bgoverlay_DEF.spriteList;
-		UInt16 spriteCount = bgoverlay_DEF.spriteCount;
-		if (spriteCount <= 0)
-		{
-			return 1;
-		}
-		Material material = spriteList[0].transform.gameObject.GetComponent<MeshRenderer>().material;
-		Int32 num;
-		if (FF9StateSystem.Common.FF9.id != 0)
-		{
-			num = (Int32)spriteCount;
-		}
-		else
-		{
-			num = 0;
-		}
-		material.SetColor("_Color", new Color((Single)r / 128f, (Single)g / 128f, (Single)b / 128f, 1f));
-		for (UInt16 num2 = 0; num2 < spriteCount; num2 = (UInt16)(num2 + 1))
-		{
-			spriteList[(Int32)num2 + num].transform.gameObject.GetComponent<MeshRenderer>().material = material;
-		}
-		return 1;
-	}
+    public bool EBG_isCombineMesh(BGOVERLAY_DEF overlayPtr)
+    {
+        return overlayPtr.transform.GetComponent<MeshRenderer>() != (UnityEngine.Object)null;
+    }
 
-	public Int32 EBG_overlaySetShadeColor(UInt32 overlayNdx, Byte r, Byte g, Byte b)
+    public int EBG_overlaySetSpriteShadeColorOffScreen(BGSCENE_DEF scenePtr, uint overlayNdx, byte r, byte g, byte b)
+    {
+        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(int)overlayNdx];
+        List<BGSPRITE_LOC_DEF> spriteList = bgoverlay_DEF.spriteList;
+        if (spriteList.Count == 0)
+        {
+            return 1;
+        }
+        if (this.EBG_isCombineMesh(bgoverlay_DEF))
+        {
+            Material material = bgoverlay_DEF.transform.gameObject.GetComponent<MeshRenderer>().material;
+            material.SetColor("_Color", new Color((float)r / 128f, (float)g / 128f, (float)b / 128f, 1f));
+            bgoverlay_DEF.transform.gameObject.GetComponent<MeshRenderer>().material = material;
+        }
+        else
+        {
+            Material material2 = spriteList[0].transform.gameObject.GetComponent<MeshRenderer>().material;
+            ushort spriteCount = bgoverlay_DEF.spriteCount;
+            int num;
+            if (FF9StateSystem.Common.FF9.id != 0)
+            {
+                num = (int)spriteCount;
+            }
+            else
+            {
+                num = 0;
+            }
+            material2.SetColor("_Color", new Color((float)r / 128f, (float)g / 128f, (float)b / 128f, 1f));
+            for (ushort num2 = 0; num2 < spriteCount; num2 = (ushort)(num2 + 1))
+            {
+                spriteList[(int)num2 + num].transform.gameObject.GetComponent<MeshRenderer>().material = material2;
+            }
+        }
+        return 1;
+    }
+
+    public Int32 EBG_overlaySetShadeColor(UInt32 overlayNdx, Byte r, Byte g, Byte b)
 	{
 		BGSCENE_DEF scenePtr = this.scene;
 		this.EBG_overlaySetSpriteShadeColorOffScreen(scenePtr, overlayNdx, r, g, b);
@@ -1209,256 +1297,249 @@ public class FieldMap : HonoBehavior
 		return 1;
 	}
 
-	public void UpdateOverlayAll()
-	{
-		if (this.scene.cameraList.Count <= 0)
-		{
-			return;
-		}
-		BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-		Vector2 zero = Vector2.zero;
-		zero[0] = this.curVRP[0] + (Single)bgcam_DEF.centerOffset[0] + 160f;
-		zero[1] = this.curVRP[1] - (Single)bgcam_DEF.centerOffset[1] + 112f;
-		this.scene.scrX = (Int16)((Single)this.scene.curX + 160f - zero[0]);
-		this.scene.scrY = (Int16)((Single)this.scene.curY + 112f - zero[1]);
-		UInt16 overlayCount = this.scene.overlayCount;
-		List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
-		for (Int32 i = 0; i < (Int32)overlayCount; i++)
-		{
-			this.UpdateOverlay(overlayList[i], zero);
-		}
-	}
+    public void UpdateOverlayAll()
+    {
+        if (this.scene.cameraList.Count <= 0)
+        {
+            return;
+        }
+        if (this.curCamIdx == -1)
+        {
+            return;
+        }
+        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
+        Vector2 zero = Vector2.zero;
+        zero[0] = this.curVRP[0] + (float)bgcam_DEF.centerOffset[0] + 160f;
+        zero[1] = this.curVRP[1] - (float)bgcam_DEF.centerOffset[1] + 112f;
+        this.scene.scrX = (short)((float)this.scene.curX + 160f - zero[0]);
+        this.scene.scrY = (short)((float)this.scene.curY + 112f - zero[1]);
+        ushort overlayCount = this.scene.overlayCount;
+        List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
+        for (int i = 0; i < (int)overlayCount; i++)
+        {
+            this.UpdateOverlay((uint)i, overlayList[i], zero);
+        }
+    }
 
-	private void UpdateOverlay(BGOVERLAY_DEF overlayPtr, Vector2 realVrp)
-	{
-		UInt16 spriteCount = overlayPtr.spriteCount;
-		List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
-		BGSCENE_DEF bgscene_DEF = this.scene;
-		Int16 num = (Int16)(overlayPtr.curX + bgscene_DEF.scrX);
-		Int16 num2 = (Int16)(overlayPtr.curY + bgscene_DEF.scrY);
-		Int16 num3 = (Int16)(overlayPtr.curZ + (UInt16)bgscene_DEF.curZ);
-		if ((overlayPtr.flags & 4) != 0)
-		{
-			Int16 num4;
-			Int16 num5;
-			if ((overlayPtr.flags & 1) != 0)
-			{
-				num4 = this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][0];
-				num5 = this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][1];
-			}
-			else
-			{
-				num4 = (Int16)(160f - realVrp[0] + (Single)this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][0]);
-				num5 = (Int16)(112f - realVrp[1] + (Single)this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][1]);
-			}
-			Int16 num6 = this.scrollWindowDim[(Int32)overlayPtr.viewportNdx][0];
-			Int16 num7 = this.scrollWindowDim[(Int32)overlayPtr.viewportNdx][1];
-			if (overlayPtr.dX < 0)
-			{
-				Int16 num8 = (Int16)(256 - (overlayPtr.dX << 8 >> 8));
-				num = (Int16)((((Int32)overlayPtr.curX << 8 | (Int32)overlayPtr.fracX) + (Int32)num8 >> 8) + (Int32)bgscene_DEF.scrX);
-			}
-			if (overlayPtr.dY < 0)
-			{
-				Int16 num9 = (Int16)(256 - (overlayPtr.dX << 8 >> 8));
-				num2 = (Int16)((((Int32)overlayPtr.curY << 8 | (Int32)overlayPtr.fracY) + (Int32)num9 >> 8) + (Int32)bgscene_DEF.scrY);
-			}
-			if (overlayPtr.dX != 0)
-			{
-				num = (Int16)((num - (num6 - (Int16)overlayPtr.w)) % (Int16)overlayPtr.w + (num6 - (Int16)overlayPtr.w));
-			}
-			if (overlayPtr.dY != 0)
-			{
-				num2 = (Int16)((num2 - (num7 - (Int16)overlayPtr.h)) % (Int16)overlayPtr.h + (num7 - (Int16)overlayPtr.h));
-			}
-			for (Int16 num10 = 0; num10 < (Int16)spriteCount; num10 = (Int16)(num10 + 1))
-			{
-				BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(Int32)num10];
-				Vector3 localPosition = bgsprite_LOC_DEF.transform.localPosition;
-				if ((overlayPtr.flags & 1) != 0)
-				{
-					Int16 num11 = (Int16)(num + (Int16)bgsprite_LOC_DEF.offX);
-					if (overlayPtr.dX != 0)
-					{
-						if (num11 + 16 >= (Int16)overlayPtr.w)
-						{
-							num11 = (Int16)(num11 - (Int16)overlayPtr.w);
-						}
-						else if (num11 <= -16)
-						{
-							num11 = (Int16)(num11 + (Int16)overlayPtr.w);
-						}
-					}
-					Int16 num12 = (Int16)(num2 + (Int16)bgsprite_LOC_DEF.offY);
-					if (overlayPtr.dY != 0)
-					{
-						if (num12 + 16 >= (Int16)overlayPtr.h)
-						{
-							num12 = (Int16)(num12 - (Int16)overlayPtr.h);
-						}
-						else if (num12 <= -16)
-						{
-							num12 = (Int16)(num12 + (Int16)overlayPtr.h);
-						}
-					}
-					localPosition.x = (Single)(num11 + num4);
-					localPosition.y = (Single)(num12 + num5);
-				}
-				else
-				{
-					Int16 num11 = (Int16)(num + (Int16)bgsprite_LOC_DEF.offX);
-					if (overlayPtr.dX != 0)
-					{
-						if (num11 + 16 >= (Int16)overlayPtr.w)
-						{
-							num11 = (Int16)(num11 - (Int16)overlayPtr.w);
-						}
-						else if (num11 <= -16)
-						{
-							num11 = (Int16)(num11 + (Int16)overlayPtr.w);
-						}
-						localPosition.x = (Single)(num11 + num4);
-					}
-					else
-					{
-						localPosition.x = (Single)num11;
-					}
-					Int16 num12 = (Int16)(num2 + (Int16)bgsprite_LOC_DEF.offY);
-					if (overlayPtr.dY != 0)
-					{
-						if (num12 + 16 >= (Int16)overlayPtr.h)
-						{
-							num12 = (Int16)(num12 - (Int16)overlayPtr.h);
-						}
-						else if (num12 <= -16)
-						{
-							num12 = (Int16)(num12 + (Int16)overlayPtr.h);
-						}
-						localPosition.y = (Single)(num12 + num5);
-					}
-					else
-					{
-						localPosition.y = (Single)num12;
-					}
-				}
-				localPosition.y += 16f;
-				if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0")
-				{
-					localPosition.x += 8f;
-				}
-				localPosition.x -= (Single)(this.scene.scrX + overlayPtr.curX);
-				localPosition.y -= (Single)(this.scene.scrY + overlayPtr.curY);
-				bgsprite_LOC_DEF.transform.localPosition = localPosition;
-			}
-			overlayPtr.transform.localPosition = new Vector3((Single)overlayPtr.curX * 1f, (Single)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
-		}
-		else if ((overlayPtr.flags & 128) != 0)
-		{
-			Int16 num4;
-			Int16 num5;
-			if ((overlayPtr.flags & 1) != 0)
-			{
-				num4 = this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][0];
-				num5 = this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][1];
-			}
-			else
-			{
-				num4 = (Int16)(160f - realVrp[0] + (Single)this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][0]);
-				num5 = (Int16)(112f - realVrp[1] + (Single)this.scrollWindowPos[(Int32)overlayPtr.viewportNdx][1]);
-			}
-			Int16 num6 = this.scrollWindowDim[(Int32)overlayPtr.viewportNdx][0];
-			Int16 num7 = this.scrollWindowDim[(Int32)overlayPtr.viewportNdx][1];
-			if (overlayPtr.isXOffset != 0)
-			{
-				num2 = (Int16)((num2 - (num7 - (Int16)overlayPtr.h)) % (Int16)overlayPtr.h + (num7 - (Int16)overlayPtr.h));
-				num = (Int16)(num + num2 * overlayPtr.dX / (Int16)overlayPtr.h % (Int16)overlayPtr.w);
-			}
-			else
-			{
-				num = (Int16)((num - (num6 - (Int16)overlayPtr.w)) % (Int16)overlayPtr.w + (num6 - (Int16)overlayPtr.w));
-				num2 = (Int16)(num2 + num * overlayPtr.dY / (Int16)overlayPtr.w % (Int16)overlayPtr.h);
-			}
-			for (Int16 num10 = 0; num10 < (Int16)spriteCount; num10 = (Int16)(num10 + 1))
-			{
-				BGSPRITE_LOC_DEF bgsprite_LOC_DEF2 = spriteList[(Int32)num10];
-				Vector3 localPosition2 = bgsprite_LOC_DEF2.transform.localPosition;
-				if (overlayPtr.isXOffset != 0)
-				{
-					Int16 num13 = 0;
-					Int16 num14 = (Int16)(num2 + (Int16)bgsprite_LOC_DEF2.offY);
-					if (num14 + 16 >= (Int16)overlayPtr.h)
-					{
-						num14 = (Int16)(num14 - (Int16)overlayPtr.h);
-						num13 = (Int16)(-overlayPtr.dX);
-					}
-					else if (num14 <= -16)
-					{
-						num14 = (Int16)(num14 + (Int16)overlayPtr.h);
-						num13 = overlayPtr.dX;
-					}
-					Int16 num15 = (Int16)(num + (Int16)bgsprite_LOC_DEF2.offX + num13);
-					localPosition2.x = (Single)num15;
-					localPosition2.y = (Single)(num14 + num5);
-				}
-				else
-				{
-					Int16 num13 = 0;
-					Int16 num15 = (Int16)(num + (Int16)bgsprite_LOC_DEF2.offX);
-					if (num15 + 16 >= (Int16)overlayPtr.w)
-					{
-						num15 = (Int16)(num15 - (Int16)overlayPtr.w);
-						num13 = (Int16)(-overlayPtr.dY);
-					}
-					else if (num15 <= -16)
-					{
-						num15 = (Int16)(num15 + (Int16)overlayPtr.w);
-						num13 = overlayPtr.dY;
-					}
-					Int16 num14 = (Int16)(num2 + (Int16)bgsprite_LOC_DEF2.offY + num13);
-					localPosition2.x = (Single)(num15 + num4);
-					localPosition2.y = (Single)num14;
-				}
-				localPosition2.y += 16f;
-				localPosition2.x -= (Single)(this.scene.scrX + overlayPtr.curX);
-				localPosition2.y -= (Single)(this.scene.scrY + overlayPtr.curY);
-				bgsprite_LOC_DEF2.transform.localPosition = localPosition2;
-			}
-			overlayPtr.transform.localPosition = new Vector3((Single)overlayPtr.curX * 1f, (Single)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
-		}
-		else
-		{
-			Single num16;
-			Single num17;
-			if ((overlayPtr.flags & 8) != 0 && overlayPtr.isSpecialParallax)
-			{
-				num16 = overlayPtr.parallaxCurX;
-				num17 = overlayPtr.parallaxCurY;
-			}
-			else
-			{
-				num16 = (Single)overlayPtr.curX;
-				num17 = (Single)overlayPtr.curY;
-			}
-			for (Int16 num10 = 0; num10 < (Int16)spriteCount; num10 = (Int16)(num10 + 1))
-			{
-				BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-				BGSPRITE_LOC_DEF bgsprite_LOC_DEF3 = spriteList[(Int32)num10];
-				Vector3 localPosition3 = bgsprite_LOC_DEF3.transform.localPosition;
-				Int16 num18 = (Int16)(num + (Int16)bgsprite_LOC_DEF3.offX);
-				Int16 num19 = (Int16)(num2 + (Int16)bgsprite_LOC_DEF3.offY);
-				localPosition3.x = (Single)num18;
-				localPosition3.y = (Single)(num19 + 16);
-				localPosition3.x -= (Single)(this.scene.scrX + overlayPtr.curX);
-				localPosition3.y -= (Single)(this.scene.scrY + overlayPtr.curY);
-				bgsprite_LOC_DEF3.transform.localPosition = localPosition3;
-			}
-			overlayPtr.transform.localPosition = new Vector3(num16 * 1f, num17 * 1f, overlayPtr.transform.localPosition.z);
-		}
-		overlayPtr.scrX = num;
-		overlayPtr.scrY = num2;
-	}
+    private void UpdateOverlay(uint ovrNdx, BGOVERLAY_DEF overlayPtr, Vector2 realVrp)
+    {
+        ushort spriteCount = overlayPtr.spriteCount;
+        List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
+        BGSCENE_DEF bgscene_DEF = this.scene;
+        short num = (short)(overlayPtr.curX + bgscene_DEF.scrX);
+        short num2 = (short)(overlayPtr.curY + bgscene_DEF.scrY);
+        short num3 = (short)(overlayPtr.curZ + (ushort)bgscene_DEF.curZ);
+        if ((overlayPtr.flags & 4) != 0)
+        {
+            short num4;
+            short num5;
+            if ((overlayPtr.flags & 1) != 0)
+            {
+                num4 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
+                num5 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
+            }
+            else
+            {
+                num4 = (short)(160f - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
+                num5 = (short)(112f - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
+            }
+            short num6 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
+            short num7 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][1];
+            if (overlayPtr.dX < 0)
+            {
+                short num8 = (short)(256 - (overlayPtr.dX << 8 >> 8));
+                num = (short)((((int)overlayPtr.curX << 8 | (int)overlayPtr.fracX) + (int)num8 >> 8) + (int)bgscene_DEF.scrX);
+            }
+            if (overlayPtr.dY < 0)
+            {
+                short num9 = (short)(256 - (overlayPtr.dX << 8 >> 8));
+                num2 = (short)((((int)overlayPtr.curY << 8 | (int)overlayPtr.fracY) + (int)num9 >> 8) + (int)bgscene_DEF.scrY);
+            }
+            if (overlayPtr.dX != 0)
+            {
+                num = (short)((num - (num6 - (short)overlayPtr.w)) % (short)overlayPtr.w + (num6 - (short)overlayPtr.w));
+            }
+            if (overlayPtr.dY != 0)
+            {
+                num2 = (short)((num2 - (num7 - (short)overlayPtr.h)) % (short)overlayPtr.h + (num7 - (short)overlayPtr.h));
+            }
+            bool flag = this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0";
+            for (short num10 = 0; num10 < (short)spriteCount; num10 = (short)(num10 + 1))
+            {
+                BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(int)num10];
+                Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
+                if ((overlayPtr.flags & 1) != 0)
+                {
+                    short num11 = (short)(num + (short)bgsprite_LOC_DEF.offX);
+                    if (overlayPtr.dX != 0)
+                    {
+                        if (num11 + 16 >= (short)overlayPtr.w)
+                        {
+                            num11 = (short)(num11 - (short)overlayPtr.w);
+                        }
+                        else if (num11 <= -16)
+                        {
+                            num11 = (short)(num11 + (short)overlayPtr.w);
+                        }
+                    }
+                    short num12 = (short)(num2 + (short)bgsprite_LOC_DEF.offY);
+                    if (overlayPtr.dY != 0)
+                    {
+                        if (num12 + 16 >= (short)overlayPtr.h)
+                        {
+                            num12 = (short)(num12 - (short)overlayPtr.h);
+                        }
+                        else if (num12 <= -16)
+                        {
+                            num12 = (short)(num12 + (short)overlayPtr.h);
+                        }
+                    }
+                    cacheLocalPos.x = (float)(num11 + num4);
+                    cacheLocalPos.y = (float)(num12 + num5);
+                }
+                else
+                {
+                    short num11 = (short)(num + (short)bgsprite_LOC_DEF.offX);
+                    if (overlayPtr.dX != 0)
+                    {
+                        if (num11 + 16 >= (short)overlayPtr.w)
+                        {
+                            num11 = (short)(num11 - (short)overlayPtr.w);
+                        }
+                        else if (num11 <= -16)
+                        {
+                            num11 = (short)(num11 + (short)overlayPtr.w);
+                        }
+                        cacheLocalPos.x = (float)(num11 + num4);
+                    }
+                    else
+                    {
+                        cacheLocalPos.x = (float)num11;
+                    }
+                    short num12 = (short)(num2 + (short)bgsprite_LOC_DEF.offY);
+                    if (overlayPtr.dY != 0)
+                    {
+                        if (num12 + 16 >= (short)overlayPtr.h)
+                        {
+                            num12 = (short)(num12 - (short)overlayPtr.h);
+                        }
+                        else if (num12 <= -16)
+                        {
+                            num12 = (short)(num12 + (short)overlayPtr.h);
+                        }
+                        cacheLocalPos.y = (float)(num12 + num5);
+                    }
+                    else
+                    {
+                        cacheLocalPos.y = (float)num12;
+                    }
+                }
+                cacheLocalPos.y += 16f;
+                if (flag)
+                {
+                    cacheLocalPos.x += 8f;
+                }
+                cacheLocalPos.x -= (float)(this.scene.scrX + overlayPtr.curX);
+                cacheLocalPos.y -= (float)(this.scene.scrY + overlayPtr.curY);
+                bgsprite_LOC_DEF.cacheLocalPos = cacheLocalPos;
+                bgsprite_LOC_DEF.transform.localPosition = cacheLocalPos;
+            }
+            overlayPtr.transform.localPosition = new Vector3((float)overlayPtr.curX * 1f, (float)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
+        }
+        else if ((overlayPtr.flags & 128) != 0)
+        {
+            short num4;
+            short num5;
+            if ((overlayPtr.flags & 1) != 0)
+            {
+                num4 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
+                num5 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
+            }
+            else
+            {
+                num4 = (short)(160f - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
+                num5 = (short)(112f - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
+            }
+            short num6 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
+            short num7 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][1];
+            if (overlayPtr.isXOffset != 0)
+            {
+                num2 = (short)((num2 - (num7 - (short)overlayPtr.h)) % (short)overlayPtr.h + (num7 - (short)overlayPtr.h));
+                num = (short)(num + num2 * overlayPtr.dX / (short)overlayPtr.h % (short)overlayPtr.w);
+            }
+            else
+            {
+                num = (short)((num - (num6 - (short)overlayPtr.w)) % (short)overlayPtr.w + (num6 - (short)overlayPtr.w));
+                num2 = (short)(num2 + num * overlayPtr.dY / (short)overlayPtr.w % (short)overlayPtr.h);
+            }
+            for (short num10 = 0; num10 < (short)spriteCount; num10 = (short)(num10 + 1))
+            {
+                BGSPRITE_LOC_DEF bgsprite_LOC_DEF2 = spriteList[(int)num10];
+                Vector3 localPosition = bgsprite_LOC_DEF2.transform.localPosition;
+                if (overlayPtr.isXOffset != 0)
+                {
+                    short num13 = 0;
+                    short num14 = (short)(num2 + (short)bgsprite_LOC_DEF2.offY);
+                    if (num14 + 16 >= (short)overlayPtr.h)
+                    {
+                        num14 = (short)(num14 - (short)overlayPtr.h);
+                        num13 = (short)(-overlayPtr.dX);
+                    }
+                    else if (num14 <= -16)
+                    {
+                        num14 = (short)(num14 + (short)overlayPtr.h);
+                        num13 = overlayPtr.dX;
+                    }
+                    short num15 = (short)(num + (short)bgsprite_LOC_DEF2.offX + num13);
+                    localPosition.x = (float)num15;
+                    localPosition.y = (float)(num14 + num5);
+                }
+                else
+                {
+                    short num13 = 0;
+                    short num15 = (short)(num + (short)bgsprite_LOC_DEF2.offX);
+                    if (num15 + 16 >= (short)overlayPtr.w)
+                    {
+                        num15 = (short)(num15 - (short)overlayPtr.w);
+                        num13 = (short)(-overlayPtr.dY);
+                    }
+                    else if (num15 <= -16)
+                    {
+                        num15 = (short)(num15 + (short)overlayPtr.w);
+                        num13 = overlayPtr.dY;
+                    }
+                    short num14 = (short)(num2 + (short)bgsprite_LOC_DEF2.offY + num13);
+                    localPosition.x = (float)(num15 + num4);
+                    localPosition.y = (float)num14;
+                }
+                localPosition.y += 16f;
+                localPosition.x -= (float)(this.scene.scrX + overlayPtr.curX);
+                localPosition.y -= (float)(this.scene.scrY + overlayPtr.curY);
+                bgsprite_LOC_DEF2.transform.localPosition = localPosition;
+            }
+            overlayPtr.transform.localPosition = new Vector3((float)overlayPtr.curX * 1f, (float)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
+        }
+        else
+        {
+            float num16;
+            float num17;
+            if ((overlayPtr.flags & 8) != 0 && overlayPtr.isSpecialParallax)
+            {
+                num16 = overlayPtr.parallaxCurX;
+                num17 = overlayPtr.parallaxCurY;
+            }
+            else
+            {
+                num16 = (float)overlayPtr.curX;
+                num17 = (float)overlayPtr.curY;
+            }
+            overlayPtr.transform.localPosition = new Vector3(num16 * 1f, num17 * 1f, overlayPtr.transform.localPosition.z);
+        }
+        overlayPtr.scrX = num;
+        overlayPtr.scrY = num2;
+    }
 
-	public void UpdateSortingOrder(BGOVERLAY_DEF overlayPtr, BGSPRITE_LOC_DEF sprite, Int32 i)
+    public void UpdateSortingOrder(BGOVERLAY_DEF overlayPtr, BGSPRITE_LOC_DEF sprite, Int32 i)
 	{
 	}
 
@@ -2138,7 +2219,9 @@ public class FieldMap : HonoBehavior
 
 	public String mapName;
 
-	public String debugObjName;
+    public Boolean debugRender;
+
+    public String debugObjName;
 
 	public Int32 debugTriIdx;
 
@@ -2218,7 +2301,724 @@ public class FieldMap : HonoBehavior
 
 	public FieldMapEditor fmEditor;
 
-	public static List<String> fieldMapNameWithAreaTitle = new List<String>
+    private static readonly Dictionary<int, FieldMap.EbgCombineMeshData> combineMeshDict = new Dictionary<int, FieldMap.EbgCombineMeshData>
+    {
+        {
+            351,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            358,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    13,
+                    14
+                }
+            }
+        },
+        {
+            450,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            407,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            55,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    5
+                }
+            }
+        },
+        {
+            57,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            60,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    15,
+                    16
+                }
+            }
+        },
+        {
+            111,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    10
+                }
+            }
+        },
+        {
+            153,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            154,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            307,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    6,
+                    8
+                }
+            }
+        },
+        {
+            308,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            309,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            507,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    8,
+                    9,
+                    10
+                }
+            }
+        },
+        {
+            551,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    13
+                }
+            }
+        },
+        {
+            556,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    27
+                }
+            }
+        },
+        {
+            566,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            576,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            603,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    35
+                }
+            }
+        },
+        {
+            612,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            662,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            705,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    25
+                }
+            }
+        },
+        {
+            706,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    13
+                }
+            }
+        },
+        {
+            707,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            751,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            755,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            766,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            802,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            810,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    6,
+                    7
+                }
+            }
+        },
+        {
+            815,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            910,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    19
+                }
+            }
+        },
+        {
+            1910,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    19
+                }
+            }
+        },
+        {
+            916,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            951,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            952,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            957,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1056,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    19,
+                    24
+                }
+            }
+        },
+        {
+            1106,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    19,
+                    24
+                }
+            }
+        },
+        {
+            1153,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    6,
+                    7
+                }
+            }
+        },
+        {
+            1206,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11
+                }
+            }
+        },
+        {
+            1207,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    7,
+                    8
+                }
+            }
+        },
+        {
+            1214,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1215,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1222,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    21,
+                    22,
+                    23,
+                    24,
+                    25
+                }
+            }
+        },
+        {
+            1223,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11
+                }
+            }
+        },
+        {
+            1301,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    13
+                }
+            }
+        },
+        {
+            1307,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1312,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1355,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1362,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1455,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            3054,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1505,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    0,
+                    8,
+                    13
+                }
+            }
+        },
+        {
+            1950,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1225,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11
+                }
+            }
+        },
+        {
+            1801,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11
+                }
+            }
+        },
+        {
+            1802,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    7,
+                    8
+                }
+            }
+        },
+        {
+            3002,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    7,
+                    8
+                }
+            }
+        },
+        {
+            1806,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1807,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1814,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    21,
+                    22,
+                    23,
+                    24,
+                    25
+                }
+            }
+        },
+        {
+            1816,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                }
+            }
+        },
+        {
+            1823,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1852,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            1860,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    10
+                }
+            }
+        },
+        {
+            1865,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    17,
+                    18,
+                    20
+                }
+            }
+        },
+        {
+            2000,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2001,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    7,
+                    8
+                }
+            }
+        },
+        {
+            2101,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    13
+                }
+            }
+        },
+        {
+            565,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2112,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            605,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2155,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2162,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2200,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25
+                }
+            }
+        },
+        {
+            2217,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2220,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    4,
+                    5,
+                    6,
+                    7
+                }
+            }
+        },
+        {
+            2221,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    2,
+                    4,
+                    5,
+                    26,
+                    29
+                }
+            }
+        },
+        {
+            2404,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2453,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    1
+                }
+            }
+        },
+        {
+            2853,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15
+                }
+            }
+        },
+        {
+            2502,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2506,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            2509,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    2,
+                    3
+                }
+            }
+        },
+        {
+            2652,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    4
+                }
+            }
+        },
+        {
+            2906,
+            (FieldMap.EbgCombineMeshData)null
+        },
+        {
+            3100,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    38,
+                    40,
+                    46,
+                    47,
+                    48,
+                    49,
+                    50,
+                    52
+                }
+            }
+        },
+        {
+            2107,
+            new FieldMap.EbgCombineMeshData
+            {
+                skipOverlayList = new List<int>
+                {
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    12
+                }
+            }
+        }
+    };
+
+    public static List<String> fieldMapNameWithAreaTitle = new List<String>
 	{
 		"FBG_N01_ALXT_MAP016_AT_MSA_0",
 		"FBG_N02_ALXC_MAP042_AC_GDR_0",
@@ -2267,4 +3067,14 @@ public class FieldMap : HonoBehavior
 	public Int32 SHRT_MIN = -32768;
 
 	public Int32 SHRT_MAX = 32767;
+
+    public class EbgCombineMeshData
+    {
+        public EbgCombineMeshData()
+        {
+            this.skipOverlayList = null;
+        }
+
+        public List<int> skipOverlayList;
+    }
 }

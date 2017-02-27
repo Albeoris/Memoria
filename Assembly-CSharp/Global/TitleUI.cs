@@ -249,9 +249,19 @@ public class TitleUI : UIScene
 
     private Boolean playSoundFMV000 = true;
 
+    private Single doubleClickInterval = 0.35f;
+
     private Single clickedTimer = -1f;
 
     private Boolean isPaused;
+
+    public bool IsSplashTextActive
+    {
+        get
+        {
+            return this.SpashText != (UnityEngine.Object)null && this.SpashText.isActiveAndEnabled;
+        }
+    }
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
@@ -521,7 +531,7 @@ public class TitleUI : UIScene
     [DebuggerHidden]
     public IEnumerator StopGalleryMovieCoroutine()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(this.doubleClickInterval);
 
         if (this.clickedTimer >= 0.0)
             this.StopGalleryMovie();
@@ -539,7 +549,7 @@ public class TitleUI : UIScene
         {
             Single num = Time.realtimeSinceStartup - this.clickedTimer;
             this.clickedTimer = -1f;
-            if (num <= 0.2f && this.isPlayingMovie && !Loading)
+            if (num <= this.doubleClickInterval && this.isPlayingMovie && !base.Loading)
             {
                 this.PauseAndResumeGalleryMovie();
                 return true;
@@ -612,7 +622,7 @@ public class TitleUI : UIScene
             {
                 ButtonGroupState.SetOutsideLimitRectBehavior(PointerManager.LimitRectBehavior.Hide, MenuGroupButton);
             }
-            else if (ButtonGroupState.ActiveGroup == MovieGalleryGroupButton)
+            else if (ButtonGroupState.ActiveGroup == TitleUI.MovieGalleryGroupButton && !go.Equals(this.MovieBackButton))
             {
                 Transform parent = go.transform.parent.parent;
                 if (this.currentMoviePageIndex != parent.GetSiblingIndex())
@@ -771,12 +781,9 @@ public class TitleUI : UIScene
 
     private void OnCenterMoviePage(GameObject centeredObject)
     {
-        if (ButtonGroupState.ActiveButton != this.MovieBackButton)
-        {
-            Transform child = this.MoviePagerGrid.GetChild(centeredObject.transform.GetSiblingIndex());
-            UIToggle component = child.GetComponent<UIToggle>();
-            component.value = true;
-        }
+        Transform child = this.MoviePagerGrid.GetChild(centeredObject.transform.GetSiblingIndex());
+        UIToggle component = child.GetComponent<UIToggle>();
+        component.value = true;
     }
 
     public void PlayGalleryMovie(String movieName)
@@ -813,6 +820,14 @@ public class TitleUI : UIScene
         {
             this.isPaused = !this.isPaused;
             MBG.Instance.Pause(this.isPaused);
+            if (this.isPaused)
+            {
+                SoundLib.PauseMusic();
+            }
+            else
+            {
+                SoundLib.ResumeMusic();
+            }
         }
     }
 
@@ -1073,6 +1088,11 @@ public class TitleUI : UIScene
 
     private void OnSquareEnixButtonClick()
     {
+        if (FF9StateSystem.PCEStorePlatform)
+        {
+            return;
+        }
+
         FF9Sfx.FF9SFX_Play(103);
         String language = Localization.language;
         switch (language)
@@ -1355,6 +1375,16 @@ public class TitleUI : UIScene
 
     private void SetNonSocialUI()
     {
+        if (!FF9StateSystem.AndroidTVPlatform && FF9StateSystem.MobilePlatform)
+        {
+            Vector3 localPosition = this.ScreenRotateButton.transform.localPosition;
+            localPosition.y = -200f;
+            this.ScreenRotateButton.transform.localPosition = localPosition;
+            this.ScreenRotateButton.SetActive(true);
+            UIEventListener uieventListener = UIEventListener.Get(this.ScreenRotateButton);
+            uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        }
+
         this.cloudButton.SetActive(false);
         this.MenuGroupPanel.transform.localPosition = new Vector3(0f, -300f, 0f);
     }
@@ -1385,6 +1415,14 @@ public class TitleUI : UIScene
     private void Update()
     {
         this.timer.Update();
+        if (ButtonGroupState.ActiveGroup == TitleUI.MovieGalleryGroupButton && (UIManager.Input.GetKeyTrigger(Control.Confirm) || Input.GetMouseButtonDown(0)) && (this.isPlayingMovie || base.Loading))
+        {
+            OSDLogger.AddStaticMessage(Time.frameCount + " : TAP!");
+            if (!this.OnDoubleClickGalleryMovie())
+            {
+                base.StartCoroutine(this.StopGalleryMovieCoroutine());
+            }
+        }
     }
 
     private void Start()
@@ -1434,6 +1472,11 @@ public class TitleUI : UIScene
             expr_2B8.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_2B8.onClick, new UIEventListener.VoidDelegate(this.onClick));
             UIEventListener expr_2E5 = UIEventListener.Get(this.MenuBlackjackPCButton);
             expr_2E5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_2E5.onClick, new UIEventListener.VoidDelegate(this.onClick));
+            if (FF9StateSystem.PCEStorePlatform)
+            {
+                this.MenuStaffPCButton.transform.position = this.SquareEnixButton.transform.position;
+                this.SquareEnixButton.SetActive(false);
+            }
         }
         else
         {
@@ -1448,6 +1491,13 @@ public class TitleUI : UIScene
             expr_380.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_380.onClick, new UIEventListener.VoidDelegate(this.onClick));
             UIEventListener expr_3AD = UIEventListener.Get(this.MenuBlackjackButton);
             expr_3AD.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_3AD.onClick, new UIEventListener.VoidDelegate(this.onClick));
+            if (FF9StateSystem.AndroidAmazonPlatform)
+            {
+                this.ScreenRotateButton.transform.position = this.AchievementButton.transform.position;
+                this.AchievementButton.transform.position = this.FaqsButton.transform.position;
+                this.FaqsButton.transform.position = this.SquareEnixButton.transform.position;
+                this.SquareEnixButton.SetActive(false);
+            }
         }
         if (FF9StateSystem.MobilePlatform)
         {
@@ -1495,9 +1545,11 @@ public class TitleUI : UIScene
         String credits;
         if (FF9StateSystem.AndroidAmazonPlatform)
             credits = CreditsImporter.TryLoadCredits("EmbeddedAsset/Manifest/Text/StaffCredits_Amazon.txt", ModTextResources.Import.CreditsAmazon);
+        else if (FF9StateSystem.AndroidSQEXMarket)
+            credits = CreditsImporter.TryLoadCredits("EmbeddedAsset/Manifest/Text/StaffCredits_AndroidSQEXMarket.txt", ModTextResources.Import.CreditsAndroid);
         else if (FF9StateSystem.MobilePlatform)
             credits = CreditsImporter.TryLoadCredits("EmbeddedAsset/Manifest/Text/StaffCredits_Mobile.txt", ModTextResources.Import.CreditsMobile);
-        else if (FF9StateSystem.EStorePlatform)
+        else if (FF9StateSystem.PCEStorePlatform)
             credits = CreditsImporter.TryLoadCredits("EmbeddedAsset/Manifest/Text/StaffCredits_EStore.txt", ModTextResources.Import.CreditsEStore);
         else
             credits = CreditsImporter.TryLoadCredits("EmbeddedAsset/Manifest/Text/StaffCredits_Steam.txt", ModTextResources.Import.CreditsSteam);
@@ -1513,11 +1565,35 @@ public class TitleUI : UIScene
             case RuntimePlatform.IPhonePlayer:
                 str = "iOS";
                 break;
-            case RuntimePlatform.Android:
-                str = !FF9StateSystem.AndroidAmazonPlatform ? "Android" : "Amazon";
-                break;
+            case RuntimePlatform.PS3:
+            case RuntimePlatform.XBOX360:
             default:
-                str = platform == RuntimePlatform.WindowsPlayer ? (!FF9StateSystem.EStorePlatform ? "Steam" : "EStore") : "Steam";
+                if (platform != RuntimePlatform.WindowsPlayer)
+                {
+                    str = "Steam";
+                }
+                else if (FF9StateSystem.PCEStorePlatform)
+                {
+                    str = "EStore";
+                }
+                else
+                {
+                    str = "Steam";
+                }
+                break;
+            case RuntimePlatform.Android:
+                if (FF9StateSystem.AndroidAmazonPlatform)
+                {
+                    str = "Amazon";
+                }
+                else if (FF9StateSystem.AndroidSQEXMarket)
+                {
+                    str = "AndroidSQEXMarket";
+                }
+                else
+                {
+                    str = "Android";
+                }
                 break;
         }
 

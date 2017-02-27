@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-[RequireComponent(typeof(UIWidget))]
 [ExecuteInEditMode]
+[RequireComponent(typeof(UIWidget))]
 public class AnimatedColor : MonoBehaviour
 {
 	private void OnEnable()

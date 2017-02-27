@@ -554,7 +554,19 @@ public class SoundLib : MonoBehaviour
 		}
 	}
 
-	public static Int32 GetActiveMusicSoundID()
+    public static void ResumeMusic()
+    {
+        try
+        {
+            SoundLib.musicPlayer.ResumeMusic();
+        }
+        catch (Exception message)
+        {
+            SoundLib.LogError(message);
+        }
+    }
+
+    public static Int32 GetActiveMusicSoundID()
 	{
 		try
 		{

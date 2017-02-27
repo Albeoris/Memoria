@@ -131,8 +131,8 @@ public class SystemInfoScene : MonoBehaviour
 		GUILayout.Label(this.SystemInfoString[30, 0] + " : " + SystemInfo.systemMemorySize, new GUILayoutOption[0]);
 		GUILayout.Label("------------------------", new GUILayoutOption[0]);
 		GUILayout.Label(this.ApplicationInfoString[0, 0] + " : " + Application.dataPath, new GUILayoutOption[0]);
-		GUILayout.Label(this.ApplicationInfoString[1, 0] + " : " + Application.persistentDataPath, new GUILayoutOption[0]);
-		GUILayout.Label(this.ApplicationInfoString[2, 0] + " : " + AssetManagerUtil.GetStreamingAssetsPath(), new GUILayoutOption[0]);
+		GUILayout.Label(this.ApplicationInfoString[1, 0] + " : " + AssetManagerUtil.GetPersistentDataPath(), new GUILayoutOption[0]);
+        GUILayout.Label(this.ApplicationInfoString[2, 0] + " : " + AssetManagerUtil.GetStreamingAssetsPath(), new GUILayoutOption[0]);
 		GUILayout.Label(this.ApplicationInfoString[3, 0] + " : " + Application.temporaryCachePath, new GUILayoutOption[0]);
 		GUILayout.EndScrollView();
 		GUILayout.EndVertical();

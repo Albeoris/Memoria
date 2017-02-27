@@ -219,8 +219,8 @@ public class FieldMapActor : HonoBehavior
 			zero = new Vector3(0f, -15f, 0f);
 		}
 		Vector3 a = this.GetShadowCurrentPos();
-		if (FF9StateSystem.Common.FF9.fldMapNo == 2107 && this.actor.uid == 5)
-		{
+        if ((FF9StateSystem.Common.FF9.fldMapNo == 2107 && this.actor.uid == 5) || (FF9StateSystem.Common.FF9.fldMapNo == 2102 && this.actor.uid == 4))
+        {
 			a = base.transform.position;
 			a.y = 0f;
 		}
@@ -259,56 +259,55 @@ public class FieldMapActor : HonoBehavior
 		this._geoAttachData.attachOffset = attachOffset;
 	}
 
-	public void GeoAttach(FieldMapActor parentActor, Transform parentNode)
-	{
-		Transform childByName = base.transform.GetChildByName("bone000");
-		if (childByName == (UnityEngine.Object)null)
-		{
-			return;
-		}
-		FieldMapActorController component = base.GetComponent<FieldMapActorController>();
-		component.curPosBeforeAttach = component.curPos;
-		component.localScaleBeforeAttach = base.transform.localScale;
-		Vector3 curPos = component.curPos;
-		component.curPos = Vector3.zero;
-		component.lastPos = Vector3.zero;
-		component.SyncPosToTransform();
-		component.SetActive(false);
-		if (FF9StateSystem.Common.FF9.fldMapNo >= 1400 && FF9StateSystem.Common.FF9.fldMapNo <= 1425)
-		{
-			if (FF9StateSystem.Common.FF9.fldMapNo == 1412)
-			{
-				if (component.isPlayer)
-				{
-					component.curPos = curPos;
-				}
-			}
-			else if (FF9StateSystem.Common.FF9.fldMapNo != 1410 && component.isPlayer)
-			{
-				component.curPos = parentNode.position;
-			}
-		}
-		this._geoAttachData.parentActor = parentActor;
-		this._geoAttachData.parentNode = parentNode;
-		this._geoAttachData.childNode = childByName;
-		Vector3 attachOffset = this._geoAttachData.attachOffset;
-		Boolean flag = (Int32)Mathf.Abs(attachOffset.x) == 30 && (Int32)Mathf.Abs(attachOffset.y) == 150 && FF9StateSystem.Common.FF9.fldMapNo == 2954;
-		Boolean flag2 = FF9StateSystem.Common.FF9.fldMapNo == 2954 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 11765 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 8;
-		this._geoAttachData.attachOffset = parentActor._geoAttachData.attachOffset;
-		if (flag2)
-		{
-			this._geoAttachData.attachOffset = new Vector3(30f, 150f, 0f);
-		}
-		base.transform.parent = parentNode.transform;
-		base.transform.localPosition = this._geoAttachData.attachOffset;
-		base.transform.localRotation = Quaternion.identity;
-		base.transform.localScale = Vector3.one;
-		this._geoAttachData.childNode.localPosition = Vector3.zero;
-		this._geoAttachData.childNode.localRotation = Quaternion.identity;
-		this._geoAttachData.childNode.localScale = Vector3.one;
-	}
+    public void GeoAttach(FieldMapActor parentActor, Transform parentNode)
+    {
+        Transform childByName = base.transform.GetChildByName("bone000");
+        if (childByName == (UnityEngine.Object)null)
+        {
+            return;
+        }
+        FieldMapActorController component = base.GetComponent<FieldMapActorController>();
+        component.curPosBeforeAttach = component.curPos;
+        component.localScaleBeforeAttach = base.transform.localScale;
+        Vector3 curPos = component.curPos;
+        component.curPos = Vector3.zero;
+        component.lastPos = Vector3.zero;
+        component.SyncPosToTransform();
+        component.SetActive(false);
+        if (FF9StateSystem.Common.FF9.fldMapNo >= 1400 && FF9StateSystem.Common.FF9.fldMapNo <= 1425)
+        {
+            if (FF9StateSystem.Common.FF9.fldMapNo == 1412)
+            {
+                if (component.isPlayer)
+                {
+                    component.curPos = curPos;
+                }
+            }
+            else if (FF9StateSystem.Common.FF9.fldMapNo != 1410 && component.isPlayer)
+            {
+                component.curPos = parentNode.position;
+            }
+        }
+        this._geoAttachData.parentActor = parentActor;
+        this._geoAttachData.parentNode = parentNode;
+        this._geoAttachData.childNode = childByName;
+        Vector3 attachOffset = this._geoAttachData.attachOffset;
+        bool flag = FF9StateSystem.Common.FF9.fldMapNo == 2954 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 8;
+        this._geoAttachData.attachOffset = parentActor._geoAttachData.attachOffset;
+        if (flag)
+        {
+            this._geoAttachData.attachOffset = new Vector3(30f, 150f, 0f);
+        }
+        base.transform.parent = parentNode.transform;
+        base.transform.localPosition = this._geoAttachData.attachOffset;
+        base.transform.localRotation = Quaternion.identity;
+        base.transform.localScale = Vector3.one;
+        this._geoAttachData.childNode.localPosition = Vector3.zero;
+        this._geoAttachData.childNode.localRotation = Quaternion.identity;
+        this._geoAttachData.childNode.localScale = Vector3.one;
+    }
 
-	public void GeoDetach(Boolean restorePosAndScale)
+    public void GeoDetach(Boolean restorePosAndScale)
 	{
 		FieldMapActorController component = base.GetComponent<FieldMapActorController>();
 		component.SetActive(true);

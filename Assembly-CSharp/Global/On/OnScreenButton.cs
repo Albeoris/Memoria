@@ -57,7 +57,8 @@ public class OnScreenButton : MonoBehaviour
 			{
 				UIManager.Input.SendKeyCode(this.KeyCommand, false);
 				PersistenSingleton<HonoInputManager>.Instance.SetInputDownSources(SourceControl.Touch, this.KeyCommand);
-			}
+                Singleton<DialogManager>.Instance.PressMesId = PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId;
+            }
 			else
 			{
 				this.isPress = false;
@@ -75,7 +76,8 @@ public class OnScreenButton : MonoBehaviour
 					UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnScreenButtonPressed", base.gameObject);
 				}
 				UIManager.Input.ResetKeyCode();
-			}
+                Singleton<DialogManager>.Instance.ReleaseMesId = PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId;
+            }
 		}
 	}
 

@@ -5,76 +5,122 @@ public partial class EventEngine
 {
     private void ProcessAnime(Actor actor)
     {
-        if (((Int32)actor.animFlag & EventEngine.afFreeze) == 0)
+        if (((int)actor.animFlag & EventEngine.afFreeze) == 0)
         {
             if (this.gMode == 3)
             {
-                if ((Int32)actor.sid == 5 && WMUIData.ControlNo == 6 && (Int32)WMUIData.StatusNo == 7)
-                    actor.frameN = (Byte)20;
-                if ((Int32)actor.uid == 12 && WMUIData.ControlNo == 6 && ((Int32)WMUIData.StatusNo == 7 && (Int32)actor.frameN == 14))
-                    actor.frameN = (Byte)20;
+                if (actor.sid == 5 && WMUIData.ControlNo == 6 && WMUIData.StatusNo == 7)
+                {
+                    if (actor.anim == 8132)
+                    {
+                        actor.frameN = 30;
+                    }
+                    else if (actor.anim == 8134)
+                    {
+                        actor.frameN = 10;
+                    }
+                    else
+                    {
+                        actor.frameN = 20;
+                    }
+                }
+                if (actor.uid == 12 && WMUIData.ControlNo == 6 && WMUIData.StatusNo == 7)
+                {
+                    if (actor.anim == 8151)
+                    {
+                        actor.frameN = 30;
+                    }
+                    else if (actor.anim == 8148)
+                    {
+                        actor.frameN = 11;
+                    }
+                    else if (actor.frameN == 14)
+                    {
+                        actor.frameN = 20;
+                    }
+                }
             }
-            if (((Int32)actor.animFlag & EventEngine.afExec) != 0)
+            if (((int)actor.animFlag & EventEngine.afExec) != 0)
             {
                 if (actor.parent != null)
                 {
-                    Actor actor1 = actor.parent;
-                    Boolean flag = (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2950 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2951 || ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2952 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2953) || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2954 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2955;
-                    if ((Int32)actor1.anim == (Int32)actor1.idle)
+                    Actor parent = actor.parent;
+                    bool flag = FF9StateSystem.Common.FF9.fldMapNo == 2950 || FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952 || FF9StateSystem.Common.FF9.fldMapNo == 2953 || FF9StateSystem.Common.FF9.fldMapNo == 2954 || FF9StateSystem.Common.FF9.fldMapNo == 2955;
+                    if (parent.anim == parent.idle)
                     {
-                        if ((Int32)actor.anim != (Int32)actor.idle && flag)
-                            this.SetAnim(actor, (Int32)actor.idle);
+                        if (actor.anim != actor.idle && flag)
+                        {
+                            this.SetAnim(actor, (int)actor.idle);
+                        }
                         actor.anim = actor.idle;
                     }
-                    else if ((Int32)actor1.anim == (Int32)actor1.walk)
+                    else if (parent.anim == parent.walk)
                     {
-                        if ((Int32)actor.anim != (Int32)actor.walk && flag)
-                            this.SetAnim(actor, (Int32)actor.walk);
+                        if (actor.anim != actor.walk && flag)
+                        {
+                            this.SetAnim(actor, (int)actor.walk);
+                        }
                         actor.anim = actor.walk;
                     }
-                    else if ((Int32)actor1.anim == (Int32)actor1.run)
+                    else if (parent.anim == parent.run)
                     {
-                        if ((Int32)actor.anim != (Int32)actor.run && flag)
-                            this.SetAnim(actor, (Int32)actor.run);
+                        if (actor.anim != actor.run && flag)
+                        {
+                            this.SetAnim(actor, (int)actor.run);
+                        }
                         actor.anim = actor.run;
                     }
-                    if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2950 && (Int32)actor.sid == 25 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2951 && (Int32)actor.sid == 29 || ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2952 && (Int32)actor.sid == 23 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2954 && (Int32)actor.sid == 26) || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 2955 && (Int32)actor.sid == 28)
+                    if ((FF9StateSystem.Common.FF9.fldMapNo == 2950 && actor.sid == 25) || (FF9StateSystem.Common.FF9.fldMapNo == 2951 && actor.sid == 29) || (FF9StateSystem.Common.FF9.fldMapNo == 2952 && actor.sid == 23) || (FF9StateSystem.Common.FF9.fldMapNo == 2954 && actor.sid == 26) || (FF9StateSystem.Common.FF9.fldMapNo == 2955 && actor.sid == 28))
                     {
-                        ++actor.animFrame;
-                        actor.animFrame %= (Byte)(UInt32)actor.frameN;
+                        actor.animFrame = (byte)(actor.animFrame + 1);
+                        actor.animFrame = (byte)(actor.animFrame % actor.frameN);
                     }
                     else
-                        actor.animFrame = actor1.animFrame;
+                    {
+                        actor.animFrame = parent.animFrame;
+                    }
                 }
-                else if (((Int32)actor.animFlag & EventEngine.afDir) == 0)
+                else if (((int)actor.animFlag & EventEngine.afDir) == 0)
                 {
-                    Int32 num1 = (Int32)actor.outFrame;
-                    Int32 num2 = (Int32)actor.frameN - 1;
-                    if (num1 > num2)
-                        num1 = num2;
-                    if (this.NextFrame(actor) > num1)
+                    int num = (int)actor.outFrame;
+                    int num2 = (int)(actor.frameN - 1);
+                    if (num > num2)
+                    {
+                        num = num2;
+                    }
+                    if (this.NextFrame(actor) > num)
+                    {
                         this.AnimLoop(actor);
-                    if (((Int32)actor.flags & 128) != 0)
+                    }
+                    if ((actor.flags & 128) != 0)
+                    {
                         this.DoTurn(actor);
+                    }
                 }
-                else if (this.NextFrame(actor) < (Int32)actor.outFrame)
+                else if (this.NextFrame(actor) < (int)actor.outFrame)
+                {
                     this.AnimLoop(actor);
+                }
             }
             else
             {
-                Int32 num = this.NextFrame(actor);
-                if ((Int32)actor.sid != 17)
-                ;
-                if (num >= (Int32)actor.frameN)
+                int num3 = this.NextFrame(actor);
+                if (actor.sid == 17)
                 {
-                    actor.animFrame = (Byte)0;
-                    if ((Int32)actor.anim == (Int32)actor.idle)
+                }
+                if (num3 >= (int)actor.frameN)
+                {
+                    actor.animFrame = 0;
+                    if (actor.anim == actor.idle)
+                    {
                         this.idleAnimSpeed(actor);
+                    }
                 }
             }
         }
-        if (this.gMode != 3 || (Int32)actor.sid != 5)
-        ;
+        if (this.gMode != 3 || actor.sid == 5)
+        {
+        }
     }
 
     private Int32 NextFrame(Actor actor)

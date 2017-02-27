@@ -6548,7 +6548,10 @@ public static class ff9
 		ff9.w_moveCHRControlPtr = s_moveCHRControl2;
 		if (b == 7)
 		{
-			ff9.w_musicSEStop(s_moveCHRControl.se);
+            int num = 1000;
+            ushort tick = (ushort)((float)num * (float)Application.targetFrameRate / 1000f);
+            ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
+            ff9.w_musicSEStop((int)s_moveCHRControl.se, num);
 		}
 		if (s_moveCHRControl2.se != 0)
 		{
@@ -6597,9 +6600,11 @@ public static class ff9
 		Int32 num = ff9.w_moveCHRControl_No;
 		ff9.s_moveCHRControl s_moveCHRControl = ff9.w_moveCHRControlPtr;
 		ff9.s_moveCHRControl s_moveCHRControl2 = ff9.w_moveCHRControl[0];
-		ff9.w_musicSEVolumeIntpl(s_moveCHRControl.se, 127, 0);
-		ff9.w_musicSEVolumeIntpl(38, 127, 0);
-		ff9.w_musicRequestSend(s_moveCHRControl2.music);
+        int num2 = 3000;
+        ushort tick = (ushort)((float)num2 * (float)Application.targetFrameRate / 1000f);
+        ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
+        ff9.w_musicSEVolumeIntpl(38, tick, 0);
+        ff9.w_musicRequestSend(s_moveCHRControl2.music);
 		ff9.w_cameraChange(s_moveCHRControl2.type_cam, 64);
 	}
 
@@ -7620,7 +7625,20 @@ public static class ff9
 		}
 	}
 
-	public static Boolean w_musicGetID(Int64 seno, out ff9.s_musicID data)
+    public static void w_musicSEStop(int seno, int timeInMilliseconds)
+    {
+        ff9.s_musicID s_musicID;
+        if (ff9.w_musicGetID((long)seno, out s_musicID))
+        {
+            for (int i = 0; i < s_musicID.figure; i++)
+            {
+                FF9Snd.ff9wldsnd_sndeffect_stop(s_musicID.id[i], timeInMilliseconds);
+                timeInMilliseconds >>= 1;
+            }
+        }
+    }
+
+    public static Boolean w_musicGetID(Int64 seno, out ff9.s_musicID data)
 	{
 		ff9.s_musicID s_musicID = new ff9.s_musicID();
 		s_musicID.id[0] = -1;
@@ -7719,7 +7737,7 @@ public static class ff9
 		}
 		if (s_musicID.id[0] != -1)
 		{
-			s_musicID.attr = 32768;
+			s_musicID.attr = 0;
 			s_musicID.figure = 1;
 			data = s_musicID;
 			return true;
@@ -7729,27 +7747,27 @@ public static class ff9
 			switch ((Int32)(seno - 20L))
 			{
 			case 0:
-				s_musicID.attr = 32768;
+				s_musicID.attr = 0;
 				s_musicID.id[0] = 884;
 				s_musicID.id[1] = 885;
 				break;
 			case 1:
-				s_musicID.attr = 32768;
+				s_musicID.attr = 0;
 				s_musicID.id[0] = 886;
 				s_musicID.id[1] = 887;
 				break;
 			case 2:
-				s_musicID.attr = 32768;
+				s_musicID.attr = 0;
 				s_musicID.id[0] = 888;
 				s_musicID.id[1] = 889;
 				break;
 			case 3:
-				s_musicID.attr = 32768;
+				s_musicID.attr = 0;
 				s_musicID.id[0] = 1364;
 				s_musicID.id[1] = 1365;
 				break;
 			case 4:
-				s_musicID.attr = 32768;
+				s_musicID.attr = 0;
 				s_musicID.id[0] = 1497;
 				s_musicID.id[1] = 1498;
 				break;
@@ -10684,7 +10702,7 @@ public static class ff9
 
 	public const Int32 kmusicSEAttrGeneral = 524288;
 
-	public const Int32 kmusicSEAttrPlane = 32768;
+	public const Int32 kmusicSEAttrPlane = 0;
 
 	public const Int32 kmusicSEAttrEvent = 2048;
 

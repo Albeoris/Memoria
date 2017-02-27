@@ -11,6 +11,7 @@ public partial class EventEngine
                 return 0;
             case EBin.event_code_binary.SHADOWOFF:
                 ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                po.isShadowOff = true;
                 return 0;
             case EBin.event_code_binary.SHADOWSCALE:
                 Int32 xScale = this.getv1();

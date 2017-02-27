@@ -257,7 +257,10 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 
 	private void LoadCloudSyncPreviewOnCloudLoadCallBack(Byte[] data, SiliconStudio.Social.ResponseData.Status status)
 	{
-		if (data != null)
+        global::Debug.Log("in LoadCloudSyncPreviewOnCloudLoadCallBack 1 " + status);
+        global::Debug.Log("in LoadCloudSyncPreviewOnCloudLoadCallBack 4");
+
+        if (data != null)
 		{
 			this.ValidateCloudSaveData(data, delegate(Boolean isSuccess)
 			{

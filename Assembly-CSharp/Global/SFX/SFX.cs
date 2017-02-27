@@ -1238,6 +1238,7 @@ public class SFX
             }
             next = next.next;
         }
+        bool flag2 = (int)next.btl_id == num3;
         if (next == null || next.btl_id == 0)
         {
             return (num != 9) ? 0 : 1;
@@ -1458,6 +1459,10 @@ public class SFX
                     case 1:
                         {
                             UInt32 num6 = (UInt32)(arg2 << 16 | arg1);
+                            if (SFX.currentEffectID == 237 && (num6 & 256u) != 0u && !flag2)
+                            {
+                                return 1;
+                            }
                             return ((next.stat.permanent & num6) == 0u && (next.stat.cur & num6) == 0u) ? 0 : 1;
                         }
                     case 2:
@@ -1797,15 +1802,6 @@ public class SFX
                                     break;
                                 case 1:
                                     return SFX.cpos.vy;
-                                case 2:
-                                    array[12] = SFX.cpos.vx;
-                                    array[13] = SFX.cpos.vy;
-                                    array[14] = SFX.cpos.vz;
-                                    for (Int32 i = 0; i < 16; i++)
-                                    {
-                                        *(Single*)((Byte*)p + i * 4) = array[i];
-                                    }
-                                    break;
                             }
                             break;
                         case 15:
@@ -2240,49 +2236,46 @@ public class SFX
         SFX.SFX_SendIntData(2, trg.btl_id, 0, 0);
     }
 
-    public static void SetCamera(Int32 cam)
+    public static void SetCamera(int cam)
     {
-        Int32 arg = 0;
+        int arg = 0;
         if (cam == 2)
         {
             arg = 150;
         }
         else
         {
-            Int32 battleMapIndex = FF9StateSystem.Battle.battleMapIndex;
+            int battleMapIndex = FF9StateSystem.Battle.battleMapIndex;
             switch (battleMapIndex)
             {
                 case 160:
+                    arg = 160;
+                    break;
+                case 161:
+                case 162:
+                    IL_3B:
+                    if (battleMapIndex != 155)
+                    {
+                        if (battleMapIndex == 303)
+                        {
+                            if (cam == 9)
+                            {
+                                arg = 120;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        arg = 240;
+                    }
+                    break;
                 case 163:
-                    goto IL_56;
-                //case 161:
-                //case 162:
+                    arg = 120;
+                    break;
                 default:
-                    if (battleMapIndex == 155)
-                    {
-                        if (cam == 9)
-                        {
-                            arg = 120;
-                        }
-                        if (cam == 10)
-                        {
-                            arg = 240;
-                        }
-                        goto IL_84;
-                    }
-                    if (battleMapIndex != 303)
-                    {
-                        goto IL_84;
-                    }
-                    goto IL_56;
-            }
-            IL_56:
-            if (cam == 9)
-            {
-                arg = 120;
+                    goto IL_3B;
             }
         }
-        IL_84:
         SFX.SFX_SendIntData(3, cam, arg, 0);
     }
 

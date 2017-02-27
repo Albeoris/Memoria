@@ -87,7 +87,13 @@ public class WalkMeshTriangle
 
 	public Vector3 originalCenter;
 
-	public Vector3[] transformedVertices;
+    public Bounds originalBounds;
+
+    public Vector3 originalBoundsMin;
+
+    public Vector3 originalBoundsMax;
+
+    public Vector3[] transformedVertices;
 
 	public Vector3 transformedCenter;
 

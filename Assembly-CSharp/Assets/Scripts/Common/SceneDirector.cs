@@ -93,7 +93,8 @@ namespace Assets.Scripts.Common
 		public static void ReplacePending(SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
 		{
 			PersistenSingleton<SceneDirector>.Instance.NextScene = PersistenSingleton<SceneDirector>.Instance.PendingNextScene;
-			PersistenSingleton<SceneDirector>.Instance.Transition = transition;
+            PersistenSingleton<SceneDirector>.Instance.PendingNextScene = String.Empty;
+            PersistenSingleton<SceneDirector>.Instance.Transition = transition;
 			PersistenSingleton<SceneDirector>.Instance.Replace(needFade);
 		}
 
