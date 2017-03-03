@@ -138,7 +138,7 @@ public class BTL_SCENE
 				cmd_INFO.DefaultAlly = BitUtil.ReadBits(input, ref b, 1) != 0;
 				cmd_INFO.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref b, 3);
 				cmd_INFO.VfxIndex = (Int16)BitUtil.ReadBits(input, ref b, 9);
-				//cmd_INFO.sfx_no = (Int16)BitUtil.ReadBits(input, ref b, 12);
+				/*cmd_INFO.sfx_no = (Int16)*/ BitUtil.ReadBits(input, ref b, 12);
 				cmd_INFO.ForDead = BitUtil.ReadBits(input, ref b, 1) != 0;
 				cmd_INFO.DefaultCamera = BitUtil.ReadBits(input, ref b, 1) != 0;
 				cmd_INFO.DefaultOnDead = BitUtil.ReadBits(input, ref b, 1) != 0;
