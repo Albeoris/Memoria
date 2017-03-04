@@ -9458,10 +9458,10 @@ public static class ff9
 		{
 			ff9.w_frameDisc = b;
 		}
-		String empty = String.Empty;
-		switch (result)
-		{
-		}
+		//String empty = String.Empty;
+		//switch (result)
+		//{
+		//}
 		return result;
 	}
 

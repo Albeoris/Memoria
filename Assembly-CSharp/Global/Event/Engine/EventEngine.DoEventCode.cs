@@ -548,8 +548,8 @@ public partial class EventEngine
                     --num15;
                     ++index3;
                 }
-                if ((Int32)this.gCur.sid != 4)
-                    ;
+                //if ((Int32)this.gCur.sid != 4)
+                //    ;
                 return 0;
             case EBin.event_code_binary.ENCOUNT:
                 this.getv1(); // rush_type
@@ -975,8 +975,8 @@ public partial class EventEngine
                     if ((UnityEngine.Object)component2 != (UnityEngine.Object)null)
                         component2.CharRadius = (Single)(num24 * 4);
                 }
-                else if (this.gMode != 3)
-                    ;
+                //else if (this.gMode != 3)
+                //    ;
                 return 0;
             case EBin.event_code_binary.ATTACH:
                 Obj sourceObj = this.GetObj1();

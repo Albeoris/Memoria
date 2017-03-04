@@ -1292,7 +1292,7 @@ public class EndGame
                 this.ff9endingGameCardRender(EndGameDef.ENDGAME_CARD(n), EndGameDef.ENDGAME_SUIT(n), num2, num3);
             }
             num2 -= 13;
-            num3 = num3;
+            //num3 = num3;
         }
         return 0;
     }

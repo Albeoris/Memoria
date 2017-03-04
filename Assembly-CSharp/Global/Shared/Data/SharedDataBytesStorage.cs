@@ -27,12 +27,12 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			SetPCPath();
 		}
-		ISharedDataLog.Log("MetaData.FilePath: " + SharedDataBytesStorage.MetaData.FilePath);
+		ISharedDataLog.Log("MetaData.FilePath: " + MetaData.FilePath);
 	}
 
 	private static void SetPCPath()
 	{
-	    if (!String.IsNullOrEmpty(SharedDataBytesStorage.MetaData.FilePath))
+	    if (!String.IsNullOrEmpty(MetaData.FilePath))
 	        return;
 
         String fileName;
@@ -42,14 +42,16 @@ public class SharedDataBytesStorage : ISharedDataStorage
         {
             String text2 = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             text2 = text2.Replace('\\', '/');
-            SharedDataBytesStorage.MetaData.DirPath = text2 + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
+            MetaData.DirPath = text2 + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
         }
         else
         {
-            SharedDataBytesStorage.MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + str2;
+            MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + str2;
         }
 
-	    String[] saveDataFiles = Directory.GetFiles(SharedDataBytesStorage.MetaData.DirPath, "SavedData_??.dat");
+        Directory.CreateDirectory(MetaData.DirPath);
+
+	    String[] saveDataFiles = Directory.GetFiles(MetaData.DirPath, "SavedData_??.dat");
 	    if (saveDataFiles.Length == 0)
 	    {
             if (Localization.language == "Japanese")
@@ -82,19 +84,19 @@ public class SharedDataBytesStorage : ISharedDataStorage
 	        Log.Message($"There is many SavedData_??.dat files. Choose by a last write time: {fileName}");
 	    }
 
-        SharedDataBytesStorage.MetaData.FilePath = Application.persistentDataPath + str2 + "/" + fileName;
+        MetaData.FilePath = Application.persistentDataPath + str2 + "/" + fileName;
     }
 
     private void SetOtherPlatformPath()
 	{
-		SharedDataBytesStorage.MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
-		SharedDataBytesStorage.MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData";
+        MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
+        MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData";
 	}
 
 	private void SetEditorPath()
 	{
-		SharedDataBytesStorage.MetaData.FilePath = Application.persistentDataPath + "/SavedData/SavedData.dat";
-		SharedDataBytesStorage.MetaData.DirPath = Application.persistentDataPath + "/SavedData";
+        MetaData.FilePath = Application.persistentDataPath + "/SavedData/SavedData.dat";
+        MetaData.DirPath = Application.persistentDataPath + "/SavedData";
 	}
 
 	private JsonParser LazyCreateJsonParser()
@@ -475,13 +477,13 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
 	protected void CreateFileIfDoesNotExist(SharedDataBytesStorage.MetaData metaData)
 	{
-		if (!Directory.Exists(SharedDataBytesStorage.MetaData.DirPath))
+		if (!Directory.Exists(MetaData.DirPath))
 		{
-			Directory.CreateDirectory(SharedDataBytesStorage.MetaData.DirPath);
+			Directory.CreateDirectory(MetaData.DirPath);
 		}
-		if (!File.Exists(SharedDataBytesStorage.MetaData.FilePath))
+		if (!File.Exists(MetaData.FilePath))
 		{
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Create, FileAccess.Write))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Create, FileAccess.Write))
 			{
 				using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
 				{
@@ -546,7 +548,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		this.CreateFileIfDoesNotExist(this.metaData);
 		try
 		{
-			this.cStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read);
+			this.cStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read);
 			this.cReader = new BinaryReader(this.cStream);
 			this.cOnFinishDelegate = onFinishDelegate;
 		}
@@ -608,7 +610,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			Int32 cacheOutSlotID = -1;
 			Int32 cacheOutSaveID = -1;
 			SharedDataPreviewSlot cacheData = (SharedDataPreviewSlot)null;
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -653,7 +655,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
 			Boolean flag = false;
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -777,7 +779,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				ISharedDataLog.Log("DataSize: " + this.metaData.DataSize);
 				ISharedDataLog.Log("TotalDataSize should be: " + 150 * this.metaData.DataSize);
 				this.CreateFileIfDoesNotExist(this.metaData);
-				using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+				using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 				{
 					using (BinaryReader binaryReader = new BinaryReader(fileStream))
 					{
@@ -861,11 +863,11 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			if (!File.Exists(SharedDataBytesStorage.MetaData.FilePath))
+			if (!File.Exists(MetaData.FilePath))
 			{
 				onFinishDelegate(null);
 			}
-			Byte[] rawData = File.ReadAllBytes(SharedDataBytesStorage.MetaData.FilePath);
+			Byte[] rawData = File.ReadAllBytes(MetaData.FilePath);
 			onFinishDelegate(rawData);
 		}
 		catch (Exception message)
@@ -882,7 +884,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			File.WriteAllBytes(SharedDataBytesStorage.MetaData.FilePath, rawData);
+			File.WriteAllBytes(MetaData.FilePath, rawData);
 			onFinishDelegate(true);
 		}
 		catch (Exception message)
@@ -899,7 +901,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -923,7 +925,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -947,7 +949,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -971,7 +973,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -979,7 +981,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				}
 			}
 			this.metaData.IsGameFinishFlag = 1;
-			using (FileStream fileStream2 = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
 				{
@@ -1006,7 +1008,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1030,7 +1032,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1038,7 +1040,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				}
 			}
 			this.metaData.SelectedLanguage = selectedLanguage;
-			using (FileStream fileStream2 = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
 				{
@@ -1065,7 +1067,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1089,7 +1091,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1097,7 +1099,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				}
 			}
 			this.metaData.IsAutoLogin = isAutoLogin;
-			using (FileStream fileStream2 = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
 				{
@@ -1124,7 +1126,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1153,7 +1155,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			{
 				array[i] = systemAchievementStatuses[i];
 			}
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1172,7 +1174,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				}));
 			}
 			array = null;
-			using (FileStream fileStream2 = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
 				{
@@ -1199,7 +1201,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1223,7 +1225,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1232,7 +1234,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			}
 			this.metaData.ScreenRotation = screenRotation;
 			global::Debug.Log("ByteStorage: 1 SetScreenRotation = " + this.metaData.ScreenRotation);
-			using (FileStream fileStream2 = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream fileStream2 = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader2 = new BinaryReader(fileStream2))
 				{
@@ -1260,7 +1262,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			this.CreateDataSchema();
 			this.CreateFileIfDoesNotExist(this.metaData);
-			using (FileStream fileStream = File.Open(SharedDataBytesStorage.MetaData.FilePath, FileMode.Open, FileAccess.Read))
+			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
 				{
@@ -1287,17 +1289,17 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
 	public override void GetDataSize(ISharedDataStorage.OnGetDataSizeFinish onFinishDelegate)
 	{
-		if (!Directory.Exists(SharedDataBytesStorage.MetaData.DirPath))
+		if (!Directory.Exists(MetaData.DirPath))
 		{
 			onFinishDelegate(false, 0);
 			return;
 		}
-		if (!File.Exists(SharedDataBytesStorage.MetaData.FilePath))
+		if (!File.Exists(MetaData.FilePath))
 		{
 			onFinishDelegate(false, 0);
 			return;
 		}
-		FileInfo fileInfo = new FileInfo(SharedDataBytesStorage.MetaData.FilePath);
+		FileInfo fileInfo = new FileInfo(MetaData.FilePath);
 		Int32 num = (Int32)fileInfo.Length;
 		Int32 num2 = 2937152;
 		if (num == num2)

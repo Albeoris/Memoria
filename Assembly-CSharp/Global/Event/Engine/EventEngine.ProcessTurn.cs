@@ -52,13 +52,9 @@ public partial class EventEngine
     private void DoTurn(Actor actor)
     {
         Vector3 vector3 = actor.rotAngle;
-        if ((Int32)actor.sid != 15)
-        ;
         vector3.y += actor.turnAdd;
         actor.rotAngle[1] += actor.turnAdd;
         actor.trot += actor.trotAdd;
-        if ((Int32)actor.sid == 15)
-        ;
     }
 
     private void FinishTurn(Actor actor)
