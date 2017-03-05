@@ -168,7 +168,7 @@ public class fldchar
 				if (charStateArray.ContainsKey(key))
 				{
 					FF9FieldCharState ff9FieldCharState = charStateArray[key];
-					Int32 num = (Int32)(ff9Char.attr & 65536u);
+					UInt32 num = (UInt32)(ff9Char.attr & 65536u);
 					Int32 num2 = (Int32)((UInt64)(ff9FieldCharState.attr & 65536u) ^ (UInt64)((Int64)num));
 					Int32 num3 = FF9Char.ff9charptr_attr_test(ff9Char, 262144);
 					Int32 num4 = FF9Char.ff9charptr_attr_test(ff9Char, 131072);
@@ -212,7 +212,7 @@ public class fldchar
 							{
 								FF9Char.ff9charptr_attr_set(ff9Char, 131072);
 							}
-							ff9FieldCharState.attr = (UInt32)(((UInt64)ff9FieldCharState.attr & 18446744073709486079UL) | (UInt64)num);
+							ff9FieldCharState.attr = (ff9FieldCharState.attr & 0xFFFEFFFF) | num;
 						}
 						FF9FieldCharColor ff9FieldCharColor = ff9FieldCharState.clr[0];
 						if (ff9FieldCharColor.active && !FF9StateSystem.Field.isDebugWalkMesh && (Int32)componentsInChildren.Length > 0)

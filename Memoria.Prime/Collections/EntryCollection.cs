@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Memoria.Prime.Collections
@@ -88,7 +89,7 @@ namespace Memoria.Prime.Collections
         }
     }
 
-    public sealed class EntryCollection<TValue> where TValue : class
+    public sealed class EntryCollection<TValue> : IEnumerable<TValue> where TValue : class
     {
         private readonly Dictionary<Int32, TValue> _dic;
         private readonly TValue _defaultElement;
@@ -122,6 +123,16 @@ namespace Memoria.Prime.Collections
 
                 throw new ArgumentException($"There is no element of type {TypeCache<TValue>.Type.FullName} with the key {key}.");
             }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator<TValue> GetEnumerator()
+        {
+            return _dic.Values.GetEnumerator();
         }
     }
 }

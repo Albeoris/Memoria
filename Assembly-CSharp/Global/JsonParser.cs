@@ -905,19 +905,19 @@ public class JsonParser : ISharedDataParser
 			{
 				{
 					"p_def",
-					player2.defence.p_def.ToString()
+					player2.defence.PhisicalDefence.ToString()
 				},
 				{
 					"p_ev",
-					player2.defence.p_ev.ToString()
+					player2.defence.PhisicalEvade.ToString()
 				},
 				{
 					"m_def",
-					player2.defence.m_def.ToString()
+					player2.defence.MagicalDefence.ToString()
 				},
 				{
 					"m_ev",
-					player2.defence.m_ev.ToString()
+					player2.defence.MagicalEvade.ToString()
 				}
 			});
 			jsonclass2.Add("basis", new JSONClass
@@ -1159,19 +1159,19 @@ public class JsonParser : ISharedDataParser
 			{
 				{
 					"p_def",
-					player3.defence.p_def.GetType().ToString()
+					player3.defence.PhisicalDefence.GetType().ToString()
 				},
 				{
 					"p_ev",
-					player3.defence.p_ev.GetType().ToString()
+					player3.defence.PhisicalEvade.GetType().ToString()
 				},
 				{
 					"m_def",
-					player3.defence.m_def.GetType().ToString()
+					player3.defence.MagicalDefence.GetType().ToString()
 				},
 				{
 					"m_ev",
-					player3.defence.m_ev.GetType().ToString()
+					player3.defence.MagicalEvade.GetType().ToString()
 				}
 			});
 			jsonclass4.Add("basis", new JSONClass
@@ -1405,19 +1405,19 @@ public class JsonParser : ISharedDataParser
 				JSONClass asObject5 = asObject["defence"].AsObject;
 				if (asObject5["p_def"] != null)
 				{
-					player.defence.p_def = (Byte)asObject5["p_def"].AsInt;
+					player.defence.PhisicalDefence = (Byte)asObject5["p_def"].AsInt;
 				}
 				if (asObject5["p_ev"] != null)
 				{
-					player.defence.p_ev = (Byte)asObject5["p_ev"].AsInt;
+					player.defence.PhisicalEvade = (Byte)asObject5["p_ev"].AsInt;
 				}
 				if (asObject5["m_def"] != null)
 				{
-					player.defence.m_def = (Byte)asObject5["m_def"].AsInt;
+					player.defence.MagicalDefence = (Byte)asObject5["m_def"].AsInt;
 				}
 				if (asObject5["m_ev"] != null)
 				{
-					player.defence.m_ev = (Byte)asObject5["m_ev"].AsInt;
+					player.defence.MagicalEvade = (Byte)asObject5["m_ev"].AsInt;
 				}
 				JSONClass asObject6 = asObject["basis"].AsObject;
 				if (asObject6["max_hp"] != null)

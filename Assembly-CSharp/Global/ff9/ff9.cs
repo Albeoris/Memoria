@@ -3180,19 +3180,16 @@ public static class ff9
 			{
 				Single num21 = ff9.S(1408);
 				vector4.x += num21;
-				vector4.z = vector4.z;
 				Int32 num22;
 				Single num23;
 				ff9.w_cellHit(ref vector4, ref num13, out num22, ff9.w_cameraHit[0], out num23);
 				vector4.x -= num21 * 2f;
-				vector4.z = vector4.z;
 				Single num24;
 				ff9.w_cellHit(ref vector4, ref num14, out num22, ff9.w_cameraHit[1], out num24);
 				vector4.x += num21;
 				vector4.z += num21;
 				Single num25;
 				ff9.w_cellHit(ref vector4, ref num15, out num22, ff9.w_cameraHit[2], out num25);
-				vector4.x = vector4.x;
 				vector4.z -= num21 * 2f;
 				Single num26;
 				ff9.w_cellHit(ref vector4, ref num16, out num22, ff9.w_cameraHit[3], out num26);

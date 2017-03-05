@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FF9;
+using Memoria.Data;
 using UnityEngine;
 
 public class ModelFactory
@@ -204,8 +205,8 @@ public class ModelFactory
 	public static GameObject CreateDefaultWeaponForCharacterWhenUseAsEnemy(String path)
 	{
 		Int32 num = ModelFactory.defaultWeaponTable[path];
-		WEAPON weapon = ff9weap._FF9Weapon_Data[num];
-		String text = FF9BattleDB.GEO.GetValue((Int32)weapon.model_no);
+		ItemAttack weapon = ff9weap.WeaponData[num];
+		String text = FF9BattleDB.GEO.GetValue((Int32)weapon.ModelId);
 		global::Debug.LogWarning("-------------------------------------------------------------------------");
 		return ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + text + "/" + text, true);
 	}

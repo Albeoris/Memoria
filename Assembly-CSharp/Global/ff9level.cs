@@ -190,7 +190,7 @@ public static class ff9level
 			if (equip[i] != 255)
 			{
 				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)equip[i]];
-				EQUIP_PRIVILEGE equip_PRIVILEGE = ff9equip._FF9EquipBonus_Data[(Int32)ff9ITEM_DATA.bonus];
+				ItemStats equip_PRIVILEGE = ff9equip.ItemStatsData[(Int32)ff9ITEM_DATA.bonus];
 				switch (base_type)
 				{
 				case 0:

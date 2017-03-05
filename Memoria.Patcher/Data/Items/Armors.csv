@@ -1,0 +1,142 @@
+# This file contains a set of game armors.;;;;;
+# You must set at least 136 different items.;;;;;
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------;;;;;
+# Comment;Id;P.Def;P.Eva;M.Def;M.Eva
+#;Int32;Byte;Byte;Byte;Byte
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------;;;;;
+Wrist;0;0;5;0;3
+Leather Wrist;1;0;7;0;5
+Glass Armlet;2;0;10;0;7
+Bone Wrist;3;0;13;0;9
+Mythril Armlet;4;0;17;0;11
+Magic Armlet;5;0;16;1;16
+Chimera Armlet;6;0;22;0;14
+Egoist’s Armlet;7;0;20;0;20
+N-Kai Armlet;8;2;27;0;0
+Jade Armlet;9;0;0;2;27
+Thief Gloves;10;0;26;0;13
+Dragon Wrist;11;0;28;1;12
+Power Wrist;12;0;30;0;10
+Bracer;13;0;35;0;18
+Bronze Gloves;14;0;8;0;2
+Silver Gloves;15;0;10;0;5
+Mythril Gloves;16;0;13;0;7
+Thunder Gloves;17;0;16;0;10
+Diamond Gloves;18;0;19;0;13
+Venetia Shield;19;0;17;1;26
+Defence Gloves;20;1;25;1;20
+Genji Gloves;21;0;27;0;17
+Aegis Gloves;22;1;30;0;10
+Gauntlets;23;0;36;0;7
+Leather Hat;24;0;0;6;0
+Straw Hat;25;0;0;0;0
+Feather Hat;26;0;0;7;0
+Steepled Hat;27;0;0;9;0
+Headgear;28;2;0;6;0
+Magus Hat;29;0;0;10;0
+Bandana;30;0;2;12;0
+Mage’s Hat;31;0;0;14;0
+Lamia’s Tiara;32;0;0;17;0
+Ritual Hat;33;1;0;16;0
+Twist Headband;34;0;0;17;0
+Mantra Band;35;1;0;19;0
+Dark Hat;36;0;0;21;0
+Green Beret;37;0;0;23;0
+Black Hood;38;0;0;27;0
+Red Hat;39;1;0;26;0
+Golden Hairpin;40;0;0;32;2
+Coronet;41;1;0;35;0
+Flash Hat;42;0;2;37;0
+Adaman Hat;43;3;0;33;0
+Thief Hat;44;0;3;38;0
+Holy Mitre;45;0;0;39;0
+Golden Skullcap;46;2;0;47;0
+Circlet;47;0;0;51;0
+Rubber Helm;48;0;0;5;0
+Bronze Helm;49;0;0;6;0
+Iron Helm;50;0;0;7;0
+Barbut;51;0;0;9;0
+Mythril Helm;52;0;0;11;0
+Gold Helm;53;0;0;13;0
+Cross Helm;54;0;0;16;0
+Diamond Helm;55;0;0;20;0
+Platinum Helm;56;0;0;23;0
+Kaiser Helm;57;0;0;26;0
+Genji Helmet;58;2;0;29;0
+Grand Helm;59;0;0;33;0
+Aloha T-shirt;60;0;0;0;0
+Leather Shirt;61;6;0;0;0
+Silk Shirt;62;7;0;0;0
+Leather Plate;63;8;0;0;0
+Bronze Vest;64;9;0;1;0
+Chain Plate;65;10;0;0;0
+Mythril Vest;66;12;0;0;0
+Adaman Vest;67;14;0;2;0
+Magician Cloak;68;15;0;2;0
+Survival Vest;69;17;0;0;0
+Brigandine;70;20;0;0;0
+Judo Uniform;71;23;0;0;0
+Power Vest;72;27;0;0;0
+Gaia Gear;73;25;0;2;0
+Demon’s Vest;74;31;0;0;0
+Minerva’s Plate;75;34;0;1;0
+Ninja Gear;76;35;0;0;0
+Dark Gear;77;37;0;0;0
+Rubber Suit;78;39;2;1;3
+Brave Suit;79;42;0;0;0
+Cotton Robe;80;10;0;2;0
+Silk Robe;81;16;0;2;0
+Magician Robe;82;21;0;3;0
+Glutton’s Robe;83;41;0;4;0
+White Robe;84;42;0;4;0
+Black Robe;85;43;0;4;0
+Light Robe;86;41;0;6;0
+Robe of Lords;87;46;0;5;0
+Tin Armour;88;62;32;27;17
+Bronze Armour;89;9;0;0;0
+Linen Cuirass;90;10;0;0;0
+Chain Mail;91;12;0;0;0
+Mythril Armour;92;15;0;0;0
+Plate Mail;93;17;0;1;0
+Gold Armour;94;19;0;0;0
+Shield Armour;95;23;0;5;0
+Demon’s Mail;96;27;0;0;0
+Diamond Armour;97;33;0;2;0
+Platina Armour;98;36;0;0;0
+Carabini Mail;99;39;0;1;0
+Dragon Mail;100;42;0;0;0
+Genji Armour;101;45;0;1;0
+Maximillian;102;54;0;0;0
+Grand Armour;103;59;0;0;0
+Desert Boots;104;0;2;0;0
+Magician Shoes;105;0;0;0;6
+Germinas Boots;106;0;2;0;0
+Sandals;107;0;0;0;0
+Feather Boots;108;0;3;0;0
+Battle Boots;109;2;0;1;0
+Running Shoes;110;0;4;0;4
+Anklet;111;0;5;0;0
+Power Belt;112;2;0;0;0
+Black Belt;113;1;0;0;0
+Glass Buckle;114;0;0;0;5
+Madain’s Ring;115;0;0;2;0
+Rosetta Ring;116;1;2;3;2
+Reflect Ring;117;0;0;1;0
+Coral Ring;118;0;0;0;3
+Promist Ring;119;0;3;0;0
+Rebirth Ring;120;0;0;2;0
+Protect Ring;121;2;4;3;6
+Pumice Piece;122;0;5;1;0
+Pumice;123;1;0;2;0
+Yellow Scarf;124;0;0;1;0
+Gold Choker;125;0;2;1;0
+Fairy Earrings;126;0;4;0;2
+Angel Earrings;127;2;0;0;0
+Pearl Rouge;128;0;0;0;4
+Pearl Armlet;129;0;0;0;0
+Cachusha;130;0;0;1;0
+Barette;131;0;0;1;0
+Extension;132;1;0;1;0
+Ribbon;133;1;5;1;4
+Maiden Prayer;134;0;0;1;3
+Ancient Aroma;135;0;4;0;0

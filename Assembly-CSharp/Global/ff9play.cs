@@ -271,10 +271,10 @@ public class ff9play
         play.elem.str = skill.Base[1];
         play.elem.mgc = skill.Base[2];
         play.elem.wpr = skill.Base[3];
-        play.defence.p_def = (Byte)skill.weapon[1];
-        play.defence.p_ev = (Byte)skill.weapon[2];
-        play.defence.m_def = (Byte)skill.weapon[3];
-        play.defence.m_ev = (Byte)skill.weapon[4];
+        play.defence.PhisicalDefence = (Byte)skill.weapon[1];
+        play.defence.PhisicalEvade = (Byte)skill.weapon[2];
+        play.defence.MagicalDefence = (Byte)skill.weapon[3];
+        play.defence.MagicalEvade = (Byte)skill.weapon[4];
         play.cur.hp = skill.cur_hp;
         play.cur.mp = (Int16)skill.cur_mp;
         play.max.hp = skill.max_hp;
@@ -301,17 +301,17 @@ public class ff9play
         };
         Int32 index1;
         if ((index1 = info.equip[0]) != Byte.MaxValue)
-            skill.weapon[0] = ff9weap._FF9Weapon_Data[index1].Ref.Power;
+            skill.weapon[0] = ff9weap.WeaponData[index1].Ref.Power;
         for (Int32 index2 = 0; index2 < 4; ++index2)
         {
             Int32 num;
             if ((num = info.equip[1 + index2]) != Byte.MaxValue && num >= 88 && num < 224)
             {
-                DEF_PARAMS defParams = ff9armor._FF9Armor_Data[num - 88];
-                skill.weapon[1] += defParams.p_def;
-                skill.weapon[2] += defParams.p_ev;
-                skill.weapon[3] += defParams.m_def;
-                skill.weapon[4] += defParams.m_ev;
+                ItemDefence defParams = ff9armor.ArmorData[num - 88];
+                skill.weapon[1] += defParams.PhisicalDefence;
+                skill.weapon[2] += defParams.PhisicalEvade;
+                skill.weapon[3] += defParams.MagicalDefence;
+                skill.weapon[4] += defParams.MagicalEvade;
             }
         }
         for (Int32 index2 = 0; index2 < 5; ++index2)
@@ -320,7 +320,7 @@ public class ff9play
             if ((index3 = info.equip[index2]) != Byte.MaxValue)
             {
                 FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[index3];
-                EQUIP_PRIVILEGE equipPrivilege = ff9equip._FF9EquipBonus_Data[ff9ItemData.bonus];
+                ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9ItemData.bonus];
                 skill.Base[0] += equipPrivilege.dex;
                 skill.Base[1] += equipPrivilege.str;
                 skill.Base[2] += equipPrivilege.mgc;

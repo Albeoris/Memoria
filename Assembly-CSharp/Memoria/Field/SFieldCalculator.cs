@@ -183,7 +183,7 @@ namespace Memoria.Field
         {
             v.AttackNumber = (Int16)(v.Caster.elem.mgc + Comn.random16() % (1 + (v.Caster.level + v.Caster.elem.mgc >> 3)));
             v.AttackPower = v.Tbl.Ref.Power;
-            v.DefencePower = v.Target.defence.m_def;
+            v.DefencePower = v.Target.defence.MagicalDefence;
         }
 
         private static void FldCalcSub_171(Context v)

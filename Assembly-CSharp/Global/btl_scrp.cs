@@ -155,16 +155,16 @@ public class btl_scrp
 			result = (UInt32)btl.elem.mgc;
 			break;
 		case 74u:
-			result = (UInt32)btl.defence.p_def;
+			result = (UInt32)btl.defence.PhisicalDefence;
 			break;
 		case 75u:
-			result = (UInt32)btl.defence.p_ev;
+			result = (UInt32)btl.defence.PhisicalEvade;
 			break;
 		case 76u:
-			result = (UInt32)btl.defence.m_def;
+			result = (UInt32)btl.defence.MagicalDefence;
 			break;
 		case 77u:
-			result = (UInt32)btl.defence.m_ev;
+			result = (UInt32)btl.defence.MagicalEvade;
 			break;
 		}
 		return result;
@@ -297,16 +297,16 @@ public class btl_scrp
 			btl.elem.mgc = (Byte)val;
 			break;
 		case 74u:
-			btl.defence.p_def = (Byte)val;
+			btl.defence.PhisicalDefence = (Byte)val;
 			break;
 		case 75u:
-			btl.defence.p_ev = (Byte)val;
+			btl.defence.PhisicalEvade = (Byte)val;
 			break;
 		case 76u:
-			btl.defence.m_def = (Byte)val;
+			btl.defence.MagicalDefence = (Byte)val;
 			break;
 		case 77u:
-			btl.defence.m_ev = (Byte)val;
+			btl.defence.MagicalEvade = (Byte)val;
 			break;
 		case 78u:
 			btl.cur.at = btl.max.at;

@@ -142,7 +142,6 @@ public class battlebg
 		Int32 num3 = 0;
 		Vector3 zero = Vector3.zero;
 		Vector3 zero2 = Vector3.zero;
-		Matrix4x4 matrix4x = default(Matrix4x4);
 		battlebg.nf_BbgTick++;
 		if (battlebg.nf_BbgTexAnm != 0)
 		{

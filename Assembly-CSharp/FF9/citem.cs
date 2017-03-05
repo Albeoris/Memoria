@@ -11,7 +11,7 @@ namespace FF9
 
 		public static Boolean YCITEM_IS_THROW(Int32 a)
 		{
-			return a < 88 && (ff9weap._FF9Weapon_Data[a].category & 4) != 0;
+			return a < 88 && (ff9weap.WeaponData[a].Category & 4) != 0;
 		}
 	}
 }

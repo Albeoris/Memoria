@@ -45,7 +45,7 @@ rem --------------------------------------------------
 setlocal enabledelayedexpansion
 for %%p in (x64 x86) do (
   set targetDirectory=%InstallLocation%\%%p\FF9_Data\Managed
-  if EXIST "!targetDirectory!" (
+  if EXIST !targetDirectory! (
     copy /y "%sourceFilePath%.dll" "!targetDirectory!\%sourceFileName%.dll"
     copy /y "%sourceFilePath%.pdb" "!targetDirectory!\%sourceFileName%.pdb"
     copy /y "%sourceFilePath%.dll.mdb" "!targetDirectory!\%sourceFileName%.dll.mdb"

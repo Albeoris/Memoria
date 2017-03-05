@@ -427,10 +427,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 				}
 				break;
 			}
-			IL_1BB:
 			i++;
-			continue;
-			goto IL_1BB;
 		}
 	}
 
@@ -501,10 +498,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(this.Count) * (Single)i;
 				break;
 			}
-			IL_1E8:
 			i++;
-			continue;
-			goto IL_1E8;
 		}
 	}
 

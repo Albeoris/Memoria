@@ -1,4 +1,9 @@
 ﻿using System;
+using System.IO;
+using Memoria.Assets;
+using Memoria.Prime;
+using Memoria.Prime.Collections;
+using Memoria.Prime.CSV;
 
 namespace FF9
 {
@@ -6,184 +11,33 @@ namespace FF9
 	{
 		public const Byte FF9EQUIP_NONE = 255;
 
-		public static EQUIP_PRIVILEGE[] _FF9EquipBonus_Data = new EQUIP_PRIVILEGE[]
-		{
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 16, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 8),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(64, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(128, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 64),
-			new EQUIP_PRIVILEGE(1, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 128, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 32),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 2, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 4, 0), 4),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(16, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 7, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(1, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 0, 0, new DEF_ATTR(0, 0, 57, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, Byte.MaxValue), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 32),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 16, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 2),
-			new EQUIP_PRIVILEGE(1, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 192),
-			new EQUIP_PRIVILEGE(0, 0, 1, 1, new DEF_ATTR(0, 0, 32, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 8),
-			new EQUIP_PRIVILEGE(0, 0, 1, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(2, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 21, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 1),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 16),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(32, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 68),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(4, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(2, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 2, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 8, 0), 16),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(8, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 4, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 16, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 64),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 2, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 4, 1), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 2, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 4), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 16, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 1, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 2),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 8, 0, 0), 8),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 128, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 0, 0, new DEF_ATTR(0, 128, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 3, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(4, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 1),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 1), 0),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 1), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 1), 0),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 1), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 1), 64),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 1), 128),
-			new EQUIP_PRIVILEGE(0, 1, 1, 1, new DEF_ATTR(0, 0, 0, 1), 192),
-			new EQUIP_PRIVILEGE(1, 1, 1, 1, new DEF_ATTR(32, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 32, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 8, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 16, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 7, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 128, 0, 0), 128),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(2, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 0, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 3, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 128, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 1, new DEF_ATTR(0, 0, 8, 16), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 0, new DEF_ATTR(0, 0, 0, 0), 8),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 8, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(2, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 3, 1, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 3, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 0, 2, new DEF_ATTR(0, 0, 0, 0), 32),
-			new EQUIP_PRIVILEGE(0, 1, 1, 2, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 2, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 1, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 1, 0, 1, new DEF_ATTR(0, 0, 0, 7), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 4, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 4, new DEF_ATTR(0, 0, 0, 0), 64),
-			new EQUIP_PRIVILEGE(0, 0, 0, 1, new DEF_ATTR(0, 0, Byte.MaxValue, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 2, 0, new DEF_ATTR(0, 192, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 1, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 32, 0), 128),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 0, 0, 0), 32),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 0), 64),
-			new EQUIP_PRIVILEGE(0, 0, 2, 4, new DEF_ATTR(0, 0, 64, 0), 16),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 2, 1, new DEF_ATTR(0, 0, 0, 0), 1),
-			new EQUIP_PRIVILEGE(0, 3, 1, 1, new DEF_ATTR(0, 0, 0, 0), 2),
-			new EQUIP_PRIVILEGE(0, 1, 2, 1, new DEF_ATTR(0, 0, 0, 0), 4),
-			new EQUIP_PRIVILEGE(0, 1, 3, 1, new DEF_ATTR(0, 48, 71, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 1, 0, new DEF_ATTR(0, 0, 0, 128), 64),
-			new EQUIP_PRIVILEGE(0, 2, 0, 0, new DEF_ATTR(0, 0, 0, 64), 128),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(1, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 3, new DEF_ATTR(0, 0, 6, 0), 0),
-			new EQUIP_PRIVILEGE(1, 2, 2, 5, new DEF_ATTR(0, 0, 1, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 2, 0, new DEF_ATTR(0, 0, 0, 0), 64),
-			new EQUIP_PRIVILEGE(0, 0, 0, 2, new DEF_ATTR(0, 0, 128, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 48, 0, 32), 16),
-			new EQUIP_PRIVILEGE(0, 3, 2, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0),
-			new EQUIP_PRIVILEGE(0, 0, 0, 0, new DEF_ATTR(0, 0, 0, 0), 0)
-		};
+        public static readonly EntryCollection<ItemStats> ItemStatsData;
+
+        static ff9equip()
+        {
+            ItemStatsData = LoadStats();
+        }
+
+	    private static EntryCollection<ItemStats> LoadStats()
+	    {
+	        try
+	        {
+	            String inputPath = DataResources.Items.StatsFile;
+	            if (!File.Exists(inputPath))
+	                throw new FileNotFoundException($"[{nameof(ff9equip)}] Cannot load items stats because a file does not exist: [{inputPath}].", inputPath);
+
+	            ItemStats[] items = CsvReader.Read<ItemStats>(inputPath);
+	            if (items.Length < 88)
+	                throw new NotSupportedException($"[{nameof(ff9equip)}] You must set at least 176 item stats, but there {items.Length}. Any number of items will be available after a game stabilization.");
+
+	            return EntryCollection.CreateWithDefaultElement(items, i => i.Id);
+	        }
+	        catch (Exception ex)
+	        {
+	            Log.Error(ex, $"[{nameof(ff9equip)}] Load weapons failed.");
+	            UIManager.Input.ConfirmQuit();
+	            return null;
+	        }
+	    }
 	}
 }

@@ -48,11 +48,11 @@ namespace Memoria
 
         public Byte PhisicalDefence
         {
-            get { return Data.defence.p_def; }
-            set { Data.defence.p_def = value; }
+            get { return Data.defence.PhisicalDefence; }
+            set { Data.defence.PhisicalDefence = value; }
         }
 
-        public Byte PhisicalEvade => Data.defence.p_ev;
+        public Byte PhisicalEvade => Data.defence.PhisicalEvade;
 
         public Byte Magic
         {
@@ -62,11 +62,11 @@ namespace Memoria
 
         public Byte MagicDefence
         {
-            get { return Data.defence.m_def; }
-            set { Data.defence.m_def = value; }
+            get { return Data.defence.MagicalDefence; }
+            set { Data.defence.MagicalDefence = value; }
         }
 
-        public Byte MagicEvade => Data.defence.m_ev;
+        public Byte MagicEvade => Data.defence.MagicalEvade;
 
         public Byte Dexterity => Data.elem.dex;
         public Byte Will => Data.elem.wpr;
@@ -86,7 +86,7 @@ namespace Memoria
         public Byte WeaponRate => Data.weapon.Ref.Rate;
         public Byte WeaponPower => Data.weapon.Ref.Power;
         public EffectElement WeaponElement => (EffectElement)Data.weapon.Ref.Elements;
-        public BattleStatus WeaponStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.add_no].Value;
+        public BattleStatus WeaponStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value;
 
         public Character Player => Character.Find(this);
         public CharacterCategory PlayerCategory => Player.Category;
@@ -129,7 +129,7 @@ namespace Memoria
             if (Data.weapon == null)
                 return false;
 
-            return ((WeaponCategory)Data.weapon.category & category) != 0;
+            return ((WeaponCategory)Data.weapon.Category & category) != 0;
         }
 
         public Boolean HasSupportAbility(SupportAbility1 ability)

@@ -25,16 +25,16 @@ namespace Memoria
 
     public sealed class Weapon
     {
-        private readonly WEAPON _data;
+        private readonly ItemAttack _data;
 
-        internal Weapon(WEAPON data)
+        internal Weapon(ItemAttack data)
         {
             _data = data;
         }
 
-        public WeaponCategory Category => (WeaponCategory)_data.category;
-        public BattleStatus Status => FF9StateSystem.Battle.FF9Battle.add_status[_data.add_no].Value;
-        public UInt16 ModelId => _data.model_no;
+        public WeaponCategory Category => (WeaponCategory)_data.Category;
+        public BattleStatus Status => FF9StateSystem.Battle.FF9Battle.add_status[_data.StatusIndex].Value;
+        public UInt16 ModelId => _data.ModelId;
         public Byte ScriptId => _data.Ref.ScriptId;
         public Byte Power => _data.Ref.Power;
         public EffectElement Element => (EffectElement)_data.Ref.Elements;
@@ -42,7 +42,7 @@ namespace Memoria
 
         public static Weapon Find(Byte weaponId)
         {
-            return new Weapon(ff9weap._FF9Weapon_Data[btl_util.ff9WeaponNum(weaponId)]);
+            return new Weapon(ff9weap.WeaponData[btl_util.ff9WeaponNum(weaponId)]);
         }
     }
 }

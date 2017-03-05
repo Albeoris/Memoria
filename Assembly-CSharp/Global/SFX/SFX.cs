@@ -2026,9 +2026,9 @@ public class SFX
             init.enemy_radius = 256;
             init.geo_radius = init.enemy_radius;
             init.geo_height = init.enemy_radius * 2;
-            init.weapon_category = (Byte)(SFX.isDebugMode ? 0 : btl.weapon.category);
-            init.weapon_offset0 = (Int16)(SFX.isDebugMode ? 0 : btl.weapon.offset[0]);
-            init.weapon_offset1 = (Int16)(SFX.isDebugMode ? 0 : btl.weapon.offset[1]);
+            init.weapon_category = (Byte)(SFX.isDebugMode ? 0 : btl.weapon.Category);
+            init.weapon_offset0 = (Int16)(SFX.isDebugMode ? 0 : btl.weapon.Offset1);
+            init.weapon_offset1 = (Int16)(SFX.isDebugMode ? 0 : btl.weapon.Offset2);
             init.enemy_cam_bone0 = 0;
             init.enemy_cam_bone1 = 0;
             init.enemy_cam_bone2 = 0;

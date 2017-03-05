@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria.Data;
 using UnityEngine;
 
 public class btl_init
@@ -145,10 +146,10 @@ public class btl_init
 		pBtl.stat.cur = pParm.Status[2];
 		pBtl.cur.hp = pParm.MaxHP;
 		pBtl.cur.mp = (Int16)pParm.MaxMP;
-		pBtl.defence.p_def = pParm.P_DP;
-		pBtl.defence.p_ev = pParm.P_AV;
-		pBtl.defence.m_def = pParm.M_DP;
-		pBtl.defence.m_ev = pParm.M_AV;
+		pBtl.defence.PhisicalDefence = pParm.P_DP;
+		pBtl.defence.PhisicalEvade = pParm.P_AV;
+		pBtl.defence.MagicalDefence = pParm.M_DP;
+		pBtl.defence.MagicalEvade = pParm.M_AV;
 		pBtl.elem.dex = pParm.Element.dex;
 		pBtl.elem.str = pParm.Element.str;
 		pBtl.elem.mgc = pParm.Element.mgc;
@@ -190,25 +191,19 @@ public class btl_init
 			Int32 index = 0;
 			Single num = (Single)pPut.Xpos;
 			pBtl.evt.posBattle[0] = num;
-			num = num;
 			pBtl.original_pos[0] = num;
-			num = num;
 			pBtl.base_pos[0] = num;
 			pBtl.pos[index] = num;
 			Int32 index2 = 1;
 			num = (Single)(pPut.Ypos * -1);
 			pBtl.evt.posBattle[1] = num;
-			num = num;
 			pBtl.original_pos[1] = num;
-			num = num;
 			pBtl.base_pos[1] = num;
 			pBtl.pos[index2] = num;
 			Int32 index3 = 2;
 			num = (Single)pPut.Zpos;
 			pBtl.evt.posBattle[2] = num;
-			num = num;
 			pBtl.original_pos[2] = num;
-			num = num;
 			pBtl.base_pos[2] = num;
 			pBtl.pos[index3] = num;
 			pBtl.rot = (pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, (Single)(pPut.Rot + array2[(Int32)pScene.Info.StartType] & 4095), 180f)));
@@ -363,21 +358,18 @@ public class btl_init
 			Int32 index = 0;
 			Single num7 = (Single)num5;
 			next.evt.posBattle[0] = num7;
-			num7 = num7;
 			next.base_pos[0] = num7;
 			btl_DATA.pos[index] = num7;
 			BTL_DATA btl_DATA2 = next;
 			Int32 index2 = 1;
 			num7 = (Single)((!btl_stat.CheckStatus(next, 2097152u)) ? 0 : -200);
 			next.evt.posBattle[1] = num7;
-			num7 = num7;
 			next.base_pos[1] = num7;
 			btl_DATA2.pos[index2] = num7;
 			BTL_DATA btl_DATA3 = next;
 			Int32 index3 = 2;
 			num7 = (Single)(num4 + (Int16)((next.bi.row == 0) ? -400 : 0));
 			next.evt.posBattle[2] = num7;
-			num7 = num7;
 			next.base_pos[2] = num7;
 			btl_DATA3.pos[index3] = num7;
 			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, (Single)num6, 180f)));
@@ -451,10 +443,10 @@ public class btl_init
 		btl_mot.SetPlayerDefMotion(btl, (UInt32)p.info.serial_no, (UInt32)btl_no);
 		BattlePlayerCharacter.InitAnimation(btl);
 		btl_eqp.InitWeapon(p, btl);
-		btl.defence.p_def = p.defence.p_def;
-		btl.defence.p_ev = p.defence.p_ev;
-		btl.defence.m_def = p.defence.m_def;
-		btl.defence.m_ev = p.defence.m_ev;
+		btl.defence.PhisicalDefence = p.defence.PhisicalDefence;
+		btl.defence.PhisicalEvade = p.defence.PhisicalEvade;
+		btl.defence.MagicalDefence = p.defence.MagicalDefence;
+		btl.defence.MagicalEvade = p.defence.MagicalEvade;
 		btl_eqp.InitEquipPrivilegeAttrib(p, btl);
 		btl_util.GeoSetColor2Source(btl.weapon_geo, 0, 0, 0);
 		if (btl.cur.hp * 6 < btl.max.hp)
@@ -495,7 +487,7 @@ public class btl_init
 			btl_DATA.max.at = (Int16)((60 - btl_DATA.elem.dex) * 40 << 2);
 			btl_para.InitATB(btl_DATA);
 			btl_DATA.cur.at = (Int16)(Comn.random16() % (Int32)btl_DATA.max.at);
-			btl_DATA.weapon = (WEAPON)null;
+			btl_DATA.weapon = (ItemAttack)null;
 			btl_stat.InitCountDownStatus(btl_DATA);
 			btl_mot.HideMesh(btl_DATA, btl_DATA.mesh_current, false);
 			if (btl_DATA.bi.slave != 0)

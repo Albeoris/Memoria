@@ -30,8 +30,8 @@ public partial class EventEngine
                         this.requiredAddActor = true;
                         this.toBeAddedObjUIDList.Add((Int32)posObj.uid);
                     }
-                    if (this.gMode != 1)
-                        ;
+                    //if (this.gMode != 1)
+                    //    ;
                 }
             }
         }
@@ -73,8 +73,8 @@ public partial class EventEngine
                     Singleton<WMWorld>.Instance.addWMActorOnly((Actor)objUid);
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(objUid.go, ((Actor)objUid).wmActor);
                     PosObj posObj = (PosObj)objUid;
-                    if ((Int32)posObj.uid != (Int32)this._context.controlUID)
-                        ;
+                    //if ((Int32)posObj.uid != (Int32)this._context.controlUID)
+                    //    ;
                     ((Actor)objUid).wmActor.SetPosition(posObj.pos[0], posObj.pos[1], posObj.pos[2]);
                 }
             }

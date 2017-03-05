@@ -80,7 +80,7 @@ public class fldmcf
 					Int16 num2 = 0;
 					DMSMapChar? dmsmapChar3 = fldmcf.ff9fieldMCFGetCharByID(mcfPtr.Value, (Int32)activeActorByUID.model);
 					DMSMapLight? dmsmapLight3 = fldmcf.ff9fieldMCFGetLightByCharFloor(mcfPtr.Value, num, ref num2);
-					Int32 num3 = (Int32)(ff9Char.attr & 4u);
+                    UInt32 num3 = (UInt32)(ff9Char.attr & 4u);
 					Boolean flag = ((Int32)ff9FieldCharState.floor & 255) != (Int32)(num2 & 255) || ((Int64)num3 ^ (Int64)((UInt64)(ff9FieldCharState.attr & 4u))) != 0L || FF9Char.ff9charptr_attr_test(ff9Char, 256) == 0;
 					if (flag)
 					{
@@ -141,7 +141,7 @@ public class fldmcf
 						ff9shadow.FF9ShadowSetAmpField(num, num4);
 						ff9shadow.FF9ShadowSetScaleField(num, num5, num5);
 						ff9FieldCharState.floor = (SByte)num2;
-						ff9FieldCharState.attr = (UInt32)(((UInt64)ff9FieldCharState.attr & 18446744073709551611UL) | (UInt64)num3);
+						ff9FieldCharState.attr = ((ff9FieldCharState.attr & 0xFFFFFFFF) | num3);
 						FF9Char.ff9charptr_attr_set(ff9Char, 256);
 					}
 				}

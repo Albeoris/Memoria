@@ -1,5 +1,6 @@
 ﻿using System;
 using FF9;
+using Memoria.Data;
 using UnityEngine;
 
 public class BTL_DATA
@@ -13,7 +14,7 @@ public class BTL_DATA
 		this.elem = new ELEMENT();
 		this.stat = new STAT_INFO();
 		this.bi = new BTL_INFO();
-		this.defence = new DEF_PARAMS();
+		this.defence = new ItemDefence();
 		this.def_attr = new DEF_ATTR();
 		this.evt = new PosObj();
 		this.finger_pos = new Int16[2];
@@ -135,11 +136,11 @@ public class BTL_DATA
 
 	public BTL_INFO bi;
 
-	public DEF_PARAMS defence;
+	public ItemDefence defence;
 
 	public DEF_ATTR def_attr;
 
-	public WEAPON weapon;
+	public ItemAttack weapon;
 
 	public Byte trance;
 

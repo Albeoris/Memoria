@@ -794,7 +794,7 @@ public class btl_cmd
                         BTL_DATA btlDataPtr1;
                         if ((btlDataPtr1 = btl_scrp.GetBtlDataPtr(cmd.tar_id)) == null || btlDataPtr1.bi.target == 0 || Status.checkCurStat(btlDataPtr1, 256U))
                             return false;
-                        if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.category & 1) != 0)
+                        if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.Category & 1) != 0)
                         {
                             UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                             return false;
@@ -813,7 +813,7 @@ public class btl_cmd
                     case 51:
                         goto label_14;
                     case 52:
-                        if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.category & 1) != 0)
+                        if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.Category & 1) != 0)
                         {
                             UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                             return false;
@@ -893,7 +893,7 @@ public class btl_cmd
                         switch (num1)
                         {
                             case 1:
-                                if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.category & 1) != 0 && cmd.tar_id > 15)
+                                if (btlsys.btl_scene.Info.NoNeighboring != 0 && (btlData.weapon.Category & 1) != 0 && cmd.tar_id > 15)
                                 {
                                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                                     return false;

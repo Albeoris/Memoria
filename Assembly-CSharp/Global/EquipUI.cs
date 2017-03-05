@@ -467,11 +467,11 @@ public class EquipUI : UIScene
 		this.parameterHud.ParameterLabel[1].text = player.elem.str.ToString();
 		this.parameterHud.ParameterLabel[2].text = player.elem.mgc.ToString();
 		this.parameterHud.ParameterLabel[3].text = player.elem.wpr.ToString();
-		this.parameterHud.ParameterLabel[4].text = ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.Power.ToString();
-		this.parameterHud.ParameterLabel[5].text = player.defence.p_def.ToString();
-		this.parameterHud.ParameterLabel[6].text = player.defence.p_ev.ToString();
-		this.parameterHud.ParameterLabel[7].text = player.defence.m_def.ToString();
-		this.parameterHud.ParameterLabel[8].text = player.defence.m_ev.ToString();
+		this.parameterHud.ParameterLabel[4].text = ff9weap.WeaponData[(Int32)player.equip[0]].Ref.Power.ToString();
+		this.parameterHud.ParameterLabel[5].text = player.defence.PhisicalDefence.ToString();
+		this.parameterHud.ParameterLabel[6].text = player.defence.PhisicalEvade.ToString();
+		this.parameterHud.ParameterLabel[7].text = player.defence.MagicalDefence.ToString();
+		this.parameterHud.ParameterLabel[8].text = player.defence.MagicalEvade.ToString();
 		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton || (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == EquipUI.SubMenu.Off))
 		{
 			if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == EquipUI.SubMenu.Off)
@@ -503,11 +503,11 @@ public class EquipUI : UIScene
 			ff9PLAY_SKILL.Base[1] = player.elem.str;
 			ff9PLAY_SKILL.Base[2] = player.elem.mgc;
 			ff9PLAY_SKILL.Base[3] = player.elem.wpr;
-			ff9PLAY_SKILL.weapon[0] = (UInt16)ff9weap._FF9Weapon_Data[(Int32)player.equip[0]].Ref.Power;
-			ff9PLAY_SKILL.weapon[1] = (UInt16)player.defence.p_def;
-			ff9PLAY_SKILL.weapon[2] = (UInt16)player.defence.p_ev;
-			ff9PLAY_SKILL.weapon[3] = (UInt16)player.defence.m_def;
-			ff9PLAY_SKILL.weapon[4] = (UInt16)player.defence.m_ev;
+			ff9PLAY_SKILL.weapon[0] = (UInt16)ff9weap.WeaponData[(Int32)player.equip[0]].Ref.Power;
+			ff9PLAY_SKILL.weapon[1] = (UInt16)player.defence.PhisicalDefence;
+			ff9PLAY_SKILL.weapon[2] = (UInt16)player.defence.PhisicalEvade;
+			ff9PLAY_SKILL.weapon[3] = (UInt16)player.defence.MagicalDefence;
+			ff9PLAY_SKILL.weapon[4] = (UInt16)player.defence.MagicalEvade;
 			Int32 j;
 			for (j = 0; j < 4; j++)
 			{

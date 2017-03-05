@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 

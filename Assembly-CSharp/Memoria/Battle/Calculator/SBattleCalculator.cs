@@ -145,9 +145,9 @@ namespace Memoria
                             btl_para.SetMpDamage(caster, v.Caster.MpDamage);
                     }
                 }
-                if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.add_no].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
+                if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
                 {
-                    v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.add_no].Value, false);
+                    v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
                 }
                 if (target.bi.player != 0 && FF9StateSystem.Settings.IsHpMpFull && target.cur.hp != 0)
                 {
@@ -180,7 +180,7 @@ namespace Memoria
 
         private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.add_no].Value & BattleStatus.NoReaction) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, 1107333379U) && v.Caster.Data != v.Target.Data);
+            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatus.NoReaction) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, 1107333379U) && v.Caster.Data != v.Target.Data);
         }
 
         private static void CheckDamageReaction(BattleCalculator v, Boolean counterAtk)

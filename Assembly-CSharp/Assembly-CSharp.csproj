@@ -245,7 +245,7 @@
     <Compile Include="Global\Controller\ControllerType.cs" />
     <Compile Include="Global\DataSerializerErrorCode.cs" />
     <Compile Include="Global\DebugUtil.cs" />
-    <Compile Include="Global\DEF_PARAMS.cs" />
+    <Compile Include="Memoria\Data\Items\ItemDefence.cs" />
     <Compile Include="Global\Dialog\Dialog.cs" />
     <Compile Include="Global\Dialog\DialogAnimator.cs" />
     <Compile Include="Global\Dialog\DialogManager.cs" />
@@ -740,7 +740,7 @@
     <Compile Include="Global\Walk\Triangle\WalkMeshTriangleEdge.cs" />
     <Compile Include="Global\Walk\WalkMesh.cs" />
     <Compile Include="Global\Watch.cs" />
-    <Compile Include="Global\WEAPON.cs" />
+    <Compile Include="Memoria\Data\Items\ItemAttack.cs" />
     <Compile Include="Global\WinIosAndrSharedDataSerializer.cs" />
     <Compile Include="Global\WK_MOVE.cs" />
     <Compile Include="Global\WK_SCALE.cs" />
@@ -847,7 +847,7 @@
     <Compile Include="FF9\DEF_ATTR.cs" />
     <Compile Include="FF9\enemy_die_sequence.cs" />
     <Compile Include="FF9\enemy_motion_index.cs" />
-    <Compile Include="FF9\EQUIP_PRIVILEGE.cs" />
+    <Compile Include="Memoria\Data\Items\ItemStats.cs" />
     <Compile Include="Memoria\Data\ff9abil.cs" />
     <Compile Include="FF9\FF9ABIL_INFO.cs" />
     <Compile Include="FF9\ff9armor.cs" />

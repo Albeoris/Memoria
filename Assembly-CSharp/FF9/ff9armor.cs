@@ -1,149 +1,44 @@
 ﻿using System;
+using System.IO;
+using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
+using Memoria.Prime.Collections;
+using Memoria.Prime.CSV;
 
 namespace FF9
 {
 	public class ff9armor
 	{
-		public const Byte FF9ARMOR_START = 88;
+	    public const Byte FF9ARMOR_START = 88;
 
-		public static DEF_PARAMS[] _FF9Armor_Data = new DEF_PARAMS[]
-		{
-			new DEF_PARAMS(0, 5, 0, 3),
-			new DEF_PARAMS(0, 7, 0, 5),
-			new DEF_PARAMS(0, 10, 0, 7),
-			new DEF_PARAMS(0, 13, 0, 9),
-			new DEF_PARAMS(0, 17, 0, 11),
-			new DEF_PARAMS(0, 16, 1, 16),
-			new DEF_PARAMS(0, 22, 0, 14),
-			new DEF_PARAMS(0, 20, 0, 20),
-			new DEF_PARAMS(2, 27, 0, 0),
-			new DEF_PARAMS(0, 0, 2, 27),
-			new DEF_PARAMS(0, 26, 0, 13),
-			new DEF_PARAMS(0, 28, 1, 12),
-			new DEF_PARAMS(0, 30, 0, 10),
-			new DEF_PARAMS(0, 35, 0, 18),
-			new DEF_PARAMS(0, 8, 0, 2),
-			new DEF_PARAMS(0, 10, 0, 5),
-			new DEF_PARAMS(0, 13, 0, 7),
-			new DEF_PARAMS(0, 16, 0, 10),
-			new DEF_PARAMS(0, 19, 0, 13),
-			new DEF_PARAMS(0, 17, 1, 26),
-			new DEF_PARAMS(1, 25, 1, 20),
-			new DEF_PARAMS(0, 27, 0, 17),
-			new DEF_PARAMS(1, 30, 0, 10),
-			new DEF_PARAMS(0, 36, 0, 7),
-			new DEF_PARAMS(0, 0, 6, 0),
-			new DEF_PARAMS(0, 0, 0, 0),
-			new DEF_PARAMS(0, 0, 7, 0),
-			new DEF_PARAMS(0, 0, 9, 0),
-			new DEF_PARAMS(2, 0, 6, 0),
-			new DEF_PARAMS(0, 0, 10, 0),
-			new DEF_PARAMS(0, 2, 12, 0),
-			new DEF_PARAMS(0, 0, 14, 0),
-			new DEF_PARAMS(0, 0, 17, 0),
-			new DEF_PARAMS(1, 0, 16, 0),
-			new DEF_PARAMS(0, 0, 17, 0),
-			new DEF_PARAMS(1, 0, 19, 0),
-			new DEF_PARAMS(0, 0, 21, 0),
-			new DEF_PARAMS(0, 0, 23, 0),
-			new DEF_PARAMS(0, 0, 27, 0),
-			new DEF_PARAMS(1, 0, 26, 0),
-			new DEF_PARAMS(0, 0, 32, 2),
-			new DEF_PARAMS(1, 0, 35, 0),
-			new DEF_PARAMS(0, 2, 37, 0),
-			new DEF_PARAMS(3, 0, 33, 0),
-			new DEF_PARAMS(0, 3, 38, 0),
-			new DEF_PARAMS(0, 0, 39, 0),
-			new DEF_PARAMS(2, 0, 47, 0),
-			new DEF_PARAMS(0, 0, 51, 0),
-			new DEF_PARAMS(0, 0, 5, 0),
-			new DEF_PARAMS(0, 0, 6, 0),
-			new DEF_PARAMS(0, 0, 7, 0),
-			new DEF_PARAMS(0, 0, 9, 0),
-			new DEF_PARAMS(0, 0, 11, 0),
-			new DEF_PARAMS(0, 0, 13, 0),
-			new DEF_PARAMS(0, 0, 16, 0),
-			new DEF_PARAMS(0, 0, 20, 0),
-			new DEF_PARAMS(0, 0, 23, 0),
-			new DEF_PARAMS(0, 0, 26, 0),
-			new DEF_PARAMS(2, 0, 29, 0),
-			new DEF_PARAMS(0, 0, 33, 0),
-			new DEF_PARAMS(0, 0, 0, 0),
-			new DEF_PARAMS(6, 0, 0, 0),
-			new DEF_PARAMS(7, 0, 0, 0),
-			new DEF_PARAMS(8, 0, 0, 0),
-			new DEF_PARAMS(9, 0, 1, 0),
-			new DEF_PARAMS(10, 0, 0, 0),
-			new DEF_PARAMS(12, 0, 0, 0),
-			new DEF_PARAMS(14, 0, 2, 0),
-			new DEF_PARAMS(15, 0, 2, 0),
-			new DEF_PARAMS(17, 0, 0, 0),
-			new DEF_PARAMS(20, 0, 0, 0),
-			new DEF_PARAMS(23, 0, 0, 0),
-			new DEF_PARAMS(27, 0, 0, 0),
-			new DEF_PARAMS(25, 0, 2, 0),
-			new DEF_PARAMS(31, 0, 0, 0),
-			new DEF_PARAMS(34, 0, 1, 0),
-			new DEF_PARAMS(35, 0, 0, 0),
-			new DEF_PARAMS(37, 0, 0, 0),
-			new DEF_PARAMS(39, 2, 1, 3),
-			new DEF_PARAMS(42, 0, 0, 0),
-			new DEF_PARAMS(10, 0, 2, 0),
-			new DEF_PARAMS(16, 0, 2, 0),
-			new DEF_PARAMS(21, 0, 3, 0),
-			new DEF_PARAMS(41, 0, 4, 0),
-			new DEF_PARAMS(42, 0, 4, 0),
-			new DEF_PARAMS(43, 0, 4, 0),
-			new DEF_PARAMS(41, 0, 6, 0),
-			new DEF_PARAMS(46, 0, 5, 0),
-			new DEF_PARAMS(62, 32, 27, 17),
-			new DEF_PARAMS(9, 0, 0, 0),
-			new DEF_PARAMS(10, 0, 0, 0),
-			new DEF_PARAMS(12, 0, 0, 0),
-			new DEF_PARAMS(15, 0, 0, 0),
-			new DEF_PARAMS(17, 0, 1, 0),
-			new DEF_PARAMS(19, 0, 0, 0),
-			new DEF_PARAMS(23, 0, 5, 0),
-			new DEF_PARAMS(27, 0, 0, 0),
-			new DEF_PARAMS(33, 0, 2, 0),
-			new DEF_PARAMS(36, 0, 0, 0),
-			new DEF_PARAMS(39, 0, 1, 0),
-			new DEF_PARAMS(42, 0, 0, 0),
-			new DEF_PARAMS(45, 0, 1, 0),
-			new DEF_PARAMS(54, 0, 0, 0),
-			new DEF_PARAMS(59, 0, 0, 0),
-			new DEF_PARAMS(0, 2, 0, 0),
-			new DEF_PARAMS(0, 0, 0, 6),
-			new DEF_PARAMS(0, 2, 0, 0),
-			new DEF_PARAMS(0, 0, 0, 0),
-			new DEF_PARAMS(0, 3, 0, 0),
-			new DEF_PARAMS(2, 0, 1, 0),
-			new DEF_PARAMS(0, 4, 0, 4),
-			new DEF_PARAMS(0, 5, 0, 0),
-			new DEF_PARAMS(2, 0, 0, 0),
-			new DEF_PARAMS(1, 0, 0, 0),
-			new DEF_PARAMS(0, 0, 0, 5),
-			new DEF_PARAMS(0, 0, 2, 0),
-			new DEF_PARAMS(1, 2, 3, 2),
-			new DEF_PARAMS(0, 0, 1, 0),
-			new DEF_PARAMS(0, 0, 0, 3),
-			new DEF_PARAMS(0, 3, 0, 0),
-			new DEF_PARAMS(0, 0, 2, 0),
-			new DEF_PARAMS(2, 4, 3, 6),
-			new DEF_PARAMS(0, 5, 1, 0),
-			new DEF_PARAMS(1, 0, 2, 0),
-			new DEF_PARAMS(0, 0, 1, 0),
-			new DEF_PARAMS(0, 2, 1, 0),
-			new DEF_PARAMS(0, 4, 0, 2),
-			new DEF_PARAMS(2, 0, 0, 0),
-			new DEF_PARAMS(0, 0, 0, 4),
-			new DEF_PARAMS(0, 0, 0, 0),
-			new DEF_PARAMS(0, 0, 1, 0),
-			new DEF_PARAMS(0, 0, 1, 0),
-			new DEF_PARAMS(1, 0, 1, 0),
-			new DEF_PARAMS(1, 5, 1, 4),
-			new DEF_PARAMS(0, 0, 1, 3),
-			new DEF_PARAMS(0, 4, 0, 0)
-		};
+        public static readonly EntryCollection<ItemDefence> ArmorData;
+
+        static ff9armor()
+	    {
+	        ArmorData = LoadArmors();
+	    }
+
+        private static EntryCollection<ItemDefence> LoadArmors()
+        {
+            try
+            {
+                String inputPath = DataResources.Items.ArmorsFile;
+                if (!File.Exists(inputPath))
+                    throw new FileNotFoundException($"[ff9armor] Cannot load armors because a file does not exist: [{inputPath}].", inputPath);
+
+                ItemDefence[] items = CsvReader.Read<ItemDefence>(inputPath);
+                if (items.Length < 136)
+                    throw new NotSupportedException($"You must set at least 136 armors, but there {items.Length}. Any number of items will be available after a game stabilization.");
+
+                return EntryCollection.CreateWithDefaultElement(items, i => i.Id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ff9armor] Load armors failed.");
+                UIManager.Input.ConfirmQuit();
+                return null;
+            }
+        }
 	}
 }

@@ -258,11 +258,11 @@ public class StatusUI : UIScene
         _parameterHud.StrengthLabel.text = player.elem.str.ToString();
         _parameterHud.MagicLabel.text = player.elem.mgc.ToString();
         _parameterHud.SpiritLabel.text = player.elem.wpr.ToString();
-        _parameterHud.AttackLabel.text = ff9weap._FF9Weapon_Data[player.equip[0]].Ref.Power.ToString();
-        _parameterHud.DefendLabel.text = player.defence.p_def.ToString();
-        _parameterHud.EvadeLabel.text = player.defence.p_ev.ToString();
-        _parameterHud.MagicDefLabel.text = player.defence.m_def.ToString();
-        _parameterHud.MagicEvaLabel.text = player.defence.m_ev.ToString();
+        _parameterHud.AttackLabel.text = ff9weap.WeaponData[player.equip[0]].Ref.Power.ToString();
+        _parameterHud.DefendLabel.text = player.defence.PhisicalDefence.ToString();
+        _parameterHud.EvadeLabel.text = player.defence.PhisicalEvade.ToString();
+        _parameterHud.MagicDefLabel.text = player.defence.MagicalDefence.ToString();
+        _parameterHud.MagicEvaLabel.text = player.defence.MagicalEvade.ToString();
 
         UInt32 exp = player.level < 99 ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
         if (FF9StateSystem.EventState.gEventGlobal[16] != 0 && (player.category & 16) == 0)

@@ -628,7 +628,6 @@ public class UIInput : MonoBehaviour
 				default:
 					goto IL_D9;
 				}
-				break;
 			case KeyCode.C:
 				if (flag2)
 				{
@@ -639,7 +638,6 @@ public class UIInput : MonoBehaviour
 			default:
 				goto IL_C3;
 			}
-			break;
 		case KeyCode.Home:
 			ev.Use();
 			if (!String.IsNullOrEmpty(this.mValue))

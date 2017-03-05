@@ -119,8 +119,8 @@ public partial class EventEngine
                 num = (Int32)stateBattleSystem.btl_scene.PatNum;
                 break;
             default:
-                if ((Int32)this.gCur.sid != 3 || this.gCur.ip != 791)
-                    ;
+                //if ((Int32)this.gCur.sid != 3 || this.gCur.ip != 791)
+                //    ;
                 num = code < 192 ? (Int32)btl_scrp.GetBattleData(code) : ff9.w_frameGetParameter(code);
                 break;
         }

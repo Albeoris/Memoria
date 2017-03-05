@@ -13,6 +13,10 @@ namespace Memoria.Assets
             public static readonly String Directory = DataDirectory + "Items/";
 
             public static String ItemsFile => Directory + "Items.csv";
+            public static String StatsFile => Directory + "Stats.csv";
+            public static String ArmorsFile => Directory + "Armors.csv";
+            public static String WeaponsFile => Directory + "Weapons.csv";
+            public static String SynthesisFile => Directory + "Synthesis.csv";
             public static String ItemEffectsFile => Directory + "ItemEffects.csv";
             public static String ShopItems => Directory + "ShopItems.csv";
         }

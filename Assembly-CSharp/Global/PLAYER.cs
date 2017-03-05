@@ -10,7 +10,7 @@ public class PLAYER
 		this.cur = new POINTS();
 		this.max = new POINTS();
 		this.elem = new ELEMENT();
-		this.defence = new DEF_PARAMS();
+		this.defence = new ItemDefence();
 		this.basis = new PLAYER_BASE();
 	    this.equip = new CharacterEquipment();
 		this.bonus = new FF9LEVEL_BONUS();
@@ -261,7 +261,7 @@ public class PLAYER
 
 	public ELEMENT elem;
 
-	public DEF_PARAMS defence;
+	public ItemDefence defence;
 
 	public PLAYER_BASE basis;
 
