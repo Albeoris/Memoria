@@ -245,6 +245,7 @@
     <Compile Include="Global\Controller\ControllerType.cs" />
     <Compile Include="Global\DataSerializerErrorCode.cs" />
     <Compile Include="Global\DebugUtil.cs" />
+    <Compile Include="Memoria\Data\Items\IdMap.cs" />
     <Compile Include="Memoria\Data\Items\ItemDefence.cs" />
     <Compile Include="Global\Dialog\Dialog.cs" />
     <Compile Include="Global\Dialog\DialogAnimator.cs" />

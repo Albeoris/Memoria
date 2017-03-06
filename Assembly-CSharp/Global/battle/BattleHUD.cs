@@ -2,6 +2,7 @@
 using FF9;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Memoria;
@@ -9,6 +10,8 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
+using Memoria.Prime.Collections;
+using Memoria.Prime.CSV;
 using UnityEngine;
 using Object = System.Object;
 
@@ -71,7 +74,7 @@ public class BattleHUD : UIScene
     public Boolean IsDoubleCast => (Int32)_currentCommandId == 23 || (Int32)_currentCommandId == 21;
 
     private static readonly Byte[] BattleMessageTimeTick;
-    private static readonly Byte[] CmdTitleTable;
+    private static readonly EntryCollection<IdMap> CmdTitleTable;
     private static readonly Int32 YINFO_ANIM_HPMP_MIN;
     private static readonly Int32 YINFO_ANIM_HPMP_MAX;
     private static readonly Int32 AbilFenril;
@@ -166,201 +169,7 @@ public class BattleHUD : UIScene
     {
         BattleMessageTimeTick = new Byte[7] { 54, 46, 48, 30, 24, 18, 12 };
 
-        CmdTitleTable = new Byte[192]
-        {
-            0,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            153,
-            254,
-            154,
-            254,
-            155,
-            254,
-            192,
-            254,
-            254,
-            157,
-            254,
-            158,
-            254,
-            159,
-            254,
-            160,
-            254,
-            194,
-            193,
-            195,
-            196,
-            197,
-            198,
-            73,
-            Byte.MaxValue,
-            187,
-            254,
-            254,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            192,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            0,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            0,
-            0,
-            0,
-            Byte.MaxValue,
-            0,
-            0,
-            Byte.MaxValue,
-            0,
-            0,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            Byte.MaxValue,
-            254,
-            0,
-            254
-        };
+        CmdTitleTable = LoadBattleCommandTitles();
 
         YINFO_ANIM_HPMP_MIN = 4;
         YINFO_ANIM_HPMP_MAX = 16;
@@ -407,6 +216,28 @@ public class BattleHUD : UIScene
         TargetGroupButton = "Battle.Target";
         AbilityGroupButton = "Battle.Ability";
         ItemGroupButton = "Battle.Item";
+    }
+
+    private static EntryCollection<IdMap> LoadBattleCommandTitles()
+    {
+        try
+        {
+            String inputPath = DataResources.Characters.CommandTitlesFile;
+            if (!File.Exists(inputPath))
+                throw new FileNotFoundException($"[BattleHUD] Cannot load character command titles because a file does not exist: [{inputPath}].", inputPath);
+
+            IdMap[] maps = CsvReader.Read<IdMap>(inputPath);
+            if (maps.Length < 192)
+                throw new NotSupportedException($"You must set titles for 192 battle commands, but there {maps.Length}.");
+
+            return EntryCollection.CreateWithDefaultElement(maps, g => g.Id);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[BattleHUD] Load character command titles failed.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
     }
 
     public BattleHUD()
@@ -674,13 +505,13 @@ public class BattleHUD : UIScene
             default:
                 if (pCmd.sub_no < 192)
                 {
-                    Int32 id = CmdTitleTable[pCmd.sub_no];
+                    Int32 id = CmdTitleTable[pCmd.sub_no].MappedId;
                     switch (id)
                     {
                         case 254: // Magic sword
                             str1 = FormatMagicSwordAbility(pCmd);
                             break;
-                        case Byte.MaxValue:
+                        case 255:
                             str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no);
                             break;
                         case 0:

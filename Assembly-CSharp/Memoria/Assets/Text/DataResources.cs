@@ -27,6 +27,7 @@ namespace Memoria.Assets
 
             public static String CommandsFile => Directory + "Commands.csv";
             public static String CommandSetsFile => Directory + "CommandSets.csv";
+            public static String CommandTitlesFile => Directory + "CommandTitles.csv";
             public static String DefaultEquipmentsFile => Directory + "DefaultEquipment.csv";
             public static String BaseStatsFile => Directory + "BaseStats.csv";
             public static String Leveling => Directory + "Leveling.csv";
