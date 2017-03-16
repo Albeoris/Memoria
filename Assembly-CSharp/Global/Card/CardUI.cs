@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using Memoria.Prime;
+using Memoria.Prime.Threading;
 using UnityEngine;
 using Object = System.Object;
 
@@ -468,7 +476,9 @@ public class CardUI : UIScene
 
 	private void Awake()
 	{
-		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
+	    //GameObjectService.Start();
+
+        base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
 		this.levelLabel = this.PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(3).GetComponent<UILabel>();
 		this.classNameLabel = this.PlayerInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
 		this.winCountLabel = this.PlayerInfoPanel.GetChild(1).GetChild(0).GetChild(2).GetComponent<UILabel>();
@@ -506,7 +516,8 @@ public class CardUI : UIScene
 		uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		this.discardConfirmButton = this.DeleteDialogGameObject.GetChild(0).GetChild(1).GetComponent<ButtonGroupState>();
 		this.discardCancelButton = this.DeleteDialogGameObject.GetChild(0).GetChild(2).GetComponent<ButtonGroupState>();
-		UIEventListener uieventListener3 = UIEventListener.Get(this.discardConfirmButton.gameObject);
+
+        UIEventListener uieventListener3 = UIEventListener.Get(this.discardConfirmButton.gameObject);
 		uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		UIEventListener uieventListener4 = UIEventListener.Get(this.discardCancelButton.gameObject);
 		uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));

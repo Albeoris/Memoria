@@ -222,6 +222,7 @@
     <Compile Include="Global\Card\CardPool.cs" />
     <Compile Include="Global\Card\CardPreviewUI.cs" />
     <Compile Include="Global\Card\CardUI.cs" />
+    <Compile Include="Global\Card\GameObjectService.cs" />
     <Compile Include="Global\Card\Icon\CardIcon.cs" />
     <Compile Include="Global\Card\Icon\CardIconUI.cs" />
     <Compile Include="Global\ChangeUI.cs" />
@@ -245,6 +246,9 @@
     <Compile Include="Global\Controller\ControllerType.cs" />
     <Compile Include="Global\DataSerializerErrorCode.cs" />
     <Compile Include="Global\DebugUtil.cs" />
+    <Compile Include="Global\Sound\Loader\SoundImporter.cs" />
+    <Compile Include="Memoria\Assets\Export\Audio\AudioResourceExporter.cs" />
+    <Compile Include="Memoria\Assets\Text\AudioResources.cs" />
     <Compile Include="Memoria\Data\Items\IdMap.cs" />
     <Compile Include="Memoria\Data\Items\ItemDefence.cs" />
     <Compile Include="Global\Dialog\Dialog.cs" />

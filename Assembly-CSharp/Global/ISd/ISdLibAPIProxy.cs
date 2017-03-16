@@ -13,18 +13,24 @@ public class ISdLibAPIProxy
 		{
 			if (ISdLibAPIProxy.instance == null)
 			{
-				if (Application.HasProLicense())
-				{
-					ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
-				}
-				else
-				{
-					ISdLibAPIProxy.instance = new SdLibApiWithoutProLicense();
-				}
+				Initialize();
 			}
 			return ISdLibAPIProxy.instance;
 		}
+	    set { ISdLibAPIProxy.instance = value; }
 	}
 
-	private static ISdLibAPI instance;
+    private static void Initialize()
+    {
+        if (Application.HasProLicense())
+        {
+            ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
+        }
+        else
+        {
+            ISdLibAPIProxy.instance = new SdLibApiWithoutProLicense();
+        }
+    }
+
+    private static ISdLibAPI instance;
 }

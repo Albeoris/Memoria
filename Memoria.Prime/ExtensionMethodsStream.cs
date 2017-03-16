@@ -5,7 +5,7 @@ namespace Memoria.Prime
 {
     public static class ExtensionMethodsStream
     {
-        public static void CopyTo(this Stream self, Stream destination, Int32 bufferSize)
+        public static void CopyTo(this Stream self, Stream destination, Int64 bufferSize)
         {
             Int32 count;
             Byte[] buffer = new Byte[bufferSize];

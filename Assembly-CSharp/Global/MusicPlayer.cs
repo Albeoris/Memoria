@@ -101,7 +101,7 @@ public class MusicPlayer : SoundPlayer
 		}
 	}
 
-	private void PlayMusic(SoundProfile soundProfileFromIndex, Int32 fadeIn)
+	public void PlayMusic(SoundProfile soundProfileFromIndex, Int32 fadeIn)
 	{
 		this.fadeInDuration = (Single)fadeIn / 1000f;
 		this.fadeInTimeRemain = this.fadeInDuration;
@@ -348,7 +348,7 @@ public class MusicPlayer : SoundPlayer
 		}
 	}
 
-	private SoundDatabase soundDatabase = new SoundDatabase();
+	public SoundDatabase soundDatabase = new SoundDatabase();
 
 	private SoundDatabase onTheFlySoundDatabase = new SoundDatabase();
 

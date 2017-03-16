@@ -40,6 +40,7 @@ namespace Memoria
             public static String Path => Instance._import.Path.Value;
             public static Boolean Text => Instance._import.Text.Value;
             public static Boolean Graphics => Instance._import.Graphics.Value;
+            public static Boolean Audio => Enabled && Instance._import.Audio.Value;
         }
 
         public static class Export
@@ -50,6 +51,7 @@ namespace Memoria
             public static Boolean Text => Instance._export.Text.Value;
             public static Int32 TextFormat = 1;
             public static Boolean Graphics => Instance._export.Graphics.Value;
+            public static Boolean Audio => Enabled && Instance._export.Audio.Value;
             public static Boolean Field => Instance._export.Field.Value;
             public static Boolean Battle => Instance._export.Battle.Value;
         }

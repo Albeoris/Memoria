@@ -65,7 +65,22 @@ namespace Memoria.Launcher
                     String unityDataPath = Path.GetFullPath(directoyPath + "\\Unity_Data");
 
                     if (!Directory.Exists(unityDataPath))
+                    {
                         JunctionPoint.Create(unityDataPath, ff9DataPath, true);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            foreach (String item in Directory.EnumerateFileSystemEntries(unityDataPath))
+                                break;
+                        }
+                        catch
+                        {
+                            JunctionPoint.Delete(unityDataPath);
+                            JunctionPoint.Create(unityDataPath, ff9DataPath, true);
+                        }
+                    }
                 }
 
                 String arguments = $"-runbylauncher -single-instance -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettings.Windowed ? "0" : "1")}";

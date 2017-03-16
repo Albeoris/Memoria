@@ -30,6 +30,26 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
+    private Boolean ShiftKey
+    {
+        get
+        {
+            if (!UnityXInput.Input.GetKey(KeyCode.LeftShift))
+                return UnityXInput.Input.GetKey(KeyCode.RightShift);
+            return true;
+        }
+    }
+
+    private Boolean ControlKey
+    {
+        get
+        {
+            if (!UnityXInput.Input.GetKey(KeyCode.LeftControl))
+                return UnityXInput.Input.GetKey(KeyCode.RightControl);
+            return true;
+        }
+    }
+
     private Boolean AltKeyDown
     {
         get
@@ -48,6 +68,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
     private Boolean F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private Boolean F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
+    private Boolean SKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.S);
 
     public UIKeyTrigger()
     {
@@ -362,6 +383,11 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
+    private static void OnSoundDebugRoomCommandDetected()
+    {
+        SceneDirector.Replace("SoundDebugRoom", SceneTransition.FadeOutToBlack_FadeIn, true);
+    }
+
     private static void TryShowSaveScene(UIScene scene)
     {
         switch (PersistenSingleton<UIManager>.Instance.State)
@@ -538,6 +564,12 @@ public class UIKeyTrigger : MonoBehaviour
             if (F9KeyDown)
             {
                 OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
+                return true;
+            }
+
+            if (ShiftKey && ControlKey && SKeyDown)
+            {
+                OnSoundDebugRoomCommandDetected();
                 return true;
             }
         }

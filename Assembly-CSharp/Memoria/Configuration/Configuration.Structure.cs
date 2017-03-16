@@ -127,6 +127,7 @@ namespace Memoria
             public readonly IniValue<String> Path = IniValue.Path(nameof(Path));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
             public readonly IniValue<Boolean> Graphics = IniValue.Boolean(nameof(Graphics));
+            public readonly IniValue<Boolean> Audio = IniValue.Boolean(nameof(Audio));
 
             public ImportSection() : base("Import")
             {
@@ -134,6 +135,7 @@ namespace Memoria
                 Path.Value = "%StreamingAssets%";
                 Text.Value = true;
                 Graphics.Value = true;
+                Audio.Value = true;
             }
 
             protected override IEnumerable<IniValue> GetValues()
@@ -142,6 +144,7 @@ namespace Memoria
                 yield return Path;
                 yield return Text;
                 yield return Graphics;
+                yield return Audio;
             }
         }
 
@@ -152,6 +155,7 @@ namespace Memoria
             public readonly IniArray<String> Languages = IniValue.StringArray(nameof(Languages));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
             public readonly IniValue<Boolean> Graphics = IniValue.Boolean(nameof(Graphics));
+            public readonly IniValue<Boolean> Audio = IniValue.Boolean(nameof(Audio));
             public readonly IniValue<Boolean> Field = IniValue.Boolean(nameof(Field));
             public readonly IniValue<Boolean> Battle = IniValue.Boolean(nameof(Battle));
 
@@ -162,6 +166,7 @@ namespace Memoria
                 Languages.Value = new[] { "US", "UK", "JP", "ES", "FR", "GR", "IT" };
                 Text.Value = true;
                 Graphics.Value = true;
+                Audio.Value = true;
                 Field.Value = false;
                 Battle.Value = false;
             }
@@ -173,6 +178,7 @@ namespace Memoria
                 yield return Languages;
                 yield return Text;
                 yield return Graphics;
+                yield return Audio;
                 yield return Field;
                 yield return Battle;
             }

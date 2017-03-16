@@ -96,6 +96,33 @@
     <Compile Include="Json\JsonEncoder.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MathEx.cs" />
+    <Compile Include="OggFile\AKB2\AKB2Header.cs" />
+    <Compile Include="OggFile\AKB2\AKB2UnknownSection.cs" />
+    <Compile Include="OggFile\BufferedReadStream.cs" />
+    <Compile Include="OggFile\DataPacket.cs" />
+    <Compile Include="OggFile\Huffman.cs" />
+    <Compile Include="OggFile\IContainerReader.cs" />
+    <Compile Include="OggFile\IPacketProvider.cs" />
+    <Compile Include="OggFile\IVorbisStreamStatus.cs" />
+    <Compile Include="OggFile\Mdct.cs" />
+    <Compile Include="OggFile\NewStreamEventArgs.cs" />
+    <Compile Include="OggFile\Ogg\OggContainerReader.cs" />
+    <Compile Include="OggFile\Ogg\OggCrc.cs" />
+    <Compile Include="OggFile\Ogg\OggPacket.cs" />
+    <Compile Include="OggFile\Ogg\OggPacketReader.cs" />
+    <Compile Include="OggFile\Ogg\OggPageFlags.cs" />
+    <Compile Include="OggFile\ParameterChangeEventArgs.cs" />
+    <Compile Include="OggFile\RingBuffer.cs" />
+    <Compile Include="OggFile\StreamReadBuffer.cs" />
+    <Compile Include="OggFile\Utils.cs" />
+    <Compile Include="OggFile\VorbisCodebook.cs" />
+    <Compile Include="OggFile\VorbisFloor.cs" />
+    <Compile Include="OggFile\VorbisMapping.cs" />
+    <Compile Include="OggFile\VorbisMode.cs" />
+    <Compile Include="OggFile\VorbisReader.cs" />
+    <Compile Include="OggFile\VorbisResidue.cs" />
+    <Compile Include="OggFile\VorbisStreamDecoder.cs" />
+    <Compile Include="OggFile\VorbisTime.cs" />
     <Compile Include="PsdFile\Common\Point.cs" />
     <Compile Include="PsdFile\Common\Rectangle.cs" />
     <Compile Include="PsdFile\Common\Size.cs" />
@@ -145,6 +172,7 @@
     <Compile Include="TypeCache.cs" />
     <Compile Include="Collections\TwoWayDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WinAPI\Kernel32.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

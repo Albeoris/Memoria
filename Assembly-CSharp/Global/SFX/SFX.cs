@@ -2,8 +2,10 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 using AOT;
 using FF9;
+using Memoria.Prime;
 using UnityEngine;
 
 public class SFX
@@ -936,30 +938,45 @@ public class SFX
         };
     }
 
+    private static Int32 UpdatePluginErrorCount = 0;
+
     public static void UpdatePlugin()
     {
-        if (SFX.isSystemRun)
+        try
         {
-            SFX.UpdateScreenSize();
-            SFX.isRunning = SFX.SFX_Update(ref SFX.frameIndex);
-            if (SFX.isRunning)
+            if (SFX.isSystemRun)
             {
-                SFX.isUpdated = true;
-                Int32 num = SFX.currentEffectID;
-                PSXTextureMgr.isCaptureBlur = num != 274;
-                if (SFX.currentEffectID == 381)
+                SFX.UpdateScreenSize();
+                SFX.isRunning = SFX.SFX_Update(ref SFX.frameIndex);
+                if (SFX.isRunning)
                 {
-                    if (SFX.frameIndex == 1004)
+                    SFX.isUpdated = true;
+                    Int32 num = SFX.currentEffectID;
+                    PSXTextureMgr.isCaptureBlur = num != 274;
+                    if (SFX.currentEffectID == 381)
                     {
-                        SFX.subOrder = 2;
-                    }
-                    if (SFX.frameIndex == 1193)
-                    {
-                        SFX.subOrder = 0;
+                        if (SFX.frameIndex == 1004)
+                        {
+                            SFX.subOrder = 2;
+                        }
+                        if (SFX.frameIndex == 1193)
+                        {
+                            SFX.subOrder = 0;
+                        }
                     }
                 }
+                vib.VIB_service();
             }
-            vib.VIB_service();
+        }
+        catch (Exception ex)
+        {
+            Int32 errorCount = Interlocked.Increment(ref UpdatePluginErrorCount);
+            Log.Error(ex, "Failed to update SFX plugin. ErrorCount: " + errorCount);
+            if (errorCount > 1000)
+            {
+                Interlocked.Exchange(ref UpdatePluginErrorCount, 0);
+                throw;
+            }
         }
     }
 

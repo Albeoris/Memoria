@@ -1,59 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 
 public class SoundLoaderProxy
 {
-	public static ISoundLoader Instance
-	{
-		get
-		{
-			if (SoundLoaderProxy.instance == null)
-			{
-				SoundLoaderProxy.instance = SoundLoaderProxy.soundLoaderDict[SoundLibResourceLocation.ResourcesRecursive]();
-			}
-			return SoundLoaderProxy.instance;
-		}
-	}
+    public static ISoundLoader Instance
+    {
+        get
+        {
+            if (s_instance == null)
+            {
+                if (Configuration.Import.Audio)
+                    s_instance = CreateSoundLoaderForImport();
+                else
+                    s_instance = SoundLoaderDict[SoundLibResourceLocation.ResourcesRecursive]();
+            }
+            return s_instance;
+        }
+    }
 
-	private static ISoundLoader CreateSoundLoaderFromResources()
-	{
-		SoundLoaderProxy.instance = new SoundLoaderResources();
-		return SoundLoaderProxy.instance;
-	}
+    private static ISoundLoader CreateSoundLoaderFromResources()
+    {
+        s_instance = new SoundLoaderResources();
+        return s_instance;
+    }
 
-	private static ISoundLoader CreateSoundLoaderForDocumentDirectory()
-	{
-		SoundLoaderProxy.instance = new SoundLoaderDocumentDirectory();
-		return SoundLoaderProxy.instance;
-	}
+    private static ISoundLoader CreateSoundLoaderForDocumentDirectory()
+    {
+        s_instance = new SoundLoaderDocumentDirectory();
+        return s_instance;
+    }
 
-	private static ISoundLoader CreateSoundLoaderFromStreamingAssets()
-	{
-		SoundLoaderProxy.instance = new SoundLoaderStreamingAssets();
-		return SoundLoaderProxy.instance;
-	}
+    private static ISoundLoader CreateSoundLoaderFromStreamingAssets()
+    {
+        s_instance = new SoundLoaderStreamingAssets();
+        return s_instance;
+    }
 
-	private static ISoundLoader instance = (ISoundLoader)null;
+    private static ISoundLoader CreateSoundLoaderForImport()
+    {
+        return SoundImporter.Instance;
+    }
 
-	private static Dictionary<SoundLibResourceLocation, SoundLoaderProxy.CreateSoundLoader> soundLoaderDict = new Dictionary<SoundLibResourceLocation, SoundLoaderProxy.CreateSoundLoader>
-	{
-		{
-			SoundLibResourceLocation.Resources,
-			new SoundLoaderProxy.CreateSoundLoader(SoundLoaderProxy.CreateSoundLoaderFromResources)
-		},
-		{
-			SoundLibResourceLocation.ResourcesRecursive,
-			new SoundLoaderProxy.CreateSoundLoader(SoundLoaderProxy.CreateSoundLoaderFromResources)
-		},
-		{
-			SoundLibResourceLocation.DocumentDirectory,
-			new SoundLoaderProxy.CreateSoundLoader(SoundLoaderProxy.CreateSoundLoaderForDocumentDirectory)
-		},
-		{
-			SoundLibResourceLocation.StreamingAsset,
-			new SoundLoaderProxy.CreateSoundLoader(SoundLoaderProxy.CreateSoundLoaderFromStreamingAssets)
-		}
-	};
+    private static ISoundLoader s_instance;
 
-	private delegate ISoundLoader CreateSoundLoader();
+    private delegate ISoundLoader CreateSoundLoader();
+
+    private static readonly Dictionary<SoundLibResourceLocation, CreateSoundLoader> SoundLoaderDict = new Dictionary<SoundLibResourceLocation, CreateSoundLoader>
+    {
+        {SoundLibResourceLocation.Resources, CreateSoundLoaderFromResources},
+        {SoundLibResourceLocation.ResourcesRecursive, CreateSoundLoaderFromResources},
+        {SoundLibResourceLocation.DocumentDirectory, CreateSoundLoaderForDocumentDirectory},
+        {SoundLibResourceLocation.StreamingAsset, CreateSoundLoaderFromStreamingAssets}
+    };
 }

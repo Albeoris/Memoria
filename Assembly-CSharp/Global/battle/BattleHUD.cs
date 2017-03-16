@@ -3135,8 +3135,20 @@ public class BattleHUD : UIScene
         if (Configuration.Hacks.BattleSpeed != 2)
             return true;
 
-        if (FF9StateSystem.Battle.FF9Battle.cmd_queue.next != null || FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
+        if (FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
             return false;
+
+        for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue.next; cmd != null; cmd = cmd.next)
+        {
+            BTL_DATA btl = cmd.regist;
+            if (btl == null)
+                continue;
+
+            if (btl.cur.hp == 0 || btl.bi.atb == 0 || btl.bi.player == 0)
+                continue;
+
+            return false;
+        }
 
         if (UIManager.Battle.CurrentPlayerIndex == -1)
             return true;

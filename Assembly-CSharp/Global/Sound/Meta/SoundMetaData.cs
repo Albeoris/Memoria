@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Memoria.Assets;
 using SimpleJSON;
 using UnityEngine;
 
@@ -113,15 +114,15 @@ public class SoundMetaData
 		SoundMetaData.MusicMetaData = SoundMetaData.ComposeMetaDataJsonString(list2);
 	}
 
-	private static void LoadMetaDataFromResourcesRecursively()
-	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt", false);
-		TextAsset textAsset2 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt", false);
-		TextAsset textAsset3 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt", false);
-		TextAsset textAsset4 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt", false);
-		TextAsset textAsset5 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt", false);
-		TextAsset textAsset6 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt", false);
-		TextAsset textAsset7 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt", false);
+    private static void LoadMetaDataFromResourcesRecursively()
+    {
+        TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt", false);
+        TextAsset textAsset2 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt", false);
+        TextAsset textAsset3 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt", false);
+        TextAsset textAsset4 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt", false);
+        TextAsset textAsset5 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt", false);
+        TextAsset textAsset6 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt", false);
+        TextAsset textAsset7 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt", false);
 
 
         Exception exception = null;
@@ -142,16 +143,18 @@ public class SoundMetaData
             {
                 exception = ex;
             }
-        }, 30*1024*1024); // Workaround for StackOverflowException: The requested operation caused a stack overflow
+        }, 30 * 1024 * 1024); // Workaround for StackOverflowException: The requested operation caused a stack overflow
 
         thread.Start();
         thread.Join();
 
         if (exception != null)
             throw new Exception("Failed to recursively load a meta data from resources.", exception);
-	}
 
-	private static void LoadMetaDataFromDocumentDirectory()
+        AudioResourceExporter.ExportSafe();
+    }
+
+    private static void LoadMetaDataFromDocumentDirectory()
 	{
 		SoundLoaderProxy.Instance.Initial();
 		String path = Application.persistentDataPath + "/SoundEffect";
