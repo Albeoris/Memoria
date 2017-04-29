@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
+using Memoria.Prime.Text;
 using UnityEngine;
 using Object = System.Object;
 
@@ -431,28 +432,16 @@ public static class NGUIText
 		String text = phrase;
 		foreach (KeyValuePair<Int32, Int32> keyValuePair in dialog.MessageValues)
 		{
-			text = text.Replace(String.Concat(new Object[]
-			{
-				"[",
-				NGUIText.NumberVar,
-				"=",
-				keyValuePair.Key,
-				"]"
-			}), keyValuePair.Value.ToString());
+		    String value = keyValuePair.Value.ToString();
+
+            text = text.ReplaceAll(
+		        new[]
+		        {
+		            new KeyValuePair<String, TextReplacement>($"[NUMB={keyValuePair.Key}]", value),
+		            new KeyValuePair<String, TextReplacement>($"{{Variable {keyValuePair.Key}}}", value)
+		        });
 		}
 		return text;
-	}
-
-	public static Boolean ContainsTextOffset(Dialog dialog)
-	{
-		foreach (String text in dialog.SubPage)
-		{
-			if (NGUIText.ContainsTextOffset(text))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public static Boolean ContainsTextOffset(String text)
@@ -596,7 +585,7 @@ public static class NGUIText
 			while (i < length)
 			{
 				Char c = text[i];
-				if (c == '[')
+				if (c == '[' || c == '{')
 				{
 					Int32 num = 0;
 					Boolean flag = false;

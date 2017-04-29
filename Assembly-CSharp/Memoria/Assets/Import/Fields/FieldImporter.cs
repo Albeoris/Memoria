@@ -33,6 +33,7 @@ namespace Memoria.Assets
         private Dictionary<String, LinkedList<UInt64>> _dic;
         private IList<KeyValuePair<String, TextReplacement>> _customTags;
         private IList<KeyValuePair<String, TextReplacement>> _fieldReplacements;
+        private Dictionary<String, IList<KeyValuePair<String, TextReplacement>>> _fieldTags;
 
         public Task InitializationTask { get; private set; }
 
@@ -56,7 +57,7 @@ namespace Memoria.Assets
             {
                 _dic = new Dictionary<String, LinkedList<UInt64>>();
                 _customTags = LoadCustomTags();
-                Dictionary<String, IList<KeyValuePair<String, TextReplacement>>> fieldTags = LoadFieldTags();
+                _fieldTags = LoadFieldTags();
 
                 KeyValuePair<Int32, String> chocoboForest = new KeyValuePair<Int32, String>(945, "MES_CHOCO");
                 foreach (KeyValuePair<Int32, String> pair in ExtensionMethodsIEnumerable.Append(FF9DBAll.EventDB, chocoboForest))
@@ -84,7 +85,7 @@ namespace Memoria.Assets
                         continue;
                     }
 
-                    fieldTags.TryGetValue(_fieldFileName, out _fieldReplacements);
+                    _fieldTags.TryGetValue(_fieldFileName, out _fieldReplacements);
                     _cache[_fieldZoneId] = MergeEntries();
                 }
 
@@ -118,7 +119,6 @@ namespace Memoria.Assets
                 _dic = null;
                 _original = null;
                 _external = null;
-                _customTags = null;
                 _fieldReplacements = null;
             }
         }
@@ -142,6 +142,11 @@ namespace Memoria.Assets
                         importer._watcher = _watcher;
                         importer.Initialize();
                         _cache = importer._cache;
+                        _customTags = importer._customTags;
+                        _fieldTags = importer._fieldTags;
+
+                        importer = null;
+
                         LoadExternal();
 
                         Log.Message($"[TextWatcher] Reinitialized for {DateTime.UtcNow - beginTime}");
@@ -258,6 +263,13 @@ namespace Memoria.Assets
                     }
 
                     target = currentText[lineId];
+
+                    // new
+                    String currentZoneName = GetZoneName(currentZoneId);
+                    IList<KeyValuePair<String, TextReplacement>> tags;
+                    if (_fieldTags.TryGetValue(currentZoneName, out tags))
+                        target = target.ReplaceAll(tags);
+
                 } while (target.StartsWith("{$"));
 
                 foreach (UInt64 value in pair.Value)
@@ -268,6 +280,17 @@ namespace Memoria.Assets
                     _cache[zoneId][lineId] = target;
                 }
             }
+        }
+
+        private String GetZoneName(Int32 zoneId)
+        {
+            String name;
+            if (zoneId == 945)
+                name = "MES_CHOCO";
+            else
+                name = FF9DBAll.EventDB[zoneId];
+
+            return zoneId.ToString("D4", CultureInfo.InvariantCulture) + '_' + name;
         }
 
         private String[] MergeEntries()
@@ -297,8 +320,8 @@ namespace Memoria.Assets
                 }
 
                 //external = external.ReplaceAll(_fieldReplacements, _customTags, _formatter.SimpleTags.Backward, _formatter.ComplexTags).TrimEnd();
-                external = external.ReplaceAll(_fieldReplacements, _customTags).TrimEnd();
-                //external = external.TrimEnd();
+                //external = external.ReplaceAll(_fieldReplacements, _customTags).TrimEnd();
+                external = external.TrimEnd();
                 String ending = GetEnding(original);
                 if (ending != String.Empty)
                     external += ending;
@@ -395,6 +418,20 @@ namespace Memoria.Assets
 
                 if (result != null)
                 {
+                    // new
+                    String fieldZoneName = GetZoneName(fieldZoneId);
+                    IList<KeyValuePair<String, TextReplacement>> filedTags;
+                    if (_fieldTags.TryGetValue(fieldZoneName, out filedTags))
+                    {
+                        for (Int32 i = 0; i < result.Length; i++)
+                            result[i] = result[i].ReplaceAll(filedTags, _customTags);
+                    }
+                    else
+                    {
+                        for (Int32 i = 0; i < result.Length; i++)
+                            result[i] = result[i].ReplaceAll(_customTags);
+                    }
+
                     FF9TextTool.SetFieldText(result);
                     FF9TextTool.SetTableText(FF9TextTool.ExtractTableText(result));
                 }
