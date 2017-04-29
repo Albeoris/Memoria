@@ -480,7 +480,7 @@ namespace Memoria.Assets
             for (Int32 i = 0; i < values.Length; i++)
             {
                 Int32 numArg;
-                if (!Int32.TryParse(par, NumberStyles.Integer | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out numArg))
+                if (!Int32.TryParse(values[i], NumberStyles.Integer | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out numArg))
                 {
                     offset = oldOffset;
                     left = oldleft;

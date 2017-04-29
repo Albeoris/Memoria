@@ -1009,7 +1009,7 @@ public static class NGUIText
 			while (i < length)
 			{
 				Char c = text[i];
-				if (c == '[')
+				if (c == '[' || c == '{')
 				{
 					Int32 num = 0;
 					Boolean flag = false;
@@ -1031,7 +1031,7 @@ public static class NGUIText
 						continue;
 					}
 				}
-				i++;
+			    i++;
 			}
 		}
 		return text;
