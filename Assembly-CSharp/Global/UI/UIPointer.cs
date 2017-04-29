@@ -143,14 +143,22 @@ public class UIPointer : MonoBehaviour
 
 	public void SetNumberActive(Boolean isActive, Int32 number)
 	{
-		if (isActive)
+	    UISprite sprite = this.numberSprite;
+	    if (sprite == null)
+	        return;
+
+	    GameObject gameObj = sprite.gameObject;
+        if (ReferenceEquals(gameObj, null))
+	        return;
+
+        if (isActive)
 		{
-			this.numberSprite.gameObject.SetActive(true);
-			this.numberSprite.spriteName = ((number != 1) ? "hand_battle_2" : "hand_battle_1");
+            gameObj.SetActive(true);
+            sprite.spriteName = (number != 1) ? "hand_battle_2" : "hand_battle_1";
 		}
 		else
 		{
-			this.numberSprite.gameObject.SetActive(false);
+            gameObj.SetActive(false);
 		}
 	}
 

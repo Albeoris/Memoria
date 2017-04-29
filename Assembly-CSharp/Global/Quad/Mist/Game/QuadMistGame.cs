@@ -934,19 +934,19 @@ public class QuadMistGame : MonoBehaviour
         {
             if (attacker.side == 0) // Player
             {
-                battleCalculation.atkFinish = 10;
+                battleCalculation.atkFinish = 100;
                 battleCalculation.defFinish = 0;
             }
             else
             {
                 battleCalculation.atkFinish = 0;
-                battleCalculation.defFinish = 10;
+                battleCalculation.defFinish = 100;
             }
         }
         else if (Configuration.TetraMaster.IsReduceRandom)
         {
-            Int32 lowestAttack = Math.Max(0, battleCalculation.atkStart - (Int32)(MathEx.BitCount(attacker.arrow) * 1.5 - 1));
-            Int32 lowestDefense = Math.Max(0, battleCalculation.defStart - (MathEx.BitCount(defender.arrow) * 2 - 1));
+            Int32 lowestAttack = Math.Max(0, battleCalculation.atkStart - (Int32)(MathEx.BitCount(attacker.arrow) * 1.5 - 1) << 4);
+            Int32 lowestDefense = Math.Max(0, battleCalculation.defStart - (MathEx.BitCount(defender.arrow) * 2 - 1) << 4);
             battleCalculation.atkFinish = Random.Range(lowestAttack, battleCalculation.atkStart);
             battleCalculation.defFinish = Random.Range(lowestDefense, battleCalculation.defStart);
         }

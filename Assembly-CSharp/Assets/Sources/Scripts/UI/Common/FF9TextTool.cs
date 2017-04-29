@@ -224,29 +224,60 @@ namespace Assets.Sources.Scripts.UI.Common
         {
             String[] array = extactedList.Where(t => t.Contains("[TBLE=")).ToArray();
             Int32 length = array.Length;
-            if (length <= 0)
-                return null;
-
-            String[][] strArray1 = new String[length][];
-            for (Int32 index = 0; index < length; ++index)
+            if (length > 0)
             {
-                String str = array[index];
-                for (Int32 startIndex1 = 0; startIndex1 < str.Length && startIndex1 + 5 <= str.Length; ++startIndex1)
+                String[][] tables = new String[length][];
+                for (Int32 index = 0; index < length; ++index)
                 {
-                    Int32 num1 = startIndex1;
-                    if (str.Substring(startIndex1, 5) == "[" + NGUIText.TableStart)
+                    String str = array[index];
+                    for (Int32 i = 0; i + 5 <= str.Length; i++)
                     {
-                        Int32 num2 = str.IndexOf(']', startIndex1 + 4);
-                        Int32 startIndex2 = num2 + 1;
-                        Int32 num3 = str.IndexOf('[', startIndex2);
-                        String[] strArray3 = str.Substring(startIndex2, num3 - num2 - 1).Split('\n');
-                        strArray1[index] = strArray3;
-                        num1 = num3 - 1;
+                        Int32 num1 = i;
+                        if (str.Substring(i, 5) == "[" + NGUIText.TableStart)
+                        {
+                            Int32 num2 = str.IndexOf(']', i + 4);
+                            Int32 startIndex2 = num2 + 1;
+                            Int32 num3 = str.IndexOf('[', startIndex2);
+                            String[] strArray3 = str.Substring(startIndex2, num3 - num2 - 1).Split('\n');
+                            tables[index] = strArray3;
+                            num1 = num3 - 1;
+                        }
+                        i = num1;
                     }
-                    startIndex1 = num1;
                 }
+                return tables;
             }
-            return strArray1;
+
+            array = extactedList.Where(t => t.Contains("{Table ")).ToArray();
+            length = array.Length;
+            if (length > 0)
+            {
+                String[][] table = new String[length][];
+                for (Int32 index = 0; index < length; ++index)
+                {
+                    String str = array[index];
+                    for (Int32 i = 0; i + 6 <= str.Length; ++i)
+                    {
+                        Int32 num1 = i;
+                        if (str.Substring(i, 6) == "{Table")
+                        {
+                            Int32 endingTag = str.IndexOf('}', i + 5);
+                            Int32 nextIndex = endingTag + 1;
+                            Int32 nextTag = str.IndexOf('{', nextIndex);
+                            if (nextTag < 0)
+                                nextTag = str.IndexOf('[', nextIndex);
+
+                            String[] strArray3 = str.Substring(nextIndex, nextTag - endingTag - 1).Split('\n');
+                            table[index] = strArray3;
+                            num1 = nextTag - 1;
+                        }
+                        i = num1;
+                    }
+                }
+                return table;
+            }
+
+            return null;
         }
 
         public IEnumerator UpdateTextLocalization(Action setMenuLanguageCallback)
@@ -345,20 +376,6 @@ namespace Assets.Sources.Scripts.UI.Common
         public static String FieldText(Int32 textId)
         {
             return (textId >= (Int32)FF9TextTool.fieldText.Length) ? String.Empty : FF9TextTool.fieldText[textId];
-        }
-
-        private static String GetFieldTextFileName()
-        {
-            String text = FF9TextTool.fieldZoneId.ToString();
-            if (FF9StateSystem.MobilePlatform)
-            {
-                Int32 num = FF9TextTool.fieldZoneId;
-                if (num == 71)
-                {
-                    text += "m";
-                }
-            }
-            return text;
         }
 
         public static String CharacterProfile(Int32 charId)
@@ -602,19 +619,9 @@ namespace Assets.Sources.Scripts.UI.Common
             return (id >= (Int32)FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
         }
 
-        private static String[] RemoveAllOpCode(String[] textList)
-        {
-            String[] array = new String[(Int32)textList.Length];
-            for (Int32 i = 0; i < (Int32)textList.Length; i++)
-            {
-                array[i] = FF9TextTool.RemoveOpCode(textList[i]);
-            }
-            return array;
-        }
-
         public static String RemoveOpCode(String textList)
         {
-            String pattern = "\\[[^\\]]*\\]";
+            String pattern = @"\[[^\]]*\]|\{[^\}]*\}";
             return Regex.Replace(textList, pattern, String.Empty);
         }
 
@@ -637,6 +644,8 @@ namespace Assets.Sources.Scripts.UI.Common
             }
             return result;
         }
+
+        public static event Action FieldTextUpdated;
 
         private static Int32 fieldZoneId = -1;
 
@@ -709,6 +718,7 @@ namespace Assets.Sources.Scripts.UI.Common
         public static void SetFieldText(String[] value)
         {
             fieldText = value;
+            FieldTextUpdated?.Invoke();
         }
 
         public static void SetTableText(String[][] value)

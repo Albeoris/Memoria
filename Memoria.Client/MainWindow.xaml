@@ -5,8 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Memoria.Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Memoria Client" Height="350" Width="525">
     <Grid>
+        
+        <!-- Connection View -->
+        <Grid Visibility="{Binding ConnectionViewVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Width="160" Height="60" Margin="32" FontSize="24" Content="Connect" Click="OnConnectButtonClick"/>
+            <TextBox Grid.Row="1" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" Text="{Binding ConnectionViewText, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"/>
+        </Grid>
+
+        <!-- Main View -->
+        <TabControl Visibility="{Binding TabControlVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+            <TabItem Header="Game Objects">
+                <local:UiGameObjectContent/>
+            </TabItem>
+        </TabControl>
         
     </Grid>
 </Window>

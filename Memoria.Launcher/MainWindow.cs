@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Memoria.Launcher
 {
@@ -12,8 +16,25 @@ namespace Memoria.Launcher
         public MainWindow()
         {
             InitializeComponent();
+            TryLoadImage();
 
             PlayButton.GameSettings = GameSettings;
+        }
+
+        private void TryLoadImage()
+        {
+            try
+            {
+                String backgroundImagePath = ConfigurationManager.AppSettings["backgroundImagePath"];
+                if (String.IsNullOrEmpty(backgroundImagePath) || !File.Exists(backgroundImagePath))
+                    return;
+
+                ImageSource imageSource = new BitmapImage(new Uri(backgroundImagePath));
+                Launcher.Source = imageSource;
+            }
+            catch
+            {
+            }
         }
 
         [DllImport("user32.dll")]

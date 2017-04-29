@@ -399,7 +399,7 @@ public class Dialog : MonoBehaviour
 		set
 		{
 			String text = this.OverwritePrerenderText(value);
-			NGUIText.PhrasePreOpcodeSymbol(text, this);
+            DialogBoxConstructor.PhrasePreOpcodeSymbol(text, this);
 			this.PrepareNextPage();
 		}
 	}
@@ -1928,7 +1928,7 @@ public class Dialog : MonoBehaviour
 		this.phrase = ((this.subPage.Count <= this.currentPage) ? String.Empty : this.subPage[this.currentPage++]);
 		this.phrase = this.RewriteSentenceForExclamation(this.phrase);
 		this.ClearIcon();
-		NGUIText.PhraseOpcodeSymbol(this.phrase, this);
+        DialogBoxController.PhraseOpcodeSymbol(this.phrase, this);
 		this.phraseMessageValue = this.phrase;
 		this.phrase = NGUIText.ReplaceNumberValue(this.phrase, this);
 	}

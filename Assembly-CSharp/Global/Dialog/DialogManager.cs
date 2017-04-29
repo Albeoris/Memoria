@@ -200,7 +200,7 @@ public class DialogManager : Singleton<DialogManager>
 	public Dialog AttachDialog(Int32 dialogId, Dialog.WindowStyle style, Int32 textId, PosObj po, Dialog.DialogIntDelegate listener, Dialog.CaptionType captionType)
 	{
 		Dialog dialogFromPool = this.GetDialogFromPool();
-		if (dialogFromPool != (UnityEngine.Object)null)
+		if (dialogFromPool != null)
 		{
 			dialogFromPool.Reset();
 			dialogFromPool.Id = dialogId;
@@ -224,8 +224,20 @@ public class DialogManager : Singleton<DialogManager>
 			else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
 			{
 				dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
-			}
-			dialogFromPool.Show();
+
+                // Subscribe
+			    Action onFieldTextUpdated = () =>
+			    {
+                    dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
+			        dialogFromPool.Show();
+			    };
+                FF9TextTool.FieldTextUpdated += onFieldTextUpdated;
+
+                // Unsubscribe
+                Dialog.DialogIntDelegate unsubscribe = (c) => FF9TextTool.FieldTextUpdated -= onFieldTextUpdated;
+                listener = (Dialog.DialogIntDelegate)Delegate.Combine(unsubscribe, listener);
+            }
+            dialogFromPool.Show();
 			dialogFromPool.AfterDialogHidden = listener;
 			if (!this.isActivate)
 			{

@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using Memoria.Prime;
 using UnityEngine;
 
 public class QuadMistDatabase : MonoBehaviour
@@ -195,16 +199,16 @@ public class QuadMistDatabase : MonoBehaviour
 		return num;
 	}
 
-	public static Int32 MiniGame_AwayCard(Int32 ID, Int32 offset)
+	public static Int32 MiniGame_AwayCard(Int32 cardId, Int32 cardIndex)
 	{
 		List<QuadMistCard> miniGameCard = FF9StateSystem.MiniGame.SavedData.MiniGameCard;
 		QuadMistCard quadMistCard = (QuadMistCard)null;
 		Int32 num = 0;
 		foreach (QuadMistCard quadMistCard2 in miniGameCard)
 		{
-			if ((Int32)quadMistCard2.id == ID)
+			if ((Int32)quadMistCard2.id == cardId)
 			{
-				if (num == offset)
+				if (num == cardIndex)
 				{
 					quadMistCard = quadMistCard2;
 					break;
@@ -221,7 +225,178 @@ public class QuadMistDatabase : MonoBehaviour
 		return -1;
 	}
 
-	public static void MiniGame_AwayAllCard()
+    public static void DiscardUnnecessaryCards()
+    {
+        List<QuadMistCard> cards = FF9StateSystem.MiniGame.SavedData.MiniGameCard;
+
+        Int32 minDeckSize = Configuration.TetraMaster.DiscardMinDeckSize;
+        if (cards.Count <= minDeckSize)
+        {
+            Log.Warning($"You don't have enough cards to discard. You can change a minimum deck size via Mememoria.ini: [{nameof(Configuration.TetraMaster)}].{nameof(Configuration.TetraMaster.DiscardMinDeckSize)}");
+            return;
+        }
+
+        Dictionary<Byte, List<QuadMistCard>> cardsById = new Dictionary<Byte, List<QuadMistCard>>();
+        Dictionary<Byte, List<QuadMistCard>> cardsByArrow = new Dictionary<Byte, List<QuadMistCard>>();
+
+        foreach (QuadMistCard card in cards)
+        {
+            List<QuadMistCard> list;
+
+            if (!cardsById.TryGetValue(card.id, out list))
+            {
+                list = new List<QuadMistCard>();
+                cardsById.Add(card.id, list);
+            }
+            list.Add(card);
+
+            if (!cardsByArrow.TryGetValue(card.arrow, out list))
+            {
+                list = new List<QuadMistCard>();
+                cardsByArrow.Add(card.arrow, list);
+            }
+            list.Add(card);
+        }
+
+        foreach (List<QuadMistCard> list in cardsById.Values)
+            list.Sort(CompareCard);
+        foreach (List<QuadMistCard> list in cardsByArrow.Values)
+            list.Sort(CompareCard);
+
+        Int32 maxSameArrows = Configuration.TetraMaster.DiscardKeepSameArrow;
+        Int32 maxSameType = Configuration.TetraMaster.DiscardKeepSameType;
+
+        Log.Message("-------------------");
+        Log.Message("Discarding cards...");
+
+        foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsByArrow.OrderByDescending(p => MathEx.BitCount(p.Key)))
+        {
+            Int32 sameArrows = maxSameArrows;
+            List<QuadMistCard> list = pair.Value;
+
+            for (Int32 i = 0; (i < list.Count && i < list.Count - sameArrows); i++)
+            {
+                QuadMistCard card = list[i];
+                if (!CanDiscard(card))
+                {
+                    sameArrows--;
+                    continue;
+                }
+
+                List<QuadMistCard> sameCards = cardsById[card.id];
+                if (sameCards.Count <= maxSameType)
+                {
+                    sameArrows--;
+                    continue;
+                }
+
+                list.RemoveAt(i);
+                sameCards.Remove(card);
+                cards.Remove(card);
+                i--;
+                LogDiscardingCard(card);
+
+                if (cards.Count <= minDeckSize)
+                    break;
+            }
+
+            if (cards.Count <= minDeckSize)
+                break;
+        }
+
+        foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsById.OrderBy(p => p.Key))
+        {
+            Int32 sameType = maxSameType;
+
+            List<QuadMistCard> list = pair.Value;
+
+            for (Int32 i = 0; (i < list.Count && i < list.Count - sameType); i++)
+            {
+                QuadMistCard card = list[i];
+                if (!CanDiscard(card))
+                {
+                    sameType--;
+                    continue;
+                }
+
+                List<QuadMistCard> arrowCards = cardsByArrow[card.arrow];
+                if (arrowCards.Count <= maxSameArrows)
+                {
+                    sameType--;
+                    continue;
+                }
+
+                list.RemoveAt(i);
+                arrowCards.Remove(card);
+                cards.Remove(card);
+                i--;
+                LogDiscardingCard(card);
+
+                if (cards.Count <= minDeckSize)
+                    break;
+            }
+
+            if (cards.Count <= minDeckSize)
+                break;
+        }
+
+        Log.Message("-------------------");
+    }
+
+    private static void LogDiscardingCard(QuadMistCard card)
+    {
+        String cardName = FF9TextTool.CardName(card.id);
+        String displayInfo = card.ToString();
+        Int32 arrowCount = MathEx.BitCount(card.arrow);
+
+        Log.Message($"Discard the card: {cardName} ({displayInfo}, {arrowCount} arrows) [Id: {card.id}, Type: {card.type}, Attack: {card.atk}, P.Def: {card.pdef}, M.Def: {card.mdef}]");
+    }
+
+    private static Boolean CanDiscard(QuadMistCard card)
+    {
+        if (Configuration.TetraMaster.DiscardExclusions.Contains(card.id))
+            return false;
+
+        if (card.type == QuadMistCard.Type.ASSAULT && !Configuration.TetraMaster.DiscardAssaultCards)
+            return false;
+        if (card.type == QuadMistCard.Type.FLEXIABLE && !Configuration.TetraMaster.DiscardFlexibleCards)
+            return false;
+
+        if (card.atk > Configuration.TetraMaster.DiscardMaxAttack)
+            return false;
+        if (card.pdef > Configuration.TetraMaster.DiscardMaxPDef)
+            return false;
+        if (card.mdef > Configuration.TetraMaster.DiscardMaxMDef)
+            return false;
+
+        if (card.atk + card.pdef + card.mdef >= Configuration.TetraMaster.DiscardMaxSum)
+            return false;
+
+        return true;
+    }
+
+    private static Int32 CompareCardReverse(QuadMistCard x, QuadMistCard y)
+    {
+        return CompareCard(x, y) * -1;
+    }
+
+    private static Int32 CompareCard(QuadMistCard x, QuadMistCard y)
+    {
+        if (x.cpoint > y.cpoint)
+            return 1;
+        if (y.cpoint > x.cpoint)
+            return -1;
+
+        if (x.type == QuadMistCard.Type.ASSAULT && y.type != QuadMistCard.Type.ASSAULT)
+            return 1;
+        if (y.type == QuadMistCard.Type.ASSAULT && x.type != QuadMistCard.Type.ASSAULT)
+            return -1;
+
+        return (x.atk + x.pdef + x.mdef) * (x.type >= QuadMistCard.Type.FLEXIABLE ? 1.5 : 1).CompareTo(
+                   (y.atk + y.pdef + y.mdef) * (y.type >= QuadMistCard.Type.FLEXIABLE ? 1.5 : 1));
+    }
+
+    public static void MiniGame_AwayAllCard()
 	{
 		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Clear();
 	}

@@ -69,7 +69,7 @@ namespace Memoria.Prime.Threading
             ThreadPool.QueueUserWorkItem(RunSafe);
         }
 
-        public Boolean WaitSafe(Int32 millisecondsTimeout = -1)
+        public Boolean WaitSafe(Int32 millisecondsTimeout = -1, Boolean skipLogging = false)
         {
             if (IsCompleted)
                 return true;
@@ -83,7 +83,8 @@ namespace Memoria.Prime.Threading
                 if (_completedEvent.WaitOne(5 * 60 * 1000))
                     break;
 
-                Log.Warning("Long running task was detected. Lifetime: {0}, Stack: {1}", DateTime.UtcNow - startTime, Environment.StackTrace);
+                if (!skipLogging)
+                    Log.Warning("Long running task was detected. Lifetime: {0}, Stack: {1}", DateTime.UtcNow - startTime, Environment.StackTrace);
             }
 
             return true;

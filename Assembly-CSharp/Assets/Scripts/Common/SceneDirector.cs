@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Memoria.Assets;
+using Memoria.Prime;
 using SiliconStudio;
 using UnityEngine;
 
@@ -44,6 +45,12 @@ namespace Assets.Scripts.Common
 		public static void ReplaceNow(String nextScene)
 		{
             MemoriaExport();
+
+            if (String.IsNullOrEmpty(nextScene))
+            {
+                Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
+            }
+
             if (nextScene != "MainMenu")
 			{
 				if (Singleton<BubbleUI>.Instance != (UnityEngine.Object)null)
@@ -56,8 +63,8 @@ namespace Assets.Scripts.Common
 			PersistenSingleton<SceneDirector>.Instance.NextScene = nextScene;
 			Application.LoadLevel("Loading");
 			Resources.UnloadUnusedAssets();
-			GC.Collect();
-			Application.LoadLevel(PersistenSingleton<SceneDirector>.Instance.NextScene);
+			//GC.Collect();
+		    PersistenSingleton<SceneDirector>.Instance.LoadNextScene();
 			PersistenSingleton<SceneDirector>.Instance.LastScene = PersistenSingleton<SceneDirector>.Instance.CurrentScene;
 			PersistenSingleton<SceneDirector>.Instance.CurrentScene = PersistenSingleton<SceneDirector>.Instance.NextScene;
 			PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene = String.Empty;
@@ -66,9 +73,34 @@ namespace Assets.Scripts.Common
 			global::Debug.Log("---------- Current Scene : " + PersistenSingleton<SceneDirector>.Instance.CurrentScene + " ----------");
 		}
 
-		public static void Replace(String nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
+	    private void LoadNextScene()
+	    {
+	        try
+	        {
+	            String nextScene = this.NextScene;
+	            if (nextScene == null)
+                    throw new ArgumentNullException(nameof(nextScene));
+
+                if (nextScene == String.Empty)
+	                throw new ArgumentException(nameof(nextScene));
+
+                Application.LoadLevel(this.NextScene);
+	        }
+	        catch (Exception ex)
+	        {
+	            Log.Error(ex, "Failed to load next scene.");
+	            throw;
+	        }
+	    }
+
+	    public static void Replace(String nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
 		{
-			if (nextScene != "MainMenu")
+		    if (String.IsNullOrEmpty(nextScene))
+		    {
+		        Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
+		    }
+
+		    if (nextScene != "MainMenu")
 			{
 				if (Singleton<BubbleUI>.Instance != (UnityEngine.Object)null)
 				{
@@ -242,8 +274,8 @@ namespace Assets.Scripts.Common
 		{
 			Application.LoadLevel("Loading");
 			Resources.UnloadUnusedAssets();
-			GC.Collect();
-			Application.LoadLevel(this.NextScene);
+			//GC.Collect();
+		    LoadNextScene();
 			SoundLib.StopAllSoundEffects();
 			if (this.CurrentScene != this.NextScene)
 			{
@@ -353,7 +385,7 @@ namespace Assets.Scripts.Common
 
 		private IEnumerator _Swirl(String nextScene, SceneTransition transition)
 		{
-			this.PendingCurrentScene = this.CurrentScene;
+            this.PendingCurrentScene = this.CurrentScene;
 			this.PendingNextScene = nextScene;
 			this.IsFading = true;
 			UIManager.Field.Loading = true;
@@ -373,7 +405,7 @@ namespace Assets.Scripts.Common
 			this.NextScene = String.Empty;
 			yield return new WaitForEndOfFrame();
 			Resources.UnloadUnusedAssets();
-			GC.Collect();
+			//GC.Collect();
 			SceneDirector.ClearFadeColor();
 			this.IsFading = false;
 			yield break;

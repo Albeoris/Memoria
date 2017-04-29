@@ -66,30 +66,59 @@ namespace Memoria.Assets
                 yield return relativePath;
         }
 
-        private static void ExportSoundSafe(String outputPath, TextAsset textAsset)
+        private static void ExportSoundSafe(String akbOutputPath, TextAsset textAsset)
         {
             try
             {
-                if (File.Exists(outputPath))
+                String oggOutputPath = akbOutputPath + ".ogg";
+
+                String fileName;
+                String directoryPath;
+                String alternativePath;
+                if (AudioResources.TryAppendDisplayName(akbOutputPath, out directoryPath, out fileName, out alternativePath))
                 {
-                    Log.Warning("[AudioResourceExporter] Export was skipped bacause a file already exists: [{0}].", outputPath);
+                    alternativePath += ".ogg";
+
+                    if (File.Exists(alternativePath))
+                    {
+                        Log.Warning("[AudioResourceExporter] Export was skipped bacause a file already exists: [{0}].", alternativePath);
+                        return;
+                    }
+
+                    if (File.Exists(oggOutputPath))
+                    {
+                        Log.Message("[AudioResourceExporter] The file [{0}] will be renamed to [{1}].", oggOutputPath, alternativePath);
+                        File.Move(oggOutputPath, alternativePath);
+                        Log.Warning("[AudioResourceExporter] Export was skipped bacause a file already exists: [{0}].", alternativePath);
+                        return;
+                    }
+
+                    oggOutputPath = alternativePath;
+                }
+                else if (File.Exists(akbOutputPath))
+                {
+                    Log.Warning("[AudioResourceExporter] Export was skipped bacause a file already exists: [{0}].", akbOutputPath);
                     return;
                 }
+                else
+                {
+                    oggOutputPath = akbOutputPath + ".ogg";
+                }
 
-                FileCommander.PrepareFileDirectory(outputPath);
+                FileCommander.PrepareFileDirectory(akbOutputPath);
 
-                using (Stream akb = File.Create(outputPath))
-                using (Stream ogg = File.Create(outputPath + ".ogg"))
+                using (Stream akb = File.Create(akbOutputPath))
+                using (Stream ogg = File.Create(oggOutputPath))
                 {
                     akb.Write(textAsset.bytes, 0, textAsset.bytes.Length);
                     ogg.Write(textAsset.bytes, 304, textAsset.bytes.Length - 304);
                 }
 
-                File.SetLastWriteTimeUtc(outputPath, File.GetLastWriteTimeUtc(outputPath + ".ogg"));
+                File.SetLastWriteTimeUtc(akbOutputPath, File.GetLastWriteTimeUtc(oggOutputPath));
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[AudioResourceExporter] Failed to export sound [{0}] to the [{1}].", textAsset.name, outputPath);
+                Log.Error(ex, "[AudioResourceExporter] Failed to export sound [{0}] to the [{1}].", textAsset.name, akbOutputPath);
             }
         }
     }

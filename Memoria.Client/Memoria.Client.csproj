@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Memoria.Client</RootNamespace>
     <AssemblyName>Memoria.Client</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -29,6 +29,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -65,11 +67,32 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\References\UnityEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="XInputDotNetPure">
@@ -85,6 +108,55 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="..\Assembly-CSharp\Memoria\Test\Commands\Shared\ChangeValueCommandMessage.cs">
+      <Link>GameObjectExplorer\Commands\Shared\ChangeValueCommandMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Assembly-CSharp\Memoria\Test\Commands\Shared\CommandMessage.cs">
+      <Link>GameObjectExplorer\Commands\Shared\CommandMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Assembly-CSharp\Memoria\Test\Commands\Shared\DuplicateCommandMessage.cs">
+      <Link>GameObjectExplorer\Commands\Shared\DuplicateCommandMessage.cs</Link>
+    </Compile>
+    <Compile Include="GameObjectExplorer\Commands\Internal\CommandMessage.cs" />
+    <Compile Include="GameObjectExplorer\Commands\Internal\ChangeValueCommandMessage.cs" />
+    <Compile Include="GameObjectExplorer\Commands\Internal\DuplicateCommandMessage.cs" />
+    <Compile Include="GameObjectExplorer\GameObjectObservableCollection.cs" />
+    <Compile Include="Controls\UiGrid.cs" />
+    <Compile Include="Components\AbstractList.cs" />
+    <Compile Include="GameObjectExplorer\GameObjectListCollectionView.cs" />
+    <Compile Include="GameObjectExplorer\ObjectViewFactory.cs" />
+    <Compile Include="GameObjectExplorer\RemoteGameObjects.cs" />
+    <Compile Include="GameObjectExplorer\UiGameObjectContent.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\BehaviourView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\MonoBehaviourView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UILocalizeView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIRectView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UILabelView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UIPanelView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UIWidgetView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\ComponentView.cs" />
+    <Compile Include="GameObjectExplorer\Views\GameObjectView.cs" />
+    <Compile Include="GameObjectExplorer\Views\ObjectAbstractView.cs" />
+    <Compile Include="GameObjectExplorer\Views\ObjectView.cs" />
+    <Compile Include="GameObjectExplorer\Views\ScriptableObjectView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\TransformView.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\QuaternionControl.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\QuaternionEditor.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\UiRectPositionControl.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\UiRectPositionEditor.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector2Editor.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector2Control.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector3Control.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector3Editor.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector4Control.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector4Editor.cs" />
+    <Compile Include="Interaction\InteractionService.cs" />
+    <Compile Include="Interaction\IInfoProvider.cs" />
+    <Compile Include="Interaction\InfoProviderGroup.cs" />
+    <Compile Include="Interaction\RemoteGameObjectsProvider.cs" />
+    <Compile Include="Interaction\RemoteGameObjectsProviders.cs" />
+    <Compile Include="Interaction\UiHelper.cs" />
+    <Compile Include="NetworkClient.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,12 +165,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FrameworkElementExm.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AkbPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -117,6 +191,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -125,8 +200,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assembly-CSharp\Assembly-CSharp.csproj">
-      <Project>{3fe6492c-c2e2-48ee-9ad6-b2d9a7d43c93}</Project>
+      <Project>{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}</Project>
       <Name>Assembly-CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
+      <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
+      <Name>Memoria.Prime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +215,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

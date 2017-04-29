@@ -39,8 +39,8 @@ Final Fantasy IX Engine
 6. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
 7. Easy rope jumping
 8. Change the game font
-9. Export text resources and field backgrounds
-10. Import text resources
+9. Export/import text resources
+10. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
 
 
 # Configuration:

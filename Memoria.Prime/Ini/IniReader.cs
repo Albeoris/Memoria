@@ -150,7 +150,17 @@ namespace Memoria.Prime.Ini
                 {
                     IniSection section;
                     if (_sections.TryGetValue(_sb.ToString(), out section))
-                        _values = section.GetValuesInternal().ToDictionary(v => v.Name);
+                    {
+                        try
+                        {
+                            _values = section.GetValuesInternal().ToDictionary(v => v.Name);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Failed to load data for the section [{0}]", section.Name);
+                            _values = new Dictionary<String, IniValue>();
+                        }
+                    }
                     break;
                 }
                 _sb.Append(ch);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
@@ -10,62 +9,9 @@ using Object = System.Object;
 
 public static class NGUIText
 {
-	static NGUIText()
+    static NGUIText()
 	{
 		// Note: this type is marked as 'beforefieldinit'.
-		NGUIText.StartSentense = "STRT";
-		NGUIText.DialogId = "ID";
-		NGUIText.Choose = "CHOO";
-		NGUIText.AnimationTime = "TIME";
-		NGUIText.FlashInh = "FLIM";
-		NGUIText.NoAnimation = "NANI";
-		NGUIText.NoTypeEffect = "IMME";
-		NGUIText.MessageSpeed = "SPED";
-		NGUIText.Zidane = "ZDNE";
-		NGUIText.Vivi = "VIVI";
-		NGUIText.Dagger = "DGGR";
-		NGUIText.Steiner = "STNR";
-		NGUIText.Fraya = "FRYA";
-		NGUIText.Quina = "QUIN";
-		NGUIText.Eiko = "EIKO";
-		NGUIText.Amarant = "AMRT";
-		NGUIText.Party1 = "PTY1";
-		NGUIText.Party2 = "PTY2";
-		NGUIText.Party3 = "PTY3";
-		NGUIText.Party4 = "PTY4";
-		NGUIText.Shadow = "HSHD";
-		NGUIText.NoShadow = "NSHD";
-		NGUIText.ButtonIcon = "DBTN";
-		NGUIText.NoFocus = "NFOC";
-		NGUIText.IncreaseSignal = "INCS";
-		NGUIText.CustomButtonIcon = "CBTN";
-		NGUIText.NewIcon = "PNEW";
-		NGUIText.TextOffset = "MOVE";
-		NGUIText.EndSentence = "ENDN";
-		NGUIText.TextVar = "TEXT";
-		NGUIText.ItemNameVar = "ITEM";
-		NGUIText.SignalVar = "SIGL";
-		NGUIText.NumberVar = "NUMB";
-		NGUIText.MessageDelay = "WAIT";
-		NGUIText.MessageFeed = "FEED";
-		NGUIText.MessageTab = "XTAB";
-		NGUIText.YAddOffset = "YADD";
-		NGUIText.YSubOffset = "YSUB";
-		NGUIText.IconVar = "ICON";
-		NGUIText.PreChoose = "PCHC";
-		NGUIText.PreChooseMask = "PCHM";
-		NGUIText.DialogAbsPosition = "MPOS";
-		NGUIText.DialogOffsetPositon = "OFFT";
-		NGUIText.DialogTailPositon = "TAIL";
-		NGUIText.TableStart = "TBLE";
-		NGUIText.WidthInfo = "WDTH";
-		NGUIText.Center = "CENT";
-		NGUIText.Signal = "SIGL";
-		NGUIText.NewPage = "PAGE";
-		NGUIText.MobileIcon = "MOBI";
-		NGUIText.SpacingY = "SPAY";
-		NGUIText.KeyboardButtonIcon = "KCBT";
-		NGUIText.JoyStickButtonIcon = "JCBT";
 		NGUIText.RenderOpcodeSymbols = new String[]
 		{
 			NGUIText.StartSentense,
@@ -180,735 +126,7 @@ public static class NGUIText
 		}
 	}
 
-	public static Boolean PhraseOpcodeSymbol(String text, ref Int32 index, ref Boolean highShadow, ref Boolean center, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
-	{
-		if (index + 6 > text.Length || text[index] != '[')
-		{
-			return false;
-		}
-		Int32 num = index;
-		String a = text.Substring(index, 5);
-		String[] renderOpcodeSymbols = NGUIText.RenderOpcodeSymbols;
-		for (Int32 i = 0; i < (Int32)renderOpcodeSymbols.Length; i++)
-		{
-			String text2 = renderOpcodeSymbols[i];
-			if (a == "[" + text2)
-			{
-				NGUIText.PhraseRenderOpcodeSymbol(text, index, ref num, text2, ref highShadow, ref center, ref ff9Signal, ref extraOffset, ref tabX, ref insertImage);
-				break;
-			}
-		}
-		if (num == index)
-		{
-			return false;
-		}
-		if (num != -1)
-		{
-			index = num + 1;
-			return true;
-		}
-		index = text.Length;
-		return true;
-	}
-
-	private static void PhraseRenderOpcodeSymbol(String text, Int32 index, ref Int32 closingBracket, String tag, ref Boolean highShadow, ref Boolean center, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
-	{
-		if (tag == NGUIText.Center)
-		{
-			closingBracket = text.IndexOf(']', index + 4);
-			center = true;
-		}
-		else if (tag == NGUIText.Shadow)
-		{
-			closingBracket = text.IndexOf(']', index + 4);
-			highShadow = true;
-		}
-		else if (tag == NGUIText.NoShadow)
-		{
-			closingBracket = text.IndexOf(']', index + 4);
-			highShadow = false;
-		}
-		else if (tag == NGUIText.Signal)
-		{
-			Int32 oneParameterFromTag = NGUIText.GetOneParameterFromTag(text, index, ref closingBracket);
-			ff9Signal = 10 + oneParameterFromTag;
-		}
-		else if (tag == NGUIText.IncreaseSignal)
-		{
-			closingBracket = text.IndexOf(']', index + 4);
-			ff9Signal = 2;
-		}
-		else if (tag == NGUIText.MessageFeed)
-		{
-			Single[] allParameters = NGUIText.GetAllParameters(text, index, ref closingBracket);
-			extraOffset.x += ((allParameters[0] >= 160f) ? 0f : (allParameters[0] * UIManager.ResourceXMultipier));
-		}
-		else if (tag == NGUIText.YSubOffset)
-		{
-			Single[] allParameters2 = NGUIText.GetAllParameters(text, index, ref closingBracket);
-			extraOffset.y += allParameters2[0] * UIManager.ResourceYMultipier;
-		}
-		else if (tag == NGUIText.YAddOffset)
-		{
-			Single[] allParameters3 = NGUIText.GetAllParameters(text, index, ref closingBracket);
-			extraOffset.y -= allParameters3[0] * UIManager.ResourceYMultipier;
-		}
-		else if (tag == NGUIText.MessageTab)
-		{
-			Single[] allParameters4 = NGUIText.GetAllParameters(text, index, ref closingBracket);
-			if (allParameters4[0] == 224f)
-			{
-				allParameters4[0] = 0f;
-			}
-			tabX = allParameters4[0] * UIManager.ResourceYMultipier;
-		}
-		else if (tag == NGUIText.CustomButtonIcon || tag == NGUIText.ButtonIcon || tag == NGUIText.JoyStickButtonIcon || tag == NGUIText.KeyboardButtonIcon)
-		{
-			closingBracket = text.IndexOf(']', index + 4);
-			String parameterStr = text.Substring(index + 6, closingBracket - index - 6);
-			Boolean checkConfig = tag == NGUIText.CustomButtonIcon || tag == NGUIText.JoyStickButtonIcon;
-			insertImage = NGUIText.CreateButtonImage(parameterStr, checkConfig, tag);
-			insertImage.TextPosition = index;
-		}
-		else if (tag == NGUIText.IconVar)
-		{
-			Int32 oneParameterFromTag2 = NGUIText.GetOneParameterFromTag(text, index, ref closingBracket);
-			insertImage = NGUIText.CreateIconImage(oneParameterFromTag2);
-			insertImage.TextPosition = index;
-		}
-		else if (tag == NGUIText.NewIcon)
-		{
-			Int32 oneParameterFromTag3 = NGUIText.GetOneParameterFromTag(text, index, ref closingBracket);
-			insertImage = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
-			insertImage.TextPosition = index;
-		}
-		else if (tag == NGUIText.MobileIcon)
-		{
-			Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(text, index, ref closingBracket);
-			if (FF9StateSystem.MobilePlatform)
-			{
-				insertImage = NGUIText.CreateIconImage(oneParameterFromTag4);
-				insertImage.TextPosition = index;
-			}
-		}
-		else if (tag == NGUIText.TextOffset)
-		{
-			Single[] allParameters5 = NGUIText.GetAllParameters(text, index, ref closingBracket);
-			extraOffset.x += (allParameters5[0] - 4f) * UIManager.ResourceXMultipier;
-			extraOffset.y -= allParameters5[1] * UIManager.ResourceYMultipier;
-		}
-		else
-		{
-			closingBracket = text.IndexOf(']', index + 4);
-		}
-	}
-
-	public static void PhrasePreOpcodeSymbol(String text, Dialog dlg)
-	{
-		String text2 = String.Empty;
-		Int32 length = text.Length;
-		Int32 num = 0;
-		Boolean flag = FF9StateSystem.Settings.CurrentLanguage == "Japanese";
-		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-		ETb etb = (!(PersistenSingleton<EventEngine>.Instance == (UnityEngine.Object)null)) ? PersistenSingleton<EventEngine>.Instance.eTb : ((ETb)null);
-		dlg.SignalNumber = ETb.gMesSignal;
-		for (Int32 i = 0; i < text.Length; i++)
-		{
-			length = text.Length;
-			if (i + 6 > length || text[i] != '[')
-			{
-				text2 += text[i];
-			}
-			else
-			{
-				if (text[i + 5] == ']')
-				{
-					String a = text.Substring(i, 6);
-					if (a == "[" + NGUIText.NoAnimation + "]")
-					{
-						dlg.DialogAnimate.ShowWithoutAnimation = true;
-						i += 5;
-						goto IL_1280;
-					}
-					if (a == "[" + NGUIText.NoFocus + "]")
-					{
-						dlg.FlagButtonInh = true;
-						dlg.FlagResetChoice = false;
-						i += 5;
-						goto IL_1280;
-					}
-					if (a == "[" + NGUIText.FlashInh + "]")
-					{
-						dlg.TypeEffect = true;
-						i += 5;
-						goto IL_1280;
-					}
-					if (a == "[" + NGUIText.EndSentence + "]")
-					{
-						dlg.EndMode = -1;
-						i += 5;
-						goto IL_1280;
-					}
-				}
-				Int32 num2 = i;
-				String text3 = text.Substring(i, 5);
-				if (text3 == "[" + NGUIText.StartSentense)
-				{
-					Int32[] allParametersFromTag = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					Single num3 = Convert.ToSingle(allParametersFromTag[0]);
-					if (num3 > 0f)
-					{
-						num3 += 3f;
-					}
-					if (num3 > dlg.CaptionWidth)
-					{
-						dlg.Width = num3;
-					}
-					else
-					{
-						dlg.Width = dlg.CaptionWidth;
-					}
-					dlg.LineNumber = Convert.ToSingle(allParametersFromTag[1]);
-				}
-				else if (text3 == "[" + NGUIText.DialogTailPositon)
-				{
-					num2 = text.IndexOf(']', i + 4);
-					String text4 = text.Substring(i + 6, num2 - i - 6);
-					String text5 = text4;
-					switch (text5)
-					{
-					case "LOR":
-						dlg.Tail = Dialog.TailPosition.LowerRight;
-						break;
-					case "LOL":
-						dlg.Tail = Dialog.TailPosition.LowerLeft;
-						break;
-					case "UPR":
-						dlg.Tail = Dialog.TailPosition.UpperRight;
-						break;
-					case "UPL":
-						dlg.Tail = Dialog.TailPosition.UpperLeft;
-						break;
-					case "LOC":
-						dlg.Tail = Dialog.TailPosition.LowerCenter;
-						break;
-					case "UPC":
-						dlg.Tail = Dialog.TailPosition.UpperCenter;
-						break;
-					case "LORF":
-						dlg.Tail = Dialog.TailPosition.LowerRightForce;
-						break;
-					case "LOLF":
-						dlg.Tail = Dialog.TailPosition.LowerLeftForce;
-						break;
-					case "UPRF":
-						dlg.Tail = Dialog.TailPosition.UpperRightForce;
-						break;
-					case "UPLF":
-						dlg.Tail = Dialog.TailPosition.UpperLeftForce;
-						break;
-					case "DEFT":
-						dlg.Tail = Dialog.TailPosition.DialogPosition;
-						break;
-					}
-				}
-				else if (text3 == "[" + NGUIText.WidthInfo)
-				{
-					Int32[] allParametersFromTag2 = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					Int32 num5 = 0;
-					while (num5 + 2 < (Int32)allParametersFromTag2.Length)
-					{
-						Int32 num6 = 0;
-						Int32 num7 = allParametersFromTag2[num5];
-						Int32 num8 = allParametersFromTag2[num5 + 1];
-						if (dlg.DisableIndexes.Contains(num7 - 1))
-						{
-							num8 = 0;
-						}
-						List<Int32> list = new List<Int32>();
-						Boolean flag2 = false;
-						while (allParametersFromTag2[num5 + 2 + num6] != -1)
-						{
-							list.Add(allParametersFromTag2[num5 + 2 + num6]);
-							flag2 = true;
-							num6++;
-						}
-						if (num6 == 0)
-						{
-							num6 = 1;
-						}
-						num5 += 2 + num6;
-						if (flag2)
-						{
-							num5++;
-						}
-						String[] array = (from val in list
-						select val.ToString()).ToArray<String>();
-						num8 += (Int32)NGUIText.GetDialogWidthFromSpecialOpcode(list, etb, dlg.PhraseLabel);
-						if (dlg.OriginalWidth < (Single)num8)
-						{
-							dlg.Width = (Single)num8;
-						}
-					}
-				}
-				else if (text3 == "[" + NGUIText.PreChoose)
-				{
-					Int32[] allParametersFromTag3 = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					ETb.sChooseMask = -1;
-					dlg.ChoiceNumber = Convert.ToInt32(allParametersFromTag3[0]);
-					dlg.DefaultChoice = (Int32)((ETb.sChoose < 0) ? 0 : ETb.sChoose);
-					dlg.DefaultChoice = (Int32)((dlg.DefaultChoice < dlg.ChoiceNumber) ? dlg.DefaultChoice : (dlg.ChoiceNumber - 1));
-					Int32 num9 = Convert.ToInt32(allParametersFromTag3[1]);
-					dlg.CancelChoice = (Int32)((num9 <= -1) ? (dlg.ChoiceNumber - 1) : num9);
-				}
-				else if (text3 == "[" + NGUIText.PreChooseMask)
-				{
-					Int32[] allParametersFromTag4 = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					ETb.sChooseMask = ETb.sChooseMaskInit;
-					dlg.ChoiceNumber = Convert.ToInt32(allParametersFromTag4[0]);
-					dlg.CancelChoice = Convert.ToInt32(allParametersFromTag4[1]);
-					dlg.DefaultChoice = (Int32)((ETb.sChoose < 0) ? 0 : ETb.sChoose);
-					dlg.LineNumber = ((dlg.LineNumber >= (Single)dlg.ChoiceNumber) ? dlg.LineNumber : (dlg.LineNumber + (Single)dlg.ChoiceNumber));
-					dlg.ChooseMask = ETb.sChooseMask;
-					if (dlg.DisableIndexes.Count > 0)
-					{
-						if (dlg.DisableIndexes.Contains(dlg.DefaultChoice) || !dlg.ActiveIndexes.Contains(dlg.DefaultChoice))
-						{
-							dlg.DefaultChoice = dlg.ActiveIndexes.Min();
-						}
-						if (dlg.DisableIndexes.Contains(dlg.CancelChoice) || !dlg.ActiveIndexes.Contains(dlg.CancelChoice))
-						{
-							dlg.CancelChoice = dlg.ActiveIndexes.Max();
-						}
-					}
-					else
-					{
-						dlg.DefaultChoice = (Int32)((dlg.DefaultChoice < dlg.ChoiceNumber) ? dlg.DefaultChoice : (dlg.ChoiceNumber - 1));
-					}
-					num = 0;
-				}
-				else if (text3 == "[" + NGUIText.AnimationTime)
-				{
-					Int32 oneParameterFromTag = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					if (oneParameterFromTag > 0)
-					{
-						dlg.EndMode = oneParameterFromTag;
-						dlg.FlagButtonInh = true;
-					}
-					else if (oneParameterFromTag == -1)
-					{
-						dlg.FlagButtonInh = true;
-					}
-					else
-					{
-						dlg.FlagButtonInh = false;
-					}
-				}
-				else if (text3 == "[" + NGUIText.TextOffset)
-				{
-					Int32[] allParametersFromTag5 = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					if (dlg.SkipThisChoice(num))
-					{
-						num2 = text.IndexOf('[' + NGUIText.TextOffset, num2);
-						if (num2 >= 0)
-						{
-							num2--;
-						}
-					}
-					else if (allParametersFromTag5[0] == 18 && allParametersFromTag5[1] == 0)
-					{
-						text2 += "    ";
-					}
-					else
-					{
-						String text5 = text2;
-						text2 = String.Concat(new Object[]
-						{
-							text5,
-							text3,
-							"=",
-							allParametersFromTag5[0],
-							",",
-							allParametersFromTag5[1],
-							"]"
-						});
-					}
-					num++;
-				}
-				else if (text3 == "[" + NGUIText.CustomButtonIcon || text3 == "[" + NGUIText.ButtonIcon || text3 == "[" + NGUIText.JoyStickButtonIcon || text3 == "[" + NGUIText.KeyboardButtonIcon)
-				{
-					num2 = text.IndexOf(']', i + 4);
-					String text6 = text.Substring(i + 6, num2 - i - 6);
-					if (!FF9StateSystem.MobilePlatform || text3 == "[" + NGUIText.JoyStickButtonIcon || text3 == "[" + NGUIText.KeyboardButtonIcon || NGUIText.ForceShowButton)
-					{
-						String text5 = text2;
-						text2 = String.Concat(new String[]
-						{
-							text5,
-							text3,
-							"=",
-							text6,
-							"] "
-						});
-					}
-				}
-				else if (text3 == "[" + NGUIText.IconVar)
-				{
-					Int32 oneParameterFromTag2 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					String str = String.Empty;
-					Int32 num4 = oneParameterFromTag2;
-					switch (num4)
-					{
-					case 34:
-						str = "[sub]0[/sub]";
-						break;
-					case 35:
-						str = "[sub]1[/sub]";
-						break;
-					case 36:
-					case 37:
-					case 38:
-						IL_9B2:
-						switch (num4)
-						{
-						case 159:
-							str = "[sup]" + Localization.Get("Miss") + "[/sup]";
-							break;
-						case 160:
-							str = "[sup]" + Localization.Get("Death") + "[/sup]";
-							break;
-						case 161:
-							str = "[sup]" + Localization.Get("Guard") + "[/sup]";
-							break;
-						case 162:
-							IL_9D3:
-							if (num4 != 173)
-							{
-								if (num4 != 174)
-								{
-									if (num4 != 45)
-									{
-										if (num4 != 179)
-										{
-											str = String.Concat(new Object[]
-											{
-												text3,
-												"=",
-												oneParameterFromTag2,
-												"] "
-											});
-										}
-										else
-										{
-											str = String.Concat(new String[]
-											{
-												NGUIText.FF9YellowColor,
-												"[sup]",
-												Localization.Get("Critical"),
-												"[/sup]",
-												NGUIText.FF9WhiteColor
-											});
-										}
-									}
-									else
-									{
-										str = "[sub]/[/sub]";
-									}
-								}
-								else
-								{
-									str = "/";
-								}
-							}
-							else
-							{
-								str = "9";
-							}
-							break;
-						case 163:
-							str = "[sup]" + Localization.Get("MPCaption") + "[/sup]";
-							break;
-						default:
-							goto IL_9D3;
-						}
-						break;
-					case 39:
-						str = "[sub]5[/sub]";
-						break;
-					default:
-						goto IL_9B2;
-					}
-					text2 += str;
-				}
-				else if (text3 == "[" + NGUIText.NewIcon)
-				{
-					Int32 oneParameterFromTag3 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					if ((etb.gMesValue[0] & 1 << oneParameterFromTag3) > 0)
-					{
-						String text5 = text2;
-						text2 = String.Concat(new Object[]
-						{
-							text5,
-							text3,
-							"=",
-							oneParameterFromTag3,
-							"] "
-						});
-					}
-				}
-				else if (text3 == "[" + NGUIText.MobileIcon)
-				{
-					Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					if (FF9StateSystem.MobilePlatform && !NGUIText.ForceShowButton)
-                    {
-						String text5 = text2;
-						text2 = String.Concat(new Object[]
-						{
-							text5,
-							text3,
-							"=",
-							oneParameterFromTag4,
-							"] "
-						});
-					}
-				}
-				else if (text3 == "[" + NGUIText.DialogOffsetPositon)
-				{
-					Int32[] allParametersFromTag6 = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					dlg.OffsetPosition = new Vector3((Single)allParametersFromTag6[0], (Single)allParametersFromTag6[1], (Single)allParametersFromTag6[2]);
-				}
-				else if (NGUIText.nameKeywordList.Contains(text3.Remove(0, 1)))
-				{
-					String a2 = text3.Remove(0, 1);
-					String text7 = String.Empty;
-					String str2 = String.Empty;
-					num2 = text.IndexOf(']', i + 4);
-					if (a2 == NGUIText.Zidane)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[0].name;
-					}
-					else if (a2 == NGUIText.Vivi)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[1].name;
-					}
-					else if (a2 == NGUIText.Dagger)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[2].name;
-					}
-					else if (a2 == NGUIText.Steiner)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[3].name;
-					}
-					else if (a2 == NGUIText.Fraya)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[4].name;
-					}
-					else if (a2 == NGUIText.Quina)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[5].name;
-					}
-					else if (a2 == NGUIText.Eiko)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[6].name;
-					}
-					else if (a2 == NGUIText.Amarant)
-					{
-						text2 += FF9StateSystem.Common.FF9.player[7].name;
-					}
-					else if (a2 == NGUIText.Party1)
-					{
-						Int32 partyPlayer = PersistenSingleton<EventEngine>.Instance.GetPartyPlayer(0);
-						PLAYER player = ff.player[partyPlayer];
-						str2 = player.name;
-						text2 += str2;
-						text7 = "Party 1:" + str2;
-					}
-					else if (a2 == NGUIText.Party2)
-					{
-						Int32 partyPlayer = PersistenSingleton<EventEngine>.Instance.GetPartyPlayer(1);
-						PLAYER player = ff.player[partyPlayer];
-						str2 = player.name;
-						text2 += str2;
-						text7 = "Party 2:" + str2;
-					}
-					else if (a2 == NGUIText.Party3)
-					{
-						Int32 partyPlayer = PersistenSingleton<EventEngine>.Instance.GetPartyPlayer(2);
-						PLAYER player = ff.player[partyPlayer];
-						str2 = player.name;
-						text2 += str2;
-						text7 = "Party 3:" + str2;
-					}
-					else if (a2 == NGUIText.Party4)
-					{
-						Int32 partyPlayer = PersistenSingleton<EventEngine>.Instance.GetPartyPlayer(3);
-						PLAYER player = ff.player[partyPlayer];
-						str2 = player.name;
-						text2 += str2;
-						text7 = "Party 4:" + str2;
-					}
-				}
-				else if (text3 == "[" + NGUIText.NumberVar)
-				{
-					Int32 num10 = 0;
-					Int32 oneParameterFromTag5 = NGUIText.GetOneParameterFromTag(text, i, ref num10);
-					Int32 value = etb.gMesValue[oneParameterFromTag5];
-					if (!dlg.MessageValues.ContainsKey(oneParameterFromTag5))
-					{
-						dlg.MessageValues.Add(oneParameterFromTag5, value);
-					}
-					dlg.MessageNeedUpdate = true;
-				}
-				else if (text3 == "[" + NGUIText.ItemNameVar)
-				{
-					Int32 oneParameterFromTag6 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					text2 = text2 + "[C8B040][HSHD]" + ETb.GetItemName(etb.gMesValue[oneParameterFromTag6]) + "[C8C8C8]";
-				}
-				else if (text3 == "[" + NGUIText.Signal)
-				{
-					Int32 num11 = text.IndexOf(']', i + 4);
-					String value2 = text.Substring(i + 6, num11 - i - 6);
-					Int32 signalNumber = Convert.ToInt32(value2);
-					dlg.SignalNumber = signalNumber;
-					dlg.SignalMode = 1;
-				}
-				else if (text3 == "[" + NGUIText.IncreaseSignal)
-				{
-					dlg.SignalNumber++;
-					dlg.SignalMode = 2;
-				}
-				else if (text3 == "[" + NGUIText.DialogAbsPosition)
-				{
-					Single[] allParameters = NGUIText.GetAllParameters(text, i, ref num2);
-					dlg.Position = new Vector2(allParameters[0], allParameters[1]);
-				}
-				else if (text3 == "[" + NGUIText.TextVar)
-				{
-					Int32[] allParametersFromTag7 = NGUIText.GetAllParametersFromTag(text, i, ref num2);
-					text2 += etb.GetStringFromTable(Convert.ToUInt32(allParametersFromTag7[0]), Convert.ToUInt32(allParametersFromTag7[1]));
-				}
-				else if (text3 == "[" + NGUIText.Choose)
-				{
-					Int32 startIndex = text.IndexOf(']', i + 4);
-					if (flag)
-					{
-						Int32[] array2 = new Int32[]
-						{
-							-1
-						};
-						if (dlg.DisableIndexes != null)
-						{
-							array2 = ((dlg.DisableIndexes.Count <= 0) ? array2 : dlg.DisableIndexes.ToArray());
-						}
-						global::Debug.Log(text2);
-						text = NGUIText.ProcessJapaneseChoose(text, startIndex, array2);
-					}
-				}
-				else if (text3 == "[" + NGUIText.NewPage)
-				{
-					Int32 num12 = text.IndexOf(']', i + 4);
-					dlg.SubPage.Add(NGUIText.FF9WhiteColor + text2);
-					text2 = String.Empty;
-				}
-				if (num2 == i)
-				{
-					text2 += text[i];
-				}
-				else if (num2 != -1)
-				{
-					i = num2;
-				}
-				else
-				{
-					i = length;
-				}
-			}
-			IL_1280:;
-		}
-		dlg.SubPage.Add(NGUIText.FF9WhiteColor + text2);
-	}
-
-	public static void PhraseOpcodeSymbol(String text, Dialog dialog)
-	{
-		Int32 num = 0;
-		for (Int32 i = 0; i < text.Length; i++)
-		{
-			Int32 length = text.Length;
-			if (text[i] == '\n')
-			{
-				num++;
-			}
-			if (i + 6 <= length && text[i] == '[')
-			{
-				Int32 num2 = i;
-				String a = text.Substring(i, 5);
-				if (a == "[" + NGUIText.MessageSpeed)
-				{
-					Int32 oneParameterFromTag = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					dialog.SetMessageSpeed(oneParameterFromTag, i);
-				}
-				if (a == "[" + NGUIText.MessageDelay)
-				{
-					Int32 oneParameterFromTag2 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					dialog.SetMessageWait(oneParameterFromTag2, i);
-				}
-				else if (a == "[" + NGUIText.NoTypeEffect)
-				{
-					num2 = text.IndexOf(']', i + 4);
-					dialog.TypeEffect = false;
-				}
-				else if (a == "[" + NGUIText.Choose)
-				{
-					num2 = text.IndexOf(']', i + 4);
-					dialog.StartChoiceRow = num;
-				}
-				else if (a == "[" + NGUIText.CustomButtonIcon || a == "[" + NGUIText.ButtonIcon || a == "[" + NGUIText.JoyStickButtonIcon || a == "[" + NGUIText.KeyboardButtonIcon)
-				{
-					num2 = text.IndexOf(']', i + 4);
-					String parameterStr = text.Substring(i + 6, num2 - i - 6);
-					Boolean checkConfig = a == "[" + NGUIText.CustomButtonIcon || a == "[" + NGUIText.JoyStickButtonIcon;
-					String tag = text.Substring(i + 1, 4);
-					Dialog.DialogImage dialogImage = NGUIText.CreateButtonImage(parameterStr, checkConfig, tag);
-					dialogImage.TextPosition = i;
-					dialog.ImageList.Add(dialogImage);
-				}
-				else if (a == "[" + NGUIText.IconVar)
-				{
-					Int32 oneParameterFromTag3 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					Dialog.DialogImage dialogImage2 = NGUIText.CreateIconImage(oneParameterFromTag3);
-					dialogImage2.TextPosition = i;
-					dialog.ImageList.Add(dialogImage2);
-				}
-				else if (a == "[" + NGUIText.NewIcon)
-				{
-					Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					Dialog.DialogImage dialogImage3 = NGUIText.CreateIconImage(FF9UIDataTool.NewIconId);
-					dialogImage3.TextPosition = i;
-					dialog.ImageList.Add(dialogImage3);
-				}
-				else if (a == "[" + NGUIText.MobileIcon)
-				{
-					Int32 oneParameterFromTag5 = NGUIText.GetOneParameterFromTag(text, i, ref num2);
-					Dialog.DialogImage dialogImage4 = NGUIText.CreateIconImage(oneParameterFromTag5);
-					dialogImage4.TextPosition = i;
-					dialog.ImageList.Add(dialogImage4);
-				}
-				if (num2 == i)
-				{
-					if (num2 != -1)
-					{
-						i = num2;
-					}
-					else
-					{
-						i = text.Length;
-					}
-				}
-			}
-		}
-	}
-
-	public static Single GetTextWidthFromFF9Font(UILabel phraseLabel, String text)
+    public static Single GetTextWidthFromFF9Font(UILabel phraseLabel, String text)
 	{
 		phraseLabel.ProcessText();
 		phraseLabel.UpdateNGUIText();
@@ -1064,41 +282,6 @@ public static class NGUIText
 		ff9Signal = 0;
 	}
 
-	public static String ProcessJapaneseChoose(String text, Int32 startIndex, Int32[] disableChoice)
-	{
-		Int32 num = text.IndexOf('[' + NGUIText.EndSentence, startIndex + 1) - startIndex;
-		num = (Int32)((num > 0) ? num : (text.IndexOf("[TIME=-1]", startIndex + 1) - startIndex));
-		String text2 = text.Substring(startIndex + 1, num);
-		String[] array = text2.Split(new Char[]
-		{
-			'\n'
-		});
-		String text3 = String.Empty;
-		for (Int32 i = 0; i < (Int32)array.Length; i++)
-		{
-			String text4 = array[i];
-			Boolean flag = true;
-			for (Int32 j = 0; j < (Int32)disableChoice.Length; j++)
-			{
-				Int32 num2 = disableChoice[j];
-				if (i == num2)
-				{
-					flag = false;
-					break;
-				}
-			}
-			if (flag)
-			{
-				text3 += text4.Replace("  ", "    ");
-				if (i + 1 < (Int32)array.Length)
-				{
-					text3 += '\n';
-				}
-			}
-		}
-		return text.Replace(text2, text3);
-	}
-
 	public static Dialog.DialogImage CreateButtonImage(String parameterStr, Boolean checkConfig, String tag)
 	{
 		Dialog.DialogImage dialogImage = new Dialog.DialogImage();
@@ -1206,18 +389,22 @@ public static class NGUIText
 		return result;
 	}
 
-	public static Int32[] GetAllParametersFromTag(String fullText, Int32 currentIndex, ref Int32 closingBracket)
-	{
-		closingBracket = fullText.IndexOf(']', currentIndex + 4);
-		String text = fullText.Substring(currentIndex + 6, closingBracket - currentIndex - 6);
-		String[] array = text.Split(new Char[]
-		{
-			','
-		});
-		return Array.ConvertAll<String, Int32>(array, new Converter<String, Int32>(Int32.Parse));
-	}
+    public static Int32 GetOneParameterFromTag(Char[] fullText, Int32 currentIndex, ref Int32 closingBracket)
+    {
+        Int32 result = 0;
+        try
+        {
+            closingBracket = Array.IndexOf(fullText, ']', currentIndex + 4);
+            String value = new String(fullText, currentIndex + 6, closingBracket - currentIndex - 6);
+            result = Convert.ToInt32(value);
+        }
+        catch
+        {
+        }
+        return result;
+    }
 
-	public static Single[] GetAllParameters(String fullText, Int32 currentIndex, ref Int32 closingBracket)
+    public static Single[] GetAllParameters(String fullText, Int32 currentIndex, ref Int32 closingBracket)
 	{
 		closingBracket = fullText.IndexOf(']', currentIndex + 4);
 		String text = fullText.Substring(currentIndex + 6, closingBracket - currentIndex - 6);
@@ -1228,7 +415,18 @@ public static class NGUIText
 		return Array.ConvertAll<String, Single>(array, new Converter<String, Single>(Single.Parse));
 	}
 
-	public static String ReplaceNumberValue(String phrase, Dialog dialog)
+    public static Single[] GetAllParameters(Char[] fullText, Int32 currentIndex, ref Int32 closingBracket)
+    {
+        closingBracket = Array.IndexOf(fullText, ']', currentIndex + 4);
+        String text = new string(fullText, currentIndex + 6, closingBracket - currentIndex - 6);
+        String[] array = text.Split(new Char[]
+        {
+            ','
+        });
+        return Array.ConvertAll<String, Single>(array, new Converter<String, Single>(Single.Parse));
+    }
+
+    public static String ReplaceNumberValue(String phrase, Dialog dialog)
 	{
 		String text = phrase;
 		foreach (KeyValuePair<Int32, Int32> keyValuePair in dialog.MessageValues)
@@ -1314,7 +512,7 @@ public static class NGUIText
 				}
 				else if (num7 >= 32)
 				{
-					if (NGUIText.encoding && NGUIText.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num2, ref zero2, ref num3, ref dialogImage))
+					if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num2, ref zero2, ref num3, ref dialogImage))
 					{
 						i--;
 					}
@@ -1413,7 +611,7 @@ public static class NGUIText
 					Vector3 zero = Vector3.zero;
 					Single num4 = 0f;
 					Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
-					if (NGUIText.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num3, ref zero, ref num4, ref dialogImage))
+					if (DialogBoxSymbols.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num3, ref zero, ref num4, ref dialogImage))
 					{
 						String text2 = text.Substring(i, num2 - i);
 						if (!NGUIText.ContainsTextOffset(text2) && dialogImage == null)
@@ -1790,7 +988,7 @@ public static class NGUIText
 		Boolean flag7 = false;
 		Vector3 zero = Vector3.zero;
 		Single num2 = 0f;
-		return NGUIText.ParseSymbol(text, ref index, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref ff9Signal, ref zero, ref num2, ref insertImage);
+		return DialogBoxSymbols.ParseSymbol(text, ref index, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref ff9Signal, ref zero, ref num2, ref insertImage);
 	}
 
 	[DebuggerHidden]
@@ -1800,206 +998,9 @@ public static class NGUIText
 		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
 	}
 
-	public static Boolean ParseSymbol(String text, ref Int32 index, BetterList<Color> colors, Boolean premultiply, ref Int32 sub, ref Boolean bold, ref Boolean italic, ref Boolean underline, ref Boolean strike, ref Boolean ignoreColor, ref Boolean highShadow, ref Boolean center, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
-	{
-		Int32 length = text.Length;
-		if (index + 3 > length || text[index] != '[')
-		{
-			return false;
-		}
-		if (text[index + 2] == ']')
-		{
-			if (text[index + 1] == '-')
-			{
-				if (colors != null && colors.size > 1)
-				{
-					colors.RemoveAt(colors.size - 1);
-				}
-				index += 3;
-				return true;
-			}
-			String text2 = text.Substring(index, 3);
-			String text3 = text2;
-			switch (text3)
-			{
-			case "[b]":
-				bold = true;
-				index += 3;
-				return true;
-			case "[i]":
-				italic = true;
-				index += 3;
-				return true;
-			case "[u]":
-				underline = true;
-				index += 3;
-				return true;
-			case "[s]":
-				strike = true;
-				index += 3;
-				return true;
-			case "[c]":
-				ignoreColor = true;
-				index += 3;
-				return true;
-			}
-		}
-		if (index + 4 > length)
-		{
-			return false;
-		}
-		if (text[index + 3] == ']')
-		{
-			String text4 = text.Substring(index, 4);
-			String text3 = text4;
-			switch (text3)
-			{
-			case "[/b]":
-				bold = false;
-				index += 4;
-				return true;
-			case "[/i]":
-				italic = false;
-				index += 4;
-				return true;
-			case "[/u]":
-				underline = false;
-				index += 4;
-				return true;
-			case "[/s]":
-				strike = false;
-				index += 4;
-				return true;
-			case "[/c]":
-				ignoreColor = false;
-				index += 4;
-				return true;
-			}
-			Char ch = text[index + 1];
-			Char ch2 = text[index + 2];
-			if (NGUIText.IsHex(ch) && NGUIText.IsHex(ch2))
-			{
-				Int32 num2 = NGUIMath.HexToDecimal(ch) << 4 | NGUIMath.HexToDecimal(ch2);
-				NGUIText.mAlpha = (Single)num2 / 255f;
-				index += 4;
-				return true;
-			}
-		}
-		if (index + 5 > length)
-		{
-			return false;
-		}
-		if (text[index + 4] == ']')
-		{
-			String text5 = text.Substring(index, 5);
-            switch (text5)
-            {
-                case "[sub]":
-                    sub = 1;
-                    index += 5;
-                    return true;
-                case "[sup]":
-                    sub = 2;
-                    index += 5;
-                    return true;
+    
 
-            }
-        }
-		if (index + 6 > length)
-		{
-			return false;
-		}
-		if (NGUIText.PhraseOpcodeSymbol(text, ref index, ref highShadow, ref center, ref ff9Signal, ref extraOffset, ref tabX, ref insertImage))
-		{
-			return true;
-		}
-		if (text[index + 5] == ']')
-		{
-			String text6 = text.Substring(index, 6);
-			String text3 = text6;
-			switch (text3)
-			{
-			case "[/sub]":
-				sub = 0;
-				index += 6;
-				return true;
-			case "[/sup]":
-				sub = 0;
-				index += 6;
-				return true;
-			case "[/url]":
-				index += 6;
-				return true;
-			}
-		}
-		if (text[index + 1] == 'u' && text[index + 2] == 'r' && text[index + 3] == 'l' && text[index + 4] == '=')
-		{
-			Int32 num3 = text.IndexOf(']', index + 4);
-			if (num3 != -1)
-			{
-				index = num3 + 1;
-				center = true;
-				return true;
-			}
-			index = text.Length;
-			center = false;
-			return true;
-		}
-		else
-		{
-			if (index + 8 > length)
-			{
-				return false;
-			}
-			if (text[index + 7] == ']')
-			{
-				Color color = NGUIText.ParseColor24(text, index + 1);
-				if (NGUIText.EncodeColor24(color) != text.Substring(index + 1, 6).ToUpper())
-				{
-					return false;
-				}
-				if (colors != null)
-				{
-					color.a = colors[colors.size - 1].a;
-					if (premultiply && color.a != 1f)
-					{
-						color = Color.Lerp(NGUIText.mInvisible, color, color.a);
-					}
-					colors.Add(color);
-				}
-				index += 8;
-				return true;
-			}
-			else
-			{
-				if (index + 10 > length)
-				{
-					return false;
-				}
-				if (text[index + 9] != ']')
-				{
-					return false;
-				}
-				Color color2 = NGUIText.ParseColor32(text, index + 1);
-				if (NGUIText.EncodeColor32(color2) != text.Substring(index + 1, 8).ToUpper())
-				{
-					return false;
-				}
-				if (colors != null)
-				{
-					if (premultiply && color2.a != 1f)
-					{
-						color2 = Color.Lerp(NGUIText.mInvisible, color2, color2.a);
-					}
-					colors.Add(color2);
-				}
-				index += 10;
-				return true;
-			}
-		}
-	}
-
-	public static String StripSymbols(String text)
+    public static String StripSymbols(String text)
 	{
 		if (text != null)
 		{
@@ -2023,7 +1024,7 @@ public static class NGUIText
 					Vector3 zero = Vector3.zero;
 					Single num4 = 0f;
 					Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
-					if (NGUIText.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num3, ref zero, ref num4, ref dialogImage))
+					if (DialogBoxSymbols.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num3, ref zero, ref num4, ref dialogImage))
 					{
 						text = text.Remove(i, num2 - i);
 						length = text.Length;
@@ -2498,7 +1499,7 @@ public static class NGUIText
 							goto IL_69E;
 						}
 					}
-					else if (NGUIText.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num6, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref flag9, ref flag10, ref num7, ref zero, ref num8, ref dialogImage))
+					else if (DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num6, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref flag9, ref flag10, ref num7, ref zero, ref num8, ref dialogImage))
 					{
 						if (flag8)
 						{
@@ -2751,7 +1752,7 @@ public static class NGUIText
 			{
 				prev = num13;
 			}
-			else if (NGUIText.encoding && NGUIText.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num9, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref num10, ref zero, ref num12, ref dialogImage))
+			else if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num9, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref num10, ref zero, ref num12, ref dialogImage))
 			{
 				Color color2;
 				if (flag6)
@@ -3662,111 +2663,59 @@ public static class NGUIText
 
 	public const Int32 FF9TIM_ID_DMG_CRITICAL_YELLOW = 179;
 
-	public static readonly String StartSentense;
-
-	public static readonly String DialogId;
-
-	public static readonly String Choose;
-
-	public static readonly String AnimationTime;
-
-	public static readonly String FlashInh;
-
-	public static readonly String NoAnimation;
-
-	public static readonly String NoTypeEffect;
-
-	public static readonly String MessageSpeed;
-
-	public static readonly String Zidane;
-
-	public static readonly String Vivi;
-
-	public static readonly String Dagger;
-
-	public static readonly String Steiner;
-
-	public static readonly String Fraya;
-
-	public static readonly String Quina;
-
-	public static readonly String Eiko;
-
-	public static readonly String Amarant;
-
-	public static readonly String Party1;
-
-	public static readonly String Party2;
-
-	public static readonly String Party3;
-
-	public static readonly String Party4;
-
-	public static readonly String Shadow;
-
-	public static readonly String NoShadow;
-
-	public static readonly String ButtonIcon;
-
-	public static readonly String NoFocus;
-
-	public static readonly String IncreaseSignal;
-
-	public static readonly String CustomButtonIcon;
-
-	public static readonly String NewIcon;
-
-	public static readonly String TextOffset;
-
-	public static readonly String EndSentence;
-
-	public static readonly String TextVar;
-
-	public static readonly String ItemNameVar;
-
-	public static readonly String SignalVar;
-
-	public static readonly String NumberVar;
-
-	public static readonly String MessageDelay;
-
-	public static readonly String MessageFeed;
-
-	public static readonly String MessageTab;
-
-	public static readonly String YAddOffset;
-
-	public static readonly String YSubOffset;
-
-	public static readonly String IconVar;
-
-	public static readonly String PreChoose;
-
-	public static readonly String PreChooseMask;
-
-	public static readonly String DialogAbsPosition;
-
-	public static readonly String DialogOffsetPositon;
-
-	public static readonly String DialogTailPositon;
-
-	public static readonly String TableStart;
-
-	public static readonly String WidthInfo;
-
-	public static readonly String Center;
-
-	public static readonly String Signal;
-
-	public static readonly String NewPage;
-
-	public static readonly String MobileIcon;
-
-	public static readonly String SpacingY;
-
-	public static readonly String KeyboardButtonIcon;
-
-	public static readonly String JoyStickButtonIcon;
+    public const String StartSentense = "STRT";
+    public const String DialogId = "ID";
+    public const String Choose = "CHOO";
+    public const String AnimationTime = "TIME";
+    public const String FlashInh = "FLIM";
+    public const String NoAnimation = "NANI";
+    public const String NoTypeEffect = "IMME";
+    public const String MessageSpeed = "SPED";
+    public const String Zidane = "ZDNE";
+    public const String Vivi = "VIVI";
+    public const String Dagger = "DGGR";
+    public const String Steiner = "STNR";
+    public const String Fraya = "FRYA";
+    public const String Quina = "QUIN";
+    public const String Eiko = "EIKO";
+    public const String Amarant = "AMRT";
+    public const String Party1 = "PTY1";
+    public const String Party2 = "PTY2";
+    public const String Party3 = "PTY3";
+    public const String Party4 = "PTY4";
+    public const String Shadow = "HSHD";
+    public const String NoShadow = "NSHD";
+    public const String ButtonIcon = "DBTN";
+    public const String NoFocus = "NFOC";
+    public const String IncreaseSignal = "INCS";
+    public const String CustomButtonIcon = "CBTN";
+    public const String NewIcon = "PNEW";
+    public const String TextOffset = "MOVE";
+    public const String EndSentence = "ENDN";
+    public const String TextVar = "TEXT";
+    public const String ItemNameVar = "ITEM";
+    public const String SignalVar = "SIGL";
+    public const String NumberVar = "NUMB";
+    public const String MessageDelay = "WAIT";
+    public const String MessageFeed = "FEED";
+    public const String MessageTab = "XTAB";
+    public const String YAddOffset = "YADD";
+    public const String YSubOffset = "YSUB";
+    public const String IconVar = "ICON";
+    public const String PreChoose = "PCHC";
+    public const String PreChooseMask = "PCHM";
+    public const String DialogAbsPosition = "MPOS";
+    public const String DialogOffsetPositon = "OFFT";
+    public const String DialogTailPositon = "TAIL";
+    public const String TableStart = "TBLE";
+    public const String WidthInfo = "WDTH";
+    public const String Center = "CENT";
+    public const String Signal = "SIGL";
+    public const String NewPage = "PAGE";
+    public const String MobileIcon = "MOBI";
+    public const String SpacingY = "SPAY";
+    public const String KeyboardButtonIcon = "KCBT";
+    public const String JoyStickButtonIcon = "JCBT";
 
 	public static readonly String[] RenderOpcodeSymbols;
 
@@ -3844,11 +2793,11 @@ public static class NGUIText
 
 	public static Boolean useSymbols = false;
 
-	private static Color mInvisible = new Color(0f, 0f, 0f, 0f);
+	internal static Color mInvisible = new Color(0f, 0f, 0f, 0f);
 
 	private static BetterList<Color> mColors = new BetterList<Color>();
 
-	private static Single mAlpha = 1f;
+	internal static Single mAlpha = 1f;
 
 	private static CharacterInfo mTempChar;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Memoria.Prime
 {
-    public static class EnumFlags<T>
+    public static class EnumFlags<T> where T : struct
     {
         public static readonly String[] Names;
         public static readonly T[] Values;

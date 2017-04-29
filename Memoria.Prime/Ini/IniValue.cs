@@ -40,6 +40,16 @@ namespace Memoria.Prime.Ini
             return new IniValue<Int32>(name, TryParseInt32, FormatInt32);
         }
 
+        public static IniArray<Int32> Int32Array(String name)
+        {
+            return new IniArray<Int32>(name, TryParseInt32, FormatInt32);
+        }
+
+        public static IniSet<Int32> Int32Set(String name)
+        {
+            return new IniSet<Int32>(name, TryParseInt32, FormatInt32);
+        }
+
         public static IniArray<String> StringArray(String name)
         {
             return new IniArray<String>(name, TryParseString, FormatString);

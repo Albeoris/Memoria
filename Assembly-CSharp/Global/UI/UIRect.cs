@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 
 public abstract class UIRect : MonoBehaviour
@@ -458,7 +459,98 @@ public abstract class UIRect : MonoBehaviour
 
 	protected static Vector3[] mSides = new Vector3[4];
 
-	[Serializable]
+    public Position LeftAnchorPosition
+    {
+        get { return new Position(leftAnchor.relative, leftAnchor.absolute); }
+        set
+        {
+            leftAnchor.relative = value.Relative;
+            leftAnchor.absolute = value.Absolute;
+        }
+    }
+
+    public Position RightAnchorPosition
+    {
+        get { return new Position(rightAnchor.relative, rightAnchor.absolute); }
+        set
+        {
+            rightAnchor.relative = value.Relative;
+            rightAnchor.absolute = value.Absolute;
+        }
+    }
+
+    public Position TopAnchorPosition
+    {
+        get { return new Position(topAnchor.relative, topAnchor.absolute); }
+        set
+        {
+            topAnchor.relative = value.Relative;
+            topAnchor.absolute = value.Absolute;
+        }
+    }
+
+    public Position BottomAnchorPosition
+    {
+        get { return new Position(bottomAnchor.relative, bottomAnchor.absolute); }
+        set
+        {
+            bottomAnchor.relative = value.Relative;
+            bottomAnchor.absolute = value.Absolute;
+        }
+    }
+
+    public struct Position
+    {
+        public readonly Single Relative;
+        public readonly Int32 Absolute;
+
+        public Position(Single relative, Int32 absolute)
+        {
+            Relative = relative;
+            Absolute = absolute;
+        }
+
+        public override Boolean Equals(System.Object obj)
+        {
+            if (!(obj is Position))
+                return false;
+
+            return Equals((Position)obj);
+        }
+
+        public Boolean Equals(Position other)
+        {
+            return Relative.Equals(other.Relative) && Absolute.Equals(other.Absolute);
+        }
+
+        public override Int32 GetHashCode()
+        {
+            return unchecked((Relative.GetHashCode() * 397) ^ Absolute.GetHashCode());
+        }
+
+        public static Boolean operator ==(Position x, Position y)
+        {
+            return x.Equals(y);
+        }
+
+        public static Boolean operator !=(Position x, Position y)
+        {
+            return !x.Equals(y);
+        }
+
+        public void Write(BinaryWriter bw)
+        {
+            bw.Write(Relative);
+            bw.Write(Absolute);
+        }
+
+        public static Position Read(BinaryReader br)
+        {
+            return new Position(br.ReadSingle(), br.ReadInt32());
+        }
+    }
+
+    [Serializable]
 	public class AnchorPoint
 	{
 		public AnchorPoint()

@@ -137,7 +137,7 @@ public class ETb
         {
             NGUIText.ForceShowButton = true;
         }
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, new Dialog.DialogIntDelegate(this.OnDialogFinish), captionType);
+        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, this.OnDialogFinish, captionType);
         if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
         {
             switch (FF9StateSystem.Settings.CurrentLanguage)

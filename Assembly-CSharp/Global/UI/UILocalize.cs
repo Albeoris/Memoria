@@ -7,7 +7,11 @@ using UnityEngine;
 [RequireComponent(typeof(UIWidget))]
 public class UILocalize : MonoBehaviour
 {
-	private void EnablePrintIcon(UILabel lbl)
+    public delegate String OverwriteTextDelegate(String key, String text);
+
+    public event OverwriteTextDelegate TextOverwriting;
+
+    private void EnablePrintIcon(UILabel lbl)
 	{
 		lbl.PrintIconAfterProcessedText = true;
 	}
@@ -19,6 +23,11 @@ public class UILocalize : MonoBehaviour
         {
             result = rawText.Substring(0, rawText.Length - 1);
         }
+
+        OverwriteTextDelegate h = TextOverwriting;
+        if (h != null)
+            result = h(this.key, result);
+
         return result;
     }
 
@@ -31,10 +40,10 @@ public class UILocalize : MonoBehaviour
 				UIWidget component = base.GetComponent<UIWidget>();
 				UILabel uilabel = component as UILabel;
 				UISprite uisprite = component as UISprite;
-				if (uilabel != (UnityEngine.Object)null)
+				if (uilabel != null)
 				{
 					UIInput uiinput = NGUITools.FindInParents<UIInput>(uilabel.gameObject);
-					if (uiinput != (UnityEngine.Object)null && uiinput.label == uilabel)
+					if (uiinput != null && uiinput.label == uilabel)
 					{
 						uiinput.defaultText = value;
 					}
@@ -47,10 +56,10 @@ public class UILocalize : MonoBehaviour
                         uilabel.text = text;
                     }
 				}
-				else if (uisprite != (UnityEngine.Object)null)
+				else if (uisprite != null)
 				{
 					UIButton uibutton = NGUITools.FindInParents<UIButton>(uisprite.gameObject);
-					if (uibutton != (UnityEngine.Object)null && uibutton.tweenTarget == uisprite.gameObject)
+					if (uibutton != null && uibutton.tweenTarget == uisprite.gameObject)
 					{
 						uibutton.normalSprite = value;
 					}
@@ -80,7 +89,7 @@ public class UILocalize : MonoBehaviour
 		if (String.IsNullOrEmpty(this.key))
 		{
 			UILabel component = base.GetComponent<UILabel>();
-			if (component != (UnityEngine.Object)null)
+			if (component != null)
 			{
 				this.key = component.text;
 			}

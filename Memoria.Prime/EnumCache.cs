@@ -1,15 +1,35 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Reflection.Emit;
 
 namespace Memoria.Prime
 {
-    public static class EnumCache<T>
+    public static class EnumCache<T> where T : struct
     {
         public static readonly String[] Names = Enum.GetNames(TypeCache<T>.Type);
         public static readonly T[] Values = (T[])Enum.GetValues(TypeCache<T>.Type);
         public static readonly UInt64[] Integers = Values.Select(ToUInt64).ToArray();
+
+        public static int Count
+        {
+            get { return Values.Length; }
+        }
+
+        public static bool IsDefined(T value)
+        {
+            return Values.Contains(value);
+        }
+
+        public static T? TryParse(string name, StringComparison nameComparison = StringComparison.InvariantCultureIgnoreCase)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                if (String.Equals(Names[i], name, nameComparison))
+                    return Values[i];
+            }
+
+            return null;
+        }
 
         public static UInt64 ToUInt64(T value)
         {

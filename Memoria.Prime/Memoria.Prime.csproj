@@ -66,6 +66,8 @@
     <Compile Include="Caster.cs" />
     <Compile Include="Collections\BetterList.cs" />
     <Compile Include="Collections\EntryCollection.cs" />
+    <Compile Include="CrossPlatformBinaryReader.cs" />
+    <Compile Include="CrossPlatformBinaryWriter.cs" />
     <Compile Include="CSV\CsvParseException.cs" />
     <Compile Include="CSV\CsvParser.cs" />
     <Compile Include="CSV\CsvReader.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="Exceptions\Exceptions.cs" />
     <Compile Include="ExtensionMethodsGameObject.cs" />
     <Compile Include="ExtensionMethodsIEnumerable.cs" />
+    <Compile Include="ExtensionMethodsVector3.cs" />
     <Compile Include="FileCommander.cs" />
     <Compile Include="GameLoopManager.cs" />
     <Compile Include="ExtensionMethodsIDisposable.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="Ini\IniFormatValue.cs" />
     <Compile Include="Ini\IniReader.cs" />
     <Compile Include="Ini\IniSection.cs" />
+    <Compile Include="Ini\IniSet.cs" />
     <Compile Include="Ini\IniTryParseValue.cs" />
     <Compile Include="Ini\IniValue.cs" />
     <Compile Include="Ini\StringIniValue.cs" />

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Memoria.Assets;
 using Memoria.Prime;
@@ -66,8 +67,32 @@ namespace Memoria
             String akbPath = AudioResources.Import.GetSoundPath(profile.ResourceID);
             String oggPath = akbPath + ".ogg";
 
-            if (File.Exists(oggPath))
+            String fileName;
+            String directoryPath;
+            String alternativeOggPath;
+            if (AudioResources.TryAppendDisplayName(akbPath, out directoryPath, out fileName, out alternativeOggPath))
+            {
+                alternativeOggPath += ".ogg";
+
+                if (!File.Exists(alternativeOggPath) && File.Exists(oggPath))
+                {
+                    Log.Message("[SoundImporter] The file [{0}] will be renamed to [{1}].", akbPath, alternativeOggPath);
+                    File.Move(oggPath, alternativeOggPath);
+                }
+            }
+
+            String[] oggFiles = Directory.GetFiles(directoryPath, fileName + "*.ogg");
+            if (oggFiles.Length == 1)
+            {
+                oggPath = oggFiles[0];
                 return ReadAkbDataFromOggViaCache(profile, oggPath, akbPath);
+            }
+            if (oggFiles.Length > 1)
+            {
+                oggPath = oggFiles.OrderByDescending(File.GetLastWriteTimeUtc).First();
+                Log.Warning("[SoundImporter] There is several files with the same internal name. The last modified will be used: {0}", oggPath);
+                return ReadAkbDataFromOggViaCache(profile, oggPath, akbPath);
+            }
 
             if (File.Exists(akbPath))
                 return ReadFileToUnmanagedMemory(akbPath);

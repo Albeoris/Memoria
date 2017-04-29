@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Prime;
 using Memoria.Prime.Text;
@@ -17,10 +19,13 @@ namespace Memoria.Assets
         private const Int32 EndingLength = 6;
 
         private static String TypeName => nameof(FieldImporter);
-        private readonly Dictionary<Int32, String[]> _cache = new Dictionary<Int32, String[]>();
         private readonly ImportFieldTags _formatter = new ImportFieldTags();
+        private volatile Dictionary<Int32, String[]> _cache = new Dictionary<Int32, String[]>();
 
         private volatile Boolean _initialized;
+        private volatile FileSystemWatcher _watcher;
+        private volatile AutoResetEvent _watcherEvent;
+        private volatile Task _watcherTask;
         private Int32 _fieldZoneId;
         private String _fieldFileName;
         private String[] _original;
@@ -86,6 +91,22 @@ namespace Memoria.Assets
                 ResolveReferences();
 
                 _initialized = true;
+
+                if (_watcher == null)
+                {
+                    _watcherEvent = new AutoResetEvent(false);
+                    _watcherTask = Task.Run(DoWatch);
+
+                    _watcher = new FileSystemWatcher(directory, "*.strings");
+                    GameLoopManager.Quit += _watcher.Dispose;
+
+                    _watcher.Changed += OnChangedFileInDirectory;
+                    _watcher.Created += OnChangedFileInDirectory;
+                    _watcher.Deleted += OnChangedFileInDirectory;
+
+                    _watcher.EnableRaisingEvents = true;
+                }
+
                 Log.Message($"[{TypeName}] Initialization completed successfully.");
             }
             catch (Exception ex)
@@ -100,6 +121,47 @@ namespace Memoria.Assets
                 _customTags = null;
                 _fieldReplacements = null;
             }
+        }
+
+        private void DoWatch()
+        {
+            Int32 retryCount = 20;
+
+            try
+            {
+                while (retryCount > 0)
+                {
+                    try
+                    {
+                        _watcherEvent.WaitOne();
+
+                        DateTime beginTime = DateTime.UtcNow;
+                        Log.Message("[TextWatcher] Field's text was changed. Reinitialize...");
+
+                        FieldImporter importer = new FieldImporter();
+                        importer._watcher = _watcher;
+                        importer.Initialize();
+                        _cache = importer._cache;
+                        LoadExternal();
+
+                        Log.Message($"[TextWatcher] Reinitialized for {DateTime.UtcNow - beginTime}");
+                    }
+                    catch (Exception ex)
+                    {
+                        retryCount--;
+                        Log.Error(ex, "[TextWatcher] Failed to iterate.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[TextWatcher] Failed to watch.");
+            }
+        }
+
+        private void OnChangedFileInDirectory(Object sender, FileSystemEventArgs e)
+        {
+            _watcherEvent.Set();
         }
 
         private static IList<KeyValuePair<String, TextReplacement>> LoadCustomTags()
@@ -234,7 +296,8 @@ namespace Memoria.Assets
                     continue;
                 }
 
-                external = external.ReplaceAll(_fieldReplacements, _customTags, _formatter.SimpleTags.Backward, _formatter.ComplexTags).TrimEnd();
+                //external = external.ReplaceAll(_fieldReplacements, _customTags, _formatter.SimpleTags.Backward, _formatter.ComplexTags).TrimEnd();
+                external = external.TrimEnd();
                 String ending = GetEnding(original);
                 if (ending != String.Empty)
                     external += ending;
@@ -319,7 +382,7 @@ namespace Memoria.Assets
             {
                 if (!_initialized)
                     return false;
-
+                
                 Int32 fieldZoneId = FF9TextTool.FieldZoneId;
 
                 String[] result;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Memoria.Prime
 {
-    internal sealed class DisposableStack : IDisposable
+    public sealed class DisposableStack : IDisposable
     {
         private readonly Stack<IDisposable> _stack;
 

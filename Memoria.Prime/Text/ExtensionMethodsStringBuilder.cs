@@ -36,5 +36,12 @@ namespace Memoria.Prime.Text
 
             return -1;
         }
+
+        public static String Evict(this StringBuilder self)
+        {
+            String result = self.ToString();
+            self.Length = 0;
+            return result;
+        }
     }
 }
