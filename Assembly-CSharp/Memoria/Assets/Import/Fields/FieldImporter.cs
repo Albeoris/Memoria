@@ -297,7 +297,8 @@ namespace Memoria.Assets
                 }
 
                 //external = external.ReplaceAll(_fieldReplacements, _customTags, _formatter.SimpleTags.Backward, _formatter.ComplexTags).TrimEnd();
-                external = external.TrimEnd();
+                external = external.ReplaceAll(_fieldReplacements, _customTags).TrimEnd();
+                //external = external.TrimEnd();
                 String ending = GetEnding(original);
                 if (ending != String.Empty)
                     external += ending;

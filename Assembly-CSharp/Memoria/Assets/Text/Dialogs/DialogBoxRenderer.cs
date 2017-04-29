@@ -25,6 +25,9 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.IncreaseSignal:
                     ff9Signal = 2;
                     break;
+                case FFIXTextTagCode.IncreaseSignalEx:
+                    ff9Signal = 2;
+                    break;
                 case FFIXTextTagCode.DialogF:
                     extraOffset.x += (tag.Param[0] >= 160f) ? 0f : (tag.Param[0] * UIManager.ResourceXMultipier);
                     break;
@@ -166,9 +169,54 @@ namespace Memoria.Assets
                     OnColor(colors, "909090");
                     highShadow = true;
                     break;
+                case FFIXTextTagCode.DialogSize:
+                case FFIXTextTagCode.Choice:
+                case FFIXTextTagCode.Time:
+                case FFIXTextTagCode.Flash:
+                case FFIXTextTagCode.NoAnimation:
+                case FFIXTextTagCode.Instantly:
+                case FFIXTextTagCode.Speed:
+                case FFIXTextTagCode.Zidane:
+                case FFIXTextTagCode.Vivi:
+                case FFIXTextTagCode.Dagger:
+                case FFIXTextTagCode.Steiner:
+                case FFIXTextTagCode.Fraya:
+                case FFIXTextTagCode.Quina:
+                case FFIXTextTagCode.Eiko:
+                case FFIXTextTagCode.Amarant:
+                case FFIXTextTagCode.Party:
+                case FFIXTextTagCode.NoFocus:
+                case FFIXTextTagCode.End:
+                case FFIXTextTagCode.Text:
+                case FFIXTextTagCode.Item:
+                case FFIXTextTagCode.Variable:
+                case FFIXTextTagCode.Wait:
+                case FFIXTextTagCode.PreChoose:
+                case FFIXTextTagCode.PreChooseMask:
+                case FFIXTextTagCode.Position:
+                case FFIXTextTagCode.Offset:
+                case FFIXTextTagCode.LowerRight:
+                case FFIXTextTagCode.LowerLeft:
+                case FFIXTextTagCode.UpperRight:
+                case FFIXTextTagCode.UpperLeft:
+                case FFIXTextTagCode.LowerCenter:
+                case FFIXTextTagCode.UpperCenter:
+                case FFIXTextTagCode.LowerRightForce:
+                case FFIXTextTagCode.LowerLeftForce:
+                case FFIXTextTagCode.UpperRightForce:
+                case FFIXTextTagCode.UpperLeftForce:
+                case FFIXTextTagCode.DialogPosition:
+                case FFIXTextTagCode.Table:
+                case FFIXTextTagCode.Widths:
+                case FFIXTextTagCode.NewPage:
+                    index = num;
+                    return true;
+
+                default:
+                    return false;
             }
 
-            index = num - 1;
+            index = num;
             return true;
         }
 

@@ -363,7 +363,11 @@ namespace Memoria.Assets
         /// <summary>
         /// [OFFT=?,?,?...]
         /// </summary>
-        Offset
+        Offset,
+        /// <summary>
+        /// [TBLE=?,?,?...]
+        /// </summary>
+        Table
     }
 
     public sealed class FFIXTextTag
@@ -525,13 +529,28 @@ namespace Memoria.Assets
         public override String ToString()
         {
             StringBuilder sb = new StringBuilder(MaxTagLength);
+
+            switch (Code)
+            {
+                case FFIXTextTagCode.DialogSize:
+                    return String.Format("{{W{0}H{1}}}", Param[0], Param[1]);
+                case FFIXTextTagCode.DialogY:
+                    return String.Format("{{y{0}}}", Param[0]);
+                case FFIXTextTagCode.DialogX:
+                    return String.Format("{{x{0}}}", Param[0]);
+                case FFIXTextTagCode.DialogF:
+                    return String.Format("{{f{0}}}", Param[0]);
+            }
+
             sb.Append('{');
             if (EnumCache<FFIXTextTagCode>.IsDefined(Code))
+            {
                 sb.Append(Code);
+            }
             else
                 sb.Append("Unknown ").Append(((Byte)Code).ToString("X2"));
 
-            if (Param != null)
+            if (Param?.Length > 0)
             {
                 sb.Append(' ');
                 sb.Append(String.Join(",", Param.Select(p => p.ToString()).ToArray()));
@@ -731,19 +750,23 @@ namespace Memoria.Assets
                     OnPartyMemberName(tag.Param[0]);
                     break;
                 case FFIXTextTagCode.Variable:
+                    _sb.Append(tag);
                     OnVariable(tag.Param[0]);
                     break;
                 case FFIXTextTagCode.Item:
                     OnItemName(tag.Param[0]);
                     break;
                 case FFIXTextTagCode.Signal:
+                    _sb.Append(tag);
                     OnSignal(tag.Param[0]);
                     break;
                 case FFIXTextTagCode.IncreaseSignal:
+                    _sb.Append(tag);
                     OnIncreaseSignal();
                     OnTime(-1);
                     break;
                 case FFIXTextTagCode.IncreaseSignalEx:
+                    _sb.Append(tag);
                     OnIncreaseSignal();
                     break;
                 case FFIXTextTagCode.Position:
@@ -753,17 +776,27 @@ namespace Memoria.Assets
                     OnTextVariable(tag.Param);
                     break;
                 case FFIXTextTagCode.Choice:
+                    _sb.Append(tag);
                     OnTab(ref index);
                     break;
                 case FFIXTextTagCode.NewPage:
+                    _sb.Append(tag);
                     OnNewPage();
                     break;
-            }
+                default:
+                {
+                    StringBuilder sb;
+                    if (NGUIText.ForceShowButton || !FF9StateSystem.MobilePlatform)
+                        sb = _sb;
+                    else
+                        sb = new StringBuilder(16);
 
-            if (NGUIText.ForceShowButton || !FF9StateSystem.MobilePlatform)
-            {
-                KeepKeyIcon(tag.Code);
-                KeepKeyExIcon(tag);
+                    if (KeepKeyIcon(sb, tag.Code) || KeepKeyExIcon(sb, tag))
+                        return;
+
+                    _sb.Append(tag);
+                    break;
+                }
             }
         }
 
@@ -1129,108 +1162,114 @@ namespace Memoria.Assets
             _dlg.OffsetPosition = new Vector3(allParametersFromTag6[0], allParametersFromTag6[1], allParametersFromTag6[2]);
         }
 
-        private void KeepKeyIcon(FFIXTextTagCode tagCode)
+        private static Boolean KeepKeyIcon(StringBuilder sb, FFIXTextTagCode tagCode)
         {
             switch (tagCode)
             {
                 case FFIXTextTagCode.Up:
-                    _sb.Append("[DBTN=UP]");
-                    return;
+                    sb.Append("[DBTN=UP]");
+                    break;
                 case FFIXTextTagCode.Down:
-                    _sb.Append("[DBTN=DOWN]");
-                    return;
+                    sb.Append("[DBTN=DOWN]");
+                    break;
                 case FFIXTextTagCode.Left:
-                    _sb.Append("[DBTN=LEFT]");
-                    return;
+                    sb.Append("[DBTN=LEFT]");
+                    break;
                 case FFIXTextTagCode.Right:
-                    _sb.Append("[DBTN=RIGHT]");
-                    return;
+                    sb.Append("[DBTN=RIGHT]");
+                    break;
                 case FFIXTextTagCode.Circle:
-                    _sb.Append("[DBTN=CIRCLE]");
-                    return;
+                    sb.Append("[DBTN=CIRCLE]");
+                    break;
                 case FFIXTextTagCode.Cross:
-                    _sb.Append("[DBTN=CROSS]");
-                    return;
+                    sb.Append("[DBTN=CROSS]");
+                    break;
                 case FFIXTextTagCode.Triangle:
-                    _sb.Append("[DBTN=TRIANGLE]");
-                    return;
+                    sb.Append("[DBTN=TRIANGLE]");
+                    break;
                 case FFIXTextTagCode.Square:
-                    _sb.Append("[DBTN=SQUARE]");
-                    return;
+                    sb.Append("[DBTN=SQUARE]");
+                    break;
                 case FFIXTextTagCode.R1:
-                    _sb.Append("[DBTN=R1]");
-                    return;
+                    sb.Append("[DBTN=R1]");
+                    break;
                 case FFIXTextTagCode.R2:
-                    _sb.Append("[DBTN=R2]");
-                    return;
+                    sb.Append("[DBTN=R2]");
+                    break;
                 case FFIXTextTagCode.L1:
-                    _sb.Append("[DBTN=L1]");
-                    return;
+                    sb.Append("[DBTN=L1]");
+                    break;
                 case FFIXTextTagCode.L2:
-                    _sb.Append("[DBTN=L2]");
-                    return;
+                    sb.Append("[DBTN=L2]");
+                    break;
                 case FFIXTextTagCode.Select:
-                    _sb.Append("[DBTN=SELECT]");
-                    return;
+                    sb.Append("[DBTN=SELECT]");
+                    break;
                 case FFIXTextTagCode.Start:
-                    _sb.Append("[DBTN=START]");
-                    return;
+                    sb.Append("[DBTN=START]");
+                    break;
                 case FFIXTextTagCode.Pad:
-                    _sb.Append("[DBTN=PAD]");
-                    return;
+                    sb.Append("[DBTN=PAD]");
+                    break;
+                default:
+                    return false;
             }
+            return true;
         }
 
-        private void KeepKeyExIcon(FFIXTextTag tag)
+        private static Boolean KeepKeyExIcon(StringBuilder sb, FFIXTextTag tag)
         {
             switch (tag.Code)
             {
                 case FFIXTextTagCode.UpEx:
-                    _sb.Append("[CBTN=UP]");
+                    sb.Append("[CBTN=UP]");
                     break;
                 case FFIXTextTagCode.DownEx:
-                    _sb.Append("[CBTN=DOWN]");
+                    sb.Append("[CBTN=DOWN]");
                     break;
                 case FFIXTextTagCode.LeftEx:
-                    _sb.Append("[CBTN=LEFT]");
+                    sb.Append("[CBTN=LEFT]");
                     break;
                 case FFIXTextTagCode.RightEx:
-                    _sb.Append("[CBTN=RIGHT]");
+                    sb.Append("[CBTN=RIGHT]");
                     break;
                 case FFIXTextTagCode.CircleEx:
-                    _sb.Append("[CBTN=CIRCLE]");
+                    sb.Append("[CBTN=CIRCLE]");
                     break;
                 case FFIXTextTagCode.CrossEx:
-                    _sb.Append("[CBTN=CROSS]");
+                    sb.Append("[CBTN=CROSS]");
                     break;
                 case FFIXTextTagCode.TriangleEx:
-                    _sb.Append("[CBTN=TRIANGLE]");
+                    sb.Append("[CBTN=TRIANGLE]");
                     break;
                 case FFIXTextTagCode.SquareEx:
-                    _sb.Append("[CBTN=SQUARE]");
+                    sb.Append("[CBTN=SQUARE]");
                     break;
                 case FFIXTextTagCode.R1Ex:
-                    _sb.Append("[CBTN=R1]");
+                    sb.Append("[CBTN=R1]");
                     break;
                 case FFIXTextTagCode.R2Ex:
-                    _sb.Append("[CBTN=R2]");
+                    sb.Append("[CBTN=R2]");
                     break;
                 case FFIXTextTagCode.L1Ex:
-                    _sb.Append("[CBTN=L1]");
+                    sb.Append("[CBTN=L1]");
                     break;
                 case FFIXTextTagCode.L2Ex:
-                    _sb.Append("[CBTN=L2]");
+                    sb.Append("[CBTN=L2]");
                     break;
                 case FFIXTextTagCode.SelectEx:
-                    _sb.Append("[CBTN=SELECT]");
+                    sb.Append("[CBTN=SELECT]");
                     break;
                 case FFIXTextTagCode.StartEx:
-                    _sb.Append("[CBTN=START]");
+                    sb.Append("[CBTN=START]");
                     break;
                 case FFIXTextTagCode.PadEx:
-                    _sb.Append("[CBTN=PAD]");
+                    sb.Append("[CBTN=PAD]");
                     break;
+                default:
+                    return false;
             }
+            return true;
         }
 
         private void KeepMobileIcon(Int32 oneParameterFromTag4)
@@ -1338,8 +1377,11 @@ namespace Memoria.Assets
                 if (newIndex >= 0)
                     index = newIndex - 1;
             }
+            else
+            {
+                _sb.Append("    ");
+            }
 
-            _sb.Append("    ");
             _choiseIndex++;
         }
 
