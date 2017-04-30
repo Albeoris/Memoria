@@ -46,26 +46,17 @@ public class SettingsState : MonoBehaviour
     public Boolean[] IsBoosterButtonActive;
 
     public Boolean IsATBFull => IsBoosterButtonActive[0];
-
     public Boolean IsHpMpFull => IsBoosterButtonActive[0];
-
     public Boolean IsTranceFull => IsBoosterButtonActive[0];
-
     public Boolean IsDmg9999 => IsBoosterButtonActive[3];
-
     public Boolean IsNoEncounter => IsBoosterButtonActive[4];
-
     public Boolean IsFastForward => IsBoosterButtonActive[1];
-
     public Boolean IsMasterSkill => IsBoosterButtonActive[7];
-
     public Boolean IsAutoRotation => IsBoosterButtonActive[2];
-
     public Boolean IsPerspectCamera => IsBoosterButtonActive[5];
-
     public Boolean IsFastTrophyMode => false;
-
     public static Int32 FastForwardGameSpeed => Configuration.Cheats.SpeedFactor;
+    public static Boolean IsRapidEncounter;
 
     public Int32 FastForwardFactor
     {

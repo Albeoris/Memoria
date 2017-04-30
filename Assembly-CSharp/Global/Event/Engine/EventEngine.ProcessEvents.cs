@@ -231,13 +231,13 @@ public partial class EventEngine
                             this.SetAnim(actor, (Int32)actor.idle);
                         if (flag && (Int32)obj.uid == (Int32)this._context.controlUID && this._moveKey)
                         {
-                            Single num2 = this.distance(deltaX, deltaY, deltaZ);
+                            Single distance = this.distance(deltaX, deltaY, deltaZ);
                             if (this.gMode == 3)
                             {
                                 WMActor wmActor = ((Actor)obj).wmActor;
                             }
-                            this._encountTimer += num2;
-                            if (!FF9StateSystem.Settings.IsNoEncounter && this.ProcessEncount((PosObj)actor))
+                            this._encountTimer += distance;
+                            if (!FF9StateSystem.Settings.IsNoEncounter && this.ProcessEncount(actor))
                                 this._encountReserved = true;
                         }
                     }
@@ -282,7 +282,7 @@ public partial class EventEngine
     private Boolean ProcessEncount(PosObj po)
     {
         Int32 SceneNo = 0;
-        if ((Int32)this._context.usercontrol != 0 && (Double)this._encountTimer > 960.0)
+        if ((Int32)this._context.usercontrol != 0 && (this._encountTimer > 960.0 || SettingsState.IsRapidEncounter))
         {
             this._encountTimer = 0.0f;
             this._encountBase += (Int32)this._context.encratio;

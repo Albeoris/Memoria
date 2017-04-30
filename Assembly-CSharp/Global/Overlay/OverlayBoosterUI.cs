@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Prime;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = System.Object;
 
 public class OverlayBoosterUI : MonoBehaviour
 {
-	private void Awake()
+    private void Awake()
 	{
 		this.boosterImageList = new List<Image>
 		{
@@ -37,7 +39,19 @@ public class OverlayBoosterUI : MonoBehaviour
 		this.UpdateBoosterSize();
 	}
 
-	public void Restart()
+    private void OnGUI()
+    {
+        if (!base.gameObject.activeSelf)
+            return;
+
+        if (SettingsState.IsRapidEncounter)
+        {
+            if (GUI.Button(new Rect(0, 0, 30, 30), "↑E"))
+                SettingsState.IsRapidEncounter = false;
+        }
+    }
+
+    public void Restart()
 	{
 		this.UpdateBoosterSize();
 	}
@@ -57,6 +71,7 @@ public class OverlayBoosterUI : MonoBehaviour
 		Single num3 = this.boosterContainerRectTrans.sizeDelta.y * (this.origBoosterContainerScale.y * num);
 		Single x = -1f * this.origBoosterContainerPos.x * (this.origBoosterContainerScale.x - this.origBoosterContainerScale.x * num) + this.origBoosterContainerPos.x;
 		Single y = -1f * this.origBoosterContainerPos.y * (this.origBoosterContainerScale.y - this.origBoosterContainerScale.y * num) + this.origBoosterContainerPos.y;
+
 		this.boosterContainerRectTrans.anchoredPosition = new Vector2(x, y);
 		if (UIManager.UIPillarBoxSize.y <= 0f)
 		{

@@ -520,30 +520,6 @@ public class UIKeyTrigger : MonoBehaviour
             }
         }
 
-        //if (AltKeyDown)
-        //{
-        //    if (F2Key)
-        //    {
-        //        OnPartySceneCommandDetected(sceneFromState);
-        //        return true;
-        //    }
-        //    if (F4Key)
-        //    {
-        //        OnQuitCommandDetected(sceneFromState);
-        //        return true;
-        //    }
-        //    if (F5Key)
-        //    {
-        //        OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Save);
-        //        return true;
-        //    }
-        //    if (F9Key)
-        //    {
-        //        OnSaveLoadSceneCommandDetected(sceneFromState, SaveLoadUI.SerializeType.Load);
-        //        return true;
-        //    }
-        //}
-
         if (AltKey)
         {
             if (F2KeyDown)
@@ -572,6 +548,12 @@ public class UIKeyTrigger : MonoBehaviour
                 OnSoundDebugRoomCommandDetected();
                 return true;
             }
+        }
+
+        if (ShiftKey && F4KeyDown)
+        {
+            SettingsState.IsRapidEncounter = !SettingsState.IsRapidEncounter;
+            return true;
         }
 
         return false;
