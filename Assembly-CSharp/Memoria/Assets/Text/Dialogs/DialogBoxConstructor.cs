@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using Memoria.Assets;
@@ -8,559 +7,9 @@ using Memoria.Prime;
 using Memoria.Prime.Exceptions;
 using Memoria.Prime.Text;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Memoria.Assets
 {
-    public enum FFIXTextTagCode
-    {
-        /// <summary>
-        /// [ZDNE]
-        /// </summary>
-        Zidane,
-        /// <summary>
-        /// [VIVI]
-        /// </summary>
-        Vivi,
-        /// <summary>
-        /// [DGGR]
-        /// </summary>
-        Dagger,
-        /// <summary>
-        /// [STNR]
-        /// </summary>
-        Steiner,
-        /// <summary>
-        /// [FRYA]
-        /// </summary>
-        Fraya,
-        /// <summary>
-        /// [QUIN]
-        /// </summary>
-        Quina,
-        /// <summary>
-        /// [EIKO]
-        /// </summary>
-        Eiko,
-        /// <summary>
-        /// [AMRT]
-        /// </summary>
-        Amarant,
-        /// <summary>
-        /// [IMME]
-        /// </summary>
-        Instantly,
-        /// <summary>
-        /// [FLIM]
-        /// </summary>
-        Flash,
-        /// <summary>
-        /// [NFOC]
-        /// </summary>
-        NoFocus,
-        /// <summary>
-        /// [NANI]
-        /// </summary>
-        NoAnimation,
-        /// <summary>
-        /// [PAGE]
-        /// </summary>
-        NewPage,
-        /// <summary>
-        /// [CHOO][MOVE=18,0]
-        /// </summary>
-        Choice,
-        /// <summary>
-        /// [MOVE=18,0]
-        /// </summary>
-        Tab,
-        /// <summary>
-        /// [C8C8C8][HSHD]
-        /// </summary>
-        White,
-        /// <summary>
-        /// [B880E0][HSHD]
-        /// </summary>
-        Pink,
-        /// <summary>
-        /// [68C0D8][HSHD]
-        /// </summary>
-        Cyan,
-        /// <summary>
-        /// [D06050][HSHD]
-        /// </summary>
-        Brown,
-        /// <summary>
-        /// [C8B040][HSHD]
-        /// </summary>
-        Yellow,
-        /// <summary>
-        /// [78C840][HSHD]
-        /// </summary>
-        Green,
-        /// <summary>
-        /// [909090][HSHD]
-        /// </summary>
-        Grey,
-        /// <summary>
-        /// [INCS][TIME=-1]
-        /// </summary>
-        IncreaseSignal,
-        /// <summary>
-        /// [INCS]
-        /// </summary>
-        IncreaseSignalEx,
-        /// <summary>
-        /// [TAIL=LOR]
-        /// </summary>
-        LowerRight,
-        /// <summary>
-        /// [TAIL=LOL]
-        /// </summary>
-        LowerLeft,
-        /// <summary>
-        /// [TAIL=UPR]
-        /// </summary>
-        UpperRight,
-        /// <summary>
-        /// [TAIL=UPL]
-        /// </summary>
-        UpperLeft,
-        /// <summary>
-        /// [TAIL=LOC]
-        /// </summary>
-        LowerCenter,
-        /// <summary>
-        /// [TAIL=UPC]
-        /// </summary>
-        UpperCenter,
-        /// <summary>
-        /// [TAIL=LORF]
-        /// </summary>
-        LowerRightForce,
-        /// <summary>
-        /// [TAIL=LOLF]
-        /// </summary>
-        LowerLeftForce,
-        /// <summary>
-        /// [TAIL=UPRF]
-        /// </summary>
-        UpperRightForce,
-        /// <summary>
-        /// [TAIL=UPLF]
-        /// </summary>
-        UpperLeftForce,
-        /// <summary>
-        /// [TAIL=DEFT]
-        /// </summary>
-        DialogPosition,
-        /// <summary>
-        /// [STRT=?,?]
-        /// </summary>
-        DialogSize,
-        /// <summary>
-        /// [YADD]
-        /// </summary>
-        DialogY,
-        /// <summary>
-        /// [XTAB]
-        /// </summary>
-        DialogX,
-        /// <summary>
-        /// [FEED]
-        /// </summary>
-        DialogF,
-        /// <summary>
-        /// [MPOS=?,?]
-        /// </summary>
-        Position,
-        /// <summary>
-        /// ENDN
-        /// </summary>
-        End,
-        /// <summary>
-        /// [DBTN=UP]
-        /// </summary>
-        Up,
-        /// <summary>
-        /// [DBTN=DOWN]
-        /// </summary>
-        Down,
-        /// <summary>
-        /// [DBTN=LEFT]
-        /// </summary>
-        Left,
-        /// <summary>
-        /// [DBTN=RIGHT]
-        /// </summary>
-        Right,
-        /// <summary>
-        /// [DBTN=CIRCLE]
-        /// </summary>
-        Circle,
-        /// <summary>
-        /// [DBTN=CROSS]
-        /// </summary>
-        Cross,
-        /// <summary>
-        /// [DBTN=TRIANGLE]
-        /// </summary>
-        Triangle,
-        /// <summary>
-        /// [DBTN=SQUARE]
-        /// </summary>
-        Square,
-        /// <summary>
-        /// [DBTN=R1]
-        /// </summary>
-        R1,
-        /// <summary>
-        /// [DBTN=R2]
-        /// </summary>
-        R2,
-        /// <summary>
-        /// [DBTN=L1]
-        /// </summary>
-        L1,
-        /// <summary>
-        /// [DBTN=L2]
-        /// </summary>
-        L2,
-        /// <summary>
-        /// [DBTN=SELECT]
-        /// </summary>
-        Select,
-        /// <summary>
-        /// [DBTN=START]
-        /// </summary>
-        Start,
-        /// <summary>
-        /// [DBTN=PAD]
-        /// </summary>
-        Pad,
-        /// <summary>
-        /// [CBTN=UP]
-        /// </summary>
-        UpEx,
-        /// <summary>
-        /// [CBTN=DOWN]
-        /// </summary>
-        DownEx,
-        /// <summary>
-        /// [CBTN=LEFT]
-        /// </summary>
-        LeftEx,
-        /// <summary>
-        /// [CBTN=RIGHT]
-        /// </summary>
-        RightEx,
-        /// <summary>
-        /// [CBTN=CIRCLE]
-        /// </summary>
-        CircleEx,
-        /// <summary>
-        /// [CBTN=CROSS]
-        /// </summary>
-        CrossEx,
-        /// <summary>
-        /// [CBTN=TRIANGLE]
-        /// </summary>
-        TriangleEx,
-        /// <summary>
-        /// [CBTN=SQUARE]
-        /// </summary>
-        SquareEx,
-        /// <summary>
-        /// [CBTN=R1]
-        /// </summary>
-        R1Ex,
-        /// <summary>
-        /// [CBTN=R2]
-        /// </summary>
-        R2Ex,
-        /// <summary>
-        /// [CBTN=L1]
-        /// </summary>
-        L1Ex,
-        /// <summary>
-        /// [CBTN=L2]
-        /// </summary>
-        L2Ex,
-        /// <summary>
-        /// [CBTN=SELECT]
-        /// </summary>
-        SelectEx,
-        /// <summary>
-        /// [CBTN=START]
-        /// </summary>
-        StartEx,
-        /// <summary>
-        /// [CBTN=PAD]
-        /// </summary>
-        PadEx,
-
-        /// <summary>
-        /// [PTY1], [PTY2], [PTY3], [PTY4]
-        /// </summary>
-        Party,
-        /// <summary>
-        /// [SIGL=0], [SIGL=1], [SIGL=2]
-        /// </summary>
-        Signal,
-        /// <summary>
-        /// [TIME=?]
-        /// </summary>
-        Time,
-        /// <summary>
-        /// [WAIT=?]
-        /// </summary>
-        Wait,
-        /// <summary>
-        /// [CENT=?]
-        /// </summary>
-        Center,
-        /// <summary>
-        /// [NUMB=?]
-        /// </summary>
-        Variable,
-        /// <summary>
-        /// [ITEM=?]
-        /// </summary>
-        Item,
-        /// <summary>
-        /// [ICON=?]
-        /// </summary>
-        Icon,
-        /// <summary>
-        /// [PNEW=?]
-        /// </summary>
-        IconEx,
-        /// <summary>
-        /// [MOBI=?]
-        /// </summary>
-        Mobile,
-        /// <summary>
-        /// [SPED=?]
-        /// </summary>
-        Speed,
-
-        /// <summary>
-        /// [WDTH=?,?,?...]
-        /// </summary>
-        Widths,
-        /// <summary>
-        /// [TEXT=?,?,?...]
-        /// </summary>
-        Text,
-        /// <summary>
-        /// [PCHC=?,?,?...]
-        /// </summary>
-        PreChoose,
-        /// <summary>
-        /// [PCHM=?,?,?...]
-        /// </summary>
-        PreChooseMask,
-        /// <summary>
-        /// [OFFT=?,?,?...]
-        /// </summary>
-        Offset,
-        /// <summary>
-        /// [TBLE=?,?,?...]
-        /// </summary>
-        Table
-    }
-
-    public sealed class FFIXTextTag
-    {
-        public const Int32 MaxTagLength = 32;
-
-        public readonly FFIXTextTagCode Code;
-        public readonly Int32[] Param;
-
-        public FFIXTextTag(FFIXTextTagCode code)
-        {
-            Code = code;
-            Param = null;
-        }
-
-        public FFIXTextTag(FFIXTextTagCode code, params Int32[] param)
-        {
-            Code = code;
-            Param = param;
-        }
-
-        public static FFIXTextTag TryRead(Char[] chars, ref Int32 offset, ref Int32 left)
-        {
-            Int32 oldOffset = offset;
-            Int32 oldleft = left;
-
-            String tag, par;
-            if (chars[offset++] != '{' || !TryGetTag(chars, ref offset, ref left, out tag, out par))
-            {
-                offset = oldOffset;
-                left = oldleft;
-                return null;
-            }
-
-            if (tag[0] == 'W' && Char.IsNumber(tag[1]))
-            {
-                String[] items = tag.Split('H');
-                if (items.Length != 2)
-                {
-                    offset = oldOffset;
-                    left = oldleft;
-                    return null;
-                }
-
-                Int32 width, height;
-                if (!Int32.TryParse(items[0].Substring(1), NumberStyles.Integer, CultureInfo.InvariantCulture, out width) ||
-                    !Int32.TryParse(items[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out height))
-                {
-                    offset = oldOffset;
-                    left = oldleft;
-                    return null;
-                }
-
-                return new FFIXTextTag(FFIXTextTagCode.DialogSize, width, height);
-            }
-
-            if (tag[0] == 'y' && (tag[1] == '-' || Char.IsNumber(tag[1])))
-            {
-                Int32 value;
-                if (!Int32.TryParse(tag.Substring(1), NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
-                {
-                    offset = oldOffset;
-                    left = oldleft;
-                    return null;
-                }
-
-                return new FFIXTextTag(FFIXTextTagCode.DialogY, value);
-            }
-
-            if (tag[0] == 'x' && (tag[1] == '-' || Char.IsNumber(tag[1])))
-            {
-                Int32 value;
-                if (!Int32.TryParse(tag.Substring(1), NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
-                {
-                    offset = oldOffset;
-                    left = oldleft;
-                    return null;
-                }
-
-                return new FFIXTextTag(FFIXTextTagCode.DialogX, value);
-            }
-
-            if (tag[0] == 'f' && (tag[1] == '-' || Char.IsNumber(tag[1])))
-            {
-                Int32 value;
-                if (!Int32.TryParse(tag.Substring(1), NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
-                {
-                    offset = oldOffset;
-                    left = oldleft;
-                    return null;
-                }
-
-                return new FFIXTextTag(FFIXTextTagCode.DialogF, value);
-            }
-
-            FFIXTextTagCode? code;
-            if (tag[tag.Length - 1] == '+')
-                code = EnumCache<FFIXTextTagCode>.TryParse(tag + "Ex");
-            else
-                code = EnumCache<FFIXTextTagCode>.TryParse(tag);
-
-            if (code == null)
-            {
-                offset = oldOffset;
-                left = oldleft;
-                return null;
-            }
-
-            if (String.IsNullOrEmpty(par))
-                return new FFIXTextTag(code.Value);
-
-            String[] values = par.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            Int32[] args = new Int32[values.Length];
-            for (Int32 i = 0; i < values.Length; i++)
-            {
-                Int32 numArg;
-                if (!Int32.TryParse(values[i], NumberStyles.Integer | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out numArg))
-                {
-                    offset = oldOffset;
-                    left = oldleft;
-                    return null;
-                }
-                args[i] = numArg;
-            }
-
-            return new FFIXTextTag(code.Value, args);
-        }
-
-        private static Boolean TryGetTag(Char[] chars, ref Int32 offset, ref Int32 left, out String tag, out String par)
-        {
-            Int32 lastIndex = Array.IndexOf(chars, '}', offset);
-            Int32 length = lastIndex - offset + 1;
-            if (length < 2)
-            {
-                tag = null;
-                par = null;
-                return false;
-            }
-
-            left--;
-            left -= length;
-
-            Int32 spaceIndex = Array.IndexOf(chars, ' ', offset + 1, length - 2);
-            if (spaceIndex < 0)
-            {
-                tag = new String(chars, offset, length - 1);
-                par = String.Empty;
-            }
-            else
-            {
-                tag = new String(chars, offset, spaceIndex - offset);
-                par = new String(chars, spaceIndex + 1, lastIndex - spaceIndex - 1);
-            }
-
-            offset = lastIndex + 1;
-            return true;
-        }
-
-        public override String ToString()
-        {
-            StringBuilder sb = new StringBuilder(MaxTagLength);
-
-            switch (Code)
-            {
-                case FFIXTextTagCode.DialogSize:
-                    return String.Format("{{W{0}H{1}}}", Param[0], Param[1]);
-                case FFIXTextTagCode.DialogY:
-                    return String.Format("{{y{0}}}", Param[0]);
-                case FFIXTextTagCode.DialogX:
-                    return String.Format("{{x{0}}}", Param[0]);
-                case FFIXTextTagCode.DialogF:
-                    return String.Format("{{f{0}}}", Param[0]);
-            }
-
-            sb.Append('{');
-            if (EnumCache<FFIXTextTagCode>.IsDefined(Code))
-            {
-                sb.Append(Code);
-            }
-            else
-                sb.Append("Unknown ").Append(((Byte)Code).ToString("X2"));
-
-            if (Param?.Length > 0)
-            {
-                sb.Append(' ');
-                sb.Append(String.Join(",", Param.Select(p => p.ToString()).ToArray()));
-            }
-
-            sb.Append('}');
-            return sb.ToString();
-        }
-    }
-
     public sealed class DialogBoxConstructor
     {
         public static void PhrasePreOpcodeSymbol(String text, Dialog dlg)
@@ -717,7 +166,7 @@ namespace Memoria.Assets
                     KeepIconEx(tag.Param[0]);
                     break;
                 case FFIXTextTagCode.Mobile:
-                    KeepMobileIcon(tag.Param[0]);
+                    KeepMobileIcon(_sb, tag.Param[0]);
                     break;
                 case FFIXTextTagCode.Offset:
                     OnDialogOffsetPositon(tag.Param);
@@ -959,7 +408,7 @@ namespace Memoria.Assets
             else if (text3 == "[" + NGUIText.MobileIcon)
             {
                 Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(_chars, index, ref newIndex);
-                KeepMobileIcon(oneParameterFromTag4);
+                KeepMobileIcon(_sb, oneParameterFromTag4);
             }
             else if (text3 == "[" + NGUIText.DialogOffsetPositon)
             {
@@ -1162,54 +611,54 @@ namespace Memoria.Assets
             _dlg.OffsetPosition = new Vector3(allParametersFromTag6[0], allParametersFromTag6[1], allParametersFromTag6[2]);
         }
 
-        private static Boolean KeepKeyIcon(StringBuilder sb, FFIXTextTagCode tagCode)
+        internal static Boolean KeepKeyIcon(StringBuilder sb, FFIXTextTagCode tagCode)
         {
             switch (tagCode)
             {
                 case FFIXTextTagCode.Up:
-                    sb.Append("[DBTN=UP]");
+                    sb.Append("[DBTN=UP] ");
                     break;
                 case FFIXTextTagCode.Down:
-                    sb.Append("[DBTN=DOWN]");
+                    sb.Append("[DBTN=DOWN] ");
                     break;
                 case FFIXTextTagCode.Left:
-                    sb.Append("[DBTN=LEFT]");
+                    sb.Append("[DBTN=LEFT] ");
                     break;
                 case FFIXTextTagCode.Right:
-                    sb.Append("[DBTN=RIGHT]");
+                    sb.Append("[DBTN=RIGHT] ");
                     break;
                 case FFIXTextTagCode.Circle:
-                    sb.Append("[DBTN=CIRCLE]");
+                    sb.Append("[DBTN=CIRCLE] ");
                     break;
                 case FFIXTextTagCode.Cross:
-                    sb.Append("[DBTN=CROSS]");
+                    sb.Append("[DBTN=CROSS] ");
                     break;
                 case FFIXTextTagCode.Triangle:
-                    sb.Append("[DBTN=TRIANGLE]");
+                    sb.Append("[DBTN=TRIANGLE] ");
                     break;
                 case FFIXTextTagCode.Square:
-                    sb.Append("[DBTN=SQUARE]");
+                    sb.Append("[DBTN=SQUARE] ");
                     break;
                 case FFIXTextTagCode.R1:
-                    sb.Append("[DBTN=R1]");
+                    sb.Append("[DBTN=R1] ");
                     break;
                 case FFIXTextTagCode.R2:
-                    sb.Append("[DBTN=R2]");
+                    sb.Append("[DBTN=R2] ");
                     break;
                 case FFIXTextTagCode.L1:
-                    sb.Append("[DBTN=L1]");
+                    sb.Append("[DBTN=L1] ");
                     break;
                 case FFIXTextTagCode.L2:
-                    sb.Append("[DBTN=L2]");
+                    sb.Append("[DBTN=L2] ");
                     break;
                 case FFIXTextTagCode.Select:
-                    sb.Append("[DBTN=SELECT]");
+                    sb.Append("[DBTN=SELECT] ");
                     break;
                 case FFIXTextTagCode.Start:
-                    sb.Append("[DBTN=START]");
+                    sb.Append("[DBTN=START] ");
                     break;
                 case FFIXTextTagCode.Pad:
-                    sb.Append("[DBTN=PAD]");
+                    sb.Append("[DBTN=PAD] ");
                     break;
                 default:
                     return false;
@@ -1217,54 +666,54 @@ namespace Memoria.Assets
             return true;
         }
 
-        private static Boolean KeepKeyExIcon(StringBuilder sb, FFIXTextTag tag)
+        internal static Boolean KeepKeyExIcon(StringBuilder sb, FFIXTextTag tag)
         {
             switch (tag.Code)
             {
                 case FFIXTextTagCode.UpEx:
-                    sb.Append("[CBTN=UP]");
+                    sb.Append("[CBTN=UP] ");
                     break;
                 case FFIXTextTagCode.DownEx:
-                    sb.Append("[CBTN=DOWN]");
+                    sb.Append("[CBTN=DOWN] ");
                     break;
                 case FFIXTextTagCode.LeftEx:
-                    sb.Append("[CBTN=LEFT]");
+                    sb.Append("[CBTN=LEFT] ");
                     break;
                 case FFIXTextTagCode.RightEx:
-                    sb.Append("[CBTN=RIGHT]");
+                    sb.Append("[CBTN=RIGHT] ");
                     break;
                 case FFIXTextTagCode.CircleEx:
-                    sb.Append("[CBTN=CIRCLE]");
+                    sb.Append("[CBTN=CIRCLE] ");
                     break;
                 case FFIXTextTagCode.CrossEx:
-                    sb.Append("[CBTN=CROSS]");
+                    sb.Append("[CBTN=CROSS] ");
                     break;
                 case FFIXTextTagCode.TriangleEx:
-                    sb.Append("[CBTN=TRIANGLE]");
+                    sb.Append("[CBTN=TRIANGLE] ");
                     break;
                 case FFIXTextTagCode.SquareEx:
-                    sb.Append("[CBTN=SQUARE]");
+                    sb.Append("[CBTN=SQUARE] ");
                     break;
                 case FFIXTextTagCode.R1Ex:
-                    sb.Append("[CBTN=R1]");
+                    sb.Append("[CBTN=R1] ");
                     break;
                 case FFIXTextTagCode.R2Ex:
-                    sb.Append("[CBTN=R2]");
+                    sb.Append("[CBTN=R2] ");
                     break;
                 case FFIXTextTagCode.L1Ex:
-                    sb.Append("[CBTN=L1]");
+                    sb.Append("[CBTN=L1] ");
                     break;
                 case FFIXTextTagCode.L2Ex:
-                    sb.Append("[CBTN=L2]");
+                    sb.Append("[CBTN=L2] ");
                     break;
                 case FFIXTextTagCode.SelectEx:
-                    sb.Append("[CBTN=SELECT]");
+                    sb.Append("[CBTN=SELECT] ");
                     break;
                 case FFIXTextTagCode.StartEx:
-                    sb.Append("[CBTN=START]");
+                    sb.Append("[CBTN=START] ");
                     break;
                 case FFIXTextTagCode.PadEx:
-                    sb.Append("[CBTN=PAD]");
+                    sb.Append("[CBTN=PAD] ");
                     break;
                 default:
                     return false;
@@ -1272,13 +721,13 @@ namespace Memoria.Assets
             return true;
         }
 
-        private void KeepMobileIcon(Int32 oneParameterFromTag4)
+        internal static void KeepMobileIcon(StringBuilder sb, Int32 oneParameterFromTag4)
         {
             if (FF9StateSystem.MobilePlatform && !NGUIText.ForceShowButton)
             {
-                _sb.Append("[MOBI=");
-                _sb.Append(oneParameterFromTag4);
-                _sb.Append("] ");
+                sb.Append("[MOBI=");
+                sb.Append(oneParameterFromTag4);
+                sb.Append("] ");
             }
         }
 
@@ -1347,7 +796,7 @@ namespace Memoria.Assets
                 default:
                     _sb.Append("[ICON=");
                     _sb.Append(iconNumber);
-                    _sb.Append(']');
+                    _sb.Append("] ");
                     break;
             }
         }

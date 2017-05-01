@@ -446,7 +446,19 @@ public static class NGUIText
 
 	public static Boolean ContainsTextOffset(String text)
 	{
-		String[] textOffsetOpcodeSymbols = NGUIText.TextOffsetOpcodeSymbols;
+	    Int32 offset = 0;
+	    Int32 left = text.Length;
+
+        FFIXTextTag tag = FFIXTextTag.TryRead(text.ToCharArray(), ref offset, ref left);
+	    switch (tag?.Code)
+	    {
+            case FFIXTextTagCode.DialogX:
+            case FFIXTextTagCode.DialogY:
+            case FFIXTextTagCode.DialogF:
+	            return true;
+	    }
+
+	    String[] textOffsetOpcodeSymbols = NGUIText.TextOffsetOpcodeSymbols;
 		for (Int32 i = 0; i < (Int32)textOffsetOpcodeSymbols.Length; i++)
 		{
 			String value = textOffsetOpcodeSymbols[i];
@@ -455,6 +467,7 @@ public static class NGUIText
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -1668,10 +1681,10 @@ public static class NGUIText
 		NGUIText.Prepare(text);
 		NGUIText.mColors.Add(Color.white);
 		NGUIText.mAlpha = 1f;
-		Int32 prev = 0;
-		Int32 num = 0;
-		Single num2 = 0f;
-		Single num3 = 0f;
+		Int32 prevCh = 0;
+		Int32 currCh = 0;
+		Single currentX = 0f;
+		Single lineHeight = 0f;
 		Single num4 = 0f;
 		Single num5 = (Single)NGUIText.finalSize;
 		Color a = NGUIText.tint * NGUIText.gradientBottom;
@@ -1683,20 +1696,20 @@ public static class NGUIText
 		Single num7 = 0f;
 		Single num8 = num5 * NGUIText.pixelDensity;
 		Boolean flag = false;
-		Int32 num9 = 0;
-		Boolean flag2 = false;
-		Boolean flag3 = false;
-		Boolean flag4 = false;
-		Boolean flag5 = false;
-		Boolean flag6 = false;
-		Boolean flag7 = false;
-		Boolean flag8 = false;
-		Boolean flag9 = false;
-		Int32 num10 = 0;
-		Vector3 zero = Vector3.zero;
+		Int32 sub = 0;
+		Boolean bold = false;
+		Boolean italic = false;
+		Boolean underline = false;
+		Boolean strike = false;
+		Boolean ignoreColor = false;
+		Boolean highShadow = false;
+		Boolean center = false;
+		Boolean containCharAlignment = false;
+		Int32 ff9Signal = 0;
+		Vector3 extraOffset = Vector3.zero;
 		Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
-		Int32 num11 = 0;
-		Single num12 = 0f;
+		Int32 printedLine = 0;
+		Single tabX = 0f;
 		NGUIText.Alignment alignment = NGUIText.alignment;
 		BetterList<Int32> betterList = new BetterList<Int32>();
 		if (NGUIText.bitmapFont != (UnityEngine.Object)null)
@@ -1711,40 +1724,40 @@ public static class NGUIText
 		}
 		for (Int32 i = 0; i < length; i++)
 		{
-			Int32 num13 = (Int32)text[i];
-			Single num14 = num2;
-			if (num13 == 10)
+			Int32 ch = (Int32)text[i];
+			Single num14 = currentX;
+			if (ch == 10)
 			{
-				if (num2 > num4)
+				if (currentX > num4)
 				{
-					num4 = num2;
+					num4 = currentX;
 				}
-				if (verts.size > 0 && flag9)
+				if (verts.size > 0 && containCharAlignment)
 				{
-					NGUIText.AlignImageWithLastChar(ref specialImages, betterList, verts, num11);
+					NGUIText.AlignImageWithLastChar(ref specialImages, betterList, verts, printedLine);
 				}
 				betterList.Clear();
-				NGUIText.AlignImage(verts, size, num2 - NGUIText.finalSpacingX, specialImages, num11);
-				NGUIText.Align(verts, size, num2 - NGUIText.finalSpacingX, 4);
+				NGUIText.AlignImage(verts, size, currentX - NGUIText.finalSpacingX, specialImages, printedLine);
+				NGUIText.Align(verts, size, currentX - NGUIText.finalSpacingX, 4);
 				size = verts.size;
 				vertsLineOffsets.Add(size);
 				NGUIText.alignment = alignment;
-				flag8 = false;
-				flag9 = false;
-				zero = Vector3.zero;
-				num11++;
-				num2 = 0f;
-				num3 += NGUIText.finalLineHeight;
-				prev = 0;
+				center = false;
+				containCharAlignment = false;
+				extraOffset = Vector3.zero;
+				printedLine++;
+				currentX = 0f;
+				lineHeight += NGUIText.finalLineHeight;
+				prevCh = 0;
 			}
-			else if (num13 < 32)
+			else if (ch < 32)
 			{
-				prev = num13;
+				prevCh = ch;
 			}
-			else if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num9, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref num10, ref zero, ref num12, ref dialogImage))
+			else if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref sub, ref bold, ref italic, ref underline, ref strike, ref ignoreColor, ref highShadow, ref center, ref ff9Signal, ref extraOffset, ref tabX, ref dialogImage))
 			{
 				Color color2;
-				if (flag6)
+				if (ignoreColor)
 				{
 					color2 = NGUIText.mColors[NGUIText.mColors.size - 1];
 					color2.a *= NGUIText.mAlpha * NGUIText.tint.a;
@@ -1771,7 +1784,7 @@ public static class NGUIText
 			}
 			else
 			{
-				if (flag8)
+				if (center)
 				{
 					NGUIText.alignment = NGUIText.Alignment.Center;
 				}
@@ -1779,51 +1792,51 @@ public static class NGUIText
 				{
 					NGUIText.alignment = alignment;
 				}
-				if (num12 != 0f)
+				if (tabX != 0f)
 				{
-					zero.x = 0f;
-					num2 = num12;
-					num12 = 0f;
+					extraOffset.x = 0f;
+					currentX = tabX;
+					tabX = 0f;
 				}
-				NGUIText.AddSpecialIconToList(ref specialImages, ref betterList, ref dialogImage, zero, ref num2, num3, num11);
+				NGUIText.AddSpecialIconToList(ref specialImages, ref betterList, ref dialogImage, extraOffset, ref currentX, lineHeight, printedLine);
 				BMSymbol bmsymbol = (!NGUIText.useSymbols) ? null : NGUIText.GetSymbol(text, i, length);
 				if (bmsymbol != null)
 				{
-					Single num16 = num2 + (Single)bmsymbol.offsetX * NGUIText.fontScale;
+					Single num16 = currentX + (Single)bmsymbol.offsetX * NGUIText.fontScale;
 					Single num17 = num16 + (Single)bmsymbol.width * NGUIText.fontScale;
-					Single num18 = -(num3 + (Single)bmsymbol.offsetY * NGUIText.fontScale);
+					Single num18 = -(lineHeight + (Single)bmsymbol.offsetY * NGUIText.fontScale);
 					Single num19 = num18 - (Single)bmsymbol.height * NGUIText.fontScale;
-					if (Mathf.RoundToInt(num2 + (Single)bmsymbol.advance * NGUIText.fontScale) > NGUIText.regionWidth)
+					if (Mathf.RoundToInt(currentX + (Single)bmsymbol.advance * NGUIText.fontScale) > NGUIText.regionWidth)
 					{
-						if (num2 == 0f)
+						if (currentX == 0f)
 						{
 							return;
 						}
 						if (size < verts.size)
 						{
-							NGUIText.AlignImage(verts, size, num2 - NGUIText.finalSpacingX, specialImages, num11);
-							NGUIText.Align(verts, size, num2 - NGUIText.finalSpacingX, 4);
+							NGUIText.AlignImage(verts, size, currentX - NGUIText.finalSpacingX, specialImages, printedLine);
+							NGUIText.Align(verts, size, currentX - NGUIText.finalSpacingX, 4);
 							size = verts.size;
 							vertsLineOffsets.Add(size);
 						}
 						NGUIText.alignment = alignment;
-						flag8 = false;
-						zero = Vector3.zero;
-						num11++;
-						num16 -= num2;
-						num17 -= num2;
+						center = false;
+						extraOffset = Vector3.zero;
+						printedLine++;
+						num16 -= currentX;
+						num17 -= currentX;
 						num19 -= NGUIText.finalLineHeight;
 						num18 -= NGUIText.finalLineHeight;
-						num2 = 0f;
-						num3 += NGUIText.finalLineHeight;
+						currentX = 0f;
+						lineHeight += NGUIText.finalLineHeight;
 					}
 					verts.Add(new Vector3(num16, num19));
 					verts.Add(new Vector3(num16, num18));
 					verts.Add(new Vector3(num17, num18));
 					verts.Add(new Vector3(num17, num19));
-					num2 += NGUIText.finalSpacingX + (Single)bmsymbol.advance * NGUIText.fontScale;
+					currentX += NGUIText.finalSpacingX + (Single)bmsymbol.advance * NGUIText.fontScale;
 					i += bmsymbol.length - 1;
-					prev = 0;
+					prevCh = 0;
 					if (uvs != null)
 					{
 						Rect uvRect = bmsymbol.uvRect;
@@ -1858,16 +1871,16 @@ public static class NGUIText
 				}
 				else
 				{
-					NGUIText.GlyphInfo glyphInfo = NGUIText.GetGlyph(num13, prev);
+					NGUIText.GlyphInfo glyphInfo = NGUIText.GetGlyph(ch, prevCh);
 					if (glyphInfo != null)
 					{
-						if (!flag9)
+						if (!containCharAlignment)
 						{
-							flag9 = NGUIText.ContainCharAlignment(num13);
+							containCharAlignment = NGUIText.ContainCharAlignment(ch);
 						}
-						prev = num13;
-						num = num13;
-						if (num9 != 0)
+						prevCh = ch;
+						currCh = ch;
+						if (sub != 0)
 						{
 							NGUIText.GlyphInfo glyphInfo2 = glyphInfo;
 							glyphInfo2.v0.x = glyphInfo2.v0.x * 0.75f;
@@ -1877,7 +1890,7 @@ public static class NGUIText
 							glyphInfo4.v1.x = glyphInfo4.v1.x * 0.75f;
 							NGUIText.GlyphInfo glyphInfo5 = glyphInfo;
 							glyphInfo5.v1.y = glyphInfo5.v1.y * 0.75f;
-							if (num9 == 1)
+							if (sub == 1)
 							{
 								NGUIText.GlyphInfo glyphInfo6 = glyphInfo;
 								glyphInfo6.v0.y = glyphInfo6.v0.y - NGUIText.fontScale * (Single)NGUIText.fontSize * 0.4f;
@@ -1892,51 +1905,51 @@ public static class NGUIText
 								glyphInfo9.v1.y = glyphInfo9.v1.y + NGUIText.fontScale * (Single)NGUIText.fontSize * 0.05f;
 							}
 						}
-						Single num16 = glyphInfo.v0.x + num2;
-						Single num19 = glyphInfo.v0.y - num3;
-						Single num17 = glyphInfo.v1.x + num2;
-						Single num18 = glyphInfo.v1.y - num3;
+						Single v0x = glyphInfo.v0.x + currentX;
+						Single v0y = glyphInfo.v0.y - lineHeight;
+						Single v1x = glyphInfo.v1.x + currentX;
+						Single v1y = glyphInfo.v1.y - lineHeight;
 						Single num20 = glyphInfo.advance;
 						if (NGUIText.finalSpacingX < 0f)
 						{
 							num20 += NGUIText.finalSpacingX;
 						}
-						if (Mathf.RoundToInt(num2 + num20) > NGUIText.regionWidth)
+						if (Mathf.RoundToInt(currentX + num20) > NGUIText.regionWidth)
 						{
-							if (num2 == 0f)
+							if (currentX == 0f)
 							{
 								return;
 							}
 							if (size < verts.size)
 							{
-								NGUIText.Align(verts, size, num2 - NGUIText.finalSpacingX, 4);
+								NGUIText.Align(verts, size, currentX - NGUIText.finalSpacingX, 4);
 								size = verts.size;
 								vertsLineOffsets.Add(size);
 							}
-							zero = Vector3.zero;
-							num16 -= num2;
-							num17 -= num2;
-							num19 -= NGUIText.finalLineHeight;
-							num18 -= NGUIText.finalLineHeight;
-							num2 = 0f;
-							num3 += NGUIText.finalLineHeight;
+							extraOffset = Vector3.zero;
+							v0x -= currentX;
+							v1x -= currentX;
+							v0y -= NGUIText.finalLineHeight;
+							v1y -= NGUIText.finalLineHeight;
+							currentX = 0f;
+							lineHeight += NGUIText.finalLineHeight;
 							num14 = 0f;
 							NGUIText.alignment = alignment;
-							flag8 = false;
+							center = false;
 						}
-						if (NGUIText.IsSpace(num13))
+						if (NGUIText.IsSpace(ch))
 						{
-							if (flag4)
+							if (underline)
 							{
-								num13 = 95;
+								ch = 95;
 							}
-							else if (flag5)
+							else if (strike)
 							{
-								num13 = 45;
+								ch = 45;
 							}
 						}
-						num2 += ((num9 != 0) ? ((NGUIText.finalSpacingX + glyphInfo.advance) * 0.75f) : (NGUIText.finalSpacingX + glyphInfo.advance));
-						if (!NGUIText.IsSpace(num13))
+						currentX += ((sub != 0) ? ((NGUIText.finalSpacingX + glyphInfo.advance) * 0.75f) : (NGUIText.finalSpacingX + glyphInfo.advance));
+						if (!NGUIText.IsSpace(ch))
 						{
 							if (uvs != null)
 							{
@@ -1952,7 +1965,7 @@ public static class NGUIText
 									glyphInfo.u3.y = glyphInfo.u0.y;
 								}
 								Int32 m = 0;
-								Int32 num21 = (Int32)((!flag2) ? 1 : 4);
+								Int32 num21 = (Int32)((!bold) ? 1 : 4);
 								while (m < num21)
 								{
 									uvs.Add(glyphInfo.u0);
@@ -1975,7 +1988,7 @@ public static class NGUIText
 										NGUIText.s_c0 = Color.Lerp(a, b, num22);
 										NGUIText.s_c1 = Color.Lerp(a, b, num23);
 										Int32 n = 0;
-										Int32 num24 = (Int32)((!flag2) ? 1 : 4);
+										Int32 num24 = (Int32)((!bold) ? 1 : 4);
 										while (n < num24)
 										{
 											cols.Add(NGUIText.s_c0);
@@ -1988,7 +2001,7 @@ public static class NGUIText
 									else
 									{
 										Int32 num25 = 0;
-										Int32 num26 = (Int32)((!flag2) ? 4 : 16);
+										Int32 num26 = (Int32)((!bold) ? 4 : 16);
 										while (num25 < num26)
 										{
 											cols.Add(color);
@@ -2017,7 +2030,7 @@ public static class NGUIText
 									}
 									Color32 item2 = color3;
 									Int32 num27 = 0;
-									Int32 num28 = (Int32)((!flag2) ? 4 : 16);
+									Int32 num28 = (Int32)((!bold) ? 4 : 16);
 									while (num27 < num28)
 									{
 										cols.Add(item2);
@@ -2025,22 +2038,22 @@ public static class NGUIText
 									}
 								}
 							}
-							if (!flag2)
+							if (!bold)
 							{
-								if (!flag3)
+								if (!italic)
 								{
-									verts.Add(new Vector3(num16, num19));
-									verts.Add(new Vector3(num16, num18));
-									verts.Add(new Vector3(num17, num18));
-									verts.Add(new Vector3(num17, num19));
+									verts.Add(new Vector3(v0x, v0y));
+									verts.Add(new Vector3(v0x, v1y));
+									verts.Add(new Vector3(v1x, v1y));
+									verts.Add(new Vector3(v1x, v0y));
 								}
 								else
 								{
-									Single num29 = (Single)NGUIText.fontSize * 0.1f * ((num18 - num19) / (Single)NGUIText.fontSize);
-									verts.Add(new Vector3(num16 - num29, num19));
-									verts.Add(new Vector3(num16 + num29, num18));
-									verts.Add(new Vector3(num17 + num29, num18));
-									verts.Add(new Vector3(num17 - num29, num19));
+									Single num29 = (Single)NGUIText.fontSize * 0.1f * ((v1y - v0y) / (Single)NGUIText.fontSize);
+									verts.Add(new Vector3(v0x - num29, v0y));
+									verts.Add(new Vector3(v0x + num29, v1y));
+									verts.Add(new Vector3(v1x + num29, v1y));
+									verts.Add(new Vector3(v1x - num29, v0y));
 								}
 							}
 							else
@@ -2049,38 +2062,38 @@ public static class NGUIText
 								{
 									Single num31 = NGUIText.mBoldOffset[num30 * 2];
 									Single num32 = NGUIText.mBoldOffset[num30 * 2 + 1];
-									Single num33 = (!flag3) ? 0f : ((Single)NGUIText.fontSize * 0.1f * ((num18 - num19) / (Single)NGUIText.fontSize));
-									verts.Add(new Vector3(num16 + num31 - num33, num19 + num32));
-									verts.Add(new Vector3(num16 + num31 + num33, num18 + num32));
-									verts.Add(new Vector3(num17 + num31 + num33, num18 + num32));
-									verts.Add(new Vector3(num17 + num31 - num33, num19 + num32));
+									Single num33 = (!italic) ? 0f : ((Single)NGUIText.fontSize * 0.1f * ((v1y - v0y) / (Single)NGUIText.fontSize));
+									verts.Add(new Vector3(v0x + num31 - num33, v0y + num32));
+									verts.Add(new Vector3(v0x + num31 + num33, v1y + num32));
+									verts.Add(new Vector3(v1x + num31 + num33, v1y + num32));
+									verts.Add(new Vector3(v1x + num31 - num33, v0y + num32));
 								}
 							}
-							if (flag7)
+							if (highShadow)
 							{
 								for (Int32 num34 = verts.size - 4; num34 < verts.size; num34++)
 								{
 									highShadowVertIndexes.Add(num34);
 								}
 							}
-							if (zero != Vector3.zero)
+							if (extraOffset != Vector3.zero)
 							{
 								for (Int32 num35 = verts.size - 4; num35 < verts.size; num35++)
 								{
 									Int32 i3;
 									Int32 i2 = i3 = num35;
 									Vector3 a2 = verts[i3];
-									verts[i2] = a2 + zero;
+									verts[i2] = a2 + extraOffset;
 								}
 							}
-							if (NGUIText.ContainCharAlignment(num13))
+							if (NGUIText.ContainCharAlignment(ch))
 							{
-								NGUIText.AlignImageWithLastChar(ref specialImages, betterList, verts, num11);
+								NGUIText.AlignImageWithLastChar(ref specialImages, betterList, verts, printedLine);
 								betterList.Clear();
 							}
-							if (flag4 || flag5)
+							if (underline || strike)
 							{
-								NGUIText.GlyphInfo glyphInfo10 = NGUIText.GetGlyph((Int32)((!flag5) ? 95 : 45), prev);
+								NGUIText.GlyphInfo glyphInfo10 = NGUIText.GetGlyph((Int32)((!strike) ? 95 : 45), prevCh);
 								if (glyphInfo10 != null)
 								{
 									if (uvs != null)
@@ -2094,7 +2107,7 @@ public static class NGUIText
 										}
 										Single x = (glyphInfo10.u0.x + glyphInfo10.u2.x) * 0.5f;
 										Int32 num36 = 0;
-										Int32 num37 = (Int32)((!flag2) ? 1 : 4);
+										Int32 num37 = (Int32)((!bold) ? 1 : 4);
 										while (num36 < num37)
 										{
 											uvs.Add(new Vector2(x, glyphInfo10.u0.y));
@@ -2104,36 +2117,36 @@ public static class NGUIText
 											num36++;
 										}
 									}
-									if (flag && flag5)
+									if (flag && strike)
 									{
-										num19 = (-num3 + glyphInfo10.v0.y) * 0.75f;
-										num18 = (-num3 + glyphInfo10.v1.y) * 0.75f;
+										v0y = (-lineHeight + glyphInfo10.v0.y) * 0.75f;
+										v1y = (-lineHeight + glyphInfo10.v1.y) * 0.75f;
 									}
 									else
 									{
-										num19 = -num3 + glyphInfo10.v0.y;
-										num18 = -num3 + glyphInfo10.v1.y;
+										v0y = -lineHeight + glyphInfo10.v0.y;
+										v1y = -lineHeight + glyphInfo10.v1.y;
 									}
-									if (flag2)
+									if (bold)
 									{
 										for (Int32 num38 = 0; num38 < 4; num38++)
 										{
 											Single num39 = NGUIText.mBoldOffset[num38 * 2];
 											Single num40 = NGUIText.mBoldOffset[num38 * 2 + 1];
-											verts.Add(new Vector3(num14 + num39, num19 + num40));
-											verts.Add(new Vector3(num14 + num39, num18 + num40));
-											verts.Add(new Vector3(num2 + num39, num18 + num40));
-											verts.Add(new Vector3(num2 + num39, num19 + num40));
+											verts.Add(new Vector3(num14 + num39, v0y + num40));
+											verts.Add(new Vector3(num14 + num39, v1y + num40));
+											verts.Add(new Vector3(currentX + num39, v1y + num40));
+											verts.Add(new Vector3(currentX + num39, v0y + num40));
 										}
 									}
 									else
 									{
-										verts.Add(new Vector3(num14, num19));
-										verts.Add(new Vector3(num14, num18));
-										verts.Add(new Vector3(num2, num18));
-										verts.Add(new Vector3(num2, num19));
+										verts.Add(new Vector3(num14, v0y));
+										verts.Add(new Vector3(num14, v1y));
+										verts.Add(new Vector3(currentX, v1y));
+										verts.Add(new Vector3(currentX, v0y));
 									}
-									if (flag7)
+									if (highShadow)
 									{
 										for (Int32 num41 = verts.size - 4; num41 < verts.size; num41++)
 										{
@@ -2149,7 +2162,7 @@ public static class NGUIText
 										NGUIText.s_c0 = Color.Lerp(a, b, num42);
 										NGUIText.s_c1 = Color.Lerp(a, b, num43);
 										Int32 num44 = 0;
-										Int32 num45 = (Int32)((!flag2) ? 1 : 4);
+										Int32 num45 = (Int32)((!bold) ? 1 : 4);
 										while (num44 < num45)
 										{
 											cols.Add(NGUIText.s_c0);
@@ -2162,7 +2175,7 @@ public static class NGUIText
 									else
 									{
 										Int32 num46 = 0;
-										Int32 num47 = (Int32)((!flag2) ? 4 : 16);
+										Int32 num47 = (Int32)((!bold) ? 4 : 16);
 										while (num46 < num47)
 										{
 											cols.Add(color);
@@ -2176,22 +2189,22 @@ public static class NGUIText
 				}
 			}
 		}
-		NGUIText.AddSpecialIconToList(ref specialImages, ref betterList, ref dialogImage, zero, ref num2, num3, num11);
+		NGUIText.AddSpecialIconToList(ref specialImages, ref betterList, ref dialogImage, extraOffset, ref currentX, lineHeight, printedLine);
 		if (size < verts.size)
 		{
-			NGUIText.AlignImage(verts, size, num2 - NGUIText.finalSpacingX, specialImages, num11);
-			NGUIText.Align(verts, size, num2 - NGUIText.finalSpacingX, 4);
+			NGUIText.AlignImage(verts, size, currentX - NGUIText.finalSpacingX, specialImages, printedLine);
+			NGUIText.Align(verts, size, currentX - NGUIText.finalSpacingX, 4);
 			size = verts.size;
 			vertsLineOffsets.Add(size);
 			NGUIText.alignment = alignment;
-			flag8 = false;
+			center = false;
 		}
-		if (betterList.size > 0 && flag9 && num != 45)
+		if (betterList.size > 0 && containCharAlignment && currCh != 45)
 		{
-			NGUIText.AlignImageWithLastChar(ref specialImages, betterList, verts, num11);
+			NGUIText.AlignImageWithLastChar(ref specialImages, betterList, verts, printedLine);
 			betterList.Clear();
 		}
-		zero = Vector3.zero;
+		extraOffset = Vector3.zero;
 		NGUIText.mColors.Clear();
 		NGUIText.alignment = alignment;
 	}

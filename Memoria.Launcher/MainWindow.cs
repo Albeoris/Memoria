@@ -29,7 +29,9 @@ namespace Memoria.Launcher
                 if (String.IsNullOrEmpty(backgroundImagePath) || !File.Exists(backgroundImagePath))
                     return;
 
-                ImageSource imageSource = new BitmapImage(new Uri(backgroundImagePath));
+                String path = Path.GetFullPath(backgroundImagePath);
+
+                ImageSource imageSource = new BitmapImage(new Uri(path, UriKind.Absolute));
                 Launcher.Source = imageSource;
             }
             catch

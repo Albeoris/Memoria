@@ -33,7 +33,7 @@ public class WMScriptDirector : HonoBehavior
 		Transform transform = GameObject.Find("Bee").transform;
 		UnityEngine.Object.Destroy(transform.gameObject);
 		Application.targetFrameRate = 20;
-		Singleton<WMWorld>.Instance.Initialize();
+        Singleton<WMWorld>.Instance.Initialize();
 		this.World = Singleton<WMWorld>.Instance;
 		this.World.ClipDistance = 300000;
 		this.World.Settings.WrapWorld = true;

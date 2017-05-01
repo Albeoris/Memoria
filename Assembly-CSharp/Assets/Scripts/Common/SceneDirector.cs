@@ -30,7 +30,7 @@ namespace Assets.Scripts.Common
 			else if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.WorldMapSceneName) == 0)
 			{
 				Application.targetFrameRate = 20;
-			}
+            }
 			else
 			{
 				Application.targetFrameRate = 60;

@@ -37,6 +37,7 @@ namespace Memoria.Assets
                 }
                 else
                 {
+                    Int32 currentIndex = index;
                     Int32 left = _chars.Length - index;
                     FFIXTextTag tag = FFIXTextTag.TryRead(_chars, ref index, ref left);
                     if (tag == null)
@@ -45,7 +46,7 @@ namespace Memoria.Assets
                     index--;
                     try
                     {
-                        PerformMemoriaTag(ref index, tag);
+                        PerformMemoriaTag(currentIndex, tag);
                     }
                     catch (IndexOutOfRangeException ex)
                     {
@@ -59,7 +60,7 @@ namespace Memoria.Assets
             }
         }
 
-        private void PerformMemoriaTag(ref Int32 characterIndex, FFIXTextTag tag)
+        private void PerformMemoriaTag(Int32 characterIndex, FFIXTextTag tag)
         {
             switch (tag.Code)
             {
