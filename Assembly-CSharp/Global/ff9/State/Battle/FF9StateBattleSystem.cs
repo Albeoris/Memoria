@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using FF9;
+using Memoria;
 using Memoria.Data;
 using Memoria.Prime.Collections;
 using UnityEngine;
@@ -119,4 +121,16 @@ public class FF9StateBattleSystem
 	public EntryCollection<AA_DATA> aa_data;
 
 	public EntryCollection<BattleStatusEntry> add_status;
+
+    public IEnumerable<BattleUnit> EnumerateBattleUnits()
+    {
+        for (BTL_DATA data = FF9StateSystem.Battle.FF9Battle.btl_list.next; data != null; data = data.next)
+            yield return new BattleUnit(data);
+    }
+
+    public BattleUnit GetUnit(Int32 index)
+    {
+        BTL_DATA data = btl_data[index];
+        return new BattleUnit(data);
+    }
 }

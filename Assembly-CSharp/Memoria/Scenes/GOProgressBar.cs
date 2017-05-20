@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Memoria.Scenes
@@ -16,6 +17,11 @@ namespace Memoria.Scenes
             ProgressBar = obj.GetExactComponent<UIProgressBar>();
 
             Foreground = new GOForegroundWidget(obj.GetChild(0));
+        }
+
+        public void SetProgress(Single value)
+        {
+            ProgressBar.value = value;
         }
     }
 }

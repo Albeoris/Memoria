@@ -19,6 +19,17 @@ namespace Memoria.Scenes
             GameObject = obj;
         }
 
+        public Boolean IsActive
+        {
+            get { return GameObject.activeSelf; }
+            set { GameObject.SetActive(value); }
+        }
+
+        public static implicit operator GameObject(GOBase self)
+        {
+            return self.GameObject;
+        }
+
         public static T Create<T>(GameObject obj) where T : GOBase
         {
             return ConstructorCache<T>.Constructor(obj);

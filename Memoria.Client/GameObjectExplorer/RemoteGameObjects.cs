@@ -32,8 +32,8 @@ namespace Memoria.Client
                 GameObjectMessage objectMessage = new GameObjectMessage();
                 objectMessage.Deserialize(br);
 
-                if (br.ReadInt32() != objectMessage.CheckField1)
-                    throw new InvalidDataException();
+                //if (br.ReadInt32() != objectMessage.CheckField1)
+                //    throw new InvalidDataException();
 
                 objectMessages[o] = objectMessage;
 
@@ -53,8 +53,8 @@ namespace Memoria.Client
                     ComponentMessage componentMessage = _messageFactory.CreateComponentMessage(componentIndex);
                     componentMessage.Deserialize(br);
 
-                    if (br.ReadInt32() != componentMessage.CheckField1)
-                        throw new InvalidDataException();
+                    //if (br.ReadInt32() != componentMessage.CheckField1)
+                    //    throw new InvalidDataException();
 
                     componentMessages[c] = componentMessage;
 

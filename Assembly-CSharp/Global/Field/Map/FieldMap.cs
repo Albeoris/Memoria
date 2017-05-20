@@ -95,7 +95,11 @@ public class FieldMap : HonoBehavior
 
 	public override void HonoAwake()
 	{
-		GameObject gameObject = new GameObject("TriPosObj");
+        // DEBUG
+	    // debugRender = true;
+        // FF9StateSystem.Field.isDebugWalkMesh = true;
+
+        GameObject gameObject = new GameObject("TriPosObj");
 		this.debugTriPosObj = gameObject.transform;
 		this.debugTriPosObj.position = Vector3.zero;
 		GameObject gameObject2 = GameObject.Find("FieldMap Camera");
@@ -313,28 +317,6 @@ public class FieldMap : HonoBehavior
 
 	public override void HonoUpdate()
 	{
-		if (this.walkMesh != null)
-		{
-			this.walkMesh.RenderWalkMeshNormal();
-			if (this.debugTriIdx < -1)
-			{
-				this.debugTriIdx = -1;
-			}
-			else if (this.debugTriIdx >= this.walkMesh.tris.Count)
-			{
-				this.debugTriIdx = this.walkMesh.tris.Count - 1;
-			}
-			this.walkMesh.RenderWalkMeshTris(this.debugTriIdx);
-			if (this.debugTriIdx != -1)
-			{
-				WalkMeshTriangle walkMeshTriangle = this.walkMesh.tris[this.debugTriIdx];
-				this.debugTriPosObj.position = walkMeshTriangle.originalCenter;
-			}
-			for (Int32 i = 0; i < (Int32)this.debugPosMarker.Length; i++)
-			{
-				DebugUtil.DebugDrawMarker(this.debugPosMarker[i], 20f, Color.yellow);
-			}
-		}
 		if (this.animIdx == null || (Int32)this.animIdx.Length != this.scene.animList.Count)
 		{
 			this.animIdx = new Boolean[this.scene.animList.Count];
@@ -351,7 +333,33 @@ public class FieldMap : HonoBehavior
 		this.EBG_attachService();
 	}
 
-	public void ff9fieldCharService()
+    public override void HonoOnGUI()
+    {
+        if (this.walkMesh != null)
+        {
+            this.walkMesh.RenderWalkMeshNormal();
+            if (this.debugTriIdx < -1)
+            {
+                this.debugTriIdx = -1;
+            }
+            else if (this.debugTriIdx >= this.walkMesh.tris.Count)
+            {
+                this.debugTriIdx = this.walkMesh.tris.Count - 1;
+            }
+            this.walkMesh.RenderWalkMeshTris(this.debugTriIdx);
+            if (this.debugTriIdx != -1)
+            {
+                WalkMeshTriangle walkMeshTriangle = this.walkMesh.tris[this.debugTriIdx];
+                this.debugTriPosObj.position = walkMeshTriangle.originalCenter;
+            }
+            for (Int32 i = 0; i < (Int32)this.debugPosMarker.Length; i++)
+            {
+                DebugUtil.DebugDrawMarker(this.debugPosMarker[i], 20f, Color.yellow);
+            }
+        }
+    }
+
+    public void ff9fieldCharService()
 	{
 		for (ObjList objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList(); objList != null; objList = objList.next)
 		{

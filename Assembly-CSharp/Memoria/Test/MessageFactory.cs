@@ -74,6 +74,8 @@ namespace Memoria.Test
             {typeof(UIPanel), () => new UIPanelMessage(), obj => new UIPanelMessage((UIPanel)obj)},
             {typeof(UILabel), () => new UILabelMessage(), obj => new UILabelMessage((UILabel)obj)},
             {typeof(UILocalize), () => new UILocalizeMessage(), obj => new UILocalizeMessage((UILocalize)obj)},
+            {typeof(UIWidgetContainer), () => new UIWidgetContainerMessage(), obj => new UIWidgetContainerMessage((UIWidgetContainer)obj)},
+            {typeof(UITable), () => new UITableMessage(), obj => new UITableMessage((UITable)obj)},
         };
     }
 }

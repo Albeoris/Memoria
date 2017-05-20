@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Memoria.Scenes
@@ -10,6 +11,16 @@ namespace Memoria.Scenes
             : base(obj)
         {
             Label = obj.GetExactComponent<UILabel>();
+        }
+
+        public void SetText(String value)
+        {
+            Label.text = value;
+        }
+
+        public void SetColor(Color value)
+        {
+            Label.color = value;
         }
     }
 }

@@ -695,15 +695,15 @@ public static class PSXGPU
 		c2.a = a3;
 	}
 
-	public static void DrawLineG2(Boolean abe, Color32 c0, Vector3 p0, Color32 c1, Vector3 p1)
+	public static void DrawLineG2(Boolean blend, Color32 beginColor, Vector3 begin, Color32 endColor, Vector3 end)
 	{
 		PSXGPU.SetMaterial(PSXGPU.matPSXShaderNoTexture);
-		c0.a = (c1.a = PSXGPU.SetShader(abe, PSXGPU.GlobalFlagABR, PSXGPU.drOffset));
+		beginColor.a = (endColor.a = PSXGPU.SetShader(blend, PSXGPU.GlobalFlagABR, PSXGPU.drOffset));
 		PSXGPU.SetPolygon(1);
-		GL.Color(c0);
-		GL.Vertex(p0);
-		GL.Color(c1);
-		GL.Vertex(p1);
+		GL.Color(beginColor);
+		GL.Vertex(begin);
+		GL.Color(endColor);
+		GL.Vertex(end);
 		GL.End();
 	}
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
 using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
@@ -97,17 +98,17 @@ public class BattleResultUI : UIScene
 			{
 				FF9Sfx.FF9SFX_StopLoop(105);
 				this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
-				BattleResultUI.BattleEndValue[] array = this.expValue;
+				BattleEndValue[] array = this.expValue;
 				for (Int32 i = 0; i < (Int32)array.Length; i++)
 				{
-					BattleResultUI.BattleEndValue battleEndValue = array[i];
+					BattleEndValue battleEndValue = array[i];
 					battleEndValue.step = battleEndValue.value;
 				}
 				this.UpdateExp();
-				BattleResultUI.BattleEndValue[] array2 = this.apValue;
+				BattleEndValue[] array2 = this.apValue;
 				for (Int32 j = 0; j < (Int32)array2.Length; j++)
 				{
-					BattleResultUI.BattleEndValue battleEndValue2 = array2[j];
+					BattleEndValue battleEndValue2 = array2[j];
 					battleEndValue2.step = battleEndValue2.value;
 				}
 				this.UpdateAp();
@@ -336,8 +337,10 @@ public class BattleResultUI : UIScene
 		{
 			if (((Int32)battle.btl_bonus.member_flag & 1 << i) != 0 && FF9StateSystem.Common.FF9.party.member[i] != null)
 			{
-				this.isNeedExp[i] = this.IsNeedExp(FF9StateSystem.Common.FF9.party.member[i]);
-				this.isNeedAp[i] = this.IsNeedAp(FF9StateSystem.Common.FF9.party.member[i]);
+			    Character player = FF9StateSystem.Common.FF9.party.GetCharacter(i);
+
+                this.isNeedExp[i] = this.IsNeedExp(player);
+				this.isNeedAp[i] = this.IsNeedAp(player);
 				if (this.isNeedExp[i])
 				{
 					this.remainPlayerCounter++;
@@ -346,14 +349,14 @@ public class BattleResultUI : UIScene
 		}
 	}
 
-	private Boolean IsNeedExp(PLAYER play)
+	private Boolean IsNeedExp(Character play)
 	{
-		return this.IsEnable(play) && play.exp < 9999999u;
+		return this.IsEnable(play.Data) && play.Data.exp < 9999999u;
 	}
 
-	private Boolean IsNeedAp(PLAYER play)
+	private Boolean IsNeedAp(Character play)
 	{
-		return this.IsEnable(play) && ff9abil.FF9Abil_HasAp(play);
+		return this.IsEnable(play.Data) && ff9abil.FF9Abil_HasAp(play);
 	}
 
 	private Boolean IsEnableDraw(PLAYER play, Int32 id)
@@ -371,8 +374,8 @@ public class BattleResultUI : UIScene
 		this.AllPanel.SetActive(true);
 		for (Int32 i = 0; i < 4; i++)
 		{
-			this.expValue[i] = new BattleResultUI.BattleEndValue();
-			this.apValue[i] = new BattleResultUI.BattleEndValue();
+			this.expValue[i] = new BattleEndValue();
+			this.apValue[i] = new BattleEndValue();
 			this.isNeedAp[i] = false;
 			this.isNeedExp[i] = false;
 		}
@@ -409,20 +412,20 @@ public class BattleResultUI : UIScene
 			true
 		};
 		Boolean flag = true;
-		BattleResultUI.BattleEndValue[] array = this.expValue;
+		BattleEndValue[] array = this.expValue;
 		for (Int32 j = 0; j < (Int32)array.Length; j++)
 		{
-			BattleResultUI.BattleEndValue battleEndValue = array[j];
+			BattleEndValue battleEndValue = array[j];
 			if (battleEndValue.value != 0u)
 			{
 				flag = false;
 				break;
 			}
 		}
-		BattleResultUI.BattleEndValue[] array2 = this.apValue;
+		BattleEndValue[] array2 = this.apValue;
 		for (Int32 k = 0; k < (Int32)array2.Length; k++)
 		{
-			BattleResultUI.BattleEndValue battleEndValue2 = array2[k];
+			BattleEndValue battleEndValue2 = array2[k];
 			if (battleEndValue2.value != 0u)
 			{
 				flag = false;
@@ -480,19 +483,19 @@ public class BattleResultUI : UIScene
 			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
 			if (this.isNeedExp[i] && player != null)
 			{
-				BattleResultUI.BattleEndValue battleEndValue = new BattleResultUI.BattleEndValue();
+				BattleEndValue battleEndValue = new BattleEndValue();
 				battleEndValue.value = this.defaultExp;
-				if (ff9abil.FF9Abil_GetEnableSA((Int32)player.info.slot_no, 235))
+				if (ff9abil.FF9Abil_GetEnableSA(player.Index, 235))
 				{
 					battleEndValue.value += this.defaultExp >> 1;
 				}
-				if ((UInt64)this.defaultExp < (UInt64)((Int64)BattleResultUI.EXPMinTick))
+				if (this.defaultExp < (UInt64)EXPMinTick)
 				{
 					battleEndValue.step = 1u;
 				}
-				else if ((UInt64)this.defaultExp < (UInt64)((Int64)(BattleResultUI.EXPMinTick * BattleResultUI.EXPDefaultAdd)))
+				else if (this.defaultExp < (UInt64)(EXPMinTick * EXPDefaultAdd))
 				{
-					battleEndValue.step = (UInt32)(((UInt64)this.defaultExp + (UInt64)((Int64)BattleResultUI.EXPMinTick) - 1UL) / (UInt64)((Int64)BattleResultUI.EXPMinTick));
+					battleEndValue.step = (UInt32)((this.defaultExp + (UInt64)EXPMinTick - 1UL) / (UInt64)EXPMinTick);
 				}
 				else
 				{
@@ -508,8 +511,8 @@ public class BattleResultUI : UIScene
 			}
 			if (this.isNeedAp[i] && player != null)
 			{
-				BattleResultUI.BattleEndValue battleEndValue2 = new BattleResultUI.BattleEndValue();
-				if (ff9abil.FF9Abil_GetEnableSA((Int32)player.info.slot_no, 236))
+				BattleEndValue battleEndValue2 = new BattleEndValue();
+				if (ff9abil.FF9Abil_GetEnableSA(player.Index, 236))
 				{
 					battleEndValue2.value = this.defaultAp << 1;
 				}
@@ -521,7 +524,7 @@ public class BattleResultUI : UIScene
 				battleEndValue2.current = 0u;
 				this.apValue[i] = battleEndValue2;
 			}
-			if (player != null && ff9abil.FF9Abil_GetEnableSA((Int32)player.info.slot_no, 237))
+			if (player != null && ff9abil.FF9Abil_GetEnableSA(player.Index, 237))
 			{
 				flag = true;
 			}
@@ -593,7 +596,7 @@ public class BattleResultUI : UIScene
 		for (Int32 i = 0; i < 4; i++)
 		{
 			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
-			BattleResultUI.BattleEndValue battleEndValue = this.expValue[i];
+			BattleEndValue battleEndValue = this.expValue[i];
 			if (this.isNeedExp[i])
 			{
 				if (player != null)
@@ -638,7 +641,7 @@ public class BattleResultUI : UIScene
 		{
 			if (this.isNeedAp[i])
 			{
-				BattleResultUI.BattleEndValue battleEndValue = this.apValue[i];
+				BattleEndValue battleEndValue = this.apValue[i];
 				if (battleEndValue.current < battleEndValue.value)
 				{
 					this.apEndTick = false;
@@ -651,7 +654,7 @@ public class BattleResultUI : UIScene
 
 	private void AddAp(Int32 id, UInt32 ap)
 	{
-		PLAYER player = FF9StateSystem.Common.FF9.party.member[id];
+		Character player = FF9StateSystem.Common.FF9.party.GetCharacter(id);
 		if (ap == 0u)
 		{
 			return;
@@ -667,28 +670,28 @@ public class BattleResultUI : UIScene
 		this.apValue[id].current += ap;
 		for (Int32 i = 0; i < 5; i++)
 		{
-			if (player.equip[i] != 255)
+			if (player.Equipment[i] != 255)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)player.equip[i]];
+				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)player.Equipment[i]];
 				for (Int32 j = 0; j < 3; j++)
 				{
 					if (ff9ITEM_DATA.ability[j] != 0)
 					{
-						Int32 num = ff9abil.FF9Abil_GetIndex((Int32)player.info.slot_no, (Int32)ff9ITEM_DATA.ability[j]);
+						Int32 num = ff9abil.FF9Abil_GetIndex(player.Index, ff9ITEM_DATA.ability[j]);
 						if (num >= 0)
 						{
-							Int32 max_ap = (Int32)ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type][num].Ap;
-							Int32 num2 = (Int32)player.pa[num];
+							Int32 max_ap = ff9abil._FF9Abil_PaData[player.PresetId][num].Ap;
+							Int32 num2 = (Int32)player.Data.pa[num];
 							if (max_ap > num2)
 							{
 								if ((Int64)(max_ap - num2) <= (Int64)((UInt64)ap))
 								{
-									player.pa[num] = (Byte)max_ap;
+									player.Data.pa[num] = (Byte)max_ap;
 									this.ApLearned(id, (Int32)ff9ITEM_DATA.ability[j]);
 								}
 								else
 								{
-									Byte[] pa = player.pa;
+									Byte[] pa = player.Data.pa;
 									Int32 num3 = num;
 									pa[num3] = (Byte)(pa[num3] + (Byte)ap);
 								}
@@ -1007,11 +1010,11 @@ public class BattleResultUI : UIScene
 
 	private BattleResultUI.ResultState currentState;
 
-	private BattleResultUI.BattleEndValue[] expValue = new BattleResultUI.BattleEndValue[4];
+	private BattleEndValue[] expValue = new BattleEndValue[4];
 
-	private BattleResultUI.BattleEndValue[] apValue = new BattleResultUI.BattleEndValue[4];
+	private BattleEndValue[] apValue = new BattleEndValue[4];
 
-	private BattleResultUI.BattleEndValue gilValue = new BattleResultUI.BattleEndValue();
+	private BattleEndValue gilValue = new BattleEndValue();
 
 	private List<FF9ITEM> itemList = new List<FF9ITEM>();
 

@@ -104,17 +104,19 @@ public class UIPointer : MonoBehaviour
 		}
 	}
 
-	public void SetBlinkActive(Boolean isActive)
-	{
-		if (!this.isHidden)
-		{
-			this.blinkActive = isActive;
-			this.pointerSprite.color = Color.white;
-			this.pointerTween.enabled = isActive;
-		}
-	}
+    public void SetBlinkActive(Boolean isActive)
+    {
+        if (!this.isHidden)
+        {
+            this.blinkActive = isActive;
+            if (this.pointerSprite != null)
+                this.pointerSprite.color = Color.white;
+            if (this.pointerTween != null)
+                this.pointerTween.enabled = isActive;
+        }
+    }
 
-	public void SetHelpActive(Boolean isActive, Boolean isImmediate)
+    public void SetHelpActive(Boolean isActive, Boolean isImmediate)
 	{
 		if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
 		{

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Database;
 using UnityEngine;
@@ -309,7 +310,7 @@ public class StatusUI : UIScene
     private void DrawAbilityInfo(AbilityItemHUD abilityHud, Int32 index)
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
-        Boolean flag = ff9abil.FF9Abil_HasAp(player);
+        Boolean flag = ff9abil.FF9Abil_HasAp(new Character(player));
         if (flag && player.pa[index] == 0)
         {
             abilityHud.Self.SetActive(false);

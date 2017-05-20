@@ -25,6 +25,7 @@ namespace Memoria.Client
                     Native.Text = value;
                     IValueMessage valueMessage = new StringMessage(value);
                     SendPropertyChanged(nameof(UILabel.text), valueMessage);
+                    RaisePropertyChanged(nameof(Title));
                 }
             }
         }

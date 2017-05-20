@@ -133,6 +133,8 @@
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIRectView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UILabelView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UIPanelView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UITableView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UIWidgetContainerView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIWidget\UIWidgetView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\ComponentView.cs" />
     <Compile Include="GameObjectExplorer\Views\GameObjectView.cs" />

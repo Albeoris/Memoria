@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Prime;
+using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
 
@@ -14,7 +16,8 @@ public class WalkMesh
 		this.tris = new List<WalkMeshTriangle>();
 		this.ProjectedWalkMesh = (GameObject)null;
 		this.OriginalWalkMesh = (GameObject)null;
-		this.trisPerCamera = new List<WalkMeshTriangle>[(Int32)fieldMap.scene.cameraCount];
+
+        this.trisPerCamera = new List<WalkMeshTriangle>[(Int32)fieldMap.scene.cameraCount];
 		for (Int32 i = 0; i < (Int32)this.trisPerCamera.Length; i++)
 		{
 			this.trisPerCamera[i] = null;
@@ -34,21 +37,21 @@ public class WalkMesh
         BGCAM_DEF bgcam_DEF = scene.cameraList[this.fieldMap.camIdx];
         this.trisPerCamera[this.fieldMap.camIdx] = new List<WalkMeshTriangle>();
         this.bgiCharPos = bgi.charPos.ToVector3();
-        List<Vector3> list = new List<Vector3>();
-        List<Vector3> list2 = new List<Vector3>();
+        List<Vector3> originalVertices = new List<Vector3>();
+        List<Vector3> transformedVertices = new List<Vector3>();
         for (ushort num = 0; num < bgi.floorCount; num = (ushort)(num + 1))
         {
             BGI_FLOOR_DEF bgi_FLOOR_DEF = bgi.floorList[(int)num];
-            list.Clear();
-            list2.Clear();
+            originalVertices.Clear();
+            transformedVertices.Clear();
             for (int i = 0; i < bgi.vertexList.Count; i++)
             {
                 Vector3 vector = bgi.vertexList[i].ToVector3() + bgi_FLOOR_DEF.orgPos.ToVector3() + bgi.orgPos.ToVector3();
                 vector.y *= -1f;
-                list.Add(vector);
+                originalVertices.Add(vector);
                 float num2 = PSX.CalculateGTE_RTPTZ(vector, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.fieldMap.offset);
                 vector = PSX.CalculateGTE_RTPT(vector, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.fieldMap.offset);
-                list2.Add(vector);
+                transformedVertices.Add(vector);
             }
             for (ushort num3 = 0; num3 < bgi_FLOOR_DEF.triCount; num3 = (ushort)(num3 + 1))
             {
@@ -58,8 +61,8 @@ public class WalkMesh
                 walkMeshTriangle.triIdx = bgi_TRI_DEF.triIdx;
                 for (int j = 0; j < 3; j++)
                 {
-                    walkMeshTriangle.originalVertices[j] = list[(int)bgi_TRI_DEF.vertexNdx[j]];
-                    walkMeshTriangle.transformedVertices[j] = list2[(int)bgi_TRI_DEF.vertexNdx[j]];
+                    walkMeshTriangle.originalVertices[j] = originalVertices[(int)bgi_TRI_DEF.vertexNdx[j]];
+                    walkMeshTriangle.transformedVertices[j] = transformedVertices[(int)bgi_TRI_DEF.vertexNdx[j]];
                     walkMeshTriangle.neighborIdx[j] = (int)bgi_TRI_DEF.neighborNdx[j];
                 }
                 walkMeshTriangle.originalBounds = new Bounds(walkMeshTriangle.originalVertices[0], Vector3.zero);
@@ -228,7 +231,7 @@ public class WalkMesh
 			mesh.triangles = list3.ToArray();
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
-			MeshRenderer meshRenderer = gameObject2.AddComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = gameObject2.AddComponent<MeshRenderer>();
 			MeshFilter meshFilter = gameObject2.AddComponent<MeshFilter>();
 			meshFilter.mesh = mesh;
 			Material material;
@@ -373,11 +376,13 @@ public class WalkMesh
 		return num;
 	}
 
-	public void RenderWalkMeshTris(Int32 highlightTriIdx)
+    private String _debugChangedValue = String.Empty;
+
+    public void RenderWalkMeshTris(Int32 highlightTriIdx)
 	{
         if (!this.fieldMap.debugRender)
             return;
-
+        
         BGSCENE_DEF scene = this.fieldMap.scene;
 		Vector3 zero = new Vector3(0f, 0f, (Single)scene.curZ);
 		if (FF9StateSystem.Field.isDebugWalkMesh)
@@ -386,21 +391,62 @@ public class WalkMesh
 		}
 		for (Int32 i = 0; i < this.tris.Count; i++)
 		{
-			WalkMeshTriangle walkMeshTriangle = this.tris[i];
+		    if (i % 2 == 0)
+		        zero = new Vector3(0f, 0f, (Single)scene.curZ * 2);
+            else
+                zero = new Vector3(0f, 0f, -scene.curZ * 2);
+
+            WalkMeshTriangle walkMeshTriangle = this.tris[i];
 			Color white = Color.white;
-			Vector3 a = walkMeshTriangle.transformedVertices[0];
-			Vector3 a2 = walkMeshTriangle.transformedVertices[1];
-			Vector3 a3 = walkMeshTriangle.transformedVertices[2];
-			if (FF9StateSystem.Field.isDebugWalkMesh)
+
+            BGCAM_DEF camera = scene.cameraList[0]; // Main camera
+
+		    GUI.BeginGroup(new Rect(0, 0, 400, 200));
+		    GUI.Box(new Rect(0, 0, 400, 200), "Camera 0");
+
+            for (int k = 0; k < 3; k++)
+		    for (int n = 0; n < 3; n++)
+		    {
+		        GUI.Label(new Rect(25 + n * 125, 20 + k * 40, 30, 40), $"r[{k},{n}]");
+		        Int16 value = (Int16)GUI.HorizontalSlider(new Rect(60 + n * 125, 25 + k * 40, 80, 40), camera.r[k, n], -6000, 6000);
+
+                if (value != camera.r[k, n])
+                {
+                    _debugChangedValue = $"r[{k},{n}]: {value}";
+		            camera.r[k, n] = value;
+		        }
+		    }
+
+		    for (int n = 0; n < 3; n++)
+		    {
+		        GUI.Label(new Rect(25 + n * 125, 20 + 3 * 40, 100, 40), $"t[{n}]");
+                Int16 value = (Int16)GUI.HorizontalSlider(new Rect(60 + n * 125, 25 + 3 * 40, 80, 40), camera.t[n], -6000, 6000);
+                if (value != camera.t[n])
+		        {
+		            _debugChangedValue = $"t[{n}]: {value}";
+		            camera.t[n] = value;
+		        }
+		    }
+
+		    GUI.Label(new Rect(160, 170, 100, 30), _debugChangedValue);
+            GUI.EndGroup();
+
+            Vector3 a1 = PSX.CalculateGTE_RTPT(walkMeshTriangle.originalVertices[0], Matrix4x4.identity, camera.GetMatrixRT(), camera.GetViewDistance(), this.fieldMap.offset);
+            Vector3 a2 = PSX.CalculateGTE_RTPT(walkMeshTriangle.originalVertices[1], Matrix4x4.identity, camera.GetMatrixRT(), camera.GetViewDistance(), this.fieldMap.offset);
+            Vector3 a3 = PSX.CalculateGTE_RTPT(walkMeshTriangle.originalVertices[2], Matrix4x4.identity, camera.GetMatrixRT(), camera.GetViewDistance(), this.fieldMap.offset);
+
+            if (FF9StateSystem.Field.isDebugWalkMesh)
 			{
-				a = walkMeshTriangle.originalVertices[0];
+				a1 = walkMeshTriangle.originalVertices[0];
 				a2 = walkMeshTriangle.originalVertices[1];
 				a3 = walkMeshTriangle.originalVertices[2];
 			}
-			global::Debug.DrawLine(a + zero, a2 + zero, white, 0f, true);
-			global::Debug.DrawLine(a2 + zero, a3 + zero, white, 0f, true);
-			global::Debug.DrawLine(a + zero, a3 + zero, white, 0f, true);
-		}
+
+            DebugUtil.DrawLine(a1 + zero, a2 + zero, white, 0f, true);
+			DebugUtil.DrawLine(a2 + zero, a3 + zero, white, 0f, true);
+            DebugUtil.DrawLine(a1 + zero, a3 + zero, white, 0f, true);
+        }
+
 		if (highlightTriIdx >= 0 && highlightTriIdx < this.tris.Count)
 		{
 			WalkMeshTriangle walkMeshTriangle2 = this.tris[highlightTriIdx];
@@ -414,13 +460,13 @@ public class WalkMesh
 				a5 = walkMeshTriangle2.originalVertices[1];
 				a6 = walkMeshTriangle2.originalVertices[2];
 			}
-			global::Debug.DrawLine(a4 + zero, a5 + zero, magenta, 0f, true);
-			global::Debug.DrawLine(a5 + zero, a6 + zero, magenta, 0f, true);
-			global::Debug.DrawLine(a4 + zero, a6 + zero, magenta, 0f, true);
+            DebugUtil.DrawLine(a4 + zero, a5 + zero, magenta, 0f, true);
+			DebugUtil.DrawLine(a5 + zero, a6 + zero, magenta, 0f, true);
+            DebugUtil.DrawLine(a4 + zero, a6 + zero, magenta, 0f, true);
 		}
 	}
 
-	public void RenderWalkMeshNormal()
+    public void RenderWalkMeshNormal()
 	{
         if (!this.fieldMap.debugRender)
             return;
@@ -448,7 +494,7 @@ public class WalkMesh
 				vector2.Normalize();
 				vector2.y *= -1f;
 				vector2 *= 200f;
-				global::Debug.DrawLine(vector, vector - vector2, blue, 0f, true);
+                DebugUtil.DrawLine(vector, vector - vector2, blue, 0f, true);
 			}
 		}
 	}
@@ -481,7 +527,7 @@ public class WalkMesh
 				vector2.Normalize();
 				vector2.y *= -1f;
 				vector2 *= 200f;
-				global::Debug.DrawLine(vector, vector - vector2, blue, 0f, true);
+                DebugUtil.DrawLine(vector, vector - vector2, blue, 0f, true);
 			}
 		}
 		for (Int32 j = 0; j < this.tris.Count; j++)
@@ -506,7 +552,7 @@ public class WalkMesh
 							a = walkMeshTriangle2.transformedVertices[num];
 							a2 = walkMeshTriangle2.transformedVertices[num2];
 						}
-						global::Debug.DrawLine(a + zero, a2 + zero, color, 0f, true);
+                        DebugUtil.DrawLine(a + zero, a2 + zero, color, 0f, true);
 					}
 				}
 				else
@@ -522,7 +568,7 @@ public class WalkMesh
 						a3 = walkMeshTriangle2.transformedVertices[num3];
 						a4 = walkMeshTriangle2.transformedVertices[num4];
 					}
-					global::Debug.DrawLine(a3 + zero, a4 + zero, color, 0f, true);
+                    DebugUtil.DrawLine(a3 + zero, a4 + zero, color, 0f, true);
 				}
 			}
 		}
@@ -549,7 +595,7 @@ public class WalkMesh
 			a = walkMeshTriangle.transformedVertices[num];
 			a2 = walkMeshTriangle.transformedVertices[num2];
 		}
-		global::Debug.DrawLine(a + zero, a2 + zero, red, 1f, true);
+        DebugUtil.DrawLine(a + zero, a2 + zero, red, 1f, true);
 	}
 
 	public void DebugRenderTri(BGI_TRI_DEF tri)
@@ -580,9 +626,9 @@ public class WalkMesh
 			a2 = tri.transformedVertices[1];
 			a3 = tri.transformedVertices[2];
 		}
-		global::Debug.DrawLine(a + zero, a2 + zero, red, 10f, true);
-		global::Debug.DrawLine(a2 + zero, a3 + zero, red, 10f, true);
-		global::Debug.DrawLine(a + zero, a3 + zero, red, 10f, true);
+		DebugUtil.DrawLine(a + zero, a2 + zero, red, 10f, true);
+		DebugUtil.DrawLine(a2 + zero, a3 + zero, red, 10f, true);
+        DebugUtil.DrawLine(a + zero, a3 + zero, red, 10f, true);
 	}
 
 	public void DebugRenderTri(BGI_TRI_DEF tri, Color col)
@@ -609,9 +655,9 @@ public class WalkMesh
 			a2 = tri.transformedVertices[1];
 			a3 = tri.transformedVertices[2];
 		}
-		global::Debug.DrawLine(a + zero, a2 + zero, col, 10f, true);
-		global::Debug.DrawLine(a2 + zero, a3 + zero, col, 10f, true);
-		global::Debug.DrawLine(a + zero, a3 + zero, col, 10f, true);
+		DebugUtil.DrawLine(a + zero, a2 + zero, col, 10f, true);
+		DebugUtil.DrawLine(a2 + zero, a3 + zero, col, 10f, true);
+        DebugUtil.DrawLine(a + zero, a3 + zero, col, 10f, true);
 	}
 
 	private void ResetPathLinks()
@@ -893,30 +939,30 @@ public class WalkMesh
 			Vector3 position = actor1.go.transform.position;
 			Vector3 position2 = actor1.go.transform.position;
 			Vector3 vector = new Vector3((Single)i, 0f, (Single)(9 - i));
-			global::Debug.DrawLine(position, position2 + vector.normalized * r, Color.red, 0.5f, true);
+            DebugUtil.DrawLine(position, position2 + vector.normalized * r, Color.red, 0.5f, true);
 			Vector3 position3 = actor1.go.transform.position;
 			Vector3 position4 = actor1.go.transform.position;
 			Vector3 vector2 = new Vector3((Single)(-(Single)i), 0f, (Single)(9 - i));
-			global::Debug.DrawLine(position3, position4 + vector2.normalized * r, Color.red, 0.5f, true);
+            DebugUtil.DrawLine(position3, position4 + vector2.normalized * r, Color.red, 0.5f, true);
 			Vector3 position5 = actor1.go.transform.position;
 			Vector3 position6 = actor1.go.transform.position;
 			Vector3 vector3 = new Vector3((Single)i, 0f, (Single)(-9 + i));
-			global::Debug.DrawLine(position5, position6 + vector3.normalized * r, Color.red, 0.5f, true);
+            DebugUtil.DrawLine(position5, position6 + vector3.normalized * r, Color.red, 0.5f, true);
 			Vector3 position7 = actor1.go.transform.position;
 			Vector3 position8 = actor1.go.transform.position;
 			Vector3 vector4 = new Vector3((Single)(-(Single)i), 0f, (Single)(-9 + i));
-			global::Debug.DrawLine(position7, position8 + vector4.normalized * r, Color.red, 0.5f, true);
+            DebugUtil.DrawLine(position7, position8 + vector4.normalized * r, Color.red, 0.5f, true);
 		}
 		for (Int32 j = 0; j < 10; j++)
 		{
 			Vector3 vector5 = new Vector3((Single)j, 0f, (Single)(9 - j));
-			global::Debug.DrawLine(p0, p0 + vector5.normalized * r0, Color.green, 0.5f, true);
+            DebugUtil.DrawLine(p0, p0 + vector5.normalized * r0, Color.green, 0.5f, true);
 			Vector3 vector6 = new Vector3((Single)(-(Single)j), 0f, (Single)(9 - j));
-			global::Debug.DrawLine(p0, p0 + vector6.normalized * r0, Color.green, 0.5f, true);
+            DebugUtil.DrawLine(p0, p0 + vector6.normalized * r0, Color.green, 0.5f, true);
 			Vector3 vector7 = new Vector3((Single)j, 0f, (Single)(-9 + j));
-			global::Debug.DrawLine(p0, p0 + vector7.normalized * r0, Color.green, 0.5f, true);
+            DebugUtil.DrawLine(p0, p0 + vector7.normalized * r0, Color.green, 0.5f, true);
 			Vector3 vector8 = new Vector3((Single)(-(Single)j), 0f, (Single)(-9 + j));
-			global::Debug.DrawLine(p0, p0 + vector8.normalized * r0, Color.green, 0.5f, true);
+            DebugUtil.DrawLine(p0, p0 + vector8.normalized * r0, Color.green, 0.5f, true);
 		}
 	}
 

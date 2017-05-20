@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -52,9 +53,9 @@ namespace FF9
             return (sa[num >> 5] & 1 << num) != 0L;
         }
 
-        public static void FF9Abil_SetEnableSA(Int32 slot_id, Int32 abil_id, Boolean enable)
+        public static void FF9Abil_SetEnableSA(CharacterIndex characterIndex, Int32 abil_id, Boolean enable)
         {
-            UInt32[] numArray = FF9StateSystem.Common.FF9.player[slot_id].sa;
+            UInt32[] numArray = FF9StateSystem.Common.FF9.player[characterIndex].sa;
             Int32 num = abil_id - 192;
             if (enable)
                 numArray[num >> 5] |= (UInt32)(1 << num);
@@ -62,17 +63,17 @@ namespace FF9
                 numArray[num >> 5] &= (UInt32)~(1 << num);
         }
 
-        public static Boolean FF9Abil_GetEnableSA(Int32 slot_id, Int32 abil_id)
+        public static Boolean FF9Abil_GetEnableSA(CharacterIndex characterIndex, Int32 abil_id)
         {
-            return FF9Abil_IsEnableSA(FF9StateSystem.Common.FF9.player[slot_id].sa, abil_id);
+            return FF9Abil_IsEnableSA(FF9StateSystem.Common.FF9.player[characterIndex].sa, abil_id);
         }
 
-        public static Int32 FF9Abil_GetAp(Int32 slot_id, Int32 abil_id)
+        public static Int32 FF9Abil_GetAp(CharacterIndex characterIndex, Int32 abil_id)
         {
-            Int32 index = FF9Abil_GetIndex(slot_id, abil_id);
+            Int32 index = FF9Abil_GetIndex(characterIndex, abil_id);
             if (index < 0)
                 return -1;
-            return FF9StateSystem.Common.FF9.player[slot_id].pa[index];
+            return FF9StateSystem.Common.FF9.player[characterIndex].pa[index];
         }
 
         public static Int32 FF9Abil_SetAp(Int32 slot_id, Int32 abil_id, Int32 ap)
@@ -100,15 +101,15 @@ namespace FF9
             return _FF9Abil_PaData[player.info.menu_type][index].Ap;
         }
 
-        public static Boolean FF9Abil_HasAp(PLAYER play)
+        public static Boolean FF9Abil_HasAp(Character play)
         {
-            if ((play.category & 16) == 0 && play.info.menu_type < 8)
+            if (play.IsMainCharacter && play.PresetId < 8)
                 return true;
 
-            if (play.info.menu_type >= _FF9Abil_PaData.Length)
+            if (play.PresetId >= _FF9Abil_PaData.Length)
                 return false;
 
-            return _FF9Abil_PaData[play.info.menu_type].Any(pa => pa.Ap > 0);
+            return _FF9Abil_PaData[play.PresetId].Any(pa => pa.Ap > 0);
         }
 
         public static Int32 FF9Abil_GetIndex(Int32 slot_id, Int32 abil_id)
@@ -132,13 +133,13 @@ namespace FF9
 
         public static Boolean FF9Abil_IsMaster(CharacterPresetId presetId, Int32 abilityId)
         {
-            return FF9Abil_IsMaster((Int32)presetId, abilityId);
+            return FF9Abil_IsMaster(presetId, abilityId);
         }
 
-        public static Boolean FF9Abil_IsMaster(Int32 slot_id, Int32 abil_id)
+        public static Boolean FF9Abil_IsMaster(CharacterIndex characterIndex, Int32 abil_id)
         {
-            Int32 ap = FF9Abil_GetAp(slot_id, abil_id);
-            Int32 max = FF9Abil_GetMax(slot_id, abil_id);
+            Int32 ap = FF9Abil_GetAp(characterIndex, abil_id);
+            Int32 max = FF9Abil_GetMax(characterIndex, abil_id);
             return ap >= 0 && max >= 0 && ap >= max;
         }
 

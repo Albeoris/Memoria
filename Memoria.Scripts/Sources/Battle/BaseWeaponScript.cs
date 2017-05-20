@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.GambleDefence();
             _v.Target.PhysicalPenaltyAndBonusAttack();
-            if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PresetId == CharacterPresetId.Steiner)
+            if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterPresetId.Steiner)
                 _v.Context.Attack *= 2;
 
             _v.BonusBackstabAndPenaltyLongDistance();

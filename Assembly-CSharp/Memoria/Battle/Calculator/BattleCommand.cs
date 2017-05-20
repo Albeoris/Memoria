@@ -36,14 +36,15 @@ namespace Memoria
 
     public sealed class BattleEnemy
     {
-        private readonly ENEMY _data;
+        internal readonly ENEMY Data;
 
         internal BattleEnemy(ENEMY data)
         {
-            _data = data;
+            Data = data;
         }
 
-        public Byte[] StealableItems => _data.steal_item;
+        public String Name => Data.et.name;
+        public Byte[] StealableItems => Data.steal_item;
 
         public static BattleEnemy Find(BattleUnit unit)
         {

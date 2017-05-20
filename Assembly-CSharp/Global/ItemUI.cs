@@ -697,8 +697,8 @@ public class ItemUI : UIScene
                         targetHud.MPPanel.SetActive(true);
                         targetHud.StatusesPanel.SetActive(false);
                         continue;
-                    case TargetDisplay.Debufs:
-                    case TargetDisplay.Bufs:
+                    case TargetDisplay.Debuffs:
+                    case TargetDisplay.Buffs:
                         targetHud.HPPanel.SetActive(false);
                         targetHud.MPPanel.SetActive(false);
                         targetHud.StatusesPanel.SetActive(true);

@@ -1,5 +1,6 @@
 ﻿using System;
 using FF9;
+using Memoria;
 using Memoria.Data;
 
 public class ff9feqp
@@ -80,7 +81,7 @@ public class ff9feqp
 	private static void FF9FEqp_UpdateSA(PLAYER play)
 	{
 		Boolean[] array = new Boolean[64];
-		if (!ff9abil.FF9Abil_HasAp(play))
+		if (!ff9abil.FF9Abil_HasAp(new Character(play)))
 		{
 			return;
 		}
@@ -99,14 +100,14 @@ public class ff9feqp
 				}
 			}
 		}
-		CharacterAbility[] array2 = ff9abil._FF9Abil_PaData[(Int32)play.info.menu_type];
+		CharacterAbility[] array2 = ff9abil._FF9Abil_PaData[play.PresetId];
 		for (Int32 i = 0; i < 48; i++)
 		{
-			if (192 <= array2[i].Id && ff9abil.FF9Abil_GetEnableSA((Int32)play.info.slot_no, (Int32)array2[i].Id) && !array[(Int32)(array2[i].Id - 192)] && play.pa[i] < array2[i].Ap)
+			if (192 <= array2[i].Id && ff9abil.FF9Abil_GetEnableSA(play.Index, array2[i].Id) && !array[array2[i].Id - 192] && play.pa[i] < array2[i].Ap)
 			{
-				ff9abil.FF9Abil_SetEnableSA((Int32)play.info.slot_no, (Int32)array2[i].Id, false);
-				Int32 capa_val = (Int32)ff9abil._FF9Abil_SaData[(Int32)(array2[i].Id - 192)].GemsCount;
-				if ((Int32)(play.max.capa - play.cur.capa) >= capa_val)
+				ff9abil.FF9Abil_SetEnableSA(play.Index, array2[i].Id, false);
+				Int32 capa_val = ff9abil._FF9Abil_SaData[array2[i].Id - 192].GemsCount;
+				if (play.max.capa - play.cur.capa >= capa_val)
 				{
 					POINTS cur = play.cur;
 					cur.capa = (Byte)(cur.capa + (Byte)capa_val);

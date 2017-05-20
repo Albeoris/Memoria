@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Memoria.Scenes
@@ -5,9 +6,9 @@ namespace Memoria.Scenes
     internal sealed class GONavigationButton : GOWidgetButton
     {
         public readonly UIKeyNavigation KeyNavigation;
-        public readonly ButtonGroupState GroupState;
+        public readonly ButtonGroupState ButtonGroup;
 
-        public readonly GOLabel Label;
+        public readonly GOLabel Name;
         public readonly GOSprite Highlight;
         public readonly GOThinBackground Background;
 
@@ -15,11 +16,21 @@ namespace Memoria.Scenes
             : base(obj)
         {
             KeyNavigation = obj.GetExactComponent<UIKeyNavigation>();
-            GroupState = obj.GetExactComponent<ButtonGroupState>();
+            ButtonGroup = obj.GetExactComponent<ButtonGroupState>();
 
-            Label = new GOLabel(obj.GetChild(0));
+            Name = new GOLabel(obj.GetChild(0));
             Highlight = new GOSprite(obj.GetChild(1));
             Background = new GOThinBackground(obj.GetChild(2));
+        }
+
+        public void SetLabelText(String value)
+        {
+            Name.Label.text = value;
+        }
+
+        public void SetLabelColor(Color value)
+        {
+            Name.Label.color = value;
         }
     }
 }

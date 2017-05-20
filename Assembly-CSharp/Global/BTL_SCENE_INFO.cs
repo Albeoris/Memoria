@@ -18,7 +18,7 @@ public class BTL_SCENE_INFO
 
 	public Byte NoNeighboring;
 
-	public Byte NoMagical;
+	public Boolean NoMagical;
 
 	public Byte ReverseAttack;
 

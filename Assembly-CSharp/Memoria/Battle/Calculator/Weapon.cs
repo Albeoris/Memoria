@@ -6,21 +6,27 @@ namespace Memoria
 {
     public sealed class Character
     {
-        private readonly PLAYER _data;
+        internal readonly PLAYER Data;
 
         internal Character(PLAYER data)
         {
-            _data = data;
+            Data = data;
         }
+
+        public String Name => Data.name;
+        public CharacterIndex Index => Data.Index;
+        public CharacterPresetId PresetId => Data.PresetId;
+        public CharacterEquipment Equipment => Data.equip;
+        public Byte Row => Data.info.row;
+        public CharacterCategory Category => (CharacterCategory)Data.category;
+        public Boolean IsMainCharacter => !Data.IsSubCharacter;
+        public Boolean IsSubCharacter => Data.IsSubCharacter;
 
         public static Character Find(BattleUnit unit)
         {
-            PLAYER data = FF9StateSystem.Common.FF9.player[(Int32)unit.PresetId];
+            PLAYER data = FF9StateSystem.Common.FF9.player[unit.PlayerIndex];
             return new Character(data);
         }
-
-        public Byte Row => _data.info.row;
-        public CharacterCategory Category => (CharacterCategory)_data.category;
     }
 
     public sealed class Weapon

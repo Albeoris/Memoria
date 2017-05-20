@@ -441,8 +441,8 @@ public class btl2d
 						}
 					}
 					Singleton<HUDMessage>.Instance.Show(btl2D_ENT.trans, text, style, new Vector3(0f, (Single)btl2D_ENT.Yofs, 0f), 0);
-					UIManager.Battle.DisplayInfomation();
-					btl2D_ENT.BtlPtr = (BTL_DATA)null;
+				    UIManager.Battle.DisplayParty();
+				    btl2D_ENT.BtlPtr = (BTL_DATA)null;
 				}
 			}
 			num = (Int16)(num + 1);
@@ -713,7 +713,7 @@ public class btl2d
 											if (next.deathMessage == (UnityEngine.Object)null)
 											{
 												next.deathMessage = Singleton<HUDMessage>.Instance.Show(childByName, "10", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, (Single)num6), 0);
-												UIManager.Battle.DisplayInfomation();
+											    UIManager.Battle.DisplayParty();
 											}
 											else
 											{
@@ -725,7 +725,7 @@ public class btl2d
 											if (next.petrifyMessage == (UnityEngine.Object)null)
 											{
 												next.petrifyMessage = Singleton<HUDMessage>.Instance.Show(childByName, "10", HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, (Single)num6), 0);
-												UIManager.Battle.DisplayInfomation();
+											    UIManager.Battle.DisplayParty();
 											}
 											else
 											{

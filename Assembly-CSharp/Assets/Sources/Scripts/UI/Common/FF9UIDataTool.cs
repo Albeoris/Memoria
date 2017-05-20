@@ -146,8 +146,8 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		public static void DisplayAPBar(PLAYER player, Int32 abilityId, Boolean isShowText, APBarHUD apBar)
 		{
-			Int32 num = ff9abil.FF9Abil_GetAp((Int32)player.info.slot_no, abilityId);
-			Int32 num2 = ff9abil.FF9Abil_GetMax((Int32)player.info.slot_no, abilityId);
+			Int32 num = ff9abil.FF9Abil_GetAp(player.Index, abilityId);
+			Int32 num2 = ff9abil.FF9Abil_GetMax(player.Index, abilityId);
 			if (num >= num2)
 			{
 				apBar.TextPanel.SetActive(false);

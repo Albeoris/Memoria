@@ -22,10 +22,12 @@ namespace Memoria
         public Boolean IsPlayer => Data.bi.player != 0;
         public Boolean IsCovered => Data.bi.cover != 0;
         public Boolean IsSelected => Data.bi.target != 0;
-        public CharacterPresetId PresetId => (CharacterPresetId)Data.bi.slot_no;
+        public CharacterIndex PlayerIndex => Data.bi.slot_no;
 
         public Byte Level => Data.level;
         public Byte Row => Data.bi.row;
+        public Byte Position => Data.bi.line_no;
+
         public UInt16 MaximumHp => Data.max.hp;
         public UInt16 CurrentHp
         {
@@ -38,6 +40,13 @@ namespace Memoria
         {
             get { return Data.cur.mp; }
             set { Data.cur.mp = value; }
+        }
+
+        public Int16 MaximumAtb => Data.max.at;
+        public Int16 CurrentAtb
+        {
+            get { return Data.cur.at; }
+            set { Data.cur.at = value; }
         }
 
         public Byte Strength
@@ -71,6 +80,8 @@ namespace Memoria
         public Byte Dexterity => Data.elem.dex;
         public Byte Will => Data.elem.wpr;
 
+        public Boolean HasTrance => Data.bi.t_gauge != 0;
+        public Boolean InTrance => Trance == Byte.MaxValue;
         public Byte Trance
         {
             get { return Data.trance; }
@@ -90,8 +101,9 @@ namespace Memoria
 
         public Character Player => Character.Find(this);
         public CharacterCategory PlayerCategory => Player.Category;
-        public ENEMY Enemy => btl_util.getEnemyPtr(Data);
+        public BattleEnemy Enemy => new BattleEnemy(btl_util.getEnemyPtr(Data));
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
+        public String Name => IsPlayer ? Player.Name : Enemy.Name;
 
         public BattleStatus CurrentStatus => (BattleStatus)Data.stat.cur;
         public BattleStatus PermanentStatus => (BattleStatus)Data.stat.permanent;
@@ -117,6 +129,11 @@ namespace Memoria
         public Boolean IsUnderPermanentStatus(BattleStatus status)
         {
             return (PermanentStatus & status) != 0;
+        }
+
+        public Boolean IsUnderAnyStatus(BattleStatus status)
+        {
+            return ((CurrentStatus | PermanentStatus) & status) != 0;
         }
 
         public Boolean HasCategory(EnemyCategory category)
@@ -180,7 +197,7 @@ namespace Memoria
             btl_sys.SavePlayerData(Data, 1U);
             btl_sys.DelCharacter(Data);
             Data.SetDisappear(1);
-            UIManager.Battle.DisplayInfomation();
+            UIManager.Battle.DisplayParty();
             UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
         }
 
@@ -214,12 +231,22 @@ namespace Memoria
 
         public void Libra()
         {
-            UIManager.Battle.SetBattleLibra(Data);
+            UIManager.Battle.SetBattleLibra(this);
         }
 
         public void Detect()
         {
-            UIManager.Battle.SetBattlePeeping(Data);
+            UIManager.Battle.SetBattlePeeping(this);
+        }
+
+        public Int32 GetIndex()
+        {
+            Int32 index = 0;
+
+            while (1 << index != Data.btl_id)
+                ++index;
+
+            return index;
         }
     }
 }

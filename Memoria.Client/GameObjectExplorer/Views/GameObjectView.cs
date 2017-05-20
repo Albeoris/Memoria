@@ -12,6 +12,11 @@ namespace Memoria.Client
         }
 
         [Category("GameObject")]
+        [DisplayName("OrderedNumber")]
+        [Description("The ordered number of this game object.")]
+        public Int32 OrderedNumber => Native.OrderedNumber;
+
+        [Category("GameObject")]
         [DisplayName("Tag")]
         [Description("The tag of this game object.")]
         public String Tag

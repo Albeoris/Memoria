@@ -6,7 +6,7 @@ namespace Memoria.Test
 {
     public abstract class ObjectMessage : IRemotingMessage
     {
-        public Int32 CheckField1 = 0x77FFFF77;
+        //public Int32 CheckField1 = 0x77FFFF77;
 
         public Int32 InstanceId;
         public String TypeName;
@@ -27,7 +27,7 @@ namespace Memoria.Test
 
         public virtual void Serialize(BinaryWriter bw)
         {
-            bw.Write(CheckField1);
+            //bw.Write(CheckField1);
 
             bw.Write(InstanceId);
             bw.Write(TypeName);
@@ -37,8 +37,8 @@ namespace Memoria.Test
 
         public virtual void Deserialize(BinaryReader br)
         {
-            if (CheckField1 != br.ReadInt32())
-                throw new InvalidOperationException();
+            //if (CheckField1 != br.ReadInt32())
+            //    throw new InvalidOperationException();
 
             InstanceId = br.ReadInt32();
             TypeName = br.ReadString();

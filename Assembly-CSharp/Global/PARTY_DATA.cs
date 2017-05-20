@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 
 public class PARTY_DATA
 {
@@ -16,4 +17,6 @@ public class PARTY_DATA
 	public UInt32 gil;
 
 	public UInt32 pad;
+
+    public Character GetCharacter(Int32 index) => new Character(member[index]);
 }

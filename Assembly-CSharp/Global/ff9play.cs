@@ -495,16 +495,16 @@ public class ff9play
 
     private static void FF9Play_UpdateSA(PLAYER play)
     {
-        Int32 slot_id = play.info.slot_no;
+        CharacterIndex characterIndex = play.Index;
         play.cur.capa = play.max.capa;
         for (Int32 index = 0; index < 64; ++index)
         {
-            if (ff9abil.FF9Abil_GetEnableSA(slot_id, 192 + index))
+            if (ff9abil.FF9Abil_GetEnableSA(characterIndex, 192 + index))
             {
                 if (play.cur.capa >= ff9abil._FF9Abil_SaData[index].GemsCount)
                     play.cur.capa -= ff9abil._FF9Abil_SaData[index].GemsCount;
                 else
-                    ff9abil.FF9Abil_SetEnableSA(slot_id, 192 + index, false);
+                    ff9abil.FF9Abil_SetEnableSA(characterIndex, 192 + index, false);
             }
         }
     }

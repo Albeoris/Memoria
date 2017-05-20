@@ -38,13 +38,13 @@ namespace Memoria.Scripts.Battle
             Byte blueMagicId = enemyPrototype.BlueMagicId;
             _v.Target.Kill();
 
-            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.PresetId, blueMagicId))
+            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.PlayerIndex, blueMagicId))
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
                 return;
             }
 
-            ff9abil.FF9Abil_SetMaster(_v.Caster.PresetId, blueMagicId);
+            ff9abil.FF9Abil_SetMaster(_v.Caster.PlayerIndex, blueMagicId);
             BattleState.RaiseAbilitiesAchievement(blueMagicId);
             UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.ActionAbilityName(blueMagicId));
         }

@@ -92,11 +92,13 @@ namespace Memoria.Test
                         bw.Write(GameObjectMessage.Type);
                         bw.Write(objects.Length);
 
-                        foreach (GameObject obj in objects)
+                        for (Int32 index = 0; index < objects.Length; index++)
                         {
+                            GameObject obj = objects[index];
                             GameObjectMessage objectMessage = MessageFactory.CreateGameObjectMessage(obj);
+                            objectMessage.OrderedNumber = index;
                             objectMessage.Serialize(bw);
-                            bw.Write(objectMessage.CheckField1); // 
+                            //bw.Write(objectMessage.CheckField1); // 
 
                             obj.GetComponents(components);
                             bw.Write(components.Count);
@@ -105,7 +107,7 @@ namespace Memoria.Test
                                 ComponentMessage componentMessage = MessageFactory.CreateComponentMessage(component);
                                 bw.Write(componentMessage.ComponentIndex);
                                 componentMessage.Serialize(bw);
-                                bw.Write(componentMessage.CheckField1); // 
+                                //bw.Write(componentMessage.CheckField1); // 
                             }
                             components.Clear();
                         }

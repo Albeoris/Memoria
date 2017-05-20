@@ -32,6 +32,9 @@ namespace Memoria.Client
             {typeof(UIPanelMessage), (message, context) => new UIPanelView<UIPanelMessage>((UIPanelMessage)message, context)},
             {typeof(UILabelMessage), (message, context) => new UILabelView<UILabelMessage>((UILabelMessage)message, context)},
 
+            {typeof(UIWidgetContainerMessage), (message, context) => new UIWidgetContainerView<UIWidgetContainerMessage>((UIWidgetContainerMessage)message, context)},
+            {typeof(UITableMessage), (message, context) => new UITableView<UITableMessage>((UITableMessage)message, context)},
+
             {typeof(UILocalizeMessage), (message, context) => new UILocalizeView<UILocalizeMessage>((UILocalizeMessage)message, context)},
         };
     }

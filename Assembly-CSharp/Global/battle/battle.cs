@@ -117,7 +117,6 @@ public class battle
                         }
                         if (battle.SUMMON_RAY_FLAG == 0)
                         {
-                            UIManager.Battle.FF9BMenu_Enable(true);
                             UIManager.Battle.FF9BMenu_EnableMenu(true);
                         }
                         if (ff9Battle.btl_scene.Info.StartType == 0)
@@ -340,7 +339,6 @@ public class battle
             btlsys.btl_escape_fade -= 2;
         if ((Int32)num1 != 0)
         {
-            UIManager.Battle.FF9BMenu_Enable(false);
             switch (btlsys.btl_seq)
             {
                 case 0:

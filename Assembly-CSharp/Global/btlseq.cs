@@ -534,7 +534,7 @@ public class btlseq
 		}
 		if ((flags & 128) != 0)
 		{
-			btl_scene.Info.NoMagical = 1;
+			btl_scene.Info.NoMagical = true;
 		}
 		if ((flags & 256) != 0)
 		{

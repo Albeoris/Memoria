@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using UnityEngine;
@@ -607,7 +608,7 @@ public class EquipUI : UIScene
 	{
 		if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton || ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
 		{
-			PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+			Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
 			String spriteName = String.Empty;
 			switch (this.currentEquipPart)
 			{
@@ -636,7 +637,7 @@ public class EquipUI : UIScene
 			FF9ITEM_DATA ff9ITEM_DATA;
 			if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
 			{
-				num = (Int32)player.equip[this.currentEquipPart];
+				num = player.Equipment[this.currentEquipPart];
 				ff9ITEM_DATA = ff9item._FF9Item_Data[num];
 			}
 			else
@@ -670,8 +671,8 @@ public class EquipUI : UIScene
 					this.equipmentAbilitySelectHudList[num2].Self.SetActive(true);
 					if (ff9abil.FF9Abil_HasAp(player))
 					{
-						Boolean flag = ff9abil.FF9Abil_GetIndex((Int32)player.info.slot_no, num3) >= 0;
-						Int32 num4 = ff9abil.FF9Abil_GetMax((Int32)player.info.slot_no, num3);
+						Boolean flag = ff9abil.FF9Abil_GetIndex(player.Index, num3) >= 0;
+						Int32 num4 = ff9abil.FF9Abil_GetMax(player.Index, num3);
 						String spriteName2;
 						if (flag)
 						{
@@ -681,7 +682,7 @@ public class EquipUI : UIScene
 							}
 							else
 							{
-								spriteName2 = ((!ff9abil.FF9Abil_IsEnableSA(player.sa, num3)) ? "skill_stone_off" : "skill_stone_on");
+								spriteName2 = ((!ff9abil.FF9Abil_IsEnableSA(player.Data.sa, num3)) ? "skill_stone_off" : "skill_stone_on");
 							}
 						}
 						else
@@ -692,7 +693,7 @@ public class EquipUI : UIScene
 						{
 							Boolean isShowText = num3 >= 192 || (FF9StateSystem.Battle.FF9Battle.aa_data[num3].Type & 2) == 0;
 							this.equipmentAbilitySelectHudList[num2].APBar.Self.SetActive(true);
-							FF9UIDataTool.DisplayAPBar(player, num3, isShowText, this.equipmentAbilitySelectHudList[num2].APBar);
+							FF9UIDataTool.DisplayAPBar(player.Data, num3, isShowText, this.equipmentAbilitySelectHudList[num2].APBar);
 						}
 						else
 						{
@@ -893,7 +894,7 @@ public class EquipUI : UIScene
 	private void UpdateCharacterSA(PLAYER player)
 	{
 		List<Int32> list = new List<Int32>();
-		if (!ff9abil.FF9Abil_HasAp(player))
+		if (!ff9abil.FF9Abil_HasAp(new Character(player)))
 		{
 			return;
 		}
@@ -912,13 +913,13 @@ public class EquipUI : UIScene
 				}
 			}
 		}
-		CharacterAbility[] array = ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type];
+		CharacterAbility[] array = ff9abil._FF9Abil_PaData[player.PresetId];
 		for (Int32 k = 0; k < 48; k++)
 		{
-			if (192 <= array[k].Id && ff9abil.FF9Abil_GetEnableSA((Int32)player.info.slot_no, (Int32)array[k].Id) && !list.Contains((Int32)(array[k].Id - 192)) && player.pa[k] < array[k].Ap)
+			if (192 <= array[k].Id && ff9abil.FF9Abil_GetEnableSA(player.Index, array[k].Id) && !list.Contains(array[k].Id - 192) && player.pa[k] < array[k].Ap)
 			{
-				ff9abil.FF9Abil_SetEnableSA((Int32)player.info.slot_no, (Int32)array[k].Id, false);
-				Byte capa_val = ff9abil._FF9Abil_SaData[(Int32)(array[k].Id - 192)].GemsCount;
+				ff9abil.FF9Abil_SetEnableSA(player.Index, array[k].Id, false);
+				Byte capa_val = ff9abil._FF9Abil_SaData[array[k].Id - 192].GemsCount;
 				if (player.max.capa - player.cur.capa >= capa_val)
 				{
 					POINTS cur = player.cur;

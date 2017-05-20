@@ -312,8 +312,7 @@ public class btl_scrp
 			btl.cur.at = btl.max.at;
 			btl.sel_mode = 1;
 			btl_cmd.SetCommand(btl.cmd[0], 20u, 187u, (UInt16)val, 8u);
-			UIManager.Battle.FF9BMenu_Enable(true);
-			UIManager.Battle.FF9BMenu_EnableMenu(true);
+		        UIManager.Battle.FF9BMenu_EnableMenu(true);
 			break;
 		}
 	}

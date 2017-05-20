@@ -8,6 +8,8 @@ namespace Memoria.Test
     {
         public const RemotingMessageType Type = RemotingMessageType.GameObject;
 
+        public Int32 OrderedNumber;
+
         public String Tag;
         public Boolean IsActive;
         public Boolean IsActiveInHierarchy;
@@ -31,6 +33,8 @@ namespace Memoria.Test
         {
             base.Serialize(bw);
 
+            bw.Write(OrderedNumber);
+
             bw.Write(Tag);
             bw.Write(IsActive);
             bw.Write(IsActiveInHierarchy);
@@ -40,6 +44,8 @@ namespace Memoria.Test
         public override void Deserialize(BinaryReader br)
         {
             base.Deserialize(br);
+
+            OrderedNumber = br.ReadInt32();
 
             Tag = br.ReadString();
             IsActive = br.ReadBoolean();
