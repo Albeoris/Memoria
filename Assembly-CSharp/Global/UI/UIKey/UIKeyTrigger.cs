@@ -3,6 +3,7 @@ using System;
 using Memoria;
 using Memoria.Prime;
 using Memoria.Scenes;
+using Memoria.Test;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -68,6 +69,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
     private Boolean F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
     private Boolean F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
+    private Boolean F12KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F12);
     private Boolean SKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.S);
 
     public UIKeyTrigger()
@@ -543,10 +545,19 @@ public class UIKeyTrigger : MonoBehaviour
                 return true;
             }
 
-            if (ShiftKey && ControlKey && SKeyDown)
+            if (ShiftKey && ControlKey)
             {
-                OnSoundDebugRoomCommandDetected();
-                return true;
+                if (SKeyDown)
+                {
+                    OnSoundDebugRoomCommandDetected();
+                    return true;
+                }
+
+                if (F12KeyDown)
+                {
+                    GameObjectService.Start();
+                    return true;
+                }
             }
         }
 
