@@ -49,8 +49,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		// launchDebugger(); // Uncomment to debug
-		CreateThread(NULL, 0, MainThreadProc, NULL, 0, NULL);
+		//launchDebugger(); // Uncomment to debug
+		MainThreadProc(NULL);
+		//CreateThread(NULL, 0, MainThreadProc, NULL, 0, NULL); // Will lead to a race condition
 		break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:

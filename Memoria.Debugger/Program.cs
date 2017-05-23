@@ -91,11 +91,15 @@ namespace Memoria.Debugger
                     {
                         memoryHandle.Write(unicodeDllPath);
 
+                        // Uncomment to debug
+                        // System.Diagnostics.Debugger.Launch();
+                        // KeepAlive(cts, TimeSpan.FromMinutes(10));
+
                         IntPtr loadLibraryAddress = GetLoadLibraryAddress();
                         using (SafeRemoteThread thread = processHandle.CreateThread(loadLibraryAddress, memoryHandle))
                         {
-                            window.Close();
                             thread.Join();
+                            window.Close();
                         }
                     }
 
@@ -113,9 +117,9 @@ namespace Memoria.Debugger
                     Console.WriteLine(ex);
 
                     cts.Token.ThrowIfCancellationRequested();
-                    Console.WriteLine("Waiting 10 seconds to try again...");
+                    Console.WriteLine("Waiting 20 seconds to try again...");
                     Console.WriteLine("Press Ctrl+C to exit...");
-                    Thread.Sleep(10 * 1000);
+                    Thread.Sleep(20 * 1000);
                 }
             }
         }
