@@ -51,7 +51,7 @@ public class PSXTexture
 			for (Int32 i = 0; i < h; i++)
 			{
 				Int32 num3 = (TY + i << 10) + TX;
-				for (Int32 j = 0; j < w >> 2; j++)
+				for (Int32 j = 0; j < (int) w >> 2; j++)
 				{
 					UInt16 num4 = PSXTextureMgr.originalVram[num3];
 					Int32 num5 = (Int32)(num4 & 15);
@@ -74,7 +74,7 @@ public class PSXTexture
 			for (Int32 k = 0; k < h; k++)
 			{
 				Int32 num6 = (TY + k << 10) + TX;
-				for (Int32 l = 0; l < w >> 1; l++)
+				for (Int32 l = 0; l < (w >> 1); l++)
 				{
 					UInt16 num7 = PSXTextureMgr.originalVram[num6];
 					Int32 num8 = (Int32)(num7 & 255);

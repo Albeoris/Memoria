@@ -68,7 +68,7 @@ namespace FF9
 			{
 				return 0;
 			}
-			if ((btl_util.getPlayerPtr(btlDataPtr).category & 2) != 0 && (Int32)btlDataPtr.cur.hp < btlDataPtr.max.hp >> 1)
+			if ((btl_util.getPlayerPtr(btlDataPtr).category & 2) != 0 && (Int32)btlDataPtr.cur.hp < (int)btlDataPtr.max.hp >> 1)
 			{
 				for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 				{

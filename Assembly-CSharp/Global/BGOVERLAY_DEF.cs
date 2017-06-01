@@ -113,6 +113,8 @@ public class BGOVERLAY_DEF
 
 	public Byte isXOffset;
 
+    public UInt32 indnum;
+
 	public Byte viewportNdx;
 
 	public UInt16 spriteCount;

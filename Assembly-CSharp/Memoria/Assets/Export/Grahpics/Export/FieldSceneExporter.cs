@@ -47,8 +47,8 @@ namespace Memoria.Assets
                 String outputDirectory = Path.Combine(Configuration.Export.Path, relativePath);
                 if (Directory.Exists(outputDirectory))
                 {
-                    Log.Warning($"Export was not skipped because kostyli");
-                    //Log.Warning($"[FieldSceneExporter] Export was skipped bacause a directory already exists: [{outputDirectory}].");
+
+                    Log.Warning($"[FieldSceneExporter] Export was skipped bacause a directory already exists: [{outputDirectory}].");
                     //return;
                 }
 
@@ -102,12 +102,18 @@ namespace Memoria.Assets
                     {
                         BGOVERLAY_DEF overlay = scene.overlayList[index];
                         String outputPath = outputDirectory + $"Overlay{index}.png";
-                        ExportOverlayTest(overlay, atlasTexture, outputPath, scene, file);
+                        ExportOverlay(overlay, atlasTexture, outputPath, scene, file);
                         //return;
                     }
 
                     file.Save(output, Encoding.UTF8);
                 }
+
+                string strings = $"[PsdSection]\nLayerOrder=name\nReversed = 0";
+                System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(outputDirectory, "psd.meta"));
+                sw.WriteLine(strings);
+                sw.Close();
+
 
                 //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(scene.atlas), outputPath);
 
@@ -119,7 +125,7 @@ namespace Memoria.Assets
             }
         }
 
-        private static void ExportOverlayTest(BGOVERLAY_DEF overlay, Texture2D atlas, String outputPath, BGSCENE_DEF scene, PsdFile psd)
+        private static void ExportOverlay(BGOVERLAY_DEF overlay, Texture2D atlas, String outputPath, BGSCENE_DEF scene, PsdFile psd)
         {
             Int32 factor = (Int32)scene.SPRITE_W / 16;
             Log.Message($"Transform: {overlay.transform?.name}, Factor: {factor}");
@@ -132,7 +138,6 @@ namespace Memoria.Assets
 
             Layer layer = new Layer(psd);
             psd.Layers.Add(layer);
-
             Int32 textureWidth = (Int32)(overlay.spriteList.Max(s => s.offX * factor) + scene.SPRITE_W);
             Int32 textureHeight = (Int32)(overlay.spriteList.Max(s => s.offY * factor) + scene.SPRITE_H);
             Texture2D result = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
@@ -156,6 +161,14 @@ namespace Memoria.Assets
             g.ImageData = new Byte[channelSize];
             b.ImageData = new Byte[channelSize];
             a.ImageData = new Byte[channelSize];
+            
+            Color[] transpPixels = new Color[textureWidth * textureHeight];
+            Color transpPixel = new Color(1.0f,1.0f, 1.0f, 0.0f);
+            for (var i = 0; i < textureHeight * textureWidth; i++)
+            {
+                transpPixels[i] = transpPixel;
+            }
+            result.SetPixels(transpPixels);
 
             foreach (BGSPRITE_LOC_DEF s in overlay.spriteList)
             {
@@ -165,11 +178,12 @@ namespace Memoria.Assets
                 Int32 h = (Int32)scene.SPRITE_H;
 
                 Int32 sx = s.atlasX;
-                Int32 sy = (Int32)(scene.ATLAS_H - s.atlasY + 1 * factor - scene.SPRITE_H);
+                Int32 sy = (Int32)(scene.ATLAS_H - s.atlasY - scene.SPRITE_H);
                 Color[] pixels = atlas.GetPixels(sx, sy, w, h);
 
                 Int32 tx = s.offX * factor;
-                Int32 ty = textureHeight - s.offY * factor;
+                Int32 ty = textureHeight - s.offY * factor - (Int32)scene.SPRITE_H;
+
                 result.SetPixels(tx, ty, w, h, pixels);
 
                 for (Int32 y = 0; y < h; y++)
@@ -200,7 +214,7 @@ namespace Memoria.Assets
         private static IEnumerable<String> CreateMapList()
         {
             String[] strArray1 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/FieldMap/mapList.txt", false).text.Split('\n');
-            for (Int32 i = 0; i < 30; i++)
+            for (Int32 i = 0; i < 100; i++)
             //foreach (String str in strArray1)
             {
                 String str = strArray1[i];
