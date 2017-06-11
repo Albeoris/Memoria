@@ -17,3 +17,4 @@ obj/
 *.idb
 *.sdf
 *.tlog
+*.meta

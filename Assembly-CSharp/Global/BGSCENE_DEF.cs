@@ -1029,7 +1029,7 @@ public class BGSCENE_DEF
             bGCAM_DEF.transform.localScale = new Vector3(1f, 1f, 1f);
         }
 
-        if (Configuration.Export.Enabled && Configuration.Export.Field)
+        if (Configuration.Export.Field)
         {
             this.handleOverlays(fieldMap, UseUpscalFM);
         }
@@ -1037,7 +1037,7 @@ public class BGSCENE_DEF
         {
             path = Path.Combine(Configuration.Import.Path, path);
             // check if atlas has already been created
-            if (Configuration.Import.Enabled && !Configuration.Export.Enabled)
+            if (Configuration.Import.Field)
             {
                 string psdPath = Path.Combine(path, "test.psd");
                 string atlasPath = Path.Combine(path, "atlases\\atlas_1.png");
@@ -1065,7 +1065,7 @@ public class BGSCENE_DEF
             //try
             //{
             //this.handleOverlays(fieldMap, UseUpscalFM);
-            if (Configuration.Import.Enabled && !Configuration.Export.Enabled)
+            if (Configuration.Import.Field && !Configuration.Export.Field)
                 this.importOverlaysFromPsd(fieldMap, UseUpscalFM, path);
             else
                 this.handleOverlays(fieldMap, UseUpscalFM);

@@ -127,6 +127,7 @@ namespace Memoria
             public readonly IniValue<String> Path = IniValue.Path(nameof(Path));
             public readonly IniValue<Boolean> Text = IniValue.Boolean(nameof(Text));
             public readonly IniValue<Boolean> Graphics = IniValue.Boolean(nameof(Graphics));
+            public readonly IniValue<Boolean> Field = IniValue.Boolean(nameof(Field));
             public readonly IniValue<Boolean> Audio = IniValue.Boolean(nameof(Audio));
 
             public ImportSection() : base("Import")
@@ -136,6 +137,7 @@ namespace Memoria
                 Text.Value = true;
                 Graphics.Value = true;
                 Audio.Value = true;
+                Field.Value = false;
             }
 
             protected override IEnumerable<IniValue> GetValues()
@@ -145,6 +147,7 @@ namespace Memoria
                 yield return Text;
                 yield return Graphics;
                 yield return Audio;
+                yield return Field;
             }
         }
 
