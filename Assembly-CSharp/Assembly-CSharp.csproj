@@ -246,6 +246,8 @@
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogLabelFilter.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTag.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTagCode.cs" />
+    <Compile Include="Memoria\Field\TileMap.cs" />
+    <Compile Include="Memoria\Field\TileCoordinates.cs" />
     <Compile Include="Memoria\Test\Commands\CommandMessageType.cs" />
     <Compile Include="Memoria\Test\Commands\Internal\ChangeValueCommandMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Internal\CommandMessage.cs" />
