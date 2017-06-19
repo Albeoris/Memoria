@@ -28,6 +28,7 @@ namespace Memoria.Assets
             RenderTexture oldActive = RenderTexture.active;
 
             Texture2D result = new Texture2D(texture.width, texture.height, TextureFormat.ARGB32, false);
+
             RenderTexture rt = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.ARGB32);
             try
             {

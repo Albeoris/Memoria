@@ -115,7 +115,7 @@ namespace Memoria.Assets
                 sw.Close();
 
 
-                //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(scene.atlas), outputPath);
+                TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(scene.atlas), Path.Combine(outputDirectory, "atlas.png"));
 
                 Log.Message("[FieldSceneExporter] Exporting completed successfully.");
             }

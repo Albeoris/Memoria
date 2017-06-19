@@ -344,9 +344,11 @@ public class BGSCENE_DEF
         else
         {
             Texture2D x = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas"), false);
+
             if (x != null)
             {
                 this.atlas = x;
+                Log.Message("Loading this.atlas");
                 if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
                 {
                     this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), false);
@@ -440,6 +442,7 @@ public class BGSCENE_DEF
         else
         {
             this.CreateScene(fieldMap, this.useUpscaleFM, path);
+
         }
     }
 
@@ -589,26 +592,26 @@ public class BGSCENE_DEF
         this.atlas.Apply();
     }
 
-    private byte[] getPixelArray(Layer curlayer, uint factor, BGOVERLAY_DEF overlayinfo, int no)
+    private byte[] getPixelArray(Layer currentLayer, uint factor, BGOVERLAY_DEF overlayInfo, int no)
     {
 
         this.SPRITE_H = 16 * factor;
         this.SPRITE_W = 16 * factor;
 
-        long overlayHeight = overlayinfo.h * factor;
-        long overlayWidth = overlayinfo.w * factor;
-        //long overlayHeight = curlayer.Rect.Height + curlayer.Rect.Top % this.SPRITE_H + (this.SPRITE_H - curlayer.Rect.Bottom % this.SPRITE_H) % this.SPRITE_H;
-        //long overlayWidth = curlayer.Rect.Width + curlayer.Rect.Left % this.SPRITE_W + (this.SPRITE_W - curlayer.Rect.Right % this.SPRITE_W) % this.SPRITE_W;
+        long overlayHeight = overlayInfo.h * factor;
+        long overlayWidth = overlayInfo.w * factor;
+        //long overlayHeight = currentLayer.Rect.Height + currentLayer.Rect.Top % this.SPRITE_H + (this.SPRITE_H - currentLayer.Rect.Bottom % this.SPRITE_H) % this.SPRITE_H;
+        //long overlayWidth = currentLayer.Rect.Width + currentLayer.Rect.Left % this.SPRITE_W + (this.SPRITE_W - currentLayer.Rect.Right % this.SPRITE_W) % this.SPRITE_W;
         // get overlay bounds
-        Rectangle rect = curlayer.Rect;
-        long left = overlayinfo.curX;
-        long right = left + overlayinfo.w;
-        long top = overlayinfo.curY;
-        long bottom = top + overlayinfo.h;
+        Rectangle rect = currentLayer.Rect;
+        long left = overlayInfo.curX;
+        long right = left + overlayInfo.w;
+        long top = overlayInfo.curY;
+        long bottom = top + overlayInfo.h;
         long product = overlayHeight * overlayWidth;
         long verticalOffset = (this.SPRITE_H - rect.Bottom % this.SPRITE_H) % this.SPRITE_H;
         long horizontalOffset = rect.Left % this.SPRITE_W;
-        Rectangle currentRect = curlayer.Rect;
+        Rectangle currentRect = currentLayer.Rect;
         // fill overlay with transparency
 
         byte[] layerbytes = new byte[product * 4];
@@ -625,7 +628,7 @@ public class BGSCENE_DEF
         long initialX = currentRect.Left - left * factor;
         long initialY = bottom * factor - currentRect.Bottom;
         //long initialY = currentRect.Top - top * factor;
-        foreach (var channel in curlayer.Channels)
+        foreach (var channel in currentLayer.Channels)
         {
 
             byte[] imgdata = channel.ImageData;
@@ -756,15 +759,12 @@ public class BGSCENE_DEF
         uint padding = tileSize / 16;
         int factor =(int) tileSize / 16;
 
-        float atlasX = padding, atlasY = padding;
+        UInt32 atlasX = padding, atlasY = padding;
         uint deltaX = this.SPRITE_W + 2 * padding;
         uint deltaY = this.SPRITE_H + 2 * padding;
 
         string pathDebugOverlay = Path.Combine(atlasPath, "debug");
-        if(!Directory.Exists(pathDebugOverlay))
-        {
             Directory.CreateDirectory(pathDebugOverlay);
-        }
         List<Vector3> list = new List<Vector3>();
         List<Vector2> list2 = new List<Vector2>();
         List<Int32> list3 = new List<Int32>();
@@ -809,10 +809,10 @@ public class BGSCENE_DEF
                 Single y2;
 
                 Single num4 = 0.5f;
-                x = (atlasX + num4) / atlasSide;
-                x2 = (atlasX + this.SPRITE_W + num4) / atlasSide;
-                y = (atlasY + this.SPRITE_H - num4) / atlasSide;
-                y2 = (atlasY  - num4) / atlasSide;
+                x = (float)(atlasX - num4) / atlasSide;
+                x2 = (float)(atlasX - num4 + this.SPRITE_W) / atlasSide;
+                y = (float)(atlasY + num4 + this.SPRITE_H) / atlasSide;
+                y2 = (float)(atlasY + num4) / atlasSide;
                 Color[] sprite = reftexture.GetPixels((int)atlasX, (int)atlasY, (int)this.SPRITE_W, (int)this.SPRITE_H);
                 overlaytex.SetPixels(spriteInfo.offX * factor, overlaytex.height - (spriteInfo.offY + 16) * factor, (int)this.SPRITE_W, (int)this.SPRITE_H, sprite);
 
@@ -895,7 +895,7 @@ public class BGSCENE_DEF
         }
     }
 
-    private void handleOverlays(FieldMap fieldMap, Boolean UseUpscalFM)
+    private void handleOverlays(FieldMap fieldMap, Boolean UseUpscalFM, String path)
     {
         Log.Message($"UseUpscalFM {UseUpscalFM}");
         List<Vector3> list = new List<Vector3>();
@@ -1008,6 +1008,7 @@ public class BGSCENE_DEF
             }
             overlayInfo.transform.gameObject.SetActive((overlayInfo.flags & 2) != 0);
         }
+
     }
 
     private void CreateScene(FieldMap fieldMap, Boolean UseUpscalFM, String path)
@@ -1029,9 +1030,10 @@ public class BGSCENE_DEF
             bGCAM_DEF.transform.localScale = new Vector3(1f, 1f, 1f);
         }
 
-        if (Configuration.Export.Field)
+        if (Configuration.Export.Enabled && Configuration.Export.Field)
         {
-            this.handleOverlays(fieldMap, UseUpscalFM);
+            var newPath = Path.Combine(Configuration.Import.Path, path);
+            this.handleOverlays(fieldMap, UseUpscalFM, newPath);
         }
         else
         {
@@ -1053,7 +1055,7 @@ public class BGSCENE_DEF
                         PsdInfo psdInfo = PsdInfo.Load(psdMetaPath);
                         PsdFile psdfile = new PsdFile(psdPath, new LoadContext());
                
-                        this.createAtlas(path, psdfile, 2048, psdInfo, File.GetLastWriteTimeUtc(psdPath));
+                        this.createAtlas(path, psdfile, 1024, psdInfo, File.GetLastWriteTimeUtc(psdPath));
                     }
                     else Log.Message("No psd or no need to create atlas");
                 }
@@ -1067,9 +1069,9 @@ public class BGSCENE_DEF
             //this.handleOverlays(fieldMap, UseUpscalFM);
             if (Configuration.Import.Field && !Configuration.Export.Field)
                 this.importOverlaysFromPsd(fieldMap, UseUpscalFM, path);
-            else
-                this.handleOverlays(fieldMap, UseUpscalFM);
-            //}
+            else { 
+                this.handleOverlays(fieldMap, UseUpscalFM, path);
+            }
             //catch(Exception e)
             //{
             //    Log.Message($"handleOvelays5 fail, exception\n{e}");
@@ -1150,10 +1152,10 @@ public class BGSCENE_DEF
         {
             
             BGOVERLAY_DEF overlayInfo = this.overlayList[j];
-            Layer curlayer = layers[j];
+            Layer currentLayer = layers[j];
             if (j == 0)
             {
-                factor = (uint)Math.Ceiling((float)curlayer.Rect.Height / overlayInfo.h);
+                factor = (uint)Math.Ceiling((float)currentLayer.Rect.Height / overlayInfo.h);
                 this.SPRITE_H = 16 * factor;
                 this.SPRITE_W = 16 * factor;
             }
@@ -1162,7 +1164,7 @@ public class BGSCENE_DEF
             deltaY = this.SPRITE_H + 2 * padding;
             long overlayHeight = overlayInfo.h * factor;
             long overlayWidth = overlayInfo.w * factor;
-            byte[] originalArray = this.getPixelArray(curlayer, factor, overlayInfo, j);
+            byte[] originalArray = this.getPixelArray(currentLayer, factor, overlayInfo, j);
             if (originalArray == null)
             {
                 Log.Message($"oopsie, could not get data for layer {j}");
@@ -1186,7 +1188,7 @@ public class BGSCENE_DEF
                 y2 = (uint)(overlayHeight - ((spriteInfo.offY) * factor + this.SPRITE_H));
                 try
                 {
-                    this.writeTile2(atlasArray, originalArray, (uint)overlayWidth, padding, x, y2, atlasX, atlasY, (uint)atlasSide, factor);
+                    this.writeTile(atlasArray, originalArray, (uint)overlayWidth, padding, x, y2, atlasX, atlasY, (uint)atlasSide, factor);
                 }
                 catch(Exception e)
                 {
@@ -1241,7 +1243,7 @@ public class BGSCENE_DEF
         this.SPRITE_W = SPRITE_W_B;
     }
 
-    private void writeTile2(byte[] atlasArray, byte[] originalArray, uint sourceWidth, uint padding,
+    private void writeTile(byte[] atlasArray, byte[] originalArray, uint sourceWidth, uint padding,
         uint fromX, uint fromY, uint toX, uint toY, uint atlasSide, uint factor)
     {
         for (var yOffset = 0; yOffset < this.SPRITE_H; yOffset++)
@@ -1264,40 +1266,45 @@ public class BGSCENE_DEF
                             int signX = (xOffset == 0) ? -1 : 1;
                             var dstIndexCorrected = dstIndexCorrectedBase + signX * zz * 4;
                                 this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndex);
-                           /* atlasArray[dstIndexCorrected] = originalArray[srcIndex];
-                            atlasArray[dstIndexCorrected + 1] = originalArray[srcIndex + 1];
-                            atlasArray[dstIndexCorrected + 2] = originalArray[srcIndex + 2];
-                            atlasArray[dstIndexCorrected + 3] = originalArray[srcIndex + 3];*/
                         }
                     }
                 }
                 if (yOffset == 0 || (yOffset == (this.SPRITE_H - 1)))
                 {
                     int sign = (yOffset == 0) ? -1 : 1;
+                    var srcIndexCorrected = srcIndex + sign * sourceWidth * 4;
+                    if (srcIndexCorrected < 0 || (srcIndexCorrected > originalArray.Length - 1) || originalArray[srcIndexCorrected + 3] == 0)
+                        srcIndexCorrected = srcIndex;
                     // rows
                     for (var z = 1; z < padding + 1; z++)
                     {
                         var dstIndexCorrected = dstIndex + sign * z * atlasSide * 4;
-
-                            this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndex);
-
-                        //this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndex);
-                        /*atlasArray[dstIndexCorrected] = originalArray[srcIndex];
-                        atlasArray[dstIndexCorrected + 1] = originalArray[srcIndex + 1];
-                        atlasArray[dstIndexCorrected + 2] = originalArray[srcIndex + 2];
-                        atlasArray[dstIndexCorrected + 3] = originalArray[srcIndex + 3];*/
+                        try
+                        {
+                            this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndexCorrected);
+                        }
+                        catch(Exception e)
+                        {
+                            Log.Message($"dst {dstIndexCorrected}, dstlen {atlasArray.Length}, src {srcIndexCorrected}, srcLen {originalArray.Length}");
+                        }
+                        
                     }
                 }
                 if (xOffset == 0 || (xOffset == (this.SPRITE_W - 1)))
                 {
                     int sign = (xOffset == 0) ? -1 : 1;
+                    var srcIndexCorrected = srcIndex + sign * 4;
+                    if (srcIndexCorrected < 0 || (srcIndexCorrected > originalArray.Length - 1) 
+                       || srcIndexCorrected % (sourceWidth * 4) == 0 || srcIndexCorrected % (sourceWidth * 4) == (sourceWidth - 1) * 4 
+                        || originalArray[srcIndexCorrected + 3] == 0)
+                        srcIndexCorrected = srcIndex;
                     // columns
                     for (var z = 1; z < padding + 1; z++)
                     {
                         var dstIndexCorrected = dstIndex + sign * z * 4;
                         try
                         {
-                            this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndex);
+                            this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndexCorrected);
                         }
                         catch (Exception e)
                         {
@@ -1305,10 +1312,6 @@ public class BGSCENE_DEF
                             return;
                         }
                         
-                        /*atlasArray[dstIndexCorrected] = originalArray[srcIndex];
-                        atlasArray[dstIndexCorrected + 1] = originalArray[srcIndex + 1];
-                        atlasArray[dstIndexCorrected + 2] = originalArray[srcIndex + 2];
-                        atlasArray[dstIndexCorrected + 3] = originalArray[srcIndex + 3];*/
                     }
                 }
                 try
@@ -1320,10 +1323,6 @@ public class BGSCENE_DEF
                     Log.Message($"{e}");
                     return;
                 }
-                /*atlasArray[dstIndex] = originalArray[srcIndex];
-                atlasArray[dstIndex + 1] = originalArray[srcIndex + 1];
-                atlasArray[dstIndex + 2] = originalArray[srcIndex + 2];
-                atlasArray[dstIndex + 3] = originalArray[srcIndex + 3];*/
            }
        }
         //return atlasArray;
@@ -1335,176 +1334,6 @@ public class BGSCENE_DEF
             dstarray[dstindex + 1] = srcarray[srcindex + 1];
             dstarray[dstindex + 2] = srcarray[srcindex + 2];
             dstarray[dstindex + 3] = srcarray[srcindex + 3];
-    }
-
-
-
-    private void CreateScene2(FieldMap fieldMap, Boolean UseUpscalFM)
-    {
-        GameObject gameObject = new GameObject("Background");
-        gameObject.transform.parent = fieldMap.transform;
-        gameObject.transform.localPosition = new Vector3(this.curX - 160f, -(this.curY - 112f), this.curZ);
-        gameObject.transform.localScale = new Vector3(1f, -1f, 1f);
-        for (Int32 i = 0; i < this.cameraList.Count; i++)
-        {
-            BGCAM_DEF bGCAM_DEF = this.cameraList[i];
-            GameObject gameObject2 = new GameObject(String.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + 160f, " x ", bGCAM_DEF.vrpMaxY + 112f));
-            Transform transform = gameObject2.transform;
-            transform.parent = gameObject.transform;
-            bGCAM_DEF.transform = transform;
-            bGCAM_DEF.transform.localPosition = Vector3.zero;
-            bGCAM_DEF.transform.localScale = new Vector3(1f, 1f, 1f);
-        }
-        List<Vector3> list = new List<Vector3>();
-        List<Vector2> list2 = new List<Vector2>();
-        List<Int32> list3 = new List<Int32>();
-        for (Int32 j = 0; j < this.overlayList.Count; j++)
-        {
-            BGOVERLAY_DEF overlayInfo = this.overlayList[j];
-            String str = "Overlay_" + j.ToString("D2");
-            GameObject gameObject3 = new GameObject(str);
-            Transform transform2 = gameObject3.transform;
-            transform2.parent = this.cameraList[overlayInfo.camNdx].transform;
-            transform2.localPosition = new Vector3(overlayInfo.curX * 1f, overlayInfo.curY * 1f, overlayInfo.curZ);
-            transform2.localScale = new Vector3(1f, 1f, 1f);
-            overlayInfo.transform = transform2;
-            for (Int32 k = 0; k < overlayInfo.spriteList.Count; k++)
-            {
-                BGSPRITE_LOC_DEF spriteInfo = overlayInfo.spriteList[k];
-                var num = spriteInfo.depth;
-                GameObject gameObject4 = new GameObject(str + "_Sprite_" + k.ToString("D3"));
-                Transform transform3 = gameObject4.transform;
-                transform3.parent = transform2;
-                {
-                    transform3.localPosition = new Vector3(spriteInfo.offX * 1f, (spriteInfo.offY + 16) * 1f, num);
-                }
-                transform3.localScale = new Vector3(1f, 1f, 1f);
-                spriteInfo.transform = transform3;
-                spriteInfo.cacheLocalPos = transform3.localPosition;
-                list.Clear();
-                list2.Clear();
-                list3.Clear();
-                list.Add(new Vector3(0f, -16f, 0f));
-                list.Add(new Vector3(16f, -16f, 0f));
-                list.Add(new Vector3(16f, 0f, 0f));
-                list.Add(new Vector3(0f, 0f, 0f));
-                Single num2 = this.ATLAS_W;
-                Single num3 = this.ATLAS_H;
-                Single x;
-                Single y;
-                Single x2;
-                Single y2;
-                if (UseUpscalFM)
-                {
-                    Single num4 = 0.5f;
-                    x = (spriteInfo.atlasX - num4) / num2;
-                    y = (this.ATLAS_H - spriteInfo.atlasY + num4) / num3;
-                    x2 = (spriteInfo.atlasX + this.SPRITE_W - num4) / num2;
-                    y2 = (this.ATLAS_H - (spriteInfo.atlasY + this.SPRITE_H) + num4) / num3;
-                }
-                else
-                {
-                    Single num5 = 0.5f;
-                    x = (spriteInfo.atlasX + num5) / num2;
-                    y = (spriteInfo.atlasY + num5) / num3;
-                    x2 = (spriteInfo.atlasX + this.SPRITE_W - num5) / num2;
-                    y2 = (spriteInfo.atlasY + this.SPRITE_H - num5) / num3;
-                }
-                list2.Add(new Vector2(x, y));
-                list2.Add(new Vector2(x2, y));
-                list2.Add(new Vector2(x2, y2));
-                list2.Add(new Vector2(x, y2));
-                list3.Add(2);
-                list3.Add(1);
-                list3.Add(0);
-                list3.Add(3);
-                list3.Add(2);
-                list3.Add(0);
-                Mesh mesh = new Mesh
-                {
-                    vertices = list.ToArray(),
-                    uv = list2.ToArray(),
-                    triangles = list3.ToArray()
-                };
-                MeshRenderer meshRenderer = gameObject4.AddComponent<MeshRenderer>();
-                MeshFilter meshFilter = gameObject4.AddComponent<MeshFilter>();
-                meshFilter.mesh = mesh;
-                GameObject gameObject5 = gameObject4;
-                string text = gameObject5.name;
-                gameObject5.name = string.Concat(new object[]
-                {
-                    text,
-                    "_Atlas[",
-                    spriteInfo.atlasX,
-                    ", ",
-                    spriteInfo.atlasY,
-                    "]"
-                });
-                int num6 = (int)(this.curZ + (short)overlayInfo.curZ) + spriteInfo.depth;
-                GameObject gameObject6 = gameObject4;
-                gameObject6.name = gameObject6.name + "_Depth(" + num6.ToString("D5") + ")";
-                string text2 = string.Empty;
-                if (spriteInfo.trans != 0)
-                {
-                    if (spriteInfo.alpha == 0)
-                    {
-                        text2 = "abr_0";
-                    }
-                    else if (spriteInfo.alpha == 1)
-                    {
-                        text2 = "abr_1";
-                    }
-                    else if (spriteInfo.alpha == 2)
-                    {
-                        text2 = "abr_2";
-                    }
-                    else
-                    {
-                        text2 = "abr_3";
-                    }
-                }
-                else
-                {
-                    text2 = "abr_none";
-                }
-                if (fieldMap.mapName == "FBG_N39_UUVL_MAP671_UV_DEP_0" && j == 14)
-                {
-                    text2 = "abr_none";
-                }
-                GameObject gameObject7 = gameObject4;
-                gameObject7.name = gameObject7.name + "_[" + text2 + "]";
-                meshRenderer.material = this.materialList[text2];
-            }
-            if ((overlayInfo.flags & 2) != 0)
-            {
-                overlayInfo.transform.gameObject.SetActive(true);
-            }
-            else
-            {
-                overlayInfo.transform.gameObject.SetActive(false);
-            }
-        }
-        for (int l = 0; l < this.animList.Count; l++)
-        {
-            BGANIM_DEF bganim_DEF = this.animList[l];
-            for (int m = 0; m < bganim_DEF.frameList.Count; m++)
-            {
-                GameObject gameObject8 = this.overlayList[(int)bganim_DEF.frameList[m].target].transform.gameObject;
-                GameObject gameObject9 = gameObject8;
-                gameObject9.name = gameObject9.name + "_[anim_" + l.ToString("D2") + "]";
-                GameObject gameObject10 = gameObject8;
-                string text = gameObject10.name;
-                gameObject10.name = string.Concat(new string[]
-                {
-                    text,
-                    "_[frame_",
-                    m.ToString("D2"),
-                    "_of_",
-                    bganim_DEF.frameList.Count.ToString("D2"),
-                    "]"
-                });
-            }
-        }
     }
 
     public void CreateSeparateOverlay(FieldMap fieldMap, bool UseUpscalFM, uint ovrNdx)
