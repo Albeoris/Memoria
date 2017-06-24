@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
+using Memoria.Prime.Text;
 using UnityEngine;
 using Object = System.Object;
 
@@ -1816,24 +1817,22 @@ public class Dialog : MonoBehaviour
 	{
 		Int32[] gMesValue = PersistenSingleton<EventEngine>.Instance.eTb.gMesValue;
 		String text = this.phraseMessageValue;
-		String text2 = String.Empty;
+		String formattedValue = String.Empty;
 		for (Int32 i = 0; i < (Int32)gMesValue.Length; i++)
 		{
 			if (this.messageValues.ContainsKey(i))
 			{
-				text2 = gMesValue[i].ToString();
+				formattedValue = gMesValue[i].ToString();
 				if (this.overlayMessageNumber == i)
-				{
-					text2 = NGUIText.FF9PinkColor + text2 + NGUIText.FF9WhiteColor;
-				}
-				text = text.Replace(String.Concat(new Object[]
-				{
-					"[",
-					NGUIText.NumberVar,
-					"=",
-					i,
-					"]"
-				}), text2);
+					formattedValue = NGUIText.FF9PinkColor + formattedValue + NGUIText.FF9WhiteColor;
+
+                text = text.ReplaceAll(
+                new[]
+                {
+                    new KeyValuePair<String, TextReplacement>($"[NUMB={i}]", formattedValue),
+                    new KeyValuePair<String, TextReplacement>($"{{Variable {i}}}", formattedValue)
+                });
+
 				this.messageValues[i] = gMesValue[i];
 			}
 		}
