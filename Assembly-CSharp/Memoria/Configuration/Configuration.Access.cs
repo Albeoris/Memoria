@@ -89,6 +89,7 @@ namespace Memoria
             public static Boolean Enabled => Instance._hacks.Enabled.Value;
             public static Int32 AllCharactersAvailable => Enabled ? Instance._hacks.AllCharactersAvailable.Value : 0;
             public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement.Value;
+            public static Int32 HippaulRacingViviSpeed => Enabled ? Instance._hacks.HippaulRacingViviSpeed.Value : 33;
 
             public static Int32 BattleSpeed => Enabled ? Math.Min(Math.Max(0, Instance._hacks.BattleSpeed.Value), 2) : 0;
         }

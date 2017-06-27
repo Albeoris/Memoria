@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.SiliconSocial;
+using Memoria;
 
 public class EMinigame
 {
@@ -952,7 +953,7 @@ public class EMinigame
 			if (s1.ip == 1445 || s1.ip == 1497)
 			{
 				Int32 varManually = eBin.getVarManually(9429);
-				eBin.setVarManually(9429, 33);
+				eBin.setVarManually(9429, Configuration.Hacks.HippaulRacingViviSpeed);
 			}
 			else if (s1.ip == 1595)
 			{
