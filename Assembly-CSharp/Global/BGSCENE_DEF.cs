@@ -348,7 +348,7 @@ public class BGSCENE_DEF
             if (x != null)
             {
                 this.atlas = x;
-                Log.Message("Loading this.atlas");
+                //Log.Message("Loading this.atlas");
                 if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
                 {
                     this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), false);
@@ -897,7 +897,7 @@ public class BGSCENE_DEF
 
     private void handleOverlays(FieldMap fieldMap, Boolean UseUpscalFM, String path)
     {
-        Log.Message($"UseUpscalFM {UseUpscalFM}");
+        //Log.Message($"UseUpscalFM {UseUpscalFM}");
         List<Vector3> list = new List<Vector3>();
         List<Vector2> list2 = new List<Vector2>();
         List<Int32> list3 = new List<Int32>();
