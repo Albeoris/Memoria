@@ -7,7 +7,7 @@ namespace Memoria.Test
     {
         public ValueMessageType ValueType => ValueMessageType.Decimal;
 
-        Object IValueMessage.Object => Value;
+        ValueType IValueMessage.Object => Value;
 
         public Decimal Value;
 

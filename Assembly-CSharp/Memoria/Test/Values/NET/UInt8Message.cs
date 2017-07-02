@@ -7,7 +7,7 @@ namespace Memoria.Test
     {
         public ValueMessageType ValueType => ValueMessageType.UInt8;
 
-        Object IValueMessage.Object => Value;
+        ValueType IValueMessage.Object => Value;
 
         public Byte Value;
 

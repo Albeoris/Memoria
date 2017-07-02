@@ -249,11 +249,14 @@
     <Compile Include="Memoria\Field\TileMap.cs" />
     <Compile Include="Memoria\Field\TileCoordinates.cs" />
     <Compile Include="Memoria\Test\Commands\CommandMessageType.cs" />
+    <Compile Include="Memoria\Test\Commands\Internal\ChangeReferenceCommandMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Internal\ChangeValueCommandMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Internal\CommandMessage.cs" />
+    <Compile Include="Memoria\Test\Commands\Shared\ChangeReferenceCommandMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Shared\ChangeValueCommandMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Shared\CommandMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Internal\DuplicateCommandMessage.cs" />
+    <Compile Include="Memoria\Test\Component\Behaviour\MonoBehaviour\CameraMessage.cs" />
     <Compile Include="Memoria\Test\Component\Behaviour\MonoBehaviour\MonoBehaviourMessage.cs" />
     <Compile Include="Memoria\Test\Component\Behaviour\BehaviourMessage.cs" />
     <Compile Include="Memoria\Test\Component\Behaviour\MonoBehaviour\UIRect\UILocalizeMessage.cs" />
@@ -280,7 +283,8 @@
     <Compile Include="Memoria\Test\RemotingMessageType.cs" />
     <Compile Include="Memoria\Test\ScriptableObjectMessage.cs" />
     <Compile Include="Memoria\Test\Component\TransformMessage.cs" />
-    <Compile Include="Memoria\Test\Values\Engine\Class1.cs" />
+    <Compile Include="Memoria\Test\Values\Engine\UiRectPositionMessage.cs" />
+    <Compile Include="Memoria\Test\Values\IReferenceMessage.cs" />
     <Compile Include="Memoria\Test\Values\NET\BooleanMessage.cs" />
     <Compile Include="Memoria\Test\Values\NET\DecimalMessage.cs" />
     <Compile Include="Memoria\Test\Values\NET\DoubleMessage.cs" />
@@ -289,6 +293,9 @@
     <Compile Include="Memoria\Test\Values\NET\Int64Message.cs" />
     <Compile Include="Memoria\Test\Values\NET\Int8Message.cs" />
     <Compile Include="Memoria\Test\Values\IValueMessage.cs" />
+    <Compile Include="Memoria\Test\Values\ReferenceMessageFactory.cs" />
+    <Compile Include="Memoria\Test\Values\ReferenceMessageType.cs" />
+    <Compile Include="Memoria\Test\Values\Unity\Matrix4x4Message.cs" />
     <Compile Include="Memoria\Test\Values\Unity\QuaternionMessage.cs" />
     <Compile Include="Memoria\Test\Values\NET\SingleMessage.cs" />
     <Compile Include="Memoria\Test\Values\NET\StringMessage.cs" />
@@ -296,6 +303,7 @@
     <Compile Include="Memoria\Test\Values\NET\UInt32Message.cs" />
     <Compile Include="Memoria\Test\Values\NET\UInt64Message.cs" />
     <Compile Include="Memoria\Test\Values\NET\UInt8Message.cs" />
+    <Compile Include="Memoria\Test\Values\Unity\RectMessage.cs" />
     <Compile Include="Memoria\Test\Values\ValueMessageFactory.cs" />
     <Compile Include="Memoria\Test\Values\ValueMessageType.cs" />
     <Compile Include="Global\ChangeUI.cs" />

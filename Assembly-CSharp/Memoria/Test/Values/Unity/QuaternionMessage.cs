@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 using Object = System.Object;
@@ -8,7 +9,7 @@ namespace Memoria.Test
     {
         public ValueMessageType ValueType => ValueMessageType.Quaternion;
 
-        Object IValueMessage.Object => Value;
+        ValueType IValueMessage.Object => Value;
 
         public Quaternion Value;
 

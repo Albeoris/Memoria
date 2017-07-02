@@ -16,12 +16,14 @@ namespace Memoria.Test
         Single,
         Double,
         Decimal,
-        String,
 
         Vector2,
         Vector3,
         Vector4,
         Quaternion,
+
+        Rect,
+        Matrix4x4,
 
         UiRectPosition
     }

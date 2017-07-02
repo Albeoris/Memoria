@@ -226,6 +226,8 @@ namespace Memoria.Test
             {
                 case CommandMessageType.ChangeValue:
                     return new ChangeValueCommandMessage();
+                case CommandMessageType.ChangeReference:
+                    return new ChangeReferenceCommandMessage();
                 case CommandMessageType.Duplicate:
                     return new DuplicateCommandMessage();
                 default:

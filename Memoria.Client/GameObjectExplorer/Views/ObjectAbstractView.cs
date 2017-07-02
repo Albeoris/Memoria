@@ -96,6 +96,12 @@ namespace Memoria.Client
             NetworkClient.Execute(message);
         }
 
+        protected internal void SendPropertyChanged(String memberName, IReferenceMessage value)
+        {
+            ChangeReferenceCommandMessage message = new ChangeReferenceCommandMessage(Message.InstanceId, memberName, value);
+            NetworkClient.Execute(message);
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

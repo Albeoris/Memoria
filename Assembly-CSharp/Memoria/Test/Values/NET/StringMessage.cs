@@ -3,11 +3,11 @@ using System.IO;
 
 namespace Memoria.Test
 {
-    public sealed class StringMessage : IValueMessage
+    public sealed class StringMessage : IReferenceMessage
     {
-        public ValueMessageType ValueType => ValueMessageType.String;
+        public ReferenceMessageType ReferenceType => ReferenceMessageType.String;
 
-        Object IValueMessage.Object => Value;
+        Object IReferenceMessage.Object => Value;
 
         public String Value;
 

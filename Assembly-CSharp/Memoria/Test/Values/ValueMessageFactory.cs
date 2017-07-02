@@ -34,8 +34,6 @@ namespace Memoria.Test
                     return new DoubleMessage(0);
                 case ValueMessageType.Decimal:
                     return new DecimalMessage(0);
-                case ValueMessageType.String:
-                    return new StringMessage(String.Empty);
 
                 case ValueMessageType.Vector2:
                     return new Vector2Message(Vector2.zero);

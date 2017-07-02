@@ -69,13 +69,14 @@ namespace Memoria.Test
             {typeof(Transform), () => new TransformMessage(), obj => new TransformMessage((Transform)obj)},
             {typeof(Behaviour), () => new BehaviourMessage(), obj => new BehaviourMessage((Behaviour)obj)},
             {typeof(MonoBehaviour), () => new MonoBehaviourMessage(), obj => new MonoBehaviourMessage((MonoBehaviour)obj)},
+            {typeof(Camera), ()=> new CameraMessage(), obj => new CameraMessage((Camera)obj)},
             {typeof(UIRect), () => new UIRectMessage(), obj => new UIRectMessage((UIRect)obj)},
             {typeof(UIWidget), () => new UIWidgetMessage(), obj => new UIWidgetMessage((UIWidget)obj)},
             {typeof(UIPanel), () => new UIPanelMessage(), obj => new UIPanelMessage((UIPanel)obj)},
             {typeof(UILabel), () => new UILabelMessage(), obj => new UILabelMessage((UILabel)obj)},
             {typeof(UILocalize), () => new UILocalizeMessage(), obj => new UILocalizeMessage((UILocalize)obj)},
             {typeof(UIWidgetContainer), () => new UIWidgetContainerMessage(), obj => new UIWidgetContainerMessage((UIWidgetContainer)obj)},
-            {typeof(UITable), () => new UITableMessage(), obj => new UITableMessage((UITable)obj)},
+            {typeof(UITable), () => new UITableMessage(), obj => new UITableMessage((UITable)obj)}
         };
     }
 }

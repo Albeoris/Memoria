@@ -35,6 +35,20 @@ namespace Memoria.Test
             bw.Write(value.w);
         }
 
+        public static void Write(this BinaryWriter bw, Rect value)
+        {
+            bw.Write(value.x);
+            bw.Write(value.y);
+            bw.Write(value.width);
+            bw.Write(value.height);
+        }
+
+        public static void Write(this BinaryWriter bw, Matrix4x4 value)
+        {
+            for (int i = 0; i < 4 * 4; i++)
+                bw.Write(value[i]);
+        }
+
         public static void Write(this BinaryWriter bw, RemotingMessageType messageType)
         {
             bw.Write((UInt16)messageType);
@@ -46,6 +60,11 @@ namespace Memoria.Test
         }
 
         public static void Write(this BinaryWriter bw, ValueMessageType messageType)
+        {
+            bw.Write((UInt16)messageType);
+        }
+
+        public static void Write(this BinaryWriter bw, ReferenceMessageType messageType)
         {
             bw.Write((UInt16)messageType);
         }

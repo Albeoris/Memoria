@@ -117,9 +117,11 @@
     <Compile Include="..\Assembly-CSharp\Memoria\Test\Commands\Shared\DuplicateCommandMessage.cs">
       <Link>GameObjectExplorer\Commands\Shared\DuplicateCommandMessage.cs</Link>
     </Compile>
+    <Compile Include="GameObjectExplorer\Commands\Internal\ChangeReferenceCommandMessage.cs" />
     <Compile Include="GameObjectExplorer\Commands\Internal\CommandMessage.cs" />
     <Compile Include="GameObjectExplorer\Commands\Internal\ChangeValueCommandMessage.cs" />
     <Compile Include="GameObjectExplorer\Commands\Internal\DuplicateCommandMessage.cs" />
+    <Compile Include="GameObjectExplorer\Commands\Shared\ChangeReferenceCommandMessage.cs" />
     <Compile Include="GameObjectExplorer\GameObjectObservableCollection.cs" />
     <Compile Include="Controls\UiGrid.cs" />
     <Compile Include="Components\AbstractList.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="GameObjectExplorer\RemoteGameObjects.cs" />
     <Compile Include="GameObjectExplorer\UiGameObjectContent.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\BehaviourView.cs" />
+    <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\CameraView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\MonoBehaviourView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UILocalizeView.cs" />
     <Compile Include="GameObjectExplorer\Views\Component\Behaviour\MonoBehaviour\UIRect\UIRectView.cs" />

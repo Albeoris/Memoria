@@ -27,6 +27,7 @@ namespace Memoria.Client
 
             {typeof(BehaviourMessage), (message, context) => new BehaviourView<BehaviourMessage>((BehaviourMessage)message, context)},
             {typeof(MonoBehaviourMessage), (message, context) => new MonoBehaviourView<MonoBehaviourMessage>((MonoBehaviourMessage)message, context)},
+            {typeof(CameraMessage), (message, context) => new CameraView<CameraMessage>((CameraMessage)message, context)},
             {typeof(UIRectMessage), (message, context) => new UIRectView<UIRectMessage>((UIRectMessage)message, context)},
             {typeof(UIWidgetMessage), (message, context) => new UIWidgetView<UIWidgetMessage>((UIWidgetMessage)message, context)},
             {typeof(UIPanelMessage), (message, context) => new UIPanelView<UIPanelMessage>((UIPanelMessage)message, context)},
@@ -35,7 +36,7 @@ namespace Memoria.Client
             {typeof(UIWidgetContainerMessage), (message, context) => new UIWidgetContainerView<UIWidgetContainerMessage>((UIWidgetContainerMessage)message, context)},
             {typeof(UITableMessage), (message, context) => new UITableView<UITableMessage>((UITableMessage)message, context)},
 
-            {typeof(UILocalizeMessage), (message, context) => new UILocalizeView<UILocalizeMessage>((UILocalizeMessage)message, context)},
+            {typeof(UILocalizeMessage), (message, context) => new UILocalizeView<UILocalizeMessage>((UILocalizeMessage)message, context)}
         };
     }
 }

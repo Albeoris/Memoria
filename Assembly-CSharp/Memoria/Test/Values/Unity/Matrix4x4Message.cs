@@ -1,17 +1,18 @@
 using System;
 using System.IO;
+using UnityEngine;
 
 namespace Memoria.Test
 {
-    public sealed class Int8Message : IValueMessage
+    public sealed class Matrix4x4Message : IValueMessage
     {
-        public ValueMessageType ValueType => ValueMessageType.Int8;
+        public ValueMessageType ValueType => ValueMessageType.Matrix4x4;
 
         ValueType IValueMessage.Object => Value;
 
-        public SByte Value;
+        public Matrix4x4 Value;
 
-        public Int8Message(SByte value)
+        public Matrix4x4Message(Matrix4x4 value)
         {
             Value = value;
         }
@@ -23,7 +24,7 @@ namespace Memoria.Test
 
         public void Deserialize(BinaryReader br)
         {
-            Value = br.ReadSByte();
+            Value = br.ReadMatrix4x4();
         }
     }
 }

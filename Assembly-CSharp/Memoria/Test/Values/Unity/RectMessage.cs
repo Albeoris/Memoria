@@ -1,17 +1,19 @@
 using System;
 using System.IO;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria.Test
 {
-    public sealed class Int8Message : IValueMessage
+    public sealed class RectMessage : IValueMessage
     {
-        public ValueMessageType ValueType => ValueMessageType.Int8;
+        public ValueMessageType ValueType => ValueMessageType.Rect;
 
         ValueType IValueMessage.Object => Value;
 
-        public SByte Value;
+        public Rect Value;
 
-        public Int8Message(SByte value)
+        public RectMessage(Rect value)
         {
             Value = value;
         }
@@ -23,7 +25,7 @@ namespace Memoria.Test
 
         public void Deserialize(BinaryReader br)
         {
-            Value = br.ReadSByte();
+            Value = br.ReadRect();
         }
     }
 }
