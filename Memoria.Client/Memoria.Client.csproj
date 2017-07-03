@@ -147,6 +147,8 @@
     <Compile Include="GameObjectExplorer\Views\Component\TransformView.cs" />
     <Compile Include="GameObjectExplorer\Views\TypeEditors\QuaternionControl.cs" />
     <Compile Include="GameObjectExplorer\Views\TypeEditors\QuaternionEditor.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\RectControl.cs" />
+    <Compile Include="GameObjectExplorer\Views\TypeEditors\RectEditor.cs" />
     <Compile Include="GameObjectExplorer\Views\TypeEditors\UiRectPositionControl.cs" />
     <Compile Include="GameObjectExplorer\Views\TypeEditors\UiRectPositionEditor.cs" />
     <Compile Include="GameObjectExplorer\Views\TypeEditors\Vector2Editor.cs" />

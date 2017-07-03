@@ -2,6 +2,7 @@
 using System.Collections;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -714,9 +715,25 @@ public class UIManager : PersistenSingleton<UIManager>
 		}
 	}
 
-	public static Vector2 UIContentSize = new Vector2(1543f, 1080f);
+	public static Vector2 UIContentSize = GetUIContentSize();
 
-	public static Vector2 OriginScreenSize = new Vector2(320f, 224f);
+    private static Vector2 GetUIContentSize()
+    {
+        const Int32 contentWidth = 1543;
+        const Int32 contentHeight = 1080;
+
+        if (Configuration.Graphics.WidescreenSupport)
+        {
+            Single aspect = (Single)Screen.width / Screen.height;
+            return new Vector2(contentHeight * aspect, contentHeight);
+        }
+        else
+        {
+            return new Vector2(contentWidth, contentHeight);
+        }
+    }
+
+    public static Vector2 OriginScreenSize = new Vector2(320f, 224f);
 
 	public static Single ResourceXMultipier = UIManager.UIContentSize.x / UIManager.OriginScreenSize.x;
 

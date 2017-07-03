@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using Memoria.Client.GameObjectExplorer.Views.TypeEditors;
 using Memoria.Test;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -330,6 +331,7 @@ namespace Memoria.Client
         [Category("Camera")]
         [DisplayName("PixelRect")]
         [Description("Where on the screen is the camera rendered in pixel coordinates.")]
+        [Editor(typeof(RectEditor), typeof(RectEditor))]
         public Rect PixelRect
         {
             get { return Native.PixelRect; }

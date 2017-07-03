@@ -157,23 +157,39 @@ public class SFX_Rush
 
     public static Rect GetScreenSize()
     {
-        Vector2 vector2 = new Vector2(320f, 224f);
-        if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
-            vector2 = new Vector2(320f, 220f);
-
-        Single num = Mathf.Min(Screen.width / vector2.x, Screen.height / vector2.y);
-
-        Single w = vector2.x * num;
-        Single h = vector2.y * num;
-        Rect rect = new Rect
+        if (Configuration.Graphics.WidescreenSupport)
         {
-            width = w,
-            height = h,
-            x = (Single)((Screen.width - w) * 0.5),
-            y = (Single)((Screen.height - h) * 0.5)
-        };
+            Rect rect = new Rect
+            {
+                width = Screen.width,
+                height = Screen.height,
+                x = 0,
+                y = 0
+            };
 
-        return rect;
+            return rect;
+        }
+        else
+        {
+
+            Vector2 vector2 = new Vector2(320f, 224f);
+            if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
+                vector2 = new Vector2(320f, 220f);
+
+            Single num = Mathf.Min(Screen.width / vector2.x, Screen.height / vector2.y);
+
+            Single w = vector2.x * num;
+            Single h = vector2.y * num;
+            Rect rect = new Rect
+            {
+                width = w,
+                height = h,
+                x = (Single)((Screen.width - w) * 0.5),
+                y = (Single)((Screen.height - h) * 0.5)
+            };
+
+            return rect;
+        }
     }
 
     public static void CreateScreen()

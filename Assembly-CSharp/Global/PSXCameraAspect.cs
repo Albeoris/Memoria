@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.Common;
+using Memoria;
 using UnityEngine;
 
 public class PSXCameraAspect : MonoBehaviour
@@ -38,28 +39,48 @@ public class PSXCameraAspect : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		Single num = 320f;
-		Single num2 = 224f;
-		if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
-		{
-			num = 320f;
-			num2 = 220f;
-		}
-		this.Ratio = Mathf.Min((Single)Screen.width / num, (Single)Screen.height / num2);
-		Vector2 vector = new Vector2(num * this.Ratio, num2 * this.Ratio);
-		Single num3 = ((Single)Screen.width - vector.x) / (Single)Screen.width;
-		Single num4 = ((Single)Screen.height - vector.y) / (Single)Screen.height;
-		Rect rect = base.GetComponent<Camera>().rect;
-		rect.width = vector.x / (Single)Screen.width;
-		rect.height = vector.y / (Single)Screen.height;
-		rect.x = num3 / 2f;
-		rect.y = num4 / 2f;
-		this.Border = new Vector2(rect.x * (Single)Screen.width, rect.y * (Single)Screen.height);
-		this.Size = new Vector2(vector.x, vector.y);
-		this.MainCamera.rect = rect;
-	}
+        Rect rect = base.GetComponent<Camera>().rect;
 
-	public Single Ratio;
+        if (Configuration.Graphics.WidescreenSupport)
+        {
+            this.Ratio = 1f;
+
+            rect.width = 1;
+	        rect.height = 1;
+	        rect.x = 0;
+	        rect.y = 0;
+
+            this.Size = new Vector2(Screen.width, Screen.height);
+	    }
+        else
+	    {
+            Single originalWidth = 320f;
+            Single originalHeight = 224f;
+
+            if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
+            {
+                originalWidth = 320f;
+                originalHeight = 220f;
+            }
+
+            this.Ratio = Mathf.Min((Single)Screen.width / originalWidth, (Single)Screen.height / originalHeight);
+
+            Vector2 scaledSize = new Vector2(originalWidth * this.Ratio, originalHeight * this.Ratio);
+            Single normalizedWidth = ((Single)Screen.width - scaledSize.x) / (Single)Screen.width;
+            Single normalizedHeight = ((Single)Screen.height - scaledSize.y) / (Single)Screen.height;
+            rect.width = scaledSize.x / (Single)Screen.width;
+            rect.height = scaledSize.y / (Single)Screen.height;
+            rect.x = normalizedWidth / 2f;
+            rect.y = normalizedHeight / 2f;
+            
+            this.Size = new Vector2(scaledSize.x, scaledSize.y);
+        }
+
+        this.Border = new Vector2(rect.x * (Single)Screen.width, rect.y * (Single)Screen.height);
+        this.MainCamera.rect = rect;
+    }
+
+    public Single Ratio;
 
 	public Vector2 Border;
 

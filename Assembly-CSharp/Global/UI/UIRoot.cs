@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -47,7 +48,13 @@ public class UIRoot : MonoBehaviour
 	{
 		get
 		{
-			if (this.activeScaling == UIRoot.Scaling.Flexible)
+		    if (Configuration.Graphics.WidescreenSupport)
+		    {
+		        this.manualWidth = (Int32)UIManager.UIContentSize.x;
+                this.manualHeight = (Int32)UIManager.UIContentSize.y;
+            }
+
+		    if (this.activeScaling == UIRoot.Scaling.Flexible)
 			{
 				Vector2 screenSize = NGUITools.screenSize;
 				Single num = screenSize.x / screenSize.y;

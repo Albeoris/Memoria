@@ -44,6 +44,9 @@ namespace Memoria.Test
                 case ValueMessageType.Quaternion:
                     return new QuaternionMessage(Quaternion.identity);
 
+                case ValueMessageType.Rect:
+                    return new RectMessage(new Rect());
+
                 case ValueMessageType.UiRectPosition:
                     return new UiRectPositionMessage(new UIRect.Position());
 
