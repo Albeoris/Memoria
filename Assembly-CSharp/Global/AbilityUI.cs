@@ -939,9 +939,9 @@ public class AbilityUI : UIScene
 
             if (ff9abil.FF9Abil_HasAp(player))
             {
-                Int32 num1 = player.Data.pa[index];
-                Int32 num2 = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
-                if (num1 == 0 || num1 < num2)
+                Int32 currentAp = player.Data.pa[index];
+                Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
+                if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
         }
@@ -965,9 +965,9 @@ public class AbilityUI : UIScene
 
             if (ff9abil.FF9Abil_HasAp(player))
             {
-                Int32 num1 = player.Data.pa[index];
-                Int32 num2 = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
-                if (num1 == 0 || num1 < num2)
+                Int32 currentAp = player.Data.pa[index];
+                Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
+                if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
         }
