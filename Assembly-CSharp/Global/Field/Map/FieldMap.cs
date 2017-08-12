@@ -443,7 +443,7 @@ public class FieldMap : HonoBehavior
 		Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
 		this.offset.x = (Single)(bgcam_DEF.w / 2) + centerOffset.x;
 		this.offset.y = -((Single)(bgcam_DEF.h / 2) + centerOffset.y);
-		this.offset.x = this.offset.x - 160f;
+		this.offset.x = this.offset.x - HalfSceneWidth;
 		this.offset.y = this.offset.y + 112f;
 		Shader.SetGlobalFloat("_OffsetX", this.offset.x);
 		Shader.SetGlobalFloat("_OffsetY", this.offset.y);
@@ -478,7 +478,7 @@ public class FieldMap : HonoBehavior
 		Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
 		this.offset.x = (Single)(bgcam_DEF.w / 2) + centerOffset.x;
 		this.offset.y = -((Single)(bgcam_DEF.h / 2) + centerOffset.y);
-		this.offset.x = this.offset.x - 160f;
+		this.offset.x = this.offset.x - HalfSceneWidth;
 		this.offset.y = this.offset.y + 112f;
 		Shader.SetGlobalFloat("_OffsetX", this.offset.x);
 		Shader.SetGlobalFloat("_OffsetY", this.offset.y);
@@ -826,7 +826,7 @@ public class FieldMap : HonoBehavior
 			return 0;
 		}
 		BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-		Single num = (Single)((bgcam_DEF.vrpMinX + bgcam_DEF.vrpMaxX) / 2 - bgcam_DEF.centerOffset[0]) - 160f;
+		Single num = (Single)((bgcam_DEF.vrpMinX + bgcam_DEF.vrpMaxX) / 2 - bgcam_DEF.centerOffset[0]) - HalfSceneWidth;
 		Single num2 = (Single)((bgcam_DEF.vrpMinY + bgcam_DEF.vrpMaxY) / 2 + bgcam_DEF.centerOffset[1]) - 112f;
 		Int32 index = 0;
 		Single value = num;
@@ -897,7 +897,7 @@ public class FieldMap : HonoBehavior
 			return 0;
 		}
 		BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-		x = (Int16)(this.curVRP[0] + (Single)bgcam_DEF.centerOffset[0] + 160f);
+		x = (Int16)(this.curVRP[0] + (Single)bgcam_DEF.centerOffset[0] + HalfSceneWidth);
 		y = (Int16)(this.curVRP[1] - (Single)bgcam_DEF.centerOffset[1] + 112f);
 		return 1;
 	}
@@ -1317,9 +1317,9 @@ public class FieldMap : HonoBehavior
         }
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
         Vector2 zero = Vector2.zero;
-        zero[0] = this.curVRP[0] + (float)bgcam_DEF.centerOffset[0] + 160f;
+        zero[0] = this.curVRP[0] + (float)bgcam_DEF.centerOffset[0] + HalfSceneWidth;
         zero[1] = this.curVRP[1] - (float)bgcam_DEF.centerOffset[1] + 112f;
-        this.scene.scrX = (short)((float)this.scene.curX + 160f - zero[0]);
+        this.scene.scrX = (short)((float)this.scene.curX + HalfSceneWidth - zero[0]);
         this.scene.scrY = (short)((float)this.scene.curY + 112f - zero[1]);
         ushort overlayCount = this.scene.overlayCount;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
@@ -1348,7 +1348,7 @@ public class FieldMap : HonoBehavior
             }
             else
             {
-                num4 = (short)(160f - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
+                num4 = (short)(HalfSceneWidth - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
                 num5 = (short)(112f - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
             }
             short num6 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
@@ -1465,7 +1465,7 @@ public class FieldMap : HonoBehavior
             }
             else
             {
-                num4 = (short)(160f - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
+                num4 = (short)(HalfSceneWidth - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
                 num5 = (short)(112f - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
             }
             short num6 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
@@ -1612,9 +1612,9 @@ public class FieldMap : HonoBehavior
 		}
 		Single num = (Single)((Int32)vertex.x);
 		Single num2 = (Single)((Int32)vertex.y);
-		Single num3 = (Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + (num - 160f);
+		Single num3 = (Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + (num - HalfSceneWidth);
 		Single num4 = (Single)((bgcam_DEF.h >> 1) + (Int32)bgcam_DEF.centerOffset[1]) + (num2 - 112f);
-		num3 -= this.offset.x - 160f;
+		num3 -= this.offset.x - HalfSceneWidth;
 		num4 += this.offset.y - 112f;
 		num4 *= -1f;
 		if (num3 < (Single)bgcam_DEF.vrpMinX)
@@ -1864,7 +1864,7 @@ public class FieldMap : HonoBehavior
 		Int16 num3 = this.curFrame;
 		Int16 num4 = this.frameCount;
 		BGCAM_DEF bgcam_DEF = bgscene_DEF.cameraList[this.curCamIdx];
-		Int16 num5 = (Int16)(this.endPoint[0] - (Single)bgcam_DEF.centerOffset[0] - 160f - this.startPoint[0]);
+		Int16 num5 = (Int16)(this.endPoint[0] - (Single)bgcam_DEF.centerOffset[0] - HalfSceneWidth - this.startPoint[0]);
 		Int16 num6 = (Int16)(this.endPoint[1] + (Single)bgcam_DEF.centerOffset[1] - 112f - this.startPoint[1]);
 		Single num7 = (Single)((Int16)this.curVRP.x);
 		Single num8 = (Single)((Int16)this.curVRP.y);
@@ -1999,20 +1999,20 @@ public class FieldMap : HonoBehavior
 			this.prevScr = vector;
 		}
 		this.prevScr = vector;
-		Single num = (Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + (vector.x - 160f);
+		Single num = (Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + (vector.x - HalfSceneWidth);
 		Single num2 = (Single)((bgcam_DEF.h >> 1) + (Int32)bgcam_DEF.centerOffset[1]) + (vector.y - 112f);
 		Single num3 = vector.x;
 		Single num4 = vector.y;
-		num -= this.offset.x - 160f;
+		num -= this.offset.x - HalfSceneWidth;
 		num2 += this.offset.y - 112f;
 		num2 *= -1f;
 		if (num < (Single)bgcam_DEF.vrpMinX)
 		{
-			num3 = this.offset.x + 160f - ((Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + 160f - (Single)bgcam_DEF.vrpMinX);
+			num3 = this.offset.x + HalfSceneWidth - ((Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + HalfSceneWidth - (Single)bgcam_DEF.vrpMinX);
 		}
 		else if (num > (Single)bgcam_DEF.vrpMaxX)
 		{
-			num3 = this.offset.x + 160f - ((Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + 160f - (Single)bgcam_DEF.vrpMaxX);
+			num3 = this.offset.x + HalfSceneWidth - ((Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + HalfSceneWidth - (Single)bgcam_DEF.vrpMaxX);
 		}
 		if (num2 < (Single)bgcam_DEF.vrpMinY)
 		{
@@ -2151,7 +2151,7 @@ public class FieldMap : HonoBehavior
 		{
 			this.curVRP[1] = aimY;
 		}
-		this.curVRP[0] = this.curVRP[0] - (Single)camPtr.centerOffset[0] - 160f;
+		this.curVRP[0] = this.curVRP[0] - (Single)camPtr.centerOffset[0] - HalfSceneWidth;
 		this.curVRP[1] = this.curVRP[1] + (Single)camPtr.centerOffset[1] - 112f;
 		dX = (Int16)(this.curVRP.x - x);
 		dY = (Int16)(this.curVRP.y - y);
@@ -3085,4 +3085,6 @@ public class FieldMap : HonoBehavior
 
         public List<int> skipOverlayList;
     }
+
+    private static readonly Single HalfSceneWidth = 160f;//((224f / Screen.height) * Screen.width) / 2;
 }

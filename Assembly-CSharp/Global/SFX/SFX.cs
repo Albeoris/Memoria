@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using AOT;
 using FF9;
+using Memoria;
 using Memoria.Prime;
 using UnityEngine;
 
@@ -1033,18 +1034,29 @@ public class SFX
 
     public static void UpdateScreenSize()
     {
-        Single num = Screen.width / (Single)Screen.height;
-        if (num >= 1.0)
+        if (Configuration.Graphics.WidescreenSupport)
         {
+            SFX.screenWidth = Screen.width;
             SFX.screenHeight = Screen.height;
-            SFX.screenWidth = Screen.height * 1.4545455f;
-            SFX.screenWidthOffset = (Screen.width - SFX.screenWidth) * 0.5f;
+            SFX.screenWidthOffset = 0;
+            SFX.screenHeightRatio = 1f;
+            SFX.screenWidthRatio = 1f;
         }
         else
         {
-            SFX.screenHeight = Screen.width;
-            SFX.screenWidth = Screen.width * 1.4545455f;
-            SFX.screenWidthOffset = (Screen.height - SFX.screenWidth) * 0.5f;
+            Single num = Screen.width / (Single)Screen.height;
+            if (num >= 1.0)
+            {
+                SFX.screenHeight = Screen.height;
+                SFX.screenWidth = Screen.height * 1.4545455f;
+                SFX.screenWidthOffset = (Screen.width - SFX.screenWidth) * 0.5f;
+            }
+            else
+            {
+                SFX.screenHeight = Screen.width;
+                SFX.screenWidth = Screen.width * 1.4545455f;
+                SFX.screenWidthOffset = (Screen.height - SFX.screenWidth) * 0.5f;
+            }
         }
     }
 

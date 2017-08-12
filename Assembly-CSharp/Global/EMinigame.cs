@@ -205,17 +205,12 @@ public class EMinigame
 		}
 	}
 
-	public static void CatchingGoldenFrogAchievement(Obj frogObj)
+    public const Int32 GoldenFrogModelId = 423;
+
+    public static void CatchingGoldenFrogAchievement(Obj frogObj)
 	{
-		Boolean flag = false;
-		if (((PosObj)frogObj).model == 423)
-		{
-			flag = true;
-		}
-		if (flag)
-		{
+		if (((PosObj)frogObj).model == GoldenFrogModelId)
 			AchievementManager.ReportAchievement(AcheivementKey.GoldenFrog, 1);
-		}
 	}
 
 	public static void GetRewardFromQueenStellaAchievement()

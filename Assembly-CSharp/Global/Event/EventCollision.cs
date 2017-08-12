@@ -536,7 +536,7 @@ public class EventCollision
 					case 176:
 						break;
 					default:
-						if (model != 423)
+						if (model != EMinigame.GoldenFrogModelId)
 						{
 							goto IL_191;
 						}
