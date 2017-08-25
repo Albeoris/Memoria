@@ -336,7 +336,15 @@ public class TitleUI : UIScene
             FF9StateSystem.Serializer.HasAutoload(this.CheckAutoSaveSlot);
             FF9StateSystem.Serializer.GetGameFinishFlag(this.CheckGameFinishFlag);
             ExpansionVerifier.printLog("TitleUI: PlaySplashScreen()");
-            this.PlaySplashScreen();
+            if (Configuration.Graphics.SkipIntros)
+            {
+                this.ShowMenuPanel();
+                this.idleScreenType = SlideShow.Type.Sequence1;
+                ButtonGroupState.ActiveGroup = MenuGroupButton;
+            } else
+            {
+                this.PlaySplashScreen();
+            }
         }
         else if (!this.ForceCheckingAutoSave && !this.SplashScreenEnabled && PersistenSingleton<UIManager>.Instance.PreviousState != UIManager.UIState.EndGame)
         {

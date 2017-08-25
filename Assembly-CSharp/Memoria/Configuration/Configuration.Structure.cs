@@ -78,6 +78,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleFPS = IniValue.Int32(nameof(BattleFPS));
             public readonly IniValue<Int32> BattleSwirlFrames = IniValue.Int32(nameof(BattleSwirlFrames));
             public readonly IniValue<Boolean> WidescreenSupport = IniValue.Boolean(nameof(WidescreenSupport));
+            public readonly IniValue<Boolean> SkipIntros = IniValue.Boolean(nameof(SkipIntros));
 
             public GraphicsSection() : base("Graphics")
             {
@@ -85,6 +86,7 @@ namespace Memoria
                 BattleFPS.Value = 30;
                 BattleSwirlFrames.Value = 25;
                 WidescreenSupport.Value = false;
+                SkipIntros.Value = false;
             }
 
             protected override IEnumerable<IniValue> GetValues()
@@ -93,6 +95,7 @@ namespace Memoria
                 yield return BattleFPS;
                 yield return BattleSwirlFrames;
                 yield return WidescreenSupport;
+                yield return SkipIntros;
             }
         }
 

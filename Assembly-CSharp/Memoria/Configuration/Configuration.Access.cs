@@ -26,6 +26,7 @@ namespace Memoria
             public static Int32 BattleFPS => Enabled ? Instance._graphics.BattleFPS.Value : 15;
             public static Int32 BattleSwirlFrames => Enabled ? Instance._graphics.BattleSwirlFrames.Value : 115;
             public static Boolean WidescreenSupport { get; set; } = Enabled && Instance._graphics.WidescreenSupport.Value;
+            public static Boolean SkipIntros = Enabled && Instance._graphics.SkipIntros.Value;
         }
 
         public static class Cheats
