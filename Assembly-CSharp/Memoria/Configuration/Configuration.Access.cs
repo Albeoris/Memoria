@@ -13,6 +13,13 @@ namespace Memoria
             public static Int32 Size => Instance._font.Size.Value;
         }
 
+        public static class Control
+        {
+            public static Boolean Enabled => Instance._ctrl.Enabled.Value;
+            public static Int32 StickThreshold => Instance._ctrl.StickThreshold.Value;
+            public static Int32 MinimumSpeed => Instance._ctrl.MinimumSpeed.Value;
+        }
+
         public static class Graphics
         {
             public static Boolean Enabled => Instance._graphics.Enabled.Value;

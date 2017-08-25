@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityXInput;
+using Memoria;
 using XInputDotNetPure;
 
 public class HonoInputManager : PersistenSingleton<HonoInputManager>
 {
 	public HonoInputManager()
 	{
+        this.analogControlEnabled = Configuration.Control.Enabled;
 		KeyCode[] array = new KeyCode[3];
 		array[0] = KeyCode.KeypadEnter;
 		array[1] = KeyCode.Mouse1;
@@ -1271,8 +1273,13 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	private Vector2 GetJoyStickValue()
 	{
-		return new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
-	}
+        Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
+        if (inputAxis.magnitude > 1 && analogControlEnabled)
+        {
+            inputAxis.Normalize();
+        }
+        return inputAxis;
+    }
 
 	private Vector2 GetInputAxis()
 	{
@@ -1280,7 +1287,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		{
 			return VirtualAnalog.Value;
 		}
-		return new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
+        Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
+        if (inputAxis.magnitude > 1 && analogControlEnabled)
+        {
+            inputAxis.Normalize();
+        }
+        return inputAxis;
 	}
 
 	private void ScanAndroidSecondarySelectKey()
@@ -1467,6 +1479,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	private Boolean[] hasVAxisSignalNotZero;
 
 	private Boolean isDisablePrimaryKey;
+
+    private Boolean analogControlEnabled;
 
 	[SerializeField]
 	private Boolean[] rightAnalogButtonStatus;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using FF9;
 using UnityEngine;
+using Memoria;
 using Object = System.Object;
 
 public class FieldMapActorController : HonoBehavior
@@ -149,7 +150,11 @@ public class FieldMapActorController : HonoBehavior
 		this.animation = this.model.GetComponent<Animation>();
 		this.foundTris = new List<Int32>();
 		this.adjacentActiveTris = new List<Int32>();
-	}
+        this.analogControlEnabled = Configuration.Control.Enabled;
+        this.stickThreshold = Configuration.Control.StickThreshold/100.0f;
+        this.minimumSpeed = Mathf.Min((float)Configuration.Control.MinimumSpeed, 30.0f);
+
+    }
 
 	public override void HonoStart()
 	{
@@ -164,7 +169,7 @@ public class FieldMapActorController : HonoBehavior
 
 	public override void HonoUpdate()
 	{
-		if (!FF9StateSystem.Field.isDebug)
+        if (!FF9StateSystem.Field.isDebug)
 		{
 			this.PlayAnimationViaEventScript();
 		}
@@ -216,7 +221,7 @@ public class FieldMapActorController : HonoBehavior
 		this.isRunning = false;
 		Single num = this.radius * this.radius * 9f * 9f;
 		Boolean flag = PersistenSingleton<EventEngine>.Instance.GetDashInh() == 1;
-		if (this.isPlayer && ((UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) || VirtualAnalog.GetMagnitudeRatio() > 0.95f || this.totalPathLengthSq > num) && !flag)
+		if (this.isPlayer && ((UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) ||  this.totalPathLengthSq > num) && !flag)
 		{
 			this.isRunning = true;
 			Int32 num2 = 2;
@@ -658,7 +663,12 @@ public class FieldMapActorController : HonoBehavior
 		{
 			return;
 		}
-		Boolean flag = false;
+        //This flag was set to false, causing the game to register digital movement unless on android.
+        Boolean flag = false;
+        if (analogControlEnabled)
+        {
+            flag = true;
+        }
 		Vector2 vector = Vector2.zero;
 		if (FF9StateSystem.MobilePlatform)
 		{
@@ -679,11 +689,11 @@ public class FieldMapActorController : HonoBehavior
 		{
 			vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
 		}
-		Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0f;
-		Boolean flag3 = UIManager.Input.GetKey(Control.Down) || vector.y < 0f;
-		Boolean flag4 = UIManager.Input.GetKey(Control.Left) || vector.x < 0f;
-		Boolean flag5 = UIManager.Input.GetKey(Control.Right) || vector.x > 0f;
-		if (!FF9StateSystem.Field.isDebug)
+        Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0f;
+        Boolean flag3 = UIManager.Input.GetKey(Control.Down) || vector.y < 0f;
+        Boolean flag4 = UIManager.Input.GetKey(Control.Left) || vector.x < 0f;
+        Boolean flag5 = UIManager.Input.GetKey(Control.Right) || vector.x > 0f;
+        if (!FF9StateSystem.Field.isDebug)
 		{
 			flag2 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
 			flag3 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
@@ -747,30 +757,34 @@ public class FieldMapActorController : HonoBehavior
 		{
 			this.moveVec = Vector3.zero;
 			if (flag)
-			{
+			{      
 				this.moveVec = new Vector3(vector.x, 0f, vector.y);
 			}
-			else
-			{
-				if (this.moveVec.x < 0f || flag4)
-				{
-					this.moveVec.x = this.moveVec.x - this.speed;
-				}
-				if (this.moveVec.x > 0f || flag5)
-				{
-					this.moveVec.x = this.moveVec.x + this.speed;
-				}
-				if (this.moveVec.z > 0f || flag2)
-				{
-					this.moveVec.z = this.moveVec.z + this.speed;
-				}
-				if (this.moveVec.z < 0f || flag3)
-				{
-					this.moveVec.z = this.moveVec.z - this.speed;
-				}
-			}
-			this.moveVec.Normalize();
-			Single y = FF9StateSystem.Field.twist.y;
+            else
+            {
+                if (this.moveVec.x < 0f || flag4)
+                {
+                    this.moveVec.x = this.moveVec.x - this.speed;
+                }
+                if (this.moveVec.x > 0f || flag5)
+                {
+                    this.moveVec.x = this.moveVec.x + this.speed;
+                }
+                if (this.moveVec.z > 0f || flag2)
+                {
+                    this.moveVec.z = this.moveVec.z + this.speed;
+                }
+                if (this.moveVec.z < 0f || flag3)
+                {
+                    this.moveVec.z = this.moveVec.z - this.speed;
+                }
+            }
+           // Removing this statement allows for variable movement speed.
+            if (!analogControlEnabled)
+            {
+                this.moveVec.Normalize();
+            }
+            Single y = FF9StateSystem.Field.twist.y;
 			if (flag)
 			{
 				y = FF9StateSystem.Field.twist.x;
@@ -778,10 +792,36 @@ public class FieldMapActorController : HonoBehavior
 			Quaternion rotation = Quaternion.Euler(0f, y, 0f);
 			this.moveVec = rotation * this.moveVec;
 		}
-		Vector3 b = this.moveVec * this.speed;
-		this.curPos += b;
+
+        Vector3 b = this.moveVec * this.speed;
+
+        //This block sets correct state and speed based on stick magnitude.
+        if (analogControlEnabled)
+        {
+
+            float currentSpeed = 0.0f;
+            Boolean dashInhibited = PersistenSingleton<EventEngine>.Instance.GetDashInh() == 1;
+            if (moveVec.magnitude > 0.5 && (UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) && !dashInhibited)
+            {
+                this.isRunning = true;
+                currentSpeed = Mathf.Lerp(this.minimumSpeed / 2.0f, this.speed, moveVec.magnitude);
+            }
+            else
+            {
+                this.isRunning = false;
+                currentSpeed = Mathf.Lerp(this.minimumSpeed, this.speed, moveVec.magnitude);
+            }
+            b = this.moveVec.normalized * currentSpeed;
+            //Inihibit movement if below threshold
+            if (this.moveVec.magnitude <= stickThreshold)
+            {
+                b = Vector3.zero;
+            }
+        }
+        this.curPos += b;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-		if (flag2 || flag3 || flag4 || flag5 || this.hasTarget)
+        //Prevent rotation if below threshold
+        if (flag2 || flag3 || flag4 || flag5 || this.hasTarget && b != Vector3.zero)
 		{
 			Single num2 = Mathf.Atan2(-this.moveVec.x, -this.moveVec.z) * 57.29578f;
 			Single num3 = Mathf.Lerp(this.actor.actor.rotAngle[1], num2, 0.4f);
@@ -2553,6 +2593,12 @@ public class FieldMapActorController : HonoBehavior
 	private Boolean isRunning;
 
 	private Single cTime;
+
+    private bool analogControlEnabled;
+
+    private float stickThreshold;
+
+    private float minimumSpeed;
 
 	private Transform model;
 
