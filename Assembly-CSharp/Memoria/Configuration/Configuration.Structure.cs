@@ -7,6 +7,7 @@ namespace Memoria
     public sealed partial class Configuration : Ini
     {
         private readonly FontSection _font = new FontSection();
+        private readonly ControlSection _ctrl = new ControlSection();
         private readonly GraphicsSection _graphics = new GraphicsSection();
         private readonly CheatsSection _cheats = new CheatsSection();
         private readonly ImportSection _import = new ImportSection();
@@ -19,6 +20,7 @@ namespace Memoria
         public override IEnumerable<IniSection> GetSections()
         {
             yield return _font;
+            yield return _ctrl;
             yield return _graphics;
             yield return _cheats;
             yield return _import;
@@ -49,12 +51,34 @@ namespace Memoria
             }
         }
 
+        private sealed class ControlSection : IniSection
+        {
+            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Int32> StickThreshold = IniValue.Int32(nameof(StickThreshold));
+            public readonly IniValue<Int32> MinimumSpeed = IniValue.Int32(nameof(MinimumSpeed));
+
+            public ControlSection() : base("AnalogControl")
+            {
+                Enabled.Value = false;
+                StickThreshold.Value = 10;
+                MinimumSpeed.Value = 5;
+            }
+
+            protected override IEnumerable<IniValue> GetValues()
+            {
+                yield return Enabled;
+                yield return StickThreshold;
+                yield return MinimumSpeed;
+            }
+        }
+
         private sealed class GraphicsSection : IniSection
         {
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<Int32> BattleFPS = IniValue.Int32(nameof(BattleFPS));
             public readonly IniValue<Int32> BattleSwirlFrames = IniValue.Int32(nameof(BattleSwirlFrames));
             public readonly IniValue<Boolean> WidescreenSupport = IniValue.Boolean(nameof(WidescreenSupport));
+            public readonly IniValue<Boolean> SkipIntros = IniValue.Boolean(nameof(SkipIntros));
 
             public GraphicsSection() : base("Graphics")
             {
@@ -62,6 +86,7 @@ namespace Memoria
                 BattleFPS.Value = 30;
                 BattleSwirlFrames.Value = 25;
                 WidescreenSupport.Value = true;
+                SkipIntros.Value = false;
             }
 
             protected override IEnumerable<IniValue> GetValues()
@@ -70,6 +95,7 @@ namespace Memoria
                 yield return BattleFPS;
                 yield return BattleSwirlFrames;
                 yield return WidescreenSupport;
+                yield return SkipIntros;
             }
         }
 

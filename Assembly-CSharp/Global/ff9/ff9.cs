@@ -6,6 +6,7 @@ using Assets.Scripts.Common;
 using FF9;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
+using Memoria;
 
 public static class ff9
 {
@@ -7324,24 +7325,34 @@ public static class ff9
 		}
 	}
 
-	public static Boolean w_moveGetPadStateLX(out Int32 vx)
-	{
-		Single x = PersistenSingleton<HonoInputManager>.Instance.GetAxis().x;
-		Boolean flag = x < -0.1f;
-		Boolean flag2 = x > 0.1f;
-		vx = 0;
-		if (flag)
-		{
-			vx = -128;
-		}
-		if (flag2)
-		{
-			vx = 128;
-		}
-		if (!EventInput.IsMovementControl)
-		{
-			vx = 0;
-		}
+    public static Boolean w_moveGetPadStateLX(out Int32 vx)
+    {
+        Single x = PersistenSingleton<HonoInputManager>.Instance.GetAxis().x;
+        Boolean flag = x < -0.1f;
+        Boolean flag2 = x > 0.1f;
+        vx = 0;
+        if (Configuration.Control.Enabled)
+        {
+            if (flag || flag2)
+            {
+                vx = (int)(x * 128.0f);
+            }
+        }
+        else
+        {
+            if (flag)
+            {
+                vx = -128;
+            }
+            if (flag2)
+            {
+                vx = 128;
+            }
+            if (!EventInput.IsMovementControl)
+            {
+                vx = 0;
+            }
+        }
 		return false;
 	}
 
@@ -7401,14 +7412,24 @@ public static class ff9
 		Boolean flag4 = y3 > 0.1f;
 		Boolean flag5 = y3 < -0.1f;
 		vy = 0;
-		if (flag4)
-		{
-			vy = -128;
-		}
-		if (flag5)
-		{
-			vy = 128;
-		}
+        if (Configuration.Control.Enabled)
+        {
+            if (flag4 || flag5)
+            {
+                vy = (int)(-y3 * 128.0f);
+            }
+
+        } else
+        {
+            if (flag4)
+            {
+                vy = -128;
+            }
+            if (flag5)
+            {
+                vy = 128;
+            }
+        }
 		if (!EventInput.IsMovementControl)
 		{
 			vy = 0;

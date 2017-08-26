@@ -14,11 +14,20 @@ namespace Memoria
             public static Int32 Size => Instance._font.Size.Value;
         }
 
+        public static class Control
+        {
+            public static Boolean Enabled => Instance._ctrl.Enabled.Value;
+            public static Int32 StickThreshold => Instance._ctrl.StickThreshold.Value;
+            public static Int32 MinimumSpeed => Instance._ctrl.MinimumSpeed.Value;
+        }
+
         public static class Graphics
         {
             public static Boolean Enabled => Instance._graphics.Enabled.Value;
             public static Int32 BattleFPS => Enabled ? Instance._graphics.BattleFPS.Value : 15;
             public static Int32 BattleSwirlFrames => Enabled ? Instance._graphics.BattleSwirlFrames.Value : 115;
+            public static Boolean WidescreenSupport { get; set; } = Enabled && Instance._graphics.WidescreenSupport.Value;
+            public static Boolean SkipIntros = Enabled && Instance._graphics.SkipIntros.Value;
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 
