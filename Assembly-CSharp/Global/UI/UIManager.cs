@@ -4,6 +4,8 @@ using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Scenes;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class UIManager : PersistenSingleton<UIManager>
@@ -336,8 +338,8 @@ public class UIManager : PersistenSingleton<UIManager>
 		else if (loadedLevelName == SceneDirector.BattleMapSceneName)
 		{
 			this.UnityScene = UIManager.Scene.Battle;
-			this.battleCamera = GameObject.Find("BattleMap Root/Battle Camera").GetComponent<Camera>();
-			this.ChangeUIState(UIManager.UIState.BattleHUD);
+		    InitializeBattleCamera();
+            this.ChangeUIState(UIManager.UIState.BattleHUD);
 			TimerUI.Init();
 			this.BattleHUDScene.Loading = true;
 			active = true;
@@ -374,7 +376,7 @@ public class UIManager : PersistenSingleton<UIManager>
 		else if (loadedLevelName == "BattleMapDebug")
 		{
 			this.UnityScene = UIManager.Scene.Battle;
-			this.battleCamera = GameObject.Find("BattleMap Root/Battle Camera").GetComponent<Camera>();
+			InitializeBattleCamera();
 			this.ChangeUIState(UIManager.UIState.BattleHUD);
 			TimerUI.Init();
 			isEnable = true;
@@ -412,7 +414,17 @@ public class UIManager : PersistenSingleton<UIManager>
 		FF9StateSystem.Settings.SetFastForward(FF9StateSystem.Settings.IsFastForward);
 	}
 
-	public void AnchorToUIRoot(GameObject go)
+    private void InitializeBattleCamera()
+    {
+        GameObject cameraObject = GameObject.Find("BattleMap Root/Battle Camera");
+        //if (Configuration.Graphics.WidescreenSupport) // Always to switch an aspect in runtime by Alt+Space
+        {
+            cameraObject.EnsureExactComponent<PSXCameraAspect>();
+        }
+        this.battleCamera = cameraObject.GetComponent<Camera>();
+    }
+
+    public void AnchorToUIRoot(GameObject go)
 	{
 		UIWidget component = go.GetComponent<UIWidget>();
 		component.SetAnchor(base.gameObject);
@@ -697,25 +709,33 @@ public class UIManager : PersistenSingleton<UIManager>
 		}
 	}
 
-	public void InitFadeTexture()
-	{
-		GameObject gameObject = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Add");
-		if (gameObject != (UnityEngine.Object)null)
-		{
-			this.eventFadeTextureAdd = gameObject.GetComponent<UITexture>();
-			this.eventFadeTextureAdd.mainTexture = Texture2D.whiteTexture;
-			this.eventFadeTextureAdd.material = new Material(Shader.Find("PSX/Fade_Abr_1 1"));
-		}
-		GameObject gameObject2 = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Sub");
-		if (gameObject2 != (UnityEngine.Object)null)
-		{
-			this.eventFadeTextureSub = gameObject2.GetComponent<UITexture>();
-			this.eventFadeTextureSub.mainTexture = Texture2D.whiteTexture;
-			this.eventFadeTextureSub.material = new Material(Shader.Find("PSX/Fade_Abr_2 1"));
-		}
-	}
+    public void InitFadeTexture()
+    {
+        GameObject addTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Add");
 
-	public static Vector2 UIContentSize = GetUIContentSize();
+        if (addTexture != null)
+        {
+            this.eventFadeTextureAdd = addTexture.GetComponent<UITexture>();
+            this.eventFadeTextureAdd.mainTexture = Texture2D.whiteTexture;
+            this.eventFadeTextureAdd.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_1 1"));
+
+            if (Configuration.Graphics.WidescreenSupport)
+                eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
+        }
+        GameObject subTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Sub");
+
+        if (subTexture != null)
+        {
+            this.eventFadeTextureSub = subTexture.GetComponent<UITexture>();
+            this.eventFadeTextureSub.mainTexture = Texture2D.whiteTexture;
+            this.eventFadeTextureSub.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_2 1"));
+
+            if (Configuration.Graphics.WidescreenSupport)
+                eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
+        }
+    }
+
+    public static Vector2 UIContentSize = GetUIContentSize();
 
     private static Vector2 GetUIContentSize()
     {
@@ -733,13 +753,12 @@ public class UIManager : PersistenSingleton<UIManager>
         }
     }
 
-    public static Vector2 OriginScreenSize = new Vector2(320f, 224f);
+    public static Vector2 OriginScreenSize = new Vector2(FieldMap.PsxFieldWidth, FieldMap.PsxFieldHeightNative);
 
-	public static Single ResourceXMultipier = UIManager.UIContentSize.x / UIManager.OriginScreenSize.x;
+    public static volatile Single ResourceXMultipier = CalcResourceXMultipier();
+    public static volatile Single ResourceYMultipier = CalcResourceYMultipier();
 
-	public static Single ResourceYMultipier = UIManager.UIContentSize.y / UIManager.OriginScreenSize.y;
-
-	private static FieldMapActorController PlayerActorController;
+    private static FieldMapActorController PlayerActorController;
 
 	private static HonoluluBattleMain battleMainBehavior;
 
@@ -876,4 +895,20 @@ public class UIManager : PersistenSingleton<UIManager>
 		EndGame,
 		None
 	}
+
+    public void OnWidescreenSupportChanged()
+    {
+        UIContentSize = GetUIContentSize();
+        ResourceXMultipier = CalcResourceXMultipier();
+        ResourceYMultipier = CalcResourceYMultipier();
+
+        if (eventFadeTextureAdd != null)
+            eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
+
+        if (eventFadeTextureSub != null)
+            eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
+    }
+
+    private static Single CalcResourceYMultipier() => UIContentSize.y / OriginScreenSize.y;
+    private static Single CalcResourceXMultipier() => UIContentSize.x / OriginScreenSize.x;
 }

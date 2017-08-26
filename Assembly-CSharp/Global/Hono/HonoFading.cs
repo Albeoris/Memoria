@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Memoria;
 using UnityEngine;
 
 public class HonoFading : MonoBehaviour
@@ -30,14 +31,21 @@ public class HonoFading : MonoBehaviour
 
 	public void Fade(Single alphaFrom, Single alphaTo, Single duration, Single delay, AnimationCurve animCurve, UIScene.SceneVoidDelegate callback = null)
 	{
-		if (base.gameObject.activeInHierarchy && !this.busy)
+        if (base.gameObject.activeInHierarchy && !this.busy)
 		{
-			this.busy = true;
+		    if (Configuration.Graphics.WidescreenSupport)
+		    {
+		        UISprite faddingSprite = gameObject.GetComponent<UISprite>();
+		        faddingSprite.width = faddingSprite.height * Screen.width / Screen.height;
+		    }
+
+            this.busy = true;
 			this.SetAlphaTween(alphaFrom, alphaTo, duration, delay, animCurve);
 			this.tweenAlpha.ResetToBeginning();
 			this.tweenAlpha.enabled = true;
 			base.gameObject.SetActive(true);
-			if (callback != null)
+
+		    if (callback != null)
 			{
 				base.StartCoroutine("WaitForAnimation", callback);
 			}
@@ -62,7 +70,7 @@ public class HonoFading : MonoBehaviour
 	{
 		if (base.gameObject.activeInHierarchy)
 		{
-			base.StartCoroutine(this.PingPongProcess(blackSceneCallback, finishCallback));
+            base.StartCoroutine(this.PingPongProcess(blackSceneCallback, finishCallback));
 		}
 	}
 
@@ -81,7 +89,14 @@ public class HonoFading : MonoBehaviour
 		yield break;
 	}
 
-	private IEnumerator WaitForAnimation(UIScene.SceneVoidDelegate callback)
+    private IEnumerator SkipPingPongProcess(UIScene.SceneVoidDelegate blackSceneCallback = null, UIScene.SceneVoidDelegate finishCallback = null)
+    {
+        blackSceneCallback?.Invoke();
+        yield return new WaitForEndOfFrame();
+        finishCallback?.Invoke();
+    }
+
+    private IEnumerator WaitForAnimation(UIScene.SceneVoidDelegate callback)
 	{
 		yield return new WaitForSeconds(this.tweenAlpha.duration + this.tweenAlpha.delay);
 		this.busy = false;
@@ -92,7 +107,17 @@ public class HonoFading : MonoBehaviour
 		yield break;
 	}
 
-	private void OnDisable()
+    private IEnumerator SkipAnimation(UIScene.SceneVoidDelegate callback)
+    {
+        this.busy = false;
+        if (callback != null)
+        {
+            callback();
+        }
+        yield break;
+    }
+
+    private void OnDisable()
 	{
 		this.busy = false;
 		this.tweenAlpha.enabled = false;

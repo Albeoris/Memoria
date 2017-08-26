@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class WorldSPS : MonoBehaviour
@@ -34,11 +35,11 @@ public class WorldSPS : MonoBehaviour
 		this._uv = new List<Vector2>();
 		this._indices = new List<Int32>();
 		this.materials = new Material[5];
-		this.materials[0] = new Material(Shader.Find("WorldMap/SPS_Abr_0"));
-		this.materials[1] = new Material(Shader.Find("WorldMap/SPS_Abr_1"));
-		this.materials[2] = new Material(Shader.Find("WorldMap/SPS_Abr_2"));
-		this.materials[3] = new Material(Shader.Find("WorldMap/SPS_Abr_3"));
-		this.materials[4] = new Material(Shader.Find("WorldMap/SPS_Abr_None"));
+		this.materials[0] = new Material(ShadersLoader.Find("WorldMap/SPS_Abr_0"));
+		this.materials[1] = new Material(ShadersLoader.Find("WorldMap/SPS_Abr_1"));
+		this.materials[2] = new Material(ShadersLoader.Find("WorldMap/SPS_Abr_2"));
+		this.materials[3] = new Material(ShadersLoader.Find("WorldMap/SPS_Abr_3"));
+		this.materials[4] = new Material(ShadersLoader.Find("WorldMap/SPS_Abr_None"));
 	}
 
 	public void S_WoSpsPut(Byte[] spsBin, Vector3 pos, Vector3 rot, Int32 size, Int32 frame, Int32 abr, Int32 fade, Int32 clutoff, Int32 shtsc)

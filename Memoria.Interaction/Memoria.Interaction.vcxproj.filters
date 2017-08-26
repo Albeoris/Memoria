@@ -52,9 +52,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="app.rc">
       <Filter>Файлы ресурсов</Filter>
     </ResourceCompile>

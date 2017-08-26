@@ -319,9 +319,9 @@ public class HelpDialog : Singleton<HelpDialog>
 
 	public static Int32 FF9HELP_MAXH = HelpDialog.FF9HELP_MAXY - HelpDialog.FF9HELP_MINY + 1 * (Int32)UIManager.ResourceYMultipier;
 
-	public static Int32 FF9HELP_DEFMAXX = (Int32)(UIManager.ResourceXMultipier * 320f - (Single)HelpDialog.FF9HELP_MINX);
+	public static Int32 FF9HELP_DEFMAXX = (Int32)(UIManager.ResourceXMultipier * FieldMap.PsxFieldWidth - (Single)HelpDialog.FF9HELP_MINX);
 
-	public static Int32 FF9HELP_DEFMAXY = (Int32)(UIManager.ResourceYMultipier * 224f - (Single)HelpDialog.FF9HELP_MINY);
+	public static Int32 FF9HELP_DEFMAXY = (Int32)(UIManager.ResourceYMultipier * FieldMap.PsxFieldHeightNative - (Single)HelpDialog.FF9HELP_MINY);
 
 	public static Int32 FF9HELP_DEFMAXW = HelpDialog.FF9HELP_DEFMAXX - HelpDialog.FF9HELP_MINX + 1 * (Int32)UIManager.ResourceXMultipier;
 

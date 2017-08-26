@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Graphics.Movie;
+using Memoria.Scripts;
 using SimpleJSON;
 using UnityEngine;
 using Object = System.Object;
@@ -51,7 +52,7 @@ public class MBG : HonoBehavior
 		this.moviePlane.transform.localScale = Vector3.Scale(new Vector3(32f, 1f, 22.4f), MovieMaterial.ScaleVector);
 		this.mbgCamera.depth = -4096f;
 		this.movieMaterial.FastForward = (MovieMaterial.FastForwardMode)((!FF9StateSystem.Settings.IsFastForward) ? MovieMaterial.FastForwardMode.Normal : MovieMaterial.FastForwardMode.HighSpeed);
-		this.shader = Shader.Find("PSX/FieldMapActorMBGMask");
+		this.shader = ShadersLoader.Find("PSX/FieldMapActorMBGMask");
 		this.SetFastForward(HonoBehaviorSystem.Instance.IsFastForwardModeActive());
 		this.isFastForwardOnBeforePlayingMBG = false;
 		this.played = false;

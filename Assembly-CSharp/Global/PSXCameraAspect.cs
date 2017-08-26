@@ -7,12 +7,12 @@ public class PSXCameraAspect : MonoBehaviour
 {
 	public Vector3 GetLocalMousePos()
 	{
-		Single num = 320f;
-		Single num2 = 224f;
+		Single num = FieldMap.PsxFieldWidth;
+		Single num2 = FieldMap.PsxFieldHeightNative;
 		if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
 		{
-			num = 320f;
-			num2 = 220f;
+			num = FieldMap.PsxScreenWidth;
+			num2 = FieldMap.PsxScreenHeightNative;
 		}
 		Vector3 mousePosition = Input.mousePosition;
 		mousePosition.y = -((Single)Screen.height - mousePosition.y);
@@ -51,16 +51,16 @@ public class PSXCameraAspect : MonoBehaviour
 	        rect.y = 0;
 
             this.Size = new Vector2(Screen.width, Screen.height);
-	    }
+        }
         else
 	    {
-            Single originalWidth = 320f;
-            Single originalHeight = 224f;
+            Single originalWidth = FieldMap.PsxFieldWidth;
+            Single originalHeight = FieldMap.PsxFieldHeightNative;
 
             if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
             {
-                originalWidth = 320f;
-                originalHeight = 220f;
+                originalWidth = FieldMap.PsxScreenWidth;
+                originalHeight = FieldMap.PsxScreenHeightNative;
             }
 
             this.Ratio = Mathf.Min((Single)Screen.width / originalWidth, (Single)Screen.height / originalHeight);
@@ -78,7 +78,7 @@ public class PSXCameraAspect : MonoBehaviour
 
         this.Border = new Vector2(rect.x * (Single)Screen.width, rect.y * (Single)Screen.height);
         this.MainCamera.rect = rect;
-    }
+	}
 
     public Single Ratio;
 

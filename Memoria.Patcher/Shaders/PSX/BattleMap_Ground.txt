@@ -1,0 +1,73 @@
+Shader "PSX/BattleMap_Ground" {
+	Properties {
+		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
+		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
+		_Intensity ("Intensity", Float) = 128
+	}
+	SubShader { 
+		LOD 100
+		Tags { "QUEUE"="AlphaTest+1" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+		Pass {
+			Tags { "QUEUE"="AlphaTest+1" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+			ZWrite Off
+			GpuProgramID 28340
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_modelview0]
+					Matrix 4 [glstate_matrix_projection]
+					Vector 9 [_MainTex_ST]
+					Vector 8 [_ProjectionParams]
+					"vs_2_0
+						def c10, 20, 1, 60000, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.w, c3, v0
+						dp4 r0.z, c2, v0
+						dp4 r1.x, c7, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c4, r0
+						dp4 r2.y, c5, r0
+						mov r3.xyw, r0
+						mul oPos.xy, r1.x, r2
+						mov r0.xw, c10.xyzy
+						add r0.x, r0.x, c8.y
+						add r3.z, -r0.x, r0.z
+						sge r0.x, r0.z, -r0.x
+						dp4 r0.y, c7, r3
+						dp4 r0.z, c6, r3
+						rcp r0.y, r0.y
+						mul r0.z, r0.y, r0.z
+						add r1.xy, -r0.zwzw, c10.zyzw
+						mad oPos.zw, r0.x, r1.xyxy, r0
+						mad oT0.xy, v1, c9, c9.zwzw
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 0 [_Cutoff]
+					Float 1 [_Intensity]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c2, 0.0078125, 0, 0, 0
+						dcl_pp t0.xy
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						add_pp r1, r0.w, -c0.x
+						texkill r1
+						mov r1.x, c1.x
+						mul r1.x, r1.x, c2.x
+						mul_pp r0.xyz, r0, r1.x
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

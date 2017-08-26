@@ -1794,15 +1794,15 @@ internal class EventEngineUtils
 
     public static Vector3 ConvertFixedPointAngleToDegree(Int16[] fixedPointAngle)
     {
-        return new Vector3((Single)(((Int32)fixedPointAngle[0] >> 4) / 256.0 * 360.0), (Single)(((Int32)fixedPointAngle[1] >> 4) / 256.0 * 360.0), (Single)(((Int32)fixedPointAngle[2] >> 4) / 256.0 * 360.0));
+        return new Vector3(x: (Single)(((Int32)fixedPointAngle[0] >> 4) / 256.0 * 360.0), y: (Single)(((Int32)fixedPointAngle[1] >> 4) / 256.0 * 360.0), z: (Single)(((Int32)fixedPointAngle[2] >> 4) / 256.0 * 360.0));
     }
 
-    public static Single ConvertFixedPointAngleToDegree(Int16 fixedPointAngle)
+    public static Single ConvertFixedPointAngleToDegree(Int32 fixedPointAngle)
     {
-        return (Single)(((Int32)fixedPointAngle >> 4) / 256.0 * 360.0);
+        return (Single)((fixedPointAngle >> 4) / 256.0 * 360.0);
     }
 
-    public static Single ConvertFixedPointAngleToDegreeWithOutShiftRight(Int16 fixedPointAngle)
+    public static Single ConvertFixedPointAngleToDegreeWithOutShiftRight(Int32 fixedPointAngle)
     {
         return (Single)(fixedPointAngle / 4096.0 * 360.0);
     }

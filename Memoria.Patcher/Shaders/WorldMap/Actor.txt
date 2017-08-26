@@ -1,0 +1,92 @@
+Shader "WorldMap/Actor" {
+	Properties {
+		_MainTex ("Base (RGB)", 2D) = "white" { }
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_Cutoff ("Cutoff", Range(0,1)) = 0.5
+		_FogEnabled ("FogEnabled", Range(0,1)) = 1
+		_FogStrength ("FogStrength", Float) = 1
+		_ViewDistance ("ViewDistance", Float) = 1
+	}
+	SubShader { 
+		Tags { "LIGHTMODE"="Vertex" "QUEUE"="Transparent" "RenderType"="Transparent" }
+		Pass {
+			Tags { "LIGHTMODE"="Vertex" "QUEUE"="Transparent" "RenderType"="Transparent" }
+			GpuProgramID 63037
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 7 [glstate_matrix_modelview0] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Float 12 [_FogEnabled]
+					Float 14 [_FogEndDistance]
+					Float 13 [_FogStartDistance]
+					Vector 11 [_MainTex_ST]
+					Vector 10 [glstate_lightmodel_ambient]
+					Vector 4 [unity_LightColor0]
+					Vector 5 [unity_LightColor1]
+					Vector 6 [unity_LightColor2]
+					"vs_2_0
+						def c15, 0.800000012, 0, 1, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c11, c11.zwzw
+						add r0.xyz, c10, c10
+						mov r1.x, c15.x
+						mad r0.xyz, c4.x, r1.x, r0
+						mad r0.xyz, c5.x, r1.x, r0
+						mad r0.xyz, c6.x, r1.x, r0
+						max r0.xyz, r0, c15.y
+						min oD0.xyz, r0, c15.z
+						dp4 r0.x, c7, v0
+						dp4 r0.y, c8, v0
+						dp4 r0.z, c9, v0
+						dp3 r0.x, r0, r0
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						add r0.x, -r0.x, c14.x
+						mov r1.x, c14.x
+						add r0.y, r1.x, -c13.x
+						rcp r0.y, r0.y
+						mul r0.x, r0.y, r0.x
+						max r0.x, r0.x, c15.y
+						min r0.x, r0.x, c15.z
+						add r0.y, -r0.x, c15.z
+						mul r0.z, c12.x, c12.x
+						sge r0.z, -r0.z, r0.z
+						mad oT2.x, r0.z, r0.y, r0.x
+						mov oD0.w, c15.z
+						mov oT2.y, c15.z
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 1 [_Cutoff]
+					Vector 0 [unity_FogColor]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl_pp t0.xy
+						dcl v0.xyz
+						dcl t2.x
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						add r1, r0.w, -c1.x
+						texkill r1
+						mul_pp r1.xyz, r0, v0
+						mad r1.xyz, r1, v0, -c0
+						mad_pp r0.xyz, t2.x, r1, c0
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

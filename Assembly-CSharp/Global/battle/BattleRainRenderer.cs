@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.Common;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class BattleRainRenderer : MonoBehaviour
@@ -13,7 +14,7 @@ public class BattleRainRenderer : MonoBehaviour
 		{
 			this.nf_BbgRainFlag = this.maxRain;
 		}
-		this.mat = new Material(Shader.Find("SPS/SPSRain"));
+		this.mat = ShadersLoader.CreateShaderMaterial("SPS/SPSRain");
 	}
 
 	public void nf_BbgRain()

@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.Common;
 using Memoria;
+using Memoria.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -111,11 +112,11 @@ public class SFX_Rush
         {
             _isUpdate = false;
 
-            Material mat1 = new Material(Shader.Find("SFX_RUSH_SUB"));
+            Material mat1 = new Material(ShadersLoader.Find("SFX_RUSH_SUB"));
             mat1.SetVector("_Param", new Vector4(_rot, _scale, _subCol, 0.0f));
             Graphics.Blit(_texture[index1], _texture[index2], mat1);
 
-            Material mat2 = new Material(Shader.Find("SFX_RUSH_ADD"));
+            Material mat2 = new Material(ShadersLoader.Find("SFX_RUSH_ADD"));
             mat2.SetVector("_Center", new Vector4(_px, _py, 0.0f, 0.0f));
             mat2.SetVector("_Param", new Vector4(_rot, _scale, _addCol, 0.0f));
             Graphics.Blit(_texture[index1], _texture[index2], mat2);
@@ -172,9 +173,9 @@ public class SFX_Rush
         else
         {
 
-            Vector2 vector2 = new Vector2(320f, 224f);
+            Vector2 vector2 = new Vector2(FieldMap.PsxFieldWidth, FieldMap.PsxFieldHeightNative);
             if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
-                vector2 = new Vector2(320f, 220f);
+                vector2 = new Vector2(FieldMap.PsxScreenWidth, FieldMap.PsxScreenHeightNative);
 
             Single num = Mathf.Min(Screen.width / vector2.x, Screen.height / vector2.y);
 

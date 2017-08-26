@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Memoria.Prime.Ini;
+using UnityEngine;
 
 namespace Memoria
 {
@@ -18,7 +19,35 @@ namespace Memoria
             public static Boolean Enabled => Instance._graphics.Enabled.Value;
             public static Int32 BattleFPS => Enabled ? Instance._graphics.BattleFPS.Value : 15;
             public static Int32 BattleSwirlFrames => Enabled ? Instance._graphics.BattleSwirlFrames.Value : 115;
-            public static Boolean WidescreenSupport { get; set; } = Enabled && Instance._graphics.WidescreenSupport.Value;
+
+            private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
+
+            private static Boolean InitializeWidescreenSupport()
+            {
+                if (!Enabled)
+                    return false;
+
+                if (!Instance._graphics.WidescreenSupport.Value)
+                    return false;
+
+                if (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.001)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            public static Boolean WidescreenSupport
+            {
+                get => _widescreenSupport;
+                set
+                {
+                    _widescreenSupport = value;
+                    FieldMap.OnWidescreenSupportChanged();
+                    PersistenSingleton<UIManager>.Instance.OnWidescreenSupportChanged();
+                }
+            }
         }
 
         public static class Cheats
@@ -89,7 +118,8 @@ namespace Memoria
         {
             public static Boolean Enabled => Instance._hacks.Enabled.Value;
             public static Int32 AllCharactersAvailable => Enabled ? Instance._hacks.AllCharactersAvailable.Value : 0;
-            public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement.Value;
+            public static Int32 RopeJumpingIncrement => Enabled ? Instance._hacks.RopeJumpingIncrement.Value : 1;
+            public static Int32 FrogCatchingIncrement => Enabled ? Instance._hacks.FrogCatchingIncrement.Value : 1;
             public static Int32 HippaulRacingViviSpeed => Enabled ? Instance._hacks.HippaulRacingViviSpeed.Value : 33;
 
             public static Int32 BattleSpeed => Enabled ? Math.Min(Math.Max(0, Instance._hacks.BattleSpeed.Value), 2) : 0;

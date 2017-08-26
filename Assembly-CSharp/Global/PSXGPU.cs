@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Memoria.Scripts;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -83,9 +84,9 @@ public static class PSXGPU
 
 	private static void InitMaterial()
 	{
-		PSXGPU.matPSXShaderNoTexture = new PSXMaterial(Shader.Find("PSXShaderNoTexture"));
-		PSXGPU.matPSXShaderTextureNoShading = new PSXMaterial(Shader.Find("PSXShaderTextureNoShading"));
-		PSXGPU.matPSXShaderTextureShading = new PSXMaterial(Shader.Find("PSXShaderTextureShading"));
+		PSXGPU.matPSXShaderNoTexture = new PSXMaterial(ShadersLoader.Find("PSXShaderNoTexture"));
+		PSXGPU.matPSXShaderTextureNoShading = new PSXMaterial(ShadersLoader.Find("PSXShaderTextureNoShading"));
+		PSXGPU.matPSXShaderTextureShading = new PSXMaterial(ShadersLoader.Find("PSXShaderTextureShading"));
 	}
 
 	public unsafe static void exePrim(void* addr)
@@ -800,7 +801,7 @@ public static class PSXGPU
 		{
 			GL.Viewport(new Rect(0f, 0f, (Single)PSXTextureMgr.GEN_TEXTURE_W, (Single)PSXTextureMgr.GEN_TEXTURE_H));
 			GL.LoadIdentity();
-			Matrix4x4 mat = Matrix4x4.Ortho(0f, (Single)PSXTextureMgr.GEN_TEXTURE_W, 0f, (Single)PSXTextureMgr.GEN_TEXTURE_H, 160f, 65536f);
+			Matrix4x4 mat = Matrix4x4.Ortho(0f, (Single)PSXTextureMgr.GEN_TEXTURE_W, 0f, (Single)PSXTextureMgr.GEN_TEXTURE_H, FieldMap.HalfScreenWidth, 65536f);
 			mat.m22 = -1f;
 			mat.m23 = 0f;
 			GL.LoadProjectionMatrix(mat);
@@ -994,20 +995,20 @@ public static class PSXGPU
 	{
 		PSXGPU.matPSXShaderNoTexture.SetPass(0);
 		GL.Begin(1);
-		Single num = 160f;
-		Single num2 = 112f;
+		Single halfSceneWidth = FieldMap.HalfFieldWidth;
+		Single halfSceneHeight = FieldMap.HalfFieldHeight;
 		GL.Color(Color.red);
-		GL.Vertex(new Vector3(-num, -num2, 0f));
-		GL.Vertex(new Vector3(num, -num2, 0f));
+		GL.Vertex(new Vector3(-halfSceneWidth, -halfSceneHeight, 0f));
+		GL.Vertex(new Vector3(halfSceneWidth, -halfSceneHeight, 0f));
 		GL.Color(Color.green);
-		GL.Vertex(new Vector3(-num, num2, 0f));
-		GL.Vertex(new Vector3(num, num2, 0f));
+		GL.Vertex(new Vector3(-halfSceneWidth, halfSceneHeight, 0f));
+		GL.Vertex(new Vector3(halfSceneWidth, halfSceneHeight, 0f));
 		GL.Color(Color.blue);
-		GL.Vertex(new Vector3(num, num2, 0f));
-		GL.Vertex(new Vector3(num, -num2, 0f));
+		GL.Vertex(new Vector3(halfSceneWidth, halfSceneHeight, 0f));
+		GL.Vertex(new Vector3(halfSceneWidth, -halfSceneHeight, 0f));
 		GL.Color(Color.white);
-		GL.Vertex(new Vector3(-num, num2, 0f));
-		GL.Vertex(new Vector3(-num, -num2, 0f));
+		GL.Vertex(new Vector3(-halfSceneWidth, halfSceneHeight, 0f));
+		GL.Vertex(new Vector3(-halfSceneWidth, -halfSceneHeight, 0f));
 		GL.End();
 	}
 

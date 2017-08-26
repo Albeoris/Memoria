@@ -1,0 +1,89 @@
+Shader "WorldMap/ScrollTexture" {
+	Properties {
+		_MainTex ("Texture", 2D) = "white" { }
+		_Offset ("Offset", Float) = 10
+	}
+	SubShader { 
+		Tags { "LIGHTMODE"="Vertex" }
+		Pass {
+			Tags { "LIGHTMODE"="Vertex" }
+			GpuProgramID 44095
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 10 [glstate_matrix_modelview0] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Float 16 [_Offset]
+					Vector 13 [glstate_lightmodel_ambient]
+					Vector 15 [unity_FogEnd]
+					Vector 14 [unity_FogStart]
+					Vector 4 [unity_LightColor0]
+					Vector 5 [unity_LightColor1]
+					Vector 6 [unity_LightColor2]
+					Vector 7 [unity_LightPosition0]
+					Vector 8 [unity_LightPosition1]
+					Vector 9 [unity_LightPosition2]
+					"vs_2_0
+						def c17, 0, 1, 0, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dcl_normal v2
+						add oT0.y, v1.y, c16.x
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						dp3 r0.x, v2, c7
+						max r0.x, r0.x, c17.x
+						add r0.yzw, c13.xxyz, c13.xxyz
+						mad r0.xyz, c4.x, r0.x, r0.yzww
+						dp3 r0.w, v2, c8
+						max r0.w, r0.w, c17.x
+						mad r0.xyz, c5.x, r0.w, r0
+						dp3 r0.w, v2, c9
+						max r0.w, r0.w, c17.x
+						mad oD0.xyz, c6.x, r0.w, r0
+						dp4 r0.x, c10, v0
+						dp4 r0.y, c11, v0
+						dp4 r0.z, c12, v0
+						dp3 r0.x, r0, r0
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						add r0.x, -r0.x, c15.x
+						mov r1.x, c15.x
+						add r0.y, r1.x, -c14.x
+						rcp r0.y, r0.y
+						mul r0.x, r0.y, r0.x
+						max r0.x, r0.x, c17.x
+						min oT2.x, r0.x, c17.y
+						mov oT0.x, v1.x
+						mov oT1.xy, c17.y
+						mov oD0.w, c17.y
+						mov oT2.y, c17.y
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [unity_FogColor]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl t0.xy
+						dcl v0.xyz
+						dcl t2.x
+						dcl_2d s0
+						texld r0, t0, s0
+						mad r1.xyz, r0, v0, -c0
+						mad r0.xyz, t2.x, r1, c0
+						mov oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "VertexLit"
+}

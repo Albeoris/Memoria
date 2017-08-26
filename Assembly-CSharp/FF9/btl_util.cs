@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Scripts;
 using UnityEngine;
 
 namespace FF9
@@ -252,7 +253,7 @@ namespace FF9
 			}
 			else
 			{
-				shader = Shader.Find(type);
+				shader = ShadersLoader.Find(type);
 			}
 			SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
 			for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)

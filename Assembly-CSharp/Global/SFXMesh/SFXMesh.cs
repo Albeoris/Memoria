@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class SFXMesh : SFXMeshBase
@@ -32,12 +33,12 @@ public class SFXMesh : SFXMeshBase
 	public static void Init()
 	{
 		SFXMesh.shaders = new Shader[6];
-		SFXMesh.shaders[0] = Shader.Find("SFX_OPA_GT");
-		SFXMesh.shaders[1] = Shader.Find("SFX_ADD_GT");
-		SFXMesh.shaders[2] = Shader.Find("SFX_SUB_GT");
-		SFXMesh.shaders[3] = Shader.Find("SFX_OPA_G");
-		SFXMesh.shaders[4] = Shader.Find("SFX_ADD_G");
-		SFXMesh.shaders[5] = Shader.Find("SFX_SUB_G");
+		SFXMesh.shaders[0] = ShadersLoader.Find("SFX_OPA_GT");
+		SFXMesh.shaders[1] = ShadersLoader.Find("SFX_ADD_GT");
+		SFXMesh.shaders[2] = ShadersLoader.Find("SFX_SUB_GT");
+		SFXMesh.shaders[3] = ShadersLoader.Find("SFX_OPA_G");
+		SFXMesh.shaders[4] = ShadersLoader.Find("SFX_ADD_G");
+	    SFXMesh.shaders[5] = ShadersLoader.Find("SFX_SUB_G");
 		SFXMesh.gPos = new Vector3[SFXMesh.POS_MAX];
 		for (Int32 i = 0; i < (Int32)SFXMesh.gPos.Length; i++)
 		{

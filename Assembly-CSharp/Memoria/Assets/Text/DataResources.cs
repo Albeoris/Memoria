@@ -7,6 +7,7 @@ namespace Memoria.Assets
     {
         public static readonly String DataDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Data/";
         public static readonly String ScriptsDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Scripts/";
+        public static readonly String ShadersDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Shaders/";
 
         public static class Items
         {

@@ -1205,8 +1205,8 @@ public class EndGame
 
     private void RenderWithHighScaleCoordinate(GameObject gameObject, Int32 sx, Int32 sy, Boolean useBatchDepth = true)
     {
-        Single num = (Single)sx / 320f;
-        Single num2 = (Single)sy / 224f;
+        Single num = (Single)sx / FieldMap.PsxFieldWidth;
+        Single num2 = (Single)sy / FieldMap.PsxFieldHeightNative;
         Single x = 5f + num * -10f;
         Single z = -5f + num2 * 10f;
         Vector3 localPosition;

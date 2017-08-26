@@ -9,7 +9,7 @@ Final Fantasy IX Engine
 
 
 # Build
-1. Use Visual Studio 2015 or JetBrains Rider.
+1. Use Visual Studio 2015/2017 or JetBrains Rider.
 2. Copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
 3. Resture NuGet packages manualy or enable automaticaly package downloads.
 
@@ -31,16 +31,18 @@ Final Fantasy IX Engine
 
 
 # Features:
-1. Disable/Enable cheats
-2. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
-3. Save/Load anywhere (Alt+F5, Alt+F9) 
-4. Edit game data (look at the "StreamingAssets\Data" folder)
-5. Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
-6. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-7. Easy rope jumping
-8. Change the game font
-9. Export/import text resources
-10. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
+1. Widescreen support (just select any 16:9 resolution)
+2. Disable/Enable cheats
+3. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
+4. Save/Load anywhere (Alt+F5, Alt+F9) 
+5. Edit game data (look at the "StreamingAssets\Data" folder)
+6. Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
+7. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
+8. Easy rope jumping, frog catching, hippaul racing
+9. Auto discard cards
+10. Change the game font
+11. Export/import text resources
+12. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
 
 
 # Configuration:
@@ -64,13 +66,13 @@ https://www.youtube.com/watch?v=cU4T3GSIjxs
 
 
 # Restrictions (for developers)
-1. **Please** don't change any data that can be sent to the game server developers! We don't want any trouble.
-2. Don't change a serializable data that can be deserialized by a Unity Engine. The game will crash or corrupt.
+1. **Please** don't change any data that can be sent to the game server! We don't want any trouble.
+2. Don't change a serializable data that can be deserialized by the Unity Engine. The game will crash or corrupt.
 
 
 # Debugging (for developers)
 1. Check the "Debuggable" checkbox in the Launcher.
-2. Attach to the game process (Debug -> Attach Unity Debugger in the Visual Studio 2015 Tools for Unity)
+2. Attach to the game process (Debug -> Attach Unity Debugger in the Visual Studio 2015/2017 Tools for Unity)
 
 
 # Knowledge base

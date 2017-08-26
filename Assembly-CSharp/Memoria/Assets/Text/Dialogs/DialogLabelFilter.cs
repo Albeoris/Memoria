@@ -103,7 +103,7 @@ namespace Memoria.Assets
                     OnCharacterName(7);
                     break;
                 case FFIXTextTagCode.Party:
-                    OnPartyMemberName(tag.Param[0]);
+                    OnPartyMemberName(tag.Param[0] - 1);
                     break;
                 case FFIXTextTagCode.Variable:
                     OnVariable(tag.Param[0]);

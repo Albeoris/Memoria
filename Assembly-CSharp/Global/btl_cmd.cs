@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Memoria;
 using Memoria.Data;
+using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 
@@ -118,7 +119,7 @@ public class btl_cmd
         GameObject gameObject = btlsys.s_cur = new GameObject("selectCursor");
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
         gameObject.AddComponent<MeshFilter>().mesh = mesh;
-        Material material = new Material(Shader.Find("PSX/BattleMap_SelectCursor_Abr_1"));
+        Material material = new Material(ShadersLoader.Find("PSX/BattleMap_SelectCursor_Abr_1"));
         meshRenderer.material = material;
         gameObject.SetActive(false);
     }

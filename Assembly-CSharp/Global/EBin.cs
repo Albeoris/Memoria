@@ -944,7 +944,7 @@ public class EBin
                     break;
                 case 81:
                     _a0 = getvi();
-                    _v0 = ff9.rcos(_a0);
+                    _v0 = ff9.rcos(fixedPointAngle: _a0);
                     expr_ad0();
                     break;
                 case 88:
@@ -1044,7 +1044,7 @@ public class EBin
                 case 99:
                     _v0 = getvi();
                     _a0 = _v0 << 4;
-                    _v0 = ff9.rcos(_a0);
+                    _v0 = ff9.rcos(fixedPointAngle: _a0);
                     expr_ad0();
                     break;
                 case 102:

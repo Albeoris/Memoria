@@ -1,0 +1,71 @@
+Shader "Color Space/YCbCrtoRGB Trans" {
+	Properties {
+		_YTex ("Y (RGB)", 2D) = "black" { }
+		_CrTex ("Cr (RGB)", 2D) = "gray" { }
+		_CbTex ("Cb (RGB)", 2D) = "gray" { }
+		_TintColor ("Color", Color) = (1,1,1,1)
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			ColorMask RGB
+			GpuProgramID 54622
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 5 [_CbTex_ST]
+					Vector 4 [_YTex_ST]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c4, c4.zwzw
+						mad oT1.xy, v1, c5, c5.zwzw
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_TintColor]
+					SetTexture 0 [_YTex] 2D 0
+					SetTexture 1 [_CbTex] 2D 1
+					SetTexture 2 [_CrTex] 2D 2
+					"ps_2_0
+						def c1, 1.16438282, 1.59602737, 0, -0.870785177
+						def c2, 1.16438282, -0.812968731, -0.39176172, 0.529593766
+						def c3, 1.16438282, 0, 2.01723433, -1.08139062
+						def c4, 1, 0, 0, 0
+						dcl_pp t0.xy
+						dcl_pp t1.xy
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						texld_pp r0, t0, s0
+						texld_pp r1, t1, s2
+						texld_pp r2, t1, s1
+						mov_pp r3.w, c4.x
+						mov_pp r0.x, r0.w
+						mov_pp r0.y, r1.w
+						mov_pp r0.z, r2.w
+						mov_pp r0.w, c4.x
+						dp4_pp r3.x, c1, r0
+						dp4_pp r3.y, c2, r0
+						dp4_pp r3.z, c3, r0
+						mul_pp r0, r3, c0
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

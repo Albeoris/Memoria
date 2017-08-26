@@ -715,38 +715,32 @@ public class MainMenuUI : UIScene
 		this.OrderSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(4);
 		this.CardSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(5);
 		this.ConfigSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(6);
-		UIEventListener uieventListener = UIEventListener.Get(this.ItemSubMenu);
-		uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener2 = UIEventListener.Get(this.AbilitySubMenu);
-		uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener3 = UIEventListener.Get(this.EquipSubMenu);
-		uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener4 = UIEventListener.Get(this.StatusSubMenu);
-		uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener5 = UIEventListener.Get(this.OrderSubMenu);
-		uieventListener5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener5.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener6 = UIEventListener.Get(this.CardSubMenu);
-		uieventListener6.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener6.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener7 = UIEventListener.Get(this.ConfigSubMenu);
-		uieventListener7.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener7.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		foreach (Object obj in this.CharacterListPanel.transform)
-		{
-			Transform transform = (Transform)obj;
-			GameObject gameObject = transform.gameObject;
-			UIEventListener uieventListener8 = UIEventListener.Get(gameObject);
-			uieventListener8.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener8.onClick, new UIEventListener.VoidDelegate(this.onClick));
-			CharacterDetailHUD item = new CharacterDetailHUD(gameObject, false);
-			this.CharacterHUDList.Add(item);
-			GameObject child = gameObject.GetChild(1);
-			UIEventListener uieventListener9 = UIEventListener.Get(child);
-			uieventListener9.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener9.onClick, new UIEventListener.VoidDelegate(this.onClick));
-			this.CharacterOrderGameObjectList.Add(child);
-			if (FF9StateSystem.MobilePlatform)
-			{
-				gameObject.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
-			}
-		}
-		this.gilLabel = this.GenericInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
+
+        UIEventListener.Get(this.ItemSubMenu).Click += onClick;
+	    UIEventListener.Get(this.AbilitySubMenu).Click += onClick;
+	    UIEventListener.Get(this.EquipSubMenu).Click += onClick;
+	    UIEventListener.Get(this.StatusSubMenu).Click += onClick;
+	    UIEventListener.Get(this.OrderSubMenu).Click += onClick;
+	    UIEventListener.Get(this.CardSubMenu).Click += onClick;
+	    UIEventListener.Get(this.ConfigSubMenu).Click += onClick;
+
+	    foreach (Transform tr in this.CharacterListPanel.transform)
+	    {
+	        GameObject go = tr.gameObject;
+	        UIEventListener.Get(go).Click += onClick;
+
+	        CharacterDetailHUD item = new CharacterDetailHUD(go, false);
+	        this.CharacterHUDList.Add(item);
+
+	        GameObject child = go.GetChild(1);
+	        UIEventListener.Get(child).Click += onClick;
+
+	        this.CharacterOrderGameObjectList.Add(child);
+	        if (FF9StateSystem.MobilePlatform)
+	            go.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
+	    }
+
+	    this.gilLabel = this.GenericInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
 		this.hourLabel = this.GenericInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
 		this.minuteLabel = this.GenericInfoPanel.GetChild(0).GetChild(3).GetComponent<UILabel>();
 		this.secondLabel = this.GenericInfoPanel.GetChild(0).GetChild(5).GetComponent<UILabel>();

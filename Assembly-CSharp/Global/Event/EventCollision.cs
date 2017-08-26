@@ -229,8 +229,8 @@ public class EventCollision
 
 	private static Int32 CalculateRadiusFromOvalRatio(PosObj po, PosObj targetPosObj, Int32 radius)
 	{
-		Int32 a = EventCollision.CollisionAngle(targetPosObj, po);
-		Int32 num = ff9.rcos(a);
+		Int32 fixedPointAngle = EventCollision.CollisionAngle(targetPosObj, po);
+		Int32 num = ff9.rcos(fixedPointAngle);
 		Int32 num2 = (num * num >> 4) * (Int32)targetPosObj.ovalRatio + 16777216;
 		radius = Convert.ToInt32((Single)radius * ff9.SquareRoot0((Single)num2)) >> 12;
 		return radius;

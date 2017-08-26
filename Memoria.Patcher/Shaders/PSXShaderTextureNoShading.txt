@@ -1,0 +1,63 @@
+Shader "PSXShaderTextureNoShading" {
+	Properties {
+		_MainTex ("Texture0", 2D) = "" { }
+		_BlendOp ("BlendOp", Float) = 0
+		_SrcFactor ("SrcFactor", Float) = 0
+		_DstFactor ("DstFactor", Float) = 0
+		_Offset ("Offset", Vector) = (0,0,0,0)
+		_TexSize ("TexSize", Vector) = (0,0,0,0)
+	}
+	SubShader { 
+		Tags { "ForceSupported"="true" "RenderType"="Overlay" }
+		Pass {
+			Tags { "ForceSupported"="true" "RenderType"="Overlay" }
+			ZWrite Off
+			Cull Off
+			Blend [_SrcFactor] [_DstFactor], One Zero
+			BlendOp [_BlendOp]
+			GpuProgramID 2493
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_Offset]
+					Vector 5 [_TexSize]
+					"vs_2_0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						add r0.xy, v0, c4
+						mov r0.zw, v0
+						dp4 oPos.x, c0, r0
+						dp4 oPos.y, c1, r0
+						dp4 oPos.z, c2, r0
+						dp4 oPos.w, c3, r0
+						add r0.xy, v2, c4.zwzw
+						rcp r1.x, c5.x
+						rcp r1.y, c5.y
+						mul oT0.xy, r0, r1
+						mov oD0, v1
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl v0
+						dcl t0.xy
+						dcl_2d s0
+						texld r0, t0, s0
+						mul_pp r0, r0, v0
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

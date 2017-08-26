@@ -2226,20 +2226,20 @@ public static class ff9
 		return Mathf.Sqrt(a);
 	}
 
-	public static Int32 rsin(Int32 a)
+	public static Int32 rsin(Int32 fixedPointAngle)
 	{
-		Single num = a / 4096f * 360f;
-		num *= 0.0174532924f;
-		Single num2 = Mathf.Sin(num);
-		return (Int32)(num2 * 4096f);
+		Single degree = fixedPointAngle / 4096f * 360f;
+		degree *= 0.0174532924f;
+		Single sinRadian = Mathf.Sin(degree);
+		return (Int32)(sinRadian * 4096f);
 	}
 
-	public static Int32 rcos(Int32 a)
+	public static Int32 rcos(Int32 fixedPointAngle)
 	{
-		Single num = a / 4096f * 360f;
-		num *= 0.0174532924f;
-		Single num2 = Mathf.Cos(num);
-		return (Int32)(num2 * 4096f);
+		Single degree = fixedPointAngle / 4096f * 360f;
+		degree *= 0.0174532924f;
+		Single cosRadian = Mathf.Cos(degree);
+		return (Int32)(cosRadian * 4096f);
 	}
 
 	public static Single abs(Single _X)
@@ -4160,7 +4160,7 @@ public static class ff9
 								Int32 index5 = index2 = 1;
 								Single num = worldSPS5.pos[index2];
 								worldSPS5.pos[index5] = num - 80f;
-								worldSPS.pos[2] = ff9.rcos(worldSPS.frame * 64 + worldSPS.prm0) / 2 + ff9.w_effectTwisPos.z;
+								worldSPS.pos[2] = ff9.rcos(fixedPointAngle: worldSPS.frame * 64 + worldSPS.prm0) / 2 + ff9.w_effectTwisPos.z;
 							}
 						}
 						else
@@ -6915,15 +6915,15 @@ public static class ff9
 				num7 = 2048;
 			}
 			Int32 fixedPoint = (Int32)(ff9.rsin(num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1])) / 4f);
-			Int32 fixedPoint2 = (Int32)(ff9.rcos(num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1])) / 4f);
+			Int32 fixedPoint2 = (Int32)(ff9.rcos(fixedPointAngle: num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1])) / 4f);
 			ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0] + ff9.S(fixedPoint), ff9.S(100), ff9.w_moveActorPtr.pos[2] + ff9.S(fixedPoint2), 15, 15000);
 			if (ff9.w_frameCounter % 2 != 0)
 			{
 				fixedPoint = (Int32)(ff9.rsin(num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1]) + 128) / 8f);
-				fixedPoint2 = (Int32)(ff9.rcos(num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1]) + 128) / 8f);
+				fixedPoint2 = (Int32)(ff9.rcos(fixedPointAngle: num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1]) + 128) / 8f);
 				ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0] + ff9.S(fixedPoint), ff9.S(100), ff9.w_moveActorPtr.pos[2] + ff9.S(fixedPoint2), 10, 15000);
 				fixedPoint = (Int32)(ff9.rsin(num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1]) - 128) / 8f);
-				fixedPoint2 = (Int32)(ff9.rcos(num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1]) - 128) / 8f);
+				fixedPoint2 = (Int32)(ff9.rcos(fixedPointAngle: num7 + (Int32)ff9.UnityRot(ff9.w_moveActorPtr.rot[1]) - 128) / 8f);
 				ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0] + ff9.S(fixedPoint), ff9.S(100), ff9.w_moveActorPtr.pos[2] + ff9.S(fixedPoint2), 10, 15000);
 			}
 		}

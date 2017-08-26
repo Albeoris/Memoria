@@ -1,0 +1,2864 @@
+Shader "Custom/WorldMap-TestShader" {
+	Properties {
+		_Color ("Color", Color) = (1,1,1,1)
+		_MainTex ("Albedo (RGB)", 2D) = "white" { }
+		_Glossiness ("Smoothness", Range(0,1)) = 0.5
+		_Metallic ("Metallic", Range(0,1)) = 0
+	}
+	SubShader { 
+		LOD 200
+		Tags { "RenderType"="Opaque" }
+		Pass {
+			Name "FORWARD"
+			Tags { "LIGHTMODE"="ForwardBase" "SHADOWSUPPORT"="true" "RenderType"="Opaque" }
+			GpuProgramID 23387
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 14 [_MainTex_ST]
+					Vector 12 [unity_SHBb]
+					Vector 11 [unity_SHBg]
+					Vector 10 [unity_SHBr]
+					Vector 13 [unity_SHC]
+					"vs_3_0
+						def c15, 0, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dcl_texcoord6 o5
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c14, c14.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						nrm r1.xyz, r0
+						mul r0.x, r1.y, r1.y
+						mad r0.x, r1.x, r1.x, -r0.x
+						mul r2, r1.yzzx, r1.xyzz
+						mov o2.xyz, r1
+						dp4 r1.x, c10, r2
+						dp4 r1.y, c11, r2
+						dp4 r1.z, c12, r2
+						mad o4.xyz, c13, r0.x, r1
+						mov o5, c15.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 16 [_MainTex_ST]
+					Vector 10 [_ProjectionParams]
+					Vector 11 [_ScreenParams]
+					Vector 14 [unity_SHBb]
+					Vector 13 [unity_SHBg]
+					Vector 12 [unity_SHBr]
+					Vector 15 [unity_SHC]
+					"vs_3_0
+						def c17, 0.5, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dcl_texcoord4 o5
+						dcl_texcoord6 o6
+						mad o1.xy, v2, c16, c16.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						nrm r1.xyz, r0
+						mul r0.x, r1.y, r1.y
+						mad r0.x, r1.x, r1.x, -r0.x
+						mul r2, r1.yzzx, r1.xyzz
+						mov o2.xyz, r1
+						dp4 r1.x, c12, r2
+						dp4 r1.y, c13, r2
+						dp4 r1.z, c14, r2
+						mad o4.xyz, c15, r0.x, r1
+						dp4 r0.y, c1, v0
+						mul r1.x, r0.y, c10.x
+						mul r1.w, r1.x, c17.x
+						dp4 r0.x, c0, v0
+						dp4 r0.w, c3, v0
+						mul r1.xz, r0.xyww, c17.x
+						mad o5.xy, r1.z, c11.zwzw, r1.xwzw
+						dp4 r0.z, c2, v0
+						mov o0, r0
+						mov o5.zw, r0
+						mov o6, c17.y
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "VERTEXLIGHT_ON" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 8 [_Object2World] 3
+					Matrix 11 [_World2Object] 3
+					Matrix 4 [glstate_matrix_mvp]
+					Vector 22 [_MainTex_ST]
+					Vector 17 [unity_4LightAtten0]
+					Vector 14 [unity_4LightPosX0]
+					Vector 15 [unity_4LightPosY0]
+					Vector 16 [unity_4LightPosZ0]
+					Vector 0 [unity_LightColor0]
+					Vector 1 [unity_LightColor1]
+					Vector 2 [unity_LightColor2]
+					Vector 3 [unity_LightColor3]
+					Vector 20 [unity_SHBb]
+					Vector 19 [unity_SHBg]
+					Vector 18 [unity_SHBr]
+					Vector 21 [unity_SHC]
+					"vs_3_0
+						def c23, 0, 1, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dcl_texcoord6 o5
+						dp4 o0.x, c4, v0
+						dp4 o0.y, c5, v0
+						dp4 o0.z, c6, v0
+						dp4 o0.w, c7, v0
+						mad o1.xy, v2, c22, c22.zwzw
+						dp4 r0.x, c8, v0
+						add r1, -r0.x, c14
+						dp4 r0.y, c9, v0
+						add r2, -r0.y, c15
+						mul r3.xyz, c12, v1.y
+						mad r3.xyz, c11, v1.x, r3
+						mad r3.xyz, c13, v1.z, r3
+						nrm r4.xyz, r3
+						mul r3, r2, r4.y
+						mul r2, r2, r2
+						mad r2, r1, r1, r2
+						mad r1, r1, r4.x, r3
+						dp4 r0.z, c10, v0
+						add r3, -r0.z, c16
+						mov o3.xyz, r0
+						mad r0, r3, r4.z, r1
+						mad r1, r3, r3, r2
+						rsq r2.x, r1.x
+						rsq r2.y, r1.y
+						rsq r2.z, r1.z
+						rsq r2.w, r1.w
+						mov r3.y, c23.y
+						mad r1, r1, c17, r3.y
+						mul r0, r0, r2
+						max r0, r0, c23.x
+						rcp r2.x, r1.x
+						rcp r2.y, r1.y
+						rcp r2.z, r1.z
+						rcp r2.w, r1.w
+						mul r0, r0, r2
+						mul r1.xyz, r0.y, c1
+						mad r1.xyz, c0, r0.x, r1
+						mad r0.xyz, c2, r0.z, r1
+						mad r0.xyz, c3, r0.w, r0
+						mul r0.w, r4.y, r4.y
+						mad r0.w, r4.x, r4.x, -r0.w
+						mul r1, r4.yzzx, r4.xyzz
+						mov o2.xyz, r4
+						dp4 r2.x, c18, r1
+						dp4 r2.y, c19, r1
+						dp4 r2.z, c20, r1
+						mad r1.xyz, c21, r0.w, r2
+						add o4.xyz, r0, r1
+						mov o5, c23.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "VERTEXLIGHT_ON" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 8 [_Object2World] 3
+					Matrix 11 [_World2Object] 3
+					Matrix 4 [glstate_matrix_mvp]
+					Vector 24 [_MainTex_ST]
+					Vector 14 [_ProjectionParams]
+					Vector 15 [_ScreenParams]
+					Vector 19 [unity_4LightAtten0]
+					Vector 16 [unity_4LightPosX0]
+					Vector 17 [unity_4LightPosY0]
+					Vector 18 [unity_4LightPosZ0]
+					Vector 0 [unity_LightColor0]
+					Vector 1 [unity_LightColor1]
+					Vector 2 [unity_LightColor2]
+					Vector 3 [unity_LightColor3]
+					Vector 22 [unity_SHBb]
+					Vector 21 [unity_SHBg]
+					Vector 20 [unity_SHBr]
+					Vector 23 [unity_SHC]
+					"vs_3_0
+						def c25, 0, 1, 0.5, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dcl_texcoord4 o5
+						dcl_texcoord6 o6
+						mad o1.xy, v2, c24, c24.zwzw
+						dp4 r0.x, c8, v0
+						add r1, -r0.x, c16
+						dp4 r0.y, c9, v0
+						add r2, -r0.y, c17
+						mul r3.xyz, c12, v1.y
+						mad r3.xyz, c11, v1.x, r3
+						mad r3.xyz, c13, v1.z, r3
+						nrm r4.xyz, r3
+						mul r3, r2, r4.y
+						mul r2, r2, r2
+						mad r2, r1, r1, r2
+						mad r1, r1, r4.x, r3
+						dp4 r0.z, c10, v0
+						add r3, -r0.z, c18
+						mov o3.xyz, r0
+						mad r0, r3, r4.z, r1
+						mad r1, r3, r3, r2
+						rsq r2.x, r1.x
+						rsq r2.y, r1.y
+						rsq r2.z, r1.z
+						rsq r2.w, r1.w
+						mov r3.y, c25.y
+						mad r1, r1, c19, r3.y
+						mul r0, r0, r2
+						max r0, r0, c25.x
+						rcp r2.x, r1.x
+						rcp r2.y, r1.y
+						rcp r2.z, r1.z
+						rcp r2.w, r1.w
+						mul r0, r0, r2
+						mul r1.xyz, r0.y, c1
+						mad r1.xyz, c0, r0.x, r1
+						mad r0.xyz, c2, r0.z, r1
+						mad r0.xyz, c3, r0.w, r0
+						mul r0.w, r4.y, r4.y
+						mad r0.w, r4.x, r4.x, -r0.w
+						mul r1, r4.yzzx, r4.xyzz
+						mov o2.xyz, r4
+						dp4 r2.x, c20, r1
+						dp4 r2.y, c21, r1
+						dp4 r2.z, c22, r1
+						mad r1.xyz, c23, r0.w, r2
+						add o4.xyz, r0, r1
+						dp4 r0.y, c5, v0
+						mul r1.x, r0.y, c14.x
+						mul r1.w, r1.x, c25.z
+						dp4 r0.x, c4, v0
+						dp4 r0.w, c7, v0
+						mul r1.xz, r0.xyww, c25.z
+						mad o5.xy, r1.z, c15.zwzw, r1.xwzw
+						dp4 r0.z, c6, v0
+						mov o0, r0
+						mov o5.zw, r0
+						mov o6, c25.x
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					Vector 18 [_Color]
+					Float 16 [_Glossiness]
+					Vector 14 [_LightColor0]
+					Float 17 [_Metallic]
+					Vector 0 [_WorldSpaceCameraPos]
+					Vector 1 [_WorldSpaceLightPos0]
+					Vector 13 [unity_ColorSpaceDielectricSpec]
+					Vector 15 [unity_LightGammaCorrectionConsts]
+					Vector 4 [unity_SHAb]
+					Vector 3 [unity_SHAg]
+					Vector 2 [unity_SHAr]
+					Vector 5 [unity_SpecCube0_BoxMax]
+					Vector 6 [unity_SpecCube0_BoxMin]
+					Vector 8 [unity_SpecCube0_HDR]
+					Vector 7 [unity_SpecCube0_ProbePosition]
+					Vector 9 [unity_SpecCube1_BoxMax]
+					Vector 10 [unity_SpecCube1_BoxMin]
+					Vector 12 [unity_SpecCube1_HDR]
+					Vector 11 [unity_SpecCube1_ProbePosition]
+					SetTexture 0 [unity_SpecCube0] CUBE 0
+					SetTexture 1 [unity_SpecCube1] CUBE 1
+					SetTexture 2 [_MainTex] 2D 2
+					"ps_3_0
+						def c19, 0, 1, 0.5, 0.75
+						def c20, 7, 0.999989986, 0.00100000005, 31.622776
+						def c21, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3_pp v3.xyz
+						dcl_cube s0
+						dcl_cube s1
+						dcl_2d s2
+						add r0.xyz, c0, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul_pp r1.xyz, r0.w, r0
+						texld r2, v0, s2
+						mul_pp r3.xyz, r2, c18
+						dp3_pp r1.w, v1, c1
+						max_pp r2.w, r1.w, c19.x
+						mov r4.xyz, c19
+						add_pp r1.w, r4.y, -c16.x
+						dp3_pp r3.w, -r1, v1
+						add_pp r3.w, r3.w, r3.w
+						mad_pp r5.xyz, v1, -r3.w, -r1
+						mad_pp r6, v1.xyzx, c19.yyyx, c19.xxxy
+						dp4_pp r7.x, c2, r6
+						dp4_pp r7.y, c3, r6
+						dp4_pp r7.z, c4, r6
+						add_pp r6.xyz, r7, v3
+						if_lt -c7.w, r4.x
+						nrm_pp r7.xyz, r5
+						add r8.xyz, c5, -v2
+						rcp r9.x, r7.x
+						rcp r9.y, r7.y
+						rcp r9.z, r7.z
+						mul_pp r8.xyz, r8, r9
+						add r10.xyz, c6, -v2
+						mul_pp r9.xyz, r9, r10
+						cmp_pp r8.xyz, -r7, r9, r8
+						min_pp r3.w, r8.y, r8.x
+						min_pp r4.w, r8.z, r3.w
+						mov r8.xyz, c6
+						add r8.xyz, r8, c5
+						mad r9.xyz, r8, r4.z, -c7
+						add r9.xyz, r9, v2
+						mad r7.xyz, r7, r4.w, r9
+						mad_pp r7.xyz, r8, -c19.z, r7
+						else
+						mov_pp r7.xyz, r5
+						endif
+						pow_pp r3.w, r1.w, c19.w
+						mul_pp r7.w, r3.w, c20.x
+						texldl_pp r8, r7, s0
+						pow_pp r3.w, r8.w, c8.y
+						mul_pp r3.w, r3.w, c8.x
+						mul_pp r9.xyz, r8, r3.w
+						mov r4.w, c6.w
+						if_lt r4.w, c20.y
+						if_lt -c11.w, r4.x
+						nrm_pp r10.xyz, r5
+						add r11.xyz, c9, -v2
+						rcp r12.x, r10.x
+						rcp r12.y, r10.y
+						rcp r12.z, r10.z
+						mul_pp r11.xyz, r11, r12
+						add r13.xyz, c10, -v2
+						mul_pp r12.xyz, r12, r13
+						cmp_pp r11.xyz, -r10, r12, r11
+						min_pp r4.x, r11.y, r11.x
+						min_pp r5.w, r11.z, r4.x
+						mov r11.xyz, c9
+						add r11.xyz, r11, c10
+						mad r4.xzw, r11.xyyz, r4.z, -c11.xyyz
+						add r4.xzw, r4, v2.xyyz
+						mad r4.xzw, r10.xyyz, r5.w, r4
+						mad_pp r7.xyz, r11, -c19.z, r4.xzww
+						else
+						mov_pp r7.xyz, r5
+						endif
+						texldl_pp r5, r7, s1
+						pow_pp r4.x, r5.w, c12.y
+						mul_pp r4.x, r4.x, c12.x
+						mul_pp r4.xzw, r5.xyyz, r4.x
+						mad r5.xyz, r3.w, r8, -r4.xzww
+						mad_pp r9.xyz, c6.w, r5, r4.xzww
+						endif
+						nrm_pp r5.xyz, v1
+						mov r7, c13
+						mad_pp r2.xyz, r2, c18, -r7
+						mad_pp r2.xyz, c17.x, r2, r7
+						mad_pp r3.w, c17.x, -r7.w, r7.w
+						mul_pp r3.xyz, r3.w, r3
+						mad_pp r0.xyz, r0, r0.w, c1
+						dp3_pp r0.w, r0, r0
+						add r4.x, -r0.w, c20.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r4.x, c20.w, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r5, r0
+						max_pp r4.x, r0.w, c19.x
+						dp3_pp r0.w, r5, r1
+						max_pp r1.x, r0.w, c19.x
+						dp3_pp r0.x, c1, r0
+						max_pp r1.y, r0.x, c19.x
+						mul_pp r0.x, r1.w, r1.w
+						mul_pp r0.y, r0.x, c15.w
+						mad_pp r0.x, r0.x, -c15.w, r4.y
+						mad_pp r0.z, r2.w, r0.x, r0.y
+						mad_pp r0.x, r1.x, r0.x, r0.y
+						mad r0.x, r0.z, r0.x, c21.x
+						rcp_pp r0.x, r0.x
+						add_pp r0.y, -r1.w, c19.y
+						mad_pp r0.y, r0.y, c21.y, c21.z
+						log_pp r0.y, r0.y
+						rcp r0.y, r0.y
+						mul_pp r0.y, r0.y, c21.w
+						mul_pp r0.z, r0.y, r0.y
+						mad_pp r0.y, r0.y, r0.y, c19.y
+						mul_pp r0.y, r0.y, c15.y
+						pow_pp r1.z, r4.x, r0.z
+						add_pp r0.z, -r2.w, c19.y
+						mul_pp r0.w, r0.z, r0.z
+						mul_pp r0.w, r0.w, r0.w
+						mul_pp r0.z, r0.z, r0.w
+						add_pp r0.w, -r1.x, c19.y
+						mul_pp r1.x, r0.w, r0.w
+						mul_pp r1.x, r1.x, r1.x
+						mul_pp r0.yw, r0, r1.xzzx
+						mul_pp r1.x, r1.y, r1.y
+						dp2add_pp r1.x, r1.x, r1.w, -c19.z
+						mad_pp r0.z, r1.x, r0.z, c19.y
+						mad_pp r1.x, r1.x, r0.w, c19.y
+						mul_pp r0.z, r0.z, r1.x
+						mul_pp r0.x, r0.y, r0.x
+						mul_pp r0.xy, r2.w, r0.xzzw
+						mul_pp r0.x, r0.x, c15.x
+						add_pp r0.z, -r3.w, c19.y
+						add_sat_pp r0.z, r0.z, c16.x
+						mad_pp r1.xzw, c14.xyyz, r0.y, r6.xyyz
+						mul_pp r4.xyz, r0.x, c14
+						cmp_pp r4.xyz, r0.x, r4, c19.x
+						add_pp r0.x, -r1.y, c19.y
+						mul_pp r0.y, r0.x, r0.x
+						mul_pp r0.y, r0.y, r0.y
+						mul_pp r0.x, r0.x, r0.y
+						lrp_pp r5.xyz, r0.x, c19.y, r2
+						mul_pp r4.xyz, r4, r5
+						mad_pp r1.xyz, r3, r1.xzww, r4
+						lrp_pp r3.xyz, r0.w, r0.z, r2
+						mad_pp oC0.xyz, r9, r3, r1
+						mov_pp oC0.w, c19.y
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					Vector 18 [_Color]
+					Float 16 [_Glossiness]
+					Vector 14 [_LightColor0]
+					Float 17 [_Metallic]
+					Vector 0 [_WorldSpaceCameraPos]
+					Vector 1 [_WorldSpaceLightPos0]
+					Vector 13 [unity_ColorSpaceDielectricSpec]
+					Vector 15 [unity_LightGammaCorrectionConsts]
+					Vector 4 [unity_SHAb]
+					Vector 3 [unity_SHAg]
+					Vector 2 [unity_SHAr]
+					Vector 5 [unity_SpecCube0_BoxMax]
+					Vector 6 [unity_SpecCube0_BoxMin]
+					Vector 8 [unity_SpecCube0_HDR]
+					Vector 7 [unity_SpecCube0_ProbePosition]
+					Vector 9 [unity_SpecCube1_BoxMax]
+					Vector 10 [unity_SpecCube1_BoxMin]
+					Vector 12 [unity_SpecCube1_HDR]
+					Vector 11 [unity_SpecCube1_ProbePosition]
+					SetTexture 0 [unity_SpecCube0] CUBE 0
+					SetTexture 1 [unity_SpecCube1] CUBE 1
+					SetTexture 2 [_ShadowMapTexture] 2D 2
+					SetTexture 3 [_MainTex] 2D 3
+					"ps_3_0
+						def c19, 7, 0.999989986, 0.00100000005, 31.622776
+						def c20, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c21, 0, 1, 0.5, 0.75
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3_pp v3.xyz
+						dcl_texcoord4 v4
+						dcl_cube s0
+						dcl_cube s1
+						dcl_2d s2
+						dcl_2d s3
+						add r0.xyz, c0, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul_pp r1.xyz, r0.w, r0
+						texld r2, v0, s3
+						mul_pp r3.xyz, r2, c18
+						texldp_pp r4, v4, s2
+						dp3_pp r1.w, v1, c1
+						max_pp r2.w, r1.w, c21.x
+						mov r5.xyz, c21
+						add_pp r1.w, r5.y, -c16.x
+						dp3_pp r3.w, -r1, v1
+						add_pp r3.w, r3.w, r3.w
+						mad_pp r4.yzw, v1.xxyz, -r3.w, -r1.xxyz
+						mul_pp r6.xyz, r4.x, c14
+						mad_pp r7, v1.xyzx, c21.yyyx, c21.xxxy
+						dp4_pp r8.x, c2, r7
+						dp4_pp r8.y, c3, r7
+						dp4_pp r8.z, c4, r7
+						add_pp r7.xyz, r8, v3
+						if_lt -c7.w, r5.x
+						nrm_pp r8.xyz, r4.yzww
+						add r9.xyz, c5, -v2
+						rcp r10.x, r8.x
+						rcp r10.y, r8.y
+						rcp r10.z, r8.z
+						mul_pp r9.xyz, r9, r10
+						add r11.xyz, c6, -v2
+						mul_pp r10.xyz, r10, r11
+						cmp_pp r9.xyz, -r8, r10, r9
+						min_pp r3.w, r9.y, r9.x
+						min_pp r4.x, r9.z, r3.w
+						mov r9.xyz, c6
+						add r9.xyz, r9, c5
+						mad r10.xyz, r9, r5.z, -c7
+						add r10.xyz, r10, v2
+						mad r8.xyz, r8, r4.x, r10
+						mad_pp r8.xyz, r9, -c21.z, r8
+						else
+						mov_pp r8.xyz, r4.yzww
+						endif
+						pow_pp r3.w, r1.w, c21.w
+						mul_pp r8.w, r3.w, c19.x
+						texldl_pp r9, r8, s0
+						pow_pp r3.w, r9.w, c8.y
+						mul_pp r3.w, r3.w, c8.x
+						mul_pp r10.xyz, r9, r3.w
+						mov r5.w, c6.w
+						if_lt r5.w, c19.y
+						if_lt -c11.w, r5.x
+						nrm_pp r11.xyz, r4.yzww
+						add r12.xyz, c9, -v2
+						rcp r13.x, r11.x
+						rcp r13.y, r11.y
+						rcp r13.z, r11.z
+						mul_pp r12.xyz, r12, r13
+						add r14.xyz, c10, -v2
+						mul_pp r13.xyz, r13, r14
+						cmp_pp r12.xyz, -r11, r13, r12
+						min_pp r4.x, r12.y, r12.x
+						min_pp r5.x, r12.z, r4.x
+						mov r12.xyz, c9
+						add r12.xyz, r12, c10
+						mad r13.xyz, r12, r5.z, -c11
+						add r13.xyz, r13, v2
+						mad r5.xzw, r11.xyyz, r5.x, r13.xyyz
+						mad_pp r8.xyz, r12, -c21.z, r5.xzww
+						else
+						mov_pp r8.xyz, r4.yzww
+						endif
+						texldl_pp r4, r8, s1
+						pow_pp r5.x, r4.w, c12.y
+						mul_pp r4.w, r5.x, c12.x
+						mul_pp r4.xyz, r4, r4.w
+						mad r5.xzw, r3.w, r9.xyyz, -r4.xyyz
+						mad_pp r10.xyz, c6.w, r5.xzww, r4
+						endif
+						nrm_pp r4.xyz, v1
+						mov r8, c13
+						mad_pp r2.xyz, r2, c18, -r8
+						mad_pp r2.xyz, c17.x, r2, r8
+						mad_pp r3.w, c17.x, -r8.w, r8.w
+						mul_pp r3.xyz, r3.w, r3
+						mad_pp r0.xyz, r0, r0.w, c1
+						dp3_pp r0.w, r0, r0
+						add r4.w, -r0.w, c19.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r4.w, c19.w, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r4, r0
+						max_pp r4.w, r0.w, c21.x
+						dp3_pp r0.w, r4, r1
+						max_pp r1.x, r0.w, c21.x
+						dp3_pp r0.x, c1, r0
+						max_pp r1.y, r0.x, c21.x
+						mul_pp r0.x, r1.w, r1.w
+						mul_pp r0.y, r0.x, c15.w
+						mad_pp r0.x, r0.x, -c15.w, r5.y
+						mad_pp r0.z, r2.w, r0.x, r0.y
+						mad_pp r0.x, r1.x, r0.x, r0.y
+						mad r0.x, r0.z, r0.x, c20.x
+						rcp_pp r0.x, r0.x
+						add_pp r0.y, -r1.w, c21.y
+						mad_pp r0.y, r0.y, c20.y, c20.z
+						log_pp r0.y, r0.y
+						rcp r0.y, r0.y
+						mul_pp r0.y, r0.y, c20.w
+						mul_pp r0.z, r0.y, r0.y
+						mad_pp r0.y, r0.y, r0.y, c21.y
+						mul_pp r0.y, r0.y, c15.y
+						pow_pp r1.z, r4.w, r0.z
+						add_pp r0.z, -r2.w, c21.y
+						mul_pp r0.w, r0.z, r0.z
+						mul_pp r0.w, r0.w, r0.w
+						mul_pp r0.z, r0.z, r0.w
+						add_pp r0.w, -r1.x, c21.y
+						mul_pp r1.x, r0.w, r0.w
+						mul_pp r1.x, r1.x, r1.x
+						mul_pp r0.yw, r0, r1.xzzx
+						mul_pp r1.x, r1.y, r1.y
+						dp2add_pp r1.x, r1.x, r1.w, -c21.z
+						mad_pp r0.z, r1.x, r0.z, c21.y
+						mad_pp r1.x, r1.x, r0.w, c21.y
+						mul_pp r0.z, r0.z, r1.x
+						mul_pp r0.x, r0.y, r0.x
+						mul_pp r0.x, r2.w, r0.x
+						mul_pp r0.x, r0.x, c15.x
+						max_pp r1.x, r0.x, c21.x
+						mul_pp r0.x, r2.w, r0.z
+						add_pp r0.y, -r3.w, c21.y
+						add_sat_pp r0.y, r0.y, c16.x
+						mad_pp r4.xyz, r6, r0.x, r7
+						mul_pp r1.xzw, r6.xyyz, r1.x
+						add_pp r0.x, -r1.y, c21.y
+						mul_pp r0.z, r0.x, r0.x
+						mul_pp r0.z, r0.z, r0.z
+						mul_pp r0.x, r0.x, r0.z
+						lrp_pp r5.xyz, r0.x, c21.y, r2
+						mul_pp r1.xyz, r1.xzww, r5
+						mad_pp r1.xyz, r3, r4, r1
+						lrp_pp r3.xyz, r0.w, r0.y, r2
+						mad_pp oC0.xyz, r10, r3, r1
+						mov_pp oC0.w, c21.y
+						
+						"
+				}
+			}
+		}
+		Pass {
+			Name "FORWARD"
+			Tags { "LIGHTMODE"="ForwardAdd" "SHADOWSUPPORT"="true" "RenderType"="Opaque" }
+			ZWrite Off
+			Blend One One
+			GpuProgramID 92883
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "POINT" "SHADOWS_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c10, c10.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c10, c10.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" "SHADOWS_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c10, c10.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT_COOKIE" "SHADOWS_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c10, c10.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c10, c10.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 8 [_Object2World]
+					Matrix 12 [_World2Object] 3
+					Matrix 4 [glstate_matrix_mvp]
+					Matrix 0 [unity_World2Shadow0]
+					Vector 15 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4
+						dp4 o0.x, c4, v0
+						dp4 o0.y, c5, v0
+						dp4 o0.z, c6, v0
+						dp4 o0.w, c7, v0
+						mad o1.xy, v2, c15, c15.zwzw
+						mul r0.xyz, c13, v1.y
+						mad r0.xyz, c12, v1.x, r0
+						mad r0.xyz, c14, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.w, c11, v0
+						dp4 r0.x, c8, v0
+						dp4 r0.y, c9, v0
+						dp4 r0.z, c10, v0
+						dp4 o4.x, c0, r0
+						dp4 o4.y, c1, r0
+						dp4 o4.z, c2, r0
+						dp4 o4.w, c3, r0
+						mov o3.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 12 [_MainTex_ST]
+					Vector 10 [_ProjectionParams]
+					Vector 11 [_ScreenParams]
+					"vs_3_0
+						def c13, 0.5, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4
+						mad o1.xy, v2, c12, c12.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.y, c1, v0
+						mul r1.x, r0.y, c10.x
+						mul r1.w, r1.x, c13.x
+						dp4 r0.x, c0, v0
+						dp4 r0.w, c3, v0
+						mul r1.xz, r0.xyww, c13.x
+						mad o4.xy, r1.z, c11.zwzw, r1.xwzw
+						dp4 r0.z, c2, v0
+						mov o0, r0
+						mov o4.zw, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 12 [_MainTex_ST]
+					Vector 10 [_ProjectionParams]
+					Vector 11 [_ScreenParams]
+					"vs_3_0
+						def c13, 0.5, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4
+						mad o1.xy, v2, c12, c12.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.y, c1, v0
+						mul r1.x, r0.y, c10.x
+						mul r1.w, r1.x, c13.x
+						dp4 r0.x, c0, v0
+						dp4 r0.w, c3, v0
+						mul r1.xz, r0.xyww, c13.x
+						mad o4.xy, r1.z, c11.zwzw, r1.xwzw
+						dp4 r0.z, c2, v0
+						mov o0, r0
+						mov o4.zw, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT" "SHADOWS_CUBE" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_LightPositionRange]
+					Vector 11 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c11, c11.zwzw
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						add o4.xyz, r0, -c10
+						mov o3.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT_COOKIE" "SHADOWS_CUBE" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_LightPositionRange]
+					Vector 11 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c11, c11.zwzw
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						add o4.xyz, r0, -c10
+						mov o3.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 8 [_Object2World]
+					Matrix 12 [_World2Object] 3
+					Matrix 4 [glstate_matrix_mvp]
+					Matrix 0 [unity_World2Shadow0]
+					Vector 15 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4
+						dp4 o0.x, c4, v0
+						dp4 o0.y, c5, v0
+						dp4 o0.z, c6, v0
+						dp4 o0.w, c7, v0
+						mad o1.xy, v2, c15, c15.zwzw
+						mul r0.xyz, c13, v1.y
+						mad r0.xyz, c12, v1.x, r0
+						mad r0.xyz, c14, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.w, c11, v0
+						dp4 r0.x, c8, v0
+						dp4 r0.y, c9, v0
+						dp4 r0.z, c10, v0
+						dp4 o4.x, c0, r0
+						dp4 o4.y, c1, r0
+						dp4 o4.z, c2, r0
+						dp4 o4.w, c3, r0
+						mov o3.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_LightPositionRange]
+					Vector 11 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c11, c11.zwzw
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						add o4.xyz, r0, -c10
+						mov o3.xyz, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 10 [_LightPositionRange]
+					Vector 11 [_MainTex_ST]
+					"vs_3_0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord3 o4.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c11, c11.zwzw
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mul o2.xyz, r0.w, r0
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						add o4.xyz, r0, -c10
+						mov o3.xyz, r0
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "POINT" "SHADOWS_OFF" }
+					Matrix 0 [_LightMatrix0] 3
+					Vector 10 [_Color]
+					Float 8 [_Glossiness]
+					Vector 6 [_LightColor0]
+					Float 9 [_Metallic]
+					Vector 3 [_WorldSpaceCameraPos]
+					Vector 4 [_WorldSpaceLightPos0]
+					Vector 5 [unity_ColorSpaceDielectricSpec]
+					Vector 7 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_LightTexture0] 2D 0
+					SetTexture 1 [_MainTex] 2D 1
+					"ps_3_0
+						def c11, 1, 0, 0.00100000005, 31.622776
+						def c12, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c13, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_2d s0
+						dcl_2d s1
+						add r0.xyz, c3, -v2
+						nrm_pp r1.xyz, r0
+						add r0.xyz, c4, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mad_pp r2.xyz, r0, r0.w, r1
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r2, r2
+						add r1.w, -r0.w, c11.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c11.w, r0.w
+						mul_pp r2.xyz, r0.w, r2
+						nrm_pp r3.xyz, v1
+						dp3_pp r0.w, r3, r2
+						dp3_pp r1.w, r0, r2
+						dp3_pp r0.x, v1, r0
+						max_pp r2.x, r0.x, c11.y
+						max_pp r0.x, r1.w, c11.y
+						dp3_pp r0.y, r3, r1
+						max_pp r1.x, r0.y, c11.y
+						max_pp r1.y, r0.w, c11.y
+						mov r3.x, c11.x
+						add_pp r0.y, r3.x, -c8.x
+						add_pp r0.z, -r0.y, c11.x
+						mad_pp r0.z, r0.z, c12.y, c12.z
+						log_pp r0.z, r0.z
+						rcp r0.z, r0.z
+						mul_pp r0.z, r0.z, c12.w
+						mul_pp r0.w, r0.z, r0.z
+						mad_pp r0.z, r0.z, r0.z, c11.x
+						mul_pp r0.z, r0.z, c7.y
+						pow_pp r2.y, r1.y, r0.w
+						mul_pp r0.z, r0.z, r2.y
+						mul_pp r0.w, r0.y, r0.y
+						mul_pp r1.y, r0.w, c7.w
+						mad_pp r0.w, r0.w, -c7.w, r3.x
+						mad_pp r1.z, r1.x, r0.w, r1.y
+						add_pp r1.x, -r1.x, c11.x
+						mad_pp r0.w, r2.x, r0.w, r1.y
+						mad r0.w, r0.w, r1.z, c12.x
+						rcp_pp r0.w, r0.w
+						mul_pp r0.z, r0.z, r0.w
+						mul_pp r0.z, r2.x, r0.z
+						mul_pp r0.z, r0.z, c7.x
+						max_pp r1.y, r0.z, c11.y
+						mad r3, v2.xyzx, c11.xxxy, c11.yyyx
+						dp4 r4.x, c0, r3
+						dp4 r4.y, c1, r3
+						dp4 r4.z, c2, r3
+						dp3 r0.z, r4, r4
+						texld_pp r3, r0.z, s0
+						mul_pp r2.yzw, r3.x, c6.xxyz
+						mul_pp r1.yzw, r1.y, r2
+						add_pp r0.z, -r0.x, c11.x
+						mul_pp r0.x, r0.x, r0.x
+						dp2add_pp r0.x, r0.x, r0.y, c13.x
+						mul_pp r0.y, r0.z, r0.z
+						mul_pp r0.y, r0.y, r0.y
+						mul_pp r0.y, r0.z, r0.y
+						texld r3, v0, s1
+						mov r4, c5
+						mad_pp r5.xyz, r3, c10, -r4
+						mul_pp r3.xyz, r3, c10
+						mad_pp r4.xyz, c9.x, r5, r4
+						lrp_pp r5.xyz, r0.y, c11.x, r4
+						mul_pp r0.yzw, r1, r5.xxyz
+						mul_pp r1.y, r1.x, r1.x
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.x, r1.x, r1.y
+						mad_pp r1.x, r0.x, r1.x, c11.x
+						add_pp r1.y, -r2.x, c11.x
+						mul_pp r1.z, r1.y, r1.y
+						mul_pp r1.z, r1.z, r1.z
+						mul_pp r1.y, r1.y, r1.z
+						mad_pp r0.x, r0.x, r1.y, c11.x
+						mul_pp r0.x, r1.x, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mul_pp r1.xyz, r0.x, r2.yzww
+						mad_pp r0.x, c9.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.x, r3
+						mad_pp oC0.xyz, r2, r1, r0.yzww
+						mov_pp oC0.w, c11.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" }
+					Vector 7 [_Color]
+					Float 5 [_Glossiness]
+					Vector 3 [_LightColor0]
+					Float 6 [_Metallic]
+					Vector 0 [_WorldSpaceCameraPos]
+					Vector 1 [_WorldSpaceLightPos0]
+					Vector 2 [unity_ColorSpaceDielectricSpec]
+					Vector 4 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_3_0
+						def c8, 0, 1, 0.00100000005, 31.622776
+						def c9, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c10, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_2d s0
+						add r0.xyz, c0, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mad_pp r1.xyz, r0, r0.w, c1
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r1, r1
+						add r1.w, -r0.w, c8.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c8.w, r0.w
+						mul_pp r1.xyz, r0.w, r1
+						nrm_pp r2.xyz, v1
+						dp3_pp r0.w, r2, r1
+						dp3_pp r1.x, c1, r1
+						max_pp r2.w, r1.x, c8.x
+						dp3_pp r0.x, r2, r0
+						max_pp r1.x, r0.x, c8.x
+						max_pp r1.y, r0.w, c8.x
+						mov r0.y, c8.y
+						add_pp r0.x, r0.y, -c5.x
+						add_pp r0.z, -r0.x, c8.y
+						mad_pp r0.z, r0.z, c9.y, c9.z
+						log_pp r0.z, r0.z
+						rcp r0.z, r0.z
+						mul_pp r0.z, r0.z, c9.w
+						mul_pp r0.w, r0.z, r0.z
+						mad_pp r0.z, r0.z, r0.z, c8.y
+						mul_pp r0.z, r0.z, c4.y
+						pow_pp r2.x, r1.y, r0.w
+						mul_pp r0.z, r0.z, r2.x
+						mul_pp r0.w, r0.x, r0.x
+						mul_pp r1.y, r0.w, c4.w
+						mad_pp r0.y, r0.w, -c4.w, r0.y
+						mad_pp r0.w, r1.x, r0.y, r1.y
+						add_pp r1.x, -r1.x, c8.y
+						dp3_pp r1.z, v1, c1
+						max_pp r2.x, r1.z, c8.x
+						mad_pp r0.y, r2.x, r0.y, r1.y
+						mad r0.y, r0.y, r0.w, c9.x
+						rcp_pp r0.y, r0.y
+						mul_pp r0.y, r0.z, r0.y
+						mul_pp r0.y, r2.x, r0.y
+						mul_pp r0.y, r0.y, c4.x
+						mul_pp r1.yzw, r0.y, c3.xxyz
+						cmp_pp r0.yzw, r0.y, r1, c8.x
+						add_pp r1.y, -r2.w, c8.y
+						mul_pp r1.z, r2.w, r2.w
+						dp2add_pp r0.x, r1.z, r0.x, c10.x
+						mul_pp r1.z, r1.y, r1.y
+						mul_pp r1.z, r1.z, r1.z
+						mul_pp r1.y, r1.y, r1.z
+						texld r3, v0, s0
+						mov r4, c2
+						mad_pp r2.yzw, r3.xxyz, c7.xxyz, -r4.xxyz
+						mul_pp r3.xyz, r3, c7
+						mad_pp r2.yzw, c6.x, r2, r4.xxyz
+						lrp_pp r4.xyz, r1.y, c8.y, r2.yzww
+						mul_pp r0.yzw, r0, r4.xxyz
+						mul_pp r1.y, r1.x, r1.x
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.x, r1.x, r1.y
+						mad_pp r1.x, r0.x, r1.x, c8.y
+						add_pp r1.y, -r2.x, c8.y
+						mul_pp r1.z, r1.y, r1.y
+						mul_pp r1.z, r1.z, r1.z
+						mul_pp r1.y, r1.y, r1.z
+						mad_pp r0.x, r0.x, r1.y, c8.y
+						mul_pp r0.x, r1.x, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mul_pp r1.xyz, r0.x, c3
+						mad_pp r0.x, c6.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.x, r3
+						mad_pp oC0.xyz, r2, r1, r0.yzww
+						mov_pp oC0.w, c8.y
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" "SHADOWS_OFF" }
+					Matrix 0 [_LightMatrix0]
+					Vector 11 [_Color]
+					Float 9 [_Glossiness]
+					Vector 7 [_LightColor0]
+					Float 10 [_Metallic]
+					Vector 4 [_WorldSpaceCameraPos]
+					Vector 5 [_WorldSpaceLightPos0]
+					Vector 6 [unity_ColorSpaceDielectricSpec]
+					Vector 8 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_LightTexture0] 2D 0
+					SetTexture 1 [_LightTextureB0] 2D 1
+					SetTexture 2 [_MainTex] 2D 2
+					"ps_3_0
+						def c12, 1, 0, 0.5, 0.00100000005
+						def c13, 31.622776, 9.99999975e-005, 0.967999995, 0.0299999993
+						def c14, 10, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						mad r0, v2.xyzx, c12.xxxy, c12.yyyx
+						dp4 r1.x, c3, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c0, r0
+						dp4 r2.y, c1, r0
+						dp4 r2.z, c2, r0
+						mad r0.xy, r2, r1.x, c12.z
+						dp3 r0.z, r2, r2
+						texld_pp r1, r0.z, s1
+						texld_pp r0, r0, s0
+						mul r0.x, r1.x, r0.w
+						mul_pp r0.xyz, r0.x, c7
+						cmp_pp r0.xyz, -r2.z, c12.y, r0
+						add r1.xyz, c4, -v2
+						nrm_pp r2.xyz, r1
+						add r1.xyz, c5, -v2
+						dp3 r0.w, r1, r1
+						rsq r0.w, r0.w
+						mad_pp r3.xyz, r1, r0.w, r2
+						mul_pp r1.xyz, r0.w, r1
+						dp3_pp r0.w, r3, r3
+						add r1.w, -r0.w, c12.w
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c13.x, r0.w
+						mul_pp r3.xyz, r0.w, r3
+						nrm_pp r4.xyz, v1
+						dp3_pp r0.w, r4, r3
+						dp3_pp r1.w, r1, r3
+						dp3_pp r1.x, v1, r1
+						max_pp r2.w, r1.x, c12.y
+						max_pp r3.x, r1.w, c12.y
+						dp3_pp r1.x, r4, r2
+						max_pp r2.x, r1.x, c12.y
+						max_pp r1.x, r0.w, c12.y
+						mov r4.x, c12.x
+						add_pp r0.w, r4.x, -c9.x
+						add_pp r1.y, -r0.w, c12.x
+						mad_pp r1.y, r1.y, c13.z, c13.w
+						log_pp r1.y, r1.y
+						rcp r1.y, r1.y
+						mul_pp r1.y, r1.y, c14.x
+						mul_pp r1.z, r1.y, r1.y
+						mad_pp r1.y, r1.y, r1.y, c12.x
+						mul_pp r1.y, r1.y, c8.y
+						pow_pp r2.y, r1.x, r1.z
+						mul_pp r1.x, r1.y, r2.y
+						mul_pp r1.y, r0.w, r0.w
+						mul_pp r1.z, r1.y, c8.w
+						mad_pp r1.y, r1.y, -c8.w, r4.x
+						mad_pp r1.w, r2.x, r1.y, r1.z
+						add_pp r2.x, -r2.x, c12.x
+						mad_pp r1.y, r2.w, r1.y, r1.z
+						mad r1.y, r1.y, r1.w, c13.y
+						rcp_pp r1.y, r1.y
+						mul_pp r1.x, r1.x, r1.y
+						mul_pp r1.x, r2.w, r1.x
+						mul_pp r1.x, r1.x, c8.x
+						max_pp r2.y, r1.x, c12.y
+						mul_pp r1.xyz, r0, r2.y
+						add_pp r1.w, -r3.x, c12.x
+						mul_pp r2.y, r3.x, r3.x
+						dp2add_pp r0.w, r2.y, r0.w, -c12.z
+						mul_pp r2.y, r1.w, r1.w
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r1.w, r1.w, r2.y
+						texld r3, v0, s2
+						mov r4, c6
+						mad_pp r5.xyz, r3, c11, -r4
+						mul_pp r3.xyz, r3, c11
+						mad_pp r4.xyz, c10.x, r5, r4
+						lrp_pp r5.xyz, r1.w, c12.x, r4
+						mul_pp r1.xyz, r1, r5
+						mul_pp r1.w, r2.x, r2.x
+						mul_pp r1.w, r1.w, r1.w
+						mul_pp r1.w, r2.x, r1.w
+						mad_pp r1.w, r0.w, r1.w, c12.x
+						add_pp r2.x, -r2.w, c12.x
+						mul_pp r2.y, r2.x, r2.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r2.x, r2.x, r2.y
+						mad_pp r0.w, r0.w, r2.x, c12.x
+						mul_pp r0.w, r1.w, r0.w
+						mul_pp r0.w, r2.w, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						mad_pp r0.w, c10.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.w, r3
+						mad_pp oC0.xyz, r2, r0, r1
+						mov_pp oC0.w, c12.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT_COOKIE" "SHADOWS_OFF" }
+					Matrix 0 [_LightMatrix0] 3
+					Vector 10 [_Color]
+					Float 8 [_Glossiness]
+					Vector 6 [_LightColor0]
+					Float 9 [_Metallic]
+					Vector 3 [_WorldSpaceCameraPos]
+					Vector 4 [_WorldSpaceLightPos0]
+					Vector 5 [unity_ColorSpaceDielectricSpec]
+					Vector 7 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_LightTexture0] CUBE 0
+					SetTexture 1 [_LightTextureB0] 2D 1
+					SetTexture 2 [_MainTex] 2D 2
+					"ps_3_0
+						def c11, 1, 0, 0.00100000005, 31.622776
+						def c12, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c13, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_cube s0
+						dcl_2d s1
+						dcl_2d s2
+						add r0.xyz, c3, -v2
+						nrm_pp r1.xyz, r0
+						add r0.xyz, c4, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mad_pp r2.xyz, r0, r0.w, r1
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r2, r2
+						add r1.w, -r0.w, c11.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c11.w, r0.w
+						mul_pp r2.xyz, r0.w, r2
+						nrm_pp r3.xyz, v1
+						dp3_pp r0.w, r3, r2
+						dp3_pp r1.w, r0, r2
+						dp3_pp r0.x, v1, r0
+						max_pp r2.x, r0.x, c11.y
+						max_pp r0.x, r1.w, c11.y
+						dp3_pp r0.y, r3, r1
+						max_pp r1.x, r0.y, c11.y
+						max_pp r1.y, r0.w, c11.y
+						mov r3.x, c11.x
+						add_pp r0.y, r3.x, -c8.x
+						add_pp r0.z, -r0.y, c11.x
+						mad_pp r0.z, r0.z, c12.y, c12.z
+						log_pp r0.z, r0.z
+						rcp r0.z, r0.z
+						mul_pp r0.z, r0.z, c12.w
+						mul_pp r0.w, r0.z, r0.z
+						mad_pp r0.z, r0.z, r0.z, c11.x
+						mul_pp r0.z, r0.z, c7.y
+						pow_pp r2.y, r1.y, r0.w
+						mul_pp r0.z, r0.z, r2.y
+						mul_pp r0.w, r0.y, r0.y
+						mul_pp r1.y, r0.w, c7.w
+						mad_pp r0.w, r0.w, -c7.w, r3.x
+						mad_pp r1.z, r1.x, r0.w, r1.y
+						add_pp r1.x, -r1.x, c11.x
+						mad_pp r0.w, r2.x, r0.w, r1.y
+						mad r0.w, r0.w, r1.z, c12.x
+						rcp_pp r0.w, r0.w
+						mul_pp r0.z, r0.z, r0.w
+						mul_pp r0.z, r2.x, r0.z
+						mul_pp r0.z, r0.z, c7.x
+						max_pp r1.y, r0.z, c11.y
+						mad r3, v2.xyzx, c11.xxxy, c11.yyyx
+						dp4 r4.x, c0, r3
+						dp4 r4.y, c1, r3
+						dp4 r4.z, c2, r3
+						dp3 r0.z, r4, r4
+						texld r3, r4, s0
+						texld r4, r0.z, s1
+						mul_pp r0.z, r3.w, r4.x
+						mul_pp r2.yzw, r0.z, c6.xxyz
+						mul_pp r1.yzw, r1.y, r2
+						add_pp r0.z, -r0.x, c11.x
+						mul_pp r0.x, r0.x, r0.x
+						dp2add_pp r0.x, r0.x, r0.y, c13.x
+						mul_pp r0.y, r0.z, r0.z
+						mul_pp r0.y, r0.y, r0.y
+						mul_pp r0.y, r0.z, r0.y
+						texld r3, v0, s2
+						mov r4, c5
+						mad_pp r5.xyz, r3, c10, -r4
+						mul_pp r3.xyz, r3, c10
+						mad_pp r4.xyz, c9.x, r5, r4
+						lrp_pp r5.xyz, r0.y, c11.x, r4
+						mul_pp r0.yzw, r1, r5.xxyz
+						mul_pp r1.y, r1.x, r1.x
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.x, r1.x, r1.y
+						mad_pp r1.x, r0.x, r1.x, c11.x
+						add_pp r1.y, -r2.x, c11.x
+						mul_pp r1.z, r1.y, r1.y
+						mul_pp r1.z, r1.z, r1.z
+						mul_pp r1.y, r1.y, r1.z
+						mad_pp r0.x, r0.x, r1.y, c11.x
+						mul_pp r0.x, r1.x, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mul_pp r1.xyz, r0.x, r2.yzww
+						mad_pp r0.x, c9.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.x, r3
+						mad_pp oC0.xyz, r2, r1, r0.yzww
+						mov_pp oC0.w, c11.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+					Matrix 0 [_LightMatrix0] 2
+					Vector 9 [_Color]
+					Float 7 [_Glossiness]
+					Vector 5 [_LightColor0]
+					Float 8 [_Metallic]
+					Vector 2 [_WorldSpaceCameraPos]
+					Vector 3 [_WorldSpaceLightPos0]
+					Vector 4 [unity_ColorSpaceDielectricSpec]
+					Vector 6 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_LightTexture0] 2D 0
+					SetTexture 1 [_MainTex] 2D 1
+					"ps_3_0
+						def c10, 1, 0, 0.00100000005, 31.622776
+						def c11, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c12, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_2d s0
+						dcl_2d s1
+						add r0.xyz, c2, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mad_pp r1.xyz, r0, r0.w, c3
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r1, r1
+						add r1.w, -r0.w, c10.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c10.w, r0.w
+						mul_pp r1.xyz, r0.w, r1
+						nrm_pp r2.xyz, v1
+						dp3_pp r0.w, r2, r1
+						dp3_pp r1.x, c3, r1
+						max_pp r2.w, r1.x, c10.y
+						dp3_pp r0.x, r2, r0
+						max_pp r1.x, r0.x, c10.y
+						max_pp r1.y, r0.w, c10.y
+						mov r0.x, c10.x
+						add_pp r0.y, r0.x, -c7.x
+						add_pp r0.z, -r0.y, c10.x
+						mad_pp r0.z, r0.z, c11.y, c11.z
+						log_pp r0.z, r0.z
+						rcp r0.z, r0.z
+						mul_pp r0.z, r0.z, c11.w
+						mul_pp r0.w, r0.z, r0.z
+						mad_pp r0.z, r0.z, r0.z, c10.x
+						mul_pp r0.z, r0.z, c6.y
+						pow_pp r2.x, r1.y, r0.w
+						mul_pp r0.z, r0.z, r2.x
+						mul_pp r0.w, r0.y, r0.y
+						mul_pp r1.y, r0.w, c6.w
+						mad_pp r0.x, r0.w, -c6.w, r0.x
+						mad_pp r0.w, r1.x, r0.x, r1.y
+						add_pp r1.x, -r1.x, c10.x
+						dp3_pp r1.z, v1, c3
+						max_pp r2.x, r1.z, c10.y
+						mad_pp r0.x, r2.x, r0.x, r1.y
+						mad r0.x, r0.x, r0.w, c11.x
+						rcp_pp r0.x, r0.x
+						mul_pp r0.x, r0.z, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mul_pp r0.x, r0.x, c6.x
+						max_pp r1.y, r0.x, c10.y
+						mad r3, v2.xyzx, c10.xxxy, c10.yyyx
+						dp4 r4.x, c0, r3
+						dp4 r4.y, c1, r3
+						texld_pp r3, r4, s0
+						mul_pp r0.xzw, r3.w, c5.xyyz
+						mul_pp r1.yzw, r0.xxzw, r1.y
+						add_pp r2.y, -r2.w, c10.x
+						mul_pp r2.z, r2.w, r2.w
+						dp2add_pp r0.y, r2.z, r0.y, c12.x
+						mul_pp r2.z, r2.y, r2.y
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.y, r2.y, r2.z
+						texld r3, v0, s1
+						mov r4, c4
+						mad_pp r5.xyz, r3, c9, -r4
+						mul_pp r3.xyz, r3, c9
+						mad_pp r4.xyz, c8.x, r5, r4
+						lrp_pp r5.xyz, r2.y, c10.x, r4
+						mul_pp r1.yzw, r1, r5.xxyz
+						mul_pp r2.y, r1.x, r1.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r1.x, r1.x, r2.y
+						mad_pp r1.x, r0.y, r1.x, c10.x
+						add_pp r2.y, -r2.x, c10.x
+						mul_pp r2.z, r2.y, r2.y
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.y, r2.y, r2.z
+						mad_pp r0.y, r0.y, r2.y, c10.x
+						mul_pp r0.y, r1.x, r0.y
+						mul_pp r0.y, r2.x, r0.y
+						mul_pp r0.xyz, r0.y, r0.xzww
+						mad_pp r0.w, c8.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.w, r3
+						mad_pp oC0.xyz, r2, r0, r1.yzww
+						mov_pp oC0.w, c10.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+					Matrix 0 [_LightMatrix0]
+					Vector 12 [_Color]
+					Float 10 [_Glossiness]
+					Vector 8 [_LightColor0]
+					Vector 6 [_LightShadowData]
+					Float 11 [_Metallic]
+					Vector 4 [_WorldSpaceCameraPos]
+					Vector 5 [_WorldSpaceLightPos0]
+					Vector 7 [unity_ColorSpaceDielectricSpec]
+					Vector 9 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					SetTexture 1 [_LightTexture0] 2D 1
+					SetTexture 2 [_LightTextureB0] 2D 2
+					SetTexture 3 [_MainTex] 2D 3
+					"ps_3_0
+						def c13, 1, 0, 0.5, 0.00100000005
+						def c14, 31.622776, 9.99999975e-005, 0.967999995, 0.0299999993
+						def c15, 10, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						dcl_2d s3
+						mad r0, v2.xyzx, c13.xxxy, c13.yyyx
+						dp4 r1.x, c3, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c0, r0
+						dp4 r2.y, c1, r0
+						dp4 r2.z, c2, r0
+						mad r0.xy, r2, r1.x, c13.z
+						dp3 r0.z, r2, r2
+						texld_pp r1, r0.z, s2
+						texld_pp r0, r0, s1
+						mul r0.x, r1.x, r0.w
+						cmp r0.x, -r2.z, c13.y, r0.x
+						texldp_pp r1, v3, s0
+						mov r2.x, c13.x
+						lrp_pp r0.y, r1.x, r2.x, c6.x
+						mul_pp r0.x, r0.y, r0.x
+						mul_pp r0.xyz, r0.x, c8
+						add r1.xyz, c4, -v2
+						nrm_pp r3.xyz, r1
+						add r1.xyz, c5, -v2
+						dp3 r0.w, r1, r1
+						rsq r0.w, r0.w
+						mad_pp r2.yzw, r1.xxyz, r0.w, r3.xxyz
+						mul_pp r1.xyz, r0.w, r1
+						dp3_pp r0.w, r2.yzww, r2.yzww
+						add r1.w, -r0.w, c13.w
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c14.x, r0.w
+						mul_pp r2.yzw, r0.w, r2
+						nrm_pp r4.xyz, v1
+						dp3_pp r0.w, r4, r2.yzww
+						dp3_pp r1.w, r1, r2.yzww
+						dp3_pp r1.x, v1, r1
+						max_pp r2.y, r1.x, c13.y
+						max_pp r2.z, r1.w, c13.y
+						dp3_pp r1.x, r4, r3
+						max_pp r2.w, r1.x, c13.y
+						max_pp r1.x, r0.w, c13.y
+						add_pp r0.w, r2.x, -c10.x
+						add_pp r1.y, -r0.w, c13.x
+						mad_pp r1.y, r1.y, c14.z, c14.w
+						log_pp r1.y, r1.y
+						rcp r1.y, r1.y
+						mul_pp r1.y, r1.y, c15.x
+						mul_pp r1.z, r1.y, r1.y
+						mad_pp r1.y, r1.y, r1.y, c13.x
+						mul_pp r1.y, r1.y, c9.y
+						pow_pp r3.x, r1.x, r1.z
+						mul_pp r1.x, r1.y, r3.x
+						mul_pp r1.y, r0.w, r0.w
+						mul_pp r1.z, r1.y, c9.w
+						mad_pp r1.y, r1.y, -c9.w, r2.x
+						mad_pp r1.w, r2.w, r1.y, r1.z
+						add_pp r2.x, -r2.w, c13.x
+						mad_pp r1.y, r2.y, r1.y, r1.z
+						mad r1.y, r1.y, r1.w, c14.y
+						rcp_pp r1.y, r1.y
+						mul_pp r1.x, r1.x, r1.y
+						mul_pp r1.x, r2.y, r1.x
+						mul_pp r1.x, r1.x, c9.x
+						max_pp r2.w, r1.x, c13.y
+						mul_pp r1.xyz, r0, r2.w
+						add_pp r1.w, -r2.z, c13.x
+						mul_pp r2.z, r2.z, r2.z
+						dp2add_pp r0.w, r2.z, r0.w, -c13.z
+						mul_pp r2.z, r1.w, r1.w
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r1.w, r1.w, r2.z
+						texld r3, v0, s3
+						mov r4, c7
+						mad_pp r5.xyz, r3, c12, -r4
+						mul_pp r3.xyz, r3, c12
+						mad_pp r4.xyz, c11.x, r5, r4
+						lrp_pp r5.xyz, r1.w, c13.x, r4
+						mul_pp r1.xyz, r1, r5
+						mul_pp r1.w, r2.x, r2.x
+						mul_pp r1.w, r1.w, r1.w
+						mul_pp r1.w, r2.x, r1.w
+						mad_pp r1.w, r0.w, r1.w, c13.x
+						add_pp r2.x, -r2.y, c13.x
+						mul_pp r2.z, r2.x, r2.x
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.x, r2.x, r2.z
+						mad_pp r0.w, r0.w, r2.x, c13.x
+						mul_pp r0.w, r1.w, r0.w
+						mul_pp r0.w, r2.y, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						mad_pp r0.w, c11.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.w, r3
+						mad_pp oC0.xyz, r2, r0, r1
+						mov_pp oC0.w, c13.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
+					Vector 7 [_Color]
+					Float 5 [_Glossiness]
+					Vector 3 [_LightColor0]
+					Float 6 [_Metallic]
+					Vector 0 [_WorldSpaceCameraPos]
+					Vector 1 [_WorldSpaceLightPos0]
+					Vector 2 [unity_ColorSpaceDielectricSpec]
+					Vector 4 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					SetTexture 1 [_MainTex] 2D 1
+					"ps_3_0
+						def c8, 0, 1, 0.00100000005, 31.622776
+						def c9, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c10, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3
+						dcl_2d s0
+						dcl_2d s1
+						add r0.xyz, c0, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mad_pp r1.xyz, r0, r0.w, c1
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r1, r1
+						add r1.w, -r0.w, c8.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c8.w, r0.w
+						mul_pp r1.xyz, r0.w, r1
+						nrm_pp r2.xyz, v1
+						dp3_pp r0.w, r2, r1
+						dp3_pp r1.x, c1, r1
+						max_pp r2.w, r1.x, c8.x
+						dp3_pp r0.x, r2, r0
+						max_pp r1.x, r0.x, c8.x
+						max_pp r1.y, r0.w, c8.x
+						mov r0.y, c8.y
+						add_pp r0.x, r0.y, -c5.x
+						add_pp r0.z, -r0.x, c8.y
+						mad_pp r0.z, r0.z, c9.y, c9.z
+						log_pp r0.z, r0.z
+						rcp r0.z, r0.z
+						mul_pp r0.z, r0.z, c9.w
+						mul_pp r0.w, r0.z, r0.z
+						mad_pp r0.z, r0.z, r0.z, c8.y
+						mul_pp r0.z, r0.z, c4.y
+						pow_pp r2.x, r1.y, r0.w
+						mul_pp r0.z, r0.z, r2.x
+						mul_pp r0.w, r0.x, r0.x
+						mul_pp r1.y, r0.w, c4.w
+						mad_pp r0.y, r0.w, -c4.w, r0.y
+						mad_pp r0.w, r1.x, r0.y, r1.y
+						add_pp r1.x, -r1.x, c8.y
+						dp3_pp r1.z, v1, c1
+						max_pp r2.x, r1.z, c8.x
+						mad_pp r0.y, r2.x, r0.y, r1.y
+						mad r0.y, r0.y, r0.w, c9.x
+						rcp_pp r0.y, r0.y
+						mul_pp r0.y, r0.z, r0.y
+						mul_pp r0.y, r2.x, r0.y
+						mul_pp r0.y, r0.y, c4.x
+						max_pp r1.y, r0.y, c8.x
+						texldp_pp r3, v3, s0
+						mul_pp r0.yzw, r3.x, c3.xxyz
+						mul_pp r1.yzw, r0, r1.y
+						add_pp r2.y, -r2.w, c8.y
+						mul_pp r2.z, r2.w, r2.w
+						dp2add_pp r0.x, r2.z, r0.x, c10.x
+						mul_pp r2.z, r2.y, r2.y
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.y, r2.y, r2.z
+						texld r3, v0, s1
+						mov r4, c2
+						mad_pp r5.xyz, r3, c7, -r4
+						mul_pp r3.xyz, r3, c7
+						mad_pp r4.xyz, c6.x, r5, r4
+						lrp_pp r5.xyz, r2.y, c8.y, r4
+						mul_pp r1.yzw, r1, r5.xxyz
+						mul_pp r2.y, r1.x, r1.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r1.x, r1.x, r2.y
+						mad_pp r1.x, r0.x, r1.x, c8.y
+						add_pp r2.y, -r2.x, c8.y
+						mul_pp r2.z, r2.y, r2.y
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.y, r2.y, r2.z
+						mad_pp r0.x, r0.x, r2.y, c8.y
+						mul_pp r0.x, r1.x, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mul_pp r0.xyz, r0.x, r0.yzww
+						mad_pp r0.w, c6.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.w, r3
+						mad_pp oC0.xyz, r2, r0, r1.yzww
+						mov_pp oC0.w, c8.y
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+					Matrix 0 [_LightMatrix0] 2
+					Vector 9 [_Color]
+					Float 7 [_Glossiness]
+					Vector 5 [_LightColor0]
+					Float 8 [_Metallic]
+					Vector 2 [_WorldSpaceCameraPos]
+					Vector 3 [_WorldSpaceLightPos0]
+					Vector 4 [unity_ColorSpaceDielectricSpec]
+					Vector 6 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					SetTexture 1 [_LightTexture0] 2D 1
+					SetTexture 2 [_MainTex] 2D 2
+					"ps_3_0
+						def c10, 1, 0, 0.00100000005, 31.622776
+						def c11, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c12, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						add r0.xyz, c2, -v2
+						dp3 r0.w, r0, r0
+						rsq r0.w, r0.w
+						mad_pp r1.xyz, r0, r0.w, c3
+						mul_pp r0.xyz, r0.w, r0
+						dp3_pp r0.w, r1, r1
+						add r1.w, -r0.w, c10.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r1.w, c10.w, r0.w
+						mul_pp r1.xyz, r0.w, r1
+						nrm_pp r2.xyz, v1
+						dp3_pp r0.w, r2, r1
+						dp3_pp r1.x, c3, r1
+						max_pp r2.w, r1.x, c10.y
+						dp3_pp r0.x, r2, r0
+						max_pp r1.x, r0.x, c10.y
+						max_pp r1.y, r0.w, c10.y
+						mov r0.x, c10.x
+						add_pp r0.y, r0.x, -c7.x
+						add_pp r0.z, -r0.y, c10.x
+						mad_pp r0.z, r0.z, c11.y, c11.z
+						log_pp r0.z, r0.z
+						rcp r0.z, r0.z
+						mul_pp r0.z, r0.z, c11.w
+						mul_pp r0.w, r0.z, r0.z
+						mad_pp r0.z, r0.z, r0.z, c10.x
+						mul_pp r0.z, r0.z, c6.y
+						pow_pp r2.x, r1.y, r0.w
+						mul_pp r0.z, r0.z, r2.x
+						mul_pp r0.w, r0.y, r0.y
+						mul_pp r1.y, r0.w, c6.w
+						mad_pp r0.x, r0.w, -c6.w, r0.x
+						mad_pp r0.w, r1.x, r0.x, r1.y
+						add_pp r1.x, -r1.x, c10.x
+						dp3_pp r1.z, v1, c3
+						max_pp r2.x, r1.z, c10.y
+						mad_pp r0.x, r2.x, r0.x, r1.y
+						mad r0.x, r0.x, r0.w, c11.x
+						rcp_pp r0.x, r0.x
+						mul_pp r0.x, r0.z, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mul_pp r0.x, r0.x, c6.x
+						max_pp r1.y, r0.x, c10.y
+						mad r3, v2.xyzx, c10.xxxy, c10.yyyx
+						dp4 r4.x, c0, r3
+						dp4 r4.y, c1, r3
+						texld r3, r4, s1
+						texldp_pp r4, v3, s0
+						mul_pp r0.x, r3.w, r4.x
+						mul_pp r0.xzw, r0.x, c5.xyyz
+						mul_pp r1.yzw, r0.xxzw, r1.y
+						add_pp r2.y, -r2.w, c10.x
+						mul_pp r2.z, r2.w, r2.w
+						dp2add_pp r0.y, r2.z, r0.y, c12.x
+						mul_pp r2.z, r2.y, r2.y
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.y, r2.y, r2.z
+						texld r3, v0, s2
+						mov r4, c4
+						mad_pp r5.xyz, r3, c9, -r4
+						mul_pp r3.xyz, r3, c9
+						mad_pp r4.xyz, c8.x, r5, r4
+						lrp_pp r5.xyz, r2.y, c10.x, r4
+						mul_pp r1.yzw, r1, r5.xxyz
+						mul_pp r2.y, r1.x, r1.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r1.x, r1.x, r2.y
+						mad_pp r1.x, r0.y, r1.x, c10.x
+						add_pp r2.y, -r2.x, c10.x
+						mul_pp r2.z, r2.y, r2.y
+						mul_pp r2.z, r2.z, r2.z
+						mul_pp r2.y, r2.y, r2.z
+						mad_pp r0.y, r0.y, r2.y, c10.x
+						mul_pp r0.y, r1.x, r0.y
+						mul_pp r0.y, r2.x, r0.y
+						mul_pp r0.xyz, r0.y, r0.xzww
+						mad_pp r0.w, c8.x, -r4.w, r4.w
+						mul_pp r2.xyz, r0.w, r3
+						mad_pp oC0.xyz, r2, r0, r1.yzww
+						mov_pp oC0.w, c10.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT" "SHADOWS_CUBE" }
+					Matrix 0 [_LightMatrix0] 3
+					Vector 12 [_Color]
+					Float 10 [_Glossiness]
+					Vector 8 [_LightColor0]
+					Vector 5 [_LightPositionRange]
+					Vector 6 [_LightShadowData]
+					Float 11 [_Metallic]
+					Vector 3 [_WorldSpaceCameraPos]
+					Vector 4 [_WorldSpaceLightPos0]
+					Vector 7 [unity_ColorSpaceDielectricSpec]
+					Vector 9 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] CUBE 0
+					SetTexture 1 [_LightTexture0] 2D 1
+					SetTexture 2 [_MainTex] 2D 2
+					"ps_3_0
+						def c13, 1, 0, 0.970000029, 0.00100000005
+						def c14, 31.622776, 9.99999975e-005, 0.967999995, 0.0299999993
+						def c15, 10, -0.5, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3.xyz
+						dcl_cube s0
+						dcl_2d s1
+						dcl_2d s2
+						dp3 r0.x, v3, v3
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						mul r0.x, r0.x, c5.w
+						texld r1, v3, s0
+						mad r0.x, r0.x, -c13.z, r1.x
+						mov r1.x, c13.x
+						cmp_pp r0.x, r0.x, r1.x, c6.x
+						mad r2, v2.xyzx, c13.xxxy, c13.yyyx
+						dp4 r3.x, c0, r2
+						dp4 r3.y, c1, r2
+						dp4 r3.z, c2, r2
+						dp3 r0.y, r3, r3
+						texld r2, r0.y, s1
+						mul_pp r0.x, r0.x, r2.x
+						mul_pp r0.xyz, r0.x, c8
+						add r1.yzw, c3.xxyz, -v2.xxyz
+						nrm_pp r2.xyz, r1.yzww
+						add r1.yzw, c4.xxyz, -v2.xxyz
+						dp3 r0.w, r1.yzww, r1.yzww
+						rsq r0.w, r0.w
+						mad_pp r3.xyz, r1.yzww, r0.w, r2
+						mul_pp r1.yzw, r0.w, r1
+						dp3_pp r0.w, r3, r3
+						add r2.w, -r0.w, c13.w
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r2.w, c14.x, r0.w
+						mul_pp r3.xyz, r0.w, r3
+						nrm_pp r4.xyz, v1
+						dp3_pp r0.w, r4, r3
+						dp3_pp r2.w, r1.yzww, r3
+						dp3_pp r1.y, v1, r1.yzww
+						max_pp r3.x, r1.y, c13.y
+						max_pp r1.y, r2.w, c13.y
+						dp3_pp r1.z, r4, r2
+						max_pp r2.x, r1.z, c13.y
+						max_pp r1.z, r0.w, c13.y
+						add_pp r0.w, r1.x, -c10.x
+						add_pp r1.w, -r0.w, c13.x
+						mad_pp r1.w, r1.w, c14.z, c14.w
+						log_pp r1.w, r1.w
+						rcp r1.w, r1.w
+						mul_pp r1.w, r1.w, c15.x
+						mul_pp r2.y, r1.w, r1.w
+						mad_pp r1.w, r1.w, r1.w, c13.x
+						mul_pp r1.w, r1.w, c9.y
+						pow_pp r3.y, r1.z, r2.y
+						mul_pp r1.z, r1.w, r3.y
+						mul_pp r1.w, r0.w, r0.w
+						mul_pp r2.y, r1.w, c9.w
+						mad_pp r1.x, r1.w, -c9.w, r1.x
+						mad_pp r1.w, r2.x, r1.x, r2.y
+						add_pp r2.x, -r2.x, c13.x
+						mad_pp r1.x, r3.x, r1.x, r2.y
+						mad r1.x, r1.x, r1.w, c14.y
+						rcp_pp r1.x, r1.x
+						mul_pp r1.x, r1.z, r1.x
+						mul_pp r1.x, r3.x, r1.x
+						mul_pp r1.x, r1.x, c9.x
+						max_pp r2.y, r1.x, c13.y
+						mul_pp r1.xzw, r0.xyyz, r2.y
+						add_pp r2.y, -r1.y, c13.x
+						mul_pp r1.y, r1.y, r1.y
+						dp2add_pp r0.w, r1.y, r0.w, c15.y
+						mul_pp r1.y, r2.y, r2.y
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.y, r2.y, r1.y
+						texld r4, v0, s2
+						mov r5, c7
+						mad_pp r2.yzw, r4.xxyz, c12.xxyz, -r5.xxyz
+						mul_pp r3.yzw, r4.xxyz, c12.xxyz
+						mad_pp r2.yzw, c11.x, r2, r5.xxyz
+						lrp_pp r4.xyz, r1.y, c13.x, r2.yzww
+						mul_pp r1.xyz, r1.xzww, r4
+						mul_pp r1.w, r2.x, r2.x
+						mul_pp r1.w, r1.w, r1.w
+						mul_pp r1.w, r2.x, r1.w
+						mad_pp r1.w, r0.w, r1.w, c13.x
+						add_pp r2.x, -r3.x, c13.x
+						mul_pp r2.y, r2.x, r2.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r2.x, r2.x, r2.y
+						mad_pp r0.w, r0.w, r2.x, c13.x
+						mul_pp r0.w, r1.w, r0.w
+						mul_pp r0.w, r3.x, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						mad_pp r0.w, c11.x, -r5.w, r5.w
+						mul_pp r2.xyz, r0.w, r3.yzww
+						mad_pp oC0.xyz, r2, r0, r1
+						mov_pp oC0.w, c13.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT_COOKIE" "SHADOWS_CUBE" }
+					Matrix 0 [_LightMatrix0] 3
+					Vector 12 [_Color]
+					Float 10 [_Glossiness]
+					Vector 8 [_LightColor0]
+					Vector 5 [_LightPositionRange]
+					Vector 6 [_LightShadowData]
+					Float 11 [_Metallic]
+					Vector 3 [_WorldSpaceCameraPos]
+					Vector 4 [_WorldSpaceLightPos0]
+					Vector 7 [unity_ColorSpaceDielectricSpec]
+					Vector 9 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] CUBE 0
+					SetTexture 1 [_LightTexture0] CUBE 1
+					SetTexture 2 [_LightTextureB0] 2D 2
+					SetTexture 3 [_MainTex] 2D 3
+					"ps_3_0
+						def c13, 1, 0, 0.970000029, 0.00100000005
+						def c14, 31.622776, 9.99999975e-005, 0.967999995, 0.0299999993
+						def c15, 10, -0.5, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3.xyz
+						dcl_cube s0
+						dcl_cube s1
+						dcl_2d s2
+						dcl_2d s3
+						mad r0, v2.xyzx, c13.xxxy, c13.yyyx
+						dp4 r1.x, c0, r0
+						dp4 r1.y, c1, r0
+						dp4 r1.z, c2, r0
+						dp3 r0.x, r1, r1
+						texld r1, r1, s1
+						texld r0, r0.x, s2
+						mul r0.x, r1.w, r0.x
+						dp3 r0.y, v3, v3
+						rsq r0.y, r0.y
+						rcp r0.y, r0.y
+						mul r0.y, r0.y, c5.w
+						texld r1, v3, s0
+						mad r0.y, r0.y, -c13.z, r1.x
+						mov r1.x, c13.x
+						cmp_pp r0.y, r0.y, r1.x, c6.x
+						mul_pp r0.x, r0.y, r0.x
+						mul_pp r0.xyz, r0.x, c8
+						add r1.yzw, c3.xxyz, -v2.xxyz
+						nrm_pp r2.xyz, r1.yzww
+						add r1.yzw, c4.xxyz, -v2.xxyz
+						dp3 r0.w, r1.yzww, r1.yzww
+						rsq r0.w, r0.w
+						mad_pp r3.xyz, r1.yzww, r0.w, r2
+						mul_pp r1.yzw, r0.w, r1
+						dp3_pp r0.w, r3, r3
+						add r2.w, -r0.w, c13.w
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r2.w, c14.x, r0.w
+						mul_pp r3.xyz, r0.w, r3
+						nrm_pp r4.xyz, v1
+						dp3_pp r0.w, r4, r3
+						dp3_pp r2.w, r1.yzww, r3
+						dp3_pp r1.y, v1, r1.yzww
+						max_pp r3.x, r1.y, c13.y
+						max_pp r1.y, r2.w, c13.y
+						dp3_pp r1.z, r4, r2
+						max_pp r2.x, r1.z, c13.y
+						max_pp r1.z, r0.w, c13.y
+						add_pp r0.w, r1.x, -c10.x
+						add_pp r1.w, -r0.w, c13.x
+						mad_pp r1.w, r1.w, c14.z, c14.w
+						log_pp r1.w, r1.w
+						rcp r1.w, r1.w
+						mul_pp r1.w, r1.w, c15.x
+						mul_pp r2.y, r1.w, r1.w
+						mad_pp r1.w, r1.w, r1.w, c13.x
+						mul_pp r1.w, r1.w, c9.y
+						pow_pp r3.y, r1.z, r2.y
+						mul_pp r1.z, r1.w, r3.y
+						mul_pp r1.w, r0.w, r0.w
+						mul_pp r2.y, r1.w, c9.w
+						mad_pp r1.x, r1.w, -c9.w, r1.x
+						mad_pp r1.w, r2.x, r1.x, r2.y
+						add_pp r2.x, -r2.x, c13.x
+						mad_pp r1.x, r3.x, r1.x, r2.y
+						mad r1.x, r1.x, r1.w, c14.y
+						rcp_pp r1.x, r1.x
+						mul_pp r1.x, r1.z, r1.x
+						mul_pp r1.x, r3.x, r1.x
+						mul_pp r1.x, r1.x, c9.x
+						max_pp r2.y, r1.x, c13.y
+						mul_pp r1.xzw, r0.xyyz, r2.y
+						add_pp r2.y, -r1.y, c13.x
+						mul_pp r1.y, r1.y, r1.y
+						dp2add_pp r0.w, r1.y, r0.w, c15.y
+						mul_pp r1.y, r2.y, r2.y
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.y, r2.y, r1.y
+						texld r4, v0, s3
+						mov r5, c7
+						mad_pp r2.yzw, r4.xxyz, c12.xxyz, -r5.xxyz
+						mul_pp r3.yzw, r4.xxyz, c12.xxyz
+						mad_pp r2.yzw, c11.x, r2, r5.xxyz
+						lrp_pp r4.xyz, r1.y, c13.x, r2.yzww
+						mul_pp r1.xyz, r1.xzww, r4
+						mul_pp r1.w, r2.x, r2.x
+						mul_pp r1.w, r1.w, r1.w
+						mul_pp r1.w, r2.x, r1.w
+						mad_pp r1.w, r0.w, r1.w, c13.x
+						add_pp r2.x, -r3.x, c13.x
+						mul_pp r2.y, r2.x, r2.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r2.x, r2.x, r2.y
+						mad_pp r0.w, r0.w, r2.x, c13.x
+						mul_pp r0.w, r1.w, r0.w
+						mul_pp r0.w, r3.x, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						mad_pp r0.w, c11.x, -r5.w, r5.w
+						mul_pp r2.xyz, r0.w, r3.yzww
+						mad_pp oC0.xyz, r2, r0, r1
+						mov_pp oC0.w, c13.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+					Matrix 4 [_LightMatrix0]
+					Vector 16 [_Color]
+					Float 14 [_Glossiness]
+					Vector 12 [_LightColor0]
+					Vector 10 [_LightShadowData]
+					Float 15 [_Metallic]
+					Vector 0 [_ShadowOffsets0]
+					Vector 1 [_ShadowOffsets1]
+					Vector 2 [_ShadowOffsets2]
+					Vector 3 [_ShadowOffsets3]
+					Vector 8 [_WorldSpaceCameraPos]
+					Vector 9 [_WorldSpaceLightPos0]
+					Vector 11 [unity_ColorSpaceDielectricSpec]
+					Vector 13 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					SetTexture 1 [_LightTexture0] 2D 1
+					SetTexture 2 [_LightTextureB0] 2D 2
+					SetTexture 3 [_MainTex] 2D 3
+					"ps_3_0
+						def c17, 1, 0, 0.5, 0.25
+						def c18, 0.00100000005, 31.622776, 9.99999975e-005, 10
+						def c19, 0.967999995, 0.0299999993, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3
+						dcl_2d s0
+						dcl_2d s1
+						dcl_2d s2
+						dcl_2d s3
+						mov r0.x, c17.x
+						rcp r0.y, v3.w
+						mad r1, v3, r0.y, c0
+						texldp_pp r1, r1, s0
+						mad r2, v3, r0.y, c1
+						texldp_pp r2, r2, s0
+						mov_pp r1.y, r2.x
+						mad r2, v3, r0.y, c2
+						mad r3, v3, r0.y, c3
+						texldp_pp r3, r3, s0
+						mov_pp r1.w, r3.x
+						texldp_pp r2, r2, s0
+						mov_pp r1.z, r2.x
+						lrp_pp r2, r1, r0.x, c10.x
+						dp4_pp r0.y, r2, c17.w
+						mad r1, v2.xyzx, c17.xxxy, c17.yyyx
+						dp4 r0.z, c7, r1
+						rcp r0.z, r0.z
+						dp4 r2.x, c4, r1
+						dp4 r2.y, c5, r1
+						dp4 r2.z, c6, r1
+						mad r0.zw, r2.xyxy, r0.z, c17.z
+						dp3 r1.x, r2, r2
+						texld_pp r1, r1.x, s2
+						texld_pp r3, r0.zwzw, s1
+						mul r0.z, r1.x, r3.w
+						cmp r0.z, -r2.z, c17.y, r0.z
+						mul_pp r0.y, r0.y, r0.z
+						mul_pp r0.yzw, r0.y, c12.xxyz
+						add r1.xyz, c8, -v2
+						nrm_pp r2.xyz, r1
+						add r1.xyz, c9, -v2
+						dp3 r1.w, r1, r1
+						rsq r1.w, r1.w
+						mad_pp r3.xyz, r1, r1.w, r2
+						mul_pp r1.xyz, r1.w, r1
+						dp3_pp r1.w, r3, r3
+						add r2.w, -r1.w, c18.x
+						rsq_pp r1.w, r1.w
+						cmp_pp r1.w, r2.w, c18.y, r1.w
+						mul_pp r3.xyz, r1.w, r3
+						nrm_pp r4.xyz, v1
+						dp3_pp r1.w, r4, r3
+						dp3_pp r2.w, r1, r3
+						dp3_pp r1.x, v1, r1
+						max_pp r3.x, r1.x, c17.y
+						max_pp r1.x, r2.w, c17.y
+						dp3_pp r1.y, r4, r2
+						max_pp r2.x, r1.y, c17.y
+						max_pp r2.y, r1.w, c17.y
+						add_pp r1.y, r0.x, -c14.x
+						add_pp r1.z, -r1.y, c17.x
+						mad_pp r1.z, r1.z, c19.x, c19.y
+						log_pp r1.z, r1.z
+						rcp r1.z, r1.z
+						mul_pp r1.z, r1.z, c18.w
+						mul_pp r1.w, r1.z, r1.z
+						mad_pp r1.z, r1.z, r1.z, c17.x
+						mul_pp r1.z, r1.z, c13.y
+						pow_pp r3.y, r2.y, r1.w
+						mul_pp r1.z, r1.z, r3.y
+						mul_pp r1.w, r1.y, r1.y
+						mul_pp r2.y, r1.w, c13.w
+						mad_pp r0.x, r1.w, -c13.w, r0.x
+						mad_pp r1.w, r2.x, r0.x, r2.y
+						add_pp r2.x, -r2.x, c17.x
+						mad_pp r0.x, r3.x, r0.x, r2.y
+						mad r0.x, r0.x, r1.w, c18.z
+						rcp_pp r0.x, r0.x
+						mul_pp r0.x, r1.z, r0.x
+						mul_pp r0.x, r3.x, r0.x
+						mul_pp r0.x, r0.x, c13.x
+						max_pp r1.z, r0.x, c17.y
+						mul_pp r2.yzw, r0, r1.z
+						add_pp r0.x, -r1.x, c17.x
+						mul_pp r1.x, r1.x, r1.x
+						dp2add_pp r1.x, r1.x, r1.y, -c17.z
+						mul_pp r1.y, r0.x, r0.x
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r0.x, r0.x, r1.y
+						texld r4, v0, s3
+						mov r5, c11
+						mad_pp r1.yzw, r4.xxyz, c16.xxyz, -r5.xxyz
+						mul_pp r3.yzw, r4.xxyz, c16.xxyz
+						mad_pp r1.yzw, c15.x, r1, r5.xxyz
+						lrp_pp r4.xyz, r0.x, c17.x, r1.yzww
+						mul_pp r1.yzw, r2, r4.xxyz
+						mul_pp r0.x, r2.x, r2.x
+						mul_pp r0.x, r0.x, r0.x
+						mul_pp r0.x, r2.x, r0.x
+						mad_pp r0.x, r1.x, r0.x, c17.x
+						add_pp r2.x, -r3.x, c17.x
+						mul_pp r2.y, r2.x, r2.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r2.x, r2.x, r2.y
+						mad_pp r1.x, r1.x, r2.x, c17.x
+						mul_pp r0.x, r0.x, r1.x
+						mul_pp r0.x, r3.x, r0.x
+						mul_pp r0.xyz, r0.x, r0.yzww
+						mad_pp r0.w, c15.x, -r5.w, r5.w
+						mul_pp r2.xyz, r0.w, r3.yzww
+						mad_pp oC0.xyz, r2, r0, r1.yzww
+						mov_pp oC0.w, c17.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+					Matrix 0 [_LightMatrix0] 3
+					Vector 12 [_Color]
+					Float 10 [_Glossiness]
+					Vector 8 [_LightColor0]
+					Vector 5 [_LightPositionRange]
+					Vector 6 [_LightShadowData]
+					Float 11 [_Metallic]
+					Vector 3 [_WorldSpaceCameraPos]
+					Vector 4 [_WorldSpaceLightPos0]
+					Vector 7 [unity_ColorSpaceDielectricSpec]
+					Vector 9 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] CUBE 0
+					SetTexture 1 [_LightTexture0] 2D 1
+					SetTexture 2 [_MainTex] 2D 2
+					"ps_3_0
+						def c13, 0.970000029, 0.25, 0.00100000005, 31.622776
+						def c14, 1, 0, 0.0078125, -0.0078125
+						def c15, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c16, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3.xyz
+						dcl_cube s0
+						dcl_2d s1
+						dcl_2d s2
+						dp3 r0.x, v3, v3
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						mul r0.x, r0.x, c5.w
+						add r0.yzw, c14.z, v3.xxyz
+						texld r1, r0.yzww, s0
+						add r0.yzw, c14.xwwz, v3.xxyz
+						texld r2, r0.yzww, s0
+						mov r1.y, r2.x
+						add r0.yzw, c14.xwzw, v3.xxyz
+						texld r2, r0.yzww, s0
+						mov r1.z, r2.x
+						add r0.yzw, c14.xzww, v3.xxyz
+						texld r2, r0.yzww, s0
+						mov r1.w, r2.x
+						mad r0, r0.x, -c13.x, r1
+						mov r1.x, c14.x
+						cmp_pp r0, r0, r1.x, c6.x
+						dp4_pp r0.x, r0, c13.y
+						mad r2, v2.xyzx, c14.xxxy, c14.yyyx
+						dp4 r3.x, c0, r2
+						dp4 r3.y, c1, r2
+						dp4 r3.z, c2, r2
+						dp3 r0.y, r3, r3
+						texld r2, r0.y, s1
+						mul_pp r0.x, r0.x, r2.x
+						mul_pp r0.xyz, r0.x, c8
+						add r1.yzw, c3.xxyz, -v2.xxyz
+						nrm_pp r2.xyz, r1.yzww
+						add r1.yzw, c4.xxyz, -v2.xxyz
+						dp3 r0.w, r1.yzww, r1.yzww
+						rsq r0.w, r0.w
+						mad_pp r3.xyz, r1.yzww, r0.w, r2
+						mul_pp r1.yzw, r0.w, r1
+						dp3_pp r0.w, r3, r3
+						add r2.w, -r0.w, c13.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r2.w, c13.w, r0.w
+						mul_pp r3.xyz, r0.w, r3
+						nrm_pp r4.xyz, v1
+						dp3_pp r0.w, r4, r3
+						dp3_pp r2.w, r1.yzww, r3
+						dp3_pp r1.y, v1, r1.yzww
+						max_pp r3.x, r1.y, c14.y
+						max_pp r1.y, r2.w, c14.y
+						dp3_pp r1.z, r4, r2
+						max_pp r2.x, r1.z, c14.y
+						max_pp r1.z, r0.w, c14.y
+						add_pp r0.w, r1.x, -c10.x
+						add_pp r1.w, -r0.w, c14.x
+						mad_pp r1.w, r1.w, c15.y, c15.z
+						log_pp r1.w, r1.w
+						rcp r1.w, r1.w
+						mul_pp r1.w, r1.w, c15.w
+						mul_pp r2.y, r1.w, r1.w
+						mad_pp r1.w, r1.w, r1.w, c14.x
+						mul_pp r1.w, r1.w, c9.y
+						pow_pp r3.y, r1.z, r2.y
+						mul_pp r1.z, r1.w, r3.y
+						mul_pp r1.w, r0.w, r0.w
+						mul_pp r2.y, r1.w, c9.w
+						mad_pp r1.x, r1.w, -c9.w, r1.x
+						mad_pp r1.w, r2.x, r1.x, r2.y
+						add_pp r2.x, -r2.x, c14.x
+						mad_pp r1.x, r3.x, r1.x, r2.y
+						mad r1.x, r1.x, r1.w, c15.x
+						rcp_pp r1.x, r1.x
+						mul_pp r1.x, r1.z, r1.x
+						mul_pp r1.x, r3.x, r1.x
+						mul_pp r1.x, r1.x, c9.x
+						max_pp r2.y, r1.x, c14.y
+						mul_pp r1.xzw, r0.xyyz, r2.y
+						add_pp r2.y, -r1.y, c14.x
+						mul_pp r1.y, r1.y, r1.y
+						dp2add_pp r0.w, r1.y, r0.w, c16.x
+						mul_pp r1.y, r2.y, r2.y
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.y, r2.y, r1.y
+						texld r4, v0, s2
+						mov r5, c7
+						mad_pp r2.yzw, r4.xxyz, c12.xxyz, -r5.xxyz
+						mul_pp r3.yzw, r4.xxyz, c12.xxyz
+						mad_pp r2.yzw, c11.x, r2, r5.xxyz
+						lrp_pp r4.xyz, r1.y, c14.x, r2.yzww
+						mul_pp r1.xyz, r1.xzww, r4
+						mul_pp r1.w, r2.x, r2.x
+						mul_pp r1.w, r1.w, r1.w
+						mul_pp r1.w, r2.x, r1.w
+						mad_pp r1.w, r0.w, r1.w, c14.x
+						add_pp r2.x, -r3.x, c14.x
+						mul_pp r2.y, r2.x, r2.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r2.x, r2.x, r2.y
+						mad_pp r0.w, r0.w, r2.x, c14.x
+						mul_pp r0.w, r1.w, r0.w
+						mul_pp r0.w, r3.x, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						mad_pp r0.w, c11.x, -r5.w, r5.w
+						mul_pp r2.xyz, r0.w, r3.yzww
+						mad_pp oC0.xyz, r2, r0, r1
+						mov_pp oC0.w, c14.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+					Matrix 0 [_LightMatrix0] 3
+					Vector 12 [_Color]
+					Float 10 [_Glossiness]
+					Vector 8 [_LightColor0]
+					Vector 5 [_LightPositionRange]
+					Vector 6 [_LightShadowData]
+					Float 11 [_Metallic]
+					Vector 3 [_WorldSpaceCameraPos]
+					Vector 4 [_WorldSpaceLightPos0]
+					Vector 7 [unity_ColorSpaceDielectricSpec]
+					Vector 9 [unity_LightGammaCorrectionConsts]
+					SetTexture 0 [_ShadowMapTexture] CUBE 0
+					SetTexture 1 [_LightTexture0] CUBE 1
+					SetTexture 2 [_LightTextureB0] 2D 2
+					SetTexture 3 [_MainTex] 2D 3
+					"ps_3_0
+						def c13, 0.970000029, 0.25, 0.00100000005, 31.622776
+						def c14, 1, 0, 0.0078125, -0.0078125
+						def c15, 9.99999975e-005, 0.967999995, 0.0299999993, 10
+						def c16, -0.5, 0, 0, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord2 v2.xyz
+						dcl_texcoord3 v3.xyz
+						dcl_cube s0
+						dcl_cube s1
+						dcl_2d s2
+						dcl_2d s3
+						dp3 r0.x, v3, v3
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						mul r0.x, r0.x, c5.w
+						add r0.yzw, c14.z, v3.xxyz
+						texld r1, r0.yzww, s0
+						add r0.yzw, c14.xwwz, v3.xxyz
+						texld r2, r0.yzww, s0
+						mov r1.y, r2.x
+						add r0.yzw, c14.xwzw, v3.xxyz
+						texld r2, r0.yzww, s0
+						mov r1.z, r2.x
+						add r0.yzw, c14.xzww, v3.xxyz
+						texld r2, r0.yzww, s0
+						mov r1.w, r2.x
+						mad r0, r0.x, -c13.x, r1
+						mov r1.x, c14.x
+						cmp_pp r0, r0, r1.x, c6.x
+						dp4_pp r0.x, r0, c13.y
+						mad r2, v2.xyzx, c14.xxxy, c14.yyyx
+						dp4 r3.x, c0, r2
+						dp4 r3.y, c1, r2
+						dp4 r3.z, c2, r2
+						dp3 r0.y, r3, r3
+						texld r2, r3, s1
+						texld r3, r0.y, s2
+						mul r0.y, r2.w, r3.x
+						mul_pp r0.x, r0.x, r0.y
+						mul_pp r0.xyz, r0.x, c8
+						add r1.yzw, c3.xxyz, -v2.xxyz
+						nrm_pp r2.xyz, r1.yzww
+						add r1.yzw, c4.xxyz, -v2.xxyz
+						dp3 r0.w, r1.yzww, r1.yzww
+						rsq r0.w, r0.w
+						mad_pp r3.xyz, r1.yzww, r0.w, r2
+						mul_pp r1.yzw, r0.w, r1
+						dp3_pp r0.w, r3, r3
+						add r2.w, -r0.w, c13.z
+						rsq_pp r0.w, r0.w
+						cmp_pp r0.w, r2.w, c13.w, r0.w
+						mul_pp r3.xyz, r0.w, r3
+						nrm_pp r4.xyz, v1
+						dp3_pp r0.w, r4, r3
+						dp3_pp r2.w, r1.yzww, r3
+						dp3_pp r1.y, v1, r1.yzww
+						max_pp r3.x, r1.y, c14.y
+						max_pp r1.y, r2.w, c14.y
+						dp3_pp r1.z, r4, r2
+						max_pp r2.x, r1.z, c14.y
+						max_pp r1.z, r0.w, c14.y
+						add_pp r0.w, r1.x, -c10.x
+						add_pp r1.w, -r0.w, c14.x
+						mad_pp r1.w, r1.w, c15.y, c15.z
+						log_pp r1.w, r1.w
+						rcp r1.w, r1.w
+						mul_pp r1.w, r1.w, c15.w
+						mul_pp r2.y, r1.w, r1.w
+						mad_pp r1.w, r1.w, r1.w, c14.x
+						mul_pp r1.w, r1.w, c9.y
+						pow_pp r3.y, r1.z, r2.y
+						mul_pp r1.z, r1.w, r3.y
+						mul_pp r1.w, r0.w, r0.w
+						mul_pp r2.y, r1.w, c9.w
+						mad_pp r1.x, r1.w, -c9.w, r1.x
+						mad_pp r1.w, r2.x, r1.x, r2.y
+						add_pp r2.x, -r2.x, c14.x
+						mad_pp r1.x, r3.x, r1.x, r2.y
+						mad r1.x, r1.x, r1.w, c15.x
+						rcp_pp r1.x, r1.x
+						mul_pp r1.x, r1.z, r1.x
+						mul_pp r1.x, r3.x, r1.x
+						mul_pp r1.x, r1.x, c9.x
+						max_pp r2.y, r1.x, c14.y
+						mul_pp r1.xzw, r0.xyyz, r2.y
+						add_pp r2.y, -r1.y, c14.x
+						mul_pp r1.y, r1.y, r1.y
+						dp2add_pp r0.w, r1.y, r0.w, c16.x
+						mul_pp r1.y, r2.y, r2.y
+						mul_pp r1.y, r1.y, r1.y
+						mul_pp r1.y, r2.y, r1.y
+						texld r4, v0, s3
+						mov r5, c7
+						mad_pp r2.yzw, r4.xxyz, c12.xxyz, -r5.xxyz
+						mul_pp r3.yzw, r4.xxyz, c12.xxyz
+						mad_pp r2.yzw, c11.x, r2, r5.xxyz
+						lrp_pp r4.xyz, r1.y, c14.x, r2.yzww
+						mul_pp r1.xyz, r1.xzww, r4
+						mul_pp r1.w, r2.x, r2.x
+						mul_pp r1.w, r1.w, r1.w
+						mul_pp r1.w, r2.x, r1.w
+						mad_pp r1.w, r0.w, r1.w, c14.x
+						add_pp r2.x, -r3.x, c14.x
+						mul_pp r2.y, r2.x, r2.x
+						mul_pp r2.y, r2.y, r2.y
+						mul_pp r2.x, r2.x, r2.y
+						mad_pp r0.w, r0.w, r2.x, c14.x
+						mul_pp r0.w, r1.w, r0.w
+						mul_pp r0.w, r3.x, r0.w
+						mul_pp r0.xyz, r0.w, r0
+						mad_pp r0.w, c11.x, -r5.w, r5.w
+						mul_pp r2.xyz, r0.w, r3.yzww
+						mad_pp oC0.xyz, r2, r0, r1
+						mov_pp oC0.w, c14.x
+						
+						"
+				}
+			}
+		}
+		Pass {
+			Name "DEFERRED"
+			Tags { "LIGHTMODE"="Deferred" "RenderType"="Opaque" }
+			GpuProgramID 170940
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "HDR_LIGHT_PREPASS_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 14 [_MainTex_ST]
+					Vector 12 [unity_SHBb]
+					Vector 11 [unity_SHBg]
+					Vector 10 [unity_SHBr]
+					Vector 13 [unity_SHC]
+					"vs_3_0
+						def c15, 0, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord4 o4
+						dcl_texcoord5 o5.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c14, c14.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						nrm r1.xyz, r0
+						mul r0.x, r1.y, r1.y
+						mad r0.x, r1.x, r1.x, -r0.x
+						mul r2, r1.yzzx, r1.xyzz
+						mov o2.xyz, r1
+						dp4 r1.x, c10, r2
+						dp4 r1.y, c11, r2
+						dp4 r1.z, c12, r2
+						mad o5.xyz, c13, r0.x, r1
+						mov o4, c15.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "UNITY_HDR_ON" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 7 [_World2Object] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 14 [_MainTex_ST]
+					Vector 12 [unity_SHBb]
+					Vector 11 [unity_SHBg]
+					Vector 10 [unity_SHBr]
+					Vector 13 [unity_SHC]
+					"vs_3_0
+						def c15, 0, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dcl_position o0
+						dcl_texcoord o1.xy
+						dcl_texcoord1 o2.xyz
+						dcl_texcoord2 o3.xyz
+						dcl_texcoord4 o4
+						dcl_texcoord5 o5.xyz
+						dp4 o0.x, c0, v0
+						dp4 o0.y, c1, v0
+						dp4 o0.z, c2, v0
+						dp4 o0.w, c3, v0
+						mad o1.xy, v2, c14, c14.zwzw
+						dp4 o3.x, c4, v0
+						dp4 o3.y, c5, v0
+						dp4 o3.z, c6, v0
+						mul r0.xyz, c8, v1.y
+						mad r0.xyz, c7, v1.x, r0
+						mad r0.xyz, c9, v1.z, r0
+						nrm r1.xyz, r0
+						mul r0.x, r1.y, r1.y
+						mad r0.x, r1.x, r1.x, -r0.x
+						mul r2, r1.yzzx, r1.xyzz
+						mov o2.xyz, r1
+						dp4 r1.x, c10, r2
+						dp4 r1.y, c11, r2
+						dp4 r1.z, c12, r2
+						mad o5.xyz, c13, r0.x, r1
+						mov o4, c15.x
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "HDR_LIGHT_PREPASS_OFF" }
+					Vector 6 [_Color]
+					Float 4 [_Glossiness]
+					Float 5 [_Metallic]
+					Vector 3 [unity_ColorSpaceDielectricSpec]
+					Vector 2 [unity_SHAb]
+					Vector 1 [unity_SHAg]
+					Vector 0 [unity_SHAr]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_3_0
+						def c7, 1, 0, 0.5, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord5_pp v2.xyz
+						dcl_2d s0
+						texld r0, v0, s0
+						mov r1, c3
+						mad_pp r2.xyz, r0, c6, -r1
+						mul_pp r0.xyz, r0, c6
+						mad_pp oC1.xyz, c5.x, r2, r1
+						mad_pp r2, v1.xyzx, c7.xxxy, c7.yyyx
+						dp4_pp r1.x, c0, r2
+						dp4_pp r1.y, c1, r2
+						dp4_pp r1.z, c2, r2
+						add_pp r1.xyz, r1, v2
+						mad_pp r0.w, c5.x, -r1.w, r1.w
+						mul_pp r0.xyz, r0.w, r0
+						mul_pp r1.xyz, r1, r0
+						mov_pp oC0.xyz, r0
+						exp_pp oC3.x, -r1.x
+						exp_pp oC3.y, -r1.y
+						exp_pp oC3.z, -r1.z
+						mov_pp oC0.w, c7.x
+						mov_pp oC1.w, c4.x
+						mad_pp oC2, v1.xyzx, c7.zzzy, c7.zzzx
+						mov_pp oC3.w, c7.x
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "UNITY_HDR_ON" }
+					Vector 6 [_Color]
+					Float 4 [_Glossiness]
+					Float 5 [_Metallic]
+					Vector 3 [unity_ColorSpaceDielectricSpec]
+					Vector 2 [unity_SHAb]
+					Vector 1 [unity_SHAg]
+					Vector 0 [unity_SHAr]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_3_0
+						def c7, 1, 0, 0.5, 0
+						dcl_texcoord v0.xy
+						dcl_texcoord1_pp v1.xyz
+						dcl_texcoord5_pp v2.xyz
+						dcl_2d s0
+						texld r0, v0, s0
+						mov r1, c3
+						mad_pp r2.xyz, r0, c6, -r1
+						mul_pp r0.xyz, r0, c6
+						mad_pp oC1.xyz, c5.x, r2, r1
+						mad_pp r2, v1.xyzx, c7.xxxy, c7.yyyx
+						dp4_pp r1.x, c0, r2
+						dp4_pp r1.y, c1, r2
+						dp4_pp r1.z, c2, r2
+						add_pp r1.xyz, r1, v2
+						mad_pp r0.w, c5.x, -r1.w, r1.w
+						mul_pp r0.xyz, r0.w, r0
+						mul_pp oC3.xyz, r1, r0
+						mov_pp oC0.xyz, r0
+						mov_pp oC0.w, c7.x
+						mov_pp oC1.w, c4.x
+						mad_pp oC2, v1.xyzx, c7.zzzy, c7.zzzx
+						mov_pp oC3.w, c7.x
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

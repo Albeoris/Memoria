@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -1898,8 +1899,7 @@ public partial class EventEngine
                 po.ovalRatio = (Byte)this.getv1();
                 return 0;
             case EBin.event_code_binary.INCFROG:
-                if ((Int32)this._ff9.frog_no < (Int32)Int16.MaxValue)
-                    ++this._ff9.frog_no;
+                _ff9.frog_no = (Int16)Math.Min(_ff9.frog_no + Configuration.Hacks.FrogCatchingIncrement, Int16.MaxValue);
                 EMinigame.CatchingGoldenFrogAchievement(this.gCur);
                 EMinigame.Catching99FrogAchievement((Int32)this._ff9.frog_no);
                 return 0;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Memoria.Prime;
 using Memoria.Scenes;
+using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 
@@ -109,8 +110,8 @@ public class WalkMesh
 			Vector2 zero = Vector2.zero;
 			zero.x = (Single)(bgcam_DEF.w / 2) + centerOffset.x;
 			zero.y = -((Single)(bgcam_DEF.h / 2) + centerOffset.y);
-			zero.x -= 160f;
-			zero.y += 112f;
+			zero.x -= FieldMap.HalfFieldWidth;
+			zero.y += FieldMap.HalfFieldHeight;
 			GameObject gameObject2 = new GameObject("Projected_WalkMesh_Camera_" + i.ToString("D2"));
 			gameObject2.transform.parent = this.fieldMap.transform;
 			gameObject2.transform.localPosition = new Vector3(0f, 0f, (Single)scene.curZ);
@@ -159,7 +160,7 @@ public class WalkMesh
 				MeshFilter meshFilter = gameObject3.AddComponent<MeshFilter>();
 				MeshRenderer meshRenderer = gameObject3.AddComponent<MeshRenderer>();
 				meshFilter.mesh = mesh;
-				meshRenderer.material = new Material(Shader.Find("Sprites/Default"))
+				meshRenderer.material = new Material(ShadersLoader.Find("Sprites/Default"))
 				{
 					color = new Color(1f, 1f, 1f, 0.5f)
 				};
@@ -237,11 +238,12 @@ public class WalkMesh
 			Material material;
 			if (FF9StateSystem.Field.isDebugWalkMesh)
 			{
-				material = new Material(Shader.Find("Sprites/Default"));
+				material = new Material(ShadersLoader.Find("Sprites/Default"));
 			}
 			else
 			{
-				material = new Material(Shader.Find("PSX/FieldMapActor"));
+			    material = new Material(ShadersLoader.Find("PSX/FieldMapActor"));
+
 			}
 			material.color = new Color(1f, 1f, 1f, 0.5f);
 			meshRenderer.material = material;
@@ -308,7 +310,7 @@ public class WalkMesh
 		mesh.triangles = list3.ToArray();
 		mesh.RecalculateNormals();
 		mesh.RecalculateBounds();
-		Material material = new Material(Shader.Find("Sprites/Default"));
+		Material material = new Material(ShadersLoader.Find("Sprites/Default"));
 		material.color = new Color(1f, 1f, 1f, 0.5f);
 		MeshRenderer meshRenderer = gameObject2.AddComponent<MeshRenderer>();
 		meshRenderer.material = material;
@@ -850,13 +852,13 @@ public class WalkMesh
 	{
 		PosObj posObj = (PosObj)obj;
 		Single x = fmac.curPos.x;
-		Single num = posObj.pos[0];
+		Single objX = posObj.pos[0];
 		Single z = fmac.curPos.z;
-		Single num2 = posObj.pos[2];
-		Single x2 = num - x;
-		Single y = num2 - z;
-		Single num3 = Mathf.Atan2(y, x2);
-		return myrot - num3;
+		Single objZ = posObj.pos[2];
+		Single dx = objX - x;
+		Single dz = objZ - z;
+		Single angleRadian = Mathf.Atan2(dz, dx);
+		return myrot - angleRadian;
 	}
 
 	private Single disdif(Single x, Single z, Single r)
@@ -874,8 +876,8 @@ public class WalkMesh
 		PosObj result = (PosObj)null;
 		Boolean flag = (mode & 4) != 0;
 		Vector3 curPos = fieldMapActorController.curPos;
-		Single num = (Single)(4 * (Byte)((!flag) ? fieldMapActorController.originalActor.collRad : fieldMapActorController.originalActor.talkRad));
-		Single num2 = 0f;
+		Single originalRadius = (Single)(4 * (Byte)((!flag) ? fieldMapActorController.originalActor.collRad : fieldMapActorController.originalActor.talkRad));
+		Single minDistanceDif = 0f;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		for (ObjList objList = instance.GetActiveObjList(); objList != null; objList = objList.next)
 		{
@@ -886,49 +888,49 @@ public class WalkMesh
 			{
 				Actor actor = (Actor)obj;
 				Single[] pos = actor.pos;
-				Single num3 = pos[1] - curPos.y;
-				if (num3 > -400f && num3 < 400f)
+				Single dy = pos[1] - curPos.y;
+				if (dy > -400f && dy < 400f)
 				{
-					Single num4 = pos[0] - curPos.x;
-					Single num5 = pos[2] - curPos.z;
-					if (((num4 < 0f) ? (-num4) : num4) < 2048f && ((num5 < 0f) ? (-num5) : num5) < 2048f)
+					Single dx = pos[0] - curPos.x;
+					Single dz = pos[2] - curPos.z;
+					if (((dx < 0f) ? (-dx) : dx) < 2048f && ((dz < 0f) ? (-dz) : dz) < 2048f)
 					{
-						Single num6 = (Single)(4 * (Byte)((!flag) ? actor.collRad : actor.talkRad));
-						num6 += num;
+						Single actorRadius = (Single)(4 * (Byte)((!flag) ? actor.collRad : actor.talkRad));
+						actorRadius += originalRadius;
 						if ((mode & 6) != 0)
 						{
-							num6 += (Single)actor.speed + 60f;
+							actorRadius += (Single)actor.speed + 60f;
 						}
-						Single num7 = this.disdif(num4, num5, num6);
+						Single distanceDif = this.disdif(dx, dz, actorRadius);
 						if (flag)
 						{
-							Single num8 = (Single)PersistenSingleton<EventEngine>.Instance.eBin.CollisionAngle(fieldMapActorController.originalActor, actor, fieldMapActorController.originalActor.rotAngle[1]);
-							num8 = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num8);
-							if (num8 < 0f)
+							Single collisionAngle = (Single)PersistenSingleton<EventEngine>.Instance.eBin.CollisionAngle(fieldMapActorController.originalActor, actor, fieldMapActorController.originalActor.rotAngle[1]);
+							collisionAngle = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)collisionAngle);
+							if (collisionAngle < 0f)
 							{
-								num8 = -num8;
+								collisionAngle = -collisionAngle;
 							}
-							num8 -= 640f;
-							if (num8 < 0f)
+							collisionAngle -= 640f;
+							if (collisionAngle < 0f)
 							{
-								num7 += num8;
-								if (num2 > num7 && Mathf.Abs(Mathf.Abs(num2) - Mathf.Abs(num7)) > 1f)
+								distanceDif += collisionAngle;
+								if (minDistanceDif > distanceDif && Mathf.Abs(Mathf.Abs(minDistanceDif) - Mathf.Abs(distanceDif)) > 1f)
 								{
-									num2 = num7;
+									minDistanceDif = distanceDif;
 									result = actor;
 								}
 							}
 						}
-						else if (num2 > num7 && Mathf.Abs(Mathf.Abs(num2) - Mathf.Abs(num7)) > 1f)
+						else if (minDistanceDif > distanceDif && Mathf.Abs(Mathf.Abs(minDistanceDif) - Mathf.Abs(distanceDif)) > 1f)
 						{
-							num2 = num7;
+							minDistanceDif = distanceDif;
 							result = actor;
 						}
 					}
 				}
 			}
 		}
-		distance = num2;
+		distance = minDistanceDif;
 		return result;
 	}
 

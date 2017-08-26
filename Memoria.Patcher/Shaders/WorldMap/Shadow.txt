@@ -1,0 +1,71 @@
+Shader "WorldMap/Shadow" {
+	Properties {
+		_MainTex ("Texture", 2D) = "white" { }
+		_Alpha ("Alpha", Range(0,1)) = 1
+		_Amp ("Amp", Float) = 1
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			GpuProgramID 19080
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 4 [glstate_matrix_modelview0] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Float 9 [_FogEndDistance]
+					Float 8 [_FogStartDistance]
+					Vector 7 [_MainTex_ST]
+					"vs_2_0
+						def c10, 0, 1, 0, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c7, c7.zwzw
+						dp4 r0.x, c4, v0
+						dp4 r0.y, c5, v0
+						dp4 r0.z, c6, v0
+						dp3 r0.x, r0, r0
+						rsq r0.x, r0.x
+						rcp r0.x, r0.x
+						add r0.x, -r0.x, c9.x
+						mov r1.x, c9.x
+						add r0.y, r1.x, -c8.x
+						rcp r0.y, r0.y
+						mul r0.x, r0.y, r0.x
+						max r0.x, r0.x, c10.x
+						min oT2.x, r0.x, c10.y
+						mov oT2.y, c10.y
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 1 [_Alpha]
+					Float 2 [_Amp]
+					Vector 0 [unity_FogColor]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl_pp t0.xy
+						dcl t2.x
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						mul_pp r1.w, r0.w, c1.x
+						lrp_pp r1.xyz, t2.x, r0, c0
+						mul_pp r0, r1, c2.x
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

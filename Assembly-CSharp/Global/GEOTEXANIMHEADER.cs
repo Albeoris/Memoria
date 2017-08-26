@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 
@@ -107,5 +108,5 @@ public class GEOTEXANIMHEADER
 
 	public Rect[] rectuvs;
 
-	public static Material texAnimMat = new Material(Shader.Find("PSX/BattleMap_TexAnim"));
+	public static Material texAnimMat = new Material(ShadersLoader.Find("PSX/BattleMap_TexAnim"));
 }

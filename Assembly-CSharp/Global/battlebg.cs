@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 
@@ -111,24 +112,24 @@ public class battlebg
 				String text = material.name.Replace("(Instance)", String.Empty);
 				if (battlebg.nf_BbgNumber == 171 && num == 0 && shaderName.Contains("Minus"))
 				{
-					material.shader = Shader.Find("PSX/BattleMap_Moon");
+					material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
 				}
 				else if ((battlebg.nf_BbgNumber == 92 && num == 3 && shaderName.Contains("Plus")) || (battlebg.nf_BbgNumber == 52 && num == 6 && shaderName.Contains("Plus")))
 				{
-					material.shader = Shader.Find("PSX/BattleMap_Plus_Abr_1_Off");
+					material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
 				}
 				else if (text.Contains("a"))
 				{
-					material.shader = Shader.Find(shaderName + "_Abr_1");
+					material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
 				}
 				else if (text.Contains("s"))
 				{
-					material.shader = Shader.Find(shaderName + "_Abr_0");
+					material.shader = ShadersLoader.Find(shaderName + "_Abr_0");
 					material.SetColor("_Color", new Color32(Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, 110));
 				}
 				else
 				{
-					material.shader = Shader.Find(shaderName);
+					material.shader = ShadersLoader.Find(shaderName);
 				}
 				num++;
 			}

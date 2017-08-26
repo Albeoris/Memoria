@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.Common;
+using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 
@@ -23,9 +24,9 @@ public class FieldRainRenderer : MonoBehaviour
 		this.speed = 0;
 		this.over = 0;
 		this.gen = 0;
-		this.offset = new Vector2(-160f, 0f);
+		this.offset = new Vector2(-FieldMap.HalfFieldWidth, 0f);
 		this.factor = 1f;
-		this.mat = new Material(Shader.Find("SPS/SPSRain"));
+		this.mat = new Material(ShadersLoader.Find("SPS/SPSRain"));
 		String b = "FBG_N32_IFUG_MAP568_IU_SDV_0";
 		this.isIifaTreeMap = false;
 		this.posOffset = Vector3.zero;
@@ -62,12 +63,12 @@ public class FieldRainRenderer : MonoBehaviour
 			p.y -= this.offset.y;
 			p2.y -= this.offset.y;
 			p3.y -= this.offset.y;
-			p.x /= 320f;
-			p2.x /= 320f;
-			p3.x /= 320f;
-			p.y /= 224f;
-			p2.y /= 224f;
-			p3.y /= 224f;
+			p.x /= FieldMap.PsxFieldWidth;
+			p2.x /= FieldMap.PsxFieldWidth;
+			p3.x /= FieldMap.PsxFieldWidth;
+			p.y /= FieldMap.PsxFieldHeightNative;
+			p2.y /= FieldMap.PsxFieldHeightNative;
+			p3.y /= FieldMap.PsxFieldHeightNative;
 			p.z = 0f;
 			p2.z = 0f;
 			p3.z = 0f;

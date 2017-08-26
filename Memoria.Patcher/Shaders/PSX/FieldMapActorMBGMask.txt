@@ -1,0 +1,139 @@
+Shader "PSX/FieldMapActorMBGMask" {
+	Properties {
+		_MainTex ("Texture", 2D) = "grey" { }
+		_Color ("Tint", Color) = (1,1,1,1)
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+		Pass {
+			Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+			Cull Off
+			Blend One OneMinusSrcAlpha
+			GpuProgramID 31530
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 8 [_MatrixRT]
+					Matrix 0 [_Object2World]
+					Matrix 4 [unity_MatrixVP]
+					Vector 14 [_Color]
+					Float 18 [_DepthOffset]
+					Float 16 [_OffsetX]
+					Float 17 [_OffsetY]
+					Vector 12 [_ProjectionParams]
+					Vector 13 [_ScreenParams]
+					Float 15 [_ViewDistance]
+					Float 30 [_MulX]
+					Float 31 [_MulY]
+					"vs_2_0
+						def c19, 0, -112, -1, 0.25
+						def c20, 0.00625000000, 0.00892857183, 0.5, 0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						mov r0.yw, c19.xxzz
+						dp4 r1.x, c1, v0
+						mov r1.y, -r1.x
+						dp4 r1.x, c0, v0
+						dp4 r1.z, c2, v0
+						dp4 r1.w, c3, v0
+						dp4 r2.x, c10, r1
+						rcp r2.y, r2.x
+						mul r2.y, r2.y, c15.x
+						dp4 r2.z, c9, r1
+						mul r2.w, r2.y, r2.z
+						mad r2.z, r2.z, r2.y, c19.y
+						mov r0.x, -r2.w
+						add r0.z, r2.w, r2.z
+						slt r2.z, r2.x, c19.x
+						mov r2.w, c19.w
+						mad r3.z, r2.x, r2.w, c18.x
+						mad r3.xy, r2.z, r0.wzzw, r0.yxzw
+						mov oT1.z, r3.x
+						dp4 r0.x, c8, r1
+						dp4 r3.w, c11, r1
+						mov oT1.w, r1.w
+						mul r3.x, r2.y, r0.x
+						dp4 oPos.z, c6, r3
+						mul oD0, v1, c14
+						dp4 r0.x, c4, r3
+						
+						mov r1.x, c30.x
+						mov r1.y, c31.x
+						mad r0.x, c16.x, r1.x, r0.x
+						dp4 r0.w, c7, r3
+						dp4 r0.z, c5, r3
+						mad r0.y, c17.x, r1.y, r0.z
+						mul r1.xz, r0.xyww, c20.z
+						mov oPos.xyw, r0
+						mul r0.x, r0.y, c12.x
+						mul r1.w, r0.x, c20.z
+						mad oT1.xy, r1.z, c13.zwzw, r1.xwzw
+						mov oT0.xy, v2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 1 [_Frame]
+					Vector 0 [_MBGMask_TexelSize]
+					Vector 2 [_SpriteSourceSize]
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_MBGMask] 2D 1
+					"ps_2_0
+						def c3, 0.000781250012, 960, 0.00104166672, 1
+						def c4, -0, -1, 0, -0.100000001
+						dcl v0
+						dcl_pp t0.xy
+						dcl t1.xy
+						dcl_2d s0
+						dcl_2d s1
+						mov r0.w, c1.y
+						add r0.x, -r0.w, c0.w
+						add r0.x, r0.x, -c1.w
+						rcp r0.y, c0.w
+						mul r0.x, r0.y, r0.x
+						mul r0.y, r0.y, c1.w
+						mov r1.xyz, c3
+						mul r1.w, r1.z, c2.w
+						rcp r1.w, r1.w
+						add r0.z, r1.y, -c2.y
+						add r0.z, r0.z, -c2.w
+						mad r0.z, r0.z, -c3.z, t1.y
+						mul r0.w, r1.w, r0.z
+						mad r0.y, r0.w, r0.y, r0.x
+						mul r0.w, r1.x, c2.z
+						rcp r0.w, r0.w
+						mad r1.y, c2.x, -r1.x, t1.x
+						mul r0.w, r0.w, r1.y
+						rcp r1.w, c0.z
+						mul r2.w, r1.w, c1.z
+						mul r1.w, r1.w, c1.x
+						mad r0.x, r0.w, r2.w, r1.w
+						texld_pp r2, r0, s1
+						texld_pp r3, t0, s0
+						add_pp r1.w, -r2.w, c3.w
+						mul_pp r2, r3, v0
+						min_pp r0.x, r1.w, r2.w
+						mad r0.y, c2.w, -r1.z, r0.z
+						cmp r0.y, r0.y, c4.x, c4.y
+						mad r0.w, c2.z, -r1.x, r1.y
+						cmp r0.y, r0.w, c4.z, r0.y
+						cmp r0.y, -r0.z, c4.z, r0.y
+						cmp r0.y, -r1.y, c4.z, r0.y
+						cmp_pp r0.w, r0.y, r2.w, r0.x
+						mul_pp r1.xyz, r0.w, r2
+						add_pp r0.xyz, r1, r1
+						add r1, r0.w, c4.w
+						mov_pp oC0, r0
+						texkill r1
+						
+						"
+				}
+			}
+		}
+	}
+}

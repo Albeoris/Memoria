@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.Common;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class WorldRainRenderer : MonoBehaviour
@@ -59,7 +60,7 @@ public class WorldRainRenderer : MonoBehaviour
 		this.gen = 0;
 		this.offset = new Vector3(0f, -3474f, 0f);
 		this.factor = 1f;
-		this.mat = new Material(Shader.Find("SPS/SPSRain"));
+		this.mat = new Material(ShadersLoader.Find("SPS/SPSRain"));
 	}
 
 	public void ServiceRain()

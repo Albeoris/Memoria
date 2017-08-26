@@ -137,10 +137,10 @@ public class WMPsxCamera
 
 	private Matrix4x4 PsxProj2UnityProj(Single psxGeomScreen, Single clipDistance)
 	{
-		Single num = 160f;
-		Single num2 = 112f;
+		Single halfSceneWidth = FieldMap.HalfFieldWidth;
+		Single halfSceneHeight = FieldMap.HalfFieldHeight;
 		Single far = psxGeomScreen + clipDistance;
-		return this.PerspectiveOffCenter(-num, num, -num2, num2, psxGeomScreen, far);
+		return this.PerspectiveOffCenter(-halfSceneWidth, halfSceneWidth, -halfSceneHeight, halfSceneHeight, psxGeomScreen, far);
 	}
 
 	public void ConvertCameraPsx2UnityOld(Camera unityCam)
