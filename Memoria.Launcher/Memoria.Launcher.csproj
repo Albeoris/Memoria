@@ -43,6 +43,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Memoria\ScreenInterrogatory.cs" />
     <Compile Include="Memoria\FrameworkElementExm.cs" />
     <Compile Include="App.cs" />
     <Compile Include="MainWindow.cs" />

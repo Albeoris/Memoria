@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -39,7 +40,7 @@ namespace Memoria.Launcher
                 _validSamplingFrequency.Add(frequency);
 
             SetCols(2);
-            SetRows(6);
+            SetRows(8);
 
             Width = 200;
             VerticalAlignment = VerticalAlignment.Top;
@@ -77,31 +78,37 @@ namespace Memoria.Launcher
             Rectangle backround = AddUiElement(new Rectangle {Stroke = backgroundStroke, Fill = backgroundFill, StrokeThickness = 5}, 0, 0, 9, 2);
 
             Thickness rowMargin = new Thickness(0, 8, 0, 3);
+            
+            AddUiElement(UiTextBlockFactory.Create("Active monitor:"), row: 0, col: 0).Margin = rowMargin;
+            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 1, col: 0, rowSpan: 0, colSpan: 2);
+            monitor.ItemsSource = GetAvailableMonitors();
+            monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
+            monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create("Resolution:"), 0, 0).Margin = rowMargin;
-            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), 1, 0);
+            AddUiElement(UiTextBlockFactory.Create("Resolution:"), row: 2, col: 0).Margin = rowMargin;
+            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 3, col: 0);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
-            resolution.SetBinding(Selector.SelectedItemProperty, new Binding("ScreenResolution") {Mode = BindingMode.TwoWay});
+            resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create("Windowed", null), 1, 1);
+            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create("Windowed", null), row: 3, col: 1);
             windowedCheckBox.Margin = rowMargin;
             windowedCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Windowed)) {Mode = BindingMode.TwoWay});
 
-            AddUiElement(UiTextBlockFactory.Create("Audio sampling frequency:"), 3, 0, 0, 2).Margin = rowMargin;
-            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 4, 0, 0, 2);
+            AddUiElement(UiTextBlockFactory.Create("Audio sampling frequency:"), 4, 0, 0, 2).Margin = rowMargin;
+            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 5, 0, 0, 2);
             audio.ItemStringFormat = "{0} Hz";
             audio.ItemsSource = EnumerateAudioSettings().ToArray();
-            audio.SetBinding(Selector.SelectedItemProperty, new Binding("AudioFrequency") { Mode = BindingMode.TwoWay });
-            audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) { Mode = BindingMode.TwoWay });
+            audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
+            audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create("X64", null), 5, 0);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create("X64", null), 6, 0);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create("Debuggable", null), 5, 1);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create("Debuggable", null), 6, 1);
             debuggableCheckBox.Margin = new Thickness(0, 8, 0, 8);
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
 
@@ -136,6 +143,19 @@ namespace Memoria.Launcher
                 if (_resolution != value)
                 {
                     _resolution = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public String ActiveMonitor
+        {
+            get { return _activeMonitor; }
+            set
+            {
+                if (_activeMonitor != value)
+                {
+                    _activeMonitor = value;
                     OnPropertyChanged();
                 }
             }
@@ -267,6 +287,9 @@ namespace Memoria.Launcher
                     case nameof(ScreenResolution):
                         iniFile.WriteValue("Settings", propertyName, ScreenResolution ?? "1280x960");
                         break;
+                    case nameof(ActiveMonitor):
+                        iniFile.WriteValue("Settings", propertyName, ActiveMonitor ?? String.Empty);
+                        break;
                     case nameof(Windowed):
                         iniFile.WriteValue("Settings", propertyName, (Windowed).ToString());
                         break;
@@ -290,6 +313,7 @@ namespace Memoria.Launcher
         private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
 
         private String _resolution = "1280x960";
+        private String _activeMonitor = "";
         private UInt16 _audioFrequency = 32000;
         private Boolean _audioFrequencyEnabled = true;
         private Boolean _isWindowMode = true;
@@ -307,6 +331,11 @@ namespace Memoria.Launcher
                 if (String.IsNullOrEmpty(value))
                     value = "1280x960";
                 _resolution = value;
+
+                value = iniFile.ReadValue("Settings", nameof(ActiveMonitor));
+                if (String.IsNullOrEmpty(value))
+                    value = String.Empty;
+                _activeMonitor = value;
 
                 value = iniFile.ReadValue("Settings", nameof(Windowed));
                 if (String.IsNullOrEmpty(value))
@@ -357,6 +386,7 @@ namespace Memoria.Launcher
                     _isDebugMode = false;
 
                 OnPropertyChanged(nameof(ScreenResolution));
+                OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(Windowed));
                 OnPropertyChanged(nameof(AudioFrequency));
                 OnPropertyChanged(nameof(AudioFrequencyEnabled));
@@ -517,6 +547,34 @@ namespace Memoria.Launcher
                         yield return result;
                 }
             }
+        }
+
+        private String[] GetAvailableMonitors()
+        {
+            Screen[] allScreens = Screen.AllScreens;
+            Dictionary<Int32, String> friendlyNames = ScreenInterrogatory.GetAllMonitorFriendlyNamesSafe();
+            String[] result = new String[allScreens.Length];
+            for (Int32 index = 0; index < allScreens.Length; index++)
+            {
+                Screen screen = allScreens[index];
+                StringBuilder sb = new StringBuilder();
+                sb.Append(index);
+                sb.Append(" - ");
+
+                String name;
+                if (!friendlyNames.TryGetValue(index, out name))
+                    name = screen.DeviceName;
+                sb.Append(name);
+
+                if (screen.Primary)
+                    sb.Append(" [Primary]");
+
+                result[index] = sb.ToString();
+
+                if (screen.Primary)
+                    _activeMonitor = result[index];
+            }
+            return result;
         }
 
         private IEnumerable<UInt16> EnumerateAudioSettings()

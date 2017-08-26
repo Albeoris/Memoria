@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -29,6 +28,23 @@ namespace Memoria.Launcher
                 if (GameSettings.ScreenResolution == null)
                 {
                     MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    return;
+                }
+
+                Int32 activeMonitor = -1;
+                if (!String.IsNullOrEmpty(GameSettings.ActiveMonitor))
+                {
+                    Int32 spaceIndex = GameSettings.ActiveMonitor.IndexOf(' ');
+                    if (spaceIndex > 0)
+                    {
+                        String activeMonitorNumber = GameSettings.ActiveMonitor.Substring(0, spaceIndex);
+                        Int32.TryParse(activeMonitorNumber, NumberStyles.Integer, CultureInfo.InvariantCulture, out activeMonitor);
+                    }
+                }
+
+                if (activeMonitor < 0)
+                {
+                    MessageBox.Show((Window)this.GetRootElement(), "Please select an available monitor.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     return;
                 }
 
@@ -83,7 +99,7 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String arguments = $"-runbylauncher -single-instance -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettings.Windowed ? "0" : "1")}";
+                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {(GameSettings.Windowed ? "0" : "1")}";
                 await Task.Factory.StartNew(
                     () =>
                     {
