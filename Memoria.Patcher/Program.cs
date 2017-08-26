@@ -109,6 +109,7 @@ namespace Memoria.Patcher
 
             CopyData(targetDirectory);
             CopyScripts(targetDirectory);
+            CopyShaders(targetDirectory);
         }
 
         private static void CopyData(String targetDirectory)
@@ -135,6 +136,19 @@ namespace Memoria.Patcher
             Console.WriteLine("Copy script files...");
             CopyFiles(targetDirectory, sourceDirectory, "*.*");
             Console.WriteLine("Script files was copied!");
+        }
+
+        private static void CopyShaders(String targetDirectory)
+        {
+            String sourceDirectory = Path.GetFullPath("Shaders");
+            if (!Directory.Exists(sourceDirectory))
+                throw new DirectoryNotFoundException("Shaders files was not found: " + sourceDirectory);
+
+            targetDirectory = Path.Combine(targetDirectory, "Shaders");
+
+            Console.WriteLine("Copy shader files...");
+            CopyFiles(targetDirectory, sourceDirectory, "*.*");
+            Console.WriteLine("Shaders files was copied!");
         }
 
         private static void CopyFiles(String targetDirectory, String sourceDirectory, String extensions)

@@ -8,6 +8,7 @@ using UnityEngine;
 using Memoria.Prime.PsdFile;
 //using Memoria.Prime.Log;
 using Memoria.Assets.Import.Graphics;
+using Memoria.Scripts;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -670,31 +671,31 @@ public class BGSCENE_DEF
     {
         Log.Message("Creating material for overlay");
         this.materialList.Clear();
-        Material material = new Material(Shader.Find("PSX/FieldMap_Abr_None")) { mainTexture = overlay };
+        Material material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_None")) { mainTexture = overlay };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_none", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_0")) { mainTexture = overlay };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_0")) { mainTexture = overlay };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_0", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_1")) { mainTexture = overlay };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_1")) { mainTexture = overlay };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_1", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_2")) { mainTexture = overlay };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_2")) { mainTexture = overlay };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_2", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_3")) { mainTexture = overlay };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_3")) { mainTexture = overlay };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
@@ -705,31 +706,31 @@ public class BGSCENE_DEF
 
     private void CreateMaterials()
     {
-        Material material = new Material(Shader.Find("PSX/FieldMap_Abr_None")) { mainTexture = this.atlas };
+        Material material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_None")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_none", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_0")) { mainTexture = this.atlas };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_0")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_0", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_1")) { mainTexture = this.atlas };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_1")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_1", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_2")) { mainTexture = this.atlas };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_2")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
         this.materialList.Add("abr_2", material);
-        material = new Material(Shader.Find("PSX/FieldMap_Abr_3")) { mainTexture = this.atlas };
+        material = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_3")) { mainTexture = this.atlas };
         if (this.atlasAlpha != null)
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
@@ -1017,12 +1018,12 @@ public class BGSCENE_DEF
         gameObject.transform.parent = fieldMap?.transform;
 
         
-        gameObject.transform.localPosition = new Vector3(this.curX - 160f, -(this.curY - 112f), this.curZ);
+        gameObject.transform.localPosition = new Vector3(this.curX - FieldMap.HalfFieldWidth, -(this.curY - FieldMap.HalfFieldHeight), this.curZ);
         gameObject.transform.localScale = new Vector3(1f, -1f, 1f);
         for (Int32 i = 0; i < this.cameraList.Count; i++)
         {
             BGCAM_DEF bGCAM_DEF = this.cameraList[i];
-            GameObject gameObject2 = new GameObject(String.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + 160f, " x ", bGCAM_DEF.vrpMaxY + 112f));
+            GameObject gameObject2 = new GameObject(String.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + FieldMap.HalfFieldWidth, " x ", bGCAM_DEF.vrpMaxY + FieldMap.HalfFieldHeight));
             Transform transform = gameObject2.transform;
             transform.parent = gameObject.transform;
             bGCAM_DEF.transform = transform;
@@ -1582,11 +1583,11 @@ public class BGSCENE_DEF
         gameObject.transform.parent = fieldMap.transform;
         if (flag)
         {
-            gameObject.transform.localPosition = new Vector3((float)this.curX - 160f, -((float)this.curY - 112f), 0f);
+            gameObject.transform.localPosition = new Vector3((float)this.curX - FieldMap.HalfFieldWidth, -((float)this.curY - FieldMap.HalfFieldHeight), 0f);
         }
         else
         {
-            gameObject.transform.localPosition = new Vector3((float)this.curX - 160f, -((float)this.curY - 112f), (float)this.curZ);
+            gameObject.transform.localPosition = new Vector3((float)this.curX - FieldMap.HalfFieldWidth, -((float)this.curY - FieldMap.HalfFieldHeight), (float)this.curZ);
         }
         gameObject.transform.localScale = new Vector3(1f, -1f, 1f);
         for (int i = 0; i < this.cameraList.Count; i++)
@@ -1597,9 +1598,9 @@ public class BGSCENE_DEF
                 "Camera_",
                 i.ToString("D2"),
                 " : ",
-                (float)bgcam_DEF.vrpMaxX + 160f,
+                (float)bgcam_DEF.vrpMaxX + FieldMap.HalfFieldWidth,
                 " x ",
-                (float)bgcam_DEF.vrpMaxY + 112f
+                (float)bgcam_DEF.vrpMaxY + FieldMap.HalfFieldHeight
             }));
             Transform transform = gameObject2.transform;
             transform.parent = gameObject.transform;

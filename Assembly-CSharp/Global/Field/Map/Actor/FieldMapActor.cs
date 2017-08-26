@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class FieldMapActor : HonoBehavior
@@ -397,7 +398,7 @@ public class FieldMapActor : HonoBehavior
 		MeshRenderer meshRenderer = this.shadowObj.AddComponent<MeshRenderer>();
 		MeshFilter meshFilter = this.shadowObj.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
-		Shader shader = Shader.Find("PSX/FieldMapActorShadow");
+		Shader shader = ShadersLoader.Find("PSX/FieldMapActorShadow");
 		Material material = new Material(shader);
 		this.shadowTex = AssetManager.Load<Texture2D>("CommonAsset/Common/shadow_plate", false);
 		material.mainTexture = this.shadowTex;

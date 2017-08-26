@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Scripts;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -68,7 +69,7 @@ public class UITexture : UIBasicSprite
 			}
 			if (this.mShader == (UnityEngine.Object)null)
 			{
-				this.mShader = Shader.Find("Unlit/Transparent Colored");
+				this.mShader = ShadersLoader.Find("Unlit/Transparent Colored");
 			}
 			return this.mShader;
 		}

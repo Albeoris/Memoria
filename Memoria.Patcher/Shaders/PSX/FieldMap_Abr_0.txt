@@ -1,0 +1,58 @@
+Shader "PSX/FieldMap_Abr_0" {
+	Properties {
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex ("Texture", 2D) = "black" { }
+		_AlphaTex ("Texture", 2D) = "white" { }
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+		Pass {
+			Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			GpuProgramID 43830
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					"vs_2_0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mov oD0, v1
+						mov oT0.xy, v2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_Color]
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_AlphaTex] 2D 1
+					"ps_2_0
+						def c1, -0.100000001, 0, 0, 0
+						dcl_pp t0.xy
+						dcl_2d s0
+						dcl_2d s1
+						texld_pp r0, t0, s1
+						texld r1, t0, s0
+						mul_pp r1, r1, c0
+						min_pp r2.w, r0.x, r1.w
+						mul_pp r2.xyz, r1, r2.w
+						add r0, r2.w, c1.x
+						mov_pp oC0, r2
+						texkill r0
+						
+						"
+				}
+			}
+		}
+	}
+}

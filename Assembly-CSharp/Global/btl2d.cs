@@ -491,8 +491,8 @@ public class btl2d
 							{
 								if (next.bi.player == 0 || !btl_mot.checkMotion(next, 17))
 								{
-									Int32 num2 = ff9.rsin((Int32)(next.rot.eulerAngles.y / 360f * 4096f));
-									Int32 num3 = ff9.rcos((Int32)(next.rot.eulerAngles.y / 360f * 4096f));
+									Int32 num2 = ff9.rsin(fixedPointAngle: (Int32)(next.rot.eulerAngles.y / 360f * 4096f));
+									Int32 num3 = ff9.rcos(fixedPointAngle: (Int32)(next.rot.eulerAngles.y / 360f * 4096f));
 									Int16 num4;
 									Byte[] array;
 									SByte[] array2;

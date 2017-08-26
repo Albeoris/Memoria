@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 
@@ -182,11 +183,11 @@ public class UIDrawCall : MonoBehaviour
 		if (this.panel.clipping == UIDrawCall.Clipping.TextureMask)
 		{
 			this.mTextureClip = true;
-			this.shader = Shader.Find("Hidden/" + text + " (TextureClip)");
+			this.shader = ShadersLoader.Find("Hidden/" + text + " (TextureClip)");
 		}
 		else if (this.mClipCount != 0)
 		{
-			this.shader = Shader.Find(String.Concat(new Object[]
+			this.shader = ShadersLoader.Find(String.Concat(new Object[]
 			{
 				"Hidden/",
 				text,
@@ -195,21 +196,21 @@ public class UIDrawCall : MonoBehaviour
 			}));
 			if (this.shader == (UnityEngine.Object)null)
 			{
-				this.shader = Shader.Find(text + " " + this.mClipCount);
+				this.shader = ShadersLoader.Find(text + " " + this.mClipCount);
 			}
 			if (this.shader == (UnityEngine.Object)null && this.mClipCount == 1)
 			{
 				this.mLegacyShader = true;
-				this.shader = Shader.Find(text + " (SoftClip)");
+				this.shader = ShadersLoader.Find(text + " (SoftClip)");
 			}
 		}
 		else
 		{
-			this.shader = Shader.Find(text);
+			this.shader = ShadersLoader.Find(text);
 		}
 		if (this.shader == (UnityEngine.Object)null)
 		{
-			this.shader = Shader.Find("Unlit/Transparent Colored");
+			this.shader = ShadersLoader.Find("Unlit/Transparent Colored");
 		}
 		if (this.mMaterial != (UnityEngine.Object)null)
 		{

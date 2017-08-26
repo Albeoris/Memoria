@@ -216,7 +216,7 @@ public class WorldSPSSystem : MonoBehaviour
 								Int32 index5 = index2 = 1;
 								Single num = worldSPS5.pos[index2];
 								worldSPS5.pos[index5] = num - 80f;
-								worldSPS.pos[2] = (Single)(ff9.rcos(worldSPS.frame * 64 + worldSPS.prm0) / 2) + ff9.w_effectTwisPos.z;
+								worldSPS.pos[2] = (Single)(ff9.rcos(fixedPointAngle: worldSPS.frame * 64 + worldSPS.prm0) / 2) + ff9.w_effectTwisPos.z;
 							}
 						}
 						else

@@ -29,7 +29,7 @@ namespace Memoria.Assets
                     ff9Signal = 2;
                     break;
                 case FFIXTextTagCode.DialogF:
-                    extraOffset.x += (tag.Param[0] >= 160f) ? 0f : (tag.Param[0] * UIManager.ResourceXMultipier);
+                    extraOffset.x += (tag.Param[0] >= FieldMap.HalfFieldWidth) ? 0f : (tag.Param[0] * UIManager.ResourceXMultipier);
                     break;
                 case FFIXTextTagCode.DialogY:
                     extraOffset.y -= tag.Param[0] * UIManager.ResourceYMultipier;
@@ -264,7 +264,7 @@ namespace Memoria.Assets
             else if (tag == NGUIText.MessageFeed)
             {
                 Single[] allParameters = NGUIText.GetAllParameters(text, index, ref closingBracket);
-                extraOffset.x += ((allParameters[0] >= 160f) ? 0f : (allParameters[0] * UIManager.ResourceXMultipier));
+                extraOffset.x += ((allParameters[0] >= FieldMap.HalfFieldWidth) ? 0f : (allParameters[0] * UIManager.ResourceXMultipier));
             }
             else if (tag == NGUIText.YSubOffset)
             {

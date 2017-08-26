@@ -623,7 +623,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private void SpawnCustomChatacters()
     {
         CharacterBuilder builer = new CharacterBuilder(this);
-        if (_ff9.fldMapNo == 102)
+        if (_ff9.fldMapNo == 102 && false)
         {
             builer.Spawn(new MyCharacter());
         }

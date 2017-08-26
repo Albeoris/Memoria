@@ -1,0 +1,90 @@
+Shader "PSX/BattleMap_StatusEffect" {
+	Properties {
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
+		_DetailTex ("Detail Texture", 2D) = "white" { }
+		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
+		_IsPetrify ("is petrify", Float) = 0
+	}
+	SubShader { 
+		LOD 100
+		Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutOff" }
+		Pass {
+			Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutOff" }
+			GpuProgramID 15200
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_modelview0]
+					Matrix 4 [glstate_matrix_projection]
+					Vector 10 [_DetailTex_ST]
+					Vector 9 [_MainTex_ST]
+					Vector 8 [_ProjectionParams]
+					"vs_2_0
+						def c11, 20, 1, 60000, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.w, c3, v0
+						dp4 r0.z, c2, v0
+						dp4 r1.x, c7, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c4, r0
+						dp4 r2.y, c5, r0
+						mov r3.xyw, r0
+						mul oPos.xy, r1.x, r2
+						mov r0.xw, c11.xyzy
+						add r0.x, r0.x, c8.y
+						add r3.z, -r0.x, r0.z
+						sge r0.x, r0.z, -r0.x
+						dp4 r0.y, c7, r3
+						dp4 r0.z, c6, r3
+						rcp r0.y, r0.y
+						mul r0.z, r0.y, r0.z
+						add r1.xy, -r0.zwzw, c11.zyzw
+						mad oPos.zw, r0.x, r1.xyxy, r0
+						mad oT0.xy, v1, c9, c9.zwzw
+						mad oT0.zw, v1.xyxy, c10.xyxy, c10
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 1 [_Color]
+					Float 2 [_Cutoff]
+					Float 0 [_IsPetrify]
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_DetailTex] 2D 1
+					"ps_2_0
+						def c3, -0.5, 0.715200007, 0.212599993, 0.0722000003
+						dcl_pp t0
+						dcl_2d s0
+						dcl_2d s1
+						texld_pp r0, t0, s0
+						add_pp r1, r0.w, -c2.x
+						mov_pp r2.x, t0.z
+						mov_pp r2.y, t0.w
+						texkill r1
+						texld_pp r1, r2, s1
+						mov r1.w, c3.x
+						add_pp r2.xyz, r1.w, c1
+						add_pp r2.xyz, r0, r2
+						mul r1.w, r2.y, c3.y
+						mad r1.w, r2.x, c3.z, r1.w
+						mad_pp r1.w, r2.z, c3.w, r1.w
+						mul r1.xyz, r1, r1.w
+						mul r1.xyz, r1, -c3.x
+						mad_pp r1.xyz, r1.w, -c3.x, r1
+						mul r1.w, c0.x, c0.x
+						cmp_pp r0.xyz, -r1.w, r2, r1
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

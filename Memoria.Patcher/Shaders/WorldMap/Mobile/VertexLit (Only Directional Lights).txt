@@ -1,0 +1,270 @@
+Shader "WorldMap/Mobile/VertexLit (Only Directional Lights)" {
+	Properties {
+		_MainTex ("Base (RGB)", 2D) = "white" { }
+	}
+	SubShader { 
+		LOD 80
+		Tags { "RenderType"="Opaque" }
+		Pass {
+			Name "FORWARD"
+			Tags { "LIGHTMODE"="ForwardBase" "SHADOWSUPPORT"="true" "RenderType"="Opaque" }
+			GpuProgramID 31262
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 15 [_LightColor0]
+					Vector 16 [_MainTex_ST]
+					Vector 7 [_WorldSpaceLightPos0]
+					Vector 10 [unity_SHAb]
+					Vector 9 [unity_SHAg]
+					Vector 8 [unity_SHAr]
+					Vector 13 [unity_SHBb]
+					Vector 12 [unity_SHBg]
+					Vector 11 [unity_SHBr]
+					Vector 14 [unity_SHC]
+					"vs_2_0
+						def c17, 1, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v2, c16, c16.zwzw
+						dp3 r0.y, c5, v1
+						mul r1.x, r0.y, r0.y
+						dp3 r0.x, c4, v1
+						mad r1.x, r0.x, r0.x, -r1.x
+						dp3 r0.z, c6, v1
+						mul r2, r0.yzzx, r0.xyzz
+						dp4 r3.x, c11, r2
+						dp4 r3.y, c12, r2
+						dp4 r3.z, c13, r2
+						mad r1.xyz, c14, r1.x, r3
+						mov r0.w, c17.x
+						dp4 r2.x, c8, r0
+						dp4 r2.y, c9, r0
+						dp4 r2.z, c10, r0
+						add r1.xyz, r1, r2
+						dp3 r0.w, r0, c7
+						mov oT1.xyz, r0
+						max r0.x, r0.w, c17.y
+						add r0.x, r0.x, r0.x
+						mad oT2.xyz, c15, r0.x, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 17 [_LightColor0]
+					Vector 18 [_MainTex_ST]
+					Vector 7 [_ProjectionParams]
+					Vector 8 [_ScreenParams]
+					Vector 9 [_WorldSpaceLightPos0]
+					Vector 12 [unity_SHAb]
+					Vector 11 [unity_SHAg]
+					Vector 10 [unity_SHAr]
+					Vector 15 [unity_SHBb]
+					Vector 14 [unity_SHBg]
+					Vector 13 [unity_SHBr]
+					Vector 16 [unity_SHC]
+					"vs_2_0
+						def c19, 1, 0, 0.5, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						mad oT0.xy, v2, c18, c18.zwzw
+						dp3 r0.y, c5, v1
+						mul r1.x, r0.y, r0.y
+						dp3 r0.x, c4, v1
+						mad r1.x, r0.x, r0.x, -r1.x
+						dp3 r0.z, c6, v1
+						mul r2, r0.yzzx, r0.xyzz
+						dp4 r3.x, c13, r2
+						dp4 r3.y, c14, r2
+						dp4 r3.z, c15, r2
+						mad r1.xyz, c16, r1.x, r3
+						mov r0.w, c19.x
+						dp4 r2.x, c10, r0
+						dp4 r2.y, c11, r0
+						dp4 r2.z, c12, r0
+						add r1.xyz, r1, r2
+						dp3 r0.w, r0, c9
+						mov oT1.xyz, r0
+						max r0.x, r0.w, c19.y
+						add r0.x, r0.x, r0.x
+						mad oT2.xyz, c17, r0.x, r1
+						dp4 r0.y, c1, v0
+						mul r1.x, r0.y, c7.x
+						mul r1.w, r1.x, c19.z
+						dp4 r0.x, c0, v0
+						dp4 r0.w, c3, v0
+						mul r1.xz, r0.xyww, c19.z
+						mad oT3.xy, r1.z, c8.zwzw, r1.xwzw
+						dp4 r0.z, c2, v0
+						mov oPos, r0
+						mov oT3.zw, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "VERTEXLIGHT_ON" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 15 [_LightColor0]
+					Vector 16 [_MainTex_ST]
+					Vector 7 [_WorldSpaceLightPos0]
+					Vector 10 [unity_SHAb]
+					Vector 9 [unity_SHAg]
+					Vector 8 [unity_SHAr]
+					Vector 13 [unity_SHBb]
+					Vector 12 [unity_SHBg]
+					Vector 11 [unity_SHBr]
+					Vector 14 [unity_SHC]
+					"vs_2_0
+						def c17, 1, 0, 0, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v2, c16, c16.zwzw
+						dp3 r0.y, c5, v1
+						mul r1.x, r0.y, r0.y
+						dp3 r0.x, c4, v1
+						mad r1.x, r0.x, r0.x, -r1.x
+						dp3 r0.z, c6, v1
+						mul r2, r0.yzzx, r0.xyzz
+						dp4 r3.x, c11, r2
+						dp4 r3.y, c12, r2
+						dp4 r3.z, c13, r2
+						mad r1.xyz, c14, r1.x, r3
+						mov r0.w, c17.x
+						dp4 r2.x, c8, r0
+						dp4 r2.y, c9, r0
+						dp4 r2.z, c10, r0
+						add r1.xyz, r1, r2
+						dp3 r0.w, r0, c7
+						mov oT1.xyz, r0
+						max r0.x, r0.w, c17.y
+						add r0.x, r0.x, r0.x
+						mad oT2.xyz, c15, r0.x, r1
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" "VERTEXLIGHT_ON" }
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [_Object2World] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 17 [_LightColor0]
+					Vector 18 [_MainTex_ST]
+					Vector 7 [_ProjectionParams]
+					Vector 8 [_ScreenParams]
+					Vector 9 [_WorldSpaceLightPos0]
+					Vector 12 [unity_SHAb]
+					Vector 11 [unity_SHAg]
+					Vector 10 [unity_SHAr]
+					Vector 15 [unity_SHBb]
+					Vector 14 [unity_SHBg]
+					Vector 13 [unity_SHBr]
+					Vector 16 [unity_SHC]
+					"vs_2_0
+						def c19, 1, 0, 0.5, 0
+						dcl_position v0
+						dcl_normal v1
+						dcl_texcoord v2
+						mad oT0.xy, v2, c18, c18.zwzw
+						dp3 r0.y, c5, v1
+						mul r1.x, r0.y, r0.y
+						dp3 r0.x, c4, v1
+						mad r1.x, r0.x, r0.x, -r1.x
+						dp3 r0.z, c6, v1
+						mul r2, r0.yzzx, r0.xyzz
+						dp4 r3.x, c13, r2
+						dp4 r3.y, c14, r2
+						dp4 r3.z, c15, r2
+						mad r1.xyz, c16, r1.x, r3
+						mov r0.w, c19.x
+						dp4 r2.x, c10, r0
+						dp4 r2.y, c11, r0
+						dp4 r2.z, c12, r0
+						add r1.xyz, r1, r2
+						dp3 r0.w, r0, c9
+						mov oT1.xyz, r0
+						max r0.x, r0.w, c19.y
+						add r0.x, r0.x, r0.x
+						mad oT2.xyz, c17, r0.x, r1
+						dp4 r0.y, c1, v0
+						mul r1.x, r0.y, c7.x
+						mul r1.w, r1.x, c19.z
+						dp4 r0.x, c0, v0
+						dp4 r0.w, c3, v0
+						mul r1.xz, r0.xyww, c19.z
+						mad oT3.xy, r1.z, c8.zwzw, r1.xwzw
+						dp4 r0.z, c2, v0
+						mov oPos, r0
+						mov oT3.zw, r0
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_OFF" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						def c0, 0, 0, 0, 0
+						dcl t0.xy
+						dcl_pp t2.xyz
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						mul_pp r0.xyz, r0, t2
+						mov_pp r0.w, c0.x
+						mov_pp oC0, r0
+						
+						"
+				}
+				SubProgram "d3d9 " {
+					Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "DYNAMICLIGHTMAP_OFF" }
+					SetTexture 0 [_ShadowMapTexture] 2D 0
+					SetTexture 1 [_MainTex] 2D 1
+					"ps_2_0
+						def c0, 0, 0, 0, 0
+						dcl t0.xy
+						dcl_pp t2.xyz
+						dcl_pp t3
+						dcl_2d s0
+						dcl_2d s1
+						texld_pp r0, t0, s1
+						texldp_pp r1, t3, s0
+						mul_pp r0.xyz, r0, t2
+						mul_pp r0.xyz, r1.x, r0
+						mov_pp r0.w, c0.x
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Mobile/VertexLit"
+}

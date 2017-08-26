@@ -1,0 +1,71 @@
+Shader "Unlit/Transparent Colored (Packed) (TextureClip)" {
+	Properties {
+		_MainTex ("Base (RGB), Alpha (A)", 2D) = "black" { }
+	}
+	SubShader { 
+		LOD 200
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			ColorMask RGB
+			Offset -1, -1
+			GpuProgramID 39543
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_MainTex_ST]
+					"vs_2_0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT1.xy, v0, c4, c4.zwzw
+						mov oD0, v1
+						mov oT0.xy, v2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_ClipTex] 2D 1
+					"ps_2_0
+						def c0, 0.5, -0.5, 0.50999999, -2.04081631
+						dcl v0
+						dcl t0.xy
+						dcl t1.xy
+						dcl_2d s0
+						dcl_2d s1
+						mad r0.xy, t1, c0.x, c0.x
+						texld_pp r1, t0, s0
+						texld_pp r0, r0, s1
+						add_pp r2, v0, c0.y
+						frc_pp r3, -r2
+						add_sat_pp r2, r2, r3
+						mul_pp r0.xy, r1, r2
+						add_pp r0.x, r0.y, r0.x
+						mad_pp r0.x, r1.z, r2.z, r0.x
+						mad_pp r0.x, r1.w, r2.w, r0.x
+						mad_pp r1, r2, c0.z, -v0
+						mul_sat_pp r1, r1, c0.w
+						mul_pp r0.y, r0.w, r1.w
+						mul_pp r1.w, r0.x, r0.y
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback Off
+}

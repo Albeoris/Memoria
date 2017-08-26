@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using FF9;
 using Memoria.Data;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class ModelFactory
@@ -87,16 +88,16 @@ public class ModelFactory
 		{
 			if (text.Contains("GEO_SUB_W0_025"))
 			{
-				shader = Shader.Find("WorldMap/ShadowActor");
+				shader = ShadersLoader.Find("WorldMap/ShadowActor");
 			}
 			else
 			{
-				shader = Shader.Find("WorldMap/Actor");
+				shader = ShadersLoader.Find("WorldMap/Actor");
 			}
 		}
 		else
 		{
-			shader = Shader.Find((!isBattle) ? "Unlit/Transparent Cutout" : "BattleMap_Common");
+			shader = ShadersLoader.Find((!isBattle) ? "Unlit/Transparent Cutout" : "BattleMap_Common");
 		}
 		SkinnedMeshRenderer[] componentsInChildren2 = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
 		for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
@@ -113,11 +114,11 @@ public class ModelFactory
 				String text3 = material.name.Replace("(Instance)", String.Empty);
 				if (componentsInChildren3[k].name == "Group_2")
 				{
-					material.shader = Shader.Find("BattleMap_Ground");
+					material.shader = ShadersLoader.Find("BattleMap_Ground");
 				}
 				else if (text3.Contains("a"))
 				{
-					material.shader = Shader.Find("PSX/BattleMap_Abr_1");
+					material.shader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
 				}
 				else
 				{

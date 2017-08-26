@@ -1,0 +1,51 @@
+Shader "WorldMap/SkyDomeFog" {
+	Properties {
+		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
+		_Alpha ("Alpha", Float) = 0.7
+		_Color ("Color", Color) = (1,1,1,1)
+	}
+	SubShader { 
+		LOD 100
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZWrite Off
+			Blend SrcAlpha OneMinusSrcAlpha
+			GpuProgramID 32702
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_MainTex_ST]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c4, c4.zwzw
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 0 [_Alpha]
+					Vector 1 [_Color]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl_pp t0.xy
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						mul_pp r0.w, r0.w, c0.x
+						mul_pp r0, r0, c1
+						mov_pp oC0, r0
+						
+						"
+				}
+			}
+		}
+	}
+}

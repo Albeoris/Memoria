@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Memoria;
+using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
 
@@ -129,6 +130,8 @@ public class UIRoot : MonoBehaviour
 	protected virtual void Awake()
 	{
 		this.mTrans = base.transform;
+	    this.mPanel = this.gameObject.GetComponent<UIPanel>();
+
 	}
 
 	protected virtual void OnEnable()
@@ -167,23 +170,38 @@ public class UIRoot : MonoBehaviour
 
 	public void UpdateScale(Boolean updateAnchors = true)
 	{
-		if (this.mTrans != (UnityEngine.Object)null)
-		{
-			Single num = (Single)this.activeHeight;
-			if (num > 0f)
-			{
-				Single num2 = 2f / num;
-				Vector3 localScale = this.mTrans.localScale;
-				if (Mathf.Abs(localScale.x - num2) > 1.401298E-45f || Mathf.Abs(localScale.y - num2) > 1.401298E-45f || Mathf.Abs(localScale.z - num2) > 1.401298E-45f)
-				{
-					this.mTrans.localScale = new Vector3(num2, num2, num2);
-					if (updateAnchors)
-					{
-						base.BroadcastMessage("UpdateAnchors");
-					}
-				}
-			}
-		}
+	    if (this.mTrans == null)
+            return;
+
+	    if (Configuration.Graphics.WidescreenSupport)
+	    {
+            if (mPanel != null)
+            {
+                Vector4 clipRegion = mPanel.baseClipRegion;
+                if (clipRegion.z < manualWidth || clipRegion.w < manualHeight)
+                {
+                    Log.Message("[UIRoot] Changing a clip region of the UI root.");
+                    clipRegion.z = manualWidth + 2;
+                    clipRegion.w = manualHeight + 2;
+                    mPanel.baseClipRegion = clipRegion;
+                }
+            }
+	    }
+
+	    Single num = (Single)this.activeHeight;
+	    if (num > 0f)
+	    {
+	        Single num2 = 2f / num;
+	        Vector3 localScale = this.mTrans.localScale;
+	        if (Mathf.Abs(localScale.x - num2) > 1.401298E-45f || Mathf.Abs(localScale.y - num2) > 1.401298E-45f || Mathf.Abs(localScale.z - num2) > 1.401298E-45f)
+	        {
+	            this.mTrans.localScale = new Vector3(num2, num2, num2);
+	            if (updateAnchors)
+	            {
+	                base.BroadcastMessage("UpdateAnchors");
+	            }
+	        }
+	    }
 	}
 
 	public static void Broadcast(String funcName)
@@ -244,6 +262,8 @@ public class UIRoot : MonoBehaviour
 	public Boolean shrinkPortraitUI;
 
 	private Transform mTrans;
+
+    private UIPanel mPanel;
 
 	public enum Scaling
 	{

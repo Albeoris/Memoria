@@ -4,13 +4,176 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Prime.IL;
 using Memoria.Prime.Threading;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria.Scripts
 {
+    public static class ShadersLoader
+    {
+        private static volatile Task s_initializationTask;
+        private static volatile Dictionary<String, Shader> s_shaders;
+        private static volatile FileSystemWatcher s_watcher;
+
+        public static void InitializeAsync()
+        {
+            s_initializationTask = Task.Run(Initialize);
+        }
+
+        public static Material CreateShaderMaterial(String shaderName)
+        {
+            Shader shader = FindShaderSafe(shaderName);
+            if (shader == null)
+                shader = Shader.Find(shaderName);
+
+            if (shader != null)
+                return new Material(shader);
+
+            return null;
+        }
+
+        public static Shader Find(String shaderName)
+        {
+            return FindShader(shaderName);
+        }
+
+        public static Shader FindShader(String shaderName)
+        {
+            Shader shaderMaterial = FindShaderSafe(shaderName);
+            if (shaderMaterial != null)
+                return shaderMaterial;
+
+            Shader shader = Shader.Find(shaderName);
+            if (shader != null)
+                return shader;
+
+            return null;
+        }
+
+        private static void Initialize()
+        {
+            try
+            {
+                String rootPath = DataResources.ShadersDirectory;
+                if (!Directory.Exists(rootPath))
+                    throw new DirectoryNotFoundException($"[ShadersLoader] Cannot load external shaders because a directory does not exist: [{rootPath}].");
+
+                String[] shaderFiles = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories);
+                Dictionary<String, Shader> shaders = new Dictionary<String, Shader>(shaderFiles.Length);
+
+                foreach (String shaderPath in shaderFiles)
+                    InitializeMaterial(shaderPath, rootPath, shaders);
+
+                // ReSharper disable once InconsistentlySynchronizedField
+                s_shaders = shaders;
+
+                s_watcher = new FileSystemWatcher(rootPath, "*");
+                GameLoopManager.Quit += s_watcher.Dispose;
+
+                s_watcher.IncludeSubdirectories = true;
+                s_watcher.Changed += OnChangedFileInDirectory;
+                s_watcher.Created += OnChangedFileInDirectory;
+                s_watcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ShadersLoader] Failed to load external shaders.");
+                UIManager.Input.ConfirmQuit();
+            }
+        }
+
+        private static void InitializeMaterial(String shaderPath, String rootPath, Dictionary<String, Shader> shaders)
+        {
+            String shaderName = Path.ChangeExtension(shaderPath.Substring(rootPath.Length), extension: null).Replace('\\', '/');
+            String shaderCode = File.ReadAllText(shaderPath);
+            Material newShader = new Material(shaderCode);
+
+            if (newShader.shader.isSupported)
+            {
+                shaders[shaderName] = newShader.shader;
+            }
+            else
+            {
+                shaders[shaderName] = null;
+                Log.Warning("[ShadersLoader] Shader isn't supported: " + shaderPath);
+            }
+        }
+
+        private static void OnChangedFileInDirectory(Object sender, FileSystemEventArgs e)
+        {
+            Task.Run(DoWatch, e);
+        }
+
+        private static void DoWatch(FileSystemEventArgs e)
+        {
+            Int32 retryCount = 10;
+
+            try
+            {
+                while (retryCount > 0)
+                {
+                    try
+                    {
+                        DateTime beginTime = DateTime.UtcNow;
+                        Log.Message($"[ShadersLoader] An external shader was changed. Reloading... [{e.FullPath}]");
+
+                        String rootPath = DataResources.ShadersDirectory;
+                        rootPath = Path.GetFullPath(rootPath);
+
+                        lock (s_shaders)
+                            InitializeMaterial(e.FullPath, rootPath, s_shaders);
+
+                        Log.Message($"[ShadersLoader] Reloaded for {DateTime.UtcNow - beginTime}");
+                        return;
+                    }
+                    catch (IOException ex)
+                    {
+                        retryCount--;
+                        Log.Error(ex, $"[ShadersLoader] Failed to reload an external shader {e.FullPath}.");
+                        Thread.Sleep(1000);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ShadersLoader] Failed to realod an external shader.");
+            }
+        }
+
+        private static Shader FindShaderSafe(String shaderName)
+        {
+            try
+            {
+                if (s_shaders == null)
+                {
+                    if (s_initializationTask == null)
+                        InitializeAsync();
+
+                    s_initializationTask.Wait();
+                }
+
+                lock (s_shaders)
+                {
+                    Shader shaderMaterial;
+                    if (s_shaders.TryGetValue(shaderName, out shaderMaterial))
+                        return shaderMaterial;
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ShadersLoader] Failed to get battle calculator's script.");
+                UIManager.Input.ConfirmQuit();
+                return null;
+            }
+        }
+    }
+
     public static class ScriptsLoader
     {
         private static volatile Task s_initializationTask;

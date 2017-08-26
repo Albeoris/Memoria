@@ -1,0 +1,61 @@
+Shader "WorldMap/WorldMap-TestTerrain2" {
+	Properties {
+		_Color ("Main Color", Color) = (0.5,0.5,0.5,1)
+		_MainTex ("Base (RGB)", 2D) = "white" { }
+		_ToonShade ("ToonShader Cubemap(RGB)", CUBE) = "" { }
+	}
+	SubShader { 
+		Tags { "RenderType"="Opaque" }
+		Pass {
+			Name "BASE"
+			Tags { "RenderType"="Opaque" }
+			Cull Off
+			GpuProgramID 34471
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+					Matrix 4 [glstate_matrix_modelview0] 3
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 7 [_MainTex_ST]
+					"vs_2_0
+						dcl_position v0
+						dcl_texcoord v1
+						dcl_normal v2
+						dp4 oPos.x, c0, v0
+						dp4 oPos.y, c1, v0
+						dp4 oPos.z, c2, v0
+						dp4 oPos.w, c3, v0
+						mad oT0.xy, v1, c7, c7.zwzw
+						dp3 oT1.x, c4, v2
+						dp3 oT1.y, c5, v2
+						dp3 oT1.z, c6, v2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Vector 0 [_Color]
+					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_ToonShade] CUBE 1
+					"ps_2_0
+						dcl t0.xy
+						dcl t1.xyz
+						dcl_2d s0
+						dcl_cube s1
+						texld_pp r0, t1, s1
+						texld r1, t0, s0
+						add r0.xyz, r0, r0
+						mul_pp r1, r1, c0
+						mul_pp r1.xyz, r0, r1
+						mov_pp oC0, r1
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "VertexLit"
+}

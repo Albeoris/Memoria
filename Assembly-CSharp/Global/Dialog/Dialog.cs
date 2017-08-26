@@ -2195,9 +2195,9 @@ public class Dialog : MonoBehaviour
 
 	public static readonly Int32 DialogTailBottomOffset = (Int32)(UIManager.ResourceYMultipier * 32f);
 
-	public static readonly Int32 kCenterX = (Int32)(UIManager.ResourceXMultipier * 160f);
+	public static readonly Int32 kCenterX = (Int32)(UIManager.ResourceXMultipier * FieldMap.HalfScreenWidth);
 
-	public static readonly Int32 kCenterY = (Int32)(UIManager.ResourceYMultipier * 110f);
+	public static readonly Int32 kCenterY = (Int32)(UIManager.ResourceYMultipier * FieldMap.HalfScreenHeight);
 
 	public static readonly Int32 kDialogY = (Int32)(UIManager.ResourceYMultipier * 150f);
 

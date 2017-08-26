@@ -1,0 +1,63 @@
+Shader "Custom/CamDistanceDepth_AlphaCutOff" {
+	Properties {
+		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
+		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
+		_Znear ("zNear", Float) = 400
+		_Zfar ("zFar", Float) = 10400
+	}
+	SubShader { 
+		LOD 100
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			Cull Off
+			Blend One OneMinusSrcAlpha
+			GpuProgramID 14123
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [glstate_matrix_mvp]
+					Vector 4 [_MainTex_ST]
+					Float 6 [_Zfar]
+					Float 5 [_Znear]
+					"vs_2_0
+						dcl_position v0
+						dcl_color v1
+						dcl_texcoord v2
+						mad oT0.xy, v2, c4, c4.zwzw
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.w, c3, v0
+						rcp r0.z, r0.w
+						mul oPos.xyw, r0.z, r0
+						add r0.x, r0.w, -c5.x
+						mov r1.x, c5.x
+						add r0.y, -r1.x, c6.x
+						rcp r0.y, r0.y
+						mul oPos.z, r0.y, r0.x
+						mov oD0, v1
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 0 [_Cutoff]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+						dcl t0.xy
+						dcl_2d s0
+						texld_pp r0, t0, s0
+						add_pp r1, r0.w, -c0.x
+						mov_pp oC0, r0
+						texkill r1
+						
+						"
+				}
+			}
+		}
+	}
+	Fallback "Transparent/VertexLit"
+}

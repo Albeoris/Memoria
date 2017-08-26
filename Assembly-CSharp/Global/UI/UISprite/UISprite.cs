@@ -1,4 +1,6 @@
 ﻿using System;
+using Memoria;
+using Memoria.Prime;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -122,7 +124,11 @@ public class UISprite : UIBasicSprite
 	{
 		get
 		{
-			if (this.type == UIBasicSprite.Type.Sliced || this.type == UIBasicSprite.Type.Advanced)
+            // Black square
+            if (Configuration.Graphics.WidescreenSupport && (mSpriteName == "menu_bg" || mSpriteName == "dialog_hilight"))
+                return mHeight * Screen.width / Screen.height;
+
+            if (this.type == UIBasicSprite.Type.Sliced || this.type == UIBasicSprite.Type.Advanced)
 			{
 				Single pixelSize = this.pixelSize;
 				Vector4 vector = this.border * this.pixelSize;

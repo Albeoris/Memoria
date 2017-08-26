@@ -1952,18 +1952,18 @@ public static class FF9Snd
 		Int32 num2 = (Int32)(num * 128L) / 4096;
 		Int32 num3 = (128 - num2) * 2;
 		Int32 num4;
-		if (array[0] >= 0 && array[0] < 320)
+		if (array[0] >= 0 && array[0] < FF9_SCREEN_WIDTH)
 		{
-			num4 = (Int32)array[0] * num3 / 320;
+			num4 = (Int32)array[0] * num3 / FF9_SCREEN_WIDTH;
 			num4 = num2 + num4;
 		}
 		else if (array[0] < 0)
 		{
-			if (array[0] < -320)
+			if (array[0] < -FF9_SCREEN_WIDTH)
 			{
-				array[0] = -320;
+				array[0] = -FF9_SCREEN_WIDTH;
 			}
-			num4 = (Int32)(array[0] - -320) * num2 / 320;
+			num4 = (Int32)(array[0] - -FF9_SCREEN_WIDTH) * num2 / FF9_SCREEN_WIDTH;
 		}
 		else
 		{
@@ -1971,7 +1971,7 @@ public static class FF9Snd
 			{
 				array[0] = 639;
 			}
-			num4 = (Int32)(array[0] - 320) * num2 / 320;
+			num4 = (Int32)(array[0] - FF9_SCREEN_WIDTH) * num2 / FF9_SCREEN_WIDTH;
 			num4 = 255 - num2 + num4;
 		}
 		PosPtr = (Int32)((UInt16)(num4 & 255));

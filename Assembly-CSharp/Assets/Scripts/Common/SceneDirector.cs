@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Memoria.Assets;
 using Memoria.Prime;
@@ -221,7 +222,7 @@ namespace Assets.Scripts.Common
 
 		private void _OnGUI_Fade()
 		{
-			Color color = this.curColor;
+            Color color = this.curColor;
 			color.a = this.fadeAmount;
 			GUI.color = color;
 		}
@@ -484,6 +485,7 @@ namespace Assets.Scripts.Common
 			{
 				return;
 			}
+
 			SceneDirector._curFrame += 1f;
 			String propertyName = "_FadeColor_ABR" + (Int32)(SceneDirector.fadeMode + 1);
 			Color32 color = Color32.Lerp(SceneDirector._prevColor, SceneDirector._targetColor, SceneDirector._curFrame / SceneDirector._targetFrame);

@@ -85,7 +85,7 @@ namespace Memoria
                 Enabled.Value = false;
                 BattleFPS.Value = 30;
                 BattleSwirlFrames.Value = 25;
-                WidescreenSupport.Value = false;
+                WidescreenSupport.Value = true;
                 SkipIntros.Value = false;
             }
 
@@ -294,6 +294,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleSpeed = IniValue.Int32(nameof(BattleSpeed));
             public readonly IniValue<Int32> AllCharactersAvailable = IniValue.Int32(nameof(AllCharactersAvailable));
             public readonly IniValue<Int32> RopeJumpingIncrement = IniValue.Int32(nameof(RopeJumpingIncrement));
+            public readonly IniValue<Int32> FrogCatchingIncrement = IniValue.Int32(nameof(FrogCatchingIncrement));
             public readonly IniValue<Int32> HippaulRacingViviSpeed = IniValue.Int32(nameof(HippaulRacingViviSpeed));
 
             public HacksSection() : base("Hacks")
@@ -302,6 +303,7 @@ namespace Memoria
                 BattleSpeed.Value = 1;
                 AllCharactersAvailable.Value = 0;
                 RopeJumpingIncrement.Value = 1;
+                FrogCatchingIncrement.Value = 1;
                 HippaulRacingViviSpeed.Value = 33;
             }
 
@@ -311,6 +313,7 @@ namespace Memoria
                 yield return BattleSpeed;
                 yield return AllCharactersAvailable;
                 yield return RopeJumpingIncrement;
+                yield return FrogCatchingIncrement;
                 yield return HippaulRacingViviSpeed;
             }
         }

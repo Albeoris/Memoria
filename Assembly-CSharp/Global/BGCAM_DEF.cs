@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using Memoria;
 using UnityEngine;
+using Object = System.Object;
 
 public class BGCAM_DEF
 {
@@ -12,32 +14,34 @@ public class BGCAM_DEF
 		this.startOffset = 0L;
 	}
 
-	public void ReadData(BinaryReader reader)
-	{
-		this.startOffset = reader.BaseStream.Position;
-		this.proj = reader.ReadUInt16();
-		for (Int32 i = 0; i < 3; i++)
-		{
-			for (Int32 j = 0; j < 3; j++)
-			{
-				this.r[i, j] = reader.ReadInt16();
-			}
-		}
-		this.t[0] = reader.ReadInt32();
-		this.t[1] = reader.ReadInt32();
-		this.t[2] = reader.ReadInt32();
-		this.centerOffset[0] = reader.ReadInt16();
-		this.centerOffset[1] = reader.ReadInt16();
-		this.w = reader.ReadInt16();
-		this.h = reader.ReadInt16();
-		this.vrpMinX = reader.ReadInt16();
-		this.vrpMaxX = reader.ReadInt16();
-		this.vrpMinY = reader.ReadInt16();
-		this.vrpMaxY = reader.ReadInt16();
-		this.depthOffset = reader.ReadInt32();
-	}
+    public void ReadData(BinaryReader reader)
+    {
+        this.startOffset = reader.BaseStream.Position;
+        this.proj = reader.ReadUInt16();
+        for (Int32 i = 0; i < 3; i++)
+        {
+            for (Int32 j = 0; j < 3; j++)
+            {
+                this.r[i, j] = reader.ReadInt16();
+            }
+        }
+        this.t[0] = reader.ReadInt32();
+        this.t[1] = reader.ReadInt32();
+        this.t[2] = reader.ReadInt32();
+        this.centerOffset[0] = reader.ReadInt16();
+        this.centerOffset[1] = reader.ReadInt16();
+        this.w = reader.ReadInt16();
+        this.h = reader.ReadInt16();
+        this._vrpMinX = reader.ReadInt16();
+        this._vrpMaxX = reader.ReadInt16();
+        this.vrpMinY = reader.ReadInt16();
+        this.vrpMaxY = reader.ReadInt16();
+        this.depthOffset = reader.ReadInt32();
 
-	public Matrix4x4 GetMatrixR()
+        RefreshCache();
+    }
+
+    public Matrix4x4 GetMatrixR()
 	{
 		Matrix4x4 result = default(Matrix4x4);
 		result.SetRow(1, new Vector4((Single)this.r[1, 0] * 0.000244140625f, (Single)this.r[1, 1] * 0.000244140625f, (Single)this.r[1, 2] * 0.000244140625f, 0f));
@@ -99,9 +103,51 @@ public class BGCAM_DEF
 
 	public Int16 h;
 
-	public Int16 vrpMinX;
+    private Int16 _vrpMinX, _vrpMaxX, _cachedMinX, _cachedMaxX, _delta, _knownFieldWidth;
 
-	public Int16 vrpMaxX;
+    public Int16 vrpMinX
+    {
+        get
+        {
+            RefreshCache();
+            return _cachedMinX;
+        }
+        set
+        {
+            _cachedMinX = value;
+            _vrpMinX = (Int16)(value - _delta);
+        }
+    }
+
+    public Int16 vrpMaxX
+    {
+        get
+        {
+            RefreshCache();
+            return _cachedMaxX;
+        }
+        set
+        {
+            _cachedMaxX = value;
+            _vrpMaxX = (Int16)(value + _delta);
+        }
+    }
+
+    private void RefreshCache()
+    {
+        Int16 actualFieldWidth = FieldMap.PsxFieldWidth;
+        if (_knownFieldWidth == actualFieldWidth)
+            return;
+
+        Int32 desiredDiff = FieldMap.PsxFieldWidth - FieldMap.PsxFieldWidthNative;
+        Int32 maxDiff = _vrpMaxX - _vrpMinX;
+        _delta = (Int16)(Math.Min(desiredDiff, maxDiff) / 2);
+
+        _cachedMinX = (Int16)(_vrpMinX + _delta);
+        _cachedMaxX = (Int16)(_vrpMaxX - _delta);
+
+        _knownFieldWidth = actualFieldWidth;
+    }
 
 	public Int16 vrpMinY;
 

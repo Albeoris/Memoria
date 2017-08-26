@@ -860,9 +860,9 @@ public class FieldMapActorController : HonoBehavior
 				this.originalActor.coll = posObj;
 				this.originalActor.colldist = num4;
 				Vector3 vector3 = new Vector3(posObj.pos[0], posObj.pos[1], posObj.pos[2]);
-				Single num5 = (Single)PersistenSingleton<EventEngine>.Instance.eBin.CollisionAngle(this.actor.actor, posObj, this.actor.actor.rotAngle[1]);
-				num5 = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num5);
-				if (num5 >= -90f && num5 <= 90f)
+				Int32 fixedPointAngle = PersistenSingleton<EventEngine>.Instance.eBin.CollisionAngle(this.actor.actor, posObj, this.actor.actor.rotAngle[1]);
+				Single degree = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)fixedPointAngle);
+				if (degree >= -90f && degree <= 90f)
 				{
 					Single num6 = this.radius;
 					Single num7 = (Single)(4 * posObj.collRad);

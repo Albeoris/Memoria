@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria.Scripts;
 using UnityEngine;
 
 public class FieldSPS : MonoBehaviour
@@ -37,11 +38,11 @@ public class FieldSPS : MonoBehaviour
 		this._uv = new List<Vector2>();
 		this._indices = new List<Int32>();
 		this.materials = new Material[5];
-		this.materials[0] = new Material(Shader.Find("PSX/FieldSPS_Abr_0"));
-		this.materials[1] = new Material(Shader.Find("PSX/FieldSPS_Abr_1"));
-		this.materials[2] = new Material(Shader.Find("PSX/FieldSPS_Abr_2"));
-		this.materials[3] = new Material(Shader.Find("PSX/FieldSPS_Abr_3"));
-		this.materials[4] = new Material(Shader.Find("PSX/FieldSPS_Abr_None"));
+		this.materials[0] = new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_0"));
+		this.materials[1] = new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_1"));
+		this.materials[2] = new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_2"));
+		this.materials[3] = new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_3"));
+		this.materials[4] = new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_None"));
 		this.charTran = (Transform)null;
 		this.boneTran = (Transform)null;
 	}

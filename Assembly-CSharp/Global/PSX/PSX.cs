@@ -186,10 +186,10 @@ internal static class PSX
 
 	private static Matrix4x4 PsxProj2UnityProj(Single psxGeomScreen, Single clipDistance)
 	{
-		Single num = 160f;
-		Single num2 = 110f;
+	    Single halfScreenWidth = FieldMap.HalfScreenWidth;
+	    Single halfScreenHeight = FieldMap.HalfScreenHeight;
 		Single far = psxGeomScreen + clipDistance;
-		return PSX.PerspectiveOffCenter(-num, num, num2, -num2, psxGeomScreen, far);
+		return PSX.PerspectiveOffCenter(-halfScreenWidth, halfScreenWidth, halfScreenHeight, -halfScreenHeight, psxGeomScreen, far);
 	}
 
 	public static void ConvertCameraPsx2Unity(Camera unityCam, Matrix4x4 psxRot, Vector3 psxTrans, Single psxGeomScreen, Single clipDistance)
