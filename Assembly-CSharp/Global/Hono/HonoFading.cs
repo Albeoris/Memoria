@@ -36,7 +36,8 @@ public class HonoFading : MonoBehaviour
 		    if (Configuration.Graphics.WidescreenSupport)
 		    {
 		        UISprite faddingSprite = gameObject.GetComponent<UISprite>();
-		        faddingSprite.width = faddingSprite.height * Screen.width / Screen.height;
+		        if (faddingSprite != null)
+		            faddingSprite.width = faddingSprite.height * Screen.width / Screen.height;
 		    }
 
             this.busy = true;

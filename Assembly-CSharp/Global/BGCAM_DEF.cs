@@ -148,6 +148,9 @@ public class BGCAM_DEF
             case 1605: // Madain Sari - Eidolon Wall
             case 1606: // Madain Sari - Chamber
             case 1607: // Madain Sari - Kitchen
+            case 2204: // Desert Palace - Odessey
+            case 2208: // Desert Palace - Hallway
+            case 2261: // Oeilvert - Bridge
                 ignore = true;
                 break;
         }

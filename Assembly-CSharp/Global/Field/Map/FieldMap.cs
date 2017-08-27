@@ -1193,15 +1193,15 @@ public class FieldMap : HonoBehavior
     {
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[(Int32)camNdx];
         BGSCENE_DEF bgscene_DEF = this.scene;
-        bgcam_DEF.vrpMinX = (Int16)(minX + HalfFieldWidth);
+        bgcam_DEF.vrpMinX = (Int16)(minX + HalfFieldWidthNative);
         if (bgcam_DEF.vrpMinX > bgcam_DEF.w - HalfFieldWidth)
         {
-            bgcam_DEF.vrpMinX = (Int16)(bgcam_DEF.w - HalfFieldWidth);
+            bgcam_DEF.vrpMinX = (Int16)(bgcam_DEF.w - HalfFieldWidthNative);
         }
-        bgcam_DEF.vrpMaxX = (Int16)(maxX - HalfFieldWidth);
-        if (bgcam_DEF.vrpMaxX < HalfFieldWidth)
+        bgcam_DEF.vrpMaxX = (Int16)(maxX - HalfFieldWidthNative);
+        if (bgcam_DEF.vrpMaxX < HalfFieldWidthNative)
         {
-            bgcam_DEF.vrpMaxX = HalfFieldWidth;
+            bgcam_DEF.vrpMaxX = HalfFieldWidthNative;
         }
         bgcam_DEF.vrpMinY = (Int16)(minY + HalfFieldHeight);
         if (bgcam_DEF.vrpMinY > bgcam_DEF.h - HalfFieldHeight)
@@ -3049,6 +3049,7 @@ public class FieldMap : HonoBehavior
     internal static volatile Int16 PsxFieldWidth = CalcPsxFieldWidth();
     internal static readonly Int16 HalfFieldHeight = (Int16)(PsxFieldHeightNative / 2);
     internal static volatile Int16 HalfFieldWidth = (Int16)(PsxFieldWidth / 2);
+    internal static volatile Int16 HalfFieldWidthNative = (Int16)(PsxFieldWidthNative / 2);
 
     internal static readonly Int16 PsxScreenWidthNative = 320;
     internal static readonly Int16 PsxScreenHeightNative = 220;
