@@ -177,6 +177,7 @@
     <Compile Include="Collections\TwoWayDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WinAPI\Kernel32.cs" />
+    <Compile Include="WinAPI\User32.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

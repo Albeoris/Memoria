@@ -22,6 +22,7 @@ namespace Memoria
         public Boolean IsPlayer => Data.bi.player != 0;
         public Boolean IsCovered => Data.bi.cover != 0;
         public Boolean IsSelected => Data.bi.target != 0;
+        public Boolean CanMove => Data.bi.atb != 0;
         public CharacterIndex PlayerIndex => Data.bi.slot_no;
 
         public Byte Level => Data.level;

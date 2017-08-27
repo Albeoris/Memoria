@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Memoria;
+using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
@@ -286,7 +287,11 @@ public partial class BattleHUD : UIScene
             if (btl == null)
                 continue;
 
-            if (btl.cur.hp == 0 || btl.bi.atb == 0 || btl.bi.player == 0)
+            BattleUnit unit = new BattleUnit(btl);
+            if (unit.CurrentHp == 0 || !unit.CanMove || !unit.IsPlayer)
+                continue;
+
+            if (unit.IsUnderAnyStatus(BattleStatus.Freeze))
                 continue;
 
             return false;

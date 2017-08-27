@@ -139,14 +139,33 @@ public class BGCAM_DEF
         if (_knownFieldWidth == actualFieldWidth)
             return;
 
+        _knownFieldWidth = actualFieldWidth;
+
+        Boolean ignore = false;
+        switch (FF9StateSystem.Common.FF9.fldMapNo)
+        {
+            case 1507: // Conde Petie - Pathway
+            case 1605: // Madain Sari - Eidolon Wall
+            case 1606: // Madain Sari - Chamber
+            case 1607: // Madain Sari - Kitchen
+                ignore = true;
+                break;
+        }
+
+        if (ignore)
+        {
+            _cachedMinX = _vrpMinX;
+            _cachedMaxX = _vrpMaxX;
+            _delta = 0;
+            return;
+        }
+
         Int32 desiredDiff = FieldMap.PsxFieldWidth - FieldMap.PsxFieldWidthNative;
         Int32 maxDiff = _vrpMaxX - _vrpMinX;
         _delta = (Int16)(Math.Min(desiredDiff, maxDiff) / 2);
 
         _cachedMinX = (Int16)(_vrpMinX + _delta);
         _cachedMaxX = (Int16)(_vrpMaxX - _delta);
-
-        _knownFieldWidth = actualFieldWidth;
     }
 
 	public Int16 vrpMinY;
