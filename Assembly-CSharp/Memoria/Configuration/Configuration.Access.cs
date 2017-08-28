@@ -27,6 +27,7 @@ namespace Memoria
             public static Int32 BattleFPS => Enabled ? Instance._graphics.BattleFPS.Value : 15;
             public static Int32 BattleSwirlFrames => Enabled ? Instance._graphics.BattleSwirlFrames.Value : 115;
             public static Boolean SkipIntros = Enabled && Instance._graphics.SkipIntros.Value;
+            public static Int32 GarnetHair = Enabled ? Instance._graphics.GarnetHair.Value : 0;
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 

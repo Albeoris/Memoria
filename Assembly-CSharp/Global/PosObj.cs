@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -125,7 +126,16 @@ public class PosObj : Obj
 				String b = "mesh" + mesh;
 				if (mesh == 1 && this.garnet)
 				{
-					if (this.shortHair)
+				    Boolean garnetShortHair;
+
+                    if (Configuration.Graphics.GarnetHair == 1)
+				        garnetShortHair = false;
+				    else if (Configuration.Graphics.GarnetHair == 2)
+                        garnetShortHair = true;
+                    else
+                        garnetShortHair = this.shortHair;
+
+                    if (garnetShortHair)
 					{
 						b = "short_hair";
 					}

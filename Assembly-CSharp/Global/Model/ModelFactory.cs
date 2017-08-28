@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FF9;
+using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
 using UnityEngine;
@@ -128,9 +129,16 @@ public class ModelFactory
 		}
 		if (ModelFactory.garnetShortHairTable.Contains(text))
 		{
-			UInt16 num = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
-			Boolean flag = num >= 10300;
-			if (flag)
+		    Boolean garnetShortHair;
+
+		    if (Configuration.Graphics.GarnetHair == 1)
+		        garnetShortHair = false;
+            else if (Configuration.Graphics.GarnetHair == 2)
+		        garnetShortHair = true;
+		    else
+		        garnetShortHair = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0) >= 10300;
+
+            if (garnetShortHair)
 			{
 				Renderer[] componentsInChildren4 = gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
 				Renderer[] array2 = componentsInChildren4;

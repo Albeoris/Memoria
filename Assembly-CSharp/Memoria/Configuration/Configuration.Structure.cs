@@ -79,6 +79,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleSwirlFrames = IniValue.Int32(nameof(BattleSwirlFrames));
             public readonly IniValue<Boolean> WidescreenSupport = IniValue.Boolean(nameof(WidescreenSupport));
             public readonly IniValue<Boolean> SkipIntros = IniValue.Boolean(nameof(SkipIntros));
+            public readonly IniValue<Int32> GarnetHair = IniValue.Int32(nameof(GarnetHair));
 
             public GraphicsSection() : base("Graphics")
             {
@@ -87,6 +88,7 @@ namespace Memoria
                 BattleSwirlFrames.Value = 25;
                 WidescreenSupport.Value = true;
                 SkipIntros.Value = false;
+                GarnetHair.Value = 0;
             }
 
             protected override IEnumerable<IniValue> GetValues()
@@ -96,6 +98,7 @@ namespace Memoria
                 yield return BattleSwirlFrames;
                 yield return WidescreenSupport;
                 yield return SkipIntros;
+                yield return GarnetHair;
             }
         }
 

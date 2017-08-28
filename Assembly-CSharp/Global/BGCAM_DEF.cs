@@ -151,6 +151,7 @@ public class BGCAM_DEF
             case 2204: // Desert Palace - Odessey
             case 2208: // Desert Palace - Hallway
             case 2261: // Oeilvert - Bridge
+            case 2363: // Gulug - Path
                 ignore = true;
                 break;
         }

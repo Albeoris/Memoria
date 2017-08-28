@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -386,7 +387,7 @@ public class btlseq
 				if ((btl.bi.slot_no == 2 && btl.bi.player != 0) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
 				{
 					Byte serialNumber = btl_util.getSerialNumber(btl);
-					if (serialNumber == 4 || serialNumber == 3)
+					if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == 4 || serialNumber == 3 || Configuration.Graphics.GarnetHair == 1))
 					{
 						Renderer[] componentsInChildren3 = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
 						Renderer[] array3 = componentsInChildren3;

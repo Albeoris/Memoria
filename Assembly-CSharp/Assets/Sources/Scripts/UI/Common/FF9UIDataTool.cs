@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 using XInputDotNetPure;
@@ -747,10 +748,14 @@ namespace Assets.Sources.Scripts.UI.Common
 				return "face01";
 			case 3:
 			case 4:
-				return "face02";
+			    if (Configuration.Graphics.GarnetHair == 2)
+			        return "face03";
+			    return "face02";
 			case 5:
 			case 6:
-				return "face03";
+			    if (Configuration.Graphics.GarnetHair == 1)
+			        return "face02";
+			    return "face03";
 			case 7:
 			case 8:
 				return "face04";
