@@ -141,22 +141,7 @@ public class BGCAM_DEF
 
         _knownFieldWidth = actualFieldWidth;
 
-        Boolean ignore = false;
-        switch (FF9StateSystem.Common.FF9.fldMapNo)
-        {
-            case 1507: // Conde Petie - Pathway
-            case 1605: // Madain Sari - Eidolon Wall
-            case 1606: // Madain Sari - Chamber
-            case 1607: // Madain Sari - Kitchen
-            case 2204: // Desert Palace - Odessey
-            case 2208: // Desert Palace - Hallway
-            case 2261: // Oeilvert - Bridge
-            case 2363: // Gulug - Path
-                ignore = true;
-                break;
-        }
-
-        if (ignore)
+        if (FieldMap.IsNarrowMap())
         {
             _cachedMinX = _vrpMinX;
             _cachedMaxX = _vrpMaxX;

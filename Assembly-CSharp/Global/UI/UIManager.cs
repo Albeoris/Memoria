@@ -78,7 +78,12 @@ public class UIManager : PersistenSingleton<UIManager>
 		}
 		set
 		{
-			this.state = value;
+            if (value == UIState.FieldHUD && FieldMap.IsNarrowMap())
+		        Configuration.Graphics.DisableWidescreenSupportForSingleMap();
+		    else
+		        Configuration.Graphics.RestoreDisabledWidescreenSupport();
+
+            this.state = value;
 		}
 	}
 
@@ -691,7 +696,7 @@ public class UIManager : PersistenSingleton<UIManager>
 		if (uiState != this.state)
 		{
 			this.prevState = this.state;
-			this.state = uiState;
+			this.State = uiState;
 			UICamera.selectedObject = (GameObject)null;
 			ButtonGroupState.DisableAllGroup(true);
 			Singleton<HelpDialog>.Instance.SetDialogVisibility(false);

@@ -52,10 +52,33 @@ namespace Memoria
                 get => _widescreenSupport;
                 set
                 {
+                    _disableWidescreenSupportForSingleMap = false;
                     _widescreenSupport = value;
                     FieldMap.OnWidescreenSupportChanged();
                     PersistenSingleton<UIManager>.Instance.OnWidescreenSupportChanged();
                 }
+            }
+
+            private static Boolean _disableWidescreenSupportForSingleMap = false;
+
+            public static void RestoreDisabledWidescreenSupport()
+            {
+                if (WidescreenSupport)
+                    return;
+
+                if (!_disableWidescreenSupportForSingleMap)
+                    return;
+
+                WidescreenSupport = true;
+            }
+
+            public static void DisableWidescreenSupportForSingleMap()
+            {
+                if (!WidescreenSupport)
+                    return;
+
+                WidescreenSupport = false;
+                _disableWidescreenSupportForSingleMap = true;
             }
         }
 

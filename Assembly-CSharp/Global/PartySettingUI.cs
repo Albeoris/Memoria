@@ -116,7 +116,15 @@ public class PartySettingUI : UIScene
 
         SceneVoidDelegate sceneVoidDelegate = delegate
         {
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(18f, -18f), MoveCharGroupButton);
+            if (Configuration.Graphics.WidescreenSupport)
+            {
+                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(150, -18f), MoveCharGroupButton);
+            }
+            else
+            {
+                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(18f, -18f), MoveCharGroupButton);
+            }
+
             ButtonGroupState.SetPointerDepthToGroup(6, MoveCharGroupButton);
             ButtonGroupState.ActiveGroup = SelectCharGroupButton;
         };

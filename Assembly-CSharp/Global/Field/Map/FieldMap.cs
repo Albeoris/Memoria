@@ -483,6 +483,27 @@ public class FieldMap : HonoBehavior
         this.walkMesh.ProcessBGI();
     }
 
+    public static Boolean IsNarrowMap()
+    {
+        switch (FF9StateSystem.Common.FF9.fldMapNo)
+        {
+            case 0455: // Mountain - Base
+            case 1507: // Conde Petie - Pathway
+            case 1605: // Madain Sari - Eidolon Wall
+            case 1606: // Madain Sari - Chamber
+            case 1607: // Madain Sari - Kitchen
+            case 1823: // Alexandira Castle - Hallway
+            case 2000: // Hilda Garde 2 - Deck
+            case 2007: // Alexandira Castle - Altar
+            case 2204: // Desert Palace - Odessey
+            case 2208: // Desert Palace - Hallway
+            case 2261: // Oeilvert - Bridge
+            case 2363: // Gulug - Path
+                return true;
+        }
+        return false;
+    }
+
     public void LoadFieldMap(String name)
     {
         Transform transform = base.transform;
@@ -1194,7 +1215,7 @@ public class FieldMap : HonoBehavior
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[(Int32)camNdx];
         BGSCENE_DEF bgscene_DEF = this.scene;
         bgcam_DEF.vrpMinX = (Int16)(minX + HalfFieldWidthNative);
-        if (bgcam_DEF.vrpMinX > bgcam_DEF.w - HalfFieldWidth)
+        if (bgcam_DEF.vrpMinX > bgcam_DEF.w - HalfFieldWidthNative)
         {
             bgcam_DEF.vrpMinX = (Int16)(bgcam_DEF.w - HalfFieldWidthNative);
         }
@@ -1583,6 +1604,15 @@ public class FieldMap : HonoBehavior
         this.startPoint[0] = (Single)((Int16)this.curVRP[0]);
         this.startPoint[1] = (Single)((Int16)this.curVRP[1]);
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
+
+        if (Configuration.Graphics.WidescreenSupport)
+        {
+            if (destX > bgcam_DEF.vrpMaxX)
+                destX = bgcam_DEF.vrpMaxX;
+            else if (destX < bgcam_DEF.vrpMinX)
+                destX = bgcam_DEF.vrpMinX;
+        }
+
         this.endPoint[0] = (Single)destX;
         this.endPoint[1] = (Single)destY;
         this.frameCount = (Int16)frameCount;
