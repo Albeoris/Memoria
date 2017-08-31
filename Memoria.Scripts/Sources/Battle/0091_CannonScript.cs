@@ -1,4 +1,5 @@
 using System;
+using FF9;
 
 namespace Memoria.Scripts.Battle
 {
@@ -28,7 +29,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.TargetCommand.TryMagicHit())
                 return;
 
-            _v.SetCommandPower();
+            _v.Context.Attack = _v.Command.Power;
             _v.CasterCommand.BonusElement();
             if (!_v.CanAttackMagic())
                 return;

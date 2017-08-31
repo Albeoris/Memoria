@@ -846,7 +846,7 @@ public partial class BattleHUD : UIScene
         else if (bd.IsUnderAnyStatus(BattleStatus.Haste))
             spriteName = ATEOrange;
 
-        playerHud.ATBBar.Foreground.Highlight.Sprite.spriteName = spriteName;
+        playerHud.ATBBar.Foreground.Foreground.Sprite.spriteName = spriteName;
         if (!bd.HasTrance)
             return;
 
