@@ -333,9 +333,8 @@ namespace Memoria.Launcher
                 _resolution = value;
 
                 value = iniFile.ReadValue("Settings", nameof(ActiveMonitor));
-                if (String.IsNullOrEmpty(value))
-                    value = String.Empty;
-                _activeMonitor = value;
+                if (!String.IsNullOrEmpty(value))
+                    _activeMonitor = value;
 
                 value = iniFile.ReadValue("Settings", nameof(Windowed));
                 if (String.IsNullOrEmpty(value))
