@@ -336,12 +336,6 @@ public class TitleUI : UIScene
             FF9StateSystem.Serializer.HasAutoload(this.CheckAutoSaveSlot);
             FF9StateSystem.Serializer.GetGameFinishFlag(this.CheckGameFinishFlag);
             ExpansionVerifier.printLog("TitleUI: PlaySplashScreen()");
-            if (Configuration.Graphics.SkipIntros)
-            {
-                this.ShowMenuPanel();
-                this.idleScreenType = SlideShow.Type.Sequence1;
-                ButtonGroupState.ActiveGroup = MenuGroupButton;
-            } else
             {
                 this.PlaySplashScreen();
             }
@@ -1355,6 +1349,7 @@ public class TitleUI : UIScene
             this.ShowMenuPanel();
             this.idleScreenType = SlideShow.Type.Sequence1;
             ButtonGroupState.ActiveGroup = MenuGroupButton;
+            Configuration.Graphics.SkipIntros = 0;
             this.timer.Start();
             if (this.IsJustLaunchApp)
             {
@@ -1973,6 +1968,9 @@ public class TitleUI : UIScene
                 this.logoSprite.spriteName = this.logoIndex == 0 ? "logo_sqex" : "logo_sst";
                 this.honoFading.Fade(1f, 0f, 0.7f, 1.3f, this.honoFading.fadeInCurve, this.preLogoFadeOut);
             };
+            if (Configuration.Graphics.SkipIntros > 1)
+                this.onLogoFinish = delegate { this.onMovieFinish(); };
+            else
             this.onLogoFinish = delegate
             {
                 this.type = Type.Movie1;
@@ -1981,6 +1979,7 @@ public class TitleUI : UIScene
                 this.honoFading.Fade(1f, 0f, 1f, 0f, this.honoFading.fadeInCurve, delegate
                 {
                 });
+
                 MBG.Instance.SetFinishCallback(this.onMovieFinish);
                 MBG.Instance.gameObject.SetActive(true);
                 MBG.Instance.LoadMovie("FMV000");

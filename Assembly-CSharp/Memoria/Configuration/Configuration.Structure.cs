@@ -78,7 +78,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleFPS = IniValue.Int32(nameof(BattleFPS));
             public readonly IniValue<Int32> BattleSwirlFrames = IniValue.Int32(nameof(BattleSwirlFrames));
             public readonly IniValue<Boolean> WidescreenSupport = IniValue.Boolean(nameof(WidescreenSupport));
-            public readonly IniValue<Boolean> SkipIntros = IniValue.Boolean(nameof(SkipIntros));
+            public readonly IniValue<Int32> SkipIntros = IniValue.Int32(nameof(SkipIntros));
             public readonly IniValue<Int32> GarnetHair = IniValue.Int32(nameof(GarnetHair));
 
             public GraphicsSection() : base("Graphics")
@@ -87,7 +87,7 @@ namespace Memoria
                 BattleFPS.Value = 30;
                 BattleSwirlFrames.Value = 25;
                 WidescreenSupport.Value = true;
-                SkipIntros.Value = false;
+                SkipIntros.Value = 0;
                 GarnetHair.Value = 0;
             }
 
