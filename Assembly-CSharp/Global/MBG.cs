@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Graphics.Movie;
+using Memoria;
 using Memoria.Scripts;
 using SimpleJSON;
 using UnityEngine;
@@ -198,7 +199,7 @@ public class MBG : HonoBehavior
 	public void Play()
 	{
 		this.tempTargetFrameRate = Application.targetFrameRate;
-		Application.targetFrameRate = 15;
+	    Application.targetFrameRate = Configuration.Graphics.MovieFPS;
 		this.tempVirtualAnalogStatus = VirtualAnalog.IsEnable;
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(false);
 		this.isSkip = false;
