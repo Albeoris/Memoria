@@ -1932,10 +1932,33 @@ public partial class BattleHUD : UIScene
 
     private void SetTarget(Int32 battleIndex)
     {
+        const Byte saveTheQueenId = (Byte)WeaponItem.SaveTheQueen;
+
+        if (_currentCommandId == 1 && CurrentBattlePlayerIndex > -1)
+        {
+            BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+            if (btl.PlayerIndex == CharacterIndex.Beatrix)
+            {
+                Character player = btl.Player;
+                Byte weapon = player.Equipment.Weapon;
+                Byte accessory = player.Equipment.Accessory;
+                if (weapon == saveTheQueenId && accessory == saveTheQueenId)
+                {
+                    CommandDetail first = ProcessCommand(battleIndex, _cursorType);
+                    SendDoubleCastCommand(first, first);
+
+                    SetTargetVisibility(false);
+                    SetIdle();
+                    return;
+                }
+            }
+        }
+
         if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else
             SendCommand(ProcessCommand(battleIndex, _cursorType));
+
         SetTargetVisibility(false);
         SetIdle();
     }

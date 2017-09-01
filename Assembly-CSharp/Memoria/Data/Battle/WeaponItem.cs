@@ -81,7 +81,7 @@
         Defender = 0025,
 
         ///<summary>Long sword used by holy knights."</summary>
-        SavetheQueen = 0026,
+        SaveTheQueen = 0026,
 
         ///<summary>Sword that can only be used by chosen knights."</summary>
         UltimaSword = 0027,

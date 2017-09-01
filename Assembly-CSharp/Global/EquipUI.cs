@@ -734,11 +734,10 @@ public class EquipUI : UIScene
 
 	private void DisplayInventory()
 	{
-		PLAYER play = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-		Int32 num = (Int32)this.charMask[(CharacterId)ff9play.FF9Play_GetCharID2(play.Index, play.IsSubCharacter)];
-		Int32 num2 = (Int32)this.partMask[this.currentEquipPart];
-		Int32 num3 = 0;
-		switch (this.currentEquipPart)
+	    Character character = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+        Int32 characterMask = (Int32)this.charMask[ff9play.FF9Play_GetCharID2(character.Index, character.IsSubCharacter)];
+		Int32 equipSlotMask = (Int32)this.partMask[this.currentEquipPart];
+	    switch (this.currentEquipPart)
 		{
 		case 0:
 			this.equipmentListCaption.text = Localization.Get("WeaponCaption");
@@ -761,18 +760,20 @@ public class EquipUI : UIScene
 		}
 		List<FF9ITEM> list = this.itemIdList[this.currentEquipPart];
 		list.Clear();
-        int num4 = 0;
+        int resultIndex = 0;
         for (Int32 i = 0; i < 256; i++)
 		{
 			if (FF9StateSystem.Common.FF9.item[i].count > 0)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)FF9StateSystem.Common.FF9.item[i].id];
-				if (((Int32)ff9ITEM_DATA.equip & num) != 0 && ((Int32)ff9ITEM_DATA.type & num2) != 0)
+			    FF9ITEM item = FF9StateSystem.Common.FF9.item[i];
+                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
+
+				if (CanEquip(item, itemData, character, characterMask, equipSlotMask))
 				{
-                    this.tempItemList[num4].id = FF9StateSystem.Common.FF9.item[i].id;
-                    this.tempItemList[num4].count = FF9StateSystem.Common.FF9.item[i].count;
-                    list.Add(this.tempItemList[num4]);
-                    num4++;
+                    this.tempItemList[resultIndex].id = item.id;
+                    this.tempItemList[resultIndex].count = item.count;
+                    list.Add(this.tempItemList[resultIndex]);
+                    resultIndex++;
                 }
 			}
 		}
@@ -800,7 +801,6 @@ public class EquipUI : UIScene
 		List<ListDataTypeBase> list2 = new List<ListDataTypeBase>();
 		foreach (FF9ITEM itemData in list)
 		{
-			num3++;
 			list2.Add(new EquipUI.EquipInventoryListData
 			{
 				ItemData = itemData
@@ -819,7 +819,24 @@ public class EquipUI : UIScene
 		}
 	}
 
-	private void DisplayInventoryInfo(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
+    private Boolean CanEquip(FF9ITEM item, FF9ITEM_DATA itemData, Character character, Int32 characterMask, Int32 equipSlotMask)
+    {
+        const Int32 accessories = 4;
+        const Int32 saveTheQueen = 26;
+
+        if ((itemData.equip & characterMask) == 0)
+            return false;
+
+        if (this.currentEquipPart == accessories)
+        {
+            if (character.Index == CharacterIndex.Beatrix && item.id == saveTheQueen)
+                return true;
+        }
+
+        return (itemData.type & equipSlotMask) != 0;
+    }
+
+    private void DisplayInventoryInfo(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
 	{
 		EquipUI.EquipInventoryListData equipInventoryListData = (EquipUI.EquipInventoryListData)data;
 		ItemListDetailWithIconHUD itemListDetailWithIconHUD = new ItemListDetailWithIconHUD(item.gameObject, true);
