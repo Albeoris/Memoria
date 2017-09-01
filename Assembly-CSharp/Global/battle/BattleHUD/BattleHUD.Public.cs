@@ -278,6 +278,9 @@ public partial class BattleHUD : UIScene
         if (Configuration.Hacks.BattleSpeed != 2)
             return true;
 
+        if (FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0)
+            return true;
+
         if (FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
             return false;
 
