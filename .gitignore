@@ -8,6 +8,7 @@ obj/
 /Output/
 /.idea/
 /.vs/
+/ipch/
 *.suo
 *.user
 *.DotSettings*
