@@ -6,7 +6,7 @@ namespace Memoria.Assets
 {
     public class DialogBoxRenderer
     {
-        public static Boolean ProcessMemoriaTag(Char[] toCharArray, ref Int32 index, BetterList<Color> colors, ref Boolean highShadow, ref Boolean center, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
+        public static Boolean ProcessMemoriaTag(Char[] toCharArray, ref Int32 index, BetterList<Color> colors, ref Boolean highShadow, ref Boolean center, ref Boolean justified, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
         {
             Int32 num = index;
             Int32 left = toCharArray.Length - index;
@@ -16,6 +16,9 @@ namespace Memoria.Assets
 
             switch (tag.Code)
             {
+                case FFIXTextTagCode.Justified:
+                    justified = true;
+                    break;
                 case FFIXTextTagCode.Center:
                     center = true;
                     break;

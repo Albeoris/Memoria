@@ -482,6 +482,7 @@ public static class NGUIText
 		Boolean flag5 = false;
 		Boolean flag6 = false;
 		Boolean flag7 = false;
+	    Boolean flag8 = false;
 		Int32 num2 = 0;
 		Vector3 zero2 = Vector3.zero;
 		Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
@@ -514,7 +515,7 @@ public static class NGUIText
 				}
 				else if (num7 >= 32)
 				{
-					if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num2, ref zero2, ref num3, ref dialogImage))
+					if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref num2, ref zero2, ref num3, ref dialogImage))
 					{
 						i--;
 					}
@@ -608,12 +609,13 @@ public static class NGUIText
 					Boolean flag5 = false;
 					Boolean flag6 = false;
 					Boolean flag7 = false;
+				    Boolean flag8 = false;
 					Int32 num2 = i;
 					Int32 num3 = 0;
 					Vector3 zero = Vector3.zero;
 					Single num4 = 0f;
 					Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
-					if (DialogBoxSymbols.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num3, ref zero, ref num4, ref dialogImage))
+					if (DialogBoxSymbols.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref num3, ref zero, ref num4, ref dialogImage))
 					{
 						String text2 = text.Substring(i, num2 - i);
 						if (!NGUIText.ContainsTextOffset(text2) && dialogImage == null)
@@ -988,9 +990,10 @@ public static class NGUIText
 		Boolean flag5 = false;
 		Boolean flag6 = false;
 		Boolean flag7 = false;
+	    Boolean flag8 = false;
 		Vector3 zero = Vector3.zero;
 		Single num2 = 0f;
-		return DialogBoxSymbols.ParseSymbol(text, ref index, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref ff9Signal, ref zero, ref num2, ref insertImage);
+		return DialogBoxSymbols.ParseSymbol(text, ref index, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref ff9Signal, ref zero, ref num2, ref insertImage);
 	}
 
 	[DebuggerHidden]
@@ -1021,12 +1024,13 @@ public static class NGUIText
 					Boolean flag5 = false;
 					Boolean flag6 = false;
 					Boolean flag7 = false;
+				    Boolean flag8 = false;
 					Int32 num2 = i;
 					Int32 num3 = 0;
 					Vector3 zero = Vector3.zero;
 					Single num4 = 0f;
 					Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
-					if (DialogBoxSymbols.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref num3, ref zero, ref num4, ref dialogImage))
+					if (DialogBoxSymbols.ParseSymbol(text, ref num2, null, false, ref num, ref flag, ref flag2, ref flag3, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref num3, ref zero, ref num4, ref dialogImage))
 					{
 						text = text.Remove(i, num2 - i);
 						length = text.Length;
@@ -1116,51 +1120,49 @@ public static class NGUIText
 			{
 				return;
 			}
-			Single num13 = ((Single)NGUIText.rectWidth - printedWidth) * 0.5f;
-			if (num13 < 1f)
-			{
+			Single margin = (NGUIText.rectWidth - printedWidth) * 0.5f;
+			if (margin < 1f)
 				return;
-			}
-			Int32 num14 = (verts.size - indexOffset) / elements;
-			if (num14 < 1)
-			{
+
+		    Int32 padding = (verts.size - indexOffset) / elements;
+			if (padding < 2)
 				return;
-			}
-			Single num15 = 1f / (Single)(num14 - 1);
-			Single num16 = (Single)NGUIText.rectWidth / printedWidth;
+
+		    Single paddingFactor = 1f / (padding - 1);
+			Single widthRatio = NGUIText.rectWidth / printedWidth;
 			Int32 l = indexOffset + elements;
-			Int32 num17 = 1;
+			Int32 counter = 1;
 			while (l < verts.size)
 			{
-				Single num18 = verts.buffer[l].x;
-				Single num19 = verts.buffer[l + elements / 2].x;
-				Single num20 = num19 - num18;
-				Single num21 = num18 * num16;
-				Single a = num21 + num20;
-				Single num22 = num19 * num16;
-				Single b = num22 - num20;
-				Single t = (Single)num17 * num15;
-				num19 = Mathf.Lerp(a, num22, t);
-				num18 = Mathf.Lerp(num21, b, t);
-				num18 = Mathf.Round(num18);
-				num19 = Mathf.Round(num19);
+				Single currentX1 = verts.buffer[l].x;
+				Single currentX2 = verts.buffer[l + elements / 2].x;
+				Single deltaX = currentX2 - currentX1;
+				Single scaledX1 = currentX1 * widthRatio;
+				Single a = scaledX1 + deltaX;
+				Single scaledX2 = currentX2 * widthRatio;
+				Single b = scaledX2 - deltaX;
+				Single t = counter * paddingFactor;
+				currentX2 = Mathf.Lerp(a, scaledX2, t);
+				currentX1 = Mathf.Lerp(scaledX1, b, t);
+				currentX1 = Mathf.Round(currentX1);
+				currentX2 = Mathf.Round(currentX2);
 				if (elements == 4)
 				{
-					verts.buffer[l++].x = num18;
-					verts.buffer[l++].x = num18;
-					verts.buffer[l++].x = num19;
-					verts.buffer[l++].x = num19;
+					verts.buffer[l++].x = currentX1;
+					verts.buffer[l++].x = currentX1;
+					verts.buffer[l++].x = currentX2;
+					verts.buffer[l++].x = currentX2;
 				}
 				else if (elements == 2)
 				{
-					verts.buffer[l++].x = num18;
-					verts.buffer[l++].x = num19;
+					verts.buffer[l++].x = currentX1;
+					verts.buffer[l++].x = currentX2;
 				}
 				else if (elements == 1)
 				{
-					verts.buffer[l++].x = num18;
+					verts.buffer[l++].x = currentX1;
 				}
-				num17++;
+				counter++;
 			}
 			break;
 		}
@@ -1437,6 +1439,7 @@ public static class NGUIText
 		Boolean flag8 = false;
 		Boolean flag9 = false;
 		Boolean flag10 = false;
+	    Boolean flag15 = false;
 		Int32 num7 = 0;
 		Vector3 zero = Vector3.zero;
 		Single num8 = 0f;
@@ -1501,7 +1504,7 @@ public static class NGUIText
 							goto IL_69E;
 						}
 					}
-					else if (DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num6, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref flag9, ref flag10, ref num7, ref zero, ref num8, ref dialogImage))
+					else if (DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref num6, ref flag4, ref flag5, ref flag6, ref flag7, ref flag8, ref flag9, ref flag10, ref flag15, ref num7, ref zero, ref num8, ref dialogImage))
 					{
 						if (flag8)
 						{
@@ -1704,7 +1707,8 @@ public static class NGUIText
 		Boolean ignoreColor = false;
 		Boolean highShadow = false;
 		Boolean center = false;
-		Boolean containCharAlignment = false;
+	    Boolean justified = false;
+        Boolean containCharAlignment = false;
 		Int32 ff9Signal = 0;
 		Vector3 extraOffset = Vector3.zero;
 		Dialog.DialogImage dialogImage = (Dialog.DialogImage)null;
@@ -1754,7 +1758,7 @@ public static class NGUIText
 			{
 				prevCh = ch;
 			}
-			else if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref sub, ref bold, ref italic, ref underline, ref strike, ref ignoreColor, ref highShadow, ref center, ref ff9Signal, ref extraOffset, ref tabX, ref dialogImage))
+			else if (NGUIText.encoding && DialogBoxSymbols.ParseSymbol(text, ref i, NGUIText.mColors, NGUIText.premultiply, ref sub, ref bold, ref italic, ref underline, ref strike, ref ignoreColor, ref highShadow, ref center, ref justified, ref ff9Signal, ref extraOffset, ref tabX, ref dialogImage))
 			{
 				Color color2;
 				if (ignoreColor)
@@ -1784,7 +1788,11 @@ public static class NGUIText
 			}
 			else
 			{
-				if (center)
+                if(justified)
+                {
+                    NGUIText.alignment = NGUIText.Alignment.Justified;
+                }
+				else if (center)
 				{
 					NGUIText.alignment = NGUIText.Alignment.Center;
 				}

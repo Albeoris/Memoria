@@ -5,13 +5,13 @@ namespace Memoria.Assets
 {
     public static class DialogBoxSymbols
     {
-        public static Boolean ParseSymbol(String text, ref Int32 index, BetterList<Color> colors, Boolean premultiply, ref Int32 sub, ref Boolean bold, ref Boolean italic, ref Boolean underline, ref Boolean strike, ref Boolean ignoreColor, ref Boolean highShadow, ref Boolean center, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
+        public static Boolean ParseSymbol(String text, ref Int32 index, BetterList<Color> colors, Boolean premultiply, ref Int32 sub, ref Boolean bold, ref Boolean italic, ref Boolean underline, ref Boolean strike, ref Boolean ignoreColor, ref Boolean highShadow, ref Boolean center, ref Boolean justified, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
         {
             Int32 length = text.Length;
             if (IsMemoriaTag(text, index))
             {
                 Char[] chars = text.ToCharArray();
-                if (DialogBoxRenderer.ProcessMemoriaTag(chars, ref index, colors, ref highShadow, ref center, ref ff9Signal, ref extraOffset, ref tabX, ref insertImage))
+                if (DialogBoxRenderer.ProcessMemoriaTag(chars, ref index, colors, ref highShadow, ref center, ref justified, ref ff9Signal, ref extraOffset, ref tabX, ref insertImage))
                     return true;
 
                 return false;

@@ -355,6 +355,11 @@ namespace Memoria.Assets
         /// <summary>
         /// [TBLE=?,?,?...]
         /// </summary>
-        Table
+        Table,
+
+        /// <summary>
+        /// It's a custom tag
+        /// </summary>
+        Justified,
     }
 }
