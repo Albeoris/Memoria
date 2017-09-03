@@ -441,12 +441,12 @@ public class btlseq
 			}
 			return;
 		}
-		BTL_DATA masterEnemyBtlPtr = btl_util.GetMasterEnemyBtlPtr();
+		BattleUnit masterEnemyBtlPtr = btl_util.GetMasterEnemyBtlPtr();
 		if (masterEnemyBtlPtr == null)
 		{
 			return;
 		}
-		btl.rot = masterEnemyBtlPtr.rot;
+		btl.rot = masterEnemyBtlPtr.Data.rot;
 		btl_mot.setSlavePos(btl, ref btl.base_pos);
 		btl_mot.setBasePos(btl);
 	}

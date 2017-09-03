@@ -1,6 +1,7 @@
 ﻿using FF9;
 using System;
 using Memoria;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -58,48 +59,44 @@ public class btl_para
         }
     }
 
-    public static void SetDamage(BTL_DATA btl, Int32 damage, Byte dmg_mot)
+    public static void SetDamage(BattleUnit btl, Int32 damage, Byte dmg_mot)
     {
-        if (Status.checkCurStat(btl, 256u))
+        if (btl.IsUnderStatus(BattleStatus.Death))
         {
-            btl.fig_info = 32;
-            return;
-        }
-        if (Status.checkCurStat(btl, 1u))
-        {
-            btl.fig = 0;
+            btl.Data.fig_info = 32;
             return;
         }
 
-        if (btl != FF9StateSystem.Battle.FF9Battle.cur_cmd.regist)
+        if (btl.IsUnderStatus(BattleStatus.Petrify))
         {
-            Int32 num = btl_mot.setDirection(btl);
-            btl.evt.rotBattle.eulerAngles = new Vector3(btl.evt.rotBattle.eulerAngles.x, num, btl.evt.rotBattle.eulerAngles.z);
-            btl.rot.eulerAngles = new Vector3(btl.rot.eulerAngles.x, num, btl.rot.eulerAngles.z);
+            btl.Fig = 0;
+            return;
         }
+
+        if (btl.Data != FF9StateSystem.Battle.FF9Battle.cur_cmd.regist)
+            btl.FaceTheEnemy();
+
         if (!FF9StateSystem.Battle.isDebug)
         {
-            if (btl.cur.hp > damage)
+            if (btl.CurrentHp > damage)
             {
-                if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
-                {
-                    POINTS expr_116 = btl.cur;
-                    expr_116.hp -= (UInt16)damage;
-                }
+                if (!btl.IsPlayer || !FF9StateSystem.Settings.IsHpMpFull)
+                    btl.CurrentHp -= (UInt16)damage;
             }
             else
             {
-                btl.cur.hp = 0;
+                btl.CurrentHp = 0;
             }
         }
-        btl.fig = (Int16)damage;
+
+        btl.Fig = (Int16)damage;
         if (dmg_mot != 0)
         {
             btl_mot.SetDamageMotion(btl);
         }
-        else if (btl.cur.hp == 0)
+        else if (btl.CurrentHp == 0)
         {
-            new BattleUnit(btl).Kill();
+            btl.Kill();
         }
     }
 
@@ -254,15 +251,15 @@ public class btl_para
         btl.fig_poison_mp = (Int16)num;
     }
 
-    public static void SetTroubleDamage(BTL_DATA btl)
+    public static void SetTroubleDamage(BattleUnit btl)
     {
-        for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (next.bi.player == btl.bi.player && next != btl && next.bi.target != 0)
+            if (next.IsPlayer == btl.IsPlayer && next.Id != btl.Id && next.IsSelected)
             {
-                next.fig_info = 1;
-                SetDamage(next, btl.fig >> 1, 0);
-                btl2d.Btl2dReq(next);
+                next.Data.fig_info = 1;
+                SetDamage(next, btl.Fig >> 1, 0);
+                btl2d.Btl2dReq(next.Data);
             }
         }
     }

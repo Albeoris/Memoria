@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 using Memoria.Scripts;
 using UnityEngine;
 
@@ -56,19 +57,18 @@ namespace FF9
 			return curCmdPtr != null && curCmdPtr.regist == btl;
 		}
 
-		public static BTL_DATA GetMasterEnemyBtlPtr()
-		{
-			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-			{
-				if (next.bi.player == 0 && next.bi.slave == 0 && FF9StateSystem.Battle.FF9Battle.enemy[(Int32)next.bi.slot_no].info.multiple != 0)
-				{
-					return next;
-				}
-			}
-			return (BTL_DATA)null;
-		}
+	    public static BattleUnit GetMasterEnemyBtlPtr()
+	    {
+	        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+	        {
+	            if (!unit.IsPlayer && !unit.IsSlave && unit.Enemy.Data.info.multiple != 0)
+	                return unit;
+	        }
 
-		public static UInt32 SumOfTarget(UInt32 player)
+	        return null;
+	    }
+
+	    public static UInt32 SumOfTarget(UInt32 player)
 		{
 			UInt32 num = 0u;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)

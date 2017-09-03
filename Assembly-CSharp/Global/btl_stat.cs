@@ -44,6 +44,7 @@ public class btl_stat
 
     public static UInt32 AlterStatus(BTL_DATA btl, UInt32 status)
     {
+        BattleUnit unit = new BattleUnit(btl);
         STAT_DATA[] statusData = FF9StateSystem.Battle.FF9Battle.status_data;
         STAT_INFO stat = btl.stat;
         UInt32 statTblNo = 0;
@@ -75,25 +76,31 @@ public class btl_stat
         switch (num4)
         {
             case 6:
-                if (btl.bi.player != 0 && !Status.checkCurStat(btl, 16384U))
-                    btl.trance = 0;
+                if (unit.IsPlayer && !unit.IsUnderStatus(BattleStatus.Trance))
+                    unit.Trance = 0;
+
                 SetStatusPolyColor(btl);
                 break;
             case 8:
-                if (btl.cur.hp > 0)
+                if (unit.CurrentHp > 0)
                 {
                     btl.fig_info |= 64;
                     new BattleUnit(btl).Kill();
                 }
                 else
-                    btl.cur.hp = 0;
-                btl.cur.at = 0;
+                {
+                    unit.CurrentHp = 0;
+                }
+
+                unit.CurrentAtb = 0;
+
                 if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
                 {
                     btl_cmd.SetCommand(btl.cmd[2], 60U, 0U, btl.btl_id, 0U);
-                    if (btl.bi.player == 0)
+                    if (!unit.IsPlayer)
                         btl_sys.CheckForecastMenuOff(btl);
                 }
+
                 btl_cmd.KillSpecificCommand(btl, 59);
                 break;
             case 11:
@@ -108,7 +115,7 @@ public class btl_stat
                 btl_cmd.SetCommand(btl.cmd[4], 59U, 0U, btl.btl_id, 0U);
                 break;
             case 17:
-                if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, 1) && !btl_util.isCurCmdOwner(btl))
+                if (unit.IsPlayer && !btl_mot.checkMotion(btl, 1) && !btl_util.isCurCmdOwner(btl))
                 {
                     btl_mot.setMotion(btl, 1);
                     btl.evt.animFrame = 0;
@@ -214,20 +221,20 @@ public class btl_stat
         if (((Int32)stat.permanent & (Int32)status) != 0 || ((Int32)stat.cur & (Int32)status) == 0 || btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & 4099L) != 0L)
             return 1;
         stat.cur &= ~status;
-        switch (status)
+        switch ((BattleStatus)status)
         {
-            case 1:
+            case BattleStatus.Petrify:
                 SetStatusClut(btl, false);
                 break;
-            case 64:
-            case 16777216:
-            case 33554432:
+            case BattleStatus.Zombie:
+            case BattleStatus.Heat:
+            case BattleStatus.Freeze:
                 if (Status.checkCurStat(btl, 50333760U))
                 {
                     SetStatusPolyColor(btl);
                 }
                 break;
-            case 256:
+            case BattleStatus.Death:
                 btl.die_seq = 0;
                 btl.bi.dmg_mot_f = 0;
                 btl.bi.cmd_idle = 0;
@@ -250,20 +257,20 @@ public class btl_stat
                     SetOprStatusCount(btl, 18U);
                 }
                 break;
-            case 1024:
+            case BattleStatus.Confuse:
                 Vector3 eulerAngles = btl.rot.eulerAngles;
                 eulerAngles.y = btl.evt.rotBattle.eulerAngles.y;
                 btl.rot = Quaternion.Euler(eulerAngles);
                 StatusCommandCancel(btl, status);
                 break;
-            case 2048:
+            case BattleStatus.Berserk:
                 StatusCommandCancel(btl, status);
                 if (Status.checkCurStat(btl, 50333760U))
                 {
                     SetStatusPolyColor(btl);
                 }
                 break;
-            case 16384:
+            case BattleStatus.Trance:
                 btl.trance = 0;
                 if (Status.checkCurStat(btl, 1073741824U))
                 {
@@ -275,30 +282,30 @@ public class btl_stat
                 }
                 btl_cmd.SetCommand(btl.cmd[4], 59U, 0U, btl.btl_id, 0U);
                 break;
-            case 524288:
-            case 1048576:
+            case BattleStatus.Haste:
+            case BattleStatus.Slow:
                 btl_para.InitATB(btl);
                 break;
-            case 2097152:
+            case BattleStatus.Float:
                 Single value = 0f;
                 btl.pos[1] = value;
                 btl.base_pos[1] = value;
                 break;
-            case 67108864:
+            case BattleStatus.Vanish:
                 btl_mot.ShowMesh(btl, btl.mesh_banish, true);
                 break;
-            case 134217728:
+            case BattleStatus.Doom:
                 if (btl.deathMessage != null)
                 {
                     Singleton<HUDMessage>.Instance.ReleaseObject(btl.deathMessage);
                     btl.deathMessage = null;
                 }
                 break;
-            case 268435456:
+            case BattleStatus.Mini:
                 geo.geoScaleReset(btl);
                 btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), btl.shadow_x, btl.shadow_z);
                 break;
-            case 1073741824:
+            case BattleStatus.Jump:
                 btl.tar_mode = 3;
                 btl.bi.atb = 1;
                 if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
@@ -307,7 +314,7 @@ public class btl_stat
                 btl.cmd[3].cmd_no = 0;
                 btl.cmd[3].tar_id = 0;
                 break;
-            case 2147483648:
+            case BattleStatus.GradualPetrify:
                 if (btl.petrifyMessage != null)
                 {
                     Singleton<HUDMessage>.Instance.ReleaseObject(btl.petrifyMessage);
@@ -433,9 +440,10 @@ public class btl_stat
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         STAT_INFO stat = btl.stat;
-        SetStatusVfx(btl);
-
         BattleUnit unit = new BattleUnit(btl);
+
+        SetStatusVfx(unit);
+
         if (unit.IsUnderStatus(BattleStatus.Death))
         {
             btl_mot.DieSequence(btl);
@@ -525,29 +533,30 @@ public class btl_stat
         }
     }
 
-    public static void SetStatusVfx(BTL_DATA btl)
+    public static void SetStatusVfx(BattleUnit unit)
     {
+        BTL_DATA data = unit.Data;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        if (btl.bi.disappear == 0 && !Status.checkCurStat(btl, 1U))
+        if (data.bi.disappear == 0 && !Status.checkCurStat(data, 1U))
         {
             BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
-            if (Status.checkCurStat(btl, 50333760U))
+            if (Status.checkCurStat(data, 50333760U))
             {
                 if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
-                btl_util.GeoSetColor2DrawPacket(btl.gameObject, btl.add_col[0], btl.add_col[1], btl.add_col[2], Byte.MaxValue);
-                if (btl.weapon_geo)
-                    btl_util.GeoSetColor2DrawPacket(btl.weapon_geo, btl.add_col[0], btl.add_col[1], btl.add_col[2], Byte.MaxValue);
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                btl_util.GeoSetColor2DrawPacket(data.gameObject, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
+                if (data.weapon_geo)
+                    btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
             }
-            else if (Status.checkCurStat(btl, 12582912U))
+            else if (Status.checkCurStat(data, 12582912U))
             {
                 if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
                 Byte num1 = (Byte)(ff9Battle.btl_cnt % 24);
                 Int16 num2;
                 Int16 num3;
                 Int16 num4;
-                if ((!Status.checkCurStat(btl, 8388608U) || !Status.checkCurStat(btl, 4194304U) ? (!Status.checkCurStat(btl, 8388608U) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
+                if ((!Status.checkCurStat(data, 8388608U) || !Status.checkCurStat(data, 4194304U) ? (!Status.checkCurStat(data, 8388608U) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
                 {
                     num2 = (Int16)(bbgInfoPtr.chr_r - 64);
                     num3 = (Int16)(bbgInfoPtr.chr_g - -24);
@@ -563,16 +572,16 @@ public class btl_stat
                 Int16 r = (Int16)(num2 * num5 >> 3);
                 Int16 g = (Int16)(num3 * num5 >> 3);
                 Int16 b = (Int16)(num4 * num5 >> 3);
-                GeoAddColor2DrawPacket(btl.gameObject, r, g, b);
-                if (btl.weapon_geo)
-                    GeoAddColor2DrawPacket(btl.weapon_geo, r, g, b);
+                GeoAddColor2DrawPacket(data.gameObject, r, g, b);
+                if (data.weapon_geo)
+                    GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
             }
-            else if (Status.checkCurStat(btl, 16384U) && !Status.checkCurStat(btl, 256U))
+            else if (unit.IsUnderStatus(BattleStatus.Trance) && !unit.IsUnderStatus(BattleStatus.Death))
             {
-                if (btl_util.getSerialNumber(btl) + 19 < btl_init.model_id.Length)
+                if (btl_util.getSerialNumber(data) + 19 < btl_init.model_id.Length)
                 {
                     if (!FF9StateSystem.Battle.isFade)
-                        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+                        btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
                     Byte[][] numArray = new Byte[8][]
                     {
                         new Byte[3] {Byte.MaxValue, 96, 96},
@@ -585,53 +594,48 @@ public class btl_stat
                         new Byte[3] {208, 184, 104}
                     };
                     Byte num1 = (Byte)(ff9Battle.btl_cnt % 16);
-                    Int16 num2 = (Int16)(bbgInfoPtr.chr_r - (128 - numArray[btl.bi.slot_no][0]));
-                    Int16 num3 = (Int16)(bbgInfoPtr.chr_g - (128 - numArray[btl.bi.slot_no][1]));
-                    Int16 num4 = (Int16)(bbgInfoPtr.chr_b - (128 - numArray[btl.bi.slot_no][2]));
+                    Int16 num2 = (Int16)(bbgInfoPtr.chr_r - (128 - numArray[data.bi.slot_no][0]));
+                    Int16 num3 = (Int16)(bbgInfoPtr.chr_g - (128 - numArray[data.bi.slot_no][1]));
+                    Int16 num4 = (Int16)(bbgInfoPtr.chr_b - (128 - numArray[data.bi.slot_no][2]));
                     Byte num5 = (Int32)num1 >= 8 ? (Byte)(16U - num1) : num1;
-                    GeoAddColor2DrawPacket(btl.gameObject, (Int16)(num2 * num5 >> 3), (Int16)(num3 * num5 >> 3), (Int16)(num4 * num5 >> 3));
-                    if (btl.weapon_geo)
+                    GeoAddColor2DrawPacket(data.gameObject, (Int16)(num2 * num5 >> 3), (Int16)(num3 * num5 >> 3), (Int16)(num4 * num5 >> 3));
+                    if (data.weapon_geo)
                     {
-                        GeoAddColor2DrawPacket(btl.weapon_geo, (Int16)(num2 * num5 >> 3), (Int16)(num3 * num5 >> 3), (Int16)(num4 * num5 >> 3));
+                        GeoAddColor2DrawPacket(data.weapon_geo, (Int16)(num2 * num5 >> 3), (Int16)(num3 * num5 >> 3), (Int16)(num4 * num5 >> 3));
                     }
                 }
             }
-            else if ((FF9StateSystem.Battle.battleMapIndex == 892 || FF9StateSystem.Battle.battleMapIndex == 893 || FF9StateSystem.Battle.battleMapIndex >= 865 && FF9StateSystem.Battle.battleMapIndex <= 867) && (btl.btl_id == 32 || btl.btl_id == 64))
-            {
-                BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr(16);
-                if (btlDataPtr == null || !Status.checkCurStat(btlDataPtr, 256U))
-                {
-                }
-            }
             else
-                SetDefaultShader(btl);
+            {
+                SetDefaultShader(data);
+            }
         }
-        else if (Status.checkCurStat(btl, 1U))
+        else if (Status.checkCurStat(data, 1U))
         {
-            SetDefaultShader(btl);
-            SetStatusClut(btl, true);
+            SetDefaultShader(data);
+            SetStatusClut(data, true);
         }
         if (FF9StateSystem.Battle.isDebug && FF9StateSystem.Battle.isLevitate)
         {
-            Vector3 pos = btl.pos;
-            if (btl.bi.player != 0)
+            Vector3 pos = data.pos;
+            if (data.bi.player != 0)
             {
                 pos.y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
                 pos.y *= -1f;
             }
-            btl.pos = pos;
+            data.pos = pos;
         }
-        if (CheckStatus(btl, 2097152u))
+        if (CheckStatus(data, 2097152u))
         {
             Single y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
-            Vector3 vector = btl.base_pos;
+            Vector3 vector = data.base_pos;
             vector.y = y;
             vector.y *= -1f;
-            btl.base_pos = vector;
-            vector = btl.pos;
+            data.base_pos = vector;
+            vector = data.pos;
             vector.y = y;
             vector.y *= -1f;
-            btl.pos = vector;
+            data.pos = vector;
         }
     }
 

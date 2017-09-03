@@ -105,19 +105,23 @@ namespace FF9
             btl_cmd.KillAllCommand(ff9Battle);
         }
 
-        public static void CheckBattleMenuOff(BTL_DATA btl)
+        public static void CheckBattleMenuOff(BattleUnit btl)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            BTL_DATA btl1 = null;
-            for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+            BattleUnit btl1 = null;
+
+            foreach (BattleUnit next in ff9Battle.EnumerateBattleUnits())
             {
-                if (next.bi.slot_no == 6)
+                if (next.PlayerIndex == CharacterIndex.Eiko)
                     btl1 = next;
-                if (next.bi.player == btl.bi.player && (!Status.checkCurStat(next, 4355U) || (next.cur.hp == 0 || Status.checkCurStat(next, 256U)) && Status.checkCurStat(next, 8192U) || btl_cmd.CheckSpecificCommand(next, 61)))
+
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderStatus((BattleStatus)4355U) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, 61)))
                     return;
             }
-            if (btl1 != null && btl_cmd.CheckSpecificCommand(btl1, 58))
+
+            if (btl1 != null && btl_cmd.CheckSpecificCommand(btl1.Data, 58))
                 return;
+
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             btl_cmd.KillNormalCommand(ff9Battle);
             ff9Battle.btl_escape_key = 0;
@@ -152,7 +156,7 @@ namespace FF9
                     for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                     {
                         if (next.bi.player != 0)
-                            SavePlayerData(next, 0U);
+                            SavePlayerData(next, false);
                     }
                     break;
                 default:
@@ -161,7 +165,7 @@ namespace FF9
                     for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                     {
                         if (next.bi.player != 0)
-                            SavePlayerData(next, 0U);
+                            SavePlayerData(next, false);
                     }
                     break;
             }
@@ -241,12 +245,13 @@ namespace FF9
             btlBonus.card = (Byte)et.bonus.card;
         }
 
-        public static void SavePlayerData(BTL_DATA btl, UInt32 flag)
+        public static void SavePlayerData(BTL_DATA btl, Boolean removingUnit)
         {
+            BattleUnit unit = new BattleUnit(btl);
             PLAYER playerPtr = btl_util.getPlayerPtr(btl);
-            playerPtr.trance = !Status.checkCurStat(btl, 16384U) ? btl.trance : (Byte)0;
+            playerPtr.trance = !unit.IsUnderStatus(BattleStatus.Trance) ? btl.trance : (Byte)0;
             btl_init.CopyPoints(playerPtr.cur, btl.cur);
-            if (btl_cmd.HasSupportAbility(btl, SupportAbility2.GuardianMog) && (Int32)flag == 0)
+            if (btl_cmd.HasSupportAbility(btl, SupportAbility2.GuardianMog) && !removingUnit)
             {
                 playerPtr.status = 0;
             }

@@ -393,7 +393,11 @@ public partial class BattleHUD : UIScene
         }
         else
         {
-            if (_isTranceMenu || CurrentPlayerIndex == -1 || !btl_stat.CheckStatus(FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex], 16384U))
+            if (_isTranceMenu || CurrentPlayerIndex == -1)
+                return;
+
+            BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+            if (!unit.IsUnderAnyStatus(BattleStatus.Trance))
                 return;
 
             DisplayCommand();

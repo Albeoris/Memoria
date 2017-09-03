@@ -1,4 +1,6 @@
 ﻿using System;
+using Memoria;
+using Memoria.Data;
 using UnityEngine;
 
 namespace FF9
@@ -60,74 +62,49 @@ namespace FF9
 			}
 		}
 
-		public static UInt16 CheckCoverAbility(UInt16 tar_id)
-		{
-			BTL_DATA btl_DATA = (BTL_DATA)null;
-			BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr(tar_id);
-			if (Status.checkCurStat(btlDataPtr, 257u))
-			{
-				return 0;
-			}
-			if ((btl_util.getPlayerPtr(btlDataPtr).category & 2) != 0 && (Int32)btlDataPtr.cur.hp < (int)btlDataPtr.max.hp >> 1)
-			{
-				for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-				{
-					if ((next.sa[1] & 64u) != 0u && !Status.checkCurStat(next, 1124077827u) && next != btlDataPtr)
-					{
-						if (btl_DATA != null)
-						{
-							if (btl_DATA.cur.hp < next.cur.hp)
-							{
-								btl_DATA = next;
-							}
-						}
-						else
-						{
-							btl_DATA = next;
-						}
-					}
-				}
-			}
-			if (btl_DATA == null && Status.checkCurStat(btlDataPtr, 512u))
-			{
-				for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-				{
-					if ((next.sa[1] & 32u) != 0u && !Status.checkCurStat(next, 1124077827u) && next != btlDataPtr)
-					{
-						if (btl_DATA != null)
-						{
-							if (btl_DATA.cur.hp < next.cur.hp)
-							{
-								btl_DATA = next;
-							}
-						}
-						else
-						{
-							btl_DATA = next;
-						}
-					}
-				}
-			}
-			if (btl_DATA != null)
-			{
-				Int32 num = btl_mot.setDirection(btl_DATA);
-				btl_DATA.evt.rotBattle.eulerAngles = new Vector3(btl_DATA.evt.rotBattle.eulerAngles.x, (Single)num, btl_DATA.evt.rotBattle.eulerAngles.z);
-				btl_DATA.rot.eulerAngles = new Vector3(btl_DATA.rot.eulerAngles.x, (Single)num, btl_DATA.rot.eulerAngles.z);
-				btl_DATA.pos[0] = btlDataPtr.pos[0];
-				btl_DATA.pos[2] = btlDataPtr.pos[2];
-				BTL_DATA btl_DATA2 = btlDataPtr;
-				Int32 index2;
-				Int32 index = index2 = 2;
-				Single num2 = btl_DATA2.pos[index2];
-				btl_DATA2.pos[index] = num2 + -400f;
-				btl_mot.setMotion(btl_DATA, 15);
-				btl_DATA.bi.cover = 1;
-				return btl_DATA.btl_id;
-			}
-			return 0;
-		}
+	    public static UInt16 CheckCoverAbility(UInt16 tar_id)
+	    {
+	        BattleUnit coverBy = null;
+	        BattleUnit targetUnit = btl_scrp.FindBattleUnit(tar_id);
+	        if (targetUnit.IsUnderStatus(BattleStatus.Death | BattleStatus.Petrify))
+	            return 0;
 
-		public static void CheckReactionAbility(BTL_DATA btl, AA_DATA aa)
+	        if (targetUnit.HasCategory(CharacterCategory.Female) && targetUnit.CurrentHp < targetUnit.MaximumHp >> 1)
+	            coverBy = FindStrongestDefender(SupportAbility2.ProtectGirls, targetUnit);
+
+	        if (coverBy == null && targetUnit.IsUnderStatus(BattleStatus.LowHP))
+	            coverBy = FindStrongestDefender(SupportAbility2.Cover, targetUnit);
+
+	        if (coverBy == null)
+	            return 0;
+
+	        coverBy.FaceTheEnemy();
+	        coverBy.Data.pos[0] = targetUnit.Data.pos[0];
+	        coverBy.Data.pos[2] = targetUnit.Data.pos[2];
+
+	        targetUnit.Data.pos[2] -= 400f;
+
+	        btl_mot.setMotion(coverBy.Data, 15);
+	        coverBy.IsCovered = true;
+
+            return coverBy.Id;
+	    }
+
+	    private static BattleUnit FindStrongestDefender(SupportAbility2 ability, BattleUnit targetUnit)
+	    {
+	        BattleUnit coverBy = null;
+	        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+	        {
+	            if (!next.HasSupportAbility(ability) || next.IsUnderStatus((BattleStatus)1124077827u) || next.Id == targetUnit.Id)
+	                continue;
+
+	            if (coverBy == null || coverBy.CurrentHp < next.CurrentHp)
+	                coverBy = next;
+	        }
+	        return coverBy;
+	    }
+
+	    public static void CheckReactionAbility(BTL_DATA btl, AA_DATA aa)
 		{
 			if (!Status.checkCurStat(btl, 1107300611u))
 			{

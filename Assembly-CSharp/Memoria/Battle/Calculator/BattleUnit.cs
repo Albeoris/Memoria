@@ -20,8 +20,8 @@ namespace Memoria
 
         public UInt16 Id => Data.btl_id;
         public Boolean IsPlayer => Data.bi.player != 0;
-        public Boolean IsCovered => Data.bi.cover != 0;
         public Boolean IsSelected => Data.bi.target != 0;
+        public Boolean IsSlave => Data.bi.slave != 0;
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterIndex PlayerIndex => Data.bi.slot_no;
 
@@ -29,51 +29,63 @@ namespace Memoria
         public Byte Row => Data.bi.row;
         public Byte Position => Data.bi.line_no;
 
+        public Boolean IsCovered
+        {
+            get => Data.bi.cover != 0;
+            set => Data.bi.cover = (Byte)(value ? 1 : 0);
+        }
+
+        public Boolean IsDodged
+        {
+            get => Data.bi.dodge != 0;
+            set => Data.bi.dodge = (Byte)(value ? 1 : 0);
+        }
+
         public UInt16 MaximumHp => Data.max.hp;
         public UInt16 CurrentHp
         {
-            get { return Data.cur.hp; }
-            set { Data.cur.hp = value; }
+            get => Data.cur.hp;
+            set => Data.cur.hp = value;
         }
 
         public Int16 MaximumMp => Data.max.mp;
         public Int16 CurrentMp
         {
-            get { return Data.cur.mp; }
-            set { Data.cur.mp = value; }
+            get => Data.cur.mp;
+            set => Data.cur.mp = value;
         }
 
         public Int16 MaximumAtb => Data.max.at;
         public Int16 CurrentAtb
         {
-            get { return Data.cur.at; }
-            set { Data.cur.at = value; }
+            get => Data.cur.at;
+            set => Data.cur.at = value;
         }
 
         public Byte Strength
         {
-            get { return Data.elem.str; }
-            set { Data.elem.str = value; }
+            get => Data.elem.str;
+            set => Data.elem.str = value;
         }
 
         public Byte PhisicalDefence
         {
-            get { return Data.defence.PhisicalDefence; }
-            set { Data.defence.PhisicalDefence = value; }
+            get => Data.defence.PhisicalDefence;
+            set => Data.defence.PhisicalDefence = value;
         }
 
         public Byte PhisicalEvade => Data.defence.PhisicalEvade;
 
         public Byte Magic
         {
-            get { return Data.elem.mgc; }
-            set { Data.elem.mgc = value; }
+            get => Data.elem.mgc;
+            set => Data.elem.mgc = value;
         }
 
         public Byte MagicDefence
         {
-            get { return Data.defence.MagicalDefence; }
-            set { Data.defence.MagicalDefence = value; }
+            get => Data.defence.MagicalDefence;
+            set => Data.defence.MagicalDefence = value;
         }
 
         public Byte MagicEvade => Data.defence.MagicalEvade;
@@ -85,14 +97,14 @@ namespace Memoria
         public Boolean InTrance => Trance == Byte.MaxValue;
         public Byte Trance
         {
-            get { return Data.trance; }
-            set { Data.trance = value; }
+            get => Data.trance;
+            set => Data.trance = value;
         }
 
         public Int16 Fig
         {
-            get { return Data.fig; }
-            set { Data.fig = value; }
+            get => Data.fig;
+            set => Data.fig = value;
         }
 
         public Byte WeaponRate => Data.weapon.Ref.Rate;
@@ -135,6 +147,11 @@ namespace Memoria
         public Boolean IsUnderAnyStatus(BattleStatus status)
         {
             return ((CurrentStatus | PermanentStatus) & status) != 0;
+        }
+
+        public Boolean HasCategory(CharacterCategory category)
+        {
+            return (PlayerCategory & category) != 0;
         }
 
         public Boolean HasCategory(EnemyCategory category)
@@ -195,7 +212,7 @@ namespace Memoria
             battle.btl_bonus.member_flag &= (Byte)~(1 << Data.bi.line_no);
             btl_cmd.ClearSysPhantom(Data);
             btl_cmd.KillCommand3(Data);
-            btl_sys.SavePlayerData(Data, 1U);
+            btl_sys.SavePlayerData(Data, true);
             btl_sys.DelCharacter(Data);
             Data.SetDisappear(1);
             UIManager.Battle.DisplayParty();
@@ -209,7 +226,7 @@ namespace Memoria
 
         public void FaceAsUnit(BattleUnit unit)
         {
-            Int32 angle = btl_mot.setDirection(unit.Data);
+            Int32 angle = btl_mot.GetDirection(unit);
             Data.evt.rotBattle.eulerAngles = new Vector3(Data.evt.rotBattle.eulerAngles.x, angle, Data.evt.rotBattle.eulerAngles.z);
             Data.rot.eulerAngles = new Vector3(Data.rot.eulerAngles.x, angle, Data.rot.eulerAngles.z);
         }

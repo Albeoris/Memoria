@@ -1,5 +1,7 @@
 ﻿using System;
 using FF9;
+using Memoria;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -97,8 +99,9 @@ public class btl_vfx
 	public static void SelectCommandVfx(CMD_DATA cmd)
 	{
 		BTL_DATA regist = cmd.regist;
-		Byte cmd_no = cmd.cmd_no;
-		switch (cmd_no)
+	    BattleUnit caster = regist == null ? null : new BattleUnit(regist);
+		BattleCommandId cmd_no = (BattleCommandId)cmd.cmd_no;
+		switch ((Int32)cmd_no)
 		{
 		case 47:
 			if (cmd.tar_id < 16 && (cmd.aa.Category & 8) != 0 && cmd.info.cursor == 0)
@@ -120,9 +123,9 @@ public class btl_vfx
 			IL_4B:
 			switch (cmd_no)
 			{
-			case 1:
+			case BattleCommandId.Attack:
 				break;
-			case 2:
+			case BattleCommandId.Steal:
 			{
 				Byte serialNumber = btl_util.getSerialNumber(regist);
 				if (serialNumber != 0)
@@ -156,15 +159,15 @@ public class btl_vfx
 				}
 				return;
 			}
-			case 3:
-			case 5:
-			case 6:
+			case BattleCommandId.Jump1:
+			case BattleCommandId.Flee:
+			case BattleCommandId.FB:
 				IL_6F:
 				switch (cmd_no)
 				{
-				case 14:
+				case BattleCommandId.Item:
 					goto IL_168;
-				case 15:
+				case BattleCommandId.Throw:
 					switch (ff9item._FF9Item_Data[(Int32)cmd.sub_no].shape)
 					{
 					case 1:
@@ -199,7 +202,7 @@ public class btl_vfx
 						break;
 					}
 					return;
-				case 18:
+				case BattleCommandId.Eidolon:
 				{
 					FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 					switch (cmd.sub_no)
@@ -249,13 +252,13 @@ public class btl_vfx
 					btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
 				}
 				return;
-			case 4:
+			case BattleCommandId.Defend:
 				UIManager.Battle.SetBattleCommandTitle(cmd);
 				btl_mot.setMotion(regist, 12);
 				regist.evt.animFrame = 0;
 				btl_cmd.ExecVfxCommand(regist);
 				return;
-			case 7:
+			case BattleCommandId.Change:
 				UIManager.Battle.SetBattleCommandTitle(cmd);
 				btl_mot.setMotion(regist, 9);
 				return;
@@ -274,7 +277,7 @@ public class btl_vfx
 			btlseq.RunSequence(cmd);
 			return;
 		case 59:
-			btl_vfx.SetBattleVfx(cmd, (UInt32)((!Status.checkCurStat(regist, 16384u)) ? 489u : 257u), null);
+			btl_vfx.SetBattleVfx(cmd, !caster.IsUnderStatus(BattleStatus.Trance) ? 489u : 257u, null);
 			return;
 		default:
 			goto IL_4B;

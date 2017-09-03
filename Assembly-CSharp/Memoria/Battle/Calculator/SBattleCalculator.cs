@@ -55,14 +55,14 @@ namespace Memoria
                     {
                         btl_mot.setMotion(target, 16);
                         target.evt.animFrame = 0;
-                        Int32 num = btl_mot.setDirection(target);
+                        Int32 num = btl_mot.GetDirection(target);
                         target.evt.rotBattle.eulerAngles = new Vector3(target.evt.rotBattle.eulerAngles.x, num, target.evt.rotBattle.eulerAngles.z);
                         target.rot.eulerAngles = new Vector3(target.rot.eulerAngles.x, num, target.rot.eulerAngles.z);
                     }
                     else if (target.bi.slave == 0)
                         target.pos[2] -= -400f;
                     else
-                        btl_util.GetMasterEnemyBtlPtr().pos[2] -= -400f;
+                        btl_util.GetMasterEnemyBtlPtr().Data.pos[2] -= -400f;
                     target.bi.dodge = 1;
                     v.Command.Data.info.dodge = 1;
                 }
@@ -108,7 +108,7 @@ namespace Memoria
                         {
                             if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != 41 && v.Command.Data.cmd_no != 42) && (v.Command.Data.cmd_no != 43 && v.Command.Data.cmd_no != 44))
                                 v.Target.HpDamage = 9999;
-                            btl_para.SetDamage(target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1);
+                            btl_para.SetDamage(v.Target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1);
                             CheckDamageReaction(v, counterAtk);
                         }
                     }
@@ -124,7 +124,7 @@ namespace Memoria
                 else if ((v.Context.Flags & BattleCalcFlags.DirectHP) != 0)
                 {
                     if (CheckDamageMotion(v))
-                        btl_mot.SetDamageMotion(target);
+                        btl_mot.SetDamageMotion(v.Target);
                     CheckDamageReaction(v, counterAtk);
                 }
                 if (v.Caster.Flags != 0)
@@ -135,7 +135,7 @@ namespace Memoria
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
                             btl_para.SetRecover(caster, v.Caster.HpDamage);
                         else
-                            btl_para.SetDamage(caster, v.Caster.HpDamage, 0);
+                            btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0);
                     }
                     if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                     {
@@ -204,11 +204,15 @@ namespace Memoria
             }
             else
             {
+                v.Target.Data.trance = Byte.MaxValue;
+
                 if (FF9StateSystem.Battle.isDebug)
                     return;
 
-                v.Target.Data.trance = Byte.MaxValue;
-                btl_stat.AlterStatus(v.Target.Data, 16384U);
+                if (Configuration.Battle.NoAutoTrance)
+                    return;
+
+                v.Target.AlterStatus(BattleStatus.Trance);
             }
         }
     }

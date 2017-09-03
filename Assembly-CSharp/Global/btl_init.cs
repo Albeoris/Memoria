@@ -501,7 +501,7 @@ public class btl_init
 				btl_mot.setSlavePos(btl_DATA, ref btl_DATA.base_pos);
 				UnityEngine.Object.Destroy(btl_DATA.gameObject);
 				UnityEngine.Object.Destroy(btl_DATA.getShadow());
-				btl_DATA.gameObject = btl_util.GetMasterEnemyBtlPtr().gameObject;
+				btl_DATA.gameObject = btl_util.GetMasterEnemyBtlPtr().Data.gameObject;
 			}
 			else
 			{

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using FF9;
+using Memoria;
 
 public class btl_scrp
 {
@@ -30,29 +32,22 @@ public class btl_scrp
 		return num;
 	}
 
-	public static BTL_DATA GetBtlDataPtr(UInt16 btl_id)
+	public static BattleUnit FindBattleUnit(UInt16 btl_id)
 	{
-		for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-		{
-			if (next.btl_id == btl_id)
-			{
-				return next;
-			}
-		}
-		return (BTL_DATA)null;
+	    return FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(u => u.Id == btl_id);
 	}
 
-	public static BTL_DATA GetBtlDataPtrUnlimited(UInt16 btl_id)
+	public static BattleUnit FindBattleUnitUnlimited(UInt16 btl_id)
 	{
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		for (Int32 i = 0; i < 8; i++)
 		{
 			if (ff9Battle.btl_data[i].btl_id == btl_id)
 			{
-				return ff9Battle.btl_data[i];
+			    return new BattleUnit(ff9Battle.btl_data[i]);
 			}
 		}
-		return (BTL_DATA)null;
+		return null;
 	}
 
 	public static UInt32 GetCharacterData(BTL_DATA btl, UInt32 id)

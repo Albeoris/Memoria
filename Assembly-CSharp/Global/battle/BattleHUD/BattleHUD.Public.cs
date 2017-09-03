@@ -123,7 +123,7 @@ public partial class BattleHUD : UIScene
                 break;
         }
 
-        if (String.IsNullOrEmpty(str1))
+        if (String.IsNullOrEmpty(str1) ||( pCmd.cmd_no == 7 && pCmd.sub_no == 96))
             return;
 
         SetBattleTitle(str1, 1);
@@ -275,7 +275,7 @@ public partial class BattleHUD : UIScene
         if (!IsNativeEnableAtb())
             return false;
 
-        if (Configuration.Hacks.BattleSpeed != 2)
+        if (Configuration.Battle.Speed != 2)
             return true;
 
         if (FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0)

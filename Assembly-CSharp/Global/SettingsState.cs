@@ -318,17 +318,14 @@ public class SettingsState : MonoBehaviour
     {
         if (!IsTranceFull || !SceneDirector.IsBattleScene())
             return;
-        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+
+        foreach (BattleUnit btl in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (btl.bi.t_gauge != 0 && btl.bi.player != 0 && !Status.checkCurStat(btl, 33575235U) && btl.cmd[4] != btl_util.getCurCmdPtr() && !SFX.isRunning)
+            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderStatus((BattleStatus)33575235U) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.isRunning)
             {
-                if (!Status.checkCurStat(btl, 16384U))
-                {
-                    btl.trance = Byte.MaxValue;
-                    btl_stat.AlterStatus(btl, 16384U);
-                }
-                else
-                    btl.trance = Byte.MaxValue;
+                btl.Trance = Byte.MaxValue;
+                if (!btl.IsUnderStatus(BattleStatus.Trance))
+                    btl.AlterStatus(BattleStatus.Trance);
             }
         }
     }
@@ -338,10 +335,10 @@ public class SettingsState : MonoBehaviour
         if (!this.IsTranceFull || !SceneDirector.IsBattleScene())
             return;
 
-        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (Status.checkCurStat(btl, 16384U))
-                btl.trance = Byte.MaxValue;
+            if (unit.IsUnderStatus(BattleStatus.Trance))
+                unit.Trance = Byte.MaxValue;
         }
     }
 

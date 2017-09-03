@@ -425,7 +425,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void ProcessActiveTime(BTL_DATA btl)
     {
-        Int32 battleSpeed = Configuration.Hacks.BattleSpeed;
+        Int32 battleSpeed = Configuration.Battle.Speed;
 
         BTL_DATA source = btl;
         Boolean canContinute = false;
@@ -523,7 +523,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 }
                 else
                 {
-                    if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.GetBtlDataPtr(btl.btl_id).typeNo]) < 0)
+                    if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.FindBattleUnit(btl.btl_id).Data.typeNo]) < 0)
                         Debug.LogError("Index out of range");
 
                     UnityEngine.Random.Range(0, 4);

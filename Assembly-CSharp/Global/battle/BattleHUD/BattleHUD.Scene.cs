@@ -111,7 +111,12 @@ public partial class BattleHUD : UIScene
                     break;
                 case CommandMenu.Change:
                     _targetCursor = 0;
-                    SendCommand(ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual));
+
+                    CommandDetail command = ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual);
+                    if (_isManualTrance)
+                        command.SubId = 96; // Trance
+
+                    SendCommand(command);
                     SetIdle();
                     break;
             }

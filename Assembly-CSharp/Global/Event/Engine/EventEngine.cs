@@ -842,12 +842,14 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         Int32 index = 0;
         while (index < 8 && this._objPtrList[index] != obj)
             ++index;
+
         if (index < 8)
         {
-            BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr((UInt16)(1 << index));
+            BattleUnit btlDataPtr = btl_scrp.FindBattleUnit((UInt16)(1 << index));
             if (btlDataPtr != null)
-                num = (Int32)btl_scrp.GetCharacterData(btlDataPtr, (UInt32)kind);
+                 num = (Int32)btl_scrp.GetCharacterData(btlDataPtr.Data, (UInt32)kind);
         }
+
         return num;
     }
 
@@ -856,12 +858,15 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         Int32 index = 0;
         while (index < 8 && this._objPtrList[index] != obj)
             ++index;
+
         if (index >= 8)
             return;
-        BTL_DATA btl = kind != 32 ? btl_scrp.GetBtlDataPtr((UInt16)(1 << index)) : btl_scrp.GetBtlDataPtrUnlimited((UInt16)(1 << index));
+
+        BattleUnit btl = kind != 32 ? btl_scrp.FindBattleUnit((UInt16)(1 << index)) : btl_scrp.FindBattleUnitUnlimited((UInt16)(1 << index));
         if (btl == null)
             return;
-        btl_scrp.SetCharacterData(btl, (UInt32)kind, (UInt32)value);
+
+        btl_scrp.SetCharacterData(btl.Data, (UInt32)kind, (UInt32)value);
     }
 
     private Int32 getNumOfObjsInObjList(ObjList list)

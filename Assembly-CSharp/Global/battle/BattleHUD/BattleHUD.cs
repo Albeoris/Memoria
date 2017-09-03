@@ -40,6 +40,7 @@ public partial class BattleHUD : UIScene
     private RecycleListPopulator _itemScrollList;
     private RecycleListPopulator _abilityScrollList;
     private Boolean _isTranceMenu;
+    private Boolean _isManualTrance;
     private Boolean _needItemUpdate;
     private Boolean _currentSilenceStatus;
     private Int32 _currentMpValue;
@@ -236,6 +237,24 @@ public partial class BattleHUD : UIScene
             _isTranceMenu = false;
         }
 
+        if (Configuration.Battle.NoAutoTrance && btl.Trance == Byte.MaxValue && !btl.IsUnderAnyStatus(BattleStatus.Trance))
+        {
+            if (!_isManualTrance)
+            {
+                _commandPanel.Change.SetLabelText(Localization.Get("Trance"));
+                _commandPanel.Change.SetLabelColor(FF9TextTool.Yellow);
+                _commandPanel.Change.ButtonGroup.Help.Text = "Activates the trance mode.";
+                _isManualTrance = true;
+            }
+        }
+        else
+        {
+            _commandPanel.Change.SetLabelText(FF9TextTool.CommandName(7));
+            _commandPanel.Change.SetLabelColor(FF9TextTool.White);
+            _commandPanel.Change.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(7);
+            _isManualTrance = false;
+        }
+
         String command1Name = FF9TextTool.CommandName((Byte)command1);
         String command2Name = FF9TextTool.CommandName((Byte)command2);
         Boolean flag1 = command1 != 0;
@@ -293,15 +312,12 @@ public partial class BattleHUD : UIScene
         _commandPanel.Attack.SetLabelText(FF9TextTool.CommandName(1));
         _commandPanel.Defend.SetLabelText(FF9TextTool.CommandName(4));
         _commandPanel.Item.SetLabelText(FF9TextTool.CommandName(14));
-        _commandPanel.Change.SetLabelText(FF9TextTool.CommandName(7));
         _commandPanel.Attack.ButtonGroup.Help.TextKey = String.Empty;
         _commandPanel.Attack.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(1);
         _commandPanel.Defend.ButtonGroup.Help.TextKey = String.Empty;
         _commandPanel.Defend.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(4);
         _commandPanel.Item.ButtonGroup.Help.TextKey = String.Empty;
         _commandPanel.Item.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(14);
-        _commandPanel.Change.ButtonGroup.Help.TextKey = String.Empty;
-        _commandPanel.Change.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(7);
         if (ButtonGroupState.ActiveGroup != CommandGroupButton)
             return;
 

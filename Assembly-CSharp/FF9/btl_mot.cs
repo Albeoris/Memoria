@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 using UnityEngine;
 
 namespace FF9
@@ -658,7 +659,12 @@ namespace FF9
 			btl_mot.mot = array;
 		}
 
-		public static void setMotion(BTL_DATA btl, Byte index)
+	    public static void setMotion(BattleUnit btl, Byte index)
+        {
+            btl.Data.currentAnimationName = btl.Data.mot[(Int32)index];
+        }
+
+        public static void setMotion(BTL_DATA btl, Byte index)
 		{
 			btl.currentAnimationName = btl.mot[(Int32)index];
 		}
@@ -708,12 +714,17 @@ namespace FF9
 			}
 		}
 
-		public static Int32 setDirection(BTL_DATA btl)
+		public static Int32 GetDirection(BTL_DATA btl)
 		{
-			return (Int32)((btl.bi.player == 0) ? 0 : 180);
+			return btl.bi.player == 0 ? 0 : 180;
 		}
 
-		public static void setSlavePos(BTL_DATA btl, ref Vector3 pos)
+	    public static Int32 GetDirection(BattleUnit btl)
+	    {
+	        return btl.IsPlayer ? 180 : 0;
+	    }
+
+	    public static void setSlavePos(BTL_DATA btl, ref Vector3 pos)
 		{
 			pos[0] = btl.gameObject.transform.GetChildByName("bone" + btl.tar_bone.ToString("D3")).position.x;
 			pos[1] = 0f;
@@ -966,42 +977,33 @@ namespace FF9
 			return true;
 		}
 
-		public static void SetDamageMotion(BTL_DATA btl)
+		public static void SetDamageMotion(BattleUnit btl)
 		{
-			if ((btl.fig_info & 4) != 0)
-			{
-				BTL_DATA btl_DATA = btl;
-				Int32 index2;
-				Int32 index = index2 = 2;
-				Single num = btl_DATA.pos[index2];
-				btl_DATA.pos[index] = num + (Single)(((btl.evt.rot[1] == 0) ? 400 : -400) >> 1);
-			}
-			if (btl.bi.player != 0)
+			if ((btl.Data.fig_info & 4) != 0)
+			    btl.Data.pos[2] += (btl.Data.evt.rot[1] == 0 ? 400 : -400) >> 1;
+
+            if (btl.IsPlayer)
 			{
 				if ((btl_util.getCurCmdPtr().aa.Type & 129) == 129)
-				{
 					btl_mot.setMotion(btl, 3);
-				}
 				else
-				{
 					btl_mot.setMotion(btl, 2);
-				}
 			}
-			else if (btl.cur.hp == 0 && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
+			else if (btl.CurrentHp == 0 && btl.Enemy.Data.info.die_dmg != 0)
 			{
 				btl_mot.setMotion(btl, 3);
-				btl_util.SetEnemyDieSound(btl, btl_util.getEnemyTypePtr(btl).die_snd_no);
+				btl_util.SetEnemyDieSound(btl.Data, btl.EnemyType.die_snd_no);
 			}
 			else
 			{
-				if (btl.bi.slave != 0)
+				if (btl.IsSlave)
 				{
 					btl = btl_util.GetMasterEnemyBtlPtr();
 				}
-				btl_mot.setMotion(btl, (Byte)(2 + btl.bi.def_idle));
+				btl_mot.setMotion(btl, (Byte)(2 + btl.Data.bi.def_idle));
 			}
-			btl.bi.dmg_mot_f = 1;
-			btl.evt.animFrame = 0;
+			btl.Data.bi.dmg_mot_f = 1;
+			btl.Data.evt.animFrame = 0;
 		}
 
 		public static Boolean ControlDamageMotion(CMD_DATA cmd)

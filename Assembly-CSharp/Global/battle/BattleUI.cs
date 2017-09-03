@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using Memoria;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -532,37 +534,37 @@ public class BattleUI : MonoBehaviour
 			GUILayout.Height(screenRect.height)
 		});
 		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);
-		Boolean flag = GUILayout.Toggle(FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID], "Trance", new GUILayoutOption[0]);
-		if (flag != FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID])
+		Boolean isTrance = GUILayout.Toggle(FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID], "Trance", new GUILayoutOption[0]);
+		if (isTrance != FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID])
 		{
-			BTL_DATA btlDataPtr = btl_scrp.GetBtlDataPtr((UInt16)(1 << FF9StateSystem.Battle.selectCharPosID));
-			FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID] = flag;
-			if (flag)
+		    BattleUnit character = btl_scrp.FindBattleUnit((UInt16)(1 << FF9StateSystem.Battle.selectCharPosID));
+			FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID] = isTrance;
+			if (isTrance)
 			{
-				btlDataPtr.trance = Byte.MaxValue;
-				btl_stat.AlterStatus(btlDataPtr, 16384u);
+				character.Trance = Byte.MaxValue;
+			    character.AlterStatus(BattleStatus.Trance);
 			}
 			else
 			{
-				btlDataPtr.trance = 0;
-				btl_stat.RemoveStatus(btlDataPtr, 16384u);
+				character.Trance = 0;
+			    character.RemoveStatus(BattleStatus.Trance);
 			}
 		}
 		if (GUILayout.Button("Attack", new GUILayoutOption[0]))
 		{
-			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 0, 16, flag);
+			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 0, 16, isTrance);
 		}
 		else if (GUILayout.Button("Skill1", new GUILayoutOption[0]))
 		{
-			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 1, 16, flag);
+			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 1, 16, isTrance);
 		}
 		else if (GUILayout.Button("Skill2", new GUILayoutOption[0]))
 		{
-			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 2, 16, flag);
+			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 2, 16, isTrance);
 		}
 		else if (GUILayout.Button("Item", new GUILayoutOption[0]))
 		{
-			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 3, 16, flag);
+			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 3, 16, isTrance);
 		}
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);

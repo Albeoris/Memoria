@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -230,7 +231,7 @@ public class btl2d
 		{
 			if ((fig_info & 256) != 0)
 			{
-				btl_para.SetTroubleDamage(pBtl);
+			    btl_para.SetTroubleDamage(new BattleUnit(pBtl));
 			}
 			if ((fig_info & 128) != 0)
 			{

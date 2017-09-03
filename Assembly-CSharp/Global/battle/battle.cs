@@ -4,6 +4,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using UnityEngine;
 using Memoria;
+using Memoria.Data;
 
 // ReSharper disable UnusedParameter.Global
 // ReSharper disable UnusedMember.Global
@@ -195,7 +196,7 @@ public class battle
             btl_para.CheckPointData(next);
 
             // ============ Warning ============
-            if (Configuration.Hacks.BattleSpeed == 0 || next.sel_mode != 0 || next.sel_menu != 0 || next.cur.hp == 0 || next.bi.atb == 0)
+            if (Configuration.Battle.Speed == 0 || next.sel_mode != 0 || next.sel_menu != 0 || next.cur.hp == 0 || next.bi.atb == 0)
                 btl_stat.CheckStatusLoop(next, false);
             // =================================
         }
@@ -214,31 +215,32 @@ public class battle
     {
         //uint id = sys.id;
         Boolean flag = true;
-        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (next.bi.disappear == 0)
+            BTL_DATA data = next.Data;
+            if (data.bi.disappear == 0)
             {
-                btlseq.DispCharacter(next);
+                btlseq.DispCharacter(data);
                 if (btlsys.btl_phase == 3)
                 {
-                    next.bi.stop_anim = 0;
-                    if (next.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(next))
+                    data.bi.stop_anim = 0;
+                    if (data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data))
                     {
-                        if (!Status.checkCurStat(next, 256U))
-                            btl_mot.setMotion(next, next.bi.def_idle);
-                        next.evt.animFrame = 0;
+                        if (!next.IsUnderStatus(BattleStatus.Death))
+                            btl_mot.setMotion(next, data.bi.def_idle);
+                        data.evt.animFrame = 0;
                     }
-                    if (!Status.checkCurStat(next, 1U) && !btl_mot.checkMotion(next, next.bi.def_idle) && !btl_mot.checkMotion(next, 4))
+                    if (!next.IsUnderStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, 4))
                         flag = false;
                 }
-                else if (btlsys.btl_phase == 6 && next.bi.player != 0 && (!Status.checkCurStat(next, 4355U) && btlsys.btl_scene.Info.WinPose != 0) && (btl_util.getPlayerPtr(next).info.win_pose != 0 && next.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(next)))
+                else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus((BattleStatus)4355U) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
                 {
                     btl_mot.setMotion(next, 19);
-                    next.evt.animFrame = 0;
+                    data.evt.animFrame = 0;
                 }
                 btl_stat.SetStatusVfx(next);
             }
-            btl_mot.DieSequence(next);
+            btl_mot.DieSequence(data);
         }
         if (btlsys.btl_phase == 7 && btlsys.btl_scene.Info.NoGameOver == 0 && !btl_util.ManageBattleSong(sys, 30U, 6U))
             flag = false;
@@ -252,22 +254,24 @@ public class battle
         UInt32 num1 = 1;
         if (SFX.isRunning || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
             num1 = 0U;
-        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+
+        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (next.bi.disappear == 0)
+            BTL_DATA data = next.Data;
+            if (data.bi.disappear == 0)
             {
-                btlseq.DispCharacter(next);
+                btlseq.DispCharacter(data);
                 switch (btlsys.btl_seq)
                 {
                     case 0:
-                        btl_para.CheckPointData(next);
-                        if (next.bi.player == 0 && !Status.checkCurStat(next, 4099U) || next.bi.player != 0 && Status.checkCurStat(next, 256U) && !btl_mot.checkMotion(next, 4))
+                        btl_para.CheckPointData(data);
+                        if ((!next.IsPlayer && !next.IsUnderStatus((BattleStatus)4099U)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, 4))
                         {
                             num1 = 0U;
                         }
                         break;
                     case 1:
-                        if (next.bi.player != 0 && !btl_mot.checkMotion(next, 4) && !Status.checkCurStat(next, 4099U))
+                        if (next.IsPlayer && !btl_mot.checkMotion(data, 4) && !next.IsUnderStatus((BattleStatus)4099U))
                         {
                             num1 = 0U;
                         }
@@ -275,49 +279,48 @@ public class battle
                     case 2:
                         if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && (!btl_cmd.CheckSpecificCommand2(59) && !btl_cmd.CheckSpecificCommand2(60)) && (!btl_cmd.CheckSpecificCommand2(61) && !btl_cmd.CheckSpecificCommand2(62)))
                             num1 = 1U;
-                        btl_para.CheckPointData(next);
-                        if (next.bi.player != 0)
+                        btl_para.CheckPointData(data);
+                        if (next.IsPlayer)
                         {
-                            /*int num2 = (int)*/
-                            btl_stat.RemoveStatuses(next, 33592320U);
+                            next.TryRemoveStatuses((BattleStatus)33592320U);
                         }
                         if (btlsys.cmd_mode != 0)
                             num1 = 0U;
-                        if (Status.checkCurStat(next, 256U))
+                        if (next.IsUnderStatus(BattleStatus.Death))
                         {
-                            if (next.die_seq == 0 && !btl_cmd.CheckUsingCommand(next.cmd[2]))
-                                btl_cmd.SetCommand(next.cmd[2], 60U, 0U, next.btl_id, 0U);
-                            if (next.bi.player != 0 && next.die_seq != 6 || next.bi.player == 0 && next.die_seq != 6)
+                            if (data.die_seq == 0 && !btl_cmd.CheckUsingCommand(data.cmd[2]))
+                                btl_cmd.SetCommand(data.cmd[2], 60U, 0U, data.btl_id, 0U);
+                            if (next.IsPlayer && data.die_seq != 6 || !next.IsPlayer && data.die_seq != 6)
                             {
                                 num1 = 0U;
                             }
                             break;
                         }
-                        if (!Status.checkCurStat(next, 33558531U) && !btl_mot.checkMotion(next, 0) && !btl_mot.checkMotion(next, 1))
+                        if (!Status.checkCurStat(data, 33558531U) && !btl_mot.checkMotion(data, 0) && !btl_mot.checkMotion(data, 1))
                         {
                             num1 = 0U;
                         }
                         break;
                     case 3:
                         btl_cmd.KillAllCommand(btlsys);
-                        if (Status.checkCurStat(next, 256U))
+                        if (next.IsUnderStatus(BattleStatus.Death))
                         {
-                            if (next.die_seq == 0)
-                                next.die_seq = 1;
-                            if (!btl_mot.checkMotion(next, 4) || btl_cmd.CheckSpecificCommand(next, 61))
+                            if (data.die_seq == 0)
+                                data.die_seq = 1;
+                            if (!btl_mot.checkMotion(data, 4) || btl_cmd.CheckSpecificCommand(data, 61))
                             {
                                 num1 = 0U;
                             }
                             break;
                         }
-                        if (next.bi.player != 0 && !Status.checkCurStat(next, 1107431747U))
+                        if (next.IsPlayer && !Status.checkCurStat(data, 1107431747U))
                         {
                             FF9StateSystem.Battle.isFade = true;
-                            next.pos[2] -= 100f;
-                            btl_util.SetFadeRate(next, btlsys.btl_escape_fade);
+                            data.pos[2] -= 100f;
+                            btl_util.SetFadeRate(data, btlsys.btl_escape_fade);
                             if (btlsys.btl_escape_fade <= 0)
                             {
-                                next.SetDisappear(1);
+                                data.SetDisappear(1);
                                 break;
                             }
                             num1 = 0U;
@@ -333,7 +336,7 @@ public class battle
                 }
                 btl_stat.SetStatusVfx(next);
             }
-            btl_mot.DieSequence(next);
+            btl_mot.DieSequence(data);
         }
         if (btlsys.btl_seq == 3 && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
             btlsys.btl_escape_fade -= 2;
@@ -359,7 +362,7 @@ public class battle
                                     {
                                         if (next.cur.hp > 0)
                                         {
-                                            Int32 num3 = btl_mot.setDirection(next);
+                                            Int32 num3 = btl_mot.GetDirection(next);
                                             next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num3, next.evt.rotBattle.eulerAngles.z);
                                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
                                             next.bi.def_idle = !btl_stat.CheckStatus(next, 197122U) ? (Byte)0 : (Byte)1;
@@ -402,7 +405,7 @@ public class battle
                         btl_cmd.InitCommand(next);
                         if (next.bi.player == 0)
                         {
-                            Int32 num2 = btl_mot.setDirection(next);
+                            Int32 num2 = btl_mot.GetDirection(next);
                             next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num2, next.evt.rotBattle.eulerAngles.z);
                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
                         }
@@ -460,15 +463,17 @@ public class battle
             btlsys.btl_load_status |= 32;
         else if ((btlsys.attr & 4) != 0 && (btlsys.btl_load_status & 64) == 0 && (btlsys.btl_load_status & 16) != 0)
             btlsys.btl_load_status |= 64;
-        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+
+        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (next.bi.disappear == 0)
+            BTL_DATA data = next.Data;
+            if (data.bi.disappear == 0)
             {
-                btlseq.DispCharacter(next);
-                if (next.bi.player != 0)
-                    btl_util.SetFadeRate(next, btlsys.player_load_fade);
-                else if (next.bi.slave == 0)
-                    btl_util.SetFadeRate(next, btlsys.enemy_load_fade);
+                btlseq.DispCharacter(data);
+                if (next.IsPlayer)
+                    btl_util.SetFadeRate(data, btlsys.player_load_fade);
+                else if (!next.IsSlave)
+                    btl_util.SetFadeRate(data, btlsys.enemy_load_fade);
                 btl_stat.SetStatusVfx(next);
             }
         }
