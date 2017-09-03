@@ -221,20 +221,21 @@ public class FieldMapActorController : HonoBehavior
 		this.isRunning = false;
 		Single num = this.radius * this.radius * 9f * 9f;
 		Boolean flag = PersistenSingleton<EventEngine>.Instance.GetDashInh() == 1;
-		if (this.isPlayer && ((UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) ||  this.totalPathLengthSq > num) && !flag)
-		{
-			this.isRunning = true;
-			Int32 num2 = 2;
-			for (Int32 i = 0; i < num2; i++)
-			{
-				this.UpdateMovement();
-			}
-		}
-		else
-		{
-			this.UpdateMovement();
-		}
-		if (this.isPlayer && PersistenSingleton<EventEngine>.Instance.GetUserControl())
+
+	    if (this.isPlayer && ((UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) || !analogControlEnabled && VirtualAnalog.GetMagnitudeRatio() > 0.95f || this.totalPathLengthSq > num) && !flag)
+	    {
+	        this.isRunning = true;
+	        Int32 num2 = 2;
+	        for (Int32 i = 0; i < num2; i++)
+	        {
+	            this.UpdateMovement();
+	        }
+	    }
+	    else
+	    {
+	        this.UpdateMovement();
+	    }
+	    if (this.isPlayer && PersistenSingleton<EventEngine>.Instance.GetUserControl())
 		{
 			if (this.isRunning)
 			{
