@@ -1075,7 +1075,7 @@ public class btl_cmd
             }
 
             // Freya's jump
-            if (caster.IsUnderStatus(BattleStatus.Trance) && commandId != BattleCommandId.Jump1 && commandId != BattleCommandId.Jump3)
+            if (IsNeedToDecreaseTrance(caster, commandId, cmd))
             {
                 Byte tranceDelta = (Byte)((300 - caster.Level) / caster.Will * 10);
 
@@ -1153,6 +1153,20 @@ public class btl_cmd
             HonoluluBattleMain.playerEnterCommand = true;
     }
 
+    private static Boolean IsNeedToDecreaseTrance(BattleUnit caster, BattleCommandId commandId, CMD_DATA cmd)
+    {
+        if (!caster.IsUnderStatus(BattleStatus.Trance))
+            return false;
+
+        if (commandId == BattleCommandId.Jump1 || commandId == BattleCommandId.Jump3)
+            return false;
+
+        if (commandId == BattleCommandId.Change && cmd.sub_no == 96)
+            return false;
+
+        return true;
+    }
+
     private static void ResetCurrentBattlerActiveTime(BattleUnit btl1)
     {
         if (Configuration.Fixes.IsKeepRestTimeInBattle && btl1.MaximumAtb > 0)
@@ -1191,35 +1205,68 @@ public class btl_cmd
             }
             else if (cmd.cmd_no == 7)
             {
-                if (btl_mot.checkMotion(btlData, 9))
+                if (Configuration.Battle.NoAutoTrance && cmd.sub_no == 96)
                 {
-                    if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData, btlData.currentAnimationName))
-                        return;
-                    btl_mot.setMotion(btlData, (Byte)(29U + btlData.bi.row));
-                    btlData.evt.animFrame = 0;
-                }
-                if (btl_mot.checkMotion(btlData, (Byte)(29U + btlData.bi.row)))
-                {
-                    UInt16 numFrames = GeoAnim.geoAnimGetNumFrames(btlData);
-                    UInt16 num1 = btlData.evt.animFrame;
-                    if (num1 < numFrames)
+                    if (btl_mot.checkMotion(btlData, 9))
                     {
-                        UInt16 num2 = (UInt16)(num1 + 1U);
-                        btlData.pos[2] = btlData.bi.row == 0 ? 400 * num2 / numFrames - 1960 : -400 * num2 / numFrames - 1560;
-                        btlData.gameObject.transform.localPosition = btlData.pos;
+                        if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData, btlData.currentAnimationName))
+                            return;
+                        btl_mot.setMotion(btlData, (Byte)(29U + btlData.bi.row));
+                        btlData.evt.animFrame = 0;
+                    }
+                    if (btl_mot.checkMotion(btlData, (Byte)(29U + btlData.bi.row)))
+                    {
+                        UInt16 numFrames = GeoAnim.geoAnimGetNumFrames(btlData);
+                        UInt16 num1 = btlData.evt.animFrame;
+                        if (num1 < numFrames)
+                        {
+                            return;
+                        }
+                        ExecVfxCommand(btlData);
+                        btl_mot.setMotion(btlData, 32);
+                        btlData.evt.animFrame = 0;
                         return;
                     }
-                    ExecVfxCommand(btlData);
-                    btl_mot.setMotion(btlData, 32);
-                    btlData.evt.animFrame = 0;
-                    return;
+                    if (btl_mot.checkMotion(btlData, 32))
+                    {
+                        if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData))
+                            return;
+                        btl_mot.setMotion(btlData, 0);
+                        btlData.evt.animFrame = 0;
+                    }
                 }
-                if (btl_mot.checkMotion(btlData, 32))
+                else
                 {
-                    if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData))
+                    if (btl_mot.checkMotion(btlData, 9))
+                    {
+                        if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData, btlData.currentAnimationName))
+                            return;
+                        btl_mot.setMotion(btlData, (Byte)(29U + btlData.bi.row));
+                        btlData.evt.animFrame = 0;
+                    }
+                    if (btl_mot.checkMotion(btlData, (Byte)(29U + btlData.bi.row)))
+                    {
+                        UInt16 numFrames = GeoAnim.geoAnimGetNumFrames(btlData);
+                        UInt16 num1 = btlData.evt.animFrame;
+                        if (num1 < numFrames)
+                        {
+                            UInt16 num2 = (UInt16)(num1 + 1U);
+                            btlData.pos[2] = btlData.bi.row == 0 ? 400 * num2 / numFrames - 1960 : -400 * num2 / numFrames - 1560;
+                            btlData.gameObject.transform.localPosition = btlData.pos;
+                            return;
+                        }
+                        ExecVfxCommand(btlData);
+                        btl_mot.setMotion(btlData, 32);
+                        btlData.evt.animFrame = 0;
                         return;
-                    btl_mot.setMotion(btlData, 0);
-                    btlData.evt.animFrame = 0;
+                    }
+                    if (btl_mot.checkMotion(btlData, 32))
+                    {
+                        if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData))
+                            return;
+                        btl_mot.setMotion(btlData, 0);
+                        btlData.evt.animFrame = 0;
+                    }
                 }
             }
             BattleAchievement.UpdateCommandAchievement(cmd);

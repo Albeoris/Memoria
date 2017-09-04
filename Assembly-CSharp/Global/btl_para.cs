@@ -266,12 +266,9 @@ public class btl_para
 
     public static void SwitchPlayerRow(BTL_DATA btl)
     {
-        Int32 num = (btl.bi.row == 0) ? 400 : -400;
-        btl.pos[2] = btl.base_pos[2] + num;
-        Int32 index;
-        Int32 expr_44 = index = 2;
-        Single num2 = btl.base_pos[index];
-        btl.base_pos[expr_44] = num2 + num;
-        btl.bi.row = (Byte)((btl.bi.row == 0) ? 1 : 0);
+        Int32 delta = (btl.bi.row == 0) ? 400 : -400;
+        btl.pos[2] = btl.base_pos[2] + delta;
+        btl.base_pos[2] += delta;
+        btl.bi.row = (Byte)(btl.bi.row == 0 ? 1 : 0);
     }
 }
