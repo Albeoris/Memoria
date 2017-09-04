@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Memoria;
+using Memoria.Prime;
 using Memoria.Assets;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -54,7 +55,16 @@ public partial class EventEngine
                 Int32 sid1 = this.gArgFlag;
                 Int32 uid1 = this.geti();
                 if (sid1 >= 251 && sid1 < (Int32)Byte.MaxValue)
+                {
                     sid1 = (Int32)this._context.partyUID[sid1 - 251];
+
+                    if (sid1 == Byte.MaxValue)
+                    {
+                        Log.Warning($"[EventEnginge] Failed to perform an event code [NEW3] because there is no party member with index {this.gArgFlag}");
+                        return 0;
+                    }
+                }
+
                 Actor actor2 = new Actor(sid1, uid1, EventEngine.sizeOfActor);
                 if (this.gMode == 3)
                     Singleton<WMWorld>.Instance.addWMActorOnly((Actor)actor2);
