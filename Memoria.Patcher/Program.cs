@@ -80,6 +80,12 @@ namespace Memoria.Patcher
             String targetDirectory = Path.Combine(gameLocation.RootDirectory, "Debugger");
             Directory.CreateDirectory(targetDirectory);
 
+            if (FsHelper.IsSamePaths(sourceDirectory, targetDirectory))
+            {
+                Console.WriteLine("Copying skipped because source and target folders have a same path.");
+                return;
+            }
+
             foreach (String sourcePath in Directory.EnumerateFileSystemEntries(sourceDirectory, "*", SearchOption.AllDirectories))
             {
                 if (!sourcePath.StartsWith(sourceDirectory))
@@ -153,6 +159,12 @@ namespace Memoria.Patcher
 
         private static void CopyFiles(String targetDirectory, String sourceDirectory, String extensions)
         {
+            if (FsHelper.IsSamePaths(sourceDirectory, targetDirectory))
+            {
+                Console.WriteLine("Copying skipped because source and target folders have a same path.");
+                return;
+            }
+
             foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, extensions, SearchOption.AllDirectories))
             {
                 DateTime sourceFileTime = File.GetCreationTimeUtc(sourceFile);

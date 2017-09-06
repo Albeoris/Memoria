@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FSHelper.cs" />
     <Compile Include="GameInfo\GameLocationSteamRegistryProvider.cs" />
     <Compile Include="GameInfo\GameLocationInfo.cs" />
     <Compile Include="Program.cs" />
