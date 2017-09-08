@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.TargetCommand.TryMagicHit())
                 return;
 
-            _v.SetCommandPower();
+            _v.SetCommandAttack();
             _v.CasterCommand.BonusElement();
             if (_v.CanAttackMagic())
                 _v.TargetCommand.CalcProportionDamage();

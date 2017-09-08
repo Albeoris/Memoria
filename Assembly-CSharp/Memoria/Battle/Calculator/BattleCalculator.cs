@@ -395,6 +395,11 @@ namespace Memoria
             Context.AttackPower = Command.Power;
         }
 
+        public void SetCommandAttack()
+        {
+            Context.Attack = Command.Power;
+        }
+
         public void PenaltyCommandDividedAttack()
         {
             if (Command.IsDevided)

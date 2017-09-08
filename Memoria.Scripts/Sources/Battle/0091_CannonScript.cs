@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.TargetCommand.TryMagicHit())
                 return;
 
-            _v.Context.Attack = _v.Command.Power;
+            _v.SetCommandAttack();
             _v.CasterCommand.BonusElement();
             if (!_v.CanAttackMagic())
                 return;

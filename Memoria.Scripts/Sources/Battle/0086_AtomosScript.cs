@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CheckUnsafetyOrMiss())
                 return;
 
-            _v.SetCommandPower();
+            _v.SetCommandAttack();
             _v.CasterCommand.BonusElement();
             if (!_v.CanAttackMagic())
                 return;
