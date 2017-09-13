@@ -199,9 +199,13 @@ namespace Memoria.Patcher
                 if (!File.Exists(backupPath))
                     File.Copy(assemblyPath, backupPath);
 
-                String modPath = Path.Combine(directory, "Memoria.Prime.dll");
-                File.Copy("Memoria.Prime.dll", modPath, true);
-                File.Copy("Memoria.Prime.dll.mdb", modPath + ".mdb", true);
+                String primeDllPath = Path.Combine(directory, "Memoria.Prime.dll");
+                File.Copy("Memoria.Prime.dll", primeDllPath, true);
+                File.Copy("Memoria.Prime.dll.mdb", primeDllPath + ".mdb", true);
+
+                String unityUiDllPath = Path.Combine(directory, "UnityEngine.UI.dll");
+                File.Copy("UnityEngine.UI.dll", unityUiDllPath, true);
+                File.Copy("UnityEngine.UI.dll.mdb", unityUiDllPath + ".mdb", true);
 
                 File.Copy("Assembly-CSharp.dll", assemblyPath, true);
                 File.Copy("Assembly-CSharp.dll.mdb", assemblyPath + ".mdb", true);

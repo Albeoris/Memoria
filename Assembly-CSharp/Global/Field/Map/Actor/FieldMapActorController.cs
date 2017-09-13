@@ -664,33 +664,31 @@ public class FieldMapActorController : HonoBehavior
 		{
 			return;
 		}
+
         //This flag was set to false, causing the game to register digital movement unless on android.
         Boolean flag = false;
-        if (analogControlEnabled)
-        {
-            flag = true;
-        }
 		Vector2 vector = Vector2.zero;
-		if (FF9StateSystem.MobilePlatform)
+		if (FF9StateSystem.MobilePlatform && VirtualAnalog.HasInput())
 		{
-			if (VirtualAnalog.HasInput())
-			{
-				vector = VirtualAnalog.GetAnalogValue();
-				if (Mathf.Abs(vector.x) >= 0.1f || Mathf.Abs(vector.y) >= 0.1f)
-				{
-					flag = true;
-				}
-			}
-			else
-			{
-				vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
-			}
-		}
-		else
-		{
-			vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
-		}
-        Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0f;
+		    vector = VirtualAnalog.GetAnalogValue();
+		    flag = true;
+        }
+		else if (analogControlEnabled)
+	    {
+	        vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
+	        flag = true;
+	    }
+
+	    if (flag)
+	    {
+	        flag = (Mathf.Abs(vector.x) >= 0.1f || Mathf.Abs(vector.y) >= 0.1f);
+	    }
+	    else
+	    {
+	        vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
+        }
+
+	    Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0f;
         Boolean flag3 = UIManager.Input.GetKey(Control.Down) || vector.y < 0f;
         Boolean flag4 = UIManager.Input.GetKey(Control.Left) || vector.x < 0f;
         Boolean flag5 = UIManager.Input.GetKey(Control.Right) || vector.x > 0f;

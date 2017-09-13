@@ -468,8 +468,7 @@ namespace SimpleJSON
 									text = String.Empty;
 									goto IL_467;
 								}
-								break;
-							case '}':
+                            case '}':
 								break;
 							default:
 								goto IL_88;
