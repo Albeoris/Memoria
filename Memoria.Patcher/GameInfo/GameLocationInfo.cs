@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Memoria.Prime.Exceptions;
 
 namespace Memoria.Patcher
 {
@@ -28,7 +27,8 @@ namespace Memoria.Patcher
 
         public void Validate()
         {
-            Exceptions.CheckFileNotFoundException(LauncherPath);
+            if (!File.Exists(LauncherPath))
+                throw new FileNotFoundException(LauncherPath, LauncherPath);
         }
     }
 }

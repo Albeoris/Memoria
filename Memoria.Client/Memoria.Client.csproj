@@ -43,6 +43,7 @@
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>CS0067</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -98,10 +99,6 @@
     <Reference Include="XInputDotNetPure">
       <HintPath>..\References\XInputDotNetPure.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +210,10 @@
     <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
       <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
       <Name>Memoria.Prime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
+      <Project>{cbc800df-4de1-4cbc-9c97-98cbb375204f}</Project>
+      <Name>UnityEngine.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

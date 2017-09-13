@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp\Assembly-CSharp.csproj", "{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Prime", "Memoria.Prime\Memoria.Prime.csproj", "{110F557E-ABFF-44C5-886A-C7C7F0614558}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F} = {CBC800DF-4DE1-4CBC-9C97-98CBB375204F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Compiler", "Memoria.Compiler\Memoria.Compiler.csproj", "{0BD08E14-E15A-4762-A4BE-F988A5013FF6}"
 EndProject
@@ -34,14 +37,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", 
 	ProjectSection(SolutionItems) = preProject
 		References\Assembly-CSharp-firstpass.dll = References\Assembly-CSharp-firstpass.dll
 		References\ICSharpCode.SharpZipLib.dll = References\ICSharpCode.SharpZipLib.dll
-		References\MemoriaPostBuild.cmd = References\MemoriaPostBuild.cmd
+		References\Memoria.MSBuild.dll = References\Memoria.MSBuild.dll
+		References\Microsoft.Build.Framework.dll = References\Microsoft.Build.Framework.dll
+		References\Microsoft.Build.Utilities.v4.0.dll = References\Microsoft.Build.Utilities.v4.0.dll
 		References\Mono.Security.dll = References\Mono.Security.dll
 		References\mscorlib.dll = References\mscorlib.dll
+		References\pdb2mdb.exe = References\pdb2mdb.exe
 		References\System.Core.dll = References\System.Core.dll
 		References\System.dll = References\System.dll
 		References\UnityEngine.dll = References\UnityEngine.dll
 		References\UnityEngine.Networking.dll = References\UnityEngine.Networking.dll
-		References\UnityEngine.UI.dll = References\UnityEngine.UI.dll
 		References\XInputDotNetPure.dll = References\XInputDotNetPure.dll
 	EndProjectSection
 EndProject
@@ -51,11 +56,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
+		UnityEngine.UI_LICENSE = UnityEngine.UI_LICENSE
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Memoria.Interaction", "Memoria.Interaction\Memoria.Interaction.vcxproj", "{C0C25502-F265-4812-93C6-1360857081EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Client", "Memoria.Client\Memoria.Client.csproj", "{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.UI", "UnityEngine.UI\UnityEngine.UI.csproj", "{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.MSBuild", "Memoria.MSBuild\Memoria.MSBuild.csproj", "{190517C9-78DA-45DF-972D-8A42E80E156C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -181,8 +191,33 @@ Global
 		{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}.Release|x64.Build.0 = Release|Any CPU
 		{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}.Release|x86.ActiveCfg = Release|Any CPU
 		{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}.Release|x86.Build.0 = Release|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Debug|x64.Build.0 = Debug|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Release|x64.ActiveCfg = Release|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Release|x64.Build.0 = Release|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}.Release|x86.Build.0 = Release|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Debug|x64.Build.0 = Debug|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Debug|x86.Build.0 = Debug|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Release|x64.ActiveCfg = Release|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Release|x64.Build.0 = Release|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Release|x86.ActiveCfg = Release|Any CPU
+		{190517C9-78DA-45DF-972D-8A42E80E156C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AAE047D9-3570-4935-A6CE-CD62DAC03763}
 	EndGlobalSection
 EndGlobal

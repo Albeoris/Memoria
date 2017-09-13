@@ -481,7 +481,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 			{
 				return "Horizontal iOS";
 			}
-			return "Horizontal NonMobile";
+
+		    return "Horizontal";
+
+            // I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
+            // return "Horizontal NonMobile";
 		}
 	}
 
@@ -505,7 +509,11 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 			{
 				return "Vertical iOS";
 			}
-			return "Vertical NonMobile";
+
+		    return "Vertical";
+
+		    // I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
+		    // return "Vertical NonMobile";
 		}
 	}
 
@@ -1249,26 +1257,28 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		return VirtualAnalog.Value;
 	}
 
-	public Single GetHorizontalNavigation()
-	{
-		Single axis = UnityXInput.Input.GetAxis(this.DefaultHorizontalInputKey);
-		Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformHorizontalInputKey);
-		if (axis2 != 0f)
-		{
-			return axis2;
-		}
-		return axis;
-	}
+    public Single GetHorizontalNavigation()
+    {
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformHorizontalInputKey);
+            if (Math.Abs(axis2) > 0.01)
+                return axis2;
+        }
 
-	public Single GetVerticalNavigation()
+        return UnityXInput.Input.GetAxis(this.DefaultHorizontalInputKey);
+    }
+
+    public Single GetVerticalNavigation()
 	{
-		Single axis = UnityXInput.Input.GetAxis(this.DefaultVerticalInputKey);
-		Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformVerticalInputKey);
-		if (axis2 != 0f)
-		{
-			return axis2;
-		}
-		return axis;
+	    if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+	    {
+	        Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformVerticalInputKey);
+	        if (Math.Abs(axis2) > 0.01)
+	            return axis2;
+	    }
+
+        return UnityXInput.Input.GetAxis(this.DefaultVerticalInputKey);
 	}
 
 	private Vector2 GetJoyStickValue()

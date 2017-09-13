@@ -335,23 +335,29 @@ public partial class EventEngine
                 Boolean flag1 = false;
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2954 && (Int32)po.sid == 4)
                 {
-                    Int32 num13 = 0;
+                    //Int32 num13 = 0;
                     SettingUtils.FieldMapSettings fieldMapSettings = SettingUtils.fieldMapSettings;
                     if (num11 == -2181 && num12 == 14842)
-                        num13 = 0;
+                    {
+                        //num13 = 0;
+                    }
                     else if (num11 == -2407 && num12 == 14508)
-                        num13 = 1;
+                    {
+                        //num13 = 1;
+                    }
                     else if (num11 == -1146 && num12 == 13438)
-                        num13 = 2;
+                    {
+                        //num13 = 2;
+                    }
                     else if (num11 == -1159 && num12 == 13130)
                     {
-                        num13 = 3;
+                        //num13 = 3;
                         num11 = -1275;
                         num12 = 13130;
                     }
                     else if (num11 == -3644 && num12 == 11849)
                     {
-                        num13 = 4;
+                        //num13 = 4;
                         num11 = -3750;
                         num12 = 11849;
                     }

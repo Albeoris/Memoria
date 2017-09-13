@@ -15,7 +15,7 @@ namespace Memoria
             public ControlSection() : base("AnalogControl")
             {
                 Enabled.Value = false;
-                StickThreshold.Value = 20;
+                StickThreshold.Value = 10;
                 MinimumSpeed.Value = 5;
             }
 

@@ -1284,7 +1284,7 @@ public class BGSCENE_DEF
                         {
                             this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndexCorrected);
                         }
-                        catch(Exception e)
+                        catch(Exception)
                         {
                             Log.Message($"dst {dstIndexCorrected}, dstlen {atlasArray.Length}, src {srcIndexCorrected}, srcLen {originalArray.Length}");
                         }
