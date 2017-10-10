@@ -153,7 +153,7 @@
  Mental Break;146;None(0);SingleEnemy(2);0;0;0;0;209;209;35;0;0;50;12;0;8;0;# Mental Break
  Magic Break;147;None(0);SingleEnemy(2);0;0;0;0;46;46;36;0;0;50;12;0;4;0;# Magic Break
  Charge!;148;None(0);RandomEnemy(11);0;0;0;0;398;398;61;0;0;0;12;0;10;0;# Charge!
- Thunder Slash;149;None(0);SingleEnemy(2);0;0;0;0;191;412;17;19;4;0;12;0;24;0;# Thunder Slash
+ Thunder Slash;149;None(0);SingleEnemy(2);0;0;0;0;191;412;20;19;4;0;12;0;24;0;# Thunder Slash
  Stock Break;150;None(0);AllEnemy(8);0;0;0;0;207;414;19;15;0;0;12;0;26;0;# Stock Break
  Climhazzard;151;None(0);AllEnemy(8);0;0;0;0;397;417;20;20;0;0;12;0;32;0;# Climhazzard
  Shock;152;None(0);SingleEnemy(2);0;0;0;0;192;413;19;30;0;0;12;0;46;0;# Shock
