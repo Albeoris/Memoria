@@ -54,22 +54,22 @@
  Flare;47;None(0);SingleAny(0);0;0;0;0;125;10;9;119;0;0;19;0;40;0;# Flare
  Doomsday;48;None(0);Everyone(12);0;0;0;0;308;10;9;112;128;0;18;0;72;0;# Doomsday
  Shiva;49;None(0);AllEnemy(8);0;0;0;0;38;407;85;36;2;0;22;0;24;4;# Shiva
- Fire;50;None(0);SingleEnemy(2);0;0;0;0;212;10;63;5;1;0;2;0;6;0;# Fire
+ Fire Sword;50;None(0);SingleEnemy(2);0;0;0;0;212;10;63;5;1;0;2;0;6;0;# Fire Sword
  Ifrit;51;None(0);AllEnemy(8);0;0;0;0;276;445;85;42;1;0;22;0;26;4;# Ifrit
- Fira;52;None(0);SingleEnemy(2);0;0;0;0;213;10;63;10;1;0;2;0;12;0;# Fira
+ Fira Sword;52;None(0);SingleEnemy(2);0;0;0;0;213;10;63;10;1;0;2;0;12;0;# Fira Sword
  Ramuh;53;None(0);AllEnemy(8);0;0;0;0;186;415;85;32;4;0;22;0;22;4;# Ramuh
- Firaga;54;None(0);SingleEnemy(2);0;0;0;0;214;10;63;30;1;0;2;0;30;0;# Firaga
+ Firaga Sword;54;None(0);SingleEnemy(2);0;0;0;0;214;10;63;30;1;0;2;0;30;0;# Firaga Sword
  Atomos;55;None(0);AllEnemy(8);0;0;0;0;184;446;86;30;0;0;22;0;32;4;# Atomos
- Blizzard;56;None(0);SingleEnemy(2);0;0;0;0;218;10;63;5;2;0;2;0;6;0;# Blizzard
- Blizzara;57;None(0);SingleEnemy(2);0;0;0;0;219;10;63;10;2;0;2;0;12;0;# Blizzara
+ Blizzard Sword;56;None(0);SingleEnemy(2);0;0;0;0;218;10;63;5;2;0;2;0;6;0;# Blizzard Sword
+ Blizzara Sword;57;None(0);SingleEnemy(2);0;0;0;0;219;10;63;10;2;0;2;0;12;0;# Blizzara Sword
  Odin;58;None(0);AllEnemy(8);0;0;0;0;261;424;87;45;0;0;22;21;28;4;# Odin
- Blizzaga;59;None(0);SingleEnemy(2);0;0;0;0;220;10;63;30;2;0;2;0;30;0;# Blizzaga
+ Blizzaga Sword;59;None(0);SingleEnemy(2);0;0;0;0;220;10;63;30;2;0;2;0;30;0;# Blizzaga Sword
  Leviathan;60;None(0);AllEnemy(8);0;0;0;0;179;406;85;59;16;0;22;0;42;4;# Leviathan
- Thunder;61;None(0);SingleEnemy(2);0;0;0;0;215;10;63;5;4;0;2;0;6;0;# Thunder
+ Thunder Sword;61;None(0);SingleEnemy(2);0;0;0;0;215;10;63;5;4;0;2;0;6;0;# Thunder Sword
  Bahamut;62;None(0);AllEnemy(8);0;0;0;0;227;405;85;88;0;0;22;0;56;4;# Bahamut
- Thundara;63;None(0);SingleEnemy(2);0;0;0;0;216;10;63;10;4;0;2;0;12;0;# Thundara
+ Thundara Sword;63;None(0);SingleEnemy(2);0;0;0;0;216;10;63;10;4;0;2;0;12;0;# Thundara Sword
  Ark;64;None(0);AllEnemy(8);0;0;0;0;381;447;85;106;128;0;22;0;80;4;# Ark
- Thundaga;65;None(0);SingleEnemy(2);0;0;0;0;217;10;63;30;4;0;2;0;30;0;# Thundaga
+ Thundaga Sword;65;None(0);SingleEnemy(2);0;0;0;0;217;10;63;30;4;0;2;0;30;0;# Thundaga Sword
  Fenrir;66;None(0);AllEnemy(8);0;0;0;0;210;508;85;42;8;0;22;0;30;0;# Fenrir
  Fenrir;67;None(0);AllEnemy(8);0;0;0;0;226;509;85;44;32;0;22;0;30;0;# Fenrir
  Carbuncle;68;Bufs(4);AllAlly(7);1;1;0;0;177;504;103;0;0;-1;70;11;24;0;# Carbuncle
@@ -79,8 +79,8 @@
  Phoenix;72;None(0);Everyone(12);1;1;0;0;211;510;49;40;1;0;6;23;32;0;# Phoenix
  Rebirth Flame;73;None(0);AllAlly(7);1;1;0;0;225;225;13;30;0;-1;70;2;0;0;# Rebirth Flame
  Madeen;74;None(0);AllEnemy(8);0;1;0;0;251;378;85;71;64;0;22;0;54;0;# Madeen
- Bio;75;None(0);SingleEnemy(2);0;0;0;0;221;10;63;20;0;0;2;0;20;0;# Bio
- Water;76;None(0);SingleEnemy(2);0;0;0;0;222;10;63;25;16;0;2;0;26;0;# Water
+ Bio Sword;75;None(0);SingleEnemy(2);0;0;0;0;221;10;63;20;0;0;2;0;20;0;# Bio Sword
+ Water Sword;76;None(0);SingleEnemy(2);0;0;0;0;222;10;63;25;16;0;2;0;26;0;# Water Sword
  Goblin Punch;77;None(0);SingleEnemy(2);0;0;0;0;74;10;21;20;0;0;6;0;4;2;# Goblin Punch
  LV5 Death;78;None(0);AllEnemy(8);0;0;0;0;154;10;22;0;0;5;6;21;20;2;# LV5 Death
  LV4 Holy;79;None(0);AllEnemy(8);0;0;0;0;129;10;23;34;64;4;6;0;22;2;# LV4 Holy
@@ -193,6 +193,6 @@
  Spear;186;None(0);RandomEnemy(11);0;0;0;0;389;10;83;0;0;0;12;0;0;0;# Spear
  Terra Homing;187;None(0);AllEnemy(8);0;0;0;0;251;251;85;200;64;0;22;0;0;0;# Terra Homing
  Focus;188;None(0);Self(13);1;0;0;0;199;10;44;4;0;0;68;0;0;0;# Focus
- Flare;189;None(0);SingleEnemy(2);0;0;0;0;223;10;63;60;0;0;6;0;60;0;# Flare
+ Flare Sword;189;None(0);SingleEnemy(2);0;0;0;0;223;10;63;60;0;0;6;0;60;0;# Flare Sword
  Throw;190;None(0);SingleEnemy(2);0;0;0;0;10;10;42;0;0;0;12;0;0;0;# Throw
- Doomsday;191;None(0);AllEnemy(8);0;0;0;0;224;10;63;40;128;0;6;0;50;0;# Doomsday
+ Doomsday Sword;191;None(0);AllEnemy(8);0;0;0;0;224;10;63;40;128;0;6;0;50;0;# Doomsday Sword
