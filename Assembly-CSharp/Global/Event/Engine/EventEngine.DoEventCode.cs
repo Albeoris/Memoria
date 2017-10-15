@@ -1915,7 +1915,12 @@ public partial class EventEngine
                 po.ovalRatio = (Byte)this.getv1();
                 return 0;
             case EBin.event_code_binary.INCFROG:
-                _ff9.frog_no = (Int16)Math.Min(_ff9.frog_no + Configuration.Hacks.FrogCatchingIncrement, Int16.MaxValue);
+                Int16?[] frogRewards = { 2, 5, 9, 15, 23, 33, 45, 99 };
+                Int16? maxFrogs = frogRewards.FirstOrDefault(a => _ff9.frog_no < a);
+                if (maxFrogs == null)
+                    maxFrogs = Int16.MaxValue;
+
+                _ff9.frog_no = (Int16)Math.Min(_ff9.frog_no + Configuration.Hacks.FrogCatchingIncrement, (Int16)maxFrogs);
                 EMinigame.CatchingGoldenFrogAchievement(this.gCur);
                 EMinigame.Catching99FrogAchievement((Int32)this._ff9.frog_no);
                 return 0;
