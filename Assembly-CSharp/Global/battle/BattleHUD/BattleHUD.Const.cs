@@ -183,6 +183,33 @@ public partial class BattleHUD : UIScene
         return index; // The bug is possible
     }
 
+    private static Int32 GetAlivePlayerIndexForHealingAttack()
+    {
+        Int32 minHp = Int32.MaxValue;
+        Int32 minIndex = -1;
+
+        Int32 index = -1;
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        {
+            if (!unit.IsPlayer)
+                continue;
+
+            index++;
+            if (unit.CurrentHp <= 0)
+                continue;
+
+            if (unit.IsUnderStatus(BattleStatus.Confuse | BattleStatus.Sleep))
+                return index;
+
+            if (unit.CurrentHp < minHp)
+            {
+                minHp = unit.CurrentHp;
+                minIndex = index;
+            }
+        }
+        return minIndex;
+    }
+
     private static Int32 GetFirstAliveEnemyIndex()
     {
         Int32 index = -1;
@@ -210,6 +237,21 @@ public partial class BattleHUD : UIScene
         }
 
         return null;
+    }
+
+    private static Int32 GetFirstAliveZombieEnemyIndex()
+    {
+        Int32 index = -1;
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        {
+            if (unit.IsPlayer)
+                continue;
+
+            index++;
+            if (unit.CurrentHp > 0 && unit.IsZombie && !unit.IsUnderAnyStatus(BattleStatus.Vanish))
+                return index;
+        }
+        return -1;
     }
 
     private static EntryCollection<IdMap> LoadBattleCommandTitles()

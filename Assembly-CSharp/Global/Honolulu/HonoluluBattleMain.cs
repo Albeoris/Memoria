@@ -475,12 +475,20 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (current.at < maximum.at)
                     continue;
 
-                if (battleSpeed == 2 && btl.bi.player != 0)
+                if (battleSpeed == 2)
                 {
-                    if (changed)
+                    if (btl.bi.player != 0)
                     {
-                        BattleHUD.ForceNextTurn = false;
-                        needContinue = false;
+                        if (changed)
+                        {
+                            BattleHUD.ForceNextTurn = false;
+                            needContinue = false;
+                        }
+                    }
+                    else
+                    {
+                        if (!btl_stat.CheckStatus(btl, 33685506U))
+                            needContinue = false;
                     }
                 }
                 else

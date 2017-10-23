@@ -70,7 +70,8 @@ public partial class BattleHUD : UIScene
     private Single _runCounter;
     private Boolean _hidingHud;
     private CursorGroup _cursorType;
-    private Boolean _defaultTargetCursor;
+    private Boolean _defaultTargetAlly;
+    private Boolean _defaultTargetHealingAttack;
     private Boolean _defaultTargetDead;
     private Boolean _targetDead;
     private TargetType _targetCursor;
@@ -1406,7 +1407,8 @@ public partial class BattleHUD : UIScene
         {
             TargetType cursor = 0;
             TargetDisplay subMode = 0;
-            _defaultTargetCursor = false;
+            _defaultTargetAlly = false;
+            _defaultTargetHealingAttack = false;
             _defaultTargetDead = false;
             _targetDead = false;
             if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
@@ -1414,20 +1416,27 @@ public partial class BattleHUD : UIScene
                 CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
                 AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]];
                 cursor = aaData.Info.Target;
-                _defaultTargetCursor = aaData.Info.DefaultAlly;
+                _defaultTargetAlly = aaData.Info.DefaultAlly;
                 _defaultTargetDead = aaData.Info.DefaultOnDead;
                 _targetDead = aaData.Info.ForDead;
                 subMode = aaData.Info.DisplayStats;
             }
-            else if (_currentCommandIndex != CommandMenu.Attack && _currentCommandIndex == CommandMenu.Item)
+            else if (_currentCommandIndex == CommandMenu.Item)
             {
                 ITEM_DATA itemData = ff9item._FF9Item_Info[_itemIdList[_currentSubMenuIndex] - 224];
                 cursor = itemData.info.Target;
-                _defaultTargetCursor = itemData.info.DefaultAlly;
+                _defaultTargetAlly = itemData.info.DefaultAlly;
                 _defaultTargetDead = itemData.info.ForDead;
                 _targetDead = itemData.info.ForDead;
                 subMode = itemData.info.DisplayStats;
             }
+            else if (_currentCommandIndex == CommandMenu.Attack && CurrentPlayerIndex > -1)
+            {
+                BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+                if (btl.IsHealer)
+                    _defaultTargetHealingAttack = true;
+            }
+
             _isAllTarget = false;
             TargetPanel.SetActive(true);
             EnableTargetArea();
@@ -1570,8 +1579,30 @@ public partial class BattleHUD : UIScene
             || _targetCursor == TargetType.ManyAny
             || _targetCursor == TargetType.ManyAlly
             || _targetCursor == TargetType.ManyEnemy)
-        {
-            if (_defaultTargetCursor)
+        {            
+            if (_defaultTargetHealingAttack)
+            {
+                Int32 targetIndex = GetFirstAliveZombieEnemyIndex();
+                if (targetIndex > -1)
+                {
+                    targetIndex += HonoluluBattleMain.EnemyStartIndex;
+
+                    if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform)
+                        ValidateDefaultTarget(ref targetIndex);
+
+                    GONavigationButton targetEnemy = _targetPanel.AllTargets[targetIndex];
+                    ButtonGroupState.SetCursorStartSelect(targetEnemy, TargetGroupButton);
+                }
+                else
+                {
+                    targetIndex = GetAlivePlayerIndexForHealingAttack();
+                    GONavigationButton ally = _targetPanel.Players[targetIndex];
+                    ButtonGroupState.SetCursorStartSelect(ally, TargetGroupButton);
+                }
+
+                _currentTargetIndex = 0;
+            }
+            else if (_defaultTargetAlly)
             {
                 if (_defaultTargetDead)
                 {
@@ -1586,7 +1617,6 @@ public partial class BattleHUD : UIScene
                 }
 
                 _currentTargetIndex = 0;
-                ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
             }
             else
             {
@@ -1610,7 +1640,6 @@ public partial class BattleHUD : UIScene
                     }
                 }
                 _currentTargetIndex = firstIndex;
-                ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
             }
         }
         else if (_targetCursor == TargetType.Self)
@@ -1619,8 +1648,9 @@ public partial class BattleHUD : UIScene
             GONavigationButton currentPlayer = _targetPanel.Players[currentPlayerIndex];
             ButtonGroupState.SetCursorStartSelect(currentPlayer, TargetGroupButton);
             _currentTargetIndex = currentPlayerIndex;
-            ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
         }
+
+        ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
     }
 
     private void SetTargetHelp()

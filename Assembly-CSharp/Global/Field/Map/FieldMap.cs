@@ -499,6 +499,7 @@ public class FieldMap : HonoBehavior
             case 2208: // Desert Palace - Hallway
             case 2261: // Oeilvert - Bridge
             case 2363: // Gulug - Path
+            case 2510: // Iifa Tree - Silver Dragon
                 return true;
         }
         return false;

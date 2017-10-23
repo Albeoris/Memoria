@@ -366,6 +366,7 @@ namespace Memoria
 
         public void PenaltyReverseAttack()
         {
+            // Ipsen's Castle
             if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack == 0)
                 return;
 
