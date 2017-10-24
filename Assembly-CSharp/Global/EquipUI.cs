@@ -83,7 +83,10 @@ public class EquipUI : UIScene
 					this.DisplayEquiptmentInfo();
 					break;
 				case EquipUI.SubMenu.Optimize:
-					this.EquipStrongest();
+				    if (UIKeyTrigger.IsShiftKeyPressed)
+				        this.EquipForAbilityLearning();
+				    else
+				        this.EquipStrongest();
 					this.DisplayPlayer(true);
 					this.DisplayParameter();
 					this.DisplayEquipment();
@@ -656,44 +659,44 @@ public class EquipUI : UIScene
 			Int32 num2 = 0;
 			for (Int32 i = 0; i < 3; i++)
 			{
-				Int32 num3 = (Int32)ff9ITEM_DATA.ability[i];
-				if (num3 != 0)
+				Int32 abilityId = (Int32)ff9ITEM_DATA.ability[i];
+				if (abilityId != 0)
 				{
 					String text = String.Empty;
-					if (num3 < 192)
+					if (abilityId < 192)
 					{
-						text = FF9TextTool.ActionAbilityName(num3);
+						text = FF9TextTool.ActionAbilityName(abilityId);
 					}
 					else
 					{
-						text = FF9TextTool.SupportAbilityName(num3 - 192);
+						text = FF9TextTool.SupportAbilityName(abilityId - 192);
 					}
 					this.equipmentAbilitySelectHudList[num2].Self.SetActive(true);
 					if (ff9abil.FF9Abil_HasAp(player))
 					{
-						Boolean flag = ff9abil.FF9Abil_GetIndex(player.Index, num3) >= 0;
-						Int32 num4 = ff9abil.FF9Abil_GetMax(player.Index, num3);
+						Boolean flag = ff9abil.FF9Abil_GetIndex(player.Index, abilityId) >= 0;
+						Int32 num4 = ff9abil.FF9Abil_GetMax(player.Index, abilityId);
 						String spriteName2;
 						if (flag)
 						{
-							if (num3 < 192)
+							if (abilityId < 192)
 							{
 								spriteName2 = "ability_stone";
 							}
 							else
 							{
-								spriteName2 = ((!ff9abil.FF9Abil_IsEnableSA(player.Data.sa, num3)) ? "skill_stone_off" : "skill_stone_on");
+								spriteName2 = ((!ff9abil.FF9Abil_IsEnableSA(player.Data.sa, abilityId)) ? "skill_stone_off" : "skill_stone_on");
 							}
 						}
 						else
 						{
-							spriteName2 = ((num3 >= 192) ? "skill_stone_null" : "ability_stone_null");
+							spriteName2 = ((abilityId >= 192) ? "skill_stone_null" : "ability_stone_null");
 						}
 						if (flag)
 						{
-							Boolean isShowText = num3 >= 192 || (FF9StateSystem.Battle.FF9Battle.aa_data[num3].Type & 2) == 0;
+							Boolean isShowText = abilityId >= 192 || (FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].Type & 2) == 0;
 							this.equipmentAbilitySelectHudList[num2].APBar.Self.SetActive(true);
-							FF9UIDataTool.DisplayAPBar(player.Data, num3, isShowText, this.equipmentAbilitySelectHudList[num2].APBar);
+							FF9UIDataTool.DisplayAPBar(player.Data, abilityId, isShowText, this.equipmentAbilitySelectHudList[num2].APBar);
 						}
 						else
 						{
@@ -713,7 +716,7 @@ public class EquipUI : UIScene
 					else
 					{
 						String spriteName2;
-						if (num3 < 192)
+						if (abilityId < 192)
 						{
 							spriteName2 = "ability_stone_null";
 						}
@@ -950,30 +953,314 @@ public class EquipUI : UIScene
 		}
 	}
 
-	private void EquipStrongest()
+    private void EquipForAbilityLearning()
+    {
+        const Int32 itemTypeCount = 5;
+
+        Character character = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+        CharacterIndex characterIndex = character.Index;
+        CharacterEquipment equipment = character.Equipment;
+
+        LearnableItemAbilities learnable = new LearnableItemAbilities(character, this.charMask[character.Id]);
+
+        Byte[] toRemove = new Byte[itemTypeCount];
+        Byte[] toKeep = new Byte[itemTypeCount];
+        Byte[] toLearn = new Byte[itemTypeCount];
+        Byte[] toEquip = new Byte[itemTypeCount];
+        for (Int32 i = 0; i < itemTypeCount; i++)
+        {
+            toRemove[i] = Byte.MaxValue;
+            toKeep[i] = Byte.MaxValue;
+            toLearn[i] = Byte.MaxValue;
+            toEquip[i] = Byte.MaxValue;
+        }
+
+        Boolean canLearn = false;
+        Boolean canEquip = false;
+
+        for (Int32 itemType = 0; itemType < itemTypeCount; itemType++)
+        {
+            Byte betterItemId = Byte.MaxValue;
+            Int32 betterLevel = Int32.MinValue;
+            Byte learnableItemId = Byte.MaxValue;
+            Int32 learnableLevel = Int32.MaxValue;
+            Int32 learnableLeftAp = Int32.MaxValue;
+
+            Byte itemId = equipment[itemType];
+            if (itemId != Byte.MaxValue)
+            {
+                FF9ITEM_DATA equipedItem = ff9item._FF9Item_Data[itemId];
+
+                betterLevel = equipedItem.eq_lv;
+                betterItemId = itemId;
+
+                if (learnable.IsLearnable(itemId, out learnableLeftAp))
+                {
+                    toLearn[itemType] = itemId;
+                    learnableItemId = itemId;
+                    learnableLevel = equipedItem.eq_lv;
+                }
+                else
+                {
+                    toRemove[itemType] = itemId;
+                }
+            }
+
+            Boolean equiptable = false;
+            for (Int32 itemIndex = 0; itemIndex <= 255; itemIndex++)
+            {
+                FF9ITEM item = FF9StateSystem.Common.FF9.item[itemIndex];
+                if (item.count < 1)
+                    continue;
+
+                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
+                if ((itemData.type & this.partMask[itemType]) == 0)
+                    continue;
+
+                if ((itemData.equip & this.charMask[character.Id]) == 0)
+                    continue;
+
+                if (itemData.eq_lv > betterLevel)
+                {
+                    betterItemId = item.id;
+                    betterLevel = itemData.eq_lv;
+                    equiptable = true;
+                }
+
+                Int32 leftAp;
+                if (itemData.eq_lv < learnableLevel && learnable.IsLearnable(item.id, out leftAp) && leftAp <= learnableLeftAp)
+                {
+                    learnableItemId = item.id;
+                    learnableLevel = itemData.eq_lv;
+                    canLearn = true;
+                }
+            }
+            
+            toLearn[itemType] = learnableItemId;
+            toEquip[itemType] = betterItemId;
+
+            if (equiptable && learnableItemId == Byte.MaxValue)
+                canEquip = true;
+        }
+
+        for (Int32 itemType = 0; itemType < itemTypeCount; itemType++)
+        {
+            Byte itemId = toLearn[itemType];
+            if (itemId != Byte.MaxValue)
+            {
+                character.Equipment.Change(itemType, itemId);
+                continue;
+            }
+
+            if (canLearn || !canEquip)
+            {
+                if (itemType != 0 && toRemove[itemType] != Byte.MaxValue)
+                    character.Equipment.Change(itemType, Byte.MaxValue);
+
+                continue;
+            }
+
+            itemId = toEquip[itemType];
+            if (itemId != Byte.MaxValue)
+                character.Equipment.Change(itemType, itemId);
+        }
+
+        this.UpdateCharacterData(character.Data);
+        FF9Sfx.FF9SFX_Play(107);
+    }
+
+    private sealed class LearnableItemAbilities
+    {
+        private readonly Dictionary<Byte, Int32> _itemsWithLearnableAbilities;
+
+        public LearnableItemAbilities(Character character, UInt16 characterMask)
+        {
+            _itemsWithLearnableAbilities = InitializeMap(character, characterMask);
+        }
+
+        public Boolean IsLearnable(Byte itemId, out Int32 learnableLeftAp)
+        {
+            Int32 leftAp;
+            if (_itemsWithLearnableAbilities.TryGetValue(itemId, out leftAp))
+            {
+                learnableLeftAp = leftAp;
+                return true;
+            }
+            learnableLeftAp = Int32.MaxValue;
+            return false;
+        }
+
+        private static Dictionary<Byte, Int32> InitializeMap(Character character, UInt16 characterMask)
+        {
+            CharacterPresetId characterPresetId = character.PresetId;
+            if (characterPresetId >= 16)
+                return new Dictionary<Byte, Int32>(0);
+
+            CharacterIndex characterIndex = character.Index;
+            CharacterEquipment equipment = character.Equipment;
+
+            Dictionary<Byte, Int32> abilityIdToLeftAp = new Dictionary<Byte, Int32>(128);
+
+
+            CharacterAbility[] array = ff9abil._FF9Abil_PaData[characterPresetId];
+            foreach (var ability in array)
+            {
+                Byte abilityId = ability.Id;
+
+                Int32 cur = ff9abil.FF9Abil_GetAp(characterIndex, abilityId);
+                Int32 max = ff9abil.FF9Abil_GetMax(characterIndex, abilityId);
+
+                if (cur < max)
+                {
+                    if (cur > 0)
+                        abilityIdToLeftAp.Add(abilityId, max - cur);
+                    else
+                        abilityIdToLeftAp.Add(abilityId, Int32.MaxValue);
+                }
+            }
+
+            Dictionary<Int64, FF9ITEM_DATA> keyToItem = new Dictionary<Int64, FF9ITEM_DATA>(255);
+            Dictionary<FF9ITEM_DATA, Byte> itemDataToItemId = new Dictionary<FF9ITEM_DATA, Byte>(255);
+            Dictionary<Byte, List<Byte>> itemToAbilities = new Dictionary<Byte, List<Byte>>(255);
+
+            foreach (Byte itemId in EnumerateItemIds(character))
+            {
+                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[itemId];
+                if ((itemData.equip & characterMask) == 0)
+                    continue;
+
+                List<Byte> learnableAbilities = new List<Byte>(3);
+                foreach (Byte abilityId in itemData.ability)
+                {
+                    if (abilityIdToLeftAp.ContainsKey(abilityId))
+                        learnableAbilities.Add(abilityId);
+                }
+
+                if (learnableAbilities.Count == 0)
+                    continue;
+
+                itemDataToItemId.Add(itemData, itemId);
+
+                learnableAbilities.Sort();
+
+                Int64 key = itemData.equip;
+                for (Int32 i = 0; i < learnableAbilities.Count; i++)
+                    key |= ((Int64)learnableAbilities[i] << ((i + 2) * 8));
+
+                FF9ITEM_DATA oldData;
+                if (keyToItem.TryGetValue(key, out oldData))
+                {
+                    if (oldData.eq_lv < itemData.eq_lv)
+                        keyToItem[key] = itemData;
+                }
+                else
+                {
+                    keyToItem.Add(key, itemData);
+                }
+
+                itemToAbilities.Add(itemId, learnableAbilities);
+            }
+
+
+            Dictionary<Byte, Int32> dic = new Dictionary<Byte, Int32>(keyToItem.Count);
+            foreach (var pair in keyToItem)
+            {
+                FF9ITEM_DATA itemData = pair.Value;
+                Byte itemId = itemDataToItemId[itemData];
+                List<Byte> abilities = itemToAbilities[itemId];
+
+                Int32 totalApLeft = 0;
+                foreach (Byte abilityId in abilities)
+                {
+                    Int32 leftAp = abilityIdToLeftAp[abilityId];
+                    if (leftAp != Int32.MaxValue)
+                        totalApLeft += leftAp;
+                }
+                if (totalApLeft == 0)
+                    totalApLeft = Int32.MaxValue;
+
+                dic.Add(itemId, totalApLeft);
+            }
+            return dic;
+        }
+
+        private static IEnumerable<Byte> EnumerateItemIds(Character character)
+        {
+            HashSet<Byte> values = new HashSet<Byte>();
+
+            CharacterEquipment equipment = character.Equipment;
+            for (Int32 i = 0; i < 5; i++)
+            {
+                Byte itemId = equipment[i];
+                if (itemId != Byte.MaxValue)
+                    if (values.Add(itemId))
+                        yield return itemId;
+            }
+
+            for (Int32 itemIndex = 0; itemIndex <= 255; itemIndex++)
+            {
+                FF9ITEM item = FF9StateSystem.Common.FF9.item[itemIndex];
+                if (item.count < 1)
+                    continue;
+
+                if (values.Add(item.id))
+                    yield return item.id;
+            }
+        }
+    }
+
+    private static Boolean HasLearnableAbilities(FF9ITEM_DATA itemData, CharacterIndex characterIndex, out Int32 leftAp)
+    {
+        foreach (Byte abilityId in itemData.ability)
+        {
+            if (abilityId == 0)
+                continue;
+
+            if (ff9abil.FF9Abil_GetIndex(characterIndex, abilityId) < 0)
+                continue;
+
+            Int32 cur = ff9abil.FF9Abil_GetAp(characterIndex, abilityId);
+            Int32 max = ff9abil.FF9Abil_GetMax(characterIndex, abilityId);
+            if (cur < max)
+            {
+                if (cur > 0)
+                    leftAp = max - cur;
+                else
+                    leftAp = Int32.MaxValue;
+
+                return true;
+            }
+        }
+
+        leftAp = Int32.MaxValue;
+        return false;
+    }
+
+
+    private void EquipStrongest()
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
 		Int32 itemId = 0;
 		Int32 num2 = (CharacterId)ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter);
 		for (Int32 i = 0; i < 5; i++)
 		{
-			Int32 num3 = (Int32)((player.equip[i] == Byte.MaxValue) ? -1 : ((Int32)ff9item._FF9Item_Data[(Int32)player.equip[i]].eq_lv));
-			Int32 num4 = -1;
+			Int32 currentLevel = (Int32)((player.equip[i] == Byte.MaxValue) ? -1 : ((Int32)ff9item._FF9Item_Data[(Int32)player.equip[i]].eq_lv));
+			Int32 bestLevel = -1;
 			FF9ITEM ff9ITEM = FF9StateSystem.Common.FF9.item[0];
 			for (Int32 j = 0; j < 256; j++)
 			{
 				if (ff9ITEM.count > 0)
 				{
 					FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)ff9ITEM.id];
-					if ((ff9ITEM_DATA.type & this.partMask[i]) != 0 && (ff9ITEM_DATA.equip & this.charMask[num2]) != 0 && (Int32)ff9ITEM_DATA.eq_lv > num4)
+					if ((ff9ITEM_DATA.type & this.partMask[i]) != 0 && (ff9ITEM_DATA.equip & this.charMask[num2]) != 0 && (Int32)ff9ITEM_DATA.eq_lv > bestLevel)
 					{
-						num4 = (Int32)ff9ITEM_DATA.eq_lv;
+						bestLevel = (Int32)ff9ITEM_DATA.eq_lv;
 						itemId = (Int32)ff9ITEM.id;
 					}
 				}
 				ff9ITEM = FF9StateSystem.Common.FF9.item[j];
 			}
-			if (num4 > num3)
+			if (bestLevel > currentLevel)
 			{
 				if (player.equip[i] != 255)
 				{

@@ -14,6 +14,7 @@ namespace Memoria
         }
 
         public String Name => Data.name;
+        public CharacterId Id => ff9play.FF9Play_GetCharID2(Index, IsSubCharacter);
         public CharacterIndex Index => Data.Index;
         public CharacterPresetId PresetId => Data.PresetId;
         public CharacterEquipment Equipment => Data.equip;

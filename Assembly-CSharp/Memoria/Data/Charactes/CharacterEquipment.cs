@@ -99,5 +99,25 @@ namespace Memoria.Data
                 }
             }
         }
+
+        public void Change(Int32 itemType, Byte itemId)
+        {
+            Byte currentItemId = this[itemType];
+            if (currentItemId == itemId)
+                return;
+
+            // Unequip
+            if (currentItemId != Byte.MaxValue)
+            {
+                if (currentItemId == (Int32)GemItem.Moonstone)
+                    ff9item.DecreaseMoonStoneCount();
+
+                ff9item.FF9Item_Add(currentItemId, 1);
+            }
+
+            // Equip
+            if (itemId == Byte.MaxValue || ff9item.FF9Item_Remove(itemId, 1) != 0)
+                this[itemType] = itemId;
+        }
     }
 }

@@ -21,45 +21,12 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean triggleEventDialog;
     private Boolean quitConfirm;
 
-    private Boolean AltKey
-    {
-        get
-        {
-            if (!UnityXInput.Input.GetKey(KeyCode.LeftAlt))
-                return UnityXInput.Input.GetKey(KeyCode.RightAlt);
-            return true;
-        }
-    }
+    public static Boolean IsShiftKeyPressed { get; private set; }
 
-    private Boolean ShiftKey
-    {
-        get
-        {
-            if (!UnityXInput.Input.GetKey(KeyCode.LeftShift))
-                return UnityXInput.Input.GetKey(KeyCode.RightShift);
-            return true;
-        }
-    }
-
-    private Boolean ControlKey
-    {
-        get
-        {
-            if (!UnityXInput.Input.GetKey(KeyCode.LeftControl))
-                return UnityXInput.Input.GetKey(KeyCode.RightControl);
-            return true;
-        }
-    }
-
-    private Boolean AltKeyDown
-    {
-        get
-        {
-            if (!UnityXInput.Input.GetKeyDown(KeyCode.LeftAlt))
-                return UnityXInput.Input.GetKeyDown(KeyCode.RightAlt);
-            return true;
-        }
-    }
+    private Boolean AltKey => UnityXInput.Input.GetKey(KeyCode.LeftAlt) || UnityXInput.Input.GetKey(KeyCode.RightAlt);
+    private Boolean ShiftKey => UnityXInput.Input.GetKey(KeyCode.LeftShift) || UnityXInput.Input.GetKey(KeyCode.RightShift);
+    private Boolean ControlKey => UnityXInput.Input.GetKey(KeyCode.LeftControl) || UnityXInput.Input.GetKey(KeyCode.RightControl);
+    private Boolean AltKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.LeftAlt) || UnityXInput.Input.GetKeyDown(KeyCode.RightAlt);
 
     private Boolean F2Key => UnityXInput.Input.GetKey(KeyCode.F2);
     private Boolean F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
@@ -441,6 +408,8 @@ public class UIKeyTrigger : MonoBehaviour
 
     private Boolean handleMenuControlKeyPressCustomInput(GameObject activeButton = null)
     {
+        IsShiftKeyPressed = ShiftKey;
+
         UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
         if (ButtonGroupState.ActiveButton && ButtonGroupState.ActiveButton != PersistenSingleton<UIManager>.Instance.gameObject)
             activeButton = ButtonGroupState.ActiveButton;
@@ -551,7 +520,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return true;
             }
 
-            if (ShiftKey && ControlKey)
+            if (IsShiftKeyPressed && ControlKey)
             {
                 if (SKeyDown)
                 {
@@ -567,7 +536,7 @@ public class UIKeyTrigger : MonoBehaviour
             }
         }
 
-        if (ShiftKey && F4KeyDown)
+        if (IsShiftKeyPressed && F4KeyDown)
         {
             SettingsState.IsRapidEncounter = !SettingsState.IsRapidEncounter;
             return true;
