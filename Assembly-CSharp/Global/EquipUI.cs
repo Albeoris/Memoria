@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
 
@@ -19,7 +20,36 @@ public class EquipUI : UIScene
 		}
 	}
 
-	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
+    public void Update()
+    {
+        if (UIKeyTrigger.IsShiftKeyPressed)
+        {
+            if (_equipForAbilityLearning)
+                return;
+
+            ChangeBestItemsButtonBehaviour(true);
+        }
+        else
+        {
+            if (!_equipForAbilityLearning)
+                return;
+
+            ChangeBestItemsButtonBehaviour(false);
+        }
+    }
+
+    private void ChangeBestItemsButtonBehaviour(Boolean equipForAbilityLearning)
+    {
+        GameObject label = this.OptimizeSubMenu.GetChild(1);
+        GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
+        localizableLable.Label.width = 220;
+        localizableLable.Localize.key = equipForAbilityLearning ? "Ability" : "Optimize"; ;
+        localizableLable.Localize.OnLocalize();
+
+        _equipForAbilityLearning = equipForAbilityLearning;
+    }
+
+    public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
 	{
 		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
 		{
@@ -83,7 +113,7 @@ public class EquipUI : UIScene
 					this.DisplayEquiptmentInfo();
 					break;
 				case EquipUI.SubMenu.Optimize:
-				    if (UIKeyTrigger.IsShiftKeyPressed)
+				    if (_equipForAbilityLearning)
 				        this.EquipForAbilityLearning();
 				    else
 				        this.EquipStrongest();
@@ -1479,6 +1509,8 @@ public class EquipUI : UIScene
 		16,
 		8
 	};
+
+    private Boolean _equipForAbilityLearning;
 
 	public class ParameterDetailCompareHUD
 	{

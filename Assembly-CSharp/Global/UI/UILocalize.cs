@@ -84,7 +84,7 @@ public class UILocalize : MonoBehaviour
 		this.OnLocalize();
 	}
 
-	private void OnLocalize()
+	public void OnLocalize()
 	{
 		if (String.IsNullOrEmpty(this.key))
 		{
