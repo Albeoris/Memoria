@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FF9;
+using Memoria;
 using UnityEngine;
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -282,7 +283,7 @@ public partial class EventEngine
     private Boolean ProcessEncount(PosObj po)
     {
         Int32 SceneNo = 0;
-        if ((Int32)this._context.usercontrol != 0 && (this._encountTimer > 960.0 || SettingsState.IsRapidEncounter))
+        if ((Int32)this._context.usercontrol != 0 && (this._encountTimer > Configuration.Battle.EncounterInterval || SettingsState.IsRapidEncounter))
         {
             this._encountTimer = 0.0f;
             this._encountBase += (Int32)this._context.encratio;

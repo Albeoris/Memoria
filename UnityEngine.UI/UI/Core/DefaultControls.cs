@@ -79,7 +79,7 @@ namespace UnityEngine.UI
 
         // Actual controls
 
-        public static GameObject CreatePanel(Resources resources)
+        public static GameObject CreatePanel(Sprite background)
         {
             GameObject panelRoot = CreateUIElementRoot("Panel", s_ThickElementSize);
 
@@ -91,11 +91,16 @@ namespace UnityEngine.UI
             rectTransform.sizeDelta = Vector2.zero;
 
             Image image = panelRoot.AddComponent<Image>();
-            image.sprite = resources.background;
+            image.sprite = background;
             image.type = Image.Type.Sliced;
             image.color = s_PanelColor;
 
             return panelRoot;
+        }
+
+        public static GameObject CreatePanel(Resources resources)
+        {
+            return CreatePanel(resources.background);
         }
 
         public static GameObject CreateButton(Resources resources)

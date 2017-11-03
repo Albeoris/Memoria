@@ -11,12 +11,14 @@ namespace Memoria
             public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
             public readonly IniValue<Int32> Speed = IniValue.Int32(nameof(Speed));
             public readonly IniValue<Boolean> NoAutoTrance = IniValue.Boolean(nameof(NoAutoTrance));
+            public readonly IniValue<Int32> EncounterInterval = IniValue.Int32(nameof(EncounterInterval));
 
             public BattleSection() : base("Battle")
             {
                 Enabled.Value = false;
                 Speed.Value = 0;
                 NoAutoTrance.Value = false;
+                EncounterInterval.Value = 960;
             }
 
             protected override IEnumerable<IniValue> GetValues()
@@ -24,6 +26,7 @@ namespace Memoria
                 yield return Enabled;
                 yield return Speed;
                 yield return NoAutoTrance;
+                yield return EncounterInterval;
             }
         }
     }
