@@ -7,10 +7,10 @@ namespace Memoria
         public static class Hacks
         {
             public static Boolean Enabled => Instance._hacks.Enabled.Value;
-            public static Int32 AllCharactersAvailable => Enabled ? Instance._hacks.AllCharactersAvailable.Value : 0;
-            public static Int32 RopeJumpingIncrement => Enabled ? Instance._hacks.RopeJumpingIncrement.Value : 1;
-            public static Int32 FrogCatchingIncrement => Enabled ? Instance._hacks.FrogCatchingIncrement.Value : 1;
-            public static Int32 HippaulRacingViviSpeed => Enabled ? Instance._hacks.HippaulRacingViviSpeed.Value : 33;
+            public static Int32 AllCharactersAvailable => Instance._hacks.AllCharactersAvailable;
+            public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement;
+            public static Int32 FrogCatchingIncrement => Instance._hacks.FrogCatchingIncrement;
+            public static Int32 HippaulRacingViviSpeed => Instance._hacks.HippaulRacingViviSpeed;
         }
     }
 }

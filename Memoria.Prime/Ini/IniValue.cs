@@ -86,7 +86,7 @@ namespace Memoria.Prime.Ini
                 : Application.streamingAssetsPath;
         }
 
-        private static Boolean TryParsePath(String rawstring, out String value)
+        internal static Boolean TryParsePath(String rawstring, out String value)
         {
             if (!System.String.IsNullOrEmpty(rawstring))
             {
@@ -162,6 +162,11 @@ namespace Memoria.Prime.Ini
         public override void WriteValue(StreamWriter sw)
         {
             sw.Write(_formatter(Value));
+        }
+
+        public static implicit operator T(IniValue<T> handler)
+        {
+            return handler.Value;
         }
     }
 }

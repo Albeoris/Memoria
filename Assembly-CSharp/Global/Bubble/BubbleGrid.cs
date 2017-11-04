@@ -40,6 +40,10 @@ public class BubbleGrid : MonoBehaviour
 			{
 			}
 		}
+        else if (indexes.Length == 0)
+        {
+
+        }
 		else
 		{
 			global::Debug.LogWarning("This version is not supported to arrange bubble over 3 indexes.");

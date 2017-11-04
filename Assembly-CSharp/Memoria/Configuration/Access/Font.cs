@@ -6,9 +6,9 @@ namespace Memoria
     {
         public static class Font
         {
-            public static Boolean Enabled => Instance._font.Enabled.Value;
-            public static String[] Names => Instance._font.Names.Value;
-            public static Int32 Size => Instance._font.Size.Value;
+            public static Boolean Enabled => Instance._font.Enabled;
+            public static String[] Names => Instance._font.Names;
+            public static Int32 Size => Instance._font.Size;
         }
     }
 }

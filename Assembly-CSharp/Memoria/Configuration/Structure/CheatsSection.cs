@@ -8,52 +8,33 @@ namespace Memoria
     {
         private sealed class CheatsSection : IniSection
         {
-            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
+            public readonly IniValue<Boolean> Rotation;
+            public readonly IniValue<Boolean> Perspective;
 
-            public readonly IniValue<Boolean> Rotation = IniValue.Boolean(nameof(Rotation));
-            public readonly IniValue<Boolean> Perspective = IniValue.Boolean(nameof(Perspective));
+            public readonly IniValue<Boolean> SpeedMode;
+            public readonly IniValue<Int32> SpeedFactor;
 
-            public readonly IniValue<Boolean> SpeedMode = IniValue.Boolean(nameof(SpeedMode));
-            public readonly IniValue<Int32> SpeedFactor = IniValue.Int32(nameof(SpeedFactor));
+            public readonly IniValue<Boolean> BattleAssistance;
+            public readonly IniValue<Boolean> Attack9999;
+            public readonly IniValue<Boolean> NoRandomEncounter;
+            public readonly IniValue<Boolean> MasterSkill;
+            public readonly IniValue<Boolean> LvMax;
+            public readonly IniValue<Boolean> GilMax;
 
-            public readonly IniValue<Boolean> BattleAssistance = IniValue.Boolean(nameof(BattleAssistance));
-            public readonly IniValue<Boolean> Attack9999 = IniValue.Boolean(nameof(Attack9999));
-            public readonly IniValue<Boolean> NoRandomEncounter = IniValue.Boolean(nameof(NoRandomEncounter));
-            public readonly IniValue<Boolean> MasterSkill = IniValue.Boolean(nameof(MasterSkill));
-            public readonly IniValue<Boolean> LvMax = IniValue.Boolean(nameof(LvMax));
-            public readonly IniValue<Boolean> GilMax = IniValue.Boolean(nameof(GilMax));
-
-            public CheatsSection() : base("Cheats")
+            public CheatsSection() : base(nameof(CheatsSection), false)
             {
-                Enabled.Value = false;
+                Rotation = BindBoolean(nameof(Rotation), false);
+                Perspective = BindBoolean(nameof(Perspective), false);
 
-                Rotation.Value = true;
-                Perspective.Value = true;
+                SpeedMode = BindBoolean(nameof(SpeedMode), false);
+                SpeedFactor = BindInt32(nameof(SpeedFactor), 5);
 
-                SpeedMode.Value = true;
-                SpeedFactor.Value = 5;
-
-                BattleAssistance.Value = false;
-                Attack9999.Value = false;
-                NoRandomEncounter.Value = false;
-                MasterSkill.Value = false;
-                LvMax.Value = false;
-                GilMax.Value = false;
-            }
-
-            protected override IEnumerable<IniValue> GetValues()
-            {
-                yield return Enabled;
-                yield return Rotation;
-                yield return Perspective;
-                yield return SpeedMode;
-                yield return SpeedFactor;
-                yield return BattleAssistance;
-                yield return Attack9999;
-                yield return NoRandomEncounter;
-                yield return MasterSkill;
-                yield return LvMax;
-                yield return GilMax;
+                BattleAssistance = BindBoolean(nameof(BattleAssistance), false);
+                Attack9999 = BindBoolean(nameof(Attack9999), false);
+                NoRandomEncounter = BindBoolean(nameof(NoRandomEncounter), false);
+                MasterSkill = BindBoolean(nameof(MasterSkill), false);
+                LvMax = BindBoolean(nameof(LvMax), false);
+                GilMax = BindBoolean(nameof(GilMax), false);
             }
         }
     }

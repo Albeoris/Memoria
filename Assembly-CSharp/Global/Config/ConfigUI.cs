@@ -841,7 +841,7 @@ public class ConfigUI : UIScene
         {
             if (!FF9StateSystem.Settings.IsMasterSkill)
             {
-                if (Configuration.Cheats.Enabled && Configuration.Cheats.MasterSkill)
+                if (Configuration.Cheats.MasterSkill)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.MasterSkill, AfterBoosterFinish);
@@ -864,7 +864,7 @@ public class ConfigUI : UIScene
         }
         else if (go == lvMaxButtonGameObject)
         {
-            if (Configuration.Cheats.Enabled && Configuration.Cheats.LvMax)
+            if (Configuration.Cheats.LvMax)
             {
                 FF9Sfx.FF9SFX_Play(103);
                 PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.LvMax, AfterBoosterFinish);
@@ -879,7 +879,7 @@ public class ConfigUI : UIScene
         }
         else if (go == gilMaxButtonGameObject)
         {
-            if (Configuration.Cheats.Enabled && Configuration.Cheats.GilMax)
+            if (Configuration.Cheats.GilMax)
             {
                 FF9Sfx.FF9SFX_Play(103);
                 PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax, AfterBoosterFinish);
@@ -1301,10 +1301,10 @@ public class ConfigUI : UIScene
             configScrollView.ScrollToIndex(0);
         }
 
-        if (!Configuration.Cheats.Enabled || !Configuration.Cheats.LvMax)
+        if (!Configuration.Cheats.LvMax)
             lvMaxLabel.color = FF9TextTool.Gray;
 
-        if (!Configuration.Cheats.Enabled || !Configuration.Cheats.GilMax)
+        if (!Configuration.Cheats.GilMax)
             gilMaxLabel.color = FF9TextTool.Gray;
 
         if (FF9StateSystem.Settings.IsMasterSkill)
@@ -1313,7 +1313,7 @@ public class ConfigUI : UIScene
         }
         else
         {
-            if (!Configuration.Cheats.Enabled || !Configuration.Cheats.MasterSkill)
+            if (!Configuration.Cheats.MasterSkill)
                 masterSkillLabel.color = FF9TextTool.Gray;
             else
                 masterSkillLabel.color = FF9TextTool.White;

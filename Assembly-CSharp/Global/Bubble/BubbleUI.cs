@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using UnityEngine;
 
 public class BubbleUI : Singleton<BubbleUI>
@@ -106,62 +107,55 @@ public class BubbleUI : Singleton<BubbleUI>
 		this.currentFlag.Clear();
 		this.HideAllHud();
 		Byte b = 0;
-		List<Byte> list = new List<Byte>();
-		if (this.GetCursorFlagIndex(flags) != -1)
-		{
-			this.cursor.Show();
-			flags = new BubbleUI.Flag[]
-			{
-				BubbleUI.Flag.CURSOR
-			};
-			list.Add(0);
-		}
-		else
-		{
-			BubbleUI.Flag[] array = flags;
-			for (Int32 i = 0; i < (Int32)array.Length; i++)
-			{
-				BubbleUI.Flag flag = array[i];
-				switch (flag)
-				{
-				case BubbleUI.Flag.EXCLAMATION:
-					this.ShowHud(flag);
-					this.suspectedButton.Show();
-					this.suspectedIndex = b;
-					list.Add(1);
-					break;
-				case BubbleUI.Flag.QUESTION:
-					this.ShowHud(flag);
-					this.helpButton.Show();
-					this.helpIndex = b;
-					list.Add(2);
-					break;
-				case BubbleUI.Flag.DUEL:
-					this.ShowHud(flag);
-					this.duelButton.Show();
-					this.duelIndex = b;
-					list.Add(3);
-					break;
-				case BubbleUI.Flag.BEACH:
-					this.ShowHud(flag);
-					this.beachButton.Show();
-					this.beachIndex = b;
-					list.Add(4);
-					break;
-				}
-				b = (Byte)(b + 1);
-				this.currentFlag.Add(flag);
-			}
-		}
-		Boolean flag2 = false;
+		List<Byte> list = new List<Byte>(flags.Length);
+
+	    flags = FilterFlags(flags);
+
+	    for (Int32 i = 0; i < (Int32)flags.Length; i++)
+	    {
+	        BubbleUI.Flag flag = flags[i];
+	        switch (flag)
+	        {
+	            case Flag.CURSOR:
+	                this.cursor.Show();
+	                list.Add(0);
+	                continue;
+	            case BubbleUI.Flag.EXCLAMATION:
+	                this.ShowHud(flag);
+	                this.suspectedButton.Show();
+	                this.suspectedIndex = b;
+	                list.Add(1);
+	                break;
+	            case BubbleUI.Flag.QUESTION:
+	                this.ShowHud(flag);
+	                this.helpButton.Show();
+	                this.helpIndex = b;
+	                list.Add(2);
+	                break;
+	            case BubbleUI.Flag.DUEL:
+	                this.ShowHud(flag);
+	                this.duelButton.Show();
+	                this.duelIndex = b;
+	                list.Add(3);
+	                break;
+	            case BubbleUI.Flag.BEACH:
+	                this.ShowHud(flag);
+	                this.beachButton.Show();
+	                this.beachIndex = b;
+	                list.Add(4);
+	                break;
+	        }
+	        b = (Byte)(b + 1);
+	        this.currentFlag.Add(flag);
+	    }
+        Boolean flag2 = false;
 		BubbleUI.Flag[] array2 = this.allFlag;
 		for (Int32 j = 0; j < (Int32)array2.Length; j++)
 		{
 			BubbleUI.Flag flag3 = array2[j];
-			BubbleUI.Flag[] array3 = flags;
-			for (Int32 k = 0; k < (Int32)array3.Length; k++)
+			for (Int32 k = 0; k < (Int32)flags.Length; k++)
 			{
-				BubbleUI.Flag flag4 = array3[k];
+				BubbleUI.Flag flag4 = flags[k];
 				if (flag4 == flag3)
 				{
 					flag2 = true;
@@ -177,7 +171,48 @@ public class BubbleUI : Singleton<BubbleUI>
 		this.grid.Reposition(list.ToArray());
 	}
 
-	public void ChangePrimaryKey(Control keyCode)
+    private static Flag[] FilterFlags(Flag[] flags)
+    {
+        List<Flag> filtredFlags = new List<Flag>(flags.Length);
+
+        foreach (Flag flag in flags)
+        {
+            if (flag == Flag.CURSOR)
+            {
+                filtredFlags.Clear();
+                if (!Configuration.Icons.HideCursos)
+                    filtredFlags.Add(Flag.CURSOR);
+                break;
+            }
+
+            if (flag == Flag.EXCLAMATION)
+            {
+                if (Configuration.Icons.HideExclamation)
+                    continue;
+            }
+            else if (flag == Flag.QUESTION)
+            {
+                if (Configuration.Icons.HideQuestion)
+                    continue;
+            }
+            else if (flag == Flag.DUEL)
+            {
+                if (Configuration.Icons.HideCards)
+                    continue;
+            }
+            else if (flag == Flag.BEACH)
+            {
+                if (Configuration.Icons.HideBeach)
+                    continue;
+            }
+
+            filtredFlags.Add(flag);
+        }
+
+        return filtredFlags.ToArray();
+    }
+
+    public void ChangePrimaryKey(Control keyCode)
 	{
 		if (this.suspectedOnScreenButton != (UnityEngine.Object)null && this.primaryOnScreenButton != (UnityEngine.Object)null)
 		{

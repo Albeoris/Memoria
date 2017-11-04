@@ -1031,7 +1031,7 @@ public class BGSCENE_DEF
             bGCAM_DEF.transform.localScale = new Vector3(1f, 1f, 1f);
         }
 
-        if (Configuration.Export.Enabled && Configuration.Export.Field)
+        if (Configuration.Export.Field)
         {
             var newPath = Path.Combine(Configuration.Import.Path, path);
             this.handleOverlays(fieldMap, UseUpscalFM, newPath);
@@ -1099,11 +1099,13 @@ public class BGSCENE_DEF
     private void createAtlas(String path, PsdFile psd, int atlasSide, PsdInfo psdInfo, DateTime timestamp)
     {
         Log.Message("BEGIN CREATE ATLAS");
-        string order = psdInfo.LayerOrderFromPsdSection;
-        bool reverse = psdInfo.ReversedFromPsdSection == 1 ? true : false;
-        psd.Layers.Reverse();
+
+        // ???
+        if (psdInfo.ReverseOrder)
+            psd.Layers.Reverse();
+
         List<Layer> newPsdList = new List<Layer>();
-        if (order == "depth")
+        if (psdInfo.OrderByDepth)
         {
             int[] orderArray = new int[this.overlayList.Count];
 
@@ -1132,6 +1134,7 @@ public class BGSCENE_DEF
         {
             newPsdList = psd.Layers;
         }
+
         Texture2D atlas = new Texture2D(atlasSide, atlasSide, TextureFormat.RGBA32, false);
         if (!Directory.Exists(Path.Combine(path, "atlases")))
         {

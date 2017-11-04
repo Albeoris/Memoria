@@ -4,11 +4,11 @@ namespace Memoria
 {
     public sealed partial class Configuration
     {
-        public static class Control
+        public static class AnalogControl
         {
-            public static Boolean Enabled => Instance._ctrl.Enabled.Value;
-            public static Int32 StickThreshold => Instance._ctrl.StickThreshold.Value;
-            public static Int32 MinimumSpeed => Instance._ctrl.MinimumSpeed.Value;
+            public static Boolean Enabled => Instance._analogControl.Enabled.Value;
+            public static Int32 StickThreshold => Instance._analogControl.StickThreshold.Value;
+            public static Int32 MinimumSpeed => Instance._analogControl.MinimumSpeed.Value;
         }
     }
 }

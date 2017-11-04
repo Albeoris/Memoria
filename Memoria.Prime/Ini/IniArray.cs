@@ -55,5 +55,10 @@ namespace Memoria.Prime.Ini
             sw.Write(string.Join("\", \"", Value.Select(v => _formatter(v)).ToArray()));
             sw.Write('"');
         }
+
+        public static implicit operator T[](IniArray<T> handler)
+        {
+            return handler.Value;
+        }
     }
 }

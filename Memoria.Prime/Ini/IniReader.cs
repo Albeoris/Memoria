@@ -3,16 +3,57 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Memoria.Prime.Text;
 
 namespace Memoria.Prime.Ini
 {
+    internal abstract class SectionBinding
+    {
+        public readonly String Name;
+
+        protected SectionBinding(String name)
+        {
+            Name = name;
+        }
+
+        public abstract IniSection CreateSection();
+        public abstract void UpdateSection(IniSection value);
+    }
+
+    internal sealed class SectionBinding<T> : SectionBinding where T : IniSection
+    {
+        private Func<T> _ctor;
+        private Action<T> _setter;
+
+        public SectionBinding(String name, Func<T> ctor, Action<T> setter)
+            :base(name)
+        {
+            _ctor = ctor;
+            _setter = setter;
+        }
+
+        public override IniSection CreateSection()
+        {
+            return _ctor();
+        }
+
+        public override void UpdateSection(IniSection value)
+        {
+            _setter((T)value);
+        }
+    }
+
     public sealed class IniReader
     {
         private readonly String _filePath;
 
-        private Dictionary<String, IniSection> _sections;
+        private Ini _output;
+        private Dictionary<String, SectionBinding> _sections;
         private Dictionary<String, IniValue> _values;
+        private SectionBinding _currentSectionBinding;
+        private IniSection _currentSection;
         private IniValue _currnetValue;
+        private IniValue<Boolean> _enabledValue;
         private StringBuilder _sb;
         private String _line;
         private Boolean _section;
@@ -27,7 +68,8 @@ namespace Memoria.Prime.Ini
         {
             try
             {
-                _sections = output.GetSections().ToDictionary(s => s.Name);
+                _output = output;
+                _sections = output.GetBindings().ToDictionary(s => s.Name);
                 if (_sections.Count == 0)
                     return;
 
@@ -47,6 +89,7 @@ namespace Memoria.Prime.Ini
             }
             finally
             {
+                FlushSection();
                 _sections = null;
                 _values = null;
                 _sb = null;
@@ -92,6 +135,9 @@ namespace Memoria.Prime.Ini
             }
 
             _currnetValue.ParseValue(_sb.ToString().Trim());
+
+            if (_enabledValue == null && _currnetValue.Name == nameof(IniSection.Enabled))
+                _enabledValue = (IniValue<Boolean>)_currnetValue;
         }
 
         private Boolean ReadKey()
@@ -148,22 +194,38 @@ namespace Memoria.Prime.Ini
                 Char ch = _line[_index];
                 if (ch == ']')
                 {
-                    IniSection section;
-                    if (_sections.TryGetValue(_sb.ToString(), out section))
+                    FlushSection();
+
+                    String sectionName = _sb.ToString().TrimEnd("Section", StringComparison.InvariantCulture);
+                    if (_sections.TryGetValue(sectionName, out _currentSectionBinding))
                     {
                         try
                         {
-                            _values = section.GetValuesInternal().ToDictionary(v => v.Name);
+                            _currentSection = _currentSectionBinding.CreateSection();
+                            _values = _currentSection.GetValues().ToDictionary(v => v.Name);
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, "Failed to load data for the section [{0}]", section.Name);
+                            Log.Error(ex, "Failed to load data for the section [{0}]", _currentSection.Name);
                             _values = new Dictionary<String, IniValue>();
                         }
                     }
+
+                    _enabledValue = null;
                     break;
                 }
                 _sb.Append(ch);
+            }
+        }
+
+        private void FlushSection()
+        {
+            if (_currentSection != null && _currentSectionBinding != null)
+            {
+                if (!_currentSection.Enabled.Value)
+                    _currentSection.Reset();
+
+                _currentSectionBinding.UpdateSection(_currentSection);
             }
         }
     }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Memoria.Prime.Ini;
+#pragma warning disable 420
 
 namespace Memoria.Assets.Import.Graphics
 {
     public sealed class AtlasInfo : Ini
     {
+        #region Static
+
         public static void Sample()
         {
             AtlasInfo ini = AtlasInfo.Load("AtlasInfo.ini");
@@ -26,36 +27,30 @@ namespace Memoria.Assets.Import.Graphics
             return result;
         }
 
-        private readonly AtlasSection _atlasSection = new AtlasSection();
+        #endregion
+
+        private volatile AtlasSection _atlasSection;
 
         public Int32 TotalAtlasesFromAtlasSection => _atlasSection.TotalAtlases.Value;
         public Int32 TileSizeFromAtlasSection => _atlasSection.TileSize.Value;
         public Int32 AtlasSideFromAtlasSection => _atlasSection.AtlasSide.Value;
 
-        public override IEnumerable<IniSection> GetSections()
+        public AtlasInfo()
         {
-            yield return _atlasSection;
+            BindingSection(out _atlasSection, v => _atlasSection = v);
         }
 
         private sealed class AtlasSection : IniSection
         {
-            public readonly IniValue<Int32> TotalAtlases = IniValue.Int32(nameof(TotalAtlases));
-            public readonly IniValue<Int32> TileSize = IniValue.Int32(nameof(TileSize));
-            public readonly IniValue<Int32> AtlasSide = IniValue.Int32(nameof(AtlasSide));
+            public readonly IniValue<Int32> TotalAtlases;
+            public readonly IniValue<Int32> TileSize;
+            public readonly IniValue<Int32> AtlasSide;
 
-            public AtlasSection() : base("AtlasSection")
+            public AtlasSection() : base(nameof(AtlasSection), true)
             {
-                TileSize.Value = 32; // DefaultValue
-                TotalAtlases.Value = 1;
-                AtlasSide.Value = 2048;
-                
-            }
-
-            protected override IEnumerable<IniValue> GetValues()
-            {
-                yield return TileSize;
-                yield return TotalAtlases;
-                yield return AtlasSide;
+                TotalAtlases = BindInt32(nameof(TotalAtlases), 1);
+                TileSize = BindInt32(nameof(TileSize), 32);
+                AtlasSide = BindInt32(nameof(AtlasSide), 2048);
             }
         }
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Memoria.Prime.Ini;
 
 namespace Memoria
@@ -8,34 +7,21 @@ namespace Memoria
     {
         private sealed class GraphicsSection : IniSection
         {
-            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
-            public readonly IniValue<Int32> BattleFPS = IniValue.Int32(nameof(BattleFPS));
-            public readonly IniValue<Int32> MovieFPS = IniValue.Int32(nameof(MovieFPS));
-            public readonly IniValue<Int32> BattleSwirlFrames = IniValue.Int32(nameof(BattleSwirlFrames));
-            public readonly IniValue<Boolean> WidescreenSupport = IniValue.Boolean(nameof(WidescreenSupport));
-            public readonly IniValue<Int32> SkipIntros = IniValue.Int32(nameof(SkipIntros));
-            public readonly IniValue<Int32> GarnetHair = IniValue.Int32(nameof(GarnetHair));
+            public readonly IniValue<Int32> BattleFPS;
+            public readonly IniValue<Int32> MovieFPS;
+            public readonly IniValue<Int32> BattleSwirlFrames;
+            public readonly IniValue<Boolean> WidescreenSupport;
+            public readonly IniValue<Int32> SkipIntros;
+            public readonly IniValue<Int32> GarnetHair;
 
-            public GraphicsSection() : base("Graphics")
+            public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
-                Enabled.Value = false;
-                BattleFPS.Value = 30;
-                MovieFPS.Value = 15;
-                BattleSwirlFrames.Value = 25;
-                WidescreenSupport.Value = true;
-                SkipIntros.Value = 0;
-                GarnetHair.Value = 0;
-            }
-
-            protected override IEnumerable<IniValue> GetValues()
-            {
-                yield return Enabled;
-                yield return BattleFPS;
-                yield return MovieFPS;
-                yield return BattleSwirlFrames;
-                yield return WidescreenSupport;
-                yield return SkipIntros;
-                yield return GarnetHair;
+                BattleFPS = BindInt32(nameof(BattleFPS), 15);
+                MovieFPS = BindInt32(nameof(MovieFPS), 15);
+                BattleSwirlFrames = BindInt32(nameof(BattleSwirlFrames), 115);
+                WidescreenSupport = BindBoolean(nameof(WidescreenSupport), true);
+                SkipIntros = BindInt32(nameof(SkipIntros), 0);
+                GarnetHair = BindInt32(nameof(GarnetHair), 0);
             }
         }
     }

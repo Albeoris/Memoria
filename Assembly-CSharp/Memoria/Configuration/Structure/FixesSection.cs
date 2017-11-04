@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Memoria.Prime.Ini;
 
 namespace Memoria
@@ -8,19 +7,11 @@ namespace Memoria
     {
         private sealed class FixesSection : IniSection
         {
-            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
-            public readonly IniValue<Boolean> KeepRestTimeInBattle = IniValue.Boolean(nameof(KeepRestTimeInBattle));
+            public readonly IniValue<Boolean> KeepRestTimeInBattle;
 
-            public FixesSection() : base("Fixes")
+            public FixesSection() : base(nameof(FixesSection), true)
             {
-                Enabled.Value = false;
-                KeepRestTimeInBattle.Value = true;
-            }
-
-            protected override IEnumerable<IniValue> GetValues()
-            {
-                yield return Enabled;
-                yield return KeepRestTimeInBattle;
+                KeepRestTimeInBattle = BindBoolean(nameof(KeepRestTimeInBattle), true);
             }
         }
     }

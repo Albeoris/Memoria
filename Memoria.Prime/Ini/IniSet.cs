@@ -33,7 +33,7 @@ namespace Memoria.Prime.Ini
                 return;
             }
 
-            String[] list = rawString.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
+            String[] list = rawString.Trim('"').Split(new[] {"\", \""}, StringSplitOptions.None);
             HashSet<T> result = new HashSet<T>();
             for (int i = 0; i < list.Length; i++)
             {
@@ -55,6 +55,11 @@ namespace Memoria.Prime.Ini
             sw.Write('"');
             sw.Write(string.Join("\", \"", Value.Select(v => _formatter(v)).ToArray()));
             sw.Write('"');
+        }
+
+        public static implicit operator HashSet<T>(IniSet<T> handler)
+        {
+            return handler.Value;
         }
     }
 }

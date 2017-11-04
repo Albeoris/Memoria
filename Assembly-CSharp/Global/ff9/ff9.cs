@@ -7331,7 +7331,7 @@ public static class ff9
         Boolean flag = x < -0.1f;
         Boolean flag2 = x > 0.1f;
         vx = 0;
-        if (Configuration.Control.Enabled)
+        if (Configuration.AnalogControl.Enabled)
         {
             if (flag || flag2)
             {
@@ -7412,7 +7412,7 @@ public static class ff9
 		Boolean flag4 = y3 > 0.1f;
 		Boolean flag5 = y3 < -0.1f;
 		vy = 0;
-        if (Configuration.Control.Enabled)
+        if (Configuration.AnalogControl.Enabled)
         {
             if (flag4 || flag5)
             {

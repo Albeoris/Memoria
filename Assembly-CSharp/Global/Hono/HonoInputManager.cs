@@ -11,7 +11,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 {
 	public HonoInputManager()
 	{
-        this.analogControlEnabled = Configuration.Control.Enabled;
+        this.analogControlEnabled = Configuration.AnalogControl.Enabled;
 		KeyCode[] array = new KeyCode[3];
 		array[0] = KeyCode.KeypadEnter;
 		array[1] = KeyCode.Mouse1;

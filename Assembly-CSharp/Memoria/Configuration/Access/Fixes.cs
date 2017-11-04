@@ -6,9 +6,7 @@ namespace Memoria
     {
         public static class Fixes
         {
-            public static Boolean Enabled => Instance._fixes.Enabled.Value;
-
-            public static Boolean IsKeepRestTimeInBattle => Enabled && Instance._fixes.KeepRestTimeInBattle.Value;
+            public static Boolean IsKeepRestTimeInBattle => Instance._fixes.KeepRestTimeInBattle;
         }
     }
 }

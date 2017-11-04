@@ -8,55 +8,37 @@ namespace Memoria
     {
         private sealed class TetraMasterSection : IniSection
         {
-            public readonly IniValue<Boolean> Enabled = IniValue.Boolean(nameof(Enabled));
-            public readonly IniValue<Int32> ReduceRandom = IniValue.Int32(nameof(ReduceRandom));
+            private static readonly HashSet<Int32> DefaultExclusions = new HashSet<Int32>(new[] {56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100});
 
-            public readonly IniValue<Boolean> DiscardAutoButton = IniValue.Boolean(nameof(DiscardAutoButton));
-            public readonly IniValue<Boolean> DiscardAssaultCards = IniValue.Boolean(nameof(DiscardAssaultCards));
-            public readonly IniValue<Boolean> DiscardFlexibleCards = IniValue.Boolean(nameof(DiscardFlexibleCards));
-            public readonly IniValue<Int32> DiscardMaxAttack = IniValue.Int32(nameof(DiscardMaxAttack));
-            public readonly IniValue<Int32> DiscardMaxPDef = IniValue.Int32(nameof(DiscardMaxPDef));
-            public readonly IniValue<Int32> DiscardMaxMDef = IniValue.Int32(nameof(DiscardMaxMDef));
-            public readonly IniValue<Int32> DiscardMaxSum = IniValue.Int32(nameof(DiscardMaxSum));
-            public readonly IniValue<Int32> DiscardMinDeckSize = IniValue.Int32(nameof(DiscardMinDeckSize));
-            public readonly IniValue<Int32> DiscardKeepSameType = IniValue.Int32(nameof(DiscardKeepSameType));
-            public readonly IniValue<Int32> DiscardKeepSameArrow = IniValue.Int32(nameof(DiscardKeepSameArrow));
-            public readonly IniSet<Int32> DiscardExclusions = IniValue.Int32Set(nameof(DiscardExclusions));
+            public readonly IniValue<Int32> ReduceRandom;
 
-            public TetraMasterSection() : base("TetraMaster")
+            public readonly IniValue<Boolean> DiscardAutoButton;
+            public readonly IniValue<Boolean> DiscardAssaultCards;
+            public readonly IniValue<Boolean> DiscardFlexibleCards;
+            public readonly IniValue<Int32> DiscardMaxAttack;
+            public readonly IniValue<Int32> DiscardMaxPDef;
+            public readonly IniValue<Int32> DiscardMaxMDef;
+            public readonly IniValue<Int32> DiscardMaxSum;
+            public readonly IniValue<Int32> DiscardMinDeckSize;
+            public readonly IniValue<Int32> DiscardKeepSameType;
+            public readonly IniValue<Int32> DiscardKeepSameArrow;
+            public readonly IniSet<Int32> DiscardExclusions;
+
+            public TetraMasterSection() : base(nameof(TetraMasterSection), true)
             {
-                Enabled.Value = true;
-                ReduceRandom.Value = 1;
+                ReduceRandom = BindInt32(nameof(ReduceRandom), 1);
 
-                DiscardAutoButton.Value = true;
-                DiscardAssaultCards.Value = false;
-                DiscardFlexibleCards.Value = true;
-                DiscardMaxAttack.Value = 224;
-                DiscardMaxPDef.Value = 255;
-                DiscardMaxMDef.Value = 255;
-                DiscardMaxSum.Value = 480;
-                DiscardMinDeckSize.Value = 10;
-                DiscardKeepSameType.Value = 1;
-                DiscardKeepSameArrow.Value = 0;
-                DiscardExclusions.Value = new HashSet<Int32>(new[] {56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100});
-            }
-
-            protected override IEnumerable<IniValue> GetValues()
-            {
-                yield return Enabled;
-                yield return ReduceRandom;
-
-                yield return DiscardAutoButton;
-                yield return DiscardAssaultCards;
-                yield return DiscardFlexibleCards;
-                yield return DiscardMaxAttack;
-                yield return DiscardMaxPDef;
-                yield return DiscardMaxMDef;
-                yield return DiscardMaxSum;
-                yield return DiscardMinDeckSize;
-                yield return DiscardKeepSameType;
-                yield return DiscardKeepSameArrow;
-                yield return DiscardExclusions;
+                DiscardAutoButton = BindBoolean(nameof(DiscardAutoButton), true);
+                DiscardAssaultCards = BindBoolean(nameof(DiscardAssaultCards), false);
+                DiscardFlexibleCards = BindBoolean(nameof(DiscardFlexibleCards), true);
+                DiscardMaxAttack = BindInt32(nameof(DiscardMaxAttack), 224);
+                DiscardMaxPDef = BindInt32(nameof(DiscardMaxPDef), 255);
+                DiscardMaxMDef = BindInt32(nameof(DiscardMaxMDef), 255);
+                DiscardMaxSum = BindInt32(nameof(DiscardMaxSum), 480);
+                DiscardMinDeckSize = BindInt32(nameof(DiscardMinDeckSize), 10);
+                DiscardKeepSameType = BindInt32(nameof(DiscardKeepSameType), 1);
+                DiscardKeepSameArrow = BindInt32(nameof(DiscardKeepSameArrow), 0);
+                DiscardExclusions = BindInt32Set(nameof(DiscardExclusions), DefaultExclusions);
             }
         }
     }

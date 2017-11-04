@@ -105,6 +105,7 @@ namespace Memoria.Debugger
 
                     KeepAlive(cts, timeout);
                     Console.WriteLine($"DLL was successfully injected to the process with PID: {processId}.");
+                    return;
                 }
                 catch (OperationCanceledException)
                 {

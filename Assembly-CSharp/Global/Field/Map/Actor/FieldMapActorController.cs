@@ -140,7 +140,7 @@ public class FieldMapActorController : HonoBehavior
 		this.totalPathCount = 0;
 		this.totalPathLengthSq = 0f;
 		this.cumulativeTime = 0f;
-		this.amplitude = (Single)Screen.height * 0.025f;
+		this.amplitude = Screen.height * 0.025f;
 		this.hasTalkBalloon = false;
 		this.talkBalloonRect = default(Rect);
 		this.warpRects = new List<Rect>();
@@ -150,9 +150,9 @@ public class FieldMapActorController : HonoBehavior
 		this.animation = this.model.GetComponent<Animation>();
 		this.foundTris = new List<Int32>();
 		this.adjacentActiveTris = new List<Int32>();
-        this.analogControlEnabled = Configuration.Control.Enabled;
-        this.stickThreshold = Configuration.Control.StickThreshold/100.0f;
-        this.minimumSpeed = Mathf.Min((float)Configuration.Control.MinimumSpeed, 30.0f);
+        this.analogControlEnabled = Configuration.AnalogControl.Enabled;
+        this.stickThreshold = Configuration.AnalogControl.StickThreshold/100.0f;
+        this.minimumSpeed = Mathf.Min(Configuration.AnalogControl.MinimumSpeed, 30.0f);
 
     }
 

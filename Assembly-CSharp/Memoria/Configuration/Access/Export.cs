@@ -6,15 +6,17 @@ namespace Memoria
     {
         public static class Export
         {
-            public static Boolean Enabled => Instance._export.Enabled.Value;
-            public static String Path => Instance._export.Path.Value;
-            public static String[] Languages => Instance._export.Languages.Value;
-            public static Boolean Text => Instance._export.Text.Value;
+            public static Boolean Enabled => Instance._export.Enabled;
+
+            public static String Path => Instance._export.Path;
+            public static String[] Languages => Instance._export.Languages;
+            public static Boolean Text => Instance._export.Text;
+            public static Boolean Graphics => Instance._export.Graphics;
+            public static Boolean Audio => Instance._export.Audio;
+            public static Boolean Field => Instance._export.Field;
+            public static Boolean Battle => Instance._export.Battle;
+
             public static Int32 TextFormat = 1;
-            public static Boolean Graphics => Instance._export.Graphics.Value;
-            public static Boolean Audio => Enabled && Instance._export.Audio.Value;
-            public static Boolean Field => Enabled && Instance._export.Field.Value;
-            public static Boolean Battle => Instance._export.Battle.Value;
         }
     }
 }

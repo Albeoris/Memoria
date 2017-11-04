@@ -142,5 +142,29 @@ namespace Memoria.Prime.Text
 
             return result.ToString();
         }
+
+        public static String TrimEnd(this String source, String sufix, StringComparison comparisonType)
+        {
+            if (source == null)
+                return null;
+
+            Exceptions.Exceptions.CheckArgumentNullOrEmprty(sufix, nameof(sufix));
+
+            Int32 sourceLength = source.Length;
+            Int32 sufixLength = sufix.Length;
+
+            if (sufixLength > sourceLength)
+                return source;
+
+            Int32 index = sourceLength - sufixLength;
+            String sub = source.Substring(index);
+            if (!sub.Equals(sufix, comparisonType))
+                return source;
+
+            if (index == 0)
+                return String.Empty;
+
+            return source.Substring(0, index);
+        }
     }
 }

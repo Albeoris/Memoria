@@ -7,12 +7,14 @@ using Memoria.Prime.Ini;
 namespace Memoria.Assets.Import.Graphics
 {
     class PsdInfo : Ini
-    { 
-       public static void Sample()
+    {
+        #region Static
+
+        public static void Sample()
         {
             PsdInfo ini = PsdInfo.Load("PsdInfo.ini");
-            String LayerOrder = ini.LayerOrderFromPsdSection;
-            Int32 Reversed = ini.ReversedFromPsdSection;
+            Boolean LayerOrder = ini.OrderByDepth;
+            Boolean Reversed = ini.ReverseOrder;
         }
 
         public static PsdInfo Load(String filePath)
@@ -25,32 +27,27 @@ namespace Memoria.Assets.Import.Graphics
             return result;
         }
 
-        private readonly PsdSection _psdSection = new PsdSection();
+        #endregion
 
-        public String LayerOrderFromPsdSection => _psdSection.LayerOrder.Value;
-        public Int32 ReversedFromPsdSection => _psdSection.Reversed.Value;
+        private PsdSection _psdSection;
 
-        public override IEnumerable<IniSection> GetSections()
+        public Boolean OrderByDepth => _psdSection.OrderByDepth.Value;
+        public Boolean ReverseOrder => _psdSection.ReverseOrder.Value;
+
+        public PsdInfo()
         {
-            yield return _psdSection;
+            BindingSection(out _psdSection, v => _psdSection = v);
         }
 
         private sealed class PsdSection : IniSection
         {
-            public readonly IniValue<String> LayerOrder = IniValue.String(nameof(LayerOrder));
-            public readonly IniValue<Int32> Reversed = IniValue.Int32(nameof(Reversed));
+            public readonly IniValue<Boolean> OrderByDepth;
+            public readonly IniValue<Boolean> ReverseOrder;
 
-            public PsdSection() : base("PsdSection")
+            public PsdSection() : base(nameof(PsdSection), true)
             {
-                LayerOrder.Value = "name"; // DefaultValue
-                Reversed.Value = 0 ;
-
-            }
-
-            protected override IEnumerable<IniValue> GetValues()
-            {
-                yield return LayerOrder;
-                yield return Reversed;
+                OrderByDepth = BindBoolean(nameof(OrderByDepth), false);
+                ReverseOrder = BindBoolean(nameof(ReverseOrder), false);
             }
         }
     }
