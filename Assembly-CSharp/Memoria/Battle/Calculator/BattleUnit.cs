@@ -118,8 +118,24 @@ namespace Memoria
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
         public String Name => IsPlayer ? Player.Name : Enemy.Name;
 
-        public BattleStatus CurrentStatus => (BattleStatus)Data.stat.cur;
-        public BattleStatus PermanentStatus => (BattleStatus)Data.stat.permanent;
+        public BattleStatus CurrentStatus
+        {
+            get => (BattleStatus)Data.stat.cur;
+            set => Data.stat.cur = (UInt32)value;
+        }
+
+        public BattleStatus PermanentStatus
+        {
+            get => (BattleStatus)Data.stat.permanent;
+            set => Data.stat.permanent = (UInt32)value;
+        }
+         
+        public BattleStatus ResistStatus
+        {
+            get => (BattleStatus)Data.stat.invalid;
+            set => Data.stat.invalid = (UInt32)value;
+        }
+
         public EffectElement BonusElement => (EffectElement)Data.p_up_attr;
 
         public EffectElement WeakElement => (EffectElement)Data.def_attr.weak;
@@ -127,8 +143,8 @@ namespace Memoria
         public EffectElement AbsorbElement => (EffectElement)Data.def_attr.absorb;
         public EffectElement HalfElement => (EffectElement)Data.def_attr.half;
 
-        public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderStatus(BattleStatus.Float);
-        public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderStatus(BattleStatus.Zombie);
+        public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderAnyStatus(BattleStatus.Float);
+        public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatus.Zombie);
         public Boolean HasLongReach => HasSupportAbility(SupportAbility1.LongReach) || HasCategory(WeaponCategory.LongRange);
 
         public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);

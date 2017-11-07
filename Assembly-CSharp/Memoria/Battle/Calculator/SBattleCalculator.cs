@@ -43,7 +43,7 @@ namespace Memoria
             BTL_DATA caster = v.Caster.Data;
             Boolean counterAtk = false;
             if (target.bi.player != 0 && caster.bi.player == 0)
-                counterAtk = btl_abil.CheckCounterAbility(target, caster, v.Command.Data);
+                counterAtk = btl_abil.CheckCounterAbility(v.Target, v.Caster, v.Command);
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
                 target.fig_info |= 128;
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
@@ -97,7 +97,7 @@ namespace Memoria
                                 v.Target.HpDamage = 9999;
                             else
                                 v.Target.HpDamage *= (Int16)num1;
-                            if (v.Caster.HasSupportAbility(SupportAbility1.PowerThrow) && (v.Target.HpDamage *= 2) > 9999)
+                            if (v.Caster.HasSupportAbility(SupportAbility1.Reflectx2) && (v.Target.HpDamage *= 2) > 9999)
                                 v.Target.HpDamage = 9999;
                         }
                         if ((v.Target.Flags & CalcFlag.HpRecovery) != 0)
@@ -169,7 +169,7 @@ namespace Memoria
             PersistenSingleton<EventEngine>.Instance.RequestAction(55, num5, caster.btl_id, num6);
         }
 
-        private static BattleScriptFactory FindScriptFactory(Int32 scriptId)
+        public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
         {
             if (scriptId >= 0 && scriptId < BaseScripts.Length)
                 return BaseScripts[scriptId];
@@ -188,7 +188,7 @@ namespace Memoria
             if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
                 return;
             if (!counterAtk)
-                btl_abil.CheckAutoItemAbility(v.Target.Data, v.Command.Data.cmd_no);
+                btl_abil.CheckAutoItemAbility(v.Target, v.Command);
             btl_abil.CheckReactionAbility(v.Target.Data, v.Command.Data.aa);
             if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || Status.checkCurStat(v.Target.Data, 33575235U))
                 return;

@@ -193,7 +193,7 @@ public class btl_stat
         }
         if (((Int32)status & 327682) != 0)
             SetOprStatusCount(btl, statTblNo);
-        HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, status);
+        HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit, status);
         if (btl.bi.player != 0)
             BattleAchievement.UpdateAbnormalStatus(status);
         return 2;

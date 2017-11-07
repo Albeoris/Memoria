@@ -352,8 +352,8 @@ public class btl_scrp
 		case 39:
 			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null)
 			{
-				if ((ff9Battle.cur_cmd.regist.sa[1] & 1u) != 0u)
-				{
+				if ((ff9Battle.cur_cmd.regist.sa[1] & 1u) != 0u) // MagElemNull
+                    {
 					result = 0u;
 				}
 				else

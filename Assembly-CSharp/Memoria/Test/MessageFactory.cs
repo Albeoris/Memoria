@@ -67,6 +67,7 @@ namespace Memoria.Test
         {
             {typeof(Component), () => new ComponentMessage(), obj => new ComponentMessage(obj)},
             {typeof(Transform), () => new TransformMessage(), obj => new TransformMessage((Transform)obj)},
+            {typeof(RectTransform), () => new RectTransformMessage(), obj => new RectTransformMessage((RectTransform)obj)},
             {typeof(Behaviour), () => new BehaviourMessage(), obj => new BehaviourMessage((Behaviour)obj)},
             {typeof(MonoBehaviour), () => new MonoBehaviourMessage(), obj => new MonoBehaviourMessage((MonoBehaviour)obj)},
             {typeof(Camera), ()=> new CameraMessage(), obj => new CameraMessage((Camera)obj)},

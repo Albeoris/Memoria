@@ -9,6 +9,7 @@ namespace Memoria
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 Speed => Math.Max(Instance._battle.Speed, Instance._hacks.BattleSpeed);
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
+            public static Int32 AutoPotionOverhealLimit => Instance._battle.AutoPotionOverhealLimit;
         }
     }
 }

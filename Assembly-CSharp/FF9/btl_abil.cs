@@ -20,47 +20,104 @@ namespace FF9
 			return false;
 		}
 
-		public static Boolean CheckCounterAbility(BTL_DATA btl, BTL_DATA target, CMD_DATA cmd)
-		{
-			if (!Status.checkCurStat(btl, 1107300611u) && cmd.cmd_no < 48)
-			{
-				if ((btl.sa[1] & 16u) != 0u && (cmd.aa.Category & 8) != 0)
-				{
-					Int32 num = (Int32)btl.elem.wpr;
-					if ((btl.sa[1] & 128u) != 0u)
-					{
-						num *= 2;
-					}
-					if (num > Comn.random16() % 100)
-					{
-						btl_cmd.SetCounter(btl, 49u, 176, target.btl_id);
-						return true;
-					}
-				}
-				if ((btl.sa[1] & 4194304u) != 0u && (cmd.aa.Category & 128) != 0)
-				{
-					btl_cmd.SetCounter(btl, 50u, (Int32)cmd.sub_no, target.btl_id);
-					return true;
-				}
-			}
-			return false;
-		}
+	    public static Boolean CheckCounterAbility(BattleTarget defender, BattleCaster attacker, BattleCommand command)
+	    {
+	        if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.None3)
+                return false;
 
-		public static void CheckAutoItemAbility(BTL_DATA btl, Byte cmd_no)
-		{
-			if (!Status.checkCurStat(btl, 1107300611u) && cmd_no < 48 && (btl.sa[1] & 16777216u) != 0u)
-			{
-				for (Byte b = 236; b < 238; b = (Byte)(b + 1))
-				{
-					if (ff9item.FF9Item_GetCount((Int32)b) != 0)
-					{
-						UIManager.Battle.ItemRequest((Int32)b);
-						btl_cmd.SetCounter(btl, 51u, (Int32)b, btl.btl_id);
-						break;
-					}
-				}
-			}
-		}
+            if (defender.HasSupportAbility(SupportAbility2.Counter) && (command.Data.aa.Category & 8) != 0) // Physical
+            {
+
+                Int32 chance = defender.Will;
+	            if (defender.HasSupportAbility(SupportAbility2.Eye4Eye))
+	                chance *= 2;
+
+                if (chance > Comn.random16() % 100)
+	            {
+	                btl_cmd.SetCounter(defender.Data, 49u, 176, attacker.Id);
+	                return true;
+	            }
+	        }
+
+	        if (defender.HasSupportAbility(SupportAbility2.ReturnMagic) && (command.Data.aa.Category & 128) != 0) // Magic
+            {
+	            btl_cmd.SetCounter(defender.Data, 50u, command.Data.sub_no, attacker.Id);
+	            return true;
+	        }
+
+	        return false;
+        }
+
+	    public static void CheckAutoItemAbility(BattleTarget defender, BattleCommand command)
+	    {
+	        const Byte potion1Id = 236;
+	        const Byte potion2Id = 237;
+	        const Byte potionScriptId = 069;
+
+	        if (!defender.HasSupportAbility(SupportAbility2.AutoPotion))
+	            return;
+
+	        if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.None3)
+	            return;
+
+	        Int32 overhealLimit = Configuration.Battle.AutoPotionOverhealLimit;
+
+            // Vanila
+	        if (overhealLimit < 0)
+	        {
+	            foreach (Byte potionId in new[] {potion1Id, potion2Id})
+	            {
+	                if (ff9item.FF9Item_GetCount(potionId) != 0)
+	                {
+	                    UIManager.Battle.ItemRequest(potionId);
+	                    btl_cmd.SetCounter(defender.Data, 51u, potionId, defender.Id);
+	                    break;
+	                }
+	            }
+	        }
+            // Better auto-potions
+	        else
+	        {
+	            Byte betterPotionId = 0;
+
+	            foreach (Byte potionId in new[] {potion1Id, potion2Id})
+	            {
+	                if (ff9item.FF9Item_GetCount(potionId) < 1)
+	                    continue;
+
+	                CMD_DATA testCommand = new CMD_DATA
+	                {
+	                    cmd_no = 51,
+	                    sub_no = potionId,
+	                    aa = FF9StateSystem.Battle.FF9Battle.aa_data[0],
+	                    tar_id = defender.Id,
+	                    info = new CMD_DATA.SELECT_INFO()
+	                };
+
+	                BattleCalculator v = new BattleCalculator(defender.Data, defender.Data, new BattleCommand(testCommand));
+	                BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(potionScriptId);
+	                if (factory != null)
+	                {
+	                    IBattleScript script = factory(v);
+	                    script.Perform();
+	                }
+
+	                Int16 heal = v.Target.HpDamage;
+	                Int32 harm = v.Target.MaximumHp - v.Target.CurrentHp;
+
+	                if (heal - harm > heal * overhealLimit / 100)
+	                    break;
+
+	                betterPotionId = potionId;
+	            }
+
+	            if (betterPotionId != 0)
+	            {
+	                UIManager.Battle.ItemRequest(betterPotionId);
+	                btl_cmd.SetCounter(defender.Data, 51u, betterPotionId, defender.Id);
+	            }
+	        }
+	    }
 
 	    public static UInt16 CheckCoverAbility(UInt16 tar_id)
 	    {
@@ -135,65 +192,77 @@ namespace FF9
 			}
 		}
 
-		public static void CheckStatusAbility(BTL_DATA btl)
+		public static void CheckStatusAbility(BattleUnit btl)
 		{
-			if ((btl.sa[0] & 1u) != 0u)
-			{
-				btl.stat.permanent |= 536870912u;
-				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, 536870912u);
+            if (btl.HasSupportAbility(SupportAbility1.AutoReflect))
+            {
+                btl.PermanentStatus |= BattleStatus.Reflect;
+				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, (UInt32)BattleStatus.Reflect);
 			}
-			if ((btl.sa[0] & 2u) != 0u)
+
+			if (btl.HasSupportAbility(SupportAbility1.AutoFloat))
 			{
-				btl.stat.permanent |= 2097152u;
+			    btl.PermanentStatus |= BattleStatus.Float;
 			}
-			if ((btl.sa[0] & 4u) != 0u)
+
+            if (btl.HasSupportAbility(SupportAbility1.AutoHaste))
+            {
+                btl.PermanentStatus |= BattleStatus.Haste;
+                btl.ResistStatus |= BattleStatus.Slow;
+                btl.Data.cur.at_coef = (SByte)(btl.Data.cur.at_coef * 3 / 2);
+				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, (UInt32)BattleStatus.Haste);
+			}
+
+            if (btl.HasSupportAbility(SupportAbility1.AutoRegen))
+            {
+                btl.PermanentStatus |= BattleStatus.Regen;
+				btl_stat.SetOprStatusCount(btl.Data, 18u);
+			}
+
+            if (btl.HasSupportAbility(SupportAbility1.AutoLife))
+            {
+                btl.CurrentStatus |= BattleStatus.AutoLife;
+			}
+
+            if (btl.HasSupportAbility(SupportAbility2.BodyTemp))
+            {
+                btl.ResistStatus |= (BattleStatus.Freeze | BattleStatus.Heat);
+			}
+
+            if (btl.HasSupportAbility(SupportAbility2.Insomniac))
+            {
+                btl.ResistStatus |= BattleStatus.Sleep;
+			}
+
+            if (btl.HasSupportAbility(SupportAbility2.Antibody))
+            {
+                btl.ResistStatus |= (BattleStatus.Poison | BattleStatus.Venom);
+			}
+
+            if (btl.HasSupportAbility(SupportAbility2.BrightEyes))
+            {
+                btl.ResistStatus |= BattleStatus.Blind;
+			}
+
+            if (btl.HasSupportAbility(SupportAbility2.Loudmouth))
 			{
-				btl.stat.permanent |= 524288u;
-				btl.stat.invalid |= 1048576u;
-				btl.cur.at_coef = (SByte)((Int32)btl.cur.at_coef * 3 / 2);
-				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, 524288u);
+			    btl.ResistStatus |= BattleStatus.Silence;
+            }
+
+            if (btl.HasSupportAbility(SupportAbility2.Jelly))
+            {
+                btl.ResistStatus |= (BattleStatus.Petrify | BattleStatus.GradualPetrify);
 			}
-			if ((btl.sa[0] & 8u) != 0u)
-			{
-				btl.stat.permanent |= 262144u;
-				btl_stat.SetOprStatusCount(btl, 18u);
-			}
-			if ((btl.sa[0] & 16u) != 0u)
-			{
-				btl.stat.cur |= 8192u;
-			}
-			if ((btl.sa[1] & 256u) != 0u)
-			{
-				btl.stat.invalid |= 50331648u;
-			}
-			if ((btl.sa[1] & 65536u) != 0u)
-			{
-				btl.stat.invalid |= 131072u;
-			}
-			if ((btl.sa[1] & 131072u) != 0u)
-			{
-				btl.stat.invalid |= 65538u;
-			}
-			if ((btl.sa[1] & 262144u) != 0u)
-			{
-				btl.stat.invalid |= 16u;
-			}
-			if ((btl.sa[1] & 524288u) != 0u)
-			{
-				btl.stat.invalid |= 8u;
-			}
-			if ((btl.sa[1] & 2097152u) != 0u)
-			{
-				btl.stat.invalid |= 2147483649u;
-			}
-			if ((btl.sa[1] & 33554432u) != 0u)
-			{
-				btl.stat.invalid |= 4096u;
-			}
-			if ((btl.sa[1] & 67108864u) != 0u)
-			{
-				btl.stat.invalid |= 1024u;
-			}
+
+		    if (btl.HasSupportAbility(SupportAbility2.Locomotion))
+		    {
+		        btl.ResistStatus |= BattleStatus.Stop;
+		    }
+
+		    if (btl.HasSupportAbility(SupportAbility2.ClearHeaded))
+		    {
+		        btl.ResistStatus |= BattleStatus.Confuse;
+		    }
 		}
 	}
 }

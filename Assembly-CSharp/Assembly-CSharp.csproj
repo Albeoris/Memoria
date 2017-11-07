@@ -294,6 +294,7 @@
     <Compile Include="Memoria\Test\Component\ComponentFactoryWrapDelegate.cs" />
     <Compile Include="Memoria\Test\Component\ComponentMessage.cs" />
     <Compile Include="Memoria\Test\Commands\Shared\DuplicateCommandMessage.cs" />
+    <Compile Include="Memoria\Test\Component\RectTransformMessage.cs" />
     <Compile Include="Memoria\Test\ExtensionMethodsBinaryReader.cs" />
     <Compile Include="Memoria\Test\ExtensionMethodsBinaryWriter.cs" />
     <Compile Include="Memoria\Test\GameObjectMessage.cs" />

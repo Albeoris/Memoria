@@ -225,7 +225,7 @@ namespace Memoria.Field
         private static void FldCalcSub_204(Context v)
         {
             Int32 num1 = v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power);
-            Int32 num2 = ((Int32)v.Caster.sa[1] & 2) == 0 ? num1 / 100 : num1 / 50;
+            Int32 num2 = ((Int32)v.Caster.sa[1] & 2) == 0 ? num1 / 100 : num1 / 50; // Concentrate
             if (num2 > 9999)
                 num2 = 9999;
             v.TargetHp = (Int16)num2;

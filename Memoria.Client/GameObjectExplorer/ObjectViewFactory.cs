@@ -24,6 +24,7 @@ namespace Memoria.Client
 
             {typeof(ComponentMessage), (message, context) => new ComponentView<ComponentMessage>((ComponentMessage)message, context)},
             {typeof(TransformMessage), (message, context) => new TransformView<TransformMessage>((TransformMessage)message, context)},
+            {typeof(RectTransformMessage), (message, context) => new RectTransformView<RectTransformMessage>((RectTransformMessage)message, context)},
 
             {typeof(BehaviourMessage), (message, context) => new BehaviourView<BehaviourMessage>((BehaviourMessage)message, context)},
             {typeof(MonoBehaviourMessage), (message, context) => new MonoBehaviourView<MonoBehaviourMessage>((MonoBehaviourMessage)message, context)},

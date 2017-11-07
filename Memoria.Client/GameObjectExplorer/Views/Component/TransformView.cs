@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using Memoria.Client.GameObjectExplorer.Views.TypeEditors;
 using Memoria.Test;

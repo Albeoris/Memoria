@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
 using Memoria.Data;
 using UnityEngine;
 
@@ -458,7 +459,7 @@ public class btl_init
 		{
 			btl_stat.AlterStatus(btl, 1u);
 		}
-		btl_abil.CheckStatusAbility(btl);
+		btl_abil.CheckStatusAbility(new BattleUnit(btl));
 		btl.base_pos = btl.evt.posBattle;
 		Int16 geoID = btl.dms_geo_id;
 		btl.height = 0;

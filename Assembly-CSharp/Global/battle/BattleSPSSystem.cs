@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -356,10 +357,10 @@ public class BattleSPSSystem : MonoBehaviour
 		return (Int32)(btl.bi.line_no * 12) + statusSPSIndex;
 	}
 
-	public void AddBtlSPSObj(BTL_DATA btl, UInt32 status)
+	public void AddBtlSPSObj(BattleUnit btl, UInt32 status)
 	{
 		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
-		Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);
+		Int32 objSpsIndex = this.GetObjSpsIndex(btl.Data, status);
 		btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[statusSPSIndex];
 		this.SetBtlStatus(objSpsIndex, statusSPSIndex, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
 	}
