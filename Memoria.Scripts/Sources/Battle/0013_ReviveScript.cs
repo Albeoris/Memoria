@@ -20,7 +20,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (!_v.Target.CanBeRevived() || (!HitRateForZombie() && !_v.TargetCommand.TryMagicHit()))
+            if (!_v.Target.CanBeRevived())
+                return;
+
+            if (HitRateForZombie() && !_v.TargetCommand.TryMagicHit())
                 return;
 
             if (_v.Target.IsZombie)
@@ -45,9 +48,9 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.IsZombie)
             {
                 _v.MagicAccuracy();
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
     }

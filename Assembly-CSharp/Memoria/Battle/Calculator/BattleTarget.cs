@@ -213,11 +213,19 @@ namespace Memoria
 
         public Boolean CanBeRevived()
         {
-            if (IsUnderStatus(BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Zombie))
-                return true;
+            if (IsUnderStatus(BattleStatus.Petrify))
+            {
+                _context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
 
-            _context.Flags |= BattleCalcFlags.Miss;
-            return false;
+            if (IsUnderStatus(BattleStatus.Death) && IsZombie)
+            {
+                _context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            return true;
         }
 
         public Boolean CanBeHealed()
