@@ -461,7 +461,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinute = true;
 
                     changed = true;
-                    current.at += (Int16)(Math.Max(1, current.at_coef * 4 * 15 / fps)); // 15 - default fps
+                    current.at += (Int16)Math.Max(1, current.at_coef * 4 );
                 }
 
                 if (needContinue)
