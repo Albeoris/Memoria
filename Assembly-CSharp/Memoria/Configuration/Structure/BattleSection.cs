@@ -11,6 +11,7 @@ namespace Memoria
             public readonly IniValue<Boolean> NoAutoTrance;
             public readonly IniValue<Int32> EncounterInterval;
             public readonly IniValue<Int32> AutoPotionOverhealLimit;
+            public readonly IniValue<Boolean> GarnetConcentrate;
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -18,6 +19,7 @@ namespace Memoria
                 NoAutoTrance = BindBoolean(nameof(NoAutoTrance), false);
                 EncounterInterval = BindInt32(nameof(EncounterInterval), 960);
                 AutoPotionOverhealLimit = BindInt32(nameof(AutoPotionOverhealLimit), -1);
+                GarnetConcentrate = BindBoolean(nameof(GarnetConcentrate), false);
             }
         }
     }

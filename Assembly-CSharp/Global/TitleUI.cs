@@ -1438,7 +1438,7 @@ public class TitleUI : UIScene
             ButtonGroupState.ActiveGroup = MenuGroupButton;
 
             if (Configuration.Graphics.SkipIntros > 2)
-                Configuration.Graphics.SkipIntros = 0;
+            Configuration.Graphics.SkipIntros = 0;
             
             this.timer.Start();
             if (this.IsJustLaunchApp)
