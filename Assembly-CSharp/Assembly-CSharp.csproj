@@ -13,7 +13,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <FrameworkPathOverride>..\References\</FrameworkPathOverride>
+    <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -235,6 +235,7 @@
     <Compile Include="Global\Card\CardPool.cs" />
     <Compile Include="Global\Card\CardPreviewUI.cs" />
     <Compile Include="Global\Card\CardUI.cs" />
+    <Compile Include="Global\ff9\State\FF9StateGlobal.FrogHandler.cs" />
     <Compile Include="Memoria\Application\PlayerWindow.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\AtlasImport.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\PsdImport.cs" />

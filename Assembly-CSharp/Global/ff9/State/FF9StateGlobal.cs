@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using UnityEngine;
 
-public class FF9StateGlobal
+public partial class FF9StateGlobal
 {
 	public FF9StateGlobal()
 	{
@@ -16,7 +17,7 @@ public class FF9StateGlobal
 		this.item = new FF9ITEM[256];
 		this.rare_item = new Byte[64];
 		this.charArray = new Dictionary<Int32, FF9Char>();
-		this.frog_no = 0;
+	    this.Frogs = new FrogHandler();
 		this.steal_no = 0;
 		this.dragon_no = 0;
 	}
@@ -63,7 +64,7 @@ public class FF9StateGlobal
 
 	public PARTY_DATA party;
 
-	public Int16 frog_no;
+	public FrogHandler Frogs;
 
 	public Int16 steal_no;
 

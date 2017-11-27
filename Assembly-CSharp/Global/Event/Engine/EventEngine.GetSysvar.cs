@@ -65,7 +65,7 @@ public partial class EventEngine
                 num = fldfmv.FF9FieldFMVSync();
                 break;
             case 16:
-                num = (Int32)this._ff9.frog_no;
+                num = this._ff9.Frogs.Number;
                 break;
             case 17:
                 num = Convert.ToInt32(TimerUI.Time);

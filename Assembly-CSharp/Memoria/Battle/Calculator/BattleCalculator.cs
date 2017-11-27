@@ -27,7 +27,7 @@ namespace Memoria
 
     public static class GameState
     {
-        public static Int16 Frogs => FF9StateSystem.Common.FF9.frog_no;
+        public static Int16 Frogs => FF9StateSystem.Common.FF9.Frogs.Number;
         public static Int16 Dragons => FF9StateSystem.Common.FF9.dragon_no;
         public static Byte Tonberies => battle.TONBERI_COUNT;
 

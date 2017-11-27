@@ -1031,7 +1031,7 @@ public class JsonParser : ISharedDataParser
 		jsonclass.Add("escape_no", party.escape_no.ToString());
 		jsonclass.Add("summon_flag", party.summon_flag.ToString());
 		jsonclass.Add("gil", party.gil.ToString());
-		jsonclass.Add("frog_no", data.frog_no.ToString());
+		jsonclass.Add("frog_no", data.Frogs.Number.ToString());
 		jsonclass.Add("steal_no", data.steal_no.ToString());
 		jsonclass.Add("dragon_no", data.dragon_no.ToString());
 		FF9ITEM[] item = data.item;
@@ -1279,7 +1279,7 @@ public class JsonParser : ISharedDataParser
 		jsonclass3.Add("escape_no", party2.escape_no.GetType().ToString());
 		jsonclass3.Add("summon_flag", party2.summon_flag.GetType().ToString());
 		jsonclass3.Add("gil", party2.gil.GetType().ToString());
-		jsonclass3.Add("frog_no", data.frog_no.GetType().ToString());
+		jsonclass3.Add("frog_no", data.Frogs.Number.GetType().ToString());
 		jsonclass3.Add("steal_no", data.steal_no.GetType().ToString());
 		jsonclass3.Add("dragon_no", data.dragon_no.GetType().ToString());
 		FF9ITEM ff9ITEM2 = new FF9ITEM(0, 0);
@@ -1552,7 +1552,7 @@ public class JsonParser : ISharedDataParser
 		}
 		if (jsonData["frog_no"] != null)
 		{
-			ff.frog_no = (Int16)jsonData["frog_no"].AsInt;
+		    ff.Frogs.Initialize((Int16)jsonData["frog_no"].AsInt);
 		}
 		if (jsonData["steal_no"] != null)
 		{

@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
+using Memoria.Scenes;
 using UnityEngine;
+using UnityEngine.UI;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable NotAccessedField.Local
@@ -263,8 +266,92 @@ public class TitleUI : UIScene
         }
     }
 
+    public class UiElement
+    {
+        protected static readonly Color DefaultColor = new Color(1f, 1f, 1f, 0.392f);
+
+        public readonly GameObject GameObject;
+        public readonly RectTransform RectTransform;
+
+        public UiElement()
+        {
+            GameObject = new GameObject();
+            RectTransform = GameObject.EnsureExactComponent<RectTransform>();
+        }
+
+        public String Name
+        {
+            get => GameObject.name;
+            set => GameObject.name = value;
+        }
+    }
+
+    public class UiPanel : UiElement
+    {
+        public readonly Image Image;
+
+        public UiPanel()
+        {
+            RectTransform.anchorMin = Vector2.zero;
+            RectTransform.anchorMax = Vector2.one;
+            RectTransform.anchoredPosition = Vector2.zero;
+            RectTransform.sizeDelta = Vector2.zero;
+
+            Image = GameObject.EnsureExactComponent<Image>();
+            Image.type = Image.Type.Sliced;
+            Image.color = DefaultColor;
+            Image.fillCenter = true;
+        }
+
+        public Sprite Sprite
+        {
+            get => Image.sprite;
+            set => Image.sprite = value;
+        }
+
+        public Color Color
+        {
+            get => Image.color;
+            set => Image.color = value;
+        }
+    }
+
+    //class Aaaaaaaaa : MonoBehaviour
+    //{
+    //    private void Start()
+    //    {
+    //        var friendlyName = "PlayerAppDomain";
+    //        var assembly = Assembly.GetExecutingAssembly();
+    //        var codeBase = assembly.Location;
+    //        var codeBaseDirectory = Path.GetDirectoryName(codeBase);
+    //        var info = new AppDomainSetup()
+    //        {
+    //            ApplicationName = "123",
+    //            ApplicationBase = codeBaseDirectory,
+    //            DynamicBase = codeBaseDirectory,
+    //        };
+    //        var domain = AppDomain.CreateDomain(friendlyName, new System.Security.Policy.Evidence(), info);
+    //        AppDomain.Unload(domain);
+    //    }
+    //}
+
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
+        GameObject root = new GameObject();
+        Canvas uiRoot = root.EnsureExactComponent<Canvas>();
+
+
+        UiPanel panel = new UiPanel();
+        //panel.RectTransform.offsetMin = new Vector2(500, 300);
+        //panel.RectTransform.offsetMax = new Vector2(-420, 50);
+
+
+        panel.RectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+        panel.RectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+        panel.RectTransform.sizeDelta = new Vector2(920, 350);
+        panel.GameObject.transform.SetParent(root.transform);
+
+
         // ====================================
         // TEMP
         try
@@ -1971,22 +2058,22 @@ public class TitleUI : UIScene
             if (Configuration.Graphics.SkipIntros > 1)
                 this.onLogoFinish = delegate { this.onMovieFinish(); };
             else
-            this.onLogoFinish = delegate
-            {
-                this.type = Type.Movie1;
-                postMenuFadeOut();
-                this.logoContainer.gameObject.SetActive(false);
-                this.honoFading.Fade(1f, 0f, 1f, 0f, this.honoFading.fadeInCurve, delegate
+                this.onLogoFinish = delegate
                 {
-                });
+                    this.type = Type.Movie1;
+                    postMenuFadeOut();
+                    this.logoContainer.gameObject.SetActive(false);
+                    this.honoFading.Fade(1f, 0f, 1f, 0f, this.honoFading.fadeInCurve, delegate
+                    {
+                    });
 
-                MBG.Instance.SetFinishCallback(this.onMovieFinish);
-                MBG.Instance.gameObject.SetActive(true);
-                MBG.Instance.LoadMovie("FMV000");
-                MBG.Instance.SetDepthForTitle();
-                MBG.Instance.Play();
-                this.stopEnable = true;
-            };
+                    MBG.Instance.SetFinishCallback(this.onMovieFinish);
+                    MBG.Instance.gameObject.SetActive(true);
+                    MBG.Instance.LoadMovie("FMV000");
+                    MBG.Instance.SetDepthForTitle();
+                    MBG.Instance.Play();
+                    this.stopEnable = true;
+                };
             this.onMovieFinish = delegate
             {
                 this.honoFading.Fade(0f, 1f, 1f, 0f, this.honoFading.fadeInCurve, delegate

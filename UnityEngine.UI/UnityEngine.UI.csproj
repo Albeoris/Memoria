@@ -16,7 +16,7 @@
     <FileAlignment>512</FileAlignment>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <FrameworkPathOverride>..\References\</FrameworkPathOverride>
+    <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
