@@ -3,7 +3,7 @@ using System;
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
-    /// Demi, Aqua Breath, Demi Shock, Thunder Slash, Worm Hole
+    /// Demi, Aqua Breath, Demi Shock, Worm Hole
     /// </summary>
     [BattleScript(Id)]
     public sealed class MagicProportionHpDmageScript : IBattleScript
