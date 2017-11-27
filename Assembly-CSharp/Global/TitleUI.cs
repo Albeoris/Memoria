@@ -1436,7 +1436,10 @@ public class TitleUI : UIScene
             this.ShowMenuPanel();
             this.idleScreenType = SlideShow.Type.Sequence1;
             ButtonGroupState.ActiveGroup = MenuGroupButton;
-            Configuration.Graphics.SkipIntros = 0;
+            
+            if (Configuration.Graphics.SkipIntros > 2)
+                Configuration.Graphics.SkipIntros = 0;
+                
             this.timer.Start();
             if (this.IsJustLaunchApp)
             {
