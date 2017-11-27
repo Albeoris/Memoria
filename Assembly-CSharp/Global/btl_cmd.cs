@@ -709,7 +709,7 @@ public class btl_cmd
                 caster.FaceTheEnemy();
 
             // Garnet is depressed.
-            if (battle.GARNET_DEPRESS_FLAG != 0 && caster.IsPlayer && caster.PlayerIndex == CharacterIndex.Garnet)
+            if (battle.GARNET_DEPRESS_FLAG != 0 && caster.IsPlayer && caster.PlayerIndex == CharacterIndex.Garnet && !Configuration.Battle.GarnetConcentrate)
             {
                 if (cmd.cmd_no < 48 && Comn.random8() < 64) // 25%
                 {
