@@ -337,19 +337,19 @@ public class TitleUI : UIScene
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
-        GameObject root = new GameObject();
-        Canvas uiRoot = root.EnsureExactComponent<Canvas>();
-
-
-        UiPanel panel = new UiPanel();
-        //panel.RectTransform.offsetMin = new Vector2(500, 300);
-        //panel.RectTransform.offsetMax = new Vector2(-420, 50);
-
-
-        panel.RectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-        panel.RectTransform.anchorMax = new Vector2(1.0f, 1.0f);
-        panel.RectTransform.sizeDelta = new Vector2(920, 350);
-        panel.GameObject.transform.SetParent(root.transform);
+        //GameObject root = new GameObject();
+        //Canvas uiRoot = root.EnsureExactComponent<Canvas>();
+        //
+        //
+        //UiPanel panel = new UiPanel();
+        ////panel.RectTransform.offsetMin = new Vector2(500, 300);
+        ////panel.RectTransform.offsetMax = new Vector2(-420, 50);
+        //
+        //
+        //panel.RectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+        //panel.RectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+        //panel.RectTransform.sizeDelta = new Vector2(920, 350);
+        //panel.GameObject.transform.SetParent(root.transform);
 
 
         // ====================================
@@ -1436,7 +1436,10 @@ public class TitleUI : UIScene
             this.ShowMenuPanel();
             this.idleScreenType = SlideShow.Type.Sequence1;
             ButtonGroupState.ActiveGroup = MenuGroupButton;
-            Configuration.Graphics.SkipIntros = 0;
+
+            if (Configuration.Graphics.SkipIntros > 2)
+                Configuration.Graphics.SkipIntros = 0;
+            
             this.timer.Start();
             if (this.IsJustLaunchApp)
             {
