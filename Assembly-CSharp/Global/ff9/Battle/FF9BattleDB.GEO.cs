@@ -363,7 +363,7 @@ public static partial class FF9BattleDB
 		{573, "GEO_MON_B3_182"},
 		{429, "GEO_MON_B3_183"},
 		{430, "GEO_MON_B3_184"},
-		{446, "GEO_MON_B3_185"},
+		{446, "GEO_MON_B3_185"}, // Garland
 		{1, "GEO_MON_B3_186"},
 		{356, "GEO_MON_B3_187"},
 		{357, "GEO_MON_B3_188"},
