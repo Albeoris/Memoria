@@ -96,199 +96,168 @@ public class btl_vfx
 		SFX.Play((Int32)fx_no);
 	}
 
-	public static void SelectCommandVfx(CMD_DATA cmd)
-	{
-		BTL_DATA regist = cmd.regist;
-	    BattleUnit caster = regist == null ? null : new BattleUnit(regist);
-		BattleCommandId cmd_no = (BattleCommandId)cmd.cmd_no;
-		switch ((Int32)cmd_no)
-		{
-		case 47:
-			if (cmd.tar_id < 16 && (cmd.aa.Category & 8) != 0 && cmd.info.cursor == 0)
-			{
-				UInt16 num = btl_abil.CheckCoverAbility(cmd.tar_id);
-				if (num != 0)
-				{
-					cmd.tar_id = num;
-					cmd.info.cover = 1;
-				}
-			}
-			btlseq.RunSequence(cmd);
-			return;
-		case 48:
-		case 50:
-		case 56:
-		case 57:
-		case 58:
-			IL_4B:
-			switch (cmd_no)
-			{
-			case BattleCommandId.Attack:
-				break;
-			case BattleCommandId.Steal:
-			{
-				Byte serialNumber = btl_util.getSerialNumber(regist);
-				if (serialNumber != 0)
-				{
-					if (serialNumber != 1)
-					{
-						if (serialNumber != 14)
-						{
-							if (serialNumber != 15)
-							{
-								SetBattleVfx(cmd, 20u, null);
-							}
-							else
-							{
-								SetBattleVfx(cmd, 119u, null);
-							}
-						}
-						else
-						{
-							SetBattleVfx(cmd, 19u, null);
-						}
-					}
-					else
-					{
-						SetBattleVfx(cmd, 273u, null);
-					}
-				}
-				else
-				{
-					SetBattleVfx(cmd, 200u, null);
-				}
-				return;
-			}
-			case BattleCommandId.Jump:
-			case BattleCommandId.Escape:
-			case BattleCommandId.FinishBlow:
-				IL_6F:
-				switch (cmd_no)
-				{
-				case BattleCommandId.Item:
-					goto IL_168;
-				case BattleCommandId.Throw:
-					switch (ff9item._FF9Item_Data[(Int32)cmd.sub_no].shape)
-					{
-					case 1:
-						SetBattleVfx(cmd, 272u, null);
-						break;
-					case 2:
-						SetBattleVfx(cmd, 266u, null);
-						break;
-					case 3:
-					case 4:
-						SetBattleVfx(cmd, 267u, null);
-						break;
-					case 5:
-						SetBattleVfx(cmd, 268u, null);
-						break;
-					case 6:
-						SetBattleVfx(cmd, 269u, null);
-						break;
-					case 7:
-						SetBattleVfx(cmd, 265u, null);
-						break;
-					case 8:
-					case 9:
-					case 10:
-						SetBattleVfx(cmd, 270u, null);
-						break;
-					case 11:
-						SetBattleVfx(cmd, 271u, null);
-						break;
-					case 12:
-						SetBattleVfx(cmd, 277u, null);
-						break;
-					}
-					return;
-				case BattleCommandId.Phantom:
-				{
-					FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-					switch (cmd.sub_no)
-					{
-					case 49:
-						ff9Battle.phantom_no = 153;
-						break;
-					case 51:
-						ff9Battle.phantom_no = 154;
-						break;
-					case 53:
-						ff9Battle.phantom_no = 155;
-						break;
-					case 55:
-						ff9Battle.phantom_no = 156;
-						break;
-					case 58:
-						ff9Battle.phantom_no = 157;
-						break;
-					case 60:
-						ff9Battle.phantom_no = 158;
-						break;
-					case 62:
-						ff9Battle.phantom_no = 159;
-						break;
-					case 64:
-						ff9Battle.phantom_no = 160;
-						break;
-					}
-					if ((cmd.aa.Info.Target ==  TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
-					{
-						SetBattleVfx(cmd, cmd.aa.Vfx2, null);
-					}
-					else
-					{
-						SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
-					}
-					return;
-				}
-				}
-				if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
-				{
-					SetBattleVfx(cmd, cmd.aa.Vfx2, null);
-				}
-				else
-				{
-					SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
-				}
-				return;
-			case BattleCommandId.Defend:
-				UIManager.Battle.SetBattleCommandTitle(cmd);
-				btl_mot.setMotion(regist, 12);
-				regist.evt.animFrame = 0;
-				btl_cmd.ExecVfxCommand(regist);
-				return;
-			case BattleCommandId.Change:
-				UIManager.Battle.SetBattleCommandTitle(cmd);
-				btl_mot.setMotion(regist, 9);
-				return;
-			default:
-				goto IL_6F;
-			}
-			break;
-		case 49:
-		case 52:
-			break;
-		case 51:
-			goto IL_168;
-		case 53:
-		case 54:
-		case 55:
-			btlseq.RunSequence(cmd);
-			return;
-		case 59:
-			SetBattleVfx(cmd, !caster.IsUnderStatus(BattleStatus.Trance) ? 489u : 257u, null);
-			return;
-		default:
-			goto IL_4B;
-		}
-		SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
-		return;
-		IL_168:
-		SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum((Int32)cmd.sub_no)].info.VfxIndex, null);
-	}
+    public static void SelectCommandVfx(CMD_DATA cmd)
+    {
+        BTL_DATA regist = cmd.regist;
+        BattleUnit caster = regist == null ? null : new BattleUnit(regist);
+        BattleCommandId cmd_no = cmd.cmd_no;
+        switch (cmd_no)
+        {
+            case BattleCommandId.EnemyAtk:
+                if (cmd.tar_id < 16 && (cmd.aa.Category & 8) != 0 && cmd.info.cursor == 0)
+                {
+                    UInt16 num = btl_abil.CheckCoverAbility(cmd.tar_id);
+                    if (num != 0)
+                    {
+                        cmd.tar_id = num;
+                        cmd.info.cover = 1;
+                    }
+                }
+                btlseq.RunSequence(cmd);
+                return;
+            case BattleCommandId.Counter:
+            case BattleCommandId.RushAttack:
+                SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
+                return;
+            case BattleCommandId.AutoPotion:
+                SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.VfxIndex, null);
+                return;
+            case BattleCommandId.EnemyCounter:
+            case BattleCommandId.EnemyDying:
+            case BattleCommandId.EnemyReaction:
+                btlseq.RunSequence(cmd);
+                return;
+            case BattleCommandId.SysTrans:
+                SetBattleVfx(cmd, !caster.IsUnderStatus(BattleStatus.Trance) ? 489u : 257u, null);
+                return;
+            case BattleCommandId.Attack:
+                SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
+                return;
+            case BattleCommandId.Item:
+                SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.VfxIndex, null);
+                return;
+            case BattleCommandId.Defend:
+                UIManager.Battle.SetBattleCommandTitle(cmd);
+                btl_mot.setMotion(regist, 12);
+                regist.evt.animFrame = 0;
+                btl_cmd.ExecVfxCommand(regist);
+                return;
+            case BattleCommandId.Change:
+                UIManager.Battle.SetBattleCommandTitle(cmd);
+                btl_mot.setMotion(regist, 9);
+                return;
+            case BattleCommandId.Steal:
+            {
+                Byte serialNumber = btl_util.getSerialNumber(regist);
+                if (serialNumber == 0)
+                {
+                    SetBattleVfx(cmd, 200u, null);
+                }
+                else if (serialNumber == 1)
+                {
+                    SetBattleVfx(cmd, 273u, null);
+                }
+                else if (serialNumber == 14)
+                {
+                    SetBattleVfx(cmd, 19u, null);
+                }
+                else if (serialNumber == 15)
+                    SetBattleVfx(cmd, 119u, null);
+                else
+                    SetBattleVfx(cmd, 20u, null);
+                return;
+            }
+            case BattleCommandId.Throw:
+                switch (ff9item._FF9Item_Data[(Int32)cmd.sub_no].shape)
+                {
+                    case 1:
+                        SetBattleVfx(cmd, 272u, null);
+                        break;
+                    case 2:
+                        SetBattleVfx(cmd, 266u, null);
+                        break;
+                    case 3:
+                    case 4:
+                        SetBattleVfx(cmd, 267u, null);
+                        break;
+                    case 5:
+                        SetBattleVfx(cmd, 268u, null);
+                        break;
+                    case 6:
+                        SetBattleVfx(cmd, 269u, null);
+                        break;
+                    case 7:
+                        SetBattleVfx(cmd, 265u, null);
+                        break;
+                    case 8:
+                    case 9:
+                    case 10:
+                        SetBattleVfx(cmd, 270u, null);
+                        break;
+                    case 11:
+                        SetBattleVfx(cmd, 271u, null);
+                        break;
+                    case 12:
+                        SetBattleVfx(cmd, 277u, null);
+                        break;
+                }
+                return;
+            case BattleCommandId.Phantom:
+            {
+                FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+                switch (cmd.sub_no)
+                {
+                    case 49:
+                        ff9Battle.phantom_no = 153;
+                        break;
+                    case 51:
+                        ff9Battle.phantom_no = 154;
+                        break;
+                    case 53:
+                        ff9Battle.phantom_no = 155;
+                        break;
+                    case 55:
+                        ff9Battle.phantom_no = 156;
+                        break;
+                    case 58:
+                        ff9Battle.phantom_no = 157;
+                        break;
+                    case 60:
+                        ff9Battle.phantom_no = 158;
+                        break;
+                    case 62:
+                        ff9Battle.phantom_no = 159;
+                        break;
+                    case 64:
+                        ff9Battle.phantom_no = 160;
+                        break;
+                }
 
-	public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
+                if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
+                    SetBattleVfx(cmd, cmd.aa.Vfx2, null);
+                else
+                    SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
+
+                return;
+            }
+            case BattleCommandId.BoundaryCheck:
+            case BattleCommandId.MagicCounter:
+            case BattleCommandId.SysEscape:
+            case BattleCommandId.SysPhantom:
+            case BattleCommandId.SysLastPhoenix:
+            case BattleCommandId.Jump:
+            case BattleCommandId.Escape:
+            case BattleCommandId.FinishBlow:
+            default:
+                if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
+                    SetBattleVfx(cmd, cmd.aa.Vfx2, null);
+                else
+                    SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
+                return;
+        }
+    }
+
+    public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
 	{
 		Vector3 pos = btl.pos;
 		Vector3 eulerAngles = btl.rot.eulerAngles;

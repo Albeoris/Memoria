@@ -281,7 +281,7 @@ public class btl_cmd
         else
         {
             CMD_DATA cmd;
-            if ((Int32)cmd_no == 47)
+            if (cmd_no == BattleCommandId.EnemyAtk)
             {
                 if (stateBattleSystem.btl_phase != 4)
                 {
@@ -300,9 +300,9 @@ public class btl_cmd
                     sub_no = btl.EnemyType.p_atk_no;
                 }
             }
-            else if ((Int32)cmd_no == 53)
+            else if (cmd_no == BattleCommandId.EnemyCounter)
                 cmd = btl.Data.cmd[1];
-            else if ((Int32)cmd_no == 54)
+            else if (cmd_no == BattleCommandId.EnemyDying)
             {
                 cmd = btl.Data.cmd[1];
             }
@@ -345,7 +345,7 @@ public class btl_cmd
         else
         {
             CMD_DATA cmd;
-            if ((Int32)cmd_no == 47)
+            if (cmd_no == BattleCommandId.EnemyAtk)
             {
                 if (stateBattleSystem.btl_phase != 4)
                 {
@@ -364,9 +364,9 @@ public class btl_cmd
                     sub_no = btlDataPtr.EnemyType.p_atk_no;
                 }
             }
-            else if ((Int32)cmd_no == 53)
+            else if (cmd_no == BattleCommandId.EnemyCounter)
                 cmd = btlDataPtr.Data.cmd[1];
-            else if ((Int32)cmd_no == 54)
+            else if (cmd_no == BattleCommandId.EnemyDying)
             {
                 cmd = btlDataPtr.Data.cmd[1];
             }
@@ -476,9 +476,8 @@ public class btl_cmd
                 FinishCommand(btlsys);
                 break;
         }
-        if (!btl_mot.ControlDamageMotion(cmd1) || btlsys.cmd_mode != 4)
-            return;
-        FinishCommand(btlsys);
+        if (btl_mot.ControlDamageMotion(cmd1) && btlsys.cmd_mode == 4)
+            FinishCommand(btlsys);
     }
 
     public static void KillCommand(CMD_DATA cmd)
