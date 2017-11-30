@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
             Int32 power = _v.Command.Power * _v.Caster.Level;
             Int64 gil = GameState.Gil + power;
             Int64 damage = power * power / 10U * _v.Caster.Will / gil;
-            if (_v.Command.Id == BattleCommandId.Elan)
+            if (_v.Command.Id == BattleCommandId.SuperTrick)
                 damage /= BattleState.TargetCount(false);
 
             _v.Target.HpDamage = (Int16)Math.Min(9999, damage);

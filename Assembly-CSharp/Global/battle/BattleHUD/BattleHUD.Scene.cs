@@ -60,7 +60,7 @@ public partial class BattleHUD : UIScene
         {
             FF9Sfx.FF9SFX_Play(103);
             _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
-            _currentCommandId = (UInt32)GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
+            _currentCommandId = GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
             _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
             _subMenuType = SubMenuType.Normal;
             if (IsDoubleCast && _doubleCastCount < 2)
@@ -80,7 +80,7 @@ public partial class BattleHUD : UIScene
                 case CommandMenu.Ability1:
                 case CommandMenu.Ability2:
                     //int num = currentCommandIndex != CommandMenu.Ability2 ? 0 : 1;
-                    CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
+                    CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
                     if (ff9Command.Type == CharacterCommandType.Normal)
                     {
                         _subMenuType = SubMenuType.Normal;
@@ -399,7 +399,7 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus CheckAbilityStatus(Int32 subMenuIndex)
     {
-        CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
+        CharacterCommand command = CharacterCommands.Commands[(Int32)_currentCommandId];
         if (subMenuIndex >= command.Abilities.Length)
             return AbilityStatus.None;
 

@@ -950,8 +950,6 @@
     <Compile Include="FF9\command_mode_index.cs" />
     <Compile Include="FF9\command_slot.cs" />
     <Compile Include="FF9\command_status.cs" />
-    <Compile Include="FF9\command_tags.cs" />
-    <Compile Include="FF9\command_type.cs" />
     <Compile Include="FF9\common_motion.cs" />
     <Compile Include="FF9\Comn.cs" />
     <Compile Include="FF9\continuous_status_tags.cs" />

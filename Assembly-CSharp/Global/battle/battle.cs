@@ -289,7 +289,7 @@ public class battle
                         if (next.IsUnderStatus(BattleStatus.Death))
                         {
                             if (data.die_seq == 0 && !btl_cmd.CheckUsingCommand(data.cmd[2]))
-                                btl_cmd.SetCommand(data.cmd[2], 60U, 0U, data.btl_id, 0U);
+                                btl_cmd.SetCommand(data.cmd[2], BattleCommandId.SysDead, 0U, data.btl_id, 0U);
                             if (next.IsPlayer && data.die_seq != 6 || !next.IsPlayer && data.die_seq != 6)
                             {
                                 num1 = 0U;

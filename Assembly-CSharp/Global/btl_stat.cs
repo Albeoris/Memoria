@@ -96,7 +96,7 @@ public class btl_stat
 
                 if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
                 {
-                    btl_cmd.SetCommand(btl.cmd[2], 60U, 0U, btl.btl_id, 0U);
+                    btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysDead, 0U, btl.btl_id, 0U);
                     if (!unit.IsPlayer)
                         btl_sys.CheckForecastMenuOff(btl);
                 }
@@ -112,7 +112,7 @@ public class btl_stat
                 btl_sys.CheckBattlePhase(btl);
                 break;
             case 14:
-                btl_cmd.SetCommand(btl.cmd[4], 59U, 0U, btl.btl_id, 0U);
+                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0U, btl.btl_id, 0U);
                 break;
             case 17:
                 if (unit.IsPlayer && !btl_mot.checkMotion(btl, 1) && !btl_util.isCurCmdOwner(btl))
@@ -174,7 +174,7 @@ public class btl_stat
                 {
                     if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2)
                     {
-                        btl_cmd.SetCommand(btl.cmd[2], 62U, 0U, btl.btl_id, 0U);
+                        btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysStone, 0U, btl.btl_id, 0U);
                         break;
                     }
                     stat.cur |= status;
@@ -280,7 +280,7 @@ public class btl_stat
                     btl_mot.setMotion(btl, btl.bi.def_idle);
                     btl.evt.animFrame = 0;
                 }
-                btl_cmd.SetCommand(btl.cmd[4], 59U, 0U, btl.btl_id, 0U);
+                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0U, btl.btl_id, 0U);
                 break;
             case BattleStatus.Haste:
             case BattleStatus.Slow:
@@ -464,9 +464,9 @@ public class btl_stat
             if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
             {
                 if (btl.cmd[3].cmd_no == 3)
-                    btl_cmd.SetCounter(btl, 10U, 185, btl.cmd[3].tar_id);
+                    btl_cmd.SetCounter(btl, BattleCommandId.JumpAttack, 185, btl.cmd[3].tar_id);
                 else
-                    btl_cmd.SetCounter(btl, 11U, 186, btl.cmd[3].tar_id);
+                    btl_cmd.SetCounter(btl, BattleCommandId.JumpTrance, 186, btl.cmd[3].tar_id);
             }
 
             return;
@@ -513,7 +513,7 @@ public class btl_stat
         {
             if (ff9Battle.phantom_cnt <= 0)
             {
-                btl_cmd.SetCommand(btl.cmd[3], 57U, ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
+                btl_cmd.SetCommand(btl.cmd[3], BattleCommandId.SysPhantom, ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
                 ff9Battle.cmd_status |= 8;
             }
             else

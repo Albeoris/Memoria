@@ -146,13 +146,12 @@ public class btl_cmd
         ClearReflecData(btl);
     }
 
-    public static void SetCommand(CMD_DATA cmd, UInt32 cmd_no, UInt32 sub_no, UInt16 tar_id, UInt32 cursor)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, UInt32 sub_no, UInt16 tar_id, UInt32 cursor)
     {
         BTL_DATA btl = cmd.regist;
-        UInt32 num1 = cmd_no;
-        switch (num1)
+        switch (commandId)
         {
-            case 56:
+            case BattleCommandId.SysEscape:
                 if ((FF9StateSystem.Battle.FF9Battle.cmd_status & 1) != 0)
                 {
                     cmd.sub_no = (Byte)sub_no;
@@ -161,56 +160,44 @@ public class btl_cmd
                 FF9StateSystem.Battle.FF9Battle.cmd_status |= 1;
                 cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[180];
                 break;
-            case 60:
-            case 61:
-            case 62:
+            case BattleCommandId.SysDead:
+            case BattleCommandId.SysReraise:
+            case BattleCommandId.SysStone:
                 cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[0];
                 break;
+            case BattleCommandId.JumpAttack:
+            case BattleCommandId.JumpTrance:
+                FF9StateSystem.Battle.FF9Battle.cmd_status |= 16;
+                cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
+                break;
+            case BattleCommandId.Item:
+            case BattleCommandId.AutoPotion:
+                cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[0];
+                break;
+            case BattleCommandId.Throw:
+                cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[190];
+                break;
+            case BattleCommandId.MagicCounter:
+                cmd.aa = FF9StateSystem.Battle.FF9Battle.enemy_attack[sub_no];
+                break;
+            case BattleCommandId.Steal:
+                if (HasSupportAbility(btl, SupportAbility2.Mug))
+                    sub_no = 181U;
+                cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
+                break;
             default:
-                switch (num1)
-                {
-                    case 10:
-                    case 11:
-                        FF9StateSystem.Battle.FF9Battle.cmd_status |= 16;
-                        cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
-                        break;
-                    case 14:
-                        cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[0];
-                        break;
-                    case 15:
-                        cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[190];
-                        break;
-                    default:
-                        if ((Int32)num1 != 50)
-                        {
-                            if ((Int32)num1 != 51)
-                            {
-                                if ((Int32)num1 == 2)
-                                {
-                                    if (HasSupportAbility(btl, SupportAbility2.Mug))
-                                        sub_no = 181U;
-                                    cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
-                                    break;
-                                }
-                                cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
-                                break;
-                            }
-                            goto case 14;
-                        }
-                        cmd.aa = FF9StateSystem.Battle.FF9Battle.enemy_attack[sub_no];
-                        break;
-                }
+                cmd.aa = FF9StateSystem.Battle.FF9Battle.aa_data[sub_no];
                 break;
         }
 
         cmd.tar_id = tar_id;
-        cmd.cmd_no = (Byte)cmd_no;
+        cmd.cmd_no = (Byte)commandId;
         cmd.sub_no = (Byte)sub_no;
         cmd.info.cursor = (Byte)cursor;
         cmd.info.cover = 0;
         cmd.info.dodge = 0;
         cmd.info.reflec = 0;
-        if (cmd_no > 48U)
+        if (commandId > BattleCommandId.BoundaryCheck)
         {
             cmd.info.priority = 1;
         }
@@ -219,7 +206,7 @@ public class btl_cmd
             /*int num2 = (int)*/
             btl_stat.RemoveStatus(btl, 32768U);
         }
-        if (cmd_no < 55U)
+        if (commandId < BattleCommandId.EnemyReaction)
         {
             if (btl_util.getCurCmdPtr() != btl.cmd[4])
             {
@@ -233,7 +220,7 @@ public class btl_cmd
                     btl_mot.setMotion(btl, 11);
                     btl.evt.animFrame = 0;
                 }
-                else if (btl_mot.checkMotion(btl, 13) && cmd_no < 48U)
+                else if (btl_mot.checkMotion(btl, 13) && commandId < BattleCommandId.BoundaryCheck)
                 {
                     btl_mot.setMotion(btl, 14);
                     btl.evt.animFrame = 0;
@@ -244,11 +231,11 @@ public class btl_cmd
         EnqueueCommand(cmd);
     }
 
-    public static void SetCounter(BTL_DATA btl, UInt32 cmd_no, Int32 sub_no, UInt16 tar_id)
+    public static void SetCounter(BTL_DATA btl, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id)
     {
         if (Status.checkCurStat(btl, 33689603U) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
             return;
-        SetCommand(btl.cmd[1], cmd_no, (UInt32)sub_no, tar_id, 0U);
+        SetCommand(btl.cmd[1], commandId, (UInt32)sub_no, tar_id, 0U);
     }
 
     public static Int16 GetPhantomCount(BattleUnit btl)
@@ -260,13 +247,13 @@ public class btl_cmd
     {
         if (Status.checkCurStat(btl, 1024U))
         {
-            SetCommand(btl.cmd[0], 1U, 176U, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
+            SetCommand(btl.cmd[0], BattleCommandId.Attack, 176U, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
         }
         else
         {
             if (!Status.checkCurStat(btl, 2048U))
                 return;
-            SetCommand(btl.cmd[0], 1U, 176U, btl_util.GetRandomBtlID(0U), 0U);
+            SetCommand(btl.cmd[0], BattleCommandId.Attack, 176U, btl_util.GetRandomBtlID(0U), 0U);
         }
     }
 
@@ -732,14 +719,14 @@ public class btl_cmd
                     return false;
                 }
                 break;
-            case BattleCommandId.Jump2:
+            case BattleCommandId.JumpTrance:
                 caster.Data.cmd[3].tar_id = btl_util.GetStatusBtlID(1U, 0U);
                 break;
-            case BattleCommandId.Jump1:
-            case BattleCommandId.Jump3:
+            case BattleCommandId.Jump:
+            case BattleCommandId.Jump2:
                 caster.AlterStatus((BattleStatus)1073741824U);
                 caster.Data.cmd[3].cmd_no = cmd.cmd_no;
-                caster.Data.cmd[3].tar_id = cmd.cmd_no != (Int32)BattleCommandId.Jump1 ? btl_util.GetStatusBtlID(1U, 0U) : cmd.tar_id;
+                caster.Data.cmd[3].tar_id = cmd.cmd_no != (Int32)BattleCommandId.Jump ? btl_util.GetStatusBtlID(1U, 0U) : cmd.tar_id;
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.Item:
@@ -755,17 +742,17 @@ public class btl_cmd
                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.AutoPotion);
                 }
                 break;
-            case BattleCommandId.Summon1:
-            case BattleCommandId.Summon2:
-            case BattleCommandId.Eidolon:
+            case BattleCommandId.SummonGarnet:
+            case BattleCommandId.SummonEiko:
+            case BattleCommandId.Phantom:
                 DecideSummonType(cmd);
                 break;
-            case BattleCommandId.BlkMag:
-            case BattleCommandId.DblBlk:
+            case BattleCommandId.BlackMagic:
+            case BattleCommandId.DoubleBlackMagic:
                 if (cmd.sub_no == 46)
                     DecideMeteor(cmd);
                 break;
-            case BattleCommandId.BluMag:
+            case BattleCommandId.BlueMagic:
                 if (cmd.sub_no == 82)
                 {
                     cmd.tar_id = btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1));
@@ -777,8 +764,8 @@ public class btl_cmd
                     return false;
                 }
                 break;
-            case BattleCommandId.Flair:
-            case BattleCommandId.Elan:
+            case BattleCommandId.MasterTrick:
+            case BattleCommandId.SuperTrick:
                 if (cmd.sub_no == 126 || cmd.sub_no == 134)
                 {
                     UInt32 num3 = cmd.aa.Ref.Power * (UInt32)caster.Level;
@@ -795,7 +782,7 @@ public class btl_cmd
                     cmd.aa.Ref.Elements = (Byte)(1 << Comn.random8() % 8);
                 }
                 break;
-            case BattleCommandId.SwdMag:
+            case BattleCommandId.MagicSword:
                 return DecideMagicSword(caster, cmd.aa.MP);
             default:
                 switch ((Int32)commandId)
@@ -1057,16 +1044,16 @@ public class btl_cmd
             {
                 ResetCurrentBattlerActiveTime(caster);
             }
-            else if (commandId == BattleCommandId.DblWht && caster.PlayerIndex == CharacterIndex.Eiko && (cmd == caster.Data.cmd[3] && !CheckUsingCommand(caster.Data.cmd[0])))
+            else if (commandId == BattleCommandId.DoubleWhiteMagic && caster.PlayerIndex == CharacterIndex.Eiko && (cmd == caster.Data.cmd[3] && !CheckUsingCommand(caster.Data.cmd[0])))
             {
                 ResetCurrentBattlerActiveTime(caster);
             }
-            else if (commandId == BattleCommandId.None)
+            else if (commandId == BattleCommandId.JumpAttack)
             {
                 caster.RemoveStatus((BattleStatus)1073741824U);
                 FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
             }
-            else if (commandId == BattleCommandId.Jump2)
+            else if (commandId == BattleCommandId.JumpTrance)
             {
                 caster.AlterStatus((BattleStatus)1073741824U);
                 caster.Data.tar_mode = 2;
@@ -1158,7 +1145,7 @@ public class btl_cmd
         if (!caster.IsUnderStatus(BattleStatus.Trance))
             return false;
 
-        if (commandId == BattleCommandId.Jump1 || commandId == BattleCommandId.Jump3)
+        if (commandId == BattleCommandId.Jump || commandId == BattleCommandId.Jump2)
             return false;
 
         if (commandId == BattleCommandId.Change && cmd.sub_no == 96)

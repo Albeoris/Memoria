@@ -423,7 +423,7 @@ public partial class BattleHUD : UIScene
 
         if (_subMenuType == SubMenuType.Ability)
         {
-            CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
+            CharacterCommand command = CharacterCommands.Commands[(Int32)_currentCommandId];
             if (_currentSubMenuIndex >= command.Abilities.Length)
                 return true;
 
@@ -585,7 +585,7 @@ public partial class BattleHUD : UIScene
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)
         {
-            btl_cmd.SetCommand(player.Data.cmd[0], 1U, 176U, enemy.Id, 0U);
+            btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, 176U, enemy.Id, 0U);
             InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;

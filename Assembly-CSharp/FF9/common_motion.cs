@@ -2,12 +2,12 @@
 
 namespace FF9
 {
-	public enum common_motion
+	public enum CommonMotion
 	{
-		COM_IDLE1,
-		COM_IDLE2,
-		COM_DAMAGE1,
-		COM_DAMAGE2,
-		COM_DISABLE
+		Idle1,
+		Idle2,
+		Damage1,
+		Damage2,
+		Disable
 	}
 }

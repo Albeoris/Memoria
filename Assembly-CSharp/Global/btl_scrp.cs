@@ -2,6 +2,7 @@
 using System.Linq;
 using FF9;
 using Memoria;
+using Memoria.Data;
 
 public class btl_scrp
 {
@@ -306,7 +307,7 @@ public class btl_scrp
 		case 78u:
 			btl.cur.at = btl.max.at;
 			btl.sel_mode = 1;
-			btl_cmd.SetCommand(btl.cmd[0], 20u, 187u, (UInt16)val, 8u);
+			btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SummonEiko, 187u, (UInt16)val, 8u);
 		        UIManager.Battle.FF9BMenu_EnableMenu(true);
 			break;
 		}

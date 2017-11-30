@@ -6,17 +6,17 @@ namespace Memoria.Data
 {
     public sealed class CharacterCommandSet : ICsvEntry
     {
-        public command_tags Regular1;
-        public command_tags Regular2;
-        public command_tags Trance1;
-        public command_tags Trance2;
+        public BattleCommandId Regular1;
+        public BattleCommandId Regular2;
+        public BattleCommandId Trance1;
+        public BattleCommandId Trance2;
 
         public void ParseEntry(String[] raw)
         {
-            Regular1 = (command_tags)CsvParser.Byte(raw[0]);
-            Regular2 = (command_tags)CsvParser.Byte(raw[1]);
-            Trance1 = (command_tags)CsvParser.Byte(raw[2]);
-            Trance2 = (command_tags)CsvParser.Byte(raw[3]);
+            Regular1 = (BattleCommandId)CsvParser.Byte(raw[0]);
+            Regular2 = (BattleCommandId)CsvParser.Byte(raw[1]);
+            Trance1 = (BattleCommandId)CsvParser.Byte(raw[2]);
+            Trance2 = (BattleCommandId)CsvParser.Byte(raw[3]);
         }
 
         public void WriteEntry(CsvWriter sw)
@@ -27,7 +27,7 @@ namespace Memoria.Data
             sw.Byte((Byte)Trance2);
         }
 
-        public command_tags GetRegular(Int32 number)
+        public BattleCommandId GetRegular(Int32 number)
         {
             if (number == 0)
                 return Regular1;
@@ -36,7 +36,7 @@ namespace Memoria.Data
             throw new ArgumentOutOfRangeException(nameof(number), number, "Number must be 0 or 1.");
         }
 
-        public command_tags GetTrance(Int32 number)
+        public BattleCommandId GetTrance(Int32 number)
         {
             if (number == 0)
                 return Trance1;
@@ -45,7 +45,7 @@ namespace Memoria.Data
             throw new ArgumentOutOfRangeException(nameof(number), number, "Number must be 0 or 1.");
         }
 
-        public command_tags Get(Boolean isTrance, Int32 number)
+        public BattleCommandId Get(Boolean isTrance, Int32 number)
         {
             return isTrance ? GetTrance(number) : GetRegular(number);
         }

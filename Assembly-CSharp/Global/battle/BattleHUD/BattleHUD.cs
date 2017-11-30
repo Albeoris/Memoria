@@ -60,7 +60,7 @@ public partial class BattleHUD : UIScene
     private Boolean _isFromPause;
     private Boolean _isNeedToInit;
     private CommandMenu _currentCommandIndex;
-    private UInt32 _currentCommandId;
+    private BattleCommandId _currentCommandId;
     private String _currentButtonGroup;
     private Int32 _currentSubMenuIndex;
     private Int32 _currentTargetIndex;
@@ -219,8 +219,8 @@ public partial class BattleHUD : UIScene
     {
         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(btl.Position).PresetId;
-        command_tags command1;
-        command_tags command2;
+        BattleCommandId command1;
+        BattleCommandId command2;
 
         if (btl.IsUnderStatus(BattleStatus.Trance))
         {
@@ -261,7 +261,7 @@ public partial class BattleHUD : UIScene
         Boolean flag1 = command1 != 0;
         Boolean command2IsEnable = command2 != 0;
 
-        if (command2 == command_tags.CMD_MAGIC_SWORD)
+        if (command2 == BattleCommandId.MagicSword)
         {
             if (!_magicSwordCond.IsViviExist)
             {
@@ -484,7 +484,7 @@ public partial class BattleHUD : UIScene
             return;
 
         _needItemUpdate = false;
-        DisplayItem(CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
+        DisplayItem(CharacterCommands.Commands[(Int32)_currentCommandId].Type == CharacterCommandType.Throw);
     }
 
     private void DisplayItem(Boolean isThrow)
@@ -547,7 +547,7 @@ public partial class BattleHUD : UIScene
 
     private void DisplayAbility()
     {
-        CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
+        CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
         SetAbilityAp(_abilityDetailDict[CurrentPlayerIndex]);
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
 
@@ -1079,8 +1079,8 @@ public partial class BattleHUD : UIScene
 
         for (Int32 k = 0; k < 2; k++)
         {
-            command_tags normalCommandId = CharacterCommands.CommandSets[presetId].GetRegular(k);
-            command_tags tranceCommandId = CharacterCommands.CommandSets[presetId].GetTrance(k);
+            BattleCommandId normalCommandId = CharacterCommands.CommandSets[presetId].GetRegular(k);
+            BattleCommandId tranceCommandId = CharacterCommands.CommandSets[presetId].GetTrance(k);
             if (normalCommandId == tranceCommandId)
                 continue;
 
@@ -1112,7 +1112,7 @@ public partial class BattleHUD : UIScene
         if (character.Index != CharacterIndex.Steiner)
             return;
 
-        CharacterCommand magicSwordCommand = CharacterCommands.Commands[(Int32)command_tags.CMD_MAGIC_SWORD];
+        CharacterCommand magicSwordCommand = CharacterCommands.Commands[(Int32)BattleCommandId.MagicSword];
         PLAYER player2 = FF9StateSystem.Common.FF9.player[CharacterPresetId.Vivi];
         CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[CharacterPresetId.Vivi];
         Int32[] abilities = {25, 26, 27, 29, 30, 31, 33, 34, 35, 38, 45, 47, 48}; // TODO: Move to the resource file
@@ -1239,13 +1239,15 @@ public partial class BattleHUD : UIScene
             SubId = 0U
         };
 
-        CharacterCommandType commandType = CharacterCommands.Commands[commandDetail.CommandId].Type;
+        Int32 commandIndex = (Int32)commandDetail.CommandId;
+
+        CharacterCommandType commandType = CharacterCommands.Commands[commandIndex].Type;
         if (commandType == CharacterCommandType.Normal)
-            commandDetail.SubId = CharacterCommands.Commands[commandDetail.CommandId].Ability;
+            commandDetail.SubId = CharacterCommands.Commands[commandIndex].Ability;
 
         if (commandType == CharacterCommandType.Ability)
         {
-            Int32 abilityId = CharacterCommands.Commands[commandDetail.CommandId].Abilities[_currentSubMenuIndex];
+            Int32 abilityId = CharacterCommands.Commands[commandIndex].Abilities[_currentSubMenuIndex];
             commandDetail.SubId = (UInt32)PatchAbility(abilityId);
         }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
@@ -1413,7 +1415,7 @@ public partial class BattleHUD : UIScene
             _targetDead = false;
             if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
             {
-                CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
+                CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
                 AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]];
                 cursor = aaData.Info.Target;
                 _defaultTargetAlly = aaData.Info.DefaultAlly;
@@ -1980,7 +1982,7 @@ public partial class BattleHUD : UIScene
     {
         const Byte saveTheQueenId = (Byte)WeaponItem.SaveTheQueen;
 
-        if (_currentCommandId == 1 && CurrentBattlePlayerIndex > -1)
+        if (_currentCommandId == BattleCommandId.Attack && CurrentBattlePlayerIndex > -1)
         {
             BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
             if (btl.PlayerIndex == CharacterIndex.Beatrix)

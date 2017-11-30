@@ -88,7 +88,7 @@ namespace FF9
                                 if (ff9item.FF9Item_GetCount(249) > Comn.random8())
                                 {
                                     UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                    btl_cmd.SetCommand(next.cmd[0], 58U, 73U, btl_scrp.GetBattleID(0U), 1U);
+                                    btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, 73U, btl_scrp.GetBattleID(0U), 1U);
                                     return;
                                 }
                                 break;

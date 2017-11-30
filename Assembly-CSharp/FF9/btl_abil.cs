@@ -22,7 +22,7 @@ namespace FF9
 
 	    public static Boolean CheckCounterAbility(BattleTarget defender, BattleCaster attacker, BattleCommand command)
 	    {
-	        if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.None3)
+	        if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.EnemyAtk)
                 return false;
 
             if (defender.HasSupportAbility(SupportAbility2.Counter) && (command.Data.aa.Category & 8) != 0) // Physical
@@ -34,14 +34,14 @@ namespace FF9
 
                 if (chance > Comn.random16() % 100)
 	            {
-	                btl_cmd.SetCounter(defender.Data, 49u, 176, attacker.Id);
+	                btl_cmd.SetCounter(defender.Data, BattleCommandId.Counter, 176, attacker.Id);
 	                return true;
 	            }
 	        }
 
 	        if (defender.HasSupportAbility(SupportAbility2.ReturnMagic) && (command.Data.aa.Category & 128) != 0) // Magic
             {
-	            btl_cmd.SetCounter(defender.Data, 50u, command.Data.sub_no, attacker.Id);
+	            btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, command.Data.sub_no, attacker.Id);
 	            return true;
 	        }
 
@@ -57,7 +57,7 @@ namespace FF9
 	        if (!defender.HasSupportAbility(SupportAbility2.AutoPotion))
 	            return;
 
-	        if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.None3)
+	        if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.EnemyAtk)
 	            return;
 
 	        Int32 overhealLimit = Configuration.Battle.AutoPotionOverhealLimit;
@@ -70,7 +70,7 @@ namespace FF9
 	                if (ff9item.FF9Item_GetCount(potionId) != 0)
 	                {
 	                    UIManager.Battle.ItemRequest(potionId);
-	                    btl_cmd.SetCounter(defender.Data, 51u, potionId, defender.Id);
+	                    btl_cmd.SetCounter(defender.Data, BattleCommandId.AutoPotion, potionId, defender.Id);
 	                    break;
 	                }
 	            }
@@ -114,7 +114,7 @@ namespace FF9
 	            if (betterPotionId != 0)
 	            {
 	                UIManager.Battle.ItemRequest(betterPotionId);
-	                btl_cmd.SetCounter(defender.Data, 51u, betterPotionId, defender.Id);
+	                btl_cmd.SetCounter(defender.Data, BattleCommandId.AutoPotion, betterPotionId, defender.Id);
 	            }
 	        }
 	    }

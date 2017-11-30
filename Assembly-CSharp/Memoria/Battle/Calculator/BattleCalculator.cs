@@ -67,12 +67,12 @@ namespace Memoria
 
         public static void EnqueueCommand(BattleCommand escapeCommand, BattleCommandId commandId, BattleAbilityId abilityId, UInt16 targetId, Boolean isManyTarget)
         {
-            btl_cmd.SetCommand(escapeCommand.Data, (UInt32)commandId, (UInt32)abilityId, targetId, isManyTarget ? 1u : 0u);
+            btl_cmd.SetCommand(escapeCommand.Data, commandId, (UInt32)abilityId, targetId, isManyTarget ? 1u : 0u);
         }
 
         public static void EnqueueConter(BattleUnit unit, BattleCommandId commandId, BattleAbilityId abilityId, UInt16 target)
         {
-            btl_cmd.SetCounter(unit.Data, (UInt32)commandId, (Int32)abilityId, target);
+            btl_cmd.SetCounter(unit.Data, commandId, (Int32)abilityId, target);
         }
 
         public static UInt16 GetRandomUnitId(Boolean isPlayer)
@@ -282,11 +282,9 @@ namespace Memoria
             if (playerLevels == 0)
                 playerLevels = 1;
 
-            const UInt32 fleeIterationScript = 0056;
-
             Int16 rate = (Int16)(200 / (enemyLevels / enemyCount) * (playerLevels / playerCount) / 16);
             if (rate > Comn.random16() % 100)
-                btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, fleeIterationScript, 1U, 15, 1U);
+                btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1U, 15, 1U);
         }
 
         public Boolean TryPhysicalHit()

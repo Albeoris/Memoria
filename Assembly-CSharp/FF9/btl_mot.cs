@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria;
+using Memoria.Data;
 using UnityEngine;
 
 namespace FF9
@@ -898,7 +899,7 @@ namespace FF9
 			if ((btl.stat.cur & 8192u) != 0u)
 			{
 				btl.die_seq = 7;
-				btl_cmd.SetCommand(btl.cmd[5], 61u, 0u, btl.btl_id, 0u);
+				btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
 				btl_stat.RemoveStatus(btl, 8192u);
 				UIManager.Battle.RemovePlayerFromAction((Int32)btl.btl_id, true);
 				return false;

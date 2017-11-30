@@ -137,16 +137,16 @@ public partial class BattleHUD : UIScene
         return abilityName + str2 + FF9TextTool.BattleCommandTitleText(0);
     }
 
-    private static command_tags GetCommandFromCommandIndex(CommandMenu commandIndex, Int32 playerIndex)
+    private static BattleCommandId GetCommandFromCommandIndex(CommandMenu commandIndex, Int32 playerIndex)
     {
         BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(player.Position).PresetId;
         switch (commandIndex)
         {
             case CommandMenu.Attack:
-                return command_tags.CMD_ATTACK;
+                return BattleCommandId.Attack;
             case CommandMenu.Defend:
-                return command_tags.CMD_DEFEND;
+                return BattleCommandId.Defend;
             case CommandMenu.Ability1:
             {
                 CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
@@ -160,11 +160,11 @@ public partial class BattleHUD : UIScene
                 return commandSet.Get(underTrance, 1);
             }
             case CommandMenu.Item:
-                return command_tags.CMD_ITEM;
+                return BattleCommandId.Item;
             case CommandMenu.Change:
-                return command_tags.CMD_CHANGE;
+                return BattleCommandId.Change;
             default:
-                return command_tags.CMD_NONE;
+                return BattleCommandId.None;
         }
     }
 

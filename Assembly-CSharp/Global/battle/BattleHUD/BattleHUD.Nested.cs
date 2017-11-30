@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Memoria;
+using Memoria.Data;
 
 public partial class BattleHUD : UIScene
 {
@@ -103,7 +104,7 @@ public partial class BattleHUD : UIScene
 
     private class CommandDetail
     {
-        public UInt32 CommandId;
+        public BattleCommandId CommandId;
         public UInt32 SubId;
         public UInt16 TargetId;
         public UInt32 TargetType;

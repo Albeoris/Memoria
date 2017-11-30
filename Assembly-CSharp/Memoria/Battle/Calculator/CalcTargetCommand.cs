@@ -115,7 +115,7 @@ namespace Memoria
         public void TryAlterCommandStatuses()
         {
             BattleStatus status = _command.AbilityStatus;
-            if (!_command.IsShortSummon && _command.Id == BattleCommandId.Summon2)
+            if (!_command.IsShortSummon && _command.Id == BattleCommandId.SummonEiko)
                 status |= BattleStatus.Protect;
 
             _target.TryAlterStatuses(status, true);

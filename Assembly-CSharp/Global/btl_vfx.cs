@@ -159,9 +159,9 @@ public class btl_vfx
 				}
 				return;
 			}
-			case BattleCommandId.Jump1:
-			case BattleCommandId.Flee:
-			case BattleCommandId.FB:
+			case BattleCommandId.Jump:
+			case BattleCommandId.Escape:
+			case BattleCommandId.FinishBlow:
 				IL_6F:
 				switch (cmd_no)
 				{
@@ -202,7 +202,7 @@ public class btl_vfx
 						break;
 					}
 					return;
-				case BattleCommandId.Eidolon:
+				case BattleCommandId.Phantom:
 				{
 					FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 					switch (cmd.sub_no)

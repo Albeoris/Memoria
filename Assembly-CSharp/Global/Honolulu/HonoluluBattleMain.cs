@@ -376,43 +376,44 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[characterNo];
             Byte presetId = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
-            UInt32 cmd_no = 0;
+            BattleCommandId commandId = 0;
+            Int32 commandIndex = (Int32)commandId;
             UInt32 sub_no = 0;
             switch (slotNo)
             {
                 case 0:
-                    cmd_no = 1U;
-                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
+                    commandId = BattleCommandId.Attack;
+                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
                     break;
                 case 1:
-                    cmd_no = (UInt32)CharacterCommands.CommandSets[presetId].Get(isTrance, 0);
-                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
+                    commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, 0);
+                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
                     break;
                 case 2:
-                    cmd_no = (UInt32)CharacterCommands.CommandSets[presetId].Get(isTrance, 1);
-                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
+                    commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, 1);
+                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
                     break;
                 case 3:
-                    cmd_no = 14U;
+                    commandId = BattleCommandId.Item;
                     sub_no = 236U;
                     break;
                 case 4:
-                    cmd_no = 4U;
+                    commandId = BattleCommandId.Defend;
                     break;
                 case 5:
-                    cmd_no = 7U;
-                    sub_no = CharacterCommands.Commands[cmd_no].Ability;
+                    commandId = BattleCommandId.Change;
+                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
                     break;
             }
 
-            if (CharacterCommands.Commands[cmd_no].Type == CharacterCommandType.Throw)
+            if (CharacterCommands.Commands[commandIndex].Type == CharacterCommandType.Throw)
                 sub_no = 1U;
 
-            if ((Int32)cmd_no == 0)
+            if (commandId == BattleCommandId.None)
                 return;
 
             CMD_DATA cmd = new CMD_DATA { regist = btlData };
-            btl_cmd.SetCommand(cmd, cmd_no, sub_no, (UInt16)target, 0U);
+            btl_cmd.SetCommand(cmd, commandId, sub_no, (UInt16)target, 0U);
         }
     }
 
