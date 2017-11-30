@@ -18,7 +18,7 @@ namespace Memoria
         public new BattleCommandId Id
         {
             get { return base.Id; }
-            set { Data.cmd_no = (Byte)value; }
+            set { Data.cmd_no = value; }
         }
 
         public new BattleAbilityId AbilityId

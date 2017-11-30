@@ -277,7 +277,7 @@ public class battle
                         }
                         break;
                     case 2:
-                        if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && (!btl_cmd.CheckSpecificCommand2(59) && !btl_cmd.CheckSpecificCommand2(60)) && (!btl_cmd.CheckSpecificCommand2(61) && !btl_cmd.CheckSpecificCommand2(62)))
+                        if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && (!btl_cmd.CheckSpecificCommand2(BattleCommandId.SysTrans) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysDead)) && (!btl_cmd.CheckSpecificCommand2(BattleCommandId.SysReraise) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysStone)))
                             num1 = 1U;
                         btl_para.CheckPointData(data);
                         if (next.IsPlayer)
@@ -307,7 +307,7 @@ public class battle
                         {
                             if (data.die_seq == 0)
                                 data.die_seq = 1;
-                            if (!btl_mot.checkMotion(data, 4) || btl_cmd.CheckSpecificCommand(data, 61))
+                            if (!btl_mot.checkMotion(data, 4) || btl_cmd.CheckSpecificCommand(data, BattleCommandId.SysReraise))
                             {
                                 num1 = 0U;
                             }

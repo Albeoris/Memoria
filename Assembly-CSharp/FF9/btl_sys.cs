@@ -62,7 +62,7 @@ namespace FF9
                 Int32 num2 = 0;
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    if (next.bi.player != 0 && (!Status.checkCurStat(next, 4355U) || (next.cur.hp == 0 || Status.checkCurStat(next, 256U)) && Status.checkCurStat(next, 8192U) || btl_cmd.CheckSpecificCommand(next, 61)))
+                    if (next.bi.player != 0 && (!Status.checkCurStat(next, 4355U) || (next.cur.hp == 0 || Status.checkCurStat(next, 256U)) && Status.checkCurStat(next, 8192U) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
                     {
                         num2 = 1;
                         break;
@@ -83,7 +83,7 @@ namespace FF9
                         case 11:
                             if (!Status.checkCurStat(next, 4163U))
                             {
-                                if (btl_cmd.CheckSpecificCommand(next, 58))
+                                if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
                                     return;
                                 if (ff9item.FF9Item_GetCount(249) > Comn.random8())
                                 {
@@ -115,11 +115,11 @@ namespace FF9
                 if (next.PlayerIndex == CharacterIndex.Eiko)
                     btl1 = next;
 
-                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderStatus((BattleStatus)4355U) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, 61)))
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderStatus((BattleStatus)4355U) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
             }
 
-            if (btl1 != null && btl_cmd.CheckSpecificCommand(btl1.Data, 58))
+            if (btl1 != null && btl_cmd.CheckSpecificCommand(btl1.Data, BattleCommandId.SysLastPhoenix))
                 return;
 
             UIManager.Battle.FF9BMenu_EnableMenu(false);

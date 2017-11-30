@@ -10,6 +10,7 @@ using System.Linq;
 using Memoria;
 using Memoria.Prime;
 using Memoria.Assets;
+using Memoria.Data;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Object = System.Object;
@@ -754,14 +755,14 @@ public partial class EventEngine
                 switch (this.gExec.level)
                 {
                     case 0:
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), 54U, (UInt32)this.getv1());
+                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, (UInt32)this.getv1());
                         break;
                     case 1:
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), 53U, (UInt32)this.getv1());
+                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, (UInt32)this.getv1());
                         break;
                     case 3:
                         this.gExec.btlchk = (Byte)0;
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), 47U, (UInt32)this.getv1());
+                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, (UInt32)this.getv1());
                         break;
                 }
                 return 0;

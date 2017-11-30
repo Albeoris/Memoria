@@ -6,6 +6,7 @@ using System.Threading;
 using AOT;
 using FF9;
 using Memoria;
+using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
 
@@ -1365,7 +1366,7 @@ public class SFX
             case 8:
                 if (FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
                 {
-                    return (FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no != 51 || !btl_cmd.CheckUsingCommand(next.cmd[0])) ? 0 : 1;
+                    return (FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no != BattleCommandId.AutoPotion || !btl_cmd.CheckUsingCommand(next.cmd[0])) ? 0 : 1;
                 }
                 return 0;
             case 9:

@@ -269,7 +269,7 @@ namespace Memoria
             if (!IsUnderStatus(BattleStatus.Freeze) || IsUnderStatus(BattleStatus.Petrify))
                 return false;
 
-            btl_cmd.KillSpecificCommand(Data, 62);
+            btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
             Kill();
             UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.ImpactCrushes);
             return true;

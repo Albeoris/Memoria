@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Data;
 
 public class CMD_DATA
 {
@@ -17,7 +18,7 @@ public class CMD_DATA
 
 	public UInt16 tar_id;
 
-	public Byte cmd_no;
+	public BattleCommandId cmd_no;
 
 	public Byte sub_no;
 

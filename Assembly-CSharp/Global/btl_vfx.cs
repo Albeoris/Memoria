@@ -35,15 +35,15 @@ public class btl_vfx
 		if (cmd.info.reflec == 0)
 		{
 			num = btl_cmd.CheckReflec(cmd);
-			if (cmd.cmd_no == 14 || cmd.cmd_no == 51)
+			if (cmd.cmd_no == BattleCommandId.Item || cmd.cmd_no == BattleCommandId.AutoPotion)
 			{
 				fx_req.flgs = 2;
 			}
-			else if (cmd.cmd_no == 31)
+			else if (cmd.cmd_no == BattleCommandId.MagicSword)
 			{
 				fx_req.flgs = 4;
 			}
-			else if (cmd.cmd_no == 57 || cmd.cmd_no == 58)
+			else if (cmd.cmd_no == BattleCommandId.SysPhantom || cmd.cmd_no == BattleCommandId.SysLastPhoenix)
 			{
 				fx_req.flgs = 1;
 			}
@@ -79,7 +79,7 @@ public class btl_vfx
 				btl_VFX_REQ2.rtrgno = (SByte)((b = btl_VFX_REQ2.rtrgno) + 1);
 				rtrg[(Int32)((Byte)b)] = next;
 			}
-			if (cmd.cmd_no == 31 && btl_util.getSerialNumber(next) == 2)
+			if (cmd.cmd_no == BattleCommandId.MagicSword && btl_util.getSerialNumber(next) == 2)
 			{
 				fx_req.mexe = next;
 			}
@@ -136,26 +136,26 @@ public class btl_vfx
 						{
 							if (serialNumber != 15)
 							{
-								btl_vfx.SetBattleVfx(cmd, 20u, null);
+								SetBattleVfx(cmd, 20u, null);
 							}
 							else
 							{
-								btl_vfx.SetBattleVfx(cmd, 119u, null);
+								SetBattleVfx(cmd, 119u, null);
 							}
 						}
 						else
 						{
-							btl_vfx.SetBattleVfx(cmd, 19u, null);
+							SetBattleVfx(cmd, 19u, null);
 						}
 					}
 					else
 					{
-						btl_vfx.SetBattleVfx(cmd, 273u, null);
+						SetBattleVfx(cmd, 273u, null);
 					}
 				}
 				else
 				{
-					btl_vfx.SetBattleVfx(cmd, 200u, null);
+					SetBattleVfx(cmd, 200u, null);
 				}
 				return;
 			}
@@ -171,34 +171,34 @@ public class btl_vfx
 					switch (ff9item._FF9Item_Data[(Int32)cmd.sub_no].shape)
 					{
 					case 1:
-						btl_vfx.SetBattleVfx(cmd, 272u, null);
+						SetBattleVfx(cmd, 272u, null);
 						break;
 					case 2:
-						btl_vfx.SetBattleVfx(cmd, 266u, null);
+						SetBattleVfx(cmd, 266u, null);
 						break;
 					case 3:
 					case 4:
-						btl_vfx.SetBattleVfx(cmd, 267u, null);
+						SetBattleVfx(cmd, 267u, null);
 						break;
 					case 5:
-						btl_vfx.SetBattleVfx(cmd, 268u, null);
+						SetBattleVfx(cmd, 268u, null);
 						break;
 					case 6:
-						btl_vfx.SetBattleVfx(cmd, 269u, null);
+						SetBattleVfx(cmd, 269u, null);
 						break;
 					case 7:
-						btl_vfx.SetBattleVfx(cmd, 265u, null);
+						SetBattleVfx(cmd, 265u, null);
 						break;
 					case 8:
 					case 9:
 					case 10:
-						btl_vfx.SetBattleVfx(cmd, 270u, null);
+						SetBattleVfx(cmd, 270u, null);
 						break;
 					case 11:
-						btl_vfx.SetBattleVfx(cmd, 271u, null);
+						SetBattleVfx(cmd, 271u, null);
 						break;
 					case 12:
-						btl_vfx.SetBattleVfx(cmd, 277u, null);
+						SetBattleVfx(cmd, 277u, null);
 						break;
 					}
 					return;
@@ -232,24 +232,24 @@ public class btl_vfx
 						ff9Battle.phantom_no = 160;
 						break;
 					}
-					if ((cmd.aa.Info.Target ==  Memoria.Data.TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == 32 || cmd.cmd_no == 33)
+					if ((cmd.aa.Info.Target ==  TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
 					{
-						btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Vfx2, null);
+						SetBattleVfx(cmd, cmd.aa.Vfx2, null);
 					}
 					else
 					{
-						btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
+						SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
 					}
 					return;
 				}
 				}
-				if ((cmd.aa.Info.Target == Memoria.Data.TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == 32 || cmd.cmd_no == 33)
+				if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
 				{
-					btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Vfx2, null);
+					SetBattleVfx(cmd, cmd.aa.Vfx2, null);
 				}
 				else
 				{
-					btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
+					SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
 				}
 				return;
 			case BattleCommandId.Defend:
@@ -277,15 +277,15 @@ public class btl_vfx
 			btlseq.RunSequence(cmd);
 			return;
 		case 59:
-			btl_vfx.SetBattleVfx(cmd, !caster.IsUnderStatus(BattleStatus.Trance) ? 489u : 257u, null);
+			SetBattleVfx(cmd, !caster.IsUnderStatus(BattleStatus.Trance) ? 489u : 257u, null);
 			return;
 		default:
 			goto IL_4B;
 		}
-		btl_vfx.SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
+		SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
 		return;
 		IL_168:
-		btl_vfx.SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum((Int32)cmd.sub_no)].info.VfxIndex, null);
+		SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum((Int32)cmd.sub_no)].info.VfxIndex, null);
 	}
 
 	public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)

@@ -87,7 +87,7 @@ namespace FF9
 
 	                CMD_DATA testCommand = new CMD_DATA
 	                {
-	                    cmd_no = 51,
+	                    cmd_no = BattleCommandId.AutoPotion,
 	                    sub_no = potionId,
 	                    aa = FF9StateSystem.Battle.FF9Battle.aa_data[0],
 	                    tar_id = defender.Id,

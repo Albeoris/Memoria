@@ -106,7 +106,7 @@ namespace Memoria
                         }
                         else
                         {
-                            if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != 41 && v.Command.Data.cmd_no != 42) && (v.Command.Data.cmd_no != 43 && v.Command.Data.cmd_no != 44))
+                            if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != BattleCommandId.StageMagicZidane && v.Command.Data.cmd_no != BattleCommandId.StageMagicBlank) && (v.Command.Data.cmd_no != BattleCommandId.StageMagicMarcus && v.Command.Data.cmd_no != BattleCommandId.StageMagicCinna))
                                 v.Target.HpDamage = 9999;
                             btl_para.SetDamage(v.Target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1);
                             CheckDamageReaction(v, counterAtk);
@@ -163,7 +163,7 @@ namespace Memoria
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(54, num5, caster.btl_id, num6);
-                else if (target.cur.hp != 0 && v.Command.Data.cmd_no < 48)
+                else if (target.cur.hp != 0 && v.Command.Data.cmd_no < BattleCommandId.BoundaryCheck)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(53, num5, caster.btl_id, num6);
             }
             PersistenSingleton<EventEngine>.Instance.RequestAction(55, num5, caster.btl_id, num6);

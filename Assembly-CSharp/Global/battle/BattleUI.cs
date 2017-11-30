@@ -6,7 +6,6 @@ using Assets.Sources.Scripts.Common;
 using Memoria;
 using Memoria.Data;
 using UnityEngine;
-using Object = System.Object;
 
 public class BattleUI : MonoBehaviour
 {
@@ -23,13 +22,7 @@ public class BattleUI : MonoBehaviour
 		}
 		this.battleMain = base.GetComponent<HonoluluBattleMain>();
 		FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum = FF9StateSystem.Battle.patternIndex;
-		this.patternIndex = String.Concat(new Object[]
-		{
-			"Pattern ",
-			(Int32)(this.battleMain.btlScene.PatNum + 1),
-			"/",
-			this.battleMain.btlScene.header.PatCount
-		});
+		this.patternIndex = String.Concat("Pattern ", (Int32)(this.battleMain.btlScene.PatNum + 1), "/", this.battleMain.btlScene.header.PatCount);
 		this.cameraController = GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>();
 		this.effNum = 126;
 		this.strEffNum = this.effNum.ToString();
@@ -70,8 +63,8 @@ public class BattleUI : MonoBehaviour
 		if (!FF9StateSystem.Battle.isDebug)
 		{
 			GUILayout.BeginArea(fullscreenRect);
-			GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-			if (GUILayout.Button("Back", new GUILayoutOption[0]))
+			GUILayout.BeginHorizontal();
+			if (GUILayout.Button("Back"))
 			{
 				SceneDirector.Replace(PersistenSingleton<SceneDirector>.Instance.LastScene, SceneTransition.FadeOutToBlack_FadeIn, true);
 			}
@@ -81,20 +74,20 @@ public class BattleUI : MonoBehaviour
 			return;
 		}
 		GUILayout.BeginArea(fullscreenRect);
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-		if (GUILayout.Button("Back", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button("Back"))
 		{
 			SceneDirector.Replace("MainMenu", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.FlexibleSpace();
 		GUILayout.FlexibleSpace();
 		GUILayout.FlexibleSpace();
-		GUILayout.BeginVertical(new GUILayoutOption[0]);
-		GUILayout.BeginVertical("Box", new GUILayoutOption[0]);
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+		GUILayout.BeginVertical();
+		GUILayout.BeginVertical("Box");
+		GUILayout.BeginHorizontal();
 		if (this.isOpenBattleMapDebugPanel)
 		{
-			if (GUILayout.Button("Effect UI", new GUILayoutOption[0]))
+			if (GUILayout.Button("Effect UI"))
 			{
 				this.isOpenEffectDebugPanel = !this.isOpenEffectDebugPanel;
 				if (this.isOpenEffectDebugPanel)
@@ -102,7 +95,7 @@ public class BattleUI : MonoBehaviour
 					this.isOpenAttackDebugPanel = false;
 				}
 			}
-			if (GUILayout.Button("Attack UI", new GUILayoutOption[0]))
+			if (GUILayout.Button("Attack UI"))
 			{
 				this.isOpenAttackDebugPanel = !this.isOpenAttackDebugPanel;
 				if (this.isOpenAttackDebugPanel)
@@ -112,7 +105,7 @@ public class BattleUI : MonoBehaviour
 			}
 			GUILayout.FlexibleSpace();
 		}
-		if (GUILayout.Button("Debug UI", new GUILayoutOption[0]))
+		if (GUILayout.Button("Debug UI"))
 		{
 			this.isOpenBattleMapDebugPanel = !this.isOpenBattleMapDebugPanel;
 		}
@@ -138,8 +131,8 @@ public class BattleUI : MonoBehaviour
 
 	private void BuildBattleMapDebugPanel()
 	{
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-		if (GUILayout.Button(" < ", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button(" < "))
 		{
 			this.mapIndex--;
 			if (this.mapIndex < 0)
@@ -150,11 +143,8 @@ public class BattleUI : MonoBehaviour
 			FF9StateSystem.Battle.patternIndex = 0;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		this.battleMapString = GUILayout.TextField(this.battleMapString, new GUILayoutOption[]
-		{
-			GUILayout.Width(200f)
-		});
-		if (GUILayout.Button(" > ", new GUILayoutOption[0]))
+		this.battleMapString = GUILayout.TextField(this.battleMapString, GUILayout.Width(200f));
+		if (GUILayout.Button(" > "))
 		{
 			this.mapIndex++;
 			if (this.mapIndex > (Int32)this.mapIDs.Length)
@@ -165,7 +155,7 @@ public class BattleUI : MonoBehaviour
 			FF9StateSystem.Battle.patternIndex = 0;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		if (GUILayout.Button("Jump", new GUILayoutOption[0]))
+		if (GUILayout.Button("Jump"))
 		{
 			Int32 num = 0;
 			Int32.TryParse(this.battleMapString, out num);
@@ -179,8 +169,8 @@ public class BattleUI : MonoBehaviour
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-		if (GUILayout.Button(" < ", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button(" < "))
 		{
 			if (this.battleMain.btlScene.header.PatCount == 1)
 			{
@@ -192,21 +182,12 @@ public class BattleUI : MonoBehaviour
 			{
 				FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum = (Byte)(this.battleMain.btlScene.header.PatCount - 1);
 			}
-			this.patternIndex = String.Concat(new Object[]
-			{
-				"Pattern ",
-				(Int32)(FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum + 1),
-				" / ",
-				this.battleMain.btlScene.header.PatCount
-			});
+			this.patternIndex = String.Concat("Pattern ", (Int32)(FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum + 1), " / ", this.battleMain.btlScene.header.PatCount);
 			FF9StateSystem.Battle.patternIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		GUILayout.Label(this.patternIndex, new GUILayoutOption[]
-		{
-			GUILayout.Width(200f)
-		});
-		if (GUILayout.Button(" > ", new GUILayoutOption[0]))
+		GUILayout.Label(this.patternIndex, GUILayout.Width(200f));
+		if (GUILayout.Button(" > "))
 		{
 			if (this.battleMain.btlScene.header.PatCount == 1)
 			{
@@ -218,20 +199,14 @@ public class BattleUI : MonoBehaviour
 			{
 				FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum = 0;
 			}
-			this.patternIndex = String.Concat(new Object[]
-			{
-				"Pattern ",
-				(Int32)(FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum + 1),
-				" / ",
-				this.battleMain.btlScene.header.PatCount
-			});
+			this.patternIndex = String.Concat("Pattern ", (Int32)(FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum + 1), " / ", this.battleMain.btlScene.header.PatCount);
 			FF9StateSystem.Battle.patternIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+		GUILayout.BeginHorizontal();
 		GUI.enabled = (btlseq.seq_work_set.SeqWork[0] != null && btlseq.seq_work_set.SeqWork[0].CmdPtr == null);
-		if (GUILayout.Button(" < ", new GUILayoutOption[0]))
+		if (GUILayout.Button(" < "))
 		{
 			this.seqNo--;
 			if (this.seqNo < 0)
@@ -239,11 +214,8 @@ public class BattleUI : MonoBehaviour
 				this.seqNo = this.seqList.Count - 1;
 			}
 		}
-		GUILayout.Label("sequence: " + (this.seqNo + 1), new GUILayoutOption[]
-		{
-			GUILayout.Width(150f)
-		});
-		if (GUILayout.Button(" > ", new GUILayoutOption[0]))
+		GUILayout.Label("sequence: " + (this.seqNo + 1), GUILayout.Width(150f));
+		if (GUILayout.Button(" > "))
 		{
 			this.seqNo++;
 			if (this.seqNo >= this.seqList.Count)
@@ -251,20 +223,20 @@ public class BattleUI : MonoBehaviour
 				this.seqNo = 0;
 			}
 		}
-		if (GUILayout.Button(" Play ", new GUILayoutOption[0]))
+		if (GUILayout.Button(" Play "))
 		{
-			btl_cmd.SetEnemyCommandBySequence(1, 47u, (UInt32)this.seqList[this.seqNo]);
+			btl_cmd.SetEnemyCommandBySequence(1, BattleCommandId.EnemyAtk, (UInt32)this.seqList[this.seqNo]);
 		}
 		GUI.enabled = true;
 		GUILayout.EndHorizontal();
 		this.OnUiCamera();
-		Boolean flag = GUILayout.Toggle(FF9StateSystem.Battle.isFrontRow, "Front Row", new GUILayoutOption[0]);
+		Boolean flag = GUILayout.Toggle(FF9StateSystem.Battle.isFrontRow, "Front Row");
 		if (flag != FF9StateSystem.Battle.isFrontRow)
 		{
 			FF9StateSystem.Battle.isFrontRow = flag;
 			this.battleMain.SetFrontRow();
 		}
-		Boolean flag2 = GUILayout.Toggle(FF9StateSystem.Battle.isLevitate, "Levitate", new GUILayoutOption[0]);
+		Boolean flag2 = GUILayout.Toggle(FF9StateSystem.Battle.isLevitate, "Levitate");
 		if (flag2 != FF9StateSystem.Battle.isLevitate)
 		{
 			FF9StateSystem.Battle.isLevitate = flag2;
@@ -281,18 +253,18 @@ public class BattleUI : MonoBehaviour
 				}
 			}
 		}
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-		if (GUILayout.Button("Normal Attack", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button("Normal Attack"))
 		{
 			FF9StateSystem.Battle.debugStartType = 2;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		if (GUILayout.Button("First Attack", new GUILayoutOption[0]))
+		if (GUILayout.Button("First Attack"))
 		{
 			FF9StateSystem.Battle.debugStartType = 1;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		if (GUILayout.Button("Back Attack", new GUILayoutOption[0]))
+		if (GUILayout.Button("Back Attack"))
 		{
 			FF9StateSystem.Battle.debugStartType = 0;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
@@ -302,16 +274,13 @@ public class BattleUI : MonoBehaviour
 
 	private void OnUiCamera()
 	{
-		GUILayout.BeginHorizontal(new GUILayoutOption[0]);
-		if (GUILayout.Button(" < ", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button(" < "))
 		{
 			this.cameraController.SetPrevDefaultCamera();
 		}
-		GUILayout.Label("Cam ID: " + (this.cameraController.GetCurrDefaultCamID() + 1), new GUILayoutOption[]
-		{
-			GUILayout.Width(200f)
-		});
-		if (GUILayout.Button(" > ", new GUILayoutOption[0]))
+		GUILayout.Label("Cam ID: " + (this.cameraController.GetCurrDefaultCamID() + 1), GUILayout.Width(200f));
+		if (GUILayout.Button(" > "))
 		{
 			this.cameraController.SetNextDefaultCamera();
 		}
@@ -325,12 +294,8 @@ public class BattleUI : MonoBehaviour
 		screenRect.height *= 0.375f;
 		screenRect.y = fullscreenRect.height - screenRect.height;
 		GUILayout.BeginArea(screenRect);
-		this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, new GUILayoutOption[]
-		{
-			GUILayout.Width(screenRect.width),
-			GUILayout.Height(screenRect.height)
-		});
-		GUILayout.BeginVertical(new GUILayoutOption[0]);
+		this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUILayout.Width(screenRect.width), GUILayout.Height(screenRect.height));
+		GUILayout.BeginVertical();
 		GUILayout.FlexibleSpace();
 		this.OnUiSpecialEffectBottom1();
 		this.OnUiSpecialEffectBottom0();
@@ -341,55 +306,45 @@ public class BattleUI : MonoBehaviour
 
 	private void OnUiSpecialEffectBottom1()
 	{
-		GUILayout.BeginHorizontal("box", new GUILayoutOption[0]);
-		if (GUILayout.Button("Line " + ((!SFX.isDebugLine) ? "Off" : "On"), new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal("box");
+		if (GUILayout.Button("Line " + ((!SFX.isDebugLine) ? "Off" : "On")))
 		{
 			SFX.isDebugLine = !SFX.isDebugLine;
 		}
-		if (GUILayout.Button("Cam " + ((!SFX.isDebugCam) ? "On" : "Off"), new GUILayoutOption[0]))
+		if (GUILayout.Button("Cam " + ((!SFX.isDebugCam) ? "On" : "Off")))
 		{
 			SFX.isDebugCam = !SFX.isDebugCam;
 		}
-		if (GUILayout.Button("Sub " + SFX.defaultSubOrder, new GUILayoutOption[0]))
+		if (GUILayout.Button("Sub " + SFX.defaultSubOrder))
 		{
 			SFX.defaultSubOrder = (SFX.defaultSubOrder + 1) % 3;
 			SFX.subOrder = SFX.defaultSubOrder;
 		}
-		if (GUILayout.Button("Col " + SFX.defaultColIntensity, new GUILayoutOption[0]))
+		if (GUILayout.Button("Col " + SFX.defaultColIntensity))
 		{
 			SFX.defaultColIntensity = (SFX.defaultColIntensity + 1) % 3;
 			SFX.colIntensity = SFX.defaultColIntensity;
 		}
-		if (GUILayout.Button("Ofs " + SFX.pixelOffset, new GUILayoutOption[0]))
+		if (GUILayout.Button("Ofs " + SFX.pixelOffset))
 		{
 			SFX.pixelOffset = (SFX.pixelOffset + 1 & 1);
 		}
-		if (GUILayout.Button("Alp " + SFX.colThreshold, new GUILayoutOption[0]))
+		if (GUILayout.Button("Alp " + SFX.colThreshold))
 		{
 			SFX.colThreshold = (SFX.colThreshold + 1 & 1);
 		}
-		if (GUILayout.Button("Bilinear " + ((!SFX.isDebugFillter) ? "SPRT" : "All"), new GUILayoutOption[0]))
+		if (GUILayout.Button("Bilinear " + ((!SFX.isDebugFillter) ? "SPRT" : "All")))
 		{
 			SFX.isDebugFillter = !SFX.isDebugFillter;
 		}
-		GUILayout.Label(String.Concat(new Object[]
-		{
-			"Sub:",
-			SFX.subOrder,
-			" /Col:",
-			SFX.colIntensity,
-			" /Prim:",
-			SFXRender.primCount,
-			" / Frame:",
-			SFX.frameIndex
-		}), new GUILayoutOption[0]);
+		GUILayout.Label(String.Concat("Sub:", SFX.subOrder, " /Col:", SFX.colIntensity, " /Prim:", SFXRender.primCount, " / Frame:", SFX.frameIndex));
 		GUILayout.EndHorizontal();
 	}
 
 	private void OnUiSpecialEffectBottom0()
 	{
-		GUILayout.BeginHorizontal("box", new GUILayoutOption[0]);
-		if (GUILayout.Button("<", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal("box");
+		if (GUILayout.Button("<"))
 		{
 			this.effNum--;
 			if (this.effNum < 0)
@@ -399,7 +354,7 @@ public class BattleUI : MonoBehaviour
 			this.strEffNum = this.effNum.ToString();
 		}
 		String text = this.strEffNum;
-		this.strEffNum = GUILayout.TextField(text, new GUILayoutOption[0]);
+		this.strEffNum = GUILayout.TextField(text);
 		if (this.strEffNum != text)
 		{
 			Int32 num = 0;
@@ -416,7 +371,7 @@ public class BattleUI : MonoBehaviour
 				this.effNum = 0;
 			}
 		}
-		if (GUILayout.Button(">", new GUILayoutOption[0]))
+		if (GUILayout.Button(">"))
 		{
 			this.effNum++;
 			if (this.effNum >= 511)
@@ -427,23 +382,23 @@ public class BattleUI : MonoBehaviour
 		}
 		Boolean enabled = true;
 		GUI.enabled = enabled;
-		if (GUILayout.Button(" P2E ", new GUILayoutOption[0]))
+		if (GUILayout.Button(" P2E "))
 		{
 			this.SFXPlay(8, FF9StateSystem.Battle.selectCharPosID, 4);
 		}
-		if (GUILayout.Button(" E2P ", new GUILayoutOption[0]))
+		if (GUILayout.Button(" E2P "))
 		{
 			this.SFXPlay(1, 4, 0);
 		}
-		if (GUILayout.Button("P(Me)", new GUILayoutOption[0]))
+		if (GUILayout.Button("P(Me)"))
 		{
 			this.SFXPlay(8, FF9StateSystem.Battle.selectCharPosID, FF9StateSystem.Battle.selectCharPosID);
 		}
-		if (GUILayout.Button("E(Me)", new GUILayoutOption[0]))
+		if (GUILayout.Button("E(Me)"))
 		{
 			this.SFXPlay(1, 4, 4);
 		}
-		if (GUILayout.Button("Summon", new GUILayoutOption[0]))
+		if (GUILayout.Button("Summon"))
 		{
 			Byte[] monbone = new Byte[2];
 			PSX_LIBGTE.VECTOR trgcpos = default(PSX_LIBGTE.VECTOR);
@@ -453,11 +408,11 @@ public class BattleUI : MonoBehaviour
 			SFX.SetTrg(FF9StateSystem.Battle.FF9Battle.btl_data, 4);
 			SFX.Play(this.effNum);
 		}
-		if (GUILayout.Button(" Item ", new GUILayoutOption[0]))
+		if (GUILayout.Button(" Item "))
 		{
 			this.SFXPlay(2, FF9StateSystem.Battle.selectCharPosID, 1);
 		}
-		if (GUILayout.Button("Sword", new GUILayoutOption[0]))
+		if (GUILayout.Button("Sword"))
 		{
 			Byte[] monbone2 = new Byte[2];
 			PSX_LIBGTE.VECTOR trgcpos2 = default(PSX_LIBGTE.VECTOR);
@@ -468,7 +423,7 @@ public class BattleUI : MonoBehaviour
 			SFX.SetTrg(FF9StateSystem.Battle.FF9Battle.btl_data[4]);
 			SFX.Play(this.effNum);
 		}
-		if (GUILayout.Button(" Ref ", new GUILayoutOption[0]))
+		if (GUILayout.Button(" Ref "))
 		{
 			Byte[] monbone3 = new Byte[2];
 			PSX_LIBGTE.VECTOR trgcpos3 = default(PSX_LIBGTE.VECTOR);
@@ -479,7 +434,7 @@ public class BattleUI : MonoBehaviour
 			SFX.SetRTrgTest(FF9StateSystem.Battle.FF9Battle.btl_data[2]);
 			SFX.Play(this.effNum);
 		}
-		if (GUILayout.Button("Auto " + ((!SFX.isDebugAutoPlay) ? "Off" : "On"), new GUILayoutOption[0]))
+		if (GUILayout.Button("Auto " + ((!SFX.isDebugAutoPlay) ? "Off" : "On")))
 		{
 			SFX.isDebugAutoPlay = !SFX.isDebugAutoPlay;
 		}
@@ -515,9 +470,6 @@ public class BattleUI : MonoBehaviour
 
 	private void Update()
 	{
-		if (SFX.isRunning)
-		{
-		}
 	}
 
 	private void OnUiAttackDebug()
@@ -527,14 +479,10 @@ public class BattleUI : MonoBehaviour
 		screenRect.height *= 0.375f;
 		screenRect.y = fullscreenRect.height - screenRect.height;
 		GUILayout.BeginArea(screenRect);
-		GUILayout.BeginVertical(new GUILayoutOption[0]);
-		this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, new GUILayoutOption[]
-		{
-			GUILayout.Width(screenRect.width),
-			GUILayout.Height(screenRect.height)
-		});
-		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);
-		Boolean isTrance = GUILayout.Toggle(FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID], "Trance", new GUILayoutOption[0]);
+		GUILayout.BeginVertical();
+		this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUILayout.Width(screenRect.width), GUILayout.Height(screenRect.height));
+		GUILayout.BeginHorizontal("Box");
+		Boolean isTrance = GUILayout.Toggle(FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID], "Trance");
 		if (isTrance != FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID])
 		{
 		    BattleUnit character = btl_scrp.FindBattleUnit((UInt16)(1 << FF9StateSystem.Battle.selectCharPosID));
@@ -550,26 +498,26 @@ public class BattleUI : MonoBehaviour
 			    character.RemoveStatus(BattleStatus.Trance);
 			}
 		}
-		if (GUILayout.Button("Attack", new GUILayoutOption[0]))
+		if (GUILayout.Button("Attack"))
 		{
 			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 0, 16, isTrance);
 		}
-		else if (GUILayout.Button("Skill1", new GUILayoutOption[0]))
+		else if (GUILayout.Button("Skill1"))
 		{
 			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 1, 16, isTrance);
 		}
-		else if (GUILayout.Button("Skill2", new GUILayoutOption[0]))
+		else if (GUILayout.Button("Skill2"))
 		{
 			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 2, 16, isTrance);
 		}
-		else if (GUILayout.Button("Item", new GUILayoutOption[0]))
+		else if (GUILayout.Button("Item"))
 		{
 			HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 3, 16, isTrance);
 		}
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);
-		GUILayout.Label("PlayerCount:" + FF9StateSystem.Battle.selectPlayerCount, new GUILayoutOption[0]);
-		if (GUILayout.Button("<", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal("Box");
+		GUILayout.Label("PlayerCount:" + FF9StateSystem.Battle.selectPlayerCount);
+		if (GUILayout.Button("<"))
 		{
 			FF9StateSystem.Battle.selectPlayerCount--;
 			if (FF9StateSystem.Battle.selectPlayerCount <= 0)
@@ -586,7 +534,7 @@ public class BattleUI : MonoBehaviour
 			}
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		if (GUILayout.Button(">", new GUILayoutOption[0]))
+		if (GUILayout.Button(">"))
 		{
 			Int32 num = FF9StateSystem.Battle.selectPlayerCount++;
 			if (FF9StateSystem.Battle.selectPlayerCount > 4)
@@ -603,9 +551,9 @@ public class BattleUI : MonoBehaviour
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);
-		GUILayout.Label("CharPosID:" + FF9StateSystem.Battle.selectCharPosID, new GUILayoutOption[0]);
-		if (GUILayout.Button("<", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal("Box");
+		GUILayout.Label("CharPosID:" + FF9StateSystem.Battle.selectCharPosID);
+		if (GUILayout.Button("<"))
 		{
 			FF9StateSystem.Battle.selectCharPosID--;
 			if (FF9StateSystem.Battle.selectCharPosID < 0)
@@ -613,7 +561,7 @@ public class BattleUI : MonoBehaviour
 				FF9StateSystem.Battle.selectCharPosID = FF9StateSystem.Battle.selectPlayerCount - 1;
 			}
 		}
-		if (GUILayout.Button(">", new GUILayoutOption[0]))
+		if (GUILayout.Button(">"))
 		{
 			FF9StateSystem.Battle.selectCharPosID++;
 			if (FF9StateSystem.Battle.selectCharPosID >= FF9StateSystem.Battle.selectPlayerCount)
@@ -622,9 +570,9 @@ public class BattleUI : MonoBehaviour
 			}
 		}
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);
-		GUILayout.Label("CharModelID:" + FF9StateSystem.Common.FF9.party.member[FF9StateSystem.Battle.selectCharPosID].info.slot_no, new GUILayoutOption[0]);
-		if (GUILayout.Button("<", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal("Box");
+		GUILayout.Label("CharModelID:" + FF9StateSystem.Common.FF9.party.member[FF9StateSystem.Battle.selectCharPosID].info.slot_no);
+		if (GUILayout.Button("<"))
 		{
 			Int32 num2 = BattleUI.currentDebugSerialCharacter[FF9StateSystem.Battle.selectCharPosID];
 			do
@@ -643,7 +591,7 @@ public class BattleUI : MonoBehaviour
 			BattleUI.currentDebugSerialCharacter[FF9StateSystem.Battle.selectCharPosID] = num2;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		if (GUILayout.Button(">", new GUILayoutOption[0]))
+		if (GUILayout.Button(">"))
 		{
 			Int32 num3 = BattleUI.currentDebugSerialCharacter[FF9StateSystem.Battle.selectCharPosID];
 			do
@@ -663,15 +611,15 @@ public class BattleUI : MonoBehaviour
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal("Box", new GUILayoutOption[0]);
-		GUILayout.Label("WeaponID:" + this.battleMain.GetWeaponID(FF9StateSystem.Battle.selectCharPosID), new GUILayoutOption[0]);
-		if (GUILayout.Button("<", new GUILayoutOption[0]))
+		GUILayout.BeginHorizontal("Box");
+		GUILayout.Label("WeaponID:" + this.battleMain.GetWeaponID(FF9StateSystem.Battle.selectCharPosID));
+		if (GUILayout.Button("<"))
 		{
 			HonoluluBattleMain.CurPlayerWeaponIndex[FF9StateSystem.Battle.selectCharPosID]--;
 			ff9feqp.FF9FEqp_Equip((Byte)FF9StateSystem.Battle.selectCharPosID, ref HonoluluBattleMain.CurPlayerWeaponIndex[FF9StateSystem.Battle.selectCharPosID]);
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
-		if (GUILayout.Button(">", new GUILayoutOption[0]))
+		if (GUILayout.Button(">"))
 		{
 			HonoluluBattleMain.CurPlayerWeaponIndex[FF9StateSystem.Battle.selectCharPosID]++;
 			ff9feqp.FF9FEqp_Equip((Byte)FF9StateSystem.Battle.selectCharPosID, ref HonoluluBattleMain.CurPlayerWeaponIndex[FF9StateSystem.Battle.selectCharPosID]);

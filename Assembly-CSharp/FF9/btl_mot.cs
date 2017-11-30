@@ -920,11 +920,11 @@ namespace FF9
 				}
 				return false;
 			}
-			if (cur_cmd != null && (Status.checkCurStat(btl, 1107300355u) || btl.bi.dmg_mot_f != 0 || (btl_util.getSerialNumber(btl) == 2 && cur_cmd.cmd_no == 31)))
+			if (cur_cmd != null && (Status.checkCurStat(btl, 1107300355u) || btl.bi.dmg_mot_f != 0 || (btl_util.getSerialNumber(btl) == 2 && cur_cmd.cmd_no == BattleCommandId.MagicSword)))
 			{
 				return false;
 			}
-			if (cur_cmd != null && btl == cur_cmd.regist && (cur_cmd.cmd_no < 55 || cur_cmd.cmd_no > 61))
+			if (cur_cmd != null && btl == cur_cmd.regist && (cur_cmd.cmd_no < BattleCommandId.EnemyReaction || cur_cmd.cmd_no > BattleCommandId.SysReraise))
 			{
 				if (btl_mot.checkMotion(btl, 10) || btl_mot.checkMotion(btl, 11))
 				{

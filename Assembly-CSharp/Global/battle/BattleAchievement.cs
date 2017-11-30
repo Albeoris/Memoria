@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Assets.SiliconSocial;
+using Memoria.Data;
 
 public class BattleAchievement
 {
@@ -72,28 +73,28 @@ public class BattleAchievement
 
 	public static void UpdateCommandAchievement(CMD_DATA cmd)
 	{
-		Byte cmd_no = cmd.cmd_no;
-		if (cmd_no == 4)
+	    BattleCommandId cmd_no = cmd.cmd_no;
+		if (cmd_no == BattleCommandId.Defend)
 		{
 			BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.defence_no, 1);
 			AchievementManager.ReportAchievement(AcheivementKey.Defense50, BattleAchievement.achievement.defence_no);
 		}
-		else if (cmd_no == 22 || cmd_no == 23)
+		else if (cmd_no == BattleCommandId.BlackMagic || cmd_no == BattleCommandId.DoubleBlackMagic)
 		{
 			BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.blkMag_no, 1);
 			AchievementManager.ReportAchievement(AcheivementKey.BlkMag100, BattleAchievement.achievement.blkMag_no);
 		}
-		else if (cmd_no == 17 || cmd_no == 19 || cmd_no == 21)
+		else if (cmd_no == BattleCommandId.WhiteMagicGarnet || cmd_no == BattleCommandId.WhiteMagicEiko || cmd_no == BattleCommandId.DoubleWhiteMagic)
 		{
 			BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.whtMag_no, 1);
 			AchievementManager.ReportAchievement(AcheivementKey.WhtMag200, BattleAchievement.achievement.whtMag_no);
 		}
-		else if (cmd_no == 24)
+		else if (cmd_no == BattleCommandId.BlueMagic)
 		{
 			BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.bluMag_no, 1);
 			AchievementManager.ReportAchievement(AcheivementKey.BluMag100, BattleAchievement.achievement.bluMag_no);
 		}
-		else if (cmd_no == 16 || cmd_no == 18 || cmd_no == 20)
+		else if (cmd_no == BattleCommandId.SummonGarnet || cmd_no == BattleCommandId.Phantom || cmd_no == BattleCommandId.SummonEiko)
 		{
 			BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.summon_no, 1);
 			AchievementManager.ReportAchievement(AcheivementKey.Summon50, BattleAchievement.achievement.summon_no);
@@ -180,12 +181,12 @@ public class BattleAchievement
 				AchievementManager.ReportAchievement(AcheivementKey.SummonMadeen, 1);
 			}
 		}
-		else if (cmd_no == 2)
+		else if (cmd_no == BattleCommandId.Steal)
 		{
 			Int32 totalProgress = BattleAchievement.achievement.increaseStealCount();
 			AchievementManager.ReportAchievement(AcheivementKey.Steal50, totalProgress);
 		}
-		else if (cmd_no == 58)
+		else if (cmd_no == BattleCommandId.SysLastPhoenix)
 		{
 			AchievementManager.ReportAchievement(AcheivementKey.RebirthFlame, 1);
 		}

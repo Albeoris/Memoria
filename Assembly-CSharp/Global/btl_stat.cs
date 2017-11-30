@@ -62,7 +62,7 @@ public class btl_stat
             if (((Int32)stat.cur & (Int32)num3) != 0)
                 num2 |= statusData[num1].invalid;
         }
-        if (btl_cmd.CheckSpecificCommand(btl, 62))
+        if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysStone))
             num2 |= statusData[0].invalid;
         if (((Int32)num2 & (Int32)status) != 0)
             return 1;
@@ -101,7 +101,7 @@ public class btl_stat
                         btl_sys.CheckForecastMenuOff(btl);
                 }
 
-                btl_cmd.KillSpecificCommand(btl, 59);
+                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
                 break;
             case 11:
             case 24:
@@ -249,9 +249,9 @@ public class btl_stat
                     btl_mot.setMotion(btl, 6);
                     btl.evt.animFrame = 0;
                 }
-                if (FF9StateSystem.Battle.FF9Battle.cur_cmd.regist != btl || FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no > 48)
+                if (FF9StateSystem.Battle.FF9Battle.cur_cmd.regist != btl || FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no > BattleCommandId.BoundaryCheck)
                     btl.sel_mode = 0;
-                btl_cmd.KillSpecificCommand(btl, 60);
+                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysDead);
                 if (((Int32)btl.stat.permanent & 262144) != 0)
                 {
                     SetOprStatusCount(btl, 18U);
@@ -320,7 +320,7 @@ public class btl_stat
                     Singleton<HUDMessage>.Instance.ReleaseObject(btl.petrifyMessage);
                     btl.petrifyMessage = null;
                 }
-                btl_cmd.KillSpecificCommand(btl, 62);
+                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 break;
         }
         HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status);
@@ -463,7 +463,7 @@ public class btl_stat
         {
             if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
             {
-                if (btl.cmd[3].cmd_no == 3)
+                if (btl.cmd[3].cmd_no == BattleCommandId.Jump)
                     btl_cmd.SetCounter(btl, BattleCommandId.JumpAttack, 185, btl.cmd[3].tar_id);
                 else
                     btl_cmd.SetCounter(btl, BattleCommandId.JumpTrance, 186, btl.cmd[3].tar_id);

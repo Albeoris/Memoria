@@ -94,11 +94,11 @@ public partial class BattleHUD : UIScene
         String str1 = String.Empty;
         switch (pCmd.cmd_no)
         {
-            case 14:
-            case 15:
+            case BattleCommandId.Item:
+            case BattleCommandId.Throw:
                 str1 = FF9TextTool.ItemName(pCmd.sub_no);
                 break;
-            case 50:
+            case BattleCommandId.MagicCounter:
                 str1 = pCmd.aa.Name;
                 break;
             default:
@@ -123,7 +123,7 @@ public partial class BattleHUD : UIScene
                 break;
         }
 
-        if (String.IsNullOrEmpty(str1) ||( pCmd.cmd_no == 7 && pCmd.sub_no == 96))
+        if (String.IsNullOrEmpty(str1) ||( pCmd.cmd_no == BattleCommandId.Change && pCmd.sub_no == 96))
             return;
 
         SetBattleTitle(str1, 1);

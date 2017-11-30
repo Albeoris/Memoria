@@ -376,7 +376,7 @@ public class btl_scrp
 				UInt32 serialNumber = (UInt32)btl_util.getSerialNumber(next);
 				if (serialNumber == 10u || serialNumber == 11u)
 				{
-					result = (UInt32)((!btl_cmd.CheckSpecificCommand(next, 58)) ? 0u : 1u);
+					result = !btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix) ? 0u : 1u;
 					break;
 				}
 			}
