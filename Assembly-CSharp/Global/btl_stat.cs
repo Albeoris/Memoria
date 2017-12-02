@@ -39,7 +39,7 @@ public class btl_stat
         btl.sel_mode = 0;
         if (btl.bi.player != 0)
             UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
-        btl.cmd[0].cmd_no = 0;
+        btl.cmd[0].cmd_no = BattleCommandId.None;
     }
 
     public static UInt32 AlterStatus(BTL_DATA btl, UInt32 status)
@@ -311,7 +311,7 @@ public class btl_stat
                 if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
                     btl.cur.at = 0;
                 btl.sel_mode = 0;
-                btl.cmd[3].cmd_no = 0;
+                btl.cmd[3].cmd_no = BattleCommandId.None;
                 btl.cmd[3].tar_id = 0;
                 break;
             case BattleStatus.GradualPetrify:

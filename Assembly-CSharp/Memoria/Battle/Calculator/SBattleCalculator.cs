@@ -157,16 +157,16 @@ namespace Memoria
             }
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
-            UInt16 num5 = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
-            UInt16 num6 = (UInt16)((UInt32)v.Command.Data.cmd_no << 8 | v.Command.Data.sub_no);
+            UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
+            UInt16 commandAndScript = (UInt16)((UInt32)v.Command.Data.cmd_no << 8 | v.Command.Data.sub_no);
             if (caster.bi.player != 0 && !Status.checkCurStat(target, 33558531U))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
-                    PersistenSingleton<EventEngine>.Instance.RequestAction(54, num5, caster.btl_id, num6);
+                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, commandAndScript);
                 else if (target.cur.hp != 0 && v.Command.Data.cmd_no < BattleCommandId.BoundaryCheck)
-                    PersistenSingleton<EventEngine>.Instance.RequestAction(53, num5, caster.btl_id, num6);
+                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, commandAndScript);
             }
-            PersistenSingleton<EventEngine>.Instance.RequestAction(55, num5, caster.btl_id, num6);
+            PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, commandAndScript);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)

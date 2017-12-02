@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -133,7 +134,7 @@ public class btlseq
 			return;
 		}
 		CMD_DATA cmd_DATA = next.cmd[0];
-		cmd_DATA.cmd_no = 0;
+		cmd_DATA.cmd_no = BattleCommandId.None;
 		cmd_DATA.sub_no = (Byte)pSeqNo;
 		cmd_DATA.tar_id = (UInt16)pTarID;
 		cmd_DATA.regist = next;

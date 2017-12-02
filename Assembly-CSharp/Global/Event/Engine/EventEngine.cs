@@ -5,7 +5,9 @@ using FF9;
 using Memoria;
 using System.Collections.Generic;
 using System.IO;
+using Memoria.Data;
 using UnityEngine;
+using static EventEngine;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
@@ -178,11 +180,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         EncountData encountData = this.gMode != 1 ? ff9.w_worldGetBattleScenePtr() : this._enCountData;
         Int32 num = Comn.random8();
         Int32 index = encountData.pattern & 3;
-        if (num < EventEngine.d[index, 0])
+        if (num < d[index, 0])
             return encountData.scene[0];
-        if (num < EventEngine.d[index, 1])
+        if (num < d[index, 1])
             return encountData.scene[1];
-        if (num < EventEngine.d[index, 2])
+        if (num < d[index, 2])
             return encountData.scene[2];
         return encountData.scene[3];
     }
@@ -254,45 +256,44 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return 1 << numArray[index];
     }
 
-    public Int32 RequestAction(Int32 cmd, Int32 target, Int32 prm1, Int32 prm2)
+    public Boolean RequestAction(BattleCommandId cmd, Int32 target, Int32 prm1, Int32 commandAndScript)
     {
-        Int32 num = 0;
         Int32 index;
         for (index = 0; index < 8 && (target & 1) == 0; ++index)
             target >>= 1;
-        if (index < 8)
+
+        if (index >= 8)
+            return false;
+
+        Obj p = this._objPtrList[index];
+        if (cmd == BattleCommandId.EnemyAtk)
         {
-            Obj p = this._objPtrList[index];
-            if (cmd == 47)
+            if (p.level > 3)
             {
-                if (p.level > 3)
-                {
-                    p.btlchk = 2;
-                    num = 1;
-                }
+                p.btlchk = 2;
+                return true;
             }
-            else
-            {
-                Int32 level = 2;
-                Int32 tagNumber = 7;
-                switch (cmd - 53)
-                {
-                    case 0:
-                        tagNumber = 6;
-                        this.SetSysList(0, prm1);
-                        level = 1;
-                        break;
-                    case 1:
-                        tagNumber = 9;
-                        this.SetSysList(0, prm1);
-                        level = 0;
-                        break;
-                }
-                EventEngine._btlCmdPrm = prm2;
-                num = !this.Request(p, level, tagNumber, false) ? 0 : 1;
-            }
+
+            return false;
         }
-        return num;
+        Int32 level = 2;
+        Int32 tagNumber = 7;
+        switch (cmd)
+        {
+            case BattleCommandId.EnemyCounter:
+                tagNumber = 6;
+                this.SetSysList(0, prm1);
+                level = 1;
+                break;
+            case BattleCommandId.EnemyDying:
+                tagNumber = 9;
+                this.SetSysList(0, prm1);
+                level = 0;
+                break;
+        }
+
+        _btlCmdPrm = commandAndScript;
+        return this.Request(p, level, tagNumber, false);
     }
 
     private Obj Collision(EventEngine eventEngine, PosObj po, Int32 mode, ref Single distance)
@@ -435,8 +436,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public void clrdist(Actor actor)
     {
-        actor.lastdist = EventEngine.kInitialDist;
-        actor.actf &= (UInt16)~(EventEngine.actMove | EventEngine.actLockDir);
+        actor.lastdist = kInitialDist;
+        actor.actf &= (UInt16)~(actMove | actLockDir);
         actor.rot0 = 0.0f;
     }
 
@@ -472,12 +473,12 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         if (p.animFrame != p.frameN - 1)
             return;
         this.ResetIdleTimer(1);
-        if (p.sleep == 0 || (p.animFlag & (EventEngine.afExec | EventEngine.afFreeze)) != 0)
+        if (p.sleep == 0 || (p.animFlag & (afExec | afFreeze)) != 0)
             return;
         p.inFrame = 0;
         p.outFrame = Byte.MaxValue;
         this.ExecAnim(p, p.sleep);
-        p.animFlag |= (Byte)EventEngine.afLower;
+        p.animFlag |= (Byte)afLower;
     }
 
     public Boolean isPosObj(Obj obj)
@@ -498,7 +499,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public void StartEvents(Byte[] ebFileData)
     {
-        EventEngine.resyncBGMSignal = 0;
+        resyncBGMSignal = 0;
         //Debug.Log("Reset resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal);
         this._ff9 = FF9StateSystem.Common.FF9;
         this._ff9.charArray.Clear();
@@ -563,7 +564,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._noEvents = false;
         this.InitEncount();
         NewThread(0, 0);
-        this._context.activeObj.obj.state = EventEngine.stateInit;
+        this._context.activeObj.obj.state = stateInit;
         this.SetupPartyUID();
         for (Int32 index = 0; index < 8; ++index)
             this._objPtrList[index] = null;
@@ -575,7 +576,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 Int32 partyMember = this.eTb.GetPartyMember(index);
                 if (partyMember >= 0)
                 {
-                    Actor actor = new Actor(this.sSourceObjN - 9 + partyMember, 0, EventEngine.sizeOfActor);
+                    Actor actor = new Actor(this.sSourceObjN - 9 + partyMember, 0, sizeOfActor);
                 }
             }
             this._context.partyObjTail = this._context.activeObjTail;
@@ -637,7 +638,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             if (obj.uid != 0)
             {
                 obj.state0 = obj.state;
-                obj.state = EventEngine.stateSuspend;
+                obj.state = stateSuspend;
             }
         }
     }
@@ -833,7 +834,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private static Obj NewThread(Int32 sid, Int32 uid)
     {
-        return new Obj(sid, uid, EventEngine.sizeOfObj, 16) {cid = 2};
+        return new Obj(sid, uid, sizeOfObj, 16) {cid = 2};
     }
 
     public Int32 GetBattleCharData(Obj obj, Int32 kind)
@@ -976,7 +977,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public Boolean objIsVisible(Obj obj)
     {
-        if (obj.state == EventEngine.stateRunning)
+        if (obj.state == stateRunning)
             return (obj.flags & 1) != 0;
         return false;
     }
@@ -1062,11 +1063,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 }
             }
         }
-        else if (obj.state == EventEngine.stateInit)
+        else if (obj.state == stateInit)
         {
-            obj.state = EventEngine.stateRunning;
+            obj.state = stateRunning;
             obj.ip = this.GetIP(obj.sid, 1, obj.ebData);
-            obj.level = (Byte)(EventEngine.cEventLevelN - 1);
+            obj.level = (Byte)(cEventLevelN - 1);
         }
         else
             obj.ip = this.nil;
@@ -1086,8 +1087,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 ((PosObj)obj1).follow = Byte.MaxValue;
         }
         ((PosObj)obj).follow = (Byte)winnum;
-        EventEngine.sLastTalker = (PosObj)obj;
-        EventEngine.sTalkTimer = 0;
+        sLastTalker = (PosObj)obj;
+        sTalkTimer = 0;
     }
 
     public void SetNextMap(Int32 MapNo)
@@ -1173,13 +1174,13 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void ExecAnim(Actor p, Int32 anim)
     {
-        if ((p.animFlag & EventEngine.afExec) != 0 && (p.flags & 128) != 0)
+        if ((p.animFlag & afExec) != 0 && (p.flags & 128) != 0)
             this.FinishTurn(p);
         p.anim = (UInt16)anim;
         p.animFrame = p.inFrame;
-        Byte num1 = (Byte)~(EventEngine.afDir | EventEngine.afLower | EventEngine.afFreeze);
+        Byte num1 = (Byte)~(afDir | afLower | afFreeze);
         p.animFlag &= num1;
-        Byte num2 = p.inFrame <= p.outFrame ? (Byte)EventEngine.afExec : (Byte)(EventEngine.afExec | EventEngine.afDir);
+        Byte num2 = p.inFrame <= p.outFrame ? (Byte)afExec : (Byte)(afExec | afDir);
         p.animFlag |= num2;
         p.frameDif = 0;
         p.frameN = (Byte)EventEngineUtils.GetCharAnimFrame(p.go, anim);

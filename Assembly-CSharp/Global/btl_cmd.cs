@@ -42,7 +42,7 @@ public class btl_cmd
         cmd.next = null;
         cmd.aa = null;
         cmd.tar_id = 0;
-        cmd.cmd_no = 0;
+        cmd.cmd_no = BattleCommandId.None;
         cmd.sub_no = 0;
         cmd.info.cursor = 0;
         cmd.info.stat = 0;
@@ -1173,7 +1173,23 @@ public class btl_cmd
 
     public static void CheckCommandLoop(CMD_DATA cmd)
     {
-        if (!SFX.isRunning)
+        if (SFX.isRunning)
+        {
+            if (cmd.cmd_no == BattleCommandId.SysTrans && SFX.frameIndex == 75)
+            {
+                BattleUnit caster = new BattleUnit(cmd.regist);
+                if (caster.IsUnderStatus(BattleStatus.Trance))
+                {
+                    btl_vfx.SetTranceModel(caster.Data, true);
+                    BattleAchievement.UpdateTranceStatus();
+                }
+                else
+                {
+                    btl_vfx.SetTranceModel(caster.Data, false);
+                }
+            }
+        }
+        else
         {
             BTL_DATA btlData = cmd.regist;
             if (!FF9StateSystem.Battle.isDebug && (UIManager.Battle.BtlWorkLibra || UIManager.Battle.BtlWorkPeep))
@@ -1258,19 +1274,6 @@ public class btl_cmd
             ReqFinishCommand();
             if (cmd.cmd_no == BattleCommandId.SysTrans)
                 btl_stat.SetPresentColor(btlData);
-        }
-        else if (cmd.cmd_no == BattleCommandId.SysTrans && SFX.frameIndex == 75)
-        {
-            BattleUnit caster = new BattleUnit(cmd.regist);
-            if (caster.IsUnderStatus(BattleStatus.Trance))
-            {
-                btl_vfx.SetTranceModel(caster.Data, true);
-                BattleAchievement.UpdateTranceStatus();
-            }
-            else
-            {
-                btl_vfx.SetTranceModel(caster.Data, false);
-            }
         }
     }
 
