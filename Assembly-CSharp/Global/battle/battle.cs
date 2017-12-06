@@ -233,7 +233,7 @@ public class battle
                     if (!next.IsUnderStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, 4))
                         flag = false;
                 }
-                else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus((BattleStatus)4355U) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
+                else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus(BattleStatus.BattleEnd) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
                 {
                     btl_mot.setMotion(next, 19);
                     data.evt.animFrame = 0;
@@ -282,7 +282,7 @@ public class battle
                         btl_para.CheckPointData(data);
                         if (next.IsPlayer)
                         {
-                            next.TryRemoveStatuses((BattleStatus)33592320U);
+                            next.TryRemoveStatuses(BattleStatus.CancelEvent);
                         }
                         if (btlsys.cmd_mode != 0)
                             num1 = 0U;
@@ -296,7 +296,7 @@ public class battle
                             }
                             break;
                         }
-                        if (!Status.checkCurStat(data, 33558531U) && !btl_mot.checkMotion(data, 0) && !btl_mot.checkMotion(data, 1))
+                        if (!Status.checkCurStat(data, BattleStatus.Immobilized) && !btl_mot.checkMotion(data, 0) && !btl_mot.checkMotion(data, 1))
                         {
                             num1 = 0U;
                         }
@@ -313,7 +313,7 @@ public class battle
                             }
                             break;
                         }
-                        if (next.IsPlayer && !Status.checkCurStat(data, 1107431747U))
+                        if (next.IsPlayer && !Status.checkCurStat(data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump))
                         {
                             FF9StateSystem.Battle.isFade = true;
                             data.pos[2] -= 100f;
@@ -357,15 +357,15 @@ public class battle
                                 if (next.bi.player != 0)
                                 {
                                     /*int num2 = (int)*/
-                                    btl_stat.RemoveStatuses(next, 3221208064U);
-                                    if (!Status.checkCurStat(next, 4355U))
+                                    btl_stat.RemoveStatuses(next, BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify);
+                                    if (!Status.checkCurStat(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop))
                                     {
                                         if (next.cur.hp > 0)
                                         {
                                             Int32 num3 = btl_mot.GetDirection(next);
                                             next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num3, next.evt.rotBattle.eulerAngles.z);
                                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                            next.bi.def_idle = !btl_stat.CheckStatus(next, 197122U) ? (Byte)0 : (Byte)1;
+                                            next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatus.IdleDying) ? (Byte)0 : (Byte)1;
                                             next.bi.cmd_idle = 0;
                                             if (btl_util.getPlayerPtr(next).info.win_pose != 0)
                                                 btl_mot.setMotion(next, 18);
@@ -376,7 +376,7 @@ public class battle
                                         else
                                         {
                                             /*int num4 = (int)*/
-                                            btl_stat.AlterStatus(next, 256U);
+                                            btl_stat.AlterStatus(next, BattleStatus.Death);
                                         }
                                     }
                                 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Memoria;
+using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
@@ -323,7 +324,7 @@ public class BattleSPSSystem : MonoBehaviour
 		return result;
 	}
 
-	public void UpdateBtlStatus(BTL_DATA btl, UInt32 status, Vector3 pos, Vector3 rot, Int32 frame)
+	public void UpdateBtlStatus(BTL_DATA btl, BattleStatus status, Vector3 pos, Vector3 rot, Int32 frame)
 	{
 		Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);
 		BattleSPS battleSPS = this._spsList[objSpsIndex];
@@ -337,7 +338,7 @@ public class BattleSPSSystem : MonoBehaviour
 		battleSPS.isUpdate = true;
 	}
 
-	public Int32 GetStatusSPSIndex(UInt32 status)
+	public Int32 GetStatusSPSIndex(BattleStatus status)
 	{
 		Int32 result = 0;
 		for (Int32 i = 0; i < (Int32)btl2d.wStatIconTbl.Length; i++)
@@ -351,13 +352,13 @@ public class BattleSPSSystem : MonoBehaviour
 		return result;
 	}
 
-	public Int32 GetObjSpsIndex(BTL_DATA btl, UInt32 status)
+	public Int32 GetObjSpsIndex(BTL_DATA btl, BattleStatus status)
 	{
 		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
 		return (Int32)(btl.bi.line_no * 12) + statusSPSIndex;
 	}
 
-	public void AddBtlSPSObj(BattleUnit btl, UInt32 status)
+	public void AddBtlSPSObj(BattleUnit btl, BattleStatus status)
 	{
 		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
 		Int32 objSpsIndex = this.GetObjSpsIndex(btl.Data, status);
@@ -365,7 +366,7 @@ public class BattleSPSSystem : MonoBehaviour
 		this.SetBtlStatus(objSpsIndex, statusSPSIndex, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
 	}
 
-	public void RemoveBtlSPSObj(BTL_DATA btl, UInt32 status)
+	public void RemoveBtlSPSObj(BTL_DATA btl, BattleStatus status)
 	{
 		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
 		Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);

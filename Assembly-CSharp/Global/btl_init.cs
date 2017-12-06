@@ -286,7 +286,7 @@ public class btl_init
 
 				btl_init.OrganizePlayerData(p, btl_DATA, (UInt16)num2, (UInt16)num);
 				btl_init.SetBattleModel(btl_DATA);
-				if (Status.checkCurStat(btl_DATA, 256u))
+				if (Status.checkCurStat(btl_DATA, BattleStatus.Death))
 				{
 					GeoTexAnim.geoTexAnimStop(btl_DATA.texanimptr, 2);
 					GeoTexAnim.geoTexAnimPlayOnce(btl_DATA.texanimptr, 0);
@@ -377,7 +377,7 @@ public class btl_init
 			btl_DATA.pos[index] = num7;
 			BTL_DATA btl_DATA2 = next;
 			Int32 index2 = 1;
-			num7 = (!btl_stat.CheckStatus(next, 2097152u)) ? 0 : -200;
+			num7 = (!btl_stat.CheckStatus(next, BattleStatus.Float)) ? 0 : -200;
 			next.evt.posBattle[1] = num7;
 			next.base_pos[1] = num7;
 			btl_DATA2.pos[index2] = num7;
@@ -466,12 +466,13 @@ public class btl_init
 		btl_util.GeoSetColor2Source(btl.weapon_geo, 0, 0, 0);
 		if (btl.cur.hp * 6 < btl.max.hp)
 		{
-			btl.stat.cur |= 512u;
+			btl.stat.cur |= BattleStatus.LowHP;
 		}
-		btl_stat.AlterStatuses(btl, p.status & 4294967294u);
+
+        btl_stat.AlterStatuses(btl, (BattleStatus)p.status & (BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.Jump | BattleStatus.GradualPetrify));
 		if ((p.status & 1) != 0)
 		{
-			btl_stat.AlterStatus(btl, 1u);
+			btl_stat.AlterStatus(btl, BattleStatus.Petrify);
 		}
 		btl_abil.CheckStatusAbility(new BattleUnit(btl));
 		btl.base_pos = btl.evt.posBattle;
@@ -481,13 +482,13 @@ public class btl_init
 
         FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl.height, ref btl.radius);
 
-        if (btl.cur.hp == 0 && btl_stat.AlterStatus(btl, 256u) == 2u)
+        if (btl.cur.hp == 0 && btl_stat.AlterStatus(btl, BattleStatus.Death) == 2u)
 		{
 			btl.die_seq = 5;
 			btl_mot.DecidePlayerDieSequence(btl);
 			return;
 		}
-		btl.bi.def_idle = Convert.ToByte(btl_stat.CheckStatus(btl, 197122u));
+		btl.bi.def_idle = Convert.ToByte(btl_stat.CheckStatus(btl, BattleStatus.IdleDying));
 		btl_mot.setMotion(btl, btl.bi.def_idle);
 		btl.evt.animFrame = 0;
 	}

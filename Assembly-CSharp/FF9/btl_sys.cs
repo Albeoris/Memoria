@@ -54,7 +54,7 @@ namespace FF9
             Int32 num1 = 6; /*btl.bi.player == 0 ? 6 : 6*/
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
-                if (next.bi.player == btl.bi.player && (!Status.checkCurStat(next, 4355U) || Status.checkCurStat(next, 256U) && next.die_seq != num1))
+                if (next.bi.player == btl.bi.player && (!Status.checkCurStat(next, BattleStatus.BattleEnd) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != num1))
                     return;
             }
             if (btl.bi.player == 0)
@@ -62,7 +62,7 @@ namespace FF9
                 Int32 num2 = 0;
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    if (next.bi.player != 0 && (!Status.checkCurStat(next, 4355U) || (next.cur.hp == 0 || Status.checkCurStat(next, 256U)) && Status.checkCurStat(next, 8192U) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
+                    if (next.bi.player != 0 && (!Status.checkCurStat(next, BattleStatus.BattleEnd) || (next.cur.hp == 0 || Status.checkCurStat(next, BattleStatus.Death)) && Status.checkCurStat(next, BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
                     {
                         num2 = 1;
                         break;
@@ -81,7 +81,7 @@ namespace FF9
                     {
                         case 10:
                         case 11:
-                            if (!Status.checkCurStat(next, 4163U))
+                            if (!Status.checkCurStat(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Stop))
                             {
                                 if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
                                     return;
@@ -115,7 +115,7 @@ namespace FF9
                 if (next.PlayerIndex == CharacterIndex.Eiko)
                     btl1 = next;
 
-                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderStatus((BattleStatus)4355U) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderStatus(BattleStatus.BattleEnd) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
             }
 
@@ -132,7 +132,7 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
-                if (next.bi.player == 0 && !Status.checkCurStat(next, 256U))
+                if (next.bi.player == 0 && !Status.checkCurStat(next, BattleStatus.Death))
                     return;
             }
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -260,7 +260,7 @@ namespace FF9
                 if (btl.cur.hp == 0)
                 {
                     /*int num = (int)*/
-                    btl_stat.AlterStatus(btl, 256U);
+                    btl_stat.AlterStatus(btl, BattleStatus.Death);
                 }
                 btl_stat.SaveStatus(playerPtr, btl);
             }

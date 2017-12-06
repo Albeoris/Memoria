@@ -1,10 +1,11 @@
 ﻿using System;
+using Memoria.Data;
 
 public class SB2_MON_PARM
 {
 	public SB2_MON_PARM()
 	{
-		this.Status = new UInt32[3];
+		this.Status = new BattleStatus[3];
 		this.WinItems = new Byte[4];
 		this.StealItems = new Byte[4];
 		this.Mot = new UInt16[6];
@@ -22,7 +23,7 @@ public class SB2_MON_PARM
 
 	public const Int32 Size = 116;
 
-	public UInt32[] Status;
+	public BattleStatus[] Status;
 
 	public UInt16 MaxHP;
 

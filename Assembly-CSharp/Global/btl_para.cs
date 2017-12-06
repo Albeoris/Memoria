@@ -31,7 +31,7 @@ public class btl_para
     {
         if (btl.cur.hp * 6 > btl.max.hp)
         {
-            btl_stat.RemoveStatus(btl, 512u);
+            btl_stat.RemoveStatus(btl, BattleStatus.LowHP);
             if (btl.cur.hp > btl.max.hp)
             {
                 btl.cur.hp = btl.max.hp;
@@ -43,19 +43,19 @@ public class btl_para
             {
                 if (btl.die_seq == 0)
                 {
-                    btl_stat.AlterStatus(btl, 256u);
+                    btl_stat.AlterStatus(btl, BattleStatus.Death);
                 }
                 return;
             }
-            if (!Status.checkCurStat(btl, 512u))
+            if (!Status.checkCurStat(btl, BattleStatus.LowHP))
             {
-                btl_stat.AlterStatus(btl, 512u);
+                btl_stat.AlterStatus(btl, BattleStatus.LowHP);
             }
         }
         btl.cur.mp = ((btl.cur.mp <= btl.max.mp) ? btl.cur.mp : btl.max.mp);
         if (btl.bi.player != 0)
         {
-            btl.bi.def_idle = (Byte)((!btl_stat.CheckStatus(btl, 197122u)) ? 0 : 1);
+            btl.bi.def_idle = (Byte)((!btl_stat.CheckStatus(btl, BattleStatus.IdleDying)) ? 0 : 1);
         }
     }
 
@@ -102,11 +102,11 @@ public class btl_para
 
     public static void SetRecover(BTL_DATA btl, Int32 recover)
     {
-        if (Status.checkCurStat(btl, 256u))
+        if (Status.checkCurStat(btl, BattleStatus.Death))
         {
             btl.fig_info = 32;
         }
-        else if (Status.checkCurStat(btl, 1u))
+        else if (Status.checkCurStat(btl, BattleStatus.Petrify))
         {
             recover = 0;
         }
@@ -124,11 +124,11 @@ public class btl_para
 
     public static void SetMpDamage(BTL_DATA btl, Int32 damage)
     {
-        if (Status.checkCurStat(btl, 256u))
+        if (Status.checkCurStat(btl, BattleStatus.Death))
         {
             btl.fig_info = 32;
         }
-        else if (Status.checkCurStat(btl, 1u))
+        else if (Status.checkCurStat(btl, BattleStatus.Petrify))
         {
             damage = 0;
         }
@@ -149,11 +149,11 @@ public class btl_para
 
     public static void SetMpRecover(BTL_DATA btl, Int32 recover)
     {
-        if (Status.checkCurStat(btl, 256u))
+        if (Status.checkCurStat(btl, BattleStatus.Death))
         {
             btl.fig_info = 32;
         }
-        else if (Status.checkCurStat(btl, 1u))
+        else if (Status.checkCurStat(btl, BattleStatus.Petrify))
         {
             recover = 0;
         }
@@ -172,7 +172,7 @@ public class btl_para
     public static void SetPoisonDamage(BTL_DATA btl)
     {
         Int32 num = 0;
-        if (!Status.checkCurStat(btl, 1u))
+        if (!Status.checkCurStat(btl, BattleStatus.Petrify))
         {
             num = btl.max.hp >> 4;
             if (!FF9StateSystem.Battle.isDebug)
@@ -198,10 +198,10 @@ public class btl_para
     public static void SetRegeneRecover(BTL_DATA btl)
     {
         Int32 num = 0;
-        if (!Status.checkCurStat(btl, 1u))
+        if (!Status.checkCurStat(btl, BattleStatus.Petrify))
         {
             num = btl.max.hp >> 4;
-            if (Status.checkCurStat(btl, 64u) || btl_util.CheckEnemyCategory(btl, 16))
+            if (Status.checkCurStat(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
                 btl.fig_stat_info |= 8;
                 if (btl.cur.hp > num)
@@ -231,7 +231,7 @@ public class btl_para
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
         Int32 num = 0;
-        if (!Status.checkCurStat(btl, 1u))
+        if (!Status.checkCurStat(btl, BattleStatus.Petrify))
         {
             num = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))

@@ -1,10 +1,11 @@
 ﻿using System;
+using Memoria.Data;
 
 namespace FF9
 {
 	public class STAT_DATA
 	{
-		public STAT_DATA(Byte priority, Byte opr_cnt, UInt16 conti_cnt, UInt32 clear, UInt32 invalid)
+		public STAT_DATA(Byte priority, Byte opr_cnt, UInt16 conti_cnt, BattleStatus clear, BattleStatus invalid)
 		{
 			this.priority = priority;
 			this.opr_cnt = opr_cnt;
@@ -19,8 +20,8 @@ namespace FF9
 
 		public UInt16 conti_cnt;
 
-		public UInt32 clear;
+		public BattleStatus clear;
 
-		public UInt32 invalid;
+		public BattleStatus invalid;
 	}
 }

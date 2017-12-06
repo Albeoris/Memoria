@@ -204,7 +204,7 @@ public class btl_cmd
         else
         {
             /*int num2 = (int)*/
-            btl_stat.RemoveStatus(btl, 32768U);
+            btl_stat.RemoveStatus(btl, BattleStatus.Defend);
         }
         if (commandId < BattleCommandId.EnemyReaction)
         {
@@ -233,7 +233,7 @@ public class btl_cmd
 
     public static void SetCounter(BTL_DATA btl, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id)
     {
-        if (Status.checkCurStat(btl, 33689603U) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
+        if (Status.checkCurStat(btl, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
             return;
         SetCommand(btl.cmd[1], commandId, (UInt32)sub_no, tar_id, 0U);
     }
@@ -245,13 +245,13 @@ public class btl_cmd
 
     public static void SetAutoCommand(BTL_DATA btl)
     {
-        if (Status.checkCurStat(btl, 1024U))
+        if (Status.checkCurStat(btl, BattleStatus.Confuse))
         {
             SetCommand(btl.cmd[0], BattleCommandId.Attack, 176U, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
         }
         else
         {
-            if (!Status.checkCurStat(btl, 2048U))
+            if (!Status.checkCurStat(btl, BattleStatus.Berserk))
                 return;
             SetCommand(btl.cmd[0], BattleCommandId.Attack, 176U, btl_util.GetRandomBtlID(0U), 0U);
         }
@@ -324,7 +324,7 @@ public class btl_cmd
             else
             {
                 /*int num2 = (int)*/
-                btl_stat.RemoveStatus(cmd.regist, 32768U);
+                btl_stat.RemoveStatus(cmd.regist, BattleStatus.Defend);
             }
             cmd.info.cover = 0;
             cmd.info.dodge = 0;
@@ -387,7 +387,7 @@ public class btl_cmd
             else
             {
                 /*int num = (int)*/
-                btl_stat.RemoveStatus(cmd.regist, 32768U);
+                btl_stat.RemoveStatus(cmd.regist, BattleStatus.Defend);
             }
             cmd.info.cover = 0;
             cmd.info.dodge = 0;
@@ -404,7 +404,7 @@ public class btl_cmd
             if (btlsys.cmd_queue.next == null)
                 return;
             CMD_DATA cmd = btlsys.cmd_queue.next;
-            while (cmd != null && (cmd.cmd_no <= BattleCommandId.SysTrans && cmd.cmd_no != BattleCommandId.SysEscape && (cmd.cmd_no != BattleCommandId.SysLastPhoenix && Status.checkCurStat(cmd.regist, 33558531U)) || cmd.cmd_no == BattleCommandId.SysPhantom && Status.checkCurStat(cmd.regist, 256U)))
+            while (cmd != null && (cmd.cmd_no <= BattleCommandId.SysTrans && cmd.cmd_no != BattleCommandId.SysEscape && (cmd.cmd_no != BattleCommandId.SysLastPhoenix && Status.checkCurStat(cmd.regist, BattleStatus.Immobilized)) || cmd.cmd_no == BattleCommandId.SysPhantom && Status.checkCurStat(cmd.regist, BattleStatus.Death)))
                 cmd = cmd.next;
 
             if (cmd == null || !FF9StateSystem.Battle.isDebug && !UIManager.Battle.IsNativeEnableAtb() && cmd.cmd_no < BattleCommandId.BoundaryCheck)
@@ -417,7 +417,7 @@ public class btl_cmd
                     btl_mot.setMotion(btl, 9);
                     btl.evt.animFrame = 0;
                 }
-                if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, 9) && (!btl_mot.checkMotion(btl, 17) && !Status.checkCurStat(btl, 1073741824U)))
+                if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, 9) && (!btl_mot.checkMotion(btl, 17) && !Status.checkCurStat(btl, BattleStatus.Jump)))
                 {
                     if (!btl_mot.checkMotion(btl, btl.bi.def_idle) || btl.bi.cmd_idle != 0)
                         return;
@@ -425,10 +425,10 @@ public class btl_cmd
                     btl.evt.animFrame = 0;
                     return;
                 }
-                if (Status.checkCurStat(btl, 16777216U))
+                if (Status.checkCurStat(btl, BattleStatus.Heat))
                 {
                     /*int num = (int)*/
-                    btl_stat.AlterStatus(btl, 256U);
+                    btl_stat.AlterStatus(btl, BattleStatus.Death);
                     return;
                 }
             }
@@ -627,13 +627,13 @@ public class btl_cmd
             {
                 if ((btl.btl_id & cmd.tar_id) != 0)
                 {
-                    if (!Status.checkCurStat(btl, 1U) && btl_stat.CheckStatus(btl, 536870912U))
+                    if (!Status.checkCurStat(btl, BattleStatus.Petrify) && btl_stat.CheckStatus(btl, BattleStatus.Reflect))
                     {
                         num1 |= btl.btl_id;
                         ++num4;
                     }
                 }
-                else if (!Status.checkCurStat(btl, 256U) && btl.bi.player == (Int32)num2 && btl.bi.target != 0)
+                else if (!Status.checkCurStat(btl, BattleStatus.Death) && btl.bi.player == (Int32)num2 && btl.bi.target != 0)
                     numArray[num3++] = btl.btl_id;
             }
             if (num4 != 0 && num3 != 0)
@@ -707,7 +707,7 @@ public class btl_cmd
                 return false;
         }
 
-        BattleCommandId commandId = (BattleCommandId)cmd.cmd_no;
+        BattleCommandId commandId = cmd.cmd_no;
         switch (commandId)
         {
             case BattleCommandId.Attack:
@@ -722,14 +722,14 @@ public class btl_cmd
                 break;
             case BattleCommandId.Jump:
             case BattleCommandId.Jump2:
-                caster.AlterStatus((BattleStatus)1073741824U);
+                caster.AlterStatus(BattleStatus.Jump);
                 caster.Data.cmd[3].cmd_no = cmd.cmd_no;
                 caster.Data.cmd[3].tar_id = cmd.cmd_no != BattleCommandId.Jump ? btl_util.GetStatusBtlID(1U, 0U) : cmd.tar_id;
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.Item:
+            case BattleCommandId.AutoPotion:
             case BattleCommandId.Throw:
-                label_14:
                 if (ff9item.FF9Item_GetCount(cmd.sub_no) == 0)
                 {
                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughItems);
@@ -782,116 +782,109 @@ public class btl_cmd
                 break;
             case BattleCommandId.MagicSword:
                 return DecideMagicSword(caster, cmd.aa.MP);
-            default:
-                switch ((Int32)commandId)
+            case BattleCommandId.Counter:
+                BattleUnit btlDataPtr1;
+                if ((btlDataPtr1 = btl_scrp.FindBattleUnit(cmd.tar_id)) == null || btlDataPtr1.Data.bi.target == 0 || btlDataPtr1.IsUnderStatus(BattleStatus.Death))
+                    return false;
+                if (btlsys.btl_scene.Info.NoNeighboring != 0 && caster.HasCategory(WeaponCategory.ShortRange))
                 {
-                    case 49:
-                        BattleUnit btlDataPtr1;
-                        if ((btlDataPtr1 = btl_scrp.FindBattleUnit(cmd.tar_id)) == null || btlDataPtr1.Data.bi.target == 0 || btlDataPtr1.IsUnderStatus(BattleStatus.Death))
-                            return false;
-                        if (btlsys.btl_scene.Info.NoNeighboring != 0 && caster.HasCategory(WeaponCategory.ShortRange))
-                        {
-                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
-                            return false;
-                        }
-                        if (cmd.cmd_no == BattleCommandId.Counter)
-                        {
-                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
-                        }
-                        break;
-                    case 50:
-                        BattleUnit btlDataPtr2;
-                        if ((btlDataPtr2 = btl_scrp.FindBattleUnit(cmd.tar_id)) == null || btlDataPtr2.Data.bi.target == 0 || btlDataPtr2.IsUnderStatus(BattleStatus.Death))
-                            return false;
-                        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.ReturnMagic);
-                        break;
-                    case 51:
-                        goto label_14;
-                    case 52:
-                        if (btlsys.btl_scene.Info.NoNeighboring != 0 && caster.HasCategory(WeaponCategory.ShortRange))
-                        {
-                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
-                            return false;
-                        }
-                        if (cmd.cmd_no == BattleCommandId.Counter)
-                        {
-                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
-                        }
-                        break;
-                    case 56:
-                        if (btlsys.btl_phase == 4)
-                        {
-                            for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
-                            {
-                                if (btl.bi.player != 0 && !Status.checkCurStat(btl, 1107431747U) && btl.cur.hp > 0)
-                                {
-                                    if (!btl_mot.checkMotion(btl, 17))
-                                    {
-                                        btl_mot.setMotion(btl, 17);
-                                        btl.evt.animFrame = 0;
-                                    }
-                                    btlsys.btl_phase = 5;
-                                    btlsys.btl_seq = 3;
-                                }
-                            }
-                            if (btlsys.btl_phase == 5 && btlsys.btl_seq == 3)
-                            {
-                                UIManager.Battle.SetIdle();
-                                ++ff9StateGlobal.party.escape_no;
-                                if (cmd.sub_no == 0)
-                                    ff9StateGlobal.btl_flag |= 4;
-                                KillAllCommand(btlsys);
-                            }
-                            else
-                                btlsys.cmd_status &= 65534;
-                            return false;
-                        }
-                        break;
-                    case 57:
-                        if (cmd.sub_no != btlsys.phantom_no)
-                        {
-                            cmd.sub_no = btlsys.phantom_no;
-                            cmd.aa = btlsys.aa_data[cmd.sub_no];
-                        }
-                        break;
-                    case 59:
-                        if (caster.IsUnderStatus(BattleStatus.Trance))
-                        {
-                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.Trance);
-                            caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data) + 19);
-                        }
-                        else
-                        {
-                            caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data));
-                        }
-                        return true;
-                    case 60:
-                        btl_sys.CheckBattleMenuOff(caster);
-                        if (caster.Data.die_seq == 0)
-                        {
-                            if (caster.IsPlayer)
-                                caster.Data.die_seq = !btl_mot.checkMotion(caster.Data, 4) ? (Byte)1 : (Byte)5;
-                            else
-                                caster.Data.die_seq = caster.IsSlave || caster.Data.bi.death_f == 0 ? (Byte)1 : (Byte)3;
-                        }
-                        return false;
-                    case 61:
-                        caster.CurrentHp = 1;
-                        /*int num4 = (int)*/
-                        caster.RemoveStatus(BattleStatus.Death);
-                        caster.Data.bi.dmg_mot_f = 1;
-                        FF9StateSystem.Settings.SetHPFull();
-                        return false;
-                    case 62:
-                        btl_stat.StatusCommandCancel(caster.Data, 1U);
-                        caster.Data.stat.cur |= 1U;
-                        caster.CurrentAtb = 0;
-                        btl_sys.CheckBattlePhase(caster.Data);
-                        caster.RemoveStatus((BattleStatus)2147483648U);
-                        btl_stat.SetStatusClut(caster.Data, true);
-                        return false;
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
+                    return false;
+                }
+                if (cmd.cmd_no == BattleCommandId.Counter)
+                {
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
                 }
                 break;
+            case BattleCommandId.MagicCounter:
+                BattleUnit btlDataPtr2;
+                if ((btlDataPtr2 = btl_scrp.FindBattleUnit(cmd.tar_id)) == null || btlDataPtr2.Data.bi.target == 0 || btlDataPtr2.IsUnderStatus(BattleStatus.Death))
+                    return false;
+                UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.ReturnMagic);
+                break;
+            case BattleCommandId.RushAttack:
+                if (btlsys.btl_scene.Info.NoNeighboring != 0 && caster.HasCategory(WeaponCategory.ShortRange))
+                {
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
+                    return false;
+                }
+                if (cmd.cmd_no == BattleCommandId.Counter)
+                {
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
+                }
+                break;
+            case BattleCommandId.SysEscape:
+                if (btlsys.btl_phase == 4)
+                {
+                    for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
+                    {
+                        if (btl.bi.player != 0 && !Status.checkCurStat(btl, BattleStatus.CannotEscape) && btl.cur.hp > 0)
+                        {
+                            if (!btl_mot.checkMotion(btl, 17))
+                            {
+                                btl_mot.setMotion(btl, 17);
+                                btl.evt.animFrame = 0;
+                            }
+                            btlsys.btl_phase = 5;
+                            btlsys.btl_seq = 3;
+                        }
+                    }
+                    if (btlsys.btl_phase == 5 && btlsys.btl_seq == 3)
+                    {
+                        UIManager.Battle.SetIdle();
+                        ++ff9StateGlobal.party.escape_no;
+                        if (cmd.sub_no == 0)
+                            ff9StateGlobal.btl_flag |= 4;
+                        KillAllCommand(btlsys);
+                    }
+                    else
+                        btlsys.cmd_status &= 65534;
+                    return false;
+                }
+                break;
+            case BattleCommandId.SysPhantom:
+                if (cmd.sub_no != btlsys.phantom_no)
+                {
+                    cmd.sub_no = btlsys.phantom_no;
+                    cmd.aa = btlsys.aa_data[cmd.sub_no];
+                }
+                break;
+            case BattleCommandId.SysTrans:
+                if (caster.IsUnderStatus(BattleStatus.Trance))
+                {
+                    UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.Trance);
+                    caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data) + 19);
+                }
+                else
+                {
+                    caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data));
+                }
+                return true;
+            case BattleCommandId.SysDead:
+                btl_sys.CheckBattleMenuOff(caster);
+                if (caster.Data.die_seq == 0)
+                {
+                    if (caster.IsPlayer)
+                        caster.Data.die_seq = !btl_mot.checkMotion(caster.Data, 4) ? (Byte)1 : (Byte)5;
+                    else
+                        caster.Data.die_seq = caster.IsSlave || caster.Data.bi.death_f == 0 ? (Byte)1 : (Byte)3;
+                }
+                return false;
+            case BattleCommandId.SysReraise:
+                caster.CurrentHp = 1;
+                /*int num4 = (int)*/
+                caster.RemoveStatus(BattleStatus.Death);
+                caster.Data.bi.dmg_mot_f = 1;
+                FF9StateSystem.Settings.SetHPFull();
+                return false;
+            case BattleCommandId.SysStone:
+                btl_stat.StatusCommandCancel(caster.Data, BattleStatus.Petrify);
+                caster.Data.stat.cur |= BattleStatus.Petrify;
+                caster.CurrentAtb = 0;
+                btl_sys.CheckBattlePhase(caster.Data);
+                caster.RemoveStatus((BattleStatus)2147483648U);
+                btl_stat.SetStatusClut(caster.Data, true);
+                return false;
         }
         return true;
     }
@@ -900,7 +893,7 @@ public class btl_cmd
 
     public static Boolean CheckMagicCondition(CMD_DATA cmd)
     {
-        if (!Status.checkCurStat(cmd.regist, 8U) || (cmd.aa.Category & 2) == 0)
+        if (!Status.checkCurStat(cmd.regist, BattleStatus.Silence) || (cmd.aa.Category & 2) == 0)
             return true;
         UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotCast);
         return false;
@@ -951,7 +944,7 @@ public class btl_cmd
             return;
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         BTL_DATA btl = ncp.regist;
-        if (ncp.cmd_no < BattleCommandId.BoundaryCheck && btl != null && !Status.checkCurStat(btl, 256U))
+        if (ncp.cmd_no < BattleCommandId.BoundaryCheck && btl != null && !Status.checkCurStat(btl, BattleStatus.Death))
         {
             btl.sel_mode = 0;
             if (btl_mot.checkMotion(btl, 9) && (btl.bi.slot_no != 6 || stateBattleSystem.cur_cmd != null && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.DoubleWhiteMagic) && (btl.bi.slot_no != 1 || stateBattleSystem.cur_cmd != null && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.MagicSword && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.DoubleBlackMagic))
@@ -996,7 +989,7 @@ public class btl_cmd
         }
         for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !Status.checkCurStat(btl, 256U)))
+            if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !Status.checkCurStat(btl, BattleStatus.Death)))
                 num1 |= btl.btl_id;
         }
         if (num1 != 0)
@@ -1025,7 +1018,7 @@ public class btl_cmd
         }
         else
         {
-            if (Status.checkCurStat(cmd.regist, 8192U) && cmd.cmd_no == BattleCommandId.SysDead && !btl_mot.checkMotion(cmd.regist, 4))
+            if (Status.checkCurStat(cmd.regist, BattleStatus.AutoLife) && cmd.cmd_no == BattleCommandId.SysDead && !btl_mot.checkMotion(cmd.regist, 4))
                 return;
             stateBattleSystem.cmd_mode = 4;
         }
@@ -1035,7 +1028,7 @@ public class btl_cmd
     {
         CMD_DATA cmd = btlsys.cur_cmd;
         BattleUnit caster = cmd.regist == null ? null : new BattleUnit(cmd.regist);
-        BattleCommandId commandId = (BattleCommandId)cmd.cmd_no;
+        BattleCommandId commandId = cmd.cmd_no;
         if (cmd.cmd_no < BattleCommandId.BoundaryCheck && caster != null)
         {
             if (cmd == caster.Data.cmd[0] && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2)
@@ -1048,12 +1041,12 @@ public class btl_cmd
             }
             else if (commandId == BattleCommandId.JumpAttack)
             {
-                caster.RemoveStatus((BattleStatus)1073741824U);
+                caster.RemoveStatus(BattleStatus.Jump);
                 FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
-                caster.AlterStatus((BattleStatus)1073741824U);
+                caster.AlterStatus(BattleStatus.Jump);
                 caster.Data.tar_mode = 2;
                 caster.Data.SetDisappear(1);
                 FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
@@ -1311,7 +1304,7 @@ public class btl_cmd
                 return;
             case BattleCommandId.SysLastPhoenix:
                 UInt16 battleId = btl_scrp.GetBattleID(1U);
-                UInt16 statusBtlId = btl_util.GetStatusBtlID(1U, 4355U);
+                UInt16 statusBtlId = btl_util.GetStatusBtlID(1U, BattleStatus.BattleEnd);
                 if (battleId == 0 || battleId == statusBtlId)
                 {
                     FF9StateBattleSystem btlsys = FF9StateSystem.Battle.FF9Battle;

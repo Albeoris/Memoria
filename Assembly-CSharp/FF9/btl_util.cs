@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria;
+using Memoria.Data;
 using Memoria.Scripts;
 using UnityEngine;
 
@@ -73,7 +74,7 @@ namespace FF9
 			UInt32 num = 0u;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if ((UInt32)next.bi.player == player && next.bi.target != 0 && !Status.checkCurStat(next, 256u))
+				if ((UInt32)next.bi.player == player && next.bi.target != 0 && !Status.checkCurStat(next, BattleStatus.Death))
 				{
 					num += 1u;
 				}
@@ -91,7 +92,7 @@ namespace FF9
 			}
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if ((UInt32)next.bi.player == player && !Status.checkCurStat(next, 256u) && next.bi.target != 0)
+				if ((UInt32)next.bi.player == player && !Status.checkCurStat(next, BattleStatus.Death) && next.bi.target != 0)
 				{
 					UInt16[] array2 = array;
 					UInt16 num2 = num;
@@ -135,7 +136,7 @@ namespace FF9
 			return true;
 		}
 
-		public static UInt16 GetStatusBtlID(UInt32 list_no, UInt32 status)
+		public static UInt16 GetStatusBtlID(UInt32 list_no, BattleStatus status)
 		{
 			UInt16 num = 0;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)

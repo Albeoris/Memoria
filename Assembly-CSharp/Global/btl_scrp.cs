@@ -57,10 +57,10 @@ public class btl_scrp
 		switch (id)
 		{
 		case 35u:
-			result = (UInt32)btl.max.hp;
+			result = btl.max.hp;
 			break;
 		case 36u:
-			result = (UInt32)btl.cur.hp;
+			result = btl.cur.hp;
 			break;
 		case 37u:
 			result = (UInt32)btl.max.mp;
@@ -74,93 +74,93 @@ public class btl_scrp
 		case 41u:
 			if (btl.bi.player != 0)
 			{
-				result = (UInt32)btl_util.getPlayerPtr(btl).level;
+				result = btl_util.getPlayerPtr(btl).level;
 			}
 			else
 			{
-				result = (UInt32)btl_util.getEnemyTypePtr(btl).level;
+				result = btl_util.getEnemyTypePtr(btl).level;
 			}
 			break;
 		case 42u:
-			result = btl.stat.invalid >> 24;
+			result = ((UInt32)btl.stat.invalid >> 24);
 			break;
 		case 43u:
-			result = (btl.stat.invalid & 16777215u);
+			result = ((UInt32)btl.stat.invalid & 16777215u);
 			break;
 		case 44u:
-			result = btl.stat.permanent >> 24;
+			result = (UInt32)btl.stat.permanent >> 24;
 			break;
 		case 45u:
-			result = (btl.stat.permanent & 16777215u);
+			result = ((UInt32)btl.stat.permanent & 16777215u);
 			break;
 		case 46u:
-			result = btl.stat.cur >> 24;
+			result = (UInt32)btl.stat.cur >> 24;
 			break;
 		case 47u:
-			result = (btl.stat.cur & 16777215u);
+			result = ((UInt32)btl.stat.cur & 16777215u);
 			break;
 		case 48u:
-			result = (UInt32)btl.def_attr.invalid;
+			result = btl.def_attr.invalid;
 			break;
 		case 49u:
-			result = (UInt32)btl.def_attr.absorb;
+			result = btl.def_attr.absorb;
 			break;
 		case 50u:
-			result = (UInt32)btl.def_attr.half;
+			result = btl.def_attr.half;
 			break;
 		case 51u:
-			result = (UInt32)btl.def_attr.weak;
+			result = btl.def_attr.weak;
 			break;
 		case 52u:
-			result = (UInt32)btl.bi.target;
+			result = btl.bi.target;
 			break;
 		case 53u:
-			result = (UInt32)btl.bi.disappear;
+			result = btl.bi.disappear;
 			break;
 		case 57u:
 			result = (UInt32)btl.dms_geo_id;
 			break;
 		case 58u:
-			result = (UInt32)btl.mesh_current;
+			result = btl.mesh_current;
 			break;
 		case 64u:
-			result = (UInt32)btl.bi.row;
+			result = btl.bi.row;
 			break;
 		case 65u:
-			result = (UInt32)btl.bi.line_no;
+			result = btl.bi.line_no;
 			break;
 		case 66u:
-			result = (UInt32)btl_util.getPlayerPtr(btl).info.serial_no;
+			result = btl_util.getPlayerPtr(btl).info.serial_no;
 			break;
 		case 67u:
-			result = (UInt32)btl_util.getPlayerPtr(btl).category;
+			result = btl_util.getPlayerPtr(btl).category;
 			break;
 		case 68u:
-			result = (UInt32)btl_util.getEnemyTypePtr(btl).category;
+			result = btl_util.getEnemyTypePtr(btl).category;
 			break;
 		case 69u:
-			result = (UInt32)btl.bi.def_idle;
+			result = btl.bi.def_idle;
 			break;
 		case 70u:
-			result = (UInt32)btl.bi.slot_no;
+			result = btl.bi.slot_no;
 			break;
 		case 72u:
-			result = (UInt32)btl.elem.str;
+			result = btl.elem.str;
 			break;
 		case 73u:
-			result = (UInt32)btl.elem.mgc;
+			result = btl.elem.mgc;
 			break;
 		case 74u:
-			result = (UInt32)btl.defence.PhisicalDefence;
+			result = btl.defence.PhisicalDefence;
 			break;
 		case 75u:
-			result = (UInt32)btl.defence.PhisicalEvade;
+			result = btl.defence.PhisicalEvade;
 			break;
 		case 76u:
-			result = (UInt32)btl.defence.MagicalDefence;
+			result = btl.defence.MagicalDefence;
 			break;
 		case 77u:
-			result = (UInt32)btl.defence.MagicalEvade;
+			result = btl.defence.MagicalEvade;
 			break;
 		}
 		return result;
@@ -257,7 +257,7 @@ public class btl_scrp
 			break;
 		case 55u:
 			geo.geoScaleSet(btl, (Int32)val);
-			btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), (Byte)((UInt32)btl.shadow_x * val >> 12), (Byte)((UInt32)btl.shadow_z * val >> 12));
+			btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), (Byte)(btl.shadow_x * val >> 12), (Byte)(btl.shadow_z * val >> 12));
 			break;
 		case 56u:
 			geo.geoScaleReset(btl);
@@ -321,33 +321,33 @@ public class btl_scrp
 		switch (id)
 		{
 		case 32:
-			result = (UInt32)ff9Battle.btl_scene.Info.StartType;
+			result = ff9Battle.btl_scene.Info.StartType;
 			break;
 		case 33:
 			result = ff.party.gil;
 			break;
 		case 34:
-			result = (UInt32)ff9Battle.btl_phase;
+			result = ff9Battle.btl_phase;
 			break;
 		case 35:
-			result = (UInt32)ff9Battle.btl_seq;
+			result = ff9Battle.btl_seq;
 			break;
 		case 36:
 			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null)
 			{
-				result = (UInt32)ff9Battle.cur_cmd.regist.btl_id;
+				result = ff9Battle.cur_cmd.regist.btl_id;
 			}
 			break;
 		case 37:
 			if (ff9Battle.cur_cmd != null)
 			{
-				result = (UInt32)ff9Battle.cur_cmd.tar_id;
+				result = ff9Battle.cur_cmd.tar_id;
 			}
 			break;
 		case 38:
 			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null && ff9Battle.cur_cmd.regist.weapon != null)
 			{
-				result = (UInt32)ff9Battle.cur_cmd.regist.weapon.Ref.Elements;
+				result = ff9Battle.cur_cmd.regist.weapon.Ref.Elements;
 			}
 			break;
 		case 39:
@@ -359,12 +359,12 @@ public class btl_scrp
 				}
 				else
 				{
-					result = (UInt32)ff9Battle.cur_cmd.aa.Ref.Elements;
+					result = ff9Battle.cur_cmd.aa.Ref.Elements;
 				}
 			}
 			break;
 		case 40:
-			result = (UInt32)ff9Battle.btl_load_status;
+			result = ff9Battle.btl_load_status;
 			break;
 		case 41:
 			result = battle.btl_bonus.exp;
@@ -373,7 +373,7 @@ public class btl_scrp
 			result = 0u;
 			for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
 			{
-				UInt32 serialNumber = (UInt32)btl_util.getSerialNumber(next);
+				UInt32 serialNumber = btl_util.getSerialNumber(next);
 				if (serialNumber == 10u || serialNumber == 11u)
 				{
 					result = !btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix) ? 0u : 1u;
@@ -394,7 +394,7 @@ public class btl_scrp
 		case 32u:
 			UIManager.Battle.FF9BMenu_EnableMenu(false);
 			ff9Battle.btl_escape_key = 0;
-			ff9Battle.cmd_status = (UInt16)((Int32)ff9Battle.cmd_status & -2);
+			ff9Battle.cmd_status = (UInt16)(ff9Battle.cmd_status & -2);
 			ff9Battle.btl_phase = 5;
 			ff9Battle.btl_seq = 2;
 			btl_cmd.KillAllCommand(ff9Battle);

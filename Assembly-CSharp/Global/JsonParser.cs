@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Memoria.Data;
 using SimpleJSON;
 using UnityEngine;
 
@@ -93,7 +94,7 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"00001_abnormal_status",
-				FF9StateSystem.Achievement.abnormal_status.ToString()
+				((UInt32)FF9StateSystem.Achievement.abnormal_status).ToString()
 			},
 			{
 				"00002_summon_shiva",
@@ -164,7 +165,7 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"00001_abnormal_status",
-				FF9StateSystem.Achievement.abnormal_status.GetType().ToString()
+				((UInt32)FF9StateSystem.Achievement.abnormal_status).GetType().ToString()
 			},
 			{
 				"00002_summon_shiva",
@@ -319,7 +320,7 @@ public class JsonParser : ISharedDataParser
 		}
 		if (jsonnode["98000_Achievement"]["00001_abnormal_status"] != null)
 		{
-			FF9StateSystem.Achievement.abnormal_status = jsonnode["98000_Achievement"]["00001_abnormal_status"].AsUInt;
+			FF9StateSystem.Achievement.abnormal_status = (BattleStatus)jsonnode["98000_Achievement"]["00001_abnormal_status"].AsUInt;
 		}
 		if (jsonnode["98000_Achievement"]["00002_summon_shiva"] != null)
 		{

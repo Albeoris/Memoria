@@ -83,11 +83,11 @@ namespace Memoria
         public static UInt16 GetUnitIdsUnderStatus(Boolean? isPlayer, BattleStatus dying)
         {
             if (isPlayer == false)
-                return btl_util.GetStatusBtlID(0, (UInt32)dying);
+                return btl_util.GetStatusBtlID(0, dying);
             if (isPlayer == true)
-                return btl_util.GetStatusBtlID(1, (UInt32)dying);
+                return btl_util.GetStatusBtlID(1, dying);
 
-            return btl_util.GetStatusBtlID(2, (UInt32)dying);
+            return btl_util.GetStatusBtlID(2, dying);
         }
 
         public static void RaiseAbilitiesAchievement(Int32 abilityId)

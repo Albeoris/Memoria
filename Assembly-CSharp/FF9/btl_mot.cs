@@ -896,11 +896,11 @@ namespace FF9
 				GeoTexAnim.geoTexAnimPlayOnce(btl.tranceTexanimptr, 0);
 			}
 			btl.evt.animFrame = 0;
-			if ((btl.stat.cur & 8192u) != 0u)
+			if ((btl.stat.cur & BattleStatus.AutoLife) != 0u)
 			{
 				btl.die_seq = 7;
 				btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
-				btl_stat.RemoveStatus(btl, 8192u);
+				btl_stat.RemoveStatus(btl, BattleStatus.AutoLife);
 				UIManager.Battle.RemovePlayerFromAction((Int32)btl.btl_id, true);
 				return false;
 			}
@@ -912,7 +912,7 @@ namespace FF9
 		{
 			FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 			CMD_DATA cur_cmd = ff9Battle.cur_cmd;
-			if (Status.checkCurStat(btl, 256u))
+			if (Status.checkCurStat(btl, BattleStatus.Death))
 			{
 				if (btl.bi.player != 0 && btl.bi.dmg_mot_f == 0 && cur_cmd != null && btl != cur_cmd.regist && btl.die_seq == 0 && !btl_mot.checkMotion(btl, 4) && !btl_mot.checkMotion(btl, 9))
 				{
@@ -920,7 +920,7 @@ namespace FF9
 				}
 				return false;
 			}
-			if (cur_cmd != null && (Status.checkCurStat(btl, 1107300355u) || btl.bi.dmg_mot_f != 0 || (btl_util.getSerialNumber(btl) == 2 && cur_cmd.cmd_no == BattleCommandId.MagicSword)))
+			if (cur_cmd != null && (Status.checkCurStat(btl, BattleStatus.FrozenAnimation) || btl.bi.dmg_mot_f != 0 || (btl_util.getSerialNumber(btl) == 2 && cur_cmd.cmd_no == BattleCommandId.MagicSword)))
 			{
 				return false;
 			}
@@ -936,11 +936,11 @@ namespace FF9
 			{
 				if (btl.bi.cover == 0 && btl.bi.dodge == 0)
 				{
-					if ((ff9Battle.btl_escape_key != 0 || (ff9Battle.cmd_status & 1) != 0) && !Status.checkCurStat(btl, 1107431747u))
+					if ((ff9Battle.btl_escape_key != 0 || (ff9Battle.cmd_status & 1) != 0) && !Status.checkCurStat(btl, BattleStatus.CannotEscape))
 					{
 						btl_mot.setMotion(btl, 17);
 					}
-					else if (Status.checkCurStat(btl, 32768u))
+					else if (Status.checkCurStat(btl, BattleStatus.Defend))
 					{
 						btl_mot.setMotion(btl, 13);
 					}
@@ -955,12 +955,12 @@ namespace FF9
 							btl_mot.setMotion(btl, 9);
 						}
 					}
-					else if (btl_mot.checkMotion(btl, 0) && Status.checkCurStat(btl, 197122u))
+					else if (btl_mot.checkMotion(btl, 0) && Status.checkCurStat(btl, BattleStatus.IdleDying))
 					{
 						global::Debug.LogWarning(btl.gameObject.name + " Dead");
 						btl_mot.setMotion(btl, 7);
 					}
-					else if ((btl_mot.checkMotion(btl, 1) || btl_mot.checkMotion(btl, 6)) && !Status.checkCurStat(btl, 197122u))
+					else if ((btl_mot.checkMotion(btl, 1) || btl_mot.checkMotion(btl, 6)) && !Status.checkCurStat(btl, BattleStatus.IdleDying))
 					{
 						btl_mot.setMotion(btl, 5);
 					}
@@ -1040,7 +1040,7 @@ namespace FF9
 		{
 			if (btl_mot.checkMotion(btl, 2))
 			{
-				if (Status.checkCurStat(btl, 256u))
+				if (Status.checkCurStat(btl, BattleStatus.Death))
 				{
 					btl.die_seq = 1;
 					btl.bi.dmg_mot_f = 0;
@@ -1056,7 +1056,7 @@ namespace FF9
 			}
 			else if (btl_mot.checkMotion(btl, 3))
 			{
-				if (Status.checkCurStat(btl, 256u))
+				if (Status.checkCurStat(btl, BattleStatus.Death))
 				{
 					btl.die_seq = 5;
 					btl.bi.dmg_mot_f = 0;
@@ -1073,7 +1073,7 @@ namespace FF9
 				{
 					btl_mot.setMotion(btl, 11);
 				}
-				else if (Status.checkCurStat(btl, 197122u))
+				else if (Status.checkCurStat(btl, BattleStatus.IdleDying))
 				{
 					btl.bi.dmg_mot_f = 0;
 				}
@@ -1092,7 +1092,7 @@ namespace FF9
 		public static void EnemyDamageMotion(BTL_DATA btl)
 		{
 			btl.bi.dmg_mot_f = 0;
-			if (Status.checkCurStat(btl, 256u))
+			if (Status.checkCurStat(btl, BattleStatus.Death))
 			{
 				if (btl_mot.checkMotion(btl, 3) && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
 				{

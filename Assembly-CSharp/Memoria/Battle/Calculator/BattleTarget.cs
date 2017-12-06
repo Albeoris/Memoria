@@ -170,7 +170,7 @@ namespace Memoria
 
         public void TryAlterStatuses(BattleStatus status, Boolean changeContext)
         {
-            UInt32 result = btl_stat.AlterStatuses(Data, (UInt32)status);
+            UInt32 result = btl_stat.AlterStatuses(Data, status);
             if (changeContext)
             {
                 if (result == 0)

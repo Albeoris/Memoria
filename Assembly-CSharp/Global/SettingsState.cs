@@ -295,7 +295,7 @@ public class SettingsState : MonoBehaviour
             return;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.player != 0 && !Status.checkCurStat(btl, 256U))
+            if (btl.bi.player != 0 && !Status.checkCurStat(btl, BattleStatus.Death))
                 btl.cur.at = btl.max.at;
         }
     }
@@ -306,7 +306,7 @@ public class SettingsState : MonoBehaviour
             return;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.player != 0 && !Status.checkCurStat(btl, 256U))
+            if (btl.bi.player != 0 && !Status.checkCurStat(btl, BattleStatus.Death))
             {
                 btl.cur.hp = btl.max.hp;
                 btl.cur.mp = btl.max.mp;
@@ -321,7 +321,7 @@ public class SettingsState : MonoBehaviour
 
         foreach (BattleUnit btl in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderStatus((BattleStatus)33575235U) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.isRunning)
+            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderStatus(BattleStatus.CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.isRunning)
             {
                 btl.Trance = Byte.MaxValue;
                 if (!btl.IsUnderStatus(BattleStatus.Trance))

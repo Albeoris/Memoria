@@ -198,10 +198,10 @@ public class BattleAchievement
 		AchievementManager.ReportAchievement(AcheivementKey.BackAttack30, BattleAchievement.achievement.backAtk_no);
 	}
 
-	public static void UpdateAbnormalStatus(UInt32 status)
+	public static void UpdateAbnormalStatus(BattleStatus status)
 	{
 		BattleAchievement.achievement.abnormal_status |= status;
-		if ((BattleAchievement.achievement.abnormal_status & 3221176191u) == 3221176191u)
+		if ((BattleAchievement.achievement.abnormal_status & BattleStatus.Achievement) == BattleStatus.Achievement)
 		{
 			AchievementManager.ReportAchievement(AcheivementKey.AbnormalStatus, 1);
 		}

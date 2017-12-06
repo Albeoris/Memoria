@@ -49,7 +49,7 @@ public class BTL_SCENE
 				SB2_MON_PARM sb2_MON_PARM = this.MonAddr[k] = new SB2_MON_PARM();
 				for (Int32 l = 0; l < 3; l++)
 				{
-					sb2_MON_PARM.Status[l] = binaryReader.ReadUInt32();
+					sb2_MON_PARM.Status[l] = (BattleStatus)binaryReader.ReadUInt32();
 				}
 				sb2_MON_PARM.MaxHP = binaryReader.ReadUInt16();
 				sb2_MON_PARM.MaxMP = binaryReader.ReadUInt16();

@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Data;
 
 public class STAT_INFO
 {
@@ -7,11 +8,11 @@ public class STAT_INFO
 		this.cnt = new STAT_CNT();
 	}
 
-	public UInt32 invalid;
+	public BattleStatus invalid;
 
-	public UInt32 permanent;
+	public BattleStatus permanent;
 
-	public UInt32 cur;
+	public BattleStatus cur;
 
 	public STAT_CNT cnt;
 }

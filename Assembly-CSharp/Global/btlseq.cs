@@ -324,13 +324,13 @@ public class btlseq
 				{
 					btl.evt.animFrame = 0;
 				}
-				else if (Status.checkCurStat(btl, 33558531u))
+				else if (Status.checkCurStat(btl, BattleStatus.Immobilized))
 				{
 					PosObj evt2 = btl.evt;
 					evt2.animFrame = (Byte)(evt2.animFrame - 1);
 				}
 			}
-			if (!Status.checkCurStat(btl, 33558531u) && btl.bi.stop_anim == 0)
+			if (!Status.checkCurStat(btl, BattleStatus.Immobilized) && btl.bi.stop_anim == 0)
 			{
 				if (btl.animation != (UnityEngine.Object)null)
 				{
@@ -418,7 +418,7 @@ public class btlseq
 					}
 				}
 			}
-			if (!Status.checkCurStat(btl, 1073741824u))
+			if (!Status.checkCurStat(btl, BattleStatus.Jump))
 			{
 				GeoTexAnim.geoTexAnimService(btl.texanimptr);
 				GeoTexAnim.geoTexAnimService(btl.tranceTexanimptr);
@@ -574,7 +574,7 @@ public class btlseq
 			pMe.evt.animFrame = 0;
 			pSeqWork.Flags.FinishIdle = true;
 		}
-		if ((pMe.stat.cur & 33558530u) == 0u && !pSeqWork.Flags.FinishIdle)
+		if ((pMe.stat.cur & (BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Freeze)) == 0u && !pSeqWork.Flags.FinishIdle)
 		{
 			return 0;
 		}
@@ -746,7 +746,7 @@ public class btlseq
 	public static Int32 SeqExecWaitAnim(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecWaitAnim");
-		if (pSeqWork.AnmCnt != 0 && ((UInt16)pMe.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(pMe) || (pMe.stat.cur & 33558530u) != 0u))
+		if (pSeqWork.AnmCnt != 0 && ((UInt16)pMe.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(pMe) || (pMe.stat.cur & ANIM_STOP_STATUS) != 0u))
 		{
 			SFX.SetEffCamTrigger();
 			pSeqWork.CurPtr++;
@@ -936,7 +936,7 @@ public class btlseq
 				{
 					goto IL_16C;
 				}
-				UInt32 num = pMe.stat.cur;
+				BattleStatus num = pMe.stat.cur;
 				for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
 				{
 					if ((next.btl_id & pSeqWork.CmdPtr.tar_id) != 0)
@@ -944,7 +944,7 @@ public class btlseq
 						num |= next.stat.cur;
 					}
 				}
-				if ((num & 335544320u) != 0u)
+				if ((num & (BattleStatus.Vanish | BattleStatus.Mini)) != 0u)
 				{
 					goto IL_16C;
 				}
@@ -1194,7 +1194,7 @@ public class btlseq
 
 	public const Int32 RET_CONTINUE = 1;
 
-	public const UInt32 ANIM_STOP_STATUS = 33558530u;
+	public const BattleStatus ANIM_STOP_STATUS = BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Freeze;
 
 	public static Byte[] data;
 

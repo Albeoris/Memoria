@@ -1222,7 +1222,7 @@ public class SFX
                     Int32 num10 = 0;
                     for (BTL_DATA next2 = FF9StateSystem.Battle.FF9Battle.btl_list.next; next2 != null; next2 = next2.next)
                     {
-                        if (next2.bi.player != 0 && !FF9.Status.checkCurStat(next2, 1073742080u))
+                        if (next2.bi.player != 0 && !FF9.Status.checkCurStat(next2, BattleStatus.Death | BattleStatus.Jump))
                         {
                             num10++;
                         }
@@ -1483,20 +1483,20 @@ public class SFX
                 {
                     case 0:
                         {
-                            UInt32 num6 = (UInt32)(arg2 << 16 | arg1);
+                            BattleStatus num6 = (BattleStatus)(arg2 << 16 | arg1);
                             return ((next.stat.cur & num6) == 0u) ? 0 : 1;
                         }
                     case 1:
                         {
-                            UInt32 num6 = (UInt32)(arg2 << 16 | arg1);
-                            if (SFX.currentEffectID == 237 && (num6 & 256u) != 0u && !flag2)
+                            BattleStatus num6 = (BattleStatus)(arg2 << 16 | arg1);
+                            if (SFX.currentEffectID == 237 && (num6 & BattleStatus.Death) != 0u && !flag2)
                             {
                                 return 1;
                             }
                             return ((next.stat.permanent & num6) == 0u && (next.stat.cur & num6) == 0u) ? 0 : 1;
                         }
                     case 2:
-                        btl_stat.RemoveStatuses(next, 4294962303u);
+                        btl_stat.RemoveStatuses(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.Jump | BattleStatus.GradualPetrify);
                         break;
                     case 3:
                         btl_stat.InitStatus(next);

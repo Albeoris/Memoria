@@ -120,20 +120,20 @@ namespace Memoria
 
         public BattleStatus CurrentStatus
         {
-            get => (BattleStatus)Data.stat.cur;
-            set => Data.stat.cur = (UInt32)value;
+            get => Data.stat.cur;
+            set => Data.stat.cur = value;
         }
 
         public BattleStatus PermanentStatus
         {
-            get => (BattleStatus)Data.stat.permanent;
-            set => Data.stat.permanent = (UInt32)value;
+            get => Data.stat.permanent;
+            set => Data.stat.permanent = value;
         }
          
         public BattleStatus ResistStatus
         {
-            get => (BattleStatus)Data.stat.invalid;
-            set => Data.stat.invalid = (UInt32)value;
+            get => Data.stat.invalid;
+            set => Data.stat.invalid = value;
         }
 
         public EffectElement BonusElement => (EffectElement)Data.p_up_attr;
@@ -195,17 +195,17 @@ namespace Memoria
 
         public Boolean TryRemoveStatuses(BattleStatus status)
         {
-            return btl_stat.RemoveStatuses(Data, (UInt32)status) == 2U;
+            return btl_stat.RemoveStatuses(Data, status) == 2U;
         }
 
         public void RemoveStatus(BattleStatus status)
         {
-            btl_stat.RemoveStatus(Data, (UInt32)status);
+            btl_stat.RemoveStatus(Data, status);
         }
 
         public void AlterStatus(BattleStatus status)
         {
-            btl_stat.AlterStatus(Data, (UInt32)status);
+            btl_stat.AlterStatus(Data, status);
         }
 
         public void Kill()

@@ -488,7 +488,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     }
                     else
                     {
-                        if (!btl_stat.CheckStatus(btl, 33685506U))
+                        if (!btl_stat.CheckStatus(btl, BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze))
                             needContinue = false;
                     }
                 }
@@ -500,12 +500,12 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (!Configuration.Fixes.IsKeepRestTimeInBattle)
                     current.at = maximum.at;
 
-                if (btl_stat.CheckStatus(btl, 33685506U))
+                if (btl_stat.CheckStatus(btl, BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze))
                     continue;
 
                 if (btl.bi.player != 0)
                 {
-                    if (btl_stat.CheckStatus(btl, 3072U))
+                    if (btl_stat.CheckStatus(btl, BattleStatus.Confuse | BattleStatus.Berserk))
                     {
                         Int32 num = 0;
                         while (1 << num != btl.btl_id)

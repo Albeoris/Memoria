@@ -163,9 +163,9 @@ namespace FF9
 
 	    public static void CheckReactionAbility(BTL_DATA btl, AA_DATA aa)
 		{
-			if (!Status.checkCurStat(btl, 1107300611u))
+			if (!Status.checkCurStat(btl, BattleStatus.NoReaction))
 			{
-				if ((btl.sa[1] & 1048576u) != 0u && btl.cur.hp != 0 && Status.checkCurStat(btl, 512u))
+				if ((btl.sa[1] & 1048576u) != 0u && btl.cur.hp != 0 && Status.checkCurStat(btl, BattleStatus.LowHP))
 				{
 					if (btl.cur.hp + btl.max.hp / 2 < btl.max.hp)
 					{
@@ -197,7 +197,7 @@ namespace FF9
             if (btl.HasSupportAbility(SupportAbility1.AutoReflect))
             {
                 btl.PermanentStatus |= BattleStatus.Reflect;
-				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, (UInt32)BattleStatus.Reflect);
+				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, BattleStatus.Reflect);
 			}
 
 			if (btl.HasSupportAbility(SupportAbility1.AutoFloat))
@@ -210,7 +210,7 @@ namespace FF9
                 btl.PermanentStatus |= BattleStatus.Haste;
                 btl.ResistStatus |= BattleStatus.Slow;
                 btl.Data.cur.at_coef = (SByte)(btl.Data.cur.at_coef * 3 / 2);
-				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, (UInt32)BattleStatus.Haste);
+				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, BattleStatus.Haste);
 			}
 
             if (btl.HasSupportAbility(SupportAbility1.AutoRegen))

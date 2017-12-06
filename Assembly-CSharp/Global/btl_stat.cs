@@ -19,7 +19,7 @@ public class btl_stat
 
     public static void SaveStatus(PLAYER p, BTL_DATA btl)
     {
-        p.status = (Byte)(btl.stat.cur & (UInt32)SByte.MaxValue);
+        p.status = (Byte)(btl.stat.cur & (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie));
     }
 
     public static void InitCountDownStatus(BTL_DATA btl)
@@ -27,7 +27,7 @@ public class btl_stat
         btl.stat.cnt.cdown_max = (Int16)((60 - btl.elem.wpr << 3) * FF9StateSystem.Battle.FF9Battle.status_data[27].conti_cnt);
     }
 
-    public static void StatusCommandCancel(BTL_DATA btl, UInt32 status)
+    public static void StatusCommandCancel(BTL_DATA btl, BattleStatus status)
     {
         if (!btl_cmd.KillCommand2(btl))
             return;
@@ -42,7 +42,7 @@ public class btl_stat
         btl.cmd[0].cmd_no = BattleCommandId.None;
     }
 
-    public static UInt32 AlterStatus(BTL_DATA btl, UInt32 status)
+    public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status)
     {
         BattleUnit unit = new BattleUnit(btl);
         STAT_DATA[] statusData = FF9StateSystem.Battle.FF9Battle.status_data;
@@ -53,7 +53,7 @@ public class btl_stat
         if (((Int32)stat.permanent & (Int32)status) != 0 || ((Int32)stat.cur & (Int32)status) != 0 && ((Int32)status & -2013200513) != 0)
             return 1;
         UInt32 num1 = 0;
-        UInt32 num2 = 0;
+        BattleStatus num2 = 0;
         for (; num1 < 32U; ++num1)
         {
             UInt32 num3 = 1U << (Int32)num1;
@@ -122,9 +122,9 @@ public class btl_stat
                 }
                 break;
             case 19:
-                if (Status.checkCurStat(btl, 1048576U))
+                if (Status.checkCurStat(btl, BattleStatus.Slow))
                 {
-                    RemoveStatus(btl, 1048576U);
+                    RemoveStatus(btl, BattleStatus.Slow);
                     return 2;
                 }
                 btl_para.InitATB(btl);
@@ -132,9 +132,9 @@ public class btl_stat
                 stat.cur |= status;
                 break;
             case 20:
-                if (Status.checkCurStat(btl, 524288U))
+                if (Status.checkCurStat(btl, BattleStatus.Haste))
                 {
-                    RemoveStatus(btl, 524288U);
+                    RemoveStatus(btl, BattleStatus.Haste);
                     return 2;
                 }
                 btl_para.InitATB(btl);
@@ -146,7 +146,7 @@ public class btl_stat
                 break;
             case 28:
                 stat.cur ^= status;
-                if (Status.checkCurStat(btl, 268435456U))
+                if (Status.checkCurStat(btl, BattleStatus.Mini))
                 {
                     geo.geoScaleSet(btl, 2048);
                     btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), (Byte)(btl.shadow_x / 2U), (Byte)(btl.shadow_z / 2U));
@@ -184,7 +184,7 @@ public class btl_stat
                 break;
         }
         RemoveStatuses(btl, statusData[statTblNo].clear);
-        if (Status.checkCurStat(btl, 1073746177U))
+        if (Status.checkCurStat(btl, BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Jump))
             btl.bi.atb = 0;
         if (((Int32)status & -268500992) != 0)
         {
@@ -199,12 +199,12 @@ public class btl_stat
         return 2;
     }
 
-    public static UInt32 AlterStatuses(BTL_DATA btl, UInt32 statuses)
+    public static UInt32 AlterStatuses(BTL_DATA btl, BattleStatus statuses)
     {
         UInt32 num1 = 0;
-        for (UInt32 index = 0; index < 32U; ++index)
+        for (Int32 index = 0; index < 32U; ++index)
         {
-            UInt32 status = 1U << (Int32)index;
+            BattleStatus status = (BattleStatus)(1U << index);
             if (((Int32)statuses & (Int32)status) != 0)
             {
                 UInt32 num2 = AlterStatus(btl, status);
@@ -215,10 +215,10 @@ public class btl_stat
         return num1;
     }
 
-    public static UInt32 RemoveStatus(BTL_DATA btl, UInt32 status)
+    public static UInt32 RemoveStatus(BTL_DATA btl, BattleStatus status)
     {
         STAT_INFO stat = btl.stat;
-        if (((Int32)stat.permanent & (Int32)status) != 0 || ((Int32)stat.cur & (Int32)status) == 0 || btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & 4099L) != 0L)
+        if (((Int32)stat.permanent & (Int32)status) != 0 || ((Int32)stat.cur & (Int32)status) == 0 || btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop)) != 0L)
             return 1;
         stat.cur &= ~status;
         switch ((BattleStatus)status)
@@ -229,7 +229,7 @@ public class btl_stat
             case BattleStatus.Zombie:
             case BattleStatus.Heat:
             case BattleStatus.Freeze:
-                if (Status.checkCurStat(btl, 50333760U))
+                if (Status.checkCurStat(btl, BattleStatus.ChgPolyCol))
                 {
                     SetStatusPolyColor(btl);
                 }
@@ -265,16 +265,16 @@ public class btl_stat
                 break;
             case BattleStatus.Berserk:
                 StatusCommandCancel(btl, status);
-                if (Status.checkCurStat(btl, 50333760U))
+                if (Status.checkCurStat(btl, BattleStatus.ChgPolyCol))
                 {
                     SetStatusPolyColor(btl);
                 }
                 break;
             case BattleStatus.Trance:
                 btl.trance = 0;
-                if (Status.checkCurStat(btl, 1073741824U))
+                if (Status.checkCurStat(btl, BattleStatus.Jump))
                 {
-                    RemoveStatus(btl, 1073741824U);
+                    RemoveStatus(btl, BattleStatus.Jump);
                     btl.SetDisappear(0);
                     btl_mot.setBasePos(btl);
                     btl_mot.setMotion(btl, btl.bi.def_idle);
@@ -327,12 +327,12 @@ public class btl_stat
         return 2;
     }
 
-    public static UInt32 RemoveStatuses(BTL_DATA btl, UInt32 statuses)
+    public static UInt32 RemoveStatuses(BTL_DATA btl, BattleStatus statuses)
     {
         UInt32 num = 1;
-        for (UInt32 index = 0; index < 32U; ++index)
+        for (Int32 index = 0; index < 32U; ++index)
         {
-            UInt32 status = 1U << (Int32)index;
+            BattleStatus status = (BattleStatus)(1U << index);
             if (((Int32)statuses & (Int32)status) != 0 && (Int32)RemoveStatus(btl, status) == 2)
                 num = 2U;
         }
@@ -363,9 +363,9 @@ public class btl_stat
 
     public static void SetPresentColor(BTL_DATA btl)
     {
-        if (Status.checkCurStat(btl, 1U))
+        if (Status.checkCurStat(btl, BattleStatus.Petrify))
             SetStatusClut(btl, true);
-        else if (Status.checkCurStat(btl, 50333760U))
+        else if (Status.checkCurStat(btl, BattleStatus.ChgPolyCol))
             SetStatusPolyColor(btl);
         btl_util.SetBBGColor(btl.gameObject);
         if (btl.bi.player == 0)
@@ -378,25 +378,25 @@ public class btl_stat
         BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
         Int16[] numArray1 = new Int16[3];
         Int16[] numArray2 = new Int16[3] { bbgInfoPtr.chr_r, bbgInfoPtr.chr_g, bbgInfoPtr.chr_b };
-        if (Status.checkCurStat(btl, 64U))
+        if (Status.checkCurStat(btl, BattleStatus.Zombie))
         {
             numArray1[0] = 48;
             numArray1[1] = 72;
             numArray1[2] = 88;
         }
-        else if (Status.checkCurStat(btl, 2048U))
+        else if (Status.checkCurStat(btl, BattleStatus.Berserk))
         {
             numArray1[0] = -16;
             numArray1[1] = 40;
             numArray1[2] = 40;
         }
-        else if (Status.checkCurStat(btl, 16777216U))
+        else if (Status.checkCurStat(btl, BattleStatus.Heat))
         {
             numArray1[0] = -80;
             numArray1[1] = 16;
             numArray1[2] = 72;
         }
-        else if (Status.checkCurStat(btl, 33554432U))
+        else if (Status.checkCurStat(btl, BattleStatus.Freeze))
         {
             numArray1[0] = 48;
             numArray1[1] = 0;
@@ -425,7 +425,7 @@ public class btl_stat
         }
     }
 
-    public static Boolean CheckStatus(BTL_DATA btl, UInt32 status)
+    public static Boolean CheckStatus(BTL_DATA btl, BattleStatus status)
     {
         return ((Int32)btl.stat.permanent & (Int32)status) != 0 || ((Int32)btl.stat.cur & (Int32)status) != 0;
     }
@@ -525,7 +525,7 @@ public class btl_stat
 
     private static void RotateAfterCheckStatusLoop(BTL_DATA btl)
     {
-        if (Status.checkCurStat(btl, 1024u) && !btl_util.isCurCmdOwner(btl) && (btl_mot.checkMotion(btl, 0) || btl_mot.checkMotion(btl, 1) || (btl.bi.player != 0 && btl_mot.checkMotion(btl, 9))))
+        if (Status.checkCurStat(btl, BattleStatus.Confuse) && !btl_util.isCurCmdOwner(btl) && (btl_mot.checkMotion(btl, 0) || btl_mot.checkMotion(btl, 1) || (btl.bi.player != 0 && btl_mot.checkMotion(btl, 9))))
         {
             Vector3 eulerAngles = btl.rot.eulerAngles;
             eulerAngles.y += 11.25f;
@@ -537,10 +537,10 @@ public class btl_stat
     {
         BTL_DATA data = unit.Data;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        if (data.bi.disappear == 0 && !Status.checkCurStat(data, 1U))
+        if (data.bi.disappear == 0 && !Status.checkCurStat(data, BattleStatus.Petrify))
         {
             BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
-            if (Status.checkCurStat(data, 50333760U))
+            if (Status.checkCurStat(data, BattleStatus.ChgPolyCol))
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
@@ -548,7 +548,7 @@ public class btl_stat
                 if (data.weapon_geo)
                     btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
             }
-            else if (Status.checkCurStat(data, 12582912U))
+            else if (Status.checkCurStat(data, BattleStatus.Shell | BattleStatus.Protect))
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
@@ -556,7 +556,7 @@ public class btl_stat
                 Int16 num2;
                 Int16 num3;
                 Int16 num4;
-                if ((!Status.checkCurStat(data, 8388608U) || !Status.checkCurStat(data, 4194304U) ? (!Status.checkCurStat(data, 8388608U) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
+                if ((!Status.checkCurStat(data, BattleStatus.Protect) || !Status.checkCurStat(data, BattleStatus.Shell) ? (!Status.checkCurStat(data, BattleStatus.Protect) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
                 {
                     num2 = (Int16)(bbgInfoPtr.chr_r - 64);
                     num3 = (Int16)(bbgInfoPtr.chr_g - -24);
@@ -610,7 +610,7 @@ public class btl_stat
                 SetDefaultShader(data);
             }
         }
-        else if (Status.checkCurStat(data, 1U))
+        else if (Status.checkCurStat(data, BattleStatus.Petrify))
         {
             SetDefaultShader(data);
             SetStatusClut(data, true);
@@ -625,7 +625,7 @@ public class btl_stat
             }
             data.pos = pos;
         }
-        if (CheckStatus(data, 2097152u))
+        if (CheckStatus(data, BattleStatus.Float))
         {
             Single y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
             Vector3 vector = data.base_pos;
@@ -705,21 +705,21 @@ public class btl_stat
     {
         for (Int32 index = 0; index < 16; ++index)
         {
-            UInt32 status = (UInt32)(65536 << index);
-            if (((Int32)btl.stat.cur & -268500992 & (Int32)status) != 0 && (btl.stat.cnt.conti[index] -= btl.cur.at_coef) < 0)
+            BattleStatus status = (BattleStatus)(65536 << index);
+            if ((btl.stat.cur & Status.STATUS_MASK & status) != 0 && (btl.stat.cnt.conti[index] -= btl.cur.at_coef) < 0)
             {
                 if (((Int32)status & Int32.MinValue) != 0)
                 {
-                    if (!btl_cmd.CheckUsingCommand(btl.cmd[2]) && (Int32)AlterStatus(btl, 1U) != 2)
+                    if (!btl_cmd.CheckUsingCommand(btl.cmd[2]) && (Int32)AlterStatus(btl, BattleStatus.Petrify) != 2)
                     {
-                        RemoveStatus(btl, 2147483648U);
+                        RemoveStatus(btl, BattleStatus.GradualPetrify);
                         btl.fig_info |= 32;
                         btl2d.Btl2dReq(btl);
                     }
                 }
-                else if (((Int32)status & 134217728) != 0)
+                else if ((status & BattleStatus.Doom) != 0)
                 {
-                    AlterStatus(btl, 256U);
+                    AlterStatus(btl, BattleStatus.Death);
                     btl2d.Btl2dReq(btl);
                 }
                 else

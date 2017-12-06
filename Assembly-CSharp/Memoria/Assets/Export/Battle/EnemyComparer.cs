@@ -150,9 +150,9 @@ namespace Memoria.Assets
             Int64 hashCode = obj.Key["US"].GetHashCode();
             SB2_MON_PARM enemy = obj.Value;
 
-            hashCode = (hashCode * 397) ^ enemy.Status[0];
-            hashCode = (hashCode * 397) ^ enemy.Status[1];
-            hashCode = (hashCode * 397) ^ enemy.Status[2];
+            hashCode = (hashCode * 397) ^ (UInt32)enemy.Status[0];
+            hashCode = (hashCode * 397) ^ (UInt32)enemy.Status[1];
+            hashCode = (hashCode * 397) ^ (UInt32)enemy.Status[2];
 
             hashCode = (hashCode * 397) ^ enemy.MaxHP;
             hashCode = (hashCode * 397) ^ enemy.MaxMP;

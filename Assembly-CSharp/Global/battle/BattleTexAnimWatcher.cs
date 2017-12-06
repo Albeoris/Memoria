@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using FF9;
+using Memoria.Data;
 using UnityEngine;
 
 public class BattleTexAnimWatcher : MonoBehaviour
@@ -10,7 +11,7 @@ public class BattleTexAnimWatcher : MonoBehaviour
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
 		{
-			if (!Status.checkCurStat(next, 1073741824u))
+			if (!Status.checkCurStat(next, BattleStatus.Jump))
 			{
 				this.CheckRenderTexture(next.texanimptr);
 				this.CheckRenderTexture(next.tranceTexanimptr);

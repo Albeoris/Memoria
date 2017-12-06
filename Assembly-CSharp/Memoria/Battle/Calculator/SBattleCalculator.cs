@@ -159,7 +159,7 @@ namespace Memoria
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
             UInt16 commandAndScript = (UInt16)((UInt32)v.Command.Data.cmd_no << 8 | v.Command.Data.sub_no);
-            if (caster.bi.player != 0 && !Status.checkCurStat(target, 33558531U))
+            if (caster.bi.player != 0 && !Status.checkCurStat(target, BattleStatus.Immobilized))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, commandAndScript);
@@ -180,7 +180,7 @@ namespace Memoria
 
         private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatus.NoReaction) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, 1107333379U) && v.Caster.Data != v.Target.Data);
+            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatus.NoReaction) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump) && v.Caster.Data != v.Target.Data);
         }
 
         private static void CheckDamageReaction(BattleCalculator v, Boolean counterAtk)
@@ -190,7 +190,7 @@ namespace Memoria
             if (!counterAtk)
                 btl_abil.CheckAutoItemAbility(v.Target, v.Command);
             btl_abil.CheckReactionAbility(v.Target.Data, v.Command.Data.aa);
-            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || Status.checkCurStat(v.Target.Data, 33575235U))
+            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || Status.checkCurStat(v.Target.Data, BattleStatus.CannotTrance))
                 return;
 
 

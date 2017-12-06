@@ -215,9 +215,9 @@ namespace Memoria.Assets
 
                 writer.BeginObject();
                 writer.WriteString("name", names["US"]);
-                writer.WriteUInt32("invalidStatus", enemy.Status[0]);
-                writer.WriteUInt32("permanentStatus", enemy.Status[1]);
-                writer.WriteUInt32("currentStatus", enemy.Status[2]);
+                writer.WriteUInt32("invalidStatus", (UInt32)enemy.Status[0]);
+                writer.WriteUInt32("permanentStatus", (UInt32)enemy.Status[1]);
+                writer.WriteUInt32("currentStatus", (UInt32)enemy.Status[2]);
                 writer.WriteUInt16("maxHp", enemy.MaxHP);
                 writer.WriteUInt16("maxMp", enemy.MaxMP);
                 writer.WriteUInt16("winGil", enemy.WinGil);
@@ -473,11 +473,11 @@ namespace Memoria.Assets
                             writer.WriteString("name", RemovePrefix(names["US"]));
 
                             if (baseValue.Status[0] != enemy.Status[0])
-                                writer.WriteUInt32("invalidStatus", enemy.Status[0]);
+                                writer.WriteUInt32("invalidStatus", (UInt32)enemy.Status[0]);
                             if (baseValue.Status[1] != enemy.Status[1])
-                                writer.WriteUInt32("permanentStatus", enemy.Status[1]);
+                                writer.WriteUInt32("permanentStatus", (UInt32)enemy.Status[1]);
                             if (baseValue.Status[2] != enemy.Status[2])
-                                writer.WriteUInt32("currentStatus", enemy.Status[2]);
+                                writer.WriteUInt32("currentStatus", (UInt32)enemy.Status[2]);
                             if (baseValue.MaxHP != enemy.MaxHP)
                                 writer.WriteUInt16("maxHp", enemy.MaxHP);
                             if (baseValue.MaxMP != enemy.MaxMP)
@@ -830,9 +830,9 @@ namespace Memoria.Assets
             {
                 sw.UInt16(_index);
 
-                sw.UInt32(_enData.Status[0]);
-                sw.UInt32(_enData.Status[1]);
-                sw.UInt32(_enData.Status[2]);
+                sw.UInt32((UInt32)_enData.Status[0]);
+                sw.UInt32((UInt32)_enData.Status[1]);
+                sw.UInt32((UInt32)_enData.Status[2]);
                 sw.UInt16(_enData.MaxHP);
                 sw.UInt16(_enData.MaxMP);
                 sw.UInt16(_enData.WinGil);

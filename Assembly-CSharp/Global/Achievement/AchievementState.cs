@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.SiliconSocial;
+using Memoria.Data;
 using UnityEngine;
 
 public class AchievementState : MonoBehaviour
@@ -132,7 +133,7 @@ public class AchievementState : MonoBehaviour
 
 	public Int32 trance_no;
 
-	public UInt32 abnormal_status;
+	public BattleStatus abnormal_status;
 
 	public Boolean summon_shiva;
 
