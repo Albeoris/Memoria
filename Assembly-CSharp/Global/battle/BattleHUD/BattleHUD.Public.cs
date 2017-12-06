@@ -47,7 +47,7 @@ public partial class BattleHUD : UIScene
         _itemCursorMemorize = new Dictionary<Int32, Int32>();
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
-        _itemIdList = new List<Int32>();
+        _itemIdList = new List<Byte>();
         _oneTime = true;
     }
     

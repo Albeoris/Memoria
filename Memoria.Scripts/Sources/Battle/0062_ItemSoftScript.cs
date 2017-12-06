@@ -7,7 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Soft (Item)
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ItemSoftScript : IBattleScript
+    public sealed class ItemSoftScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0062;
 
@@ -31,6 +31,27 @@ namespace Memoria.Scripts.Battle
                 _v.Target.Kill();
                 UiState.SetBattleFollowFormatMessage(BattleMesages.BecameTooSoftToLive);
             }
+        }
+
+        public Single RateTarget()
+        {
+            if (_v.Target.HasCategory(EnemyCategory.Stone))
+            {
+                if (_v.Target.CanBeAttacked())
+                    return -1 * BattleScriptStatusEstimate.RateStatus(BattleStatus.Death);
+
+                return 0;
+            }
+
+            BattleStatus playerStatus = _v.Target.CurrentStatus;
+            BattleStatus removeStatus = _v.Command.ItemStatus;
+            BattleStatus removedStatus = playerStatus & removeStatus;
+            Int32 rating = BattleScriptStatusEstimate.RateStatuses(removedStatus);
+
+            if (_v.Target.IsPlayer)
+                return -1 * rating;
+
+            return rating;
         }
     }
 }

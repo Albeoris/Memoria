@@ -23,7 +23,7 @@ public partial class BattleHUD : UIScene
     private readonly Dictionary<Int32, Int32> _itemCursorMemorize;
     private readonly List<Int32> _matchBattleIdPlayerList;
     private readonly List<Int32> _matchBattleIdEnemyList;
-    private readonly List<Int32> _itemIdList;
+    private readonly List<Byte> _itemIdList;
 
     private Single _lastFrameRightTriggerAxis;
     private Boolean _lastFramePressOnMenu;
@@ -74,6 +74,7 @@ public partial class BattleHUD : UIScene
     private Boolean _defaultTargetHealingAttack;
     private Boolean _defaultTargetDead;
     private Boolean _targetDead;
+    private Int32 _bestTargetIndex;
     private TargetType _targetCursor;
     private Boolean _isTryingToRun;
     private Boolean _isAutoAttack;
@@ -1252,8 +1253,8 @@ public partial class BattleHUD : UIScene
         }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
         {
-            Int32 num2 = _itemIdList[_currentSubMenuIndex];
-            commandDetail.SubId = (UInt32)num2;
+            Int32 itemId = _itemIdList[_currentSubMenuIndex];
+            commandDetail.SubId = (UInt32)itemId;
         }
 
         commandDetail.TargetId = 0;
@@ -1407,17 +1408,18 @@ public partial class BattleHUD : UIScene
     {
         if (isVisible)
         {
-            TargetType cursor = 0;
+            TargetType targetType = 0;
             TargetDisplay subMode = 0;
             _defaultTargetAlly = false;
             _defaultTargetHealingAttack = false;
             _defaultTargetDead = false;
             _targetDead = false;
+            _bestTargetIndex = -1;
             if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
             {
                 CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
                 AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]];
-                cursor = aaData.Info.Target;
+                targetType = aaData.Info.Target;
                 _defaultTargetAlly = aaData.Info.DefaultAlly;
                 _defaultTargetDead = aaData.Info.DefaultOnDead;
                 _targetDead = aaData.Info.ForDead;
@@ -1425,12 +1427,16 @@ public partial class BattleHUD : UIScene
             }
             else if (_currentCommandIndex == CommandMenu.Item)
             {
-                ITEM_DATA itemData = ff9item._FF9Item_Info[_itemIdList[_currentSubMenuIndex] - 224];
-                cursor = itemData.info.Target;
+                Byte itemId = _itemIdList[_currentSubMenuIndex];
+                Int32 effectId = itemId - 224;
+                ITEM_DATA itemData = ff9item._FF9Item_Info[effectId];
+                targetType = itemData.info.Target;
                 _defaultTargetAlly = itemData.info.DefaultAlly;
                 _defaultTargetDead = itemData.info.ForDead;
                 _targetDead = itemData.info.ForDead;
                 subMode = itemData.info.DisplayStats;
+
+                SelectBestItemTarget(targetType, itemData, itemId);
             }
             else if (_currentCommandIndex == CommandMenu.Attack && CurrentPlayerIndex > -1)
             {
@@ -1444,7 +1450,7 @@ public partial class BattleHUD : UIScene
             EnableTargetArea();
             DisplayTarget();
             DisplayStatus(subMode);
-            SetTargetAvalability(cursor);
+            SetTargetAvalability(targetType);
             SetTargetDefault();
             SetTargetHelp();
             ButtonGroupState.ActiveGroup = TargetGroupButton;
@@ -1464,6 +1470,48 @@ public partial class BattleHUD : UIScene
             StatusContainer.SetActive(false);
             _partyDetail.SetActive(true);
             TargetPanel.SetActive(false);
+        }
+    }
+
+    private void SelectBestItemTarget(TargetType targetType, ITEM_DATA itemData, Byte itemId)
+    {
+        if (targetType != TargetType.SingleAny || CurrentPlayerIndex <= -1)
+            return;
+
+        Int32 targetIndex = -1;
+        Single bestRating = 0;
+        BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(itemData.Ref.ScriptId);
+        if (factory == null)
+            return;
+
+        BTL_DATA caster = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
+        foreach (BattleUnit target in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        {
+            targetIndex++;
+
+            if (!_targetDead && target.IsUnderAnyStatus(BattleStatus.Death))
+                continue;
+
+            CMD_DATA testCommand = new CMD_DATA
+            {
+                cmd_no = BattleCommandId.Item,
+                sub_no = itemId,
+                aa = FF9StateSystem.Battle.FF9Battle.aa_data[0],
+                tar_id = target.Id,
+                info = new CMD_DATA.SELECT_INFO()
+            };
+
+            BattleCalculator v = new BattleCalculator(caster, target.Data, new BattleCommand(testCommand));
+            IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
+            if (script == null)
+                break;
+
+            Single rating = script.RateTarget();
+            if (rating > bestRating)
+            {
+                bestRating = rating;
+                _bestTargetIndex = targetIndex;
+            }
         }
     }
 
@@ -1582,7 +1630,12 @@ public partial class BattleHUD : UIScene
             || _targetCursor == TargetType.ManyAlly
             || _targetCursor == TargetType.ManyEnemy)
         {            
-            if (_defaultTargetHealingAttack)
+            if (_bestTargetIndex > -1)
+            {
+                GONavigationButton target = _targetPanel.AllTargets[_bestTargetIndex];
+                ButtonGroupState.SetCursorStartSelect(target, TargetGroupButton);
+            }
+            else if (_defaultTargetHealingAttack)
             {
                 Int32 targetIndex = GetFirstAliveZombieEnemyIndex();
                 if (targetIndex > -1)
