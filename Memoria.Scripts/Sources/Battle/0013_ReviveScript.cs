@@ -7,7 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Life, Full-Life, Rebirth Flame, Revive
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ReviveScript : IBattleScript
+    public sealed class ReviveScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0013;
 
@@ -53,5 +53,33 @@ namespace Memoria.Scripts.Battle
             return false;
         }
 
+        public Single RateTarget()
+        {
+            if (!_v.Target.CanBeRevived())
+                return 0;
+
+            if (_v.Target.IsZombie)
+            {
+                _v.MagicAccuracy();
+
+                Single hitRate = BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
+                Single evaRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
+
+                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death) * hitRate * evaRate;
+                if (!_v.Target.IsPlayer)
+                    result *= -1;
+                return result;
+            }
+
+            if (!_v.Target.IsPlayer)
+                return 0;
+
+            BattleStatus playerStatus = _v.Target.CurrentStatus;
+            BattleStatus removeStatus = _v.Command.AbilityStatus;
+            BattleStatus removedStatus = playerStatus & removeStatus;
+            Int32 rating = BattleScriptStatusEstimate.RateStatuses(removedStatus);
+
+            return -1 * rating;
+        }
     }
 }

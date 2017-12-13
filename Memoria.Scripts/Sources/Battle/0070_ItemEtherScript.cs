@@ -7,7 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Ether
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ItemEtherScript : IBattleScript
+    public sealed class ItemEtherScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0070;
 
@@ -27,11 +27,28 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.HasSupportAbility(SupportAbility1.Chemist))
                 _v.Context.Attack *= 2;
 
-            _v.Target.Flags |= CalcFlag.MpAlteration;
-            if (!_v.Target.IsZombie)
-                _v.Target.Flags |= CalcFlag.MpRecovery;
+            _v.TargetCommand.CalcMpMagicRecovery();
+        }
 
-            _v.Target.MpDamage = (Int16)Math.Min(9999, _v.Context.AttackPower * _v.Context.Attack);
+        public Single RateTarget()
+        {
+            _v.Context.Attack = 15;
+            _v.Context.AttackPower = _v.Command.Item.Power;
+            _v.Context.DefensePower = 0;
+
+            if (_v.Caster.HasSupportAbility(SupportAbility1.Chemist))
+                _v.Context.Attack *= 2;
+
+            _v.TargetCommand.CalcMpMagicRecovery();
+
+            Single rate = _v.Target.MpDamage * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentMp, _v.Target.MaximumMp);
+
+            if ((_v.Target.Flags & CalcFlag.MpRecovery) != CalcFlag.MpRecovery)
+                rate *= -1;
+            if (!_v.Target.IsPlayer)
+                rate *= -1;
+
+            return rate;
         }
     }
 }

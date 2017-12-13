@@ -9,7 +9,7 @@ namespace Memoria.Scripts.Battle
     /// Eat, Cook
     /// </summary>
     [BattleScript(Id)]
-    public sealed class EatScript : IBattleScript
+    public sealed class EatScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0065;
 
@@ -47,6 +47,22 @@ namespace Memoria.Scripts.Battle
             ff9abil.FF9Abil_SetMaster(_v.Caster.PlayerIndex, blueMagicId);
             BattleState.RaiseAbilitiesAchievement(blueMagicId);
             UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.ActionAbilityName(blueMagicId));
+        }
+
+        public Single RateTarget()
+        {
+            if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked() || _v.Target.HasCategory(EnemyCategory.Humanoid))
+                return 0;
+
+            if (_v.Target.CurrentHp > _v.Target.MaximumHp / _v.Command.Power)
+                return 0;
+
+            BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
+            Byte blueMagicId = enemyPrototype.BlueMagicId;
+            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.PlayerIndex, blueMagicId))
+                return 0;
+
+            return 1;
         }
     }
 }

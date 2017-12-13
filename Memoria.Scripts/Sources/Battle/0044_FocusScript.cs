@@ -6,7 +6,7 @@ namespace Memoria.Scripts.Battle
     /// Focus
     /// </summary>
     [BattleScript(Id)]
-    public sealed class FocusScript : IBattleScript
+    public sealed class FocusScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0044;
 
@@ -20,6 +20,11 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Magic = (Byte)Math.Min(99, _v.Target.Magic + _v.Target.Magic / _v.Command.Power);
+        }
+
+        public Single RateTarget()
+        {
+            return (Byte)Math.Min(99, _v.Target.Magic + _v.Target.Magic / _v.Command.Power);
         }
     }
 }

@@ -446,20 +446,42 @@ public partial class BattleHUD : UIScene
             statusPanel.Array[index].IsActive = false;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <remarks>There may be invisible players here, we must ignore them.</remarks>
     private IEnumerable<KnownUnit> EnumerateKnownPlayers()
     {
+        foreach (KnownUnit unit in EnumerateKnownUnits())
+        {
+            if (unit.Unit.IsPlayer)
+                yield return unit;
+        }
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <remarks>There may be invisible enemies here, we must ignore them.</remarks>
+    private IEnumerable<KnownUnit> EnumerateKnownEnemies()
+    {
+        foreach (KnownUnit unit in EnumerateKnownUnits())
+        {
+            if (!unit.Unit.IsPlayer)
+                yield return new KnownUnit(unit.Index - HonoluluBattleMain.EnemyStartIndex, unit.Unit);
+        }
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <remarks>There may be invisible units here, we must ignore them.</remarks>
+    private IEnumerable<KnownUnit> EnumerateKnownUnits()
+    {
+        Int32 index = 0;
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (!unit.IsPlayer)
+            if (!unit.IsSelected)
                 continue;
 
-            Int32 num = 0;
-            while (1 << num != unit.Id)
-                ++num;
-
-            Int32 index = _matchBattleIdPlayerList.IndexOf(num);
-            if (index >= 0)
-                yield return new KnownUnit(index, unit);
+            yield return new KnownUnit(index++, unit);
         }
     }
 
@@ -1249,7 +1271,7 @@ public partial class BattleHUD : UIScene
         if (commandType == CharacterCommandType.Ability)
         {
             Int32 abilityId = CharacterCommands.Commands[commandIndex].Abilities[_currentSubMenuIndex];
-            commandDetail.SubId = (UInt32)PatchAbility(abilityId);
+            commandDetail.SubId = PatchAbility(abilityId);
         }
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
         {
@@ -1418,12 +1440,23 @@ public partial class BattleHUD : UIScene
             if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
             {
                 CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]];
+                Byte abilityId = PatchAbility(ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]);
+                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilityId];
                 targetType = aaData.Info.Target;
                 _defaultTargetAlly = aaData.Info.DefaultAlly;
                 _defaultTargetDead = aaData.Info.DefaultOnDead;
                 _targetDead = aaData.Info.ForDead;
                 subMode = aaData.Info.DisplayStats;
+
+                CMD_DATA testCommand = new CMD_DATA
+                {
+                    cmd_no = _currentCommandId,
+                    sub_no = abilityId,
+                    aa = aaData,
+                    info = new CMD_DATA.SELECT_INFO()
+                };
+
+                SelectBestTarget(targetType, testCommand, aaData.Ref.ScriptId);
             }
             else if (_currentCommandIndex == CommandMenu.Item)
             {
@@ -1436,7 +1469,15 @@ public partial class BattleHUD : UIScene
                 _targetDead = itemData.info.ForDead;
                 subMode = itemData.info.DisplayStats;
 
-                SelectBestItemTarget(targetType, itemData, itemId);
+                CMD_DATA testCommand = new CMD_DATA
+                {
+                    cmd_no = _currentCommandId,
+                    sub_no = itemId,
+                    aa = FF9StateSystem.Battle.FF9Battle.aa_data[0],
+                    info = new CMD_DATA.SELECT_INFO()
+                };
+
+                SelectBestTarget(targetType, testCommand, itemData.Ref.ScriptId);
             }
             else if (_currentCommandIndex == CommandMenu.Attack && CurrentPlayerIndex > -1)
             {
@@ -1473,33 +1514,26 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private void SelectBestItemTarget(TargetType targetType, ITEM_DATA itemData, Byte itemId)
+    private void SelectBestTarget(TargetType targetType, CMD_DATA testCommand, Byte scriptId)
     {
+        if (!Configuration.Battle.SelectBestTarget)
+            return;
         if (targetType != TargetType.SingleAny || CurrentPlayerIndex <= -1)
             return;
 
-        Int32 targetIndex = -1;
         Single bestRating = 0;
-        BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(itemData.Ref.ScriptId);
+        BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(scriptId);
         if (factory == null)
             return;
 
         BTL_DATA caster = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
-        foreach (BattleUnit target in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        foreach (KnownUnit knownTarget in EnumerateKnownUnits())
         {
-            targetIndex++;
-
+            BattleUnit target = knownTarget.Unit;
             if (!_targetDead && target.IsUnderAnyStatus(BattleStatus.Death))
                 continue;
 
-            CMD_DATA testCommand = new CMD_DATA
-            {
-                cmd_no = BattleCommandId.Item,
-                sub_no = itemId,
-                aa = FF9StateSystem.Battle.FF9Battle.aa_data[0],
-                tar_id = target.Id,
-                info = new CMD_DATA.SELECT_INFO()
-            };
+            testCommand.tar_id = target.Id;
 
             BattleCalculator v = new BattleCalculator(caster, target.Data, new BattleCommand(testCommand));
             IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
@@ -1510,7 +1544,7 @@ public partial class BattleHUD : UIScene
             if (rating > bestRating)
             {
                 bestRating = rating;
-                _bestTargetIndex = targetIndex;
+                _bestTargetIndex = knownTarget.Index;
             }
         }
     }
@@ -1856,7 +1890,7 @@ public partial class BattleHUD : UIScene
     }
 
 
-    private Int32 PatchAbility(Int32 id)
+    private Byte PatchAbility(Int32 id)
     {
         if (AbilCarbuncle == id)
         {
@@ -1882,7 +1916,7 @@ public partial class BattleHUD : UIScene
             if (character.Equipment.Accessory == 222)
                 id++;
         }
-        return id;
+        return checked((Byte)id);
     }
 
     private UInt16 GetDeadOrCurrentPlayer(Boolean player)

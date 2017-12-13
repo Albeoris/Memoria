@@ -13,6 +13,28 @@ namespace Memoria
         Single RateTarget();
     }
 
+    public static class BattleScriptDamageEstimate
+    {
+        public static Single RateHpMp(Int32 currentValue, Int32 maxValue)
+        {
+            Single hpDiff = maxValue - currentValue;
+            return hpDiff / maxValue;
+        }
+    }
+
+    public static class BattleScriptAccuracyEstimate
+    {
+        public static Single RatePlayerAttackHit(Int32 hit)
+        {
+            return hit * 0.01f;
+        }
+
+        public static Single RatePlayerAttackEvade(Int32 eva)
+        {
+            return (100 - eva) * 0.01f;
+        }
+    }
+
     public static class BattleScriptStatusEstimate
     {
         public static Int32 RateStatuses(BattleStatus statuses)

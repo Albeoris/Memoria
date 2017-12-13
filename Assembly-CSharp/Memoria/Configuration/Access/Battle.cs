@@ -11,6 +11,7 @@ namespace Memoria
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 AutoPotionOverhealLimit => Instance._battle.AutoPotionOverhealLimit;
             public static Boolean GarnetConcentrate => Instance._battle.GarnetConcentrate;
+            public static Boolean SelectBestTarget => Instance._battle.SelectBestTarget;
         }
     }
 }

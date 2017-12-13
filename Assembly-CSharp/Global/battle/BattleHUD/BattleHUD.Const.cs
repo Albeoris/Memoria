@@ -239,17 +239,13 @@ public partial class BattleHUD : UIScene
         return null;
     }
 
-    private static Int32 GetFirstAliveZombieEnemyIndex()
+    private Int32 GetFirstAliveZombieEnemyIndex()
     {
-        Int32 index = -1;
-        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        foreach (KnownUnit knownEnemy in EnumerateKnownEnemies())
         {
-            if (unit.IsPlayer)
-                continue;
-
-            index++;
+            BattleUnit unit = knownEnemy.Unit;
             if (unit.CurrentHp > 0 && unit.IsZombie && !unit.IsUnderAnyStatus(BattleStatus.Vanish))
-                return index;
+                return knownEnemy.Index;
         }
         return -1;
     }

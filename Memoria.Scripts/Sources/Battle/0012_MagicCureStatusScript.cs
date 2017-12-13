@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -6,7 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Panacea, Stona, Esuna, Dispel
     /// </summary>
     [BattleScript(Id)]
-    public sealed class MagicCureStatusScript : IBattleScript
+    public sealed class MagicCureStatusScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0012;
 
@@ -20,6 +21,19 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.TargetCommand.TryRemoveAbilityStatuses();
+        }
+
+        public Single RateTarget()
+        {
+            BattleStatus playerStatus = _v.Target.CurrentStatus;
+            BattleStatus removeStatus = _v.Command.AbilityStatus;
+            BattleStatus removedStatus = playerStatus & removeStatus;
+            Int32 rating = BattleScriptStatusEstimate.RateStatuses(removedStatus);
+
+            if (_v.Target.IsPlayer)
+                return -1 * rating;
+
+            return rating;
         }
     }
 }

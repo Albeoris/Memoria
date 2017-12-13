@@ -81,12 +81,19 @@ namespace Memoria
         {
             _target.Flags |= CalcFlag.HpAlteration;
 
-            Int32 recovery = Math.Min(9999, _context.AttackPower * _context.Attack);
-
             if (!_target.IsZombie)
                 _target.Flags |= CalcFlag.HpRecovery;
 
-            _target.HpDamage = (Int16)recovery;
+            _target.HpDamage = (Int16)Math.Min(9999, _context.AttackPower * _context.Attack);
+        }
+
+        public void CalcMpMagicRecovery()
+        {
+            _target.Flags |= CalcFlag.MpAlteration;
+            if (!_target.IsZombie)
+                _target.Flags |= CalcFlag.MpRecovery;
+
+            _target.MpDamage = (Int16)Math.Min(9999, _context.AttackPower * _context.Attack);
         }
 
         public void TryAlterMagicStatuses()

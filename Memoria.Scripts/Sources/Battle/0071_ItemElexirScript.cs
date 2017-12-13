@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -6,7 +7,7 @@ namespace Memoria.Scripts.Battle
     /// Elexir
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ItemElexirScript : IBattleScript
+    public sealed class ItemElexirScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0071;
 
@@ -31,6 +32,33 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.CurrentHp = _v.Target.MaximumHp;
                 _v.Target.CurrentMp = _v.Target.MaximumMp;
+            }
+        }
+
+        public Single RateTarget()
+        {
+            if (!_v.Target.CanBeAttacked())
+                return 0;
+
+            if (_v.Target.IsZombie)
+            {
+                Int32 rate = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death);
+                if (!_v.Target.IsPlayer)
+                    rate *= -1;
+
+                return rate;
+            }
+            else
+            {
+                Single rate = 0;
+
+                rate += _v.Target.MaximumHp * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentHp, _v.Target.MaximumHp);
+                rate += _v.Target.MaximumMp * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentMp, _v.Target.MaximumMp);
+
+                if (!_v.Target.IsPlayer)
+                    rate *= -1;
+
+                return rate;
             }
         }
     }

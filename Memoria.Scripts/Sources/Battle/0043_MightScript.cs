@@ -6,7 +6,7 @@ namespace Memoria.Scripts.Battle
     /// Might
     /// </summary>
     [BattleScript(Id)]
-    public sealed class MightScript : IBattleScript
+    public sealed class MightScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0043;
 
@@ -20,6 +20,11 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Strength = (Byte)Math.Min(99, _v.Target.Strength + _v.Target.Strength / _v.Command.Power);
+        }
+
+        public Single RateTarget()
+        {
+            return (Byte)Math.Min(99, _v.Target.Strength + _v.Target.Strength / _v.Command.Power);
         }
     }
 }
