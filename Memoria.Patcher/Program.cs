@@ -167,9 +167,9 @@ namespace Memoria.Patcher
 
             foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, extensions, SearchOption.AllDirectories))
             {
-                DateTime sourceFileTime = File.GetCreationTimeUtc(sourceFile);
+                DateTime sourceFileTime = File.GetLastWriteTimeUtc(sourceFile);
                 String targetFile = targetDirectory + sourceFile.Substring(sourceDirectory.Length);
-                if (File.Exists(targetFile) && File.GetCreationTimeUtc(targetFile) == sourceFileTime)
+                if (File.Exists(targetFile) && File.GetLastWriteTimeUtc(targetFile) == sourceFileTime)
                     continue;
 
                 String directoryName = Path.GetDirectoryName(targetFile);
