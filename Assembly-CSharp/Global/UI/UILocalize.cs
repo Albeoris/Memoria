@@ -19,7 +19,7 @@ public class UILocalize : MonoBehaviour
     private string OverwriteText(string rawText)
     {
         string result = rawText;
-        if (this.key == "Collector" && Localization.language == "German")
+        if (this.key == "Collector" && Localization.CurrentLanguage == "German")
         {
             result = rawText.Substring(0, rawText.Length - 1);
         }

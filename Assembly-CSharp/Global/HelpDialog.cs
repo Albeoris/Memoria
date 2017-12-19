@@ -131,7 +131,7 @@ public class HelpDialog : Singleton<HelpDialog>
 				this.dialogRect.y = 880f;
 				this.dialogRect.z = 420f;
 				this.dialogRect.w = 332f;
-				if (Localization.language != "Japanese")
+				if (Localization.CurrentLanguage != "Japanese")
 				{
 					this.phraseLabel.fontSize = 32;
 				}

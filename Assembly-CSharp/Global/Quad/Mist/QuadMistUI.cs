@@ -78,7 +78,7 @@ public class QuadMistUI : UIScene
 				UISprite uisprite = array[i];
 				uisprite.atlas = this.textAtlas;
 			}
-			String language = Localization.language;
+			String language = Localization.CurrentLanguage;
 			switch (language)
 			{
 			case "English(US)":

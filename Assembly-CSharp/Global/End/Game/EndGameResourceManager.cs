@@ -53,7 +53,7 @@ public class EndGameResourceManager : MonoBehaviour
 	private String GetQuadMistTextAtlasPath()
 	{
 		String str = String.Empty;
-		String language = Localization.language;
+		String language = Localization.CurrentLanguage;
 		switch (language)
 		{
 		case "English(US)":

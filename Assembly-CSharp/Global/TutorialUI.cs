@@ -177,7 +177,7 @@ public class TutorialUI : UIScene
 
 	private void DisplayBattleTutorial()
 	{
-		String str = (!(Localization.language == "Japanese")) ? String.Empty : "_jp";
+		String str = (!(Localization.CurrentLanguage == "Japanese")) ? String.Empty : "_jp";
 		this.battleTutorialImage1.spriteName = ((!FF9StateSystem.MobilePlatform) ? ("tutorial_pc_01" + str) : ("tutorial_mobile_01" + str));
 		this.battleTutorialImage2.spriteName = ((!FF9StateSystem.MobilePlatform) ? ("tutorial_pc_02" + str) : ("tutorial_mobile_02" + str));
 		this.battleTutorialDialogImage2.spriteName = Localization.Get((!FF9StateSystem.MobilePlatform) ? "TutorialTapOnCharacterIconPC" : "TutorialTapOnCharacterIconMobile");

@@ -239,6 +239,7 @@
     <Compile Include="Memoria\Application\PlayerWindow.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\AtlasImport.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\PsdImport.cs" />
+    <Compile Include="Memoria\Assets\Import\Text\CharacterNamesImporter.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxConstructor.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxController.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxRenderer.cs" />
@@ -246,6 +247,8 @@
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogLabelFilter.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTag.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTagCode.cs" />
+    <Compile Include="Memoria\Assets\Text\CharacterNamesFormatter.cs" />
+    <Compile Include="Memoria\Assets\Text\Export\CharacterNamesExporter.cs" />
     <Compile Include="Memoria\Configuration\Access\Cheats.cs" />
     <Compile Include="Memoria\Configuration\Access\Control.cs" />
     <Compile Include="Memoria\Configuration\Access\Debug.cs" />
@@ -1043,7 +1046,7 @@
     <Compile Include="Memoria\Assets\Text\Formatters\LocationNameFormatter.cs" />
     <Compile Include="Memoria\Assets\Text\GraphicResources.cs" />
     <Compile Include="Memoria\Assets\Text\Localization.cs" />
-    <Compile Include="Memoria\Assets\Text\LocalizationDictionary.cs" />
+    <Compile Include="Memoria\Assets\Text\LanguageMap.cs" />
     <Compile Include="Memoria\Assets\Text\ModTextResources.cs" />
     <Compile Include="Memoria\Assets\Text\ResourceExporter.cs" />
     <Compile Include="Memoria\Assets\Text\ResourceImporter.cs" />

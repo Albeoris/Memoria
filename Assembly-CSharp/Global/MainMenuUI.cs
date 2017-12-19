@@ -450,7 +450,7 @@ public class MainMenuUI : UIScene
 				{
 					UInt32 exp = (player2.level < 99) ? ff9level.CharacterLevelUps[player2.level].ExperienceToLevel : player2.exp;
 					Int32 num5;
-					if (Localization.language == "English(US)" || Localization.language == "English(UK)" || Localization.language == "German")
+					if (Localization.CurrentLanguage == "English(US)" || Localization.CurrentLanguage == "English(UK)" || Localization.CurrentLanguage == "German")
 					{
 						num5 = 82;
 					}

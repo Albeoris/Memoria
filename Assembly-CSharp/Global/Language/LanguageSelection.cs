@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -16,24 +17,25 @@ public class LanguageSelection : MonoBehaviour
 	{
 		EventDelegate.Add(this.mList.onChange, delegate
 		{
-			Localization.language = UIPopupList.current.value;
+			Localization.CurrentLanguage = UIPopupList.current.value;
 		});
 	}
 
 	public void Refresh()
 	{
-		if (this.mList != (UnityEngine.Object)null && Localization.knownLanguages != null)
-		{
-			this.mList.Clear();
-			Int32 i = 0;
-			Int32 num = (Int32)Localization.knownLanguages.Length;
-			while (i < num)
-			{
-				this.mList.items.Add(Localization.knownLanguages[i]);
-				i++;
-			}
-			this.mList.value = Localization.language;
-		}
+	    if (this.mList == null)
+            return;
+
+	    ICollection<String> knownLanguages = Localization.KnownLanguages;
+	    if (knownLanguages == null)
+	        return;
+
+        this.mList.Clear();
+
+        foreach (var language in knownLanguages)
+            this.mList.items.Add(language);
+        
+	    this.mList.value = Localization.CurrentLanguage;
 	}
 
 	private UIPopupList mList;

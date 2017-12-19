@@ -11,9 +11,17 @@ namespace Memoria.Assets
 
         protected override TxtEntry[] PrepareEntries()
         {
-            Int32 ind = Localization.Provider.CurrentLanguageIndex;
-            Dictionary<String, String[]> dic = Localization.Provider.ProvideDictionary();
-            return dic.Select(p => new TxtEntry {Prefix = p.Key, Value = p.Value[ind]}).ToArray();
+            String symbol = EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol();
+
+            SortedList<String, String> dic = Localization.Provider.ProvideDictionary(symbol);
+            IList<String> keys = dic.Keys;
+            IList<String> values = dic.Values;
+
+            TxtEntry[] result = new TxtEntry[dic.Count];
+            for (Int32 i = 0; i < result.Length; i++)
+                result[i] = new TxtEntry {Prefix = keys[i], Value =  values[i]};
+
+            return result;
         }
     }
 }

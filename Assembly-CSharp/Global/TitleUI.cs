@@ -1148,7 +1148,7 @@ public class TitleUI : UIScene
     private void OnFaqsButtonClick()
     {
         FF9Sfx.FF9SFX_Play(103);
-        String language = Localization.language;
+        String language = Localization.CurrentLanguage;
         switch (language)
         {
             case "English(US)":
@@ -1183,7 +1183,7 @@ public class TitleUI : UIScene
         }
 
         FF9Sfx.FF9SFX_Play(103);
-        String language = Localization.language;
+        String language = Localization.CurrentLanguage;
         switch (language)
         {
             case "English(US)":
@@ -1334,7 +1334,7 @@ public class TitleUI : UIScene
 
     private GameObject GetGameObjectFromCurrentLanguage()
     {
-        String language = Localization.language;
+        String language = Localization.CurrentLanguage;
         switch (language)
         {
             case "English(US)":

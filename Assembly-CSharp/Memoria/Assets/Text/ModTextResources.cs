@@ -24,6 +24,7 @@ namespace Memoria.Assets
         private const String LocationNamesDirectoryPath = "/Location";
         private const String FieldsDirectoryPath = "/Field";
         private const String FieldTagsPath = FieldsDirectoryPath + "/FieldTags.strings";
+        private const String CharacterNamesPath = "/CharacterNames.strings";
 
         private const String ManifestDirectoryPath = "/Manifest";
         private const String CreditsAmazonPath = "/StaffCredits_Amazon.txt";
@@ -51,6 +52,7 @@ namespace Memoria.Assets
             public static String WorldLocations => GetCurrentPath(WorldLocationsPath);
             public static String Chocobo => GetCurrentPath(ChocoboPath);
             public static String FieldTags => GetCurrentPath(FieldTagsPath);
+            public static String CharacterNames => GetCurrentPath(CharacterNamesPath);
             public static String LocationNamesDirectory => GetCurrentPath(LocationNamesDirectoryPath);
             public static String FieldsDirectory => GetCurrentPath(FieldsDirectoryPath);
 
@@ -91,6 +93,7 @@ namespace Memoria.Assets
             public static String WorldLocations => GetCurrentPath(WorldLocationsPath);
             public static String Chocobo => GetCurrentPath(ChocoboPath);
             public static String FieldTags => GetCurrentPath(FieldTagsPath);
+            public static String CharacterNames => GetCurrentPath(CharacterNamesPath);
             public static String LocationNamesDirectory => GetCurrentPath(LocationNamesDirectoryPath);
             public static String FieldsDirectory => GetCurrentPath(FieldsDirectoryPath);
 

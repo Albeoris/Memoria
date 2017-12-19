@@ -1,110 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Object = System.Object;
 
 namespace Memoria.Assets
 {
     public static class Localization
     {
-        public delegate Byte[] LoadFunction(String path);
+        internal static readonly LanguageMap Provider = new LanguageMap();
 
-        public delegate void OnLocalizeNotification();
+        public static ICollection<String> KnownLanguages => Provider.KnownLanguages;
 
-        internal static readonly LocalizationDictionary Provider = new LocalizationDictionary();
-
-        public static Boolean localizationHasBeenSet;
-        public static LoadFunction loadFunction;
-        public static OnLocalizeNotification onLocalize;
-
-        [Obsolete("Localization is now always active. You no longer need to check this property.")]
-        public static Boolean isActive => true;
-
-        public static String[] knownLanguages => Provider.ProvideLanguages();
-
-        public static Dictionary<String, String[]> dictionary
+        public static String CurrentLanguage
         {
-            get { return Provider.ProvideDictionary(); }
-            set { Provider.SetDictionary(value); }
-        }
-
-        public static String language
-        {
-            get { return Provider.ProvideLanguage(); }
-            set { Provider.SetLanguage(value); }
-        }
-
-        public static void Load(TextAsset asset)
-        {
-            ByteReader byteReader = new ByteReader(asset);
-            Provider.Set(asset.name, byteReader.ReadDictionary());
-        }
-
-        public static void Set(String languageName, Byte[] bytes)
-        {
-            ByteReader byteReader = new ByteReader(bytes);
-            Provider.Set(languageName, byteReader.ReadDictionary());
-        }
-
-        public static void Set(String key, String value)
-        {
-            Provider.Set(key, value);
-        }
-
-        public static void ReplaceKey(String key, String val)
-        {
-            Provider.ReplaceKey(key, val);
-        }
-
-        public static void ClearReplacements()
-        {
-            Provider.ClearReplacements();
-        }
-
-        public static Boolean LoadCSV(TextAsset asset, Boolean merge = false)
-        {
-            return Provider.TryLoadCSV(asset.bytes, merge);
-        }
-
-        public static Boolean LoadCSV(Byte[] bytes, Boolean merge = false)
-        {
-            return Provider.TryLoadCSV(bytes, merge);
-        }
-
-        public static void Set(String languageName, Dictionary<String, String> dic)
-        {
-            Provider.Set(languageName, dic);
-        }
-
-        public static String GetPath()
-        {
-            return "EmbeddedAsset/Text/" + GetSymbol();
+            get => Provider.CurrentLanguage;
+            set => Provider.SelectLanguage(value);
         }
 
         public static String GetSymbol()
         {
-            return Get("Symbol");
+            return Provider.CurrentSymbol;
         }
 
         public static String Get(String key)
         {
             return Provider.Get(key);
-        }
-
-        public static String Format(String key, params Object[] parameters)
-        {
-            return String.Format(Get(key), parameters);
-        }
-
-        public static Boolean Exists(String key)
-        {
-            return Provider.Exists(key);
-        }
-
-        [Obsolete("Use Localization.Get instead")]
-        public static String Localize(String key)
-        {
-            return Get(key);
         }
     }
 }

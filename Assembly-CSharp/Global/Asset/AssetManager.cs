@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Object = System.Object;
 
@@ -93,6 +94,15 @@ public static class AssetManager
 			}
 		}
 	}
+
+    public static Byte[] LoadBinary(String resourcePath)
+    {
+        TextAsset textAsset = Resources.Load<TextAsset>(resourcePath);
+        if (textAsset == null)
+            throw new FileNotFoundException(resourcePath);
+
+        return textAsset.bytes;
+    }
 
 	public static T Load<T>(String name, Boolean suppressError = false) where T : UnityEngine.Object
 	{

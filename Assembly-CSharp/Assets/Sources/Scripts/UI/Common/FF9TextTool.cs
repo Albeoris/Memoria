@@ -77,6 +77,23 @@ namespace Assets.Sources.Scripts.UI.Common
             return InitializeEtcTextInternal().GetEnumerator();
         }
 
+        public static IEnumerator InitializeCharacterNamesText()
+        {
+            Log.Message(nameof(InitializeEtcText));
+            return InitializeCharacterNamesTextInternal().GetEnumerator();
+        }
+
+        private static IEnumerable InitializeCharacterNamesTextInternal()
+        {
+            IsLoading = true;
+
+            CharacterNamesImporter importer = new CharacterNamesImporter();
+            foreach (var state in importer.LoadAsync())
+                yield return state;
+
+            IsLoading = false;
+        }
+
         private static IEnumerable InitializeEtcTextInternal()
         {
             IsLoading = true;
@@ -214,6 +231,20 @@ namespace Assets.Sources.Scripts.UI.Common
             return str;
         }
 
+        public static String CharacterDefaultName(Int32 nameId)
+        {
+            if (FF9StateSystem.Settings.CurrentLanguage == null)
+                FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
+
+            if (characterNames == null)
+                characterNames = CharacterNamesFormatter.CharacterDefaultNames();
+
+            if (nameId < 0 || nameId >= characterNames.Length)
+                return "Unknown";
+
+            return characterNames[nameId];
+        }
+
         public static String[] ExtractSentense(String text)
         {
             String[] strArray1 = Regex.Split(text, "\\[STRT\\=");
@@ -293,6 +324,7 @@ namespace Assets.Sources.Scripts.UI.Common
             yield return base.StartCoroutine(FF9TextTool.InitializeBattleText());
             yield return base.StartCoroutine(FF9TextTool.InitializeLocationText());
             yield return base.StartCoroutine(FF9TextTool.InitializeEtcText());
+            yield return base.StartCoroutine(FF9TextTool.InitializeCharacterNamesText());
             if (setMenuLanguageCallback != null)
             {
                 setMenuLanguageCallback();
@@ -384,195 +416,6 @@ namespace Assets.Sources.Scripts.UI.Common
         public static String CharacterProfile(Int32 charId)
         {
             return Localization.Get("CharacterProfile" + charId);
-        }
-
-        public static String CharacterDefaultName(Int32 id)
-        {
-            String[] array = null;
-            if (FF9StateSystem.Settings.CurrentLanguage == null)
-            {
-                FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
-            }
-            String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-            switch (currentLanguage)
-            {
-                case "English(US)":
-                    array = new String[]
-                    {
-                        "Zidane",
-                        "Vivi",
-                        "Dagger",
-                        "Steiner",
-                        "Freya",
-                        "Quina",
-                        "Eiko",
-                        "Amarant",
-                        "Cinna",
-                        "Cinna",
-                        "Marcus",
-                        "Marcus",
-                        "Blank",
-                        "Blank",
-                        "Beatrix",
-                        "Beatrix",
-                        "Zidane",
-                        "Cinna",
-                        "Marcus",
-                        "Blank"
-                    };
-                    break;
-                case "English(UK)":
-                    array = new String[]
-                    {
-                        "Zidane",
-                        "Vivi",
-                        "Dagger",
-                        "Steiner",
-                        "Freya",
-                        "Quina",
-                        "Eiko",
-                        "Amarant",
-                        "Cinna",
-                        "Cinna",
-                        "Marcus",
-                        "Marcus",
-                        "Blank",
-                        "Blank",
-                        "Beatrix",
-                        "Beatrix",
-                        "Zidane",
-                        "Cinna",
-                        "Marcus",
-                        "Blank"
-                    };
-                    break;
-                case "Japanese":
-                    array = new String[]
-                    {
-                        "ジタン",
-                        "ビビ",
-                        "ダガー",
-                        "スタイナー",
-                        "フライヤ",
-                        "クイナ",
-                        "エーコ",
-                        "サラマンダー",
-                        "シナ",
-                        "シナ",
-                        "マーカス",
-                        "マーカス",
-                        "ブランク",
-                        "ブランク",
-                        "ベアトリクス",
-                        "ベアトリクス",
-                        "ジタン",
-                        "シナ",
-                        "マーカス",
-                        "ブランク"
-                    };
-                    break;
-                case "German":
-                    array = new String[]
-                    {
-                        "Zidane",
-                        "Vivi",
-                        "Lili",
-                        "Steiner",
-                        "Freya",
-                        "Quina",
-                        "Eiko",
-                        "Mahagon",
-                        "Cinna",
-                        "Cinna",
-                        "Marcus",
-                        "Marcus",
-                        "Blank",
-                        "Blank",
-                        "Beatrix",
-                        "Beatrix",
-                        "Zidane",
-                        "Cinna",
-                        "Marcus",
-                        "Blank"
-                    };
-                    break;
-                case "French":
-                    array = new String[]
-                    {
-                        "Djidane",
-                        "Bibi",
-                        "Dagga",
-                        "Steiner",
-                        "Freyja",
-                        "Kweena",
-                        "Eiko",
-                        "Tarask",
-                        "Cina",
-                        "Cina",
-                        "Markus",
-                        "Markus",
-                        "Frank",
-                        "Frank",
-                        "Beate",
-                        "Beate",
-                        "Djidane",
-                        "Cina",
-                        "Markus",
-                        "Frank"
-                    };
-                    break;
-                case "Italian":
-                    array = new String[]
-                    {
-                        "Gidan",
-                        "Vivi",
-                        "Daga",
-                        "Steiner",
-                        "Freija",
-                        "Quina",
-                        "Eiko",
-                        "Amarant",
-                        "Er Cina",
-                        "Er Cina",
-                        "Marcus",
-                        "Marcus",
-                        "Blank",
-                        "Blank",
-                        "Beatrix",
-                        "Beatrix",
-                        "Gidan",
-                        "Er Cina",
-                        "Marcus",
-                        "Blank"
-                    };
-                    break;
-                case "Spanish":
-                    array = new String[]
-                    {
-                        "Yitán",
-                        "Vivi",
-                        "Daga",
-                        "Steiner",
-                        "Freija",
-                        "Quina",
-                        "Eiko",
-                        "Amarant",
-                        "Cinna",
-                        "Cinna",
-                        "Marcus",
-                        "Marcus",
-                        "Blank",
-                        "Blank",
-                        "Beatrix",
-                        "Beatrix",
-                        "Yitán",
-                        "Cinna",
-                        "Marcus",
-                        "Blank"
-                    };
-                    break;
-            }
-            return (array != null) ? ((id >= (Int32)array.Length) ? String.Empty : array[id]) : String.Empty;
         }
 
         public static String LocationName(Int32 id)
@@ -677,6 +520,8 @@ namespace Assets.Sources.Scripts.UI.Common
         private static String[] actionAbilityName;
 
         private static String[] actionAbilityHelpDesc;
+
+        private static String[] characterNames;
 
         private static String[] commandName;
 
@@ -817,6 +662,11 @@ namespace Assets.Sources.Scripts.UI.Common
         public static void SetActionAbilityHelpDesc(String[] value)
         {
             actionAbilityHelpDesc = value;
+        }
+
+        public static void SetCharacterNames(String[] value)
+        {
+            characterNames = value;
         }
     }
 }

@@ -18,7 +18,7 @@ public class QuadMistResourceManager : MonoBehaviour
 	private void InitAtlasPath()
 	{
 		String text = String.Empty;
-		String language = Localization.language;
+		String language = Localization.CurrentLanguage;
 		switch (language)
 		{
 		case "English(US)":
@@ -197,7 +197,7 @@ public class QuadMistResourceManager : MonoBehaviour
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list7 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_bg.png"));
-		if (Localization.language == "Japanese")
+		if (Localization.CurrentLanguage == "Japanese")
 		{
 			list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_mg_jp.png"));
 		}

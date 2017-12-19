@@ -205,7 +205,7 @@ public class ActiveTimeEvent : MonoBehaviour
 
 	private String GetText1SpriteName()
 	{
-		String language = Localization.language;
+		String language = Localization.CurrentLanguage;
 		String text = language;
 		switch (text)
 		{
@@ -229,7 +229,7 @@ public class ActiveTimeEvent : MonoBehaviour
 
 	private String GetText2SpriteName()
 	{
-		String language = Localization.language;
+		String language = Localization.CurrentLanguage;
 		String text = language;
 		switch (text)
 		{

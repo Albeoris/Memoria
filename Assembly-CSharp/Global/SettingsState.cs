@@ -133,8 +133,7 @@ public class SettingsState : MonoBehaviour
                 Debug.Log("serializer.ReadSystemData.callback 2 ReadSystemData : fail");
             }
             PersistenSingleton<UIManager>.Instance.TitleScene.SetRotateScreen();
-            Localization.localizationHasBeenSet = false;
-            Localization.language = CurrentLanguage;
+            Localization.CurrentLanguage = CurrentLanguage;
             UIManager.Field.InitializeATEText();
             StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(callback));
             EventInput.ChangeInputLayout(CurrentLanguage);
@@ -185,10 +184,14 @@ public class SettingsState : MonoBehaviour
                 return "French";
             case SystemLanguage.German:
                 return "German";
+            case SystemLanguage.Italian:
+                return "Italian";
+            case SystemLanguage.Japanese:
+                return "Japanese";
+            case SystemLanguage.Spanish:
+                return "Spanish";
             default:
-                if (systemLanguage == SystemLanguage.Italian)
-                    return "Italian";
-                return systemLanguage == SystemLanguage.Japanese || systemLanguage != SystemLanguage.Spanish ? "English(US)" : "Spanish";
+                return "English(US)";
         }
     }
 
@@ -199,7 +202,7 @@ public class SettingsState : MonoBehaviour
             //if (errNo != DataSerializerErrorCode.Success)
             //    ;
             CurrentLanguage = language;
-            Localization.language = language;
+            Localization.CurrentLanguage = language;
             UIManager.Field.InitializeATEText();
             StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(callback));
         };

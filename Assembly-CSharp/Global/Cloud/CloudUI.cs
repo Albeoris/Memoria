@@ -399,7 +399,7 @@ public class CloudUI : UIScene
 	private void DisplayTimeStamp()
 	{
 		String format = String.Empty;
-		String language = Localization.language;
+		String language = Localization.CurrentLanguage;
 		switch (language)
 		{
 		case "English(US)":
@@ -513,7 +513,7 @@ public class CloudUI : UIScene
 				if (errNo == DataSerializerErrorCode.Success)
 				{
 					FF9StateSystem.Settings.CurrentLanguage = LanguageCode.ConvertToLanguageName(selectedLanguage);
-					Localization.language = LanguageCode.ConvertToLanguageName(selectedLanguage);
+					Localization.CurrentLanguage = LanguageCode.ConvertToLanguageName(selectedLanguage);
 					UIManager.Field.InitializeATEText();
 					this.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(delegate
 					{

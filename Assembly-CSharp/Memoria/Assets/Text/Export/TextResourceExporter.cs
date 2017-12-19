@@ -55,6 +55,7 @@ namespace Memoria.Assets
             yield return new BattleExporter();
             yield return new LocationNameExporter();
             yield return new FieldExporter();
+            yield return new CharacterNamesExporter();
         }
     }
 
