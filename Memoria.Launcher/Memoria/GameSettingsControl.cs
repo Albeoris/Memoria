@@ -40,7 +40,7 @@ namespace Memoria.Launcher
                 _validSamplingFrequency.Add(frequency);
 
             SetCols(2);
-            SetRows(8);
+            SetRows(9);
 
             Width = 200;
             VerticalAlignment = VerticalAlignment.Top;
@@ -79,25 +79,25 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(0, 8, 0, 3);
             
-            AddUiElement(UiTextBlockFactory.Create("Active monitor:"), row: 0, col: 0).Margin = rowMargin;
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, colSpan:2).Margin = rowMargin;
             UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 1, col: 0, rowSpan: 0, colSpan: 2);
             monitor.ItemsSource = GetAvailableMonitors();
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create("Resolution:"), row: 2, col: 0).Margin = rowMargin;
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 2, col: 0).Margin = rowMargin;
             UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 3, col: 0);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create("Windowed", null), row: 3, col: 1);
+            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Windowed, null), row: 3, col: 1);
             windowedCheckBox.Margin = rowMargin;
             windowedCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Windowed)) {Mode = BindingMode.TwoWay});
 
-            AddUiElement(UiTextBlockFactory.Create("Audio sampling frequency:"), 4, 0, 0, 2).Margin = rowMargin;
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency), 4, 0, 0, 2).Margin = rowMargin;
             UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 5, 0, 0, 2);
-            audio.ItemStringFormat = "{0} Hz";
+            audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
             audio.ItemsSource = EnumerateAudioSettings().ToArray();
             audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
@@ -108,9 +108,13 @@ namespace Memoria.Launcher
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create("Debuggable", null), 6, 1);
-            debuggableCheckBox.Margin = new Thickness(0, 8, 0, 8);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 6, 1);
+            debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
+
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 7, 0, 0, 2);
+            checkUpdates.Margin = new Thickness(0, 8, 0, 8);
+            checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
 
             foreach (FrameworkElement child in Children)
             {
@@ -168,32 +172,32 @@ namespace Memoria.Launcher
             {
                 if (_audioFrequency != value)
                 {
-                    if (MessageBox.Show((Window)this.GetRootElement(), "Are you sure you want to patch SdLib.dll?", "Patch SdLib.dll", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.AreYouSure, Lang.SdLib.Caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Boolean? x64 = TryWriteAudioSamplingFrequency(true, value, false);
                         Boolean? x86 = TryWriteAudioSamplingFrequency(false, value, false);
                         if (x64 == true && x86 == true)
                         {
-                            MessageBox.Show((Window)this.GetRootElement(), "SdLib.dll is successfully patched for both platforms.", "Patch SdLib.dll", MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.SuccessBoth, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Information);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
                         else if (x64 == true)
                         {
-                            MessageBox.Show((Window)this.GetRootElement(), "SdLib.dll is successfully patched for the x64 platform only.", "Patch SdLib.dll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.SuccessX64 , Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
                         else if (x86 == true)
                         {
-                            MessageBox.Show((Window)this.GetRootElement(), "SdLib.dll is successfully patched for the x86 platform only.", "Patch SdLib.dll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.SuccessX86, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
                         else
                         {
                             Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
-                            MessageBox.Show((Window)this.GetRootElement(), "Unfortunately, we could not patch the SdLib.dll. Please share your version of this file.", "Patch SdLib.dll", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.Fail, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else
@@ -269,6 +273,32 @@ namespace Memoria.Launcher
             }
         }
 
+        public String[] DownloadMirrors
+        {
+            get { return _downloadMirrors; }
+            set
+            {
+                if (_downloadMirrors != value)
+                {
+                    _downloadMirrors = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Boolean CheckUpdates
+        {
+            get { return _checkUpdates; }
+            set
+            {
+                if (_checkUpdates != value)
+                {
+                    _checkUpdates = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region INotifyPropertyChanged
@@ -320,6 +350,8 @@ namespace Memoria.Launcher
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
+        private Boolean _checkUpdates;
+        private String[] _downloadMirrors;
 
         private void LoadSettings()
         {
@@ -384,6 +416,36 @@ namespace Memoria.Launcher
                 if (!Boolean.TryParse(value, out _isDebugMode))
                     _isDebugMode = false;
 
+                value = iniFile.ReadValue("Memoria", nameof(CheckUpdates));
+                if (String.IsNullOrEmpty(value))
+                    value = "false";
+                if (!Boolean.TryParse(value, out _checkUpdates))
+                    _checkUpdates = false;
+
+                value = iniFile.ReadValue("Memoria", nameof(DownloadMirrors));
+                if (String.IsNullOrEmpty(value))
+                {
+                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")
+                    {
+                        _downloadMirrors = new[]
+                        {
+                            "https://ff9.ffrtt.ru/rus/FF9RU.exe",
+                            "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"
+                        };
+                    }
+                    else
+                    {
+                        _downloadMirrors = new[]
+                        {
+                            "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"
+                        };
+                    }
+                }
+                else
+                {
+                    _downloadMirrors = value.Split(',');
+                }
+
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(Windowed));
@@ -392,6 +454,8 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsX64));
                 OnPropertyChanged(nameof(IsX64Enabled));
                 OnPropertyChanged(nameof(IsDebugMode));
+                OnPropertyChanged(nameof(CheckUpdates));
+                OnPropertyChanged(nameof(DownloadMirrors));
             }
             catch (Exception ex)
             {
@@ -425,7 +489,7 @@ namespace Memoria.Launcher
                     // Read value from by first offset
                     input.Seek(offset1, SeekOrigin.Begin);
                     if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException("Unexpected end of stream.");
+                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
                     samplingFrequency = BitConverter.ToUInt16(buff, 0);
 
                     // Check the value
@@ -438,7 +502,7 @@ namespace Memoria.Launcher
                     // Check values are same
                     input.Seek(offset2, SeekOrigin.Begin);
                     if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException("Unexpected end of stream.");
+                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
                     if (samplingFrequency != BitConverter.ToUInt16(buff, 0))
                     {
                         samplingFrequency = 0;
@@ -450,7 +514,7 @@ namespace Memoria.Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show((Window)this.GetRootElement(), $"Cannot read audio sampling frequency from the file: {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                 samplingFrequency = 0;
                 return false;
             }
@@ -494,7 +558,7 @@ namespace Memoria.Launcher
                     // Read value from by first offset
                     input.Seek(offset1, SeekOrigin.Begin);
                     if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException("Unexpected end of stream.");
+                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
                     UInt16 originalFrequency = BitConverter.ToUInt16(buff, 0);
 
                     // Check the value
@@ -504,7 +568,7 @@ namespace Memoria.Launcher
                     // Check values are same
                     input.Seek(offset2, SeekOrigin.Begin);
                     if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException("Unexpected end of stream.");
+                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
                     if (originalFrequency != BitConverter.ToUInt16(buff, 0))
                         return false;
 
@@ -522,7 +586,7 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 if (!quiet)
-                    MessageBox.Show((Window)this.GetRootElement(), $"Cannot read audio sampling frequency from the SdLib.dll ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 samplingFrequency = 0;
                 return false;
@@ -566,7 +630,7 @@ namespace Memoria.Launcher
                 sb.Append(name);
 
                 if (screen.Primary)
-                    sb.Append(" [Primary]");
+                    sb.Append(Lang.Settings.PrimaryMonitor);
 
                 result[index] = sb.ToString();
 

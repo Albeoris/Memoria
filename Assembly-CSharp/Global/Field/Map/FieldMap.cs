@@ -500,6 +500,9 @@ public class FieldMap : HonoBehavior
             case 2261: // Oeilvert - Bridge
             case 2363: // Gulug - Path
             case 2510: // Iifa Tree - Silver Dragon
+            case 3009: // Ending - TH
+            case 3010: // Ending - TH
+            case 3011: // Ending - TH
                 return true;
         }
         return false;

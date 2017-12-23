@@ -5,9 +5,29 @@
         Title="FF9 Launcher" Height="480" Width="640" WindowStartupLocation="CenterScreen"
         BorderThickness="0" WindowStyle="None" ResizeMode="NoResize">
   <Grid>
-        <Image MouseDown="Launcher_MouseDown" x:Name="Launcher" HorizontalAlignment="Left" Height="480" VerticalAlignment="Top" Width="640" Source="Images/pc_launcher_bg.png"/>
-        <launcher:GameSettingsControl x:Name="GameSettings" HorizontalAlignment="Right"  VerticalAlignment="Top" Margin="0,150,10,0"/>
-        <launcher:UiLauncherExitButton VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10"/>
-        <launcher:UiLauncherPlayButton x:Name="PlayButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10"/>
+      <Image MouseDown="Launcher_MouseDown" x:Name="Launcher" HorizontalAlignment="Left" Height="480" VerticalAlignment="Top" Width="640" Source="Images/pc_launcher_bg.png"/>
+      <launcher:GameSettingsControl x:Name="GameSettings" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="10,90"/>
+      <launcher:UiLauncherExitButton VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10"/>
+      <launcher:UiLauncherPlayButton x:Name="PlayButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10"/>
+      <launcher:DonationControl x:Name="Donation" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,90"/>
+
+        <StackPanel x:Name="Links" Margin="5" Visibility="Collapsed" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Orientation="Vertical">
+            <TextBlock Margin="5" HorizontalAlignment="Left">
+              <TextBlock.Effect>
+                  <DropShadowEffect ShadowDepth="0" BlurRadius="3" Color="#FF000000" />
+              </TextBlock.Effect>
+              <Hyperlink NavigateUri="http://zoneofgames.ru" RequestNavigate="OnHyperlinkClick" Foreground="WhiteSmoke">
+                  Zone of Games
+              </Hyperlink>
+          </TextBlock>
+            <TextBlock Margin="5" Width="50" HorizontalAlignment="Left">
+              <TextBlock.Effect>
+                  <DropShadowEffect ShadowDepth="0" BlurRadius="3" Color="#FF000000" />
+              </TextBlock.Effect>
+              <Hyperlink NavigateUri="http://ff9.ffrtt.ru" RequestNavigate="OnHyperlinkClick"  Foreground="WhiteSmoke">
+                  FFRTT
+              </Hyperlink>
+          </TextBlock>
+      </StackPanel>
     </Grid>
 </Window>

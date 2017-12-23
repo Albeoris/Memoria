@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 
 namespace Memoria.Launcher
 {
@@ -17,6 +19,7 @@ namespace Memoria.Launcher
         {
             InitializeComponent();
             TryLoadImage();
+            TryShowDonation();
 
             PlayButton.GameSettings = GameSettings;
         }
@@ -39,6 +42,23 @@ namespace Memoria.Launcher
             }
         }
 
+        private void TryShowDonation()
+        {
+            try
+            {
+                String showDonationControl = ConfigurationManager.AppSettings[nameof(showDonationControl)];
+                if (showDonationControl == "true")
+                {
+                    Donation.Visibility = Visibility.Visible;
+                    Links.Visibility = Visibility.Visible;
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         [DllImport("user32.dll")]
         public static extern Int32 SendMessage(IntPtr hWnd, Int32 msg, Int32 wParam, Int32 lParam);
 
@@ -56,6 +76,12 @@ namespace Memoria.Launcher
 
             ReleaseCapture();
             SendMessage(new WindowInteropHelper(this).Handle, 161, 2, 0);
+        }
+
+        private void OnHyperlinkClick(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(e.Uri.AbsoluteUri);
+            e.Handled = true;
         }
     }
 }

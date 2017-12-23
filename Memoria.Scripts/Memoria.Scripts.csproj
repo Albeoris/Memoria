@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Output\Scripts\</OutputPath>
+    <OutputPath>..\Output\StreamingAssets\Scripts\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,24 +28,24 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Output\Scripts\</OutputPath>
+    <OutputPath>..\Output\StreamingAssets\Scripts\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" >
-	  <HintPath>..\References\mscorlib.dll</HintPath>
+    <Reference Include="mscorlib">
+      <HintPath>..\References\mscorlib.dll</HintPath>
       <Private>False</Private>
-	</Reference>
-    <Reference Include="System" >
-	  <HintPath>..\References\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\References\System.dll</HintPath>
       <Private>False</Private>
-	</Reference>
-	<Reference Include="System.Core" >
-	  <HintPath>..\References\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\References\System.Core.dll</HintPath>
       <Private>False</Private>
-	</Reference>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\References\UnityEngine.dll</HintPath>
       <Private>False</Private>

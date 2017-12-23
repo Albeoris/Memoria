@@ -55,6 +55,7 @@
       <Link>GameInfo\GameLocationSteamRegistryProvider.cs</Link>
     </Compile>
     <Compile Include="BuildEnvironment.cs" />
+    <Compile Include="Pack.cs" />
     <Compile Include="Deploy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

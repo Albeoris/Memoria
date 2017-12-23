@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Net.Mime;
 using System.Reflection;
-using Memoria.Prime;
+using System.Text;
 
 namespace Memoria.Patcher
 {
@@ -11,213 +15,213 @@ namespace Memoria.Patcher
         {
             try
             {
-                GameLocationInfo gameLocation = GetGameLocation(args);
-                if (gameLocation == null)
+                if (args.Length == 3 && args[0] == "-update")
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
-                    Console.WriteLine("Press enter to exit...");
-                    Console.ReadLine();
-                    Environment.Exit(1);
-                }
+                    Int32 launcherProcessId = Int32.Parse(args[1]);
+                    String launcherProcessPath = args[2];
+                    String launcherProcessDirectory = Path.GetDirectoryName(launcherProcessPath);
+                    try
+                    {
+                        Process process = Process.GetProcessById(launcherProcessId);
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+                    catch
+                    {
+                    }
 
-                ReplaceLauncher(gameLocation);
-                ReplaceDebugger(gameLocation);
-                CopyExternalFiles(gameLocation.StreamingAssetsPath);
-                Patch(gameLocation.ManagedPathX64);
-                Patch(gameLocation.ManagedPathX86);
+                    Run(new[] { launcherProcessDirectory });
+
+                    Process.Start(launcherProcessPath);
+
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    Run(args);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected error has occurred. See [{Log.LogFileName}] for details.");
+                Console.WriteLine("Unexpected error has occurred.");
+                Console.WriteLine("---------------------------");
                 Console.WriteLine(ex);
-
-                Log.Error(ex, "Unexpected error.");
+                Console.WriteLine("---------------------------");
             }
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }
 
-        private static void ReplaceLauncher(GameLocationInfo gameLocation)
+        private static void Run(String[] args)
         {
-            String sourceDirectory = Path.GetFullPath("Launcher");
-            if (!Directory.Exists(sourceDirectory))
-                throw new DirectoryNotFoundException("Launcher's directory was not found: " + sourceDirectory);
-
-            String backupPath = Path.ChangeExtension(gameLocation.LauncherPath, ".bak");
-            if (!File.Exists(backupPath))
+            GameLocationInfo gameLocation = GetGameLocation(args);
+            if (gameLocation == null)
             {
-                Console.WriteLine("Back up a launcher.");
-                File.Copy(gameLocation.LauncherPath, backupPath);
+                Console.WriteLine();
+                Console.WriteLine("{0}.exe <gamePath>", Assembly.GetExecutingAssembly().GetName().Name);
+                Console.WriteLine("Press enter to exit...");
+                Console.ReadLine();
+                Environment.Exit(1);
             }
 
-            Console.WriteLine("Copy a launcher...");
-            foreach (String sourcePath in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.TopDirectoryOnly))
+            String executablePath = Assembly.GetEntryAssembly().Location;
+            using (FileStream inputFile = File.OpenRead(executablePath))
             {
-                if (!sourcePath.StartsWith(sourceDirectory))
-                    throw new InvalidDataException(sourcePath);
+                inputFile.Seek(-3 * 8, SeekOrigin.End);
+                BinaryReader br = new BinaryReader(inputFile);
 
-                String relativePath = sourcePath.Substring(sourceDirectory.Length);
-                relativePath = relativePath.Replace("Memoria.Launcher", "FF9_Launcher");
-                String targetPath = gameLocation.RootDirectory + relativePath;
+                Int64 magicNumber = br.ReadInt64();
+                Int64 uncompressedDataSize = br.ReadInt64();
+                Int64 compressedDataPosition = br.ReadInt64();
+                if (magicNumber != 0x004149524F4D454D) // MEMORIA\0
+                    throw new InvalidDataException("Invalid magic number: " + magicNumber);
 
-                File.Copy(sourcePath, targetPath, true);
-                Console.WriteLine("Copied: " + targetPath.Substring(gameLocation.RootDirectory.Length));
-
+                inputFile.Position = compressedDataPosition;
+                using (ConsoleProgressHandler progressHandler = new ConsoleProgressHandler(uncompressedDataSize))
+                using (GZipStream input = new GZipStream(inputFile, CompressionMode.Decompress))
+                using (br = new BinaryReader(input))
+                {
+                    Int64 leftSize = uncompressedDataSize;
+                    ExtractFiles(gameLocation, input, br, ref leftSize, progressHandler);
+                }
             }
-            Console.WriteLine("The launcher was copied!");
         }
 
-        private static void ReplaceDebugger(GameLocationInfo gameLocation)
+        private static void ExtractFiles(GameLocationInfo gameLocation, GZipStream input, BinaryReader br, ref Int64 leftSize, ConsoleProgressHandler progressHandler)
         {
-            String sourceDirectory = Path.GetFullPath("Debugger");
-            if (!Directory.Exists(sourceDirectory))
-                throw new DirectoryNotFoundException("Debugger's directory was not found: " + sourceDirectory);
+            Dictionary<Int16, String> pathMap = new Dictionary<Int16, String>(400);
+            UInt16 idMask = 1 << 15;
 
-            Console.WriteLine("Copy a debugger...");
+            Byte[] buff = new Byte[64 * 1024];
 
-            String targetDirectory = Path.Combine(gameLocation.RootDirectory, "Debugger");
-            Directory.CreateDirectory(targetDirectory);
-
-            if (FsHelper.IsSamePaths(sourceDirectory, targetDirectory))
+            while (leftSize > 0)
             {
-                Console.WriteLine("Copying skipped because source and target folders have a same path.");
-                return;
-            }
+                Int64 uncompressedSize = br.ReadUInt32();
+                DateTime writeTimeUtc = new DateTime(br.ReadInt64(), DateTimeKind.Utc);
 
-            foreach (String sourcePath in Directory.EnumerateFileSystemEntries(sourceDirectory, "*", SearchOption.AllDirectories))
-            {
-                if (!sourcePath.StartsWith(sourceDirectory))
-                    throw new InvalidDataException(sourcePath);
-
-                String relativePath = sourcePath.Substring(sourceDirectory.Length);
-                String targetPath = targetDirectory + relativePath;
-
-                if ((File.GetAttributes(sourcePath) & FileAttributes.Directory) == FileAttributes.Directory)
+                Boolean hasPlatform = false;
+                String[] pathParts = new String[br.ReadByte() + 1];
+                pathParts[0] = gameLocation.RootDirectory;
+                for (Int32 i = 1; i < pathParts.Length; i++)
                 {
-                    Directory.CreateDirectory(targetPath);
+                    String part = null;
+
+                    Int16 id = br.ReadInt16();
+                    if ((id & idMask) == idMask)
+                    {
+                        id = (Int16)(id & ~idMask);
+
+                        Int32 bytesNumber = br.ReadByte();
+                        Int32 readed = 0;
+                        while (bytesNumber > 0)
+                        {
+                            readed = br.Read(buff, readed, bytesNumber);
+                            bytesNumber -= readed;
+                        }
+
+                        part = Encoding.UTF8.GetString(buff, 0, readed);
+                        pathParts[i] = part;
+                        pathMap.Add(id, part);
+                    }
+                    else
+                    {
+                        part = pathMap[id];
+                        pathParts[i] = part;
+                    }
+
+                    if (part == "{PLATFORM}")
+                        hasPlatform = true;
+                }
+
+                String outputPath = Path.Combine(pathParts);
+
+                if (hasPlatform)
+                {
+                    if (Directory.Exists(gameLocation.ManagedPathX64))
+                    {
+                        if (Directory.Exists(gameLocation.ManagedPathX86))
+                        {
+                            String x64 = outputPath.Replace("{PLATFORM}", "x64");
+                            String x86 = outputPath.Replace("{PLATFORM}", "x86");
+                            ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, x64, x86);
+                        }
+                        else
+                        {
+                            outputPath = outputPath.Replace("{PLATFORM}", "x86");
+                            ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
+                        }
+                    }
+                    else if (Directory.Exists(gameLocation.ManagedPathX86))
+                    {
+                        outputPath = outputPath.Replace("{PLATFORM}", "x86");
+                        ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
+                    }
+                    else
+                    {
+                        progressHandler.IncrementProcessedSize(uncompressedSize);
+                    }
                 }
                 else
                 {
-                    File.Copy(sourcePath, targetPath, true);
-                    Console.WriteLine("Copied: " + targetPath.Substring(targetDirectory.Length));
+                    ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
                 }
 
-            }
-            Console.WriteLine("The debugger was copied!");
-        }
-
-        private static void CopyExternalFiles(String targetDirectory)
-        {
-            if (!Directory.Exists(targetDirectory))
-                throw new DirectoryNotFoundException("StreamingAssets directory does not exist: " + targetDirectory);
-
-            CopyData(targetDirectory);
-            CopyScripts(targetDirectory);
-            CopyShaders(targetDirectory);
-        }
-
-        private static void CopyData(String targetDirectory)
-        {
-            String sourceDirectory = Path.GetFullPath("Data");
-            if (!Directory.Exists(sourceDirectory))
-                throw new DirectoryNotFoundException("Data files was not found: " + sourceDirectory);
-
-            targetDirectory = Path.Combine(targetDirectory, "Data");
-
-            Console.WriteLine("Copy data files...");
-            CopyFiles(targetDirectory, sourceDirectory, "*.csv");
-            Console.WriteLine("Data files was copied!");
-        }
-
-        private static void CopyScripts(String targetDirectory)
-        {
-            String sourceDirectory = Path.GetFullPath("Scripts");
-            if (!Directory.Exists(sourceDirectory))
-                throw new DirectoryNotFoundException("Script files was not found: " + sourceDirectory);
-
-            targetDirectory = Path.Combine(targetDirectory, "Scripts");
-
-            Console.WriteLine("Copy script files...");
-            CopyFiles(targetDirectory, sourceDirectory, "*.*");
-            Console.WriteLine("Script files was copied!");
-        }
-
-        private static void CopyShaders(String targetDirectory)
-        {
-            String sourceDirectory = Path.GetFullPath("Shaders");
-            if (!Directory.Exists(sourceDirectory))
-                throw new DirectoryNotFoundException("Shaders files was not found: " + sourceDirectory);
-
-            targetDirectory = Path.Combine(targetDirectory, "Shaders");
-
-            Console.WriteLine("Copy shader files...");
-            CopyFiles(targetDirectory, sourceDirectory, "*.*");
-            Console.WriteLine("Shaders files was copied!");
-        }
-
-        private static void CopyFiles(String targetDirectory, String sourceDirectory, String extensions)
-        {
-            if (FsHelper.IsSamePaths(sourceDirectory, targetDirectory))
-            {
-                Console.WriteLine("Copying skipped because source and target folders have a same path.");
-                return;
-            }
-
-            foreach (String sourceFile in Directory.EnumerateFiles(sourceDirectory, extensions, SearchOption.AllDirectories))
-            {
-                DateTime sourceFileTime = File.GetLastWriteTimeUtc(sourceFile);
-                String targetFile = targetDirectory + sourceFile.Substring(sourceDirectory.Length);
-                if (File.Exists(targetFile) && File.GetLastWriteTimeUtc(targetFile) == sourceFileTime)
-                    continue;
-
-                String directoryName = Path.GetDirectoryName(targetFile);
-                Directory.CreateDirectory(directoryName);
-
-                File.Copy(sourceFile, targetFile, true);
-                File.SetCreationTimeUtc(targetFile, sourceFileTime);
-                Console.WriteLine("Copied: " + targetFile.Substring(targetDirectory.Length));
+                leftSize -= uncompressedSize;
             }
         }
 
-        private static void Patch(String directory)
+        private static void ExtractFile(GZipStream input, Int64 uncompressedSize, Byte[] buff, DateTime writeTimeUtc, ConsoleProgressHandler progressHandler, params String[] outputPaths)
         {
+            List<FileStream> outputs = new List<FileStream>(outputPaths.Length);
             try
             {
-                if (!Directory.Exists(directory))
+                foreach (String outputPath in outputPaths)
+                    outputs.Add(OverwrieFile(outputPath));
+
+                while (uncompressedSize > 0)
                 {
-                    Console.WriteLine("Directory does not exist: {0}", directory);
-                    return;
+                    Int32 readed = input.Read(buff, 0, (Int32)Math.Min(uncompressedSize, buff.Length));
+                    uncompressedSize -= readed;
+
+                    foreach (FileStream output in outputs)
+                        output.Write(buff, 0, readed);
+
+                    progressHandler.IncrementProcessedSize(readed);
                 }
-
-                Console.WriteLine("Patching...");
-
-                String assemblyPath = Path.Combine(directory, "Assembly-CSharp.dll");
-                String backupPath = Path.Combine(directory, "Assembly-CSharp.bak");
-
-                if (!File.Exists(backupPath))
-                    File.Copy(assemblyPath, backupPath);
-
-                String primeDllPath = Path.Combine(directory, "Memoria.Prime.dll");
-                File.Copy("Memoria.Prime.dll", primeDllPath, true);
-                File.Copy("Memoria.Prime.dll.mdb", primeDllPath + ".mdb", true);
-
-                String unityUiDllPath = Path.Combine(directory, "UnityEngine.UI.dll");
-                File.Copy("UnityEngine.UI.dll", unityUiDllPath, true);
-                File.Copy("UnityEngine.UI.dll.mdb", unityUiDllPath + ".mdb", true);
-
-                File.Copy("Assembly-CSharp.dll", assemblyPath, true);
-                File.Copy("Assembly-CSharp.dll.mdb", assemblyPath + ".mdb", true);
-
-                Console.WriteLine("Success!");
             }
-            catch (Exception ex)
+            finally
             {
-                String message = $"Failed to patch assembly from a directory [{directory}]";
-                Console.WriteLine(message);
-                Log.Error(ex, message);
+                foreach (FileStream output in outputs)
+                    output.Dispose();
             }
+
+            foreach (String outputPath in outputPaths)
+                File.SetLastWriteTimeUtc(outputPath, writeTimeUtc);
+        }
+
+        private static readonly HashSet<String> _filesForBackup = new HashSet<String>(StringComparer.OrdinalIgnoreCase) {".exe", ".dll"};
+
+        private static FileStream OverwrieFile(String outputPath)
+        {
+            if (File.Exists(outputPath))
+            {
+                String extension = Path.GetExtension(outputPath);
+                if (_filesForBackup.Contains(extension))
+                {
+                    String backupPath = Path.ChangeExtension(outputPath, ".bak");
+                    if (!File.Exists(backupPath))
+                        File.Move(outputPath, backupPath);
+                }
+            }
+            else
+            {
+                String directoryName = Path.GetDirectoryName(outputPath);
+                if (directoryName != null)
+                    Directory.CreateDirectory(directoryName);
+            }
+
+            return File.Create(outputPath);
         }
 
         private static GameLocationInfo GetGameLocation(String[] args)
@@ -225,7 +229,7 @@ namespace Memoria.Patcher
             try
             {
                 GameLocationInfo result;
-                if (args.IsNullOrEmpty())
+                if (args == null || args.Length == 0)
                 {
                     if (File.Exists(GameLocationInfo.LauncherName))
                     {
@@ -246,8 +250,10 @@ namespace Memoria.Patcher
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to get a game location.");
-                Console.WriteLine($"Failed to get a game location. See [{Log.LogFileName}] for details.");
+                Console.WriteLine("Failed to get a game location.");
+                Console.WriteLine("---------------------------");
+                Console.WriteLine(ex);
+                Console.WriteLine("---------------------------");
                 return null;
             }
         }

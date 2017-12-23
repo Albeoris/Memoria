@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Pack" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,6 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,9 +27,10 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,7 +43,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>6</LangVersion>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,6 +55,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>ff9.ico</ApplicationIcon>
@@ -59,526 +63,524 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FSHelper.cs" />
+    <Compile Include="ConsoleProgressHandler.cs" />
     <Compile Include="GameInfo\GameLocationSteamRegistryProvider.cs" />
     <Compile Include="GameInfo\GameLocationInfo.cs" />
+    <Compile Include="Languages\Lang.cs" />
+    <Compile Include="Languages\XmlDocumentExm.cs" />
+    <Compile Include="Languages\XmlHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="Data\Battle\Actions.csv">
+    <None Include="StreamingAssets\Data\Battle\Actions.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Battle\StatusSets.csv">
+    <None Include="StreamingAssets\Data\Battle\StatusSets.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\AbilityGems.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\AbilityGems.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\BaseStats.csv">
+    <None Include="StreamingAssets\Data\Characters\BaseStats.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\CommandTitles.csv">
+    <None Include="StreamingAssets\Data\Characters\CommandTitles.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\DefaultEquipment.csv">
+    <None Include="StreamingAssets\Data\Characters\DefaultEquipment.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Leveling.csv">
+    <None Include="StreamingAssets\Data\Characters\Leveling.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\Armors.csv">
+    <None Include="StreamingAssets\Data\Items\Armors.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\ShopItems.csv">
+    <None Include="StreamingAssets\Data\Items\ShopItems.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\Stats.csv">
+    <None Include="StreamingAssets\Data\Items\Stats.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\Synthesis.csv">
+    <None Include="StreamingAssets\Data\Items\Synthesis.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\Weapons.csv">
+    <None Include="StreamingAssets\Data\Items\Weapons.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scripts\Project\Properties\AssemblyInfo.cs">
+    <None Include="StreamingAssets\Scripts\Project\Properties\AssemblyInfo.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Data\Characters\Abilities\Amarant.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Amarant.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Beatrix1.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Beatrix1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Beatrix2.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Beatrix2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Blank1.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Blank1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Blank2.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Blank2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Cinna1.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Cinna1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Cinna2.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Cinna2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Eiko.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Eiko.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Freya.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Freya.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Garnet.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Garnet.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Marcus1.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Marcus1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Marcus2.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Marcus2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Quina.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Quina.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Steiner.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Steiner.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Vivi.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Vivi.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Abilities\Zidane.csv">
+    <None Include="StreamingAssets\Data\Characters\Abilities\Zidane.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\Commands.csv">
+    <None Include="StreamingAssets\Data\Characters\Commands.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Characters\CommandSets.csv">
+    <None Include="StreamingAssets\Data\Characters\CommandSets.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\ItemEffects.csv">
+    <None Include="StreamingAssets\Data\Items\ItemEffects.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\Items.csv">
+    <None Include="StreamingAssets\Data\Items\Items.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
-    <None Include="Shaders\BattleCommon.txt">
+    <EmbeddedResource Include="Languages\en.xml" />
+    <EmbeddedResource Include="Languages\ru.xml" />
+    <None Include="StreamingAssets\Shaders\BattleCommon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\BattleMap_Common.txt">
+    <None Include="StreamingAssets\Shaders\BattleMap_Common.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Color Space\YCbCrtoRGB Chroma Key.txt">
+    <None Include="StreamingAssets\Shaders\Color Space\YCbCrtoRGB Chroma Key.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Color Space\YCbCrtoRGB Trans.txt">
+    <None Include="StreamingAssets\Shaders\Color Space\YCbCrtoRGB Trans.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Color Space\YCbCrtoRGB.txt">
+    <None Include="StreamingAssets\Shaders\Color Space\YCbCrtoRGB.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Color Space\YCrCbtoRGB Split Alpha.txt">
+    <None Include="StreamingAssets\Shaders\Color Space\YCrCbtoRGB Split Alpha.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Custom\CamDistanceDepth_AlphaCutOff.txt">
+    <None Include="StreamingAssets\Shaders\Custom\CamDistanceDepth_AlphaCutOff.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Custom\NewShader.txt">
+    <None Include="StreamingAssets\Shaders\Custom\NewShader.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Custom\WorldMap-TestShader.txt">
+    <None Include="StreamingAssets\Shaders\Custom\WorldMap-TestShader.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Premultiplied Colored %28TextureClip%29.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Premultiplied Colored %28TextureClip%29.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Premultiplied Colored 1.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Premultiplied Colored 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Premultiplied Colored 2.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Premultiplied Colored 2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Premultiplied Colored 3.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Premultiplied Colored 3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Text %28TextureClip%29.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Text %28TextureClip%29.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Text 1.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Text 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Text 2.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Text 2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Text 3.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Text 3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Colored %28TextureClip%29.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Colored %28TextureClip%29.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Colored 1.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Colored 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Colored 2.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Colored 2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Colored 3.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Colored 3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Masked 1.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Masked 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Masked 2.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Masked 2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Masked 3.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Masked 3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Packed 1.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Packed 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Packed 2.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Packed 2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Hidden\Unlit\Transparent Packed 3.txt">
+    <None Include="StreamingAssets\Shaders\Hidden\Unlit\Transparent Packed 3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Legacy Shaders\Transparent\VertexLit.txt">
+    <None Include="StreamingAssets\Shaders\Legacy Shaders\Transparent\VertexLit.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Mobile\VertexLit.txt">
+    <None Include="StreamingAssets\Shaders\Mobile\VertexLit.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\mShaders\mWipe1.txt">
+    <None Include="StreamingAssets\Shaders\mShaders\mWipe1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSXShaderNoTexture.txt">
+    <None Include="StreamingAssets\Shaders\PSXShaderNoTexture.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSXShaderTextureNoShading.txt">
+    <None Include="StreamingAssets\Shaders\PSXShaderTextureNoShading.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSXShaderTextureShading.txt">
+    <None Include="StreamingAssets\Shaders\PSXShaderTextureShading.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\Actor_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\Actor_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\Actor_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\Actor_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\Actor_Abr_2.txt">
+    <None Include="StreamingAssets\Shaders\PSX\Actor_Abr_2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\Actor_Abr_3.txt">
+    <None Include="StreamingAssets\Shaders\PSX\Actor_Abr_3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Abr_2.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Abr_2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Cystal.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Cystal.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Ground.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Ground.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Ground_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Ground_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Ground_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Ground_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Minus.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Minus.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Minus_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Minus_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Minus_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Minus_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Moon.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Moon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Plus.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Plus_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Plus_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Plus_Abr_1_h.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_1_h.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Plus_Abr_1_Off.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_1_Off.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_SelectCursor_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_SelectCursor_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Sky.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Sky_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_Sky_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_StatusEffect.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_StatusEffect_Abr_3.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_Abr_3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_TexAnim.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_TexAnim.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\BattleMap_UnlitTransCutOff.txt">
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_UnlitTransCutOff.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\Fade_Abr_1 1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\Fade_Abr_1 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\Fade_Abr_2 1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\Fade_Abr_2 1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMapActor.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMapActor.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMapActorMBGMask.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMapActorMBGMask.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMapActorShadow.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMapActorShadow.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMapActor_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMapActor_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMap_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMap_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMap_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMap_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMap_Abr_2.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMap_Abr_2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMap_Abr_3.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMap_Abr_3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldMap_Abr_None.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldMap_Abr_None.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldSPS_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldSPS_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldSPS_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldSPS_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldSPS_Abr_2.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldSPS_Abr_2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldSPS_Abr_3.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldSPS_Abr_3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX\FieldSPS_Abr_None.txt">
+    <None Include="StreamingAssets\Shaders\PSX\FieldSPS_Abr_None.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\PSX_ABR2.txt">
+    <None Include="StreamingAssets\Shaders\PSX_ABR2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SceneTransitions\Plane\No zTest.txt">
+    <None Include="StreamingAssets\Shaders\SceneTransitions\Plane\No zTest.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_ADD_G.txt">
+    <None Include="StreamingAssets\Shaders\SFX_ADD_G.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_ADD_GT.txt">
+    <None Include="StreamingAssets\Shaders\SFX_ADD_GT.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_OPA_G.txt">
+    <None Include="StreamingAssets\Shaders\SFX_OPA_G.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_OPA_GT.txt">
+    <None Include="StreamingAssets\Shaders\SFX_OPA_GT.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_RUSH_ADD.txt">
+    <None Include="StreamingAssets\Shaders\SFX_RUSH_ADD.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_RUSH_SUB.txt">
+    <None Include="StreamingAssets\Shaders\SFX_RUSH_SUB.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_SS.txt">
+    <None Include="StreamingAssets\Shaders\SFX_SS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_SUB_G.txt">
+    <None Include="StreamingAssets\Shaders\SFX_SUB_G.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SFX_SUB_GT.txt">
+    <None Include="StreamingAssets\Shaders\SFX_SUB_GT.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\SPS\SPSRain.txt">
+    <None Include="StreamingAssets\Shaders\SPS\SPSRain.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\AdjustableTransparent.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\AdjustableTransparent.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\Premultiplied Colored.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\Premultiplied Colored.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\Texture-SceneDirector.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\Texture-SceneDirector.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\Transparent Colored.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\Transparent Colored.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\Transparent Cutout.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\Transparent Cutout.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\Transparent Masked.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\Transparent Masked.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\Transparent Packed.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\Transparent Packed.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\WorldMap-EvaBlack %28~Additive-Multiply%29.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\WorldMap-EvaBlack %28~Additive-Multiply%29.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\WorldMap-EvaSphere1.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\WorldMap-EvaSphere1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\Unlit\WorldMap-Thunder.txt">
+    <None Include="StreamingAssets\Shaders\Unlit\WorldMap-Thunder.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Actor.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Actor.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Beach.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Beach.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Cloud No Fog.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Cloud No Fog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Mobile\VertexLit %28Only Directional Lights%29.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Mobile\VertexLit %28Only Directional Lights%29.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Mobile\VertexLit.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Mobile\VertexLit.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\River.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\River.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\ScrollTexture.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\ScrollTexture.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Sea.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Sea.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Shadow.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Shadow.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\ShadowActor.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\ShadowActor.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SimpleColor.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SimpleColor.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SkyDome No Fog.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SkyDome No Fog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SkyDomeFog.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SkyDomeFog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SPS_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SPS_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SPS_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SPS_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SPS_Abr_2.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SPS_Abr_2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SPS_Abr_3.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SPS_Abr_3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\SPS_Abr_None.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\SPS_Abr_None.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Terrain.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Terrain.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\TerrainQuicksand.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\TerrainQuicksand.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Transparent Cutout Anim.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Transparent Cutout Anim.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Transparent Cutout.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Transparent Cutout.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\TwisterCore_Abr_0.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\TwisterCore_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\Twister_Abr_1.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\Twister_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\UnlitTexture.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\UnlitTexture.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\VertexLit.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\VertexLit.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\VolcanoCrater1.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\VolcanoCrater1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\VolcanoCrater2.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\VolcanoCrater2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\VolcanoLava1.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\VolcanoLava1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\VolcanoLava2.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\VolcanoLava2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\WalkMesh.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\WalkMesh.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\WorldMap-EvaArch.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\WorldMap-EvaArch.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\WorldMap-TestTerrain.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\WorldMap-TestTerrain.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\WorldMap\WorldMap-TestTerrain2.txt">
+    <None Include="StreamingAssets\Shaders\WorldMap\WorldMap-TestTerrain2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scripts\Project\Memoria.Scripts.csproj">
+    <None Include="StreamingAssets\Scripts\Project\Memoria.Scripts.csproj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scripts\Project\Memoria.Scripts.sln">
+    <None Include="StreamingAssets\Scripts\Project\Memoria.Scripts.sln">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -594,12 +596,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
-      <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
-      <Name>Memoria.Prime</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -612,5 +609,8 @@
     <MSBuild Projects="..\Memoria.Debugger\Memoria.Debugger.csproj" Properties="Platform=x64;PlatFormTarget=x64" RunEachTargetSeparately="true" />
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=Win32;PlatFormTarget=Win32" RunEachTargetSeparately="true" />
     <MSBuild Projects="..\Memoria.Injection\Memoria.Injection.vcxproj" Properties="Platform=x64;PlatFormTarget=x64" RunEachTargetSeparately="true" />
+  </Target>
+  <Target Name="AfterBuild">
+    <Pack SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
   </Target>
 </Project>

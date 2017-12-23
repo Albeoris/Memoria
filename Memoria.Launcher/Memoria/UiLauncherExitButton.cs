@@ -6,24 +6,21 @@ namespace Memoria.Launcher
 {
     public sealed class UiLauncherExitButton : UiLauncherButton
     {
-        private const String ExitLabel = "Exit";
-        private const String ExitingLabel = "Exiting...";
-
         public UiLauncherExitButton()
         {
-            Label = ExitLabel;
+            Label = Lang.Button.Exit;
         }
 
         protected override async Task DoAction()
         {
-            Label = ExitingLabel;
+            Label = Lang.Button.Exiting;
             try
             {
                 ((Window)this.GetRootElement()).Close();
             }
             finally
             {
-                Label = ExitLabel;
+                Label = Lang.Button.Exit;
             }
         }
     }

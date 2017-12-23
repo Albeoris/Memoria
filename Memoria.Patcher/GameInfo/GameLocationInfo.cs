@@ -30,5 +30,10 @@ namespace Memoria.Patcher
             if (!File.Exists(LauncherPath))
                 throw new FileNotFoundException(LauncherPath, LauncherPath);
         }
+
+        public Boolean IsValid()
+        {
+            return File.Exists(LauncherPath);
+        }
     }
 }

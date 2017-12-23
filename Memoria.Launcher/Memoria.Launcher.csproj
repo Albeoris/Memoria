@@ -37,13 +37,20 @@
   <ItemGroup>
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml" />
     <Reference Include="System" />
     <Reference Include="PresentationCore" />
+    <Reference Include="System.XML" />
     <Reference Include="WindowsBase" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Languages\Lang.cs" />
+    <Compile Include="Languages\XmlDocumentExm.cs" />
+    <Compile Include="Languages\XmlHelper.cs" />
+    <Compile Include="Memoria\UiTextBox.cs" />
+    <Compile Include="Memoria\DonationControl.cs" />
     <Compile Include="Memoria\ScreenInterrogatory.cs" />
     <Compile Include="Memoria\FrameworkElementExm.cs" />
     <Compile Include="App.cs" />
@@ -68,6 +75,7 @@
     <Compile Include="Memoria\UiRadioButtonFactory.cs" />
     <Compile Include="Memoria\UiTextBlock.cs" />
     <Compile Include="Memoria\UiTextBlockFactory.cs" />
+    <Compile Include="Memoria\UiTextBoxFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\pc_launcher_bg.png" />
@@ -87,6 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
+    <EmbeddedResource Include="Languages\en.xml" />
+    <EmbeddedResource Include="Languages\ru.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
