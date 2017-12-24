@@ -113,14 +113,12 @@ namespace Memoria.Assets
         {
             if (TryGetAlternativeKey(key, out var alternativeKey))
             {
-                if (TryGetValue(alternativeKey, out var value))
-                    return value;
+                if (TryGetValue(alternativeKey, out var alternativeValue))
+                    return alternativeValue;
             }
-            else
-            {
-                if (TryGetValue(key, out var value))
-                    return value;
-            }
+
+            if (TryGetValue(key, out var value))
+                return value;
 
             return key;
         }
