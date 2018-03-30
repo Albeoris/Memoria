@@ -117,7 +117,7 @@ public partial class BattleHUD : UIScene
             case "FR":
             case "IT":
             case "ES":
-                return $"{commandTitle} {abilityName}";
+                return $"{commandTitle}{abilityName}";
             default:
                 return $"{abilityName} {commandTitle}";
         }
