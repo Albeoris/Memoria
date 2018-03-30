@@ -152,6 +152,8 @@
       Title = "Done!"
       ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
       InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
+      Success = "Installation was successful."
+      PressEnterToExit = "Press enter to exit..."
       />
 
     <Question

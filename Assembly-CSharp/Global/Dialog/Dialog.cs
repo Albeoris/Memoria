@@ -1050,6 +1050,9 @@ public class Dialog : MonoBehaviour
 		Single waitTime = (Single)this.endMode / 30f;
 		if (FF9StateSystem.Common.FF9.fldMapNo == 3009)
 		{
+            // Epilogue: Stage
+		    DialogManager.Instance.ForceControlByEvent(false);
+		    yield break;
 			String localSymbol = Localization.GetSymbol();
 			if (localSymbol != "US" && localSymbol != "JP")
 			{
@@ -1076,6 +1079,9 @@ public class Dialog : MonoBehaviour
 		}
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 3010)
 		{
+		    // Epilogue: Stage
+		    DialogManager.Instance.ForceControlByEvent(false);
+		    yield break;
 			String localSymbol2 = Localization.GetSymbol();
 			if (localSymbol2 != "US" && localSymbol2 != "JP")
 			{
@@ -1088,6 +1094,9 @@ public class Dialog : MonoBehaviour
 		}
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
 		{
+		    // Epilogue: Stage
+		    DialogManager.Instance.ForceControlByEvent(true);
+		    //yield break; // Leads to problems
 			String localSymbol3 = Localization.GetSymbol();
 			if (localSymbol3 != "US" && localSymbol3 != "JP")
 			{

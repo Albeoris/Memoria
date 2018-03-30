@@ -37,104 +37,111 @@ namespace Memoria.Assets
             Boolean block = false;
             Boolean escape = false;
             Int32 line = 0;
-            while (true)
+            try
             {
-                Int32 value = sr.Read();
-                if (value < 0)
+                while (true)
                 {
-                    if (sb.Length == 0)
-                        return null;
-
-                    throw new Exception("Unexpected end of stream.");
-                }
-
-                Char ch = (Char)value;
-                switch (ch)
-                {
-                    case '\\':
+                    Int32 value = sr.Read();
+                    if (value < 0)
                     {
-                        if (!block)
-                            continue;
+                        if (sb.Length == 0)
+                            return null;
 
-                        if (escape)
-                        {
-                            AppendLines(ref line, sb);
-                            sb.Append('\\');
-                            escape = false;
-                        }
-                        else
-                        {
-                            escape = true;
-                        }
-                        break;
+                        throw new Exception("Unexpected end of stream.");
                     }
-                    case '"':
-                    {
-                        if (escape)
-                        {
-                            AppendLines(ref line, sb);
-                            sb.Append('"');
-                            escape = false;
-                        }
-                        else
-                        {
-                            if (block)
-                            {
-                                if (key)
-                                {
-                                    if (sb.Length > 4)
-                                        result.Prefix = sb.ToString(0, sb.Length - 4);
 
-                                    index = Int32.Parse(sb.ToString(sb.Length - 4, 4), CultureInfo.InvariantCulture);
-                                    key = false;
-                                }
-                                else
-                                {
-                                    result.Index = index;
-                                    result.Value = sb.ToString();
-                                    return result;
-                                }
-                                block = false;
-                                sb.Length = 0;
+                    Char ch = (Char)value;
+                    switch (ch)
+                    {
+                        case '\\':
+                        {
+                            if (!block)
+                                continue;
+
+                            if (escape)
+                            {
+                                AppendLines(ref line, sb);
+                                sb.Append('\\');
+                                escape = false;
                             }
                             else
                             {
-                                block = true;
+                                escape = true;
                             }
+                            break;
                         }
-                        break;
-                    }
-                    case '\r':
-                    {
-                        if (!block)
-                            continue;
-
-                        break;
-                    }
-                    case '\n':
-                    {
-                        if (!block)
-                            continue;
-
-                        line++;
-                        break;
-                    }
-                    default:
-                    {
-                        if (!block)
-                            continue;
-
-                        if (escape)
+                        case '"':
                         {
-                            sb.Append('\\');
-                            escape = false;
-                        }
+                            if (escape)
+                            {
+                                AppendLines(ref line, sb);
+                                sb.Append('"');
+                                escape = false;
+                            }
+                            else
+                            {
+                                if (block)
+                                {
+                                    if (key)
+                                    {
+                                        if (sb.Length > 4)
+                                            result.Prefix = sb.ToString(0, sb.Length - 4);
 
-                        AppendLines(ref line, sb);
-                        sb.Append(ch);
-                        break;
+                                        index = Int32.Parse(sb.ToString(sb.Length - 4, 4), CultureInfo.InvariantCulture);
+                                        key = false;
+                                    }
+                                    else
+                                    {
+                                        result.Index = index;
+                                        result.Value = sb.ToString();
+                                        return result;
+                                    }
+                                    block = false;
+                                    sb.Length = 0;
+                                }
+                                else
+                                {
+                                    block = true;
+                                }
+                            }
+                            break;
+                        }
+                        case '\r':
+                        {
+                            if (!block)
+                                continue;
+
+                            break;
+                        }
+                        case '\n':
+                        {
+                            if (!block)
+                                continue;
+
+                            line++;
+                            break;
+                        }
+                        default:
+                        {
+                            if (!block)
+                                continue;
+
+                            if (escape)
+                            {
+                                sb.Append('\\');
+                                escape = false;
+                            }
+
+                            AppendLines(ref line, sb);
+                            sb.Append(ch);
+                            break;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Cannot parse .strings entry.\r\n[Index: {result.Index}, Prefix: {result.Prefix}, Value: {result.Value}]\r\n[Buffer: {sb}, Line: {line} IsKey: {key}, IsBlock: {block}, IsEscape: {escape}]", ex);
             }
         }
 

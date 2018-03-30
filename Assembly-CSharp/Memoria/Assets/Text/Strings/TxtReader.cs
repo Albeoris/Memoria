@@ -66,7 +66,24 @@ namespace Memoria.Assets
                 Int32 offset = 0;
                 for (Int32 i = 0; i < count && !sr.EndOfStream; i++)
                 {
-                    TxtEntry entry = _formatter.Read(sr);
+                    TxtEntry entry;
+                    try
+                    {
+                        entry = _formatter.Read(sr);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (i > 0)
+                        {
+                            TxtEntry previous = result[i - 1];
+                            throw new Exception($"Cannot read {i} entry from {name}.\r\nPrevious: [Index: {previous.Index}, Pefix: {previous.Prefix}, Value: {previous.Value}]", ex);
+                        }
+                        else
+                        {
+                            throw new Exception($"Cannot read {i} entry from {name}.", ex);
+
+                        }
+                    }
                     if (entry == null)
                     {
                         offset++;

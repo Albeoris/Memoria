@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -305,7 +306,7 @@ namespace Memoria.Launcher
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] String propertyName = null)
+        private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
             try
             {
@@ -329,6 +330,20 @@ namespace Memoria.Launcher
                     case nameof(IsX64):
                         iniFile.WriteValue("Memoria", propertyName, (IsX64).ToString());
                         break;
+                    case nameof(CheckUpdates):
+                    {
+                        iniFile.WriteValue("Memoria", propertyName, (CheckUpdates).ToString());
+                        if (CheckUpdates)
+                        {
+                            using (ManualResetEvent evt = new ManualResetEvent(false))
+                            {
+                                Window root = this.GetRootElement() as Window;
+                                if (root != null)
+                                    await UiLauncherPlayButton.CheckUpdates(root, evt, this);
+                            }
+                        }
+                        break;
+                    }
                 }
             }
             catch (Exception ex)

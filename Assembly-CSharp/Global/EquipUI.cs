@@ -1403,7 +1403,10 @@ public class EquipUI : UIScene
             this.tempItemList[i] = new FF9ITEM(byte.MaxValue, 0);
         }
         this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
-		if (FF9StateSystem.MobilePlatform)
+
+	    ChangeEquipButtonWidth();
+
+	    if (FF9StateSystem.MobilePlatform)
 		{
 			this.EquipSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "EquipDetailHelpForMobile";
 			this.OptimizeSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "OptimizeHelpForMobile";
@@ -1411,7 +1414,14 @@ public class EquipUI : UIScene
 		}
 	}
 
-	public GameObject EquipSubMenu;
+    private void ChangeEquipButtonWidth()
+    {
+        GameObject label = this.EquipSubMenu.GetChild(1);
+        GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
+        localizableLable.Label.width = 220;
+    }
+
+    public GameObject EquipSubMenu;
 
 	public GameObject OptimizeSubMenu;
 

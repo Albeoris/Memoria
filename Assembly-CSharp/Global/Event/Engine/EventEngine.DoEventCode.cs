@@ -321,7 +321,7 @@ public partial class EventEngine
                 return 0;
             case EBin.event_code_binary.CLOSE:
                 // For the stage
-                if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 62 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 63)
+                if (IsAlexandriaStageScene())
                 {
                     DialogManager.Instance.ForceControlByEvent(false);
                     goto case EBin.event_code_binary.WAITMES;
@@ -2186,6 +2186,20 @@ public partial class EventEngine
                         goto label_832;
                 }
         }
+    }
+
+    private static Boolean IsAlexandriaStageScene()
+    {
+        switch (FF9StateSystem.Common.FF9.fldMapNo)
+        {
+            case 62:
+            case 63:
+            case 3009:
+            case 3010:
+            //case 3011: // Leads to problems
+                return true;
+        }
+        return false;
     }
 
     [DebuggerHidden]

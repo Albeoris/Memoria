@@ -103,38 +103,99 @@ public partial class BattleHUD : UIScene
     {
         // TODO: Move it to an external file
         String abilityName = FF9TextTool.ActionAbilityName(pCmd.sub_no);
+        
+        String result;
+        if (TryFormatRussianMagicSwordAbility(abilityName, out result))
+            return result;
+
+        String commandTitle = FF9TextTool.BattleCommandTitleText(0);
+
+        switch (Localization.GetSymbol())
+        {
+            case "JP":
+                return $"{abilityName}{commandTitle}";
+            case "FR":
+            case "IT":
+            case "ES":
+                return $"{commandTitle} {abilityName}";
+            default:
+                return $"{abilityName} {commandTitle}";
+        }
+    }
+
+    private static Boolean TryFormatRussianMagicSwordAbility(String abilityName, out String result)
+    {
         switch (abilityName)
         {
             case "Огонь":
-                return "Огненный клинок";
+            {
+                result = "Огненный клинок";
+                return true;
+            }
             case "Огонь II":
-                return "Огненный клинок II";
+            {
+                result = "Огненный клинок II";
+                return true;
+            }
             case "Огонь III":
-                return "Огненный клинок III";
+            {
+                result = "Огненный клинок III";
+                return true;
+            }
             case "Буран":
-                return "Ледяной клинок";
+            {
+                result = "Ледяной клинок";
+                return true;
+            }
             case "Буран II":
-                return "Ледяной клинок II";
+            {
+                result = "Ледяной клинок II";
+                return true;
+            }
             case "Буран III":
-                return "Ледяной клинок III";
+            {
+                result = "Ледяной клинок III";
+                return true;
+            }
             case "Молния":
-                return "Электрический клинок";
+            {
+                result = "Электрический клинок";
+                return true;
+            }
             case "Молния II":
-                return "Электрический клинок II";
+            {
+                result = "Электрический клинок II";
+                return true;
+            }
             case "Молния III":
-                return "Электрический клинок III";
+            {
+                result = "Электрический клинок III";
+                return true;
+            }
             case "Био":
-                return "Ядовитый клинок";
+            {
+                result = "Ядовитый клинок";
+                return true;
+            }
             case "Вода":
-                return "Водный клинок";
+            {
+                result = "Водный клинок";
+                return true;
+            }
             case "Взрыв":
-                return "Взрывной клинок";
+            {
+                result = "Взрывной клинок";
+                return true;
+            }
             case "Судный день":
-                return "Клинок Судного дня";
+            {
+                result = "Клинок Судного дня";
+                return true;
+            }
         }
 
-        String str2 = Localization.GetSymbol() == "JP" ? String.Empty : " ";
-        return abilityName + str2 + FF9TextTool.BattleCommandTitleText(0);
+        result = null;
+        return false;
     }
 
     private static BattleCommandId GetCommandFromCommandIndex(CommandMenu commandIndex, Int32 playerIndex)

@@ -444,7 +444,9 @@ namespace Memoria.Launcher
                     return GetMessage(name, nameof(Question));
                 }
 
+                public static readonly string Title = GetMessageQuestion(nameof(Title));
                 public static readonly string AreYouSureTitle = GetMessageQuestion(nameof(AreYouSureTitle));
+                public static readonly string NewVersionIsAvailable = GetMessageQuestion(nameof(NewVersionIsAvailable));
             }
 
             public static class Error

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text;
@@ -15,30 +16,46 @@ namespace Memoria.Patcher
         {
             try
             {
-                if (args.Length == 3 && args[0] == "-update")
+                if (args.Length > 1 && args[0] == "-update")
                 {
-                    Int32 launcherProcessId = Int32.Parse(args[1]);
-                    String launcherProcessPath = args[2];
+                    String launcherProcessPath = args[1];
                     String launcherProcessDirectory = Path.GetDirectoryName(launcherProcessPath);
-                    try
-                    {
-                        Process process = Process.GetProcessById(launcherProcessId);
-                        process.Kill();
-                        process.WaitForExit();
-                    }
-                    catch
-                    {
-                    }
 
-                    Run(new[] { launcherProcessDirectory });
+                    if (args.Length > 2)
+                    {
+                        Int32 launcherProcessId = Int32.Parse(args[2]);
+                        try
+                        {
+                            Process process = Process.GetProcessById(launcherProcessId);
+                            process.Kill();
+                            process.WaitForExit();
+                        }
+                        catch
+                        {
+                        }
 
-                    Process.Start(launcherProcessPath);
+                        Run(new[] {launcherProcessDirectory});
+
+                        String arguments = $"-update \"{launcherProcessPath}\"";
+                        foreach (String patcher in args.Skip(3))
+                        {
+                            Process process = Process.Start(patcher, arguments);
+                            process?.WaitForExit();
+                        }
+
+                        Process.Start(launcherProcessPath);
+                    }
+                    else
+                    {
+                        Run(new[] {launcherProcessDirectory});
+                    }
 
                     Environment.Exit(0);
                 }
                 else
                 {
                     Run(args);
+                    Console.WriteLine(Lang.Message.Done.Success);
                 }
             }
             catch (Exception ex)
@@ -49,7 +66,7 @@ namespace Memoria.Patcher
                 Console.WriteLine("---------------------------");
             }
 
-            Console.WriteLine("Press enter to exit...");
+            Console.WriteLine(Lang.Message.Done.PressEnterToExit);
             Console.ReadLine();
         }
 

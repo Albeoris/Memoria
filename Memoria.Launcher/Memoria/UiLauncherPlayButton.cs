@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -34,32 +36,8 @@ namespace Memoria.Launcher
             {
                 if (GameSettings.CheckUpdates)
                 {
-                    String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
-                    String applicationDirectory = Path.GetDirectoryName(applicationPath);
-                    HttpFileInfo updateInfo = await FindFirstUpdateInfo(applicationDirectory);
-                    if (updateInfo != null)
-                    {
-                        DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(applicationPath);
-                        if (lastWriteTimeUtc < updateInfo.LastModified && MessageBox.Show((Window)this.GetRootElement(), "A new version is available, download now?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                        {
-                            String filePath = updateInfo.TargetPath;
-
-                            using (UiProgressWindow progress = new UiProgressWindow("Downloading..."))
-                            {
-                                progress.SetTotal(updateInfo.ContentLength);
-                                progress.Show();
-
-                                Downloader downloader = new Downloader(CancelEvent);
-                                downloader.DownloadProgress += progress.Incremented;
-                                await downloader.Download(updateInfo.Url, filePath);
-                                File.SetLastWriteTime(filePath, updateInfo.LastModified);
-                            }
-
-                            Process.Start(filePath, $@"-update ""{Process.GetCurrentProcess().Id}"" ""{applicationPath}""");
-                            Environment.Exit(2);
-                            return;
-                        }
-                    }
+                    if (await CheckUpdates((Window)this.GetRootElement(), CancelEvent, GameSettings))
+                        return;
                 }
 
                 if (GameSettings.ScreenResolution == null)
@@ -170,10 +148,104 @@ namespace Memoria.Launcher
             }
         }
 
-        private async Task<HttpFileInfo> FindFirstUpdateInfo(String applicationDirectory)
+        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, GameSettingsControl gameSettings)
         {
-            Downloader downloader = new Downloader(CancelEvent);
-            String[] urls = GameSettings.DownloadMirrors;
+            String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
+            String applicationDirectory = Path.GetDirectoryName(applicationPath);
+            LinkedList<HttpFileInfo> updateInfo = await FindUpdatesInfo(applicationDirectory, cancelEvent, gameSettings);
+            if (updateInfo.Count == 0)
+                return false;
+
+            StringBuilder messageSb = new StringBuilder(256);
+            messageSb.AppendLine(Lang.Message.Question.NewVersionIsAvailable);
+            Int64 size = 0;
+            foreach (HttpFileInfo info in updateInfo)
+            {
+                size += info.ContentLength;
+                messageSb.AppendLine($"{info.TargetName} - {info.LastModified} ({UiProgressWindow.FormatValue(info.ContentLength)})");
+            }
+
+            if (MessageBox.Show(rootElement, messageSb.ToString(), Lang.Message.Question.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                List<String> success = new List<String>(updateInfo.Count);
+                List<String> failed = new List<String>();
+
+                using (UiProgressWindow progress = new UiProgressWindow("Downloading..."))
+                {
+                    progress.SetTotal(size);
+                    progress.Show();
+
+                    Downloader downloader = new Downloader(cancelEvent);
+                    downloader.DownloadProgress += progress.Incremented;
+
+                    foreach (HttpFileInfo info in updateInfo)
+                    {
+                        String filePath = info.TargetPath;
+
+                        try
+                        {
+                            await downloader.Download(info.Url, filePath);
+                            File.SetLastWriteTime(filePath, info.LastModified);
+
+                            success.Add(filePath);
+                        }
+                        catch
+                        {
+                            failed.Add(filePath);
+                        }
+                    }
+                }
+
+                if (failed.Count > 0)
+                {
+                    MessageBox.Show(rootElement,
+                        "Failed to download:" + Environment.NewLine + String.Join(Environment.NewLine, failed),
+                        Lang.Message.Error.Title,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+
+                if (success.Count > 0)
+                {
+                    String main = success.First();
+                    if (success.Count > 1)
+                    {
+                        StringBuilder sb = new StringBuilder(256);
+                        foreach (String path in success.Skip(1))
+                        {
+                            sb.Append('"');
+                            sb.Append(path);
+                            sb.Append('"');
+                        }
+
+                        Process.Start(main, $@"-update ""{applicationPath}"" ""{Process.GetCurrentProcess().Id}"" {sb}");
+                    }
+                    else
+                    {
+                        Process.Start(main, $@"-update ""{applicationPath}"" ""{Process.GetCurrentProcess().Id}""");
+                    }
+
+                    Environment.Exit(2);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+
+
+        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, GameSettingsControl gameSettings)
+        {
+            Downloader downloader = new Downloader(cancelEvent);
+            String[] urls = gameSettings.DownloadMirrors;
+
+            LinkedList<HttpFileInfo> list = new LinkedList<HttpFileInfo>();
+            Dictionary<String, LinkedListNode<HttpFileInfo>> dic = new Dictionary<String, LinkedListNode<HttpFileInfo>>(urls.Length);
 
             foreach (String url in urls)
             {
@@ -185,13 +257,27 @@ namespace Memoria.Launcher
 
                     Int32 separatorIndex = url.LastIndexOf('/');
                     String remoteFileName = url.Substring(separatorIndex + 1);
+                    fileInfo.TargetName = remoteFileName;
                     fileInfo.TargetPath = Path.Combine(applicationDirectory, remoteFileName);
 
-                    if (!File.Exists(fileInfo.TargetPath))
-                        return fileInfo;
+                    LinkedListNode<HttpFileInfo> node;
+                    if (!dic.TryGetValue(fileInfo.TargetPath, out node) && File.Exists(fileInfo.TargetPath) && File.GetLastWriteTime(fileInfo.TargetPath) >= fileInfo.LastModified)
+                        continue;
 
-                    if (File.GetLastWriteTime(fileInfo.TargetPath) != fileInfo.LastModified)
-                        return fileInfo;
+                    if (node != null)
+                    {
+                        if (node.Value.LastModified >= fileInfo.LastModified)
+                            continue;
+
+                        LinkedListNode<HttpFileInfo> newNode = list.AddBefore(node, fileInfo);
+                        list.Remove(node);
+                        dic[fileInfo.TargetPath] = newNode;
+                    }
+                    else
+                    {
+                        LinkedListNode<HttpFileInfo> newNode = list.AddLast(fileInfo);
+                        dic.Add(fileInfo.TargetPath, newNode);
+                    }
                 }
                 catch
                 {
@@ -199,7 +285,7 @@ namespace Memoria.Launcher
                 }
             }
 
-            return null;;
+            return list;;
         }
     }
 
@@ -208,6 +294,7 @@ namespace Memoria.Launcher
         public string Url;
         public long ContentLength = -1;
         public DateTime LastModified;
+        public String TargetName;
         public String TargetPath;
 
         public void ReadFromResponse(string url, WebResponse response)
@@ -414,7 +501,7 @@ namespace Memoria.Launcher
             _timer.Elapsed += OnTimer;
         }
 
-        public String FormatValue(Int64 value)
+        public static String FormatValue(Int64 value)
         {
             Int32 i = 0;
             Decimal dec = value;

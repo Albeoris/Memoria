@@ -181,7 +181,9 @@
       />
 
     <Question
+      Title = "Question"
       AreYouSureTitle = "Are you sure?"
+      NewVersionIsAvailable = "A new version is available, download now?"
       />
     
     <Error

@@ -152,6 +152,8 @@
       Title = "Готово!"
       ExtractionCompleteFormat = "Распаковка завершена за {0:hh\:mm\:ss}."
       InjectionCompleteFormat = "Упаковка завершена за {0:hh\:mm\:ss}."
+      Success = "Установка успешно завершена."
+      PressEnterToExit = "Нажмите Enter для завершения..."
       />
     
     <Question

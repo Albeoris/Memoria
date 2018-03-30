@@ -487,6 +487,7 @@ public class FieldMap : HonoBehavior
     {
         switch (FF9StateSystem.Common.FF9.fldMapNo)
         {
+            case 0052: // Prima Vista - Meeting Room
             case 0455: // Mountain - Base
             case 1507: // Conde Petie - Pathway
             case 1605: // Madain Sari - Eidolon Wall
@@ -500,9 +501,9 @@ public class FieldMap : HonoBehavior
             case 2261: // Oeilvert - Bridge
             case 2363: // Gulug - Path
             case 2510: // Iifa Tree - Silver Dragon
-            case 3009: // Ending - TH
-            case 3010: // Ending - TH
-            case 3011: // Ending - TH
+            //case 3009: // Ending - TH
+            //case 3010: // Ending - TH
+            //case 3011: // Ending - TH
                 return true;
         }
         return false;

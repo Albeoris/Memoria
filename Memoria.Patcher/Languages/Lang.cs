@@ -397,6 +397,8 @@ namespace Memoria.Patcher
                 public static readonly string Title = GetMessageDone("Title");
                 public static readonly string ExtractionCompleteFormat = GetMessageDone("ExtractionCompleteFormat");
                 public static readonly string InjectionCompleteFormat = GetMessageDone("InjectionCompleteFormat");
+                public static readonly string Success = GetMessageDone(nameof(Success));
+                public static readonly string PressEnterToExit = GetMessageDone(nameof(PressEnterToExit));
             }
 
             public static class Question
