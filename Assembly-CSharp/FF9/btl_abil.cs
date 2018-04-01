@@ -126,7 +126,7 @@ namespace FF9
 	        if (targetUnit.IsUnderStatus(BattleStatus.Death | BattleStatus.Petrify))
 	            return 0;
 
-	        if (targetUnit.HasCategory(CharacterCategory.Female) && targetUnit.CurrentHp < targetUnit.MaximumHp >> 1)
+	        if (targetUnit.HasCategory(CharacterCategory.Female) && targetUnit.CurrentHp < (targetUnit.MaximumHp >> 1))
 	            coverBy = FindStrongestDefender(SupportAbility2.ProtectGirls, targetUnit);
 
 	        if (coverBy == null && targetUnit.IsUnderStatus(BattleStatus.LowHP))
