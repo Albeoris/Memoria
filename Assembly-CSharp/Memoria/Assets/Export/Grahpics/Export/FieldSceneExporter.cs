@@ -23,11 +23,36 @@ namespace Memoria.Assets
 
                 Boolean old = AssetManager.UseBundles;
                 AssetManager.UseBundles = true;
-
+                var i = 0;
                 foreach (String map in CreateMapList())
                 {
                     ExportMapSafe(map);
-                    //return;
+                    i++;
+
+                    Texture2D[] allResTextures = Resources.FindObjectsOfTypeAll(typeof(Texture2D)) as Texture2D[];
+                    if (allResTextures != null)
+                    {
+                        List<Texture2D> texturesToUnload = new List<Texture2D>();
+                        foreach (Texture2D t in allResTextures)
+                            if (t != null)
+                                texturesToUnload.Add(t);
+
+                        if (texturesToUnload.Count > 0)
+                        {
+                            foreach (Texture2D t in texturesToUnload)
+                            {
+                                if (t == null)
+                                    continue;
+
+                                UnityEngine.Object.DestroyImmediate(t, true);
+                                Resources.UnloadAsset(t);
+                            }
+                        }
+                    }
+
+                    Resources.UnloadUnusedAssets();
+                    if (i % 100 == 0)
+                        System.GC.Collect();
                 }
 
                 AssetManager.UseBundles = old;
@@ -45,12 +70,12 @@ namespace Memoria.Assets
             {
                 String relativePath = FieldMap.GetMapResourcePath(mapName);
                 String outputDirectory = Path.Combine(Configuration.Export.Path, relativePath);
-                if (Directory.Exists(outputDirectory))
-                {
+                //if (Directory.Exists(outputDirectory))
+                //{
 
-                    Log.Warning($"[FieldSceneExporter] Export was skipped bacause a directory already exists: [{outputDirectory}].");
-                    //return;
-                }
+                //    Log.Warning($"[FieldSceneExporter] Export was skipped bacause a directory already exists: [{outputDirectory}].");
+                //    //return;
+                //}
 
                 Log.Message("[FieldSceneExporter] Exporting [{0}]...", mapName);
 
@@ -58,66 +83,67 @@ namespace Memoria.Assets
                 scene.LoadEBG(null, relativePath, mapName);
 
                 //String directoryPath = Path.GetDirectoryName(outputPath);
-                Directory.CreateDirectory(outputDirectory);
+                if(true) { // TEST
+                    Directory.CreateDirectory(outputDirectory);
 
-                Texture2D atlasTexture = TextureHelper.CopyAsReadable(scene.atlas);
-                Int32 factor = (Int32)scene.SPRITE_W / 16;
-                Int32 textureWidth = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offY * factor) + scene.SPRITE_H);
-                Int32 textureHeight = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offX * factor) + scene.SPRITE_W);
+                    Texture2D atlasTexture = TextureHelper.CopyAsReadable(scene.atlas);
+                    Int32 factor = (Int32)scene.SPRITE_W / 16;
+                    Int32 textureWidth = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offY * factor) + scene.SPRITE_H);
+                    Int32 textureHeight = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offX * factor) + scene.SPRITE_W);
 
-                using (Stream output = File.Create(outputDirectory + "test.psd"))
-                {
-                    PsdFile file = new PsdFile();
-                    file.BitDepth = 8;
-                    file.ChannelCount = 4;
-                    file.ColorMode = PsdColorMode.Rgb;
-                    file.RowCount = textureWidth;
-                    file.ColumnCount = textureHeight;
-                    file.Resolution = new ResolutionInfo
+                    using (Stream output = File.Create(outputDirectory + "test.psd"))
                     {
-                        Name = "ResolutionInfo ",
+                        PsdFile file = new PsdFile();
+                        file.BitDepth = 8;
+                        file.ChannelCount = 4;
+                        file.ColorMode = PsdColorMode.Rgb;
+                        file.RowCount = textureWidth;
+                        file.ColumnCount = textureHeight;
+                        file.Resolution = new ResolutionInfo
+                        {
+                            Name = "ResolutionInfo ",
 
-                        HDpi = new UFixed1616(72, 0),
-                        HResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
-                        HeightDisplayUnit = ResolutionInfo.Unit.Centimeters,
+                            HDpi = new UFixed1616(72, 0),
+                            HResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
+                            HeightDisplayUnit = ResolutionInfo.Unit.Centimeters,
 
-                        VDpi = new UFixed1616(72, 0),
-                        VResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
-                        WidthDisplayUnit = ResolutionInfo.Unit.Centimeters
-                    };
+                            VDpi = new UFixed1616(72, 0),
+                            VResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
+                            WidthDisplayUnit = ResolutionInfo.Unit.Centimeters
+                        };
 
-                    file.BaseLayer.Name = "Base";
-                    for (Int16 i = 0; i < 4; i++)
-                    {
-                        Channel channel = new Channel(i, file.BaseLayer);
-                        channel.ImageCompression = file.ImageCompression;
-                        channel.Length = file.RowCount * Util.BytesPerRow(file.BaseLayer.Rect.Size, file.BitDepth);
-                        channel.ImageData = new Byte[channel.Length];
-                        file.BaseLayer.Channels.Add(channel);
+                        file.BaseLayer.Name = "Base";
+                        for (Int16 i = 0; i < 4; i++)
+                        {
+                            Channel channel = new Channel(i, file.BaseLayer);
+                            channel.ImageCompression = file.ImageCompression;
+                            channel.Length = file.RowCount * Util.BytesPerRow(file.BaseLayer.Rect.Size, file.BitDepth);
+                            channel.ImageData = new Byte[channel.Length];
+                            file.BaseLayer.Channels.Add(channel);
+                        }
+
+                        file.BaseLayer.Channels.Last().ID = -1;
+
+                        for (Int32 index = scene.overlayList.Count - 1; index >= 0; index--) //scene.overlayList.Count
+                        {
+                            BGOVERLAY_DEF overlay = scene.overlayList[index];
+                            String outputPath = outputDirectory + $"Overlay{index}.png";
+                            ExportOverlay(overlay, atlasTexture, outputPath, scene, file);
+                        }
+
+                        file.Save(output, Encoding.UTF8);
                     }
 
-                    file.BaseLayer.Channels.Last().ID = -1;
+                    string strings = $"[PsdSection]\nLayerOrder=name\nReversed = 0";
+                    System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(outputDirectory, "psd.meta"));
+                    sw.WriteLine(strings);
+                    sw.Close();
 
-                    for (Int32 index = scene.overlayList.Count - 1; index >= 0; index--) //scene.overlayList.Count
-                    {
-                        BGOVERLAY_DEF overlay = scene.overlayList[index];
-                        String outputPath = outputDirectory + $"Overlay{index}.png";
-                        ExportOverlay(overlay, atlasTexture, outputPath, scene, file);
-                        //return;
-                    }
 
-                    file.Save(output, Encoding.UTF8);
+                    TextureHelper.WriteTextureToFile(atlasTexture, Path.Combine(outputDirectory, "atlas.png"));
+
+                    Log.Message("[FieldSceneExporter] Exporting completed successfully.");
                 }
-
-                string strings = $"[PsdSection]\nLayerOrder=name\nReversed = 0";
-                System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(outputDirectory, "psd.meta"));
-                sw.WriteLine(strings);
-                sw.Close();
-
-
-                TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(scene.atlas), Path.Combine(outputDirectory, "atlas.png"));
-
-                Log.Message("[FieldSceneExporter] Exporting completed successfully.");
             }
             catch (Exception ex)
             {
@@ -128,18 +154,17 @@ namespace Memoria.Assets
         private static void ExportOverlay(BGOVERLAY_DEF overlay, Texture2D atlas, String outputPath, BGSCENE_DEF scene, PsdFile psd)
         {
             Int32 factor = (Int32)scene.SPRITE_W / 16;
-            Log.Message($"Transform: {overlay.transform?.name}, Factor: {factor}");
-            Log.Message($"SPRITE_H: {scene.SPRITE_H:D2} SPRITE_W {scene.SPRITE_W:D2}");
-            if (overlay.spriteList.Count < 1)
-            {
-                Log.Message("Overlay is empty.");
-                return;
-            }
 
             Layer layer = new Layer(psd);
             psd.Layers.Add(layer);
-            Int32 textureWidth = (Int32)(overlay.spriteList.Max(s => s.offX * factor) + scene.SPRITE_W);
-            Int32 textureHeight = (Int32)(overlay.spriteList.Max(s => s.offY * factor) + scene.SPRITE_H);
+            Int32 textureWidth = (Int32)scene.SPRITE_W;
+            Int32 textureHeight = (Int32)scene.SPRITE_H;
+            // try ane mitigate empty overlay disaster
+            if (overlay.spriteList.Count > 1)
+            {
+                textureWidth = (Int32)(overlay.spriteList.Max(s => s.offX * factor) + scene.SPRITE_W);
+                textureHeight = (Int32)(overlay.spriteList.Max(s => s.offY * factor) + scene.SPRITE_H);
+            }
             Texture2D result = new Texture2D(textureWidth, textureHeight, TextureFormat.ARGB32, false);
             //Log.Message("depth;h;w;u;v;offX;offY;oriData;pad;res;startOffset;texX;texY;trans;localPosition;name");
 
@@ -202,7 +227,6 @@ namespace Memoria.Assets
                 //result.ReadPixels(new Rect(s.atlasX, s.atlasY, scene.SPRITE_W, scene.SPRITE_H), s.offX * factor, textureHeight - s.offY * factor);
             }
             TextureHelper.WriteTextureToFile(result, outputPath);
-
             layer.Name = Path.GetFileNameWithoutExtension(outputPath);
             layer.Opacity = 255;
             layer.Rect = new Rectangle(overlay.curX * factor, overlay.curY * factor, textureWidth, textureHeight);
@@ -214,10 +238,10 @@ namespace Memoria.Assets
         private static IEnumerable<String> CreateMapList()
         {
             String[] strArray1 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/FieldMap/mapList.txt", false).text.Split('\n');
-            for (Int32 i = 0; i < 100; i++)
-            //foreach (String str in strArray1)
+            //for (Int32 i = 0; i < 100; i++)
+            foreach (String str in strArray1)
             {
-                String str = strArray1[i];
+                //String str = strArray1[i];
                 if (str == String.Empty)
                     break;
 

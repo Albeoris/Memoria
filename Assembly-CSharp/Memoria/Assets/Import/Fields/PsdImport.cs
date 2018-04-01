@@ -13,8 +13,8 @@ namespace Memoria.Assets.Import.Graphics
         public static void Sample()
         {
             PsdInfo ini = PsdInfo.Load("PsdInfo.ini");
-            Boolean LayerOrder = ini.OrderByDepth;
-            Boolean Reversed = ini.ReverseOrder;
+            String LayerOrder = ini.LayerOrderFromPsdSection;
+            Int32 Reversed = ini.ReversedFromPsdSection;
         }
 
         public static PsdInfo Load(String filePath)
@@ -31,8 +31,8 @@ namespace Memoria.Assets.Import.Graphics
 
         private PsdSection _psdSection;
 
-        public Boolean OrderByDepth => _psdSection.OrderByDepth.Value;
-        public Boolean ReverseOrder => _psdSection.ReverseOrder.Value;
+        public String LayerOrderFromPsdSection => _psdSection.LayerOrder.Value;
+        public Int32 ReversedFromPsdSection => _psdSection.Reversed.Value;
 
         public PsdInfo()
         {
@@ -41,13 +41,13 @@ namespace Memoria.Assets.Import.Graphics
 
         private sealed class PsdSection : IniSection
         {
-            public readonly IniValue<Boolean> OrderByDepth;
-            public readonly IniValue<Boolean> ReverseOrder;
+            public readonly IniValue<String> LayerOrder;
+            public readonly IniValue<Int32> Reversed;
 
             public PsdSection() : base(nameof(PsdSection), true)
             {
-                OrderByDepth = BindBoolean(nameof(OrderByDepth), false);
-                ReverseOrder = BindBoolean(nameof(ReverseOrder), false);
+                LayerOrder = BindString(nameof(LayerOrder), "name");
+                Reversed = BindInt32(nameof(Reversed), 0);
             }
         }
     }

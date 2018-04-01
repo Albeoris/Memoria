@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using Memoria.Prime;
 
 namespace Memoria.Assets
@@ -19,6 +20,8 @@ namespace Memoria.Assets
                 GraphicResourceExporter.ExportSafe();
                 FieldSceneExporter.ExportSafe();
                 BattleSceneExporter.ExportSafe();
+                Log.Message("[ResourceExporter] Application will now quit. Please disable Configuration.Export.Enabled and restart the game.");
+                UIManager.Input.ConfirmQuit();
             }
             catch (Exception ex)
             {
