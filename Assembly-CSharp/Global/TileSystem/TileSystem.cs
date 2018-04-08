@@ -688,7 +688,7 @@ namespace Global.TileSystem
 
             if (paddingCoords.tileCol < this.TDMap.SizeX && paddingCoords.tileRow < this.TDMap.SizeY)
             {
-                overlayNumbers = this.TDMap.TileMap[paddingCoords.tileCol, paddingCoords.tileRow];
+                overlayNumbers = new List<TileDepthInfo>(this.TDMap.TileMap[paddingCoords.tileCol, paddingCoords.tileRow]);
             }
 
             PaddingCoords selfCoords = this.GetPaddingSourceCoords(tile, paddingType, true);
@@ -706,28 +706,39 @@ namespace Global.TileSystem
             List<Overlay> paddingOverlayList = new List<Overlay>();
             var currentNumber = overlay.GetOrderNumber();
 
-            int numberToRemove = _getOverlayToRemove(currentNumber, paddingType, x, y);
-            if(numberToRemove != -1)
+            //int numberToRemove = _getOverlayToRemove(currentNumber, paddingType, x, y);
+            //if (numberToRemove != -1)
+            //{
+            //    for (var i = 0; i < overlayNumbers.Count; i++)
+            //    {
+            //        var elem = overlayNumbers[i];
+            //        if (elem.orderNumber == numberToRemove)
+            //        {
+            //            overlayNumbers.Remove(elem);
+            //            break;
+            //        }
+            //    }
+            //}
+            // this one is original order
+            //overlayNumbers.Sort(delegate (TileDepthInfo first, TileDepthInfo second)
+            //{
+            //    return (Math.Abs(first.depth - sourceDepth)).CompareTo(Math.Abs(second.depth - sourceDepth));
+            //});
+
+            // this one is not
+            List<TileDepthInfo> greater = new List<TileDepthInfo>();
+            List<TileDepthInfo> lesserOrEquals = new List<TileDepthInfo>();
+            foreach(var element in overlayNumbers)
             {
-                for (var i = 0; i < overlayNumbers.Count; i++)
-                {
-                    var elem = overlayNumbers[i];
-                    if (elem.orderNumber == numberToRemove)
-                    {
-                        overlayNumbers.Remove(elem);
-                        break;
-                    }
-                }
+                if (element.depth > sourceDepth)
+                    greater.Add(element);
+                else lesserOrEquals.Add(element);
             }
+            greater.Reverse();
+            overlayNumbers = lesserOrEquals.Concat(greater).ToList();
+
             
-            overlayNumbers.Sort(delegate (TileDepthInfo first, TileDepthInfo second)
-            {
-                return (Math.Abs(first.depth - sourceDepth)).CompareTo(Math.Abs(second.depth - sourceDepth));
-            });
 
-
-
-            int indexToRemove = -1;
             for (int i = 0; i < overlayNumbers.Count; i++)
             {
                 var item = overlayNumbers[i];
@@ -743,11 +754,14 @@ namespace Global.TileSystem
             }
 
 
+           // String depths = "";
             for (var i = 0; i < overlayNumbers.Count; i++)
             {
                 int number = overlayNumbers[i].orderNumber;
                 paddingOverlayList.Add(this.GetOverlay(number));
+               // depths += $"depth {overlayNumbers[i].depth}, orderNumber {overlayNumbers[i].orderNumber}\n ";
             }
+           // Log.Message(depths);
             return new Padding(tile, overlay, paddingOverlayList, paddingCoords, selfCoords, paddingType);
         }
 
