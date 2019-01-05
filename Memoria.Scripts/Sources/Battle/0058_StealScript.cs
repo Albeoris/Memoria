@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 
@@ -19,6 +20,11 @@ namespace Memoria.Scripts.Battle
             _v = v;
         }
 
+        static Int32 Bandit = 1;
+        static Int32 MasterThief = 2;
+        static Int32 BanditMasterThief = 3;
+        static Int32 AlwaysSteal = 4;
+
         public void Perform()
         {
             BattleEnemy enemy = BattleEnemy.Find(_v.Target);
@@ -28,7 +34,15 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            if (!_v.Caster.HasSupportAbility(SupportAbility2.Bandit))
+            Int32 StealAugment = Configuration.Battle.StealAugment;
+            if (StealAugment == AlwaysSteal) 
+            {
+                var index = Enumerable.Range(0, 4).FirstOrDefault(x => HasItem(enemy.StealableItems[x]));
+                StealItem(enemy, index);
+                return;
+            }
+
+            if (StealAugment != Bandit || StealAugment != BanditMasterThief || !_v.Caster.HasSupportAbility(SupportAbility2.Bandit))
             {
                 _v.Context.HitRate = (Int16)(_v.Caster.Level + _v.Caster.Will);
                 _v.Context.Evade = _v.Target.Level;
@@ -40,13 +54,13 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief))
+            if (StealAugment != MasterThief || StealAugment != BanditMasterThief || _v.Caster.HasSupportAbility(SupportAbility1.MasterThief))
             {
-                if (enemy.StealableItems[3] != Byte.MaxValue && GameRandom.Next8() < 32)
+                if (HasItem(enemy.StealableItems[3]) && GameRandom.Next8() < 32)
                     StealItem(enemy, 3);
-                else if (enemy.StealableItems[2] != Byte.MaxValue && GameRandom.Next8() < 32)
+                else if (HasItem(enemy.StealableItems[2]) && GameRandom.Next8() < 32)
                     StealItem(enemy, 2);
-                else if (enemy.StealableItems[1] != Byte.MaxValue && GameRandom.Next8() < 64)
+                else if (HasItem(enemy.StealableItems[1]) && GameRandom.Next8() < 64)
                     StealItem(enemy, 1);
                 else
                     StealItem(enemy, 0);
@@ -64,21 +78,25 @@ namespace Memoria.Scripts.Battle
             }
         }
 
+        private static Boolean HasItem(Byte item)
+        {
+            return item != Byte.MaxValue;
+        }
+
         private static Boolean HasStealableItems(BattleEnemy enemy)
         {
-            Boolean hasStealableItems = false;
             for (Int16 index = 0; index < 4; ++index)
             {
-                if (enemy.StealableItems[index] != Byte.MaxValue)
-                    hasStealableItems = true;
+                if (HasItem(enemy.StealableItems[index]))
+                    return true;
             }
-            return hasStealableItems;
+            return false;
         }
 
         private void StealItem(BattleEnemy enemy, Int32 itemIndex)
         {
             Byte itemId = enemy.StealableItems[itemIndex];
-            if (itemId == Byte.MaxValue)
+            if (!HasItem(itemId))
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                 return;
