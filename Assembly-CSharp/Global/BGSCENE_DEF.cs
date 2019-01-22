@@ -38,6 +38,9 @@ using Global.TileSystem;
 
 public class BGSCENE_DEF
 {
+    private static readonly Int32 TileSize = Configuration.Graphics.TileSize;
+
+
     public UInt16 sceneLength;
 
     public UInt16 depthBitShift;
@@ -229,6 +232,7 @@ public class BGSCENE_DEF
 
     private void ExtractSpriteData(BinaryReader reader)
     {
+
         this.spriteCount = 0;
         for (Int32 i = 0; i < (Int32)this.overlayCount; i++)
         {
@@ -240,7 +244,7 @@ public class BGSCENE_DEF
             this.ATLAS_H = (UInt32)this.atlas.height;
             this.ATLAS_W = (UInt32)this.atlas.width;
         }
-        Int32 num = this.atlas.width / 36;
+        Int32 num = this.atlas.width / (TileSize + 4);
         Int32 num2 = 0;
         for (Int32 j = 0; j < (Int32)this.overlayCount; j++)
         {
@@ -259,10 +263,10 @@ public class BGSCENE_DEF
                 spriteInfo2.ReadData_BGSPRITELOC_DEF(reader);
                 if (this.useUpscaleFM)
                 {
-                    spriteInfo2.atlasX = (UInt16)(2 + num2 % num * 36);
-                    spriteInfo2.atlasY = (UInt16)(2 + num2 / num * 36);
-                    spriteInfo2.w = 32;
-                    spriteInfo2.h = 32;
+                    spriteInfo2.atlasX = (UInt16)(2 + num2 % num * (TileSize + 4));
+                    spriteInfo2.atlasY = (UInt16)(2 + num2 / num * (TileSize + 4));
+                    spriteInfo2.w = (ushort)TileSize;
+                    spriteInfo2.h = (ushort)TileSize;
                     num2++;
                 }
             }
@@ -302,7 +306,7 @@ public class BGSCENE_DEF
             Int32 startOvrIdx = info.startOvrIdx;
             Int32 endOvrIdx = info.endOvrIdx;
             Int32 spriteStartIndex = info.GetSpriteStartIndex(localizeSymbol);
-            Int32 num = atlasWidth / 36;
+            Int32 num = atlasWidth / (TileSize + 4);
             Int32 num2 = spriteStartIndex;
             for (Int32 i = startOvrIdx; i <= endOvrIdx; i++)
             {
@@ -321,10 +325,10 @@ public class BGSCENE_DEF
                     spriteInfo2.ReadData_BGSPRITELOC_DEF(binaryReader);
                     if (this.useUpscaleFM)
                     {
-                        spriteInfo2.atlasX = (UInt16)(2 + num2 % num * 36);
-                        spriteInfo2.atlasY = (UInt16)(2 + num2 / num * 36);
-                        spriteInfo2.w = 32;
-                        spriteInfo2.h = 32;
+                        spriteInfo2.atlasX = (UInt16)(2 + num2 % num * (TileSize + 4));
+                        spriteInfo2.atlasY = (UInt16)(2 + num2 / num * (TileSize + 4));
+                        spriteInfo2.w = (ushort)TileSize;
+                        spriteInfo2.h = (ushort)TileSize;
                         num2++;
                     }
                 }
@@ -350,7 +354,7 @@ public class BGSCENE_DEF
             if (x != null)
             {
                 this.atlas = x;
-                //Log.Message("Loading this.atlas");
+                
                 if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
                 {
                     this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), false);
@@ -359,8 +363,8 @@ public class BGSCENE_DEF
                 {
                     this.atlasAlpha = null;
                 }
-                this.SPRITE_W = 32u;
-                this.SPRITE_H = 32u;
+                this.SPRITE_W = (ushort)TileSize;
+                this.SPRITE_H = (ushort)TileSize;
             }
             else
             {
@@ -469,8 +473,8 @@ public class BGSCENE_DEF
         for (Int32 i = 0; i < array2.Length; i++)
         {
             Rect result = array2[i];
-            Int32 num = (Int32)result.width / 36;
-            Int32 num2 = (Int32)result.height / 36;
+            Int32 num = (Int32)result.width / (TileSize + 4);
+            Int32 num2 = (Int32)result.height / (TileSize + 4);
             if (num * num2 >= spriteCount)
             {
                 return result;
