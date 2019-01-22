@@ -949,12 +949,12 @@ public class BGSCENE_DEF
         gameObject.transform.parent = fieldMap?.transform;
 
 
-        gameObject.transform.localPosition = new Vector3(this.curX - 160f, -(this.curY - 112f), this.curZ);
+        gameObject.transform.localPosition = new Vector3(this.curX - FieldMap.HalfFieldWidth, -(this.curY - FieldMap.HalfFieldHeight), this.curZ);
         gameObject.transform.localScale = new Vector3(1f, -1f, 1f);
         for (Int32 i = 0; i < this.cameraList.Count; i++)
         {
             BGCAM_DEF bGCAM_DEF = this.cameraList[i];
-            GameObject gameObject2 = new GameObject(String.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + 160f, " x ", bGCAM_DEF.vrpMaxY + 112f));
+            GameObject gameObject2 = new GameObject(String.Concat("Camera_", i.ToString("D2"), " : ", bGCAM_DEF.vrpMaxX + FieldMap.HalfFieldWidth, " x ", bGCAM_DEF.vrpMaxY + FieldMap.HalfFieldHeight));
             Transform transform = gameObject2.transform;
             transform.parent = gameObject.transform;
             bGCAM_DEF.transform = transform;
