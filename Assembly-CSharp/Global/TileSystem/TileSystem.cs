@@ -151,7 +151,7 @@ namespace Global.TileSystem
                 for (var j = 0; j < tilemap.SizeX; j++)
                 {
                     List<TileDepthInfo> lst = tileDepthMap.TileMap[j, i];
-                    if (lst.Count < 2)
+                    if (lst == null || lst.Count < 2)
                         continue;
                     int overlayNum = lst[0].orderNumber;
                     Overlay targetOverlay = tilemap.GetOverlay(overlayNum);
@@ -491,10 +491,11 @@ namespace Global.TileSystem
             {
                 for (var tileCol = 0; tileCol < sizeX; tileCol++)
                 {
-                    TileMap[tileCol, tileRow].Sort(delegate (TileDepthInfo x, TileDepthInfo y)
-                    {
-                        return y.depth.CompareTo(x.depth);
-                    });
+                    if(TileMap[tileCol, tileRow] != null)
+                        TileMap[tileCol, tileRow].Sort(delegate (TileDepthInfo x, TileDepthInfo y)
+                        {
+                            return y.depth.CompareTo(x.depth);
+                        });
                 }
             }
         }
@@ -505,6 +506,8 @@ namespace Global.TileSystem
         private int _cameraIndex;
         private int _fieldMapNumber;
         private Dictionary<Int32, Overlay> _overlays;
+        public int MinX;
+        public int MinY;
         public int SizeX;
         public int SizeY;
         private List<BGANIM_DEF> _animList;
@@ -686,7 +689,8 @@ namespace Global.TileSystem
             PaddingCoords paddingCoords = this.GetPaddingSourceCoords(tile, paddingType, false);
             List<TileDepthInfo> overlayNumbers = new List<TileDepthInfo>();
 
-            if (paddingCoords.tileCol < this.TDMap.SizeX && paddingCoords.tileRow < this.TDMap.SizeY)
+            if (paddingCoords.tileCol < this.TDMap.SizeX && paddingCoords.tileRow < this.TDMap.SizeY
+                && this.TDMap.TileMap[paddingCoords.tileCol, paddingCoords.tileRow] != null)
             {
                 overlayNumbers = new List<TileDepthInfo>(this.TDMap.TileMap[paddingCoords.tileCol, paddingCoords.tileRow]);
             }
@@ -807,6 +811,8 @@ namespace Global.TileSystem
         {
             Int32 minX, minY, maxX, maxY;
             TileMap.GetBounds(overlayList, cameraIndex, out minX, out minY, out maxX, out maxY);
+            this.MinX = minX;
+            this.MinY = minY;
             this.SizeX = (maxX - minX) / 16 + 1;
             this.SizeY = (maxY - minY) / 16 + 1;
             _fieldMapNumber = fieldMapNumber;
@@ -969,8 +975,8 @@ namespace Global.TileSystem
                 Tile tileToPush = new Tile();
                 tileToPush.info = info.spriteList[k];
                 BGSPRITE_LOC_DEF spriteInfo = info.spriteList[k];
-                tileToPush.x = (info.orgX + spriteInfo.offX) / 16; // get global x
-                tileToPush.y = (info.orgY + spriteInfo.offY) / 16; // get global y
+                tileToPush.x = (info.orgX + spriteInfo.offX - minX) / 16; // get global x
+                tileToPush.y = (info.orgY + spriteInfo.offY - minY) / 16; // get global y
                 tileToPush.overlay = this;
                 _map[tileToPush.x, tileToPush.y] = tileToPush;
             }

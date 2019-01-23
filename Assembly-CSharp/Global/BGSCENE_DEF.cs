@@ -10,6 +10,7 @@ using Memoria.Prime.PsdFile;
 using Memoria.Assets.Import.Graphics;
 using Memoria.Scripts;
 using Global.TileSystem;
+using System.Linq;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -120,6 +121,12 @@ public class BGSCENE_DEF
     private Boolean useUpscaleFM;
 
     private Int32 initialCorrection;
+
+    private String mapName;
+
+    private String atlasPath;
+
+    private DateTime atlasTimestamp;
 
     public BGSCENE_DEF(Boolean useUpscaleFm)
     {
@@ -289,10 +296,16 @@ public class BGSCENE_DEF
         }
     }
 
+    public void LoadLocale(BGSCENE_DEF sceneUS, String path, String newName, FieldMapLocalizeAreaTitleInfo info, String localizeSymbol)
+    {
+        this._LoadDummyEBG(sceneUS, path, newName, info, localizeSymbol);
+    }
+
     private void _LoadDummyEBG(BGSCENE_DEF sceneUS, String path, String newName, FieldMapLocalizeAreaTitleInfo info, String localizeSymbol)
     {
         this.name = newName;
-        TextAsset textAsset = AssetManager.Load<TextAsset>(String.Concat(path, newName, "_", localizeSymbol, ".bgs"), false);
+        String a = String.Concat(path, newName, "_", localizeSymbol, ".bgs");
+        TextAsset textAsset = AssetManager.Load<TextAsset>(a, false);
         if (textAsset == null)
         {
             return;
@@ -340,7 +353,7 @@ public class BGSCENE_DEF
         }
     }
 
-    public void LoadEBG(FieldMap fieldMap, String path, String newName)
+    public void LoadResources(FieldMap fieldMap, String path, String newName)
     {
         this.name = newName;
         if (!this.useUpscaleFM)
@@ -399,6 +412,16 @@ public class BGSCENE_DEF
         {
             this.ReadData(binaryReader);
         }
+
+        FieldMapInfo.fieldmapExtraOffset.SetOffset(name, this.overlayList);
+        if (!this.useUpscaleFM)
+        {
+            this.GenerateAtlasFromBinary();
+        }
+    }
+
+    private void loadLocalizationInfo(String newName, String path)
+    {
         String symbol = Localization.GetSymbol();
         if (symbol != "US")
         {
@@ -412,12 +435,19 @@ public class BGSCENE_DEF
                 }
             }
         }
+    }
 
-        FieldMapInfo.fieldmapExtraOffset.SetOffset(name, this.overlayList);
-        if (!this.useUpscaleFM)
-        {
-            this.GenerateAtlasFromBinary();
-        }
+    public void LoadEBG(FieldMap fieldMap, String path, String newName)
+    {
+        this.mapName = newName; 
+
+        this.LoadResources(fieldMap, path, newName);
+
+        //FieldMapInfo.fieldmapExtraOffset.SetOffset(name, this.overlayList);
+        //if (!this.useUpscaleFM)
+        //{
+        //    this.GenerateAtlasFromBinary();
+        //}
         this.CreateMaterials();
         List<short> list = new List<short>
         {
@@ -443,13 +473,18 @@ public class BGSCENE_DEF
         this.combineMeshes = list.Contains(FF9StateSystem.Common.FF9.fldMapNo);
         if (this.combineMeshes && !Configuration.Import.Enabled && !Configuration.Import.Field)
         {
+            this.loadLocalizationInfo(newName, path);
             this.CreateSceneCombined(fieldMap, this.useUpscaleFM);
         }
         else
         {
             this.CreateScene(fieldMap, this.useUpscaleFM, path);
-
         }
+    }
+
+    public bool GetUseUpscaleFM()
+    {
+        return this.useUpscaleFM;
     }
 
     private static Rect CalculateExpectedTextureAtlasSize(Int32 spriteCount)
@@ -669,21 +704,15 @@ public class BGSCENE_DEF
         this.materialList.Add("abr_3", material);
     }
 
-    private void importOverlaysFromPsd(FieldMap fieldMap, Boolean UseUpscalFM, String path)
+    private void importOverlaysFromPsd(FieldMap fieldMap, Boolean UseUpscalFM, String externalPath)
     {
         // open meta, get total atlases
-        string atlasPath = Path.Combine(path, "atlases");
+        string atlasPath = Path.Combine(externalPath, "atlases");
         AtlasInfo ai = AtlasInfo.Load(Path.Combine(atlasPath, "atlas.meta"));
  
         uint totalAtlases = (uint) ai.TotalAtlasesFromAtlasSection;
         uint tileSize = (uint)ai.TileSizeFromAtlasSection;
         int atlasSide = ai.AtlasSideFromAtlasSection;
-
-        Log.Message($"Begin importOverlaysFromPsd, totalAtlases {totalAtlases}, tileSize {tileSize}, atlasSide {atlasSide}");
-        int currentAtlas = 0;
-        Texture2D reftexture = new Texture2D(atlasSide, atlasSide, TextureFormat.RGBA32, false);
-        reftexture.LoadImage(File.ReadAllBytes(Path.Combine(atlasPath, $"atlas_{++currentAtlas}.png")));
-        this.CreateMaterialsForOverlay(reftexture);
 
 
         this.SPRITE_H = tileSize;
@@ -700,12 +729,167 @@ public class BGSCENE_DEF
         List<Vector3> list = new List<Vector3>();
         List<Vector2> list2 = new List<Vector2>();
         List<Int32> list3 = new List<Int32>();
+        // count how many tiles to pass
+        // pass them
+        // or maybe create your own overlays
+        FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(this.mapName);
+
+        Int32 startLocaleOvrIdx = Int32.MaxValue;
+        Int32 endLocaleOvrIdx = Int32.MinValue;
+
+        if (info != null)
+        {
+            Log.Message("Start importing locale overlays");
+            startLocaleOvrIdx = info.startOvrIdx;
+            endLocaleOvrIdx = info.endOvrIdx;
+            String symbol = Localization.GetSymbol();
+
+            int currentLocaleAtlas = 0;
+            Texture2D localeReftexture = new Texture2D(atlasSide, atlasSide, TextureFormat.RGBA32, false);
+            localeReftexture.LoadImage(File.ReadAllBytes(Path.Combine(atlasPath, $"atlas_{symbol.ToUpper()}_{++currentLocaleAtlas}.png")));
+            this.CreateMaterialsForOverlay(localeReftexture);
+
+            UInt32 atlasLocaleX = padding, atlasLocaleY = padding;
+
+            for (Int32 j = startLocaleOvrIdx; j <= endLocaleOvrIdx; j++)
+            {
+                BGOVERLAY_DEF overlayInfo = this.overlayList[j];
+                Log.Message($"LocaleOverlay {j}, lang {symbol}, spriteCount {overlayInfo.spriteList.Count}");
+                Texture2D overlaytexLocale = new Texture2D(overlayInfo.w * factor, overlayInfo.h * factor, TextureFormat.RGBA32, false);
+                //Texture2D overlay = new Texture2D();
+                String str = "Overlay_" + j.ToString("D2");
+                GameObject gameObject3 = new GameObject(str);
+                Transform transform2 = gameObject3.transform;
+                transform2.parent = this.cameraList[overlayInfo.camNdx].transform;
+                transform2.localPosition = new Vector3(overlayInfo.curX * 1f, overlayInfo.curY * 1f, overlayInfo.curZ);
+                transform2.localScale = new Vector3(1f, 1f, 1f);
+                overlayInfo.transform = transform2;
+                for (Int32 k = 0; k < overlayInfo.spriteList.Count; k++)
+                {
+                    BGSPRITE_LOC_DEF spriteInfo = overlayInfo.spriteList[k];
+                    var num = spriteInfo.depth;
+                    GameObject gameObject4 = new GameObject(str + "_Sprite_" + k.ToString("D3"));
+                    Transform transform3 = gameObject4.transform;
+                    transform3.parent = transform2;
+                    {
+                        transform3.localPosition = new Vector3(spriteInfo.offX * 1f, (spriteInfo.offY + 16) * 1f, num);
+                    }
+
+                    transform3.localScale = new Vector3(1f, 1f, 1f);
+                    spriteInfo.transform = transform3;
+                    list.Clear();
+                    list2.Clear();
+                    list3.Clear();
+                    list.Add(new Vector3(0f, -16f, 0f));
+                    list.Add(new Vector3(16f, -16f, 0f));
+                    list.Add(new Vector3(16f, 0f, 0f));
+                    list.Add(new Vector3(0f, 0f, 0f));
+                    Single num2 = this.ATLAS_W;
+                    Single num3 = this.ATLAS_H;
+                    Single x;
+                    Single y;
+                    Single x2;
+                    Single y2;
+
+                    Single num4 = 0.5f;
+                    x = (float)(atlasLocaleX - num4) / atlasSide;
+                    x2 = (float)(atlasLocaleX - num4 + this.SPRITE_W) / atlasSide;
+                    y = (float)(atlasLocaleY + num4 + this.SPRITE_H) / atlasSide;
+                    y2 = (float)(atlasLocaleY + num4) / atlasSide;
+                    Color[] sprite = localeReftexture.GetPixels((int)atlasLocaleX, (int)atlasLocaleY, (int)this.SPRITE_W, (int)this.SPRITE_H);
+                    overlaytexLocale.SetPixels(spriteInfo.offX * factor, overlaytexLocale.height - (spriteInfo.offY + 16) * factor, (int)this.SPRITE_W, (int)this.SPRITE_H, sprite);
+
+                    list2.Add(new Vector2(x, y));
+                    list2.Add(new Vector2(x2, y));
+                    list2.Add(new Vector2(x2, y2));
+                    list2.Add(new Vector2(x, y2));
+                    list3.Add(2);
+                    list3.Add(1);
+                    list3.Add(0);
+                    list3.Add(3);
+                    list3.Add(2);
+                    list3.Add(0);
+
+                    Mesh mesh = new Mesh
+                    {
+                        vertices = list.ToArray(),
+                        uv = list2.ToArray(),
+                        triangles = list3.ToArray()
+                    };
+
+                    MeshRenderer meshRenderer = gameObject4.AddComponent<MeshRenderer>();
+                    MeshFilter meshFilter = gameObject4.AddComponent<MeshFilter>();
+                    meshFilter.mesh = mesh;
+                    Int32 num6 = this.curZ + (Int16)overlayInfo.curZ + spriteInfo.depth;
+                    GameObject expr_5B4 = gameObject4;
+                    expr_5B4.name = expr_5B4.name + "_Depth(" + num6.ToString("D5") + ")";
+                    String text;
+                    if (spriteInfo.trans != 0)
+                    {
+                        if (spriteInfo.alpha == 0)
+                        {
+                            text = "abr_0";
+                        }
+                        else if (spriteInfo.alpha == 1)
+                        {
+                            text = "abr_1";
+                        }
+                        else if (spriteInfo.alpha == 2)
+                        {
+                            text = "abr_2";
+                        }
+                        else
+                        {
+                            text = "abr_3";
+                        }
+                    }
+                    else
+                    {
+                        text = "abr_none";
+                    }
+                    if (fieldMap.mapName == "FBG_N39_UUVL_MAP671_UV_DEP_0" && j == 14)
+                    {
+                        text = "abr_none";
+                    }
+                    GameObject expr_671 = gameObject4;
+                    expr_671.name = expr_671.name + "_[" + text + "]";
+                    meshRenderer.material = this.materialList[text];
+
+                    atlasLocaleX += deltaX;
+                    if (atlasLocaleX + deltaX > atlasSide)
+                    {
+                        atlasLocaleX = padding;
+                        atlasLocaleY += deltaY;
+                    }
+                    if (atlasLocaleY + deltaY > atlasSide)
+                    {
+                        // write atlas to file, flush atlas and so on
+                        atlasLocaleX = padding;
+                        atlasLocaleY = padding;
+                        localeReftexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+                        localeReftexture.LoadImage(File.ReadAllBytes(Path.Combine(atlasPath, $"atlas_{symbol.ToUpper()}_{++currentLocaleAtlas}.png")));
+                        this.CreateMaterialsForOverlay(localeReftexture);
+                    }
+
+                }
+                TextureHelper.WriteTextureToFile(overlaytexLocale, Path.Combine(pathDebugOverlay, $"overlay_{j}_{symbol.ToUpper()}.png"));
+                overlayInfo.transform.gameObject.SetActive((overlayInfo.flags & 2) != 0);
+            }
+        }
+
+        Log.Message($"Begin importOverlaysFromPsd, totalAtlases {totalAtlases}, tileSize {tileSize}, atlasSide {atlasSide}");
+        int currentAtlas = 0;
+        Texture2D reftexture = new Texture2D(atlasSide, atlasSide, TextureFormat.RGBA32, false);
+        reftexture.LoadImage(File.ReadAllBytes(Path.Combine(atlasPath, $"atlas_{++currentAtlas}.png")));
+        this.CreateMaterialsForOverlay(reftexture);
+
         for (Int32 j = 0; j < this.overlayList.Count; j++)
         {
+            if (j >= startLocaleOvrIdx && j <= endLocaleOvrIdx)
+                continue;
 
             BGOVERLAY_DEF overlayInfo = this.overlayList[j];
             Texture2D overlaytex = new Texture2D(overlayInfo.w * factor, overlayInfo.h * factor, TextureFormat.RGBA32, false);
-            //Texture2D overlay = new Texture2D();
             String str = "Overlay_" + j.ToString("D2");
             GameObject gameObject3 = new GameObject(str);
             Transform transform2 = gameObject3.transform;
@@ -813,7 +997,6 @@ public class BGSCENE_DEF
                 if (atlasY + deltaY > atlasSide)
                 {
                     // write atlas to file, flush atlas and so on
-                    Log.Message($"end atlas read, sprites loaded: ");
                     atlasX = padding;
                     atlasY = padding;
                     reftexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
@@ -961,6 +1144,11 @@ public class BGSCENE_DEF
             bGCAM_DEF.transform.localPosition = Vector3.zero;
             bGCAM_DEF.transform.localScale = new Vector3(1f, 1f, 1f);
         }
+        String externalPath = Path.Combine(Configuration.Import.Path, path);
+
+        string psdPath = Path.Combine(externalPath, "test.psd");
+        string atlasPath = Path.Combine(externalPath, "atlases\\atlas_1.png");
+        string psdMetaPath = Path.Combine(externalPath, "psd.meta");
 
         if (Configuration.Export.Enabled && Configuration.Export.Field)
         {
@@ -969,17 +1157,13 @@ public class BGSCENE_DEF
         }
         else
         {
-            path = Path.Combine(Configuration.Import.Path, path);
             // check if atlas has already been created
             if (Configuration.Import.Field)
             {
-                string psdPath = Path.Combine(path, "test.psd");
-                string atlasPath = Path.Combine(path, "atlases\\atlas_1.png");
-                string psdMetaPath = Path.Combine(path, "psd.meta");
                 try
                 {
-                    if (File.Exists(Path.Combine(path, "test.psd")) &&
-                        (!File.Exists(Path.Combine(path, "atlases\\atlas_1.png"))
+                    if (File.Exists(psdPath) &&
+                        (!File.Exists(atlasPath)
                         || File.GetLastWriteTimeUtc(psdPath) > File.GetLastWriteTimeUtc(atlasPath)))
                     {
 
@@ -987,7 +1171,7 @@ public class BGSCENE_DEF
                         PsdInfo psdInfo = PsdInfo.Load(psdMetaPath);
                         PsdFile psdfile = new PsdFile(psdPath, new LoadContext());
 
-                        this.createAtlas(path, psdfile, 2048, psdInfo, File.GetLastWriteTimeUtc(psdPath));
+                        this.createAtlas(externalPath, path, psdfile, 2048, psdInfo, File.GetLastWriteTimeUtc(psdPath));
                     }
                     else Log.Message("No psd or no need to create atlas");
                 }
@@ -996,13 +1180,14 @@ public class BGSCENE_DEF
                     Log.Message($"{e}");
                 }
             }
-            if (Configuration.Import.Field && !Configuration.Export.Field)
+            this.loadLocalizationInfo(this.mapName, path);
+            if (Configuration.Import.Field && !Configuration.Export.Field && File.Exists(atlasPath))
             {
-                this.importOverlaysFromPsd(fieldMap, UseUpscalFM, path);
+                this.importOverlaysFromPsd(fieldMap, UseUpscalFM, externalPath);
             }
             else
             {
-                this.handleOverlays(fieldMap, UseUpscalFM, path);
+                this.handleOverlays(fieldMap, UseUpscalFM, externalPath);
             }
         }
 
@@ -1021,15 +1206,14 @@ public class BGSCENE_DEF
         }
     }
 
-
-    private void createAtlas(String path, PsdFile psd, int atlasSide, PsdInfo psdInfo, DateTime timestamp)
+    private List<Layer> getOrderedLayerList(PsdFile psd, PsdInfo psdInfo)
     {
         string order = psdInfo.LayerOrderFromPsdSection;
         bool reverse = psdInfo.ReversedFromPsdSection == 1 ? true : false;
-        if(!reverse)
+        if (!reverse)
             psd.Layers.Reverse();
         List<Layer> newPsdList = new List<Layer>();
-
+        // rearrange layers
         if (order == "depth")
         {
             List<BGOVERLAY_DEF> myorder = new List<BGOVERLAY_DEF>();
@@ -1040,10 +1224,9 @@ public class BGSCENE_DEF
             }
             myorder.Sort(delegate (BGOVERLAY_DEF x, BGOVERLAY_DEF y)
             {
-                return x.curZ == y.curZ?
+                return x.curZ == y.curZ ?
                 (x.indnum.CompareTo(y.indnum)) : x.curZ.CompareTo(y.curZ);
             });
-            int[] orderArray = new int[this.overlayList.Count];
 
 
             // sort overlaylist by depth
@@ -1060,27 +1243,27 @@ public class BGSCENE_DEF
         {
             newPsdList = psd.Layers;
         }
+        return newPsdList;
+    }
 
-        Texture2D atlas = new Texture2D(atlasSide, atlasSide, TextureFormat.RGBA32, false);
-        if (!Directory.Exists(Path.Combine(path, "atlases")))
-        {
-            Directory.CreateDirectory(Path.Combine(path, "atlases"));
-        }
-
+    private byte[] generateEmptyAtlasArray(int atlasSide)
+    {
         var product = atlasSide * atlasSide * 4;
         byte[] atlasArray = new byte[product];
         for (var i = 0; i < product; i++)
         {
             atlasArray[i] = 0;
         }
-        uint atlasesWritten = 0;
-        uint SPRITE_H_B = this.SPRITE_H;
-        uint SPRITE_W_B = this.SPRITE_W;
-        Layer[] layers = newPsdList.ToArray();
+        return atlasArray;
+    }
+
+    private uint getFactor(List<Layer> noLocalizationList)
+    {
+        Layer[] layers = noLocalizationList.ToArray();
 
         int firstNonEmptyIndex = 0;
         // find first non-empty overlay for comparison
-        for(var j = 0; j < this.overlayList.Count; j++)
+        for (var j = 0; j < this.overlayList.Count; j++)
         {
             if (this.overlayList[j].spriteList.Count > 0)
             {
@@ -1089,28 +1272,34 @@ public class BGSCENE_DEF
             }
         }
         uint factor = (uint)Math.Ceiling((double)layers[firstNonEmptyIndex].Rect.Height / (double)this.overlayList[firstNonEmptyIndex].h);
-        int padding = Convert.ToInt32(factor);
-        int atlasX = padding, atlasY = padding;
-        int deltaX = 0, deltaY = 0;
-        
+        return factor;
+    }
 
-        CopyBytesHelper copyHelper = new CopyBytesHelper(factor, 16 * factor, 16 * factor);
-        deltaX = Convert.ToInt32(copyHelper._tileWidth) + Convert.ToInt32(padding) * 2;
-        deltaY = Convert.ToInt32(copyHelper._tileHeight) + Convert.ToInt32(padding) * 2;
+    private void doCreateAtlas(List<Layer> layers, List<BGOVERLAY_DEF> overlays, 
+        List<BGANIM_DEF> animationOverlays, List<BGLIGHT_DEF> lightOverlays,
+        String atlasFilename, 
+        CopyBytesHelper copyHelper, int atlasSide, uint factor, Texture2D atlasTexture)
+    {
+        int padding = Convert.ToInt32(factor);
         TileMap[] tileSystems = new TileMap[this.cameraCount];
         for (var i = 0; i < this.cameraCount; i++)
         {
-            tileSystems[i] = new TileMap(FF9StateSystem.Common.FF9.fldMapNo, newPsdList, this.overlayList, this.animList, this.lightList, i, factor);
+            tileSystems[i] = new TileMap(FF9StateSystem.Common.FF9.fldMapNo, layers,
+                overlays, this.animList, this.lightList, i, factor);
             copyHelper.FillBackgroundOverlays(tileSystems[i]);
         }
 
+        int atlasX = padding, atlasY = padding;
+        int deltaX = Convert.ToInt32(copyHelper._tileWidth) + Convert.ToInt32(padding) * 2;
+        int deltaY = Convert.ToInt32(copyHelper._tileHeight) + Convert.ToInt32(padding) * 2;
+        // setup atlas variables
+        byte[] atlasArray = generateEmptyAtlasArray(atlasSide);
 
-        int spriteHeight = Convert.ToInt32(this.SPRITE_H * factor);
-        int spriteWidth = Convert.ToInt32(this.SPRITE_W * factor);
+        uint atlasesWritten = 0;
 
-        for (Int32 j = 0; j < this.overlayList.Count; j++)
+        for (Int32 j = 0; j < overlays.Count; j++)
         {
-            BGOVERLAY_DEF overlayInfo = overlayList[j];
+            BGOVERLAY_DEF overlayInfo = overlays[j];
             TileMap tileSystem = tileSystems[overlayInfo.camNdx];
             Overlay memoriaOverlay = tileSystem.GetOverlay(j);
             for (Int32 k = 0; k < overlayInfo.spriteList.Count; k++)
@@ -1119,22 +1308,16 @@ public class BGSCENE_DEF
 
                 // okay guise let's get a tile
 
-                int grabX = (overlayInfo.curX + spriteInfo.offX) / 16;
-                int grabY = (overlayInfo.curY + spriteInfo.offY) / 16;
+                int grabX = (overlayInfo.curX + spriteInfo.offX - tileSystem.MinX) / 16;
+                int grabY = (overlayInfo.curY + spriteInfo.offY - tileSystem.MinY) / 16;
                 Tile memoriaTile = memoriaOverlay.GetTile(grabX, grabY);
 
                 copyHelper.CopyTile(atlasArray, atlasSide, atlasX, atlasY, memoriaTile, memoriaOverlay, false);
                 foreach (var paddingType in EnumCache<PaddingType>.Values)
                 {
-                    //var paddingType = PaddingType.Left;
                     if (copyHelper.PaddingNeeded(memoriaTile, memoriaOverlay, paddingType))
                     {
-                        if (k == 0 && paddingType == PaddingType.Left && grabX == 8 && grabY == 7)
-                        {
-                            var i = 1;
-                        }
                         Padding memoriaPadding = tileSystem.GetPaddingForTile(paddingType, memoriaOverlay, grabX, grabY);
-                        //copyHelper.CopyPadding(atlasArray, atlasSide, atlasX, atlasY, memoriaPadding, memoriaOverlay, memoriaTile);
                         copyHelper.CopyPaddingByPixels(atlasArray, atlasSide, atlasX, atlasY, memoriaPadding);
                     }
                 }
@@ -1149,135 +1332,115 @@ public class BGSCENE_DEF
                 {
                     // write atlas to file, flush atlas and so on
 
-                    atlas.LoadRawTextureData(atlasArray);
-                    atlas.Apply();
+                    atlasTexture.LoadRawTextureData(atlasArray);
+                    atlasTexture.Apply();
                     for (var i = 0; i < atlasSide * atlasSide * 4; i++)
                     {
                         atlasArray[i] = 0;
                     }
                     atlasX = padding;
                     atlasY = padding;
-                    string atlasPath = Path.Combine(path, $"atlases\\atlas_{++atlasesWritten}.png");
-                    TextureHelper.WriteTextureToFile(atlas, atlasPath);
+                    string fullAtlasPath = Path.Combine(Path.Combine(this.atlasPath, "atlases"), $"{atlasFilename}_{++atlasesWritten}.png");
+                    TextureHelper.WriteTextureToFile(atlasTexture, fullAtlasPath);
 
-                    File.SetLastWriteTimeUtc(atlasPath, timestamp);
+                    // TODO: This is time of PSD, not atlas... is it okay?
+                    File.SetLastWriteTimeUtc(fullAtlasPath, this.atlasTimestamp);
                 }
             }
-            // break;atlasSide, atlasSide, TextureFormat.RGBA32, false
         }
+
         try
         {
             Log.Message($"Trying to write to atlas {atlasArray.Length}");
-            atlas.LoadRawTextureData(atlasArray);
+            atlasTexture.LoadRawTextureData(atlasArray);
         }
         catch (Exception e)
         {
             Log.Message($"{e}");
         }
 
-        atlas.Apply();
+        atlasTexture.Apply();
 
-        string finalAtlasPath = Path.Combine(Path.Combine(path, "atlases"), "atlas_" + (++atlasesWritten) + ".png");
-        TextureHelper.WriteTextureToFile(atlas, finalAtlasPath);
-        File.SetLastWriteTimeUtc(finalAtlasPath, timestamp);
+        string finalAtlasPath = Path.Combine(Path.Combine(this.atlasPath, "atlases"), $"{atlasFilename}_{++atlasesWritten}.png");
+        TextureHelper.WriteTextureToFile(atlasTexture, finalAtlasPath);
+        File.SetLastWriteTimeUtc(finalAtlasPath, this.atlasTimestamp);
         string strings = $"[AtlasSection]\nTotalAtlases={atlasesWritten}\nTileSize={16 * factor}\nAtlasSide={atlasSide}";
-        System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(Path.Combine(path, "atlases"), "atlas.meta"));
+        System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(Path.Combine(this.atlasPath, "atlases"), "atlas.meta"));
         sw.WriteLine(strings);
         sw.Close();
         Log.Message("End create atlas");
     }
 
-    private void writeTile(byte[] atlasArray, byte[] originalArray, uint sourceWidth, uint padding,
-        uint fromX, uint fromY, uint toX, uint toY, uint atlasSide, uint factor)
+    private void createAtlas(String externalPath, String resourcePath, PsdFile psd, int atlasSide, PsdInfo psdInfo, DateTime timestamp)
     {
-        for (var yOffset = 0; yOffset < this.SPRITE_H; yOffset++)
+        this.atlasPath = externalPath;
+        this.atlasTimestamp = timestamp;
+        // decompose into smaller functions: rearrange layers, create atlas
+
+        List<Layer> newPsdList = this.getOrderedLayerList(psd, psdInfo);
+        List<Layer> noLocalizationList = newPsdList.Where(x => !x.Name.Contains('_')).ToList();
+
+        Texture2D atlasTexture = new Texture2D(atlasSide, atlasSide, TextureFormat.RGBA32, false);
+        if (!Directory.Exists(Path.Combine(externalPath, "atlases")))
         {
+            Directory.CreateDirectory(Path.Combine(externalPath, "atlases"));
+        }
 
-            for (var xOffset = 0; xOffset < this.SPRITE_W; xOffset++)
+
+        uint factor = getFactor(noLocalizationList);
+        CopyBytesHelper copyHelper = new CopyBytesHelper(factor, 16 * factor, 16 * factor);
+
+        // actual useful part
+        FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(this.mapName);
+
+        List<BGOVERLAY_DEF> mainList = new List<BGOVERLAY_DEF>(this.overlayList);
+        List<Layer> mainLayerList = new List<Layer>(noLocalizationList);
+
+        if(info != null)
+        {
+            Int32 startOvrIdx = info.startOvrIdx;
+            Int32 endOvrIdx = info.endOvrIdx;
+            for(var i = endOvrIdx; i >= startOvrIdx; i--)
             {
-                var dstIndex = ((toY + yOffset + padding) * atlasSide + toX + xOffset + padding) * 4;
-                var srcIndex = ((fromY + yOffset) * sourceWidth + fromX + xOffset) * 4;
-                if ((yOffset == 0 || yOffset == (this.SPRITE_H - 1)) && (xOffset == 0 || xOffset == (this.SPRITE_H - 1)))
-                {
-                    for (var z = 1; z < padding + 1; z++)
-                    {
-                        int signY = (yOffset == 0) ? -1 : 1;
-                        var dstIndexCorrectedBase = dstIndex + signY * z * atlasSide * 4;
-                        // corners
-                        for (var zz = 1; zz < padding + 1; zz++)
-                        {
+                mainLayerList.RemoveAt(i);
+                mainList.RemoveAt(i);
+            }
+        }
 
-                            int signX = (xOffset == 0) ? -1 : 1;
-                            var dstIndexCorrected = dstIndexCorrectedBase + signX * zz * 4;
-                                this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndex);
-                        }
-                    }
-                }
-                if (yOffset == 0 || (yOffset == (this.SPRITE_H - 1)))
-                {
-                    int sign = (yOffset == 0) ? -1 : 1;
-                    var srcIndexCorrected = srcIndex + sign * sourceWidth * 4;
-                    if (srcIndexCorrected < 0 || (srcIndexCorrected > originalArray.Length - 1) || originalArray[srcIndexCorrected + 3] == 0)
-                        srcIndexCorrected = srcIndex;
-                    // rows
-                    for (var z = 1; z < padding + 1; z++)
-                    {
-                        var dstIndexCorrected = dstIndex + sign * z * atlasSide * 4;
-                        try
-                        {
-                            this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndexCorrected);
-                        }
-                        catch(Exception)
-                        {
-                            Log.Message($"dst {dstIndexCorrected}, dstlen {atlasArray.Length}, src {srcIndexCorrected}, srcLen {originalArray.Length}");
-                        }
-                        
-                    }
-                }
-                if (xOffset == 0 || (xOffset == (this.SPRITE_W - 1)))
-                {
-                    int sign = (xOffset == 0) ? -1 : 1;
-                    var srcIndexCorrected = srcIndex + sign * 4;
-                    if (srcIndexCorrected < 0 || (srcIndexCorrected > originalArray.Length - 1) 
-                       || srcIndexCorrected % (sourceWidth * 4) == 0 || srcIndexCorrected % (sourceWidth * 4) == (sourceWidth - 1) * 4 
-                        || originalArray[srcIndexCorrected + 3] == 0)
-                        srcIndexCorrected = srcIndex;
-                    // columns
-                    for (var z = 1; z < padding + 1; z++)
-                    {
-                        var dstIndexCorrected = dstIndex + sign * z * 4;
-                        try
-                        {
-                            this.writePixel(atlasArray, originalArray, dstIndexCorrected, srcIndexCorrected);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Message($"{e}");
-                            return;
-                        }
-                        
-                    }
-                }
-                try
-                {
-                    this.writePixel(atlasArray, originalArray, dstIndex, srcIndex);
-                }
-                catch (Exception e)
-                {
-                    Log.Message($"{e}");
-                    return;
-                }
-           }
-       }
-        //return atlasArray;
-    }
+        this.doCreateAtlas(mainLayerList, mainList, this.animList, this.lightList, 
+            "atlas", copyHelper, atlasSide, factor, atlasTexture);
 
-    private void writePixel(byte[] dstarray, byte[] srcarray, long dstindex, long srcindex)
-    {
-            dstarray[dstindex] = srcarray[srcindex];
-            dstarray[dstindex + 1] = srcarray[srcindex + 1];
-            dstarray[dstindex + 2] = srcarray[srcindex + 2];
-            dstarray[dstindex + 3] = srcarray[srcindex + 3];
+        // create all other atlases
+        if(info != null)
+        {
+            Int32 startOvrIdx = info.startOvrIdx;
+            Int32 endOvrIdx = info.endOvrIdx;
+            // find all overlay indices
+
+            Log.Message($"Creating localization atlases for {this.mapName}");
+            foreach (var language in Configuration.Export.Languages)
+            {
+                BGSCENE_DEF bb = new BGSCENE_DEF(this.useUpscaleFM);
+                bb.overlayList = new List<BGOVERLAY_DEF>(this.overlayList);
+                BGSCENE_DEF bGSCENE_DEF = new BGSCENE_DEF(this.useUpscaleFM);
+                bGSCENE_DEF._LoadDummyEBG(bb, resourcePath, this.mapName, info, language);
+                List<Layer> restrictedLayerList = new List<Layer>();
+                List<BGOVERLAY_DEF> restrictedOverlayList = new List<BGOVERLAY_DEF>();
+                for(var i = startOvrIdx; i <= endOvrIdx; i++)
+                {
+                    Log.Message($"Overlay {startOvrIdx}, localization for {language}, spriteCount {this.overlayList[i].spriteList.Count}");
+                    restrictedLayerList.Add(newPsdList.First(x => x.Name == $"{noLocalizationList[i].Name}_{language}"));
+                    restrictedOverlayList.Add(bb.overlayList[i]);
+                }
+
+                Log.Message($"Creating atlas for language {language}");
+                this.doCreateAtlas(restrictedLayerList, restrictedOverlayList, new List<BGANIM_DEF>(), new List<BGLIGHT_DEF>(), 
+                    $"atlas_{language}", copyHelper, atlasSide, factor, atlasTexture);
+            }
+        }
+        //String symbol = Localization.GetSymbol();
+        //BGSCENE_DEF dummy = new BGSCENE_DEF(this.useUpscaleFM);
+        //dummy._LoadDummyEBG(this, resourcePath, this.mapName, info, symbol);
     }
 
     public void CreateSeparateOverlay(FieldMap fieldMap, bool UseUpscalFM, uint ovrNdx)

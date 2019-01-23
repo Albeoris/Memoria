@@ -50,9 +50,9 @@ namespace Memoria.Assets
                         }
                     }
 
-                    Resources.UnloadUnusedAssets();
-                    if (i % 100 == 0)
-                        System.GC.Collect();
+                    //Resources.UnloadUnusedAssets();
+                    //if (i % 100 == 0)
+                    //    System.GC.Collect();
                 }
 
                 AssetManager.UseBundles = old;
@@ -70,6 +70,7 @@ namespace Memoria.Assets
             {
                 String relativePath = FieldMap.GetMapResourcePath(mapName);
                 String outputDirectory = Path.Combine(Configuration.Export.Path, relativePath);
+                // TODO: uncomment this when all is well
                 //if (Directory.Exists(outputDirectory))
                 //{
 
@@ -80,70 +81,89 @@ namespace Memoria.Assets
                 Log.Message("[FieldSceneExporter] Exporting [{0}]...", mapName);
 
                 BGSCENE_DEF scene = new BGSCENE_DEF(true);
-                scene.LoadEBG(null, relativePath, mapName);
+                scene.LoadResources(null, relativePath, mapName);
 
                 //String directoryPath = Path.GetDirectoryName(outputPath);
-                if(true) { // TEST
-                    Directory.CreateDirectory(outputDirectory);
 
-                    Texture2D atlasTexture = TextureHelper.CopyAsReadable(scene.atlas);
-                    Int32 factor = (Int32)scene.SPRITE_W / 16;
-                    Int32 textureWidth = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offY * factor) + scene.SPRITE_H);
-                    Int32 textureHeight = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offX * factor) + scene.SPRITE_W);
+                Directory.CreateDirectory(outputDirectory);
 
-                    using (Stream output = File.Create(outputDirectory + "test.psd"))
+                Texture2D atlasTexture = TextureHelper.CopyAsReadable(scene.atlas);
+                Int32 factor = (Int32)scene.SPRITE_W / 16;
+                Int32 textureWidth = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offY * factor) + scene.SPRITE_H);
+                Int32 textureHeight = (Int32)(scene.overlayList.SelectMany(s => s.spriteList).Max(s => s.offX * factor) + scene.SPRITE_W);
+
+                using (Stream output = File.Create(outputDirectory + "test.psd"))
+                {
+                    PsdFile file = new PsdFile();
+                    file.BitDepth = 8;
+                    file.ChannelCount = 4;
+                    file.ColorMode = PsdColorMode.Rgb;
+                    file.RowCount = textureWidth;
+                    file.ColumnCount = textureHeight;
+                    file.Resolution = new ResolutionInfo
                     {
-                        PsdFile file = new PsdFile();
-                        file.BitDepth = 8;
-                        file.ChannelCount = 4;
-                        file.ColorMode = PsdColorMode.Rgb;
-                        file.RowCount = textureWidth;
-                        file.ColumnCount = textureHeight;
-                        file.Resolution = new ResolutionInfo
-                        {
-                            Name = "ResolutionInfo ",
+                        Name = "ResolutionInfo ",
 
-                            HDpi = new UFixed1616(72, 0),
-                            HResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
-                            HeightDisplayUnit = ResolutionInfo.Unit.Centimeters,
+                        HDpi = new UFixed1616(72, 0),
+                        HResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
+                        HeightDisplayUnit = ResolutionInfo.Unit.Centimeters,
 
-                            VDpi = new UFixed1616(72, 0),
-                            VResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
-                            WidthDisplayUnit = ResolutionInfo.Unit.Centimeters
-                        };
+                        VDpi = new UFixed1616(72, 0),
+                        VResDisplayUnit = ResolutionInfo.ResUnit.PxPerInch,
+                        WidthDisplayUnit = ResolutionInfo.Unit.Centimeters
+                    };
 
-                        file.BaseLayer.Name = "Base";
-                        for (Int16 i = 0; i < 4; i++)
-                        {
-                            Channel channel = new Channel(i, file.BaseLayer);
-                            channel.ImageCompression = file.ImageCompression;
-                            channel.Length = file.RowCount * Util.BytesPerRow(file.BaseLayer.Rect.Size, file.BitDepth);
-                            channel.ImageData = new Byte[channel.Length];
-                            file.BaseLayer.Channels.Add(channel);
-                        }
-
-                        file.BaseLayer.Channels.Last().ID = -1;
-
-                        for (Int32 index = scene.overlayList.Count - 1; index >= 0; index--) //scene.overlayList.Count
-                        {
-                            BGOVERLAY_DEF overlay = scene.overlayList[index];
-                            String outputPath = outputDirectory + $"Overlay{index}.png";
-                            ExportOverlay(overlay, atlasTexture, outputPath, scene, file);
-                        }
-
-                        file.Save(output, Encoding.UTF8);
+                    file.BaseLayer.Name = "Base";
+                    for (Int16 i = 0; i < 4; i++)
+                    {
+                        Channel channel = new Channel(i, file.BaseLayer);
+                        channel.ImageCompression = file.ImageCompression;
+                        channel.Length = file.RowCount * Util.BytesPerRow(file.BaseLayer.Rect.Size, file.BitDepth);
+                        channel.ImageData = new Byte[channel.Length];
+                        file.BaseLayer.Channels.Add(channel);
                     }
 
-                    string strings = $"[PsdSection]\nLayerOrder=name\nReversed = 0";
-                    System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(outputDirectory, "psd.meta"));
-                    sw.WriteLine(strings);
-                    sw.Close();
+                    file.BaseLayer.Channels.Last().ID = -1;
 
+                    for (Int32 index = scene.overlayList.Count - 1; index >= 0; index--) //scene.overlayList.Count
+                    {
+                        BGOVERLAY_DEF overlay = scene.overlayList[index];
+                        String outputPath = outputDirectory + $"Overlay{index}.png";
+                        ExportOverlay(overlay, atlasTexture, outputPath, scene, file);
+                    }
 
-                    TextureHelper.WriteTextureToFile(atlasTexture, Path.Combine(outputDirectory, "atlas.png"));
+                    // get all languages
+                    FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(mapName);
+                    if (info != null)
+                    {
+                        Int32 startOvrIdx = info.startOvrIdx;
+                        Int32 endOvrIdx = info.endOvrIdx;
+                        String[] allLanguages = Configuration.Export.Languages;
+                        foreach (var language in allLanguages)
+                        {
+                            BGSCENE_DEF localeScene = new BGSCENE_DEF(scene.GetUseUpscaleFM());
+                            localeScene.LoadLocale(scene, relativePath, mapName, info, language);
+                            for (Int32 index = startOvrIdx; index <= endOvrIdx; index++)
+                            {
+                                BGOVERLAY_DEF overlay = scene.overlayList[index];
+                                String outputPath = outputDirectory + $"Overlay{index}_{language}.png";
+                                ExportOverlay(overlay, atlasTexture, outputPath, scene, file);
+                            }
+                        }
+                    }
 
-                    Log.Message("[FieldSceneExporter] Exporting completed successfully.");
+                    file.Save(output, Encoding.UTF8);
                 }
+
+                string strings = $"[PsdSection]\nLayerOrder=name\nReversed = 0";
+                System.IO.StreamWriter sw = new System.IO.StreamWriter(Path.Combine(outputDirectory, "psd.meta"));
+                sw.WriteLine(strings);
+                sw.Close();
+
+
+                TextureHelper.WriteTextureToFile(atlasTexture, Path.Combine(outputDirectory, "atlas.png"));
+
+                Log.Message("[FieldSceneExporter] Exporting completed successfully.");
             }
             catch (Exception ex)
             {
