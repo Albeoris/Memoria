@@ -21,7 +21,7 @@ namespace Memoria
                 MovieFPS = BindInt32(nameof(MovieFPS), 15);
                 BattleSwirlFrames = BindInt32(nameof(BattleSwirlFrames), 115);
                 WidescreenSupport = BindBoolean(nameof(WidescreenSupport), true);
-                TileSize = BindInt32(nameof(TileSize), 64);
+                TileSize = BindInt32(nameof(TileSize), 32);
                 SkipIntros = BindInt32(nameof(SkipIntros), 0);
                 GarnetHair = BindInt32(nameof(GarnetHair), 0);
             }
