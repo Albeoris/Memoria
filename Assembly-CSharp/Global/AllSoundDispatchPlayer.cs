@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
@@ -200,7 +200,15 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				this.CreateSound(soundProfile);
 				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+				if (this.suspendSongID != -1 && this.suspendSongID == soundProfile.SoundIndex)
+				{
+					int offsetTimeMSec = Convert.ToInt32(this.suspendSongTimeMs);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
+				}
+				else
+				{
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+				}
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
 				this.currentMusicID = ObjNo;
 				if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
@@ -208,23 +216,21 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					this.suspendSongID = -1;
 				}
 			});
+			return;
 		}
-		else
+		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
 		{
-			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			if (soundProfile != null)
 			{
-				if (soundProfile != null)
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
+				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
+				if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
 				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
-					soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
-					if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
-					{
-						this.suspendSongID = -1;
-					}
+					this.suspendSongID = -1;
 				}
-			});
-		}
+			}
+		});
 	}
 
 	public Int32 GetSuspendSongID()
@@ -241,6 +247,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
 				this.suspendSongID = ObjNo;
 				this.suspendSongVolume = AllSoundDispatchPlayer.ReverseNormalizeVolume(soundProfile.SoundVolume);
+				this.suspendSongTimeMs = soundProfile.StartPlayTime;
+
 			}
 		});
 	}
@@ -454,9 +462,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SNDEFFECT_PLAY(Int32 ObjNo, Int32 attr, Int32 pos, Int32 vol)
 	{
-        this.LimitPlayingSfxByObjNo(ObjNo, 2295, 1);
-        this.LimitPlayingSfxByObjNo(ObjNo, 1966, 3);
-        this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
+		this.LimitPlayingSfxByObjNo(ObjNo, 2295, 1);
+		this.LimitPlayingSfxByObjNo(ObjNo, 1966, 3);
+		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
 		{
 			this.CreateSound(soundProfile);
 			soundProfile.Pitch = 1f;
@@ -472,40 +480,40 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			playingSfx.SndEffectVol = vol;
 			playingSfx.Pitch = soundProfile.Pitch;
 			playingSfx.IsFastForwardedPitch = (HonoBehaviorSystem.Instance.GetFastForwardFactor() != 1);
-            playingSfx.StartPlayTime = Time.time;
-            this.sfxChanels.Add(playingSfx);
+			playingSfx.StartPlayTime = Time.time;
+			this.sfxChanels.Add(playingSfx);
 		});
 	}
 
-    private void LimitPlayingSfxByObjNo(int ObjNo, int limitObjNo, int limitNumber)
-    {
-        if (ObjNo == limitObjNo)
-        {
-            AllSoundDispatchPlayer.PlayingSfx playingSfx = (AllSoundDispatchPlayer.PlayingSfx)null;
-            float num = float.MaxValue;
-            int num2 = 0;
-            for (int i = 0; i < this.sfxChanels.Count; i++)
-            {
-                AllSoundDispatchPlayer.PlayingSfx playingSfx2 = this.sfxChanels[i];
-                if (playingSfx2.ObjNo == ObjNo)
-                {
-                    num2++;
-                    if (playingSfx2.StartPlayTime < num)
-                    {
-                        playingSfx = playingSfx2;
-                        num = playingSfx2.StartPlayTime;
-                    }
-                }
-            }
-            if (num2 >= limitNumber)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(playingSfx.SoundID, 0);
-                this.sfxChanels.Remove(playingSfx);
-            }
-        }
-    }
+	private void LimitPlayingSfxByObjNo(int ObjNo, int limitObjNo, int limitNumber)
+	{
+		if (ObjNo == limitObjNo)
+		{
+			AllSoundDispatchPlayer.PlayingSfx playingSfx = (AllSoundDispatchPlayer.PlayingSfx)null;
+			float num = float.MaxValue;
+			int num2 = 0;
+			for (int i = 0; i < this.sfxChanels.Count; i++)
+			{
+				AllSoundDispatchPlayer.PlayingSfx playingSfx2 = this.sfxChanels[i];
+				if (playingSfx2.ObjNo == ObjNo)
+				{
+					num2++;
+					if (playingSfx2.StartPlayTime < num)
+					{
+						playingSfx = playingSfx2;
+						num = playingSfx2.StartPlayTime;
+					}
+				}
+			}
+			if (num2 >= limitNumber)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(playingSfx.SoundID, 0);
+				this.sfxChanels.Remove(playingSfx);
+			}
+		}
+	}
 
-    private Int32 TuneUpSoundEffectByObjNo(Int32 ObjNo, SoundProfile soundProfile)
+	private Int32 TuneUpSoundEffectByObjNo(Int32 ObjNo, SoundProfile soundProfile)
 	{
 		if (ObjNo == 1748)
 		{
@@ -1307,6 +1315,24 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public override void Update()
 	{
+		if (this.currentMusicID != -1)
+		{
+			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			{
+				if (soundProfile != null)
+				{
+					soundProfile.StartPlayTime += 20f;
+					if (soundProfile.StartPlayTime > 245000f)
+					{
+						soundProfile.StartPlayTime %= 245000f;
+					}
+
+				}
+
+			});
+
+		}
+
 		foreach (AllSoundDispatchPlayer.PlayingSfx playingSfx in this.sfxChanels)
 		{
 			if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(playingSfx.SoundID) == 0)
@@ -1373,6 +1399,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	private Int32 suspendSongVolume;
 
+	private float suspendSongTimeMs;
+
 	private List<AllSoundDispatchPlayer.PlayingSfx> sfxChanels = new List<AllSoundDispatchPlayer.PlayingSfx>();
 
 	public AllSoundDispatchPlayer.OnSndEffectResPlay onSndEffectResPlay;
@@ -1421,8 +1449,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			this.IsSuspend = false;
 			this.Pitch = 1f;
 			this.IsFastForwardedPitch = false;
-            this.StartPlayTime = 0f;
-        }
+			this.StartPlayTime = 0f;
+		}
 
 		public Int32 ObjNo;
 
@@ -1440,8 +1468,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 		public Boolean IsFastForwardedPitch;
 
-        public float StartPlayTime;
-    }
+		public float StartPlayTime;
+	}
 
 	public delegate void OnSndEffectResPlay(Int32 slot, Int32 ObjNo, Int32 attr, Int32 pos, Int32 vol);
 
