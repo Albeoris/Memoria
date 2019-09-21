@@ -106,7 +106,7 @@ public class SettingsState : MonoBehaviour
                         CurrentLanguage = "English(UK)";
                         break;
                     case 2:
-                        CurrentLanguage = "English(US)";
+                        CurrentLanguage = "Japanese";
                         break;
                     case 3:
                         CurrentLanguage = "German";
