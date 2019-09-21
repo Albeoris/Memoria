@@ -5424,7 +5424,7 @@ public static class ff9
 		list.Sort(delegate(Vector3 p1, Vector3 p2)
 		{
 			Vector3 nop = nearestObjectPos;
-            nop.y = 0f;
+			nop.y = 0f;
 			p1.y = 0f;
 			p2.y = 0f;
 			Single num5 = Vector3.Distance(p1, nop);
@@ -6015,7 +6015,7 @@ public static class ff9
 		list.Sort(delegate(Vector3 p1, Vector3 p2)
 		{
 			Vector3 nop = nearestObjectPos;
-            nop.y = 0f;
+			nop.y = 0f;
 			p1.y = 0f;
 			p2.y = 0f;
 			Single num5 = Vector3.Distance(p1, nop);
@@ -6546,10 +6546,10 @@ public static class ff9
 		ff9.w_moveCHRControlPtr = s_moveCHRControl2;
 		if (b == 7)
 		{
-            int num = 1000;
-            ushort tick = (ushort)((float)num * (float)Application.targetFrameRate / 1000f);
-            ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
-            ff9.w_musicSEStop((int)s_moveCHRControl.se, num);
+			int num = 1000;
+			ushort tick = (ushort)((float)num * (float)Application.targetFrameRate / 1000f);
+			ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
+			ff9.w_musicSEStop((int)s_moveCHRControl.se, num);
 		}
 		if (s_moveCHRControl2.se != 0)
 		{
@@ -6598,11 +6598,11 @@ public static class ff9
 		Int32 num = ff9.w_moveCHRControl_No;
 		ff9.s_moveCHRControl s_moveCHRControl = ff9.w_moveCHRControlPtr;
 		ff9.s_moveCHRControl s_moveCHRControl2 = ff9.w_moveCHRControl[0];
-        int num2 = 3000;
-        ushort tick = (ushort)((float)num2 * (float)Application.targetFrameRate / 1000f);
-        ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
-        ff9.w_musicSEVolumeIntpl(38, tick, 0);
-        ff9.w_musicRequestSend(s_moveCHRControl2.music);
+		int num2 = 3000;
+		ushort tick = (ushort)((float)num2 * (float)Application.targetFrameRate / 1000f);
+		ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
+		ff9.w_musicSEVolumeIntpl(38, tick, 0);
+		ff9.w_musicRequestSend(s_moveCHRControl2.music);
 		ff9.w_cameraChange(s_moveCHRControl2.type_cam, 64);
 	}
 
@@ -7325,34 +7325,34 @@ public static class ff9
 		}
 	}
 
-    public static Boolean w_moveGetPadStateLX(out Int32 vx)
-    {
-        Single x = PersistenSingleton<HonoInputManager>.Instance.GetAxis().x;
-        Boolean flag = x < -0.1f;
-        Boolean flag2 = x > 0.1f;
-        vx = 0;
-        if (Configuration.AnalogControl.Enabled)
-        {
-            if (flag || flag2)
-            {
-                vx = (int)(x * 128.0f);
-            }
-        }
-        else
-        {
-            if (flag)
-            {
-                vx = -128;
-            }
-            if (flag2)
-            {
-                vx = 128;
-            }
-            if (!EventInput.IsMovementControl)
-            {
-                vx = 0;
-            }
-        }
+	public static Boolean w_moveGetPadStateLX(out Int32 vx)
+	{
+		Single x = PersistenSingleton<HonoInputManager>.Instance.GetAxis().x;
+		Boolean flag = x < -0.1f;
+		Boolean flag2 = x > 0.1f;
+		vx = 0;
+		if (Configuration.AnalogControl.Enabled)
+		{
+			if (flag || flag2)
+			{
+				vx = (int)(x * 128.0f);
+			}
+		}
+		else
+		{
+			if (flag)
+			{
+				vx = -128;
+			}
+			if (flag2)
+			{
+				vx = 128;
+			}
+			if (!EventInput.IsMovementControl)
+			{
+				vx = 0;
+			}
+		}
 		return false;
 	}
 
@@ -7412,24 +7412,24 @@ public static class ff9
 		Boolean flag4 = y3 > 0.1f;
 		Boolean flag5 = y3 < -0.1f;
 		vy = 0;
-        if (Configuration.AnalogControl.Enabled)
-        {
-            if (flag4 || flag5)
-            {
-                vy = (int)(-y3 * 128.0f);
-            }
+		if (Configuration.AnalogControl.Enabled)
+		{
+			if (flag4 || flag5)
+			{
+				vy = (int)(-y3 * 128.0f);
+			}
 
-        } else
-        {
-            if (flag4)
-            {
-                vy = -128;
-            }
-            if (flag5)
-            {
-                vy = 128;
-            }
-        }
+		} else
+		{
+			if (flag4)
+			{
+				vy = -128;
+			}
+			if (flag5)
+			{
+				vy = 128;
+			}
+		}
 		if (!EventInput.IsMovementControl)
 		{
 			vy = 0;
@@ -7531,11 +7531,20 @@ public static class ff9
 
 	public static void w_musicPlay(UInt16 musicno)
 	{
+		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
 		Byte b = ff9.byte_gEventGlobal(104);
 		ff9.w_musicPlayNo = ff9.w_musicChoice(musicno);
 		ff9.w_musicFirstPlay = 1;
 		Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
-		FF9Snd.ff9wldsnd_song_play(ff9.w_musicPlayNo);
+		if (allSoundDispatchPlayer.GetSuspendSongID() != -1)
+		{
+			FF9Snd.ff9wldsnd_song_restore();
+		}
+		else
+		{
+			FF9Snd.ff9wldsnd_song_play(ff9.w_musicPlayNo);
+
+		}
 		FF9Snd.LatestWorldPlayedSong = ff9.w_musicPlayNo;
 		Int32 currentMusicId2 = FF9Snd.GetCurrentMusicId();
 		if (b == 0)
@@ -7544,7 +7553,7 @@ public static class ff9
 		}
 		if (currentMusicId != currentMusicId2)
 		{
-			FF9Snd.ff9wldsnd_song_vol_fadeall(60, 0, b);
+			FF9Snd.ff9wldsnd_song_vol_fadeall(60, 0, (int)b);
 		}
 	}
 
@@ -7643,20 +7652,20 @@ public static class ff9
 		}
 	}
 
-    public static void w_musicSEStop(int seno, int timeInMilliseconds)
-    {
-        ff9.s_musicID s_musicID;
-        if (ff9.w_musicGetID((long)seno, out s_musicID))
-        {
-            for (int i = 0; i < s_musicID.figure; i++)
-            {
-                FF9Snd.ff9wldsnd_sndeffect_stop(s_musicID.id[i], timeInMilliseconds);
-                timeInMilliseconds >>= 1;
-            }
-        }
-    }
+	public static void w_musicSEStop(int seno, int timeInMilliseconds)
+	{
+		ff9.s_musicID s_musicID;
+		if (ff9.w_musicGetID((long)seno, out s_musicID))
+		{
+			for (int i = 0; i < s_musicID.figure; i++)
+			{
+				FF9Snd.ff9wldsnd_sndeffect_stop(s_musicID.id[i], timeInMilliseconds);
+				timeInMilliseconds >>= 1;
+			}
+		}
+	}
 
-    public static Boolean w_musicGetID(Int64 seno, out ff9.s_musicID data)
+	public static Boolean w_musicGetID(Int64 seno, out ff9.s_musicID data)
 	{
 		ff9.s_musicID s_musicID = new ff9.s_musicID();
 		s_musicID.id[0] = -1;
@@ -9180,7 +9189,7 @@ public static class ff9
 			x = svector.vx / 4096f,
 			y = svector.vy / 4096f,
 			z = svector.vz / 4096f
-        };
+		};
 	}
 
 	public static Vector3[] BuildNormalsFrome_w_NormalTable()

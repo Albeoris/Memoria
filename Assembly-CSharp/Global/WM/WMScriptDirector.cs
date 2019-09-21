@@ -211,11 +211,9 @@ public class WMScriptDirector : HonoBehavior
 			}
 			else if (this.FF9Sys.mode == 2)
 			{
-				EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
-				Obj objUID = eventEngine.GetObjUID(250);
-				PosObj posObj = (PosObj)objUID;
-                EventInput.IsProcessingInput = false;
-                SoundLib.StopAllSounds();
+				PosObj posObj = (PosObj)PersistenSingleton<EventEngine>.Instance.GetObjUID(250);
+				EventInput.IsProcessingInput = false;
+				SoundLib.SuspendSoundSystem();
 				SFX_Rush.SetCenterPosition(1);
 				SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
 			}
@@ -244,8 +242,7 @@ public class WMScriptDirector : HonoBehavior
 		{
 			if (objList2.obj.cid == 4)
 			{
-				WMActor wmActor2 = ((Actor)objList2.obj).wmActor;
-				wmActor2.LateUpdateFunction();
+				((Actor)objList2.obj).wmActor.LateUpdateFunction();
 			}
 		}
 	}
