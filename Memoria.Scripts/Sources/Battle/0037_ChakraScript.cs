@@ -25,12 +25,12 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.HasSupportAbility(SupportAbility1.PowerUp))
             {
                 _v.Target.HpDamage = (Int16)(_v.Target.MaximumHp * _v.Command.Power / 50);
-                _v.Target.MpDamage = (Int16)(_v.Target.MaximumHp * _v.Command.Power / 50);
+                _v.Target.MpDamage = (Int16)(_v.Target.MaximumMp * _v.Command.Power / 50);
             }
             else
             {
                 _v.Target.HpDamage = (Int16)(_v.Target.MaximumHp * _v.Command.Power / 100);
-                _v.Target.MpDamage = (Int16)(_v.Target.MaximumHp * _v.Command.Power / 100);
+                _v.Target.MpDamage = (Int16)(_v.Target.MaximumMp * _v.Command.Power / 100);
             }
         }
     }
