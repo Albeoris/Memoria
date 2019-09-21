@@ -21,9 +21,9 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.WeakElement |= _v.Command.Element;
-            _v.Target.GuardElement &= _v.Command.Element;
-            _v.Target.AbsorbElement &= _v.Command.Element;
-            _v.Target.HalfElement &= _v.Command.Element;
+            _v.Target.GuardElement &= ~_v.Command.Element;
+            _v.Target.AbsorbElement &= ~_v.Command.Element;
+            _v.Target.HalfElement &= ~_v.Command.Element;
 
             UiState.SetBattleFollowMessage(BattleMesages.BecameWeakAgainst, _v.Command.Element);
         }
