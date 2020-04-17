@@ -493,6 +493,7 @@ public class FieldMap : HonoBehavior
             case 1605: // Madain Sari - Eidolon Wall
             case 1606: // Madain Sari - Chamber
             case 1607: // Madain Sari - Kitchen
+            case 1807: // Alexandira Castle - Hallway (Attack on Alexandra)
             case 1823: // Alexandira Castle - Hallway
             case 2000: // Hilda Garde 2 - Deck
             case 2007: // Alexandira Castle - Altar
@@ -504,7 +505,7 @@ public class FieldMap : HonoBehavior
             //case 3009: // Ending - TH
             //case 3010: // Ending - TH
             //case 3011: // Ending - TH
-                return true;
+            return true;
         }
         return false;
     }
