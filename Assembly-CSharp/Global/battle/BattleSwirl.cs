@@ -69,6 +69,7 @@ public class BattleSwirl : MonoBehaviour
         FF9Snd.ff9fldsnd_sndeffect_play(634, 0, SByte.MaxValue, 128);
     }
 
+
     private void RequestPlayBattleEncounterSong()
     {
         if (_eventEngineGmode == 1)
