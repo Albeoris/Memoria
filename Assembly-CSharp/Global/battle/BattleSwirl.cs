@@ -19,7 +19,6 @@ public class BattleSwirl : MonoBehaviour
     private void Awake()
     {
         _hasPlayEncounterSound = false;
-        wasUpdated = false;
         _eventEngineGmode = PersistenSingleton<EventEngine>.Instance.gMode;
         FF9Snd.sndFuncPtr = FF9Snd.FF9BattleSoundDispatch;
         PlayBattleEncounterSoundEffect();
