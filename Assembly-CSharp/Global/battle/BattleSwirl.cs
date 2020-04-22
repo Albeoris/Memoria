@@ -14,10 +14,12 @@ public class BattleSwirl : MonoBehaviour
     private Boolean _hasPlayEncounterSound;
     private Int32 _eventEngineGmode;
     private SFX_Rush _rush;
+    private bool wasUpdated;
 
     private void Awake()
     {
         _hasPlayEncounterSound = false;
+        wasUpdated = false;
         _eventEngineGmode = PersistenSingleton<EventEngine>.Instance.gMode;
         FF9Snd.sndFuncPtr = FF9Snd.FF9BattleSoundDispatch;
         PlayBattleEncounterSoundEffect();
@@ -48,7 +50,12 @@ public class BattleSwirl : MonoBehaviour
             _hasPlayEncounterSound = true;
         }
 
-        SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+        if (!this.wasUpdated)
+		{
+			SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+			return;
+		}
+		this.wasUpdated = true;
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
