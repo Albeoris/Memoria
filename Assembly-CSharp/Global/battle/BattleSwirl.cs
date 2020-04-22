@@ -14,6 +14,7 @@ public class BattleSwirl : MonoBehaviour
     private Boolean _hasPlayEncounterSound;
     private Int32 _eventEngineGmode;
     private SFX_Rush _rush;
+    private bool wasUpdated;
 
     private void Awake()
     {
@@ -48,7 +49,12 @@ public class BattleSwirl : MonoBehaviour
             _hasPlayEncounterSound = true;
         }
 
-        SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+        if (!this.wasUpdated)
+		{
+			SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+			return;
+		}
+		this.wasUpdated = true;
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -62,6 +68,7 @@ public class BattleSwirl : MonoBehaviour
         FF9Snd.ff9fldsnd_sndeffect_play(635, 0, SByte.MaxValue, 128);
         FF9Snd.ff9fldsnd_sndeffect_play(634, 0, SByte.MaxValue, 128);
     }
+
 
     private void RequestPlayBattleEncounterSong()
     {
