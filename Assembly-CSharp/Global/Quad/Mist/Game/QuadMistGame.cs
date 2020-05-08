@@ -945,10 +945,20 @@ public class QuadMistGame : MonoBehaviour
         }
         else if (Configuration.TetraMaster.IsReduceRandom)
         {
-            Int32 lowestAttack = Math.Max(0, battleCalculation.atkStart - (Int32)(MathEx.BitCount(attacker.arrow) * 1.5 - 1) << 4);
-            Int32 lowestDefense = Math.Max(0, battleCalculation.defStart - (MathEx.BitCount(defender.arrow) * 2 - 1) << 4);
+            Single ak = 1 - attacker.ArrowNumber / 10.0f; // The attack is 20% less susceptible to randomness.
+            Single dk = 1 - defender.ArrowNumber / 8.0f;
+
+            Int32 lowestAttack = (Int32) (battleCalculation.atkStart * ak);
+            Int32 lowestDefense = (Int32) (battleCalculation.defStart * dk);
+            
             battleCalculation.atkFinish = Random.Range(lowestAttack, battleCalculation.atkStart);
             battleCalculation.defFinish = Random.Range(lowestDefense, battleCalculation.defStart);
+
+            // Set the life of the loser to 0.
+            if (battleCalculation.atkFinish > battleCalculation.defFinish)
+                battleCalculation.defFinish = 0;
+            else
+                battleCalculation.atkFinish = 0;
         }
         else
         {

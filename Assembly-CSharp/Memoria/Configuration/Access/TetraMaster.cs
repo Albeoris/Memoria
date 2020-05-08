@@ -7,8 +7,9 @@ namespace Memoria
     {
         public static class TetraMaster
         {
-            public static Boolean IsEasyWin => Instance._tetraMaster.ReduceRandom == 2;
-            public static Boolean IsReduceRandom => Instance._tetraMaster.ReduceRandom == 1;
+            public static Boolean IsEnabled => Instance._tetraMaster.Enabled;
+            public static Boolean IsEasyWin => IsEnabled && Instance._tetraMaster.ReduceRandom == 2;
+            public static Boolean IsReduceRandom => IsEnabled && Instance._tetraMaster.ReduceRandom == 1;
 
             public static Boolean DiscardAutoButton => Instance._tetraMaster.DiscardAutoButton;
             public static Boolean DiscardAssaultCards => Instance._tetraMaster.DiscardAssaultCards;

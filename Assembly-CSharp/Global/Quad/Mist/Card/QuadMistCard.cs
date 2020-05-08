@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
 
@@ -93,6 +94,8 @@ public class QuadMistCard
 			(this.mdef >> 4).ToString("X").ToLower()[0]
 		});
 	}
+
+	public Int32 ArrowNumber => MathEx.BitCount(arrow);
 
 	public Boolean IsBlock
 	{
