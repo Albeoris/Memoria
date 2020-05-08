@@ -44,13 +44,18 @@ namespace Memoria.Scripts
 
         public static Shader FindShader(String shaderName)
         {
-            Shader shaderMaterial = FindShaderSafe(shaderName);
-            if (shaderMaterial != null)
-                return shaderMaterial;
-
-            Shader shader = Shader.Find(shaderName);
-            if (shader != null)
-                return shader;
+            if (shaderName != "Unlit/Transparent Colored")
+            {
+                Shader shaderMaterial = FindShaderSafe(shaderName);
+                if (shaderMaterial != null)
+                    return shaderMaterial;
+            }
+            else
+            {
+                Shader shader = Shader.Find(shaderName);
+                if (shader != null)
+                    return shader;
+            }
 
             return null;
         }
