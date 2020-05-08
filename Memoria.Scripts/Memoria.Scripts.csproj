@@ -14,6 +14,7 @@
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
     <AllowedReferenceRelatedFileExtensions>.pdb</AllowedReferenceRelatedFileExtensions>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

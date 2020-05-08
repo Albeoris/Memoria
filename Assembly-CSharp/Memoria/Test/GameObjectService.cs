@@ -121,7 +121,8 @@ namespace Memoria.Test
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to write data to the remote channel.");
-                socket.Dispose();
+                IDisposable disposable = socket;
+                disposable.Dispose();
             }
         }
 
@@ -216,7 +217,8 @@ namespace Memoria.Test
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to read data from the remote channel.");
-                socket.Dispose();
+                IDisposable disposable = socket;
+                disposable.Dispose();
             }
         }
 
