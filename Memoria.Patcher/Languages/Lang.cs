@@ -29,7 +29,7 @@ namespace Memoria.Patcher
                         break;
                 }
 
-                return new Lang(def, cur);
+                return new Lang(def, cur ?? def);
             }
             catch (Exception ex)
             {
