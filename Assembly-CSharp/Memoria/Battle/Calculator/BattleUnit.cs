@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using FF9;
 using Memoria.Data;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Memoria
 {
@@ -12,12 +14,12 @@ namespace Memoria
         public Int16 MpDamage;
 
         internal BTL_DATA Data;
-
+        
         internal BattleUnit(BTL_DATA data)
         {
             Data = data;
         }
-
+        
         public UInt16 Id => Data.btl_id;
         public Boolean IsPlayer => Data.bi.player != 0;
         public Boolean IsSelected => Data.bi.target != 0;
@@ -149,6 +151,11 @@ namespace Memoria
 
         public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);
         public Boolean IsHealer => IsPlayer && (HasSupportAbility(SupportAbility1.Healer) || Weapon == WeaponItem.HealingRod);
+        
+        public MutableBattleCommand AttackCommand => Commands[0];
+        
+        private MutableBattleCommand[] _commands;
+        public MutableBattleCommand[] Commands => _commands ??= Data.cmd.Select(cmd => new MutableBattleCommand(cmd)).ToArray();
 
         public Boolean IsUnderStatus(BattleStatus status)
         {

@@ -29,5 +29,21 @@ public class CMD_DATA
 		public Byte meteor_miss;
 		public Byte short_summon;
 		public Byte mon_reflec;
+
+		public Boolean IsZeroMP { get; set; }
+
+		public void Reset()
+		{
+			cursor = 0;
+			stat = 0;
+			priority = 0;
+			cover = 0;
+			dodge = 0;
+			reflec = 0;
+			meteor_miss = 0;
+			short_summon = 0;
+			mon_reflec = 0;
+			IsZeroMP = false;
+		}
 	}
 }

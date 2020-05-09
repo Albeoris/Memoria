@@ -92,6 +92,7 @@ namespace Memoria
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
         public Boolean IsShortSummon => Data.info.short_summon != 0;
+        public Boolean IsZeroMP => Data.info.IsZeroMP;
 
         public BattleStatus AbilityStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.aa.AddNo].Value;
         public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;

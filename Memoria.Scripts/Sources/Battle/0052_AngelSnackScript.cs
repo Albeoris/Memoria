@@ -6,7 +6,7 @@ using Memoria.Data;
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
-    /// Angel’s Snack
+    /// Angelâ€™s Snack
     /// </summary>
     [BattleScript(Id)]
     public sealed class AngelSnackScript : IBattleScript

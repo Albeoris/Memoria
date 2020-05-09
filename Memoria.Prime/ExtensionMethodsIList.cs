@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 namespace Memoria.Prime
 {
@@ -56,6 +57,21 @@ namespace Memoria.Prime
                 list[index] = result;
             }
             return result;
+        }
+
+        private static readonly System.Random s_random = new System.Random();
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            for (int n = 0; n < 3; n++)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    Int32 k = s_random.Next(0, list.Count);
+                    T value = list[k];
+                    list[k] = list[i];
+                    list[i] = value;
+                }
+            }
         }
     }
 }

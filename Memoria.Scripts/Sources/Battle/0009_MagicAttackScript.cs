@@ -1,9 +1,10 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
     [BattleScript(Id)]
-    public sealed class MagicAttackScript : IBattleScript
+    public sealed class MagicAttackScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0009;
 
@@ -27,6 +28,32 @@ namespace Memoria.Scripts.Battle
                 _v.TargetCommand.CalcHpDamage();
                 _v.TargetCommand.TryAlterMagicStatuses();
             }
+        }
+
+        public Single RateTarget()
+        {
+            _v.NormalMagicParams();
+            _v.Caster.PenaltyMini();
+            _v.Target.PenaltyShellAttack();
+            _v.PenaltyCommandDividedAttack();
+            _v.CasterCommand.BonusElement();
+
+            if (!_v.CanAttackMagic())
+                return 0;
+
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && _v.Caster.HasSupportAbility(SupportAbility1.ReflectNull))
+                return 0;
+
+            _v.TargetCommand.CalcHpDamage();
+
+            Single rate = Math.Min(_v.Target.HpDamage, _v.Target.CurrentHp);
+
+            if ((_v.Target.Flags & CalcFlag.HpRecovery) == CalcFlag.HpRecovery)
+                rate *= -1;
+            if (_v.Target.IsPlayer)
+                rate *= -1;
+
+            return rate;
         }
     }
 }

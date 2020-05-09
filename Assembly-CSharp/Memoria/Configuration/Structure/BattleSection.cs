@@ -13,6 +13,7 @@ namespace Memoria
             public readonly IniValue<Int32> AutoPotionOverhealLimit;
             public readonly IniValue<Boolean> GarnetConcentrate;
             public readonly IniValue<Boolean> SelectBestTarget;
+            public readonly IniValue<Boolean> ViviAutoAttack;
             
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -22,6 +23,7 @@ namespace Memoria
                 AutoPotionOverhealLimit = BindInt32(nameof(AutoPotionOverhealLimit), -1);
                 GarnetConcentrate = BindBoolean(nameof(GarnetConcentrate), false);
                 SelectBestTarget = BindBoolean(nameof(SelectBestTarget), true);
+                ViviAutoAttack = BindBoolean(nameof(ViviAutoAttack), false);
             }
         }
     }

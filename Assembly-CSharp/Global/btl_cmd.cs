@@ -44,15 +44,7 @@ public class btl_cmd
         cmd.tar_id = 0;
         cmd.cmd_no = BattleCommandId.None;
         cmd.sub_no = 0;
-        cmd.info.cursor = 0;
-        cmd.info.stat = 0;
-        cmd.info.priority = 0;
-        cmd.info.cover = 0;
-        cmd.info.dodge = 0;
-        cmd.info.reflec = 0;
-        cmd.info.meteor_miss = 0;
-        cmd.info.short_summon = 0;
-        cmd.info.mon_reflec = 0;
+        cmd.info.Reset();
     }
 
     public static void ClearReflecData(BTL_DATA btl)
@@ -961,10 +953,15 @@ public class btl_cmd
     private static Boolean CheckMpCondition(CMD_DATA cmd)
     {
         Int16 mp = cmd.aa.MP;
+        if (cmd.info.IsZeroMP)
+            mp = 0;
+        
         if (battle.GARNET_SUMMON_FLAG != 0 && (cmd.aa.Type & 4) != 0)
             mp *= 4;
+        
         if (cmd.cmd_no == BattleCommandId.MagicCounter || ConsumeMp(cmd.regist, mp))
             return true;
+        
         UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughMp);
         return false;
     }

@@ -17,74 +17,80 @@ namespace Memoria
 
         public new BattleCommandId Id
         {
-            get { return base.Id; }
-            set { Data.cmd_no = value; }
+            get => base.Id;
+            set => Data.cmd_no = value;
         }
 
         public new BattleAbilityId AbilityId
         {
-            get { return base.AbilityId; }
-            set { Data.sub_no = (Byte)value; }
+            get => base.AbilityId;
+            set => Data.sub_no = (Byte)value;
         }
 
         public new Byte ScriptId
         {
-            get { return base.ScriptId; }
-            set { Data.aa.Ref.ScriptId = value; }
+            get => base.ScriptId;
+            set => Data.aa.Ref.ScriptId = value;
         }
 
         public new Byte HitRate
         {
-            get { return base.HitRate; }
-            set { Data.aa.Ref.Rate = value; }
+            get => base.HitRate;
+            set => Data.aa.Ref.Rate = value;
         }
 
         public new Byte Power
         {
-            get { return base.Power; }
-            set { Data.aa.Ref.Power = value; }
+            get => base.Power;
+            set => Data.aa.Ref.Power = value;
         }
 
         public new Boolean IsManyTarget
         {
-            get { return base.IsManyTarget; }
-            set { Data.info.cursor = (Byte)(value ? 1 : 0); }
+            get => base.IsManyTarget;
+            set => Data.info.cursor = (Byte)(value ? 1 : 0);
         }
 
         public new TargetType TargetType
         {
-            get { return base.TargetType; }
-            set { Data.aa.Info.Target = value; }
+            get => base.TargetType;
+            set => Data.aa.Info.Target = value;
         }
 
         public new BattleStatusIndex AbilityStatusIndex
         {
-            get { return base.AbilityStatusIndex; }
-            set { Data.aa.AddNo = (Byte)value; }
+            get => base.AbilityStatusIndex;
+            set => Data.aa.AddNo = (Byte)value;
         }
 
         public new EffectElement Element
         {
-            get { return base.Element; }
-            set { Data.aa.Ref.Elements = (Byte)value; }
+            get => base.Element;
+            set => Data.aa.Ref.Elements = (Byte)value;
         }
 
         public new SpecialEffect SpecialEffect
         {
-            get { return base.SpecialEffect; }
-            set { Data.aa.Info.VfxIndex = (Int16)value; }
+            get => base.SpecialEffect;
+            set => Data.aa.Info.VfxIndex = (Int16)value;
         }
 
         public new Boolean IsMeteorMiss
         {
-            get { return base.IsMeteorMiss; }
-            set { Data.info.meteor_miss = (Byte)(value ? 1 : 0); }
+            get => base.IsMeteorMiss;
+            set => Data.info.meteor_miss = (Byte)(value ? 1 : 0);
         }
 
         public new Boolean IsShortSummon
         {
-            get { return base.IsShortSummon; }
-            set { Data.info.short_summon = (Byte)(value ? 1 : 0); }
+            get => base.IsShortSummon;
+            set => Data.info.short_summon = (Byte)(value ? 1 : 0);
+        }
+
+        public new Boolean IsZeroMP
+        {
+            get => base.IsZeroMP;
+            set => Data.info.IsZeroMP = value;
         }
 
         public void LoadAbility()
