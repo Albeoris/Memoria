@@ -38,6 +38,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean F9KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F9);
     private Boolean F12KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F12);
     private Boolean SpaceKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.Space);
+    private Boolean MKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.M);
     private Boolean SKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.S);
 
     public UIKeyTrigger()
@@ -357,6 +358,12 @@ public class UIKeyTrigger : MonoBehaviour
     {
         SceneDirector.Replace("SoundDebugRoom", SceneTransition.FadeOutToBlack_FadeIn, true);
     }
+    
+    private void OnMemoriaMenuCommandDetected()
+    {
+        var instance = PersistenSingleton<MemoriaConfigurationMenu>.Instance;
+        instance.enabled = !instance.enabled;
+    }
 
     private static void TryShowSaveScene(UIScene scene)
     {
@@ -525,6 +532,12 @@ public class UIKeyTrigger : MonoBehaviour
                 if (SKeyDown)
                 {
                     OnSoundDebugRoomCommandDetected();
+                    return true;
+                }
+
+                if (MKeyDown)
+                {
+                    OnMemoriaMenuCommandDetected();
                     return true;
                 }
 

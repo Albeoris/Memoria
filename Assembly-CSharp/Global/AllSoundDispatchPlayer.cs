@@ -23,29 +23,17 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		Single num3 = (Single)original / (Single)num;
 		return num3 * num2 + 1f;
 	}
-
-	public void EnableMusic()
+	
+	public void SetMusicVolume(Int32 volume)
 	{
-		this.musicPlayerVolume = 1f;
-		this.UpdatePlayingMusicVolume(true);
+		this.musicPlayerVolume = volume / 100f;
+		this.UpdatePlayingMusicVolume(volume > 0);
 	}
 
-	public void DisableMusic()
+	public void SetSoundEffectVolume(Int32 volume)
 	{
-		this.musicPlayerVolume = 0f;
-		this.UpdatePlayingMusicVolume(false);
-	}
-
-	public void EnableSoundEffect()
-	{
-		this.soundEffectPlayerVolume = 1f;
-		this.UpdatePlayingSoundEffectVolume(true);
-	}
-
-	public void DisableSoundEffect()
-	{
-		this.soundEffectPlayerVolume = 0f;
-		this.UpdatePlayingSoundEffectVolume(false);
+		this.soundEffectPlayerVolume = volume / 100f;
+		this.UpdatePlayingSoundEffectVolume(volume > 0);
 	}
 
 	private void UpdatePlayingMusicVolume(Boolean isEnable)

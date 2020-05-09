@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria;
 using UnityEngine;
 
 public class SfxSoundPlayer : SoundPlayer
 {
-	public void EnableSoundEffect()
+	public void SetVolume(Int32 volume)
 	{
-		this.playerVolume = 1f;
-		this.UpdatePlayingSoundVolume();
-	}
-
-	public void DisableSoundEffect()
-	{
-		this.playerVolume = 0f;
+		this.playerVolume = volume / 100f;
 		this.UpdatePlayingSoundVolume();
 	}
 

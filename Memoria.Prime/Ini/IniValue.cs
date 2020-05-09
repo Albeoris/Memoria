@@ -20,6 +20,14 @@ namespace Memoria.Prime.Ini
         public abstract void ParseValue(String rawString);
         public abstract void WriteValue(StreamWriter sw);
 
+        public void WriteLine(StreamWriter sw)
+        {
+            sw.Write(Name);
+            sw.Write(" = ");
+            WriteValue(sw);
+            sw.WriteLine();
+        }
+
         public static IniValue<String> String(String name)
         {
             return new IniValue<String>(name, TryParseString, FormatString);

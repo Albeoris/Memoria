@@ -252,6 +252,7 @@
     <Compile Include="Memoria\Assets\Text\CharacterNamesFormatter.cs" />
     <Compile Include="Memoria\Assets\Text\Export\CharacterNamesExporter.cs" />
     <Compile Include="Memoria\Configuration\Access\Cheats.cs" />
+    <Compile Include="Memoria\Configuration\Access\Audio.cs" />
     <Compile Include="Memoria\Configuration\Access\Control.cs" />
     <Compile Include="Memoria\Configuration\Access\Debug.cs" />
     <Compile Include="Memoria\Configuration\Access\Export.cs" />
@@ -263,8 +264,10 @@
     <Compile Include="Memoria\Configuration\Access\Hacks.cs" />
     <Compile Include="Memoria\Configuration\Access\Import.cs" />
     <Compile Include="Memoria\Configuration\Access\TetraMaster.cs" />
+    <Compile Include="Memoria\Configuration\MemoriaConfigurationMenu.cs" />
     <Compile Include="Memoria\Configuration\Structure\CheatsSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\AnalogControlSection.cs" />
+    <Compile Include="Memoria\Configuration\Structure\AudioSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ExportSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\FontSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\GraphicsSection.cs" />

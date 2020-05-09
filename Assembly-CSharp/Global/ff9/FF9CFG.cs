@@ -68,4 +68,7 @@ public class FF9CFG
 	public static Byte FF9CFG_VIBE_ON;
 
 	public static Byte FF9CFG_VIBE_OFF = 1;
+
+	public Boolean IsMusicEnabled => sound == 0L;
+	public Boolean IsSoundEnabled => sound_effect == 0L;
 }

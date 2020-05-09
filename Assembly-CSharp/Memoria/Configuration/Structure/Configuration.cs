@@ -17,6 +17,7 @@ namespace Memoria
         private volatile HacksSection _hacks;
         private volatile BattleSection _battle;
         private volatile IconsSection _icons;
+        private volatile AudioSection _audio;
         private volatile DebugSection _debug;
 
         public Configuration()
@@ -32,6 +33,7 @@ namespace Memoria
             BindingSection(out _hacks, v => _hacks = v);
             BindingSection(out _battle, v => _battle = v);
             BindingSection(out _icons, v => _icons = v);
+            BindingSection(out _audio, v => _audio = v);
             BindingSection(out _debug, v => _debug = v);
         }
     }

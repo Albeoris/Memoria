@@ -1,11 +1,12 @@
 ﻿using System;
+using Memoria;
 using UnityEngine;
 
 public class MusicPlayer : SoundPlayer
 {
 	public MusicPlayer()
 	{
-		this.playerVolume = 1f;
+		this.playerVolume = Configuration.Audio.MusicVolume / 100f;
 		this.playerPitch = 1f;
 		this.playerPanning = 0f;
 		this.fadeInDuration = 0f;
@@ -236,16 +237,9 @@ public class MusicPlayer : SoundPlayer
 		}
 	}
 
-	public void SetOptionVolume(Boolean isEnable)
+	public void SetOptionVolume(Int32 volume)
 	{
-		if (isEnable)
-		{
-			this.optionVolume = 1f;
-		}
-		else
-		{
-			this.optionVolume = 0f;
-		}
+		this.optionVolume = volume / 100f;
 		this.SetMusicVolume(this.playerVolume);
 	}
 

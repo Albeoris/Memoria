@@ -9,7 +9,7 @@ Final Fantasy IX Engine
 
 
 # Build
-1. Use Visual Studio 2015/2017 or JetBrains Rider.
+1. Use Visual Studio 2019 or JetBrains Rider.
 2. Copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
 3. Resture NuGet packages manualy or enable automaticaly package downloads.
 
@@ -41,8 +41,10 @@ Final Fantasy IX Engine
 8. Easy rope jumping, frog catching, hippaul racing
 9. Auto discard cards
 10. Change the game font
-11. Export/import text resources
-12. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
+11. [Change audio volume](https://github.com/Albeoris/Memoria/issues/36) (Ctrl+Alt+Shift+M to show configuration menu)
+12. Export/import text resources
+13. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
+14. [Bypass the Launcher](https://github.com/Albeoris/Memoria/issues/70) 
 
 
 # Configuration:

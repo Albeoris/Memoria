@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 using MLog = Memoria.Prime.Log;
@@ -639,13 +640,19 @@ public class SoundLib : MonoBehaviour
 		}
 	}
 
+	public static void TryUpdateMusicVolume()
+	{
+		if (FF9StateSystem.Settings.cfg.IsMusicEnabled)
+			EnableMusic();
+	}
+
 	public static void EnableMusic()
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.EnableMusic();
-			SoundLib.musicPlayer.SetOptionVolume(true);
-			SoundLib.movieAudioPlayer.SetOptionVolume(true);
+			SoundLib.allSoundDispatchPlayer.SetMusicVolume(Configuration.Audio.MusicVolume);
+			SoundLib.musicPlayer.SetOptionVolume(Configuration.Audio.MusicVolume);
+			SoundLib.movieAudioPlayer.SetOptionVolume(Configuration.Audio.MusicVolume);
 			SoundLib.MusicIsMute = false;
 		}
 		catch (Exception message)
@@ -658,9 +665,10 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.DisableMusic();
-			SoundLib.musicPlayer.SetOptionVolume(false);
-			SoundLib.movieAudioPlayer.SetOptionVolume(false);
+			SoundLib.allSoundDispatchPlayer.SetMusicVolume(0);
+			SoundLib.allSoundDispatchPlayer.SetMusicVolume(0);
+			SoundLib.musicPlayer.SetOptionVolume(0);
+			SoundLib.movieAudioPlayer.SetOptionVolume(0);
 			SoundLib.MusicIsMute = true;
 		}
 		catch (Exception message)
@@ -668,15 +676,22 @@ public class SoundLib : MonoBehaviour
 			SoundLib.LogError(message);
 		}
 	}
+	
+		
+	public static void TryUpdateSoundVolume()
+	{
+		if (FF9StateSystem.Settings.cfg.IsSoundEnabled)
+			EnableSoundEffect();
+	}
 
 	public static void EnableSoundEffect()
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.EnableSoundEffect();
-			SoundLib.sfxSoundPlayer.EnableSoundEffect();
-			SoundLib.soundEffectPlayer.SetVolume(1f);
-			SoundLib.songPlayer.SetVolume(1f);
+			SoundLib.allSoundDispatchPlayer.SetSoundEffectVolume(Configuration.Audio.SoundVolume);
+			SoundLib.sfxSoundPlayer.SetVolume(Configuration.Audio.SoundVolume);
+			SoundLib.soundEffectPlayer.SetVolume(Configuration.Audio.SoundVolume / 100f);
+			SoundLib.songPlayer.SetVolume(Configuration.Audio.SoundVolume / 100f);
 			SoundLib.SoundEffectIsMute = false;
 		}
 		catch (Exception message)
@@ -689,8 +704,8 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.DisableSoundEffect();
-			SoundLib.sfxSoundPlayer.DisableSoundEffect();
+			SoundLib.allSoundDispatchPlayer.SetSoundEffectVolume(0);
+			SoundLib.sfxSoundPlayer.SetVolume(0);
 			SoundLib.soundEffectPlayer.SetVolume(0f);
 			SoundLib.songPlayer.SetVolume(0f);
 			SoundLib.SoundEffectIsMute = true;
