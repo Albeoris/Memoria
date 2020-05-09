@@ -9,7 +9,7 @@ namespace Memoria.Assets
         public IEnumerable LoadAsync()
         {
             Task<Boolean> task;
-            if (Configuration.Import.Enabled && Configuration.Import.Text)
+            if (Configuration.Import.Text)
             {
                 task = Task.Run(LoadExternal);
                 while (!task.IsCompleted)

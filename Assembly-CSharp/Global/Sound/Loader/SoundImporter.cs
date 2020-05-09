@@ -81,6 +81,9 @@ namespace Memoria
                 }
             }
 
+            if (!Directory.Exists(directoryPath))
+                return IntPtr.Zero;
+
             String[] oggFiles = Directory.GetFiles(directoryPath, fileName + "*.ogg");
             if (oggFiles.Length == 1)
             {

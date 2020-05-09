@@ -423,17 +423,17 @@ public class BGSCENE_DEF
     private void loadLocalizationInfo(String newName, String path)
     {
         String symbol = Localization.GetSymbol();
-        if (symbol != "US")
+        if (symbol == "US")
+            return;
+        
+        FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(newName);
+        if (info == null)
+            return;
+        
+        if (symbol != "UK" || info.hasUK)
         {
-            FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(newName);
-            if (info != null)
-            {
-                if (symbol != "UK" || info.hasUK)
-                {
-                    BGSCENE_DEF bGSCENE_DEF = new BGSCENE_DEF(this.useUpscaleFM);
-                    bGSCENE_DEF._LoadDummyEBG(this, path, newName, info, symbol);
-                }
-            }
+            BGSCENE_DEF bGSCENE_DEF = new BGSCENE_DEF(this.useUpscaleFM);
+            bGSCENE_DEF._LoadDummyEBG(this, path, newName, info, symbol);
         }
     }
 
@@ -471,7 +471,7 @@ public class BGSCENE_DEF
             2252
         };
         this.combineMeshes = list.Contains(FF9StateSystem.Common.FF9.fldMapNo);
-        if (this.combineMeshes && !Configuration.Import.Enabled && !Configuration.Import.Field)
+        if (this.combineMeshes && !Configuration.Import.Field)
         {
             this.loadLocalizationInfo(newName, path);
             this.CreateSceneCombined(fieldMap, this.useUpscaleFM);

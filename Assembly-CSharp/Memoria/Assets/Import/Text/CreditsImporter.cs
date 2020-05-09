@@ -23,7 +23,7 @@ namespace Memoria.Assets
         public static String TryLoadCredits(String internalPath, String externalPath)
         {
             CreditsImporter importer = new CreditsImporter(internalPath, externalPath);
-            if (Configuration.Import.Enabled && Configuration.Import.Text)
+            if (Configuration.Import.Text)
             {
                 if (importer.LoadExternal() || importer.LoadInternal())
                     return importer.Result;
