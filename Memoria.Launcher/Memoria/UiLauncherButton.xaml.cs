@@ -13,6 +13,14 @@ namespace Memoria.Launcher
             InitializeComponent();
         }
 
+        public void Click()
+        {
+            if (!IsEnabled)
+                return;
+
+            OnClick();
+        }
+
         protected abstract Task DoAction();
 
         protected override async void OnClick()

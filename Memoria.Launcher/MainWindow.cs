@@ -22,6 +22,13 @@ namespace Memoria.Launcher
             TryShowDonation();
 
             PlayButton.GameSettings = GameSettings;
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(Object sender, RoutedEventArgs e)
+        {
+            if (GameSettings.AutoRunGame)
+                PlayButton.Click();
         }
 
         private void TryLoadImage()
