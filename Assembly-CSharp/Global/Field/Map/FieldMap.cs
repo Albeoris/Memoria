@@ -488,11 +488,159 @@ public class FieldMap : HonoBehavior
         switch (FF9StateSystem.Common.FF9.fldMapNo)
         {
             case 0052: // Prima Vista - Meeting Room
-            case 0455: // Mountain - Base
+            case 0053:
+            case 0056:
+            case 0058:
+            case 0059:
+            case 0061:
+            case 0062:
+            case 0063:
+            case 0065:
+            case 0066:
+            case 0068:
+            case 0069:
+            case 0100:
+            case 0104:
+            case 0105:
+            case 0108:
+            case 0116:
+            case 0160:
+            case 0163:
+            case 0166:
+            case 0164:
+            case 0165:
+            case 0205:
+            case 0209:
+            case 0255:
+            case 0256:
+            case 0259:
+            case 0261:
+            case 0301:
+            case 0305:
+            case 0306:
+            case 0308:
+            case 0309:
+            case 0310:
+            case 0311:
+            case 0354:
+            case 0355:
+            case 0357:
+            case 0358:
+            case 0359:
+            case 0400:
+            case 0452:
+            case 0453:
+            case 0454:
+            case 0457:
+            case 0500:
+            case 0551:
+            case 0560:
+            case 0567:
+            case 0570:
+            case 0574:
+            case 0576:
+            case 0601:
+            case 0607:
+            case 0609:
+            case 0701:
+            case 0750:
+            case 0754:
+            case 0758:
+            case 0764:
+            case 0765:
+            case 0766:
+            case 0800:
+            case 0930:
+            case 0932:
+            case 1002:
+            case 1003:
+            case 1006:
+            case 1007:
+            case 1009:
+            case 1013:
+            case 1050:
+            case 1100:
+            case 1200:
+            case 1208:
+            case 1214:
+            case 1221:
+            case 1226:
+            case 1250:
+            case 1252:
+            case 1253:
+            case 1314:
+            case 1357:
+            case 1401:
+            case 1406:
+            case 1410:
+            case 1455:
+            case 1457:
+            case 1459:
+            case 1462:
+            case 1463:
             case 1507: // Conde Petie - Pathway
+            case 1556:
+            case 1557:
+            case 1607: // Madain Sari - Kitchen
+            case 1609:
+            case 1610:
+            case 1663:
+            case 1706:
+            case 1750:
+            case 1753:
+            case 1755:
+            case 1756:
+            case 1800:
+            case 1818:
+            case 1850:
+            case 1854:
+            case 1866:
+            case 2005:
+            case 2008:
+            case 2050:
+            case 2114:
+            case 2172:
+            case 2217:
+            case 2250:
+            case 2255:
+            case 2260:
+            case 2305:
+            case 2351:
+            case 2361:
+            case 2405:
+            case 2450:
+            case 2453:
+            case 2458:
+            case 2510: // Iifa Tree - Silver Dragon
+            case 2512:
+            case 2608:
+            case 2701:
+            case 2715:
+            case 2719:
+            case 2752:
+            case 2900:
+            case 2901:
+            case 2902:
+            case 2908:
+            case 2909:
+            case 2910:
+            case 2912:
+            case 2914:
+            case 2917:
+            case 2918:
+            case 2919:
+            case 2924:
+            case 2925:
+            case 2926:
+            case 2927:
+            case 2929:
+            case 2930:
+            case 2933:
+            case 2934:
+            case 2950:
+            case 0455: // Mountain - Base
             case 1605: // Madain Sari - Eidolon Wall
             case 1606: // Madain Sari - Chamber
-            case 1607: // Madain Sari - Kitchen
             case 1807: // Alexandira Castle - Hallway (Attack on Alexandra)
             case 1823: // Alexandira Castle - Hallway
             case 2000: // Hilda Garde 2 - Deck
@@ -501,12 +649,13 @@ public class FieldMap : HonoBehavior
             case 2208: // Desert Palace - Hallway
             case 2261: // Oeilvert - Bridge
             case 2363: // Gulug - Path
-            case 2510: // Iifa Tree - Silver Dragon
-            //case 3009: // Ending - TH
-            //case 3010: // Ending - TH
-            //case 3011: // Ending - TH
-            return true;
+
+                //case 3009: // Ending - TH
+                //case 3010: // Ending - TH
+                //case 3011: // Ending - TH
+                return true;
         }
+
         return false;
     }
 
