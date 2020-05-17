@@ -38,7 +38,7 @@ public class BGCAM_DEF
         this.vrpMaxY = reader.ReadInt16();
         this.depthOffset = reader.ReadInt32();
 
-        RefreshCache();
+        RefreshCache(true);
     }
 
     public Matrix4x4 GetMatrixR()
@@ -109,7 +109,7 @@ public class BGCAM_DEF
     {
         get
         {
-            RefreshCache();
+            RefreshCache(false);
             return _cachedMinX;
         }
         set
@@ -123,7 +123,7 @@ public class BGCAM_DEF
     {
         get
         {
-            RefreshCache();
+            RefreshCache(false);
             return _cachedMaxX;
         }
         set
@@ -133,10 +133,10 @@ public class BGCAM_DEF
         }
     }
 
-    private void RefreshCache()
+    private void RefreshCache(Boolean force)
     {
         Int16 actualFieldWidth = FieldMap.PsxFieldWidth;
-        if (_knownFieldWidth == actualFieldWidth)
+        if (!force && _knownFieldWidth == actualFieldWidth)
             return;
 
         _knownFieldWidth = actualFieldWidth;
@@ -146,7 +146,12 @@ public class BGCAM_DEF
             _cachedMinX = _vrpMinX;
             _cachedMaxX = _vrpMaxX;
             _delta = 0;
+            Configuration.Graphics.DisableWidescreenSupportForSingleMap();
             return;
+        }
+        else
+        {
+	        Configuration.Graphics.RestoreDisabledWidescreenSupport();
         }
 
         Int32 desiredDiff = FieldMap.PsxFieldWidth - FieldMap.PsxFieldWidthNative;
