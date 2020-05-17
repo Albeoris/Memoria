@@ -24,8 +24,8 @@ public class FieldMapLocalizeAreaTitle
 			});
 			FieldMapLocalizeAreaTitleInfo fieldMapLocalizeAreaTitleInfo = new FieldMapLocalizeAreaTitleInfo();
 			fieldMapLocalizeAreaTitleInfo.mapName = array[0];
-			Int32.TryParse(array[1], out fieldMapLocalizeAreaTitleInfo.atlasWidth);
-			Int32.TryParse(array[2], out fieldMapLocalizeAreaTitleInfo.atlasHeight);
+			Int32.TryParse(array[1], out _); // fieldMapLocalizeAreaTitleInfo.atlasWidth
+			Int32.TryParse(array[2], out _); // fieldMapLocalizeAreaTitleInfo.atlasHeight
 			Int32.TryParse(array[3], out fieldMapLocalizeAreaTitleInfo.startOvrIdx);
 			Int32.TryParse(array[4], out fieldMapLocalizeAreaTitleInfo.endOvrIdx);
 			Int32 num = 0;

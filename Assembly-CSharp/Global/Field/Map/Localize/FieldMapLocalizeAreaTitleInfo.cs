@@ -82,9 +82,9 @@ public class FieldMapLocalizeAreaTitleInfo
 
 	public String mapName;
 
-	public Int32 atlasWidth;
-
-	public Int32 atlasHeight;
+	// public Int32 atlasWidth;
+	//
+	// public Int32 atlasHeight;
 
 	public Int32 startOvrIdx;
 

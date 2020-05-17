@@ -26,6 +26,9 @@ namespace Memoria.Assets
                 var i = 0;
                 foreach (String map in CreateMapList())
                 {
+                    if (!map.Contains("FBG_N01_ALXT_MAP016_AT_MSA_0"))
+                        continue;
+                    
                     ExportMapSafe(map);
                     i++;
 
