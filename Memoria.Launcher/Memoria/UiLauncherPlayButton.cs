@@ -140,7 +140,7 @@ namespace Memoria.Launcher
                         }
                     }
                 );
-                //Application.Current.Shutdown();
+                Application.Current.Shutdown();
             }
             finally
             {
