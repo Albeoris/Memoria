@@ -9,7 +9,6 @@ namespace Memoria
         {
             public static Boolean Enabled => Instance._graphics.Enabled;
             public static Int32 BattleFPS => Instance._graphics.BattleFPS;
-            public static Int32 MovieFPS => Instance._graphics.MovieFPS;
             public static Int32 BattleSwirlFrames => Instance._graphics.BattleSwirlFrames;
             public static Int32 SkipIntros = Instance._graphics.SkipIntros;
             public static Int32 GarnetHair => Instance._graphics.GarnetHair;

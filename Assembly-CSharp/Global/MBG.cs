@@ -199,7 +199,6 @@ public class MBG : HonoBehavior
 	public void Play()
 	{
 		this.tempTargetFrameRate = Application.targetFrameRate;
-	    Application.targetFrameRate = Configuration.Graphics.MovieFPS;
 		this.tempVirtualAnalogStatus = VirtualAnalog.IsEnable;
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(false);
 		this.isSkip = false;
@@ -225,6 +224,8 @@ public class MBG : HonoBehavior
 		}
         this.isWaitForPause = false;
         this.played = true;
+        Application.targetFrameRate = Mathf.RoundToInt((Single) this.movieMaterial.FPS);
+        PlayerWindow.Instance.SetTitle($"FPS: {Application.targetFrameRate}");
 		this.movieMaterial.Play();
 	}
 
@@ -313,6 +314,7 @@ public class MBG : HonoBehavior
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(this.tempVirtualAnalogStatus);
 		SceneDirector.ToggleFadeAll(true);
 		Application.targetFrameRate = this.tempTargetFrameRate;
+		PlayerWindow.Instance.SetTitle(String.Empty);
 		vib.VIB_actuatorReset(0);
 		this.movieMaterial.Transparency = 0f;
 		this.movieMaterial.Stop();
