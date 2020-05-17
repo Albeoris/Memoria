@@ -133,7 +133,7 @@ public class AchievementState : MonoBehaviour
 
 	public Int32 trance_no;
 
-	public BattleStatus abnormal_status;
+	public UInt32 abnormal_status;
 
 	public Boolean summon_shiva;
 
