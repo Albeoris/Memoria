@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Memoria.Prime;
 using SiliconStudio;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
@@ -35,7 +36,7 @@ public class SteamSdkWrapper : ISocialPlatform
 		SteamSdkWrapper.RegisterStatsReceivedCallback(new SteamSdkWrapper.ResultCallbackDelegate(SteamSdkWrapper.DispatchStatsReceivedEvent));
 		SteamSdkWrapper.RegisterStatsStoredCallback(new SteamSdkWrapper.ResultCallbackDelegate(SteamSdkWrapper.DispatchStatsStoredEvent));
 		SteamSdkWrapper.RegisterAchievementStoredCallback(new SteamSdkWrapper.VoidCallbackDelegate(SteamSdkWrapper.DispatchAchievementStoredEvent));
-		this.Initialized = SteamSdkWrapper.Init();
+		this.Initialized = TryInitialize();
 	}
 
 	public static void RequestStats(Action<Boolean> callback)
@@ -141,6 +142,24 @@ public class SteamSdkWrapper : ISocialPlatform
 	public Boolean GetLoading(ILeaderboard board)
 	{
 		throw new NotImplementedException();
+	}
+	
+	public static Boolean IsInitialized { get; private set; }
+
+	public static Boolean TryInitialize()
+	{
+		if (!IsInitialized)
+		{
+			IsInitialized = Init();
+			Log.Message($"[{nameof(SteamSdkWrapper)}] Initialized: {IsInitialized}");
+		}
+		else
+		{
+			Boolean stats = RequestStats();
+			Log.Message($"[{nameof(SteamSdkWrapper)}] Request stats: {stats}");
+		}
+
+		return IsInitialized;
 	}
 
 	[DllImport("steamwrapper")]
