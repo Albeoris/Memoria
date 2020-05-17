@@ -61,9 +61,9 @@ public class SFXRender
 			SFXRender.meshLineOpa = new List<SFXMesh>();
 			SFXRender.meshLineAdd = new List<SFXMesh>();
 			SFXRender.meshLineSub = new List<SFXMesh>();
-			SFXMesh.gPosIndex = 0;
-			SFXMesh.gTexIndex = 0;
-			SFXMesh.gColIndex = 0;
+			SFXMesh.GPosIndex = 0;
+			SFXMesh.GTexIndex = 0;
+			SFXMesh.GColIndex = 0;
 			for (;;)
 			{
 				Int32 num = 0;
@@ -72,7 +72,7 @@ public class SFXRender
 				{
 					break;
 				}
-				SFXMesh.zDepth = (Single)(-(Single)num);
+				SFXMesh.GzDepth = (Single)(-(Single)num);
 				SFXRender.Add(ptr);
 				SFXRender.primCount++;
 			}
@@ -248,56 +248,56 @@ public class SFXRender
 	{
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
 		SFXMesh mesh = SFXRender.GetMesh(abrtex, tag->code);
-		mesh.PolyGT3(tag);
+		mesh.PolyGt3(tag);
 	}
 
 	private unsafe static void PolyFT3(PSX_LIBGPU.POLY_FT3* tag)
 	{
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
 		SFXMesh mesh = SFXRender.GetMesh(abrtex, tag->code);
-		mesh.PolyFT3(tag);
+		mesh.PolyFt3(tag);
 	}
 
 	private unsafe static void PolyGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
 		SFXMesh mesh = SFXRender.GetMesh(abrtex, tag->code);
-		mesh.PolyGT4(tag);
+		mesh.PolyGt4(tag);
 	}
 
 	private unsafe static void PolyFT4(PSX_LIBGPU.POLY_FT4* tag, UInt32 fillter = 0u)
 	{
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | fillter;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-		mesh.PolyFT4(tag);
+		mesh.PolyFt4(tag);
 	}
 
 	private unsafe static void PolyBFT4(PSX_LIBGPU.POLY_FT4* tag)
 	{
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-		mesh.PolyBFT4(tag);
+		mesh.PolyBft4(tag);
 	}
 
 	private unsafe static void PolyBGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-		mesh.PolyBGT4(tag);
+		mesh.PolyBgt4(tag);
 	}
 
 	private unsafe static void SPRT(PSX_LIBGPU.SPRT* tag, Int32 w, Int32 h)
 	{
 		UInt32 meshKey = SFXKey.GetCurrentABRTex(tag->code, tag->clut) | 67108864u;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-		mesh.SPRT(tag, w, h);
+		mesh.Sprite(tag, w, h);
 	}
 
 	private unsafe static void TILE(PSX_LIBGPU.TILE* tag, Int32 w, Int32 h)
 	{
 		UInt32 currentABR = SFXKey.GetCurrentABR(tag->code);
 		SFXMesh mesh = SFXRender.GetMesh(currentABR, tag->code);
-		mesh.TILE(tag, w, h);
+		mesh.Tile(tag, w, h);
 	}
 
 	private unsafe static void DR_TPAGE(PSX_LIBGPU.DR_TPAGE* obj)
@@ -471,7 +471,7 @@ public class SFXRender
 					}
 					else
 					{
-						UInt32 fillter = SFXKey.GetFillter(meshKey);
+						UInt32 fillter = SFXKey.GetFilter(meshKey);
 						if (fillter != 33554432u)
 						{
 							if (fillter != 67108864u)

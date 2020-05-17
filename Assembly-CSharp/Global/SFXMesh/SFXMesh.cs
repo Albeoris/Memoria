@@ -6,22 +6,22 @@ public class SFXMesh : SFXMeshBase
 {
 	public SFXMesh()
 	{
-		this.key = 0u;
-		this.material = new Material(SFXMesh.shaders[0]);
-		this.mesh = new Mesh();
-		this.mesh.MarkDynamic();
-		this.ibIndex = new Int32[SFXMesh.INDICES_MAX];
-		this.vbPos = new Vector3[SFXMesh.VERTICES_MAX];
-		this.vbCol = new Color32[SFXMesh.VERTICES_MAX];
-		this.vbTex = new Vector2[SFXMesh.VERTICES_MAX];
-		this.constTexParam = new Vector4(SFXMesh.HALF_PIXEL, SFXMesh.HALF_PIXEL, 256f, 256f);
+		_key = 0u;
+		_material = new Material(__shaders[0]);
+		_mesh = new Mesh();
+		_mesh.MarkDynamic();
+		IbIndex = new Int32[INDICES_MAX];
+		VbPos = new Vector3[VERTICES_MAX];
+		VbCol = new Color32[VERTICES_MAX];
+		VbTex = new Vector2[VERTICES_MAX];
+		_constTexParam = new Vector4(HALF_PIXEL, HALF_PIXEL, 256f, 256f);
 	}
 
 	public static void DummyRender()
 	{
 		Color32 c = new Color32(0, 0, 0, 0);
 		Vector3 v = new Vector3(0f, 0f, 0f);
-		SFXMesh.dummyMaterial.SetPass(0);
+		__dummyMaterial.SetPass(0);
 		GL.Begin(1);
 		GL.Color(c);
 		GL.Vertex(v);
@@ -32,744 +32,741 @@ public class SFXMesh : SFXMeshBase
 
 	public static void Init()
 	{
-		SFXMesh.shaders = new Shader[6];
-		SFXMesh.shaders[0] = ShadersLoader.Find("SFX_OPA_GT");
-		SFXMesh.shaders[1] = ShadersLoader.Find("SFX_ADD_GT");
-		SFXMesh.shaders[2] = ShadersLoader.Find("SFX_SUB_GT");
-		SFXMesh.shaders[3] = ShadersLoader.Find("SFX_OPA_G");
-		SFXMesh.shaders[4] = ShadersLoader.Find("SFX_ADD_G");
-	    SFXMesh.shaders[5] = ShadersLoader.Find("SFX_SUB_G");
-		SFXMesh.gPos = new Vector3[SFXMesh.POS_MAX];
-		for (Int32 i = 0; i < (Int32)SFXMesh.gPos.Length; i++)
+		__shaders = new Shader[6];
+		__shaders[0] = ShadersLoader.Find("SFX_OPA_GT");
+		__shaders[1] = ShadersLoader.Find("SFX_ADD_GT");
+		__shaders[2] = ShadersLoader.Find("SFX_SUB_GT");
+		__shaders[3] = ShadersLoader.Find("SFX_OPA_G");
+		__shaders[4] = ShadersLoader.Find("SFX_ADD_G");
+	    __shaders[5] = ShadersLoader.Find("SFX_SUB_G");
+		__gPos = new Vector3[POS_MAX];
+		for (Int32 i = 0; i < __gPos.Length; i++)
 		{
-			SFXMesh.gPos[i] = default(Vector3);
+			__gPos[i] = default;
 		}
-		SFXMesh.gTex = new Vector2[SFXMesh.TEX_MAX];
-		for (Int32 j = 0; j < (Int32)SFXMesh.gTex.Length; j++)
+		__gTex = new Vector2[TEX_MAX];
+		for (Int32 j = 0; j < __gTex.Length; j++)
 		{
-			SFXMesh.gTex[j] = default(Vector2);
+			__gTex[j] = default;
 		}
-		SFXMesh.gCol = new Color32[SFXMesh.COL_MAX];
-		for (Int32 k = 0; k < (Int32)SFXMesh.gCol.Length; k++)
+		__gCol = new Color32[COL_MAX];
+		for (Int32 k = 0; k < __gCol.Length; k++)
 		{
-			SFXMesh.gCol[k] = default(Color32);
+			__gCol[k] = default;
 		}
-		SFXMesh.colorData = new Color[3];
-		SFXMesh.colorData[0] = new Color(1f, 1f, 1f, 1f);
-		SFXMesh.colorData[1] = new Color(1.5f, 1.5f, 1.5f, 1f);
-		SFXMesh.colorData[2] = new Color(2f, 2f, 2f, 1f);
-		SFXMesh.dummyMaterial = new Material(SFXMesh.shaders[4]);
+		ColorData = new Color[3];
+		ColorData[0] = new Color(1f, 1f, 1f, 1f);
+		ColorData[1] = new Color(1.5f, 1.5f, 1.5f, 1f);
+		ColorData[2] = new Color(2f, 2f, 2f, 1f);
+		__dummyMaterial = new Material(__shaders[4]);
 	}
 
 	public static void Release()
 	{
-		UnityEngine.Object.Destroy(SFXMesh.dummyMaterial);
+		UnityEngine.Object.Destroy(__dummyMaterial);
 		for (Int32 i = 0; i < 6; i++)
 		{
-			SFXMesh.shaders[i] = (Shader)null;
+			__shaders[i] = null;
 		}
-		SFXMesh.shaders = null;
-		SFXMeshBase.curRenderTexture = (RenderTexture)null;
+		__shaders = null;
+		curRenderTexture = null;
 	}
 
 	public void ClearObject()
 	{
-		UnityEngine.Object.Destroy(this.material);
-		UnityEngine.Object.Destroy(this.mesh);
-		this.ibIndex = null;
-		this.vbPos = null;
-		this.vbCol = null;
-		this.vbTex = null;
+		UnityEngine.Object.Destroy(_material);
+		UnityEngine.Object.Destroy(_mesh);
+		IbIndex = null;
+		VbPos = null;
+		VbCol = null;
+		VbTex = null;
 	}
 
 	public void Setup(UInt32 meshKey, Byte code)
 	{
-		this.key = meshKey;
+		_key = meshKey;
 		Boolean flag = SFXKey.IsTexture(meshKey);
-		this.shaderIndex = (UInt32)((!flag) ? 3u : 0u);
+		_shaderIndex = (!flag) ? 3u : 0u;
 		if ((code & 2) != 0)
 		{
-			this.alpha = SFXMesh.abrAlphaData[(Int32)((UIntPtr)SFXKey.tmpABR)];
-			this.shaderIndex += SFXKey.GetBlendMode(meshKey);
+			_alpha = AbrAlphaData[(Int32)((UIntPtr)SFXKey.tmpABR)];
+			_shaderIndex += SFXKey.GetBlendMode(meshKey);
 		}
 		else
 		{
-			this.alpha = 128;
+			_alpha = 128;
 		}
 		if (flag)
 		{
 			if (SFX.pixelOffset == 0)
 			{
-				this.constTexParam.x = SFXMesh.HALF_PIXEL;
-				this.constTexParam.y = SFXMesh.HALF_PIXEL;
+				_constTexParam.x = HALF_PIXEL;
+				_constTexParam.y = HALF_PIXEL;
 			}
 			else if (SFX.pixelOffset == 1)
 			{
-				this.constTexParam.x = SFXMesh.INV_HALF_PIXEL;
-				this.constTexParam.y = SFXMesh.INV_HALF_PIXEL;
+				_constTexParam.x = INV_HALF_PIXEL;
+				_constTexParam.y = INV_HALF_PIXEL;
 			}
 			else
 			{
-				this.constTexParam.x = SFXMesh.HALF_PIXEL;
-				this.constTexParam.y = SFXMesh.INV_HALF_PIXEL;
+				_constTexParam.x = HALF_PIXEL;
+				_constTexParam.y = INV_HALF_PIXEL;
 			}
-			this.constTexParam.z = 256f;
-			this.constTexParam.w = 256f;
+			_constTexParam.z = 256f;
+			_constTexParam.w = 256f;
 		}
 	}
 
 	private Texture GetTexture()
 	{
-		UInt32 textureKey = SFXKey.GetTextureKey(this.key);
-		if (SFXKey.GetTextureMode(this.key) != 2u)
+		UInt32 textureKey = SFXKey.GetTextureKey(_key);
+		if (SFXKey.GetTextureMode(_key) != 2u)
 		{
 			if (SFX.currentEffectID == 435)
 			{
 				Single[] array = new Single[2];
 				Texture texture = PSXTextureMgr.GetTexture435(textureKey, array);
-				if (texture != (UnityEngine.Object)null)
+				if (texture != null)
 				{
-					this.constTexParam.y = array[0];
-					this.constTexParam.w = array[1];
+					_constTexParam.y = array[0];
+					_constTexParam.w = array[1];
 					return texture;
 				}
 			}
-			return PSXTextureMgr.GetTexture(this.key).texture;
+			return PSXTextureMgr.GetTexture(_key).texture;
 		}
 		if (SFXKey.IsBlurTexture(textureKey))
 		{
-			if ((this.key & 536870912u) != 0u)
+			if ((_key & 536870912u) != 0u)
 			{
-				this.constTexParam.w = 240f;
+				_constTexParam.w = 240f;
 			}
 			else
 			{
-				this.constTexParam.y = -240f;
-				this.constTexParam.w = -240f;
+				_constTexParam.y = -240f;
+				_constTexParam.w = -240f;
 			}
-			this.constTexParam.z = 320f;
+			_constTexParam.z = 320f;
 			return PSXTextureMgr.blurTexture;
 		}
-		if ((this.key & 2031616u) == PSXTextureMgr.bgKey)
+		if ((_key & 2031616u) == PSXTextureMgr.bgKey)
 		{
 			return PSXTextureMgr.bgTexture;
 		}
 		if (PSXTextureMgr.isCreateGenTexture)
 		{
-			this.constTexParam.x = (Single)((UInt64)SFXKey.GetPositionX(this.key) - (UInt64)((Int64)PSXTextureMgr.GEN_TEXTURE_X)) + 0.5f;
-			this.constTexParam.z = (Single)PSXTextureMgr.GEN_TEXTURE_W;
-			this.constTexParam.w = (Single)PSXTextureMgr.GEN_TEXTURE_H;
+			_constTexParam.x = SFXKey.GetPositionX(_key) - (UInt64)PSXTextureMgr.GEN_TEXTURE_X + 0.5f;
+			_constTexParam.z = PSXTextureMgr.GEN_TEXTURE_W;
+			_constTexParam.w = PSXTextureMgr.GEN_TEXTURE_H;
 			return PSXTextureMgr.genTexture;
 		}
 		if (SFX.currentEffectID == 274 && textureKey == 5767167u)
 		{
-			this.constTexParam.x = 176f;
-			this.constTexParam.y = 0f;
-			this.constTexParam.z = 480f;
-			this.constTexParam.w = 360f;
+			_constTexParam.x = 176f;
+			_constTexParam.y = 0f;
+			_constTexParam.z = 480f;
+			_constTexParam.w = 360f;
 			return PSXTextureMgr.blurTexture;
 		}
-		return PSXTextureMgr.GetTexture(this.key).texture;
+		return PSXTextureMgr.GetTexture(_key).texture;
 	}
 
 	public UInt32 GetKey()
 	{
-		return this.key;
+		return _key;
 	}
 
 	public void Begin()
 	{
-		this.key = 0u;
-		this.ibOffset = 0;
-		this.vbOffset = 0;
+		_key = 0u;
+		IbOffset = 0;
+		VbOffset = 0;
 	}
 
 	public void End()
 	{
-		this.mesh.Clear();
-		Int32[] array = new Int32[this.ibOffset];
-		Buffer.BlockCopy(this.ibIndex, 0, array, 0, this.ibOffset << 2);
-		this.mesh.vertices = this.vbPos;
-		this.mesh.colors32 = this.vbCol;
-		if (SFXKey.IsTexture(this.key))
-		{
-			this.mesh.uv = this.vbTex;
-		}
-		else
-		{
-			this.mesh.uv = null;
-		}
+		_mesh.Clear();
+		Int32[] array = new Int32[IbOffset];
+		Buffer.BlockCopy(IbIndex, 0, array, 0, IbOffset << 2);
+		FixWideScreenOffset();
+		_mesh.vertices = VbPos;
+		_mesh.colors32 = VbCol;
+		
+		_mesh.uv = SFXKey.IsTexture(_key) ? VbTex : null;
+		
 		if (SFX.isDebugLine)
-		{
-			this.mesh.SetIndices(array, MeshTopology.Lines, 0);
-		}
-		else if (SFXKey.isLinePolygon(this.key))
-		{
-			this.mesh.SetIndices(array, MeshTopology.Lines, 0);
-		}
+			_mesh.SetIndices(array, MeshTopology.Lines, 0);
+		else if (SFXKey.isLinePolygon(_key))
+			_mesh.SetIndices(array, MeshTopology.Lines, 0);
 		else
-		{
-			this.mesh.triangles = array;
-		}
+			_mesh.triangles = array;
+	}
+
+	private void FixWideScreenOffset()
+	{
+		Int32 offsetValue = (FieldMap.PsxFieldWidth - 320) / 2;
+		for (Int32 i = 0; i < VbOffset; i++)
+			VbPos[i].x = VbPos[i].x + offsetValue;
 	}
 
 	public override void Render(Int32 index)
 	{
-		this.material.shader = SFXMesh.shaders[(Int32)((UIntPtr)this.shaderIndex)];
-		if (SFXKey.IsTexture(this.key))
+		_material.shader = __shaders[(Int32)((UIntPtr)_shaderIndex)];
+		if (SFXKey.IsTexture(_key))
 		{
-			this.material.mainTexture = this.GetTexture();
-			if (this.material.mainTexture == (UnityEngine.Object)null)
+			_material.mainTexture = GetTexture();
+			if (_material.mainTexture == null)
 			{
 				return;
 			}
-			UInt32 fillter = SFXKey.GetFillter(this.key);
-			if (fillter != 33554432u)
+			UInt32 filter = SFXKey.GetFilter(_key);
+			if (filter != 33554432u)
 			{
-				if (fillter != 67108864u)
+				if (filter != 67108864u)
 				{
-					this.material.mainTexture.filterMode = (FilterMode)((!SFX.isDebugFillter) ? FilterMode.Point : FilterMode.Bilinear);
+					_material.mainTexture.filterMode = (!SFX.isDebugFillter) ? FilterMode.Point : FilterMode.Bilinear;
 				}
 				else
 				{
-					this.material.mainTexture.filterMode = FilterMode.Bilinear;
+					_material.mainTexture.filterMode = FilterMode.Bilinear;
 				}
 			}
 			else
 			{
-				this.material.mainTexture.filterMode = FilterMode.Point;
+				_material.mainTexture.filterMode = FilterMode.Point;
 			}
-			this.material.mainTexture.wrapMode = TextureWrapMode.Clamp;
-			this.material.SetVector("_TexParam", this.constTexParam);
+			_material.mainTexture.wrapMode = TextureWrapMode.Clamp;
+			_material.SetVector(TexParam, _constTexParam);
 		}
-		this.material.SetColor("_Color", SFXMesh.colorData[SFX.colIntensity]);
-		this.material.SetFloat("_Threshold", (SFX.colThreshold != 0) ? 0.05f : 0.0295f);
-		this.material.SetPass(0);
-		Graphics.DrawMeshNow(this.mesh, Matrix4x4.identity);
+		_material.SetColor(Color, ColorData[SFX.colIntensity]);
+		_material.SetFloat(Threshold, (SFX.colThreshold != 0) ? 0.05f : 0.0295f);
+		_material.SetPass(0);
+		Graphics.DrawMeshNow(_mesh, Matrix4x4.identity);
 	}
 
 	public unsafe void PolyF3(PSX_LIBGPU.POLY_F3* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++]));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 3;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = __gCol[GColIndex++]));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 3;
 	}
 
-	public unsafe void PolyFT3(PSX_LIBGPU.POLY_FT3* obj)
+	public unsafe void PolyFt3(PSX_LIBGPU.POLY_FT3* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0, (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u1, (Single)obj->v1);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u2, (Single)obj->v2);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.GetShadeAlpha(obj->code);
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++]));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 3;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gTex[GTexIndex].Set(obj->u0, obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u1, obj->v1);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u2, obj->v2);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = GetShadeAlpha(obj->code);
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = __gCol[GColIndex++]));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 3;
 	}
 
 	public unsafe void PolyG3(PSX_LIBGPU.POLY_G3* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r1;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g1;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b1;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r2;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g2;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b2;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 3;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r1;
+		__gCol[GColIndex].g = obj->g1;
+		__gCol[GColIndex].b = obj->b1;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset + 1] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r2;
+		__gCol[GColIndex].g = obj->g2;
+		__gCol[GColIndex].b = obj->b2;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset + 2] = __gCol[GColIndex++];
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 3;
 	}
 
-	public unsafe void PolyGT3(PSX_LIBGPU.POLY_GT3* obj)
+	public unsafe void PolyGt3(PSX_LIBGPU.POLY_GT3* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0, (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u1, (Single)obj->v1);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u2, (Single)obj->v2);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		Byte shadeAlpha = this.GetShadeAlpha(obj->code);
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r1;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g1;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b1;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r2;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g2;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b2;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 3;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gTex[GTexIndex].Set(obj->u0, obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u1, obj->v1);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u2, obj->v2);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		Byte shadeAlpha = GetShadeAlpha(obj->code);
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r1;
+		__gCol[GColIndex].g = obj->g1;
+		__gCol[GColIndex].b = obj->b1;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset + 1] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r2;
+		__gCol[GColIndex].g = obj->g2;
+		__gCol[GColIndex].b = obj->b2;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset + 2] = __gCol[GColIndex++];
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 3;
 	}
 
 	public unsafe void PolyF4(PSX_LIBGPU.POLY_F4* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		Int32 num7 = (Int32)obj->x3 + SFXMeshBase.drOffsetX;
-		Int32 num8 = (Int32)obj->y3 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num7, (Single)num8, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = (this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++])));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.vbOffset += 4;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		Int32 num7 = obj->x3 + drOffsetX;
+		Int32 num8 = obj->y3 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num7, num8, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = (VbCol[VbOffset + 3] = __gCol[GColIndex++])));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		VbOffset += 4;
 	}
 
-	public unsafe void PolyFT4(PSX_LIBGPU.POLY_FT4* obj)
+	public unsafe void PolyFt4(PSX_LIBGPU.POLY_FT4* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		Int32 num7 = (Int32)obj->x3 + SFXMeshBase.drOffsetX;
-		Int32 num8 = (Int32)obj->y3 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num7, (Single)num8, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0, (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u1, (Single)obj->v1);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u2, (Single)obj->v2);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u3, (Single)obj->v3);
-		this.vbTex[this.vbOffset + 3] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.GetShadeAlpha(obj->code);
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = (this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++])));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.vbOffset += 4;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		Int32 num7 = obj->x3 + drOffsetX;
+		Int32 num8 = obj->y3 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num7, num8, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
+		__gTex[GTexIndex].Set(obj->u0, obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u1, obj->v1);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u2, obj->v2);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u3, obj->v3);
+		VbTex[VbOffset + 3] = __gTex[GTexIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = GetShadeAlpha(obj->code);
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = (VbCol[VbOffset + 3] = __gCol[GColIndex++])));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		VbOffset += 4;
 	}
 
-	public unsafe void PolyBFT4(PSX_LIBGPU.POLY_FT4* obj)
+	public unsafe void PolyBft4(PSX_LIBGPU.POLY_FT4* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		Int32 num7 = (Int32)obj->x3 + SFXMeshBase.drOffsetX;
-		Int32 num8 = (Int32)obj->y3 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num7, (Single)num8, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		Int32 num7 = obj->x3 + drOffsetX;
+		Int32 num8 = obj->y3 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num7, num8, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
 		Single num9 = 0f;
 		Single num10 = 240f;
-		if ((this.key >> 16 & 31u) != 0u)
+		if ((_key >> 16 & 31u) != 0u)
 		{
 			num9 = 128f;
 		}
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0 + num9, num10 - (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u1 + num9, num10 - (Single)obj->v1);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u2 + num9, num10 - (Single)obj->v2);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u3 + num9, num10 - (Single)obj->v3);
-		this.vbTex[this.vbOffset + 3] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = (this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++])));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.vbOffset += 4;
+		__gTex[GTexIndex].Set(obj->u0 + num9, num10 - obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u1 + num9, num10 - obj->v1);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u2 + num9, num10 - obj->v2);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u3 + num9, num10 - obj->v3);
+		VbTex[VbOffset + 3] = __gTex[GTexIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = (VbCol[VbOffset + 3] = __gCol[GColIndex++])));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		VbOffset += 4;
 	}
 
 	public unsafe void PolyG4(PSX_LIBGPU.POLY_G4* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		Int32 num7 = (Int32)obj->x3 + SFXMeshBase.drOffsetX;
-		Int32 num8 = (Int32)obj->y3 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num7, (Single)num8, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r1;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g1;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b1;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r2;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g2;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b2;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r3;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g3;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b3;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 4;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		Int32 num7 = obj->x3 + drOffsetX;
+		Int32 num8 = obj->y3 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num7, num8, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r1;
+		__gCol[GColIndex].g = obj->g1;
+		__gCol[GColIndex].b = obj->b1;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset + 1] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r2;
+		__gCol[GColIndex].g = obj->g2;
+		__gCol[GColIndex].b = obj->b2;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset + 2] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r3;
+		__gCol[GColIndex].g = obj->g3;
+		__gCol[GColIndex].b = obj->b3;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset + 3] = __gCol[GColIndex++];
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 4;
 	}
 
-	public unsafe void PolyGT4(PSX_LIBGPU.POLY_GT4* obj)
+	public unsafe void PolyGt4(PSX_LIBGPU.POLY_GT4* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		Int32 num7 = (Int32)obj->x3 + SFXMeshBase.drOffsetX;
-		Int32 num8 = (Int32)obj->y3 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num7, (Single)num8, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0, (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u1, (Single)obj->v1);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u2, (Single)obj->v2);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u3, (Single)obj->v3);
-		this.vbTex[this.vbOffset + 3] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		Byte shadeAlpha = this.GetShadeAlpha(obj->code);
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r1;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g1;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b1;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r2;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g2;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b2;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r3;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g3;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b3;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = shadeAlpha;
-		this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.vbOffset += 4;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		Int32 num7 = obj->x3 + drOffsetX;
+		Int32 num8 = obj->y3 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num7, num8, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
+		__gTex[GTexIndex].Set(obj->u0, obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u1, obj->v1);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u2, obj->v2);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u3, obj->v3);
+		VbTex[VbOffset + 3] = __gTex[GTexIndex++];
+		Byte shadeAlpha = GetShadeAlpha(obj->code);
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r1;
+		__gCol[GColIndex].g = obj->g1;
+		__gCol[GColIndex].b = obj->b1;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset + 1] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r2;
+		__gCol[GColIndex].g = obj->g2;
+		__gCol[GColIndex].b = obj->b2;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset + 2] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r3;
+		__gCol[GColIndex].g = obj->g3;
+		__gCol[GColIndex].b = obj->b3;
+		__gCol[GColIndex].a = shadeAlpha;
+		VbCol[VbOffset + 3] = __gCol[GColIndex++];
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		VbOffset += 4;
 	}
 
-	public unsafe void PolyBGT4(PSX_LIBGPU.POLY_GT4* obj)
+	public unsafe void PolyBgt4(PSX_LIBGPU.POLY_GT4* obj)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		Int32 num3 = (Int32)obj->x1 + SFXMeshBase.drOffsetX;
-		Int32 num4 = (Int32)obj->y1 + SFXMeshBase.drOffsetY;
-		Int32 num5 = (Int32)obj->x2 + SFXMeshBase.drOffsetX;
-		Int32 num6 = (Int32)obj->y2 + SFXMeshBase.drOffsetY;
-		Int32 num7 = (Int32)obj->x3 + SFXMeshBase.drOffsetX;
-		Int32 num8 = (Int32)obj->y3 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num3, (Single)num4, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num5, (Single)num6, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num7, (Single)num8, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		Int32 num3 = obj->x1 + drOffsetX;
+		Int32 num4 = obj->y1 + drOffsetY;
+		Int32 num5 = obj->x2 + drOffsetX;
+		Int32 num6 = obj->y2 + drOffsetY;
+		Int32 num7 = obj->x3 + drOffsetX;
+		Int32 num8 = obj->y3 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num3, num4, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num5, num6, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num7, num8, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
 		Single num9 = 0f;
 		Single num10 = 240f;
-		if ((this.key >> 16 & 31u) != 0u)
+		if ((_key >> 16 & 31u) != 0u)
 		{
 			num9 = 128f;
 		}
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0 + num9, num10 - (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u1 + num9, num10 - (Single)obj->v1);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u2 + num9, num10 - (Single)obj->v2);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u3 + num9, num10 - (Single)obj->v3);
-		this.vbTex[this.vbOffset + 3] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		Byte a = this.alpha;
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = a;
-		this.vbCol[this.vbOffset] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r1;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g1;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b1;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = a;
-		this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r2;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g2;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b2;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = a;
-		this.vbCol[this.vbOffset + 2] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r3;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g3;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b3;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = a;
-		this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.vbOffset += 4;
+		__gTex[GTexIndex].Set(obj->u0 + num9, num10 - obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u1 + num9, num10 - obj->v1);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u2 + num9, num10 - obj->v2);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u3 + num9, num10 - obj->v3);
+		VbTex[VbOffset + 3] = __gTex[GTexIndex++];
+		Byte a = _alpha;
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = a;
+		VbCol[VbOffset] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r1;
+		__gCol[GColIndex].g = obj->g1;
+		__gCol[GColIndex].b = obj->b1;
+		__gCol[GColIndex].a = a;
+		VbCol[VbOffset + 1] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r2;
+		__gCol[GColIndex].g = obj->g2;
+		__gCol[GColIndex].b = obj->b2;
+		__gCol[GColIndex].a = a;
+		VbCol[VbOffset + 2] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r3;
+		__gCol[GColIndex].g = obj->g3;
+		__gCol[GColIndex].b = obj->b3;
+		__gCol[GColIndex].a = a;
+		VbCol[VbOffset + 3] = __gCol[GColIndex++];
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		VbOffset += 4;
 	}
 
-	public unsafe void SPRT(PSX_LIBGPU.SPRT* obj, Int32 w, Int32 h)
+	public unsafe void Sprite(PSX_LIBGPU.SPRT* obj, Int32 w, Int32 h)
 	{
-		Single num = (Single)((Int32)obj->x0 + SFXMeshBase.drOffsetX);
-		Single num2 = (Single)((Int32)obj->y0 + SFXMeshBase.drOffsetY);
-		Single num3 = (Single)w - 1f;
-		Single num4 = (Single)h - 1f;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set(num, num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set(num + (Single)w, num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set(num, num2 + (Single)h, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set(num + (Single)w, num2 + (Single)h, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0, (Single)obj->v0);
-		this.vbTex[this.vbOffset] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0 + num3, (Single)obj->v0);
-		this.vbTex[this.vbOffset + 1] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0, (Single)obj->v0 + num4);
-		this.vbTex[this.vbOffset + 2] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gTex[SFXMesh.gTexIndex].Set((Single)obj->u0 + num3, (Single)obj->v0 + num4);
-		this.vbTex[this.vbOffset + 3] = SFXMesh.gTex[SFXMesh.gTexIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.GetShadeAlpha(obj->code);
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = (this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++])));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 4;
+		Single num = obj->x0 + drOffsetX;
+		Single num2 = obj->y0 + drOffsetY;
+		Single num3 = w - 1f;
+		Single num4 = h - 1f;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num + w, num2, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num, num2 + h, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num + w, num2 + h, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
+		__gTex[GTexIndex].Set(obj->u0, obj->v0);
+		VbTex[VbOffset] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u0 + num3, obj->v0);
+		VbTex[VbOffset + 1] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u0, obj->v0 + num4);
+		VbTex[VbOffset + 2] = __gTex[GTexIndex++];
+		__gTex[GTexIndex].Set(obj->u0 + num3, obj->v0 + num4);
+		VbTex[VbOffset + 3] = __gTex[GTexIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = GetShadeAlpha(obj->code);
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = (VbCol[VbOffset + 3] = __gCol[GColIndex++])));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 4;
 	}
 
 	public unsafe void LineF2(PSX_LIBGPU.LINE_F2* obj)
 	{
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)((Int32)obj->x0 + SFXMeshBase.drOffsetX), (Single)((Int32)obj->y0 + SFXMeshBase.drOffsetY), SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)((Int32)obj->x1 + SFXMeshBase.drOffsetX), (Single)((Int32)obj->y1 + SFXMeshBase.drOffsetY), SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++]);
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.vbOffset += 2;
+		__gPos[GPosIndex].Set(obj->x0 + drOffsetX, obj->y0 + drOffsetY, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(obj->x1 + drOffsetX, obj->y1 + drOffsetY, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = __gCol[GColIndex++]);
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		VbOffset += 2;
 	}
 
 	public unsafe void LineG2(PSX_LIBGPU.LINE_G2* obj)
 	{
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)((Int32)obj->x0 + SFXMeshBase.drOffsetX), (Single)((Int32)obj->y0 + SFXMeshBase.drOffsetY), SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)((Int32)obj->x1 + SFXMeshBase.drOffsetX), (Single)((Int32)obj->y1 + SFXMeshBase.drOffsetY), SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r1;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g1;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b1;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset + 1] = SFXMesh.gCol[SFXMesh.gColIndex++];
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.vbOffset += 2;
+		__gPos[GPosIndex].Set(obj->x0 + drOffsetX, obj->y0 + drOffsetY, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(obj->x1 + drOffsetX, obj->y1 + drOffsetY, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = __gCol[GColIndex++];
+		__gCol[GColIndex].r = obj->r1;
+		__gCol[GColIndex].g = obj->g1;
+		__gCol[GColIndex].b = obj->b1;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset + 1] = __gCol[GColIndex++];
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		VbOffset += 2;
 	}
 
-	public unsafe void TILE(PSX_LIBGPU.TILE* obj, Int32 w, Int32 h)
+	public unsafe void Tile(PSX_LIBGPU.TILE* obj, Int32 w, Int32 h)
 	{
-		Int32 num = (Int32)obj->x0 + SFXMeshBase.drOffsetX;
-		Int32 num2 = (Int32)obj->y0 + SFXMeshBase.drOffsetY;
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)(num + w), (Single)num2, SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 1] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)num, (Single)(num2 + h), SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 2] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gPos[SFXMesh.gPosIndex].Set((Single)(num + w), (Single)(num2 + h), SFXMesh.zDepth);
-		this.vbPos[this.vbOffset + 3] = SFXMesh.gPos[SFXMesh.gPosIndex++];
-		SFXMesh.gCol[SFXMesh.gColIndex].r = obj->r0;
-		SFXMesh.gCol[SFXMesh.gColIndex].g = obj->g0;
-		SFXMesh.gCol[SFXMesh.gColIndex].b = obj->b0;
-		SFXMesh.gCol[SFXMesh.gColIndex].a = this.alpha;
-		this.vbCol[this.vbOffset] = (this.vbCol[this.vbOffset + 1] = (this.vbCol[this.vbOffset + 2] = (this.vbCol[this.vbOffset + 3] = SFXMesh.gCol[SFXMesh.gColIndex++])));
-		this.ibIndex[this.ibOffset++] = this.vbOffset;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 1;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 3;
-		this.ibIndex[this.ibOffset++] = this.vbOffset + 2;
-		this.vbOffset += 4;
+		Int32 num = obj->x0 + drOffsetX;
+		Int32 num2 = obj->y0 + drOffsetY;
+		__gPos[GPosIndex].Set(num, num2, GzDepth);
+		VbPos[VbOffset] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num + w, num2, GzDepth);
+		VbPos[VbOffset + 1] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num, num2 + h, GzDepth);
+		VbPos[VbOffset + 2] = __gPos[GPosIndex++];
+		__gPos[GPosIndex].Set(num + w, num2 + h, GzDepth);
+		VbPos[VbOffset + 3] = __gPos[GPosIndex++];
+		__gCol[GColIndex].r = obj->r0;
+		__gCol[GColIndex].g = obj->g0;
+		__gCol[GColIndex].b = obj->b0;
+		__gCol[GColIndex].a = _alpha;
+		VbCol[VbOffset] = (VbCol[VbOffset + 1] = (VbCol[VbOffset + 2] = (VbCol[VbOffset + 3] = __gCol[GColIndex++])));
+		IbIndex[IbOffset++] = VbOffset;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		IbIndex[IbOffset++] = VbOffset + 1;
+		IbIndex[IbOffset++] = VbOffset + 3;
+		IbIndex[IbOffset++] = VbOffset + 2;
+		VbOffset += 4;
 	}
 
 	public Byte GetShadeAlpha(Byte code)
 	{
 		if ((code & 1) != 0)
 		{
-			return this.alpha;
+			return _alpha;
 		}
-		Int32 num = (Int32)this.alpha << 1;
+		Int32 num = _alpha << 1;
 		if (num > 255)
 		{
 			return Byte.MaxValue;
@@ -777,71 +774,49 @@ public class SFXMesh : SFXMeshBase
 		return (Byte)num;
 	}
 
-	public static Byte[] abrAlphaData = new Byte[]
-	{
+	public static readonly Byte[] AbrAlphaData = {
 		63,
 		127,
 		127,
 		31
 	};
 
-	public static Color[] colorData;
-
-	public static Single zDepth;
+	public static Color[] ColorData;
+	public static Single GzDepth;
 
 	private static Single HALF_PIXEL = 0.5f;
-
 	private static Single INV_HALF_PIXEL = 0f;
-
 	private static Int32 INDICES_MAX = 21000;
-
 	private static Int32 VERTICES_MAX = 14000;
-
-	private static Shader[] shaders;
-
+	private static Shader[] __shaders;
 	private static Int32 POS_MAX = 22000;
-
 	private static Int32 TEX_MAX = 19300;
-
 	private static Int32 COL_MAX = 10000;
 
-	public static Int32 gPosIndex;
+	public static Int32 GPosIndex;
+	public static Int32 GTexIndex;
+	public static Int32 GColIndex;
+	
+	private static Vector3[] __gPos;
+	private static Vector2[] __gTex;
+	private static Color32[] __gCol;
+	private static Material __dummyMaterial;
 
-	public static Int32 gTexIndex;
+	private UInt32 _key;
+	private Byte _alpha;
+	private readonly Mesh _mesh;
+	private readonly Material _material;
 
-	public static Int32 gColIndex;
+	public Int32[] IbIndex;
+	public Vector3[] VbPos;
+	public Color32[] VbCol;
+	public Vector2[] VbTex;
+	public Int32 VbOffset;
+	public Int32 IbOffset;
 
-	private static Vector3[] gPos;
-
-	private static Vector2[] gTex;
-
-	private static Color32[] gCol;
-
-	private static Material dummyMaterial;
-
-	private UInt32 key;
-
-	private Byte alpha;
-
-	private Mesh mesh;
-
-	private Material material;
-
-	public MeshTopology polyType;
-
-	public Int32[] ibIndex;
-
-	public Vector3[] vbPos;
-
-	public Color32[] vbCol;
-
-	public Vector2[] vbTex;
-
-	public Int32 vbOffset;
-
-	public Int32 ibOffset;
-
-	private UInt32 shaderIndex;
-
-	private Vector4 constTexParam;
+	private UInt32 _shaderIndex;
+	private Vector4 _constTexParam;
+	private static readonly Int32 Threshold = Shader.PropertyToID("_Threshold");
+	private static readonly Int32 Color = Shader.PropertyToID("_Color");
+	private static readonly Int32 TexParam = Shader.PropertyToID("_TexParam");
 }
