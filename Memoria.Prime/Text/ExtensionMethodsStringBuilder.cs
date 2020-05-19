@@ -5,6 +5,11 @@ namespace Memoria.Prime.Text
 {
     public static class ExtensionMethodsStringBuilder
     {
+        public static void Clear(this StringBuilder self)
+        {
+            self.Length = 0;
+        }
+        
         public static StringBuilder AppendFormatLine(this StringBuilder self, String format, params Object[] args)
         {
             Exceptions.Exceptions.CheckArgumentNull(self, "self");

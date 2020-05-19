@@ -389,19 +389,19 @@ public class EBin
             if (b < 0)
             {
                 s1.ip++;
-                _v0 = expr_varSpec(b);
+                _v0 = EvaluateExpressionValue(b);
                 _s7.push(_v0);
             }
             else
             {
                 s1.ip++;
-                expr_jumpToSubCommand(b);
+                EvaluateExpressionCommand(b);
             }
         }
         return 0;
     }
 
-    private Int32 expr_varSpec(Int32 arg0)
+    private Int32 EvaluateExpressionValue(Int32 arg0)
     {
         _v0 = (arg0 & 3);
         _v0 <<= 26;
@@ -474,7 +474,7 @@ public class EBin
         return result;
     }
 
-    private void expr_jumpToSubCommand(Int32 arg0)
+    private void EvaluateExpressionCommand(Int32 arg0)
     {
         if (arg0 >= 0 && arg0 <= 127)
         {

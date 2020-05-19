@@ -66,9 +66,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Array.cs" />
     <Compile Include="Caster.cs" />
     <Compile Include="Collections\BetterList.cs" />
     <Compile Include="Collections\EntryCollection.cs" />
+    <Compile Include="Collections\IStack.cs" />
     <Compile Include="CrossPlatformBinaryReader.cs" />
     <Compile Include="CrossPlatformBinaryWriter.cs" />
     <Compile Include="CSV\CsvParseException.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Exceptions\AggregateException.cs" />
     <Compile Include="Exceptions\ArgumentEmptyException.cs" />
     <Compile Include="Exceptions\Exceptions.cs" />
+    <Compile Include="ExtensionMethodsArray.cs" />
     <Compile Include="ExtensionMethodsGameObject.cs" />
     <Compile Include="ExtensionMethodsIEnumerable.cs" />
     <Compile Include="ExtensionMethodsVector3.cs" />
@@ -179,6 +182,7 @@
     <Compile Include="TypeCache.cs" />
     <Compile Include="Collections\TwoWayDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnsafeTypeCache.cs" />
     <Compile Include="WinAPI\Kernel32.cs" />
     <Compile Include="WinAPI\User32.cs" />
   </ItemGroup>
