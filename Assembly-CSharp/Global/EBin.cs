@@ -49,7 +49,7 @@ public class EBin
     //private static Int32 _a0;
     //private static Int32 _a1;
     //private static Int32 _a2;
-    private static Int32 _a3;
+    // private static Int32 _a3;
     private static Int32 _s2;
     private static Int32 _s3;
     private static Int32 _s5;
@@ -1829,39 +1829,39 @@ public class EBin
     public Int32 putvi(Int32 arg0)
     {
         _s7.pop(ref _t0);
-        _a3 = arg0;
+        Int32 a3 = arg0;
         Int32 a2 = _t0 >> 26;
         switch ((VariableSource)(a2 & 7))
         {
             case VariableSource.Global:
             {
                 int ofs = (_t0 & 65535);
-                putvsub(FF9StateSystem.EventState.gEventGlobal, ofs, a2, _a3, 0);
+                putvsub(FF9StateSystem.EventState.gEventGlobal, ofs, a2, a3, 0);
                 break;
             }
             case VariableSource.Map:
             {
                 int ofs = (_t0 & 65535);
-                putvsub(_eventEngine.GetMapVar(), ofs, a2, _a3, 0);
+                putvsub(_eventEngine.GetMapVar(), ofs, a2, a3, 0);
                 break;
             }
             case VariableSource.Instance:
             {
                 int ofs = (_t0 & 65535);
-                putvsub(_instance, ofs, a2, _a3, _instanceVOfs);
+                putvsub(_instance, ofs, a2, a3, _instanceVOfs);
                 break;
             }
             case VariableSource.System:
             {
                 Int32 a0 = (_t0 & 255);
-                int value = _a3;
+                int value = a3;
                 _eventEngine.SetSysList(a0, value);
                 break;
             }
             case VariableSource.Member:
             {
                 int type = (_t0 & 255);
-                a2 = _a3;
+                a2 = a3;
                 _eventEngine.putvobj(_eventEngine.gMemberTarget, type, a2);
                 break;
             }
@@ -1897,6 +1897,7 @@ public class EBin
                 }
             case VariableType.Int24:
             case VariableType.UInt24:
+            {
                 if (EventHUD.CurrentHUD == MinigameHUD.JumpingRope && Configuration.Hacks.Enabled && (ofs == 43 || ofs == 59))
                     value = value - 1 + Configuration.Hacks.RopeJumpingIncrement;
 
@@ -1904,15 +1905,20 @@ public class EBin
                 buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
                 buffer[ofs + 2 + bufferOffset] = (Byte)((value & 16711680) >> 16);
                 break;
+            }
             case VariableType.SByte:
             case VariableType.Byte:
-                buffer[ofs + bufferOffset] = (Byte)_a3;
+            {
+                buffer[ofs + bufferOffset] = (Byte)value;
                 break;
+            }
             case VariableType.Int16:
             case VariableType.UInt16:
+            {
                 buffer[ofs + bufferOffset] = (Byte)(value & 255);
                 buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
                 break;
+            }
         }
         return 0;
     }
