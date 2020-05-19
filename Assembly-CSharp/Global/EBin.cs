@@ -51,7 +51,7 @@ public class EBin
     //private static Int32 _a2;
     // private static Int32 _a3;
     private static Int32 _s2;
-    private static Int32 _s3;
+    //private static Int32 _s3;
     //private static Int32 _s5;
     private static Int32 _nextCodeIndex;
     //private static CalcStack _s4;
@@ -1950,13 +1950,13 @@ public class EBin
     public Int32 CalcExpr()
     {
         Obj obj = s1;
-        Int32 num = _s3;
+        //Int32 num = _s3;
         Int32 num2 = _nextCodeIndex;
         CalcStack calcStack = _s7;
         s1 = _eventEngine.gExec;
         expr();
         s1 = obj;
-        _s3 = num;
+        //_s3 = num;
         _nextCodeIndex = num2;
         _s7 = calcStack;
         return 0;
