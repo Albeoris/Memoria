@@ -59,7 +59,7 @@ public class EBin
     private static CalcStack _tempS4;
     private static CalcStack _tempStack = new CalcStack();
     //private static Int32 _t0;
-    private static Int32 _t2;
+    //private static Int32 _t2;
     private static Int32 _t3;
     private static Int32 _t4;
 
@@ -1342,7 +1342,7 @@ public class EBin
         return 0;
     }
 
-    private void ad2()
+    private void ad2(Int32 t2)
     {
         _t3 = s1.getByteIP(1);
         _t4 = (SByte)s1.getByteIP(2);
@@ -1350,7 +1350,7 @@ public class EBin
         _v0 = getvi();
         _v0 -= _t3;
         _v0 -= _t4;
-        Int32 a0 = _v0 - _t2;
+        Int32 a0 = _v0 - t2;
         if (_v0 < 0)
         {
             ad5();
@@ -1403,11 +1403,11 @@ public class EBin
         return 0;
     }
 
-    public void ad13(ref Int32 a0)
+    public void ad13(ref Int32 a0, ref Int32 t2)
     {
-        if (_t2 > 0)
+        if (t2 > 0)
         {
-            _t2--;
+            t2--;
             _t4 = s1.getByteIP(1 + a0);
             _t3 = s1.getByteIP(0 + a0);
             Int32 num = _t3 | _t4 << 8;
@@ -1423,12 +1423,12 @@ public class EBin
             }
             else
             {
-                ad13(ref a0);
+                ad13(ref a0, ref t2);
             }
         }
         else
         {
-            _t2--;
+            t2--;
             _t4 = s1.getByteIP(2);
             _t3 = s1.getByteIP(1);
             _t3 |= _t4 << 8;
@@ -1450,38 +1450,55 @@ public class EBin
             switch (arg0)
             {
                 case 1:
+                {
                     bra();
                     return 0;
+                }
                 case 2:
+                {
                     beq();
                     return 0;
+                }
                 case 3:
+                {
                     bne();
                     return 0;
+                }
                 case 4:
+                {
                     _eventEngine.Return(s1);
                     adfr();
                     return 0;
+                }
                 case 5:
+                {
                     expr();
                     return 0;
+                }
                 case 6:
-                    _t2 = s1.getByteIP();
+                {
+                    Int32 t2 = s1.getByteIP();
                     _v0 = getvi();
                     _v0 &= 65535;
                     Int32 _a0 = 3;
-                    ad13(ref _a0);
+                    ad13(ref _a0, ref t2);
                     return 0;
+                }
                 case 11:
-                    _t2 = s1.getByteIP();
-                    ad2();
+                {
+                    Int32 t2 = s1.getByteIP();
+                    ad2(t2);
                     return 0;
+                }
                 case 13:
-                    _t2 = s1.getShortIP();
+                {
+                    Int32 t2 = s1.getShortIP();
                     s1.ip++;
-                    ad2();
+                    ad2(t2);
                     return 0;
+                }
                 default:
+                {
                     switch (arg0)
                     {
                         case 48:
@@ -1496,8 +1513,8 @@ public class EBin
                         {
                             _s5 = s1.getByteIP();
                             s1.ip++;
-                            _a0 = getv1i();
-                            int a1 = getv1i();
+                            Int32 a0 = getv1i();
+                            Int32 a1 = getv1i();
                             return 0;
                         }
                         default:
@@ -1512,7 +1529,7 @@ public class EBin
                             }
                             if (arg0 == 28)
                             {
-                                _a0 = s1.getByteIP(1);
+                                Int32 _a0 = s1.getByteIP(1);
                                 int a1 = 255;
                                 s1.ip += 2;
                                 if (_a0 == a1)
@@ -1542,6 +1559,7 @@ public class EBin
                             return 0;
                         }
                     }
+                }
             }
         }
         Debug.Log("EBin.jumpToCommand INVALID command " + arg0);
