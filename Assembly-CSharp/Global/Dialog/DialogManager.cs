@@ -345,11 +345,6 @@ public class DialogManager : Singleton<DialogManager>
 				dialog.ForceClose();
 			}
 		}
-
-		if (FF9StateSystem.Common.FF9.fldMapNo == 1807)
-		{
-			Configuration.Graphics.RestoreDisabledWidescreenSupport();
-		}
 	}
 
 	public void ShowChoiceHud()
