@@ -54,9 +54,9 @@ public class EBin
     private static Int32 _s3;
     private static Int32 _s5;
     private static Int32 _nextCodeIndex;
-    private static CalcStack _s4;
+    //private static CalcStack _s4;
     private static CalcStack _s7;
-    private static CalcStack _tempS4;
+    //private static CalcStack _tempS4;
     private static CalcStack _tempStack = new CalcStack();
     //private static Int32 _t0;
     //private static Int32 _t2;
@@ -354,8 +354,8 @@ public class EBin
     public Int32 expr()
     {
         _s7 = calcstack;
-        _tempS4 = _s4;
-        _s4 = _eventEngine.gCP;
+        //_tempS4 = _s4;
+        //_s4 = _eventEngine.gCP;
         _s7.emptyCalcStack();
         _exprLoop = true;
         while (_exprLoop)
@@ -1229,7 +1229,7 @@ public class EBin
                 case 127:
                 {
                     _eventEngine.gCP = _s7;
-                    _s4 = _tempS4;
+                    //_s4 = _tempS4;
                     _exprLoop = false;
                     break;
                 }
