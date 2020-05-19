@@ -61,7 +61,7 @@ public class EBin
     //private static Int32 _t0;
     //private static Int32 _t2;
     //private static Int32 _t3;
-    private static Int32 _t4;
+    //private static Int32 _t4;
 
     private readonly EventEngine _eventEngine;
     private readonly ETb _eTb;
@@ -1345,11 +1345,11 @@ public class EBin
     private void ad2(Int32 t2)
     {
         Int32 byteIp = s1.getByteIP(1);
-        _t4 = (SByte)s1.getByteIP(2);
-        _t4 <<= 8;
+        Int32 t4 = (SByte)s1.getByteIP(2);
+        t4 <<= 8;
         _v0 = getvi();
         _v0 -= byteIp;
-        _v0 -= _t4;
+        _v0 -= t4;
         Int32 a0 = _v0 - t2;
         if (_v0 < 0)
         {
@@ -1408,16 +1408,16 @@ public class EBin
         if (t2 > 0)
         {
             t2--;
-            _t4 = s1.getByteIP(1 + a0);
+            Int32 t4 = s1.getByteIP(1 + a0);
             Int32 t3 = s1.getByteIP(0 + a0);
-            Int32 num = t3 | _t4 << 8;
+            Int32 num = t3 | t4 << 8;
             num -= _v0;
             a0 += 4;
             if (num == 0)
             {
-                _t4 = s1.getByteIP(-1 + a0);
+                t4 = s1.getByteIP(-1 + a0);
                 t3 = s1.getByteIP(-2 + a0);
-                t3 |= _t4 << 8;
+                t3 |= t4 << 8;
                 s1.ip += t3;
                 s1.ip += 3;
             }
@@ -1429,9 +1429,9 @@ public class EBin
         else
         {
             t2--;
-            _t4 = s1.getByteIP(2);
+            Int32 t4 = s1.getByteIP(2);
             Int32 byteIp = s1.getByteIP(1);
-            byteIp |= _t4 << 8;
+            byteIp |= t4 << 8;
             s1.ip += byteIp;
             s1.ip += 3;
         }
