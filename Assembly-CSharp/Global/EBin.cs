@@ -48,7 +48,7 @@ public class EBin
     private static Int32 _v0;
     //private static Int32 _a0;
     //private static Int32 _a1;
-    private static Int32 _a2;
+    //private static Int32 _a2;
     private static Int32 _a3;
     private static Int32 _s2;
     private static Int32 _s3;
@@ -135,7 +135,7 @@ public class EBin
                 continue;
             }
 
-            _a2 = 1;
+            Int32 a2 = 1;
             if (a0 != 0)
             {
                 a1 = 255;
@@ -186,7 +186,7 @@ public class EBin
             _instanceVOfs = a1;
             objV0 = s1;
             _v0 = s1.ip;
-            if (a0 != _a2)
+            if (a0 != a2)
             {
                 result = ad3(a0);
             }
@@ -245,8 +245,8 @@ public class EBin
                 {
                 }
                 Int32 num = a0 << 2;
-                _a2 = num - 440;
-                if (_a2 >= 0)
+                Int32 a2 = num - 440;
+                if (a2 >= 0)
                 {
                     commandDefault2();
                 }
@@ -385,7 +385,7 @@ public class EBin
             }
             EMinigame.ChanbaraBonusPoints(s1, this);
             EMinigame.SetViviSpeed(s1, this);
-            _a2 = b << 2;
+            Int32 a2 = b << 2;
             if (b < 0)
             {
                 s1.ip++;
@@ -1366,9 +1366,9 @@ public class EBin
             {
                 a0 = _nextCodeIndex + _v0;
                 int a1 = s1.getByteIP(_v0 + 5);
-                _a2 = s1.getByteIP(_v0 + 6);
+                Int32 a2 = s1.getByteIP(_v0 + 6);
                 s1.ip += a1;
-                s1.ip += _a2 << 8;
+                s1.ip += a2 << 8;
             }
         }
     }
@@ -1605,24 +1605,24 @@ public class EBin
     public Int32 getvi()
     {
         _s7.pop(ref _t0);
-        _a2 = getTypeAndVarClass(_t0);
+        Int32 a2 = getTypeAndVarClass(_t0);
         Int32 a0 = getVarClass(_t0);
         switch ((VariableSource)a0)
         {
             case VariableSource.Global:
             {
                 int ofs = (_t0 & 65535);
-                return getvsub(FF9StateSystem.EventState.gEventGlobal, ofs, _a2, 0);
+                return getvsub(FF9StateSystem.EventState.gEventGlobal, ofs, a2, 0);
             }
             case VariableSource.Map:
             {
                 int ofs = (_t0 & 65535);
-                return getvsub(_eventEngine.GetMapVar(), ofs, _a2, 0);
+                return getvsub(_eventEngine.GetMapVar(), ofs, a2, 0);
             }
             case VariableSource.Instance:
             {
                 int ofs = (_t0 & 65535);
-                return getvsub(_instance, ofs, _a2, _instanceVOfs);
+                return getvsub(_instance, ofs, a2, _instanceVOfs);
             }
             case VariableSource.Object:
                 {
@@ -1830,25 +1830,25 @@ public class EBin
     {
         _s7.pop(ref _t0);
         _a3 = arg0;
-        _a2 = _t0 >> 26;
-        switch ((VariableSource)(_a2 & 7))
+        Int32 a2 = _t0 >> 26;
+        switch ((VariableSource)(a2 & 7))
         {
             case VariableSource.Global:
             {
                 int ofs = (_t0 & 65535);
-                putvsub(FF9StateSystem.EventState.gEventGlobal, ofs, _a2, _a3, 0);
+                putvsub(FF9StateSystem.EventState.gEventGlobal, ofs, a2, _a3, 0);
                 break;
             }
             case VariableSource.Map:
             {
                 int ofs = (_t0 & 65535);
-                putvsub(_eventEngine.GetMapVar(), ofs, _a2, _a3, 0);
+                putvsub(_eventEngine.GetMapVar(), ofs, a2, _a3, 0);
                 break;
             }
             case VariableSource.Instance:
             {
                 int ofs = (_t0 & 65535);
-                putvsub(_instance, ofs, _a2, _a3, _instanceVOfs);
+                putvsub(_instance, ofs, a2, _a3, _instanceVOfs);
                 break;
             }
             case VariableSource.System:
@@ -1861,8 +1861,8 @@ public class EBin
             case VariableSource.Member:
             {
                 int type = (_t0 & 255);
-                _a2 = _a3;
-                _eventEngine.putvobj(_eventEngine.gMemberTarget, type, _a2);
+                a2 = _a3;
+                _eventEngine.putvobj(_eventEngine.gMemberTarget, type, a2);
                 break;
             }
         }
@@ -1880,17 +1880,17 @@ public class EBin
                     _v0 = (ofs & 7);
                     Int32 num = ofs >> 3;
                     int a1 = (SByte)buffer[num + bufferOffset];
-                    _a2 = 1;
-                    _a2 <<= _v0;
+                    Int32 a2 = 1;
+                    a2 <<= _v0;
                     if (value == 0)
                     {
-                        _a2 ^= 255;
-                        a1 &= _a2;
+                        a2 ^= 255;
+                        a1 &= a2;
                         buffer[num + bufferOffset] = (Byte)a1;
                     }
                     else
                     {
-                        a1 |= _a2;
+                        a1 |= a2;
                         buffer[num + bufferOffset] = (Byte)a1;
                     }
                     break;
