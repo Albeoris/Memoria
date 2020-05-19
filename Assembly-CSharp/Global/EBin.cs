@@ -52,7 +52,7 @@ public class EBin
     // private static Int32 _a3;
     private static Int32 _s2;
     private static Int32 _s3;
-    private static Int32 _s5;
+    //private static Int32 _s5;
     private static Int32 _nextCodeIndex;
     //private static CalcStack _s4;
     private static CalcStack _s7;
@@ -1302,9 +1302,9 @@ public class EBin
 
     public Int32 wait()
     {
-        _s5 = s1.getByteIP();
+        Int32 s5 = s1.getByteIP();
         s1.ip++;
-        _v0 = getv1i();
+        _v0 = getv1i(ref s5);
         if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
         {
             String symbol = Localization.GetSymbol();
@@ -1511,10 +1511,10 @@ public class EBin
                         }
                         case 50:
                         {
-                            _s5 = s1.getByteIP();
+                            Int32 s5 = s1.getByteIP();
                             s1.ip++;
-                            Int32 a0 = getv1i();
-                            Int32 a1 = getv1i();
+                            Int32 a0 = getv1i(ref s5);
+                            Int32 a1 = getv1i(ref s5);
                             return 0;
                         }
                         default:
@@ -1829,10 +1829,10 @@ public class EBin
         }
     }
 
-    public Int32 getv1i()
+    public Int32 getv1i(ref Int32 s5)
     {
-        _v0 = (_s5 & 1);
-        _s5 >>= 1;
+        _v0 = (s5 & 1);
+        s5 >>= 1;
         if (_v0 != 0)
         {
             expr();
