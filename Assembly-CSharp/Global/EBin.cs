@@ -58,7 +58,7 @@ public class EBin
     private static CalcStack _s7;
     private static CalcStack _tempS4;
     private static CalcStack _tempStack = new CalcStack();
-    private static Int32 _t0;
+    //private static Int32 _t0;
     private static Int32 _t2;
     private static Int32 _t3;
     private static Int32 _t4;
@@ -1604,52 +1604,52 @@ public class EBin
 
     public Int32 getvi()
     {
-        _s7.pop(ref _t0);
-        Int32 a2 = getTypeAndVarClass(_t0);
-        Int32 a0 = getVarClass(_t0);
+        _s7.pop(out var t0);
+        Int32 a2 = getTypeAndVarClass(t0);
+        Int32 a0 = getVarClass(t0);
         switch ((VariableSource)a0)
         {
             case VariableSource.Global:
             {
-                int ofs = (_t0 & 65535);
+                int ofs = (t0 & 65535);
                 return getvsub(FF9StateSystem.EventState.gEventGlobal, ofs, a2, 0);
             }
             case VariableSource.Map:
             {
-                int ofs = (_t0 & 65535);
+                int ofs = (t0 & 65535);
                 return getvsub(_eventEngine.GetMapVar(), ofs, a2, 0);
             }
             case VariableSource.Instance:
             {
-                int ofs = (_t0 & 65535);
+                int ofs = (t0 & 65535);
                 return getvsub(_instance, ofs, a2, _instanceVOfs);
             }
             case VariableSource.Object:
                 {
-                    a0 = _t0 >> 8;
+                    a0 = t0 >> 8;
                     a0 &= 255;
                     Obj objUID = _eventEngine.GetObjUID(a0);
-                    int type = (_t0 & 255);
+                    int type = (t0 & 255);
                     _v0 = getvobj(objUID, type);
                     return _v0;
                 }
             case VariableSource.System:
             {
-                a0 = (_t0 & 255);
+                a0 = (t0 & 255);
                 _v0 = _eventEngine.GetSysList(a0);
                 return _v0;
             }
             case VariableSource.Member:
             {
-                _t0 <<= 6;
-                int type = _t0 >> 6;
+                t0 <<= 6;
+                int type = t0 >> 6;
                 _v0 = getvobj(_eventEngine.gMemberTarget, type);
                 return _v0;
             }
             case VariableSource.Int26:
             {
-                _t0 <<= 6;
-                _v0 = _t0 >> 6;
+                t0 <<= 6;
+                _v0 = t0 >> 6;
                 return _v0;
             }
         }
@@ -1828,39 +1828,39 @@ public class EBin
 
     public Int32 putvi(Int32 arg0)
     {
-        _s7.pop(ref _t0);
+        _s7.pop(out var t0);
         Int32 a3 = arg0;
-        Int32 a2 = _t0 >> 26;
+        Int32 a2 = t0 >> 26;
         switch ((VariableSource)(a2 & 7))
         {
             case VariableSource.Global:
             {
-                int ofs = (_t0 & 65535);
+                int ofs = (t0 & 65535);
                 putvsub(FF9StateSystem.EventState.gEventGlobal, ofs, a2, a3, 0);
                 break;
             }
             case VariableSource.Map:
             {
-                int ofs = (_t0 & 65535);
+                int ofs = (t0 & 65535);
                 putvsub(_eventEngine.GetMapVar(), ofs, a2, a3, 0);
                 break;
             }
             case VariableSource.Instance:
             {
-                int ofs = (_t0 & 65535);
+                int ofs = (t0 & 65535);
                 putvsub(_instance, ofs, a2, a3, _instanceVOfs);
                 break;
             }
             case VariableSource.System:
             {
-                Int32 a0 = (_t0 & 255);
+                Int32 a0 = (t0 & 255);
                 int value = a3;
                 _eventEngine.SetSysList(a0, value);
                 break;
             }
             case VariableSource.Member:
             {
-                int type = (_t0 & 255);
+                int type = (t0 & 255);
                 a2 = a3;
                 _eventEngine.putvobj(_eventEngine.gMemberTarget, type, a2);
                 break;

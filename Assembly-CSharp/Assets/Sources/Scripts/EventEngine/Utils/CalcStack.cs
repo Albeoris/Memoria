@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Prime;
 
 namespace Assets.Sources.Scripts.EventEngine.Utils
 {
@@ -15,10 +16,12 @@ namespace Assets.Sources.Scripts.EventEngine.Utils
 			return true;
 		}
 
-		public Boolean pop(ref Int32 output)
+		public Boolean pop(out Int32 output)
 		{
 			if (this.topOfStackID == 0)
 			{
+				Log.Error($"[{nameof(CalcStack)}.{nameof(pop)}]if (this.topOfStackID == 0)");
+				output = default;
 				return false;
 			}
 			output = this.stack[this.topOfStackID - 1];
