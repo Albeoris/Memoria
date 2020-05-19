@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{308DD7D4-4BBB-4E34-A24C-554784A4DBA1}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>Memoria.EventEngine</RootNamespace>
+        <AssemblyName>Memoria.EventEngine</AssemblyName>
+        <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Control\IJsmControl.cs" />
+        <Compile Include="Control\Jsm.Control.Builder.cs" />
+        <Compile Include="Control\Jsm.Control.Goto.cs" />
+        <Compile Include="Control\Jsm.Control.If.cs" />
+        <Compile Include="Control\Jsm.Control.If.ElseIfSegment.cs" />
+        <Compile Include="Control\Jsm.Control.If.ElseSegment.cs" />
+        <Compile Include="Control\Jsm.Control.If.Executer.cs" />
+        <Compile Include="Control\Jsm.Control.If.IfSegment.cs" />
+        <Compile Include="Control\Jsm.Control.ProcessedJumps.cs" />
+        <Compile Include="Control\Jsm.Control.While.cs" />
+        <Compile Include="Control\Jsm.Control.While.Executer.cs" />
+        <Compile Include="Control\Jsm.ExecutableSegment.cs" />
+        <Compile Include="Control\Jsm.Segment.Builder.cs" />
+        <Compile Include="Control\Jsm.Segment.cs" />
+        <Compile Include="Core\DummyAwaitable.cs" />
+        <Compile Include="Core\DummyAwaiter.cs" />
+        <Compile Include="Core\GlobalVariableId.cs" />
+        <Compile Include="Core\IAwaitable.cs" />
+        <Compile Include="Core\IAwaiter.cs" />
+        <Compile Include="Core\IScriptExecuter.cs" />
+        <Compile Include="Core\Services\Implementation\GlobalVariableService.cs" />
+        <Compile Include="Core\Services\Interfaces\IGlobalVariableService.cs" />
+        <Compile Include="Core\Services\ServiceId.cs" />
+        <Compile Include="Core\SpinAwaitable.cs" />
+        <Compile Include="EV\EVFileHeader.cs" />
+        <Compile Include="EV\EVFileObject.cs" />
+        <Compile Include="EV\EVFileReader.cs" />
+        <Compile Include="EV\EVFileScriptInfo.cs" />
+        <Compile Include="EV\EVFileScriptsHeader.cs" />
+        <Compile Include="EV\EVObject.cs" />
+        <Compile Include="EV\EVScript.cs" />
+        <Compile Include="EV\EVScriptMaker.cs" />
+        <Compile Include="Execution\StatelessServices.cs" />
+        <Compile Include="Expressions\IJsmExpression.cs" />
+        <Compile Include="Expressions\Jsm.Expression.CAL.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHAC.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHI_L.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHM_B.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHM_L.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHM_W.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHN_L.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHSM_B.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHSM_L.cs" />
+        <Compile Include="Expressions\Jsm.Expression.PSHSM_W.cs" />
+        <Compile Include="Expressions\Jsm.Expression.TryMake.cs" />
+        <Compile Include="Expressions\Jsm.Expression.ValueExpression.cs" />
+        <Compile Include="File\JSM.LabelBuilder.cs" />
+        <Compile Include="File\JSM.LabeledStack.cs" />
+        <Compile Include="File\JSM.IndexedInstruction.cs" />
+        <Compile Include="Format\DummyFormatterContext.cs" />
+        <Compile Include="Format\FieldScriptFormatter.cs" />
+        <Compile Include="Format\FormatHelper.cs" />
+        <Compile Include="Format\FormattedObject.cs" />
+        <Compile Include="Format\IFormattableScript.cs" />
+        <Compile Include="Format\IScriptFormatterContext.cs" />
+        <Compile Include="Format\ScriptFormatterContext.cs" />
+        <Compile Include="Format\ScriptWriter.cs" />
+        <Compile Include="Instructions\IJsmInstruction.cs" />
+        <Compile Include="Instructions\IJumpToInstruction.cs" />
+        <Compile Include="Instructions\IJumpToOpcode.cs" />
+        <Compile Include="Instructions\JMP.cs" />
+        <Compile Include="Instructions\NOP.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Types\Jsm.Opcode.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
+        <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
+        <Name>Memoria.Prime</Name>
+      </ProjectReference>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>
