@@ -60,7 +60,7 @@ public class EBin
     private static CalcStack _tempStack = new CalcStack();
     //private static Int32 _t0;
     //private static Int32 _t2;
-    private static Int32 _t3;
+    //private static Int32 _t3;
     private static Int32 _t4;
 
     private readonly EventEngine _eventEngine;
@@ -529,44 +529,44 @@ public class EBin
                 case 4:
                 {
                     _v0 = getvi();
-                    _t3 = _v0;
+                    Int32 t3 = _v0;
                     _s7.advanceTopOfStack();
                     Int32 a0 = _v0 + 1;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 5:
                 {
                     _v0 = getvi();
-                    _t3 = _v0;
+                    Int32 t3 = _v0;
                     _s7.advanceTopOfStack();
                     Int32 a0 = _v0 - 1;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 6:
                 {
                     _v0 = getvi();
-                    _t3 = _v0 + 1;
+                    Int32 t3 = _v0 + 1;
                     _s7.advanceTopOfStack();
-                    Int32 a0 = _t3;
+                    Int32 a0 = t3;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 7:
                 {
                     _v0 = getvi();
-                    _t3 = _v0 - 1;
+                    Int32 t3 = _v0 - 1;
                     _s7.advanceTopOfStack();
-                    Int32 a0 = _t3;
+                    Int32 a0 = t3;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
@@ -599,95 +599,95 @@ public class EBin
                 }
                 case 17:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 *= _t3;
+                    _v0 *= t3;
                     expr_ad0();
                     break;
                 }
                 case 18:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    if (_t3 == 0)
+                    if (t3 == 0)
                     {
                         expr_adZ();
                     }
                     else
                     {
-                        _v0 /= _t3;
+                        _v0 /= t3;
                         expr_ad0();
                     }
                     break;
                 }
                 case 19:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    if (_t3 == 0)
+                    if (t3 == 0)
                     {
                         expr_adZ();
                     }
                     else
                     {
-                        _v0 %= _t3;
+                        _v0 %= t3;
                         expr_ad0();
                     }
                     break;
                 }
                 case 20:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 += _t3;
+                    _v0 += t3;
                     expr_ad0();
                     break;
                 }
                 case 21:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 -= _t3;
+                    _v0 -= t3;
                     expr_ad0();
                     break;
                 }
                 case 22:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 <<= _t3;
+                    _v0 <<= t3;
                     expr_ad0();
                     break;
                 }
                 case 23:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 >>= _t3;
+                    _v0 >>= t3;
                     expr_ad0();
                     break;
                 }
                 case 24:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    if (_eventEngine.gCur.uid == 13 && _t3 == -300)
+                    if (_eventEngine.gCur.uid == 13 && t3 == -300)
                     {
-                        _t3 = -250;
+                        t3 = -250;
                     }
-                    _v0 = _v0 < _t3 ? 1 : 0;
+                    _v0 = _v0 < t3 ? 1 : 0;
                     expr_ad0();
                     break;
                 }
                 case 25:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
                     if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
                     {
-                        _v0 = _t3 <= _v0 ? 1 : 0;
+                        _v0 = t3 <= _v0 ? 1 : 0;
                     }
-                    else if (_t3 < _v0)
+                    else if (t3 < _v0)
                     {
                         _v0 = 1;
                     }
@@ -700,18 +700,18 @@ public class EBin
                 }
                 case 26:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 = _t3 < _v0 ? 1 : 0;
+                    _v0 = t3 < _v0 ? 1 : 0;
                     _v0 ^= 1;
                     expr_ad0();
                     break;
                 }
                 case 27:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 = _v0 < _t3 ? 1 : 0;
+                    _v0 = _v0 < t3 ? 1 : 0;
                     _v0 ^= 1;
                     expr_ad0();
                     break;
@@ -738,43 +738,43 @@ public class EBin
                 }
                 case 32:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 ^= _t3;
+                    _v0 ^= t3;
                     _v0 = Mathf.Abs(_v0) < 1 ? 1 : 0;
                     expr_ad0();
                     break;
                 }
                 case 33:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 ^= _t3;
+                    _v0 ^= t3;
                     _v0 = 0 < Mathf.Abs(_v0) ? 1 : 0;
                     expr_ad0();
                     break;
                 }
                 case 36:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 &= _t3;
+                    _v0 &= t3;
                     expr_ad0();
                     break;
                 }
                 case 37:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 ^= _t3;
+                    _v0 ^= t3;
                     expr_ad0();
                     break;
                 }
                 case 38:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    _v0 |= _t3;
+                    _v0 |= t3;
                     expr_ad0();
                     break;
                 }
@@ -845,9 +845,9 @@ public class EBin
                 {
                     _v0 = getvi();
                     Int32 a0 = _v0;
-                    _t3 = _v0;
+                    Int32 t3 = _v0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
@@ -875,135 +875,135 @@ public class EBin
                 }
                 case 47:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = _v0 * _t3;
+                    Int32 a0 = _v0 * t3;
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 48:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
                     _s7.advanceTopOfStack();
-                    if (_t3 == 0)
+                    if (t3 == 0)
                     {
                         expr_adZ();
                     }
                     else
                     {
-                        Int32 a0 = _v0 / _t3;
-                        _t3 = a0;
+                        Int32 a0 = _v0 / t3;
+                        t3 = a0;
                         putvi(a0);
-                        _v0 = _t3;
+                        _v0 = t3;
                         expr_ad0();
                     }
                     break;
                 }
                 case 49:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
                     _s7.advanceTopOfStack();
-                    if (_t3 == 0)
+                    if (t3 == 0)
                     {
                         expr_adZ();
                     }
                     else
                     {
-                        Int32 a0 = _v0 % _t3;
-                        _t3 = a0;
+                        Int32 a0 = _v0 % t3;
+                        t3 = a0;
                         putvi(a0);
-                        _v0 = _t3;
+                        _v0 = t3;
                         expr_ad0();
                     }
                     break;
                 }
                 case 50:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = _v0 + _t3;
+                    Int32 a0 = _v0 + t3;
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 51:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = _v0 - _t3;
+                    Int32 a0 = _v0 - t3;
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 52:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = _v0 << _t3;
+                    Int32 a0 = _v0 << t3;
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 53:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = _v0 >> _t3;
+                    Int32 a0 = _v0 >> t3;
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 61:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = (_v0 & _t3);
+                    Int32 a0 = (_v0 & t3);
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 62:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = (_v0 ^ _t3);
+                    Int32 a0 = (_v0 ^ t3);
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
                 case 63:
                 {
-                    _t3 = getvi();
+                    Int32 t3 = getvi();
                     _v0 = getvi();
-                    Int32 a0 = (_v0 | _t3);
+                    Int32 a0 = (_v0 | t3);
                     _s7.advanceTopOfStack();
-                    _t3 = a0;
+                    t3 = a0;
                     putvi(a0);
-                    _v0 = _t3;
+                    _v0 = t3;
                     expr_ad0();
                     break;
                 }
@@ -1017,9 +1017,9 @@ public class EBin
                 }
                 case 79:
                 {
-                    _t3 = (Int32)ETb.KeyOn();
+                    Int32 keyOn = (Int32)ETb.KeyOn();
                     _v0 = getvi();
-                    _v0 &= _t3;
+                    _v0 &= keyOn;
                     if (s1.sid == 5)
                     {
                     }
@@ -1043,25 +1043,25 @@ public class EBin
                 }
                 case 88:
                 {
-                    _t3 = (Int32)ETb.KeyOff();
+                    Int32 keyOff = (Int32)ETb.KeyOff();
                     _v0 = getvi();
-                    _v0 &= _t3;
+                    _v0 &= keyOff;
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
                     expr_ad0();
                     break;
                 }
                 case 89:
                 {
-                    _t3 = (Int32)_eTb.PadReadE();
+                    Int32 padReadE = (Int32)_eTb.PadReadE();
                     _v0 = getvi();
-                    _v0 &= _t3;
+                    _v0 &= padReadE;
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
                     expr_ad0();
                     break;
                 }
                 case 93:
                     {
-                        _t3 = getvi();
+                        Int32 t3 = getvi();
                         _v0 = getvi();
                         Obj gCur = _eventEngine.gCur;
                         Actor actor = (Actor)gCur;
@@ -1071,7 +1071,7 @@ public class EBin
                         Single num = actor.pos[0];
                         Single num2 = actor.pos[2];
                         num = _v0 - num;
-                        num2 = _t3 - num2;
+                        num2 = t3 - num2;
                         Single floatAngle = angleAsm(num, num2);
                         Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
                         _v0 = 0;
@@ -1083,14 +1083,14 @@ public class EBin
                     }
                 case 94:
                     {
-                        _t3 = getvi();
+                        Int32 t3 = getvi();
                         _v0 = getvi();
                         Obj gCur = _eventEngine.gCur;
                         Actor actor = (Actor)gCur;
                         Single x = actor.pos[0];
                         Single z = actor.pos[2];
                         x = _v0 - x;
-                        z = _t3 - z;
+                        z = t3 - z;
                         var y = 0;
                         _v0 = (Int32)distance(x, y, z);
                         expr_ad0();
@@ -1151,9 +1151,9 @@ public class EBin
                 }
                 case 102:
                     {
-                        _t3 = getvi();
+                        Int32 t3 = getvi();
                         Int32 a0 = getvi();
-                        var deltaZ = _t3;
+                        var deltaZ = t3;
                         Single floatAngle = angleAsm(a0, deltaZ);
                         Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
                         _v0 = num3 >> 4;
@@ -1344,11 +1344,11 @@ public class EBin
 
     private void ad2(Int32 t2)
     {
-        _t3 = s1.getByteIP(1);
+        Int32 byteIp = s1.getByteIP(1);
         _t4 = (SByte)s1.getByteIP(2);
         _t4 <<= 8;
         _v0 = getvi();
-        _v0 -= _t3;
+        _v0 -= byteIp;
         _v0 -= _t4;
         Int32 a0 = _v0 - t2;
         if (_v0 < 0)
@@ -1409,16 +1409,16 @@ public class EBin
         {
             t2--;
             _t4 = s1.getByteIP(1 + a0);
-            _t3 = s1.getByteIP(0 + a0);
-            Int32 num = _t3 | _t4 << 8;
+            Int32 t3 = s1.getByteIP(0 + a0);
+            Int32 num = t3 | _t4 << 8;
             num -= _v0;
             a0 += 4;
             if (num == 0)
             {
                 _t4 = s1.getByteIP(-1 + a0);
-                _t3 = s1.getByteIP(-2 + a0);
-                _t3 |= _t4 << 8;
-                s1.ip += _t3;
+                t3 = s1.getByteIP(-2 + a0);
+                t3 |= _t4 << 8;
+                s1.ip += t3;
                 s1.ip += 3;
             }
             else
@@ -1430,9 +1430,9 @@ public class EBin
         {
             t2--;
             _t4 = s1.getByteIP(2);
-            _t3 = s1.getByteIP(1);
-            _t3 |= _t4 << 8;
-            s1.ip += _t3;
+            Int32 byteIp = s1.getByteIP(1);
+            byteIp |= _t4 << 8;
+            s1.ip += byteIp;
             s1.ip += 3;
         }
     }
