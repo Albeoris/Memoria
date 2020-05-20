@@ -189,7 +189,7 @@ public class SFXMesh : SFXMeshBase
 		_mesh.Clear();
 		Int32[] array = new Int32[IbOffset];
 		Buffer.BlockCopy(IbIndex, 0, array, 0, IbOffset << 2);
-		FixWideScreenOffset();
+		// FixWideScreenOffset();
 		_mesh.vertices = VbPos;
 		_mesh.colors32 = VbCol;
 		
