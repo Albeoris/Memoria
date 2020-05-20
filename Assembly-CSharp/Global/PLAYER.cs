@@ -23,6 +23,8 @@ public class PLAYER
     public CharacterIndex Index => info.slot_no;
     public Boolean IsSubCharacter => (Category & CharacterCategory.Subpc) == CharacterCategory.Subpc;
 
+    public CharacterId CharacterId => PresetId.ToCharacterId();
+    public EquipmentSetId DefaultEquipmentSetId => PresetId.ToEquipmentSetId();
     public CharacterPresetId PresetId
     {
         get { return info.menu_type; }

@@ -163,42 +163,69 @@ public class PartySettingUI : UIScene
 
     public override Boolean OnKeyConfirm(GameObject go)
     {
-        if (base.OnKeyConfirm(go))
+        if (!base.OnKeyConfirm(go))
+            return true;
+
+        if (TryHackCurrentCharacter(go))
+            return true;
+        
+        if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
+            FF9Sfx.FF9SFX_Play(103);
+            this.currentCharacterSelect = this.GetCurrentSelect(go);
+            this.currentCharacterId = this.GetCurrentId(go);
+            ButtonGroupState.SetCursorStartSelect((this.currentCharacterSelect.Group != Mode.Menu) ? go.GetChild(0) : go.GetChild(2), MoveCharGroupButton);
+            ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
+            ButtonGroupState.ActiveGroup = MoveCharGroupButton;
+            ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
+            foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
+            {
+                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == FF9PARTY_NONE || !this.info.fix[this.currentCharacterId]);
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
+        {
+            PartySelect currentSelect = this.GetCurrentSelect(go);
+            Byte currentId = this.GetCurrentId(go);
+            if (this.currentCharacterSelect.Group == Mode.Select && currentId != FF9PARTY_NONE && this.info.fix[currentId])
+            {
+                FF9Sfx.FF9SFX_Play(102);
+            }
+            else
             {
                 FF9Sfx.FF9SFX_Play(103);
-                this.currentCharacterSelect = this.GetCurrentSelect(go);
-                this.currentCharacterId = this.GetCurrentId(go);
-                ButtonGroupState.SetCursorStartSelect((this.currentCharacterSelect.Group != Mode.Menu) ? go.GetChild(0) : go.GetChild(2), MoveCharGroupButton);
-                ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
-                ButtonGroupState.ActiveGroup = MoveCharGroupButton;
-                ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
-                foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
-                {
-                    ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == FF9PARTY_NONE || !this.info.fix[this.currentCharacterId]);
-                }
-            }
-            else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
-            {
-                PartySelect currentSelect = this.GetCurrentSelect(go);
-                Byte currentId = this.GetCurrentId(go);
-                if (this.currentCharacterSelect.Group == Mode.Select && currentId != FF9PARTY_NONE && this.info.fix[currentId])
-                {
-                    FF9Sfx.FF9SFX_Play(102);
-                }
-                else
-                {
-                    FF9Sfx.FF9SFX_Play(103);
-                    this.SwapCharacter(this.currentCharacterSelect, currentSelect);
-                    this.DisplayCharacter();
-                    this.DisplayCharacterInfo(this.currentCharacterId);
-                    ButtonGroupState.SetCursorMemorize(go.transform.parent.gameObject, SelectCharGroupButton);
-                    ButtonGroupState.ActiveGroup = SelectCharGroupButton;
-                }
+                this.SwapCharacter(this.currentCharacterSelect, currentSelect);
+                this.DisplayCharacter();
+                this.DisplayCharacterInfo(this.currentCharacterId);
+                ButtonGroupState.SetCursorMemorize(go.transform.parent.gameObject, SelectCharGroupButton);
+                ButtonGroupState.ActiveGroup = SelectCharGroupButton;
             }
         }
         return true;
+    }
+
+    private Boolean TryHackCurrentCharacter(GameObject go)
+    {
+        if (!UIKeyTrigger.IsShiftKeyPressed)
+            return false;
+        
+        Byte characterId = this.GetCurrentId(go);
+        if (characterId != FF9PARTY_NONE)
+        {
+            PLAYER player = FF9StateSystem.Common.FF9.player[characterId];
+            Byte category = BitUtil.InvertFlag(player.category, 16);
+            if (TryHackPlayer(player, category))
+            {
+                this.DisplayCharacter();
+                this.DisplayCharacterInfo(characterId);
+                FF9Sfx.FF9SFX_Play(103);
+                return true;
+            }
+        }
+        
+        FF9Sfx.FF9SFX_Play(102);
+        return true;
+
     }
 
     public override Boolean OnKeyCancel(GameObject go)
@@ -471,17 +498,6 @@ public class PartySettingUI : UIScene
         if (Configuration.Hacks.AllCharactersAvailable < 1)
             return;
 
-        if (Configuration.Hacks.AllCharactersAvailable == 2)
-        {
-            foreach (PLAYER player in FF9StateSystem.Common.FF9.player)
-                TryHackPlayer(player, (Byte)(player.category & ~16));
-        }
-        else if (Configuration.Hacks.AllCharactersAvailable == 3)
-        {
-            foreach (PLAYER player in FF9StateSystem.Common.FF9.player)
-                TryHackPlayer(player, (Byte)(player.category | 16));
-        }
-
         Int32 availabilityMask = -1;
 
         for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
@@ -510,7 +526,7 @@ public class PartySettingUI : UIScene
         }
     }
 
-    private static void TryHackPlayer(PLAYER player, Byte category)
+    private static Boolean TryHackPlayer(PLAYER player, Byte category)
     {
         CharacterPresetId presetId = player.PresetId;
 
@@ -524,9 +540,10 @@ public class PartySettingUI : UIScene
             player.PresetId = presetId = CharacterPresetId.Blank2;
 
         if (player.category == category)
-            return;
+            return false;
+        
+        List<Int32> defaultEquipment = ff9play.GetDefaultEquipment(player.PresetId);
 
-        player.category = category;
         if (presetId == CharacterPresetId.Quina)
             player.PresetId = CharacterPresetId.Cinna2;
         else if (presetId == CharacterPresetId.Eiko)
@@ -539,8 +556,12 @@ public class PartySettingUI : UIScene
             player.PresetId = CharacterPresetId.Eiko;
         else if (presetId == CharacterPresetId.Blank2)
             player.PresetId = CharacterPresetId.Amarant;
+        else
+            return false;
+        
+        player.category = category;
 
-        CharacterId equipId = ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter);
-        ff9play.FF9Play_Change(player.info.slot_no, true, equipId);
+        ff9play.FF9Play_Change(player.info.slot_no, false, defaultEquipment, player.DefaultEquipmentSetId);
+        return true;
     }
 }

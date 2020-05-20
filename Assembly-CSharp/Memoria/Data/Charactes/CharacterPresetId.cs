@@ -50,6 +50,67 @@ namespace Memoria.Data
             return new CharacterPresetId(value);
         }
 
+        public CharacterId ToCharacterId()
+        {
+            return _presetId switch
+            {
+                0 => CharacterId.Zidane,
+                1 => CharacterId.Vivi,
+                2 => CharacterId.Garnet,
+                3 => CharacterId.Steiner,
+                4 => CharacterId.Freya,
+                5 => CharacterId.Quina,
+                6 => CharacterId.Eiko,
+                7 => CharacterId.Amarant,
+                8 => CharacterId.Cinna,
+                9 => CharacterId.Cinna,
+                10 => CharacterId.Marcus,
+                11 => CharacterId.Marcus,
+                12 => CharacterId.Blank,
+                13 => CharacterId.Blank,
+                14 => CharacterId.Beatrix,
+                15 => CharacterId.Beatrix,
+                16 => CharacterId.Zidane,
+                17 => CharacterId.Cinna,
+                18 => CharacterId.Marcus,
+                19 => CharacterId.Blank,
+                _ => throw new NotSupportedException(this.ToString())
+            };
+        }
+
+        public EquipmentSetId ToEquipmentSetId()
+        {
+            return _presetId switch
+            {
+                0 => EquipmentSetId.Zidane,
+                1 => EquipmentSetId.Vivi,
+                2 => EquipmentSetId.Garnet,
+                3 => EquipmentSetId.Steiner,
+                4 => EquipmentSetId.Freya,
+                5 => EquipmentSetId.Quina,
+                6 => EquipmentSetId.Eiko,
+                7 => EquipmentSetId.Amarant,
+                8 => EquipmentSetId.Cinna,
+                9 => EquipmentSetId.Cinna,
+                10 => EquipmentSetId.Marcus,
+                11 => EquipmentSetId.Marcus2,
+                12 => EquipmentSetId.Blank,
+                13 => EquipmentSetId.Blank2,
+                14 => EquipmentSetId.Beatrix,
+                15 => EquipmentSetId.Beatrix2,
+                16 => EquipmentSetId.Zidane,
+                17 => EquipmentSetId.Cinna,
+                18 => EquipmentSetId.Marcus,
+                19 => EquipmentSetId.Blank,
+                _ => throw new NotSupportedException(this.ToString())
+            };
+        }
+
+        public CharacterIndex ToCharacterIndex()
+        {
+            return ToCharacterId().ToCharacterIndex();
+        }
+
         public override Boolean Equals(Object obj)
         {
             if (obj is CharacterPresetId)
@@ -64,52 +125,30 @@ namespace Memoria.Data
 
         public override String ToString()
         {
-            switch (_presetId)
+            return _presetId switch
             {
-                case 0:
-                    return nameof(Zidane);
-                case 1:
-                    return nameof(Vivi);
-                case 2:
-                    return nameof(Garnet);
-                case 3:
-                    return nameof(Steiner);
-                case 4:
-                    return nameof(Freya);
-                case 5:
-                    return nameof(Quina);
-                case 6:
-                    return nameof(Eiko);
-                case 7:
-                    return nameof(Amarant);
-                case 8:
-                    return nameof(Cinna1);
-                case 9:
-                    return nameof(Cinna2);
-                case 10:
-                    return nameof(Marcus1);
-                case 11:
-                    return nameof(Marcus2);
-                case 12:
-                    return nameof(Blank1);
-                case 13:
-                    return nameof(Blank2);
-                case 14:
-                    return nameof(Beatrix1);
-                case 15:
-                    return nameof(Beatrix2);
-
-                case 16:
-                    return nameof(StageZidane);
-                case 17:
-                    return nameof(StageCinna);
-                case 18:
-                    return nameof(StageMarcus);
-                case 19:
-                    return nameof(StageBlank);
-                default:
-                    return _presetId.ToString();
-            }
+                0 => nameof(Zidane),
+                1 => nameof(Vivi),
+                2 => nameof(Garnet),
+                3 => nameof(Steiner),
+                4 => nameof(Freya),
+                5 => nameof(Quina),
+                6 => nameof(Eiko),
+                7 => nameof(Amarant),
+                8 => nameof(Cinna1),
+                9 => nameof(Cinna2),
+                10 => nameof(Marcus1),
+                11 => nameof(Marcus2),
+                12 => nameof(Blank1),
+                13 => nameof(Blank2),
+                14 => nameof(Beatrix1),
+                15 => nameof(Beatrix2),
+                16 => nameof(StageZidane),
+                17 => nameof(StageCinna),
+                18 => nameof(StageMarcus),
+                19 => nameof(StageBlank),
+                _ => _presetId.ToString()
+            };
         }
     }
 }
