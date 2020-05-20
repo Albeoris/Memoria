@@ -25,7 +25,6 @@ public class BundleScene : MonoBehaviour
 
 	private void Awake()
 	{
-		UnityEngine.Debug.Log("40 BundleScene.Awake");
 		GameInitializer.Initial();
 		this._logOutput = new StringBuilder();
 		this._scrollPosition = new Vector2(0f, 0f);

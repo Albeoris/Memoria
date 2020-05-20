@@ -44,7 +44,7 @@ public class SFXRender
 		if (SFX.SFX_BeginRender())
 		{
 			SFXRender.primCount = 0;
-			SFXMeshBase.drOffsetX = (FieldMap.PsxFieldWidth - 320) / 2;
+			SFXMeshBase.drOffsetX = (FieldMap.PsxFieldWidth - 320) / 2; // Widescreen offset
 			SFXMeshBase.drOffsetY = 0;
 			SFXRender.meshEmpty = new List<SFXMesh>(SFXRender.meshOrigin);
 			for (Int32 i = 0; i < SFXRender.MESH_MAX; i++)
