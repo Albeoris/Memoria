@@ -116,13 +116,14 @@ public class PLAYER
 
     private String GetName()
     {
-        String mainName, altName;
-        SplitName(out mainName, out altName);
+	    if ((category & 16) == 16)
+        {
+	        GetDefaultName(out _, out var altName);
+	        return altName;
+        }
 
-        if ((category & 16) == 16)
-            return altName;
-        else
-            return mainName;
+	    SplitName(out var mainName, out _);
+	    return mainName;
     }
 
     public const Byte PLAYER_CATEGORY_MALE = 1;
@@ -175,26 +176,20 @@ public class PLAYER
 
     private void SetName(String value)
     {
-        if (value.IndexOf('\t') >= 0)
-        {
-            _name = value;
-            return;
-        }
-
-        String mainName, altName;
-        SplitName(out mainName, out altName);
-
-        if ((category & 16) == 16)
-            altName = value;
-        else
-            mainName = value;
-
-        _name = mainName + '\t' + altName;
+	    if (value.IndexOf('\t') < 0)
+	    {
+		    _name = value;
+	    }
+	    else // Remove old style splited name
+	    {
+		    SplitName(out var mainName, out _);
+		    _name = mainName;
+	    }
     }
 
     private void SplitName(out String mainName, out String altName)
     {
-        if (String.IsNullOrEmpty(_name))
+	    if (String.IsNullOrEmpty(_name))
         {
             GetDefaultName(out mainName, out altName);
         }

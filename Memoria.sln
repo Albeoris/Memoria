@@ -60,8 +60,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		UnityEngine.UI_LICENSE = UnityEngine.UI_LICENSE
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Memoria.Interaction", "Memoria.Interaction\Memoria.Interaction.vcxproj", "{C0C25502-F265-4812-93C6-1360857081EA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Client", "Memoria.Client\Memoria.Client.csproj", "{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine.UI", "UnityEngine.UI\UnityEngine.UI.csproj", "{CBC800DF-4DE1-4CBC-9C97-98CBB375204F}"
@@ -179,16 +177,6 @@ Global
 		{76CC5596-5D70-44A1-B7C6-3DF321517C58}.Release|x64.Build.0 = Release|Any CPU
 		{76CC5596-5D70-44A1-B7C6-3DF321517C58}.Release|x86.ActiveCfg = Release|Any CPU
 		{76CC5596-5D70-44A1-B7C6-3DF321517C58}.Release|x86.Build.0 = Release|Any CPU
-		{C0C25502-F265-4812-93C6-1360857081EA}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{C0C25502-F265-4812-93C6-1360857081EA}.Debug|x64.ActiveCfg = Debug|x64
-		{C0C25502-F265-4812-93C6-1360857081EA}.Debug|x64.Build.0 = Debug|x64
-		{C0C25502-F265-4812-93C6-1360857081EA}.Debug|x86.ActiveCfg = Debug|Win32
-		{C0C25502-F265-4812-93C6-1360857081EA}.Debug|x86.Build.0 = Debug|Win32
-		{C0C25502-F265-4812-93C6-1360857081EA}.Release|Any CPU.ActiveCfg = Release|Win32
-		{C0C25502-F265-4812-93C6-1360857081EA}.Release|x64.ActiveCfg = Release|x64
-		{C0C25502-F265-4812-93C6-1360857081EA}.Release|x64.Build.0 = Release|x64
-		{C0C25502-F265-4812-93C6-1360857081EA}.Release|x86.ActiveCfg = Release|Win32
-		{C0C25502-F265-4812-93C6-1360857081EA}.Release|x86.Build.0 = Release|Win32
 		{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84AB19B5-F8AD-4FC9-AE09-1B1A19E24757}.Debug|x64.ActiveCfg = Debug|Any CPU
