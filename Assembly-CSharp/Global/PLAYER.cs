@@ -114,6 +114,11 @@ public class PLAYER
         return _name;
     }
 
+    public void SetRealName(String name)
+    {
+	    _name = name;
+    }
+
     private String GetName()
     {
 	    if ((category & 16) == 16)
@@ -176,12 +181,18 @@ public class PLAYER
 
     private void SetName(String value)
     {
-	    if (value.IndexOf('\t') < 0)
+	    if ((category & 16) == 16)
+	    {
+		    // We cannot change the names of alternative characters
+		    if (String.IsNullOrEmpty(_name))
+		    {
+			    GetDefaultName(out var mainName, out _);
+			    _name = mainName;
+		    }
+	    }
+	    else
 	    {
 		    _name = value;
-	    }
-	    else // Remove old style splited name
-	    {
 		    SplitName(out var mainName, out _);
 		    _name = mainName;
 	    }

@@ -1322,7 +1322,7 @@ public class JsonParser : ISharedDataParser
 				PLAYER player = ff.player[i];
 				if (asObject["name"] != null)
 				{
-					player.name = asObject["name"];
+					player.SetRealName(asObject["name"]);
 				}
 				if (asObject["category"] != null)
 				{
