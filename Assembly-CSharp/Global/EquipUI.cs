@@ -111,6 +111,7 @@ public class EquipUI : UIScene
 					ButtonGroupState.HoldActiveStateOnGroup(EquipUI.SubMenuGroupButton);
 					this.DisplaySubMenuArrow(false);
 					this.DisplayEquiptmentInfo();
+					this.DisplayParameter();
 					break;
 				case EquipUI.SubMenu.Optimize:
 				    if (_equipForAbilityLearning)
@@ -1541,7 +1542,21 @@ public class EquipUI : UIScene
 				}
 				i++;
 			}
+			NewParameterLabel[3].gameObject.AddComponent<FixSpiritSkillNumberLabelPos>();
 		}
+		
+		public class FixSpiritSkillNumberLabelPos : MonoBehaviour
+    {
+        void Start()
+        {
+            transform.localPosition = Vector2.right * 292;
+        }
+
+        void OnEnable()
+        {
+            transform.localPosition = Vector2.right * 292;
+        }
+    }
 
 		public GameObject Self;
 
