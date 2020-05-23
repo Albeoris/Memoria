@@ -619,7 +619,9 @@ public partial class BattleHUD : UIScene
         else
         {
             itemListDetailHud.Content.SetActive(true);
-            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(abilityId);
+						
+						int patchedID = this.PatchAbility(abilityId);
+            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
             Int32 mp = GetActionMpCost(aaData);
             itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
 
@@ -637,7 +639,7 @@ public partial class BattleHUD : UIScene
             }
 
             itemListDetailHud.Button.Help.TextKey = String.Empty;
-            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(abilityId);
+            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedID);
         }
     }
 
