@@ -26,6 +26,8 @@ using UnityEngine;
 public class AbilityUI : UIScene
 {
     public const Int32 FF9FABIL_EVENT_NOMAGIC = 227;
+    private static readonly Int32 AbilFenril = 66;
+    private static readonly Int32 AbilCarbuncle = 68;
     public GameObject TransitionGroup;
     public GameObject UseSubMenu;
     public GameObject EquipSubMenu;
@@ -763,7 +765,8 @@ public class AbilityUI : UIScene
             itemListDetailHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, abilityListData.Type == AbilityType.Enable);
             Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[abilityListData.Id]);
-            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(abilityListData.Id);
+            Int32 patchedId = this.PatchAbility(abilityListData.Id);	
+            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedId);
             itemListDetailHud.NumberLabel.text = mp != 0 ? mp.ToString() : String.Empty;
             if (abilityListData.Type == AbilityType.CantSpell)
             {
@@ -776,8 +779,36 @@ public class AbilityUI : UIScene
                 itemListDetailHud.NumberLabel.color = FF9TextTool.White;
             }
             itemListDetailHud.Button.Help.Enable = true;
-            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(abilityListData.Id);
+            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedId);
         }
+    }
+    
+    private Int32 PatchAbility(Int32 id)
+    {
+        if (AbilityUI.AbilCarbuncle == id)
+        {
+            switch (FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].equip[4])
+            {
+            case 227:
+                id += 3;
+                break;
+            case 228:
+                id++;
+                break;
+            case 229:
+                id += 2;
+                break;
+            }
+        }
+        else
+        {
+            if (AbilityUI.AbilFenril == id)
+            {
+                byte b = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].equip[4];
+                id += ((b != 222) ? 0 : 1);
+            }
+        }
+        return id;
     }
 
     private void DisplaySA()
