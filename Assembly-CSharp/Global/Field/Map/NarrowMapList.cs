@@ -27,6 +27,7 @@ public static class NarrowMapList
         0104, // Alexandria/Shop
         0105, // Alexandria/Alley
         0108, // Alexandria/Item Shop
+        0109, 
         0116, // Alexandria/Rooftop
         0150, // A. Castle/Guardhouse
         0153, // A. Castle/Hallway
@@ -249,7 +250,9 @@ public static class NarrowMapList
         2354, // Gulug/Room
         2356, // Gulug/Room
         2361, // Gulug/Well
+        2362,
         2363, // Gulug/Path
+        2365,
         2400, // A. Castle/Neptune
         2405, // A. Castle/Courtyard
         2450, // Alexandria/Main Street
