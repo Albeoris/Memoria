@@ -3,6 +3,7 @@ using FF9;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -110,14 +111,14 @@ public class ff9play
         PLAYER_INFO[] playerInfoArray =
         {
             new PLAYER_INFO(CharacterIndex.Zidane, 1, 1, 1, 0, 0),
-            new PLAYER_INFO(1, 2, 0, 1, 0, 1),
-            new PLAYER_INFO(2, 3, 0, 1, 0, 2),
-            new PLAYER_INFO(3, 7, 1, 1, 0, 3),
-            new PLAYER_INFO(4, 12, 0, 1, 0, 4),
-            new PLAYER_INFO(5, 14, 1, 1, 0, 8),
-            new PLAYER_INFO(6, 15, 1, 1, 0, 10),
-            new PLAYER_INFO(7, 16, 1, 1, 0, 12),
-            new PLAYER_INFO(8, 18, 1, 1, 0, 14)
+            new PLAYER_INFO(CharacterIndex.Vivi, 2, 0, 1, 0, 1),
+            new PLAYER_INFO(CharacterIndex.Garnet, 3, 0, 1, 0, 2),
+            new PLAYER_INFO(CharacterIndex.Steiner, 7, 1, 1, 0, 3),
+            new PLAYER_INFO(CharacterIndex.Freya, 12, 0, 1, 0, 4),
+            new PLAYER_INFO(CharacterIndex.Quina, 14, 1, 1, 0, 8),
+            new PLAYER_INFO(CharacterIndex.Eiko, 15, 1, 1, 0, 10),
+            new PLAYER_INFO(CharacterIndex.Amarant, 16, 1, 1, 0, 12),
+            new PLAYER_INFO(CharacterIndex.Beatrix, 18, 1, 1, 0, 14)
         };
         play.info = playerInfoArray[slot_id];
         play.status = 0;

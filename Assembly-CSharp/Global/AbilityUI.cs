@@ -26,8 +26,6 @@ using UnityEngine;
 public class AbilityUI : UIScene
 {
     public const Int32 FF9FABIL_EVENT_NOMAGIC = 227;
-    private static readonly Int32 AbilFenril = 66;
-    private static readonly Int32 AbilCarbuncle = 68;
     public GameObject TransitionGroup;
     public GameObject UseSubMenu;
     public GameObject EquipSubMenu;
@@ -539,7 +537,7 @@ public class AbilityUI : UIScene
         ButtonGroupState component = this.UseSubMenu.GetComponent<ButtonGroupState>();
         ButtonGroupState component2 = this.EquipSubMenu.GetComponent<ButtonGroupState>();
         string text = Localization.Get("UseAbilityHelp");
-        if (FF9StateSystem.EventState.gEventGlobal[227] != 0)
+        if (FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] != 0)
         {
             if (FF9StateSystem.MobilePlatform)
             {
@@ -782,33 +780,10 @@ public class AbilityUI : UIScene
             itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedId);
         }
     }
-    
+
     private Int32 PatchAbility(Int32 id)
     {
-        if (AbilityUI.AbilCarbuncle == id)
-        {
-            switch (FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].equip[4])
-            {
-            case 227:
-                id += 3;
-                break;
-            case 228:
-                id++;
-                break;
-            case 229:
-                id += 2;
-                break;
-            }
-        }
-        else
-        {
-            if (AbilityUI.AbilFenril == id)
-            {
-                byte b = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex].equip[4];
-                id += ((b != 222) ? 0 : 1);
-            }
-        }
-        return id;
+        return (Int32) BattleAbilityHelper.ApplyEquipment((BattleAbilityId) id, this.currentPartyIndex);
     }
 
     private void DisplaySA()
@@ -1141,7 +1116,7 @@ public class AbilityUI : UIScene
                 }
             }
         }
-        this.isAAEnable = player.Data.cur.hp > 0 && (player.Data.status & 9) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[227] == 0;
+        this.isAAEnable = player.Data.cur.hp > 0 && (player.Data.status & 9) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
         this.isSAEnable = ff9abil.FF9Abil_HasAp(player);
         this.useSubMenuLabel.color = !this.isAAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         this.equipSubMenuLabel.color = !this.isSAEnable ? FF9TextTool.Gray : FF9TextTool.White;

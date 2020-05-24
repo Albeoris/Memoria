@@ -9,47 +9,46 @@ using Memoria.Data;
 using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
+// ReSharper disable InconsistentNaming
 
 public class EquipUI : UIScene
 {
 	public Int32 CurrentPartyIndex
 	{
-		set
+		set { this.currentPartyIndex = value; }
+	}
+
+	public void Update()
+	{
+		if (UIKeyTrigger.IsShiftKeyPressed)
 		{
-			this.currentPartyIndex = value;
+			if (_equipForAbilityLearning)
+				return;
+
+			ChangeBestItemsButtonBehaviour(true);
+		}
+		else
+		{
+			if (!_equipForAbilityLearning)
+				return;
+
+			ChangeBestItemsButtonBehaviour(false);
 		}
 	}
 
-    public void Update()
-    {
-        if (UIKeyTrigger.IsShiftKeyPressed)
-        {
-            if (_equipForAbilityLearning)
-                return;
+	private void ChangeBestItemsButtonBehaviour(Boolean equipForAbilityLearning)
+	{
+		GameObject label = this.OptimizeSubMenu.GetChild(1);
+		GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
+		localizableLable.Label.width = 220;
+		localizableLable.Localize.key = equipForAbilityLearning ? "Ability" : "Optimize";
+		;
+		localizableLable.Localize.OnLocalize();
 
-            ChangeBestItemsButtonBehaviour(true);
-        }
-        else
-        {
-            if (!_equipForAbilityLearning)
-                return;
+		_equipForAbilityLearning = equipForAbilityLearning;
+	}
 
-            ChangeBestItemsButtonBehaviour(false);
-        }
-    }
-
-    private void ChangeBestItemsButtonBehaviour(Boolean equipForAbilityLearning)
-    {
-        GameObject label = this.OptimizeSubMenu.GetChild(1);
-        GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
-        localizableLable.Label.width = 220;
-        localizableLable.Localize.key = equipForAbilityLearning ? "Ability" : "Optimize"; ;
-        localizableLable.Localize.OnLocalize();
-
-        _equipForAbilityLearning = equipForAbilityLearning;
-    }
-
-    public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
+	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
 	{
 		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
 		{
@@ -61,8 +60,9 @@ public class EquipUI : UIScene
 		};
 		if (afterFinished != null)
 		{
-			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
+			sceneVoidDelegate = (UIScene.SceneVoidDelegate) Delegate.Combine(sceneVoidDelegate, afterFinished);
 		}
+
 		SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
 		base.Show(sceneVoidDelegate);
 		this.SwitchCharacter(true);
@@ -75,6 +75,7 @@ public class EquipUI : UIScene
 		{
 			this.HelpDespLabelGameObject.SetActive(false);
 		}
+
 		this.equipSelectScrollList.ScrollButton.DisplayScrollButton(false, false);
 	}
 
@@ -96,292 +97,317 @@ public class EquipUI : UIScene
 
 	public override Boolean OnKeyConfirm(GameObject go)
 	{
-		if (base.OnKeyConfirm(go))
+		if (!base.OnKeyConfirm(go))
+			return true;
+		
+		if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
 		{
-			if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton)
+			OnKeyConfirmSubMenuGroupButton(go);
+		}
+		else if (ButtonGroupState.ActiveGroup == EquipmentGroupButton)
+		{
+			OnKeyConfirmEquipmentGroupButton(go);
+		}
+		else if (ButtonGroupState.ActiveGroup == InventoryGroupButton && ButtonGroupState.ContainButtonInGroup(go, EquipUI.InventoryGroupButton))
+		{
+			OnKeyConfirmInventoryGroupButton(go);
+		}
+
+		return true;
+	}
+
+	private void OnKeyConfirmInventoryGroupButton(GameObject go)
+	{
+		this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+		if (this.itemIdList[this.currentEquipPart][this.currentItemIndex].id == 255)
+		{
+			FF9Sfx.FF9SFX_Play(102);
+			return;
+		}
+
+		FF9Sfx.FF9SFX_Play(107);
+		PLAYER player2 = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+		Int32 num2 = player2.equip[this.currentEquipPart];
+		Int32 id = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
+		if (num2 != 255)
+		{
+			if (num2 == 229)
 			{
-				this.currentMenu = this.GetSubMenuFromGameObject(go);
-				switch (this.currentMenu)
-				{
-				case EquipUI.SubMenu.Equip:
-				case EquipUI.SubMenu.Off:
-					FF9Sfx.FF9SFX_Play(103);
-					ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
-					ButtonGroupState.SetSecondaryOnGroup(EquipUI.SubMenuGroupButton);
-					ButtonGroupState.HoldActiveStateOnGroup(EquipUI.SubMenuGroupButton);
-					this.DisplaySubMenuArrow(false);
-					this.DisplayEquiptmentInfo();
-					this.DisplayParameter();
-					break;
-				case EquipUI.SubMenu.Optimize:
-				    if (_equipForAbilityLearning)
-				        this.EquipForAbilityLearning();
-				    else
-				        this.EquipStrongest();
-					this.DisplayPlayer(true);
-					this.DisplayParameter();
-					this.DisplayEquipment();
-					break;
-				}
+				ff9item.DecreaseMoonStoneCount();
 			}
-			else if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
+
+			ff9item.FF9Item_Add(num2, 1);
+		}
+
+		if (ff9item.FF9Item_Remove(id, 1) != 0)
+		{
+			player2.equip[this.currentEquipPart] = (Byte) id;
+			this.UpdateCharacterData(player2);
+			this.DisplayEquipment();
+			this.DisplayParameter();
+		}
+
+		this.ClearChangeParameter();
+		this.DisplayPlayerArrow(true);
+		ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
+		base.Loading = true;
+		this.equipmentSelectionTransition.TweenOut(new Byte[1], delegate { base.Loading = false; });
+		this.equipmentPartCaption.SetActive(true);
+	}
+
+	private void OnKeyConfirmEquipmentGroupButton(GameObject go)
+	{
+		if (!ButtonGroupState.ContainButtonInGroup(go, EquipUI.EquipmentGroupButton))
+		{
+			this.OnSecondaryGroupClick(go);
+			return;
+		}
+
+		this.currentEquipPart = go.transform.GetSiblingIndex();
+		if (this.currentMenu == EquipUI.SubMenu.Off)
+		{
+			Boolean flag = false;
+			if (this.currentEquipPart != 0)
 			{
-				if (ButtonGroupState.ContainButtonInGroup(go, EquipUI.EquipmentGroupButton))
-				{
-					this.currentEquipPart = go.transform.GetSiblingIndex();
-					if (this.currentMenu == EquipUI.SubMenu.Off)
-					{
-						Boolean flag = false;
-						if (this.currentEquipPart != 0)
-						{
-							PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-							Int32 num = (Int32)player.equip[this.currentEquipPart];
-							if (num != 255)
-							{
-								FF9Sfx.FF9SFX_Play(107);
-								if (num == 229)
-								{
-									ff9item.DecreaseMoonStoneCount();
-								}
-								ff9item.FF9Item_Add(num, 1);
-							    player.equip[this.currentEquipPart] = CharacterEquipment.EmptyItemId;
-								this.UpdateCharacterData(player);
-								flag = true;
-							}
-							else
-							{
-								FF9Sfx.FF9SFX_Play(102);
-							}
-						}
-						else
-						{
-							FF9Sfx.FF9SFX_Play(102);
-						}
-						this.DisplayParameter();
-						this.DisplayEquipment();
-						this.DisplayHelp();
-						if (flag)
-						{
-							ButtonGroupState.RefreshHelpDialog();
-						}
-					}
-					else
-					{
-						FF9Sfx.FF9SFX_Play(103);
-						this.DisplayPlayerArrow(false);
-						this.DisplayInventory();
-						String key = String.Empty;
-						switch (this.currentEquipPart)
-						{
-						case 0:
-							key = "WeaponCaption";
-							break;
-						case 1:
-							key = "HeadCaption";
-							break;
-						case 2:
-							key = "WristCaption";
-							break;
-						case 3:
-							key = "ArmorCaption";
-							break;
-						default:
-							key = "AccessoryCaption";
-							break;
-						}
-						this.selectedCaption.key = key;
-						base.Loading = true;
-						this.equipmentSelectionTransition.TweenIn(new Byte[1], delegate
-						{
-							base.Loading = false;
-							ButtonGroupState.RemoveCursorMemorize(EquipUI.InventoryGroupButton);
-							ButtonGroupState.ActiveGroup = EquipUI.InventoryGroupButton;
-							this.equipmentPartCaption.SetActive(false);
-							this.currentItemIndex = 0;
-							this.DisplayParameter();
-							this.DisplayEquiptmentInfo();
-							this.DisplayHelp();
-						});
-					}
-				}
-				else
-				{
-					this.OnSecondaryGroupClick(go);
-				}
-			}
-			else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton && ButtonGroupState.ContainButtonInGroup(go, EquipUI.InventoryGroupButton))
-			{
-				this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-				if (this.itemIdList[this.currentEquipPart][this.currentItemIndex].id != 255)
+				PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+				Int32 num = player.equip[this.currentEquipPart];
+				if (num != 255)
 				{
 					FF9Sfx.FF9SFX_Play(107);
-					PLAYER player2 = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-					Int32 num2 = (Int32)player2.equip[this.currentEquipPart];
-					Int32 id = (Int32)this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
-					if (num2 != 255)
+					if (num == 229)
 					{
-						if (num2 == 229)
-						{
-							ff9item.DecreaseMoonStoneCount();
-						}
-						ff9item.FF9Item_Add(num2, 1);
+						ff9item.DecreaseMoonStoneCount();
 					}
-					if (ff9item.FF9Item_Remove(id, 1) != 0)
-					{
-						player2.equip[this.currentEquipPart] = (Byte)id;
-						this.UpdateCharacterData(player2);
-						this.DisplayEquipment();
-						this.DisplayParameter();
-					}
-					this.ClearChangeParameter();
-					this.DisplayPlayerArrow(true);
-					ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
-					base.Loading = true;
-					this.equipmentSelectionTransition.TweenOut(new Byte[1], delegate
-					{
-						base.Loading = false;
-					});
-					this.equipmentPartCaption.SetActive(true);
+
+					ff9item.FF9Item_Add(num, 1);
+					player.equip[this.currentEquipPart] = CharacterEquipment.EmptyItemId;
+					this.UpdateCharacterData(player);
+					flag = true;
 				}
 				else
 				{
 					FF9Sfx.FF9SFX_Play(102);
 				}
 			}
+			else
+			{
+				FF9Sfx.FF9SFX_Play(102);
+			}
+
+			this.DisplayParameter();
+			this.DisplayEquipment();
+			this.DisplayHelp();
+			if (flag)
+			{
+				ButtonGroupState.RefreshHelpDialog();
+			}
 		}
-		return true;
+		else
+		{
+			FF9Sfx.FF9SFX_Play(103);
+			this.DisplayPlayerArrow(false);
+			this.DisplayInventory();
+			String key = String.Empty;
+			switch (this.currentEquipPart)
+			{
+				case 0:
+					key = "WeaponCaption";
+					break;
+				case 1:
+					key = "HeadCaption";
+					break;
+				case 2:
+					key = "WristCaption";
+					break;
+				case 3:
+					key = "ArmorCaption";
+					break;
+				default:
+					key = "AccessoryCaption";
+					break;
+			}
+
+			this.selectedCaption.key = key;
+			base.Loading = true;
+			this.equipmentSelectionTransition.TweenIn(new Byte[1], delegate
+			{
+				base.Loading = false;
+				ButtonGroupState.RemoveCursorMemorize(EquipUI.InventoryGroupButton);
+				ButtonGroupState.ActiveGroup = EquipUI.InventoryGroupButton;
+				this.equipmentPartCaption.SetActive(false);
+				this.currentItemIndex = 0;
+				this.DisplayParameter();
+				this.DisplayEquiptmentInfo();
+				this.DisplayHelp();
+			});
+		}
+	}
+
+	private void OnKeyConfirmSubMenuGroupButton(GameObject go)
+	{
+		this.currentMenu = this.GetSubMenuFromGameObject(go);
+		switch (this.currentMenu)
+		{
+			case EquipUI.SubMenu.Equip:
+			case EquipUI.SubMenu.Off:
+				FF9Sfx.FF9SFX_Play(103);
+				ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
+				ButtonGroupState.SetSecondaryOnGroup(EquipUI.SubMenuGroupButton);
+				ButtonGroupState.HoldActiveStateOnGroup(EquipUI.SubMenuGroupButton);
+				this.DisplaySubMenuArrow(false);
+				this.DisplayEquiptmentInfo();
+				this.DisplayParameter();
+				break;
+			case EquipUI.SubMenu.Optimize:
+				if (_equipForAbilityLearning)
+					this.EquipForAbilityLearning();
+				else
+					this.EquipStrongest();
+				this.DisplayPlayer(true);
+				this.DisplayParameter();
+				this.DisplayEquipment();
+				break;
+		}
 	}
 
 	public override Boolean OnKeyCancel(GameObject go)
 	{
-		if (base.OnKeyCancel(go))
+		if (!base.OnKeyCancel(go))
+			return true;
+		
+		if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton)
 		{
-			if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton)
+			FF9Sfx.FF9SFX_Play(101);
+			this.fastSwitch = false;
+			this.Hide(delegate
 			{
-				FF9Sfx.FF9SFX_Play(101);
-				this.fastSwitch = false;
-				this.Hide(delegate
-				{
-					PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = false;
-					PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = MainMenuUI.SubMenu.Equip;
-					PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
-				});
-			}
-			else if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
-			{
-				FF9Sfx.FF9SFX_Play(101);
-				ButtonGroupState.ActiveGroup = EquipUI.SubMenuGroupButton;
-				this.ClearChangeParameter();
-				this.ClearEquipmentInfo();
-				this.DisplaySubMenuArrow(true);
-			}
-			else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
-			{
-				FF9Sfx.FF9SFX_Play(101);
-				this.DisplayPlayerArrow(true);
-				this.ClearChangeParameter();
-				ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
-				this.DisplayEquiptmentInfo();
-				base.Loading = true;
-				this.equipmentSelectionTransition.TweenOut(new Byte[1], delegate
-				{
-					base.Loading = false;
-				});
-				this.equipmentPartCaption.SetActive(true);
-			}
+				PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = false;
+				PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = MainMenuUI.SubMenu.Equip;
+				PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
+			});
 		}
+		else if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
+		{
+			FF9Sfx.FF9SFX_Play(101);
+			ButtonGroupState.ActiveGroup = EquipUI.SubMenuGroupButton;
+			this.ClearChangeParameter();
+			this.ClearEquipmentInfo();
+			this.DisplaySubMenuArrow(true);
+		}
+		else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
+		{
+			FF9Sfx.FF9SFX_Play(101);
+			this.DisplayPlayerArrow(true);
+			this.ClearChangeParameter();
+			ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
+			this.DisplayEquiptmentInfo();
+			base.Loading = true;
+			this.equipmentSelectionTransition.TweenOut(new Byte[1], delegate { base.Loading = false; });
+			this.equipmentPartCaption.SetActive(true);
+		}
+
 		return true;
 	}
 
 	public override Boolean OnItemSelect(GameObject go)
 	{
-		if (base.OnItemSelect(go))
+		if (!base.OnItemSelect(go))
+			return true;
+		
+		if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton && this.currentMenu != this.GetSubMenuFromGameObject(go))
 		{
-			if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton && this.currentMenu != this.GetSubMenuFromGameObject(go))
+			this.currentMenu = this.GetSubMenuFromGameObject(go);
+			this.DisplayEquipment();
+		}
+
+		if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
+		{
+			if (this.currentEquipPart != go.transform.GetSiblingIndex())
 			{
-				this.currentMenu = this.GetSubMenuFromGameObject(go);
-				this.DisplayEquipment();
-			}
-			if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton)
-			{
-				if (this.currentEquipPart != go.transform.GetSiblingIndex())
-				{
-					this.currentEquipPart = go.transform.GetSiblingIndex();
-					this.DisplayEquiptmentInfo();
-					this.DisplayParameter();
-				}
-			}
-			else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton && this.currentItemIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
-			{
-				this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+				this.currentEquipPart = go.transform.GetSiblingIndex();
 				this.DisplayEquiptmentInfo();
 				this.DisplayParameter();
 			}
 		}
+		else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton && this.currentItemIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
+		{
+			this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+			this.DisplayEquiptmentInfo();
+			this.DisplayParameter();
+		}
+
 		return true;
 	}
 
 	public override Boolean OnKeySpecial(GameObject go)
 	{
-		if (base.OnKeySpecial(go) && ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton)
+		if (!base.OnKeySpecial(go) 
+		    || ButtonGroupState.ActiveGroup != SubMenuGroupButton)
+			return true;
+		
+		FF9Sfx.FF9SFX_Play(103);
+		this.fastSwitch = true;
+		this.Hide(delegate
 		{
-			FF9Sfx.FF9SFX_Play(103);
-			this.fastSwitch = true;
-			this.Hide(delegate
-			{
-				this.RemoveCursorMemorize();
-				PersistenSingleton<UIManager>.Instance.AbilityScene.CurrentPartyIndex = this.currentPartyIndex;
-				PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Ability);
-			});
-		}
+			this.RemoveCursorMemorize();
+			PersistenSingleton<UIManager>.Instance.AbilityScene.CurrentPartyIndex = this.currentPartyIndex;
+			PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Ability);
+		});
+
 		return true;
 	}
 
 	public override Boolean OnKeyLeftBumper(GameObject go)
 	{
-		if (base.OnKeyLeftBumper(go) && (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton || ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton) && this.CharacterArrowPanel.activeSelf)
+		if (!base.OnKeyLeftBumper(go)
+		    || (ButtonGroupState.ActiveGroup != EquipUI.SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipUI.EquipmentGroupButton)
+		    || !this.CharacterArrowPanel.activeSelf)
+			return true;
+		
+		FF9Sfx.FF9SFX_Play(1047);
+		Int32 num = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
+		if (num != this.currentPartyIndex)
 		{
-			FF9Sfx.FF9SFX_Play(1047);
-			Int32 num = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
-			if (num != this.currentPartyIndex)
+			this.currentPartyIndex = num;
+			PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+			String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
+			base.Loading = true;
+			Boolean isKnockOut = player.cur.hp == 0;
+			this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, delegate
 			{
-				this.currentPartyIndex = num;
-				PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-				String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
-				base.Loading = true;
-				Boolean isKnockOut = player.cur.hp == 0;
-				this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, delegate
-				{
-					this.DisplayPlayer(true);
-					base.Loading = false;
-				});
-				this.SwitchCharacter(false);
-			}
+				DisplayPlayer(true);
+				base.Loading = false;
+			});
+			SwitchCharacter(false);
 		}
+
 		return true;
 	}
 
 	public override Boolean OnKeyRightBumper(GameObject go)
 	{
-		if (base.OnKeyRightBumper(go) && (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton || ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton) && this.CharacterArrowPanel.activeSelf)
+		if (!base.OnKeyRightBumper(go)
+		    || (ButtonGroupState.ActiveGroup != SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipmentGroupButton)
+		    || !CharacterArrowPanel.activeSelf)
+			return true;
+		
+		FF9Sfx.FF9SFX_Play(1047);
+		Int32 num = ff9play.FF9Play_GetNext(this.currentPartyIndex);
+		if (num != this.currentPartyIndex)
 		{
-			FF9Sfx.FF9SFX_Play(1047);
-			Int32 num = ff9play.FF9Play_GetNext(this.currentPartyIndex);
-			if (num != this.currentPartyIndex)
+			this.currentPartyIndex = num;
+			PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+			String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
+			Boolean isKnockOut = player.cur.hp == 0;
+			this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.RightToLeft, isKnockOut, delegate
 			{
-				this.currentPartyIndex = num;
-				PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-				String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
-				Boolean isKnockOut = player.cur.hp == 0;
-				this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.RightToLeft, isKnockOut, delegate
-				{
-					this.DisplayPlayer(true);
-					base.Loading = false;
-				});
-				this.SwitchCharacter(false);
-				base.Loading = true;
-			}
+				this.DisplayPlayer(true);
+				base.Loading = false;
+			});
+			this.SwitchCharacter(false);
+			base.Loading = true;
 		}
+
 		return true;
 	}
 
@@ -400,30 +426,20 @@ public class EquipUI : UIScene
 	private void DisplayHelp()
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-		Int32 num = 0;
-        CharacterEquipment equip = player.equip;
+		CharacterEquipment equip = player.equip;
 		for (Int32 i = 0; i < CharacterEquipment.Length; i++)
 		{
 			Byte itemId = equip[i];
-			ButtonGroupState buttonGroupState = (ButtonGroupState)null;
-			switch (num)
+			ButtonGroupState buttonGroupState = i switch
 			{
-			case 0:
-				buttonGroupState = this.equipmentHud.Weapon.Button;
-				break;
-			case 1:
-				buttonGroupState = this.equipmentHud.Head.Button;
-				break;
-			case 2:
-				buttonGroupState = this.equipmentHud.Wrist.Button;
-				break;
-			case 3:
-				buttonGroupState = this.equipmentHud.Body.Button;
-				break;
-			case 4:
-				buttonGroupState = this.equipmentHud.Accessory.Button;
-				break;
-			}
+				0 => this.equipmentHud.Weapon.Button,
+				1 => this.equipmentHud.Head.Button,
+				2 => this.equipmentHud.Wrist.Button,
+				3 => this.equipmentHud.Body.Button,
+				4 => this.equipmentHud.Accessory.Button,
+				_ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
+			};
+
 			if (itemId != 255)
 			{
 				buttonGroupState.Help.TextKey = String.Empty;
@@ -433,7 +449,6 @@ public class EquipUI : UIScene
 			{
 				buttonGroupState.Help.TextKey = Localization.Get("NoEquipHelp");
 			}
-			num++;
 		}
 	}
 
@@ -462,7 +477,7 @@ public class EquipUI : UIScene
 		{
 			Int32 num = 0;
 			PLAYER[] member = FF9StateSystem.Common.FF9.party.member;
-			for (Int32 i = 0; i < (Int32)member.Length; i++)
+			for (Int32 i = 0; i < member.Length; i++)
 			{
 				PLAYER player = member[i];
 				if (player != null)
@@ -470,6 +485,7 @@ public class EquipUI : UIScene
 					num++;
 				}
 			}
+
 			if (num > 1)
 			{
 				this.CharacterArrowPanel.SetActive(true);
@@ -502,20 +518,21 @@ public class EquipUI : UIScene
 		this.parameterHud.ParameterLabel[1].text = player.elem.str.ToString();
 		this.parameterHud.ParameterLabel[2].text = player.elem.mgc.ToString();
 		this.parameterHud.ParameterLabel[3].text = player.elem.wpr.ToString();
-		this.parameterHud.ParameterLabel[4].text = ff9weap.WeaponData[(Int32)player.equip[0]].Ref.Power.ToString();
+		this.parameterHud.ParameterLabel[4].text = ff9weap.WeaponData[player.equip[0]].Ref.Power.ToString();
 		this.parameterHud.ParameterLabel[5].text = player.defence.PhisicalDefence.ToString();
 		this.parameterHud.ParameterLabel[6].text = player.defence.PhisicalEvade.ToString();
 		this.parameterHud.ParameterLabel[7].text = player.defence.MagicalDefence.ToString();
 		this.parameterHud.ParameterLabel[8].text = player.defence.MagicalEvade.ToString();
-		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton || (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == EquipUI.SubMenu.Off))
+		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton || (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == SubMenu.Off))
 		{
-			if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == EquipUI.SubMenu.Off)
+			if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == SubMenu.Off)
 			{
 				if (player.equip[this.currentEquipPart] == 255)
 				{
 					this.ClearChangeParameter();
 					return;
 				}
+
 				if (this.currentEquipPart == 0)
 				{
 					this.ClearChangeParameter();
@@ -527,32 +544,36 @@ public class EquipUI : UIScene
 				this.ClearChangeParameter();
 				return;
 			}
+
 			for (Int32 i = 0; i < 9; i++)
 			{
 				this.parameterHud.ArrowSprite[i].gameObject.SetActive(true);
 				this.parameterHud.NewParameterLabel[i].gameObject.SetActive(true);
 			}
+
 			FF9PLAY_SKILL ff9PLAY_SKILL = new FF9PLAY_SKILL();
 			FF9PLAY_SKILL ff9PLAY_SKILL2 = this.CalculateSkill();
 			ff9PLAY_SKILL.Base[0] = player.elem.dex;
 			ff9PLAY_SKILL.Base[1] = player.elem.str;
 			ff9PLAY_SKILL.Base[2] = player.elem.mgc;
 			ff9PLAY_SKILL.Base[3] = player.elem.wpr;
-			ff9PLAY_SKILL.weapon[0] = (UInt16)ff9weap.WeaponData[(Int32)player.equip[0]].Ref.Power;
-			ff9PLAY_SKILL.weapon[1] = (UInt16)player.defence.PhisicalDefence;
-			ff9PLAY_SKILL.weapon[2] = (UInt16)player.defence.PhisicalEvade;
-			ff9PLAY_SKILL.weapon[3] = (UInt16)player.defence.MagicalDefence;
-			ff9PLAY_SKILL.weapon[4] = (UInt16)player.defence.MagicalEvade;
+			ff9PLAY_SKILL.weapon[0] = ff9weap.WeaponData[player.equip[0]].Ref.Power;
+			ff9PLAY_SKILL.weapon[1] = player.defence.PhisicalDefence;
+			ff9PLAY_SKILL.weapon[2] = player.defence.PhisicalEvade;
+			ff9PLAY_SKILL.weapon[3] = player.defence.MagicalDefence;
+			ff9PLAY_SKILL.weapon[4] = player.defence.MagicalEvade;
 			Int32 j;
 			for (j = 0; j < 4; j++)
 			{
 				this.parameterHud.NewParameterLabel[j].text = ff9PLAY_SKILL2.Base[j].ToString();
 			}
+
 			while (j < 9)
 			{
 				this.parameterHud.NewParameterLabel[j].text = ff9PLAY_SKILL2.weapon[j - 4].ToString();
 				j++;
 			}
+
 			for (j = 0; j < 4; j++)
 			{
 				if (ff9PLAY_SKILL.Base[j] != ff9PLAY_SKILL2.Base[j])
@@ -565,6 +586,7 @@ public class EquipUI : UIScene
 					this.parameterHud.ArrowSprite[j].color = new Color(1f, 1f, 1f, 0.7058824f);
 				}
 			}
+
 			while (j < 9)
 			{
 				if (ff9PLAY_SKILL.weapon[j - 4] != ff9PLAY_SKILL2.weapon[j - 4])
@@ -576,8 +598,10 @@ public class EquipUI : UIScene
 					this.parameterHud.ArrowTween[j].enabled = false;
 					this.parameterHud.ArrowSprite[j].color = new Color(1f, 1f, 1f, 0.7058824f);
 				}
+
 				j++;
 			}
+
 			for (j = 0; j < 4; j++)
 			{
 				if (ff9PLAY_SKILL.Base[j] < ff9PLAY_SKILL2.Base[j])
@@ -593,6 +617,7 @@ public class EquipUI : UIScene
 					this.parameterHud.NewParameterLabel[j].color = FF9TextTool.White;
 				}
 			}
+
 			while (j < 9)
 			{
 				if (ff9PLAY_SKILL.weapon[j - 4] < ff9PLAY_SKILL2.weapon[j - 4])
@@ -607,6 +632,7 @@ public class EquipUI : UIScene
 				{
 					this.parameterHud.NewParameterLabel[j].color = FF9TextTool.White;
 				}
+
 				j++;
 			}
 		}
@@ -619,22 +645,23 @@ public class EquipUI : UIScene
 	private void DisplayEquipment()
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-		if (this.currentMenu == EquipUI.SubMenu.Off)
+		if (this.currentMenu == SubMenu.Off)
 		{
-			FF9UIDataTool.DisplayItem((Int32)player.equip[0], this.equipmentHud.Weapon.IconSprite, this.equipmentHud.Weapon.NameLabel, false);
+			FF9UIDataTool.DisplayItem(player.equip[0], this.equipmentHud.Weapon.IconSprite, this.equipmentHud.Weapon.NameLabel, false);
 			this.weaponPartColonLabel.color = FF9TextTool.Gray;
 			this.weaponPartIconSprite.alpha = 0.5f;
 		}
 		else
 		{
-			FF9UIDataTool.DisplayItem((Int32)player.equip[0], this.equipmentHud.Weapon.IconSprite, this.equipmentHud.Weapon.NameLabel, true);
+			FF9UIDataTool.DisplayItem(player.equip[0], this.equipmentHud.Weapon.IconSprite, this.equipmentHud.Weapon.NameLabel, true);
 			this.weaponPartColonLabel.color = FF9TextTool.White;
 			this.weaponPartIconSprite.alpha = 1f;
 		}
-		FF9UIDataTool.DisplayItem((Int32)player.equip[1], this.equipmentHud.Head.IconSprite, this.equipmentHud.Head.NameLabel, true);
-		FF9UIDataTool.DisplayItem((Int32)player.equip[2], this.equipmentHud.Wrist.IconSprite, this.equipmentHud.Wrist.NameLabel, true);
-		FF9UIDataTool.DisplayItem((Int32)player.equip[3], this.equipmentHud.Body.IconSprite, this.equipmentHud.Body.NameLabel, true);
-		FF9UIDataTool.DisplayItem((Int32)player.equip[4], this.equipmentHud.Accessory.IconSprite, this.equipmentHud.Accessory.NameLabel, true);
+
+		FF9UIDataTool.DisplayItem(player.equip[1], this.equipmentHud.Head.IconSprite, this.equipmentHud.Head.NameLabel, true);
+		FF9UIDataTool.DisplayItem(player.equip[2], this.equipmentHud.Wrist.IconSprite, this.equipmentHud.Wrist.NameLabel, true);
+		FF9UIDataTool.DisplayItem(player.equip[3], this.equipmentHud.Body.IconSprite, this.equipmentHud.Body.NameLabel, true);
+		FF9UIDataTool.DisplayItem(player.equip[4], this.equipmentHud.Accessory.IconSprite, this.equipmentHud.Accessory.NameLabel, true);
 		this.DisplayHelp();
 	}
 
@@ -643,28 +670,16 @@ public class EquipUI : UIScene
 		if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton || ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
 		{
 			Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-			String spriteName = String.Empty;
-			switch (this.currentEquipPart)
+			String spriteName = this.currentEquipPart switch
 			{
-			case 0:
-				spriteName = "icon_equip_0";
-				break;
-			case 1:
-				spriteName = "icon_equip_1";
-				break;
-			case 2:
-				spriteName = "icon_equip_2";
-				break;
-			case 3:
-				spriteName = "icon_equip_3";
-				break;
-			case 4:
-				spriteName = "icon_equip_4";
-				break;
-			default:
-				spriteName = String.Empty;
-				break;
-			}
+				0 => "icon_equip_0",
+				1 => "icon_equip_1",
+				2 => "icon_equip_2",
+				3 => "icon_equip_3",
+				4 => "icon_equip_4",
+				_ => String.Empty
+			};
+
 			this.equipmentSelectHud.Self.SetActive(true);
 			this.equipmentSelectHud.PartIconSprite.spriteName = spriteName;
 			Int32 num;
@@ -680,9 +695,11 @@ public class EquipUI : UIScene
 				{
 					return;
 				}
-				num = (Int32)this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
+
+				num = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
 				ff9ITEM_DATA = ff9item._FF9Item_Data[num];
 			}
+
 			FF9UIDataTool.DisplayItem(num, this.equipmentSelectHud.Equipment.IconSprite, this.equipmentSelectHud.Equipment.NameLabel, true);
 			this.equipmentAbilitySelectHudList[0].Self.SetActive(false);
 			this.equipmentAbilitySelectHudList[1].Self.SetActive(false);
@@ -690,7 +707,7 @@ public class EquipUI : UIScene
 			Int32 num2 = 0;
 			for (Int32 i = 0; i < 3; i++)
 			{
-				Int32 abilityId = (Int32)ff9ITEM_DATA.ability[i];
+				Int32 abilityId = ff9ITEM_DATA.ability[i];
 				if (abilityId != 0)
 				{
 					String text = String.Empty;
@@ -702,6 +719,7 @@ public class EquipUI : UIScene
 					{
 						text = FF9TextTool.SupportAbilityName(abilityId - 192);
 					}
+
 					this.equipmentAbilitySelectHudList[num2].Self.SetActive(true);
 					if (ff9abil.FF9Abil_HasAp(player))
 					{
@@ -723,6 +741,7 @@ public class EquipUI : UIScene
 						{
 							spriteName2 = ((abilityId >= 192) ? "skill_stone_null" : "ability_stone_null");
 						}
+
 						if (flag)
 						{
 							Boolean isShowText = abilityId >= 192 || (FF9StateSystem.Battle.FF9Battle.aa_data[abilityId].Type & 2) == 0;
@@ -733,6 +752,7 @@ public class EquipUI : UIScene
 						{
 							this.equipmentAbilitySelectHudList[num2].APBar.Self.SetActive(false);
 						}
+
 						this.equipmentAbilitySelectHudList[num2].NameLabel.text = text;
 						this.equipmentAbilitySelectHudList[num2].IconSprite.spriteName = spriteName2;
 						if (flag)
@@ -755,11 +775,13 @@ public class EquipUI : UIScene
 						{
 							spriteName2 = "skill_stone_null";
 						}
+
 						this.equipmentAbilitySelectHudList[num2].NameLabel.text = text;
 						this.equipmentAbilitySelectHudList[num2].IconSprite.spriteName = spriteName2;
 						this.equipmentAbilitySelectHudList[num2].NameLabel.color = FF9TextTool.Gray;
 						this.equipmentAbilitySelectHudList[num2].APBar.Self.SetActive(false);
 					}
+
 					num2++;
 				}
 			}
@@ -768,55 +790,57 @@ public class EquipUI : UIScene
 
 	private void DisplayInventory()
 	{
-	    Character character = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        Int32 characterMask = (Int32)this.charMask[ff9play.FF9Play_GetCharID2(character.Index, character.IsSubCharacter)];
-		Int32 equipSlotMask = (Int32)this.partMask[this.currentEquipPart];
-	    switch (this.currentEquipPart)
+		Character character = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+		Int32 characterMask = this.charMask[ff9play.FF9Play_GetCharID2(character.Index, character.IsSubCharacter)];
+		Int32 equipSlotMask = this.partMask[this.currentEquipPart];
+		switch (this.currentEquipPart)
 		{
-		case 0:
-			this.equipmentListCaption.text = Localization.Get("WeaponCaption");
-			break;
-		case 1:
-			this.equipmentListCaption.text = Localization.Get("HeadCaption");
-			break;
-		case 2:
-			this.equipmentListCaption.text = Localization.Get("WristCaption");
-			break;
-		case 3:
-			this.equipmentListCaption.text = Localization.Get("ArmorCaption");
-			break;
-		case 4:
-			this.equipmentListCaption.text = Localization.Get("AccessoryCaption");
-			break;
-		default:
-			this.equipmentListCaption.text = Localization.Get("WeaponCaption");
-			break;
+			case 0:
+				this.equipmentListCaption.text = Localization.Get("WeaponCaption");
+				break;
+			case 1:
+				this.equipmentListCaption.text = Localization.Get("HeadCaption");
+				break;
+			case 2:
+				this.equipmentListCaption.text = Localization.Get("WristCaption");
+				break;
+			case 3:
+				this.equipmentListCaption.text = Localization.Get("ArmorCaption");
+				break;
+			case 4:
+				this.equipmentListCaption.text = Localization.Get("AccessoryCaption");
+				break;
+			default:
+				this.equipmentListCaption.text = Localization.Get("WeaponCaption");
+				break;
 		}
+
 		List<FF9ITEM> list = this.itemIdList[this.currentEquipPart];
 		list.Clear();
-        int resultIndex = 0;
-        for (Int32 i = 0; i < 256; i++)
+		int resultIndex = 0;
+		for (Int32 i = 0; i < 256; i++)
 		{
 			if (FF9StateSystem.Common.FF9.item[i].count > 0)
 			{
-			    FF9ITEM item = FF9StateSystem.Common.FF9.item[i];
-                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
+				FF9ITEM item = FF9StateSystem.Common.FF9.item[i];
+				FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
 
 				if (CanEquip(item, itemData, character, characterMask, equipSlotMask))
 				{
-                    this.tempItemList[resultIndex].id = item.id;
-                    this.tempItemList[resultIndex].count = item.count;
-                    list.Add(this.tempItemList[resultIndex]);
-                    resultIndex++;
-                }
+					this.tempItemList[resultIndex].id = item.id;
+					this.tempItemList[resultIndex].count = item.count;
+					list.Add(this.tempItemList[resultIndex]);
+					resultIndex++;
+				}
 			}
 		}
+
 		for (Int32 j = 0; j < list.Count - 1; j++)
 		{
 			for (Int32 k = j + 1; k < list.Count; k++)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA2 = ff9item._FF9Item_Data[(Int32)list[j].id];
-				FF9ITEM_DATA ff9ITEM_DATA3 = ff9item._FF9Item_Data[(Int32)list[k].id];
+				FF9ITEM_DATA ff9ITEM_DATA2 = ff9item._FF9Item_Data[list[j].id];
+				FF9ITEM_DATA ff9ITEM_DATA3 = ff9item._FF9Item_Data[list[k].id];
 				if ((ff9ITEM_DATA2.eq_lv == ff9ITEM_DATA3.eq_lv && list[j].id > list[k].id) || ff9ITEM_DATA2.eq_lv > ff9ITEM_DATA3.eq_lv)
 				{
 					Byte id = list[j].id;
@@ -828,21 +852,24 @@ public class EquipUI : UIScene
 				}
 			}
 		}
+
 		if (list.Count == 0)
 		{
 			list.Add(new FF9ITEM(Byte.MaxValue, 0));
 		}
+
 		List<ListDataTypeBase> list2 = new List<ListDataTypeBase>();
 		foreach (FF9ITEM itemData in list)
 		{
-			list2.Add(new EquipUI.EquipInventoryListData
+			list2.Add(new EquipInventoryListData
 			{
 				ItemData = itemData
 			});
 		}
+
 		if (this.equipSelectScrollList.ItemsPool.Count == 0)
 		{
-			this.equipSelectScrollList.PopulateListItemWithData = new Action<Transform, ListDataTypeBase, Int32, Boolean>(this.DisplayInventoryInfo);
+			this.equipSelectScrollList.PopulateListItemWithData = this.DisplayInventoryInfo;
 			this.equipSelectScrollList.OnRecycleListItemClick += this.OnListItemClick;
 			this.equipSelectScrollList.InitTableView(list2, 0);
 		}
@@ -853,43 +880,44 @@ public class EquipUI : UIScene
 		}
 	}
 
-    private Boolean CanEquip(FF9ITEM item, FF9ITEM_DATA itemData, Character character, Int32 characterMask, Int32 equipSlotMask)
-    {
-        const Int32 accessories = 4;
-        const Int32 saveTheQueen = 26;
-
-        if ((itemData.equip & characterMask) == 0)
-            return false;
-
-        if (this.currentEquipPart == accessories)
-        {
-            if (character.Index == CharacterIndex.Beatrix && item.id == saveTheQueen)
-                return true;
-        }
-
-        return (itemData.type & equipSlotMask) != 0;
-    }
-
-    private void DisplayInventoryInfo(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
+	private Boolean CanEquip(FF9ITEM item, FF9ITEM_DATA itemData, Character character, Int32 characterMask, Int32 equipSlotMask)
 	{
-		EquipUI.EquipInventoryListData equipInventoryListData = (EquipUI.EquipInventoryListData)data;
+		const Int32 accessories = 4;
+		const Int32 saveTheQueen = 26;
+
+		if ((itemData.equip & characterMask) == 0)
+			return false;
+
+		if (this.currentEquipPart == accessories)
+		{
+			if (character.Index == CharacterIndex.Beatrix && item.id == saveTheQueen)
+				return true;
+		}
+
+		return (itemData.type & equipSlotMask) != 0;
+	}
+
+	private void DisplayInventoryInfo(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
+	{
+		EquipInventoryListData equipInventoryListData = (EquipInventoryListData) data;
 		ItemListDetailWithIconHUD itemListDetailWithIconHUD = new ItemListDetailWithIconHUD(item.gameObject, true);
 		if (isInit)
 		{
-			this.DisplayWindowBackground(item.gameObject, (UIAtlas)null);
+			this.DisplayWindowBackground(item.gameObject, null);
 			itemListDetailWithIconHUD.Button.Help.Enable = false;
 		}
+
 		if (equipInventoryListData.ItemData.id != 255)
 		{
 			ButtonGroupState.SetButtonAnimation(itemListDetailWithIconHUD.Self, true);
 			itemListDetailWithIconHUD.IconSprite.gameObject.SetActive(true);
 			itemListDetailWithIconHUD.NameLabel.gameObject.SetActive(true);
 			itemListDetailWithIconHUD.NumberLabel.gameObject.SetActive(true);
-			FF9UIDataTool.DisplayItem((Int32)equipInventoryListData.ItemData.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
+			FF9UIDataTool.DisplayItem(equipInventoryListData.ItemData.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
 			itemListDetailWithIconHUD.NumberLabel.text = equipInventoryListData.ItemData.count.ToString();
 			itemListDetailWithIconHUD.Button.Help.Enable = true;
 			itemListDetailWithIconHUD.Button.Help.TextKey = String.Empty;
-			itemListDetailWithIconHUD.Button.Help.Text = FF9TextTool.ItemHelpDescription((Int32)equipInventoryListData.ItemData.id);
+			itemListDetailWithIconHUD.Button.Help.Text = FF9TextTool.ItemHelpDescription(equipInventoryListData.ItemData.id);
 		}
 		else
 		{
@@ -939,7 +967,7 @@ public class EquipUI : UIScene
 	{
 		this.UpdateCharacterSA(player);
 		ff9play.FF9Play_Update(player);
-		player.info.serial_no = (Byte)ff9play.FF9Play_GetSerialID(player.info.slot_no, (player.category & 16) != 0, player.equip);
+		player.info.serial_no = (Byte) ff9play.FF9Play_GetSerialID(player.info.slot_no, (player.category & 16) != 0, player.equip);
 	}
 
 	private void UpdateCharacterSA(PLAYER player)
@@ -949,14 +977,15 @@ public class EquipUI : UIScene
 		{
 			return;
 		}
+
 		for (Int32 i = 0; i < 5; i++)
 		{
 			if (player.equip[i] != 255)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)player.equip[i]];
+				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[player.equip[i]];
 				for (Int32 j = 0; j < 3; j++)
 				{
-					Int32 num = (Int32)ff9ITEM_DATA.ability[j];
+					Int32 num = ff9ITEM_DATA.ability[j];
 					if (num != 0 && 192 <= num)
 					{
 						list.Add(num - 192);
@@ -964,6 +993,7 @@ public class EquipUI : UIScene
 				}
 			}
 		}
+
 		CharacterAbility[] array = ff9abil._FF9Abil_PaData[player.PresetId];
 		for (Int32 k = 0; k < 48; k++)
 		{
@@ -974,7 +1004,7 @@ public class EquipUI : UIScene
 				if (player.max.capa - player.cur.capa >= capa_val)
 				{
 					POINTS cur = player.cur;
-					cur.capa = (Byte)(cur.capa + capa_val);
+					cur.capa = (Byte) (cur.capa + capa_val);
 				}
 				else
 				{
@@ -984,313 +1014,318 @@ public class EquipUI : UIScene
 		}
 	}
 
-    private void EquipForAbilityLearning()
-    {
-        const Int32 itemTypeCount = 5;
+	private void EquipForAbilityLearning()
+	{
+		const Int32 itemTypeCount = 5;
 
-        Character character = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        CharacterIndex characterIndex = character.Index;
-        CharacterEquipment equipment = character.Equipment;
+		Character character = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+		CharacterIndex characterIndex = character.Index;
+		CharacterEquipment equipment = character.Equipment;
 
-        LearnableItemAbilities learnable = new LearnableItemAbilities(character, this.charMask[character.Id]);
+		LearnableItemAbilities learnable = new LearnableItemAbilities(character, this.charMask[character.Id]);
 
-        Byte[] toRemove = new Byte[itemTypeCount];
-        Byte[] toKeep = new Byte[itemTypeCount];
-        Byte[] toLearn = new Byte[itemTypeCount];
-        Byte[] toEquip = new Byte[itemTypeCount];
-        for (Int32 i = 0; i < itemTypeCount; i++)
-        {
-            toRemove[i] = Byte.MaxValue;
-            toKeep[i] = Byte.MaxValue;
-            toLearn[i] = Byte.MaxValue;
-            toEquip[i] = Byte.MaxValue;
-        }
+		Byte[] toRemove = new Byte[itemTypeCount];
+		Byte[] toKeep = new Byte[itemTypeCount];
+		Byte[] toLearn = new Byte[itemTypeCount];
+		Byte[] toEquip = new Byte[itemTypeCount];
+		for (Int32 i = 0; i < itemTypeCount; i++)
+		{
+			toRemove[i] = Byte.MaxValue;
+			toKeep[i] = Byte.MaxValue;
+			toLearn[i] = Byte.MaxValue;
+			toEquip[i] = Byte.MaxValue;
+		}
 
-        Boolean canLearn = false;
-        Boolean canEquip = false;
+		Boolean canLearn = false;
+		Boolean canEquip = false;
 
-        for (Int32 itemType = 0; itemType < itemTypeCount; itemType++)
-        {
-            Byte betterItemId = Byte.MaxValue;
-            Int32 betterLevel = Int32.MinValue;
-            Byte learnableItemId = Byte.MaxValue;
-            Int32 learnableLevel = Int32.MaxValue;
-            Int32 learnableLeftAp = Int32.MaxValue;
+		for (Int32 itemType = 0; itemType < itemTypeCount; itemType++)
+		{
+			Byte betterItemId = Byte.MaxValue;
+			Int32 betterLevel = Int32.MinValue;
+			Byte learnableItemId = Byte.MaxValue;
+			Int32 learnableLevel = Int32.MaxValue;
+			Int32 learnableLeftAp = Int32.MaxValue;
 
-            Byte itemId = equipment[itemType];
-            if (itemId != Byte.MaxValue)
-            {
-                FF9ITEM_DATA equipedItem = ff9item._FF9Item_Data[itemId];
+			Byte itemId = equipment[itemType];
+			if (itemId != Byte.MaxValue)
+			{
+				FF9ITEM_DATA equipedItem = ff9item._FF9Item_Data[itemId];
 
-                betterLevel = equipedItem.eq_lv;
-                betterItemId = itemId;
+				betterLevel = equipedItem.eq_lv;
+				betterItemId = itemId;
 
-                if (learnable.IsLearnable(itemId, out learnableLeftAp))
-                {
-                    toLearn[itemType] = itemId;
-                    learnableItemId = itemId;
-                    learnableLevel = equipedItem.eq_lv;
-                }
-                else
-                {
-                    toRemove[itemType] = itemId;
-                }
-            }
+				if (learnable.IsLearnable(itemId, out learnableLeftAp))
+				{
+					toLearn[itemType] = itemId;
+					learnableItemId = itemId;
+					learnableLevel = equipedItem.eq_lv;
+				}
+				else
+				{
+					toRemove[itemType] = itemId;
+				}
+			}
 
-            Boolean equiptable = false;
-            for (Int32 itemIndex = 0; itemIndex <= 255; itemIndex++)
-            {
-                FF9ITEM item = FF9StateSystem.Common.FF9.item[itemIndex];
-                if (item.count < 1)
-                    continue;
+			Boolean equiptable = false;
+			for (Int32 itemIndex = 0; itemIndex <= 255; itemIndex++)
+			{
+				FF9ITEM item = FF9StateSystem.Common.FF9.item[itemIndex];
+				if (item.count < 1)
+					continue;
 
-                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
-                if ((itemData.type & this.partMask[itemType]) == 0)
-                    continue;
+				FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
+				if ((itemData.type & this.partMask[itemType]) == 0)
+					continue;
 
-                if ((itemData.equip & this.charMask[character.Id]) == 0)
-                    continue;
+				if ((itemData.equip & this.charMask[character.Id]) == 0)
+					continue;
 
-                if (itemData.eq_lv > betterLevel)
-                {
-                    betterItemId = item.id;
-                    betterLevel = itemData.eq_lv;
-                    equiptable = true;
-                }
+				if (itemData.eq_lv > betterLevel)
+				{
+					betterItemId = item.id;
+					betterLevel = itemData.eq_lv;
+					equiptable = true;
+				}
 
-                Int32 leftAp;
-                if (itemData.eq_lv < learnableLevel && learnable.IsLearnable(item.id, out leftAp) && leftAp <= learnableLeftAp)
-                {
-                    learnableItemId = item.id;
-                    learnableLevel = itemData.eq_lv;
-                    canLearn = true;
-                }
-            }
-            
-            toLearn[itemType] = learnableItemId;
-            toEquip[itemType] = betterItemId;
+				Int32 leftAp;
+				if (itemData.eq_lv < learnableLevel && learnable.IsLearnable(item.id, out leftAp) && leftAp <= learnableLeftAp)
+				{
+					learnableItemId = item.id;
+					learnableLevel = itemData.eq_lv;
+					canLearn = true;
+				}
+			}
 
-            if (equiptable && learnableItemId == Byte.MaxValue)
-                canEquip = true;
-        }
+			toLearn[itemType] = learnableItemId;
+			toEquip[itemType] = betterItemId;
 
-        for (Int32 itemType = 0; itemType < itemTypeCount; itemType++)
-        {
-            Byte itemId = toLearn[itemType];
-            if (itemId != Byte.MaxValue)
-            {
-                character.Equipment.Change(itemType, itemId);
-                continue;
-            }
+			if (equiptable && learnableItemId == Byte.MaxValue)
+				canEquip = true;
+		}
 
-            if (canLearn || !canEquip)
-            {
-                if (itemType != 0 && toRemove[itemType] != Byte.MaxValue)
-                    character.Equipment.Change(itemType, Byte.MaxValue);
+		for (Int32 itemType = 0; itemType < itemTypeCount; itemType++)
+		{
+			Byte itemId = toLearn[itemType];
+			if (itemId != Byte.MaxValue)
+			{
+				character.Equipment.Change(itemType, itemId);
+				continue;
+			}
 
-                continue;
-            }
+			if (canLearn || !canEquip)
+			{
+				if (itemType != 0 && toRemove[itemType] != Byte.MaxValue)
+					character.Equipment.Change(itemType, Byte.MaxValue);
 
-            itemId = toEquip[itemType];
-            if (itemId != Byte.MaxValue)
-                character.Equipment.Change(itemType, itemId);
-        }
+				continue;
+			}
 
-        this.UpdateCharacterData(character.Data);
-        FF9Sfx.FF9SFX_Play(107);
-    }
+			itemId = toEquip[itemType];
+			if (itemId != Byte.MaxValue)
+				character.Equipment.Change(itemType, itemId);
+		}
 
-    private sealed class LearnableItemAbilities
-    {
-        private readonly Dictionary<Byte, Int32> _itemsWithLearnableAbilities;
+		this.UpdateCharacterData(character.Data);
+		FF9Sfx.FF9SFX_Play(107);
+	}
 
-        public LearnableItemAbilities(Character character, UInt16 characterMask)
-        {
-            _itemsWithLearnableAbilities = InitializeMap(character, characterMask);
-        }
+	private sealed class LearnableItemAbilities
+	{
+		private readonly Dictionary<Byte, Int32> _itemsWithLearnableAbilities;
 
-        public Boolean IsLearnable(Byte itemId, out Int32 learnableLeftAp)
-        {
-            Int32 leftAp;
-            if (_itemsWithLearnableAbilities.TryGetValue(itemId, out leftAp))
-            {
-                learnableLeftAp = leftAp;
-                return true;
-            }
-            learnableLeftAp = Int32.MaxValue;
-            return false;
-        }
+		public LearnableItemAbilities(Character character, UInt16 characterMask)
+		{
+			_itemsWithLearnableAbilities = InitializeMap(character, characterMask);
+		}
 
-        private static Dictionary<Byte, Int32> InitializeMap(Character character, UInt16 characterMask)
-        {
-            CharacterPresetId characterPresetId = character.PresetId;
-            if (characterPresetId >= 16)
-                return new Dictionary<Byte, Int32>(0);
+		public Boolean IsLearnable(Byte itemId, out Int32 learnableLeftAp)
+		{
+			Int32 leftAp;
+			if (_itemsWithLearnableAbilities.TryGetValue(itemId, out leftAp))
+			{
+				learnableLeftAp = leftAp;
+				return true;
+			}
 
-            CharacterIndex characterIndex = character.Index;
-            CharacterEquipment equipment = character.Equipment;
+			learnableLeftAp = Int32.MaxValue;
+			return false;
+		}
 
-            Dictionary<Byte, Int32> abilityIdToLeftAp = new Dictionary<Byte, Int32>(128);
+		private static Dictionary<Byte, Int32> InitializeMap(Character character, UInt16 characterMask)
+		{
+			CharacterPresetId characterPresetId = character.PresetId;
+			if (characterPresetId >= 16)
+				return new Dictionary<Byte, Int32>(0);
 
+			CharacterIndex characterIndex = character.Index;
+			CharacterEquipment equipment = character.Equipment;
 
-            CharacterAbility[] array = ff9abil._FF9Abil_PaData[characterPresetId];
-            foreach (var ability in array)
-            {
-                Byte abilityId = ability.Id;
-
-                Int32 cur = ff9abil.FF9Abil_GetAp(characterIndex, abilityId);
-                Int32 max = ff9abil.FF9Abil_GetMax(characterIndex, abilityId);
-
-                if (cur < max)
-                {
-                    if (cur > 0)
-                        abilityIdToLeftAp.Add(abilityId, max - cur);
-                    else
-                        abilityIdToLeftAp.Add(abilityId, Int32.MaxValue);
-                }
-            }
-
-            Dictionary<Int64, FF9ITEM_DATA> keyToItem = new Dictionary<Int64, FF9ITEM_DATA>(255);
-            Dictionary<FF9ITEM_DATA, Byte> itemDataToItemId = new Dictionary<FF9ITEM_DATA, Byte>(255);
-            Dictionary<Byte, List<Byte>> itemToAbilities = new Dictionary<Byte, List<Byte>>(255);
-
-            foreach (Byte itemId in EnumerateItemIds(character))
-            {
-                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[itemId];
-                if ((itemData.equip & characterMask) == 0)
-                    continue;
-
-                List<Byte> learnableAbilities = new List<Byte>(3);
-                foreach (Byte abilityId in itemData.ability)
-                {
-                    if (abilityIdToLeftAp.ContainsKey(abilityId))
-                        learnableAbilities.Add(abilityId);
-                }
-
-                if (learnableAbilities.Count == 0)
-                    continue;
-
-                itemDataToItemId.Add(itemData, itemId);
-
-                learnableAbilities.Sort();
-
-                Int64 key = itemData.equip;
-                for (Int32 i = 0; i < learnableAbilities.Count; i++)
-                    key |= ((Int64)learnableAbilities[i] << ((i + 2) * 8));
-
-                FF9ITEM_DATA oldData;
-                if (keyToItem.TryGetValue(key, out oldData))
-                {
-                    if (oldData.eq_lv < itemData.eq_lv)
-                        keyToItem[key] = itemData;
-                }
-                else
-                {
-                    keyToItem.Add(key, itemData);
-                }
-
-                itemToAbilities.Add(itemId, learnableAbilities);
-            }
+			Dictionary<Byte, Int32> abilityIdToLeftAp = new Dictionary<Byte, Int32>(128);
 
 
-            Dictionary<Byte, Int32> dic = new Dictionary<Byte, Int32>(keyToItem.Count);
-            foreach (var pair in keyToItem)
-            {
-                FF9ITEM_DATA itemData = pair.Value;
-                Byte itemId = itemDataToItemId[itemData];
-                List<Byte> abilities = itemToAbilities[itemId];
+			CharacterAbility[] array = ff9abil._FF9Abil_PaData[characterPresetId];
+			foreach (var ability in array)
+			{
+				Byte abilityId = ability.Id;
 
-                Int32 totalApLeft = 0;
-                foreach (Byte abilityId in abilities)
-                {
-                    Int32 leftAp = abilityIdToLeftAp[abilityId];
-                    if (leftAp != Int32.MaxValue)
-                        totalApLeft += leftAp;
-                }
-                if (totalApLeft == 0)
-                    totalApLeft = Int32.MaxValue;
+				Int32 cur = ff9abil.FF9Abil_GetAp(characterIndex, abilityId);
+				Int32 max = ff9abil.FF9Abil_GetMax(characterIndex, abilityId);
 
-                dic.Add(itemId, totalApLeft);
-            }
-            return dic;
-        }
+				if (cur < max)
+				{
+					if (cur > 0)
+						abilityIdToLeftAp.Add(abilityId, max - cur);
+					else
+						abilityIdToLeftAp.Add(abilityId, Int32.MaxValue);
+				}
+			}
 
-        private static IEnumerable<Byte> EnumerateItemIds(Character character)
-        {
-            HashSet<Byte> values = new HashSet<Byte>();
+			Dictionary<Int64, FF9ITEM_DATA> keyToItem = new Dictionary<Int64, FF9ITEM_DATA>(255);
+			Dictionary<FF9ITEM_DATA, Byte> itemDataToItemId = new Dictionary<FF9ITEM_DATA, Byte>(255);
+			Dictionary<Byte, List<Byte>> itemToAbilities = new Dictionary<Byte, List<Byte>>(255);
 
-            CharacterEquipment equipment = character.Equipment;
-            for (Int32 i = 0; i < 5; i++)
-            {
-                Byte itemId = equipment[i];
-                if (itemId != Byte.MaxValue)
-                    if (values.Add(itemId))
-                        yield return itemId;
-            }
+			foreach (Byte itemId in EnumerateItemIds(character))
+			{
+				FF9ITEM_DATA itemData = ff9item._FF9Item_Data[itemId];
+				if ((itemData.equip & characterMask) == 0)
+					continue;
 
-            for (Int32 itemIndex = 0; itemIndex <= 255; itemIndex++)
-            {
-                FF9ITEM item = FF9StateSystem.Common.FF9.item[itemIndex];
-                if (item.count < 1)
-                    continue;
+				List<Byte> learnableAbilities = new List<Byte>(3);
+				foreach (Byte abilityId in itemData.ability)
+				{
+					if (abilityIdToLeftAp.ContainsKey(abilityId))
+						learnableAbilities.Add(abilityId);
+				}
 
-                if (values.Add(item.id))
-                    yield return item.id;
-            }
-        }
-    }
+				if (learnableAbilities.Count == 0)
+					continue;
 
-    private static Boolean HasLearnableAbilities(FF9ITEM_DATA itemData, CharacterIndex characterIndex, out Int32 leftAp)
-    {
-        foreach (Byte abilityId in itemData.ability)
-        {
-            if (abilityId == 0)
-                continue;
+				itemDataToItemId.Add(itemData, itemId);
 
-            if (ff9abil.FF9Abil_GetIndex(characterIndex, abilityId) < 0)
-                continue;
+				learnableAbilities.Sort();
 
-            Int32 cur = ff9abil.FF9Abil_GetAp(characterIndex, abilityId);
-            Int32 max = ff9abil.FF9Abil_GetMax(characterIndex, abilityId);
-            if (cur < max)
-            {
-                if (cur > 0)
-                    leftAp = max - cur;
-                else
-                    leftAp = Int32.MaxValue;
+				Int64 key = itemData.equip;
+				for (Int32 i = 0; i < learnableAbilities.Count; i++)
+					key |= ((Int64) learnableAbilities[i] << ((i + 2) * 8));
 
-                return true;
-            }
-        }
+				FF9ITEM_DATA oldData;
+				if (keyToItem.TryGetValue(key, out oldData))
+				{
+					if (oldData.eq_lv < itemData.eq_lv)
+						keyToItem[key] = itemData;
+				}
+				else
+				{
+					keyToItem.Add(key, itemData);
+				}
 
-        leftAp = Int32.MaxValue;
-        return false;
-    }
+				itemToAbilities.Add(itemId, learnableAbilities);
+			}
 
 
-    private void EquipStrongest()
+			Dictionary<Byte, Int32> dic = new Dictionary<Byte, Int32>(keyToItem.Count);
+			foreach (var pair in keyToItem)
+			{
+				FF9ITEM_DATA itemData = pair.Value;
+				Byte itemId = itemDataToItemId[itemData];
+				List<Byte> abilities = itemToAbilities[itemId];
+
+				Int32 totalApLeft = 0;
+				foreach (Byte abilityId in abilities)
+				{
+					Int32 leftAp = abilityIdToLeftAp[abilityId];
+					if (leftAp != Int32.MaxValue)
+						totalApLeft += leftAp;
+				}
+
+				if (totalApLeft == 0)
+					totalApLeft = Int32.MaxValue;
+
+				dic.Add(itemId, totalApLeft);
+			}
+
+			return dic;
+		}
+
+		private static IEnumerable<Byte> EnumerateItemIds(Character character)
+		{
+			HashSet<Byte> values = new HashSet<Byte>();
+
+			CharacterEquipment equipment = character.Equipment;
+			for (Int32 i = 0; i < 5; i++)
+			{
+				Byte itemId = equipment[i];
+				if (itemId != Byte.MaxValue)
+					if (values.Add(itemId))
+						yield return itemId;
+			}
+
+			for (Int32 itemIndex = 0; itemIndex <= 255; itemIndex++)
+			{
+				FF9ITEM item = FF9StateSystem.Common.FF9.item[itemIndex];
+				if (item.count < 1)
+					continue;
+
+				if (values.Add(item.id))
+					yield return item.id;
+			}
+		}
+	}
+
+	private static Boolean HasLearnableAbilities(FF9ITEM_DATA itemData, CharacterIndex characterIndex, out Int32 leftAp)
+	{
+		foreach (Byte abilityId in itemData.ability)
+		{
+			if (abilityId == 0)
+				continue;
+
+			if (ff9abil.FF9Abil_GetIndex(characterIndex, abilityId) < 0)
+				continue;
+
+			Int32 cur = ff9abil.FF9Abil_GetAp(characterIndex, abilityId);
+			Int32 max = ff9abil.FF9Abil_GetMax(characterIndex, abilityId);
+			if (cur < max)
+			{
+				if (cur > 0)
+					leftAp = max - cur;
+				else
+					leftAp = Int32.MaxValue;
+
+				return true;
+			}
+		}
+
+		leftAp = Int32.MaxValue;
+		return false;
+	}
+
+
+	private void EquipStrongest()
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
 		Int32 itemId = 0;
-		Int32 num2 = (CharacterId)ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter);
+		Int32 num2 = ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter);
 		for (Int32 i = 0; i < 5; i++)
 		{
-			Int32 currentLevel = (Int32)((player.equip[i] == Byte.MaxValue) ? -1 : ((Int32)ff9item._FF9Item_Data[(Int32)player.equip[i]].eq_lv));
+			Int32 currentLevel = (player.equip[i] == Byte.MaxValue) ? -1 : ff9item._FF9Item_Data[player.equip[i]].eq_lv;
 			Int32 bestLevel = -1;
 			FF9ITEM ff9ITEM = FF9StateSystem.Common.FF9.item[0];
 			for (Int32 j = 0; j < 256; j++)
 			{
 				if (ff9ITEM.count > 0)
 				{
-					FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)ff9ITEM.id];
-					if ((ff9ITEM_DATA.type & this.partMask[i]) != 0 && (ff9ITEM_DATA.equip & this.charMask[num2]) != 0 && (Int32)ff9ITEM_DATA.eq_lv > bestLevel)
+					FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[ff9ITEM.id];
+					if ((ff9ITEM_DATA.type & this.partMask[i]) != 0 && (ff9ITEM_DATA.equip & this.charMask[num2]) != 0 && ff9ITEM_DATA.eq_lv > bestLevel)
 					{
-						bestLevel = (Int32)ff9ITEM_DATA.eq_lv;
-						itemId = (Int32)ff9ITEM.id;
+						bestLevel = ff9ITEM_DATA.eq_lv;
+						itemId = ff9ITEM.id;
 					}
 				}
+
 				ff9ITEM = FF9StateSystem.Common.FF9.item[j];
 			}
+
 			if (bestLevel > currentLevel)
 			{
 				if (player.equip[i] != 255)
@@ -1299,14 +1334,17 @@ public class EquipUI : UIScene
 					{
 						ff9item.DecreaseMoonStoneCount();
 					}
-					ff9item.FF9Item_Add((Int32)player.equip[i], 1);
+
+					ff9item.FF9Item_Add(player.equip[i], 1);
 				}
+
 				if (ff9item.FF9Item_Remove(itemId, 1) != 0)
 				{
-					player.equip[i] = (Byte)itemId;
+					player.equip[i] = (Byte) itemId;
 				}
 			}
 		}
+
 		this.UpdateCharacterData(player);
 		FF9Sfx.FF9SFX_Play(107);
 	}
@@ -1325,59 +1363,65 @@ public class EquipUI : UIScene
 		{
 			itemId = player.equip[this.currentEquipPart];
 		}
+
 		ff9PLAY_INFO.Base = player.basis;
 		ff9PLAY_INFO.cur_hp = player.cur.hp;
-		ff9PLAY_INFO.cur_mp = (UInt16)player.cur.mp;
-        ff9PLAY_INFO.equip.Absorb(player.equip);
-        for (Int32 j = 0; j < (Int32)player.sa.Length; j++)
+		ff9PLAY_INFO.cur_mp = (UInt16) player.cur.mp;
+		ff9PLAY_INFO.equip.Absorb(player.equip);
+		for (Int32 j = 0; j < player.sa.Length; j++)
 		{
 			ff9PLAY_INFO.sa[j] = player.sa[j];
 		}
+
 		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
 		{
 			ff9PLAY_INFO.equip[this.currentEquipPart] = itemId;
 			ff9play.FF9Play_GetSkill(ref ff9PLAY_INFO, ref result);
 		}
-		else if (this.currentMenu == EquipUI.SubMenu.Off && ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentEquipPart != 0)
+		else if (this.currentMenu == SubMenu.Off && ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentEquipPart != 0)
 		{
-		    ff9PLAY_INFO.equip[this.currentEquipPart] = CharacterEquipment.EmptyItemId;
+			ff9PLAY_INFO.equip[this.currentEquipPart] = CharacterEquipment.EmptyItemId;
 			ff9play.FF9Play_GetSkill(ref ff9PLAY_INFO, ref result);
 		}
+
 		return result;
 	}
 
-	public EquipUI.SubMenu GetSubMenuFromGameObject(GameObject go)
+	public SubMenu GetSubMenuFromGameObject(GameObject go)
 	{
 		if (go == this.EquipSubMenu)
 		{
-			return EquipUI.SubMenu.Equip;
+			return SubMenu.Equip;
 		}
+
 		if (go == this.OptimizeSubMenu)
 		{
-			return EquipUI.SubMenu.Optimize;
+			return SubMenu.Optimize;
 		}
+
 		if (go == this.OffSubMenu)
 		{
-			return EquipUI.SubMenu.Off;
+			return SubMenu.Off;
 		}
-		return EquipUI.SubMenu.None;
+
+		return SubMenu.None;
 	}
 
 	private void Awake()
 	{
 		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
 		UIEventListener uieventListener = UIEventListener.Get(this.EquipSubMenu);
-		uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		uieventListener.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		UIEventListener uieventListener2 = UIEventListener.Get(this.OptimizeSubMenu);
-		uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		uieventListener2.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		UIEventListener uieventListener3 = UIEventListener.Get(this.OffSubMenu);
-		uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		uieventListener3.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		this.characterHud = new CharacterDetailHUD(this.CharacterDetailPanel, false);
-		this.parameterHud = new EquipUI.ParameterDetailCompareHUD(this.CharacterParameterPanel);
+		this.parameterHud = new ParameterDetailCompareHUD(this.CharacterParameterPanel);
 		this.equipmentHud = new EquipmentDetailHud(this.EquipmentPartListPanel.GetChild(0));
 		this.weaponPartIconSprite = this.equipmentHud.Weapon.Self.GetChild(2).GetComponent<UISprite>();
 		this.weaponPartColonLabel = this.equipmentHud.Weapon.Self.GetChild(3).GetComponent<UILabel>();
-		this.equipmentSelectHud = new EquipUI.EquipmentItemListHUD(this.EquipmentAbilityPanel.GetChild(0));
+		this.equipmentSelectHud = new EquipmentItemListHUD(this.EquipmentAbilityPanel.GetChild(0));
 		this.equipmentAbilitySelectHudList[0] = new AbilityItemHUD(this.EquipmentAbilityPanel.GetChild(1).GetChild(0));
 		this.equipmentAbilitySelectHudList[1] = new AbilityItemHUD(this.EquipmentAbilityPanel.GetChild(1).GetChild(1));
 		this.equipmentAbilitySelectHudList[2] = new AbilityItemHUD(this.EquipmentAbilityPanel.GetChild(1).GetChild(2));
@@ -1385,10 +1429,11 @@ public class EquipUI : UIScene
 		this.equipmentListCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILabel>();
 		foreach (Object obj in this.EquipmentPartListPanel.GetChild(0).transform)
 		{
-			Transform transform = (Transform)obj;
-			UIEventListener uieventListener4 = UIEventListener.Get(transform.gameObject);
-			uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
+			Transform tr = (Transform) obj;
+			UIEventListener uieventListener4 = UIEventListener.Get(tr.gameObject);
+			uieventListener4.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		}
+
 		this.submenuArrowGameObject = this.SubMenuPanel.GetChild(0);
 		this.equipSelectScrollList = this.EquipmentInventoryListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
 		this.equipmentSelectionTransition = this.TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
@@ -1398,16 +1443,17 @@ public class EquipUI : UIScene
 		this.itemIdList.Add(new List<FF9ITEM>());
 		this.itemIdList.Add(new List<FF9ITEM>());
 		this.itemIdList.Add(new List<FF9ITEM>());
-        this.tempItemList = new FF9ITEM[45];
-        for (int i = 0; i < (int)this.tempItemList.Length; i++)
-        {
-            this.tempItemList[i] = new FF9ITEM(byte.MaxValue, 0);
-        }
-        this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
+		this.tempItemList = new FF9ITEM[45];
+		for (int i = 0; i < this.tempItemList.Length; i++)
+		{
+			this.tempItemList[i] = new FF9ITEM(byte.MaxValue, 0);
+		}
 
-	    ChangeEquipButtonWidth();
+		this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
 
-	    if (FF9StateSystem.MobilePlatform)
+		ChangeEquipButtonWidth();
+
+		if (FF9StateSystem.MobilePlatform)
 		{
 			this.EquipSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "EquipDetailHelpForMobile";
 			this.OptimizeSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "OptimizeHelpForMobile";
@@ -1415,113 +1461,57 @@ public class EquipUI : UIScene
 		}
 	}
 
-    private void ChangeEquipButtonWidth()
-    {
-        GameObject label = this.EquipSubMenu.GetChild(1);
-        GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
-        localizableLable.Label.width = 220;
-    }
+	private void ChangeEquipButtonWidth()
+	{
+		GameObject label = this.EquipSubMenu.GetChild(1);
+		GOLocalizableLabel localizableLable = new GOLocalizableLabel(label);
+		localizableLable.Label.width = 220;
+	}
 
-    public GameObject EquipSubMenu;
-
+	public GameObject EquipSubMenu;
 	public GameObject OptimizeSubMenu;
-
 	public GameObject OffSubMenu;
-
 	public GameObject HelpDespLabelGameObject;
-
 	public GameObject SubMenuPanel;
-
 	public GameObject TransitionGroup;
-
 	public GameObject CharacterDetailPanel;
-
 	public GameObject CharacterParameterPanel;
-
 	public GameObject EquipmentAbilityPanel;
-
 	public GameObject CharacterArrowPanel;
-
 	public GameObject EquipmentPartListPanel;
-
 	public GameObject EquipmentInventoryListPanel;
-
 	public GameObject ScreenFadeGameObject;
-
 	private UISprite weaponPartIconSprite;
-
 	private UILabel weaponPartColonLabel;
-
 	private UILabel equipmentListCaption;
-
 	private CharacterDetailHUD characterHud;
-
-	private EquipUI.ParameterDetailCompareHUD parameterHud;
-
+	private ParameterDetailCompareHUD parameterHud;
 	private EquipmentDetailHud equipmentHud;
-
 	private GameObject equipmentPartCaption;
-
-	private EquipUI.EquipmentItemListHUD equipmentSelectHud;
-
+	private EquipmentItemListHUD equipmentSelectHud;
 	private AbilityItemHUD[] equipmentAbilitySelectHudList = new AbilityItemHUD[3];
-
 	private HonoTweenPosition equipmentSelectionTransition;
-
 	private HonoAvatarTweenPosition avatarTransition;
-
 	private GameObject submenuArrowGameObject;
-
 	private RecycleListPopulator equipSelectScrollList;
 
 	private static String SubMenuGroupButton = "Equip.SubMenu";
-
 	private static String EquipmentGroupButton = "Equip.Equipment";
-
 	private static String InventoryGroupButton = "Equip.Inventory";
 
 	private List<List<FF9ITEM>> itemIdList = new List<List<FF9ITEM>>();
-
-    private FF9ITEM[] tempItemList;
-
-    private Int32 currentPartyIndex;
-
-	private EquipUI.SubMenu currentMenu = EquipUI.SubMenu.None;
-
+	private FF9ITEM[] tempItemList;
+	private Int32 currentPartyIndex;
+	private SubMenu currentMenu = SubMenu.None;
 	private Int32 currentEquipPart = -1;
-
 	private Int32 currentItemIndex = -1;
-
 	private Boolean fastSwitch;
-
 	private UILocalize selectedCaption;
 
-	private UInt16[] charMask = new UInt16[]
-	{
-		2048,
-		1024,
-		512,
-		256,
-		128,
-		64,
-		32,
-		16,
-		8,
-		4,
-		2,
-		1
-	};
+	private UInt16[] charMask = {2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1};
+	private Byte[] partMask = {128, 32, 64, 16, 8};
 
-	private Byte[] partMask = new Byte[]
-	{
-		128,
-		32,
-		64,
-		16,
-		8
-	};
-
-    private Boolean _equipForAbilityLearning;
+	private Boolean _equipForAbilityLearning;
 
 	public class ParameterDetailCompareHUD
 	{
@@ -1540,33 +1530,33 @@ public class EquipUI : UIScene
 					this.ArrowTween[num] = go.GetChild(i).GetChild(2).GetComponent<TweenAlpha>();
 					num++;
 				}
+
 				i++;
 			}
-			NewParameterLabel[3].gameObject.AddComponent<FixSpiritSkillNumberLabelPos>();
-		}
-		
-		public class FixSpiritSkillNumberLabelPos : MonoBehaviour
-    {
-        void Start()
-        {
-            transform.localPosition = Vector2.right * 292;
-        }
 
-        void OnEnable()
-        {
-            transform.localPosition = Vector2.right * 292;
-        }
-    }
+			// Spirit label fix: http://forums.qhimm.com/index.php?topic=14315.msg277655#msg277655
+			FixPositionX.Fix(NewParameterLabel[3].gameObject, NewParameterLabel[2].gameObject);
+		}
 
 		public GameObject Self;
-
 		public UILabel[] ParameterLabel = new UILabel[9];
-
 		public UILabel[] NewParameterLabel = new UILabel[9];
-
 		public UISprite[] ArrowSprite = new UISprite[9];
-
 		public TweenAlpha[] ArrowTween = new TweenAlpha[9];
+
+		private class FixPositionX : MonoBehaviour
+		{
+			public static void Fix(GameObject spiritLabel, GameObject validLabel)
+			{
+				FixPositionX fix = spiritLabel.EnsureExactComponent<FixPositionX>();
+				fix.Reference = validLabel;
+			}
+
+			private GameObject Reference { get; set; }
+			private void Start() => Fix();
+			private void OnEnable() => Fix();
+			private void Fix() => transform.SetX(Reference.transform.localPosition.x);
+		}
 	}
 
 	public class EquipmentItemListHUD
@@ -1581,9 +1571,7 @@ public class EquipUI : UIScene
 		}
 
 		public GameObject Self;
-
 		public UISprite PartIconSprite;
-
 		public ItemListDetailWithIconHUD Equipment;
 	}
 

@@ -279,6 +279,8 @@
     <Compile Include="Memoria\Configuration\Structure\FixesSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\HacksSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\TetraMasterSection.cs" />
+    <Compile Include="Memoria\Data\Battle\AccessoryItem.cs" />
+    <Compile Include="Memoria\Data\Battle\BattleAbilityHelper.cs" />
     <Compile Include="Memoria\Data\Charactes\EquipmentSetId.cs" />
     <Compile Include="Memoria\Field\TileMap.cs" />
     <Compile Include="Memoria\Field\TileCoordinates.cs" />
