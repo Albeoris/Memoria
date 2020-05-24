@@ -295,7 +295,7 @@ namespace Assets.Sources.Graphics.Movie
 				this.m_uvHeight = MovieMaterial.GetUVHeight(this.m_nativeContext);
 				this.currentFPS = this.FPS;
 				this.currentDuration = MovieMaterial.GetDuration(this.m_nativeContext);
-				this.playSpeed = (Single) (this.playSpeed * (15.0 / currentFPS)); 
+				this.playSpeed = (Single) (15.0 / currentFPS); 
 				this.CalculateUVScaleOffset();
 				return;
 			}

@@ -304,10 +304,12 @@ public static class NarrowMapList
         2927, // Crystal World
         2929, // last/cw mbg a
         2930, // last/cw mbg 0
+        2932, // last/cw brg 0
         2933, // last/cw mbg 1
         2934, // last/cw mbg 2
         2950, // Chocobo’s Forest
         2953, // Chocobo’s Dream World
+        3008, // Ending/Prima Vista - Meeting Room
         3010, // Ending/TH
         3011, // Ending/TH
         3052, // Mage Village/Cemetery
