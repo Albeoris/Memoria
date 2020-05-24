@@ -38,7 +38,7 @@
             /// return
             /// End the function.
             /// </summary>
-            rsv04 = 0x04,
+            Return = 0x04,
 
             /// <summary>
             /// set

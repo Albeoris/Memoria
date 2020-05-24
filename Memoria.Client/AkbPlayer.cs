@@ -37,7 +37,7 @@ namespace Memoria.Client
                 //soundProfile.SoundProfileType = SoundProfileType.Music;
 
 
-                //String path = @"W:\Steam\steamapps\common\FINAL FANTASY IX\StreamingAssets\Sounds\Sounds01\BGM_\music033";
+                //String path = @"StreamingAssets\Sounds\Sounds01\BGM_\music033";
                 //DateTime writeTime = File.GetLastWriteTimeUtc(path);
 
                 //Byte[] array = File.ReadAllBytes(path);

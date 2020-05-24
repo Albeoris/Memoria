@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using FF8.JSM;
+using FF8.JSM.Format;
 using FF8.JSM.Instructions;
+using Memoria.EventEngine.Execution;
 using Memoria.Prime;
 
 namespace Memoria.EventEngine.EV
@@ -75,6 +78,10 @@ namespace Memoria.EventEngine.EV
                         EVScriptMaker scriptMaker = new EVScriptMaker(code.Segment(position, size));
                         Jsm.ExecutableSegment scriptSegment = MakeScript(scriptMaker);
                         scripts[s] = new EVScript(info.Id, scriptSegment);
+
+                        var sw = new ScriptWriter();
+                        scripts[s].FormatMethod(sw, new DummyFormatterContext(), StatelessServices.Instance);
+                        var result = sw.Release();
                     }
 
                     if (codeUsage != code.Length)
@@ -97,36 +104,51 @@ namespace Memoria.EventEngine.EV
             Jsm.LabeledStack stack = new Jsm.LabeledStack();
             Jsm.LabelBuilder labelBuilder = new Jsm.LabelBuilder(maker.Size);
 
+            var currentLabel = maker.Offset;
+
             while (maker.TryReadOpcode(out Jsm.Opcode opcode))
             {
-                stack.CurrentLabel = maker.Offset;
+                if (opcode == Jsm.Opcode.NOP)
+                    throw new InvalidProgramException("if (opcode == Jsm.Opcode.NOP)");
 
                 if (opcode == Jsm.Opcode.EXPR)
                 {
-                    IJsmExpression expression = Jsm.Expression.TryMake(maker, stack);
-                    stack.Push(expression);
+                    currentLabel = maker.Offset - 1;
+                        
+                    stack.Clear();
+                    Jsm.Expression.Evaluate(maker, stack);
+
+                    if (stack.TryPeek() is JsmInstruction setter)
+                    {
+                        labelBuilder.TraceInstruction(maker.Offset, currentLabel, new Jsm.IndexedInstruction(instructions.Count, setter));
+                        instructions.Add(setter);
+                        currentLabel = maker.Offset;
+                    }
+
                     continue;
                 }
 
-                // JsmInstruction instruction = JsmInstruction.TryMake(opcode, parameter, stack);
-                // if (instruction != null)
-                // {
-                //     labelBuilder.TraceInstruction(i, stack.CurrentLabel, new Jsm.IndexedInstruction(instructions.Count, instruction));
-                //     instructions.Add(instruction);
-                //     continue;
-                // }
+                
+                JsmInstruction instruction = JsmInstruction.TryMake(opcode, maker, stack);
+                if (instruction != null)
+                {
+                    labelBuilder.TraceInstruction(maker.Offset, currentLabel, new Jsm.IndexedInstruction(instructions.Count, instruction));
+                    instructions.Add(instruction);
+                    currentLabel = maker.Offset;
+                    continue;
+                }
 
                 throw new NotSupportedException(opcode.ToString());
             }
 
-            if (stack.Count != 0)
-                throw new InvalidProgramException("Stack unbalanced.");
+            stack.Clear();
 
             // if (!(instructions.First() is LBL))
             //     throw new InvalidProgramException("Script must start with a label.");
             //
-            // if (!(instructions.Last() is IRET))
-            //     throw new InvalidProgramException("Script must end with a return.");
+            
+            if (!(instructions.Last() is RETURN))
+                throw new InvalidProgramException("Script must end with a return.");
 
             // Switch from opcodes to instructions
             HashSet<Int32> labelIndices = labelBuilder.Commit();

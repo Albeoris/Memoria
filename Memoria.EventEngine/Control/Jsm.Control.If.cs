@@ -78,14 +78,14 @@ namespace FF8.JSM
                 private void FormatIf(StringBuilder sb, Segment ifRange)
                 {
                     sb.Append("if(");
-                    sb.Append((JPF)_instructions[ifRange.From]);
+                    sb.Append((JMP_IF)_instructions[ifRange.From]);
                     sb.AppendLine(")");
                 }
 
                 private void FormatElseIf(StringBuilder sb, Segment elseIfRange)
                 {
                     sb.Append("else if(");
-                    sb.Append((JPF)_instructions[elseIfRange.From]);
+                    sb.Append((JMP_IF)_instructions[elseIfRange.From]);
                     sb.AppendLine(")");
                 }
 

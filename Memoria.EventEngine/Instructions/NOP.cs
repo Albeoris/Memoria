@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.EventEngine.EV;
 using Memoria.Prime.Collections;
 
 namespace FF8.JSM.Instructions
@@ -9,9 +10,9 @@ namespace FF8.JSM.Instructions
         {
         }
 
-        public NOP(IStack<IJsmExpression> stack)
-            : this()
+        public static JsmInstruction Create(JsmInstructionReader reader)
         {
+            return new NOP();
         }
 
         public override String ToString()

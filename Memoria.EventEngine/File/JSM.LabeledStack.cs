@@ -25,6 +25,11 @@ namespace FF8.JSM
                 return _stack.Peek();
             }
 
+            public IJsmExpression TryPeek()
+            {
+                return Count == 0 ? null : _stack.Peek();
+            }
+
             public IJsmExpression Pop()
             {
                 IJsmExpression result = _stack.Pop();
@@ -33,6 +38,12 @@ namespace FF8.JSM
                 _positions.Remove(result);
 
                 return result;
+            }
+
+            public void Clear()
+            {
+                while (Count > 0)
+                    Pop();
             }
         }
     }

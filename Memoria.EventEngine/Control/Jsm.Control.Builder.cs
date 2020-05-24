@@ -25,7 +25,7 @@ namespace FF8.JSM
                 }
 
                 private Int32 _index;
-                private JPF _begin;
+                private JMP_IF _begin;
 
                 public IJsmControl[] Make()
                 {
@@ -56,7 +56,7 @@ namespace FF8.JSM
                         return true;
                     }
 
-                    if (!(instruction is JPF jpf))
+                    if (!(instruction is JMP_IF jpf))
                         return true;
 
                     if (!_processed.TryProcess(jpf))
@@ -80,7 +80,7 @@ namespace FF8.JSM
 
                 private Boolean TryMakeIf()
                 {
-                    JPF jpf = _begin;
+                    JMP_IF jmpIf = _begin;
                     JMP jmp = _instructions[_begin.Index - 1] as JMP;
 
                     If control = new If(_instructions, _index, _begin.Index);
@@ -92,13 +92,13 @@ namespace FF8.JSM
                         return true;
                     }
 
-                    if (jmp.Index == jpf.Index)
+                    if (jmp.Index == jmpIf.Index)
                     {
                         // It isn't our jump, but an nested if. If { nested if{}<-}
                         return true;
                     }
 
-                    if (jmp.Index < jpf.Index)
+                    if (jmp.Index < jmpIf.Index)
                     {
                         // It isn't our jump, but an nested loop. If { nested while{}<-}
                         return true;
@@ -111,37 +111,37 @@ namespace FF8.JSM
                     }
 
                     _processed.Process(jmp);
-                    AddIfElseBranches(control, jpf, jmp);
+                    AddIfElseBranches(control, jmpIf, jmp);
                     return true;
                 }
 
-                private void AddIfElseBranches(If control, JPF jpf, JMP jmp)
+                private void AddIfElseBranches(If control, JMP_IF jmpIf, JMP jmp)
                 {
                     Int32 endOfBlock = jmp.Index;
 
                     while (true)
                     {
-                        Int32 newJpfIndex = jpf.Index;
-                        JPF newJpf = _instructions[newJpfIndex] as JPF;
-                        if (newJpf == null || newJpf.Index > endOfBlock)
+                        Int32 newJpfIndex = jmpIf.Index;
+                        JMP_IF newJmpIf = _instructions[newJpfIndex] as JMP_IF;
+                        if (newJmpIf == null || newJmpIf.Index > endOfBlock)
                         {
-                            control.AddElse(jpf.Index, endOfBlock);
+                            control.AddElse(jmpIf.Index, endOfBlock);
                             return;
                         }
 
-                        JMP newJmp = _instructions[newJpf.Index - 1] as JMP;
+                        JMP newJmp = _instructions[newJmpIf.Index - 1] as JMP;
                         if (newJmp == null)
                         {
-                            if (newJpf.Index == endOfBlock)
+                            if (newJmpIf.Index == endOfBlock)
                             {
                                 // if-elseif without jmp
-                                _processed.Process(newJpf);
-                                control.AddIf(newJpfIndex, newJpf.Index);
+                                _processed.Process(newJmpIf);
+                                control.AddIf(newJpfIndex, newJmpIf.Index);
                             }
                             else
                             {
                                 // if-else without jmp
-                                control.AddElse(jpf.Index, endOfBlock);
+                                control.AddElse(jmpIf.Index, endOfBlock);
                             }
 
                             return;
@@ -150,18 +150,18 @@ namespace FF8.JSM
                         // Isn't our jump
                         if (newJmp.Index != endOfBlock)
                         {
-                            control.AddElse(jpf.Index, endOfBlock);
+                            control.AddElse(jmpIf.Index, endOfBlock);
                             return;
                         }
 
-                        jpf = newJpf;
+                        jmpIf = newJmpIf;
                         jmp = newJmp;
-                        _processed.Process(jpf);
+                        _processed.Process(jmpIf);
                         _processed.TryProcess(jmp);
 
-                        control.AddIf(newJpfIndex, jpf.Index);
+                        control.AddIf(newJpfIndex, jmpIf.Index);
 
-                        if (jpf.Index == endOfBlock)
+                        if (jmpIf.Index == endOfBlock)
                             return;
                     }
                 }

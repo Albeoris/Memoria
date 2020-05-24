@@ -27,7 +27,7 @@ namespace FF8.JSM
                     public override void ToString(StringBuilder sb)
                     {
                         sb.Append("if(");
-                        sb.Append((JPF)_list[0]);
+                        sb.Append((JMP_IF)_list[0]);
                         sb.AppendLine(")");
                         FormatBranch(sb, _list.Skip(1));
                     }
@@ -35,7 +35,7 @@ namespace FF8.JSM
                     public override void Format(ScriptWriter sw, IScriptFormatterContext formatterContext, IServices services)
                     {
                         sw.Append("if(");
-                        Jpf.Format(sw, formatterContext, services);
+                        JmpIf.Format(sw, formatterContext, services);
                         sw.AppendLine(")");
                         FormatBranch(sw, formatterContext, services, GetBodyInstructions());
 
@@ -48,7 +48,7 @@ namespace FF8.JSM
                         return new Executer(_aggregator);
                     }
 
-                    public JPF Jpf => ((JPF)_list[0]);
+                    public JMP_IF JmpIf => ((JMP_IF)_list[0]);
 
                     public IEnumerable<IJsmInstruction> GetBodyInstructions()
                     {

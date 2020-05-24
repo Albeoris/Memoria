@@ -24,7 +24,7 @@ namespace FF8.JSM
                     public override void ToString(StringBuilder sb)
                     {
                         sb.Append("else if(");
-                        sb.Append(Jpf);
+                        sb.Append(JmpIf);
                         sb.AppendLine(")");
                         FormatBranch(sb, GetBodyInstructions());
                     }
@@ -32,12 +32,12 @@ namespace FF8.JSM
                     public override void Format(ScriptWriter sw, IScriptFormatterContext formatterContext, IServices services)
                     {
                         sw.Append("else if(");
-                        ((JPF)_list[0]).Format(sw, formatterContext, services);
+                        ((JMP_IF)_list[0]).Format(sw, formatterContext, services);
                         sw.AppendLine(")");
                         FormatBranch(sw, formatterContext, services, GetBodyInstructions());
                     }
 
-                    public JPF Jpf => ((JPF)_list[0]);
+                    public JMP_IF JmpIf => ((JMP_IF)_list[0]);
 
                     public IEnumerable<IJsmInstruction> GetBodyInstructions()
                     {

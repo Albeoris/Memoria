@@ -80,19 +80,19 @@ namespace FF8.JSM.Format
             return message.Split(Separators, StringSplitOptions.None);
         }
 
-        public static void FormatGlobalGet<T>(GlobalVariableId<T> globalVariable, Int32[] knownVariables, ScriptWriter sw, IScriptFormatterContext formatterContext, IServices executionContext) where T: unmanaged
+        public static void FormatGlobalGet<T>(GlobalVariableId globalVariable, Int32[] knownVariables, ScriptWriter sw, IScriptFormatterContext formatterContext, IServices executionContext) where T: unmanaged
         {
             if (knownVariables == null || Array.BinarySearch(knownVariables, globalVariable.VariableId) < 0)
             {
                 sw.Append("(");
-                sw.Append(GlobalVariableId<T>.TypeName);
+                sw.Append(globalVariable.TypeName);
                 sw.Append(")");
                 sw.Append("G");
             }
             else
             {
                 sw.Append("G");
-                sw.Append(GlobalVariableId<T>.TypeName);
+                sw.Append(globalVariable.TypeName);
             }
 
             sw.Append("[");
@@ -100,7 +100,7 @@ namespace FF8.JSM.Format
             sw.Append("]");
         }
 
-        public static void FormatGlobalSet<T>(GlobalVariableId<T> globalVariable, IJsmExpression value, Int32[] knownVariables, ScriptWriter sw, IScriptFormatterContext formatterContext, IServices executionContext) where T: unmanaged
+        public static void FormatGlobalSet<T>(GlobalVariableId globalVariable, IJsmExpression value, Int32[] knownVariables, ScriptWriter sw, IScriptFormatterContext formatterContext, IServices executionContext) where T: unmanaged
         {
             sw.Append("G");
 
@@ -111,12 +111,12 @@ namespace FF8.JSM.Format
                 sw.Append("]");
                 sw.Append(" = ");
                 sw.Append("(");
-                sw.Append(GlobalVariableId<T>.TypeName);
+                sw.Append(globalVariable.TypeName);
                 sw.Append(")");
             }
             else
             {
-                sw.Append(GlobalVariableId<T>.TypeName);
+                sw.Append(globalVariable.TypeName);
                 sw.Append("[");
                 sw.Append(globalVariable.VariableId.ToString(CultureInfo.InvariantCulture));
                 sw.Append("]");

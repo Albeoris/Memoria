@@ -2,7 +2,6 @@
 // Type: UnityXInput.Input
 // Assembly: Assembly-CSharp, Version=1.0.6017.29125, Culture=neutral, PublicKeyToken=null
 // MVID: 9E13D328-CC20-4729-BE81-A583B120F83A
-// Assembly location: W:\Steam\steamapps\common\FINAL FANTASY IX\x64\FF9_Data\Managed\01.dll
 // Compiler-generated code is shown
 
 using System;

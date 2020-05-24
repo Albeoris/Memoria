@@ -22,7 +22,7 @@ namespace FF8.JSM
 
                     public IEnumerable<IAwaitable> Execute(IServices services)
                     {
-                        while (CanExecute(_seg.Jpf, services))
+                        while (CanExecute(_seg.JmpIf, services))
                         {
                             IEnumerable<IJsmInstruction> executable = _seg.GetBodyInstructions();
                             IScriptExecuter executer = ExecutableSegment.GetExecuter(executable);
@@ -34,11 +34,11 @@ namespace FF8.JSM
                         }
                     }
 
-                    private Boolean CanExecute(JPF jpf, IServices services)
+                    private Boolean CanExecute(JMP_IF jmpIf, IServices services)
                     {
-                        foreach (var condition in jpf.Conditions)
+                        foreach (var condition in jmpIf.Conditions)
                         {
-                            if (!condition.Boolean(services))
+                            if (!condition.IsTrue(services))
                                 return false;
                         }
 

@@ -29,7 +29,7 @@ namespace FF8.JSM
                     StringBuilder sb = new StringBuilder();
 
                     sb.Append("while(");
-                    sb.Append((JPF)_instructions[_segment.From]);
+                    sb.Append((JMP_IF)_instructions[_segment.From]);
                     sb.AppendLine(")");
 
                     sb.AppendLine("{");
@@ -59,7 +59,7 @@ namespace FF8.JSM
                     public override void ToString(StringBuilder sb)
                     {
                         sb.Append("while(");
-                        sb.Append((JPF)_list[0]);
+                        sb.Append((JMP_IF)_list[0]);
                         sb.AppendLine(")");
 
                         FormatBranch(sb, _list.Skip(1));
@@ -68,7 +68,7 @@ namespace FF8.JSM
                     public override void Format(ScriptWriter sw, IScriptFormatterContext formatterContext, IServices services)
                     {
                         sw.Append("while(");
-                        ((JPF)_list[0]).Format(sw, formatterContext, services);
+                        ((JMP_IF)_list[0]).Format(sw, formatterContext, services);
                         sw.AppendLine(")");
                         FormatBranch(sw, formatterContext, services, _list.Skip(1));
                     }
@@ -78,7 +78,7 @@ namespace FF8.JSM
                         return new Executer(this);
                     }
 
-                    public JPF Jpf => ((JPF)_list[0]);
+                    public JMP_IF JmpIf => ((JMP_IF)_list[0]);
 
                     public IEnumerable<IJsmInstruction> GetBodyInstructions()
                     {

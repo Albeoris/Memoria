@@ -31,11 +31,11 @@ namespace FF8.JSM
                             yield return result;
                     }
 
-                    public Boolean CanExecute(JPF jpf, IServices services)
+                    public Boolean CanExecute(JMP_IF jmpIf, IServices services)
                     {
-                        foreach (var condition in jpf.Conditions)
+                        foreach (var condition in jmpIf.Conditions)
                         {
-                            if (!condition.Boolean(services))
+                            if (!condition.IsTrue(services))
                                 return false;
                         }
 
@@ -44,12 +44,12 @@ namespace FF8.JSM
 
                     private IEnumerable<IJsmInstruction> GetExecutableInstructions(IServices services)
                     {
-                        if (CanExecute(_aggregator.IfRange.Jpf, services))
+                        if (CanExecute(_aggregator.IfRange.JmpIf, services))
                             return _aggregator.IfRange.GetBodyInstructions();
 
                         foreach (var elseIf in _aggregator.ElseIfRanges)
                         {
-                            if (CanExecute(elseIf.Jpf, services))
+                            if (CanExecute(elseIf.JmpIf, services))
                             {
                                 return elseIf.GetBodyInstructions();
                             }

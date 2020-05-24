@@ -14,21 +14,17 @@ namespace FF8.JSM
             {
                 public Int64 Value { get; }
 
-                private readonly TypeCode _typeCode;
+                private readonly VariableType _typeCode;
 
-                public static ValueExpression Create(Int32 value) => new ValueExpression(value, TypeCode.Int32);
-                public static ValueExpression Create(UInt32 value) => new ValueExpression(value, TypeCode.UInt32);
-                public static ValueExpression Create(Int16 value) => new ValueExpression(value, TypeCode.Int16);
-                public static ValueExpression Create(UInt16 value) => new ValueExpression(value, TypeCode.UInt16);
-                public static ValueExpression Create(Byte value) => new ValueExpression(value, TypeCode.Byte);
-                public static ValueExpression Create(SByte value) => new ValueExpression(value, TypeCode.SByte);
+                public static ValueExpression Create(Int64 value) => new ValueExpression(value, VariableType.Int24);
+                public static ValueExpression Boolean(Boolean value) => new ValueExpression(value ? 1 : 0, VariableType.Int24);
 
-                private ValueExpression(Int64 value, TypeCode typeCode)
+                public ValueExpression(Int64 value, VariableType typeCode)
                 {
                     Value = value;
                     _typeCode = typeCode;
 
-                    if (_typeCode < TypeCode.SByte || typeCode > TypeCode.UInt32)
+                    if (_typeCode < VariableType.Default || typeCode > VariableType.UInt16)
                         throw new ArgumentOutOfRangeException($"Type {typeCode} isn't supported.", nameof(typeCode));
                 }
 
@@ -36,23 +32,37 @@ namespace FF8.JSM
                 {
                     switch (_typeCode)
                     {
-                        case TypeCode.SByte:
+                        case VariableType.Default:
                             sw.Append("(SByte)");
                             break;
-                        case TypeCode.Byte:
+                        case VariableType.Bit:
+                            sw.Append("(Boolean)");
+                            break;
+                        case VariableType.Int24:
+                            sw.Append("(Int32)");
+                            break;
+                        case VariableType.UInt24:
+                            sw.Append("(UInt32)");
+                            break;
+                        case VariableType.SByte:
+                            sw.Append("(SByte)");
+                            break;
+                        case VariableType.Byte:
                             sw.Append("(Byte)");
                             break;
-                        case TypeCode.Int16:
+                        case VariableType.Int16:
                             sw.Append("(Int16)");
                             break;
-                        case TypeCode.UInt16:
+                        case VariableType.UInt16:
                             sw.Append("(UInt16)");
                             break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
                     sw.Append(Value.ToString(CultureInfo.InvariantCulture));
 
-                    if (_typeCode == TypeCode.UInt32)
+                    if (_typeCode == VariableType.UInt24)
                         sw.Append("u");
                 }
 
@@ -68,7 +78,7 @@ namespace FF8.JSM
 
                 public ILogicalExpression LogicalInverse()
                 {
-                    return new ValueExpression(Value == 0 ? 1 : 0, TypeCode.Int32);
+                    return new ValueExpression(Value == 0 ? 1 : 0, VariableType.Default);
                 }
 
                 public override String ToString()

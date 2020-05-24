@@ -15,12 +15,17 @@ namespace FF8.Core
 
     public static class ServiceId
     {
-        public static ServiceId<IGlobalVariableService> Global { get; } = new GlobalVariableServiceId();
+        public static ServiceId<IVariablesService> Variables { get; } = new VariablesServiceId();
         
-        private sealed class GlobalVariableServiceId : ServiceId<IGlobalVariableService>, IGlobalVariableService
+        private sealed class VariablesServiceId : ServiceId<IVariablesService>, IVariablesService
         {
-            public T Get<T>(GlobalVariableId<T> id) where T : unmanaged => throw new NotSupportedException();
-            public void Set<T>(GlobalVariableId<T> id, T value) where T : unmanaged => throw new NotSupportedException();
+            public Int32 Get(GlobalVariableId id) => throw new NotSupportedException();
+            public void Set(GlobalVariableId id, Int32 value) => throw new NotSupportedException();
+            
+            public Int32 Get(MapVariableId id) => throw new NotSupportedException();
+            public void Set(MapVariableId id, Int32 value) => throw new NotSupportedException();
+            public Int32 Get(SystemVariableId id) => throw new NotSupportedException();
+            public void Set(SystemVariableId id, Int32 value) => throw new NotSupportedException();
         }
     }
 }
