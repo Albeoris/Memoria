@@ -2113,7 +2113,7 @@ public partial class BattleHUD : UIScene
                 List<GameObject> goList = new List<GameObject>();
                 for (Int32 index = 0; index < _enemyCount; ++index)
                 {
-                    if (!_currentEnemyDieState[index] || _targetDead)
+                    if (_targetDead || index < _currentEnemyDieState.Count && !_currentEnemyDieState[index])
                         goList.Add(_targetPanel.Enemies[index]);
                 }
                 ButtonGroupState.SetMultipleTarget(goList, true);
