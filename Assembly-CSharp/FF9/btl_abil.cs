@@ -41,7 +41,28 @@ namespace FF9
 
 	        if (defender.HasSupportAbility(SupportAbility2.ReturnMagic) && (command.Data.aa.Category & 128) != 0) // Magic
             {
-	            btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, command.Data.sub_no, attacker.Id);
+				if (command.Data.tar_id == defender.Id) // Single-target magic
+				{
+					if (!attacker.IsPlayer || attacker.IsUnderStatus(BattleStatus.Death))
+					{
+						for (int retarget_id = 4; retarget_id < 8; retarget_id++)
+						{
+							BattleUnit new_target = btl_scrp.FindBattleUnit((ushort)(1 << retarget_id));
+							if (new_target != null && new_target.Data.bi.target != 0 && !new_target.IsUnderStatus(BattleStatus.Death))
+							{
+								btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, new_target.Id);
+								return true;
+							}
+						}
+						return false;
+					}
+					else
+						btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, attacker.Id);
+				}
+				else if ((command.Data.tar_id & 0xF0) != 0) // Most likely targeting everyone
+					btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, btl_scrp.GetBattleID(2u));
+				else // Multi-target magic
+					btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, btl_scrp.GetBattleID(1u));
 	            return true;
 	        }
 

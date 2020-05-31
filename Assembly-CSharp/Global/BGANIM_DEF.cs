@@ -22,6 +22,10 @@ public class BGANIM_DEF
 		this.frameRate = reader.ReadInt16();
 		this.counter = reader.ReadUInt16();
 		this.offset = reader.ReadUInt32();
+		this.curFrame = 0;
+		this.frameRate = 256;
+		this.counter = 0;
+		this.flags = 1;
         this.CalculateActualFrameCount();
     }
 

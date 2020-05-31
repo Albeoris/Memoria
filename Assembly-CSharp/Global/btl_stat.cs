@@ -582,16 +582,17 @@ public class btl_stat
                 {
                     if (!FF9StateSystem.Battle.isFade)
                         btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                    Byte[][] numArray = new Byte[8][]
+                    Byte[][] numArray = new Byte[9][] // Trance glowing color
                     {
-                        new Byte[3] {Byte.MaxValue, 96, 96},
-                        new Byte[3] {104, 120, Byte.MaxValue},
-                        new Byte[3] {Byte.MaxValue, 184, 120},
+                        new Byte[3] {255, 96, 96},
+                        new Byte[3] {104, 120, 255},
+                        new Byte[3] {255, 184, 120},
                         new Byte[3] {128, 192, 208},
                         new Byte[3] {192, 104, 144},
                         new Byte[3] {208, 112, 120},
                         new Byte[3] {200, 216, 104},
-                        new Byte[3] {208, 184, 104}
+                        new Byte[3] {208, 184, 104},
+                        new Byte[3] {255, 160, 128}
                     };
                     Byte num1 = (Byte)(ff9Battle.btl_cnt % 16);
                     Int16 num2 = (Int16)(bbgInfoPtr.chr_r - (128 - numArray[data.bi.slot_no][0]));

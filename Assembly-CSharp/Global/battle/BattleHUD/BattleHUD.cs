@@ -1682,7 +1682,17 @@ public partial class BattleHUD : UIScene
         }
         else if (cursor == TargetType.All || cursor == TargetType.Everyone || cursor == TargetType.Random)
         {
-            _cursorType = CursorGroup.All;
+			if (cursor == TargetType.All || cursor == TargetType.Random)
+			{
+				if (_defaultTargetAlly)
+					_cursorType = CursorGroup.AllPlayer;
+				else
+					_cursorType = CursorGroup.AllEnemy;
+			}
+			else
+			{
+				_cursorType = CursorGroup.All;
+			}
 
             ChangeTargetAvalability(player: true, enemy: true, all: false, allPlayers: true, allEnemies: true);
 
