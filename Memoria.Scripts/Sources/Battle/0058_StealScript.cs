@@ -28,6 +28,28 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
+            {
+                _v.Context.HitRate = (Int16)(_v.Caster.Level  + _v.Caster.Will );
+                _v.Context.Evade = 0;
+
+                if (GameRandom.Next16() % _v.Context.HitRate < GameRandom.Next16() % _v.Context.Evade)
+                {
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+                    return;
+                }
+
+                else if (enemy.StealableItems[1] != Byte.MaxValue && GameRandom.Next8() < 100)
+                    StealItem(enemy, 1);
+                else if (enemy.StealableItems[2] != Byte.MaxValue && GameRandom.Next8() < 99)
+                    StealItem(enemy, 2);
+                else if (enemy.StealableItems[3] != Byte.MaxValue && GameRandom.Next8() < 98)
+                    StealItem(enemy, 3);
+                else
+                    StealItem(enemy, 0);
+
+                return;
+            }
+
             if (!_v.Caster.HasSupportAbility(SupportAbility2.Bandit))
             {
                 _v.Context.HitRate = (Int16)(_v.Caster.Level + _v.Caster.Will);
@@ -51,6 +73,7 @@ namespace Memoria.Scripts.Battle
                 else
                     StealItem(enemy, 0);
             }
+
             else
             {
                 if (GameRandom.Next8() < 1)
