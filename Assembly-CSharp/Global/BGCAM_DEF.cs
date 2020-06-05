@@ -141,7 +141,46 @@ public class BGCAM_DEF
 
         _knownFieldWidth = actualFieldWidth;
 
-        if (FieldMap.IsNarrowMap())
+	    
+	bool ForceCameraToNarrow = false;
+        int c = -1; //camera index
+        int f = FF9StateSystem.Common.FF9.fldMapNo; //mapnumber
+        GameObject go = GameObject.Find("FieldMap");
+        if (go != null)
+        {
+            c = go.GetComponent<FieldMap>().prevCamIdx;
+            
+        }
+
+        if ((f == 116 && c == 1)
+            || (f == 153 && c == 0)
+            || (f == 154 && c == 0)
+            || (f == 352 && c == 1)
+            || (f == 355 && c == 1)
+            || (f == 600 && c == 1)
+            || (f == 615 && c == 1)
+            || (f == 801 && c == 1)
+            || (f == 932 && c == 1)
+            || (f == 951 && c == 1)
+            || (f == 1205 && c == 1)
+            || (f == 1206 && c == 1)
+            || (f == 1214 && c == 0)
+            || (f == 1215 && c == 0)
+            || (f == 1462 && c == 0)
+            || (f == 1652 && c == 1)
+            || (f == 1663 && c == 0)
+            || (f == 1759 && c == 1)
+            || (f == 1823 && c == 1)
+            || (f == 2150 && c == 1)
+            || (f == 2172 && c == 1)
+            || (f == 2217 && c == 1)
+            || (f == 2217 && c == 2)
+            || (f == 2510 && c == 0)
+            || (f == 2553 && c == 1))
+        {
+            ForceCameraToNarrow = true;
+        }
+        if (FieldMap.IsNarrowMap() || ForceCameraToNarrow == true))
         {
             _cachedMinX = _vrpMinX;
             _cachedMaxX = _vrpMaxX;
