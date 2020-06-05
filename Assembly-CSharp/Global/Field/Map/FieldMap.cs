@@ -348,10 +348,19 @@ public class FieldMap : HonoBehavior
             }
         }
         this.ActivateCamera();
+        
+        if (this.curCamIdx != prevCamIdx) 
+        {
+            prevCamIdx = curCamIdx;
+            BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
+            bgcam_DEF.RefreshCache(true);
+        }
+        
         this.cumulativeTime = 0f;
         this.EBG_animationService();
         this.EBG_attachService();
     }
+    public int prevCamIdx = -1;
 
     public override void HonoOnGUI()
     {
