@@ -8,6 +8,7 @@ public static class NarrowMapList
 
     private static readonly Int32[] List = new[]
     {
+        
         0052, // Prima Vista/Meeting Rm
         0053, // Prima Vista/Meeting Rm
         0056, // S. Gate
@@ -23,7 +24,7 @@ public static class NarrowMapList
         0068, // A. Castle/Throne
         0069, // A. Castle/Throne
         0100, // Alexandria/Main Street
-        0103, // Alexandria/Square
+        //0103, // Alexandria/Square
         0104, // Alexandria/Shop
         0105, // Alexandria/Alley
         0108, // Alexandria/Item Shop
@@ -44,6 +45,7 @@ public static class NarrowMapList
         0203, // Prima Vista/Meeting Rm
         0205, // Prima Vista/Hallway
         0209, // Prima Vista/Event
+        0254,
         0255, // Evil Forest/Riverbank
         0256, // Evil Forest/Trail
         0259, // Evil Forest/Trail
@@ -72,7 +74,7 @@ public static class NarrowMapList
         0500, // Cargo Ship/Deck
         0502, // Cargo Ship/Bridge
         0503, // Cargo Ship/Bridge
-        0504, // Cargo Ship/Engine Room
+        //0504, // Cargo Ship/Engine Room
         0505, // Cargo Ship/Rear Deck
         0506, // Cargo Ship/Deck
         0551, // Lindblum/B.D. Station
@@ -103,9 +105,9 @@ public static class NarrowMapList
         0813, // S. Gate/Berkmea
         0814, // S. Gate/Berkmea
         0816, // S. Gate/Berkmea
-        0916, // Treno/Dock
+        //0916, // Treno/Dock
         0930, // Treno/Tot Residence
-        //0932, // Treno/Event
+        0932, // Treno/Event
         //0951, // Gargan Roo/Passage
         0954, // Gargan Roo/Tunnel
         1000, // Cleyra/Tree Roots
@@ -116,20 +118,20 @@ public static class NarrowMapList
         1007, // Cleyra/Tree Trunk
         1009, // Cleyra/Tree Trunk
         1013, // Cleyra/Tree Trunk
-        1015, // Cleyra/Tree Trunk
+        //1015, // Cleyra/Tree Trunk
         1017, // Cleyra/Tree Trunk
         1050, // Cleyra/Tree Trunk
-        1051, // Cleyra/Entrance
-        1053, // Cleyra/Water Mill Area
-        1054, // Cleyra/Windmill Area
-        1055, // Cleyra/Town Area
-        1057, // Cleyra/Observation Poi
+        //1051, // Cleyra/Entrance
+        //1053, // Cleyra/Water Mill Area
+        //1054, // Cleyra/Windmill Area
+        //1055, // Cleyra/Town Area
+        //1057, // Cleyra/Observation Poi
         1058, // Cleyra/Cathedral
-        1059, // Cleyra/Cathedral
-        1060, // Cleyra/Cathedral
+        //1059, // Cleyra/Cathedral
+        //1060, // Cleyra/Cathedral
         1100, // Cleyra/Tree Trunk
         1108, // Cleyra/Cathedral
-        1110, // Cleyra/Cathedral
+        //1110, // Cleyra/Cathedral
         1150, // Red Rose/Deck
         1151, // Red Rose/Cabin
         1153, // Red Rose/Bridge
@@ -180,7 +182,7 @@ public static class NarrowMapList
         1610, // Mdn. Sari/Cove
         1651, // Iifa Tree/Tree Roots
         //1652, // Iifa Tree/Roots
-        1653, // Iifa Tree/Tree Roots
+        //1653, // Iifa Tree/Tree Roots
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
@@ -210,7 +212,7 @@ public static class NarrowMapList
         1822, // A. Castle/Library
         //1823, // A. Castle/Hallway
         1850, // Alexandria/Main Street
-        1853, // Alexandria/Square
+        //1853, // Alexandria/Square
         1854, // Alexandria/Alley
         1857, // Alexandria/Item Shop
         1858, // Alexandria/Wpn. Shop
@@ -222,7 +224,7 @@ public static class NarrowMapList
         2008, // A. Castle/Altar
         2010,
         2050, // Alexandria/Main Street
-        2053, // Alexandria/Square
+        //2053, // Alexandria/Square
         2101, // Lindblum/B.D. Station
         2103, // Lindblum/Inn
         2108, // Lindblum/Synthesist
@@ -243,7 +245,7 @@ public static class NarrowMapList
         2254, // Oeilvert/Ship Display
         2255, // Oeilvert/Stairwell
         2257, // Oeilvert/Display
-        2259, // Oeilvert/Star Display
+        //2259, // Oeilvert/Star Display
         2260, // Oeilvert/Tombstone
         2261, // Oeilvert/Bridge
         2305, // Esto Gaza/Path
@@ -251,7 +253,7 @@ public static class NarrowMapList
         2354, // Gulug/Room
         2356, // Gulug/Room
         2361, // Gulug/Well
-        2362,
+        2362, // Gulug/Path
         2363, // Gulug/Path
         2365,
         2400, // A. Castle/Neptune
@@ -291,6 +293,7 @@ public static class NarrowMapList
         2902, // Memoria/Stairs of Time
         2903, // Memoria/Recollection
         2904, // Memoria/Outer Path
+        2905, // Memoria pink scene
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
         2910, // Memoria/Lost Memory
@@ -301,10 +304,10 @@ public static class NarrowMapList
         2918, // Memoria/Stairs
         2919, // Memoria/Gate to Space
         2920, // Memoria/Emptiness
-        2922,
-        2924,
-        2925,
-        2926,
+        2922, // Crystal World
+        2924, // Crystal World
+        2925, // Crystal World
+        2926, // Crystal World
         2927, // Crystal World
         2929, // last/cw mbg a
         2930, // last/cw mbg 0
@@ -320,5 +323,6 @@ public static class NarrowMapList
         3054, // Mage Village/Synthesis
         3056, // Mage Village/Rooftop
         3058, // Mage Village/Water Mil
+        
     }.OrderBy(a => a).ToArray();
 }
