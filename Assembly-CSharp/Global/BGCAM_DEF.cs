@@ -176,7 +176,8 @@ public class BGCAM_DEF
             || (f == 2217 && c == 1)
             || (f == 2217 && c == 2)
             || (f == 2510 && c == 0)
-            || (f == 2553 && c == 1))
+	    || (f == 2553 && c == 1)
+            || (f == 2755 && c == 1))
         {
             ForceCameraToNarrow = true;
         }
