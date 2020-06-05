@@ -787,8 +787,41 @@ public class FieldMap : HonoBehavior
         Vector3 localPosition = camera.transform.localPosition;
         localPosition.x = bgcam_DEF.centerOffset[0] + this.charOffset.x;
         localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
+        
+        if (Configuration.Graphics.WidescreenSupport && !IsNarrowMap())
+        {
+            int threshmargin = (int)(Math.Min((bgcam_DEF.w - PsxFieldWidth), 0)); //offset value for fields that are between 320 & 398
+            foreach (KeyValuePair<int, int> entry in mapCameraMargin)
+            {
+                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                {
+                    threshmargin = entry.Value;
+                }
+            }
+            int threshleft = (int)(0 + threshmargin);
+            int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
+            if (FF9StateSystem.Common.FF9.fldMapNo == 103 || FF9StateSystem.Common.FF9.fldMapNo == 1853 || FF9StateSystem.Common.FF9.fldMapNo == 2053) // exception in alex center
+            {
+                threshleft = (int)(threshleft + 16);
+            }
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2903) // exception in memoria castle
+            {
+                threshright = (int)(threshright - 32);
+            }
+            localPosition.x = (int)(Math.Max(threshleft, localPosition.x));
+            localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+        }
         camera.transform.localPosition = localPosition;
     }
+    
+    private static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
+    {
+        {1051,8},
+        {1057,16},
+        {1060,16},
+        {1652,16},
+        {1653,16},
+    };
 
     public void ff9fieldInternalBattleEncountService()
     {
