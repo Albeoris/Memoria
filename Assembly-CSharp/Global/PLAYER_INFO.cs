@@ -2,9 +2,9 @@
 
 public class PLAYER_INFO
 {
-	public PLAYER_INFO(Byte slot_no, Byte serial_no, Byte row, Byte win_pose, Byte party, Byte menu_type)
+	public PLAYER_INFO(Byte index, Byte serial_no, Byte row, Byte win_pose, Byte party, Byte menu_type)
 	{
-		this.slot_no = slot_no;
+		this.slot_no = index;
 		this.serial_no = serial_no;
 		this.row = row;
 		this.win_pose = win_pose;

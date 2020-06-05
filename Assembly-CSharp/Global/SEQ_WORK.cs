@@ -44,5 +44,5 @@ public class SEQ_WORK
 
 	public Byte FadeStep;
 
-	public Byte[] Work = new Byte[16];
+	public Byte[] Work;
 }

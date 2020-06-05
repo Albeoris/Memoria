@@ -1129,7 +1129,7 @@ namespace FF9
 					geo.geoMeshHide(btl, i);
 				}
 			}
-			if (mesh == 65535 && btl.bi.player == 0 && !flag)
+			if (mesh == 65535)
 			{
 				for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 				{
@@ -1156,7 +1156,7 @@ namespace FF9
 					geo.geoMeshShow(btl, i);
 				}
 			}
-			if (mesh == 65535 && btl.bi.player == 0)
+			if (mesh == 65535)
 			{
 				for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 				{

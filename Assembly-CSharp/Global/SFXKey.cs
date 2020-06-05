@@ -78,7 +78,7 @@ public class SFXKey
 		return key >> 21 & 3u;
 	}
 
-	public static UInt32 GetFillter(UInt32 key)
+	public static UInt32 GetFilter(UInt32 key)
 	{
 		return key & 100663296u;
 	}

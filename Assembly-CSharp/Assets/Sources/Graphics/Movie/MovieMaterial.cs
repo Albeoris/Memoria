@@ -295,7 +295,7 @@ namespace Assets.Sources.Graphics.Movie
 				this.m_uvHeight = MovieMaterial.GetUVHeight(this.m_nativeContext);
 				this.currentFPS = this.FPS;
 				this.currentDuration = MovieMaterial.GetDuration(this.m_nativeContext);
-				this.playSpeed = (Single) (this.playSpeed * (15.0 / currentFPS)); 
+				this.playSpeed = (Single) (15.0 / currentFPS); 
 				this.CalculateUVScaleOffset();
 				return;
 			}
@@ -417,9 +417,10 @@ namespace Assets.Sources.Graphics.Movie
 			}
 			set
 			{
-				this.playMode = value;
-				this.shouldSync = true;
-				this.playSpeed = ((this.playMode != MovieMaterial.FastForwardMode.Normal) ? ((Single)FF9StateSystem.Settings.FastForwardFactor) : 1f);
+				// It's realy bad idea to speed up movies!
+				// this.playMode = value;
+				// this.shouldSync = true;
+				// this.playSpeed = 1f; //((this.playMode != MovieMaterial.FastForwardMode.Normal) ? ((Single)FF9StateSystem.Settings.FastForwardFactor) : 1f);
 			}
 		}
 

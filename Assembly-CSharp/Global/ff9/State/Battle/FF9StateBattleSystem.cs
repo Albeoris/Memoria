@@ -22,19 +22,18 @@ public class FF9StateBattleSystem
 		{
 			this.enemy[i] = new ENEMY();
 		}
-		this.enemy_type = new ENEMY_TYPE[3];
+		this.enemy_type = new ENEMY_TYPE[4];
 		for (Int32 j = 0; j < (Int32)this.enemy_type.Length; j++)
 		{
 			this.enemy_type[j] = new ENEMY_TYPE();
 		}
-		this.enemy_attack = new AA_DATA[18];
 		this.btl_list = new BTL_DATA();
 		this.btl_data = new BTL_DATA[8];
 		for (Int32 k = 0; k < (Int32)this.btl_data.Length; k++)
 		{
 			this.btl_data[k] = new BTL_DATA();
 		}
-		this.cmd_buffer = new CMD_DATA[36];
+		this.cmd_buffer = new CMD_DATA[48]; // enemy_type.Length * 12
 		for (Int32 l = 0; l < (Int32)this.cmd_buffer.Length; l++)
 		{
 			this.cmd_buffer[l] = new CMD_DATA();

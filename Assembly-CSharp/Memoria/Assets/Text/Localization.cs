@@ -5,7 +5,13 @@ namespace Memoria.Assets
 {
     public static class Localization
     {
-        internal static readonly LanguageMap Provider = new LanguageMap();
+        internal static readonly LanguageMap Provider;
+
+        static Localization()
+        {
+            Provider = new LanguageMap();
+            Provider.Broadcast();
+        }
 
         public static ICollection<String> KnownLanguages => Provider.KnownLanguages;
 

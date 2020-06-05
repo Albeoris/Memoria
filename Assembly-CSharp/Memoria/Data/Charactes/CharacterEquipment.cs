@@ -116,8 +116,10 @@ namespace Memoria.Data
             }
 
             // Equip
-            if (itemId == Byte.MaxValue || ff9item.FF9Item_Remove(itemId, 1) != 0)
-                this[itemType] = itemId;
+            if (itemId != Byte.MaxValue)
+                ff9item.FF9Item_Remove(itemId, 1); // Ignore missing item
+            
+            this[itemType] = itemId;
         }
     }
 }

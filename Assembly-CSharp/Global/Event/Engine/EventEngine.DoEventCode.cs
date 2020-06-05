@@ -2081,17 +2081,18 @@ public partial class EventEngine
             case EBin.event_code_binary.JOIN:
                 Int32 slot_no = this.chr2slot(this.getv1());
                 Int32 num83 = this.getv1();
-                Int32 eqp_id = this.getv1();
+                EquipmentSetId eqp_id = new EquipmentSetId(this.getv1());
                 if (slot_no >= 0 && slot_no < 9)
                 {
                     PLAYER player = FF9StateSystem.Common.FF9.player[slot_no];
+                    List<Int32> defaultEquipment = ff9play.GetDefaultEquipment(player.PresetId);
                     Int32 num13 = this.getv1();
                     if (num13 != (Int32)Byte.MaxValue)
                         player.category = (Byte)num13;
                     Int32 num53 = this.getv1();
                     if (num53 != (Int32)Byte.MaxValue)
                         player.info.menu_type = (Byte)num53;
-                    ff9play.FF9Play_Change(slot_no, num83 != 0, eqp_id);
+                    ff9play.FF9Play_Change(slot_no, num83 != 0, defaultEquipment, eqp_id);
                 }
                 else
                 {

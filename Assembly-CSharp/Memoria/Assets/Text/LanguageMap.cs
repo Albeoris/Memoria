@@ -58,8 +58,6 @@ namespace Memoria.Assets
             _current = _failback;
 
             LoadExternalText();
-
-            SelectLanguage(LanguagePrefs.Key);
         }
 
         public String CurrentLanguage => _currentLanguage;
@@ -72,6 +70,11 @@ namespace Memoria.Assets
                 return _current;
 
             return _languages.Values.FirstOrDefault(languageDic => languageDic[SymbolKey] == symbol);
+        }
+
+        public void Broadcast()
+        {
+            SelectLanguage(LanguagePrefs.Key);
         }
 
         public void SelectLanguage(String language)

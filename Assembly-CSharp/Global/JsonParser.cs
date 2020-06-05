@@ -320,7 +320,7 @@ public class JsonParser : ISharedDataParser
 		}
 		if (jsonnode["98000_Achievement"]["00001_abnormal_status"] != null)
 		{
-			FF9StateSystem.Achievement.abnormal_status = (BattleStatus)jsonnode["98000_Achievement"]["00001_abnormal_status"].AsUInt;
+			FF9StateSystem.Achievement.abnormal_status = jsonnode["98000_Achievement"]["00001_abnormal_status"].AsUInt;
 		}
 		if (jsonnode["98000_Achievement"]["00002_summon_shiva"] != null)
 		{
@@ -1322,7 +1322,7 @@ public class JsonParser : ISharedDataParser
 				PLAYER player = ff.player[i];
 				if (asObject["name"] != null)
 				{
-					player.name = asObject["name"];
+					player.SetRealName(asObject["name"]);
 				}
 				if (asObject["category"] != null)
 				{

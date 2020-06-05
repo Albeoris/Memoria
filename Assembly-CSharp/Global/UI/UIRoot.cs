@@ -132,6 +132,25 @@ public class UIRoot : MonoBehaviour
 		this.mTrans = base.transform;
 	    this.mPanel = this.gameObject.GetComponent<UIPanel>();
 
+	    FixWideScreenPauseBackground();
+	}
+
+	private void FixWideScreenPauseBackground()
+	{
+		try
+		{
+			UISprite pauseBackground =  gameObject
+				.FindChild("Pause Container")
+				.FindChild("Panel")
+				.FindChild("Dim Background")
+				.GetComponent<UISprite>();
+
+			pauseBackground.width = 4096;
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to fix wide screen pause background.");
+		}
 	}
 
 	protected virtual void OnEnable()

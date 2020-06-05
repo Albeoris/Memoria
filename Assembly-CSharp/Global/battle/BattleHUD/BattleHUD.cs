@@ -619,7 +619,9 @@ public partial class BattleHUD : UIScene
         else
         {
             itemListDetailHud.Content.SetActive(true);
-            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(abilityId);
+						
+						int patchedID = this.PatchAbility(abilityId);
+            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
             Int32 mp = GetActionMpCost(aaData);
             itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
 
@@ -637,7 +639,7 @@ public partial class BattleHUD : UIScene
             }
 
             itemListDetailHud.Button.Help.TextKey = String.Empty;
-            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(abilityId);
+            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedID);
         }
     }
 
@@ -1680,7 +1682,17 @@ public partial class BattleHUD : UIScene
         }
         else if (cursor == TargetType.All || cursor == TargetType.Everyone || cursor == TargetType.Random)
         {
-            _cursorType = CursorGroup.All;
+			if (cursor == TargetType.All || cursor == TargetType.Random)
+			{
+				if (_defaultTargetAlly)
+					_cursorType = CursorGroup.AllPlayer;
+				else
+					_cursorType = CursorGroup.AllEnemy;
+			}
+			else
+			{
+				_cursorType = CursorGroup.All;
+			}
 
             ChangeTargetAvalability(player: true, enemy: true, all: false, allPlayers: true, allEnemies: true);
 
@@ -1972,31 +1984,8 @@ public partial class BattleHUD : UIScene
 
     private Byte PatchAbility(Int32 id)
     {
-        if (AbilCarbuncle == id)
-        {
-            BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-            Character character = FF9StateSystem.Common.FF9.party.GetCharacter(unit.Position);
-            switch (character.Equipment.Accessory)
-            {
-                case 228:
-                    id++;
-                    break;
-                case 229:
-                    id += 2;
-                    break;
-                case 227:
-                    id += 3;
-                    break;
-            }
-        }
-        else if (AbilFenril == id)
-        {
-            BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-            Character character = FF9StateSystem.Common.FF9.party.GetCharacter(unit.Position);
-            if (character.Equipment.Accessory == 222)
-                id++;
-        }
-        return checked((Byte)id);
+        BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+        return (Byte) BattleAbilityHelper.ApplyEquipment((BattleAbilityId) id, unit.Position); 
     }
 
     private UInt16 GetDeadOrCurrentPlayer(Boolean player)
@@ -2134,7 +2123,7 @@ public partial class BattleHUD : UIScene
                 List<GameObject> goList = new List<GameObject>();
                 for (Int32 index = 0; index < _enemyCount; ++index)
                 {
-                    if (!_currentEnemyDieState[index] || _targetDead)
+                    if (_targetDead || index < _currentEnemyDieState.Count && !_currentEnemyDieState[index])
                         goList.Add(_targetPanel.Enemies[index]);
                 }
                 ButtonGroupState.SetMultipleTarget(goList, true);

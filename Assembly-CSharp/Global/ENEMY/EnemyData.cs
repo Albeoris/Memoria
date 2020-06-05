@@ -26,17 +26,17 @@ public class EnemyData : MonoBehaviour
 
 	public Int32 GetCardID()
 	{
-		Int32 num = UnityEngine.Random.Range(0, 256);
-		Int32 num2 = 15;
-		for (Int32 i = (Int32)this.probability.Length - 1; i >= 0; i--)
+		Int32 rnd = UnityEngine.Random.Range(0, 256);
+		Int32 cardIndex = 15;
+		
+		for (Int32 i = this.probability.Length - 1; i >= 0; i--)
 		{
-			if (num > this.probability[i])
-			{
+			if (rnd >= this.probability[i])
 				break;
-			}
-			num2 = i;
+			
+			cardIndex = i;
 		}
-		return (Int32)this.enemyData[this.cardLevel * 16 + num2];
+		return this.enemyData[this.cardLevel * 16 + cardIndex];
 	}
 
 	public void Initialize(Hand hand)

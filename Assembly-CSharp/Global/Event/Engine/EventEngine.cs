@@ -510,17 +510,17 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._defaultMapName = this._ff9.mapNameStr;
         switch (this._ff9Sys.mode)
         {
-            case 1:
+            case 1: // Field
                 this.gMode = 1;
                 break;
-            case 2:
+            case 2: // Battle
                 this.gMode = 2;
                 break;
-            case 3:
+            case 3: // World
                 this.gMode = 3;
                 UIManager.World.EnableMapButton = true;
                 break;
-            case 8:
+            case 8: // Battle
                 this.gMode = 4;
                 break;
         }
@@ -569,6 +569,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         for (Int32 index = 0; index < 8; ++index)
             this._objPtrList[index] = null;
         this._opLStart = 0;
+        
+        // Battle
         if (this.gMode == 2)
         {
             for (Int32 index = 0; index < 4; ++index)
@@ -582,8 +584,12 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             this._context.partyObjTail = this._context.activeObjTail;
         }
         else
+        {
             this._ff9.btl_rain = 0;
+        }
+
         this._opLStart = 4;
+        
         if (this.gMode == 1 && this.sEventContext1.inited == 1 && this.sEventContext1.lastmap == this._ff9.fldMapNo || this.gMode == 3 && this.sEventContext1.inited == 3 && this.sEventContext1.lastmap == this._ff9.wldMapNo || this._ff9Sys.prevMode == 9 && this.sEventContext1.inited != 0)
         {
             this.sEventContext0.copy(this.sEventContext1);
@@ -594,15 +600,18 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             if (this.gMode != 2 && this.gMode != 4)
             {
+                Int32 scCounterSvr = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                Int32 mapIndexSvr = this.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+                
                 Boolean flag1 = this._ff9.fldMapNo == 70;
-                Boolean flag2 = this._ff9.fldMapNo == 2200 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 9450 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 9999;
-                Boolean flag3 = this._ff9.fldMapNo == 150 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 1155 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 325;
-                Boolean flag4 = this._ff9.fldMapNo == 1251 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 5400;
-                Boolean flag5 = this._ff9.fldMapNo == 1602 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6645 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 16;
-                Boolean flag6 = this._ff9.fldMapNo == 1757 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6740;
-                Boolean flag7 = this._ff9.fldMapNo == 2752 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 11100 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 9999;
-                Boolean flag8 = this._ff9.fldMapNo == 3001 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 12000 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 0;
-                Boolean flag9 = this._ff9.fldMapNo == 2161 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 10000 && this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 32;
+                Boolean flag2 = this._ff9.fldMapNo == 2200 && scCounterSvr == 9450 && mapIndexSvr == 9999;
+                Boolean flag3 = this._ff9.fldMapNo == 150 && scCounterSvr == 1155 && mapIndexSvr == 325;
+                Boolean flag4 = this._ff9.fldMapNo == 1251 && scCounterSvr == 5400;
+                Boolean flag5 = this._ff9.fldMapNo == 1602 && scCounterSvr == 6645 && mapIndexSvr == 16;
+                Boolean flag6 = this._ff9.fldMapNo == 1757 && scCounterSvr == 6740;
+                Boolean flag7 = this._ff9.fldMapNo == 2752 && scCounterSvr == 11100 && mapIndexSvr == 9999;
+                Boolean flag8 = this._ff9.fldMapNo == 3001 && scCounterSvr == 12000 && mapIndexSvr == 0;
+                Boolean flag9 = this._ff9.fldMapNo == 2161 && scCounterSvr == 10000 && mapIndexSvr == 32;
                 if (!flag1 && !flag4 && (!flag5 && !flag6) && (!flag3 && !flag2 && (!flag7 && !flag8)) && !flag9)
                 {
                     FF9StateSystem.Settings.UpdateTickTime();
@@ -906,23 +915,25 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
         if (eventData.Length == 0)
             return this.nil;
+        
         using (MemoryStream memoryStream = new MemoryStream(eventData))
         {
             using (BinaryReader binaryReader = new BinaryReader(memoryStream))
             {
                 binaryReader.ReadByte();
-                Byte num1 = binaryReader.ReadByte();
+                Byte count = binaryReader.ReadByte();
                 UInt16 num2 = 0;
                 Int32 num3;
-                for (num3 = num1; num3 > 0; --num3)
+                for (num3 = count; num3 > 0; --num3)
                 {
-                    UInt16 num4 = (UInt16)binaryReader.ReadInt16();
+                    UInt16 id = (UInt16)binaryReader.ReadInt16();
                     num2 = (UInt16)binaryReader.ReadInt16();
-                    if (num4 == tagID)
+                    if (id == tagID)
                         break;
                 }
                 if (num3 == 0)
                     return this.nil;
+                
                 return 2 + num2;
             }
         }

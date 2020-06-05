@@ -177,9 +177,18 @@ public class UIScene : MonoBehaviour
 		return true;
 	}
 
+	[NonSerialized] private Single _lastPausePressed;
+
 	public virtual Boolean OnKeyPause(GameObject go)
 	{
-		return !this.isLoading && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI;
+		Single currentTime = Time.realtimeSinceStartup;
+		if (Math.Abs(currentTime - _lastPausePressed) < 1)
+			return false;
+
+		Boolean result = !this.isLoading && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI;
+		if (result)
+			_lastPausePressed = currentTime;
+		return result;
 	}
 
 	public virtual Boolean OnKeyLeftBumper(GameObject go)

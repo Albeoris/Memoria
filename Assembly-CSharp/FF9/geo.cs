@@ -8,19 +8,53 @@ namespace FF9
 		public static void geoScaleSet(BTL_DATA btl, Int32 size)
 		{
 			btl.flags = (UInt16)(btl.flags | geo.GEO_FLAGS_SCALE);
-			Vector3 localScale = btl.gameObject.transform.localScale;
-			localScale.x = (localScale.y = (localScale.z = (Single)size / 4096f));
-			btl.gameObject.transform.localScale = localScale;
+			if (btl.bi.player == 0)
+			{
+				Vector3 localScale = btl.gameObject.transform.localScale;
+				localScale.x = (localScale.y = (localScale.z = (Single)size / 4096f));
+				btl.gameObject.transform.localScale = localScale;
+			}
+			else
+			{
+				Vector3 localScale = btl.originalGo.transform.localScale;
+				localScale.x = (localScale.y = (localScale.z = (Single)size / 4096f));
+				btl.originalGo.transform.localScale = localScale;
+				if (btl.tranceGo != null)
+				{
+					Vector3 localScaleTrance = btl.tranceGo.transform.localScale;
+					localScaleTrance.x = (localScaleTrance.y = (localScaleTrance.z = (Single)size / 4096f));
+					btl.tranceGo.transform.localScale = localScaleTrance;
+				}
+			}
 		}
 
 		public static void geoScaleSetXYZ(BTL_DATA btl, Int32 sizex, Int32 sizey, Int32 sizez)
 		{
 			btl.flags = (UInt16)(btl.flags | geo.GEO_FLAGS_SCALE);
-			Vector3 localScale = btl.gameObject.transform.localScale;
-			localScale.x = (Single)sizex / 4096f;
-			localScale.y = (Single)sizey / 4096f;
-			localScale.z = (Single)sizez / 4096f;
-			btl.gameObject.transform.localScale = localScale;
+			if (btl.bi.player == 0)
+			{
+				Vector3 localScale = btl.gameObject.transform.localScale;
+				localScale.x = (Single)sizex / 4096f;
+				localScale.y = (Single)sizey / 4096f;
+				localScale.z = (Single)sizez / 4096f;
+				btl.gameObject.transform.localScale = localScale;
+			}
+			else
+			{
+				Vector3 localScale = btl.originalGo.transform.localScale;
+				localScale.x = (Single)sizex / 4096f;
+				localScale.y = (Single)sizey / 4096f;
+				localScale.z = (Single)sizez / 4096f;
+				btl.originalGo.transform.localScale = localScale;
+				if (btl.tranceGo != null)
+				{
+					Vector3 localScaleTrance = btl.tranceGo.transform.localScale;
+					localScaleTrance.x = (Single)sizex / 4096f;
+					localScaleTrance.y = (Single)sizey / 4096f;
+					localScaleTrance.z = (Single)sizez / 4096f;
+					btl.tranceGo.transform.localScale = localScaleTrance;
+				}
+			}
 		}
 
 		public static void geoScaleSetXYZ(GameObject go, Int32 sizex, Int32 sizey, Int32 sizez)
@@ -46,9 +80,24 @@ namespace FF9
 		public static void geoScaleReset(BTL_DATA btl)
 		{
 			btl.flags = (UInt16)(btl.flags & (UInt16)(~geo.GEO_FLAGS_SCALE));
-			Vector3 localScale = btl.gameObject.transform.localScale;
-			localScale.x = (localScale.y = (localScale.z = 1f));
-			btl.gameObject.transform.localScale = localScale;
+			if (btl.bi.player == 0)
+			{
+				Vector3 localScale = btl.gameObject.transform.localScale;
+				localScale.x = (localScale.y = (localScale.z = 1f));
+				btl.gameObject.transform.localScale = localScale;
+			}
+			else
+			{
+				Vector3 localScale = btl.originalGo.transform.localScale;
+				localScale.x = (localScale.y = (localScale.z = 1f));
+				btl.originalGo.transform.localScale = localScale;
+				if (btl.tranceGo != null)
+				{
+					Vector3 localScaleTrance = btl.tranceGo.transform.localScale;
+					localScaleTrance.x = (localScaleTrance.y = (localScaleTrance.z = 1f));
+					btl.tranceGo.transform.localScale = localScaleTrance;
+				}
+			}
 		}
 
 		public static Int16 geoMeshChkFlags(BTL_DATA btl, Int32 mesh)

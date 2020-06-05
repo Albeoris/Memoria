@@ -20,11 +20,15 @@ public class BundleSceneSelector : MonoBehaviour
 			}
 			fileInfo.Delete();
 		}
+		
 		if (SteamSdkWrapper.SteamAPIRestartAppIfNecessary())
 		{
 			Application.Quit();
 			return;
 		}
+
+		SteamSdkWrapper.TryInitialize();
+		
 		if (Application.platform == RuntimePlatform.IPhonePlayer || flag)
 		{
 			if (BundleSceneIOS.Are3CompressedBundlesCached())

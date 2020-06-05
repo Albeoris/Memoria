@@ -46,22 +46,22 @@ public class EBin
     //private const int KAtn45 = 10;
 
     private static Int32 _v0;
-    private static Int32 _a0;
-    private static Int32 _a1;
-    private static Int32 _a2;
-    private static Int32 _a3;
+    //private static Int32 _a0;
+    //private static Int32 _a1;
+    //private static Int32 _a2;
+    // private static Int32 _a3;
     private static Int32 _s2;
-    private static Int32 _s3;
-    private static Int32 _s5;
+    //private static Int32 _s3;
+    //private static Int32 _s5;
     private static Int32 _nextCodeIndex;
-    private static CalcStack _s4;
+    //private static CalcStack _s4;
     private static CalcStack _s7;
-    private static CalcStack _tempS4;
+    //private static CalcStack _tempS4;
     private static CalcStack _tempStack = new CalcStack();
-    private static Int32 _t0;
-    private static Int32 _t2;
-    private static Int32 _t3;
-    private static Int32 _t4;
+    //private static Int32 _t0;
+    //private static Int32 _t2;
+    //private static Int32 _t3;
+    //private static Int32 _t4;
 
     private readonly EventEngine _eventEngine;
     private readonly ETb _eTb;
@@ -110,67 +110,67 @@ public class EBin
         while (_objectExists)
         {
             s1 = s0.obj;
-            _a1 = s1.state;
-            if (_a1 == EventEngine.stateNew)
+            int a1 = s1.state;
+            if (a1 == EventEngine.stateNew)
             {
-                _a0 = EventEngine.stateInit;
-                s1.state = (Byte)_a0;
+                Int32 state = EventEngine.stateInit;
+                s1.state = (Byte)state;
                 next0();
                 continue;
             }
 
-            _a0 = EventEngine.stateSuspend;
+            Int32 a0 = EventEngine.stateSuspend;
             _s2 = 0;
-            if (_a1 == _a0)
+            if (a1 == a0)
             {
                 next0();
                 continue;
             }
 
             _nextCodeIndex = s1.ip;
-            _a0 = s1.wait;
+            a0 = s1.wait;
             if (_nextCodeIndex == _eventEngine.nil)
             {
                 next0();
                 continue;
             }
 
-            _a2 = 1;
-            if (_a0 != 0)
+            Int32 a2 = 1;
+            if (a0 != 0)
             {
-                _a1 = 255;
-                if (_a0 != 254)
+                a1 = 255;
+                if (a0 != 254)
                 {
-                    if (_a0 == _a1)
+                    if (a0 == a1)
                     {
                         next0();
                     }
                     else
                     {
-                        _a0 = s1.wait;
-                        _a0--;
-                        s1.wait = (Byte)_a0;
+                        a0 = s1.wait;
+                        a0--;
+                        s1.wait = (Byte)a0;
                         next0();
                     }
                 }
                 else
                 {
-                    _a0 = s1.winnum;
-                    if (_a0 == 255)
+                    a0 = s1.winnum;
+                    if (a0 == 255)
                     {
                         ad4();
                     }
                     else
                     {
-                        Boolean flag = _eTb.MesWinActive(_a0);
-                        _a0 = 255;
+                        Boolean flag = _eTb.MesWinActive(a0);
+                        a0 = 255;
                         if (flag)
                         {
                             next0();
                         }
                         else
                         {
-                            s1.winnum = (Byte)_a0;
+                            s1.winnum = (Byte)a0;
                             ad4();
                         }
                     }
@@ -178,24 +178,24 @@ public class EBin
                 continue;
             }
 
-            _a1 = s1.vofs;
+            a1 = s1.vofs;
             _eventEngine.gExec = s1;
-            _a1 <<= 2;
-            _a0 = s1.cid;
+            a1 <<= 2;
+            a0 = s1.cid;
             _instance = s1.buffer;
-            _instanceVOfs = _a1;
+            _instanceVOfs = a1;
             objV0 = s1;
             _v0 = s1.ip;
-            if (_a0 != _a2)
+            if (a0 != a2)
             {
-                result = ad3(_a0);
+                result = ad3(a0);
             }
             else
             {
-                _a0 = s1.uid;
-                _a0 -= 64;
-                objV0 = _eventEngine.FindObjByUID(_a0);
-                result = ad3(_a0);
+                a0 = s1.uid;
+                a0 -= 64;
+                objV0 = _eventEngine.FindObjByUID(a0);
+                result = ad3(a0);
             }
             objV0 = null;
         }
@@ -210,26 +210,26 @@ public class EBin
 
     public Int32 ad3(Int32 arg0)
     {
-        _a0 = _eventEngine.gMode;
+        Int32 a0 = _eventEngine.gMode;
         _eventEngine.gCur = objV0;
-        _a1 = 2;
+        int a1 = 2;
         Int32 result;
-        if (_a0 != _a1)
+        if (a0 != a1)
         {
-            result = next(_a0);
+            result = next(a0);
         }
         else
         {
             _eventEngine.ProcessCodeExt(s1);
-            result = next(_a0);
+            result = next(a0);
         }
         return result;
     }
 
     private void ad4()
     {
-        _a0 = 0;
-        s1.wait = (Byte)_a0;
+        Int32 a0 = 0;
+        s1.wait = (Byte)a0;
         next0();
     }
 
@@ -240,20 +240,20 @@ public class EBin
         {
             if (_s2 == 0)
             {
-                _a0 = s1.getByteIP();
+                Int32 a0 = s1.getByteIP();
                 if (s1.sid == 1 || s1.sid == 0)
                 {
                 }
-                Int32 num = _a0 << 2;
-                _a2 = num - 440;
-                if (_a2 >= 0)
+                Int32 num = a0 << 2;
+                Int32 a2 = num - 440;
+                if (a2 >= 0)
                 {
                     commandDefault2();
                 }
                 else
                 {
                     s1.ip++;
-                    jumpToCommand(_a0);
+                    jumpToCommand(a0);
                     if (FF9StateSystem.Settings.IsFastTrophyMode)
                     {
                         EMinigame.DigUpMadianRingCheating();
@@ -281,32 +281,32 @@ public class EBin
         }
         else
         {
-            _a0 = 3;
-            if (_s2 == _a0)
+            Int32 a0 = 3;
+            if (_s2 == a0)
             {
                 adFin();
             }
             else
             {
-                _a0 = 7;
-                if (_s2 == _a0)
+                a0 = 7;
+                if (_s2 == a0)
                 {
                     adFin();
                 }
                 else
                 {
-                    _a0 = 8;
-                    if (_s2 == _a0)
+                    a0 = 8;
+                    if (_s2 == a0)
                     {
                         adFin();
                     }
                     else
                     {
-                        _a0 = 6;
-                        if (_s2 != _a0)
+                        a0 = 6;
+                        if (_s2 != a0)
                         {
-                            _a0 = 2;
-                            if (_s2 == _a0)
+                            a0 = 2;
+                            if (_s2 == a0)
                             {
                                 next1();
                             }
@@ -317,7 +317,7 @@ public class EBin
                         }
                         else
                         {
-                            _a0 = 2;
+                            a0 = 2;
                             _eventEngine.gStopObj = s0;
                             adFin();
                         }
@@ -354,8 +354,8 @@ public class EBin
     public Int32 expr()
     {
         _s7 = calcstack;
-        _tempS4 = _s4;
-        _s4 = _eventEngine.gCP;
+        //_tempS4 = _s4;
+        //_s4 = _eventEngine.gCP;
         _s7.emptyCalcStack();
         _exprLoop = true;
         while (_exprLoop)
@@ -385,7 +385,7 @@ public class EBin
             }
             EMinigame.ChanbaraBonusPoints(s1, this);
             EMinigame.SetViviSpeed(s1, this);
-            _a2 = b << 2;
+            Int32 a2 = b << 2;
             if (b < 0)
             {
                 s1.ip++;
@@ -405,20 +405,20 @@ public class EBin
     {
         _v0 = (arg0 & 3);
         _v0 <<= 26;
-        _a1 = (arg0 & 28);
-        _a1 <<= 27;
-        _v0 |= _a1;
-        _a1 = s1.getByteIP();
+        int a1 = (arg0 & 28);
+        a1 <<= 27;
+        _v0 |= a1;
+        a1 = s1.getByteIP();
         arg0 &= 32;
         s1.ip++;
         if (arg0 != 0)
         {
-            _v0 |= _a1;
-            _a1 = s1.getByteIP();
+            _v0 |= a1;
+            a1 = s1.getByteIP();
             s1.ip++;
-            _a1 <<= 8;
+            a1 <<= 8;
         }
-        _v0 |= _a1;
+        _v0 |= a1;
         return _v0;
     }
 
@@ -440,7 +440,7 @@ public class EBin
         }
         num2 |= num4;
         _s7.push(num2);
-        putvi(value);
+        SetVariableValue(value);
         num3 = encodeTypeAndVarClass(7);
         num2 |= num3;
         _s7.push(num2);
@@ -469,652 +469,781 @@ public class EBin
         }
         num2 |= num4;
         _s7.push(num2);
-        Int32 result = getvi();
+        Int32 result = EvaluateValueExpression();
         _s7 = calcStack;
         return result;
     }
 
     private void expr_jumpToSubCommand(Int32 arg0)
     {
-        if (arg0 >= 0 && arg0 <= 127)
+        if (arg0 < 0 || arg0 > 127)
+            return;
+        
+        switch (arg0)
         {
-            switch (arg0)
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 15:
+            case 46:
+            case 67:
+            case 68:
+            case 69:
+            case 70:
+            case 71:
+            case 72:
+            case 73:
+            case 74:
+            case 75:
+            case 76:
+            case 78:
+            case 82:
+            case 83:
+            case 90:
+            case 91:
+            case 92:
+            case 100:
+            case 101:
+            case 103:
+            case 104:
+            case 105:
+            case 106:
+            case 108:
+            case 110:
+            case 111:
+            case 112:
+            case 113:
+            case 123:
+            case 124:
             {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 8:
-                case 9:
-                case 10:
-                case 11:
-                case 15:
-                case 46:
-                case 67:
-                case 68:
-                case 69:
-                case 70:
-                case 71:
-                case 72:
-                case 73:
-                case 74:
-                case 75:
-                case 76:
-                case 78:
-                case 82:
-                case 83:
-                case 90:
-                case 91:
-                case 92:
-                case 100:
-                case 101:
-                case 103:
-                case 104:
-                case 105:
-                case 106:
-                case 108:
-                case 110:
-                case 111:
-                case 112:
-                case 113:
-                case 123:
-                case 124:
-                    _eventEngine.gCP = _s7;
-                    _v0 = _eventEngine.DoCalcOperationExt(arg0);
-                    _s7 = _eventEngine.gCP;
-                    expr_ad0();
-                    break;
-                case 4:
-                    _v0 = getvi();
-                    _t3 = _v0;
+                _eventEngine.gCP = _s7;
+                _v0 = _eventEngine.DoCalcOperationExt(arg0);
+                _s7 = _eventEngine.gCP;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 4:
+            {
+                _v0 = EvaluateValueExpression();
+                Int32 t3 = _v0;
+                _s7.advanceTopOfStack();
+                Int32 a0 = _v0 + 1;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 5:
+            {
+                _v0 = EvaluateValueExpression();
+                Int32 t3 = _v0;
+                _s7.advanceTopOfStack();
+                Int32 a0 = _v0 - 1;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 6:
+            {
+                _v0 = EvaluateValueExpression();
+                Int32 t3 = _v0 + 1;
+                _s7.advanceTopOfStack();
+                Int32 a0 = t3;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 7:
+            {
+                _v0 = EvaluateValueExpression();
+                Int32 t3 = _v0 - 1;
+                _s7.advanceTopOfStack();
+                Int32 a0 = t3;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 12:
+            {
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 13:
+            {
+                _v0 = EvaluateValueExpression();
+                _v0 = 0 - _v0;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 14:
+            {
+                _v0 = EvaluateValueExpression();
+                _v0 = 0 < _v0 ? 1 : 0;
+                _v0 ^= 1;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 16:
+            {
+                _v0 = EvaluateValueExpression();
+                _v0 = ~(0 | _v0);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 17:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 *= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 18:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                if (t3 == 0)
+                {
+                    expr_adZ();
+                }
+                else
+                {
+                    _v0 /= t3;
+                    expr_Push_v0_Int24();
+                }
+                break;
+            }
+            case 19:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                if (t3 == 0)
+                {
+                    expr_adZ();
+                }
+                else
+                {
+                    _v0 %= t3;
+                    expr_Push_v0_Int24();
+                }
+                break;
+            }
+            case 20:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 += t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 21:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 -= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 22:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 <<= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 23:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 >>= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 24: // B_LT = 24,
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                if (_eventEngine.gCur.uid == 13 && t3 == -300)
+                {
+                    t3 = -250;
+                }
+                _v0 = _v0 < t3 ? 1 : 0;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 25: // B_GT = 25,
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
+                {
+                    _v0 = t3 <= _v0 ? 1 : 0;
+                }
+                else if (t3 < _v0)
+                {
+                    _v0 = 1;
+                }
+                else
+                {
+                    _v0 = 0;
+                }
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 26: // B_LE = 26,
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 = t3 < _v0 ? 1 : 0;
+                _v0 ^= 1;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 27: // B_GE = 27,
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 = _v0 < t3 ? 1 : 0;
+                _v0 ^= 1;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 28: // B_LT_E = 28,
+            case 29: // B_GT_E = 29,
+            case 30: // B_LE_E = 30,
+            case 31: // B_GE_E = 31,
+            case 34:
+            case 35:
+            case 84:
+            case 85:
+            case 86:
+            case 87:
+            {
+                if (s1.sid != 0 || s1.ip == 320)
+                {
+                }
+                _eventEngine.gCP = _s7;
+                _v0 = _eventEngine.OperatorExtract(arg0);
+                _s7 = _eventEngine.gCP;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 32:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 ^= t3;
+                _v0 = Mathf.Abs(_v0) < 1 ? 1 : 0;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 33:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 ^= t3;
+                _v0 = 0 < Mathf.Abs(_v0) ? 1 : 0;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 36:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 &= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 37:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 ^= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 38:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _v0 |= t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 39:
+            {
+                _v0 = EvaluateValueExpression();
+                _s7.retreatTopOfStack();
+                if (_v0 == 0)
+                {
+                    expr_Push_v0_Int24();
+                }
+                else
+                {
                     _s7.advanceTopOfStack();
-                    _a0 = _v0 + 1;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 5:
-                    _v0 = getvi();
-                    _t3 = _v0;
-                    _s7.advanceTopOfStack();
-                    _a0 = _v0 - 1;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 6:
-                    _v0 = getvi();
-                    _t3 = _v0 + 1;
-                    _s7.advanceTopOfStack();
-                    _a0 = _t3;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 7:
-                    _v0 = getvi();
-                    _t3 = _v0 - 1;
-                    _s7.advanceTopOfStack();
-                    _a0 = _t3;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 12:
-                    expr_ad0();
-                    break;
-                case 13:
-                    _v0 = getvi();
-                    _v0 = 0 - _v0;
-                    expr_ad0();
-                    break;
-                case 14:
-                    _v0 = getvi();
-                    _v0 = 0 < _v0 ? 1 : 0;
-                    _v0 ^= 1;
-                    expr_ad0();
-                    break;
-                case 16:
-                    _v0 = getvi();
-                    _v0 = ~(0 | _v0);
-                    expr_ad0();
-                    break;
-                case 17:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 *= _t3;
-                    expr_ad0();
-                    break;
-                case 18:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    if (_t3 == 0)
-                    {
-                        expr_adZ();
-                    }
-                    else
-                    {
-                        _v0 /= _t3;
-                        expr_ad0();
-                    }
-                    break;
-                case 19:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    if (_t3 == 0)
-                    {
-                        expr_adZ();
-                    }
-                    else
-                    {
-                        _v0 %= _t3;
-                        expr_ad0();
-                    }
-                    break;
-                case 20:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 += _t3;
-                    expr_ad0();
-                    break;
-                case 21:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 -= _t3;
-                    expr_ad0();
-                    break;
-                case 22:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 <<= _t3;
-                    expr_ad0();
-                    break;
-                case 23:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 >>= _t3;
-                    expr_ad0();
-                    break;
-                case 24:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    if (_eventEngine.gCur.uid == 13 && _t3 == -300)
-                    {
-                        _t3 = -250;
-                    }
-                    _v0 = _v0 < _t3 ? 1 : 0;
-                    expr_ad0();
-                    break;
-                case 25:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
-                    {
-                        _v0 = _t3 <= _v0 ? 1 : 0;
-                    }
-                    else if (_t3 < _v0)
-                    {
-                        _v0 = 1;
-                    }
-                    else
-                    {
-                        _v0 = 0;
-                    }
-                    expr_ad0();
-                    break;
-                case 26:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 = _t3 < _v0 ? 1 : 0;
-                    _v0 ^= 1;
-                    expr_ad0();
-                    break;
-                case 27:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 = _v0 < _t3 ? 1 : 0;
-                    _v0 ^= 1;
-                    expr_ad0();
-                    break;
-                case 28:
-                case 29:
-                case 30:
-                case 31:
-                case 34:
-                case 35:
-                case 84:
-                case 85:
-                case 86:
-                case 87:
-                    if (s1.sid != 0 || s1.ip == 320)
-                    {
-                    }
-                    _eventEngine.gCP = _s7;
-                    _v0 = _eventEngine.OperatorExtract(arg0);
-                    _s7 = _eventEngine.gCP;
-                    expr_ad0();
-                    break;
-                case 32:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 ^= _t3;
-                    _v0 = Mathf.Abs(_v0) < 1 ? 1 : 0;
-                    expr_ad0();
-                    break;
-                case 33:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 ^= _t3;
-                    _v0 = 0 < Mathf.Abs(_v0) ? 1 : 0;
-                    expr_ad0();
-                    break;
-                case 36:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 &= _t3;
-                    expr_ad0();
-                    break;
-                case 37:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 ^= _t3;
-                    expr_ad0();
-                    break;
-                case 38:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _v0 |= _t3;
-                    expr_ad0();
-                    break;
-                case 39:
-                    _v0 = getvi();
-                    _s7.retreatTopOfStack();
-                    if (_v0 == 0)
-                    {
-                        expr_ad0();
-                    }
-                    else
-                    {
-                        _s7.advanceTopOfStack();
-                        _v0 = getvi();
-                        _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                        expr_ad0();
-                    }
-                    break;
-                case 40:
-                    _v0 = getvi();
+                    _v0 = EvaluateValueExpression();
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                    _s7.retreatTopOfStack();
-                    if (_v0 != 0)
-                    {
-                        expr_ad0();
-                    }
-                    else
-                    {
-                        _s7.advanceTopOfStack();
-                        _v0 = getvi();
-                        _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                        expr_ad0();
-                    }
-                    break;
-                case 41:
-                    _a0 = s1.getByteIP();
-                    s1.ip++;
-                    _a1 = encodeTypeAndVarClass(6);
-                    _a0 |= _a1;
-                    _s7.push(_a0);
-                    break;
-                case 42:
-                    if (s1.sid != 0 || s1.ip == 321)
-                    {
-                    }
-                    _eventEngine.gCP = _s7;
-                    _v0 = _eventEngine.OperatorCount();
-                    _s7 = _eventEngine.gCP;
-                    expr_ad0();
-                    break;
-                case 43:
-                    _eventEngine.gCP = _s7;
-                    _v0 = _eventEngine.OperatorPick();
-                    _s7 = _eventEngine.gCP;
-                    expr_ad0();
-                    break;
-                case 44:
-                    _v0 = getvi();
-                    _a0 = _v0;
-                    _t3 = _v0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 45:
-                case 54:
-                case 55:
-                case 56:
-                case 57:
-                case 58:
-                case 59:
-                case 60:
-                case 64:
-                case 65:
-                case 66:
-                    _eventEngine.gCP = _s7;
-                    if (s1.sid == 0 && s1.ip == 411)
-                    {
-                        //Debug.Log("Debug @all");
-                    }
-                    _v0 = _eventEngine.OperatorAll(arg0);
-                    _s7 = _eventEngine.gCP;
-                    expr_ad0();
-                    break;
-                case 47:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = _v0 * _t3;
+                    expr_Push_v0_Int24();
+                }
+                break;
+            }
+            case 40:
+            {
+                _v0 = EvaluateValueExpression();
+                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                _s7.retreatTopOfStack();
+                if (_v0 != 0)
+                {
+                    expr_Push_v0_Int24();
+                }
+                else
+                {
                     _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 48:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _s7.advanceTopOfStack();
-                    if (_t3 == 0)
-                    {
-                        expr_adZ();
-                    }
-                    else
-                    {
-                        _a0 = _v0 / _t3;
-                        _t3 = _a0;
-                        putvi(_a0);
-                        _v0 = _t3;
-                        expr_ad0();
-                    }
-                    break;
-                case 49:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _s7.advanceTopOfStack();
-                    if (_t3 == 0)
-                    {
-                        expr_adZ();
-                    }
-                    else
-                    {
-                        _a0 = _v0 % _t3;
-                        _t3 = _a0;
-                        putvi(_a0);
-                        _v0 = _t3;
-                        expr_ad0();
-                    }
-                    break;
-                case 50:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = _v0 + _t3;
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 51:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = _v0 - _t3;
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 52:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = _v0 << _t3;
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 53:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = _v0 >> _t3;
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 61:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = (_v0 & _t3);
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 62:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = (_v0 ^ _t3);
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 63:
-                    _t3 = getvi();
-                    _v0 = getvi();
-                    _a0 = (_v0 | _t3);
-                    _s7.advanceTopOfStack();
-                    _t3 = _a0;
-                    putvi(_a0);
-                    _v0 = _t3;
-                    expr_ad0();
-                    break;
-                case 77:
-                    _eventEngine.gCP = _s7;
-                    _v0 = _eventEngine.OperatorSelect();
-                    _s7 = _eventEngine.gCP;
-                    expr_ad0();
-                    break;
-                case 79:
-                    _t3 = (Int32)ETb.KeyOn();
-                    _v0 = getvi();
-                    _v0 &= _t3;
-                    if (s1.sid == 5)
-                    {
-                    }
+                    _v0 = EvaluateValueExpression();
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                    expr_ad0();
-                    break;
-                case 80:
-                    _a0 = getvi();
-                    _v0 = ff9.rsin(_a0);
-                    expr_ad0();
-                    break;
-                case 81:
-                    _a0 = getvi();
-                    _v0 = ff9.rcos(fixedPointAngle: _a0);
-                    expr_ad0();
-                    break;
-                case 88:
-                    _t3 = (Int32)ETb.KeyOff();
-                    _v0 = getvi();
-                    _v0 &= _t3;
-                    _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                    expr_ad0();
-                    break;
-                case 89:
-                    _t3 = (Int32)_eTb.PadReadE();
-                    _v0 = getvi();
-                    _v0 &= _t3;
-                    _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                    expr_ad0();
-                    break;
-                case 93:
-                    {
-                        _t3 = getvi();
-                        _v0 = getvi();
-                        Obj gCur = _eventEngine.gCur;
-                        Actor actor = (Actor)gCur;
-                        if (actor.fieldMapActorController == null)
-                        {
-                        }
-                        Single num = actor.pos[0];
-                        Single num2 = actor.pos[2];
-                        num = _v0 - num;
-                        num2 = _t3 - num2;
-                        Single floatAngle = angleAsm(num, num2);
-                        Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
-                        _v0 = 0;
-                        _v0 = num3;
-                        _v0 <<= 20;
-                        _v0 >>= 24;
-                        expr_ad0();
-                        break;
-                    }
-                case 94:
-                    {
-                        _t3 = getvi();
-                        _v0 = getvi();
-                        Obj gCur = _eventEngine.gCur;
-                        Actor actor = (Actor)gCur;
-                        Single num4 = actor.pos[0];
-                        Single num5 = actor.pos[2];
-                        num4 = _v0 - num4;
-                        num5 = _t3 - num5;
-                        _a1 = 0;
-                        _v0 = (Int32)distance(num4, _a1, num5);
-                        expr_ad0();
-                        break;
-                    }
-                case 95:
-                    {
-                        _a0 = s1.getByteIP();
-                        s1.ip++;
-                        Obj objUID = _eventEngine.GetObjUID(_a0);
-                        _v0 = objUID.uid;
-                        expr_ad0();
-                        break;
-                    }
-                case 96:
-                    {
-                        _v0 = getvi();
-                        Obj objUID2 = _eventEngine.GetObjUID(_v0);
-                        Single num6 = ((PosObj)objUID2).pos[0];
-                        Single num7 = ((PosObj)objUID2).pos[2];
-                        Single num8 = ((PosObj)_eventEngine.gCur).pos[0];
-                        Single num9 = ((PosObj)_eventEngine.gCur).pos[2];
-                        Single floatAngle = angleAsm(num6 - num8, num7 - num9);
-                        Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
-                        _v0 = num3 >> 4;
-                        expr_ad0();
-                        break;
-                    }
-                case 97:
-                    {
-                        _v0 = getvi();
-                        Obj objUID2 = _eventEngine.GetObjUID(_v0);
-                        Obj gCur = _eventEngine.gCur;
-                        Actor actor = (Actor)gCur;
-                        _a0 = 524288000;
-                        Single num4 = ((Actor)objUID2).pos[0] - actor.pos[0];
-                        Single num5 = ((Actor)objUID2).pos[2] - actor.pos[2];
-                        _a1 = 0;
-                        _v0 = (Int32)distance(num4, _a1, num5);
-                        expr_ad0();
-                        break;
-                    }
-                case 98:
-                    _v0 = getvi();
-                    _a0 = _v0 << 4;
-                    _v0 = ff9.rsin(_a0);
-                    expr_ad0();
-                    break;
-                case 99:
-                    _v0 = getvi();
-                    _a0 = _v0 << 4;
-                    _v0 = ff9.rcos(fixedPointAngle: _a0);
-                    expr_ad0();
-                    break;
-                case 102:
-                    {
-                        _t3 = getvi();
-                        _a0 = getvi();
-                        _a1 = _t3;
-                        Single floatAngle = angleAsm(_a0, _a1);
-                        Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
-                        _v0 = num3 >> 4;
-                        expr_ad0();
-                        break;
-                    }
-                case 107:
-                    _a0 = getvi();
-                    _v0 = _eventEngine.partychk(_a0) ? 1 : 0;
-                    expr_ad0();
-                    break;
-                case 109:
-                    _a0 = getvi();
-                    _v0 = _eventEngine.partyadd(_a0) ? 1 : 0;
-                    expr_ad0();
-                    break;
-                case 120:
-                    _a0 = s1.getByteIP();
-                    _a1 = s1.getByteIP(1);
-                    s1.ip += 2;
-                    _a0 <<= 8;
-                    _a0 |= _a1;
-                    _a1 = encodeTypeAndVarClass(4);
-                    _a0 |= _a1;
-                    _s7.push(_a0);
-                    break;
-                case 121:
-                    _a0 = s1.getByteIP();
-                    s1.ip++;
-                    _a1 = encodeTypeAndVarClass(5);
-                    _a0 |= _a1;
-                    _s7.push(_a0);
-                    break;
-                case 122:
-                    _a0 = s1.getByteIP();
-                    s1.ip++;
-                    _v0 = _eventEngine.GetSysvar(_a0);
-                    _a0 = 67108863;
-                    _a0 = (_v0 & _a0);
-                    _a1 = encodeTypeAndVarClass(7);
-                    _a0 |= _a1;
-                    _s7.push(_a0);
-                    break;
-                case 125:
-                    _a0 = s1.getShortIP();
-                    s1.ip += 2;
-                    _a1 = encodeTypeAndVarClass(7);
-                    _a0 |= _a1;
-                    _s7.push(_a0);
-                    break;
-                case 126:
-                    _a0 = s1.getIntIP();
-                    s1.ip += 4;
-                    _a0 &= 67108863;
-                    _a1 = encodeTypeAndVarClass(7);
-                    _a0 |= _a1;
-                    _s7.push(_a0);
-                    break;
-                case 127:
-                    _eventEngine.gCP = _s7;
-                    _s4 = _tempS4;
-                    _exprLoop = false;
-                    break;
+                    expr_Push_v0_Int24();
+                }
+                break;
+            }
+            case 41:
+            {
+                Int32 a0 = s1.getByteIP();
+                s1.ip++;
+                int a1 = encodeTypeAndVarClass(6);
+                a0 |= a1;
+                _s7.push(a0);
+                break;
+            }
+            case 42:
+            {
+                if (s1.sid != 0 || s1.ip == 321)
+                {
+                }
+                _eventEngine.gCP = _s7;
+                _v0 = _eventEngine.OperatorCount();
+                _s7 = _eventEngine.gCP;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 43:
+            {
+                _eventEngine.gCP = _s7;
+                _v0 = _eventEngine.OperatorPick();
+                _s7 = _eventEngine.gCP;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 44:
+            {
+                // -> ValueExpression
+                // ResultVariableId
+                // END
+                _v0 = EvaluateValueExpression();
+                    
+                // -> ResultVariableId
+                // END
+                Int32 currentValue = _v0;
+                Int32 t3 = _v0;
+                SetVariableValue(currentValue);
+                    
+                // END
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                    
+                // -> Int24ValueExpression
+                // END
+                break;
+            }
+            case 45:
+            case 54:
+            case 55:
+            case 56:
+            case 57:
+            case 58:
+            case 59:
+            case 60:
+            case 64:
+            case 65:
+            case 66:
+            {
+                _eventEngine.gCP = _s7;
+                if (s1.sid == 0 && s1.ip == 411)
+                {
+                    //Debug.Log("Debug @all");
+                }
+                _v0 = _eventEngine.OperatorAll(arg0);
+                _s7 = _eventEngine.gCP;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 47:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 * t3;
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 48:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _s7.advanceTopOfStack();
+                if (t3 == 0)
+                {
+                    expr_adZ();
+                }
+                else
+                {
+                    Int32 a0 = _v0 / t3;
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                }
+                break;
+            }
+            case 49:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                _s7.advanceTopOfStack();
+                if (t3 == 0)
+                {
+                    expr_adZ();
+                }
+                else
+                {
+                    Int32 a0 = _v0 % t3;
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                }
+                break;
+            }
+            case 50:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 + t3;
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 51:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 - t3;
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 52:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 << t3;
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 53:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 >> t3;
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 61:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = (_v0 & t3);
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 62:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = (_v0 ^ t3);
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 63:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = (_v0 | t3);
+                _s7.advanceTopOfStack();
+                t3 = a0;
+                SetVariableValue(a0);
+                _v0 = t3;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 77:
+            {
+                _eventEngine.gCP = _s7;
+                _v0 = _eventEngine.OperatorSelect();
+                _s7 = _eventEngine.gCP;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 79:
+            {
+                Int32 keyOn = (Int32)ETb.KeyOn();
+                _v0 = EvaluateValueExpression();
+                _v0 &= keyOn;
+                if (s1.sid == 5)
+                {
+                }
+                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 80:
+            {
+                Int32 a0 = EvaluateValueExpression();
+                _v0 = ff9.rsin(a0);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 81:
+            {
+                Int32 a0 = EvaluateValueExpression();
+                _v0 = ff9.rcos(fixedPointAngle: a0);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 88:
+            {
+                Int32 keyOff = (Int32)ETb.KeyOff();
+                _v0 = EvaluateValueExpression();
+                _v0 &= keyOff;
+                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 89:
+            {
+                Int32 padReadE = (Int32)_eTb.PadReadE();
+                _v0 = EvaluateValueExpression();
+                _v0 &= padReadE;
+                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 93:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Obj gCur = _eventEngine.gCur;
+                Actor actor = (Actor)gCur;
+                if (actor.fieldMapActorController == null)
+                {
+                }
+                Single num = actor.pos[0];
+                Single num2 = actor.pos[2];
+                num = _v0 - num;
+                num2 = t3 - num2;
+                Single floatAngle = angleAsm(num, num2);
+                Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                _v0 = 0;
+                _v0 = num3;
+                _v0 <<= 20;
+                _v0 >>= 24;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 94:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                _v0 = EvaluateValueExpression();
+                Obj gCur = _eventEngine.gCur;
+                Actor actor = (Actor)gCur;
+                Single x = actor.pos[0];
+                Single z = actor.pos[2];
+                x = _v0 - x;
+                z = t3 - z;
+                var y = 0;
+                _v0 = (Int32)distance(x, y, z);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 95:
+            {
+                Int32 a0 = s1.getByteIP();
+                s1.ip++;
+                Obj objUID = _eventEngine.GetObjUID(a0);
+                _v0 = objUID.uid;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 96:
+            {
+                _v0 = EvaluateValueExpression();
+                Obj objUID2 = _eventEngine.GetObjUID(_v0);
+                Single num6 = ((PosObj)objUID2).pos[0];
+                Single num7 = ((PosObj)objUID2).pos[2];
+                Single num8 = ((PosObj)_eventEngine.gCur).pos[0];
+                Single num9 = ((PosObj)_eventEngine.gCur).pos[2];
+                Single floatAngle = angleAsm(num6 - num8, num7 - num9);
+                Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                _v0 = num3 >> 4;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 97:
+            {
+                _v0 = EvaluateValueExpression();
+                Obj objUID2 = _eventEngine.GetObjUID(_v0);
+                Obj gCur = _eventEngine.gCur;
+                Actor actor = (Actor)gCur;
+                //Int32 a0 = 524288000;
+                Single num4 = ((Actor)objUID2).pos[0] - actor.pos[0];
+                Single num5 = ((Actor)objUID2).pos[2] - actor.pos[2];
+                var y = 0;
+                _v0 = (Int32)distance(num4, y, num5);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 98:
+            {
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 << 4;
+                _v0 = ff9.rsin(a0);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 99:
+            {
+                _v0 = EvaluateValueExpression();
+                Int32 a0 = _v0 << 4;
+                _v0 = ff9.rcos(fixedPointAngle: a0);
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 102:
+            {
+                Int32 t3 = EvaluateValueExpression();
+                Int32 a0 = EvaluateValueExpression();
+                var deltaZ = t3;
+                Single floatAngle = angleAsm(a0, deltaZ);
+                Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                _v0 = num3 >> 4;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 107:
+            {
+                Int32 a0 = EvaluateValueExpression();
+                _v0 = _eventEngine.partychk(a0) ? 1 : 0;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 109:
+            {
+                Int32 a0 = EvaluateValueExpression();
+                _v0 = _eventEngine.partyadd(a0) ? 1 : 0;
+                expr_Push_v0_Int24();
+                break;
+            }
+            case 120:
+            {
+                Int32 a0 = s1.getByteIP();
+                int a1 = s1.getByteIP(1);
+                s1.ip += 2;
+                a0 <<= 8;
+                a0 |= a1;
+                a1 = encodeTypeAndVarClass(4);
+                a0 |= a1;
+                _s7.push(a0);
+                break;
+            }
+            case 121:
+            {
+                Int32 a0 = s1.getByteIP();
+                s1.ip++;
+                int a1 = encodeTypeAndVarClass(5);
+                a0 |= a1;
+                _s7.push(a0);
+                break;
+            }
+            case 122:
+            {
+                Int32 a0 = s1.getByteIP();
+                s1.ip++;
+                _v0 = _eventEngine.GetSysvar(a0);
+                a0 = 67108863;
+                a0 = (_v0 & a0);
+                int a1 = encodeTypeAndVarClass(7);
+                a0 |= a1;
+                _s7.push(a0);
+                break;
+            }
+            case 125:
+            {
+                Int32 a0 = s1.getShortIP();
+                s1.ip += 2;
+                int a1 = encodeTypeAndVarClass(7);
+                a0 |= a1;
+                _s7.push(a0);
+                break;
+            }
+            case 126:
+            {
+                Int32 a0 = s1.getIntIP();
+                s1.ip += 4;
+                a0 &= 0x3FFFFFF; // 26 bit
+                int a1 = encodeTypeAndVarClass(7);
+                a0 |= a1;
+                _s7.push(a0);
+                break;
+            }
+            case 127:
+            {
+                _eventEngine.gCP = _s7;
+                //_s4 = _tempS4;
+                _exprLoop = false;
+                break;
             }
         }
     }
@@ -1132,16 +1261,16 @@ public class EBin
         return -1;
     }
 
-    private void expr_ad0()
+    private void expr_Push_v0_Int24()
     {
-        _a1 = encodeTypeAndVarClass(7);
-        _v0 |= _a1;
+        int a1 = encodeTypeAndVarClass(7);
+        _v0 |= a1;
         _s7.push(_v0);
     }
 
     private void expr_adZ()
     {
-        expr_ad0();
+        expr_Push_v0_Int24();
     }
 
     public Int32 bra()
@@ -1154,7 +1283,7 @@ public class EBin
 
     public Int32 beq()
     {
-        _v0 = getvi();
+        _v0 = EvaluateValueExpression();
         if (_v0 != 0)
         {
             s1.ip += 2;
@@ -1170,7 +1299,7 @@ public class EBin
 
     public Int32 bne()
     {
-        _v0 = getvi();
+        _v0 = EvaluateValueExpression();
         if (_v0 == 0)
         {
             s1.ip += 2;
@@ -1184,9 +1313,9 @@ public class EBin
 
     public Int32 wait()
     {
-        _s5 = s1.getByteIP();
+        Int32 s5 = s1.getByteIP();
         s1.ip++;
-        _v0 = getv1i();
+        _v0 = getv1i(ref s5);
         if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
         {
             String symbol = Localization.GetSymbol();
@@ -1210,11 +1339,11 @@ public class EBin
                 _v0 = 20;
             }
         }
-        _a0 = _v0 - 254;
+        Int32 a0 = _v0 - 254;
         if (_v0 != 0)
         {
             _v0--;
-            if (_a0 > 0)
+            if (a0 > 0)
             {
                 _v0 = 253;
             }
@@ -1224,15 +1353,15 @@ public class EBin
         return 0;
     }
 
-    private void ad2()
+    private void ad2(Int32 t2)
     {
-        _t3 = s1.getByteIP(1);
-        _t4 = (SByte)s1.getByteIP(2);
-        _t4 <<= 8;
-        _v0 = getvi();
-        _v0 -= _t3;
-        _v0 -= _t4;
-        _a0 = _v0 - _t2;
+        Int32 byteIp = s1.getByteIP(1);
+        Int32 t4 = (SByte)s1.getByteIP(2);
+        t4 <<= 8;
+        _v0 = EvaluateValueExpression();
+        _v0 -= byteIp;
+        _v0 -= t4;
+        Int32 a0 = _v0 - t2;
         if (_v0 < 0)
         {
             ad5();
@@ -1240,27 +1369,27 @@ public class EBin
         else
         {
             _v0 <<= 1;
-            if (_a0 >= 0)
+            if (a0 >= 0)
             {
                 ad5();
             }
             else
             {
-                _a0 = _nextCodeIndex + _v0;
-                _a1 = s1.getByteIP(_v0 + 5);
-                _a2 = s1.getByteIP(_v0 + 6);
-                s1.ip += _a1;
-                s1.ip += _a2 << 8;
+                a0 = _nextCodeIndex + _v0;
+                int a1 = s1.getByteIP(_v0 + 5);
+                Int32 a2 = s1.getByteIP(_v0 + 6);
+                s1.ip += a1;
+                s1.ip += a2 << 8;
             }
         }
     }
 
     public void ad5()
     {
-        _a0 = s1.getByteIP(3);
-        _a1 = s1.getByteIP(4);
-        _a1 = (_a1 << 8 | _a0);
-        s1.ip += _a1;
+        Int32 a0 = s1.getByteIP(3);
+        int a1 = s1.getByteIP(4);
+        a1 = (a1 << 8 | a0);
+        s1.ip += a1;
     }
 
     public Int32 commandDefault()
@@ -1275,46 +1404,46 @@ public class EBin
         Int32 ip = s1.ip;
         _v0 = _eventEngine.DoEventCode();
         _s2 = _v0;
-        _a0 = _eventEngine.gArgUsed;
+        Int32 a0 = _eventEngine.gArgUsed;
         _nextCodeIndex = s1.ip;
         s1.ip = ip;
-        _a0 = ((0 >= _a0) ? 0 : 1);
-        _a0 ^= 1;
-        _nextCodeIndex -= _a0;
+        a0 = ((0 >= a0) ? 0 : 1);
+        a0 ^= 1;
+        _nextCodeIndex -= a0;
         s1.ip = _nextCodeIndex;
         return 0;
     }
 
-    public void ad13()
+    public void ad13(ref Int32 a0, ref Int32 t2)
     {
-        if (_t2 > 0)
+        if (t2 > 0)
         {
-            _t2--;
-            _t4 = s1.getByteIP(1 + _a0);
-            _t3 = s1.getByteIP(0 + _a0);
-            Int32 num = _t3 | _t4 << 8;
+            t2--;
+            Int32 t4 = s1.getByteIP(1 + a0);
+            Int32 t3 = s1.getByteIP(0 + a0);
+            Int32 num = t3 | t4 << 8;
             num -= _v0;
-            _a0 += 4;
+            a0 += 4;
             if (num == 0)
             {
-                _t4 = s1.getByteIP(-1 + _a0);
-                _t3 = s1.getByteIP(-2 + _a0);
-                _t3 |= _t4 << 8;
-                s1.ip += _t3;
+                t4 = s1.getByteIP(-1 + a0);
+                t3 = s1.getByteIP(-2 + a0);
+                t3 |= t4 << 8;
+                s1.ip += t3;
                 s1.ip += 3;
             }
             else
             {
-                ad13();
+                ad13(ref a0, ref t2);
             }
         }
         else
         {
-            _t2--;
-            _t4 = s1.getByteIP(2);
-            _t3 = s1.getByteIP(1);
-            _t3 |= _t4 << 8;
-            s1.ip += _t3;
+            t2--;
+            Int32 t4 = s1.getByteIP(2);
+            Int32 byteIp = s1.getByteIP(1);
+            byteIp |= t4 << 8;
+            s1.ip += byteIp;
             s1.ip += 3;
         }
     }
@@ -1332,51 +1461,75 @@ public class EBin
             switch (arg0)
             {
                 case 1:
+                {
                     bra();
                     return 0;
+                }
                 case 2:
+                {
                     beq();
                     return 0;
+                }
                 case 3:
+                {
                     bne();
                     return 0;
+                }
                 case 4:
+                {
                     _eventEngine.Return(s1);
                     adfr();
                     return 0;
+                }
                 case 5:
+                {
                     expr();
                     return 0;
+                }
                 case 6:
-                    _t2 = s1.getByteIP();
-                    _v0 = getvi();
+                {
+                    Int32 t2 = s1.getByteIP();
+                    _v0 = EvaluateValueExpression();
                     _v0 &= 65535;
-                    _a0 = 3;
-                    ad13();
+                    Int32 _a0 = 3;
+                    ad13(ref _a0, ref t2);
                     return 0;
+                }
                 case 11:
-                    _t2 = s1.getByteIP();
-                    ad2();
+                {
+                    Int32 t2 = s1.getByteIP();
+                    ad2(t2);
                     return 0;
+                }
                 case 13:
-                    _t2 = s1.getShortIP();
+                {
+                    Int32 t2 = s1.getShortIP();
                     s1.ip++;
-                    ad2();
+                    ad2(t2);
                     return 0;
+                }
                 default:
+                {
                     switch (arg0)
                     {
                         case 48:
+                        {
                             return 0;
+                        }
                         case 49:
+                        {
                             return 0;
+                        }
                         case 50:
-                            _s5 = s1.getByteIP();
+                        {
+                            Int32 s5 = s1.getByteIP();
                             s1.ip++;
-                            _a0 = getv1i();
-                            _a1 = getv1i();
+                            Int32 a0 = getv1i(ref s5);
+                            Int32 a1 = getv1i(ref s5);
                             return 0;
+                        }
                         default:
+                        {
                             if (arg0 == 108)
                             {
                                 return 0;
@@ -1387,10 +1540,10 @@ public class EBin
                             }
                             if (arg0 == 28)
                             {
-                                _a0 = s1.getByteIP(1);
-                                _a1 = 255;
+                                Int32 _a0 = s1.getByteIP(1);
+                                int a1 = 255;
                                 s1.ip += 2;
-                                if (_a0 == _a1)
+                                if (_a0 == a1)
                                 {
                                     ad21();
                                 }
@@ -1415,7 +1568,9 @@ public class EBin
                             }
                             wait();
                             return 0;
+                        }
                     }
+                }
             }
         }
         Debug.Log("EBin.jumpToCommand INVALID command " + arg0);
@@ -1476,44 +1631,56 @@ public class EBin
         return ConvertFloatAngleToFixedPoint(num);
     }
 
-    public Int32 getvi()
+    public Int32 EvaluateValueExpression()
     {
-        _s7.pop(ref _t0);
-        _a2 = getTypeAndVarClass(_t0);
-        _a0 = getVarClass(_t0);
-        switch ((VariableSource)_a0)
+        _s7.pop(out var t0);
+        Int32 valType = getTypeAndVarClass(t0);
+        Int32 cls = getVarClass(t0);
+        switch ((VariableSource)cls)
         {
             case VariableSource.Global:
-                _a1 = (_t0 & 65535);
-                return getvsub(FF9StateSystem.EventState.gEventGlobal, _a1, _a2, 0);
+            {
+                int ofs = (t0 & 65535);
+                return GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, ofs, valType, 0);
+            }
             case VariableSource.Map:
-                _a1 = (_t0 & 65535);
-                return getvsub(_eventEngine.GetMapVar(), _a1, _a2, 0);
+            {
+                int ofs = (t0 & 65535);
+                return GetVariableValueInternal(_eventEngine.GetMapVar(), ofs, valType, 0);
+            }
             case VariableSource.Instance:
-                _a1 = (_t0 & 65535);
-                return getvsub(_instance, _a1, _a2, _instanceVOfs);
+            {
+                int ofs = (t0 & 65535);
+                return GetVariableValueInternal(_instance, ofs, valType, _instanceVOfs);
+            }
             case VariableSource.Object:
                 {
-                    _a0 = _t0 >> 8;
-                    _a0 &= 255;
-                    Obj objUID = _eventEngine.GetObjUID(_a0);
-                    _a1 = (_t0 & 255);
-                    _v0 = getvobj(objUID, _a1);
+                    cls = t0 >> 8;
+                    cls &= 255;
+                    Obj objUID = _eventEngine.GetObjUID(cls);
+                    int type = (t0 & 255);
+                    _v0 = getvobj(objUID, type);
                     return _v0;
                 }
             case VariableSource.System:
-                _a0 = (_t0 & 255);
-                _v0 = _eventEngine.GetSysList(_a0);
+            {
+                cls = (t0 & 255);
+                _v0 = _eventEngine.GetSysList(cls);
                 return _v0;
+            }
             case VariableSource.Member:
-                _t0 <<= 6;
-                _a1 = _t0 >> 6;
-                _v0 = getvobj(_eventEngine.gMemberTarget, _a1);
+            {
+                t0 <<= 6;
+                int type = t0 >> 6;
+                _v0 = getvobj(_eventEngine.gMemberTarget, type);
                 return _v0;
+            }
             case VariableSource.Int26:
-                _t0 <<= 6;
-                _v0 = _t0 >> 6;
+            {
+                t0 <<= 6;
+                _v0 = t0 >> 6;
                 return _v0;
+            }
         }
         return 0;
     }
@@ -1614,59 +1781,73 @@ public class EBin
         return Mathf.Sqrt(x * x + y * y + z * z);
     }
 
-    public Int32 getvsub(Byte[] buffer, Int32 ofs, Int32 type, Int32 bufferOffset = 0)
+    public Int32 GetVariableValueInternal(Byte[] buffer, Int32 ofs, Int32 type, Int32 bufferOffset = 0)
     {
         _v0 = (type & 56) >> 3;
         switch ((VariableType)_v0)
         {
             case VariableType.SBit:
             case VariableType.Bit:
+            {
                 _v0 = ofs >> 3; // 5
-                _a0 = (SByte)buffer[_v0 + bufferOffset];
+                Int32 a0 = (SByte)buffer[_v0 + bufferOffset];
                 _v0 = (ofs & 7); // 3
-                _a0 >>= _v0;
-                _v0 = (_a0 & 1);
+                a0 >>= _v0;
+                _v0 = (a0 & 1);
                 return _v0;
+            }
             case VariableType.Int24:
             case VariableType.UInt24:
+            {
                 _v0 = (SByte)buffer[ofs + 2 + bufferOffset];
-                _a1 = buffer[ofs + 1 + bufferOffset];
-                _v0 = (_v0 << 8 | _a1);
-                _a1 = buffer[ofs + bufferOffset];
+                int a1 = buffer[ofs + 1 + bufferOffset];
+                _v0 = (_v0 << 8 | a1);
+                a1 = buffer[ofs + bufferOffset];
                 _v0 <<= 8;
-                _v0 |= _a1;
+                _v0 |= a1;
                 return _v0;
+            }
             case VariableType.SByte:
+            {
                 _v0 = (SByte)buffer[ofs + bufferOffset];
                 return _v0;
+            }
             case VariableType.Byte:
+            {
                 _v0 = buffer[ofs + bufferOffset];
                 return _v0;
+            }
             case VariableType.Int16:
+            {
                 _v0 = (SByte)buffer[ofs + 1 + bufferOffset];
-                _a0 = buffer[ofs + bufferOffset];
+                Int32 a0 = buffer[ofs + bufferOffset];
                 _v0 <<= 8;
-                _v0 |= _a0;
+                _v0 |= a0;
                 return _v0;
+            }
             case VariableType.UInt16:
+            {
                 _v0 = buffer[ofs + 1 + bufferOffset];
-                _a0 = buffer[ofs + bufferOffset];
+                Int32 a0 = buffer[ofs + bufferOffset];
                 _v0 <<= 8;
-                _v0 |= _a0;
+                _v0 |= a0;
                 return _v0;
+            }
             default:
+            {
                 return 0;
+            }
         }
     }
 
-    public Int32 getv1i()
+    public Int32 getv1i(ref Int32 s5)
     {
-        _v0 = (_s5 & 1);
-        _s5 >>= 1;
+        _v0 = (s5 & 1);
+        s5 >>= 1;
         if (_v0 != 0)
         {
             expr();
-            _v0 = getvi();
+            _v0 = EvaluateValueExpression();
             return _v0;
         }
         _v0 = s1.getByteIP();
@@ -1674,40 +1855,50 @@ public class EBin
         return _v0;
     }
 
-    public Int32 putvi(Int32 arg0)
+    public Int32 SetVariableValue(Int32 arg0)
     {
-        _s7.pop(ref _t0);
-        _a3 = arg0;
-        _a2 = _t0 >> 26;
-        switch ((VariableSource)(_a2 & 7))
+        _s7.pop(out var t0);
+        Int32 varValue = arg0;
+        Int32 varType = t0 >> 26;
+        switch ((VariableSource)(varType & 7))
         {
             case VariableSource.Global:
-                _a1 = (_t0 & 65535);
-                putvsub(FF9StateSystem.EventState.gEventGlobal, _a1, _a2, _a3, 0);
+            {
+                int ofs = (t0 & 65535);
+                SetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, ofs, varType, varValue, 0);
                 break;
+            }
             case VariableSource.Map:
-                _a1 = (_t0 & 65535);
-                putvsub(_eventEngine.GetMapVar(), _a1, _a2, _a3, 0);
+            {
+                int ofs = (t0 & 65535);
+                SetVariableValueInternal(_eventEngine.GetMapVar(), ofs, varType, varValue, 0);
                 break;
+            }
             case VariableSource.Instance:
-                _a1 = (_t0 & 65535);
-                putvsub(_instance, _a1, _a2, _a3, _instanceVOfs);
+            {
+                int ofs = (t0 & 65535);
+                SetVariableValueInternal(_instance, ofs, varType, varValue, _instanceVOfs);
                 break;
+            }
             case VariableSource.System:
-                _a0 = (_t0 & 255);
-                _a1 = _a3;
-                _eventEngine.SetSysList(_a0, _a1);
+            {
+                Int32 a0 = (t0 & 255);
+                int value = varValue;
+                _eventEngine.SetSysList(a0, value);
                 break;
+            }
             case VariableSource.Member:
-                _a1 = (_t0 & 255);
-                _a2 = _a3;
-                _eventEngine.putvobj(_eventEngine.gMemberTarget, _a1, _a2);
+            {
+                int type = (t0 & 255);
+                varType = varValue;
+                _eventEngine.putvobj(_eventEngine.gMemberTarget, type, varType);
                 break;
+            }
         }
         return 0;
     }
 
-    public Int32 putvsub(Byte[] buffer, Int32 ofs, Int32 type, Int32 value, Int32 bufferOffset = 0)
+    public Int32 SetVariableValueInternal(Byte[] buffer, Int32 ofs, Int32 type, Int32 value, Int32 bufferOffset = 0)
     {
         _v0 = (type & 56) >> 3;
         switch ((VariableType)_v0)
@@ -1717,24 +1908,25 @@ public class EBin
                 {
                     _v0 = (ofs & 7);
                     Int32 num = ofs >> 3;
-                    _a1 = (SByte)buffer[num + bufferOffset];
-                    _a2 = 1;
-                    _a2 <<= _v0;
+                    int a1 = (SByte)buffer[num + bufferOffset];
+                    Int32 a2 = 1;
+                    a2 <<= _v0;
                     if (value == 0)
                     {
-                        _a2 ^= 255;
-                        _a1 &= _a2;
-                        buffer[num + bufferOffset] = (Byte)_a1;
+                        a2 ^= 255;
+                        a1 &= a2;
+                        buffer[num + bufferOffset] = (Byte)a1;
                     }
                     else
                     {
-                        _a1 |= _a2;
-                        buffer[num + bufferOffset] = (Byte)_a1;
+                        a1 |= a2;
+                        buffer[num + bufferOffset] = (Byte)a1;
                     }
                     break;
                 }
             case VariableType.Int24:
             case VariableType.UInt24:
+            {
                 if (EventHUD.CurrentHUD == MinigameHUD.JumpingRope && Configuration.Hacks.Enabled && (ofs == 43 || ofs == 59))
                     value = value - 1 + Configuration.Hacks.RopeJumpingIncrement;
 
@@ -1742,15 +1934,20 @@ public class EBin
                 buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
                 buffer[ofs + 2 + bufferOffset] = (Byte)((value & 16711680) >> 16);
                 break;
+            }
             case VariableType.SByte:
             case VariableType.Byte:
-                buffer[ofs + bufferOffset] = (Byte)_a3;
+            {
+                buffer[ofs + bufferOffset] = (Byte)value;
                 break;
+            }
             case VariableType.Int16:
             case VariableType.UInt16:
+            {
                 buffer[ofs + bufferOffset] = (Byte)(value & 255);
                 buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
                 break;
+            }
         }
         return 0;
     }
@@ -1764,13 +1961,13 @@ public class EBin
     public Int32 CalcExpr()
     {
         Obj obj = s1;
-        Int32 num = _s3;
+        //Int32 num = _s3;
         Int32 num2 = _nextCodeIndex;
         CalcStack calcStack = _s7;
         s1 = _eventEngine.gExec;
         expr();
         s1 = obj;
-        _s3 = num;
+        //_s3 = num;
         _nextCodeIndex = num2;
         _s7 = calcStack;
         return 0;
@@ -1780,7 +1977,7 @@ public class EBin
     {
         CalcStack calcStack = _s7;
         _s7 = _eventEngine.gCP;
-        _v0 = getvi();
+        _v0 = EvaluateValueExpression();
         _s7 = calcStack;
         return _v0;
     }
@@ -1789,7 +1986,7 @@ public class EBin
     {
         CalcStack calcStack = _s7;
         _s7 = _eventEngine.gCP;
-        _v0 = putvi(a);
+        _v0 = SetVariableValue(a);
         _s7 = calcStack;
         return _v0;
     }
@@ -1807,7 +2004,7 @@ public class EBin
 
     private Int32 encodeTypeAndVarClass(Int32 typeAndClass)
     {
-        return typeAndClass << 10 << 16;
+        return typeAndClass << 26;
     }
 
     public enum event_code_binary
@@ -2094,128 +2291,128 @@ public class EBin
 
     public enum op_binary
     {
-        B_PAD0,
-        B_PAD1,
-        B_PAD2,
-        B_PAD3,
-        B_POST_PLUS,
-        B_POST_MINUS,
-        B_PRE_PLUS,
-        B_PRE_MINUS,
-        B_POST_PLUS_A,
-        B_POST_MINUS_A,
-        B_PRE_PLUS_A,
-        B_PRE_MINUS_A,
-        B_SINGLE_PLUS,
-        B_SINGLE_MINUS,
-        B_NOT,
-        B_NOT_E,
-        B_COMP,
-        B_MULT,
-        B_DIV,
-        B_REM,
-        B_PLUS,
-        B_MINUS,
-        B_SHIFT_LEFT,
-        B_SHIFT_RIGHT,
-        B_LT,
-        B_GT,
-        B_LE,
-        B_GE,
-        B_LT_E,
-        B_GT_E,
-        B_LE_E,
-        B_GE_E,
-        B_EQ,
-        B_NE,
-        B_EQ_E,
-        B_NE_E,
-        B_AND,
-        B_XOR,
-        B_OR,
-        B_ANDAND,
-        B_OROR,
-        B_MEMBER,
-        B_COUNT,
-        B_PICK,
-        B_LET,
-        B_LET_A,
-        B_LET_E,
-        B_MULT_LET,
-        B_DIV_LET,
-        B_REM_LET,
-        B_PLUS_LET,
-        B_MINUS_LET,
-        B_SHIFT_LEFT_LET,
-        B_SHIFT_RIGHT_LET,
-        B_MULT_LET_A,
-        B_DIV_LET_A,
-        B_REM_LET_A,
-        B_PLUS_LET_A,
-        B_MINUS_LET_A,
-        B_SHIFT_LEFT_LET_A,
-        B_SHIFT_RIGHT_LET_A,
-        B_AND_LET,
-        B_XOR_LET,
-        B_OR_LET,
-        B_AND_LET_A,
-        B_XOR_LET_A,
-        B_OR_LET_A,
-        B_AND_LET_E,
-        B_XOR_LET_E,
-        B_OR_LET_E,
-        B_CAST8,
-        B_CAST8U,
-        B_CAST16,
-        B_CAST16U,
-        B_CAST_LIST,
-        B_LMAX,
-        B_LMIN,
-        B_SELECT,
-        B_OBJSPEC,
-        B_KEYON,
-        B_SIN2,
-        B_COS2,
-        B_CURHP,
-        B_MAXHP,
-        B_AND_E,
-        B_NAND_E,
-        B_XOR_E,
-        B_OR_E,
-        B_KEYOFF,
-        B_KEY,
-        B_KEYON2,
-        B_KEYOFF2,
-        B_KEY2,
-        B_ANGLE,
-        B_DISTANCE,
-        B_PTR,
-        B_ANGLEA,
-        B_DISTANCEA,
-        B_SIN,
-        B_COS,
-        B_HAVE_ITEM,
-        B_BAFRAME,
-        B_ANGLE2,
-        pad67,
-        pad68,
-        pad69,
-        B_FRAME,
-        B_PARTYCHK,
-        B_SPS,
-        B_PARTYADD,
-        B_CURMP,
-        B_MAXMP,
-        B_BGIID,
-        B_BGIFLOOR,
+        B_PAD0 = 0,
+        B_PAD1 = 1,
+        B_PAD2 = 2,
+        B_PAD3 = 3,
+        B_POST_PLUS = 4,
+        B_POST_MINUS = 5,
+        B_PRE_PLUS = 6,
+        B_PRE_MINUS = 7,
+        B_POST_PLUS_A = 8,
+        B_POST_MINUS_A = 9,
+        B_PRE_PLUS_A = 10,
+        B_PRE_MINUS_A = 11,
+        B_SINGLE_PLUS = 12,
+        B_SINGLE_MINUS = 13,
+        B_NOT = 14,
+        B_NOT_E = 15,
+        B_COMP = 16,
+        B_MULT = 17,
+        B_DIV = 18,
+        B_REM = 19,
+        B_PLUS = 20,
+        B_MINUS = 21,
+        B_SHIFT_LEFT = 22,
+        B_SHIFT_RIGHT = 23,
+        B_LT = 24,
+        B_GT = 25,
+        B_LE = 26,
+        B_GE = 27,
+        B_LT_E = 28,
+        B_GT_E = 29,
+        B_LE_E = 30,
+        B_GE_E = 31,
+        B_EQ = 32,
+        B_NE = 33,
+        B_EQ_E = 34,
+        B_NE_E = 35,
+        B_AND = 36,
+        B_XOR = 37,
+        B_OR = 38,
+        B_ANDAND = 39,
+        B_OROR = 40,
+        B_MEMBER = 41,
+        B_COUNT = 42,
+        B_PICK = 43,
+        B_LET = 44,
+        B_LET_A = 45,
+        B_LET_E = 46,
+        B_MULT_LET = 47,
+        B_DIV_LET = 48,
+        B_REM_LET = 49,
+        B_PLUS_LET = 50,
+        B_MINUS_LET = 51,
+        B_SHIFT_LEFT_LET = 52,
+        B_SHIFT_RIGHT_LET = 53,
+        B_MULT_LET_A = 54,
+        B_DIV_LET_A = 55,
+        B_REM_LET_A = 56,
+        B_PLUS_LET_A = 57,
+        B_MINUS_LET_A = 58,
+        B_SHIFT_LEFT_LET_A = 59,
+        B_SHIFT_RIGHT_LET_A = 60,
+        B_AND_LET = 61,
+        B_XOR_LET = 62,
+        B_OR_LET = 63,
+        B_AND_LET_A = 64,
+        B_XOR_LET_A = 65,
+        B_OR_LET_A = 66,
+        B_AND_LET_E = 67,
+        B_XOR_LET_E = 68,
+        B_OR_LET_E = 69,
+        B_CAST8 = 70,
+        B_CAST8U = 71,
+        B_CAST16 = 72,
+        B_CAST16U = 73,
+        B_CAST_LIST = 74,
+        B_LMAX = 75,
+        B_LMIN = 76,
+        B_SELECT = 77,
+        B_OBJSPEC = 78,
+        B_KEYON = 79,
+        B_SIN2 = 80,
+        B_COS2 = 81,
+        B_CURHP = 82,
+        B_MAXHP = 83,
+        B_AND_E = 84,
+        B_NAND_E = 85,
+        B_XOR_E = 86,
+        B_OR_E = 87,
+        B_KEYOFF = 88,
+        B_KEY = 89,
+        B_KEYON2 = 90,
+        B_KEYOFF2 = 91,
+        B_KEY2 = 92,
+        B_ANGLE = 93,
+        B_DISTANCE = 94,
+        B_PTR = 95,
+        B_ANGLEA = 96,
+        B_DISTANCEA = 97,
+        B_SIN = 98,
+        B_COS = 99,
+        B_HAVE_ITEM = 100,
+        B_BAFRAME = 101,
+        B_ANGLE2 = 102,
+        pad67 = 103,
+        pad68 = 104,
+        pad69 = 105,
+        B_FRAME = 106,
+        B_PARTYCHK = 107,
+        B_SPS = 108,
+        B_PARTYADD = 109,
+        B_CURMP = 110,
+        B_MAXMP = 111,
+        B_BGIID = 112,
+        B_BGIFLOOR = 113,
         B_OBJSPECA = 120,
-        B_SYSLIST,
-        B_SYSVAR,
-        B_pad7b,
-        B_PAD4,
-        B_CONST,
-        B_CONST4,
-        B_EXPR_END,
+        B_SYSLIST = 121,
+        B_SYSVAR = 122,
+        B_pad7b = 123,
+        B_PAD4 = 124,
+        B_CONST = 125,
+        B_CONST4 = 126,
+        B_EXPR_END = 127,
         B_VAR = 192
     }
 

@@ -1465,6 +1465,9 @@ public class ConfigUI : UIScene
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         ConfigFieldList = new List<ConfigField>();
+		// If the cheats of the Configuration menu are disabled, hide them and expand the ConfigList menu
+		if (!Configuration.Cheats.Enabled || (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax))
+			ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
         Int32 num = ConfigList.GetChild(1).GetChild(0).transform.childCount;
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
@@ -1565,5 +1568,7 @@ public class ConfigUI : UIScene
         configScrollButton.DisplayScrollButton(false, false);
         transform.GetChild(3).GetChild(4).gameObject.SetActive(false);
         backButtonGameObject = ControlPanelGroup.GetChild(1);
+		if (!Configuration.Cheats.Enabled || (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax))
+			BoosterPanel.SetActive(false);
     }
 }
