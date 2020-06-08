@@ -10,7 +10,7 @@ using Object = System.Object;
 [Flags]
 public enum FieldMapFlags : uint
 {
-    None = 0,
+    None = 0,HonoLateUpdate
     Unknown1 = 1,
     Unknown2 = 2,
     Unknown4 = 4,
@@ -450,6 +450,7 @@ public class FieldMap : HonoBehavior
         this.EBG_sceneService2DScroll();
         this.EBG_sceneService3DScroll();
         this.EBG_sceneServiceScroll(this.scene);
+        OnWidescreenSupportChanged();
         this.CenterCameraOnPlayer();
         this.UpdateOverlayAll();
     }
@@ -788,7 +789,7 @@ public class FieldMap : HonoBehavior
         localPosition.x = bgcam_DEF.centerOffset[0] + this.charOffset.x;
         localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
         
-        if (Configuration.Graphics.WidescreenSupport && !IsNarrowMap())
+        if (Configuration.Graphics.InitializeWidescreenSupport() && !IsNarrowMap())
         {
             int threshmargin = (int)(Math.Min((bgcam_DEF.w - PsxFieldWidth), 0)); //offset value for fields that are between 320 & 398
             foreach (KeyValuePair<int, int> entry in mapCameraMargin)
@@ -811,16 +812,145 @@ public class FieldMap : HonoBehavior
             localPosition.x = (int)(Math.Max(threshleft, localPosition.x));
             localPosition.x = (int)(Math.Min(threshright, localPosition.x));
         }
+
+
+        if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
+        {
+            foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+            {
+                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                {
+                    localPosition.x = (int)((bgcam_DEF.w - entry.Value) /2);
+                }
+            }
+        }
+
         camera.transform.localPosition = localPosition;
     }
-    
+
+
     private static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
     {
+        //{mapNo,extra pixels on each side because of scrollable}
         {1051,8},
         {1057,16},
         {1060,16},
         {1652,16},
         {1653,16},
+    };
+    
+    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int> 
+    {
+        //{mapNo,actualWidth-2}
+        {203,334},
+        {502,334},
+        {503,334},
+        {760,334},
+        {814,334},
+        {816,334},
+        {1151,334},
+        {1458,334},
+        {1500,334},
+        {1506,334},
+        {1605,334},
+        {1606,334},
+        {1660,334},
+        {1661,334},
+        {1662,334},
+        {1705,334},
+        {2202,334},
+        {2204,334},
+        {2205,334},
+        {2208,334},
+        {2254,334},
+        {2257,334},
+        {2303,334},
+        {2365,334},
+        {2513,334},
+        {114,350},
+        {550,350},
+        {620,350},
+        {802,350},
+        {803,350},
+        {1212,350},
+        {1300,350},
+        {1508,350},
+        {1650,350},
+        {1657,350},
+        {1752,350},
+        {1757,350},
+        {1951,350},
+        {1952,350},
+        {2000,350},
+        {2055,350},
+        {2203,350},
+        {2261,350},
+        {2356,350},
+        {2362,350},
+        {2500,350},
+        {2501,350},
+        {2654,350},
+        {60,366},
+        {67,366},
+        {150,366},
+        {161,366},
+        {201,366},
+        {262,366},
+        {565,366},
+        {911,366},
+        {1213,366},
+        {1222,366},
+        {1251,366},
+        {1254,366},
+        {1403,366}, 
+        {1817,366},
+        {2002,366},
+        {2004,366},
+        {2006,366},
+        {2502,366},
+        {2503,366},
+        {2650,366},
+        {2904,366}, 
+        {2913,366},
+        {2928,366},
+        {3100,366},
+        {102,382},
+        {109,382},
+        {206,382},
+        {207,382},
+        {251,382},
+        {252,382},
+        {407,382},
+        {553,382},
+        {556,382},
+        {705,382},
+        {751,382},
+        {813,382},
+        {950,382},
+        {1017,382},
+        {1018,382},
+        {1058,382},
+        {1108,382},
+        {1201,382},
+        {1210,382},
+        {1404,382},
+        {1452,382},
+        {1453,382},
+        {1509,382},
+        {1656,382},
+        {1852,382},
+        {1953,382},
+        {2052,382},
+        {2200,382},
+        {2222,382},
+        {2355,382},
+        {2406,382},
+        {2451,382},
+        {2657,382},
+        {2851,382},
+        {2855,382},
+        {2856,382},
+        {2915,382},
     };
 
     public void ff9fieldInternalBattleEncountService()
@@ -3121,6 +3251,17 @@ public class FieldMap : HonoBehavior
     {
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
+        if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
+        {
+            foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+            {
+                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                {
+                    PsxFieldWidth = (Int16)(entry.Value);
+                    PsxScreenWidth = PsxFieldWidth;
+                }
+            }
+        }
         HalfFieldWidth = (Int16)(PsxFieldWidth / 2);
         HalfScreenWidth = (Int16)(PsxScreenWidth / 2);
         ShaderMulX = CalcShaderMulX();
