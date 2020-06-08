@@ -744,9 +744,17 @@ public class UIManager : PersistenSingleton<UIManager>
 
     private static Vector2 GetUIContentSize()
     {
+        const Int32 contentWidth = 1543;
         const Int32 contentHeight = 1080;
-        Single aspect = (Single)Screen.width / Screen.height;
-        return new Vector2(contentHeight * aspect, contentHeight);
+        if (Configuration.Graphics.InitializeWidescreenSupport())
+        {
+            Single aspect = (Single)Screen.width / Screen.height;
+            return new Vector2(contentHeight * aspect, contentHeight);
+        }
+        else
+        {
+            return new Vector2(contentWidth, contentHeight);
+        }
     }
 
     public static Vector2 OriginScreenSize = new Vector2(FieldMap.PsxFieldWidth, FieldMap.PsxFieldHeightNative);
