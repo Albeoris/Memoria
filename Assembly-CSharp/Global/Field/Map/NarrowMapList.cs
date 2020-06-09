@@ -10,6 +10,7 @@ public static class NarrowMapList
     {
         0052, // Prima Vista/Meeting Rm
         0053, // Prima Vista/Meeting Rm
+        0055,
         0056, // S. Gate
         0058, // Prima Vista/Storage
         0059, // Prima Vista/Interior
@@ -27,9 +28,10 @@ public static class NarrowMapList
         0104, // Alexandria/Shop
         0105, // Alexandria/Alley
         0108, // Alexandria/Item Shop
-        0109, 
+        0109,
         0114,
         0150, // A. Castle/Guardhouse
+        0157,
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
         0162, // A. Castle/West Tower
@@ -64,6 +66,7 @@ public static class NarrowMapList
         0358, // Dali/Windmill
         0359, // Dali/???
         0400, // Dali/Underground
+        0405,
         0407,
         0452, // Dali/Field
         0453, // Dali/Field
@@ -81,21 +84,34 @@ public static class NarrowMapList
         0553, // Lindblum/Inn
         0556,
         0560, // Lindblum/Synthesist
+        0561,
         0565,
+        0566,
         0567, // Lindblum/Theater Ave.
+        0568,
+        0569,
         0570, // Lindblum/Industrial Wa
+        0571,
         0574, // Lindblum/Festival
         0576, // Lindblum/Festival
         0601, // L. Castle/Lift
         0606, // L. Castle/Event
         0607, // L. Castle/Hangar
         0609, // L. Castle/Castle Bridg
+        0613,
         0620,
+        0656,
+        0657,
+        0658,
+        0659,
+        0663,
         0701, // Gizamaluke/Entrance
         0705,
         0750, // Burmecia/Gate
         0751,
+        0753,
         0754, // Burmecia/Residence
+        0755,
         0758, // Burmecia/Pathway
         0760, // Burmecia/Uptown Area
         0764, // Burmecia/Vault
@@ -105,10 +121,15 @@ public static class NarrowMapList
         0800, // S. Gate/Bohden Gate
         0802, // S. Gate/Bohden Sta.
         0803,
+        0806,
         0813, // S. Gate/Berkmea
         0814, // S. Gate/Berkmea
         0816, // S. Gate/Berkmea
+        0851,
+        0855,
+        0901,
         0911,
+        0913,
         0930, // Treno/Tot Residence
         0932, // Treno/Event
         0950,
@@ -124,8 +145,10 @@ public static class NarrowMapList
         1017, // Cleyra/Tree Trunk
         1018,
         1050, // Cleyra/Tree Trunk
+        1054,
         1058, // Cleyra/Cathedral
         1100, // Cleyra/Tree Trunk
+        1104,
         1108, // Cleyra/Cathedral
         1150, // Red Rose/Deck
         1151, // Red Rose/Cabin
@@ -136,6 +159,10 @@ public static class NarrowMapList
         1210, // A. Castle/West Tower
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
+        1214,
+        1215,
+        1216,
+        1218,
         1221, // A. Castle/Courtyard
         1222, // A. Castle/Courtyard
         1226, // A. Castle/Library
@@ -148,16 +175,28 @@ public static class NarrowMapList
         1301, // Lindblum/B.D. Station
         1303, // Lindblum/Inn
         1308, // Lindblum/Synthesist
+        1312,
+        1313,
         1314, // Lindblum/Theater Ave.
+        1350,
+        1351,
+        1356,
         1357, // L. Castle/Hangar
+        1359,
+        1363,
+        1370,
         1401, // Fossil Roo/Cavern
         1403, // Fossil Roo/Cavern
         1404,
         1406, // Fossil Roo/Nest
+        1408,
         1410, // Fossil Roo/Nest
+        1414,
+        1424,
         1452, // Mage Village/Cemetery
         1453, // Mage Village/Cemetery
         1455, // Mage Village/Synthesis
+        1456,
         1457, // Mage Village/Rooftop
         1458,
         1459, // Mage Village/Water Mil
@@ -170,6 +209,9 @@ public static class NarrowMapList
         1509, // Conde Petie/Item Shop
         1556, // Mountain Path/Roots
         1557, // Mountain Path/Roots
+        1600,
+        1601,
+        1602,
         1604, // Mdn. Sari/Eidolon Wall
         1605, // Mdn. Sari/Eidolon Wall
         1606, // Mdn. Sari/Resting Room
@@ -186,6 +228,9 @@ public static class NarrowMapList
         1660,
         1661,
         1662,
+        1700,
+        1701,
+        1702,
         1704, // Mdn. Sari/Eidolon Wall
         1705, // Mdn. Sari/Resting Room
         1706, // Mdn. Sari/Kitchen
@@ -202,6 +247,8 @@ public static class NarrowMapList
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
         1807, // A. Castle/Hallway
+        1808,
+        1810,
         1813, // A. Castle/Courtyard
         1814, // A. Castle/Courtyard
         1816, // A. Castle/Courtyard
@@ -214,7 +261,11 @@ public static class NarrowMapList
         1854, // Alexandria/Alley
         1857, // Alexandria/Item Shop
         1858, // Alexandria/Wpn. Shop
+        1863,
         1866, // Alexandria/Dock
+        1901,
+        1911,
+        1913,
         1951,
         1952,
         1953, // Quan’s/Fishing Area
@@ -225,7 +276,6 @@ public static class NarrowMapList
         2006,
         2007, // A. Castle/Altar
         2008, // A. Castle/Altar
-        2010,
         2050, // Alexandria/Main Street
         2052,
         2055,
@@ -233,16 +283,23 @@ public static class NarrowMapList
         2103, // Lindblum/Inn
         2108, // Lindblum/Synthesist
         2109, // Lindblum/Wpn. Shop
+        2112,
+        2113,
         2114, // Lindblum/Theater Ave.
+        2150,
         2151, // L. Castle/Lift
         2157, // L. Castle/Hangar
         2159, // L. Castle/Castle Bridg
+        2163,
+        2171,
         2200,
         2202, // Palace/Dungeon
         2203, // Palace/Rack
         2204, // Palace/Odyssey
         2205, // Palace/Odyssey
         2208, // Palace/Hallway
+        2212,
+        2213,
         2222,
         2250, // Oeilvert/Outside
         2254, // Oeilvert/Ship Display
@@ -253,6 +310,8 @@ public static class NarrowMapList
         2303,
         2305, // Esto Gaza/Path
         2351, // Gulug/Well
+        2352,
+        2353,
         2354, // Gulug/Room
         2355,
         2356, // Gulug/Room
@@ -275,8 +334,10 @@ public static class NarrowMapList
         2505, // I. Castle/Inverted Roo
         2512, // I. Castle/Mural Room
         2513,
+        2551,
         2552, // Earth Shrine/Interior
         2600, // Terra/Hilltop
+        2601,
         2602, // Terra/Stepping Stones
         2605, // Terra/Treetop
         2606, // Terra/Tree base
@@ -286,8 +347,10 @@ public static class NarrowMapList
         2651, // Bran Bal/Entrance
         2654, // Bran Bal/Pond
         2657, // Bran Bal/Storage
+        2658,
         2660, // Bran Bal/Hilltop
         2701, // Pand./Path
+        2706,
         2715, // Pand./Event
         2719, // Pand./Exit
         2752, // Invincible/Bridge
@@ -303,6 +366,7 @@ public static class NarrowMapList
         2903, // Memoria/Recollection
         2904, // Memoria/Outer Path
         2905, // Memoria pink scene
+        2906,
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
         2910, // Memoria/Lost Memory
@@ -327,12 +391,15 @@ public static class NarrowMapList
         2934, // last/cw mbg 2
         2950, // Chocobo’s Forest
         2953, // Chocobo’s Dream World
+        3005,
         3008, // Ending/Prima Vista - Meeting Room
         3010, // Ending/TH
         3011, // Ending/TH
         3052, // Mage Village/Cemetery
         3054, // Mage Village/Synthesis
+        3055,
         3056, // Mage Village/Rooftop
+        3057,
         3058, // Mage Village/Water Mil
         3100,
 
