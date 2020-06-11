@@ -30,6 +30,7 @@ public static class NarrowMapList
         0108, // Alexandria/Item Shop
         0109,
         0114,
+        0116,
         0150, // A. Castle/Guardhouse
         0153,
         0154,
