@@ -17,7 +17,7 @@ namespace Memoria
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 
-            private static Boolean InitializeWidescreenSupport()
+            public static Boolean InitializeWidescreenSupport()
             {
                 if (!Enabled)
                     return false;
