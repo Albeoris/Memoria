@@ -348,19 +348,10 @@ public class FieldMap : HonoBehavior
             }
         }
         this.ActivateCamera();
-        
-        if (this.curCamIdx != prevCamIdx) 
-        {
-            prevCamIdx = curCamIdx;
-            BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
-            bgcam_DEF.RefreshCache(true);
-        }
-        
         this.cumulativeTime = 0f;
         this.EBG_animationService();
         this.EBG_attachService();
     }
-    public int prevCamIdx = -1;
 
     public override void HonoOnGUI()
     {
@@ -776,7 +767,8 @@ public class FieldMap : HonoBehavior
             return;
         }
         Camera camera = this.GetMainCamera();
-        if (FF9StateSystem.Common.FF9.fldMapNo == 70)
+        Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
+        if (map == 70)
         {
             return;
         }
@@ -788,39 +780,74 @@ public class FieldMap : HonoBehavior
         Vector3 localPosition = camera.transform.localPosition;
         localPosition.x = bgcam_DEF.centerOffset[0] + this.charOffset.x;
         localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
-        
-        if (Configuration.Graphics.InitializeWidescreenSupport() && !IsNarrowMap())
+
+        if (Configuration.Graphics.InitializeWidescreenSupport())
         {
             int threshmargin = (int)(Math.Min((bgcam_DEF.w - PsxFieldWidth), 0)); //offset value for fields that are between 320 & 398
-            foreach (KeyValuePair<int, int> entry in mapCameraMargin)
+            if (!IsNarrowMap())
             {
-                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+
+                foreach (KeyValuePair<int, int> entry in mapCameraMargin)
                 {
-                    threshmargin = entry.Value;
+                    if (map == entry.Key)
+                    {
+                        threshmargin = entry.Value;
+                    }
                 }
-            }
-            int threshleft = (int)(0 + threshmargin);
-            int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
-            if (FF9StateSystem.Common.FF9.fldMapNo == 103 || FF9StateSystem.Common.FF9.fldMapNo == 1853 || FF9StateSystem.Common.FF9.fldMapNo == 2053) // exception in alex center
-            {
-                threshleft = (int)(threshleft + 16);
-            }
-            if (FF9StateSystem.Common.FF9.fldMapNo == 2903) // exception in memoria castle
-            {
-                threshright = (int)(threshright - 32);
-            }
-            localPosition.x = (int)(Math.Max(threshleft, localPosition.x));
-            localPosition.x = (int)(Math.Min(threshright, localPosition.x));
-        }
+                
+                int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
 
-
-        if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
-        {
-            foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
-            {
-                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                if (map == 103 || map == 1853 || map == 2053) // exception in alex center
                 {
-                    localPosition.x = (int)((bgcam_DEF.w - entry.Value) /2);
+                    threshmargin = (int)(threshmargin + 16);
+                }
+                if (map == 2903) // exception in memoria castle
+                {
+                    threshright = (int)(threshright - 32);
+                }
+                if (map == 2606) // exception in memoria castle
+                {
+                    threshmargin = (int)(threshmargin + 16);
+                }
+                localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
+                localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+            }
+            else if (map == 1205 || map == 154 || map == 1214 || map == 1807 || map == 1652 || map == 2552) 
+            {
+                switch (map)
+                {
+                    case 1652: // ifa root entrance
+                        if (this.camIdx == 0)
+                        {
+                            threshmargin = threshmargin + 16;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
+                localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
+                localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+            }
+            else if (IsNarrowMap())
+            {
+                foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+                {
+                    if (map == entry.Key)
+                    {
+                        localPosition.x = (int)((bgcam_DEF.w - entry.Value) / 2);
+                    }
+                }
+                switch (map) // offsets for scrolling maps stretched to WS
+                {
+                    case 505: //Cargo ship offset
+                        localPosition.x = 105; 
+                        break;
+                    case 1153: //Rose Rouge cockpit offset
+                        localPosition.x = 175;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -854,10 +881,13 @@ public class FieldMap : HonoBehavior
         {1506,334},
         {1605,334},
         {1606,334},
+        {1608,334},
         {1660,334},
         {1661,334},
         {1662,334},
         {1705,334},
+        {1707,334},
+        {1751,334},
         {2202,334},
         {2204,334},
         {2205,334},
@@ -867,6 +897,8 @@ public class FieldMap : HonoBehavior
         {2303,334},
         {2365,334},
         {2513,334},
+        {2756,334},
+        {2932,334},
         {3057,334},
         {114,350},
         {550,350},
@@ -970,6 +1002,7 @@ public class FieldMap : HonoBehavior
         {55,398},
         {157,398},
         {405,398},
+        {505,398},
         {561,398},
         {566,398},
         {568,398},
@@ -990,6 +1023,7 @@ public class FieldMap : HonoBehavior
         {913,398},
         {1054,398},
         {1104,398},
+        {1153,398},
         {1218,398},
         {1313,398},
         {1363,398},
@@ -1019,6 +1053,13 @@ public class FieldMap : HonoBehavior
         {2906,398},
         {3005,398},
         {3055,398},
+
+        {1205,384},
+        {154,352},
+        {1215,352},
+        {1805,352},
+        {1652,336},
+        {2552,352},
     };
 
     public void ff9fieldInternalBattleEncountService()
