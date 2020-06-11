@@ -10,7 +10,7 @@ using Object = System.Object;
 [Flags]
 public enum FieldMapFlags : uint
 {
-    None = 0,HonoLateUpdate
+    None = 0,
     Unknown1 = 1,
     Unknown2 = 2,
     Unknown4 = 4,
