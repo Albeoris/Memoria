@@ -31,6 +31,8 @@ public static class NarrowMapList
         0109,
         0114,
         0150, // A. Castle/Guardhouse
+        0153,
+        0154,
         0157,
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
@@ -94,6 +96,7 @@ public static class NarrowMapList
         0571,
         0574, // Lindblum/Festival
         0576, // Lindblum/Festival
+        0600,
         0601, // L. Castle/Lift
         0606, // L. Castle/Event
         0607, // L. Castle/Hangar
@@ -133,6 +136,7 @@ public static class NarrowMapList
         0930, // Treno/Tot Residence
         0932, // Treno/Event
         0950,
+        0951,
         0954, // Gargan Roo/Tunnel
         1000, // Cleyra/Tree Roots
         1001, // Cleyra/Tree Roots
@@ -155,6 +159,7 @@ public static class NarrowMapList
         1153, // Red Rose/Bridge
         1200, // A. Castle/Throne
         1201,
+        1205,
         1208, // A. Castle/Dungeon
         1210, // A. Castle/West Tower
         1212, // A. Castle/East Tower
@@ -221,6 +226,7 @@ public static class NarrowMapList
         1610, // Mdn. Sari/Cove
         1650,
         1651, // Iifa Tree/Tree Roots
+        1652,
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
@@ -300,6 +306,7 @@ public static class NarrowMapList
         2208, // Palace/Hallway
         2212,
         2213,
+        2217,
         2222,
         2250, // Oeilvert/Outside
         2254, // Oeilvert/Ship Display
@@ -332,6 +339,7 @@ public static class NarrowMapList
         2503,
         2504, // I. Castle/Small Room
         2505, // I. Castle/Inverted Roo
+        2510,
         2512, // I. Castle/Mural Room
         2513,
         2551,
@@ -354,18 +362,16 @@ public static class NarrowMapList
         2715, // Pand./Event
         2719, // Pand./Exit
         2752, // Invincible/Bridge
-        2755, // Hilda Garde/Bridge
         2756, // Red Rose/Bridge
-        2850, // Hilda Garde 3/Bridge
+        //2850, // Hilda Garde 3/Bridge
         2851, // Hilda Garde 3/Engine
         2855,
         2856,
         2900, // Memoria/Outside
         2901, // Memoria/Entrance
         2902, // Memoria/Stairs of Time
-        2903, // Memoria/Recollection
         2904, // Memoria/Outer Path
-        2905, // Memoria pink scene
+        2905,
         2906,
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
