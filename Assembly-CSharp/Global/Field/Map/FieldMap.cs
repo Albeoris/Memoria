@@ -794,7 +794,7 @@ public class FieldMap : HonoBehavior
                         threshmargin = entry.Value;
                     }
                 }
-                
+
                 int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
 
                 if (map == 103 || map == 1853 || map == 2053) // exception in alex center
@@ -812,18 +812,11 @@ public class FieldMap : HonoBehavior
                 localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
                 localPosition.x = (int)(Math.Min(threshright, localPosition.x));
             }
-            else if (map == 1205 || map == 154 || map == 1214 || map == 1807 || map == 1652 || map == 2552) 
+            else if (map == 1205 || map == 154 || map == 1214 || map == 1807 || map == 1652 || map == 2552)
             {
-                switch (map)
+                if (map == 1652 && this.camIdx == 0)
                 {
-                    case 1652: // ifa root entrance
-                        if (this.camIdx == 0)
-                        {
-                            threshmargin = threshmargin + 16;
-                        }
-                        break;
-                    default:
-                        break;
+                    threshmargin = threshmargin + 16;
                 }
                 int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
                 localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
@@ -841,7 +834,7 @@ public class FieldMap : HonoBehavior
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
                     case 505: //Cargo ship offset
-                        localPosition.x = 105; 
+                        localPosition.x = 105;
                         break;
                     case 1153: //Rose Rouge cockpit offset
                         localPosition.x = 175;
