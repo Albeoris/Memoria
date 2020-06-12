@@ -441,7 +441,10 @@ public class FieldMap : HonoBehavior
         this.EBG_sceneService2DScroll();
         this.EBG_sceneService3DScroll();
         this.EBG_sceneServiceScroll(this.scene);
-        OnWidescreenSupportChanged();
+        if (Configuration.Graphics.InitializeWidescreenSupport())
+        {
+            OnWidescreenSupportChanged();
+        }
         this.CenterCameraOnPlayer();
         this.UpdateOverlayAll();
     }
