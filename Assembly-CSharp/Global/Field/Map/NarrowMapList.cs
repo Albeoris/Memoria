@@ -30,10 +30,10 @@ public static class NarrowMapList
         0108, // Alexandria/Item Shop
         0109,
         0114,
-        0116,
+        0116, // Alexandria/Rooftop
         0150, // A. Castle/Guardhouse
         0153,
-        0154,
+        0154, // A. Castle/Hallway
         0157,
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
@@ -97,7 +97,7 @@ public static class NarrowMapList
         0571,
         0574, // Lindblum/Festival
         0576, // Lindblum/Festival
-        0600,
+        0600, // L. Castle/Royal Cham.
         0601, // L. Castle/Lift
         0606, // L. Castle/Event
         0607, // L. Castle/Hangar
@@ -137,7 +137,7 @@ public static class NarrowMapList
         0930, // Treno/Tot Residence
         0932, // Treno/Event
         0950,
-        0951,
+        0951, // Gargan Roo/Passage
         0954, // Gargan Roo/Tunnel
         1000, // Cleyra/Tree Roots
         1001, // Cleyra/Tree Roots
@@ -150,7 +150,7 @@ public static class NarrowMapList
         1017, // Cleyra/Tree Trunk
         1018,
         1050, // Cleyra/Tree Trunk
-        1054,
+        1054, // Cleyra/Windmill Area
         1058, // Cleyra/Cathedral
         1100, // Cleyra/Tree Trunk
         1104,
@@ -160,13 +160,13 @@ public static class NarrowMapList
         1153, // Red Rose/Bridge
         1200, // A. Castle/Throne
         1201,
-        1205,
+        1205, // A. Castle/Chapel
         1208, // A. Castle/Dungeon
         1210, // A. Castle/West Tower
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
-        1214,
-        1215,
+        1214, // A. Castle/Hallway
+        1215, // A. Castle/Hallway
         1216,
         1218,
         1221, // A. Castle/Courtyard
@@ -227,7 +227,7 @@ public static class NarrowMapList
         1610, // Mdn. Sari/Cove
         1650,
         1651, // Iifa Tree/Tree Roots
-        1652,
+        1652, // Iifa Tree/Roots
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
@@ -293,7 +293,7 @@ public static class NarrowMapList
         2112,
         2113,
         2114, // Lindblum/Theater Ave.
-        2150,
+        2150, // L. Castle/Royal Cham.
         2151, // L. Castle/Lift
         2157, // L. Castle/Hangar
         2159, // L. Castle/Castle Bridg
@@ -307,7 +307,7 @@ public static class NarrowMapList
         2208, // Palace/Hallway
         2212,
         2213,
-        2217,
+        2217, // Palace/Stairwell
         2222,
         2250, // Oeilvert/Outside
         2254, // Oeilvert/Ship Display
@@ -324,7 +324,7 @@ public static class NarrowMapList
         2355,
         2356, // Gulug/Room
         2361, // Gulug/Well
-        2362, // Gulug/Path
+        2362,
         2363, // Gulug/Path
         2365,
         2400, // A. Castle/Neptune
@@ -340,7 +340,7 @@ public static class NarrowMapList
         2503,
         2504, // I. Castle/Small Room
         2505, // I. Castle/Inverted Roo
-        2510,
+        2510, // I. Castle/Mural Room
         2512, // I. Castle/Mural Room
         2513,
         2551,
@@ -364,7 +364,6 @@ public static class NarrowMapList
         2719, // Pand./Exit
         2752, // Invincible/Bridge
         2756, // Red Rose/Bridge
-        //2850, // Hilda Garde 3/Bridge
         2851, // Hilda Garde 3/Engine
         2855,
         2856,
@@ -385,10 +384,10 @@ public static class NarrowMapList
         2918, // Memoria/Stairs
         2919, // Memoria/Gate to Space
         2920, // Memoria/Emptiness
-        2922, // Crystal World
-        2924, // Crystal World
-        2925, // Crystal World
-        2926, // Crystal World
+        2922,
+        2924,
+        2925,
+        2926,
         2927, // Crystal World
         2928,
         2929, // last/cw mbg a
@@ -409,6 +408,5 @@ public static class NarrowMapList
         3057,
         3058, // Mage Village/Water Mil
         3100,
-
     }.OrderBy(a => a).ToArray();
 }
