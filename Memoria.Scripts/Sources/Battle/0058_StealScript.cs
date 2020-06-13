@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            if (!_v.Caster.HasSupportAbility(SupportAbility2.Bandit))
+            if (!_v.Caster.HasSupportAbility(SupportAbility2.Bandit) && Configuration.Hacks.StealingAlwaysWorks < 2)
             {
                 _v.Context.HitRate = (Int16)(_v.Caster.Level + _v.Caster.Will);
                 _v.Context.Evade = _v.Target.Level;
@@ -40,7 +40,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
-            if (Configuration.Hacks.StealingAlwaysWorks == 1) // cheat
+            if (Configuration.Hacks.StealingAlwaysWorks >= 1) // cheat
             {
 
                 if (enemy.StealableItems[3] != Byte.MaxValue)
