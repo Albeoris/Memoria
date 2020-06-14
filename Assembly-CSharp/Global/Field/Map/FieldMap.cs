@@ -787,7 +787,7 @@ public class FieldMap : HonoBehavior
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
             int threshmargin = (int)(Math.Min((bgcam_DEF.w - PsxFieldWidth), 0)); //offset value for fields that are between 320 & 398
-            if (!IsNarrowMap())
+            if (!IsNarrowMap() && map != 507)
             {
 
                 foreach (KeyValuePair<int, int> entry in mapCameraMargin)
@@ -821,7 +821,9 @@ public class FieldMap : HonoBehavior
                 {
                     threshmargin = threshmargin + 16;
                 }
+                
                 int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
+                
                 localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
                 localPosition.x = (int)(Math.Min(threshright, localPosition.x));
             }
@@ -836,6 +838,9 @@ public class FieldMap : HonoBehavior
                 }
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
+                    case 456:
+                        localPosition.x = 160;
+                        break;
                     case 505: //Cargo ship offset
                         localPosition.x = 105;
                         break;
@@ -861,8 +866,8 @@ public class FieldMap : HonoBehavior
         {1652,16},
         {1653,16},
     };
-    
-    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int> 
+
+    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
     {
         //{mapNo,actualWidth-2}
         {203,334},
@@ -906,7 +911,6 @@ public class FieldMap : HonoBehavior
         {1370,350},
         {1508,350},
         {1650,350},
-        {1657,350},
         {1752,350},
         {1757,350},
         {1863,350},
@@ -949,7 +953,7 @@ public class FieldMap : HonoBehavior
         {2502,366},
         {2503,366},
         {2650,366},
-        {2904,366}, 
+        {2904,366},
         {2913,366},
         {2928,366},
         {3100,366},
@@ -969,8 +973,8 @@ public class FieldMap : HonoBehavior
         {950,382},
         {1017,382},
         {1018,382},
-        {1058,382},
-        {1108,382},
+        {1058,380},
+        {1108,380},
         {1201,382},
         {1210,382},
         {1303,382},
@@ -998,6 +1002,7 @@ public class FieldMap : HonoBehavior
         {55,398},
         {157,398},
         {405,398},
+        {456,398},
         {505,398},
         {561,398},
         {566,398},

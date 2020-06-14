@@ -32,7 +32,7 @@ public static class NarrowMapList
         0114,
         0116, // Alexandria/Rooftop
         0150, // A. Castle/Guardhouse
-        0153,
+        0153, // A. Castle/Hallway
         0154, // A. Castle/Hallway
         0157,
         0160, // A. Castle/Courtyard
@@ -235,6 +235,7 @@ public static class NarrowMapList
         1660,
         1661,
         1662,
+        1663,
         1700,
         1701,
         1702,
