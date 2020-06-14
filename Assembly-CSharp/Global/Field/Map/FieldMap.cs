@@ -441,6 +441,10 @@ public class FieldMap : HonoBehavior
         this.EBG_sceneService2DScroll();
         this.EBG_sceneService3DScroll();
         this.EBG_sceneServiceScroll(this.scene);
+        if (Configuration.Graphics.InitializeWidescreenSupport())
+        {
+            OnWidescreenSupportChanged();
+        }
         this.CenterCameraOnPlayer();
         this.UpdateOverlayAll();
     }
@@ -766,7 +770,8 @@ public class FieldMap : HonoBehavior
             return;
         }
         Camera camera = this.GetMainCamera();
-        if (FF9StateSystem.Common.FF9.fldMapNo == 70)
+        Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
+        if (map == 70)
         {
             return;
         }
@@ -778,8 +783,285 @@ public class FieldMap : HonoBehavior
         Vector3 localPosition = camera.transform.localPosition;
         localPosition.x = bgcam_DEF.centerOffset[0] + this.charOffset.x;
         localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
+
+        if (Configuration.Graphics.InitializeWidescreenSupport())
+        {
+            int threshmargin = (int)(Math.Min((bgcam_DEF.w - PsxFieldWidth), 0)); //offset value for fields that are between 320 & 398
+            if (!IsNarrowMap() && map != 507)
+            {
+
+                foreach (KeyValuePair<int, int> entry in mapCameraMargin)
+                {
+                    if (map == entry.Key)
+                    {
+                        threshmargin = entry.Value;
+                    }
+                }
+
+                int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
+
+                if (map == 103 || map == 1853 || map == 2053) // exception in alex center
+                {
+                    threshmargin = (int)(threshmargin + 16);
+                }
+                if (map == 2903) // exception in memoria castle
+                {
+                    threshright = (int)(threshright - 32);
+                }
+                if (map == 2606) // exception in memoria castle
+                {
+                    threshmargin = (int)(threshmargin + 16);
+                }
+                localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
+                localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+            }
+            else if (map == 1205 || map == 154 || map == 1214 || map == 1807 || map == 1652 || map == 2552)
+            {
+                if (map == 1652 && this.camIdx == 0)
+                {
+                    threshmargin = threshmargin + 16;
+                }
+                
+                int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
+                
+                localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
+                localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+            }
+            else if (IsNarrowMap())
+            {
+                foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+                {
+                    if (map == entry.Key)
+                    {
+                        localPosition.x = (int)((bgcam_DEF.w - entry.Value) / 2);
+                    }
+                }
+                switch (map) // offsets for scrolling maps stretched to WS
+                {
+                    case 456:
+                        localPosition.x = 160;
+                        break;
+                    case 505: //Cargo ship offset
+                        localPosition.x = 105;
+                        break;
+                    case 1153: //Rose Rouge cockpit offset
+                        localPosition.x = 175;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         camera.transform.localPosition = localPosition;
     }
+
+
+    private static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
+    {
+        //{mapNo,extra pixels on each side because of scrollable}
+        {1051,8},
+        {1057,16},
+        {1060,16},
+        {1652,16},
+        {1653,16},
+    };
+
+    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
+    {
+        //{mapNo,actualWidth-2}
+        {203,334},
+        {502,334},
+        {503,334},
+        {760,334},
+        {814,334},
+        {816,334},
+        {1151,334},
+        {1458,334},
+        {1500,334},
+        {1506,334},
+        {1605,334},
+        {1606,334},
+        {1608,334},
+        {1660,334},
+        {1661,334},
+        {1662,334},
+        {1705,334},
+        {1707,334},
+        {1751,334},
+        {2202,334},
+        {2204,334},
+        {2205,334},
+        {2208,334},
+        {2254,334},
+        {2257,334},
+        {2303,334},
+        {2365,334},
+        {2513,334},
+        {2756,334},
+        {2932,334},
+        {3057,334},
+        {114,350},
+        {550,350},
+        {620,350},
+        {802,350},
+        {803,350},
+        {1212,350},
+        {1300,350},
+        {1370,350},
+        {1508,350},
+        {1650,350},
+        {1752,350},
+        {1757,350},
+        {1863,350},
+        {1951,350},
+        {1952,350},
+        {2000,350},
+        {2055,350},
+        {2771,350},
+        {2203,350},
+        {2261,350},
+        {2356,350},
+        {2362,350},
+        {2500,350},
+        {2501,350},
+        {2654,350},
+        {60,366},
+        {67,366},
+        {150,366},
+        {161,366},
+        {201,366},
+        {262,366},
+        {565,366},
+        {911,366},
+        {1213,366},
+        {1222,366},
+        {1251,366},
+        {1254,366},
+        {1312,366},
+        {1403,366},
+        {1803,366},
+        {1814,366},
+        {1817,366},
+        {1911,366},
+        {1953,366},
+        {2002,366},
+        {2004,366},
+        {2006,366},
+        {2112,366},
+        {2400,366},
+        {2502,366},
+        {2503,366},
+        {2650,366},
+        {2904,366},
+        {2913,366},
+        {2928,366},
+        {3100,366},
+        {102,382},
+        {109,382},
+        {162,382},
+        {206,382},
+        {207,382},
+        {251,382},
+        {252,382},
+        {407,382},
+        {553,382},
+        {556,382},
+        {705,382},
+        {751,382},
+        {813,382},
+        {950,382},
+        {1017,382},
+        {1018,382},
+        {1058,380},
+        {1108,380},
+        {1201,382},
+        {1210,382},
+        {1303,382},
+        {1404,382},
+        {1452,382},
+        {1453,382},
+        {1509,382},
+        {1656,382},
+        {1820,382},
+        {1852,382},
+        {1858,382},
+        {2052,382},
+        {2103,382},
+        {2200,382},
+        {2222,382},
+        {2355,382},
+        {2406,382},
+        {2451,382},
+        {2657,382},
+        {2851,382},
+        {2855,382},
+        {2856,382},
+        {2915,382},
+        {3052,382},
+        {55,398},
+        {157,398},
+        {405,398},
+        {456,398},
+        {505,398},
+        {561,398},
+        {566,398},
+        {568,398},
+        {569,398},
+        {571,398},
+        {613,398},
+        {656,398},
+        {657,398},
+        {658,398},
+        {659,398},
+        {663,398},
+        {753,398},
+        {755,398},
+        {806,398},
+        {851,398},
+        {855,398},
+        {901,398},
+        {913,398},
+        {1054,398},
+        {1104,398},
+        {1153,398},
+        {1218,398},
+        {1313,398},
+        {1363,398},
+        {1408,398},
+        {1414,398},
+        {1424,398},
+        {1456,398},
+        {1600,398},
+        {1601,398},
+        {1602,398},
+        {1700,398},
+        {1701,398},
+        {1702,398},
+        {1810,398},
+        {1901,398},
+        {1913,398},
+        {2113,398},
+        {2163,398},
+        {2212,398},
+        {2213,398},
+        {2352,398},
+        {2353,398},
+        {2551,398},
+        {2601,398},
+        {2658,398},
+        {2706,398},
+        {2906,398},
+        {3005,398},
+        {3055,398},
+
+        {1205,384},
+        {154,352},
+        {1215,352},
+        {1805,352},
+        {1652,336},
+        {2552,352},
+    };
 
     public void ff9fieldInternalBattleEncountService()
     {
@@ -3079,6 +3361,17 @@ public class FieldMap : HonoBehavior
     {
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
+        if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
+        {
+            foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+            {
+                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                {
+                    PsxFieldWidth = (Int16)(entry.Value);
+                    PsxScreenWidth = PsxFieldWidth;
+                }
+            }
+        }
         HalfFieldWidth = (Int16)(PsxFieldWidth / 2);
         HalfScreenWidth = (Int16)(PsxScreenWidth / 2);
         ShaderMulX = CalcShaderMulX();

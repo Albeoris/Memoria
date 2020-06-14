@@ -11,6 +11,7 @@ namespace Memoria
             public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement;
             public static Int32 FrogCatchingIncrement => Instance._hacks.FrogCatchingIncrement;
             public static Int32 HippaulRacingViviSpeed => Instance._hacks.HippaulRacingViviSpeed;
+            public static Int32 StealingAlwaysWorks => Instance._hacks.StealingAlwaysWorks;
         }
     }
 }

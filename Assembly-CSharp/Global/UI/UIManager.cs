@@ -746,8 +746,7 @@ public class UIManager : PersistenSingleton<UIManager>
     {
         const Int32 contentWidth = 1543;
         const Int32 contentHeight = 1080;
-
-        if (Configuration.Graphics.WidescreenSupport)
+        if (Configuration.Graphics.InitializeWidescreenSupport())
         {
             Single aspect = (Single)Screen.width / Screen.height;
             return new Vector2(contentHeight * aspect, contentHeight);

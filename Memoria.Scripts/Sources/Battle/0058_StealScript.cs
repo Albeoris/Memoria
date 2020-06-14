@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
 
-            if (!_v.Caster.HasSupportAbility(SupportAbility2.Bandit))
+            if (!_v.Caster.HasSupportAbility(SupportAbility2.Bandit) && Configuration.Hacks.StealingAlwaysWorks < 2)
             {
                 _v.Context.HitRate = (Int16)(_v.Caster.Level + _v.Caster.Will);
                 _v.Context.Evade = _v.Target.Level;
@@ -40,6 +40,20 @@ namespace Memoria.Scripts.Battle
                 }
             }
 
+            if (Configuration.Hacks.StealingAlwaysWorks >= 1) // cheat
+            {
+
+                if (enemy.StealableItems[3] != Byte.MaxValue)
+                    StealItem(enemy, 3);
+                else if (enemy.StealableItems[2] != Byte.MaxValue)
+                    StealItem(enemy, 2);
+                else if (enemy.StealableItems[1] != Byte.MaxValue)
+                    StealItem(enemy, 1);
+                else
+                    StealItem(enemy, 0);
+                return;
+            }
+            
             if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief))
             {
                 if (enemy.StealableItems[3] != Byte.MaxValue && GameRandom.Next8() < 32)
@@ -62,29 +76,30 @@ namespace Memoria.Scripts.Battle
                 else
                     StealItem(enemy, 0);
             }
+            
         }
 
         private static Boolean HasStealableItems(BattleEnemy enemy)
         {
             Boolean hasStealableItems = false;
-            for (Int16 index = 0; index < 4; ++index)
+            for (Int16 slot = 0; slot < 4; ++slot)
             {
-                if (enemy.StealableItems[index] != Byte.MaxValue)
+                if (enemy.StealableItems[slot] != Byte.MaxValue)
                     hasStealableItems = true;
             }
             return hasStealableItems;
         }
 
-        private void StealItem(BattleEnemy enemy, Int32 itemIndex)
+        private void StealItem(BattleEnemy enemy, Int32 slot)
         {
-            Byte itemId = enemy.StealableItems[itemIndex];
+            Byte itemId = enemy.StealableItems[slot];
             if (itemId == Byte.MaxValue)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                 return;
             }
 
-            enemy.StealableItems[itemIndex] = Byte.MaxValue;
+            enemy.StealableItems[slot] = Byte.MaxValue;
             GameState.Thefts++;
 
             BattleItem.AddToInventory(itemId);

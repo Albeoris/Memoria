@@ -12,6 +12,7 @@ namespace Memoria
             public readonly IniValue<Int32> RopeJumpingIncrement;
             public readonly IniValue<Int32> FrogCatchingIncrement;
             public readonly IniValue<Int32> HippaulRacingViviSpeed;
+            public readonly IniValue<Int32> StealingAlwaysWorks;
 
             public HacksSection() : base(nameof(HacksSection), false)
             {
@@ -20,6 +21,7 @@ namespace Memoria
                 RopeJumpingIncrement = BindInt32(nameof(RopeJumpingIncrement), 1);
                 FrogCatchingIncrement = BindInt32(nameof(FrogCatchingIncrement), 1);
                 HippaulRacingViviSpeed = BindInt32(nameof(HippaulRacingViviSpeed), 33);
+                StealingAlwaysWorks = BindInt32(nameof(StealingAlwaysWorks), 0);
             }
         }
     }
