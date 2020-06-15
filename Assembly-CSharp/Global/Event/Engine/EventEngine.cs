@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Assets.Sources.Scripts.EventEngine.Utils;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -43,6 +43,17 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public ObjList gStopObj;
     public ObjTable[] sObjTable;
     public Int32 sSourceObjN;
+    #region Memoria Background free-view mode
+    public Boolean sExternalFieldMode = false;
+    public List<Int16> sExternalFieldList = new List<Int16>();
+    public Int32 sExternalFieldNum;
+    public Int16 sExternalFieldFade;
+    public Int32 sExternalFieldChangeCamera;
+    public Int32 sExternalFieldChangeField;
+    public List<GameObject> sOriginalFieldGameObjects = new List<GameObject>();
+    public String sOriginalFieldName;
+    #endregion
+    public Int16 sOriginalFieldNo;
     public Int32 gMode;
     public Obj gCur;
     public Int32 gArgFlag;
@@ -81,7 +92,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private PosObj _eyeObj;
     private PosObj _aimObj;
     private FF9FIELD_DISC _ff9fieldDisc;
-    private TextAsset _currentEBAsset;
+    private Byte[] _currentEBAsset;
     private Boolean _posUsed;
     private Boolean _noEvents;
     private FF9StateGlobal _ff9;
@@ -488,8 +499,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public void StartEventsByEBFileName(String ebFileName)
     {
-        this._currentEBAsset = AssetManager.Load<TextAsset>(ebFileName, false);
-        this.StartEvents(this._currentEBAsset.bytes);
+		String[] ebInfo;
+        this._currentEBAsset = AssetManager.LoadBytes(ebFileName, out ebInfo, false);
+        this.StartEvents(this._currentEBAsset);
     }
 
     public Boolean IsEventContextValid()
@@ -802,6 +814,12 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             case 4:
                 this._sysList[4] = btl_scrp.GetBattleID(2U);
                 break;
+            case 6:
+                // Usage in battle scripts:
+                // set SV_5 = Spell stat ID of the currently used spell to access (see btl_scrp.GetCurrentCommandData for the list)
+                // set spellstat = SV_6
+                this._sysList[6] = btl_scrp.GetCurrentCommandData(this._sysList[5]);
+                break;
         }
         return this._sysList[num];
     }
@@ -819,6 +837,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public void SetSysList(Int32 num, Int32 value)
     {
         this._sysList[num & 7] = (UInt16)value;
+        // Usage in battle scripts:
+        // set SV_5 = Spell stat ID of the currently used spell to modify (see btl_scrp.GetCurrentCommandData for the list)
+        // set SV_6 = newvalue
+        if (num == 6)
+            btl_scrp.SetCurrentCommandData(this._sysList[5], value);
     }
 
     private void InitMP()
@@ -876,7 +899,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         if (btl == null)
             return;
 
-        btl_scrp.SetCharacterData(btl.Data, (UInt32)kind, (UInt32)value);
+        btl_scrp.SetCharacterData(btl.Data, (UInt32)kind, (Int32)value);
     }
 
     private Int32 getNumOfObjsInObjList(ObjList list)

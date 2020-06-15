@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -119,13 +119,13 @@ public class BGI_DEF
 	public void LoadBGI(FieldMap fieldMap, String path, String name)
 	{
 		this.name = name;
-		TextAsset textAsset = AssetManager.Load<TextAsset>(path + name + ".bgi", false);
+		String[] bgiInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(path + name + ".bgi", out bgiInfo, false);
 		if (FF9StateSystem.Common.FF9.fldMapNo == 70)
 		{
 			return;
 		}
-		Byte[] bytes = textAsset.bytes;
-		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
+		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
 			this.ReadData(binaryReader);
 		}

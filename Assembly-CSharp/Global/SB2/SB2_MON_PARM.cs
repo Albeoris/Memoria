@@ -25,13 +25,13 @@ public class SB2_MON_PARM
 
 	public BattleStatus[] Status;
 
-	public UInt16 MaxHP;
+	public UInt32 MaxHP;
 
-	public UInt16 MaxMP;
+	public UInt32 MaxMP;
 
-	public UInt16 WinGil;
+	public UInt32 WinGil;
 
-	public UInt16 WinExp;
+	public UInt32 WinExp;
 
 	public Byte[] WinItems;
 
@@ -47,7 +47,7 @@ public class SB2_MON_PARM
 
 	public UInt16 Flags;
 
-	public UInt16 AP;
+	public UInt32 AP;
 
 	public SB2_ELEMENT Element;
 
@@ -104,4 +104,6 @@ public class SB2_MON_PARM
 	public UInt16 Pad1;
 
 	public UInt16 Pad2;
+
+	public SByte OutOfReach = -1;
 }

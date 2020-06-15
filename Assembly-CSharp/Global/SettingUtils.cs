@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using SimpleJSON;
 using UnityEngine;
 
@@ -6,12 +6,13 @@ public static class SettingUtils
 {
 	public static void LoadSettings()
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/FieldMap/settingUtils.txt", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] settInfo;
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/settingUtils.txt", out settInfo, false);
+		if (textAsset == null)
 		{
 			return;
 		}
-		SettingUtils.jsNode = JSON.Parse(textAsset.text);
+		SettingUtils.jsNode = JSON.Parse(textAsset);
 		if (SettingUtils.jsNode == null)
 		{
 			return;

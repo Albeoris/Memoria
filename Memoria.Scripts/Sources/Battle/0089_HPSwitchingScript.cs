@@ -22,12 +22,12 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked())
                 return;
 
-            Int32 hp = _v.Caster.CurrentHp;
+            UInt32 hp = _v.Caster.CurrentHp;
             _v.Caster.CurrentHp = _v.Target.CurrentHp;
             if (_v.Caster.CurrentHp > _v.Caster.MaximumHp)
                 _v.Caster.CurrentHp = _v.Caster.MaximumHp;
 
-            _v.Target.CurrentHp = (UInt16)hp;
+            _v.Target.CurrentHp = hp;
             if (_v.Target.CurrentHp > _v.Target.MaximumHp)
                 _v.Target.CurrentHp = _v.Target.MaximumHp;
         }

@@ -62,7 +62,7 @@ public class ModelFactory
 		String text = path;
 		path = ModelFactory.CheckUpscale(path);
 		String renameModelPath = ModelFactory.GetRenameModelPath(path);
-		UnityEngine.Object @object = AssetManager.Load<GameObject>(renameModelPath, false);
+		UnityEngine.Object @object = AssetManager.Load<GameObject>(renameModelPath, out _, false);
 		if (@object == (UnityEngine.Object)null)
 		{
 			return (GameObject)null;
@@ -80,7 +80,8 @@ public class ModelFactory
 				String text2 = ModelFactory.GetGEOID(text).ToString();
 				String str = text2 + "_" + c;
 				String name2 = "Models/2/" + text2 + "/" + str;
-				Texture texture = AssetManager.Load<Texture>(name2, false);
+				String[] pngInfo;
+				Texture texture = AssetManager.Load<Texture>(name2, out pngInfo, false);
 				renderer.material.SetTexture("_MainTex", texture);
 			}
 		}

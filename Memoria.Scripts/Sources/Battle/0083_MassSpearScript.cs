@@ -26,14 +26,14 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump))
                 _v.Context.Attack *= 2;
             else
-                _v.Context.Attack = (Int16)(_v.Context.Attack * 3 >> 1);
+                _v.Context.Attack = _v.Context.Attack * 3 >> 1;
 
             _v.Caster.PenaltyMini();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             if (_v.Context.Attack < 4)
                 _v.Context.Attack = 4;
 
-            _v.Target.HpDamage = (Int16)Math.Min(9999, _v.Context.EnsurePowerDifference * _v.Context.Attack / BattleState.TargetCount(false));
+            _v.Target.HpDamage = Math.Min(9999, _v.Context.EnsurePowerDifference * _v.Context.Attack / BattleState.TargetCount(false));
         }
     }
 }

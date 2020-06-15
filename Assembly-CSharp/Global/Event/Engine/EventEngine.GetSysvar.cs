@@ -118,6 +118,9 @@ public partial class EventEngine
             case 31:
                 num = (Int32)stateBattleSystem.btl_scene.PatNum;
                 break;
+            case 191: // GetData_191: return current field map ID
+                num = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+                break;
             default:
                 //if ((Int32)this.gCur.sid != 3 || this.gCur.ip != 791)
                 //    ;

@@ -14,9 +14,9 @@ public class FF9PLAY_INFO
 
 	public UInt32[] sa;
 
-	public UInt16 cur_hp;
+	public UInt32 cur_hp;
 
-	public UInt16 cur_mp;
+	public UInt32 cur_mp;
 
 	public CharacterEquipment equip;
 }

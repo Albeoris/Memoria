@@ -52,9 +52,9 @@ public class ENEMY_TYPE
 			this.item = new Byte[4];
 		}
 
-		public UInt16 gil;
+		public UInt32 gil;
 
-		public UInt16 exp;
+		public UInt32 exp;
 
 		public Byte[] item;
 

@@ -157,9 +157,9 @@ namespace Memoria.Field
                 return false;
             }
             if (v.TargetHp > 0)
-                FieldSetRecover(v.Target, v.TargetHp);
+                FieldSetRecover(v.Target, (UInt32)v.TargetHp);
             if (v.TargetMp > 0)
-                FieldSetMpRecover(v.Target, v.TargetMp);
+                FieldSetMpRecover(v.Target, (UInt32)v.TargetMp);
             return true;
         }
 
@@ -224,11 +224,11 @@ namespace Memoria.Field
 
         private static void FldCalcSub_204(Context v)
         {
-            Int32 num1 = v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power);
+            Int32 num1 = (Int32)v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power);
             Int32 num2 = ((Int32)v.Caster.sa[1] & 2) == 0 ? num1 / 100 : num1 / 50; // Concentrate
             if (num2 > 9999)
                 num2 = 9999;
-            v.TargetHp = (Int16)num2;
+            v.TargetHp = (Int32)num2;
         }
 
         private static void FldCalcSub_21E(Context v)
@@ -271,21 +271,21 @@ namespace Memoria.Field
             v.Flags |= 1;
         }
 
-        private static void FieldSetRecover(PLAYER player, Int32 recover)
+        private static void FieldSetRecover(PLAYER player, UInt32 recover)
         {
             if (FieldCheckStatus(player, 1))
                 return;
-            player.cur.hp += (UInt16)recover;
+            player.cur.hp += recover;
             if (player.cur.hp <= player.max.hp)
                 return;
             player.cur.hp = player.max.hp;
         }
 
-        private static void FieldSetMpRecover(PLAYER player, Int32 recover)
+        private static void FieldSetMpRecover(PLAYER player, UInt32 recover)
         {
             if (FieldCheckStatus(player, 1))
                 return;
-            player.cur.mp += (Int16)recover;
+            player.cur.mp += recover;
             if (player.cur.mp <= player.max.mp)
                 return;
             player.cur.mp = player.max.mp;
@@ -356,11 +356,11 @@ namespace Memoria.Field
             public UInt32 Cursor;
             public Byte Flags;
             public Byte TargetInfo;
-            public Int16 AttackPower;
-            public Int16 DefencePower;
-            public Int16 AttackNumber;
-            public Int16 TargetHp;
-            public Int16 TargetMp;
+            public Int32 AttackPower;
+            public Int32 DefencePower;
+            public Int32 AttackNumber;
+            public Int32 TargetHp;
+            public Int32 TargetMp;
         }
     }
 }

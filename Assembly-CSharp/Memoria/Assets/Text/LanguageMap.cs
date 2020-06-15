@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -200,7 +200,7 @@ namespace Memoria.Assets
 
         private static Byte[] ReadEmbadedTable()
         {
-            return AssetManager.LoadBinary("EmbeddedAsset/Manifest/Text/Localization.txt");
+            return AssetManager.LoadBytes("EmbeddedAsset/Manifest/Text/Localization.txt", out _, false);
         }
 
         private void StoreValue(String language, String key, String value)

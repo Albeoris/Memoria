@@ -26,12 +26,12 @@ namespace Memoria.Scripts.Battle
 
             _v.Target.Flags |= CalcFlag.HpAlteration;
 
-            Int16 damage = (Int16)Math.Min(9999, _v.Context.EnsureAttack * (_v.Context.AttackPower - _v.Context.DefensePower));
+            Int32 damage = Math.Min(9999, _v.Context.EnsureAttack * (_v.Context.AttackPower - _v.Context.DefensePower));
             if (damage < 1)
                 return;
 
             _v.Caster.Flags |= CalcFlag.HpAlteration;
-            _v.Caster.HpDamage = (Int16)(_v.Caster.MaximumHp >> 3);
+            _v.Caster.HpDamage = (Int32)(_v.Caster.MaximumHp >> 3);
 
             if ((_v.Context.Flags & BattleCalcFlags.Absorb) != 0)
                 _v.Target.Flags |= CalcFlag.HpRecovery;

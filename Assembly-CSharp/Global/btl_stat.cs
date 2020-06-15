@@ -122,7 +122,7 @@ public class btl_stat
                 }
                 break;
             case 19:
-                if (Status.checkCurStat(btl, BattleStatus.Slow))
+                if (CheckStatus(btl, BattleStatus.Slow))
                 {
                     RemoveStatus(btl, BattleStatus.Slow);
                     return 2;
@@ -132,7 +132,7 @@ public class btl_stat
                 stat.cur |= status;
                 break;
             case 20:
-                if (Status.checkCurStat(btl, BattleStatus.Haste))
+                if (CheckStatus(btl, BattleStatus.Haste))
                 {
                     RemoveStatus(btl, BattleStatus.Haste);
                     return 2;
@@ -146,7 +146,7 @@ public class btl_stat
                 break;
             case 28:
                 stat.cur ^= status;
-                if (Status.checkCurStat(btl, BattleStatus.Mini))
+                if (CheckStatus(btl, BattleStatus.Mini))
                 {
                     geo.geoScaleSet(btl, 2048);
                     btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), (Byte)(btl.shadow_x / 2U), (Byte)(btl.shadow_z / 2U));
@@ -184,7 +184,7 @@ public class btl_stat
                 break;
         }
         RemoveStatuses(btl, statusData[statTblNo].clear);
-        if (Status.checkCurStat(btl, BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Jump))
+        if (CheckStatus(btl, BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Jump))
             btl.bi.atb = 0;
         if (((Int32)status & -268500992) != 0)
         {
@@ -229,7 +229,7 @@ public class btl_stat
             case BattleStatus.Zombie:
             case BattleStatus.Heat:
             case BattleStatus.Freeze:
-                if (Status.checkCurStat(btl, BattleStatus.ChgPolyCol))
+                if (CheckStatus(btl, BattleStatus.ChgPolyCol))
                 {
                     SetStatusPolyColor(btl);
                 }
@@ -265,7 +265,7 @@ public class btl_stat
                 break;
             case BattleStatus.Berserk:
                 StatusCommandCancel(btl, status);
-                if (Status.checkCurStat(btl, BattleStatus.ChgPolyCol))
+                if (CheckStatus(btl, BattleStatus.ChgPolyCol))
                 {
                     SetStatusPolyColor(btl);
                 }
@@ -339,6 +339,23 @@ public class btl_stat
         return num;
     }
 
+    public static void MakeStatusesPermanent(BTL_DATA btl, BattleStatus statuses, Boolean flag = true)
+    {
+        if (flag)
+        {
+            AlterStatuses(btl, statuses);
+            btl.stat.permanent |= statuses & btl.stat.cur;
+            // Should permanent statuses be also registered as current statuses?
+//          btl.stat.cur &= ~(statuses & btl.stat.cur);
+        }
+        else
+        {
+            btl.stat.permanent &= ~statuses;
+            btl_stat.RemoveStatuses(btl, statuses);
+            btl.stat.permanent |= statuses & btl.stat.cur;
+        }
+    }
+
     public static void SetOprStatusCount(BTL_DATA btl, UInt32 statTblNo)
     {
         UInt16 num1;
@@ -363,9 +380,9 @@ public class btl_stat
 
     public static void SetPresentColor(BTL_DATA btl)
     {
-        if (Status.checkCurStat(btl, BattleStatus.Petrify))
+        if (CheckStatus(btl, BattleStatus.Petrify))
             SetStatusClut(btl, true);
-        else if (Status.checkCurStat(btl, BattleStatus.ChgPolyCol))
+        else if (CheckStatus(btl, BattleStatus.ChgPolyCol))
             SetStatusPolyColor(btl);
         btl_util.SetBBGColor(btl.gameObject);
         if (btl.bi.player == 0)
@@ -378,25 +395,25 @@ public class btl_stat
         BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
         Int16[] numArray1 = new Int16[3];
         Int16[] numArray2 = new Int16[3] { bbgInfoPtr.chr_r, bbgInfoPtr.chr_g, bbgInfoPtr.chr_b };
-        if (Status.checkCurStat(btl, BattleStatus.Zombie))
+        if (CheckStatus(btl, BattleStatus.Zombie))
         {
             numArray1[0] = 48;
             numArray1[1] = 72;
             numArray1[2] = 88;
         }
-        else if (Status.checkCurStat(btl, BattleStatus.Berserk))
+        else if (CheckStatus(btl, BattleStatus.Berserk))
         {
             numArray1[0] = -16;
             numArray1[1] = 40;
             numArray1[2] = 40;
         }
-        else if (Status.checkCurStat(btl, BattleStatus.Heat))
+        else if (CheckStatus(btl, BattleStatus.Heat))
         {
             numArray1[0] = -80;
             numArray1[1] = 16;
             numArray1[2] = 72;
         }
-        else if (Status.checkCurStat(btl, BattleStatus.Freeze))
+        else if (CheckStatus(btl, BattleStatus.Freeze))
         {
             numArray1[0] = 48;
             numArray1[1] = 0;
@@ -450,10 +467,10 @@ public class btl_stat
             return;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Petrify))
+        if (unit.IsUnderAnyStatus(BattleStatus.Petrify))
             return;
 
-        if (!unit.IsUnderStatus(BattleStatus.Stop | BattleStatus.Jump))
+        if (!unit.IsUnderAnyStatus(BattleStatus.Stop | BattleStatus.Jump))
             btl.bi.atb = 1;
 
         if (!ignoreAtb && !UIManager.Battle.FF9BMenu_IsEnableAtb())
@@ -472,7 +489,7 @@ public class btl_stat
             return;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Venom))
+        if (unit.IsUnderAnyStatus(BattleStatus.Venom))
         {
             if (stat.cnt.opr[0] <= 0)
             {
@@ -485,7 +502,7 @@ public class btl_stat
                 stat.cnt.opr[0] -= btl.cur.at_coef;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Poison))
+        if (unit.IsUnderAnyStatus(BattleStatus.Poison))
         {
             if (stat.cnt.opr[1] <= 0)
             {
@@ -497,7 +514,7 @@ public class btl_stat
                 stat.cnt.opr[1] -= btl.cur.at_coef;
         }
 
-        if (unit.IsUnderStatus(BattleStatus.Regen) || unit.IsUnderPermanentStatus(BattleStatus.Regen))
+        if (unit.IsUnderAnyStatus(BattleStatus.Regen))
         {
             if (stat.cnt.opr[2] <= 0)
             {
@@ -525,7 +542,7 @@ public class btl_stat
 
     private static void RotateAfterCheckStatusLoop(BTL_DATA btl)
     {
-        if (Status.checkCurStat(btl, BattleStatus.Confuse) && !btl_util.isCurCmdOwner(btl) && (btl_mot.checkMotion(btl, 0) || btl_mot.checkMotion(btl, 1) || (btl.bi.player != 0 && btl_mot.checkMotion(btl, 9))))
+        if (CheckStatus(btl, BattleStatus.Confuse) && !btl_util.isCurCmdOwner(btl) && (btl_mot.checkMotion(btl, 0) || btl_mot.checkMotion(btl, 1) || (btl.bi.player != 0 && btl_mot.checkMotion(btl, 9))))
         {
             Vector3 eulerAngles = btl.rot.eulerAngles;
             eulerAngles.y += 11.25f;
@@ -537,10 +554,10 @@ public class btl_stat
     {
         BTL_DATA data = unit.Data;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        if (data.bi.disappear == 0 && !Status.checkCurStat(data, BattleStatus.Petrify))
+        if (data.bi.disappear == 0 && !CheckStatus(data, BattleStatus.Petrify))
         {
             BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
-            if (Status.checkCurStat(data, BattleStatus.ChgPolyCol))
+            if (CheckStatus(data, BattleStatus.ChgPolyCol))
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
@@ -548,7 +565,7 @@ public class btl_stat
                 if (data.weapon_geo)
                     btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
             }
-            else if (Status.checkCurStat(data, BattleStatus.Shell | BattleStatus.Protect))
+            else if (CheckStatus(data, BattleStatus.Shell | BattleStatus.Protect))
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
@@ -556,7 +573,7 @@ public class btl_stat
                 Int16 num2;
                 Int16 num3;
                 Int16 num4;
-                if ((!Status.checkCurStat(data, BattleStatus.Protect) || !Status.checkCurStat(data, BattleStatus.Shell) ? (!Status.checkCurStat(data, BattleStatus.Protect) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
+                if ((!CheckStatus(data, BattleStatus.Protect) || !CheckStatus(data, BattleStatus.Shell) ? (!CheckStatus(data, BattleStatus.Protect) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
                 {
                     num2 = (Int16)(bbgInfoPtr.chr_r - 64);
                     num3 = (Int16)(bbgInfoPtr.chr_g - -24);
@@ -611,7 +628,7 @@ public class btl_stat
                 SetDefaultShader(data);
             }
         }
-        else if (Status.checkCurStat(data, BattleStatus.Petrify))
+        else if (CheckStatus(data, BattleStatus.Petrify))
         {
             SetDefaultShader(data);
             SetStatusClut(data, true);

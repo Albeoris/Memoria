@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
@@ -25,8 +25,8 @@ public class btlseq
 			FF9BattleDB.SceneData["BSC_" + name],
 			".raw17"
 		});
-		TextAsset textAsset = AssetManager.Load<TextAsset>(name2, false);
-		btlseq.data = textAsset.bytes;
+		String[] bscInfo;
+		btlseq.data = AssetManager.LoadBytes(name2, out bscInfo, false);
 		btlseq.seq_work_set = FF9StateSystem.Battle.FF9Battle.seq_work_set;
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(btlseq.data)))
 		{
@@ -168,7 +168,7 @@ public class btlseq
 		if (pCmd.regist.bi.player == 0)
 		{
 			Vector3 eulerAngles = pCmd.regist.rot.eulerAngles;
-			pCmd.regist.rot.eulerAngles = new Vector3(eulerAngles.x, 0f, eulerAngles.z);
+			pCmd.regist.rot.eulerAngles = new Vector3(eulerAngles.x, pCmd.regist.evt.rotBattle.eulerAngles.y, eulerAngles.z);
 		}
 	}
 
@@ -824,7 +824,7 @@ public class btlseq
 		WK_SCALE wk_SCALE = btlseq.SequenceConverter.WorkToWkScale(pSeqWork.Work);
 		UInt16 num = (UInt16)(wk_SCALE.Scl * pSeqWork.IncCnt / wk_SCALE.Frames + wk_SCALE.Org);
 		geo.geoScaleSet(pMe, (Int32)num);
-		btl_scrp.SetCharacterData(pMe, 55u, (UInt32)num);
+		btl_scrp.SetCharacterData(pMe, 55u, (Int32)num);
 		if (num == 4096)
 		{
 			geo.geoScaleReset(pMe);

@@ -96,6 +96,20 @@ public class btl_vfx
 		SFX.Play((Int32)fx_no);
 	}
 
+    public static Boolean UseBeatrixAlternateVfx(BattleUnit caster, Int16 vfx1, UInt16 vfx2)
+    {
+        // Check if vfx1 and vfx2 are the two versions of a Sword Art spell animation: use the 2nd version when used by Beatrix
+        if (!caster.IsPlayer || caster.PlayerIndex != CharacterIndex.Beatrix) return false;
+        if (vfx1 == 188u && vfx2 == 409u) return true; // Darkside
+        if (vfx1 == 189u && vfx2 == 410u) return true; // Minus Strike
+        if (vfx1 == 190u && vfx2 == 411u) return true; // Iai Strike
+        if (vfx1 == 191u && vfx2 == 412u) return true; // Thunder Slash
+        if (vfx1 == 192u && vfx2 == 413u) return true; // Shock
+        if (vfx1 == 207u && vfx2 == 414u) return true; // Stock Break
+        if (vfx1 == 397u && vfx2 == 417u) return true; // Climhazzard
+        return false;
+    }
+
     public static void SelectCommandVfx(CMD_DATA cmd)
     {
         BTL_DATA regist = cmd.regist;
@@ -114,10 +128,6 @@ public class btl_vfx
                     }
                 }
                 btlseq.RunSequence(cmd);
-                return;
-            case BattleCommandId.Counter:
-            case BattleCommandId.RushAttack:
-                SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
                 return;
             case BattleCommandId.AutoPotion:
                 SetBattleVfx(cmd, (UInt32)ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.VfxIndex, null);
@@ -233,7 +243,7 @@ public class btl_vfx
                         break;
                 }
 
-                if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
+                if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || btl_vfx.UseBeatrixAlternateVfx(caster, cmd.aa.Info.VfxIndex, cmd.aa.Vfx2))
                     SetBattleVfx(cmd, cmd.aa.Vfx2, null);
                 else
                     SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
@@ -248,8 +258,12 @@ public class btl_vfx
             case BattleCommandId.Jump:
             case BattleCommandId.Escape:
             case BattleCommandId.FinishBlow:
+            case BattleCommandId.Counter:
+            case BattleCommandId.RushAttack:
             default:
-                if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || cmd.cmd_no == BattleCommandId.HolySword1 || cmd.cmd_no == BattleCommandId.HolySword2)
+                if (cmd_no != BattleCommandId.MagicCounter && cmd.sub_no == 176)
+                    SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
+                else if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || btl_vfx.UseBeatrixAlternateVfx(caster, cmd.aa.Info.VfxIndex, cmd.aa.Vfx2))
                     SetBattleVfx(cmd, cmd.aa.Vfx2, null);
                 else
                     SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);

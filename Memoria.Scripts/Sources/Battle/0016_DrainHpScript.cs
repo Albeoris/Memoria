@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Context.PowerDifference < 1)
                 return;
 
-            Int16 damage = (Int16)Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
+            Int32 damage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
             _v.Target.HpDamage = damage;
             _v.Caster.HpDamage = damage;
         }

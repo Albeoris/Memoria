@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.HasSupportAbility(SupportAbility1.HighJump))
                 _v.Context.Attack *= 2;
             else
-                _v.Context.Attack = (Int16)(_v.Context.Attack * 3 >> 1);
+                _v.Context.Attack = _v.Context.Attack * 3 >> 1;
 
             _v.Caster.PenaltyMini();
             _v.Target.PhysicalPenaltyAndBonusAttack();

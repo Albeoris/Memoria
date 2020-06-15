@@ -20,6 +20,7 @@ public class BTL_DATA
 		this.finger_pos = new Int16[2];
 		this.add_col = new Byte[3];
 		this.attachOffset = 0;
+		this.stat_modifier = new bool[6]; // Str, Mgc, Def, Ev, MgDef, MgEv
 	}
 
 	public void SetDisappear(Byte value)
@@ -156,9 +157,9 @@ public class BTL_DATA
 
 	public UInt16 fig_info;
 
-	public Int16 fig;
+	public Int32 fig;
 
-	public Int16 m_fig;
+	public Int32 m_fig;
 
 	public Int16 dms_geo_id;
 
@@ -198,11 +199,11 @@ public class BTL_DATA
 
 	public UInt32[] sa;
 
-	public Int16 fig_regene_hp;
+	public Int32 fig_regene_hp;
 
-	public Int16 fig_poison_hp;
+	public Int32 fig_poison_hp;
 
-	public Int16 fig_poison_mp;
+	public Int32 fig_poison_mp;
 
 	public Byte fig_stat_info;
 
@@ -267,4 +268,15 @@ public class BTL_DATA
 	public Int16 targetFrame;
 
 	public Animation animation;
+
+	// Custom fields
+	public Boolean out_of_reach; // Instead of considering the global battle flag "NoNeighboring", we use a flag for each BTL_DATA
+
+	public Boolean[] stat_modifier; // Flags checking if a stat has been modified by a spell; re-initialized to "false" when that stat gets modified by script
+
+	public UInt16 summon_count; // Counter of the number of uses of a summon spell in a battle
+
+	public Int16 critical_rate_deal_bonus; // Absolute increase/decrease in the % of critical strikes dealt by the BTL_DATA
+
+	public Int16 critical_rate_receive_bonus; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
 }

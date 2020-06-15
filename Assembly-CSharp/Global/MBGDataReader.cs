@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -25,12 +25,13 @@ public class MBGDataReader
 
 	public static MBGDataReader Load(String binaryName)
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("CommonAsset/MBGData/" + binaryName + ".mbgdata", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] mbgInfo;
+		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MBGData/" + binaryName + ".mbgdata", out mbgInfo, false);
+		if (binAsset == null)
 		{
 			return (MBGDataReader)null;
 		}
-		return new MBGDataReader(new BinaryReader(new MemoryStream(textAsset.bytes)));
+		return new MBGDataReader(new BinaryReader(new MemoryStream(binAsset)));
 	}
 
 	public MBG_CAM_DEF GetMBGCam(Int32 frameIndex)

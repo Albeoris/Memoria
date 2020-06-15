@@ -41,28 +41,35 @@ namespace FF9
 
 	        if (defender.HasSupportAbility(SupportAbility2.ReturnMagic) && (command.Data.aa.Category & 128) != 0) // Magic
             {
-				if (command.Data.tar_id == defender.Id) // Single-target magic
+				if (Configuration.Battle.CountersBetterTarget)
 				{
-					if (!attacker.IsPlayer || attacker.IsUnderStatus(BattleStatus.Death))
+					if (command.Data.tar_id == defender.Id) // Single-target magic
 					{
-						for (int retarget_id = 4; retarget_id < 8; retarget_id++)
+						if (!attacker.IsPlayer || attacker.IsUnderStatus(BattleStatus.Death))
 						{
-							BattleUnit new_target = btl_scrp.FindBattleUnit((ushort)(1 << retarget_id));
-							if (new_target != null && new_target.Data.bi.target != 0 && !new_target.IsUnderStatus(BattleStatus.Death))
+							for (int retarget_id = 4; retarget_id < 8; retarget_id++)
 							{
-								btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, new_target.Id);
-								return true;
+								BattleUnit new_target = btl_scrp.FindBattleUnit((ushort)(1 << retarget_id));
+								if (new_target != null && new_target.Data.bi.target != 0 && !new_target.IsUnderStatus(BattleStatus.Death))
+								{
+									btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, new_target.Id);
+									return true;
+								}
 							}
+							return false;
 						}
-						return false;
+						else
+							btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, attacker.Id);
 					}
-					else
-						btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, attacker.Id);
+					else if ((command.Data.tar_id & 0xF0) != 0) // Most likely targeting everyone
+						btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, btl_scrp.GetBattleID(2u));
+					else // Multi-target magic
+						btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, btl_scrp.GetBattleID(1u));
 				}
-				else if ((command.Data.tar_id & 0xF0) != 0) // Most likely targeting everyone
-					btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, btl_scrp.GetBattleID(2u));
-				else // Multi-target magic
-					btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, btl_scrp.GetBattleID(1u));
+				else
+                {
+					btl_cmd.SetCounter(defender.Data, BattleCommandId.MagicCounter, (int)command.Data.sub_no, attacker.Id);
+				}
 	            return true;
 	        }
 
@@ -123,8 +130,8 @@ namespace FF9
 	                    script.Perform();
 	                }
 
-	                Int16 heal = v.Target.HpDamage;
-	                Int32 harm = v.Target.MaximumHp - v.Target.CurrentHp;
+	                Int32 heal = v.Target.HpDamage;
+	                Int32 harm = (Int32)v.Target.MaximumHp - (Int32)v.Target.CurrentHp;
 
 	                if (heal - harm > heal * overhealLimit / 100)
 	                    break;
@@ -190,8 +197,7 @@ namespace FF9
 				{
 					if (btl.cur.hp + btl.max.hp / 2 < btl.max.hp)
 					{
-						POINTS cur = btl.cur;
-						cur.hp = (UInt16)(cur.hp + (UInt16)(btl.max.hp / 2));
+						btl.cur.hp += btl.max.hp / 2;
 					}
 					else
 					{
@@ -200,10 +206,9 @@ namespace FF9
 				}
 				if ((btl.sa[1] & 8388608u) != 0u && aa.MP != 0)
 				{
-					if (btl.cur.mp + (Int16)aa.MP < btl.max.mp)
+					if (btl.cur.mp + aa.MP < btl.max.mp)
 					{
-						POINTS cur2 = btl.cur;
-						cur2.mp = (Int16)(cur2.mp + (Int16)aa.MP);
+						btl.cur.mp += aa.MP;
 					}
 					else
 					{
@@ -218,72 +223,52 @@ namespace FF9
             if (btl.HasSupportAbility(SupportAbility1.AutoReflect))
             {
                 btl.PermanentStatus |= BattleStatus.Reflect;
-				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, BattleStatus.Reflect);
+//				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, BattleStatus.Reflect);
 			}
 
 			if (btl.HasSupportAbility(SupportAbility1.AutoFloat))
-			{
 			    btl.PermanentStatus |= BattleStatus.Float;
-			}
 
             if (btl.HasSupportAbility(SupportAbility1.AutoHaste))
             {
                 btl.PermanentStatus |= BattleStatus.Haste;
                 btl.ResistStatus |= BattleStatus.Slow;
-                btl.Data.cur.at_coef = (SByte)(btl.Data.cur.at_coef * 3 / 2);
-				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, BattleStatus.Haste);
+//				btl.Data.cur.at_coef = (SByte)(btl.Data.cur.at_coef * 3 / 2);
+//				HonoluluBattleMain.battleSPS.AddBtlSPSObj(btl, BattleStatus.Haste);
 			}
 
             if (btl.HasSupportAbility(SupportAbility1.AutoRegen))
             {
                 btl.PermanentStatus |= BattleStatus.Regen;
-				btl_stat.SetOprStatusCount(btl.Data, 18u);
+//				btl_stat.SetOprStatusCount(btl.Data, 18u);
 			}
 
             if (btl.HasSupportAbility(SupportAbility1.AutoLife))
-            {
                 btl.CurrentStatus |= BattleStatus.AutoLife;
-			}
 
             if (btl.HasSupportAbility(SupportAbility2.BodyTemp))
-            {
                 btl.ResistStatus |= (BattleStatus.Freeze | BattleStatus.Heat);
-			}
 
             if (btl.HasSupportAbility(SupportAbility2.Insomniac))
-            {
                 btl.ResistStatus |= BattleStatus.Sleep;
-			}
 
             if (btl.HasSupportAbility(SupportAbility2.Antibody))
-            {
                 btl.ResistStatus |= (BattleStatus.Poison | BattleStatus.Venom);
-			}
 
             if (btl.HasSupportAbility(SupportAbility2.BrightEyes))
-            {
                 btl.ResistStatus |= BattleStatus.Blind;
-			}
 
             if (btl.HasSupportAbility(SupportAbility2.Loudmouth))
-			{
 			    btl.ResistStatus |= BattleStatus.Silence;
-            }
 
             if (btl.HasSupportAbility(SupportAbility2.Jelly))
-            {
                 btl.ResistStatus |= (BattleStatus.Petrify | BattleStatus.GradualPetrify);
-			}
 
 		    if (btl.HasSupportAbility(SupportAbility2.Locomotion))
-		    {
 		        btl.ResistStatus |= BattleStatus.Stop;
-		    }
 
 		    if (btl.HasSupportAbility(SupportAbility2.ClearHeaded))
-		    {
 		        btl.ResistStatus |= BattleStatus.Confuse;
-		    }
 		}
 	}
 }

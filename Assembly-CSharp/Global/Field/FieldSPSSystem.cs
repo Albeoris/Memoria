@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -108,10 +108,11 @@ public class FieldSPSSystem : HonoBehavior
 
 	private Boolean _loadSPSTexture()
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("FieldMaps/" + this.MapName + "/spt.tcb", false);
-		if (textAsset != (UnityEngine.Object)null)
+		String[] tcbInfo;
+		Byte[] binAsset = AssetManager.LoadBytes("FieldMaps/" + this.MapName + "/spt.tcb", out tcbInfo, false);
+		if (binAsset != null)
 		{
-			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(textAsset.bytes)))
+			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 			{
 				UInt32 num = binaryReader.ReadUInt32();
 				UInt32 num2 = binaryReader.ReadUInt32();
@@ -162,21 +163,21 @@ public class FieldSPSSystem : HonoBehavior
 		{
 			return true;
 		}
-		TextAsset textAsset = AssetManager.Load<TextAsset>(String.Concat(new Object[]
+		String[] spsInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(String.Concat(new Object[]
 		{
 			"FieldMaps/",
 			this.MapName,
 			"/",
 			spsNo,
 			".sps"
-		}), false);
-		if (textAsset == (UnityEngine.Object)null)
+		}), out spsInfo, false);
+		if (binAsset == null)
 		{
 			return false;
 		}
-		Byte[] bytes = textAsset.bytes;
-		Int32 key = this._GetSpsFrameCount(bytes);
-		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, bytes));
+		Int32 key = this._GetSpsFrameCount(binAsset);
+		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, binAsset));
 		return true;
 	}
 

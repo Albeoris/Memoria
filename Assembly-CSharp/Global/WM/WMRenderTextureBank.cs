@@ -15,70 +15,70 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
 		{
 			return;
 		}
-		this.VolcanoCrater1 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoCrater1", false);
-		this.VolcanoCrater1Material = AssetManager.Load<Material>("WorldMap/Materials/0_4_0_128_mat", false);
+		this.VolcanoCrater1 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoCrater1", out _, false);
+		this.VolcanoCrater1Material = AssetManager.Load<Material>("WorldMap/Materials/0_4_0_128_mat", out _, false);
 		this.VolcanoCrater1Texture = (Texture2D)this.VolcanoCrater1Material.mainTexture;
-		this.VolcanoLava1 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoLava1", false);
-		this.VolcanoLava1Material = AssetManager.Load<Material>("WorldMap/Materials/0_4_0_192_mat", false);
+		this.VolcanoLava1 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoLava1", out _, false);
+		this.VolcanoLava1Material = AssetManager.Load<Material>("WorldMap/Materials/0_4_0_192_mat", out _, false);
 		this.VolcanoLava1Texture = (Texture2D)this.VolcanoLava1Material.mainTexture;
-		this.VolcanoCrater2 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoCrater2", false);
-		this.VolcanoCrater2Material = AssetManager.Load<Material>("WorldMap/Materials/1_4_0_128_mat", false);
+		this.VolcanoCrater2 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoCrater2", out _, false);
+		this.VolcanoCrater2Material = AssetManager.Load<Material>("WorldMap/Materials/1_4_0_128_mat", out _, false);
 		this.VolcanoCrater2Texture = (Texture2D)this.VolcanoCrater2Material.mainTexture;
-		this.VolcanoLava2 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoLava2", false);
-		this.VolcanoLava2Material = AssetManager.Load<Material>("WorldMap/Materials/1_4_0_192_mat", false);
+		this.VolcanoLava2 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoLava2", out _, false);
+		this.VolcanoLava2Material = AssetManager.Load<Material>("WorldMap/Materials/1_4_0_192_mat", out _, false);
 		this.VolcanoLava2Texture = (Texture2D)this.VolcanoLava2Material.mainTexture;
-		this.Beach1Material = AssetManager.Load<Material>("WorldMap/Materials/Beach1", false);
+		this.Beach1Material = AssetManager.Load<Material>("WorldMap/Materials/Beach1", out _, false);
 		for (Int32 i = 0; i < 4; i++)
 		{
-			this.Beach1Textures[i] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_0_128_" + i, false);
+			this.Beach1Textures[i] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_0_128_" + i, out _, false);
 		}
-		this.Beach2Material = AssetManager.Load<Material>("WorldMap/Materials/Beach2", false);
+		this.Beach2Material = AssetManager.Load<Material>("WorldMap/Materials/Beach2", out _, false);
 		for (Int32 j = 0; j < 4; j++)
 		{
-			this.Beach2Textures[j] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_128_128_" + j, false);
+			this.Beach2Textures[j] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_128_128_" + j, out _, false);
 		}
-		this.RiverMaterial = AssetManager.Load<Material>("WorldMap/Materials/River", false);
+		this.RiverMaterial = AssetManager.Load<Material>("WorldMap/Materials/River", out _, false);
 		for (Int32 k = 0; k < 6; k++)
 		{
-			this.RiverTextures[k] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_128_0_" + k, false);
+			this.RiverTextures[k] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_128_0_" + k, out _, false);
 		}
-		this.RiverJointMaterial = AssetManager.Load<Material>("WorldMap/Materials/RiverJoint", false);
+		this.RiverJointMaterial = AssetManager.Load<Material>("WorldMap/Materials/RiverJoint", out _, false);
 		for (Int32 l = 0; l < 6; l++)
 		{
-			this.RiverJointTextures[l] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_0_128_" + l, false);
+			this.RiverJointTextures[l] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_0_128_" + l, out _, false);
 		}
-		this.Sea_10_64_0Material = AssetManager.Load<Material>("WorldMap/Materials/Sea1", false);
+		this.Sea_10_64_0Material = AssetManager.Load<Material>("WorldMap/Materials/Sea1", out _, false);
 		for (Int32 m = 0; m < 6; m++)
 		{
-			this.Sea_10_64_0Textures[m] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_64_0_" + m, false);
+			this.Sea_10_64_0Textures[m] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_64_0_" + m, out _, false);
 		}
-		this.Sea_10_128_0Material = AssetManager.Load<Material>("WorldMap/Materials/Sea2", false);
+		this.Sea_10_128_0Material = AssetManager.Load<Material>("WorldMap/Materials/Sea2", out _, false);
 		for (Int32 n = 0; n < 6; n++)
 		{
-			this.Sea_10_128_0Textures[n] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_128_0_" + n, false);
+			this.Sea_10_128_0Textures[n] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_128_0_" + n, out _, false);
 		}
-		this.Sea_10_128_64Material = AssetManager.Load<Material>("WorldMap/Materials/Sea3", false);
+		this.Sea_10_128_64Material = AssetManager.Load<Material>("WorldMap/Materials/Sea3", out _, false);
 		for (Int32 num = 0; num < 6; num++)
 		{
-			this.Sea_10_128_64Textures[num] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_128_64_" + num, false);
+			this.Sea_10_128_64Textures[num] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_128_64_" + num, out _, false);
 		}
-		this.Sea_10_128_128Material = AssetManager.Load<Material>("WorldMap/Materials/Sea4", false);
+		this.Sea_10_128_128Material = AssetManager.Load<Material>("WorldMap/Materials/Sea4", out _, false);
 		for (Int32 num2 = 0; num2 < 6; num2++)
 		{
-			this.Sea_10_128_128Textures[num2] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_128_128_" + num2, false);
+			this.Sea_10_128_128Textures[num2] = AssetManager.Load<Texture2D>("WorldMap/Textures/10_128_128_" + num2, out _, false);
 		}
-		this.Sea_11_64_0Material = AssetManager.Load<Material>("WorldMap/Materials/Sea5", false);
+		this.Sea_11_64_0Material = AssetManager.Load<Material>("WorldMap/Materials/Sea5", out _, false);
 		for (Int32 num3 = 0; num3 < 6; num3++)
 		{
-			this.Sea_11_64_0Textures[num3] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_64_0_" + num3, false);
+			this.Sea_11_64_0Textures[num3] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_64_0_" + num3, out _, false);
 		}
-		this.Sea_11_192_64Material = AssetManager.Load<Material>("WorldMap/Materials/Sea6", false);
+		this.Sea_11_192_64Material = AssetManager.Load<Material>("WorldMap/Materials/Sea6", out _, false);
 		for (Int32 num4 = 0; num4 < 4; num4++)
 		{
-			this.Sea_11_192_64Textures[num4] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_192_64_" + num4, false);
+			this.Sea_11_192_64Textures[num4] = AssetManager.Load<Texture2D>("WorldMap/Textures/11_192_64_" + num4, out _, false);
 		}
-		this.Falls = AssetManager.Load<Material>("WorldMap/Materials/Falls", false);
-		this.Stream = AssetManager.Load<Material>("WorldMap/Materials/Stream", false);
+		this.Falls = AssetManager.Load<Material>("WorldMap/Materials/Falls", out _, false);
+		this.Stream = AssetManager.Load<Material>("WorldMap/Materials/Stream", out _, false);
 		this.initialized = true;
 	}
 

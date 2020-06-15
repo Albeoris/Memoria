@@ -2009,9 +2009,9 @@ public partial class EventEngine
                     PLAYER player = FF9StateSystem.Common.FF9.player[characterIndex];
                     Int32 newHp = this.getv2();
                     if (newHp > player.max.hp)
-                        newHp = player.max.hp;
+                        newHp = (Int32)player.max.hp;
 
-                    player.cur.hp = (UInt16)newHp;
+                    player.cur.hp = (UInt32)newHp;
                     FF9StateSystem.Common.FF9.player[characterIndex] = player;
 
                     // https://github.com/Albeoris/Memoria/issues/22
@@ -2031,9 +2031,9 @@ public partial class EventEngine
                     PLAYER player = FF9StateSystem.Common.FF9.player[characterIndex];
                     Int32 newMp = this.getv2();
                     if (newMp > player.max.mp)
-                        newMp = player.max.mp;
+                        newMp = (Int32)player.max.mp;
 
-                    player.cur.mp = (Int16)newMp;
+                    player.cur.mp = (UInt32)newMp;
                     FF9StateSystem.Common.FF9.player[characterIndex] = player;
 
                     // https://github.com/Albeoris/Memoria/issues/22
@@ -2075,8 +2075,33 @@ public partial class EventEngine
                 vib.VIB_setPlayRange((Int16)this.getv1(), (Int16)this.getv1());
                 return 0;
             case EBin.event_code_binary.HINT:
-                num1 = this.getv1();
-                num3 = this.getv2();
+                num1 = this.getv1(); // The only values of num1 are 0x5, 0x11 and 0x91 in non-modded scripts
+                num2 = this.getv2();
+                if (num1 == 0x30)
+                {
+                    // PreloadField( 48, ... )
+                    // Add a field to the list of background free-view mode
+                    this.sExternalFieldList.Add((short)num2);
+                }
+                else if (num1 == 0x31)
+                {
+                    // PreloadField( 49, ... )
+                    // Start the background free-view mode, starting by the selected field
+                    this.sOriginalFieldName = this.fieldmap.mapName;
+                    this.sOriginalFieldNo = FF9StateSystem.Common.FF9.fldMapNo;
+                    this.sExternalFieldChangeField = num2;
+                    this.sExternalFieldChangeCamera = 0;
+                    this.sExternalFieldFade = 0;
+                    foreach (Transform field_transform in this.fieldmap.transform)
+                        if (field_transform.gameObject.name != "Background")
+                            sOriginalFieldGameObjects.Add(field_transform.gameObject);
+                    foreach (GameObject field_object in this.sOriginalFieldGameObjects)
+                    {
+                        field_object.transform.parent = null;
+                        field_object.SetActive(false);
+                    }
+                    this.sExternalFieldMode = true;
+                }
                 return 0;
             case EBin.event_code_binary.JOIN:
                 Int32 slot_no = this.chr2slot(this.getv1());

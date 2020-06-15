@@ -208,7 +208,7 @@ namespace FF9
         public static void SetBonus(ENEMY_TYPE et)
         {
             BONUS btlBonus = battle.btl_bonus;
-            btlBonus.gil += et.bonus.gil;
+            btlBonus.gil += (Int32)et.bonus.gil;
             btlBonus.exp += et.bonus.exp;
             Byte num1 = 0;
             while (num1 < 16 && btlBonus.item[num1] != Byte.MaxValue)

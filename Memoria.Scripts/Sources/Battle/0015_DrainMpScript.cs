@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.IsCasterNotTarget() || !_v.Target.CanBeAttacked())
                 return;
 
-            Int16 damage = 0;
+            Int32 damage = 0;
             _v.NormalMagicParams();
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
@@ -31,19 +31,19 @@ namespace Memoria.Scripts.Battle
 
             Int32 diff = _v.Context.PowerDifference;
             if (diff > 0)
-                damage = (Int16)Math.Min(9999, diff * _v.Context.EnsureAttack >> 2);
+                damage = Math.Min(9999, diff * _v.Context.EnsureAttack >> 2);
 
             if (_v.Target.IsZombie)
             {
                 _v.Target.Flags |= CalcFlag.MpRecovery;
                 if (damage > _v.Caster.CurrentMp)
-                    damage = _v.Caster.CurrentMp;
+                    damage = (Int32)_v.Caster.CurrentMp;
             }
             else
             {
                 _v.Caster.Flags |= CalcFlag.MpRecovery;
                 if (damage > _v.Target.CurrentMp)
-                    damage = _v.Target.CurrentMp;
+                    damage = (Int32)_v.Target.CurrentMp;
             }
 
             _v.Target.MpDamage = damage;

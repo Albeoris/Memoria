@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -25,8 +25,9 @@ public class vib
 		vib.Parms.vibPtr = null;
 		if (vib.vibList.Contains(vibrationFileName))
 		{
-			TextAsset textAsset = AssetManager.Load<TextAsset>("CommonAsset/VibrationData/" + vibrationFileName, false);
-			MemoryStream memoryStream = new MemoryStream(textAsset.bytes);
+			String[] vibInfo;
+			Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/VibrationData/" + vibrationFileName, out vibInfo, false);
+			MemoryStream memoryStream = new MemoryStream(binAsset);
 			BinaryReader binaryReader = new BinaryReader(memoryStream);
 			vib.VIB_init(binaryReader);
 			binaryReader.Close();

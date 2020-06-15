@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Command.Id == BattleCommandId.SuperTrick)
                 damage /= BattleState.TargetCount(false);
 
-            _v.Target.HpDamage = (Int16)Math.Min(9999, damage);
+            _v.Target.HpDamage = (Int32)Math.Min(9999, damage);
         }
     }
 }

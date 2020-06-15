@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
             if (_v.TargetCommand.TryMagicHit())
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
-                _v.Target.HpDamage = (Int16)(_v.Target.Level * _v.Command.Power);
+                _v.Target.HpDamage = _v.Target.Level * _v.Command.Power;
             }
         }
     }

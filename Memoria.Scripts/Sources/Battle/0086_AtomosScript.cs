@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.CanAttackMagic())
                 return;
 
-            _v.Context.Attack += (Int16)ff9item.FF9Item_GetCount(225);
+            _v.Context.Attack += ff9item.FF9Item_GetCount(225);
             _v.TargetCommand.CalcProportionDamage();
         }
     }

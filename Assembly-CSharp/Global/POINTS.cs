@@ -2,9 +2,9 @@
 
 public class POINTS
 {
-	public UInt16 hp;
+	public UInt32 hp;
 
-	public Int16 mp;
+	public UInt32 mp;
 
 	public Int16 at;
 

@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.CurrentMp == 0)
                 return;
 
-            _v.Target.MpDamage = (Int16)Math.Min(9999, GameRandom.Next16() % _v.Target.CurrentMp);
+            _v.Target.MpDamage = (Int32)Math.Min(9999, GameRandom.Next16() % _v.Target.CurrentMp);
         }
     }
 }

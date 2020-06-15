@@ -63,7 +63,7 @@ namespace Memoria
             if (_context.Attack > 100)
                 _context.Attack = 100;
 
-            Int32 damage = _target.MaximumHp * _context.Attack / 100;
+            Int32 damage = (Int32)_target.MaximumHp * _context.Attack / 100;
             if (_command.IsShortSummon)
                 damage = damage * 2 / 3;
 
@@ -74,7 +74,7 @@ namespace Memoria
             if (_context.IsAbsorb)
                 _target.Flags |= CalcFlag.HpRecovery;
 
-            _target.HpDamage = (Int16)damage;
+            _target.HpDamage = damage;
         }
 
         public void CalcHpMagicRecovery()
@@ -144,7 +144,15 @@ namespace Memoria
         {
             if (_command.Power == 0)
             {
-                _target.Kill();
+                if (_target.IsZombie)
+                {
+                    if (_target.CanBeAttacked())
+                        _target.CurrentHp = _target.MaximumHp;
+                }
+                else if (_target.IsUnderStatus(BattleStatus.EasyKill))
+                    _context.Flags |= BattleCalcFlags.Guard;
+                else
+                    _target.Kill();
                 return;
             }
 
@@ -155,7 +163,7 @@ namespace Memoria
             }
 
             _context.Flags |= BattleCalcFlags.DirectHP;
-            _target.Data.cur.hp = _command.Power;
+            _target.CurrentHp = _command.Power;
             _target.FaceTheEnemy();
         }
     }

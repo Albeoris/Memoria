@@ -35,11 +35,11 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CheckIsPlayer())
                 return;
 
-            Int32 damage = _v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power);
+            Int64 damage = _v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power);
             damage = Math.Min(9999, _v.Caster.HasSupportAbility(SupportAbility2.Concentrate) ? damage / 50 : damage / 100);
 
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-            _v.Target.HpDamage = (Int16)damage;
+            _v.Target.HpDamage = (Int32)damage;
             _v.TargetCommand.TryRemoveAbilityStatuses();
         }
 

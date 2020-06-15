@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -317,11 +317,12 @@ public static class PSXTextureMgr
 				}
 			}
 		}
-		PSXTextureMgr.eff435Tex[3] = Resources.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_02");
+		String[] pngInfo;
+		PSXTextureMgr.eff435Tex[3] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_02", out pngInfo, false);
 		PSXTextureMgr.eff435Key[3] = SFXKey.GenerateKey(1, 0, 0, 0, 0);
-		PSXTextureMgr.eff435Tex[4] = Resources.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_00");
+		PSXTextureMgr.eff435Tex[4] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_00", out pngInfo, false);
 		PSXTextureMgr.eff435Key[4] = SFXKey.GenerateKey(1, 1, 0, 0, 0);
-		PSXTextureMgr.eff435Tex[5] = Resources.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_01");
+		PSXTextureMgr.eff435Tex[5] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_01", out pngInfo, false);
 		PSXTextureMgr.eff435Key[5] = SFXKey.GenerateKey(1, 2, 0, 0, 0);
 		PSXTextureMgr.eff435Tex[6] = PSXTextureMgr.eff435Tex[5];
 		PSXTextureMgr.eff435Key[6] = SFXKey.GenerateKey(1, 3, 0, 0, 0);

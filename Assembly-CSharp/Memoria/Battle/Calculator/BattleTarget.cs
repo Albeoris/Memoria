@@ -170,7 +170,9 @@ namespace Memoria
 
         public void TryAlterStatuses(BattleStatus status, Boolean changeContext)
         {
+            BattleStatus prev_status = this.PermanentStatus | this.CurrentStatus;
             UInt32 result = btl_stat.AlterStatuses(Data, status);
+            this._context.added_status |= (this.PermanentStatus | this.CurrentStatus) & ~prev_status;
             if (changeContext)
             {
                 if (result == 0)

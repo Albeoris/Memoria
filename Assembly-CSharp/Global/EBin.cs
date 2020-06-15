@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Assets.Sources.Scripts.EventEngine.Utils;
 using System.IO;
 using Memoria;
@@ -82,13 +82,14 @@ public class EBin
 
     private void InitializeATanTable()
     {
-        TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/ratan_tbl.bin", false);
-        if (textAsset == null)
+		String[] tblInfo;
+        Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/ratan_tbl.bin", out tblInfo, false);
+        if (binAsset == null)
         {
             //Debug.LogError("InitializeATanTable: cannot load ratan_tble.bin.bytes");
             return;
         }
-        MemoryStream memoryStream = new MemoryStream(textAsset.bytes);
+        MemoryStream memoryStream = new MemoryStream(binAsset);
         BinaryReader binaryReader = new BinaryReader(memoryStream);
         _ratanTbl = new Byte[binaryReader.BaseStream.Length];
         binaryReader.Read(_ratanTbl, 0, _ratanTbl.Length);

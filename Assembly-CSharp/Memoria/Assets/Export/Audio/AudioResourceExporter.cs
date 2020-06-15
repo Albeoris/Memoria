@@ -22,11 +22,11 @@ namespace Memoria.Assets
                 foreach (String relativePath in EnumerateUniqueSoundResources())
                 {
                     String path = AudioResources.Embaded.GetSoundPath(relativePath);
-                    TextAsset textAsset = AssetManager.Load<TextAsset>(path, true);
-                    if (textAsset != null)
+                    Byte[] binAsset = AssetManager.LoadBytes(path, out _, true);
+                    if (binAsset != null)
                     {
                         path = AudioResources.Export.GetSoundPath(relativePath);
-                        ExportSoundSafe(path, textAsset);
+                        ExportSoundSafe(path, binAsset);
                     }
                     else
                     {
@@ -66,7 +66,7 @@ namespace Memoria.Assets
                 yield return relativePath;
         }
 
-        private static void ExportSoundSafe(String akbOutputPath, TextAsset textAsset)
+        private static void ExportSoundSafe(String akbOutputPath, Byte[] binAsset)
         {
             try
             {
@@ -110,15 +110,15 @@ namespace Memoria.Assets
                 using (Stream akb = File.Create(akbOutputPath))
                 using (Stream ogg = File.Create(oggOutputPath))
                 {
-                    akb.Write(textAsset.bytes, 0, textAsset.bytes.Length);
-                    ogg.Write(textAsset.bytes, 304, textAsset.bytes.Length - 304);
+                    akb.Write(binAsset, 0, binAsset.Length);
+                    ogg.Write(binAsset, 304, binAsset.Length - 304);
                 }
 
                 File.SetLastWriteTimeUtc(akbOutputPath, File.GetLastWriteTimeUtc(oggOutputPath));
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[AudioResourceExporter] Failed to export sound [{0}] to the [{1}].", textAsset.name, akbOutputPath);
+                Log.Error(ex, "[AudioResourceExporter] Failed to export sound [{0}].", akbOutputPath);
             }
         }
     }

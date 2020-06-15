@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FF9;
 using Memoria;
@@ -183,13 +183,15 @@ namespace Assets.Sources.Scripts.UI.Common
 				{
 					if (FF9UIDataTool.grayAtlas == (UnityEngine.Object)null)
 					{
-						FF9UIDataTool.grayAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/Gray Atlas", typeof(UIAtlas)) as UIAtlas);
+						String[] grayAtlasInfo;
+						FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", out grayAtlasInfo, false);
 					}
 					return FF9UIDataTool.grayAtlas;
 				}
 				if (FF9UIDataTool.blueAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.blueAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/Blue Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] blueAtlasInfo;
+					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", out blueAtlasInfo, false);
 				}
 				return FF9UIDataTool.blueAtlas;
 			}
@@ -201,7 +203,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9UIDataTool.grayAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.grayAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/Gray Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] atlasInfo;
+					FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", out atlasInfo, false);
 				}
 				return FF9UIDataTool.grayAtlas;
 			}
@@ -213,7 +216,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9UIDataTool.blueAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.blueAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/Blue Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] atlasInfo;
+					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", out atlasInfo, false);
 				}
 				return FF9UIDataTool.blueAtlas;
 			}
@@ -225,7 +229,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9UIDataTool.iconAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.iconAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/Icon Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] atlasInfo;
+					FF9UIDataTool.iconAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Icon Atlas", out atlasInfo, false);
 				}
 				return FF9UIDataTool.iconAtlas;
 			}
@@ -237,7 +242,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9UIDataTool.generalAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.generalAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/General Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] atlasInfo;
+					FF9UIDataTool.generalAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/General Atlas", out atlasInfo, false);
 				}
 				return FF9UIDataTool.generalAtlas;
 			}
@@ -249,7 +255,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9UIDataTool.screenButtonAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.screenButtonAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/Screen Button Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] atlasInfo;
+					FF9UIDataTool.screenButtonAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Screen Button Atlas", out atlasInfo, false);
 				}
 				return FF9UIDataTool.screenButtonAtlas;
 			}
@@ -261,7 +268,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9UIDataTool.tutorialAtlas == (UnityEngine.Object)null)
 				{
-					FF9UIDataTool.tutorialAtlas = (Resources.Load("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", typeof(UIAtlas)) as UIAtlas);
+					String[] atlasInfo;
+					FF9UIDataTool.tutorialAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", out atlasInfo, false);
 				}
 				return FF9UIDataTool.tutorialAtlas;
 			}
@@ -824,7 +832,8 @@ namespace Assets.Sources.Scripts.UI.Common
 			else
 			{
 				String path = "EmbeddedAsset/UI/Sprites/" + text + "/" + text2;
-				sprite = Resources.Load<Sprite>(path);
+				String[] spriteInfo;
+				sprite = AssetManager.Load<Sprite>(path, out spriteInfo, false);
 				FF9UIDataTool.worldTitleSpriteList.Add(text2, sprite);
 			}
 			return sprite;

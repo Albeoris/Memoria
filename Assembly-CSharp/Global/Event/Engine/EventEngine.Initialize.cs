@@ -1,12 +1,13 @@
 ﻿using System;
 using Assets.Scripts.Common;
 using UnityEngine;
+using Memoria;
 
 public partial class EventEngine
 {
     private void InitEncount()
     {
-        this._encountTimer = -1440f;
+		this._encountTimer = (Single)Configuration.Battle.EncounterInitial;
         this._context.encratio = (Byte)0;
         this._encountBase = 0;
         this._encountReserved = false;

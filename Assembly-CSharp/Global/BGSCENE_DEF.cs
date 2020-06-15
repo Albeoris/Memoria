@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Memoria;
@@ -305,12 +305,12 @@ public class BGSCENE_DEF
     {
         this.name = newName;
         String a = String.Concat(path, newName, "_", localizeSymbol, ".bgs");
-        TextAsset textAsset = AssetManager.Load<TextAsset>(a, false);
-        if (textAsset == null)
+		String[] bgsInfo;
+        this.ebgBin = AssetManager.LoadBytes(a, out bgsInfo, false);
+        if (this.ebgBin == null)
         {
             return;
         }
-        this.ebgBin = textAsset.bytes;
         using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(this.ebgBin)))
         {
             this.ExtractHeaderData(binaryReader);
@@ -362,7 +362,8 @@ public class BGSCENE_DEF
         }
         else
         {
-            Texture2D x = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas"), false);
+			String[] pngInfo;
+            Texture2D x = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas"), out pngInfo, false);
 
             if (x != null)
             {
@@ -370,7 +371,7 @@ public class BGSCENE_DEF
                 
                 if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
                 {
-                    this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), false);
+                    this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), out pngInfo, false);
                 }
                 else
                 {
@@ -389,25 +390,26 @@ public class BGSCENE_DEF
         {
             this.vram.LoadTIMs(path);
         }
-        TextAsset textAsset;
+        Byte[] binAsset;
+		String[] bgsInfo;
         if (!FieldMapEditor.useOriginalVersion)
         {
-            textAsset = AssetManager.Load<TextAsset>(path + FieldMapEditor.GetFieldMapModName(newName) + ".bgs", false);
-            if (textAsset == null)
+            binAsset = AssetManager.LoadBytes(path + FieldMapEditor.GetFieldMapModName(newName) + ".bgs", out bgsInfo, false);
+            if (binAsset == null)
             {
                 Debug.Log("Cannot find MOD version.");
-                textAsset = AssetManager.Load<TextAsset>(path + newName + ".bgs", false);
+                binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo, false);
             }
         }
         else
         {
-            textAsset = AssetManager.Load<TextAsset>(path + newName + ".bgs", false);
+            binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo, false);
         }
 
-        if (textAsset == null)
+        if (binAsset == null)
             return;
 
-        this.ebgBin = textAsset.bytes;
+        this.ebgBin = binAsset;
         using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(this.ebgBin)))
         {
             this.ReadData(binaryReader);

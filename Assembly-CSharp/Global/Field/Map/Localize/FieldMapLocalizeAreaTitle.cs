@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -13,8 +13,8 @@ public class FieldMapLocalizeAreaTitle
 	public void Load()
 	{
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapLocalizeAreaTitle.txt";
-		TextAsset textAsset = AssetManager.Load<TextAsset>(name, false);
-		StringReader stringReader = new StringReader(textAsset.text);
+		String textAsset = AssetManager.LoadString(name, out _, false);
+		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)
 		{

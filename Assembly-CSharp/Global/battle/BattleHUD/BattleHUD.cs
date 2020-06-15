@@ -128,14 +128,14 @@ public partial class BattleHUD : UIScene
         }
         else if (_currentLibraMessageNumber == 2)
         {
-            str = String.Format("{0}{1}{2}{3}{4}{5}{2}{6}",
-                FF9TextTool.BattleLibraText(11),
-                _libraBtlData.CurrentHp,
-                FF9TextTool.BattleLibraText(13),
-                _libraBtlData.MaximumHp,
-                FF9TextTool.BattleLibraText(12),
-                _libraBtlData.CurrentMp,
-                _libraBtlData.MaximumMp);
+            str = FF9TextTool.BattleLibraText(11);
+            str += btl_para.GetLogicalHP(this._libraBtlData.Data, false);
+            str += FF9TextTool.BattleLibraText(13);
+            str += btl_para.GetLogicalHP(this._libraBtlData.Data, true);
+            str += FF9TextTool.BattleLibraText(12);
+            str += this._libraBtlData.CurrentMp;
+            str += FF9TextTool.BattleLibraText(13);
+            str += this._libraBtlData.MaximumMp;
 
             _currentLibraMessageCount = 0;
             _currentLibraMessageNumber = 3;
@@ -497,7 +497,7 @@ public partial class BattleHUD : UIScene
 
         if (_currentMpValue != unit.CurrentMp)
         {
-            _currentMpValue = unit.CurrentMp;
+            _currentMpValue = (Int32)unit.CurrentMp;
             DisplayAbility();
         }
     }
@@ -1012,8 +1012,8 @@ public partial class BattleHUD : UIScene
         {
             DamageAnimationInfo infoVal1 = new DamageAnimationInfo();
             DamageAnimationInfo infoVal2 = new DamageAnimationInfo();
-            infoVal1.RequiredValue = infoVal1.CurrentValue = unit.CurrentHp;
-            infoVal2.RequiredValue = infoVal2.CurrentValue = unit.CurrentMp;
+            infoVal1.RequiredValue = infoVal1.CurrentValue = (Int32)unit.CurrentHp;
+            infoVal2.RequiredValue = infoVal2.CurrentValue = (Int32)unit.CurrentMp;
             infoVal1.FrameLeft = infoVal2.FrameLeft = 0;
             infoVal1.IncrementStep = infoVal2.IncrementStep = 0;
             _hpInfoVal.Add(infoVal1);

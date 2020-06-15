@@ -293,9 +293,9 @@ public class AbilityUI : UIScene
                 if (flag)
                 {
                     FF9Sfx.FF9SFX_Play(106);
-                    Int16 num = (Int16)GetMp(aaData);
+                    Int32 num = GetMp(aaData);
                     if (!FF9StateSystem.Settings.IsHpMpFull)
-                        caster.cur.mp -= num;
+                        caster.cur.mp = (UInt32)(caster.cur.mp - num);
                     if (caster.cur.mp < num)
                     {
                         this.DisplayAA();

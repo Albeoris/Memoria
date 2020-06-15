@@ -218,10 +218,10 @@ namespace Memoria.Assets
                 writer.WriteUInt32("invalidStatus", (UInt32)enemy.Status[0]);
                 writer.WriteUInt32("permanentStatus", (UInt32)enemy.Status[1]);
                 writer.WriteUInt32("currentStatus", (UInt32)enemy.Status[2]);
-                writer.WriteUInt16("maxHp", enemy.MaxHP);
-                writer.WriteUInt16("maxMp", enemy.MaxMP);
-                writer.WriteUInt16("winGil", enemy.WinGil);
-                writer.WriteUInt16("winExp", enemy.WinExp);
+                writer.WriteUInt16("maxHp", (UInt16)enemy.MaxHP);
+                writer.WriteUInt16("maxMp", (UInt16)enemy.MaxMP);
+                writer.WriteUInt16("winGil", (UInt16)enemy.WinGil);
+                writer.WriteUInt16("winExp", (UInt16)enemy.WinExp);
 
                 writer.BeginArray("winItems"); // 4
                 foreach (Byte item in enemy.WinItems)
@@ -245,7 +245,7 @@ namespace Memoria.Assets
                 writer.WriteUInt16OrMinusOne("banishMesh", enemy.Mesh[1]);
 
                 writer.WriteUInt16("flags", enemy.Flags);
-                writer.WriteUInt16("ap", enemy.AP);
+                writer.WriteUInt16("ap", (UInt16)enemy.AP);
 
                 writer.BeginObject("element");
                 writer.WriteByte("dex", enemy.Element.dex);
@@ -479,13 +479,13 @@ namespace Memoria.Assets
                             if (baseValue.Status[2] != enemy.Status[2])
                                 writer.WriteUInt32("currentStatus", (UInt32)enemy.Status[2]);
                             if (baseValue.MaxHP != enemy.MaxHP)
-                                writer.WriteUInt16("maxHp", enemy.MaxHP);
+                                writer.WriteUInt16("maxHp", (UInt16)enemy.MaxHP);
                             if (baseValue.MaxMP != enemy.MaxMP)
-                                writer.WriteUInt16("maxMp", enemy.MaxMP);
+                                writer.WriteUInt16("maxMp", (UInt16)enemy.MaxMP);
                             if (baseValue.WinGil != enemy.WinGil)
-                                writer.WriteUInt16("winGil", enemy.WinGil);
+                                writer.WriteUInt16("winGil", (UInt16)enemy.WinGil);
                             if (baseValue.WinExp != enemy.WinExp)
-                                writer.WriteUInt16("winExp", enemy.WinExp);
+                                writer.WriteUInt16("winExp", (UInt16)enemy.WinExp);
 
                             if (!baseValue.WinItems.SequenceEqual(enemy.WinItems))
                             {
@@ -527,7 +527,7 @@ namespace Memoria.Assets
                             if (baseValue.Flags != enemy.Flags)
                                 writer.WriteUInt16("flags", enemy.Flags);
                             if (baseValue.AP != enemy.AP)
-                                writer.WriteUInt16("ap", enemy.AP);
+                                writer.WriteUInt16("ap", (UInt16)enemy.AP);
 
                             if (!EnemyComparer.EqualElements(baseValue.Element, enemy.Element))
                             {
@@ -833,10 +833,10 @@ namespace Memoria.Assets
                 sw.UInt32((UInt32)_enData.Status[0]);
                 sw.UInt32((UInt32)_enData.Status[1]);
                 sw.UInt32((UInt32)_enData.Status[2]);
-                sw.UInt16(_enData.MaxHP);
-                sw.UInt16(_enData.MaxMP);
-                sw.UInt16(_enData.WinGil);
-                sw.UInt16(_enData.WinExp);
+                sw.UInt16((UInt16)_enData.MaxHP);
+                sw.UInt16((UInt16)_enData.MaxMP);
+                sw.UInt16((UInt16)_enData.WinGil);
+                sw.UInt16((UInt16)_enData.WinExp);
 
                 // 4
                 foreach (Byte item in _enData.WinItems)
@@ -858,7 +858,7 @@ namespace Memoria.Assets
                     sw.UInt16(item);
 
                 sw.UInt16(_enData.Flags);
-                sw.UInt16(_enData.AP);
+                sw.UInt16((UInt16)_enData.AP);
 
                 sw.Byte(_enData.Element.dex);
                 sw.Byte(_enData.Element.str);

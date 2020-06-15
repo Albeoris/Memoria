@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SimpleJSON;
 using UnityEngine;
@@ -15,14 +15,15 @@ public class FF9SndMetaData
 
 	private static void CreateBattleEncountBgmMetaData(String path, out Dictionary<Int32, Dictionary<Int32, Int32>> mapper)
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>(path, false);
+		String[] bgmInfo;
+		String textAsset = AssetManager.LoadString(path, out bgmInfo, false);
 		mapper = new Dictionary<Int32, Dictionary<Int32, Int32>>();
-		if ((UnityEngine.Object)null == textAsset)
+		if (textAsset == null)
 		{
 			SoundLib.LogError("File not found AT path: " + path);
 			return;
 		}
-		JSONClass jsonclass = (JSONClass)JSONNode.Parse(textAsset.text);
+		JSONClass jsonclass = (JSONClass)JSONNode.Parse(textAsset);
 		foreach (String text in jsonclass.Dict.Keys)
 		{
 			Dictionary<Int32, Int32> dictionary = new Dictionary<Int32, Int32>();

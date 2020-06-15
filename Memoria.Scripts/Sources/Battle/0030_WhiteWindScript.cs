@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.IsUnderStatus(BattleStatus.Zombie))
                 _v.Target.Flags |= CalcFlag.HpRecovery;
 
-            _v.Target.HpDamage = (Int16)(_v.Caster.MaximumHp / 3);
+            _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp / 3);
         }
     }
 }

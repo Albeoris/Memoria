@@ -22,11 +22,11 @@ namespace Memoria.Scripts.Battle
             _v.Target.Flags |= CalcFlag.HpAlteration;
             if (_v.Caster.CurrentHp != 0)
             {
-                _v.Caster.Fig = (Int16)_v.Caster.CurrentHp;
+                _v.Caster.Fig = (Int32)_v.Caster.CurrentHp;
                 _v.Caster.Kill();
             }
 
-            _v.Target.HpDamage = Math.Min((Int16)9999, _v.Caster.Fig);
+            _v.Target.HpDamage = Math.Min(9999, _v.Caster.Fig);
         }
     }
 }

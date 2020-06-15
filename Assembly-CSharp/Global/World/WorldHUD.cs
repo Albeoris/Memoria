@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
@@ -621,9 +621,10 @@ public class WorldHUD : UIScene
 
 	public void InitialHUD()
 	{
+		String[] spriteInfo;
 		if (WMUIData.ActiveMapNo == 1)
 		{
-			Sprite sprite = Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/world_map_full_all");
+			Sprite sprite = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/world_map_full_all", out spriteInfo, false);
 			this.miniMapSprite.spriteName = "world_map_mini_all";
 			this.miniMapButton.normalSprite = "world_map_mini_all";
 			this.mapSprite.sprite2D = sprite;
@@ -631,7 +632,7 @@ public class WorldHUD : UIScene
 		}
 		else
 		{
-			Sprite sprite2 = Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent");
+			Sprite sprite2 = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent", out spriteInfo, false);
 			this.miniMapSprite.spriteName = "world_map_mini_mistcontinent";
 			this.miniMapButton.normalSprite = "world_map_mini_mistcontinent";
 			this.mapSprite.sprite2D = sprite2;

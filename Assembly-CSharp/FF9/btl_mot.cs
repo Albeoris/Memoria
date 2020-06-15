@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Memoria;
 using Memoria.Data;
 using UnityEngine;
@@ -10,6 +10,41 @@ namespace FF9
 		static btl_mot()
 		{
 			// Note: this type is marked as 'beforefieldinit'.
+			// Battle motion IDs for player characters are sorted like these:
+			//  0:  stand
+			//  1:  stand low HP
+			//  2:  hitted
+			//  3:  hitted strongly
+			//  4:  stand KO
+			//  5:  low HP -> stand
+			//  6:  KO -> stand
+			//  7:  hit hard
+			//  8:  KO
+			//  9:  stand ready
+			//  10: ready
+			//  11: KO -> stand low HP
+			//  12: defend
+			//  13: stand defend
+			//  14: defend -> stand
+			//  15: ???
+			//  16: dodge
+			//  17: flee
+			//  18: victory
+			//  19: stand victory
+			//  20: run
+			//  21: stand run
+			//  22: attack 1
+			//  23: attack 2
+			//  24: jump back 1
+			//  25: jump back 2
+			//  26: cast
+			//  27: stand cast
+			//  28: cast -> stand
+			//  29: move forward
+			//  30: move backward
+			//  31: item
+			//  32: ready -> stand
+			//  33: cast alternate
 			String[,] array = new String[19, 34];
 			array[0, 0] = "ANH_MAIN_B0_000_000";
 			array[0, 1] = "ANH_MAIN_B0_000_022";
@@ -670,6 +705,19 @@ namespace FF9
 			btl.currentAnimationName = btl.mot[(Int32)index];
 		}
 
+        public static Byte getMotion(BattleUnit btl)
+		{
+			return getMotion(btl.Data);
+		}
+
+        public static Byte getMotion(BTL_DATA btl)
+		{
+			for (Int32 i = 0; i < btl.mot.Length; i++)
+				if (btl.currentAnimationName == btl.mot[i])
+					return (Byte)i;
+			return Byte.MaxValue;
+		}
+
 		public static void setMotion(BTL_DATA btl, String name)
 		{
 			btl.currentAnimationName = name;
@@ -717,13 +765,13 @@ namespace FF9
 
 		public static Int32 GetDirection(BTL_DATA btl)
 		{
-			return btl.bi.player == 0 ? 0 : 180;
+			return (Int32)btl.evt.rotBattle.eulerAngles[1];
 		}
 
 	    public static Int32 GetDirection(BattleUnit btl)
 	    {
-	        return btl.IsPlayer ? 180 : 0;
-	    }
+			return (Int32)btl.Data.evt.rotBattle.eulerAngles[1];
+		}
 
 	    public static void setSlavePos(BTL_DATA btl, ref Vector3 pos)
 		{
@@ -960,7 +1008,7 @@ namespace FF9
 						global::Debug.LogWarning(btl.gameObject.name + " Dead");
 						btl_mot.setMotion(btl, 7);
 					}
-					else if ((btl_mot.checkMotion(btl, 1) || btl_mot.checkMotion(btl, 6)) && !Status.checkCurStat(btl, BattleStatus.IdleDying))
+					else if ((btl_mot.checkMotion(btl, 1) || btl_mot.checkMotion(btl, 6)) && !btl_stat.CheckStatus(btl, BattleStatus.IdleDying))
 					{
 						btl_mot.setMotion(btl, 5);
 					}
@@ -981,7 +1029,7 @@ namespace FF9
 		public static void SetDamageMotion(BattleUnit btl)
 		{
 			if ((btl.Data.fig_info & 4) != 0)
-			    btl.Data.pos[2] += (btl.Data.evt.rot[1] == 0 ? 400 : -400) >> 1;
+			    btl.Data.pos[2] += (((btl.Data.evt.rot[1] + 90) % 360) < 180 ? 400 : -400) >> 1;
 
             if (btl.IsPlayer)
 			{
@@ -1073,7 +1121,7 @@ namespace FF9
 				{
 					btl_mot.setMotion(btl, 11);
 				}
-				else if (Status.checkCurStat(btl, BattleStatus.IdleDying))
+				else if (btl_stat.CheckStatus(btl, BattleStatus.IdleDying))
 				{
 					btl.bi.dmg_mot_f = 0;
 				}

@@ -162,9 +162,9 @@ public static class ff9level
 		return gemCount;
 	}
 
-	public static Int32 FF9Level_GetHp(Int32 lv, Int32 str)
+	public static UInt32 FF9Level_GetHp(Int32 lv, Int32 str)
 	{
-		Int32 num = (Int32)ff9level.CharacterLevelUps[lv - 1].BonusHP * str / 50;
+		UInt32 num = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusHP * str / 50);
 		if (num > 9999)
 		{
 			num = 9999;
@@ -172,9 +172,9 @@ public static class ff9level
 		return num;
 	}
 
-	public static Int32 FF9Level_GetMp(Int32 lv, Int32 mgc)
+	public static UInt32 FF9Level_GetMp(Int32 lv, Int32 mgc)
 	{
-		Int32 num = (Int32)ff9level.CharacterLevelUps[lv - 1].BonusMP * mgc / 100;
+		UInt32 num = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusMP * mgc / 100);
 		if (num > 999)
 		{
 			num = 999;

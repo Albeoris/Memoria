@@ -52,8 +52,8 @@ namespace Memoria.Scripts.Battle
             {
                 Single rate = 0;
 
-                rate += _v.Target.MaximumHp * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentHp, _v.Target.MaximumHp);
-                rate += _v.Target.MaximumMp * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentMp, _v.Target.MaximumMp);
+                rate += _v.Target.MaximumHp * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
+                rate += _v.Target.MaximumMp * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentMp, (Int32)_v.Target.MaximumMp);
 
                 if (!_v.Target.IsPlayer)
                     rate *= -1;

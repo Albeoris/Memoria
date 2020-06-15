@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -2244,12 +2244,12 @@ public class SFX
             PSXTextureMgr.SpEff435();
         }
         String path = "SpecialEffects/ef" + effNum.ToString("D3");
-        TextAsset textAsset = Resources.Load<TextAsset>(path);
-        if (textAsset != null)
+		String[] efInfo;
+        Byte[] binAsset = AssetManager.LoadBytes(path, out efInfo, false);
+        if (binAsset != null)
         {
-            textAsset.name = "effect";
-            GCHandle gCHandle2 = GCHandle.Alloc(textAsset.bytes, GCHandleType.Pinned);
-            SFX.SFX_Play(effNum, gCHandle2.AddrOfPinnedObject(), textAsset.bytes.Length, gCHandle.AddrOfPinnedObject());
+            GCHandle gCHandle2 = GCHandle.Alloc(binAsset, GCHandleType.Pinned);
+            SFX.SFX_Play(effNum, gCHandle2.AddrOfPinnedObject(), binAsset.Length, gCHandle.AddrOfPinnedObject());
             gCHandle2.Free();
         }
         else
@@ -2565,8 +2565,16 @@ public class SFX
     public static void SoundPlayChant(Int32 dno, Int32 attr, Int32 position)
     {
         Int32 num = (dno & 16777215) * 3 + SFX.seChantIndex;
+        if ((dno & 16777215) == 3)
+        {
+            if (SFX.seChantIndex % 3 == 0)
+                SoundLib.PlaySoundEffect(REFLECT_SOUND_ID, 5f, 0f, 1f); // DEBUG: using 5f as sound volume because the current sound fix has a low volume... must fix that
+        }
+        else
+        {
+            SoundLib.PlaySfxSound(num, 1f, 0f, 1f);
+        }
         SFX.seChantIndex++;
-        SoundLib.PlaySfxSound(num, 1f, 0f, 1f);
         for (Int32 i = 0; i < SFX.MAX_INDEX; i++)
         {
             if (SFX.channel[i, 0] == -1)
@@ -2811,6 +2819,8 @@ public class SFX
     public const UInt16 S_REQFLG_REF_NEXT = 16;
 
     public const Int32 SEND_FLOAT_CAMERA_TARGET = 1;
+
+    public const Int32 REFLECT_SOUND_ID = 350; // Thanks to LovelsDarkness and DoomOyster
 
     public static Int32 currentEffectID;
 

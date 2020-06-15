@@ -30,7 +30,9 @@ public class CMD_DATA
 		public Byte short_summon;
 		public Byte mon_reflec;
 
+		// Custom fields
 		public Boolean IsZeroMP { get; set; }
+		public Int32 CustomMPCost { get; set; }
 
 		public void Reset()
 		{
@@ -44,6 +46,7 @@ public class CMD_DATA
 			short_summon = 0;
 			mon_reflec = 0;
 			IsZeroMP = false;
+			CustomMPCost = -1;
 		}
 	}
 }

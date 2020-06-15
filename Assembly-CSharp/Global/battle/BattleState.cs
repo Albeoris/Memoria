@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Memoria.Scripts;
@@ -16,8 +16,9 @@ public class BattleState : MonoBehaviour
 	private void InitMapName()
 	{
 		this.mapName = new Dictionary<Int32, String>();
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", false);
-		StringReader stringReader = new StringReader(textAsset.text);
+		String[] bmapInfo;
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", out bmapInfo, false);
+		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)
 		{
@@ -60,7 +61,8 @@ public class BattleState : MonoBehaviour
 		this.fadeShader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
 		this.battleShader = ShadersLoader.Find("PSX/BattleMap_StatusEffect");
 		this.shadowShader = ShadersLoader.Find("PSX/BattleMap_Abr_2");
-		this.detailTexture = Resources.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture");
+		String[] pngInfo;
+		this.detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture", out pngInfo, false);
 	}
 
 	public Boolean isNoBoosterMap()
