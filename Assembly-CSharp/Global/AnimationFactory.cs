@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -9,12 +9,11 @@ public class AnimationFactory
 	{
 		AnimationFactory.animationEventClip.Clear();
 		AnimationFactory.animationMapping.Clear();
-		TextAsset textAsset = AssetManager.Load<TextAsset>("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt", false);
-		if (textAsset == (UnityEngine.Object)null)
-		{
+		String[] animInfo;
+		String text = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt", out animInfo, false);
+		if (text == null)
 			return;
-		}
-		String text = textAsset.text.Replace("\r", String.Empty);
+		text = text.Replace("\r", String.Empty);
 		if (!text.StartsWith("animation:"))
 		{
 			return;
@@ -36,7 +35,7 @@ public class AnimationFactory
 				String animationFolder = AnimationFactory.GetAnimationFolder(text2);
 				String text3 = "Animations/" + animationFolder + "/" + text2;
 				text3 = AnimationFactory.GetRenameAnimationPath(text3);
-				AnimationClip value = AssetManager.Load<AnimationClip>(text3, false);
+				AnimationClip value = AssetManager.Load<AnimationClip>(text3, out animInfo, false);
 				AnimationFactory.animationEventClip.Add(text2, value);
 			}
 		}
@@ -103,7 +102,8 @@ public class AnimationFactory
 			});
 			String text = "Animations/" + str + "/" + animationName;
 			text = AnimationFactory.GetRenameAnimationPath(text);
-			AnimationClip clip = AssetManager.Load<AnimationClip>(text, false);
+			String[] animInfo;
+			AnimationClip clip = AssetManager.Load<AnimationClip>(text, out animInfo, false);
 			component.AddClip(clip, animationName);
 		}
 	}
@@ -157,7 +157,8 @@ public class AnimationFactory
 				for (Int32 k = 0; k < (Int32)array5.Length; k++)
 				{
 					String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(array5[k]);
-					AnimationClip animationClip2 = AssetManager.Load<AnimationClip>(renameAnimationPath, false);
+					String[] animInfo;
+					AnimationClip animationClip2 = AssetManager.Load<AnimationClip>(renameAnimationPath, out animInfo, false);
 					String name2 = animationClip2.name;
 					component.AddClip(animationClip2, name2);
 				}

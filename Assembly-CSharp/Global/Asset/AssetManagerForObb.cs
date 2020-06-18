@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
@@ -18,14 +18,14 @@ public class AssetManagerForObb
 	private static void _LoadAnimationFolderMapping()
 	{
 		AssetManagerForObb._animationInFolder = new Dictionary<String, List<String>>();
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String filestr = AssetManager.LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _, false);
+		if (filestr == null)
 		{
 			global::Debug.LogWarning("Cannot load resource [AnimationFolderMapping]");
 			ExpansionVerifier.printLog("AssetManagerForObb : Cannot load resource [AnimationFolderMapping]");
 			return;
 		}
-		String[] array = textAsset.text.Split(new Char[]
+		String[] array = filestr.Split(new Char[]
 		{
 			'\n'
 		});

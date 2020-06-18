@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = (Int16)Math.Min(9999, _v.Target.MaximumHp - _v.Target.CurrentHp);
+            _v.Target.HpDamage = (Int32)Math.Min(9999, _v.Target.MaximumHp - _v.Target.CurrentHp);
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {

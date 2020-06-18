@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -136,7 +136,8 @@ public sealed class NameSettingUI : UIScene
 
     private void SetData()
     {
-        Background.sprite2D = Resources.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath());
+		String[] nameSpriteInfo;
+        Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), out nameSpriteInfo, false);
         MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
         CharacterProfile.text = FF9TextTool.CharacterProfile(_currentCharId);
         NameInputField.value = _isDefaultName

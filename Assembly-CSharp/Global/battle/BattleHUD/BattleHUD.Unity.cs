@@ -330,14 +330,14 @@ public partial class BattleHUD : UIScene
                 }
                 else
                 {
-                    Int32 num1 = index2 != 0 ? unit.CurrentMp : (Int32)unit.CurrentHp;
-                    Int32 num2 = index2 != 0 ? unit.MaximumMp : (Int32)unit.MaximumHp;
+                    Int32 num1 = index2 != 0 ? (Int32)unit.CurrentMp : (Int32)unit.CurrentHp;
+                    Int32 num2 = index2 != 0 ? (Int32)unit.MaximumMp : (Int32)unit.MaximumHp;
                     Int32 num3;
                     if ((num3 = num1 - infoVal3.CurrentValue) == 0)
                         continue;
 
                     Int32 num4 = Mathf.Abs(num3);
-                    infoVal3.RequiredValue = (Int16)num1;
+                    infoVal3.RequiredValue = num1;
                     if (num4 < YINFO_ANIM_HPMP_MIN)
                     {
                         infoVal3.FrameLeft = num4;

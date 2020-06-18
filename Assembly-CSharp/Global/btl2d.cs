@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using FF9;
 using Memoria;
@@ -215,12 +215,11 @@ public class btl2d
 		};
 		for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
 		{
-			TextAsset textAsset = AssetManager.Load<TextAsset>("BattleMap/BattleSPS/" + arg + ".sps", false);
-			if (textAsset == null)
+			Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + arg + ".sps", out _, false);
+			if (bytes == null)
 			{
 				return;
 			}
-			Byte[] bytes = textAsset.bytes;
 		}
 	}
 
@@ -342,7 +341,7 @@ public class btl2d
 		return btl2D_ENT;
 	}
 
-	public static BTL2D_ENT Btl2dReqHP(BTL_DATA pBtl, Int16 pNum, UInt16 pCol, Byte pDelay)
+	public static BTL2D_ENT Btl2dReqHP(BTL_DATA pBtl, Int32 pNum, UInt16 pCol, Byte pDelay)
 	{
 		BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
 		freeEntry.Type = 0;
@@ -352,7 +351,7 @@ public class btl2d
 		return freeEntry;
 	}
 
-	public static BTL2D_ENT Btl2dReqMP(BTL_DATA pBtl, Int16 pNum, UInt16 pCol, Byte pDelay)
+	public static BTL2D_ENT Btl2dReqMP(BTL_DATA pBtl, Int32 pNum, UInt16 pCol, Byte pDelay)
 	{
 		BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
 		freeEntry.Type = 1;

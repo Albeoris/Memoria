@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Memoria.Assets;
@@ -11,8 +11,8 @@ public class FieldMapExtraOffset
 		this.offsetDict = new Dictionary<String, FieldMapExtraOffset.ExtraOffset[]>();
 		this.notMoveDict = new Dictionary<String, FieldMapExtraOffset.ExtraOffset[]>();
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapExtraOffsetList.txt";
-		TextAsset textAsset = AssetManager.Load<TextAsset>(name, false);
-		StringReader stringReader = new StringReader(textAsset.text);
+		String textAsset = AssetManager.LoadString(name, out _, false);
+		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)
 		{

@@ -246,7 +246,7 @@ public partial class BattleHUD : UIScene
 
     private static Int32 GetAlivePlayerIndexForHealingAttack()
     {
-        Int32 minHp = Int32.MaxValue;
+        UInt32 minHp = Int32.MaxValue;
         Int32 minIndex = -1;
 
         Int32 index = -1;

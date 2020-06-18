@@ -173,15 +173,15 @@ public class BundleSceneIOS : MonoBehaviour
 		AssetManager.UseBundles = true;
 		if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
 		{
-			this._baseUrl = AssetManagerUtil.GetStreamingAssetsPath() + "/";
+			this._baseUrl = "";
 		}
 		else if (Application.platform == RuntimePlatform.IPhonePlayer)
 		{
-			this._baseUrl = AssetManagerUtil.GetStreamingAssetsPath() + "/";
+			this._baseUrl = "";
 		}
 		else if (Application.platform == RuntimePlatform.Android)
 		{
-			this._baseUrl = AssetManagerUtil.GetStreamingAssetsPath() + "/";
+			this._baseUrl = "";
 		}
 		this._isDownloading = true;
 		this._isCompressedBundles = false;
@@ -222,41 +222,44 @@ public class BundleSceneIOS : MonoBehaviour
 	public IEnumerator DownloadAssetBundles()
 	{
 		Screen.sleepTimeout = -1;
-		Int32 curItem = 0;
-		Int32 numItem = AssetManager.DictAssetBundleRefs.Count;
-		if (!BundleSceneIOS.Are3CompressedBundlesCached())
+		foreach (AssetManager.AssetFolder modfold in AssetManager.Folder)
 		{
-			global::Debug.Log("Need to check free space");
-			if (Storage.GetFreeSpace() < 382335908UL)
+			Int32 curItem = 0;
+			Int32 numItem = modfold.DictAssetBundleRefs.Count;
+			if (!BundleSceneIOS.Are3CompressedBundlesCached())
 			{
-				this.LoadingUI.SetSceneActive(true);
-				this.LoadingUI.SetStatusText(ExpansionVerifier.State.DecompressFailure, ExpansionVerifier.ErrorCode.NotEnoughStorage);
-				yield break;
+				global::Debug.Log("Need to check free space");
+				if (Storage.GetFreeSpace() < 382335908UL)
+				{
+					this.LoadingUI.SetSceneActive(true);
+					this.LoadingUI.SetStatusText(ExpansionVerifier.State.DecompressFailure, ExpansionVerifier.ErrorCode.NotEnoughStorage);
+					yield break;
+				}
+				AssetManager.ClearCache();
+				Single curTime = Time.realtimeSinceStartup;
+				Single percent = 0f;
+				while (Time.realtimeSinceStartup - curTime < 5f)
+				{
+					percent = (Time.realtimeSinceStartup - curTime) / 5f;
+					this.LoadingUI.SetSceneActive(true);
+					this.LoadingUI.SetStatusText(ExpansionVerifier.State.DecompressOBB, ExpansionVerifier.ErrorCode.None);
+					Single total = ((Single)this.currentProgressIndex + percent) * 100f;
+					Single totalProgress = total / 4f;
+					this.LoadingUI.SetProgress(Mathf.FloorToInt(totalProgress), true);
+					yield return new WaitForSeconds(0.3f);
+				}
+				this.currentProgressIndex++;
 			}
-			AssetManager.ClearCache();
-			Single curTime = Time.realtimeSinceStartup;
-			Single percent = 0f;
-			while (Time.realtimeSinceStartup - curTime < 5f)
+			foreach (KeyValuePair<String, AssetManager.AssetBundleRef> entry in modfold.DictAssetBundleRefs)
 			{
-				percent = (Time.realtimeSinceStartup - curTime) / 5f;
-				this.LoadingUI.SetSceneActive(true);
-				this.LoadingUI.SetStatusText(ExpansionVerifier.State.DecompressOBB, ExpansionVerifier.ErrorCode.None);
-				Single total = ((Single)this.currentProgressIndex + percent) * 100f;
-				Single totalProgress = total / 4f;
-				this.LoadingUI.SetProgress(Mathf.FloorToInt(totalProgress), true);
-				yield return new WaitForSeconds(0.3f);
+				AssetManager.AssetBundleRef abRef = entry.Value;
+				if (abRef.assetBundle != (UnityEngine.Object)null)
+				{
+					break;
+				}
+				yield return base.StartCoroutine(this.DownloadAssetBundle(abRef, curItem, numItem));
+				curItem++;
 			}
-			this.currentProgressIndex++;
-		}
-		foreach (KeyValuePair<String, AssetManager.AssetBundleRef> entry in AssetManager.DictAssetBundleRefs)
-		{
-			AssetManager.AssetBundleRef abRef = entry.Value;
-			if (abRef.assetBundle != (UnityEngine.Object)null)
-			{
-				break;
-			}
-			yield return base.StartCoroutine(this.DownloadAssetBundle(abRef, curItem, numItem));
-			curItem++;
 		}
 		this._SetStatusText("Load Completed");
 		Screen.sleepTimeout = -2;
@@ -271,14 +274,11 @@ public class BundleSceneIOS : MonoBehaviour
 		{
 			yield return null;
 		}
-		this._AddLogOutput("Downloading : " + abRef.url);
+		this._AddLogOutput("Downloading : " + abRef.fullUrl);
 		String fullUrl = String.Concat(new String[]
 		{
 			this._baseUrl,
-			AssetManagerUtil.GetPlatformPrefix(Application.platform),
-			AssetManagerUtil.GetCompressionPrefix(this._isCompressedBundles),
-			abRef.url,
-			AssetManagerUtil.GetBundleExtension()
+			abRef.fullUrl
 		});
 		this._AddLogOutput("    At : " + fullUrl);
 		String prefix = AssetManagerUtil.GetPlatformPrefix(Application.platform);
@@ -292,10 +292,7 @@ public class BundleSceneIOS : MonoBehaviour
 			fullUrl = String.Concat(new String[]
 			{
 				baseUrl,
-				AssetManagerUtil.GetPlatformPrefix(Application.platform),
-				AssetManagerUtil.GetCompressionPrefix(isCompressedBundles),
-				abRef.url,
-				AssetManagerUtil.GetBundleExtension()
+				abRef.fullUrl
 			});
 		}
 		if (!isCompressedBundles && fullUrl.IndexOf("http://") == -1)
@@ -362,15 +359,15 @@ public class BundleSceneIOS : MonoBehaviour
 		String text = String.Empty;
 		if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
 		{
-			text = "file://" + AssetManagerUtil.GetStreamingAssetsPath() + "/";
+			text = "file://";
 		}
 		else if (Application.platform == RuntimePlatform.IPhonePlayer)
 		{
-			text = "file://" + AssetManagerUtil.GetStreamingAssetsPath() + "/";
+			text = "file://";
 		}
 		else if (Application.platform == RuntimePlatform.Android)
 		{
-			text = "jar:file://" + AssetManagerUtil.GetStreamingAssetsPath() + "/";
+			text = "jar:file://";
 		}
 		global::Debug.Log("GetBasedURLForLocalBundles = " + text);
 		return text;

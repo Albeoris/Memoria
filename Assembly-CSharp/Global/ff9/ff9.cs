@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -2639,11 +2639,12 @@ public static class ff9
 		if (buffer.Length < size)
 		{
 		}
-		TextAsset textAsset = AssetManager.Load<TextAsset>(fileName, false);
-		if (!textAsset)
+		String[] worldRawInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(fileName, out worldRawInfo, false);
+		if (binAsset == null)
 		{
 		}
-		using (MemoryStream memoryStream = new MemoryStream(textAsset.bytes))
+		using (MemoryStream memoryStream = new MemoryStream(binAsset))
 		{
 			memoryStream.Position = pos;
 			memoryStream.Read(buffer, 0, (Int32)size);

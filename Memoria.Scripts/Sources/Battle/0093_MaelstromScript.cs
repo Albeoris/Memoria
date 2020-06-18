@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
             {
                 _v.Context.Flags |= BattleCalcFlags.DirectHP;
-                _v.Target.CurrentHp = (UInt16)(1 + GameRandom.Next8() % 9);
+                _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 9);
                 _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, false);
             }
         }

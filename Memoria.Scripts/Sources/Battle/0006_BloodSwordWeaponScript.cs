@@ -37,7 +37,7 @@ namespace Memoria.Scripts.Battle
             _v.PenaltyReverseAttack();
             _v.PrepareHpDraining();
 
-            Int16 damage = (Int16)Math.Min(9999, _v.Context.EnsurePowerDifference * _v.Context.EnsureAttack);
+            Int32 damage = Math.Min(9999, _v.Context.EnsurePowerDifference * _v.Context.EnsureAttack);
             _v.Target.HpDamage = damage;
             _v.Caster.HpDamage = damage;
 

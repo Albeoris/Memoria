@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             if (GameState.Frogs == 0)
                 _v.Target.HpDamage = 1;
             else
-                _v.Target.HpDamage = (Int16)Math.Min(9999, GameState.Frogs * _v.Caster.Level);
+                _v.Target.HpDamage = Math.Min(9999, GameState.Frogs * _v.Caster.Level);
         }
     }
 }

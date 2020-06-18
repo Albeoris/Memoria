@@ -1366,7 +1366,7 @@ public class EquipUI : UIScene
 
 		ff9PLAY_INFO.Base = player.basis;
 		ff9PLAY_INFO.cur_hp = player.cur.hp;
-		ff9PLAY_INFO.cur_mp = (UInt16) player.cur.mp;
+		ff9PLAY_INFO.cur_mp = player.cur.mp;
 		ff9PLAY_INFO.equip.Absorb(player.equip);
 		for (Int32 j = 0; j < player.sa.Length; j++)
 		{

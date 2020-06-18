@@ -45,6 +45,10 @@ namespace Memoria
 
         public String Name => Data.et.name;
         public Byte[] StealableItems => Data.steal_item;
+        public ENEMY GetData
+        {
+            get => Data;
+        }
 
         public static BattleEnemy Find(BattleUnit unit)
         {

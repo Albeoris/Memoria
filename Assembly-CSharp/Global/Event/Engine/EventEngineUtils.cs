@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Memoria;
@@ -1863,9 +1863,10 @@ internal class EventEngineUtils
             str = "US/";
 
         ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
-        TextAsset textAsset = AssetManager.Load<TextAsset>(ebFileName, false);
-        if (!(textAsset == null))
-            return textAsset.bytes;
+		String[] ebInfo;
+        Byte[] binAsset = AssetManager.LoadBytes(ebFileName, out ebInfo, false);
+        if (binAsset != null)
+            return binAsset;
 
         E_Error("loadEventData: cannot load eb file " + ebFileName);
         return null;

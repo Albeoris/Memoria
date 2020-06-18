@@ -36,6 +36,9 @@ public class ENEMY
 
 	public Vector3 base_pos;
 
+	// Custom field
+	public Byte steal_unsuccessful_counter;
+
 	public class ENEMY_INFO
 	{
 		public Byte die_fade_rate;
@@ -49,5 +52,7 @@ public class ENEMY
 		public Byte slave;
 
 		public Int32 reserve;
+
+		public UInt16 flags;
 	}
 }

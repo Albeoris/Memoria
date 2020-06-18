@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 public class EnemyData : MonoBehaviour
@@ -11,8 +11,8 @@ public class EnemyData : MonoBehaviour
 
 	private void Load()
 	{
-		TextAsset textAsset = Resources.Load(this.stageDataPath, typeof(TextAsset)) as TextAsset;
-		Byte[] bytes = textAsset.bytes;
+		String[] cardStratInfo;
+		Byte[] bytes = AssetManager.LoadBytes(this.stageDataPath, out cardStratInfo, false);
 		Int32 miniGameArg = (Int32)FF9StateSystem.Common.FF9.miniGameArg;
 		Char c = (Char)bytes[miniGameArg * 2];
 		Int32 num = (Int32)c;
@@ -20,8 +20,8 @@ public class EnemyData : MonoBehaviour
 		Int32 wise = (Int32)c;
 		this.cardLevel = num;
 		this.Wise = wise;
-		TextAsset textAsset2 = Resources.Load(this.cardLevelDataPath, typeof(TextAsset)) as TextAsset;
-		this.enemyData = textAsset2.bytes;
+		String[] cardListInfo;
+		this.enemyData = AssetManager.LoadBytes(this.cardLevelDataPath, out cardListInfo, false);
 	}
 
 	public Int32 GetCardID()

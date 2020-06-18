@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -27,13 +27,13 @@ public class GeoTexAnim : HonoBehavior
 	{
 		this._mainTextureIndex = mainTextureIndex;
 		this._subTextureIndex = subTextureIndex;
-		TextAsset textAsset = AssetManager.Load<TextAsset>(modelName + ".tab", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] tabInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(modelName + ".tab", out tabInfo, false);
+		if (binAsset == null)
 		{
 			return;
 		}
-		Byte[] bytes = textAsset.bytes;
-		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
+		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
 			this.Count = (Int32)binaryReader.ReadUInt16();
 			Int32 num = (Int32)binaryReader.ReadUInt16();
@@ -470,12 +470,13 @@ public class GeoTexAnim : HonoBehavior
 	{
 		mainTextureIndex = 0;
 		subTextureIndex = 0;
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] csvInfo;
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo, false);
+		if (textAsset == null)
 		{
 			return;
 		}
-		String[] array = textAsset.text.Split(new Char[]
+		String[] array = textAsset.Split(new Char[]
 		{
 			'\n'
 		});
@@ -500,14 +501,15 @@ public class GeoTexAnim : HonoBehavior
 
 	public static void SetTexAnimIndexs(String geoName, out Int32[] mainTextureIndexs, out Int32[] subTextureIndexs)
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] csvInfo;
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo, false);
+		if (textAsset == null)
 		{
 			mainTextureIndexs = null;
 			subTextureIndexs = null;
 			return;
 		}
-		String[] array = textAsset.text.Split(new Char[]
+		String[] array = textAsset.Split(new Char[]
 		{
 			'\n'
 		});

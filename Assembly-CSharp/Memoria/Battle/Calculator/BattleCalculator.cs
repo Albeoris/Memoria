@@ -151,23 +151,23 @@ namespace Memoria
             switch (bonus)
             {
                 case CalcAttackBonus.Simple:
-                    Context.Attack = (Int16)(Caster.Strength + baseDamage);
+                    Context.Attack = Caster.Strength + baseDamage;
                     break;
                 case CalcAttackBonus.WillPower:
-                    Context.Attack = (Int16)((Caster.Strength + Caster.Will >> 1) + baseDamage);
+                    Context.Attack = (Caster.Strength + Caster.Will >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Dexterity:
-                    Context.Attack = (Int16)((Caster.Strength + Caster.Data.elem.dex >> 1) + baseDamage);
+                    Context.Attack = (Caster.Strength + Caster.Data.elem.dex >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Magic:
-                    Context.Attack = (Int16)((Caster.Strength + Caster.Data.elem.mgc >> 1) + baseDamage);
+                    Context.Attack = (Caster.Strength + Caster.Data.elem.mgc >> 1) + baseDamage;
                     break;
                 case CalcAttackBonus.Random:
-                    Context.Attack = (Int16)(Comn.random16() % Caster.Strength + baseDamage);
+                    Context.Attack = Comn.random16() % Caster.Strength + baseDamage;
                     break;
                 case CalcAttackBonus.Level:
                     Context.AttackPower += Caster.Data.level;
-                    Context.Attack = (Int16)(Caster.Strength + baseDamage);
+                    Context.Attack = Caster.Strength + baseDamage;
                     break;
             }
         }
@@ -315,7 +315,7 @@ namespace Memoria
         public void CalcPhysicalHpDamage()
         {
             Target.Flags |= CalcFlag.HpAlteration;
-            Target.HpDamage = (Int16)Math.Min(9999, Context.EnsureAttack * Math.Max(1, Context.PowerDifference));
+            Target.HpDamage = Math.Min(9999, Context.EnsureAttack * Math.Max(1, Context.PowerDifference));
 
             if (Context.IsAbsorb)
             {
@@ -328,7 +328,7 @@ namespace Memoria
             }
         }
 
-        public void BonusSupportAbilitiesAttack()
+        public void BonusKillerAbilities()
         {
             var hasCategory = new Func<ENEMY_TYPE, EnemyCategory, Boolean>((enemy, category) => (enemy.category & (Int16)category) != 0);
 
@@ -343,20 +343,28 @@ namespace Memoria
                     Caster.HasSupportAbility(SupportAbility1.DevilKiller) && hasCategory(enemy, EnemyCategory.Devil) ||
                     Caster.HasSupportAbility(SupportAbility1.BeastKiller) && hasCategory(enemy, EnemyCategory.Beast) ||
                     Caster.HasSupportAbility(SupportAbility1.ManEater) && hasCategory(enemy, EnemyCategory.Humanoid))
-                    Context.Attack = (Int16)(Context.Attack * 3 >> 1);
+                    Context.Attack = Context.Attack * 3 >> 1;
             }
-
+        }
+        public void BonusMpAttack()
+        {
             if (Caster.HasSupportAbility(SupportAbility1.MPAttack) && Caster.CurrentMp > 0)
             {
-                Context.Attack = (Int16)(Context.Attack * 3 >> 1);
+                Context.Attack = Context.Attack * 3 >> 1;
                 Context.Flags |= BattleCalcFlags.MpAttack;
             }
+        }
+
+        public void BonusSupportAbilitiesAttack()
+        {
+            BonusKillerAbilities();
+            BonusMpAttack();
         }
 
         public void BonusBackstabAndPenaltyLongDistance()
         {
             if (IsCasterSameDirectionTarget() || Target.IsRunningAway())
-                Context.Attack = (Int16)(Context.Attack * 3 >> 1);
+                Context.Attack = Context.Attack * 3 >> 1;
 
             if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongReach)
                 Context.Attack /= 2;
@@ -368,7 +376,7 @@ namespace Memoria
             if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack == 0)
                 return;
 
-            Context.AttackPower = (Int16)(60 - Context.AttackPower);
+            Context.AttackPower = 60 - Context.AttackPower;
             if (Context.AttackPower < 1)
                 Context.AttackPower = 1;
         }
@@ -376,7 +384,7 @@ namespace Memoria
         public void TryCriticalHit()
         {
             Int32 quarterWill = Caster.Data.elem.wpr >> 2;
-            if (quarterWill != 0 && Comn.random16() % quarterWill > Comn.random16() % 100)
+            if (quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.Data.critical_rate_deal_bonus + Target.Data.critical_rate_receive_bonus > Comn.random16() % 100)
             {
                 Context.Attack *= 2;
                 Target.Flags |= CalcFlag.Critical;
@@ -386,7 +394,7 @@ namespace Memoria
         public void ConsumeMpAttack()
         {
             if ((Context.Flags & BattleCalcFlags.MpAttack) != 0)
-                Caster.Data.cur.mp = (Int16)Math.Max(0, Caster.Data.cur.mp - (Caster.MaximumMp >> 3));
+                Caster.Data.cur.mp = (UInt32)Math.Max(0, (Int32)Caster.Data.cur.mp - (Caster.MaximumMp >> 3));
         }
 
         public void SetCommandPower()
@@ -418,6 +426,15 @@ namespace Memoria
 
             Context.Flags |= BattleCalcFlags.Miss;
             return false;
+        }
+        public void TryAddWeaponStatus()
+        {
+            if (Caster.HasSupportAbility(SupportAbility1.AddStatus))
+            {
+                Context.StatusRate = Caster.WeaponRate;
+                if (Context.StatusRate > GameRandom.Next16() % 100)
+                    Context.Flags |= BattleCalcFlags.AddStat;
+            }
         }
     }
 }

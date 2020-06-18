@@ -64,6 +64,9 @@
         SysTrans = 59,
         SysDead = 60,
         SysReraise = 61,
-        SysStone = 62
+        SysStone = 62,
+        ScriptCounter1,
+        ScriptCounter2,
+        ScriptCounter3
     }
 }

@@ -107,7 +107,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Caster.HasSupportAbility(SupportAbility2.Mug))
             {
                 _v.Target.Flags |= CalcFlag.HpAlteration;
-                _v.Target.HpDamage = (Int16)(GameRandom.Next16() % (_v.Caster.Level * _v.Target.Level >> 1));
+                _v.Target.HpDamage = GameRandom.Next16() % (_v.Caster.Level * _v.Target.Level >> 1);
             }
 
             if (_v.Caster.HasSupportAbility(SupportAbility1.StealGil))

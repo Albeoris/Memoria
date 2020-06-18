@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Memoria.Data;
 using UnityEngine;
@@ -9,8 +9,8 @@ public class BTL_SCENE
 	{
 		name = "EVT_BATTLE_" + name;
 		this.header = new SB2_HEAD();
-		TextAsset textAsset = AssetManager.Load<TextAsset>("BattleMap/BattleScene/" + name + "/dbfile0000.raw16", false);
-		Byte[] bytes = textAsset.bytes;
+		String[] bsceneInfo;
+		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleScene/" + name + "/dbfile0000.raw16", out bsceneInfo, false);
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
 		{
 			this.header.Ver = binaryReader.ReadByte();
@@ -153,6 +153,29 @@ public class BTL_SCENE
 				aa_DATA.Type = binaryReader.ReadByte();
 				aa_DATA.Vfx2 = binaryReader.ReadUInt16();
 				aa_DATA.Name = binaryReader.ReadUInt16().ToString();
+			}
+		}
+		Int32 typIndex = -1;
+		foreach (String s in bsceneInfo)
+		{
+			String[] bsceneCode = s.Split(' ');
+			if (bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Enemy") == 0)
+				System.Int32.TryParse(bsceneCode[1], out typIndex);
+			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "MaxHP") == 0)
+				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxHP);
+			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "MaxMP") == 0)
+				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxMP);
+			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Gil") == 0)
+				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinGil);
+			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Exp") == 0)
+				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinExp);
+			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "AttackPower") == 0)
+				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].AP); // AP is unused by default
+			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "OutOfReach") == 0)
+			{
+				Boolean oor;
+				if (System.Boolean.TryParse(bsceneCode[1], out oor))
+					this.MonAddr[typIndex].OutOfReach = (SByte)(oor ? 1 : 0);
 			}
 		}
 	}

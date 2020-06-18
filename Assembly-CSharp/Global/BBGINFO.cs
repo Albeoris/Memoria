@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -7,13 +7,14 @@ public class BBGINFO
 	public void ReadBattleInfo(String battleModelPath)
 	{
 		String name = "BattleMap/BattleInfo/" + battleModelPath.Replace("BBG", "INB") + ".inb";
-		TextAsset textAsset = AssetManager.Load<TextAsset>(name, false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] battleInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(name, out battleInfo, false);
+		if (binAsset == null)
 		{
 			global::Debug.LogWarning("Cannot find BattleInfo for : " + battleModelPath);
 			return;
 		}
-		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(textAsset.bytes)))
+		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
 			this.bbgnumber = binaryReader.ReadInt16();
 			this.texanim = binaryReader.ReadInt16();

@@ -228,12 +228,12 @@ public class ff9play
         play.basis.str = (Byte)ff9level.FF9Level_GetStr(slot_id, play.level, lvup);
         play.basis.mgc = (Byte)ff9level.FF9Level_GetMgc(slot_id, play.level, lvup);
         play.basis.wpr = (Byte)ff9level.FF9Level_GetWpr(slot_id, play.level, lvup);
-        play.max.hp = (UInt16)ff9level.FF9Level_GetHp(play.level, play.basis.str);
-        play.basis.max_hp = (Int16)play.max.hp;
-        play.max.mp = play.basis.max_mp = (Int16)ff9level.FF9Level_GetMp(play.level, play.basis.mgc);
+        play.max.hp = ff9level.FF9Level_GetHp(play.level, play.basis.str);
+        play.basis.max_hp = play.max.hp;
+        play.max.mp = play.basis.max_mp = ff9level.FF9Level_GetMp(play.level, play.basis.mgc);
         play.max.capa = (Byte)ff9level.FF9Level_GetCap(slot_id, play.level, lvup);
-        play.cur.hp = (UInt16)ccommon.min((Int32)num2, play.max.hp);
-        play.cur.mp = (Int16)ccommon.min((Int32)num3, play.max.mp);
+        play.cur.hp = ccommon.min((UInt32)num2, play.max.hp);
+        play.cur.mp = ccommon.min((UInt32)num3, play.max.mp);
         play.cur.capa = (Byte)(play.max.capa - (UInt64)num1);
         if (init != null)
         {
@@ -244,8 +244,8 @@ public class ff9play
         FF9Play_Update(play);
         if (lvup)
         {
-            play.cur.hp = (UInt16)ccommon.min((Int32)num2, play.max.hp);
-            play.cur.mp = (Int16)ccommon.min((Int32)num3, play.max.mp);
+            play.cur.hp = ccommon.min((UInt32)num2, play.max.hp);
+            play.cur.mp = ccommon.min((UInt32)num3, play.max.mp);
         }
         if (num5 == 99L)
         {
@@ -263,7 +263,7 @@ public class ff9play
         FF9PLAY_SKILL skill = new FF9PLAY_SKILL();
         info.Base = play.basis;
         info.cur_hp = play.cur.hp;
-        info.cur_mp = (UInt16)play.cur.mp;
+        info.cur_mp = play.cur.mp;
         for (Int32 index = 0; index < 1; ++index)
             info.sa[index] = play.sa[index];
         info.equip.Absorb(play.equip);
@@ -277,9 +277,9 @@ public class ff9play
         play.defence.MagicalDefence = (Byte)skill.weapon[3];
         play.defence.MagicalEvade = (Byte)skill.weapon[4];
         play.cur.hp = skill.cur_hp;
-        play.cur.mp = (Int16)skill.cur_mp;
+        play.cur.mp = skill.cur_mp;
         play.max.hp = skill.max_hp;
-        play.max.mp = (Int16)skill.max_mp;
+        play.max.mp = skill.max_mp;
     }
 
     public static FF9PLAY_SKILL FF9Play_GetSkill(ref FF9PLAY_INFO info, ref FF9PLAY_SKILL skill)
@@ -290,8 +290,8 @@ public class ff9play
         {
             cur_hp = info.cur_hp,
             cur_mp = info.cur_mp,
-            max_hp = (UInt16)info.Base.max_hp,
-            max_mp = (UInt16)info.Base.max_mp,
+            max_hp = info.Base.max_hp,
+            max_mp = info.Base.max_mp,
             Base =
             {
                 [0] = info.Base.dex,
@@ -335,16 +335,16 @@ public class ff9play
                 switch (numArray1[index2])
                 {
                     case 197:
-                        skill.max_hp = (UInt16)(skill.max_hp + skill.max_hp / 10U);
+                        skill.max_hp += skill.max_hp / 10U;
                         continue;
                     case 198:
-                        skill.max_hp = (UInt16)(skill.max_hp + skill.max_hp / 5U);
+                        skill.max_hp += skill.max_hp / 5U;
                         continue;
                     case 199:
-                        skill.max_mp = (UInt16)(skill.max_mp + skill.max_mp / 10U);
+                        skill.max_mp += skill.max_mp / 10U;
                         continue;
                     case 200:
-                        skill.max_mp = (UInt16)(skill.max_mp + skill.max_mp / 5U);
+                        skill.max_mp += skill.max_mp / 5U;
                         continue;
                     default:
                         continue;

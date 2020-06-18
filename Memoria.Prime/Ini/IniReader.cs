@@ -52,6 +52,7 @@ namespace Memoria.Prime.Ini
         private Dictionary<String, IniValue> _values;
         private SectionBinding _currentSectionBinding;
         private IniSection _currentSection;
+        private Dictionary<String, IniSection> _sectionsRead;
         private IniValue _currnetValue;
         private IniValue<Boolean> _enabledValue;
         private StringBuilder _sb;
@@ -68,6 +69,7 @@ namespace Memoria.Prime.Ini
         {
             try
             {
+                _sectionsRead.Clear();
                 _output = output;
                 _sections = output.GetBindings().ToDictionary(s => s.Name);
                 if (_sections.Count == 0)
@@ -86,6 +88,46 @@ namespace Memoria.Prime.Ini
                         ParseLine();
                     }
                 }
+                // Read configuration files inside the different mod sections
+                IniSection modSection;
+                if (_sectionsRead.TryGetValue("Mod", out modSection))
+                    if (modSection.Enabled)
+                    {
+                        String[] ModFolders = null;
+                        foreach (IniValue v in modSection.GetValues())
+                            if (String.Compare(v.Name, "FolderNames") == 0)
+                            {
+                                IniArray<String> vs = v as IniArray<String>;
+                                if (vs != null)
+                                {
+                                    // Consider that only the main configuration file can have a "[Mod] FolderNames" field (others are ignored as it is)
+                                    ModFolders = new String[vs.Value.Length];
+                                    vs.Value.CopyTo(ModFolders, 0);
+                                    break;
+                                }
+                            }
+                        if (ModFolders != null)
+                            for (Int32 i = ModFolders.Length-1; i >= 0; --i) // Read in reverse order so that first folder's changes overwrite the others
+                            {
+                                String subConfigPath = ModFolders[i] + Path.DirectorySeparatorChar + _filePath;
+                                if (File.Exists(subConfigPath))
+                                {
+                                    using (Stream input = File.OpenRead(subConfigPath))
+                                    using (StreamReader sr = new StreamReader(input))
+                                    {
+                                        _sb = new StringBuilder();
+                                        while (!sr.EndOfStream)
+                                        {
+                                            _line = sr.ReadLine();
+                                            if (String.IsNullOrEmpty(_line))
+                                                continue;
+
+                                            ParseLine();
+                                        }
+                                    }
+                                }
+                            }
+                    }
             }
             finally
             {
@@ -201,7 +243,8 @@ namespace Memoria.Prime.Ini
                     {
                         try
                         {
-                            _currentSection = _currentSectionBinding.CreateSection();
+                            if (!_sectionsRead.TryGetValue(_currentSectionBinding.Name, out _currentSection))
+                                _currentSection = _currentSectionBinding.CreateSection();
                             _values = _currentSection.GetValues().ToDictionary(v => v.Name);
                         }
                         catch (Exception ex)
@@ -226,6 +269,7 @@ namespace Memoria.Prime.Ini
                     _currentSection.Reset();
 
                 _currentSectionBinding.UpdateSection(_currentSection);
+                _sectionsRead[_currentSection.Name] = _currentSection;
             }
         }
     }

@@ -10,8 +10,8 @@ namespace Memoria
     public class BattleUnit
     {
         public CalcFlag Flags;
-        public Int16 HpDamage;
-        public Int16 MpDamage;
+        public Int32 HpDamage;
+        public Int32 MpDamage;
 
         internal BTL_DATA Data;
         
@@ -43,15 +43,19 @@ namespace Memoria
             set => Data.bi.dodge = (Byte)(value ? 1 : 0);
         }
 
-        public UInt16 MaximumHp => Data.max.hp;
-        public UInt16 CurrentHp
+        public UInt32 MaximumHp
         {
-            get => Data.cur.hp;
-            set => Data.cur.hp = value;
+            get => btl_para.GetLogicalHP(Data, true);
+            set => btl_para.SetLogicalHP(Data, value, true);
+        }
+        public UInt32 CurrentHp
+        {
+            get => btl_para.GetLogicalHP(Data, false);
+            set => btl_para.SetLogicalHP(Data, value, false);
         }
 
-        public Int16 MaximumMp => Data.max.mp;
-        public Int16 CurrentMp
+        public UInt32 MaximumMp => Data.max.mp;
+        public UInt32 CurrentMp
         {
             get => Data.cur.mp;
             set => Data.cur.mp = value;
@@ -103,7 +107,7 @@ namespace Memoria
             set => Data.trance = value;
         }
 
-        public Int16 Fig
+        public Int32 Fig
         {
             get => Data.fig;
             set => Data.fig = value;
@@ -151,7 +155,17 @@ namespace Memoria
 
         public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);
         public Boolean IsHealer => IsPlayer && (HasSupportAbility(SupportAbility1.Healer) || Weapon == WeaponItem.HealingRod);
-        
+
+        public Boolean[] StatModifier
+        {
+            get
+            {
+                return this.Data.stat_modifier;
+            }
+        }
+
+        public UInt16 SummonCount => Data.summon_count;
+
         public MutableBattleCommand AttackCommand => Commands[0];
         
         private MutableBattleCommand[] _commands;

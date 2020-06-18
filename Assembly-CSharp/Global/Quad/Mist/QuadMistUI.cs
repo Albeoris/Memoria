@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
@@ -49,7 +49,8 @@ public class QuadMistUI : UIScene
 			this.BuildCard();
 			this.UpdateAmountLabel();
 		}
-		this.textAtlas = (Resources.Load("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", typeof(UIAtlas)) as UIAtlas);
+		String[] atlasInfo;
+		this.textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", out atlasInfo, false);
 		PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
 		this.DisplayInfo();
 		this.DisplayCardList();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -58,13 +58,13 @@ public class PSXVram
 		for (Int32 i = 0; i < 16; i++)
 		{
 			String name = baseResPath + i.ToString("D4") + ".tim";
-			TextAsset textAsset = AssetManager.Load<TextAsset>(name, false);
-			if (textAsset == (UnityEngine.Object)null)
+			String[] timInfo;
+			Byte[] binAsset = AssetManager.LoadBytes(name, out timInfo, false);
+			if (binAsset == null)
 			{
 				break;
 			}
-			Byte[] bytes = textAsset.bytes;
-			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
+			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 			{
 				if (binaryReader.ReadUInt32() == 16u)
 				{
@@ -127,8 +127,7 @@ public class PSXVram
 
 	public void LoadRAWVram(String resPath)
 	{
-		TextAsset textAsset = Resources.Load<TextAsset>(resPath);
-		this.rawData = textAsset.bytes;
+		this.rawData = AssetManager.LoadBytes(resPath, out _, false);
 	}
 
 	public void LoadRAWVram(Byte[] data)

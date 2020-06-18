@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -6,12 +6,13 @@ public class MapConfiguration
 {
 	public static DMSMapConf? LoadMapConfigData(String fileName)
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("CommonAsset/MapConfigData/" + fileName, false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] mapConfInfo;
+		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MapConfigData/" + fileName, out mapConfInfo, false);
+		if (binAsset == null)
 		{
 			return null;
 		}
-		MemoryStream memoryStream = new MemoryStream(textAsset.bytes);
+		MemoryStream memoryStream = new MemoryStream(binAsset);
 		BinaryReader binaryReader = new BinaryReader(memoryStream);
 		DMSMapConf value = MapConfiguration.DMSParseMapConfFile(binaryReader);
 		binaryReader.Close();

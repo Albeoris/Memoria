@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -125,13 +125,14 @@ public class GEOTEXHEADER
 
 	public void ReadTextureAnim(String path)
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>(path, false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] tabInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(path, out tabInfo, false);
+		if (binAsset == null)
 		{
 			global::Debug.LogWarning("Cannot find GeoTexAnim for : " + path);
 			return;
 		}
-		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(textAsset.bytes)))
+		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
 			this.count = binaryReader.ReadUInt16();
 			this.pad = binaryReader.ReadUInt16();

@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Context.IsAbsorb)
                 _v.Target.Flags |= CalcFlag.HpRecovery;
 
-            _v.Target.HpDamage = (Int16)Math.Min(9999, _v.Target.CurrentHp * _v.Context.Attack / 100);
+            _v.Target.HpDamage = (Int32)Math.Min(9999, _v.Target.CurrentHp * _v.Context.Attack / 100);
         }
     }
 }

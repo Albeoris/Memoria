@@ -10,19 +10,19 @@ namespace Memoria.Assets
     {
         private const String TypeName = nameof(CreditsExporter);
 
-        private readonly TextAsset _amazonCredits;
-        private readonly TextAsset _mobileCredits;
-        private readonly TextAsset _estoreCredits;
-        private readonly TextAsset _steamCredits;
+        private readonly String _amazonCredits;
+        private readonly String _mobileCredits;
+        private readonly String _estoreCredits;
+        private readonly String _steamCredits;
 
         public CreditsExporter()
         {
             try
             {
-                _amazonCredits = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Text/StaffCredits_Amazon.txt", false);
-                _mobileCredits = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Text/StaffCredits_Mobile.txt", false);
-                _estoreCredits = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Text/StaffCredits_EStore.txt", false);
-                _steamCredits = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Text/StaffCredits_Steam.txt", false);
+                _amazonCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Amazon.txt", out _, false);
+                _mobileCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Mobile.txt", out _, false);
+                _estoreCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_EStore.txt", out _, false);
+                _steamCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Steam.txt", out _, false);
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace Memoria.Assets
             }
         }
 
-        private static void Export(TextAsset asset, String exportPath)
+        private static void Export(String asset, String exportPath)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace Memoria.Assets
 
                 if (asset != null)
                 {
-                    File.WriteAllText(exportPath, asset.text, Encoding.Unicode);
+                    File.WriteAllText(exportPath, asset, Encoding.Unicode);
                     Log.Message($"[{TypeName}] Exporting completed successfully.");
                 }
                 else

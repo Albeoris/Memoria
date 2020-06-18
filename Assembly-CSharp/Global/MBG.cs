@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Common;
@@ -17,7 +17,7 @@ public class MBG : HonoBehavior
 		{
 			if (MBG.instance == (UnityEngine.Object)null)
 			{
-				MBG.instance = UnityEngine.Object.Instantiate<GameObject>(AssetManager.Load<GameObject>("CommonAsset/MBGData/MBG", false)).GetComponent<MBG>();
+				MBG.instance = UnityEngine.Object.Instantiate<GameObject>(AssetManager.Load<GameObject>("CommonAsset/MBGData/MBG", out _, false)).GetComponent<MBG>();
 			}
 			return MBG.instance;
 		}
@@ -150,8 +150,9 @@ public class MBG : HonoBehavior
 					i,
 					".txt"
 				});
-				TextAsset textAsset = AssetManager.Load<TextAsset>(name, false);
-				JSONNode jsonnode = JSONNode.Parse(textAsset.text);
+				String[] mbgInfo;
+				String textAsset = AssetManager.LoadString(name, out mbgInfo, false);
+				JSONNode jsonnode = JSONNode.Parse(textAsset);
 				JSONClass asObject = jsonnode["frames"].AsObject;
 				foreach (Object obj in asObject)
 				{

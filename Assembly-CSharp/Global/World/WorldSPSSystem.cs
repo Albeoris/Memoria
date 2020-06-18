@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -494,10 +494,11 @@ public class WorldSPSSystem : MonoBehaviour
 
 	private Boolean _loadSPSTexture()
 	{
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/WorldSPS/fx.tcb", false);
-		if (textAsset != (UnityEngine.Object)null)
+		String[] tcbInfo;
+		Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/WorldSPS/fx.tcb", out tcbInfo, false);
+		if (binAsset != null)
 		{
-			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(textAsset.bytes)))
+			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 			{
 				UInt32 num = binaryReader.ReadUInt32();
 				UInt32 num2 = binaryReader.ReadUInt32();
@@ -553,14 +554,14 @@ public class WorldSPSSystem : MonoBehaviour
 		{
 			return true;
 		}
-		TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/WorldSPS/fx" + spsNo.ToString("D2") + ".sps", false);
-		if (textAsset == (UnityEngine.Object)null)
+		String[] spsInfo;
+		Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/WorldSPS/fx" + spsNo.ToString("D2") + ".sps", out spsInfo, false);
+		if (binAsset == null)
 		{
 			return false;
 		}
-		Byte[] bytes = textAsset.bytes;
-		Int32 key = this._GetSpsFrameCount(bytes);
-		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, bytes));
+		Int32 key = this._GetSpsFrameCount(binAsset);
+		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, binAsset));
 		return true;
 	}
 

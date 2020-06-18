@@ -43,17 +43,7 @@ namespace Memoria.Scripts.Battle
                 _v.Target.RaiseTrouble();
                 _v.ConsumeMpAttack();
 
-                TryAddWeaponStatus();
-            }
-        }
-
-        private void TryAddWeaponStatus()
-        {
-            if (_v.Caster.HasSupportAbility(SupportAbility1.AddStatus))
-            {
-                _v.Context.StatusRate = _v.Caster.WeaponRate;
-                if (_v.Context.StatusRate > GameRandom.Next16() % 100)
-                    _v.Context.Flags |= BattleCalcFlags.AddStat;
+                _v.TryAddWeaponStatus();
             }
         }
     }

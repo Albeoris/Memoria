@@ -21,15 +21,15 @@ namespace Memoria.Scripts.Battle
         {
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
             Byte itemId = (Byte)_v.Command.AbilityId;
-            _v.Target.HpDamage = (Int16)(_v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1));
+            _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1);
         }
 
         public Single RateTarget()
         {
             Byte itemId = (Byte)_v.Command.AbilityId;
-            Int16 recovery = (Int16)(_v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1));
+            Int32 recovery = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1);
 
-            Single rate = recovery * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentHp, _v.Target.MaximumHp);
+            Single rate = recovery * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
             
             if (!_v.Target.IsPlayer)
                 rate *= -1;

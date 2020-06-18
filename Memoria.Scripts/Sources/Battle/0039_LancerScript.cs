@@ -27,8 +27,8 @@ namespace Memoria.Scripts.Battle
                 return;
 
             Int32 damage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
-            _v.Target.HpDamage = (Int16)damage;
-            _v.Target.MpDamage = (Int16)(damage >> 4);
+            _v.Target.HpDamage = damage;
+            _v.Target.MpDamage = damage >> 4;
         }
     }
 }

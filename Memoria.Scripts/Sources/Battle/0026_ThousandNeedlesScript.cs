@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = (Int16)(_v.Command.Power * 100 + _v.Command.HitRate);
+            _v.Target.HpDamage = _v.Command.Power * 100 + _v.Command.HitRate;
         }
     }
 }

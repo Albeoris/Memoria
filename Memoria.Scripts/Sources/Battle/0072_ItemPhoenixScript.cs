@@ -25,13 +25,13 @@ namespace Memoria.Scripts.Battle
             
             if (_v.Target.IsZombie)
             {
-                if ((_v.Target.CurrentHp = (UInt16)(GameRandom.Next8() % 10)) == 0)
+                if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
                     _v.Target.Kill();
             }
             else if (_v.Target.CheckIsPlayer())
             {
                 if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                    _v.Target.CurrentHp = (UInt16)(1 + GameRandom.Next8() % 10);
+                    _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
 
                 _v.TargetCommand.TryRemoveItemStatuses();
             }

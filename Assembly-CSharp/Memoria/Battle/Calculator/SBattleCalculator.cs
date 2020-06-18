@@ -23,6 +23,29 @@ namespace Memoria
         {
             BattleCalculator v = new BattleCalculator(caster, target, command);
             BattleScriptFactory factory = FindScriptFactory(scriptId);
+            btl_cmd.cmd_effect_counter++;
+            if (btl_cmd.IsAttackShortRange(v.Caster, command.Data))
+            {
+                v.BonusBackstabAndPenaltyLongDistance();
+                if ((command.Data.aa.Category & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
+                    v.Context.Flags |= BattleCalcFlags.Miss;
+            }
+            if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (command.Data.aa.Type & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
+            {
+                v.BonusKillerAbilities();
+                v.Caster.BonusWeaponElement();
+                if (v.CanAttackWeaponElementalCommand())
+                    v.TryAddWeaponStatus();
+            }
+            if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
+            {
+                if (caster != null && target != null)
+                    SBattleCalculator.CalcResult(v);
+                return;
+            }
+            if ((command.Data.aa.Category & 8) != 0) // Is Physical
+                if (!v.Target.TryKillFrozen())
+                    SBattleCalculator.CalcResult(v);
             if (factory != null)
             {
                 IBattleScript script = factory(v);
@@ -45,10 +68,12 @@ namespace Memoria
             if (target.bi.player != 0 && caster.bi.player == 0)
                 counterAtk = btl_abil.CheckCounterAbility(v.Target, v.Caster, v.Command);
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
-                target.fig_info |= 128;
+                target.fig_info |= Param.FIG_INFO_GUARD;
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
             {
-                target.fig_info |= 32;
+                target.fig_info |= Param.FIG_INFO_MISS;
+                if (target.cur.hp <= 0)
+                    v.Context.Flags &= ~BattleCalcFlags.Dodge;
                 if ((v.Context.Flags & BattleCalcFlags.Dodge) != 0)
                 {
                     if (target.bi.player != 0)
@@ -60,7 +85,11 @@ namespace Memoria
                         target.rot.eulerAngles = new Vector3(target.rot.eulerAngles.x, num, target.rot.eulerAngles.z);
                     }
                     else if (target.bi.slave == 0)
+                    {
+                        if (Configuration.Battle.FloatEvadeBonus > 0 && v.Target.IsUnderPermanentStatus(BattleStatus.Float))
+                            target.pos[1] = target.pos[1] - -600f;
                         target.pos[2] -= -400f;
+                    }
                     else
                         btl_util.GetMasterEnemyBtlPtr().Data.pos[2] -= -400f;
                     target.bi.dodge = 1;
@@ -69,16 +98,27 @@ namespace Memoria
             }
             else
             {
-                if ((v.Command.Data.aa.Category & 8) != 0)
+                if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (v.Command.Data.aa.Type & 0x20) != 0) // Has critical
+                    v.TryCriticalHit();
+                // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
+                if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
                 {
-                    v.Target.RemoveStatus(BattleStatus.Confuse);
-                    v.Target.RemoveStatus(BattleStatus.Sleep);
+                    if ((FF9StateSystem.Battle.FF9Battle.add_status[(int)caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !Status.checkCurStat(target, BattleStatus.EasyKill))
+                    {
+                        v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[(int)caster.weapon.StatusIndex].Value, false);
+                    }
+                }
+                if ((v.Command.Data.aa.Category & 8) != 0) // Is Physical
+                {
+//                  v.Target.RaiseTrouble();
+                    if ((v.Context.added_status & BattleStatus.Confuse) == 0)
+                        v.Target.RemoveStatus(BattleStatus.Confuse);
+                    if ((v.Context.added_status & BattleStatus.Sleep) == 0)
+                        v.Target.RemoveStatus(BattleStatus.Sleep);
                 }
 
-                if ((v.Command.Data.aa.Category & 16) != 0)
-                {
+                if ((v.Command.Data.aa.Category & 16) != 0 && (v.Context.added_status & BattleStatus.Vanish) == 0) // Is Magical
                     v.Target.RemoveStatus(BattleStatus.Vanish);
-                }
 
                 if (v.Target.Flags != 0)
                 {
@@ -93,16 +133,15 @@ namespace Memoria
                                 if ((caster.reflec.tar_id[index] & target.btl_id) != 0)
                                     ++num1;
                             }
-                            if (v.Target.HpDamage * num1 > 9999)
-                                v.Target.HpDamage = 9999;
-                            else
-                                v.Target.HpDamage *= (Int16)num1;
-                            if (v.Caster.HasSupportAbility(SupportAbility1.Reflectx2) && (v.Target.HpDamage *= 2) > 9999)
-                                v.Target.HpDamage = 9999;
+                            v.Target.HpDamage *= num1;
+                            if (v.Caster.HasSupportAbility(SupportAbility1.Reflectx2))
+                                v.Target.HpDamage *= 2;
                         }
+                        if (v.Target.HpDamage > 9999)
+                            v.Target.HpDamage = 9999;
                         if ((v.Target.Flags & CalcFlag.HpRecovery) != 0)
                         {
-                            btl_para.SetRecover(target, v.Target.HpDamage);
+                            btl_para.SetRecover(target, (UInt32)v.Target.HpDamage);
                         }
                         else
                         {
@@ -115,10 +154,12 @@ namespace Memoria
 
                     if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                     {
+                        if (v.Target.MpDamage > 999)
+                            v.Target.MpDamage = 999;
                         if ((v.Target.Flags & CalcFlag.MpRecovery) != 0)
-                            btl_para.SetMpRecover(target, v.Target.MpDamage);
+                            btl_para.SetMpRecover(target, (UInt32)v.Target.MpDamage);
                         else
-                            btl_para.SetMpDamage(target, v.Target.MpDamage);
+                            btl_para.SetMpDamage(target, (UInt32)v.Target.MpDamage);
                     }
                 }
                 else if ((v.Context.Flags & BattleCalcFlags.DirectHP) != 0)
@@ -132,23 +173,27 @@ namespace Memoria
                     caster.fig_info |= (UInt16)v.Caster.Flags;
                     if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
                     {
+                        if (v.Caster.HpDamage > 9999)
+                            v.Caster.HpDamage = 9999;
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
-                            btl_para.SetRecover(caster, v.Caster.HpDamage);
+                            btl_para.SetRecover(caster, (UInt32)v.Caster.HpDamage);
                         else
                             btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0);
                     }
                     if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                     {
+                        if (v.Caster.MpDamage > 999)
+                            v.Caster.MpDamage = 999;
                         if ((v.Caster.Flags & CalcFlag.MpRecovery) != 0)
-                            btl_para.SetMpRecover(caster, v.Caster.MpDamage);
+                            btl_para.SetMpRecover(caster, (UInt32)v.Caster.MpDamage);
                         else
-                            btl_para.SetMpDamage(caster, v.Caster.MpDamage);
+                            btl_para.SetMpDamage(caster, (UInt32)v.Caster.MpDamage);
                     }
                 }
-                if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
-                {
-                    v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
-                }
+//              if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
+//              {
+//                  v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
+//              }
                 if (target.bi.player != 0 && FF9StateSystem.Settings.IsHpMpFull && target.cur.hp != 0)
                 {
                     target.cur.hp = target.max.hp;
@@ -159,7 +204,7 @@ namespace Memoria
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
             UInt16 commandAndScript = (UInt16)((UInt32)v.Command.Data.cmd_no << 8 | v.Command.Data.sub_no);
-            if (caster.bi.player != 0 && !Status.checkCurStat(target, BattleStatus.Immobilized))
+            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatus.Immobilized))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, commandAndScript);
@@ -190,7 +235,7 @@ namespace Memoria
             if (!counterAtk)
                 btl_abil.CheckAutoItemAbility(v.Target, v.Command);
             btl_abil.CheckReactionAbility(v.Target.Data, v.Command.Data.aa);
-            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || Status.checkCurStat(v.Target.Data, BattleStatus.CannotTrance))
+            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatus.CannotTrance))
                 return;
 
 

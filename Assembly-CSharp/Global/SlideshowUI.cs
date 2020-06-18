@@ -9,11 +9,11 @@ public class SlideshowUI : MonoBehaviour
 		GameObject gameObject;
 		if (currentLanguage == "English(UK)" || currentLanguage == "English(US)" || currentLanguage == "Japanese" || currentLanguage == "German")
 		{
-			gameObject = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_US_JP_GR_Atlas", false);
+			gameObject = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_US_JP_GR_Atlas", out _, false);
 		}
 		else
 		{
-			gameObject = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_FR_IT_ES_Atlas", false);
+			gameObject = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_FR_IT_ES_Atlas", out _, false);
 		}
 		UIAtlas component = gameObject.GetComponent<UIAtlas>();
 		this.text1Sprite.atlas = component;

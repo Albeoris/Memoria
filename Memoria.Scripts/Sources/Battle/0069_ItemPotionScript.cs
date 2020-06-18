@@ -41,7 +41,7 @@ namespace Memoria.Scripts.Battle
 
             _v.TargetCommand.CalcHpMagicRecovery();
 
-            Single rate = _v.Target.HpDamage * BattleScriptDamageEstimate.RateHpMp(_v.Target.CurrentHp, _v.Target.MaximumHp);
+            Single rate = _v.Target.HpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
 
             if ((_v.Target.Flags & CalcFlag.HpRecovery) != CalcFlag.HpRecovery)
                 rate *= -1;

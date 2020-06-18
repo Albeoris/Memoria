@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
             Byte itemId = (Byte)_v.Command.AbilityId;
 
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = (Int16)(_v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1));
+            _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1);
         }
     }
 }

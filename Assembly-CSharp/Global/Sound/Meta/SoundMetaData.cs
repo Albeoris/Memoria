@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -116,13 +116,13 @@ public class SoundMetaData
 
     private static void LoadMetaDataFromResourcesRecursively()
     {
-        TextAsset textAsset = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt", false);
-        TextAsset textAsset2 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt", false);
-        TextAsset textAsset3 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt", false);
-        TextAsset textAsset4 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt", false);
-        TextAsset textAsset5 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt", false);
-        TextAsset textAsset6 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt", false);
-        TextAsset textAsset7 = AssetManager.Load<TextAsset>("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt", false);
+        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt", out _, false);
+        String textAsset2 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt", out _, false);
+        String textAsset3 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt", out _, false);
+        String textAsset4 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt", out _, false);
+        String textAsset5 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt", out _, false);
+        String textAsset6 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt", out _, false);
+        String textAsset7 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt", out _, false);
 
 
         Exception exception = null;
@@ -131,13 +131,13 @@ public class SoundMetaData
         {
             try
             {
-                SoundMetaData.soundEffectExtendedMetaData = textAsset2.text;
-                SoundMetaData.SoundEffectMetaData = textAsset.text;
-                SoundMetaData.MusicMetaData = textAsset3.text;
-                SoundMetaData.MovieAudioMetaData = textAsset4.text;
-                SoundMetaData.SongMetaData = textAsset5.text;
-                SoundMetaData.SfxSoundMetaData = textAsset6.text;
-                SoundMetaData.ResidentSfxSoundMetaData = textAsset7.text;
+                SoundMetaData.soundEffectExtendedMetaData = textAsset2;
+                SoundMetaData.SoundEffectMetaData = textAsset;
+                SoundMetaData.MusicMetaData = textAsset3;
+                SoundMetaData.MovieAudioMetaData = textAsset4;
+                SoundMetaData.SongMetaData = textAsset5;
+                SoundMetaData.SfxSoundMetaData = textAsset6;
+                SoundMetaData.ResidentSfxSoundMetaData = textAsset7;
             }
             catch (Exception ex)
             {

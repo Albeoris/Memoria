@@ -45,7 +45,8 @@ public class btlshadow
 			Shader shadowShader = FF9StateSystem.Battle.shadowShader;
 			Material material = new Material(shadowShader);
 			material.SetColor("_TintColor", new Color32(64, 64, 64, Byte.MaxValue));
-			material.mainTexture = AssetManager.Load<Texture2D>("CommonAsset/Common/shadow_plate", false);
+			String[] pngInfo;
+			material.mainTexture = AssetManager.Load<Texture2D>("CommonAsset/Common/shadow_plate", out pngInfo, false);
 			meshRenderer.material = material;
 			gameObject.SetActive(false);
 		}

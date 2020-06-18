@@ -495,7 +495,7 @@ namespace Assets.Sources.Graphics.Movie
 			{
 				throw new NullReferenceException("MovieMaterialProcessor cannot be null");
 			}
-			Material material = AssetManager.Load<Material>("EmbeddedAsset/Shaders/Movie/Movie", false);
+			Material material = AssetManager.Load<Material>("EmbeddedAsset/Shaders/Movie/Movie", out _, false);
 			if (material == (UnityEngine.Object)null)
 			{
 				throw new ArgumentException("Failed to load material Movie/Movie");

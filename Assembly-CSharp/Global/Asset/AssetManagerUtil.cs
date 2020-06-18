@@ -8,12 +8,17 @@ public static class AssetManagerUtil
 	{
 		if (Application.platform == RuntimePlatform.WindowsPlayer)
 		{
-			return "./StreamingAssets";
+			return "StreamingAssets";
 		}
 		return Application.streamingAssetsPath;
 	}
 
-    public static string GetPersistentDataPath()
+	public static String GetResourcesAssetsPath(Boolean shortVersion)
+	{
+		return shortVersion ? "FF9_Data" : "x64/FF9_Data";
+	}
+
+	public static string GetPersistentDataPath()
     {
         if (FF9StateSystem.PCEStorePlatform)
         {
@@ -323,7 +328,7 @@ public static class AssetManagerUtil
 		return String.Format("{0}{1}", AssetManagerUtil.GetModuleBundleName(AssetManagerUtil.ModuleBundle.Sounds), (Int32)bundleId);
 	}
 
-	public static String CreateFieldMapBundleFilename(AssetManagerUtil.AvailablePlatform buildTarget, Boolean isCompressed, AssetManagerUtil.FieldMapBundleId bundleId)
+	public static String CreateFieldMapBundleFilename(RuntimePlatform buildTarget, Boolean isCompressed, AssetManagerUtil.FieldMapBundleId bundleId)
 	{
 		return String.Format("{0}{1}{2}{3}{4}", new Object[]
 		{
@@ -335,7 +340,7 @@ public static class AssetManagerUtil
 		});
 	}
 
-	public static String CreateSoundBundleFilename(AssetManagerUtil.AvailablePlatform buildTarget, Boolean isCompressed, AssetManagerUtil.SoundBundleId bundleId)
+	public static String CreateSoundBundleFilename(RuntimePlatform buildTarget, Boolean isCompressed, AssetManagerUtil.SoundBundleId bundleId)
 	{
 		return String.Format("{0}{1}{2}{3}{4}", new Object[]
 		{
@@ -347,7 +352,7 @@ public static class AssetManagerUtil
 		});
 	}
 
-	public static String CreateModuleBundleFilename(AssetManagerUtil.AvailablePlatform buildTarget, Boolean isCompressed, AssetManagerUtil.ModuleBundle moduleBundle)
+	public static String CreateModuleBundleFilename(RuntimePlatform buildTarget, Boolean isCompressed, AssetManagerUtil.ModuleBundle moduleBundle)
 	{
 		return String.Format("{0}{1}{2}{3}", new Object[]
 		{
@@ -358,7 +363,7 @@ public static class AssetManagerUtil
 		});
 	}
 
-	public static String CreateObbBundleFilename(AssetManagerUtil.AvailablePlatform buildTarget)
+	public static String CreateObbBundleFilename(RuntimePlatform buildTarget)
 	{
 		return String.Format("{0}{1}{2}", AssetManagerUtil.GetPlatformPrefix(buildTarget), "OBB", AssetManagerUtil.GetBundleExtension());
 	}
@@ -458,7 +463,7 @@ public static class AssetManagerUtil
 		return result;
 	}
 
-	public enum AvailablePlatform
+	public enum AvailablePlatform // Not very interesting... use RuntimePlatform (Application.platform) instead
 	{
 		StandaloneWindows = 5,
 		iOS = 9,

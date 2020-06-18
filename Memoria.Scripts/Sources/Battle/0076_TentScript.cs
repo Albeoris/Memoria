@@ -21,8 +21,8 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery | CalcFlag.MpAlteration | CalcFlag.MpRecovery;
-            _v.Target.HpDamage = (Int16)(_v.Target.MaximumHp >> 1);
-            _v.Target.MpDamage = (Int16)(_v.Target.MaximumMp >> 1);
+            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp >> 1);
+            _v.Target.MpDamage = (Int32)(_v.Target.MaximumMp >> 1);
 
             BattleItem item = _v.Command.Item;
             if (item.HitRate < GameRandom.Next16() % 100)
