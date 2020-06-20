@@ -7,37 +7,34 @@
     <Button.Template>
         <ControlTemplate>
             <Grid x:Name="LayoutRoot" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <Rectangle StrokeThickness="5">
-                    <Rectangle.Stroke>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <LinearGradientBrush.RelativeTransform>
-                                <RotateTransform CenterX="0.5" CenterY="0.5" Angle="115"/>
-                            </LinearGradientBrush.RelativeTransform>
-                            <GradientStop Color="#FF616161" Offset="0"/>
-                            <GradientStop Color="#FFF2F2F2" Offset="0.504"/>
-                            <GradientStop Color="#FFAEB1B1" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Rectangle.Stroke>
+                <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}">
+                    <Rectangle.Style>
+                        <Style TargetType="{x:Type Rectangle}">
+                            <Setter Property="Fill" Value="#bb244A38" />
+                        </Style>
+                    </Rectangle.Style>
                 </Rectangle>
-                <Rectangle Margin="5" Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}">
-                    <!--Blue-->
-                    <Rectangle.Fill>
-                        <LinearGradientBrush MappingMode="RelativeToBoundingBox" StartPoint="0.4,1.0" EndPoint="0.8,-0.4">
-                            <GradientStop Color="#DD4471C1"/>
-                            <GradientStop Color="#DD283665" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Rectangle.Fill>
-                </Rectangle>
-                <TextBlock TextWrapping="Wrap" Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}" FontSize="32" Height="45" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,3">
+                <TextBlock TextWrapping="Wrap" Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}" FontFamily="Arial" FontSize="28" Height="32" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" >
                     <TextBlock.Foreground>
                         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0" Opacity="0.885">
-                            <GradientStop Color="#DDAEB1B1" Offset="0.000"/>
-                            <GradientStop Color="#DDF2F2F2" Offset="0.504"/>
-                            <GradientStop Color="#DD616161" Offset="1.000"/>
+                            <GradientStop Color="#DDffffff" Offset="0.000"/>
                         </LinearGradientBrush>
                     </TextBlock.Foreground>
                 </TextBlock>
                 <TextBlock TextWrapping="Wrap" Text="{Binding SubLabel, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}" Foreground="{Binding SubLabelColor, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}" FontSize="10" Height="Auto" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,7"/>
+                <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}">
+                    <Rectangle.Style>
+                        <Style TargetType="{x:Type Rectangle}">
+                            <Setter Property="Fill" Value="#00244A38" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Fill" Value="#33ffffff">
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                </Rectangle>
             </Grid>
         </ControlTemplate>
     </Button.Template>

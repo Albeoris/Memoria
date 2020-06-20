@@ -7,7 +7,7 @@ namespace Ini
   public class IniFile
   {
     public String path;
-
+        //test2
     public IniFile(String INIPath)
     {
       this.path = INIPath;

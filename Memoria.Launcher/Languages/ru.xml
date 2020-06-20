@@ -37,6 +37,23 @@
     AudioSamplingFrequencyFormat = "{0} Гц"
     Debuggable = "Отладка"
     CheckUpdates = "Проверка обновлений"
+	IniOptions = "Options"
+	Widescreen = " Widescreen (16:9)"
+	SkipIntrosToMainMenu = " Skip intros to main menu"
+	SkipBattleLoading = " Skip battle loading"
+	HideCardsBubbles = " Hide cards bubbles"
+	TurnBasedBattles = " Turn-based battles"
+	SoundVolume = "Sound volume"
+	MusicVolume = "Music volume"
+	IniCheats = "Cheats"
+	MaxStealRate = " 100% steal rate"
+	DisableCantConcentrate = " Disable 'can't concentrate'"
+	SpeedMode = " Speed mode | F1"
+	SpeedFactor = "SpeedFactor"
+	PermanentTranse = " Permanent transe | F2"
+	MaxDamage = " Max damage | F3"
+	NoRandomBattles = " No random battles | F4"
+	PermanentCheats = " Permanent cheats | F5 F6 F7"
   />
 
   <SdLib

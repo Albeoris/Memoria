@@ -27,8 +27,10 @@ namespace Memoria.Launcher
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");
                     if (cur != null)
                         break;
+                    
                 }
-
+                //File.AppendAllText("MBROutput2.txt", name + \n");
+                
                 return new Lang(def, cur ?? def);
             }
             catch (Exception ex)
@@ -140,6 +142,23 @@ namespace Memoria.Launcher
             public static readonly string AudioSamplingFrequencyFormat = GetSettings(nameof(AudioSamplingFrequencyFormat));
             public static readonly string Debuggable = GetSettings(nameof(Debuggable));
             public static readonly string CheckUpdates = GetSettings(nameof(CheckUpdates));
+            public static readonly string IniOptions = GetSettings(nameof(IniOptions));
+            public static readonly string Widescreen = GetSettings(nameof(Widescreen));
+            public static readonly string SkipIntrosToMainMenu = GetSettings(nameof(SkipIntrosToMainMenu));
+            public static readonly string SkipBattleLoading = GetSettings(nameof(SkipBattleLoading));
+            public static readonly string HideCardsBubbles = GetSettings(nameof(HideCardsBubbles));
+            public static readonly string TurnBasedBattles = GetSettings(nameof(TurnBasedBattles));
+            public static readonly string SoundVolume = GetSettings(nameof(SoundVolume));
+            public static readonly string MusicVolume = GetSettings(nameof(MusicVolume));
+            public static readonly string IniCheats = GetSettings(nameof(IniCheats));
+            public static readonly string MaxStealRate = GetSettings(nameof(MaxStealRate));
+            public static readonly string DisableCantConcentrate = GetSettings(nameof(DisableCantConcentrate));
+            public static readonly string SpeedMode = GetSettings(nameof(SpeedMode));
+            public static readonly string SpeedFactor = GetSettings(nameof(SpeedFactor));
+            public static readonly string PermanentTranse = GetSettings(nameof(PermanentTranse));
+            public static readonly string MaxDamage = GetSettings(nameof(MaxDamage));
+            public static readonly string NoRandomBattles = GetSettings(nameof(NoRandomBattles));
+            public static readonly string PermanentCheats = GetSettings(nameof(PermanentCheats));
         }
 
         public static class SdLib
