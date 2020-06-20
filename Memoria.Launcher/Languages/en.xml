@@ -23,21 +23,41 @@
     Rollback = "Cancel"
     Inject = "Inject"
     SaveAs = "Save as..."
-    Exit = "Exit"
+    Exit = "E X I T"
     Exiting = "Exiting..."
-    Launch = "Launch"
+    Launch = "P L A Y"
     Launching = "Launching..."
     />
   
   <Settings
-    ActiveMonitor = "Active monitor:"
+    ActiveMonitor = "Active monitor"
     PrimaryMonitor = " [Primary]"
-    Resolution = "Resolution:"
-    Windowed = "Windowed"
-    AudioSamplingFrequency = "Audio sampling frequency:"
+    Resolution = "Resolution"
+    Windowed = " Windowed"
+    AudioSamplingFrequency = "Audio sampling frequency"
     AudioSamplingFrequencyFormat = "{0} Hz"
-    Debuggable = "Debuggable"
-    CheckUpdates = "Check for updates"
+    Debuggable = " Debuggable"
+    CheckUpdates = " Check for updates"
+	IniOptions = "Options"
+	Widescreen = " Widescreen (16:9)"
+	SkipIntrosToMainMenu = " Skip intros to main menu"
+	SkipBattleLoading = " Skip battle loading"
+	HideCardsBubbles = " Hide cards bubbles"
+	TurnBasedBattles = " Turn-based battles"
+	SoundVolume = "Sound volume"
+	MusicVolume = "Music volume"
+	IniCheats = "Cheats"
+	MaxStealRate = " 100% steal rate"
+	DisableCantConcentrate = " Disable 'can't concentrate'"
+	SpeedMode = " Speed mode | F1"
+	SpeedFactor = "SpeedFactor"
+	PermanentTranse = " Permanent transe | F2"
+	MaxDamage = " Max damage | F3"
+	NoRandomBattles = " No random battles | F4"
+	PermanentCheats = " Permanent cheats | F5 F6 F7"
+	
+	
+	
    />
 
   <SdLib

@@ -39,9 +39,10 @@ namespace Memoria.Launcher
         {
             foreach (UInt16 frequency in EnumerateAudioSettings())
                 _validSamplingFrequency.Add(frequency);
-
+            
+            SetRows(27);
             SetCols(2);
-            SetRows(9);
+            
 
             Width = 200;
             VerticalAlignment = VerticalAlignment.Top;
@@ -49,78 +50,49 @@ namespace Memoria.Launcher
             Margin = new Thickness(5);
             DataContext = this;
 
-            LinearGradientBrush backgroundStroke = new LinearGradientBrush
-            {
-                EndPoint = new Point(0.5, 1),
-                StartPoint = new Point(0.5, 0),
-                RelativeTransform = new RotateTransform(115, 0.5, 0.5),
-                GradientStops = new GradientStopCollection
-                {
-                    new GradientStop(Color.FromArgb(0xff, 0x61, 0x61, 0x61), 0),
-                    new GradientStop(Color.FromArgb(0xff, 0xF2, 0xF2, 0xF2), 0.504),
-                    new GradientStop(Color.FromArgb(0xff, 0xAE, 0xB1, 0xB1), 1)
-                }
-            };
-            backgroundStroke.Freeze();
-
-            LinearGradientBrush backgroundFill = new LinearGradientBrush
-            {
-                MappingMode = BrushMappingMode.RelativeToBoundingBox,
-                StartPoint = new Point(0.5, 1.0),
-                EndPoint = new Point(0.5, -0.4),
-                GradientStops = new GradientStopCollection
-                {
-                    new GradientStop(Color.FromArgb(0xBB, 0x44, 0x71, 0xc1), 0),
-                    new GradientStop(Color.FromArgb(0xBB, 0x28, 0x36, 0x65), 1)
-                }
-            };
-            backgroundFill.Freeze();
-
-            Rectangle backround = AddUiElement(new Rectangle {Stroke = backgroundStroke, Fill = backgroundFill, StrokeThickness = 5}, 0, 0, 9, 2);
-
             Thickness rowMargin = new Thickness(0, 8, 0, 3);
             
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, colSpan:2).Margin = rowMargin;
-            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 1, col: 0, rowSpan: 0, colSpan: 2);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan:2).Margin = rowMargin;
+            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 2);
             monitor.ItemsSource = GetAvailableMonitors();
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 2, col: 0).Margin = rowMargin;
-            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 3, col: 0);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 6, col: 0,rowSpan: 3).Margin = rowMargin;
+            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 8, col: 0, rowSpan: 3);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Windowed, null), row: 3, col: 1);
+            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Windowed, null), row: 8, col: 1, rowSpan: 3);
             windowedCheckBox.Margin = rowMargin;
             windowedCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Windowed)) {Mode = BindingMode.TwoWay});
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency), 4, 0, 0, 2).Margin = rowMargin;
-            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 5, 0, 0, 2);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency), 12, 0, 3, 2).Margin = rowMargin;
+            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 14, 0, 3, 2);
             audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
             audio.ItemsSource = EnumerateAudioSettings().ToArray();
             audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create("X64", null), 6, 0);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 17, 0, 3, 0);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 6, 1);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 17, 1, 3, 0);
             debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 7, 0, 0, 2);
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 19, 0, 3, 2);
             checkUpdates.Margin = new Thickness(0, 8, 0, 8);
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
 
             foreach (FrameworkElement child in Children)
             {
-                if (!ReferenceEquals(child, backround))
-                    child.Margin = new Thickness(child.Margin.Left + 8, child.Margin.Top, child.Margin.Right + 8, child.Margin.Bottom);
+                //if (!ReferenceEquals(child, backround))
+                child.Margin = new Thickness(child.Margin.Left + 8, child.Margin.Top, child.Margin.Right + 8, child.Margin.Bottom);
 
                 TextBlock textblock = child as TextBlock;
                 if (textblock != null)
@@ -135,9 +107,9 @@ namespace Memoria.Launcher
                     control.Foreground = Brushes.WhiteSmoke;
             }
 
+
             LoadSettings();
         }
-
         #region Properties
 
         public String ScreenResolution
