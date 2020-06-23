@@ -28,9 +28,9 @@
               </Hyperlink>
             </TextBlock>
         </StackPanel>
-        <launcher:GameSettingsControl x:Name="GameSettings" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="60,0,540,108" Height="324" Width="Auto"/>
-        <launcher:MemoriaIniControl x:Name="MemoriaIniControl" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="300,0,300,137" Height="293" Width="Auto"/>
-        <launcher:MemoriaIniCheatControl x:Name="MemoriaIniCheatControl" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,78,99" Height="331" Width="182"/>
+        <launcher:GameSettingsControl x:Name="GameSettings" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="60,0,540,117" Height="331" Width="Auto"/>
+        <launcher:MemoriaIniControl x:Name="MemoriaIniControl" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="300,0,300,156" Height="290" Width="Auto"/>
+        <launcher:MemoriaIniCheatControl x:Name="MemoriaIniCheatControl" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,78,143" Height="303" Width="182"/>
 
         <launcher:UiLauncherExitButton VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="60,0,0,39" Height="78" Width="200"/>
         <launcher:UiLauncherPlayButton x:Name="PlayButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,60,39" Width="200" Height="78" Content=""/>

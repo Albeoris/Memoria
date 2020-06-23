@@ -159,6 +159,9 @@ namespace Memoria.Launcher
             public static readonly string MaxDamage = GetSettings(nameof(MaxDamage));
             public static readonly string NoRandomBattles = GetSettings(nameof(NoRandomBattles));
             public static readonly string PermanentCheats = GetSettings(nameof(PermanentCheats));
+            public static readonly string UsePsxFont = GetSettings(nameof(UsePsxFont));
+            public static readonly string SBUIenabled = GetSettings(nameof(SBUIenabled));
+
         }
 
         public static class SdLib

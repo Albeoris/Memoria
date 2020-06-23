@@ -71,7 +71,7 @@ namespace Memoria.Launcher
             speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactorTextindex.Foreground = Brushes.White;
 
-            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row: 9, col: 3, rowSpan: 2, colSpan: 5);
+            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row: 9, col: 3, rowSpan: 1, colSpan: 5);
             speedFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactor.TickFrequency = 1;
             speedFactor.IsSnapToTickEnabled = true;
