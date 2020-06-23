@@ -19,3 +19,4 @@ obj/
 *.sdf
 *.tlog
 *.meta
+/References
