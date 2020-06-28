@@ -1,231 +1,231 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Data>
 
-  <Measurement
-    Elapsed = "Elapsed"
-    Remaining = "Remaining"
-    SecondAbbr = "sec"
-    ByteAbbr = "B"
-    KByteAbbr = "KB"
-    MByteAbbr = "MB"
-    GByteAbbr = "GB"
-    TByteAbbr = "TB"
-    PByteAbbr = "PB"
-    EByteAbbr = "EB"
-    />
-  
-  <Button
-    OK = "OK"
-    Cancel = "Cancel"
-    Continue = "Continue"
-    Clone = "Clone"
-    Remove = "Remove"
-    Rollback = "Cancel"
-    Inject = "Inject"
-    SaveAs = "Save as..."
-    Exit = "E X I T"
-    Exiting = "Exiting..."
-    Launch = "P L A Y"
-    Launching = "Launching..."
-    />
-  
-  <Settings
-    ActiveMonitor = "Active monitor"
-    PrimaryMonitor = " [Primary]"
-    Resolution = "Resolution"
-    Windowed = " Windowed"
-    AudioSamplingFrequency = "Audio sampling frequency"
-    AudioSamplingFrequencyFormat = "{0} Hz"
-    Debuggable = " Debuggable"
-    CheckUpdates = " Check for updates"
-	IniOptions = "Options"
-	Widescreen = " Widescreen (16:9)"
-	SkipIntrosToMainMenu = " Skip intros to main menu"
-	SkipBattleLoading = " Skip battle loading"
-	HideCardsBubbles = " Hide cards bubbles"
-	TurnBasedBattles = " Turn-based battles"
-	SoundVolume = "Sound volume"
-	MusicVolume = "Music volume"
-	IniCheats = "Cheats"
-	MaxStealRate = " 100% steal rate"
-	DisableCantConcentrate = " Disable 'can't concentrate'"
-	SpeedMode = " Speed mode | F1"
-	SpeedFactor = "SpeedFactor"
-	PermanentTranse = " Permanent transe | F2"
-	MaxDamage = " Max damage | F3"
-	NoRandomBattles = " No random battles | F4"
-	PermanentCheats = " Permanent cheats | F5 F6 F7"
-	UsePsxFont = "Use PSX font"
-	SBUIenabled = "Scaled Battle UI"
-	
-   />
+	<Measurement
+			Elapsed = "Elapsed"
+			Remaining = "Remaining"
+			SecondAbbr = "sec"
+			ByteAbbr = "B"
+			KByteAbbr = "KB"
+			MByteAbbr = "MB"
+			GByteAbbr = "GB"
+			TByteAbbr = "TB"
+			PByteAbbr = "PB"
+			EByteAbbr = "EB"
+			/>
 
-  <SdLib
-    Caption = "Patch SdLib.dll"
-    AreYouSure = "Are you sure you want to patch SdLib.dll?"
-    SuccessBoth = "SdLib.dll is successfully patched for both platforms."
-    SuccessX64 = "SdLib.dll is successfully patched for the x64 platform only."
-    SuccessX86 = "SdLib.dll is successfully patched for the x86 platform only."
-    Fail = "Unfortunately, we could not patch the SdLib.dll. Please share your version of this file."
-    CannotRead = "Cannot read audio sampling frequency from the file:"
-    CannotWrite = "Cannot read audio sampling frequency from the SdLib.dll"
-  />
+	<Button
+			OK = "OK"
+			Cancel = "Cancel"
+			Continue = "Continue"
+			Clone = "Clone"
+			Remove = "Remove"
+			Rollback = "Cancel"
+			Inject = "Inject"
+			SaveAs = "Save as..."
+			Exit = "E X I T"
+			Exiting = "Exiting..."
+			Launch = "P L A Y"
+			Launching = "Launching..."
+			/>
 
-  <InfoProvider>
-    
-    <ApplicationConfig
-      Title = "Settings"
-      Description = "Various settings of the application."
-      NewTitle = "New"
-      NewDescription = "Initialize all settings default values."
-      FileTitle = "From file"
-      FileDescription = "Reads the application configuration file {0}"
-    />
+	<Settings
+			ActiveMonitor = "Active monitor"
+			PrimaryMonitor = " [Primary]"
+			Resolution = "Resolution"
+			Windowed = " Windowed"
+			AudioSamplingFrequency = "Audio sampling frequency"
+			AudioSamplingFrequencyFormat = "{0} Hz"
+			Debuggable = " Debuggable"
+			CheckUpdates = " Check for updates"
+			IniOptions = "Options"
+			Widescreen = " Widescreen (16:9)"
+			SkipIntrosToMainMenu = " Skip intros to main menu"
+			SkipBattleLoading = " Skip battle loading"
+			HideCardsBubbles = " Hide cards bubbles"
+			TurnBasedBattles = " Turn-based battles"
+			SoundVolume = "Sound volume"
+			MusicVolume = "Music volume"
+			IniCheats = "Cheats"
+			MaxStealRate = " 100% steal rate"
+			DisableCantConcentrate = " Disable 'can't concentrate'"
+			SpeedMode = " Speed mode | F1"
+			SpeedFactor = "SpeedFactor"
+			PermanentTranse = " Permanent transe | F2"
+			MaxDamage = " Max damage | F3"
+			NoRandomBattles = " No random battles | F4"
+			PermanentCheats = " Permanent cheats | F5 F6 F7"
+			UsePsxFont = "Use PSX font"
+			SBUIenabled = "Scaled Battle UI"
 
-    <GameLocation
-      Title = "Game Directory"
-      Description = "Location of the game files."
-      ConfigurationTitle = "Settings"
-      ConfigurationDescription = "Uses the information stored in the configuration file."
-      SteamRegistryTitle = "From registry (Steam)"
-      SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
-      UserTitle = "Manual"
-      UserDescription = "Allows you to manually select the directory to which you have installed the game."
-    />
+			/>
 
-    <WorkingLocation
-      Title = "Working Directory"
-      Description = "The directory to store the results of the application."
-      ConfigurationTitle = "Settings"
-      ConfigurationDescription = "Uses the information stored in the configuration file."
-      UserTitle = "Manual"
-      UserDescription = "Allows you to manually select a working directory."
-    />
+	<SdLib
+			Caption = "Patch SdLib.dll"
+			AreYouSure = "Are you sure you want to patch SdLib.dll?"
+			SuccessBoth = "SdLib.dll is successfully patched for both platforms."
+			SuccessX64 = "SdLib.dll is successfully patched for the x64 platform only."
+			SuccessX86 = "SdLib.dll is successfully patched for the x86 platform only."
+			Fail = "Unfortunately, we could not patch the SdLib.dll. Please share your version of this file."
+			CannotRead = "Cannot read audio sampling frequency from the file:"
+			CannotWrite = "Cannot read audio sampling frequency from the SdLib.dll"
+			/>
 
-    <TextEncoding
-      Title = "Encoding"
-      Description = "Encoding for unpacking and packing the game text."
-      NewTitle = "New"
-      NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
-      WorkingLocationTitle = "Working directory"
-      WorkingLocationDescription = "Reads the encoding from the working directory."
-      UserTitle = "Edit"
-      UserDescription = "Change the current encoding."
-    />
+	<InfoProvider>
 
-    <AudioSettings
-      Title="Audio Settings"
-      Description="Settings of audio device."
-      NewTitle="New"
-      NewDescription="Initialize all settings default values."
-    />
-    
-  </InfoProvider>
+		<ApplicationConfig
+				Title = "Settings"
+				Description = "Various settings of the application."
+				NewTitle = "New"
+				NewDescription = "Initialize all settings default values."
+				FileTitle = "From file"
+				FileDescription = "Reads the application configuration file {0}"
+				/>
 
-  <Dockable>
+		<GameLocation
+				Title = "Game Directory"
+				Description = "Location of the game files."
+				ConfigurationTitle = "Settings"
+				ConfigurationDescription = "Uses the information stored in the configuration file."
+				SteamRegistryTitle = "From registry (Steam)"
+				SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
+				UserTitle = "Manual"
+				UserDescription = "Allows you to manually select the directory to which you have installed the game."
+				/>
 
-    <DataSources Header = "Data Sources" />
+		<WorkingLocation
+				Title = "Working Directory"
+				Description = "The directory to store the results of the application."
+				ConfigurationTitle = "Settings"
+				ConfigurationDescription = "Uses the information stored in the configuration file."
+				UserTitle = "Manual"
+				UserDescription = "Allows you to manually select a working directory."
+				/>
 
-    <GameFileCommander
-      Header = "Game Resources"
-      Unpack = "Unpack"
-      Pack = "Pack"
-      ArchivesNode ="Archives"
-      />
+		<TextEncoding
+				Title = "Encoding"
+				Description = "Encoding for unpacking and packing the game text."
+				NewTitle = "New"
+				NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
+				WorkingLocationTitle = "Working directory"
+				WorkingLocationDescription = "Reads the encoding from the working directory."
+				UserTitle = "Edit"
+				UserDescription = "Change the current encoding."
+				/>
 
-    <GameFilePreview
-      Header="Preview"
-      >
+		<AudioSettings
+				Title="Audio Settings"
+				Description="Settings of audio device."
+				NewTitle="New"
+				NewDescription="Initialize all settings default values."
+				/>
 
-      <Ykd
-        ResourceRemovingTitle = "Removing"
-        ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
-        />
-      
-    </GameFilePreview>
+	</InfoProvider>
 
-  </Dockable>
+	<Dockable>
 
-  <EncodingEditor>
+		<DataSources Header = "Data Sources" />
 
-    <List
-      Name = "Name"
-      Pattern = "Pattern"
-      Encoding = "Encoding"
-      Font = "Font"
-      Edit = "Edit"
-      />
+		<GameFileCommander
+				Header = "Game Resources"
+				Unpack = "Unpack"
+				Pack = "Pack"
+				ArchivesNode ="Archives"
+				/>
 
-    <EncodingSelectDialog
-      Title = "Choose the encoding"
-      Watermark = "Enter the encoding name..."
-      ConfirmMessageFormat = "You have chosen [{0}]. Right?"
-      ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
-      />
+		<GameFilePreview
+				Header="Preview"
+				>
 
-    <EncodingEditDialog
-      Title = "Encoding edit"
-      />
+			<Ykd
+					ResourceRemovingTitle = "Removing"
+					ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
+					/>
 
-    <Main
-      Before = "Before:"
-      Width = "Width:"
-      After = "After:"
-      FromText = "From text:"
-      ToText = "To text:"
-      />
-    
-    <Extra
-      Row = "Row:"
-      Column = "Column:"
-      FromText = "From text:"
-      ToText = "To text:"
-      />
+		</GameFilePreview>
 
-  </EncodingEditor>
+	</Dockable>
 
-  <Dialogue>
-    
-    <SaveAs
-      Title = "Save as..."
-      />
-    
-  </Dialogue>
+	<EncodingEditor>
 
-  <Message>
+		<List
+				Name = "Name"
+				Pattern = "Pattern"
+				Encoding = "Encoding"
+				Font = "Font"
+				Edit = "Edit"
+				/>
 
-    <Done
-      Title = "Done!"
-      ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
-      InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
-      />
+		<EncodingSelectDialog
+				Title = "Choose the encoding"
+				Watermark = "Enter the encoding name..."
+				ConfirmMessageFormat = "You have chosen [{0}]. Right?"
+				ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
+				/>
 
-    <Question
-      Title = "Question"
-      AreYouSureTitle = "Are you sure?"
-      NewVersionIsAvailable = "A new version is available, download now?"
-      />
-    
-    <Error
-      Title = "Error!"
-      />
+		<EncodingEditDialog
+				Title = "Encoding edit"
+				/>
 
-  </Message>
+		<Main
+				Before = "Before:"
+				Width = "Width:"
+				After = "After:"
+				FromText = "From text:"
+				ToText = "To text:"
+				/>
 
-  <Error>  
-    
-    <File
-      UnknownFormat = "Unknown file format."
-      />
+		<Extra
+				Row = "Row:"
+				Column = "Column:"
+				FromText = "From text:"
+				ToText = "To text:"
+				/>
 
-    <Process
-      CannotGetExecutablePath = "Cannot get a path of the executable assembly."
-      />
-    
-    <Text
-      TooLongTagNameFormat = "Too long name of tag: {0}"
-      />
+	</EncodingEditor>
 
-  </Error>
+	<Dialogue>
+
+		<SaveAs
+				Title = "Save as..."
+				/>
+
+	</Dialogue>
+
+	<Message>
+
+		<Done
+				Title = "Done!"
+				ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
+				InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
+				/>
+
+		<Question
+				Title = "Question"
+				AreYouSureTitle = "Are you sure?"
+				NewVersionIsAvailable = "A new version is available, download now?"
+				/>
+
+		<Error
+				Title = "Error!"
+				/>
+
+	</Message>
+
+	<Error>
+
+		<File
+				UnknownFormat = "Unknown file format."
+				/>
+
+		<Process
+				CannotGetExecutablePath = "Cannot get a path of the executable assembly."
+				/>
+
+		<Text
+				TooLongTagNameFormat = "Too long name of tag: {0}"
+				/>
+
+	</Error>
 
 </Data>

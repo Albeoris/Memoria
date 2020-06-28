@@ -148,7 +148,7 @@ namespace Memoria.Launcher
                 sBUIScaleTextindex.Foreground = Brushes.White;
                 sBUIScaleTextindex.Margin = new Thickness(8, 0, 0, 0);
 
-                baseNumberOfRows = (short)(baseNumberOfRows + 4);
+                //baseNumberOfRows = (short)(baseNumberOfRows + 4);
 
             }
 
@@ -427,7 +427,7 @@ namespace Memoria.Launcher
                         }
                         break;
                     case nameof(SkipIntros):
-                        if (SkipIntros == 1)
+                        if (SkipIntros == 3)
                         {
                             iniFile.WriteValue("Graphics", propertyName, " 3");
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
@@ -443,7 +443,7 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Graphics", propertyName, " 0");
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         }
-                        else if (BattleSwirlFrames == 0)
+                        else if (BattleSwirlFrames == 13)
                         {
                             iniFile.WriteValue("Graphics", propertyName, "13");
                         }
