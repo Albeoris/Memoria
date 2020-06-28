@@ -52,7 +52,7 @@ namespace Memoria.Prime.Ini
         private Dictionary<String, IniValue> _values;
         private SectionBinding _currentSectionBinding;
         private IniSection _currentSection;
-        private Dictionary<String, IniSection> _sectionsRead;
+        private Dictionary<String, IniSection> _sectionsRead = new Dictionary<String, IniSection>();
         private IniValue _currnetValue;
         private IniValue<Boolean> _enabledValue;
         private StringBuilder _sb;
