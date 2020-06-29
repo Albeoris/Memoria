@@ -41,7 +41,7 @@
 			IniOptions = "Options"
 			Widescreen = " Widescreen (16:9)"
 			SkipIntrosToMainMenu = " Skip intros to main menu"
-			SkipBattleLoading = " Skip battle loading"
+			SkipBattleLoading = "Frames to load battle"
 			HideCardsBubbles = " Hide cards bubbles"
 			TurnBasedBattles = " Turn-based battles"
 			SoundVolume = "Sound volume"
