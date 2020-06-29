@@ -869,7 +869,7 @@ public class FieldMap : HonoBehavior
 
     public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
     {
-        //{mapNo,actualWidth-2}
+        //{mapNo,(actualWidth - 2)}
         {203,334},
         {502,334},
         {503,334},
@@ -1054,11 +1054,11 @@ public class FieldMap : HonoBehavior
         {2906,398},
         {3005,398},
         {3055,398},
-
         {1205,384},
         {154,352},
         {1215,352},
         {1805,352},
+        {1807,352},
         {1652,336},
         {2552,352},
     };

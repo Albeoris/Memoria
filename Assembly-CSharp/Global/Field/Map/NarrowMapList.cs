@@ -384,7 +384,6 @@ public static class NarrowMapList
         2917, // Memoria/Gaia’s Birth
         2918, // Memoria/Stairs
         2919, // Memoria/Gate to Space
-        2920, // Memoria/Emptiness
         2922,
         2924,
         2925,
@@ -398,8 +397,10 @@ public static class NarrowMapList
         2934, // last/cw mbg 2
         2950, // Chocobo’s Forest
         2953, // Chocobo’s Dream World
+        3001,
         3005,
         3008, // Ending/Prima Vista - Meeting Room
+        3009,
         3010, // Ending/TH
         3011, // Ending/TH
         3052, // Mage Village/Cemetery

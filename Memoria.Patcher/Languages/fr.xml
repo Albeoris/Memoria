@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Data>
+
+  <Measurement
+    Elapsed = "Passé"
+    Remaining = "Restant"
+    SecondAbbr = "sec"
+    ByteAbbr = "B"
+    KByteAbbr = "KB"
+    MByteAbbr = "MB"
+    GByteAbbr = "GB"
+    TByteAbbr = "TB"
+    PByteAbbr = "PB"
+    EByteAbbr = "EB"
+    />
+  
+  <Button
+    OK = "OK"
+    Cancel = "Annuler"
+    Continue = "Continuer"
+    Clone = "Cloner"
+    Remove = "Supprimer"
+    Rollback = "Annuler"
+    Inject = "Injecter"
+    SaveAs = "Enregistrer sous..."
+    />
+
+  <InfoProvider>
+    
+    <ApplicationConfig
+      Title = "Settings"
+      Description = "Various settings of the application."
+      NewTitle = "New"
+      NewDescription = "Initialize all settings default values."
+      FileTitle = "From file"
+      FileDescription = "Reads the application configuration file {0}"
+    />
+
+    <GameLocation
+      Title = "Game Directory"
+      Description = "Location of the game files."
+      ConfigurationTitle = "Settings"
+      ConfigurationDescription = "Uses the information stored in the configuration file."
+      SteamRegistryTitle = "From registry (Steam)"
+      SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
+      UserTitle = "Manual"
+      UserDescription = "Allows you to manually select the directory to which you have installed the game."
+    />
+
+    <WorkingLocation
+      Title = "Working Directory"
+      Description = "The directory to store the results of the application."
+      ConfigurationTitle = "Settings"
+      ConfigurationDescription = "Uses the information stored in the configuration file."
+      UserTitle = "Manual"
+      UserDescription = "Allows you to manually select a working directory."
+    />
+
+    <TextEncoding
+      Title = "Encoding"
+      Description = "Encoding for unpacking and packing the game text."
+      NewTitle = "New"
+      NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
+      WorkingLocationTitle = "Working directory"
+      WorkingLocationDescription = "Reads the encoding from the working directory."
+      UserTitle = "Edit"
+      UserDescription = "Change the current encoding."
+    />
+
+    <AudioSettings
+      Title="Audio Settings"
+      Description="Settings of audio device."
+      NewTitle="New"
+      NewDescription="Initialize all settings default values."
+    />
+    
+  </InfoProvider>
+
+  <Dockable>
+
+    <DataSources Header = "Data Sources" />
+
+    <GameFileCommander
+      Header = "Game Resources"
+      Unpack = "Unpack"
+      Pack = "Pack"
+      ArchivesNode ="Archives"
+      />
+
+    <GameFilePreview
+      Header="Preview"
+      >
+
+      <Ykd
+        ResourceRemovingTitle = "Removing"
+        ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
+        />
+      
+    </GameFilePreview>
+
+  </Dockable>
+
+  <EncodingEditor>
+
+    <List
+      Name = "Name"
+      Pattern = "Pattern"
+      Encoding = "Encoding"
+      Font = "Font"
+      Edit = "Edit"
+      />
+
+    <EncodingSelectDialog
+      Title = "Choose the encoding"
+      Watermark = "Enter the encoding name..."
+      ConfirmMessageFormat = "You have chosen [{0}]. Right?"
+      ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
+      />
+
+    <EncodingEditDialog
+      Title = "Encoding edit"
+      />
+
+    <Main
+      Before = "Before:"
+      Width = "Width:"
+      After = "After:"
+      FromText = "From text:"
+      ToText = "To text:"
+      />
+    
+    <Extra
+      Row = "Row:"
+      Column = "Column:"
+      FromText = "From text:"
+      ToText = "To text:"
+      />
+
+  </EncodingEditor>
+
+  <Dialogue>
+    
+    <SaveAs
+      Title = "Save as..."
+      />
+    
+  </Dialogue>
+
+  <Message>
+
+    <Done
+      Title = "Done!"
+      ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
+      InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
+      Success = "Installation terminée avec succès."
+      PressEnterToExit = "Appuyez sur enter pour fermer..."
+      />
+
+    <Question
+      AreYouSureTitle = "Are you sure?"
+      />
+    
+    <Error
+      Title = "Error!"
+      />
+
+  </Message>
+
+  <Error>  
+    
+    <File
+      UnknownFormat = "Format de fichier inconnu."
+      EndOfStream ="Fin du flux innattendu."
+      />
+
+    <Process
+      CannotGetExecutablePath = "Cannot get a path of the executable assembly."
+      />
+    
+    <Text
+      TooLongTagNameFormat = "Too long name of tag: {0}"
+      />
+
+  </Error>
+
+</Data>
