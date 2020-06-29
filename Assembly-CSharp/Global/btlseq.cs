@@ -105,7 +105,6 @@ public class btlseq
 		{
 			seqWork[i] = new SEQ_WORK();
 			seqWork[i].CmdPtr = (CMD_DATA)null;
-			seqWork[i].Work = new Byte[btlseq.seq_work_set.SeqData.Length];
 		}
 	}
 
