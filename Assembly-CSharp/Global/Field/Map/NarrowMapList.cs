@@ -384,6 +384,7 @@ public static class NarrowMapList
         2917, // Memoria/Gaia’s Birth
         2918, // Memoria/Stairs
         2919, // Memoria/Gate to Space
+        2920,
         2922,
         2924,
         2925,
