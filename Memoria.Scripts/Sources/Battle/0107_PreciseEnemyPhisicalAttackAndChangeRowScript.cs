@@ -21,18 +21,17 @@ namespace Memoria.Scripts.Battle
         {
             _v.NormalPhisicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.GambleDefence();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();
             _v.CasterCommand.BonusElement();
             if (!_v.CanAttackElementalCommand())
                 return;
 
-            _v.TargetCommand.CalcHpDamage();
+            _v.CalcHpDamage();
             if (_v.Target.Row != 0)
                 _v.Target.ChangeRow();
 
-            _v.TargetCommand.TryAlterMagicStatuses();
+            _v.TryAlterMagicStatuses();
         }
     }
 }

@@ -40,7 +40,7 @@ public class BattleState : MonoBehaviour
 	{
 		this.battleMapIndex = 0;
 		this.isFrontRow = false;
-		this.debugStartType = 2;
+		this.debugStartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
 		this.isLevitate = false;
 		this.isTrance = new Boolean[4];
 		for (Int32 i = 0; i < (Int32)this.isTrance.Length; i++)
@@ -78,7 +78,7 @@ public class BattleState : MonoBehaviour
 
 	public Boolean isFrontRow;
 
-	public Byte debugStartType;
+	public battle_start_type_tags debugStartType;
 
 	public Boolean isLevitate;
 

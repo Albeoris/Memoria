@@ -4,8 +4,11 @@ using System.Globalization;
 using System.IO;
 using UnityEngine;
 using Memoria;
+using Memoria.Data;
+using Memoria.Prime;
 using Object = System.Object;
 using System.Net.Mime;
+using Assets.Sources.Scripts.UI.Common;
 
 public static class AssetManager
 {
@@ -151,36 +154,36 @@ public static class AssetManager
 			if (textureCode.Length >= 2 && String.Compare(textureCode[0], "AnisotropicLevel") == 0)
 			{
 				Int32 anisoLevel;
-				if (System.Int32.TryParse(textureCode[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out anisoLevel) && anisoLevel >= 1 && anisoLevel <= 9)
+				if (Int32.TryParse(textureCode[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out anisoLevel) && anisoLevel >= 1 && anisoLevel <= 9)
 					texture.anisoLevel = anisoLevel;
 			} else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "FilterMode") == 0)
 			{
 				foreach (FilterMode m in (FilterMode[]) Enum.GetValues(typeof(FilterMode)))
-					if (String.Compare(textureCode[1], nameof(m)) == 0)
+					if (String.Compare(textureCode[1], m.ToString()) == 0)
 						texture.filterMode = m;
 			}
 			else if(textureCode.Length >= 2 && String.Compare(textureCode[0], "HideFlags") == 0)
 			{
 				foreach (HideFlags f in (HideFlags[]) Enum.GetValues(typeof(HideFlags)))
-					if (String.Compare(textureCode[1], nameof(f)) == 0)
+					if (String.Compare(textureCode[1], f.ToString()) == 0)
 						texture.hideFlags = f;
 			}
 			else if(textureCode.Length >= 2 && String.Compare(textureCode[0], "MipMapBias") == 0)
 			{
 				Single mipMapBias;
-				if (System.Single.TryParse(textureCode[1], out mipMapBias))
+				if (Single.TryParse(textureCode[1], out mipMapBias))
 					texture.mipMapBias = mipMapBias;
 			}
 			else if(textureCode.Length >= 2 && String.Compare(textureCode[0], "WrapMode") == 0)
 			{
 				foreach (TextureWrapMode m in (TextureWrapMode[]) Enum.GetValues(typeof(TextureWrapMode)))
-					if (String.Compare(textureCode[1], nameof(m)) == 0)
+					if (String.Compare(textureCode[1], m.ToString()) == 0)
 						texture.wrapMode = m;
 			}
 		}
 	}
 
-	public static T LoadFromDisc<T>(String name, ref String[] memoriaInfo)
+	public static T LoadFromDisc<T>(String name, ref String[] memoriaInfo, String archiveName)
 	{
 		/*
 		Types used by the game by default:
@@ -194,22 +197,41 @@ public static class AssetManager
 		*/
 		if (typeof(T) == typeof(String))
 		{
-			return (T)((Object)File.ReadAllText(name));
+			return (T)(Object)File.ReadAllText(name);
 		}
 		else if (typeof(T) == typeof(Byte[]))
 		{
-			return (T)((Object)File.ReadAllBytes(name));
+			return (T)(Object)File.ReadAllBytes(name);
 		}
 		else if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
 		{
 			Byte[] raw = File.ReadAllBytes(name);
-			Texture2D result = new Texture2D(1, 1, DefaultTextureFormat, false);
-			result.LoadImage(raw);
-			ApplyTextureGenericMemoriaInfo<Texture2D>(ref result, ref memoriaInfo);
-			return (T)((Object)result);
+			Texture2D newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
+			newTexture.LoadImage(raw);
+			ApplyTextureGenericMemoriaInfo<Texture2D>(ref newTexture, ref memoriaInfo);
+			return (T)(Object)newTexture;
 		}
-		Memoria.Prime.Log.Message("[AssetManager] Trying to load from disc the asset " + name + " of type " + nameof(T) + ", which is not currently possible");
-		return (T)((Object)null);
+		else if (typeof(T) == typeof(Sprite))
+		{
+			Byte[] raw = File.ReadAllBytes(name);
+			Texture2D newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
+			newTexture.LoadImage(raw);
+			ApplyTextureGenericMemoriaInfo<Texture2D>(ref newTexture, ref memoriaInfo);
+			Sprite newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), new Vector2(0.5f, 0.5f));
+			return (T)(Object)newSprite;
+		}
+		else if (typeof(T) == typeof(UIAtlas))
+		{
+			// Todo: Maybe avoid the call of Resources.Load<UIAtlas> if a complete .tpsheet is available and it's not necessary to get the original's sprite list
+			UIAtlas newAtlas = Resources.Load<UIAtlas>(archiveName);
+			if (newAtlas != null)
+				newAtlas.ReadFromDisc(name);
+			else
+				Log.Message("[AssetManager] Embeded asset not found: " + archiveName);
+			return (T)(Object)newAtlas;
+		}
+		Log.Message("[AssetManager] Trying to load from disc the asset " + name + " of type " + typeof(T).ToString() + ", which is not currently possible");
+		return (T)(Object)null;
 	}
 
 	public static T Load<T>(String name, out String[] info, Boolean suppressError = false) where T : UnityEngine.Object
@@ -226,11 +248,11 @@ public static class AssetManager
 				{
 					if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName))
 						info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName);
-					return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info);
+					return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 				}
 			result = Resources.Load<T>(name);
 			if (result == (UnityEngine.Object)null)
-				Memoria.Prime.Log.Message("[AssetManager] Embeded asset not found: " + name);
+				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return result;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
@@ -243,7 +265,7 @@ public static class AssetManager
 				{
 					if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() + infoFileName))
 						info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() + infoFileName);
-					return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, ref info);
+					return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, ref info, nameInBundle);
 				}
 				AssetBundleRef assetBundleRef = null;
 				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
@@ -262,11 +284,11 @@ public static class AssetManager
 			{
 				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName))
 					info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName);
-				return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info);
+				return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 			}
 		result = Resources.Load<T>(name);
 		if (result == (UnityEngine.Object)null)
-			Memoria.Prime.Log.Message("[AssetManager] Asset not found: " + name);
+			Log.Message("[AssetManager] Asset not found: " + name);
 		return result;
 	}
 	
@@ -289,12 +311,12 @@ public static class AssetManager
 				{
 					if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName))
 						info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName);
-					return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info);
+					return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 				}
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != (UnityEngine.Object)null)
 				return txt.text;
-			Memoria.Prime.Log.Message("[AssetManager] Embeded asset not found: " + name);
+			Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return null;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
@@ -307,7 +329,7 @@ public static class AssetManager
 				{
 					if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() + infoFileName))
 						info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() + infoFileName);
-					return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, ref info);
+					return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, ref info, nameInBundle);
 				}
 				AssetBundleRef assetBundleRef = null;
 				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
@@ -326,12 +348,12 @@ public static class AssetManager
 			{
 				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName))
 					info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName);
-				return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info);
+				return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 			}
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != (UnityEngine.Object)null)
 			return txt.text;
-		Memoria.Prime.Log.Message("[AssetManager] Asset not found: " + name);
+		Log.Message("[AssetManager] Asset not found: " + name);
 		return null;
 	}
 	
@@ -354,12 +376,12 @@ public static class AssetManager
 				{
 					if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName))
 						info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName);
-					return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info);
+					return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 				}
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != (UnityEngine.Object)null)
 				return txt.bytes;
-			Memoria.Prime.Log.Message("[AssetManager] Embeded asset not found: " + name);
+			Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return null;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
@@ -372,7 +394,7 @@ public static class AssetManager
 				{
 					if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() + infoFileName))
 						info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() + infoFileName);
-					return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, ref info);
+					return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, ref info, nameInBundle);
 				}
 				AssetBundleRef assetBundleRef = null;
 				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
@@ -391,12 +413,12 @@ public static class AssetManager
 			{
 				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName))
 					info = File.ReadAllLines(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + infoFileName);
-				return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info);
+				return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 			}
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != (UnityEngine.Object)null)
 			return txt.bytes;
-		Memoria.Prime.Log.Message("[AssetManager] Asset not found: " + name);
+		Log.Message("[AssetManager] Asset not found: " + name);
 		return null;
 	}
 
@@ -431,7 +453,7 @@ public static class AssetManager
 		ResourceRequest resourceRequest2 = Resources.LoadAsync<T>(name);
 		if (resourceRequest2 != null)
 			return new AssetManagerRequest(resourceRequest2, (AssetBundleRequest)null);
-		Memoria.Prime.Log.Message("[AssetManager] Asset not found: " + name);
+		Log.Message("[AssetManager] Asset not found: " + name);
 		return (AssetManagerRequest)null;
 	}
 
@@ -474,22 +496,158 @@ public static class AssetManager
 				continue;
 			if (String.Compare(entry[0], "MessageFile") == 0)
             {
+				// eg.: MessageFile 2000 MES_CUSTOM_PLACE
 				if (FF9DBAll.MesDB == null)
 					continue;
 				Int32 ID;
-				if (!System.Int32.TryParse(entry[1], out ID))
+				if (!Int32.TryParse(entry[1], out ID))
 					continue;
 				FF9DBAll.MesDB[ID] = entry[2];
 			}
-			if (String.Compare(entry[0], "BattleMapModel") == 0)
+			else if(String.Compare(entry[0], "IconSprite") == 0)
 			{
+				// eg.: IconSprite 19 arrow_down
+				if (FF9UIDataTool.IconSpriteName == null)
+					continue;
+				Int32 ID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				FF9UIDataTool.IconSpriteName[ID] = entry[2];
+			}
+			else if (String.Compare(entry[0], "DebuffIcon") == 0)
+			{
+				// eg.: DebuffIcon 0 188
+				// or : DebuffIcon 0 ability_stone
+				if (BattleHUD.DebuffIconNames == null)
+					continue;
+				Int32 ID, iconID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				if (Int32.TryParse(entry[2], out iconID))
+				{
+					if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
+                    {
+						Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
+						continue;
+                    }
+					BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
+					if (BattleResultUI.BadIconDict == null || FF9UIDataTool.status_id == null)
+						continue;
+					BattleResultUI.BadIconDict[(UInt32)(1 << ID)] = (Byte)iconID;
+					if (ID < FF9UIDataTool.status_id.Length)
+						FF9UIDataTool.status_id[ID] = iconID;
+					// Todo: debuff icons in the main menus (status menu, items...) are UISprite components of CharacterDetailHUD and are enabled/disabled in FF9UIDataTool.DisplayCharacterDetail
+					// Maybe add UISprite components at runtime? The width of the window may require adjustments then
+					// By design (in FF9UIDataTool.DisplayCharacterDetail for instance), permanent debuffs must be the first ones of the list of statuses
+				}
+				else
+				{
+					BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = entry[2]; // When adding a debuff icon by sprite name, not all the dictionaries are updated
+				}
+			}
+			else if (String.Compare(entry[0], "BuffIcon") == 0)
+			{
+				// eg.: BuffIcon 18 188
+				// or : BuffIcon 18 ability_stone
+				if (BattleHUD.BuffIconNames == null)
+					continue;
+				Int32 ID, iconID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				if (Int32.TryParse(entry[2], out iconID))
+				{
+					if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
+					{
+						Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
+						continue;
+					}
+					BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
+				}
+				else
+				{
+					BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = entry[2];
+				}
+			}
+			else if (String.Compare(entry[0], "HalfTranceCommand") == 0)
+			{
+				// eg.: HalfTranceCommand Set DoubleWhiteMagic DoubleBlackMagic HolySword2
+				if (btl_cmd.half_trance_cmd_list == null)
+					continue;
+				Boolean add = String.Compare(entry[1], "Remove") != 0;
+				if (String.Compare(entry[1], "Set") == 0)
+					btl_cmd.half_trance_cmd_list.Clear();
+				for (Int32 i = 2; i< entry.Length; i++)
+					foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
+						if (String.Compare(entry[i], cmdid.ToString()) == 0)
+						{
+							if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdid))
+								btl_cmd.half_trance_cmd_list.Add(cmdid);
+							else if (!add)
+								btl_cmd.half_trance_cmd_list.Remove(cmdid);
+							break;
+						}
+			}
+			else if (String.Compare(entry[0], "BattleMapModel") == 0)
+			{
+				// eg.: BattleMapModel BSC_CUSTOM_FIELD BBG_B065
+				// Can also be modified using "BattleScene"
 				if (FF9BattleDB.MapModel == null)
 					continue;
 				FF9BattleDB.MapModel[entry[1]] = entry[2];
 			}
-			// Etc...
-			// Note from Tirlititi: I will expland that list of moddable dictionaries at some point
-			// I need to sort things out because sometimes several dictionaries are linked logically together and should be added/modified by a single code
+			else if (String.Compare(entry[0], "FieldScene") == 0 && entry.Length >= 6)
+			{
+				// eg.: FieldScene 4000 57 CUSTOM_FIELD CUSTOM_FIELD 2000
+				if (FF9DBAll.EventDB == null || EventEngineUtils.eventIDToFBGID == null || EventEngineUtils.eventIDToMESID == null)
+					continue;
+				Int32 ID, mesID, areaID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				if (!Int32.TryParse(entry[2], out areaID))
+					continue;
+				if (!Int32.TryParse(entry[5], out mesID))
+					continue;
+				if (!FF9DBAll.MesDB.ContainsKey(mesID))
+				{
+					Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid message file ID " + mesID + " for the field map field scene " + entry[3] + " (" + ID + ")");
+					continue;
+				}
+				String fieldMapName = "FBG_N" + areaID + "_" + entry[3];
+				EventEngineUtils.eventIDToFBGID[ID] = fieldMapName;
+				FF9DBAll.EventDB[ID] = "EVT_" + entry[4];
+				EventEngineUtils.eventIDToMESID[ID] = mesID;
+				// p0data1X:
+				//  Assets/Resources/FieldMaps/{fieldMapName}/atlas.png
+				//  Assets/Resources/FieldMaps/{fieldMapName}/{fieldMapName}.bgi.bytes
+				//  Assets/Resources/FieldMaps/{fieldMapName}/{fieldMapName}.bgs.bytes
+				//  [Optional] Assets/Resources/FieldMaps/{fieldMapName}/spt.tcb.bytes
+				//  [Optional for each sps] Assets/Resources/FieldMaps/{fieldMapName}/{spsID}.sps.bytes
+				// p0data7:
+				//  Assets/Resources/CommonAsset/EventEngine/EventBinary/Field/LANG/EVT_{entry[4]}.eb.bytes
+				//  [Optional] Assets/Resources/CommonAsset/EventEngine/EventAnimation/EVT_{entry[4]}.txt.bytes
+				//  [Optional] Assets/Resources/CommonAsset/MapConfigData/EVT_{entry[4]}.bytes
+				//  [Optional] Assets/Resources/CommonAsset/VibrationData/EVT_{entry[4]}.bytes
+			}
+			else if (String.Compare(entry[0], "BattleScene") == 0 && entry.Length >= 4)
+			{
+				// eg.: BattleScene 5000 CUSTOM_BATTLE BBG_B065
+				if (FF9DBAll.EventDB == null || FF9BattleDB.SceneData == null || FF9BattleDB.MapModel == null)
+					continue;
+				Int32 ID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				FF9DBAll.EventDB[ID] = "EVT_BATTLE_" + entry[2];
+				FF9BattleDB.SceneData["BSC_" + entry[2]] = ID;
+				FF9BattleDB.MapModel["BSC_" + entry[2]] = entry[3];
+				// p0data2:
+				//  Assets/Resources/BattleMap/BattleScene/EVT_BATTLE_{entry[2]}/{ID}.raw17.bytes
+				//  Assets/Resources/BattleMap/BattleScene/EVT_BATTLE_{entry[2]}/dbfile0000.raw16.bytes
+				// p0data7:
+				//  Assets/Resources/CommonAsset/EventEngine/EventBinary/Battle/{Lang}/EVT_BATTLE_{entry[2]}.eb.bytes
+				// resources:
+				//  EmbeddedAsset/Text/{Lang}/Battle/{ID}.mes
+			}
+			// Todo: add dictionary moddability for 3D models and animations, at least for modifying existing entries
 		}
 	}
 

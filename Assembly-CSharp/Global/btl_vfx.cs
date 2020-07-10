@@ -118,15 +118,6 @@ public class btl_vfx
         switch (cmd_no)
         {
             case BattleCommandId.EnemyAtk:
-                if (cmd.tar_id < 16 && (cmd.aa.Category & 8) != 0 && cmd.info.cursor == 0)
-                {
-                    UInt16 num = btl_abil.CheckCoverAbility(cmd.tar_id);
-                    if (num != 0)
-                    {
-                        cmd.tar_id = num;
-                        cmd.info.cover = 1;
-                    }
-                }
                 btlseq.RunSequence(cmd);
                 return;
             case BattleCommandId.AutoPotion:

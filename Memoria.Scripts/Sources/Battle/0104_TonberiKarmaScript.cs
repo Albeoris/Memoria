@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = GameState.Tonberies > 13 ? 9999 : 1 << GameState.Tonberies - 1;
+            _v.Target.HpDamage = 1 << Math.Min(20, GameState.Tonberies - 1);
         }
     }
 }

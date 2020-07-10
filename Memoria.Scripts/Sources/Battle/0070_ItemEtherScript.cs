@@ -24,10 +24,7 @@ namespace Memoria.Scripts.Battle
             _v.Context.AttackPower = _v.Command.Item.Power;
             _v.Context.DefensePower = 0;
 
-            if (_v.Caster.HasSupportAbility(SupportAbility1.Chemist))
-                _v.Context.Attack *= 2;
-
-            _v.TargetCommand.CalcMpMagicRecovery();
+            _v.CalcMpMagicRecovery();
         }
 
         public Single RateTarget()
@@ -36,10 +33,7 @@ namespace Memoria.Scripts.Battle
             _v.Context.AttackPower = _v.Command.Item.Power;
             _v.Context.DefensePower = 0;
 
-            if (_v.Caster.HasSupportAbility(SupportAbility1.Chemist))
-                _v.Context.Attack *= 2;
-
-            _v.TargetCommand.CalcMpMagicRecovery();
+            _v.CalcMpMagicRecovery();
 
             Single rate = _v.Target.MpDamage * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentMp, (Int32)_v.Target.MaximumMp);
 

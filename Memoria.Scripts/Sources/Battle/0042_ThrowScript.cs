@@ -27,9 +27,6 @@ namespace Memoria.Scripts.Battle
             _v.Target.SetPhisicalDefense();
             _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
 
-            if (_v.Caster.HasSupportAbility(SupportAbility1.PowerThrow))
-                _v.Context.Attack = _v.Context.Attack * 3 >> 1;
-
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
 

@@ -40,8 +40,8 @@ public partial class BattleHUD : UIScene
     private static readonly String ATEOrange = "battle_bar_haste";
     private static readonly Single DefaultPartyPanelPosY = -350f;
     private static readonly Single PartyItemHeight = 82f;
-    private static readonly Dictionary<BattleStatus, String> DebuffIconNames;
-    private static readonly Dictionary<BattleStatus, String> BuffIconNames;
+    public static Dictionary<BattleStatus, String> DebuffIconNames;
+    public static Dictionary<BattleStatus, String> BuffIconNames;
     private static readonly Color[] TranceTextColor;
 
     static BattleHUD()
@@ -315,7 +315,7 @@ public partial class BattleHUD : UIScene
     {
         try
         {
-            String inputPath = DataResources.Characters.CommandTitlesFile;
+            String inputPath = DataResources.Characters.Directory + DataResources.Characters.CommandTitlesFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"[BattleHUD] Cannot load character command titles because a file does not exist: [{inputPath}].", inputPath);
 
@@ -323,7 +323,18 @@ public partial class BattleHUD : UIScene
             if (maps.Length < 192)
                 throw new NotSupportedException($"You must set titles for 192 battle commands, but there {maps.Length}.");
 
-            return EntryCollection.CreateWithDefaultElement(maps, g => g.Id);
+            EntryCollection<IdMap> result = EntryCollection.CreateWithDefaultElement(maps, g => g.Id);
+            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            {
+                inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CommandTitlesFile;
+                if (File.Exists(inputPath))
+                {
+                    maps = CsvReader.Read<IdMap>(inputPath);
+                    foreach (IdMap it in maps)
+                        result[it.Id] = it;
+                }
+            }
+            return result;
         }
         catch (Exception ex)
         {

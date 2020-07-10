@@ -298,44 +298,62 @@ namespace Memoria.Assets
             {@"se010039", "Air racket swing"},
             {@"se010040", "Jump (Spear)"},
 
-            {@"se010128", "Enemy attack #15"},
-            {@"se010132", "Enemy attack #16"},
-            {@"se010136", "Enemy strike"},
+            {@"se010128", "Enemy attack #15"}, // "Battle Sound Knight Sword Slash" Thunder Slash;Stock Break;Slash;Attack;Climhazzard;Hack;Sword Quiver;Cleave;Helm Divide;Judgment Sword;Battlemes1;Battlemes2;Battlemes3;Rrrragh!;Gwahaha!;MESAttack0;MESAttack1;Get some!23;Taste steel!
+            {@"se010132", "Enemy attack #16"}, // "Battle Sound Frontal Knock" Tail;HP Switching;StrikeBC;Devil's Kiss;Dive;Counter;Open and Close
+            {@"se010136", "Enemy strike"}, // "Battle Sound Claw & Sting" Strike;Counter;Poison Claw;Claws;Scratch;Silent Claw;Claw;Dive;Attack;Battlemes1;Battlemes2;Battlemes3;Demon's Claw
             {@"se010138", "Enemy attack #17"},
-            {@"se010140", "Enemy attack #18"},
-            {@"se010144", "Enemy attack #19"},
-            {@"se010148", "Enemy attack #20"},
-            {@"se010152", "Enemy attack #21"},
-            {@"se010156", "Enemy attack #22"},
-            {@"se010160", "Enemy attack #23"},
-            {@"se010164", "Enemy attack #24"},
-            {@"se010168", "Enemy attack #25"},
-            {@"se010172", "Enemy attack #26"},
-            {@"se010176", "Enemy attack #27"},
-            {@"se010180", "Enemy attack #28"},
-            {@"se010182", "Enemy attack #29"},
-            {@"se010184", "Enemy attack #30"},
-            {@"se010188", "Unknown - Botched"},
-            {@"se010192", "Enemy attack - Oink 2"},
-            {@"se010196", "Enemy attack - Oink 3"},
+            {@"se010140", "Enemy attack #18"}, // "Battle Sound Metallic Slice" Trouble Knife;Knife;Rusty Knife;Claws;Slash;Clamp Pinch;Attack;Battlemes1;Battlemes2;Battlemes3;Chop
+            {@"se010144", "Enemy attack #19"}, // "Battle Sound Spear Hit" Counter;Spear;Impale
+            {@"se010148", "Enemy attack #20"}, // "Battle Sound Bite & Scratch" Bite;Fang
+            {@"se010152", "Enemy attack #21"}, // "Battle Sound Steal" Steal;Mug;Hit
+            {@"se010156", "Enemy attack #22"}, // "Battle Sound Rusted Slice" Charge;Claws;Hit;Slice;Blade;Crush;Chop
+            {@"se010160", "Enemy attack #23"}, // "Battle Sound Stab & Suck" Tongue;Absorb even more;Stab;Absorb more even more;Rapid Fire;Poison Counter;Stinger
+            {@"se010164", "Enemy attack #24"}, // "Battle Sound Heavy Slice" Axe;Trouble Knife;Attack;MEScounter;Dagger's first hit;MEShit1;MEShit2;Hatchet;Mask Jump
+            {@"se010168", "Enemy attack #25"}, // "Battle Sound Tongue Knock" Tongue;Stomach
+            {@"se010172", "Enemy attack #26"}, // "Battle Sound Wing Uppercut" Wings
+            {@"se010176", "Enemy attack #27"}, // "Battle Sound Slam" Counter;Stretch;Antenna;Edge;Strike;Attack;Mug;Hit;Battlemes1;Battlemes2;Silent Kiss;Battlemes3;The Drop
+            {@"se010180", "Enemy attack #28"}, // "Battle Sound Charge & Fist" Head Attack;Body Ram;Knock Down;Smash;Ram;Teleport;YEOWWW!;Fist;Open and Close;Battlemes3;Freaked out;Battlemes2;Oww!;Battlemes1;Attack
+            {@"se010182", "Enemy attack #29"}, // "Battle Sound Baku Crash" ARGHHH!;Oww!;YEOWWW!
+            {@"se010184", "Enemy attack #30"}, // "Battle Sound Beak" Beak
+            {@"se010188", "Unknown - Botched"}, // "Battle Sound Rush" Rush;Charge;Fat Press;Crash;ARGHHH!;Hiphop;Ram
+            {@"se010192", "Enemy attack - Oink 2"}, // "Battle Sound Spike Hit" Battlemes1;Battlemes2;Battlemes3;Knife;Sting;Spear;Attack;Rolling Attack
+            {@"se010196", "Enemy attack - Oink 3"}, // "Battle Sound Heave" Heave;Charge;End3;Counter
             {@"se010197", "Enemy Heave"},
-            {@"se010200", "Unknown - Botched"},
-            {@"se010204", "Enemy head attack"},
-            {@"se010208", "Enemy Wing attack"},
-            {@"se010212", "Enemy Slap attack"},
-            {@"se010216", "Unknown - Botched"},
-            {@"se010220", "Unknown - Botched"},
+            {@"se010200", "Unknown - Botched"}, // "Battle Sound Power Up" Power Thorn;Power Zorn
+            {@"se010204", "Enemy head attack"}, // "Battle Sound Horn Gore" Head Attack;Charge;Horn;Stab
+            {@"se010208", "Enemy Wing attack"}, // "Battle Sound Slap" Silent Slap;Trouble Tail;Tail;Hiphop;Strike;Fin;Tentacle;Wings;Wing
+            {@"se010212", "Enemy Slap attack"}, // "Battle Sound Whip" Thorn Whip;Slap;Left Stem;Right Stem;Right Tentacle;Left Tentacle;Trouble Counter;Spin;Leg
+            {@"se010216", "Unknown - Botched"}, // "Battle Sound Soft Tail" Virus Tentacles;Blind Tail
+            {@"se010220", "Unknown - Botched"}, // "Battle Sound Nymph Happy" Happy
             {@"se010224", "Unknown - Botched (Pumpkin Head 1)"},
-            {@"se010225", "Unknown - Botched"},
-            {@"se010226", "Unknown - Botched (Aqua Breath 1)"},
-            {@"se010228", "Enemy Charge"},
-            {@"se010229", "Enemy Saw"},
-            {@"se010232", "Enemy Slice"},
+            {@"se010225", "Unknown - Botched"}, // "Battle Sound Mimic Call" Call
+            {@"se010226", "Unknown - Botched (Aqua Breath 1)"}, // "Battle Sound Teleport" Teleport
+            {@"se010228", "Enemy Charge"}, // "Battle Sound Head Attack" Head Attack
+            {@"se010229", "Enemy Saw"}, // "Battle Sound Saw" Saw
+            {@"se010232", "Enemy Slice"}, // "Battle Sound Lich Cutter" Death Cutter;Double Slash
             {@"se010256", "Enemy Fade away (Die)"},
             {@"se010257", "Taharka Ipsen cutscene death (downsampled)"},
             {@"se010258", "Unknown - Botched (Flee) (Part 1)"},
             {@"se010259", "Unknown - Botched (Flee) (Part 2)"},
             {@"se010260", "Unknown - Botched (Flee) (Part 3)"},
+
+            {@"se030005", "Enemy attack #31"}, // "Battle Sound Bomb Grow" Grow
+            {@"se030022", "Enemy attack #32"}, // "Battle Sound Vice Appearance" Appearance
+            {@"se030048", "Enemy attack #33"}, // "Battle Sound Groan" Groan
+            {@"se030109", "Enemy attack #34"}, // "Battle Sound Prison Cage Escape" Event of death
+            {@"se030284", "Enemy attack #35"}, // "Battle Sound Sand Golem Death" Golem Death
+            {@"se030303", "Enemy attack #36"}, // "Battle Sound Armodullahan Death" Death
+            {@"se030309", "Enemy attack #37"}, // "Battle Sound Prison Cage Death" Death
+            {@"se030314", "Enemy attack #38"}, // "Battle Sound Gizamaluke Death" Death
+            {@"se030318", "Enemy attack #39"}, // "Battle Sound Antlion Death" Death
+            {@"se030336", "Enemy attack #40"}, // "Battle Sound Silver Dragon Death" Death
+            {@"se030338", "Enemy attack #41"}, // "Battle Sound Nova Dragon Death" Death
+            {@"se030346", "Enemy attack #42"}, // "Battle Sound Hades Death" Death by idle2;Death
+            {@"se030347", "Enemy attack #43"}, // "Battle Sound Deathguise Death" Death1;Death0
+            
+            {@"se500432", "Enemy attack #44"}, // "Battle Sound Flee 1" Escape;Flee;HappyCALC;RefuseEVT
+            {@"se500433", "Enemy attack #45"}, // "Battle Sound Flee 2" Escape;Refuse;Happy;FleeEVTCALC
+            {@"se500434", "Enemy attack #46"}, // "Battle Sound Flee 3" Escape;Refuse;Happy;FleeEVTCALC
         };
     }
 }

@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
                 _v.Caster.Kill();
             }
 
-            _v.Target.HpDamage = Math.Min(9999, _v.Caster.Fig);
+            _v.Target.HpDamage = _v.Caster.Fig;
         }
     }
 }

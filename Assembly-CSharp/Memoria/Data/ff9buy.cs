@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -21,7 +22,7 @@ namespace FF9
         {
             try
             {
-                String inputPath = DataResources.Items.ShopItems;
+                String inputPath = DataResources.Items.Directory + DataResources.Items.ShopItems;
                 if (!File.Exists(inputPath))
                     throw new FileNotFoundException($"File with shop items not found: [{inputPath}]");
 
@@ -29,7 +30,18 @@ namespace FF9
                 if (shopItems.Length < FF9BUY_SHOP_MAX)
                     throw new NotSupportedException($"You must set an assortment for {FF9BUY_SHOP_MAX} shops, but there {shopItems.Length}.");
 
-                return EntryCollection.CreateWithDefaultElement(shopItems, e => e.Id);
+                EntryCollection<ShopItems> result = EntryCollection.CreateWithDefaultElement(shopItems, e => e.Id);
+                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+                {
+                    inputPath = DataResources.Items.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Items.ShopItems;
+                    if (File.Exists(inputPath))
+                    {
+                        shopItems = CsvReader.Read<ShopItems>(inputPath);
+                        foreach (ShopItems it in shopItems)
+                            result[it.Id] = it;
+                    }
+                }
+                return result;
             }
             catch (Exception ex)
             {

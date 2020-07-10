@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
@@ -22,7 +23,7 @@ namespace FF9
 	    {
 	        try
 	        {
-	            String inputPath = DataResources.Items.StatsFile;
+	            String inputPath = DataResources.Items.Directory + DataResources.Items.StatsFile;
 	            if (!File.Exists(inputPath))
 	                throw new FileNotFoundException($"[{nameof(ff9equip)}] Cannot load items stats because a file does not exist: [{inputPath}].", inputPath);
 
@@ -30,7 +31,18 @@ namespace FF9
 	            if (items.Length < 88)
 	                throw new NotSupportedException($"[{nameof(ff9equip)}] You must set at least 176 item stats, but there {items.Length}. Any number of items will be available after a game stabilization.");
 
-	            return EntryCollection.CreateWithDefaultElement(items, i => i.Id);
+				EntryCollection<ItemStats> result = EntryCollection.CreateWithDefaultElement(items, i => i.Id);
+				for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+				{
+					inputPath = DataResources.Items.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Items.StatsFile;
+					if (File.Exists(inputPath))
+					{
+						items = CsvReader.Read<ItemStats>(inputPath);
+						foreach (ItemStats it in items)
+							result[it.Id] = it;
+					}
+				}
+				return result;
 	        }
 	        catch (Exception ex)
 	        {

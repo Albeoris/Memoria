@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = Math.Min(9999, GameState.Thefts * _v.Caster.Dexterity / 2);
+            _v.Target.HpDamage = GameState.Thefts * _v.Caster.Dexterity / 2;
         }
     }
 }

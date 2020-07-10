@@ -35,8 +35,8 @@ namespace Memoria.Scripts.Battle
 
             if (_v.CanAttackMagic())
             {
-                _v.TargetCommand.CalcHpDamage();
-                _v.TargetCommand.TryAlterMagicStatuses();
+                _v.CalcHpDamage();
+                _v.TryAlterMagicStatuses();
             }
         }
 

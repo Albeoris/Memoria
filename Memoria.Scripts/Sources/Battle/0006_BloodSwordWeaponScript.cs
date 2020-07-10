@@ -24,24 +24,18 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.PhysicalAccuracy();
-            if (!_v.Caster.HasSupportAbility(SupportAbility1.Accuracy) && !_v.TryPhysicalHit())
+            if (!_v.TryPhysicalHit())
                 return;
 
             _v.WeaponPhisicalParams(CalcAttackBonus.Simple);
-            _v.BonusSupportAbilitiesAttack();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.GambleDefence();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();
             _v.TryCriticalHit();
             _v.PenaltyReverseAttack();
             _v.PrepareHpDraining();
-
-            Int32 damage = Math.Min(9999, _v.Context.EnsurePowerDifference * _v.Context.EnsureAttack);
-            _v.Target.HpDamage = damage;
-            _v.Caster.HpDamage = damage;
-
-            _v.ConsumeMpAttack();
+            _v.CalcPhysicalHpDamage();
+            _v.Caster.HpDamage = _v.Target.HpDamage;
         }
     }
 }

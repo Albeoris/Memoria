@@ -9,6 +9,10 @@ public class BTL_REF
 
     public BTL_REF()
 	{
+		ScriptId = 0;
+		Power = 0;
+		Elements = 0;
+		Rate = 0;
 	}
 
 	public BTL_REF(Byte scriptId, Byte power, Byte elements, Byte rate)

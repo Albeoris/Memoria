@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CanBeRevived())
                 return;
 
-            if (HitRateForZombie() && !_v.TargetCommand.TryMagicHit())
+            if (HitRateForZombie() && !_v.TryMagicHit())
                 return;
 
             if (_v.Target.IsZombie)
@@ -35,11 +35,8 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.CheckIsPlayer())
                 return;
 
-            Int64 damage = _v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power);
-            damage = Math.Min(9999, _v.Caster.HasSupportAbility(SupportAbility2.Concentrate) ? damage / 50 : damage / 100);
-
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
-            _v.Target.HpDamage = (Int32)damage;
+            _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
             _v.TargetCommand.TryRemoveAbilityStatuses();
         }
 

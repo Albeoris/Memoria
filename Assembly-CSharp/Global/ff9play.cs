@@ -87,7 +87,7 @@ public class ff9play
     {
         try
         {
-            String inputPath = DataResources.Characters.DefaultEquipmentsFile;
+            String inputPath = DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"File with characters default equipments not found: [{inputPath}]");
 
@@ -95,7 +95,18 @@ public class ff9play
             if (equipment.Length < 15)
                 throw new NotSupportedException($"You must set at least 15 different entries, but there {equipment.Length}.");
 
-            return EntryCollection.CreateWithDefaultElement(equipment, e => e.Id);
+            EntryCollection<CharacterEquipment> result = EntryCollection.CreateWithDefaultElement(equipment, e => e.Id);
+            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            {
+                inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.DefaultEquipmentsFile;
+                if (File.Exists(inputPath))
+                {
+                    equipment = CsvReader.Read<CharacterEquipment>(inputPath);
+                    foreach (CharacterEquipment it in equipment)
+                        result[it.Id] = it;
+                }
+            }
+            return result;
         }
         catch (Exception ex)
         {
@@ -280,6 +291,17 @@ public class ff9play
         play.cur.mp = skill.cur_mp;
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
+        play.mpCostFactor = 100;
+        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play.sa))
+            saFeature.TriggerOnEnable(play);
+        if (play.max.hp > 9999)
+            play.max.hp = 9999;
+        if (play.max.mp > 999)
+            play.max.mp = 999;
+        if (play.cur.hp > play.max.hp)
+            play.cur.hp = play.max.hp;
+        if (play.cur.mp > play.max.mp)
+            play.cur.mp = play.max.mp;
     }
 
     public static FF9PLAY_SKILL FF9Play_GetSkill(ref FF9PLAY_INFO info, ref FF9PLAY_SKILL skill)
@@ -326,29 +348,6 @@ public class ff9play
                 skill.Base[1] += equipPrivilege.str;
                 skill.Base[2] += equipPrivilege.mgc;
                 skill.Base[3] += equipPrivilege.wpr;
-            }
-        }
-        for (Int32 index2 = 0; index2 < 4; ++index2)
-        {
-            if (ff9abil.FF9Abil_IsEnableSA(info.sa, numArray1[index2]))
-            {
-                switch (numArray1[index2])
-                {
-                    case 197:
-                        skill.max_hp += skill.max_hp / 10U;
-                        continue;
-                    case 198:
-                        skill.max_hp += skill.max_hp / 5U;
-                        continue;
-                    case 199:
-                        skill.max_mp += skill.max_mp / 10U;
-                        continue;
-                    case 200:
-                        skill.max_mp += skill.max_mp / 5U;
-                        continue;
-                    default:
-                        continue;
-                }
             }
         }
         for (Int32 index2 = 0; index2 < 4; ++index2)

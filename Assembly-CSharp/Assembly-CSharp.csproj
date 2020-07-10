@@ -42,6 +42,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\References\Antlr3.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
@@ -1145,6 +1148,27 @@
     <Compile Include="Memoria\Test\Values\Unity\Vector2Message.cs" />
     <Compile Include="Memoria\Test\Values\Unity\Vector3Message.cs" />
     <Compile Include="Memoria\Test\Values\Unity\Vector4Message.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\BinaryExpression.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\EvaluationVisitor.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\Function.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\Identifier.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\LogicalExpression.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\LogicalExpressionVisitor.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\SerializationVisitor.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\TernaryExpression.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\UnaryExpression.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Domain\Value.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\EvaluateFunctionHandler.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\EvaluateParameterHandler.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\EvaluationException.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\EvaluationOption.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Expression.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\FunctionArgs.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\NCalcLexer.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\NCalcParser.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\Numbers.cs" />
+    <Compile Include="NCalc\Evaluant.Calculator\ParameterArgs.cs" />
+    <Compile Include="NCalc\NCalcUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SiliconStudio\Social.cs" />
     <Compile Include="SiliconStudio\SteamAchievementData.cs" />
@@ -1201,6 +1225,7 @@
   <ItemGroup>
     <None Include="Memoria\Characters\AnimationList.csv" />
     <EmbeddedResource Include="Memoria\Configuration\Memoria.ini" />
+    <None Include="NCalc\Grammar\NCalc.g" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

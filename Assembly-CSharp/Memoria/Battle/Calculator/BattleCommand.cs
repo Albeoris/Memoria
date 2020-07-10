@@ -79,6 +79,8 @@ namespace Memoria
     {
         internal readonly CMD_DATA Data;
 
+        // Maybe move all these inside CMD_DATA...?
+
         internal BattleCommand(CMD_DATA data)
         {
             Data = data;
@@ -86,19 +88,18 @@ namespace Memoria
 
         public BattleCommandId Id => (BattleCommandId)Data.cmd_no;
         public BattleAbilityId AbilityId => (BattleAbilityId)Data.sub_no;
-        public Byte ScriptId => Data.aa.Ref.ScriptId;
-        public Byte HitRate => Data.aa.Ref.Rate;
-        public Byte Power => Data.aa.Ref.Power;
         public Boolean IsManyTarget => Data.info.cursor == 1;
         public TargetType TargetType => (TargetType)Data.aa.Info.Target;
         public BattleStatusIndex AbilityStatusIndex => (BattleStatusIndex)Data.aa.AddNo;
-        public EffectElement Element => (EffectElement)Data.aa.Ref.Elements;
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
-        public Boolean IsShortSummon => Data.info.short_summon != 0;
+        public Boolean IsShortSummon
+        {
+            get => Data.info.short_summon != 0;
+            set => Data.info.short_summon = (Byte)(value ? 1 : 0);
+        }
         public Boolean IsZeroMP => Data.info.IsZeroMP;
 
-        public BattleStatus AbilityStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.aa.AddNo].Value;
         public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;
 
         public BattleItem Item => BattleItem.Find((Byte)AbilityId);
@@ -108,6 +109,57 @@ namespace Memoria
         public Boolean IsHeat => HasElement(EffectElement.Fire);
         public Boolean IsQuench => HasElement(EffectElement.Aqua | EffectElement.Cold);
         public Boolean IsGround => HasElement(EffectElement.Earth);
+
+        public Boolean IsShortRange
+		{
+            get => Data.IsShortRange;
+            set => Data.IsShortRange = value;
+        }
+        public Boolean IsReflectNull
+        {
+            get => Data.info.ReflectNull;
+            set => Data.info.ReflectNull = value;
+        }
+        public Byte Power
+        {
+            get => Data.Power;
+            set => Data.Power = value;
+        }
+        public Byte ScriptId
+        {
+            get => Data.ScriptId;
+            set => Data.ScriptId = value;
+        }
+        public Byte HitRate
+        {
+            get => Data.HitRate;
+            set => Data.HitRate = value;
+        }
+        public EffectElement Element
+        {
+            get => Data.Element;
+            set => Data.Element = value;
+        }
+        public EffectElement ElementForBonus
+        {
+            get => Data.ElementForBonus;
+            set => Data.ElementForBonus = value;
+        }
+        public BattleStatus AbilityStatus
+        {
+            get => Data.AbilityStatus;
+            set => Data.AbilityStatus = value;
+        }
+        public Byte AbilityCategory
+        {
+            get => Data.AbilityCategory;
+            set => Data.AbilityCategory = value;
+        }
+        public Byte AbilityType
+        {
+            get => Data.AbilityType;
+            set => Data.AbilityType = value;
+        }
 
         public Boolean HasElement(EffectElement element)
         {

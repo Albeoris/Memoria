@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.SetPhisicalDefense();
             _v.CasterCommand.BonusElement();
             if (_v.CanAttackMagic())
-                _v.TargetCommand.CalcHpDamage();
+                _v.CalcHpDamage();
         }
     }
 }

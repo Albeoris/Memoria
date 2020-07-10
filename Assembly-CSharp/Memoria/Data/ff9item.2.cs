@@ -2,6 +2,7 @@
 using System.IO;
 using Assets.SiliconSocial;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -62,19 +63,24 @@ public class ff9item
     {
         try
         {
-            String inputPath = DataResources.Items.ItemsFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"[ff9item] Cannot load items because a file does not exist: [{inputPath}].", inputPath);
-
-            ItemInfo[] items = CsvReader.Read<ItemInfo>(inputPath);
-            if (items.Length != 256)
-                throw new NotSupportedException($"You must set 256 items, but there {items.Length}. Any number of items will be available after a game stabilization."); // TODO
-
-            FF9ITEM_DATA[] result = new FF9ITEM_DATA[items.Length];
-            for (Int32 i = 0; i < result.Length; i++)
-                result[i] = items[i].ToItemData();
-
-            return result;
+            ItemInfo[] items;
+            String inputPath = DataResources.Items.Directory + DataResources.Items.ItemsFile;
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = 0; i < dir.Length; i++)
+            {
+                inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.ItemsFile;
+                if (File.Exists(inputPath))
+                {
+                    items = CsvReader.Read<ItemInfo>(inputPath);
+                    if (items.Length != 256)
+                        throw new NotSupportedException($"You must set 256 items, but there {items.Length}. Any number of items will be available after a game stabilization."); // TODO
+                    FF9ITEM_DATA[] result = new FF9ITEM_DATA[items.Length];
+                    for (Int32 j = 0; j < result.Length; j++)
+                        result[j] = items[j].ToItemData();
+                    return result;
+                }
+            }
+            throw new FileNotFoundException($"[ff9item] Cannot load items because a file does not exist: [{inputPath}].", inputPath);
         }
         catch (Exception ex)
         {
@@ -88,19 +94,24 @@ public class ff9item
     {
         try
         {
-            String inputPath = DataResources.Items.ItemEffectsFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"[ff9item] Cannot load item actions because a file does not exist: [{inputPath}].", inputPath);
-
-            ItemEffect[] effects = CsvReader.Read<ItemEffect>(inputPath);
-            if (effects.Length != 32)
-                throw new NotSupportedException($"You must set 32 actions, but there {effects.Length}. Any number of actions will be available after a game stabilization."); // TODO
-
-            ITEM_DATA[] result = new ITEM_DATA[effects.Length];
-            for (Int32 i = 0; i < result.Length; i++)
-                result[i] = effects[i].ToItemData();
-
-            return result;
+            ItemEffect[] effects;
+            String inputPath = DataResources.Items.Directory + DataResources.Items.ItemEffectsFile;
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = 0; i < dir.Length; i++)
+            {
+                inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.ItemEffectsFile;
+                if (File.Exists(inputPath))
+                {
+                    effects = CsvReader.Read<ItemEffect>(inputPath);
+                    if (effects.Length != 32)
+                        throw new NotSupportedException($"You must set 32 actions, but there {effects.Length}. Any number of actions will be available after a game stabilization."); // TODO
+                    ITEM_DATA[] result = new ITEM_DATA[effects.Length];
+                    for (Int32 j = 0; j < result.Length; j++)
+                        result[j] = effects[j].ToItemData();
+                    return result;
+                }
+            }
+            throw new FileNotFoundException($"[ff9item] Cannot load item actions because a file does not exist: [{inputPath}].", inputPath);
         }
         catch (Exception ex)
         {

@@ -871,7 +871,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static List<GameObject> activeBitmapNewIconList = new List<GameObject>();
 
-		private static Int32[] status_id = new Int32[]
+		public static Int32[] status_id = new Int32[]
 		{
 			154,
 			153,

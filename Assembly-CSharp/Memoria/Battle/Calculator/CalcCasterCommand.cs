@@ -28,7 +28,7 @@ namespace Memoria
 
         public void BonusElement()
         {
-            if (_command.HasElement(_caster.BonusElement))
+            if ((_command.ElementForBonus & _caster.BonusElement) != 0)
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }
     }

@@ -22,11 +22,15 @@ namespace Memoria.Database
         {
             try
             {
-                String inputPath = DataResources.Characters.CommandsFile;
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"[rdata] Cannot load character commands because a file does not exist: [{inputPath}].", inputPath);
-
-                return CsvReader.Read<CharacterCommand>(inputPath);
+                String inputPath = DataResources.Characters.Directory + DataResources.Characters.CommandsFile;
+                String[] dir = Configuration.Mod.AllFolderNames;
+                for (Int32 i = 0; i < dir.Length; i++)
+                {
+                    inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CommandsFile;
+                    if (File.Exists(inputPath))
+                        return CsvReader.Read<CharacterCommand>(inputPath);
+                }
+                throw new FileNotFoundException($"[rdata] Cannot load character commands because a file does not exist: [{inputPath}].", inputPath);
             }
             catch (Exception ex)
             {
@@ -40,11 +44,15 @@ namespace Memoria.Database
         {
             try
             {
-                String inputPath = DataResources.Characters.CommandSetsFile;
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"[rdata] Cannot load character command sets because a file does not exist: [{inputPath}].", inputPath);
-
-                return CsvReader.Read<CharacterCommandSet>(inputPath);
+                String inputPath = DataResources.Characters.Directory + DataResources.Characters.CommandSetsFile;
+                String[] dir = Configuration.Mod.AllFolderNames;
+                for (Int32 i = 0; i < dir.Length; i++)
+                {
+                    inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CommandSetsFile;
+                    if (File.Exists(inputPath))
+                        return CsvReader.Read<CharacterCommandSet>(inputPath);
+                }
+                throw new FileNotFoundException($"[rdata] Cannot load character command sets because a file does not exist: [{inputPath}].", inputPath);
             }
             catch (Exception ex)
             {

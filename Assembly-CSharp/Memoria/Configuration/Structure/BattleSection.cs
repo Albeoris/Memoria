@@ -17,11 +17,6 @@ namespace Memoria
             public readonly IniValue<Boolean> ViviAutoAttack;
             public readonly IniValue<Boolean> CountersBetterTarget;
             public readonly IniValue<Int32> SummonPriorityCount;
-            /* SpareChangeGilSpentFormula (see "btl_cmd.SpendSpareChangeGil"):
-             0 - default: cost = cmd.aa.Ref.Power * (UInt32)caster.Level;
-             1 - Alternate Fantasy: cost = cmd.aa.Ref.Power * partyState.gil / 100;
-            */
-            public readonly IniValue<Int32> SpareChangeGilSpentFormula;
             public readonly IniValue<Boolean> CurseUseWeaponElement;
             public readonly IniValue<Int32> FloatEvadeBonus;
             /* CustomBattleFlagsMeaning:
@@ -33,6 +28,19 @@ namespace Memoria
               [ENEMY_INFO.flags & 0x4]: "Has 10 000 HP trigger", consider that the enemy has 10000 HP less than what its data says (for Scan, HP-based heal or damage...)
             */
             public readonly IniValue<Int32> CustomBattleFlagsMeaning;
+            /* SpareChangeGilSpentFormula (see "btl_cmd.SpendSpareChangeGil"):
+             default: SpareChangeGilSpentFormula = Power * CasterLevel
+             Alternate Fantasy: SpareChangeGilSpentFormula = Power * Gil / 100
+            */
+            public readonly IniValue<String> SpareChangeGilSpentFormula;
+            /* Status durations and ticks formulas (see "btl_stat"):
+             default: StatusDurationFormula = ContiCnt * (IsNegativeStatus ? 60 - 8 * TargetSpirit : 8 * TargetSpirit)
+                      StatusTickFormula = OprCnt * (IsNegativeStatus ? 60 - 4 * TargetSpirit : 4 * TargetSpirit)
+             Alternate Fantasy: StatusDurationFormula = ContiCnt * (StatusIndex == 31 || StatusIndex == 27 ? 240 + 4 * TargetSpirit : 200)
+                                StatusTickFormula = OprCnt * 150
+            */
+            public readonly IniValue<String> StatusDurationFormula;
+            public readonly IniValue<String> StatusTickFormula;
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -46,10 +54,12 @@ namespace Memoria
                 ViviAutoAttack = BindBoolean(nameof(ViviAutoAttack), false);
                 CountersBetterTarget = BindBoolean(nameof(CountersBetterTarget), true);
                 SummonPriorityCount = BindInt32(nameof(SummonPriorityCount), 0);
-                SpareChangeGilSpentFormula = BindInt32(nameof(SpareChangeGilSpentFormula), 0);
                 CurseUseWeaponElement = BindBoolean(nameof(CurseUseWeaponElement), false);
                 FloatEvadeBonus = BindInt32(nameof(FloatEvadeBonus), 0);
                 CustomBattleFlagsMeaning = BindInt32(nameof(CustomBattleFlagsMeaning), 0);
+                SpareChangeGilSpentFormula = BindString(nameof(SpareChangeGilSpentFormula), "");
+                StatusDurationFormula = BindString(nameof(StatusDurationFormula), "");
+                StatusTickFormula = BindString(nameof(StatusTickFormula), "");
             }
         }
     }

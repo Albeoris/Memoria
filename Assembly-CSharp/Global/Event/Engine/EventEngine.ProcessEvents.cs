@@ -262,6 +262,7 @@ public partial class EventEngine
         EMinigame.AllTreasureAchievement();
         EMinigame.AllSandyBeachAchievement();
         EMinigame.DigUpKupoAchievement();
+        // In-game free camera mode: navigation
         if (this.sExternalFieldMode)
         {
             bool allow_camera_move = true;

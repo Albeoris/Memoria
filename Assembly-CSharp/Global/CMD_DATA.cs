@@ -6,8 +6,8 @@ public class CMD_DATA
 	public CMD_DATA()
 	{
 		this.regist = new BTL_DATA();
-		this.aa = new AA_DATA();
 		this.info = new CMD_DATA.SELECT_INFO();
+		this.aa = new AA_DATA();
 	}
 
 	public CMD_DATA next;
@@ -17,6 +17,34 @@ public class CMD_DATA
 	public BattleCommandId cmd_no;
 	public Byte sub_no;
 	public CMD_DATA.SELECT_INFO info;
+
+	// Having duplicates allow to modify these fields (eg. SA features) without modifying the base AA's fields
+	public Boolean IsShortRange;
+	public Byte HitRate;
+	public Byte Power;
+	public Byte ScriptId;
+	public EffectElement Element;
+	public EffectElement ElementForBonus;
+	public BattleStatus AbilityStatus;
+	public Byte AbilityCategory;
+	public Byte AbilityType;
+
+	public void SetAAData(AA_DATA value)
+	{
+		aa = value;
+		if (aa != null)
+		{
+			HitRate = aa.Ref.Rate;
+			Power = aa.Ref.Power;
+			ScriptId = aa.Ref.ScriptId;
+			Element = (EffectElement)aa.Ref.Elements;
+			ElementForBonus = Element;
+			AbilityStatus = FF9StateSystem.Battle.FF9Battle.add_status[aa.AddNo].Value;
+			AbilityCategory = aa.Category;
+			AbilityType = aa.Type;
+			IsShortRange = false;
+		}
+	}
 
 	public class SELECT_INFO
 	{
@@ -33,6 +61,7 @@ public class CMD_DATA
 		// Custom fields
 		public Boolean IsZeroMP { get; set; }
 		public Int32 CustomMPCost { get; set; }
+		public Boolean ReflectNull { get; set; }
 
 		public void Reset()
 		{
@@ -47,6 +76,7 @@ public class CMD_DATA
 			mon_reflec = 0;
 			IsZeroMP = false;
 			CustomMPCost = -1;
+			ReflectNull = false;
 		}
 	}
 }

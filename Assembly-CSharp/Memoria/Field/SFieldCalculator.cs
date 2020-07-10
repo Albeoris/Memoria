@@ -202,7 +202,7 @@ namespace Memoria.Field
 
         private static void FldCalcSub_146(Context v)
         {
-            if (((Int32)v.Caster.sa[1] & 2) == 0)
+            if (((Int32)v.Caster.sa[1] & 2) == 0) // Concentrate
                 return;
             v.AttackNumber = (Int16)(v.AttackNumber * 3 >> 1);
         }

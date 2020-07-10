@@ -22,13 +22,11 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.PhysicalAccuracy();
-            if (!_v.Caster.HasSupportAbility(SupportAbility1.Accuracy) && !_v.TryPhysicalHit())
+            if (!_v.TryPhysicalHit())
                 return;
 
             _v.WeaponPhisicalParams(_bonus);
-            _v.BonusSupportAbilitiesAttack();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.GambleDefence();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             if (_v.Caster.IsUnderStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterPresetId.Steiner)
                 _v.Context.Attack *= 2;
@@ -40,10 +38,7 @@ namespace Memoria.Scripts.Battle
                 _v.TryCriticalHit();
                 _v.PenaltyReverseAttack();
                 _v.CalcPhysicalHpDamage();
-                _v.Target.RaiseTrouble();
-                _v.ConsumeMpAttack();
-
-                _v.TryAddWeaponStatus();
+                _v.RaiseTrouble();
             }
         }
     }

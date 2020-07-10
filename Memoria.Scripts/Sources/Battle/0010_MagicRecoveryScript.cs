@@ -17,10 +17,9 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.NormalMagicParams();
-            _v.Caster.BonusConcentrate();
             _v.Caster.PenaltyMini();
             _v.PenaltyCommandDividedAttack();
-            _v.TargetCommand.CalcHpMagicRecovery();
+            _v.CalcHpMagicRecovery();
         }
     }
 }

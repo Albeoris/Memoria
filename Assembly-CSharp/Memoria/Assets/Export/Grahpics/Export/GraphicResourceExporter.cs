@@ -20,7 +20,7 @@ namespace Memoria.Assets
 
                 foreach (String name in EnumerateAtlases())
                 {
-                    String path = GraphicResources.Embaded.GetAtlasPath(name);
+                    String path = GraphicResources.Embedded.GetAtlasPath(name);
                     UIAtlas atlas = Resources.Load(path, typeof(UIAtlas)) as UIAtlas;
                     if (atlas != null)
                     {

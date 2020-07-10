@@ -5,6 +5,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
 
@@ -99,8 +100,7 @@ public class btlseq
 
 	public static void InitSequencer()
 	{
-		SEQ_WORK_SET seq_WORK_SET = btlseq.seq_work_set;
-		SEQ_WORK[] seqWork = seq_WORK_SET.SeqWork;
+		SEQ_WORK[] seqWork = btlseq.seq_work_set.SeqWork;
 		for (Int32 i = 0; i < 4; i++)
 		{
 			seqWork[i] = new SEQ_WORK();
@@ -131,8 +131,9 @@ public class btlseq
 		cmd_DATA.sub_no = (Byte)pSeqNo;
 		cmd_DATA.tar_id = (UInt16)pTarID;
 		cmd_DATA.regist = next;
-		cmd_DATA.aa = FF9StateSystem.Battle.FF9Battle.enemy_attack[pSeqNo];
+		cmd_DATA.SetAAData(FF9StateSystem.Battle.FF9Battle.enemy_attack[pSeqNo]);
 		cmd_DATA.info = new CMD_DATA.SELECT_INFO();
+		cmd_DATA.IsShortRange = btl_cmd.IsAttackShortRange(cmd_DATA);
 		SEQ_WORK seq_WORK;
 		if ((seq_WORK = btlseq.EntrySequence(cmd_DATA)) == null)
 		{

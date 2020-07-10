@@ -13,6 +13,13 @@ public class BattleCommandInfo
 
     public BattleCommandInfo()
 	{
+		Target = 0;
+		DefaultAlly = false;
+		DisplayStats = 0;
+		VfxIndex = 0;
+		ForDead = false;
+		DefaultCamera = false;
+		DefaultOnDead = false;
 	}
 
 	public BattleCommandInfo(TargetType target, Boolean defaultAlly, TargetDisplay displayStats, Int16 vfxIndex, Boolean forDead, Boolean defaultCamera, Boolean defaultOnDead)

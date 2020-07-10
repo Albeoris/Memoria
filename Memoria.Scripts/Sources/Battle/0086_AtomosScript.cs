@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.Context.Attack += ff9item.FF9Item_GetCount(225);
-            _v.TargetCommand.CalcProportionDamage();
+            _v.CalcProportionDamage();
         }
     }
 }

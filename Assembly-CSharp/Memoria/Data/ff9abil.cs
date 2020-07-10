@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -40,17 +42,28 @@ namespace FF9
 
         public static CharacterAbility[][] _FF9Abil_PaData;
         public static EntryCollection<CharacterAbilityGems> _FF9Abil_SaData;
+        public static EntryCollection<SupportingAbilityFeature> _FF9Abil_SaFeature;
 
         static ff9abil()
         {
             _FF9Abil_PaData = LoadCharacterAbilities();
             _FF9Abil_SaData = LoadCharacterAbilityGems();
+            _FF9Abil_SaFeature = LoadSupportingAbilityFeatures();
         }
 
         public static Boolean FF9Abil_IsEnableSA(UInt32[] sa, Int32 abil_id)
         {
             Int32 num = abil_id - 192;
             return (sa[num >> 5] & 1 << num) != 0L;
+        }
+
+        public static List<SupportingAbilityFeature> GetEnabledSA(UInt32[] sa)
+        {
+            List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
+            for (Int32 saIndex = 0; saIndex < 64; saIndex++)
+                if ((sa[saIndex >> 5] & 1 << saIndex) != 0L)
+                    result.Add(_FF9Abil_SaFeature[saIndex]);
+            return result;
         }
 
         public static void FF9Abil_SetEnableSA(CharacterIndex characterIndex, Int32 abil_id, Boolean enable)
@@ -187,7 +200,7 @@ namespace FF9
         {
             try
             {
-                String inputPath = DataResources.Characters.Abilities.GemsFile;
+                String inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.GemsFile;
                 if (!File.Exists(inputPath))
                     throw new FileNotFoundException($"File with ability gems not found: [{inputPath}]");
 
@@ -195,7 +208,18 @@ namespace FF9
                 if (gems.Length != 64)
                     throw new NotSupportedException($"You must set number of gems for 64 abilities, but there {gems.Length}. Any number of abilities will be available after a game stabilization.");
 
-                return EntryCollection.CreateWithDefaultElement(gems, g => g.Id);
+                EntryCollection<CharacterAbilityGems> result = EntryCollection.CreateWithDefaultElement(gems, g => g.Id);
+                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+                {
+                    inputPath = DataResources.Characters.Abilities.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Abilities.GemsFile;
+                    if (File.Exists(inputPath))
+                    {
+                        gems = CsvReader.Read<CharacterAbilityGems>(inputPath);
+                        foreach (CharacterAbilityGems it in gems)
+                            result[it.Id] = it;
+                    }
+                }
+                return result;
             }
             catch (Exception ex)
             {
@@ -209,12 +233,24 @@ namespace FF9
         {
             try
             {
-                String inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId);
-
+                CharacterAbility[] abilities;
+                String inputPath;
+                for (Int32 i = 0; i < Configuration.Mod.FolderNames.Length; i++)
+                {
+                    inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId, Configuration.Mod.FolderNames[i]);
+                    if (File.Exists(inputPath))
+                    {
+                        abilities = CsvReader.Read<CharacterAbility>(inputPath);
+                        if (abilities.Length != 48)
+                            throw new NotSupportedException($"You must set 48 abilities, but there {abilities.Length}. Any number of abilities will be available after a game stabilization."); // TODO Json, Player, SettingsState, EqupUI, ff9feqp
+                        return abilities;
+                    }
+                }
+                inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId);
                 if (!File.Exists(inputPath))
                     throw new FileNotFoundException($"File with {presetId}'s abilities not found: [{inputPath}]");
 
-                CharacterAbility[] abilities = CsvReader.Read<CharacterAbility>(inputPath);
+                abilities = CsvReader.Read<CharacterAbility>(inputPath);
                 if (abilities.Length != 48)
                     throw new NotSupportedException($"You must set 48 abilities, but there {abilities.Length}. Any number of abilities will be available after a game stabilization."); // TODO Json, Player, SettingsState, EqupUI, ff9feqp
 
@@ -225,5 +261,52 @@ namespace FF9
                 throw new FileLoadException($"Failed to load {presetId}'s  learnable abilities.", ex);
             }
         }
+
+        private static EntryCollection<SupportingAbilityFeature> LoadSupportingAbilityFeatures()
+        {
+            try
+            {
+                String inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.SAFeaturesFile;
+                if (!File.Exists(inputPath))
+                    throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
+
+                EntryCollection<SupportingAbilityFeature> result = EntryCollection.CreateWithDefaultElement<SupportingAbilityFeature>(0);
+                LoadSupportingAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
+                for (Int32 i = 0; i < 64; i++)
+                    if (!result.Contains(i))
+                        Log.Error($"[ff9abil] Ability features of SA {i} is missing from [{inputPath}]");
+                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+                {
+                    inputPath = DataResources.Characters.Abilities.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Abilities.SAFeaturesFile;
+                    if (File.Exists(inputPath))
+                        LoadSupportingAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[ff9abil] Load abilitiy features failed.");
+                UIManager.Input.ConfirmQuit();
+                return null;
+            }
+        }
+
+        private static void LoadSupportingAbilityFeatureFile(ref EntryCollection<SupportingAbilityFeature> entries, String input)
+		{
+            MatchCollection saMatches = new Regex(@"^(>SA)\s+(\d+).*()", RegexOptions.Multiline).Matches(input);
+            for (Int32 i = 0; i < saMatches.Count; i++)
+			{
+                Int32 saIndex;
+                if (!Int32.TryParse(saMatches[i].Groups[2].Value, out saIndex))
+                    continue;
+                Int32 endPos, startPos = saMatches[i].Groups[3].Captures[0].Index+1;
+                if (i + 1 == saMatches.Count)
+                    endPos = input.Length;
+                else
+                    endPos = saMatches[i + 1].Groups[1].Captures[0].Index;
+                entries[saIndex] = new SupportingAbilityFeature();
+                entries[saIndex].ParseFeatures(saIndex, input.Substring(startPos, endPos - startPos));
+            }
+		}
     }
 }

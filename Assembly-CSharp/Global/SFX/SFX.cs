@@ -1216,7 +1216,7 @@ public class SFX
             case 121:
                 return battle.btl_bonus.member_flag;
             case 122:
-                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType;
+                return (Byte)FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType;
             case 123:
                 {
                     Int32 num10 = 0;

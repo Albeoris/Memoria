@@ -1029,11 +1029,11 @@ namespace FF9
 		public static void SetDamageMotion(BattleUnit btl)
 		{
 			if ((btl.Data.fig_info & 4) != 0)
-			    btl.Data.pos[2] += (((btl.Data.evt.rot[1] + 90) % 360) < 180 ? 400 : -400) >> 1;
+			    btl.Data.pos[2] += (((btl.Data.rot.eulerAngles[1] + 90) % 360) < 180 ? 400 : -400) >> 1;
 
             if (btl.IsPlayer)
 			{
-				if ((btl_util.getCurCmdPtr().aa.Type & 129) == 129)
+				if ((btl_util.getCurCmdPtr().AbilityType & 129) == 129)
 					btl_mot.setMotion(btl, 3);
 				else
 					btl_mot.setMotion(btl, 2);

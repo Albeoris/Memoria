@@ -19,16 +19,17 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.WeaponPhisicalParams();
+            if (_v.Caster.IsPlayer)
+                _v.WeaponPhisicalParams();
+            else
+                _v.NormalPhisicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.MpAlteration;
-            if (_v.Context.PowerDifference <= 0)
-                return;
-
-            Int32 damage = Math.Min(9999, _v.Context.PowerDifference * _v.Context.EnsureAttack);
-            _v.Target.HpDamage = damage;
-            _v.Target.MpDamage = damage >> 4;
+            _v.CalcHpDamage();
+            _v.Target.Flags |= CalcFlag.MpAlteration;
+            if ((_v.Target.Flags & CalcFlag.HpRecovery) != 0)
+                _v.Target.Flags |= CalcFlag.MpRecovery;
+            _v.Target.MpDamage = _v.Target.HpDamage >> 4;
         }
     }
 }

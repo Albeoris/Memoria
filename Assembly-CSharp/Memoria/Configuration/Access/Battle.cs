@@ -16,10 +16,12 @@ namespace Memoria
             public static Boolean ViviAutoAttack => Instance._battle.ViviAutoAttack;
             public static Boolean CountersBetterTarget => Instance._battle.CountersBetterTarget;
             public static Int32 SummonPriorityCount => Instance._battle.SummonPriorityCount;
-            public static Int32 SpareChangeGilSpentFormula => Instance._battle.SpareChangeGilSpentFormula;
             public static Boolean CurseUseWeaponElement => Instance._battle.CurseUseWeaponElement;
             public static Int32 FloatEvadeBonus => Instance._battle.FloatEvadeBonus;
             public static Int32 CustomBattleFlagsMeaning => Instance._battle.CustomBattleFlagsMeaning;
+            public static String SpareChangeGilSpentFormula => Instance._battle.SpareChangeGilSpentFormula;
+            public static String StatusDurationFormula => Instance._battle.StatusDurationFormula;
+            public static String StatusTickFormula => Instance._battle.StatusTickFormula;
         }
     }
 }

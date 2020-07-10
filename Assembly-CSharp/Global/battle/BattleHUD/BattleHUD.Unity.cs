@@ -428,7 +428,7 @@ public partial class BattleHUD : UIScene
                 return true;
 
             AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[PatchAbility(command.Abilities[_currentSubMenuIndex])];
-            Int32 mpCost = ff9abil.FF9Abil_GetEnableSA(btl.PlayerIndex, AbilSaMpHalf) ? aaData.MP >> 1 : aaData.MP;
+            Int32 mpCost = aaData.MP * btl.Player.Data.mpCostFactor / 100;
 
             if (btl.CurrentMp < mpCost)
             {

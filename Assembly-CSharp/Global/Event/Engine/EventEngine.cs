@@ -98,9 +98,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private FF9StateGlobal _ff9;
     private FF9StateSystem _ff9Sys;
     private GeoTexAnim _geoTexAnim; // DoEventCode
-    private readonly Dictionary<Int32, Int32> _mesIdES_FR; // DoEventCode
-    private readonly Dictionary<Int32, Int32> _mesIdGR;    // DoEventCode
-    private readonly Dictionary<Int32, Int32> _mesIdIT;    // DoEventCode
+    private readonly Dictionary<Int32, Int32> _mesIdES_FR; // DoEventCode; for field 1060 (Cleyra/Cathedral) only
+    private readonly Dictionary<Int32, Int32> _mesIdGR;    // DoEventCode; for field 1060 (Cleyra/Cathedral) only
+    private readonly Dictionary<Int32, Int32> _mesIdIT;    // DoEventCode; for field 1060 (Cleyra/Cathedral) only
     private PosObj _fixThornPosObj; // DoEventCode
     private Int32 _fixThornPosA;      // DoEventCode
     private Int32 _fixThornPosB;      // DoEventCode

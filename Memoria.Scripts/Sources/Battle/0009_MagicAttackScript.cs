@@ -25,8 +25,8 @@ namespace Memoria.Scripts.Battle
 
             if (_v.CanAttackMagic())
             {
-                _v.TargetCommand.CalcHpDamage();
-                _v.TargetCommand.TryAlterMagicStatuses();
+                _v.CalcHpDamage();
+                _v.TryAlterMagicStatuses();
             }
         }
 
@@ -41,10 +41,10 @@ namespace Memoria.Scripts.Battle
             if (!_v.CanAttackMagic())
                 return 0;
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && _v.Caster.HasSupportAbility(SupportAbility1.ReflectNull))
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
                 return 0;
 
-            _v.TargetCommand.CalcHpDamage();
+            _v.CalcHpDamage();
 
             Single rate = Math.Min(_v.Target.HpDamage, _v.Target.CurrentHp);
 

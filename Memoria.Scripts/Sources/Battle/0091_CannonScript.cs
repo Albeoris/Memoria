@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             _v.MagicAccuracy();
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
-            if (!_v.TargetCommand.TryMagicHit())
+            if (!_v.TryMagicHit())
                 return;
 
             _v.SetCommandAttack();
@@ -34,14 +34,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.CanAttackMagic())
                 return;
 
-            if (_v.Context.Attack > 100)
-                _v.Context.Attack = 100;
-
-            _v.Target.Flags |= CalcFlag.HpAlteration;
-            if (_v.Context.IsAbsorb)
-                _v.Target.Flags |= CalcFlag.HpRecovery;
-
-            _v.Target.HpDamage = (Int32)Math.Min(9999, _v.Target.CurrentHp * _v.Context.Attack / 100);
+            _v.CalcCannonProportionDamage();
         }
     }
 }

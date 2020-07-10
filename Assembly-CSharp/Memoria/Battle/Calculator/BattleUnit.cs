@@ -24,6 +24,11 @@ namespace Memoria
         public Boolean IsPlayer => Data.bi.player != 0;
         public Boolean IsSelected => Data.bi.target != 0;
         public Boolean IsSlave => Data.bi.slave != 0;
+        public Boolean IsOutOfReach
+        {
+            get => Data.out_of_reach;
+            set => Data.out_of_reach = value;
+        }
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterIndex PlayerIndex => Data.bi.slot_no;
 
@@ -54,7 +59,11 @@ namespace Memoria
             set => btl_para.SetLogicalHP(Data, value, false);
         }
 
-        public UInt32 MaximumMp => Data.max.mp;
+        public UInt32 MaximumMp
+        {
+            get => Data.max.mp;
+            set => Data.max.mp = value;
+        }
         public UInt32 CurrentMp
         {
             get => Data.cur.mp;
@@ -80,7 +89,11 @@ namespace Memoria
             set => Data.defence.PhisicalDefence = value;
         }
 
-        public Byte PhisicalEvade => Data.defence.PhisicalEvade;
+        public Byte PhisicalEvade
+        {
+            get => Data.defence.PhisicalDefence;
+            set => Data.defence.PhisicalEvade = value;
+        }
 
         public Byte Magic
         {
@@ -94,13 +107,25 @@ namespace Memoria
             set => Data.defence.MagicalDefence = value;
         }
 
-        public Byte MagicEvade => Data.defence.MagicalEvade;
+        public Byte MagicEvade
+        {
+            get => Data.defence.MagicalEvade;
+            set => Data.defence.MagicalEvade = value;
+        }
 
-        public Byte Dexterity => Data.elem.dex;
-        public Byte Will => Data.elem.wpr;
+        public Byte Dexterity
+        {
+            get => Data.elem.dex;
+            set => Data.elem.dex = value;
+        }
+        public Byte Will
+        {
+            get => Data.elem.wpr;
+            set => Data.elem.wpr = value;
+        }
 
         public Boolean HasTrance => Data.bi.t_gauge != 0;
-        public Boolean InTrance => Trance == Byte.MaxValue;
+        public Boolean InTrance => (CurrentStatus & BattleStatus.Trance) != 0;
         public Byte Trance
         {
             get => Data.trance;
@@ -113,13 +138,15 @@ namespace Memoria
             set => Data.fig = value;
         }
 
-        public Byte WeaponRate => Data.weapon.Ref.Rate;
-        public Byte WeaponPower => Data.weapon.Ref.Power;
-        public EffectElement WeaponElement => (EffectElement)Data.weapon.Ref.Elements;
-        public BattleStatus WeaponStatus => FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value;
+        public Byte WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : (Byte)0;
+        public Byte WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : (Byte)0;
+        public EffectElement WeaponElement => (EffectElement)(Data.weapon != null ? Data.weapon.Ref.Elements : 0);
+        public BattleStatus WeaponStatus => Data.weapon != null ? FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value : 0;
 
         public Character Player => Character.Find(this);
         public CharacterCategory PlayerCategory => Player.Category;
+        public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
+        public WeaponCategory WeapCategory => (WeaponCategory)(Data.weapon != null ? Data.weapon.Category : 0);
         public BattleEnemy Enemy => new BattleEnemy(btl_util.getEnemyPtr(Data));
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
         public String Name => IsPlayer ? Player.Name : Enemy.Name;
@@ -142,19 +169,38 @@ namespace Memoria
             set => Data.stat.invalid = value;
         }
 
-        public EffectElement BonusElement => (EffectElement)Data.p_up_attr;
-
-        public EffectElement WeakElement => (EffectElement)Data.def_attr.weak;
-        public EffectElement GuardElement => (EffectElement)Data.def_attr.invalid;
-        public EffectElement AbsorbElement => (EffectElement)Data.def_attr.absorb;
-        public EffectElement HalfElement => (EffectElement)Data.def_attr.half;
+        public EffectElement BonusElement
+        {
+            get => (EffectElement)Data.p_up_attr;
+            set => Data.p_up_attr = (Byte)value;
+        }
+        public EffectElement WeakElement
+        {
+            get => (EffectElement)Data.def_attr.weak;
+            set => Data.def_attr.weak = (Byte)value;
+        }
+        public EffectElement GuardElement
+        {
+            get => (EffectElement)Data.def_attr.invalid;
+            set => Data.def_attr.invalid = (Byte)value;
+        }
+        public EffectElement AbsorbElement
+        {
+            get => (EffectElement)Data.def_attr.absorb;
+            set => Data.def_attr.absorb = (Byte)value;
+        }
+        public EffectElement HalfElement
+        {
+            get => (EffectElement)Data.def_attr.half;
+            set => Data.def_attr.half = (Byte)value;
+        }
 
         public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderAnyStatus(BattleStatus.Float);
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatus.Zombie);
-        public Boolean HasLongReach => HasSupportAbility(SupportAbility1.LongReach) || HasCategory(WeaponCategory.LongRange);
+        public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
         public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);
-        public Boolean IsHealer => IsPlayer && (HasSupportAbility(SupportAbility1.Healer) || Weapon == WeaponItem.HealingRod);
+        public Boolean IsHealingRod => IsPlayer && Weapon == WeaponItem.HealingRod;
 
         public Boolean[] StatModifier
         {
@@ -165,6 +211,16 @@ namespace Memoria
         }
 
         public UInt16 SummonCount => Data.summon_count;
+        public Int16 CriticalRateBonus
+        {
+            get => Data.critical_rate_deal_bonus;
+            set => Data.critical_rate_deal_bonus = value;
+        }
+        public Int16 CriticalRateWeakening
+        {
+            get => Data.critical_rate_receive_bonus;
+            set => Data.critical_rate_receive_bonus = value;
+        }
 
         public MutableBattleCommand AttackCommand => Commands[0];
         
@@ -252,8 +308,10 @@ namespace Memoria
             btl_sys.SavePlayerData(Data, true);
             btl_sys.DelCharacter(Data);
             Data.SetDisappear(1);
-            UIManager.Battle.DisplayParty();
+            // The two following lines have been switched for fixing an UI bug (ATB bar glowing, etc... when an ally is snorted)
+            // It seems to fix the bug without introducing another one (the HP/MP figures update strangely but that's because of how the UI cells are managed)
             UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
+            UIManager.Battle.DisplayParty();
         }
 
         public void FaceTheEnemy()

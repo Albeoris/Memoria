@@ -1029,8 +1029,7 @@ public partial class BattleHUD : UIScene
         if ((aaData.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
             num <<= 2;
 
-        if (ff9abil.FF9Abil_GetEnableSA(slotId, AbilSaMpHalf))
-            num >>= 1;
+        num = num * unit.Player.Data.mpCostFactor / 100;
 
         return num;
     }
@@ -1353,9 +1352,9 @@ public partial class BattleHUD : UIScene
                 continue;
 
             testCommand.sub_no = (Byte) abilityId;
-            testCommand.aa = FF9StateSystem.Battle.FF9Battle.aa_data[testCommand.sub_no];
+            testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[testCommand.sub_no]);
 
-            BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(testCommand.aa.Ref.ScriptId);
+            BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(testCommand.ScriptId);
             if (factory == null)
                 continue;
 
@@ -1531,9 +1530,9 @@ public partial class BattleHUD : UIScene
                 {
                     cmd_no = _currentCommandId,
                     sub_no = abilityId,
-                    aa = aaData,
                     info = new CMD_DATA.SELECT_INFO()
                 };
+                testCommand.SetAAData(aaData);
 
                 SelectBestTarget(targetType, testCommand, aaData.Ref.ScriptId);
             }
@@ -1552,16 +1551,16 @@ public partial class BattleHUD : UIScene
                 {
                     cmd_no = _currentCommandId,
                     sub_no = itemId,
-                    aa = FF9StateSystem.Battle.FF9Battle.aa_data[0],
                     info = new CMD_DATA.SELECT_INFO()
                 };
+                testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[0]);
 
                 SelectBestTarget(targetType, testCommand, itemData.Ref.ScriptId);
             }
             else if (_currentCommandIndex == CommandMenu.Attack && CurrentPlayerIndex > -1)
             {
                 BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-                if (btl.IsHealer)
+                if (btl.IsHealingRod || btl.HasSupportAbility(SupportAbility1.Healer)) // Todo: should be coded as a SA feature instead of being hard-coded
                     _defaultTargetHealingAttack = true;
             }
 
@@ -1595,6 +1594,7 @@ public partial class BattleHUD : UIScene
 
     private void SelectBestTarget(TargetType targetType, CMD_DATA testCommand, Byte scriptId)
     {
+        testCommand.ScriptId = scriptId;
         if (!Configuration.Battle.SelectBestTarget)
             return;
         if (targetType != TargetType.SingleAny || CurrentPlayerIndex <= -1)

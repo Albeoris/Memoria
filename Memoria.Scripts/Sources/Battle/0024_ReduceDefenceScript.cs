@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.TargetCommand.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
+            if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
                 if (_v.Target.PhisicalDefence != 0)
                     _v.Target.PhisicalDefence = (Byte)((UInt32)GameRandom.Next16() % _v.Target.PhisicalDefence);

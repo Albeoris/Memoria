@@ -30,19 +30,19 @@ namespace Memoria
         public new Byte ScriptId
         {
             get => base.ScriptId;
-            set => Data.aa.Ref.ScriptId = value;
+            set => Data.ScriptId = value;
         }
 
         public new Byte HitRate
         {
             get => base.HitRate;
-            set => Data.aa.Ref.Rate = value;
+            set => Data.HitRate = value;
         }
 
         public new Byte Power
         {
             get => base.Power;
-            set => Data.aa.Ref.Power = value;
+            set => Data.Power = value;
         }
 
         public new Boolean IsManyTarget
@@ -66,7 +66,13 @@ namespace Memoria
         public new EffectElement Element
         {
             get => base.Element;
-            set => Data.aa.Ref.Elements = (Byte)value;
+            set => Data.Element = value;
+        }
+
+        public new EffectElement ElementForBonus
+        {
+            get => base.ElementForBonus;
+            set => Data.ElementForBonus = value;
         }
 
         public new SpecialEffect SpecialEffect
@@ -130,7 +136,8 @@ namespace Memoria
                 Name = original.Name
             };
 
-            Data.aa = newData;
+            Data.SetAAData(newData);
+            Data.IsShortRange = btl_cmd.IsAttackShortRange(Data);
         }
     }
 }

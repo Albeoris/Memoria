@@ -3,6 +3,7 @@ using UnityEngine;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using NCalc;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable EmptyConstructor
@@ -24,6 +25,7 @@ public class btl_stat
 
     public static void InitCountDownStatus(BTL_DATA btl)
     {
+        // cdown_max is now updated in AlterStatus; its initialization there is not important
         btl.stat.cnt.cdown_max = (Int16)((60 - btl.elem.wpr << 3) * FF9StateSystem.Battle.FF9Battle.status_data[27].conti_cnt);
     }
 
@@ -190,6 +192,23 @@ public class btl_stat
         {
             Int16 num3 = ((Int32)status & -1693253632) == 0 ? (((Int32)status & 619446272) == 0 ? (Int16)(60 - btl.elem.wpr << 2) : (Int16)(btl.elem.wpr << 3)) : (Int16)(60 - btl.elem.wpr << 3);
             btl.stat.cnt.conti[statTblNo - 16U] = (Int16)(statusData[statTblNo].conti_cnt * num3);
+            if (Configuration.Battle.StatusDurationFormula.Length > 0)
+            {
+                Expression e = new Expression(Configuration.Battle.StatusDurationFormula);
+                e.Parameters["StatusIndex"] = (Int32)statTblNo;
+                e.Parameters["IsPositiveStatus"] = ((Int32)status & 619446272) != 0;
+                e.Parameters["IsNegativeStatus"] = ((Int32)status & -1693253632) != 0;
+                e.Parameters["ContiCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].conti_cnt;
+                e.Parameters["OprCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt;
+                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
+                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                if (val >= 0)
+                    btl.stat.cnt.opr[statTblNo - 16U] = (Int16)Math.Min(val, Int16.MaxValue);
+            }
+            if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
+                btl.stat.cnt.cdown_max = btl.stat.cnt.conti[statTblNo - 16U];
         }
         if (((Int32)status & 327682) != 0)
             SetOprStatusCount(btl, statTblNo);
@@ -376,6 +395,21 @@ public class btl_stat
             num2 = (UInt16)(60 - btl.elem.wpr << 2);
         }
         btl.stat.cnt.opr[num1] = (Int16)(FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt * num2);
+        if (Configuration.Battle.StatusTickFormula.Length > 0)
+        {
+            Expression e = new Expression(Configuration.Battle.StatusTickFormula);
+            e.Parameters["StatusIndex"] = (Int32)statTblNo;
+            e.Parameters["IsPositiveStatus"] = num1 == 2;
+            e.Parameters["IsNegativeStatus"] = num1 == 0 || num1 == 1;
+            e.Parameters["ContiCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].conti_cnt;
+            e.Parameters["OprCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt;
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
+            Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+            if (val >= 0)
+                btl.stat.cnt.opr[num1] = (Int16)Math.Min(val, Int16.MaxValue);
+        }
     }
 
     public static void SetPresentColor(BTL_DATA btl)
@@ -731,14 +765,37 @@ public class btl_stat
                     if (!btl_cmd.CheckUsingCommand(btl.cmd[2]) && (Int32)AlterStatus(btl, BattleStatus.Petrify) != 2)
                     {
                         RemoveStatus(btl, BattleStatus.GradualPetrify);
-                        btl.fig_info |= 32;
+                        btl.fig_info |= Param.FIG_INFO_MISS;
                         btl2d.Btl2dReq(btl);
                     }
                 }
                 else if ((status & BattleStatus.Doom) != 0)
                 {
-                    AlterStatus(btl, BattleStatus.Death);
-                    btl2d.Btl2dReq(btl);
+                    if (Status.checkCurStat(btl, BattleStatus.EasyKill))
+                    {
+                        // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
+                        // Might want to add a Configuration option for that effect...
+                        Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
+                        if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
+                            doom_damage = (Int32)btl.cur.hp - 1;
+                        if (doom_damage > 0)
+                        {
+                            btl_stat.RemoveStatus(btl, status);
+                            btl.fig_info = Param.FIG_INFO_DISP_HP;
+                            btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
+                            btl2d.Btl2dReq(btl);
+                        }
+                        else
+                        {
+                            btl.fig_info |= Param.FIG_INFO_MISS;
+                            btl2d.Btl2dReq(btl);
+                        }
+                    }
+                    else
+                    {
+                        btl_stat.AlterStatus(btl, BattleStatus.Death);
+                        btl2d.Btl2dReq(btl);
+                    }
                 }
                 else
                 {

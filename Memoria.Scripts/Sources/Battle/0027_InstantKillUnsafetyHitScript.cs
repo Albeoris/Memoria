@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.MagicAccuracy();
                 _v.Target.PenaltyShellHitRate();
-                if (_v.TargetCommand.TryMagicHit())
+                if (_v.TryMagicHit())
                 {
                     _v.TargetCommand.InstantKill();
                 }

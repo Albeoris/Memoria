@@ -21,31 +21,51 @@ namespace Memoria
 
         internal static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Byte scriptId)
         {
+            if (caster == null || target == null)
+			{
+                if (scriptId == btl_sys.fleeScriptId)
+                {
+                    BattleScriptFactory fleeFactory = FindScriptFactory(scriptId);
+                    if (fleeFactory != null)
+                        fleeFactory(new BattleCalculator()).Perform();
+                    else
+                        Log.Warning($"Unknown script id: {scriptId}");
+                }
+                return;
+			}
+            command.ScriptId = scriptId;
             BattleCalculator v = new BattleCalculator(caster, target, command);
             BattleScriptFactory factory = FindScriptFactory(scriptId);
-            btl_cmd.cmd_effect_counter++;
-            if (btl_cmd.IsAttackShortRange(v.Caster, command.Data))
+            ++btl_cmd.cmd_effect_counter;
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
+                saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
+                saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
+
+            if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
             {
-                v.BonusBackstabAndPenaltyLongDistance();
-                if ((command.Data.aa.Category & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
-                    v.Context.Flags |= BattleCalcFlags.Miss;
-            }
-            if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (command.Data.aa.Type & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
-            {
-                v.BonusKillerAbilities();
-                v.Caster.BonusWeaponElement();
-                if (v.CanAttackWeaponElementalCommand())
-                    v.TryAddWeaponStatus();
-            }
-            if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
-            {
-                if (caster != null && target != null)
+                if (command.IsShortRange)
+                {
+                    v.BonusBackstabAndPenaltyLongDistanceAsDamageModifiers();
+                    if ((command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
+                        v.Context.Flags |= BattleCalcFlags.Miss;
+                }
+                if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
+                {
+                    v.Caster.BonusWeaponElement();
+                    v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement);
+                }
+                if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
+                {
                     SBattleCalculator.CalcResult(v);
+                    return;
+                }
+            }
+            if ((command.AbilityCategory & 8) != 0 && v.Target.TryKillFrozen()) // Is Physical
+            {
+                SBattleCalculator.CalcResult(v);
                 return;
             }
-            if ((command.Data.aa.Category & 8) != 0) // Is Physical
-                if (!v.Target.TryKillFrozen())
-                    SBattleCalculator.CalcResult(v);
             if (factory != null)
             {
                 IBattleScript script = factory(v);
@@ -56,17 +76,18 @@ namespace Memoria
                 Log.Warning($"Unknown script id: {scriptId}");
             }
 
-            if (caster != null && target != null)
-                CalcResult(v);
+            CalcResult(v);
         }
 
         public static void CalcResult(BattleCalculator v)
         {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
+                saFeature.TriggerOnAbility(v, "BattleScriptEnd", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
+                saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
-            Boolean counterAtk = false;
-            if (target.bi.player != 0 && caster.bi.player == 0)
-                counterAtk = btl_abil.CheckCounterAbility(v.Target, v.Caster, v.Command);
+            v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
                 target.fig_info |= Param.FIG_INFO_GUARD;
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
@@ -98,7 +119,7 @@ namespace Memoria
             }
             else
             {
-                if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (v.Command.Data.aa.Type & 0x20) != 0) // Has critical
+                if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (v.Command.AbilityType & 0x20) != 0) // Has critical
                     v.TryCriticalHit();
                 // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
                 if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
@@ -108,23 +129,47 @@ namespace Memoria
                         v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[(int)caster.weapon.StatusIndex].Value, false);
                     }
                 }
-                if ((v.Command.Data.aa.Category & 8) != 0) // Is Physical
+                if ((v.Command.AbilityCategory & 8) != 0) // Is Physical
                 {
-//                  v.Target.RaiseTrouble();
-                    if ((v.Context.added_status & BattleStatus.Confuse) == 0)
+                    if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
+                        v.RaiseTrouble();
+                    if ((v.Context.AddedStatuses & BattleStatus.Confuse) == 0)
                         v.Target.RemoveStatus(BattleStatus.Confuse);
-                    if ((v.Context.added_status & BattleStatus.Sleep) == 0)
+                    if ((v.Context.AddedStatuses & BattleStatus.Sleep) == 0)
                         v.Target.RemoveStatus(BattleStatus.Sleep);
                 }
-
-                if ((v.Command.Data.aa.Category & 16) != 0 && (v.Context.added_status & BattleStatus.Vanish) == 0) // Is Magical
+                if ((v.Command.AbilityCategory & 16) != 0 && (v.Context.AddedStatuses & BattleStatus.Vanish) == 0) // Is Magical
                     v.Target.RemoveStatus(BattleStatus.Vanish);
 
                 if (v.Target.Flags != 0)
                 {
+                    // DamageModifierCount > 0 -> damage is multiplied by 1.5, 2, 2.25, 2.5, 2.625, 2.75...
+                    // DamageModifierCount < 0 -> damage is divided by 2, 4, 8, 16, 32...
+                    Single modifier_factor = 1.0f;
+                    Single modifier_bonus = 0.5f;
+                    Byte modifier_index = 0;
+                    if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && v.Caster.PlayerIndex == CharacterIndex.Steiner)
+                        modifier_bonus = 1.0f;
+                    while (v.Context.DamageModifierCount > 0)
+                    {
+                        modifier_factor += modifier_bonus;
+                        modifier_index++;
+                        if (modifier_index >= 2)
+                        {
+                            modifier_bonus *= 0.5f;
+                            modifier_index = 0;
+                        }
+                        --v.Context.DamageModifierCount;
+                    }
+                    while (v.Context.DamageModifierCount < 0)
+                    {
+                        modifier_factor *= 0.5f;
+                        ++v.Context.DamageModifierCount;
+                    }
                     target.fig_info |= (UInt16)v.Target.Flags;
                     if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                     {
+                        v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
                         if (v.Command.Data.info.reflec == 1)
                         {
                             UInt16 num1 = 0;
@@ -134,8 +179,6 @@ namespace Memoria
                                     ++num1;
                             }
                             v.Target.HpDamage *= num1;
-                            if (v.Caster.HasSupportAbility(SupportAbility1.Reflectx2))
-                                v.Target.HpDamage *= 2;
                         }
                         if (v.Target.HpDamage > 9999)
                             v.Target.HpDamage = 9999;
@@ -148,25 +191,44 @@ namespace Memoria
                             if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != BattleCommandId.StageMagicZidane && v.Command.Data.cmd_no != BattleCommandId.StageMagicBlank) && (v.Command.Data.cmd_no != BattleCommandId.StageMagicMarcus && v.Command.Data.cmd_no != BattleCommandId.StageMagicCinna))
                                 v.Target.HpDamage = 9999;
                             btl_para.SetDamage(v.Target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1);
-                            CheckDamageReaction(v, counterAtk);
+                            CheckDamageReaction(v);
+                        }
+                        if (v.Context.IsDrain)
+						{
+                            v.Caster.Flags |= CalcFlag.HpAlteration;
+                            if ((v.Target.Flags & CalcFlag.HpRecovery) == 0)
+                                v.Caster.Flags |= CalcFlag.HpRecovery;
+                            else
+                                v.Caster.Flags &= ~CalcFlag.HpRecovery;
+                            v.Caster.HpDamage = v.Target.HpDamage;
                         }
                     }
 
                     if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                     {
+                        v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
                         if (v.Target.MpDamage > 999)
                             v.Target.MpDamage = 999;
                         if ((v.Target.Flags & CalcFlag.MpRecovery) != 0)
                             btl_para.SetMpRecover(target, (UInt32)v.Target.MpDamage);
                         else
                             btl_para.SetMpDamage(target, (UInt32)v.Target.MpDamage);
+                        if (v.Context.IsDrain)
+                        {
+                            v.Caster.Flags |= CalcFlag.MpAlteration;
+                            if ((v.Target.Flags & CalcFlag.MpRecovery) == 0)
+                                v.Caster.Flags |= CalcFlag.MpRecovery;
+                            else
+                                v.Caster.Flags &= ~CalcFlag.MpRecovery;
+                            v.Caster.MpDamage = v.Target.MpDamage;
+                        }
                     }
                 }
                 else if ((v.Context.Flags & BattleCalcFlags.DirectHP) != 0)
                 {
                     if (CheckDamageMotion(v))
                         btl_mot.SetDamageMotion(v.Target);
-                    CheckDamageReaction(v, counterAtk);
+                    CheckDamageReaction(v);
                 }
                 if (v.Caster.Flags != 0)
                 {
@@ -190,16 +252,20 @@ namespace Memoria
                             btl_para.SetMpDamage(caster, (UInt32)v.Caster.MpDamage);
                     }
                 }
-//              if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
-//              {
-//                  v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
-//              }
+                //if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
+                //{
+                //    v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
+                //}
                 if (target.bi.player != 0 && FF9StateSystem.Settings.IsHpMpFull && target.cur.hp != 0)
                 {
                     target.cur.hp = target.max.hp;
                     target.cur.mp = target.max.mp;
                 }
             }
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
+                saFeature.TriggerOnAbility(v, "EffectDone", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
+                saFeature.TriggerOnAbility(v, "EffectDone", true);
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
@@ -225,31 +291,34 @@ namespace Memoria
 
         private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatus.NoReaction) == 0) && ((v.Command.Data.aa.Category & 64) == 0 && v.Command.Data.info.cover == 0) && (!Status.checkCurStat(v.Target.Data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump) && v.Caster.Data != v.Target.Data);
+            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatus.NoReaction) == 0)
+                && (v.Command.AbilityCategory & 64) == 0
+                && v.Command.Data.info.cover == 0
+                && !Status.checkCurStat(v.Target.Data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump)
+                && v.Caster.Data != v.Target.Data;
         }
 
-        private static void CheckDamageReaction(BattleCalculator v, Boolean counterAtk)
+        private static void CheckDamageReaction(BattleCalculator v)
         {
             if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
                 return;
-            if (!counterAtk)
-                btl_abil.CheckAutoItemAbility(v.Target, v.Command);
-            btl_abil.CheckReactionAbility(v.Target.Data, v.Command.Data.aa);
             if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatus.CannotTrance))
                 return;
 
 
-            Byte num1 = v.Target.HasSupportAbility(SupportAbility2.HighTide)
-                ? v.Target.Data.elem.wpr
-                : (Byte)((UInt32)Comn.random16() % v.Target.Data.elem.wpr);
-
-            if (v.Target.Data.trance + num1 < Byte.MaxValue)
+            if (v.Target.Trance + v.Context.TranceIncrease < 0)
             {
-                v.Target.Data.trance += num1;
+                v.Target.Trance = 0;
+                if (v.Target.InTrance)
+                    v.Target.RemoveStatus(BattleStatus.Trance);
+            }
+            else if (v.Target.Trance + v.Context.TranceIncrease < Byte.MaxValue)
+            {
+                v.Target.Trance += (Byte)v.Context.TranceIncrease;
             }
             else
             {
-                v.Target.Data.trance = Byte.MaxValue;
+                v.Target.Trance = Byte.MaxValue;
 
                 if (FF9StateSystem.Battle.isDebug)
                     return;

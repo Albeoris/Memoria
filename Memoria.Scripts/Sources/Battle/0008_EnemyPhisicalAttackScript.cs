@@ -28,7 +28,6 @@ namespace Memoria.Scripts.Battle
 
             _v.NormalPhisicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.GambleDefence();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();
             _v.CasterCommand.BonusElement();
@@ -37,8 +36,8 @@ namespace Memoria.Scripts.Battle
 
             _v.TryCriticalHit();
             _v.CalcPhysicalHpDamage();
-            _v.Target.RaiseTrouble();
-            _v.TargetCommand.TryAlterMagicStatuses();
+            _v.RaiseTrouble();
+            _v.TryAlterMagicStatuses();
         }
     }
 }

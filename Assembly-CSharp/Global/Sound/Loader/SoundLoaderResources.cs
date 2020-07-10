@@ -22,7 +22,7 @@ public class SoundLoaderResources : ISoundLoader
 			callback((SoundProfile)null, (SoundDatabase)null);
 			return;
 		}
-		// ToDo: maybe use SoundImporter.ReadAkbDataFromOgg
+		// Todo: maybe use SoundImporter.ReadAkbDataFromOgg
 		// if (((binAsset[0] << 24) | (binAsset[1] << 16) | (binAsset[2] << 8) | binAsset[3]) == 0x4F676753)
 		IntPtr intPtr = Marshal.AllocHGlobal((Int32)binAsset.Length);
 		Marshal.Copy(binAsset, 0, intPtr, (Int32)binAsset.Length);

@@ -65,25 +65,38 @@ namespace Memoria.Scripts
             try
             {
                 String rootPath = DataResources.ShadersDirectory;
-                if (!Directory.Exists(rootPath))
+                String[] dir = Configuration.Mod.AllFolderNames;
+                Boolean foundOneDir = false;
+                for (Int32 i = dir.Length - 1; i >= 0; i--)
+                {
+                    rootPath = DataResources.ShadersModDirectory(dir[i]);
+                    if (Directory.Exists(rootPath))
+                    {
+                        String[] shaderFiles = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories);
+                        Dictionary<String, Shader> shaders = new Dictionary<String, Shader>(shaderFiles.Length);
+
+                        foreach (String shaderPath in shaderFiles)
+                            InitializeMaterial(shaderPath, rootPath, shaders);
+
+                        // Create a watcher only for the first valid directory (most likely the default one out of any mod)
+                        if (!foundOneDir)
+                        {
+                            // ReSharper disable once InconsistentlySynchronizedField
+                            s_shaders = shaders;
+
+                            s_watcher = new FileSystemWatcher(rootPath, "*");
+                            GameLoopManager.Quit += s_watcher.Dispose;
+
+                            s_watcher.IncludeSubdirectories = true;
+                            s_watcher.Changed += OnChangedFileInDirectory;
+                            s_watcher.Created += OnChangedFileInDirectory;
+                            s_watcher.EnableRaisingEvents = true;
+                        }
+                        foundOneDir = true;
+                    }
+                }
+                if (!foundOneDir)
                     throw new DirectoryNotFoundException($"[ShadersLoader] Cannot load external shaders because a directory does not exist: [{rootPath}].");
-
-                String[] shaderFiles = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories);
-                Dictionary<String, Shader> shaders = new Dictionary<String, Shader>(shaderFiles.Length);
-
-                foreach (String shaderPath in shaderFiles)
-                    InitializeMaterial(shaderPath, rootPath, shaders);
-
-                // ReSharper disable once InconsistentlySynchronizedField
-                s_shaders = shaders;
-
-                s_watcher = new FileSystemWatcher(rootPath, "*");
-                GameLoopManager.Quit += s_watcher.Dispose;
-
-                s_watcher.IncludeSubdirectories = true;
-                s_watcher.Changed += OnChangedFileInDirectory;
-                s_watcher.Created += OnChangedFileInDirectory;
-                s_watcher.EnableRaisingEvents = true;
             }
             catch (Exception ex)
             {
@@ -127,7 +140,7 @@ namespace Memoria.Scripts
                         DateTime beginTime = DateTime.UtcNow;
                         Log.Message($"[ShadersLoader] An external shader was changed. Reloading... [{e.FullPath}]");
 
-                        String rootPath = DataResources.ShadersDirectory;
+                        String rootPath = s_watcher.Path;
                         rootPath = Path.GetFullPath(rootPath);
 
                         lock (s_shaders)
@@ -172,7 +185,7 @@ namespace Memoria.Scripts
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[ShadersLoader] Failed to get battle calculator's script.");
+                Log.Error(ex, $"[ShadersLoader] Failed to find shader {shaderName}.");
                 UIManager.Input.ConfirmQuit();
                 return null;
             }
@@ -204,15 +217,22 @@ namespace Memoria.Scripts
             try
             {
                 String inputPath = DataResources.ScriptsDirectory + "Memoria.Scripts.dll";
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{inputPath}].", inputPath);
-
-                Assembly assembly = Assembly.LoadFile(inputPath);
-                Result result = new Result();
-                TypeOrderer orderer = new TypeOrderer();
-                foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
-                    ProcessType(type, result);
-                s_result = result;
+                String[] dir = Configuration.Mod.AllFolderNames;
+                for (Int32 i = 0; i < dir.Length; i++)
+                {
+                    inputPath = DataResources.ScriptsModDirectory(dir[i]) + "Memoria.Scripts.dll";
+                    if (File.Exists(inputPath))
+                    {
+                        Assembly assembly = Assembly.LoadFile(inputPath);
+                        Result result = new Result();
+                        TypeOrderer orderer = new TypeOrderer();
+                        foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
+                            ProcessType(type, result);
+                        s_result = result;
+                        return;
+                    }
+                }
+                throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{inputPath}].", inputPath);
             }
             catch (Exception ex)
             {

@@ -4,6 +4,7 @@ using FF9;
 using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
+using Assets.Sources.Scripts.UI.Common;
 
 namespace Memoria
 {
@@ -30,6 +31,7 @@ namespace Memoria
         public static Int16 Frogs => FF9StateSystem.Common.FF9.Frogs.Number;
         public static Int16 Dragons => FF9StateSystem.Common.FF9.dragon_no;
         public static Byte Tonberies => battle.TONBERI_COUNT;
+        public static Byte AbilityUsage(Byte index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
 
         public static UInt32 Gil
         {
@@ -105,6 +107,16 @@ namespace Memoria
         public readonly CalcCasterCommand CasterCommand;
         public readonly CalcTargetCommand TargetCommand;
 
+        public BattleCalculator()
+        {
+            Context = null;
+            Command = null;
+            Caster = null;
+            Target = null;
+            CasterCommand = null;
+            TargetCommand = null;
+        }
+
         public BattleCalculator(BTL_DATA caster, BTL_DATA target, BattleCommand command)
         {
             Context = new CalcContext();
@@ -113,6 +125,7 @@ namespace Memoria
             Target = new BattleTarget(target, Context);
             CasterCommand = new CalcCasterCommand(Caster, Command, Context);
             TargetCommand = new CalcTargetCommand(Target, Command, Context);
+            Context.TranceIncrease = (Int16)(Comn.random16() % Target.Will);
         }
 
         public void NormalMagicParams()
@@ -197,7 +210,7 @@ namespace Memoria
 
         public Boolean CanAttackElementalCommand()
         {
-            return Caster.HasSupportAbility(SupportAbility2.MagElemNull) || Target.CanAttackElement(Command.Element);
+            return /*Caster.HasSupportAbility(SupportAbility2.MagElemNull) || */ Target.CanAttackElement(Command.Element);
         }
 
         public Boolean CanAttackWeaponElementalCommand()
@@ -233,7 +246,17 @@ namespace Memoria
 
         public Boolean IsCasterSameDirectionTarget()
         {
+            // Doesn't take running away or Confuse into account but takes back attack into account
             return Math.Abs(Caster.Data.evt.rotBattle.eulerAngles.y - Target.Data.evt.rotBattle.eulerAngles.y) < 0.1;
+        }
+
+        public Boolean IsCasterVisuallySameDirectionTarget()
+        {
+            // Takes back attacks, Confuse and running away (animation, not key press) into account
+            Quaternion target_angle = Target.Data.rot;
+            if (Target.IsPlayer && btl_mot.checkMotion(Target.Data, 17))
+                target_angle = new Quaternion(0f, 1f, 0f, 0f) * target_angle;
+            return Mathf.Abs(Quaternion.Angle(Caster.Data.rot, target_angle)) < 90;
         }
 
         public void PrepareHpDraining()
@@ -245,6 +268,8 @@ namespace Memoria
                 Target.Flags |= CalcFlag.HpRecovery;
             else
                 Caster.Flags |= CalcFlag.HpRecovery;
+
+            Context.IsDrain = true;
         }
 
         public void TryEscape()
@@ -291,10 +316,14 @@ namespace Memoria
         {
             Caster.PenaltyPhysicalHitRate();
             Caster.BonusPhysicalEvade();
-            Target.PenaltyDistractHitRate();
             Target.PenaltyPhysicalEvade();
             Target.PenaltyDefenceHitRate();
             Target.PenaltyBanishHitRate();
+
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", true);
 
             if (Context.HitRate <= Comn.random16() % 100)
             {
@@ -312,24 +341,151 @@ namespace Memoria
             return false;
         }
 
-        public void CalcPhysicalHpDamage()
+        public void TryAlterMagicStatuses()
+        {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", true);
+
+            if (Command.HitRate > Comn.random16() % 100)
+                Target.TryAlterStatuses(Command.AbilityStatus, false);
+        }
+
+        public Boolean TryMagicHit()
+        {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", true);
+
+            if (Context.HitRate <= Comn.random16() % 100)
+            {
+                Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            if (Context.Evade > Comn.random16() % 100)
+            {
+                Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            return true;
+        }
+
+        public Boolean IsTargetLevelMultipleOfCommandRate()
+        {
+            if (Target.Level % Command.HitRate == 0)
+                return true;
+
+            Context.Flags |= BattleCalcFlags.Miss;
+            return false;
+        }
+
+        public void CalcDamageCommon()
         {
             Target.Flags |= CalcFlag.HpAlteration;
-            Target.HpDamage = Math.Min(9999, Context.EnsureAttack * Math.Max(1, Context.PowerDifference));
-
             if (Context.IsAbsorb)
             {
                 Target.Flags |= CalcFlag.HpRecovery;
+                Context.DefensePower = 0;
             }
-            else if (!Target.IsZombie && Caster.IsHealer)
-            {
-                Target.FaceTheEnemy();
+
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "CalcDamage", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "CalcDamage", true);
+        }
+
+        public void CalcPhysicalHpDamage()
+        {
+            if (!Target.IsZombie && Caster.IsHealingRod)
                 Target.Flags |= CalcFlag.HpRecovery;
+
+            CalcDamageCommon();
+
+            Target.HpDamage = Context.EnsureAttack * Context.EnsurePowerDifference;
+            if ((Target.Flags & CalcFlag.HpRecovery) != 0)
+                Target.FaceTheEnemy();
+        }
+
+        public void CalcHpDamage()
+        {
+            CalcDamageCommon();
+
+            Int32 damage = Context.EnsureAttack * Context.EnsurePowerDifference;
+            if (Command.IsShortSummon)
+                damage = damage * 2 / 3;
+
+            Target.HpDamage = damage;
+        }
+
+        public void CalcMpDamage()
+        {
+            Target.Flags |= CalcFlag.MpAlteration;
+            if (Context.IsAbsorb)
+            {
+                Target.Flags |= CalcFlag.MpRecovery;
+                Context.DefensePower = 0;
             }
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "CalcDamage", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "CalcDamage", true);
+
+            Target.MpDamage = Math.Max(0, Context.PowerDifference) * Context.EnsureAttack >> 2;
+        }
+
+        public void CalcProportionDamage()
+        {
+            CalcDamageCommon();
+
+            if (Context.Attack > 100)
+                Context.Attack = 100;
+            Int32 damage = (Int32)Target.MaximumHp * Context.Attack / 100;
+            if (Command.IsShortSummon)
+                damage = damage * 2 / 3;
+
+            Target.HpDamage = damage;
+        }
+
+        public void CalcCannonProportionDamage()
+        {
+            CalcDamageCommon();
+
+            if (Context.Attack > 100)
+                Context.Attack = 100;
+            Target.HpDamage = (Int32)Target.CurrentHp * Context.Attack / 100;
+        }
+
+        public void CalcHpMagicRecovery()
+        {
+            if (!Target.IsZombie)
+                Target.Flags |= CalcFlag.HpRecovery;
+
+            CalcDamageCommon();
+
+            Target.HpDamage = Context.AttackPower * Context.Attack;
+        }
+
+        public void CalcMpMagicRecovery()
+        {
+            Target.Flags |= CalcFlag.MpAlteration;
+            if (!Target.IsZombie)
+                Target.Flags |= CalcFlag.MpRecovery;
+
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "CalcDamage", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "CalcDamage", true);
+
+            Target.MpDamage = Context.AttackPower * Context.Attack;
         }
 
         public void BonusKillerAbilities()
         {
+            // Dummied
             var hasCategory = new Func<ENEMY_TYPE, EnemyCategory, Boolean>((enemy, category) => (enemy.category & (Int16)category) != 0);
 
             if (!Target.IsPlayer)
@@ -348,6 +504,7 @@ namespace Memoria
         }
         public void BonusMpAttack()
         {
+            // Dummied
             if (Caster.HasSupportAbility(SupportAbility1.MPAttack) && Caster.CurrentMp > 0)
             {
                 Context.Attack = Context.Attack * 3 >> 1;
@@ -357,6 +514,7 @@ namespace Memoria
 
         public void BonusSupportAbilitiesAttack()
         {
+            // Dummied
             BonusKillerAbilities();
             BonusMpAttack();
         }
@@ -366,8 +524,19 @@ namespace Memoria
             if (IsCasterSameDirectionTarget() || Target.IsRunningAway())
                 Context.Attack = Context.Attack * 3 >> 1;
 
-            if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongReach)
+            // Note that there are two weapon categories: SHORT_RANGE and LONG_RANGE
+            // LONG_RANGE is used for this penalty while SHORT_RANGE is used both for that and for "out of range" enemies
+            if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange)
                 Context.Attack /= 2;
+        }
+
+        public void BonusBackstabAndPenaltyLongDistanceAsDamageModifiers()
+        {
+            if (IsCasterVisuallySameDirectionTarget())
+                ++Context.DamageModifierCount;
+
+            if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange)
+                ++Context.DamageModifierCount;
         }
 
         public void PenaltyReverseAttack()
@@ -427,14 +596,64 @@ namespace Memoria
             Context.Flags |= BattleCalcFlags.Miss;
             return false;
         }
+
         public void TryAddWeaponStatus()
         {
+            // Dummied
             if (Caster.HasSupportAbility(SupportAbility1.AddStatus))
             {
                 Context.StatusRate = Caster.WeaponRate;
                 if (Context.StatusRate > GameRandom.Next16() % 100)
                     Context.Flags |= BattleCalcFlags.AddStat;
             }
+        }
+
+        public Boolean ApplyElementAsDamageModifiers(EffectElement element)
+		{
+            if ((element & Target.GuardElement) != 0)
+			{
+                Context.Flags |= BattleCalcFlags.Guard;
+                return false;
+            }
+            if ((element & Target.AbsorbElement) != 0)
+                Context.Flags |= BattleCalcFlags.Absorb;
+            for (Int32 i = 0; i < 8; i++)
+			{
+                if ((Caster.BonusElement & (EffectElement)(1 << i)) != 0)
+                    ++Context.DamageModifierCount;
+                if ((Target.WeakElement & (EffectElement)(1 << i)) != 0)
+                    ++Context.DamageModifierCount;
+                if ((Target.HalfElement & (EffectElement)(1 << i)) != 0)
+                    --Context.DamageModifierCount;
+            }
+            return true;
+        }
+
+        public void StealItem(BattleEnemy enemy, Int32 slot)
+        {
+            Context.ItemSteal = enemy.StealableItems[slot];
+            if (Context.ItemSteal == Byte.MaxValue)
+            {
+                UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
+                return;
+            }
+
+            enemy.StealableItems[slot] = Byte.MaxValue;
+            GameState.Thefts++;
+
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+                saFeature.TriggerOnAbility(this, "Steal", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+                saFeature.TriggerOnAbility(this, "Steal", true);
+
+            BattleItem.AddToInventory(Context.ItemSteal);
+            UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(Context.ItemSteal));
+        }
+
+        public void RaiseTrouble()
+        {
+            if (Command.Data.tar_id == Target.Id && Target.IsUnderStatus(BattleStatus.Trouble) && (Context.AddedStatuses & BattleStatus.Trouble) == 0 && (Target.Flags & CalcFlag.HpRecovery) == 0)
+                Target.Data.fig_info |= Param.FIG_INFO_TROUBLE;
         }
     }
 }

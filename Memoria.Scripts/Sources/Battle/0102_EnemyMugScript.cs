@@ -23,10 +23,9 @@ namespace Memoria.Scripts.Battle
         {
             _v.NormalPhisicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
-            _v.Target.GambleDefence();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();
-            _v.TargetCommand.CalcHpDamage();
+            _v.CalcHpDamage();
             RemoveItem();
         }
 

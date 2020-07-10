@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             }
 
             _v.MagicAccuracy();
-            if (_v.TargetCommand.TryMagicHit())
+            if (_v.TryMagicHit())
                 _v.TargetCommand.TryAlterCommandStatuses();
         }
     }

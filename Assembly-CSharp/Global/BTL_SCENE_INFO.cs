@@ -2,7 +2,7 @@
 
 public class BTL_SCENE_INFO
 {
-	public Byte StartType;
+	public battle_start_type_tags StartType;
 
 	public Byte SpecialStart;
 

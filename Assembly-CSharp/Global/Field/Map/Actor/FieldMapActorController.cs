@@ -784,7 +784,7 @@ public class FieldMapActorController : HonoBehavior
                 this.moveVec.Normalize();
             }
             Single y = FF9StateSystem.Field.twist.y;
-			if (flag)
+			if (analogControlEnabled && Configuration.AnalogControl.UseAbsoluteOrientation)
 			{
 				y = FF9StateSystem.Field.twist.x;
 			}

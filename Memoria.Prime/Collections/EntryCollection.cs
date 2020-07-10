@@ -123,6 +123,11 @@ namespace Memoria.Prime.Collections
 
                 throw new ArgumentException($"There is no element of type {TypeCache<TValue>.Type.FullName} with the key {key}.");
             }
+
+            set
+            {
+                _dic[key] = value;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

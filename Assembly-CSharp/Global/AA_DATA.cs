@@ -6,6 +6,11 @@ public class AA_DATA
 	{
 		this.Info = new BattleCommandInfo();
 		this.Ref = new BTL_REF();
+		Category = 0;
+		AddNo = 0;
+		MP = 0;
+		Type = 0;
+		Vfx2 = 0;
 	}
 
 	public AA_DATA(BattleCommandInfo info, BTL_REF @ref, Byte category, Byte statusSetIndex, Byte mp, Byte type, UInt16 vfx2)

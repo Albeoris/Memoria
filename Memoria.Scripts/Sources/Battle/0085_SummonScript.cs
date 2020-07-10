@@ -56,8 +56,8 @@ namespace Memoria.Scripts.Battle
                     break;
             }
 
-            _v.TargetCommand.CalcHpDamage();
-            _v.TargetCommand.TryAlterMagicStatuses();
+            _v.CalcHpDamage();
+            _v.TryAlterMagicStatuses();
         }
     }
 }

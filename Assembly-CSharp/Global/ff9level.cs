@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -22,7 +23,7 @@ public static class ff9level
     {
         try
         {
-            String inputPath = DataResources.Characters.BaseStatsFile;
+            String inputPath = DataResources.Characters.Directory + DataResources.Characters.BaseStatsFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"File with base stats of characters not found: [{inputPath}]");
 
@@ -30,7 +31,18 @@ public static class ff9level
             if (baseStats.Length < CharacterId.CharacterCount)
                 throw new NotSupportedException($"You must set base stats for {CharacterId.CharacterCount} characters, but there {baseStats.Length}.");
 
-            return EntryCollection.CreateWithDefaultElement(baseStats, e => e.Id);
+			EntryCollection<CharacterBaseStats> result = EntryCollection.CreateWithDefaultElement(baseStats, e => e.Id);
+			for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+			{
+				inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.BaseStatsFile;
+				if (File.Exists(inputPath))
+				{
+					baseStats = CsvReader.Read<CharacterBaseStats>(inputPath);
+					foreach (CharacterBaseStats it in baseStats)
+						result[it.Id] = it;
+				}
+			}
+			return result;
         }
         catch (Exception ex)
         {
@@ -44,15 +56,29 @@ public static class ff9level
     {
         try
         {
-            String inputPath = DataResources.Characters.Leveling;
+			CharacterLevelUp[] levels;
+
+			String inputPath;
+			for (Int32 i = 0; i < Configuration.Mod.FolderNames.Length; i++)
+			{
+				inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Leveling;
+				if (File.Exists(inputPath))
+				{
+					levels = CsvReader.Read<CharacterLevelUp>(inputPath);
+					if (levels.Length < CharacterLevelUp.LevelCount)
+						throw new NotSupportedException($"You must set level up info for {CharacterLevelUp.LevelCount} levels, but there {levels.Length}.");
+					return levels;
+				}
+			}
+			inputPath = DataResources.Characters.Directory + DataResources.Characters.Leveling;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"File with leveling info not found: [{inputPath}]");
 
-            CharacterLevelUp[] levels = CsvReader.Read<CharacterLevelUp>(inputPath);
+            levels = CsvReader.Read<CharacterLevelUp>(inputPath);
             if (levels.Length < CharacterLevelUp.LevelCount)
                 throw new NotSupportedException($"You must set level up info for {CharacterLevelUp.LevelCount} levels, but there {levels.Length}.");
 
-            return levels;
+			return levels;
         }
         catch (Exception ex)
         {

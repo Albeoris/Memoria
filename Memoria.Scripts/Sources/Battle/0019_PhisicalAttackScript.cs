@@ -19,14 +19,17 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.WeaponPhisicalParams();
+            if (_v.Caster.IsPlayer)
+                _v.WeaponPhisicalParams();
+            else
+                _v.NormalPhisicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.CasterCommand.BonusElement();
             if (_v.CanAttackWeaponElementalCommand())
             {
-                _v.TargetCommand.CalcHpDamage();
-                _v.TargetCommand.TryAlterMagicStatuses();
+                _v.CalcHpDamage();
+                _v.TryAlterMagicStatuses();
             }
         }
     }

@@ -648,7 +648,7 @@ public class btl_scrp
 		switch (id)
 		{
 		case 32:
-			result = ff9Battle.btl_scene.Info.StartType;
+			result = (Byte)ff9Battle.btl_scene.Info.StartType;
 			break;
 		case 33:
 			result = ff.party.gil;
@@ -680,14 +680,7 @@ public class btl_scrp
 		case 39:
 			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null)
 			{
-				if ((ff9Battle.cur_cmd.regist.sa[1] & 1u) != 0u) // MagElemNull
-                    {
-					result = 0u;
-				}
-				else
-				{
-					result = ff9Battle.cur_cmd.aa.Ref.Elements;
-				}
+				result = (UInt32)ff9Battle.cur_cmd.Element;
 			}
 			break;
 		case 40:
@@ -769,7 +762,7 @@ public class btl_scrp
 				ff9Battle.btl_seq = 0;
 				if (info.SpecialStart == 0 || info.BackAttack == 0)
 				{
-					info.StartType = 2;
+					info.StartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
 				}
 			}
 			break;

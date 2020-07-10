@@ -1,6 +1,7 @@
 ﻿using System;
 using Memoria;
 using Memoria.Data;
+using System.Collections.Generic;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable EmptyConstructor
@@ -12,6 +13,8 @@ namespace FF9
 {
     public class btl_sys
     {
+        public const Int32 fleeScriptId = 0056;
+
         public btl_sys()
         {
         }
@@ -172,37 +175,35 @@ namespace FF9
             return 1;
         }
 
-        public static Byte StartType(BTL_SCENE_INFO info)
+        public static battle_start_type_tags StartType(BTL_SCENE_INFO info)
         {
-            Byte num1 = 2;
-            if (info.SpecialStart != 0)
+            battle_start_type_tags start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
+            if (info.BackAttack != 0)
+                start_type = battle_start_type_tags.BTL_START_BACK_ATTACK;
+            Int32 backAttackChance = 24;
+            Int32 preemptiveChance = 16;
+            Int32 preemptivePriority = 0;
+            for (Int32 i = 0; i < 4; i++)
             {
-                if (info.BackAttack != 0)
-                    num1 = 0;
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
+                if (player != null)
+                    foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
+                        saFeature.TriggerOnBattleStart(ref backAttackChance, ref preemptiveChance, ref preemptivePriority);
             }
-            else
+            if (info.BackAttack == 0)
             {
-                Byte num2 = 24;
-                if (btl_abil.CheckPartyAbility(1U, 512U))
-                    num2 = 0;
-                else if (info.BackAttack != 0)
-                    num2 = Byte.MaxValue;
-                if (Comn.random8() < num2)
-                {
-                    num1 = 0;
-                }
-                else
-                {
-                    Byte num3 = 16;
-                    if (btl_abil.CheckPartyAbility(1U, 1024U))
-                        num3 = 85;
-                    if (Comn.random8() < num3)
-                        num1 = 1;
-                }
+                Boolean bAttack = Comn.random8() < backAttackChance;
+                Boolean preemptive = Comn.random8() < preemptiveChance;
+                if (preemptive && preemptivePriority > 0)
+                    start_type = battle_start_type_tags.BTL_START_FIRST_ATTACK;
+                else if (bAttack)
+                    start_type = battle_start_type_tags.BTL_START_BACK_ATTACK;
+                else if (preemptive)
+                    start_type = battle_start_type_tags.BTL_START_FIRST_ATTACK;
             }
-            if (num1 == 0)
+            if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
-            return num1;
+            return start_type;
         }
 
         public static void SetBonus(ENEMY_TYPE et)
@@ -251,19 +252,15 @@ namespace FF9
             PLAYER playerPtr = btl_util.getPlayerPtr(btl);
             playerPtr.trance = !unit.IsUnderStatus(BattleStatus.Trance) ? btl.trance : (Byte)0;
             btl_init.CopyPoints(playerPtr.cur, btl.cur);
-            if (btl_cmd.HasSupportAbility(btl, SupportAbility2.GuardianMog) && !removingUnit)
-            {
-                playerPtr.status = 0;
-            }
-            else
+            if (removingUnit)
             {
                 if (btl.cur.hp == 0)
                 {
                     /*int num = (int)*/
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
                 }
-                btl_stat.SaveStatus(playerPtr, btl);
             }
+            btl_stat.SaveStatus(playerPtr, btl);
         }
 
         public static void DelCharacter(BTL_DATA btl)
@@ -304,7 +301,6 @@ namespace FF9
             }
             else
             {
-                const Int32 fleeScriptId = 0056;
                 if (calc_check && UIManager.Battle.FF9BMenu_IsEnableAtb())
                     SBattleCalculator.CalcMain(null, null, null, fleeScriptId);
             }

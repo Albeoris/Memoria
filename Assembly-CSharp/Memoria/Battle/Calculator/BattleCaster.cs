@@ -55,6 +55,7 @@ namespace Memoria
 
         public void BonusConcentrate()
         {
+            // Dummied
             if (HasSupportAbility(SupportAbility2.Concentrate))
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }

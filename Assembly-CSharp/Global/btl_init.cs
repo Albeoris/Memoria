@@ -80,7 +80,7 @@ public class btl_init
 			{
 				btl_DATA2.weapon_geo = null;
 			}
-			btl_DATA2.sa = btl_init.enemy_dummy_sa;
+			btl_DATA2.sa = btl_init.enemy_dummy_sa; // Might want to use "= new UInt32[2]" for letting enemies use SA... doesn't seem to be useful for now though
 
 		    FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl_DATA2.height, ref btl_DATA2.radius);
             
@@ -193,9 +193,7 @@ public class btl_init
 
 	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int16 pNo)
 	{
-		Int16[] array = new Int16[3];
-		array[1] = 180;
-		Int16[] array2 = array;
+		Int16 startTypeAngle = (Int16)(pScene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK ? 180 : 0);
 		ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
 		enemy.et = FF9StateSystem.Battle.FF9Battle.enemy_type[pPut.TypeNo];
 		pBtl.bi.target = (Byte)(((pPut.Flags & 1) == 0) ? 0 : 1);
@@ -225,8 +223,8 @@ public class btl_init
 			pBtl.base_pos[2] = num;
 			pBtl.pos[index3] = num;
 			pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, (Single)(pPut.Rot & 4095), 180f));
-			pBtl.rot = Quaternion.Euler(new Vector3(0f, (Single)(pPut.Rot + array2[(int)pScene.Info.StartType] & 4095), 180f));
-//			pBtl.rot = (pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, pPut.Rot + array2[pScene.Info.StartType] & 4095, 180f)));
+			pBtl.rot = Quaternion.Euler(new Vector3(0f, (Single)(pPut.Rot + startTypeAngle & 4095), 180f));
+			//pBtl.rot = (pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, pPut.Rot + 180 & 4095, 180f)));
 		}
 		else
 		{
@@ -323,7 +321,7 @@ public class btl_init
 		}
 		btlsys.btl_load_status = (Byte)(btlsys.btl_load_status | 16);
 		btl_init.SetupBattlePlayer();
-		if (btlsys.btl_scene.Info.StartType == 0)
+		if (btlsys.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
 		{
 			for (BTL_DATA btl_DATA = btlsys.btl_list.next; btl_DATA != null; btl_DATA = btl_DATA.next)
 			{
@@ -333,7 +331,7 @@ public class btl_init
 				}
 			}
 		}
-		else if (btlsys.btl_scene.Info.StartType == 1)
+		else if (btlsys.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
 		{
 			for (BTL_DATA btl_DATA = btlsys.btl_list.next; btl_DATA != null; btl_DATA = btl_DATA.next)
 			{
@@ -361,7 +359,7 @@ public class btl_init
 		Int16 num3 = 632;
 		Int16 num4 = -1560;
 		Int16 num5 = (Int16)((num - 1) * num3 / 2);
-		Int16 num6 = (Int16)((btl_scene.Info.StartType != 0) ? 180 : 0);
+		Int16 num6 = (Int16)((btl_scene.Info.StartType != battle_start_type_tags.BTL_START_BACK_ATTACK) ? 180 : 0);
 		num2 = 0;
 		BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
 		while (num2 < num)
@@ -371,7 +369,7 @@ public class btl_init
 				break;
 			}
 			next.bi.row = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.row;
-			if (btl_scene.Info.StartType == 0)
+			if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
 			{
 				BTL_INFO bi = next.bi;
 				bi.row = (Byte)(bi.row ^ 1);
@@ -395,7 +393,7 @@ public class btl_init
 			next.base_pos[2] = num7;
 			btl_DATA3.pos[index3] = num7;
 			next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 180f, 180f));
-			next.rot = Quaternion.Euler(new Vector3(0f, (float)num6, 180f));
+			next.rot = Quaternion.Euler(new Vector3(0f, (Single)num6, 180f));
 //			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
 			next.gameObject.transform.localPosition = next.pos;
 			next.gameObject.transform.localRotation = next.rot;
@@ -452,11 +450,11 @@ public class btl_init
 		btl_stat.InitCountDownStatus(btl);
 		btl.max.at = (Int16)((60 - btl.elem.dex) * 40 << 2);
 		btl_para.InitATB(btl);
-		if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == 0)
+		if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
 		{
 			btl.cur.at = 0;
 		}
-		else if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == 1)
+		else if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
 		{
 			btl.cur.at = (Int16)(btl.max.at - 1);
 		}

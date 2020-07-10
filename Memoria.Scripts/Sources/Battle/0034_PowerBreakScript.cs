@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             _v.MagicAccuracy();
             _v.Target.PenaltyShellHitRate();
-            if (_v.TargetCommand.TryMagicHit())
+            if (_v.TryMagicHit())
                 _v.Target.Strength = (Byte)(_v.Target.Strength * 3 / 4);
         }
 

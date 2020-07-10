@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -24,7 +25,7 @@ public static partial class FF9BattleDB
     {
         try
         {
-            String inputPath = DataResources.Battle.StatusSetsFile;
+            String inputPath = DataResources.Battle.Directory + DataResources.Battle.StatusSetsFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"File with status sets not found: [{inputPath}]");
 
@@ -32,7 +33,18 @@ public static partial class FF9BattleDB
             if (statusSets.Length < BattleStatusEntry.SetsCount)
                 throw new NotSupportedException($"You must set {BattleStatusEntry.SetsCount} status sets, but there {statusSets.Length}.");
 
-            return EntryCollection.CreateWithDefaultElement(statusSets, e => e.Id);
+            EntryCollection<BattleStatusEntry> result = EntryCollection.CreateWithDefaultElement(statusSets, e => e.Id);
+            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            {
+                inputPath = DataResources.Battle.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Battle.StatusSetsFile;
+                if (File.Exists(inputPath))
+                {
+                    statusSets = CsvReader.Read<BattleStatusEntry>(inputPath);
+                    foreach (BattleStatusEntry it in statusSets)
+                        result[it.Id] = it;
+                }
+            }
+            return result;
         }
         catch (Exception ex)
         {
@@ -46,7 +58,7 @@ public static partial class FF9BattleDB
     {
         try
         {
-            String inputPath = DataResources.Battle.ActionsFile;
+            String inputPath = DataResources.Battle.Directory + DataResources.Battle.ActionsFile;
             if (!File.Exists(inputPath))
                 throw new FileNotFoundException($"File with character actions not found: [{inputPath}]");
 
@@ -54,7 +66,18 @@ public static partial class FF9BattleDB
             if (statusSets.Length < BattleStatusEntry.SetsCount)
                 throw new NotSupportedException($"You must set {BattleStatusEntry.SetsCount} status sets, but there {statusSets.Length}.");
 
-            return EntryCollection.CreateWithDefaultElement(statusSets, e => e.Id, e=>e.ActionData);
+            EntryCollection<AA_DATA> result = EntryCollection.CreateWithDefaultElement(statusSets, e => e.Id, e => e.ActionData);
+            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            {
+                inputPath = DataResources.Battle.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Battle.ActionsFile;
+                if (File.Exists(inputPath))
+                {
+                    statusSets = CsvReader.Read<BattleActionEntry>(inputPath);
+                    foreach (BattleActionEntry it in statusSets)
+                        result[it.Id] = it.ActionData;
+                }
+            }
+            return result;
         }
         catch (Exception ex)
         {
@@ -64,6 +87,7 @@ public static partial class FF9BattleDB
         }
     }
 
+    // Todo: make a CSV reader for those
 	public static STAT_DATA[] status_data = new[]
 	{
 		new STAT_DATA(2, 0, 0, BattleStatus.Doom, (BattleStatus)UInt32.MaxValue),

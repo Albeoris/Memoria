@@ -422,16 +422,17 @@ public class BattleResultUI : UIScene
 				break;
 			}
 		}
-		BattleEndValue[] array2 = this.apValue;
-		for (Int32 k = 0; k < (Int32)array2.Length; k++)
+		for (Int32 k = 0; k < (Int32)this.apValue.Length; k++)
 		{
-			BattleEndValue battleEndValue2 = array2[k];
-			if (battleEndValue2.value != 0u)
+			if (this.apValue[k].value != 0u)
 			{
 				flag = false;
 				break;
 			}
 		}
+		for (Int32 k = 0; k < (Int32)this.expValue.Length && flag; k++)
+			if (this.expValue[k].value != 0u)
+				flag = false;
 		if (!flag)
 		{
 			this.currentState = BattleResultUI.ResultState.Start;
@@ -476,64 +477,65 @@ public class BattleResultUI : UIScene
 
 	private void InitialInfo()
 	{
-		Boolean flag = false;
+		this.AnalyzeBonusItem();
+		PLAYER[] party = FF9StateSystem.Common.FF9.party.member;
+		for (Int32 saIndex = 0; saIndex < 64; saIndex++)
+		{
+			Boolean triggered = false;
+			for (Int32 playIndex = 0; playIndex < 4 && !triggered; playIndex++)
+				if (party[playIndex] != null && ff9abil.FF9Abil_IsEnableSA(party[playIndex].sa, 192 + saIndex))
+					triggered = ff9abil._FF9Abil_SaFeature[saIndex].TriggerOnBattleResult(party[playIndex], battle.btl_bonus, this.itemList, "RewardAll", 0U);
+		}
 		this.AnalyzeArgument();
 		for (Int32 i = 0; i < 4; i++)
 		{
-			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
-			if (this.isNeedExp[i] && player != null)
+			PLAYER player = party[i];
+			if (player != null)
 			{
-				BattleEndValue battleEndValue = new BattleEndValue();
-				battleEndValue.value = this.defaultExp;
-				if (ff9abil.FF9Abil_GetEnableSA(player.Index, 235))
+				BONUS individualBonus = new BONUS();
+				individualBonus.ap = (UInt16)this.defaultAp;
+				individualBonus.card = (Byte)this.defaultCard;
+				individualBonus.exp = this.defaultExp;
+				individualBonus.gil = this.defaultGil;
+				foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
+					saFeature.TriggerOnBattleResult(player, individualBonus, this.itemList, "RewardSingle", 0U);
+				this.defaultCard = individualBonus.card;
+				this.defaultGil = individualBonus.gil;
+				if (this.isNeedExp[i])
 				{
-					battleEndValue.value += this.defaultExp >> 1;
-				}
-				if (this.defaultExp < (UInt64)EXPMinTick)
-				{
-					battleEndValue.step = 1u;
-				}
-				else if (this.defaultExp < (UInt64)(EXPMinTick * EXPDefaultAdd))
-				{
-					battleEndValue.step = (UInt32)((this.defaultExp + (UInt64)EXPMinTick - 1UL) / (UInt64)EXPMinTick);
-				}
-				else
-				{
-					battleEndValue.step = (UInt32)BattleResultUI.EXPDefaultAdd;
-					UInt32 num = this.defaultExp / battleEndValue.step;
-					if ((UInt64)num > (UInt64)((Int64)BattleResultUI.EXPTickMax))
+					BattleEndValue battleEndValue = new BattleEndValue();
+					battleEndValue.value = individualBonus.exp;
+					if (battleEndValue.value < (UInt64)EXPMinTick)
 					{
-						battleEndValue.step = (UInt32)(((UInt64)this.defaultExp + (UInt64)((Int64)BattleResultUI.EXPTickMax) - 1UL) / (UInt64)((Int64)BattleResultUI.EXPTickMax));
+						battleEndValue.step = 1u;
 					}
+					else if (battleEndValue.value < (UInt64)(EXPMinTick * EXPDefaultAdd))
+					{
+						battleEndValue.step = (UInt32)((battleEndValue.value + (UInt64)EXPMinTick - 1UL) / (UInt64)EXPMinTick);
+					}
+					else
+					{
+						battleEndValue.step = (UInt32)BattleResultUI.EXPDefaultAdd;
+						UInt32 num = battleEndValue.value / battleEndValue.step;
+						if ((UInt64)num > (UInt64)((Int64)BattleResultUI.EXPTickMax))
+						{
+							battleEndValue.step = (UInt32)(((UInt64)battleEndValue.value + (UInt64)((Int64)BattleResultUI.EXPTickMax) - 1UL) / (UInt64)((Int64)BattleResultUI.EXPTickMax));
+						}
+					}
+					battleEndValue.current = 0u;
+					this.expValue[i] = battleEndValue;
 				}
-				battleEndValue.current = 0u;
-				this.expValue[i] = battleEndValue;
-			}
-			if (this.isNeedAp[i] && player != null)
-			{
-				BattleEndValue battleEndValue2 = new BattleEndValue();
-				if (ff9abil.FF9Abil_GetEnableSA(player.Index, 236))
+				if (this.isNeedAp[i])
 				{
-					battleEndValue2.value = this.defaultAp << 1;
+					BattleEndValue battleEndValue2 = new BattleEndValue();
+					battleEndValue2.value = individualBonus.ap;
+					battleEndValue2.step = 1u;
+					battleEndValue2.current = 0u;
+					this.apValue[i] = battleEndValue2;
 				}
-				else
-				{
-					battleEndValue2.value = this.defaultAp;
-				}
-				battleEndValue2.step = 1u;
-				battleEndValue2.current = 0u;
-				this.apValue[i] = battleEndValue2;
-			}
-			if (player != null && ff9abil.FF9Abil_GetEnableSA(player.Index, 237))
-			{
-				flag = true;
 			}
 		}
 		this.gilValue.value = (UInt32)this.defaultGil;
-		if (flag)
-		{
-			this.gilValue.value += this.gilValue.value >> 1;
-		}
 		if ((UInt64)this.gilValue.value < (UInt64)((Int64)BattleResultUI.GilCountTick))
 		{
 			this.gilValue.step = 1u;
@@ -554,13 +556,8 @@ public class BattleResultUI : UIScene
 		base.StartCoroutine(this.InitialNone_delay());
 	}
 
-	private void AnalyzeArgument()
+	private void AnalyzeBonusItem()
 	{
-		this.AnalyzeParty();
-		this.defaultExp = (UInt32)((this.remainPlayerCounter == 0) ? 0UL : ((UInt64)battle.btl_bonus.exp / (UInt64)((Int64)this.remainPlayerCounter)));
-		this.defaultAp = (UInt32)battle.btl_bonus.ap;
-		this.defaultGil = battle.btl_bonus.gil;
-		this.defaultCard = (Int32)((QuadMistDatabase.MiniGame_GetAllCardCount() < 100) ? battle.btl_bonus.card : Byte.MaxValue);
 		this.itemList.Clear();
 		for (Int32 i = 0; i < BattleResultUI.ItemArgMax; i++)
 		{
@@ -588,6 +585,15 @@ public class BattleResultUI : UIScene
 				}
 			}
 		}
+	}
+
+	private void AnalyzeArgument()
+	{
+		this.AnalyzeParty();
+		this.defaultExp = (UInt32)((this.remainPlayerCounter == 0) ? 0UL : ((UInt64)battle.btl_bonus.exp / (UInt64)((Int64)this.remainPlayerCounter)));
+		this.defaultAp = (UInt32)battle.btl_bonus.ap;
+		this.defaultGil = battle.btl_bonus.gil;
+		this.defaultCard = (Int32)((QuadMistDatabase.MiniGame_GetAllCardCount() < 100) ? battle.btl_bonus.card : Byte.MaxValue);
 	}
 
 	private void UpdateExp()
@@ -946,7 +952,7 @@ public class BattleResultUI : UIScene
 
 	public GameObject ScreenFadeGameObject;
 
-	private static Int32 ItemMax = 6;
+	public static Int32 ItemMax = 6;
 
 	private static Int32 ItemArgMax = 16;
 
@@ -1046,7 +1052,7 @@ public class BattleResultUI : UIScene
 
 	private Boolean isTimerDisplay;
 
-	private static Dictionary<UInt32, Byte> BadIconDict = new Dictionary<UInt32, Byte>
+	public static Dictionary<UInt32, Byte> BadIconDict = new Dictionary<UInt32, Byte>
 	{
 		{
 			1u,

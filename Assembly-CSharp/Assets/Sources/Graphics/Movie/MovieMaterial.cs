@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Memoria;
+using Memoria.Prime;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -254,14 +256,25 @@ namespace Assets.Sources.Graphics.Movie
 			Int64 num = 0L;
 			Int64 num2 = 0L;
 			RuntimePlatform platform = Application.platform;
-			String text;
+			String text = "";
+			String[] folderNames = Configuration.Mod.AllFolderNames;
 			switch (platform)
 			{
 			case RuntimePlatform.WindowsEditor:
-				text = AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
+				for (Int32 i = 0; i < folderNames.Length; i++)
+				{
+					text = folderNames[i] + (folderNames[i].Length > 0 ? "/" : "") + AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
+					if (File.Exists(text))
+						break;
+				}
 				break;
 			case RuntimePlatform.IPhonePlayer:
-				text = AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
+				for (Int32 i = 0; i < folderNames.Length; i++)
+				{
+					text = folderNames[i] + (folderNames[i].Length > 0 ? "/" : "") + AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
+					if (File.Exists(text))
+						break;
+				}
 				break;
 			case RuntimePlatform.PS3:
 			case RuntimePlatform.XBOX360:
@@ -270,7 +283,12 @@ namespace Assets.Sources.Graphics.Movie
 				{
 					throw new Exception("[Movie.MovieMaterial.GLPlugin]  Platform: " + Application.platform + " Not supported.");
 				}
-				text = AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
+				for (Int32 i = 0; i < folderNames.Length; i++)
+				{
+					text = folderNames[i] + (folderNames[i].Length > 0 ? "/" : "") + AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
+					if (File.Exists(text))
+						break;
+				}
 				break;
 			case RuntimePlatform.Android:
 				text = Application.dataPath;
@@ -282,7 +300,7 @@ namespace Assets.Sources.Graphics.Movie
 			default:
 				goto IL_2A;
 			}
-            this.isFMV = this.MovieFile.StartsWith("FMV");
+			this.isFMV = this.MovieFile.StartsWith("FMV");
             if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, text, (Int32)num, (Int32)num2, false, this.scanDuration, 16))
 			{
 				this.Width = MovieMaterial.GetPicWidth(this.m_nativeContext);

@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.TargetCommand.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
+            if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
                 _v.NormalMagicParams();
                 _v.Caster.PenaltyMini();
@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
                 _v.CasterCommand.BonusElement();
 
                 if (_v.CanAttackElementalCommand())
-                    _v.TargetCommand.CalcHpDamage();
+                    _v.CalcHpDamage();
             }
         }
     }

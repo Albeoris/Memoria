@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
@@ -251,6 +252,23 @@ public partial class BattleHUD : UIScene
             return;
         _oneTime = false;
         Application.targetFrameRate = 60;
+
+        UInt32 gil = (UInt32)battle.btl_bonus.gil;
+        for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+            if (next.bi.player == 0)
+                gil += btl_util.getEnemyTypePtr(next).bonus.gil;
+        if (FF9StateSystem.Common.FF9.btl_result == 4)
+            btl_sys.ClearBattleBonus();
+        for (Int32 i = 0; i < 4; i++)
+        {
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
+            if (player != null)
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
+                    saFeature.TriggerOnBattleResult(player, battle.btl_bonus, new List<FF9ITEM>(), "BattleEnd", gil / 10U);
+        }
+        if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != Byte.MaxValue))
+            battle.btl_bonus.escape_gil = true;
+
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.BattleResult));
     }
 

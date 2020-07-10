@@ -28,10 +28,10 @@ namespace Memoria.Scripts.Battle
             _v.Target.PenaltyShellAttack();
             _v.Target.Flags |= CalcFlag.MpAlteration;
             _v.Caster.Flags |= CalcFlag.MpAlteration;
+            _v.Context.IsDrain = true;
 
-            Int32 diff = _v.Context.PowerDifference;
-            if (diff > 0)
-                damage = Math.Min(9999, diff * _v.Context.EnsureAttack >> 2);
+            _v.CalcMpDamage();
+            damage = _v.Target.MpDamage;
 
             if (_v.Target.IsZombie)
             {

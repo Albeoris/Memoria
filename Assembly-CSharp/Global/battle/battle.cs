@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -120,12 +121,12 @@ public class battle
                         {
                             UIManager.Battle.FF9BMenu_EnableMenu(true);
                         }
-                        if (ff9Battle.btl_scene.Info.StartType == 0)
+                        if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
                         {
                             UIManager.Battle.SetBattleFollowMessage(2);
                             break;
                         }
-                        if (ff9Battle.btl_scene.Info.StartType == 1)
+                        if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                         {
                             UIManager.Battle.SetBattleFollowMessage(1);
                         }
@@ -415,15 +416,12 @@ public class battle
                     UInt32 gil = (UInt32)battle.btl_bonus.gil;
                     sys.btl_flag |= 64;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                    {
                         if (next.bi.player == 0)
                             gil += btl_util.getEnemyTypePtr(next).bonus.gil;
-                    }
                     if (btlsys.btl_scene.Info.WinPose == 0 && btlsys.btl_scene.Info.FieldBGM != 0)
                         sys.btl_flag |= 8;
                     sys.btl_result = 4;
                     btlsys.btl_phase = 8;
-                    btl_sys.ClearBattleBonus();
                     if ((sys.btl_flag & 4) != 0)
                     {
                         UInt32 num2 = gil / 10U;
@@ -437,12 +435,6 @@ public class battle
                             sys.party.gil = 0U;
                         }
                         UIManager.Battle.SetBattleFollowMessage(30, num2);
-                        break;
-                    }
-                    if (btl_abil.CheckPartyAbility(1U, 16384U))
-                    {
-                        battle.btl_bonus.escape_gil = true;
-                        battle.btl_bonus.gil = (Int32)(gil / 10U);
                     }
                     break;
             }

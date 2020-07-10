@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
             }
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
-            _v.TargetCommand.CalcHpDamage();
+            _v.CalcHpDamage();
         }
     }
 }

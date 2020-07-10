@@ -94,10 +94,11 @@ namespace Memoria.Prime.Ini
                     if (modSection.Enabled)
                     {
                         String[] ModFolders = null;
+                        IniArray<String> vs = null;
                         foreach (IniValue v in modSection.GetValues())
                             if (String.Compare(v.Name, "FolderNames") == 0)
                             {
-                                IniArray<String> vs = v as IniArray<String>;
+                                vs = v as IniArray<String>;
                                 if (vs != null)
                                 {
                                     // Consider that only the main configuration file can have a "[Mod] FolderNames" field (others are ignored as it is)
@@ -107,7 +108,8 @@ namespace Memoria.Prime.Ini
                                 }
                             }
                         if (ModFolders != null)
-                            for (Int32 i = ModFolders.Length-1; i >= 0; --i) // Read in reverse order so that first folder's changes overwrite the others
+                        {
+                            for (Int32 i = ModFolders.Length - 1; i >= 0; --i) // Read in reverse order so that first folder's changes overwrite the others
                             {
                                 String subConfigPath = ModFolders[i] + Path.DirectorySeparatorChar + _filePath;
                                 if (File.Exists(subConfigPath))
@@ -127,6 +129,8 @@ namespace Memoria.Prime.Ini
                                     }
                                 }
                             }
+                            vs.Value = ModFolders;
+                        }
                     }
             }
             finally

@@ -256,17 +256,17 @@ public class BattleUI : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button("Normal Attack"))
 		{
-			FF9StateSystem.Battle.debugStartType = 2;
+			FF9StateSystem.Battle.debugStartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		if (GUILayout.Button("First Attack"))
 		{
-			FF9StateSystem.Battle.debugStartType = 1;
+			FF9StateSystem.Battle.debugStartType = battle_start_type_tags.BTL_START_FIRST_ATTACK;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		if (GUILayout.Button("Back Attack"))
 		{
-			FF9StateSystem.Battle.debugStartType = 0;
+			FF9StateSystem.Battle.debugStartType = battle_start_type_tags.BTL_START_BACK_ATTACK;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.EndHorizontal();

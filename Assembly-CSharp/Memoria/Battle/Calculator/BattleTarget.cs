@@ -80,6 +80,7 @@ namespace Memoria
 
         public void PenaltyDistractHitRate()
         {
+            // Dummied
             if (HasSupportAbility(SupportAbility1.Distract))
                 _context.HitRate /= 2;
         }
@@ -111,11 +112,11 @@ namespace Memoria
                 _context.DefensePower = 0;
         }
 
-            public void BonusWeakElement(EffectElement element)
-            {
-                if (IsWeakElement(element))
-                    _context.Attack = (Int16)(_context.Attack * 3 >> 1);
-            }
+        public void BonusWeakElement(EffectElement element)
+        {
+            if (IsWeakElement(element))
+                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+        }
 
         private void BonusSleepOrMiniAttack()
         {
@@ -172,7 +173,7 @@ namespace Memoria
         {
             BattleStatus prev_status = this.PermanentStatus | this.CurrentStatus;
             UInt32 result = btl_stat.AlterStatuses(Data, status);
-            this._context.added_status |= (this.PermanentStatus | this.CurrentStatus) & ~prev_status;
+            this._context.AddedStatuses |= (this.PermanentStatus | this.CurrentStatus) & ~prev_status;
             if (changeContext)
             {
                 if (result == 0)
@@ -279,14 +280,9 @@ namespace Memoria
 
         public void GambleDefence()
         {
+            // Dummied
             if (_context.DefensePower != 0 && HasSupportAbility(SupportAbility1.GambleDefence))
                 _context.DefensePower = (Int16)(Comn.random16() % (_context.DefensePower << 1));
-        }
-
-        public void RaiseTrouble()
-        {
-            if (IsUnderStatus(BattleStatus.Trouble))
-                Data.fig_info |= Param.FIG_INFO_TROUBLE;
         }
     }
 }
