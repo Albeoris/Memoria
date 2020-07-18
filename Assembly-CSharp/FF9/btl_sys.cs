@@ -190,7 +190,7 @@ namespace FF9
                     foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
                         saFeature.TriggerOnBattleStart(ref backAttackChance, ref preemptiveChance, ref preemptivePriority);
             }
-            if (info.BackAttack == 0)
+            if (info.SpecialStart == 0 && info.BackAttack == 0)
             {
                 Boolean bAttack = Comn.random8() < backAttackChance;
                 Boolean preemptive = Comn.random8() < preemptiveChance;

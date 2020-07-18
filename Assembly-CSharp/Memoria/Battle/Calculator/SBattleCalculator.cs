@@ -52,8 +52,7 @@ namespace Memoria
                 }
                 if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
                 {
-                    v.Caster.BonusWeaponElement();
-                    v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement);
+                    v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement, v.Caster.WeaponElement);
                 }
                 if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
                 {

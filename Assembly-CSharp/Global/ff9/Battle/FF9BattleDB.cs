@@ -14,12 +14,14 @@ public static partial class FF9BattleDB
 {
     public static readonly EntryCollection<BattleStatusEntry> StatusSets;
     public static readonly EntryCollection<AA_DATA> CharacterActions;
+    public static readonly EntryCollection<STAT_DATA> StatusData;
 
     static FF9BattleDB()
 	{
 	    StatusSets = LoadStatusSets();
 	    CharacterActions = LoadActions();
-	}
+        StatusData = LoadStatusData();
+    }
 
     private static EntryCollection<BattleStatusEntry> LoadStatusSets()
     {
@@ -48,7 +50,7 @@ public static partial class FF9BattleDB
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[ff9level] Load base stats of characters failed.");
+            Log.Error(ex, "[FF9BattleDB] Load base stats of characters failed.");
             UIManager.Input.ConfirmQuit();
             return null;
         }
@@ -81,56 +83,42 @@ public static partial class FF9BattleDB
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[ff9level] Load base stats of characters failed.");
+            Log.Error(ex, "[FF9BattleDB] Load base stats of characters failed.");
             UIManager.Input.ConfirmQuit();
             return null;
         }
     }
 
-    // Todo: make a CSV reader for those
-	public static STAT_DATA[] status_data = new[]
-	{
-		new STAT_DATA(2, 0, 0, BattleStatus.Doom, (BattleStatus)UInt32.MaxValue),
-		new STAT_DATA(7, 20, 0, BattleStatus.Defend | BattleStatus.Poison, BattleStatus.Venom | BattleStatus.Poison),
-		new STAT_DATA(0, 0, 0, 0u, BattleStatus.Virus),
-		new STAT_DATA(13, 0, 0, 0u, BattleStatus.Silence),
-		new STAT_DATA(16, 0, 0, 0u, BattleStatus.Blind),
-		new STAT_DATA(10, 0, 0, 0u, BattleStatus.Trouble),
-		new STAT_DATA(9, 0, 0, 0u, BattleStatus.Petrify | BattleStatus.Zombie | BattleStatus.Trance | BattleStatus.GradualPetrify),
-		new STAT_DATA(0, 0, 0, 0u, 0u),
+    private static EntryCollection<STAT_DATA> LoadStatusData()
+    {
+        try
+        {
+            String inputPath = DataResources.Battle.Directory + DataResources.Battle.StatusDataFile;
+            if (!File.Exists(inputPath))
+                throw new FileNotFoundException($"File with character actions not found: [{inputPath}]");
 
-        new STAT_DATA(1, 0, 0,
-            BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.LowHP | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Reflect | BattleStatus.Jump | BattleStatus.GradualPetrify,
-            BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.EasyKill | BattleStatus.LowHP | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.Jump | BattleStatus.GradualPetrify),
+            BattleStatusDataEntry[] statusData = CsvReader.Read<BattleStatusDataEntry>(inputPath);
+            if (statusData.Length < BattleStatusDataEntry.StatusCount)
+                throw new NotSupportedException($"You must set {BattleStatusDataEntry.StatusCount} status sets, but there {statusData.Length}.");
 
-		new STAT_DATA(5, 0, 0, 0u, BattleStatus.LowHP),
-		new STAT_DATA(14, 0, 0, 0u, BattleStatus.Confuse),
-		new STAT_DATA(15, 0, 0, 0u, BattleStatus.Berserk),
-		new STAT_DATA(6, 0, 0, 0u, BattleStatus.Stop),
-		new STAT_DATA(27, 0, 0, 0u, BattleStatus.AutoLife),
-
-        new STAT_DATA(3, 0, 0,
-            BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Slow | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.GradualPetrify,
-		    BattleStatus.Zombie | BattleStatus.Trance),
-
-        new STAT_DATA(0, 0, 0, 0u, BattleStatus.Defend),
-		new STAT_DATA(8, 10, 30, 0u, 0u),
-		new STAT_DATA(12, 0, 25, BattleStatus.Defend, 0u),
-		new STAT_DATA(23, 10, 45, 0u, 0u),
-		new STAT_DATA(22, 0, 40, 0u, 0u),
-		new STAT_DATA(17, 0, 40, 0u, 0u),
-		new STAT_DATA(26, 0, 30, 0u, 0u),
-		new STAT_DATA(20, 0, 45, 0u, 0u),
-		new STAT_DATA(21, 0, 45, 0u, 0u),
-		new STAT_DATA(18, 0, 20, BattleStatus.Freeze, 0u),
-		new STAT_DATA(19, 0, 20, BattleStatus.Heat | BattleStatus.Vanish, BattleStatus.Vanish),
-		new STAT_DATA(24, 0, 30, 0u, 0u),
-		new STAT_DATA(4, 0, 25, 0u, BattleStatus.Doom | BattleStatus.GradualPetrify),
-		new STAT_DATA(11, 0, 20, 0u, 0u),
-		new STAT_DATA(25, 0, 40, 0u, 0u),
-		new STAT_DATA(0, 0, 10, 0u, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify),
-		new STAT_DATA(0, 0, 25, 0u, BattleStatus.Zombie | BattleStatus.Doom | BattleStatus.GradualPetrify)
-	};
-
-    
+            EntryCollection<STAT_DATA> result = EntryCollection.CreateWithDefaultElement(statusData, e => e.Id, e => e.Value);
+            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            {
+                inputPath = DataResources.Battle.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Battle.StatusDataFile;
+                if (File.Exists(inputPath))
+                {
+                    statusData = CsvReader.Read<BattleStatusDataEntry>(inputPath);
+                    foreach (BattleStatusDataEntry it in statusData)
+                        result[it.Id] = it.Value;
+                }
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[FF9BattleDB] Load base stats of characters failed.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
+    }
 }

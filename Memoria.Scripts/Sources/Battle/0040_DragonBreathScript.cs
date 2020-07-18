@@ -32,6 +32,8 @@ namespace Memoria.Scripts.Battle
                     BattleState.Unit2DReq(unit);
                 }
             }
+            _v.Target.Flags = 0;
+            _v.Target.MpDamage = 0;
         }
     }
 }

@@ -34,6 +34,8 @@ namespace Memoria.Scripts.Battle
                 SBattleCalculator.CalcResult(_v);
                 BattleState.Unit2DReq(unit);
             }
+            _v.Caster.Flags = 0;
+            _v.Caster.MpDamage = 0;
         }
     }
 }

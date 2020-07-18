@@ -82,7 +82,7 @@ namespace FF9
 			return num;
 		}
 
-		public static UInt16 GetRandomBtlID(UInt32 player)
+		public static UInt16 GetRandomBtlID(UInt32 player, Boolean allowDead = false)
 		{
 			UInt16[] array = new UInt16[4];
 			UInt16 num = 0;
@@ -92,7 +92,7 @@ namespace FF9
 			}
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if ((UInt32)next.bi.player == player && !Status.checkCurStat(next, BattleStatus.Death) && next.bi.target != 0)
+				if ((UInt32)next.bi.player == player && (!Status.checkCurStat(next, BattleStatus.Death) || allowDead) && next.bi.target != 0)
 				{
 					UInt16[] array2 = array;
 					UInt16 num2 = num;
