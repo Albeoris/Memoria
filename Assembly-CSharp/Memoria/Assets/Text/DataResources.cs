@@ -17,13 +17,13 @@ namespace Memoria.Assets
         {
             if (modFolder == null || modFolder.Length == 0)
                 return ScriptsDirectory;
-            return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/Scripts/";
+            return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/Scripts/";
         }
         public static String ShadersModDirectory(String modFolder)
         {
             if (modFolder == null || modFolder.Length == 0)
                 return ShadersDirectory;
-            return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/Shaders/";
+            return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/Shaders/";
         }
 
         public static class Items
@@ -43,7 +43,7 @@ namespace Memoria.Assets
             {
                 if (modFolder == null || modFolder.Length == 0)
                     return Directory;
-                return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/" + PureDirectory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
         }
 
@@ -63,7 +63,7 @@ namespace Memoria.Assets
             {
                 if (modFolder == null || modFolder.Length == 0)
                     return Directory;
-                return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/" + PureDirectory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
 
             public static class Abilities
@@ -79,13 +79,13 @@ namespace Memoria.Assets
                 {
                     if (modFolder == null || modFolder.Length == 0)
                         return Directory + presetId + ".csv";
-                    return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/" + PureDirectory + presetId + ".csv";
+                    return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory + presetId + ".csv";
                 }
                 public static String ModDirectory(String modFolder)
                 {
                     if (modFolder == null || modFolder.Length == 0)
                         return Directory;
-                    return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/" + PureDirectory;
+                    return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
                 }
             }
         }
@@ -97,12 +97,13 @@ namespace Memoria.Assets
 
             public static String StatusSetsFile => "StatusSets.csv";
             public static String ActionsFile => "Actions.csv";
+            public static String StatusDataFile => "StatusData.csv";
 
             public static String ModDirectory(String modFolder)
             {
                 if (modFolder == null || modFolder.Length == 0)
                     return Directory;
-                return AssetManagerUtil.GetStreamingAssetsPath() + "/" + modFolder + "/" + PureDirectory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
         }
     }

@@ -319,6 +319,8 @@ namespace Memoria
             Target.PenaltyPhysicalEvade();
             Target.PenaltyDefenceHitRate();
             Target.PenaltyBanishHitRate();
+            if (Target.IsUnderAnyStatus(BattleStatus.Float))
+                Context.Evade += (Int16)Configuration.Battle.FloatEvadeBonus;
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", false);
@@ -536,7 +538,7 @@ namespace Memoria
                 ++Context.DamageModifierCount;
 
             if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange)
-                ++Context.DamageModifierCount;
+                --Context.DamageModifierCount;
         }
 
         public void PenaltyReverseAttack()
@@ -608,7 +610,7 @@ namespace Memoria
             }
         }
 
-        public Boolean ApplyElementAsDamageModifiers(EffectElement element)
+        public Boolean ApplyElementAsDamageModifiers(EffectElement element, EffectElement elementForBonus)
 		{
             if ((element & Target.GuardElement) != 0)
 			{
@@ -617,15 +619,10 @@ namespace Memoria
             }
             if ((element & Target.AbsorbElement) != 0)
                 Context.Flags |= BattleCalcFlags.Absorb;
-            for (Int32 i = 0; i < 8; i++)
-			{
-                if ((Caster.BonusElement & (EffectElement)(1 << i)) != 0)
-                    ++Context.DamageModifierCount;
-                if ((Target.WeakElement & (EffectElement)(1 << i)) != 0)
-                    ++Context.DamageModifierCount;
-                if ((Target.HalfElement & (EffectElement)(1 << i)) != 0)
-                    --Context.DamageModifierCount;
-            }
+
+            Context.DamageModifierCount += (SByte)Comn.countBits((UInt16)(Caster.BonusElement & elementForBonus));
+            Context.DamageModifierCount += (SByte)Comn.countBits((UInt16)(Target.WeakElement & element));
+            Context.DamageModifierCount -= (SByte)Comn.countBits((UInt16)(Target.HalfElement & element));
             return true;
         }
 

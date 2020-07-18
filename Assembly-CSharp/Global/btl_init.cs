@@ -471,13 +471,6 @@ public class btl_init
 		btl.defence.MagicalEvade = p.defence.MagicalEvade;
 		btl_eqp.InitEquipPrivilegeAttrib(p, btl);
 		btl_util.GeoSetColor2Source(btl.weapon_geo, 0, 0, 0);
-		btl_abil.CheckStatusAbility(new BattleUnit(btl));
-		BattleStatus permanent_stat = btl.stat.permanent;
-		BattleStatus current_stat = btl.stat.cur;
-		btl.stat.permanent = 0;
-		btl.stat.cur = 0;
-		btl_stat.MakeStatusesPermanent(btl, permanent_stat);
-		btl_stat.AlterStatuses(btl, current_stat);
 		if (btl.cur.hp * 6 < btl.max.hp)
 		{
 			btl.stat.cur |= BattleStatus.LowHP;
@@ -488,6 +481,13 @@ public class btl_init
 		{
 			btl_stat.AlterStatus(btl, BattleStatus.Petrify);
 		}
+		btl_abil.CheckStatusAbility(new BattleUnit(btl));
+		BattleStatus permanent_stat = btl.stat.permanent;
+		BattleStatus current_stat = btl.stat.cur;
+		btl.stat.permanent = 0;
+		btl.stat.cur = 0;
+		btl_stat.MakeStatusesPermanent(btl, permanent_stat);
+		btl_stat.AlterStatuses(btl, current_stat);
 		btl.base_pos = btl.evt.posBattle;
 		Int16 geoID = btl.dms_geo_id;
 		btl.height = 0;

@@ -1,0 +1,38 @@
+# This file contains data of statuses.;;;;;;;;;;;;;;;;;;
+# You must set 32 different items.;;;;;;;;;;;;;;;;;;
+# ----------------------------------------------------------------------------------------------------------------------------------;;;;;;;;;;;;;;;;;;
+# Comment;id;priority(unused);oprCount(tick);contiCount(duration);clear;invalid;
+#;Int32;UInt8;UInt8;UInt16;UInt32[];UInt32[];
+# ----------------------------------------------------------------------------------------------------------------------------------;;;;;;;;;;;;;;;;;;
+Petrify;0;2;0;0;Doom(28);Petrify(1), Venom(2), Virus(3), Silence(4), Blind(5), Trouble(6), Zombie(7), EasyKill(8), Death(9), LowHP(10), Confuse(11), Berserk(12), Stop(13), AutoLife(14), Trance(15), Defend(16), Poison(17), Sleep(18), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Heat(25), Freeze(26), Vanish(27), Doom(28), Mini(29), Reflect(30), Jump(31), GradualPetrify(32);# Petrify
+Venom;1;7;20;0;Defend(16), Poison(17);Venom(2), Poison(17);# Venom
+Virus;2;0;0;0;None(0);Virus(3);# Virus
+Silence;3;13;0;0;None(0);Silence(4);# Silence
+Blind;4;16;0;0;None(0);Blind(5);# Blind
+Trouble;5;10;0;0;None(0);Trouble(6);# Trouble
+Zombie;6;9;0;0;None(0);Petrify(1), Zombie(7), Trance(15), GradualPetrify(32);# Zombie
+EasyKill;7;0;0;0;None(0);None(0);# Easy Kill Proof
+Death;8;1;0;0;Venom(2), Silence(4), Blind(5), Trouble(6), LowHP(10), Confuse(11), Berserk(12), Stop(13), Defend(16), Poison(17), Sleep(18), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Heat(25), Freeze(26), Vanish(27), Doom(28), Reflect(30), Jump(31), GradualPetrify(32);Petrify(1), Venom(2), Virus(3), Silence(4), Blind(5), Trouble(6), EasyKill(8), LowHP(10), Confuse(11), Berserk(12), Stop(13), AutoLife(14), Trance(15), Defend(16), Poison(17), Sleep(18), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Heat(25), Freeze(26), Vanish(27), Doom(28), Mini(29), Reflect(30), Jump(31), GradualPetrify(32);# Death
+LowHP;9;5;0;0;None(0);LowHP(10);# Low HP
+Confuse;10;14;0;0;None(0);Confuse(11);# Confuse
+Berserk;11;15;0;0;None(0);Berserk(12);# Berserk
+Stop;12;6;0;0;None(0);Stop(13);# Stop
+AutoLife;13;27;0;0;None(0);AutoLife(14);# Auto-Life
+Trance;14;3;0;0;Venom(2), Silence(4), Blind(5), Trouble(6), Confuse(11), Berserk(12), Stop(13), Poison(17), Sleep(18), Slow(21), Heat(25), Freeze(26), Doom(28), Mini(29), GradualPetrify(32);Zombie(7), Trance(15);# Trance
+Defend;15;0;0;0;None(0);Defend(16);# Defend
+Poison;16;8;10;30;None(0);None(0);# Poison
+Sleep;17;12;0;25;Defend(16);None(0);# Sleep
+Regen;18;23;10;45;None(0);None(0);# Regen
+Haste;19;22;0;40;None(0);None(0);# Haste
+Slow;20;17;0;40;None(0);None(0);# Slow
+Float;21;26;0;30;None(0);None(0);# Float
+Shell;22;20;0;45;None(0);None(0);# Shell
+Protect;23;21;0;45;None(0);None(0);# Protect
+Heat;24;18;0;20;Freeze(26);None(0);# Heat
+Freeze;25;19;0;20;Heat(25), Vanish(27);Vanish(27);# Freeze
+Vanish;26;24;0;30;None(0);None(0);# Vanish
+Doom;27;4;0;25;None(0);Doom(28), GradualPetrify(32);# Doom
+Mini;28;11;0;20;None(0);None(0);# Mini
+Reflect;29;25;0;40;None(0);None(0);# Reflect
+Jump;30;0;0;10;None(0);Petrify(1), Venom(2), Virus(3), Silence(4), Blind(5), Trouble(6), Zombie(7), EasyKill(8), Death(9), LowHP(10), Confuse(11), Berserk(12), Stop(13), AutoLife(14), Trance(15), Defend(16), Poison(17), Sleep(18), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Heat(25), Freeze(26), Vanish(27), Doom(28), Mini(29), Reflect(30), GradualPetrify(32);# Jump
+GradualPetrify;31;0;0;25;None(0);Zombie(7), Doom(28), GradualPetrify(32);# Gradual Petrify

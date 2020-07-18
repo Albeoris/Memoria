@@ -3,6 +3,7 @@ using UnityEngine;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime.Collections;
 using NCalc;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -47,7 +48,7 @@ public class btl_stat
     public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status)
     {
         BattleUnit unit = new BattleUnit(btl);
-        STAT_DATA[] statusData = FF9StateSystem.Battle.FF9Battle.status_data;
+        EntryCollection<STAT_DATA> statusData = FF9StateSystem.Battle.FF9Battle.status_data;
         STAT_INFO stat = btl.stat;
         UInt32 statTblNo = 0;
         if (((Int32)stat.invalid & (Int32)status) != 0)
@@ -198,14 +199,14 @@ public class btl_stat
                 e.Parameters["StatusIndex"] = (Int32)statTblNo;
                 e.Parameters["IsPositiveStatus"] = ((Int32)status & 619446272) != 0;
                 e.Parameters["IsNegativeStatus"] = ((Int32)status & -1693253632) != 0;
-                e.Parameters["ContiCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].conti_cnt;
-                e.Parameters["OprCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt;
+                e.Parameters["ContiCnt"] = (Int32)statusData[statTblNo].conti_cnt;
+                e.Parameters["OprCnt"] = (Int32)statusData[statTblNo].opr_cnt;
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
                 Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                 if (val >= 0)
-                    btl.stat.cnt.opr[statTblNo - 16U] = (Int16)Math.Min(val, Int16.MaxValue);
+                    btl.stat.cnt.conti[statTblNo - 16U] = (Int16)Math.Min(val, Int16.MaxValue);
             }
             if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
                 btl.stat.cnt.cdown_max = btl.stat.cnt.conti[statTblNo - 16U];
@@ -362,16 +363,19 @@ public class btl_stat
     {
         if (flag)
         {
+            if ((statuses & BattleStatus.Haste) != 0)
+                RemoveStatus(btl, BattleStatus.Slow);
+            if ((statuses & BattleStatus.Slow) != 0)
+                RemoveStatus(btl, BattleStatus.Haste);
             AlterStatuses(btl, statuses);
-            btl.stat.permanent |= statuses & btl.stat.cur;
-            // Should permanent statuses be also registered as current statuses?
-//          btl.stat.cur &= ~(statuses & btl.stat.cur);
+            btl.stat.permanent |= statuses;
+            // Permanent statuses should also be registered as current statuses
+            //btl.stat.cur &= ~(statuses & btl.stat.cur);
         }
         else
         {
             btl.stat.permanent &= ~statuses;
             btl_stat.RemoveStatuses(btl, statuses);
-            btl.stat.permanent |= statuses & btl.stat.cur;
         }
     }
 
@@ -677,7 +681,8 @@ public class btl_stat
             }
             data.pos = pos;
         }
-        if (CheckStatus(data, BattleStatus.Float))
+        // Prevent auto-floating enemies to have the hovering movement
+        if (Status.checkCurStat(data, BattleStatus.Float) && ((data.stat.permanent & BattleStatus.Float) == 0 || data.bi.player != 0))
         {
             Single y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
             Vector3 vector = data.base_pos;

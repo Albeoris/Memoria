@@ -868,7 +868,7 @@ public class btl_cmd
             if (!CheckMagicCondition(cmd))
                 return false;
 
-            if (cmd.IsShortRange)
+            /*if (cmd.IsShortRange && Comn.countBits(cmd.tar_id) > 1)
             {
                 for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                     if (next.out_of_reach && (next.btl_id & cmd.tar_id) != 0)
@@ -878,14 +878,14 @@ public class btl_cmd
                     UIManager.Battle.SetBattleFollowMessage(23, new object[0]);
                     return false;
                 }
-            }
+            }*/
         }
 
         BattleCommandId commandId = cmd.cmd_no;
         switch (commandId)
         {
             case BattleCommandId.Attack:
-                /* Check removed: "CannotReach" is checked above
+                /* Check removed: "CannotReach" is checked in CheckTargetCondition
                 if (btlsys.btl_scene.Info.NoNeighboring != 0 && caster.HasCategory(WeaponCategory.ShortRange) && cmd.tar_id > 15)
                 {
                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
@@ -955,7 +955,7 @@ public class btl_cmd
             case BattleCommandId.MagicSword:
                 return DecideMagicSword(caster, cmd.aa.MP);
             case BattleCommandId.Counter:
-                if (Configuration.Battle.CountersBetterTarget)
+                /*if (Configuration.Battle.CountersBetterTarget)
                 {
                     int valid_target_count = 0;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
@@ -974,14 +974,14 @@ public class btl_cmd
                 {
                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                     return false;
-                }
+                }*/
                 if (cmd.sub_no == 176)
                 {
                     UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CounterAttack);
                 }
                 break;
             case BattleCommandId.MagicCounter:
-                if (Configuration.Battle.CountersBetterTarget)
+                /*if (Configuration.Battle.CountersBetterTarget)
                 {
                     int valid_target_count = 0;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
@@ -995,7 +995,7 @@ public class btl_cmd
                     BattleUnit btlDataPtr2;
                     if ((btlDataPtr2 = btl_scrp.FindBattleUnit(cmd.tar_id)) == null || btlDataPtr2.Data.bi.target == 0 || btlDataPtr2.IsUnderStatus(BattleStatus.Death))
                         return false;
-                }
+                }*/
                 UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.ReturnMagic);
                 break;
             case BattleCommandId.RushAttack:
@@ -1196,7 +1196,7 @@ public class btl_cmd
         }
         for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !Status.checkCurStat(btl, BattleStatus.Death)))
+            if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !Status.checkCurStat(btl, BattleStatus.Death)) && (!btl.out_of_reach || !cmd.IsShortRange))
                 num1 |= btl.btl_id;
         }
         if (num1 != 0)
@@ -1204,7 +1204,7 @@ public class btl_cmd
             cmd.tar_id = num1;
             return true;
         }
-        if (cmd.info.cursor == 0 && forDead == false)
+        if (cmd.info.cursor == 0)
         {
             if (cmd.IsShortRange)
             {
@@ -1212,18 +1212,19 @@ public class btl_cmd
                 Boolean allowPlayer = (cmd.tar_id & 0xF) != 0;
                 Boolean allowEnemy = (cmd.tar_id & 0xF0) != 0;
                 for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                    if (((allowEnemy && next.bi.player == 0) || (allowPlayer && next.bi.player == 1)) && next.bi.target != 0 && !next.out_of_reach && !Status.checkCurStat(next, BattleStatus.Death))
+                    if (((allowEnemy && next.bi.player == 0) || (allowPlayer && next.bi.player == 1)) && next.bi.target != 0 && !next.out_of_reach && (!Status.checkCurStat(next, BattleStatus.Death) || forDead))
                         targetInRange |= next.btl_id;
                 cmd.tar_id = (UInt16)Comn.randomID(targetInRange);
                 if (cmd.tar_id == 0)
                 {
-                    //UIManager.Battle.SetBattleFollowMessage(23, new object[0]);
+                    if (btl_util.GetRandomBtlID(allowPlayer ? 1U : 0U, forDead) != 0)
+                        UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotReach);
                     return false;
                 }
             }
             else
             {
-                cmd.tar_id = btl_util.GetRandomBtlID(cmd.tar_id & 15U);
+                cmd.tar_id = btl_util.GetRandomBtlID(cmd.tar_id & 15U, forDead);
             }
             if (cmd.tar_id != 0)
                 return true;
