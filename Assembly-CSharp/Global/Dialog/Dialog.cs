@@ -1053,44 +1053,12 @@ public class Dialog : MonoBehaviour
             // Epilogue: Stage
 		    DialogManager.Instance.ForceControlByEvent(false);
 		    yield break;
-			String localSymbol = Localization.GetSymbol();
-			if (localSymbol != "US" && localSymbol != "JP")
-			{
-				if (EventEngine.resyncBGMSignal == 0)
-				{
-					waitTime += 0.7f;
-				}
-				else if (EventEngine.resyncBGMSignal == 1)
-				{
-					if (localSymbol == "GR" || localSymbol == "UK")
-					{
-						waitTime += 0.1f;
-					}
-					else
-					{
-						waitTime += 0.2f;
-					}
-				}
-			}
-			else
-			{
-				waitTime -= 0.22f;
-			}
 		}
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 3010)
 		{
 		    // Epilogue: Stage
 		    DialogManager.Instance.ForceControlByEvent(false);
 		    yield break;
-			String localSymbol2 = Localization.GetSymbol();
-			if (localSymbol2 != "US" && localSymbol2 != "JP")
-			{
-				waitTime += 0.4f;
-			}
-			else
-			{
-				waitTime += -0.1f;
-			}
 		}
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
 		{
@@ -1154,10 +1122,8 @@ public class Dialog : MonoBehaviour
 				actor.mesofsY = Convert.ToInt16(this.offset.y);
 				actor.mesofsZ = Convert.ToInt16(this.offset.z);
 			}
-			Single num3;
-			Single num4;
-			ETb.GetMesPos(this.Po, out num3, out num4);
-			num = num3;
+            ETb.GetMesPos(this.Po, out float num3, out float num4);
+            num = num3;
 			num2 = num4;
 			Boolean flag2;
 			if (this.tailPosition == Dialog.TailPosition.AutoPosition)

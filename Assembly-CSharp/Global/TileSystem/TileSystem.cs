@@ -69,7 +69,6 @@ namespace Global.TileSystem
                             return true;
                     }
                     return false;
-                    break;
                 case PaddingType.Right:
                     plusX = _tileWidth - 1;
                     for (uint y = 0; y < _tileHeight; y++)
@@ -79,7 +78,6 @@ namespace Global.TileSystem
                             return true;
                     }
                     return false;
-                    break;
                 case PaddingType.Down:
                     plusY = _tileHeight - 1;
                     for (uint x = 0; x < _tileWidth; x++)
@@ -89,7 +87,6 @@ namespace Global.TileSystem
                             return true;
                     }
                     return false;
-                    break;
                 case PaddingType.Up:
                     plusY = 0;
                     for (uint x = 0; x < _tileWidth; x++)
@@ -99,7 +96,6 @@ namespace Global.TileSystem
                             return true;
                     }
                     return false;
-                    break;
                 case PaddingType.DownLeft:
                     plusY = _tileHeight - 1;
                     plusX = 0;
@@ -373,7 +369,7 @@ namespace Global.TileSystem
                     to[toIndex * 4 + i] = from[fromIndex * 4 + i];
                 }
             }
-            catch (System.IndexOutOfRangeException exc)
+            catch (IndexOutOfRangeException)
             {
                 return;
             }
@@ -809,8 +805,7 @@ namespace Global.TileSystem
 
         public TileMap(int fieldMapNumber, List<Layer> layers, List<BGOVERLAY_DEF> overlayList, List<BGANIM_DEF> animList, List<BGLIGHT_DEF> lightList, int cameraIndex, uint factor)
         {
-            Int32 minX, minY, maxX, maxY;
-            TileMap.GetBounds(overlayList, cameraIndex, out minX, out minY, out maxX, out maxY);
+            TileMap.GetBounds(overlayList, cameraIndex, out int minX, out int minY, out int maxX, out int maxY);
             this.MinX = minX;
             this.MinY = minY;
             this.SizeX = (maxX - minX) / 16 + 1;
@@ -843,7 +838,6 @@ namespace Global.TileSystem
                     continue;
                 Layer layer = layers[i];
                 bool animationFlag = animationArray[i];
-                bool isLight = false;
                 Overlay overlay = new Overlay(CopyBytesHelper.GetImageData(layer, info, factor), info, i, this.SizeX, this.SizeY, minX, minY, maxX, maxY, animationFlag);
                 _overlays[i] = overlay;
             }

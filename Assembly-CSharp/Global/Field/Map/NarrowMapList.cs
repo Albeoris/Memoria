@@ -32,6 +32,7 @@ public static class NarrowMapList
         0114,
         0116, // Alexandria/Rooftop
         0150, // A. Castle/Guardhouse
+        0151,
         0153, // A. Castle/Hallway
         0154, // A. Castle/Hallway
         0157,
@@ -57,6 +58,7 @@ public static class NarrowMapList
         0259, // Evil Forest/Trail
         0261, // Evil Forest/Exit
         0262,
+        0300,
         0301, // Ice Cavern/Ice Path
         0305, // Ice Cavern/Ice Path
         0306, // Ice Cavern/Cave
