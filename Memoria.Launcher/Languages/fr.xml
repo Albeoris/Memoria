@@ -50,7 +50,7 @@
 			MaxStealRate = " Voler ne rate jamais"
 			DisableCantConcentrate = " Désactiver 'déconcentration'"
 			SpeedMode = " Mode rapide | F1"
-			SpeedFactor = "Vitesse"
+			SpeedFactor = "Vit."
 			PermanentTranse = " Transe permanente | F2"
 			MaxDamage = " 9999 dégats | F3"
 			NoRandomBattles = " Pas de combats aléat. | F4"
