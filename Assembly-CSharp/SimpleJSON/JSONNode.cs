@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
+using Memoria.Prime.Text;
 
 namespace SimpleJSON
 {
@@ -298,239 +300,184 @@ namespace SimpleJSON
 			return text;
 		}
 
-		public static JSONNode Parse(String aJSON)
+		public static JSONNode Parse(String json)
 		{
 			Stack<JSONNode> stack = new Stack<JSONNode>();
-			JSONNode jsonnode = (JSONNode)null;
+			JSONNode ctx = null;
 			Int32 i = 0;
-			String text = String.Empty;
-			String text2 = String.Empty;
-			Boolean flag = false;
-			while (i < aJSON.Length)
+			StringBuilder nameBuilder = new StringBuilder();
+			String name = String.Empty;
+			Boolean quoteMode = false;
+			while (i < json.Length)
 			{
-                Char c = aJSON[i];
-				switch (c)
+				switch (json[i])
 				{
-				case '\t':
-					goto IL_333;
-				case '\n':
-				case '\r':
-					break;
-				case '\v':
-				case '\f':
-					IL_46:
-					switch (c)
-					{
-					case ' ':
-						goto IL_333;
-					case '!':
-						IL_5C:
-						switch (c)
+					case '{':
+						if (quoteMode)
 						{
-						case '[':
-							if (flag)
+							nameBuilder.Append(json[i]);
+							break;
+						}
+
+						stack.Push(new JSONClass());
+						if (ctx != null)
+						{
+							name = name.Trim();
+							if (ctx is JSONArray)
+								ctx.Add(stack.Peek());
+							else if (name != String.Empty)
+								ctx.Add(name, stack.Peek());
+						}
+
+						name = String.Empty;
+						nameBuilder.Clear();
+						ctx = stack.Peek();
+						break;
+
+					case '[':
+						if (quoteMode)
+						{
+							nameBuilder.Append(json[i]);
+							break;
+						}
+
+						stack.Push(new JSONArray());
+						if (ctx != null)
+						{
+							name = name.Trim();
+							if (ctx is JSONArray)
+								ctx.Add(stack.Peek());
+							else if (name != String.Empty)
+								ctx.Add(name, stack.Peek());
+						}
+
+						name = String.Empty;
+						nameBuilder.Clear();
+						ctx = stack.Peek();
+						break;
+
+					case '}':
+					case ']':
+						if (quoteMode)
+						{
+							nameBuilder.Append(json[i]);
+							break;
+						}
+
+						if (stack.Count == 0)
+							throw new Exception("JSON Parse: Too many closing brackets");
+
+						stack.Pop();
+						if (nameBuilder.Length > 0)
+						{
+							name = name.Trim();
+							if (ctx is JSONArray)
+								ctx.Add(nameBuilder.ToString());
+							else if (name != String.Empty)
+								ctx.Add(name, nameBuilder.ToString());
+						}
+
+						name = String.Empty;
+						nameBuilder.Clear();
+						if (stack.Count > 0)
+							ctx = stack.Peek();
+						break;
+
+					case ':':
+						if (quoteMode)
+						{
+							nameBuilder.Append(json[i]);
+							break;
+						}
+
+						name = nameBuilder.ToString();
+						nameBuilder.Clear();
+						break;
+
+					case '"':
+						quoteMode ^= true;
+						break;
+
+					case ',':
+						if (quoteMode)
+						{
+							nameBuilder.Append(json[i]);
+							break;
+						}
+
+						if (nameBuilder.Length > 0)
+						{
+							if (ctx is JSONArray)
+								ctx.Add(nameBuilder.ToString());
+							else if (name != String.Empty)
+								ctx.Add(name, nameBuilder.ToString());
+						}
+
+						name = String.Empty;
+						nameBuilder.Clear();
+						break;
+
+					case '\r':
+					case '\n':
+						break;
+
+					case ' ':
+					case '\t':
+						if (quoteMode)
+							nameBuilder.Append(json[i]);
+						break;
+
+					case '\\':
+						++i;
+						if (quoteMode)
+						{
+							Char ch = json[i];
+							switch (ch)
 							{
-								text += aJSON[i];
-								goto IL_467;
-							}
-							stack.Push(new JSONArray());
-							if (jsonnode != null)
-							{
-								text2 = text2.Trim();
-								if (jsonnode is JSONArray)
-								{
-									jsonnode.Add(stack.Peek());
-								}
-								else if (text2 != String.Empty)
-								{
-									jsonnode.Add(text2, stack.Peek());
-								}
-							}
-							text2 = String.Empty;
-							text = String.Empty;
-							jsonnode = stack.Peek();
-							goto IL_467;
-						case '\\':
-							i++;
-							if (flag)
-							{
-								Char c2 = aJSON[i];
-								Char c3 = c2;
-								switch (c3)
-								{
-								case 'n':
-									text += '\n';
-									break;
-								case 'o':
-								case 'p':
-								case 'q':
-								case 's':
-									IL_394:
-									if (c3 != 'b')
-									{
-										if (c3 != 'f')
-										{
-											text += c2;
-										}
-										else
-										{
-											text += '\f';
-										}
-									}
-									else
-									{
-										text += '\b';
-									}
+								case 't':
+									nameBuilder.Append('\t');
 									break;
 								case 'r':
-									text += '\r';
+									nameBuilder.Append('\r');
 									break;
-								case 't':
-									text += '\t';
+								case 'n':
+									nameBuilder.Append('\n');
+									break;
+								case 'b':
+									nameBuilder.Append('\b');
+									break;
+								case 'f':
+									nameBuilder.Append('\f');
 									break;
 								case 'u':
 								{
-									String s = aJSON.Substring(i + 1, 4);
-									text += (Char)Int32.Parse(s, NumberStyles.AllowHexSpecifier);
+									String s = json.Substring(i + 1, 4);
+									nameBuilder.Append((Char) Int32.Parse(s, NumberStyles.AllowHexSpecifier));
 									i += 4;
 									break;
 								}
 								default:
-									goto IL_394;
-								}
-							}
-							goto IL_467;
-						case ']':
-							break;
-						default:
-							switch (c)
-							{
-							case '{':
-								if (flag)
-								{
-									text += aJSON[i];
-									goto IL_467;
-								}
-								stack.Push(new JSONClass());
-								if (jsonnode != null)
-								{
-									text2 = text2.Trim();
-									if (jsonnode is JSONArray)
-									{
-										jsonnode.Add(stack.Peek());
-									}
-									else if (text2 != String.Empty)
-									{
-										jsonnode.Add(text2, stack.Peek());
-									}
-								}
-								text2 = String.Empty;
-								text = String.Empty;
-								jsonnode = stack.Peek();
-								goto IL_467;
-							case '|':
-								IL_88:
-								if (c != ',')
-								{
-									if (c != ':')
-									{
-										text += aJSON[i];
-										goto IL_467;
-									}
-									if (flag)
-									{
-										text += aJSON[i];
-										goto IL_467;
-									}
-									text2 = text;
-									text = String.Empty;
-									goto IL_467;
-								}
-								else
-								{
-									if (flag)
-									{
-										text += aJSON[i];
-										goto IL_467;
-									}
-									if (text != String.Empty)
-									{
-										if (jsonnode is JSONArray)
-										{
-											jsonnode.Add(text);
-										}
-										else if (text2 != String.Empty)
-										{
-											jsonnode.Add(text2, text);
-										}
-									}
-									text2 = String.Empty;
-									text = String.Empty;
-									goto IL_467;
-								}
-                            case '}':
-								break;
-							default:
-								goto IL_88;
-							}
-							break;
-						}
-						if (flag)
-						{
-							text += aJSON[i];
-						}
-						else
-						{
-							if (stack.Count == 0)
-							{
-								throw new Exception("JSON Parse: Too many closing brackets");
-							}
-							stack.Pop();
-							if (text != String.Empty)
-							{
-								text2 = text2.Trim();
-								if (jsonnode is JSONArray)
-								{
-									jsonnode.Add(text);
-								}
-								else if (text2 != String.Empty)
-								{
-									jsonnode.Add(text2, text);
-								}
-							}
-							text2 = String.Empty;
-							text = String.Empty;
-							if (stack.Count > 0)
-							{
-								jsonnode = stack.Peek();
+									nameBuilder.Append(ch);
+									break;
 							}
 						}
+
 						break;
-					case '"':
-						flag ^= true;
-						break;
+
 					default:
-						goto IL_5C;
-					}
-					break;
-				default:
-					goto IL_46;
+						nameBuilder.Append(json[i]);
+						break;
 				}
-				IL_467:
-				i++;
-				continue;
-				IL_333:
-				if (flag)
-				{
-					text += aJSON[i];
-				}
-				goto IL_467;
+
+				++i;
 			}
-			if (flag)
+
+			if (quoteMode)
 			{
 				throw new Exception("JSON Parse: Quotation marks seems to be messed up.");
 			}
-			return jsonnode;
+
+			return ctx;
 		}
 
 		public virtual void Serialize(BinaryWriter aWriter)
