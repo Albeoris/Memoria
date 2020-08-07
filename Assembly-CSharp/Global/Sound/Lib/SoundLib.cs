@@ -726,7 +726,7 @@ public class SoundLib : MonoBehaviour
 		SoundLib.allSoundDispatchPlayer.UpdatePlayingSoundEffectPitchFollowingGameSpeed();
 	}
 
-	public static void StopAllSounds()
+	public static void StopAllSounds(Boolean isAll = true)
 	{
 		try
 		{
@@ -734,7 +734,14 @@ public class SoundLib : MonoBehaviour
 			SoundLib.soundEffectPlayer.StopAllSoundEffects();
 			SoundLib.songPlayer.StopAllSoundEffects();
 			SoundLib.movieAudioPlayer.StopMusic();
-			SoundLib.allSoundDispatchPlayer.StopAllSounds();
+			if (isAll)
+			{
+				SoundLib.allSoundDispatchPlayer.StopAllSounds();
+			}
+			else
+			{
+				SoundLib.allSoundDispatchPlayer.PauseAllSounds();
+			}
 			SoundLib.sfxSoundPlayer.StopAllSounds();
 		}
 		catch (Exception message)

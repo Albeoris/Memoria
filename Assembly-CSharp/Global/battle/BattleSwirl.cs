@@ -12,13 +12,16 @@ public class BattleSwirl : MonoBehaviour
 {
     private Single _time;
     private Boolean _hasPlayEncounterSound;
+    private Boolean _isReplaceCalled;
     private Int32 _eventEngineGmode;
     private SFX_Rush _rush;
-    private bool wasUpdated;
+    private Boolean wasUpdated;
 
     private void Awake()
     {
+        FF9StateSystem.Battle.isEncount = false;
         _hasPlayEncounterSound = false;
+        _isReplaceCalled = false;
         _eventEngineGmode = PersistenSingleton<EventEngine>.Instance.gMode;
         FF9Snd.sndFuncPtr = FF9Snd.FF9BattleSoundDispatch;
         PlayBattleEncounterSoundEffect();
@@ -34,27 +37,35 @@ public class BattleSwirl : MonoBehaviour
     private void Update()
     {
         _time += Time.deltaTime;
-        if (_time >= 1.29999995231628 && !_hasPlayEncounterSound)
+        if (_time >= 1.3f && !_hasPlayEncounterSound)
         {
             RequestPlayBattleEncounterSong();
             _hasPlayEncounterSound = true;
         }
+        
+        // TODO Check Native: #147
+        // if (this.rush.update() && !this.isReplaceCalled)
+        // {
+        //     this.isReplaceCalled = true;
+        //     SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+        // }
 
-        if (!_rush.update())
-            return;
-
-        if (!_hasPlayEncounterSound)
+        if (_rush.update() && !this._isReplaceCalled)
         {
-            RequestPlayBattleEncounterSong();
-            _hasPlayEncounterSound = true;
-        }
+            if (!_hasPlayEncounterSound)
+            {
+                RequestPlayBattleEncounterSong();
+                _hasPlayEncounterSound = true;
+            }
 
-        if (!this.wasUpdated)
-		{
-			SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
-			return;
-		}
-		this.wasUpdated = true;
+            if (!this.wasUpdated)
+            {
+                SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+                return;
+            }
+
+            this.wasUpdated = true;
+        }
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -128,7 +139,7 @@ public class BattleSwirl : MonoBehaviour
         if (songid == currentMusicId)
             return;
 
-        FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
+        SoundLib.GetAllSoundDispatchPlayer().FF9SOUND_SONG_SUSPEND(currentMusicId, true);
         btlsnd.ff9btlsnd_song_play(songid);
     }
 }

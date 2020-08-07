@@ -1558,7 +1558,18 @@ public class FieldMap : HonoBehavior
         FieldMapInfo.fieldmapExtraOffset.UpdateOverlayOffset(this.mapName, overlayNdx, ref dz);
         Int16 num = (Int16)(bgoverlay_DEF.orgX + dx);
         Int16 num2 = (Int16)(bgoverlay_DEF.orgY + dy);
-        Int16 num3 = (Int16)(bgoverlay_DEF.orgZ + (UInt16)dz);
+        
+        // TODO Check Native: #147
+        Int16 num3;
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17)
+        {
+            num3 = 3000;
+        }
+        else
+        {
+            num3 = (Int16)(bgoverlay_DEF.orgZ + (UInt16)dz);
+        }
+        
         if (num < bgoverlay_DEF.minX)
         {
             num = bgoverlay_DEF.minX;

@@ -40,7 +40,7 @@ public static class SharedSerializerEvent
 				SoundLib.DisableMusic();
 			}
 			AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
-			allSoundDispatchPlayer.FF9SOUND_SONG_PLAY(FF9StateSystem.Sound.auto_save_bgm_id, 127);
+			allSoundDispatchPlayer.FF9SOUND_SONG_PLAY(FF9StateSystem.Sound.auto_save_bgm_id, 127, 0);
 			allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADE(FF9StateSystem.Sound.auto_save_bgm_id, 30, 0, 127);
 			FF9StateSystem.Sound.auto_save_bgm_id = -1;
 		}

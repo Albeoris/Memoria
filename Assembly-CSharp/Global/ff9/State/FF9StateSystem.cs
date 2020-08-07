@@ -242,6 +242,8 @@ public class FF9StateSystem : PersistenSingleton<FF9StateSystem>
     public static Boolean AndroidSQEXMarket = false;
 
     public static Boolean EnableAndroidTVJoystickMode = true;
+    
+    public static Boolean IsPlatformVibration => Editor || PCPlatform;
 
 	public UInt32 attr;
 

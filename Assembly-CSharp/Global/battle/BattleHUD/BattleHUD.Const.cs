@@ -38,8 +38,9 @@ public partial class BattleHUD : UIScene
     private static readonly String ATENormal = "battle_bar_atb";
     private static readonly String ATEGray = "battle_bar_slow";
     private static readonly String ATEOrange = "battle_bar_haste";
-    private static readonly Single DefaultPartyPanelPosY = -350f;
-    private static readonly Single PartyItemHeight = 82f;
+    // TODO Check Native: #147
+    private static readonly Single DefaultPartyPanelPosY = -420f;
+    private static readonly Single PartyItemHeight = 60f;
     public static Dictionary<BattleStatus, String> DebuffIconNames;
     public static Dictionary<BattleStatus, String> BuffIconNames;
     private static readonly Color[] TranceTextColor;

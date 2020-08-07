@@ -257,6 +257,8 @@ public class TitleUI : UIScene
     private Single clickedTimer = -1f;
 
     private Boolean isPaused;
+    
+    public string GClunguage;
 
     public bool IsSplashTextActive
     {
@@ -416,7 +418,7 @@ public class TitleUI : UIScene
         base.Show(sceneVoidDelegate);
         if (this.SplashScreenEnabled)
         {
-            SoundLib.StopAllSounds();
+            SoundLib.StopAllSounds(true);
             SoundLib.ClearSuspendedSounds();
             FF9StateSystem.ReInitStateSystem();
             this.CheckAutoSaveSlot(DataSerializerErrorCode.Success, false);
@@ -930,7 +932,7 @@ public class TitleUI : UIScene
             ButtonGroupState.SetActiveGroupEnable(true);
             Loading = true;
             MBG.Instance.Stop();
-            SoundLib.StopAllSounds();
+            SoundLib.StopAllSounds(true);
             this.MovieForeGround.GetComponent<HonoFading>().FadeOut(delegate
             {
                 Loading = false;
@@ -1521,6 +1523,7 @@ public class TitleUI : UIScene
     private void Start()
     {
         SiliconStudio.Social.InitializeSocialPlatform();
+        PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(false);
     }
 
     private void Awake()
@@ -1561,15 +1564,16 @@ public class TitleUI : UIScene
             this.MenuBlackjackButton.SetActive(false);
             this.MenuStaffPCButton.SetActive(true);
             this.MenuBlackjackPCButton.SetActive(true);
-            UIEventListener expr_2B8 = UIEventListener.Get(this.MenuStaffPCButton);
-            expr_2B8.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_2B8.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            UIEventListener expr_2E5 = UIEventListener.Get(this.MenuBlackjackPCButton);
-            expr_2E5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_2E5.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            if (FF9StateSystem.PCEStorePlatform)
-            {
-                this.MenuStaffPCButton.transform.position = this.SquareEnixButton.transform.position;
-                this.SquareEnixButton.SetActive(false);
-            }
+            
+            UIEventListener staffEvents = UIEventListener.Get(this.MenuStaffPCButton);
+            staffEvents.Click += onClick;
+            
+            UIEventListener blackjackEvents = UIEventListener.Get(this.MenuBlackjackPCButton);
+            blackjackEvents.Click += onClick;
+            
+            this.SquareEnixButton.SetActive(true);
+            UIEventListener squareEnixEvents = UIEventListener.Get(this.SquareEnixButton);
+            squareEnixEvents.Click += onClick;
         }
         else
         {

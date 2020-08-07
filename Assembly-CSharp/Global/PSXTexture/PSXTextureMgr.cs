@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using UnityEngine;
 
@@ -256,13 +256,13 @@ public static class PSXTextureMgr
 		if (PSXTextureMgr.isBgCapture)
 		{
 			PSXTextureMgr.isBgCapture = false;
+			PSXTextureMgr.bgKey = (uint)(PSXTextureMgr.bgParam[1] >> 8 << 20 | PSXTextureMgr.bgParam[0] >> 6 << 16);
 			GameObject btlBGPtr = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
 			MeshRenderer[] componentsInChildren = btlBGPtr.GetComponentsInChildren<MeshRenderer>();
 			for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
 			{
 				if (componentsInChildren[i].name == "Group_2")
 				{
-					PSXTextureMgr.bgKey = (UInt32)(PSXTextureMgr.bgParam[1] >> 8 << 20 | PSXTextureMgr.bgParam[0] >> 6 << 16);
 					RenderTexture active = RenderTexture.active;
 					RenderTexture.active = PSXTextureMgr.bgTexture;
 					GL.Viewport(new Rect(0f, 0f, 256f, 256f));
@@ -286,6 +286,11 @@ public static class PSXTextureMgr
 					return;
 				}
 			}
+			PSXTextureMgr.bgKey = (uint)(PSXTextureMgr.bgParam[1] >> 8 << 20 | PSXTextureMgr.bgParam[0] >> 6 << 16);
+			RenderTexture active2 = RenderTexture.active;
+			RenderTexture.active = PSXTextureMgr.bgTexture;
+			GL.Clear(false, true, new Color(0f, 0f, 0f, 0f));
+			RenderTexture.active = active2;
 		}
 	}
 

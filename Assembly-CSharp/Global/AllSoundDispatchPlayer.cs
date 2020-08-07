@@ -154,10 +154,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume, 0);
 					}
 					this.currentMusicID = ObjNo;
-					if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
-					{
-						this.suspendSongID = -1;
-					}
+					this.StopAndClearSuspendBGM(ObjNo);
 				});
 			}
 		}
@@ -168,8 +165,27 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			});
 		}
 	}
+	
+	public void StopAndClearSuspendBGM(int ObjNo)
+	{
+		if (this.suspendBgmNo != -1 && ObjNo != this.suspendBgmNo)
+		{
+			if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.suspendBgmID, 0);
+				this.suspendBgmNo = -1;
+				this.suspendBgmID = 0;
+			}
+			if (PersistenSingleton<EventEngine>.Instance.gMode == 3 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9WorldSoundDispatch))
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.suspendBgmID, 0);
+				this.suspendBgmNo = -1;
+				this.suspendBgmID = 0;
+			}
+		}
+	}
 
-	public void FF9SOUND_SONG_PLAY(Int32 ObjNo, Int32 vol = 127)
+	public void FF9SOUND_SONG_PLAY(Int32 ObjNo, Int32 vol = 127, int time = 0)
 	{
 		if (this.currentMusicID != ObjNo)
 		{
@@ -188,65 +204,62 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				this.CreateSound(soundProfile);
 				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
-				if (this.suspendSongID != -1 && this.suspendSongID == soundProfile.SoundIndex)
-				{
-					int offsetTimeMSec = Convert.ToInt32(this.suspendSongTimeMs);
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
-				}
-				else
-				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
-				}
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time * 1000);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
 				this.currentMusicID = ObjNo;
-				if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
+				this.StopAndClearSuspendBGM(ObjNo);
+			});
+		}
+		else
+		{
+			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			{
+				if (soundProfile != null)
 				{
-					this.suspendSongID = -1;
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, time * 1000);
+					soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
+					this.StopAndClearSuspendBGM(ObjNo);
 				}
 			});
-			return;
 		}
-		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
-		{
-			if (soundProfile != null)
-			{
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
-				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
-				if (PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
-				{
-					this.suspendSongID = -1;
-				}
-			}
-		});
 	}
 
 	public Int32 GetSuspendSongID()
 	{
-		return this.suspendSongID;
+		return this.suspendBgmNo;
 	}
 
-	public void FF9SOUND_SONG_SUSPEND(Int32 ObjNo)
+	public void FF9SOUND_SONG_SUSPEND(int ObjNo, bool isSkipPause = false)
 	{
 		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
-				this.suspendSongID = ObjNo;
-				this.suspendSongVolume = AllSoundDispatchPlayer.ReverseNormalizeVolume(soundProfile.SoundVolume);
-				this.suspendSongTimeMs = soundProfile.StartPlayTime;
-
+				if (!isSkipPause)
+				{
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
+				}
+				this.suspendBgmNo = ObjNo;
+				this.suspendBgmID = soundProfile.SoundID;
+				this.currentMusicID = -1;
+			}
+			else
+			{
+				this.suspendBgmNo = -1;
+				this.suspendBgmID = 0;
 			}
 		});
 	}
 
 	public void FF9SOUND_SONG_RESTORE()
 	{
-		if (this.suspendSongID != -1)
+		if (this.suspendBgmNo != -1)
 		{
-			this.FF9SOUND_SONG_PLAY(this.suspendSongID, this.suspendSongVolume);
-			this.suspendSongID = -1;
+			this.currentMusicID = this.suspendBgmNo;
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(this.suspendBgmID, 0, 0);
+			this.suspendBgmNo = -1;
+			this.suspendBgmID = 0;
 		}
 		else
 		{
@@ -254,7 +267,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 	}
 
-	public void FF9SOUND_SONG_STOP(Int32 ObjNo)
+	public void FF9SOUND_SONG_STOP(int ObjNo)
 	{
 		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
 		{
@@ -262,7 +275,15 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
 			}
-			this.currentMusicID = -1;
+			if (ObjNo == this.suspendBgmNo)
+			{
+				this.suspendBgmNo = -1;
+				this.suspendBgmID = 0;
+			}
+			if (ObjNo == this.currentMusicID)
+			{
+				this.currentMusicID = -1;
+			}
 		});
 	}
 
@@ -1116,7 +1137,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void ClearSuspendedSounds()
 	{
-		this.suspendSongID = -1;
+		this.FF9SOUND_SONG_STOP(this.suspendBgmNo);
 		for (Int32 i = 0; i < (Int32)this.sfxResSlot.Length; i++)
 		{
 			this.sfxResSlot[i] = (AllSoundDispatchPlayer.PlayingSfx)null;
@@ -1383,11 +1404,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	private Int32 currentMusicID = -1;
 
-	private Int32 suspendSongID = -1;
+	private Int32 suspendBgmNo = -1;
 
-	private Int32 suspendSongVolume;
-
-	private float suspendSongTimeMs;
+	private Int32 suspendBgmID;
 
 	private List<AllSoundDispatchPlayer.PlayingSfx> sfxChanels = new List<AllSoundDispatchPlayer.PlayingSfx>();
 

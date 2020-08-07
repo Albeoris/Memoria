@@ -95,14 +95,26 @@ public partial class EventEngine
         }
         if (isBattle)
             this.SetupBattleState();
+        
         this._posUsed = false;
-        Int32 num1 = this.eBin.ProcessCode(this._context.activeObj);
+        
+        // TODO Check Native: #147
+        Int32 num1 = 0;
+        bool canProcessCode = true;
+
+        if (_ff9.fldMapNo == 257)
+            canProcessCode = (!Singleton<DialogManager>.Instance.Activate || Singleton<DialogManager>.Instance.CompletlyVisible);
+        
+        if (canProcessCode)
+            num1 = this.eBin.ProcessCode(this._context.activeObj);
+        
         EventHUD.CheckUIMiniGameForMobile();
         if (num1 == 6)
             num1 = 0;
         else
-            this.gStopObj = (ObjList)null;
-        this._aimObj = (PosObj)null;
+            this.gStopObj = null;
+        
+        this._aimObj = null;
         this._eyeObj = (PosObj)null;
         for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
             this.SetRenderer(objList.obj, isBattle);
@@ -465,6 +477,7 @@ public partial class EventEngine
                 this.SetBattleScene(SceneNo);
                 this._ff9.btlSubMapNo = -1;
                 FF9StateSystem.Battle.isRandomEncounter = true;
+                FF9StateSystem.Battle.isEncount = true;
             }
         }
         return SceneNo != 0;

@@ -33,6 +33,9 @@ namespace Memoria.Scenes.BattleHUD
                     if (IsAutoProperty(property))
                         Do(property.Name, property.GetValue(obj, null));
                 }
+
+                if (obj is GameObject go)
+                    DoGameObject(go.name, go);
             }
             finally
             {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Memoria;
@@ -473,7 +473,8 @@ public class BGSCENE_DEF
             1751,
             1752,
             1753,
-            2252
+            2252,
+            2714
         };
         this.combineMeshes = list.Contains(FF9StateSystem.Common.FF9.fldMapNo);
         if (this.combineMeshes && !Configuration.Import.Field)
@@ -1477,6 +1478,22 @@ public class BGSCENE_DEF
             if (!flag)
             {
                 num = bgsprite_LOC_DEF.depth;
+            }
+            
+            // TODO Check Native: #147
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2714) // Pand./Maze -> FBG_N42_PDMN_MAP734_PD_MZM_0
+            {
+                Int32 num23 = i;
+                switch (num23)
+                {
+                    case 64:
+                    case 65:
+                    case 66:
+                    case 80:
+                    case 81:
+                        num = 400;
+                        break;
+                }
             }
             GameObject gameObject = new GameObject(bgoverlay_DEF.transform.name + "_Sprite_" + i.ToString("D3"));
             Transform transform = gameObject.transform;

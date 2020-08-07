@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Memoria.Scripts;
@@ -52,6 +52,7 @@ public class BattleState : MonoBehaviour
 		this.selectPlayerCount = 4;
 		this.isDebug = false;
 		this.isRandomEncounter = false;
+		this.isEncount = false;
 		this.isTutorial = false;
 		battle.isAlreadyShowTutorial = false;
 		this.FF9Battle = new FF9StateBattleSystem();
@@ -109,4 +110,6 @@ public class BattleState : MonoBehaviour
 	public FF9StateBattleSystem FF9Battle;
 
 	public Boolean IsPlayFieldBGMInCurrentBattle;
+	
+	public bool isEncount;
 }

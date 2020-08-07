@@ -139,6 +139,7 @@ public class CardUI : UIScene
         count[deleteCardId] = (Byte)(count[deleteCardId] - 1);
         this.offset[this.deleteCardId] = Math.Min(this.offset[this.deleteCardId], (Int32)(this.count[this.deleteCardId] - 1));
         this.DisplayHelp();
+        this.DisplayInfo();
         this.DisplayCardList();
         this.DisplayCardDetail();
     }
@@ -416,6 +417,7 @@ public class CardUI : UIScene
 		Int32 num = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetWinCount());
 		Int32 num2 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetLoseCount());
 		Int32 num3 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetDrawCount());
+		this.FF9FCard_GetPoint();
 		this.levelLabel.text = this.point.ToString() + "p";
 		this.classNameLabel.text = FF9TextTool.CardLevelName(this.lv_collector);
 		this.winCountLabel.text = num.ToString();
@@ -487,38 +489,34 @@ public class CardUI : UIScene
 	private void FF9FCard_GetPoint()
 	{
 		List<QuadMistCard> list = QuadMistDatabase.MiniGame_GetCardBinPtr();
-		Boolean[] array = new Boolean[CardUI.FF9FCARD_ARROW_TYPE_MAX];
-		Int32 num = 0;
-		Int32 num2 = 0;
-		Int32 num3 = 0;
-		Byte[] array2 = new Byte[]
+		bool[] array = new bool[CardUI.FF9FCARD_ARROW_TYPE_MAX];
+		int num = 0;
+		int num2 = 0;
+		byte[] array2 = new byte[]
 		{
 			0,
 			0,
 			1,
 			2
 		};
-		foreach (QuadMistCard quadMistCard in list)
+		int num3 = QuadMistDatabase.MiniGame_GetCardKindCount() * 10;
+		for (int i = 0; i < 100; i++)
 		{
-			num += (Int32)quadMistCard.cpoint;
-		}
-		for (Int32 i = 0; i < 100; i++)
-		{
-			for (Int32 j = 0; j < (Int32)this.count[i]; j++)
+			for (int j = 0; j < (int)this.count[i]; j++)
 			{
-				QuadMistCard quadMistCard2 = QuadMistDatabase.MiniGame_GetCardInfoPtr(i, j);
-				array[(Int32)quadMistCard2.arrow] = true;
-				num2 += (Int32)array2[(Int32)quadMistCard2.type];
+				QuadMistCard quadMistCard = QuadMistDatabase.MiniGame_GetCardInfoPtr(i, j);
+				array[(int)quadMistCard.arrow] = true;
+				num += (int)array2[(int)quadMistCard.type];
 			}
 		}
-		for (Int32 k = 0; k < CardUI.FF9FCARD_ARROW_TYPE_MAX; k++)
+		for (int k = 0; k < CardUI.FF9FCARD_ARROW_TYPE_MAX; k++)
 		{
 			if (array[k])
 			{
-				num3 += 5;
+				num2 += 5;
 			}
 		}
-		this.point = num + num2 + num3;
+		this.point = num3 + num + num2;
 	}
 
 	private void ShowCardDetailHudNumber(Int32 number)

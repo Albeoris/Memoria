@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scenes;
+using Memoria.Scenes.BattleHUD;
 using UnityEngine;
+using Object = System.Object;
 
 public partial class BattleHUD : UIScene
 {
@@ -20,6 +22,7 @@ public partial class BattleHUD : UIScene
             public ContainerStatus(BattleHUD battleHUD, GameObject obj)
                 : base(obj)
             {
+                // new SOLogger().Do(obj);
                 HP = new PanelDetail<ValueWidget>(obj.GetChild(0));
                 MP = new PanelDetail<ValueWidget>(obj.GetChild(1));
                 GoodStatus = new PanelDetail<IconsWidget>(obj.GetChild(2));
@@ -40,18 +43,16 @@ public partial class BattleHUD : UIScene
 
                 internal sealed class CaptionBackground<T1> : GOWidget where T1 : GOBase
                 {
-                    public readonly GOSprite TopBorder;
-                    public readonly GOSprite Border;
-                    public readonly GOSprite Body;
                     public readonly T1 Content;
+                    public readonly GOSprite Body;
+                    public readonly GOSprite TopBorder;
 
                     public CaptionBackground(GameObject obj)
                         : base(obj)
                     {
-                        TopBorder = new GOSprite(obj.GetChild(0));
-                        Border = new GOSprite(obj.GetChild(1));
-                        Body = new GOSprite(obj.GetChild(2));
-                        Content = Create<T1>(obj.GetChild(3));
+                        Content = Create<T1>(obj.GetChild(0));
+                        Body = new GOSprite(obj.GetChild(1));
+                        TopBorder = new GOSprite(obj.GetChild(2));
                     }
                 }
             }

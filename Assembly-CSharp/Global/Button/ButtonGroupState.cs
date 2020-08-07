@@ -744,27 +744,20 @@ public class ButtonGroupState : MonoBehaviour
 		{
 			return;
 		}
-		if (newGroupName == String.Empty)
+		if (newGroupName == string.Empty)
 		{
 			Singleton<HelpDialog>.Instance.HideDialog();
 			return;
 		}
-		String text = ButtonGroupState.activeGroup;
+		string text = ButtonGroupState.activeGroup;
 		ButtonGroupState.UpdatePointerPropertyForGroup(newGroupName);
 		if (ButtonGroupState.secondaryGroup.Contains(newGroupName))
 		{
 			ButtonGroupState.secondaryGroup.Remove(newGroupName);
 		}
-		if (UICamera.selectedObject && !String.IsNullOrEmpty(text) && UICamera.selectedObject.GetComponent<UIKeyNavigation>() && UICamera.selectedObject.GetComponent<UIKeyNavigation>().enabled && UICamera.selectedObject.GetComponent<ButtonGroupState>().GroupName == text)
+		if (UICamera.selectedObject && !string.IsNullOrEmpty(text) && UICamera.selectedObject.GetComponent<UIKeyNavigation>() && UICamera.selectedObject.GetComponent<UIKeyNavigation>().enabled && UICamera.selectedObject.GetComponent<ButtonGroupState>().GroupName == text && ButtonGroupState.activeButtonList.ContainsKey(text) && ButtonGroupState.activeButtonList[text] != UICamera.selectedObject && ButtonGroupState.activeButtonList[text] != null)
 		{
-			if (ButtonGroupState.activeButtonList.ContainsKey(text) && ButtonGroupState.activeButtonList[text] != UICamera.selectedObject && ButtonGroupState.activeButtonList[text] != (UnityEngine.Object)null)
-			{
-				Singleton<PointerManager>.Instance.RemovePointerFromGameObject(ButtonGroupState.activeButtonList[text]);
-			}
-			if (ButtonGroupState.ButtonGroupList[text].Contains(UICamera.selectedObject))
-			{
-				ButtonGroupState.activeButtonList[text] = UICamera.selectedObject;
-			}
+			Singleton<PointerManager>.Instance.RemovePointerFromGameObject(ButtonGroupState.activeButtonList[text]);
 		}
 		if (ButtonGroupState.ButtonGroupList.ContainsKey(text))
 		{
@@ -798,13 +791,13 @@ public class ButtonGroupState : MonoBehaviour
 		{
 			ButtonGroupState.scrollButtonList[newGroupName].SetScrollButtonEnable(true);
 		}
-		if (!ButtonGroupState.activeButtonList.ContainsKey(newGroupName) || ButtonGroupState.activeButtonList[newGroupName] == (UnityEngine.Object)null)
+		if (!ButtonGroupState.activeButtonList.ContainsKey(newGroupName) || ButtonGroupState.activeButtonList[newGroupName] == null)
 		{
 			if (ButtonGroupState.ButtonGroupList.ContainsKey(newGroupName))
 			{
 				if (ButtonGroupState.ButtonGroupList[newGroupName].Count == 0)
 				{
-					ButtonGroupState.activeButtonList[newGroupName] = (GameObject)null;
+					ButtonGroupState.activeButtonList[newGroupName] = null;
 				}
 				else
 				{
@@ -813,7 +806,7 @@ public class ButtonGroupState : MonoBehaviour
 			}
 			else
 			{
-				ButtonGroupState.activeButtonList[newGroupName] = (GameObject)null;
+				ButtonGroupState.activeButtonList[newGroupName] = null;
 			}
 		}
 		ButtonGroupState.allTarget = false;

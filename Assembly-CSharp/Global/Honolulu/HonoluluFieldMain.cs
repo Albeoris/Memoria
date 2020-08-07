@@ -135,6 +135,10 @@ public class HonoluluFieldMain : HonoBehavior
 		{
 			FF9Snd.ff9fldsnd_song_restore();
 		}
+		else
+		{
+			SoundLib.GetAllSoundDispatchPlayer().StopAndClearSuspendBGM(-1);
+		}
 		if (FF9Snd.LatestWorldPlayedSong != -1 && FF9Snd.LatestWorldPlayedSong == SoundLib.GetAllSoundDispatchPlayer().GetCurrentMusicId() && FF9Snd.BGMFieldSongCounter == 0)
 		{
 			SoundLib.GetAllSoundDispatchPlayer().FF9SOUND_SONG_STOPCURRENT();
@@ -495,7 +499,7 @@ public class HonoluluFieldMain : HonoBehavior
 			}
 			this.FF9.fldMapNo = (Int16)EventEngine.testEventIDs[num];
 			this.shutdownField();
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		this.stringToEdit = GUILayout.TextField(this.stringToEdit, new GUILayoutOption[]
@@ -512,7 +516,7 @@ public class HonoluluFieldMain : HonoBehavior
 			}
 			this.FF9.fldMapNo = (Int16)EventEngine.testEventIDs[num2];
 			this.shutdownField();
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.FlexibleSpace();
@@ -534,7 +538,7 @@ public class HonoluluFieldMain : HonoBehavior
 			}
 			this.FF9.fldMapNo = (Int16)EventEngine.testEventIDs[num3];
 			this.shutdownField();
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.FlexibleSpace();
@@ -554,7 +558,7 @@ public class HonoluluFieldMain : HonoBehavior
 			}
 			this.FF9.fldMapNo = (Int16)EventEngine.testEventIDs[num];
 			this.shutdownField();
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.FF9Wipe_FadeIn();
 			SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
@@ -572,7 +576,7 @@ public class HonoluluFieldMain : HonoBehavior
 			}
 			this.FF9.fldMapNo = (Int16)EventEngine.testEventIDs[num2];
 			this.shutdownField();
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.FF9Wipe_FadeIn();
 			SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
@@ -603,7 +607,7 @@ public class HonoluluFieldMain : HonoBehavior
 			}
 			this.FF9.fldMapNo = (Int16)EventEngine.testEventIDs[num3];
 			this.shutdownField();
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.FF9Wipe_FadeIn();
 			SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 			global::Debug.Log(String.Concat(new Object[]

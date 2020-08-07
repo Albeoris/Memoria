@@ -213,13 +213,37 @@ public partial class BattleHUD : UIScene
             character.TranceBar.IsActive = unit.HasTrance;
             partyIndex++;
         }
-
+        
         PartyDetailPanel.transform.localPosition = new Vector3(PartyDetailPanel.transform.localPosition.x, DefaultPartyPanelPosY - PartyItemHeight * (_partyDetail.Characters.Count - partyIndex), PartyDetailPanel.transform.localPosition.z);
+        
+        CorrectPartyPanelPosition(partyIndex);
+
         for (; partyIndex < _partyDetail.Characters.Count ; ++partyIndex)
         {
             _partyDetail.Characters[partyIndex].IsActive = false;
             _partyDetail.Characters[partyIndex].PlayerId = -1;
         }
+    }
+
+    private void CorrectPartyPanelPosition(Int32 partyIndex)
+    {
+        // TODO Check Native: #147, Didn't notice any changes
+        var y = this.PartyDetailPanel.transform.localPosition.y;
+
+        var hp = _statusPanel.HP;
+        var mp = _statusPanel.MP;
+        var good = _statusPanel.GoodStatus;
+        var bad = _statusPanel.BadStatus;
+
+        hp.Transform.SetY(y);
+        mp.Transform.SetY(y);
+        good.Transform.SetY(y);
+        bad.Transform.SetY(y);
+
+        hp.Caption.Content.GameObject.transform.localScale = new Vector3(1f, 0.25f * partyIndex, 1f);
+        mp.Caption.Content.GameObject.transform.localScale = new Vector3(1f, 0.25f * partyIndex, 1f);
+        good.Caption.Content.GameObject.transform.localScale = new Vector3(1f, 0.25f * partyIndex, 1f);
+        bad.Caption.Content.GameObject.transform.localScale = new Vector3(1f, 0.25f * partyIndex, 1f);
     }
 
     public void AddPlayerToReady(Int32 playerId)

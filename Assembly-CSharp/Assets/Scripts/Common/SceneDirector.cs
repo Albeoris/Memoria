@@ -286,7 +286,7 @@ namespace Assets.Scripts.Common
 				}
 				if (String.Equals(this.NextScene, "MainMenu"))
 				{
-					SoundLib.StopAllSounds();
+					SoundLib.StopAllSounds(true);
 				}
 				if (String.Equals(this.NextScene, SceneDirector.FieldMapSceneName))
 				{

@@ -625,6 +625,11 @@ public class FieldMapActorController : HonoBehavior
 				this.ApplyNeckRotation(childByName, num4, rotY);
 			}
 		}
+		// TODO Check Native: #147
+		else if (this.actor.actor.anim == 4630 || this.actor.actor.anim == 12938 || this.actor.actor.anim == 4636)
+		{
+			childByName.rotation = Quaternion.Euler(-20f, 0f, 0f) * childByName.rotation;
+		}
 		else
 		{
 			this.ApplyNeckRotation(childByName, num4, rotY);
@@ -688,10 +693,10 @@ public class FieldMapActorController : HonoBehavior
 	        vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
         }
 
-	    Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0f;
-        Boolean flag3 = UIManager.Input.GetKey(Control.Down) || vector.y < 0f;
-        Boolean flag4 = UIManager.Input.GetKey(Control.Left) || vector.x < 0f;
-        Boolean flag5 = UIManager.Input.GetKey(Control.Right) || vector.x > 0f;
+	    Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0.1f;
+        Boolean flag3 = UIManager.Input.GetKey(Control.Down) || vector.y < -0.1f;
+        Boolean flag4 = UIManager.Input.GetKey(Control.Left) || vector.x < -0.1f;
+        Boolean flag5 = UIManager.Input.GetKey(Control.Right) || vector.x > 0.1f;
         if (!FF9StateSystem.Field.isDebug)
 		{
 			flag2 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();

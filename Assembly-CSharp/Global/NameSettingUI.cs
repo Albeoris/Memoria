@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -28,8 +28,8 @@ public sealed class NameSettingUI : UIScene
     private Int32 _subNumber;
     private Int32 _currentCharId;
     private Int32 _currentSlotId;
-    private readonly Int32[] _idChar;
-    private readonly Byte[] _slot;
+    private static readonly Int32[] _idChar;
+    private static readonly Byte[] _slot;
 
     public Int32 SubNo
     {
@@ -37,7 +37,7 @@ public sealed class NameSettingUI : UIScene
         set { _subNumber = value; }
     }
 
-    public NameSettingUI()
+    static NameSettingUI()
     {
         _idChar = new Int32[12] { 0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10 };
         _slot = new Byte[12] { 0, 1, 2, 3, 4, 5, 6, 7, 5, 6, 7, 8 };
@@ -185,12 +185,12 @@ public sealed class NameSettingUI : UIScene
         return addedChar;
     }
 
-    private Int32 FF9Name_EventToChar(Int32 eventID)
+    public static  Int32 FF9Name_EventToChar(Int32 eventID)
     {
         return _idChar[eventID];
     }
 
-    private Int32 FF9Name_CharToSlot(Int32 charID)
+    public static  Int32 FF9Name_CharToSlot(Int32 charID)
     {
         return _slot[charID];
     }

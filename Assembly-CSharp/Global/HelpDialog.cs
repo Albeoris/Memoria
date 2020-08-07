@@ -127,10 +127,18 @@ public class HelpDialog : Singleton<HelpDialog>
 			this.dialogTail = HelpDialog.FF9HELP_NONE;
 			if (ButtonGroupState.ActiveGroup == BattleHUD.TargetGroupButton)
 			{
-				this.dialogRect.x = 1306f;
-				this.dialogRect.y = 880f;
-				this.dialogRect.z = 420f;
-				this.dialogRect.w = 332f;
+				// TODO Check Native: #147
+				// New:
+				this.dialogRect.x = 1282f;
+				this.dialogRect.y = 898f;
+				this.dialogRect.z = 478f;
+				this.dialogRect.w = 272f;
+				
+				// Old:
+				// this.dialogRect.x = 1306f;
+				// this.dialogRect.y = 880f;
+				// this.dialogRect.z = 420f;
+				// this.dialogRect.w = 332f;
 				if (Localization.CurrentLanguage != "Japanese")
 				{
 					this.phraseLabel.fontSize = 32;
@@ -138,10 +146,18 @@ public class HelpDialog : Singleton<HelpDialog>
 			}
 			else
 			{
+				// TODO Check Native: #147
+				// New:
 				this.dialogRect.x = 1116.5f;
-				this.dialogRect.y = 880f;
-				this.dialogRect.z = 798f;
-				this.dialogRect.w = 332f;
+				this.dialogRect.y = 898f;
+				this.dialogRect.z = 808f;
+				this.dialogRect.w = 264f;
+				
+				// Old:
+				// this.dialogRect.x = 1116.5f;
+				// this.dialogRect.y = 880f;
+				// this.dialogRect.z = 798f;
+				// this.dialogRect.w = 332f;
 			}
 			vector = this.dialogRect;
 		}

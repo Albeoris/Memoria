@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -4975,14 +4975,17 @@ public static class ff9
 			{
 				return 0;
 			}
-			Int64 num3 = Comn.random8();
-			Int64 num4 = Comn.random8();
-			Int64 num5 = num3 << 8 | num4;
-			Int64 num6 = num5 % (ff9.w_frameEventBattleProb + 1);
-			Int32 num = 0;
-			if (ff9.w_frameEncountEnable && ff9.w_moveCHRControl_Move && ff9.m_GetIDTopograph(idall) >= 36 && ff9.m_GetIDTopograph(idall) <= 38 && ff9.w_frameCounter > 400 && num6 == 1L)
+			int num = 0;
+			if (UIManager.World.CurrentState != WorldHUD.State.FullMap)
 			{
-				num = 1;
+				long num3 = (long)Comn.random8();
+				long num4 = (long)Comn.random8();
+				long num5 = num3 << 8 | num4;
+				long num6 = num5 % (long)(ff9.w_frameEventBattleProb + 1);
+				if (ff9.w_frameEncountEnable && ff9.w_moveCHRControl_Move && ff9.m_GetIDTopograph(idall) >= 36 && ff9.m_GetIDTopograph(idall) <= 38 && ff9.w_frameCounter > 400 && num6 == 1L)
+				{
+					num = 1;
+				}
 			}
 			return num;
 		}
@@ -5800,17 +5803,47 @@ public static class ff9
 					else
 					{
 						WMPhysics.UseInfiniteRaycast = true;
-						WMPhysics.CastRayFromSky = true;
+						WMPhysics.CastRayFromSky = (ff9.w_moveCHRStatus[(int)posObj.index].flg_fly != 0);
 						WMPhysics.IgnoreExceptions = true;
-						s_moveCHRStatus = ff9.w_moveCHRStatus[posObj.index];
-						ff9.s_moveCHRCache cache = ff9.w_moveCHRCache[s_moveCHRStatus.cache];
+						s_moveCHRStatus = ff9.w_moveCHRStatus[(int)posObj.index];
+						ff9.s_moveCHRCache s_moveCHRCache = ff9.w_moveCHRCache[(int)s_moveCHRStatus.cache];
 						Vector3 pos = ((Actor)posObj).wmActor.pos;
-						Int32 num;
-						Single ground_height;
-						ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out num, cache, out ground_height);
+						int num;
+						float ground_height;
+						ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out num, null, out ground_height);
+						if (num == -1 && !WMPhysics.CastRayFromSky)
+						{
+							WMPhysics.CastRayFromSky = true;
+							ff9.w_cellHit(ref pos, ref s_moveCHRStatus.id, out num, null, out ground_height);
+						}
 						if (posObj.index == 8)
 						{
 							ground_height = 0f;
+						}
+						if (s_moveCHRStatus.id == 4078 && (posObj.index == 1 || posObj.index == 2 || posObj.index == 11 || posObj.index == 3 || posObj.index == 4 || posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+						{
+							ground_height = ((Actor)posObj).wmActor.pos1;
+							s_moveCHRStatus.id = 4050;
+						}
+						if (s_moveCHRStatus.id == 6382 && (posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+						{
+							ground_height = ((Actor)posObj).wmActor.pos1;
+							s_moveCHRStatus.id = 196;
+						}
+						if (s_moveCHRStatus.id == 2030 && (posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+						{
+							ground_height = ((Actor)posObj).wmActor.pos1;
+							s_moveCHRStatus.id = 196;
+						}
+						if (s_moveCHRStatus.id == 7150 && (posObj.index == 1 || posObj.index == 2 || posObj.index == 11 || posObj.index == 3 || posObj.index == 4 || posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+						{
+							ground_height = ((Actor)posObj).wmActor.pos1;
+							s_moveCHRStatus.id = 6980;
+						}
+						if (s_moveCHRStatus.id == 11502 && (posObj.index == 1 || posObj.index == 2 || posObj.index == 11 || posObj.index == 3 || posObj.index == 4 || posObj.index == 5 || posObj.index == 6 || (posObj.index == 7 && s_moveCHRStatus.flg_fly == 0)))
+						{
+							ground_height = ((Actor)posObj).wmActor.pos1;
+							s_moveCHRStatus.id = 27724;
 						}
 						s_moveCHRStatus.ground_height = ground_height;
 						((Actor)posObj).wmActor.pos = pos;
@@ -6276,30 +6309,31 @@ public static class ff9
 
 	public static Boolean w_movementRoundCheck(ref Vector3 pos, Single rotation, Int32 type, Single speed, ref Int32 id, ref Int32 polyno)
 	{
-		Int32 num = 0;
+		int num = 0;
 		ff9.s_moveCHRControl s_moveCHRControl = ff9.w_moveCHRControl[type];
-		ff9.s_moveCHRCache cache = ff9.w_moveCHRCache[ff9.w_moveCHRStatus[(Int32)ff9.w_moveActorPtr.originalActor.index].cache];
+		ff9.s_moveCHRCache cache = ff9.w_moveCHRCache[(int)ff9.w_moveCHRStatus[(int)ff9.w_moveActorPtr.originalActor.index].cache];
 		Vector3 vector = pos;
 		vector.x += ff9.rsin(ff9.w_moveCHRControl_RotTrue + ff9.PsxRot(2048) + rotation) * speed;
 		vector.z += ff9.rcos(ff9.w_moveCHRControl_RotTrue + ff9.PsxRot(2048) + rotation) * speed;
-		Int32 num2;
-		if (ff9.m_GetIDTopograph(ff9.m_moveActorID) == 52 && ff9.w_moveCHRControlPtr.type != 1)
+		int num2 = ff9.m_GetIDTopograph(ff9.m_moveActorID);
+		int num3;
+		if ((num2 == 52 || num2 == 49) && ff9.w_moveCHRControlPtr.type != 1)
 		{
-			ff9.w_cellHit(ref vector, ref num, out num2, null, out vector.y);
+			ff9.w_cellHit(ref vector, ref num, out num3, null, out vector.y);
 		}
 		else
 		{
-			ff9.w_cellHit(ref vector, ref num, out num2, cache, out vector.y);
+			ff9.w_cellHit(ref vector, ref num, out num3, cache, out vector.y);
 		}
-		if (num2 >= 0)
+		if (num3 >= 0)
 		{
-			Boolean flag = ff9.w_movementCheckTopographID(s_moveCHRControl.limit, (UInt32)num);
+			bool flag = ff9.w_movementCheckTopographID(s_moveCHRControl.limit, (uint)num);
 			if (flag && s_moveCHRControl.flg_gake != 0)
 			{
-				Boolean flag2 = ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, (UInt32)num);
-				Boolean flag3 = ff9.w_movementCheckTopographID(ff9.w_movementGroundStatus, (UInt32)num);
-				Boolean flag4 = ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, ff9.m_moveActorID);
-				Boolean flag5 = ff9.w_movementCheckTopographID(ff9.w_movementGroundStatus, ff9.m_moveActorID);
+				bool flag2 = ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, (uint)num);
+				bool flag3 = ff9.w_movementCheckTopographID(ff9.w_movementGroundStatus, (uint)num);
+				bool flag4 = ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, ff9.m_moveActorID);
+				bool flag5 = ff9.w_movementCheckTopographID(ff9.w_movementGroundStatus, ff9.m_moveActorID);
 				if (flag3 && flag4)
 				{
 					flag = false;
@@ -6312,7 +6346,7 @@ public static class ff9
 			if (flag)
 			{
 				pos = vector;
-				polyno = num2;
+				polyno = num3;
 				id = num;
 				return true;
 			}
@@ -7532,22 +7566,24 @@ public static class ff9
 
 	public static void w_musicPlay(UInt16 musicno)
 	{
-		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
-		Byte b = ff9.byte_gEventGlobal(104);
+		byte b = ff9.byte_gEventGlobal(104);
 		ff9.w_musicPlayNo = ff9.w_musicChoice(musicno);
 		ff9.w_musicFirstPlay = 1;
-		Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
-		if (allSoundDispatchPlayer.GetSuspendSongID() != -1)
+		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
+		int suspendSongID = allSoundDispatchPlayer.GetSuspendSongID();
+		int suspendSongID2 = allSoundDispatchPlayer.GetSuspendSongID();
+		if (ff9.w_musicPlayNo == suspendSongID && suspendSongID != -1 && suspendSongID2 != -1 && suspendSongID == suspendSongID2)
 		{
 			FF9Snd.ff9wldsnd_song_restore();
 		}
 		else
 		{
+			SoundLib.GetAllSoundDispatchPlayer().StopAndClearSuspendBGM(-1);
 			FF9Snd.ff9wldsnd_song_play(ff9.w_musicPlayNo);
-
 		}
 		FF9Snd.LatestWorldPlayedSong = ff9.w_musicPlayNo;
-		Int32 currentMusicId2 = FF9Snd.GetCurrentMusicId();
+		int currentMusicId = FF9Snd.GetCurrentMusicId();
+		int currentMusicId2 = FF9Snd.GetCurrentMusicId();
 		if (b == 0)
 		{
 			b = 125;
@@ -8148,8 +8184,8 @@ public static class ff9
 		Int32 num;
 		if (absoluteBlock.Raycast(ray, out wmraycastHit, distance, out num, cache))
 		{
-			id = num;
 			result = wmraycastHit.point.y;
+			id = num;
 			pno = 1000;
 		}
 		return result;

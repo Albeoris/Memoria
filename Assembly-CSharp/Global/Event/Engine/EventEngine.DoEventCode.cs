@@ -363,6 +363,12 @@ public partial class EventEngine
                         num12 = 11849;
                     }
                 }
+                // TODO Check Native: #147
+                else if (FF9StateSystem.Common.FF9.fldMapNo == 2800 && po.sid == 17)
+                {
+                    num11 = -4702;
+                    num12 = 2702;
+                }
                 else if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 108 && (Int32)po.sid == 2)
                 {
                     if (num11 == -111 && num12 == -210)

@@ -145,6 +145,7 @@ public class FieldSPS : MonoBehaviour
 			num5 = (Int32)reader.ReadSByte();
 			num5 <<= 16;
 			num3 |= num5;
+			var ff9FldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 			if (this.works.fade >= 0)
 			{
 				UInt32 num7 = (UInt32)this.works.fade;
@@ -162,7 +163,7 @@ public class FieldSPS : MonoBehaviour
 				num8 = (UInt32)Mathf.Clamp(num8, -32768f, 32767f);
 				num9 = (UInt32)Mathf.Clamp(num9, -32768f, 32767f);
 				num10 = (UInt32)Mathf.Clamp(num10, -32768f, 32767f);
-				if ((FF9StateSystem.Common.FF9.fldMapNo == 2901 && (this.refNo == 644 || this.refNo == 736)) || (FF9StateSystem.Common.FF9.fldMapNo == 2913 && (this.refNo == 646 || this.refNo == 737)) || (FF9StateSystem.Common.FF9.fldMapNo == 2925 && (this.refNo == 990 || this.refNo == 988)))
+				if ((ff9FldMapNo == 2901 && (this.refNo == 644 || this.refNo == 736)) || (ff9FldMapNo == 2913 && (this.refNo == 646 || this.refNo == 737)) || (ff9FldMapNo == 2925 && (this.refNo == 990 || this.refNo == 988)))
 				{
 					item.color = new Color(num8 / 255f, num9 / 255f, num10 / 255f, 1f);
 				}
@@ -186,6 +187,10 @@ public class FieldSPS : MonoBehaviour
 			item.otz = 0;
 			this.spsPrims.Add(item);
 			reader.BaseStream.Seek(position, SeekOrigin.Begin);
+			
+			// TODO Check Native: #147
+			if ((ff9FldMapNo == 155 || ff9FldMapNo == 1216 || ff9FldMapNo == 1808) && base.name.Equals("SPS_0008"))
+				this.zOffset = 700;
 		}
 	}
 

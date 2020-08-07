@@ -7,21 +7,16 @@ namespace Memoria
     {
         public static class Graphics
         {
-            public static Boolean Enabled => Instance._graphics.Enabled;
             public static Int32 BattleFPS => Instance._graphics.BattleFPS;
             public static Int32 BattleSwirlFrames => Instance._graphics.BattleSwirlFrames;
             public static Int32 SkipIntros = Instance._graphics.SkipIntros;
             public static Int32 GarnetHair => Instance._graphics.GarnetHair;
-
             public static Int32 TileSize => Instance._graphics.TileSize;
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 
             public static Boolean InitializeWidescreenSupport()
             {
-                if (!Enabled)
-                    return false;
-
                 if (!Instance._graphics.WidescreenSupport)
                     return false;
 

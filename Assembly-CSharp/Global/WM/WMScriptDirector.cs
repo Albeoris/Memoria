@@ -151,38 +151,48 @@ public class WMScriptDirector : HonoBehavior
 
 	public void HonoUpdate20FPS()
 	{
-		if ((this.FF9.attr & 256u) == 0u)
+		bool flag;
+		if ((this.FF9.attr & 256U) == 0U)
 		{
 			if (ff9.w_frameCounter >= 5)
 			{
 				UIManager.World.SetPerspectiveToggle(ff9.w_cameraSysDataCamera.upperCounter == 4096);
 				UIManager.World.SetRotationLockToggle(!ff9.w_cameraSysData.cameraNotrot);
 			}
-			if (this.FF9WorldMap.nextMode != 2)
+
+			if (this.FF9WorldMap.nextMode == 2)
 			{
+				flag = false;
+			}
+			else
+			{
+				flag = true;
 				switch (ff9.w_frameMainRoutine())
 				{
-				case 3:
-					this.FF9WorldMap.nextMode = 2;
-					ff9.ff9worldInternalBattleEncountStart();
-					PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = false;
-					break;
-				case 4:
-					this.FF9WorldMap.nextMode = 1;
-					PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = false;
-					this.FF9Sys.attr |= 4096u;
-					break;
+					case 3:
+						this.FF9WorldMap.nextMode = 2;
+						ff9.ff9worldInternalBattleEncountStart();
+						PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = false;
+						break;
+					case 4:
+						this.FF9WorldMap.nextMode = 1;
+						PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = false;
+						this.FF9Sys.attr |= 4096U;
+						break;
 				}
 			}
+
 			this.RenderTextureBank.OnUpdate20FPS();
-			if ((this.FF9World.attr & 512u) == 0u)
+			if ((this.FF9World.attr & 512U) == 0U)
 			{
 				SceneDirector.ServiceFade();
 			}
-			if ((this.FF9World.attr & 1024u) == 0u)
+
+			if ((this.FF9World.attr & 1024U) == 0U)
 			{
 				ff9.ff9worldInternalBattleEncountService();
 			}
+
 			if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
 			{
 				this.fastForwardFrameCounter20FPS++;
@@ -197,7 +207,12 @@ public class WMScriptDirector : HonoBehavior
 				this.UpdateTexture_Render();
 			}
 		}
-		if ((this.FF9Sys.attr & 12289u) != 0u || (this.FF9Sys.attr & 4097u) != 0u)
+		else
+		{
+			flag = false;
+		}
+
+		if ((this.FF9Sys.attr & 12289U) != 0U || (this.FF9Sys.attr & 4097U) != 0U)
 		{
 			ff9.ff9ShutdownStateWorldMap();
 			ff9.ff9ShutdownStateWorldSystem();
@@ -211,18 +226,24 @@ public class WMScriptDirector : HonoBehavior
 			}
 			else if (this.FF9Sys.mode == 2)
 			{
-				PosObj posObj = (PosObj)PersistenSingleton<EventEngine>.Instance.GetObjUID(250);
+				EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
+				Obj objUID = eventEngine.GetObjUID(250);
+				PosObj posObj = (PosObj) objUID;
 				EventInput.IsProcessingInput = false;
-				SoundLib.SuspendSoundSystem();
-				SFX_Rush.SetCenterPosition(1);
-				SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
+				if (flag)
+				{
+					SoundLib.StopAllSounds(false);
+					SFX_Rush.SetCenterPosition(1);
+					SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
+				}
 			}
 			else if (this.FF9Sys.mode == 3)
 			{
-				SoundLib.StopAllSounds();
+				SoundLib.StopAllSounds(true);
 				SceneDirector.Replace("WorldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 			}
 		}
+
 		if (!FF9StateSystem.World.IsBeeScene)
 		{
 			for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
@@ -230,19 +251,21 @@ public class WMScriptDirector : HonoBehavior
 				Obj obj = objList.obj;
 				if (PersistenSingleton<EventEngine>.Instance.isPosObj(obj))
 				{
-					WMActor wmActor = ((Actor)obj).wmActor;
-					if (obj.cid == 4 && wmActor != (UnityEngine.Object)null)
+					WMActor wmActor = ((Actor) obj).wmActor;
+					if (obj.cid == 4 && wmActor != null)
 					{
 						wmActor.UpdateAnimationViaScript();
 					}
 				}
 			}
 		}
+
 		for (ObjList objList2 = this.World.ActorList; objList2 != null; objList2 = objList2.next)
 		{
 			if (objList2.obj.cid == 4)
 			{
-				((Actor)objList2.obj).wmActor.LateUpdateFunction();
+				WMActor wmActor2 = ((Actor) objList2.obj).wmActor;
+				wmActor2.LateUpdateFunction();
 			}
 		}
 	}

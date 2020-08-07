@@ -50,6 +50,13 @@ public class GUIManager : MonoBehaviour
 			return;
 		}
 	}
+	
+	private void SetFieldMap(short no, int sc = 0, int id = -1)
+	{
+		FF9StateSystem.Common.FF9.fldMapNo = no;
+		PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(EBin.SC_COUNTER_SVR, sc);
+		PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(EBin.MAP_INDEX_SVR, id);
+	}
 
 	private Vector2 scrollPosition = new Vector2(0f, 0f);
 

@@ -10,18 +10,16 @@ public class AppArgumentsCheck : MonoBehaviour
 
 	private void ForceQuitIfRequiredArguementIsMissing()
 	{
-		String[] commandLineArgs = Environment.GetCommandLineArgs();
-		Boolean flag = false;
-		Boolean flag2 = false;
-		String[] array = commandLineArgs;
-		for (Int32 i = 0; i < (Int32)array.Length; i++)
+		string[] commandLineArgs = Environment.GetCommandLineArgs();
+		bool flag = false;
+		bool flag2 = false;
+		for (int i = 0; i < commandLineArgs.Length; i++)
 		{
-			String a = array[i];
-			if (a == "-runbylauncher")
+			if (commandLineArgs[i] == "-runbylauncher")
 			{
 				flag = true;
 			}
-			if (a == "-screen-quality")
+			if (commandLineArgs[i] == "-screen-quality")
 			{
 				flag2 = true;
 			}

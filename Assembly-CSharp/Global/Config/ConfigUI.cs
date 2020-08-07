@@ -226,7 +226,7 @@ public class ConfigUI : UIScene
             ButtonGroupState.RemoveCursorMemorize(CustomControllerGroupButton);
             ButtonGroupState.ActiveGroup = CustomControllerGroupButton;
             ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
-            yield break;
+            yield return null;
         }
 
         KeyboardButton.SetActive(true);
@@ -896,20 +896,12 @@ public class ConfigUI : UIScene
 
     public override Boolean OnKeyPause(GameObject go)
     {
-        if (base.OnKeyPause(go) && ButtonGroupState.ActiveGroup == CustomControllerGroupButton)
+        if (base.OnKeyPause(go) && ButtonGroupState.ActiveGroup == ConfigUI.CustomControllerGroupButton)
         {
             FF9Sfx.FF9SFX_Play(101);
-            SetControllerSettings();
-            if (FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
-            {
-                ButtonGroupState.ActiveGroup = ConfigGroupButton;
-                CloseCustomControllerPanel(ControllerType.Joystick);
-            }
-            else
-            {
-                ButtonGroupState.ActiveGroup = ControllerTypeGroupButton;
-                backButtonGameObject.GetComponent<OnScreenButton>().KeyCommand = Control.Cancel;
-            }
+            this.SetControllerSettings();
+            ButtonGroupState.ActiveGroup = ConfigUI.ControllerTypeGroupButton;
+            this.backButtonGameObject.GetComponent<OnScreenButton>().KeyCommand = Control.Cancel;
         }
         return true;
     }
@@ -1324,6 +1316,9 @@ public class ConfigUI : UIScene
     {
         ValidateKeyboard();
         ValidateController();
+        
+        // TODO Check Native: #147 - Will incombaitble with Android and PC with Controller? O.o
+        // this.currentControllerType = ControllerType.Keyboard;
         if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
         {
             currentControllerType = ControllerType.Joystick;
@@ -1473,27 +1468,25 @@ public class ConfigUI : UIScene
         {
             ConfigField configField = new ConfigField();
             GameObject obj = trans.gameObject;
-            Int32 iD = obj.GetComponent<ScrollItemKeyNavigation>().ID;
-            if (!FF9StateSystem.Editor && !FF9StateSystem.PCPlatform)
+            Int32 id = obj.GetComponent<ScrollItemKeyNavigation>().ID;
+            
+            // Hide vibration settings from menu
+            if (!FF9StateSystem.IsPlatformVibration)
             {
-                if (iD == 12)
+                if (id == 12) // Configurator.Vibration
                 {
                     num--;
-                    obj.SetActive(false);
+                    gameObject.SetActive(false);
                 }
-                else if (iD > 12)
+                else if (id > 12) //  ControlTutorial, CombatTutorial, Title, QuitGame
                 {
-                    obj.GetComponent<ScrollItemKeyNavigation>().ID = iD - 1;
-                }
-                if (iD == 16)
-                {
-                    num--;
-                    obj.SetActive(false);
+                    gameObject.GetComponent<ScrollItemKeyNavigation>().ID = id - 1;
                 }
             }
+            
             configField.ConfigParent = obj;
             configField.Button = obj.GetComponent<ButtonGroupState>();
-            configField.Configurator = (Configurator)iD;
+            configField.Configurator = (Configurator)id;
             if (ConfigSliderIdList.Contains(configField.Configurator))
             {
                 configField.ConfigChoice.Add(trans.GetChild(1).GetChild(1).gameObject);
@@ -1526,14 +1519,14 @@ public class ConfigUI : UIScene
             expr_2BB.onNavigate = (UIEventListener.KeyCodeDelegate)Delegate.Combine(expr_2BB.onNavigate, new UIEventListener.KeyCodeDelegate(OnKeyChoice));
             ConfigFieldList.Add(configField);
         }
-        if (!FF9StateSystem.Editor && !FF9StateSystem.PCPlatform)
+        
+        if (!FF9StateSystem.IsPlatformVibration)
         {
-            Int32 num3 = 12;
-            ConfigFieldList[num3 - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = ConfigFieldList[num3 + 1].ConfigParent;
-            ConfigFieldList[num3 + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = ConfigFieldList[num3 - 1].ConfigParent;
-            Int32 num4 = 16;
-            ConfigFieldList[num4 - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = BoosterPanel.GetChild(0);
+            int num3 = 12;
+            this.ConfigFieldList[num3 - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = this.ConfigFieldList[num3 + 1].ConfigParent;
+            this.ConfigFieldList[num3 + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = this.ConfigFieldList[num3 - 1].ConfigParent;
         }
+        
         configScrollButton = ConfigList.GetChild(0).GetComponent<ScrollButton>();
         configScrollView = ConfigList.GetChild(1).GetComponent<SnapDragScrollView>();
         configScrollView.MaxItem = num;

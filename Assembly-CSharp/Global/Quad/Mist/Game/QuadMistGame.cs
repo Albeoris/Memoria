@@ -660,6 +660,7 @@ public class QuadMistGame : MonoBehaviour
             yield return null;
         }
 
+        FF9Snd.ff9minisnd_song_stop(66);
         SceneDirector.Replace(PersistenSingleton<SceneDirector>.Instance.LastScene, SceneTransition.FadeOutToBlack_FadeIn, true);
     }
 

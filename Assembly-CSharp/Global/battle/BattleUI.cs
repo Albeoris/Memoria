@@ -165,7 +165,7 @@ public class BattleUI : MonoBehaviour
 			}
 			FF9StateSystem.Battle.battleMapIndex = num;
 			FF9StateSystem.Battle.patternIndex = 0;
-			SoundLib.StopAllSounds();
+			SoundLib.StopAllSounds(true);
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
 		GUILayout.EndHorizontal();

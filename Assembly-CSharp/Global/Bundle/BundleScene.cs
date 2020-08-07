@@ -40,6 +40,7 @@ public class BundleScene : MonoBehaviour
 		}
 		this._skipBundleScene = true;
 		ExpansionVerifier.printLog("BundleScene : awake _skipBundleScene = " + this._skipBundleScene);
+		this._UsingUncompressedAssetBundlesFromLocal();
 	}
 
 	private void LateUpdate()

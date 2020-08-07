@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
@@ -203,7 +203,7 @@ public class FieldMapUIButton : MonoBehaviour
 				}
 				FF9StateSystem.Field.SceneName = this._sceneList[this.index].name;
 				FF9StateSystem.Field.index = this.index;
-				SoundLib.StopAllSounds();
+				SoundLib.StopAllSounds(true);
 				SceneDirector.Replace("FieldMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 			}
 		}

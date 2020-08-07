@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 using Memoria.Prime;
 using UnityEngine;
 
@@ -9,7 +10,19 @@ namespace Memoria.Scenes
     {
         public static T GetExactComponent<T>(this GameObject obj) where T : Component
         {
-            return obj.GetComponents<T>().Single(c => c.GetType() == TypeCache<T>.Type);
+            T[] components = obj.GetComponents<T>();
+            if (components.Length == 1)
+            {
+                T component = components[0];
+                if (component.GetType() == TypeCache<T>.Type)
+                    return component;
+            }
+
+            Component[] allComponents = obj.GetComponents<Component>();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Cannot find component of type {TypeCache<T>.Type} for the object {obj.name} ({obj.GetInstanceID()}).");
+            sb.AppendLine("Existing components: " + String.Join(", ", allComponents.Select(c => c.GetType().Name).ToArray()));
+            throw new ArgumentException(sb.ToString());
         }
 
         public static T GetExactComponent<T>(this GameObject obj, Int32 index) where T : Component

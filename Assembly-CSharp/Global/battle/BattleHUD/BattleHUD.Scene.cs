@@ -21,6 +21,7 @@ public partial class BattleHUD : UIScene
             base.Show(action);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterState(PersistenSingleton<UIManager>.Instance.UnityScene);
             FF9StateSystem.Settings.SetMasterSkill();
+            this._doubleCastCount = 0;
             AllMenuPanel.SetActive(false);
         }
         else
