@@ -15,7 +15,6 @@ public class BattleSwirl : MonoBehaviour
     private Boolean _isReplaceCalled;
     private Int32 _eventEngineGmode;
     private SFX_Rush _rush;
-    private Boolean wasUpdated;
 
     private void Awake()
     {
@@ -42,29 +41,20 @@ public class BattleSwirl : MonoBehaviour
             RequestPlayBattleEncounterSong();
             _hasPlayEncounterSound = true;
         }
-        
-        // TODO Check Native: #147
-        // if (this.rush.update() && !this.isReplaceCalled)
-        // {
-        //     this.isReplaceCalled = true;
-        //     SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
-        // }
 
         if (_rush.update() && !this._isReplaceCalled)
         {
             if (!_hasPlayEncounterSound)
             {
-                RequestPlayBattleEncounterSong();
                 _hasPlayEncounterSound = true;
+                RequestPlayBattleEncounterSong();
             }
 
-            if (!this.wasUpdated)
+            if (!this._isReplaceCalled)
             {
+                this._isReplaceCalled = true;
                 SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
-                return;
             }
-
-            this.wasUpdated = true;
         }
     }
 
