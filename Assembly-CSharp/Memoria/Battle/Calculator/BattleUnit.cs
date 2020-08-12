@@ -91,7 +91,7 @@ namespace Memoria
 
         public Byte PhisicalEvade
         {
-            get => Data.defence.PhisicalDefence;
+            get => Data.defence.PhisicalEvade;
             set => Data.defence.PhisicalEvade = value;
         }
 
