@@ -57,6 +57,7 @@
 			PermanentCheats = " Triche 'irréversible' | F5 F6 F7"
 			UsePsxFont = " Utiliser la police PS1"
 			SBUIenabled = " Scaled Battle UI"
+			BattleFPS = "Vitesse combats (déf. 15)"
 			/>
 
 	<SdLib

@@ -57,6 +57,7 @@
 			PermanentCheats = " Permanent cheats | F5 F6 F7"
 			UsePsxFont = "Use PSX font"
 			SBUIenabled = "Scaled Battle UI"
+			BattleFPS = "Battle speed (def. 15)"
 
 			/>
 

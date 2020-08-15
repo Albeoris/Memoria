@@ -339,53 +339,78 @@ namespace Memoria.Launcher
 
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "1";
+                    OnPropertyChanged(nameof(WidescreenSupport));
+                }
                 if (!Int16.TryParse(value, out _iswidescreensupport))
                     _iswidescreensupport = 1;
                 value = iniFile.ReadValue("Graphics", nameof(SkipIntros));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(SkipIntros));
+                }
                 if (!Int16.TryParse(value, out _isskipintros))
                     _isskipintros = 0;
                 value = iniFile.ReadValue("Icons", nameof(HideCards));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(HideCards));
+                }
                 if (!Int16.TryParse(value, out _ishidecards))
                     _ishidecards = 0;
                 value = iniFile.ReadValue("Battle", nameof(Speed));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(Speed));
+                }
                 if (!Int16.TryParse(value, out _isturnbased))
                     _isturnbased = 0;
                 value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "20";
+                    OnPropertyChanged(nameof(BattleSwirlFrames));
+                }
                 if (!Int16.TryParse(value, out _battleswirlframes))
                     _battleswirlframes = 20;
                 value = iniFile.ReadValue("Audio", nameof(SoundVolume));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "100";
+                    OnPropertyChanged(nameof(SoundVolume));
+                }
                 if (!Int16.TryParse(value, out _soundvolume))
                     _soundvolume = 100;
 
                 value = iniFile.ReadValue("Audio", nameof(MusicVolume));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "100";
+                    OnPropertyChanged(nameof(MusicVolume));
+                }
                 if (!Int16.TryParse(value, out _musicvolume))
                     _musicvolume = 100;
 
-                OnPropertyChanged(nameof(WidescreenSupport));
-                OnPropertyChanged(nameof(SkipIntros));
-                OnPropertyChanged(nameof(HideCards));
-                OnPropertyChanged(nameof(Speed));
-                OnPropertyChanged(nameof(BattleSwirlFrames));
-                OnPropertyChanged(nameof(SoundVolume));
-                OnPropertyChanged(nameof(MusicVolume));
+
+                Refresh(nameof(WidescreenSupport));
+                Refresh(nameof(SkipIntros));
+                Refresh(nameof(HideCards));
+                Refresh(nameof(Speed));
+                Refresh(nameof(BattleSwirlFrames));
+                Refresh(nameof(SoundVolume));
+                Refresh(nameof(MusicVolume));
 
                 if (PsxFontInstalled) {
                     value = iniFile.ReadValue("Graphics", nameof(UseGarnetFont));
                     if (String.IsNullOrEmpty(value))
+                    {
                         value = "1";
+                        OnPropertyChanged(nameof(UseGarnetFont));
+                    }
                     if (!Int16.TryParse(value, out _usegarnetfont))
                         _usegarnetfont = 1;
                     OnPropertyChanged(nameof(UseGarnetFont));
@@ -394,14 +419,20 @@ namespace Memoria.Launcher
                 {
                     value = iniFile.ReadValue("Graphics", nameof(ScaledBattleUI));
                     if (String.IsNullOrEmpty(value))
+                    {
                         value = "1";
+                        OnPropertyChanged(nameof(ScaledBattleUI));
+                    }
                     if (!Int16.TryParse(value, out _scaledbattleui))
                         _scaledbattleui = 1;
                     OnPropertyChanged(nameof(ScaledBattleUI));
 
                     value = iniFile.ReadValue("Graphics", nameof(ScaleUIFactor));
                     if (String.IsNullOrEmpty(value))
+                    {
                         value = "0.6";
+                        OnPropertyChanged(nameof(ScaleUIFactor));
+                    }
                     if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _scaledbattleuiscale))
                         _scaledbattleuiscale = 0.6;
                     OnPropertyChanged(nameof(ScaleUIFactor));
@@ -412,6 +443,18 @@ namespace Memoria.Launcher
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+
+        private async void Refresh([CallerMemberName] String propertyName = null)
+        {
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
             try

@@ -99,6 +99,23 @@ namespace Memoria.Launcher
             masterSkill.Foreground = Brushes.White;
             masterSkill.Margin = rowMargin;
 
+            UiTextBlock battleFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleFPS), row: 19, col: 0, rowSpan: 2, colSpan: 8);
+            battleFpsText.Foreground = Brushes.White;
+            battleFpsText.Margin = rowMargin;
+
+            UiTextBlock battleFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row: 21, col: 0, rowSpan: 2, colSpan: 2);
+            battleFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
+            battleFpsIndex.Foreground = Brushes.White;
+            battleFpsIndex.Margin = rowMargin;
+
+            Slider battleFps = AddUiElement(UiSliderFactory.Create(0), row: 21, col: 2, rowSpan: 1, colSpan: 6);
+            battleFps.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
+            battleFps.TickFrequency = 5;
+            battleFps.IsSnapToTickEnabled = true;
+            battleFps.Minimum = 15;
+            battleFps.Maximum = 60;
+            battleFps.Margin = new Thickness(0, 0, 3, 0);
+
             LoadSettings();
         }
 
@@ -199,7 +216,20 @@ namespace Memoria.Launcher
             }
         }
 
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill;
+        public Int16 BattleFPS
+        {
+            get { return _battlefps; }
+            set
+            {
+                if (_battlefps != value)
+                {
+                    _battlefps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _battlefps;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -212,66 +242,113 @@ namespace Memoria.Launcher
                 
                 String value = iniFile.ReadValue("Hacks", nameof(StealingAlwaysWorks));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(StealingAlwaysWorks));
+                }
                 if (!Int16.TryParse(value, out _stealingalwaysworks))
                     _stealingalwaysworks = 0;
 
                 value = iniFile.ReadValue("Battle", nameof(GarnetConcentrate));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(GarnetConcentrate));
+                }
                 if (!Int16.TryParse(value, out _garnetconcentrate))
                     _garnetconcentrate = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(SpeedMode));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(SpeedMode));
+                }
                 if (!Int16.TryParse(value, out _speedmode))
                     _speedmode = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(SpeedFactor));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "2";
+                    OnPropertyChanged(nameof(SpeedFactor));
+                }
                 if (!Int16.TryParse(value, out _speedfactor))
                     _speedfactor = 2;
 
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(BattleAssistance));
+                }
                 if (!Int16.TryParse(value, out _battleassistance))
                     _battleassistance = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(Attack9999));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(Attack9999));
+                }
                 if (!Int16.TryParse(value, out _attack9999))
                     _attack9999 = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(NoRandomEncounter));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(NoRandomEncounter));
+                }
                 if (!Int16.TryParse(value, out _norandomencounter))
                     _norandomencounter = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(MasterSkill));
                 if (String.IsNullOrEmpty(value))
+                {
                     value = "0";
+                    OnPropertyChanged(nameof(MasterSkill));
+                }
                 if (!Int16.TryParse(value, out _masterskill))
                     _masterskill = 0;
 
+                value = iniFile.ReadValue("Graphics", nameof(BattleFPS));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = "15";
+                    OnPropertyChanged(nameof(BattleFPS));
+                }
+                if (!Int16.TryParse(value, out _battlefps))
+                    _battlefps = 15;
 
-                OnPropertyChanged(nameof(StealingAlwaysWorks));
-                OnPropertyChanged(nameof(GarnetConcentrate));
-                OnPropertyChanged(nameof(SpeedMode));
-                OnPropertyChanged(nameof(SpeedFactor));
-                OnPropertyChanged(nameof(BattleAssistance));
-                OnPropertyChanged(nameof(Attack9999));
-                OnPropertyChanged(nameof(NoRandomEncounter));
-                OnPropertyChanged(nameof(MasterSkill));
+
+                Refresh(nameof(StealingAlwaysWorks));
+                Refresh(nameof(GarnetConcentrate));
+                Refresh(nameof(SpeedMode));
+                Refresh(nameof(SpeedFactor));
+                Refresh(nameof(BattleAssistance));
+                Refresh(nameof(Attack9999));
+                Refresh(nameof(NoRandomEncounter));
+                Refresh(nameof(MasterSkill));
+                Refresh(nameof(BattleFPS));
             }
             catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+
+        private async void Refresh([CallerMemberName] String propertyName = null)
+        {
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
 
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
@@ -283,9 +360,6 @@ namespace Memoria.Launcher
                 switch (propertyName)
                 {
                     case nameof(StealingAlwaysWorks):
-                        
-                        
-                        
                         iniFile.WriteValue("Hacks", propertyName, " " + (StealingAlwaysWorks).ToString());
                         if (StealingAlwaysWorks == 0)
                         {
@@ -347,17 +421,15 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
                         }
                         break;
+                    case nameof(BattleFPS):
+                        iniFile.WriteValue("Graphics", propertyName, " " + (BattleFPS).ToString());
+                        break;
                 }
             }
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
-        }
-        private IEnumerable<UInt16> EnumerateSpeedFactor()
-        {
-            for (ushort i = 2; i < 16; i++)
-                yield return i;
         }
 
     }
