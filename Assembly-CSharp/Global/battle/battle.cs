@@ -364,7 +364,6 @@ public class battle
                                         if (next.cur.hp > 0)
                                         {
                                             Int32 num3 = btl_mot.GetDirection(next);
-                                            next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num3, next.evt.rotBattle.eulerAngles.z);
                                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
                                             next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatus.IdleDying) ? (Byte)0 : (Byte)1;
                                             next.bi.cmd_idle = 0;
@@ -407,7 +406,6 @@ public class battle
                         if (next.bi.player == 0)
                         {
                             Int32 num2 = btl_mot.GetDirection(next);
-                            next.evt.rotBattle.eulerAngles = new Vector3(next.evt.rotBattle.eulerAngles.x, num2, next.evt.rotBattle.eulerAngles.z);
                             next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
                         }
                     }

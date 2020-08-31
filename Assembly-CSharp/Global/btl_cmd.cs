@@ -62,7 +62,7 @@ public class btl_cmd
             return false;
         if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (cmd.AbilityType & 0x8) != 0)
             return true;
-        if (Configuration.Battle.CustomBattleFlagsMeaning != 1 && cmd.sub_no == 176)
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 1)
             return true;
         return false;
     }

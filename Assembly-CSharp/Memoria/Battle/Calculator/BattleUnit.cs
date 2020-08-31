@@ -322,7 +322,6 @@ namespace Memoria
         public void FaceAsUnit(BattleUnit unit)
         {
             Int32 angle = btl_mot.GetDirection(unit);
-            Data.evt.rotBattle.eulerAngles = new Vector3(Data.evt.rotBattle.eulerAngles.x, angle, Data.evt.rotBattle.eulerAngles.z);
             Data.rot.eulerAngles = new Vector3(Data.rot.eulerAngles.x, angle, Data.rot.eulerAngles.z);
         }
 

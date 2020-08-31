@@ -88,6 +88,8 @@ namespace Memoria.Prime.Ini
                         ParseLine();
                     }
                 }
+                FlushSection();
+                _values = null;
                 // Read configuration files inside the different mod sections
                 IniSection modSection;
                 if (_sectionsRead.TryGetValue("Mod", out modSection))

@@ -45,8 +45,9 @@ public class UIAtlas : MonoBehaviour
 			if (File.Exists(inputPath) && !File.Exists(tpsheetPath))
 			{
 				Byte[] raw = File.ReadAllBytes(inputPath);
-				Texture2D newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
-				newFullAtlas.LoadImage(raw);
+				Texture2D newFullAtlas = AssetManager.LoadTextureGeneric(raw);
+				if (newFullAtlas == null)
+					newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
 				SetTexture(newFullAtlas);
 				return true;
 			}

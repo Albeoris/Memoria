@@ -101,7 +101,6 @@ namespace Memoria
                         btl_mot.setMotion(target, 16);
                         target.evt.animFrame = 0;
                         Int32 num = btl_mot.GetDirection(target);
-                        target.evt.rotBattle.eulerAngles = new Vector3(target.evt.rotBattle.eulerAngles.x, num, target.evt.rotBattle.eulerAngles.z);
                         target.rot.eulerAngles = new Vector3(target.rot.eulerAngles.x, num, target.rot.eulerAngles.z);
                     }
                     else if (target.bi.slave == 0)

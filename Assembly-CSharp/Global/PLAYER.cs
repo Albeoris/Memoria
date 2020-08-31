@@ -46,8 +46,9 @@ public class PLAYER
 			this.cur.capa = this.max.capa;
 			this.sa[0] = 0u;
 			this.sa[1] = 0u;
-			ff9play.FF9Play_Update(this);
 		}
+		// Run "FF9Play_Update" anyway when loading data, mostly for "SupportingAbilityFeature.TriggerOnEnable"
+		ff9play.FF9Play_Update(this);
 	}
 
 	public void ValidateBasisStatus()

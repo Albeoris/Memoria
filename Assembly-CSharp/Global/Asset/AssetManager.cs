@@ -183,6 +183,54 @@ public static class AssetManager
 		}
 	}
 
+	public static Boolean IsTextureFormatReadableFromBytes(TextureFormat format)
+	{
+		// Todo: verify which TextureFormat are compatible with LoadRawTextureData
+		return format == TextureFormat.Alpha8
+			|| format == TextureFormat.RGB24
+			|| format == TextureFormat.RGBA32
+			|| format == TextureFormat.ARGB32
+			|| format == TextureFormat.RGB565
+			|| format == TextureFormat.DXT1
+			|| format == TextureFormat.DXT5;
+	}
+
+	public static Texture2D LoadTextureGeneric(Byte[] raw)
+	{
+		const UInt32 DDS_HEADER_SIZE = 0x3C;
+		if (raw.Length >= DDS_HEADER_SIZE)
+		{
+			UInt32 w = BitConverter.ToUInt32(raw, 0);
+			UInt32 h = BitConverter.ToUInt32(raw, 4);
+			UInt32 imgSize = BitConverter.ToUInt32(raw, 8);
+			TextureFormat fmt = (TextureFormat)BitConverter.ToUInt32(raw, 12);
+			UInt32 mipCount = BitConverter.ToUInt32(raw, 16);
+			// UInt32 flags = BitConverter.ToUInt32(raw, 20); // 1 = isReadable (for use of GetPixels); 0x100 is usually on
+			// UInt32 imageCount = BitConverter.ToUInt32(raw, 24);
+			// UInt32 dimension = BitConverter.ToUInt32(raw, 28);
+			// UInt32 filterMode = BitConverter.ToUInt32(raw, 32);
+			// UInt32 anisotropic = BitConverter.ToUInt32(raw, 36);
+			// UInt32 mipBias = BitConverter.ToUInt32(raw, 40);
+			// UInt32 wrapMode = BitConverter.ToUInt32(raw, 44);
+			// UInt32 lightmapFormat = BitConverter.ToUInt32(raw, 48);
+			// UInt32 colorSpace = BitConverter.ToUInt32(raw, 52);
+			// UInt32 imgSize = BitConverter.ToUInt32(raw, 56);
+			if (raw.Length == DDS_HEADER_SIZE + imgSize && IsTextureFormatReadableFromBytes(fmt))
+			{
+				Byte[] imgBytes = new Byte[imgSize];
+				Buffer.BlockCopy(raw, (Int32)DDS_HEADER_SIZE, imgBytes, 0, (Int32)imgSize);
+				Texture2D ddsTexture = new Texture2D((Int32)w, (Int32)h, fmt, mipCount > 1);
+				ddsTexture.LoadRawTextureData(imgBytes);
+				ddsTexture.Apply();
+				return ddsTexture;
+			}
+		}
+		Texture2D pngTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
+		if (pngTexture.LoadImage(raw))
+			return pngTexture;
+		return null;
+	}
+
 	public static T LoadFromDisc<T>(String name, ref String[] memoriaInfo, String archiveName)
 	{
 		/*
@@ -206,16 +254,18 @@ public static class AssetManager
 		else if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
 		{
 			Byte[] raw = File.ReadAllBytes(name);
-			Texture2D newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
-			newTexture.LoadImage(raw);
+			Texture2D newTexture = LoadTextureGeneric(raw);
+			if (newTexture == null)
+				newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
 			ApplyTextureGenericMemoriaInfo<Texture2D>(ref newTexture, ref memoriaInfo);
 			return (T)(Object)newTexture;
 		}
 		else if (typeof(T) == typeof(Sprite))
 		{
 			Byte[] raw = File.ReadAllBytes(name);
-			Texture2D newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
-			newTexture.LoadImage(raw);
+			Texture2D newTexture = LoadTextureGeneric(raw);
+			if (newTexture == null)
+				newTexture = new Texture2D(1, 1, DefaultTextureFormat, false);
 			ApplyTextureGenericMemoriaInfo<Texture2D>(ref newTexture, ref memoriaInfo);
 			Sprite newSprite = Sprite.Create(newTexture, new Rect(0, 0, newTexture.width, newTexture.height), new Vector2(0.5f, 0.5f));
 			return (T)(Object)newSprite;
