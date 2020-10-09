@@ -60,6 +60,20 @@ namespace NCalc
                     v2 |= (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), 0);
                 args.Result = name == "CombineStatuses" ? v1 | v2 : v1 & ~v2;
             }
+            else if (name == "Min" && args.Parameters.Length == 2)
+            {
+                Int64 v1 = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Int64.MaxValue);
+                Int64 v2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), Int64.MaxValue);
+                if (v1 != Int64.MaxValue || v2 != Int64.MaxValue)
+                    args.Result = Math.Min(v1, v2);
+            }
+            else if (name == "Max" && args.Parameters.Length == 2)
+            {
+                Int64 v1 = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Int64.MinValue);
+                Int64 v2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), Int64.MinValue);
+                if (v1 != Int64.MinValue || v2 != Int64.MinValue)
+                    args.Result = Math.Max(v1, v2);
+            }
         };
 
         public static EvaluateParameterHandler commonNCalcParameters = delegate (String name, ParameterArgs args)
