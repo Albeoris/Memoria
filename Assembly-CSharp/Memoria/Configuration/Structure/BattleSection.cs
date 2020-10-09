@@ -41,6 +41,11 @@ namespace Memoria
             */
             public readonly IniValue<String> StatusDurationFormula;
             public readonly IniValue<String> StatusTickFormula;
+            public readonly IniValue<String> SpeedStatFormula;
+            public readonly IniValue<String> StrengthStatFormula;
+            public readonly IniValue<String> MagicStatFormula;
+            public readonly IniValue<String> SpiritStatFormula;
+            public readonly IniValue<String> MagicStoneStockFormula;
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -60,6 +65,11 @@ namespace Memoria
                 SpareChangeGilSpentFormula = BindString(nameof(SpareChangeGilSpentFormula), "");
                 StatusDurationFormula = BindString(nameof(StatusDurationFormula), "");
                 StatusTickFormula = BindString(nameof(StatusTickFormula), "");
+                SpeedStatFormula = BindString(nameof(SpeedStatFormula), "");
+                StrengthStatFormula = BindString(nameof(StrengthStatFormula), "");
+                MagicStatFormula = BindString(nameof(MagicStatFormula), "");
+                SpiritStatFormula = BindString(nameof(SpiritStatFormula), "");
+                MagicStoneStockFormula = BindString(nameof(MagicStoneStockFormula), "");
             }
         }
     }
