@@ -22,6 +22,11 @@ namespace Memoria
             public static String SpareChangeGilSpentFormula => Instance._battle.SpareChangeGilSpentFormula;
             public static String StatusDurationFormula => Instance._battle.StatusDurationFormula;
             public static String StatusTickFormula => Instance._battle.StatusTickFormula;
+            public static String SpeedStatFormula => Instance._battle.SpeedStatFormula;
+            public static String StrengthStatFormula => Instance._battle.StrengthStatFormula;
+            public static String MagicStatFormula => Instance._battle.MagicStatFormula;
+            public static String SpiritStatFormula => Instance._battle.SpiritStatFormula;
+            public static String MagicStoneStockFormula => Instance._battle.MagicStoneStockFormula;
         }
     }
 }
