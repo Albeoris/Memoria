@@ -58,34 +58,36 @@ namespace Memoria.Launcher
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 6, col: 0,rowSpan: 3).Margin = rowMargin;
-            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 8, col: 0, rowSpan: 3);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 5, col: 0,rowSpan: 3).Margin = rowMargin;
+            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 2);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            UiCheckBox windowedCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Windowed, null), row: 8, col: 1, rowSpan: 3);
-            windowedCheckBox.Margin = rowMargin;
-            windowedCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Windowed)) {Mode = BindingMode.TwoWay});
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 10, col: 0,rowSpan: 3).Margin = rowMargin;
+            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 12, col: 0, rowSpan: 3, colSpan: 2);
+            windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
+            windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) {Mode = BindingMode.TwoWay});
+            windowMode.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency), 12, 0, 3, 2).Margin = rowMargin;
-            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 14, 0, 3, 2);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency), 15, 0, 3, 2).Margin = rowMargin;
+            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 17, 0, 3, 2);
             audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
             audio.ItemsSource = EnumerateAudioSettings().ToArray();
             audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 17, 0, 3, 0);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 20, 0, 3, 0);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 17, 1, 3, 0);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 20, 1, 3, 0);
             debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 19, 0, 3, 2);
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 22, 0, 3, 2);
             checkUpdates.Margin = new Thickness(0, 8, 0, 8);
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
 
@@ -120,6 +122,19 @@ namespace Memoria.Launcher
                 if (_resolution != value)
                 {
                     _resolution = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public String WindowMode
+        {
+            get { return _windowMode; }
+            set
+            {
+                if (_windowMode != value)
+                {
+                    _windowMode = value;
                     OnPropertyChanged();
                 }
             }
@@ -220,19 +235,6 @@ namespace Memoria.Launcher
             }
         }
 
-        public Boolean Windowed
-        {
-            get { return _isWindowMode; }
-            set
-            {
-                if (_isWindowMode != value)
-                {
-                    _isWindowMode = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         public Boolean IsDebugMode
         {
             get { return _isDebugMode; }
@@ -295,8 +297,8 @@ namespace Memoria.Launcher
                     case nameof(ActiveMonitor):
                         iniFile.WriteValue("Settings", propertyName, ActiveMonitor ?? String.Empty);
                         break;
-                    case nameof(Windowed):
-                        iniFile.WriteValue("Settings", propertyName, (Windowed).ToString());
+                    case nameof(WindowMode):
+                        iniFile.WriteValue("Settings", propertyName, WindowMode ?? Lang.Settings.Window);
                         break;
                     case nameof(IsDebugMode):
                         iniFile.WriteValue("Memoria", propertyName, (IsDebugMode).ToString());
@@ -333,9 +335,9 @@ namespace Memoria.Launcher
 
         private String _resolution = "1280x960";
         private String _activeMonitor = "";
+        private String _windowMode = "";
         private UInt16 _audioFrequency = 32000;
         private Boolean _audioFrequencyEnabled = true;
-        private Boolean _isWindowMode = true;
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
@@ -357,11 +359,11 @@ namespace Memoria.Launcher
                 if (!String.IsNullOrEmpty(value))
                     _activeMonitor = value;
 
-                value = iniFile.ReadValue("Settings", nameof(Windowed));
-                if (String.IsNullOrEmpty(value))
-                    value = "true";
-                if (!Boolean.TryParse(value, out _isWindowMode))
-                    _isWindowMode = true;
+                value = iniFile.ReadValue("Settings", nameof(WindowMode));
+                if (!String.IsNullOrEmpty(value))
+                    _windowMode = value;
+                if (!EnumerateWindowModeSettings().Contains(_windowMode))
+                    _windowMode = Lang.Settings.Window;
 
                 value = iniFile.ReadValue("Memoria", nameof(IsX64));
                 if (String.IsNullOrEmpty(value))
@@ -442,7 +444,7 @@ namespace Memoria.Launcher
 
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
-                OnPropertyChanged(nameof(Windowed));
+                OnPropertyChanged(nameof(WindowMode));
                 OnPropertyChanged(nameof(AudioFrequency));
                 OnPropertyChanged(nameof(AudioFrequencyEnabled));
                 OnPropertyChanged(nameof(IsX64));
@@ -642,6 +644,13 @@ namespace Memoria.Launcher
             yield return 44056; // Used by digital audio locked to NTSC color video signals (3 samples per line, 245 lines per field, 59.94 fields per second = 29.97 frames per second).
             yield return 37800; // CD-XA audio
             yield return 32000; // miniDV digital video camcorder, video tapes with extra channels of audio (e.g. DVCAM with 4 Channels of audio), DAT (LP mode), Germany's Digitales Satellitenradio, NICAM digital audio, used alongside analogue television sound in some countries. High-quality digital wireless microphones.[12] Suitable for digitizing FM radio.[citation needed]
+        }
+
+        private IEnumerable<String> EnumerateWindowModeSettings()
+        {
+            yield return Lang.Settings.Window; // Unity Player launches in a window with an OS-styled title-bar. Can be moved around by dragging the title-bar
+            yield return Lang.Settings.ExclusiveFullscreen; // Unity Player launches in full screen on the selected monitor. Screen disappears if the application loses focus (IE, by clicking on another application)
+            yield return Lang.Settings.BorderlessFullscreen; // If the resolution matches the target display then Unity Player launches in borderless fullscreen mode on that display. Unlike exclusive fullscreen the player will not disappear if the app loses focus. If the resolution is smaller than the display resolution then Unity player will launch as a window without a title-bar (sized to the chosen resolution). 
         }
 
         private struct DevMode

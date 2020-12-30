@@ -32,7 +32,10 @@
 	<Settings
 			ActiveMonitor = "Активный монитор:"
 			Resolution = "Разрешение:"
-			Windowed = "В окне"
+			WindowMode = "Оконный режим"
+			Window = "Окно"
+			ExclusiveFullscreen = "полноэкранный"
+			BorderlessFullscreen = "полноэкранный режим без полей"
 			AudioSamplingFrequency = "Частота дискретизации звука:"
 			AudioSamplingFrequencyFormat = "{0} Гц"
 			Debuggable = "Отладка"
