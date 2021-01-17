@@ -137,7 +137,10 @@ namespace Memoria.Launcher
             public static readonly string ActiveMonitor = GetSettings(nameof(ActiveMonitor));
             public static readonly string PrimaryMonitor = GetSettings(nameof(PrimaryMonitor));
             public static readonly string Resolution = GetSettings(nameof(Resolution));
-            public static readonly string Windowed = GetSettings(nameof(Windowed));
+            public static readonly string WindowMode = GetSettings(nameof(WindowMode));
+            public static readonly string Window = GetSettings(nameof(Window));
+            public static readonly string ExclusiveFullscreen = GetSettings(nameof(ExclusiveFullscreen));
+            public static readonly string BorderlessFullscreen = GetSettings(nameof(BorderlessFullscreen));
             public static readonly string AudioSamplingFrequency = GetSettings(nameof(AudioSamplingFrequency));
             public static readonly string AudioSamplingFrequencyFormat = GetSettings(nameof(AudioSamplingFrequencyFormat));
             public static readonly string Debuggable = GetSettings(nameof(Debuggable));
