@@ -653,15 +653,13 @@ public partial class BattleHUD : UIScene
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
+            if (!unit.IsSelected)
+                continue;
+
             if (unit.IsPlayer)
-            {
-                if (unit.IsSelected)
-                    playerCount++;
-            }
+                playerCount++;
             else
-            {
                 enemyCount++;
-            }
         }
 
         if (enemyCount != enCount || playerCount != plCount)
