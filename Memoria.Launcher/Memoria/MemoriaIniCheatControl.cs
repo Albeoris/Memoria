@@ -110,7 +110,7 @@ namespace Memoria.Launcher
 
             Slider battleFps = AddUiElement(UiSliderFactory.Create(0), row: 21, col: 2, rowSpan: 1, colSpan: 6);
             battleFps.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
-            battleFps.TickFrequency = 5;
+            battleFps.TickFrequency = 1;
             battleFps.IsSnapToTickEnabled = true;
             battleFps.Minimum = 15;
             battleFps.Maximum = 60;
