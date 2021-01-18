@@ -1354,7 +1354,7 @@ public class EBin
         return 0;
     }
 
-    private void ad2(Int32 t2)
+    private void JMP_SWITCH(Int32 caseNumber)
     {
         Int32 offsetL = s1.getByteIP(1);
         Int32 offsetH = (SByte)s1.getByteIP(2);
@@ -1365,14 +1365,14 @@ public class EBin
         Int32 a0 = _v0 - caseNumber;
         if (_v0 < 0)
         {
-            ad5();
+            JMP_SWITCH_DEFAULT();
         }
         else
         {
             _v0 <<= 1;
             if (a0 >= 0)
             {
-                ad5();
+                JMP_SWITCH_DEFAULT();
             }
             else
             {
@@ -1385,7 +1385,7 @@ public class EBin
         }
     }
 
-    public void ad5()
+    public void JMP_SWITCH_DEFAULT()
     {
         Int32 offsetL = s1.getByteIP(3);
         Int32 offsetH = s1.getByteIP(4);
@@ -1496,17 +1496,17 @@ public class EBin
                     JMP_SWITCHEX(ref caseOffset, ref caseNumber);
                     return 0;
                 }
-                case 11:
+                case 11: // rsv0b, JMP_SWITCH
                 {
-                    Int32 t2 = s1.getByteIP();
-                    ad2(t2);
+                    Int32 caseNumber = s1.getByteIP();
+                    JMP_SWITCH(caseNumber);
                     return 0;
                 }
                 case 13:
                 {
                     Int32 t2 = s1.getShortIP();
                     s1.ip++;
-                    ad2(t2);
+                    JMP_SWITCH(t2);
                     return 0;
                 }
                 default:
