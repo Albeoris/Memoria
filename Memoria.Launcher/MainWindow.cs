@@ -19,7 +19,6 @@ namespace Memoria.Launcher
         {
             InitializeComponent();
             TryLoadImage();
-            TryShowDonation();
 
             PlayButton.GameSettings = GameSettings;
             Loaded += OnLoaded;
@@ -46,23 +45,6 @@ namespace Memoria.Launcher
             }
             catch
             {
-            }
-        }
-
-        private void TryShowDonation()
-        {
-            try
-            {
-                String showDonationControl = ConfigurationManager.AppSettings[nameof(showDonationControl)];
-                if (showDonationControl == "true")
-                {
-                    Donation.Visibility = Visibility.Visible;
-                    Links.Visibility = Visibility.Visible;
-                }
-            }
-            catch
-            {
-
             }
         }
 

@@ -75,6 +75,13 @@
 			CannotWrite = "Cannot read audio sampling frequency from the SdLib.dll"
 			/>
 
+	<SteamOverlay
+			OptionLabel = "Fix Steam Overlay"
+			Caption = "Steam Overlay"
+			FixAreYouSure = "Now we will install a hook into your OS that will launch FF9_Launcher.fix instead of the FF9_Launcher.exe file. In this case, all integrity checks of the Steam file will complete successfully. Thus, this will solve the problem that some users have periodically disabled Steam Overlay functionality, and related features: achievements and controller support.&#13;&#10;&#13;&#10;However, be careful and DO NOT DELETE the game, its folder or the FF9_Launcher.fix file without first rolling back the changes. Otherwise, the hook will remain in your system, and after a new installation of the game, you will not be able to launch it. You can roll back the changes in the launcher or manually by running Memoria.SteamFix.exe in the game folder.&#13;&#10;&#13;&#10;Are you sure you still want to continue?"
+			RollbackAreYouSure = "Now we will remove the changes made, after which the problem with Steam Overlay will return.&#13;&#10;&#13;&#10;This can lead to disabling achievements and controller issues.&#13;&#10;&#13;&#10;Are you sure you want to continue?"
+	/>
+
 	<InfoProvider>
 
 		<ApplicationConfig

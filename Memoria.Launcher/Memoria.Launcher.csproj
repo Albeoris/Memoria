@@ -73,7 +73,6 @@
 		<Compile Include="Memoria\UiSlider.cs" />
 		<Compile Include="Memoria\UiSliderFactory.cs" />
 		<Compile Include="Memoria\UiTextBox.cs" />
-		<Compile Include="Memoria\DonationControl.cs" />
 		<Compile Include="Memoria\ScreenInterrogatory.cs" />
 		<Compile Include="Memoria\FrameworkElementExm.cs" />
 		<Compile Include="App.cs" />

@@ -184,6 +184,19 @@ namespace Memoria.Launcher
             public static readonly String CannotRead = GetSdLib(nameof(CannotRead));
             public static readonly String CannotWrite = GetSdLib(nameof(CannotWrite));
         }
+        
+        public static class SteamOverlay
+        {
+            private static String GetSteamOverlay(string name)
+            {
+                return Instance.Value.GetString(name, nameof(SteamOverlay));
+            }
+
+            public static readonly String OptionLabel = GetSteamOverlay(nameof(OptionLabel));
+            public static readonly String Caption = GetSteamOverlay(nameof(Caption));
+            public static readonly String FixAreYouSure = GetSteamOverlay(nameof(FixAreYouSure));
+            public static readonly String RollbackAreYouSure = GetSteamOverlay(nameof(RollbackAreYouSure));
+        }
 
         public static class Button
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,12 +18,14 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Ini;
+using Microsoft.Win32;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using ComboBox = System.Windows.Controls.ComboBox;
 using Control = System.Windows.Controls.Control;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
+using Path = System.IO.Path;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InconsistentNaming
@@ -40,7 +43,7 @@ namespace Memoria.Launcher
             foreach (UInt16 frequency in EnumerateAudioSettings())
                 _validSamplingFrequency.Add(frequency);
             
-            SetRows(27);
+            SetRows(28);
             SetCols(2);
             
 
@@ -50,7 +53,7 @@ namespace Memoria.Launcher
             Margin = new Thickness(5);
             DataContext = this;
 
-            Thickness rowMargin = new Thickness(0, 8, 0, 3);
+            Thickness rowMargin = new Thickness(0, 7, 0, 3);
             
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan:2).Margin = rowMargin;
             UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 2);
@@ -58,13 +61,13 @@ namespace Memoria.Launcher
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 5, col: 0,rowSpan: 3).Margin = rowMargin;
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 5, col: 0, rowSpan: 3).Margin = rowMargin;
             UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 2);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 10, col: 0,rowSpan: 3).Margin = rowMargin;
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 10, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
             UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 12, col: 0, rowSpan: 3, colSpan: 2);
             windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
             windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) {Mode = BindingMode.TwoWay});
@@ -88,8 +91,12 @@ namespace Memoria.Launcher
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
 
             UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 22, 0, 3, 2);
-            checkUpdates.Margin = new Thickness(0, 8, 0, 8);
+            checkUpdates.Margin = rowMargin;
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
+            
+            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 24, 0, 3, 2);
+            steamOverlayFix.Margin = new Thickness(0, 7, 0, 7);
+            steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
 
             foreach (FrameworkElement child in Children)
             {
@@ -112,6 +119,7 @@ namespace Memoria.Launcher
 
             LoadSettings();
         }
+        
         #region Properties
 
         public String ScreenResolution
@@ -274,6 +282,48 @@ namespace Memoria.Launcher
             }
         }
 
+        public Boolean SteamOverlayFix
+        {
+            get => IsSteamOverlayFixed();
+            set
+            {
+                MessageBoxResult ShowMessage(String message, MessageBoxButton button, MessageBoxImage image)
+                {
+                    return MessageBox.Show((Window) this.GetRootElement(), message, Lang.SteamOverlay.Caption, button, image);
+                }
+
+                if (IsSteamOverlayFixed() == value)
+                    return;
+                
+                if (value)
+                {
+                    if (ShowMessage(Lang.SteamOverlay.FixAreYouSure, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
+                        return;
+                    }
+
+                    String currentLauncherPath = Process.GetCurrentProcess().MainModule.FileName;
+                    
+                    Process process = Process.Start(new ProcessStartInfo("Memoria.SteamFix.exe", @$" ""{currentLauncherPath}"" ") {Verb = "runas"});
+                    process.WaitForExit();
+                }
+                else
+                {
+                    if (ShowMessage(Lang.SteamOverlay.RollbackAreYouSure, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
+                        return;
+                    }
+
+                    Process process = Process.Start(new ProcessStartInfo("Memoria.SteamFix.exe") {Verb = "runas"});
+                    process.WaitForExit();
+                }
+                
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
+            }
+        }
+
         public Boolean AutoRunGame { get; private set; }
 
         #endregion
@@ -412,7 +462,7 @@ namespace Memoria.Launcher
                     value = "false";
                 if (!Boolean.TryParse(value, out _checkUpdates))
                     _checkUpdates = false;
-                
+
                 value = iniFile.ReadValue("Memoria", nameof(AutoRunGame));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
@@ -456,6 +506,34 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
+
+        private Boolean IsSteamOverlayFixed()
+        {
+            try
+            {
+                using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
+                {
+                    using (var subKey = registryKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\FF9_Launcher.exe"))
+                    {
+                        if (subKey?.GetValue("Debugger") == null)
+                            return false;
+                    }
+                }
+
+                var bak = new FileInfo("FF9_Launcher.bak");
+                var exe = new FileInfo("FF9_Launcher.exe");
+
+                // Patch again if FF9_Launcher.exe was rewrited
+                if (bak.Exists && exe.Exists && bak.Length != exe.Length)
+                    return false;
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -510,7 +588,7 @@ namespace Memoria.Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show((Window) this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                 samplingFrequency = 0;
                 return false;
             }

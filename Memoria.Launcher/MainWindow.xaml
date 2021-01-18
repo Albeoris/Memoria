@@ -7,9 +7,6 @@
     <Grid>
         <Image MouseDown="Launcher_MouseDown" x:Name="Launcher" Height="600" Width="800" VerticalAlignment="Top" Source="/Images/new_launcher_bg.png"/>
 
-
-        <launcher:DonationControl x:Name="Donation" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,90"/>
-
         <StackPanel x:Name="Links" Margin="5,5,0,5" Visibility="Collapsed" HorizontalAlignment="Left" Grid.Row="0" Orientation="Vertical">
             <TextBlock Margin="5" HorizontalAlignment="Left">
                 <TextBlock.Effect>
