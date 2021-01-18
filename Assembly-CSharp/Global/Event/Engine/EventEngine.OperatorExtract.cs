@@ -2,7 +2,7 @@
 
 public partial class EventEngine
 {
-    public Int32 OperatorExtract(Int32 op)
+    public Int32 OperatorExtract(EBin.op_binary op)
     {
         Int32 num1 = 0;
         Int32 num2 = 0;
@@ -28,7 +28,7 @@ public partial class EventEngine
             if ((num3 & 1) != 0)
             {
                 this.gMemberTarget = this._objPtrList[index];
-                EBin.op_binary opBinary = (EBin.op_binary)op;
+                EBin.op_binary opBinary = op;
                 switch (opBinary)
                 {
                     case EBin.op_binary.B_LT_E:
@@ -77,7 +77,7 @@ public partial class EventEngine
         return num1;
     }
 
-    private Int32 OperatorExtract1(Int32 op)
+    private Int32 OperatorExtract1(EBin.op_binary op)
     {
         Int32 num1 = 0;
         Int32 num2 = 0;
@@ -94,7 +94,7 @@ public partial class EventEngine
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
-        switch ((EBin.op_binary)op)
+        switch (op)
         {
             case EBin.op_binary.B_LMAX:
                 Int32 num4 = (Int32)Int16.MinValue;
@@ -153,7 +153,7 @@ public partial class EventEngine
         return num1;
     }
 
-    private Int32 OperatorExtractLet(Int32 op)
+    private Int32 OperatorExtractLet(EBin.op_binary op)
     {
         Int32 a = 0;
         Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
@@ -184,15 +184,15 @@ public partial class EventEngine
         this.gCP.retreatTopOfStack();
         switch (op)
         {
-            case 67:
+            case EBin.op_binary.B_AND_LET_E:
                 a &= this.eBin.getv();
                 this.gCP.advanceTopOfStack();
                 break;
-            case 68:
+            case EBin.op_binary.B_XOR_LET_E:
                 a ^= this.eBin.getv();
                 this.gCP.advanceTopOfStack();
                 break;
-            case 69:
+            case EBin.op_binary.B_OR_LET_E:
                 a |= this.eBin.getv();
                 this.gCP.advanceTopOfStack();
                 break;

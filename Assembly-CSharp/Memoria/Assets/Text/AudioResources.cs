@@ -173,7 +173,7 @@ namespace Memoria.Assets
             {@"music062", "Conde Petie"},
             {@"music063", "Gargant Roo"},
             {@"music064", "Cleyra's Trunk"},
-            {@"music065", "Kuja's Theme"},
+            {@"music066", "Kuja's Theme"},
             {@"music067", "Kuja's Theme Millennium (Desert Palace)"},
             {@"music068", "Immoral Melody (Kuja's Theme Pt. II)"},
             {@"music069", "Footsteps of Desire (Disc 3, fall into Kuja's Trap)"},

@@ -396,7 +396,7 @@ public class EBin
             else
             {
                 s1.ip++;
-                expr_jumpToSubCommand(b);
+                expr_jumpToSubCommand((op_binary) b);
             }
         }
         return 0;
@@ -475,52 +475,52 @@ public class EBin
         return result;
     }
 
-    private void expr_jumpToSubCommand(Int32 arg0)
+    private void expr_jumpToSubCommand(op_binary arg0)
     {
-        if (arg0 < 0 || arg0 > 127)
+        if (arg0 < op_binary.B_PAD0 || arg0 > op_binary.B_EXPR_END)
             return;
         
         switch (arg0)
         {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 15:
-            case 46:
-            case 67:
-            case 68:
-            case 69:
-            case 70:
-            case 71:
-            case 72:
-            case 73:
-            case 74:
-            case 75:
-            case 76:
-            case 78:
-            case 82:
-            case 83:
-            case 90:
-            case 91:
-            case 92:
-            case 100:
-            case 101:
-            case 103:
-            case 104:
-            case 105:
-            case 106:
-            case 108:
-            case 110:
-            case 111:
-            case 112:
-            case 113:
-            case 123:
-            case 124:
+            case op_binary.B_PAD0:
+            case op_binary.B_PAD1:
+            case op_binary.B_PAD2:
+            case op_binary.B_PAD3:
+            case op_binary.B_POST_PLUS_A:
+            case op_binary.B_POST_MINUS_A:
+            case op_binary.B_PRE_PLUS_A:
+            case op_binary.B_PRE_MINUS_A:
+            case op_binary.B_NOT_E:
+            case op_binary.B_LET_E:
+                case op_binary.B_AND_LET_E:
+                case op_binary.B_XOR_LET_E:
+                case op_binary.B_OR_LET_E:
+                case op_binary.B_CAST8:
+                case op_binary.B_CAST8U:
+                case op_binary.B_CAST16:
+                case op_binary.B_CAST16U:
+                case op_binary.B_CAST_LIST:
+                case op_binary.B_LMAX:
+                case op_binary.B_LMIN:
+            case op_binary.B_OBJSPEC:
+            case op_binary.B_CURHP:
+            case op_binary.B_MAXHP:
+            case op_binary.B_KEYON2:
+            case op_binary.B_KEYOFF2:
+            case op_binary.B_KEY2:
+            case op_binary.B_HAVE_ITEM:
+            case op_binary.B_BAFRAME:
+            case op_binary.pad67:
+            case op_binary.pad68:
+            case op_binary.pad69:
+            case op_binary.B_FRAME:
+            case op_binary.B_SPS:
+            case op_binary.B_CURMP:
+            case op_binary.B_MAXMP:
+            case op_binary.B_BGIID:
+            case op_binary.B_BGIFLOOR:
+            case op_binary.B_pad7b:
+            case op_binary.B_PAD4:
             {
                 _eventEngine.gCP = _s7;
                 _v0 = _eventEngine.DoCalcOperationExt(arg0);
@@ -528,7 +528,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 4:
+            case op_binary.B_POST_PLUS:
             {
                 _v0 = EvaluateValueExpression();
                 Int32 t3 = _v0;
@@ -539,7 +539,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 5:
+            case op_binary.B_POST_MINUS:
             {
                 _v0 = EvaluateValueExpression();
                 Int32 t3 = _v0;
@@ -550,7 +550,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 6:
+            case op_binary.B_PRE_PLUS:
             {
                 _v0 = EvaluateValueExpression();
                 Int32 t3 = _v0 + 1;
@@ -561,7 +561,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 7:
+            case op_binary.B_PRE_MINUS:
             {
                 _v0 = EvaluateValueExpression();
                 Int32 t3 = _v0 - 1;
@@ -572,19 +572,19 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 12:
+            case op_binary.B_SINGLE_PLUS:
             {
                 expr_Push_v0_Int24();
                 break;
             }
-            case 13:
+            case op_binary.B_SINGLE_MINUS:
             {
                 _v0 = EvaluateValueExpression();
                 _v0 = 0 - _v0;
                 expr_Push_v0_Int24();
                 break;
             }
-            case 14:
+            case op_binary.B_NOT:
             {
                 _v0 = EvaluateValueExpression();
                 _v0 = 0 < _v0 ? 1 : 0;
@@ -592,14 +592,14 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 16:
+            case op_binary.B_COMP:
             {
                 _v0 = EvaluateValueExpression();
                 _v0 = ~(0 | _v0);
                 expr_Push_v0_Int24();
                 break;
             }
-            case 17:
+            case op_binary.B_MULT:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -607,7 +607,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 18:
+            case op_binary.B_DIV:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -622,7 +622,7 @@ public class EBin
                 }
                 break;
             }
-            case 19:
+            case op_binary.B_REM:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -637,7 +637,7 @@ public class EBin
                 }
                 break;
             }
-            case 20:
+            case op_binary.B_PLUS:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -645,7 +645,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 21:
+            case op_binary.B_MINUS:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -653,7 +653,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 22:
+            case op_binary.B_SHIFT_LEFT:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -661,7 +661,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 23:
+            case op_binary.B_SHIFT_RIGHT:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -669,7 +669,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 24: // B_LT = 24,
+            case op_binary.B_LT: // B_LT = 24,
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -681,7 +681,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 25: // B_GT = 25,
+            case op_binary.B_GT: // B_GT = 25,
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -700,7 +700,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 26: // B_LE = 26,
+            case op_binary.B_LE: // B_LE = 26,
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -709,7 +709,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 27: // B_GE = 27,
+            case op_binary.B_GE: // B_GE = 27,
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -718,16 +718,16 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 28: // B_LT_E = 28,
-            case 29: // B_GT_E = 29,
-            case 30: // B_LE_E = 30,
-            case 31: // B_GE_E = 31,
-            case 34:
-            case 35:
-            case 84:
-            case 85:
-            case 86:
-            case 87:
+            case op_binary.B_LT_E:
+            case op_binary.B_GT_E:
+            case op_binary.B_LE_E:
+            case op_binary.B_GE_E:
+            case op_binary.B_EQ_E:
+            case op_binary.B_NE_E:
+            case op_binary.B_AND_E:
+            case op_binary.B_NAND_E:
+            case op_binary.B_XOR_E:
+            case op_binary.B_OR_E:
             {
                 if (s1.sid != 0 || s1.ip == 320)
                 {
@@ -738,7 +738,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 32:
+            case op_binary.B_EQ:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -747,7 +747,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 33:
+            case op_binary.B_NE:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -756,7 +756,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 36:
+            case op_binary.B_AND:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -764,7 +764,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 37:
+            case op_binary.B_XOR:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -772,7 +772,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 38:
+            case op_binary.B_OR:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -780,7 +780,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 39:
+            case op_binary.B_ANDAND:
             {
                 _v0 = EvaluateValueExpression();
                 _s7.retreatTopOfStack();
@@ -797,7 +797,7 @@ public class EBin
                 }
                 break;
             }
-            case 40:
+            case op_binary.B_OROR:
             {
                 _v0 = EvaluateValueExpression();
                 _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
@@ -815,7 +815,7 @@ public class EBin
                 }
                 break;
             }
-            case 41:
+            case op_binary.B_MEMBER:
             {
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
@@ -824,7 +824,7 @@ public class EBin
                 _s7.push(a0);
                 break;
             }
-            case 42:
+            case op_binary.B_COUNT:
             {
                 if (s1.sid != 0 || s1.ip == 321)
                 {
@@ -835,7 +835,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 43:
+            case op_binary.B_PICK:
             {
                 _eventEngine.gCP = _s7;
                 _v0 = _eventEngine.OperatorPick();
@@ -843,7 +843,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 44:
+            case op_binary.B_LET:
             {
                 // -> ValueExpression
                 // ResultVariableId
@@ -864,17 +864,17 @@ public class EBin
                 // END
                 break;
             }
-            case 45:
-            case 54:
-            case 55:
-            case 56:
-            case 57:
-            case 58:
-            case 59:
-            case 60:
-            case 64:
-            case 65:
-            case 66:
+            case op_binary.B_LET_A:
+            case op_binary.B_MULT_LET_A:
+            case op_binary.B_DIV_LET_A:
+            case op_binary.B_REM_LET_A:
+            case op_binary.B_PLUS_LET_A:
+            case op_binary.B_MINUS_LET_A:
+            case op_binary.B_SHIFT_LEFT_LET_A:
+            case op_binary.B_SHIFT_RIGHT_LET_A:
+            case op_binary.B_AND_LET_A:
+            case op_binary.B_XOR_LET_A:
+            case op_binary.B_OR_LET_A:
             {
                 _eventEngine.gCP = _s7;
                 if (s1.sid == 0 && s1.ip == 411)
@@ -886,7 +886,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 47:
+            case op_binary.B_MULT_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -898,7 +898,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 48:
+            case op_binary.B_DIV_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -917,7 +917,7 @@ public class EBin
                 }
                 break;
             }
-            case 49:
+            case op_binary.B_REM_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -936,7 +936,7 @@ public class EBin
                 }
                 break;
             }
-            case 50:
+            case op_binary.B_PLUS_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -948,7 +948,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 51:
+            case op_binary.B_MINUS_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -960,7 +960,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 52:
+            case op_binary.B_SHIFT_LEFT_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -972,7 +972,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 53:
+            case op_binary.B_SHIFT_RIGHT_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -984,7 +984,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 61:
+            case op_binary.B_AND_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -996,7 +996,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 62:
+            case op_binary.B_XOR_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -1008,7 +1008,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 63:
+            case op_binary.B_OR_LET:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -1020,7 +1020,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 77:
+            case op_binary.B_SELECT:
             {
                 _eventEngine.gCP = _s7;
                 _v0 = _eventEngine.OperatorSelect();
@@ -1028,7 +1028,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 79:
+            case op_binary.B_KEYON: // B_KEYON = 79
             {
                 Int32 keyOn = (Int32)ETb.KeyOn();
                 _v0 = EvaluateValueExpression();
@@ -1040,21 +1040,21 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 80:
+            case op_binary.B_SIN2:
             {
                 Int32 a0 = EvaluateValueExpression();
                 _v0 = ff9.rsin(a0);
                 expr_Push_v0_Int24();
                 break;
             }
-            case 81:
+            case op_binary.B_COS2:
             {
                 Int32 a0 = EvaluateValueExpression();
                 _v0 = ff9.rcos(fixedPointAngle: a0);
                 expr_Push_v0_Int24();
                 break;
             }
-            case 88:
+            case op_binary.B_KEYOFF:
             {
                 Int32 keyOff = (Int32)ETb.KeyOff();
                 _v0 = EvaluateValueExpression();
@@ -1063,7 +1063,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 89:
+            case op_binary.B_KEY:
             {
                 Int32 padReadE = (Int32)_eTb.PadReadE();
                 _v0 = EvaluateValueExpression();
@@ -1072,7 +1072,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 93:
+            case op_binary.B_ANGLE:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -1094,7 +1094,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 94:
+            case op_binary.B_DISTANCE:
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
@@ -1109,7 +1109,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 95:
+            case op_binary.B_PTR:
             {
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
@@ -1118,7 +1118,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 96:
+            case op_binary.B_ANGLEA:
             {
                 _v0 = EvaluateValueExpression();
                 Obj objUID2 = _eventEngine.GetObjUID(_v0);
@@ -1132,7 +1132,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 97:
+            case op_binary.B_DISTANCEA:
             {
                 _v0 = EvaluateValueExpression();
                 Obj objUID2 = _eventEngine.GetObjUID(_v0);
@@ -1146,7 +1146,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 98:
+            case op_binary.B_SIN:
             {
                 _v0 = EvaluateValueExpression();
                 Int32 a0 = _v0 << 4;
@@ -1154,7 +1154,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 99:
+            case op_binary.B_COS:
             {
                 _v0 = EvaluateValueExpression();
                 Int32 a0 = _v0 << 4;
@@ -1162,7 +1162,7 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 102:
+            case op_binary.B_ANGLE2:
             {
                 Int32 t3 = EvaluateValueExpression();
                 Int32 a0 = EvaluateValueExpression();
@@ -1173,21 +1173,21 @@ public class EBin
                 expr_Push_v0_Int24();
                 break;
             }
-            case 107:
+            case op_binary.B_PARTYCHK: // B_PARTYCHK
             {
                 Int32 a0 = EvaluateValueExpression();
                 _v0 = _eventEngine.partychk(a0) ? 1 : 0;
                 expr_Push_v0_Int24();
                 break;
             }
-            case 109:
+            case op_binary.B_PARTYADD:
             {
                 Int32 a0 = EvaluateValueExpression();
                 _v0 = _eventEngine.partyadd(a0) ? 1 : 0;
                 expr_Push_v0_Int24();
                 break;
             }
-            case 120:
+            case op_binary.B_OBJSPECA:
             {
                 Int32 a0 = s1.getByteIP();
                 int a1 = s1.getByteIP(1);
@@ -1199,7 +1199,7 @@ public class EBin
                 _s7.push(a0);
                 break;
             }
-            case 121:
+            case op_binary.B_SYSLIST:
             {
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
@@ -1208,7 +1208,7 @@ public class EBin
                 _s7.push(a0);
                 break;
             }
-            case 122:
+            case op_binary.B_SYSVAR:
             {
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
@@ -1220,7 +1220,7 @@ public class EBin
                 _s7.push(a0);
                 break;
             }
-            case 125:
+            case op_binary.B_CONST:
             {
                 Int32 a0 = s1.getShortIP();
                 s1.ip += 2;
@@ -1229,7 +1229,7 @@ public class EBin
                 _s7.push(a0);
                 break;
             }
-            case 126:
+            case op_binary.B_CONST4:
             {
                 Int32 a0 = s1.getIntIP();
                 s1.ip += 4;
@@ -1239,7 +1239,7 @@ public class EBin
                 _s7.push(a0);
                 break;
             }
-            case 127:
+            case op_binary.B_EXPR_END:
             {
                 _eventEngine.gCP = _s7;
                 //_s4 = _tempS4;
@@ -1356,13 +1356,13 @@ public class EBin
 
     private void ad2(Int32 t2)
     {
-        Int32 byteIp = s1.getByteIP(1);
-        Int32 t4 = (SByte)s1.getByteIP(2);
-        t4 <<= 8;
+        Int32 offsetL = s1.getByteIP(1);
+        Int32 offsetH = (SByte)s1.getByteIP(2);
+        offsetH <<= 8;
         _v0 = EvaluateValueExpression();
-        _v0 -= byteIp;
-        _v0 -= t4;
-        Int32 a0 = _v0 - t2;
+        _v0 -= offsetL;
+        _v0 -= offsetH;
+        Int32 a0 = _v0 - caseNumber;
         if (_v0 < 0)
         {
             ad5();
@@ -1377,8 +1377,8 @@ public class EBin
             else
             {
                 a0 = _nextCodeIndex + _v0;
-                int a1 = s1.getByteIP(_v0 + 5);
-                Int32 a2 = s1.getByteIP(_v0 + 6);
+                Int32 a1 = s1.getByteIP(_v0 + 5); // caseOffsetL
+                Int32 a2 = s1.getByteIP(_v0 + 6); // caseOffsetH
                 s1.ip += a1;
                 s1.ip += a2 << 8;
             }
@@ -1387,10 +1387,10 @@ public class EBin
 
     public void ad5()
     {
-        Int32 a0 = s1.getByteIP(3);
-        int a1 = s1.getByteIP(4);
-        a1 = (a1 << 8 | a0);
-        s1.ip += a1;
+        Int32 offsetL = s1.getByteIP(3);
+        Int32 offsetH = s1.getByteIP(4);
+        offsetH = (offsetH << 8 | offsetL);
+        s1.ip += offsetH;
     }
 
     public Int32 commandDefault()
@@ -1415,36 +1415,36 @@ public class EBin
         return 0;
     }
 
-    public void ad13(ref Int32 a0, ref Int32 t2)
+    public void JMP_SWITCHEX(ref Int32 caseOffset, ref Int32 caseNumber)
     {
-        if (t2 > 0)
+        if (caseNumber > 0)
         {
-            t2--;
-            Int32 t4 = s1.getByteIP(1 + a0);
-            Int32 t3 = s1.getByteIP(0 + a0);
-            Int32 num = t3 | t4 << 8;
-            num -= _v0;
-            a0 += 4;
-            if (num == 0)
+            caseNumber--;
+            Int32 valueH = s1.getByteIP(1 + caseOffset);
+            Int32 valueL = s1.getByteIP(0 + caseOffset);
+            Int32 caseValue = valueL | valueH << 8;
+            caseValue -= _v0; // inputValue
+            caseOffset += 4;
+            if (caseValue == 0)
             {
-                t4 = s1.getByteIP(-1 + a0);
-                t3 = s1.getByteIP(-2 + a0);
-                t3 |= t4 << 8;
-                s1.ip += t3;
+                Int32 offsetH = s1.getByteIP(-1 + caseOffset);
+                Int32 offsetL = s1.getByteIP(-2 + caseOffset);
+                offsetL |= offsetH << 8;
+                s1.ip += offsetL;
                 s1.ip += 3;
             }
             else
             {
-                ad13(ref a0, ref t2);
+                JMP_SWITCHEX(ref caseOffset, ref caseNumber);
             }
         }
         else
         {
-            t2--;
-            Int32 t4 = s1.getByteIP(2);
-            Int32 byteIp = s1.getByteIP(1);
-            byteIp |= t4 << 8;
-            s1.ip += byteIp;
+            caseNumber--;
+            Int32 offsetH = s1.getByteIP(2);
+            Int32 offsetL = s1.getByteIP(1);
+            offsetL |= offsetH << 8;
+            s1.ip += offsetL;
             s1.ip += 3;
         }
     }
@@ -1487,13 +1487,13 @@ public class EBin
                     expr();
                     return 0;
                 }
-                case 6:
+                case 6: // JMP_SWITCHEX
                 {
-                    Int32 t2 = s1.getByteIP();
+                    Int32 caseNumber = s1.getByteIP();
                     _v0 = EvaluateValueExpression();
                     _v0 &= 65535;
-                    Int32 _a0 = 3;
-                    ad13(ref _a0, ref t2);
+                    Int32 caseOffset = 3;
+                    JMP_SWITCHEX(ref caseOffset, ref caseNumber);
                     return 0;
                 }
                 case 11:
@@ -1790,11 +1790,11 @@ public class EBin
             case VariableType.SBit:
             case VariableType.Bit:
             {
-                _v0 = ofs >> 3; // 5
+                _v0 = ofs >> 3;  // (767 bit >> 3) == (767 bit / 8) == 95 byte 
                 Int32 a0 = (SByte)buffer[_v0 + bufferOffset];
-                _v0 = (ofs & 7); // 3
-                a0 >>= _v0;
-                _v0 = (a0 & 1);
+                _v0 = (ofs & 7); // (767 bit & 7) == 7 bit
+                a0 >>= _v0;      // (7 bit >> 7) => 1 bit
+                _v0 = (a0 & 1);  // (1 bit & 1) => result
                 return _v0;
             }
             case VariableType.Int24:

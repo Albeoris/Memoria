@@ -2,12 +2,12 @@
 
 public partial class EventEngine
 {
-    public Int32 DoCalcOperationExt(Int32 code)
+    public Int32 DoCalcOperationExt(EBin.op_binary code)
     {
         Int32 frameNdx = 0;
         Int16 triNdx1 = 0;
         Int16 floorNdx1 = 0;
-        EBin.op_binary opBinary = (EBin.op_binary)code;
+        EBin.op_binary opBinary = code;
         switch (opBinary)
         {
             case EBin.op_binary.B_HAVE_ITEM:
@@ -40,65 +40,33 @@ public partial class EventEngine
                 BGI.BGI_charGetInfo(this.eBin.getv(), ref triNdx1, ref floorNdx2);
                 frameNdx = (Int32)floorNdx2;
                 break;
-            default:
-                switch (opBinary - 67)
-                {
-                    case EBin.op_binary.B_PAD0:
-                    case EBin.op_binary.B_PAD1:
-                    case EBin.op_binary.B_PAD2:
-                        label_9:
-                        frameNdx = this.OperatorExtractLet(code);
-                        break;
-                    case EBin.op_binary.B_POST_PLUS_A:
-                    case EBin.op_binary.B_POST_MINUS_A:
-                        label_8:
-                        frameNdx = this.OperatorExtract1(code);
-                        break;
-                    default:
-                        switch (opBinary - 8)
-                        {
-                            case EBin.op_binary.B_PAD0:
-                            case EBin.op_binary.B_PAD1:
-                            case EBin.op_binary.B_PAD2:
-                            case EBin.op_binary.B_PAD3:
-                                frameNdx = this.OperatorAll1(code);
-                                break;
-                            case EBin.op_binary.B_PRE_MINUS:
-                                goto label_8;
-                            default:
-                                switch (opBinary - 90)
-                                {
-                                    case EBin.op_binary.B_PAD0:
-                                    case EBin.op_binary.B_PAD1:
-                                    case EBin.op_binary.B_PAD2:
-                                        this.eBin.getv();
-                                        break;
-                                    default:
-                                        if (opBinary != EBin.op_binary.B_CURHP)
-                                        {
-                                            if (opBinary != EBin.op_binary.B_MAXHP)
-                                            {
-                                                if (opBinary == EBin.op_binary.B_LET_E)
-                                                    goto label_9;
-                                                else
-                                                    break;
-                                            }
-                                            else
-                                            {
-                                                frameNdx = (Int32)this._ff9.player[this.chr2slot(this.eBin.getv())].max.hp;
-                                                break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            frameNdx = (Int32)this._ff9.player[this.chr2slot(this.eBin.getv())].cur.hp;
-                                            break;
-                                        }
-                                }
-                                break;
-                        }
-                        break;
-                }
+            case EBin.op_binary.B_AND_LET_E:
+            case EBin.op_binary.B_XOR_LET_E:
+            case EBin.op_binary.B_OR_LET_E: 
+            case EBin.op_binary.B_LET_E:
+                frameNdx = this.OperatorExtractLet(code);
+                break;
+            case EBin.op_binary.B_LMAX:
+            case EBin.op_binary.B_LMIN:
+            case EBin.op_binary.B_NOT_E:
+                frameNdx = this.OperatorExtract1(code);
+                break;
+            case EBin.op_binary.B_POST_PLUS_A:
+            case EBin.op_binary.B_POST_MINUS_A:
+            case EBin.op_binary.B_PRE_PLUS_A:
+            case EBin.op_binary.B_PRE_MINUS_A:
+                frameNdx = this.OperatorAll1(code);
+                break;
+            case EBin.op_binary.B_KEYON2:
+            case EBin.op_binary.B_KEYOFF2:
+            case EBin.op_binary.B_KEY2:
+                this.eBin.getv();
+                break;
+            case EBin.op_binary.B_CURHP:
+                frameNdx = (Int32) this._ff9.player[this.chr2slot(this.eBin.getv())].cur.hp;
+                break;
+            case EBin.op_binary.B_MAXHP:
+                frameNdx = (Int32) this._ff9.player[this.chr2slot(this.eBin.getv())].max.hp;
                 break;
         }
         return frameNdx;
