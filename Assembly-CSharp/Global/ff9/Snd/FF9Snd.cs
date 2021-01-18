@@ -587,554 +587,487 @@ public static class FF9Snd
 		{
 			ParmType &= 65535;
 			Int32 slot = ParmType >> 6 & 1;
-			SoundLib.Log(String.Concat(new Object[]
-			{
-				"ParmType: ",
-				ParmType,
-				" ObjNo: ",
-				ObjNo,
-				" Arg1: ",
-				Arg1,
-				" Arg2: ",
-				Arg2,
-				" Arg3: ",
-				Arg3
-			}));
+			SoundLib.Log($"ParmType: {ParmType} ObjNo: {ObjNo}, Arg1: {Arg1}, Arg2: {Arg2}, Arg3: {Arg3}");
 			FF9Snd.ParameterChanger(ref ParmType, ref ObjNo, ref Arg1, ref Arg2, ref Arg3);
 			Int32 num = ParmType & 65471;
 			switch (num)
 			{
-			case 16897:
-			{
-				SoundLib.Log("FF9SOUND_SONG_VOL");
-				Int32 vol = Arg1;
-				allSoundDispatchPlayer.FF9SOUND_SONG_VOL(ObjNo, vol);
-				break;
-			}
-			case 16898:
-				SoundLib.Log("Call song stubbed case");
-				break;
-			case 16899:
-			{
-				SoundLib.Log("FF9SOUND_SONG_PITCH");
-				Int32 pitch = Arg1;
-				allSoundDispatchPlayer.FF9SOUND_SONG_PITCH(ObjNo, pitch);
-				break;
-			}
-			case 16900:
-				SoundLib.Log("Call song stubbed case");
-				break;
-			case 16901:
-			case 16902:
-				IL_C4:
-				switch (num)
+				case FF9SOUND_SONG_PLAY: // 0
 				{
-				case 21761:
+					SoundLib.Log("FF9SOUND_SONG_PLAY");
+					allSoundDispatchPlayer.FF9SOUND_SONG_PLAY(ObjNo, 127, 0);
+					break;
+				}
+				case FF9SOUND_SONG_STOP: // 256
+				{
+					SoundLib.Log("FF9SOUND_SONG_STOP");
+					allSoundDispatchPlayer.FF9SOUND_SONG_STOP(ObjNo);
+					break;
+				}
+				case FF9SOUND_SONG_STOPCURRENT: // 265
+				{
+					SoundLib.Log("FF9SOUND_SONG_STOPCURRENT");
+					allSoundDispatchPlayer.FF9SOUND_SONG_STOPCURRENT();
+					break;
+				}
+				case FF9SOUND_SONG_NULL: // 520
+				{
+					SoundLib.Log("FF9SOUND_SONG_NULL means ignore");
+					break;
+				}
+				case FF9SOUND_SONG_TEMPOPITCH_FADE: // 1028
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH_FADE stubbed case");
+					break;
+				}
+				case FF9SOUND_SONG_LOAD: // 1792
+				{
+					SoundLib.Log("FF9SOUND_SONG_LOAD");
+					allSoundDispatchPlayer.FF9SOUND_SONG_LOAD(ObjNo);
+					break;
+				}
+				case FF9SOUND_SONG_SUSPEND: // 2048
+				{
+					SoundLib.Log("FF9SOUND_SONG_SUSPEND");
+					allSoundDispatchPlayer.FF9SOUND_SONG_SUSPEND(ObjNo, false);
+					break;
+				}
+				case FF9SOUND_SONG_RESTORE: // 2304
+				{
+					SoundLib.Log("FF9SOUND_SONG_RESTORE");
+					allSoundDispatchPlayer.FF9SOUND_SONG_RESTORE();
+					break;
+				}
+				case FF9SOUND_SONG_JUMPPOINT: // 2566
+				{
+					SoundLib.Log("FF9SOUND_SONG_JUMPPOINT");
+					SoundLib.Log("ObjNo: " + ObjNo);
+					allSoundDispatchPlayer.FF9SOUND_SONG_JUMPPOINT();
+					break;
+				}
+				case FF9SOUND_SYNC: // 3072
+				{
+					SoundLib.Log("Call SOUND_SYNC, stub");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_STOPCURRENT: // 4489
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOPCURRENT");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_NULL: // 4616
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_NULL means ignore");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_SUSPEND: // 6272
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_SUSPEND");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_SUSPEND(slot);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_RESTORE: // 6528
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_RESTORE");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(slot);
+					break;
+				}
+				case FF9SOUND_STREAM_STOP: // 8448
+				{
+					SoundLib.Log("FF9SOUND_STREAM_STOP");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_STOP should be 0, but ObjNo: " + ObjNo);
+
+					allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
+					break;
+				}
+				case FF9SOUND_STREAM_NULL: // 8712
+				{
+					SoundLib.Log("Call FF9SOUND_STREAM_NULL, stub");
+					break;
+				}
+				case FF9SOUND_SONG_VOL: // 16897
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL");
+					Int32 vol = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL(ObjNo, vol);
+					break;
+				}
+				case FF9SOUND_SONG_TEMPO: // 16898
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPO stubbed case");
+					break;
+				}
+				case FF9SOUND_SONG_PITCH: // 16899
+				{
+					SoundLib.Log("FF9SOUND_SONG_PITCH");
+					Int32 pitch = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SONG_PITCH(ObjNo, pitch);
+					break;
+				}
+				case FF9SOUND_SONG_TEMPOPITCH: // 16900
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH stubbed case");
+					break;
+				}
+				case FF9SOUND_SONG_SKIPPHRASE: // 16903
+				{
+					SoundLib.Log("FF9SOUND_SONG_SKIPPHRASE");
+					Int32 num10 = Arg1;
+					SoundLib.Log("_phrase: " + num10);
+					Int32 offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE = FF9Snd.GetOffsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE(ObjNo, num10);
+					if (offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE != -1)
+					{
+						allSoundDispatchPlayer.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(ObjNo, offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE);
+					}
+
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_STOP: // 20736
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_STOP");
+					Int32 attr6 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP(ObjNo, attr6);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_STOP: // 20864
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOP");
+					Int32 timeMsec = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOP(slot, ObjNo, timeMsec);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_VOL_ALL: // 21761
 				{
 					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_ALL");
 					if (ObjNo != -1)
-					{
 						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_ALL should be 0, but ObjNo: " + ObjNo);
-					}
+
 					Int32 vol2 = Arg1;
 					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_ALL(vol2);
 					break;
 				}
+				case FF9SOUND_SNDEFFECT_PITCH_ALL: // 21763
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_ALL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_POS_ALL: // 21765
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_ALL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_VOL_ALL: // 21889
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_ALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_ALL should be 0, but ObjNo: " + ObjNo);
+
+					Int32 vol3 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_ALL(vol3);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_PITCH_ALL: // 21891
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_ALL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_POS_ALL: // 21893
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_ALL stubbed case");
+					break;
+				}
+				case FF9SOUND_STREAM_VOL: // 25089
+				{
+					SoundLib.Log("FF9SOUND_STREAM_VOL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_VOL should be 0, but ObjNo: " + ObjNo);
+
+					Int32 vol7 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_STREAM_VOL(vol7);
+					break;
+				}
+				case FF9SOUND_STREAM_POS: // 25093
+				{
+					SoundLib.Log("FF9SOUND_STREAM_POS");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_POS should be 0, but ObjNo: " + ObjNo);
+
+					SoundLib.Log("No implementation!");
+					break;
+				}
+				case FF9SOUND_STREAMFMV_VOL: // 25098
+				{
+					SoundLib.Log("FF9SOUND_STREAMFMV_VOL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAMFMV_VOL should be 0, but ObjNo: " + ObjNo);
+
+					SoundLib.Log("No implementation!");
+					break;
+				}
+				case FF9SOUND_STREAM_REVERB: // 25100
+				{
+					SoundLib.Log("FF9SOUND_STREAM_REVERB");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_REVERB should be 0, but ObjNo: " + ObjNo);
+
+					SoundLib.Log("No implementation!");
+					break;
+				}
+				case FF9SOUND_INSTR_LOAD: // 30464
+				{
+					SoundLib.Log("Call FF9SOUND_INSTR_LOAD, stub");
+					break;
+				}
+				case FF9SOUND_SONG_VOL_INTPL: // 33537
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_INTPL");
+					Int32 ticks4 = Arg1;
+					Int32 to4 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPL(ObjNo, ticks4, to4);
+					break;
+				}
+				case FF9SOUND_SONG_TEMPO_INTPL: // 33538
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPO_INTPL stubbed case");
+					break;
+				}
+				case FF9SOUND_SONG_PITCH_INTPL: // 33539
+				{
+					SoundLib.Log("FF9SOUND_SONG_PITCH_INTPL");
+					Int32 tick = Arg1;
+					Int32 to5 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_INTPL(ObjNo, tick, to5);
+					break;
+				}
+				case FF9SOUND_SONG_TEMPOPITCH_INTPL: // 33540
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH_INTPL stubbed case");
+					break;
+				}
+				case FF9SOUND_SONG_VOL_INTPLALL: // 34305
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_INTPLALL");
+					Int32 ticks7 = Arg1;
+					Int32 to9 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPLALL(ticks7, to9);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_VOL: // 37377
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL");
+					Int32 attr = Arg1;
+					Int32 vol4 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL(ObjNo, attr, vol4);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_PITCH: // 37379
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_PITCH");
+					Int32 attr7 = Arg1;
+					Int32 pitch2 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PITCH(ObjNo, attr7, pitch2);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_VOL: // 37505
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL");
+					Int32 attr2 = Arg1;
+					Int32 vol5 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL(slot, ObjNo, attr2, vol5);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_PITCH: // 37507
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_POS: // 37509
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_POS: // 37381
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_VOL_INTPLALL: // 38401
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPLALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
+
+					Int32 ticks = Arg1;
+					Int32 to = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPLALL(ticks, to);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_PITCH_INTPLALL: // 38403
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_INTPLALL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_POS_INTPLALL: // 38405
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_INTPLALL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_VOL_INTPLALL: // 38529
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPLALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
+
+					Int32 ticks2 = Arg1;
+					Int32 to2 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPLALL(ticks2, to2);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_PITCH_INTPLALL: // 38531
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_INTPLALL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_POS_INTPLALL: // 38533
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_INTPLALL stubbed case");
+					break;
+				}
+				case FF9SOUND_STREAM_PLAY: // 40960
+				{
+					SoundLib.Log("FF9SOUND_STREAM_PLAY");
+					Int32 streamid = ObjNo;
+					Int32 num8 = Arg1;
+					Int32 num9 = Arg2;
+					SoundLib.Log($"ObjNo: {ObjNo},  pos: {num8}, reverb: {num9}");
+					if (!SoundLib.SoundEffectIsMute)
+						allSoundDispatchPlayer.FF9SOUND_STREAM_PLAY(streamid, num8, num9);
+
+					break;
+				}
+				case FF9SOUND_SONG_VOL_FADE: // 50177
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_FADE");
+					Int32 ticks5 = Arg1;
+					Int32 from = Arg2;
+					Int32 to6 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADE(ObjNo, ticks5, from, to6);
+					break;
+				}
+				case FF9SOUND_SONG_TEMPO_FADE: // 50178
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPO_FADE stubbed case");
+					break;
+				}
+				case FF9SOUND_SONG_PITCH_FADE: // 50179
+				{
+					SoundLib.Log("FF9SOUND_SONG_PITCH_FADE");
+					Int32 tick2 = Arg1;
+					Int32 from2 = Arg2;
+					Int32 to7 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_FADE(ObjNo, tick2, from2, to7);
+					break;
+				}
+				case FF9SOUND_SONG_VOL_FADEALL: // 51969
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_FADEALL");
+					Int32 ticks6 = Arg1;
+					Int32 from3 = Arg2;
+					Int32 to8 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADEALL(ticks6, from3, to8);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_PLAY: // 53248
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_PLAY");
+					Int32 attr = Arg1;
+					Int32 pos = Arg2;
+					Int32 volume = Arg3;
+					SoundLib.Log($"ObjNo: {ObjNo}, attr: {attr}  pos: {pos}, vol: {volume}");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PLAY(ObjNo, attr, pos, volume);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_PLAY: // 53376
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_PLAY");
+					Int32 timeMsec = Arg1;
+					Int32 pos = Arg2;
+					Int32 volume = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_PLAY(slot, ObjNo, timeMsec, pos, volume);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_VOL_INTPL: // 54017
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPL");
+					Int32 attr3 = Arg1;
+					Int32 ticks3 = Arg2;
+					Int32 to3 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPL(ObjNo, attr3, ticks3, to3);
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_PITCH_INTPL: // 54019
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_INTPL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECT_POS_INTPL: // 54021
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_INTPL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_VOL_INTPL: // 54145
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPL");
+					Int32 unused = Arg1;
+					Int32 ticks = Arg2;
+					Int32 volume = Arg3;
+					SoundLib.Log($"ObjNo: {ObjNo}, attr: {unused}  ticks: {ticks}, to: {volume}");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPL(slot, ObjNo, unused, ticks, volume);
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_PITCH_INTPL: // 54147
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_INTPL stubbed case");
+					break;
+				}
+				case FF9SOUND_SNDEFFECTRES_POS_INTPL: // 54149
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_INTPL stubbed case");
+					break;
+				}
+				case 16901:
+				case 16902:
 				case 21762:
 				case 21764:
-					IL_E5:
-					switch (num)
-					{
-					case 21889:
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_ALL");
-						if (ObjNo != -1)
-						{
-							SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_ALL should be 0, but ObjNo: " + ObjNo);
-						}
-						Int32 vol3 = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_ALL(vol3);
-						break;
-					}
-					case 21890:
-					case 21892:
-						IL_106:
-						switch (num)
-						{
-						case 37377:
-						{
-							SoundLib.Log("FF9SOUND_SNDEFFECT_VOL");
-							Int32 attr = Arg1;
-							Int32 vol4 = Arg2;
-							allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL(ObjNo, attr, vol4);
-							break;
-						}
-						case 37378:
-						case 37380:
-							IL_127:
-							switch (num)
-							{
-							case 37505:
-							{
-								SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL");
-								Int32 attr2 = Arg1;
-								Int32 vol5 = Arg2;
-								allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL(slot, ObjNo, attr2, vol5);
-								break;
-							}
-							case 37506:
-							case 37508:
-								IL_148:
-								switch (num)
-								{
-								case 38401:
-								{
-									SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPLALL");
-									if (ObjNo != -1)
-									{
-										SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
-									}
-									Int32 ticks = Arg1;
-									Int32 to = Arg2;
-									allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPLALL(ticks, to);
-									break;
-								}
-								case 38402:
-								case 38404:
-									IL_169:
-									switch (num)
-									{
-									case 38529:
-									{
-										SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPLALL");
-										if (ObjNo != -1)
-										{
-											SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
-										}
-										Int32 ticks2 = Arg1;
-										Int32 to2 = Arg2;
-										allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPLALL(ticks2, to2);
-										break;
-									}
-									case 38530:
-									case 38532:
-										IL_18A:
-										switch (num)
-										{
-										case 54017:
-										{
-											SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPL");
-											Int32 attr3 = Arg1;
-											Int32 ticks3 = Arg2;
-											Int32 to3 = Arg3;
-											allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPL(ObjNo, attr3, ticks3, to3);
-											break;
-										}
-										case 54018:
-										case 54020:
-											IL_1AB:
-											switch (num)
-											{
-											case 54145:
-											{
-												SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPL");
-												Int32 num2 = Arg1;
-												Int32 num3 = Arg2;
-												Int32 num4 = Arg3;
-												SoundLib.Log(String.Concat(new Object[]
-												{
-													"ObjNo: ",
-													ObjNo,
-													" attr: ",
-													num2,
-													" ticks: ",
-													num3,
-													" to: ",
-													num4
-												}));
-												allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPL(slot, ObjNo, num2, num3, num4);
-												break;
-											}
-											case 54146:
-											case 54148:
-												IL_1CC:
-												switch (num)
-												{
-												case 33537:
-												{
-													SoundLib.Log("FF9SOUND_SONG_VOL_INTPL");
-													Int32 ticks4 = Arg1;
-													Int32 to4 = Arg2;
-													allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPL(ObjNo, ticks4, to4);
-													break;
-												}
-												case 33538:
-													SoundLib.Log("Call song stubbed case");
-													break;
-												case 33539:
-												{
-													SoundLib.Log("FF9SOUND_SONG_PITCH_INTPL");
-													Int32 tick = Arg1;
-													Int32 to5 = Arg2;
-													allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_INTPL(ObjNo, tick, to5);
-													break;
-												}
-												case 33540:
-													SoundLib.Log("Call song stubbed case");
-													break;
-												default:
-													switch (num)
-													{
-													case 25098:
-														SoundLib.Log("FF9SOUND_STREAMFMV_VOL");
-														if (ObjNo != -1)
-														{
-															SoundLib.Log("ObjNo for FF9SOUND_STREAMFMV_VOL should be 0, but ObjNo: " + ObjNo);
-														}
-														SoundLib.Log("No implementation!");
-														break;
-													case 25099:
-														IL_202:
-														switch (num)
-														{
-														case 50177:
-														{
-															SoundLib.Log("FF9SOUND_SONG_VOL_FADE");
-															Int32 ticks5 = Arg1;
-															Int32 from = Arg2;
-															Int32 to6 = Arg3;
-															allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADE(ObjNo, ticks5, from, to6);
-															break;
-														}
-														case 50178:
-															SoundLib.Log("Call song stubbed case");
-															break;
-														case 50179:
-														{
-															SoundLib.Log("FF9SOUND_SONG_PITCH_FADE");
-															Int32 tick2 = Arg1;
-															Int32 from2 = Arg2;
-															Int32 to7 = Arg3;
-															allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_FADE(ObjNo, tick2, from2, to7);
-															break;
-														}
-														default:
-															switch (num)
-															{
-																case 0:
-																	SoundLib.Log("FF9SOUND_SONG_PLAY");
-																	allSoundDispatchPlayer.FF9SOUND_SONG_PLAY(ObjNo, 127, 0);
-																	break;
-																case 256:
-																	SoundLib.Log("FF9SOUND_SONG_STOP");
-																	allSoundDispatchPlayer.FF9SOUND_SONG_STOP(ObjNo);
-																	break;
-																case 265:
-																	SoundLib.Log("FF9SOUND_SONG_STOPCURRENT");
-																	allSoundDispatchPlayer.FF9SOUND_SONG_STOPCURRENT();
-																	break;
-																case 520:
-																	SoundLib.Log("FF9SOUND_SONG_NULL means ignore");
-																	break;
-																case 1028:
-																	SoundLib.Log("Call song stubbed case");
-																	break;
-																case 1792:
-																	SoundLib.Log("FF9SOUND_SONG_LOAD");
-																	allSoundDispatchPlayer.FF9SOUND_SONG_LOAD(ObjNo);
-																	break;
-																case 2048:
-																	SoundLib.Log("FF9SOUND_SONG_SUSPEND");
-																	allSoundDispatchPlayer.FF9SOUND_SONG_SUSPEND(ObjNo, false);
-																	break;
-																case 2304:
-																	SoundLib.Log("FF9SOUND_SONG_RESTORE");
-																	allSoundDispatchPlayer.FF9SOUND_SONG_RESTORE();
-																	break;
-																case 2566:
-																	SoundLib.Log("FF9SOUND_SONG_JUMPPOINT");
-																	SoundLib.Log("ObjNo: " + ObjNo);
-																	allSoundDispatchPlayer.FF9SOUND_SONG_JUMPPOINT();
-																	break;
-																case 3072:
-																	SoundLib.Log("Call SOUND_SYNC, stub");
-																	break;
-																case 4489:
-																	SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOPCURRENT");
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-																	break;
-																case 4616:
-																	SoundLib.Log("FF9SOUND_SNDEFFECT_NULL means ignore");
-																	break;
-																case 6272:
-																	SoundLib.Log("FF9SOUND_SNDEFFECTRES_SUSPEND");
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_SUSPEND(slot);
-																	break;
-																case 6528:
-																	SoundLib.Log("FF9SOUND_SNDEFFECTRES_RESTORE");
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(slot);
-																	break;
-																case 8448:
-																{
-																	SoundLib.Log("FF9SOUND_STREAM_STOP");
-																	if (ObjNo != -1)
-																	{
-																		SoundLib.Log("ObjNo for FF9SOUND_STREAM_STOP should be 0, but ObjNo: " + ObjNo);
-																	}
-
-																	allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
-																	break;
-																}
-																case 8712:
-																	SoundLib.Log("Call STREAM_NULL, stub");
-																	break;
-																case 20736:
-																{
-																	SoundLib.Log("FF9SOUND_SNDEFFECT_STOP");
-																	Int32 attr6 = Arg1;
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP(ObjNo, attr6);
-																	break;
-																}
-																case 20864:
-																{
-																	SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOP");
-																	Int32 attr5 = Arg1;
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOP(slot, ObjNo, attr5);
-																	break;
-																}
-																case 25089:
-																{
-																	SoundLib.Log("FF9SOUND_STREAM_VOL");
-																	if (ObjNo != -1)
-																	{
-																		SoundLib.Log("ObjNo for FF9SOUND_STREAM_VOL should be 0, but ObjNo: " + ObjNo);
-																	}
-
-																	Int32 vol7 = Arg1;
-																	allSoundDispatchPlayer.FF9SOUND_STREAM_VOL(vol7);
-																	break;
-																}
-																case 25093:
-																{
-																	SoundLib.Log("FF9SOUND_STREAM_POS");
-																	if (ObjNo != -1)
-																	{
-																		SoundLib.Log("ObjNo for FF9SOUND_STREAM_POS should be 0, but ObjNo: " + ObjNo);
-																	}
-
-																	SoundLib.Log("No implementation!");
-																	break;
-																}
-																case 30464:
-																	SoundLib.Log("Call INSTR_LOAD, stub");
-																	break;
-																case 34305:
-																{
-																	SoundLib.Log("FF9SOUND_SONG_VOL_INTPLALL");
-																	Int32 ticks7 = Arg1;
-																	Int32 to9 = Arg2;
-																	allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPLALL(ticks7, to9);
-																	break;
-																}
-																case 40960:
-																{
-																	SoundLib.Log("FF9SOUND_STREAM_PLAY");
-																	Int32 streamid = ObjNo;
-																	Int32 num8 = Arg1;
-																	Int32 num9 = Arg2;
-																	SoundLib.Log(String.Concat(new Object[]
-																	{
-																		"ObjNo: ",
-																		ObjNo,
-																		" pos: ",
-																		num8,
-																		" reverb: ",
-																		num9
-																	}));
-																	if (!SoundLib.SoundEffectIsMute)
-																	{
-																		allSoundDispatchPlayer.FF9SOUND_STREAM_PLAY(streamid, num8, num9);
-																	}
-
-																	break;
-																}
-																case 51969:
-																{
-																	SoundLib.Log("FF9SOUND_SONG_VOL_FADEALL");
-																	Int32 ticks6 = Arg1;
-																	Int32 from3 = Arg2;
-																	Int32 to8 = Arg3;
-																	allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADEALL(ticks6, from3, to8);
-																	break;
-																}
-																case 53248:
-																{
-																	SoundLib.Log("FF9SOUND_SNDEFFECT_PLAY");
-																	Int32 num5 = Arg1;
-																	Int32 num6 = Arg2;
-																	Int32 num7 = Arg3;
-																	SoundLib.Log(String.Concat(new Object[]
-																	{
-																		"ObjNo: ",
-																		ObjNo,
-																		" attr: ",
-																		num5,
-																		" pos: ",
-																		num6,
-																		" vol: ",
-																		num7
-																	}));
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PLAY(ObjNo, num5, num6, num7);
-																	break;
-																}
-																case 53376:
-																{
-																	SoundLib.Log("FF9SOUND_SNDEFFECTRES_PLAY");
-																	Int32 attr4 = Arg1;
-																	Int32 pos = Arg2;
-																	Int32 vol6 = Arg3;
-																	allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_PLAY(slot, ObjNo, attr4, pos, vol6);
-																	break;
-																}
-																default:
-																	SoundLib.Log(String.Concat(new Object[]
-																	{
-																		"Not founded case with ParmType: ",
-																		ParmType,
-																		"\nParmType Value: ",
-																		Convert.ToString(ParmType, 2)
-																	}));
-																	break;
-															}
-
-															break;
-														}
-														break;
-													case 25100:
-														SoundLib.Log("FF9SOUND_STREAM_REVERB");
-														if (ObjNo != -1)
-														{
-															SoundLib.Log("ObjNo for FF9SOUND_STREAM_REVERB should be 0, but ObjNo: " + ObjNo);
-														}
-														SoundLib.Log("No implementation!");
-														break;
-													default:
-														goto IL_202;
-													}
-													break;
-												}
-												break;
-											case 54147:
-												SoundLib.Log("Call SFXRes stubbed case");
-												break;
-											case 54149:
-												SoundLib.Log("Call SFXRes stubbed case");
-												break;
-											default:
-												goto IL_1CC;
-											}
-											break;
-										case 54019:
-											SoundLib.Log("Call SFX stubbed case");
-											break;
-										case 54021:
-											SoundLib.Log("Call SFX stubbed case");
-											break;
-										default:
-											goto IL_1AB;
-										}
-										break;
-									case 38531:
-										SoundLib.Log("Call SFXRes stubbed case");
-										break;
-									case 38533:
-										SoundLib.Log("Call SFXRes stubbed case");
-										break;
-									default:
-										goto IL_18A;
-									}
-									break;
-								case 38403:
-									SoundLib.Log("Call SFX stubbed case");
-									break;
-								case 38405:
-									SoundLib.Log("Call SFX stubbed case");
-									break;
-								default:
-									goto IL_169;
-								}
-								break;
-							case 37507:
-								SoundLib.Log("Call SFXRes stubbed case");
-								break;
-							case 37509:
-								SoundLib.Log("Call SFXRes stubbed case");
-								break;
-							default:
-								goto IL_148;
-							}
-							break;
-						case 37379:
-						{
-							SoundLib.Log("FF9SOUND_SNDEFFECT_PITCH");
-							Int32 attr7 = Arg1;
-							Int32 pitch2 = Arg2;
-							allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PITCH(ObjNo, attr7, pitch2);
-							break;
-						}
-						case 37381:
-							SoundLib.Log("Call SFX stubbed case");
-							break;
-						default:
-							goto IL_127;
-						}
-						break;
-					case 21891:
-						SoundLib.Log("Call SFXRes stubbed case");
-						break;
-					case 21893:
-						SoundLib.Log("Call SFXRes stubbed case");
-						break;
-					default:
-						goto IL_106;
-					}
-					break;
-				case 21763:
-					SoundLib.Log("Call SFX stubbed case");
-					break;
-				case 21765:
-					SoundLib.Log("Call SFX stubbed case");
-					break;
+				case 21890:
+				case 21892:
+				case 25099:
+				case 37378:
+				case 37380:
+				case 37506:
+				case 37508:
+				case 38402:
+				case 38404:
+				case 38530:
+				case 38532:
+				case 54018:
+				case 54020:
+				case 54146:
+				case 54148:
 				default:
-					goto IL_E5;
-				}
-				break;
-			case 16903:
-			{
-				SoundLib.Log("FF9SOUND_SONG_SKIPPHRASE");
-				Int32 num10 = Arg1;
-				SoundLib.Log("_phrase: " + num10);
-				Int32 offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE = FF9Snd.GetOffsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE(ObjNo, num10);
-				if (offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE != -1)
 				{
-					allSoundDispatchPlayer.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(ObjNo, offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE);
+					SoundLib.Log($"Not founded case with ParmType: {ParmType}\nParmType Value: {Convert.ToString(ParmType, 2)}");
+					break;
 				}
-				break;
-			}
-			default:
-				goto IL_C4;
 			}
 		}
 		catch (Exception ex)
 		{
-			SoundLib.LogWarning(String.Concat(new Object[]
-			{
-				"Music Id: ",
-				ObjNo,
-				" has Exception: ",
-				ex
-			}));
+			SoundLib.LogWarning($"Music Id: {ObjNo} has Exception: {ex}");
 		}
+
 		return 0;
 	}
 

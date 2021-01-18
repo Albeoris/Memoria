@@ -2,7 +2,7 @@
 
 public partial class EventEngine
 {
-    public Int32 OperatorAll(Int32 op)
+    public Int32 OperatorAll(EBin.op_binary op)
     {
         Int32 a = 0;
         Int32 valueAtOffset = this.gCP.getValueAtOffset(-3);
@@ -21,7 +21,7 @@ public partial class EventEngine
             this.gCP.advanceTopOfStack();
         }
         Int32 num2 = this.eBin.getv();
-        EBin.op_binary opBinary = (EBin.op_binary)op;
+        EBin.op_binary opBinary = op;
         for (Int32 index = 0; index < 8; ++index)
         {
             if ((num1 & 1) != 0)
@@ -83,7 +83,7 @@ public partial class EventEngine
         return a;
     }
 
-    private Int32 OperatorAll1(Int32 op)
+    private Int32 OperatorAll1(EBin.op_binary op)
     {
         Int32 a = 0;
         Int32 valueAtOffset = this.gCP.getValueAtOffset(-2);
@@ -99,7 +99,7 @@ public partial class EventEngine
             this.gCP.advanceTopOfStack();
             this.gCP.advanceTopOfStack();
         }
-        EBin.op_binary opBinary = (EBin.op_binary)op;
+        EBin.op_binary opBinary = op;
         for (Int32 index = 0; index < 8; ++index)
         {
             if ((num & 1) != 0)
