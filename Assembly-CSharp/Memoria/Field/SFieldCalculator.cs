@@ -258,8 +258,9 @@ namespace Memoria.Field
 
         private static void FldCalcSub_302(Context v)
         {
-            Byte[] numArray = new Byte[6] { 0, 0, 0, 2, 1, 24 };
-            if ((Int32)FieldRemoveStatuses(v.Target, numArray[v.Tbl.AddNo]) == 2)
+            // Use the status set list initialized through CSV reading
+            // Might use "....Value & 127" instead of the plain Value although that doesn't seem required
+            if ((Int32)FieldRemoveStatuses(v.Target, (Byte)FF9BattleDB.StatusSets[v.Tbl.AddNo].Value) == 2)
                 return;
             v.Flags |= 1;
         }
