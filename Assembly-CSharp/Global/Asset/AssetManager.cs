@@ -242,7 +242,7 @@ public static class AssetManager
 		 * Texture (only used by ModelFactory for "GEO_MAIN_F3_ZDN", "GEO_MAIN_F4_ZDN" and "GEO_MAIN_F5_ZDN") - Can be read as PNG/JPG as Texture2D
 		 * RenderTexture (Usually split into many pieces) - Can't be read from disc currently
 		 * Material - Can't be read from disc currently
-		 * AnimationClip (LoadAll is used in AnimationFactory) - Can be read as .anim (serialized format, as in the p0data5.bin) but with a very simple reader
+		 * AnimationClip (LoadAll is used in AnimationFactory) - Can be read as .anim (serialized format, as in the p0data5.bin) or JSON but with simple readers
 		 * GameObject (Usually split into many pieces ; LoadAsync is used in WMWorld) - Can't be read from disc currently
 		*/
 		if (typeof(T) == typeof(String))
