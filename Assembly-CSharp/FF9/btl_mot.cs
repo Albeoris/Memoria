@@ -11,40 +11,40 @@ namespace FF9
 		{
 			// Note: this type is marked as 'beforefieldinit'.
 			// Battle motion IDs for player characters are sorted like these:
-			//  0:  stand
-			//  1:  stand low HP
-			//  2:  hitted
-			//  3:  hitted strongly
-			//  4:  stand KO
-			//  5:  low HP -> stand
-			//  6:  KO -> stand
-			//  7:  hit hard
-			//  8:  KO
-			//  9:  stand ready
-			//  10: ready
-			//  11: KO -> stand low HP
-			//  12: defend
-			//  13: stand defend
-			//  14: defend -> stand
-			//  15: ???
-			//  16: dodge
-			//  17: flee
-			//  18: victory
-			//  19: stand victory
-			//  20: run
-			//  21: stand run
-			//  22: attack 1
-			//  23: attack 2
-			//  24: jump back 1
-			//  25: jump back 2
-			//  26: cast
-			//  27: stand cast
-			//  28: cast -> stand
-			//  29: move forward
-			//  30: move backward
-			//  31: item
-			//  32: ready -> stand
-			//  33: cast alternate
+			//  0:  stand (MP_IDLE_NORMAL),
+			//  1:  low HP (MP_IDLE_DYING),
+			//  2:  hitted (MP_DAMAGE1),
+			//  3:  hitted strongly (MP_DAMAGE2),
+			//  4:  KO (MP_DISABLE),
+			//  5:  low HP -> stand (MP_GET_UP_DYING),
+			//  6:  KO -> stand (MP_GET_UP_DISABLE),
+			//  7:  hit hard (MP_DOWN_DYING),
+			//  8:  stand -> KO (MP_DOWN_DISABLE),
+			//  9:  ready (MP_IDLE_CMD),
+			//  10: stand -> ready (MP_NORMAL_TO_CMD),
+			//  11: KO -> low HP (MP_DYING_TO_CMD),
+			//  12: stand -> defend (MP_IDLE_TO_DEF),
+			//  13: defend (MP_DEFENCE),
+			//  14: defend -> stand (MP_DEF_TO_IDLE),
+			//  15: cover (MP_COVER),
+			//  16: dodge (MP_AVOID),
+			//  17: flee (MP_ESCAPE),
+			//  18: victory (MP_WIN),
+			//  19: stand victory (MP_WIN_LOOP),
+			//  20: stand -> run (MP_SET),
+			//  21: run (MP_RUN),
+			//  22: run -> attack (MP_RUN_TO_ATTACK),
+			//  23: attack (MP_ATTACK),
+			//  24: jump back (MP_BACK),
+			//  25: jump back -> stand (MP_ATK_TO_NORMAL),
+			//  26: stand -> cast (MP_IDLE_TO_CHANT),
+			//  27: cast (MP_CHANT),
+			//  28: cast -> stand (MP_MAGIC),
+			//  29: move forward (MP_STEP_FORWARD),
+			//  30: move backward (MP_STEP_BACK),
+			//  31: item (MP_ITEM1),
+			//  32: ready -> stand (MP_CMD_TO_NORMAL),
+			//  33: cast alternate (MP_SPECIAL1)
 			String[,] array = new String[19, 34];
 			array[0, 0] = "ANH_MAIN_B0_000_000";
 			array[0, 1] = "ANH_MAIN_B0_000_022";

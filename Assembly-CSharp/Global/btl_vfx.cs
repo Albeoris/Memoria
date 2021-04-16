@@ -310,6 +310,6 @@ public class btl_vfx
 		{
 			b = 8;
 		}
-		AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_init.model_id[(Int32)b]);
+		AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_init.model_id[(Int32)b], true);
 	}
 }

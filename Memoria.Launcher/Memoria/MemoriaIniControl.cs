@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Globalization;
+using System.Drawing.Text;
 using Ini;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
@@ -29,8 +30,7 @@ namespace Memoria.Launcher
         public MemoriaIniControl()
         {
 
-
-            PsxFontInstalled = IsOptionPresentInIni("Graphics", "UseGarnetFont");
+            PsxFontInstalled = true || IsOptionPresentInIni("Graphics", "UseGarnetFont");
             SBUIInstalled = IsOptionPresentInIni("Graphics", "ScaledBattleUI");
             short baseNumberOfRows = 23;
             short numberOfRows = baseNumberOfRows;
@@ -142,10 +142,22 @@ namespace Memoria.Launcher
 
             if (PsxFontInstalled)
             {
-                UiCheckBox useGarnetFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), (short)(baseNumberOfRows), 0, 2, 8);
-                useGarnetFont.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(UseGarnetFont)) { Mode = BindingMode.TwoWay });
-                useGarnetFont.Foreground = Brushes.White;
-                useGarnetFont.Margin = rowMargin;
+                /*UiCheckBox useGarnetFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), (short)(baseNumberOfRows), 0, 2, 8);
+                useGarnetFont.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(UseGarnetFont)) { Mode = BindingMode.TwoWay });*/
+                UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row: baseNumberOfRows, col: 0, rowSpan: 2, colSpan: 3);
+                fontChoiceText.Foreground = Brushes.White;
+                fontChoiceText.Margin = rowMargin;
+                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), (short)(baseNumberOfRows), 2, 2, 6);
+                FontCollection installedFonts = new InstalledFontCollection();
+                String[] fontNames = new String[installedFonts.Families.Length + 2];
+                fontNames[0] = _fontDefaultPC;
+                fontNames[1] = _fontDefaultPSX;
+                for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
+                    fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
+                _fontChoiceBox.ItemsSource = fontNames;
+                _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
+                //fontChoice.Foreground = Brushes.White;
+                _fontChoiceBox.Margin = rowMargin;
 
                 baseNumberOfRows = (short)(baseNumberOfRows + 2);
             }
@@ -282,6 +294,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public String FontChoice
+        {
+            get { return _fontChoice; }
+            set
+            {
+                if (_fontChoice != value)
+                {
+                    _fontChoice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 ScaledBattleUI
         {
             get { return _scaledbattleui; }
@@ -321,6 +345,10 @@ namespace Memoria.Launcher
         }
         private Int16 _iswidescreensupport, _isskipintros, _ishidecards, _isturnbased, _battleswirlframes, _soundvolume, _musicvolume, _usegarnetfont, _scaledbattleui;
         private double _scaledbattleuiscale;
+        private String _fontChoice;
+        private UiComboBox _fontChoiceBox;
+        private readonly String _fontDefaultPC = "Final Fantasy IX PC";
+        private readonly String _fontDefaultPSX = "Final Fantasy IX PSX";
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
 
         private void LoadSettings()
@@ -405,7 +433,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(MusicVolume));
 
                 if (PsxFontInstalled) {
-                    value = iniFile.ReadValue("Graphics", nameof(UseGarnetFont));
+                    /*value = iniFile.ReadValue("Graphics", nameof(UseGarnetFont));
                     if (String.IsNullOrEmpty(value))
                     {
                         value = "1";
@@ -413,7 +441,29 @@ namespace Memoria.Launcher
                     }
                     if (!Int16.TryParse(value, out _usegarnetfont))
                         _usegarnetfont = 1;
-                    OnPropertyChanged(nameof(UseGarnetFont));
+                    OnPropertyChanged(nameof(UseGarnetFont));*/
+                    value = iniFile.ReadValue("Font", "Enabled");
+                    Int16 enabledFont = 0;
+                    if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
+                    {
+                        _fontChoice = _fontDefaultPC;
+                    }
+                    else
+                    {
+                        value = iniFile.ReadValue("Font", "Names");
+                        if (String.IsNullOrEmpty(value) || value.Length < 2)
+                        {
+                            _fontChoice = _fontDefaultPC;
+                        }
+                        else
+                        {
+                            String[] fontList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
+                            _fontChoice = fontList[0];
+                            if (_fontChoice.CompareTo("Alexandria") == 0 || _fontChoice.CompareTo("Garnet") == 0)
+                                _fontChoice = _fontDefaultPSX;
+                        }
+                    }
+                    _fontChoiceBox.SelectedItem = _fontChoice;
                 }
                 if (SBUIInstalled)
                 {
@@ -516,6 +566,20 @@ namespace Memoria.Launcher
                         }
                         iniFile.WriteValue("Graphics", propertyName, " " + (UseGarnetFont).ToString());
                         break;
+                    case nameof(FontChoice):
+                        if (FontChoice.CompareTo(_fontDefaultPC) == 0)
+                            iniFile.WriteValue("Font", "Enabled ", " 0");
+                        else if (FontChoice.CompareTo(_fontDefaultPSX) == 0)
+                        {
+                            iniFile.WriteValue("Font", "Enabled ", " 1");
+                            iniFile.WriteValue("Font", "Names", " \"Alexandria\", \"Garnet\"");
+                        }
+                        else
+                        {
+                            iniFile.WriteValue("Font", "Enabled ", " 1");
+                            iniFile.WriteValue("Font", "Names", " \"" + FontChoice + "\", \"Times Bold\"");
+                        }
+                            break;
                     case nameof(ScaledBattleUI):
                         if (ScaledBattleUI == 1)
                         {

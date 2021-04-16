@@ -61,16 +61,6 @@ public class BundleScene : MonoBehaviour
 			{
 				this._UsingUncompressedAssetBundlesFromLocal();
 			}
-			// Reverse order for first having priority; might move the patcher somewhere else; might use the default folder (AssetManager.Folder.Length-1) as well
-			Memoria.Prime.Log.Message("[BundleScene] Patch dictionaries");
-			for (Int32 i = AssetManager.Folder.Length-2; i >= 0; --i)
-            {
-				if (System.IO.File.Exists(AssetManager.Folder[i].FolderPath + AssetManager.MemoriaDictionaryPatcherPath))
-                {
-					String[] patch = System.IO.File.ReadAllLines(AssetManager.Folder[i].FolderPath + AssetManager.MemoriaDictionaryPatcherPath);
-					AssetManager.PatchDictionaries(patch);
-				}
-            }
 		}
 	}
 

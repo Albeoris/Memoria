@@ -32,6 +32,7 @@ namespace Memoria
         public static Int16 Dragons => FF9StateSystem.Common.FF9.dragon_no;
         public static Byte Tonberies => battle.TONBERI_COUNT;
         public static Byte AbilityUsage(Byte index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
+        public static Byte[] GeneralVariable => FF9StateSystem.EventState.gEventGlobal;
 
         public static UInt32 Gil
         {
@@ -557,7 +558,9 @@ namespace Memoria
             Int32 quarterWill = Caster.Data.elem.wpr >> 2;
             if (quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.Data.critical_rate_deal_bonus + Target.Data.critical_rate_receive_bonus > Comn.random16() % 100)
             {
-                Context.Attack *= 2;
+                Context.Attack *= 2; // In case TryCriticalHit is called before "Calc...HpDamage"
+                Target.HpDamage *= 2; // In case TryCriticalHit is called after "Calc...HpDamage"
+                Target.MpDamage *= 2;
                 Target.Flags |= CalcFlag.Critical;
             }
         }

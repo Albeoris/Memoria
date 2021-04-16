@@ -257,6 +257,8 @@
         /// <summary>
         /// Legendary fork known for its ability to crush anything. Add ST: {b}Stop{/b}.
         /// </summary>
-        GastroFork = 0084
+        GastroFork = 0084,
+
+        NoWeapon = 0255
     }
 }

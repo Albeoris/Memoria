@@ -10,9 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Assembly-CSharp</RootNamespace>
     <AssemblyName>Assembly-CSharp</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -338,6 +339,7 @@
     <Compile Include="Memoria\Assets\Import\Fields\AtlasImport.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\PsdImport.cs" />
     <Compile Include="Memoria\Assets\Import\Text\CharacterNamesImporter.cs" />
+    <Compile Include="Memoria\Assets\AnimationClipReader.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxConstructor.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxController.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxRenderer.cs" />

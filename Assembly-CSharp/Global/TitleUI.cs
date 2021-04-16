@@ -1719,6 +1719,17 @@ public class TitleUI : UIScene
         }
         this.slashScreen = new SlashScreen(null, this.SpashText, this.SlideShowObject, this.SlideShowFadingObject, this.TitleImageTextObject0, this.TitleImageTextObject1, this.TitleImageTextJpObject0, this.TitleImageTextJpObject1);
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, new UICamera.KeyCodeDelegate(this.OnKeyNavigate));
+
+        // Apply DictionaryPatch.txt; might move the patcher somewhere else; might use the default folder (AssetManager.Folder.Length-1) as well
+        // Reverse order for first having priority
+        for (Int32 i = AssetManager.Folder.Length - 2; i >= 0; --i)
+        {
+            if (System.IO.File.Exists(AssetManager.Folder[i].FolderPath + AssetManager.MemoriaDictionaryPatcherPath))
+            {
+                String[] patch = System.IO.File.ReadAllLines(AssetManager.Folder[i].FolderPath + AssetManager.MemoriaDictionaryPatcherPath);
+                AssetManager.PatchDictionaries(patch);
+            }
+        }
     }
 
     private class SlideShow

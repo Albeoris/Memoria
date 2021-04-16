@@ -6,6 +6,7 @@ using UnityEngine;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Assets;
 using Object = System.Object;
 using System.Net.Mime;
 using Assets.Sources.Scripts.UI.Common;
@@ -82,38 +83,39 @@ public static class AssetManager
 	private static void _LoadAnimationFolderMapping()
 	{
 		_animationInFolder = new Dictionary<String, List<String>>();
+		_animationReverseFolder = new Dictionary<String, String>();
 		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _, false);
 		if (filestr == null)
 		{
 			return;
 		}
-		String[] array = filestr.Split(new Char[]
+		String[] folderList = filestr.Split(new Char[]
 		{
 			'\n'
 		});
-		String[] array2 = array;
-		for (Int32 i = 0; i < (Int32)array2.Length; i++)
+		for (Int32 i = 0; i < (Int32)folderList.Length; i++)
 		{
-			String text = array2[i];
-			String[] array3 = text.Split(new Char[]
+			String folderFull = folderList[i];
+			String[] geoAndAnim = folderFull.Split(new Char[]
 			{
 				':'
 			});
-			String text2 = array3[0];
-			String[] array4 = array3[1].Split(new Char[]
+			String geoFolder = geoAndAnim[0];
+			String modelName = Path.GetFileNameWithoutExtension(geoFolder);
+			String[] animList = geoAndAnim[1].Split(new Char[]
 			{
 				','
 			});
-			List<String> list = new List<String>();
-			String[] array5 = array4;
-			for (Int32 j = 0; j < (Int32)array5.Length; j++)
+			List<String> animFolderList = new List<String>();
+			for (Int32 j = 0; j < (Int32)animList.Length; j++)
 			{
-				String str = array5[j];
-				String text3 = text2 + "/" + str;
-				text3 = text3.Trim();
-				list.Add(text3);
+				String animName = animList[j].Trim();
+				String animFolder = geoFolder + "/" + animName;
+				animFolder = animFolder.Trim();
+				animFolderList.Add(animFolder);
+				_animationReverseFolder[animName] = modelName;
 			}
-			_animationInFolder.Add(text2, list);
+			_animationInFolder.Add(geoFolder, animFolderList);
 		}
 	}
 
@@ -240,7 +242,7 @@ public static class AssetManager
 		 * Texture (only used by ModelFactory for "GEO_MAIN_F3_ZDN", "GEO_MAIN_F4_ZDN" and "GEO_MAIN_F5_ZDN") - Can be read as PNG/JPG as Texture2D
 		 * RenderTexture (Usually split into many pieces) - Can't be read from disc currently
 		 * Material - Can't be read from disc currently
-		 * AnimationClip (LoadAll is used in AnimationFactory) - Can't be read from disc currently
+		 * AnimationClip (LoadAll is used in AnimationFactory) - Can be read as .anim (serialized format, as in the p0data5.bin) but with a very simple reader
 		 * GameObject (Usually split into many pieces ; LoadAsync is used in WMWorld) - Can't be read from disc currently
 		*/
 		if (typeof(T) == typeof(String))
@@ -279,6 +281,10 @@ public static class AssetManager
 			else
 				Log.Message("[AssetManager] Embeded asset not found: " + archiveName);
 			return (T)(Object)newAtlas;
+		}
+		else if (typeof(T) == typeof(AnimationClip))
+		{
+			return (T)(Object)AnimationClipReader.ReadAnimationClipFromDisc(name);
 		}
 		Log.Message("[AssetManager] Trying to load from disc the asset " + name + " of type " + typeof(T).ToString() + ", which is not currently possible");
 		return (T)(Object)null;
@@ -323,7 +329,9 @@ public static class AssetManager
 				{
 					result = assetBundleRef.assetBundle.LoadAsset<T>(nameInBundle);
 					if (result != (UnityEngine.Object)null)
+					{
 						return result;
+					}
 				}
 			}
 		}
@@ -530,6 +538,12 @@ public static class AssetManager
 			{
 				String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(list[i]);
 				array[i] = Load<T>(renameAnimationPath, out _, false);
+				AnimationClip clip = array[i] as AnimationClip;
+				if (clip != null)
+				{
+					if (String.Compare(clip.name, "CUSTOM_MUST_RENAME") == 0)
+						clip.name = Path.GetFileNameWithoutExtension(list[i]);
+				}
 			}
 			return array;
 		}
@@ -545,7 +559,7 @@ public static class AssetManager
 			if (entry.Length < 3)
 				continue;
 			if (String.Compare(entry[0], "MessageFile") == 0)
-            {
+			{
 				// eg.: MessageFile 2000 MES_CUSTOM_PLACE
 				if (FF9DBAll.MesDB == null)
 					continue;
@@ -554,7 +568,7 @@ public static class AssetManager
 					continue;
 				FF9DBAll.MesDB[ID] = entry[2];
 			}
-			else if(String.Compare(entry[0], "IconSprite") == 0)
+			else if (String.Compare(entry[0], "IconSprite") == 0)
 			{
 				// eg.: IconSprite 19 arrow_down
 				if (FF9UIDataTool.IconSpriteName == null)
@@ -576,10 +590,10 @@ public static class AssetManager
 				if (Int32.TryParse(entry[2], out iconID))
 				{
 					if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
-                    {
+					{
 						Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
 						continue;
-                    }
+					}
 					BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
 					if (BattleResultUI.BadIconDict == null || FF9UIDataTool.status_id == null)
 						continue;
@@ -626,7 +640,7 @@ public static class AssetManager
 				Boolean add = String.Compare(entry[1], "Remove") != 0;
 				if (String.Compare(entry[1], "Set") == 0)
 					btl_cmd.half_trance_cmd_list.Clear();
-				for (Int32 i = 2; i< entry.Length; i++)
+				for (Int32 i = 2; i < entry.Length; i++)
 					foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
 						if (String.Compare(entry[i], cmdid.ToString()) == 0)
 						{
@@ -697,7 +711,131 @@ public static class AssetManager
 				// resources:
 				//  EmbeddedAsset/Text/{Lang}/Battle/{ID}.mes
 			}
-			// Todo: add dictionary moddability for 3D models and animations, at least for modifying existing entries
+			else if (String.Compare(entry[0], "CharacterDefaultName") == 0 && entry.Length >= 4)
+			{
+				// eg.: CharacterDefaultName 0 US Zinedine
+				// REMARK: Character default names can also be changed with the option "[Import] Text = 1" although it would monopolise the whole machinery of text importing
+				// "[Import] Text = 1" has the priority over DictionaryPatch
+				if (CharacterNamesFormatter._characterNames == null)
+					continue;
+				Int32 ID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				String[] nameArray;
+				if (!CharacterNamesFormatter._characterNames.TryGetValue(entry[2], out nameArray))
+					nameArray = new String[ID + 1];
+				if (nameArray.Length <= ID)
+				{
+					nameArray = new String[ID + 1];
+					CharacterNamesFormatter._characterNames[entry[2]].CopyTo(nameArray, 0);
+				}
+				nameArray[ID] = String.Join(" ", entry, 3, entry.Length - 3); // Character names can't have spaces now and are max 8 char long, so there's no real point in joining instead of using entry[3] directly
+				CharacterNamesFormatter._characterNames[entry[2]] = nameArray;
+			}
+			else if (String.Compare(entry[0], "3DModel") == 0)
+			{
+				// For both field models and enemy battle models (+ animations)
+				// eg.:
+				// 3DModel 98 GEO_NPC_F0_RMF
+				// 3DModelAnimation 200 ANH_NPC_F0_RMF_IDLE
+				// 3DModelAnimation 25 ANH_NPC_F0_RMF_WALK
+				// 3DModelAnimation 38 ANH_NPC_F0_RMF_RUN
+				// 3DModelAnimation 40 ANH_NPC_F0_RMF_TURN_L
+				// 3DModelAnimation 41 ANH_NPC_F0_RMF_TURN_R
+				// 3DModelAnimation 54 55 56 57 59 ANH_NPC_F0_RMF_ANGRY_INN
+				if (FF9BattleDB.GEO == null)
+					continue;
+				Int32 idcount = entry.Length - 2;
+				Int32[] ID = new Int32[entry.Length-2];
+				Boolean formatOK = true;
+				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
+					if (!Int32.TryParse(entry[idindex + 1], out ID[idindex]))
+						formatOK = false;
+				if (!formatOK)
+					continue;
+				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
+				{
+					FF9BattleDB.GEO[ID[idindex]] = entry[entry.Length - 1];
+				}
+				// TODO: make it work for replacing battle weapon models
+				// Currently, a line like "3DModel 476 GEO_ACC_F0_OPB" for replacing the dagger by a book freezes the game on black screen when battle starts
+			}
+			else if (String.Compare(entry[0], "3DModelAnimation") == 0)
+			{
+				// eg.: See above
+				// When adding custom animations, the name must follow the following pattern:
+				//   ANH_[MODEL TYPE]_[MODEL VERSION]_[MODEL 3 LETTER CODE]_[WHATEVER]
+				// in such a way that the model's name GEO_[...] and its new animation ANH_[...] have the middle block in common in their name
+				// Then that custom animation's file must be placed in that model's animation folder
+				// (eg. "assets/resources/animations/98/100000.anim" for a custom animation of Zidane with ID 100000)
+				if (FF9DBAll.AnimationDB == null || FF9BattleDB.Animation == null)
+					continue;
+				Int32 idcount = entry.Length - 2;
+				Int32[] ID = new Int32[entry.Length - 2];
+				Boolean formatOK = true;
+				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
+					if (!Int32.TryParse(entry[idindex + 1], out ID[idindex]))
+						formatOK = false;
+				if (!formatOK)
+					continue;
+				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
+				{
+					FF9DBAll.AnimationDB[ID[idindex]] = entry[entry.Length - 1];
+					FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
+				}
+			}
+			else if (String.Compare(entry[0], "PlayerBattleModel") == 0 && entry.Length >= 39)
+			{
+				// For party battle models and animations
+				// Check btl_mot's note for the sorting of battle animations
+				// eg.:
+				// 3DModelAnimation 100000 ANH_SUB_F0_KJA_MYCUSTOM_ANIM
+				// PlayerBattleModel 0 GEO_SUB_F0_KJA GEO_SUB_F0_KJA 18
+				//   ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_MON_B3_125_003 ANH_MON_B3_125_040
+				//   ANH_SUB_F0_KJA_DOWN ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_MYCUSTOM_ANIM
+				//   ANH_SUB_F0_KJA_DOWN ANH_SUB_F0_KJA_IDLE ANH_SUB_F0_KJA_ARMS_CROSS_2_3 ANH_SUB_F0_KJA_ARMS_CROSS_2_2
+				//   ANH_SUB_F0_KJA_SHOW_OFF_1_1 ANH_SUB_F0_KJA_SHOW_OFF_1_2 ANH_SUB_F0_KJA_SHOW_OFF_1_3
+				//   ANH_MON_B3_125_021 ANH_SUB_F0_KJA_LAUGH_2_2 ANH_SUB_F0_KJA_SHOW_OFF_2_2
+				//   ANH_SUB_F0_KJA_OJIGI_1 ANH_SUB_F0_KJA_OJIGI_2
+				//   ANH_SUB_F0_KJA_GET_HSK_1 ANH_SUB_F0_KJA_GET_HSK_2 ANH_SUB_F0_KJA_GET_HSK_2 ANH_SUB_F0_KJA_GET_HSK_3 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2
+				//   ANH_MON_B3_125_020 ANH_MON_B3_125_021 ANH_MON_B3_125_022
+				//   ANH_SUB_F0_KJA_WALK ANH_SUB_F0_KJA_WALK ANH_SUB_F0_KJA_RAIN_1
+				//   ANH_SUB_F0_KJA_ARMS_CROSS_2_1 ANH_SUB_F0_KJA_ARMS_UP_KUBIFURI_2
+				// (in a single line)
+				if (FF9.btl_mot.mot == null || BattlePlayerCharacter.PlayerModelFileName == null || btl_init.model_id == null)
+					continue;
+				Int32 ID;
+				Byte boneID;
+				if (!Int32.TryParse(entry[1], out ID))
+					continue;
+				if (!Byte.TryParse(entry[4], out boneID))
+					continue;
+				if (ID < 0 || ID >= 19) // Replace only existing characters
+					continue;
+				BattlePlayerCharacter.PlayerModelFileName[ID] = entry[2]; // Model
+				btl_init.model_id[ID] = entry[2];
+				btl_init.model_id[ID + 19] = entry[3]; // Trance model
+				BattlePlayerCharacter.PlayerWeaponToBoneName[ID] = boneID; // Model's weapon bone
+				for (Int32 animid = 0; animid < 34; ++animid)
+					FF9.btl_mot.mot[ID, animid] = entry[animid + 5];
+				List<String> modelAnimList;
+				String animlistID = "Animations/" + entry[2];
+				String animID, animModelID;
+				if (!_animationInFolder.TryGetValue(animlistID, out modelAnimList))
+					modelAnimList = new List<String>();
+				for (Int32 animid = 0; animid < 34; ++animid)
+				{
+					if (!_animationReverseFolder.TryGetValue(entry[animid + 5], out animModelID)) // Animation registered in "AnimationFolderMapping.txt": use ID of registered model
+						animModelID = entry[2]; // Custom animation: the path is "Animation/[ID of battle model]/[Anim ID]"
+					animID = "Animations/" + animModelID + "/" + entry[animid + 5];
+					if (!modelAnimList.Contains(animID))
+					{
+						modelAnimList.Add(animID);
+						_animationReverseFolder[entry[animid + 5]] = animModelID;
+					}
+				}
+				_animationInFolder[animlistID] = modelAnimList;
+			}
 		}
 	}
 
@@ -714,6 +852,8 @@ public static class AssetManager
 	public static AssetFolder[] Folder;
 
 	private static Dictionary<String, List<String>> _animationInFolder;
+
+	private static Dictionary<String, String> _animationReverseFolder;
 
 	public class AssetBundleRef
 	{

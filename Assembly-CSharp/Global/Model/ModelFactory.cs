@@ -162,7 +162,7 @@ public class ModelFactory
 		}
 		if (gameObject != (UnityEngine.Object)null)
 		{
-			AnimationFactory.AddAnimToGameObject(gameObject, text);
+			AnimationFactory.AddAnimToGameObject(gameObject, text, (isBattle && !text.Contains("_B1_")) || text.Contains("_W0_"));
 			if (text.Contains("GEO_MON_"))
 			{
 				if (ModelFactory.upscaleTable.ContainsKey(text))
@@ -170,7 +170,7 @@ public class ModelFactory
 					text = ModelFactory.upscaleTable[text];
 				}
 				text = text.Replace("_UP0", "_B3");
-				AnimationFactory.AddAnimToGameObject(gameObject, text);
+				AnimationFactory.AddAnimToGameObject(gameObject, text, (isBattle && !text.Contains("_B1_")) || text.Contains("_W0_"));
 			}
 		}
 		if (gameObject != (UnityEngine.Object)null)
@@ -252,7 +252,6 @@ public class ModelFactory
 		String text2 = String.Empty;
 		if (ModelFactory.upscaleTable.ContainsKey(text))
 		{
-			text2 = ModelFactory.findModelFilePathFromModelCode(text);
 			text = ModelFactory.upscaleTable[text];
 		}
 		if (path.StartsWith("GEO_"))
@@ -261,7 +260,6 @@ public class ModelFactory
 		}
 		else
 		{
-			text2 = Path.GetDirectoryName(Path.GetDirectoryName(path));
 			text2 = Path.GetDirectoryName(Path.GetDirectoryName(path));
 		}
 		if (extension != String.Empty)

@@ -163,6 +163,7 @@ namespace Memoria.Launcher
             public static readonly string NoRandomBattles = GetSettings(nameof(NoRandomBattles));
             public static readonly string PermanentCheats = GetSettings(nameof(PermanentCheats));
             public static readonly string UsePsxFont = GetSettings(nameof(UsePsxFont));
+            public static readonly string FontChoice = GetSettings(nameof(FontChoice));
             public static readonly string SBUIenabled = GetSettings(nameof(SBUIenabled));
             public static readonly string BattleFPS = GetSettings(nameof(BattleFPS));
 

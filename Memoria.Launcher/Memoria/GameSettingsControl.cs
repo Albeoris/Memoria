@@ -42,11 +42,19 @@ namespace Memoria.Launcher
         {
             foreach (UInt16 frequency in EnumerateAudioSettings())
                 _validSamplingFrequency.Add(frequency);
-            
-            SetRows(28);
-            SetCols(2);
-            
 
+            Boolean[] modFolderExists = new Boolean[_modInLauncher.Length];
+            Int32 modFolderCount = 0;
+            for (Int32 i = 0; i < _modInLauncher.Length; ++i)
+            {
+                modFolderExists[i] = Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + _modInLauncher[i][0]);
+                if (modFolderExists[i])
+                    ++modFolderCount;
+            }
+
+            SetRows(24 + 2 * Math.Max(2, modFolderCount));
+            SetCols(4);
+            
             Width = 200;
             VerticalAlignment = VerticalAlignment.Top;
             HorizontalAlignment = HorizontalAlignment.Left;
@@ -55,48 +63,66 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(0, 7, 0, 3);
             
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan:2).Margin = rowMargin;
-            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 2);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 4).Margin = rowMargin;
+            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 4);
             monitor.ItemsSource = GetAvailableMonitors();
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 5, col: 0, rowSpan: 3).Margin = rowMargin;
-            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 2);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 4).Margin = rowMargin;
+            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 4);
+            windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
+            windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
+            windowMode.Margin = rowMargin;
+
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
+            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 2, rowSpan: 3, colSpan: 2);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 10, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
-            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 12, col: 0, rowSpan: 3, colSpan: 2);
-            windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
-            windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) {Mode = BindingMode.TwoWay});
-            windowMode.Margin = rowMargin;
-
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency), 15, 0, 3, 2).Margin = rowMargin;
-            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), 17, 0, 3, 2);
+            UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
+            _audioText.FontSize *= 0.8;
+            _audioText.TextWrapping = TextWrapping.WrapWithOverflow;
+            AddUiElement(_audioText, row: 13, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
+            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), row: 13, col: 2, rowSpan: 3, colSpan: 2);
             audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
             audio.ItemsSource = EnumerateAudioSettings().ToArray();
             audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 20, 0, 3, 0);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 2);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 20, 1, 3, 0);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 1, 3, 3);
             debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 22, 0, 3, 2);
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 4);
             checkUpdates.Margin = rowMargin;
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
             
-            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 24, 0, 3, 2);
-            steamOverlayFix.Margin = new Thickness(0, 7, 0, 7);
+            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 4);
+            steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
+
+            Int32 currentRow = 22;
+            _modBox = new UiCheckBox[_modInLauncher.Length];
+            for (Int32 i = 0; i < _modInLauncher.Length; ++i)
+                if (modFolderExists[i])
+				{
+                    _modBox[i] = AddUiElement(UiCheckBoxFactory.Create(_modInLauncher[i][1], null), currentRow, 0, 3, 4);
+                    _modBox[i].Margin = rowMargin;
+                    _modBox[i].SetBinding(ToggleButton.IsCheckedProperty, new Binding(_modInLauncher[i][2]) { Mode = BindingMode.TwoWay });
+                    currentRow += 2;
+                }
+				else
+				{
+                    _modBox[i] = null;
+                }
 
             foreach (FrameworkElement child in Children)
             {
@@ -338,6 +364,54 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+                for (Int32 i = 0; i < _modInLauncher.Length; ++i)
+                    if (propertyName.CompareTo(_modInLauncher[i][2]) == 0)
+                    {
+                        // A fair bunch of the following code is meant to
+                        // (1) keep unknown mod folders in the list,
+                        // (2) keep them in the same order between themselves and with respect to known mods,
+                        // (3) have known mod folders placed in the order of "_modInLauncher" (except if the user used another order with direct modifications)
+                        IniFile memoriaIniFile = new IniFile(_memoriaIniPath);
+                        String currentModRaw = memoriaIniFile.ReadValue("Mod", "FolderNames");
+                        if (String.IsNullOrEmpty(currentModRaw))
+                            currentModRaw = "";
+                        String[] currentModList = currentModRaw.Length < 2 ? Array.Empty<String>() : currentModRaw.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
+                        List<String> newModList = new List<String>();
+                        Int32[] launcherModPosition = Enumerable.Repeat(-1, _modInLauncher.Length).ToArray();
+                        for (Int32 currentModIndex = 0; currentModIndex < currentModList.Length; ++currentModIndex)
+						{
+                            Boolean isModKnown = false;
+                            for (Int32 launcherModIndex = 0; launcherModIndex < _modInLauncher.Length; ++launcherModIndex)
+                                if (currentModList[currentModIndex].CompareTo(_modInLauncher[launcherModIndex][0]) == 0)
+                                {
+                                    if (IsModEnabledByIndex(launcherModIndex) && launcherModPosition[launcherModIndex] < 0)
+                                    {
+                                        launcherModPosition[launcherModIndex] = newModList.Count;
+                                        newModList.Add(_modInLauncher[launcherModIndex][0]);
+                                    }
+                                    isModKnown = true;
+                                    break;
+                                }
+                            if (!isModKnown)
+                                newModList.Add(currentModList[currentModIndex]);
+                        }
+                        for (Int32 launcherModIndex = _modInLauncher.Length - 1; launcherModIndex >= 0; --launcherModIndex)
+                            if (launcherModPosition[launcherModIndex] < 0 && IsModEnabledByIndex(launcherModIndex))
+                            {
+                                Int32 posToAdd = newModList.Count;
+                                for (Int32 remLauncherModIndex = launcherModIndex + 1; remLauncherModIndex < _modInLauncher.Length; ++remLauncherModIndex)
+                                    if (launcherModPosition[remLauncherModIndex] >= 0)
+                                    {
+                                        posToAdd = launcherModPosition[remLauncherModIndex];
+                                        break;
+                                    }
+                                newModList.Insert(posToAdd, _modInLauncher[launcherModIndex][0]);
+                                break;
+                            }
+                        memoriaIniFile.WriteValue("Mod", "FolderNames", newModList.Count == 0 ? "" : " \"" + String.Join("\", \"", newModList) + "\"");
+                        return;
+                    }
+
                 IniFile iniFile = new IniFile(_iniPath);
                 switch (propertyName)
                 {
@@ -381,6 +455,7 @@ namespace Memoria.Launcher
         #endregion
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
+        private readonly String _memoriaIniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
         private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
 
         private String _resolution = "1280x960";
@@ -394,7 +469,74 @@ namespace Memoria.Launcher
         private Boolean _checkUpdates;
         private String[] _downloadMirrors;
 
-        private void LoadSettings()
+		#region KnownModsInLauncher
+		// Registering other mods in the launcher can be done by adding entries in this region of the code, down to SetModEnabledByIndex
+		private UiCheckBox[] _modBox;
+        private String[][] _modInLauncher =
+        {
+            new string[]{ @"AlternateFantasy",   "Alternate Fantasy",    "ModAFEnabled" },
+            new string[]{ @"BeatrixMod",         "Beatrix mod",          "ModBeatrixEnabled" },
+            new string[]{ @"MoguriFiles",        "Moguri mod (main)",    "ModMoguriMainEnabled" },
+            new string[]{ @"MoguriSoundtrack",   "Orchestral music",     "ModMoguriMusicEnabled" },
+            new string[]{ @"MoguriVideo",        "30 FPS video",         "ModMoguriVideoEnabled" }
+        };
+        // List of booleans registered in _modInLauncher[][2]
+        private Boolean _modAFEnabled = false;
+        private Boolean _modBeatrixEnabled = false;
+        private Boolean _modMoguriMainEnabled = false;
+        private Boolean _modMoguriMusicEnabled = false;
+        private Boolean _modMoguriVideoEnabled = false;
+        public Boolean ModAFEnabled
+        {
+            get { return _modAFEnabled; }
+            set { if (_modAFEnabled != value) { _modAFEnabled = value; OnPropertyChanged(); } }
+        }
+        public Boolean ModBeatrixEnabled
+        {
+            get { return _modBeatrixEnabled; }
+            set { if (_modBeatrixEnabled != value) { _modBeatrixEnabled = value; OnPropertyChanged(); } }
+        }
+        public Boolean ModMoguriMainEnabled
+        {
+            get { return _modMoguriMainEnabled; }
+            set { if (_modMoguriMainEnabled != value) { _modMoguriMainEnabled = value; OnPropertyChanged(); } }
+        }
+        public Boolean ModMoguriMusicEnabled
+        {
+            get { return _modMoguriMusicEnabled; }
+            set { if (_modMoguriMusicEnabled != value) { _modMoguriMusicEnabled = value; OnPropertyChanged(); } }
+        }
+        public Boolean ModMoguriVideoEnabled
+        {
+            get { return _modMoguriVideoEnabled; }
+            set { if (_modMoguriVideoEnabled != value) { _modMoguriVideoEnabled = value; OnPropertyChanged(); } }
+        }
+        private Boolean IsModEnabledByIndex(Int32 index)
+		{
+            switch (index)
+            {
+                case 0: return _modAFEnabled;
+                case 1: return _modBeatrixEnabled;
+                case 2: return _modMoguriMainEnabled;
+                case 3: return _modMoguriMusicEnabled;
+                case 4: return _modMoguriVideoEnabled;
+            }
+            return false;
+        }
+        private void SetModEnabledByIndex(Int32 index, Boolean value)
+        {
+            switch (index)
+            {
+                case 0: _modAFEnabled = value; break;
+                case 1: _modBeatrixEnabled = value; break;
+                case 2: _modMoguriMainEnabled = value; break;
+                case 3: _modMoguriMusicEnabled = value; break;
+                case 4: _modMoguriVideoEnabled = value; break;
+            }
+        }
+		#endregion
+
+		private void LoadSettings()
         {
             try
             {
@@ -502,6 +644,27 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
+
+                IniFile memoriaIniFile = new IniFile(_memoriaIniPath);
+
+                for (Int32 i = 0; i < _modInLauncher.Length; ++i)
+                    SetModEnabledByIndex(i, false);
+
+                value = memoriaIniFile.ReadValue("Mod", "FolderNames");
+                if (!String.IsNullOrEmpty(value) && value.Length >= 2)
+                {
+                    String[] currentModList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
+                    foreach (String modFolder in currentModList)
+                    {
+                        for (Int32 launcherModIndex = 0; launcherModIndex < _modInLauncher.Length; ++launcherModIndex)
+                            if (_modBox[launcherModIndex] != null && modFolder.CompareTo(_modInLauncher[launcherModIndex][0]) == 0)
+                            {
+                                SetModEnabledByIndex(launcherModIndex, true);
+                                _modBox[launcherModIndex].IsChecked = true;
+                                break;
+                            }
+                    }
+                }
             }
             catch (Exception ex)
             {

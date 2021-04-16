@@ -108,7 +108,7 @@ public class AnimationFactory
 		}
 	}
 
-	public static void AddAnimToGameObject(GameObject go, String modelName)
+	public static void AddAnimToGameObject(GameObject go, String modelName, Boolean addAutoAnim = false)
 	{
 		Animation component = go.GetComponent<Animation>();
 		if (AnimationFactory.animationMapping.ContainsKey(modelName))
@@ -122,7 +122,7 @@ public class AnimationFactory
 				component.AddClip(clip, text);
 			}
 		}
-		if (modelName.Contains("_B0_") || modelName.Contains("_B3_") || modelName.Contains("_BF_") || modelName.Contains("_W0_"))
+		if (addAutoAnim)
 		{
 			String name = "Animations/" + modelName;
 			AnimationClip[] array3 = AssetManager.LoadAll<AnimationClip>(name);

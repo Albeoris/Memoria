@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Memoria.Assets
 {
@@ -6,47 +7,22 @@ namespace Memoria.Assets
     {
         public static String[] CharacterDefaultNames()
         {
-            switch (EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol())
-            {
-                case "US":
-                    return new[]
-                    {
-                        "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank"
-                    };
-                case "UK":
-                    return new[]
-                    {
-                        "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank"
-                    };
-                case "JP":
-                    return new[]
-                    {
-                        "ジタン", "ビビ", "ダガー", "スタイナー", "フライヤ", "クイナ", "エーコ", "サラマンダー", "シナ", "シナ", "マーカス", "マーカス", "ブランク", "ブランク", "ベアトリクス", "ベアトリクス", "ジタン", "シナ", "マーカス", "ブランク"
-                    };
-                case "GR":
-                    return new[]
-                    {
-                        "Zidane", "Vivi", "Lili", "Steiner", "Freya", "Quina", "Eiko", "Mahagon", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank"
-                    };
-                case "FR":
-                    return new[]
-                    {
-                        "Djidane", "Bibi", "Dagga", "Steiner", "Freyja", "Kweena", "Eiko", "Tarask", "Cina", "Cina", "Markus", "Markus", "Frank", "Frank", "Beate", "Beate", "Djidane", "Cina", "Markus", "Frank"
-                    };
-                case "IT":
-                    return new[]
-                    {
-                        "Gidan", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Er Cina", "Er Cina", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Gidan", "Er Cina", "Marcus", "Blank"
-                    };
-                case "ES":
-                    return new[]
-                    {
-                        "Yitán", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Yitán", "Cinna", "Marcus", "Blank"
-                    };
-                default:
-                    return new String[0];
-            }
+            String[] nameArray;
+            if (_characterNames.TryGetValue(EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol(), out nameArray))
+                return nameArray;
+            return new String[0];
         }
+
+        public static Dictionary<String, String[]> _characterNames = new Dictionary<String, String[]>()
+        {
+            { "US", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank" } },
+            { "UK", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank" } },
+            { "JP", new String[]{ "ジタン", "ビビ", "ダガー", "スタイナー", "フライヤ", "クイナ", "エーコ", "サラマンダー", "シナ", "シナ", "マーカス", "マーカス", "ブランク", "ブランク", "ベアトリクス", "ベアトリクス", "ジタン", "シナ", "マーカス", "ブランク" } },
+            { "GR", new String[]{ "Zidane", "Vivi", "Lili", "Steiner", "Freya", "Quina", "Eiko", "Mahagon", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank" } },
+            { "FR", new String[]{ "Djidane", "Bibi", "Dagga", "Steiner", "Freyja", "Kweena", "Eiko", "Tarask", "Cina", "Cina", "Markus", "Markus", "Frank", "Frank", "Beate", "Beate", "Djidane", "Cina", "Markus", "Frank" } },
+            { "IT", new String[]{ "Gidan", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Er Cina", "Er Cina", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Gidan", "Er Cina", "Marcus", "Blank" } },
+            { "ES", new String[]{ "Yitán", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Yitán", "Cinna", "Marcus", "Blank" } }
+        };
 
         public static TxtEntry[] Build(String prefix, String[] characterNames)
         {

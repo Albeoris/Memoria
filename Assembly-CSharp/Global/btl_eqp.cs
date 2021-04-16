@@ -17,56 +17,7 @@ public class btl_eqp
 			btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
 		}
 		btl_util.SetBBGColor(btl.weapon_geo);
-		switch (p.info.serial_no)
-		{
-		case 0:
-			p.wep_bone = btl_eqp.b0_000_sk_r_sw;
-			break;
-		case 1:
-			p.wep_bone = btl_eqp.b0_001_sk_r_sw;
-			break;
-		case 2:
-			p.wep_bone = btl_eqp.b0_006_sk_r_wep;
-			break;
-		case 3:
-		case 5:
-			p.wep_bone = btl_eqp.b0_002_r_wep;
-			break;
-		case 4:
-		case 6:
-			p.wep_bone = btl_eqp.b0_003_r_wep;
-			break;
-		case 7:
-		case 8:
-			p.wep_bone = btl_eqp.b0_007_sk_r_wep;
-			break;
-		case 9:
-			p.wep_bone = btl_eqp.b0_008_r_wep;
-			break;
-		case 10:
-		case 11:
-			p.wep_bone = btl_eqp.b0_009_wep;
-			break;
-		case 12:
-			p.wep_bone = btl_eqp.b0_011_sk_l_wep;
-			break;
-		case 13:
-			p.wep_bone = btl_eqp.b0_012_r_hand;
-			break;
-		case 14:
-			p.wep_bone = btl_eqp.b0_013_l_sw;
-			break;
-		case 15:
-			p.wep_bone = btl_eqp.b0_014_r_sw;
-			break;
-		case 16:
-		case 17:
-			p.wep_bone = btl_eqp.b0_015_r_sw;
-			break;
-		case 18:
-			p.wep_bone = btl_eqp.b0_017_r_wep;
-			break;
-		}
+		p.wep_bone = BattlePlayerCharacter.PlayerWeaponToBoneName[p.info.serial_no];
 		geo.geoAttach(btl.weapon_geo, btl.gameObject, (Int32)p.wep_bone);
 	}
 
@@ -82,32 +33,4 @@ public class btl_eqp
 			}
 		}
 	}
-
-	private static Byte b0_000_sk_r_sw = 13;
-
-	private static Byte b0_001_sk_r_sw = 13;
-
-	private static Byte b0_006_sk_r_wep = 16;
-
-	private static Byte b0_002_r_wep = 15;
-
-	private static Byte b0_003_r_wep = 15;
-
-	private static Byte b0_007_sk_r_wep = 16;
-
-	private static Byte b0_008_r_wep = 14;
-
-	private static Byte b0_009_wep = 15;
-
-	private static Byte b0_011_sk_l_wep = 6;
-
-	private static Byte b0_012_r_hand = 16;
-
-	private static Byte b0_013_l_sw = 25;
-
-	private static Byte b0_014_r_sw = 6;
-
-	private static Byte b0_015_r_sw = 14;
-
-	private static Byte b0_017_r_wep = 16;
 }

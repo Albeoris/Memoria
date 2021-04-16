@@ -1073,6 +1073,7 @@ public partial class EventEngine
                 return 0;
             case EBin.event_code_binary.ASLEEP:
                 actor1.sleep = (UInt16)this.getv2();
+                AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.sleep));
                 return 0;
             case EBin.event_code_binary.NOINITMES:
                 this.eTb.InhInitMes();
@@ -1356,6 +1357,7 @@ public partial class EventEngine
                 actor1.jump = (UInt16)this.getv2();
                 actor1.jump0 = (Byte)this.getv1();
                 actor1.jump1 = (Byte)this.getv1();
+                AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.jump));
                 return 0;
             case EBin.event_code_binary.MESA:
                 PosObj targetPo1 = (PosObj)this.GetObj1();

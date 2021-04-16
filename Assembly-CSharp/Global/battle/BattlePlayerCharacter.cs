@@ -185,50 +185,50 @@ public class BattlePlayerCharacter : MonoBehaviour
 		11
 	};
 
-	public static readonly String[] PlayerModelFileName = new String[]
+	public static String[] PlayerModelFileName = new String[]
 	{
-		"GEO_MAIN_B0_000",
-		"GEO_MAIN_B0_001",
-		"GEO_MAIN_B0_006",
-		"GEO_MAIN_B0_002",
-		"GEO_MAIN_B0_003",
-		"GEO_MAIN_B0_004",
-		"GEO_MAIN_B0_005",
-		"GEO_MAIN_B0_007",
-		"GEO_MAIN_B0_018",
-		"GEO_MAIN_B0_008",
-		"GEO_MAIN_B0_009",
-		"GEO_MAIN_B0_010",
-		"GEO_MAIN_B0_011",
-		"GEO_MAIN_B0_012",
-		"GEO_MAIN_B0_013",
-		"GEO_MAIN_B0_014",
-		"GEO_MAIN_B0_015",
-		"GEO_MAIN_B0_016",
-		"GEO_MAIN_B0_017"
+		"GEO_MAIN_B0_000", // ZIDANE_DAGGER
+		"GEO_MAIN_B0_001", // ZIDANE_SWORD,
+		"GEO_MAIN_B0_006", // VIVI,
+		"GEO_MAIN_B0_002", // GARNET_LH_ROD,
+		"GEO_MAIN_B0_003", // GARNET_LH_KNIFE,
+		"GEO_MAIN_B0_004", // GARNET_SH_ROD,
+		"GEO_MAIN_B0_005", // GARNET_SH_KNIFE,
+		"GEO_MAIN_B0_007", // STEINER_OUTDOOR,
+		"GEO_MAIN_B0_018", // STEINER_INDOOR,
+		"GEO_MAIN_B0_008", // KUINA,
+		"GEO_MAIN_B0_009", // EIKO_FLUTE,
+		"GEO_MAIN_B0_010", // EIKO_KNIFE,
+		"GEO_MAIN_B0_011", // FREIJA,
+		"GEO_MAIN_B0_012", // SALAMANDER,
+		"GEO_MAIN_B0_013", // CINNA,
+		"GEO_MAIN_B0_014", // MARCUS,
+		"GEO_MAIN_B0_015", // BLANK,
+		"GEO_MAIN_B0_016", // BLANK_ARMOR,
+		"GEO_MAIN_B0_017"  // BEATRIX,
 	};
 
-	public static readonly String[] PlayerWeaponToBoneName = new String[]
+	public static Byte[] PlayerWeaponToBoneName = new Byte[]
 	{
-		"bone013",
-		"bone013",
-		"bone016",
-		"bone015",
-		"bone015",
-		"bone015",
-		"bone015",
-		"bone016",
-		"bone016",
-		"bone014",
-		"bone015",
-		"bone015",
-		"bone006",
-		"bone016",
-		"bone025",
-		"bone006",
-		"bone014",
-		"bone014",
-		"bone016"
+		13,
+		13,
+		16,
+		15,
+		15,
+		15,
+		15,
+		16,
+		16,
+		14,
+		15,
+		15,
+		6,
+		16,
+		25,
+		6,
+		14,
+		14,
+		16
 	};
 
 	public static readonly Int32[] PlayerDefaultWeaponID = new Int32[]

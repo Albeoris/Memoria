@@ -678,7 +678,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             {
                 // https://github.com/Albeoris/Memoria/issues/3
                 // Tirlititi: If Beatrix is in the team, we make it so the engine thinks it's another member instead
-                if (partyMember == 8)
+                if (partyMember == 8 && Configuration.Hacks.AllCharactersAvailable != 0)
                 {
                     if (!partychk(1))
                         partyMember = 1;

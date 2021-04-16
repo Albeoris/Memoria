@@ -62,7 +62,8 @@ public class btl_scrp
 			return 0;
 		if (data_type < 17 && FF9StateSystem.Battle.FF9Battle.cur_cmd.aa == null)
 			return 0;
-		switch (data_type) {
+		switch (data_type)
+		{
 			case 0: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.Target;
 			case 1: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultAlly ? 1 : 0);
 			case 2: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DisplayStats;
@@ -98,7 +99,8 @@ public class btl_scrp
 			return;
 		if (data_type < 17 && FF9StateSystem.Battle.FF9Battle.cur_cmd.aa == null)
 			return;
-		switch (data_type) {
+		switch (data_type)
+		{
 			case 0: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.Target = (TargetType)val; break;
 			case 1: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultAlly = val != 0; break;
 			case 2: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DisplayStats = (TargetDisplay)val; break;

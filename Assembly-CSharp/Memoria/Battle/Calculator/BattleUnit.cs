@@ -199,7 +199,7 @@ namespace Memoria
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatus.Zombie);
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
-        public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);
+        public WeaponItem Weapon => IsPlayer ? (WeaponItem)btl_util.getWeaponNumber(Data) : WeaponItem.NoWeapon;
         public Boolean IsHealingRod => IsPlayer && Weapon == WeaponItem.HealingRod;
 
         public Boolean[] StatModifier

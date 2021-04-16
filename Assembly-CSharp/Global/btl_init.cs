@@ -198,7 +198,7 @@ public class btl_init
 		enemy.et = FF9StateSystem.Battle.FF9Battle.enemy_type[pPut.TypeNo];
 		pBtl.bi.target = (Byte)(((pPut.Flags & 1) == 0) ? 0 : 1);
 		pBtl.bi.row = 2;
-		pBtl.max = FF9StateSystem.Battle.FF9Battle.enemy_type[pPut.TypeNo].max;
+		CopyPoints(pBtl.max, FF9StateSystem.Battle.FF9Battle.enemy_type[pPut.TypeNo].max);
 		pBtl.cur.hp = pBtl.max.hp;
 		pBtl.cur.mp = pBtl.max.mp;
 		enemy.info.multiple = (Byte)(((pPut.Flags & 2) == 0) ? 0 : 1);

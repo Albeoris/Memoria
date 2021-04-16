@@ -44,12 +44,7 @@ namespace Memoria.Prime.Collections
                 throw;
             }
 
-            if (_allowDublicateValues)
-            {
-                if (!_revDictionary.ContainsKey(value))
-                    _revDictionary.Add(value, key);
-            }
-            else
+            if (!_allowDublicateValues || !_revDictionary.ContainsKey(value))
             {
                 _revDictionary.Add(value, key);
             }
@@ -119,6 +114,20 @@ namespace Memoria.Prime.Collections
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return _fwdDictionary.GetEnumerator();
+        }
+        public TValue this[TKey key] {
+            get
+            {
+                return _fwdDictionary[key];
+            }
+            set
+			{
+                _fwdDictionary[key] = value;
+                if (!_allowDublicateValues || !_revDictionary.ContainsKey(value))
+                {
+                    _revDictionary[value] = key;
+                }
+            }
         }
     }
 }
