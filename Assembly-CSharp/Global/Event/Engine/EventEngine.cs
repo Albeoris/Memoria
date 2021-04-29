@@ -677,18 +677,24 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             if (partyMember >= 0)
             {
                 // https://github.com/Albeoris/Memoria/issues/3
-                // Tirlititi: If Beatrix is in the team, we make it so the engine thinks it's another member instead
-                if (partyMember == 8 && Configuration.Hacks.AllCharactersAvailable != 0)
+                // Tirlititi: If Beatrix is in the team and she has no script, we make it so the engine thinks it's another member instead
+                if (partyMember == 8) // The index-th team character is Beatrix
                 {
-                    if (!partychk(1))
-                        partyMember = 1;
-                    else if (!partychk(2))
-                        partyMember = 2;
-                    else if (!partychk(3))
-                        partyMember = 3;
-                    else
-                        partyMember = 0;
+                    Byte BeatrixSID = (Byte)((UInt32)(this.sSourceObjN - 9) + numArray1[partyMember]);
+                    if (this.GetIP(BeatrixSID, 0, this.allObjsEBData[BeatrixSID]) == this.nil) // The Main function of the Beatrix entry doesn't exist
+                    {
+                        if (!partychk(1))
+                            partyMember = 1;
+                        else if (!partychk(2))
+                            partyMember = 2;
+                        else if (!partychk(3))
+                            partyMember = 3;
+                        else
+                            partyMember = 0;
+                    }
                 }
+                // Note that, as for all the 9 characters, the Beatrix entry is not dependant on the model used by the entry but rather on the fact that it is at the end of the entry list
+                // (Even in battle scripts, in which character entries are never used nor tied to the team's battle datas, 9 entry slots are reserved at the end of the entry list)
                 // *********************
 
                 num |= 1 << numArray2[partyMember];

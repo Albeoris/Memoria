@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 using UnityEngine;
@@ -261,4 +262,32 @@ public class BTL_DATA
 	public Int16 critical_rate_deal_bonus; // Absolute increase/decrease in the % of critical strikes dealt by the BTL_DATA
 
 	public Int16 critical_rate_receive_bonus; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
+
+	public Int32 geo_scale_x; // For geo.geoScaleSet
+	public Int32 geo_scale_y;
+	public Int32 geo_scale_z;
+
+	public Boolean is_monster_transform;
+
+	public class MONSTER_TRANSFORM
+	{
+		public BattleCommandId base_command;
+		public BattleCommandId new_command;
+		public UInt32 attack;
+		public Boolean replace_point;
+		public Boolean replace_stat;
+		public Boolean replace_defence;
+		public Boolean replace_element;
+		public Boolean cancel_on_death;
+		public Byte[] cam_bone = new Byte[3];
+		public Byte[] icon_bone = new Byte[6];
+		public SByte[] icon_y = new SByte[6];
+		public SByte[] icon_z = new SByte[6];
+		public BattleStatus resist_added;
+		public UInt16 death_sound;
+		public Int32 fade_counter;
+		public List<BattleCommandId> disable_commands;
+	}
+
+	public MONSTER_TRANSFORM monster_transform;
 }

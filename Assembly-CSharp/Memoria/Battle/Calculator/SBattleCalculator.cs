@@ -98,7 +98,7 @@ namespace Memoria
                 {
                     if (target.bi.player != 0)
                     {
-                        btl_mot.setMotion(target, 16);
+                        btl_mot.setMotion(target, BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID);
                         target.evt.animFrame = 0;
                         Int32 num = btl_mot.GetDirection(target);
                         target.rot.eulerAngles = new Vector3(target.rot.eulerAngles.x, num, target.rot.eulerAngles.z);

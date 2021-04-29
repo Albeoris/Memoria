@@ -215,11 +215,31 @@ public partial class BattleHUD : UIScene
         _currentPeepingMessageCount = 0;
     }
 
-
+    private void SetupCommandButton(GONavigationButton button, int cmdId, Boolean enabled, Boolean hardDisable = false)
+	{
+        enabled = enabled || hardDisable;
+        button.SetLabelText(hardDisable ? String.Empty : FF9TextTool.CommandName(cmdId));
+        ButtonGroupState.SetButtonEnable(button, enabled);
+        ButtonGroupState.SetButtonAnimation(button, enabled);
+        if (enabled)
+        {
+            button.SetLabelColor(FF9TextTool.White);
+            button.ButtonGroup.Help.Enable = true;
+            button.ButtonGroup.Help.TextKey = String.Empty;
+            button.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(cmdId);
+        }
+        else
+        {
+            button.SetLabelColor(FF9TextTool.Gray);
+            button.BoxCollider.enabled = false;
+            button.ButtonGroup.Help.Enable = false;
+        }
+    }
 
     private void DisplayCommand()
     {
         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+        BTL_DATA.MONSTER_TRANSFORM transform = btl.Data.is_monster_transform ? btl.Data.monster_transform : null;
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(btl.Position).PresetId;
         BattleCommandId command1;
         BattleCommandId command2;
@@ -240,6 +260,34 @@ public partial class BattleHUD : UIScene
             _isTranceMenu = false;
         }
 
+        if (btl.Data.is_monster_transform && transform.base_command == command1)
+            command1 = transform.new_command;
+        if (btl.Data.is_monster_transform && transform.base_command == command2)
+            command2 = transform.new_command;
+        Boolean attackIsEnable = !btl.Data.is_monster_transform || transform.base_command == BattleCommandId.Attack || (transform.attack != 0 && !transform.disable_commands.Contains(BattleCommandId.Attack));
+        Boolean changeIsEnable = !btl.Data.is_monster_transform || transform.base_command == BattleCommandId.Change || !transform.disable_commands.Contains(BattleCommandId.Change);
+        Boolean itemIsEnable = !btl.Data.is_monster_transform || transform.base_command == BattleCommandId.Item || !transform.disable_commands.Contains(BattleCommandId.Item);
+        Boolean defendIsEnable = !btl.Data.is_monster_transform || transform.base_command == BattleCommandId.Defend || !transform.disable_commands.Contains(BattleCommandId.Defend);
+        Int32 attackCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Attack ? 1 : (Int32)transform.new_command;
+        Int32 changeCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Change ? 7 : (Int32)transform.new_command;
+        Int32 itemCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Item ? 14 : (Int32)transform.new_command;
+        Int32 defendCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Defend ? 4 : (Int32)transform.new_command;
+        Boolean command1IsEnable = command1 != 0 && (!btl.Data.is_monster_transform || !transform.disable_commands.Contains(command1));
+        Boolean command2IsEnable = command2 != 0 && (!btl.Data.is_monster_transform || !transform.disable_commands.Contains(command2));
+        Boolean noMagicSword = false;
+        if (command2 == BattleCommandId.MagicSword)
+        {
+            if (!_magicSwordCond.IsViviExist)
+            {
+                noMagicSword = true;
+                command2IsEnable = false;
+            }
+            else if (_magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini)
+            {
+                command2IsEnable = false;
+            }
+        }
+
         if (Configuration.Battle.NoAutoTrance && btl.Trance == Byte.MaxValue && !btl.IsUnderAnyStatus(BattleStatus.Trance))
         {
             if (!_isManualTrance)
@@ -252,75 +300,16 @@ public partial class BattleHUD : UIScene
         }
         else
         {
-            _commandPanel.Change.SetLabelText(FF9TextTool.CommandName(7));
-            _commandPanel.Change.SetLabelColor(FF9TextTool.White);
-            _commandPanel.Change.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(7);
+            SetupCommandButton(_commandPanel.Change, changeCmdId, changeIsEnable);
             _isManualTrance = false;
         }
 
-        String command1Name = FF9TextTool.CommandName((Byte)command1);
-        String command2Name = FF9TextTool.CommandName((Byte)command2);
-        Boolean flag1 = command1 != 0;
-        Boolean command2IsEnable = command2 != 0;
+        SetupCommandButton(_commandPanel.Skill1, (Byte)command1, command1IsEnable);
+        SetupCommandButton(_commandPanel.Skill2, (Byte)command2, command2IsEnable, noMagicSword);
+        SetupCommandButton(_commandPanel.Attack, attackCmdId, attackIsEnable);
+        SetupCommandButton(_commandPanel.Defend, defendCmdId, defendIsEnable);
+        SetupCommandButton(_commandPanel.Item, itemCmdId, itemIsEnable);
 
-        if (command2 == BattleCommandId.MagicSword)
-        {
-            if (!_magicSwordCond.IsViviExist)
-            {
-                command2Name = String.Empty;
-                command2IsEnable = false;
-            }
-            else if (_magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini)
-            {
-                command2IsEnable = false;
-            }
-        }
-
-        _commandPanel.Skill1.SetLabelText(command1Name);
-        ButtonGroupState.SetButtonEnable(_commandPanel.Skill1, flag1);
-        ButtonGroupState.SetButtonAnimation(_commandPanel.Skill1, flag1);
-
-        if (flag1)
-        {
-            _commandPanel.Skill1.SetLabelColor(FF9TextTool.White);
-            _commandPanel.Skill1.ButtonGroup.Help.Enable = true;
-            _commandPanel.Skill1.ButtonGroup.Help.TextKey = String.Empty;
-            _commandPanel.Skill1.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription((Byte)command1);
-        }
-        else
-        {
-            _commandPanel.Skill1.SetLabelColor(FF9TextTool.Gray);
-            _commandPanel.Skill1.BoxCollider.enabled = false;
-            _commandPanel.Skill1.ButtonGroup.Help.Enable = false;
-        }
-
-        _commandPanel.Skill2.SetLabelText(command2Name);
-        ButtonGroupState.SetButtonEnable(_commandPanel.Skill2, command2IsEnable);
-        ButtonGroupState.SetButtonAnimation(_commandPanel.Skill2, command2IsEnable);
-
-        if (command2IsEnable)
-        {
-            _commandPanel.Skill2.SetLabelColor(FF9TextTool.White);
-            _commandPanel.Skill2.ButtonGroup.Help.Enable = true;
-            _commandPanel.Skill2.ButtonGroup.Help.TextKey = String.Empty;
-            _commandPanel.Skill2.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription((Byte)command2);
-        }
-        else
-        {
-            _commandPanel.Skill2.SetLabelColor(FF9TextTool.Gray);
-            _commandPanel.Skill2.BoxCollider.enabled = false;
-            _commandPanel.Skill2.ButtonGroup.Help.Enable = false;
-        }
-
-        _commandPanel.Attack.SetLabelText(FF9TextTool.CommandName(1));
-        _commandPanel.Defend.SetLabelText(FF9TextTool.CommandName(4));
-        _commandPanel.Item.SetLabelText(FF9TextTool.CommandName(14));
-        _commandPanel.Attack.ButtonGroup.Help.TextKey = String.Empty;
-        _commandPanel.Attack.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(1);
-        _commandPanel.Defend.ButtonGroup.Help.TextKey = String.Empty;
-        _commandPanel.Defend.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(4);
-        _commandPanel.Item.ButtonGroup.Help.TextKey = String.Empty;
-        _commandPanel.Item.ButtonGroup.Help.Text = FF9TextTool.CommandHelpDescription(14);
         if (ButtonGroupState.ActiveGroup != CommandGroupButton)
             return;
 
@@ -619,8 +608,8 @@ public partial class BattleHUD : UIScene
         else
         {
             itemListDetailHud.Content.SetActive(true);
-						
-						int patchedID = this.PatchAbility(abilityId);
+
+            int patchedID = this.PatchAbility(abilityId);
             itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
             Int32 mp = GetActionMpCost(aaData);
             itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
@@ -1039,7 +1028,7 @@ public partial class BattleHUD : UIScene
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
         AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
 
-        if (abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && (!abilityPlayerDetail.AbilityPaList.ContainsKey(abilId) || abilityPlayerDetail.AbilityPaList[abilId] < abilityPlayerDetail.AbilityMaxPaList[abilId]))
+        if (abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && abilId < 192 && (!abilityPlayerDetail.AbilityPaList.ContainsKey(abilId) || abilityPlayerDetail.AbilityPaList[abilId] < abilityPlayerDetail.AbilityMaxPaList[abilId]))
             return AbilityStatus.None;
 
         if ((aaData.Category & 2) != 0)
@@ -1197,15 +1186,15 @@ public partial class BattleHUD : UIScene
     {
         if (_cursorType == CursorGroup.AllEnemy)
         {
-            if (_targetCursor != TargetType.ManyAny || key != KeyCode.RightArrow)
+            if ((_targetCursor != TargetType.ManyAny && _targetCursor != TargetType.All && _targetCursor != TargetType.Random) || key != KeyCode.RightArrow)
                 return;
             FF9Sfx.FF9SFX_Play(103);
             _cursorType = CursorGroup.AllPlayer;
             DisplayTargetPointer();
         }
-        else
+        else if (_cursorType == CursorGroup.AllPlayer)
         {
-            if (_cursorType != CursorGroup.AllPlayer || _targetCursor != TargetType.ManyAny || key != KeyCode.LeftArrow)
+            if ((_targetCursor != TargetType.ManyAny && _targetCursor != TargetType.All && _targetCursor != TargetType.Random) || key != KeyCode.LeftArrow)
                 return;
             FF9Sfx.FF9SFX_Play(103);
             _cursorType = CursorGroup.AllEnemy;
@@ -1379,9 +1368,13 @@ public partial class BattleHUD : UIScene
 
     private void SendCommand(CommandDetail command)
     {
-        CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0];
+        BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
+        CMD_DATA cmd = btl.cmd[0];
         cmd.regist.sel_mode = 1;
-        btl_cmd.SetCommand(cmd, command.CommandId, command.SubId, command.TargetId, command.TargetType);
+        if (btl.is_monster_transform && command.CommandId == BattleCommandId.Attack && btl.monster_transform.attack != 0)
+            btl_cmd.SetCommand(cmd, command.CommandId, btl.monster_transform.attack, command.TargetId, command.TargetType);
+        else
+            btl_cmd.SetCommand(cmd, command.CommandId, command.SubId, command.TargetId, command.TargetType);
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
 
@@ -1412,7 +1405,10 @@ public partial class BattleHUD : UIScene
             return;
         }
 
-        GameObject commandObject = _commandPanel.Attack;
+        GameObject commandObject = _commandPanel.Attack.ButtonGroup.Help.Enable ? _commandPanel.Attack
+            : _commandPanel.Skill1.ButtonGroup.Help.Enable ? _commandPanel.Skill1
+            : _commandPanel.Skill2.ButtonGroup.Help.Enable ? _commandPanel.Skill2
+            : _commandPanel.Item;
 
         if (_commandPanel.IsActive)
         {
@@ -1476,12 +1472,15 @@ public partial class BattleHUD : UIScene
             if (!AbilityPanel.activeSelf)
             {
                 AbilityPanel.SetActive(true);
-                Dictionary<Int32, Int32> dictionary = _currentCommandIndex != CommandMenu.Ability1 ? _ability2CursorMemorize : _ability1CursorMemorize;
+                Int32 defaultIndex = 0;
                 ButtonGroupState.RemoveCursorMemorize(AbilityGroupButton);
-                if (dictionary.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
-                    _abilityScrollList.JumpToIndex(dictionary[CurrentPlayerIndex], true);
-                else
-                    _abilityScrollList.JumpToIndex(0, true);
+                if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
+                {
+                    Dictionary<Int32, Int32> dictionary = _currentCommandIndex != CommandMenu.Ability1 ? _ability2CursorMemorize : _ability1CursorMemorize;
+                    if (dictionary.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
+                        defaultIndex = dictionary[CurrentPlayerIndex];
+                }
+                _abilityScrollList.JumpToIndex(defaultIndex, true);
             }
             if (IsDoubleCast && _doubleCastCount == 1)
                 ButtonGroupState.SetPointerNumberToGroup(1, AbilityGroupButton);
@@ -1513,7 +1512,7 @@ public partial class BattleHUD : UIScene
             _defaultTargetDead = false;
             _targetDead = false;
             _bestTargetIndex = -1;
-            if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
+            if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2 || (CurrentPlayerIndex > -1 && FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Data.is_monster_transform && _currentCommandId == FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Data.monster_transform.new_command))
             {
                 CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
                 Byte abilityId = PatchAbility(ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]);

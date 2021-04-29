@@ -108,7 +108,7 @@ public class btl_cmd
     public static void InitCommandSystem(FF9StateBattleSystem btlsys)
     {
         btlsys.cur_cmd = null;
-        btlsys.cmd_mode = 0;
+        btlsys.cmd_mode = command_mode_index.CMD_MODE_INSPECTION;
         btlsys.cmd_status = 2;
         btlsys.cmd_queue.regist = btlsys.cmd_escape.regist = null;
         ClearCommand(btlsys.cmd_queue);
@@ -321,19 +321,19 @@ public class btl_cmd
         {
             if (btl_util.getCurCmdPtr() != btl.cmd[4])
             {
-                if (btl_mot.checkMotion(btl, 0))
+                if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL))
                 {
-                    btl_mot.setMotion(btl, btl.mot[10]);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_NORMAL_TO_CMD);
                     btl.evt.animFrame = 0;
                 }
-                else if (btl_mot.checkMotion(btl, 1))
+                else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
                 {
-                    btl_mot.setMotion(btl, 11);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DYING_TO_CMD);
                     btl.evt.animFrame = 0;
                 }
-                else if (btl_mot.checkMotion(btl, 13) && commandId < BattleCommandId.BoundaryCheck)
+                else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE) && commandId < BattleCommandId.BoundaryCheck)
                 {
-                    btl_mot.setMotion(btl, 14);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DEF_TO_IDLE);
                     btl.evt.animFrame = 0;
                 }
             }
@@ -346,6 +346,12 @@ public class btl_cmd
     {
         if (btl_stat.CheckStatus(btl, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Death) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
             return;
+        if (sub_no == 176 && btl.is_monster_transform)
+		{
+            if (btl.monster_transform.attack == 0)
+                return;
+            sub_no = (Int32)btl.monster_transform.attack;
+        }
         SetCommand(btl.cmd[1], commandId, (UInt32)sub_no, tar_id, 0U);
     }
 
@@ -556,14 +562,14 @@ public class btl_cmd
                 BTL_DATA btl = cmd.regist;
                 if (cmd.cmd_no > BattleCommandId.BoundaryCheck && cmd.cmd_no < BattleCommandId.EnemyCounter)
                 {
-                    btl_mot.setMotion(btl, 9);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD);
                     btl.evt.animFrame = 0;
                 }
-                if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, 9) && (!btl_mot.checkMotion(btl, 17) && !Status.checkCurStat(btl, BattleStatus.Jump)))
+                if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD) && (!btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE) && !Status.checkCurStat(btl, BattleStatus.Jump)))
                 {
                     if (!btl_mot.checkMotion(btl, btl.bi.def_idle) || btl.bi.cmd_idle != 0)
                         return;
-                    btl_mot.setMotion(btl, 9);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD);
                     btl.evt.animFrame = 0;
                     return;
                 }
@@ -583,18 +589,18 @@ public class btl_cmd
         BTL_DATA btl1 = cmd1.regist;
         switch (btlsys.cmd_mode)
         {
-            case 0:
+            case command_mode_index.CMD_MODE_INSPECTION:
                 if (!CheckCommandCondition(btlsys, cmd1) || !CheckTargetCondition(btlsys, cmd1) || !CheckMpCondition(cmd1))
                 {
                     ResetItemCount(cmd1);
-                    if (btl1 != null && btl1.bi.player != 0 && btl_mot.checkMotion(btl1, 9))
-                        btl_mot.setMotion(btl1, 32);
-                    btlsys.cmd_mode = 3;
+                    if (btl1 != null && btl1.bi.player != 0 && btl_mot.checkMotion(btl1, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD))
+                        btl_mot.setMotion(btl1, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL);
+                    btlsys.cmd_mode = command_mode_index.CMD_MODE_IDLE;
                     break;
                 }
-                if (btl1 != null && !btl_mot.checkMotion(btl1, 9) && cmd1.cmd_no < BattleCommandId.EnemyAtk)
+                if (btl1 != null && !btl_mot.checkMotion(btl1, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD) && cmd1.cmd_no < BattleCommandId.EnemyAtk)
                 {
-                    btl_mot.setMotion(btl1, 9);
+                    btl_mot.setMotion(btl1, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD);
                     btl1.evt.animFrame = 0;
                 }
                 if (btl1 != null && btl1.bi.player != 0)
@@ -607,7 +613,7 @@ public class btl_cmd
                 }
                 ++btlsys.cmd_mode;
                 break;
-            case 1:
+            case command_mode_index.CMD_MODE_SELECT_VFX:
                 {
                     Boolean[] tryCover = new Boolean[8];
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
@@ -623,13 +629,13 @@ public class btl_cmd
                     ++btlsys.cmd_mode;
                     break;
                 }
-            case 2:
+            case command_mode_index.CMD_MODE_LOOP:
                 if (btl1.bi.player != 0 || cmd1.info.mon_reflec != 0)
                 {
                     CheckCommandLoop(cmd1);
                 }
                 break;
-            case 3:
+            case command_mode_index.CMD_MODE_IDLE:
                 if (cmd1.cmd_no != BattleCommandId.SysEscape)
                 {
                     ReqFinishCommand();
@@ -638,7 +644,7 @@ public class btl_cmd
                 FinishCommand(btlsys);
                 break;
         }
-        if (btl_mot.ControlDamageMotion(cmd1) && btlsys.cmd_mode == 4)
+        if (btl_mot.ControlDamageMotion(cmd1) && btlsys.cmd_mode == command_mode_index.CMD_MODE_DONE)
             FinishCommand(btlsys);
     }
 
@@ -1016,9 +1022,9 @@ public class btl_cmd
                     {
                         if (btl.bi.player != 0 && !btl_stat.CheckStatus(btl, BattleStatus.CannotEscape) && btl.cur.hp > 0)
                         {
-                            if (!btl_mot.checkMotion(btl, 17))
+                            if (!btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
                             {
-                                btl_mot.setMotion(btl, 17);
+                                btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE);
                                 btl.evt.animFrame = 0;
                             }
                             btlsys.btl_phase = 5;
@@ -1062,7 +1068,7 @@ public class btl_cmd
                 if (caster.Data.die_seq == 0)
                 {
                     if (caster.IsPlayer)
-                        caster.Data.die_seq = !btl_mot.checkMotion(caster.Data, 4) ? (Byte)1 : (Byte)5;
+                        caster.Data.die_seq = !btl_mot.checkMotion(caster.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) ? (Byte)1 : (Byte)5;
                     else
                         caster.Data.die_seq = caster.IsSlave || caster.Data.bi.death_f == 0 ? (Byte)1 : (Byte)3;
                 }
@@ -1144,9 +1150,9 @@ public class btl_cmd
         if (ncp.cmd_no < BattleCommandId.BoundaryCheck && btl != null && !Status.checkCurStat(btl, BattleStatus.Death))
         {
             btl.sel_mode = 0;
-            if (btl_mot.checkMotion(btl, 9) && (btl.bi.slot_no != 6 || stateBattleSystem.cur_cmd != null && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.DoubleWhiteMagic) && (btl.bi.slot_no != 1 || stateBattleSystem.cur_cmd != null && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.MagicSword && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.DoubleBlackMagic))
+            if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD) && (btl.bi.slot_no != 6 || stateBattleSystem.cur_cmd != null && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.DoubleWhiteMagic) && (btl.bi.slot_no != 1 || stateBattleSystem.cur_cmd != null && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.MagicSword && stateBattleSystem.cur_cmd.cmd_no != BattleCommandId.DoubleBlackMagic))
             {
-                btl_mot.setMotion(btl, 32);
+                btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL);
                 btl.evt.animFrame = 0;
                 btl.bi.cmd_idle = 0;
             }
@@ -1240,13 +1246,13 @@ public class btl_cmd
         {
             cmd.tar_id = MargeReflecTargetID(cmd.regist.reflec);
             btl_vfx.SetBattleVfx(cmd, (UInt32)cmd.aa.Info.VfxIndex, null);
-            stateBattleSystem.cmd_mode = 2;
+            stateBattleSystem.cmd_mode = command_mode_index.CMD_MODE_LOOP;
         }
         else
         {
-            if (btl_stat.CheckStatus(cmd.regist, BattleStatus.AutoLife) && cmd.cmd_no == BattleCommandId.SysDead && !btl_mot.checkMotion(cmd.regist, 4))
+            if (btl_stat.CheckStatus(cmd.regist, BattleStatus.AutoLife) && cmd.cmd_no == BattleCommandId.SysDead && !btl_mot.checkMotion(cmd.regist, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
                 return;
-            stateBattleSystem.cmd_mode = 4;
+            stateBattleSystem.cmd_mode = command_mode_index.CMD_MODE_DONE;
         }
     }
 
@@ -1352,7 +1358,7 @@ public class btl_cmd
 
         ClearCommand(cmd);
         btlsys.cur_cmd = null;
-        btlsys.cmd_mode = 0;
+        btlsys.cmd_mode = command_mode_index.CMD_MODE_INSPECTION;
 
         if (!FF9StateSystem.Battle.isDebug)
             HonoluluBattleMain.playerEnterCommand = true;
@@ -1416,11 +1422,11 @@ public class btl_cmd
                 return;
             if (cmd.cmd_no == BattleCommandId.Defend)
             {
-                if (btl_mot.checkMotion(btlData, 12))
+                if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_DEF))
                 {
                     if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData))
                         return;
-                    btl_mot.setMotion(btlData, 13);
+                    btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE);
                     btlData.evt.animFrame = 0;
                 }
             }
@@ -1428,7 +1434,7 @@ public class btl_cmd
             {
                 if (Configuration.Battle.NoAutoTrance && cmd.sub_no == 96)
                 {
-                    if (btl_mot.checkMotion(btlData, 9))
+                    if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD))
                     {
                         if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData, btlData.currentAnimationName))
                             return;
@@ -1444,21 +1450,21 @@ public class btl_cmd
                             return;
                         }
                         ExecVfxCommand(btlData);
-                        btl_mot.setMotion(btlData, 32);
+                        btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL);
                         btlData.evt.animFrame = 0;
                         return;
                     }
-                    if (btl_mot.checkMotion(btlData, 32))
+                    if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL))
                     {
                         if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData))
                             return;
-                        btl_mot.setMotion(btlData, 0);
+                        btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
                         btlData.evt.animFrame = 0;
                     }
                 }
                 else
                 {
-                    if (btl_mot.checkMotion(btlData, 9))
+                    if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD))
                     {
                         if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData, btlData.currentAnimationName))
                             return;
@@ -1477,15 +1483,15 @@ public class btl_cmd
                             return;
                         }
                         ExecVfxCommand(btlData);
-                        btl_mot.setMotion(btlData, 32);
+                        btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL);
                         btlData.evt.animFrame = 0;
                         return;
                     }
-                    if (btl_mot.checkMotion(btlData, 32))
+                    if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL))
                     {
                         if (btlData.evt.animFrame < GeoAnim.geoAnimGetNumFrames(btlData))
                             return;
-                        btl_mot.setMotion(btlData, 0);
+                        btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
                         btlData.evt.animFrame = 0;
                     }
                 }

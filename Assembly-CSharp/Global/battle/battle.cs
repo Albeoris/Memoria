@@ -231,12 +231,12 @@ public class battle
                             btl_mot.setMotion(next, data.bi.def_idle);
                         data.evt.animFrame = 0;
                     }
-                    if (!next.IsUnderStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, 4))
+                    if (!next.IsUnderStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
                         flag = false;
                 }
                 else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus(BattleStatus.BattleEnd) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
                 {
-                    btl_mot.setMotion(next, 19);
+                    btl_mot.setMotion(next.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP);
                     data.evt.animFrame = 0;
                 }
                 btl_stat.SetStatusVfx(next);
@@ -266,13 +266,13 @@ public class battle
                 {
                     case 0:
                         btl_para.CheckPointData(data);
-                        if ((!next.IsPlayer && !next.IsUnderStatus((BattleStatus)4099U)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, 4))
+                        if ((!next.IsPlayer && !next.IsUnderStatus((BattleStatus)4099U)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
                         {
                             num1 = 0U;
                         }
                         break;
                     case 1:
-                        if (next.IsPlayer && !btl_mot.checkMotion(data, 4) && !next.IsUnderStatus((BattleStatus)4099U))
+                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderStatus((BattleStatus)4099U))
                         {
                             num1 = 0U;
                         }
@@ -285,7 +285,7 @@ public class battle
                         {
                             next.TryRemoveStatuses(BattleStatus.CancelEvent);
                         }
-                        if (btlsys.cmd_mode != 0)
+                        if (btlsys.cmd_mode != command_mode_index.CMD_MODE_INSPECTION)
                             num1 = 0U;
                         if (next.IsUnderStatus(BattleStatus.Death))
                         {
@@ -297,7 +297,7 @@ public class battle
                             }
                             break;
                         }
-                        if (!Status.checkCurStat(data, BattleStatus.Immobilized) && !btl_mot.checkMotion(data, 0) && !btl_mot.checkMotion(data, 1))
+                        if (!Status.checkCurStat(data, BattleStatus.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
                         {
                             num1 = 0U;
                         }
@@ -308,7 +308,7 @@ public class battle
                         {
                             if (data.die_seq == 0)
                                 data.die_seq = 1;
-                            if (!btl_mot.checkMotion(data, 4) || btl_cmd.CheckSpecificCommand(data, BattleCommandId.SysReraise))
+                            if (!btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_cmd.CheckSpecificCommand(data, BattleCommandId.SysReraise))
                             {
                                 num1 = 0U;
                             }
@@ -368,7 +368,7 @@ public class battle
                                             next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatus.IdleDying) ? (Byte)0 : (Byte)1;
                                             next.bi.cmd_idle = 0;
                                             if (btl_util.getPlayerPtr(next).info.win_pose != 0)
-                                                btl_mot.setMotion(next, 18);
+                                                btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
                                             else
                                                 btl_mot.setMotion(next, next.bi.def_idle);
                                             next.evt.animFrame = 0;

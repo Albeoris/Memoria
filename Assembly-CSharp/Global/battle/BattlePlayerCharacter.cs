@@ -423,6 +423,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 		FF9PLAY_CHAR_MAX
 	}
 
+	// Enemies have 6 default battle animations that more or less relate to the first 6 PlayerMotionIndex:
+	// Idle, Idle Alternate, Hit, Hit Alternate, Death, Death Alternate
 	public enum PlayerMotionIndex
 	{
 		MP_IDLE_NORMAL,

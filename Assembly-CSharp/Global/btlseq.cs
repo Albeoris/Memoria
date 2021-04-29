@@ -11,13 +11,14 @@ using Object = System.Object;
 
 public class btlseq
 {
-	public btlseq()
+	public static void ReadBattleSequence(String name)
 	{
-		btlseq.enemy = FF9StateSystem.Battle.FF9Battle.enemy;
+		ReadBattleSequence(name, ref instance, true);
 	}
 
-	public void ReadBattleSequence(String name)
+	public static void ReadBattleSequence(String name, ref btlseqinstance inst, Boolean useGlobalWorkSet = false)
 	{
+		inst.enemy = FF9StateSystem.Battle.FF9Battle.enemy;
 		String name2 = String.Concat(new Object[]
 		{
 			"BattleMap/BattleScene/EVT_BATTLE_",
@@ -27,12 +28,15 @@ public class btlseq
 			".raw17"
 		});
 		String[] bscInfo;
-		btlseq.data = AssetManager.LoadBytes(name2, out bscInfo, false);
-		btlseq.seq_work_set = FF9StateSystem.Battle.FF9Battle.seq_work_set;
-		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(btlseq.data)))
+		inst.data = AssetManager.LoadBytes(name2, out bscInfo, false);
+		if (useGlobalWorkSet)
+			inst.seq_work_set = FF9StateSystem.Battle.FF9Battle.seq_work_set;
+		else
+			inst.seq_work_set = new SEQ_WORK_SET();
+		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(inst.data)))
 		{
 			Int16 num = binaryReader.ReadInt16();
-			btlseq.camOffset = (Int32)binaryReader.ReadInt16();
+			inst.camOffset = (Int32)binaryReader.ReadInt16();
 			Int16 num2 = binaryReader.ReadInt16();
 			Int16 num3 = binaryReader.ReadInt16();
 			Int32[] array = new Int32[num2];
@@ -50,19 +54,19 @@ public class btlseq
 			{
 				array3[k] = binaryReader.ReadByte();
 			}
-			btlseq.seq_work_set.SeqData = array;
-			btlseq.seq_work_set.AnmAddrList = array2;
-			btlseq.seq_work_set.AnmOfsList = array3;
+			inst.seq_work_set.SeqData = array;
+			inst.seq_work_set.AnmAddrList = array2;
+			inst.seq_work_set.AnmOfsList = array3;
 			Byte[] array4 = array3.Distinct<Byte>().ToArray<Byte>();
-			this.ChangeToSequenceListNumber(array4);
+			ChangeToSequenceListNumber(array4);
 			Byte[] array5 = new Byte[(Int32)array3.Length];
 			Array.Copy(array3, array5, (Int32)array3.Length);
-			this.ChangeToSequenceListNumber(array5);
-			this.sequenceProperty = new SequenceProperty[(Int32)array4.Length];
+			ChangeToSequenceListNumber(array5);
+			inst.sequenceProperty = new SequenceProperty[(Int32)array4.Length];
 			for (Int32 l = 0; l < (Int32)array4.Length; l++)
 			{
-				this.sequenceProperty[l] = new SequenceProperty();
-				this.sequenceProperty[l].Montype = (Int32)array4[l];
+				inst.sequenceProperty[l] = new SequenceProperty();
+				inst.sequenceProperty[l].Montype = (Int32)array4[l];
 			}
 			for (Int32 m = 0; m < (Int32)num2; m++)
 			{
@@ -73,9 +77,9 @@ public class btlseq
 				{
 					for (Int32 n = 0; n < (Int32)array4.Length; n++)
 					{
-						if (this.sequenceProperty[n].Montype == (Int32)array5[m])
+						if (inst.sequenceProperty[n].Montype == (Int32)array5[m])
 						{
-							this.sequenceProperty[n].PlayableSequence.Add(m);
+							inst.sequenceProperty[n].PlayableSequence.Add(m);
 						}
 					}
 				}
@@ -83,7 +87,7 @@ public class btlseq
 		}
 	}
 
-	private void ChangeToSequenceListNumber(Byte[] list)
+	private static void ChangeToSequenceListNumber(Byte[] list)
 	{
 		Byte[] array = list.Distinct<Byte>().ToArray<Byte>();
 		for (Int32 i = 0; i < (Int32)list.Length; i++)
@@ -100,7 +104,7 @@ public class btlseq
 
 	public static void InitSequencer()
 	{
-		SEQ_WORK[] seqWork = btlseq.seq_work_set.SeqWork;
+		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
 		for (Int32 i = 0; i < 4; i++)
 		{
 			seqWork[i] = new SEQ_WORK();
@@ -110,7 +114,7 @@ public class btlseq
 
 	public static void StartBtlSeq(Int32 pBtlID, Int32 pTarID, Int32 pSeqNo)
 	{
-		if (btlseq.seq_work_set.SeqData[pSeqNo] == 0)
+		if (instance.seq_work_set.SeqData[pSeqNo] == 0)
 		{
 			return;
 		}
@@ -174,7 +178,7 @@ public class btlseq
 
 	public static SEQ_WORK EntrySequence(CMD_DATA pCmd)
 	{
-		SEQ_WORK[] seqWork = btlseq.seq_work_set.SeqWork;
+		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
 		Int16 num;
 		for (num = 0; num < 4; num = (Int16)(num + 1))
 		{
@@ -189,12 +193,12 @@ public class btlseq
 		}
 		seqWork[(Int32)num].Flags = new SeqFlag();
 		seqWork[(Int32)num].CmdPtr = pCmd;
-		seqWork[(Int32)num].CurPtr = btlseq.seq_work_set.SeqData[(Int32)pCmd.sub_no];
+		seqWork[(Int32)num].CurPtr = instance.seq_work_set.SeqData[(Int32)pCmd.sub_no];
 		seqWork[(Int32)num].OldPtr = 0;
 		seqWork[(Int32)num].IncCnt = 0;
 		seqWork[(Int32)num].DecCnt = 0;
 		seqWork[(Int32)num].AnmCnt = 0;
-		seqWork[(Int32)num].AnmIDOfs = btlseq.seq_work_set.AnmOfsList[(Int32)pCmd.sub_no];
+		seqWork[(Int32)num].AnmIDOfs = instance.seq_work_set.AnmOfsList[(Int32)pCmd.sub_no];
 		seqWork[(Int32)num].SfxTime = 0;
 		seqWork[(Int32)num].TurnTime = 0;
 		seqWork[(Int32)num].SVfxTime = 0;
@@ -205,8 +209,8 @@ public class btlseq
 
 	public static void Sequencer()
 	{
-		btlseq.wSeqCode = 0;
-		SEQ_WORK[] seqWork = btlseq.seq_work_set.SeqWork;
+		instance.wSeqCode = 0;
+		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
 		for (Int32 i = 0; i < 4; i++)
 		{
 			if (seqWork[i].CmdPtr != null)
@@ -219,27 +223,27 @@ public class btlseq
 				seq_WORK3.AnmCnt = (Int16)(seq_WORK3.AnmCnt + 1);
 				BTL_DATA regist = seqWork[i].CmdPtr.regist;
 				Int32 num = 1;
-				using (btlseq.sequenceReader = new BinaryReader(new MemoryStream(btlseq.data)))
+				using (instance.sequenceReader = new BinaryReader(new MemoryStream(instance.data)))
 				{
 					while (num != 0)
 					{
-						btlseq.sequenceReader.BaseStream.Seek((Int64)(seqWork[i].CurPtr + 4), SeekOrigin.Begin);
-						btlseq.wSeqCode = (Int32)btlseq.sequenceReader.ReadByte();
-						if (btlseq.wSeqCode > (Int32)btlseq.gSeqProg.Length)
+						instance.sequenceReader.BaseStream.Seek((Int64)(seqWork[i].CurPtr + 4), SeekOrigin.Begin);
+						instance.wSeqCode = (Int32)instance.sequenceReader.ReadByte();
+						if (instance.wSeqCode > (Int32)btlseq.gSeqProg.Length)
 						{
-							btlseq.wSeqCode = 0;
+							instance.wSeqCode = 0;
 						}
 						if (seqWork[i].Flags.WaitLoadVfx && SFX.GetTaskMonsteraStartOK() != 0)
 						{
 							seqWork[i].Flags.DoneLoadVfx = true;
 							seqWork[i].Flags.WaitLoadVfx = false;
 						}
-						if (seqWork[i].CurPtr != seqWork[i].OldPtr && btlseq.gSeqProg[btlseq.wSeqCode].Init != null)
+						if (seqWork[i].CurPtr != seqWork[i].OldPtr && btlseq.gSeqProg[instance.wSeqCode].Init != null)
 						{
-							btlseq.gSeqProg[btlseq.wSeqCode].Init(seqWork[i], regist);
+							btlseq.gSeqProg[instance.wSeqCode].Init(seqWork[i], regist);
 						}
 						seqWork[i].OldPtr = seqWork[i].CurPtr;
-						num = btlseq.gSeqProg[btlseq.wSeqCode].Exec(seqWork[i], regist);
+						num = btlseq.gSeqProg[instance.wSeqCode].Exec(seqWork[i], regist);
 					}
 				}
 				if (seqWork[i].TurnTime != 0)
@@ -292,12 +296,22 @@ public class btlseq
 		}
 	}
 
+	public static void MonsterTransformFading(BTL_DATA btl) // Maybe have a smooth fading in/out
+	{
+		if (btl.monster_transform.fade_counter == 0)
+		{
+			btl.gameObject.SetActive(true);
+			btl_mot.ShowMesh(btl, UInt16.MaxValue);
+			btl.is_monster_transform = false;
+		}
+	}
+
 	public static void DispCharacter(BTL_DATA btl)
 	{
 		PosObj evt = btl.evt;
 		if (btl.bi.slave == 0)
 		{
-			if (btl.bi.player != 0 && btl_mot.checkMotion(btl, 17))
+			if (btl.bi.player != 0 && btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
 			{
 				Vector3 eulerAngles = btl.rot.eulerAngles;
 				eulerAngles.y = 180f;
@@ -320,8 +334,7 @@ public class btlseq
 				}
 				else if (Status.checkCurStat(btl, BattleStatus.Immobilized))
 				{
-					PosObj evt2 = btl.evt;
-					evt2.animFrame = (Byte)(evt2.animFrame - 1);
+					evt.animFrame = (Byte)(evt.animFrame - 1);
 				}
 			}
 			if (!Status.checkCurStat(btl, BattleStatus.Immobilized) && btl.bi.stop_anim == 0)
@@ -330,12 +343,16 @@ public class btlseq
 				{
 					btl.animation.enabled = true;
 				}
-				PosObj posObj = evt;
-				posObj.animFrame = (Byte)(posObj.animFrame + 1);
+				evt.animFrame = (Byte)(evt.animFrame + 1);
 			}
 			else if (btl.animation != (UnityEngine.Object)null)
 			{
 				btl.animation.enabled = false;
+			}
+			if (btl.is_monster_transform && btl.monster_transform.fade_counter > 0)
+			{
+				btl.monster_transform.fade_counter--;
+				MonsterTransformFading(btl);
 			}
 			Int32 num = btl.meshCount;
 			Int32 num2 = 0;
@@ -600,7 +617,7 @@ public class btlseq
 	public static void SeqInitWait(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqInitWait");
-		pSeqWork.DecCnt = (Int16)btlseq.sequenceReader.ReadByte();
+		pSeqWork.DecCnt = (Int16)instance.sequenceReader.ReadByte();
 	}
 
 	public static Int32 SeqExecWait(SEQ_WORK pSeqWork, BTL_DATA pMe)
@@ -636,17 +653,17 @@ public class btlseq
 		WK_MOVE wk_MOVE = new WK_MOVE();
 		wk_MOVE.Next = 4;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)btlseq.sequenceReader.ReadByte();
+		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
 		for (Int32 i = 0; i < 3; i++)
 		{
 			wk_MOVE.Org[i] = (Int16)pMe.pos[i];
 		}
 		wk_MOVE.Dst[1] = wk_MOVE.Org[1];
 		btlseq.SeqSubTargetAveragePos(pSeqWork.CmdPtr.tar_id, out wk_MOVE.Dst[0], out wk_MOVE.Dst[2]);
-		Int16 num = btlseq.sequenceReader.ReadInt16();
+		Int16 num = instance.sequenceReader.ReadInt16();
 		if (wk_MOVE.Org[0] != wk_MOVE.Dst[0] || wk_MOVE.Org[2] != wk_MOVE.Dst[2])
 		{
-			if (btlseq.wSeqCode == 30)
+			if (instance.wSeqCode == 30)
 			{
 				Int16[] dst = wk_MOVE.Dst;
 				Int32 num2 = 2;
@@ -696,7 +713,7 @@ public class btlseq
 		WK_MOVE wk_MOVE = new WK_MOVE();
 		wk_MOVE.Next = 2;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)btlseq.sequenceReader.ReadByte();
+		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
 		for (Int16 num = 0; num < 3; num = (Int16)(num + 1))
 		{
 			wk_MOVE.Org[(Int32)num] = (Int16)pMe.gameObject.transform.localPosition[(Int32)num];
@@ -708,7 +725,7 @@ public class btlseq
 	public static Int32 SeqExecAnim(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecAnim");
-		Byte b = btlseq.sequenceReader.ReadByte();
+		Byte b = instance.sequenceReader.ReadByte();
 		if (b == 255)
 		{
 			Int32 num = (Int32)((pMe.bi.def_idle == 0) ? 0 : 1);
@@ -718,7 +735,7 @@ public class btlseq
 		else
 		{
 			Int32 num = (Int32)(pSeqWork.AnmIDOfs + b);
-			String name2 = FF9BattleDB.Animation[btlseq.seq_work_set.AnmAddrList[num]];
+			String name2 = FF9BattleDB.Animation[instance.seq_work_set.AnmAddrList[num]];
 			btl_mot.setMotion(pMe, name2);
 		}
 		pMe.evt.animFrame = 0;
@@ -730,9 +747,9 @@ public class btlseq
 	public static Int32 SeqExecSVfx(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecSVfx");
-		pSeqWork.SVfxNum = btlseq.sequenceReader.ReadUInt16();
-		pSeqWork.SVfxParam = btlseq.sequenceReader.ReadByte();
-		pSeqWork.SVfxTime = (Byte)(btlseq.sequenceReader.ReadByte() + 1);
+		pSeqWork.SVfxNum = instance.sequenceReader.ReadUInt16();
+		pSeqWork.SVfxParam = instance.sequenceReader.ReadByte();
+		pSeqWork.SVfxTime = (Byte)(instance.sequenceReader.ReadByte() + 1);
 		pSeqWork.CurPtr += 5;
 		return 1;
 	}
@@ -757,11 +774,11 @@ public class btlseq
 		{
 			return 0;
 		}
-		UInt16 fx_no = btlseq.sequenceReader.ReadUInt16();
-		array[0] = btlseq.sequenceReader.ReadInt16();
-		array[1] = btlseq.sequenceReader.ReadInt16();
-		array[2] = btlseq.sequenceReader.ReadInt16();
-		array[3] = (Int16)((btlseq.wSeqCode != 26) ? 0 : 1);
+		UInt16 fx_no = instance.sequenceReader.ReadUInt16();
+		array[0] = instance.sequenceReader.ReadInt16();
+		array[1] = instance.sequenceReader.ReadInt16();
+		array[2] = instance.sequenceReader.ReadInt16();
+		array[3] = (Int16)((instance.wSeqCode != 26) ? 0 : 1);
 		btl_vfx.SetBattleVfx(pSeqWork.CmdPtr, (UInt32)fx_no, array);
 		pSeqWork.Flags.WaitLoadVfx = true;
 		pSeqWork.CurPtr += 9;
@@ -803,7 +820,7 @@ public class btlseq
 		btlseq.BattleLog("SeqInitScale");
 		WK_SCALE wk_SCALE = new WK_SCALE();
 		wk_SCALE.Org = (Int16)(pMe.gameObject.transform.localScale.x * 4096f);
-		Int16 num = btlseq.sequenceReader.ReadInt16();
+		Int16 num = instance.sequenceReader.ReadInt16();
 		if (num == -1)
 		{
 			num = 4096;
@@ -814,7 +831,7 @@ public class btlseq
 		}
 		wk_SCALE.Scl = (Int16)(num - wk_SCALE.Org);
 		pSeqWork.IncCnt = 1;
-		wk_SCALE.Frames = (Int16)btlseq.sequenceReader.ReadByte();
+		wk_SCALE.Frames = (Int16)instance.sequenceReader.ReadByte();
 		pSeqWork.Work = btlseq.SequenceConverter.WkScaleToWork(wk_SCALE);
 	}
 
@@ -840,7 +857,7 @@ public class btlseq
 	public static Int32 SeqExecMeshHide(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMeshHide");
-		UInt16 num = btlseq.sequenceReader.ReadUInt16();
+		UInt16 num = instance.sequenceReader.ReadUInt16();
 		pMe.meshflags |= (UInt32)num;
 		pMe.mesh_current = (UInt16)(pMe.mesh_current | num);
 		btl_mot.HideMesh(pMe, num, false);
@@ -851,7 +868,7 @@ public class btlseq
 	public static Int32 SeqExecMessage(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMessage");
-		UInt16 num = (UInt16)btlseq.sequenceReader.ReadByte();
+		UInt16 num = (UInt16)instance.sequenceReader.ReadByte();
 		if ((num & 128) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
@@ -861,7 +878,7 @@ public class btlseq
 		{
 			num = (UInt16)(num + (UInt16)FF9StateSystem.Battle.FF9Battle.enemy[(Int32)pMe.bi.slot_no].et.mes);
 			btlseq.BattleLog("wMsg " + num);
-			if (btlseq.wSeqCode == 33)
+			if (instance.wSeqCode == 33)
 			{
 				String str = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleTitle(str, 3);
@@ -879,7 +896,7 @@ public class btlseq
 	public static Int32 SeqExecMeshShow(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMeshShow");
-		UInt16 num = btlseq.sequenceReader.ReadUInt16();
+		UInt16 num = instance.sequenceReader.ReadUInt16();
 		pMe.meshflags &= (UInt32)(~num);
 		pMe.mesh_current = (UInt16)(pMe.mesh_current & (UInt16)(~num));
 		btl_mot.ShowMesh(pMe, num, false);
@@ -890,7 +907,7 @@ public class btlseq
 	public static Int32 SeqExecSetCamera(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecSetCamera");
-		btlseq.seq_work_set.CameraNo = btlseq.sequenceReader.ReadByte();
+		instance.seq_work_set.CameraNo = instance.sequenceReader.ReadByte();
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -898,7 +915,7 @@ public class btlseq
 	public static Int32 SeqExecDefaultIdle(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecDefaultIdle");
-		pMe.bi.def_idle = btlseq.sequenceReader.ReadByte();
+		pMe.bi.def_idle = instance.sequenceReader.ReadByte();
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -922,7 +939,7 @@ public class btlseq
 		btlseq.BattleLog("SeqExecRunCamera");
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		SEQ_WORK_SET seq_WORK_SET = ff9Battle.seq_work_set;
-		if (btlseq.wSeqCode != 32)
+		if (instance.wSeqCode != 32)
 		{
 			if (pSeqWork.CmdPtr.aa.Info.DefaultCamera == false)
 			{
@@ -955,7 +972,7 @@ public class btlseq
 		seq_WORK_SET.CamExe = pMe;
 		seq_WORK_SET.CamTrg = btlseq.SeqSubGetTarget(pSeqWork.CmdPtr.tar_id);
 		SFX.SetCameraTarget(seq_WORK_SET.CamTrgCPos, seq_WORK_SET.CamExe, seq_WORK_SET.CamTrg);
-		ff9Battle.seq_work_set.CameraNo = btlseq.sequenceReader.ReadByte();
+		ff9Battle.seq_work_set.CameraNo = instance.sequenceReader.ReadByte();
 		SFX.SetEnemyCamera(pMe);
 		IL_16C:
 		pSeqWork.CurPtr += 2;
@@ -968,11 +985,11 @@ public class btlseq
 		WK_MOVE wk_MOVE = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
 		wk_MOVE.Next = 8;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)btlseq.sequenceReader.ReadByte();
+		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
 		for (Int16 num = 0; num < 3; num = (Int16)(num + 1))
 		{
 			wk_MOVE.Org[(Int32)num] = (Int16)pMe.gameObject.transform.localPosition[(Int32)num];
-			Int16 num2 = btlseq.sequenceReader.ReadInt16();
+			Int16 num2 = instance.sequenceReader.ReadInt16();
 			if (num == 1)
 			{
 				num2 = (Int16)(num2 * -1);
@@ -998,10 +1015,10 @@ public class btlseq
 		btlseq.BattleLog("SeqExecTurn");
 		Int16 num = 0;
 		Int16 num2 = 0;
-		Int16 num3 = btlseq.sequenceReader.ReadInt16();
-		Int16 num4 = btlseq.sequenceReader.ReadInt16();
+		Int16 num3 = instance.sequenceReader.ReadInt16();
+		Int16 num4 = instance.sequenceReader.ReadInt16();
 		num4 = (Int16)((Single)num4 / 4096f * 360f);
-		pSeqWork.TurnTime = btlseq.sequenceReader.ReadByte();
+		pSeqWork.TurnTime = instance.sequenceReader.ReadByte();
 		pSeqWork.TurnOrg = (Int16)pMe.rot.eulerAngles.y;
 		pSeqWork.TurnCnt = 1;
 		if (((Int32)num3 & 32768) != 0)
@@ -1061,7 +1078,7 @@ public class btlseq
 	public static Int32 SeqExecTexAnimPlay(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecTexAnimPlay");
-		GeoTexAnim.geoTexAnimPlay(pMe.texanimptr, (Int32)btlseq.sequenceReader.ReadByte());
+		GeoTexAnim.geoTexAnimPlay(pMe.texanimptr, (Int32)instance.sequenceReader.ReadByte());
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -1069,7 +1086,7 @@ public class btlseq
 	public static Int32 SeqExecTexAnimOnce(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecTexAnimOnce");
-		GeoTexAnim.geoTexAnimPlayOnce(pMe.texanimptr, (Int32)btlseq.sequenceReader.ReadByte());
+		GeoTexAnim.geoTexAnimPlayOnce(pMe.texanimptr, (Int32)instance.sequenceReader.ReadByte());
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -1077,7 +1094,7 @@ public class btlseq
 	public static Int32 SeqExecTexAnimStop(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecTexAnimStop");
-		GeoTexAnim.geoTexAnimStop(pMe.texanimptr, (Int32)btlseq.sequenceReader.ReadByte());
+		GeoTexAnim.geoTexAnimStop(pMe.texanimptr, (Int32)instance.sequenceReader.ReadByte());
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -1104,10 +1121,10 @@ public class btlseq
 	public static Int32 SeqExecSfx(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecSfx");
-		pSeqWork.SfxNum = btlseq.sequenceReader.ReadUInt16();
-		pSeqWork.SfxTime = (Byte)(btlseq.sequenceReader.ReadByte() + 1);
-		btlseq.sequenceReader.Read();
-		pSeqWork.SfxVol = btlseq.sequenceReader.ReadByte();
+		pSeqWork.SfxNum = instance.sequenceReader.ReadUInt16();
+		pSeqWork.SfxTime = (Byte)(instance.sequenceReader.ReadByte() + 1);
+		instance.sequenceReader.Read();
+		pSeqWork.SfxVol = instance.sequenceReader.ReadByte();
 		pSeqWork.CurPtr += 6;
 		return 1;
 	}
@@ -1118,11 +1135,11 @@ public class btlseq
 		WK_MOVE wk_MOVE = new WK_MOVE();
 		wk_MOVE.Next = 8;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)btlseq.sequenceReader.ReadByte();
+		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
 		for (Int16 num = 0; num < 3; num = (Int16)(num + 1))
 		{
 			wk_MOVE.Org[(Int32)num] = (Int16)pMe.gameObject.transform.localPosition[(Int32)num];
-			Int16 num2 = btlseq.sequenceReader.ReadInt16();
+			Int16 num2 = instance.sequenceReader.ReadInt16();
 			if (num == 1)
 			{
 				num2 = (Int16)(num2 * -1);
@@ -1135,7 +1152,7 @@ public class btlseq
 	public static Int32 SeqExecTargetBone(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecTargetBone");
-		pMe.tar_bone = btlseq.sequenceReader.ReadByte();
+		pMe.tar_bone = instance.sequenceReader.ReadByte();
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -1143,7 +1160,7 @@ public class btlseq
 	public static Int32 SeqExecFadeOut(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecFadeOut");
-		pSeqWork.FadeTotal = (pSeqWork.FadeStep = btlseq.sequenceReader.ReadByte());
+		pSeqWork.FadeTotal = (pSeqWork.FadeStep = instance.sequenceReader.ReadByte());
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -1151,7 +1168,7 @@ public class btlseq
 	public static Int32 SeqExecShadow(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecShadow");
-		pMe.bi.shadow = btlseq.sequenceReader.ReadByte();
+		pMe.bi.shadow = instance.sequenceReader.ReadByte();
 		if (pMe.bi.shadow != 0)
 		{
 			pMe.getShadow().SetActive(true);
@@ -1190,21 +1207,108 @@ public class btlseq
 
 	public const BattleStatus ANIM_STOP_STATUS = BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Freeze;
 
-	public static Byte[] data;
+	public class btlseqinstance
+	{
+		public Byte[] data;
 
-	public static BinaryReader sequenceReader;
+		public BinaryReader sequenceReader;
 
-	public static SEQ_WORK_SET seq_work_set;
+		public SEQ_WORK_SET seq_work_set;
 
-	public static ENEMY[] enemy;
+		public ENEMY[] enemy;
 
-	public static Int32 wSeqCode;
+		public Int32 wSeqCode;
 
-	public static BTL_DATA[] btl_list;
+		public BTL_DATA[] btl_list;
 
-	public SequenceProperty[] sequenceProperty;
+		public Int32 camOffset;
 
-	public static Int32 camOffset;
+		public SequenceProperty[] sequenceProperty;
+
+		public Int32 GetEnemyIndexOfSequence(Int32 pSeqNo)
+		{
+			for (UInt32 i = 0; i < sequenceProperty.Length; i++)
+				if (sequenceProperty[i].PlayableSequence.Contains(pSeqNo))
+					return sequenceProperty[i].Montype;
+			return -1;
+		}
+
+		public Int32 GetSFXOfSequence(Int32 pSeqNo, out Boolean isChanneling, out Boolean isContact)
+		{
+			isChanneling = false;
+			isContact = false;
+			if (seq_work_set.SeqData[pSeqNo] == 0)
+				return -1;
+			using (sequenceReader = new BinaryReader(new MemoryStream(data)))
+			{
+				sequenceReader.BaseStream.Seek(seq_work_set.SeqData[pSeqNo] + 4, SeekOrigin.Begin);
+				wSeqCode = (Int32)sequenceReader.ReadByte();
+				while (wSeqCode != 0 && wSeqCode != 0x18)
+				{
+					if (wSeqCode > (Int32)btlseq.gSeqProg.Length)
+						wSeqCode = 0;
+					switch (wSeqCode)
+					{
+						case 0x6:
+						case 0x8:
+						case 0x1A:
+							isChanneling = wSeqCode == 0x8;
+							isContact = wSeqCode == 0x6;
+							return sequenceReader.ReadByte() | (sequenceReader.ReadByte() << 8);
+						case 2:
+						case 7:
+						case 9:
+						case 0xA:
+						case 0xB:
+						case 0x18:
+							break;
+						case 1:
+						case 5:
+						case 4:
+						case 0xE:
+						case 0x10:
+						case 0x11:
+						case 0x12:
+						case 0x15:
+						case 0x16:
+						case 0x17:
+						case 0x1C:
+						case 0x1D:
+						case 0x1F:
+						case 0x20:
+						case 0x21:
+							sequenceReader.BaseStream.Seek(1, SeekOrigin.Current);
+							break;
+						case 0xD:
+						case 0xF:
+							sequenceReader.BaseStream.Seek(2, SeekOrigin.Current);
+							break;
+						case 3:
+						case 0xC:
+						case 0x1E:
+							sequenceReader.BaseStream.Seek(3, SeekOrigin.Current);
+							break;
+						case 0x14:
+						case 0x19:
+							sequenceReader.BaseStream.Seek(5, SeekOrigin.Current);
+							break;
+						case 0x13:
+						case 0x1B:
+							sequenceReader.BaseStream.Seek(7, SeekOrigin.Current);
+							break;
+					}
+					wSeqCode = (Int32)sequenceReader.ReadByte();
+				}
+			}
+			return -1;
+		}
+		public Int32 GetSFXOfSequence(Int32 pSeqNo)
+		{
+			return GetSFXOfSequence(pSeqNo, out _, out _);
+		}
+	}
+
+	public static btlseqinstance instance = new btlseqinstance();
 
 	public static btlseq.SequenceProgram[] gSeqProg = new btlseq.SequenceProgram[]
 	{

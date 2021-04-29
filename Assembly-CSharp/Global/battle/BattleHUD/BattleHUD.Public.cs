@@ -121,6 +121,10 @@ public partial class BattleHUD : UIScene
                             break;
                     }
                 }
+                else
+				{
+                    str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no);
+                }
                 break;
         }
 

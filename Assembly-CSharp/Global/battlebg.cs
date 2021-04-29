@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
@@ -130,10 +131,34 @@ public class battlebg
 				else
 				{
 					material.shader = ShadersLoader.Find(shaderName);
+					if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0)
+						material.SetInt("_ZWrite", 0); // DEBUG: Can't make the default value in "_ZWrite ("ZWrite", Int) = 0" works correctly for some reason
 				}
 				num++;
 			}
 		}
+	}
+
+	public static List<Material> GetShaders(Int32 bbgAttr)
+	{
+		List<Material> list = new List<Material>();
+		foreach (Object obj in battlebg.btlModel.transform)
+		{
+			Transform transform = (Transform)obj;
+			if (battlebg.getBbgAttr(transform.name) == bbgAttr)
+			{
+				MeshRenderer[] componentsInChildren = transform.gameObject.GetComponentsInChildren<MeshRenderer>();
+				for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+				{
+					Material[] materials = componentsInChildren[i].materials;
+					for (Int32 j = 0; j < (Int32)materials.Length; j++)
+					{
+							list.Add(materials[j]);
+					}
+				}
+			}
+		}
+		return list;
 	}
 
 	public static void nf_BattleBG()

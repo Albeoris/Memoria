@@ -199,35 +199,46 @@ public partial class BattleHUD : UIScene
         return false;
     }
 
-    private static BattleCommandId GetCommandFromCommandIndex(CommandMenu commandIndex, Int32 playerIndex)
+    private static BattleCommandId GetCommandFromCommandIndex(ref CommandMenu commandIndex, Int32 playerIndex)
     {
         BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(player.Position).PresetId;
+        BattleCommandId result = BattleCommandId.None;
         switch (commandIndex)
         {
             case CommandMenu.Attack:
-                return BattleCommandId.Attack;
+                result = BattleCommandId.Attack;
+                break;
             case CommandMenu.Defend:
-                return BattleCommandId.Defend;
+                result = BattleCommandId.Defend;
+                break;
             case CommandMenu.Ability1:
             {
                 CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
                 Boolean underTrance = player.IsUnderStatus(BattleStatus.Trance);
-                return commandSet.Get(underTrance, 0);
+                result = commandSet.Get(underTrance, 0);
+                break;
             }
             case CommandMenu.Ability2:
             {
                 CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
                 Boolean underTrance = player.IsUnderStatus(BattleStatus.Trance);
-                return commandSet.Get(underTrance, 1);
+                result = commandSet.Get(underTrance, 1);
+                break;
             }
             case CommandMenu.Item:
-                return BattleCommandId.Item;
+                result = BattleCommandId.Item;
+                break;
             case CommandMenu.Change:
-                return BattleCommandId.Change;
-            default:
-                return BattleCommandId.None;
+                result = BattleCommandId.Change;
+                break;
         }
+        if (player.Data.is_monster_transform && result == player.Data.monster_transform.base_command)
+        {
+            result = player.Data.monster_transform.new_command;
+            commandIndex = CommandMenu.Ability1;
+        }
+        return result;
     }
 
     private static Int32 GetFirstAlivePlayerIndex()

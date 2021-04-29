@@ -118,9 +118,9 @@ public class btl_stat
                 btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0U, btl.btl_id, 0U);
                 break;
             case 17:
-                if (unit.IsPlayer && !btl_mot.checkMotion(btl, 1) && !btl_util.isCurCmdOwner(btl))
+                if (unit.IsPlayer && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING) && !btl_util.isCurCmdOwner(btl))
                 {
-                    btl_mot.setMotion(btl, 1);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
                     btl.evt.animFrame = 0;
                 }
                 break;
@@ -149,14 +149,7 @@ public class btl_stat
                 break;
             case 28:
                 stat.cur ^= status;
-                if (CheckStatus(btl, BattleStatus.Mini))
-                {
-                    geo.geoScaleSet(btl, 2048);
-                    btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), (Byte)(btl.shadow_x / 2U), (Byte)(btl.shadow_z / 2U));
-                    break;
-                }
-                geo.geoScaleReset(btl);
-                btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), btl.shadow_x, btl.shadow_z);
+                geo.geoScaleUpdate(btl, true);
                 break;
             default:
                 if ((Int32)num4 != 0)
@@ -165,9 +158,9 @@ public class btl_stat
                     {
                         if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2)
                             btl_sys.CheckBattlePhase(btl);
-                        if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, 1) && !btl_util.isCurCmdOwner(btl))
+                        if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING) && !btl_util.isCurCmdOwner(btl))
                         {
-                            btl_mot.setMotion(btl, 1);
+                            btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
                             btl.evt.animFrame = 0;
                         }
                     }
@@ -261,12 +254,12 @@ public class btl_stat
                 btl.bi.death_f = 0;
                 btl.bi.stop_anim = 0;
                 btl.escape_key = 0;
-                if (btl_mot.checkMotion(btl, 4) || btl_mot.checkMotion(btl, 8))
+                if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
                 {
                     GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
                     if (btl.bi.player != 0)
                         GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
-                    btl_mot.setMotion(btl, 6);
+                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_GET_UP_DISABLE);
                     btl.evt.animFrame = 0;
                 }
                 if (FF9StateSystem.Battle.FF9Battle.cur_cmd.regist != btl || FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no > BattleCommandId.BoundaryCheck)
@@ -322,8 +315,7 @@ public class btl_stat
                 }
                 break;
             case BattleStatus.Mini:
-                geo.geoScaleReset(btl);
-                btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), btl.shadow_x, btl.shadow_z);
+                geo.geoScaleUpdate(btl, true);
                 break;
             case BattleStatus.Jump:
                 btl.tar_mode = 3;
@@ -580,7 +572,11 @@ public class btl_stat
 
     private static void RotateAfterCheckStatusLoop(BTL_DATA btl)
     {
-        if (CheckStatus(btl, BattleStatus.Confuse) && !btl_util.isCurCmdOwner(btl) && (btl_mot.checkMotion(btl, 0) || btl_mot.checkMotion(btl, 1) || (btl.bi.player != 0 && btl_mot.checkMotion(btl, 9))))
+        if (CheckStatus(btl, BattleStatus.Confuse)
+            && !btl_util.isCurCmdOwner(btl)
+            && (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL)
+                || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING)
+                || (btl.bi.player != 0 && btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD))))
         {
             Vector3 eulerAngles = btl.rot.eulerAngles;
             eulerAngles.y += 11.25f;

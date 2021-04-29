@@ -99,7 +99,7 @@ public class FF9StateBattleSystem
 
 	public UInt16 cmd_status;
 
-	public Byte cmd_mode;
+	public command_mode_index cmd_mode;
 
 	public Byte phantom_no;
 

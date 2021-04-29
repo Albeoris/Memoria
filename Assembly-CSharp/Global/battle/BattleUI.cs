@@ -29,7 +29,7 @@ public class BattleUI : MonoBehaviour
 		this.mapIDs = FF9StateSystem.Battle.mapName.Keys.ToArray<Int32>();
 		this.battleMapString = FF9StateSystem.Battle.battleMapIndex.ToString();
 		this.mapIndex = Array.IndexOf<Int32>(this.mapIDs, FF9StateSystem.Battle.battleMapIndex);
-		this.btlSeq = base.GetComponent<HonoluluBattleMain>().btlSeq;
+		this.btlSeq = btlseq.instance;
 		this.btlScene = base.GetComponent<HonoluluBattleMain>().btlScene;
 		this.seqNo = 0;
 		this.seqList = base.GetComponent<HonoluluBattleMain>().seqList;
@@ -205,7 +205,7 @@ public class BattleUI : MonoBehaviour
 		}
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUI.enabled = (btlseq.seq_work_set.SeqWork[0] != null && btlseq.seq_work_set.SeqWork[0].CmdPtr == null);
+		GUI.enabled = (btlseq.instance.seq_work_set.SeqWork[0] != null && btlseq.instance.seq_work_set.SeqWork[0].CmdPtr == null);
 		if (GUILayout.Button(" < "))
 		{
 			this.seqNo--;
@@ -659,7 +659,7 @@ public class BattleUI : MonoBehaviour
 
 	private GameObject sphere;
 
-	private btlseq btlSeq;
+	private btlseq.btlseqinstance btlSeq;
 
 	private GameObject goDebugMonRadius;
 

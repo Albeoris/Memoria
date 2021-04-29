@@ -21,7 +21,7 @@ public static class AssetManager
 	 - They are read in priority from the first mod's folder up to the last mod's folder, then from the default folder
 	 - Bundle archives should be placed directly in the mod's folder
 	 - Plain files should be placed in a subfolder of the mod's folder respecting the asset's access path (eg. "EmbeddedAsset/Manifest/Text/Localization.txt")
-	 - Only assets of certain types can be read as plain files currently: binary (TextAsset), text (TextAsset) and textures (Texture / Texture2D)
+	 - Only assets of certain types can be read as plain files currently: binary (TextAsset), text (TextAsset), textures (Texture / Texture2D / Sprite / UIAtlas) and animations (AnimationClip)
 	 - Texture files that are not in archives should be placed as PNG or JPG files, not DXT-compressed files or using Unity's format
 	 - Assets that are not present in the mod folders must be archived as normally in the default folder
 	 2) Any asset that is not archived can use a "Memoria information" file which is a text file placed in the same subfolder as the asset, with the same name and the extension "AssetManager.MemoriaInfoExtension" (".memnfo"); the purpose of these files may vary from type to type

@@ -139,13 +139,13 @@ public class btl_vfx
                 return;
             case BattleCommandId.Defend:
                 UIManager.Battle.SetBattleCommandTitle(cmd);
-                btl_mot.setMotion(regist, 12);
+                btl_mot.setMotion(regist, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_DEF);
                 regist.evt.animFrame = 0;
                 btl_cmd.ExecVfxCommand(regist);
                 return;
             case BattleCommandId.Change:
                 UIManager.Battle.SetBattleCommandTitle(cmd);
-                btl_mot.setMotion(regist, 9);
+                btl_mot.setMotion(regist, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD);
                 return;
             case BattleCommandId.Steal:
             {
@@ -254,6 +254,8 @@ public class btl_vfx
             default:
                 if (cmd_no != BattleCommandId.MagicCounter && cmd.sub_no == 176)
                     SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null);
+                else if (regist.is_monster_transform && cmd.sub_no == regist.monster_transform.attack)
+                    SetBattleVfx(cmd, (UInt32)(100 + btl_util.getSerialNumber(regist)), null); // Should be improved (attack sequence of monster-transformed character)
                 else if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || btl_vfx.UseBeatrixAlternateVfx(caster, cmd.aa.Info.VfxIndex, cmd.aa.Vfx2))
                     SetBattleVfx(cmd, cmd.aa.Vfx2, null);
                 else
@@ -304,7 +306,7 @@ public class btl_vfx
 		btl.meshCount = num;
 		btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
 		BattlePlayerCharacter.InitAnimation(btl);
-		btl_mot.setMotion(btl, 0);
+		btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
 		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(Int32)btl.bi.slot_no], btl);
 		if (b == 7)
 		{

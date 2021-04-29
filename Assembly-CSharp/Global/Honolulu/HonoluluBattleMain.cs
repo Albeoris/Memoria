@@ -41,7 +41,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     public static String battleSceneName;
     public BattleMapCameraController cameraController;
     private Boolean isSetup;
-    public btlseq btlSeq;
     public String[] animationName;
     private static readonly Int32[] CurPlayerSerialNum;
     public static Int32[] CurPlayerWeaponIndex;
@@ -178,8 +177,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         String battleModelPath = FF9BattleDB.MapModel["BSC_" + battleSceneName];
         FF9StateSystem.Battle.FF9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + battleModelPath + "/" + battleModelPath, Vector3.zero, Vector3.zero, true);
         FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum = FF9StateSystem.Battle.isDebug ? FF9StateSystem.Battle.patternIndex : (Byte)this.ChoicePattern();
-        this.btlSeq = new btlseq();
-        this.btlSeq.ReadBattleSequence(battleSceneName);
+        btlseq.ReadBattleSequence(battleSceneName);
         BeginInitialize();
         battle.InitBattle();
         EndInitialize();
@@ -215,9 +213,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             numArray[index] = sb2Pattern.Put[index].TypeNo;
         foreach (Int32 num in numArray.Distinct().ToArray())
         {
-            for (Int32 index1 = 0; index1 < this.btlSeq.sequenceProperty.Length; ++index1)
+            for (Int32 index1 = 0; index1 < btlseq.instance.sequenceProperty.Length; ++index1)
             {
-                SequenceProperty sequenceProperty = this.btlSeq.sequenceProperty[index1];
+                SequenceProperty sequenceProperty = btlseq.instance.sequenceProperty[index1];
                 if (sequenceProperty.Montype == num)
                 {
                     for (Int32 index2 = 0; index2 < sequenceProperty.PlayableSequence.Count; ++index2)
@@ -234,7 +232,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void CreateBattleData(FF9StateGlobal FF9)
     {
-        BTL_DATA[] btlDataArray = btlseq.btl_list = FF9StateSystem.Battle.FF9Battle.btl_data;
+        BTL_DATA[] btlDataArray = btlseq.instance.btl_list = FF9StateSystem.Battle.FF9Battle.btl_data;
         Int32 index1 = 0;
         for (Int32 index2 = index1; index2 < 4; ++index2)
         {

@@ -255,7 +255,7 @@ namespace Memoria
         {
             // Takes back attacks, Confuse and running away (animation, not key press) into account
             Quaternion target_angle = Target.Data.rot;
-            if (Target.IsPlayer && btl_mot.checkMotion(Target.Data, 17))
+            if (Target.IsPlayer && btl_mot.checkMotion(Target.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
                 target_angle = new Quaternion(0f, 1f, 0f, 0f) * target_angle;
             return Mathf.Abs(Quaternion.Angle(Caster.Data.rot, target_angle)) < 90;
         }

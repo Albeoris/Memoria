@@ -490,7 +490,7 @@ public class btl2d
 						{
 							if ((num & STATUS_2D_ICON) != 0u)
 							{
-								if (next.bi.player == 0 || !btl_mot.checkMotion(next, 17))
+								if (next.bi.player == 0 || !btl_mot.checkMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
 								{
 									Int32 num2 = ff9.rsin(fixedPointAngle: (Int32)(next.rot.eulerAngles.y / 360f * 4096f));
 									Int32 num3 = ff9.rcos(fixedPointAngle: (Int32)(next.rot.eulerAngles.y / 360f * 4096f));
@@ -500,10 +500,19 @@ public class btl2d
 									SByte[] array3;
 									if (next.bi.player != 0)
 									{
-										num4 = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
-										array = btl2d.wBonePC[num4];
-										array2 = btl2d.wYofsPC[num4];
-										array3 = btl2d.wZofsPC[num4];
+										if (next.is_monster_transform)
+										{
+											array = next.monster_transform.icon_bone;
+											array2 = next.monster_transform.icon_y;
+											array3 = next.monster_transform.icon_z;
+										}
+										else
+										{
+											num4 = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
+											array = btl2d.wBonePC[num4];
+											array2 = btl2d.wYofsPC[num4];
+											array3 = btl2d.wZofsPC[num4];
+										}
 									}
 									else
 									{

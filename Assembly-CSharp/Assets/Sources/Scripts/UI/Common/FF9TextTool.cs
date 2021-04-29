@@ -27,6 +27,11 @@ namespace Assets.Sources.Scripts.UI.Common
         public static readonly BattleImporter BattleImporter = new BattleImporter();
         public static readonly FieldImporter FieldImporter = new FieldImporter();
 
+        public static String[] GetBattleText(Int32 battleZoneId)
+		{
+            return EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.GetCurrentPath("/Battle/" + battleZoneId + ".mes"));
+        }
+
         public static IEnumerator InitializeFieldText()
         {
             //Log.Message(nameof(InitializeFieldText));
@@ -380,12 +385,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ActionAbilityName(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.actionAbilityName.Length) ? String.Empty : FF9TextTool.actionAbilityName[id];
+            return (id >= FF9TextTool.actionAbilityName.Count) ? String.Empty : FF9TextTool.actionAbilityName[id];
         }
 
         public static String ActionAbilityHelpDescription(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.actionAbilityHelpDesc.Length) ? String.Empty : FF9TextTool.actionAbilityHelpDesc[id];
+            return (id >= FF9TextTool.actionAbilityHelpDesc.Count) ? String.Empty : FF9TextTool.actionAbilityHelpDesc[id];
         }
 
         public static String SupportAbilityName(Int32 id)
@@ -517,9 +522,9 @@ namespace Assets.Sources.Scripts.UI.Common
 
         private static String[] supportAbilityName;
 
-        private static String[] actionAbilityName;
+        private static List<String> actionAbilityName = new List<String>();
 
-        private static String[] actionAbilityHelpDesc;
+        private static List<String> actionAbilityHelpDesc = new List<String>();
 
         private static String[] characterNames;
 
@@ -656,12 +661,54 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetActionAbilityName(String[] value)
         {
-            actionAbilityName = value;
+            actionAbilityName.Capacity = Math.Min(value.Length, actionAbilityName.Capacity);
+            for (Int32 i = 0; i < value.Length; i++)
+            {
+                if (i >= actionAbilityName.Count)
+                    actionAbilityName.Add(value[i]);
+                else
+                    actionAbilityName[i] = value[i];
+            }
+        }
+
+        public static void SetActionAbilityName(Int32 id, String value)
+        {
+            if (id >= actionAbilityName.Count)
+            {
+                if (id > actionAbilityName.Count)
+                    actionAbilityName.AddRange(Enumerable.Repeat(String.Empty, id - actionAbilityName.Count));
+                actionAbilityName.Add(value);
+            }
+            else
+            {
+                actionAbilityName[id] = value;
+            }
         }
 
         public static void SetActionAbilityHelpDesc(String[] value)
         {
-            actionAbilityHelpDesc = value;
+            actionAbilityHelpDesc.Capacity = Math.Min(value.Length, actionAbilityHelpDesc.Capacity);
+            for (Int32 i = 0; i < value.Length; i++)
+            {
+                if (i >= actionAbilityHelpDesc.Count)
+                    actionAbilityHelpDesc.Add(value[i]);
+                else
+                    actionAbilityHelpDesc[i] = value[i];
+            }
+        }
+
+        public static void SetActionAbilityHelpDesc(Int32 id, String value)
+        {
+            if (id >= actionAbilityHelpDesc.Count)
+            {
+                if (id > actionAbilityHelpDesc.Count)
+                    actionAbilityHelpDesc.AddRange(Enumerable.Repeat(String.Empty, id - actionAbilityHelpDesc.Count));
+                actionAbilityHelpDesc.Add(value);
+            }
+            else
+            {
+                actionAbilityHelpDesc[id] = value;
+            }
         }
 
         public static void SetCharacterNames(String[] value)

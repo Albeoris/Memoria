@@ -189,6 +189,7 @@ public class btl_init
 		btl_util.SetShadow(pBtl, pParm.ShadowX, pParm.ShadowZ);
 		pBtl.shadow_bone[0] = pParm.ShadowBone;
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
+		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = 4096;
 	}
 
 	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int16 pNo)
@@ -377,18 +378,21 @@ public class btl_init
 			BTL_DATA btl_DATA = next;
 			Int32 index = 0;
 			Single num7 = num5;
+			next.original_pos[0] = num7;
 			next.evt.posBattle[0] = num7;
 			next.base_pos[0] = num7;
 			btl_DATA.pos[index] = num7;
 			BTL_DATA btl_DATA2 = next;
 			Int32 index2 = 1;
 			num7 = (!btl_stat.CheckStatus(next, BattleStatus.Float)) ? 0 : -200;
+			next.original_pos[1] = 0;
 			next.evt.posBattle[1] = num7;
 			next.base_pos[1] = num7;
 			btl_DATA2.pos[index2] = num7;
 			BTL_DATA btl_DATA3 = next;
 			Int32 index3 = 2;
 			num7 = num4 + (Int16)((next.bi.row == 0) ? -400 : 0);
+			next.original_pos[2] = num4;
 			next.evt.posBattle[2] = num7;
 			next.base_pos[2] = num7;
 			btl_DATA3.pos[index3] = num7;
@@ -401,6 +405,7 @@ public class btl_init
 			next.shadow_bone[0] = btl_init.ShadowDataPC[serial_no][0];
 			next.shadow_bone[1] = btl_init.ShadowDataPC[serial_no][1];
 			btl_util.SetShadow(next, btl_init.ShadowDataPC[serial_no][2], btl_init.ShadowDataPC[serial_no][3]);
+			next.geo_scale_x = next.geo_scale_y = next.geo_scale_z = 4096;
 			GameObject gameObject = FF9StateSystem.Battle.FF9Battle.map.shadowArray[next.bi.slot_no];
 			Vector3 localPosition = gameObject.transform.localPosition;
 			localPosition.z = btl_init.ShadowDataPC[serial_no][4];
@@ -438,7 +443,7 @@ public class btl_init
 		btl.elem.mgc = p.elem.mgc;
 		btl.elem.wpr = p.elem.wpr;
 		btl.level = p.level;
-		btl.max = p.max;
+		btl_init.CopyPoints(btl.max, p.max);
 		btl_init.CopyPoints(btl.cur, p.cur);
 		Byte serial_no = p.info.serial_no;
 		FF9Char ff9Char = new FF9Char();
@@ -603,6 +608,7 @@ public class btl_init
 		btl.summon_count = 0;
 		btl.critical_rate_deal_bonus = 0;
 		btl.critical_rate_receive_bonus = 0;
+		btl.is_monster_transform = false;
 	}
 
     public static void SetBattleModel(BTL_DATA btl)
@@ -693,7 +699,7 @@ public class btl_init
 
 	private static readonly UInt32[] enemy_dummy_sa = new UInt32[2];
 
-	private static Byte[][] ShadowDataPC = new Byte[][]
+	public static Byte[][] ShadowDataPC = new Byte[][]
 	{
 		new Byte[]
 		{

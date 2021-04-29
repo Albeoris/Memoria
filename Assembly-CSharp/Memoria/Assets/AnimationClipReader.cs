@@ -171,5 +171,24 @@ namespace Memoria.Assets
 			}
 			return clip;
 		}
+
+		public static void CreateDummyAnimationClip(GameObject geo, String name, Single length = 0f)
+		{
+			AnimationClip clip = new AnimationClip();
+			clip.legacy = true;
+			clip.name = name;
+			clip.frameRate = 30f;
+			Keyframe[] keys = length > 0f ? new Keyframe[] {
+				new Keyframe( 0f, 1f ),
+				new Keyframe( length, 1f )
+			} : new Keyframe[] {
+				new Keyframe( 0f, 1f )
+			};
+			AnimationCurve curve = new AnimationCurve(keys);
+			clip.SetCurve("bone000", typeof(Transform), "localScale.x", curve);
+			clip.SetCurve("bone000", typeof(Transform), "localScale.y", curve);
+			clip.SetCurve("bone000", typeof(Transform), "localScale.z", curve);
+			geo.GetComponent<Animation>().AddClip(clip, name);
+		}
 	}
 }

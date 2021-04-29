@@ -3,13 +3,14 @@ Shader "PSX/BattleMap_Ground" {
 		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
 		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
 		_Intensity ("Intensity", Float) = 128
+		_ZWrite ("ZWrite", Int) = 0
 	}
 	SubShader { 
 		LOD 100
 		Tags { "QUEUE"="AlphaTest+1" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
 		Pass {
 			Tags { "QUEUE"="AlphaTest+1" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
-			ZWrite Off
+			ZWrite [_ZWrite]
 			GpuProgramID 28340
 			Program "vp" {
 				SubProgram "d3d9 " {

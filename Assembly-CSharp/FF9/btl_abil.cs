@@ -171,7 +171,7 @@ namespace FF9
 
 	        targetUnit.Data.pos[2] -= 400f;
 
-	        btl_mot.setMotion(coverBy.Data, 15);
+	        btl_mot.setMotion(coverBy.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_COVER);
 	        coverBy.IsCovered = true;
 
             return coverBy.Id;
