@@ -217,7 +217,7 @@ public partial class BattleHUD : UIScene
 
     private void SetupCommandButton(GONavigationButton button, int cmdId, Boolean enabled, Boolean hardDisable = false)
 	{
-        enabled = enabled || hardDisable;
+        enabled = enabled && !hardDisable;
         button.SetLabelText(hardDisable ? String.Empty : FF9TextTool.CommandName(cmdId));
         ButtonGroupState.SetButtonEnable(button, enabled);
         ButtonGroupState.SetButtonAnimation(button, enabled);
