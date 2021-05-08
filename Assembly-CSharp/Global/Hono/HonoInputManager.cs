@@ -39,8 +39,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		};
 		this.defaultJoystickInputKeys = new String[]
 		{
-			"JoystickButton1",
 			"JoystickButton0",
+			"JoystickButton1",
 			"JoystickButton3",
 			"JoystickButton2",
 			"JoystickButton4",
@@ -52,8 +52,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		};
 		this.defaultAndroidJoystickInputKeys = new String[]
 		{
-			"JoystickButton1",
 			"JoystickButton0",
+			"JoystickButton1",
 			"JoystickButton3",
 			"JoystickButton2",
 			"JoystickButton4",
@@ -78,8 +78,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		};
 		this.defaultaaaaInputKeys = new String[]
 		{
-			"JoystickButton1",
 			"JoystickButton0",
+			"JoystickButton1",
 			"JoystickButton3",
 			"JoystickButton2",
 			"JoystickButton4",
