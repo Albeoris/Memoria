@@ -32,15 +32,22 @@ namespace Memoria.Assets.TexturePacker
             _tpsheetPath = Path.ChangeExtension(tpsheetPath, ".tpsheet");
             _texturePath = Path.ChangeExtension(tpsheetPath, ".png");
 
-            Exceptions.CheckFileNotFoundException(_texturePath);
             Exceptions.CheckFileNotFoundException(_tpsheetPath);
         }
 
-        public SpriteSheet Load()
+        public SpriteSheet Load(Texture2D texture = null)
         {
             try
             {
-                _texture = StreamingResources.LoadTexture2D(_texturePath);
+                if (texture == null)
+                {
+                    Exceptions.CheckFileNotFoundException(_texturePath);
+                    _texture = StreamingResources.LoadTexture2D(_texturePath);
+                }
+                else
+                {
+                    _texture = texture;
+                }
                 _sprites = new LinkedList<Sprite>();
                 using (_sr = new StreamReader(_tpsheetPath))
                 {

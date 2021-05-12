@@ -61,6 +61,15 @@ namespace Memoria.Assets
                     Texture2D fragment = TextureHelper.GetFragment(texture, sprite.x, texture.height - sprite.y - sprite.height, sprite.width, sprite.height);
                     TextureHelper.WriteTextureToFile(fragment, Path.Combine(outputDirectory, sprite.name + ".png"));
                 }
+
+                String outputPathTPSheet = outputDirectory + ".tpsheet";
+                String tpsheetText = ":format=40000\n"
+                //  + ":texture=" + texture.name + "\n"
+                //  + ":normalmap=\n";
+                    + ":size=" + texture.width + "x" + texture.height + "\n";
+                foreach (UISpriteData sprite in atlas.spriteList)
+                    tpsheetText += sprite.name + ";" + sprite.x + ";" + sprite.y + ";" + sprite.width + ";" + sprite.height + ";0;0\n"; // ;pivotX;pivotY unused
+                File.WriteAllText(outputPathTPSheet, tpsheetText);
             }
             catch (Exception ex)
             {

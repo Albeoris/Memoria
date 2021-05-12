@@ -40,46 +40,49 @@ public class UIAtlas : MonoBehaviour
 	{
 		try
 		{
-			String tpsheetPath = inputPath + ".tpsheet";
-
-			if (File.Exists(inputPath) && !File.Exists(tpsheetPath))
-			{
-				Byte[] raw = File.ReadAllBytes(inputPath);
-				Texture2D newFullAtlas = AssetManager.LoadTextureGeneric(raw);
-				if (newFullAtlas == null)
-					newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
-				SetTexture(newFullAtlas);
-				return true;
-			}
-
-			if (!File.Exists(tpsheetPath))
+			if (!File.Exists(inputPath))
 				return false;
 
+			Byte[] raw = File.ReadAllBytes(inputPath);
+			Texture2D newFullAtlas = AssetManager.LoadTextureGeneric(raw);
+			if (newFullAtlas == null)
+				newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
+			SetTexture(newFullAtlas);
+
+			String tpsheetPath = inputPath + ".tpsheet";
+			if (!File.Exists(tpsheetPath))
+				return true;
+
 			TPSpriteSheetLoader loader = new TPSpriteSheetLoader(tpsheetPath);
-			SpriteSheet spriteSheet = loader.Load();
+			SpriteSheet spriteSheet = loader.Load(newFullAtlas);
 
 			Dictionary<String, UISpriteData> original = mSprites.ToDictionary(s => s.name);
 			Dictionary<String, UnityEngine.Sprite> external = spriteSheet.sheet.ToDictionary(s => s.name);
-			if (original.Count != external.Count)
-			{
-				Log.Warning("[UIAtlas] Invalid sprite number: {0}, expected: {1}", external.Count, original.Count);
-				return false;
-			}
 
-			Texture2D newTexture = spriteSheet.sheet[0].texture;
-			foreach (KeyValuePair<String, UISpriteData> pair in original)
+			// Combine original and external (with external updating existing sprites)
+			foreach (KeyValuePair<String, UnityEngine.Sprite> pair in external)
 			{
-				UISpriteData target = pair.Value;
-				UnityEngine.Sprite source = external[pair.Key];
-
-				target.x = (Int32)source.rect.x;
-				target.y = (Int32)(newTexture.height - source.rect.height - source.rect.y);
-				target.width = (Int32)source.rect.width;
-				target.height = (Int32)source.rect.height;
+				UISpriteData uispriteData = new UISpriteData();
+				UnityEngine.Sprite extSprite = pair.Value;
+				uispriteData.name = extSprite.name;
+				uispriteData.x = (Int32)extSprite.rect.x;
+				uispriteData.y = (Int32)extSprite.rect.y;
+				uispriteData.width = (Int32)extSprite.rect.width;
+				uispriteData.height = (Int32)extSprite.rect.height;
+				uispriteData.paddingLeft = 0;
+				uispriteData.paddingRight = 0;
+				uispriteData.paddingBottom = 0;
+				uispriteData.paddingTop = 0;
+				uispriteData.borderLeft = 0;
+				uispriteData.borderRight = 0;
+				uispriteData.borderBottom = 0;
+				uispriteData.borderTop = 0;
+				original[pair.Key] = uispriteData;
 			}
+			mSprites = original.Values.ToList();
 
 			mReplacement = null;
-			SetTexture(newTexture);
+			SetTexture(newFullAtlas);
 			return true;
 		}
 		catch (Exception ex)
