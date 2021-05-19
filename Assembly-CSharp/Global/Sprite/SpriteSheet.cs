@@ -12,4 +12,11 @@ public class SpriteSheet : ScriptableObject
 	}
 
 	public Sprite[] sheet;
+	public SpriteSheet.Info[] info; // Should be either null or same size as sheet
+
+	public class Info
+	{
+		public Vector4 padding;
+		public Vector4 border;
+	}
 }

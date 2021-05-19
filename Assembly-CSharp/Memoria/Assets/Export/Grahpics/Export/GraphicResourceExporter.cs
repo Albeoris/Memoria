@@ -68,7 +68,13 @@ namespace Memoria.Assets
                 //  + ":normalmap=\n";
                     + ":size=" + texture.width + "x" + texture.height + "\n";
                 foreach (UISpriteData sprite in atlas.spriteList)
-                    tpsheetText += sprite.name + ";" + sprite.x + ";" + sprite.y + ";" + sprite.width + ";" + sprite.height + ";0;0\n"; // ;pivotX;pivotY unused
+                {
+                    tpsheetText += sprite.name + ";" + sprite.x + ";" + sprite.y + ";" + sprite.width + ";" + sprite.height;
+                    tpsheetText += ";0;0"; // pivotX & pivotY, unused
+                    tpsheetText += ";" + sprite.paddingLeft + ";" + sprite.paddingRight + ";" + sprite.paddingTop + ";" + sprite.paddingBottom;
+                    tpsheetText += ";" + sprite.borderBottom + ";" + sprite.borderRight + ";" + sprite.borderTop + ";" + sprite.borderBottom;
+                    tpsheetText += "\n";
+                }
                 File.WriteAllText(outputPathTPSheet, tpsheetText);
             }
             catch (Exception ex)

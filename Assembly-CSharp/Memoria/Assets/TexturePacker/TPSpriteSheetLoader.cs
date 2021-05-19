@@ -26,6 +26,7 @@ namespace Memoria.Assets.TexturePacker
         private Int32 _textureWidth;
         private Int32 _textureHeight;
         private LinkedList<Sprite> _sprites;
+        private LinkedList<SpriteSheet.Info> _spriteInfos;
 
         public TPSpriteSheetLoader(String tpsheetPath)
         {
@@ -49,6 +50,7 @@ namespace Memoria.Assets.TexturePacker
                     _texture = texture;
                 }
                 _sprites = new LinkedList<Sprite>();
+                _spriteInfos = new LinkedList<SpriteSheet.Info>();
                 using (_sr = new StreamReader(_tpsheetPath))
                 {
                     while (!_sr.EndOfStream)
@@ -58,7 +60,8 @@ namespace Memoria.Assets.TexturePacker
                 return new SpriteSheet
                 {
                     name = "TPSheet_" + _textureName + Interlocked.Increment(ref _counter),
-                    sheet = _sprites.ToArray()
+                    sheet = _sprites.ToArray(),
+                    info = _spriteInfos.ToArray()
                 };
             }
             finally
@@ -163,6 +166,7 @@ namespace Memoria.Assets.TexturePacker
             if (parts.Length < 7)
                 return;
 
+            SpriteSheet.Info info = new SpriteSheet.Info();
             String name = TPSheetSpriteNameFormatter.UnescapeSpecialChars(parts[0]);
             Int32 frameX = Int32.Parse(parts[1], CultureInfo.InvariantCulture);
             Int32 frameY = Int32.Parse(parts[2], CultureInfo.InvariantCulture);
@@ -170,6 +174,20 @@ namespace Memoria.Assets.TexturePacker
             Int32 frameH = Int32.Parse(parts[4], CultureInfo.InvariantCulture);
             Single pivotX = Single.Parse(parts[5], CultureInfo.InvariantCulture);
             Single pivotY = Single.Parse(parts[6], CultureInfo.InvariantCulture);
+            if (parts.Length > 10)
+                info.padding = new Vector4(Single.Parse(parts[7], CultureInfo.InvariantCulture),
+                    Single.Parse(parts[8], CultureInfo.InvariantCulture),
+                    Single.Parse(parts[9], CultureInfo.InvariantCulture),
+                    Single.Parse(parts[10], CultureInfo.InvariantCulture));
+            else
+                info.padding = new Vector4();
+            if (parts.Length > 14)
+                info.border = new Vector4(Single.Parse(parts[11], CultureInfo.InvariantCulture),
+                    Single.Parse(parts[12], CultureInfo.InvariantCulture),
+                    Single.Parse(parts[13], CultureInfo.InvariantCulture),
+                    Single.Parse(parts[14], CultureInfo.InvariantCulture));
+            else
+                info.border = new Vector4();
 
             Sprite sprite = Sprite.Create(_texture, new Rect(frameX, frameY, frameW, frameH), new Vector2(pivotX, pivotY));
             sprite.name = name;
@@ -200,6 +218,7 @@ namespace Memoria.Assets.TexturePacker
                 sprite.OverrideGeometry(vertices ?? sprite.vertices, triangleIndices ?? sprite.triangles);
 
             _sprites.AddLast(sprite);
+            _spriteInfos.AddLast(info);
         }
     }
 }

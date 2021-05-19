@@ -54,30 +54,43 @@ public class UIAtlas : MonoBehaviour
 				return true;
 
 			TPSpriteSheetLoader loader = new TPSpriteSheetLoader(tpsheetPath);
-			SpriteSheet spriteSheet = loader.Load(newFullAtlas);
-
+			SpriteSheet external = loader.Load(newFullAtlas);
 			Dictionary<String, UISpriteData> original = mSprites.ToDictionary(s => s.name);
-			Dictionary<String, UnityEngine.Sprite> external = spriteSheet.sheet.ToDictionary(s => s.name);
 
 			// Combine original and external (with external updating existing sprites)
-			foreach (KeyValuePair<String, UnityEngine.Sprite> pair in external)
+			for (Int32 i = 0; i < external.sheet.Length; i++)
 			{
 				UISpriteData uispriteData = new UISpriteData();
-				UnityEngine.Sprite extSprite = pair.Value;
+				UnityEngine.Sprite extSprite = external.sheet[i];
+				SpriteSheet.Info extInfo = external.info?[i];
 				uispriteData.name = extSprite.name;
 				uispriteData.x = (Int32)extSprite.rect.x;
 				uispriteData.y = (Int32)extSprite.rect.y;
 				uispriteData.width = (Int32)extSprite.rect.width;
 				uispriteData.height = (Int32)extSprite.rect.height;
-				uispriteData.paddingLeft = 0;
-				uispriteData.paddingRight = 0;
-				uispriteData.paddingBottom = 0;
-				uispriteData.paddingTop = 0;
-				uispriteData.borderLeft = 0;
-				uispriteData.borderRight = 0;
-				uispriteData.borderBottom = 0;
-				uispriteData.borderTop = 0;
-				original[pair.Key] = uispriteData;
+				if (extInfo != null)
+				{
+					uispriteData.paddingLeft = (Int32)extInfo.padding[0];
+					uispriteData.paddingRight = (Int32)extInfo.padding[1];
+					uispriteData.paddingTop = (Int32)extInfo.padding[2];
+					uispriteData.paddingBottom = (Int32)extInfo.padding[3];
+					uispriteData.borderLeft = (Int32)extInfo.border[0];
+					uispriteData.borderRight = (Int32)extInfo.border[1];
+					uispriteData.borderTop = (Int32)extInfo.border[2];
+					uispriteData.borderBottom = (Int32)extInfo.border[3];
+				}
+				else
+				{
+					uispriteData.paddingLeft = 0;
+					uispriteData.paddingRight = 0;
+					uispriteData.paddingTop = 0;
+					uispriteData.paddingBottom = 0;
+					uispriteData.borderLeft = 0;
+					uispriteData.borderRight = 0;
+					uispriteData.borderTop = 0;
+					uispriteData.borderBottom = 0;
+				}
+				original[extSprite.name] = uispriteData;
 			}
 			mSprites = original.Values.ToList();
 
