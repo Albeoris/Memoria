@@ -343,9 +343,11 @@ namespace Memoria
 
         public void Kill()
         {
-            Data.cur.hp = 0;
-            Data.bi.death_f = 1;
+            CurrentHp = 0; // When using the 10 000 HP enemy threshold system (with CustomBattleFlagsMeaning == 1), Kill only set the enemy's HP to 1 assuming it will trigger its dying sequence
+            if (Data.cur.hp > 0) // Also, let the script handle the animations and sounds in that case
+                return;
 
+            Data.bi.death_f = 1;
             if (Data.bi.player == 0)
                 btl_util.SetEnemyDieSound(Data, btl_util.getEnemyTypePtr(Data).die_snd_no);
 

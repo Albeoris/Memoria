@@ -1067,7 +1067,7 @@ namespace FF9
 				else
 					btl_mot.setMotion(btl.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1);
 			}
-			else if (btl.CurrentHp == 0 && btl.Enemy.Data.info.die_dmg != 0)
+			else if (btl.Data.cur.hp == 0 && btl.Enemy.Data.info.die_dmg != 0)
 			{
 				btl_mot.setMotion(btl.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2);
 				btl_util.SetEnemyDieSound(btl.Data, btl.EnemyType.die_snd_no);

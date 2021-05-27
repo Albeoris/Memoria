@@ -207,7 +207,7 @@ public class btl_para
                 num >>= 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
-                if (btl.cur.hp > num)
+                if (GetLogicalHP(btl, false) > num)
                 {
                     if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
                     {
@@ -233,7 +233,7 @@ public class btl_para
             if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
                 btl.fig_stat_info |= 8;
-                if (btl.cur.hp > num)
+                if (GetLogicalHP(btl, false) > num)
                 {
                     btl.cur.hp -= num;
                 }
