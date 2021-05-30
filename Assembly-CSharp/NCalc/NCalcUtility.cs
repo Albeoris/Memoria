@@ -43,7 +43,7 @@ namespace NCalc
             else if (name == "GetAbilityUsageCount" && args.Parameters.Length == 1)
                 args.Result = (Int32)GameState.AbilityUsage((Byte)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
-                args.Result = ff9item.FF9Item_GetCount((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue));
+                args.Result = GameState.ItemCount((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue));
             else if ((name == "CheckAnyStatus" || name == "CheckAllStatus") && args.Parameters.Length >= 2) // operators & and | are only working with UInt16 and smaller types in NCalc...
             {
                 UInt64 v1 = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
@@ -82,7 +82,13 @@ namespace NCalc
             else if (name == "DragonCount") args.Result = (Int32)GameState.Dragons;
             else if (name == "FrogCount") args.Result = (Int32)GameState.Frogs;
             else if (name == "StealCount") args.Result = (Int32)GameState.Thefts;
+            else if (name == "EscapeCount") args.Result = (Int32)GameState.EscapeCount;
+            else if (name == "StepCount") args.Result = (Int32)GameState.StepCount;
             else if (name == "TonberryCount") args.Result = (Int32)GameState.Tonberies;
+            else if (name == "TetraMasterWinCount") args.Result = (Int32)GameState.TetraMasterWin;
+            else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
+            else if (name == "TetraMasterDrawCount") args.Result = (Int32)GameState.TetraMasterDraw;
+            else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "CalcMainCounter") args.Result = btl_cmd.cmd_effect_counter;
         };
 
@@ -103,6 +109,11 @@ namespace NCalc
             expr.Parameters["PlayerCategory"] = (Int32)play.category;
             expr.Parameters["MPCostFactor"] = (Int32)play.mpCostFactor;
             expr.Parameters["CharacterIndex"] = (Int32)play.Index;
+            expr.Parameters["WeaponId"] = (Int32)play.equip.Weapon;
+            expr.Parameters["HeadId"] = (Int32)play.equip.Head;
+            expr.Parameters["WristId"] = (Int32)play.equip.Wrist;
+            expr.Parameters["ArmorId"] = (Int32)play.equip.Armor;
+            expr.Parameters["AccessoryId"] = (Int32)play.equip.Accessory;
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == "HasSA" && args.Parameters.Length == 1)
@@ -183,6 +194,11 @@ namespace NCalc
             expr.Parameters[prefix + "IsMagicEvadeModified"] = unit.StatModifier[5];
             expr.Parameters[prefix + "CriticalRateBonus"] = (Int32)unit.CriticalRateBonus;
             expr.Parameters[prefix + "CriticalRateWeakening"] = (Int32)unit.CriticalRateWeakening;
+            expr.Parameters[prefix + "WeaponId"] = (Int32)unit.Weapon;
+            expr.Parameters[prefix + "HeadId"] = (Int32)unit.Head;
+            expr.Parameters[prefix + "WristId"] = (Int32)unit.Wrist;
+            expr.Parameters[prefix + "ArmorId"] = (Int32)unit.Armor;
+            expr.Parameters[prefix + "AccessoryId"] = (Int32)unit.Accessory;
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)

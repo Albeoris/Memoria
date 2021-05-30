@@ -31,7 +31,14 @@ namespace Memoria
         public static Int16 Frogs => FF9StateSystem.Common.FF9.Frogs.Number;
         public static Int16 Dragons => FF9StateSystem.Common.FF9.dragon_no;
         public static Byte Tonberies => battle.TONBERI_COUNT;
+        public static UInt16 EscapeCount => FF9StateSystem.Common.FF9.party.escape_no;
+        public static Int32 StepCount => FF9StateSystem.EventState.gStepCount;
+        public static Int16 TetraMasterWin => FF9StateSystem.MiniGame.SavedData.sWin;
+        public static Int16 TetraMasterLoss => FF9StateSystem.MiniGame.SavedData.sLose;
+        public static Int16 TetraMasterDraw => FF9StateSystem.MiniGame.SavedData.sDraw;
+        public static Int32 GameTime => Convert.ToInt32(FF9StateSystem.Settings.time);
         public static Byte AbilityUsage(Byte index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
+        public static Int32 ItemCount(Int32 id) => id >= EventEngine.kSItemOfs ? (id >= EventEngine.kCItemOfs ? QuadMistDatabase.MiniGame_GetCardCount(id - EventEngine.kCItemOfs) : (!ff9item.FF9Item_IsExistImportant(id - EventEngine.kSItemOfs) ? 0 : 1)) : ff9item.FF9Item_GetCount(id); // Same as "EventEngine.DoCalcOperationExt(100)"
         public static Byte[] GeneralVariable => FF9StateSystem.EventState.gEventGlobal;
 
         public static UInt32 Gil
@@ -403,9 +410,6 @@ namespace Memoria
 
         public void CalcPhysicalHpDamage()
         {
-            if (!Target.IsZombie && Caster.IsHealingRod)
-                Target.Flags |= CalcFlag.HpRecovery;
-
             CalcDamageCommon();
 
             Target.HpDamage = Context.EnsureAttack * Context.EnsurePowerDifference;

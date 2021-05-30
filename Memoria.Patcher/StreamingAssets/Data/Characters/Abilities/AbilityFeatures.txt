@@ -9,6 +9,12 @@
 ##  Generic comments should be placed at the beginning of the file
 ##  All the supporting abilities do not have to be present when inside mods
 ##  
+##  A special group of features can be optionally defined using ">SA Global" or ">SA GlobalLast"
+##  Features in these global blocks will always apply,
+##  even when no Supporting Ability is active, even for enemies
+##  These Global feature blocks can be used to link features with pieces of equipment
+##  The "Global" block applies before other supporting abilities while "GlobalLast" applies after
+##  
 #####################################################################################################
 ##  
 ##  It is important for the keyword ">SA" and for the feature types to be at the start of a new line
@@ -20,10 +26,11 @@
 ##  
 ##  There are 6 different feature types:
 ##  
-##  Permanent -> Applies as soon as the ability is enabled,
+##  Permanent -> Applies as soon as the ability is enabled (refreshes when equipment changes),
 ##    typically for stat modifications of a player character
 ##    Arguments:
-##      [code={Prop.}] {Formula} [/code] -> Modify the property according to the formula
+##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
+##      [code={Prop.}] {Formula} [/code]   -> Modify the property according to the formula
 ##  
 ##  BattleStart -> Applies when a battle is triggered, at the moment of picking the start type,
 ##    typically for changing the chances to have a back attack or preemptive start type
@@ -39,6 +46,7 @@
 ##      AutoStatus {Status Name}           -> Let the character have a permanent status
 ##      InitialStatus {Status Name}        -> Let the character start the battle with a status
 ##      ResistStatus {Status Name}         -> Let the character be immune to a status
+##      InitialATB {ATB Pourcent}          -> Fill the character's ATB at start (100 for a full gauge)
 ##  
 ##  Ability -> Apply an effect at some point during an ability's effect calculation
 ##    typically for increasing the power of some attacks or triggering a reaction
@@ -127,7 +135,7 @@
 ##    GetRandom(min, max)              -> Return a random number between min and max-1
 ##    GetRandom()                      -> Same as GetRandom(0, 256)
 ##    GetAbilityUsageCount(ability ID) -> Return the number of time the player used an ability
-##    GetItemCount(item ID)            -> Return the number of items owned by the player
+##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
 ##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list
 ##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list
 ##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list
@@ -137,12 +145,17 @@
 ##    DragonCount                      -> The number of dragon-type enemies killed
 ##    FrogCount                        -> The number of frogs catched
 ##    StealCount                       -> The number of successful steals
+##    EscapeCount                      -> The number of successful flees (either way)
 ##    TonberryCount                    -> The number of Tonberries killed
+##    TetraMasterWinCount              -> The number of Tetra Master wins
+##    TetraMasterLossCount             -> The number of Tetra Master losses
+##    TetraMasterDrawCount             -> The number of Tetra Master draws
+##    GameTime                         -> The total duration of the played game, in seconds
 ##    CalcMainCounter                  -> The number of times the current ability's effect triggered
 ##                                        (multi-target abilities and multi-hit abilities)
 ##  
 ##  Permanent:
-##    Level, Exp, CharacterIndex,
+##    Level, Exp, CharacterIndex, WeaponId, HeadId, WristId, ArmorId, AccessoryId,
 ##    HasSA(support ability ID),
 ##    (+ modifiable properties)
 ##  
@@ -151,11 +164,12 @@
 ##  StatusInit:
 ##    MaxHP, MaxMP, MaxATB, HP, MP, ATB, Trance, InTrance, CurrentStatus, PermanentStatus,
 ##    ResistStatus, HalfElement, GuardElement, AbsorbElement, WeakElement, BonusElement, WeaponPower,
-##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, Row, Position, SummonCount, IsPlayer,
-##    IsSlave, IsOutOfReach, Level, Exp, Speed, Strength, Magic, Spirit, Defence, Evade, MagicDefence,
-##    MagicEvade, PlayerCategory, Category, CharacterIndex, IsStrengthModified, IsMagicModified,
-##    IsEvadeModified, IsDefenceModified, IsMagicDefenceModified, IsMagicEvadeModified,
-##    CriticalRateBonus, CriticalRateWeakening, HasSA(support ability ID)
+##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, , WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, Row, Position, SummonCount, IsPlayer, IsSlave, IsOutOfReach, Level, Exp, Speed,
+##    Strength, Magic, Spirit, Defence, Evade, MagicDefence, MagicEvade, PlayerCategory, Category,
+##    CharacterIndex, IsStrengthModified, IsMagicModified, IsEvadeModified, IsDefenceModified,
+##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
+##    HasSA(support ability ID)
 ##  
 ##  Ability:
 ##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
@@ -178,8 +192,9 @@
 ##  
 ##  BattleResult:
 ##    Level, Exp, CharacterIndex, MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
-##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor, HasSA(support ability ID),
-##    IsFlee, IsFleeByLuck
+##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor, WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, IsFlee, IsFleeByLuck,
+##    HasSA(support ability ID),
 ##    (+ modifiable properties)
 ##  
 #####################################################################################################
@@ -187,12 +202,25 @@
 ##  Examples:
 ##  
 ##  
+##  Make the claws Avenger start the battle with Doom
+##  Also triggers a counter-attack with the sword Defender when the character is defending
+##  Also make the staff Mace of Zeus reduce MP cost of all spells to 0
+##  
+##  >SA Global
+##  StatusInit [code=Condition] WeaponId == 47 [/code] InitialStatus Doom
+##  Ability AsTarget
+##   [code=Condition] TargetWeaponId == 25 && CheckAnyStatus(TargetCurrentStatus, 32768) && CommandId <= 47 && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+##   [code=Counter] 176 [/code]
+##   DisableSA 36 54 56
+##  Permanent [code=Condition] WeaponId == 78 [/code] [code=MPCostFactor] 0 [/code]
+##  
+##  
 ##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
 ##  and give both if Defence == MagicDefence
 ##  
 ##  >SA 0
-##  StatusInit [code=Condition] Defence <= MagicDefence [/code] AutoStatus Shell
-##  StatusInit [code=Condition] MagicDefence <= Defence [/code] AutoStatus Protect
+##  StatusInit [code=Condition] Defence <= MagicDefence [/code] AutoStatus Protect
+##  StatusInit [code=Condition] MagicDefence <= Defence [/code] AutoStatus Shell
 ##  
 ##  
 ##  Save the user from fatal damage at the cost of half of the trance gauge (max is 255),
@@ -286,6 +314,11 @@
 ##   256 -> Add Status, add the caster's weapon status at the end of the effect, before damage
 ##  
 #####################################################################################################
+
+>SA Global Healing Rod's effect
+Ability WhenCalcDamage EvenImmobilized
+[code=Condition] CasterWeaponId == 60 && AbilityId == 176 && (TargetCategory & 16) == 0 && !CheckAnyStatus(TargetCurrentStatus, 64) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | 2 [/code]
 
 
 >SA 0 Auto-Reflect

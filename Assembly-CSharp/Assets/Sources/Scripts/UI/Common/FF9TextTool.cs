@@ -661,7 +661,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetActionAbilityName(String[] value)
         {
-            actionAbilityName.Capacity = Math.Min(value.Length, actionAbilityName.Capacity);
+            actionAbilityName.Capacity = Math.Max(value.Length, actionAbilityName.Capacity);
             for (Int32 i = 0; i < value.Length; i++)
             {
                 if (i >= actionAbilityName.Count)
@@ -687,7 +687,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetActionAbilityHelpDesc(String[] value)
         {
-            actionAbilityHelpDesc.Capacity = Math.Min(value.Length, actionAbilityHelpDesc.Capacity);
+            actionAbilityHelpDesc.Capacity = Math.Max(value.Length, actionAbilityHelpDesc.Capacity);
             for (Int32 i = 0; i < value.Length; i++)
             {
                 if (i >= actionAbilityHelpDesc.Count)

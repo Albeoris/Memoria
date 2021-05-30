@@ -60,9 +60,13 @@ namespace FF9
         public static List<SupportingAbilityFeature> GetEnabledSA(UInt32[] sa)
         {
             List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
+            if (_FF9Abil_SaFeature.Contains(-1)) // Global
+                result.Add(_FF9Abil_SaFeature[-1]);
             for (Int32 saIndex = 0; saIndex < 64; saIndex++)
                 if ((sa[saIndex >> 5] & 1 << saIndex) != 0L)
                     result.Add(_FF9Abil_SaFeature[saIndex]);
+            if (_FF9Abil_SaFeature.Contains(-2)) // GlobalLast
+                result.Add(_FF9Abil_SaFeature[-2]);
             return result;
         }
 
@@ -293,11 +297,15 @@ namespace FF9
 
         private static void LoadSupportingAbilityFeatureFile(ref EntryCollection<SupportingAbilityFeature> entries, String input)
 		{
-            MatchCollection saMatches = new Regex(@"^(>SA)\s+(\d+).*()", RegexOptions.Multiline).Matches(input);
+            MatchCollection saMatches = new Regex(@"^(>SA)\s+(\d+|Global|GlobalLast).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < saMatches.Count; i++)
 			{
                 Int32 saIndex;
-                if (!Int32.TryParse(saMatches[i].Groups[2].Value, out saIndex))
+                if (String.Compare(saMatches[i].Groups[2].Value, "Global") == 0)
+                    saIndex = -1;
+                else if (String.Compare(saMatches[i].Groups[2].Value, "GlobalLast") == 0)
+                    saIndex = -2;
+                else if (!Int32.TryParse(saMatches[i].Groups[2].Value, out saIndex))
                     continue;
                 Int32 endPos, startPos = saMatches[i].Groups[3].Captures[0].Index+1;
                 if (i + 1 == saMatches.Count)

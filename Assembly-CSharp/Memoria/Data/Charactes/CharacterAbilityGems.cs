@@ -38,6 +38,7 @@ namespace Memoria.Data
     {
         public class SupportingAbilityEffectPermanent
         {
+            public String Condition = "";
             public Dictionary<String, String> Formula = new Dictionary<String, String>();
         }
         public class SupportingAbilityEffectBattleStartType
@@ -58,6 +59,7 @@ namespace Memoria.Data
             public BattleStatus PermanentStatus = 0;
             public BattleStatus InitialStatus = 0;
             public BattleStatus ResistStatus = 0;
+            public Int32 InitialATB = -1;
         }
         public class SupportingAbilityEffectAbilityUse
         {
@@ -87,11 +89,21 @@ namespace Memoria.Data
         {
             for (Int32 i = 0; i < PermanentEffect.Count; i++)
             {
+                if (PermanentEffect[i].Condition.Length > 0)
+                {
+                    Expression c = new Expression(PermanentEffect[i].Condition);
+                    NCalcUtility.InitializeExpressionPlayer(ref c, play);
+                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                        continue;
+                }
                 foreach (KeyValuePair<String, String> formula in PermanentEffect[i].Formula)
                 {
                     Expression e = new Expression(formula.Value);
                     NCalcUtility.InitializeExpressionPlayer(ref e, play);
                     e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     if (String.Compare(formula.Key, "MaxHP") == 0) play.max.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.hp);
                     else if (String.Compare(formula.Key, "MaxMP") == 0) play.max.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.mp);
                     else if (String.Compare(formula.Key, "Speed") == 0) play.basis.dex = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.dex);
@@ -207,12 +219,14 @@ namespace Memoria.Data
                 unit.PermanentStatus |= StatusEffect[i].PermanentStatus;
                 unit.CurrentStatus |= StatusEffect[i].InitialStatus;
                 unit.ResistStatus |= StatusEffect[i].ResistStatus;
+                if (StatusEffect[i].InitialATB >= 0)
+                    unit.CurrentAtb = (Int16)Math.Max(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
             }
         }
 
         public void TriggerOnAbility(BattleCalculator calc, String when, Boolean asTarget)
         {
-            if (calc.Context.DisabledSA[Id])
+            if (Id >= 0 && calc.Context.DisabledSA[Id])
                 return;
             Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatus.NoReaction) : !calc.Caster.IsUnderAnyStatus(BattleStatus.NoReaction);
             for (Int32 i = 0; i < AbilityEffect.Count; i++)
@@ -462,7 +476,12 @@ namespace Memoria.Data
                 {
                     SupportingAbilityEffectPermanent newEffect = new SupportingAbilityEffectPermanent();
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
-                        newEffect.Formula[formula.Groups[1].Value] = formula.Groups[2].Value;
+                    {
+                        if (String.Compare(formula.Groups[1].Value, "Condition") == 0)
+                            newEffect.Condition = formula.Groups[2].Value;
+                        else
+                            newEffect.Formula[formula.Groups[1].Value] = formula.Groups[2].Value;
+                    }
                     PermanentEffect.Add(newEffect);
                 }
                 else if (String.Compare(saCode, "BattleStart") == 0)
@@ -503,23 +522,30 @@ namespace Memoria.Data
                         if (String.Compare(formula.Groups[1].Value, "Condition") == 0)
                             newEffect.Condition = formula.Groups[2].Value;
                     }
-                    foreach (Match statusMatch in new Regex(@"\b(Auto|Initial|Resist)Status\s+(\w+)\b").Matches(saArgs))
+                    foreach (Match statusMatch in new Regex(@"\b((Auto|Initial|Resist)Status|InitialATB)\s+(\w+|\d+)\b").Matches(saArgs))
                     {
-                        BattleStatus stat = 0;
-                        foreach (BattleStatus s in (BattleStatus[])Enum.GetValues(typeof(BattleStatus)))
-                            if (String.Compare(statusMatch.Groups[2].Value, s.ToString()) == 0)
-                            {
-                                stat = s;
-                                break;
-                            }
-                        if (stat != 0)
+                        if (String.Compare(statusMatch.Groups[1].Value, "InitialATB") == 0)
                         {
-                            if (String.Compare(statusMatch.Groups[1].Value, "Auto") == 0)
-                                newEffect.PermanentStatus |= stat;
-                            else if (String.Compare(statusMatch.Groups[1].Value, "Initial") == 0)
-                                newEffect.InitialStatus |= stat;
-                            else if (String.Compare(statusMatch.Groups[1].Value, "Resist") == 0)
-                                newEffect.ResistStatus |= stat;
+                            Int32.TryParse(statusMatch.Groups[3].Value, out newEffect.InitialATB);
+                        }
+                        else
+                        {
+                            BattleStatus stat = 0;
+                            foreach (BattleStatus s in (BattleStatus[])Enum.GetValues(typeof(BattleStatus)))
+                                if (String.Compare(statusMatch.Groups[3].Value, s.ToString()) == 0)
+                                {
+                                    stat = s;
+                                    break;
+                                }
+                            if (stat != 0)
+                            {
+                                if (String.Compare(statusMatch.Groups[2].Value, "Auto") == 0)
+                                    newEffect.PermanentStatus |= stat;
+                                else if (String.Compare(statusMatch.Groups[2].Value, "Initial") == 0)
+                                    newEffect.InitialStatus |= stat;
+                                else if (String.Compare(statusMatch.Groups[2].Value, "Resist") == 0)
+                                    newEffect.ResistStatus |= stat;
+                            }
                         }
 					}
                     StatusEffect.Add(newEffect);

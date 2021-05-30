@@ -145,6 +145,7 @@ public class EquipUI : UIScene
 			this.UpdateCharacterData(player2);
 			this.DisplayEquipment();
 			this.DisplayParameter();
+			this.DisplayPlayer(false);
 		}
 
 		this.ClearChangeParameter();

@@ -206,6 +206,10 @@ namespace Memoria
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
         public WeaponItem Weapon => IsPlayer ? (WeaponItem)btl_util.getWeaponNumber(Data) : WeaponItem.NoWeapon;
+        public Byte Head => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Head : (Byte)255;
+        public Byte Wrist => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Wrist : (Byte)255;
+        public Byte Armor => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Armor : (Byte)255;
+        public Byte Accessory => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Accessory : (Byte)255;
         public Boolean IsHealingRod => IsPlayer && Weapon == WeaponItem.HealingRod;
 
         public Boolean[] StatModifier

@@ -386,6 +386,11 @@ public class JsonParser : ISharedDataParser
 		{
 			FF9StateSystem.Achievement.summon_arc = jsonnode["98000_Achievement"]["000017_summon_arc"].AsBool;
 		}
+		for (Int32 i = 0; i < 9; i++)
+		{
+			// Run "FF9Play_Update" anyway when loading data, mostly for "SupportingAbilityFeature.TriggerOnEnable"
+			ff9play.FF9Play_Update(FF9StateSystem.Common.FF9.player[i]);
+		}
 	}
 
 	private UInt16 getExtraCap(PLAYER player)
