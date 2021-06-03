@@ -1373,14 +1373,14 @@ public static class FF9Snd
 		return -1;
 	}
 
-	public static void ff9fieldSoundCharService(FF9Char[] CharPtrArray, Int32 CharCount)
+	public static void ff9fieldSoundCharService(List<FF9Char> CharArray, Int32 CharCount)
 	{
 		FF9StateFieldMap map = FF9StateSystem.Field.FF9Field.loc.map;
 		FF9FieldCharSound[] charSoundArray = map.charSoundArray;
 		Int32 charSoundUse = map.charSoundUse;
 		for (Int32 i = CharCount - 1; i >= 0; i--)
 		{
-			FF9Char ff9Char = CharPtrArray[i];
+			FF9Char ff9Char = CharArray[i];
 			if (ff9Char != null)
 			{
 				if (FF9Snd.ff9charptr_attr_test(ff9Char, 64) == 0L)

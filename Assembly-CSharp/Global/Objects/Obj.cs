@@ -68,11 +68,11 @@ public class Obj
 		Obj.neckTurnData = new Byte[]
 		{
 			0,
-			167,
+			167, // Turn
 			0,
-			0,
-			80,
-			4
+			0, // <- write angle there for autoturn
+			80, // WaitTurn
+			4 // return
 		};
 	}
 

@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class EventContext
 {
 	public EventContext()
 	{
-		this.mapvar = new Byte[80];
+		this.mapvar = new Byte[80]; // variables of type "global" in Hades Workshop, not shared between fields but shared between entries
 		this.objbuf = new Int32[1280];
-		this.objlist = new ObjList[32];
+		this.objlist = new List<ObjList>(32); // Start with 32 possible entries to be used simultaneously
 		for (Int32 i = 0; i < 32; i++)
 		{
-			this.objlist[i] = new ObjList();
+			this.objlist.Add(new ObjList());
 		}
 		this.partyUID = new Byte[EventContext.partyUIDSize];
 		this.watch = new Watch[16];
@@ -29,13 +30,12 @@ public class EventContext
 		{
 			this.objbuf[j] = ec.objbuf[j];
 		}
-		for (Int32 k = 0; k < 32; k++)
+		for (Int32 l = 0; l < Math.Max(this.objlist.Count, ec.objlist.Count); l++)
 		{
-		}
-		for (Int32 l = 0; l < 32; l++)
-		{
+			if (l >= this.objlist.Count)
+				this.objlist.Add(new ObjList());
 			this.objlist[l] = (ObjList)null;
-			if (ec.objlist[l] != null)
+			if (l < ec.objlist.Count && ec.objlist[l] != null)
 			{
 				this.objlist[l] = new ObjList();
 				this.objlist[l].copy(ec.objlist[l]);
@@ -44,12 +44,12 @@ public class EventContext
 				}
 			}
 		}
-		for (Int32 m = 0; m < 32; m++)
+		for (Int32 m = 0; m < ec.objlist.Count; m++)
 		{
 			ObjList next = ec.objlist[m].next;
 			if (next != null && next.obj != null)
 			{
-				for (Int32 n = 0; n < 32; n++)
+				for (Int32 n = 0; n < ec.objlist.Count; n++)
 				{
 					if (ec.objlist[n].obj != null && next.obj.uid == ec.objlist[n].obj.uid)
 					{
@@ -61,7 +61,7 @@ public class EventContext
 		this.activeObj = (ObjList)null;
 		if (ec.activeObj != null)
 		{
-			for (Int32 num = 0; num < 32; num++)
+			for (Int32 num = 0; num < this.objlist.Count; num++)
 			{
 				if (this.objlist[num].obj != null && ec.activeObj.obj != null && this.objlist[num].obj.uid == ec.activeObj.obj.uid)
 				{
@@ -73,7 +73,7 @@ public class EventContext
 		this.activeObjTail = (ObjList)null;
 		if (ec.activeObjTail != null)
 		{
-			for (Int32 num2 = 0; num2 < 32; num2++)
+			for (Int32 num2 = 0; num2 < this.objlist.Count; num2++)
 			{
 				if (this.objlist[num2].obj != null && ec.activeObjTail.obj != null && this.objlist[num2].obj.uid == ec.activeObjTail.obj.uid)
 				{
@@ -84,7 +84,7 @@ public class EventContext
 		this.freeObj = (ObjList)null;
 		if (ec.freeObj != null)
 		{
-			for (Int32 num3 = 0; num3 < 32; num3++)
+			for (Int32 num3 = 0; num3 < this.objlist.Count; num3++)
 			{
 				if (this.objlist[num3].obj == null)
 				{
@@ -115,7 +115,7 @@ public class EventContext
 		this.partyObjTail = (ObjList)null;
 		if (ec.partyObjTail != null)
 		{
-			for (Int32 num5 = 0; num5 < 32; num5++)
+			for (Int32 num5 = 0; num5 < this.objlist.Count; num5++)
 			{
 				if (this.objlist[num5].obj != null && ec.partyObjTail.obj != null && this.objlist[num5].obj.uid == ec.partyObjTail.obj.uid)
 				{
@@ -125,9 +125,19 @@ public class EventContext
 		}
 	}
 
+	public ObjList AddObjList()
+	{
+		ObjList objl = new ObjList();
+		objl.obj = null;
+		objl.next = null;
+		this.objlist[this.objlist.Count - 1].next = objl;
+		this.objlist.Add(objl);
+		return objl;
+	}
+
 	public void printObjList()
 	{
-		for (Int32 i = 0; i < 32; i++)
+		for (Int32 i = 0; i < this.objlist.Count; i++)
 		{
 			ObjList objList = this.objlist[i];
 		}
@@ -137,7 +147,7 @@ public class EventContext
 
 	public Int32[] objbuf;
 
-	public ObjList[] objlist;
+	public List<ObjList> objlist;
 
 	public ObjList activeObj;
 

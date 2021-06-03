@@ -1727,8 +1727,13 @@ public partial class EventEngine
                 EventInput.PSXCntlClearPadMask(this.getv1(), Convert.ToUInt32(this.getv2()));
                 return 0;
             case EBin.event_code_binary.DANIM:
-                this.ExecAnim((Actor)this.GetObj1(), this.getv2());
-                return 0;
+                {
+                    Actor actObj = (Actor)this.GetObj1();
+                    Int32 animId = this.getv2();
+                    AnimationFactory.AddAnimWithAnimatioName(actObj.go, FF9DBAll.AnimationDB.GetValue(animId));
+                    this.ExecAnim(actObj, animId);
+                    return 0;
+                }
             case EBin.event_code_binary.DWAITANIM:
                 if (((Int32)((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0)
                     return 0;

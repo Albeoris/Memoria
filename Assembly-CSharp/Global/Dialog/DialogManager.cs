@@ -290,7 +290,8 @@ public class DialogManager : Singleton<DialogManager>
 		Dialog dialog = (Dialog)null;
 		try
 		{
-			if (base.transform.childCount > (Int32)DialogManager.MaximumDialogCount)
+
+			if (this.DialogPool.Count > 0)
 			{
 				dialog = this.DialogPool.Dequeue();
 			}

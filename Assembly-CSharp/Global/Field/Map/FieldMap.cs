@@ -32,25 +32,7 @@ public class FieldMap : HonoBehavior
     {
         this.debugObjName = "Player";
         this.debugTriIdx = -1;
-        this.CharArray = new FF9Char[]
-        {
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char(),
-            new FF9Char()
-        };
+        this.CharArray = new List<FF9Char>();
     }
 
     public bool IsCurrentFieldMapHasCombineMeshProblem()
@@ -411,7 +393,7 @@ public class FieldMap : HonoBehavior
         fldmcf.ff9fieldMCFService();
         if ((FF9StateSystem.Common.FF9.attr & 2u) == 0u)
         {
-            for (Int32 i = 0; i < 16; i++)
+            for (Int32 i = 0; i < this.CharArray.Count; i++)
             {
                 this.CharArray[i].evt = (PosObj)null;
             }
@@ -421,7 +403,7 @@ public class FieldMap : HonoBehavior
         fldchar.ff9fieldCharEffectService();
     }
 
-    public static Int32 ff9fieldCharGetActiveList(FF9Char[] CharArray)
+    public static Int32 ff9fieldCharGetActiveList(List<FF9Char> CharArray)
     {
         Int32 result = 0;
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
@@ -430,6 +412,8 @@ public class FieldMap : HonoBehavior
             Obj obj = objList.obj;
             if (instance.objIsVisible(obj) && obj.cid == 4)
             {
+                if (result >= CharArray.Count)
+                    CharArray.Add(new FF9Char());
                 CharArray[result++].evt = (PosObj)obj;
             }
         }
@@ -3334,7 +3318,7 @@ public class FieldMap : HonoBehavior
 
     public static FF9FieldAttrState FF9FieldAttr = new FF9FieldAttrState();
 
-    private FF9Char[] CharArray;
+    private List<FF9Char> CharArray;
 
     public Int32 SHRT_MIN = -32768;
 

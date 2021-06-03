@@ -138,6 +138,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public ObjList GetFreeObjList()
     {
+        if (this._context.freeObj == null)
+            return this._context.AddObjList();
         return this._context.freeObj;
     }
 
@@ -857,7 +859,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private void InitObj()
     {
         Int32 index;
-        for (index = 0; index < 31; ++index)
+        for (index = 0; index < this._context.objlist.Count - 1; ++index)
         {
             ObjList objList = this._context.objlist[index];
             objList.next = this._context.objlist[index + 1];
