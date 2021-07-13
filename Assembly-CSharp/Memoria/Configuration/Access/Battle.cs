@@ -7,7 +7,7 @@ namespace Memoria
         public static class Battle
         {
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
-            public static Int32 Speed => Math.Max(Instance._battle.Speed, Instance._hacks.BattleSpeed);
+            public static Int32 Speed => GetBattleSpeed();
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 EncounterInitial => Instance._battle.EncounterInitial;
             public static Int32 AutoPotionOverhealLimit => Instance._battle.AutoPotionOverhealLimit;
@@ -27,6 +27,19 @@ namespace Memoria
             public static String MagicStatFormula => Instance._battle.MagicStatFormula;
             public static String SpiritStatFormula => Instance._battle.SpiritStatFormula;
             public static String MagicStoneStockFormula => Instance._battle.MagicStoneStockFormula;
+            
+            private static Int32 GetBattleSpeed()
+            {
+                Int32 value = Math.Max(Instance._battle.Speed, Instance._hacks.BattleSpeed);
+                if (value == 0)
+                    return 0;
+
+                // Ozma Battle
+                if (FF9StateSystem.Battle.FF9Battle.map.nextMapNo == 2952) // EVT_CHOCO_CH_FGD_0
+                    return 0;
+
+                return value;
+            }
         }
     }
 }
