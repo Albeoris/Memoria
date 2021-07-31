@@ -1291,7 +1291,7 @@ public class BGSCENE_DEF
         for (var i = 0; i < this.cameraCount; i++)
         {
             tileSystems[i] = new TileMap(FF9StateSystem.Common.FF9.fldMapNo, layers,
-                overlays, this.animList, this.lightList, i, factor);
+                overlays, animationOverlays, lightOverlays, i, factor);
             copyHelper.FillBackgroundOverlays(tileSystems[i]);
         }
 
