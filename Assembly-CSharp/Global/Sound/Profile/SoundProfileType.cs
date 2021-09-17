@@ -7,5 +7,6 @@ public enum SoundProfileType
 	SoundEffect,
 	MovieAudio,
 	Song,
-	Sfx
+	Sfx,
+	Voice
 }
