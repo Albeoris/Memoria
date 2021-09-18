@@ -877,6 +877,7 @@ public class SoundLib : MonoBehaviour
 		SoundLib.songPlayer = new SongPlayer();
 		SoundLib.allSoundDispatchPlayer = new AllSoundDispatchPlayer();
 		SoundLib.sfxSoundPlayer = new SfxSoundPlayer();
+		SoundLib.voicePlayer = new VoicePlayer();
 		this.soundPlayerList = new List<SoundPlayer>();
 		this.soundPlayerList.Add(SoundLib.soundEffectPlayer);
 		this.soundPlayerList.Add(SoundLib.musicPlayer);
@@ -884,11 +885,14 @@ public class SoundLib : MonoBehaviour
 		this.soundPlayerList.Add(SoundLib.songPlayer);
 		this.soundPlayerList.Add(SoundLib.allSoundDispatchPlayer);
 		this.soundPlayerList.Add(SoundLib.sfxSoundPlayer);
+		this.soundPlayerList.Add(SoundLib.voicePlayer);
 	}
 
 	private Boolean m_isInitialized;
 
 	private static SoundEffectPlayer soundEffectPlayer;
+
+	public static VoicePlayer voicePlayer;
 
 	private static MusicPlayer musicPlayer;
 

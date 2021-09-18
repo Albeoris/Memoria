@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using Assets.Sources.Scripts.UI.Common;
-using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
 public class ETb
 {
+	private static SoundDatabase voiceDatabase = new SoundDatabase();
+
 	public void InitMessage()
 	{
 		if (this.sInitMesInh)
@@ -139,49 +140,26 @@ public class ETb
             NGUIText.ForceShowButton = true;
         }
         Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, this.OnDialogFinish, captionType);
-		string countryCode = "enUS";
+		
 		if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
         {
             switch (FF9StateSystem.Settings.CurrentLanguage)
             {
 				case "English(US)":
-					countryCode = "enUS";
-					dialog.FocusToActor = !(mes == 183 || mes == 166);
-					break;
 				case "English(UK)":
-					countryCode = "enUK";
-					dialog.FocusToActor = !(mes == 183 || mes == 166);
-					break;
 				case "Spanish":
-					countryCode = "ES";
-					dialog.FocusToActor = !(mes == 183 || mes == 166);
-					break;
 				case "German":
-					countryCode = "DE";
-					dialog.FocusToActor = !(mes == 183 || mes == 166);
-					break;
 				case "Italian":
-					countryCode = "IT";
 					dialog.FocusToActor = !(mes == 183 || mes == 166);
 					break;
 				case "Japanese":
-					countryCode = "JP";
                     dialog.FocusToActor = !(mes == 187 || mes == 170);
                     break;
                 case "French":
-					countryCode = "FR";
                     dialog.FocusToActor = !(mes == 185 || mes == 168);
                     break;
             }
 		}
-
-		SoundProfile soundProfile = new SoundProfile();
-		soundProfile.Code = 1.ToString();
-		soundProfile.Name = "music033";
-		soundProfile.SoundIndex = 1;
-		soundProfile.ResourceID = String.Format("../Sounds/VoiceMod/{0}/{1}/{2}.ogg", FF9StateSystem.Common.FF9.fldMapNo, countryCode, mes);
-		soundProfile.SoundProfileType = SoundProfileType.Voice;
-		//@todo play the damn file
 
 		if (dialog == (UnityEngine.Object)null)
 		{
@@ -209,6 +187,36 @@ public class ETb
 				dialog.Phrase
 			}));
 		}
+		
+		string path = String.Format("Voices/{0}/fzid_{1}/{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
+
+		var soundProfile = new SoundProfile
+		{
+			Code = num.ToString(),
+			Name = path,
+			SoundIndex = num,
+			ResourceID = path,
+			SoundProfileType = SoundProfileType.Voice,
+			SoundVolume = 1f,
+			Panning = 0f,
+			Pitch = 1f
+		};
+
+		SoundLoaderProxy.Instance.Load(soundProfile,
+		(soundProfile, db) =>
+		{
+			if (soundProfile != null)
+			{
+				SoundLib.voicePlayer.CreateSound(soundProfile);
+				SoundLib.voicePlayer.StartSound(soundProfile);
+				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+					db.Update(soundProfile);
+				else
+					db.Create(soundProfile);
+			}
+		},
+		ETb.voiceDatabase);
+
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
