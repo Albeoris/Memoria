@@ -8,6 +8,7 @@ using Object = System.Object;
 public class ETb
 {
 	private static SoundDatabase voiceDatabase = new SoundDatabase();
+	private SoundProfile currentVAFile;
 
 	public void InitMessage()
 	{
@@ -79,6 +80,7 @@ public class ETb
 
 	public void NewMesWin(Int32 mes, Int32 num, Int32 flags, PosObj targetPo)
 	{
+		currentVAFile = null;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		if (this.IsSkipped(instance, mes, num, flags, targetPo))
 		{
@@ -191,7 +193,7 @@ public class ETb
 		
 		string path = String.Format("Voices/{0}/fzid_{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
 
-		var soundProfile = new SoundProfile
+		currentVAFile = new SoundProfile
 		{
 			Code = num.ToString(),
 			Name = path,
@@ -203,7 +205,7 @@ public class ETb
 			Pitch = 1f
 		};
 
-		SoundImporter.Instance.Load(soundProfile,
+		SoundImporter.Instance.Load(currentVAFile,
 		(soundProfile, db) =>
 		{
 			if (soundProfile != null)
@@ -235,6 +237,10 @@ public class ETb
 
 	public void OnDialogFinish(Int32 choice)
 	{
+		if (currentVAFile != null)
+		{
+			SoundLib.voicePlayer.StopSound(currentVAFile);
+		}
 		if (choice > -1)
 		{
 		}
