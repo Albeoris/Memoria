@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -188,7 +189,7 @@ public class ETb
 			}));
 		}
 		
-		string path = String.Format("Voices/{0}/fzid_{1}/{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
+		string path = String.Format("Voices/{0}/fzid_{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
 
 		var soundProfile = new SoundProfile
 		{
@@ -202,7 +203,7 @@ public class ETb
 			Pitch = 1f
 		};
 
-		SoundLoaderProxy.Instance.Load(soundProfile,
+		SoundImporter.Instance.Load(soundProfile,
 		(soundProfile, db) =>
 		{
 			if (soundProfile != null)

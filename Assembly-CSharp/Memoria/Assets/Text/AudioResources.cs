@@ -91,6 +91,11 @@ namespace Memoria.Assets
                 if (!SoundDisplayNames.TryGetValue(fileName, out displayName))
                     return false;
             }
+            else if (fileName.StartsWith("va_"))
+            {
+                string[] pathParts = directoryPath.Split(new char[] { '/' });
+                displayName = fileName;
+            }
             // TODO: FMV, SE, Songs
             else
             {
