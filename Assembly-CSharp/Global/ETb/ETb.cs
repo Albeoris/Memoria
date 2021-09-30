@@ -190,35 +190,75 @@ public class ETb
 				dialog.Phrase
 			}));
 		}
-		
-		string path = String.Format("Voices/{0}/fzid_{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
-
-		currentVAFile = new SoundProfile
+		if (Configuration.Audio.VoiceActing)
 		{
-			Code = num.ToString(),
-			Name = path,
-			SoundIndex = num,
-			ResourceID = path,
-			SoundProfileType = SoundProfileType.Voice,
-			SoundVolume = 1f,
-			Panning = 0f,
-			Pitch = 1f
-		};
-
-		SoundImporter.Instance.Load(currentVAFile,
-		(soundProfile, db) =>
-		{
-			if (soundProfile != null)
+			string path = String.Format("Voices/{0}/fzid_{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
+			if (dialog.ChoiceNumber > 0)
 			{
-				SoundLib.voicePlayer.CreateSound(soundProfile);
-				SoundLib.voicePlayer.StartSound(soundProfile);
-				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-					db.Update(soundProfile);
-				else
-					db.Create(soundProfile);
-			}
-		},
-		ETb.voiceDatabase);
+				path += "_0";
+				dialog.onOptionChange = (int msg, int optionIndex) =>
+				{
+					if (currentVAFile != null)
+					{
+						SoundLib.voicePlayer.StopSound(currentVAFile);
+					}
+					string choicePath = String.Format("Voices/{0}/fzid_{1}/va_{2}_{3}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex+1);
+					currentVAFile = new SoundProfile
+					{
+						Code = num.ToString(),
+						Name = choicePath,
+						SoundIndex = num,
+						ResourceID = choicePath,
+						SoundProfileType = SoundProfileType.Voice,
+						SoundVolume = 1f,
+						Panning = 0f,
+						Pitch = 1f
+					};
+
+					SoundImporter.Instance.Load(currentVAFile,
+					(soundProfile, db) =>
+					{
+						if (soundProfile != null)
+						{
+							SoundLib.voicePlayer.CreateSound(soundProfile);
+							SoundLib.voicePlayer.StartSound(soundProfile);
+							if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+								db.Update(soundProfile);
+							else
+								db.Create(soundProfile);
+						}
+					},
+					ETb.voiceDatabase);
+				};
+            }
+
+			currentVAFile = new SoundProfile
+			{
+				Code = num.ToString(),
+				Name = path,
+				SoundIndex = num,
+				ResourceID = path,
+				SoundProfileType = SoundProfileType.Voice,
+				SoundVolume = 1f,
+				Panning = 0f,
+				Pitch = 1f
+			};
+
+			SoundImporter.Instance.Load(currentVAFile,
+			(soundProfile, db) =>
+			{
+				if (soundProfile != null)
+				{
+					SoundLib.voicePlayer.CreateSound(soundProfile);
+					SoundLib.voicePlayer.StartSound(soundProfile);
+					if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+						db.Update(soundProfile);
+					else
+						db.Create(soundProfile);
+				}
+			},
+			ETb.voiceDatabase);
+		}
 
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
@@ -320,6 +360,7 @@ public class ETb
 	public Int32 GetChoose()
 	{
 		ETb.sChoose = DialogManager.SelectChoice;
+
 		if (ETb.isMessageDebug)
 		{
 			global::Debug.Log("Event choice value:" + ETb.sChoose);

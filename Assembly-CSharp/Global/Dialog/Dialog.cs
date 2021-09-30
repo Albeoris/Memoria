@@ -21,7 +21,7 @@ public class Dialog : MonoBehaviour
 		this.disableIndexes = new List<Int32>();
 		this.activeIndexes = new List<Int32>();
 		this.choiceYPositions = new List<Single>();
-		}
+	}
 
 	static Dialog()
 	{
@@ -29,6 +29,14 @@ public class Dialog : MonoBehaviour
 		Dialog.DialogGroupButton = "Dialog.Choice";
 		Dialog.DefaultOffset = new Vector2(36f, 0f);
 	}
+
+	public delegate void onSelectedOptionChangeDelegate(int msg, int optionIndex);
+
+	public onSelectedOptionChangeDelegate onOptionChange
+    {
+		get;
+		set;
+    }
 
 	public Int32 StartChoiceRow
 	{
@@ -86,6 +94,7 @@ public class Dialog : MonoBehaviour
 		}
 		set
 		{
+			if (this.onOptionChange != null && this.selectedChoice != value) this.onOptionChange(this.id, value);
 			this.selectedChoice = value;
 			DialogManager.SelectChoice = value;
 		}

@@ -79,6 +79,7 @@ namespace Memoria.Assets
                 fileName = relativePath.Substring(index + 1);
             }
 
+            bool skipRename = false;
             // Find a display name
             String displayName;
             if (fileName.Length == 8 && fileName.StartsWith("music")) // music???
@@ -95,6 +96,7 @@ namespace Memoria.Assets
             {
                 string[] pathParts = directoryPath.Split(new char[] { '/' });
                 displayName = fileName;
+                skipRename = true;
             }
             // TODO: FMV, SE, Songs
             else
