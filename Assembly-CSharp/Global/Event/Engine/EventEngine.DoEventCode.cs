@@ -1212,7 +1212,11 @@ public partial class EventEngine
                 this.fieldmap.EBG_charLookAtUnlock();
                 return 0;
             case EBin.event_code_binary.MENU:
-                EventService.StartMenu(Convert.ToUInt32(this.getv1()), Convert.ToUInt32(this.getv1()));
+                UInt32 menuId = Convert.ToUInt32(this.getv1());
+                UInt32 subId = Convert.ToUInt32(this.getv1());
+                if (Configuration.Hacks.DisableNameChoice && menuId == 1)
+                    return 0;
+                EventService.StartMenu(menuId, subId);
                 PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
                 return 1;
             case EBin.event_code_binary.TRACKSTART:

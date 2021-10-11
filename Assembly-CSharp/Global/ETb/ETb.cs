@@ -1,11 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
 public class ETb
 {
+	private static SoundDatabase voiceDatabase = new SoundDatabase();
+	private SoundProfile currentVAFile;
+
 	public void InitMessage()
 	{
 		if (this.sInitMesInh)
@@ -76,6 +80,7 @@ public class ETb
 
 	public void NewMesWin(Int32 mes, Int32 num, Int32 flags, PosObj targetPo)
 	{
+		currentVAFile = null;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		if (this.IsSkipped(instance, mes, num, flags, targetPo))
 		{
@@ -138,36 +143,28 @@ public class ETb
             NGUIText.ForceShowButton = true;
         }
         Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, this.OnDialogFinish, captionType);
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
+		
+		if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
         {
             switch (FF9StateSystem.Settings.CurrentLanguage)
             {
-                case "English(US)":
-                case "English(UK)":
-                case "Spanish":
-                case "German":
-                case "Italian":
-                    if (mes == 183 || mes == 166)
-                    {
-                        dialog.FocusToActor = false;
-                    }
-                    break;
-                case "Japanese":
-                    if (mes == 187 || mes == 170)
-                    {
-                        dialog.FocusToActor = false;
-                    }
+				case "English(US)":
+				case "English(UK)":
+				case "Spanish":
+				case "German":
+				case "Italian":
+					dialog.FocusToActor = !(mes == 183 || mes == 166);
+					break;
+				case "Japanese":
+                    dialog.FocusToActor = !(mes == 187 || mes == 170);
                     break;
                 case "French":
-                    if (mes == 185 || mes == 168)
-                    {
-                        dialog.FocusToActor = false;
-                    }
+                    dialog.FocusToActor = !(mes == 185 || mes == 168);
                     break;
             }
-        }
+		}
 
-        if (dialog == (UnityEngine.Object)null)
+		if (dialog == (UnityEngine.Object)null)
 		{
 			return;
 		}
@@ -193,6 +190,76 @@ public class ETb
 				dialog.Phrase
 			}));
 		}
+		if (Configuration.Audio.VoiceActing)
+		{
+			string path = String.Format("Voices/{0}/fzid_{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
+			if (dialog.ChoiceNumber > 0)
+			{
+				path += "_0";
+				dialog.onOptionChange = (int msg, int optionIndex) =>
+				{
+					if (currentVAFile != null)
+					{
+						SoundLib.voicePlayer.StopSound(currentVAFile);
+					}
+					string choicePath = String.Format("Voices/{0}/fzid_{1}/va_{2}_{3}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex+1);
+					currentVAFile = new SoundProfile
+					{
+						Code = num.ToString(),
+						Name = choicePath,
+						SoundIndex = num,
+						ResourceID = choicePath,
+						SoundProfileType = SoundProfileType.Voice,
+						SoundVolume = 1f,
+						Panning = 0f,
+						Pitch = 1f
+					};
+
+					SoundImporter.Instance.Load(currentVAFile,
+					(soundProfile, db) =>
+					{
+						if (soundProfile != null)
+						{
+							SoundLib.voicePlayer.CreateSound(soundProfile);
+							SoundLib.voicePlayer.StartSound(soundProfile);
+							if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+								db.Update(soundProfile);
+							else
+								db.Create(soundProfile);
+						}
+					},
+					ETb.voiceDatabase);
+				};
+            }
+
+			currentVAFile = new SoundProfile
+			{
+				Code = num.ToString(),
+				Name = path,
+				SoundIndex = num,
+				ResourceID = path,
+				SoundProfileType = SoundProfileType.Voice,
+				SoundVolume = 1f,
+				Panning = 0f,
+				Pitch = 1f
+			};
+
+			SoundImporter.Instance.Load(currentVAFile,
+			(soundProfile, db) =>
+			{
+				if (soundProfile != null)
+				{
+					SoundLib.voicePlayer.CreateSound(soundProfile);
+					SoundLib.voicePlayer.StartSound(soundProfile);
+					if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+						db.Update(soundProfile);
+					else
+						db.Create(soundProfile);
+				}
+			},
+			ETb.voiceDatabase);
+		}
+
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
@@ -210,6 +277,10 @@ public class ETb
 
 	public void OnDialogFinish(Int32 choice)
 	{
+		if (currentVAFile != null)
+		{
+			SoundLib.voicePlayer.StopSound(currentVAFile);
+		}
 		if (choice > -1)
 		{
 		}
@@ -289,6 +360,7 @@ public class ETb
 	public Int32 GetChoose()
 	{
 		ETb.sChoose = DialogManager.SelectChoice;
+
 		if (ETb.isMessageDebug)
 		{
 			global::Debug.Log("Event choice value:" + ETb.sChoose);
