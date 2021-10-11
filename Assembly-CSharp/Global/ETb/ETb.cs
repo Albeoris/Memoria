@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using Assets.Sources.Scripts.UI.Common;
-using Memoria;
 using UnityEngine;
+using Memoria;
 using Object = System.Object;
 
 public class ETb
@@ -163,7 +162,7 @@ public class ETb
                     break;
             }
 		}
-
+		
 		if (dialog == (UnityEngine.Object)null)
 		{
 			return;
@@ -190,19 +189,18 @@ public class ETb
 				dialog.Phrase
 			}));
 		}
-		if (Configuration.Audio.VoiceActing)
+		
+		string vaPath = String.Format("Voices/{0}/{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
+		Byte[] vaRaw = AssetManager.LoadBytes(vaPath, out _);
+		if (vaRaw != null)
 		{
-			string path = String.Format("Voices/{0}/fzid_{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
 			if (dialog.ChoiceNumber > 0)
 			{
-				path += "_0";
 				dialog.onOptionChange = (int msg, int optionIndex) =>
 				{
 					if (currentVAFile != null)
-					{
 						SoundLib.voicePlayer.StopSound(currentVAFile);
-					}
-					string choicePath = String.Format("Voices/{0}/fzid_{1}/va_{2}_{3}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex+1);
+					string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
 					currentVAFile = new SoundProfile
 					{
 						Code = num.ToString(),
@@ -259,7 +257,6 @@ public class ETb
 			},
 			ETb.voiceDatabase);
 		}
-
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
@@ -278,9 +275,7 @@ public class ETb
 	public void OnDialogFinish(Int32 choice)
 	{
 		if (currentVAFile != null)
-		{
 			SoundLib.voicePlayer.StopSound(currentVAFile);
-		}
 		if (choice > -1)
 		{
 		}
@@ -360,7 +355,6 @@ public class ETb
 	public Int32 GetChoose()
 	{
 		ETb.sChoose = DialogManager.SelectChoice;
-
 		if (ETb.isMessageDebug)
 		{
 			global::Debug.Log("Event choice value:" + ETb.sChoose);

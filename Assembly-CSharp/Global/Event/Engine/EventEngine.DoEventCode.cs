@@ -2143,73 +2143,73 @@ public partial class EventEngine
                 }
                 return 0;
             case EBin.event_code_binary.EXT:
-                Int32 num84 = this.gArgFlag | 65280;
+                eventCodeBinary = (EBin.event_code_binary)(0x100 | this.gArgFlag);
                 this.gArgFlag = this.geti();
-                switch (num84)
+                switch (eventCodeBinary)
                 {
-                    case 65280:
+                    case EBin.event_code_binary.BSSTART:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65281:
+                    case EBin.event_code_binary.BSFRAME:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65282:
+                    case EBin.event_code_binary.BSACTIVE:
                         this.fieldmap.walkMesh.BGI_simSetActive((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
-                    case 65283:
+                    case EBin.event_code_binary.BSFLAG:
                         this.fieldmap.walkMesh.BGI_simSetFlags((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
-                    case 65284:
+                    case EBin.event_code_binary.BSFLOOR:
                         this.fieldmap.walkMesh.BGI_simSetFloor((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
-                    case 65285:
+                    case EBin.event_code_binary.BSRATE:
                         this.fieldmap.walkMesh.BGI_simSetFrameRate((UInt32)this.getv1(), (Int16)this.getv2());
                         return 0;
-                    case 65286:
+                    case EBin.event_code_binary.BSALGO:
                         this.fieldmap.walkMesh.BGI_simSetAlgorithm((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
-                    case 65287:
+                    case EBin.event_code_binary.BSDELTA:
                         this.fieldmap.walkMesh.BGI_simSetDelta((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2());
                         return 0;
-                    case 65288:
+                    case EBin.event_code_binary.BSAXIS:
                         this.fieldmap.walkMesh.BGI_simSetAxis((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
-                    case 65289:
+                    case EBin.event_code_binary.BAANIME:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65290:
+                    case EBin.event_code_binary.BAFRAME:
                         this.fieldmap.walkMesh.BGI_animShowFrame((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
-                    case 65291:
+                    case EBin.event_code_binary.BAACTIVE:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65292:
+                    case EBin.event_code_binary.BAFLAG:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65293:
+                    case EBin.event_code_binary.BARATE:
                         num1 = this.getv1();
                         num3 = this.getv2();
                         return 0;
-                    case 65294:
+                    case EBin.event_code_binary.BAWAITALL:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65295:
-                        num1 = this.getv1();
-                        num2 = this.getv1();
-                        num3 = this.getv1();
-                        return 0;
-                    case 65296:
+                    case EBin.event_code_binary.BAWAIT:
                         num1 = this.getv1();
                         num2 = this.getv1();
                         num3 = this.getv1();
                         return 0;
-                    case 65297:
+                    case EBin.event_code_binary.BARANGE:
+                        num1 = this.getv1();
+                        num2 = this.getv1();
+                        num3 = this.getv1();
+                        return 0;
+                    case EBin.event_code_binary.BAVISIBLE:
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;

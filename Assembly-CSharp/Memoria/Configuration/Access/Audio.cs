@@ -17,12 +17,6 @@ namespace Memoria
                 get => Instance._audio.MusicVolume;
                 set => Instance._audio.MusicVolume.Value = value;
             }
-
-            public static bool VoiceActing
-            {
-                get => Instance._audio.VoiceActing;
-                set => Instance._audio.VoiceActing.Value = value;
-            }
             
             public static void SaveSoundVolume()
             {

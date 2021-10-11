@@ -94,7 +94,8 @@ public class Dialog : MonoBehaviour
 		}
 		set
 		{
-			if (this.onOptionChange != null && this.selectedChoice != value) this.onOptionChange(this.id, value);
+			if (this.onOptionChange != null && this.selectedChoice != value)
+				this.onOptionChange(this.id, value);
 			this.selectedChoice = value;
 			DialogManager.SelectChoice = value;
 		}
