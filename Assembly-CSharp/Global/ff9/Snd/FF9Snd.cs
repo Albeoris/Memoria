@@ -565,18 +565,16 @@ public static class FF9Snd
 	{
 		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
 		for (Int32 i = 0; i < 2; i++)
-		{
-			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_SUSPEND(i);
-		}
+			if (allSoundDispatchPlayer.sfxResSlot[i] != null)
+				allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_SUSPEND(i);
 	}
 
 	public static void ff9fieldSoundRestoreAllResidentSndEffect()
 	{
 		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
 		for (Int32 i = 0; i < 2; i++)
-		{
-			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(i);
-		}
+			if (allSoundDispatchPlayer.sfxResSlot[i] != null)
+				allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(i);
 	}
 
 	public static Int32 FF9AllSoundDispatch(Int32 ParmType, Int32 ObjNo, Int32 Arg1, Int32 Arg2, Int32 Arg3)

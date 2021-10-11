@@ -354,17 +354,24 @@ public partial class BattleHUD : UIScene
             numberSubModeHud.IsActive = true;
             numberSubModeHud.Value.SetText(player.CurrentHp.ToString());
             numberSubModeHud.MaxValue.SetText(player.MaximumHp.ToString());
-            switch (CheckHPState(player))
+            if (!player.IsSelected)
             {
-                case ParameterStatus.Empty:
-                    numberSubModeHud.SetColor(FF9TextTool.Red);
-                    break;
-                case ParameterStatus.Critical:
-                    numberSubModeHud.SetColor(FF9TextTool.Yellow);
-                    break;
-                default:
-                    numberSubModeHud.SetColor(FF9TextTool.White);
-                    break;
+                numberSubModeHud.SetColor(FF9TextTool.Gray);
+            }
+            else
+            {
+                switch (CheckHPState(player))
+                {
+                    case ParameterStatus.Empty:
+                        numberSubModeHud.SetColor(FF9TextTool.Red);
+                        break;
+                    case ParameterStatus.Critical:
+                        numberSubModeHud.SetColor(FF9TextTool.Yellow);
+                        break;
+                    default:
+                        numberSubModeHud.SetColor(FF9TextTool.White);
+                        break;
+                }
             }
             list.Remove(index);
         }
@@ -388,7 +395,9 @@ public partial class BattleHUD : UIScene
             numberSubModeHud.Value.SetText(player.CurrentMp.ToString());
             numberSubModeHud.MaxValue.SetText(player.MaximumMp.ToString());
 
-            if (CheckMPState(player) == ParameterStatus.Empty)
+            if (!player.IsSelected)
+                numberSubModeHud.SetColor(FF9TextTool.Gray);
+            else if (CheckMPState(player) == ParameterStatus.Empty)
                 numberSubModeHud.SetColor(FF9TextTool.Yellow);
             else
                 numberSubModeHud.SetColor(FF9TextTool.White);
@@ -441,10 +450,14 @@ public partial class BattleHUD : UIScene
     /// <remarks>There may be invisible players here, we must ignore them.</remarks>
     private IEnumerable<KnownUnit> EnumerateKnownPlayers()
     {
-        foreach (KnownUnit unit in EnumerateKnownUnits())
+        Int32 index = 0;
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (unit.Unit.IsPlayer)
-                yield return unit;
+            if (!unit.IsPlayer)
+                continue;
+
+            // Issue #173: include non-targetable players (display their status in grey in DisplayTargetHP etc.)
+            yield return new KnownUnit(index++, unit);
         }
     }
 
@@ -2004,7 +2017,7 @@ public partial class BattleHUD : UIScene
 
     private static Boolean IsEnableInput(BattleUnit unit)
     {
-        return unit != null && unit.CurrentHp != 0 && !unit.IsUnderAnyStatus((BattleStatus)1107434755U) && (battle.btl_bonus.member_flag & 1 << unit.Position) != 0;
+        return unit != null && unit.CurrentHp != 0 && !unit.IsUnderAnyStatus(BattleStatus.NoInput) && (battle.btl_bonus.member_flag & 1 << unit.Position) != 0;
     }
 
     private Int32 GetSelectMode(CursorGroup cursor)

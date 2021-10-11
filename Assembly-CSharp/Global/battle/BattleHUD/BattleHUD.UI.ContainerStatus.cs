@@ -102,31 +102,27 @@ public partial class BattleHUD : UIScene
                 BadStatus.IsActive = value;
             }
 
-            public void DisplayStatusRealtime(List<Int32> playerIds)
+            public void DisplayStatusRealtime()
             {
                 if (HP.IsActive)
-                    DisplayData(playerIds, DisplayHp);
+                    DisplayData(DisplayHp);
                 else if (MP.IsActive)
-                    DisplayData(playerIds, DisplayMp);
+                    DisplayData(DisplayMp);
                 else if (BadStatus.IsActive)
-                    DisplayData(playerIds, DisplayBadStatus);
+                    DisplayData(DisplayBadStatus);
                 else if (GoodStatus.IsActive)
-                    DisplayData(playerIds, DisplayGoodStatus);
+                    DisplayData(DisplayGoodStatus);
             }
 
-            private static void DisplayData(List<Int32> playerIds, Action<Int32, BattleUnit> action)
+            private static void DisplayData(Action<Int32, BattleUnit> action)
             {
+                Int32 playerId = 0;
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                 {
                     if (!unit.IsPlayer)
                         continue;
 
-                    Int32 playerIndex = unit.GetIndex();
-                    Int32 playerId = playerIds.IndexOf(playerIndex);
-                    if (playerId < 0)
-                        continue;
-
-                    action(playerId, unit);
+                    action(playerId++, unit);
                 }
             }
 
@@ -136,17 +132,24 @@ public partial class BattleHUD : UIScene
                 hud.IsActive = true;
                 hud.Value.SetText(bd.CurrentHp.ToString());
                 hud.MaxValue.SetText(bd.MaximumHp.ToString());
-                switch (CheckHPState(bd))
+                if (!bd.IsSelected)
                 {
-                    case ParameterStatus.Empty:
-                        hud.SetColor(FF9TextTool.Red);
-                        return;
-                    case ParameterStatus.Critical:
-                        hud.SetColor(FF9TextTool.Yellow);
-                        return;
-                    default:
-                        hud.SetColor(FF9TextTool.White);
-                        return;
+                    hud.SetColor(FF9TextTool.Gray);
+                }
+                else
+                {
+                    switch (CheckHPState(bd))
+                    {
+                        case ParameterStatus.Empty:
+                            hud.SetColor(FF9TextTool.Red);
+                            return;
+                        case ParameterStatus.Critical:
+                            hud.SetColor(FF9TextTool.Yellow);
+                            return;
+                        default:
+                            hud.SetColor(FF9TextTool.White);
+                            return;
+                    }
                 }
             }
 
@@ -156,7 +159,12 @@ public partial class BattleHUD : UIScene
                 numberSubModeHud.IsActive = true;
                 numberSubModeHud.Value.SetText(bd.CurrentMp.ToString());
                 numberSubModeHud.MaxValue.SetText(bd.MaximumMp.ToString());
-                numberSubModeHud.SetColor(CheckMPState(bd) == ParameterStatus.Empty ? FF9TextTool.Yellow : FF9TextTool.White);
+                if (!bd.IsSelected)
+                    numberSubModeHud.SetColor(FF9TextTool.Gray);
+                else if (CheckMPState(bd) == ParameterStatus.Empty)
+                    numberSubModeHud.SetColor(FF9TextTool.Yellow);
+                else
+                    numberSubModeHud.SetColor(FF9TextTool.White);
             }
 
             private void DisplayBadStatus(Int32 playerId, BattleUnit bd)

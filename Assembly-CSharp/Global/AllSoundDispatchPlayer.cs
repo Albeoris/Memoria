@@ -688,6 +688,12 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 		if (this.sfxResSlot[slot] != null)
 		{
+			if (this.sfxResSlot[slot].ObjNo == ObjNo && !this.sfxResSlot[slot].IsSuspend)
+			{
+				// Issue #140: don't reset a sound effect already playing from a previous field
+				this.sfxResSlot[slot].PrevSndEffectMapID = FF9StateSystem.Common.FF9.fldMapNo;
+				return;
+			}
 			this.GetSoundProfileIfExist(this.sfxResSlot[slot].ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
 			{
 				if (soundProfile != null)

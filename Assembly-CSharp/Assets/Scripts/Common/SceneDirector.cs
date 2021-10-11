@@ -277,9 +277,9 @@ namespace Assets.Scripts.Common
 			Resources.UnloadUnusedAssets();
 			//GC.Collect();
 		    LoadNextScene();
-			SoundLib.StopAllSoundEffects();
 			if (this.CurrentScene != this.NextScene)
 			{
+				SoundLib.StopAllSoundEffects(); // Issue #140: don't stop sounds in field transitions
 				if (String.Equals(this.CurrentScene, "QuadMist"))
 				{
 					SceneDirector.FF9Wipe_FadeInEx(30);

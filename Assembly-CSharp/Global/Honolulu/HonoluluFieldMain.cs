@@ -145,10 +145,10 @@ public class HonoluluFieldMain : HonoBehavior
 		}
 		FF9Snd.LatestWorldPlayedSong = -1;
 		FF9Snd.BGMFieldSongCounter = 0;
-		if ((sndEffectResSoundID != -1 || sndEffectResSoundID2 != -1) && (sndEffectResSoundID3 != -1 || sndEffectResSoundID4 != -1) && sndEffectResSoundID == sndEffectResSoundID3 && sndEffectResSoundID2 == sndEffectResSoundID4)
-		{
-			FF9Snd.ff9fieldSoundRestoreAllResidentSndEffect();
-		}
+		if (sndEffectResSoundID != -1 && sndEffectResSoundID == sndEffectResSoundID3)
+			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(0);
+		if (sndEffectResSoundID2 != -1 && sndEffectResSoundID2 == sndEffectResSoundID4)
+			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(1);
 	}
 
 	public override void HonoUpdate()
@@ -187,12 +187,12 @@ public class HonoluluFieldMain : HonoBehavior
 					sceneFromState.Show((UIScene.SceneVoidDelegate)null);
 				}
 			}
-			this.FF9FieldLocationMain((Int32)this.FF9.fldLocNo);
+			this.FF9FieldLocationMain();
 			EMinigame.GetTheaterShipMaquetteAchievement();
 		}
 	}
 
-	private void FF9FieldLocationMain(Int32 LocNo)
+	private void FF9FieldLocationMain()
 	{
 		this.FF9FieldMapMain((Int32)this.FF9.fldMapNo);
 	}

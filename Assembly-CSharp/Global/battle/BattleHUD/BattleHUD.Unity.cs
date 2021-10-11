@@ -206,7 +206,7 @@ public partial class BattleHUD : UIScene
         if (TargetPanel.activeSelf)
         {
             DisplayTarget();
-            _statusPanel.DisplayStatusRealtime(_matchBattleIdPlayerList);
+            _statusPanel.DisplayStatusRealtime();
         }
 
         ManagerTarget();
