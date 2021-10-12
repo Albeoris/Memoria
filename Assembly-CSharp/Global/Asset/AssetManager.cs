@@ -35,7 +35,7 @@ public static class AssetManager
 	static AssetManager()
 	{
 		Array values = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
-		String[] foldname = new String[Configuration.Mod.FolderNames.Length+1];
+		String[] foldname = new String[Configuration.Mod.FolderNames.Length + 1];
 		String url;
 		for (Int32 i = 0; i < (Int32)Configuration.Mod.FolderNames.Length; ++i)
 			foldname[i] = Configuration.Mod.FolderNames[i] + "/";
@@ -278,7 +278,7 @@ public static class AssetManager
 			UIAtlas newAtlas = Resources.Load<UIAtlas>(archiveName);
 			if (newAtlas != null)
 				newAtlas.ReadFromDisc(name);
-			else
+			else if (AssetManager.PrintAssetNotFound)
 				Log.Message("[AssetManager] Embeded asset not found: " + archiveName);
 			return (T)(Object)newAtlas;
 		}
@@ -307,7 +307,7 @@ public static class AssetManager
 					return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 				}
 			result = Resources.Load<T>(name);
-			if (result == (UnityEngine.Object)null)
+			if (result == (UnityEngine.Object)null && AssetManager.PrintAssetNotFound)
 				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return result;
 		}
@@ -345,7 +345,7 @@ public static class AssetManager
 				return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 			}
 		result = Resources.Load<T>(name);
-		if (result == (UnityEngine.Object)null)
+		if (result == (UnityEngine.Object)null && AssetManager.PrintAssetNotFound)
 			Log.Message("[AssetManager] Asset not found: " + name);
 		return result;
 	}
@@ -374,7 +374,8 @@ public static class AssetManager
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != (UnityEngine.Object)null)
 				return txt.text;
-			Log.Message("[AssetManager] Embeded asset not found: " + name);
+			if (AssetManager.PrintAssetNotFound)
+				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return null;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
@@ -411,7 +412,8 @@ public static class AssetManager
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != (UnityEngine.Object)null)
 			return txt.text;
-		Log.Message("[AssetManager] Asset not found: " + name);
+		if (AssetManager.PrintAssetNotFound)
+			Log.Message("[AssetManager] Asset not found: " + name);
 		return null;
 	}
 	
@@ -439,7 +441,8 @@ public static class AssetManager
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != (UnityEngine.Object)null)
 				return txt.bytes;
-			Log.Message("[AssetManager] Embeded asset not found: " + name);
+			if (AssetManager.PrintAssetNotFound)
+				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return null;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
@@ -476,7 +479,8 @@ public static class AssetManager
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != (UnityEngine.Object)null)
 			return txt.bytes;
-		Log.Message("[AssetManager] Asset not found: " + name);
+		if (AssetManager.PrintAssetNotFound)
+			Log.Message("[AssetManager] Asset not found: " + name);
 		return null;
 	}
 
@@ -511,8 +515,34 @@ public static class AssetManager
 		ResourceRequest resourceRequest2 = Resources.LoadAsync<T>(name);
 		if (resourceRequest2 != null)
 			return new AssetManagerRequest(resourceRequest2, (AssetBundleRequest)null);
-		Log.Message("[AssetManager] Asset not found: " + name);
+		if (AssetManager.PrintAssetNotFound)
+			Log.Message("[AssetManager] Asset not found: " + name);
 		return (AssetManagerRequest)null;
+	}
+
+	public static String SearchAssetOnDisc(String name, Boolean includeAssetPath, Boolean includeAssetExtension)
+	{
+		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
+		{
+			foreach (AssetFolder modfold in Folder)
+				if (File.Exists(modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) + "/" : "") + name))
+					return modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) + "/" : "") + name;
+			return String.Empty;
+		}
+		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
+		if (!String.IsNullOrEmpty(belongingBundleFilename))
+		{
+			String nameInBundle = (includeAssetPath ? AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() : "") + name + (includeAssetExtension ? AssetManagerUtil.GetAssetExtension<TextAsset>(name) : "");
+			foreach (AssetFolder modfold in Folder)
+				if (File.Exists(modfold.FolderPath + nameInBundle))
+					return modfold.FolderPath + nameInBundle;
+		}
+		if (ForceUseBundles)
+			return String.Empty;
+		foreach (AssetFolder modfold in Folder)
+			if (File.Exists(modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) : "") + "/" + name))
+				return modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) : "") + "/" + name;
+		return String.Empty;
 	}
 
 	public static T[] LoadAll<T>(String name) where T : UnityEngine.Object
@@ -844,6 +874,8 @@ public static class AssetManager
 	public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
 
 	public const TextureFormat DefaultTextureFormat = TextureFormat.ARGB32;
+
+	public const Boolean PrintAssetNotFound = true;
 
 	public static Boolean UseBundles;
 

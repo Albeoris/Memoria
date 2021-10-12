@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
 using Memoria;
+using Memoria.Assets;
 using Object = System.Object;
 
 public class ETb
@@ -190,9 +192,8 @@ public class ETb
 			}));
 		}
 		
-		string vaPath = String.Format("Voices/{0}/{1}/va_{2}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
-		Byte[] vaRaw = AssetManager.LoadBytes(vaPath, out _);
-		if (vaRaw != null)
+		string vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
+		if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 		{
 			if (dialog.ChoiceNumber > 0)
 			{
@@ -200,7 +201,7 @@ public class ETb
 				{
 					if (currentVAFile != null)
 						SoundLib.voicePlayer.StopSound(currentVAFile);
-					string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Memoria.Assets.Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
+					string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
 					currentVAFile = new SoundProfile
 					{
 						Code = num.ToString(),
@@ -213,7 +214,7 @@ public class ETb
 						Pitch = 1f
 					};
 
-					SoundImporter.Instance.Load(currentVAFile,
+					SoundLoaderProxy.Instance.Load(currentVAFile,
 					(soundProfile, db) =>
 					{
 						if (soundProfile != null)
@@ -233,16 +234,16 @@ public class ETb
 			currentVAFile = new SoundProfile
 			{
 				Code = num.ToString(),
-				Name = path,
+				Name = vaPath,
 				SoundIndex = num,
-				ResourceID = path,
+				ResourceID = vaPath,
 				SoundProfileType = SoundProfileType.Voice,
 				SoundVolume = 1f,
 				Panning = 0f,
 				Pitch = 1f
 			};
 
-			SoundImporter.Instance.Load(currentVAFile,
+			SoundLoaderProxy.Instance.Load(currentVAFile,
 			(soundProfile, db) =>
 			{
 				if (soundProfile != null)

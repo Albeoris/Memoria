@@ -402,9 +402,9 @@ public static class AssetManagerUtil
 		{
 			Int32 soundCategoryBundleId = AssetManagerUtil.GetSoundCategoryBundleId(assetName);
 			if (soundCategoryBundleId != -1)
-			{
 				result = AssetManagerUtil.GetSoundBundleName((AssetManagerUtil.SoundBundleId)soundCategoryBundleId);
-			}
+			else
+				result = AssetManagerUtil.GetSoundBundleName(AssetManagerUtil.SoundBundleId.Bundle_1);
 		}
 		else if (AssetManagerUtil.CheckModuleBundleFromName(AssetManagerUtil.ModuleBundle.CommonAssets, assetName))
 		{
