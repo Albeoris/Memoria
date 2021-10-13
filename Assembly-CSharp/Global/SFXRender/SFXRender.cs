@@ -116,9 +116,7 @@ public class SFXRender
 		}
 		if (num == 40)
 		{
-			UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-			SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-			mesh.PolyF4((PSX_LIBGPU.POLY_F4*)tag);
+			SFXRender.PolyF4((PSX_LIBGPU.POLY_F4*)tag);
 			return;
 		}
 		if (num == 44)
@@ -140,9 +138,7 @@ public class SFXRender
 		}
 		if (num == 56)
 		{
-			UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-			SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-			mesh.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
+			SFXRender.PolyG4((PSX_LIBGPU.POLY_G4*) tag);
 			return;
 		}
 		if (num == 60)
@@ -244,6 +240,36 @@ public class SFXRender
 		SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, 16, 16);
 	}
 
+	private static unsafe void PolyG4(PSX_LIBGPU.POLY_G4* tag)
+	{
+		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			tag->x0 -= widescreenOffset;
+			tag->x1 += widescreenOffset;
+			tag->x2 -= widescreenOffset;
+			tag->x3 += widescreenOffset;
+		}
+		UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+		mesh.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
+	}
+
+	private static unsafe void PolyF4(PSX_LIBGPU.POLY_F4* tag)
+	{
+		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			tag->x0 -= widescreenOffset;
+			tag->x1 += widescreenOffset;
+			tag->x2 -= widescreenOffset;
+			tag->x3 += widescreenOffset;
+		}
+		UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+		mesh.PolyF4(tag);
+	}
+
 	private unsafe static void PolyGT3(PSX_LIBGPU.POLY_GT3* tag)
 	{
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
@@ -260,6 +286,14 @@ public class SFXRender
 
 	private unsafe static void PolyGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
+		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			tag->x0 -= widescreenOffset;
+			tag->x1 += widescreenOffset;
+			tag->x2 -= widescreenOffset;
+			tag->x3 += widescreenOffset;
+		}
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
 		SFXMesh mesh = SFXRender.GetMesh(abrtex, tag->code);
 		mesh.PolyGt4(tag);
@@ -267,6 +301,14 @@ public class SFXRender
 
 	private unsafe static void PolyFT4(PSX_LIBGPU.POLY_FT4* tag, UInt32 fillter = 0u)
 	{
+		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			tag->x0 -= widescreenOffset;
+			tag->x1 += widescreenOffset;
+			tag->x2 -= widescreenOffset;
+			tag->x3 += widescreenOffset;
+		}
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | fillter;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyFt4(tag);
@@ -274,6 +316,14 @@ public class SFXRender
 
 	private unsafe static void PolyBFT4(PSX_LIBGPU.POLY_FT4* tag)
 	{
+		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			tag->x0 -= widescreenOffset;
+			tag->x1 += widescreenOffset;
+			tag->x2 -= widescreenOffset;
+			tag->x3 += widescreenOffset;
+		}
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyBft4(tag);
@@ -281,6 +331,14 @@ public class SFXRender
 
 	private unsafe static void PolyBGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
+		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			tag->x0 -= widescreenOffset;
+			tag->x1 += widescreenOffset;
+			tag->x2 -= widescreenOffset;
+			tag->x3 += widescreenOffset;
+		}
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyBgt4(tag);
@@ -295,6 +353,19 @@ public class SFXRender
 
 	private unsafe static void TILE(PSX_LIBGPU.TILE* tag, Int32 w, Int32 h)
 	{
+		// Fixes some instances of screen flashes (e.g. white screen when summoning Ifrit)
+		if (w == 80 && h == 110 && (tag->y0 == 0 || tag->y0 == 110) && (tag->x0 == 0 || tag->x0 == 80 || tag->x0 == 160 || tag->x0 == 240))
+		{
+			short widescreenOffset = (short)CalculateWidescreenOffsetX();
+			float aspectRatioDiffMultiplier = FieldMap.PsxFieldWidth / 320f;
+			w = (int)(w * aspectRatioDiffMultiplier);
+			tag->x0 = (short)(tag->x0 * aspectRatioDiffMultiplier - widescreenOffset);
+			if (tag->x0 == 159)
+			{
+				// Need to increment w to make up for rounding losses
+				w++;
+			}
+		}
 		UInt32 currentABR = SFXKey.GetCurrentABR(tag->code);
 		SFXMesh mesh = SFXRender.GetMesh(currentABR, tag->code);
 		mesh.Tile(tag, w, h);
@@ -545,6 +616,16 @@ public class SFXRender
 		list.Add(sfxmesh2);
 		sfxmesh2.Setup(meshKey, code);
 		return sfxmesh2;
+	}
+
+	private static bool IsFullWidthRect(short x0, short x1, short x2, short x3)
+	{
+		return x0 == 0 && (x1 == 320 || x1 == 319) && x2 == 0 && (x3 == 320 || x3 == 319);
+	}
+
+	private static int CalculateWidescreenOffsetX()
+	{
+		return (FieldMap.PsxFieldWidth - 320) / 2;
 	}
 
 	public static Int32 primCount;
