@@ -44,7 +44,7 @@ public class SFXRender
 		if (SFX.SFX_BeginRender())
 		{
 			SFXRender.primCount = 0;
-			SFXMeshBase.drOffsetX = (FieldMap.PsxFieldWidth - 320) / 2; // Widescreen offset
+			SFXMeshBase.drOffsetX = CalculateWidescreenOffsetX();
 			SFXMeshBase.drOffsetY = 0;
 			SFXRender.meshEmpty = new List<SFXMesh>(SFXRender.meshOrigin);
 			for (Int32 i = 0; i < SFXRender.MESH_MAX; i++)
@@ -307,7 +307,7 @@ public class SFXRender
 
 	private unsafe static void DR_OFFSET(PSX_LIBGPU.DR_OFFSET* obj)
 	{
-		SFXMeshBase.drOffsetX = (Int32)(obj->code[1] & 65535u);
+		SFXMeshBase.drOffsetX = (Int32)(obj->code[1] & 65535u) + CalculateWidescreenOffsetX();
 		SFXMeshBase.drOffsetY = (Int32)(obj->code[1] >> 16);
 	}
 
@@ -317,7 +317,7 @@ public class SFXRender
 		Int32 num = (Int32)(obj->code[1] >> 16);
 		if (num != 0)
 		{
-			SFXMeshBase.drOffsetX -= PSXTextureMgr.GEN_TEXTURE_X;
+			SFXMeshBase.drOffsetX -= PSXTextureMgr.GEN_TEXTURE_X + CalculateWidescreenOffsetX();
 			SFXMeshBase.drOffsetY -= PSXTextureMgr.GEN_TEXTURE_Y;
 			SFXRender.commandBuffer.Add(new SFXRenderTextureBegin());
 		}
@@ -545,6 +545,11 @@ public class SFXRender
 		list.Add(sfxmesh2);
 		sfxmesh2.Setup(meshKey, code);
 		return sfxmesh2;
+	}
+
+	private static int CalculateWidescreenOffsetX()
+	{
+		return (FieldMap.PsxFieldWidth - 320) / 2;
 	}
 
 	public static Int32 primCount;
