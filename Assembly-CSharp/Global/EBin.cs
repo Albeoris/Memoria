@@ -2265,12 +2265,8 @@ public class EBin
         VIBRANGE,
         HINT,
         JOIN,
-        EXT
-    }
-
-    public enum event_code_binary_ext
-    {
-        BSSTART = 65280,
+        EXT, // 0xFF
+        BSSTART,
         BSFRAME,
         BSACTIVE,
         BSFLAG,
