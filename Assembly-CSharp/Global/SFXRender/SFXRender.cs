@@ -242,30 +242,16 @@ public class SFXRender
 
 	private static unsafe void PolyG4(PSX_LIBGPU.POLY_G4* tag)
 	{
-		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
-		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			tag->x0 -= widescreenOffset;
-			tag->x1 += widescreenOffset;
-			tag->x2 -= widescreenOffset;
-			tag->x3 += widescreenOffset;
-		}
 		UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
 	}
 
 	private static unsafe void PolyF4(PSX_LIBGPU.POLY_F4* tag)
 	{
-		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
-		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			tag->x0 -= widescreenOffset;
-			tag->x1 += widescreenOffset;
-			tag->x2 -= widescreenOffset;
-			tag->x3 += widescreenOffset;
-		}
 		UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyF4(tag);
 	}
@@ -286,66 +272,48 @@ public class SFXRender
 
 	private unsafe static void PolyGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
-		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
-		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			tag->x0 -= widescreenOffset;
-			tag->x1 += widescreenOffset;
-			tag->x2 -= widescreenOffset;
-			tag->x3 += widescreenOffset;
-		}
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
+		FixWidescreenFace(abrtex, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(abrtex, tag->code);
 		mesh.PolyGt4(tag);
 	}
 
 	private unsafe static void PolyFT4(PSX_LIBGPU.POLY_FT4* tag, UInt32 fillter = 0u)
 	{
-		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
-		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			tag->x0 -= widescreenOffset;
-			tag->x1 += widescreenOffset;
-			tag->x2 -= widescreenOffset;
-			tag->x3 += widescreenOffset;
-		}
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | fillter;
+		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyFt4(tag);
 	}
 
 	private unsafe static void PolyBFT4(PSX_LIBGPU.POLY_FT4* tag)
 	{
-		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
-		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			tag->x0 -= widescreenOffset;
-			tag->x1 += widescreenOffset;
-			tag->x2 -= widescreenOffset;
-			tag->x3 += widescreenOffset;
-		}
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
+		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyBft4(tag);
 	}
 
 	private unsafe static void PolyBGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
-		if (IsFullWidthRect(tag->x0, tag->x1, tag->x2, tag->x3))
-		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			tag->x0 -= widescreenOffset;
-			tag->x1 += widescreenOffset;
-			tag->x2 -= widescreenOffset;
-			tag->x3 += widescreenOffset;
-		}
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
+		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyBgt4(tag);
 	}
 
 	private unsafe static void SPRT(PSX_LIBGPU.SPRT* tag, Int32 w, Int32 h)
 	{
+		// Sprites have a texture while Tiles have vertex colors only
+		if (w == 80 && h == 110 && (tag->y0 == 0 || tag->y0 == 110) && (tag->x0 == 0 || tag->x0 == 80 || tag->x0 == 160 || tag->x0 == 240))
+		{
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			Single aspectRatioDiffMultiplier = FieldMap.PsxFieldWidth / 320f;
+			w = (int)(w * aspectRatioDiffMultiplier);
+			tag->x0 = (Int16)(tag->x0 * aspectRatioDiffMultiplier - widescreenOffset);
+			if (tag->x0 == 159)
+				w++;
+		}
 		UInt32 meshKey = SFXKey.GetCurrentABRTex(tag->code, tag->clut) | 67108864u;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.Sprite(tag, w, h);
@@ -616,6 +584,114 @@ public class SFXRender
 		list.Add(sfxmesh2);
 		sfxmesh2.Setup(meshKey, code);
 		return sfxmesh2;
+	}
+
+	private static void FixWidescreenFace(UInt32 meshKey, ref Int16 x0, ref Int16 x1, ref Int16 x2, ref Int16 x3, Int16 y0, Int16 y1, Int16 y2, Int16 y3)
+	{
+		if (!Memoria.Configuration.Graphics.WidescreenSupport)
+			return;
+		UInt32 textureKey = SFXKey.GetTextureKey(meshKey);
+		// Enlarge blur texture, whatever the size
+		if (SFXKey.GetTextureMode(meshKey) == 2u && (SFXKey.IsBlurTexture(textureKey) || (SFX.currentEffectID == 274 && textureKey == 0x57FFFFu)))
+		{
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			Single aspectRatioDiffMultiplier = FieldMap.PsxFieldWidth / (Single)FieldMap.PsxFieldWidthNative;
+			x0 = (Int16)(x0 * aspectRatioDiffMultiplier - widescreenOffset);
+			x1 = (Int16)(x1 * aspectRatioDiffMultiplier - widescreenOffset);
+			x2 = (Int16)(x2 * aspectRatioDiffMultiplier - widescreenOffset);
+			x3 = (Int16)(x3 * aspectRatioDiffMultiplier - widescreenOffset);
+			return;
+		}
+		// Enlarge faces expanding over the whole screen
+		if (IsFullWidthRect(x0, x1, x2, x3))
+		{
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			x0 -= widescreenOffset;
+			x1 += widescreenOffset;
+			x2 -= widescreenOffset;
+			x3 += widescreenOffset;
+			return;
+		}
+		if (SFX.currentEffectID == 211 && meshKey == 0x00800000u) // Phoenix__Full, fire on the foreground
+		{
+			// 0x00800000u is used by many meshes in many frames, potentially with parts that are widescreens and parts that are not; they are the trickiest
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			if (x0 == 0 && x2 == 0)
+			{
+				x0 -= widescreenOffset;
+				x2 -= widescreenOffset;
+			}
+			if (x1 == 320 && x3 == 320)
+			{
+				x1 += widescreenOffset;
+				x3 += widescreenOffset;
+			}
+			return;
+		}
+		if (SFX.currentEffectID == 225 && meshKey == 0x00800000u) // Phoenix_Rebirth_Flame, light from above
+		{
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			if (x0 == 0 && x2 == 0 && x1 == 80 && x3 == 80)
+			{
+				x0 -= widescreenOffset;
+				x2 -= widescreenOffset;
+			}
+			if (x1 == 320 && x3 == 320 && x0 == 240 && x2 == 240)
+			{
+				x1 += widescreenOffset;
+				x3 += widescreenOffset;
+			}
+			return;
+		}
+		if (SFX.currentEffectID == 251 && meshKey == 0x00800000u) // Madeen__Full, light from ground explosion
+		{
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			if (x0 == 0 && x2 == 0 && x1 == 40 && x3 == 40)
+			{
+				x0 -= widescreenOffset;
+				x2 -= widescreenOffset;
+			}
+			if (x1 == 320 && x3 == 320 && x0 == 280 && x2 == 280)
+			{
+				x1 += widescreenOffset;
+				x3 += widescreenOffset;
+			}
+			return;
+		}
+		if (SFX.currentEffectID == 381) // Ark__Full
+		{
+			if (meshKey == 0x00800000u)
+			{
+				Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+				// Beam-like effect when the hand opens
+				if (x0 == 0 && x2 == 0 && x1 == 160 && x3 == 160 && (y0 == 112 && y1 == 112 || y2 == 112 && y3 == 112))
+				{
+					x0 -= widescreenOffset;
+					x2 -= widescreenOffset;
+				}
+				if (x1 == 320 && x3 == 320 && x0 == 160 && x2 == 160 && (y0 == 112 && y1 == 112 || y2 == 112 && y3 == 112))
+				{
+					x1 += widescreenOffset;
+					x3 += widescreenOffset;
+				}
+				// Filter at the start of atmospheric entry
+				if (x0 == 0 && x2 == 0 && y0 == y1 && y2 == y3 && (y0 % 60) == 0 && (y2 % 60) == 0)
+				{
+					x0 -= widescreenOffset;
+					x2 -= widescreenOffset;
+				}
+			}
+			else if (meshKey == 0x00BBBEC0u) // NASA stock image of Florida
+			{
+				Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+				Single aspectRatioDiffMultiplier = 1f + widescreenOffset / 270f; // 342f is the extreme right coordinate but it needs extension too
+				x0 = (Int16)(x0 * aspectRatioDiffMultiplier - widescreenOffset);
+				x1 = (Int16)(x1 * aspectRatioDiffMultiplier - widescreenOffset);
+				x2 = (Int16)(x2 * aspectRatioDiffMultiplier - widescreenOffset);
+				x3 = (Int16)(x3 * aspectRatioDiffMultiplier - widescreenOffset);
+			}
+			return;
+		}
 	}
 
 	private static bool IsFullWidthRect(short x0, short x1, short x2, short x3)
