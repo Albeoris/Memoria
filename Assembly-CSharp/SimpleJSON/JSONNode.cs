@@ -226,6 +226,34 @@ namespace SimpleJSON
 			}
 		}
 
+		public virtual UnityEngine.Vector4 AsVector
+		{
+			get
+			{
+				String val = this.Value;
+				if (val.StartsWith("(") && val.EndsWith(")"))
+					val = val.Substring(1, val.Length - 2);
+				String[] coordStr = val.Split(',');
+				if (coordStr.Length == 0)
+					return UnityEngine.Vector4.zero;
+				Single[] coordNum = new Single[coordStr.Length];
+				for (Int32 i = 0; i < coordStr.Length; i++)
+					if (!Single.TryParse(coordStr[i], out coordNum[i]))
+						return UnityEngine.Vector4.zero;
+				if (coordNum.Length == 1)
+					return new UnityEngine.Vector4(coordNum[0], coordNum[0], coordNum[0], coordNum[0]);
+				if (coordNum.Length == 2)
+					return new UnityEngine.Vector4(coordNum[0], coordNum[1], 0f, 0f);
+				if (coordNum.Length == 3)
+					return new UnityEngine.Vector4(coordNum[0], coordNum[1], coordNum[2], 0f);
+				return new UnityEngine.Vector4(coordNum[0], coordNum[1], coordNum[2], coordNum[3]);
+			}
+			set
+			{
+				this.Value = value.ToString();
+			}
+		}
+
 		public virtual JSONArray AsArray
 		{
 			get

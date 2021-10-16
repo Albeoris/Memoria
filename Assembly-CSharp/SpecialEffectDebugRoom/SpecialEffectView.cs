@@ -2,6 +2,7 @@
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
 using UnityEngine;
+using Memoria.Data;
 
 namespace SpecialEffectDebugRoom
 {
@@ -156,7 +157,7 @@ namespace SpecialEffectDebugRoom
 				this.isPause = false;
 				SFX.Begin(1, 0, new Byte[2], default(PSX_LIBGTE.VECTOR));
 				SFX.SetDebug();
-				SFX.Play(this.effNum);
+				SFX.Play((SpecialEffect)this.effNum);
 			}
 			GUI.enabled = true;
 			GUILayout.EndHorizontal();
@@ -171,7 +172,7 @@ namespace SpecialEffectDebugRoom
 				this.isPause = false;
 				SFX.Begin(0, 0, new Byte[2], default(PSX_LIBGTE.VECTOR));
 				SFX.SetDebug();
-				SFX.Play(this.effNum);
+				SFX.Play((SpecialEffect)this.effNum);
 			}
 			for (Int32 i = 0; i < (Int32)(SFX.isDebugAutoPlay ? 4 : 1); i++)
 			{
