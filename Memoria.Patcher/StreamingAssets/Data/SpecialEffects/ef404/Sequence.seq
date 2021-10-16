@@ -1,0 +1,18 @@
+// Shared sequence of SFX Shockwave
+
+PlaySound: Sound=2475
+PlaySound: Sound=2476
+PlaySound: Sound=2477
+Wait: Time=32
+PlaySound: Sound=2478
+PlaySound: Sound=2479
+PlaySound: Sound=2480
+Wait: Time=24
+PlaySound: Sound=2481
+PlaySound: Sound=2482
+PlaySound: Sound=2483
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

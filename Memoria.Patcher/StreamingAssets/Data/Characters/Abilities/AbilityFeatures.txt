@@ -7,7 +7,8 @@
 ##  etc...
 ##  
 ##  Generic comments should be placed at the beginning of the file
-##  All the supporting abilities do not have to be present when inside mods
+##  The 64 supporting abilities must be defined in the main AbilityFeatures.txt
+##  However, only a part of them can be present in AbilityFeatures.txt of mod folders
 ##  
 ##  A special group of features can be optionally defined using ">SA Global" or ">SA GlobalLast"
 ##  Features in these global blocks will always apply,
@@ -119,7 +120,7 @@
 ##  
 ##  Command:
 ##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
-##    AbilityFlags, IsReflectNull, IsShortSummon, TryCover, ScriptId, HitRate
+##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate
 ##  
 ##  BattleResult:
 ##    Status, BonusAP, BonusCard, BonusExp, BonusGil, BonusItem1, BonusItemCount1,
@@ -134,7 +135,7 @@
 ##  Common:
 ##    GetRandom(min, max)              -> Return a random number between min and max-1
 ##    GetRandom()                      -> Same as GetRandom(0, 256)
-##    GetAbilityUsageCount(ability ID) -> Return the number of time the player used an ability
+##    GetAbilityUsageCount(ability ID) -> Return the number of times the player used an ability
 ##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
 ##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list
 ##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list
@@ -151,8 +152,6 @@
 ##    TetraMasterLossCount             -> The number of Tetra Master losses
 ##    TetraMasterDrawCount             -> The number of Tetra Master draws
 ##    GameTime                         -> The total duration of the played game, in seconds
-##    CalcMainCounter                  -> The number of times the current ability's effect triggered
-##                                        (multi-target abilities and multi-hit abilities)
 ##  
 ##  Permanent:
 ##    Level, Exp, CharacterIndex, WeaponId, HeadId, WristId, ArmorId, AccessoryId,
@@ -173,16 +172,16 @@
 ##  
 ##  Ability:
 ##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
-##    ReflectFactor, StatusesInflicted, CommandId, AbilityId, ScriptId, ItemUseId, SpecialEffectId,
-##    TargetType, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected, IsCovered, IsDodged,
-##    IsReflectNull, MPCost,
+##    ReflectFactor, StatusesInflicted, CommandId, AbilityId, ScriptId, ItemUseId, WeaponThrowShape,
+##    SpecialEffectId, TargetType, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected, IsCovered,
+##    IsDodged, IsReflectNull, MPCost, CalcMainCounter,
 ##    (+ the other modifiable properties, except for "ClearStatus" and "ClearAutoStatus")
 ##  
 ##  Command:
 ##    All those of "StatusInit" for both the caster and the target, but not in the condition formula,
 ##    All those of "StatusInit" for the SA user (that can be neither the caster nor a target),
-##    CommandId, AbilityId, ItemUseId, SpecialEffectId, TargetType, IsAbilityMultiTarget,
-##    IsSpellReflected, IsCovered, IsDodged, MPCost,
+##    CommandId, AbilityId, ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType,
+##    IsAbilityMultiTarget, IsSpellReflected, IsCovered, IsDodged, MPCost, CalcMainCounter,
 ##    IsCasterWellDefined, IsTargeted, IsSingleTarget, IsTheCaster, IsAllyOfTarget, IsAllyOfCaster,
 ##    IsEnemyOfTarget, IsEnemyOfCaster, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
 ##    (+ the other modifiable properties)

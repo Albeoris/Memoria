@@ -1,0 +1,9 @@
+// Shared sequence of SFX Special_Prepare_Attack
+
+PlaySound: Sound=1122
+PlaySound: Sound=1123
+PlaySound: Sound=1124
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

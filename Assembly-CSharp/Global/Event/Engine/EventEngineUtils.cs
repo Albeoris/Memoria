@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Memoria;
@@ -1864,11 +1865,21 @@ internal class EventEngineUtils
 
         ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
 		String[] ebInfo;
-        Byte[] binAsset = AssetManager.LoadBytes(ebFileName, out ebInfo, false);
+        Byte[] binAsset = AssetManager.LoadBytes(ebFileName, out ebInfo);
         if (binAsset != null)
             return binAsset;
 
         E_Error("loadEventData: cannot load eb file " + ebFileName);
+        return null;
+    }
+
+    public static EventEngineUtils.BinaryScript loadEventAsScript(String ebFileName, String ebSubFolder)
+    {
+        ebFileName = ebFilePath + ebSubFolder + Localization.GetSymbol() + "/" + ebFileName + ebFileExt;
+        String[] ebInfo;
+        Byte[] binAsset = AssetManager.LoadBytes(ebFileName, out ebInfo);
+        if (binAsset != null)
+            return new BinaryScript(binAsset);
         return null;
     }
 
@@ -1908,4 +1919,393 @@ internal class EventEngineUtils
         level5 = 5,
         levelMax = 6,
     }
+
+    // The purpose of the following class (custom to Memoria) is different from the base classes (EventEngine, ObjTable, etc):
+    // it aims to give informations on binary scripts, not execute it
+    #region EventEngineUtils.BinaryScript
+    public class BinaryScript
+    {
+        public List<Entry> entries;
+
+        public BinaryScript(Byte[] raw)
+		{
+            if (raw.Length < 4)
+                return;
+            if (raw[0] != 'E' || raw[1] != 'V')
+                return;
+            Int32 entryCount = raw[3];
+            UInt32 entryBasePos = 44 + 84; // header + PSX name
+            if (raw.Length < entryBasePos + 8 * entryCount)
+                return;
+            UInt16[] entOff = new UInt16[entryCount];
+            UInt16[] entSz = new UInt16[entryCount];
+            Byte[] entLoc = new Byte[entryCount];
+            Byte[] entFl = new Byte[entryCount];
+            UInt32 pos = entryBasePos;
+            for (Int32 i = 0; i < entryCount; i++)
+            {
+                entOff[i] = (UInt16)(raw[pos++] | (raw[pos++] << 8));
+                entSz[i] = (UInt16)(raw[pos++] | (raw[pos++] << 8));
+                entLoc[i] = raw[pos++];
+                entFl[i] = raw[pos++];
+                pos += 2;
+            }
+            for (Int32 i = 0; i < entryCount; i++)
+                if (raw.Length < entryBasePos + entOff[i] + entSz[i])
+                    return;
+            entries = new List<Entry>();
+            for (Int32 i = 0; i < entryCount; i++)
+            {
+                pos = entryBasePos + entOff[i];
+                entries.Add(new Entry(raw, ref pos, (Byte)i, entLoc[i], entFl[i], entryBasePos + entOff[i] + entSz[i]));
+            }
+        }
+
+        public UInt32 GetBinarySize()
+        {
+            UInt32 size = 44u + 84u + 8u * (UInt32)entries.Count;
+            for (Int32 i = 0; i < entries.Count; i++)
+                size += entries[i].GetBinarySize();
+            return size;
+        }
+
+        public HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true)
+        {
+            HashSet<UInt32> result = new HashSet<UInt32>();
+            foreach (Entry e in entries)
+                result.UnionWith(e.GetVariableUsage(withGeneral, withGlobal, withLocal));
+            return result;
+        }
+
+        public static Boolean IsVariableInUsage(HashSet<UInt32> pool, UInt32 specific)
+		{
+            if (pool.Contains(specific))
+                return true;
+            if ((specific & NON_BOOLEAN_FLAG) != 0)
+            {
+                for (UInt32 i = 0; i < 8; i++)
+                    if (pool.Contains((specific & 0xFFFFFFF8u & ~NON_BOOLEAN_FLAG) + i))
+                        return true;
+            }
+            else if (pool.Contains((specific & 0xFFFFFFF8u) | NON_BOOLEAN_FLAG))
+                return true;
+            return false;
+		}
+
+        public static UInt32 GetVariableFromIndex(EBin.VariableSource source, UInt16 index, Boolean isBoolType = false)
+		{
+            if (isBoolType)
+                return index | ((UInt32)source << 26);
+            return NON_BOOLEAN_FLAG | (UInt32)(index << 3) | ((UInt32)source << 26);
+        }
+
+        public class Entry
+        {
+            public Byte sid;
+            public Byte type;
+            public Byte localVarCount;
+            public Byte flags;
+            public List<Function> functions;
+            public Entry(Byte[] raw, ref UInt32 pos, Byte id, Byte lvc, Byte fl, UInt32 maxPosEntry)
+			{
+                sid = id;
+                localVarCount = lvc;
+                flags = fl;
+                functions = new List<Function>();
+                if (maxPosEntry <= pos)
+				{
+                    type = 0xFF;
+                    return;
+				}
+                type = raw[pos++];
+                Int32 funcCount = raw[pos++];
+                UInt16[] funcTag = new UInt16[funcCount];
+                UInt16[] funcPos = new UInt16[funcCount];
+                UInt32 funcBasePos = pos;
+                for (Int32 i = 0; i < funcCount; i++)
+                {
+                    funcTag[i] = (UInt16)(raw[pos++] | (raw[pos++] << 8));
+                    funcPos[i] = (UInt16)(raw[pos++] | (raw[pos++] << 8));
+                }
+                for (Int32 i = 0; i < funcCount; i++)
+                {
+                    pos = funcBasePos + funcPos[i];
+                    functions.Add(new Function(raw, ref pos, funcTag[i], i + 1 < funcCount ? funcBasePos + funcPos[i + 1] : maxPosEntry));
+                }
+            }
+
+            public HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true)
+            {
+                HashSet<UInt32> result = new HashSet<UInt32>();
+                foreach (Function f in functions)
+                    result.UnionWith(f.GetVariableUsage(withGeneral, withGlobal, withLocal));
+                return result;
+            }
+
+            public UInt32 GetBinarySize()
+            {
+                UInt32 size = 2u + 4 * (UInt32)functions.Count;
+                for (Int32 i = 0; i < functions.Count; i++)
+                    for (Int32 j = 0; j < functions[i].codes.Count; j++)
+                        size += functions[i].codes[j].GetBinarySize();
+                return size;
+            }
+
+            public class Function
+			{
+                public Int32 tagNumber;
+                public List<Code> codes;
+
+                public Function(Byte[] raw, ref UInt32 pos, Int32 tag, UInt32 maxPosFunc)
+                {
+                    codes = new List<Code>();
+                    tagNumber = tag;
+                    while (pos < maxPosFunc)
+                        codes.Add(new Code(raw, ref pos));
+                }
+
+                public HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true)
+				{
+                    HashSet<UInt32> result = new HashSet<UInt32>();
+                    HashSet<UInt32> piece;
+                    Int32 i;
+                    foreach (Code c in codes)
+                        for (i = 0; i < c.arguments.Count; i++)
+						{
+                            piece = c.arguments[i].GetVariableUsage(withGeneral, withGlobal, withLocal);
+                            if (piece != null)
+                                result.UnionWith(piece);
+						}
+                    return result;
+                }
+
+                public class Code
+				{
+                    public UInt16 opcode;
+                    public Byte argFlag;
+                    public List<Argument> arguments;
+
+                    public Code(Byte[] raw, ref UInt32 pos)
+					{
+                        arguments = new List<Argument>();
+                        opcode = raw[pos++];
+                        if (opcode == 0xFF)
+                            opcode = (UInt16)(0x100 | raw[pos++]);
+                        Int32 argCount = opArgCount[opcode];
+                        if (opcode >= 0x10 && argCount != 0)
+                            argFlag = raw[pos++];
+                        else
+                            argFlag = 0;
+                        if (opcode == 0x05)
+                            argFlag = 1;
+                        if (argCount < 0)
+                        {
+                            argCount = raw[pos++];
+                            if (opcode == 0x0D)
+                                argCount |= raw[pos++] << 8;
+                            if (opcode == 0x06)
+                                argCount = 1 + 2 * argCount;
+                            else if (opcode == 0x0B || opcode == 0x0D)
+                                argCount = 2 + argCount;
+                        }
+                        for (Int32 i = 0; i < argCount; i++)
+                            arguments.Add((argFlag & (1 << i)) != 0 ? new ArgumentExpression(raw, ref pos) : new ArgumentConstant(raw, ref pos, GetArgTypeSize(opcode, i)));
+                    }
+
+                    public UInt32 GetBinarySize()
+					{
+                        UInt32 size = opcode >= 0x100 ? 2u : 1u;
+                        if (opcode >= 0x10 && opArgCount[opcode] != 0)
+                            size++;
+                        if (opArgCount[opcode] < 0)
+                            size++;
+                        for (Int32 i = 0; i < arguments.Count; i++)
+                            size += arguments[i].GetBinarySize();
+                        return size;
+                    }
+
+                    static SByte[] opArgCount = new SByte[]
+                    {
+                        0, 1, 1, 1, 0, 1, -1, 2, 2, 2, 0, -1, 0, -1, 0, 0,
+                        3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 1, 1, 2, 5, 3,
+                        3, 1, 1, 2, 1, 0, 1, 1, 4, -1, 2, 1, 0, 0, 0, 2,
+                        0, 0, 2, 1, 1, 1, 1, 2, 1, 2, 2, 1, 5, 2, 1, 2,
+                        1, 0, 0, 1, 0, 0, 0, 1, 2, 2, 2, 3, 3, 1, 0, 1,
+                        0, 2, 1, 0, 1, 1, 2, 1, 3, 4, 4, 2, 4, 4, 3, 2,
+                        2, 2, 2, 3, 2, 3, 2, 2, 1, 1, 0, 3, 0, 0, 0, 4,
+                        2, 3, 1, 0, 0, 2, 2, 2, 0, 0, 1, 1, 2, 1, 1, 0,
+                        0, 2, 2, 1, 0, 1, 4, 2, 4, 4, 2, 2, 3, 1, 0, 4,
+                        0, 1, 7, 1, 3, 4, 4, 1, 1, 1, 2, 2, 0, 0, 0, 4,
+                        0, 3, 3, 4, 0, 2, 1, 1, 1, 1, 0, 0, 1, 4, 1, 0,
+                        1, 0, 2, 5, 1, 1, 1, 0, 0, 2, 2, 3, 1, 2, 1, 3,
+                        2, 2, 2, 2, 2, 2, 3, 4, 5, 5, 2, 2, 1, 1, 1, 1,
+                        1, 0, 0, 0, 3, 0, 0, 1, 2, 2, 5, 2, 0, 1, 2, 1,
+                        0, 0, 4, 1, 5, 1, 2, 2, 3, 0, 0, 0, 6, 3, 0, 1,
+                        0, 2, 2, 2, 2, 0, 1, 1, 3, 3, 1, 1, 2, 2, 5, 0,
+                        2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2
+                    };
+
+                    Byte GetArgTypeSize(UInt16 op, Int32 i)
+					{
+                        if (op == 0x29)
+                            return 4;
+                        if (op == 0x06 || op == 0x0B || op == 0x0D)
+                            return 2;
+                        return opArgSize[op] != null ? opArgSize[op][i] : (Byte)0;
+                    }
+
+                    static Byte[][] opArgSize = new Byte[][]
+                    {
+                        null, new Byte[]{ 2 }, new Byte[]{ 2 }, new Byte[]{ 2 }, null, new Byte[]{ 0 }, new Byte[]{ 2, 2, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, null, new Byte[]{ 2, 2, 2 }, null, null, null, null,
+                        new Byte[]{ 1, 1, 1 }, null, new Byte[]{ 1, 1, 1 }, null, new Byte[]{ 1, 1, 1 }, null, new Byte[]{ 1, 1 }, null, new Byte[]{ 1, 1 }, null, new Byte[]{ 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 2, 2 }, new Byte[]{ 1, 2, 2, 2, 2 }, new Byte[]{ 1, 1, 2 },
+                        new Byte[]{ 1, 1, 2 }, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 2, 2 }, new Byte[]{ 1 }, null, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1, 1, 1 }, new Byte[]{ 4 }, new Byte[]{ 1, 2 }, new Byte[]{ 2 }, null, null, null, new Byte[]{ 2, 1 },
+                        null, null, new Byte[]{ 1, 1 }, new Byte[]{ 2 }, new Byte[]{ 2 }, new Byte[]{ 2 }, new Byte[]{ 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 2, 2, 2, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1 },
+                        new Byte[]{ 2 }, null, null, new Byte[]{ 1 }, null, null, null, new Byte[]{ 1 }, new Byte[]{ 2, 1 }, new Byte[]{ 2, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1 }, null, new Byte[]{ 1 },
+                        null, new Byte[]{ 1, 1 }, new Byte[]{ 2 }, null, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 2, 2, 2 }, new Byte[]{ 1, 1, 1, 1 }, new Byte[]{ 1, 2, 2, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 2, 2 }, new Byte[]{ 1, 1, 2, 2 }, new Byte[]{ 1, 2, 2 }, new Byte[]{ 1, 1 },
+                        new Byte[]{ 1, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 2 }, null, new Byte[]{ 1, 1, 1 }, null, null, null, new Byte[]{ 2, 2, 1, 1 },
+                        new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 2 }, null, null, new Byte[]{ 1, 1 }, new Byte[]{ 2, 2 }, new Byte[]{ 2, 2 }, null, null, new Byte[]{ 2 }, new Byte[]{ 2 }, new Byte[]{ 2, 1 }, new Byte[]{ 1 }, new Byte[]{ 1 }, null,
+                        null, new Byte[]{ 1, 1 }, new Byte[]{ 2, 2 }, new Byte[]{ 1 }, null, new Byte[]{ 1 }, new Byte[]{ 1, 1, 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 2, 2, 2 }, new Byte[]{ 2, 2, 2, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 2 }, new Byte[]{ 1 }, null, new Byte[]{ 1, 1, 1, 1 },
+                        null, new Byte[]{ 1 }, new Byte[]{ 1, 2, 1, 1, 1, 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 2, 1, 1 }, new Byte[]{ 1, 1, 1, 2 }, new Byte[]{ 1, 1, 1, 2 }, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 2, 1 }, new Byte[]{ 2, 2 }, null, null, null, new Byte[]{ 1, 1, 1, 1 },
+                        null, new Byte[]{ 2, 2, 2 }, new Byte[]{ 2, 2, 2 }, new Byte[]{ 1, 1, 1, 1 }, null, new Byte[]{ 2, 2 }, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 1 }, null, null, new Byte[]{ 2 }, new Byte[]{ 1, 2, 2, 2 }, new Byte[]{ 2 }, null,
+                        new Byte[]{ 2 }, null, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1, 2, 2, 2 }, new Byte[]{ 2 }, new Byte[]{ 1 }, new Byte[]{ 2 }, null, null, new Byte[]{ 1, 2 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1 }, new Byte[]{ 1, 2, 2 },
+                        new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 2, 2 }, new Byte[]{ 2, 2, 3 }, new Byte[]{ 2, 2, 3, 1 }, new Byte[]{ 2, 2, 3, 1, 1 }, new Byte[]{ 1, 2, 2, 2, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 2 }, new Byte[]{ 2 }, new Byte[]{ 3 }, new Byte[]{ 3 },
+                        new Byte[]{ 2 }, null, null, null, new Byte[]{ 2, 2, 2 }, null, null, new Byte[]{ 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 1, 2, 2 }, new Byte[]{ 1, 1 }, null, new Byte[]{ 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1 },
+                        null, null, new Byte[]{ 2, 2, 2, 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1, 2, 2, 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 2, 2, 2 }, null, null, null, new Byte[]{ 1, 1, 1, 1, 1, 1 }, new Byte[]{ 1, 2, 2 }, null, new Byte[]{ 1 },
+                        null, new Byte[]{ 1, 2 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, null, new Byte[]{ 1 }, new Byte[]{ 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 2 }, new Byte[]{ 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1, 1, 1, 1 }, null,
+                        new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 2, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 2 }, new Byte[]{ 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1, 1, 1 }, new Byte[]{ 1, 1 }
+                    };
+
+                    public abstract class Argument
+					{
+                        public abstract Boolean IsConstantValue();
+                        public abstract HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true);
+                        public abstract UInt32 GetBinarySize();
+                    }
+
+                    public class ArgumentConstant : Argument
+					{
+                        public Int64 value;
+                        public Byte size;
+                        public override Boolean IsConstantValue() => true;
+                        public override HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true) => null;
+                        public override UInt32 GetBinarySize() => size;
+
+                        public ArgumentConstant(Byte[] raw, ref UInt32 pos, Byte sz)
+						{
+                            size = sz;
+                            if (size == 1)
+                                value = raw[pos++];
+                            else if (size == 2)
+                                value = raw[pos++] | (raw[pos++] << 8);
+                            else if (size == 3)
+                                value = raw[pos++] | (raw[pos++] << 8) | (raw[pos++] << 16);
+                            else if (size == 4)
+                                value = raw[pos++] | (raw[pos++] << 8) | (raw[pos++] << 16) | (raw[pos++] << 24);
+                        }
+                    }
+
+                    public class ArgumentExpression : Argument
+                    {
+                        public List<ExpressionOperation> operations;
+
+                        public ArgumentExpression(Byte[] raw, ref UInt32 pos)
+						{
+                            operations = new List<ExpressionOperation>();
+                            do
+                                operations.Add(new ExpressionOperation(raw, ref pos));
+                            while (operations[operations.Count - 1].operation != 0x7F);
+                        }
+
+                        public override Boolean IsConstantValue() => false;
+                        public override HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true)
+						{
+                            HashSet<UInt32> result = new HashSet<UInt32>();
+                            foreach (ExpressionOperation op in operations)
+							{
+                                if ((op.IsGeneralVariable() && withGeneral) || (op.IsGlobalVariable() && withGlobal) || (op.IsLocalVariable() && withLocal))
+                                {
+                                    UInt32 variable = op.IsGeneralVariable() ? (UInt32)EBin.VariableSource.Global << 26 : (op.IsGlobalVariable() ? (UInt32)EBin.VariableSource.Map << 26 : (UInt32)EBin.VariableSource.Instance << 26);
+                                    EBin.VariableType varType = (EBin.VariableType)((op.operation & 0x1C) >> 2);
+                                    UInt32 varIndex = (UInt32)(op.IsLongIndexVariable() ? op.arguments[0] | (op.arguments[1] << 8) : op.arguments[0]);
+                                    if (!op.IsBooleanVariable())
+                                    {
+                                        variable |= NON_BOOLEAN_FLAG;
+                                        varIndex <<= 3;
+                                    }
+                                    variable |= varIndex;
+                                    result.Add(variable);
+                                    if (varType == EBin.VariableType.Int16 || varType == EBin.VariableType.UInt16 || varType == EBin.VariableType.Int24 || varType == EBin.VariableType.UInt24)
+                                    {
+                                        varIndex += 1 << 3;
+                                        variable |= varIndex;
+                                        result.Add(variable);
+                                    }
+                                    if (varType == EBin.VariableType.Int24 || varType == EBin.VariableType.UInt24)
+                                    {
+                                        varIndex += 1 << 3;
+                                        variable |= varIndex;
+                                        result.Add(variable);
+                                    }
+                                }
+							}
+                            return result;
+                        }
+                        public override UInt32 GetBinarySize()
+						{
+                            UInt32 result = 0;
+                            foreach (ExpressionOperation op in operations)
+                                result += 1u + (op.arguments == null ? 0u : (UInt32)op.arguments.Length);
+                            return result;
+                        }
+                    }
+
+                    public class ExpressionOperation
+					{
+                        public Byte operation;
+                        public Byte[] arguments;
+
+                        public ExpressionOperation(Byte[] raw, ref UInt32 pos)
+						{
+                            operation = raw[pos++];
+                            if (!IsConstantValue() && !IsVariable())
+                            {
+                                arguments = null;
+                                return;
+                            }
+                            if (operation == 0x7E)
+                            {
+                                arguments = new Byte[4];
+                                arguments[0] = raw[pos++];
+                                arguments[1] = raw[pos++];
+                                arguments[2] = raw[pos++];
+                                arguments[3] = raw[pos++];
+                            }
+                            else if (operation >= 0xE0 || operation == 0x78 || operation == 0x7D)
+                            {
+                                arguments = new Byte[2];
+                                arguments[0] = raw[pos++];
+                                arguments[1] = raw[pos++];
+                            }
+                            else
+                            {
+                                arguments = new Byte[1];
+                                arguments[0] = raw[pos++];
+                            }
+                        }
+
+                        public Boolean IsVariable() => operation >= 0xC0 || operation == 0x29 || operation == 0x5F || operation == 0x78 || operation == 0x79 || operation == 0x7A;
+                        public Boolean IsGeneralVariable() => operation >= 0xC0 && (operation & 3) == 0;
+                        public Boolean IsGlobalVariable() => operation >= 0xC0 && (operation & 3) == 1;
+                        public Boolean IsLocalVariable() => operation >= 0xC0 && (operation & 3) == 2;
+                        public Boolean IsBooleanVariable() => operation >= 0xC0 && (operation & 0x18) == 0;
+                        public Boolean IsLongIndexVariable() => operation >= 0xE0 || operation == 0x78;
+                        public Boolean IsConstantValue() => operation == 0x7D || operation == 0x7E;
+                    }
+                }
+			}
+		}
+
+        private const UInt32 NON_BOOLEAN_FLAG = 0x40000u;
+	}
+	#endregion
 }

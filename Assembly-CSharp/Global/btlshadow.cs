@@ -55,10 +55,12 @@ public class btlshadow
 	public static void FF9ShadowSetScaleBattle(UInt32 charNo, Byte x, Byte z)
 	{
 		GameObject[] shadowArray = FF9StateSystem.Battle.FF9Battle.map.shadowArray;
-		Vector3 localScale = shadowArray[(Int32)((UIntPtr)charNo)].transform.localScale;
+		if (shadowArray[charNo] == null || !shadowArray[charNo].activeSelf)
+			return;
+		Vector3 localScale = shadowArray[charNo].transform.localScale;
 		localScale.x = (Single)(224 * x) * 1f / 16f;
 		localScale.z = (Single)(192 * z) * 1f / 16f;
-		shadowArray[(Int32)((UIntPtr)charNo)].transform.localScale = localScale;
+		shadowArray[charNo].transform.localScale = localScale;
 	}
 
 	public const Int32 FF9SHADOW_RADIUS = 16;

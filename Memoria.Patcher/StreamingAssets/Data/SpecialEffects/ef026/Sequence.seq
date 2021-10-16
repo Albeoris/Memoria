@@ -1,0 +1,13 @@
+// Shared sequence of SFX Sleep__Single
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=99
+PlaySound: Sound=100
+PlaySound: Sound=89
+PlaySound: Sound=42
+Wait: Time=50
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=17
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=9

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Darkness
+
+PlaySound: Sound=288
+PlaySound: Sound=272
+PlaySound: Sound=195
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=30

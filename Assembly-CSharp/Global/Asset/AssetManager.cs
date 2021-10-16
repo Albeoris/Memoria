@@ -84,7 +84,7 @@ public static class AssetManager
 	{
 		_animationInFolder = new Dictionary<String, List<String>>();
 		_animationReverseFolder = new Dictionary<String, String>();
-		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _, false);
+		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _);
 		if (filestr == null)
 		{
 			return;
@@ -278,7 +278,7 @@ public static class AssetManager
 			UIAtlas newAtlas = Resources.Load<UIAtlas>(archiveName);
 			if (newAtlas != null)
 				newAtlas.ReadFromDisc(name);
-			else if (AssetManager.PrintAssetNotFound)
+			else
 				Log.Message("[AssetManager] Embeded asset not found: " + archiveName);
 			return (T)(Object)newAtlas;
 		}
@@ -290,13 +290,32 @@ public static class AssetManager
 		return (T)(Object)null;
 	}
 
-	public static T Load<T>(String name, out String[] info, Boolean suppressError = false) where T : UnityEngine.Object
+	public static T Load<T>(String name, out String[] info, Boolean suppressMissingError = false) where T : UnityEngine.Object
 	{
 		String infoFileName = Path.ChangeExtension(name, MemoriaInfoExtension);
 		info = new String[0];
 		T result;
 		if (AssetManagerForObb.IsUseOBB)
-			return AssetManagerForObb.Load<T>(name, suppressError);
+			return AssetManagerForObb.Load<T>(name, suppressMissingError);
+		if (AssetManagerUtil.IsMemoriaAssets(name))
+		{
+			foreach (AssetFolder modfold in Folder)
+				if (File.Exists(modfold.FolderPath + name))
+				{
+					if (File.Exists(modfold.FolderPath + infoFileName))
+						info = File.ReadAllLines(modfold.FolderPath + infoFileName);
+					return LoadFromDisc<T>(modfold.FolderPath + name, ref info, name);
+				}
+			if (File.Exists(name))
+			{
+				if (File.Exists(infoFileName))
+					info = File.ReadAllLines(infoFileName);
+				return LoadFromDisc<T>(name, ref info, name);
+			}
+			if (!suppressMissingError)
+				Log.Message("[AssetManager] Memoria asset not found: " + name);
+			return null;
+		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
 		{
 			foreach (AssetFolder modfold in Folder)
@@ -307,7 +326,7 @@ public static class AssetManager
 					return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 				}
 			result = Resources.Load<T>(name);
-			if (result == (UnityEngine.Object)null && AssetManager.PrintAssetNotFound)
+			if (result == (UnityEngine.Object)null && !suppressMissingError)
 				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return result;
 		}
@@ -345,21 +364,40 @@ public static class AssetManager
 				return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, ref info, name);
 			}
 		result = Resources.Load<T>(name);
-		if (result == (UnityEngine.Object)null && AssetManager.PrintAssetNotFound)
+		if (result == (UnityEngine.Object)null && !suppressMissingError)
 			Log.Message("[AssetManager] Asset not found: " + name);
 		return result;
 	}
 	
-	public static String LoadString(String name, out String[] info, Boolean suppressError = false)
+	public static String LoadString(String name, out String[] info, Boolean suppressMissingError = false)
 	{
 		String infoFileName = Path.ChangeExtension(name, MemoriaInfoExtension);
 		TextAsset txt = null;
 		info = new String[0];
 		if (AssetManagerForObb.IsUseOBB)
 		{
-			txt = AssetManagerForObb.Load<TextAsset>(name, suppressError);
+			txt = AssetManagerForObb.Load<TextAsset>(name, suppressMissingError);
 			if (txt != (UnityEngine.Object)null)
 				return txt.text;
+			return null;
+		}
+		if (AssetManagerUtil.IsMemoriaAssets(name))
+		{
+			foreach (AssetFolder modfold in Folder)
+				if (File.Exists(modfold.FolderPath + name))
+				{
+					if (File.Exists(modfold.FolderPath + infoFileName))
+						info = File.ReadAllLines(modfold.FolderPath + infoFileName);
+					return LoadFromDisc<String>(modfold.FolderPath + name, ref info, name);
+				}
+			if (File.Exists(name))
+			{
+				if (File.Exists(infoFileName))
+					info = File.ReadAllLines(infoFileName);
+				return LoadFromDisc<String>(name, ref info, name);
+			}
+			if (!suppressMissingError)
+				Log.Message("[AssetManager] Memoria asset not found: " + name);
 			return null;
 		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
@@ -374,7 +412,7 @@ public static class AssetManager
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != (UnityEngine.Object)null)
 				return txt.text;
-			if (AssetManager.PrintAssetNotFound)
+			if (!suppressMissingError)
 				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return null;
 		}
@@ -412,21 +450,40 @@ public static class AssetManager
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != (UnityEngine.Object)null)
 			return txt.text;
-		if (AssetManager.PrintAssetNotFound)
+		if (!suppressMissingError)
 			Log.Message("[AssetManager] Asset not found: " + name);
 		return null;
 	}
 	
-	public static Byte[] LoadBytes(String name, out String[] info, Boolean suppressError = false)
+	public static Byte[] LoadBytes(String name, out String[] info, Boolean suppressMissingError = false)
 	{
 		String infoFileName = Path.ChangeExtension(name, MemoriaInfoExtension);
 		TextAsset txt = null;
 		info = new String[0];
 		if (AssetManagerForObb.IsUseOBB)
 		{
-			txt = AssetManagerForObb.Load<TextAsset>(name, suppressError);
+			txt = AssetManagerForObb.Load<TextAsset>(name, suppressMissingError);
 			if (txt != (UnityEngine.Object)null)
 				return txt.bytes;
+			return null;
+		}
+		if (AssetManagerUtil.IsMemoriaAssets(name))
+		{
+			foreach (AssetFolder modfold in Folder)
+				if (File.Exists(modfold.FolderPath + name))
+				{
+					if (File.Exists(modfold.FolderPath + infoFileName))
+						info = File.ReadAllLines(modfold.FolderPath + infoFileName);
+					return LoadFromDisc<Byte[]>(modfold.FolderPath + name, ref info, name);
+				}
+			if (File.Exists(name))
+			{
+				if (File.Exists(infoFileName))
+					info = File.ReadAllLines(infoFileName);
+				return LoadFromDisc<Byte[]>(name, ref info, name);
+			}
+			if (!suppressMissingError)
+				Log.Message("[AssetManager] Memoria asset not found: " + name);
 			return null;
 		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
@@ -441,7 +498,7 @@ public static class AssetManager
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != (UnityEngine.Object)null)
 				return txt.bytes;
-			if (AssetManager.PrintAssetNotFound)
+			if (!suppressMissingError)
 				Log.Message("[AssetManager] Embeded asset not found: " + name);
 			return null;
 		}
@@ -479,7 +536,7 @@ public static class AssetManager
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != (UnityEngine.Object)null)
 			return txt.bytes;
-		if (AssetManager.PrintAssetNotFound)
+		if (!suppressMissingError)
 			Log.Message("[AssetManager] Asset not found: " + name);
 		return null;
 	}
@@ -515,8 +572,7 @@ public static class AssetManager
 		ResourceRequest resourceRequest2 = Resources.LoadAsync<T>(name);
 		if (resourceRequest2 != null)
 			return new AssetManagerRequest(resourceRequest2, (AssetBundleRequest)null);
-		if (AssetManager.PrintAssetNotFound)
-			Log.Message("[AssetManager] Asset not found: " + name);
+		Log.Message("[AssetManager] Asset not found: " + name);
 		return (AssetManagerRequest)null;
 	}
 
@@ -874,8 +930,6 @@ public static class AssetManager
 	public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
 
 	public const TextureFormat DefaultTextureFormat = TextureFormat.ARGB32;
-
-	public const Boolean PrintAssetNotFound = true;
 
 	public static Boolean UseBundles;
 

@@ -11,7 +11,9 @@ public class BattleCommandInfo
     public Boolean DefaultCamera;
     public Boolean DefaultOnDead;
 
-    public BattleCommandInfo()
+	public UnifiedBattleSequencer.BattleAction VfxAction;
+
+	public BattleCommandInfo()
 	{
 		Target = 0;
 		DefaultAlly = false;
@@ -20,6 +22,7 @@ public class BattleCommandInfo
 		ForDead = false;
 		DefaultCamera = false;
 		DefaultOnDead = false;
+		VfxAction = null;
 	}
 
 	public BattleCommandInfo(TargetType target, Boolean defaultAlly, TargetDisplay displayStats, Int16 vfxIndex, Boolean forDead, Boolean defaultCamera, Boolean defaultOnDead)
@@ -31,5 +34,6 @@ public class BattleCommandInfo
 		ForDead = forDead;
 		DefaultCamera = defaultCamera;
 		DefaultOnDead = defaultOnDead;
+		VfxAction = null;
 	}
 }

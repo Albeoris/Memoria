@@ -1,0 +1,14 @@
+// Shared sequence of SFX Tidal_Flame
+
+PlaySound: Sound=1837
+PlaySound: Sound=1838
+PlaySound: Sound=1839
+Wait: Time=17
+PlaySound: Sound=1840
+PlaySound: Sound=1841
+PlaySound: Sound=1842
+Wait: Time=3
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

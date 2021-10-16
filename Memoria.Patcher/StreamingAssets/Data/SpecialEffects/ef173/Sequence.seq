@@ -1,0 +1,10 @@
+// Shared sequence of SFX Aero_Breath
+
+PlaySound: Sound=551
+PlaySound: Sound=541
+PlaySound: Sound=602
+Wait: Time=24
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

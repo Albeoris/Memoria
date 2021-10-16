@@ -1,0 +1,13 @@
+// Shared sequence of SFX Ink
+
+PlaySound: Sound=1826
+PlaySound: Sound=1827
+PlaySound: Sound=1828
+Wait: Time=4
+PlaySound: Sound=1829
+PlaySound: Sound=1830
+PlaySound: Sound=1831
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

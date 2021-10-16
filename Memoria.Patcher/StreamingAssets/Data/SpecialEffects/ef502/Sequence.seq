@@ -1,0 +1,10 @@
+// Shared sequence of SFX Aera_1
+
+PlaySound: Sound=688
+PlaySound: Sound=684
+PlaySound: Sound=702
+Wait: Time=80
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

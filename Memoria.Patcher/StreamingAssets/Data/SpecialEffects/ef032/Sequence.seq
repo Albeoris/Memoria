@@ -1,0 +1,10 @@
+// Shared sequence of SFX Regen
+
+PlaySound: Sound=324
+PlaySound: Sound=321
+PlaySound: Sound=310
+Wait: Time=25
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

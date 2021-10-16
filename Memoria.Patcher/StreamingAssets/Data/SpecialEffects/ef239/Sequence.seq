@@ -1,0 +1,10 @@
+// Shared sequence of SFX Red_Clipper
+
+PlaySound: Sound=971
+PlaySound: Sound=972
+PlaySound: Sound=973
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

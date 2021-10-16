@@ -1,0 +1,13 @@
+// Shared sequence of SFX Lucky_Seven
+
+PlaySound: Sound=2029
+PlaySound: Sound=2030
+PlaySound: Sound=2031
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2039
+PlaySound: Sound=2040
+PlaySound: Sound=2041
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

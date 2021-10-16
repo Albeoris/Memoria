@@ -1,0 +1,10 @@
+// Shared sequence of SFX Esuna
+
+PlaySound: Sound=35
+PlaySound: Sound=24
+PlaySound: Sound=11
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

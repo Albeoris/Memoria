@@ -1,0 +1,18 @@
+// Shared sequence of SFX Zombie_Powder
+
+PlaySound: Sound=2005
+PlaySound: Sound=2006
+PlaySound: Sound=2007
+Wait: Time=38
+PlaySound: Sound=2008
+PlaySound: Sound=2009
+PlaySound: Sound=2010
+Wait: Time=32
+PlaySound: Sound=2011
+PlaySound: Sound=2012
+PlaySound: Sound=2013
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=42
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

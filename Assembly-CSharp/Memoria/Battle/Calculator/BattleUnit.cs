@@ -40,11 +40,7 @@ namespace Memoria
         public Byte Row => Data.bi.row;
         public Byte Position => Data.bi.line_no;
 
-        public Boolean IsCovered
-        {
-            get => Data.bi.cover != 0;
-            set => Data.bi.cover = (Byte)(value ? 1 : 0);
-        }
+        public Boolean IsCovering => Data.bi.cover != 0;
 
         public Boolean IsDodged
         {
@@ -143,11 +139,15 @@ namespace Memoria
         }
 
         public Byte WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : (Byte)0;
-        public Byte WeaponPower => Data.weapon == null ? (Byte)0
-            : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack != 0 && btl_util.getCurCmdPtr() != null && (btl_util.getCurCmdPtr().AbilityType & 0x8) != 0 ? (Byte)Math.Max(1, 60 - Data.weapon.Ref.Power)
-            : Data.weapon.Ref.Power;
+        public Byte WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : (Byte)0;
         public EffectElement WeaponElement => (EffectElement)(Data.weapon != null ? Data.weapon.Ref.Elements : 0);
         public BattleStatus WeaponStatus => Data.weapon != null ? FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value : 0;
+        public Byte GetWeaponPower(BattleCommand cmd)
+        {
+            return Data.weapon == null ? (Byte)0
+              : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack != 0 && cmd != null && (cmd.AbilityType & 0x8) != 0 ? (Byte)Math.Max(1, 60 - Data.weapon.Ref.Power)
+              : Data.weapon.Ref.Power;
+        }
 
         public Character Player => Character.Find(this);
         public CharacterCategory PlayerCategory => Player.Category;
@@ -282,8 +282,10 @@ namespace Memoria
             set => geo.geoScaleSetXYZ(Data, Data.geo_scale_x, Data.geo_scale_y, value, false);
         }
 
-        public void ScaleModel(Int32 size) // 4096 is the default size
+        public void ScaleModel(Int32 size, Boolean setDefault = false) // 4096 is the default size
 		{
+            if (setDefault)
+                Data.geo_scale_default = size;
             geo.geoScaleSet(Data, size, true);
         }
 
@@ -352,14 +354,17 @@ namespace Memoria
                 return;
 
             Data.bi.death_f = 1;
-            if (Data.bi.player == 0)
-                btl_util.SetEnemyDieSound(Data, btl_util.getEnemyTypePtr(Data).die_snd_no);
-
-            if (!btl_mot.checkMotion(Data, Data.bi.def_idle) && (Data.bi.player == 0 || !btl_mot.checkMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD)) && !btl_util.isCurCmdOwner(Data))
+            if (!IsPlayer)
             {
-                btl_mot.setMotion(Data, Data.bi.def_idle);
-                Data.evt.animFrame = 0;
+                btl_util.SetEnemyDieSound(Data, btl_util.getEnemyTypePtr(Data).die_snd_no);
+                Data.die_seq = 3;
             }
+
+            //if (!btl_mot.checkMotion(Data, Data.bi.def_idle) && (Data.bi.player == 0 || !btl_mot.checkMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD)) && !btl_util.IsBtlUsingCommand(Data))
+            //{
+            //    btl_mot.setMotion(Data, Data.bi.def_idle);
+            //    Data.evt.animFrame = 0;
+            //}
         }
 
         public void Remove()
@@ -496,6 +501,8 @@ namespace Memoria
                 if (sequenceSfx >= 0)
 				{
                     scene.atk[i].Info.VfxIndex = (Int16)sequenceSfx;
+                    if (Configuration.Battle.SFXRework)
+                        scene.atk[i].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], sequenceSfx);
                     if (sequenceContact)
                     {
                         attackAA = scene.atk[i];
@@ -707,6 +714,7 @@ namespace Memoria
             btl_util.SetShadow(Data, btl_init.ShadowDataPC[p.info.serial_no][2], btl_init.ShadowDataPC[p.info.serial_no][3]);
             Data.gameObject.SetActive(false);
             Data.gameObject = Data.originalGo;
+            Data.geo_scale_default = 4096;
             geo.geoScaleReset(Data);
             if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != 2 || battle.GARNET_DEPRESS_FLAG == 0))
                 Data.bi.t_gauge = 1;
@@ -719,7 +727,7 @@ namespace Memoria
             btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
             btl_mot.HideMesh(Data, UInt16.MaxValue);
-            Data.monster_transform.fade_counter = 2;
+            Data.monster_transform.fade_counter = 8;
         }
     }
 }

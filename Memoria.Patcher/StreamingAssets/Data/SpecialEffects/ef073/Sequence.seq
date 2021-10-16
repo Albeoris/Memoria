@@ -1,0 +1,16 @@
+// Shared sequence of SFX Thundara__Multi
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=61
+PlaySound: Sound=41
+PlaySound: Sound=28
+PlaySound: Sound=17
+Wait: Time=20
+PlaySound: Sound=1384
+PlaySound: Sound=1385
+PlaySound: Sound=1386
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+SetBackgroundIntensity: Intensity=1 ; Time=8

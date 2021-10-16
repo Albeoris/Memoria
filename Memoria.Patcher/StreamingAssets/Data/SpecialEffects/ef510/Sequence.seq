@@ -1,0 +1,29 @@
+// Shared sequence of SFX Phoenix__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+PlaySound: Sound=2933
+PlaySound: Sound=2934
+PlaySound: Sound=2935
+PlaySound: Sound=2936
+SetBackgroundIntensity: Intensity=0.4296875 ; Time=12 ; HoldDuration=163
+Wait: Time=38
+PlaySound: Sound=2937
+PlaySound: Sound=2938
+PlaySound: Sound=2939
+PlaySound: Sound=2940
+Wait: Time=33
+ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+Wait: Time=88
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=3
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=12
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8
+
+

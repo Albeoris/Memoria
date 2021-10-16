@@ -1,0 +1,14 @@
+// Shared sequence of SFX Soul_Blade
+
+PlaySound: Sound=1627
+PlaySound: Sound=1628
+PlaySound: Sound=1629
+Wait: Time=15
+PlaySound: Sound=1630
+PlaySound: Sound=1631
+PlaySound: Sound=1632
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

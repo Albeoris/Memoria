@@ -1694,7 +1694,7 @@ public class TitleUI : UIScene
                 break;
         }
 
-        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/License_" + str + ".txt", out _, false);
+        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/License_" + str + ".txt", out _);
         if (textAsset != null)
             this.UpdateLicenseText(textAsset);
 
@@ -2180,7 +2180,7 @@ public class TitleUI : UIScene
             //    text = "US";
             //}
 			String[] warningInfo;
-            this.spashText.text = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning", out warningInfo, false);
+            this.spashText.text = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning", out warningInfo);
             this.spashText.alignment = NGUIText.Alignment.Left;
             this.spashText.gameObject.SetActive(true);
             SceneVoidDelegate postIdleScreenFadeOut = delegate

@@ -1,0 +1,15 @@
+// Shared sequence of SFX Blizzaga__Multi
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=18
+PlaySound: Sound=486
+PlaySound: Sound=513
+PlaySound: Sound=510
+Wait: Time=18
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=62
+Wait: Time=46
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=15
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=7
+Wait: Time=7

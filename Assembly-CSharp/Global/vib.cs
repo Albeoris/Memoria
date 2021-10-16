@@ -26,7 +26,7 @@ public class vib
 		if (vib.vibList.Contains(vibrationFileName))
 		{
 			String[] vibInfo;
-			Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/VibrationData/" + vibrationFileName, out vibInfo, false);
+			Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/VibrationData/" + vibrationFileName, out vibInfo, true);
 			MemoryStream memoryStream = new MemoryStream(binAsset);
 			BinaryReader binaryReader = new BinaryReader(memoryStream);
 			vib.VIB_init(binaryReader);

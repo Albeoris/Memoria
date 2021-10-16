@@ -22,7 +22,7 @@ namespace Memoria.Assets
                 foreach (String relativePath in EnumerateUniqueSoundResources())
                 {
                     String path = AudioResources.Embaded.GetSoundPath(relativePath);
-                    Byte[] binAsset = AssetManager.LoadBytes(path, out _, true);
+                    Byte[] binAsset = AssetManager.LoadBytes(path, out _);
                     if (binAsset != null)
                     {
                         path = AudioResources.Export.GetSoundPath(relativePath);

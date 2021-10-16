@@ -1,0 +1,10 @@
+// Shared sequence of SFX Berserk__Multi
+
+PlaySound: Sound=466
+PlaySound: Sound=459
+PlaySound: Sound=427
+Wait: Time=22
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

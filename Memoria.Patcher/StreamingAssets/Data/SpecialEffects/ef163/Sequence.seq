@@ -1,0 +1,10 @@
+// Shared sequence of SFX Electrocute
+
+PlaySound: Sound=553
+PlaySound: Sound=542
+PlaySound: Sound=603
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

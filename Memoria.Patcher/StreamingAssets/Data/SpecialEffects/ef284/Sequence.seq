@@ -1,0 +1,10 @@
+// Shared sequence of SFX High_Wind
+
+PlaySound: Sound=1812
+PlaySound: Sound=1813
+PlaySound: Sound=1814
+Wait: Time=29
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

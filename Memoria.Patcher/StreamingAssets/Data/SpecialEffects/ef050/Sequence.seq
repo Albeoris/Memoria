@@ -1,0 +1,10 @@
+// Shared sequence of SFX Glowing_Eyes
+
+PlaySound: Sound=286
+PlaySound: Sound=271
+PlaySound: Sound=194
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

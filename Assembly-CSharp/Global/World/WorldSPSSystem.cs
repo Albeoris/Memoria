@@ -495,7 +495,7 @@ public class WorldSPSSystem : MonoBehaviour
 	private Boolean _loadSPSTexture()
 	{
 		String[] tcbInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/WorldSPS/fx.tcb", out tcbInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/WorldSPS/fx.tcb", out tcbInfo);
 		if (binAsset != null)
 		{
 			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
@@ -555,7 +555,7 @@ public class WorldSPSSystem : MonoBehaviour
 			return true;
 		}
 		String[] spsInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/WorldSPS/fx" + spsNo.ToString("D2") + ".sps", out spsInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/WorldSPS/fx" + spsNo.ToString("D2") + ".sps", out spsInfo);
 		if (binAsset == null)
 		{
 			return false;

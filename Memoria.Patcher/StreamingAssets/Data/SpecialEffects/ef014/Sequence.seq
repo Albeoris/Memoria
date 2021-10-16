@@ -1,0 +1,10 @@
+// Shared sequence of SFX Berserk__Single
+
+PlaySound: Sound=10
+PlaySound: Sound=2
+PlaySound: Sound=72
+Wait: Time=22
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

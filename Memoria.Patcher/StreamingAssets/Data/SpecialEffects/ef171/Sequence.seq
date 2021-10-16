@@ -1,0 +1,10 @@
+// Shared sequence of SFX Maelstrom
+
+PlaySound: Sound=613
+PlaySound: Sound=612
+PlaySound: Sound=611
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

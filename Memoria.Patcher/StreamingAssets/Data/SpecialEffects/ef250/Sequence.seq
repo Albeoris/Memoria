@@ -1,0 +1,10 @@
+// Shared sequence of SFX Detect
+
+PlaySound: Sound=1128
+PlaySound: Sound=1129
+PlaySound: Sound=1130
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

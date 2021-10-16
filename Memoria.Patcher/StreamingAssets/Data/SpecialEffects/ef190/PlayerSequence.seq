@@ -1,0 +1,28 @@
+// Player sequence of SFX Iai_Strike_1
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Iai_Strike_1 ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+WaitMove: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+WaitMove: Char=Caster
+StartThread
+	Wait: Time=1
+	WaitSFXLoaded: SFX=Iai_Strike_1 ; Reflect=True
+	PlaySFX: SFX=Iai_Strike_1 ; Reflect=True
+	WaitSFXDone: SFX=Iai_Strike_1 ; Reflect=True
+EndThread
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+WaitAnimation: Char=Caster
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=4
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

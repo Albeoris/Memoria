@@ -1,0 +1,18 @@
+// Shared sequence of SFX Luna
+
+PlaySound: Sound=1550
+PlaySound: Sound=1551
+PlaySound: Sound=1552
+Wait: Time=46
+PlaySound: Sound=2511
+PlaySound: Sound=2512
+PlaySound: Sound=2513
+Wait: Time=33
+PlaySound: Sound=2514
+PlaySound: Sound=2515
+PlaySound: Sound=2516
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

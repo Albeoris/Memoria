@@ -1,0 +1,10 @@
+// Player sequence of SFX Jump
+
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_011_110
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=ANH_MAIN_B0_011_111
+PlaySound: Sound=1110
+WaitAnimation: Char=Caster
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure

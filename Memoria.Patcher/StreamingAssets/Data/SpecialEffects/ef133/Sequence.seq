@@ -1,0 +1,15 @@
+// Shared sequence of SFX Thundaga__Multi
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=30
+PlaySound: Sound=426
+PlaySound: Sound=419
+PlaySound: Sound=451
+Wait: Time=30
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=41
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=5
+Wait: Time=13
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

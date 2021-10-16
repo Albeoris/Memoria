@@ -1,0 +1,10 @@
+// Shared sequence of SFX Virus_Powder
+
+PlaySound: Sound=941
+PlaySound: Sound=942
+PlaySound: Sound=943
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

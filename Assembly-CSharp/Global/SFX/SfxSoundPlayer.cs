@@ -60,7 +60,7 @@ public class SfxSoundPlayer : SoundPlayer
 		this.UnloadAllSoundData(this.soundDatabase);
 		if (!SoundMetaData.SfxSoundIndex.TryGetValue(specialEffectID, out var list))
 		{
-			Log.Error($"[SoundData] Sound not found: {specialEffectID}");
+			//Log.Message($"[SoundData] Sound table not found: SFX {specialEffectID} ({(Memoria.Data.SpecialEffect)specialEffectID})");
 			return;
 		}
 
@@ -125,7 +125,23 @@ public class SfxSoundPlayer : SoundPlayer
         soundProfile.Panning = panning;
         soundProfile.Pitch = pitch;
         soundProfile.StartPlayTime = Time.time;
-        base.CreateSound(soundProfile);
+		if (SFXData.BattleCallbackReaderExportSequence && SFXData.LoadCur != null)
+		{
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SoundEffectIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("PlaySound", "Sound", p.Key.ToString(), "Volume", soundVolume.ToString(), "Pitch", pitch.ToString(), "Panning", panning.ToString()));
+					return soundProfile;
+				}
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SongIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("PlaySound", "Sound", p.Key.ToString(), "SoundType", SoundProfileType.Song.ToString(), "Volume", soundVolume.ToString(), "Pitch", pitch.ToString(), "Panning", panning.ToString()));
+					return soundProfile;
+				}
+			return soundProfile;
+		}
+		base.CreateSound(soundProfile);
         ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
         if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
         {
@@ -211,6 +227,22 @@ public class SfxSoundPlayer : SoundPlayer
 		if (soundProfile == null)
 		{
 			SoundLib.LogError("StopSfxSound, soundProfile is null");
+			return;
+		}
+		if (SFXData.BattleCallbackReaderExportSequence && SFXData.LoadCur != null)
+		{
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SoundEffectIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("StopSound", "Sound", p.Key.ToString()));
+					return;
+				}
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SongIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("StopSound", "Sound", p.Key.ToString(), "SoundType", SoundProfileType.Song.ToString()));
+					return;
+				}
 			return;
 		}
 		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)

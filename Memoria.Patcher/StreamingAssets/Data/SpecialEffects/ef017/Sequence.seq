@@ -1,0 +1,10 @@
+// Shared sequence of SFX Life
+
+PlaySound: Sound=37
+PlaySound: Sound=25
+PlaySound: Sound=13
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

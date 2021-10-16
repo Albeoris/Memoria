@@ -1,0 +1,170 @@
+// Shared sequence of SFX Special_Necron_Teleport
+
+StartThread: Target=ThirdTarget ; Sync=True
+	PlaySound: Sound=2843
+	PlaySound: Sound=2844
+	PlaySound: Sound=2845
+	Wait: Time=16
+	StartThread
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; Time=16
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 40.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 56.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 72.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 88.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 104.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 152.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 168.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 184.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 200.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 216.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 232.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 248.0, 0.0) ; MoveHeight=True ; Time=0
+	EndThread
+EndThread
+StartThread: Target=FourthTarget ; Sync=True
+	PlaySound: Sound=2843
+	PlaySound: Sound=2844
+	PlaySound: Sound=2845
+	Wait: Time=16
+	StartThread
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; Time=16
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 40.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 56.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 72.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 88.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 104.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 152.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 168.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 184.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 200.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 216.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 232.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 248.0, 0.0) ; MoveHeight=True ; Time=0
+	EndThread
+EndThread
+StartThread: Target=SecondTarget ; Sync=True
+	PlaySound: Sound=2843
+	PlaySound: Sound=2844
+	PlaySound: Sound=2845
+	Wait: Time=16
+	StartThread
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; Time=16
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 40.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 56.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 72.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 88.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 104.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 152.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 168.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 184.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 200.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 216.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 232.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 248.0, 0.0) ; MoveHeight=True ; Time=0
+	EndThread
+EndThread
+StartThread: Target=FirstTarget ; Sync=True
+	PlaySound: Sound=2843
+	PlaySound: Sound=2844
+	PlaySound: Sound=2845
+	Wait: Time=16
+	StartThread
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; Time=16
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 40.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 56.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 72.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 88.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 104.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 152.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 168.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 184.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 200.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 216.0, 0.0) ; MoveHeight=True ; Time=0
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 232.0, 0.0) ; MoveHeight=True ; Time=0
+		ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+		Wait: Time=1
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 248.0, 0.0) ; MoveHeight=True ; Time=0
+	EndThread
+EndThread

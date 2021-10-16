@@ -100,7 +100,7 @@ public partial class BattleHUD : UIScene
         };
     }
 
-    private static String FormatMagicSwordAbility(CMD_DATA pCmd)
+    public static String FormatMagicSwordAbility(CMD_DATA pCmd)
     {
         // TODO: Move it to an external file
         String abilityName = FF9TextTool.ActionAbilityName(pCmd.sub_no);

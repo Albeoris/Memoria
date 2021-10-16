@@ -1,0 +1,74 @@
+// Shared sequence of SFX Propeller_Wind
+
+PlaySound: Sound=1065
+PlaySound: Sound=1066
+PlaySound: Sound=1067
+Wait: Time=9
+Turn: BaseAngle=Default ; Angle=2.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=11.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=25.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=45.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=70.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=101.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=137.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=180.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=227.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=281.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=340.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=45.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=115.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=191.3 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=272.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=0.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=87.2 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=168.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=244.7 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=315.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=19.7 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=78.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=132.2 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=180.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=222.2 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=258.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=289.7 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=315.0 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=334.7 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=348.8 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Angle=357.2 ; Time=0 ; Char=AllTargets
+Wait: Time=1
+Turn: BaseAngle=Default ; Time=0 ; Char=AllTargets
+Wait: Time=14
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

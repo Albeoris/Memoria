@@ -39,24 +39,27 @@ namespace Memoria.Data
         GradualPetrify = 1u << 31, //2147483648,
 
         Achievement = Petrify | Venom | Virus | Silence | Blind | Trouble | Zombie | Death | LowHP | Confuse | Berserk | Stop | AutoLife | Poison | Sleep | Regen | Haste | Slow | Float | Shell | Protect | Heat | Freeze | Vanish | Doom | Mini | Reflect | GradualPetrify,
-        ContiGood1 = 619446272,
-        ContiBad = 2601713664,
-        OprCount = 327682,
-        NoInput = 1107434755,
-        CmdCancel = 134403,
+        ContiGood = Regen | Haste | Float | Shell | Protect | Vanish | Reflect, // 0x24EC0000
+        ContiBad = Poison | Sleep | Slow | Heat | Freeze | Doom | Mini | GradualPetrify, // 0x9B130000
+        ContiCount = ContiGood | Jump | Poison | Sleep | Slow | Heat | Freeze | Doom | GradualPetrify, // 0xEFFF0000
+        OprCount = Venom | Poison | Regen, // 0x50002
+        NoInput = CmdCancel | Stop | Freeze | Jump, // 0x42021D03,
+        CmdCancel = Petrify | Venom | Death | Confuse | Berserk | Sleep, // 0x20D03
         IdleDying = Venom | LowHP | Poison | Sleep,
-        Immobilized = Petrify | Venom | Stop | Freeze,
+        Immobilized = Petrify | Venom | Stop | Freeze, // 0x2001003
         FrozenAnimation = Immobilized | Jump,
-        StopAtb = 1073746177,
-        NoMagic = 318905611,
+        StopAtb = Petrify | Death | Stop | Jump, // 0x40001101
+        NoMagic = CmdCancel | Silence | Stop | Heat | Freeze | Mini, // 0x13021D0B
         ChgPolyCol = Zombie | Berserk | Heat | Freeze,
         CannotEscape = Petrify | Venom | Zombie | Death | Stop | Sleep | Freeze | Jump,
         CannotTrance = Petrify | Venom | Zombie | Death | Stop | Trance | Freeze,
-        NoReset = 2281766783,
+        NoReset = Petrify | Venom | Virus | Silence | Blind | Trouble | Zombie | Death | LowHP | Confuse | Berserk | Stop | AutoLife | Trance | Defend | Doom | GradualPetrify, // 0x8800FF7F
         BattleEnd = Petrify | Venom | Death | Stop,
-        CancelPhysics = 132096,
-        TimeOpr = 2282045442,
+        CancelPhysics = Confuse | Sleep, // 0x20400
+        TimeOpr = OprCount | Trance | Doom | GradualPetrify, // 0x88054002
         NoReaction = FrozenAnimation | Death,
-        CancelEvent = Confuse | Stop | Defend | Freeze
+        CancelEvent = Confuse | Stop | Defend | Freeze,
+        AlterNoSet = Petrify | Haste | Slow | Mini, // 0x10180001
+        PreventEnemyCmd = Immobilized | Death | Sleep // 0x2021103
     }
 }

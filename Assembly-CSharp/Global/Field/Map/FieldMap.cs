@@ -3376,7 +3376,7 @@ public class FieldMap : HonoBehavior
     }
 
     private static Int16 CalcPsxFieldWidth() => Configuration.Graphics.WidescreenSupport ? (Int16)(PsxFieldHeightNative * Screen.width / Screen.height) : PsxFieldWidthNative;
-    private static Int16 CalcPsxScreenWidth() => Configuration.Graphics.WidescreenSupport ? (Int16)(PsxScreenHeightNative * Screen.width / Screen.height) : PsxFieldWidthNative;
+    private static Int16 CalcPsxScreenWidth() => Configuration.Graphics.WidescreenSupport ? (Int16)(PsxScreenHeightNative * Screen.width / Screen.height) : PsxScreenWidthNative;
     private static Single CalcShaderMulX() => 1f / HalfFieldWidth;
     private static Single CalcShaderMulY() => 1f / HalfFieldHeight;
 

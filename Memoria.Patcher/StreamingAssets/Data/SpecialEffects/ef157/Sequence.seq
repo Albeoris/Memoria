@@ -1,0 +1,10 @@
+// Shared sequence of SFX Blind__Multi
+
+PlaySound: Sound=489
+PlaySound: Sound=482
+PlaySound: Sound=502
+Wait: Time=26
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

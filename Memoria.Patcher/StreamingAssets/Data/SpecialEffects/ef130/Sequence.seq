@@ -1,0 +1,44 @@
+// Shared sequence of SFX Magic_Hammer
+
+PlaySound: Sound=193
+PlaySound: Sound=177
+Wait: Time=11
+PlaySound: Sound=2204
+PlaySound: Sound=2205
+PlaySound: Sound=2206
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.4, 0.6, 1.4) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.5, 0.5, 1.5) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.3, 0.7, 1.3) ; ScaleShadow=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.7, 1.3, 0.7) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.6, 1.4, 0.6) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.7, 1.3, 0.7) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.2, 0.8, 1.2) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.3, 0.7, 1.3) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.2, 0.8, 1.2) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.9, 1.1, 0.9) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(0.9, 1.1, 0.9) ; ScaleShadow=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1.0, 1.0, 1.0) ; ScaleShadow=True ; Time=0
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Figure
+Wait: Time=20

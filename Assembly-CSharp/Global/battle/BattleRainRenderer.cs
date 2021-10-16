@@ -2,6 +2,7 @@
 using Assets.Scripts.Common;
 using Memoria.Scripts;
 using UnityEngine;
+using FF9;
 
 public class BattleRainRenderer : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class BattleRainRenderer : MonoBehaviour
 		GL.PushMatrix();
 		this.mat.SetPass(0);
 		GL.Begin(7);
-		if ((FF9StateSystem.Battle.FF9Battle.attr & 256) != 0)
+		if ((FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.NOPUTDISPENV) != 0)
 		{
 			if (this.randSeed == -1)
 			{

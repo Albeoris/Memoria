@@ -1,0 +1,14 @@
+// Shared sequence of SFX Paper_Storm
+
+PlaySound: Sound=2207
+PlaySound: Sound=2208
+PlaySound: Sound=2209
+Wait: Time=18
+PlaySound: Sound=2210
+PlaySound: Sound=2211
+PlaySound: Sound=2212
+Wait: Time=14
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

@@ -1,0 +1,26 @@
+// Shared sequence of SFX Limit_Glove
+
+PlaySound: Sound=2350
+PlaySound: Sound=2351
+PlaySound: Sound=2352
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=16 ; HoldDuration=188
+Wait: Time=11
+PlaySound: Sound=2353
+PlaySound: Sound=2354
+PlaySound: Sound=2355
+Wait: Time=30
+PlaySound: Sound=2356
+PlaySound: Sound=2357
+PlaySound: Sound=2358
+Wait: Time=146
+PlaySound: Sound=2359
+PlaySound: Sound=2360
+PlaySound: Sound=2361
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=1
+Wait: Time=23
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

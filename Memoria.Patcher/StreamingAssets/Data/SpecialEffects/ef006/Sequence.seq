@@ -1,0 +1,10 @@
+// Shared sequence of SFX Blizzard__Single
+
+PlaySound: Sound=79
+PlaySound: Sound=68
+PlaySound: Sound=60
+Wait: Time=29
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=14
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

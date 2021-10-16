@@ -20,16 +20,16 @@ public class SFX
     {
         SFX.fxNearZ = 100f;
         SFX.fxFarZ = 65536f;
-        SFX.S1 = 1;
-        SFX.S2 = 2;
+        SFX.S1 = 1; // Rendering order: Opa then Add then Sub by default (playParam == 0 defaults to SFX.S3)
+        SFX.S2 = 2; // SFX.Si => Sub renderer goes in i-th position
         SFX.S3 = 3;
-        SFX.C1 = 4;
-        SFX.C2 = 8;
-        SFX.C3 = 12;
-        SFX.M1 = 1073741824;
+        SFX.C1 = 4; // Color intensity of SFXMesh: SFX.C1 => normal colors (default)
+        SFX.C2 = 8; // SFX.C2 => Colors x 1.5
+        SFX.C3 = 12; // SFX.C3 => Colors x 2
+        SFX.M1 = 1073741824; // Unused
         SFX.M2 = -2147483648;
-        SFX.A1 = 536870912;
-        SFX.O1 = 268435456;
+        SFX.A1 = 536870912; // SFX.A1 => Add renderer goes before Opa
+        SFX.O1 = 268435456; // Color threashold: 0.05f (default) or 0.0295f (SFX.O1)
         SFX.playParam = new Int32[]
         {
             SFX.C1 + SFX.S1,
@@ -556,6 +556,9 @@ public class SFX
         SFX.channel = new Int32[64, 2];
         SFX.isDebugAutoPlay = false;
         SFX.isDebugPng = false;
+        SFX.IsDebugMesh = false; // Very slow
+        SFX.IsDebugObjMesh = false;
+        SFX.isDebugPrintCode = false;
         SFX.isDebugViewport = false;
         SFX.isDebugLine = false;
         SFX.isDebugCam = false;
@@ -563,6 +566,7 @@ public class SFX
         SFX.isDebugFillter = true;
         SFX.isDebugMeshIndex = 0;
         SFX.isRunning = false;
+        SFX.currentEffectID = SpecialEffect.Special_No_Effect;
         SFX.frameIndex = 0;
         SFX.isSystemRun = false;
         SFX.isUpdated = false;
@@ -572,375 +576,14 @@ public class SFX
         SFX.screenRatio = 1f;
         SFX.screenWidthRatio = 1f;
         SFX.screenHeightRatio = 1f;
-        SFX.effTeble = new Int32[]
-        {
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            17,
-            21,
-            22,
-            23,
-            24,
-            25,
-            26,
-            27,
-            28,
-            29,
-            30,
-            31,
-            32,
-            33,
-            34,
-            35,
-            36,
-            38,
-            40,
-            41,
-            42,
-            43,
-            44,
-            45,
-            46,
-            47,
-            48,
-            49,
-            50,
-            51,
-            52,
-            53,
-            54,
-            55,
-            56,
-            57,
-            58,
-            59,
-            60,
-            61,
-            62,
-            63,
-            64,
-            65,
-            66,
-            67,
-            68,
-            69,
-            70,
-            71,
-            72,
-            73,
-            74,
-            75,
-            76,
-            77,
-            78,
-            79,
-            81,
-            82,
-            83,
-            85,
-            86,
-            87,
-            88,
-            89,
-            90,
-            92,
-            93,
-            94,
-            95,
-            96,
-            97,
-            98,
-            99,
-            120,
-            121,
-            122,
-            123,
-            124,
-            125,
-            126,
-            127,
-            128,
-            129,
-            130,
-            131,
-            132,
-            133,
-            134,
-            135,
-            136,
-            137,
-            138,
-            139,
-            140,
-            141,
-            142,
-            143,
-            144,
-            145,
-            146,
-            147,
-            148,
-            149,
-            150,
-            151,
-            152,
-            153,
-            154,
-            155,
-            156,
-            157,
-            158,
-            159,
-            160,
-            161,
-            162,
-            163,
-            164,
-            165,
-            166,
-            167,
-            168,
-            169,
-            170,
-            171,
-            172,
-            173,
-            174,
-            175,
-            176,
-            177,
-            178,
-            179,
-            180,
-            181,
-            182,
-            183,
-            184,
-            185,
-            186,
-            187,
-            188,
-            189,
-            190,
-            191,
-            192,
-            193,
-            194,
-            195,
-            196,
-            197,
-            198,
-            199,
-            201,
-            202,
-            203,
-            204,
-            205,
-            206,
-            207,
-            208,
-            209,
-            210,
-            211,
-            212,
-            213,
-            214,
-            215,
-            216,
-            217,
-            218,
-            219,
-            220,
-            221,
-            222,
-            223,
-            224,
-            225,
-            226,
-            227,
-            228,
-            229,
-            230,
-            231,
-            232,
-            233,
-            234,
-            235,
-            236,
-            237,
-            238,
-            239,
-            240,
-            241,
-            242,
-            243,
-            244,
-            245,
-            246,
-            247,
-            248,
-            249,
-            250,
-            251,
-            252,
-            253,
-            254,
-            255,
-            256,
-            257,
-            258,
-            259,
-            260,
-            261,
-            262,
-            274,
-            275,
-            276,
-            277,
-            278,
-            279,
-            280,
-            281,
-            282,
-            283,
-            284,
-            285,
-            286,
-            287,
-            288,
-            289,
-            290,
-            291,
-            292,
-            293,
-            294,
-            295,
-            296,
-            297,
-            298,
-            299,
-            300,
-            301,
-            302,
-            303,
-            304,
-            305,
-            306,
-            307,
-            308,
-            309,
-            310,
-            311,
-            312,
-            377,
-            378,
-            381,
-            382,
-            383,
-            384,
-            385,
-            386,
-            387,
-            388,
-            389,
-            390,
-            391,
-            392,
-            394,
-            395,
-            396,
-            397,
-            398,
-            399,
-            400,
-            401,
-            402,
-            403,
-            404,
-            405,
-            406,
-            407,
-            408,
-            409,
-            410,
-            411,
-            412,
-            413,
-            414,
-            415,
-            416,
-            417,
-            418,
-            419,
-            420,
-            421,
-            422,
-            423,
-            424,
-            425,
-            427,
-            428,
-            429,
-            431,
-            432,
-            433,
-            434,
-            435,
-            436,
-            431,
-            432,
-            433,
-            434,
-            435,
-            436,
-            443,
-            445,
-            446,
-            447,
-            457,
-            458,
-            459,
-            460,
-            489,
-            490,
-            491,
-            492,
-            493,
-            494,
-            495,
-            496,
-            497,
-            498,
-            499,
-            500,
-            501,
-            502,
-            503,
-            504,
-            505,
-            506,
-            507,
-            508,
-            509,
-            510
-        };
     }
 
-    private static Int32 UpdatePluginErrorCount = 0;
+    public static Boolean IsRunning()
+	{
+        if (Configuration.Battle.SFXRework)
+            return UnifiedBattleSequencer.runningActions.Count > 0;
+        return SFX.isRunning;
+    }
 
     public static void UpdatePlugin()
     {
@@ -949,34 +592,39 @@ public class SFX
             if (SFX.isSystemRun)
             {
                 SFX.UpdateScreenSize();
-                SFX.isRunning = SFX.SFX_Update(ref SFX.frameIndex);
-                if (SFX.isRunning)
+                // SFX_Update is managed by UnifiedBatteSequencer and SFXDataMesh in SFXRework mode
+                if (!Configuration.Battle.SFXRework && !((SFX.IsDebugObjMesh || SFX.IsDebugMesh) && SFX.isUpdated))
                 {
-                    SFX.isUpdated = true;
-                    Int32 num = SFX.currentEffectID;
-                    PSXTextureMgr.isCaptureBlur = num != 274;
-                    if (SFX.preventStepInOut >= 0 && SFX.frameIndex - SFX.preventStepInOut > 2)
-                        SFX.preventStepInOut = -1;
-                    if (SFX.currentEffectID == 381)
+                    SFX.isRunning = SFX.SFX_Update(ref SFX.frameIndex);
+                    if (!SFX.isRunning)
                     {
-                        if (SFX.frameIndex == 1004)
-                        {
-                            SFX.subOrder = 2;
-                        }
-                        if (SFX.frameIndex == 1193)
-                        {
-                            SFX.subOrder = 0;
-                        }
+                        if (SFX.IsDebugMesh)
+                            SFXRender.SaveSFXDataMeshes();
+                        SFX.currentEffectID = SpecialEffect.Special_No_Effect;
                     }
-                    if (SFX.currentEffectID == 301)
+                    if (SFX.isRunning)
                     {
-                        // Fix the effect of Antlion's death: it sunk in the sand, in the PSX version
-                        BTL_DATA btl;
-                        for (btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-                            if (btl.btl_id == SFX.request.trg0.btl_id)
-                                break;
-                        if (btl != null && btl.bi.stop_anim != 0)
-                            btl.pos.y -= 20;
+                        SFX.isUpdated = true;
+                        PSXTextureMgr.isCaptureBlur = true;
+                        if (SFX.preventStepInOut >= 0 && SFX.frameIndex - SFX.preventStepInOut > 2)
+                            SFX.preventStepInOut = -1;
+                        if (SFX.currentEffectID == SpecialEffect.Ark__Full)
+                        {
+                            if (SFX.frameIndex == 1004)
+                                SFX.subOrder = 2;
+                            if (SFX.frameIndex == 1193)
+                                SFX.subOrder = 0;
+                        }
+                        if (SFX.currentEffectID == SpecialEffect.Sinkhole)
+                        {
+                            // Fix the effect of Antlion's death: it sunk in the sand, in the PSX version
+                            BTL_DATA btl;
+                            for (btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                                if (btl.btl_id == SFX.request.trg0.btl_id)
+                                    break;
+                            if (btl != null && btl.bi.stop_anim != 0)
+                                btl.pos.y -= 20;
+                        }
                     }
                 }
                 vib.VIB_service();
@@ -984,19 +632,14 @@ public class SFX
         }
         catch (Exception ex)
         {
-            Int32 errorCount = Interlocked.Increment(ref UpdatePluginErrorCount);
-            Log.Error(ex, "Failed to update SFX plugin. ErrorCount: " + errorCount);
-            if (errorCount > 1000)
-            {
-                Interlocked.Exchange(ref UpdatePluginErrorCount, 0);
-                throw;
-            }
+            Log.Error(ex, "Failed to update SFX plugin.");
         }
     }
 
     public static void LateUpdatePlugin()
     {
-        if (SFX.isSystemRun && SFX.isUpdated)
+        // SFX_LateUpdate and SFXRender.Update are managed by UnifiedBatteSequencer and SFXDataMesh in SFXRework mode
+        if (!Configuration.Battle.SFXRework && SFX.isSystemRun && SFX.isUpdated)
         {
             SFX.isUpdated = false;
             SFX.SFX_LateUpdate();
@@ -1006,13 +649,12 @@ public class SFX
 
     public static void PostRender()
     {
+        // SFXRender.Render is managed by UnifiedBatteSequencer and SFXDataMesh in SFXRework mode
         if (SFX.isSystemRun)
         {
             SFX.ResetViewPort();
-            if (SFX.isRunning)
-            {
+            if (!Configuration.Battle.SFXRework && SFX.isRunning)
                 SFXRender.Render();
-            }
         }
     }
 
@@ -1061,146 +703,217 @@ public class SFX
             if (num >= 1.0)
             {
                 SFX.screenHeight = Screen.height;
-                SFX.screenWidth = Screen.height * 1.4545455f;
+                SFX.screenWidth = Screen.height * PSX.PSX_SCREEN_RATIO;
                 SFX.screenWidthOffset = (Screen.width - SFX.screenWidth) * 0.5f;
             }
             else
             {
                 SFX.screenHeight = Screen.width;
-                SFX.screenWidth = Screen.width * 1.4545455f;
+                SFX.screenWidth = Screen.width * PSX.PSX_SCREEN_RATIO;
                 SFX.screenWidthOffset = (Screen.height - SFX.screenWidth) * 0.5f;
             }
         }
     }
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_InitSystem(Callback method);
+    private class DLLMethods
+    {
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_InitSystem(Callback method);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_StartPlungeCamera(IntPtr btlseq, Int32 btlseqLen, Int32 camOffset, Int32 projOffset);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_StartPlungeCamera(IntPtr btlseq, Int32 btlseqLen, Int32 camOffset, Int32 projOffset);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_SkipCameraAnimation(Int32 skip);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_SkipCameraAnimation(Int32 skip);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_InitBattle(IntPtr param);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_InitBattle(IntPtr param);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern Boolean SFX_Update(ref Int32 frameIndex);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern Boolean SFX_Update(ref Int32 frameIndex);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_LateUpdate();
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_LateUpdate();
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern IntPtr SFX_UpdateCamera(Int32 isDebug);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern IntPtr SFX_UpdateCamera(Int32 isDebug);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_MoveFreeCamera(Int32 type, Int32 x, Int32 y);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_MoveFreeCamera(Int32 type, Int32 x, Int32 y);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern Int32 SFX_SendFloatData(Int32 type, Int32 btl_id, Single arg0, Single arg1, Single arg2);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern Int32 SFX_SendFloatData(Int32 type, Int32 btl_id, Single arg0, Single arg1, Single arg2);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern Int32 SFX_SendIntData(Int32 type, Int32 arg0, Int32 arg1, Int32 arg2);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern Int32 SFX_SendIntData(Int32 type, Int32 arg0, Int32 arg1, Int32 arg2);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern void SFX_Play(Int32 effnum, IntPtr bin, Int32 size, IntPtr req);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern void SFX_Play(Int32 effnum, IntPtr bin, Int32 size, IntPtr req);
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern Boolean SFX_BeginRender();
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern Boolean SFX_BeginRender();
 
-    [DllImport("FF9SpecialEffectPlugin")]
-    public static extern IntPtr SFX_GetPrim(ref Int32 otz);
+        [DllImport("FF9SpecialEffectPlugin")]
+        public static extern IntPtr SFX_GetPrim(ref Int32 otz);
+    }
+    public static void SFX_InitSystem(Callback method)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_InitSystem " + method.ToString());
+        DLLMethods.SFX_InitSystem(method);
+    }
+    public static void SFX_StartPlungeCamera(IntPtr btlseq, Int32 btlseqLen, Int32 camOffset, Int32 projOffset)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_StartPlungeCamera " + btlseqLen + " " + camOffset + " " + projOffset);
+        DLLMethods.SFX_StartPlungeCamera(btlseq, btlseqLen, camOffset, projOffset);
+    }
+    public static void SFX_SkipCameraAnimation(Int32 skip)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_SkipCameraAnimation " + skip);
+        DLLMethods.SFX_SkipCameraAnimation(skip);
+    }
+    public static void SFX_InitBattle(IntPtr param)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_InitBattle ");
+        DLLMethods.SFX_InitBattle(param);
+    }
+    public static Boolean SFX_Update(ref Int32 frameIndex)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_Update " + frameIndex);
+        return DLLMethods.SFX_Update(ref frameIndex);
+    }
+    public static void SFX_LateUpdate()
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_LateUpdate ");
+        DLLMethods.SFX_LateUpdate();
+    }
+    public static IntPtr SFX_UpdateCamera(Int32 isDebug)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_UpdateCamera " + isDebug);
+        return DLLMethods.SFX_UpdateCamera(isDebug);
+    }
+    public static void SFX_MoveFreeCamera(Int32 type, Int32 x, Int32 y)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_MoveFreeCamera " + type + " " + x + " " + y);
+        DLLMethods.SFX_MoveFreeCamera(type, x, y);
+    }
+    public static Int32 SFX_SendFloatData(Int32 type, Int32 btl_id, Single arg0, Single arg1, Single arg2)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_SendFloatData " + type + " " + btl_id + " " + arg0 + " " + arg1 + " " + arg2);
+        return DLLMethods.SFX_SendFloatData(type, btl_id, arg0, arg1, arg2);
+    }
+    public static Int32 SFX_SendIntData(Int32 type, Int32 arg0, Int32 arg1, Int32 arg2)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_SendIntData " + type + " " + arg0 + " " + arg1 + " " + arg2);
+        return DLLMethods.SFX_SendIntData(type, arg0, arg1, arg2);
+    }
+    public static void SFX_Play(Int32 effnum, IntPtr bin, Int32 size, IntPtr req)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_Play " + effnum + " " + size);
+        DLLMethods.SFX_Play(effnum, bin, size, req);
+    }
+    public static Boolean SFX_BeginRender()
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_BeginRender");
+        return DLLMethods.SFX_BeginRender();
+    }
+    public static IntPtr SFX_GetPrim(ref Int32 otz)
+    {
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] SFX_GetPrim " + otz);
+        return DLLMethods.SFX_GetPrim(ref otz);
+    }
 
     [MonoPInvokeCallback(typeof(Callback))]
-    public static unsafe Int32 BattleCallback(Int32 code, Int32 arg0, Int32 arg1, Int32 arg2, Int32 arg3, void* p)
+    public static unsafe Int32 BattleCallback(Int32 fullCode, Int32 arg0, Int32 arg1, Int32 arg2, Int32 arg3, void* p)
     {
-        Int32 num = code >> 24;
-        if (num == 100)
+        if (SFX.hijackedCallback != null)
+            return SFX.hijackedCallback(fullCode, arg0, arg1, arg2, arg3, p);
+        Int32 code = fullCode >> 24;
+        if (SFX.isDebugPrintCode)
+            Log.Message("[SFX] Callback " + (SFX.COMMAND)code + " " + arg0 + " " + arg1 + " " + arg2 + " " + arg3 + " (" + (fullCode & 255) + ")");
+        if (code == 100) // Load the rectangle [x, y, w, h] = [arg0, arg1, arg2, arg3] from a PSX-like Vram (TIM format)
         {
             PSXTextureMgr.LoadImage(arg0, arg1, arg2, arg3, (UInt16*)p);
             return 0;
         }
         if (!SFX.isSystemRun)
-        {
             return 0;
-        }
         if (SFX.isDebugMode)
-        {
             return SFX.DebugRoomCallback(code, arg0, arg1, arg2, arg3, p);
-        }
-        Int32 num2 = num;
-        switch (num2)
+        switch (code)
         {
-            case 101:
-                PSXTextureMgr.StoreImage(arg0, arg1, arg2, arg3, (UInt16*)p);
-                return 0;
-            case 102:
-                PSXTextureMgr.MoveImage(arg0, arg1, (Int16*)p);
-                return 0;
-            //case 103:
-            //case 104:
-            //case 105:
-            //case 106:
-            //case 107:
-            //case 108:
-            //case 109:
-            default:
-                {
-                    return OtherBattleCallback(code, arg0, arg1, arg2, arg3, p, num2, num);
-                }
-            case 110:
-                {
-                    FF9StateBattleSystem expr_E1 = FF9StateSystem.Battle.FF9Battle;
-                    expr_E1.btl_seq += 1;
-                    return 0;
-                }
-            case 111:
-                return (Int32)FF9StateSystem.Settings.cfg.camera;
-            case 112:
-                {
-                    Byte[] expr_116_cp_0 = FF9StateSystem.EventState.gEventGlobal;
-                    Int32 expr_116_cp_1 = 199;
-                    expr_116_cp_0[expr_116_cp_1] |= 16;
-                    return 0;
-                }
-            case 113:
-                {
-                    CMD_DATA curCmdPtr = FF9.btl_util.getCurCmdPtr();
-                    if (curCmdPtr != null)
-                    {
-                        UIManager.Battle.SetBattleCommandTitle(curCmdPtr);
-                    }
-                    return 0;
-                }
-            case 114:
-                if (arg0 != 0)
-                {
-                    FF9StateBattleSystem expr_148 = FF9StateSystem.Battle.FF9Battle;
-                    expr_148.cmd_status |= 2;
-                }
-                else
-                {
-                    FF9StateBattleSystem expr_165 = FF9StateSystem.Battle.FF9Battle;
-                    expr_165.cmd_status &= 65533;
-                }
-                return 0;
-            case 115:
-                return ((FF9StateSystem.Battle.FF9Battle.cmd_status & 2) == 0) ? 0 : 1;
-            case 116:
-                return 0;
-            case 117:
-                return battlebg.nf_GetBbgIntensity();
-            case 118:
-                battlebg.nf_SetBbgIntensity((Byte)arg0);
-                return 0;
-            case 119:
+            case 32: // Play/Stop Sound
                 switch (arg0)
                 {
                     case 0:
-                        vib.VIB_purge();
+                        SFX.SoundPlay(arg1, arg2, arg3);
                         break;
                     case 1:
+                        SFX.SoundPlayChant(arg1, arg2, arg3);
+                        break;
+                    case 2:
+                        SFX.SoundStop(arg1, arg2);
+                        break;
+                    case 3:
+                        SFX.StreamPlay(arg1);
+                        break;
+                }
+                return 0;
+            case 101: // Pass the Vram rectangle back to FF9SpecialEffectPlugin.dll
+                PSXTextureMgr.StoreImage(arg0, arg1, arg2, arg3, (UInt16*)p);
+                return 0;
+            case 102: // Update the rectangle [arg0, arg1, p[2], p[3]] with the image of the rectangle [p[0], p[1], p[2], p[3]]
+                PSXTextureMgr.MoveImage(arg0, arg1, (Int16*)p);
+                return 0;
+            case 110: // btl_seq controls the end of battles (game over, victory animation, fleeing...)
+                FF9StateSystem.Battle.FF9Battle.btl_seq++;
+                return 0;
+            case 111: // "Battle Camera: Auto / Fixed"
+                return (Int32)FF9StateSystem.Settings.cfg.camera;
+            case 112: // Some flag used in AI scripts (Steiner's Moonlight Slash, Kuja's Transform, Trance Kuja's Ultima (Crystal) and Necron's death)
+                FF9StateSystem.EventState.gEventGlobal[199] |= 16;
+                return 0;
+            case 113: // Display Ability Casting Name
+                {
+                    CMD_DATA curCmdPtr = btl_util.getCurCmdPtr();
+                    if (curCmdPtr != null)
+                        UIManager.Battle.SetBattleCommandTitle(curCmdPtr);
+                    return 0;
+                }
+            case 114: // Show/Hide Cursor
+                if (arg0 != 0)
+                    FF9StateSystem.Battle.FF9Battle.cmd_status |= 2;
+                else
+                    FF9StateSystem.Battle.FF9Battle.cmd_status &= 65533;
+                return 0;
+            case 115: // Is Cursor Shown
+                return ((FF9StateSystem.Battle.FF9Battle.cmd_status & 2) == 0) ? 0 : 1;
+            case 116:
+                return 0;
+            case 117: // Get Background Intensity, for fading backgrounds (also used to fake a light dim)
+                return battlebg.nf_GetBbgIntensity();
+            case 118: // Set Background Intensity
+                battlebg.nf_SetBbgIntensity((Byte)arg0);
+                return 0;
+            case 119: // Controller Vibration
+                switch (arg0)
+                {
+                    case 0: // Stop Vibration
+                        vib.VIB_purge();
+                        break;
+                    case 1: // Vibrate (full parameters)
                         {
                             Byte[] array = new Byte[1800];
                             Marshal.Copy((IntPtr)p, array, 0, 1800);
@@ -1213,7 +926,7 @@ public class SFX
                             binaryReader.Close();
                             break;
                         }
-                    case 2:
+                    case 2: // Vibrate
                         vib.VIB_setActive(false);
                         vib.VIB_setTrackActive(1, vib.VIB_SAMPLE_LO, true);
                         vib.VIB_setTrackActive(1, vib.VIB_SAMPLE_HI, true);
@@ -1221,96 +934,74 @@ public class SFX
                         break;
                 }
                 return 0;
-            case 120:
+            case 120:   // Take a screenshot of the background's ground in the Vram:
+                        // Texture X -> p[0] & 0x3FC0
+                        // Texture Y -> p[1] & 0x100
+                        // Screen Position X -> p[0] & 0x3F + p[2] / 2
+                        // Screen Position Y -> p[1] & 0xFF + p[3] / 2
+                        // Camera shift -> (p[4], p[5], p[6])
                 PSXTextureMgr.isBgCapture = true;
                 Marshal.Copy((IntPtr)p, PSXTextureMgr.bgParam, 0, 7);
                 return 0;
-            case 121:
+            case 121: // Return btl_id of player characters that were not removed from the battle (with Snort / Swallow)
                 return battle.btl_bonus.member_flag;
-            case 122:
+            case 122: // Back Attack, Preemptive, Normal
                 return (Byte)FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType;
-            case 123:
+            case 123: // Return the number of targetable player characters
                 {
-                    Int32 num10 = 0;
-                    for (BTL_DATA next2 = FF9StateSystem.Battle.FF9Battle.btl_list.next; next2 != null; next2 = next2.next)
-                    {
-                        if (next2.bi.player != 0 && !FF9.Status.checkCurStat(next2, BattleStatus.Death | BattleStatus.Jump))
-                        {
-                            num10++;
-                        }
-                    }
-                    return num10;
+                    Int32 validPlayerTarget = 0;
+                    for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                        if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                            validPlayerTarget++;
+                    return validPlayerTarget;
                 }
-            case 124:
+            case 124: // Return the current battle camera index (these cameras are predefined per btlseq)
                 return FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo;
-            case 125:
+            case 125: // Set Sound Pitch (default is 4 for a pitch of 1f)
                 SFX.soundFPS = arg0;
                 return 0;
         }
+        return BattleCallbackWithBtl(code, arg0, arg1, arg2, arg3, p, fullCode & 255);
     }
 
-    private static unsafe Int32 OtherBattleCallback(Int32 code, Int32 arg0, Int32 arg1, Int32 arg2, Int32 arg3, void* p, Int32 num2, Int32 num)
+    private static unsafe Int32 BattleCallbackWithBtl(Int32 code, Int32 arg0, Int32 arg1, Int32 arg2, Int32 arg3, void* p, Int32 btlid)
     {
-        if (num2 == 32)
-        {
-            switch (arg0)
-            {
-                case 0:
-                    SFX.SoundPlay(arg1, arg2, arg3);
-                    break;
-                case 1:
-                    SFX.SoundPlayChant(arg1, arg2, arg3);
-                    break;
-                case 2:
-                    SFX.SoundStop(arg1, arg2);
-                    break;
-                case 3:
-                    SFX.StreamPlay(arg1);
-                    break;
-            }
-            return 0;
-        }
-        Int32 num3 = code & 255;
         BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
         while (next.next != null)
         {
-            if (next.btl_id == num3)
-            {
+            if (next.btl_id == btlid)
                 break;
-            }
             next = next.next;
         }
-        bool flag2 = (int)next.btl_id == num3;
-        if (next == null || next.btl_id == 0)
+        if (/*next == null || */next.btl_id == 0)
+            return (code != 9) ? 0 : 1;
+        Boolean correctBtlid = (int)next.btl_id == btlid;
+        switch (code)
         {
-            return (num != 9) ? 0 : 1;
-        }
-        switch (num)
-        {
-            case 1:
+            case 1: // Get Position
                 switch (arg0)
                 {
-                    case 0:
+                    case 0: // Current 3D
                         *(Int16*)p = (Int16)next.pos.x;
                         *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)(next.pos.y + next.attachOffset));
                         *(Int16*)((Byte*)p + 4) = (Int16)next.pos.z;
                         break;
-                    case 1:
+                    case 1: // Base pos 3D
                         *(Int16*)p = (Int16)next.base_pos.x;
                         *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)(next.base_pos.y + next.attachOffset));
                         *(Int16*)((Byte*)p + 4) = (Int16)next.base_pos.z;
                         break;
-                    case 2:
+                    case 2: // Current 2D
                         *(Int16*)p = (Int16)next.pos.x;
                         *(Int16*)((Byte*)p + 4) = (Int16)next.pos.z;
                         break;
-                    case 3:
+                    case 3: // Base pos 2D
                         *(Int16*)p = (Int16)next.base_pos.x;
                         *(Int16*)((Byte*)p + 4) = (Int16)next.base_pos.z;
                         break;
                 }
                 break;
-            case 2:
+            case 2: // Set Position
                 if (SFX.preventStepInOut >= 0 && next.btl_id == SFX.request.exe.btl_id)
                 {
                     SFX.preventStepInOut = SFX.frameIndex;
@@ -1320,106 +1011,106 @@ public class SFX
                 next.pos.y = -(*(Int16*)((Byte*)p + 2) + (Single)next.attachOffset);
                 next.pos.z = *(Int16*)((Byte*)p + 4);
                 break;
-            case 3:
+            case 3: // Get Angles
                 switch (arg0)
                 {
-                    case 0:
+                    case 0: // Difference between base and current
                         *(Int16*)p = (Int16)((next.evt.rotBattle.eulerAngles.x - next.rot.eulerAngles.x) * 11.3777781f);
                         *(Int16*)((Byte*)p + 2) = (Int16)((next.evt.rotBattle.eulerAngles.y - next.rot.eulerAngles.y) * 11.3777781f);
                         *(Int16*)((Byte*)p + 4) = (Int16)((next.evt.rotBattle.eulerAngles.z - next.rot.eulerAngles.z) * 11.3777781f);
                         break;
-                    case 1:
+                    case 1: // Current
                         *(Int16*)p = (Int16)(next.rot.eulerAngles.x * 11.3777781f);
                         *(Int16*)((Byte*)p + 2) = (Int16)(next.rot.eulerAngles.y * 11.3777781f);
                         *(Int16*)((Byte*)p + 4) = (Int16)((next.rot.eulerAngles.z - 180f) * 11.3777781f);
                         break;
-                    case 2:
+                    case 2: // Base
                         *(Int16*)p = (Int16)(next.evt.rotBattle.eulerAngles.x * 11.3777781f);
                         *(Int16*)((Byte*)p + 2) = (Int16)(next.evt.rotBattle.eulerAngles.y * 11.3777781f);
                         *(Int16*)((Byte*)p + 4) = (Int16)((next.evt.rotBattle.eulerAngles.z - 180f) * 11.3777781f);
                         break;
-                    case 3:
+                    case 3: // Base, no orientation (horizontal angle)
                         *(Int16*)p = (Int16)(next.evt.rotBattle.eulerAngles.x * 11.3777781f);
                         *(Int16*)((Byte*)p + 4) = (Int16)((next.evt.rotBattle.eulerAngles.z - 180f) * 11.3777781f);
                         break;
                 }
                 break;
-            case 4:
+            case 4: // Set Angles
                 switch (arg0)
                 {
-                    case 0:
+                    case 0: // To base angle
                         next.rot.eulerAngles = next.evt.rotBattle.eulerAngles;
                         break;
-                    case 1:
+                    case 1: // To base angle + 180 degree
                         next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, next.evt.rotBattle.eulerAngles.y + 180f, next.rot.eulerAngles.z);
                         break;
-                    case 2:
+                    case 2: // To value
                         next.rot.eulerAngles = new Vector3(*(Int16*)p * 0.087890625f, *(Int16*)((Byte*)p + 2) * 0.087890625f - 180f, *(Int16*)((Byte*)p + 4) * 0.087890625f + 180f);
                         break;
                 }
                 break;
-            case 5:
+            case 5: // Get Size
                 *(Int32*)p = (Int32)(next.gameObject.transform.localScale.x * 4096f);
                 *(Int32*)((Byte*)p + 4) = (Int32)(next.gameObject.transform.localScale.y * 4096f);
                 *(Int32*)((Byte*)p + 8) = (Int32)(next.gameObject.transform.localScale.z * 4096f);
                 break;
-            case 6:
+            case 6: // Set Size
                 if ((arg0 & 128) == 0)
-                {
-                    FF9.geo.geoScaleReset(next);
-                }
+                    geo.geoScaleReset(next);
                 else
-                {
-                    next.flags |= FF9.geo.GEO_FLAGS_SCALE;
-                }
+                    next.flags |= geo.GEO_FLAGS_SCALE;
                 if ((arg0 & 1) == 1)
-                {
                     next.gameObject.transform.localScale = new Vector3(arg1 / 4096f, arg2 / 4096f, arg3 / 4096f);
-                }
                 break;
-            case 7:
+            case 7: // Get geo flags
                 return next.flags;
-            case 8:
+            case 8: // Is using Auto-Potion
                 if (FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
-                {
                     return (FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no != BattleCommandId.AutoPotion || !btl_cmd.CheckUsingCommand(next.cmd[0])) ? 0 : 1;
-                }
                 return 0;
-            case 9:
+            case 9: // Get Current Animation's frame count
                 {
-                    UInt16 num4 = FF9.GeoAnim.geoAnimGetNumFrames(next);
-                    if (num4 == 0)
-                    {
-                        num4 = 1;
-                    }
-                    return num4;
+                    UInt16 frameCount = (UInt16)GeoAnim.geoAnimGetNumFrames(next);
+                    if (frameCount == 0)
+                        frameCount = 1;
+                    return frameCount;
                 }
-            case 10:
+            case 10: // Get Current Animation's current frame
                 return next.evt.animFrame;
-            case 11:
+            case 11: // Set Current Animation's current frame
                 {
-                    UInt16 num5 = FF9.GeoAnim.geoAnimGetNumFrames(next);
-                    next.evt.animFrame = (((Int32)num5 <= arg0) ? ((Byte)(num5 - 1)) : ((Byte)arg0));
+                    UInt16 frameMax = (UInt16)GeoAnim.geoAnimGetNumFrames(next);
+                    next.evt.animFrame = frameMax <= arg0 ? (Byte)(frameMax - 1) : (Byte)arg0;
                     break;
                 }
-            case 12:
+            case 12: // Set Current Animation
                 if (arg0 == -1)
                 {
                     arg0 = next.bi.def_idle;
+                    CMD_DATA curCmd = FF9StateSystem.Battle.FF9Battle.cur_cmd;
+                    if (curCmd != null && curCmd.info.cmd_motion)
+                    {
+                        curCmd.info.cmd_motion = false;
+                        btl_mot.EndCommandMotion(curCmd);
+                    }
                 }
                 if (arg0 < 6 || next.bi.player != 0)
                 {
-                    // Use Freya's special casting animations instead of her CHANT/MAGIC animations (jump)
-                    if (SFX.currentEffectID != 393 && (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT || arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT || arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC))
+                    // Use Freya's jump animations instead of her CHANT/MAGIC animations
+                    if ((SFX.currentEffectID == SpecialEffect.Jump || SFX.currentEffectID == SpecialEffect.Spear) && (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT || arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT || arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC))
                     {
                         String goName = next.gameObject.name;
-                        goName.Trim();
+                        goName = goName.Trim();
                         if (goName.CompareTo("192(Clone)") == 0 || goName.CompareTo("585(Clone)") == 0)
                         {
+                            if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT)
+                                btl_mot.setMotion(next, "ANH_MAIN_B0_011_110");
                             if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT)
-                                FF9.btl_mot.setMotion(next, "ANH_MAIN_B0_011_201");
-                            else if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC)
-                                FF9.btl_mot.setMotion(next, "ANH_MAIN_B0_011_202");
+                                btl_mot.setMotion(next, "ANH_MAIN_B0_011_111");
+                            if (arg0 == (Byte)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC)
+                                btl_mot.setMotion(next, "ANH_MAIN_B0_011_112");
+                            next.animFlag |= (UInt16)EventEngine.afLoop;
+                            next.evt.animFrame = 0;
                             break;
                         }
                     }
@@ -1428,11 +1119,12 @@ public class SFX
                         SFX.preventStepInOut = SFX.frameIndex;
                         break;
                     }
-                    FF9.btl_mot.setMotion(next, (Byte)arg0);
+                    btl_mot.setMotion(next, (Byte)arg0);
+                    next.animFlag |= (UInt16)EventEngine.afLoop;
                     next.evt.animFrame = 0;
                 }
                 break;
-            case 13:
+            case 13: // Stop Animation
                 {
                     // Handle Ultima (Pandemonium / Crystal World) such that it doesn't freeze the characters
                     // In order to use the SFX Ultima as normal spells, this fix is required
@@ -1440,18 +1132,20 @@ public class SFX
                     //  + reset the BBG transparency at the end ("Set battle scene transparency 255 5" in Hades Workshop)
                     //  + make sure that all the characters are shown at the end (removing all the lines "Show/hide characters" in Hades Workshop has a good-looking result)
                     // Also, the caster moves away when using SFX 384 (Ultima in Crystal World), so either reset the caster's position at the end of the sequencing or use the Pandemonium version
-                    if ((SFX.currentEffectID == 492 || SFX.currentEffectID == 384) && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
+                    if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
                         return next.bi.stop_anim;
                     Byte stop_anim = next.bi.stop_anim;
                     next.bi.stop_anim = (Byte)arg0;
                     return stop_anim;
                 }
-            case 14:
+            case 14: // Get Bone Stance
                 {
                     Matrix4x4 matrix4x;
                     try
                     {
                         matrix4x = next.gameObject.transform.GetChildByName("bone" + arg1.ToString("D3")).localToWorldMatrix;
+                        if (next.bi.disappear != 0 && next.gameObject.transform.localPosition.y == -10000f)
+                            matrix4x.m13 += 10000f; // The flickering "fix" from BTL_DATA.SetDisappear
                     }
                     catch (NullReferenceException)
                     {
@@ -1459,14 +1153,14 @@ public class SFX
                     }
                     switch (arg0)
                     {
-                        case 0:
+                        case 0: // Get Bone Position
                             *(Int16*)p = (Int16)matrix4x.m03;
                             *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)(matrix4x.m13 + next.attachOffset));
                             *(Int16*)((Byte*)p + 4) = (Int16)matrix4x.m23;
                             break;
-                        case 1:
+                        case 1: // Get Bone Height
                             return -(Int32)(matrix4x.m13 + next.attachOffset);
-                        case 2:
+                        case 2: // Get Bone Orientation & Position
                             PSXMAT* matPtr = (PSXMAT*)p;
                             Int16* rptr = matPtr->r;
                             Int32* tptr = matPtr->t;
@@ -1490,15 +1184,15 @@ public class SFX
                     }
                     break;
                 }
-            case 15:
+            case 15: // Is Targetable
                 return next.bi.target;
-            case 16:
-                FF9.btl_mot.SetDefaultIdle(next);
+            case 16: // Reset Stand Animation
+                btl_mot.SetDefaultIdle(next);
                 break;
-            case 17:
+            case 17: // Is Hidden (no model, no targeting)
                 return next.bi.disappear;
-            case 18:
-                if (SFX.currentEffectID == 301)
+            case 18: // Set Hidden On/Off
+                if (SFX.currentEffectID == SpecialEffect.Sinkhole)
                 {
                     next.bi.stop_anim = 1;
                     foreach (Material material in battlebg.GetShaders(2))
@@ -1508,128 +1202,101 @@ public class SFX
                 {
                     next.SetDisappear((Byte)arg0);
                     if (arg0 == 0)
-                    {
                         btlseq.DispCharacter(next);
-                    }
                 }
                 break;
-            case 19:
+            case 19: // Show/Hide Weapon
                 for (Int32 i = 0; i < next.weaponMeshCount; i++)
-                {
                     if (arg0 != 0)
-                    {
-                        FF9.geo.geoWeaponMeshShow(next, i);
-                    }
+                        geo.geoWeaponMeshShow(next, i);
                     else
-                    {
-                        FF9.geo.geoWeaponMeshHide(next, i);
-                    }
-                }
+                        geo.geoWeaponMeshHide(next, i);
                 break;
-            case 20:
+            case 20: // Status
                 switch (arg0)
                 {
-                    case 0:
+                    case 0: // Has Status
+                        return ((next.stat.cur & (BattleStatus)(arg2 << 16 | arg1)) == 0u) ? 0 : 1;
+                    case 1: // Has Status or Permanent Status
                         {
-                            BattleStatus num6 = (BattleStatus)(arg2 << 16 | arg1);
-                            return ((next.stat.cur & num6) == 0u) ? 0 : 1;
-                        }
-                    case 1:
-                        {
-                            BattleStatus num6 = (BattleStatus)(arg2 << 16 | arg1);
-                            if (SFX.currentEffectID == 237 && (num6 & BattleStatus.Death) != 0u && !flag2)
-                            {
+                            BattleStatus status = (BattleStatus)(arg2 << 16 | arg1);
+                            if (SFX.currentEffectID == SpecialEffect.Roulette && (status & BattleStatus.Death) != 0u && !correctBtlid)
                                 return 1;
-                            }
-                            return ((next.stat.permanent & num6) == 0u && (next.stat.cur & num6) == 0u) ? 0 : 1;
+                            return btl_stat.CheckStatus(next, status) ? 1 : 0;
                         }
-                    case 2:
-                        btl_stat.RemoveStatuses(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.Jump | BattleStatus.GradualPetrify);
+                    case 2: // Remove many statuses
+                        btl_stat.RemoveStatuses(next, ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop));
                         break;
-                    case 3:
+                    case 3: // Reset Statuses
                         btl_stat.InitStatus(next);
                         break;
                 }
                 break;
-            case 21:
+            case 21: // Has a main command queued (Ready)
                 return next.bi.cmd_idle;
-            case 22:
+            case 22: // Is attached to another enemy
                 return next.bi.slave;
-            case 23:
+            case 23: // Effect Point
                 btl_cmd.ExecVfxCommand(next);
                 break;
-            case 24:
+            case 24: // Figure Point
                 btl2d.Btl2dReq(next);
                 break;
-            case 25:
+            case 25: // Show/Hide mesh
                 switch (arg0)
                 {
-                    case 0:
-                        FF9.btl_mot.HideMesh(next, 65535, false);
+                    case 0: // Hide all
+                        btl_mot.HideMesh(next, 65535, false);
                         break;
-                    case 1:
-                        FF9.btl_mot.HideMesh(next, next.mesh_banish, true);
+                    case 1: // Hide for Vanish
+                        btl_mot.HideMesh(next, next.mesh_banish, true);
                         break;
-                    case 2:
-                        FF9.btl_mot.ShowMesh(next, 65535, false);
+                    case 2: // Show all
+                        btl_mot.ShowMesh(next, 65535, false);
                         break;
-                    case 3:
+                    case 3: // Semi-transparent fade, light
                         SFX.fade = arg1;
-                        if ((next.flags & FF9.geo.GEO_FLAGS_RENDER) != 0 && (next.flags & FF9.geo.GEO_FLAGS_CLIP) == 0)
-                        {
+                        if ((next.flags & geo.GEO_FLAGS_RENDER) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
                             btl_stat.GeoAddColor2DrawPacket(next.gameObject, (Int16)(SFX.fade - 128), (Int16)(SFX.fade - 128), (Int16)(SFX.fade - 128));
-                        }
                         break;
-                    case 4:
+                    case 4: // Semi-transparent fade, severe (a typical fading goes from arg1 == 128 to 0 forth and back)
                         {
+                            Boolean weap = arg1 < 256;
                             SFX.fade = arg1;
-                            Int32 num7 = SFX.fade;
-                            Int32 num8;
-                            if (SFX.fade >= 256)
+                            if (!weap)
+                                arg1 -= 256;
+                            if (next.bi.player != 0 && next.weapon_geo != null && weap && (next.weaponFlags & geo.GEO_FLAGS_RENDER) != 0 && (next.weaponFlags & geo.GEO_FLAGS_CLIP) == 0)
                             {
-                                num8 = 0;
-                                num7 = SFX.fade - 256;
+                                btl_stat.GeoAddColor2DrawPacket(next.weapon_geo, (Int16)(arg1 - 128), (Int16)(arg1 - 128), (Int16)(arg1 - 128));
+                                if (arg1 < 70)
+                                    btl_util.GeoSetABR(next.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
                             }
-                            else
+                            if ((next.flags & geo.GEO_FLAGS_RENDER) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
                             {
-                                num8 = 1;
-                            }
-                            if (next.bi.player != 0 && next.weapon_geo != null && num8 != 0 && (next.weaponFlags & FF9.geo.GEO_FLAGS_RENDER) != 0 && (next.weaponFlags & FF9.geo.GEO_FLAGS_CLIP) == 0)
-                            {
-                                btl_stat.GeoAddColor2DrawPacket(next.weapon_geo, (Int16)(num7 - 128), (Int16)(num7 - 128), (Int16)(num7 - 128));
-                                if (num7 < 70)
-                                {
-                                    FF9.btl_util.GeoSetABR(next.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                                }
-                            }
-                            if ((next.flags & FF9.geo.GEO_FLAGS_RENDER) != 0 && (next.flags & FF9.geo.GEO_FLAGS_CLIP) == 0)
-                            {
-                                btl_stat.GeoAddColor2DrawPacket(next.gameObject, (Int16)(num7 - 128), (Int16)(num7 - 128), (Int16)(num7 - 128));
-                                if (num7 < 70)
-                                {
-                                    FF9.btl_util.GeoSetABR(next.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                                }
+                                btl_stat.GeoAddColor2DrawPacket(next.gameObject, (Int16)(arg1 - 128), (Int16)(arg1 - 128), (Int16)(arg1 - 128));
+                                if (arg1 < 70)
+                                    btl_util.GeoSetABR(next.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
                             }
                             break;
                         }
                 }
                 break;
-            case 26:
+            case 26: // Number of meshes
                 return next.meshCount;
-            case 27:
+            case 27: // Update color
                 btl_stat.SetPresentColor(next);
                 break;
-            case 28:
+            case 28: // Play/Stop Texture Animation
                 {
-                    Boolean flag = arg1 != 0;
-                    switch (num)
+                    switch (code) // Detect, which has an eye texture animation bug, calls it 4 times:
+                                  // 28 1 0 0 0
+                                  // 28 0 0 0 0
+                                  // 28 0 1 0 0
+                                  // 28 2 0 0 0
                     {
                         case 0:
-                            {
-                                Int32 anum = (!flag) ? 0 : 1;
-                                GeoTexAnim.geoTexAnimStop(next.texanimptr, anum);
-                                break;
-                            }
+                            GeoTexAnim.geoTexAnimStop(next.texanimptr, arg1 != 0 ? 1 : 0);
+                            break;
                         case 1:
                             GeoTexAnim.geoTexAnimStop(next.texanimptr, 2);
                             break;
@@ -1639,20 +1306,19 @@ public class SFX
                     }
                     break;
                 }
-            case 29:
-                FF9.btl_util.SetBattleSfx(next, 1110, 127);
+            case 29: // Play Sound (Jump)
+                btl_util.SetBattleSfx(next, 1110, 127);
                 break;
-            case 30:
+            case 30: // Play Weapon Sound (see FF9Snd.ff9battleSoundWeaponSndEffect02, first entry)
                 btlsnd.ff9btlsnd_sndeffect_play(btlsnd.ff9btlsnd_weapon_sfx(next.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_ATTACK), 0, 127, SeSnd.S_SeGetPos((UInt64)arg0));
                 break;
-            case 31:
+            case 31: // Play Weapon Sound (see FF9Snd.ff9battleSoundWeaponSndEffect02, second entry)
                 btlsnd.ff9btlsnd_sndeffect_play(btlsnd.ff9btlsnd_weapon_sfx(next.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT), 0, 127, 128);
                 break;
-            case 33:
+            case 33: // Play Casting Animation (Dragon)
                 {
                     // Freya's Dragon casting animation (looping or launch)
-                    Int32 num9 = arg1;
-                    switch (num9)
+                    switch (arg1)
                     {
                         case 61: // Luna
                             arg0 = ((arg0 != 20) ? 1 : 0);
@@ -1675,25 +1341,23 @@ public class SFX
                         case 491: // Six Dragons
                             arg0 = ((arg0 != 18) ? 1 : 0);
                             break;
-                            /* The sequence code 0x64 ("Play Freya's casting anim" in Hades Workshop) that generates this callback code is not used in other SFX natively but why not...
-                            default:
-                                Debug.LogError("No match special effect motion");
-                                return 0;*/
                     }
                     String goName = next.gameObject.name;
-                    goName.Trim();
+                    goName = goName.Trim();
                     if (goName.CompareTo("192(Clone)") == 0 || goName.CompareTo("585(Clone)") == 0) // GEO_MAIN_B0_011's and GEO_MAIN_B0_033's internal names (Freya/Trance Freya)
-                        FF9.btl_mot.setMotion(next, arg0 != 0 ? "ANH_MAIN_B0_011_202" : "ANH_MAIN_B0_011_201");
+                        btl_mot.setMotion(next, arg0 != 0 ? "ANH_MAIN_B0_011_202" : "ANH_MAIN_B0_011_201");
                     else
-                        FF9.btl_mot.setMotion(next, arg0 != 0 ? BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC : BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                        btl_mot.setMotion(next, arg0 != 0 ? BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC : BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
                     next.evt.animFrame = 0;
+                    if (arg0 == 0)
+                        next.animFlag |= (UInt16)EventEngine.afLoop;
                     break;
                 }
         }
         return 0;
     }
 
-    public static void CrateEffectDebugData()
+    public static void CreateEffectDebugData()
     {
         SFX.cpos.vx = 0;
         SFX.cpos.vy = 0;
@@ -1922,16 +1586,12 @@ public class SFX
             if (!SFX.isDebugMode)
             {
                 FF9StateBattleSystem fF9Battle = FF9StateSystem.Battle.FF9Battle;
-                if ((fF9Battle.btl_load_status & 7) == 7)
+                if ((fF9Battle.btl_load_status & ff9btl.LOAD_ALL) == ff9btl.LOAD_ALL)
                 {
                     if (fF9Battle.btl_scene.Info.SpecialStart != 0 && !FF9StateSystem.Battle.isDebug)
-                    {
                         fF9Battle.btl_phase = 1;
-                    }
                     else
-                    {
                         fF9Battle.btl_phase = 3;
-                    }
                     SFX.InitBattleParty();
                     SFX.SetCameraPhase(0);
                 }
@@ -1953,6 +1613,10 @@ public class SFX
     {
         SFX.StartCommon(false);
         SFX.StartPlungeCamera();
+        SFXData.InitBattle();
+        SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
+        if (Configuration.Battle.SFXRework)
+            SFXChannel.LoadAll();
     }
 
     public static void StartDebugRoom()
@@ -1964,6 +1628,7 @@ public class SFX
     public static void StartCommon(Boolean mode)
     {
         SFX.isDebugMode = mode;
+        SFX.hijackedCallback = null;
         SFXMesh.Init();
         SFXRender.Init();
         unsafe
@@ -1989,11 +1654,10 @@ public class SFX
 
     public static void StartPlungeCamera()
     {
+        SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
         Int32 projOffset = 0;
-        if (FF9StateSystem.Battle.battleMapIndex == 21)
-        {
+        if (FF9StateSystem.Battle.battleMapIndex == 21) // Sealion + Black Waltz 1
             projOffset = 100;
-        }
         GCHandle gCHandle = GCHandle.Alloc(btlseq.instance.data, GCHandleType.Pinned);
         SFX.SFX_StartPlungeCamera(gCHandle.AddrOfPinnedObject(), btlseq.instance.data.Length, btlseq.instance.camOffset, projOffset);
         gCHandle.Free();
@@ -2083,10 +1747,10 @@ public class SFX
         init.bi_line_no = btl.bi.line_no;
         if (btl.bi.player != 0)
         {
-            init.player_serial_no = FF9.btl_util.getSerialNumber(btl);
-            init.player_equip = FF9.btl_util.getWeaponNumber(btl);
-            init.player_wep_bone = FF9.btl_util.getPlayerPtr(btl).wep_bone;
-            init.enemy_radius = 256;
+            init.player_serial_no = btl_util.getSerialNumber(btl);
+            init.player_equip = btl_util.getWeaponNumber(btl);
+            init.player_wep_bone = btl_util.getPlayerPtr(btl).wep_bone;
+            init.enemy_radius = btl.radius_collision;
             init.geo_radius = init.enemy_radius;
             init.geo_height = init.enemy_radius * 2;
             init.weapon_category = (Byte)(SFX.isDebugMode ? 0 : btl.weapon.Category);
@@ -2115,11 +1779,11 @@ public class SFX
             init.weapon_offset1 = 0;
             if (!SFX.isDebugMode)
             {
-                Byte typeNo = btlseq.instance.btl_list[4].typeNo;
-                init.enemy_radius = FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[typeNo].Radius;
-                init.geo_radius = btlseq.instance.btl_list[4].radius;
+                //Byte typeNo = btlseq.instance.btl_list[4].typeNo;
+                init.enemy_radius = btl.radius_collision; //FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[typeNo].Radius;
+                init.geo_radius = btlseq.instance.btl_list[4].radius_effect;
                 init.geo_height = init.enemy_radius * 2;
-                ENEMY enemyPtr = FF9.btl_util.getEnemyPtr(btl);
+                ENEMY enemyPtr = btl_util.getEnemyPtr(btl);
                 init.enemy_cam_bone0 = enemyPtr.et.cam_bone[0];
                 init.enemy_cam_bone1 = enemyPtr.et.cam_bone[1];
                 init.enemy_cam_bone2 = enemyPtr.et.cam_bone[2];
@@ -2127,7 +1791,7 @@ public class SFX
             else
             {
                 init.enemy_radius = 200;
-                init.geo_radius = btl.radius;
+                init.geo_radius = btl.radius_effect;
                 init.geo_height = init.enemy_radius * 2;
                 init.enemy_cam_bone0 = 0;
                 init.enemy_cam_bone1 = 0;
@@ -2164,9 +1828,7 @@ public class SFX
     public static void SetMExe(BTL_DATA mexe)
     {
         if (mexe != null)
-        {
             SFX.SetReqParam(ref SFX.request.mexe, mexe);
-        }
     }
 
     public static void SetTrg(BTL_DATA trg)
@@ -2244,65 +1906,57 @@ public class SFX
         req.btl_id = (UInt16)(SFX.isDebugMode ? 1 : btl.btl_id);
     }
 
-    public static void Play(Int32 effNum)
+    public static void Play(SpecialEffect effNum)
     {
         SFX.currentEffectID = effNum;
         SFX.streamIndex = 0;
         SFX.soundFPS = 4;
         SFX.soundCallCount = 0;
         SFX.cameraOffset = 0f;
-        Int32 num = SFX.playParam[effNum] & 3;
+        Int32 num = SFX.playParam[(Int32)effNum] & 3;
         if (num == 0)
-        {
             SFX.subOrder = SFX.defaultSubOrder;
-        }
         else
-        {
             SFX.subOrder = num - 1;
-        }
-        Int32 num2 = SFX.playParam[effNum] >> 2 & 3;
+        Int32 num2 = SFX.playParam[(Int32)effNum] >> 2 & 3;
         if (num2 == 0)
-        {
             SFX.colIntensity = SFX.defaultColIntensity;
-        }
         else
-        {
             SFX.colIntensity = num2 - 1;
-        }
         SFX.pixelOffset = 0;
-        SFX.colThreshold = (SFX.playParam[effNum] >> 29 & 1);
-        SFX.addOrder = (SFX.playParam[effNum] >> 28 & 1);
+        SFX.colThreshold = (SFX.playParam[(Int32)effNum] >> 29 & 1);
+        SFX.addOrder = (SFX.playParam[(Int32)effNum] >> 28 & 1);
         SFX.SoundClear();
         SFX.isRunning = true;
         SFX.frameIndex = 0;
         PSXTextureMgr.Reset();
+        SFXMesh.DetectEyeFrameStart = -1;
         Int32 num3 = Marshal.SizeOf(SFX.request);
         Byte[] value = new Byte[num3];
         GCHandle gCHandle = GCHandle.Alloc(value, GCHandleType.Pinned);
         Marshal.StructureToPtr(SFX.request, gCHandle.AddrOfPinnedObject(), false);
-        SoundLib.LoadSfxSoundData(effNum);
-        if (effNum == 435)
-        {
+        SoundLib.LoadSfxSoundData((Int32)effNum);
+        if (effNum == SpecialEffect.Special_Necron_Death)
             PSXTextureMgr.SpEff435();
-        }
-        String path = "SpecialEffects/ef" + effNum.ToString("D3");
+        String path = "SpecialEffects/ef" + ((Int32)effNum).ToString("D3");
 		String[] efInfo;
-        Byte[] binAsset = AssetManager.LoadBytes(path, out efInfo, false);
+        Byte[] binAsset = AssetManager.LoadBytes(path, out efInfo, true);
         if (binAsset != null)
         {
             GCHandle gCHandle2 = GCHandle.Alloc(binAsset, GCHandleType.Pinned);
-            SFX.SFX_Play(effNum, gCHandle2.AddrOfPinnedObject(), binAsset.Length, gCHandle.AddrOfPinnedObject());
+            SFX.SFX_Play((Int32)effNum, gCHandle2.AddrOfPinnedObject(), binAsset.Length, gCHandle.AddrOfPinnedObject());
             gCHandle2.Free();
         }
         else
         {
-            SFX.SFX_Play(effNum, (IntPtr)null, 0, gCHandle.AddrOfPinnedObject());
+            SFX.SFX_Play((Int32)effNum, (IntPtr)null, 0, gCHandle.AddrOfPinnedObject());
         }
         gCHandle.Free();
     }
 
     public static void SetCameraTarget(Vector3 pos, BTL_DATA exe, BTL_DATA trg)
     {
+        SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
         SFX.SFX_SendFloatData(1, 0, pos.x, pos.y, pos.z);
         SFX.SFX_SendIntData(1, exe.btl_id, 0, 0);
         SFX.SFX_SendIntData(2, trg.btl_id, 0, 0);
@@ -2317,74 +1971,50 @@ public class SFX
         }
         else
         {
-            int battleMapIndex = FF9StateSystem.Battle.battleMapIndex;
-            switch (battleMapIndex)
+            switch (FF9StateSystem.Battle.battleMapIndex)
             {
-                case 160:
+                case 155: // Amdusias (YANA)
                     arg = 160;
                     break;
-                case 161:
-                case 162:
-                    IL_3B:
-                    if (battleMapIndex != 155)
-                    {
-                        if (battleMapIndex == 303)
-                        {
-                            if (cam == 9)
-                            {
-                                arg = 120;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        arg = 240;
-                    }
+                case 160: // Abadon (YANA)
+                    arg = 240;
                     break;
-                case 163:
+                case 303: // Plant Brain
+                    if (cam == 9)
+                        arg = 120;
+                    break;
+                case 163: // Shell Dragon (YANA)
                     arg = 120;
                     break;
-                default:
-                    goto IL_3B;
+                //case 161: // Carve Spider + Axe Beak (World Map)
+                //case 162: // Carve Spider + Axe Beak (World Map)
             }
         }
+        SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
         SFX.SFX_SendIntData(3, cam, arg, 0);
     }
 
     public static void SetEnemyCamera(BTL_DATA btl)
     {
-        Int32 arg = 0;
-        Int32 battleMapIndex = FF9StateSystem.Battle.battleMapIndex;
-        switch (battleMapIndex)
+        Int32 arg = 0; // Seems to be either a camera distance or a fov angle
+        switch (FF9StateSystem.Battle.battleMapIndex)
         {
-            case 299:
-                goto IL_50;
-            //case 300:
-            //case 301:
-            default:
-                if (battleMapIndex == 4 || battleMapIndex == 73)
-                {
-                    goto IL_50;
-                }
-                if (battleMapIndex == 83)
-                {
-                    arg = 140;
-                    goto IL_71;
-                }
-                if (battleMapIndex != 163)
-                {
-                    goto IL_71;
-                }
-                goto IL_66;
-            case 302:
-                goto IL_66;
+            case 4: // Beatrix (Burmecia)
+            case 73: // Beatrix (Alexandria)
+            case 299: // Beatrix (Cleyra)
+                arg = 200;
+                break;
+            case 83: // Lani
+                arg = 140;
+                break;
+            case 163: // Shell Dragon (YANA)
+            case 302: // Prison Cage (Garnet)
+                arg = 150;
+                break;
+            //case 300: // Antlion (Cleyra)
+            //case 301: // Prison Cage (Vivi)
         }
-        IL_50:
-        arg = 200;
-        goto IL_71;
-        IL_66:
-        arg = 150;
-        IL_71:
+        SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
         SFX.SFX_SendIntData(4, btl.btl_id, arg, 0);
     }
 
@@ -2433,165 +2063,111 @@ public class SFX
         SFX.seChantIndex = 0;
         SFX.seNormalIndex = 0;
         for (Int32 i = 0; i < SFX.MAX_INDEX; i++)
-        {
             SFX.channel[i, 0] = -1;
+    }
+
+    public static Int32 AdjustSoundIndex(Int32 dno, Int32 sce, out Boolean shouldSkip)
+	{
+        dno += 12;
+        shouldSkip = false;
+        if (sce != 0)
+        {
+            switch (SFX.currentEffectID)
+            {
+                case SpecialEffect.Phoenix_Rebirth_Flame:
+                    return dno + 12;
+                case SpecialEffect.Madeen__Full:
+                    return dno + 11;
+                case SpecialEffect.Ark__Full:
+                    if (SFX.soundCallCount >= 28)
+                        return dno + 36;
+                    else if (SFX.soundCallCount >= 20)
+                        return dno + 20;
+                    else if (SFX.soundCallCount >= 12)
+                        return dno + 16;
+                    else
+                        return dno + 8;
+                case SpecialEffect.Ark__Short:
+                    return dno + 4;
+                case SpecialEffect.Bahamut__Full:
+                    return dno + 14;
+            }
         }
+        switch (SFX.currentEffectID)
+        {
+            case SpecialEffect.Ark__Short:
+                if (SFX.soundCallCount >= 8)
+                    return dno + 8;
+                break;
+            case SpecialEffect.Ark__Full:
+                if (SFX.soundCallCount >= 28)
+                    return dno + 28;
+                else if (SFX.soundCallCount >= 12)
+                    return dno + 12;
+                else if (SFX.soundCallCount == 0)
+                    SFX.soundFPS = -1;
+                break;
+            case SpecialEffect.Lucky_Seven:
+                return dno - 7;
+            case SpecialEffect.Odin__Full:
+                if (SFX.soundCallCount == 0)
+                    SFX.soundFPS = -3;
+                break;
+            case SpecialEffect.Roulette:
+                if (dno != 12)
+                    return dno - 3;
+                break;
+            case SpecialEffect.Bahamut__Full:
+                if (SFX.soundCallCount == 4)
+                    SFX.soundFPS = -2;
+                return dno - 2;
+            case SpecialEffect.Leviathan__Full:
+                if (dno == 15)
+                    shouldSkip = true;
+                return dno;
+            case SpecialEffect.Explosion:
+                if (dno != 12)
+                    shouldSkip = true;
+                return dno;
+            case SpecialEffect.Venom_Powder:
+                return dno - 3;
+        }
+        return dno;
     }
 
     public static void SoundPlay(Int32 dno, Int32 attr, Int32 sce)
     {
-        Int32 num = 12 + dno;
-        Int32 num2;
-        if (sce != 0)
-        {
-            num2 = SFX.currentEffectID;
-            switch (num2)
-            {
-                case 225:
-                    num += 12;
-                    goto IL_1EE;
-                //case 226:
-                default:
-                    if (num2 == 251)
-                    {
-                        num += 11;
-                        goto IL_1EE;
-                    }
-                    if (num2 == 381)
-                    {
-                        if (SFX.soundCallCount >= 28)
-                        {
-                            num += 36;
-                        }
-                        else if (SFX.soundCallCount >= 20)
-                        {
-                            num += 20;
-                        }
-                        else if (SFX.soundCallCount >= 12)
-                        {
-                            num += 16;
-                        }
-                        else
-                        {
-                            num += 8;
-                        }
-                        goto IL_1EE;
-                    }
-                    if (num2 != 447)
-                    {
-                        goto IL_1EE;
-                    }
-                    num += 4;
-                    goto IL_1EE;
-                case 227:
-                    num += 14;
-                    goto IL_1EE;
-            }
-        }
-        num2 = SFX.currentEffectID;
-        if (num2 != 10)
-        {
-            if (num2 != 31)
-            {
-                if (num2 != 179)
-                {
-                    if (num2 != 227)
-                    {
-                        if (num2 != 237)
-                        {
-                            if (num2 != 261)
-                            {
-                                if (num2 != 312)
-                                {
-                                    if (num2 != 381)
-                                    {
-                                        if (num2 == 447)
-                                        {
-                                            if (SFX.soundCallCount >= 8)
-                                            {
-                                                num += 8;
-                                            }
-                                        }
-                                    }
-                                    else if (SFX.soundCallCount >= 28)
-                                    {
-                                        num += 28;
-                                    }
-                                    else if (SFX.soundCallCount >= 12)
-                                    {
-                                        num += 12;
-                                    }
-                                    else if (SFX.soundCallCount == 0)
-                                    {
-                                        SFX.soundFPS = -1;
-                                    }
-                                }
-                                else
-                                {
-                                    num -= 7;
-                                }
-                            }
-                            else if (SFX.soundCallCount == 0)
-                            {
-                                SFX.soundFPS = -3;
-                            }
-                        }
-                        else if (dno != 0)
-                        {
-                            num -= 3;
-                        }
-                    }
-                    else
-                    {
-                        num -= 2;
-                        if (SFX.soundCallCount == 4)
-                        {
-                            SFX.soundFPS = -2;
-                        }
-                    }
-                }
-                else if (dno == 3)
-                {
-                    return;
-                }
-            }
-            else if (dno != 0)
-            {
-                return;
-            }
-        }
-        else
-        {
-            num -= 3;
-        }
-        IL_1EE:
+        Boolean skip;
+        Int32 num = AdjustSoundIndex(dno, sce, out skip);
+        if (skip)
+            return;
         SFX.soundCallCount++;
         Single pitch;
-        if (SFX.currentEffectID == 424)
+        if (SFX.currentEffectID == SpecialEffect.Odin__Short)
         {
             pitch = 1.25f;
         }
         else
         {
-            num2 = SFX.soundFPS;
-            switch (num2 + 3)
+            switch (SFX.soundFPS + 3)
             {
                 case 0:
                     pitch = 0.725f;
-                    goto IL_27A;
+                    break;
                 case 1:
                     pitch = 0.85f;
-                    goto IL_27A;
+                    break;
                 case 2:
                     pitch = 0.76f;
-                    goto IL_27A;
+                    break;
                 case 6:
                     pitch = 0.75f;
-                    goto IL_27A;
+                    break;
+                default:
+                    pitch = 1f;
+                    break;
             }
-            pitch = 1f;
         }
-        IL_27A:
         SoundLib.PlaySfxSound(num, 1f, 0f, pitch);
         for (Int32 i = 0; i < SFX.MAX_INDEX; i++)
         {
@@ -2610,7 +2186,7 @@ public class SFX
         if ((dno & 16777215) == 3)
         {
             if (SFX.seChantIndex % 3 == 0)
-                SoundLib.PlaySoundEffect(REFLECT_SOUND_ID, 5f, 0f, 1f); // DEBUG: using 5f as sound volume because the current sound fix has a low volume... must fix that
+                SoundLib.PlaySoundEffect(REFLECT_SOUND_ID, 5f, 0f, 1f); // DEBUG: using 5f as sound volume because the current sound fix has a low volume... must fix that (same as SFXChannel.ExecuteLoop)
         }
         else
         {
@@ -2643,77 +2219,45 @@ public class SFX
     public static void StreamPlay(Int32 rflg)
     {
         Int32 num = 12;
-        Int32 num2 = SFX.currentEffectID;
-        switch (num2)
+        switch (SFX.currentEffectID)
         {
-            case 225:
+            case SpecialEffect.Phoenix_Rebirth_Flame:
                 num += 16;
                 break;
-            case 226:
+            case SpecialEffect.Fenrir_Wind__Full:
                 num += 16;
                 break;
-            case 227:
+            case SpecialEffect.Bahamut__Full:
                 num += 26 + SFX.streamIndex;
                 break;
-            default:
-                if (num2 != 210)
-                {
-                    if (num2 != 211)
-                    {
-                        if (num2 != 179)
-                        {
-                            if (num2 != 186)
-                            {
-                                if (num2 != 251)
-                                {
-                                    if (num2 != 261)
-                                    {
-                                        if (num2 != 276)
-                                        {
-                                            if (num2 != 381)
-                                            {
-                                                if (num2 != 415)
-                                                {
-                                                    return;
-                                                }
-                                                num += 6;
-                                            }
-                                            else
-                                            {
-                                                num += 40 + SFX.streamIndex;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        num += 16;
-                                    }
-                                }
-                                else
-                                {
-                                    num += 19;
-                                }
-                            }
-                            else
-                            {
-                                num += 9;
-                            }
-                        }
-                        else
-                        {
-                            num += 12;
-                        }
-                    }
-                    else
-                    {
-                        num += 8;
-                    }
-                }
-                else
-                {
-                    num += 14;
-                }
+            case SpecialEffect.Fenrir_Earth__Full:
+                num += 14;
                 break;
+            case SpecialEffect.Phoenix__Full:
+                num += 8;
+                break;
+            case SpecialEffect.Leviathan__Full:
+                num += 12;
+                break;
+            case SpecialEffect.Ramuh__Full:
+                num += 9;
+                break;
+            case SpecialEffect.Madeen__Full:
+                num += 19;
+                break;
+            case SpecialEffect.Odin__Full:
+                num += 16;
+                break;
+            case SpecialEffect.Ifrit__Full:
+                break;
+            case SpecialEffect.Ark__Full:
+                num += 40 + SFX.streamIndex;
+                break;
+            case SpecialEffect.Ramuh__Short:
+                num += 6;
+                break;
+            default:
+                return;
         }
         SFX.streamIndex++;
         SoundLib.PlaySfxSound(num, 1.3f, 0f, 1f);
@@ -2728,6 +2272,19 @@ public class SFX
         }
     }
 
+    public static Boolean ShouldPlayAlternateCamera(CMD_DATA cmd)
+    {
+        if (cmd.aa.Info.DefaultCamera)
+            return true;
+        if (FF9StateSystem.Settings.cfg.camera == 1UL || Comn.random8() >= 128)
+            return false;
+        BattleStatus pStat = cmd.regist.stat.cur;
+        for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+            if ((next.btl_id & cmd.tar_id) != 0)
+                pStat |= next.stat.cur;
+        return (pStat & (BattleStatus.Vanish | BattleStatus.Mini)) == 0u;
+    }
+
     public const Int32 DEBUG_EFFECT_ID = 126;
 
     public const Int32 effMax = 511;
@@ -2738,109 +2295,61 @@ public class SFX
 
     public const Single PSX2EUL = 0.087890625f;
 
-    public const Int32 COMMAND_GET_POSITION = 1;
-
-    public const Int32 COMMAND_SET_POSITION = 2;
-
-    public const Int32 COMMAND_GET_ROTATE = 3;
-
-    public const Int32 COMMAND_SET_ROTATE = 4;
-
-    public const Int32 COMMAND_GET_SCALE = 5;
-
-    public const Int32 COMMAND_SET_SCALE = 6;
-
-    public const Int32 COMMAND_GET_GEO_FLAG = 7;
-
-    public const Int32 COMMAND_GET_AUTO_POTION_COMMAND = 8;
-
-    public const Int32 COMMAND_GET_MOTION_FRAME_MAX = 9;
-
-    public const Int32 COMMAND_GET_MOTION_FRAME = 10;
-
-    public const Int32 COMMAND_SET_MOTION_FRAME = 11;
-
-    public const Int32 COMMAND_SET_MOTION = 12;
-
-    public const Int32 COMMAND_STOP_MOTION = 13;
-
-    public const Int32 COMMAND_GET_MATRIX = 14;
-
-    public const Int32 COMMAND_IS_TARGET = 15;
-
-    public const Int32 COMMAND_SET_DEFAULT_IDLE = 16;
-
-    public const Int32 COMMAND_GET_DISAPPEAR = 17;
-
-    public const Int32 COMMAND_SET_DISAPPEAR = 18;
-
-    public const Int32 COMMAND_SHOW_WEAPON = 19;
-
-    public const Int32 COMMAND_CHECK_STATUS = 20;
-
-    public const Int32 COMMAND_GET_CMD_IDLE = 21;
-
-    public const Int32 COMMAND_GET_SLAVE = 22;
-
-    public const Int32 COMMAND_EXEC_VFX = 23;
-
-    public const Int32 COMMAND_BTL_2D_REQ = 24;
-
-    public const Int32 COMMAND_SHOW_MESH = 25;
-
-    public const Int32 COMMAND_GET_MESH_COUNT = 26;
-
-    public const Int32 COMMAND_SET_PRESENT_COLOR = 27;
-
-    public const Int32 COMMAND_EYE_BLINK = 28;
-
-    public const Int32 COMMAND_SFX_BATTLE = 29;
-
-    public const Int32 COMMAND_SFX_PLAYER_ATTACK = 30;
-
-    public const Int32 COMMAND_SFX_PLAY_HIT = 31;
-
-    public const Int32 COMMAND_SFX_PLAY = 32;
-
-    public const Int32 COMMAND_SET_SPMOTION = 33;
-
-    public const Int32 COMMAND_LOAD_IMAGE = 100;
-
-    public const Int32 COMMAND_STORE_IMAGE = 101;
-
-    public const Int32 COMMAND_MOVE_IMAGE = 102;
-
-    public const Int32 COMMAND_INCREMENT_BATTLE_SEQ = 110;
-
-    public const Int32 COMMAND_GET_CAMERA_CONFIG = 111;
-
-    public const Int32 COMMAND_LBOSS_FLAG_ENABLE = 112;
-
-    public const Int32 COMMANS_EFFECT_TILE = 113;
-
-    public const Int32 COMMAND_SET_CURSOR = 114;
-
-    public const Int32 COMMAND_GET_CURSOR = 115;
-
-    public const Int32 COMMAND_SFX_PAUSE = 116;
-
-    public const Int32 COMMAND_GET_BG_INTENSITY = 117;
-
-    public const Int32 COMMAND_SET_BG_INTENSITY = 118;
-
-    public const Int32 COMMAND_VIBRATE = 119;
-
-    public const Int32 COMMAND_CREATE_TEXTURE = 120;
-
-    public const Int32 COMMAND_GET_BONUS = 121;
-
-    public const Int32 COMMAND_GET_START_TYPE = 122;
-
-    public const Int32 COMMAND_GET_ALIVE_COUNT = 123;
-
-    public const Int32 COMMAND_GET_CAMERA_NUMBER = 124;
-
-    public const Int32 COMMAND_SET_FPS = 125;
+    public enum COMMAND
+    {
+        COMMAND_GET_POSITION = 1,
+        COMMAND_SET_POSITION = 2,
+        COMMAND_GET_ROTATE = 3,
+        COMMAND_SET_ROTATE = 4,
+        COMMAND_GET_SCALE = 5,
+        COMMAND_SET_SCALE = 6,
+        COMMAND_GET_GEO_FLAG = 7,
+        COMMAND_GET_AUTO_POTION_COMMAND = 8,
+        COMMAND_GET_MOTION_FRAME_MAX = 9,
+        COMMAND_GET_MOTION_FRAME = 10,
+        COMMAND_SET_MOTION_FRAME = 11,
+        COMMAND_SET_MOTION = 12,
+        COMMAND_STOP_MOTION = 13,
+        COMMAND_GET_MATRIX = 14,
+        COMMAND_IS_TARGET = 15,
+        COMMAND_SET_DEFAULT_IDLE = 16,
+        COMMAND_GET_DISAPPEAR = 17,
+        COMMAND_SET_DISAPPEAR = 18,
+        COMMAND_SHOW_WEAPON = 19,
+        COMMAND_CHECK_STATUS = 20,
+        COMMAND_GET_CMD_IDLE = 21,
+        COMMAND_GET_SLAVE = 22,
+        COMMAND_EXEC_VFX = 23,
+        COMMAND_BTL_2D_REQ = 24,
+        COMMAND_SHOW_MESH = 25,
+        COMMAND_GET_MESH_COUNT = 26,
+        COMMAND_SET_PRESENT_COLOR = 27,
+        COMMAND_EYE_BLINK = 28,
+        COMMAND_SFX_BATTLE = 29,
+        COMMAND_SFX_PLAYER_ATTACK = 30,
+        COMMAND_SFX_PLAY_HIT = 31,
+        COMMAND_SFX_PLAY = 32,
+        COMMAND_SET_SPMOTION = 33,
+        COMMAND_LOAD_IMAGE = 100,
+        COMMAND_STORE_IMAGE = 101,
+        COMMAND_MOVE_IMAGE = 102,
+        COMMAND_INCREMENT_BATTLE_SEQ = 110,
+        COMMAND_GET_CAMERA_CONFIG = 111,
+        COMMAND_LBOSS_FLAG_ENABLE = 112,
+        COMMAND_EFFECT_TITLE = 113,
+        COMMAND_SET_CURSOR = 114,
+        COMMAND_GET_CURSOR = 115,
+        COMMAND_SFX_PAUSE = 116,
+        COMMAND_GET_BG_INTENSITY = 117,
+        COMMAND_SET_BG_INTENSITY = 118,
+        COMMAND_VIBRATE = 119,
+        COMMAND_CREATE_TEXTURE = 120,
+        COMMAND_GET_BONUS = 121,
+        COMMAND_GET_START_TYPE = 122,
+        COMMAND_GET_ALIVE_COUNT = 123,
+        COMMAND_GET_CAMERA_NUMBER = 124,
+        COMMAND_SET_FPS = 125
+    }
 
     public const Int32 S_ChrTAnm_PLAY = 0;
 
@@ -2864,11 +2373,17 @@ public class SFX
 
     public const Int32 REFLECT_SOUND_ID = 350; // Thanks to LovelsDarkness and DoomOyster
 
-    public static Int32 currentEffectID;
+    public static SpecialEffect currentEffectID;
 
     public static Boolean isDebugAutoPlay;
 
     public static Boolean isDebugPng;
+
+    public static Boolean IsDebugMesh;
+
+    public static Boolean IsDebugObjMesh;
+
+    public static Boolean isDebugPrintCode;
 
     public static Boolean isDebugViewport;
 
@@ -2901,8 +2416,6 @@ public class SFX
     public static Single screenWidthRatio;
 
     public static Single screenHeightRatio;
-
-    public static Int32[] effTeble;
 
     public static Int32 fade;
 
@@ -2988,6 +2501,8 @@ public class SFX
     }
 
     public unsafe delegate Int32 Callback(Int32 code, Int32 arg0, Int32 arg1, Int32 arg2, Int32 arg3, void* p);
+
+    public static Callback hijackedCallback = null;
 
     public static Int32 preventStepInOut = -1;
 }

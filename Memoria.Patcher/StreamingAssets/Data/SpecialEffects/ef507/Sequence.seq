@@ -1,0 +1,23 @@
+// Shared sequence of SFX Carbuncle_Diamond__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=65
+PlaySound: Sound=2447
+PlaySound: Sound=2448
+PlaySound: Sound=2449
+Wait: Time=4
+//ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+Wait: Time=4
+PlaySound: Sound=2873
+PlaySound: Sound=2874
+PlaySound: Sound=2875
+Wait: Time=24
+//ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+//ShowMesh: Char=AllEnemies ; Enable=False ; Time=18
+Wait: Time=16
+//ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+//ShowMesh: Char=AllEnemies ; Enable=True ; Time=18
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16

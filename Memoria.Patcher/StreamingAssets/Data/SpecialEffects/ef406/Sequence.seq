@@ -1,0 +1,15 @@
+// Shared sequence of SFX Leviathan__Short
+
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+Wait: Time=6
+PlaySound: Sound=2547
+PlaySound: Sound=2548
+PlaySound: Sound=2549
+PlaySound: Sound=2550
+Wait: Time=80
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=13
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

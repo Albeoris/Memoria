@@ -1,0 +1,162 @@
+// Shared sequence of SFX Neutron_Ring
+
+PlaySound: Sound=2690
+PlaySound: Sound=2691
+PlaySound: Sound=2692
+PlaySound: Sound=2693
+Wait: Time=1
+//ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera ; Sync=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; RelativePosition=(0.0, 2.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 6.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 22.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 26.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 30.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 34.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 38.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 42.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 46.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 50.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 54.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 58.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 62.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 66.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 70.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 74.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 78.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 82.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 86.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 90.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 94.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 98.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 102.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 106.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 110.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 114.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 118.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 122.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, 126.0, 0.0) ; MoveHeight=True ; Time=0
+EndThread
+StartThread: Condition=!SFXUseCamera ; Sync=True
+	Wait: Time=31
+EndThread
+Wait: Time=19
+SetBackgroundIntensity: Intensity=0 ; Time=32 ; HoldDuration=140
+Wait: Time=31
+PlaySound: Sound=2694
+PlaySound: Sound=2695
+PlaySound: Sound=2696
+//ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+//ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+Wait: Time=108
+//ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16
+StartThread: Condition=SFXUseCamera ; Sync=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; RelativePosition=(0.0, 1922.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -122.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -118.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -114.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -110.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -106.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -102.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -98.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -94.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -90.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -86.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -82.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -78.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -74.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -70.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -66.0, 0.0) ; MoveHeight=True ; Time=0
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -62.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -58.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -54.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -50.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -46.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -42.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -38.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -34.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -30.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -26.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -22.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -18.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -14.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -10.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; RelativePosition=(0.0, -6.0, 0.0) ; MoveHeight=True ; Time=0
+	Wait: Time=1
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+EndThread
+StartThread: Condition=!SFXUseCamera ; Sync=True
+	Wait: Time=15
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=16
+EndThread
+Wait: Time=8
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

@@ -349,6 +349,16 @@
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextTagCode.cs" />
     <Compile Include="Memoria\Assets\Text\CharacterNamesFormatter.cs" />
     <Compile Include="Memoria\Assets\Text\Export\CharacterNamesExporter.cs" />
+    <Compile Include="Memoria\Battle\SFX\BattleActionCode.cs" />
+    <Compile Include="Memoria\Battle\SFX\BattleActionThread.cs" />
+    <Compile Include="Memoria\Battle\SFX\ParametricMovement.cs" />
+    <Compile Include="Memoria\Battle\SFX\SFXBinaryFile.cs" />
+    <Compile Include="Memoria\Battle\SFX\SFXChannel.cs" />
+    <Compile Include="Memoria\Battle\SFX\SFXData.cs" />
+    <Compile Include="Memoria\Battle\SFX\SFXDataCamera.cs" />
+    <Compile Include="Memoria\Battle\SFX\SFXDataMesh.cs" />
+    <Compile Include="Memoria\Battle\SFX\SFXDataMeshConverter.cs" />
+    <Compile Include="Memoria\Battle\SFX\UnifiedBattleSequencer.cs" />
     <Compile Include="Memoria\Configuration\Access\Mod.cs" />
     <Compile Include="Memoria\Configuration\Access\Cheats.cs" />
     <Compile Include="Memoria\Configuration\Access\Audio.cs" />

@@ -1,0 +1,22 @@
+// Shared sequence of SFX Flare
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=16
+PlaySound: Sound=188
+PlaySound: Sound=174
+PlaySound: Sound=158
+Wait: Time=16
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=85
+Wait: Time=30
+PlaySound: Sound=1387
+PlaySound: Sound=1388
+PlaySound: Sound=1389
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=10
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=55
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=5
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

@@ -1,0 +1,8 @@
+// Player sequence of SFX Melt
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Melt ; Reflect=True
+WaitSFXLoaded: SFX=Melt ; Reflect=True
+PlaySFX: SFX=Melt ; Reflect=True
+WaitSFXDone: SFX=Melt ; Reflect=True

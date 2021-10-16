@@ -1,0 +1,10 @@
+// Shared sequence of SFX Scoop_Art
+
+PlaySound: Sound=1903
+PlaySound: Sound=1904
+PlaySound: Sound=1905
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

@@ -29,14 +29,14 @@ namespace Memoria
                     if (fleeFactory != null)
                         fleeFactory(new BattleCalculator()).Perform();
                     else
-                        Log.Warning($"Unknown script id: {scriptId}");
+                        Log.Warning($"[{nameof(CalcMain)}] Unknown script id with no caster/target: {scriptId}");
                 }
                 return;
 			}
             command.ScriptId = scriptId;
             BattleCalculator v = new BattleCalculator(caster, target, command);
             BattleScriptFactory factory = FindScriptFactory(scriptId);
-            ++btl_cmd.cmd_effect_counter;
+            command.Data.info.effect_counter++;
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
                 saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
@@ -72,7 +72,7 @@ namespace Memoria
             }
             else
             {
-                Log.Warning($"Unknown script id: {scriptId}");
+                Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
             }
 
             CalcResult(v);
@@ -98,20 +98,24 @@ namespace Memoria
                 {
                     if (target.bi.player != 0)
                     {
-                        btl_mot.setMotion(target, BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID);
-                        target.evt.animFrame = 0;
+                        //btl_mot.setMotion(target, BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID);
+                        //target.evt.animFrame = 0;
                         Int32 num = btl_mot.GetDirection(target);
                         target.rot.eulerAngles = new Vector3(target.rot.eulerAngles.x, num, target.rot.eulerAngles.z);
                     }
                     else if (target.bi.slave == 0)
                     {
-                        if (Configuration.Battle.FloatEvadeBonus > 0 && v.Target.IsUnderPermanentStatus(BattleStatus.Float))
-                            target.pos[1] = target.pos[1] - -600f;
-                        target.pos[2] -= -400f;
+                        if (!btl_util.IsBtlBusy(target, btl_util.BusyMode.CASTER))
+                        {
+                            if (Configuration.Battle.FloatEvadeBonus > 0 && v.Target.IsUnderPermanentStatus(BattleStatus.Float))
+                                target.pos[1] = target.pos[1] - -600f;
+                            target.pos[2] -= -400f;
+                        }
                     }
                     else
                         btl_util.GetMasterEnemyBtlPtr().Data.pos[2] -= -400f;
                     target.bi.dodge = 1;
+                    btl_mot.SetDefaultIdle(target);
                     v.Command.Data.info.dodge = 1;
                 }
             }
@@ -170,13 +174,11 @@ namespace Memoria
                         v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
                         if (v.Command.Data.info.reflec == 1)
                         {
-                            UInt16 num1 = 0;
+                            UInt16 reflectMultiplier = 0;
                             for (UInt16 index = 0; index < 4; ++index)
-                            {
-                                if ((caster.reflec.tar_id[index] & target.btl_id) != 0)
-                                    ++num1;
-                            }
-                            v.Target.HpDamage *= num1;
+                                if ((v.Command.Data.reflec.tar_id[index] & target.btl_id) != 0)
+                                    ++reflectMultiplier;
+                            v.Target.HpDamage *= reflectMultiplier;
                         }
                         if (v.Target.HpDamage > 9999)
                             v.Target.HpDamage = 9999;
@@ -188,7 +190,7 @@ namespace Memoria
                         {
                             if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != BattleCommandId.StageMagicZidane && v.Command.Data.cmd_no != BattleCommandId.StageMagicBlank) && (v.Command.Data.cmd_no != BattleCommandId.StageMagicMarcus && v.Command.Data.cmd_no != BattleCommandId.StageMagicCinna))
                                 v.Target.HpDamage = 9999;
-                            btl_para.SetDamage(v.Target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1);
+                            btl_para.SetDamage(v.Target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1, v.Command.Data);
                             CheckDamageReaction(v);
                         }
                         if (v.Context.IsDrain)
@@ -225,7 +227,7 @@ namespace Memoria
                 else if ((v.Context.Flags & BattleCalcFlags.DirectHP) != 0)
                 {
                     if (CheckDamageMotion(v))
-                        btl_mot.SetDamageMotion(v.Target);
+                        btl_mot.SetDamageMotion(v.Target, v.Command.Data);
                     CheckDamageReaction(v);
                 }
                 if (v.Caster.Flags != 0)
@@ -238,7 +240,7 @@ namespace Memoria
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
                             btl_para.SetRecover(caster, (UInt32)v.Caster.HpDamage);
                         else
-                            btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0);
+                            btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0, v.Command.Data);
                     }
                     if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                     {
@@ -271,11 +273,11 @@ namespace Memoria
             if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatus.Immobilized))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
-                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, commandAndScript);
+                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, commandAndScript, v.Command.Data);
                 else if (target.cur.hp != 0 && v.Command.Data.cmd_no < BattleCommandId.BoundaryCheck)
-                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, commandAndScript);
+                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, commandAndScript, v.Command.Data);
             }
-            PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, commandAndScript);
+            PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, commandAndScript, v.Command.Data);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
@@ -292,7 +294,7 @@ namespace Memoria
             return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatus.NoReaction) == 0)
                 && (v.Command.AbilityCategory & 64) == 0
                 && v.Command.Data.info.cover == 0
-                && !Status.checkCurStat(v.Target.Data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump)
+                && !btl_stat.CheckStatus(v.Target.Data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump)
                 && v.Caster.Data != v.Target.Data;
         }
 

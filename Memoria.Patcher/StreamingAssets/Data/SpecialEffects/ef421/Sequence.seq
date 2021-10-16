@@ -1,0 +1,13 @@
+// Shared sequence of SFX Revive__Multi
+
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	PlaySound: Sound=1458
+	PlaySound: Sound=1459
+	PlaySound: Sound=1460
+	Wait: Time=11
+EndThread
+Wait: Time=25
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

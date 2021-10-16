@@ -1,0 +1,10 @@
+// Shared sequence of SFX Stop
+
+PlaySound: Sound=462
+PlaySound: Sound=457
+PlaySound: Sound=423
+Wait: Time=26
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=29
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

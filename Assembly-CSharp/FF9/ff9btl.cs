@@ -19,22 +19,27 @@ namespace FF9
 			return bone >> 8 & 255;
 		}
 
-		public const UInt16 FF9_ATTR_BATTLE_LOADBBG = 1;
+		public const Byte LOAD_BBG = 1;
+		public const Byte LOAD_NPC = 2;
+		public const Byte LOAD_CHR = 4;
+		public const Byte LOAD_INITNPC = 8;
+		public const Byte LOAD_INITCHR = 16;
+		public const Byte LOAD_FADENPC = 32;
+		public const Byte LOAD_FADECHR = 64;
+		public const Byte LOAD_ALL = LOAD_BBG | LOAD_NPC | LOAD_CHR;
 
-		public const UInt16 FF9_ATTR_BATTLE_LOADNPC = 2;
-
-		public const UInt16 FF9_ATTR_BATTLE_LOADCHR = 4;
-
-		public const UInt16 FF9_ATTR_BATTLE_INITBMENU = 16;
-
-		public const UInt16 FF9_ATTR_BATTLE_CDSHELLOPEN = 32;
-
-		public const UInt16 FF9_ATTR_BATTLE_INITHINT = 64;
-
-		public const UInt16 FF9_ATTR_BATTLE_NOPUTDISPENV = 256;
-
-		public const UInt16 FF9_ATTR_BATTLE_NOPUTDRAWENV = 512;
-
-		public const UInt16 FF9_ATTR_BATTLE_EXITBATTLE = 4096;
+		[Flags]
+		public enum ATTR : UInt16
+		{
+			LOADBBG = 1,
+			LOADNPC = 2,
+			LOADCHR = 4,
+			INITBMENU = 16,
+			CDSHELLOPEN = 32,
+			INITHINT = 64,
+			NOPUTDISPENV = 256,
+			NOPUTDRAWENV = 512,
+			EXITBATTLE = 4096
+		}
 	}
 }

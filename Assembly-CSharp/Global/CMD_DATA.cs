@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria.Data;
+using FF9;
 
 public class CMD_DATA
 {
@@ -8,6 +9,7 @@ public class CMD_DATA
 		this.regist = new BTL_DATA();
 		this.info = new CMD_DATA.SELECT_INFO();
 		this.aa = new AA_DATA();
+		this.vfxRequest = new BTL_VFX_REQ();
 	}
 
 	public CMD_DATA next;
@@ -28,6 +30,9 @@ public class CMD_DATA
 	public BattleStatus AbilityStatus;
 	public Byte AbilityCategory;
 	public Byte AbilityType;
+
+	public BTL_VFX_REQ vfxRequest;
+	public REFLEC_DATA reflec = new REFLEC_DATA();
 
 	public void SetAAData(AA_DATA value)
 	{
@@ -59,9 +64,14 @@ public class CMD_DATA
 		public Byte mon_reflec;
 
 		// Custom fields
+		public command_mode_index mode;
+		public Boolean cmd_motion;
+		// For multi-hit attacks (this counter allows to keep track of the hit number, for having different effects)
+		public Int32 effect_counter;
 		public Boolean IsZeroMP { get; set; }
 		public Int32 CustomMPCost { get; set; }
 		public Boolean ReflectNull { get; set; }
+		public Boolean HasCheckedReflect { get; set; }
 
 		public void Reset()
 		{
@@ -74,9 +84,13 @@ public class CMD_DATA
 			meteor_miss = 0;
 			short_summon = 0;
 			mon_reflec = 0;
+			mode = command_mode_index.CMD_MODE_INSPECTION;
+			cmd_motion = true;
+			effect_counter = 0;
 			IsZeroMP = false;
 			CustomMPCost = -1;
 			ReflectNull = false;
+			HasCheckedReflect = false;
 		}
 	}
 }

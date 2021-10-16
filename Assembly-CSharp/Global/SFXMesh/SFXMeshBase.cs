@@ -7,7 +7,7 @@ public class SFXMeshBase
 	{
 	}
 
-	protected static Boolean isRenderTexture;
+	public static Boolean isRenderTexture;
 
 	public static Int32 drOffsetX;
 

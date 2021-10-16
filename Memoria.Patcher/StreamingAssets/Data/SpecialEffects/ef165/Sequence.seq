@@ -1,0 +1,14 @@
+// Shared sequence of SFX Spore
+
+PlaySound: Sound=308
+PlaySound: Sound=304
+PlaySound: Sound=299
+Wait: Time=25
+PlaySound: Sound=568
+PlaySound: Sound=558
+PlaySound: Sound=550
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=40

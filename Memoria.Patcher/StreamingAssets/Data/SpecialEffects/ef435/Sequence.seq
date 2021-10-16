@@ -1,0 +1,54 @@
+// Shared sequence of SFX Special_Necron_Death
+
+PlaySound: Sound=2697
+PlaySound: Sound=2698
+PlaySound: Sound=2699
+PlaySound: Sound=2700
+SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16
+Wait: Time=96
+PlaySound: Sound=2701
+PlaySound: Sound=2702
+PlaySound: Sound=2703
+PlaySound: Sound=2705
+SetBackgroundIntensity: Intensity=0 ; Time=1 ; HoldDuration=601
+Wait: Time=1
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+Wait: Time=59
+PlaySound: Sound=2734
+PlaySound: Sound=2735
+PlaySound: Sound=2736
+PlaySound: Sound=2737
+Wait: Time=60
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+PlaySound: Sound=2738
+PlaySound: Sound=2739
+PlaySound: Sound=2740
+PlaySound: Sound=2741
+Wait: Time=70
+PlaySound: Sound=2697
+PlaySound: Sound=2698
+PlaySound: Sound=2699
+Wait: Time=81
+PlaySound: Sound=2710
+PlaySound: Sound=2711
+PlaySound: Sound=2712
+PlaySound: Sound=2713
+Wait: Time=81
+PlaySound: Sound=2714
+PlaySound: Sound=2715
+PlaySound: Sound=2716
+PlaySound: Sound=2717
+Wait: Time=36
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+PlaySound: Sound=2718
+PlaySound: Sound=2719
+PlaySound: Sound=2720
+PlaySound: Sound=2733
+Wait: Time=132
+PlaySound: Sound=2742
+PlaySound: Sound=2743
+PlaySound: Sound=2744
+Wait: Time=52
+SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16
+Wait: Time=29
+SetBackgroundIntensity: Intensity=1 ; Time=1

@@ -306,7 +306,7 @@ public class BGSCENE_DEF
         this.name = newName;
         String a = String.Concat(path, newName, "_", localizeSymbol, ".bgs");
 		String[] bgsInfo;
-        this.ebgBin = AssetManager.LoadBytes(a, out bgsInfo, false);
+        this.ebgBin = AssetManager.LoadBytes(a, out bgsInfo);
         if (this.ebgBin == null)
         {
             return;
@@ -394,16 +394,16 @@ public class BGSCENE_DEF
 		String[] bgsInfo;
         if (!FieldMapEditor.useOriginalVersion)
         {
-            binAsset = AssetManager.LoadBytes(path + FieldMapEditor.GetFieldMapModName(newName) + ".bgs", out bgsInfo, false);
+            binAsset = AssetManager.LoadBytes(path + FieldMapEditor.GetFieldMapModName(newName) + ".bgs", out bgsInfo);
             if (binAsset == null)
             {
                 Debug.Log("Cannot find MOD version.");
-                binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo, false);
+                binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo);
             }
         }
         else
         {
-            binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo, false);
+            binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo);
         }
 
         if (binAsset == null)

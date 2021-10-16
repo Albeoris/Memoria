@@ -428,7 +428,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
         BTL_DATA source = btl;
         Boolean canContinute = false;
-        Boolean needContinue = battleSpeed > 0;
+        Boolean needContinue = battleSpeed == 1 || battleSpeed == 2;
         do
         {
             for (btl = source; btl != null; btl = btl.next)
@@ -765,11 +765,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         EnemyTurn,
     }
 
-    #region Attributes
-
     private static void BeginInitialize()
     {
-        FF9StateSystem.Battle.FF9Battle.attr = (UInt16)Attributes.None;
+        FF9StateSystem.Battle.FF9Battle.attr = 0;
     }
 
     private static void EndInitialize()
@@ -779,48 +777,37 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private static Boolean IsInitialized
     {
-        get { return (FF9StateSystem.Battle.FF9Battle.attr & (UInt16)Attributes.Initialized) == (UInt16)Attributes.Initialized; }
+        get { return (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.LOADBBG) == ff9btl.ATTR.LOADBBG; }
         set
         {
             if (value)
-                FF9StateSystem.Battle.FF9Battle.attr |= (UInt16)Attributes.Initialized;
+                FF9StateSystem.Battle.FF9Battle.attr |= ff9btl.ATTR.LOADBBG;
             else
-                FF9StateSystem.Battle.FF9Battle.attr &= (UInt16)~Attributes.Initialized;
+                FF9StateSystem.Battle.FF9Battle.attr &= ~ff9btl.ATTR.LOADBBG;
         }
     }
 
     private static Boolean IsPaused
     {
-        get { return (FF9StateSystem.Battle.FF9Battle.attr & (UInt16)Attributes.Paused) == (UInt16)Attributes.Paused; }
+        get { return (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.NOPUTDISPENV) == ff9btl.ATTR.NOPUTDISPENV; }
         set
         {
             if (value)
-                FF9StateSystem.Battle.FF9Battle.attr |= (UInt16)Attributes.Paused;
+                FF9StateSystem.Battle.FF9Battle.attr |= ff9btl.ATTR.NOPUTDISPENV;
             else
-                FF9StateSystem.Battle.FF9Battle.attr &= (UInt16)~Attributes.Paused;
+                FF9StateSystem.Battle.FF9Battle.attr &= ~ff9btl.ATTR.NOPUTDISPENV;
         }
     }
 
     private static Boolean IsOver
     {
-        get { return (FF9StateSystem.Battle.FF9Battle.attr & (UInt16)Attributes.Over) == (UInt16)Attributes.Over; }
+        get { return (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.EXITBATTLE) == ff9btl.ATTR.EXITBATTLE; }
         set
         {
             if (value)
-                FF9StateSystem.Battle.FF9Battle.attr |= (UInt16)Attributes.Over;
+                FF9StateSystem.Battle.FF9Battle.attr |= ff9btl.ATTR.EXITBATTLE;
             else
-                FF9StateSystem.Battle.FF9Battle.attr &= (UInt16)~Attributes.Over;
+                FF9StateSystem.Battle.FF9Battle.attr &= ~ff9btl.ATTR.EXITBATTLE;
         }
     }
-
-    [Flags]
-    private enum Attributes : ushort
-    {
-        None = 0,
-        Initialized = 1,
-        Paused = 256,
-        Over = 4096
-    }
-
-    #endregion
 }

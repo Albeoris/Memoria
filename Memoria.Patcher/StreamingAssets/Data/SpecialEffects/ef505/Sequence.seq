@@ -1,0 +1,16 @@
+// Shared sequence of SFX Carbuncle_Pearl__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=57
+PlaySound: Sound=184
+PlaySound: Sound=171
+PlaySound: Sound=152
+Wait: Time=8
+PlaySound: Sound=2873
+PlaySound: Sound=2874
+PlaySound: Sound=2875
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16

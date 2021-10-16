@@ -1,0 +1,42 @@
+// Player sequence of SFX Player_Attack_Vivi
+
+WaitAnimation: Char=Caster
+LoadSFX: SFX=Player_Attack_Vivi
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=740 ; UseCollisionRadius=True ; Anim=MP_RUN
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=8
+	WaitMove: Char=Caster
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=250 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+EndThread
+StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, 1600) ; Time=0
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=0
+	MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=650 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+EndThread
+WaitMove: Char=Caster
+StartThread
+	Wait: Time=1
+	WaitSFXLoaded: SFX=Player_Attack_Vivi
+	PlaySound: Sound=WeaponAttack
+	PlaySound: Sound=WeaponHit
+	PlaySFX: SFX=Player_Attack_Vivi
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=4
+	EffectPoint: Char=Everyone ; Type=Figure
+	WaitSFXDone: SFX=Player_Attack_Vivi
+EndThread
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+WaitAnimation: Char=Caster
+StartThread: Condition=AreCasterAndTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+	Turn: Char=Caster ; BaseAngle=Default ; Time=4
+	WaitMove: Caster
+EndThread
+StartThread: Condition=!AreCasterAndTargetsEnemies ; Sync=True
+	MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Time=0
+	Turn: Char=Caster ; BaseAngle=Default ; Time=0
+EndThread
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster

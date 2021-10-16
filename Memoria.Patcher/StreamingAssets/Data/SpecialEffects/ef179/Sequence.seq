@@ -1,0 +1,35 @@
+// Shared sequence of SFX Leviathan__Full
+
+PlaySound: Sound=2535
+PlaySound: Sound=2536
+PlaySound: Sound=2537
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+ShowMesh: Char=AllEnemies ; Enable=False ; Time=16
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=20 ; HoldDuration=338
+Wait: Time=15
+ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+Wait: Time=109
+PlaySound: Sound=182 ; SoundType=Song ; Volume=1.3
+Wait: Time=110
+PlaySound: Sound=2539
+PlaySound: Sound=2540
+PlaySound: Sound=2541
+PlaySound: Sound=2542
+Wait: Time=104
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllEnemies ; Enable=True
+SetBackgroundIntensity: Intensity=1 ; Time=1
+Wait: Time=3
+PlaySound: Sound=2543
+PlaySound: Sound=2544
+PlaySound: Sound=2545
+PlaySound: Sound=2546
+Wait: Time=82
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=14
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=31

@@ -324,7 +324,7 @@ public class SettingsState : MonoBehaviour
 
         foreach (BattleUnit btl in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderStatus(BattleStatus.CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.isRunning)
+            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderStatus(BattleStatus.CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.IsRunning())
             {
                 btl.Trance = Byte.MaxValue;
                 if (!btl.IsUnderStatus(BattleStatus.Trance))

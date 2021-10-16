@@ -1,0 +1,13 @@
+// Shared sequence of SFX Cannon
+
+PlaySound: Sound=475
+PlaySound: Sound=469
+PlaySound: Sound=463
+Wait: Time=10
+PlaySound: Sound=424
+PlaySound: Sound=418
+PlaySound: Sound=449
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=41

@@ -1,0 +1,14 @@
+// Shared sequence of SFX Annoy
+
+PlaySound: Sound=2042
+PlaySound: Sound=2043
+PlaySound: Sound=2044
+Wait: Time=80
+PlaySound: Sound=2045
+PlaySound: Sound=2046
+PlaySound: Sound=2047
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=42
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

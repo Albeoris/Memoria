@@ -1,0 +1,15 @@
+// Shared sequence of SFX Odin__Short
+
+PlaySound: Sound=438 ; Pitch=1.25
+PlaySound: Sound=431 ; Pitch=1.25
+PlaySound: Sound=477 ; Pitch=1.25
+//ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=12
+//ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=12
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=15
+//ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+//ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Reflect
+
+PlaySound: Sound=182
+PlaySound: Sound=170
+PlaySound: Sound=150
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

@@ -406,7 +406,7 @@ public class BattleUI : MonoBehaviour
 			SFX.Begin(4, 0, monbone, trgcpos);
 			SFX.SetExe(FF9StateSystem.Battle.FF9Battle.btl_data[0]);
 			SFX.SetTrg(FF9StateSystem.Battle.FF9Battle.btl_data, 4);
-			SFX.Play(this.effNum);
+			SFX.Play((SpecialEffect)this.effNum);
 		}
 		if (GUILayout.Button(" Item "))
 		{
@@ -421,7 +421,7 @@ public class BattleUI : MonoBehaviour
 			SFX.SetExe(FF9StateSystem.Battle.FF9Battle.btl_data[3]);
 			SFX.SetMExe(FF9StateSystem.Battle.FF9Battle.btl_data[1]);
 			SFX.SetTrg(FF9StateSystem.Battle.FF9Battle.btl_data[4]);
-			SFX.Play(this.effNum);
+			SFX.Play((SpecialEffect)this.effNum);
 		}
 		if (GUILayout.Button(" Ref "))
 		{
@@ -432,7 +432,7 @@ public class BattleUI : MonoBehaviour
 			SFX.SetExe(FF9StateSystem.Battle.FF9Battle.btl_data[4]);
 			SFX.SetTrg(FF9StateSystem.Battle.FF9Battle.btl_data[4]);
 			SFX.SetRTrgTest(FF9StateSystem.Battle.FF9Battle.btl_data[2]);
-			SFX.Play(this.effNum);
+			SFX.Play((SpecialEffect)this.effNum);
 		}
 		if (GUILayout.Button("Auto " + ((!SFX.isDebugAutoPlay) ? "Off" : "On")))
 		{
@@ -461,7 +461,7 @@ public class BattleUI : MonoBehaviour
 		SFX.Begin(flag, 0, monbone, trgcpos);
 		SFX.SetExe(FF9StateSystem.Battle.FF9Battle.btl_data[exe]);
 		SFX.SetTrg(FF9StateSystem.Battle.FF9Battle.btl_data[trg]);
-		SFX.Play(this.effNum);
+		SFX.Play((SpecialEffect)this.effNum);
 		if (exe == 4)
 		{
 			SFX.SetTaskMonsteraStart();

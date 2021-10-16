@@ -1,0 +1,10 @@
+// Shared sequence of SFX Mini__Single
+
+PlaySound: Sound=81
+PlaySound: Sound=69
+PlaySound: Sound=61
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

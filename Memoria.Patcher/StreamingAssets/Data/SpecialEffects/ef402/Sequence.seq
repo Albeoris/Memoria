@@ -1,0 +1,9 @@
+// Shared sequence of SFX Special_Prison_Cage_Death
+
+PlaySound: Sound=1188
+PlaySound: Sound=1189
+PlaySound: Sound=1190
+Wait: Time=64
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

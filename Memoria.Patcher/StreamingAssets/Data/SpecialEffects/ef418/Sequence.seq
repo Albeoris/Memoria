@@ -1,0 +1,26 @@
+// Shared sequence of SFX Special_Steiner_VS_Blank
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=195
+PlaySound: Sound=1648
+PlaySound: Sound=1649
+PlaySound: Sound=1650
+Wait: Time=81
+PlaySound: Sound=2660
+PlaySound: Sound=2661
+PlaySound: Sound=2662
+Wait: Time=12
+PlaySound: Sound=1651
+PlaySound: Sound=1652
+PlaySound: Sound=1653
+Wait: Time=36
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+MoveToTarget: Char=32 ; Target=AllTargets ; MoveHeight=True ; Time=0
+ShowMesh: Char=32 ; Enable=True ; IsDisappear=True
+Wait: Time=27
+PlaySound: Sound=1654
+PlaySound: Sound=1655
+PlaySound: Sound=1656
+Wait: Time=39
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=29
+SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16

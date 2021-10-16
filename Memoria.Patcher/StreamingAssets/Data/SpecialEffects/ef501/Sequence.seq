@@ -1,0 +1,18 @@
+// Shared sequence of SFX Night
+
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=47
+PlaySound: Sound=2579
+PlaySound: Sound=2580
+PlaySound: Sound=2581
+Wait: Time=46
+PlaySound: Sound=2582
+PlaySound: Sound=2583
+PlaySound: Sound=2584
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=51
+Wait: Time=9
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10
+SetBackgroundIntensity: Intensity=1 ; Time=8

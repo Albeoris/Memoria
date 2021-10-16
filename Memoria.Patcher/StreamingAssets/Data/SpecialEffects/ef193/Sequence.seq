@@ -1,0 +1,16 @@
+// Shared sequence of SFX No_Mercy__Single
+
+PlaySound: Sound=563
+PlaySound: Sound=556
+PlaySound: Sound=544
+Wait: Time=37
+PlaySound: Sound=594
+PlaySound: Sound=588
+PlaySound: Sound=579
+Wait: Time=8
+PlaySound: Sound=527
+PlaySound: Sound=521
+PlaySound: Sound=562
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=15
+EffectPoint: Char=Everyone ; Type=Figure

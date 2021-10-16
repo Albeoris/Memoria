@@ -83,7 +83,7 @@ public class EBin
     private void InitializeATanTable()
     {
 		String[] tblInfo;
-        Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/ratan_tbl.bin", out tblInfo, false);
+        Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/ratan_tbl.bin", out tblInfo);
         if (binAsset == null)
         {
             //Debug.LogError("InitializeATanTable: cannot load ratan_tble.bin.bytes");
@@ -2413,7 +2413,7 @@ public class EBin
         B_VAR = 192
     }
 
-    private enum VariableSource
+    public enum VariableSource
     {
         Global = 0,
         Map = 1,
@@ -2424,7 +2424,7 @@ public class EBin
         Int26 = 7
     }
 
-    private enum VariableType
+    public enum VariableType
     {
         SBit = 0,
         Bit = 1,

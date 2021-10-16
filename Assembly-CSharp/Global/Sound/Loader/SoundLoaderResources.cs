@@ -16,7 +16,7 @@ public class SoundLoaderResources : ISoundLoader
 	{
 		String akbPath = "Sounds/" + profile.ResourceID + ".akb";
 		String[] akbInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(akbPath, out akbInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes(akbPath, out akbInfo);
 		SoundLib.Log("Load: " + akbPath);
 		if (binAsset == null)
 		{

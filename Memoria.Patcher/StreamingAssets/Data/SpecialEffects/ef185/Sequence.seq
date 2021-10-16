@@ -1,0 +1,13 @@
+// Shared sequence of SFX Sandstorm
+
+PlaySound: Sound=528
+PlaySound: Sound=522
+PlaySound: Sound=564
+Wait: Time=40
+PlaySound: Sound=546
+PlaySound: Sound=538
+PlaySound: Sound=596
+Wait: Time=33
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure

@@ -1,0 +1,19 @@
+// Shared sequence of SFX Frost
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=98
+PlaySound: Sound=2532
+PlaySound: Sound=2533
+PlaySound: Sound=2534
+Wait: Time=45
+PlaySound: Sound=2573
+PlaySound: Sound=2574
+PlaySound: Sound=2575
+Wait: Time=6
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2576
+PlaySound: Sound=2577
+PlaySound: Sound=2578
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20
+SetBackgroundIntensity: Intensity=1 ; Time=16

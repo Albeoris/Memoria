@@ -6,14 +6,14 @@ public class ff9shadow
 	public static void FF9ShadowOnField(Int32 uid)
 	{
 		FF9Char ff9Char = FF9StateSystem.Common.FF9.FF9GetCharPtr(uid);
-		ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073709551599UL);
+		ff9Char.attr &= 0xFFFFFFEFu;
 		FF9StateSystem.Field.FF9Field.loc.map.shadowArray[uid].needUpdate = true;
 	}
 
 	public static void FF9ShadowOnBattle(Int32 uid)
 	{
 		FF9Char ff9Char = FF9StateSystem.Common.FF9.FF9GetCharPtr(uid);
-		ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073709551599UL);
+		ff9Char.attr &= 0xFFFFFFEFu;
 		GameObject[] shadowArray = FF9StateSystem.Battle.FF9Battle.map.shadowArray;
 		MeshRenderer component = shadowArray[uid].GetComponent<MeshRenderer>();
 		component.enabled = true;
@@ -103,7 +103,7 @@ public class ff9shadow
 	public static void FF9ShadowUnlockYRotField(Int32 uid)
 	{
 		FF9Char ff9Char = FF9StateSystem.Common.FF9.FF9GetCharPtr(uid);
-		ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073709551583UL);
+		ff9Char.attr &= 0xFFFFFFDFu;
 	}
 
 	public static void FF9ShadowUnlockYRotBattle(Int32 uid)

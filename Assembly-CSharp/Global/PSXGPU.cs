@@ -819,7 +819,7 @@ public static class PSXGPU
 				texture2D.ReadPixels(new Rect(0f, 0f, (Single)PSXTextureMgr.GEN_TEXTURE_W, (Single)PSXTextureMgr.GEN_TEXTURE_H), 0, 0);
 				texture2D.Apply();
 				Byte[] bytes = texture2D.EncodeToPNG();
-				File.WriteAllBytes("Temp/gen.png", bytes);
+				File.WriteAllBytes(PSXTextureMgr.GetDebugExportPath() + "gen.png", bytes);
 			}
 			RenderTexture.active = PSXGPU.curRenderTexture;
 		}

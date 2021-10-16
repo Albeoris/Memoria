@@ -155,46 +155,50 @@ namespace FF9
 	        }
 	    }
 
-	    public static UInt16 CheckCoverAbility(UInt16 tar_id, Boolean[] candidates)
-	    {
-	        BattleUnit coverBy = null;
-	        BattleUnit targetUnit = btl_scrp.FindBattleUnit(tar_id);
+	    public static UInt16 CheckCoverAbility(BTL_DATA target, UInt16 candidates)
+		{
+			// If a unit (even not candidate) is already covering the target, let cover apply there as well
+			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+				if (next.bi.cover_unit == target)
+					return next.btl_id;
 
-	        coverBy = FindStrongestDefender(candidates, targetUnit);
-
-	        if (coverBy == null)
+			BTL_DATA coverBy = FindStrongestDefender(target, candidates);
+			if (coverBy == null)
 	            return 0;
 
-	        coverBy.FaceTheEnemy();
-	        coverBy.Data.pos[0] = targetUnit.Data.pos[0];
-	        coverBy.Data.pos[2] = targetUnit.Data.pos[2];
+	        new BattleUnit(coverBy).FaceTheEnemy();
+	        coverBy.pos[0] = target.pos[0];
+	        coverBy.pos[2] = target.pos[2];
 
-	        targetUnit.Data.pos[2] -= 400f;
+			target.pos[2] -= 400f;
 
-	        btl_mot.setMotion(coverBy.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_COVER);
-	        coverBy.IsCovered = true;
+	        //btl_mot.setMotion(coverBy.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_COVER);
+			//coverBy.Data.evt.animFrame = 0;
 
-            return coverBy.Id;
+			coverBy.bi.cover_unit = target;
+			btl_mot.SetDefaultIdle(coverBy);
+
+			return coverBy.btl_id;
 	    }
 
-	    private static BattleUnit FindStrongestDefender(Boolean[] candidates, BattleUnit targetUnit)
-	    {
-	        BattleUnit coverBy = null;
-	        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+	    private static BTL_DATA FindStrongestDefender(BTL_DATA target, UInt16 candidates)
+		{
+			BattleUnit coverBy = null;
+			foreach (BTL_DATA next in btl_util.findAllBtlData(candidates))
 	        {
-	            if (!candidates[Comn.firstBitSet(next.Id)] || next.Id == targetUnit.Id)
+				BattleUnit unit = new BattleUnit(next);
+				if (unit.Id == target.btl_id || unit.IsCovering || btl_util.IsBtlBusy(next, btl_util.BusyMode.CASTER | btl_util.BusyMode.MAGIC_CASTER))
 	                continue;
-
-	            if (coverBy == null || coverBy.CurrentHp < next.CurrentHp)
-	                coverBy = next;
+	            if (coverBy == null || coverBy.CurrentHp < unit.CurrentHp)
+	                coverBy = unit;
 	        }
-	        return coverBy;
+	        return coverBy != null ? coverBy.Data : null;
 	    }
 
 	    public static void CheckReactionAbility(BTL_DATA btl, AA_DATA aa)
 		{
 			// Dummied
-			if (!Status.checkCurStat(btl, BattleStatus.NoReaction))
+			if (!btl_stat.CheckStatus(btl, BattleStatus.NoReaction))
 			{
 				if ((btl.sa[1] & 1048576u) != 0u && btl.cur.hp != 0 && Status.checkCurStat(btl, BattleStatus.LowHP))
 				{

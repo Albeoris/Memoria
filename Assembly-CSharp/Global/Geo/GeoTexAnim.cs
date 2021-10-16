@@ -28,7 +28,7 @@ public class GeoTexAnim : HonoBehavior
 		this._mainTextureIndex = mainTextureIndex;
 		this._subTextureIndex = subTextureIndex;
 		String[] tabInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(modelName + ".tab", out tabInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes(modelName + ".tab", out tabInfo, true);
 		if (binAsset == null)
 		{
 			return;
@@ -471,7 +471,7 @@ public class GeoTexAnim : HonoBehavior
 		mainTextureIndex = 0;
 		subTextureIndex = 0;
 		String[] csvInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo, false);
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo);
 		if (textAsset == null)
 		{
 			return;
@@ -502,7 +502,7 @@ public class GeoTexAnim : HonoBehavior
 	public static void SetTexAnimIndexs(String geoName, out Int32[] mainTextureIndexs, out Int32[] subTextureIndexs)
 	{
 		String[] csvInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo, false);
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo);
 		if (textAsset == null)
 		{
 			mainTextureIndexs = null;

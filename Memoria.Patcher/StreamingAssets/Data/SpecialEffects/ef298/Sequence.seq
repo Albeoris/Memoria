@@ -1,0 +1,13 @@
+// Shared sequence of SFX Jet_Fire
+
+PlaySound: Sound=2048
+PlaySound: Sound=2049
+PlaySound: Sound=2050
+Wait: Time=12
+PlaySound: Sound=2051
+PlaySound: Sound=2052
+Wait: Time=2
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

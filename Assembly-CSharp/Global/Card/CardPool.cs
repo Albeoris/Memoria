@@ -12,7 +12,7 @@ public class CardPool : MonoBehaviour
 	public void LoadMetaData()
 	{
 		String[] cardPoolInfo;
-		Byte[] bytes = AssetManager.LoadBytes(this.dataPath, out cardPoolInfo, false);
+		Byte[] bytes = AssetManager.LoadBytes(this.dataPath, out cardPoolInfo);
 		for (Int32 i = 0; i < (Int32)CardPool.TOTAL_CARDS; i++)
 		{
 			this.cardData[i] = new QuadMistCard();

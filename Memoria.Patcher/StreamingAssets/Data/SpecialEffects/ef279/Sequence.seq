@@ -1,0 +1,10 @@
+// Shared sequence of SFX Eye_Drops
+
+PlaySound: Sound=956
+PlaySound: Sound=957
+PlaySound: Sound=958
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1

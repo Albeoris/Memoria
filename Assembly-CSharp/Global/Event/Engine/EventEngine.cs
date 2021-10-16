@@ -105,6 +105,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private Int32 _fixThornPosA;      // DoEventCode
     private Int32 _fixThornPosB;      // DoEventCode
     private Int32 _fixThornPosC;      // DoEventCode
+    private CMD_DATA[,] _requestCommandTrigger;
 
     public Int32 SCollTimer
     {
@@ -202,8 +203,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return encountData.scene[3];
     }
 
-
-
     public Int32 OperatorPick()
     {
         Int32 num1 = 0;
@@ -269,7 +268,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return 1 << numArray[index];
     }
 
-    public Boolean RequestAction(BattleCommandId cmd, Int32 target, Int32 prm1, Int32 commandAndScript)
+    public Boolean RequestAction(BattleCommandId cmd, Int32 target, Int32 prm1, Int32 commandAndScript, CMD_DATA triggeringCmd = null)
     {
         Int32 index;
         for (index = 0; index < 8 && (target & 1) == 0; ++index)
@@ -306,6 +305,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         }
 
         _btlCmdPrm = commandAndScript;
+        _requestCommandTrigger[index, level] = triggeringCmd;
         return this.Request(p, level, tagNumber, false);
     }
 
@@ -502,7 +502,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public void StartEventsByEBFileName(String ebFileName)
     {
 		String[] ebInfo;
-        this._currentEBAsset = AssetManager.LoadBytes(ebFileName, out ebInfo, false);
+        this._currentEBAsset = AssetManager.LoadBytes(ebFileName, out ebInfo);
         this.StartEvents(this._currentEBAsset);
     }
 
@@ -546,6 +546,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         TimerUI.SetPlay(this._ff9.timerControl);
         this.allObjsEBData = new Byte[this.sSourceObjN][];
         this.toBeAddedObjUIDList.Clear();
+        for (Int32 btlindex = 0; btlindex < 8; btlindex++)
+            for (Int32 lvlindex = 0; lvlindex < 8; lvlindex++)
+                this._requestCommandTrigger[btlindex, lvlindex] = null;
         for (Int32 index = 0; index < this.sSourceObjN; ++index)
         {
             br.BaseStream.Seek(128L, SeekOrigin.Begin);
@@ -910,6 +913,13 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         btl_scrp.SetCharacterData(btl.Data, (UInt32)kind, (Int32)value);
     }
 
+    public CMD_DATA GetTriggeringCommand(BTL_DATA btl)
+    {
+        if (btl.bi.line_no < 8 && this._objPtrList[btl.bi.line_no] != null && this._objPtrList[btl.bi.line_no].level < 8)
+            return this._requestCommandTrigger[btl.bi.line_no, this._objPtrList[btl.bi.line_no].level];
+        return null;
+    }
+
     private Int32 getNumOfObjsInObjList(ObjList list)
     {
         Int32 num = 0;
@@ -1072,6 +1082,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
         if (obj.sx > 1)
         {
+            Int32 btlIndex = 0;
+            while (btlIndex < 8 && this._objPtrList[btlIndex] != obj)
+                ++btlIndex;
+            if (btlIndex < 8 && obj.level < 8)
+                _requestCommandTrigger[btlIndex, obj.level] = null;
             Int32 startID1 = this.getspw(obj, obj.sx) - 4;
             Int32 intFromBuffer = obj.getIntFromBuffer(startID1);
             if (obj.uid == 0 && obj.level == 0)

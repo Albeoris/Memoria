@@ -1,0 +1,23 @@
+// Player sequence of SFX Focus
+
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, 400) ; Anim=MP_STEP_FORWARD
+	WaitMove: Char=Caster
+EndThread
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Focus ; Reflect=True
+StartThread: Condition=IsSingleSelectedTarget
+	Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+EndThread
+WaitSFXLoaded: SFX=Focus ; Reflect=True
+PlaySFX: SFX=Focus ; Reflect=True
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+WaitAnimation: Char=Caster
+StartThread: Condition=CasterRow == 0 ; Sync=True
+	MoveToPosition: Char=Caster ; RelativePosition=(0, 0, -400) ; Anim=MP_STEP_BACK
+	WaitMove: Char=Caster
+EndThread
+PlayAnimation: Char=Caster ; Anim=MP_CMD_TO_NORMAL
+Turn: Char=Caster ; BaseAngle=Default ; Time=5
+WaitAnimation: Char=Caster

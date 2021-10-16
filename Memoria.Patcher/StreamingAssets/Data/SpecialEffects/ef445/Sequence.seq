@@ -1,0 +1,16 @@
+// Shared sequence of SFX Ifrit__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=37
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+PlaySound: Sound=1536
+PlaySound: Sound=1537
+PlaySound: Sound=1538
+Wait: Time=37
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=9
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=11
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

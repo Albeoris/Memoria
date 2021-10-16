@@ -1,0 +1,13 @@
+// Shared sequence of SFX Lancer
+
+PlaySound: Sound=1185
+PlaySound: Sound=1186
+PlaySound: Sound=1187
+Wait: Time=14
+PlaySound: Sound=1547
+PlaySound: Sound=1548
+PlaySound: Sound=1549
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

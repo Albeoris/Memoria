@@ -1,0 +1,34 @@
+// Shared sequence of SFX Ramuh__Full
+
+Wait: Time=14
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=23
+PlaySound: Sound=1779
+PlaySound: Sound=1780
+PlaySound: Sound=1781
+Wait: Time=95
+SetBackgroundIntensity: Intensity=0.546875 ; Time=8 ; HoldDuration=78
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+Wait: Time=27
+PlaySound: Sound=1782
+PlaySound: Sound=1783
+PlaySound: Sound=1784
+Wait: Time=47
+PlaySound: Sound=1785
+PlaySound: Sound=1786
+PlaySound: Sound=1787
+PlaySound: Sound=117 ; SoundType=Song ; Volume=1.3
+Wait: Time=4
+SetBackgroundIntensity: Intensity=0.5 ; Time=12 ; HoldDuration=48
+Wait: Time=48
+SetBackgroundIntensity: Intensity=0 ; Time=8 ; HoldDuration=10
+Wait: Time=10
+SetBackgroundIntensity: Intensity=1 ; Time=6
+Wait: Time=2
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=31

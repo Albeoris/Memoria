@@ -82,7 +82,7 @@ namespace FF9
 
 		public static void geoScaleReset(BTL_DATA btl, Boolean updateShadow = false, Boolean bypassMini = false)
 		{
-			geoScaleSetXYZ(btl, 4096, 4096, 4096, updateShadow, bypassMini);
+			geoScaleSetXYZ(btl, btl.geo_scale_default, btl.geo_scale_default, btl.geo_scale_default, updateShadow, bypassMini);
 		}
 
 		public static void geoScaleUpdate(BTL_DATA btl, Boolean updateShadow = false)

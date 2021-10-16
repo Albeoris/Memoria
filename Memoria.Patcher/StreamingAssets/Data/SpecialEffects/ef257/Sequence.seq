@@ -1,0 +1,18 @@
+// Shared sequence of SFX Special_Trance_Activate
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=62
+PlaySound: Sound=926
+PlaySound: Sound=927
+PlaySound: Sound=928
+Wait: Time=16
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+Wait: Time=19
+PlaySound: Sound=929
+PlaySound: Sound=930
+PlaySound: Sound=931
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+Wait: Time=26
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=19

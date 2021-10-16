@@ -1,0 +1,58 @@
+// Shared sequence of SFX Devour
+
+PlaySound: Sound=1618
+PlaySound: Sound=1619
+PlaySound: Sound=1620
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=(1, 1.07, 1) ; ScaleShadow=True ; Time=0
+Wait: Time=3
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=40
+PlaySound: Sound=1621
+PlaySound: Sound=1622
+PlaySound: Sound=1623
+Wait: Time=32
+PlaySound: Sound=1624
+PlaySound: Sound=1625
+PlaySound: Sound=1626
+Wait: Time=5
+ChangeSize: Char=AllTargets ; Size=0.5 ; ScaleShadow=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=12
+MoveToTarget: Char=AllTargets ; Target=Caster ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; Time=12
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 60.0, 0.0) ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(90.0, 120.0, 0.0) ; Time=6
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, 282.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, 109.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, 94.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, 65.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, 38.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(75.0, 310.0, 180.0) ; Time=1
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, -31.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 360.0, 180.0) ; Time=5
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, -63.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, -95.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, -119.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, -136.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Wait: Time=1
+MoveToPosition: RelativePosition=(0.0, -147.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=1
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=3
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

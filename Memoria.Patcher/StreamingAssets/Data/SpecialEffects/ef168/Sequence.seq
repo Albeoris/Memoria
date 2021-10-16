@@ -1,0 +1,14 @@
+// Shared sequence of SFX Reis_Wind
+
+PlaySound: Sound=1550
+PlaySound: Sound=1551
+PlaySound: Sound=1552
+Wait: Time=46
+PlaySound: Sound=1553
+PlaySound: Sound=1554
+PlaySound: Sound=1555
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

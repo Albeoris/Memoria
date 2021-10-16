@@ -7,13 +7,13 @@ namespace Memoria.Assets
     {
         public static String[] LoadSentense(String path)
         {
-            String text = AssetManager.LoadString(path, out _, false);
+            String text = AssetManager.LoadString(path, out _);
             return text == null ? null : ExtractSentenseEnd(text);
         }
 
         public static String LoadText(String path)
         {
-            return AssetManager.LoadString(path, out _, false);
+            return AssetManager.LoadString(path, out _);
         }
 
         private static String[] ExtractSentenseEnd(String text)

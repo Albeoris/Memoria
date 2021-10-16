@@ -1,0 +1,22 @@
+// Shared sequence of SFX Free_Energy
+
+PlaySound: Sound=1016
+PlaySound: Sound=1017
+PlaySound: Sound=1018
+Wait: Time=2
+PlaySound: Sound=1016
+PlaySound: Sound=1017
+PlaySound: Sound=1018
+Wait: Time=2
+PlaySound: Sound=1016
+PlaySound: Sound=1017
+PlaySound: Sound=1018
+Wait: Time=2
+PlaySound: Sound=1016
+PlaySound: Sound=1017
+PlaySound: Sound=1018
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

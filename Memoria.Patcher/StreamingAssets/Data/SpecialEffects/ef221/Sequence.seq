@@ -1,0 +1,12 @@
+// Shared sequence of SFX Bio_Sword
+
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=159
+PlaySound: Sound=142
+PlaySound: Sound=252
+Wait: Time=35
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

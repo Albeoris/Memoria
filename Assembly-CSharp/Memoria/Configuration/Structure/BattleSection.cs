@@ -7,6 +7,7 @@ namespace Memoria
     {
         private sealed class BattleSection : IniSection
         {
+            public readonly IniValue<Boolean> SFXRework;
             public readonly IniValue<Int32> Speed;
             public readonly IniValue<Boolean> NoAutoTrance;
             public readonly IniValue<Int32> EncounterInterval;
@@ -49,6 +50,7 @@ namespace Memoria
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
+                SFXRework = BindBoolean(nameof(SFXRework), true);
                 Speed = BindInt32(nameof(Speed), 0);
                 NoAutoTrance = BindBoolean(nameof(NoAutoTrance), false);
                 EncounterInterval = BindInt32(nameof(EncounterInterval), 960);

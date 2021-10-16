@@ -1,0 +1,10 @@
+// Shared sequence of SFX Mucus
+
+PlaySound: Sound=938
+PlaySound: Sound=939
+PlaySound: Sound=940
+Wait: Time=18
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

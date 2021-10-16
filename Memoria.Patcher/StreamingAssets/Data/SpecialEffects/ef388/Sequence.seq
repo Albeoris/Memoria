@@ -1,0 +1,13 @@
+// Shared sequence of SFX Spear
+
+PlaySound: Sound=530
+PlaySound: Sound=523
+PlaySound: Sound=565
+Wait: Time=4
+PlaySound: Sound=547
+PlaySound: Sound=539
+PlaySound: Sound=598
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

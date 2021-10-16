@@ -64,8 +64,13 @@ namespace Memoria.Launcher
                 }
 
                 String[] strArray = GameSettings.ScreenResolution.Split('x');
-                Int32 screenWidth = Int32.Parse(strArray[0], CultureInfo.InvariantCulture);
-                Int32 screenHeight = Int32.Parse(strArray[1], CultureInfo.InvariantCulture);
+                Int32 screenWidth;
+                Int32 screenHeight;
+                if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
+                {
+                    MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    return;
+                }
 
                 String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
 

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Echo_Screen
+
+PlaySound: Sound=959
+PlaySound: Sound=960
+PlaySound: Sound=961
+Wait: Time=10
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1

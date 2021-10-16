@@ -18,12 +18,12 @@ namespace Memoria
 
         public void SetWeaponPower()
         {
-            _context.AttackPower = (Int16)(_caster.WeaponPower * _command.Power / 10);
+            _context.AttackPower = (Int16)(_caster.GetWeaponPower(_command) * _command.Power / 10);
         }
 
         public void SetWeaponPowerSum()
         {
-            _context.AttackPower = (Int16)(_caster.WeaponPower + _command.Power);
+            _context.AttackPower = (Int16)(_caster.GetWeaponPower(_command) + _command.Power);
         }
 
         public void BonusElement()

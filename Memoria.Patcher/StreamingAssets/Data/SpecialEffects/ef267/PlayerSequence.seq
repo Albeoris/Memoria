@@ -1,0 +1,22 @@
+// Player sequence of SFX Throw_Sword
+
+WaitAnimation: Char=Caster
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+LoadSFX: SFX=Throw_Sword ; Reflect=True
+WaitSFXLoaded: SFX=Throw_Sword ; Reflect=True
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_SPECIAL1
+StartThread
+	WaitAnimation: Char=Caster
+	PlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL
+	PlayAnimation: Char=Caster ; Anim=Idle
+	Turn: Char=Caster ; BaseAngle=Default ; Time=5
+	WaitTurn: Char=Caster
+EndThread
+Wait: Time=6
+PlaySFX: SFX=Throw_Sword ; Reflect=True
+WaitSFXDone: SFX=Throw_Sword ; Reflect=True
+ActivateReflect
+WaitReflect

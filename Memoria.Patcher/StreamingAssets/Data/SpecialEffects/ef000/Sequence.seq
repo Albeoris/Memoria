@@ -1,0 +1,10 @@
+// Shared sequence of SFX Fire__Single
+
+PlaySound: Sound=77
+PlaySound: Sound=67
+PlaySound: Sound=58
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=32

@@ -4,7 +4,7 @@ public class SFXKey
 {
 	public static void SetCurrentTPage(UInt16 tpage)
 	{
-		SFXKey.currentTexPage = (UInt32)((UInt32)((Int32)(tpage & 31) | (tpage >> 2 & 96)) << 16);
+		SFXKey.currentTexPage = (UInt32)((UInt32)((Int32)(tpage & 0x1F) | (tpage >> 2 & 0x60)) << 16);
 		SFXKey.currentTexABR = (UInt32)(tpage >> 5 & 3);
 	}
 
@@ -12,9 +12,7 @@ public class SFXKey
 	{
 		SFXKey.tmpABR = SFXKey.currentTexABR;
 		if ((code & 2) != 0)
-		{
-			return (UInt32)((SFXKey.currentTexABR == 2u) ? 16777216u : 8388608u);
-		}
+			return (UInt32)((SFXKey.currentTexABR == 2u) ? ABR_SUB : ABR_ADD);
 		return 0u;
 	}
 
@@ -23,47 +21,35 @@ public class SFXKey
 		SFXKey.tmpABR = SFXKey.currentTexABR;
 		UInt32 num;
 		if (SFXKey.currentTexPage >> 5 == 2u)
-		{
-			num = 32768u;
-		}
+			num = HAS_TEXTURE;
 		else
-		{
-			num = (UInt32)(clut | 32768);
-		}
+			num = (UInt32)(clut | HAS_TEXTURE);
 		if ((code & 2) != 0)
-		{
-			num |= (UInt32)((SFXKey.currentTexABR == 2u) ? 16777216u : 8388608u);
-		}
+			num |= (UInt32)((SFXKey.currentTexABR == 2u) ? ABR_SUB : ABR_ADD);
 		return num | SFXKey.currentTexPage;
 	}
 
 	public static UInt32 GetABRTex(Byte code, UInt16 clut, UInt16 tpage)
 	{
-		UInt32 num = (UInt32)((UInt32)((Int32)(tpage & 31) | (tpage >> 2 & 96)) << 16);
+		UInt32 num = (UInt32)((UInt32)((Int32)(tpage & 0x1F) | (tpage >> 2 & 0x60)) << 16);
 		UInt32 num2 = (UInt32)(tpage >> 5 & 3);
 		SFXKey.tmpABR = num2;
 		UInt32 num3;
 		if (num >> 5 == 2u)
-		{
-			num3 = 32768u;
-		}
+			num3 = HAS_TEXTURE;
 		else
-		{
-			num3 = (UInt32)(clut | 32768);
-		}
+			num3 = (UInt32)(clut | HAS_TEXTURE);
 		if ((code & 2) != 0)
-		{
-			num3 |= (UInt32)((num2 == 2u) ? 16777216u : 8388608u);
-		}
+			num3 |= (UInt32)((num2 == 2u) ? ABR_SUB : ABR_ADD);
 		return num3 | num;
 	}
 
 	public static UInt32 GenerateKey(Int32 TP, Int32 TX, Int32 TY, Int32 clutX, Int32 clutY)
 	{
-		UInt32 num = 32768u;
-		num |= (UInt32)(clutX & 63);
-		num |= (UInt32)((UInt32)(clutY & 511) << 6);
-		num |= (UInt32)((UInt32)(TX & 15) << 16);
+		UInt32 num = 0x8000u;
+		num |= (UInt32)(clutX & 0x3F);
+		num |= (UInt32)((UInt32)(clutY & 0x1FF) << 6);
+		num |= (UInt32)((UInt32)(TX & 0xF) << 16);
 		num |= (UInt32)((UInt32)(TY & 1) << 20);
 		return num | (UInt32)((UInt32)(TP & 3) << 21);
 	}
@@ -80,55 +66,55 @@ public class SFXKey
 
 	public static UInt32 GetFilter(UInt32 key)
 	{
-		return key & 100663296u;
+		return key & FILLTER_MASK;
 	}
 
 	public static Boolean isLinePolygon(UInt32 key)
 	{
-		return (key & 134217728u) != 0u;
+		return (key & LINE_POLYGON) != 0u;
 	}
 
 	public static UInt32 GetTextureKey(UInt32 key)
 	{
-		return key & 8388607u;
+		return key & TEX_KEY_MASK;
 	}
 
 	public static Boolean IsBlurTexture(UInt32 key)
 	{
-		return (key >> 16 & 15u) < 6u;
+		return (key >> 16 & 0xFu) < 6u;
 	}
 
 	public static Boolean IsTexture(UInt32 key)
 	{
-		return (key & 32768u) != 0u;
+		return (key & HAS_TEXTURE) != 0u;
 	}
 
 	public static UInt32 GetPositionX(UInt32 key)
 	{
-		return (key & 983040u) >> 10;
+		return (key & TX_MASK) >> 10;
 	}
 
-	public const UInt32 HAS_TEXTURE = 32768u;
+	public const UInt32 HAS_TEXTURE = 0x8000u;
 
-	public const UInt32 ABR_ADD = 8388608u;
+	public const UInt32 ABR_ADD = 0x800000u;
 
-	public const UInt32 ABR_SUB = 16777216u;
+	public const UInt32 ABR_SUB = 0x1000000u;
 
-	public const UInt32 FILLTER_POINT = 33554432u;
+	public const UInt32 FILLTER_POINT = 0x2000000u;
 
-	public const UInt32 FILLTER_BILINEAR = 67108864u;
+	public const UInt32 FILLTER_BILINEAR = 0x4000000u;
 
-	public const Int32 FILLTER_MASK = 100663296;
+	public const Int32 FILLTER_MASK = 0x6000000;
 
-	public const UInt32 LINE_POLYGON = 134217728u;
+	public const UInt32 LINE_POLYGON = 0x8000000u;
 
-	public const UInt32 GROUND_TXTURE = 268435456u;
+	public const UInt32 GROUND_TXTURE = 0x10000000u;
 
-	public const UInt32 FULL_BLUR_TXTURE = 536870912u;
+	public const UInt32 FULL_BLUR_TXTURE = 0x20000000u;
 
-	public const UInt32 TEX_KEY_MASK = 8388607u;
+	public const UInt32 TEX_KEY_MASK = 0x7FFFFFu;
 
-	public const UInt32 TX_MASK = 983040u;
+	public const UInt32 TX_MASK = 0xF0000u;
 
 	public static UInt32 tmpABR;
 

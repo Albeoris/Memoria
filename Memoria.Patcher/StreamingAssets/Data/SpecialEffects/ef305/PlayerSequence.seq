@@ -1,0 +1,8 @@
+// Player sequence of SFX Accumulate
+
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Accumulate ; Reflect=True
+WaitSFXLoaded: SFX=Accumulate ; Reflect=True
+PlaySFX: SFX=Accumulate ; Reflect=True
+WaitSFXDone: SFX=Accumulate ; Reflect=True

@@ -112,7 +112,8 @@ namespace Memoria
                 VfxIndex = originalInfo.VfxIndex,
                 ForDead = originalInfo.ForDead,
                 DefaultCamera = originalInfo.DefaultCamera,
-                DefaultOnDead = originalInfo.DefaultOnDead
+                DefaultOnDead = originalInfo.DefaultOnDead,
+                VfxAction = null
             };
 
             BTL_REF originalRef = original.Ref;

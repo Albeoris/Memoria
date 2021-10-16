@@ -1,0 +1,81 @@
+// Shared sequence of SFX Water_Sword
+
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=12
+PlaySound: Sound=3
+PlaySound: Sound=74
+Wait: Time=9
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 33.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 32.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 32.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 32.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 32.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 31.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 31.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 30.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 30.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 28.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 29.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 27.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 27.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 23.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 23.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 20.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 16.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 13.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 12.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 9.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 7.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 3.0, 0.0) ; MoveHeight=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=2
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -144.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -238.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -309.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+Wait: Time=7
+EffectPoint: Char=Everyone ; Type=Figure

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Earthquake_Strong
+
+PlaySound: Sound=313
+PlaySound: Sound=307
+PlaySound: Sound=303
+Wait: Time=57
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

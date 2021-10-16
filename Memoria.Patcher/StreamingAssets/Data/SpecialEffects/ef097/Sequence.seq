@@ -1,0 +1,10 @@
+// Shared sequence of SFX Confuse__Multi
+
+PlaySound: Sound=413
+PlaySound: Sound=411
+PlaySound: Sound=409
+Wait: Time=24
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

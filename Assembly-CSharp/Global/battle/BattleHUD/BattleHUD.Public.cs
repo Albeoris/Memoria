@@ -90,18 +90,17 @@ public partial class BattleHUD : UIScene
         SetBattleMessage(message, priority);
     }
 
-    public void SetBattleCommandTitle(CMD_DATA pCmd)
-    {
-        String str1 = String.Empty;
+    public String GetBattleCommandTitle(CMD_DATA pCmd)
+	{
         switch (pCmd.cmd_no)
         {
             case BattleCommandId.Item:
             case BattleCommandId.Throw:
-                str1 = FF9TextTool.ItemName(pCmd.sub_no);
-                break;
+                return FF9TextTool.ItemName(pCmd.sub_no);
+            case BattleCommandId.AutoPotion:
+                return String.Empty;
             case BattleCommandId.MagicCounter:
-                str1 = pCmd.aa.Name;
-                break;
+                return pCmd.aa.Name;
             default:
                 if (pCmd.sub_no < 192)
                 {
@@ -109,26 +108,29 @@ public partial class BattleHUD : UIScene
                     switch (id)
                     {
                         case 254: // Magic sword
-                            str1 = FormatMagicSwordAbility(pCmd);
-                            break;
+                            return FormatMagicSwordAbility(pCmd);
                         case 255:
-                            str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no);
-                            break;
+                            return FF9TextTool.ActionAbilityName(pCmd.sub_no);
                         case 0:
                             break;
                         default:
-                            str1 = id >= 192 ? FF9TextTool.BattleCommandTitleText((id & 63) + 1) : FF9TextTool.ActionAbilityName(id);
-                            break;
+                            return id >= 192 ? FF9TextTool.BattleCommandTitleText((id & 63) + 1) : FF9TextTool.ActionAbilityName(id);
                     }
                 }
                 else
-				{
-                    str1 = FF9TextTool.ActionAbilityName(pCmd.sub_no);
+                {
+                    return FF9TextTool.ActionAbilityName(pCmd.sub_no);
                 }
                 break;
         }
+        return String.Empty;
+    }
 
-        if (String.IsNullOrEmpty(str1) ||( pCmd.cmd_no == BattleCommandId.Change && pCmd.sub_no == 96))
+    public void SetBattleCommandTitle(CMD_DATA pCmd)
+    {
+        String str1 = GetBattleCommandTitle(pCmd);
+
+        if (String.IsNullOrEmpty(str1) || (pCmd.cmd_no == BattleCommandId.Change && pCmd.sub_no == 96))
             return;
 
         SetBattleTitle(str1, 1);
@@ -169,7 +171,7 @@ public partial class BattleHUD : UIScene
 
         if (!flag)
         {
-            SetBattleMessage(FF9TextTool.BattleLibraText(9), 2);
+            SetBattleMessage(FF9TextTool.BattleLibraText(9), 3);
             _currentPeepingMessageCount = 5;
         }
         else

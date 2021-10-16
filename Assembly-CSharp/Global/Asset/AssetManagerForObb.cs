@@ -18,7 +18,7 @@ public class AssetManagerForObb
 	private static void _LoadAnimationFolderMapping()
 	{
 		AssetManagerForObb._animationInFolder = new Dictionary<String, List<String>>();
-		String filestr = AssetManager.LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _, false);
+		String filestr = AssetManager.LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _);
 		if (filestr == null)
 		{
 			global::Debug.LogWarning("Cannot load resource [AnimationFolderMapping]");

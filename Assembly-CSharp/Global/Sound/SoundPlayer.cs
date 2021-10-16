@@ -85,6 +85,52 @@ public abstract class SoundPlayer
 		SoundLib.Log("StopSound Success");
 	}
 
+	public static void StaticCreateSound(SoundProfile soundProfile)
+	{
+		Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
+		if (num == 0)
+		{
+			SoundLib.Log("CreateSound failure");
+			return;
+		}
+		soundProfile.SoundID = num;
+		SoundLib.Log("CreateSound Success");
+	}
+
+	public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f)
+	{
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
+		{
+			SoundLib.Log("failed to play sound");
+			soundProfile.SoundID = 0;
+			return;
+		}
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * playerVolume, 0);
+		SoundLib.Log("Panning: " + soundProfile.Panning);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+		SoundLib.Log("StartSound Success");
+	}
+
+	public static void StaticPauseSound(SoundProfile soundProfile)
+	{
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
+		SoundLib.Log("PauseSound Success");
+	}
+
+	public static void StaticResumeSound(SoundProfile soundProfile)
+	{
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
+		SoundLib.Log("ResumeSound Success");
+	}
+
+	public static void StaticStopSound(SoundProfile soundProfile)
+	{
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+		SoundLib.Log("StopSound Success");
+	}
+
 	protected void LoadResource(SoundProfile soundProfile, SoundDatabase soundDatabase, SoundPlayer.LoadResourceCallback callback)
 	{
 		if (this.resourceLoadingCounter > 0)
@@ -183,18 +229,18 @@ public abstract class SoundPlayer
 		Dictionary<Int32, SoundProfile> dictionary = soundDatabase.ReadAll();
 		foreach (KeyValuePair<Int32, SoundProfile> keyValuePair in dictionary)
 		{
-			this.UnregisterBank(keyValuePair.Value);
+			SoundPlayer.StaticUnregisterBank(keyValuePair.Value);
 		}
 		soundDatabase.DeleteAll();
 	}
 
 	protected void UnloadResource(SoundProfile soundProfile, SoundDatabase soundDatabase)
 	{
-		this.UnregisterBank(soundProfile);
+		SoundPlayer.StaticUnregisterBank(soundProfile);
 		soundDatabase.Delete(soundProfile);
 	}
 
-	public void UnregisterBank(SoundProfile soundProfile)
+	public static void StaticUnregisterBank(SoundProfile soundProfile)
 	{
 		SoundLib.Log("UnregisterBank: " + soundProfile.Name);
 		if (soundProfile.BankID != 0)

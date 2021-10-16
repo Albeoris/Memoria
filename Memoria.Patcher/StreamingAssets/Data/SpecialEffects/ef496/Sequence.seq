@@ -1,0 +1,270 @@
+// Shared sequence of SFX Special_Necron_Engage
+
+ShowMesh: Char=AllTargets ; Mesh=All ; Enable=True
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, -12288.0, -4096.0) ; MoveHeight=True ; Time=0
+Wait: Time=58
+PlaySound: Sound=2599
+PlaySound: Sound=2600
+PlaySound: Sound=2601
+Wait: Time=5
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 6.0, 118.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 116.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 13.0, 116.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 111.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 112.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 28.0, 109.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 31.0, 107.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 36.0, 105.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 43.0, 105.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 46.0, 102.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 50.0, 100.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 55.0, 99.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 59.0, 97.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 63.0, 96.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 66.0, 92.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 69.0, 93.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 76.0, 91.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 80.0, 88.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 82.0, 87.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 86.0, 85.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 89.0, 83.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 92.0, 82.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 98.0, 81.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 95.0, 79.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 103.0, 77.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 108.0, 76.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 107.0, 74.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 110.0, 73.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 114.0, 70.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 117.0, 70.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 119.0, 69.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 65.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 126.0, 66.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 127.0, 62.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 128.0, 62.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 134.0, 63.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 132.0, 58.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 135.0, 58.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 137.0, 56.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 54.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 142.0, 53.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 142.0, 53.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 145.0, 50.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 145.0, 51.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 148.0, 47.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 148.0, 47.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 149.0, 46.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 146.0, 43.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 156.0, 42.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 152.0, 43.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 152.0, 39.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 153.0, 39.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 156.0, 37.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 153.0, 37.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 157.0, 36.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 153.0, 32.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 157.0, 34.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 159.0, 32.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 157.0, 30.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 154.0, 28.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 159.0, 30.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 157.0, 25.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 155.0, 27.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 154.0, 26.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 158.0, 22.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 155.0, 21.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 155.0, 23.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 156.0, 19.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 151.0, 19.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 153.0, 18.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 153.0, 18.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 148.0, 14.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 154.0, 17.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 147.0, 13.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 148.0, 12.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 144.0, 13.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 144.0, 10.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 142.0, 11.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 144.0, 8.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 9.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 142.0, 8.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 133.0, 5.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 137.0, 6.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 131.0, 5.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 129.0, 2.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 129.0, 4.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 125.0, 1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 123.0, 1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 117.0, -1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 118.0, -1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 109.0, -2.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 111.0, -4.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 107.0, -4.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 102.0, -4.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 99.0, -6.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 99.0, -5.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 96.0, -7.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 91.0, -8.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 88.0, -7.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 82.0, -10.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 79.0, -10.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 77.0, -10.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 71.0, -11.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 72.0, -12.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 64.0, -12.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 60.0, -14.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 57.0, -12.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 52.0, -14.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 48.0, -15.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 45.0, -14.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 35.0, -17.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 38.0, -17.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 29.0, -16.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, -18.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 20.0, -18.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 16.0, -18.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, -18.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, -20.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -3.0, -21.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -2.0, -19.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -12.0, -21.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -18.0, -21.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -22.0, -23.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -27.0, -20.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -33.0, -24.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -39.0, -22.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -47.0, -22.0) ; MoveHeight=True ; Time=0
+PlaySound: Sound=2602
+PlaySound: Sound=2603
+PlaySound: Sound=2604
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+Wait: Time=81

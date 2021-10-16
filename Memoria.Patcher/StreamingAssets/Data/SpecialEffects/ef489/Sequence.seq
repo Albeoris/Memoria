@@ -1,0 +1,15 @@
+// Shared sequence of SFX Special_Trance_End
+
+PlaySound: Sound=926
+PlaySound: Sound=927
+PlaySound: Sound=928
+Wait: Time=16
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+Wait: Time=19
+PlaySound: Sound=935
+PlaySound: Sound=936
+PlaySound: Sound=937
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+Wait: Time=47

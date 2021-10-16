@@ -1,0 +1,10 @@
+// Shared sequence of SFX Absorb_Prison_Cage
+
+PlaySound: Sound=974
+PlaySound: Sound=975
+PlaySound: Sound=976
+Wait: Time=67
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

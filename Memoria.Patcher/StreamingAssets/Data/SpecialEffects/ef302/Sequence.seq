@@ -1,0 +1,8 @@
+// Shared sequence of SFX Swallow
+
+ShowMesh: Char=AllTargets ; Mesh=65535 ; Enable=False
+Wait: Time=1
+PlaySound: Sound=2663
+PlaySound: Sound=2664
+PlaySound: Sound=2665
+EffectPoint: Char=AllTargets ; Type=Effect

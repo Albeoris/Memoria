@@ -1,0 +1,34 @@
+// Shared sequence of SFX Shiva__Full
+
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=3
+PlaySound: Sound=2795
+PlaySound: Sound=2796
+PlaySound: Sound=2797
+PlaySound: Sound=2798
+Wait: Time=164
+PlaySound: Sound=2799
+PlaySound: Sound=2800
+PlaySound: Sound=2801
+PlaySound: Sound=2802
+Wait: Time=22
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+Wait: Time=4
+PlaySound: Sound=2803
+PlaySound: Sound=2804
+PlaySound: Sound=2805
+PlaySound: Sound=2806
+Wait: Time=34
+SetBackgroundIntensity: Intensity=0.25 ; Time=0 ; HoldDuration=5
+Wait: Time=5
+SetBackgroundIntensity: Intensity=0.5 ; Time=12 ; HoldDuration=67
+Wait: Time=56
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=11
+SetBackgroundIntensity: Intensity=1 ; Time=24
+Wait: Time=1
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=33
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=31

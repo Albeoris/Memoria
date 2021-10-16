@@ -1,0 +1,9 @@
+// Shared sequence of SFX Auto_Life
+
+PlaySound: Sound=428
+PlaySound: Sound=420
+PlaySound: Sound=453
+Wait: Time=19
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

@@ -126,7 +126,7 @@ public class GEOTEXHEADER
 	public void ReadTextureAnim(String path)
 	{
 		String[] tabInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(path, out tabInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes(path, out tabInfo, true);
 		if (binAsset == null)
 		{
 			global::Debug.LogWarning("Cannot find GeoTexAnim for : " + path);

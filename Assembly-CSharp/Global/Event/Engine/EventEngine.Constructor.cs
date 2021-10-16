@@ -10,7 +10,7 @@ public partial class EventEngine
         this.nilFloat = -1f;
         this.POS_COMMAND_DEFAULTY = 32768f;
         this.toBeAddedObjUIDList = new List<Int32>();
-        Dictionary<Int32, Int32> dictionary1 = new Dictionary<Int32, Int32>
+        this._mesIdES_FR = new Dictionary<Int32, Int32>
         {
             {246, 254},
             {247, (Int32)Byte.MaxValue},
@@ -33,8 +33,7 @@ public partial class EventEngine
             {264, 272},
             {265, 273}
         };
-        this._mesIdES_FR = dictionary1;
-        Dictionary<Int32, Int32> dictionary2 = new Dictionary<Int32, Int32>
+        this._mesIdGR = new Dictionary<Int32, Int32>
         {
             {246, 254},
             {247, (Int32)Byte.MaxValue},
@@ -57,8 +56,7 @@ public partial class EventEngine
             {264, 274},
             {265, 275}
         };
-        this._mesIdGR = dictionary2;
-        Dictionary<Int32, Int32> dictionary3 = new Dictionary<Int32, Int32>
+        this._mesIdIT = new Dictionary<Int32, Int32>
         {
             {246, 254},
             {247, (Int32)Byte.MaxValue},
@@ -81,7 +79,7 @@ public partial class EventEngine
             {264, 272},
             {265, 273}
         };
-        this._mesIdIT = dictionary3;
+        this._requestCommandTrigger = new CMD_DATA[8, 8]; // [btl.bi.line_no, call.level]
     }
 
     private void Start()

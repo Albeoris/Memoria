@@ -119,12 +119,12 @@ public class BGI_DEF
 	public void LoadBGI(FieldMap fieldMap, String path, String name)
 	{
 		this.name = name;
-		String[] bgiInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(path + name + ".bgi", out bgiInfo, false);
 		if (FF9StateSystem.Common.FF9.fldMapNo == 70)
 		{
 			return;
 		}
+		String[] bgiInfo;
+		Byte[] binAsset = AssetManager.LoadBytes(path + name + ".bgi", out bgiInfo);
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
 			this.ReadData(binaryReader);

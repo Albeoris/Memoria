@@ -1,0 +1,10 @@
+// Shared sequence of SFX Iai_Strike_1
+
+PlaySound: Sound=599
+PlaySound: Sound=590
+PlaySound: Sound=582
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=3
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=19

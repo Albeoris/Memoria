@@ -1,0 +1,28 @@
+// Shared sequence of SFX Ifrit__Full
+
+Wait: Time=16
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=46
+PlaySound: Sound=1794
+PlaySound: Sound=1795
+PlaySound: Sound=174 ; SoundType=Song
+Wait: Time=98
+PlaySound: Sound=1796
+PlaySound: Sound=1797
+PlaySound: Sound=1798
+Wait: Time=5
+PlaySound: Sound=174 ; SoundType=Song ; Volume=1.3
+Wait: Time=64
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=11
+PlaySound: Sound=1799
+PlaySound: Sound=1800
+PlaySound: Sound=1801
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=31

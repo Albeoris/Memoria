@@ -1,0 +1,13 @@
+// Shared sequence of SFX Water_Gun
+
+PlaySound: Sound=531
+PlaySound: Sound=524
+PlaySound: Sound=567
+Wait: Time=12
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=549
+PlaySound: Sound=540
+PlaySound: Sound=600
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

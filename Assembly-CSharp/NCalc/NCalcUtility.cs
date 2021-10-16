@@ -28,6 +28,22 @@ namespace NCalc
             return noChangeValue;
         }
 
+        public static Single ConvertNCalcResult(Object obj, Single noChangeValue)
+        {
+            if (obj is SByte) return (SByte)obj;
+            if (obj is Byte) return (Byte)obj;
+            if (obj is Int16) return (Int16)obj;
+            if (obj is UInt16) return (UInt16)obj;
+            if (obj is Int32) return (Int32)obj;
+            if (obj is UInt32) return (UInt32)obj;
+            if (obj is Int64) return (Int64)obj;
+            if (obj is UInt64) return (UInt64)obj;
+            if (obj is Single) return (Single)obj;
+            if (obj is Double) return (Single)(Double)obj;
+            if (obj is Decimal) return (Single)(Decimal)obj;
+            return noChangeValue;
+        }
+
         public static Boolean EvaluateNCalcCondition(Object obj, Boolean defaultResult = false)
         {
             if (obj is Boolean) return (Boolean)obj;
@@ -89,7 +105,6 @@ namespace NCalc
             else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
             else if (name == "TetraMasterDrawCount") args.Result = (Int32)GameState.TetraMasterDraw;
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
-            else if (name == "CalcMainCounter") args.Result = btl_cmd.cmd_effect_counter;
         };
 
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
@@ -218,7 +233,7 @@ namespace NCalc
             Int32 reflectCount = 0;
             if (calc.Command.Data.info.reflec == 1)
                 for (UInt16 index = 0; index < 4; ++index)
-                    if ((caster.Data.reflec.tar_id[index] & target.Id) != 0)
+                    if ((calc.Command.Data.reflec.tar_id[index] & target.Id) != 0)
                         ++reflectCount;
             expr.Parameters["ReflectFactor"] = reflectCount;
             expr.Parameters["EffectCasterFlags"] = (Int32)caster.Flags;
@@ -252,7 +267,8 @@ namespace NCalc
             expr.Parameters["AbilityStatus"] = (UInt32)command.AbilityStatus;
             expr.Parameters["AbilityElement"] = (Int32)command.Element;
             expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
-            expr.Parameters["ItemUseId"] = command.Id == BattleCommandId.Item ? (Int32)command.AbilityId : Byte.MaxValue;
+            expr.Parameters["ItemUseId"] = command.Id == BattleCommandId.Item || command.Id == BattleCommandId.AutoPotion ? (Int32)command.AbilityId : Byte.MaxValue;
+            expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[(Int32)command.AbilityId].shape : -1;
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
             expr.Parameters["TargetType"] = (Int32)command.TargetType;
             expr.Parameters["IsAbilityMultiTarget"] = command.IsManyTarget;
@@ -262,9 +278,11 @@ namespace NCalc
             expr.Parameters["IsDodged"] = command.Data.info.dodge == 1;
             expr.Parameters["IsShortRanged"] = command.IsShortRange;
             expr.Parameters["IsReflectNull"] = command.IsReflectNull;
+            expr.Parameters["IsMeteorMiss"] = command.IsMeteorMiss;
             expr.Parameters["AbilityCategory"] = (Int32)command.AbilityCategory;
             expr.Parameters["MPCost"] = (Int32)command.Data.aa.MP;
             expr.Parameters["AbilityFlags"] = (Int32)command.AbilityType;
+            expr.Parameters["CalcMainCounter"] = (Int32)command.Data.info.effect_counter;
         }
     }
 }

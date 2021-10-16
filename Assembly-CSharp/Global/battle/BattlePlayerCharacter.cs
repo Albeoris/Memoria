@@ -103,6 +103,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 		String path = btl_init.model_id[serial + 19];
 		btl.tranceGo = ModelFactory.CreateModel(path, true);
 		BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
+		btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
 		btl.tranceGo.SetActive(false);
 	}
 
@@ -462,6 +463,19 @@ public class BattlePlayerCharacter : MonoBehaviour
 		MP_CMD_TO_NORMAL,
 		MP_SPECIAL1,
 		MP_MAX
+	}
+
+	public enum PlayerMotionStance
+	{
+		NORMAL,
+		DYING,
+		DISABLE,
+		CMD,
+		DEFEND,
+		WIN,
+		SPECIAL_ANY_IDLE,
+		SPECIAL_INDIFFERENT,
+		SPECIAL_UNKNOWN
 	}
 
 	public enum PlayerSerialNumber

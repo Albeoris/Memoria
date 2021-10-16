@@ -1,0 +1,10 @@
+// Shared sequence of SFX Break
+
+PlaySound: Sound=440
+PlaySound: Sound=432
+PlaySound: Sound=479
+Wait: Time=26
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

@@ -1,0 +1,9 @@
+// Shared sequence of SFX Minus_Strike_2
+
+PlaySound: Sound=566
+PlaySound: Sound=557
+PlaySound: Sound=548
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=4
+EffectPoint: Char=Everyone ; Type=Figure

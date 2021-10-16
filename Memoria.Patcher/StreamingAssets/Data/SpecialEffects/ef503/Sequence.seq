@@ -1,0 +1,14 @@
+// Shared sequence of SFX Blue_Shockwave
+
+PlaySound: Sound=2427
+PlaySound: Sound=2428
+PlaySound: Sound=2429
+Wait: Time=24
+PlaySound: Sound=2430
+PlaySound: Sound=2431
+PlaySound: Sound=2432
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

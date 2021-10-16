@@ -1,0 +1,10 @@
+// Shared sequence of SFX Rainbow_Wind
+
+PlaySound: Sound=587
+PlaySound: Sound=577
+PlaySound: Sound=535
+Wait: Time=16
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

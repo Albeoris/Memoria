@@ -1,0 +1,18 @@
+// Shared sequence of SFX Special_Flee
+
+PlaySound: Sound=2444
+PlaySound: Sound=2445
+PlaySound: Sound=2446
+StartThread: TargetLoop=True
+	StartThread: Condition=TargetIsPlayer
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 0.0, -4048.0) ; Time=21
+	EndThread
+	StartThread: Condition=!TargetIsPlayer
+		Turn: Char=AllTargets ; BaseAngle=Default ; Angle=180 ; Time=6
+		MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 0.0, 4048.0) ; Time=21
+	EndThread
+EndThread
+Wait: Time=18
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure
+ShowMesh: Char=AllTargets ; Enable=False

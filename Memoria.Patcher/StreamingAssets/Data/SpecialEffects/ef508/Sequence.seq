@@ -1,0 +1,71 @@
+// Shared sequence of SFX Fenrir_Earth__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=89
+ChangeSize: Char=AllTargets ; Size=0.67 ; Time=3 ; ScaleShadow=True
+MoveToPosition: Char=AllTargets ; RelativePosition=(475.0, 1670.0, 261.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+PlaySound: Sound=2888
+PlaySound: Sound=2889
+PlaySound: Sound=2890
+PlaySound: Sound=2891
+MoveToPosition: Char=AllTargets ; RelativePosition=(-1488.0, 2327.0, -1149.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-1789.0, 2853.0, -1383.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=0.07 ; Time=10 ; ScaleShadow=True
+MoveToPosition: Char=AllTargets ; RelativePosition=(-648.0, 1122.0, -503.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-579.0, 1009.0, -451.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-514.0, 902.0, -400.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-453.0, 801.0, -352.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-395.0, 706.0, -307.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-341.0, 616.0, -267.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-291.0, 534.0, -227.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-246.0, 457.0, -192.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-203.0, 386.0, -159.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-166.0, 321.0, -130.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+ChangeSize: Char=AllTargets ; Size=0 ; Time=10 ; ScaleShadow=True
+MoveToPosition: Char=AllTargets ; RelativePosition=(-131.0, 261.0, -103.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-101.0, 209.0, -79.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-74.0, 162.0, -59.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-52.0, 120.0, -42.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-34.0, 86.0, -27.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-18.0, 57.0, -15.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(-8.0, 33.0, -6.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 17.0, -1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 5.0, 1.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(2.0, 1.0, 2.0) ; MoveHeight=True ; Time=0
+Wait: Time=20
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
+Wait: Time=12
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 3000.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=4
+Wait: Time=3
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=2922
+PlaySound: Sound=2923
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=11
+SetBackgroundIntensity: Intensity=1 ; Time=12
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

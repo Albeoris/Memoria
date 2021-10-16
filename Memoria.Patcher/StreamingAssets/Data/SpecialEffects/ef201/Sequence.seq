@@ -1,0 +1,18 @@
+// Shared sequence of SFX Jewel
+
+PlaySound: Sound=1125
+PlaySound: Sound=1126
+PlaySound: Sound=1127
+Wait: Time=10
+PlaySound: Sound=242
+PlaySound: Sound=253
+PlaySound: Sound=277
+Wait: Time=30
+PlaySound: Sound=2441
+PlaySound: Sound=2442
+PlaySound: Sound=2443
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

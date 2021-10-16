@@ -17,7 +17,7 @@ public class BattleState : MonoBehaviour
 	{
 		this.mapName = new Dictionary<Int32, String>();
 		String[] bmapInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", out bmapInfo, false);
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", out bmapInfo);
 		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)

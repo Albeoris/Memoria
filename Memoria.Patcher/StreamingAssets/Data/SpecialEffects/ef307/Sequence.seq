@@ -1,0 +1,6 @@
+// Shared sequence of SFX Red_Smoke
+
+PlaySound: Sound=1074
+PlaySound: Sound=1075
+PlaySound: Sound=1076
+Wait: Time=20

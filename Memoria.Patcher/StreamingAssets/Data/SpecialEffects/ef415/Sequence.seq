@@ -1,0 +1,21 @@
+// Shared sequence of SFX Ramuh__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=68
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+Wait: Time=4
+PlaySound: Sound=1788
+PlaySound: Sound=1789
+PlaySound: Sound=1790
+Wait: Time=19
+PlaySound: Sound=1791
+PlaySound: Sound=1792
+PlaySound: Sound=1793
+Wait: Time=45
+SetBackgroundIntensity: Intensity=1 ; Time=13
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=17
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

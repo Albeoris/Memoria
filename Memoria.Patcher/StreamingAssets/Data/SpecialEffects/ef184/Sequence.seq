@@ -1,0 +1,151 @@
+// Shared sequence of SFX Atomos__Full
+
+SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=186
+Wait: Time=14
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=48
+PlaySound: Sound=2551
+PlaySound: Sound=2552
+PlaySound: Sound=2553
+PlaySound: Sound=2554
+Wait: Time=124
+SetBackgroundIntensity: Intensity=1 ; Time=0
+PlaySound: Sound=2555
+PlaySound: Sound=2556
+PlaySound: Sound=2557
+PlaySound: Sound=2558
+Wait: Time=42
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=8
+ChangeSize: Size=0 ; Time=48 ; ScaleShadow=True ; Char=AllTargets
+MoveToPosition: Char=AllTargets ; RelativePosition=(555.0, -270.0, -510.0) ; MoveHeight=True ; Time=0
+Turn: Angle=(357.1, 1.4, 177.9) ; Char=AllTargets
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=(72.0, 2571.0, 975.0) ; MoveHeight=True ; Time=48
+Turn: Angle=(354.2, 2.8, 175.8) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(351.3, 4.2, 173.7) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(348.4, 5.6, 171.6) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(345.5, 7.0, 169.5) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(342.6, 8.4, 167.3) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(339.7, 9.8, 165.2) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(336.8, 11.3, 163.1) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(333.9, 12.7, 161.0) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(331.0, 14.1, 158.9) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(328.1, 15.5, 156.8) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(325.2, 16.9, 154.7) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(322.3, 18.3, 152.6) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(319.4, 19.7, 150.5) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(316.5, 21.1, 148.4) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(313.6, 22.5, 146.3) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(310.7, 23.9, 144.1) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(307.8, 25.3, 142.0) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(304.9, 26.7, 139.9) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(302.0, 28.1, 137.8) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(299.1, 29.5, 135.7) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(296.2, 30.9, 133.6) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(293.3, 32.3, 131.5) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(290.4, 33.8, 129.4) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(287.5, 35.2, 127.3) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(284.6, 36.6, 125.2) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(281.7, 38.0, 123.0) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(278.8, 39.4, 120.9) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(275.9, 40.8, 118.8) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(273.0, 42.2, 116.7) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(270.0, 158.2, 0.0) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(272.8, 225.0, 292.5) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(275.7, 226.4, 290.4) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(278.6, 227.8, 288.3) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(281.5, 229.2, 286.2) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(284.4, 230.6, 284.1) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(287.3, 232.0, 282.0) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(290.2, 233.4, 279.8) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(293.1, 234.8, 277.7) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(296.0, 236.3, 275.6) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(298.9, 237.7, 273.5) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(301.8, 239.1, 271.4) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(304.7, 240.5, 269.3) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(307.6, 241.9, 267.2) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(310.5, 243.3, 265.1) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(313.4, 244.7, 263.0) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(316.3, 246.1, 260.9) ; Char=AllTargets
+Wait: Time=1
+Turn: Angle=(319.2, 247.5, 258.8) ; Char=AllTargets
+Wait: Time=6
+PlaySound: Sound=2559
+PlaySound: Sound=2560
+PlaySound: Sound=2561
+PlaySound: Sound=2562
+Wait: Time=2
+SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=60
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=60
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 2008.0, 0.0) ; MoveHeight=True ; Time=0
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
+SetBackgroundIntensity: Intensity=1 ; Time=16
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -116.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -190.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -254.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -311.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -354.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -384.0, 0.0) ; MoveHeight=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=18
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=32

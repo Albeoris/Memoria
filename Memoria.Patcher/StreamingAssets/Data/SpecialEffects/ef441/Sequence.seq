@@ -1,0 +1,6 @@
+// Shared sequence of SFX Special_Gizamaluke_Engage
+
+PlaySound: Sound=2563
+PlaySound: Sound=2564
+PlaySound: Sound=2565
+Wait: Time=80

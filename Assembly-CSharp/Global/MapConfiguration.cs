@@ -7,7 +7,7 @@ public class MapConfiguration
 	public static DMSMapConf? LoadMapConfigData(String fileName)
 	{
 		String[] mapConfInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MapConfigData/" + fileName, out mapConfInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MapConfigData/" + fileName, out mapConfInfo, true);
 		if (binAsset == null)
 		{
 			return null;

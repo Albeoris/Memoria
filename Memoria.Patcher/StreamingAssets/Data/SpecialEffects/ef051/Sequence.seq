@@ -1,0 +1,78 @@
+// Shared sequence of SFX Snort
+
+PlaySound: Sound=164
+PlaySound: Sound=144
+PlaySound: Sound=256
+Wait: Time=25
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-14 ; IsRelativeDistance=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-42 ; IsRelativeDistance=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-69 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 1.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-100 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 2.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-130 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 2.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-155 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 2.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-190 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 3.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-210 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-240 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-275 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-300 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-325 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-375 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 6.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-375 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 6.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-400 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 6.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-450 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 7.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-450 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 7.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-500 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-550 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-550 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 9.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-600 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 9.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-650 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-600 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToTarget: Char=AllTargets ; Target=Caster ; Distance=-700 ; IsRelativeDistance=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure

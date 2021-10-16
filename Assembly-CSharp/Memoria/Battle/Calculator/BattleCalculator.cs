@@ -167,7 +167,7 @@ namespace Memoria
         public void WeaponPhisicalParams(CalcAttackBonus bonus)
         {
             Int32 baseDamage = Comn.random16() % (1 + (Caster.Level + Caster.Strength >> 3));
-            Context.AttackPower = Caster.WeaponPower;
+            Context.AttackPower = Caster.GetWeaponPower(Command);
             Target.SetPhisicalDefense();
             switch (bonus)
             {
@@ -283,7 +283,7 @@ namespace Memoria
         public void TryEscape()
         {
             CMD_DATA curCmdPtr = btl_util.getCurCmdPtr();
-            if (curCmdPtr != null && curCmdPtr.regist.bi.player == 0)
+            if (curCmdPtr != null && curCmdPtr.regist.bi.player == 0) // Any enemy is attacking
                 return;
 
             SByte playerCount = 0;
@@ -345,7 +345,7 @@ namespace Memoria
                 return true;
 
             Context.Flags |= BattleCalcFlags.Miss;
-            if (!Target.IsCovered)
+            if (!Target.IsCovering)
                 Context.Flags |= BattleCalcFlags.Dodge;
 
             return false;

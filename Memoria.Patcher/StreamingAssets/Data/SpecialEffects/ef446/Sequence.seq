@@ -1,0 +1,162 @@
+// Shared sequence of SFX Atomos__Short
+
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+PlaySound: Sound=2827
+PlaySound: Sound=2828
+PlaySound: Sound=2829
+PlaySound: Sound=2830
+Wait: Time=25
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 3.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(1.5, 1.8, 179.7) ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.9 ; ScaleShadow=True ; Time=11
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 9.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(3.0, 3.7, 179.5) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(4.5, 5.5, 179.2) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(6.0, 7.4, 178.9) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(7.5, 9.2, 178.7) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 30.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(9.0, 11.1, 178.4) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 34.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(10.5, 12.9, 178.2) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 38.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(12.0, 14.8, 177.9) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 44.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(13.4, 16.6, 177.6) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 47.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(14.9, 18.5, 177.4) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 53.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(16.4, 20.3, 177.1) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 58.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(17.9, 22.1, 176.8) ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.8 ; ScaleShadow=True ; Time=6
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 63.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(19.4, 24.0, 176.6) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 68.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(20.9, 25.8, 176.3) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 73.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(22.4, 27.7, 176.0) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 79.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(23.9, 29.5, 175.8) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 84.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(25.4, 31.4, 175.5) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 90.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(26.9, 33.2, 175.3) ; Time=0
+ChangeSize: Char=AllTargets ; Size=0.67 ; ScaleShadow=True ; Time=6
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 95.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(28.4, 35.1, 175.0) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 99.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(29.9, 36.9, 174.7) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 105.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(31.4, 38.8, 174.5) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 111.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(32.9, 40.6, 174.2) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 115.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(34.4, 42.5, 173.9) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 120.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(35.9, 44.3, 173.7) ; Time=0
+ChangeSize: Char=AllTargets ; Size=0 ; ScaleShadow=True ; Time=16
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 125.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(37.4, 46.1, 173.4) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 131.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(38.8, 48.0, 173.1) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 136.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(40.3, 49.8, 172.9) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 141.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(41.8, 51.7, 172.6) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 145.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(43.3, 53.5, 172.4) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 151.0, 1.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(44.8, 55.4, 172.1) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 157.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(46.3, 57.2, 171.8) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 161.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(47.8, 59.1, 171.6) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 166.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(49.3, 60.9, 171.3) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 172.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(50.8, 62.8, 171.0) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 176.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(52.3, 64.6, 170.8) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 182.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(53.8, 66.4, 170.5) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 187.0, 3.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(55.3, 68.3, 170.2) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 192.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(56.8, 70.1, 170.0) ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 197.0, 2.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(58.3, 72.0, 169.7) ; Time=0
+Wait: Time=1
+PlaySound: Sound=2831
+PlaySound: Sound=2832
+PlaySound: Sound=2833
+PlaySound: Sound=2834
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=60
+Wait: Time=60
+SetBackgroundIntensity: Intensity=1 ; Time=16
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 2008.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -116.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -190.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -254.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -311.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -354.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -384.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=17
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

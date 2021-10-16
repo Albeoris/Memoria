@@ -1,0 +1,13 @@
+// Shared sequence of SFX Venom_Breath
+
+PlaySound: Sound=511
+PlaySound: Sound=507
+PlaySound: Sound=487
+Wait: Time=32
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=1390
+PlaySound: Sound=1391
+PlaySound: Sound=1392
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

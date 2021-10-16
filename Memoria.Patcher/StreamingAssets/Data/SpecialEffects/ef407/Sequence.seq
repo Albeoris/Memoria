@@ -1,0 +1,22 @@
+// Shared sequence of SFX Shiva__Short
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=39
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+Wait: Time=2
+PlaySound: Sound=2803
+PlaySound: Sound=2804
+PlaySound: Sound=2805
+PlaySound: Sound=2806
+Wait: Time=37
+SetBackgroundIntensity: Intensity=0.25 ; Time=0 ; HoldDuration=5
+Wait: Time=5
+SetBackgroundIntensity: Intensity=0.5 ; Time=12 ; HoldDuration=66
+Wait: Time=55
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=11
+SetBackgroundIntensity: Intensity=1 ; Time=25
+Wait: Time=1
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12

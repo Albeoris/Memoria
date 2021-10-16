@@ -1,0 +1,40 @@
+// Shared sequence of SFX Phoenix_Rebirth_Flame
+
+SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=422
+Wait: Time=14
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=42
+PlaySound: Sound=2951
+PlaySound: Sound=2952
+PlaySound: Sound=2953
+PlaySound: Sound=2954
+Wait: Time=63
+PlaySound: Sound=2955
+PlaySound: Sound=2956
+PlaySound: Sound=2957
+PlaySound: Sound=2958
+Wait: Time=143
+PlaySound: Sound=185 ; SoundType=Song ; Volume=1.3
+Wait: Time=50
+PlaySound: Sound=2959
+PlaySound: Sound=2960
+PlaySound: Sound=2961
+PlaySound: Sound=2962
+Wait: Time=99
+PlaySound: Sound=2963
+PlaySound: Sound=2964
+PlaySound: Sound=2965
+PlaySound: Sound=2966
+Wait: Time=11
+SetBackgroundIntensity: Intensity=0.5 ; Time=8 ; HoldDuration=90
+Wait: Time=68
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=4
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=17
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=12
+Wait: Time=11

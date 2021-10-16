@@ -1,0 +1,24 @@
+// Shared sequence of SFX LV5_Death
+
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=39
+	PlaySound: Sound=1894
+	PlaySound: Sound=1895
+	PlaySound: Sound=1896
+	Wait: Time=25
+	PlaySound: Sound=1897
+	PlaySound: Sound=1898
+	PlaySound: Sound=1899
+	Wait: Time=3
+	PlaySound: Sound=1900
+	PlaySound: Sound=1901
+	PlaySound: Sound=1902
+	Wait: Time=2
+	EffectPoint: Char=AllTargets ; Type=Effect
+	Wait: Time=9
+EndThread
+SetBackgroundIntensity: Intensity=0.5 ; Time=0 ; HoldDuration=23
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16

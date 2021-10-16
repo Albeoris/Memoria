@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria.Data;
 
 public class SFXRender
 {
@@ -10,10 +12,9 @@ public class SFXRender
 		SFXKey.currentTexABR = 0u;
 		SFXRender.meshOrigin = new SFXMesh[SFXRender.MESH_MAX];
 		for (Int32 i = 0; i < (Int32)SFXRender.meshOrigin.Length; i++)
-		{
 			SFXRender.meshOrigin[i] = new SFXMesh();
-		}
 		SFXRender.commandBuffer = new List<SFXMeshBase>();
+		SFXRender.exportSFXDataMesh = new Dictionary<UInt32, SFXDataMeshConverter>();
 	}
 
 	public static void Release()
@@ -36,6 +37,8 @@ public class SFXRender
 		SFXRender.meshLineOpa = null;
 		SFXRender.meshLineAdd = null;
 		SFXRender.meshLineSub = null;
+		SFXRender.exportSFXDataMesh.Clear();
+		SFXRender.exportSFXDataMesh = null;
 	}
 
 	public unsafe static void Update()
@@ -48,9 +51,7 @@ public class SFXRender
 			SFXMeshBase.drOffsetY = 0;
 			SFXRender.meshEmpty = new List<SFXMesh>(SFXRender.meshOrigin);
 			for (Int32 i = 0; i < SFXRender.MESH_MAX; i++)
-			{
 				SFXRender.meshEmpty[i].Begin();
-			}
 			SFXRender.meshOpa = new List<SFXMesh>();
 			SFXRender.meshAdd = new List<SFXMesh>();
 			SFXRender.meshSub = new List<SFXMesh>();
@@ -64,19 +65,47 @@ public class SFXRender
 			SFXMesh.GPosIndex = 0;
 			SFXMesh.GTexIndex = 0;
 			SFXMesh.GColIndex = 0;
-			for (;;)
+			for (; ; )
 			{
 				Int32 num = 0;
-				PSX_LIBGPU.P_TAG* ptr = (PSX_LIBGPU.P_TAG*)((void*)SFX.SFX_GetPrim(ref num));
+				PSX_LIBGPU.P_TAG* ptr = (PSX_LIBGPU.P_TAG*)SFX.SFX_GetPrim(ref num);
 				if (ptr == null)
-				{
 					break;
-				}
-				SFXMesh.GzDepth = (Single)(-(Single)num);
+				SFXMesh.GzDepth = -num;
 				SFXRender.Add(ptr);
 				SFXRender.primCount++;
 			}
 			SFXRender.PushCommandBuffer();
+			if (SFX.IsDebugMesh || SFX.IsDebugObjMesh)
+			{
+				List<SFXMesh> currMeshes = new List<SFXMesh>();
+				for (Int32 i = 0; i < SFXRender.commandBuffer.Count; i++)
+					if (SFXRender.commandBuffer[i] is SFXMesh)
+					{
+						currMeshes.Add(SFXRender.commandBuffer[i] as SFXMesh);
+						//currMeshes[currMeshes.Count - 1].TryFixDepth();
+					}
+				if (SFX.IsDebugObjMesh)
+					SFXMesh.ExportObjPacked(currMeshes, PSXTextureMgr.GetDebugExportPath() + "meshfull_" + SFX.frameIndex);
+				if (SFX.IsDebugMesh)
+				{
+					for (Int32 i = 0; i < currMeshes.Count; i++)
+					{
+						SFXMesh mesh = currMeshes[i];
+						if (!SFXRender.exportSFXDataMesh.ContainsKey(mesh._key))
+						{
+							SFXDataMeshConverter newExportMesh = new SFXDataMeshConverter();
+							newExportMesh.key = mesh._key;
+							newExportMesh.texturePath = SFXKey.GetTextureMode(mesh._key) != 2u ? "texture" + mesh._key.ToString("X8") + ".png" : "";
+							SFXRender.exportSFXDataMesh[mesh._key] = newExportMesh;
+						}
+						SFXDataMeshConverter exportMesh = SFXRender.exportSFXDataMesh[mesh._key];
+						SFXDataMeshConverter.Frame dataMesh = new SFXDataMeshConverter.Frame(exportMesh);
+						dataMesh.ConvertFromMesh(mesh);
+						exportMesh.frameMesh[SFX.frameIndex] = dataMesh;
+					}
+				}
+			}
 		}
 	}
 
@@ -89,161 +118,195 @@ public class SFXRender
 		PSXTextureMgr.CaptureBG();
 		camera.worldToCameraMatrix = Matrix4x4.identity;
 		for (Int32 i = 0; i < SFXRender.commandBuffer.Count; i++)
-		{
 			SFXRender.commandBuffer[i].Render(i);
-		}
 		SFXMesh.DummyRender();
 		camera.worldToCameraMatrix = worldToCameraMatrix;
 	}
 
+	public static void SaveSFXDataMeshes()
+	{
+		if (SFXRender.exportSFXDataMesh.Count == 0)
+			return;
+		Int32 lastFrame = 0;
+		foreach (KeyValuePair<UInt32, SFXDataMeshConverter> entry in SFXRender.exportSFXDataMesh)
+		{
+			UInt32 key = entry.Key;
+			SFXDataMeshConverter data = entry.Value;
+			foreach (Int32 sfxFrameNum in data.frameMesh.Keys)
+				if (lastFrame < sfxFrameNum)
+					lastFrame = sfxFrameNum;
+			if (false) // last 2 saves: from camera above with units far away (y) and bone positions artificially splitted (x), find where pieces are placed wrt. caster and target
+			{
+				data.SwitchToWorldCoordinates();
+				foreach (SFXDataMeshConverter.Frame sfxFrame in data.frameMesh.Values)
+				{
+					for (Int32 i = 0; i < sfxFrame.vertex.Length; i++)
+					{
+						Boolean isAtCaster = sfxFrame.vertex[i].z < -20000;
+						Boolean isAtTarget = sfxFrame.vertex[i].z > 20000;
+						Boolean isAtMonBone0 = sfxFrame.vertex[i].x > 20000;
+						Boolean isAtMonBone1 = sfxFrame.vertex[i].y > 20000;
+						Boolean isAtRoot = sfxFrame.vertex[i].y < -20000;
+						Boolean isAtAvg = sfxFrame.vertex[i].x < -20000;
+						Boolean isAtWeapon = sfxFrame.vertex[i].y > 20000 && sfxFrame.vertex[i].x > 20000;
+						Boolean isAtTarBone = sfxFrame.vertex[i].y < -20000 && sfxFrame.vertex[i].x < -20000;
+						Byte pos = (Byte)(isAtCaster ? 1 : isAtTarget ? 2 : 0);
+						SByte bpos = (SByte)(isAtWeapon ? -4 : isAtTarBone ? -3 : isAtMonBone0 ? -5 : isAtMonBone1 ? -6 : isAtAvg ? -2 : isAtRoot ? 0 : -1);
+						if (data.positionTypeUnit != 0 && pos != data.positionTypeUnit)
+							data.positionTypeUnit = 3;
+						else
+							data.positionTypeUnit = pos;
+						if (pos == 1 && data.positionTypeCasterBone == SByte.MinValue)
+							data.positionTypeCasterBone = bpos;
+						if (pos == 2 && data.positionTypeTargetBone == SByte.MinValue)
+							data.positionTypeTargetBone = bpos;
+					}
+				}
+			}
+			if (false) // 4th save: glue "connected components" and convert absolute vertex positions to caster/target relative positions
+			{
+				data.TryFixDepth();
+				data.SwitchToWorldCoordinates();
+				//data.ComputePositionInformations();
+			}
+			//if (File.Exists(outputFName))
+			//{
+			//	SFXDataMeshConverter previousCaption = new SFXDataMeshConverter();
+			//	previousCaption.Import(File.ReadAllBytes(outputFName));
+			//	previousCaption.UpdateWithNewCaption(data, true, false, false);
+			//	previousCaption.Export(outputFName);
+			//}
+			//else
+			//{
+			//	data.Export(outputFName);
+			//}
+		}
+		SFXDataMeshConverter.ExportPositionType(SFXRender.exportSFXDataMesh.Values, PSXTextureMgr.GetDebugExportPath() + "MeshPositions.txt");
+		String outputFName = PSXTextureMgr.GetDebugExportPath() + "Mesh" + UnifiedBattleSequencer.EXTENSION_SFXMESH_RAW;
+		//if (File.Exists(outputFName))
+		//{
+		//	List<SFXDataMeshConverter> previousCaption = SFXDataMeshConverter.Import(File.ReadAllText(outputFName));
+		//	SFXDataMeshConverter.Export(previousCaption, outputFName + "2");
+		//}
+		SFXDataMeshConverter.ExportAsSFXModel(SFXRender.exportSFXDataMesh.Values, outputFName);
+		//for (Int32 i = 0; i < lastFrame; i++)
+		//	SFXDataMeshConverter.ExportAsObj(PSXTextureMgr.GetDebugExportPath() + "meshfull_" + i, SFXRender.exportSFXDataMesh.Values, i);
+		SFXRender.exportSFXDataMesh.Clear();
+	}
+
 	public unsafe static void Add(PSX_LIBGPU.P_TAG* tag)
 	{
-		Int32 num = (Int32)(tag->code & 252);
-		if (num == 32)
+		switch (tag->code & 252)
 		{
-			UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-			SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-			mesh.PolyF3((PSX_LIBGPU.POLY_F3*)tag);
-			return;
-		}
-		if (num == 36)
-		{
-			if (SFX.currentEffectID != 149)
+			case 32:
 			{
+				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+				mesh.PolyF3((PSX_LIBGPU.POLY_F3*)tag);
+				return;
+			}
+			case 36:
+				//if (SFX.currentEffectID != SpecialEffect.Stop)
 				SFXRender.PolyFT3((PSX_LIBGPU.POLY_FT3*)tag);
-			}
-			return;
-		}
-		if (num == 40)
-		{
-			SFXRender.PolyF4((PSX_LIBGPU.POLY_F4*)tag);
-			return;
-		}
-		if (num == 44)
-		{
-			SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, 0u);
-			return;
-		}
-		if (num == 48)
-		{
-			UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-			SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-			mesh.PolyG3((PSX_LIBGPU.POLY_G3*)tag);
-			return;
-		}
-		if (num == 52)
-		{
-			SFXRender.PolyGT3((PSX_LIBGPU.POLY_GT3*)tag);
-			return;
-		}
-		if (num == 56)
-		{
-			SFXRender.PolyG4((PSX_LIBGPU.POLY_G4*) tag);
-			return;
-		}
-		if (num == 60)
-		{
-			if (SFX.currentEffectID != 126 && SFX.currentEffectID != 149 && SFX.currentEffectID != 395)
+				return;
+			case 40:
 			{
+				SFXRender.PolyF4((PSX_LIBGPU.POLY_F4*)tag);
+				return;
+			}
+			case 44:
+				SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, 0u);
+				return;
+			case 48:
+			{
+				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+				mesh.PolyG3((PSX_LIBGPU.POLY_G3*)tag);
+				return;
+			}
+			case 52:
+				SFXRender.PolyGT3((PSX_LIBGPU.POLY_GT3*)tag);
+				return;
+			case 56:
+			{
+				SFXRender.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
+				return;
+			}
+			case 60:
+				//if (SFX.currentEffectID != SpecialEffect.Slow && SFX.currentEffectID != SpecialEffect.Stop && SFX.currentEffectID != SpecialEffect.Rippler)
 				SFXRender.PolyGT4((PSX_LIBGPU.POLY_GT4*)tag);
-			}
-			return;
-		}
-		if (num == 64)
-		{
-			UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | 134217728u;
-			SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-			mesh.LineF2((PSX_LIBGPU.LINE_F2*)tag);
-			return;
-		}
-		if (num == 68)
-		{
-			SFXRender.PolyBFT4((PSX_LIBGPU.POLY_FT4*)tag);
-			return;
-		}
-		if (num == 72)
-		{
-			SFXRender.PolyBGT4((PSX_LIBGPU.POLY_GT4*)tag);
-			return;
-		}
-		if (num == 76)
-		{
-			SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, 33554432u);
-			return;
-		}
-		if (num == 80)
-		{
-			UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | 134217728u;
-			SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-			mesh.LineG2((PSX_LIBGPU.LINE_G2*)tag);
-			return;
-		}
-		if (num == 96)
-		{
-			SFXRender.TILE((PSX_LIBGPU.TILE*)tag, (Int32)((PSX_LIBGPU.TILE*)tag)->w, (Int32)((PSX_LIBGPU.TILE*)tag)->h);
-			return;
-		}
-		if (num == 100)
-		{
-			SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, (Int32)((PSX_LIBGPU.SPRT*)tag)->w, (Int32)((PSX_LIBGPU.SPRT*)tag)->h);
-			return;
-		}
-		if (num == 104)
-		{
-			SFXRender.TILE((PSX_LIBGPU.TILE*)tag, 1, 1);
-			return;
-		}
-		if (num == 112)
-		{
-			SFXRender.TILE((PSX_LIBGPU.TILE*)tag, 8, 8);
-			return;
-		}
-		if (num == 116)
-		{
-			SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, 8, 8);
-			return;
-		}
-		if (num == 120)
-		{
-			SFXRender.TILE((PSX_LIBGPU.TILE*)tag, 16, 16);
-			return;
-		}
-		if (num != 124)
-		{
-			switch (tag->code)
+				return;
+			case 64:
 			{
-			case 225:
-				if (tag->getLen() == 1u)
-				{
-					SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
-				}
-				else
-				{
-					SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
-				}
-				break;
-			case 228:
-				SFXRender.DR_AREA((PSX_LIBGPU.DR_AREA*)tag);
-				break;
-			case 229:
-				SFXRender.DR_OFFSET((PSX_LIBGPU.DR_OFFSET*)tag);
-				break;
-			case 231:
-				if (SFX.currentEffectID != 395 && SFX.currentEffectID != 126)
-				{
-					SFXRender.DR_MOVE((PSX_LIBGPU.DR_MOVE*)tag);
-				}
-				break;
+				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | SFXKey.LINE_POLYGON;
+				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+				mesh.LineF2((PSX_LIBGPU.LINE_F2*)tag);
+				return;
 			}
-			return;
+			case 68:
+				SFXRender.PolyBFT4((PSX_LIBGPU.POLY_FT4*)tag);
+				return;
+			case 72:
+				SFXRender.PolyBGT4((PSX_LIBGPU.POLY_GT4*)tag);
+				return;
+			case 76:
+				SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, SFXKey.FILLTER_POINT);
+				return;
+			case 80:
+			{
+				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | SFXKey.LINE_POLYGON;
+				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+				mesh.LineG2((PSX_LIBGPU.LINE_G2*)tag);
+				return;
+			}
+			case 96:
+				SFXRender.TILE((PSX_LIBGPU.TILE*)tag, (Int32)((PSX_LIBGPU.TILE*)tag)->w, (Int32)((PSX_LIBGPU.TILE*)tag)->h);
+				return;
+			case 100:
+				SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, (Int32)((PSX_LIBGPU.SPRT*)tag)->w, (Int32)((PSX_LIBGPU.SPRT*)tag)->h);
+				return;
+			case 104:
+				SFXRender.TILE((PSX_LIBGPU.TILE*)tag, 1, 1);
+				return;
+			case 112:
+				SFXRender.TILE((PSX_LIBGPU.TILE*)tag, 8, 8);
+				return;
+			case 116:
+				SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, 8, 8);
+				return;
+			case 120:
+				SFXRender.TILE((PSX_LIBGPU.TILE*)tag, 16, 16);
+				return;
+			case 124:
+				SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, 16, 16);
+				return;
 		}
-		SFXRender.SPRT((PSX_LIBGPU.SPRT*)tag, 16, 16);
+		switch (tag->code)
+		{
+		case 225:
+			if (tag->getLen() == 1u)
+				SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
+			else
+				SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
+			break;
+		case 228:
+			SFXRender.DR_AREA((PSX_LIBGPU.DR_AREA*)tag);
+			break;
+		case 229:
+			SFXRender.DR_OFFSET((PSX_LIBGPU.DR_OFFSET*)tag);
+			break;
+		case 231:
+			//if (SFX.currentEffectID != SpecialEffect.Rippler && SFX.currentEffectID != SpecialEffect.Slow)
+			SFXRender.DR_MOVE((PSX_LIBGPU.DR_MOVE*)tag);
+			break;
+		}
+		return;
 	}
 
 	private static unsafe void PolyG4(PSX_LIBGPU.POLY_G4* tag)
 	{
 		UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
+		SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
 	}
@@ -251,7 +314,7 @@ public class SFXRender
 	private static unsafe void PolyF4(PSX_LIBGPU.POLY_F4* tag)
 	{
 		UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
+		SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyF4(tag);
 	}
@@ -273,7 +336,7 @@ public class SFXRender
 	private unsafe static void PolyGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
 		UInt32 abrtex = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage);
-		FixWidescreenFace(abrtex, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
+		SFXRender.FixWidescreenFace(abrtex, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(abrtex, tag->code);
 		mesh.PolyGt4(tag);
 	}
@@ -281,40 +344,42 @@ public class SFXRender
 	private unsafe static void PolyFT4(PSX_LIBGPU.POLY_FT4* tag, UInt32 fillter = 0u)
 	{
 		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | fillter;
-		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
+		SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyFt4(tag);
 	}
 
 	private unsafe static void PolyBFT4(PSX_LIBGPU.POLY_FT4* tag)
 	{
-		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
-		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
+		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | SFXKey.FILLTER_BILINEAR | SFXKey.FULL_BLUR_TXTURE;
+		SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyBft4(tag);
 	}
 
 	private unsafe static void PolyBGT4(PSX_LIBGPU.POLY_GT4* tag)
 	{
-		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | 67108864u | 536870912u;
-		FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
+		UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | SFXKey.FILLTER_BILINEAR | SFXKey.FULL_BLUR_TXTURE;
+		SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.PolyBgt4(tag);
 	}
 
 	private unsafe static void SPRT(PSX_LIBGPU.SPRT* tag, Int32 w, Int32 h)
 	{
-		// Sprites have a texture while Tiles have vertex colors only
 		if (w == 80 && h == 110 && (tag->y0 == 0 || tag->y0 == 110) && (tag->x0 == 0 || tag->x0 == 80 || tag->x0 == 160 || tag->x0 == 240))
 		{
+			Int16 rightx = (Int16)(tag->x0 == 0 ? 80 :
+								   tag->x0 == 80 ? 160 :
+								   tag->x0 == 160 ? 240 : 320);
 			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
-			Single aspectRatioDiffMultiplier = FieldMap.PsxFieldWidth / 320f;
-			w = (int)(w * aspectRatioDiffMultiplier);
+			Single aspectRatioDiffMultiplier = FieldMap.PsxScreenWidth / (Single)FieldMap.PsxScreenWidthNative;
+			w = (Int32)(w * aspectRatioDiffMultiplier);
 			tag->x0 = (Int16)(tag->x0 * aspectRatioDiffMultiplier - widescreenOffset);
-			if (tag->x0 == 159)
+			if (rightx == 320 || tag->x0 + w < (Int16)(rightx * aspectRatioDiffMultiplier - widescreenOffset))
 				w++;
 		}
-		UInt32 meshKey = SFXKey.GetCurrentABRTex(tag->code, tag->clut) | 67108864u;
+		UInt32 meshKey = SFXKey.GetCurrentABRTex(tag->code, tag->clut) | SFXKey.FILLTER_BILINEAR;
 		SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
 		mesh.Sprite(tag, w, h);
 	}
@@ -324,11 +389,14 @@ public class SFXRender
 		// Fixes some instances of screen flashes (e.g. white screen when summoning Ifrit)
 		if (w == 80 && h == 110 && (tag->y0 == 0 || tag->y0 == 110) && (tag->x0 == 0 || tag->x0 == 80 || tag->x0 == 160 || tag->x0 == 240))
 		{
-			short widescreenOffset = (short)CalculateWidescreenOffsetX();
-			float aspectRatioDiffMultiplier = FieldMap.PsxFieldWidth / 320f;
-			w = (int)(w * aspectRatioDiffMultiplier);
-			tag->x0 = (short)(tag->x0 * aspectRatioDiffMultiplier - widescreenOffset);
-			if (tag->x0 == 159)
+			Int16 rightx = (Int16)(tag->x0 == 0 ? 80 :
+								   tag->x0 == 80 ? 160 :
+								   tag->x0 == 160 ? 240 : 320);
+			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+			Single aspectRatioDiffMultiplier = FieldMap.PsxScreenWidth / (Single)FieldMap.PsxScreenWidthNative;
+			w = (Int32)(w * aspectRatioDiffMultiplier);
+			tag->x0 = (Int16)(tag->x0 * aspectRatioDiffMultiplier - widescreenOffset);
+			if (rightx == 320 || tag->x0 + w < (Int16)(rightx * aspectRatioDiffMultiplier - widescreenOffset))
 			{
 				// Need to increment w to make up for rounding losses
 				w++;
@@ -341,12 +409,12 @@ public class SFXRender
 
 	private unsafe static void DR_TPAGE(PSX_LIBGPU.DR_TPAGE* obj)
 	{
-		SFXKey.SetCurrentTPage((UInt16)(obj->code[0] & 65535u));
+		SFXKey.SetCurrentTPage((UInt16)(obj->code[0] & 0xFFFFu));
 	}
 
 	private unsafe static void DR_OFFSET(PSX_LIBGPU.DR_OFFSET* obj)
 	{
-		SFXMeshBase.drOffsetX = (Int32)(obj->code[1] & 65535u) + CalculateWidescreenOffsetX();
+		SFXMeshBase.drOffsetX = (Int32)(obj->code[1] & 0xFFFFu) + CalculateWidescreenOffsetX();
 		SFXMeshBase.drOffsetY = (Int32)(obj->code[1] >> 16);
 	}
 
@@ -368,57 +436,41 @@ public class SFXRender
 
 	private unsafe static void DR_MOVE(PSX_LIBGPU.DR_MOVE* obj)
 	{
-		Int32 num = (Int32)(obj->code[1] >> 16);
-		Int32 num2 = (Int32)((Int16)(obj->code[1] & 65535u));
+		Int32 rx = (Int32)(obj->code[1] >> 16);
+		Int32 ry = (Int32)((Int16)(obj->code[1] & 0xFFFFu));
 		Int32 rw = (Int32)(obj->code[2] >> 16);
-		Int32 rh = (Int32)(obj->code[2] & 65535u);
+		Int32 rh = (Int32)(obj->code[2] & 0xFFFFu);
 		Int32 x = (Int32)(obj->code[3] >> 16);
-		Int32 y = (Int32)(obj->code[3] & 65535u);
+		Int32 y = (Int32)(obj->code[3] & 0xFFFFu);
 		SFXRender.PushCommandBuffer();
-		if (num < 320 && num2 < 240)
+		if (rx < 320 && ry < 240)
 		{
-			if (SFX.currentEffectID == 126)
-			{
-				num2 -= 128;
-			}
-			SFXRender.commandBuffer.Add(new SFXScreenShot(num, num2, x, y));
+			if (SFX.currentEffectID == SpecialEffect.Slow)
+				ry -= 128;
+			SFXRender.commandBuffer.Add(new SFXScreenShot(rx, ry, x, y));
 		}
 		else
 		{
-			SFXRender.commandBuffer.Add(new SFXMoveImage(num, num2, rw, rh, x, y));
+			SFXRender.commandBuffer.Add(new SFXMoveImage(rx, ry, rw, rh, x, y));
 		}
 	}
 
 	private static void PushCommandBuffer()
 	{
 		if (SFX.subOrder == 0)
-		{
 			SFXRender.PushCommandBufferSub();
-		}
 		if (SFX.addOrder == 0)
-		{
 			SFXRender.PushCommandBufferOpa();
-		}
 		else
-		{
 			SFXRender.PushCommandBufferAdd();
-		}
 		if (SFX.subOrder == 1)
-		{
 			SFXRender.PushCommandBufferSub();
-		}
 		if (SFX.addOrder == 0)
-		{
 			SFXRender.PushCommandBufferAdd();
-		}
 		else
-		{
 			SFXRender.PushCommandBufferOpa();
-		}
 		if (SFX.subOrder == 2)
-		{
 			SFXRender.PushCommandBufferSub();
-		}
 	}
 
 	private static void PushCommandBufferOpa()
@@ -497,88 +549,41 @@ public class SFXRender
 	{
 		UInt32 blendMode = SFXKey.GetBlendMode(meshKey);
 		List<SFXMesh> list;
-		if (!SFXKey.isLinePolygon(meshKey))
+		if (SFXKey.isLinePolygon(meshKey))
 		{
-			if (SFXKey.IsTexture(meshKey))
+			if (blendMode == 0)
+				list = SFXRender.meshLineOpa;
+			else if (blendMode == 1)
+				list = SFXRender.meshLineAdd;
+			else
+				list = SFXRender.meshLineSub;
+		}
+		else if (SFXKey.IsTexture(meshKey))
+		{
+			if (blendMode == 0)
+				list = SFXRender.meshTexOpa;
+			else if (blendMode == 1)
 			{
-				UInt32 num = blendMode;
-				if (num != 0u)
-				{
-					if (num != 1u)
-					{
-						list = SFXRender.meshTexSub;
-					}
-					else
-					{
-						UInt32 fillter = SFXKey.GetFilter(meshKey);
-						if (fillter != 33554432u)
-						{
-							if (fillter != 67108864u)
-							{
-								list = ((!SFX.isDebugFillter) ? SFXRender.meshTexAddPS : SFXRender.meshTexAddBL);
-							}
-							else
-							{
-								list = SFXRender.meshTexAddBL;
-							}
-						}
-						else
-						{
-							list = SFXRender.meshTexAddPS;
-						}
-					}
-				}
-				else
-				{
-					list = SFXRender.meshTexOpa;
-				}
+				UInt32 filter = SFXKey.GetFilter(meshKey);
+				list = filter == SFXKey.FILLTER_POINT ? SFXRender.meshTexAddPS
+					 : filter == SFXKey.FILLTER_BILINEAR ? SFXRender.meshTexAddBL
+					 : SFX.isDebugFillter ? SFXRender.meshTexAddBL : SFXRender.meshTexAddPS;
 			}
 			else
-			{
-				UInt32 num = blendMode;
-				if (num != 0u)
-				{
-					if (num != 1u)
-					{
-						list = SFXRender.meshSub;
-					}
-					else
-					{
-						list = SFXRender.meshAdd;
-					}
-				}
-				else
-				{
-					list = SFXRender.meshOpa;
-				}
-			}
+				list = SFXRender.meshTexSub;
 		}
 		else
 		{
-			UInt32 num = blendMode;
-			if (num != 0u)
-			{
-				if (num != 1u)
-				{
-					list = SFXRender.meshLineSub;
-				}
-				else
-				{
-					list = SFXRender.meshLineAdd;
-				}
-			}
+			if (blendMode == 0)
+				list = SFXRender.meshOpa;
+			else if (blendMode == 1)
+				list = SFXRender.meshAdd;
 			else
-			{
-				list = SFXRender.meshLineOpa;
-			}
+				list = SFXRender.meshSub;
 		}
 		foreach (SFXMesh sfxmesh in list)
-		{
 			if (sfxmesh.GetKey() == meshKey)
-			{
 				return sfxmesh;
-			}
-		}
 		SFXMesh sfxmesh2 = SFXRender.meshEmpty[SFXRender.meshEmpty.Count - 1];
 		SFXRender.meshEmpty.RemoveAt(SFXRender.meshEmpty.Count - 1);
 		list.Add(sfxmesh2);
@@ -586,16 +591,55 @@ public class SFXRender
 		return sfxmesh2;
 	}
 
+	public static Int32 GetRenderPriority(UInt32 meshKey)
+	{
+		// (SFX.subOrder, SFX.addOrder)
+		// (0, 0) => Sub Opa Add
+		// (1, 0) => Opa Sub Add
+		// (2, 0) => Opa Add Sub
+		// (0, 1) => Sub Add Opa
+		// (1, 1) => Add Sub Opa
+		// (2, 1) => Add Opa Sub
+		UInt32 blendMode = SFXKey.GetBlendMode(meshKey);
+		Int32 priority = 0;
+		if (SFXKey.isLinePolygon(meshKey))
+			priority += blendMode == 1 ? 3 : 2;
+		else if (SFXKey.IsTexture(meshKey))
+			priority += blendMode == 1 && (SFXKey.GetFilter(meshKey) == SFXKey.FILLTER_BILINEAR || SFX.isDebugFillter) ? 2 : 1;
+		if (blendMode == 0) // Opa
+		{
+			if (SFX.subOrder == 0 || (SFX.subOrder == 1 && SFX.addOrder == 1)) // Sub comes before Opa
+				priority += 3;
+			if (SFX.addOrder == 1) // Add comes before Opa
+				priority += 4;
+		}
+		else if (blendMode == 1) // Add
+		{
+			if (SFX.subOrder == 0 || (SFX.subOrder == 1 && SFX.addOrder == 0)) // Sub comes before Add
+				priority += 3;
+			if (SFX.addOrder == 0) // Opa comes before Add
+				priority += 3;
+		}
+		else // Sub
+		{
+			if (SFX.subOrder == 2 || (SFX.subOrder == 1 && SFX.addOrder == 1)) // Add comes before Sub
+				priority += 4;
+			if (SFX.subOrder == 2 || (SFX.subOrder == 1 && SFX.addOrder == 0)) // Opa comes before Sub
+				priority += 3;
+		}
+		return priority;
+	}
+
 	private static void FixWidescreenFace(UInt32 meshKey, ref Int16 x0, ref Int16 x1, ref Int16 x2, ref Int16 x3, Int16 y0, Int16 y1, Int16 y2, Int16 y3)
 	{
 		if (!Memoria.Configuration.Graphics.WidescreenSupport)
 			return;
 		UInt32 textureKey = SFXKey.GetTextureKey(meshKey);
-		// Enlarge blur texture, whatever the size
-		if (SFXKey.GetTextureMode(meshKey) == 2u && (SFXKey.IsBlurTexture(textureKey) || (SFX.currentEffectID == 274 && textureKey == 0x57FFFFu)))
+		// Enlarge blur textures, whatever the size
+		if (SFXKey.GetTextureMode(meshKey) == 2u && (SFXKey.IsBlurTexture(textureKey) || (SFX.currentEffectID == SpecialEffect.Devour && textureKey == 0x57FFFFu)))
 		{
 			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
-			Single aspectRatioDiffMultiplier = FieldMap.PsxFieldWidth / (Single)FieldMap.PsxFieldWidthNative;
+			Single aspectRatioDiffMultiplier = FieldMap.PsxScreenWidth / (Single)FieldMap.PsxScreenWidthNative;
 			x0 = (Int16)(x0 * aspectRatioDiffMultiplier - widescreenOffset);
 			x1 = (Int16)(x1 * aspectRatioDiffMultiplier - widescreenOffset);
 			x2 = (Int16)(x2 * aspectRatioDiffMultiplier - widescreenOffset);
@@ -612,7 +656,8 @@ public class SFXRender
 			x3 += widescreenOffset;
 			return;
 		}
-		if (SFX.currentEffectID == 211 && meshKey == 0x00800000u) // Phoenix__Full, fire on the foreground
+		// Fix specific exceptions
+		if (SFX.currentEffectID == SpecialEffect.Phoenix__Full && meshKey == 0x00800000u) // Fire on the foreground
 		{
 			// 0x00800000u is used by many meshes in many frames, potentially with parts that are widescreens and parts that are not; they are the trickiest
 			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
@@ -628,7 +673,7 @@ public class SFXRender
 			}
 			return;
 		}
-		if (SFX.currentEffectID == 225 && meshKey == 0x00800000u) // Phoenix_Rebirth_Flame, light from above
+		if (SFX.currentEffectID == SpecialEffect.Phoenix_Rebirth_Flame && meshKey == 0x00800000u) // Light from above
 		{
 			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
 			if (x0 == 0 && x2 == 0 && x1 == 80 && x3 == 80)
@@ -643,7 +688,7 @@ public class SFXRender
 			}
 			return;
 		}
-		if (SFX.currentEffectID == 251 && meshKey == 0x00800000u) // Madeen__Full, light from ground explosion
+		if (SFX.currentEffectID == SpecialEffect.Madeen__Full && meshKey == 0x00800000u) // Light from ground explosion
 		{
 			Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
 			if (x0 == 0 && x2 == 0 && x1 == 40 && x3 == 40)
@@ -658,7 +703,7 @@ public class SFXRender
 			}
 			return;
 		}
-		if (SFX.currentEffectID == 381) // Ark__Full
+		if (SFX.currentEffectID == SpecialEffect.Ark__Full)
 		{
 			if (meshKey == 0x00800000u)
 			{
@@ -694,14 +739,14 @@ public class SFXRender
 		}
 	}
 
-	private static bool IsFullWidthRect(short x0, short x1, short x2, short x3)
+	private static Boolean IsFullWidthRect(Int16 x0, Int16 x1, Int16 x2, Int16 x3)
 	{
 		return x0 == 0 && (x1 == 320 || x1 == 319) && x2 == 0 && (x3 == 320 || x3 == 319);
 	}
 
-	private static int CalculateWidescreenOffsetX()
+	private static Int32 CalculateWidescreenOffsetX()
 	{
-		return (FieldMap.PsxFieldWidth - 320) / 2;
+		return (FieldMap.PsxScreenWidth - FieldMap.PsxScreenWidthNative) / 2;
 	}
 
 	public static Int32 primCount;
@@ -732,5 +777,7 @@ public class SFXRender
 
 	private static List<SFXMesh> meshLineSub;
 
-	private static List<SFXMeshBase> commandBuffer;
+	public static List<SFXMeshBase> commandBuffer;
+
+	private static Dictionary<UInt32, SFXDataMeshConverter> exportSFXDataMesh;
 }

@@ -13,7 +13,7 @@ public class FieldMapUIButton : MonoBehaviour
 		this.bg = GameObject.Find("FieldMap").GetComponent<FieldMap>();
 		this._sceneList = new List<FieldMapUIButton.SceneDef>();
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapList.txt";
-		String text = AssetManager.LoadString(name, out _, false);
+		String text = AssetManager.LoadString(name, out _);
 		String[] array = text.Split(new Char[]
 		{
 			"\n"[0]

@@ -1,0 +1,6 @@
+// Shared sequence of SFX Accumulate
+
+PlaySound: Sound=1068
+PlaySound: Sound=1069
+PlaySound: Sound=1070
+Wait: Time=20

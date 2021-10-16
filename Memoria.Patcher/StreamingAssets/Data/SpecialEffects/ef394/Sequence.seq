@@ -1,0 +1,19 @@
+// Shared sequence of SFX Special_Trance_Kuja
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=176
+PlaySound: Sound=2643
+PlaySound: Sound=2644
+PlaySound: Sound=2645
+Wait: Time=36
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -500.0, 0.0) ; MoveHeight=True ; Time=0
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=31
+SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16
+Wait: Time=109
+PlaySound: Sound=1173
+PlaySound: Sound=1174
+PlaySound: Sound=1175
+SetBackgroundIntensity: Intensity=1 ; Time=16
+WaitAnimation: Char=AllTargets
+PlayAnimation: Char=AllTargets ; Anim=1 ; Loop=True

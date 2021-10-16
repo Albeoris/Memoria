@@ -1,0 +1,15 @@
+// Shared sequence of SFX Firaga__Single
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=25
+PlaySound: Sound=99
+PlaySound: Sound=88
+PlaySound: Sound=40
+Wait: Time=25
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=48
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=5
+Wait: Time=6
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

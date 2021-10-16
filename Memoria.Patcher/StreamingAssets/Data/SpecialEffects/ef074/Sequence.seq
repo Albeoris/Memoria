@@ -1,0 +1,10 @@
+// Shared sequence of SFX Goblin_Punch
+
+PlaySound: Sound=55
+PlaySound: Sound=47
+PlaySound: Sound=94
+Wait: Time=7
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=11

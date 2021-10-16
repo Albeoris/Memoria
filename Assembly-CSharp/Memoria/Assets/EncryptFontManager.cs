@@ -34,7 +34,7 @@ namespace Memoria.Assets
             if (fontBundle == null)
             {
 				String[] fontInfo;
-                Byte[] binAsset = AssetManager.LoadBytes(path, out fontInfo, false);
+                Byte[] binAsset = AssetManager.LoadBytes(path, out fontInfo);
                 Byte[] binary = ByteEncryption.Decryption(binAsset);
                 fontBundle = AssetBundle.CreateFromMemoryImmediate(binary);
             }

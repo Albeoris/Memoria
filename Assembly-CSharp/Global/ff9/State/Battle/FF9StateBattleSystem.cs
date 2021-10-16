@@ -19,29 +19,20 @@ public class FF9StateBattleSystem
 		};
 		this.enemy = new ENEMY[4];
 		for (Int32 i = 0; i < (Int32)this.enemy.Length; i++)
-		{
 			this.enemy[i] = new ENEMY();
-		}
 		this.enemy_type = new ENEMY_TYPE[4];
 		for (Int32 j = 0; j < (Int32)this.enemy_type.Length; j++)
-		{
 			this.enemy_type[j] = new ENEMY_TYPE();
-		}
 		this.btl_list = new BTL_DATA();
 		this.btl_data = new BTL_DATA[8];
 		for (Int32 k = 0; k < (Int32)this.btl_data.Length; k++)
-		{
 			this.btl_data[k] = new BTL_DATA();
-		}
 		this.cmd_buffer = new CMD_DATA[48]; // enemy_type.Length * 12
 		for (Int32 l = 0; l < (Int32)this.cmd_buffer.Length; l++)
-		{
 			this.cmd_buffer[l] = new CMD_DATA();
-		}
 		this.cmd_escape = new CMD_DATA();
 		this.cmd_queue = new CMD_DATA();
-		this.cur_cmd = new CMD_DATA();
-		this.fx_req = new BTL_VFX_REQ();
+		this.cur_cmd_list = new List<CMD_DATA>();
 		this.seq_work_set = new SEQ_WORK_SET();
 		this.btl_scene = new BTL_SCENE();
 		this.btl2d_work_set = new BTL2D_WORK();
@@ -51,7 +42,7 @@ public class FF9StateBattleSystem
 		this.map = new FF9StateBattleMap();
 	}
 
-	public UInt16 attr;
+	public ff9btl.ATTR attr;
 
 	public Char usage;
 
@@ -69,9 +60,9 @@ public class FF9StateBattleSystem
 
 	public Int32 btl_cnt;
 
-	public Byte btl_phase;
+	public Byte btl_phase; // FF9.battle_phase
 
-	public Byte btl_seq;
+	public Byte btl_seq; // FF9.battle_phase_close, FF9.battle_phase_defeat, FF9.battle_phase_menu_off & FF9.battle_phase_victory
 
 	public Byte btl_fade_time;
 
@@ -91,15 +82,28 @@ public class FF9StateBattleSystem
 
 	public CMD_DATA cmd_queue;
 
-	public CMD_DATA cur_cmd;
+	public CMD_DATA cur_cmd
+	{
+		get
+		{
+			if (cur_cmd_list.Count == 0)
+				return null;
+			foreach (CMD_DATA cmd in cur_cmd_list)
+				if (cmd.regist != null && cmd.regist.bi.player == 0)
+					return cmd;
+			return cur_cmd_list[0];
+		}
+	}
+
+	public List<CMD_DATA> cur_cmd_list;
 
 	public GameObject s_cur;
 
-	public BTL_VFX_REQ fx_req;
+	//public BTL_VFX_REQ fx_req; // Use 1 fx request per command instead of a shared one
 
-	public UInt16 cmd_status;
+	public UInt16 cmd_status; // FF9.Command.CMDSYS_STATUS_...
 
-	public command_mode_index cmd_mode;
+	//public command_mode_index cmd_mode; // Each cmd has its cmd.info.mode
 
 	public Byte phantom_no;
 
@@ -121,7 +125,7 @@ public class FF9StateBattleSystem
 
 	public EntryCollection<BattleStatusEntry> add_status;
 
-    public IEnumerable<BattleUnit> EnumerateBattleUnits()
+	public IEnumerable<BattleUnit> EnumerateBattleUnits()
     {
         for (BTL_DATA data = FF9StateSystem.Battle.FF9Battle.btl_list.next; data != null; data = data.next)
             yield return new BattleUnit(data);

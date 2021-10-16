@@ -1,0 +1,13 @@
+// Shared sequence of SFX Poly
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=101
+PlaySound: Sound=1049
+PlaySound: Sound=1050
+PlaySound: Sound=1051
+Wait: Time=55
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=8

@@ -109,7 +109,7 @@ public class FieldSPSSystem : HonoBehavior
 	private Boolean _loadSPSTexture()
 	{
 		String[] tcbInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("FieldMaps/" + this.MapName + "/spt.tcb", out tcbInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes("FieldMaps/" + this.MapName + "/spt.tcb", out tcbInfo);
 		if (binAsset != null)
 		{
 			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
@@ -171,7 +171,7 @@ public class FieldSPSSystem : HonoBehavior
 			"/",
 			spsNo,
 			".sps"
-		}), out spsInfo, false);
+		}), out spsInfo);
 		if (binAsset == null)
 		{
 			return false;

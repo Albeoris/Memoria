@@ -1,0 +1,13 @@
+// Shared sequence of SFX Sleeping_Juice
+
+PlaySound: Sound=488
+PlaySound: Sound=481
+PlaySound: Sound=501
+Wait: Time=8
+PlaySound: Sound=569
+PlaySound: Sound=559
+PlaySound: Sound=552
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

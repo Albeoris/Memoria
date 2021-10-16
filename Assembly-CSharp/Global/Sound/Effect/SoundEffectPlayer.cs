@@ -126,13 +126,10 @@ public class SoundEffectPlayer : SoundPlayer
 		}
 	}
 
-	public void PlaySoundEffect(Int32 soundIndex, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
+	public void PlaySoundEffect(Int32 soundIndex, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f, SoundProfileType type = SoundProfileType.SoundEffect)
 	{
-		this.PlaySoundEffect(soundIndex, soundVolume, panning, pitch, SoundProfileType.SoundEffect);
-	}
-
-	protected void PlaySoundEffect(Int32 soundIndex, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f, SoundProfileType type = SoundProfileType.SoundEffect)
-	{
+		if (type == SoundProfileType.SoundEffect)
+			pitch *= HonoBehaviorSystem.Instance.GetFastForwardFactor();
 		SoundProfile soundProfile = this.gameSoundDatabase.Read(soundIndex);
 		if (soundProfile == null)
 		{

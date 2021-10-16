@@ -26,7 +26,7 @@ public class MBGDataReader
 	public static MBGDataReader Load(String binaryName)
 	{
 		String[] mbgInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MBGData/" + binaryName + ".mbgdata", out mbgInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MBGData/" + binaryName + ".mbgdata", out mbgInfo);
 		if (binAsset == null)
 		{
 			return (MBGDataReader)null;

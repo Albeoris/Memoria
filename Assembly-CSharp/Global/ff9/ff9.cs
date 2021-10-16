@@ -2640,7 +2640,7 @@ public static class ff9
 		{
 		}
 		String[] worldRawInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(fileName, out worldRawInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes(fileName, out worldRawInfo);
 		if (binAsset == null)
 		{
 		}
@@ -10227,33 +10227,29 @@ public static class ff9
 
 	public static EncountData w_worldGetBattleScenePtr()
 	{
-		Int32 num = 0;
-		Int32 num2 = ff9.w_worldArea2Zone(ff9.m_GetIDArea(ff9.m_moveActorID));
-		Int32 num3 = ff9.w_worldZoneInfo[num2];
-		Int32 num4 = ff9.w_worldZoneInfo[num2 + 1];
+		Int32 useAlternate = 0;
+		Int32 zoneId = ff9.w_worldArea2Zone(ff9.m_GetIDArea(ff9.m_moveActorID));
+		Int32 zoneInfoStart = ff9.w_worldZoneInfo[zoneId];
+		Int32 zoneInfoEnd = ff9.w_worldZoneInfo[zoneId + 1];
 		Int32 i;
-		for (i = num3; i < num4; i++)
+		for (i = zoneInfoStart; i < zoneInfoEnd; i++)
 		{
 			Byte pattern = ff9.w_frameBattleScenePtr[i].pattern;
 			Byte pad = ff9.w_frameBattleScenePtr[i].pad;
-			Byte b = (Byte)(pattern >> 2);
-			Byte b2 = (Byte)(pad >> 1);
-			Byte b3 = (Byte)(pad & 1);
-			if (b == ff9.m_GetIDTopograph(ff9.m_moveActorID) && b3 == ff9.w_frameFog)
+			Byte topographId = (Byte)(pattern >> 2);
+			Byte hasFog = (Byte)(pad & 1);
+			Byte b = (Byte)(pad >> 1);
+			if (topographId == ff9.m_GetIDTopograph(ff9.m_moveActorID) && hasFog == ff9.w_frameFog)
 			{
 				if (ff9.w_frameDisc == 4 && i < 100)
-				{
-					num = 254;
-				}
+					useAlternate = 254;
 				else
-				{
-					num = 0;
-				}
-				Int32 pattern2 = ff9.w_frameBattleScenePtr[i + num].pattern;
-				return ff9.w_frameBattleScenePtr[i + num];
+					useAlternate = 0;
+				Int32 pattern2 = ff9.w_frameBattleScenePtr[i + useAlternate].pattern;
+				return ff9.w_frameBattleScenePtr[i + useAlternate];
 			}
 		}
-		return ff9.w_frameBattleScenePtr[i + num - 1];
+		return ff9.w_frameBattleScenePtr[i + useAlternate - 1];
 	}
 
 	public static void w_worldPos2Cell(Single x, Single z, out Int32 cell)

@@ -8,24 +8,24 @@ public class BTL_DATA
 {
 	public void SetDisappear(Byte value)
 	{
+		if (value == 0 && btl_stat.CheckStatus(this, BattleStatus.Jump))
+		{
+			CMD_DATA cmd;
+			if (!btl_util.IsBtlUsingCommand(this, out cmd) || (cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2 && cmd.cmd_no != BattleCommandId.JumpAttack && cmd.cmd_no != BattleCommandId.JumpTrance))
+				return;
+		}
+		// Move the gameObject out of camera view right before hiding it to avoid flickering when showing it back
+		if (value == 1 && this.bi.disappear == 0)
+			gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, -10000f, gameObject.transform.localPosition.z);
 		this.bi.disappear = value;
-		if (this.bi.disappear != 0)
-		{
-			this.SetActiveBtlData(false);
-		}
-		else
-		{
-			this.SetActiveBtlData(true);
-		}
+		this.SetActiveBtlData(this.bi.disappear != 1);
 	}
 
 	public GameObject getShadow()
 	{
 		if (this.bi.player != 0)
-		{
-			return FF9StateSystem.Battle.FF9Battle.map.shadowArray[(Int32)this.bi.slot_no];
-		}
-		return FF9StateSystem.Battle.FF9Battle.map.shadowArray[(Int32)(9 + this.bi.slot_no)];
+			return FF9StateSystem.Battle.FF9Battle.map.shadowArray[this.bi.slot_no];
+		return FF9StateSystem.Battle.FF9Battle.map.shadowArray[9 + this.bi.slot_no];
 	}
 
 	public void SetActiveBtlData(Boolean value)
@@ -33,9 +33,7 @@ public class BTL_DATA
 		GameObject shadow = this.getShadow();
 		this.gameObject.SetActive(value);
 		if (this.bi.shadow != 0)
-		{
 			shadow.SetActive(value);
-		}
 	}
 
 	public void SetIsEnabledMeshRenderer(Int32 mesh, Boolean isEnabled)
@@ -51,9 +49,7 @@ public class BTL_DATA
 				{
 					Renderer renderer = array[i];
 					if (renderer.enabled != isEnabled)
-					{
 						renderer.enabled = isEnabled;
-					}
 				}
 				this.meshIsRendering[mesh] = isEnabled;
 			}
@@ -73,9 +69,7 @@ public class BTL_DATA
 				{
 					Renderer renderer = array[i];
 					if (renderer.enabled != isEnabled)
-					{
 						renderer.enabled = isEnabled;
-					}
 				}
 				this.weaponIsRendering = isEnabled;
 			}
@@ -95,9 +89,7 @@ public class BTL_DATA
 				{
 					Renderer renderer = array[i];
 					if (renderer.enabled != isEnabled)
-					{
 						renderer.enabled = isEnabled;
-					}
 				}
 				this.battleModelIsRendering = isEnabled;
 			}
@@ -107,8 +99,6 @@ public class BTL_DATA
 	public BTL_DATA next = null;
 
 	public CMD_DATA[] cmd = new CMD_DATA[6];
-
-	public REFLEC_DATA reflec = new REFLEC_DATA();
 
 	public POINTS max = new POINTS();
 
@@ -156,6 +146,12 @@ public class BTL_DATA
 
 	public String[] mot;
 
+	public UInt16 animFlag;
+
+	public Single animSpeed;
+
+	public Single animFrameFrac;
+
 	public GameObject weapon_geo;
 
 	public UInt16 mesh_current;
@@ -164,9 +160,9 @@ public class BTL_DATA
 
 	public UInt16 btl_id;
 
-	public Byte tar_mode;
+	public Byte tar_mode; // FF9.Command.TAR_MODE_...
 
-	public Byte sel_mode;
+	public Byte sel_mode; // FF9.Command.SEL_MODE_...
 
 	public Int16[] finger_pos = new Int16[2];
 
@@ -242,7 +238,9 @@ public class BTL_DATA
 
 	public Int32 height;
 
-	public Int32 radius;
+	public Int32 radius_effect; // big radius (Scan etc...)
+
+	public UInt16 radius_collision; // small radius (range for attacks etc...)
 
 	public UInt16 frameCount = 1;
 
@@ -266,6 +264,10 @@ public class BTL_DATA
 	public Int32 geo_scale_x; // For geo.geoScaleSet
 	public Int32 geo_scale_y;
 	public Int32 geo_scale_z;
+	public Int32 geo_scale_default;
+
+	public Boolean animEndFrame;
+	public String endedAnimationName;
 
 	public Boolean is_monster_transform;
 

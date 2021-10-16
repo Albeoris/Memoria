@@ -1,0 +1,10 @@
+// Shared sequence of SFX Aura__Multi
+
+PlaySound: Sound=198
+PlaySound: Sound=192
+PlaySound: Sound=1546
+Wait: Time=43
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=27
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

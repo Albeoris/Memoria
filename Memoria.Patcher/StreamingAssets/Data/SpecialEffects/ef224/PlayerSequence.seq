@@ -1,0 +1,41 @@
+// Player sequence of SFX Doomsday_Sword
+
+WaitAnimation: Char=Caster
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+Message: Text=[MagicSword] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Doomsday_Sword ; MagicCaster=Vivi ; Reflect=True ; UseCamera=True
+Turn: Char=Vivi ; BaseAngle=Caster ; Time=14
+PlayAnimation: Char=Vivi ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Vivi
+PlayAnimation: Char=Vivi ; Anim=MP_CHANT ; Loop=True
+Channel: Char=Vivi
+SetBackgroundIntensity: Intensity=0.5 ; Time=20
+WaitSFXLoaded: SFX=Doomsday_Sword ; Reflect=True
+WaitAnimation: Char=Vivi
+StopChannel: Char=Vivi
+PlayAnimation: Char=Vivi ; Anim=MP_MAGIC
+WaitAnimation: Char=Vivi
+Turn: Char=Vivi ; BaseAngle=Default ; Time=4
+PlaySFX: SFX=Doomsday_Sword ; Reflect=True
+Wait: Time=10
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+MoveToPosition: Char=Caster ; AbsolutePosition=(0.0, 0.0, -256.0) ; Time=20
+PlayAnimation: Char=Caster ; Anim=MP_RUN ; Loop=True ; Speed=0.5
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+Wait: Time=10
+PlayAnimation: Char=Caster ; Anim=MP_RUN_TO_ATTACK ; Speed=0.5
+WaitAnimation: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+Wait: Time=5
+PlayAnimation: Char=Caster ; Speed=0
+WaitSFXDone: SFX=Doomsday_Sword ; Reflect=True
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=4
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

@@ -213,7 +213,7 @@ public class BattleSPSSystem : MonoBehaviour
 			"st_basak"
 		};
 		String[] spsInfo;
-		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + array[spsNo] + ".sps", out spsInfo, false);
+		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + array[spsNo] + ".sps", out spsInfo, true);
 		if (bytes == null)
 		{
 			return false;

@@ -1,0 +1,23 @@
+// Shared sequence of SFX Flare_Star
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4
+PlaySound: Sound=2666
+PlaySound: Sound=2667
+PlaySound: Sound=2668
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=8 ; HoldDuration=156
+Wait: Time=36
+PlaySound: Sound=2669
+PlaySound: Sound=2670
+PlaySound: Sound=2671
+Wait: Time=30
+PlaySound: Sound=2672
+PlaySound: Sound=2673
+PlaySound: Sound=2674
+Wait: Time=81
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=9
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

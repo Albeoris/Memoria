@@ -1,0 +1,8 @@
+// Shared sequence of SFX Special_Valia_Pira_Death
+
+PlaySound: Sound=2846
+PlaySound: Sound=2847
+PlaySound: Sound=2848
+Wait: Time=1
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+Wait: Time=183

@@ -15,15 +15,11 @@ public class btl_scrp
 			{
 			case 0u:
 				if (next.bi.player != 0)
-				{
 					num |= next.btl_id;
-				}
 				break;
 			case 1u:
 				if (next.bi.player == 0)
-				{
 					num |= next.btl_id;
-				}
 				break;
 			case 2u:
 				num |= next.btl_id;
@@ -42,141 +38,154 @@ public class btl_scrp
 	{
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		for (Int32 i = 0; i < 8; i++)
-		{
 			if (ff9Battle.btl_data[i].btl_id == btl_id)
-			{
 			    return new BattleUnit(ff9Battle.btl_data[i]);
-			}
-		}
 		return null;
 	}
 
+	// Try to have the most possible AI script compatibility
+	public static CMD_DATA GetCurrentCommandSmart(BTL_DATA btl)
+	{
+		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+		if (btl == null || Configuration.Battle.Speed < 3)
+			return ff9Battle.cur_cmd;
+		CMD_DATA cmd = PersistenSingleton<EventEngine>.Instance.GetTriggeringCommand(btl);
+		if (cmd != null)
+			return cmd;
+		for (Int32 i = 0; i < 6; i++)
+			if (ff9Battle.cur_cmd_list.Contains(btl.cmd[i]))
+				return btl.cmd[i];
+		return ff9Battle.cur_cmd;
+	}
+
 	#region Memoria Battle Script
-	public static UInt16 GetCurrentCommandData(UInt16 data_type)
+	public static UInt16 GetCurrentCommandData(UInt16 data_type, BTL_DATA btl = null)
 	{
 		// Access the current command's stats from battle scripts (SV_5 and SV_6)
 		// Usage:
 		// set SV_5 = Spell stat ID of the currently used spell to access
 		// set spellstat = SV_6
-		if (FF9StateSystem.Battle.FF9Battle.cur_cmd == null)
+		CMD_DATA cmd = GetCurrentCommandSmart(btl);
+		if (cmd == null)
 			return 0;
 		switch (data_type)
 		{
-			case 1000: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.tar_id;
-			case 1001: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no;
-			case 1002: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.sub_no;
-			case 1003: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.IsShortRange ? 1 : 0);
-			case 1004: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.cursor;
-			case 1005: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.stat;
-			case 1006: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.priority;
-			case 1007: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.cover;
-			case 1008: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.ScriptId;
-			case 1009: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.Power;
-			case 1010: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.Element;
-			case 1011: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.HitRate;
-			case 1012: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityCategory;
+			case 1000: return (UInt16)cmd.tar_id;
+			case 1001: return (UInt16)cmd.cmd_no;
+			case 1002: return (UInt16)cmd.sub_no;
+			case 1003: return (UInt16)(cmd.IsShortRange ? 1 : 0);
+			case 1004: return (UInt16)cmd.info.cursor;
+			case 1005: return (UInt16)cmd.info.stat;
+			case 1006: return (UInt16)cmd.info.priority;
+			case 1007: return (UInt16)cmd.info.cover;
+			case 1008: return (UInt16)cmd.ScriptId;
+			case 1009: return (UInt16)cmd.Power;
+			case 1010: return (UInt16)cmd.Element;
+			case 1011: return (UInt16)cmd.HitRate;
+			case 1012: return (UInt16)cmd.AbilityCategory;
 			case 1013: return (UInt16)0;
-			case 1014: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.CustomMPCost;
-			case 1015: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityType;
-			case 1016: return (UInt16)((UInt32)FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityStatus >> 16);
-			case 1017: return (UInt16)((UInt32)FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityStatus & 0xFFFF);
-			case 1018: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.dodge;
-			case 1019: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.reflec;
-			case 1020: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.meteor_miss;
-			case 1021: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.short_summon;
-			case 1022: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.info.mon_reflec;
-			case 1023: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.info.IsZeroMP ? 1 : 0);
-			case 1024: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.info.ReflectNull ? 1 : 0);
+			case 1014: return (UInt16)cmd.info.CustomMPCost;
+			case 1015: return (UInt16)cmd.AbilityType;
+			case 1016: return (UInt16)((UInt32)cmd.AbilityStatus >> 16);
+			case 1017: return (UInt16)((UInt32)cmd.AbilityStatus & 0xFFFF);
+			case 1018: return (UInt16)cmd.info.dodge;
+			case 1019: return (UInt16)cmd.info.reflec;
+			case 1020: return (UInt16)cmd.info.meteor_miss;
+			case 1021: return (UInt16)cmd.info.short_summon;
+			case 1022: return (UInt16)cmd.info.mon_reflec;
+			case 1023: return (UInt16)(cmd.info.IsZeroMP ? 1 : 0);
+			case 1024: return (UInt16)(cmd.info.ReflectNull ? 1 : 0);
 		}
-		if (data_type < 17 && FF9StateSystem.Battle.FF9Battle.cur_cmd.aa == null)
+		if (data_type < 17 && cmd.aa == null)
 			return 0;
 		switch (data_type)
 		{
-			case 0: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.Target;
-			case 1: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultAlly ? 1 : 0);
-			case 2: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DisplayStats;
-			case 3: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.VfxIndex;
+			case 0: return (UInt16)cmd.aa.Info.Target;
+			case 1: return (UInt16)(cmd.aa.Info.DefaultAlly ? 1 : 0);
+			case 2: return (UInt16)cmd.aa.Info.DisplayStats;
+			case 3: return (UInt16)cmd.aa.Info.VfxIndex;
 			case 4: return (UInt16)0; // SoundFxIndex... Memoria ignores it
-			case 5: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.ForDead ? 1 : 0);
-			case 6: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultCamera ? 1 : 0);
-			case 7: return (UInt16)(FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultOnDead ? 1 : 0);
-			case 8: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.ScriptId;
-			case 9: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.Power;
-			case 10: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.Elements;
-			case 11: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.Rate;
-			case 12: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Category;
-			case 13: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.AddNo;
-			case 14: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.MP;
-			case 15: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Type;
-			case 16: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Vfx2;
-			case 17: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.tar_id;
-			case 18: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no;
-			case 19: return (UInt16)FF9StateSystem.Battle.FF9Battle.cur_cmd.sub_no;
+			case 5: return (UInt16)(cmd.aa.Info.ForDead ? 1 : 0);
+			case 6: return (UInt16)(cmd.aa.Info.DefaultCamera ? 1 : 0);
+			case 7: return (UInt16)(cmd.aa.Info.DefaultOnDead ? 1 : 0);
+			case 8: return (UInt16)cmd.aa.Ref.ScriptId;
+			case 9: return (UInt16)cmd.aa.Ref.Power;
+			case 10: return (UInt16)cmd.aa.Ref.Elements;
+			case 11: return (UInt16)cmd.aa.Ref.Rate;
+			case 12: return (UInt16)cmd.aa.Category;
+			case 13: return (UInt16)cmd.aa.AddNo;
+			case 14: return (UInt16)cmd.aa.MP;
+			case 15: return (UInt16)cmd.aa.Type;
+			case 16: return (UInt16)cmd.aa.Vfx2;
+			case 17: return (UInt16)cmd.tar_id;
+			case 18: return (UInt16)cmd.cmd_no;
+			case 19: return (UInt16)cmd.sub_no;
 		}
 		return 0;
 	}
 	
-	public static void SetCurrentCommandData(UInt16 data_type, Int32 val)
+	public static void SetCurrentCommandData(UInt16 data_type, Int32 val, BTL_DATA btl = null)
 	{
 		// Modify the current command's stats from battle scripts (SV_5 and SV_6)
 		// Usage:
 		// set SV_5 = Spell stat ID of the currently used spell to modify
 		// set SV_6 = newvalue
 		// Note that changes to party's spells are permanent until the game closes
-		if (FF9StateSystem.Battle.FF9Battle.cur_cmd == null)
+		CMD_DATA cmd = GetCurrentCommandSmart(btl);
+		if (cmd == null)
 			return;
 		switch (data_type)
 		{
-			case 1000: FF9StateSystem.Battle.FF9Battle.cur_cmd.tar_id = (UInt16)val; return;
-			case 1001: FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no = (BattleCommandId)val; return;
-			case 1002: FF9StateSystem.Battle.FF9Battle.cur_cmd.sub_no = (Byte)val; return;
-			case 1003: FF9StateSystem.Battle.FF9Battle.cur_cmd.IsShortRange = val != 0; return;
-			case 1004: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.cursor = (Byte)val; return;
-			case 1005: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.stat = (Byte)val; return;
-			case 1006: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.priority = (Byte)val; return;
-			case 1007: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.cover = (Byte)val; return;
-			case 1008: FF9StateSystem.Battle.FF9Battle.cur_cmd.ScriptId = (Byte)val; return;
-			case 1009: FF9StateSystem.Battle.FF9Battle.cur_cmd.Power = (Byte)val; return;
-			case 1010: FF9StateSystem.Battle.FF9Battle.cur_cmd.Element = (EffectElement)val; return;
-			case 1011: FF9StateSystem.Battle.FF9Battle.cur_cmd.HitRate = (Byte)val; return;
-			case 1012: FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityCategory = (Byte)val; return;
+			case 1000: cmd.tar_id = (UInt16)val; return;
+			case 1001: cmd.cmd_no = (BattleCommandId)val; return;
+			case 1002: cmd.sub_no = (Byte)val; return;
+			case 1003: cmd.IsShortRange = val != 0; return;
+			case 1004: cmd.info.cursor = (Byte)val; return;
+			case 1005: cmd.info.stat = (Byte)val; return;
+			case 1006: cmd.info.priority = (Byte)val; return;
+			case 1007: cmd.info.cover = (Byte)val; return;
+			case 1008: cmd.ScriptId = (Byte)val; return;
+			case 1009: cmd.Power = (Byte)val; return;
+			case 1010: cmd.Element = (EffectElement)val; return;
+			case 1011: cmd.HitRate = (Byte)val; return;
+			case 1012: cmd.AbilityCategory = (Byte)val; return;
 			case 1013: return;
-			case 1014: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.CustomMPCost = val; return;
-			case 1015: FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityType = (Byte)val; return;
-			case 1016: FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityStatus = (BattleStatus)(((UInt32)FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityStatus & 0xFFFFu) | ((UInt32)(val & 0xFFFF) << 16)); return;
-			case 1017: FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityStatus = (BattleStatus)(((UInt32)FF9StateSystem.Battle.FF9Battle.cur_cmd.AbilityStatus & 0xFFFF0000u) | (UInt32)(val & 0xFFFF)); return;
-			case 1018: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.dodge = (Byte)val; return;
-			case 1019: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.reflec = (Byte)val; return;
-			case 1020: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.meteor_miss = (Byte)val; return;
-			case 1021: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.short_summon = (Byte)val; return;
-			case 1022: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.mon_reflec = (Byte)val; return;
-			case 1023: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.IsZeroMP = val != 0; return;
-			case 1024: FF9StateSystem.Battle.FF9Battle.cur_cmd.info.ReflectNull = val != 0; return;
+			case 1014: cmd.info.CustomMPCost = val; return;
+			case 1015: cmd.AbilityType = (Byte)val; return;
+			case 1016: cmd.AbilityStatus = (BattleStatus)(((UInt32)cmd.AbilityStatus & 0xFFFFu) | ((UInt32)(val & 0xFFFF) << 16)); return;
+			case 1017: cmd.AbilityStatus = (BattleStatus)(((UInt32)cmd.AbilityStatus & 0xFFFF0000u) | (UInt32)(val & 0xFFFF)); return;
+			case 1018: cmd.info.dodge = (Byte)val; return;
+			case 1019: cmd.info.reflec = (Byte)val; return;
+			case 1020: cmd.info.meteor_miss = (Byte)val; return;
+			case 1021: cmd.info.short_summon = (Byte)val; return;
+			case 1022: cmd.info.mon_reflec = (Byte)val; return;
+			case 1023: cmd.info.IsZeroMP = val != 0; return;
+			case 1024: cmd.info.ReflectNull = val != 0; return;
 		}
-		if (data_type < 17 && FF9StateSystem.Battle.FF9Battle.cur_cmd.aa == null)
+		if (data_type < 17 && cmd.aa == null)
 			return;
 		switch (data_type)
 		{
-			case 0: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.Target = (TargetType)val; return;
-			case 1: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultAlly = val != 0; return;
-			case 2: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DisplayStats = (TargetDisplay)val; return;
-			case 3: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.VfxIndex = (Int16)val; return;
+			case 0: cmd.aa.Info.Target = (TargetType)val; return;
+			case 1: cmd.aa.Info.DefaultAlly = val != 0; return;
+			case 2: cmd.aa.Info.DisplayStats = (TargetDisplay)val; return;
+			case 3: cmd.aa.Info.VfxIndex = (Int16)val; return;
 			case 4: return;
-			case 5: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.ForDead = val != 0; return;
-			case 6: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultCamera = val != 0; return;
-			case 7: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Info.DefaultOnDead = val != 0; return;
-			case 8: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.ScriptId = (Byte)val; return;
-			case 9: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.Power = (Byte)val; return;
-			case 10: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.Elements = (Byte)val; return;
-			case 11: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Ref.Rate = (Byte)val; return;
-			case 12: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Category = (Byte)val; return;
-			case 13: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.AddNo = (Byte)val; return;
-			case 14: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.MP = (Byte)val; return;
-			case 15: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Type = (Byte)val; return;
-			case 16: FF9StateSystem.Battle.FF9Battle.cur_cmd.aa.Vfx2 = (UInt16)val; return;
-			case 17: FF9StateSystem.Battle.FF9Battle.cur_cmd.tar_id = (UInt16)val; return;
-			case 18: FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no = (BattleCommandId)val; return;
-			case 19: FF9StateSystem.Battle.FF9Battle.cur_cmd.sub_no = (Byte)val; return;
+			case 5: cmd.aa.Info.ForDead = val != 0; return;
+			case 6: cmd.aa.Info.DefaultCamera = val != 0; return;
+			case 7: cmd.aa.Info.DefaultOnDead = val != 0; return;
+			case 8: cmd.aa.Ref.ScriptId = (Byte)val; return;
+			case 9: cmd.aa.Ref.Power = (Byte)val; return;
+			case 10: cmd.aa.Ref.Elements = (Byte)val; return;
+			case 11: cmd.aa.Ref.Rate = (Byte)val; return;
+			case 12: cmd.aa.Category = (Byte)val; return;
+			case 13: cmd.aa.AddNo = (Byte)val; return;
+			case 14: cmd.aa.MP = (Byte)val; return;
+			case 15: cmd.aa.Type = (Byte)val; return;
+			case 16: cmd.aa.Vfx2 = (UInt16)val; return;
+			case 17: cmd.tar_id = (UInt16)val; return;
+			case 18: cmd.cmd_no = (BattleCommandId)val; return;
+			case 19: cmd.sub_no = (Byte)val; return;
 		}
 	}
 	#endregion
@@ -206,13 +215,9 @@ public class btl_scrp
 			break;
 		case 41u:
 			if (btl.bi.player != 0)
-			{
 				result = btl_util.getPlayerPtr(btl).level;
-			}
 			else
-			{
 				result = btl_util.getEnemyTypePtr(btl).level;
-			}
 			break;
 		case 42u:
 			result = (Int32)((UInt32)btl.stat.invalid >> 24);
@@ -344,7 +349,7 @@ public class btl_scrp
 				result = btl_util.getEnemyPtr(btl).info.die_fade_rate;
 			break;
 		case 112u:
-			result = btl_mot.getMotion(btl); // Current battle animation by motion ID (stand = 0, etc... see btl_mot)
+			result = (Int32)btl_mot.getMotion(btl); // Current battle animation by motion ID (stand = 0, etc... see btl_mot)
 			break;
 		case 113u:
 			if (btl.bi.player == 0)
@@ -355,18 +360,18 @@ public class btl_scrp
 		case 114u:
 		{
 			// Return the current attack ID if it is currently performed by the indicated character
-			CMD_DATA cur_cmd = FF9StateSystem.Battle.FF9Battle.cur_cmd;
-			if (cur_cmd != null && cur_cmd.regist != null && cur_cmd.regist == btl)
+			CMD_DATA charCmd;
+			if (btl_util.IsBtlUsingCommand(btl, out charCmd))
 			{
 				if (btl.bi.player == 0)
 				{
-					if (cur_cmd == cur_cmd.regist.cmd[3] || cur_cmd == cur_cmd.regist.cmd[4] || cur_cmd == cur_cmd.regist.cmd[5])
-						result = cur_cmd.sub_no;
+					if (charCmd == btl.cmd[3] || charCmd == btl.cmd[4] || charCmd == btl.cmd[5])
+						result = charCmd.sub_no;
 				}
 				else
 				{
-					if (cur_cmd == cur_cmd.regist.cmd[1])
-						result = cur_cmd.sub_no;
+					if (charCmd == btl.cmd[1])
+						result = charCmd.sub_no;
 				}
 			}
 			break;
@@ -400,9 +405,7 @@ public class btl_scrp
 		{
 		case 32u:
 			for (Int32 i = 0; i < btl.meshCount; i++)
-			{
 				btl.SetIsEnabledMeshRenderer(i, true);
-			}
 			btl.getShadow().SetActive(true);
 			btl.SetIsEnabledWeaponRenderer(true);
 			btl.SetIsEnabledBattleModelRenderer(true);
@@ -410,9 +413,7 @@ public class btl_scrp
 			break;
 		case 33u:
 			for (Int32 j = 0; j < btl.meshCount; j++)
-			{
 				btl.SetIsEnabledMeshRenderer(j, false);
-			}
 			btl.getShadow().SetActive(false);
 			btl.SetIsEnabledWeaponRenderer(false);
 			btl.SetIsEnabledBattleModelRenderer(false);
@@ -421,9 +422,7 @@ public class btl_scrp
 			break;
 		case 34u:
 			if (btl_cmd.KillCommand2(btl))
-			{
 				btl.sel_mode = 0;
-			}
 			break;
 		case 35u:
 			btl.max.hp = (UInt32)val;
@@ -493,18 +492,13 @@ public class btl_scrp
 			break;
 		case 54u:
 			btl.bi.shadow = (Byte)val;
-			if (btl.bi.shadow != 0)
-			{
-				btl.getShadow().SetActive(true);
-			}
-			else
-			{
-				btl.getShadow().SetActive(false);
-			}
+			btl.getShadow().SetActive(btl.bi.shadow != 0);
 			break;
 		case 55u:
 			// Many AI scripts setup a custom model size for enemies; when they do, they handle Mini in the EventEngine.Request(tagNumber = 7) function ("CounterEx" in Hades Workshop)
 			geo.geoScaleSet(btl, (Int32)val, true, true);
+			if (ff9Battle.btl_phase == 2) // When modified during BattleLoad, consider it to be the default
+				btl.geo_scale_default = val;
 			break;
 		case 56u:
 			geo.geoScaleReset(btl, true);
@@ -702,6 +696,8 @@ public class btl_scrp
 		UInt32 result = UInt32.MaxValue;
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
+		BattleUnit unit = FindBattleUnitUnlimited((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1));
+		CMD_DATA curCmd = GetCurrentCommandSmart(unit.Data);
 		switch (id)
 		{
 		case 32:
@@ -717,28 +713,20 @@ public class btl_scrp
 			result = ff9Battle.btl_seq;
 			break;
 		case 36:
-			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null)
-			{
-				result = ff9Battle.cur_cmd.regist.btl_id;
-			}
+			if (curCmd != null && curCmd.regist != null)
+				result = curCmd.regist.btl_id;
 			break;
 		case 37:
-			if (ff9Battle.cur_cmd != null)
-			{
-				result = ff9Battle.cur_cmd.tar_id;
-			}
+			if (curCmd != null)
+				result = curCmd.tar_id;
 			break;
 		case 38:
-			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null && ff9Battle.cur_cmd.regist.weapon != null)
-			{
-				result = ff9Battle.cur_cmd.regist.weapon.Ref.Elements;
-			}
+			if (curCmd != null && curCmd.regist != null && curCmd.regist.weapon != null)
+				result = curCmd.regist.weapon.Ref.Elements;
 			break;
 		case 39:
-			if (ff9Battle.cur_cmd != null && ff9Battle.cur_cmd.regist != null)
-			{
-				result = (UInt32)ff9Battle.cur_cmd.Element;
-			}
+			if (curCmd != null && curCmd.regist != null)
+				result = (UInt32)curCmd.Element;
 			break;
 		case 40:
 			result = ff9Battle.btl_load_status;
@@ -759,7 +747,7 @@ public class btl_scrp
 			}
 			break;
 		case 43:
-			result = (UInt32)btl_cmd.cmd_effect_counter; // The number of times "SBattleCalculator.CalcMain" has been called for the current attack, for multi-hit pattern changes
+			result = curCmd != null ? (UInt32)curCmd.info.effect_counter : 0; // The number of times "SBattleCalculator.CalcMain" has been called for the current attack, for multi-hit pattern changes
 			break;
 		}
 		return result;
@@ -774,14 +762,12 @@ public class btl_scrp
 		case 32u:
 			UIManager.Battle.FF9BMenu_EnableMenu(false);
 			ff9Battle.btl_escape_key = 0;
-			ff9Battle.cmd_status = (UInt16)(ff9Battle.cmd_status & -2);
+			ff9Battle.cmd_status &= 65533;
 			ff9Battle.btl_phase = 5;
 			ff9Battle.btl_seq = 2;
 			btl_cmd.KillAllCommand(ff9Battle);
 			for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-			{
 				next.bi.cmd_idle = 0;
-			}
 			break;
 		case 33u:
 			if (ff9Battle.btl_phase == 1)
@@ -795,9 +781,7 @@ public class btl_scrp
 				else
 				{
 					if (ff.btl_result == 1)
-					{
 						ff.btl_result = 2;
-					}
 					ff9Battle.btl_phase = 8;
 					ff9Battle.btl_seq = 0;
 				}
@@ -818,16 +802,12 @@ public class btl_scrp
 				ff9Battle.btl_phase = 3;
 				ff9Battle.btl_seq = 0;
 				if (info.SpecialStart == 0 || info.BackAttack == 0)
-				{
 					info.StartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
-				}
 			}
 			break;
 		case 36u:
 			if (ff9Battle.btl_phase == 1)
-			{
 				SFX.SetCamera(val);
-			}
 			break;
 		case 37u:
 		{
@@ -839,9 +819,7 @@ public class btl_scrp
 		case 38u:
 			ff.party.gil += (UInt32)val;
 			if (ff.party.gil > 9999999u)
-			{
 				ff.party.gil = 9999999u;
-			}
 			break;
 		case 39u:
 			if (ff.dragon_no < 9999)
@@ -858,7 +836,9 @@ public class btl_scrp
 			break;
 		}
 		case 43u:
-			btl_cmd.cmd_effect_counter = val;
+			CMD_DATA curCmd = GetCurrentCommandSmart(FindBattleUnitUnlimited((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1)).Data);
+			if (curCmd != null)
+				curCmd.info.effect_counter = val;
 			break;
 		}
 	}

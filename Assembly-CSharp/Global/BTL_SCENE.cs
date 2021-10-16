@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Memoria;
 using Memoria.Data;
 using UnityEngine;
 
@@ -10,7 +11,9 @@ public class BTL_SCENE
 		name = "EVT_BATTLE_" + name;
 		this.header = new SB2_HEAD();
 		String[] bsceneInfo;
-		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleScene/" + name + "/dbfile0000.raw16", out bsceneInfo, false);
+		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleScene/" + name + "/dbfile0000.raw16", out bsceneInfo);
+		if (bytes == null)
+			return;
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
 		{
 			this.header.Ver = binaryReader.ReadByte();
@@ -156,26 +159,39 @@ public class BTL_SCENE
 			}
 		}
 		Int32 typIndex = -1;
+		Int32 attIndex = -1;
 		foreach (String s in bsceneInfo)
 		{
 			String[] bsceneCode = s.Split(' ');
 			if (bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Enemy") == 0)
-				System.Int32.TryParse(bsceneCode[1], out typIndex);
+				Int32.TryParse(bsceneCode[1], out typIndex);
+			else if (bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Attack") == 0)
+				Int32.TryParse(bsceneCode[1], out attIndex);
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "MaxHP") == 0)
-				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxHP);
+				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxHP);
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "MaxMP") == 0)
-				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxMP);
+				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxMP);
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Gil") == 0)
-				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinGil);
+				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinGil);
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Exp") == 0)
-				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinExp);
+				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinExp);
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "AttackPower") == 0)
-				System.UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].AP); // AP is unused by default
+				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].AP); // AP is unused by default
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "OutOfReach") == 0)
 			{
 				Boolean oor;
-				if (System.Boolean.TryParse(bsceneCode[1], out oor))
+				if (Boolean.TryParse(bsceneCode[1], out oor))
 					this.MonAddr[typIndex].OutOfReach = (SByte)(oor ? 1 : 0);
+			}
+			else if (attIndex >= 0 && attIndex < this.atk.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Vfx") == 0)
+			{
+				if (Configuration.Battle.SFXRework)
+				{
+					String[] efInfo;
+					String sequenceText = AssetManager.LoadString(bsceneCode[1], out efInfo);
+					if (sequenceText != null)
+						this.atk[attIndex].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
+				}
 			}
 		}
 	}
@@ -185,13 +201,9 @@ public class BTL_SCENE
 		SB2_PUT sb2_PUT = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Put[pNum];
 		Int16 result;
 		if (pNum > 0 && (sb2_PUT.Flags & 2) != 0)
-		{
 			result = -1;
-		}
 		else
-		{
 			result = (Int16)FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[(Int32)sb2_PUT.TypeNo].Geo;
-		}
 		return result;
 	}
 

@@ -1,0 +1,13 @@
+// Shared sequence of SFX Grand_Lethal
+
+PlaySound: Sound=2450
+PlaySound: Sound=2451
+PlaySound: Sound=2452
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=16 ; HoldDuration=81
+Wait: Time=49
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10
+SetBackgroundIntensity: Intensity=1 ; Time=8

@@ -68,7 +68,7 @@ public class battle
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         battlebg.nf_InitBattleBG(ff9Battle.map.btlBGInfoPtr, ff9Battle.map.btlBGTexAnimPtr);
-        ff9Battle.btl_load_status |= 1;
+        ff9Battle.btl_load_status |= ff9btl.LOAD_BBG;
         btl_cmd.InitCommandSystem(ff9Battle);
         btl_cmd.InitSelectCursor(ff9Battle);
         btlseq.SetupBattleScene();
@@ -83,7 +83,7 @@ public class battle
     {
         FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        SFX.UpdateCamera();
+        SFXDataCamera.UpdateCamera();
         if (ff9Battle.btl_phase != 4 && ff9Battle.s_cur != null && ff9Battle.s_cur.activeSelf)
             ff9Battle.s_cur.SetActive(false);
         switch (ff9Battle.btl_phase)
@@ -118,9 +118,7 @@ public class battle
                             }
                         }
                         if (battle.SUMMON_RAY_FLAG == 0)
-                        {
                             UIManager.Battle.FF9BMenu_EnableMenu(true);
-                        }
                         if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
                         {
                             UIManager.Battle.SetBattleFollowMessage(2);
@@ -141,9 +139,7 @@ public class battle
                     UIManager.Battle.FF9BMenu_EnableMenu(false);
                 battle.BattleTrailingLoop(ff9, ff9Battle);
                 if (ff9Battle.btl_seq != 3)
-                {
                     ff9Battle.btl_escape_key = 0;
-                }
                 break;
             case 6:
                 battle.BattleIdleLoop(ff9, ff9Battle);
@@ -188,7 +184,7 @@ public class battle
         {
             if (next.bi.disappear == 0)
                 btlseq.DispCharacter(next);
-            if (!FF9StateSystem.Battle.isDebug && UIManager.Battle.CurrentPlayerIndex != -1 && (next.btl_id == 1 << UIManager.Battle.CurrentPlayerIndex && (btlsys.cmd_status & 2) != 0) && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
+            if (!FF9StateSystem.Battle.isDebug && UIManager.Battle.CurrentPlayerIndex != -1 && next.btl_id == 1 << UIManager.Battle.CurrentPlayerIndex && (btlsys.cmd_status & 2) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
             {
                 flag = true;
                 btl_cmd.DispSelectCursor(sys, btlsys, next);
@@ -197,7 +193,7 @@ public class battle
             btl_para.CheckPointData(next);
 
             // ============ Warning ============
-            if (Configuration.Battle.Speed == 0 || next.sel_mode != 0 || next.sel_menu != 0 || next.cur.hp == 0 || next.bi.atb == 0)
+            if (Configuration.Battle.Speed == 0 || Configuration.Battle.Speed >= 3 || next.sel_mode != 0 || next.sel_menu != 0 || next.cur.hp == 0 || next.bi.atb == 0)
                 btl_stat.CheckStatusLoop(next, false);
             // =================================
         }
@@ -224,21 +220,21 @@ public class battle
                 btlseq.DispCharacter(data);
                 if (btlsys.btl_phase == 3)
                 {
-                    data.bi.stop_anim = 0;
-                    if (data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data))
-                    {
-                        if (!next.IsUnderStatus(BattleStatus.Death))
-                            btl_mot.setMotion(next, data.bi.def_idle);
-                        data.evt.animFrame = 0;
-                    }
+                    //data.bi.stop_anim = 0;
+                    //if (data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data))
+                    //{
+                    //    if (!next.IsUnderStatus(BattleStatus.Death))
+                    //        btl_mot.setMotion(next, data.bi.def_idle);
+                    //    data.evt.animFrame = 0;
+                    //}
                     if (!next.IsUnderStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
                         flag = false;
                 }
-                else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus(BattleStatus.BattleEnd) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
-                {
-                    btl_mot.setMotion(next.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP);
-                    data.evt.animFrame = 0;
-                }
+                //else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus(BattleStatus.BattleEnd) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
+                //{
+                //    btl_mot.setMotion(next.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP);
+                //    data.evt.animFrame = 0;
+                //}
                 btl_stat.SetStatusVfx(next);
             }
             btl_mot.DieSequence(data);
@@ -252,9 +248,9 @@ public class battle
     private static void BattleTrailingLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
         //uint id = sys.id;
-        UInt32 num1 = 1;
-        if (SFX.isRunning || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
-            num1 = 0U;
+        Boolean proceedEnd = true;
+        if (SFX.IsRunning() || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
+            proceedEnd = false;
 
         foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
@@ -266,55 +262,45 @@ public class battle
                 {
                     case 0:
                         btl_para.CheckPointData(data);
-                        if ((!next.IsPlayer && !next.IsUnderStatus((BattleStatus)4099U)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
-                        {
-                            num1 = 0U;
-                        }
+                        if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
+                            proceedEnd = false;
                         break;
                     case 1:
-                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderStatus((BattleStatus)4099U))
-                        {
-                            num1 = 0U;
-                        }
+                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))
+                            proceedEnd = false;
                         break;
                     case 2:
-                        if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && (!btl_cmd.CheckSpecificCommand2(BattleCommandId.SysTrans) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysDead)) && (!btl_cmd.CheckSpecificCommand2(BattleCommandId.SysReraise) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysStone)))
-                            num1 = 1U;
+                        if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysTrans) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysDead) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysReraise) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysStone))
+                            proceedEnd = true;
                         btl_para.CheckPointData(data);
                         if (next.IsPlayer)
-                        {
                             next.TryRemoveStatuses(BattleStatus.CancelEvent);
-                        }
-                        if (btlsys.cmd_mode != command_mode_index.CMD_MODE_INSPECTION)
-                            num1 = 0U;
+                        if (btlsys.cur_cmd != null)
+                            proceedEnd = false;
                         if (next.IsUnderStatus(BattleStatus.Death))
                         {
-                            if (data.die_seq == 0 && !btl_cmd.CheckUsingCommand(data.cmd[2]))
-                                btl_cmd.SetCommand(data.cmd[2], BattleCommandId.SysDead, 0U, data.btl_id, 0U);
+                            //if (data.die_seq == 0 && !btl_cmd.CheckUsingCommand(data.cmd[2]))
+                            //    btl_cmd.SetCommand(data.cmd[2], BattleCommandId.SysDead, 0U, data.btl_id, 0U);
+                            if (data.die_seq == 0)
+                                data.die_seq = 1;
                             if (next.IsPlayer && data.die_seq != 6 || !next.IsPlayer && data.die_seq != 6)
-                            {
-                                num1 = 0U;
-                            }
+                                proceedEnd = false;
                             break;
                         }
-                        if (!Status.checkCurStat(data, BattleStatus.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
-                        {
-                            num1 = 0U;
-                        }
+                        if (!btl_stat.CheckStatus(data, BattleStatus.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
+                            proceedEnd = false;
                         break;
                     case 3:
                         btl_cmd.KillAllCommand(btlsys);
                         if (next.IsUnderStatus(BattleStatus.Death))
                         {
-                            if (data.die_seq == 0)
+                            if (data.die_seq == 0 && !btl_util.IsBtlBusy(data, btl_util.BusyMode.CASTER))
                                 data.die_seq = 1;
                             if (!btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_cmd.CheckSpecificCommand(data, BattleCommandId.SysReraise))
-                            {
-                                num1 = 0U;
-                            }
+                                proceedEnd = false;
                             break;
                         }
-                        if (next.IsPlayer && !Status.checkCurStat(data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump))
+                        if (next.IsPlayer && !btl_stat.CheckStatus(data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump))
                         {
                             FF9StateSystem.Battle.isFade = true;
                             data.pos[2] -= 100f;
@@ -324,7 +310,7 @@ public class battle
                                 data.SetDisappear(1);
                                 break;
                             }
-                            num1 = 0U;
+                            proceedEnd = false;
                             if (btlsys.btl_escape_fade == 32)
                             {
                                 btlsnd.ff9btlsnd_sndeffect_play(2906, 0, SByte.MaxValue, 128);
@@ -341,7 +327,7 @@ public class battle
         }
         if (btlsys.btl_seq == 3 && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
             btlsys.btl_escape_fade -= 2;
-        if ((Int32)num1 != 0)
+        if (proceedEnd)
         {
             switch (btlsys.btl_seq)
             {
@@ -351,43 +337,44 @@ public class battle
                     sys.btl_result = 1;
                     if (btlsys.btl_scene.Info.WinPose != 0)
                     {
-                        if (btl_util.ManageBattleSong(sys, 30U, 5U))
+                        if (!btl_util.ManageBattleSong(sys, 30U, 5U))
+                            break;
+                        btlsys.btl_phase = 6;
+                        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                         {
-                            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                            if (next.bi.player != 0)
                             {
-                                if (next.bi.player != 0)
+                                /*int num2 = (int)*/
+                                btl_stat.RemoveStatuses(next, BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify);
+                                if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop))
                                 {
-                                    /*int num2 = (int)*/
-                                    btl_stat.RemoveStatuses(next, BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify);
-                                    if (!Status.checkCurStat(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop))
+                                    if (next.cur.hp > 0)
                                     {
-                                        if (next.cur.hp > 0)
-                                        {
-                                            Int32 num3 = btl_mot.GetDirection(next);
-                                            next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                            next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatus.IdleDying) ? (Byte)0 : (Byte)1;
-                                            next.bi.cmd_idle = 0;
-                                            if (btl_util.getPlayerPtr(next).info.win_pose != 0)
-                                                btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
-                                            else
-                                                btl_mot.setMotion(next, next.bi.def_idle);
-                                            next.evt.animFrame = 0;
-                                        }
-                                        else
-                                        {
-                                            /*int num4 = (int)*/
-                                            btl_stat.AlterStatus(next, BattleStatus.Death);
-                                        }
+                                        Int32 num3 = btl_mot.GetDirection(next);
+                                        next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
+                                        next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatus.IdleDying) ? (Byte)0 : (Byte)1;
+                                        next.bi.cmd_idle = 0;
+                                        btl_mot.SetDefaultIdle(next);
+                                        //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
+                                        //    btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
+                                        //else
+                                        //    btl_mot.setMotion(next, next.bi.def_idle);
+                                        //next.evt.animFrame = 0;
+                                    }
+                                    else
+                                    {
+                                        /*int num4 = (int)*/
+                                        btl_stat.AlterStatus(next, BattleStatus.Death);
                                     }
                                 }
                             }
-                            SFX.SetCamera(2);
                         }
-                        else
-                            break;
+                        SFX.SetCamera(2);
                     }
                     else if (btlsys.btl_scene.Info.FieldBGM != 0)
+                    {
                         sys.btl_flag |= 8;
+                    }
                     btlsys.btl_phase = 6;
                     break;
                 case 1:
@@ -447,12 +434,12 @@ public class battle
     private static void BattleLoadLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
         //uint id = sys.id;
-        btlsys.attr |= 2;
-        btlsys.attr |= 4;
-        if ((btlsys.attr & 2) != 0 && (btlsys.btl_load_status & 32) == 0 && (btlsys.btl_load_status & 8) != 0)
-            btlsys.btl_load_status |= 32;
-        else if ((btlsys.attr & 4) != 0 && (btlsys.btl_load_status & 64) == 0 && (btlsys.btl_load_status & 16) != 0)
-            btlsys.btl_load_status |= 64;
+        btlsys.attr |= ff9btl.ATTR.LOADNPC;
+        btlsys.attr |= ff9btl.ATTR.LOADCHR;
+        if ((btlsys.attr & ff9btl.ATTR.LOADNPC) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_FADENPC) == 0 && (btlsys.btl_load_status & ff9btl.LOAD_INITNPC) != 0)
+            btlsys.btl_load_status |= ff9btl.LOAD_FADENPC;
+        else if ((btlsys.attr & ff9btl.ATTR.LOADCHR) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_FADECHR) == 0 && (btlsys.btl_load_status & ff9btl.LOAD_INITCHR) != 0)
+            btlsys.btl_load_status |= ff9btl.LOAD_FADECHR;
 
         foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
@@ -467,13 +454,13 @@ public class battle
                 btl_stat.SetStatusVfx(next);
             }
         }
-        if ((btlsys.btl_load_status & 2) != 0)
+        if ((btlsys.btl_load_status & ff9btl.LOAD_NPC) != 0)
             btlseq.Sequencer();
-        if ((btlsys.attr & 1) != 0)
+        if ((btlsys.attr & ff9btl.ATTR.LOADBBG) != 0)
             battlebg.nf_BattleBG();
-        if ((btlsys.attr & 2) != 0 && (btlsys.btl_load_status & 2) == 0)
+        if ((btlsys.attr & ff9btl.ATTR.LOADNPC) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_NPC) == 0)
         {
-            if ((btlsys.btl_load_status & 8) == 0)
+            if ((btlsys.btl_load_status & ff9btl.LOAD_INITNPC) == 0)
             {
                 if (!FF9TextTool.IsLoading)
                 {
@@ -481,17 +468,17 @@ public class battle
                     btl_init.OrganizeEnemyData(btlsys);
                 }
             }
-            else if ((btlsys.btl_load_status & 32) != 0)
+            else if ((btlsys.btl_load_status & ff9btl.LOAD_FADENPC) != 0)
             {
                 if (btlsys.enemy_load_fade >= 32)
-                    btlsys.btl_load_status |= 2;
+                    btlsys.btl_load_status |= ff9btl.LOAD_NPC;
                 else
                     btlsys.enemy_load_fade += 4;
             }
         }
-        if ((btlsys.attr & 4) == 0 || (btlsys.btl_load_status & 4) != 0)
+        if ((btlsys.attr & ff9btl.ATTR.LOADCHR) == 0 || (btlsys.btl_load_status & ff9btl.LOAD_CHR) != 0)
             return;
-        if ((btlsys.btl_load_status & 16) == 0)
+        if ((btlsys.btl_load_status & ff9btl.LOAD_INITCHR) == 0)
         {
             if (FF9TextTool.IsLoading)
                 return;
@@ -504,10 +491,10 @@ public class battle
         }
         else
         {
-            if ((btlsys.btl_load_status & 64) == 0)
+            if ((btlsys.btl_load_status & ff9btl.LOAD_FADECHR) == 0)
                 return;
             if (btlsys.player_load_fade >= 32)
-                btlsys.btl_load_status |= 4;
+                btlsys.btl_load_status |= ff9btl.LOAD_CHR;
             else
                 btlsys.player_load_fade += 8;
         }
@@ -520,6 +507,7 @@ public class battle
         btlseq.Sequencer();
         battlebg.nf_BattleBG();
         SFX.UpdatePlugin();
+        UnifiedBattleSequencer.Loop();
         btl2d.Btl2dMain();
         HonoluluBattleMain.battleSPS.GenerateSPS();
     }

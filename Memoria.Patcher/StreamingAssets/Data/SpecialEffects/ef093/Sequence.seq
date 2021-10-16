@@ -1,0 +1,10 @@
+// Shared sequence of SFX Bio__Single
+
+PlaySound: Sound=159
+PlaySound: Sound=142
+PlaySound: Sound=252
+Wait: Time=35
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

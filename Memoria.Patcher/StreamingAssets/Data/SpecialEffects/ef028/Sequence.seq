@@ -1,0 +1,10 @@
+// Shared sequence of SFX Aqua_Breath
+
+PlaySound: Sound=218
+PlaySound: Sound=202
+PlaySound: Sound=284
+Wait: Time=60
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=32
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=30

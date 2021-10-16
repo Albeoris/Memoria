@@ -1,0 +1,10 @@
+// Player sequence of SFX Sinkhole
+
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Sinkhole ; Reflect=True
+WaitSFXLoaded: SFX=Sinkhole ; Reflect=True
+PlaySFX: SFX=Sinkhole ; Reflect=True
+WaitSFXDone: SFX=Sinkhole ; Reflect=True
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True

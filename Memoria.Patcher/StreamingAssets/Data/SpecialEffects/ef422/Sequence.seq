@@ -1,0 +1,30 @@
+// Shared sequence of SFX Water_Gun_x3
+
+PlaySound: Sound=1212
+PlaySound: Sound=1213
+Wait: Time=6
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=2
+PlaySound: Sound=549
+PlaySound: Sound=540
+PlaySound: Sound=600
+Wait: Time=7
+PlaySound: Sound=1212
+PlaySound: Sound=1213
+Wait: Time=6
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE1
+Wait: Time=2
+PlaySound: Sound=549
+PlaySound: Sound=540
+PlaySound: Sound=600
+Wait: Time=7
+PlaySound: Sound=1212
+PlaySound: Sound=1213
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+PlaySound: Sound=549
+PlaySound: Sound=540
+PlaySound: Sound=600
+Wait: Time=24
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

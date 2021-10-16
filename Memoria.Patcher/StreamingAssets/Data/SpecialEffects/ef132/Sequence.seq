@@ -1,0 +1,9 @@
+// Shared sequence of SFX Drain
+
+PlaySound: Sound=476
+PlaySound: Sound=470
+PlaySound: Sound=465
+Wait: Time=54
+EffectPoint: Char=AllTargets ; Type=Effect
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

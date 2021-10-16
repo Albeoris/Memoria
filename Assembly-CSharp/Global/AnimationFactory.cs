@@ -10,7 +10,7 @@ public class AnimationFactory
 		AnimationFactory.animationEventClip.Clear();
 		AnimationFactory.animationMapping.Clear();
 		String[] animInfo;
-		String text = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt", out animInfo, false);
+		String text = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt", out animInfo);
 		if (text == null)
 			return;
 		text = text.Replace("\r", String.Empty);

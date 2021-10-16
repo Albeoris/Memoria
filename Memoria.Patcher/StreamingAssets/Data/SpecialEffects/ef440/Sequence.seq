@@ -1,0 +1,10 @@
+// Shared sequence of SFX Special_Gizamaluke_Death
+
+PlaySound: Sound=2566
+PlaySound: Sound=2567
+PlaySound: Sound=2568
+Wait: Time=45
+PlaySound: Sound=2569
+PlaySound: Sound=2570
+PlaySound: Sound=2571
+Wait: Time=90

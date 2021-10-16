@@ -1,0 +1,20 @@
+// Shared sequence of SFX LV4_Holy
+
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=122
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+PlaySound: Sound=1642
+PlaySound: Sound=1643
+PlaySound: Sound=1644
+Wait: Time=64
+PlaySound: Sound=1645
+PlaySound: Sound=1646
+PlaySound: Sound=1647
+Wait: Time=14
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=18
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=20
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=6
+SetBackgroundIntensity: Intensity=1 ; Time=8
+Wait: Time=7

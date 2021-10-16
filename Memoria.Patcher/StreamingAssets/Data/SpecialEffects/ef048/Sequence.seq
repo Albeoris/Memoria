@@ -1,0 +1,14 @@
+// Shared sequence of SFX Pollen
+
+PlaySound: Sound=308
+PlaySound: Sound=304
+PlaySound: Sound=299
+Wait: Time=6
+PlaySound: Sound=641
+PlaySound: Sound=640
+PlaySound: Sound=639
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

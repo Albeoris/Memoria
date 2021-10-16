@@ -1,0 +1,10 @@
+// Shared sequence of SFX Panacea
+
+PlaySound: Sound=73
+PlaySound: Sound=64
+PlaySound: Sound=54
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

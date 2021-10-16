@@ -16,7 +16,7 @@ public class FF9SndMetaData
 	private static void CreateBattleEncountBgmMetaData(String path, out Dictionary<Int32, Dictionary<Int32, Int32>> mapper)
 	{
 		String[] bgmInfo;
-		String textAsset = AssetManager.LoadString(path, out bgmInfo, false);
+		String textAsset = AssetManager.LoadString(path, out bgmInfo);
 		mapper = new Dictionary<Int32, Dictionary<Int32, Int32>>();
 		if (textAsset == null)
 		{

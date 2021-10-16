@@ -1,0 +1,14 @@
+// Shared sequence of SFX Aerial_Slash_Gargoyle
+
+PlaySound: Sound=247
+PlaySound: Sound=233
+PlaySound: Sound=214
+Wait: Time=10
+PlaySound: Sound=186
+PlaySound: Sound=172
+PlaySound: Sound=153
+Wait: Time=19
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

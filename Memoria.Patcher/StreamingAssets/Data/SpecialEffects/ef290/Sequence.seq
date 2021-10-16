@@ -1,0 +1,12 @@
+// Shared sequence of SFX Tent
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=81
+PlaySound: Sound=992
+PlaySound: Sound=993
+PlaySound: Sound=994
+Wait: Time=64
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=17
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=4
+EffectPoint: Char=Everyone ; Type=Figure

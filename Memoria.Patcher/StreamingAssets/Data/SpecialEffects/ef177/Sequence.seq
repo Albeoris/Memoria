@@ -1,0 +1,35 @@
+// Shared sequence of SFX Carbuncle_Ruby__Full
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=244
+PlaySound: Sound=2246
+PlaySound: Sound=2247
+PlaySound: Sound=2248
+ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+Wait: Time=64
+PlaySound: Sound=2249
+PlaySound: Sound=2250
+PlaySound: Sound=2251
+Wait: Time=46
+PlaySound: Sound=2252
+PlaySound: Sound=2253
+PlaySound: Sound=2254
+Wait: Time=9
+ShowMesh: Char=AllEnemies ; Enable=False ; Time=1
+Wait: Time=1
+ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+Wait: Time=83
+PlaySound: Sound=182
+PlaySound: Sound=170
+PlaySound: Sound=150
+Wait: Time=1
+ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=16
+Wait: Time=23
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=16
+ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllEnemies ; Enable=True ; Time=4
+Wait: Time=16

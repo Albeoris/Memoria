@@ -7,7 +7,7 @@ public static class SettingUtils
 	public static void LoadSettings()
 	{
 		String[] settInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/settingUtils.txt", out settInfo, false);
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/settingUtils.txt", out settInfo);
 		if (textAsset == null)
 		{
 			return;

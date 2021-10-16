@@ -8,7 +8,7 @@ public class BBGINFO
 	{
 		String name = "BattleMap/BattleInfo/" + battleModelPath.Replace("BBG", "INB") + ".inb";
 		String[] battleInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(name, out battleInfo, false);
+		Byte[] binAsset = AssetManager.LoadBytes(name, out battleInfo);
 		if (binAsset == null)
 		{
 			global::Debug.LogWarning("Cannot find BattleInfo for : " + battleModelPath);

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Ragtime_Correct
+
+PlaySound: Sound=2312
+PlaySound: Sound=2313
+PlaySound: Sound=2314
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=8
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=30

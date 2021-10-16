@@ -1,0 +1,9 @@
+// Shared sequence of SFX Sinkhole
+
+PlaySound: Sound=1058
+PlaySound: Sound=1059
+PlaySound: Sound=1060
+Wait: Time=9
+SetVariable: Variable=_ZWrite ; Value=1
+MoveToPosition: Char=Caster ; RelativePosition=(0.0, -1600.0, 0.0) ; MoveHeight=True ; Time=80
+Wait: Time=80

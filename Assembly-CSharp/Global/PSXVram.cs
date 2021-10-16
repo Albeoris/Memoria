@@ -59,7 +59,7 @@ public class PSXVram
 		{
 			String name = baseResPath + i.ToString("D4") + ".tim";
 			String[] timInfo;
-			Byte[] binAsset = AssetManager.LoadBytes(name, out timInfo, false);
+			Byte[] binAsset = AssetManager.LoadBytes(name, out timInfo);
 			if (binAsset == null)
 			{
 				break;
@@ -127,7 +127,7 @@ public class PSXVram
 
 	public void LoadRAWVram(String resPath)
 	{
-		this.rawData = AssetManager.LoadBytes(resPath, out _, false);
+		this.rawData = AssetManager.LoadBytes(resPath, out _);
 	}
 
 	public void LoadRAWVram(Byte[] data)

@@ -1,0 +1,12 @@
+// Shared sequence of SFX Throw_Thief_Sword
+
+PlaySound: Sound=1133
+PlaySound: Sound=1134
+PlaySound: Sound=1135
+Wait: Time=5
+PlaySound: Sound=1136
+PlaySound: Sound=1137
+PlaySound: Sound=1138
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure

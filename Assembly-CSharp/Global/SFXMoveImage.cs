@@ -17,15 +17,10 @@ public class SFXMoveImage : SFXMeshBase
 		PSXTextureMgr.MoveImage(this.rx, this.ry, this.rw, this.rh, this.x, this.y);
 	}
 
-	private Int32 rx;
-
-	private Int32 ry;
-
-	private Int32 rw;
-
-	private Int32 rh;
-
-	private Int32 x;
-
-	private Int32 y;
+	public Int32 rx;
+	public Int32 ry;
+	public Int32 rw;
+	public Int32 rh;
+	public Int32 x;
+	public Int32 y;
 }

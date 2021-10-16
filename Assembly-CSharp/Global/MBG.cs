@@ -151,7 +151,7 @@ public class MBG : HonoBehavior
 					".txt"
 				});
 				String[] mbgInfo;
-				String textAsset = AssetManager.LoadString(name, out mbgInfo, false);
+				String textAsset = AssetManager.LoadString(name, out mbgInfo);
 				JSONNode jsonnode = JSONNode.Parse(textAsset);
 				JSONClass asObject = jsonnode["frames"].AsObject;
 				foreach (Object obj in asObject)

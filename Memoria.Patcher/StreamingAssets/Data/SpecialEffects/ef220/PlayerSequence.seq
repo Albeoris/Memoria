@@ -1,0 +1,37 @@
+// Player sequence of SFX Blizzaga_Sword
+
+WaitAnimation: Char=Caster
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=5
+Message: Text=[MagicSword] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+LoadSFX: SFX=Blizzaga_Sword ; MagicCaster=Vivi ; Reflect=True
+Turn: Char=Vivi ; BaseAngle=Caster ; Time=5
+PlayAnimation: Char=Vivi ; Anim=MP_IDLE_TO_CHANT
+WaitAnimation: Char=Vivi
+PlayAnimation: Char=Vivi ; Anim=MP_CHANT ; Loop=True
+Channel: Char=Vivi
+WaitSFXLoaded: SFX=Blizzaga_Sword ; Reflect=True
+WaitAnimation: Char=Vivi
+StopChannel: Char=Vivi
+PlayAnimation: Char=Vivi ; Anim=MP_MAGIC
+WaitAnimation: Char=Vivi
+Turn: Char=Vivi ; BaseAngle=Default ; Time=4
+PlayAnimation: Char=Caster ; Anim=MP_SET
+WaitAnimation: Char=Caster
+PlaySFX: SFX=Blizzaga_Sword ; Reflect=True
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=600 ; UseCollisionRadius=True ; Anim=MP_RUN
+Turn: Char=Caster ; BaseAngle=AllTargets ; Time=10
+WaitMove: Char=Caster
+MoveToTarget: Char=Caster ; Target=AllTargets ; Distance=0 ; UseCollisionRadius=True ; Anim=MP_RUN_TO_ATTACK
+WaitMove: Char=Caster
+PlayAnimation: Char=Caster ; Anim=MP_ATTACK
+Wait: Time=5
+PlayAnimation: Char=Caster ; Speed=0
+WaitSFXDone: SFX=Blizzaga_Sword ; Reflect=True
+MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
+Turn: Char=Caster ; BaseAngle=Default ; Time=4
+WaitMove: Caster
+PlayAnimation: Char=Caster ; Anim=Idle
+WaitTurn: Char=Caster
+ActivateReflect
+WaitReflect

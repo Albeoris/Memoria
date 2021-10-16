@@ -1,0 +1,10 @@
+// Shared sequence of SFX Cura__Multi
+
+PlaySound: Sound=534
+PlaySound: Sound=525
+PlaySound: Sound=570
+Wait: Time=40
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

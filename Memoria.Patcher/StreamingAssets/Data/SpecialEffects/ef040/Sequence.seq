@@ -1,0 +1,10 @@
+// Shared sequence of SFX Elixir
+
+PlaySound: Sound=2929
+PlaySound: Sound=2930
+PlaySound: Sound=2931
+Wait: Time=20
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1

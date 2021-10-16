@@ -30,7 +30,9 @@ public class BTL_INFO
 
 	public Byte shadow;
 
-	public Byte cover;
+	public BTL_DATA cover_unit;
+
+	public Byte cover => (Byte)(cover_unit != null ? 1 : 0);
 
 	public Byte dodge;
 

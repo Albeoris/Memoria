@@ -1,0 +1,10 @@
+// Shared sequence of SFX Buzz
+
+PlaySound: Sound=585
+PlaySound: Sound=576
+PlaySound: Sound=533
+Wait: Time=5
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=42
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

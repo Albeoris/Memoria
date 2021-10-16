@@ -196,20 +196,12 @@ namespace Memoria
                 //header->SampleCount = checked((UInt32)vorbis.TotalSamples);
                 header->SampleRate = checked((UInt16)vorbis.SampleRate);
 
-                Int32 desiredCount = 2;
-                Int32 parsedCount = 0;
                 foreach (String comment in vorbis.Comments)
                 {
-                    if (TryParseLoopStart(comment, ref header->LoopStart))
-                    {
-                        if (++parsedCount >= desiredCount)
-                            break;
-                    }
-                    else if (TryParseLoopEnd(comment, ref header->LoopEnd))
-                    {
-                        if (++parsedCount >= desiredCount)
-                            break;
-                    }
+                    TryParseTag(comment, "LoopStart", ref header->LoopStart);
+                    TryParseTag(comment, "LoopEnd", ref header->LoopEnd);
+                    TryParseTag(comment, "LoopStart2", ref header->LoopStartAlternate);
+                    TryParseTag(comment, "LoopEnd2", ref header->LoopEndAlternate);
                 }
 
                 if (profile.SoundProfileType == SoundProfileType.Music)
@@ -220,23 +212,12 @@ namespace Memoria
             }
         }
 
-        private static Boolean TryParseLoopStart(String comment, ref UInt32 loopStart)
+        private static Boolean TryParseTag(String comment, String tagName, ref UInt32 tagVariable)
         {
-            const String loopStartTag = "LoopStart=";
-            if (comment.Length > loopStartTag.Length && comment.StartsWith(loopStartTag, StringComparison.InvariantCultureIgnoreCase))
+            String tagWithEq = tagName + "=";
+            if (comment.Length > tagWithEq.Length && comment.StartsWith(tagWithEq, StringComparison.InvariantCultureIgnoreCase))
             {
-                loopStart = UInt32.Parse(comment.Substring(loopStartTag.Length), CultureInfo.InvariantCulture);
-                return true;
-            }
-            return false;
-        }
-
-        private static Boolean TryParseLoopEnd(String comment, ref UInt32 loopEnd)
-        {
-            const String loopEndTag = "LoopEnd=";
-            if (comment.Length > loopEndTag.Length && comment.StartsWith(loopEndTag, StringComparison.InvariantCultureIgnoreCase))
-            {
-                loopEnd = UInt32.Parse(comment.Substring(loopEndTag.Length), CultureInfo.InvariantCulture);
+                tagVariable = UInt32.Parse(comment.Substring(tagWithEq.Length), CultureInfo.InvariantCulture);
                 return true;
             }
             return false;

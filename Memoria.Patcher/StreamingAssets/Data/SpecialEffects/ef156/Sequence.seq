@@ -1,0 +1,18 @@
+// Shared sequence of SFX Gnoll_Attack
+
+PlaySound: Sound=2219
+PlaySound: Sound=2220
+PlaySound: Sound=2221
+Wait: Time=7
+PlaySound: Sound=2222
+PlaySound: Sound=2223
+PlaySound: Sound=2224
+Wait: Time=8
+PlaySound: Sound=2225
+PlaySound: Sound=2226
+PlaySound: Sound=2227
+Wait: Time=2
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

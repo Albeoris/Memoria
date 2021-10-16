@@ -1,0 +1,8 @@
+// Player sequence of SFX Special_Trance_End
+
+SetVariable: Variable=cmd_status ; Value=&65533
+LoadSFX: SFX=Special_Trance_End
+WaitSFXLoaded: SFX=Special_Trance_End
+PlaySFX: SFX=Special_Trance_End
+WaitSFXDone: SFX=Special_Trance_End
+SetVariable: Variable=cmd_status ; Value=|2

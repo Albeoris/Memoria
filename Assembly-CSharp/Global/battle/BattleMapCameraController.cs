@@ -96,6 +96,7 @@ public class BattleMapCameraController : MonoBehaviour
 	{
 		this.rainRenderer.nf_BbgRain();
 		SFX.PostRender();
+		UnifiedBattleSequencer.LoopRender();
 	}
 
 	private void OnRenderImage(RenderTexture src, RenderTexture dest)

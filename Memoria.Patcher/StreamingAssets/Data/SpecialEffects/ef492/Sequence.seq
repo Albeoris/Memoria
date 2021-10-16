@@ -1,0 +1,37 @@
+// Shared sequence of SFX Special_Ultima_Terra
+
+PlaySound: Sound=2675
+PlaySound: Sound=2676
+PlaySound: Sound=2677
+Wait: Time=42
+PlaySound: Sound=2678
+PlaySound: Sound=2679
+PlaySound: Sound=2680
+Wait: Time=23
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=24
+PlaySound: Sound=2681
+PlaySound: Sound=2682
+PlaySound: Sound=2683
+Wait: Time=25
+PlaySound: Sound=2684
+PlaySound: Sound=2685
+PlaySound: Sound=2686
+Wait: Time=21
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+Wait: Time=24
+PlaySound: Sound=2687
+PlaySound: Sound=2688
+PlaySound: Sound=2689
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8
+PlayAnimation: Char=AllTargets ; Anim=MP_DAMAGE2
+StartThread: TargetLoop=True
+	WaitAnimation: Char=AllTargets
+	PlayAnimation: Char=AllTargets ; Anim=MP_DISABLE ; Loop=True
+EndThread
+Wait: Time=60
+SetVariable: Variable=gEventGlobal ; Index=199 ; Value=|16
+Wait: Time=28

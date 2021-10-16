@@ -1,0 +1,12 @@
+// Player sequence of SFX Special_Ultima_Terra
+
+SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
+Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
+SetupReflect: Delay=SFXLoaded
+SetBackgroundIntensity: Intensity=0.5 ; Time=16
+LoadSFX: SFX=Special_Ultima_Terra ; Reflect=True
+WaitSFXLoaded: SFX=Special_Ultima_Terra ; Reflect=True
+PlaySFX: SFX=Special_Ultima_Terra ; Reflect=True
+WaitSFXDone: SFX=Special_Ultima_Terra ; Reflect=True
+SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
+SetBackgroundIntensity: Intensity=1 ; Time=8

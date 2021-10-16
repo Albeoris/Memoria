@@ -1,0 +1,67 @@
+// Shared sequence of SFX Bahamut__Full
+
+SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=116
+Wait: Time=18
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=42
+PlaySound: Sound=2136
+PlaySound: Sound=2137
+PlaySound: Sound=2138
+PlaySound: Sound=2139
+Wait: Time=56
+SetBackgroundIntensity: Intensity=0.6015625 ; Time=0 ; HoldDuration=50
+PlaySound: Sound=2140 ; Pitch=0.85
+PlaySound: Sound=2141 ; Pitch=0.85
+PlaySound: Sound=2142 ; Pitch=0.85
+PlaySound: Sound=2143 ; Pitch=0.85
+Wait: Time=24
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+PlaySound: Sound=178 ; SoundType=Song ; Volume=1.3
+Wait: Time=26
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=123
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=56
+PlaySound: Sound=2144 ; Pitch=0.85
+PlaySound: Sound=2145 ; Pitch=0.85
+PlaySound: Sound=2146 ; Pitch=0.85
+PlaySound: Sound=2147 ; Pitch=0.85
+Wait: Time=28
+PlaySound: Sound=175 ; SoundType=Song ; Volume=1.3
+Wait: Time=39
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0.6875 ; Time=1 ; HoldDuration=41
+Wait: Time=35
+PlaySound: Sound=2150 ; Pitch=0.85
+PlaySound: Sound=2151 ; Pitch=0.85
+PlaySound: Sound=2174 ; Pitch=0.85
+PlaySound: Sound=2175 ; Pitch=0.85
+Wait: Time=6
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0 ; Time=1 ; HoldDuration=71
+Wait: Time=71
+SetBackgroundIntensity: Intensity=0.5 ; Time=2 ; HoldDuration=21
+Wait: Time=2
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=8
+PlaySound: Sound=2337 ; Pitch=0.85
+PlaySound: Sound=2338 ; Pitch=0.85
+PlaySound: Sound=2152 ; Pitch=0.85
+PlaySound: Sound=2153 ; Pitch=0.85
+Wait: Time=9
+PlaySound: Sound=2156 ; Pitch=0.85
+PlaySound: Sound=2157 ; Pitch=0.85
+PlaySound: Sound=2154 ; Pitch=0.85
+PlaySound: Sound=2155 ; Pitch=0.85
+Wait: Time=2
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=12
+Wait: Time=12
+SetBackgroundIntensity: Intensity=0.6796875 ; Time=12 ; HoldDuration=82
+Wait: Time=52
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=18
+SetBackgroundIntensity: Intensity=1 ; Time=12
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=31

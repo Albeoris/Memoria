@@ -190,10 +190,8 @@ public class btl2d
 		ff9Battle.btl2d_work_set.Timer = 0;
 		ff9Battle.btl2d_work_set.OldDisappear = Byte.MaxValue;
 		BTL2D_ENT[] entry = ff9Battle.btl2d_work_set.Entry;
-		for (Int16 num = 0; num < 16; num = (Int16)(num + 1))
-		{
+		for (Int16 num = 0; num < 16; num++)
 			entry[num].BtlPtr = null;
-		}
 	}
 
 	public static void InitBattleSPSBin()
@@ -215,75 +213,65 @@ public class btl2d
 		};
 		for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
 		{
-			Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + arg + ".sps", out _, false);
+			Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + arg + ".sps", out _);
 			if (bytes == null)
-			{
 				return;
-			}
 		}
 	}
 
 	public static void Btl2dReq(BTL_DATA pBtl)
 	{
-		Byte b = 0;
-		UInt16 fig_info = pBtl.fig_info;
+		Btl2dReq(pBtl, ref pBtl.fig_info, ref pBtl.fig, ref pBtl.m_fig);
+	}
+
+	public static void Btl2dReq(BTL_DATA pBtl, ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig)
+	{
+		Byte delay = 0;
 		if (pBtl.bi.disappear == 0)
 		{
-			if ((fig_info & 256) != 0)
-			{
-			    btl_para.SetTroubleDamage(new BattleUnit(pBtl));
-			}
-			if ((fig_info & 128) != 0)
+			if ((fig_info & Param.FIG_INFO_TROUBLE) != 0)
+			    btl_para.SetTroubleDamage(new BattleUnit(pBtl), fig >> 1);
+			if ((fig_info & Param.FIG_INFO_GUARD) != 0)
 			{
 				btl2d.Btl2dReqSymbol(pBtl, 2, 0, 0);
 			}
-			else if ((fig_info & 96) != 0)
+			else if ((fig_info & (Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
 			{
-				if ((fig_info & 32) != 0)
+				if ((fig_info & Param.FIG_INFO_MISS) != 0)
 				{
 					btl2d.Btl2dReqSymbol(pBtl, 0, 0, 0);
-					b = 2;
+					delay = 2;
 				}
-				if ((fig_info & 64) != 0)
-				{
-					btl2d.Btl2dReqSymbol(pBtl, 1, 0, b);
-				}
+				if ((fig_info & Param.FIG_INFO_DEATH) != 0)
+					btl2d.Btl2dReqSymbol(pBtl, 1, 0, delay);
 			}
 			else
 			{
-				if ((fig_info & 1) != 0)
+				if ((fig_info & Param.FIG_INFO_DISP_HP) != 0)
 				{
-					if ((fig_info & 4) != 0)
+					if ((fig_info & Param.FIG_INFO_HP_CRITICAL) != 0)
 					{
-						BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqSymbol(pBtl, 3, 128, 0);
-						b = 2;
+						btl2d.Btl2dReqSymbol(pBtl, 3, 128, 0);
+						delay = 2;
 					}
-					if ((fig_info & 2) != 0)
-					{
-						btl2d.Btl2dReqHP(pBtl, pBtl.fig, 192, b);
-					}
+					if ((fig_info & Param.FIG_INFO_HP_RECOVER) != 0)
+						btl2d.Btl2dReqHP(pBtl, fig, 192, delay);
 					else
-					{
-						btl2d.Btl2dReqHP(pBtl, pBtl.fig, 0, b);
-					}
-					b = (Byte)(b + 4);
+						btl2d.Btl2dReqHP(pBtl, fig, 0, delay);
+					delay += 4;
 				}
-				if ((fig_info & 8) != 0)
+				if ((fig_info & Param.FIG_INFO_DISP_MP) != 0)
 				{
-					if ((fig_info & 16) != 0)
-					{
-						btl2d.Btl2dReqMP(pBtl, pBtl.m_fig, 192, b);
-					}
+					if ((fig_info & Param.FIG_INFO_MP_RECOVER) != 0)
+						btl2d.Btl2dReqMP(pBtl, m_fig, 192, delay);
 					else
-					{
-						btl2d.Btl2dReqMP(pBtl, pBtl.m_fig, 0, b);
-					}
+						btl2d.Btl2dReqMP(pBtl, m_fig, 0, delay);
 				}
 			}
 		}
-		pBtl.fig_info = 0;
-		pBtl.fig = 0;
-		pBtl.m_fig = 0;
+		fig_info = 0;
+		fig = 0;
+		m_fig = 0;
 	}
 
 	public static void Btl2dStatReq(BTL_DATA pBtl)
@@ -292,21 +280,21 @@ public class btl2d
 		UInt16 fig_stat_info = pBtl.fig_stat_info;
 		if (pBtl.bi.disappear == 0)
 		{
-			if ((fig_stat_info & 1) != 0)
+			if ((fig_stat_info & Param.FIG_STAT_INFO_REGENE_HP) != 0)
 			{
-				BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_regene_hp, (UInt16)(((fig_stat_info & 8) == 0) ? 192 : 0), 0);
+				BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_regene_hp, (UInt16)(((fig_stat_info & Param.FIG_STAT_INFO_REGENE_DMG) == 0) ? 192 : 0), 0);
 				btl2D_ENT.NoClip = 1;
 				btl2D_ENT.Yofs = -12;
 				b = 4;
 			}
-			if ((fig_stat_info & 2) != 0)
+			if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_HP) != 0)
 			{
 				BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_poison_hp, 0, b);
 				btl2D_ENT.NoClip = 1;
 				btl2D_ENT.Yofs = -12;
-				b = (Byte)(b + 4);
+				b += 4;
 			}
-			if ((fig_stat_info & 4) != 0)
+			if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_MP) != 0)
 			{
 				BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqMP(pBtl, pBtl.fig_poison_mp, 0, b);
 				btl2D_ENT.NoClip = 1;
@@ -325,9 +313,7 @@ public class btl2d
 		BTL2D_WORK btl2d_work_set = ff9Battle.btl2d_work_set;
 		Int16 num = (Int16)(btl2d_work_set.NewID - 1);
 		if (num < 0)
-		{
 			num = 15;
-		}
 		btl2d_work_set.NewID = num;
 		BTL2D_ENT btl2D_ENT = btl2d_work_set.Entry[num];
 		btl2D_ENT.BtlPtr = pBtl;
@@ -335,8 +321,7 @@ public class btl2d
 		btl2D_ENT.Delay = 0;
 		btl2D_ENT.trans = pBtl.gameObject.transform.GetChildByName("bone" + pBtl.tar_bone.ToString("D3"));
 		Vector3 position = btl2D_ENT.trans.position;
-		BTL2D_ENT btl2D_ENT2 = btl2D_ENT;
-		btl2D_ENT2.Yofs = (SByte)(btl2D_ENT2.Yofs + 4);
+		btl2D_ENT.Yofs += 4;
 		btl2D_ENT.trans.position = position;
 		return btl2D_ENT;
 	}
@@ -376,7 +361,7 @@ public class btl2d
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		BTL2D_WORK btl2d_work_set = ff9Battle.btl2d_work_set;
 		Int16 num = btl2d_work_set.NewID;
-		for (Int16 num2 = 0; num2 < 16; num2 = (Int16)(num2 + 1))
+		for (Int16 num2 = 0; num2 < 16; num2++)
 		{
 			BTL2D_ENT btl2D_ENT = btl2d_work_set.Entry[num];
 			if (btl2D_ENT.BtlPtr != null)
@@ -387,8 +372,7 @@ public class btl2d
 				}
 				else if (btl2D_ENT.Delay != 0)
 				{
-					BTL2D_ENT btl2D_ENT2 = btl2D_ENT;
-					btl2D_ENT2.Delay = (Byte)(btl2D_ENT2.Delay - 1);
+					btl2D_ENT.Delay--;
 				}
 				else
 				{
@@ -397,25 +381,17 @@ public class btl2d
 					if (btl2D_ENT.Type == 0)
 					{
 						if (btl2D_ENT.Work.Num.Color == 0)
-						{
 							style = HUDMessage.MessageStyle.DAMAGE;
-						}
 						else
-						{
 							style = HUDMessage.MessageStyle.RESTORE_HP;
-						}
 						text = btl2D_ENT.Work.Num.Value.ToString();
 					}
 					else if (btl2D_ENT.Type == 1)
 					{
 						if (btl2D_ENT.Work.Num.Color == 0)
-						{
 							style = HUDMessage.MessageStyle.DAMAGE;
-						}
 						else
-						{
 							style = HUDMessage.MessageStyle.RESTORE_MP;
-						}
 						text = btl2D_ENT.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
 					}
 					else if (btl2D_ENT.Type == 2)
@@ -446,27 +422,18 @@ public class btl2d
 				    btl2D_ENT.BtlPtr = null;
 				}
 			}
-			num = (Int16)(num + 1);
+			num++;
 			if (num >= 16)
-			{
 				num = 0;
-			}
 		}
 		btl2d.Btl2dStatCount();
 		if (SFX.GetEffectJTexUsed() == 0)
-		{
 			btl2d.Btl2dStatIcon();
-		}
-		BTL2D_WORK btl2D_WORK = btl2d_work_set;
-		btl2D_WORK.Timer = (UInt16)(btl2D_WORK.Timer + 1);
+		btl2d_work_set.Timer++;
 		Byte b = Byte.MaxValue;
 		for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-		{
 			if (next.bi.disappear == 0)
-			{
-				b = (Byte)(b & (Byte)(~(Byte)next.btl_id));
-			}
-		}
+				b &= (Byte)(~(Byte)next.btl_id);
 		btl2d_work_set.OldDisappear = b;
 	}
 

@@ -1,0 +1,18 @@
+// Shared sequence of SFX Blizzaga_Sword
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=16
+PlaySound: Sound=2433
+PlaySound: Sound=2434
+Wait: Time=15
+PlaySound: Sound=2610
+PlaySound: Sound=2611
+PlaySound: Sound=2612
+Wait: Time=1
+SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=54
+Wait: Time=46
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=7
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=7
+Wait: Time=7

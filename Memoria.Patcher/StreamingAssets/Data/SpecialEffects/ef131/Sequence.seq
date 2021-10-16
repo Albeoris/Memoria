@@ -1,0 +1,10 @@
+// Shared sequence of SFX Scan
+
+PlaySound: Sound=452
+PlaySound: Sound=444
+PlaySound: Sound=437
+Wait: Time=64
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

@@ -1,0 +1,14 @@
+// Shared sequence of SFX Gysahl_Greens
+
+PlaySound: Sound=986
+PlaySound: Sound=987
+PlaySound: Sound=988
+Wait: Time=12
+PlaySound: Sound=995
+PlaySound: Sound=996
+PlaySound: Sound=997
+Wait: Time=4
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=12
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=1

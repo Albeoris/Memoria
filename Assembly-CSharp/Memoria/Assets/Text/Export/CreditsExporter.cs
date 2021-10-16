@@ -19,10 +19,10 @@ namespace Memoria.Assets
         {
             try
             {
-                _amazonCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Amazon.txt", out _, false);
-                _mobileCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Mobile.txt", out _, false);
-                _estoreCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_EStore.txt", out _, false);
-                _steamCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Steam.txt", out _, false);
+                _amazonCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Amazon.txt", out _);
+                _mobileCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Mobile.txt", out _);
+                _estoreCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_EStore.txt", out _);
+                _steamCredits = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/StaffCredits_Steam.txt", out _);
             }
             catch (Exception ex)
             {

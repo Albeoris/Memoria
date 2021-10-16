@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
@@ -8,6 +9,15 @@ namespace FF9
 {
 	public class btl_util
 	{
+		public static List<BTL_DATA> findAllBtlData(UInt16 id)
+		{
+			List<BTL_DATA> result = new List<BTL_DATA>();
+			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+				if ((next.btl_id & id) != 0)
+					result.Add(next);
+			return result;
+		}
+
 		public static PLAYER getPlayerPtr(BTL_DATA btl)
 		{
 			return FF9StateSystem.Common.FF9.player[(Int32)btl.bi.slot_no];
@@ -41,9 +51,7 @@ namespace FF9
 		public static Byte getSerialNumber(BTL_DATA btl)
 		{
 			if (btl.bi.player != 0)
-			{
 				return FF9StateSystem.Common.FF9.player[(Int32)btl.bi.slot_no].info.serial_no;
-			}
 			return 19;
 		}
 
@@ -52,59 +60,99 @@ namespace FF9
 			return FF9StateSystem.Battle.FF9Battle.cur_cmd;
 		}
 
-		public static Boolean isCurCmdOwner(BTL_DATA btl)
+		public static Boolean IsBtlUsingCommand(BTL_DATA btl, out CMD_DATA cmdUsed)
 		{
-			CMD_DATA curCmdPtr = btl_util.getCurCmdPtr();
-			return curCmdPtr != null && curCmdPtr.regist == btl;
+			foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
+				if (cmd.regist == btl)
+				{
+					cmdUsed = cmd;
+					return true;
+				}
+			cmdUsed = null;
+			return false;
 		}
 
-	    public static BattleUnit GetMasterEnemyBtlPtr()
+		public static Boolean IsBtlTargetOfCommand(BTL_DATA btl, List<CMD_DATA> cmdList = null)
+		{
+			foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
+				if ((cmd.tar_id & btl.btl_id) != 0)
+				{
+					if (cmdList != null)
+						cmdList.Add(cmd);
+					else
+						return true;
+				}
+			return cmdList != null && cmdList.Count > 0;
+		}
+
+		public static Boolean IsBtlUsingCommand(BTL_DATA btl)
+		{
+			return IsBtlUsingCommand(btl, out _);
+		}
+
+		public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd = false)
+		{
+			foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
+				if (cmd.regist == btl && cmd.info.cmd_motion && (includeSysCmd || cmd.cmd_no <= BattleCommandId.EnemyReaction || cmd.cmd_no >= BattleCommandId.ScriptCounter1))
+					return true;
+			return false;
+		}
+
+		public static Boolean IsBtlBusy(BTL_DATA btl, BusyMode mode)
+		{
+			if ((mode & BusyMode.ANY_CURRENT) != 0)
+				foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
+				{
+					if ((mode & BusyMode.CASTER) != 0 && cmd.regist == btl)
+						return true;
+					if ((mode & BusyMode.TARGET) != 0 && ((cmd.tar_id & btl.btl_id) != 0 || (btl_cmd.MergeReflecTargetID(cmd.reflec) & btl.btl_id) != 0))
+						return true;
+					if ((mode & BusyMode.MAGIC_CASTER) != 0 && cmd.cmd_no == BattleCommandId.MagicSword && btl.bi.player != 0 && btl.bi.slot_no == 1)
+						return true;
+				}
+			if ((mode & BusyMode.ANY_QUEUED) != 0)
+				for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
+				{
+					if ((mode & BusyMode.QUEUED_CASTER) != 0 && cmd.regist == btl)
+						return true;
+					if ((mode & BusyMode.QUEUED_TARGET) != 0 && (cmd.tar_id & btl.btl_id) != 0)
+						return true;
+					if ((mode & BusyMode.QUEUED_MAGIC_CASTER) != 0 && cmd.cmd_no == BattleCommandId.MagicSword && btl.bi.player != 0 && btl.bi.slot_no == 1)
+						return true;
+				}
+			return false;
+		}
+
+		public static BattleUnit GetMasterEnemyBtlPtr()
 	    {
 	        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-	        {
 	            if (!unit.IsPlayer && !unit.IsSlave && unit.Enemy.Data.info.multiple != 0)
 	                return unit;
-	        }
 
 	        return null;
 	    }
 
 	    public static UInt32 SumOfTarget(UInt32 player)
 		{
-			UInt32 num = 0u;
+			UInt32 count = 0u;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-			{
 				if ((UInt32)next.bi.player == player && next.bi.target != 0 && !Status.checkCurStat(next, BattleStatus.Death))
-				{
-					num += 1u;
-				}
-			}
-			return num;
+					count++;
+			return count;
 		}
 
 		public static UInt16 GetRandomBtlID(UInt32 player, Boolean allowDead = false)
 		{
 			UInt16[] array = new UInt16[4];
-			UInt16 num = 0;
+			UInt16 btlCount = 0;
 			if (player != 0u)
-			{
 				player = 1u;
-			}
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-			{
 				if ((UInt32)next.bi.player == player && (!Status.checkCurStat(next, BattleStatus.Death) || allowDead) && next.bi.target != 0)
-				{
-					UInt16[] array2 = array;
-					UInt16 num2 = num;
-					num = (UInt16)(num2 + 1);
-					array2[(Int32)num2] = next.btl_id;
-				}
-			}
-			if (num == 0)
-			{
+					array[btlCount++] = next.btl_id;
+			if (btlCount == 0)
 				return 0;
-			}
-			return array[Comn.random8() % (Int32)num];
+			return array[Comn.random8() % (Int32)btlCount];
 		}
 
 		public static Boolean ManageBattleSong(FF9StateGlobal sys, UInt32 ticks, UInt32 song_id)
@@ -118,16 +166,12 @@ namespace FF9
 			{
 				FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 				if ((Int64)(ff9Battle.player_load_fade = (SByte)((Int32)ff9Battle.player_load_fade + 4)) < (Int64)((UInt64)ticks))
-				{
 					return false;
-				}
 				btlsnd.ff9btlsnd_song_load((Int32)song_id);
 				sys.btl_flag = (Byte)(sys.btl_flag | 2);
 			}
 			if (btlsnd.ff9btlsnd_sync() != 0)
-			{
 				return false;
-			}
 			if ((sys.btl_flag & 32) == 0)
 			{
 				btlsnd.ff9btlsnd_song_play((Int32)song_id);
@@ -147,15 +191,11 @@ namespace FF9
 					{
 					case 0u:
 						if (next.bi.player != 0)
-						{
 							num = (UInt16)(num | next.btl_id);
-						}
 						break;
 					case 1u:
 						if (next.bi.player == 0)
-						{
 							num = (UInt16)(num | next.btl_id);
-						}
 						break;
 					case 2u:
 						num = (UInt16)(num | next.btl_id);
@@ -236,26 +276,20 @@ namespace FF9
 				btl_util.GeoSetColor2DrawPacket(btl.getShadow(), (Byte)((Int32)bbginfo.chr_r * rate >> 5), (Byte)((Int32)bbginfo.chr_g * rate >> 5), (Byte)((Int32)bbginfo.chr_b * rate >> 5), Byte.MaxValue);
 			}
 			if (rate == 0)
-			{
 				btl.SetDisappear(1);
-			}
 		}
 
 		public static void GeoSetABR(GameObject go, String type)
 		{
 			Shader shader;
 			if (type == "GEO_POLYFLAGS_TRANS_100_PLUS_25")
-			{
 				shader = FF9StateSystem.Battle.fadeShader;
-			}
 			else if (type == "SEMI_TRANS_50_PLUS_50" || type == "PSX/BattleMap_StatusEffect")
-			{
 				shader = FF9StateSystem.Battle.battleShader;
-			}
+			else if (type == "SHADOW" || type == "PSX/BattleMap_Abr_2")
+				shader = FF9StateSystem.Battle.shadowShader;
 			else
-			{
 				shader = ShadersLoader.Find(type);
-			}
 			SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
 			for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
 			{
@@ -285,22 +319,14 @@ namespace FF9
 		public static void GeoSetColor2DrawPacket(GameObject go, Byte r, Byte g, Byte b, Byte a = 255)
 		{
 			if (r > 255)
-			{
 				r = Byte.MaxValue;
-			}
 			if (g > 255)
-			{
 				g = Byte.MaxValue;
-			}
 			if (b > 255)
-			{
 				b = Byte.MaxValue;
-			}
 			SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
 			for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
-			{
 				componentsInChildren[i].material.SetColor("_Color", new Color32(r, g, b, a));
-			}
 			MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
 			for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
 			{
@@ -311,6 +337,20 @@ namespace FF9
 					material.SetColor("_Color", new Color32(r, g, b, a));
 				}
 			}
+		}
+
+		[Flags]
+		public enum BusyMode
+		{
+			CASTER = 1,
+			TARGET = 2,
+			MAGIC_CASTER = 4,
+			QUEUED_CASTER = 8,
+			QUEUED_TARGET = 16,
+			QUEUED_MAGIC_CASTER = 32,
+			ANY_CURRENT = CASTER | TARGET | MAGIC_CASTER,
+			ANY_QUEUED = QUEUED_CASTER | QUEUED_TARGET | QUEUED_MAGIC_CASTER,
+			ANY = ANY_CURRENT | ANY_QUEUED
 		}
 	}
 }

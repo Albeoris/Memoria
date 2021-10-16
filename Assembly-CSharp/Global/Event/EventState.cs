@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EventState : MonoBehaviour
@@ -18,5 +19,23 @@ public class EventState : MonoBehaviour
 	{
 		if (gEventGlobal[1100 + sub_no] < 255)
 			++gEventGlobal[1100 + sub_no];
+	}
+
+	public List<Int32> FindVariableInFieldScriptUsage(List<Int32> variableIndex, List<Boolean> asBool = null)
+	{
+		List<Int32> fieldList = new List<Int32>();
+		foreach (KeyValuePair<Int32, String> pair in FF9DBAll.EventDB)
+			if (EventEngineUtils.eventIDToFBGID.ContainsKey(pair.Key))
+			{
+				EventEngineUtils.BinaryScript script = EventEngineUtils.loadEventAsScript(pair.Value, EventEngineUtils.ebSubFolderField);
+				HashSet<UInt32> varUsed = script.GetVariableUsage(true, false, false);
+				for (Int32 i = 0; i < variableIndex.Count; i++)
+					if (EventEngineUtils.BinaryScript.IsVariableInUsage(varUsed, EventEngineUtils.BinaryScript.GetVariableFromIndex(EBin.VariableSource.Global, (UInt16)variableIndex[i], asBool != null ? asBool[i] : false)))
+					{
+						fieldList.Add(pair.Key);
+						break;
+					}
+			}
+		return fieldList;
 	}
 }

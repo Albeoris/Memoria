@@ -1,0 +1,23 @@
+// Shared sequence of SFX Meteor__Success
+
+SetBackgroundIntensity: Intensity=0 ; Time=4 ; HoldDuration=50
+PlaySound: Sound=216
+PlaySound: Sound=230
+PlaySound: Sound=235
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=49
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+PlaySound: Sound=438
+PlaySound: Sound=431
+PlaySound: Sound=477
+Wait: Time=1
+SetBackgroundIntensity: Intensity=1 ; Time=0
+Wait: Time=10
+SetBackgroundIntensity: Intensity=0 ; Time=3 ; HoldDuration=39
+Wait: Time=31
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=8
+SetBackgroundIntensity: Intensity=1 ; Time=16
+Wait: Time=11
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=8

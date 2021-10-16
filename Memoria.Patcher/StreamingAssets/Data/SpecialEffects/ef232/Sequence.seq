@@ -1,0 +1,19 @@
+// Shared sequence of SFX Escape
+
+PlaySound: Sound=2237
+PlaySound: Sound=2238
+PlaySound: Sound=2239
+Wait: Time=16
+PlaySound: Sound=2240
+PlaySound: Sound=2241
+PlaySound: Sound=2242
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=2
+ChangeSize: Char=Caster ; Size=(0.67, 0.73, 0.67) ; ScaleShadow=True ; Time=0
+ChangeSize: Char=Caster ; Size=(0.20, 0.93, 0.20) ; ScaleShadow=True ; Time=4
+Wait: Time=4
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+ChangeSize: Char=Caster ; Size=1 ; ScaleShadow=True ; Time=0
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=20

@@ -1,0 +1,10 @@
+// Shared sequence of SFX Bad_Breath
+
+PlaySound: Sound=261
+PlaySound: Sound=239
+PlaySound: Sound=225
+Wait: Time=8
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=42
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=30

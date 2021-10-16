@@ -392,7 +392,7 @@ namespace Memoria.Data
                 }
         }
 
-        public void TriggerOnCommand(BattleUnit abilityUser, BattleCommand command, ref Boolean tryCover)
+        public void TriggerOnCommand(BattleUnit abilityUser, BattleCommand command, ref UInt16 tryCover)
         {
             Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatus.NoReaction);
             BattleUnit caster = null;
@@ -451,8 +451,9 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "AbilityCategory") == 0) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
                         else if (String.Compare(formula.Key, "AbilityFlags") == 0) command.AbilityType = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityType);
                         else if (String.Compare(formula.Key, "IsReflectNull") == 0) command.IsReflectNull = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsReflectNull);
+                        else if (String.Compare(formula.Key, "IsMeteorMiss") == 0) command.Data.info.meteor_miss = (Byte)(NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsReflectNull) ? 1 : 0);
                         else if (String.Compare(formula.Key, "IsShortSummon") == 0) command.IsShortSummon = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortSummon);
-                        else if (String.Compare(formula.Key, "TryCover") == 0) tryCover = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), tryCover);
+                        else if (String.Compare(formula.Key, "TryCover") == 0) tryCover |= NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), false) ? abilityUser.Id : (UInt16)0;
                         else if (String.Compare(formula.Key, "ScriptId") == 0) command.ScriptId = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.ScriptId);
                         else if (String.Compare(formula.Key, "HitRate") == 0) command.HitRate = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.HitRate);
                     }

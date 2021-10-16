@@ -1,0 +1,65 @@
+// Shared sequence of SFX Virus_Crunch
+
+MoveToTarget: Char=AllTargets ; Target=Caster ; Time=13
+Turn: Char=AllTargets ; Angle=270 ; UsePitch=True ; Time=6
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 489.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 415.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 341.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 267.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 193.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 119.0, 0.0) ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(270, 180.0, 0.0) ; Time=0
+Turn: Char=AllTargets ; Angle=30 ; UsePitch=True ; Time=8
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 45.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -29.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -103.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -177.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -251.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -325.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -399.0, 0.0) ; MoveHeight=True ; Time=0
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=1
+PlaySound: Sound=1450
+PlaySound: Sound=1451
+PlaySound: Sound=1452
+Wait: Time=7
+PlaySound: Sound=1450
+PlaySound: Sound=1451
+PlaySound: Sound=1452
+Wait: Time=6
+PlaySound: Sound=1450
+PlaySound: Sound=1451
+PlaySound: Sound=1452
+Wait: Time=6
+PlaySound: Sound=1450
+PlaySound: Sound=1451
+PlaySound: Sound=1452
+Wait: Time=8
+PlaySound: Sound=1450
+PlaySound: Sound=1451
+PlaySound: Sound=1452
+Wait: Time=8
+PlaySound: Sound=1453
+PlaySound: Sound=1454
+PlaySound: Sound=1455
+MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+Wait: Time=2
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

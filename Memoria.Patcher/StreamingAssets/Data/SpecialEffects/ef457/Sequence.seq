@@ -1,0 +1,12 @@
+// Shared sequence of SFX Thunder_Slash_3
+
+SetBackgroundIntensity: Intensity=0.3125 ; Time=4 ; HoldDuration=21
+PlaySound: Sound=530
+PlaySound: Sound=523
+PlaySound: Sound=565
+Wait: Time=1
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=10
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10
+SetBackgroundIntensity: Intensity=1 ; Time=8

@@ -152,7 +152,7 @@ public partial class BattleHUD : UIScene
                     if ((id = num2) >= 8)
                         goto label_11;
                 } while ((enemyCategory & 1 << id) == 0);
-                SetBattleMessage(FF9TextTool.BattleLibraText(id), 2);
+                SetBattleMessage(FF9TextTool.BattleLibraText(id), 3);
                 return;
             }
             label_11:
@@ -170,7 +170,7 @@ public partial class BattleHUD : UIScene
                 if ((num2 = num3) >= 8)
                     goto label_17;
             } while ((num1 & (EffectElement)(1 << num2)) == 0);
-            SetBattleMessage(Localization.GetSymbol() != "JP" ? str + FF9TextTool.BattleLibraText(14 + num2) : BtlGetAttrName(1 << num2) + FF9TextTool.BattleLibraText(14), 2);
+            SetBattleMessage(Localization.GetSymbol() != "JP" ? str + FF9TextTool.BattleLibraText(14 + num2) : BtlGetAttrName(1 << num2) + FF9TextTool.BattleLibraText(14), 3);
             return;
             label_17:
             _currentLibraMessageCount = 0;
@@ -185,7 +185,7 @@ public partial class BattleHUD : UIScene
         }
         else
         {
-            SetBattleMessage(str, 2);
+            SetBattleMessage(str, 3);
         }
     }
 
@@ -207,7 +207,7 @@ public partial class BattleHUD : UIScene
 
         SetBattleMessage(Localization.GetSymbol() != "JP"
             ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id)
-            : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 2);
+            : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
 
         return;
         label_5:
@@ -2040,7 +2040,7 @@ public partial class BattleHUD : UIScene
                 unit.Data.gameObject.transform.GetChildByName("bone" + unit.Data.tar_bone.ToString("D3")).gameObject.transform,
                 index,
                 !unit.IsPlayer,
-                unit.Data.radius,
+                unit.Data.radius_effect,
                 unit.Data.height);
         }
     }

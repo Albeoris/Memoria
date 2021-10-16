@@ -1,0 +1,12 @@
+// Shared sequence of SFX Chestnut
+
+PlaySound: Sound=1139
+PlaySound: Sound=1140
+Wait: Time=4
+PlaySound: Sound=1141
+PlaySound: Sound=1142
+PlaySound: Sound=1143
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=24

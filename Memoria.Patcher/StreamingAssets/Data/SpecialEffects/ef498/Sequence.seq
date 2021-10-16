@@ -1,0 +1,28 @@
+// Shared sequence of SFX Grand_Cross
+
+PlaySound: Sound=2880
+PlaySound: Sound=2881
+PlaySound: Sound=2882
+PlaySound: Sound=2883
+Wait: Time=94
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0 ; Time=1 ; HoldDuration=241
+Wait: Time=1
+PlaySound: Sound=2884
+PlaySound: Sound=2885
+PlaySound: Sound=2886
+PlaySound: Sound=2887
+Wait: Time=240
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+SetBackgroundIntensity: Intensity=0.3125 ; Time=1 ; HoldDuration=81
+Wait: Time=81
+SetBackgroundIntensity: Intensity=1 ; Time=1
+Wait: Time=10
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=True ; Time=8
+Wait: Time=7
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=16

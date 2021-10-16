@@ -1,0 +1,23 @@
+// Shared sequence of SFX Sacrifice
+
+PlaySound: Sound=1633
+PlaySound: Sound=1634
+PlaySound: Sound=1635
+Wait: Time=30
+PlaySound: Sound=1636
+PlaySound: Sound=1637
+PlaySound: Sound=1638
+Wait: Time=15
+StartThread: TargetLoop=True ; Chain=True ; Sync=True
+	StartThread: Condition=CasterPosition != TargetPosition ; Sync=True
+		PlaySound: Sound=1639
+		PlaySound: Sound=1640
+		PlaySound: Sound=1641
+		Wait: Time=16
+	EndThread
+EndThread
+Wait: Time=15
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=22
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=10

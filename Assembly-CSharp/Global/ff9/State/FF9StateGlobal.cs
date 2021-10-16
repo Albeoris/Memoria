@@ -889,7 +889,7 @@ public partial class FF9StateGlobal
 
 	public Int16 dragon_no;
 
-	public Byte btl_result;
+	public Byte btl_result; // FF9.battle_result
 
 	public Byte btl_flag;
 

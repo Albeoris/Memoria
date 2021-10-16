@@ -1,0 +1,10 @@
+// Shared sequence of SFX Zombie_Breath
+
+PlaySound: Sound=572
+PlaySound: Sound=561
+PlaySound: Sound=555
+Wait: Time=30
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12

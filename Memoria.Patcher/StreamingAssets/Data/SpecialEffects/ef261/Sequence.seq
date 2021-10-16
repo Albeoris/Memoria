@@ -1,0 +1,47 @@
+// Shared sequence of SFX Odin__Full
+
+SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=199
+Wait: Time=18
+ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+Wait: Time=44
+PlaySound: Sound=2255 ; Pitch=0.725
+PlaySound: Sound=2256 ; Pitch=0.725
+PlaySound: Sound=2257 ; Pitch=0.725
+PlaySound: Sound=2258 ; Pitch=0.725
+Wait: Time=45
+PlaySound: Sound=176 ; SoundType=Song ; Volume=1.3
+Wait: Time=92
+SetBackgroundIntensity: Intensity=0.5 ; Time=8 ; HoldDuration=306
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=True ; Time=8
+Wait: Time=31
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
+Wait: Time=3
+PlaySound: Sound=2259 ; Pitch=0.725
+PlaySound: Sound=2260 ; Pitch=0.725
+PlaySound: Sound=2261 ; Pitch=0.725
+PlaySound: Sound=2262 ; Pitch=0.725
+Wait: Time=56
+PlaySound: Sound=2263 ; Pitch=0.725
+PlaySound: Sound=2264 ; Pitch=0.725
+PlaySound: Sound=2265 ; Pitch=0.725
+PlaySound: Sound=2266 ; Pitch=0.725
+Wait: Time=24
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+PlayAnimation: Char=AllTargets ; Speed=0
+Wait: Time=74
+PlayAnimation: Char=AllTargets ; Speed=1
+Wait: Time=3
+PlaySound: Sound=2267 ; Pitch=0.725
+PlaySound: Sound=2268 ; Pitch=0.725
+PlaySound: Sound=2269 ; Pitch=0.725
+PlaySound: Sound=2270 ; Pitch=0.725
+Wait: Time=73
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=26
+SetBackgroundIntensity: Intensity=1 ; Time=12
+ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+Wait: Time=32

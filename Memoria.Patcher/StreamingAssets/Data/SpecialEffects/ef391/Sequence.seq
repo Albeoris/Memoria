@@ -1,0 +1,19 @@
+// Shared sequence of SFX Fire_Blades
+
+SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=60
+PlaySound: Sound=2014
+PlaySound: Sound=2015
+PlaySound: Sound=2016
+Wait: Time=16
+PlaySound: Sound=2017
+PlaySound: Sound=2018
+PlaySound: Sound=2019
+Wait: Time=16
+PlaySound: Sound=2020
+PlaySound: Sound=2021
+PlaySound: Sound=2022
+EffectPoint: Char=AllTargets ; Type=Effect
+Wait: Time=16
+EffectPoint: Char=Everyone ; Type=Figure
+Wait: Time=12
+SetBackgroundIntensity: Intensity=1 ; Time=16

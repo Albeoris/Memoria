@@ -43,74 +43,74 @@ public class PSXTexture
 	{
 		TY <<= 8;
 		TX <<= 6;
-		Int32 num = (clutX << 4) + (clutY << 10);
-		Int32 num2 = 0;
+		Int32 psxIndexBase = (clutX << 4) + (clutY << 10);
+		Int32 uniIndex = 0;
 		switch (TP)
 		{
 		case 0:
-			for (Int32 i = 0; i < h; i++)
+			for (Int32 y = 0; y < h; y++)
 			{
-				Int32 num3 = (TY + i << 10) + TX;
-				for (Int32 j = 0; j < (int) w >> 2; j++)
+				Int32 vramIndex = (TY + y << 10) + TX;
+				for (Int32 x = 0; x < (w >> 2); x++)
 				{
-					UInt16 num4 = PSXTextureMgr.originalVram[num3];
-					Int32 num5 = (Int32)(num4 & 15);
-					this.ConvertABGR16toABGR32(num2, num + num5);
-					num2++;
-					num5 = (num4 >> 4 & 15);
-					this.ConvertABGR16toABGR32(num2, num + num5);
-					num2++;
-					num5 = (num4 >> 8 & 15);
-					this.ConvertABGR16toABGR32(num2, num + num5);
-					num2++;
-					num5 = num4 >> 12;
-					this.ConvertABGR16toABGR32(num2, num + num5);
-					num2++;
-					num3++;
+					UInt16 paletteInfo = PSXTextureMgr.originalVram[vramIndex];
+					Int32 paletteIndex = paletteInfo & 0xF;
+					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+					uniIndex++;
+					paletteIndex = (paletteInfo >> 4 & 0xF);
+					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+					uniIndex++;
+					paletteIndex = (paletteInfo >> 8 & 0xF);
+					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+					uniIndex++;
+					paletteIndex = paletteInfo >> 12;
+					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+					uniIndex++;
+					vramIndex++;
 				}
 			}
 			break;
 		case 1:
-			for (Int32 k = 0; k < h; k++)
+			for (Int32 y = 0; y < h; y++)
 			{
-				Int32 num6 = (TY + k << 10) + TX;
-				for (Int32 l = 0; l < (w >> 1); l++)
+				Int32 vramIndex = (TY + y << 10) + TX;
+				for (Int32 x = 0; x < (w >> 1); x++)
 				{
-					UInt16 num7 = PSXTextureMgr.originalVram[num6];
-					Int32 num8 = (Int32)(num7 & 255);
-					this.ConvertABGR16toABGR32(num2, num + num8);
-					num2++;
-					num8 = num7 >> 8;
-					this.ConvertABGR16toABGR32(num2, num + num8);
-					num2++;
-					num6++;
+					UInt16 paletteInfo = PSXTextureMgr.originalVram[vramIndex];
+					Int32 paletteIndex = paletteInfo & 0xFF;
+					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+					uniIndex++;
+					paletteIndex = paletteInfo >> 8;
+					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+					uniIndex++;
+					vramIndex++;
 				}
 			}
 			break;
 		case 2:
-			for (Int32 m = 0; m < h; m++)
+			for (Int32 y = 0; y < h; y++)
 			{
-				Int32 num9 = (TY + m << 10) + TX;
-				for (Int32 n = 0; n < w; n++)
+				Int32 vramIndex = (TY + y << 10) + TX;
+				for (Int32 x = 0; x < w; x++)
 				{
-					this.ConvertABGR16toABGR32(num2, num9);
-					num2++;
-					num9++;
+					this.ConvertABGR16toABGR32(uniIndex, vramIndex);
+					uniIndex++;
+					vramIndex++;
 				}
 			}
 			break;
 		default:
-			for (Int32 num10 = 0; num10 < h; num10++)
+			for (Int32 y = 0; y < h; y++)
 			{
-				Int32 num11 = (TY + num10 << 10) + TX;
-				for (Int32 num12 = 0; num12 < w; num12++)
+				Int32 vramIndex = (TY + y << 10) + TX;
+				for (Int32 x = 0; x < w; x++)
 				{
-					PSXTexture.pixels[num2].r = (Byte)(PSXTextureMgr.originalVram[num11] & 255);
-					PSXTexture.pixels[num2].g = (Byte)((PSXTextureMgr.originalVram[num11] & 65280) >> 8);
-					PSXTexture.pixels[num2].b = 0;
-					PSXTexture.pixels[num2].a = Byte.MaxValue;
-					num2++;
-					num11++;
+					PSXTexture.pixels[uniIndex].r = (Byte)(PSXTextureMgr.originalVram[vramIndex] & 0xFF);
+					PSXTexture.pixels[uniIndex].g = (Byte)((PSXTextureMgr.originalVram[vramIndex] & 0xFF00) >> 8);
+					PSXTexture.pixels[uniIndex].b = 0;
+					PSXTexture.pixels[uniIndex].a = Byte.MaxValue;
+					uniIndex++;
+					vramIndex++;
 				}
 			}
 			break;
@@ -120,21 +120,15 @@ public class PSXTexture
 	private void ConvertABGR16toABGR32(Int32 uniIndex, Int32 psxIndex)
 	{
 		UInt16 num = PSXTextureMgr.originalVram[psxIndex];
-		PSXTexture.pixels[uniIndex].r = (Byte)((num & 31) << 3);
-		PSXTexture.pixels[uniIndex].g = (Byte)((num & 992) >> 2);
-		PSXTexture.pixels[uniIndex].b = (Byte)((num & 31744) >> 7);
-		if ((num & 32768) != 0)
-		{
+		PSXTexture.pixels[uniIndex].r = (Byte)((num & 0x1F) << 3);
+		PSXTexture.pixels[uniIndex].g = (Byte)((num & 0x3E0) >> 2);
+		PSXTexture.pixels[uniIndex].b = (Byte)((num & 0x7C00) >> 7);
+		if ((num & 0x8000) != 0)
 			PSXTexture.pixels[uniIndex].a = Byte.MaxValue;
-		}
-		else if ((num & 32767) != 0)
-		{
+		else if ((num & 0x7FFF) != 0)
 			PSXTexture.pixels[uniIndex].a = Byte.MaxValue;
-		}
 		else
-		{
 			PSXTexture.pixels[uniIndex].a = 0;
-		}
 	}
 
 	private UInt32 GetDataFromBit(UInt32 input, Int32 start, Int32 end)

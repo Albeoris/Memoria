@@ -1846,7 +1846,7 @@ public partial class EventEngine
                     EMinigame.StiltzkinAchievement((PosObj)this.gCur, gilDecrease);
                 return 0;
             case EBin.event_code_binary.MESB:
-                UIManager.Battle.SetBattleMessage(FF9TextTool.BattleText(this.getv2()), (Byte)3);
+                UIManager.Battle.SetBattleMessage(FF9TextTool.BattleText(this.getv2()), (Byte)4);
                 return 0;
             case EBin.event_code_binary.GLOBALCLEAR:
                 return 0;
