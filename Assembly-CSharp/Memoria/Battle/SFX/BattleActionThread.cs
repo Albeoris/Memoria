@@ -260,33 +260,33 @@ public class BattleActionThread
 						mainThread.code.AddLast(new BattleActionCode("PlayAnimation", "Char", "Caster", "Anim", animName));
 						break;
 					case 6: // SFX
+					{
+						BattleActionThread sfxThread = new BattleActionThread();
+						sfxNum = r.ReadInt16();
+						sfxBone0 = r.ReadByte();
+						sfxThread.code.AddLast(new BattleActionCode("SetupReflect"));
+						sfxThread.code.AddLast(new BattleActionCode("LoadSFX", "SFX", sfxNum.ToString(), "FirstBone", sfxBone0.ToString(), "Reflect", true.ToString()));
+						sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", (r.ReadByte() + 4).ToString(), "Reflect", true.ToString()));
+						sfxThread.code.AddLast(new BattleActionCode("WaitSFXLoaded", "Reflect", true.ToString()));
+						sfxThread.code.AddLast(new BattleActionCode("PlaySFX", "SkipSequence", (sfxBone0 != 0).ToString(), "Reflect", true.ToString()));
+						sfxThread.code.AddLast(new BattleActionCode("WaitSFXDone", "Reflect", true.ToString()));
+						mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
+						result.Add(sfxThread);
+						break;
+					}
+					case 10: // Run Spell Animation
+					{
+						BattleActionThread sfxThread = mainThread;
+						if ((SpecialEffect)sfxNum == SpecialEffect.Special_Silver_Dragon_Death)
 						{
-							BattleActionThread sfxThread = new BattleActionThread();
-							sfxNum = r.ReadInt16();
-							sfxBone0 = r.ReadByte();
-							sfxThread.code.AddLast(new BattleActionCode("SetupReflect"));
-							sfxThread.code.AddLast(new BattleActionCode("LoadSFX", "SFX", sfxNum.ToString(), "FirstBone", sfxBone0.ToString(), "Reflect", true.ToString()));
-							sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", (r.ReadByte() + 4).ToString(), "Reflect", true.ToString()));
-							sfxThread.code.AddLast(new BattleActionCode("WaitSFXLoaded", "Reflect", true.ToString()));
-							sfxThread.code.AddLast(new BattleActionCode("PlaySFX", "SkipSequence", (sfxBone0 != 0).ToString(), "Reflect", true.ToString()));
-							sfxThread.code.AddLast(new BattleActionCode("WaitSFXDone", "Reflect", true.ToString()));
+							sfxThread = new BattleActionThread();
+							sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", "44"));
 							mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
 							result.Add(sfxThread);
 						}
+						sfxThread.code.AddLast(new BattleActionCode("PlayMonsterSFX", "Reflect", true.ToString()));
 						break;
-					case 10: // Run Spell Animation
-						{
-							BattleActionThread sfxThread = mainThread;
-							if ((SpecialEffect)sfxNum == SpecialEffect.Special_Silver_Dragon_Death)
-							{
-								sfxThread = new BattleActionThread();
-								sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", "44"));
-								mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
-								result.Add(sfxThread);
-							}
-							sfxThread.code.AddLast(new BattleActionCode("PlayMonsterSFX", "Reflect", true.ToString()));
-						}
-						break;
+					}
 					case 7: // Wait Animation
 						mainThread.code.AddLast(new BattleActionCode("WaitAnimation", "Char", "Caster"));
 						break;

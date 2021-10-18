@@ -830,8 +830,6 @@ public class SFX
     }
     public static IntPtr SFX_GetPrim(ref Int32 otz)
     {
-        if (SFX.isDebugPrintCode)
-            Log.Message("[SFX] SFX_GetPrim " + otz);
         return DLLMethods.SFX_GetPrim(ref otz);
     }
 
@@ -1069,20 +1067,20 @@ public class SFX
                     return (FF9StateSystem.Battle.FF9Battle.cur_cmd.cmd_no != BattleCommandId.AutoPotion || !btl_cmd.CheckUsingCommand(next.cmd[0])) ? 0 : 1;
                 return 0;
             case 9: // Get Current Animation's frame count
-                {
-                    UInt16 frameCount = (UInt16)GeoAnim.geoAnimGetNumFrames(next);
-                    if (frameCount == 0)
-                        frameCount = 1;
-                    return frameCount;
-                }
+            {
+                UInt16 frameCount = (UInt16)GeoAnim.geoAnimGetNumFrames(next);
+                if (frameCount == 0)
+                    frameCount = 1;
+                return frameCount;
+            }
             case 10: // Get Current Animation's current frame
                 return next.evt.animFrame;
             case 11: // Set Current Animation's current frame
-                {
-                    UInt16 frameMax = (UInt16)GeoAnim.geoAnimGetNumFrames(next);
-                    next.evt.animFrame = frameMax <= arg0 ? (Byte)(frameMax - 1) : (Byte)arg0;
-                    break;
-                }
+            {
+                UInt16 frameMax = (UInt16)GeoAnim.geoAnimGetNumFrames(next);
+                next.evt.animFrame = frameMax <= arg0 ? (Byte)(frameMax - 1) : (Byte)arg0;
+                break;
+            }
             case 12: // Set Current Animation
                 if (arg0 == -1)
                 {
@@ -1125,65 +1123,65 @@ public class SFX
                 }
                 break;
             case 13: // Stop Animation
-                {
-                    // Handle Ultima (Pandemonium / Crystal World) such that it doesn't freeze the characters
-                    // In order to use the SFX Ultima as normal spells, this fix is required
-                    //  + adding two effect points (damage point & figure point) in the efXXX file
-                    //  + reset the BBG transparency at the end ("Set battle scene transparency 255 5" in Hades Workshop)
-                    //  + make sure that all the characters are shown at the end (removing all the lines "Show/hide characters" in Hades Workshop has a good-looking result)
-                    // Also, the caster moves away when using SFX 384 (Ultima in Crystal World), so either reset the caster's position at the end of the sequencing or use the Pandemonium version
-                    if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
-                        return next.bi.stop_anim;
-                    Byte stop_anim = next.bi.stop_anim;
-                    next.bi.stop_anim = (Byte)arg0;
-                    return stop_anim;
-                }
+            {
+                // Handle Ultima (Pandemonium / Crystal World) such that it doesn't freeze the characters
+                // In order to use the SFX Ultima as normal spells, this fix is required
+                //  + adding two effect points (damage point & figure point) in the efXXX file
+                //  + reset the BBG transparency at the end ("Set battle scene transparency 255 5" in Hades Workshop)
+                //  + make sure that all the characters are shown at the end (removing all the lines "Show/hide characters" in Hades Workshop has a good-looking result)
+                // Also, the caster moves away when using SFX 384 (Ultima in Crystal World), so either reset the caster's position at the end of the sequencing or use the Pandemonium version
+                if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
+                    return next.bi.stop_anim;
+                Byte stop_anim = next.bi.stop_anim;
+                next.bi.stop_anim = (Byte)arg0;
+                return stop_anim;
+            }
             case 14: // Get Bone Stance
+            {
+                Matrix4x4 matrix4x;
+                try
                 {
-                    Matrix4x4 matrix4x;
-                    try
-                    {
-                        matrix4x = next.gameObject.transform.GetChildByName("bone" + arg1.ToString("D3")).localToWorldMatrix;
-                        if (next.bi.disappear != 0 && next.gameObject.transform.localPosition.y == -10000f)
-                            matrix4x.m13 += 10000f; // The flickering "fix" from BTL_DATA.SetDisappear
-                    }
-                    catch (NullReferenceException)
-                    {
-                        matrix4x = Matrix4x4.identity;
-                    }
-                    switch (arg0)
-                    {
-                        case 0: // Get Bone Position
-                            *(Int16*)p = (Int16)matrix4x.m03;
-                            *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)(matrix4x.m13 + next.attachOffset));
-                            *(Int16*)((Byte*)p + 4) = (Int16)matrix4x.m23;
-                            break;
-                        case 1: // Get Bone Height
-                            return -(Int32)(matrix4x.m13 + next.attachOffset);
-                        case 2: // Get Bone Orientation & Position
-                            PSXMAT* matPtr = (PSXMAT*)p;
-                            Int16* rptr = matPtr->r;
-                            Int32* tptr = matPtr->t;
-
-                            matPtr->pad = 0;
-
-                            rptr[0] = (Int16)(matrix4x.m00 * -4096f);
-                            rptr[1] = (Int16)(matrix4x.m01 * -4096f);
-                            rptr[2] = (Int16)(matrix4x.m02 * 4096f);
-                            rptr[3] = (Int16)(matrix4x.m10 * -4096f);
-                            rptr[4] = (Int16)(matrix4x.m11 * 4096f);
-                            rptr[5] = (Int16)(matrix4x.m12 * -4096f);
-                            rptr[6] = (Int16)(matrix4x.m20 * 4096f);
-                            rptr[7] = (Int16)(matrix4x.m21 * 4096f);
-                            rptr[8] = (Int16)(matrix4x.m22 * 4096f);
-
-                            tptr[0] = (Int32)matrix4x.m03;
-                            tptr[1] = -(Int32)(matrix4x.m13 + next.attachOffset);
-                            tptr[2] = (Int32)matrix4x.m23;
-                            break;
-                    }
-                    break;
+                    matrix4x = next.gameObject.transform.GetChildByName("bone" + arg1.ToString("D3")).localToWorldMatrix;
+                    if (next.bi.disappear != 0 && next.gameObject.transform.localPosition.y == -10000f)
+                        matrix4x.m13 += 10000f; // The flickering "fix" from BTL_DATA.SetDisappear
                 }
+                catch (NullReferenceException)
+                {
+                    matrix4x = Matrix4x4.identity;
+                }
+                switch (arg0)
+                {
+                    case 0: // Get Bone Position
+                        *(Int16*)p = (Int16)matrix4x.m03;
+                        *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)(matrix4x.m13 + next.attachOffset));
+                        *(Int16*)((Byte*)p + 4) = (Int16)matrix4x.m23;
+                        break;
+                    case 1: // Get Bone Height
+                        return -(Int32)(matrix4x.m13 + next.attachOffset);
+                    case 2: // Get Bone Orientation & Position
+                        PSXMAT* matPtr = (PSXMAT*)p;
+                        Int16* rptr = matPtr->r;
+                        Int32* tptr = matPtr->t;
+
+                        matPtr->pad = 0;
+
+                        rptr[0] = (Int16)(matrix4x.m00 * -4096f);
+                        rptr[1] = (Int16)(matrix4x.m01 * -4096f);
+                        rptr[2] = (Int16)(matrix4x.m02 * 4096f);
+                        rptr[3] = (Int16)(matrix4x.m10 * -4096f);
+                        rptr[4] = (Int16)(matrix4x.m11 * 4096f);
+                        rptr[5] = (Int16)(matrix4x.m12 * -4096f);
+                        rptr[6] = (Int16)(matrix4x.m20 * 4096f);
+                        rptr[7] = (Int16)(matrix4x.m21 * 4096f);
+                        rptr[8] = (Int16)(matrix4x.m22 * 4096f);
+
+                        tptr[0] = (Int32)matrix4x.m03;
+                        tptr[1] = -(Int32)(matrix4x.m13 + next.attachOffset);
+                        tptr[2] = (Int32)matrix4x.m23;
+                        break;
+                }
+                break;
+            }
             case 15: // Is Targetable
                 return next.bi.target;
             case 16: // Reset Stand Animation
@@ -1218,12 +1216,12 @@ public class SFX
                     case 0: // Has Status
                         return ((next.stat.cur & (BattleStatus)(arg2 << 16 | arg1)) == 0u) ? 0 : 1;
                     case 1: // Has Status or Permanent Status
-                        {
-                            BattleStatus status = (BattleStatus)(arg2 << 16 | arg1);
-                            if (SFX.currentEffectID == SpecialEffect.Roulette && (status & BattleStatus.Death) != 0u && !correctBtlid)
-                                return 1;
-                            return btl_stat.CheckStatus(next, status) ? 1 : 0;
-                        }
+                    {
+                        BattleStatus status = (BattleStatus)(arg2 << 16 | arg1);
+                        if (SFX.currentEffectID == SpecialEffect.Roulette && (status & BattleStatus.Death) != 0u && !correctBtlid)
+                            return 1;
+                        return btl_stat.CheckStatus(next, status) ? 1 : 0;
+                    }
                     case 2: // Remove many statuses
                         btl_stat.RemoveStatuses(next, ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop));
                         break;
@@ -1260,25 +1258,25 @@ public class SFX
                             btl_stat.GeoAddColor2DrawPacket(next.gameObject, (Int16)(SFX.fade - 128), (Int16)(SFX.fade - 128), (Int16)(SFX.fade - 128));
                         break;
                     case 4: // Semi-transparent fade, severe (a typical fading goes from arg1 == 128 to 0 forth and back)
+                    {
+                        Boolean weap = arg1 < 256;
+                        SFX.fade = arg1;
+                        if (!weap)
+                            arg1 -= 256;
+                        if (next.bi.player != 0 && next.weapon_geo != null && weap && (next.weaponFlags & geo.GEO_FLAGS_RENDER) != 0 && (next.weaponFlags & geo.GEO_FLAGS_CLIP) == 0)
                         {
-                            Boolean weap = arg1 < 256;
-                            SFX.fade = arg1;
-                            if (!weap)
-                                arg1 -= 256;
-                            if (next.bi.player != 0 && next.weapon_geo != null && weap && (next.weaponFlags & geo.GEO_FLAGS_RENDER) != 0 && (next.weaponFlags & geo.GEO_FLAGS_CLIP) == 0)
-                            {
-                                btl_stat.GeoAddColor2DrawPacket(next.weapon_geo, (Int16)(arg1 - 128), (Int16)(arg1 - 128), (Int16)(arg1 - 128));
-                                if (arg1 < 70)
-                                    btl_util.GeoSetABR(next.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                            }
-                            if ((next.flags & geo.GEO_FLAGS_RENDER) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
-                            {
-                                btl_stat.GeoAddColor2DrawPacket(next.gameObject, (Int16)(arg1 - 128), (Int16)(arg1 - 128), (Int16)(arg1 - 128));
-                                if (arg1 < 70)
-                                    btl_util.GeoSetABR(next.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
-                            }
-                            break;
+                            btl_stat.GeoAddColor2DrawPacket(next.weapon_geo, (Int16)(arg1 - 128), (Int16)(arg1 - 128), (Int16)(arg1 - 128));
+                            if (arg1 < 70)
+                                btl_util.GeoSetABR(next.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
                         }
+                        if ((next.flags & geo.GEO_FLAGS_RENDER) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
+                        {
+                            btl_stat.GeoAddColor2DrawPacket(next.gameObject, (Int16)(arg1 - 128), (Int16)(arg1 - 128), (Int16)(arg1 - 128));
+                            if (arg1 < 70)
+                                btl_util.GeoSetABR(next.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+                        }
+                        break;
+                    }
                 }
                 break;
             case 26: // Number of meshes
@@ -1287,25 +1285,25 @@ public class SFX
                 btl_stat.SetPresentColor(next);
                 break;
             case 28: // Play/Stop Texture Animation
+            {
+                switch (code) // Detect, which has an eye texture animation bug, calls it 4 times:
+                              // 28 1 0 0 0
+                              // 28 0 0 0 0
+                              // 28 0 1 0 0
+                              // 28 2 0 0 0
                 {
-                    switch (code) // Detect, which has an eye texture animation bug, calls it 4 times:
-                                  // 28 1 0 0 0
-                                  // 28 0 0 0 0
-                                  // 28 0 1 0 0
-                                  // 28 2 0 0 0
-                    {
-                        case 0:
-                            GeoTexAnim.geoTexAnimStop(next.texanimptr, arg1 != 0 ? 1 : 0);
-                            break;
-                        case 1:
-                            GeoTexAnim.geoTexAnimStop(next.texanimptr, 2);
-                            break;
-                        case 2:
-                            GeoTexAnim.geoTexAnimPlay(next.texanimptr, 2);
-                            break;
-                    }
-                    break;
+                    case 0:
+                        GeoTexAnim.geoTexAnimStop(next.texanimptr, arg1 != 0 ? 1 : 0);
+                        break;
+                    case 1:
+                        GeoTexAnim.geoTexAnimStop(next.texanimptr, 2);
+                        break;
+                    case 2:
+                        GeoTexAnim.geoTexAnimPlay(next.texanimptr, 2);
+                        break;
                 }
+                break;
+            }
             case 29: // Play Sound (Jump)
                 btl_util.SetBattleSfx(next, 1110, 127);
                 break;
@@ -1316,43 +1314,43 @@ public class SFX
                 btlsnd.ff9btlsnd_sndeffect_play(btlsnd.ff9btlsnd_weapon_sfx(next.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT), 0, 127, 128);
                 break;
             case 33: // Play Casting Animation (Dragon)
+            {
+                // Freya's Dragon casting animation (looping or launch)
+                switch (arg1)
                 {
-                    // Freya's Dragon casting animation (looping or launch)
-                    switch (arg1)
-                    {
-                        case 61: // Luna
-                            arg0 = ((arg0 != 20) ? 1 : 0);
-                            break;
-                        case 83: // White Draw
-                            arg0 = ((arg0 != 9) ? 1 : 0);
-                            break;
-                        case 168: // Reis' Wind
-                            arg0 = ((arg0 != 11) ? 1 : 0);
-                            break;
-                        case 296: // Dragon Breath
-                            arg0 = ((arg0 != 19) ? 1 : 0);
-                            break;
-                        case 387: // Cherry Blossom
-                            arg0 = ((arg0 != 18) ? 1 : 0);
-                            break;
-                        case 490: // Dragon's Crest
-                            arg0 = ((arg0 != 14) ? 1 : 0);
-                            break;
-                        case 491: // Six Dragons
-                            arg0 = ((arg0 != 18) ? 1 : 0);
-                            break;
-                    }
-                    String goName = next.gameObject.name;
-                    goName = goName.Trim();
-                    if (goName.CompareTo("192(Clone)") == 0 || goName.CompareTo("585(Clone)") == 0) // GEO_MAIN_B0_011's and GEO_MAIN_B0_033's internal names (Freya/Trance Freya)
-                        btl_mot.setMotion(next, arg0 != 0 ? "ANH_MAIN_B0_011_202" : "ANH_MAIN_B0_011_201");
-                    else
-                        btl_mot.setMotion(next, arg0 != 0 ? BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC : BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
-                    next.evt.animFrame = 0;
-                    if (arg0 == 0)
-                        next.animFlag |= (UInt16)EventEngine.afLoop;
-                    break;
+                    case 61: // Luna
+                        arg0 = ((arg0 != 20) ? 1 : 0);
+                        break;
+                    case 83: // White Draw
+                        arg0 = ((arg0 != 9) ? 1 : 0);
+                        break;
+                    case 168: // Reis' Wind
+                        arg0 = ((arg0 != 11) ? 1 : 0);
+                        break;
+                    case 296: // Dragon Breath
+                        arg0 = ((arg0 != 19) ? 1 : 0);
+                        break;
+                    case 387: // Cherry Blossom
+                        arg0 = ((arg0 != 18) ? 1 : 0);
+                        break;
+                    case 490: // Dragon's Crest
+                        arg0 = ((arg0 != 14) ? 1 : 0);
+                        break;
+                    case 491: // Six Dragons
+                        arg0 = ((arg0 != 18) ? 1 : 0);
+                        break;
                 }
+                String goName = next.gameObject.name;
+                goName = goName.Trim();
+                if (goName.CompareTo("192(Clone)") == 0 || goName.CompareTo("585(Clone)") == 0) // GEO_MAIN_B0_011's and GEO_MAIN_B0_033's internal names (Freya/Trance Freya)
+                    btl_mot.setMotion(next, arg0 != 0 ? "ANH_MAIN_B0_011_202" : "ANH_MAIN_B0_011_201");
+                else
+                    btl_mot.setMotion(next, arg0 != 0 ? BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC : BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                next.evt.animFrame = 0;
+                if (arg0 == 0)
+                    next.animFlag |= (UInt16)EventEngine.afLoop;
+                break;
+            }
         }
         return 0;
     }
@@ -1542,18 +1540,18 @@ public class SFX
                         vib.VIB_purge();
                         break;
                     case 1:
-                        {
-                            Byte[] array2 = new Byte[1800];
-                            Marshal.Copy((IntPtr)p, array2, 0, 1800);
-                            MemoryStream input = new MemoryStream(array2);
-                            BinaryReader binaryReader = new BinaryReader(input);
-                            vib.VIB_init(binaryReader);
-                            vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_LO, true);
-                            vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_HI, true);
-                            vib.VIB_vibrate(1);
-                            binaryReader.Close();
-                            break;
-                        }
+                    {
+                        Byte[] array2 = new Byte[1800];
+                        Marshal.Copy((IntPtr)p, array2, 0, 1800);
+                        MemoryStream input = new MemoryStream(array2);
+                        BinaryReader binaryReader = new BinaryReader(input);
+                        vib.VIB_init(binaryReader);
+                        vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_LO, true);
+                        vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_HI, true);
+                        vib.VIB_vibrate(1);
+                        binaryReader.Close();
+                        break;
+                    }
                     case 2:
                         vib.VIB_setActive(false);
                         vib.VIB_setTrackActive(1, vib.VIB_SAMPLE_LO, true);

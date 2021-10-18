@@ -786,16 +786,17 @@ public abstract class SFXDataMesh
 				}
 				RenderTexture activeRender = RenderTexture.active;
 				RenderTexture.active = null;
-				foreach (ModelSequence.Sprite tok in mseq.spriteList)
-					foreach (ModelSequence.Sprite.Emission em in tok.emission)
-						if (em.frame > tok.lastFrameRendered && em.frame <= frame && (emit || em.frame < mseq.minimalDuration))
-							for (Int32 i = 0; i < em.count; i++)
-							{
-								ModelSequence.Sprite.Particle particle = new ModelSequence.Sprite.Particle(em, tok.baseMovement);
-								tok.particle.Add(particle);
-								foreach (Int32 link in tok.spriteEmissionLink)
-									mseq.spriteList[link].particle.Add(new ModelSequence.Sprite.Particle(particle));
-							}
+				if (run == null || !run.cancel)
+					foreach (ModelSequence.Sprite tok in mseq.spriteList)
+						foreach (ModelSequence.Sprite.Emission em in tok.emission)
+							if (em.frame > tok.lastFrameRendered && em.frame <= frame && (emit || em.frame < mseq.minimalDuration))
+								for (Int32 i = 0; i < em.count; i++)
+								{
+									ModelSequence.Sprite.Particle particle = new ModelSequence.Sprite.Particle(em, tok.baseMovement);
+									tok.particle.Add(particle);
+									foreach (Int32 link in tok.spriteEmissionLink)
+										mseq.spriteList[link].particle.Add(new ModelSequence.Sprite.Particle(particle));
+								}
 				foreach (ModelSequence.Sprite tok in mseq.spriteList)
 				{
 					for (Int32 pIndex = 0; pIndex < tok.particle.Count; pIndex++)

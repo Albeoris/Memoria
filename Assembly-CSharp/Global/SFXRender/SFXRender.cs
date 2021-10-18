@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Data;
+using Memoria.Prime;
 
 public class SFXRender
 {
@@ -65,6 +65,8 @@ public class SFXRender
 			SFXMesh.GPosIndex = 0;
 			SFXMesh.GTexIndex = 0;
 			SFXMesh.GColIndex = 0;
+			if (SFX.isDebugPrintCode)
+				Log.Message("[SFX] SFX_GetPrim (start)");
 			for (; ; )
 			{
 				Int32 num = 0;
@@ -75,6 +77,8 @@ public class SFXRender
 				SFXRender.Add(ptr);
 				SFXRender.primCount++;
 			}
+			if (SFX.isDebugPrintCode)
+				Log.Message($"[SFX] SFX_GetPrim (end:{SFXRender.primCount})");
 			SFXRender.PushCommandBuffer();
 			if (SFX.IsDebugMesh || SFX.IsDebugObjMesh)
 			{

@@ -215,7 +215,7 @@ public class btl_vfx
 			btl.meshIsRendering[i] = true;
 		btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
 		BattlePlayerCharacter.InitAnimation(btl);
-		btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+		//btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
 		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[btl.bi.slot_no], btl);
 		if (serialNo == 7)
             serialNo = 8;

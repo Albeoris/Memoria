@@ -797,7 +797,10 @@ namespace FF9
 
 		public static Boolean IsLoopingMotion(BattlePlayerCharacter.PlayerMotionIndex index)
 		{
-			return index == BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE
+			return index == BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL
+				|| index == BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING
+				|| index == BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD
+				|| index == BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE
 				|| index == BattlePlayerCharacter.PlayerMotionIndex.MP_COVER
 				|| index == BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID
 				|| index == BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE
@@ -1033,10 +1036,14 @@ namespace FF9
 			}
 			if (btl_stat.CheckStatus(btl, BattleStatus.AutoLife))
 			{
-				btl.die_seq = 7;
-				btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
+				//btl.die_seq = 7;
+				//btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
 				btl_stat.RemoveStatus(btl, BattleStatus.AutoLife);
 				UIManager.Battle.RemovePlayerFromAction((Int32)btl.btl_id, true);
+				btl.cur.hp = 1;
+				btl_stat.RemoveStatus(btl, BattleStatus.Death);
+				FF9StateSystem.Settings.SetHPFull();
+				btl_mot.SetDefaultIdle(btl);
 				return false;
 			}
 			btl.die_seq = 6;

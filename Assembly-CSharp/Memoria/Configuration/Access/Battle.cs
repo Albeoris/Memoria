@@ -28,7 +28,7 @@ namespace Memoria
             public static String MagicStatFormula => Instance._battle.MagicStatFormula;
             public static String SpiritStatFormula => Instance._battle.SpiritStatFormula;
             public static String MagicStoneStockFormula => Instance._battle.MagicStoneStockFormula;
-			            
+
             private static Int32 GetBattleSpeed()
             {
                 Int32 value = Math.Max(Instance._battle.Speed, Instance._hacks.BattleSpeed);

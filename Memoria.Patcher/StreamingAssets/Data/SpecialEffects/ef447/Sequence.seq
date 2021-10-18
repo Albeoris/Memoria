@@ -15,16 +15,12 @@ PlaySound: Sound=2502
 PlaySound: Sound=2503
 PlaySound: Sound=2504
 PlaySound: Sound=2505
-Wait: Time=156
-PlaySound: Sound=2415
-PlaySound: Sound=2416
-PlaySound: Sound=2417
-PlaySound: Sound=2418
-Wait: Time=1
-PlayAnimation: Char=Caster ; Anim=Idle
-Wait: Time=1
-PlayAnimation: Char=Caster ; Anim=Idle
-Wait: Time=117
+Wait: Time=136
+PlaySound: Sound=2423 ; Pitch=0.76
+PlaySound: Sound=2424 ; Pitch=0.76
+PlaySound: Sound=2425 ; Pitch=0.76
+PlaySound: Sound=2426 ; Pitch=0.76
+Wait: Time=139
 SetBackgroundIntensity: Intensity=1 ; Time=20
 Wait: Time=1
 ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True

@@ -596,11 +596,11 @@ public class SFXData
                     LoadThread[LoadThId].code.AddLast(new BattleActionCode("SetVariable", "Variable", "gEventGlobal", "Index", "199", "Value", "|16"));
                 return 0;
             case 113: // Display Ability Casting Name
-                {
-                    if (SFXData.BattleCallbackReaderExportSequence)
-                        LoadThread[LoadThId].code.AddLast(new BattleActionCode("Message", "Text", "[CastName]", "Priority", "1", "Title", true.ToString(), "Reflect", true.ToString()));
-                    return 0;
-                }
+            {
+                if (SFXData.BattleCallbackReaderExportSequence)
+                    LoadThread[LoadThId].code.AddLast(new BattleActionCode("Message", "Text", "[CastName]", "Priority", "1", "Title", true.ToString(), "Reflect", true.ToString()));
+                return 0;
+            }
             case 114: // Show/Hide Cursor
                 if (SFXData.BattleCallbackReaderExportSequence)
                     LoadThread[LoadThId].code.AddLast(new BattleActionCode("SetVariable", "Variable", "cmd_status", "Value", arg0 != 0 ? "|2" : "&65533", "Reflect", true.ToString()));
@@ -1058,18 +1058,18 @@ public class SFXData
                             vib.VIB_purge();
                             break;
                         case 1: // Vibrate (full parameters)
-                            {
-                                Byte[] array = new Byte[1800];
-                                Marshal.Copy((IntPtr)p, array, 0, 1800);
-                                MemoryStream input = new MemoryStream(array);
-                                BinaryReader binaryReader = new BinaryReader(input);
-                                vib.VIB_init(binaryReader);
-                                vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_LO, true);
-                                vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_HI, true);
-                                vib.VIB_vibrate(1);
-                                binaryReader.Close();
-                                break;
-                            }
+                        {
+                            Byte[] array = new Byte[1800];
+                            Marshal.Copy((IntPtr)p, array, 0, 1800);
+                            MemoryStream input = new MemoryStream(array);
+                            BinaryReader binaryReader = new BinaryReader(input);
+                            vib.VIB_init(binaryReader);
+                            vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_LO, true);
+                            vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_HI, true);
+                            vib.VIB_vibrate(1);
+                            binaryReader.Close();
+                            break;
+                        }
                         case 2: // Vibrate
                             vib.VIB_setActive(false);
                             vib.VIB_setTrackActive(1, vib.VIB_SAMPLE_LO, true);
@@ -1088,13 +1088,13 @@ public class SFXData
             case 122: // Back Attack, Preemptive, Normal
                 return (Byte)FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType;
             case 123: // Return the number of targetable player characters
-                {
-                    Int32 validPlayerTarget = 0;
-                    for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                        if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
-                            validPlayerTarget++;
-                    return validPlayerTarget;
-                }
+            {
+                Int32 validPlayerTarget = 0;
+                for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                        validPlayerTarget++;
+                return validPlayerTarget;
+            }
             case 124: // Return the current battle camera index (these cameras are predefined per BTL_SCENE)
                 return FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo;
         }

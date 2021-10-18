@@ -885,6 +885,7 @@ public class SoundLib : MonoBehaviour
 		this.soundPlayerList.Add(SoundLib.songPlayer);
 		this.soundPlayerList.Add(SoundLib.allSoundDispatchPlayer);
 		this.soundPlayerList.Add(SoundLib.sfxSoundPlayer);
+		this.soundPlayerList.Add(SoundLib.voicePlayer);
 	}
 
 	private Boolean m_isInitialized;

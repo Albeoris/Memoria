@@ -59,9 +59,9 @@ namespace FF9
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
 				if ((next.btl_id & targ) != 0)
-					this.trg[(Int32)this.trgno++] = next;
+					this.trg[this.trgno++] = next;
 				if ((next.btl_id & reflect_tar) != 0)
-					this.rtrg[(Int32)this.rtrgno++] = next;
+					this.rtrg[this.rtrgno++] = next;
 				if ((this.flgs & 4) != 0 && btl_util.getSerialNumber(next) == 2)
 					this.mexe = next;
 			}
@@ -86,9 +86,9 @@ namespace FF9
 				vx += (Int32)this.trg[i].base_pos[0];
 				vz += (Int32)this.trg[i].base_pos[2];
 			}
-			this.trgcpos.vx = vx / (Int32)this.trgno;
+			this.trgcpos.vx = vx / this.trgno;
 			this.trgcpos.vy = 0;
-			this.trgcpos.vz = vz / (Int32)this.trgno;
+			this.trgcpos.vz = vz / this.trgno;
 		}
 
 		public const UInt16 BTL_REQ_TRG_MAX = 8;

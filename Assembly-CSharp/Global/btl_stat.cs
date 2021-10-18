@@ -135,7 +135,7 @@ public class btl_stat
                     }
                 }
 
-                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
+                //btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
                 break;
             case 11:
             case 24:

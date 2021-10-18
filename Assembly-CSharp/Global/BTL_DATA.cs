@@ -98,7 +98,7 @@ public class BTL_DATA
 
 	public BTL_DATA next = null;
 
-	public CMD_DATA[] cmd = new CMD_DATA[6];
+	public List<CMD_DATA> cmd = new List<CMD_DATA>(new CMD_DATA[6]);
 
 	public POINTS max = new POINTS();
 

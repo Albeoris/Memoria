@@ -8,6 +8,8 @@ LoadSFX: SFX=Special_Trance_Activate
 WaitSFXLoaded: SFX=Special_Trance_Activate
 PlaySFX: SFX=Special_Trance_Activate
 Wait: Time=40
-PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+StartThread: Condition=!CheckAnyStatus(CasterCurrentStatus, 1, 2, 256, 4096, 1 << 17, 1 << 25, 1 << 30)
+	PlayAnimation: Char=Caster ; Anim=MP_MAGIC
+EndThread
 WaitSFXDone: SFX=Special_Trance_Activate
 SetVariable: Variable=cmd_status ; Value=|2

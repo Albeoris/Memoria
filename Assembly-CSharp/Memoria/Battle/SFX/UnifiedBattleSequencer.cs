@@ -78,6 +78,7 @@ public static class UnifiedBattleSequencer
 		private UInt16 movingChar;
 		private UInt16 turningChar;
 		private UInt16 scalingChar;
+		private Boolean cancel;
 
 		public BattleAction(EffectType type, Int32 eff)
 		{
@@ -141,7 +142,15 @@ public static class UnifiedBattleSequencer
 			reflectEffectLoaded = false;
 			reflectTriggered = false;
 			reflectingBtl = 0;
+			cancel = false;
 			runningActions.Add(this);
+		}
+
+		public void Cancel() // Might be used to cancel a command eg. when the caster dies?
+		{
+			foreach (SFXData sfx in sfxList)
+				sfx.Cancel();
+			cancel = true;
 		}
 
 		public void ExecuteSingleCode(Int32 runningThreadId)
@@ -189,6 +198,8 @@ public static class UnifiedBattleSequencer
 					break;
 				case "WaitMonsterSFXLoaded":
 				case "WaitSFXLoaded":
+					if (cancel)
+						break;
 					if (code.TryGetArgSFXInstance("SFX", "Instance", cmd.regist, sfxList, runningThread.defaultSFXIndex, out tmpInt))
 					{
 						if (tmpInt < 0)
@@ -214,13 +225,15 @@ public static class UnifiedBattleSequencer
 					UpdateSFXWait(runningThread);
 					break;
 				case "Channel":
+					if (cancel)
+						break;
 					if (!code.argument.TryGetValue("Type", out tmpStr))
 					{
 						if (cmd.regist.bi.player == 0 || cmd.cmd_no == BattleCommandId.BlueMagic)
 							tmpStr = "Enemy";
 						else if (cmd.cmd_no == BattleCommandId.BlackMagic || cmd.cmd_no == BattleCommandId.DoubleBlackMagic || cmd.cmd_no == BattleCommandId.MagicSword)
 							tmpStr = "Black";
-						else if (cmd.cmd_no == BattleCommandId.SummonEiko || cmd.cmd_no == BattleCommandId.SummonGarnet || cmd.cmd_no == BattleCommandId.Phantom)
+						else if (cmd.cmd_no == BattleCommandId.SummonEiko || cmd.cmd_no == BattleCommandId.SummonGarnet || cmd.cmd_no == BattleCommandId.Phantom || cmd.cmd_no == BattleCommandId.SysPhantom)
 							tmpStr = "Summon";
 						else
 							tmpStr = "Spell";
@@ -269,7 +282,7 @@ public static class UnifiedBattleSequencer
 						}
 						if (!code.TryGetArgCharacter("Target", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
 							tmpChar = runningThread.targetId;
-						if (code.TryGetArgCharacter("MagicCaster", cmd.regist.btl_id, runningThread.targetId, out mcasterId) || cmd.cmd_no == BattleCommandId.MagicSword)
+						if (code.TryGetArgCharacter("MagicCaster", cmd.regist.btl_id, runningThread.targetId, out mcasterId))
 							sfxArg[3] |= 4;
 						customRequest.SetupVfxRequest(cmd, sfxArg, caster, tmpChar);
 						if (mcasterId != 0)
@@ -299,12 +312,13 @@ public static class UnifiedBattleSequencer
 								frameStart += tmpInt;
 							code.TryGetArgMeshList("HideMeshes", out meshKeyList, out meshIndexList);
 							sfx.PlaySFX(frameStart, meshKeyList, meshIndexList);
+							if (cancel)
+								continue;
 							if (sfx.sfxthread.Count > 0 && (!code.TryGetArgBoolean("SkipSequence", out tmpBool) || !tmpBool))
 							{
 								BattleActionThread copy = new BattleActionThread(sfx.sfxthread[0], runningThread.isReflectThread);
 								copy.SkipFrames(tmpInt);
 								copy.targetId = runningThread.targetId;
-								copy.defaultSFXIndex = -1;
 								copy.active = true;
 								threadList.Add(copy);
 							}
@@ -832,6 +846,8 @@ public static class UnifiedBattleSequencer
 					}
 					break;
 				case "ActivateReflect":
+					if (cancel)
+						break;
 					ActivateReflect();
 					break;
 				case "RunThread":
@@ -909,6 +925,18 @@ public static class UnifiedBattleSequencer
 
 		public Boolean ExecuteLoop()
 		{
+			// End cancelled sequence if no sfx is rendering (after moving the caster back to the base position)
+			if (cancel && sfxList.FindIndex(sfx => sfx.runningSFX.Count > 0) < 0)
+			{
+				Single dist = (cmd.regist.pos - cmd.regist.base_pos).magnitude;
+				if (dist < 10)
+				{
+					cmd.regist.pos = cmd.regist.base_pos;
+					return true;
+				}
+				cmd.regist.pos = cmd.regist.pos + Math.Min(100f, dist) * BattleActionCode.PolarVector(cmd.regist.base_pos - cmd.regist.pos);
+				return false;
+			}
 			// Update waits and progressive changes
 			frameIndex++;
 			animatedChar = 0xFFFF;
@@ -1046,9 +1074,10 @@ public static class UnifiedBattleSequencer
 							sfx.runningSFX.RemoveAt(i);
 							if (sfx.runningSFX.Count == 0)
 								sfx.mesh.End();
-							foreach (BattleActionThread th in threadList)
-								if (th.parentSFX == sfx) // TODO: consider when there are several RunningInstance of the same SFXData (or remove the possibility to have multiple RunningInstance...)
-									th.active = false;
+							if (sfx.IsCancelled())
+								foreach (BattleActionThread th in threadList)
+									if (th.parentSFX == sfx) // TODO: consider when there are several RunningInstance of the same SFXData (or remove the possibility to have multiple RunningInstance...)
+										th.active = false;
 							i--;
 						}
 					}

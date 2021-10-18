@@ -7,7 +7,6 @@ using Memoria.Data;
 using Memoria.Scripts;
 using UnityEngine;
 using NCalc;
-using Object = System.Object;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -475,12 +474,12 @@ public class btl_cmd
             btlDataPtr.Data.sel_mode = 0;
             return;
         }
-        //if (Configuration.Battle.CustomBattleFlagsMeaning == 0 && btl_para.NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex) && btlDataPtr.CurrentHp < 10000 && stateBattleSystem.btl_phase == 4 && btl_scrp.GetBattleID(1) == btlDataPtr.Id)
-        //{
-        //    // Avoid bosses to keep attacking under 10000 HP in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
-        //    btlDataPtr.Data.sel_mode = 0;
-        //    return;
-        //}
+        if (Configuration.Battle.CustomBattleFlagsMeaning == 0 && btl_para.NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex) && btlDataPtr.CurrentHp < 10000 && stateBattleSystem.btl_phase == 4 && btl_scrp.GetBattleID(1) == btlDataPtr.Id)
+        {
+            // Avoid bosses to keep attacking under 10000 HP in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
+            btlDataPtr.Data.sel_mode = 0;
+            return;
+        }
         CMD_DATA cmd;
         if (cmd_no == BattleCommandId.EnemyAtk)
         {
@@ -525,6 +524,29 @@ public class btl_cmd
             btlDataPtr.Data.sel_mode = 0;
             return;
         }
+        if (btl_cmd.CheckUsingCommand(cmd))
+        {
+            if (cmd_no == BattleCommandId.EnemyAtk)
+            {
+                btlDataPtr.Data.sel_mode = 0;
+                return;
+            }
+            else if (cmd_no == BattleCommandId.EnemyDying && cmd.cmd_no != BattleCommandId.EnemyDying)
+            {
+                while (btlDataPtr.Data.cmd.Count < 7) // Make sure that EnemyDying is taken into account, even by adding a new command to BTL_DATA
+                {
+                    cmd = new CMD_DATA { regist = btlDataPtr.Data };
+                    btlDataPtr.Data.cmd.Add(cmd);
+                    ClearCommand(cmd);
+                    ClearReflecData(cmd);
+                }
+                cmd = btlDataPtr.Data.cmd[6];
+            }
+            else
+            {
+                return;
+            }
+        }
         cmd.SetAAData(stateBattleSystem.enemy_attack[sub_no]);
         cmd.tar_id = tar_id;
         cmd.cmd_no = cmd_no;
@@ -564,6 +586,10 @@ public class btl_cmd
             return;
         if (btlsys.cur_cmd_list.Contains(btlsys.cmd_escape))
             return;
+        if (Configuration.Battle.Speed < 3)
+            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                if (next.die_seq > 0 && next.die_seq < 6 && btl_stat.CheckStatus(next, BattleStatus.AutoLife))
+                    return;
 
         CMD_DATA cmd = btlsys.cmd_queue.next;
         HashSet<BTL_DATA> busyCasters = new HashSet<BTL_DATA>();
@@ -980,7 +1006,7 @@ public class btl_cmd
             }*/
         }
 
-        // In SFXRework mode, the random target pick (for player characters) is implemented in ef237.seq instead
+        // In SFXRework mode, the random target pick (for player characters) is implemented in ef237/PlayerSequence.seq instead
         if (!Configuration.Battle.SFXRework && (SpecialEffect)cmd.aa.Info.VfxIndex == SpecialEffect.Roulette)
             cmd.tar_id = btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1));
 
@@ -1159,7 +1185,7 @@ public class btl_cmd
                         caster.Data.die_seq = caster.IsSlave || caster.Data.bi.death_f == 0 ? (Byte)1 : (Byte)3;
                 }
                 return false;
-            case BattleCommandId.SysReraise:
+            case BattleCommandId.SysReraise: // Unused anymore
                 caster.CurrentHp = 1;
                 /*int num4 = (int)*/
                 caster.RemoveStatus(BattleStatus.Death);
