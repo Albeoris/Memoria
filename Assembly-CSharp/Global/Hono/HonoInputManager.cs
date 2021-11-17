@@ -696,7 +696,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		}
 	}
 
-	private Boolean CheckPersistentDirectionInput(Control key)
+	public Boolean CheckPersistentDirectionInput(Control key)
 	{
 		if (!HonoInputManager.ApplicationIsActivated())
 		{
@@ -1209,34 +1209,28 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		RuntimePlatform runtimePlatform = platform;
 		switch (runtimePlatform)
 		{
-		case RuntimePlatform.IPhonePlayer:
-			HonoInputManager.mouseEnabled = false;
-			HonoInputManager.joystickEnabled = true;
-			HonoInputManager.virtualAnalogEnabled = true;
-			break;
-		case RuntimePlatform.PS3:
-		case RuntimePlatform.XBOX360:
-			IL_20:
-			if (runtimePlatform != RuntimePlatform.WindowsPlayer)
-			{
-				HonoInputManager.mouseEnabled = true;
+			case RuntimePlatform.IPhonePlayer:
+				HonoInputManager.mouseEnabled = false;
 				HonoInputManager.joystickEnabled = true;
 				HonoInputManager.virtualAnalogEnabled = true;
-			}
-			else
-			{
+				break;
+			case RuntimePlatform.WindowsPlayer:
 				HonoInputManager.mouseEnabled = true;
 				HonoInputManager.joystickEnabled = true;
 				HonoInputManager.virtualAnalogEnabled = false;
-			}
-			break;
-		case RuntimePlatform.Android:
-			HonoInputManager.mouseEnabled = false;
-			HonoInputManager.joystickEnabled = true;
-			HonoInputManager.virtualAnalogEnabled = true;
-			break;
-		default:
-			goto IL_20;
+				break;
+			case RuntimePlatform.Android:
+				HonoInputManager.mouseEnabled = false;
+				HonoInputManager.joystickEnabled = true;
+				HonoInputManager.virtualAnalogEnabled = true;
+				break;
+			case RuntimePlatform.PS3:
+			case RuntimePlatform.XBOX360:
+			default:
+				HonoInputManager.mouseEnabled = true;
+				HonoInputManager.joystickEnabled = true;
+				HonoInputManager.virtualAnalogEnabled = true;
+				break;
 		}
 		if (HonoInputManager.virtualAnalogEnabled && HonoInputManager.joystickEnabled)
 		{
@@ -1265,7 +1259,6 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
             if (Math.Abs(axis2) > 0.01)
                 return axis2;
         }
-
         return UnityXInput.Input.GetAxis(this.DefaultHorizontalInputKey);
     }
 
@@ -1277,7 +1270,6 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	        if (Math.Abs(axis2) > 0.01)
 	            return axis2;
 	    }
-
         return UnityXInput.Input.GetAxis(this.DefaultVerticalInputKey);
 	}
 
@@ -1285,9 +1277,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	{
         Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
         if (inputAxis.magnitude > 1 && analogControlEnabled)
-        {
             inputAxis.Normalize();
-        }
         return inputAxis;
     }
 

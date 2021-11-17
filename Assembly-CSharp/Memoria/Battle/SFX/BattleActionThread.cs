@@ -322,7 +322,7 @@ public class BattleActionThread
 						break;
 					case 13: // Hide Mesh
 					case 15: // Show Mesh
-						mainThread.code.AddLast(new BattleActionCode("ShowMesh", "Char", "Caster", "Mesh", r.ReadUInt16().ToString(), "Enable", (seq.wSeqCode == 15).ToString()));
+						mainThread.code.AddLast(new BattleActionCode("ShowMesh", "Char", "Caster", "Mesh", r.ReadUInt16().ToString(), "Enable", (seq.wSeqCode == 15).ToString(), "IsPermanent", true.ToString()));
 						break;
 					case 14: // Battle Text
 					case 33: // Battle Title

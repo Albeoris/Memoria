@@ -31,7 +31,7 @@ public class FieldState : MonoBehaviour
 		this.FF9Field = new FF9StateFieldSystem();
 		PersistenSingleton<FF9StateSystem>.Instance.mode = 1;
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-		ff.fldMapNo = 100;
+		ff.fldMapNo = 100; // Alexandria/Main Street
 		ff.fldLocNo = 33;
 	}
 

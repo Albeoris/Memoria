@@ -7,7 +7,7 @@ PlaySound: Sound=1517
 Wait: Time=18
 SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=51
 Wait: Time=21
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True ; Priority=3
 ShowMesh: Char=AllTargets ; Enable=True ; Time=10
 Wait: Time=30
 SetBackgroundIntensity: Intensity=1 ; Time=7

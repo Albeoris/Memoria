@@ -1021,6 +1021,11 @@ public class Dialog : MonoBehaviour
 				}
 			}
 		}
+		else if (this.startChoiceRow > -1 && this.defaultChoice > -1 && (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation))
+		{
+			// Fix fast player inputs not applying the correct cancel choice for windows that are closed by scripts (eg. Memoria save points or World Map mog dialogs)
+			this.SelectChoice = this.defaultChoice;
+		}
 		if (this.currentState == Dialog.State.TextAnimation && this.typeAnimationEffect)
 		{
 			this.phraseLabel.text = this.phrase;
@@ -1031,11 +1036,19 @@ public class Dialog : MonoBehaviour
 
 	public void OnKeyCancel(GameObject go)
 	{
-		if (this.startChoiceRow > -1 && this.cancelChoice > -1 && this.currentState == Dialog.State.CompleteAnimation)
+		if (this.startChoiceRow > -1 && this.cancelChoice > -1)
 		{
-			this.isMuteSelectSound = true;
-			this.SetCurrentChoice(this.cancelChoice);
-			ETb.SndCancel();
+			if (this.currentState == Dialog.State.CompleteAnimation)
+			{
+				this.isMuteSelectSound = true;
+				this.SetCurrentChoice(this.cancelChoice);
+				ETb.SndCancel();
+			}
+			else if (this.currentState == Dialog.State.OpenAnimation || this.currentState == Dialog.State.TextAnimation)
+			{
+				// Fix fast player inputs not applying the correct cancel choice for windows that are closed by scripts (eg. Memoria save points or World Map mog dialogs)
+				this.SelectChoice = this.cancelChoice;
+			}
 		}
 	}
 

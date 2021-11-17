@@ -10,6 +10,7 @@ Wait: Time=19
 PlaySound: Sound=929
 PlaySound: Sound=930
 PlaySound: Sound=931
+ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=1
 ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True

@@ -181,6 +181,7 @@ public class EndGameMain : MonoBehaviour
 			"hearts",
 			"spades"
 		};
+		// Todo: allow AssetManager.LoadFromDisc if a mod folder changes it
 		Sprite[] array4 = Resources.LoadAll<Sprite>("EmbeddedAsset/EndGame/card_image");
 		Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
 		Sprite[] array5 = array4;

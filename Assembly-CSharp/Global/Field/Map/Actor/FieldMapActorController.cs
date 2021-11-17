@@ -662,16 +662,12 @@ public class FieldMapActorController : HonoBehavior
 	private void MovePC()
 	{
 		if (!FF9StateSystem.Field.isDebug && (!EventInput.IsMovementControl || this.fieldMap.isBattleBackupPos))
-		{
 			return;
-		}
 		if (!FF9StateSystem.Field.isDebug && this.originalActor.state != EventEngine.stateRunning)
-		{
 			return;
-		}
 
-        //This flag was set to false, causing the game to register digital movement unless on android.
-        Boolean flag = false;
+		//This flag was set to false, causing the game to register digital movement unless on android.
+		Boolean flag = false;
 		Vector2 vector = Vector2.zero;
 		if (FF9StateSystem.MobilePlatform && VirtualAnalog.HasInput())
 		{
@@ -685,33 +681,42 @@ public class FieldMapActorController : HonoBehavior
 	    }
 
 	    if (flag)
-	    {
-	        flag = (Mathf.Abs(vector.x) >= 0.1f || Mathf.Abs(vector.y) >= 0.1f);
-	    }
+	        flag = Mathf.Abs(vector.x) >= 0.1f || Mathf.Abs(vector.y) >= 0.1f;
 	    else
-	    {
 	        vector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
-        }
 
-	    Boolean flag2 = UIManager.Input.GetKey(Control.Up) || vector.y > 0.1f;
-        Boolean flag3 = UIManager.Input.GetKey(Control.Down) || vector.y < -0.1f;
-        Boolean flag4 = UIManager.Input.GetKey(Control.Left) || vector.x < -0.1f;
-        Boolean flag5 = UIManager.Input.GetKey(Control.Right) || vector.x > 0.1f;
-        if (!FF9StateSystem.Field.isDebug)
+	    Boolean movingUp = UIManager.Input.GetKey(Control.Up) || vector.y >= 0.1f;
+        Boolean movingDown = UIManager.Input.GetKey(Control.Down) || vector.y <= -0.1f;
+        Boolean movingLeft = UIManager.Input.GetKey(Control.Left) || vector.x <= -0.1f;
+        Boolean movingRight = UIManager.Input.GetKey(Control.Right) || vector.x >= 0.1f;
+
+		// Todo: maybe have a better check for deciding whether the movement is a stick movement
+		// In RuntimePlatform.WindowsPlayer mode:
+		//  PersistenSingleton<HonoInputManager>.Instance.GetAxis -> UnityEngine's GetAxis and UnityXInput's GetXAxis
+		//  UIManager.Input.GetKey --------------------------------> UnityEngine's GetAxis and UnityXInput's GetXAxis and HonoInputManager's CheckPersistentDirectionInput
+		//  UnityXInput.Input.GetXAxis ----------------------------> XInputManager's ThumbSticks and XInputManager's DPad
+		//   UnityEngine.Input.GetAxis ------------------------------------------------------------> ??? On configured PS4 controllers, only capture the DPad (UnityEngine.dll)
+		//   PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.ThumbSticks.Left -> Seems OK (XInputDotNetPure.dll)
+		//   PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad -------------> Doesn't work on all controllers [PS4] (XInputDotNetPure.dll)
+		//   PersistenSingleton<HonoInputManager>.Instance.CheckPersistentDirectionInput ----------> Keyboard arrow keys and WASD keys (user32.dll)
+		// The Steam overlay should be fixed and a good controller configuration should be setup from the player's end
+		HonoInputManager honoInput = PersistenSingleton<HonoInputManager>.Instance;
+		Boolean isStickMovement = !honoInput.CheckPersistentDirectionInput(Control.Up)
+							   && !honoInput.CheckPersistentDirectionInput(Control.Down)
+							   && !honoInput.CheckPersistentDirectionInput(Control.Left)
+							   && !honoInput.CheckPersistentDirectionInput(Control.Right);
+
+		if (!FF9StateSystem.Field.isDebug)
 		{
-			flag2 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
-			flag3 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
-			flag4 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
-			flag5 &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
+			movingUp &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
+			movingDown &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
+			movingLeft &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
+			movingRight &= PersistenSingleton<EventEngine>.Instance.GetUserControl();
 		}
-		if (flag2 || flag3 || flag4 || flag5)
-		{
+		if (movingUp || movingDown || movingLeft || movingRight)
 			this.ClearMoveTargetAndPath();
-		}
 		if (this.isPlayer)
-		{
-			FieldMapActorController.ccSMoveKey = (flag2 || flag3 || flag4 || flag5 || this.hasTarget);
-		}
+			FieldMapActorController.ccSMoveKey = movingUp || movingDown || movingLeft || movingRight || this.hasTarget;
 		Single num = this.radius * this.radius * 0.95f * 0.95f;
 		if (this.movePaths.Count > 0 && !this.hasTarget)
 		{
@@ -736,9 +741,7 @@ public class FieldMapActorController : HonoBehavior
 			vector2.y = 0f;
 			Single sqrMagnitude = vector2.sqrMagnitude;
 			if (this.movePaths.Count == 0)
-			{
 				num = this.radius * this.radius;
-			}
 			if (sqrMagnitude <= num)
 			{
 				this.ClearMoveTarget();
@@ -757,41 +760,34 @@ public class FieldMapActorController : HonoBehavior
 		{
 			this.moveVec = Vector3.zero;
 		}
-		if (flag2 || flag3 || flag4 || flag5)
+		if (movingUp || movingDown || movingLeft || movingRight)
 		{
 			this.moveVec = Vector3.zero;
 			if (flag)
-			{      
+			{
 				this.moveVec = new Vector3(vector.x, 0f, vector.y);
 			}
             else
             {
-                if (this.moveVec.x < 0f || flag4)
-                {
+                if (this.moveVec.x < 0f || movingLeft)
                     this.moveVec.x = this.moveVec.x - this.speed;
-                }
-                if (this.moveVec.x > 0f || flag5)
-                {
+                if (this.moveVec.x > 0f || movingRight)
                     this.moveVec.x = this.moveVec.x + this.speed;
-                }
-                if (this.moveVec.z > 0f || flag2)
-                {
+                if (this.moveVec.z > 0f || movingUp)
                     this.moveVec.z = this.moveVec.z + this.speed;
-                }
-                if (this.moveVec.z < 0f || flag3)
-                {
+                if (this.moveVec.z < 0f || movingDown)
                     this.moveVec.z = this.moveVec.z - this.speed;
-                }
             }
            // Removing this statement allows for variable movement speed.
             if (!analogControlEnabled)
-            {
                 this.moveVec.Normalize();
-            }
             Single y = FF9StateSystem.Field.twist.y;
-			if (analogControlEnabled && Configuration.AnalogControl.UseAbsoluteOrientation)
+			if (analogControlEnabled)
 			{
-				y = FF9StateSystem.Field.twist.x;
+				if (isStickMovement && Configuration.AnalogControl.UseAbsoluteOrientationStick)
+					y = FF9StateSystem.Field.twist.x;
+				else if (!isStickMovement && Configuration.AnalogControl.UseAbsoluteOrientationKeys)
+					y = FF9StateSystem.Field.twist.x;
 			}
 			Quaternion rotation = Quaternion.Euler(0f, y, 0f);
 			this.moveVec = rotation * this.moveVec;
@@ -802,7 +798,6 @@ public class FieldMapActorController : HonoBehavior
         //This block sets correct state and speed based on stick magnitude.
         if (analogControlEnabled)
         {
-
             float currentSpeed = 0.0f;
             Boolean dashInhibited = PersistenSingleton<EventEngine>.Instance.GetDashInh() == 1;
             if (moveVec.magnitude > 0.5 && (UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) && !dashInhibited)
@@ -818,36 +813,26 @@ public class FieldMapActorController : HonoBehavior
             b = this.moveVec.normalized * currentSpeed;
             //Inihibit movement if below threshold
             if (this.moveVec.magnitude <= stickThreshold)
-            {
                 b = Vector3.zero;
-            }
         }
         this.curPos += b;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         //Prevent rotation if below threshold
-        if (flag2 || flag3 || flag4 || flag5 || this.hasTarget && b != Vector3.zero)
+        if (movingUp || movingDown || movingLeft || movingRight || this.hasTarget && b != Vector3.zero)
 		{
 			Single num2 = Mathf.Atan2(-this.moveVec.x, -this.moveVec.z) * 57.29578f;
 			Single num3 = Mathf.Lerp(this.actor.actor.rotAngle[1], num2, 0.4f);
 			if (Mathf.Abs(num2 - this.actor.actor.rotAngle[1]) > 180f)
 			{
 				if (num2 > this.actor.actor.rotAngle[1])
-				{
 					num3 += 180f;
-				}
 				else
-				{
 					num3 -= 180f;
-				}
 			}
 			if (num3 > 180f)
-			{
 				num3 -= 360f;
-			}
 			else if (num3 < -180f)
-			{
 				num3 += 360f;
-			}
 			this.actor.actor.rotAngle[1] = num3;
 			Single num4;
 			PosObj posObj = this.walkMesh.Collision(this, 0, out num4);
@@ -855,9 +840,7 @@ public class FieldMapActorController : HonoBehavior
 			{
 				instance.sLockFree = (Int64)(((posObj.flags & 16) != 0) ? 0L : 1L);
 				if (instance.sLockFree == 0L)
-				{
 					instance.sLockTimer = 0L;
-				}
 			}
 			if (posObj != null && num4 <= 0f && instance.sLockTimer >= 0L)
 			{

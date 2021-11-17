@@ -211,18 +211,17 @@ public class EBin
 
     public Int32 ad3(Int32 arg0)
     {
-        Int32 a0 = _eventEngine.gMode;
+        Int32 gMode = _eventEngine.gMode;
         _eventEngine.gCur = objV0;
-        int a1 = 2;
         Int32 result;
-        if (a0 != a1)
+        if (gMode != 2)
         {
-            result = next(a0);
+            result = next(gMode);
         }
         else
         {
             _eventEngine.ProcessCodeExt(s1);
-            result = next(a0);
+            result = next(gMode);
         }
         return result;
     }
@@ -234,7 +233,7 @@ public class EBin
         next0();
     }
 
-    public Int32 next(Int32 arg0)
+    public Int32 next(Int32 gMode)
     {
         _nextLoop = true;
         while (_nextLoop)
@@ -245,9 +244,7 @@ public class EBin
                 if (s1.sid == 1 || s1.sid == 0)
                 {
                 }
-                Int32 num = a0 << 2;
-                Int32 a2 = num - 440;
-                if (a2 >= 0)
+                if (a0 >= 110)
                 {
                     commandDefault2();
                 }
@@ -362,31 +359,27 @@ public class EBin
         while (_exprLoop)
         {
             SByte b = (SByte)s1.getByteIP();
-            if (s1.sid == 11)
-            {
-            }
             if (s1.sid != 3 || s1.ip != 110)
             {
                 if (FF9StateSystem.Settings.IsFastTrophyMode)
                 {
-                    if (FF9StateSystem.Common.FF9.fldMapNo == 2801 && s1.sid == 11 && s1.ip == 3834)
+                    if (FF9StateSystem.Common.FF9.fldMapNo == 2801 && s1.sid == 11 && s1.ip == 3834) // Daguerreo/Right Hall, Gilgamesh
                     {
                         setVarManually(11989, 8);
                     }
-                    if (FF9StateSystem.Common.FF9.fldMapNo == 1900 && s1.sid == 0 && s1.ip == 4138)
+                    if (FF9StateSystem.Common.FF9.fldMapNo == 1900 && s1.sid == 0 && s1.ip == 4138) // Treno/Pub, Main
                     {
                         setVarManually(8198869, 8);
                     }
                 }
             }
-            if (FF9StateSystem.Common.FF9.fldMapNo == 705 && s1.sid == 3 && s1.ip == 541)
+            if (FF9StateSystem.Common.FF9.fldMapNo == 705 && s1.sid == 3 && s1.ip == 541) // Gizamaluke/Bell Room, Female Moogle
             {
                 s1.ip += 7;
                 return 0;
             }
             EMinigame.ChanbaraBonusPoints(s1, this);
             EMinigame.SetViviSpeed(s1, this);
-            Int32 a2 = b << 2;
             if (b < 0)
             {
                 s1.ip++;
@@ -479,7 +472,7 @@ public class EBin
     {
         if (arg0 < op_binary.B_PAD0 || arg0 > op_binary.B_EXPR_END)
             return;
-        
+
         switch (arg0)
         {
             case op_binary.B_PAD0:
@@ -492,16 +485,16 @@ public class EBin
             case op_binary.B_PRE_MINUS_A:
             case op_binary.B_NOT_E:
             case op_binary.B_LET_E:
-                case op_binary.B_AND_LET_E:
-                case op_binary.B_XOR_LET_E:
-                case op_binary.B_OR_LET_E:
-                case op_binary.B_CAST8:
-                case op_binary.B_CAST8U:
-                case op_binary.B_CAST16:
-                case op_binary.B_CAST16U:
-                case op_binary.B_CAST_LIST:
-                case op_binary.B_LMAX:
-                case op_binary.B_LMIN:
+            case op_binary.B_AND_LET_E:
+            case op_binary.B_XOR_LET_E:
+            case op_binary.B_OR_LET_E:
+            case op_binary.B_CAST8:
+            case op_binary.B_CAST8U:
+            case op_binary.B_CAST16:
+            case op_binary.B_CAST16U:
+            case op_binary.B_CAST_LIST:
+            case op_binary.B_LMAX:
+            case op_binary.B_LMIN:
             case op_binary.B_OBJSPEC:
             case op_binary.B_CURHP:
             case op_binary.B_MAXHP:
@@ -685,7 +678,8 @@ public class EBin
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
-                if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
+                if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 // Marsh/Pond, Zidane
+                    && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
                 {
                     _v0 = t3 <= _v0 ? 1 : 0;
                 }
@@ -849,17 +843,17 @@ public class EBin
                 // ResultVariableId
                 // END
                 _v0 = EvaluateValueExpression();
-                    
+
                 // -> ResultVariableId
                 // END
                 Int32 currentValue = _v0;
                 Int32 t3 = _v0;
                 SetVariableValue(currentValue);
-                    
+
                 // END
                 _v0 = t3;
                 expr_Push_v0_Int24();
-                    
+
                 // -> Int24ValueExpression
                 // END
                 break;
@@ -1213,8 +1207,8 @@ public class EBin
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
                 _v0 = _eventEngine.GetSysvar(a0);
-                a0 = 67108863;
-                a0 = (_v0 & a0);
+                a0 = 0x3FFFFFF;
+                a0 = _v0 & a0;
                 int a1 = encodeTypeAndVarClass(7);
                 a0 |= a1;
                 _s7.push(a0);
@@ -1317,7 +1311,7 @@ public class EBin
         Int32 s5 = s1.getByteIP();
         s1.ip++;
         _v0 = getv1i(ref s5);
-        if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 3011) // Ending/TH
         {
             String symbol = Localization.GetSymbol();
             if (symbol != "US" && symbol != "JP")
@@ -1332,7 +1326,7 @@ public class EBin
                 }
             }
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 3009)
+        else if (FF9StateSystem.Common.FF9.fldMapNo == 3009) // Ending/TH
         {
             String symbol2 = Localization.GetSymbol();
             if (symbol2 != "US" && symbol2 != "JP" && s1.uid == 17 && _v0 == 15)
@@ -1461,28 +1455,28 @@ public class EBin
         {
             switch (arg0)
             {
-                case 1:
+                case 1: // JMP
                 {
                     bra();
                     return 0;
                 }
-                case 2:
+                case 2: // JMP_IFNOT
                 {
                     beq();
                     return 0;
                 }
-                case 3:
+                case 3: // JMP_IF
                 {
                     bne();
                     return 0;
                 }
-                case 4:
+                case 4: // return
                 {
                     _eventEngine.Return(s1);
                     adfr();
                     return 0;
                 }
-                case 5:
+                case 5: // set
                 {
                     expr();
                     return 0;
@@ -1502,75 +1496,69 @@ public class EBin
                     JMP_SWITCH(caseNumber);
                     return 0;
                 }
-                case 13:
+                case 13: // JMP_SWITCH with many cases (>255)
                 {
                     Int32 t2 = s1.getShortIP();
                     s1.ip++;
                     JMP_SWITCH(t2);
                     return 0;
                 }
-                default:
+                case 28: // DELETE, TerminateEntry
                 {
-                    switch (arg0)
+                    Int32 _a0 = s1.getByteIP(1);
+                    int a1 = 255;
+                    s1.ip += 2;
+                    if (_a0 == a1)
                     {
-                        case 48:
+                        ad21();
+                    }
+                    else
+                    {
+                        Obj objUID = _eventEngine.GetObjUID(_a0);
+                        if (s1 == objUID)
                         {
-                            return 0;
+                            ad21();
                         }
-                        case 49:
+                        else
                         {
-                            return 0;
-                        }
-                        case 50:
-                        {
-                            Int32 s5 = s1.getByteIP();
-                            s1.ip++;
-                            Int32 a0 = getv1i(ref s5);
-                            Int32 a1 = getv1i(ref s5);
-                            return 0;
-                        }
-                        default:
-                        {
-                            if (arg0 == 108)
-                            {
-                                return 0;
-                            }
-                            if (arg0 == 109)
-                            {
-                                return 0;
-                            }
-                            if (arg0 == 28)
-                            {
-                                Int32 _a0 = s1.getByteIP(1);
-                                int a1 = 255;
-                                s1.ip += 2;
-                                if (_a0 == a1)
-                                {
-                                    ad21();
-                                }
-                                else
-                                {
-                                    Obj objUID = _eventEngine.GetObjUID(_a0);
-                                    if (s1 == objUID)
-                                    {
-                                        ad21();
-                                    }
-                                    else
-                                    {
-                                        _eventEngine.DisposeObj(objUID);
-                                    }
-                                }
-                                return 0;
-                            }
-                            if (arg0 != 34)
-                            {
-                                commandDefault();
-                                return 0;
-                            }
-                            wait();
-                            return 0;
+                            _eventEngine.DisposeObj(objUID);
                         }
                     }
+                    return 0;
+                }
+                case 34: // Wait
+                {
+                    wait();
+                    return 0;
+                }
+                case 48: // PRINT1
+                {
+                    return 0;
+                }
+                case 49: // PRINTF
+                {
+                    return 0;
+                }
+                case 50: // LOCATE
+                {
+                    Int32 s5 = s1.getByteIP();
+                    s1.ip++;
+                    Int32 a0 = getv1i(ref s5);
+                    Int32 a1 = getv1i(ref s5);
+                    return 0;
+                }
+                case 108: // PPRINT
+                {
+                    return 0;
+                }
+                case 109: // PPRINTF
+                {
+                    return 0;
+                }
+                default:
+                {
+                    commandDefault();
+                    return 0;
                 }
             }
         }

@@ -548,10 +548,11 @@ public static class UnifiedBattleSequencer
 					}
 					break;
 				case "ShowMesh":
-					Boolean disappear;
+					Boolean disappear, permanent;
 					code.TryGetArgInt32("Time", out tmpInt);
 					code.TryGetArgBoolean("Enable", out tmpBool);
 					code.TryGetArgBoolean("IsDisappear", out disappear);
+					code.TryGetArgBoolean("IsPermanent", out permanent);
 					if (code.argument.ContainsKey("Mesh"))
 					{
 						code.TryGetArgInt32("Mesh", out tmpInt2);
@@ -570,47 +571,62 @@ public static class UnifiedBattleSequencer
 					Boolean isVanish = tmpStr == "Vanish";
 					if (tmpStr == "Main")
 						tmpInt2 = UInt16.MaxValue;
+					Int32 priority;
+					if (!code.TryGetArgInt32("Priority", out priority))
+						priority = 1;
 					foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
 					{
+						Int32 meshList = tmpInt2;
 						if (btl.bi.slave != 0)
 							continue;
 						if (isVanish)
-							tmpInt2 = btl.mesh_banish;
+							meshList = btl.mesh_banish;
 						if (btl_stat.CheckStatus(btl, BattleStatus.Vanish))
-							tmpInt2 &= ~btl.mesh_banish;
+							meshList &= ~btl.mesh_banish;
+						if (!permanent)
+							meshList &= ~btl.mesh_current;
 						if (tmpInt > 0)
 						{
 							if (disappear && tmpBool)
-								btl.SetDisappear(0);
+								btl.SetDisappear(false, (Byte)priority);
 							if (tmpBool)
 							{
-								btl.meshflags &= (UInt32)~tmpInt2;
-								btl.mesh_current = (UInt16)(btl.mesh_current & (UInt16)~tmpInt2);
-								btl_mot.ShowMesh(btl, (UInt16)tmpInt2, isVanish);
+								if (permanent)
+								{
+									btl.meshflags &= (UInt32)~meshList;
+									btl.mesh_current = (UInt16)(btl.mesh_current & (UInt16)~meshList);
+								}
+								btl_mot.ShowMesh(btl, (UInt16)meshList, isVanish);
 								if (includeWeapon)
 									for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 										geo.geoWeaponMeshShow(btl, i);
 							}
-							fade.Add(new SequenceFade(btl, (UInt16)tmpInt2, disappear && !tmpBool, includeWeapon, includeShadow, tmpBool ? 0f : 128f, tmpBool ? 128f : 0f, tmpInt));
+							fade.Add(new SequenceFade(btl, (UInt16)meshList, disappear && !tmpBool, permanent, includeWeapon, includeShadow, tmpBool ? 0f : 128f, tmpBool ? 128f : 0f, tmpInt, (Byte)priority));
 						}
 						else
 						{
 							if (disappear)
-								btl.SetDisappear(tmpBool ? (Byte)0 : (Byte)1);
+								btl.SetDisappear(!tmpBool, (Byte)priority);
 							if (tmpBool)
 							{
-								btl.meshflags &= (UInt32)~tmpInt2;
-								btl.mesh_current = (UInt16)(btl.mesh_current & (UInt16)~tmpInt2);
-								btl_mot.ShowMesh(btl, (UInt16)tmpInt2, isVanish);
+								if (permanent)
+								{
+									btl.meshflags &= (UInt32)~meshList;
+									btl.mesh_current = (UInt16)(btl.mesh_current & (UInt16)~meshList);
+								}
+								btl_mot.ShowMesh(btl, (UInt16)meshList, isVanish);
 								if (includeWeapon)
 									for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 										geo.geoWeaponMeshShow(btl, i);
 							}
 							else if (!disappear)
 							{
-								btl.meshflags |= (UInt32)tmpInt2;
-								btl.mesh_current = (UInt16)(btl.mesh_current | tmpInt2);
-								btl_mot.HideMesh(btl, (UInt16)tmpInt2, isVanish);
+								if (permanent)
+								{
+									btl.meshflags |= (UInt32)meshList;
+									btl.mesh_current = (UInt16)(btl.mesh_current | meshList);
+								}
+								btl_mot.HideMesh(btl, (UInt16)meshList, isVanish);
 								if (includeWeapon)
 									for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 										geo.geoWeaponMeshHide(btl, i);
@@ -757,11 +773,13 @@ public static class UnifiedBattleSequencer
 						tmpStr = "Both";
 					if (!code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
 						tmpChar = runningThread.targetId;
+					code.TryGetArgBoolean("Alternate", out tmpBool);
 					if (tmpStr == "Effect" || tmpStr == "Both")
 					{
+						cmd.info.effect_counter++;
 						foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
 						{
-							if (btl.bi.target == 0 && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2 && cmd.cmd_no != BattleCommandId.SysEscape)
+							if (btl.bi.target == 0 && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2 && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysTrans)
 								continue;
 							List<BTL_DATA> allBtl = btl_util.findAllBtlData(0xFF);
 							foreach (BTL_DATA c in allBtl)
@@ -999,11 +1017,14 @@ public static class UnifiedBattleSequencer
 				if (seqf.frameCur >= seqf.frameEnd)
 				{
 					if (seqf.disappear)
-						seqf.character.SetDisappear(1);
+						seqf.character.SetDisappear(true, seqf.priority);
 					else if (seqf.dest == 0f)
 					{
-						seqf.character.meshflags |= (UInt32)seqf.meshId;
-						seqf.character.mesh_current = (UInt16)(seqf.character.mesh_current | seqf.meshId);
+						if (seqf.permanent)
+						{
+							seqf.character.meshflags |= (UInt32)seqf.meshId;
+							seqf.character.mesh_current = (UInt16)(seqf.character.mesh_current | seqf.meshId);
+						}
 						btl_mot.HideMesh(seqf.character, (UInt16)seqf.meshId, false);
 						if (seqf.includeWeapon)
 							for (Int32 i = 0; i < seqf.character.weaponMeshCount; i++)
@@ -1288,20 +1309,24 @@ public static class UnifiedBattleSequencer
 		public BTL_DATA character;
 		public UInt16 meshId;
 		public Boolean disappear;
+		public Boolean permanent;
 		public Boolean includeWeapon;
 		public Boolean includeShadow;
+		public Byte priority;
 		public Single origin;
 		public Single dest;
 		public Int32 frameCur;
 		public Int32 frameEnd;
 
-		public SequenceFade(BTL_DATA c, UInt16 m, Boolean dis, Boolean w, Boolean sh, Single o, Single d, Int32 f)
+		public SequenceFade(BTL_DATA c, UInt16 m, Boolean dis, Boolean per, Boolean w, Boolean sh, Single o, Single d, Int32 f, Byte pr)
 		{
 			character = c;
 			meshId = m;
 			disappear = dis;
+			permanent = per;
 			includeWeapon = w;
 			includeShadow = sh;
+			priority = pr;
 			origin = o;
 			dest = d;
 			frameCur = 0;

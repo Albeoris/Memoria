@@ -1188,7 +1188,7 @@ public class SFX
                 btl_mot.SetDefaultIdle(next);
                 break;
             case 17: // Is Hidden (no model, no targeting)
-                return next.bi.disappear;
+                return next.bi.disappear != 0 ? 1 : 0;
             case 18: // Set Hidden On/Off
                 if (SFX.currentEffectID == SpecialEffect.Sinkhole)
                 {
@@ -1198,7 +1198,9 @@ public class SFX
                 }
                 else
                 {
-                    next.SetDisappear((Byte)arg0);
+                    Byte priority = (Byte)(SFX.currentEffectID == SpecialEffect.Jump || SFX.currentEffectID == SpecialEffect.Spear || SFX.currentEffectID == SpecialEffect.Spear_Trance ? 2 :
+                        SFX.currentEffectID == SpecialEffect.Special_Sealion_Engage ? 3 : 1);
+                    next.SetDisappear(arg0 != 0, priority);
                     if (arg0 == 0)
                         btlseq.DispCharacter(next);
                 }
@@ -1235,6 +1237,11 @@ public class SFX
             case 22: // Is attached to another enemy
                 return next.bi.slave;
             case 23: // Effect Point
+                if (btl_util.getCurCmdPtr() != null && SFX.frameIndex > SFX.effectPointFrame)
+                {
+                    btl_util.getCurCmdPtr().info.effect_counter++;
+                    SFX.effectPointFrame = SFX.frameIndex;
+                }
                 btl_cmd.ExecVfxCommand(next);
                 break;
             case 24: // Figure Point
@@ -1927,6 +1934,7 @@ public class SFX
         SFX.SoundClear();
         SFX.isRunning = true;
         SFX.frameIndex = 0;
+        SFX.effectPointFrame = -1;
         PSXTextureMgr.Reset();
         SFXMesh.DetectEyeFrameStart = -1;
         Int32 num3 = Marshal.SizeOf(SFX.request);
@@ -2503,4 +2511,6 @@ public class SFX
     public static Callback hijackedCallback = null;
 
     public static Int32 preventStepInOut = -1;
+
+    public static Int32 effectPointFrame = -1;
 }

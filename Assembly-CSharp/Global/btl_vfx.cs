@@ -174,8 +174,9 @@ public class btl_vfx
                         UIManager.Battle.SetBattleCommandTitle(cmd);
                     else if (cmd.cmd_no == BattleCommandId.Defend)
                     {
+                        cmd.info.effect_counter++;
                         UIManager.Battle.SetBattleCommandTitle(cmd);
-                        btl_cmd.ExecVfxCommand(regist);
+                        btl_cmd.ExecVfxCommand(regist, cmd);
                     }
                     break;
             }

@@ -374,7 +374,7 @@ namespace Memoria
             btl_cmd.KillCommand3(Data);
             btl_sys.SavePlayerData(Data, true);
             btl_sys.DelCharacter(Data);
-            Data.SetDisappear(1);
+            Data.SetDisappear(true, 5);
             // The two following lines have been switched for fixing an UI bug (ATB bar glowing, etc... when an ally is snorted)
             // It seems to fix the bug without introducing another one (the HP/MP figures update strangely but that's because of how the UI cells are managed)
             UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);

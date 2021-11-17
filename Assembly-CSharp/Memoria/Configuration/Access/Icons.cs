@@ -11,6 +11,7 @@ namespace Memoria
             public static Boolean HideQuestion => Instance._icons.HideQuestion;
             public static Boolean HideCards => Instance._icons.HideCards;
             public static Boolean HideBeach => Instance._icons.HideBeach;
+            public static Boolean HideSteam => Instance._icons.HideSteam;
         }
     }
 }

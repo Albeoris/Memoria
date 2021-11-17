@@ -594,15 +594,14 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             {
                 Int32 partyMember = this.eTb.GetPartyMember(index);
                 if (partyMember >= 0)
-                {
-                    Actor actor = new Actor(this.sSourceObjN - 9 + partyMember, 0, sizeOfActor);
-                }
+                    new Actor(this.sSourceObjN - 9 + partyMember, 0, sizeOfActor);
             }
             this._context.partyObjTail = this._context.activeObjTail;
         }
         else
         {
             this._ff9.btl_rain = 0;
+            this.SetSysList(1, 0);
         }
 
         this._opLStart = 4;
@@ -841,8 +840,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         while (index < 8 && this._objPtrList[index] != obj)
             ++index;
         if (index >= 8)
-            return;
-        this.SetSysList(1, 1 << index);
+            this.SetSysList(1, 0);
+        else
+            this.SetSysList(1, 1 << index);
     }
 
     public void SetSysList(Int32 num, Int32 value)

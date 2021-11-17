@@ -12,6 +12,7 @@ namespace Memoria
             public readonly IniValue<Boolean> HideQuestion;
             public readonly IniValue<Boolean> HideCards;
             public readonly IniValue<Boolean> HideBeach;
+            public readonly IniValue<Boolean> HideSteam;
 
             public IconsSection() : base(nameof(IconsSection), false)
             {
@@ -20,6 +21,7 @@ namespace Memoria
                 HideQuestion = BindBoolean(nameof(HideQuestion), false);
                 HideCards = BindBoolean(nameof(HideCards), false);
                 HideBeach = BindBoolean(nameof(HideBeach), false);
+                HideSteam = BindBoolean(nameof(HideSteam), false);
             }
         }
     }

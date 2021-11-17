@@ -1,6 +1,6 @@
 // Shared sequence of SFX Special_Necron_Engage
 
-ShowMesh: Char=AllTargets ; Mesh=All ; Enable=True
+ShowMesh: Char=AllTargets ; Mesh=All ; Enable=True ; IsPermanent=True
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, -12288.0, -4096.0) ; MoveHeight=True ; Time=0
 Wait: Time=58
 PlaySound: Sound=2599

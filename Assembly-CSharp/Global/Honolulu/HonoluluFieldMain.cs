@@ -241,7 +241,7 @@ public class HonoluluFieldMain : HonoBehavior
 					NGUIDebug.Clear();
 					break;
 				case 4:
-					if (this.FF9FieldMap.nextMapNo == 16000)
+					if (this.FF9FieldMap.nextMapNo == FF9Define.FLDSCRPT_EVTNO_ENDING)
 					{
 						this.FF9FieldMap.nextMode = 4;
 						this.FF9Sys.attr |= 2u;

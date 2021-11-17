@@ -20,11 +20,11 @@ public class Actor : PosObj
 		this.aspeed = (this.aspeed0 = 16);
 		this.outFrame = Byte.MaxValue;
 		this.omega = 16;
-		if (FF9StateSystem.Common.FF9.fldMapNo == 2954 && sid == 4)
+		if (FF9StateSystem.Common.FF9.fldMapNo == 2954 && sid == 4) // Chocobo’s Paradise, Gold Chocobo
 		{
 			this.omega = 96;
 		}
-		else if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && sid == 9)
+		else if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && sid == 9) // Iifa Tree/Eidolon Mound, Vivi
 		{
 			this.omega = 48;
 		}

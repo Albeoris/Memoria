@@ -539,7 +539,7 @@ public class btl_init
 		bi.cmd_idle = 0;
 		bi.death_f = 0;
 		bi.stop_anim = 0;
-		btl.SetDisappear(0);
+		btl.SetDisappear(false, 1);
 		bi.shadow = 1;
 		bi.cover_unit = null;
 		bi.dodge = 0;

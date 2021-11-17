@@ -456,25 +456,25 @@ public class BGSCENE_DEF
         this.CreateMaterials();
         List<short> list = new List<short>
         {
-            1505,
-            2605,
-            2653,
-            2259,
-            153,
-            1806,
-            1214,
-            1823,
-            1752,
-            2922,
-            2923,
-            2924,
-            2925,
-            2926,
-            1751,
-            1752,
-            1753,
-            2252,
-            2714
+            1505, // Conde Petie/Shrine
+            2605, // Terra/Treetop
+            2653, // Bran Bal/Pond
+            2259, // Oeilvert/Star Display
+            153, // A. Castle/Hallway
+            1806, // A. Castle/Hallway
+            1214, // A. Castle/Hallway
+            1823, // A. Castle/Hallway
+            1752, // Iifa Tree/Inner Roots
+            2922, // Crystal World
+            2923, // Crystal World
+            2924, // Crystal World
+            2925, // Crystal World
+            2926, // Crystal World
+            1751, // Iifa Tree/Inner Roots
+            1752, // Iifa Tree/Inner Roots
+            1753, // Iifa Tree/Inner Roots
+            2252, // Oeilvert/Hall
+            2714 // Pand./Maze
         };
         this.combineMeshes = list.Contains(FF9StateSystem.Common.FF9.fldMapNo);
         if (this.combineMeshes && !Configuration.Import.Field)

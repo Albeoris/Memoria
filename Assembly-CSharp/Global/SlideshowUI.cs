@@ -40,6 +40,14 @@ public class SlideshowUI : MonoBehaviour
 		this.text6Sprite.alpha = 0f;
 		this.text7Sprite.alpha = 0f;
 		this.text8Sprite.alpha = 0f;
+		this.text1Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text2Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text3Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text4Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text5Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text6Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text7Sprite.GetComponent<HonoFading>().widescreenRescale = false;
+		this.text8Sprite.GetComponent<HonoFading>().widescreenRescale = false;
 	}
 
 	private String GetLocalizeNameSubfix(String language)

@@ -6,7 +6,7 @@ LoadSFX: SFX=Spear ; Reflect=True
 WaitSFXLoaded: SFX=Spear ; Reflect=True
 PlaySFX: SFX=Spear ; Reflect=True
 Wait: Time=17
-ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True ; Priority=2
 ShowMesh: Char=Caster ; Mesh=Weapon ; Enable=False
 MoveToPosition: Char=Caster ; AbsolutePosition=Default ; RelativePosition=(0.0, 2000.0, 0.0) ; MoveHeight=True ; Time=0
 MoveToTarget: Char=Caster ; Target=AllTargets ; Offset=(0.0, 0.0, -1400.0) ; MoveHeight=True ; Time=6

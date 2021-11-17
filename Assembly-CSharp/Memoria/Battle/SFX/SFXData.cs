@@ -400,17 +400,17 @@ public class SFXData
                                 UInt16 curBtlid = watcher[frameCount].btlid[j];
                                 Int32 opTime = 1;
                                 Vector3 opEnd = watcher[frameCount].pos[j];
-                                while (watcher.ContainsKey(frameCount + opTime) && watcher[frameCount + opTime].btlid.Contains(curBtlid))
-                                {
-                                    BtlPosWatcher curWatch = watcher[frameCount + opTime];
-                                    Int32 k = curWatch.btlid.FindIndex(btlid => btlid == curBtlid);
-                                    opEnd = curWatch.pos[k];
-                                    curWatch.pos.RemoveAt(k);
-                                    curWatch.btlid.RemoveAt(k);
-                                    if (curWatch.btlid.Count == 0)
-                                        watcher.Remove(frameCount + opTime);
-                                    opTime++;
-                                }
+                                //while (watcher.ContainsKey(frameCount + opTime) && watcher[frameCount + opTime].btlid.Contains(curBtlid))
+                                //{
+                                //    BtlPosWatcher curWatch = watcher[frameCount + opTime];
+                                //    Int32 k = curWatch.btlid.FindIndex(btlid => btlid == curBtlid);
+                                //    opEnd = curWatch.pos[k];
+                                //    curWatch.pos.RemoveAt(k);
+                                //    curWatch.btlid.RemoveAt(k);
+                                //    if (curWatch.btlid.Count == 0)
+                                //        watcher.Remove(frameCount + opTime);
+                                //    opTime++;
+                                //}
                                 Boolean relPos = false;
                                 //if (watcher == BtlPos && watcher.ContainsKey(frameCount - 1) && watcher[frameCount - 1].btlid.Contains(curBtlid))
                                 //{
@@ -454,9 +454,9 @@ public class SFXData
             // Generate a sequence file
             Directory.CreateDirectory("SpecialEffects/ef" + ((Int32)id).ToString("D3"));
             if (IsShortSpecialEffect(id))
-                File.WriteAllText("SpecialEffects/ef" + ((Int32)id).ToString("D3") + UnifiedBattleSequencer.EXTENSION_SEQ, $"// Player sequence of SFX {id}\n\nLoadSFX: SFX={id}\nPlayAnimation: Char=Caster ; Anim=MP_SET\nWaitAnimation: Char=Caster\nMoveToTarget: Char=Caster ; Target=AllTargets ; Dist=-2155 ; Anim=MP_RUN\nTurn: Char=Caster ; BaseAngle=AllTargets ; Time=4\nWaitMove: Char=Caster\nMoveToTarget: Char=Caster ; Target=AllTargets ; Dist=-1885 ; Anim=MP_RUN_TO_ATTACK\nWaitMove: Char=Caster\nStartThread\n\tWaitSFXLoaded: SFX={id}\n\tPlaySFX: SFX={id}\n\tWaitSFXDone: SFX={id}\nEndThread\nPlayAnimation: Char=Caster ; Anim=MP_ATTACK\nPlaySound: Sound=WeaponAttack\nPlaySound: Sound=WeaponHit\nWaitAnimation: Char=Caster\nMoveToPosition: Char=Caster ; AbsPos=Default ; Anim=MP_BACK\nTurn: Char=Caster ; BaseAngle=Default ; Time=2\nWaitMove: Caster\nPlayAnimation: Char=Caster ; Anim=MP_ATK_TO_NORMAL\nWaitAnimation: Char=Caster\nPlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL ; Loop=True\nWaitTurn: Char=Caster\n");
+                File.WriteAllText("SpecialEffects/ef" + ((Int32)id).ToString("D3") + "/" + UnifiedBattleSequencer.PLAYER_SEQUENCE_FILE, $"// Player sequence of SFX {id}\n\nLoadSFX: SFX={id}\nPlayAnimation: Char=Caster ; Anim=MP_SET\nWaitAnimation: Char=Caster\nMoveToTarget: Char=Caster ; Target=AllTargets ; Dist=-2155 ; Anim=MP_RUN\nTurn: Char=Caster ; BaseAngle=AllTargets ; Time=4\nWaitMove: Char=Caster\nMoveToTarget: Char=Caster ; Target=AllTargets ; Dist=-1885 ; Anim=MP_RUN_TO_ATTACK\nWaitMove: Char=Caster\nStartThread\n\tWaitSFXLoaded: SFX={id}\n\tPlaySFX: SFX={id}\n\tWaitSFXDone: SFX={id}\nEndThread\nPlayAnimation: Char=Caster ; Anim=MP_ATTACK\nPlaySound: Sound=WeaponAttack\nPlaySound: Sound=WeaponHit\nWaitAnimation: Char=Caster\nMoveToPosition: Char=Caster ; AbsPos=Default ; Anim=MP_BACK\nTurn: Char=Caster ; BaseAngle=Default ; Time=2\nWaitMove: Caster\nPlayAnimation: Char=Caster ; Anim=MP_ATK_TO_NORMAL\nWaitAnimation: Char=Caster\nPlayAnimation: Char=Caster ; Anim=MP_IDLE_NORMAL ; Loop=True\nWaitTurn: Char=Caster\n");
             else
-                File.WriteAllText("SpecialEffects/ef" + ((Int32)id).ToString("D3") + UnifiedBattleSequencer.EXTENSION_SEQ, $"// Player sequence of SFX {id}\n\n" + BattleActionThread.GetSequenceStringCode(reworkedThreads));
+                File.WriteAllText("SpecialEffects/ef" + ((Int32)id).ToString("D3") + "/" + UnifiedBattleSequencer.PLAYER_SEQUENCE_FILE, $"// Player sequence of SFX {id}\n\n" + BattleActionThread.GetSequenceStringCode(reworkedThreads));
         }
         SFX.currentEffectID = SpecialEffect.Special_No_Effect;
         SFX.hijackedCallback = null;
@@ -683,7 +683,7 @@ public class SFXData
                 {
                     if (!BtlPos.ContainsKey(SFX.frameIndex))
                         BtlPos[SFX.frameIndex] = new BtlPosWatcher();
-                    BtlPos[SFX.frameIndex].pos.Add(btl.pos);
+                    BtlPos[SFX.frameIndex].pos.Add(new Vector3(ps[0], -ps[1], ps[2]));
                     BtlPos[SFX.frameIndex].btlid.Add((UInt16)btlid);
                 }
                 break;
@@ -729,7 +729,7 @@ public class SFXData
                         {
                             if (!BtlRot.ContainsKey(SFX.frameIndex))
                                 BtlRot[SFX.frameIndex] = new BtlPosWatcher();
-                            BtlRot[SFX.frameIndex].pos.Add(btl.rot.eulerAngles);
+                            BtlRot[SFX.frameIndex].pos.Add(new Vector3(ps[0] * 0.087890625f, ps[1] * 0.087890625f - 180f, ps[2] * 0.087890625f + 180f));
                             BtlRot[SFX.frameIndex].btlid.Add((UInt16)btlid);
                         }
                         break;

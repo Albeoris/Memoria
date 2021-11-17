@@ -35,7 +35,7 @@ public class btl_para
             else
                 newHP += 10000;
         }
-        else if (Configuration.Battle.CustomBattleFlagsMeaning == 0 && btl.bi.player == 0 && NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
+        else if (IsNonDyingVanillaBoss(btl))
 		{
             // Weak security for enemies that should never reach 0 HP in vanilla
             newHP = Math.Max(newHP, 1);
@@ -259,7 +259,20 @@ public class btl_para
         btl.bi.row = (Byte)(btl.bi.row == 0 ? 1 : 0);
     }
 
-    public static HashSet<Int32> NonDyingBossBattles = new HashSet<Int32>()
+    public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
+	{
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0)
+            return false;
+        if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
+		{
+            if (FF9StateSystem.Battle.battleMapIndex == 338 && btl.max.hp < 10000) // King Leo + Zenero + Benero
+                return false;
+            return true;
+        }
+        return false;
+	}
+
+    private static HashSet<Int32> NonDyingBossBattles = new HashSet<Int32>()
     {
         300, // Antlion
         84, // Armodullahan
@@ -273,12 +286,12 @@ public class btl_para
         890, // Garland
         326, // Gizamaluke
         191, // Hades
-        338, // King Leo
-        891, // Kuja
+        338, // King Leo + Zenero + Benero
+        891, // Kuja + Kuja Trance
         937, // Kuja Trance
         83, // Lani
-        336, // Masked Man
-        938, // Necron
+        336, // Masked Man + Mask (right) + Mask (left)
+        938, // Necron + Dummy x 3
         931, // Nova Dragon
         211, // Ozma
         57, // Ozma
@@ -299,6 +312,6 @@ public class btl_para
         252, 363, 364, 838, // Friendly Mu
         188, 189, 268, 636, 637, 641, 647, // Friendly Nymph
         216, 217, 652, 664, 668, 670, 751, // Friendly Yeti
-        627, 634, 753, 755, 941, 942, 943, 944 // Ragtime Mouse
+        627, 634, 753, 755, 941, 942, 943, 944 // Ragtime Mouse + True + False
     };
 }

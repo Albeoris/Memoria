@@ -119,7 +119,7 @@ public class BGI_DEF
 	public void LoadBGI(FieldMap fieldMap, String path, String name)
 	{
 		this.name = name;
-		if (FF9StateSystem.Common.FF9.fldMapNo == 70)
+		if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
 		{
 			return;
 		}

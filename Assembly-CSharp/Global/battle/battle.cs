@@ -307,7 +307,7 @@ public class battle
                             btl_util.SetFadeRate(data, btlsys.btl_escape_fade);
                             if (btlsys.btl_escape_fade <= 0)
                             {
-                                data.SetDisappear(1);
+                                data.SetDisappear(true, 5);
                                 break;
                             }
                             proceedEnd = false;

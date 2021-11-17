@@ -102,7 +102,7 @@ public partial class EventEngine
         Int32 num1 = 0;
         bool canProcessCode = true;
 
-        if (_ff9.fldMapNo == 257)
+        if (_ff9.fldMapNo == 257) // Evil Forest/Nest
             canProcessCode = (!Singleton<DialogManager>.Instance.Activate || Singleton<DialogManager>.Instance.CompletlyVisible);
         
         if (canProcessCode)

@@ -574,9 +574,10 @@ public class btlseq
 		btlseq.BattleLog("SeqExecCalc");
 		CMD_DATA cmdPtr = pSeqWork.CmdPtr;
 		UInt16 tar_id = cmdPtr.tar_id;
+		cmdPtr.info.effect_counter++;
 		for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			if ((next.btl_id & tar_id) != 0)
-				btl_cmd.ExecVfxCommand(next);
+				btl_cmd.ExecVfxCommand(next, cmdPtr);
 		pSeqWork.CurPtr++;
 		return 1;
 	}

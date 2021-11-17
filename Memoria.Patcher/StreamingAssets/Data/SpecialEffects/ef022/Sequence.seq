@@ -1,34 +1,23 @@
 // Shared sequence of SFX Water__Single
+// Todo: target movement of this, ef222 and ef095 depends on something (maybe target.radius_collision?)
 
 PlaySound: Sound=12
 PlaySound: Sound=3
 PlaySound: Sound=74
-Wait: Time=2
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 26.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 26.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 25.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 24.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 23.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 22.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 22.0, 0.0) ; MoveHeight=True ; Time=0
-Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 22.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=8
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 20.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 20.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 21.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 19.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 20.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
@@ -38,43 +27,54 @@ MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 18.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 17.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 15.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 16.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 16.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 15.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 14.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 15.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 13.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 13.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 12.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 12.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 11.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 9.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 10.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 7.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 8.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 6.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 5.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 6.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 3.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 4.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 2.0, 0.0) ; MoveHeight=True ; Time=0
+Wait: Time=1
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, 2.0, 0.0) ; MoveHeight=True ; Time=0
+EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=2
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -135.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -182.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -208.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -242.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
-MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -265.0, 0.0) ; MoveHeight=True ; Time=0
+MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -287.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
-Wait: Time=2
-EffectPoint: Char=AllTargets ; Type=Effect
-Wait: Time=12
+Wait: Time=7
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=32

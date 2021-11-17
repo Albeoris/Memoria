@@ -71,25 +71,32 @@ public class QuadMistResourceManager : MonoBehaviour
 	private void LoadSprite()
 	{
 		this.spriteData = new Dictionary<String, Dictionary<String, Sprite>>();
-		String[] array = this.atlasPathList;
-		for (Int32 i = 0; i < (Int32)array.Length; i++)
+		String[] atlasArray = this.atlasPathList;
+		for (Int32 i = 0; i < (Int32)atlasArray.Length; i++)
 		{
-			String text = array[i];
-			Sprite[] array2 = Resources.LoadAll<Sprite>(text);
+			String text = atlasArray[i];
+			Sprite[] spriteArray = Resources.LoadAll<Sprite>(text);
+			Texture2D moddedAtlas = null;
+			String atlasOnDisc = AssetManager.SearchAssetOnDisc(text, true, false);
+			if (!String.IsNullOrEmpty(atlasOnDisc))
+			{
+				String[] atlasInfo = new String[0];
+				moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, ref atlasInfo, "");
+			}
 			Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
 			List<String> list = new List<String>();
 			this.AddCenterTable(list);
-			Sprite[] array3 = array2;
-			for (Int32 j = 0; j < (Int32)array3.Length; j++)
+			for (Int32 j = 0; j < spriteArray.Length; j++)
 			{
-				Sprite sprite = array3[j];
+				Sprite sprite = spriteArray[j];
 				if (list.Contains(sprite.name))
 				{
+					// Todo: use moddedAtlas for these
 					dictionary.Add(sprite.name, sprite);
 				}
 				else
 				{
-					Sprite value = Sprite.Create(sprite.texture, sprite.rect, new Vector2(0f, 1f), 482f);
+					Sprite value = Sprite.Create(moddedAtlas != null ? moddedAtlas : sprite.texture, sprite.rect, new Vector2(0f, 1f), 482f);
 					dictionary.Add(sprite.name, value);
 				}
 			}

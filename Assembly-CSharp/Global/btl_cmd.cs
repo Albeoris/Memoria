@@ -249,6 +249,11 @@ public class btl_cmd
                 first_tar_id = 0xFF;
                 second_tar_id = tar_id;
             }
+            else if (first_aa.Info.Target == TargetType.Self)
+            {
+                first_tar_id = btl.btl_id;
+                second_tar_id = tar_id;
+            }
             else if (second_aa.Info.Target == TargetType.AllAlly || second_aa.Info.Target == TargetType.RandomAlly)
             {
                 first_tar_id = tar_id;
@@ -263,6 +268,11 @@ public class btl_cmd
             {
                 first_tar_id = tar_id;
                 second_tar_id = 0xFF;
+            }
+            else if (second_aa.Info.Target == TargetType.Self)
+            {
+                first_tar_id = tar_id;
+                second_tar_id = btl.btl_id;
             }
             else
             {
@@ -365,13 +375,9 @@ public class btl_cmd
     public static void SetAutoCommand(BTL_DATA btl)
     {
         if (btl_stat.CheckStatus(btl, BattleStatus.Confuse))
-        {
             SetCommand(btl.cmd[0], BattleCommandId.Attack, 176U, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
-        }
         else if (btl_stat.CheckStatus(btl, BattleStatus.Berserk))
-        {
             SetCommand(btl.cmd[0], BattleCommandId.Attack, 176U, btl_util.GetRandomBtlID(0U), 0U);
-        }
     }
 
     public static void SetEnemyCommandBySequence(UInt16 tar_id, BattleCommandId cmd_no, UInt32 sub_no)
@@ -474,7 +480,7 @@ public class btl_cmd
             btlDataPtr.Data.sel_mode = 0;
             return;
         }
-        if (Configuration.Battle.CustomBattleFlagsMeaning == 0 && btl_para.NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex) && btlDataPtr.CurrentHp < 10000 && stateBattleSystem.btl_phase == 4 && btl_scrp.GetBattleID(1) == btlDataPtr.Id)
+        if (btl_para.IsNonDyingVanillaBoss(btlDataPtr.Data) && btlDataPtr.CurrentHp < 10000 && stateBattleSystem.btl_phase == 4 && btl_scrp.GetBattleID(1) == btlDataPtr.Id)
         {
             // Avoid bosses to keep attacking under 10000 HP in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
             btlDataPtr.Data.sel_mode = 0;
@@ -688,50 +694,50 @@ public class btl_cmd
                     cmd.info.mode = command_mode_index.CMD_MODE_SELECT_VFX;
                     break;
                 case command_mode_index.CMD_MODE_SELECT_VFX:
+                {
+                    if (cmd.regist != null && cmd.regist.bi.player != 0 && cmd.cmd_no <= BattleCommandId.RushAttack)
                     {
-                        if (cmd.regist != null && cmd.regist.bi.player != 0 && cmd.cmd_no <= BattleCommandId.RushAttack)
+                        BattlePlayerCharacter.PlayerMotionIndex motion = btl_mot.getMotion(cmd.regist);
+                        BattlePlayerCharacter.PlayerMotionStance stance = btl_mot.EndingMotionStance(motion);
+                        if (stance == BattlePlayerCharacter.PlayerMotionStance.NORMAL || stance == BattlePlayerCharacter.PlayerMotionStance.DYING || stance == BattlePlayerCharacter.PlayerMotionStance.DEFEND || stance == BattlePlayerCharacter.PlayerMotionStance.DISABLE)
+                            break;
+                        if (stance == BattlePlayerCharacter.PlayerMotionStance.CMD && motion != BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD && cmd.regist.animEndFrame)
+                            break;
+                    }
+                    Boolean cancel = true;
+                    foreach (BTL_DATA btl in btl_util.findAllBtlData(cmd.tar_id))
+                        if (btl.bi.target != 0 /*&& btl.bi.disappear == 0*/)
                         {
-                            BattlePlayerCharacter.PlayerMotionIndex motion = btl_mot.getMotion(cmd.regist);
-                            BattlePlayerCharacter.PlayerMotionStance stance = btl_mot.EndingMotionStance(motion);
-                            if (stance == BattlePlayerCharacter.PlayerMotionStance.NORMAL || stance == BattlePlayerCharacter.PlayerMotionStance.DYING || stance == BattlePlayerCharacter.PlayerMotionStance.DEFEND || stance == BattlePlayerCharacter.PlayerMotionStance.DISABLE)
-                                break;
-                            if (stance == BattlePlayerCharacter.PlayerMotionStance.CMD && motion != BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD && cmd.regist.animEndFrame)
-                                break;
-                        }
-                        Boolean cancel = true;
-                        foreach (BTL_DATA btl in btl_util.findAllBtlData(cmd.tar_id))
-                            if (btl.bi.target != 0 && btl.bi.disappear == 0)
-                            {
-                                cancel = false;
-                                break;
-                            }
-                        if (cancel)
-						{
-                            ResetItemCount(cmd);
-                            cmd.info.mode = command_mode_index.CMD_MODE_DONE;
+                            cancel = false;
                             break;
                         }
-                        UInt16 tryCover = 0;
-                        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(next.sa))
-                                saFeature.TriggerOnCommand(new BattleUnit(next), new BattleCommand(cmd), ref tryCover);
-                        if (tryCover != 0)
-                        {
-                            foreach (BTL_DATA target in btl_util.findAllBtlData(cmd.tar_id))
-                            {
-                                UInt16 coverId = btl_abil.CheckCoverAbility(target, tryCover);
-                                if (coverId != 0)
-                                {
-                                    cmd.tar_id &= (UInt16)~target.btl_id;
-                                    cmd.tar_id |= coverId;
-                                    cmd.info.cover = 1;
-                                }
-                            }
-                        }
-                        btl_vfx.SelectCommandVfx(cmd);
-                        cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
+                    if (cancel)
+                    {
+                        ResetItemCount(cmd);
+                        cmd.info.mode = command_mode_index.CMD_MODE_DONE;
                         break;
                     }
+                    UInt16 tryCover = 0;
+                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(next.sa))
+                            saFeature.TriggerOnCommand(new BattleUnit(next), new BattleCommand(cmd), ref tryCover);
+                    if (tryCover != 0)
+                    {
+                        foreach (BTL_DATA target in btl_util.findAllBtlData(cmd.tar_id))
+                        {
+                            UInt16 coverId = btl_abil.CheckCoverAbility(target, tryCover);
+                            if (coverId != 0)
+                            {
+                                cmd.tar_id &= (UInt16)~target.btl_id;
+                                cmd.tar_id |= coverId;
+                                cmd.info.cover = 1;
+                            }
+                        }
+                    }
+                    btl_vfx.SelectCommandVfx(cmd);
+                    cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
+                    break;
+                }
                 case command_mode_index.CMD_MODE_LOOP:
                     if (Configuration.Battle.SFXRework || caster.bi.player != 0 || cmd.info.mon_reflec != 0)
                         CheckCommandLoop(cmd);
@@ -1387,7 +1393,7 @@ public class btl_cmd
             {
                 caster.AlterStatus(BattleStatus.Jump);
                 caster.Data.tar_mode = 2;
-                caster.Data.SetDisappear(1);
+                caster.Data.SetDisappear(true, 2);
                 FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
             }
 
@@ -1565,7 +1571,8 @@ public class btl_cmd
                         {
                             if (btlData.evt.animFrame < GeoAnim.getAnimationLoopFrame(btlData))
                                 return;
-                            ExecVfxCommand(btlData);
+                            cmd.info.effect_counter++;
+                            ExecVfxCommand(btlData, cmd);
                             //btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL);
                             //btlData.evt.animFrame = 0;
                             //return;
@@ -1599,7 +1606,8 @@ public class btl_cmd
                             }
                             btlData.pos[2] = btlData.bi.row == 0 ? -1560 : -1960;
                             btlData.gameObject.transform.localPosition = btlData.pos;
-                            ExecVfxCommand(btlData);
+                            cmd.info.effect_counter++;
+                            ExecVfxCommand(btlData, cmd);
                             //btl_mot.setMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL);
                             //btlData.evt.animFrame = 0;
                             //return;
@@ -1643,7 +1651,7 @@ public class btl_cmd
             case BattleCommandId.Jump:
             case BattleCommandId.Jump2:
                 caster.tar_mode = 2;
-                caster.SetDisappear(1);
+                caster.SetDisappear(true, 2);
                 break;
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:

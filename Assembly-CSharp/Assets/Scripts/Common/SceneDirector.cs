@@ -435,8 +435,15 @@ namespace Assets.Scripts.Common
 		private static void _SetFadeMode(FadeMode mode)
 		{
 			SceneDirector.fadeMode = mode;
-			Boolean flag = PersistenSingleton<EventEngine>.Instance.IsEventContextValid() && FF9StateSystem.Common.FF9.fldMapNo == 60 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(6357) == 5 && mode == FadeMode.Add && FF9StateSystem.Settings.IsFastForward;
-			Boolean flag2 = PersistenSingleton<EventEngine>.Instance.IsEventContextValid() && FF9StateSystem.Common.FF9.fldMapNo == 1661 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6930 && mode == FadeMode.Add;
+			Boolean flag = PersistenSingleton<EventEngine>.Instance.IsEventContextValid()
+						&& FF9StateSystem.Common.FF9.fldMapNo == 60 // Prima Vista/Interior
+						&& PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(6357) == 5
+						&& mode == FadeMode.Add
+						&& FF9StateSystem.Settings.IsFastForward;
+			Boolean flag2 = PersistenSingleton<EventEngine>.Instance.IsEventContextValid()
+						 && FF9StateSystem.Common.FF9.fldMapNo == 1661 // Brahne’s Fleet/Event
+						 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6930
+						 && mode == FadeMode.Add;
 			if (flag || flag2)
 			{
 				PersistenSingleton<SceneDirector>.Instance.StartCoroutine(SceneDirector.SetGlobalFade());

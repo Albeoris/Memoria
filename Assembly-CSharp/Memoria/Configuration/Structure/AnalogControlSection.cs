@@ -9,13 +9,13 @@ namespace Memoria
         {
             public readonly IniValue<Int32> StickThreshold;
             public readonly IniValue<Int32> MinimumSpeed;
-            public readonly IniValue<Boolean> UseAbsoluteOrientation;
+            public readonly IniValue<Int32> UseAbsoluteOrientation;
 
             public AnalogControlSection() : base(nameof(AnalogControlSection), true)
             {
                 StickThreshold = BindInt32(nameof(StickThreshold), 10);
                 MinimumSpeed = BindInt32(nameof(MinimumSpeed), 5);
-                UseAbsoluteOrientation = BindBoolean(nameof(UseAbsoluteOrientation), false);
+                UseAbsoluteOrientation = BindInt32(nameof(UseAbsoluteOrientation), 0);
             }
         }
     }

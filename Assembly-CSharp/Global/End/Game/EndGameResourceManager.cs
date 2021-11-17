@@ -7,47 +7,42 @@ public class EndGameResourceManager : MonoBehaviour
 	private void Start()
 	{
 		String quadMistTextAtlasPath = this.GetQuadMistTextAtlasPath();
-		Sprite[] array = Resources.LoadAll<Sprite>(quadMistTextAtlasPath);
-		Sprite[] array2 = array;
-		for (Int32 i = 0; i < (Int32)array2.Length; i++)
+		Sprite[] spriteArray = Resources.LoadAll<Sprite>(quadMistTextAtlasPath);
+		Texture2D moddedAtlas = null;
+		String atlasOnDisc = AssetManager.SearchAssetOnDisc(quadMistTextAtlasPath, true, false);
+		if (!String.IsNullOrEmpty(atlasOnDisc))
 		{
-			Sprite sprite = array2[i];
-			if (String.Compare(sprite.name, "card_win.png") == 0)
-			{
-				this.winSprite = sprite;
-			}
-			else if (String.Compare(sprite.name, "card_win_shadow.png") == 0)
-			{
-				this.winShadowSprite = sprite;
-			}
-			else if (String.Compare(sprite.name, "card_lose.png") == 0)
-			{
-				this.loseSprite = sprite;
-			}
-			else if (String.Compare(sprite.name, "card_lose_shadow.png") == 0)
-			{
-				this.loseShadowSprite = sprite;
-			}
-			else if (String.Compare(sprite.name, "card_draw.png") == 0)
-			{
-				this.drawSprite = sprite;
-			}
-			else if (String.Compare(sprite.name, "card_draw_shadow.png") == 0)
-			{
-				this.drawShadowSprite = sprite;
-			}
+			String[] atlasInfo = new String[0];
+			moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, ref atlasInfo, "");
 		}
-		this.WinSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.winSprite);
-		this.WinShadowSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.winShadowSprite);
-		this.loseSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.loseSprite);
-		this.loseShadowSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.loseShadowSprite);
-		this.drawSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.drawSprite);
-		this.drawShadowSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.drawShadowSprite);
+		for (Int32 i = 0; i < spriteArray.Length; i++)
+		{
+			// Todo: use moddedAtlas for these
+			Sprite sprite = spriteArray[i];
+			if (String.Compare(sprite.name, "card_win.png") == 0)
+				this.winSprite = sprite;
+			else if (String.Compare(sprite.name, "card_win_shadow.png") == 0)
+				this.winShadowSprite = sprite;
+			else if (String.Compare(sprite.name, "card_lose.png") == 0)
+				this.loseSprite = sprite;
+			else if (String.Compare(sprite.name, "card_lose_shadow.png") == 0)
+				this.loseShadowSprite = sprite;
+			else if (String.Compare(sprite.name, "card_draw.png") == 0)
+				this.drawSprite = sprite;
+			else if (String.Compare(sprite.name, "card_draw_shadow.png") == 0)
+				this.drawShadowSprite = sprite;
+		}
+		this.WinSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.winSprite, moddedAtlas);
+		this.WinShadowSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.winShadowSprite, moddedAtlas);
+		this.loseSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.loseSprite, moddedAtlas);
+		this.loseShadowSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.loseShadowSprite, moddedAtlas);
+		this.drawSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.drawSprite, moddedAtlas);
+		this.drawShadowSpriteRenderer.sprite = this.ReCreateSpriteWithUpdatePixelPerUnity(this.drawShadowSprite, moddedAtlas);
 	}
 
-	private Sprite ReCreateSpriteWithUpdatePixelPerUnity(Sprite originalSprite)
+	private Sprite ReCreateSpriteWithUpdatePixelPerUnity(Sprite originalSprite, Texture2D moddedAtlas)
 	{
-		return Sprite.Create(originalSprite.texture, originalSprite.rect, new Vector2(0f, 1f), 10f);
+		return Sprite.Create(moddedAtlas != null ? moddedAtlas : originalSprite.texture, originalSprite.rect, new Vector2(0f, 1f), 10f);
 	}
 
 	private String GetQuadMistTextAtlasPath()

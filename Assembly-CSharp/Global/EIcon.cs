@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Memoria;
 
 internal class EIcon
 {
@@ -101,11 +102,11 @@ internal class EIcon
 
 	public static Boolean PollCollisionIcon(Obj targetObject)
 	{
-		Boolean result = false;
+		if (Configuration.Icons.HideSteam)
+			return false;
 		if (EventHUD.CurrentHUD == MinigameHUD.MogTutorial)
-		{
-			return result;
-		}
+			return false;
+		Boolean result = false;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		if (instance.gMode == 1)
 		{
@@ -128,13 +129,9 @@ internal class EIcon
 			if (flag)
 			{
 				if (EMinigame.CheckBeachMinigame() && !EventCollision.IsWorldTrigger())
-				{
 					EIcon.PollFIcon(4);
-				}
 				else
-				{
 					EIcon.PollFIcon(1);
-				}
 				result = true;
 			}
 		}

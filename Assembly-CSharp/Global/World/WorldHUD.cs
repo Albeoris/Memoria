@@ -1216,9 +1216,7 @@ public class WorldHUD : UIScene
 	private void Awake()
 	{
 		if (HonoInputManager.MouseEnabled)
-		{
 			UICamera.onMouseMove = (UICamera.MoveDelegate)Delegate.Combine(UICamera.onMouseMove, new UICamera.MoveDelegate(this.onMouseMove));
-		}
 		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
 		this.chocographLocationSprite = this.ChocographLocationPanel.GetChild(0).GetComponent<UISprite>();
 		this.menuButtonLabelGameObject = this.MenuButtonGameObject.GetChild(2);
@@ -1271,6 +1269,10 @@ public class WorldHUD : UIScene
 		uieventListener6.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener6.onClick, new UIEventListener.VoidDelegate(this.onClick));
 		this.PlaneButtonPanel.GetChild(0).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Down);
 		this.PlaneButtonPanel.GetChild(1).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Up);
+		// Todo: see with TehMighty for a proper and unified UI mod
+		//this.ChocographLocationPanel.transform.localPosition = new Vector3(600f, 0f, 0f);
+		//this.miniMapWidget.transform.parent.localPosition = new Vector3(250f, -500f, 0f);
+		// Todo: fix Title displaying permanently if the World Map was exited during its first appearance
 	}
 
 	public GameObject LocationPointerPrefab;

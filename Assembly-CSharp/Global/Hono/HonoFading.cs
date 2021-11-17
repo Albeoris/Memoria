@@ -39,7 +39,7 @@ public class HonoFading : MonoBehaviour
 
         if (base.gameObject.activeInHierarchy && !this.busy)
 		{
-		    if (Configuration.Graphics.WidescreenSupport)
+			if (Configuration.Graphics.WidescreenSupport && widescreenRescale)
 		    {
 		        UISprite faddingSprite = gameObject.GetComponent<UISprite>();
 		        if (faddingSprite != null)
@@ -160,4 +160,7 @@ public class HonoFading : MonoBehaviour
 	private UISprite foregroundSprite;
 
 	private Transform mTransform;
+
+	[NonSerialized]
+	public Boolean widescreenRescale = true;
 }

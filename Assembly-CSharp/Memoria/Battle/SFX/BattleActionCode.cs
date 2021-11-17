@@ -64,7 +64,7 @@ public class BattleActionCode
 		{ "MoveToTarget", new String[]{ "Char", "Target", "Offset", "Distance", "Time", "Anim", "MoveHeight", "UseCollisionRadius", "IsRelativeDistance" } },
 		{ "MoveToPosition", new String[]{ "Char", "AbsolutePosition", "RelativePosition", "Time", "Anim", "MoveHeight" } },
 		{ "ChangeSize", new String[]{ "Char", "Size", "Time", "ScaleShadow", "IsRelative" } },
-		{ "ShowMesh", new String[]{ "Char", "Enable", "Mesh", "Time", "IsDisappear" } },
+		{ "ShowMesh", new String[]{ "Char", "Enable", "Mesh", "Time", "IsDisappear", "IsPermanent", "Priority" } },
 		{ "ShowShadow", new String[]{ "Char", "Enable" } },
 		{ "ChangeCharacterProperty", new String[]{ "Char", "Property", "Value" } },
 		{ "PlayCamera", new String[]{ "Camera", "Char", "IsAlternate", "Start" } },
@@ -73,8 +73,8 @@ public class BattleActionCode
 		{ "StopSound", new String[]{ "Sound", "SoundType" } },
 		{ "EffectPoint", new String[]{ "Char", "Type" } },
 		{ "Message", new String[]{ "Text", "Title", "Priority" } },
-		{ "SetBackgroundIntensity", new String[]{ "Intensity", "Time" } },
-		{ "SetVariable", new String[]{ "Variable", "Value" } },
+		{ "SetBackgroundIntensity", new String[]{ "Intensity", "Time", "HoldDuration" } },
+		{ "SetVariable", new String[]{ "Variable", "Value", "Index" } },
 		{ "SetupReflect", new String[]{ "Delay" } },
 		{ "ActivateReflect", null },
 		{ "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } }
@@ -137,7 +137,7 @@ public class BattleActionCode
 				value = btlsnd.ff9btlsnd_weapon_sfx(caster.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_ATTACK);
 				return value >= 0;
 			}
-			if (args == "WeaponHit")
+			if (args == "WeaponHit") // TODO: don't play it if miss
 			{
 				value = btlsnd.ff9btlsnd_weapon_sfx(caster.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT);
 				return value >= 0;
@@ -481,60 +481,14 @@ public class BattleActionCode
 				angle = isPitch ? btl.evt.rotBattle.eulerAngles.x : btl.evt.rotBattle.eulerAngles.y;
 				return true;
 			}
-			else if (args == "AllTargets")
+			else if (Single.TryParse(args, out angle))
 			{
-				targetId = target;
 				return true;
 			}
-			else if (args == "Caster")
+			else if (TryGetArgCharacter(key, caster, target, out targetId))
 			{
-				targetId = caster;
 				return true;
 			}
-			String[] partyNames = CharacterNamesFormatter._characterNames["US"];
-			for (Int32 i = 0; i < partyNames.Length; i++)
-				if (args == partyNames[i])
-				{
-					for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-						if (next.bi.player != 0 && FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.menu_type == i)
-						{
-							targetId = next.btl_id;
-							return true;
-						}
-					return false;
-				}
-			Int32 targetIndex = -1;
-			if (args == "FirstTarget")
-				targetIndex = 0;
-			else if (args == "SecondTarget")
-				targetIndex = 1;
-			else if (args == "ThirdTarget")
-				targetIndex = 2;
-			else if (args == "FourthTarget")
-				targetIndex = 3;
-			else if (args == "FifthTarget")
-				targetIndex = 4;
-			else if (args == "SixthTarget")
-				targetIndex = 5;
-			else if (args == "SeventhTarget")
-				targetIndex = 6;
-			else if (args == "EighthTarget")
-				targetIndex = 7;
-			if (targetIndex >= 0)
-			{
-				targetId = 1;
-				while (targetId != 0)
-				{
-					while (targetId != 0 && (targetId & target) == 0)
-						targetId <<= 1;
-					if (--targetIndex < 0)
-						break;
-					targetId <<= 1;
-				}
-				return targetId != 0;
-			}
-			if (Single.TryParse(args, out angle))
-				return true;
 		}
 		return false;
 	}

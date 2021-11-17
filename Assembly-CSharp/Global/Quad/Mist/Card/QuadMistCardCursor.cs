@@ -102,31 +102,34 @@ public class QuadMistCardCursor : MonoBehaviour
 
 	private void LoadSprites(String atlasName)
 	{
-		Sprite[] array = Resources.LoadAll<Sprite>(atlasName);
+		Sprite[] spriteArray = Resources.LoadAll<Sprite>(atlasName);
 		Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
 		List<String> list = new List<String>();
-		for (Int32 i = 0; i <= 6; i++)
+		Texture2D moddedAtlas = null;
+		String atlasOnDisc = AssetManager.SearchAssetOnDisc(atlasName, true, false);
+		if (!String.IsNullOrEmpty(atlasOnDisc))
 		{
-			list.Add("card_cursor_" + i + ".png");
+			String[] atlasInfo = new String[0];
+			moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, ref atlasInfo, "");
 		}
-		Sprite[] array2 = array;
-		for (Int32 j = 0; j < (Int32)array2.Length; j++)
+		for (Int32 i = 0; i <= 6; i++)
+			list.Add("card_cursor_" + i + ".png");
+		for (Int32 j = 0; j < spriteArray.Length; j++)
 		{
-			Sprite sprite = array2[j];
+			Sprite sprite = spriteArray[j];
 			if (list.Contains(sprite.name))
 			{
-				Sprite value = Sprite.Create(sprite.texture, sprite.rect, new Vector2(0f, 0f), 482f);
+				Sprite value = Sprite.Create(moddedAtlas != null ? moddedAtlas : sprite.texture, sprite.rect, new Vector2(0f, 0f), 482f);
 				dictionary.Add(sprite.name, value);
 			}
 		}
-		Sprite[] array3 = array;
-		for (Int32 k = 0; k < (Int32)array3.Length; k++)
+		for (Int32 k = 0; k < spriteArray.Length; k++)
 		{
-			Sprite sprite2 = array3[k];
-			if (sprite2.name == "card_cursor_0.png")
+			Sprite sprite = spriteArray[k];
+			if (sprite.name == "card_cursor_0.png")
 			{
-				Sprite value2 = Sprite.Create(sprite2.texture, sprite2.rect, new Vector2(0f, 0f), 482f);
-				dictionary.Add("card_effect", value2);
+				Sprite value = Sprite.Create(moddedAtlas != null ? moddedAtlas : sprite.texture, sprite.rect, new Vector2(0f, 0f), 482f);
+				dictionary.Add("card_effect", value);
 				break;
 			}
 		}

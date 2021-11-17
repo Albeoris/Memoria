@@ -36,7 +36,6 @@ namespace Memoria
             command.ScriptId = scriptId;
             BattleCalculator v = new BattleCalculator(caster, target, command);
             BattleScriptFactory factory = FindScriptFactory(scriptId);
-            command.Data.info.effect_counter++;
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
                 saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))

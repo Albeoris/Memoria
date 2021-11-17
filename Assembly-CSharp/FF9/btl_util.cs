@@ -276,7 +276,7 @@ namespace FF9
 				btl_util.GeoSetColor2DrawPacket(btl.getShadow(), (Byte)((Int32)bbginfo.chr_r * rate >> 5), (Byte)((Int32)bbginfo.chr_g * rate >> 5), (Byte)((Int32)bbginfo.chr_b * rate >> 5), Byte.MaxValue);
 			}
 			if (rate == 0)
-				btl.SetDisappear(1);
+				btl.SetDisappear(true, 5);
 		}
 
 		public static void GeoSetABR(GameObject go, String type)

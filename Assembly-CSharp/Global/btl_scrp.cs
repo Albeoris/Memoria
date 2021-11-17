@@ -485,10 +485,7 @@ public class btl_scrp
 			}
 			break;
 		case 53u:
-			btl.SetDisappear((Byte)val);
-			if (val == 0u || ff9Battle.btl_phase == 2)
-			{
-			}
+			btl.SetDisappear(val != 0, 3);
 			break;
 		case 54u:
 			btl.bi.shadow = (Byte)val;
@@ -697,7 +694,7 @@ public class btl_scrp
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
 		BattleUnit unit = FindBattleUnitUnlimited((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1));
-		CMD_DATA curCmd = GetCurrentCommandSmart(unit.Data);
+		CMD_DATA curCmd = GetCurrentCommandSmart(unit?.Data);
 		switch (id)
 		{
 		case 32:
@@ -747,7 +744,7 @@ public class btl_scrp
 			}
 			break;
 		case 43:
-			result = curCmd != null ? (UInt32)curCmd.info.effect_counter : 0; // The number of times "SBattleCalculator.CalcMain" has been called for the current attack, for multi-hit pattern changes
+			result = curCmd != null ? (UInt32)curCmd.info.effect_counter : 0; // The number of times the effect point has been reached for the current attack, for multi-hit pattern changes
 			break;
 		}
 		return result;
@@ -836,7 +833,7 @@ public class btl_scrp
 			break;
 		}
 		case 43u:
-			CMD_DATA curCmd = GetCurrentCommandSmart(FindBattleUnitUnlimited((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1)).Data);
+			CMD_DATA curCmd = GetCurrentCommandSmart(FindBattleUnitUnlimited((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1))?.Data);
 			if (curCmd != null)
 				curCmd.info.effect_counter = val;
 			break;

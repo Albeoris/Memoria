@@ -6,19 +6,15 @@ using UnityEngine;
 
 public class BTL_DATA
 {
-	public void SetDisappear(Byte value)
+	public void SetDisappear(Boolean disappear, Byte priority)
 	{
-		if (value == 0 && btl_stat.CheckStatus(this, BattleStatus.Jump))
-		{
-			CMD_DATA cmd;
-			if (!btl_util.IsBtlUsingCommand(this, out cmd) || (cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2 && cmd.cmd_no != BattleCommandId.JumpAttack && cmd.cmd_no != BattleCommandId.JumpTrance))
-				return;
-		}
+		Byte value = disappear ? Math.Max(this.bi.disappear, priority) :
+					 priority >= this.bi.disappear ? (Byte)0 : this.bi.disappear;
 		// Move the gameObject out of camera view right before hiding it to avoid flickering when showing it back
-		if (value == 1 && this.bi.disappear == 0)
+		if (value != 0 && this.bi.disappear == 0)
 			gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, -10000f, gameObject.transform.localPosition.z);
 		this.bi.disappear = value;
-		this.SetActiveBtlData(this.bi.disappear != 1);
+		this.SetActiveBtlData(value == 0);
 	}
 
 	public GameObject getShadow()
