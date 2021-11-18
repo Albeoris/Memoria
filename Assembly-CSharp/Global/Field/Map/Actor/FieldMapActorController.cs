@@ -697,14 +697,18 @@ public class FieldMapActorController : HonoBehavior
 		//  UnityXInput.Input.GetXAxis ----------------------------> XInputManager's ThumbSticks and XInputManager's DPad
 		//   UnityEngine.Input.GetAxis ------------------------------------------------------------> ??? On configured PS4 controllers, only capture the DPad (UnityEngine.dll)
 		//   PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.ThumbSticks.Left -> Seems OK (XInputDotNetPure.dll)
-		//   PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad -------------> Doesn't work on all controllers [PS4] (XInputDotNetPure.dll)
+		//   PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad -------------> Seems OK (XInputDotNetPure.dll)
 		//   PersistenSingleton<HonoInputManager>.Instance.CheckPersistentDirectionInput ----------> Keyboard arrow keys and WASD keys (user32.dll)
 		// The Steam overlay should be fixed and a good controller configuration should be setup from the player's end
 		HonoInputManager honoInput = PersistenSingleton<HonoInputManager>.Instance;
 		Boolean isStickMovement = !honoInput.CheckPersistentDirectionInput(Control.Up)
 							   && !honoInput.CheckPersistentDirectionInput(Control.Down)
 							   && !honoInput.CheckPersistentDirectionInput(Control.Left)
-							   && !honoInput.CheckPersistentDirectionInput(Control.Right);
+							   && !honoInput.CheckPersistentDirectionInput(Control.Right)
+							   && PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad.Down != XInputDotNetPure.ButtonState.Pressed
+							   && PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad.Up != XInputDotNetPure.ButtonState.Pressed
+							   && PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad.Left != XInputDotNetPure.ButtonState.Pressed
+							   && PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.DPad.Right != XInputDotNetPure.ButtonState.Pressed;
 
 		if (!FF9StateSystem.Field.isDebug)
 		{
