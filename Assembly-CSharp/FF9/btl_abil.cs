@@ -138,8 +138,8 @@ namespace FF9
 	                    script.Perform();
 	                }
 
-	                Int32 heal = v.Target.HpDamage;
-	                Int32 harm = (Int32)v.Target.MaximumHp - (Int32)v.Target.CurrentHp;
+					Int32 heal = defender.HasSupportAbility(SupportAbility1.Chemist) ? v.Target.HpDamage * 2 : v.Target.HpDamage;
+                    Int32 harm = (Int32)v.Target.MaximumHp - (Int32)v.Target.CurrentHp;
 
 	                if (heal - harm > heal * overhealLimit / 100)
 	                    break;
