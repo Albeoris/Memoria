@@ -1436,36 +1436,24 @@ public static class FF9Snd
 			if (num == 53248)
 			{
 				if (!FF9Snd.PlayedFieldSoundEffect.Contains(ObjNo))
-				{
 					FF9Snd.PlayedFieldSoundEffect.Add(ObjNo);
-				}
 				Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 				if ((fldMapNo == 1911 || fldMapNo == 911) && ObjNo == 1395)
-				{
 					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP(1394, 0);
-				}
 				if (fldMapNo == 157 && ObjNo == 3064)
 				{
 					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PLAY(9050122, 0, 0, Arg3);
 					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PLAY(9050123, 0, 0, Arg3);
 					Arg3 /= 2;
 					if (!FF9Snd.PlayedFieldSoundEffect.Contains(9050122))
-					{
 						FF9Snd.PlayedFieldSoundEffect.Add(9050122);
-					}
 					if (!FF9Snd.PlayedFieldSoundEffect.Contains(9050123))
-					{
 						FF9Snd.PlayedFieldSoundEffect.Add(9050123);
-					}
 				}
 				if ((fldMapNo == 302 || fldMapNo == 303 || fldMapNo == 304) && ObjNo == 2491)
-				{
 					ObjNo = 77;
-				}
-				if (ObjNo == 2727)
-				{
-					ObjNo = 2728;
-				}
+				//if (ObjNo == 2727) // Choco's beak sound in the lagoon
+				//	ObjNo = 2728; // Choco's normal beak sound (grass/ground)
 			}
 		}
 		else
