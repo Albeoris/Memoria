@@ -1,8 +1,8 @@
 // Shared sequence of SFX Stellar_Circle_5
 
 PlaySound: Sound=1843
-PlaySound: Sound=1843
-PlaySound: Sound=1843
+PlaySound: Sound=1844
+PlaySound: Sound=1845
 Wait: Time=50
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=24
