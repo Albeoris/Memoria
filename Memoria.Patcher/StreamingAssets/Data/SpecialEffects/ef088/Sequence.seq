@@ -1,7 +1,6 @@
 // Shared sequence of SFX Matra_Magic
 
-SetBackgroundIntensity: Intensity=0.5 ; Time=20 ; HoldDuration=82
-Wait: Time=14
+SetBackgroundIntensity: Intensity=0.5 ; Time=20 ; HoldDuration=68
 PlaySound: Sound=1803
 PlaySound: Sound=1804
 PlaySound: Sound=1805
