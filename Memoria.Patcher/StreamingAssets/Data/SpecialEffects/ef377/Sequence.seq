@@ -1,12 +1,12 @@
 // Shared sequence of SFX Medeo
 
-PlaySound: Sound=1486
-PlaySound: Sound=1494
-PlaySound: Sound=1514
-Wait: Time=16
 PlaySound: Sound=2347
 PlaySound: Sound=2348
 PlaySound: Sound=2349
+Wait: Time=16
+PlaySound: Sound=1486
+PlaySound: Sound=1494
+PlaySound: Sound=1514
 Wait: Time=24
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=16
