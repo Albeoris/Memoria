@@ -1,5 +1,6 @@
 // Shared sequence of SFX Pyro
 
+PlaySound: Sound=584
 PlaySound: Sound=575
 Wait: Time=12
 EffectPoint: Char=AllTargets ; Type=Effect

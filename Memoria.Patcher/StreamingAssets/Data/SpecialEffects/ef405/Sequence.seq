@@ -16,14 +16,7 @@ Wait: Time=2
 SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=12
 Wait: Time=12
 SetBackgroundIntensity: Intensity=0.6796875 ; Time=12 ; HoldDuration=81
-Wait: Time=47
-StopSound: Sound=2273
-StopSound: Sound=2274
-StopSound: Sound=2277
-StopSound: Sound=2278
-StopSound: Sound=2275
-StopSound: Sound=2276
-Wait: Time=5
+Wait: Time=52
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=12
 EffectPoint: Char=Everyone ; Type=Figure
