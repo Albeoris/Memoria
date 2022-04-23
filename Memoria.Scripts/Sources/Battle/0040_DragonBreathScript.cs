@@ -33,7 +33,7 @@ namespace Memoria.Scripts.Battle
                 }
             }
             _v.Target.Flags = 0;
-            _v.Target.MpDamage = 0;
+            _v.Target.HpDamage = 0;
         }
     }
 }

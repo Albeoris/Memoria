@@ -12,6 +12,14 @@ public static class UnifiedBattleSequencer
 {
 	public static List<BattleAction> runningActions = new List<BattleAction>();
 
+	public static void EndBattle()
+	{
+		while (runningActions.Count > 0)
+			UnifiedBattleSequencer.ReleaseRunningAction(0);
+		BattleAction.bbgIntensity.Clear();
+		battlebg.nf_SetBbgIntensity(128);
+	}
+
 	public static void Loop()
 	{
 		if (!Configuration.Battle.SFXRework)
@@ -23,16 +31,7 @@ public static class UnifiedBattleSequencer
 			{
 				if (runningActions[i].ExecuteLoop())
 				{
-					foreach (SFXData sfx in runningActions[i].sfxList)
-					{
-						if (sfx.runningSFX.Count > 0)
-						{
-							sfx.mesh.End();
-							sfx.runningSFX.Clear();
-						}
-					}
-					runningActions[i].cmd = null;
-					runningActions.RemoveAt(i);
+					UnifiedBattleSequencer.ReleaseRunningAction(i);
 					i--;
 				}
 			}
@@ -50,6 +49,20 @@ public static class UnifiedBattleSequencer
 		SFXChannel.Render();
 		for (Int32 i = 0; i < runningActions.Count; i++)
 			runningActions[i].Render();
+	}
+
+	private static void ReleaseRunningAction(Int32 index)
+	{
+		foreach (SFXData sfx in runningActions[index].sfxList)
+		{
+			if (sfx.runningSFX.Count > 0)
+			{
+				sfx.mesh.End();
+				sfx.runningSFX.Clear();
+			}
+		}
+		runningActions[index].cmd = null;
+		runningActions.RemoveAt(index);
 	}
 
 	public class BattleAction
@@ -241,7 +254,15 @@ public static class UnifiedBattleSequencer
 					if (!code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
 						tmpChar = cmd.regist.btl_id;
 					foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
+					{
 						SFXChannel.Play(tmpStr, btl);
+						if (btl.bi.player != 0 && FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no == 10 && (!code.TryGetArgBoolean("SkipFlute", out tmpBool) || !tmpBool))
+						{
+							SoundLib.PlaySoundEffect(1507);
+							SoundLib.PlaySoundEffect(1508);
+							SoundLib.PlaySoundEffect(1501);
+						}
+					}
 					break;
 				case "StopChannel":
 					if (!code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
@@ -518,6 +539,57 @@ public static class UnifiedBattleSequencer
 						}
 					}
 					break;
+				case "MOVE_WATER":
+					// TODO: Maybe improve "MoveToPosition" etc... to allow formulas for destination position
+					if (!code.argument.TryGetValue("Type", out tmpStr))
+						tmpStr = "Single";
+					code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
+					code.TryGetArgInt32("Time", out tmpInt);
+					foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
+					{
+						if (btl.bi.slave != 0)
+							continue;
+						if (tmpStr == "Single")
+						{
+							if (btl.radius_collision < 180)
+								tmpVec = btl.pos + new Vector3(0, 145, 0);
+							else if (btl.radius_collision <= 1150)
+								tmpVec = btl.pos + new Vector3(0, btl.radius_collision * 106 / 225, 0);
+							else
+								tmpVec = btl.pos + new Vector3(0, 500, 0);
+						}
+						else if (tmpStr == "Sword")
+						{
+							if (btl.radius_collision < 180)
+								tmpVec = btl.pos + new Vector3(0, 200, 0);
+							else if (btl.radius_collision <= 650)
+								tmpVec = btl.pos + new Vector3(0, btl.radius_collision * 106 / 225 + 50, 0);
+							else if (btl.radius_collision <= 1150)
+								tmpVec = btl.pos + new Vector3(0, btl.radius_collision * 106 / 225 + 160, 0);
+							else
+								tmpVec = btl.pos + new Vector3(0, 650, 0);
+						}
+						else if (tmpStr == "Multi")
+						{
+							tmpVec = btl.pos + new Vector3(0, 460, 0);
+						}
+						else
+						{
+							tmpVec = btl.pos;
+						}
+						SequenceMove seqm = new SequenceMove(btl, 0, tmpVec, 0f, tmpInt, true);
+						if (tmpInt == 0)
+						{
+							seqm.frameCur = seqm.frameEnd;
+							seqm.Apply();
+						}
+						else
+						{
+							move.Add(seqm);
+							movingChar |= btl.btl_id;
+						}
+					}
+					break;
 				case "ChangeSize":
 					Boolean isRelative;
 					code.TryGetArgInt32("Time", out tmpInt);
@@ -661,7 +733,6 @@ public static class UnifiedBattleSequencer
 					if (!code.TryGetArgInt32("Start", out tmpInt2))
 						tmpInt2 = 1;
 					//SFX.SetEffCamTrigger();
-					btlseq.instance.seq_work_set.CameraNo = (Byte)tmpInt;
 					if (tmpChar != 0)
 					{
 						Int16 px, pz;
@@ -669,7 +740,12 @@ public static class UnifiedBattleSequencer
 						Vector3 trgCPos = new Vector3(px, 0f, pz);
 						BTL_DATA camTrg = btlseq.SeqSubGetTarget(tmpChar);
 						SFX.SetCameraTarget(trgCPos, cmd.regist, camTrg);
+						btlseq.instance.seq_work_set.CameraNo = (Byte)tmpInt;
 						SFX.SetEnemyCamera(cmd.regist);
+					}
+					else
+					{
+						btlseq.instance.seq_work_set.CameraNo = (Byte)tmpInt;
 					}
 					break;
 				case "ResetCamera":
@@ -773,7 +849,6 @@ public static class UnifiedBattleSequencer
 						tmpStr = "Both";
 					if (!code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
 						tmpChar = runningThread.targetId;
-					code.TryGetArgBoolean("Alternate", out tmpBool);
 					if (tmpStr == "Effect" || tmpStr == "Both")
 					{
 						cmd.info.effect_counter++;
@@ -836,7 +911,7 @@ public static class UnifiedBattleSequencer
 						tmpInt = 1;
 					code.TryGetArgInt32("HoldDuration", out tmpInt2);
 					SequenceBBGIntensity seqbbg = new SequenceBBGIntensity((Int32)(tmpSingle * 128), tmpInt, tmpInt2 >= 0 ? tmpInt2 - tmpInt : -1);
-					bbgIntensity.Add(seqbbg);
+					BattleAction.bbgIntensity.Add(seqbbg);
 					if (tmpInt == 0)
 					{
 						seqbbg.frameCur = seqbbg.frameEnd;
@@ -894,6 +969,35 @@ public static class UnifiedBattleSequencer
 							c.Parameters["AreCasterAndSelectedTargetsEnemies"] = caster.IsPlayer && (selectedTargets & 0xF0) == selectedTargets || !caster.IsPlayer && (selectedTargets & 0xF) == selectedTargets;
 							c.Parameters["AreCasterAndSelectedTargetsAllies"] = caster.IsPlayer && (selectedTargets & 0xF) == selectedTargets || !caster.IsPlayer && (selectedTargets & 0x0F) == selectedTargets;
 							c.Parameters["SFXUseCamera"] = isSFXThread ? runningThread.parentSFX.useCamera : false;
+							List<BTL_DATA> allTrgt = btl_util.findAllBtlData(runningThread.targetId);
+							Btl2dParam figParam;
+							c.Parameters["IsAttackHeal"] = false;
+							c.Parameters["IsAttackCritical"] = false;
+							c.Parameters["IsAttackMiss"] = false;
+							c.Parameters["IsAttackKill"] = false;
+							c.Parameters["IsAttackGuard"] = false;
+							c.Parameters["AttackDamage"] = 0;
+							c.Parameters["AttackMPDamage"] = 0;
+							foreach (BTL_DATA btl in allTrgt)
+							{
+								if (btl2dParam.TryGetValue(btl, out figParam))
+								{
+									if ((figParam.info & Param.FIG_INFO_HP_RECOVER) != 0)
+										c.Parameters["IsAttackHeal"] = true;
+									if ((figParam.info & Param.FIG_INFO_HP_CRITICAL) != 0)
+										c.Parameters["IsAttackCritical"] = true;
+									if ((figParam.info & Param.FIG_INFO_MISS) != 0)
+										c.Parameters["IsAttackMiss"] = true;
+									if ((figParam.info & Param.FIG_INFO_DEATH) != 0)
+										c.Parameters["IsAttackKill"] = true;
+									if ((figParam.info & Param.FIG_INFO_GUARD) != 0)
+										c.Parameters["IsAttackGuard"] = true;
+									if (figParam.hp > (Int32)c.Parameters["AttackDamage"])
+										c.Parameters["AttackDamage"] = figParam.hp;
+									if (figParam.mp > (Int32)c.Parameters["AttackMPDamage"])
+										c.Parameters["AttackMPDamage"] = figParam.mp;
+								}
+							}
 							c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
 							c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 							if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))

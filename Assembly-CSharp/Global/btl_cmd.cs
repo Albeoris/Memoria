@@ -1140,7 +1140,8 @@ public class btl_cmd
                     {
                         if (btl.bi.player != 0 && !btl_stat.CheckStatus(btl, BattleStatus.CannotEscape) && btl.cur.hp > 0)
                         {
-                            //if (!btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
+                            if (!btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
+                                btl_mot.SetDefaultIdle(btl, false);
                             //{
                             //    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE);
                             //    btl.evt.animFrame = 0;
@@ -1577,6 +1578,10 @@ public class btl_cmd
                             //btlData.evt.animFrame = 0;
                             //return;
                         }
+                        else
+                        {
+                            return;
+                        }
                         //if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL))
                         //{
                         //    if (!btlData.animEndFrame)
@@ -1612,6 +1617,10 @@ public class btl_cmd
                             //btlData.evt.animFrame = 0;
                             //return;
                         }
+                        else
+						{
+                            return;
+						}
                         //if (btl_mot.checkMotion(btlData, BattlePlayerCharacter.PlayerMotionIndex.MP_CMD_TO_NORMAL))
                         //{
                         //    if (!btlData.animEndFrame)

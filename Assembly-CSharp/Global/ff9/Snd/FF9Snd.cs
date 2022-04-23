@@ -1430,6 +1430,7 @@ public static class FF9Snd
 	{
 		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
 		ParmType &= 65535;
+		FF9Snd.ParameterChanger(ref ParmType, ref ObjNo, ref Arg1, ref Arg2, ref Arg3);
 		Int32 num = ParmType & 65471;
 		if (num != 0 && num != 1792)
 		{
@@ -2123,6 +2124,7 @@ public static class FF9Snd
 	{
 		AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
 		ParmType &= 65535;
+		FF9Snd.ParameterChanger(ref ParmType, ref ObjNo, ref Arg1, ref Arg2, ref Arg3);
 		Int32 num = ParmType & 65471;
 		if (num == 53248)
 		{

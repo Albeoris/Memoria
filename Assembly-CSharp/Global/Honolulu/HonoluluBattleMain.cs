@@ -178,6 +178,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         FF9StateSystem.Battle.FF9Battle.map.btlBGPtr = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + battleModelPath + "/" + battleModelPath, Vector3.zero, Vector3.zero, true);
         FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum = FF9StateSystem.Battle.isDebug ? FF9StateSystem.Battle.patternIndex : (Byte)this.ChoicePattern();
         btlseq.ReadBattleSequence(battleSceneName);
+        btlseq.instance.FixBuggedAnimations(this.btlScene);
         BeginInitialize();
         battle.InitBattle();
         EndInitialize();
@@ -490,7 +491,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                             needContinue = false;
                     }
                 }
-                else
+                else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze))
                 {
                     needContinue = false;
                 }

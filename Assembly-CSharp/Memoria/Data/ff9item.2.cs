@@ -123,6 +123,7 @@ public class ff9item
 
     public static void FF9Item_Init()
     {
+        // TODO: initial items; they can be changed by modifying Prima Vista's script but it could be useful to be able to set them with Memoria as well (DictionaryPatch or CSV?)
         FF9ITEM[] ff9ItemArray = new FF9ITEM[8]
         {
             new FF9ITEM(236, 7),

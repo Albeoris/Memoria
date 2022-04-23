@@ -150,11 +150,12 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 					if (fldMapNo == 503 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2970 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 11 && ObjNo == 35)
 					{
+						// Cargo Ship/Bridge
 						soundProfile.SoundVolume = 0f;
 						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume, 0);
 					}
 					this.currentMusicID = ObjNo;
-					this.StopAndClearSuspendBGM(ObjNo);
+					this.StopAndClearSuspendBGM(ObjNo, true);
 				});
 			}
 		}
@@ -166,7 +167,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 	}
 	
-	public void StopAndClearSuspendBGM(int ObjNo)
+	public void StopAndClearSuspendBGM(int ObjNo, Boolean SetCurrentMusic = false)
 	{
 		if (this.suspendBgmNo != -1 && ObjNo != this.suspendBgmNo)
 		{
@@ -182,6 +183,12 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				this.suspendBgmNo = -1;
 				this.suspendBgmID = 0;
 			}
+		}
+		if (SetCurrentMusic && this.currentMusicID != -1 && PersistenSingleton<EventEngine>.Instance.gMode == 1 && FF9Snd.sndFuncPtr == new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch))
+		{
+			// Make sure "suspendBgmNo" and "currentMusicID" are not both set when being on field ("currentMusicID" has predominance, implying a reset of the music on the problematic instance (A.Castle/Underground))
+			this.suspendBgmNo = -1;
+			this.suspendBgmID = 0;
 		}
 	}
 
@@ -207,7 +214,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time * 1000);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
 				this.currentMusicID = ObjNo;
-				this.StopAndClearSuspendBGM(ObjNo);
+				this.StopAndClearSuspendBGM(ObjNo, true);
 			});
 		}
 		else
@@ -219,7 +226,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, time * 1000);
 					soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.musicPlayerVolume, 0);
-					this.StopAndClearSuspendBGM(ObjNo);
+					this.StopAndClearSuspendBGM(ObjNo, true);
 				}
 			});
 		}
@@ -532,15 +539,17 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 			return 1;
 		}
-		if (ObjNo == 58)
-		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f, 300);
-			soundProfile.Pitch *= 0.8f;
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-			return 1;
-		}
+		// TODO: This special way to handle this sound (Fire effect) seems to crash the game when the INI option "[Import] Audio" is used
+		// We remove this "volume fading" effect and play this sound normally, but a better understanding of the bug would be nice
+		//if (ObjNo == 58)
+		//{
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f, 300);
+		//	soundProfile.Pitch *= 0.8f;
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+		//	return 1;
+		//}
 		return 0;
 	}
 

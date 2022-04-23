@@ -1178,6 +1178,27 @@ public class btlseq
 		{
 			return GetSFXOfSequence(pSeqNo, out _, out _);
 		}
+
+		public void FixBuggedAnimations(BTL_SCENE scene)
+		{
+			for (Int32 i = 0; i < scene.MonAddr.Length; i++)
+			{
+				if (scene.MonAddr[i].Geo == 149) // Wraith (Ice)
+				{
+					Int32 lastAnim = i + 1 < scene.MonAddr.Length ? seq_work_set.AnmOfsList[scene.MonAddr[i + 1].Konran] : seq_work_set.AnmAddrList.Length;
+					for (Int32 j = seq_work_set.AnmOfsList[scene.MonAddr[i].Konran]; j < lastAnim; j++)
+						if (j < seq_work_set.AnmAddrList.Length)
+						{
+							if (seq_work_set.AnmAddrList[j] == 6707) // Cast Init (Fire)
+								seq_work_set.AnmAddrList[j] = 3961; // Cast Init (Ice)
+							else if (seq_work_set.AnmAddrList[j] == 6713) // Cast Loop (Fire)
+								seq_work_set.AnmAddrList[j] = 3967; // Cast Loop (Ice)
+							else if (seq_work_set.AnmAddrList[j] == 6695) // Cast End (Fire)
+								seq_work_set.AnmAddrList[j] = 3949; // Cast End (Ice)
+						}
+				}
+			}
+		}
 	}
 
 	public static btlseqinstance instance = new btlseqinstance();

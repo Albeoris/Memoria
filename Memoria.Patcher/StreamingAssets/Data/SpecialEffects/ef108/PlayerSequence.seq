@@ -19,10 +19,12 @@ WaitMove: Char=Caster
 StartThread
 	Wait: Time=1
 	WaitSFXLoaded: SFX=Player_Attack_Steiner_2
-	PlaySound: Sound=WeaponAttack
-	PlaySound: Sound=WeaponHit
 	PlaySFX: SFX=Player_Attack_Steiner_2
 	EffectPoint: Char=AllTargets ; Type=Effect
+	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=!IsAttackMiss
+		PlaySound: Sound=WeaponHit
+	EndThread
 	Wait: Time=4
 	EffectPoint: Char=Everyone ; Type=Figure
 	WaitSFXDone: SFX=Player_Attack_Steiner_2

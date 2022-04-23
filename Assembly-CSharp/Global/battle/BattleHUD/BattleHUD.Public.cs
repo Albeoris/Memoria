@@ -20,7 +20,11 @@ public partial class BattleHUD : UIScene
     public List<Int32> ReadyQueue { get; }
     public List<Int32> InputFinishList { get; }
     public Int32 CurrentPlayerIndex { get; private set; }
-    public Boolean IsDoubleCast => (Int32)_currentCommandId == 23 || (Int32)_currentCommandId == 21;
+    public static HashSet<BattleCommandId> DoubleCastSet = new HashSet<BattleCommandId> {
+        BattleCommandId.DoubleBlackMagic,
+        BattleCommandId.DoubleWhiteMagic
+    };
+    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
     
     public BattleHUD()
     {

@@ -19,10 +19,12 @@ WaitMove: Char=Caster
 StartThread
 	Wait: Time=7
 	WaitSFXLoaded: SFX=Player_Attack_Garnet_SH_Rod
-	PlaySound: Sound=WeaponAttack
-	PlaySound: Sound=WeaponHit
 	PlaySFX: SFX=Player_Attack_Garnet_SH_Rod
 	EffectPoint: Char=AllTargets ; Type=Effect
+	PlaySound: Sound=WeaponAttack
+	StartThread: Condition=!IsAttackMiss
+		PlaySound: Sound=WeaponHit
+	EndThread
 	Wait: Time=4
 	EffectPoint: Char=Everyone ; Type=Figure
 	WaitSFXDone: SFX=Player_Attack_Garnet_SH_Rod

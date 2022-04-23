@@ -146,23 +146,25 @@ public class AnimationFactory
 				}
 				component.AddClip(animationClip, text2);
 			}
-			if (modelName.CompareTo("GEO_MON_B3_034") == 0)
-			{
-				String[] array5 = new String[]
-				{
-					"Animations/GEO_MON_B3_156/ANH_MON_B3_156_020",
-					"Animations/GEO_MON_B3_156/ANH_MON_B3_156_021",
-					"Animations/GEO_MON_B3_156/ANH_MON_B3_156_022"
-				};
-				for (Int32 k = 0; k < (Int32)array5.Length; k++)
-				{
-					String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(array5[k]);
-					String[] animInfo;
-					AnimationClip animationClip2 = AssetManager.Load<AnimationClip>(renameAnimationPath, out animInfo, false);
-					String name2 = animationClip2.name;
-					component.AddClip(animationClip2, name2);
-				}
-			}
+			// Wraith (Ice): the following code used to load Wraith (Fire)'s casting animations but it wasn't enough
+			// The current fix is to make Wraith (Ice) use Wraith (Ice)'s casting animations
+			//if (modelName.CompareTo("GEO_MON_B3_034") == 0)
+			//{
+			//	String[] array5 = new String[]
+			//	{
+			//		"Animations/GEO_MON_B3_156/ANH_MON_B3_156_020",
+			//		"Animations/GEO_MON_B3_156/ANH_MON_B3_156_021",
+			//		"Animations/GEO_MON_B3_156/ANH_MON_B3_156_022"
+			//	};
+			//	for (Int32 k = 0; k < (Int32)array5.Length; k++)
+			//	{
+			//		String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(array5[k]);
+			//		String[] animInfo;
+			//		AnimationClip animationClip2 = AssetManager.Load<AnimationClip>(renameAnimationPath, out animInfo, false);
+			//		String name2 = animationClip2.name;
+			//		component.AddClip(animationClip2, name2);
+			//	}
+			//}
 		}
 	}
 

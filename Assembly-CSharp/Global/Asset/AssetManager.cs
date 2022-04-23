@@ -737,6 +737,23 @@ public static class AssetManager
 							break;
 						}
 			}
+			else if (String.Compare(entry[0], "DoubleCastCommand") == 0)
+			{
+				// eg.: DoubleCastCommand Add RedMagic1
+				Boolean add = String.Compare(entry[1], "Remove") != 0;
+				if (String.Compare(entry[1], "Set") == 0)
+					BattleHUD.DoubleCastSet.Clear();
+				for (Int32 i = 2; i < entry.Length; i++)
+					foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
+						if (String.Compare(entry[i], cmdid.ToString()) == 0)
+						{
+							if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdid))
+								BattleHUD.DoubleCastSet.Add(cmdid);
+							else if (!add)
+								BattleHUD.DoubleCastSet.Remove(cmdid);
+							break;
+						}
+			}
 			else if (String.Compare(entry[0], "BattleMapModel") == 0)
 			{
 				// eg.: BattleMapModel BSC_CUSTOM_FIELD BBG_B065

@@ -107,7 +107,7 @@ namespace Memoria
                         if (!btl_util.IsBtlBusy(target, btl_util.BusyMode.CASTER))
                         {
                             if (Configuration.Battle.FloatEvadeBonus > 0 && v.Target.IsUnderPermanentStatus(BattleStatus.Float))
-                                target.pos[1] = target.pos[1] - -600f;
+                                target.pos[1] -= -600f;
                             target.pos[2] -= -400f;
                         }
                     }

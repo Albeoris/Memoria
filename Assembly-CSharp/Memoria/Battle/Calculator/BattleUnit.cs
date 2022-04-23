@@ -478,6 +478,7 @@ namespace Memoria
             btl_util.SetShadow(Data, monsterParam.ShadowX, monsterParam.ShadowZ);
             btlseq.btlseqinstance seqreader = new btlseq.btlseqinstance();
             btlseq.ReadBattleSequence(btlName, ref seqreader);
+            seqreader.FixBuggedAnimations(scene);
             List<AA_DATA> aaList = new List<AA_DATA>();
             AA_DATA attackAA = null;
             String[] battleRawText = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + btlName]);

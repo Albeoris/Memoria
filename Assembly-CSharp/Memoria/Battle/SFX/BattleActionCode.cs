@@ -51,7 +51,7 @@ public class BattleActionCode
 		{ "WaitSFXLoaded", new String[]{ "SFX", "Instance" } },
 		{ "WaitSFXDone", new String[]{ "SFX", "Instance" } },
 		{ "WaitReflect", null },
-		{ "Channel", new String[]{ "Type", "Char" } },
+		{ "Channel", new String[]{ "Type", "Char", "SkipFlute" } },
 		{ "StopChannel", new String[]{ "Char" } },
 		{ "LoadMonsterSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
 		{ "PlayMonsterSFX", new String[]{ "SFX", "Instance" } },
@@ -77,7 +77,8 @@ public class BattleActionCode
 		{ "SetVariable", new String[]{ "Variable", "Value", "Index" } },
 		{ "SetupReflect", new String[]{ "Delay" } },
 		{ "ActivateReflect", null },
-		{ "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } }
+		{ "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } },
+		{ "MOVE_WATER", new String[]{ "Char", "Type" } }
 	};
 
 	public Boolean TryGetArgSingle(String key, out Single value)
@@ -137,7 +138,7 @@ public class BattleActionCode
 				value = btlsnd.ff9btlsnd_weapon_sfx(caster.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_ATTACK);
 				return value >= 0;
 			}
-			if (args == "WeaponHit") // TODO: don't play it if miss
+			if (args == "WeaponHit")
 			{
 				value = btlsnd.ff9btlsnd_weapon_sfx(caster.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT);
 				return value >= 0;

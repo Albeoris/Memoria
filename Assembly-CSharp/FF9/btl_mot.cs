@@ -910,7 +910,7 @@ namespace FF9
 							}
 							break;
 						case 3:
-							if (btl_util.IsBtlUsingCommand(btl) || (enemyPtr.info.die_fade_rate >= 32 && btl_util.IsBtlTargetOfCommand(btl)))
+							if (Configuration.Battle.Speed >= 3 && (btl_util.IsBtlUsingCommand(btl) || (enemyPtr.info.die_fade_rate >= 32 && btl_util.IsBtlTargetOfCommand(btl))))
 								return;
 							btl_util.SetBattleSfx(btl, 121, 127);
 							btl_util.SetBattleSfx(btl, 120, 127);
@@ -925,7 +925,7 @@ namespace FF9
 							btl_util.SetEnemyFadeToPacket(btl, (Int32)enemyPtr.info.die_fade_rate);
 							if (enemyPtr.info.die_fade_rate == 0)
 								btl.die_seq = 5;
-							else if (enemyPtr.info.die_fade_rate > 2 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))
+							else if (Configuration.Battle.Speed < 3 || enemyPtr.info.die_fade_rate > 2 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))
 								enemyPtr.info.die_fade_rate -= 2;
 							break;
 						case 5:
@@ -1107,10 +1107,11 @@ namespace FF9
 				}
 				return;
 			}
+
 			Boolean useCmdMotion = btl_util.IsBtlUsingCommandMotion(btl);
 			if (btl.bi.player == 0 || btl.is_monster_transform)
 			{
-				if (useCmdMotion)
+				if (useCmdMotion && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2 && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1)
 					targetAnim = currentAnim;
 				else if ((btl.die_seq == 1 || btl.die_seq == 2) && btl.bi.player == 0 && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
 					targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2;

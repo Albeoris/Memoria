@@ -150,7 +150,21 @@ public class SoundEffectPlayer : SoundPlayer
 		else
 		{
 			SoundLib.Log(String.Empty + soundIndex + " is not exist");
-			soundProfile = SoundMetaData.GetSoundProfile(soundIndex, type);
+			if (soundIndex == SFX.REFLECT_SOUND_ID)
+			{
+				soundProfile = new SoundProfile
+				{
+					Code = SFX.REFLECT_SOUND_ID.ToString(),
+					Name = SFX.REFLECT_SOUND_PATH,
+					SoundIndex = SFX.REFLECT_SOUND_ID,
+					ResourceID = SFX.REFLECT_SOUND_PATH,
+					SoundProfileType = SoundProfileType.SoundEffect
+				};
+			}
+			else
+			{
+				soundProfile = SoundMetaData.GetSoundProfile(soundIndex, type);
+			}
 			soundProfile.SoundVolume = soundVolume * this.playerVolume;
 			soundProfile.Panning = panning;
 			soundProfile.Pitch = pitch;

@@ -74,6 +74,9 @@
     <Compile Include="Languages\XmlHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="StreamingAssets\Assets\Resources\Sounds\Sounds02\SE02\reflect.akb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\Battle\Actions.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2361,9 +2364,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\SpecialEffects\ef393\PlayerSequence.seq">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Data\SpecialEffects\ef393\Sequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\SpecialEffects\ef394\PlayerSequence.seq">

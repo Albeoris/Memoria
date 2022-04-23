@@ -1318,6 +1318,12 @@ public class SFX
                 btlsnd.ff9btlsnd_sndeffect_play(btlsnd.ff9btlsnd_weapon_sfx(next.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_ATTACK), 0, 127, SeSnd.S_SeGetPos((UInt64)arg0));
                 break;
             case 31: // Play Weapon Sound (see FF9Snd.ff9battleSoundWeaponSndEffect02, second entry)
+                if (btl_util.getCurCmdPtr() != null)
+				{
+                    BattleUnit targ = btl_scrp.FindBattleUnit(btl_util.getCurCmdPtr().tar_id);
+                    if (targ != null && (targ.Data.fig_info & Param.FIG_INFO_MISS) != 0)
+                        break;
+                }
                 btlsnd.ff9btlsnd_sndeffect_play(btlsnd.ff9btlsnd_weapon_sfx(next.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT), 0, 127, 128);
                 break;
             case 33: // Play Casting Animation (Dragon)
@@ -1654,6 +1660,11 @@ public class SFX
         SFXMesh.Release();
         PSXTextureMgr.ClearObject();
         PSXTextureMgr.Release();
+        if (Configuration.Battle.SFXRework)
+        {
+            UnifiedBattleSequencer.EndBattle();
+            SFXChannel.EndBattle();
+        }
         SFX.isSystemRun = false;
     }
 
@@ -2378,6 +2389,8 @@ public class SFX
     public const Int32 SEND_FLOAT_CAMERA_TARGET = 1;
 
     public const Int32 REFLECT_SOUND_ID = 350; // Thanks to LovelsDarkness and DoomOyster
+
+    public const String REFLECT_SOUND_PATH = "Sounds02/SE02/reflect";
 
     public static SpecialEffect currentEffectID;
 
