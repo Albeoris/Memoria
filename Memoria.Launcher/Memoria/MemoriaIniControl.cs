@@ -85,10 +85,27 @@ namespace Memoria.Launcher
             isHideCards.Foreground = Brushes.White;
             isHideCards.Margin = rowMargin;
 
-            UiCheckBox isTurnBased = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.TurnBasedBattles, null), 9, 0, 2, 8);
-            isTurnBased.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Speed)) { Mode = BindingMode.TwoWay });
-            isTurnBased.Foreground = Brushes.White;
-            isTurnBased.Margin = rowMargin;
+
+
+            UiTextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row: 9, col: 0, rowSpan: 2, colSpan: 3);
+            speedChoiceText.Foreground = Brushes.White;
+            speedChoiceText.Margin = rowMargin;
+            UiComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), 9, 3, 2, 6);
+            speedChoiceBox.ItemsSource = new String[]{
+                Lang.Settings.SpeedChoiceType0,
+                Lang.Settings.SpeedChoiceType1,
+                Lang.Settings.SpeedChoiceType2,
+                Lang.Settings.SpeedChoiceType3,
+                Lang.Settings.SpeedChoiceType4,
+                Lang.Settings.SpeedChoiceType5
+            };
+            speedChoiceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(Speed)) { Mode = BindingMode.TwoWay });
+            //speedChoiceBox.Foreground = Brushes.White;
+            speedChoiceBox.Margin = rowMargin;
+            //UiCheckBox isTurnBased = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.TurnBasedBattles, null), 9, 0, 2, 8);
+            //isTurnBased.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Speed)) { Mode = BindingMode.TwoWay });
+            //isTurnBased.Foreground = Brushes.White;
+            //isTurnBased.Margin = rowMargin;
 
             UiTextBlock battleSwirlFramesText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SkipBattleLoading), row: 11, col: 0, rowSpan: 2, colSpan: 8);
             battleSwirlFramesText.Foreground = Brushes.White;
@@ -147,7 +164,7 @@ namespace Memoria.Launcher
                 UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row: baseNumberOfRows, col: 0, rowSpan: 2, colSpan: 3);
                 fontChoiceText.Foreground = Brushes.White;
                 fontChoiceText.Margin = rowMargin;
-                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), (short)(baseNumberOfRows), 2, 2, 6);
+                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), baseNumberOfRows, 2, 2, 6);
                 FontCollection installedFonts = new InstalledFontCollection();
                 String[] fontNames = new String[installedFonts.Families.Length + 2];
                 fontNames[0] = _fontDefaultPC;
@@ -164,7 +181,7 @@ namespace Memoria.Launcher
 
             if (SBUIInstalled)
             {
-                UiCheckBox useSBUI = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SBUIenabled, null), (short)(baseNumberOfRows), 0, 2, 8);
+                UiCheckBox useSBUI = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SBUIenabled, null), baseNumberOfRows, 0, 2, 8);
                 useSBUI.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ScaledBattleUI)) { Mode = BindingMode.TwoWay });
                 useSBUI.Foreground = Brushes.White;
                 useSBUI.Margin = rowMargin;
@@ -236,12 +253,12 @@ namespace Memoria.Launcher
         }
         public Int16 Speed
         {
-            get { return _isturnbased; }
+            get { return _speed; }
             set
             {
-                if (_isturnbased != value)
+                if (_speed != value)
                 {
-                    _isturnbased = value;
+                    _speed = value;
                     OnPropertyChanged();
                 }
             }
@@ -343,7 +360,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _isskipintros, _ishidecards, _isturnbased, _battleswirlframes, _soundvolume, _musicvolume, _usegarnetfont, _scaledbattleui;
+        private Int16 _iswidescreensupport, _isskipintros, _ishidecards, _speed, _battleswirlframes, _soundvolume, _musicvolume, _usegarnetfont, _scaledbattleui;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -395,8 +412,8 @@ namespace Memoria.Launcher
                     value = "0";
                     OnPropertyChanged(nameof(Speed));
                 }
-                if (!Int16.TryParse(value, out _isturnbased))
-                    _isturnbased = 0;
+                if (!Int16.TryParse(value, out _speed))
+                    _speed = 0;
                 value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -540,15 +557,9 @@ namespace Memoria.Launcher
                         }
                         break;
                     case nameof(Speed):
-                        if (Speed == 1)
-                        {
-                            iniFile.WriteValue("Battle", propertyName, " 2");
+                        iniFile.WriteValue("Battle", propertyName, " " + (Speed).ToString());
+                        if (Speed != 0)
                             iniFile.WriteValue("Battle", "Enabled ", " 1");
-                        }
-                        else if (Speed == 0)
-                        {
-                            iniFile.WriteValue("Battle", propertyName, " 0");
-                        }
                         break;
                     case nameof(BattleSwirlFrames):
                         iniFile.WriteValue("Graphics", propertyName, " " + (BattleSwirlFrames).ToString());
@@ -579,7 +590,7 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Font", "Enabled ", " 1");
                             iniFile.WriteValue("Font", "Names", " \"" + FontChoice + "\", \"Times Bold\"");
                         }
-                            break;
+                        break;
                     case nameof(ScaledBattleUI):
                         if (ScaledBattleUI == 1)
                         {

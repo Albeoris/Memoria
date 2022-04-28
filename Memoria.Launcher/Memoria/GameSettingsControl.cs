@@ -43,16 +43,7 @@ namespace Memoria.Launcher
             foreach (UInt16 frequency in EnumerateAudioSettings())
                 _validSamplingFrequency.Add(frequency);
 
-            Boolean[] modFolderExists = new Boolean[_modInLauncher.Length];
-            Int32 modFolderCount = 0;
-            for (Int32 i = 0; i < _modInLauncher.Length; ++i)
-            {
-                modFolderExists[i] = Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + _modInLauncher[i][0]);
-                if (modFolderExists[i])
-                    ++modFolderCount;
-            }
-
-            SetRows(24 + 2 * Math.Max(2, modFolderCount));
+            SetRows(28);
             SetCols(4);
             
             Width = 200;
@@ -108,21 +99,6 @@ namespace Memoria.Launcher
             UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 4);
             steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
-
-            Int32 currentRow = 22;
-            _modBox = new UiCheckBox[_modInLauncher.Length];
-            for (Int32 i = 0; i < _modInLauncher.Length; ++i)
-                if (modFolderExists[i])
-				{
-                    _modBox[i] = AddUiElement(UiCheckBoxFactory.Create(_modInLauncher[i][1], null), currentRow, 0, 3, 4);
-                    _modBox[i].Margin = rowMargin;
-                    _modBox[i].SetBinding(ToggleButton.IsCheckedProperty, new Binding(_modInLauncher[i][2]) { Mode = BindingMode.TwoWay });
-                    currentRow += 2;
-                }
-				else
-				{
-                    _modBox[i] = null;
-                }
 
             foreach (FrameworkElement child in Children)
             {
@@ -364,54 +340,6 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                for (Int32 i = 0; i < _modInLauncher.Length; ++i)
-                    if (propertyName.CompareTo(_modInLauncher[i][2]) == 0)
-                    {
-                        // A fair bunch of the following code is meant to
-                        // (1) keep unknown mod folders in the list,
-                        // (2) keep them in the same order between themselves and with respect to known mods,
-                        // (3) have known mod folders placed in the order of "_modInLauncher" (except if the user used another order with direct modifications)
-                        IniFile memoriaIniFile = new IniFile(_memoriaIniPath);
-                        String currentModRaw = memoriaIniFile.ReadValue("Mod", "FolderNames");
-                        if (String.IsNullOrEmpty(currentModRaw))
-                            currentModRaw = "";
-                        String[] currentModList = currentModRaw.Length < 2 ? Array.Empty<String>() : currentModRaw.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
-                        List<String> newModList = new List<String>();
-                        Int32[] launcherModPosition = Enumerable.Repeat(-1, _modInLauncher.Length).ToArray();
-                        for (Int32 currentModIndex = 0; currentModIndex < currentModList.Length; ++currentModIndex)
-						{
-                            Boolean isModKnown = false;
-                            for (Int32 launcherModIndex = 0; launcherModIndex < _modInLauncher.Length; ++launcherModIndex)
-                                if (currentModList[currentModIndex].CompareTo(_modInLauncher[launcherModIndex][0]) == 0)
-                                {
-                                    if (IsModEnabledByIndex(launcherModIndex) && launcherModPosition[launcherModIndex] < 0)
-                                    {
-                                        launcherModPosition[launcherModIndex] = newModList.Count;
-                                        newModList.Add(_modInLauncher[launcherModIndex][0]);
-                                    }
-                                    isModKnown = true;
-                                    break;
-                                }
-                            if (!isModKnown)
-                                newModList.Add(currentModList[currentModIndex]);
-                        }
-                        for (Int32 launcherModIndex = _modInLauncher.Length - 1; launcherModIndex >= 0; --launcherModIndex)
-                            if (launcherModPosition[launcherModIndex] < 0 && IsModEnabledByIndex(launcherModIndex))
-                            {
-                                Int32 posToAdd = newModList.Count;
-                                for (Int32 remLauncherModIndex = launcherModIndex + 1; remLauncherModIndex < _modInLauncher.Length; ++remLauncherModIndex)
-                                    if (launcherModPosition[remLauncherModIndex] >= 0)
-                                    {
-                                        posToAdd = launcherModPosition[remLauncherModIndex];
-                                        break;
-                                    }
-                                newModList.Insert(posToAdd, _modInLauncher[launcherModIndex][0]);
-                                break;
-                            }
-                        memoriaIniFile.WriteValue("Mod", "FolderNames", newModList.Count == 0 ? "" : " \"" + String.Join("\", \"", newModList) + "\"");
-                        return;
-                    }
-
                 IniFile iniFile = new IniFile(_iniPath);
                 switch (propertyName)
                 {
@@ -644,27 +572,6 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
-
-                IniFile memoriaIniFile = new IniFile(_memoriaIniPath);
-
-                for (Int32 i = 0; i < _modInLauncher.Length; ++i)
-                    SetModEnabledByIndex(i, false);
-
-                value = memoriaIniFile.ReadValue("Mod", "FolderNames");
-                if (!String.IsNullOrEmpty(value) && value.Length >= 2)
-                {
-                    String[] currentModList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
-                    foreach (String modFolder in currentModList)
-                    {
-                        for (Int32 launcherModIndex = 0; launcherModIndex < _modInLauncher.Length; ++launcherModIndex)
-                            if (_modBox[launcherModIndex] != null && modFolder.CompareTo(_modInLauncher[launcherModIndex][0]) == 0)
-                            {
-                                SetModEnabledByIndex(launcherModIndex, true);
-                                _modBox[launcherModIndex].IsChecked = true;
-                                break;
-                            }
-                    }
-                }
             }
             catch (Exception ex)
             {

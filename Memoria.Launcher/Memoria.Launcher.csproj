@@ -54,6 +54,7 @@
 		<Reference Include="System.Configuration" />
 		<Reference Include="System.Drawing" />
 		<Reference Include="System.Net.Http" />
+		<Reference Include="System.IO.Compression.FileSystem" />
 		<Reference Include="System.Web.Extensions" />
 		<Reference Include="System.Xaml" />
 		<Reference Include="System" />
@@ -70,6 +71,8 @@
 		<Compile Include="Languages\XmlHelper.cs" />
 		<Compile Include="Memoria\MemoriaIniCheatControl.cs" />
 		<Compile Include="Memoria\MemoriaIniControl.cs" />
+		<Compile Include="Memoria\Mod.cs" />
+		<Compile Include="Memoria\UiLauncherModManagerButton.cs" />
 		<Compile Include="Memoria\UiSlider.cs" />
 		<Compile Include="Memoria\UiSliderFactory.cs" />
 		<Compile Include="Memoria\UiTextBox.cs" />
@@ -98,6 +101,7 @@
 		<Compile Include="Memoria\UiTextBlock.cs" />
 		<Compile Include="Memoria\UiTextBlockFactory.cs" />
 		<Compile Include="Memoria\UiTextBoxFactory.cs" />
+		<Compile Include="ModManagerWindow.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Images\pc_launcher_bg.png" />
@@ -110,6 +114,10 @@
 		<Page Include="Memoria\UiLauncherButton.xaml">
 			<Generator>MSBuild:Compile</Generator>
 			<SubType>Designer</SubType>
+		</Page>
+		<Page Include="ModManagerWindow.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
 	<ItemGroup>

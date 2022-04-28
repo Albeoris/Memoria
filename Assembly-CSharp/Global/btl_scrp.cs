@@ -437,6 +437,9 @@ public class btl_scrp
 			btl.cur.mp = (UInt32)val;
 			break;
 		case 40u:
+			// Ozma battle
+			if ((Configuration.Battle.Speed == 1 || Configuration.Battle.Speed == 2) && (FF9StateSystem.Battle.battleMapIndex == 57 || FF9StateSystem.Battle.battleMapIndex == 211))
+				break;
 			btl.cur.at = (Int16)val;
 			break;
 		case 42u:

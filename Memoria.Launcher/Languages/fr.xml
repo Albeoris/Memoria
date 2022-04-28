@@ -5,13 +5,13 @@
 			Elapsed = "Terminé"
 			Remaining = "Restant"
 			SecondAbbr = "sec"
-			ByteAbbr = "B"
-			KByteAbbr = "KB"
-			MByteAbbr = "MB"
-			GByteAbbr = "GB"
-			TByteAbbr = "TB"
-			PByteAbbr = "PB"
-			EByteAbbr = "EB"
+			ByteAbbr = "octets"
+			KByteAbbr = "Ko"
+			MByteAbbr = "Mo"
+			GByteAbbr = "Go"
+			TByteAbbr = "To"
+			PByteAbbr = "Po"
+			EByteAbbr = "Eo"
 			/>
 
 	<Button
@@ -27,6 +27,7 @@
 			Exiting = "Fermeture..."
 			Launch = "J O U E R"
 			Launching = "Lancement..."
+      ModManager = "Mods"
 			/>
 
 	<Settings
@@ -47,6 +48,13 @@
 			SkipBattleLoading = "Frames avant les combats"
 			HideCardsBubbles = " Cacher les bulles 'cartes'"
 			TurnBasedBattles = " Combat au tour-par-tour"
+			SpeedChoice = "Mode ATB"
+			SpeedChoiceType0 = "Normal"
+			SpeedChoiceType1 = "Rapide"
+			SpeedChoiceType2 = "Tour par tour"
+			SpeedChoiceType3 = "Dynamique (1)"
+			SpeedChoiceType4 = "Dynamique (2)"
+			SpeedChoiceType5 = "Dynamique (3)"
 			SoundVolume = "Volume des sons"
 			MusicVolume = "Volume de la musique"
 			IniCheats = "Triche"
@@ -194,6 +202,36 @@
 				/>
 
 	</EncodingEditor>
+
+  <ModEditor
+    WindowTitle="Configuration des Mods"
+    ModInfos = "Informations"
+    TabMyMods = "Mods Installés"
+    TabCatalog = "Catalogue"
+    Mod = "Mod"
+    Name = "Nom"
+    Website = "Site Web"
+    Author = "Auteur"
+    Release = "Date de sortie"
+    Category = "Catégorie"
+    Version = "Version"
+    Description = "Description"
+    ReleaseNotes = "Notes de version"
+    Priority = "Priorité"
+    Installed = "Installé"
+    Active = "Activé"
+    Progress = "Téléchargement"
+    Speed = "Vitesse"
+    TimeLeft = "Temps Restant"
+    PreviewImageMissing = "Illustration Manquante"
+    TooltipMoveUp = "Déplacer vers le Haut (clic gauche) / En 1ère Position (clic droit)"
+    TooltipMoveDown = "Déplacer vers le Bas (clic gauche) / En dernière Position (clic droit)"
+    TooltipActivateAll = "Activer Tous les Mods"
+    TooltipDeactivateAll = "Désactiver Tous les Mods"
+    TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"
+    TooltipDownload = "Télécharger le(s) mod(s) sélectionné(s)"
+    TooltipCancel = "Annuler le Téléchargement du Mod en cours (clic gauche) / De Tous les Mods (clic droit)"
+    />
 
 	<Dialogue>
 

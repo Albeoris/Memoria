@@ -29,6 +29,7 @@
         <launcher:MemoriaIniControl x:Name="MemoriaIniControl" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="300,0,300,153" Height="290" Width="Auto"/>
         <launcher:MemoriaIniCheatControl x:Name="MemoriaIniCheatControl" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,78,153" Height="290" Width="182"/>
 
+        <launcher:UiLauncherModManagerButton VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,20,20,0" Height="78" Width="240"/>
         <launcher:UiLauncherExitButton VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="60,0,0,39" Height="78" Width="200"/>
         <launcher:UiLauncherPlayButton x:Name="PlayButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,60,39" Width="200" Height="78" Content=""/>
     </Grid>

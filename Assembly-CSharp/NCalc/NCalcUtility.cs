@@ -105,6 +105,8 @@ namespace NCalc
             else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
             else if (name == "TetraMasterDrawCount") args.Result = (Int32)GameState.TetraMasterDraw;
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
+            else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
+            else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
         };
 
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
@@ -214,6 +216,7 @@ namespace NCalc
             expr.Parameters[prefix + "WristId"] = (Int32)unit.Wrist;
             expr.Parameters[prefix + "ArmorId"] = (Int32)unit.Armor;
             expr.Parameters[prefix + "AccessoryId"] = (Int32)unit.Accessory;
+            expr.Parameters[prefix + "ModelId"] = (Int32)unit.Data.dms_geo_id;
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)

@@ -40,10 +40,6 @@ namespace Memoria
                 if (value == 0)
                     return 0;
 
-                // Ozma Battle
-                if (FF9StateSystem.Battle.FF9Battle.map.nextMapNo == 2952 && (value == 1 || value == 2)) // EVT_CHOCO_CH_FGD_0
-                    return 0;
-
                 return value;
             }
         }

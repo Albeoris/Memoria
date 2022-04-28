@@ -132,10 +132,15 @@ public class btlseq
 	public static Boolean BtlSeqBusy()
 	{
 		if (Configuration.Battle.SFXRework)
-			return SFX.IsRunning();
+		{
+			for (Int32 i = 0; i < UnifiedBattleSequencer.runningActions.Count; i++)
+				if (UnifiedBattleSequencer.runningActions[i].cmd.regist.bi.player == 0)
+					return true;
+			return false;
+		}
 		SEQ_WORK[] seqWork = FF9StateSystem.Battle.FF9Battle.seq_work_set.SeqWork;
-		for (Int16 num = 0; num < 4; num++)
-			if (seqWork[num].CmdPtr != null)
+		for (Int16 i = 0; i < 4; i++)
+			if (seqWork[i].CmdPtr != null)
 				return true;
 		return false;
 	}

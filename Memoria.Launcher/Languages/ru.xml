@@ -27,6 +27,7 @@
 			Exiting = "Выходим..."
 			Launch = "Запуск"
 			Launching = "Запускаем..."
+      ModManager = "Установить Моды"
 			/>
 
 	<Settings
@@ -46,6 +47,13 @@
 			SkipBattleLoading = "Время загрузки битвы"
 			HideCardsBubbles = " Hide cards bubbles"
 			TurnBasedBattles = " Пошаговые бои"
+			SpeedChoice = "Боевой"
+			SpeedChoiceType0 = "Нормальный"
+			SpeedChoiceType1 = "Быстро"
+			SpeedChoiceType2 = "Пошаговые"
+			SpeedChoiceType3 = "Динамический (1)"
+			SpeedChoiceType4 = "Динамический (2)"
+			SpeedChoiceType5 = "Динамический (3)"
 			SoundVolume = "Громкость звука"
 			MusicVolume = "Громкость музыки"
 			IniCheats = "Читы"
@@ -194,6 +202,36 @@
 				/>
 
 	</EncodingEditor>
+
+  <ModEditor
+    WindowTitle="Настройка Моды"
+    ModInfos = "Информация о Мод"
+    TabMyMods = "Установленные Моды"
+    TabCatalog = "Просмотр Каталога"
+    Mod = "Мод"
+    Name = "Название"
+    Website = "Веб-Сайт"
+    Author = "Автор"
+    Release = "Дата Выпуска"
+    Category = "Категория"
+    Version = "Версия"
+    Description = "Описание"
+    ReleaseNotes = "Примечания к Выпуску"
+    Priority = "Приоритет"
+    Installed = "Установлены"
+    Active = "Активный"
+    Progress = "Прогресс"
+    Speed = "Скорость"
+    TimeLeft = "Время Вышло"
+    PreviewImageMissing = "Отсутствует Картина"
+    TooltipMoveUp = "Вверх / Переместить Наверх (правый клик)"
+    TooltipMoveDown = "Вниз / Переместить к Последнему (правый клик)"
+    TooltipActivateAll = "Активировать Все"
+    TooltipDeactivateAll = "Деактивировать Все"
+    TooltipUninstall = "Удалить Мод(ы)"
+    TooltipDownload = "Скачать Мод(ы)"
+    TooltipCancel = "Отменить Текущую Загрузка / Все Загрузок (правый клик)"
+    />
 
 	<Dialogue>
 

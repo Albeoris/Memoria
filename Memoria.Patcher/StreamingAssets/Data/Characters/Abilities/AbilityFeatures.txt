@@ -152,6 +152,8 @@
 ##    TetraMasterLossCount             -> The number of Tetra Master losses
 ##    TetraMasterDrawCount             -> The number of Tetra Master draws
 ##    GameTime                         -> The total duration of the played game, in seconds
+##    BattleId                         -> The ID of the current battle
+##    FieldId                          -> The ID of the current field
 ##  
 ##  Permanent:
 ##    Level, Exp, CharacterIndex, WeaponId, HeadId, WristId, ArmorId, AccessoryId,
@@ -161,7 +163,7 @@
 ##  BattleStart: only the common informations
 ##  
 ##  StatusInit:
-##    MaxHP, MaxMP, MaxATB, HP, MP, ATB, Trance, InTrance, CurrentStatus, PermanentStatus,
+##    MaxHP, MaxMP, MaxATB, HP, MP, ATB, Trance, InTrance, ModelId, CurrentStatus, PermanentStatus,
 ##    ResistStatus, HalfElement, GuardElement, AbsorbElement, WeakElement, BonusElement, WeaponPower,
 ##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, , WeaponId, HeadId, WristId, ArmorId,
 ##    AccessoryId, Row, Position, SummonCount, IsPlayer, IsSlave, IsOutOfReach, Level, Exp, Speed,

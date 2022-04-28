@@ -151,6 +151,13 @@ namespace Memoria.Launcher
             public static readonly string SkipBattleLoading = GetSettings(nameof(SkipBattleLoading));
             public static readonly string HideCardsBubbles = GetSettings(nameof(HideCardsBubbles));
             public static readonly string TurnBasedBattles = GetSettings(nameof(TurnBasedBattles));
+            public static readonly string SpeedChoice = GetSettings(nameof(SpeedChoice));
+            public static readonly string SpeedChoiceType0 = GetSettings(nameof(SpeedChoiceType0));
+            public static readonly string SpeedChoiceType1 = GetSettings(nameof(SpeedChoiceType1));
+            public static readonly string SpeedChoiceType2 = GetSettings(nameof(SpeedChoiceType2));
+            public static readonly string SpeedChoiceType3 = GetSettings(nameof(SpeedChoiceType3));
+            public static readonly string SpeedChoiceType4 = GetSettings(nameof(SpeedChoiceType4));
+            public static readonly string SpeedChoiceType5 = GetSettings(nameof(SpeedChoiceType5));
             public static readonly string SoundVolume = GetSettings(nameof(SoundVolume));
             public static readonly string MusicVolume = GetSettings(nameof(MusicVolume));
             public static readonly string IniCheats = GetSettings(nameof(IniCheats));
@@ -218,6 +225,7 @@ namespace Memoria.Launcher
             public static readonly string Exiting = GetButton("Exiting");
             public static readonly string Launch = GetButton("Launch");
             public static readonly string Launching = GetButton("Launching");
+            public static readonly string ModManager = GetButton("ModManager");
         }
 
         public static class InfoProvider
@@ -438,6 +446,42 @@ namespace Memoria.Launcher
                 public static readonly string FromText = GetEncodingEditorExtra("FromText");
                 public static readonly string ToText = GetEncodingEditorExtra("ToText");
             }
+        }
+
+        public static class ModEditor
+        {
+            private static String GetModEditor(string name)
+            {
+                return Instance.Value.GetString(name, nameof(ModEditor));
+            }
+
+            public static readonly String WindowTitle = GetModEditor(nameof(WindowTitle));
+            public static readonly String ModInfos = GetModEditor(nameof(ModInfos));
+            public static readonly String TabMyMods = GetModEditor(nameof(TabMyMods));
+            public static readonly String TabCatalog = GetModEditor(nameof(TabCatalog));
+            public static readonly String Mod = GetModEditor(nameof(Mod));
+            public static readonly String Name = GetModEditor(nameof(Name));
+            public static readonly String Website = GetModEditor(nameof(Website));
+            public static readonly String Author = GetModEditor(nameof(Author));
+            public static readonly String Release = GetModEditor(nameof(Release));
+            public static readonly String Category = GetModEditor(nameof(Category));
+            public static readonly String Version = GetModEditor(nameof(Version));
+            public static readonly String Description = GetModEditor(nameof(Description));
+            public static readonly String ReleaseNotes = GetModEditor(nameof(ReleaseNotes));
+            public static readonly String Priority = GetModEditor(nameof(Priority));
+            public static readonly String Installed = GetModEditor(nameof(Installed));
+            public static readonly String Active = GetModEditor(nameof(Active));
+            public static readonly String Progress = GetModEditor(nameof(Progress));
+            public static readonly String Speed = GetModEditor(nameof(Speed));
+            public static readonly String TimeLeft = GetModEditor(nameof(TimeLeft));
+            public static readonly String PreviewImageMissing = GetModEditor(nameof(PreviewImageMissing));
+            public static readonly String TooltipMoveUp = GetModEditor(nameof(TooltipMoveUp));
+            public static readonly String TooltipMoveDown = GetModEditor(nameof(TooltipMoveDown));
+            public static readonly String TooltipActivateAll = GetModEditor(nameof(TooltipActivateAll));
+            public static readonly String TooltipDeactivateAll = GetModEditor(nameof(TooltipDeactivateAll));
+            public static readonly String TooltipUninstall = GetModEditor(nameof(TooltipUninstall));
+            public static readonly String TooltipDownload = GetModEditor(nameof(TooltipDownload));
+            public static readonly String TooltipCancel = GetModEditor(nameof(TooltipCancel));
         }
 
         public static class Dialogue

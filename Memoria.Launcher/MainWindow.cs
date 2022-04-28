@@ -15,6 +15,8 @@ namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
+        public ModManagerWindow ModdingWindow;
+
         public MainWindow()
         {
             InitializeComponent();

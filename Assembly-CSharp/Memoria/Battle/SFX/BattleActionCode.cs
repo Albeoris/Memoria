@@ -78,7 +78,7 @@ public class BattleActionCode
 		{ "SetupReflect", new String[]{ "Delay" } },
 		{ "ActivateReflect", null },
 		{ "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } },
-		{ "MOVE_WATER", new String[]{ "Char", "Type" } }
+		{ "MOVE_WATER", new String[]{ "Char", "Type", "Time" } }
 	};
 
 	public Boolean TryGetArgSingle(String key, out Single value)
