@@ -573,12 +573,13 @@ namespace Memoria.Launcher
         private void UpdateModListInstalled()
         {
             foreach (String dir in Directory.EnumerateDirectories("."))
+            {
                 if (File.Exists(dir + "/" + Mod.DESCRIPTION_FILE))
-				{
+                {
                     Mod updatedMod = new Mod(dir);
                     Mod previousMod = Mod.SearchWithName(modListInstalled, updatedMod.Name);
                     if (previousMod == null)
-					{
+                    {
                         modListInstalled.Insert(0, updatedMod);
                     }
                     else if ((updatedMod.CurrentVersion != null && previousMod.CurrentVersion == null) || (previousMod.CurrentVersion != null && updatedMod.CurrentVersion != null && previousMod.CurrentVersion < updatedMod.CurrentVersion))
@@ -588,6 +589,7 @@ namespace Memoria.Launcher
                         modListInstalled.Insert(index, updatedMod);
                     }
                 }
+            }
             UpdateInstalledPriorityValue();
         }
 
@@ -595,9 +597,10 @@ namespace Memoria.Launcher
         {
             if (!Directory.Exists(folderName) || File.Exists(folderName + "/" + Mod.DESCRIPTION_FILE))
                 return false;
-            if (folderName == "MoguriFiles" && !File.Exists("MoguriFiles/" + Mod.DESCRIPTION_FILE) && Mod.SearchWithName(modListCatalog, "Moguri Mod") != null)
+            Mod catalogVersion = Mod.SearchWithPath(modListCatalog, folderName);
+            if (catalogVersion != null)
             {
-                Mod.SearchWithName(modListCatalog, "Moguri Mod").GenerateDescription(folderName);
+                catalogVersion.GenerateDescription(folderName);
                 return true;
             }
             String name = null;
