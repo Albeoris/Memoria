@@ -28,6 +28,9 @@ namespace Memoria.Launcher
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
+            // Hotfix for the Moguri mod
+            if (Directory.Exists("MoguriFiles") && !File.Exists("MoguriFiles/Memoria.ini"))
+                File.WriteAllText("MoguriFiles/Memoria.ini", "[Graphics]\nEnabled = 1\nTileSize = 64\n");
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
