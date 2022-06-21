@@ -8,7 +8,7 @@ using Object = System.Object;
 
 public class ETb
 {
-	private static SoundDatabase voiceDatabase = new SoundDatabase();
+	public static SoundDatabase voiceDatabase = new SoundDatabase();
 	private SoundProfile currentVAFile;
 
 	public void InitMessage()

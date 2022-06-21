@@ -14,6 +14,7 @@ using Memoria.Data;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Object = System.Object;
+using System.IO;
 
 public partial class EventEngine
 {
@@ -1846,7 +1847,36 @@ public partial class EventEngine
                     EMinigame.StiltzkinAchievement((PosObj)this.gCur, gilDecrease);
                 return 0;
             case EBin.event_code_binary.MESB:
-                UIManager.Battle.SetBattleMessage(FF9TextTool.BattleText(this.getv2()), (Byte)4);
+                Int32 battleTextId = this.getv2();
+                UIManager.Battle.SetBattleMessage(FF9TextTool.BattleText(battleTextId), (Byte)4);
+
+                string vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), battleTextId);
+                var currentVAFile = new SoundProfile
+                {
+                    Code = battleTextId.ToString(),
+                    Name = vaPath,
+                    SoundIndex = battleTextId,
+                    ResourceID = vaPath,
+                    SoundProfileType = SoundProfileType.Voice,
+                    SoundVolume = 1f,
+                    Panning = 0f,
+                    Pitch = 1f
+                };
+
+                SoundLoaderProxy.Instance.Load(currentVAFile,
+                (soundProfile, db) =>
+                {
+                    if (soundProfile != null)
+                    {
+                        SoundLib.voicePlayer.CreateSound(soundProfile);
+                        SoundLib.voicePlayer.StartSound(soundProfile);
+                        if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+                            db.Update(soundProfile);
+                        else
+                            db.Create(soundProfile);
+                    }
+                },
+                ETb.voiceDatabase);
                 return 0;
             case EBin.event_code_binary.GLOBALCLEAR:
                 return 0;

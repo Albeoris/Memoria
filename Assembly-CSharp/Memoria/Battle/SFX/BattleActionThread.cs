@@ -5,6 +5,7 @@ using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Prime;
 using Memoria.Data;
+using Memoria.Assets;
 
 public class BattleActionThread
 {
@@ -328,6 +329,35 @@ public class BattleActionThread
 					case 33: // Battle Title
 						Byte messId = r.ReadByte();
 						mainThread.code.AddLast(new BattleActionCode("Message", "Text", (messId & 128) != 0 ? "[CastName]" : battleText(messPtr + messId), "Priority", (messId & 128) != 0 ? "1" : "4", "Title", (seq.wSeqCode == 33 || (messId & 128) != 0).ToString(), "Reflect", (seq.wSeqCode == 33).ToString()));
+
+						int va_id = messPtr + messId;
+						string vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), va_id);
+						var currentVAFile = new SoundProfile
+						{
+							Code = va_id.ToString(),
+							Name = vaPath,
+							SoundIndex = va_id,
+							ResourceID = vaPath,
+							SoundProfileType = SoundProfileType.Voice,
+							SoundVolume = 1f,
+							Panning = 0f,
+							Pitch = 1f
+						};
+
+						SoundLoaderProxy.Instance.Load(currentVAFile,
+						(soundProfile, db) =>
+						{
+							if (soundProfile != null)
+							{
+								SoundLib.voicePlayer.CreateSound(soundProfile);
+								SoundLib.voicePlayer.StartSound(soundProfile);
+								if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+									db.Update(soundProfile);
+								else
+									db.Create(soundProfile);
+							}
+						},
+						ETb.voiceDatabase);
 						break;
 					case 16: // Run Camera
 					case 18: // Run Camera Target Alternate

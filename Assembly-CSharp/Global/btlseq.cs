@@ -9,6 +9,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
+using Memoria.Assets;
 
 public class btlseq
 {
@@ -791,6 +792,7 @@ public class btlseq
 	{
 		btlseq.BattleLog("SeqExecMessage");
 		UInt16 num = (UInt16)instance.sequenceReader.ReadByte();
+		File.AppendAllText("BattleMessageLog.txt", "Reached btlseq message");
 		if ((num & 128) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
@@ -798,18 +800,50 @@ public class btlseq
 		}
 		else
 		{
+			string vaPath;
 			num = (UInt16)(num + (UInt16)FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes);
 			btlseq.BattleLog("wMsg " + num);
 			if (instance.wSeqCode == 33)
 			{
 				String str = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleTitle(str, 4);
+				vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), num);
 			}
 			else
 			{
 				String str2 = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleMessage(str2, 4);
+				vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), num);
 			}
+			if (vaPath != null)
+			{
+				var currentVAFile = new SoundProfile
+				{
+					Code = num.ToString(),
+					Name = vaPath,
+					SoundIndex = num,
+					ResourceID = vaPath,
+					SoundProfileType = SoundProfileType.Voice,
+					SoundVolume = 1f,
+					Panning = 0f,
+					Pitch = 1f
+				};
+
+				SoundLoaderProxy.Instance.Load(currentVAFile,
+				(soundProfile, db) =>
+				{
+					if (soundProfile != null)
+					{
+						SoundLib.voicePlayer.CreateSound(soundProfile);
+						SoundLib.voicePlayer.StartSound(soundProfile);
+						if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+							db.Update(soundProfile);
+						else
+							db.Create(soundProfile);
+					}
+				},
+				ETb.voiceDatabase);
+            }
 		}
 		pSeqWork.CurPtr += 2;
 		return 1;
