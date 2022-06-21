@@ -8,7 +8,7 @@ using Object = System.Object;
 
 public class ETb
 {
-	private static SoundDatabase voiceDatabase = new SoundDatabase();
+	public static SoundDatabase voiceDatabase = new SoundDatabase();
 	private SoundProfile currentVAFile;
 
 	public void InitMessage()
@@ -193,71 +193,72 @@ public class ETb
 		}
 		
 		string vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
-		if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+		if (dialog.ChoiceNumber > 0)
 		{
-			if (dialog.ChoiceNumber > 0)
+			dialog.onOptionChange = (int msg, int optionIndex) =>
 			{
-				dialog.onOptionChange = (int msg, int optionIndex) =>
-				{
-					if (currentVAFile != null)
-						SoundLib.voicePlayer.StopSound(currentVAFile);
-					string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
-					currentVAFile = new SoundProfile
-					{
-						Code = num.ToString(),
-						Name = choicePath,
-						SoundIndex = num,
-						ResourceID = choicePath,
-						SoundProfileType = SoundProfileType.Voice,
-						SoundVolume = 1f,
-						Panning = 0f,
-						Pitch = 1f
-					};
+				if (currentVAFile != null)
+					SoundLib.voicePlayer.StopSound(currentVAFile);
+					
+				string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
+				SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, optionIndex, choicePath));
 
-					SoundLoaderProxy.Instance.Load(currentVAFile,
-					(soundProfile, db) =>
-					{
-						if (soundProfile != null)
-						{
-							SoundLib.voicePlayer.CreateSound(soundProfile);
-							SoundLib.voicePlayer.StartSound(soundProfile);
-							if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-								db.Update(soundProfile);
-							else
-								db.Create(soundProfile);
-						}
-					},
-					ETb.voiceDatabase);
+				currentVAFile = new SoundProfile
+				{
+					Code = num.ToString(),
+					Name = choicePath,
+					SoundIndex = num,
+					ResourceID = choicePath,
+					SoundProfileType = SoundProfileType.Voice,
+					SoundVolume = 1f,
+					Panning = 0f,
+					Pitch = 0.5f
 				};
-            }
 
-			currentVAFile = new SoundProfile
-			{
-				Code = num.ToString(),
-				Name = vaPath,
-				SoundIndex = num,
-				ResourceID = vaPath,
-				SoundProfileType = SoundProfileType.Voice,
-				SoundVolume = 1f,
-				Panning = 0f,
-				Pitch = 1f
-			};
-
-			SoundLoaderProxy.Instance.Load(currentVAFile,
-			(soundProfile, db) =>
-			{
-				if (soundProfile != null)
+				SoundLoaderProxy.Instance.Load(currentVAFile,
+				(soundProfile, db) =>
 				{
-					SoundLib.voicePlayer.CreateSound(soundProfile);
-					SoundLib.voicePlayer.StartSound(soundProfile);
-					if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-						db.Update(soundProfile);
-					else
-						db.Create(soundProfile);
-				}
-			},
-			ETb.voiceDatabase);
-		}
+					if (soundProfile != null)
+					{
+						SoundLib.voicePlayer.CreateSound(soundProfile);
+						SoundLib.voicePlayer.StartSound(soundProfile);
+						if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+							db.Update(soundProfile);
+						else
+							db.Create(soundProfile);
+					}
+				},
+				ETb.voiceDatabase);
+			};
+        }
+
+		currentVAFile = new SoundProfile
+		{
+			Code = num.ToString(),
+			Name = vaPath,
+			SoundIndex = num,
+			ResourceID = vaPath,
+			SoundProfileType = SoundProfileType.Voice,
+			SoundVolume = 1f,
+			Panning = 0f,
+			Pitch = 0.5f
+		};
+		SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}", FF9TextTool.FieldZoneId, mes, dialog.Phrase));
+
+		SoundLoaderProxy.Instance.Load(currentVAFile,
+		(soundProfile, db) =>
+		{
+			if (soundProfile != null)
+			{
+				SoundLib.voicePlayer.CreateSound(soundProfile);
+				SoundLib.voicePlayer.StartSound(soundProfile);
+				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+					db.Update(soundProfile);
+				else
+					db.Create(soundProfile);
+			}
+		},
+		ETb.voiceDatabase);
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;

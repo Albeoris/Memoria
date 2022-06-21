@@ -9,6 +9,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
+using Memoria.Assets;
 
 public class btlseq
 {
@@ -795,21 +796,24 @@ public class btlseq
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
+			
+			VoicePlayer.PlayBattleScriptVoice(pSeqWork.CmdPtr.regist.currentAnimationName, pSeqWork.CmdPtr.aa.Name);
 		}
 		else
 		{
 			num = (UInt16)(num + (UInt16)FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes);
-			btlseq.BattleLog("wMsg " + num);
+			string str;
 			if (instance.wSeqCode == 33)
 			{
-				String str = FF9TextTool.BattleText((Int32)num);
+				str = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleTitle(str, 4);
 			}
 			else
 			{
-				String str2 = FF9TextTool.BattleText((Int32)num);
-				UIManager.Battle.SetBattleMessage(str2, 4);
+				str = FF9TextTool.BattleText((Int32)num);
+				UIManager.Battle.SetBattleMessage(str, 4);
 			}
+			VoicePlayer.PlayBattleVoice(num, str);
 		}
 		pSeqWork.CurPtr += 2;
 		return 1;

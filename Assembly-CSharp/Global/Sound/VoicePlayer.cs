@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria;
+using Memoria.Assets;
 using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
@@ -23,6 +24,70 @@ public class VoicePlayer : SoundPlayer
 		this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.Paused, SoundProfileState.Stopped);
 		this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.Played, SoundProfileState.Stopped);
 		this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.CrossfadeIn, SoundProfileState.Stopped);
+	}
+
+	public static void PlayBattleVoice(int va_id, string text)
+    {
+		string vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), va_id);
+		var currentVAFile = new SoundProfile
+		{
+			Code = va_id.ToString(),
+			Name = vaPath,
+			SoundIndex = va_id,
+			ResourceID = vaPath,
+			SoundProfileType = SoundProfileType.Voice,
+			SoundVolume = 1f,
+			Panning = 0f,
+			Pitch = 0.5f
+		};
+
+		SoundLoaderProxy.Instance.Load(currentVAFile,
+		(soundProfile, db) =>
+		{
+			if (soundProfile != null)
+			{
+				SoundLib.voicePlayer.CreateSound(soundProfile);
+				SoundLib.voicePlayer.StartSound(soundProfile);
+				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+					db.Update(soundProfile);
+				else
+					db.Create(soundProfile);
+			}
+		},
+		ETb.voiceDatabase);
+		SoundLib.VALog(String.Format("field:battle, msg:{0}, text:{1} path:{2}", va_id, text, vaPath));
+	}
+
+	public static void PlayBattleScriptVoice(string animation_name, string text)
+	{
+		string vaPath = String.Format("Voices/{0}/battle/cmd/{1}", Localization.GetSymbol(), animation_name);
+		var currentVAFile = new SoundProfile
+		{
+			Code = animation_name,
+			Name = vaPath,
+			SoundIndex = 0,
+			ResourceID = vaPath,
+			SoundProfileType = SoundProfileType.Voice,
+			SoundVolume = 1f,
+			Panning = 0f,
+			Pitch = 0.5f
+		};
+
+		SoundLoaderProxy.Instance.Load(currentVAFile,
+		(soundProfile, db) =>
+		{
+			if (soundProfile != null)
+			{
+				SoundLib.voicePlayer.CreateSound(soundProfile);
+				SoundLib.voicePlayer.StartSound(soundProfile);
+				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+					db.Update(soundProfile);
+				else
+					db.Create(soundProfile);
+			}
+		},
+		ETb.voiceDatabase);
+		SoundLib.VALog(String.Format("field:battle/spell, script:{0}, text:{1} path:{2}", animation_name, text, vaPath));
 	}
 
 	public void LoadMusic(String metaData)

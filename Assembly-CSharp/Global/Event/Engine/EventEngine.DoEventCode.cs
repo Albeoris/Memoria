@@ -14,6 +14,7 @@ using Memoria.Data;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Object = System.Object;
+using System.IO;
 
 public partial class EventEngine
 {
@@ -1846,7 +1847,10 @@ public partial class EventEngine
                     EMinigame.StiltzkinAchievement((PosObj)this.gCur, gilDecrease);
                 return 0;
             case EBin.event_code_binary.MESB:
-                UIManager.Battle.SetBattleMessage(FF9TextTool.BattleText(this.getv2()), (Byte)4);
+                Int32 battleTextId = this.getv2();
+                string text = FF9TextTool.BattleText(battleTextId);
+                UIManager.Battle.SetBattleMessage(text, (Byte)4);
+                VoicePlayer.PlayBattleVoice(battleTextId, text);
                 return 0;
             case EBin.event_code_binary.GLOBALCLEAR:
                 return 0;

@@ -186,6 +186,11 @@ public class SoundLib : MonoBehaviour
         //MLog.Message("[SoundLib] " + message);
     }
 
+	public static void VALog(Object message)
+    {
+		MLog.Message("[VoiceActing] " + message);
+	}
+
 	public static void LogError(Object message)
 	{
         MLog.Error("[SoundLib] " + message);
