@@ -797,7 +797,9 @@ public class btlseq
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
 			// @todo i don't like this using the current animationName as the uniue key
-			VoicePlayer.PlayBattleScriptVoice(pSeqWork.CmdPtr.regist.currentAnimationName, pSeqWork.CmdPtr.aa.Name);
+			int cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqWork.CmdPtr.sub_no;
+
+			VoicePlayer.PlayBattleScriptVoice(cmdNameIndex, pSeqWork.CmdPtr.aa.Name);
 		}
 		else
 		{

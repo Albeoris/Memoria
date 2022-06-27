@@ -58,14 +58,14 @@ public class VoicePlayer : SoundPlayer
 		SoundLib.VALog(String.Format("field:battle, msg:{0}, text:{1} path:{2}", va_id, text, vaPath));
 	}
 
-	public static void PlayBattleScriptVoice(string animation_name, string text)
+	public static void PlayBattleScriptVoice(int cmd_id, string text)
 	{
-		string vaPath = String.Format("Voices/{0}/battle/cmd/{1}", Localization.GetSymbol(), animation_name);
+		string vaPath = String.Format("Voices/{0}/battle/cmd/va_{1}", Localization.GetSymbol(), cmd_id);
 		var currentVAFile = new SoundProfile
 		{
-			Code = animation_name,
+			Code = cmd_id.ToString(),
 			Name = vaPath,
-			SoundIndex = 0,
+			SoundIndex = cmd_id,
 			ResourceID = vaPath,
 			SoundProfileType = SoundProfileType.Voice,
 			SoundVolume = 1f,
