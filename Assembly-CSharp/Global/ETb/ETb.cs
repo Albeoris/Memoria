@@ -244,7 +244,7 @@ public class ETb
 				Panning = 0f,
 				Pitch = 0.5f
 			};
-			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}", FF9TextTool.FieldZoneId, mes, dialog.Phrase));
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, dialog.Phrase, vaPath));
 
 			SoundLoaderProxy.Instance.Load(currentVAFile,
 			(soundProfile, db) =>
@@ -263,7 +263,7 @@ public class ETb
         }
         else
 		{
-			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}", FF9TextTool.FieldZoneId, mes, dialog.Phrase));
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, dialog.Phrase, vaPath));
 		}
 
 		this.gMesCount++;
