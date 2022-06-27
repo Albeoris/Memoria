@@ -28,7 +28,19 @@ public class VoicePlayer : SoundPlayer
 
 	public static void PlayBattleVoice(int va_id, string text)
     {
-		string vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), va_id);
+		string vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, FF9StateSystem.Battle.battleMapIndex);
+		if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+		{
+			SoundLib.VALog(String.Format("field:battle/{0}, feild:{0}, msg:{1}, text:{2} path:{3}", FF9StateSystem.Battle.battleMapIndex, va_id, text, vaPath));
+		}
+		else
+		{
+			// otherwise check for a general one
+			vaPath = String.Format("Voices/{0}/battle/general/va_{1}", Localization.GetSymbol(), va_id);
+			if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)){
+				SoundLib.VALog(String.Format("field:battle/general, msg:{0}, text:{1} path:{2}", va_id, text, vaPath));
+			}
+		}
 		var currentVAFile = new SoundProfile
 		{
 			Code = va_id.ToString(),
@@ -55,12 +67,24 @@ public class VoicePlayer : SoundPlayer
 			}
 		},
 		ETb.voiceDatabase);
-		SoundLib.VALog(String.Format("field:battle, msg:{0}, text:{1} path:{2}", va_id, text, vaPath));
+		SoundLib.VALog(String.Format("field:battle/{3}, feild:{3}, msg:{0}, text:{1} path:{2}", va_id, text, vaPath, FF9StateSystem.Battle.battleMapIndex));
 	}
 
 	public static void PlayBattleScriptVoice(int cmd_id, string text)
 	{
-		string vaPath = String.Format("Voices/{0}/battle/cmd/va_{1}", Localization.GetSymbol(), cmd_id);
+		string vaPath = String.Format("Voices/{0}/battle/{1}/cmd/va_{1}", Localization.GetSymbol(), FF9StateSystem.Battle.battleMapIndex, cmd_id);
+		if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+		{
+			SoundLib.VALog(String.Format("Voices/{0}/battle/{1}/cmd/va_{1}", Localization.GetSymbol(), FF9StateSystem.Battle.battleMapIndex, cmd_id));
+		}
+		else
+		{
+			// otherwise check for a general one
+			vaPath = String.Format("Voices/{0}/battle/general/va_{1}", Localization.GetSymbol(), cmd_id);
+			if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)){
+				SoundLib.VALog(String.Format("Voices/{0}/battle/general/cmd/va_{1}", Localization.GetSymbol(), cmd_id));
+			}
+		}
 		var currentVAFile = new SoundProfile
 		{
 			Code = cmd_id.ToString(),
@@ -87,7 +111,7 @@ public class VoicePlayer : SoundPlayer
 			}
 		},
 		ETb.voiceDatabase);
-		SoundLib.VALog(String.Format("field:battle/spell, cmd:{0}, text:{1} path:{2}", cmd_id, text, vaPath));
+		SoundLib.VALog(String.Format("field:battle/{3}/cmd, field:{3}, cmd:{0}, text:{1} path:{2}", cmd_id, text, vaPath, FF9StateSystem.Battle.battleMapIndex));
 	}
 
 	public void LoadMusic(String metaData)
