@@ -331,8 +331,9 @@ public class BattleActionThread
 						string text = battleText(messPtr + messId);
 						mainThread.code.AddLast(new BattleActionCode("Message", "Text", (messId & 128) != 0 ? "[CastName]" : text, "Priority", (messId & 128) != 0 ? "1" : "4", "Title", (seq.wSeqCode == 33 || (messId & 128) != 0).ToString(), "Reflect", (seq.wSeqCode == 33).ToString()));
 
-						int va_id = messPtr + messId;
-						VoicePlayer.PlayBattleVoice(va_id, text);
+						// @todo fix this code (this also does not support the in combat that i'm using the animation name to create a uniue filename for)
+						//int va_id = messPtr + messId;
+						//VoicePlayer.PlayBattleVoice(va_id, text);
 						break;
 					case 16: // Run Camera
 					case 18: // Run Camera Target Alternate

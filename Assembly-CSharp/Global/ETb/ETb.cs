@@ -139,16 +139,16 @@ public class ETb
 			}
 		}
 		EventHUD.CheckSpecialHUDFromMesId(mes, true);
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (mes == 147 || mes == 148))
-        {
-            NGUIText.ForceShowButton = true;
-        }
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, this.OnDialogFinish, captionType);
-		
+		if (FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (mes == 147 || mes == 148))
+		{
+			NGUIText.ForceShowButton = true;
+		}
+		Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, this.OnDialogFinish, captionType);
+
 		if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
-        {
-            switch (FF9StateSystem.Settings.CurrentLanguage)
-            {
+		{
+			switch (FF9StateSystem.Settings.CurrentLanguage)
+			{
 				case "English(US)":
 				case "English(UK)":
 				case "Spanish":
@@ -157,14 +157,14 @@ public class ETb
 					dialog.FocusToActor = !(mes == 183 || mes == 166);
 					break;
 				case "Japanese":
-                    dialog.FocusToActor = !(mes == 187 || mes == 170);
-                    break;
-                case "French":
-                    dialog.FocusToActor = !(mes == 185 || mes == 168);
-                    break;
-            }
+					dialog.FocusToActor = !(mes == 187 || mes == 170);
+					break;
+				case "French":
+					dialog.FocusToActor = !(mes == 185 || mes == 168);
+					break;
+			}
 		}
-		
+
 		if (dialog == (UnityEngine.Object)null)
 		{
 			return;
@@ -191,74 +191,81 @@ public class ETb
 				dialog.Phrase
 			}));
 		}
-		
+
 		string vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
-		if (dialog.ChoiceNumber > 0)
-		{
-			dialog.onOptionChange = (int msg, int optionIndex) =>
-			{
-				if (currentVAFile != null)
-					SoundLib.voicePlayer.StopSound(currentVAFile);
-					
-				string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
-				SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, optionIndex, choicePath));
-
-				currentVAFile = new SoundProfile
+		if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))) { 
+				if (dialog.ChoiceNumber > 0)
 				{
-					Code = num.ToString(),
-					Name = choicePath,
-					SoundIndex = num,
-					ResourceID = choicePath,
-					SoundProfileType = SoundProfileType.Voice,
-					SoundVolume = 1f,
-					Panning = 0f,
-					Pitch = 0.5f
-				};
-
-				SoundLoaderProxy.Instance.Load(currentVAFile,
-				(soundProfile, db) =>
-				{
-					if (soundProfile != null)
+					dialog.onOptionChange = (int msg, int optionIndex) =>
 					{
-						SoundLib.voicePlayer.CreateSound(soundProfile);
-						SoundLib.voicePlayer.StartSound(soundProfile);
-						if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-							db.Update(soundProfile);
-						else
-							db.Create(soundProfile);
-					}
-				},
-				ETb.voiceDatabase);
-			};
-        }
+						if (currentVAFile != null)
+							SoundLib.voicePlayer.StopSound(currentVAFile);
 
-		currentVAFile = new SoundProfile
-		{
-			Code = num.ToString(),
-			Name = vaPath,
-			SoundIndex = num,
-			ResourceID = vaPath,
-			SoundProfileType = SoundProfileType.Voice,
-			SoundVolume = 1f,
-			Panning = 0f,
-			Pitch = 0.5f
-		};
-		SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}", FF9TextTool.FieldZoneId, mes, dialog.Phrase));
+						string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
+						SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, optionIndex, choicePath));
 
-		SoundLoaderProxy.Instance.Load(currentVAFile,
-		(soundProfile, db) =>
-		{
-			if (soundProfile != null)
+						currentVAFile = new SoundProfile
+						{
+							Code = num.ToString(),
+							Name = choicePath,
+							SoundIndex = num,
+							ResourceID = choicePath,
+							SoundProfileType = SoundProfileType.Voice,
+							SoundVolume = 1f,
+							Panning = 0f,
+							Pitch = 0.5f
+						};
+
+						SoundLoaderProxy.Instance.Load(currentVAFile,
+						(soundProfile, db) =>
+						{
+							if (soundProfile != null)
+							{
+								SoundLib.voicePlayer.CreateSound(soundProfile);
+								SoundLib.voicePlayer.StartSound(soundProfile);
+								if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+									db.Update(soundProfile);
+								else
+									db.Create(soundProfile);
+							}
+						},
+						ETb.voiceDatabase);
+					};
+				}
+
+			currentVAFile = new SoundProfile
 			{
-				SoundLib.voicePlayer.CreateSound(soundProfile);
-				SoundLib.voicePlayer.StartSound(soundProfile);
-				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-					db.Update(soundProfile);
-				else
-					db.Create(soundProfile);
-			}
-		},
-		ETb.voiceDatabase);
+				Code = num.ToString(),
+				Name = vaPath,
+				SoundIndex = num,
+				ResourceID = vaPath,
+				SoundProfileType = SoundProfileType.Voice,
+				SoundVolume = 1f,
+				Panning = 0f,
+				Pitch = 0.5f
+			};
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}", FF9TextTool.FieldZoneId, mes, dialog.Phrase));
+
+			SoundLoaderProxy.Instance.Load(currentVAFile,
+			(soundProfile, db) =>
+			{
+				if (soundProfile != null)
+				{
+					SoundLib.voicePlayer.CreateSound(soundProfile);
+					SoundLib.voicePlayer.StartSound(soundProfile);
+					if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+						db.Update(soundProfile);
+					else
+						db.Create(soundProfile);
+				}
+			},
+			ETb.voiceDatabase);
+        }
+        else
+		{
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}", FF9TextTool.FieldZoneId, mes, dialog.Phrase));
+		}
+
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;

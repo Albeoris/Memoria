@@ -792,12 +792,11 @@ public class btlseq
 	{
 		btlseq.BattleLog("SeqExecMessage");
 		UInt16 num = (UInt16)instance.sequenceReader.ReadByte();
-		File.AppendAllText("BattleMessageLog.txt", "Reached btlseq message");
 		if ((num & 128) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
-			
+			// @todo i don't like this using the current animationName as the uniue key
 			VoicePlayer.PlayBattleScriptVoice(pSeqWork.CmdPtr.regist.currentAnimationName, pSeqWork.CmdPtr.aa.Name);
 		}
 		else
@@ -809,7 +808,6 @@ public class btlseq
 			{
 				str = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleTitle(str, 4);
-				vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), num);
 			}
 			else
 			{
