@@ -792,6 +792,7 @@ public class btlseq
 	{
 		btlseq.BattleLog("SeqExecMessage");
 		UInt16 num = (UInt16)instance.sequenceReader.ReadByte();
+		File.AppendAllText("BattleMessageLog.txt", "Reached btlseq message");
 		if ((num & 128) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
@@ -801,12 +802,14 @@ public class btlseq
 		}
 		else
 		{
+			string vaPath;
 			num = (UInt16)(num + (UInt16)FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes);
 			string str;
 			if (instance.wSeqCode == 33)
 			{
 				str = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleTitle(str, 4);
+				vaPath = String.Format("Voices/{0}/battle/va_{1}", Localization.GetSymbol(), num);
 			}
 			else
 			{
