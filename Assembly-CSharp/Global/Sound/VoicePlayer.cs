@@ -72,19 +72,7 @@ public class VoicePlayer : SoundPlayer
 
 	public static void PlayBattleScriptVoice(int cmd_id, string text)
 	{
-		string vaPath = String.Format("Voices/{0}/battle/{1}/cmd/va_{1}", Localization.GetSymbol(), FF9StateSystem.Battle.battleMapIndex, cmd_id);
-		if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
-		{
-			SoundLib.VALog(String.Format("Voices/{0}/battle/{1}/cmd/va_{1}", Localization.GetSymbol(), FF9StateSystem.Battle.battleMapIndex, cmd_id));
-		}
-		else
-		{
-			// otherwise check for a general one
-			vaPath = String.Format("Voices/{0}/battle/general/va_{1}", Localization.GetSymbol(), cmd_id);
-			if (!String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".akb", true, true)) || !String.IsNullOrEmpty(AssetManager.SearchAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)){
-				SoundLib.VALog(String.Format("Voices/{0}/battle/general/cmd/va_{1}", Localization.GetSymbol(), cmd_id));
-			}
-		}
+		string vaPath = String.Format("Voices/{0}/battle/cmd/va_{1}", Localization.GetSymbol(), cmd_id);
 		var currentVAFile = new SoundProfile
 		{
 			Code = cmd_id.ToString(),
