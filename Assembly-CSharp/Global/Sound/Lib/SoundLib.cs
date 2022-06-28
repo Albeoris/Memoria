@@ -188,7 +188,8 @@ public class SoundLib : MonoBehaviour
 
 	public static void VALog(Object message)
     {
-		MLog.Message("[VoiceActing] " + message);
+		if (Configuration.Audio.LogVoiceActing)
+			MLog.Message("[VoiceActing] " + message);
 	}
 
 	public static void LogError(Object message)

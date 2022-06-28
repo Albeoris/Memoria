@@ -328,12 +328,18 @@ public class BattleActionThread
 					case 14: // Battle Text
 					case 33: // Battle Title
 						Byte messId = r.ReadByte();
-						string text = battleText(messPtr + messId);
+						Int32 messExactId = (messId & 128) != 0 ? scene.header.TypCount + atkNo : messPtr + messId;
+						String text = battleText(messExactId);
+						Int32 btlId;
 						mainThread.code.AddLast(new BattleActionCode("Message", "Text", (messId & 128) != 0 ? "[CastName]" : text, "Priority", (messId & 128) != 0 ? "1" : "4", "Title", (seq.wSeqCode == 33 || (messId & 128) != 0).ToString(), "Reflect", (seq.wSeqCode == 33).ToString()));
-
-						// @todo fix this code (this also does not support the in combat that i'm using the animation name to create a uniue filename for)
-						//int va_id = messPtr + messId;
-						//VoicePlayer.PlayBattleVoice(va_id, text);
+						if (FF9BattleDB.SceneData.TryGetValue(scene.nameIdentifier, out btlId))
+						{
+							String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), messExactId, btlId);
+							if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
+								mainThread.code.AddLast(new BattleActionCode("PlaySound", "SoundType", "Voice", "Sound", btlId + ":" + messExactId));
+							else
+								SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlId, messExactId, text, vaPath));
+						}
 						break;
 					case 16: // Run Camera
 					case 18: // Run Camera Target Alternate

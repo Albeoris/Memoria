@@ -796,27 +796,24 @@ public class btlseq
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
-			// @todo i don't like this using the current animationName as the uniue key
-			int cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqWork.CmdPtr.sub_no;
-
-			VoicePlayer.PlayBattleScriptVoice(cmdNameIndex, pSeqWork.CmdPtr.aa.Name);
+			Int32 cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqWork.CmdPtr.sub_no;
+			VoicePlayer.PlayBattleVoice(cmdNameIndex, pSeqWork.CmdPtr.aa.Name);
 		}
 		else
 		{
-			string vaPath;
 			num = (UInt16)(num + (UInt16)FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes);
-			string str;
+			string btlMessage;
 			if (instance.wSeqCode == 33)
 			{
-				str = FF9TextTool.BattleText((Int32)num);
-				UIManager.Battle.SetBattleTitle(str, 4);
+				btlMessage = FF9TextTool.BattleText((Int32)num);
+				UIManager.Battle.SetBattleTitle(btlMessage, 4);
 			}
 			else
 			{
-				str = FF9TextTool.BattleText((Int32)num);
-				UIManager.Battle.SetBattleMessage(str, 4);
+				btlMessage = FF9TextTool.BattleText((Int32)num);
+				UIManager.Battle.SetBattleMessage(btlMessage, 4);
 			}
-			VoicePlayer.PlayBattleVoice(num, str);
+			VoicePlayer.PlayBattleVoice(num, btlMessage);
 		}
 		pSeqWork.CurPtr += 2;
 		return 1;

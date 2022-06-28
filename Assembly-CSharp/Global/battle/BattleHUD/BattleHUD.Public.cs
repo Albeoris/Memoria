@@ -58,21 +58,22 @@ public partial class BattleHUD : UIScene
     
     public void SetBattleFollowMessage(Int32 pMesNo, params Object[] args)
     {
-        String str1 = FF9TextTool.BattleFollowText(pMesNo + 7);
-        if (String.IsNullOrEmpty(str1))
+        String fmtMessage = FF9TextTool.BattleFollowText(pMesNo + 7);
+        if (String.IsNullOrEmpty(fmtMessage))
             return;
 
-        Byte priority = (Byte)Char.GetNumericValue(str1[0]);
-        String str2 = str1.Substring(1);
+        Byte priority = (Byte)Char.GetNumericValue(fmtMessage[0]);
+        String parsedMessage = fmtMessage.Substring(1);
 
         if (args.Length > 0)
         {
             String str3 = args[0].ToString();
             Int32 result;
-            str2 = !Int32.TryParse(str3, out result) ? str2.Replace("%", str3) : str2.Replace("&", str3);
+            parsedMessage = !Int32.TryParse(str3, out result) ? parsedMessage.Replace("%", str3) : parsedMessage.Replace("&", str3);
         }
 
-        SetBattleMessage(str2, priority);
+        SetBattleMessage(parsedMessage, priority);
+        VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)

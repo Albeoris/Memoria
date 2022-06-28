@@ -8,6 +8,7 @@ public class BTL_SCENE
 {
 	public void ReadBattleScene(String name)
 	{
+		nameIdentifier = "BSC_" + name;
 		name = "EVT_BATTLE_" + name;
 		this.header = new SB2_HEAD();
 		String[] bsceneInfo;
@@ -242,4 +243,7 @@ public class BTL_SCENE
 	public SB2_HEAD header;
 
 	public AA_DATA[] atk;
+
+	// Custom field
+	public String nameIdentifier;
 }

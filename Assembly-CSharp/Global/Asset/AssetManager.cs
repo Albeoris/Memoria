@@ -601,6 +601,11 @@ public static class AssetManager
 		return String.Empty;
 	}
 
+	public static Boolean HasAssetOnDisc(String name, Boolean includeAssetPath, Boolean includeAssetExtension)
+	{
+		return !String.IsNullOrEmpty(SearchAssetOnDisc(name, includeAssetPath, includeAssetExtension));
+	}
+
 	public static T[] LoadAll<T>(String name) where T : UnityEngine.Object
 	{
 		if (AssetManagerForObb.IsUseOBB)

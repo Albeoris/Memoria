@@ -1444,118 +1444,34 @@ public static class ff9
 		ff9.w_worldFormFlag = new Byte[16];
 		ff9.w_worldFormData = new Byte[,]
 		{
-			{
-				1,
-				1,
-				1,
-				1,
-				0,
-				0,
-				0,
-				0,
-				0,
-				1,
-				0
-			},
-			{
-				0,
-				6,
-				6,
-				6,
-				6,
-				6,
-				6,
-				6,
-				6,
-				6,
-				0
-			},
-			{
-				0,
-				0,
-				5,
-				5,
-				5,
-				5,
-				5,
-				5,
-				5,
-				5,
-				0
-			},
-			{
-				0,
-				0,
-				0,
-				9,
-				9,
-				9,
-				9,
-				9,
-				9,
-				9,
-				0
-			},
-			{
-				0,
-				0,
-				0,
-				0,
-				0,
-				3,
-				3,
-				3,
-				3,
-				3,
-				0
-			},
-			{
-				0,
-				0,
-				0,
-				0,
-				0,
-				0,
-				11,
-				0,
-				0,
-				11,
-				0
-			},
-			{
-				0,
-				0,
-				0,
-				0,
-				0,
-				0,
-				4,
-				0,
-				0,
-				4,
-				0
-			}
+			{ 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0 }, // 1: South Gate destroyed form
+			{ 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0 }, // 6: Cleyra destroyed form
+			{ 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 0 }, // 5: Lindblum destroyed form
+			{ 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 0 }, // 9: Black Mage Village entered form (?)
+			{ 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0 }, // 3: Alexandria destroyed form
+			{ 0, 0, 0, 0, 0, 0,11, 0, 0,11, 0 }, //11: Water Shrine opened form
+			{ 0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 0 }  // 4: Fire Shrine opened form
 		};
 		ff9.w_worldFormDataTyming = new UInt16[]
 		{
-			2990,
-			4990,
-			5598,
-			6200,
-			6990,
-			8800,
-			10600,
-			10700,
-			11090,
-			64000,
-			65000
+			2990,  // South Gate destroyed
+			4990,  // Cleyra destroyed
+			5598,  // Lindblum destroyed
+			6200,  // Black Mage Village entered
+			6990,  // South Gate recovered
+			8800,  // Alexandria destroyed
+			10600, // Ipsen Castle done (Shrines open)
+			10700, // Shrines done
+			11090, // Disc 4
+			64000, // Overlimit scenario counter (all enabled)
+			65000  // Overlimit scenario counter (none enabled)
 		};
 		ff9.w_worldLocDistance = new Int32[3];
 		ff9.w_worldLocX = new Int32[]
 		{
-			229279,
-			130781,
-			299201
+			229279, // Cleyra
+			130781, // Wind Shrine
+			299201  // Earth Shrine
 		};
 		ff9.w_worldLocZ = new Int32[]
 		{
@@ -3632,14 +3548,12 @@ public static class ff9
 
 	public static void w_cellService()
 	{
-		WMBlock block = ff9.world.Block31;
-		if (block != null && block.Form == 2)
+		if (ff9.world.Block31 != null && ff9.world.Block31.Form == 2)
 		{
 			ff9.w_effectServiceSP(2);
 			ff9.w_effectUpdateSP(2);
 		}
-		WMBlock block2 = ff9.world.Block115;
-		if (block2 != null)
+		if (ff9.world.Block115 != null)
 		{
 			ff9.w_effectServiceSP(3);
 			ff9.w_effectUpdateSP(3);
@@ -3652,8 +3566,7 @@ public static class ff9
 		ff9.w_effectUpdateSP(6);
 		ff9.w_effectServiceSP(7);
 		ff9.w_effectUpdateSP(7);
-		WMBlock block3 = ff9.world.Block219;
-		if (block3 != null && block3.Form == 2)
+		if (ff9.world.Block219 != null && ff9.world.Block219.Form == 2)
 		{
 			ff9.w_effectServiceSP(10);
 			ff9.w_effectUpdateSP(10);
@@ -3827,7 +3740,7 @@ public static class ff9
 		switch (no)
 		{
 		case 4:
-			if (ff9.w_worldFormFlag[5] == 0 && ff9.w_frameDisc == 1)
+			if (ff9.w_worldFormFlag[5] == 0)
 			{
 				Vector3 localScale = new Vector3(1.46484375f, 1f, 1.46484375f);
 				Quaternion rotation = Quaternion.Euler(ff9.w_effectTwisRot);
@@ -3998,22 +3911,14 @@ public static class ff9
 			break;
 		case 3:
 			if (ff9.w_frameScenePtr >= 9450 && ff9.w_frameScenePtr <= 9890)
-			{
 				flag = true;
-			}
 			break;
 		case 4:
 		{
-			ff9.w_effectTwisRot.y = ff9.w_effectTwisRot.y - ff9.PsxRot(256);
-			Vector3[] array = ff9.w_effectSpilRot;
-			Int32 num = 0;
-			array[num].y = array[num].y - ff9.PsxRot(-256);
-			Vector3[] array2 = ff9.w_effectSpilRot;
-			Int32 num2 = 1;
-			array2[num2].y = array2[num2].y - ff9.PsxRot(64);
-			Vector3[] array3 = ff9.w_effectSpilRot;
-			Int32 num3 = 2;
-			array3[num3].y = array3[num3].y - ff9.PsxRot(384);
+			ff9.w_effectTwisRot.y -= ff9.PsxRot(256);
+			ff9.w_effectSpilRot[0].y -= ff9.PsxRot(-256);
+			ff9.w_effectSpilRot[1].y -= ff9.PsxRot(64);
+			ff9.w_effectSpilRot[2].y -= ff9.PsxRot(384);
 			flag = true;
 			break;
 		}
@@ -4027,28 +3932,17 @@ public static class ff9
 			ff9.w_effectLast2Rot.y = ff9.w_effectLast2Rot.y - ff9.PsxRot(8);
 			for (Int64 num4 = 0L; num4 < 10L; num4 += 1L)
 			{
-			}
-			for (Int64 num4 = 0L; num4 < 10L; num4 += 1L)
-			{
-				Vector3[] array4 = ff9.w_effectLastRotT;
-				IntPtr intPtr = checked((IntPtr)num4);
-				array4[(Int32)intPtr].x = array4[(Int32)intPtr].x + ff9.PsxRot(ff9.rand() % 13 - 6);
-				Vector3[] array5 = ff9.w_effectLastRotT;
-				IntPtr intPtr2 = checked((IntPtr)num4);
-				array5[(Int32)intPtr2].y = array5[(Int32)intPtr2].y + ff9.PsxRot(ff9.rand() % 13 - 6);
+				ff9.w_effectLastRotT[num4].x += ff9.PsxRot(ff9.rand() % 13 - 6);
+				ff9.w_effectLastRotT[num4].y += ff9.PsxRot(ff9.rand() % 13 - 6);
 			}
 			break;
 		case 7:
 			if (ff9.w_effectWindMillRot)
-			{
-				ff9.w_effectMillRot.y = ff9.w_effectMillRot.y + ff9.PsxRot(64);
-			}
+				ff9.w_effectMillRot.y += ff9.PsxRot(64);
 			break;
 		case 10:
 			if (ff9.w_worldFormFlag[10] != 0)
-			{
 				flag = true;
-			}
 			break;
 		}
 		if (flag)
@@ -4062,47 +3956,20 @@ public static class ff9
 			for (Int32 i = 0; i < ff9.w_effectDataList[no].effectData.Count; i++)
 			{
 				ff9.s_effectData s_effectData = ff9.w_effectDataList[no].effectData[i];
-				if (no == 2)
+				if (UnityEngine.Random.Range(0, 4096) < s_effectData.rnd)
 				{
-					if (UnityEngine.Random.Range(0, 4096) < s_effectData.rnd)
-					{
-						Int32 num5 = s_effectData.x - s_effectData.rx / 2;
-						Int32 num6 = s_effectData.y - s_effectData.ry / 2;
-						Int32 num7 = s_effectData.z - s_effectData.rz / 2;
-						if (s_effectData.rx != 0)
-						{
-							num5 += ff9.random16() % s_effectData.rx;
-						}
-						if (s_effectData.ry != 0)
-						{
-							num6 += ff9.random16() % s_effectData.ry;
-						}
-						if (s_effectData.rz != 0)
-						{
-							num7 += ff9.random16() % s_effectData.rz;
-						}
-						num6 += ff9.UnityUnit(-1.229375f);
-						ff9.w_effectRegist_FixedPoint(num5, num6, num7, s_effectData.no, s_effectData.size);
-					}
-				}
-				else if (UnityEngine.Random.Range(0, 4096) < s_effectData.rnd)
-				{
-					Int32 num8 = s_effectData.x - s_effectData.rx / 2;
-					Int32 num9 = s_effectData.y - s_effectData.ry / 2;
-					Int32 num10 = s_effectData.z - s_effectData.rz / 2;
+					Int32 x = s_effectData.x - s_effectData.rx / 2;
+					Int32 y = s_effectData.y - s_effectData.ry / 2;
+					Int32 z = s_effectData.z - s_effectData.rz / 2;
 					if (s_effectData.rx != 0)
-					{
-						num8 += ff9.random16() % s_effectData.rx;
-					}
+						x += ff9.random16() % s_effectData.rx;
 					if (s_effectData.ry != 0)
-					{
-						num9 += ff9.random16() % s_effectData.ry;
-					}
+						y += ff9.random16() % s_effectData.ry;
 					if (s_effectData.rz != 0)
-					{
-						num10 += ff9.random16() % s_effectData.rz;
-					}
-					ff9.w_effectRegist_FixedPoint(num8, num9, num10, s_effectData.no, s_effectData.size);
+						z += ff9.random16() % s_effectData.rz;
+					if (no == 2)
+						y += ff9.UnityUnit(-1.229375f);
+					ff9.w_effectRegist_FixedPoint(x, y, z, s_effectData.no, s_effectData.size);
 				}
 			}
 		}
@@ -5008,19 +4875,19 @@ public static class ff9
 		return -1;
 	}
 
-	public static Int32[] w_framePackExtract(Byte[] data)
+	public static Int32 w_framePackExtractPosition(Byte[] data, Int32 no)
 	{
 		MemoryStream memoryStream = new MemoryStream(data);
 		BinaryReader binaryReader = new BinaryReader(memoryStream);
-		Int32 num = binaryReader.ReadInt32();
-		Int32[] array = new Int32[num + 1];
-		for (Int32 i = 0; i < num; i++)
-		{
-			array[i + 1] = binaryReader.ReadInt32();
-		}
+		Int32 count = binaryReader.ReadInt32();
+		if (no > count + 1)
+			global::Debug.Log($"w_framePackExtractPosition requested pack {no} but there are only {count}");
+		for (Int32 i = 0; i < no; i++)
+			binaryReader.ReadInt32();
+		Int32 pos = binaryReader.ReadInt32();
 		memoryStream.Close();
 		binaryReader.Close();
-		return array;
+		return pos;
 	}
 
 	public static Int32 w_frameInter(Int32 from, Int32 to, Int32 t)
@@ -6855,22 +6722,22 @@ public static class ff9
 		}
 		if (ff9.w_moveCHRControl_Move && num4 != 0)
 		{
-			if (ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, ff9.m_moveActorID))
+			if (ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, ff9.m_moveActorID)) // Water movement effect
 			{
 				ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.S(100), ff9.w_moveActorPtr.pos[2], 22, 24000);
 			}
 			if (ff9.w_frameCounter % 4 == 0)
 			{
-				if (ff9.m_GetIDTopograph(ff9.m_moveActorID) == 30 || ff9.m_GetIDTopograph(ff9.m_moveActorID) == 34 || ff9.m_GetIDTopograph(ff9.m_moveActorID) == 35)
+				if (ff9.m_GetIDTopograph(ff9.m_moveActorID) == 30 || ff9.m_GetIDTopograph(ff9.m_moveActorID) == 34 || ff9.m_GetIDTopograph(ff9.m_moveActorID) == 35) // Beach movement effect
 				{
 					ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.w_moveActorPtr.pos[1], ff9.w_moveActorPtr.pos[2], 7, 2304);
 				}
-				if (ff9.m_GetIDTopograph(ff9.m_moveActorID) == 41)
+				if (ff9.m_GetIDTopograph(ff9.m_moveActorID) == 41) // Desert movement effect
 				{
 					ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.w_moveActorPtr.pos[1], ff9.w_moveActorPtr.pos[2], 27, 8192);
 				}
 			}
-			if (ff9.w_frameCounter % 2 == 0 && ff9.m_GetIDTopograph(ff9.m_moveActorID) >= 36 && ff9.m_GetIDTopograph(ff9.m_moveActorID) <= 38)
+			if (ff9.w_frameCounter % 2 == 0 && ff9.m_GetIDTopograph(ff9.m_moveActorID) >= 36 && ff9.m_GetIDTopograph(ff9.m_moveActorID) <= 38) // Forest movement effect
 			{
 				ff9.w_effectRegist(ff9.w_moveActorPtr.lastx + ff9.S(ff9.random8() - 128), ff9.w_moveActorPtr.lasty, ff9.w_moveActorPtr.lastz + ff9.S(ff9.random8() - 128), 16, 28032);
 				ff9.w_effectRegist(ff9.w_moveActorPtr.lastx + ff9.S(ff9.random8() - 128), ff9.w_moveActorPtr.lasty, ff9.w_moveActorPtr.lastz + ff9.S(ff9.random8() - 128), 16, 28032);
@@ -8028,7 +7895,7 @@ public static class ff9
 		{
 			if (ff9.w_naviTitleColor == 0)
 			{
-				ff9.w_frameScenePtr = (UInt16)(ff9.w_frameScenePtr + 10);
+				ff9.w_frameScenePtr += 10;
 				ff9.ushort_gEventGlobal_Write(0, ff9.w_frameScenePtr);
 			}
 			if (ff9.w_naviTitleColor != 128)
@@ -9373,7 +9240,7 @@ public static class ff9
 		if (num != ff9.w_weatherModeOld)
 		{
 			ff9.w_weatherModeOld = num;
-			ff9.w_weatherDest(num, (!ff9.w_weatherFogCheck()) ? 0 : 1, 128);
+			ff9.w_weatherDest(num, ff9.w_weatherFogCheck() ? 1 : 0, 128);
 		}
 		if (ff9.ushort_gEventGlobal_keventScriptNo() == 0 && ff9.w_frameCounterReady == 10)
 		{
@@ -9487,21 +9354,21 @@ public static class ff9
 		Single num4 = ff9.SquareRoot0(num2 * num2 + num3 * num3);
 		if (num4 < ff9.S(22016) * num)
 		{
-			result = 1;
+			result = 1; // Treno (evening)
 		}
 		num2 = ff9.w_moveActorPtr.RealPosition[0] * num - ff9.S(330496) * num;
 		num3 = ff9.w_moveActorPtr.RealPosition[2] * num - ff9.S(-237568) * num;
 		num4 = ff9.SquareRoot0(num2 * num2 + num3 * num3);
 		if (num4 < ff9.S(15104) * num)
 		{
-			result = 2;
+			result = 2; // Treno (night)
 		}
 		num2 = ff9.w_moveActorPtr.RealPosition[0] * num - ff9.S(128000) * num;
 		num3 = ff9.w_moveActorPtr.RealPosition[2] * num - ff9.S(-202240) * num;
 		num4 = ff9.SquareRoot0(num2 * num2 + num3 * num3);
 		if (num4 < ff9.S(46080) * num)
 		{
-			result = 1;
+			result = 1; // South Forgotten Continent (evening)
 		}
 		Byte b = ff9.w_frameDisc;
 		if (ff9.IsBeeScene)
@@ -9515,7 +9382,7 @@ public static class ff9
 			ff9.w_weatherDistanceEva = ff9.SquareRoot0(num2 * num2 + num3 * num3);
 			if (ff9.w_weatherDistanceEva < ff9.S(26080) * num)
 			{
-				result = 3;
+				result = 3; // Memoria's entrance (purple light)
 			}
 		}
 		if (ff9.IsBeeScene)
@@ -9535,7 +9402,7 @@ public static class ff9
 		{
 			return ff9.tweaker.w_frameFog;
 		}
-		return ff9.w_frameScenePtr < 5990 || ff9.w_frameScenePtr > 11090;
+		return ff9.w_frameScenePtr < 5990 || ff9.w_frameScenePtr > 11090; // Before reached Exterior Continent or after Disc 4
 	}
 
 	public static void w_weatherDest(Int32 weather, Int32 fog, Int32 speed)
@@ -9768,39 +9635,24 @@ public static class ff9
 		ff9.FF9Pc_SeekReadB(ff9.w_fileImagename[0], ff9.w_fileImageSectorInfo[1].start * 2048, (UInt32)(ff9.w_fileImageSectorInfo[1].length * 2048), ff9.w_memorySPSData);
 		ff9.w_worldChangeBlockSet();
 		if (ff9.w_frameScenePtr >= 5990)
-		{
 			ff9.w_naviMapno = 1;
-		}
 		else
-		{
 			ff9.w_naviMapno = 0;
-		}
 		ff9.w_naviTitle = -1;
-		UInt16 num3 = ff9.w_frameScenePtr;
-		if (num3 != 2400)
+		switch (ff9.w_frameScenePtr)
 		{
-			if (num3 != 5990)
-			{
-				if (num3 != 9605)
-				{
-					if (num3 == 9890)
-					{
-						ff9.w_naviTitle = 3;
-					}
-				}
-				else
-				{
-					ff9.w_naviTitle = 2;
-				}
-			}
-			else
-			{
+			case 2400:
+				ff9.w_naviTitle = 0;
+				break;
+			case 5990:
 				ff9.w_naviTitle = 1;
-			}
-		}
-		else
-		{
-			ff9.w_naviTitle = 0;
+				break;
+			case 9605:
+				ff9.w_naviTitle = 2;
+				break;
+			case 9890:
+				ff9.w_naviTitle = 3;
+				break;
 		}
 		ff9.w_worldSeaBlockPtr = ff9.w_framePackGetPtr_sNWBBlockHeader(ff9.w_memorySPSData, 66);
 		ff9.w_frameBattleScenePtr = ff9.w_framePackGetPtr_w_frameBattleScenePtr(ff9.w_memorySPSData, 3);
@@ -9808,21 +9660,19 @@ public static class ff9
 		ff9.w_worldEncountSpecial = ff9.w_framePackGetPtr_w_worldEncountSpecial(ff9.w_memorySPSData, 4);
 		ff9.w_effectDataList = new ff9.s_effectDataList[12];
 		for (Int32 i = 41; i < 53; i++)
-		{
 			ff9.w_effectDataList[i - 41] = ff9.w_framePackGetPtr_s_effectDataList(ff9.w_memorySPSData, i);
-		}
 		ff9.w_EvaCore = ff9.w_framePackGetPtr_Eva(ff9.w_memorySPSData, 37);
 	}
 
 	public static ff9.sNWBBlockHeader w_framePackGetPtr_sNWBBlockHeader(Byte[] data, Int32 no)
 	{
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		ff9.sNWBBlockHeader result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				ff9.sNWBBlockHeader sNWBBlockHeader = binaryReader.ReadNWBBlockHeader();
 				result = sNWBBlockHeader;
 			}
@@ -9836,13 +9686,13 @@ public static class ff9
 		{
 			global::Debug.LogError("no must be kWorldPackEffectAreaBin.");
 		}
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		Byte[] result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				result = null;
 			}
 		}
@@ -9855,13 +9705,13 @@ public static class ff9
 		{
 			global::Debug.LogError("no must be kWorldPackEncountTable.");
 		}
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		EncountData[] result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				EncountData[] array2 = binaryReader.ReadEncountData();
 				result = array2;
 			}
@@ -9875,13 +9725,13 @@ public static class ff9
 		{
 			global::Debug.LogError("no must be kWorldPackColorTable.");
 		}
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		ff9.sw_weatherColor result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				ff9.sw_weatherColor sw_weatherColor = binaryReader.ReadWeatherColor();
 				result = sw_weatherColor;
 			}
@@ -9895,13 +9745,13 @@ public static class ff9
 		{
 			global::Debug.LogError("no must be kWorldPackAnimationTable.");
 		}
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		ff9.stextureProject result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				ff9.stextureProject stextureProject = binaryReader.ReadTextureProjWork();
 				result = stextureProject;
 			}
@@ -9915,13 +9765,13 @@ public static class ff9
 		{
 			global::Debug.LogError("no must be kWorldPackEncountSpecial.");
 		}
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		ff9.sworldEncountSpecial[] result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				ff9.sworldEncountSpecial[] array2 = binaryReader.ReadWorldEncountSpecial();
 				result = array2;
 			}
@@ -9931,13 +9781,13 @@ public static class ff9
 
 	public static ff9.s_effectData w_framePackGetPtr_s_effectData(Byte[] data, Int32 no)
 	{
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		ff9.s_effectData result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				ff9.s_effectData s_effectData = binaryReader.ReadEffectData();
 				result = s_effectData;
 			}
@@ -9947,13 +9797,13 @@ public static class ff9
 
 	public static ff9.s_effectDataList w_framePackGetPtr_s_effectDataList(Byte[] data, Int32 no)
 	{
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		ff9.s_effectDataList result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				ff9.s_effectDataList s_effectDataList = binaryReader.ReadEffectDataList();
 				result = s_effectDataList;
 			}
@@ -9963,13 +9813,13 @@ public static class ff9
 
 	public static Byte[] w_framePackGetPtr_Eva(Byte[] data, Int32 no)
 	{
-		Int32[] array = ff9.w_framePackExtract(data);
+		Int32 pos = ff9.w_framePackExtractPosition(data, no);
 		Byte[] result;
 		using (MemoryStream memoryStream = new MemoryStream(data))
 		{
 			using (BinaryReader binaryReader = new BinaryReader(memoryStream))
 			{
-				memoryStream.Position = array[no + 1];
+				memoryStream.Position = pos;
 				Byte[] array2 = binaryReader.ReadBytes(data.Length);
 				result = array2;
 			}
@@ -10126,75 +9976,69 @@ public static class ff9
 	{
 		Int32 i;
 		for (i = 0; i < 16; i++)
-		{
 			ff9.w_worldFormFlag[i] = 0;
-		}
 		for (i = 10; i > -1; i--)
-		{
 			if (ff9.w_worldFormDataTyming[i] <= ff9.w_frameScenePtr)
-			{
 				break;
-			}
-		}
-		if (i >= 0 && ff9.w_frameDisc == 1)
+		if (i >= 0 && ff9.w_frameDisc == 1) // Allowing disc 4 to change these block forms would create mismatches as it is (holes in the ground and bubbles around Water Shrine mainly)
 		{
 			for (Int32 j = 0; j < 7; j++)
 			{
 				switch (ff9.w_worldFormData[j, i])
 				{
-				case 1:
-					ff9.mw_worldSetFormBit(18, 14);
-					ff9.mw_worldSetFormBit(17, 12);
-					ff9.w_worldFormFlag[0] = 1;
-					break;
-				case 3:
-					ff9.mw_worldSetFormBit(19, 10);
-					ff9.mw_worldSetFormBit(19, 11);
-					ff9.mw_worldSetFormBit(20, 10);
-					ff9.mw_worldSetFormBit(20, 11);
-					ff9.w_worldFormFlag[2] = 1;
-					break;
-				case 4:
-					ff9.mw_worldSetFormBit(7, 1);
-					ff9.mw_worldSetFormBit(8, 1);
-					ff9.mw_worldSetFormBit(14, 15);
-					ff9.w_worldFormFlag[3] = 1;
-					break;
-				case 5:
-					ff9.mw_worldSetFormBit(13, 16);
-					ff9.mw_worldSetFormBit(13, 17);
-					ff9.mw_worldSetFormBit(14, 16);
-					ff9.mw_worldSetFormBit(14, 17);
-					ff9.w_worldFormFlag[4] = 1;
-					break;
-				case 6:
-					ff9.mw_worldSetFormBit(13, 12);
-					ff9.mw_worldSetFormBit(14, 12);
-					ff9.w_worldFormFlag[5] = 1;
-					break;
-				case 9:
-					ff9.mw_worldSetFormBit(14, 6);
-					ff9.mw_worldSetFormBit(21, 10);
-					ff9.mw_worldSetFormBit(22, 14);
-					ff9.w_worldFormFlag[8] = 1;
-					break;
-				case 11:
-					ff9.mw_worldSetFormBit(3, 9);
-					ff9.mw_worldSetFormBit(9, 1);
-					ff9.w_worldFormFlag[10] = 1;
-					break;
+					case 1: // South Gate destroyed form
+						ff9.mw_worldSetFormBit(18, 14);
+						ff9.mw_worldSetFormBit(17, 12);
+						ff9.w_worldFormFlag[0] = 1;
+						break;
+					case 3: // Alexandria destroyed form
+						ff9.mw_worldSetFormBit(19, 10);
+						ff9.mw_worldSetFormBit(19, 11);
+						ff9.mw_worldSetFormBit(20, 10);
+						ff9.mw_worldSetFormBit(20, 11);
+						ff9.w_worldFormFlag[2] = 1;
+						break;
+					case 4: // Fire Shrine opened form
+						ff9.mw_worldSetFormBit(7, 1);
+						ff9.mw_worldSetFormBit(8, 1);
+						ff9.mw_worldSetFormBit(14, 15);
+						ff9.w_worldFormFlag[3] = 1;
+						break;
+					case 5: // Lindblum destroyed form
+						ff9.mw_worldSetFormBit(13, 16);
+						ff9.mw_worldSetFormBit(13, 17);
+						ff9.mw_worldSetFormBit(14, 16);
+						ff9.mw_worldSetFormBit(14, 17);
+						ff9.w_worldFormFlag[4] = 1;
+						break;
+					case 6: // Cleyra destroyed form
+						ff9.mw_worldSetFormBit(13, 12);
+						ff9.mw_worldSetFormBit(14, 12);
+						ff9.w_worldFormFlag[5] = 1;
+						break;
+					case 9: // Black Mage Village entered form (?)
+						ff9.mw_worldSetFormBit(14, 6);
+						ff9.mw_worldSetFormBit(21, 10);
+						ff9.mw_worldSetFormBit(22, 14);
+						ff9.w_worldFormFlag[8] = 1;
+						break;
+					case 11: // Water Shrine opened form
+						ff9.mw_worldSetFormBit(3, 9);
+						ff9.mw_worldSetFormBit(9, 1);
+						ff9.w_worldFormFlag[10] = 1;
+						break;
 				}
 			}
 		}
 		Byte b = ff9.byte_gEventGlobal(101);
-		if ((b & 128) != 0)
+		if ((b & 128) != 0) // Mognet is opened
 		{
 			ff9.mw_worldSetFormBit(16, 1);
 			ff9.mw_worldSetFormBit(13, 4);
 			ff9.mw_worldSetFormBit(14, 5);
 			ff9.w_worldFormFlag[12] = 1;
 		}
-		if ((b & 64) != 0)
+		if ((b & 64) != 0) // Chocobo's Paradise is opened
 		{
 			ff9.mw_worldSetFormBit(0, 0);
 			ff9.mw_worldSetFormBit(16, 14);

@@ -496,6 +496,8 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		if (this.Blocks == null)
 		{
+			// A block is 64x64 in Unity size and 16384x16384 in fixed-point size
+			// The world is 1536x1280 in Unity size and 393216x327680 in fixed-point size (the z coordinate being negative)
 			this.Blocks = WMWorld.BuildBlockArray(this.WorldDisc);
 			for (Int32 i = 0; i < 20; i++)
 			{
@@ -1747,313 +1749,122 @@ public class WMWorld : Singleton<WMWorld>
 	private void DetectUnseenBlocks()
 	{
 		if (FF9StateSystem.Settings.IsFastForward)
-		{
 			this.DetectUnseenBlocksFastForward();
-		}
 		else
-		{
 			this.DetectUnseenBlocksNormal();
-		}
 	}
 
 	private void DetectUnseenBlocksNormal()
 	{
-		Int32 length = this.Blocks.GetLength(0);
-		Int32 length2 = this.Blocks.GetLength(1);
-		WMBlock wmblock;
-		for (Int32 i = 0; i < length; i++)
-		{
-			for (Int32 j = 0; j < length2; j++)
-			{
-				wmblock = this.Blocks[i, j];
-				wmblock.IsInsideSight = false;
-			}
-		}
+		Int32 width = this.Blocks.GetLength(0);
+		Int32 height = this.Blocks.GetLength(1);
+		for (Int32 i = 0; i < width; i++)
+			for (Int32 j = 0; j < height; j++)
+				this.Blocks[i, j].IsInsideSight = false;
 		WMBlock absoluteBlock = this.GetAbsoluteBlock(this.SkyDome_Sky);
 		Int32 currentX = absoluteBlock.CurrentX;
 		Int32 currentY = absoluteBlock.CurrentY;
-		wmblock = this.Blocks[currentX - 2, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 2];
-		wmblock.IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY].IsInsideSight = true;
+		this.Blocks[currentX, currentY].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY + 2].IsInsideSight = true;
 	}
 
 	private void DetectUnseenBlocksFastForward()
 	{
-		Int32 length = this.Blocks.GetLength(0);
-		Int32 length2 = this.Blocks.GetLength(1);
-		WMBlock wmblock;
-		for (Int32 i = 0; i < length; i++)
-		{
-			for (Int32 j = 0; j < length2; j++)
-			{
-				wmblock = this.Blocks[i, j];
-				wmblock.IsInsideSight = false;
-			}
-		}
+		Int32 width = this.Blocks.GetLength(0);
+		Int32 height = this.Blocks.GetLength(1);
+		for (Int32 i = 0; i < width; i++)
+			for (Int32 j = 0; j < height; j++)
+				this.Blocks[i, j].IsInsideSight = false;
 		WMBlock absoluteBlock = this.GetAbsoluteBlock(this.SkyDome_Sky);
 		Int32 currentX = absoluteBlock.CurrentX;
 		Int32 currentY = absoluteBlock.CurrentY;
-		wmblock = this.Blocks[currentX - 3, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY + 3];
-		wmblock.IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY - 3].IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY - 2].IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY - 1].IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY].IsInsideSight = true;
+		this.Blocks[currentX, currentY].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY].IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY + 1].IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY + 2].IsInsideSight = true;
+		this.Blocks[currentX - 3, currentY + 3].IsInsideSight = true;
+		this.Blocks[currentX - 2, currentY + 3].IsInsideSight = true;
+		this.Blocks[currentX - 1, currentY + 3].IsInsideSight = true;
+		this.Blocks[currentX, currentY + 3].IsInsideSight = true;
+		this.Blocks[currentX + 1, currentY + 3].IsInsideSight = true;
+		this.Blocks[currentX + 2, currentY + 3].IsInsideSight = true;
+		this.Blocks[currentX + 3, currentY + 3].IsInsideSight = true;
 	}
 
 	private void DetectUnseenBlocksBy(Int32 radius)
 	{
-		Int32 length = this.Blocks.GetLength(0);
-		Int32 length2 = this.Blocks.GetLength(1);
-		WMBlock wmblock;
-		for (Int32 i = 0; i < length; i++)
-		{
-			for (Int32 j = 0; j < length2; j++)
-			{
-				wmblock = this.Blocks[i, j];
-				wmblock.IsInsideSight = false;
-			}
-		}
+		Int32 width = this.Blocks.GetLength(0);
+		Int32 height = this.Blocks.GetLength(1);
+		for (Int32 i = 0; i < width; i++)
+			for (Int32 j = 0; j < height; j++)
+				this.Blocks[i, j].IsInsideSight = false;
 		WMBlock absoluteBlock = this.GetAbsoluteBlock(this.SkyDome_Sky);
 		Int32 currentX = absoluteBlock.CurrentX;
 		Int32 currentY = absoluteBlock.CurrentY;
-		wmblock = this.Blocks[currentX - 3, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY - 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY - 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY - 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY + 1];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY + 2];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 3, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 2, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX - 1, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 1, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 2, currentY + 3];
-		wmblock.IsInsideSight = true;
-		wmblock = this.Blocks[currentX + 3, currentY + 3];
-		wmblock.IsInsideSight = true;
+		for (Int32 i = -radius; i <= radius; i++)
+			for (Int32 j = -radius; j <= radius; j++)
+				this.Blocks[currentX + i, currentY + j].IsInsideSight = true;
 	}
 
 	public void ResetBlockForms()
@@ -2195,7 +2006,7 @@ public class WMWorld : Singleton<WMWorld>
 
 	public void LoadEffects()
 	{
-		if (ff9.w_frameDisc == 1)
+		if (ff9.w_frameDisc == 1) // TODO: load if needed
 		{
 			this.kWorldPackEffectTwister = this.LoadEffect("kWorldPackEffectTwister");
 			this.kWorldPackEffectSpiral0 = this.LoadEffect("kWorldPackEffectSpiral0");

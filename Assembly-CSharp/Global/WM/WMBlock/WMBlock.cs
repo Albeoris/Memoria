@@ -117,31 +117,19 @@ public class WMBlock : MonoBehaviour
 
 	public void ApplyForm()
 	{
-		Int32 form = this.Form;
-		if (form != 1)
+		if (this.Form == 1)
 		{
-			if (form == 2)
-			{
-				foreach (Transform transform in this.Form1Transforms)
-				{
-					transform.gameObject.SetActive(false);
-				}
-				foreach (Transform transform2 in this.Form2Transforms)
-				{
-					transform2.gameObject.SetActive(true);
-				}
-			}
+			foreach (Transform transform in this.Form2Transforms)
+				transform.gameObject.SetActive(false);
+			foreach (Transform transform in this.Form1Transforms)
+				transform.gameObject.SetActive(true);
 		}
-		else
+		else if (this.Form == 2)
 		{
-			foreach (Transform transform3 in this.Form2Transforms)
-			{
-				transform3.gameObject.SetActive(false);
-			}
-			foreach (Transform transform4 in this.Form1Transforms)
-			{
-				transform4.gameObject.SetActive(true);
-			}
+			foreach (Transform transform in this.Form1Transforms)
+				transform.gameObject.SetActive(false);
+			foreach (Transform transform in this.Form2Transforms)
+				transform.gameObject.SetActive(true);
 		}
 	}
 

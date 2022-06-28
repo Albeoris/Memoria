@@ -814,6 +814,20 @@ public static class UnifiedBattleSequencer
 						case SoundProfileType.Sfx:
 							//SoundLib.PlaySfxSound(tmpInt, tmpSingle, panning, pitch);
 							break;
+						case SoundProfileType.Voice:
+							if (soundAsName.Contains(":"))
+							{
+								Int32 sepPos = soundAsName.IndexOf(':');
+								Int32 messId;
+								Int32 btlId;
+								if (Int32.TryParse(soundAsName.Substring(0, sepPos), out btlId) && Int32.TryParse(soundAsName.Substring(sepPos + 1), out messId))
+									VoicePlayer.PlayBattleVoice(messId, FF9TextTool.BattleText(messId), false, btlId);
+							}
+							else
+							{
+								VoicePlayer.PlayBattleVoice(tmpInt, FF9TextTool.BattleFollowText(tmpInt), true);
+							}
+							break;
 					}
 					break;
 				case "StopSound":
