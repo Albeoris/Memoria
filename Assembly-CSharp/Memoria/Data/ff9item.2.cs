@@ -158,14 +158,7 @@ public class ff9item
 
     public static FF9ITEM FF9Item_GetPtr(Int32 id)
     {
-        FF9ITEM[] ff9ItemArray = FF9StateSystem.Common.FF9.item;
-        for (Int32 index = 0; index < 256; ++index)
-        {
-            FF9ITEM ff9Item = ff9ItemArray[index];
-            if (ff9Item.count != 0 && ff9Item.id == id)
-                return ff9Item;
-        }
-        return null;
+        return ff9itemHelpers.FF9Item_GetPtr(id, FF9StateSystem.Common.FF9.item);
     }
 
     public static Int32 FF9Item_GetCount(Int32 id)

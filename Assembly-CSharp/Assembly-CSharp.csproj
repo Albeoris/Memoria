@@ -12,7 +12,8 @@
     <AssemblyName>Assembly-CSharp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -392,6 +393,7 @@
     <Compile Include="Memoria\Data\Battle\BattleAbilityHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleStatusDataEntry.cs" />
     <Compile Include="Memoria\Data\Charactes\EquipmentSetId.cs" />
+    <Compile Include="Memoria\Data\ff9itemHelpers.cs" />
     <Compile Include="Memoria\Field\TileMap.cs" />
     <Compile Include="Memoria\Field\TileCoordinates.cs" />
     <Compile Include="Memoria\Test\Commands\CommandMessageType.cs" />
