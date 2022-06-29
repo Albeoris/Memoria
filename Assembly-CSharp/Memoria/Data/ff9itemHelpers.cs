@@ -9,7 +9,7 @@ public static class ff9itemHelpers
         for (Int32 index = 0; index < 256; ++index)
         {
             FF9ITEM ff9Item = ff9ItemArray[index];
-            if (ff9Item.count != 0 && ff9Item.id == id)
+            if (ff9Item?.count != 0 && ff9Item?.id == id)
                 return ff9Item;
         }
         return null;
