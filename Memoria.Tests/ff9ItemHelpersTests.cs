@@ -62,12 +62,12 @@ namespace Memoria.Tests
 
         private static FF9ITEM CreateRandomNonZeroCountItem()
         {
-            return new FF9ITEM((Byte)rnd.Next(1, byte.MaxValue), (Byte)rnd.Next(1, 99));
+            return new FF9ITEM((byte)rnd.Next(1, byte.MaxValue), (byte)rnd.Next(1, 99));
         }
 
         private static FF9ITEM CreateRandomZeroCountItem()
         {
-            return new FF9ITEM((Byte)rnd.Next(1, byte.MaxValue), count: 0);
+            return new FF9ITEM((byte)rnd.Next(1, byte.MaxValue), count: 0);
         }
     }
 }
