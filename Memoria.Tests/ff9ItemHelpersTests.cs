@@ -1,3 +1,5 @@
+using FF9;
+using Memoria.Data;
 using Moq;
 
 namespace Memoria.Tests
@@ -68,6 +70,22 @@ namespace Memoria.Tests
         private static FF9ITEM CreateRandomZeroCountItem()
         {
             return new FF9ITEM((byte)rnd.Next(1, byte.MaxValue), count: 0);
+        }
+
+        [Theory]
+        [InlineData(ItemType.Weapon, FF9FEQP_EQUIP.FF9FEQP_EQUIP_WEAPON)]
+        [InlineData(ItemType.Armlet, FF9FEQP_EQUIP.FF9FEQP_EQUIP_WRIST)]
+        [InlineData(ItemType.Helmet, FF9FEQP_EQUIP.FF9FEQP_EQUIP_HEAD)]
+        [InlineData(ItemType.Armor, FF9FEQP_EQUIP.FF9FEQP_EQUIP_BODY)]
+        [InlineData(ItemType.Accessory, FF9FEQP_EQUIP.FF9FEQP_EQUIP_ACCESSORY)]
+        public void GetEquipPart_WhenItemTypeHasEquipPart_ReturnsEquipPart(ItemType itemType, FF9FEQP_EQUIP expected)
+        {
+            FF9ITEM_DATA item = CreateRandomItemData();
+            item.type = (byte)itemType;
+
+            int actual = ff9itemHelpers.FF9Item_GetEquipPart(item);
+
+            Assert.Equal(expected, (FF9FEQP_EQUIP)actual);
         }
     }
 }

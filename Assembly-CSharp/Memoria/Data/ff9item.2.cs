@@ -224,20 +224,7 @@ public class ff9item
     public static Int32 FF9Item_GetEquipPart(Int32 id)
     {
         FF9ITEM_DATA ff9ItemData = _FF9Item_Data[id];
-        Byte[] numArray = new Byte[5]
-        {
-            128,
-            32,
-            64,
-            16,
-            8
-        };
-        for (Int32 index = 0; index < 5; ++index)
-        {
-            if ((ff9ItemData.type & numArray[index]) != 0)
-                return index;
-        }
-        return -1;
+        return ff9itemHelpers.FF9Item_GetEquipPart(ff9ItemData);
     }
 
     public static Int32 FF9Item_GetEquipCount(Int32 id)

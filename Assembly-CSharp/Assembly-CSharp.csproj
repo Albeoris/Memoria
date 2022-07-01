@@ -392,6 +392,7 @@
     <Compile Include="Memoria\Data\Battle\AccessoryItem.cs" />
     <Compile Include="Memoria\Data\Battle\BattleAbilityHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleStatusDataEntry.cs" />
+    <Compile Include="Memoria\Data\ByteExtensions.cs" />
     <Compile Include="Memoria\Data\Charactes\EquipmentSetId.cs" />
     <Compile Include="Memoria\Data\ff9itemHelpers.cs" />
     <Compile Include="Memoria\Field\TileMap.cs" />
