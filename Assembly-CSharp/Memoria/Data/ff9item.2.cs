@@ -229,19 +229,7 @@ public class ff9item
 
     public static Int32 FF9Item_GetEquipCount(Int32 id)
     {
-        Int32 num = 0;
-        for (Int32 index1 = 0; index1 < 9; ++index1)
-        {
-            if (FF9StateSystem.Common.FF9.player[index1].info.party != 0)
-            {
-                for (Int32 index2 = 0; index2 < 5; ++index2)
-                {
-                    if (id == FF9StateSystem.Common.FF9.player[index1].equip[index2])
-                        ++num;
-                }
-            }
-        }
-        return num;
+        return ff9itemHelpers.FF9Item_GetEquipCount(id, FF9StateSystem.Common.FF9.player);
     }
 
     public static void FF9Item_AddImportant(Int32 id)

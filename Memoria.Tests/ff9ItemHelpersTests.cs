@@ -87,5 +87,73 @@ namespace Memoria.Tests
 
             Assert.Equal(expected, (FF9FEQP_EQUIP)actual);
         }
+
+        [Fact]
+        // Creates party, where everyone is not in the party. Therefor item count
+        // can't be made.
+        public void GetEquipCount_WhenPartyIsZero_ReturnsZero()
+        {
+            PLAYER[] party = new PLAYER[]
+            {
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer()
+            };
+
+            const int itemId = 1;
+            int actual = ff9itemHelpers.FF9Item_GetEquipCount(itemId, party);
+            Assert.Equal(0, actual);
+        }
+
+
+        [Fact]
+        // Creates party, where everyone, expect one member is in the party, with
+        // one item equipped as a weapon.
+        public void GetEquipCount_WhenGivenIdExists_ReturnsEquipCount()
+        {
+            const int itemId = 1;
+
+            PLAYER[] party = new PLAYER[]
+            {
+                CreateNewPlayer(party:1, itemId: itemId, equipPart:(byte)FF9FEQP_EQUIP.FF9FEQP_EQUIP_WEAPON),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer(),
+                CreateNewPlayer()
+            };
+
+            int actual = ff9itemHelpers.FF9Item_GetEquipCount(itemId, party);
+            Assert.Equal(1, actual);
+        }
+
+        private static PLAYER CreateNewPlayer(byte party = 0, byte itemId = 0, byte equipPart = byte.MaxValue)
+        {
+            var equipment = new CharacterEquipment();
+            if (equipPart != byte.MaxValue && itemId != 0)
+            {
+                equipment[equipPart] = itemId;
+            }
+
+            return new PLAYER()
+            {
+                info = new PLAYER_INFO(It.IsAny<byte>(),
+                                       It.IsAny<byte>(),
+                                       It.IsAny<byte>(),
+                                       It.IsAny<byte>(),
+                                       party,
+                                       It.IsAny<byte>()),
+                equip = equipment
+            };
+        }
     }
 }

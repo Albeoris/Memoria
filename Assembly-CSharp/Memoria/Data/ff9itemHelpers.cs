@@ -2,6 +2,7 @@
 using Memoria;
 using Memoria.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public static class ff9itemHelpers
@@ -34,5 +35,18 @@ public static class ff9itemHelpers
             return (int)FF9FEQP_EQUIP.FF9FEQP_EQUIP_ACCESSORY;
 
         return -1;
+    }
+
+    /// <summary>
+    /// Determines, how many times item is equipped across the entire party.
+    /// </summary>
+    /// <param name="itemId">Item to search</param>
+    /// <param name="party">Collection of party members</param>
+    /// <returns>Count of item occurrences across party</returns>
+    public static int FF9Item_GetEquipCount(int itemId, PLAYER[] party)
+    {
+        IEnumerable<PLAYER> charsInParty = party.Where(c => c.info.party != 0);
+        int count = charsInParty.Select(c => c.GetEquipmentCount(itemId)).Sum();
+        return count;
     }
 }
