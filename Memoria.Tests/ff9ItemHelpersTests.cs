@@ -6,7 +6,7 @@ namespace Memoria.Tests
 {
     public class ff9ItemHelpersTests
     {
-        private const int maxItemCount = byte.MaxValue + 1;
+        private const int maxItemArraySize = byte.MaxValue + 1;
         private static readonly Random rnd = new();
 
         [Fact]
@@ -14,7 +14,7 @@ namespace Memoria.Tests
         {
             FF9ITEM? item = CreateRandomNonZeroCountItem();
 
-            var inventory = new FF9ITEM[maxItemCount];
+            var inventory = new FF9ITEM[maxItemArraySize];
             inventory[0] = item;
 
             FF9ITEM? actual = ff9itemHelpers.FF9Item_GetPtr(item.id, inventory);
@@ -23,10 +23,24 @@ namespace Memoria.Tests
         }
 
         [Fact]
+        public void GetPtr_WhenInventoryContainsItemAndCountIsZero_ReturnsNull()
+        {
+            FF9ITEM? item = CreateRandomNonZeroCountItem();
+            item.count = 0;
+
+            var inventory = new FF9ITEM[maxItemArraySize];
+            inventory[0] = item;
+
+            FF9ITEM? actual = ff9itemHelpers.FF9Item_GetPtr(item.id, inventory);
+
+            Assert.Null(actual);
+        }
+
+        [Fact]
         public void GetPtr_WhenInventoryNotContainsItem_ReturnsNull()
         {
             FF9ITEM item = CreateRandomNonZeroCountItem();
-            var inventory = new FF9ITEM[maxItemCount];
+            var inventory = new FF9ITEM[maxItemArraySize];
 
             FF9ITEM? actual = ff9itemHelpers.FF9Item_GetPtr(item.id, inventory);
 
@@ -38,7 +52,7 @@ namespace Memoria.Tests
         {
             FF9ITEM? item = CreateRandomZeroCountItem();
 
-            var inventory = new FF9ITEM[maxItemCount];
+            var inventory = new FF9ITEM[maxItemArraySize];
             inventory[0] = item;
 
             FF9ITEM? actual = ff9itemHelpers.FF9Item_GetPtr(item.id, inventory);
@@ -154,6 +168,73 @@ namespace Memoria.Tests
                                        It.IsAny<byte>()),
                 equip = equipment
             };
+        }
+
+        [Fact]
+        public void RemoveItem_WhenGivenIdExists_DecreaseCountItem()
+        {
+            var inventory = new FF9ITEM[maxItemArraySize];
+            FF9ITEM item = CreateRandomNonZeroCountItem();
+            inventory[0] = item;
+
+            int beforeCount = item.count;
+            int removeCount = ff9itemHelpers.FF9Item_Remove(item.id, item.count, inventory);
+
+            Assert.Equal(0, item.count);
+            Assert.Equal(removeCount, beforeCount);
+        }
+
+        [Fact]
+        public void RemoveItem_WhenGivenIdExistsAndCountIsGreaterThanAvailable_SetZeroCount()
+        {
+            var inventory = new FF9ITEM[maxItemArraySize];
+            FF9ITEM item = CreateRandomNonZeroCountItem();
+            inventory[0] = item;
+
+            ff9itemHelpers.FF9Item_Remove(item.id, item.count + 10, inventory);
+
+            Assert.Equal(0, item.count);
+        }
+
+        [Fact]
+        public void RemoveItem_WhenGivenIdNotExists_ReturnZero()
+        {
+            FF9ITEM[] inventory = CreateNonZeroCountInventory();
+            FF9ITEM item = inventory[0];
+
+            int itemCount = item.count;
+            int removeCount = ff9itemHelpers.FF9Item_Remove(-1, 1, inventory);
+
+            Assert.Equal(0, removeCount);
+            Assert.Equal(itemCount, item.count);
+        }
+
+        private static FF9ITEM[] CreateNonZeroCountInventory()
+        {
+            var inventory = new FF9ITEM[maxItemArraySize];
+            for (int i = 0; i < inventory.Length; i++)
+            {
+                inventory[i] = CreateRandomNonZeroCountItem();
+            }
+
+            return inventory;
+        }
+
+        [Fact]
+        public void GetCount_WhenIdExists_ReturnsCount()
+        {
+            FF9ITEM[] inventory = CreateNonZeroCountInventory();
+            FF9ITEM item = inventory[0];
+
+            Assert.Equal(item.count, ff9itemHelpers.FF9Item_GetCount(item.id, inventory));
+        }
+
+        [Fact]
+        public void GetCount_WhenIdNotExists_ReturnsZero()
+        {
+            FF9ITEM[] inventory = CreateNonZeroCountInventory();
+
+            Assert.Equal(0, ff9itemHelpers.FF9Item_GetCount(-1, inventory));
         }
     }
 }

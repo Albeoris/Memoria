@@ -1,4 +1,5 @@
-﻿using FF9;
+﻿using Assets.SiliconSocial;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using System;
@@ -20,19 +21,19 @@ public static class ff9itemHelpers
     public static Int32 FF9Item_GetEquipPart(FF9ITEM_DATA item)
     {
         if (item.type.HasFlag(ItemType.Weapon))
-            return (int)FF9FEQP_EQUIP.FF9FEQP_EQUIP_WEAPON;
+            return (Int32)FF9FEQP_EQUIP.FF9FEQP_EQUIP_WEAPON;
 
         if (item.type.HasFlag(ItemType.Armlet))
-            return (int)FF9FEQP_EQUIP.FF9FEQP_EQUIP_WRIST;
+            return (Int32)FF9FEQP_EQUIP.FF9FEQP_EQUIP_WRIST;
 
         if (item.type.HasFlag(ItemType.Helmet))
-            return (int)FF9FEQP_EQUIP.FF9FEQP_EQUIP_HEAD;
+            return (Int32)FF9FEQP_EQUIP.FF9FEQP_EQUIP_HEAD;
 
         if (item.type.HasFlag(ItemType.Armor))
-            return (int)FF9FEQP_EQUIP.FF9FEQP_EQUIP_BODY;
+            return (Int32)FF9FEQP_EQUIP.FF9FEQP_EQUIP_BODY;
 
         if (item.type.HasFlag(ItemType.Accessory))
-            return (int)FF9FEQP_EQUIP.FF9FEQP_EQUIP_ACCESSORY;
+            return (Int32)FF9FEQP_EQUIP.FF9FEQP_EQUIP_ACCESSORY;
 
         return -1;
     }
@@ -43,10 +44,29 @@ public static class ff9itemHelpers
     /// <param name="itemId">Item to search</param>
     /// <param name="party">Collection of party members</param>
     /// <returns>Count of item occurrences across party</returns>
-    public static int FF9Item_GetEquipCount(int itemId, PLAYER[] party)
+    public static Int32 FF9Item_GetEquipCount(Int32 itemId, PLAYER[] party)
     {
         IEnumerable<PLAYER> charsInParty = party.Where(c => c.info.party != 0);
-        int count = charsInParty.Select(c => c.GetEquipmentCount(itemId)).Sum();
+        Int32 count = charsInParty.Select(c => c.GetEquipmentCount(itemId)).Sum();
         return count;
+    }
+
+    public static Int32 FF9Item_Remove(Int32 id, Int32 count, FF9ITEM[] ff9ItemArray)
+    {
+        FF9ITEM item = ff9ItemArray.FirstOrDefault(x => x.count != 0 && x.id == id);
+        if (item == null)
+            return 0;
+
+        // Prevents removing more items than available.
+        Int32 removeCount = item.count >= count ? count : item.count;
+        item.count -= (Byte)removeCount;
+        return removeCount;
+
+    }
+
+    public static Int32 FF9Item_GetCount(Int32 id, FF9ITEM[] items)
+    {
+        FF9ITEM item = FF9Item_GetPtr(id, items);
+        return item == null ? 0 : item.count;
     }
 }

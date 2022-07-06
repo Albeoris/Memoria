@@ -163,10 +163,7 @@ public class ff9item
 
     public static Int32 FF9Item_GetCount(Int32 id)
     {
-        FF9ITEM ptr = FF9Item_GetPtr(id);
-        if (ptr == null)
-            return 0;
-        return ptr.count;
+        return ff9itemHelpers.FF9Item_GetCount(id, FF9StateSystem.Common.FF9.item);
     }
 
     public static Int32 FF9Item_Add(Int32 id, Int32 count)
@@ -206,19 +203,7 @@ public class ff9item
 
     public static Int32 FF9Item_Remove(Int32 id, Int32 count)
     {
-        FF9ITEM[] ff9ItemArray = FF9StateSystem.Common.FF9.item;
-        for (Int32 index = 0; index < 256; ++index)
-        {
-            FF9ITEM ff9Item = ff9ItemArray[index];
-            if (ff9Item.count != 0 && ff9Item.id == id)
-            {
-                if (ff9Item.count < count)
-                    count = ff9Item.count;
-                ff9Item.count -= (Byte)count;
-                return count;
-            }
-        }
-        return 0;
+        return ff9itemHelpers.FF9Item_Remove(id, count, FF9StateSystem.Common.FF9.item);
     }
 
     public static Int32 FF9Item_GetEquipPart(Int32 id)

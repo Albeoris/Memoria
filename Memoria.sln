@@ -74,7 +74,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{9A4F68D4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.SteamFix", "Memoria.SteamFix\Memoria.SteamFix.csproj", "{8E82C124-FFC6-4B99-B5A9-F65B657E3822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Tests", "Memoria.Tests\Memoria.Tests.csproj", "{BB7FECFD-9DFC-4CA6-840E-55A801E4EFC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Memoria.Tests", "Memoria.Tests\Memoria.Tests.csproj", "{BB7FECFD-9DFC-4CA6-840E-55A801E4EFC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
