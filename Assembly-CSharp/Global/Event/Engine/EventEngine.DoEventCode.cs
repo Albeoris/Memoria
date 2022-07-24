@@ -43,17 +43,23 @@ public partial class EventEngine
         switch (eventCodeBinary)
         {
             case EBin.event_code_binary.NOP:
-                label_832:
+            {
                 return 1;
+            }
             case EBin.event_code_binary.NEW:
+            {
                 NewThread(this.gArgFlag, this.geti());
                 this.gArgUsed = 1;
                 return 0;
+            }
             case EBin.event_code_binary.NEW2:
+            {
                 Quad quad1 = new Quad(this.gArgFlag, this.geti());
                 this.gArgUsed = 1;
                 return 0;
+            }
             case EBin.event_code_binary.NEW3:
+            {
                 Int32 sid1 = this.gArgFlag;
                 Int32 uid1 = this.geti();
                 if (sid1 >= 251 && sid1 < (Int32)Byte.MaxValue)
@@ -74,7 +80,9 @@ public partial class EventEngine
                     this.turnOffTriManually(sid1);
                 this.gArgUsed = 1;
                 return 0;
+            }
             case EBin.event_code_binary.REQ:
+            {
                 Int32 level = this.getv1();
                 Obj p1 = this.GetObj1();
                 Int32 tag1 = this.geti();
@@ -82,7 +90,9 @@ public partial class EventEngine
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 900 && p1 != null && (level == 2 && tag1 == 11) && (Int32)p1.uid == 14)
                     this.fieldmap.walkMesh.BGI_triSetActive(62U, 1U);
                 return 0;
+            }
             case EBin.event_code_binary.REQSW:
+            {
                 Int32 num4 = this.getv1();
                 Obj p2 = this.GetObj1();
                 Int32 tag2 = this.geti();
@@ -109,7 +119,9 @@ public partial class EventEngine
                 }
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.REQEW:
+            {
                 Int32 num5 = this.getv1();
                 Obj p3 = this.GetObj1();
                 Int32 tag3 = this.geti();
@@ -131,10 +143,14 @@ public partial class EventEngine
                 else
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.REPLY:
+            {
                 this.Request(this.getSender(this.gExec), this.getv1(), this.geti(), false);
                 return 0;
+            }
             case EBin.event_code_binary.REPLYSW:
+            {
                 Int32 num6 = this.getv1();
                 Int32 tag4 = this.geti();
                 if (this.requestAcceptable(this.getSender(this.gExec), num6))
@@ -144,7 +160,9 @@ public partial class EventEngine
                 }
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.REPLYEW:
+            {
                 Int32 num7 = this.getv1();
                 Int32 tag5 = this.geti();
                 this.getSender(this.gExec);
@@ -153,14 +171,18 @@ public partial class EventEngine
                 else
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.SONGFLAG:
+            {
                 if (this.getv1() != 0)
                     FF9StateSystem.Common.FF9.btl_flag |= (Byte)8;
                 else
                     FF9StateSystem.Common.FF9.btl_flag &= (Byte)247;
                 return 0;
+            }
             case EBin.event_code_binary.POS:
             case EBin.event_code_binary.DPOS:
+            {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS)
                     po = (PosObj)this.GetObj1();
                 Int32 num8 = this.getv2();
@@ -226,10 +248,14 @@ public partial class EventEngine
                     this.clrdist((Actor)po);
                 this._posUsed = true;
                 return 0;
+            }
             case EBin.event_code_binary.BGVPORT:
+            {
                 this.fieldmap.EBG_cameraSetViewport((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.MES:
+            {
                 this.gCur.winnum = (Byte)this.getv1();
                 Int32 flags1 = this.getv1();
                 this.SetFollow(this.gCur, (Int32)this.gCur.winnum, flags1);
@@ -277,7 +303,9 @@ public partial class EventEngine
                 this.eTb.NewMesWin(index1, (Int32)this.gCur.winnum, flags1, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 this.gCur.wait = (Byte)254;
                 return 1;
+            }
             case EBin.event_code_binary.MESN:
+            {
                 this.gCur.winnum = (Byte)this.getv1();
                 Int32 flags2 = this.getv1();
                 this.SetFollow(this.gCur, (Int32)this.gCur.winnum, flags2);
@@ -320,7 +348,9 @@ public partial class EventEngine
                 PersistenSingleton<CheatingManager>.Instance.CheatJumpingRobe();
                 this.eTb.NewMesWin(index2, (Int32)this.gCur.winnum, flags2, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 return 0;
+            }
             case EBin.event_code_binary.CLOSE:
+            {
                 // For the stage
                 if (IsAlexandriaStageScene())
                 {
@@ -331,7 +361,9 @@ public partial class EventEngine
                 var v1 = this.getv1();
                 this.eTb.DisposWindowByID(v1);
                 return 0;
+            }
             case EBin.event_code_binary.MOVE:
+            {
                 Int32 num11 = this.getv2();
                 Int32 num12 = this.getv2();
                 Boolean flag1 = false;
@@ -514,17 +546,23 @@ public partial class EventEngine
                 else if (flag1)
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.MOVA:
+            {
                 PosObj flagsPosObj = (PosObj)this.GetObj1();
                 if (this.MoveToward_mixed(flagsPosObj.pos[0], flagsPosObj.pos[1], flagsPosObj.pos[2], 0, flagsPosObj))
                     this.stay();
                 this.gArgUsed = 1;
                 return 1;
+            }
             case EBin.event_code_binary.CLRDIST:
+            {
                 actor1.loopCount = Byte.MaxValue;
                 this.clrdist(actor1);
                 return 0;
+            }
             case EBin.event_code_binary.MSPEED:
+            {
                 Byte num14 = (Byte)this.getv1();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 3010)
                 {
@@ -553,13 +591,19 @@ public partial class EventEngine
                 }
                 actor1.speed = num14;
                 return 0;
+            }
             case EBin.event_code_binary.BGIMASK:
+            {
                 this.BGI_systemSetAttributeMask((Byte)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.FMV:
+            {
                 Singleton<fldfmv>.Instance.FF9FieldFMVDispatch(this.getv1(), this.getv2(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.QUAD:
+            {
                 Int32 index3 = 0;
                 ((Quad)this.gCur).n = this.getv1();
                 Int32 num15 = ((Quad)this.gCur).n;
@@ -576,7 +620,9 @@ public partial class EventEngine
                 //if ((Int32)this.gCur.sid != 4)
                 //    ;
                 return 0;
+            }
             case EBin.event_code_binary.ENCOUNT:
+            {
                 this.getv1(); // rush_type
                 this._ff9.btlSubMapNo = -1;
                 Int32 num16 = this.getv2();
@@ -584,10 +630,14 @@ public partial class EventEngine
                 this.SetBattleScene(num16 & (Int32)Int16.MaxValue);
                 FF9StateSystem.Battle.isRandomEncounter = false;
                 return 3;
+            }
             case EBin.event_code_binary.MAPJUMP:
+            {
                 this.SetNextMap(this.getv2());
                 return 4;
+            }
             case EBin.event_code_binary.CC:
+            {
                 Actor activeActorByUid = this.getActiveActorByUID((Int32)this._context.controlUID);
                 if (activeActorByUid != null && this.gMode == 1)
                 {
@@ -607,7 +657,9 @@ public partial class EventEngine
                 }
                 this._context.controlUID = this.gExec.uid;
                 return 0;
+            }
             case EBin.event_code_binary.UCOFF:
+            {
                 this._context.usercontrol = (Byte)0;
                 EIcon.SetHereIcon(0);
                 this.eTb.gMesCount = this.gAnimCount = 0;
@@ -623,7 +675,9 @@ public partial class EventEngine
                 if (!EMinigame.CheckChocoboVirtual())
                     PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (System.Action)null);
                 return 0;
+            }
             case EBin.event_code_binary.UCON:
+            {
                 this._context.usercontrol = (Byte)1;
                 EIcon.SetHereIcon(1);
                 PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (System.Action)null);
@@ -641,7 +695,9 @@ public partial class EventEngine
                     UIManager.Input.ResetTriggerEvent();
                 }
                 return 0;
+            }
             case EBin.event_code_binary.MODEL:
+            {
                 po.model = (UInt16)this.getv2();
                 this.gExec.flags |= (Byte)1;
                 po.eye = (Int16)(-4 * this.getv1());
@@ -693,7 +749,9 @@ public partial class EventEngine
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(po.go, ((Actor)po).wmActor);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.AIDLE:
+            {
                 actor1.idle = (UInt16)this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.idle));
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2365 && (Int32)actor1.uid == 14 && (Int32)actor1.idle == 11611)
@@ -720,16 +778,22 @@ public partial class EventEngine
                         this._geoTexAnim.geoTexAnimPlay(2);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.AWALK:
+            {
                 actor1.walk = (UInt16)this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.walk));
                 return 0;
+            }
             case EBin.event_code_binary.ARUN:
+            {
                 actor1.run = (UInt16)this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.run));
                 return 0;
+            }
             case EBin.event_code_binary.DIRE:
             case EBin.event_code_binary.DDIR:
+            {
                 if (eventCodeBinary == EBin.event_code_binary.DDIR)
                     po = (PosObj)this.GetObj1();
                 Int32 num17 = this.getv1();
@@ -750,7 +814,9 @@ public partial class EventEngine
                     ((Actor)po).wmActor.rot = rot;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.ROTXZ:
+            {
                 Int32 num18 = (Int32)(Int16)(this.getv1() << 4);
                 Int32 num19 = (Int32)(Int16)(this.getv1() << 4);
                 Single num20 = EventEngineUtils.ClampAngle(EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num18));
@@ -758,48 +824,68 @@ public partial class EventEngine
                 po.rotAngle[0] = num20;
                 po.rotAngle[2] = num21;
                 return 0;
+            }
             case EBin.event_code_binary.BTLCMD:
+            {
                 switch (this.gExec.level)
                 {
                     case 0:
+                    {
                         btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, (UInt32)this.getv1());
                         break;
+                    }
                     case 1:
+                    {
                         btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, (UInt32)this.getv1());
                         break;
+                    }
                     case 3:
+                    {
                         this.gExec.btlchk = (Byte)0;
                         btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, (UInt32)this.getv1());
                         break;
+                    }
                 }
                 return 0;
+            }
             case EBin.event_code_binary.MESHSHOW:
+            {
                 PosObj posObj1 = (PosObj)this.GetObj1();
                 Int32 mesh1 = this.getv1();
                 if (posObj1 != null)
                     posObj1.geoMeshShow(mesh1);
                 return 0;
+            }
             case EBin.event_code_binary.MESHHIDE:
+            {
                 PosObj posObj2 = (PosObj)this.GetObj1();
                 Int32 mesh2 = this.getv1();
                 if (posObj2 != null)
                     posObj2.geoMeshHide(mesh2);
                 return 0;
+            }
             case EBin.event_code_binary.OBJINDEX:
+            {
                 this.gExec.index = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.ENCSCENE:
+            {
                 this._enCountData.pattern = (Byte)this.getv1();
                 this._enCountData.scene[0] = (UInt16)this.getv2();
                 this._enCountData.scene[1] = (UInt16)this.getv2();
                 this._enCountData.scene[2] = (UInt16)this.getv2();
                 this._enCountData.scene[3] = (UInt16)this.getv2();
                 return 0;
+            }
             case EBin.event_code_binary.AFRAME:
+            {
                 actor1.inFrame = (Byte)this.getv1();
                 actor1.outFrame = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.ASPEED:
+            {
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo >= 3009 && (Int32)FF9StateSystem.Common.FF9.fldMapNo <= 3011)
                 {
                     this.getv1();
@@ -807,12 +893,16 @@ public partial class EventEngine
                 }
                 actor1.aspeed0 = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.AMODE:
+            {
                 Int32 num22 = this.getv1() << 3 & (EventEngine.afHold | EventEngine.afLoop | EventEngine.afPalindrome);
                 actor1.animFlag = (Byte)num22;
                 actor1.loopCount = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.ANIM:
+            {
                 Int32 anim = this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue(anim));
                 if (this.gMode == 1)
@@ -864,15 +954,21 @@ public partial class EventEngine
                 else if (this.gMode == 3)
                     this.ExecAnim(actor1, anim);
                 return 0;
+            }
             case EBin.event_code_binary.WAITANIM:
+            {
                 if (((Int32)actor1.animFlag & EventEngine.afExec) == 0)
                     return 0;
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.ENDANIM:
+            {
                 this.AnimStop(actor1);
                 return 0;
+            }
             case EBin.event_code_binary.STARTSEQ:
+            {
                 Int32 uid2 = (Int32)this.gExec.uid + EventEngine.cSeqOfs;
                 Obj objByUid1 = this.FindObjByUID(uid2);
                 if (objByUid1 != null)
@@ -898,23 +994,33 @@ public partial class EventEngine
                     }
                 }
                 return 0;
+            }
             case EBin.event_code_binary.WAITSEQ:
+            {
                 if (this.FindObjByUID((Int32)this.gExec.uid + EventEngine.cSeqOfs) == null)
                     return 0;
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.ENDSEQ:
+            {
                 Obj objByUid2 = this.FindObjByUID((Int32)this.gExec.uid + EventEngine.cSeqOfs);
                 if (objByUid2 != null)
                     this.DisposeObj(objByUid2);
                 return 0;
+            }
             case EBin.event_code_binary.DEBUGCC:
+            {
                 return 0;
+            }
             case EBin.event_code_binary.NECKFLAG:
+            {
                 actor1.actf &= (UInt16)~(EventEngine.actNeckT | EventEngine.actNeckM | EventEngine.actNeckTalk);
                 actor1.actf |= (UInt16)(this.getv1() & (EventEngine.actNeckT | EventEngine.actNeckM | EventEngine.actNeckTalk));
                 return 0;
+            }
             case EBin.event_code_binary.ITEMADD:
+            {
                 Int32 id1 = this.getv2();
                 Int32 count1 = this.getv1();
                 if (id1 < EventEngine.kSItemOfs)
@@ -938,7 +1044,9 @@ public partial class EventEngine
                 else if (id1 == 283)
                     EMinigame.AtleteQueenAchievement();
                 return 0;
+            }
             case EBin.event_code_binary.ITEMDELETE:
+            {
                 Int32 id2 = this.getv2();
                 Int32 count2 = this.getv1();
                 if (id2 < EventEngine.kSItemOfs)
@@ -948,14 +1056,18 @@ public partial class EventEngine
                 if (id2 == 324)
                     EMinigame.MognetCentralAchievement();
                 return 0;
+            }
             case EBin.event_code_binary.BTLSET:
+            {
                 Int32 num23 = this.getv1();
                 Int32 val = this.getv2();
                 //if (num23 == 33)
                 //    Debug.Log((object)"BTLSET 33");
                 btl_scrp.SetBattleData((UInt32)num23, val);
                 return 0;
+            }
             case EBin.event_code_binary.RADIUS:
+            {
                 Int32 num24 = this.getv1();
                 Int32 num25 = (Int32)(Byte)this.getv1();
                 Int32 num26 = (Int32)(Byte)this.getv1();
@@ -1003,7 +1115,9 @@ public partial class EventEngine
                 //else if (this.gMode != 3)
                 //    ;
                 return 0;
+            }
             case EBin.event_code_binary.ATTACH:
+            {
                 Obj sourceObj = this.GetObj1();
                 Obj targetObj = this.GetObj1();
                 GameObject sourceObject1 = sourceObj.go;
@@ -1021,7 +1135,9 @@ public partial class EventEngine
                         geo.geoAttachInWorld(sourceObj, targetObj, bone_index);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.DETACH:
+            {
                 Obj obj1 = this.GetObj1();
                 if (obj1 != null)
                 {
@@ -1034,7 +1150,9 @@ public partial class EventEngine
                         geo.geoDetachInWorld(obj1);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.WATCH:
+            {
                 Int32 num27 = this.gExec.ip - 1;
                 this.gExec.ip = num27;
                 Int32 num28 = (Int32)this.gExec.getByteIP();
@@ -1048,19 +1166,25 @@ public partial class EventEngine
                 this.gExec.ip = num27 + 1;
                 this.gArgUsed = 1;
                 return 0;
+            }
             case EBin.event_code_binary.STOP:
+            {
                 num1 = (Int32)this.gExec.getByteIP(-1) | (Int32)this.gExec.getByteIP() << 8;
                 ++this.gExec.ip;
                 this.gArgUsed = 1;
                 return 6;
+            }
             case EBin.event_code_binary.WAITTURN:
             case EBin.event_code_binary.DWAITTURN:
+            {
                 if (eventCodeBinary == EBin.event_code_binary.DWAITTURN)
                     actor1 = (Actor)this.GetObj1();
                 if (((Int32)actor1.flags & 128) != 0)
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.TURNA:
+            {
                 Obj obj2 = this.GetObj1();
                 Int32 tspeed1 = this.getv1();
                 if (obj2 != null)
@@ -1072,14 +1196,20 @@ public partial class EventEngine
                     this.StartTurn(actor1, a, true, tspeed1);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.ASLEEP:
+            {
                 actor1.sleep = (UInt16)this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.sleep));
                 return 0;
+            }
             case EBin.event_code_binary.NOINITMES:
+            {
                 this.eTb.InhInitMes();
                 return 0;
+            }
             case EBin.event_code_binary.WAITMES:
+            {
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
                 {
                     this.getv1();
@@ -1088,14 +1218,18 @@ public partial class EventEngine
                 this.gCur.winnum = (Byte)this.getv1();
                 this.gCur.wait = (Byte)254;
                 return 1;
+            }
             case EBin.event_code_binary.MROT:
+            {
                 Int32 num29 = this.getv1();
                 if (num29 == 0)
                     num29 = (Int32)Byte.MaxValue;
                 actor1.omega = (Byte)num29;
                 return 0;
+            }
             case EBin.event_code_binary.TURN:
             case EBin.event_code_binary.DTURN:
+            {
                 if (eventCodeBinary == EBin.event_code_binary.DTURN)
                     actor1 = (Actor)this.GetObj1();
                 Int32 num30 = this.getv1() << 4;
@@ -1106,49 +1240,73 @@ public partial class EventEngine
                 }
                 this.StartTurn(actor1, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num30), true, tspeed2);
                 return 0;
+            }
             case EBin.event_code_binary.ENCRATE:
+            {
                 this._context.encratio = (Byte)this.getv1();
                 if ((Int32)this._context.encratio == 0)
                     this._encountBase = 0;
                 return 0;
+            }
             case EBin.event_code_binary.BGSMOVE:
+            {
                 this.getv2();
                 this.getv2();
                 this.getv2();
                 //Debug.Log((object)("DoEventCode BGSMOVE : a = " + (object)this.getv2() + ", b = " + (object)this.getv2() + ", temp = " + (object)this.getv2()));
                 return 0;
+            }
             case EBin.event_code_binary.BGLCOLOR:
+            {
                 this.fieldmap.EBG_overlaySetShadeColor((UInt32)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGLMOVE:
+            {
                 this.fieldmap.EBG_overlayMove(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.BGLACTIVE:
+            {
                 this.fieldmap.EBG_overlaySetActive(this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGLLOOP:
+            {
                 this.fieldmap.EBG_overlaySetLoop((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.BGLPARALLAX:
+            {
                 this.fieldmap.EBG_overlaySetParallax((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.BGLORIGIN:
+            {
                 this.fieldmap.EBG_overlaySetOrigin(this.getv1(), this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.BGAANIME:
+            {
                 this.fieldmap.EBG_animAnimate(this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGAACTIVE:
+            {
                 this.fieldmap.EBG_animSetActive(this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGARATE:
+            {
                 Int32 animNdx = this.getv1();
                 Int32 frameRate = this.getv2();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 66 && FF9StateSystem.Settings.IsFastForward && (animNdx == 3 || animNdx == 2) && frameRate == 128)
                     frameRate = 320;
                 this.fieldmap.EBG_animSetFrameRate(animNdx, frameRate);
                 return 0;
+            }
             case EBin.event_code_binary.SETROW:
+            {
                 num1 = this.chr2slot(this.getv1());
                 num2 = this.getv1();
                 if (num1 >= 0 && num1 < 9)
@@ -1156,24 +1314,36 @@ public partial class EventEngine
                     FF9StateSystem.Common.FF9.player[num1].info.row = (byte)num2;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.BGAWAIT:
+            {
                 this.fieldmap.EBG_animSetFrameWait(this.getv1(), this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGAFLAG:
+            {
                 this.fieldmap.EBG_animSetFlags(this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGARANGE:
+            {
                 this.fieldmap.EBG_animSetPlayRange(this.getv1(), this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.MESVALUE:
+            {
                 this.eTb.SetMesValue(this.getv1(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.TWIST:
+            {
                 this._context.twist_a = (Int16)this.getv1();
                 this._context.twist_d = (Int16)this.getv1();
                 FF9StateSystem.Field.SetTwistAD((Int32)this._context.twist_a, (Int32)this._context.twist_d);
                 return 0;
+            }
             case EBin.event_code_binary.FICON:
+            {
                 Int32 type = this.getv1();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2955)
                 {
@@ -1185,34 +1355,54 @@ public partial class EventEngine
                 else
                     EIcon.PollFIcon(type);
                 return 0;
+            }
             case EBin.event_code_binary.TIMERSET:
+            {
                 TimerUI.SetTime(this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.DASHOFF:
+            {
                 this._context.dashinh = (Byte)1;
                 return 0;
+            }
             case EBin.event_code_binary.CLEARCOLOR:
+            {
                 this.fieldmap.GetMainCamera().backgroundColor = new Color((Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue);
                 return 0;
+            }
             case EBin.event_code_binary.BGSSCROLL:
+            {
                 this.fieldmap.EBG_scene2DScroll((Int16)this.getv2(), (Int16)this.getv2(), (UInt16)this.getv1(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGSRELEASE:
+            {
                 this.fieldmap.EBG_scene2DScrollRelease(this.getv1(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGCACTIVE:
+            {
                 this.fieldmap.EBG_char3DScrollSetActive((UInt32)this.getv1(), this.getv1(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGCHEIGHT:
+            {
                 this.fieldmap.charAimHeight = (Int16)this.getv2();
                 return 0;
+            }
             case EBin.event_code_binary.BGCLOCK:
+            {
                 this.fieldmap.EBG_charLookAtLock();
                 return 0;
+            }
             case EBin.event_code_binary.BGCUNLOCK:
+            {
                 this.fieldmap.EBG_charLookAtUnlock();
                 return 0;
+            }
             case EBin.event_code_binary.MENU:
+            {
                 UInt32 menuId = Convert.ToUInt32(this.getv1());
                 UInt32 subId = Convert.ToUInt32(this.getv1());
                 if (Configuration.Hacks.DisableNameChoice && menuId == 1)
@@ -1220,7 +1410,9 @@ public partial class EventEngine
                 EventService.StartMenu(menuId, subId);
                 PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
                 return 1;
+            }
             case EBin.event_code_binary.TRACKSTART:
+            {
                 Quad quad2 = (Quad)this.gCur;
                 quad2.n = 2;
                 QuadPos quadPos1 = quad2.q[0];
@@ -1234,14 +1426,18 @@ public partial class EventEngine
                 Int32 num34 = (Int32)num33;
                 quadPos2.Z = (Int16)num34;
                 return 0;
+            }
             case EBin.event_code_binary.TRACK:
+            {
                 Quad quad3 = (Quad)this.gCur;
                 Int32 val1 = quad3.n;
                 QuadPos quadPos3 = quad3.q[Math.Max(val1, 1) - 1];
                 quadPos3.X = (Int16)this.getv2();
                 quadPos3.Z = (Int16)this.getv2();
                 return 0;
+            }
             case EBin.event_code_binary.TRACKADD:
+            {
                 Quad quad4 = (Quad)this.gCur;
                 if (quad4.n > 0 && quad4.n < 8)
                 {
@@ -1249,24 +1445,36 @@ public partial class EventEngine
                     ++quad4.n;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.PRINTQUAD:
+            {
                 return 0;
+            }
             case EBin.event_code_binary.ATURNL:
+            {
                 actor1.turnl = (UInt16)this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.turnl));
                 return 0;
+            }
             case EBin.event_code_binary.ATURNR:
+            {
                 actor1.turnr = (UInt16)this.getv2();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.turnr));
                 return 0;
+            }
             case EBin.event_code_binary.CHOOSEPARAM:
+            {
                 this.eTb.SetChooseParam(this.getv2(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.TIMERCONTROL:
+            {
                 this._ff9.timerControl = this.getv1() != 0;
                 TimerUI.SetPlay(this._ff9.timerControl);
                 return 0;
+            }
             case EBin.event_code_binary.SETCAM:
+            {
                 Int32 newCamIdx = this.getv1();
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3)
@@ -1277,20 +1485,26 @@ public partial class EventEngine
                     //Debug.Log((object)("SET resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal));
                 }
                 return 0;
+            }
             case EBin.event_code_binary.IDLESPEED:
+            {
                 actor1.idleSpeed[0] = (Byte)this.getv1();
                 actor1.idleSpeed[1] = (Byte)this.getv1();
                 actor1.idleSpeed[2] = (Byte)this.getv1();
                 actor1.idleSpeed[3] = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.CHRFX:
+            {
                 Int32 Parm = this.getv1();
                 Int32 num35 = this.getv2();
                 Int32 num36 = this.getv2();
                 Int32 num37 = this.getv2();
                 fldchar.FF9FieldCharDispatch((Int32)po.uid, Parm, num35, num36, num37);
                 return 0;
+            }
             case EBin.event_code_binary.SEPV:
+            {
                 Int32 PosPtr1;
                 Int32 VolPtr1;
                 FF9Snd.FF9FieldSoundGetPositionVolume(this.getv2(), this.getv2(), this.getv2(), out PosPtr1, out VolPtr1);
@@ -1300,7 +1514,9 @@ public partial class EventEngine
                 if (this.sSEVol > (Int32)SByte.MaxValue)
                     this.sSEVol = (Int32)SByte.MaxValue;
                 return 0;
+            }
             case EBin.event_code_binary.SEPVA:
+            {
                 PosObj posObj4 = (PosObj)this.GetObj1();
                 Int32 PosPtr2;
                 Int32 VolPtr2;
@@ -1311,12 +1527,16 @@ public partial class EventEngine
                 if (this.sSEVol > (Int32)SByte.MaxValue)
                     this.sSEVol = (Int32)SByte.MaxValue;
                 return 0;
+            }
             case EBin.event_code_binary.NECKID:
+            {
                 actor1.neckMyID = (Byte)this.getv1();
                 actor1.neckTargetID = (Byte)this.getv1();
                 actor1.actf |= (UInt16)(EventEngine.actNeckT | EventEngine.actNeckM);
                 return 0;
+            }
             case EBin.event_code_binary.ENCOUNT2:
+            {
                 this.getv1(); // rush_type
                 this._ff9.btlSubMapNo = (SByte)this.getv1();
                 Int32 num40 = this.getv2();
@@ -1324,30 +1544,44 @@ public partial class EventEngine
                 this.SetBattleScene(num40 & (Int32)Int16.MaxValue);
                 FF9StateSystem.Battle.isRandomEncounter = false;
                 return 3;
+            }
             case EBin.event_code_binary.TIMERDISPLAY:
+            {
                 this._ff9.timerDisplay = this.getv1() != 0;
                 TimerUI.SetEnable(this._ff9.timerDisplay);
                 TimerUI.SetDisplay(this._ff9.timerDisplay);
                 return 0;
+            }
             case EBin.event_code_binary.RAISE:
+            {
                 this.eTb.RaiseAllWindow();
                 return 0;
+            }
             case EBin.event_code_binary.CHRCOLOR:
+            {
                 if (fldmcf.FF9FieldMCFSetCharColor((Int32)this.GetObj1().uid, this.getv1(), this.getv1(), this.getv1()) == 0)
                     return 0;
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.SLEEPINH:
+            {
                 this._context.idletimer = -1;
                 return 0;
+            }
             case EBin.event_code_binary.AUTOTURN:
+            {
                 Int32 num41 = this.getv1();
                 actor1.turninst0 = num41 == 0 ? (Int16)4 : (Int16)167;
                 return 0;
+            }
             case EBin.event_code_binary.BGLATTACH:
+            {
                 this.fieldmap.EBG_charAttachOverlay((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv1(), (SByte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.CFLAG:
+            {
                 Int32 cflag = (Int32)(Byte)this.getv1();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2934 && MBG.Instance.GetFrame < 10)
                 {
@@ -1358,13 +1592,17 @@ public partial class EventEngine
                     this.gCur.flags = (Byte)((this.gCur.flags & -64) | (cflag & 63));
                 }
                 return 0;
+            }
             case EBin.event_code_binary.AJUMP:
+            {
                 actor1.jump = (UInt16)this.getv2();
                 actor1.jump0 = (Byte)this.getv1();
                 actor1.jump1 = (Byte)this.getv1();
                 AnimationFactory.AddAnimWithAnimatioName(actor1.go, FF9DBAll.AnimationDB.GetValue((Int32)actor1.jump));
                 return 0;
+            }
             case EBin.event_code_binary.MESA:
+            {
                 PosObj targetPo1 = (PosObj)this.GetObj1();
                 this.gCur.winnum = (Byte)this.getv1();
                 Int32 flags3 = this.getv1();
@@ -1372,14 +1610,18 @@ public partial class EventEngine
                 this.eTb.NewMesWin(this.getv2(), (Int32)this.gCur.winnum, flags3, targetPo1);
                 this.gCur.wait = (Byte)254;
                 return 1;
+            }
             case EBin.event_code_binary.MESAN:
+            {
                 PosObj targetPo2 = (PosObj)this.GetObj1();
                 this.gCur.winnum = (Byte)this.getv1();
                 Int32 flags4 = this.getv1();
                 this.SetFollow((Obj)targetPo2, (Int32)this.gCur.winnum, flags4);
                 this.eTb.NewMesWin(this.getv2(), (Int32)this.gCur.winnum, flags4, targetPo2);
                 return 0;
+            }
             case EBin.event_code_binary.DRET:
+            {
                 Obj obj3 = this.GetObj1();
                 if (obj3 != null)
                 {
@@ -1388,15 +1630,21 @@ public partial class EventEngine
                     this.Return(obj3);
                 }
                 return obj3 == this.gExec ? 1 : 0;
+            }
             case EBin.event_code_binary.MOVT:
+            {
                 actor1.loopCount = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.TSPEED:
+            {
                 actor1.tspeed = (Byte)this.getv1();
                 if ((Int32)actor1.tspeed == 0)
                     actor1.tspeed = (Byte)16;
                 return 0;
+            }
             case EBin.event_code_binary.BGIACTIVET:
+            {
                 Int32 num42 = this.getv2();
                 Int32 num43 = this.getv1();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 1753 && num42 == 207)
@@ -1405,7 +1653,9 @@ public partial class EventEngine
                     num43 = 1;
                 this.fieldmap.walkMesh.BGI_triSetActive((UInt32)num42, (UInt32)num43);
                 return 0;
+            }
             case EBin.event_code_binary.TURNTO:
+            {
                 Int32 num44 = this.getv2();
                 Int32 num45 = this.getv2();
                 if (!EventEngineUtils.nearlyEqual((Single)num44, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual((Single)num45, gameObject.transform.localPosition.z))
@@ -1415,20 +1665,26 @@ public partial class EventEngine
                     this.StartTurn(actor1, a, true, (Int32)actor1.tspeed);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.PREJUMP:
+            {
                 actor1.animFlag = (Byte)EventEngine.afHold;
                 actor1.inFrame = (Byte)0;
                 actor1.outFrame = (Byte)((UInt32)actor1.jump0 - 1U);
                 this.ExecAnim(actor1, (Int32)actor1.jump);
                 return 0;
+            }
             case EBin.event_code_binary.POSTJUMP:
+            {
                 ff9shadow.FF9ShadowOnField((Int32)actor1.uid);
                 actor1.animFlag = (Byte)0;
                 actor1.inFrame = (Byte)((UInt32)actor1.jump1 + 1U);
                 actor1.outFrame = Byte.MaxValue;
                 this.ExecAnim(actor1, (Int32)actor1.jump);
                 return 0;
+            }
             case EBin.event_code_binary.MOVQ:
+            {
                 PosObj posObj5 = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
                 if (posObj5 != null)
                 {
@@ -1438,7 +1694,9 @@ public partial class EventEngine
                         objList.obj.flags |= (Byte)6;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.CHRSCALE:
+            {
                 PosObj posObj6 = (PosObj)this.GetObj1();
                 Int32 num46 = this.getv1();
                 Int32 num47 = this.getv1();
@@ -1456,12 +1714,16 @@ public partial class EventEngine
                     this._geoTexAnim.geoTexAnimPlay(1);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.MOVJ:
+            {
                 if (this.MoveToward_mixed((Single)this.sMapJumpX, 0.0f, (Single)this.sMapJumpZ, 0, (PosObj)null))
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.POS3:
             case EBin.event_code_binary.DPOS3:
+            {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS3)
                     po = (PosObj)this.GetObj1();
                 Int32 num50 = this.getv2();
@@ -1524,17 +1786,23 @@ public partial class EventEngine
                 if ((Int32)po.cid == 4)
                     this.clrdist((Actor)po);
                 return 0;
+            }
             case EBin.event_code_binary.MOVE3:
+            {
                 if (this.MoveToward_mixed((Single)this.getv2(), -this.getv2(), (Single)this.getv2(), 2, (PosObj)null))
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.DRADIUS:
+            {
                 this.getv1();
                 this.getv1();
                 this.getv1();
                 this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.MJPOS:
+            {
                 PosObj posObj7 = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
                 if (posObj7 != null)
                 {
@@ -1562,7 +1830,9 @@ public partial class EventEngine
                 else
                     this.sMapJumpX = this.sMapJumpZ = 0;
                 return 0;
+            }
             case EBin.event_code_binary.MOVH:
+            {
                 Int32 num55 = this.getv2();
                 Int32 num56 = this.getv2();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 66 && (Int32)po.sid == 14 && (num55 == -145 && num56 == -9135))
@@ -1575,14 +1845,20 @@ public partial class EventEngine
                 if (flag3)
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.SPEEDTH:
+            {
                 actor1.speedth = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.TURNDS:
+            {
                 Int32 num57 = this.getv1() << 4;
                 this.StartTurn(actor1, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)num57), true, (Int32)actor1.tspeed);
                 return 0;
+            }
             case EBin.event_code_binary.BGI:
+            {
                 Int32 num58 = this.getv1();
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2508 && (Int32)po.sid == 2 && num58 == 1)
                     num58 = 0;
@@ -1592,7 +1868,9 @@ public partial class EventEngine
                     component.walkMesh.BGI_charSetActive(component, (UInt32)num58);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.GETSCREEN:
+            {
                 Obj obj4 = this.GetObj1();
                 if (obj4 != null && (UnityEngine.Object)obj4.go != (UnityEngine.Object)null)
                 {
@@ -1603,7 +1881,9 @@ public partial class EventEngine
                     this.sSysY = (Int32)y;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.MENUON:
+            {
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
                 {
                     return 0;
@@ -1611,7 +1891,9 @@ public partial class EventEngine
                 EventInput.PSXCntlClearPadMask(0, 262144U);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
                 return 0;
+            }
             case EBin.event_code_binary.MENUOFF:
+            {
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
                 {
                     return 0;
@@ -1619,27 +1901,39 @@ public partial class EventEngine
                 EventInput.PSXCntlSetPadMask(0, 262144U);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;
+            }
             case EBin.event_code_binary.DISCCHANGE:
+            {
                 Int32 num59 = this.getv2();
                 this.FF9FieldDiscRequest((Byte)(num59 >> 14 & 3), (UInt16)(num59 & 16383));
                 return 1;
+            }
             case EBin.event_code_binary.MINIGAME:
+            {
                 Int32 minigameFlag = this.getv2();
                 EventService.SetMiniGame((UInt16)minigameFlag);
                 EMinigame.SetQuadmistStadiumOpponentId(this.gCur, minigameFlag);
                 EMinigame.SetThiefId(this.gCur);
                 EMinigame.SetFatChocoboId(this.gCur);
                 return 7;
+            }
             case EBin.event_code_binary.DELETEALLCARD:
+            {
                 QuadMistDatabase.MiniGame_AwayAllCard();
                 return 0;
+            }
             case EBin.event_code_binary.SETMAPNAME:
+            {
                 FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.FieldText(this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.RESETMAPNAME:
+            {
                 FF9StateSystem.Common.FF9.mapNameStr = this._defaultMapName;
                 return 0;
+            }
             case EBin.event_code_binary.PARTYMENU:
+            {
                 FF9PARTY_INFO sPartyInfo = new FF9PARTY_INFO();
                 sPartyInfo.party_ct = this.getv1();
                 Int32 num60 = 0;
@@ -1675,10 +1969,14 @@ public partial class EventEngine
                     sPartyInfo.select[num62++] = PartySettingUI.FF9PARTY_NONE;
                 EventService.OpenPartyMenu(sPartyInfo);
                 return 1;
+            }
             case EBin.event_code_binary.SPS:
+            {
                 this.fieldSps.FF9FieldSPSSetObjParm(this.getv1(), this.getv1(), this.getv2(), this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.FULLMEMBER:
+            {
                 Int32 num64 = this.getv2();
                 Int32 num65 = num64 | num64 >> 4 & 224;
                 for (Int32 slot_id = 0; slot_id < 9; ++slot_id)
@@ -1690,7 +1988,9 @@ public partial class EventEngine
                     num65 >>= 1;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.PRETEND:
+            {
                 Obj obj5 = this.GetObj1();
                 if (obj5 != null)
                 {
@@ -1706,10 +2006,14 @@ public partial class EventEngine
                     }
                 }
                 return 0;
+            }
             case EBin.event_code_binary.WMAPJUMP:
+            {
                 this.SetNextMap(this.getv2());
                 return 5;
+            }
             case EBin.event_code_binary.EYE:
+            {
                 if (this.gMode == 3)
                 {
                     Vector3 eyePtr = ff9.w_cameraGetEyePtr();
@@ -1717,7 +2021,9 @@ public partial class EventEngine
                     actor1.actf = (UInt16)((UInt32)actor1.actf | (UInt32)EventEngine.actEye);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.AIM:
+            {
                 if (this.gMode == 3)
                 {
                     Vector3 aimPtr = ff9.w_cameraGetAimPtr();
@@ -1725,12 +2031,17 @@ public partial class EventEngine
                     actor1.actf = (UInt16)((UInt32)actor1.actf | (UInt32)EventEngine.actAim);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.SETKEYMASK:
+            {
                 EventInput.PSXCntlSetPadMask(this.getv1(), Convert.ToUInt32(this.getv2()));
                 return 0;
+            }
             case EBin.event_code_binary.CLEARKEYMASK:
+            {
                 EventInput.PSXCntlClearPadMask(this.getv1(), Convert.ToUInt32(this.getv2()));
                 return 0;
+            }
             case EBin.event_code_binary.DANIM:
                 {
                     Actor actObj = (Actor)this.GetObj1();
@@ -1740,11 +2051,14 @@ public partial class EventEngine
                     return 0;
                 }
             case EBin.event_code_binary.DWAITANIM:
+            {
                 if (((Int32)((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0)
                     return 0;
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.TEXPLAY:
+            {
                 PosObj posObj8 = (PosObj)this.GetObj1();
                 this._geoTexAnim = posObj8.go.GetComponent<GeoTexAnim>();
                 Int32 anum1 = this.getv1();
@@ -1753,30 +2067,42 @@ public partial class EventEngine
                 if ((UnityEngine.Object)posObj8.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
                     this._geoTexAnim.geoTexAnimPlay(anum1);
                 return 0;
+            }
             case EBin.event_code_binary.TEXPLAY1:
+            {
                 PosObj posObj9 = (PosObj)this.GetObj1();
                 this._geoTexAnim = posObj9.go.GetComponent<GeoTexAnim>();
                 Int32 anum2 = this.getv1();
                 if ((UnityEngine.Object)posObj9.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
                     this._geoTexAnim.geoTexAnimPlayOnce(anum2);
                 return 0;
+            }
             case EBin.event_code_binary.TEXSTOP:
+            {
                 PosObj posObj10 = (PosObj)this.GetObj1();
                 this._geoTexAnim = posObj10.go.GetComponent<GeoTexAnim>();
                 Int32 anum3 = this.getv1();
                 if ((UnityEngine.Object)posObj10.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
                     this._geoTexAnim.geoTexAnimStop(anum3);
                 return 0;
+            }
             case EBin.event_code_binary.BGVSET:
+            {
                 this.fieldmap.EBG_overlaySetViewport((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.WPRM:
+            {
                 ff9.w_frameSetParameter(this.getv1(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.FLDSND0:
+            {
                 FF9Snd.FF9SoundArg0(this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.FLDSND1:
+            {
                 Int32 _parmtype1 = this.getv2();
                 Int32 _objno1 = this.getv2();
                 Int32 num66 = this.getv3();
@@ -1787,10 +2113,14 @@ public partial class EventEngine
                     FF9Snd.FF9SoundArg1(_parmtype1, 2983, num66);
                 }
                 return 0;
+            }
             case EBin.event_code_binary.FLDSND2:
+            {
                 FF9Snd.FF9SoundArg2(this.getv2(), this.getv2(), this.getv3(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.FLDSND3:
+            {
                 Int32 _parmtype2 = this.getv2();
                 Int32 _objno2 = this.getv2();
                 Int32 num67 = this.getv3();
@@ -1818,47 +2148,71 @@ public partial class EventEngine
                     }
                 }
                 return 0;
+            }
             case EBin.event_code_binary.BGVDEFINE:
+            {
                 this.fieldmap.EBG_overlayDefineViewport((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.BGAVISIBLE:
+            {
                 this.fieldmap.EBG_animSetVisible(this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGIACTIVEF:
+            {
                 this.fieldmap.walkMesh.BGI_floorSetActive((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.CHRSET:
+            {
                 Int32 attr1 = this.getv2();
                 FF9Char.ff9char_attr_set((Int32)po.uid, attr1);
                 return 0;
+            }
             case EBin.event_code_binary.CHRCLEAR:
+            {
                 Int32 attr2 = this.getv2();
                 FF9Char.ff9char_attr_clear((Int32)po.uid, attr2);
                 return 0;
+            }
             case EBin.event_code_binary.GILADD:
+            {
                 if ((this._ff9.party.gil += (UInt32)this.getv3()) > 9999999U)
                     this._ff9.party.gil = 9999999U;
                 return 0;
+            }
             case EBin.event_code_binary.GILDELETE:
+            {
                 Int32 gilDecrease = this.getv3();
                 if ((this._ff9.party.gil -= (UInt32)gilDecrease) > 9999999U)
                     this._ff9.party.gil = 0U;
                 if (this.isPosObj(this.gCur))
                     EMinigame.StiltzkinAchievement((PosObj)this.gCur, gilDecrease);
                 return 0;
+            }
             case EBin.event_code_binary.MESB:
+            {
                 Int32 battleTextId = this.getv2();
                 string text = FF9TextTool.BattleText(battleTextId);
                 UIManager.Battle.SetBattleMessage(text, (Byte)4);
                 VoicePlayer.PlayBattleVoice(battleTextId, text);
                 return 0;
+            }
             case EBin.event_code_binary.GLOBALCLEAR:
+            {
                 return 0;
+            }
             case EBin.event_code_binary.DEBUGSAVE:
+            {
                 return 0;
+            }
             case EBin.event_code_binary.DEBUGLOAD:
+            {
                 return 0;
+            }
             case EBin.event_code_binary.ATTACHOFFSET:
+            {
                 GameObject sourceObject2 = this.gCur.go;
                 Int32 x1 = this.getv2();
                 Int32 y1 = this.getv2();
@@ -1866,7 +2220,9 @@ public partial class EventEngine
                 if ((UnityEngine.Object)sourceObject2 != (UnityEngine.Object)null)
                     geo.geoAttachOffset(sourceObject2, x1, y1, z);
                 return 0;
+            }
             case EBin.event_code_binary.PUSHHIDE:
+            {
                 for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
                 {
                     Obj obj6 = objList.obj;
@@ -1878,7 +2234,9 @@ public partial class EventEngine
                     }
                 }
                 return 0;
+            }
             case EBin.event_code_binary.POPSHOW:
+            {
                 for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
                 {
                     Obj obj6 = objList.obj;
@@ -1889,22 +2247,32 @@ public partial class EventEngine
                     }
                 }
                 return 0;
+            }
             case EBin.event_code_binary.AICON:
+            {
                 EIcon.SetAIcon(this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.CLEARSTATUS:
+            {
                 Int32 num70 = (Int32)SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.player[this.chr2slot(this.getv1())], (Byte)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.SPS2:
+            {
                 this.fieldSps.FF9FieldSPSSetObjParm(this.getv1(), this.getv1(), this.getv1(), this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.WINPOSE:
+            {
                 Int32 index5 = this.chr2slot(this.getv1());
                 Int32 num71 = this.getv1();
                 if (index5 >= 0 && index5 < 9)
                     this._ff9.player[index5].info.win_pose = (Byte)num71;
                 return 0;
+            }
             case EBin.event_code_binary.JUMP3:
+            {
                 Int32 num72 = (Int32)actor1.jframe;
                 ++actor1.jframe;
                 Int32 num73 = (Int32)actor1.jframeN;
@@ -1916,7 +2284,9 @@ public partial class EventEngine
                     return 0;
                 this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.PARTYDELETE:
+            {
                 Int32 num74 = this.chr2slot(this.getv1());
                 Int32 party_id = 0;
                 while (party_id < 4 && (this._ff9.party.member[party_id] == null || (Int32)this._ff9.party.member[party_id].info.slot_no != num74))
@@ -1927,24 +2297,34 @@ public partial class EventEngine
                     this.SetupPartyUID();
                 }
                 return 0;
+            }
             case EBin.event_code_binary.PLAYERNAME:
+            {
                 Int32 index6 = this.chr2slot(this.getv1());
                 Int32 textId = this.getv2();
                 if (index6 >= 0 && index6 < 9)
                     this._ff9.player[index6].name = FF9TextTool.RemoveOpCode(FF9TextTool.FieldText(textId));
                 return 0;
+            }
             case EBin.event_code_binary.OVAL:
+            {
                 po.ovalRatio = (Byte)this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.INCFROG:
+            {
                 _ff9.Frogs.Increment();
                 EMinigame.CatchingGoldenFrogAchievement(this.gCur);
                 return 0;
+            }
             case EBin.event_code_binary.BEND:
+            {
                 this._noEvents = true;
                 PersistenSingleton<UIManager>.Instance.BattleResultScene.ShutdownBattleResultUI();
                 return 0;
+            }
             case EBin.event_code_binary.SETVY3:
+            {
                 actor1.jumpx = (Int16)this.getv2();
                 actor1.jumpy = (short)-this.getv2();
                 actor1.jumpz = (Int16)this.getv2();
@@ -1969,59 +2349,94 @@ public partial class EventEngine
                 actor1.jframe = (Byte)0;
                 actor1.jframeN = (Byte)num75;
                 return 0;
+            }
             case EBin.event_code_binary.SETSIGNAL:
+            {
                 ETb.gMesSignal = this.getv1();
                 return 0;
+            }
             case EBin.event_code_binary.BGLSCROLLOFFSET:
+            {
                 this.fieldmap.EBG_overlaySetScrollWithOffset((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BTLSEQ:
+            {
                 btlseq.StartBtlSeq(this.GetSysList(1), this.GetSysList(0), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGLLOOPTYPE:
+            {
                 this.fieldmap.EBG_overlaySetLoopType((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.BGAFRAME:
+            {
                 this.fieldmap.EBG_animShowFrame(this.getv1(), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.MOVE3H:
+            {
                 if (this.MoveToward_mixed((Single)this.getv2(), -this.getv2(), (Single)this.getv2(), 3, (PosObj)null))
                     this.stay();
                 return 1;
+            }
             case EBin.event_code_binary.SYNCPARTY:
+            {
                 this.SetupPartyUID();
                 return 0;
+            }
             case EBin.event_code_binary.VRP:
+            {
                 Int16 x2 = 0;
                 Int16 y2 = 0;
                 this.fieldmap.EBG_sceneGetVRP(ref x2, ref y2);
                 this.sSysX = (Int32)x2;
                 this.sSysY = (Int32)y2;
                 return 0;
+            }
             case EBin.event_code_binary.CLOSEALL:
+            {
                 this.eTb.YWindow_CloseAll();
                 return 0;
+            }
             case EBin.event_code_binary.WIPERGB:
+            {
                 Int32 num77 = this.getv1();
                 Int32 frame = this.getv1();
                 this.getv1();
                 Int32 num78 = this.getv1();
                 Int32 num79 = this.getv1();
                 Int32 num80 = this.getv1();
-                SceneDirector.InitFade((num77 >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, (Color32)new Color((Single)num78 / (Single)Byte.MaxValue, (Single)num79 / (Single)Byte.MaxValue, (Single)num80 / (Single)Byte.MaxValue));
+                SceneDirector.InitFade(
+                    (num77 >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add,
+                    frame,
+                    (Color32)new Color(
+                        (Single)num78 / (Single)Byte.MaxValue,
+                        (Single)num79 / (Single)Byte.MaxValue,
+                        (Single)num80 / (Single)Byte.MaxValue));
                 return 0;
+            }
             case EBin.event_code_binary.BGVALPHA:
+            {
                 this.fieldmap.EBG_overlayDefineViewportAlpha((UInt32)this.getv1(), this.getv2(), this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.SLEEPON:
+            {
                 this._context.idletimer = (Int16)0;
                 return 0;
+            }
             case EBin.event_code_binary.HEREON:
+            {
                 EIcon.SetHereIcon(this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.DASHON:
+            {
                 this._context.dashinh = (Byte)0;
                 return 0;
+            }
             case EBin.event_code_binary.SETHP:
             {
                 Int32 characterIndex = this.chr2slot(this.getv1());
@@ -2067,35 +2482,56 @@ public partial class EventEngine
                 return 0;
             }
             case EBin.event_code_binary.CLEARAP:
+            {
                 ff9abil.FF9Abil_ClearAp(this.chr2slot(this.getv1()), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.MAXAP:
+            {
                 ff9abil.FF9Abil_SetMaster(this.chr2slot(this.getv1()), this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.GAMEOVER:
+            {
                 return 8;
+            }
             case EBin.event_code_binary.VIBSTART:
+            {
                 vib.VIB_vibrate((Int16)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.VIBACTIVE:
+            {
                 vib.VIB_setActive(this.getv1() != 0);
                 return 0;
+            }
             case EBin.event_code_binary.VIBTRACK1:
+            {
                 vib.VIB_setTrackActive(this.getv1(), this.getv1(), this.getv1() != 0);
                 return 0;
+            }
             case EBin.event_code_binary.VIBTRACK:
+            {
                 vib.VIB_setTrackToModulate((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv1() != 0);
                 return 0;
+            }
             case EBin.event_code_binary.VIBRATE:
+            {
                 vib.VIB_setFrameRate((Int16)this.getv2());
                 return 0;
+            }
             case EBin.event_code_binary.VIBFLAG:
+            {
                 vib.VIB_setFlags((Int16)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.VIBRANGE:
+            {
                 vib.VIB_setPlayRange((Int16)this.getv1(), (Int16)this.getv1());
                 return 0;
+            }
             case EBin.event_code_binary.HINT:
+            {
                 num1 = this.getv1(); // The only values of num1 are 0x5, 0x11 and 0x91 in non-modded scripts
                 num2 = this.getv2();
                 if (num1 == 0x30)
@@ -2124,7 +2560,9 @@ public partial class EventEngine
                     this.sExternalFieldMode = true;
                 }
                 return 0;
+            }
             case EBin.event_code_binary.JOIN:
+            {
                 Int32 slot_no = this.chr2slot(this.getv1());
                 Int32 num83 = this.getv1();
                 EquipmentSetId eqp_id = new EquipmentSetId(this.getv1());
@@ -2146,92 +2584,143 @@ public partial class EventEngine
                     this.getv1();
                 }
                 return 0;
+            }
             case EBin.event_code_binary.EXT:
+            {
                 eventCodeBinary = (EBin.event_code_binary)(0x100 | this.gArgFlag);
                 this.gArgFlag = this.geti();
                 switch (eventCodeBinary)
                 {
                     case EBin.event_code_binary.BSSTART:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BSFRAME:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BSACTIVE:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetActive((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
+                    }
                     case EBin.event_code_binary.BSFLAG:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetFlags((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
+                    }
                     case EBin.event_code_binary.BSFLOOR:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetFloor((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
+                    }
                     case EBin.event_code_binary.BSRATE:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetFrameRate((UInt32)this.getv1(), (Int16)this.getv2());
                         return 0;
+                    }
                     case EBin.event_code_binary.BSALGO:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetAlgorithm((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
+                    }
                     case EBin.event_code_binary.BSDELTA:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetDelta((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2());
                         return 0;
+                    }
                     case EBin.event_code_binary.BSAXIS:
+                    {
                         this.fieldmap.walkMesh.BGI_simSetAxis((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
+                    }
                     case EBin.event_code_binary.BAANIME:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BAFRAME:
+                    {
                         this.fieldmap.walkMesh.BGI_animShowFrame((UInt32)this.getv1(), (UInt32)this.getv1());
                         return 0;
+                    }
                     case EBin.event_code_binary.BAACTIVE:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BAFLAG:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BARATE:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv2();
                         return 0;
+                    }
                     case EBin.event_code_binary.BAWAITALL:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BAWAIT:
+                    {
                         num1 = this.getv1();
                         num2 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BARANGE:
+                    {
                         num1 = this.getv1();
                         num2 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     case EBin.event_code_binary.BAVISIBLE:
+                    {
                         num1 = this.getv1();
                         num3 = this.getv1();
                         return 0;
+                    }
                     default:
+                    {
                         return 0;
+                    }
                 }
+            }
             default:
+            {
                 switch (this.gMode)
                 {
                     case 1:
+                    {
                         return this.DoEventCodeField(po, code);
+                    }
                     case 2:
+                    {
                         return this.DoEventCodeBattle(po, code);
+                    }
                     case 3:
+                    {
                         return this.DoEventCodeWorld(po, code);
+                    }
                     default:
-                        goto label_832;
+                    {
+                        return 1;
+                    }
                 }
+            }
         }
     }
 
