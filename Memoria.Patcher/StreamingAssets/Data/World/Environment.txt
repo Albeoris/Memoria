@@ -1,0 +1,118 @@
+#####################################################################################################
+## 
+##  In this file, you can tweak many World Map parameters that are managed by the engine
+##  
+##  The parameters that can be changed are the followings:
+##  
+##  Disc4 -> Decide whether the "disc 4" settings or the "disc 1" settings are used
+##    By default, the "disc 1" settings are used for all the world maps before returning from Terra
+##    These settings change a lot of things, mainly the 3D model of the world map (eg. presence of roots)
+##    and all the datas linked to it (walkmeshes, topography, script IDs for triggering Main_XXXXX functions)
+##  
+##  Mist -> Decide whether the mist should be present
+##  
+##  Place -> Decide whether the alternate form of world map places should be used
+##    For many of them, the "disc 4" settings force the usage of those alternate forms
+##    The places that have an alternate form are:
+##      SouthGate_Gate, Cleyra, Lindblum, BlackMageVillage, Alexandria, WaterShrine, FireShrine,
+##      ChocoboParadise, MognetCentral
+##  
+##  Effect -> Decide whether a world map effect should be used
+##    The possibile effects are:
+##      AlexandriaWaterfall, Windmill, SandStorm, SandPit, WaterShrine, FireShrine, WindShrine, Memoria
+##  
+##  Rain -> Define raining effects and locations
+##  
+##  Light -> Define ambiant light changes and locations, using one of the 4 different settings of WeatherColors.csv
+##  
+##  It is important for the keywords above to be written at the beginning of a new line in order to take effect
+##  The parameter change instruction must be one-lined
+##  
+#####################################################################################################
+##  
+##  In case a parameter is not changed, the default usage prevails,
+##  but as soon as a parameter is defined here, its default usage is completly ignored
+##  
+##  For example, adding a rain effect will remove the default rain effect around Burmecia unless it is also added here
+##  
+##  Parameter changes are cumulative across mods:
+##  if two different mods each add a rain effect, both will be used
+##  or if two different mods define a mist condition, the mist will appear if any condition is satisfied
+##  If you want to change this behaviour, use the "Clean" keyword after a parameter type
+##  When doing so, all the parameters changes of mods with inferior priority will be ignored
+##  Examples:
+##    Mist Clean
+##    Place Clean
+##    Place Alexandria Clean
+##    Rain Clean
+##  
+#####################################################################################################
+##  
+##  The default parameter behaviours are the followings:
+##  
+##  Use the "disc 4" settings when the scenario counter reaches 11100 (the cutscene after returning from Terra)
+##    Disc4 [Condition=ScenarioCounter >= 11090]
+##  
+##  Enable mist before reaching the Outer Continent or after returning from Terra
+##    Mist [Condition=ScenarioCounter < 5990 || ScenarioCounter > 11090]
+##  
+##  Have the South Gate destroyed between the explosive cinematic and the return from the Outer Continent
+##    Place SouthGate_Gate [Condition=WorldDisc == 1 && ScenarioCounter >= 2990 && ScenarioCounter < 6990]
+##  Have Cleyra destroyed after the Odin cinematic
+##    Place Cleyra [Condition=WorldDisc == 1 && ScenarioCounter >= 4990]
+##  Have Lindblum destroyed after the Atomos cinematic
+##    Place Lindblum [Condition=WorldDisc == 1 && ScenarioCounter >= 5598]
+##  Have the Black Mage Village found form (?) after entering it for the first time
+##    Place BlackMageVillage [Condition=WorldDisc == 1 && ScenarioCounter >= 6200]
+##  Have Alexandria destroyed after the Alexander cinematic
+##    Place Alexandria [Condition=WorldDisc == 1 && ScenarioCounter >= 8800]
+##  Have the different shrines opened for a short time after the Ipsen Castle events
+##    Place WaterShrine [Condition=WorldDisc == 1 && ScenarioCounter >= 10600 && ScenarioCounter < 10700]
+##    Place FireShrine [Condition=WorldDisc == 1 && ScenarioCounter >= 10600 && ScenarioCounter < 10700]
+##  Have the Chocobo Paradise entrance opened after using a Dead Pepper on it
+##    Place ChocoboParadise [Condition=(GetEventGlobalByte(101) & 0x40) != 0]
+##  Have the Mognet Central entrance opened after using a Dead Pepper on it
+##    Place MognetCentral [Condition=(GetEventGlobalByte(101) & 0x80) != 0]
+##  
+##  Use the Alexandria's Waterfall effect permanently (splashing at the bottom)
+##    Effect AlexandriaWaterfall [Condition=true]
+##  Use Dali's Windmill effect when there is mist (rotating windmill sails)
+##    Effect Windmill [Condition=ScenarioCounter < 6990 || ScenarioCounter >= 11090]
+##  Use Cleyra's Sandstorm before its destruction (sandstorm effect)
+##    Effect SandStorm [Condition=WorldDisc == 1 && ScenarioCounter < 4990]
+##  Use Desert Palace's fake entrance effects between its availability and Kuja's departure from there (sand splashing)
+##    Effect SandPit [Condition=ScenarioCounter >= 9450 && ScenarioCounter <= 9890]
+##  Use the Water Shrine effect while it is opened (splashing at its base)
+##    Effect WaterShrine [Condition=WorldDisc == 1 && ScenarioCounter >= 10600 && ScenarioCounter < 10700]
+##  Use the Fire Shrine effect permanently (lava movements)
+##    Effect FireShrine [Condition=true]
+##  Never use the Wind Shrine effect (no effect)
+##    Effect WindShrine [Condition=false]
+##  Use Memoria's effect in "disc 4" settings (purple orb above the Iifa Tree)
+##    Effect Memoria [Condition=WorldDisc == 4]
+##  
+##  Have Burmecia's surroundings be rainy in "World Map: No Transport" and "World Map: Invincible" (mist presence, more or less)
+##    Rain Add [Condition=GetEventGlobalByte(102) == 0 || GetEventGlobalByte(102) == 8] [Position=(247888, 808, -185944)] [RadiusLarge=9184] [RadiusSmall=992] [RainStrength=64] [RainSpeed=64]
+##  
+##  Have Treno's surroundings use evening and then night ambiant colors
+##    Light Add [Position=(329728, -240896)] [Radius=22016] [Light=1]
+##    Light Add [Position=(330496, -237568)] [Radius=15104] [Light=2]
+##  Have the south part of the Forgotten Continent use evening ambiant colors
+##    Light Add [Position=(128000, -202240)] [Radius=46080] [Light=1]
+##  Have Memoria's surroundings use purple ambiant colors
+##    Light Add [Condition=WorldDisc == 4] [Position=(196158, -81825)] [Radius=26080] [Light=3]
+##  
+#####################################################################################################
+##  
+##  For raining effect, the "RadiusLarge" is the radius at which it starts raining
+##  and "RadiusSmall" is the radius at which the rain reaches its full strength
+##  The rain strength cannot exceed 130
+##  
+##  This file can remain with no instruction line:
+##  create your own "Environment.txt" with custom instructions and place it in your mod folder,
+##  eg. "MyMod/StreamingAssets/Data/World/Environment.txt"
+##  
+#####################################################################################################
+
+
+

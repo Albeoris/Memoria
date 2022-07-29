@@ -759,6 +759,17 @@ public static class AssetManager
 							break;
 						}
 			}
+			else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
+			{
+				// eg.: WorldMusicList 69 22 112 45 95 96 61 62
+				if (ff9.w_musicSet == null)
+					continue;
+				Int32 arraySize = entry.Length - 1;
+				if (arraySize > ff9.w_musicSet.Length)
+					ff9.w_musicSet = new Byte[arraySize];
+				for (Int32 i = 0; i < arraySize; i++)
+					Byte.TryParse(entry[1 + i], out ff9.w_musicSet[i]);
+			}
 			else if (String.Compare(entry[0], "BattleMapModel") == 0)
 			{
 				// eg.: BattleMapModel BSC_CUSTOM_FIELD BBG_B065

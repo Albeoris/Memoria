@@ -20,6 +20,7 @@ namespace Memoria.Prime.CSV
         }
 
         private const NumberStyles NumberStyle = NumberStyles.Integer | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+        private const NumberStyles FloatStyle = NumberStyles.Float | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
 
         public static Byte ByteOrMinusOne(String raw)
         {
@@ -32,6 +33,11 @@ namespace Memoria.Prime.CSV
         public static Byte Byte(String raw)
         {
             return System.Byte.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
+        }
+
+        public static SByte SByte(String raw)
+        {
+            return System.SByte.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
         }
 
         public static Int16 Int16(String raw)
@@ -57,6 +63,11 @@ namespace Memoria.Prime.CSV
         public static UInt64 UInt64(String raw)
         {
             return System.UInt64.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
+        }
+
+        public static Single Single(String raw)
+        {
+            return System.Single.Parse(raw, FloatStyle, CultureInfo.InvariantCulture);
         }
 
         public static T EnumValue<T>(String raw) where T : struct

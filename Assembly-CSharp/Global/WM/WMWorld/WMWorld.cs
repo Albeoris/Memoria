@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
+using Memoria;
 using Object = System.Object;
 
 public class WMWorld : Singleton<WMWorld>
 {
+	// A block is 64x64 in Unity size and 16384x16384 in fixed-point size
+	// The world is 1536x1280 in Unity size and 393216x327680 in fixed-point size (the 2nd coordinate being negative)
 	public WMBlock[,] Blocks { get; private set; }
 
 	public WMBlock[,] InitialBlocks { get; private set; }
@@ -120,14 +123,7 @@ public class WMWorld : Singleton<WMWorld>
 		else
 		{
 			ff9.w_frameScenePtr = ff9.ushort_gEventGlobal(0);
-			if (ff9.w_frameScenePtr >= 11090)
-			{
-				ff9.w_frameDisc = 4;
-			}
-			else
-			{
-				ff9.w_frameDisc = 1;
-			}
+			ff9.w_frameDisc = WorldConfiguration.GetDisc();
 		}
 		this.currentDisc = (Int32)ff9.w_frameDisc;
 		if (!this.WorldDisc)
@@ -277,7 +273,6 @@ public class WMWorld : Singleton<WMWorld>
 			return;
 		}
 		Int32 num = posX;
-		Int32 num2 = posY;
 		Int32 num3 = posZ;
 		Int32 num4 = num % 16384;
 		Int32 num5 = num3 % 16384;
@@ -318,17 +313,17 @@ public class WMWorld : Singleton<WMWorld>
 		{
 			return (WMBlock)null;
 		}
-		Int32 num = (Int32)(position.x / 64f);
-		Int32 num2 = (Int32)(Mathf.Abs(position.z) / 64f);
-		if (num >= 24)
+		Int32 x = (Int32)(position.x / 64f);
+		Int32 z = (Int32)(Mathf.Abs(position.z) / 64f);
+		if (x >= 24)
 		{
 			return (WMBlock)null;
 		}
-		if (num2 >= 20)
+		if (z >= 20)
 		{
 			return (WMBlock)null;
 		}
-		WMBlock wmblock = this.Blocks[num, num2];
+		WMBlock wmblock = this.Blocks[x, z];
 		return this.Blocks[wmblock.CurrentX, wmblock.CurrentY];
 	}
 
@@ -339,9 +334,8 @@ public class WMWorld : Singleton<WMWorld>
 			return;
 		}
 		Vector3 vector = new Vector3(position.x % 64f, 0f, position.z % 64f);
-		Int32 num = (Int32)(position.x / 64f);
-		Int32 num2 = (Int32)(Mathf.Abs(position.z) / 64f);
-		WMBlock wmblock = (WMBlock)null;
+		Int32 x = (Int32)(position.x / 64f);
+		Int32 z = (Int32)(Mathf.Abs(position.z) / 64f);
 		WMBlock[,] blocks = this.Blocks;
 		Int32 length = blocks.GetLength(0);
 		Int32 length2 = blocks.GetLength(1);
@@ -349,19 +343,14 @@ public class WMWorld : Singleton<WMWorld>
 		{
 			for (Int32 j = 0; j < length2; j++)
 			{
-				WMBlock wmblock2 = blocks[i, j];
-				if (num == wmblock2.InitialX && num2 == wmblock2.InitialY)
+				WMBlock wmblock = blocks[i, j];
+				if (x == wmblock.InitialX && z == wmblock.InitialY)
 				{
-					wmblock = wmblock2;
-					goto IL_D0;
+					Vector3 position2 = new Vector3((Single)(wmblock.CurrentX * 64) + vector.x, position.y, (Single)(-(Single)wmblock.CurrentY * 64) + vector.z);
+					target.position = position2;
+					return;
 				}
 			}
-		}
-		IL_D0:
-		if (wmblock != (UnityEngine.Object)null)
-		{
-			Vector3 position2 = new Vector3((Single)(wmblock.CurrentX * 64) + vector.x, position.y, (Single)(-(Single)wmblock.CurrentY * 64) + vector.z);
-			target.position = position2;
 		}
 	}
 
@@ -373,9 +362,8 @@ public class WMWorld : Singleton<WMWorld>
 			return;
 		}
 		Vector3 vector = new Vector3(position.x % 64f, 0f, position.z % 64f);
-		Int32 num = (Int32)(position.x / 64f);
-		Int32 num2 = (Int32)(Mathf.Abs(position.z) / 64f);
-		WMBlock wmblock = (WMBlock)null;
+		Int32 x = (Int32)(position.x / 64f);
+		Int32 z = (Int32)(Mathf.Abs(position.z) / 64f);
 		WMBlock[,] blocks = this.Blocks;
 		Int32 length = blocks.GetLength(0);
 		Int32 length2 = blocks.GetLength(1);
@@ -383,19 +371,13 @@ public class WMWorld : Singleton<WMWorld>
 		{
 			for (Int32 j = 0; j < length2; j++)
 			{
-				WMBlock wmblock2 = blocks[i, j];
-				if (num == wmblock2.InitialX && num2 == wmblock2.InitialY)
+				WMBlock wmblock = blocks[i, j];
+				if (x == wmblock.InitialX && z == wmblock.InitialY)
 				{
-					wmblock = wmblock2;
-					goto IL_DB;
+					outPosition = new Vector3((Single)(wmblock.CurrentX * 64) + vector.x, position.y, (Single)(-(Single)wmblock.CurrentY * 64) + vector.z);
+					return;
 				}
 			}
-		}
-		IL_DB:
-		if (wmblock != (UnityEngine.Object)null)
-		{
-			Vector3 vector2 = new Vector3((Single)(wmblock.CurrentX * 64) + vector.x, position.y, (Single)(-(Single)wmblock.CurrentY * 64) + vector.z);
-			outPosition = vector2;
 		}
 	}
 
@@ -496,8 +478,6 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		if (this.Blocks == null)
 		{
-			// A block is 64x64 in Unity size and 16384x16384 in fixed-point size
-			// The world is 1536x1280 in Unity size and 393216x327680 in fixed-point size (the z coordinate being negative)
 			this.Blocks = WMWorld.BuildBlockArray(this.WorldDisc);
 			for (Int32 i = 0; i < 20; i++)
 			{
@@ -1332,11 +1312,11 @@ public class WMWorld : Singleton<WMWorld>
 		String name = String.Format("WorldMap/Prefabs/WorldDisc{0}/r{1}/{2}", 1, 0, arg);
 		this.SeaBlockPrefab = AssetManager.Load<GameObject>(name, out _, false);
 		this.DetectUnseenBlocks();
-		for (Int32 i = 0; i < 20; i++)
+		for (Int32 y = 0; y < 20; y++)
 		{
-			for (Int32 j = 0; j < 24; j++)
+			for (Int32 x = 0; x < 24; x++)
 			{
-				WMBlock wmblock = this.Blocks[j, i];
+				WMBlock wmblock = this.Blocks[x, y];
 				if (loadOnlyInSight)
 				{
 					if (wmblock.IsInsideSight && !wmblock.IsReady)
@@ -1397,11 +1377,11 @@ public class WMWorld : Singleton<WMWorld>
 		Int32 length = this.Blocks.GetLength(0);
 		Int32 length2 = this.Blocks.GetLength(1);
 		this.DetectUnseenBlocks();
-		for (Int32 i = 0; i < length; i++)
+		for (Int32 x = 0; x < length; x++)
 		{
-			for (Int32 j = 0; j < length2; j++)
+			for (Int32 y = 0; y < length2; y++)
 			{
-				WMBlock wmblock = this.Blocks[i, j];
+				WMBlock wmblock = this.Blocks[x, y];
 				if (!wmblock.StartedLoadAsync && !wmblock.IsReady && wmblock.IsInsideSight)
 				{
 					if (wmblock.IsSea)
@@ -1417,11 +1397,11 @@ public class WMWorld : Singleton<WMWorld>
 				}
 			}
 		}
-		for (Int32 k = 0; k < length; k++)
+		for (Int32 x = 0; x < length; x++)
 		{
-			for (Int32 l = 0; l < length2; l++)
+			for (Int32 y = 0; y < length2; y++)
 			{
-				WMBlock wmblock2 = this.Blocks[k, l];
+				WMBlock wmblock2 = this.Blocks[x, y];
 				if (!wmblock2.IsInsideSight && FF9StateSystem.World.DiscardBlockWhenStreaming)
 				{
 					if (wmblock2.transform.childCount != 0)
@@ -2006,7 +1986,7 @@ public class WMWorld : Singleton<WMWorld>
 
 	public void LoadEffects()
 	{
-		if (ff9.w_frameDisc == 1) // TODO: load if needed
+		if (WorldConfiguration.UseWorldEffect(WorldEffect.SandStorm))
 		{
 			this.kWorldPackEffectTwister = this.LoadEffect("kWorldPackEffectTwister");
 			this.kWorldPackEffectSpiral0 = this.LoadEffect("kWorldPackEffectSpiral0");
@@ -2016,7 +1996,7 @@ public class WMWorld : Singleton<WMWorld>
 			this.SetTwisterRenderQueue(2450);
 		}
 		this.kWorldPackEffectWindmill = this.LoadEffect("kWorldPackEffectWindmill");
-		if (ff9.w_frameDisc == 4 || Singleton<WMTweaker>.Instance.HaskEffectBlockEva)
+		if (WorldConfiguration.UseWorldEffect(WorldEffect.Memoria))
 		{
 			this.kWorldPackEffectSphere1 = this.LoadEffect("kWorldPackEffectSphere1");
 			this.kWorldPackEffectSphere2 = this.LoadEffect("kWorldPackEffectSphere2");

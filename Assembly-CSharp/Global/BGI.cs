@@ -21,6 +21,7 @@ public static class BGI
 
 	public static Int64 BGI_charGetPitchAndRoll(Int32 uid, ref Int16 thetaX, ref Int16 thetaZ)
 	{
+		// TODO: Maybe actually use this to rotate the character (notably for the field "Memoria/World Fusion")
 		Actor activeActorByUID = PersistenSingleton<EventEngine>.Instance.getActiveActorByUID(uid);
 		if (activeActorByUID != null)
 		{

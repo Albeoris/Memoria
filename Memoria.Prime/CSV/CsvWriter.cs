@@ -95,6 +95,11 @@ namespace Memoria.Prime.CSV
             String(value.ToString(CultureInfo.InvariantCulture));
         }
 
+        public void Single(Single value)
+        {
+            String(value.ToString(CultureInfo.InvariantCulture));
+        }
+
         public void ByteArray(Byte[] array)
         {
             String(System.String.Join(", ", array.Select(v => v.ToString(CultureInfo.InvariantCulture)).ToArray()));

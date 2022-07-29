@@ -2984,6 +2984,12 @@
     <None Include="StreamingAssets\Data\SpecialEffects\ef510\Sequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\World\TransportControls.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Data\World\WeatherColors.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Scripts\Project\Properties\AssemblyInfo.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -3053,6 +3059,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
+    <None Include="StreamingAssets\Data\World\Environment.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\SpecialEffects\Common\ChannelTexture.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

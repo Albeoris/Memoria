@@ -3,6 +3,7 @@ using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
+using Memoria;
 
 public class WMScriptDirector : HonoBehavior
 {
@@ -21,6 +22,7 @@ public class WMScriptDirector : HonoBehavior
 	public override void HonoAwake()
 	{
 		global::Debug.Log("WMScriptDirector.HonoAwake(): This should be called first of all things in WorldMap, than other WM* signletons.");
+		WorldConfiguration.PatchAllWorldConfig();
 		if (!FF9StateSystem.World.IsBeeScene)
 		{
 			EMinigame.InitializeAllTreasureAchievement();

@@ -166,5 +166,19 @@ namespace Memoria.Prime.Text
 
             return source.Substring(0, index);
         }
+
+        public static Boolean TryEnumParse<T>(this String source, out T value) where T : Enum
+		{
+            try
+            {
+                value = (T)Enum.Parse(typeof(T), source);
+                return true;
+            }
+            catch (Exception err)
+            {
+                value = default(T);
+                return false;
+            }
+        }
     }
 }

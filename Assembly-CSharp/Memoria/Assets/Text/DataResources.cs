@@ -106,5 +106,22 @@ namespace Memoria.Assets
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
         }
+
+        public static class World
+		{
+            public static readonly String PureDirectory = PureDataDirectory + "World/";
+            public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+
+            public static String CHRControlFile => "TransportControls.csv";
+            public static String WeatherColorFile => "WeatherColors.csv";
+            public static String EnvironmentPatchFile => "Environment.txt";
+
+            public static String ModDirectory(String modFolder)
+            {
+                if (modFolder == null || modFolder.Length == 0)
+                    return Directory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+            }
+        }
     }
 }

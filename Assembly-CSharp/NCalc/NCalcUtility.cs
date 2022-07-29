@@ -60,6 +60,14 @@ namespace NCalc
                 args.Result = (Int32)GameState.AbilityUsage((Byte)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue));
+            else if (name == "GetEventGlobalByte" && args.Parameters.Length == 1)
+            {
+                Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
+                if (index >= 0 && index < FF9StateSystem.EventState.gEventGlobal.Length)
+                    args.Result = (Int32)FF9StateSystem.EventState.gEventGlobal[index];
+                else
+                    args.Result = 0;
+            }
             else if ((name == "CheckAnyStatus" || name == "CheckAllStatus") && args.Parameters.Length >= 2) // operators & and | are only working with UInt16 and smaller types in NCalc...
             {
                 UInt64 v1 = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
@@ -107,6 +115,12 @@ namespace NCalc
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+            else if (name == "ScenarioCounter") args.Result = (Int32)((FF9StateSystem.EventState.gEventGlobal[0] << 8) | FF9StateSystem.EventState.gEventGlobal[0]);
+        };
+
+        public static EvaluateParameterHandler worldNCalcParameters = delegate (String name, ParameterArgs args)
+        {
+            if (name == "WorldDisc") args.Result = (Int32)ff9.w_frameDisc;
         };
 
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
