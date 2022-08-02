@@ -70,9 +70,9 @@
 ##    Place WaterShrine [Condition=WorldDisc == 1 && ScenarioCounter >= 10600 && ScenarioCounter < 10700]
 ##    Place FireShrine [Condition=WorldDisc == 1 && ScenarioCounter >= 10600 && ScenarioCounter < 10700]
 ##  Have the Chocobo Paradise entrance opened after using a Dead Pepper on it
-##    Place ChocoboParadise [Condition=(GetEventGlobalByte(101) & 0x40) != 0]
+##    Place ChocoboParadise [Condition=(GetEventGlobalByte(101) & 64) != 0]
 ##  Have the Mognet Central entrance opened after using a Dead Pepper on it
-##    Place MognetCentral [Condition=(GetEventGlobalByte(101) & 0x80) != 0]
+##    Place MognetCentral [Condition=(GetEventGlobalByte(101) & 128) != 0]
 ##  
 ##  Use the Alexandria's Waterfall effect permanently (splashing at the bottom)
 ##    Effect AlexandriaWaterfall [Condition=true]

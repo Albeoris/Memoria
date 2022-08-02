@@ -22,12 +22,12 @@ class SFXChannel
 		}
 	}
 
-	public static void Play(String chanType, BTL_DATA channeler)
+	public static void Play(String chanType, BTL_DATA channeler, Boolean playSound)
 	{
 		if (SFXChannel.CurrentPlay.ContainsKey(channeler))
 			SFXChannel.Stop(channeler, true);
 		Int32[] sounds;
-		if (SFXChannel.CHANNEL_TYPE.TryGetValue(chanType, out sounds))
+		if (playSound && SFXChannel.CHANNEL_TYPE.TryGetValue(chanType, out sounds))
 			foreach (Int32 snd in sounds)
 				SoundLib.PlaySoundEffect(snd);
 		SFXDataMesh.JSON dataMesh;

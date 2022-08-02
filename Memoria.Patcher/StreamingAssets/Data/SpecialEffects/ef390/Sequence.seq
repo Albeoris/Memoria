@@ -237,7 +237,7 @@ Turn: Char=AllTargets ; BaseAngle=Default ; Angle=358.6 ; Time=0
 Wait: Time=1
 EffectPoint: Char=AllTargets ; Type=Effect
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=0
-Turn: Char=AllTargets ; BaseAngle=Default ; Time=0
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
 Wait: Time=14
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=12

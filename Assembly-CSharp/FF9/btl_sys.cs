@@ -261,6 +261,9 @@ namespace FF9
                     break;
                 }
             }
+            for (Int32 i = 0; i < UnifiedBattleSequencer.runningActions.Count; i++)
+                if (UnifiedBattleSequencer.runningActions[i].cmd.tar_id == btl.btl_id)
+                    UnifiedBattleSequencer.runningActions[i].Cancel();
         }
 
         public static void AddCharacter(BTL_DATA btl)

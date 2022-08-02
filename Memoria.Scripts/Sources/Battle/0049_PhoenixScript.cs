@@ -23,6 +23,7 @@ namespace Memoria.Scripts.Battle
             MutableBattleCommand command = CreateCommand();
             Byte scriptId = PrepareCommand(command);
             SBattleCalculator.Calc(_v.Caster, _v.Target, command, scriptId);
+            _v.PerformCalcResult = false;
         }
 
         private MutableBattleCommand CreateCommand()

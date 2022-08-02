@@ -11,6 +11,7 @@ namespace Memoria
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 EncounterInitial => Instance._battle.EncounterInitial;
+            public static Boolean PersistantDangerValue => Instance._battle.PersistantDangerValue;
 
             /// <summary>
             /// Maximum over heal in percents.
@@ -21,6 +22,7 @@ namespace Memoria
             public static Boolean SelectBestTarget => Instance._battle.SelectBestTarget;
             public static Boolean ViviAutoAttack => Instance._battle.ViviAutoAttack;
             public static Boolean CountersBetterTarget => Instance._battle.CountersBetterTarget;
+            public static Int32 LockEquippedAbilities => Instance._battle.LockEquippedAbilities;
             public static Int32 SummonPriorityCount => Instance._battle.SummonPriorityCount;
             public static Boolean CurseUseWeaponElement => Instance._battle.CurseUseWeaponElement;
             public static Int32 FloatEvadeBonus => Instance._battle.FloatEvadeBonus;

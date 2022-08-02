@@ -77,6 +77,12 @@ namespace Memoria.Launcher
                 UpdateModDetails((Mod)lstMods.SelectedItem);
             else if (sender == tabCtrlMain && tabCtrlMain.SelectedIndex == 1)
                 UpdateModDetails((Mod)lstCatalogMods.SelectedItem);
+
+            Boolean canDownload = false;
+            foreach (Mod mod in lstCatalogMods.SelectedItems)
+                if (!String.IsNullOrEmpty(mod.DownloadUrl))
+                    canDownload = true;
+            btnDownload.IsEnabled = canDownload;
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
         {
@@ -384,6 +390,8 @@ namespace Memoria.Launcher
         {
             // TODO: fetch the catalog online
             // Also, TehMighty's Scaled UI is painfully missing; it can't be implemented only with a mod folder for now
+            // TODO: add more from Nexusmods
+            // TODO: Have sub-mod supports (eg. MoguriSoundtrack)
             modListCatalog.Clear();
             modListCatalog.Add(new Mod()
             {
@@ -482,6 +490,36 @@ namespace Memoria.Launcher
             });
             modListCatalog.Add(new Mod()
             {
+                Name = "Mog Add-ons",
+                CurrentVersion = new Version(2, 5),
+                InstallationPath = "MogAddons",
+                Author = "faospark",
+                Description = @"Easy to install UI enhancements for Final Fantasy IX which includes Darker UI for Gray and Class Boxes, Opera Omnia Style Portrait Artworks PlayStation or PS5 Style Button Prompts. 
+
+:: Features ::
+Darker UI for Gray and Classic Dialogue Boxes
+Opera Omnia Style Portraits
+Upscaled PS1 Portrait Artworks (New)
+PlayStation Vanilla (the closest to the game stock UI)
+PlayStation Gloss (a more glossy type and default install)
+PS5 white button prompts - Pixel Type Button Prompts
+(Optional) Make Ability Gems Require only 1 gem (new)
+(Optional) Make EXP requirements cut in half (new)
+
+:: OPTIONS ::
+- For Other Options Just Open the Folder Option you want eg: /O-Buttons - Playstation 5 Style
+- Inside each folder has a MogAddOns folder. simply Copy and Paste it on the game root
+
+:: Compatibility ::
+- Compatible to Alternate Fantasy
+- NOT Compatible to Scaled Battle UI
+- Not compatible for older versions of the games and repacks.",
+                Category = "Visual",
+                Website = "https://www.nexusmods.com/finalfantasy9/mods/31",
+                DownloadUrl = "https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1"
+            });
+            modListCatalog.Add(new Mod()
+            {
                 Name = "High-Res Chocographs",
                 InstallationPath = "HDChocographs",
                 Author = "Caledor",
@@ -526,6 +564,14 @@ namespace Memoria.Launcher
                 Category = "Audio",
                 Website = "https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/",
                 //DownloadUrl = "https://drive.google.com/file/d/1RLcIQ9M6AB19IPGDXskoBGcC3siVbLQQ"
+            });
+            modListCatalog.Add(new Mod()
+            {
+                Name = "Nexus Mods",
+                Description = "There are many mods available on the Nexus Mods website.\n" +
+                    "Because there is no public direct link for many of them, they cannot be installed directly from this manager.\n" +
+                    "Check them out at https://www.nexusmods.com/finalfantasy9/mods/",
+                Website = "https://www.nexusmods.com/finalfantasy9/mods/"
             });
             // TODO: manage translation mods; many download links should be changed + several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
             modListCatalog.Add(new Mod()
@@ -680,14 +726,13 @@ namespace Memoria.Launcher
                 String str = iniFile.ReadValue("Mod", "FolderNames");
                 if (String.IsNullOrEmpty(str))
                     str = "";
-                str.Trim();
-                str.Trim('"');
-                String[] iniModActiveList = Regex.Split(str, "\",\\s*\"");
+                str = str.Trim().Trim('"');
+                String[] iniModActiveList = Regex.Split(str, @""",\s*""");
                 str = iniFile.ReadValue("Mod", "Priorities");
                 if (String.IsNullOrEmpty(str))
                     str = "";
-                str.Trim('"');
-                String[] iniModPriorityList = Regex.Split(str, "\",\\s*\"");
+                str = str.Trim().Trim('"');
+                String[] iniModPriorityList = Regex.Split(str, @""",\s*""");
                 String[][] listCouple = new String[][] { iniModPriorityList, iniModActiveList };
                 for (Int32 listI = 0; listI < 2; ++listI)
                 {

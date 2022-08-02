@@ -36,6 +36,7 @@ namespace Memoria.Scripts.Battle
             }
             _v.Caster.Flags = 0;
             _v.Caster.MpDamage = 0;
+            _v.PerformCalcResult = false;
         }
     }
 }

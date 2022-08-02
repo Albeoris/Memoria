@@ -7,9 +7,12 @@ public partial class EventEngine
 {
     private void InitEncount()
     {
-		this._encountTimer = (Single)Configuration.Battle.EncounterInitial;
+        if (!Configuration.Battle.PersistantDangerValue)
+        {
+            this._encountTimer = (Single)Configuration.Battle.EncounterInitial;
+            this._encountBase = 0;
+        }
         this._context.encratio = (Byte)0;
-        this._encountBase = 0;
         this._encountReserved = false;
     }
 

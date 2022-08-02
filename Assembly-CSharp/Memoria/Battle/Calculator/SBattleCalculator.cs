@@ -74,7 +74,8 @@ namespace Memoria
                 Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
             }
 
-            CalcResult(v);
+            if (v.PerformCalcResult)
+                CalcResult(v);
         }
 
         public static void CalcResult(BattleCalculator v)

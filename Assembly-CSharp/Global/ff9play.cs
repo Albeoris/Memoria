@@ -227,11 +227,11 @@ public class ff9play
         if (!lvup && play.level != lv)
             play.exp = ff9level.CharacterLevelUps[lv - 1].ExperienceToLevel;
         play.level = (Byte)lv;
-        Int64 num1 = play.max.capa - play.cur.capa;
-        Int64 num2 = play.cur.hp;
-        Int64 num3 = play.cur.mp;
-        Int64 num4 = play.cur.capa;
-        Int64 num5 = play.max.capa;
+        Int64 oldStoneUse = play.max.capa - play.cur.capa;
+        Int64 oldHP = play.cur.hp;
+        Int64 oldMP = play.cur.mp;
+        Int64 oldStoneCapa = play.cur.capa;
+        Int64 oldStoneMax = play.max.capa;
         play.cur = new POINTS();
         play.max = new POINTS();
         play.cur.at_coef = 10;
@@ -243,9 +243,9 @@ public class ff9play
         play.basis.max_hp = play.max.hp;
         play.max.mp = play.basis.max_mp = ff9level.FF9Level_GetMp(play.level, play.basis.mgc);
         play.max.capa = (Byte)ff9level.FF9Level_GetCap(slot_id, play.level, lvup);
-        play.cur.hp = ccommon.min((UInt32)num2, play.max.hp);
-        play.cur.mp = ccommon.min((UInt32)num3, play.max.mp);
-        play.cur.capa = (Byte)(play.max.capa - (UInt64)num1);
+        play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
+        play.cur.mp = ccommon.min((UInt32)oldMP, play.max.mp);
+        play.cur.capa = (Byte)(play.max.capa - (UInt64)oldStoneUse);
         if (init != null)
         {
             play.cur.hp = play.max.hp;
@@ -255,15 +255,15 @@ public class ff9play
         FF9Play_Update(play);
         if (lvup)
         {
-            play.cur.hp = ccommon.min((UInt32)num2, play.max.hp);
-            play.cur.mp = ccommon.min((UInt32)num3, play.max.mp);
+            play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
+            play.cur.mp = ccommon.min((UInt32)oldMP, play.max.mp);
         }
-        if (num5 == 99L)
+        if (oldStoneMax == 99L)
         {
-            play.cur.capa = (Byte)num4;
-            play.max.capa = (Byte)num5;
+            play.cur.capa = (Byte)oldStoneCapa;
+            play.max.capa = (Byte)oldStoneMax;
         }
-        if (num1 <= play.max.capa)
+        if (oldStoneUse <= play.max.capa)
             return;
         FF9Play_UpdateSA(play);
     }
@@ -524,6 +524,8 @@ public class ff9play
     {
         CharacterIndex characterIndex = play.Index;
         play.cur.capa = play.max.capa;
+        if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
+            return;
         for (Int32 index = 0; index < 64; ++index)
         {
             if (ff9abil.FF9Abil_GetEnableSA(characterIndex, 192 + index))

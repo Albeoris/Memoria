@@ -37,6 +37,7 @@ namespace Memoria.Scripts.Battle
 
             SBattleCalculator.Calc(_v.Caster, _v.Target, itemCommand, itemScript);
             BattleItem.RemoveFromInventory(itemId);
+            _v.PerformCalcResult = false;
         }
     }
 }

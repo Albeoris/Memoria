@@ -114,6 +114,7 @@ namespace Memoria
         public readonly BattleTarget Target;
         public readonly CalcCasterCommand CasterCommand;
         public readonly CalcTargetCommand TargetCommand;
+        public Boolean PerformCalcResult = true;
 
         public BattleCalculator()
         {

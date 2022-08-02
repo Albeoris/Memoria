@@ -12,11 +12,13 @@ namespace Memoria
             public readonly IniValue<Boolean> NoAutoTrance;
             public readonly IniValue<Int32> EncounterInterval;
             public readonly IniValue<Int32> EncounterInitial;
+            public readonly IniValue<Boolean> PersistantDangerValue;
             public readonly IniValue<Int32> AutoPotionOverhealLimit;
             public readonly IniValue<Boolean> GarnetConcentrate;
             public readonly IniValue<Boolean> SelectBestTarget;
             public readonly IniValue<Boolean> ViviAutoAttack;
             public readonly IniValue<Boolean> CountersBetterTarget;
+            public readonly IniValue<Int32> LockEquippedAbilities;
             public readonly IniValue<Int32> SummonPriorityCount;
             public readonly IniValue<Boolean> CurseUseWeaponElement;
             public readonly IniValue<Int32> FloatEvadeBonus;
@@ -55,11 +57,13 @@ namespace Memoria
                 NoAutoTrance = BindBoolean(nameof(NoAutoTrance), false);
                 EncounterInterval = BindInt32(nameof(EncounterInterval), 960);
                 EncounterInitial = BindInt32(nameof(EncounterInitial), -1440);
+                PersistantDangerValue = BindBoolean(nameof(PersistantDangerValue), false);
                 AutoPotionOverhealLimit = BindInt32(nameof(AutoPotionOverhealLimit), -1);
                 GarnetConcentrate = BindBoolean(nameof(GarnetConcentrate), false);
                 SelectBestTarget = BindBoolean(nameof(SelectBestTarget), true);
                 ViviAutoAttack = BindBoolean(nameof(ViviAutoAttack), false);
                 CountersBetterTarget = BindBoolean(nameof(CountersBetterTarget), true);
+                LockEquippedAbilities = BindInt32(nameof(LockEquippedAbilities), 0);
                 SummonPriorityCount = BindInt32(nameof(SummonPriorityCount), 0);
                 CurseUseWeaponElement = BindBoolean(nameof(CurseUseWeaponElement), false);
                 FloatEvadeBonus = BindInt32(nameof(FloatEvadeBonus), 0);

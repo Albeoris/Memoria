@@ -49,7 +49,7 @@ Wait: Time=1
 MoveToPosition: RelativePosition=(0.0, -136.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
 Wait: Time=1
 MoveToPosition: RelativePosition=(0.0, -147.0, 0.0) ; MoveHeight=True ; Char=AllTargets ; Time=0
-Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=1
+Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
 Wait: Time=1
 EffectPoint: Char=AllTargets ; Type=Effect
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; Time=3

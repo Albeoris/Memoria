@@ -89,6 +89,21 @@ public partial class EventEngine
                 this.Request(p1, level, tag1, false);
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 900 && p1 != null && (level == 2 && tag1 == 11) && (Int32)p1.uid == 14)
                     this.fieldmap.walkMesh.BGI_triSetActive(62U, 1U);
+                // Hotfix: Beatrix hacked in the team to Oeilvert -> pretend another member was picked when returning to DP (field "Palace/Dock", start of function "Zidane_14")
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2211 && p1 != null && p1.sid == 19 && tag1 == 14)
+                {
+                    Int32 oeilvertPartyCount = 0;
+                    Int32 missingMemberVar = -1;
+                    for (Int32 varIndex = 3536; varIndex <= 3542; varIndex++)
+                    {
+                        if (eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, varIndex, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
+                            oeilvertPartyCount++;
+                        else if (missingMemberVar < 0)
+                            missingMemberVar = varIndex;
+                    }
+                    if (oeilvertPartyCount < 3 && missingMemberVar >= 0)
+                        eBin.SetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, missingMemberVar, (Int32)EBin.VariableType.Bit << 3, 0, 0);
+                }
                 return 0;
             }
             case EBin.event_code_binary.REQSW:

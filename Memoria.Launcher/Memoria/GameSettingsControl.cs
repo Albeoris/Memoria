@@ -340,7 +340,7 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new IniFile(IniPath);
                 switch (propertyName)
                 {
                     case nameof(ScreenResolution):
@@ -382,8 +382,9 @@ namespace Memoria.Launcher
 
         #endregion
 
-        private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
-        private readonly String _memoriaIniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
+        public static readonly String IniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
+        public static readonly String MemoriaIniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
+
         private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
 
         private String _resolution = "1280x960";
@@ -401,7 +402,7 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new IniFile(IniPath);
 
                 String value = iniFile.ReadValue("Settings", nameof(ScreenResolution));
                 if (String.IsNullOrEmpty(value))

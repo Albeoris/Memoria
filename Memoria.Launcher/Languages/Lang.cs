@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using Ini;
 
 namespace Memoria.Launcher
 {
@@ -21,13 +22,17 @@ namespace Memoria.Launcher
                 XmlElement def = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.en.xml");
                 XmlElement cur = null;
 
-                String[] fileNames = {CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName};
+                IniFile iniFile = new IniFile(GameSettingsControl.IniPath);
+                String forcedLang = iniFile.ReadValue("Memoria", "LauncherLanguage");
+
+                String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
+                    new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName } :
+                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName };
                 foreach (String name in fileNames)
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");
                     if (cur != null)
                         break;
-                    
                 }
                 //File.AppendAllText("MBROutput2.txt", name + \n");
                 

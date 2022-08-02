@@ -23,6 +23,8 @@ namespace Memoria.Scripts.Battle
             const BattleStatus cannotAttack = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk
                                               | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
 
+            _v.PerformCalcResult = false;
+
             _v.Context.Flags = (BattleCalcFlags)BattleState.GetUnitIdsUnderStatus(false, BattleStatus.LowHP);
             if (_v.Context.Flags == 0)
             {

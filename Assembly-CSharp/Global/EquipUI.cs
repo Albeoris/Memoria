@@ -966,53 +966,12 @@ public class EquipUI : UIScene
 
 	private void UpdateCharacterData(PLAYER player)
 	{
-		this.UpdateCharacterSA(player);
-		ff9play.FF9Play_Update(player);
-		player.info.serial_no = (Byte) ff9play.FF9Play_GetSerialID(player.info.slot_no, (player.category & 16) != 0, player.equip);
+		ff9feqp.FF9FEqp_UpdatePlayer(player);
 	}
 
 	private void UpdateCharacterSA(PLAYER player)
 	{
-		List<Int32> list = new List<Int32>();
-		if (!ff9abil.FF9Abil_HasAp(new Character(player)))
-		{
-			return;
-		}
-
-		for (Int32 i = 0; i < 5; i++)
-		{
-			if (player.equip[i] != 255)
-			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[player.equip[i]];
-				for (Int32 j = 0; j < 3; j++)
-				{
-					Int32 num = ff9ITEM_DATA.ability[j];
-					if (num != 0 && 192 <= num)
-					{
-						list.Add(num - 192);
-					}
-				}
-			}
-		}
-
-		CharacterAbility[] array = ff9abil._FF9Abil_PaData[player.PresetId];
-		for (Int32 k = 0; k < 48; k++)
-		{
-			if (192 <= array[k].Id && ff9abil.FF9Abil_GetEnableSA(player.Index, array[k].Id) && !list.Contains(array[k].Id - 192) && player.pa[k] < array[k].Ap)
-			{
-				ff9abil.FF9Abil_SetEnableSA(player.Index, array[k].Id, false);
-				Byte capa_val = ff9abil._FF9Abil_SaData[array[k].Id - 192].GemsCount;
-				if (player.max.capa - player.cur.capa >= capa_val)
-				{
-					POINTS cur = player.cur;
-					cur.capa = (Byte) (cur.capa + capa_val);
-				}
-				else
-				{
-					player.cur.capa = player.max.capa;
-				}
-			}
-		}
+		ff9feqp.FF9FEqp_UpdateSA(player);
 	}
 
 	private void EquipForAbilityLearning()

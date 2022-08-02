@@ -140,10 +140,8 @@ namespace FF9
 
             CharacterAbility[] array = _FF9Abil_PaData[player.info.menu_type];
             for (Int32 index = 0; index < array.Length; ++index)
-            {
                 if (_FF9Abil_PaData[player.info.menu_type][index].Id == abil_id)
                     return index;
-            }
 
             return -1;
         }

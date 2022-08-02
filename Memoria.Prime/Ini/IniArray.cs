@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Memoria.Prime.Ini
 {
@@ -32,12 +33,12 @@ namespace Memoria.Prime.Ini
                 return;
             }
 
-            String[] list = rawString.Trim('"').Split(new[] {"\", \""}, StringSplitOptions.None);
-            T[] result = new T[list.Length];
-            for (int i = 0; i < list.Length; i++)
+            MatchCollection argMatches = new Regex(@"""([^""]*)""\s*(,|$)").Matches(rawString);
+            T[] result = new T[argMatches.Count];
+            for (int i = 0; i < argMatches.Count; i++)
             {
                 T value;
-                if (!_parser(list[i], out value))
+                if (!_parser(argMatches[i].Groups[1].Value, out value))
                     return;
 
                 result[i] = value;

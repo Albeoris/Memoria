@@ -243,13 +243,9 @@ public partial class EventEngine
                         }
                         else if (((Int32)actor.animFlag & (EventEngine.afExec | EventEngine.afFreeze)) == 0 && (this._collTimer == 0 || (Int32)obj.uid != (Int32)this._context.controlUID))
                             this.SetAnim(actor, (Int32)actor.idle);
-                        if (flag && (Int32)obj.uid == (Int32)this._context.controlUID && this._moveKey)
+                        if (flag && (Int32)obj.uid == (Int32)this._context.controlUID && this._moveKey && this._context.encratio > 0)
                         {
                             Single distance = this.distance(deltaX, deltaY, deltaZ);
-                            if (this.gMode == 3)
-                            {
-                                WMActor wmActor = ((Actor)obj).wmActor;
-                            }
                             this._encountTimer += distance;
                             if (!FF9StateSystem.Settings.IsNoEncounter && this.ProcessEncount(actor))
                                 this._encountReserved = true;

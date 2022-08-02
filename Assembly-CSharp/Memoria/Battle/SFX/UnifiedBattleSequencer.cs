@@ -163,6 +163,9 @@ public static class UnifiedBattleSequencer
 		{
 			foreach (SFXData sfx in sfxList)
 				sfx.Cancel();
+			foreach (BattleActionThread th in threadList)
+				if (th.waitSFX == 1 || (th.waitSFX >= 1000 && th.waitSFX < 2000))
+					th.waitSFX = 0;
 			cancel = true;
 		}
 
@@ -255,8 +258,9 @@ public static class UnifiedBattleSequencer
 						tmpChar = cmd.regist.btl_id;
 					foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
 					{
-						SFXChannel.Play(tmpStr, btl);
-						if (btl.bi.player != 0 && FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no == 10 && (!code.TryGetArgBoolean("SkipFlute", out tmpBool) || !tmpBool))
+						Boolean useFluteSound = btl.bi.player != 0 && FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no == 10 && (!code.TryGetArgBoolean("SkipFlute", out tmpBool) || !tmpBool);
+						SFXChannel.Play(tmpStr, btl, !useFluteSound);
+						if (useFluteSound)
 						{
 							SoundLib.PlaySoundEffect(1507);
 							SoundLib.PlaySoundEffect(1508);
@@ -272,6 +276,8 @@ public static class UnifiedBattleSequencer
 					break;
 				case "LoadMonsterSFX":
 				case "LoadSFX":
+					if (cancel)
+						break;
 					if (code.TryGetArgSFX("SFX", cmd.regist, out tmpSfx))
 					{
 						//Boolean isMonsterSFX = code.operation == "LoadMonsterSFX";
@@ -324,6 +330,8 @@ public static class UnifiedBattleSequencer
 					break;
 				case "PlayMonsterSFX":
 				case "PlaySFX":
+					if (cancel)
+						break;
 					if (code.TryGetArgSFXInstance("SFX", "Instance", cmd.regist, sfxList, runningThread.defaultSFXIndex, out tmpInt))
 						foreach (SFXData sfx in (tmpInt < 0 ? sfxList.ToArray() : new SFXData[] { sfxList[tmpInt] }))
 						{
@@ -723,6 +731,8 @@ public static class UnifiedBattleSequencer
 						code.TryChangeCharacterProperty("Property", "Value", btl);
 					break;
 				case "PlayCamera":
+					if (cancel)
+						break;
 					if (Configuration.Battle.Speed >= 3 && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
 						break;
 					code.TryGetArgBoolean("Alternate", out tmpBool);
@@ -859,6 +869,8 @@ public static class UnifiedBattleSequencer
 					}
 					break;
 				case "EffectPoint":
+					if (cancel)
+						break;
 					if (!code.argument.TryGetValue("Type", out tmpStr))
 						tmpStr = "Both";
 					if (!code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
@@ -936,6 +948,8 @@ public static class UnifiedBattleSequencer
 					code.TrySetVariable("Variable", "Value", "Index");
 					break;
 				case "SetupReflect":
+					if (cancel)
+						break;
 					if (!cmd.info.HasCheckedReflect)
 					{
 						code.argument.TryGetValue("Delay", out tmpStr);
@@ -970,8 +984,8 @@ public static class UnifiedBattleSequencer
 						if (code.argument.TryGetValue("Condition", out tmpStr))
 						{
 							Expression c = new Expression(tmpStr);
-							BattleUnit caster = btl_scrp.FindBattleUnit(cmd.regist.btl_id);
-							BattleUnit target = btl_scrp.FindBattleUnit((UInt16)Comn.randomID(runningThread.targetId));
+							BattleUnit caster = new BattleUnit(cmd.regist);
+							BattleUnit target = btl_scrp.FindBattleUnitUnlimited((UInt16)Comn.firstBitSet(runningThread.targetId));
 							NCalcUtility.InitializeExpressionUnit(ref c, caster, "Caster");
 							NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
 							NCalcUtility.InitializeExpressionCommand(ref c, new BattleCommand(cmd));
@@ -1061,18 +1075,6 @@ public static class UnifiedBattleSequencer
 
 		public Boolean ExecuteLoop()
 		{
-			// End cancelled sequence if no sfx is rendering (after moving the caster back to the base position)
-			if (cancel && sfxList.FindIndex(sfx => sfx.runningSFX.Count > 0) < 0)
-			{
-				Single dist = (cmd.regist.pos - cmd.regist.base_pos).magnitude;
-				if (dist < 10)
-				{
-					cmd.regist.pos = cmd.regist.base_pos;
-					return true;
-				}
-				cmd.regist.pos = cmd.regist.pos + Math.Min(100f, dist) * BattleActionCode.PolarVector(cmd.regist.base_pos - cmd.regist.pos);
-				return false;
-			}
 			// Update waits and progressive changes
 			frameIndex++;
 			animatedChar = 0xFFFF;
@@ -1189,6 +1191,7 @@ public static class UnifiedBattleSequencer
 			if (move.Count > 0 || turn.Count > 0 || scale.Count > 0 || fade.Count > 0)
 				isOver = false;
 			if (!isOver)
+			{
 				foreach (SFXData sfx in sfxList)
 				{
 					if (sfx.runningSFX.Count > 0)
@@ -1196,6 +1199,19 @@ public static class UnifiedBattleSequencer
 					foreach (SFXData.RunningInstance run in sfx.runningSFX)
 						run.frame++;
 				}
+			}
+			else if (cancel)
+			{
+				// Make sure that cancelled sequence take the caster back to the base position
+				Single dist = (cmd.regist.pos - cmd.regist.base_pos).magnitude;
+				if (dist < 10)
+				{
+					cmd.regist.pos = cmd.regist.base_pos;
+					return true;
+				}
+				cmd.regist.pos = cmd.regist.pos + Math.Min(100f, dist) * BattleActionCode.PolarVector(cmd.regist.base_pos - cmd.regist.pos);
+				return false;
+			}
 			return isOver;
 		}
 

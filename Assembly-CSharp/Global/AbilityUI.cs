@@ -802,7 +802,7 @@ public class AbilityUI : UIScene
                     Type = this.CheckSAType(num, player)
                 };
                 inDataList.Add(abilityListData);
-                if (this.firstActiveAbility == -1 && (abilityListData.Type == AbilityType.Enable || abilityListData.Type == AbilityType.Selected))
+                if (this.firstActiveAbility == -1 && (abilityListData.Type == AbilityType.Enable || abilityListData.Type == AbilityType.Selected || abilityListData.Type == AbilityType.CantDisable))
                     this.firstActiveAbility = inDataList.Count - 1;
             }
         }
@@ -862,6 +862,14 @@ public class AbilityUI : UIScene
             {
                 detailWithIconHud.NameLabel.color = FF9TextTool.White;
                 detailWithIconHud.NumberLabel.color = FF9TextTool.White;
+                detailWithIconHud.IconSprite.atlas = FF9UIDataTool.IconAtlas;
+                detailWithIconHud.IconSpriteAnimation.namePrefix = "skill_stone_gem_";
+                detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
+            }
+            else if (abilityListData.Type == AbilityType.CantDisable)
+            {
+                detailWithIconHud.NameLabel.color = FF9TextTool.Gray;
+                detailWithIconHud.NumberLabel.color = FF9TextTool.Gray;
                 detailWithIconHud.IconSprite.atlas = FF9UIDataTool.IconAtlas;
                 detailWithIconHud.IconSpriteAnimation.namePrefix = "skill_stone_gem_";
                 detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
@@ -945,6 +953,8 @@ public class AbilityUI : UIScene
 
             if (ff9abil.FF9Abil_HasAp(player))
             {
+                if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && player.Id != CharacterId.Quina)
+                    return AbilityType.NoDraw;
                 Int32 currentAp = player.Data.pa[index];
                 Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
                 if (currentAp < learnAp)
@@ -959,6 +969,13 @@ public class AbilityUI : UIScene
     {
         if (abilityId < 192)
             return AbilityType.NoDraw;
+
+        if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
+        {
+            if (ff9abil.FF9Abil_GetIndex(player.Index, abilityId) < 0)
+                return AbilityType.NoDraw;
+            return this.equipmentPartInAbilityDict.ContainsKey(abilityId) ? AbilityType.CantDisable : AbilityType.CantSpell;
+        }
 
         if (ff9abil.FF9Abil_IsEnableSA(player.Data.sa, abilityId))
             return AbilityType.Selected;
@@ -1107,9 +1124,7 @@ public class AbilityUI : UIScene
                 {
                     if (!this.equipmentPartInAbilityDict.ContainsKey(num2))
                         this.equipmentPartInAbilityDict[num2] = 0;
-                    Dictionary<Int32, Int32> dictionary;
-                    Int32 index2;
-                    (dictionary = this.equipmentPartInAbilityDict)[index2 = num2] = dictionary[index2] + (1 << index1);
+                    this.equipmentPartInAbilityDict[num2] |= 1 << index1;
                     if (!this.equipmentIdInAbilityDict.ContainsKey(num2))
                         this.equipmentIdInAbilityDict[num2] = new Int32[5];
                     this.equipmentIdInAbilityDict[num2][index1] = num1;
@@ -1217,6 +1232,7 @@ public class AbilityUI : UIScene
         NoDraw,
         Unknow,
         CantSpell,
+        CantDisable,
         Enable,
         Selected,
         Max,

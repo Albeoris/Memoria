@@ -47,7 +47,19 @@ namespace FF9
 			return count;
 		}
 
-		public static Byte firstBitSet(UInt64 bitList)
+		public static UInt64 firstBitSet(UInt64 bitList)
+		{
+			UInt64 bit = 1;
+			while (bit != 0)
+			{
+				if ((bitList & bit) != 0)
+					return bit;
+				bit <<= 1;
+			}
+			throw new Exception("[Comn] Trying to find firstBitSet of 0");
+		}
+
+		public static Byte firstBitSetIndex(UInt64 bitList)
 		{
 			Byte pos = 0;
 			UInt64 bit = 1;
@@ -58,7 +70,7 @@ namespace FF9
 				bit <<= 1;
 				++pos;
 			}
-			throw new Exception("[Comn] Trying to find firstBitSet of 0");
+			throw new Exception("[Comn] Trying to find firstBitSetIndex of 0");
 		}
 
 		public const Int32 ONE = 4096;

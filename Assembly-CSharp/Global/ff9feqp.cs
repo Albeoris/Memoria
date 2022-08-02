@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FF9;
 using Memoria;
 using Memoria.Data;
@@ -71,50 +72,51 @@ public class ff9feqp
 		}
 	}
 
-	private static void FF9FEqp_UpdatePlayer(PLAYER play)
+	public static void FF9FEqp_UpdatePlayer(PLAYER play)
 	{
 		ff9feqp.FF9FEqp_UpdateSA(play);
 		ff9play.FF9Play_Update(play);
 		play.info.serial_no = (Byte)ff9play.FF9Play_GetSerialID(play.info.slot_no, play.IsSubCharacter, play.equip);
 	}
 
-	private static void FF9FEqp_UpdateSA(PLAYER play)
+	public static void FF9FEqp_UpdateSA(PLAYER player)
 	{
-		Boolean[] array = new Boolean[64];
-		if (!ff9abil.FF9Abil_HasAp(new Character(play)))
-		{
+		List<Int32> equipSAList = new List<Int32>();
+		if (!ff9abil.FF9Abil_HasAp(new Character(player)))
 			return;
-		}
+
 		for (Int32 i = 0; i < 5; i++)
 		{
-			if (play.equip[i] != 255)
+			if (player.equip[i] != 255)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)play.equip[i]];
+				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[player.equip[i]];
 				for (Int32 j = 0; j < 3; j++)
 				{
-					Int32 num;
-					if ((num = (Int32)ff9ITEM_DATA.ability[j]) != 0 && 192 <= num)
-					{
-						array[num - 192] = true;
-					}
+					Int32 abilId = ff9ITEM_DATA.ability[j];
+					if (abilId != 0 && 192 <= abilId)
+						equipSAList.Add(abilId - 192);
 				}
 			}
 		}
-		CharacterAbility[] array2 = ff9abil._FF9Abil_PaData[play.PresetId];
-		for (Int32 i = 0; i < 48; i++)
+
+		CharacterAbility[] playerAbilList = ff9abil._FF9Abil_PaData[player.PresetId];
+		if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
 		{
-			if (192 <= array2[i].Id && ff9abil.FF9Abil_GetEnableSA(play.Index, array2[i].Id) && !array[array2[i].Id - 192] && play.pa[i] < array2[i].Ap)
+			for (Int32 saIndex = 0; saIndex < 64; saIndex++)
+				ff9abil.FF9Abil_SetEnableSA(player.Index, 192 + saIndex, equipSAList.Contains(saIndex) && Array.Exists(playerAbilList, abil => abil.Id == 192 + saIndex));
+		}
+		else
+		{
+			for (Int32 k = 0; k < 48; k++)
 			{
-				ff9abil.FF9Abil_SetEnableSA(play.Index, array2[i].Id, false);
-				Int32 capa_val = ff9abil._FF9Abil_SaData[array2[i].Id - 192].GemsCount;
-				if (play.max.capa - play.cur.capa >= capa_val)
+				if (192 <= playerAbilList[k].Id && ff9abil.FF9Abil_GetEnableSA(player.Index, playerAbilList[k].Id) && !equipSAList.Contains(playerAbilList[k].Id - 192) && player.pa[k] < playerAbilList[k].Ap)
 				{
-					POINTS cur = play.cur;
-					cur.capa = (Byte)(cur.capa + (Byte)capa_val);
-				}
-				else
-				{
-					play.cur.capa = play.max.capa;
+					ff9abil.FF9Abil_SetEnableSA(player.Index, playerAbilList[k].Id, false);
+					Byte capa_val = ff9abil._FF9Abil_SaData[playerAbilList[k].Id - 192].GemsCount;
+					if (player.max.capa - player.cur.capa >= capa_val)
+						player.cur.capa += capa_val;
+					else
+						player.cur.capa = player.max.capa;
 				}
 			}
 		}
