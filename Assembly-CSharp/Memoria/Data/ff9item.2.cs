@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Assets.SiliconSocial;
 using FF9;
+using Global.ff9.State;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -121,27 +123,14 @@ public class ff9item
         }
     }
 
+    /// <summary>
+    /// Initializes Normal and Important items, also adds starting items to player's inventory.
+    /// </summary>
     public static void FF9Item_Init()
     {
-        // TODO: initial items; they can be changed by modifying Prima Vista's script but it could be useful to be able to set them with Memoria as well (DictionaryPatch or CSV?)
-        FF9ITEM[] ff9ItemArray = new FF9ITEM[8]
-        {
-            new FF9ITEM(236, 7),
-            new FF9ITEM(237, 2),
-            new FF9ITEM(238, 2),
-            new FF9ITEM(240, 2),
-            new FF9ITEM(247, 2),
-            new FF9ITEM(249, 1),
-            new FF9ITEM(253, 1),
-            new FF9ITEM(Byte.MaxValue, 0)
-        };
         FF9Item_InitNormal();
         FF9Item_InitImportant();
-        for (Int32 index = 0; ff9ItemArray[index].id != Byte.MaxValue; ++index)
-        {
-            FF9ITEM ff9Item = ff9ItemArray[index];
-            FF9Item_Add(ff9Item.id, ff9Item.count);
-        }
+        FF9Item_InitStartingItems();
     }
 
     public static void FF9Item_InitNormal()
@@ -154,6 +143,72 @@ public class ff9item
     {
         for (Int32 index = 0; index < 64; ++index)
             FF9StateSystem.Common.FF9.rare_item[index] = 0;
+    }
+
+    private static void FF9Item_InitStartingItems()
+    {
+        bool areStartingItemsModified = Configuration.Mod.AllFolderNames.Any(modName => ModContainsStartingItems(modName));
+        FF9ITEM[] startingItems = areStartingItemsModified ? GetModdedStartingItems() : GetDefaultStartingItems();
+
+        for (Int32 index = 0; startingItems[index].id != Byte.MaxValue; ++index)
+        {
+            FF9ITEM item = startingItems[index];
+            FF9Item_Add(item.id, item.count);
+        }
+    }
+
+    /// <summary>
+    /// Looks for first occurrence of StartingItems.csv in mod folders and retrieves data from it.
+    /// Method should be called only when there is StartingItems file in any mod folder.
+    /// </summary>
+    /// <returns>Custom set of starting items</returns>
+    private static FF9ITEM[] GetModdedStartingItems()
+    {
+        string mod = Configuration.Mod.AllFolderNames.FirstOrDefault(modName => ModContainsStartingItems(modName));
+        string path = Path.Combine(DataResources.Items.ModDirectory(mod), DataResources.Items.StartingItems);
+
+        return GetStartingItemsFromAsset(path);
+    }
+
+    private static bool ModContainsStartingItems(string mod)
+    {
+        string path = Path.Combine(DataResources.Items.ModDirectory(mod), DataResources.Items.StartingItems);
+        return File.Exists(path);
+    }
+
+    /// <summary>
+    /// Returns set of items from selected asset (file).
+    /// </summary>
+    /// <param name="path">File where asset is located</param>
+    /// <returns>Set of items from the asset file.</returns>
+    private static FF9ITEM[] GetStartingItemsFromAsset(string path)
+    {
+        FF9ITEMDto[] dtos = ReadItemsDtoFromAsset(path);
+        return dtos.ToModel();
+    }
+
+    private static FF9ITEMDto[] ReadItemsDtoFromAsset(string path)
+    {
+        try
+        {
+            return CsvReader.Read<FF9ITEMDto>(path);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"[ff9item] Load starting items failed. Path {path}.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Returns default set of starting items.
+    /// </summary>
+    /// <returns>Set of items which are defined in default game.</returns>
+    private static FF9ITEM[] GetDefaultStartingItems()
+    {
+        String path = Path.Combine(DataResources.Items.Directory, DataResources.Items.StartingItems);
+        return GetStartingItemsFromAsset(path);
     }
 
     public static FF9ITEM FF9Item_GetPtr(Int32 id)

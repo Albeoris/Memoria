@@ -38,6 +38,7 @@ namespace Memoria.Assets
             public static String SynthesisFile => "Synthesis.csv";
             public static String ItemEffectsFile => "ItemEffects.csv";
             public static String ShopItems => "ShopItems.csv";
+            public static String StartingItems => "StartingItems.csv";
 
             public static String ModDirectory(String modFolder)
             {
@@ -108,7 +109,7 @@ namespace Memoria.Assets
         }
 
         public static class World
-		{
+        {
             public static readonly String PureDirectory = PureDataDirectory + "World/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
