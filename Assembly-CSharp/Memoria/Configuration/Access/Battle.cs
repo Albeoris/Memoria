@@ -11,7 +11,7 @@ namespace Memoria
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 EncounterInitial => Instance._battle.EncounterInitial;
-            public static Boolean PersistantDangerValue => Instance._battle.PersistantDangerValue;
+            public static Boolean PersistentDangerValue => Instance._battle.PersistentDangerValue;
 
             /// <summary>
             /// Maximum over heal in percents.
