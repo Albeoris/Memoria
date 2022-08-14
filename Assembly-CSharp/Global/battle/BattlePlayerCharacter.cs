@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria;
 using Object = System.Object;
 
 public class BattlePlayerCharacter : MonoBehaviour
@@ -25,8 +26,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 		Int32 result = 0;
 		if (component[casterAnimationName] != (TrackedReference)null)
 		{
-			Int32 num = Mathf.CeilToInt(component[casterAnimationName].length * component[casterAnimationName].clip.frameRate);
-			result = num;
+			result = Mathf.CeilToInt(component[casterAnimationName].length * component[casterAnimationName].clip.frameRate) * (int)(component[casterAnimationName].clip.frameRate / (float)Configuration.Graphics.BattleFPS);
+			component[casterAnimationName].speed = component[casterAnimationName].clip.frameRate / (float)Configuration.Graphics.BattleFPS;
 			component.Play(casterAnimationName);
 		}
 		return result;
@@ -42,9 +43,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 			Int32 num = 1;
 			if (component[text2] != (TrackedReference)null)
 			{
-				component[text2].speed = 0.5f * (Single)HonoluluBattleMain.Speed;
-				Int32 num2 = Mathf.CeilToInt(component[text2].length * component[text2].clip.frameRate);
-				num = num2;
+				component[text2].speed = component[text2].clip.frameRate / (float)Configuration.Graphics.BattleFPS;
+				num = Mathf.CeilToInt(component[text2].length * ((float)Configuration.Graphics.BattleFPS / component[text2].clip.frameRate) * component[text2].clip.frameRate);
 			}
 			maxFrames[i] = (Byte)num;
 			String text3 = text;
@@ -78,7 +78,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 				{
 					animationState.wrapMode = WrapMode.Once;
 				}
-				animationState.speed = 0.5f * (Single)HonoluluBattleMain.Speed;
+				animationState.speed = animationState.clip.frameRate / (float)Configuration.Graphics.BattleFPS;
 			}
 		}
 	}

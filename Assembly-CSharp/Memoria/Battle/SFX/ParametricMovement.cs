@@ -48,7 +48,7 @@ public class ParametricMovement
 	public void LoadFromJSON(JSONNode node)
 	{
 		setup = new MovementSetup();
-		if (node == null || (node is not JSONArray && node is not JSONClass))
+		if (node == null || (node !is JSONArray && node !is JSONClass))
 			return;
 		Int32 pieceID = 0;
 		JSONClass[] classList;

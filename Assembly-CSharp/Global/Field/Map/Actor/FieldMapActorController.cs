@@ -116,7 +116,7 @@ public class FieldMapActorController : HonoBehavior
 		this.activeFloor = -1;
 		this.lastTri = -1;
 		this.lastFloor = -1;
-		this.speed = 30f;
+		this.speed = 30f * (30f / (float)Configuration.Graphics.BattleFPS);
 		this.radius = 96f;
 		this.isPlayer = false;
 		this.charFlags = 1;
@@ -307,7 +307,7 @@ public class FieldMapActorController : HonoBehavior
 		if (vector.sqrMagnitude == 0f || (this.stillCount == 0 && vector2.sqrMagnitude < 10f))
 		{
 			this.stillCount++;
-			if (this.stillCount > 30)
+			if (this.stillCount > Configuration.Graphics.BattleFPS)
 			{
 				this.movePaths.Clear();
 				this.ClearMoveTarget();
@@ -464,7 +464,7 @@ public class FieldMapActorController : HonoBehavior
 	{
 		if (this.originalActor.sid == 17 && this.animation.isPlaying)
 		{
-			foreach (Object obj in this.animation)
+			foreach (object obj in this.animation)
 			{
 				AnimationState animationState = (AnimationState)obj;
 				if (this.animation.IsPlaying(animationState.name))
@@ -473,34 +473,11 @@ public class FieldMapActorController : HonoBehavior
 				}
 			}
 		}
-		String name = FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim);
-		AnimationClip clip = this.animation.GetClip(name);
-		if (!this.animation.IsPlaying(name))
+		string value = FF9DBAll.AnimationDB.GetValue((int)this.originalActor.anim);
+		this.animation.GetClip(value);
+		if (!this.animation.IsPlaying(value))
 		{
-			if (clip != (UnityEngine.Object)null)
-			{
-				if (FF9StateSystem.Common.FF9.fldMapNo == 3010 && this.originalActor.sid == 8)
-				{
-					return;
-				}
-				this.animation.clip = clip;
-				this.animation.Play(name);
-				this.animation[name].speed = 0f;
-				Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[name].length;
-				this.animation[name].time = time;
-				this.animation.Sample();
-				if (this.originalActor.frameN == 1 && base.IsVisibled())
-				{
-					this.animation.Stop();
-				}
-			}
-		}
-		else
-		{
-			this.animation[name].speed = 0f;
-			Single time2 = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[name].length;
-			this.animation[name].time = time2;
-			this.animation.Sample();
+			this.animation.Play(value);
 		}
 	}
 
@@ -995,7 +972,7 @@ public class FieldMapActorController : HonoBehavior
 		{
 			this.moveVec = Vector3.zero;
 		}
-		Vector3 b = this.moveVec;
+		Vector3 b = this.moveVec * (30f / (float)Configuration.Graphics.BattleFPS);
 		b = this.moveVec * this.speed;
 		this.curPos += b;
 	}

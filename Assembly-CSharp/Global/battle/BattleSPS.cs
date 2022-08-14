@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria;
 using Memoria.Scripts;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ public class BattleSPS : MonoBehaviour
 		this.lastFrame = -1;
 		this.curFrame = 0;
 		this.frameCount = 0;
-		this.frameRate = 16;
+		this.frameRate = Configuration.Graphics.BattleFPS; // NOTE TO SELF: This was set to 16 instead of 15. Perhaps we should try BattleFPS +1 to avoid issues with all the bitshifting going on here?
 		this.pos = Vector3.zero;
 		this.scale = 4096;
 		this.rot = Vector3.zero;

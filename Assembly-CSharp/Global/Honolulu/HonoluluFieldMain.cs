@@ -2,6 +2,7 @@
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
+using Memoria;
 using Object = System.Object;
 
 public class HonoluluFieldMain : HonoBehavior
@@ -153,10 +154,11 @@ public class HonoluluFieldMain : HonoBehavior
 
 	public override void HonoUpdate()
 	{
-		this.frameTime = 1f / (30f * (Single)FF9StateSystem.Settings.FastForwardFactor);
+		this.frameTime = 1f / ((float)Configuration.Graphics.BattleFPS * (float)FF9StateSystem.Settings.FastForwardFactor);
+		// TODO: figure out what the hell MBG is
 		if ((MBG.Instance.IsPlaying() & 2UL) != 0UL)
 		{
-			this.frameTime = 1f / (15f * (Single)FF9StateSystem.Settings.FastForwardFactor);
+			this.frameTime = 1f / ((float)Configuration.Graphics.BattleFPS * (Single)FF9StateSystem.Settings.FastForwardFactor);
 		}
 		Single deltaTime = Time.deltaTime;
 		Single num = this.cumulativeTime + deltaTime;

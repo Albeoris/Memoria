@@ -365,7 +365,7 @@ public abstract class SFXDataMesh
 			Raw rawMesh = new Raw();
 			foreach (JSONNode meshNode in meshArray)
 			{
-				if (meshNode["Mesh"] == null || meshNode["Mesh"] is not JSONArray)
+				if (meshNode["Mesh"] == null || meshNode["Mesh"] !is JSONArray)
 					continue;
 				EffectMaterial material = new EffectMaterial();
 				if (meshNode["Material"] != null)
@@ -615,7 +615,7 @@ public abstract class SFXDataMesh
 			PSXTextureMgr.CaptureBG();
 			//camera.worldToCameraMatrix = Matrix4x4.identity;
 			for (Int32 i = 0; i < SFXRender.commandBuffer.Count; i++)
-				if (SFXRender.commandBuffer[i] is not SFXMesh || !run.preventedMeshKeys.Contains((SFXRender.commandBuffer[i] as SFXMesh)._key))
+				if (SFXRender.commandBuffer[i] !is SFXMesh || !run.preventedMeshKeys.Contains((SFXRender.commandBuffer[i] as SFXMesh)._key))
 					SFXRender.commandBuffer[i].Render(i);
 			RenderTexture.active = activeRender;
 			camera.worldToCameraMatrix = worldToCameraMatrix;

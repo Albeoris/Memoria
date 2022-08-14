@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria;
 
 public class HonoBehaviorSystem : MonoBehaviour
 {
@@ -329,7 +330,7 @@ public class HonoBehaviorSystem : MonoBehaviour
 
 	public static Boolean FrameSkipEnabled;
 
-	public static Single TargetFrameTime = 0.0333333351f;
+	public static Single TargetFrameTime = 1f / (float)Configuration.Graphics.BattleFPS;
 
 	public static Single _cumulativeTime;
 }

@@ -34,7 +34,7 @@ public class WMScriptDirector : HonoBehavior
 		PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = true;
 		Transform transform = GameObject.Find("Bee").transform;
 		UnityEngine.Object.Destroy(transform.gameObject);
-		Application.targetFrameRate = 20;
+		Application.targetFrameRate = Configuration.Graphics.BattleFPS;
         Singleton<WMWorld>.Instance.Initialize();
 		this.World = Singleton<WMWorld>.Instance;
 		this.World.ClipDistance = 300000;

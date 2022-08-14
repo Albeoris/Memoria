@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Memoria;
 
 public partial class EventEngine
 {
@@ -17,7 +18,7 @@ public partial class EventEngine
             z = -1070f;
         }
         GameObject go = this.gCur.go;
-        float num = (float)actor.speed;
+        float num = (float)actor.speed * (30f / (float)Configuration.Graphics.BattleFPS);
         float num2 = 0f;
         PosObj posObj = (PosObj)null;
         FieldMapActorController fieldMapActorController = (FieldMapActorController)null;
@@ -145,7 +146,7 @@ public partial class EventEngine
             num6 = 0f;
         }
         Vector3 vector2;
-        EventEngine.GetMoveVector(out vector2, num13, num7, (float)actor.speed);
+        EventEngine.GetMoveVector(out vector2, num13, num7, (float)actor.speed * (30f / (float)Configuration.Graphics.BattleFPS));
         if (fieldMapActorController != (UnityEngine.Object)null && fieldMapActorController.name == fieldMapActorController.fieldMap.debugObjName)
         {
             Vector3 a = new Vector3(num3, num4, num5);

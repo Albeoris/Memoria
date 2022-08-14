@@ -7,6 +7,7 @@ using Memoria.Assets;
 using Memoria.Prime;
 using SiliconStudio;
 using UnityEngine;
+using Memoria;
 
 namespace Assets.Scripts.Common
 {
@@ -20,22 +21,7 @@ namespace Assets.Scripts.Common
 
 		public static void SetTargetFrameRateForCurrentScene()
 		{
-			if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0)
-			{
-				Application.targetFrameRate = 30;
-			}
-			else if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.FieldMapSceneName) == 0)
-			{
-				Application.targetFrameRate = 30;
-			}
-			else if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.WorldMapSceneName) == 0)
-			{
-				Application.targetFrameRate = 20;
-            }
-			else
-			{
-				Application.targetFrameRate = 60;
-			}
+			Application.targetFrameRate = Configuration.Graphics.BattleFPS;
 		}
 
 		public static Boolean IsBattleScene()

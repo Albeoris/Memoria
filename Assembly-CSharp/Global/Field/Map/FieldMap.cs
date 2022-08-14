@@ -122,7 +122,7 @@ public class FieldMap : HonoBehavior
             this.mapName = "FBG_N00_TSHP_MAP001_TH_CGR_0";
         }
         this.LoadFieldMap(this.mapName);
-        this.frameTime = 0.0333333351f;
+        this.frameTime = 1f / (float)Configuration.Graphics.BattleFPS;
         HonoBehaviorSystem.FrameSkipEnabled = false;
         HonoBehaviorSystem.TargetFrameTime = this.frameTime;
         this.attachList = new EBG_ATTACH_DEF[10];

@@ -812,34 +812,16 @@ namespace FF9
 		public static void PlayAnim(BTL_DATA btl)
 		{
 			if (btl.currentAnimationName == null)
+			{
 				return;
-			GameObject gameObject = btl.gameObject;
-			String currentAnimationName = btl.currentAnimationName;
-			UInt16 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, currentAnimationName);
-			Byte animFrame = btl.evt.animFrame;
-			if (!gameObject.GetComponent<Animation>().IsPlaying(currentAnimationName))
-			{
-				if (gameObject.GetComponent<Animation>().GetClip(currentAnimationName) != (UnityEngine.Object)null)
-				{
-					AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
-					gameObject.GetComponent<Animation>().Play(currentAnimationName);
-					clipState.speed = 0f;
-					if (animMaxFrame == 0)
-						clipState.time = 0f;
-					else
-						clipState.time = (Single)animFrame / (Single)animMaxFrame * gameObject.GetComponent<Animation>()[currentAnimationName].length;
-					gameObject.GetComponent<Animation>().Sample();
-				}
 			}
-			else
+			GameObject gameObject = btl.gameObject;
+			string currentAnimationName = btl.currentAnimationName;
+			GeoAnim.geoAnimGetNumFrames(btl, currentAnimationName);
+			if (!gameObject.GetComponent<Animation>().IsPlaying(currentAnimationName) && gameObject.GetComponent<Animation>().GetClip(currentAnimationName) != null)
 			{
-				AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
-				clipState.speed = 0f;
-				if (animMaxFrame == 0)
-					clipState.time = 0f;
-				else
-					clipState.time = (Single)animFrame / (Single)animMaxFrame * gameObject.GetComponent<Animation>()[currentAnimationName].length;
-				gameObject.GetComponent<Animation>().Sample();
+				gameObject.GetComponent<Animation>().Play(currentAnimationName);
+				return;
 			}
 		}
 

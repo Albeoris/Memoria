@@ -191,30 +191,17 @@ public class WMActor : MonoBehaviour
 
     public void UpdateAnimationViaScript()
     {
-        GameObject go = this.originalActor.go;
-        if (go == (UnityEngine.Object)null)
-        {
-            return;
-        }
-        if (!go.GetComponent<Animation>().IsPlaying(FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)))
-        {
-            if (go.GetComponent<Animation>().GetClip(FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)) != (UnityEngine.Object)null)
-            {
-                go.GetComponent<Animation>().Play(FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim));
-                go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].speed = 0f;
-                Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].length;
-                go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].time = time;
-                go.GetComponent<Animation>().Sample();
-            }
-        }
-        else
-        {
-            go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].speed = 0f;
-            Single time2 = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].length;
-            go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].time = time2;
-            go.GetComponent<Animation>().Sample();
-        }
-    }
+		GameObject go = this.originalActor.go;
+		if (go == null)
+		{
+			return;
+		}
+		if (!go.GetComponent<Animation>().IsPlaying(FF9DBAll.AnimationDB.GetValue((int)this.originalActor.anim)) && go.GetComponent<Animation>().GetClip(FF9DBAll.AnimationDB.GetValue((int)this.originalActor.anim)) != null)
+		{
+			go.GetComponent<Animation>().Play(FF9DBAll.AnimationDB.GetValue((int)this.originalActor.anim));
+			return;
+		}
+	}
 
     public void LateUpdate()
 	{

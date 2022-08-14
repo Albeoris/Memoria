@@ -107,7 +107,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     protected override void Awake()
     {
         base.Awake();
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = Configuration.Graphics.BattleFPS;
         this.playerMaterials = new List<Material>();
         this.monsterMaterials = new List<Material>();
         FF9StateSystem.Battle.isFade = false;
@@ -357,8 +357,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             //    // do nothing?
             //}
         }
-        fps = Configuration.Graphics.BattleFPS * newSpeed;
-        frameTime = 1f / fps;
+        fps = Configuration.Graphics.BattleFPS * Speed;
+        frameTime = 1f / (float)fps;
     }
 
     public static void playCommand(Int32 characterNo, Int32 slotNo, Int32 target, Boolean isTrance = false)
@@ -461,7 +461,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinute = true;
 
                     changed = true;
-                    current.at += (Int16)Math.Max(1, current.at_coef * 4 );
+                    int num = (int)((float)Math.Max(1, (int)(current.at_coef * 4)) * (30f / (float)HonoluluBattleMain.fps));
+                    current.at += (short)num;
                 }
 
                 if (needContinue)

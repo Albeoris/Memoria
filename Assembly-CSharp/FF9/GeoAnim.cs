@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Memoria;
 
 namespace FF9
 {
@@ -35,7 +36,7 @@ namespace FF9
 				num4 = num;
 			else if (num3 == num2)
 				num4 = num2;
-			return num4 + 1;
+			return (int)((float)(num4 + 1) * ((float)Configuration.Graphics.BattleFPS / frameRate));
 		}
 
 		// Sometimes, the 1st frame of an animation is the same as its last frame... sometimes it's not

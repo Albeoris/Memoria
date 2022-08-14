@@ -2109,7 +2109,7 @@ internal class EventEngineUtils
                                 argCount = 2 + argCount;
                         }
                         for (Int32 i = 0; i < argCount; i++)
-                            arguments.Add((argFlag & (1 << i)) != 0 ? new ArgumentExpression(raw, ref pos) : new ArgumentConstant(raw, ref pos, GetArgTypeSize(opcode, i)));
+                            arguments.Add((argFlag & (1 << i)) != 0 ? (Argument)(new ArgumentExpression(raw, ref pos)) : (Argument)(new ArgumentConstant(raw, ref pos, GetArgTypeSize(opcode, i))));
                     }
 
                     public UInt32 GetBinarySize()

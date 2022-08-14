@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Memoria;
 
 public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
 {
@@ -89,7 +90,7 @@ public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
 					controlledDebugDebugActor.State = WMActorStateDebug.Running;
 				}
 			}
-			controlledDebugDebugActor.moveSpeed = Mathf.Lerp(controlledDebugDebugActor.moveSpeed, num2, t);
+			controlledDebugDebugActor.moveSpeed = Mathf.Lerp(controlledDebugDebugActor.moveSpeed, num2, t) * (30f / (float)Configuration.Graphics.BattleFPS);
 			if (controlledDebugDebugActor.moveSpeed < controlledDebugDebugActor.walkSpeed * 0.3f)
 			{
 			}
@@ -271,7 +272,7 @@ public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
 			Input.ResetInputAxes();
 		}
 		this.UpdateSmoothedMovementDirectionHuman();
-		Vector3 vector = controlledActor.moveDirection * controlledActor.moveSpeed;
+		Vector3 vector = controlledActor.moveDirection * controlledActor.moveSpeed * (15f / (float)Configuration.Graphics.BattleFPS);
 		vector *= Time.deltaTime;
 		if (FF9StateSystem.World.IsBeeScene && controlledActor.Animation)
 		{

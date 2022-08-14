@@ -1,10 +1,16 @@
 ﻿using System;
 using FF9;
+using UnityEngine;
+using Memoria;
 
 public partial class EventEngine
 {
     private void ProcessAnime(Actor actor)
     {
+        if ((float)Time.frameCount % ((float)Configuration.Graphics.BattleFPS / 30f) != 0f)
+        {
+            return;
+        }
         if (((int)actor.animFlag & EventEngine.afFreeze) == 0)
         {
             if (this.gMode == 3)
@@ -123,6 +129,7 @@ public partial class EventEngine
         }
     }
 
+    //TODO: Adjust this for framerate? Might resolve cutscene issues.
     private Int32 NextFrame(Actor actor)
     {
         Boolean flag = ((Int32)actor.animFlag & EventEngine.afDir) != 0;

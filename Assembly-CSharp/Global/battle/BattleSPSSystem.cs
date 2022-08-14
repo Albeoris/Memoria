@@ -60,9 +60,9 @@ public class BattleSPSSystem : MonoBehaviour
 					{
 						battleSPS.curFrame = 0;
 					}
-					else if (battleSPS.curFrame < 0)
+					else if (battleSPS.curFrame < 0) // TODO: Figure out if this is actually needed; should never run (theoretically)
 					{
-						battleSPS.curFrame = (battleSPS.frameCount >> 4) - 1 << 4;
+						battleSPS.curFrame = ((battleSPS.frameCount / 16) - 1) * 16;
 					}
 				}
 			}
@@ -80,7 +80,9 @@ public class BattleSPSSystem : MonoBehaviour
 				}
 				else if (special_sps.curFrame < 0)
 				{
-					special_sps.curFrame = (special_sps.frameCount >> 4) - 1 << 4;
+					// Adjusted from the original bitshifting setup for readability; we're not devving for a ps1 here
+					special_sps.curFrame = ((special_sps.frameCount / 16) - 1) * 16; 
+					
 				}
 			}
 		}
