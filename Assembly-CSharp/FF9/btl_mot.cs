@@ -816,10 +816,10 @@ namespace FF9
 				return;
 			}
 			GameObject gameObject = btl.gameObject;
-			string currentAnimationName = btl.currentAnimationName;
-			GeoAnim.geoAnimGetNumFrames(btl, currentAnimationName);
+			String currentAnimationName = btl.currentAnimationName;
 			if (!gameObject.GetComponent<Animation>().IsPlaying(currentAnimationName) && gameObject.GetComponent<Animation>().GetClip(currentAnimationName) != null)
 			{
+				AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
 				gameObject.GetComponent<Animation>().Play(currentAnimationName);
 				return;
 			}

@@ -461,7 +461,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinute = true;
 
                     changed = true;
-                    int num = (int)((float)Math.Max(1, (int)(current.at_coef * 4)) * (30f / (float)HonoluluBattleMain.fps));
+                    int num = (int)((float)Math.Max(1, (int)(current.at_coef * 4)) * (16f / (float)HonoluluBattleMain.fps));
                     current.at += (short)num;
                 }
 
@@ -552,13 +552,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void UpdateFrames()
     {
-        this.cumulativeTime += Time.deltaTime;
+        this.cumulativeTime += Time.smoothDeltaTime;
         if (this.needClampTime)
-            this.cumulativeTime = Mathf.Min(this.cumulativeTime, HonoluluBattleMain.frameTime * (float)SettingsState.FastForwardGameSpeed * 1.2f);
+            this.cumulativeTime = Mathf.Min(this.cumulativeTime, HonoluluBattleMain.frameTime * (float)SettingsState.FastForwardGameSpeed);
 
-        while (this.cumulativeTime >= (Double)frameTime)
+        if(this.cumulativeTime >= frameTime)
         {
-            this.cumulativeTime -= frameTime;
+            this.cumulativeTime -= Time.smoothDeltaTime;
+            if (this.cumulativeTime < 0)
+                this.cumulativeTime = 0;
+
             battleSPS.Service();
             if (!IsOver)
                 UpdateBattleFrame();

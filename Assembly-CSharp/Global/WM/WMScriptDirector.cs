@@ -131,16 +131,19 @@ public class WMScriptDirector : HonoBehavior
 		{
 			ff9.kPadPush.CollectInput();
 		}
-		this.honoCumulativeTime += Time.deltaTime;
+		this.honoCumulativeTime += Time.smoothDeltaTime;
+		float checked_frametime = 1f / Configuration.Graphics.BattleFPS;
 		if (ff9.w_frameCounter < ff9.kframeEventStartLoop + 1)
 		{
 			this.HonoUpdate20FPS();
 		}
-		else if (this.honoCumulativeTime >= 0.05f)
+		else if (this.honoCumulativeTime >= checked_frametime)
 		{
 			this.HonoUpdate20FPS();
 			this.honoFrameCounter++;
-			this.honoCumulativeTime -= 0.05f;
+			this.honoCumulativeTime -= Time.smoothDeltaTime;
+			if (honoCumulativeTime < 0)
+				honoCumulativeTime = 0;
 			ff9.kPadPush.PurgeInput();
 		}
 		if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())

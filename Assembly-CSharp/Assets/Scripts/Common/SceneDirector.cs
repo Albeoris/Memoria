@@ -466,7 +466,7 @@ namespace Assets.Scripts.Common
 		public static void InitFade(FadeMode mode, Int32 frame, Color32 target)
 		{
 			SceneDirector._curFrame = 0f;
-			SceneDirector._targetFrame = (Single)frame;
+			SceneDirector._targetFrame = (Single)frame * (Configuration.Graphics.BattleFPS / 30f); // TODO: adjust this based on battle/field/overworld
 			SceneDirector._targetColor = target;
 			SceneDirector._SetFadeMode(mode);
 			SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];

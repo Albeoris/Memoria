@@ -26,13 +26,14 @@ public class BattlePlayerCharacter : MonoBehaviour
 		Int32 result = 0;
 		if (component[casterAnimationName] != (TrackedReference)null)
 		{
-			result = Mathf.CeilToInt(component[casterAnimationName].length * component[casterAnimationName].clip.frameRate) * (int)(component[casterAnimationName].clip.frameRate / (float)Configuration.Graphics.BattleFPS);
-			component[casterAnimationName].speed = component[casterAnimationName].clip.frameRate / (float)Configuration.Graphics.BattleFPS;
+			component[casterAnimationName].speed = 0.5f * (Single)HonoluluBattleMain.Speed;
+			result = Mathf.CeilToInt(component[casterAnimationName].length * component[casterAnimationName].clip.frameRate);
 			component.Play(casterAnimationName);
 		}
 		return result;
 	}
 
+	// Unused?
 	public static void InitMaxFrame(BTL_DATA goPlayerCharacter, Byte[] maxFrames)
 	{
 		Animation component = goPlayerCharacter.gameObject.GetComponent<Animation>();
@@ -43,8 +44,9 @@ public class BattlePlayerCharacter : MonoBehaviour
 			Int32 num = 1;
 			if (component[text2] != (TrackedReference)null)
 			{
-				component[text2].speed = component[text2].clip.frameRate / (float)Configuration.Graphics.BattleFPS;
-				num = Mathf.CeilToInt(component[text2].length * ((float)Configuration.Graphics.BattleFPS / component[text2].clip.frameRate) * component[text2].clip.frameRate);
+				component[text2].speed = 0.5f * (Single)HonoluluBattleMain.Speed;
+				Int32 num2 = Mathf.CeilToInt(component[text2].length * component[text2].clip.frameRate);
+				num = num2;
 			}
 			maxFrames[i] = (Byte)num;
 			String text3 = text;
@@ -78,7 +80,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 				{
 					animationState.wrapMode = WrapMode.Once;
 				}
-				animationState.speed = animationState.clip.frameRate / (float)Configuration.Graphics.BattleFPS;
+				animationState.speed = 0.5f;
 			}
 		}
 	}
