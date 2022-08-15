@@ -147,7 +147,7 @@ namespace FF9
             {
                 case 3:
                 case 6:
-                    if (btlsys.btl_scene.Info.NoGameOver == 0)
+                    if (!btlsys.btl_scene.Info.NoGameOver)
                     {
                         ff9.btl_result = 6;
                         break;
@@ -170,8 +170,10 @@ namespace FF9
         public static battle_start_type_tags StartType(BTL_SCENE_INFO info)
         {
             battle_start_type_tags start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
-            if (info.BackAttack != 0)
+            if (info.BackAttack)
                 start_type = battle_start_type_tags.BTL_START_BACK_ATTACK;
+            else if (info.Preemptive)
+                start_type = battle_start_type_tags.BTL_START_FIRST_ATTACK;
             Int32 backAttackChance = 24;
             Int32 preemptiveChance = 16;
             Int32 preemptivePriority = 0;
@@ -182,7 +184,7 @@ namespace FF9
                     foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
                         saFeature.TriggerOnBattleStart(ref backAttackChance, ref preemptiveChance, ref preemptivePriority);
             }
-            if (info.SpecialStart == 0 && info.BackAttack == 0)
+            if (!info.SpecialStart && !info.BackAttack && !info.Preemptive)
             {
                 Boolean bAttack = Comn.random8() < backAttackChance;
                 Boolean preemptive = Comn.random8() < preemptiveChance;
@@ -208,22 +210,22 @@ namespace FF9
                 ++num1;
             if (num1 < 16)
             {
-                if (Comn.random8() < 1 && et.bonus.item[3] != Byte.MaxValue)
+                if (Comn.random8() < et.bonus.item_rate[3] && et.bonus.item[3] != Byte.MaxValue)
                 {
                     btlBonus.item[num1++] = et.bonus.item[3];
                     et.bonus.item[3] = Byte.MaxValue;
                 }
-                else if (Comn.random8() < 32 && et.bonus.item[2] != Byte.MaxValue)
+                else if (Comn.random8() < et.bonus.item_rate[2] && et.bonus.item[2] != Byte.MaxValue)
                 {
                     btlBonus.item[num1++] = et.bonus.item[2];
                     et.bonus.item[2] = Byte.MaxValue;
                 }
-                else if (Comn.random8() < 96 && et.bonus.item[1] != Byte.MaxValue)
+                else if (Comn.random8() < et.bonus.item_rate[1] && et.bonus.item[1] != Byte.MaxValue)
                 {
                     btlBonus.item[num1++] = et.bonus.item[1];
                     et.bonus.item[1] = Byte.MaxValue;
                 }
-                if (et.bonus.item[0] != Byte.MaxValue)
+                if (Comn.random8() < et.bonus.item_rate[0] && et.bonus.item[0] != Byte.MaxValue)
                 {
                     Byte[] numArray = btlBonus.item;
                     Int32 index = num1;
@@ -233,7 +235,7 @@ namespace FF9
                     numArray[index] = (Byte)num4;
                 }
             }
-            if (btlBonus.card != Byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= 32)
+            if (btlBonus.card != Byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= et.bonus.card_rate)
                 return;
             btlBonus.card = (Byte)et.bonus.card;
         }
@@ -285,7 +287,7 @@ namespace FF9
             if ((ff9Battle.cmd_status & 1) != 0)
                 return;
 
-            if (ff9Battle.btl_scene.Info.Runaway == 0)
+            if (!ff9Battle.btl_scene.Info.Runaway)
             {
                 UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotEscape);
             }

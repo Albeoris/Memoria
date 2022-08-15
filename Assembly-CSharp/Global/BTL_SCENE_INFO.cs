@@ -4,31 +4,48 @@ public class BTL_SCENE_INFO
 {
 	public battle_start_type_tags StartType;
 
-	public Byte SpecialStart;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean SpecialStart;
 
-	public Byte BackAttack;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean BackAttack;
 
-	public Byte NoGameOver;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean NoGameOver;
 
-	public Byte NoExp;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean NoExp;
 
-	public Byte WinPose;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean WinPose;
 
-	public Byte Runaway;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean Runaway;
 
-	public Byte NoNeighboring;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean NoNeighboring;
 
+	[Memoria.PatchableFieldAttribute]
 	public Boolean NoMagical;
 
-	public Byte ReverseAttack;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean ReverseAttack;
 
-	public Byte FixedCamera1;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean FixedCamera1;
 
-	public Byte FixedCamera2;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean FixedCamera2;
 
-	public Byte AfterEvent;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean AfterEvent;
 
-	public Byte FieldBGM;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean FieldBGM;
 
-	public Byte Reserve;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean Preemptive;
+
+	[Memoria.PatchableFieldAttribute]
+	public String BattleBackground;
 }

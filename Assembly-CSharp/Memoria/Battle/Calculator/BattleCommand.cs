@@ -45,6 +45,7 @@ namespace Memoria
 
         public String Name => Data.et.name;
         public Byte[] StealableItems => Data.steal_item;
+        public UInt16[] StealableItemRates => Data.steal_item_rate;
         public ENEMY GetData
         {
             get => Data;
@@ -90,7 +91,7 @@ namespace Memoria
         public BattleAbilityId AbilityId => (BattleAbilityId)Data.sub_no;
         public Boolean IsManyTarget => Data.info.cursor == 1;
         public TargetType TargetType => (TargetType)Data.aa.Info.Target;
-        public BattleStatusIndex AbilityStatusIndex => (BattleStatusIndex)Data.aa.AddNo;
+        public BattleStatusIndex AbilityStatusIndex => (BattleStatusIndex)Data.aa.AddStatusNo;
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
         public Boolean IsShortSummon

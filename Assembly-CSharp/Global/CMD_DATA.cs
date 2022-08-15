@@ -44,7 +44,7 @@ public class CMD_DATA
 			ScriptId = aa.Ref.ScriptId;
 			Element = (EffectElement)aa.Ref.Elements;
 			ElementForBonus = Element;
-			AbilityStatus = FF9StateSystem.Battle.FF9Battle.add_status[aa.AddNo].Value;
+			AbilityStatus = FF9StateSystem.Battle.FF9Battle.add_status[aa.AddStatusNo].Value;
 			AbilityCategory = aa.Category;
 			AbilityType = aa.Type;
 			IsShortRange = false;

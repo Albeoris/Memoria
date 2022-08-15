@@ -341,7 +341,7 @@ namespace Memoria.Field
                 Info = aa.Info;
                 Ref = aa.Ref;
                 Category = aa.Category;
-                AddNo = aa.AddNo;
+                AddNo = aa.AddStatusNo;
                 MP = aa.MP;
                 Type = aa.Type;
                 Vfx2 = aa.Vfx2;

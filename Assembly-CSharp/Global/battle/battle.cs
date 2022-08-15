@@ -72,7 +72,7 @@ public class battle
         btl_cmd.InitCommandSystem(ff9Battle);
         btl_cmd.InitSelectCursor(ff9Battle);
         btlseq.SetupBattleScene();
-        battle.btl_bonus.Event = ff9Battle.btl_scene.Info.AfterEvent != 0;
+        battle.btl_bonus.Event = ff9Battle.btl_scene.Info.AfterEvent;
         if (!FF9StateSystem.Battle.isDebug)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
         SceneDirector.FF9Wipe_FadeInEx(32);
@@ -239,7 +239,7 @@ public class battle
             }
             btl_mot.DieSequence(data);
         }
-        if (btlsys.btl_phase == 7 && btlsys.btl_scene.Info.NoGameOver == 0 && !btl_util.ManageBattleSong(sys, 30U, 6U))
+        if (btlsys.btl_phase == 7 && !btlsys.btl_scene.Info.NoGameOver && !btl_util.ManageBattleSong(sys, 30U, 6U))
             flag = false;
         battle.BattleSubSystem(sys, btlsys);
         return flag;
@@ -335,7 +335,7 @@ public class battle
                 case 4:
                     sys.btl_flag |= 64;
                     sys.btl_result = 1;
-                    if (btlsys.btl_scene.Info.WinPose != 0)
+                    if (btlsys.btl_scene.Info.WinPose)
                     {
                         if (!btl_util.ManageBattleSong(sys, 30U, 5U))
                             break;
@@ -371,7 +371,7 @@ public class battle
                         }
                         SFX.SetCamera(2);
                     }
-                    else if (btlsys.btl_scene.Info.FieldBGM != 0)
+                    else if (btlsys.btl_scene.Info.FieldBGM)
                     {
                         sys.btl_flag |= 8;
                     }
@@ -382,7 +382,7 @@ public class battle
                     btlsys.btl_phase = 7;
                     break;
                 case 2:
-                    if (btlsys.btl_scene.Info.WinPose == 0 && btlsys.btl_scene.Info.FieldBGM != 0)
+                    if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
                         sys.btl_flag |= 8;
                     btlsys.btl_phase = 1;
                     btl_cmd.KillAllCommand(btlsys);
@@ -403,7 +403,7 @@ public class battle
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                         if (next.bi.player == 0)
                             gil += btl_util.getEnemyTypePtr(next).bonus.gil;
-                    if (btlsys.btl_scene.Info.WinPose == 0 && btlsys.btl_scene.Info.FieldBGM != 0)
+                    if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
                         sys.btl_flag |= 8;
                     sys.btl_result = 4;
                     btlsys.btl_phase = 8;
@@ -424,7 +424,7 @@ public class battle
                     break;
             }
             if (btlsys.btl_phase != 5)
-                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose != 0 ? (Byte)0 : (Byte)1;
+                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose ? (Byte)0 : (Byte)1;
         }
         else
             btl_cmd.CommandEngine(btlsys);

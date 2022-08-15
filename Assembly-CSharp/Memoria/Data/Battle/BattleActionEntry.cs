@@ -57,7 +57,7 @@ namespace Memoria.Data
             sw.Byte(btlRef.Elements);
             sw.ByteOrMinusOne(btlRef.Rate);
             sw.Byte(ActionData.Category);
-            sw.Byte(ActionData.AddNo);
+            sw.Byte(ActionData.AddStatusNo);
             sw.Byte(ActionData.MP);
             sw.Byte(ActionData.Type);
         }

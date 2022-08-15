@@ -56,7 +56,7 @@ namespace Memoria
 
     public static class BattleState
     {
-        public static Boolean IsSpecialStart => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.SpecialStart != 0;
+        public static Boolean IsSpecialStart => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.SpecialStart;
         public static BattleCommand EscapeCommand => new BattleCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape);
 
         public static Int32 TargetCount(Boolean isPlayer)
@@ -230,7 +230,7 @@ namespace Memoria
         public Boolean CanEscape()
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            if (ff9Battle.btl_scene.Info.Runaway == 0)
+            if (!ff9Battle.btl_scene.Info.Runaway)
                 return false;
 
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
@@ -550,7 +550,7 @@ namespace Memoria
         public void PenaltyReverseAttack()
         {
             // Ipsen's Castle
-            if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack == 0)
+            if (!FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack)
                 return;
 
             Context.AttackPower = 60 - Context.AttackPower;

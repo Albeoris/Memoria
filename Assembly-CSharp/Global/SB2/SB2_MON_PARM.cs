@@ -5,12 +5,12 @@ public class SB2_MON_PARM
 {
 	public SB2_MON_PARM()
 	{
-		this.Status = new BattleStatus[3];
 		this.WinItems = new Byte[4];
+		this.WinItemRates = new UInt16[4];
 		this.StealItems = new Byte[4];
+		this.StealItemRates = new UInt16[4];
 		this.Mot = new UInt16[6];
 		this.Mesh = new UInt16[2];
-		this.Attr = new Byte[4];
 		this.Bone = new Byte[4];
 		this.IconBone = new Byte[6];
 		this.IconY = new SByte[6];
@@ -18,24 +18,42 @@ public class SB2_MON_PARM
 	}
 
 	public const Byte MON_PRM_FLG_DEADATK = 1;
-
 	public const Byte MON_PRM_FLG_DEADDMG = 2;
 
 	public const Int32 Size = 116;
 
-	public BattleStatus[] Status;
+	public static readonly UInt16[] DefaultWinItemRates = { 256, 96, 32, 1 };
+	public static readonly UInt16[] DefaultStealItemRates = { 256, 64, 16, 1 };
+	public static readonly UInt16 DefaultWinCardRate = 32;
 
+	[Memoria.PatchableFieldAttribute]
+	public BattleStatus ResistStatus;
+	[Memoria.PatchableFieldAttribute]
+	public BattleStatus AutoStatus;
+	[Memoria.PatchableFieldAttribute]
+	public BattleStatus InitialStatus;
+
+	[Memoria.PatchableFieldAttribute]
 	public UInt32 MaxHP;
 
+	[Memoria.PatchableFieldAttribute]
 	public UInt32 MaxMP;
 
+	[Memoria.PatchableFieldAttribute]
 	public UInt32 WinGil;
 
+	[Memoria.PatchableFieldAttribute]
 	public UInt32 WinExp;
 
+	[Memoria.PatchableFieldAttribute]
 	public Byte[] WinItems;
+	[Memoria.PatchableFieldAttribute]
+	public UInt16[] WinItemRates;
 
+	[Memoria.PatchableFieldAttribute]
 	public Byte[] StealItems;
+	[Memoria.PatchableFieldAttribute]
+	public UInt16[] StealItemRates;
 
 	public UInt16 Radius;
 
@@ -51,23 +69,40 @@ public class SB2_MON_PARM
 
 	public SB2_ELEMENT Element;
 
-	public Byte[] Attr;
+	[Memoria.PatchableFieldAttribute]
+	public Byte GuardElement;
+	[Memoria.PatchableFieldAttribute]
+	public Byte AbsorbElement;
+	[Memoria.PatchableFieldAttribute]
+	public Byte HalfElement;
+	[Memoria.PatchableFieldAttribute]
+	public Byte WeakElement;
+	[Memoria.PatchableFieldAttribute]
+	public Byte BonusElement;
 
+	[Memoria.PatchableFieldAttribute]
 	public Byte Level;
 
+	[Memoria.PatchableFieldAttribute]
 	public Byte Category;
 
+	[Memoria.PatchableFieldAttribute]
 	public Byte HitRate;
 
-	public Byte P_DP;
+	[Memoria.PatchableFieldAttribute]
+	public Byte PhysicalDefence;
 
-	public Byte P_AV;
+	[Memoria.PatchableFieldAttribute]
+	public Byte PhysicalEvade;
 
-	public Byte M_DP;
+	[Memoria.PatchableFieldAttribute]
+	public Byte MagicalDefence;
 
-	public Byte M_AV;
+	[Memoria.PatchableFieldAttribute]
+	public Byte MagicalEvade;
 
-	public Byte Blue;
+	[Memoria.PatchableFieldAttribute]
+	public Byte BlueMagic;
 
 	public Byte[] Bone;
 
@@ -91,7 +126,10 @@ public class SB2_MON_PARM
 
 	public Byte ShadowBone;
 
-	public Byte Card;
+	[Memoria.PatchableFieldAttribute]
+	public Byte WinCard;
+	[Memoria.PatchableFieldAttribute]
+	public UInt16 WinCardRate;
 
 	public Int16 ShadowOfsX;
 
@@ -105,5 +143,14 @@ public class SB2_MON_PARM
 
 	public UInt16 Pad2;
 
-	public SByte OutOfReach = -1;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean OutOfReach;
+
+	[Memoria.PatchableFieldAttribute]
+	public String[] TextureFiles;
+
+	[Memoria.PatchableFieldAttribute]
+	public String WeaponModel;
+	[Memoria.PatchableFieldAttribute]
+	public Int32 WeaponAttachment;
 }

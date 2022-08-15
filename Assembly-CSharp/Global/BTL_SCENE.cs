@@ -22,21 +22,21 @@ public class BTL_SCENE
 			this.header.TypCount = binaryReader.ReadByte();
 			this.header.AtkCount = binaryReader.ReadByte();
 			this.header.Flags = binaryReader.ReadUInt16();
-			this.PatAddr = new SB2_PATTERN[(Int32)this.header.PatCount];
-			this.MonAddr = new SB2_MON_PARM[(Int32)this.header.TypCount];
-			this.atk = new AA_DATA[(Int32)this.header.AtkCount];
+			this.PatAddr = new SB2_PATTERN[this.header.PatCount];
+			this.MonAddr = new SB2_MON_PARM[this.header.TypCount];
+			this.atk = new AA_DATA[this.header.AtkCount];
 			binaryReader.BaseStream.Seek(8L, SeekOrigin.Begin);
-			for (Int32 i = 0; i < (Int32)this.header.PatCount; i++)
+			for (Int32 i = 0; i < this.header.PatCount; i++)
 			{
 				SB2_PATTERN sb2_PATTERN = this.PatAddr[i] = new SB2_PATTERN();
 				sb2_PATTERN.Rate = binaryReader.ReadByte();
-				sb2_PATTERN.MonCount = binaryReader.ReadByte();
+				sb2_PATTERN.MonsterCount = binaryReader.ReadByte();
 				sb2_PATTERN.Camera = binaryReader.ReadByte();
 				sb2_PATTERN.Pad0 = binaryReader.ReadByte();
 				sb2_PATTERN.AP = binaryReader.ReadUInt32();
 				for (Int32 j = 0; j < 4; j++)
 				{
-					SB2_PUT sb2_PUT = sb2_PATTERN.Put[j] = new SB2_PUT();
+					SB2_PUT sb2_PUT = sb2_PATTERN.Monster[j] = new SB2_PUT();
 					sb2_PUT.TypeNo = binaryReader.ReadByte();
 					sb2_PUT.Flags = binaryReader.ReadByte();
 					sb2_PUT.Pease = binaryReader.ReadByte();
@@ -47,83 +47,73 @@ public class BTL_SCENE
 					sb2_PUT.Rot = binaryReader.ReadInt16();
 				}
 			}
-			binaryReader.BaseStream.Seek((Int64)(8 + 56 * this.header.PatCount), SeekOrigin.Begin);
-			for (Int32 k = 0; k < (Int32)this.header.TypCount; k++)
+			binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount, SeekOrigin.Begin);
+			for (Int32 i = 0; i < this.header.TypCount; i++)
 			{
-				SB2_MON_PARM sb2_MON_PARM = this.MonAddr[k] = new SB2_MON_PARM();
-				for (Int32 l = 0; l < 3; l++)
-				{
-					sb2_MON_PARM.Status[l] = (BattleStatus)binaryReader.ReadUInt32();
-				}
+				SB2_MON_PARM sb2_MON_PARM = this.MonAddr[i] = new SB2_MON_PARM();
+				sb2_MON_PARM.ResistStatus = (BattleStatus)binaryReader.ReadUInt32();
+				sb2_MON_PARM.AutoStatus = (BattleStatus)binaryReader.ReadUInt32();
+				sb2_MON_PARM.InitialStatus = (BattleStatus)binaryReader.ReadUInt32();
 				sb2_MON_PARM.MaxHP = binaryReader.ReadUInt16();
 				sb2_MON_PARM.MaxMP = binaryReader.ReadUInt16();
 				sb2_MON_PARM.WinGil = binaryReader.ReadUInt16();
 				sb2_MON_PARM.WinExp = binaryReader.ReadUInt16();
-				for (Int32 m = 0; m < 4; m++)
+				for (Int32 j = 0; j < 4; j++)
 				{
-					sb2_MON_PARM.WinItems[m] = binaryReader.ReadByte();
+					sb2_MON_PARM.WinItems[j] = binaryReader.ReadByte();
+					sb2_MON_PARM.WinItemRates[j] = SB2_MON_PARM.DefaultWinItemRates[j];
 				}
-				for (Int32 n = 0; n < 4; n++)
+				for (Int32 j = 0; j < 4; j++)
 				{
-					sb2_MON_PARM.StealItems[n] = binaryReader.ReadByte();
+					sb2_MON_PARM.StealItems[j] = binaryReader.ReadByte();
+					sb2_MON_PARM.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
 				}
 				sb2_MON_PARM.Radius = binaryReader.ReadUInt16();
 				sb2_MON_PARM.Geo = binaryReader.ReadUInt16();
-				for (Int32 num = 0; num < 6; num++)
-				{
-					sb2_MON_PARM.Mot[num] = binaryReader.ReadUInt16();
-				}
-				for (Int32 num2 = 0; num2 < 2; num2++)
-				{
-					sb2_MON_PARM.Mesh[num2] = binaryReader.ReadUInt16();
-				}
+				for (Int32 j = 0; j < 6; j++)
+					sb2_MON_PARM.Mot[j] = binaryReader.ReadUInt16();
+				for (Int32 j = 0; j < 2; j++)
+					sb2_MON_PARM.Mesh[j] = binaryReader.ReadUInt16();
 				sb2_MON_PARM.Flags = binaryReader.ReadUInt16();
 				sb2_MON_PARM.AP = binaryReader.ReadUInt16();
 				SB2_ELEMENT sb2_ELEMENT = sb2_MON_PARM.Element = new SB2_ELEMENT();
-				sb2_ELEMENT.dex = binaryReader.ReadByte();
-				sb2_ELEMENT.str = binaryReader.ReadByte();
-				sb2_ELEMENT.mgc = binaryReader.ReadByte();
-				sb2_ELEMENT.wpr = binaryReader.ReadByte();
+				sb2_ELEMENT.Speed = binaryReader.ReadByte();
+				sb2_ELEMENT.Strength = binaryReader.ReadByte();
+				sb2_ELEMENT.Magic = binaryReader.ReadByte();
+				sb2_ELEMENT.Spirit = binaryReader.ReadByte();
 				sb2_ELEMENT.pad = binaryReader.ReadByte();
 				sb2_ELEMENT.trans = binaryReader.ReadByte();
 				sb2_ELEMENT.cur_capa = binaryReader.ReadByte();
 				sb2_ELEMENT.max_capa = binaryReader.ReadByte();
-				for (Int32 num3 = 0; num3 < 4; num3++)
-				{
-					sb2_MON_PARM.Attr[num3] = binaryReader.ReadByte();
-				}
+				sb2_MON_PARM.GuardElement = binaryReader.ReadByte();
+				sb2_MON_PARM.AbsorbElement = binaryReader.ReadByte();
+				sb2_MON_PARM.HalfElement = binaryReader.ReadByte();
+				sb2_MON_PARM.WeakElement = binaryReader.ReadByte();
 				sb2_MON_PARM.Level = binaryReader.ReadByte();
 				sb2_MON_PARM.Category = binaryReader.ReadByte();
 				sb2_MON_PARM.HitRate = binaryReader.ReadByte();
-				sb2_MON_PARM.P_DP = binaryReader.ReadByte();
-				sb2_MON_PARM.P_AV = binaryReader.ReadByte();
-				sb2_MON_PARM.M_DP = binaryReader.ReadByte();
-				sb2_MON_PARM.M_AV = binaryReader.ReadByte();
-				sb2_MON_PARM.Blue = binaryReader.ReadByte();
-				for (Int32 num4 = 0; num4 < 4; num4++)
-				{
-					sb2_MON_PARM.Bone[num4] = binaryReader.ReadByte();
-				}
+				sb2_MON_PARM.PhysicalDefence = binaryReader.ReadByte();
+				sb2_MON_PARM.PhysicalEvade = binaryReader.ReadByte();
+				sb2_MON_PARM.MagicalDefence = binaryReader.ReadByte();
+				sb2_MON_PARM.MagicalEvade = binaryReader.ReadByte();
+				sb2_MON_PARM.BlueMagic = binaryReader.ReadByte();
+				for (Int32 j = 0; j < 4; j++)
+					sb2_MON_PARM.Bone[j] = binaryReader.ReadByte();
 				sb2_MON_PARM.DieSfx = binaryReader.ReadUInt16();
 				sb2_MON_PARM.Konran = binaryReader.ReadByte();
 				sb2_MON_PARM.MesCnt = binaryReader.ReadByte();
-				for (Int32 num5 = 0; num5 < 6; num5++)
-				{
-					sb2_MON_PARM.IconBone[num5] = binaryReader.ReadByte();
-				}
-				for (Int32 num6 = 0; num6 < 6; num6++)
-				{
-					sb2_MON_PARM.IconY[num6] = binaryReader.ReadSByte();
-				}
-				for (Int32 num7 = 0; num7 < 6; num7++)
-				{
-					sb2_MON_PARM.IconZ[num7] = binaryReader.ReadSByte();
-				}
+				for (Int32 j = 0; j < 6; j++)
+					sb2_MON_PARM.IconBone[j] = binaryReader.ReadByte();
+				for (Int32 j = 0; j < 6; j++)
+					sb2_MON_PARM.IconY[j] = binaryReader.ReadSByte();
+				for (Int32 j = 0; j < 6; j++)
+					sb2_MON_PARM.IconZ[j] = binaryReader.ReadSByte();
 				sb2_MON_PARM.StartSfx = binaryReader.ReadUInt16();
 				sb2_MON_PARM.ShadowX = binaryReader.ReadUInt16();
 				sb2_MON_PARM.ShadowZ = binaryReader.ReadUInt16();
 				sb2_MON_PARM.ShadowBone = binaryReader.ReadByte();
-				sb2_MON_PARM.Card = binaryReader.ReadByte();
+				sb2_MON_PARM.WinCard = binaryReader.ReadByte();
+				sb2_MON_PARM.WinCardRate = SB2_MON_PARM.DefaultWinCardRate;
 				sb2_MON_PARM.ShadowOfsX = binaryReader.ReadInt16();
 				sb2_MON_PARM.ShadowOfsZ = binaryReader.ReadInt16();
 				sb2_MON_PARM.ShadowBone2 = binaryReader.ReadByte();
@@ -131,11 +121,12 @@ public class BTL_SCENE
 				sb2_MON_PARM.Pad1 = binaryReader.ReadUInt16();
 				sb2_MON_PARM.Pad2 = binaryReader.ReadUInt16();
 			}
-			binaryReader.BaseStream.Seek((Int64)(8 + 56 * this.header.PatCount + 116 * this.header.TypCount), SeekOrigin.Begin);
-			for (Int32 num8 = 0; num8 < (Int32)this.header.AtkCount; num8++)
+			binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount + 116 * this.header.TypCount, SeekOrigin.Begin);
+			for (Int32 i = 0; i < this.header.AtkCount; i++)
 			{
-				AA_DATA aa_DATA = this.atk[num8] = new AA_DATA();
+				AA_DATA aa_DATA = this.atk[i] = new AA_DATA();
 				BattleCommandInfo cmd_INFO = aa_DATA.Info = new BattleCommandInfo();
+				BTL_REF btl_REF = aa_DATA.Ref = new BTL_REF();
 				UInt32 input = binaryReader.ReadUInt32();
 				Byte b = 0;
 				cmd_INFO.Target = (TargetType)BitUtil.ReadBits(input, ref b, 4);
@@ -146,19 +137,21 @@ public class BTL_SCENE
 				cmd_INFO.ForDead = BitUtil.ReadBits(input, ref b, 1) != 0;
 				cmd_INFO.DefaultCamera = BitUtil.ReadBits(input, ref b, 1) != 0;
 				cmd_INFO.DefaultOnDead = BitUtil.ReadBits(input, ref b, 1) != 0;
-				BTL_REF btl_REF = aa_DATA.Ref = new BTL_REF();
 				btl_REF.ScriptId = binaryReader.ReadByte();
 				btl_REF.Power = binaryReader.ReadByte();
 				btl_REF.Elements = binaryReader.ReadByte();
 				btl_REF.Rate = binaryReader.ReadByte();
 				aa_DATA.Category = binaryReader.ReadByte();
-				aa_DATA.AddNo = binaryReader.ReadByte();
+				aa_DATA.AddStatusNo = binaryReader.ReadByte();
 				aa_DATA.MP = binaryReader.ReadByte();
 				aa_DATA.Type = binaryReader.ReadByte();
 				aa_DATA.Vfx2 = binaryReader.ReadUInt16();
 				aa_DATA.Name = binaryReader.ReadUInt16().ToString();
 			}
 		}
+		SetupSceneInfo();
+		DataPatchers.ApplyBattlePatch(this);
+		//---- TODO: maybe delete the followings and possibly the whole ".memnfo" things
 		Int32 typIndex = -1;
 		Int32 attIndex = -1;
 		foreach (String s in bsceneInfo)
@@ -179,19 +172,20 @@ public class BTL_SCENE
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "AttackPower") == 0)
 				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].AP); // AP is unused by default
 			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "OutOfReach") == 0)
-			{
-				Boolean oor;
-				if (Boolean.TryParse(bsceneCode[1], out oor))
-					this.MonAddr[typIndex].OutOfReach = (SByte)(oor ? 1 : 0);
-			}
+				Boolean.TryParse(bsceneCode[1], out this.MonAddr[typIndex].OutOfReach);
 			else if (attIndex >= 0 && attIndex < this.atk.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Vfx") == 0)
+				this.atk[attIndex].Info.SequenceFile = bsceneCode[1];
+		}
+		//----
+		if (Configuration.Battle.SFXRework)
+		{
+			foreach (AA_DATA aa in this.atk)
 			{
-				if (Configuration.Battle.SFXRework)
+				if (!String.IsNullOrEmpty(aa.Info.SequenceFile))
 				{
-					String[] efInfo;
-					String sequenceText = AssetManager.LoadString(bsceneCode[1], out efInfo);
+					String sequenceText = AssetManager.LoadString(aa.Info.SequenceFile, out _);
 					if (sequenceText != null)
-						this.atk[attIndex].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
+						aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
 				}
 			}
 		}
@@ -199,7 +193,7 @@ public class BTL_SCENE
 
 	public static Int16 GetMonGeoID(Int32 pNum)
 	{
-		SB2_PUT sb2_PUT = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Put[pNum];
+		SB2_PUT sb2_PUT = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[pNum];
 		Int16 result;
 		if (pNum > 0 && (sb2_PUT.Flags & 2) != 0)
 			result = -1;
@@ -211,13 +205,31 @@ public class BTL_SCENE
 	public static UInt16 BtlGetStartSFX()
 	{
 		Byte patNum = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
-		UInt16 typeNo = (UInt16)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)patNum].Put[0].TypeNo;
+		UInt16 typeNo = (UInt16)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)patNum].Monster[0].TypeNo;
 		return FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[(Int32)typeNo].StartSfx;
 	}
 
 	public static Int32 GetMonCount()
 	{
-		return (Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonCount;
+		return (Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
+	}
+
+	private void SetupSceneInfo()
+	{
+		UInt16 flags = header.Flags;
+		Info = new BTL_SCENE_INFO();
+		Info.SpecialStart = (flags & 1) != 0;
+		Info.BackAttack = (flags & 2) != 0;
+		Info.NoGameOver = (flags & 4) != 0;
+		Info.NoExp = (flags & 8) != 0;
+		Info.WinPose = (flags & 16) == 0;
+		Info.Runaway = (flags & 32) == 0;
+		Info.NoNeighboring = (flags & 64) != 0;
+		Info.NoMagical = (flags & 128) != 0;
+		Info.ReverseAttack = (flags & 256) != 0;
+		Info.FixedCamera1 = (flags & 512) != 0;
+		Info.FixedCamera2 = (flags & 1024) != 0;
+		Info.AfterEvent = (flags & 2048) != 0;
 	}
 
 	public const Int32 FR_OFFSET = -400;

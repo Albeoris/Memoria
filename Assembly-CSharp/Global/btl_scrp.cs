@@ -113,7 +113,7 @@ public class btl_scrp
 			case 10: return (UInt16)cmd.aa.Ref.Elements;
 			case 11: return (UInt16)cmd.aa.Ref.Rate;
 			case 12: return (UInt16)cmd.aa.Category;
-			case 13: return (UInt16)cmd.aa.AddNo;
+			case 13: return (UInt16)cmd.aa.AddStatusNo;
 			case 14: return (UInt16)cmd.aa.MP;
 			case 15: return (UInt16)cmd.aa.Type;
 			case 16: return (UInt16)cmd.aa.Vfx2;
@@ -179,7 +179,7 @@ public class btl_scrp
 			case 10: cmd.aa.Ref.Elements = (Byte)val; return;
 			case 11: cmd.aa.Ref.Rate = (Byte)val; return;
 			case 12: cmd.aa.Category = (Byte)val; return;
-			case 13: cmd.aa.AddNo = (Byte)val; return;
+			case 13: cmd.aa.AddStatusNo = (Byte)val; return;
 			case 14: cmd.aa.MP = (Byte)val; return;
 			case 15: cmd.aa.Type = (Byte)val; return;
 			case 16: cmd.aa.Vfx2 = (UInt16)val; return;
@@ -773,7 +773,7 @@ public class btl_scrp
 			if (ff9Battle.btl_phase == 1)
 			{
 				ff.btl_result = (Byte)val;
-				if (val == 1 && ff9Battle.btl_scene.Info.WinPose != 0)
+				if (val == 1 && ff9Battle.btl_scene.Info.WinPose)
 				{
 					ff9Battle.btl_phase = 5;
 					ff9Battle.btl_seq = 4;
@@ -801,7 +801,7 @@ public class btl_scrp
 				BTL_SCENE_INFO info = ff9Battle.btl_scene.Info;
 				ff9Battle.btl_phase = 3;
 				ff9Battle.btl_seq = 0;
-				if (info.SpecialStart == 0 || info.BackAttack == 0)
+				if (!info.SpecialStart || !info.BackAttack || !info.Preemptive)
 					info.StartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
 			}
 			break;

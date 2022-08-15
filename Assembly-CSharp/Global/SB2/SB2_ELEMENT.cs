@@ -2,13 +2,17 @@
 
 public class SB2_ELEMENT
 {
-	public Byte dex;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Speed;
 
-	public Byte str;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Strength;
 
-	public Byte mgc;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Magic;
 
-	public Byte wpr;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Spirit;
 
 	public Byte pad;
 

@@ -1599,7 +1599,7 @@ public class SFX
                 FF9StateBattleSystem fF9Battle = FF9StateSystem.Battle.FF9Battle;
                 if ((fF9Battle.btl_load_status & ff9btl.LOAD_ALL) == ff9btl.LOAD_ALL)
                 {
-                    if (fF9Battle.btl_scene.Info.SpecialStart != 0 && !FF9StateSystem.Battle.isDebug)
+                    if (fF9Battle.btl_scene.Info.SpecialStart && !FF9StateSystem.Battle.isDebug)
                         fF9Battle.btl_phase = 1;
                     else
                         fF9Battle.btl_phase = 3;
@@ -1686,10 +1686,10 @@ public class SFX
         {
             SB2_PATTERN[] patAddr = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr;
             SB2_PATTERN sB2_PATTERN = patAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-            sFX_INIT_PARAM.btl_scene_patAddr_putX = sB2_PATTERN.Put[0].Xpos;
-            sFX_INIT_PARAM.btl_scene_patAddr_putZ = sB2_PATTERN.Put[0].Zpos;
-            sFX_INIT_PARAM.btl_scene_FixedCamera1 = FF9StateSystem.Battle.FF9Battle.btl_scene.Info.FixedCamera1;
-            sFX_INIT_PARAM.btl_scene_FixedCamera2 = FF9StateSystem.Battle.FF9Battle.btl_scene.Info.FixedCamera2;
+            sFX_INIT_PARAM.btl_scene_patAddr_putX = sB2_PATTERN.Monster[0].Xpos;
+            sFX_INIT_PARAM.btl_scene_patAddr_putZ = sB2_PATTERN.Monster[0].Zpos;
+            sFX_INIT_PARAM.btl_scene_FixedCamera1 = FF9StateSystem.Battle.FF9Battle.btl_scene.Info.FixedCamera1 ? (Byte)1 : (Byte)0;
+            sFX_INIT_PARAM.btl_scene_FixedCamera2 = FF9StateSystem.Battle.FF9Battle.btl_scene.Info.FixedCamera2 ? (Byte)1 : (Byte)0;
             BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
             Int32 num = 0;
             while (next != null)

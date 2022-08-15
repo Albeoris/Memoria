@@ -373,6 +373,7 @@
     <Compile Include="Memoria\Configuration\Access\Hacks.cs" />
     <Compile Include="Memoria\Configuration\Access\Import.cs" />
     <Compile Include="Memoria\Configuration\Access\TetraMaster.cs" />
+    <Compile Include="Memoria\Configuration\DataPatchers.cs" />
     <Compile Include="Memoria\Configuration\MemoriaConfigurationMenu.cs" />
     <Compile Include="Memoria\Configuration\Structure\ModSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\CheatsSection.cs" />

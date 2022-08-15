@@ -52,28 +52,32 @@ namespace Memoria.Scripts.Battle
                     _v.StealItem(enemy, 0);
                 return;
             }
-            
+
             if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief))
             {
-                if (enemy.StealableItems[3] != Byte.MaxValue && GameRandom.Next8() < 32)
+                if (enemy.StealableItems[3] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[3]))
                     _v.StealItem(enemy, 3);
-                else if (enemy.StealableItems[2] != Byte.MaxValue && GameRandom.Next8() < 32)
+                else if (enemy.StealableItems[2] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[2]))
                     _v.StealItem(enemy, 2);
-                else if (enemy.StealableItems[1] != Byte.MaxValue && GameRandom.Next8() < 64)
+                else if (enemy.StealableItems[1] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[1]))
                     _v.StealItem(enemy, 1);
-                else
+                else if (enemy.StealableItems[0] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[0]))
                     _v.StealItem(enemy, 0);
+                else
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
             else
             {
-                if (GameRandom.Next8() < 1)
+                if (GameRandom.Next8() < enemy.StealableItemRates[3])
                     _v.StealItem(enemy, 3);
-                else if (GameRandom.Next8() < 16)
+                else if (GameRandom.Next8() < enemy.StealableItemRates[2])
                     _v.StealItem(enemy, 2);
-                else if (GameRandom.Next8() < 64)
+                else if (GameRandom.Next8() < enemy.StealableItemRates[1])
                     _v.StealItem(enemy, 1);
-                else
+                else if (GameRandom.Next8() < enemy.StealableItemRates[0])
                     _v.StealItem(enemy, 0);
+                else
+                    UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
             
         }

@@ -4,12 +4,9 @@ using System.Globalization;
 using System.IO;
 using UnityEngine;
 using Memoria;
-using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Assets;
 using Object = System.Object;
-using System.Net.Mime;
-using Assets.Sources.Scripts.UI.Common;
 
 public static class AssetManager
 {
@@ -82,8 +79,8 @@ public static class AssetManager
 
 	private static void _LoadAnimationFolderMapping()
 	{
-		_animationInFolder = new Dictionary<String, List<String>>();
-		_animationReverseFolder = new Dictionary<String, String>();
+		AnimationInFolder = new Dictionary<String, List<String>>();
+		AnimationReverseFolder = new Dictionary<String, String>();
 		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _);
 		if (filestr == null)
 		{
@@ -113,9 +110,9 @@ public static class AssetManager
 				String animFolder = geoFolder + "/" + animName;
 				animFolder = animFolder.Trim();
 				animFolderList.Add(animFolder);
-				_animationReverseFolder[animName] = modelName;
+				AnimationReverseFolder[animName] = modelName;
 			}
-			_animationInFolder.Add(geoFolder, animFolderList);
+			AnimationInFolder.Add(geoFolder, animFolderList);
 		}
 	}
 
@@ -621,9 +618,9 @@ public static class AssetManager
 			name = AnimationFactory.GetRenameAnimationDirectory(name);
 			return Resources.LoadAll<T>(name);
 		}
-		if (_animationInFolder.ContainsKey(name))
+		if (AnimationInFolder.ContainsKey(name))
 		{
-			List<String> list = _animationInFolder[name];
+			List<String> list = AnimationInFolder[name];
 			T[] array = new T[list.Count];
 			for (Int32 i = 0; i < list.Count; i++)
 			{
@@ -641,326 +638,11 @@ public static class AssetManager
 		return null;
 	}
 
-	public static void PatchDictionaries(String[] patchCode)
-	{
-		// This method might go somewhere else...
-		foreach (String s in patchCode)
-		{
-			String[] entry = s.Split(' ');
-			if (entry.Length < 3)
-				continue;
-			if (String.Compare(entry[0], "MessageFile") == 0)
-			{
-				// eg.: MessageFile 2000 MES_CUSTOM_PLACE
-				if (FF9DBAll.MesDB == null)
-					continue;
-				Int32 ID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				FF9DBAll.MesDB[ID] = entry[2];
-			}
-			else if (String.Compare(entry[0], "IconSprite") == 0)
-			{
-				// eg.: IconSprite 19 arrow_down
-				if (FF9UIDataTool.IconSpriteName == null)
-					continue;
-				Int32 ID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				FF9UIDataTool.IconSpriteName[ID] = entry[2];
-			}
-			else if (String.Compare(entry[0], "DebuffIcon") == 0)
-			{
-				// eg.: DebuffIcon 0 188
-				// or : DebuffIcon 0 ability_stone
-				if (BattleHUD.DebuffIconNames == null)
-					continue;
-				Int32 ID, iconID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				if (Int32.TryParse(entry[2], out iconID))
-				{
-					if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
-					{
-						Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
-						continue;
-					}
-					BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
-					if (BattleResultUI.BadIconDict == null || FF9UIDataTool.status_id == null)
-						continue;
-					BattleResultUI.BadIconDict[(UInt32)(1 << ID)] = (Byte)iconID;
-					if (ID < FF9UIDataTool.status_id.Length)
-						FF9UIDataTool.status_id[ID] = iconID;
-					// Todo: debuff icons in the main menus (status menu, items...) are UISprite components of CharacterDetailHUD and are enabled/disabled in FF9UIDataTool.DisplayCharacterDetail
-					// Maybe add UISprite components at runtime? The width of the window may require adjustments then
-					// By design (in FF9UIDataTool.DisplayCharacterDetail for instance), permanent debuffs must be the first ones of the list of statuses
-				}
-				else
-				{
-					BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = entry[2]; // When adding a debuff icon by sprite name, not all the dictionaries are updated
-				}
-			}
-			else if (String.Compare(entry[0], "BuffIcon") == 0)
-			{
-				// eg.: BuffIcon 18 188
-				// or : BuffIcon 18 ability_stone
-				if (BattleHUD.BuffIconNames == null)
-					continue;
-				Int32 ID, iconID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				if (Int32.TryParse(entry[2], out iconID))
-				{
-					if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
-					{
-						Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
-						continue;
-					}
-					BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
-				}
-				else
-				{
-					BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = entry[2];
-				}
-			}
-			else if (String.Compare(entry[0], "HalfTranceCommand") == 0)
-			{
-				// eg.: HalfTranceCommand Set DoubleWhiteMagic DoubleBlackMagic HolySword2
-				if (btl_cmd.half_trance_cmd_list == null)
-					continue;
-				Boolean add = String.Compare(entry[1], "Remove") != 0;
-				if (String.Compare(entry[1], "Set") == 0)
-					btl_cmd.half_trance_cmd_list.Clear();
-				for (Int32 i = 2; i < entry.Length; i++)
-					foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
-						if (String.Compare(entry[i], cmdid.ToString()) == 0)
-						{
-							if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdid))
-								btl_cmd.half_trance_cmd_list.Add(cmdid);
-							else if (!add)
-								btl_cmd.half_trance_cmd_list.Remove(cmdid);
-							break;
-						}
-			}
-			else if (String.Compare(entry[0], "DoubleCastCommand") == 0)
-			{
-				// eg.: DoubleCastCommand Add RedMagic1
-				Boolean add = String.Compare(entry[1], "Remove") != 0;
-				if (String.Compare(entry[1], "Set") == 0)
-					BattleHUD.DoubleCastSet.Clear();
-				for (Int32 i = 2; i < entry.Length; i++)
-					foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
-						if (String.Compare(entry[i], cmdid.ToString()) == 0)
-						{
-							if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdid))
-								BattleHUD.DoubleCastSet.Add(cmdid);
-							else if (!add)
-								BattleHUD.DoubleCastSet.Remove(cmdid);
-							break;
-						}
-			}
-			else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
-			{
-				// eg.: WorldMusicList 69 22 112 45 95 96 61 62
-				if (ff9.w_musicSet == null)
-					continue;
-				Int32 arraySize = entry.Length - 1;
-				if (arraySize > ff9.w_musicSet.Length)
-					ff9.w_musicSet = new Byte[arraySize];
-				for (Int32 i = 0; i < arraySize; i++)
-					Byte.TryParse(entry[1 + i], out ff9.w_musicSet[i]);
-			}
-			else if (String.Compare(entry[0], "BattleMapModel") == 0)
-			{
-				// eg.: BattleMapModel BSC_CUSTOM_FIELD BBG_B065
-				// Can also be modified using "BattleScene"
-				if (FF9BattleDB.MapModel == null)
-					continue;
-				FF9BattleDB.MapModel[entry[1]] = entry[2];
-			}
-			else if (String.Compare(entry[0], "FieldScene") == 0 && entry.Length >= 6)
-			{
-				// eg.: FieldScene 4000 57 CUSTOM_FIELD CUSTOM_FIELD 2000
-				if (FF9DBAll.EventDB == null || EventEngineUtils.eventIDToFBGID == null || EventEngineUtils.eventIDToMESID == null)
-					continue;
-				Int32 ID, mesID, areaID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				if (!Int32.TryParse(entry[2], out areaID))
-					continue;
-				if (!Int32.TryParse(entry[5], out mesID))
-					continue;
-				if (!FF9DBAll.MesDB.ContainsKey(mesID))
-				{
-					Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid message file ID " + mesID + " for the field map field scene " + entry[3] + " (" + ID + ")");
-					continue;
-				}
-				String fieldMapName = "FBG_N" + areaID + "_" + entry[3];
-				EventEngineUtils.eventIDToFBGID[ID] = fieldMapName;
-				FF9DBAll.EventDB[ID] = "EVT_" + entry[4];
-				EventEngineUtils.eventIDToMESID[ID] = mesID;
-				// p0data1X:
-				//  Assets/Resources/FieldMaps/{fieldMapName}/atlas.png
-				//  Assets/Resources/FieldMaps/{fieldMapName}/{fieldMapName}.bgi.bytes
-				//  Assets/Resources/FieldMaps/{fieldMapName}/{fieldMapName}.bgs.bytes
-				//  [Optional] Assets/Resources/FieldMaps/{fieldMapName}/spt.tcb.bytes
-				//  [Optional for each sps] Assets/Resources/FieldMaps/{fieldMapName}/{spsID}.sps.bytes
-				// p0data7:
-				//  Assets/Resources/CommonAsset/EventEngine/EventBinary/Field/LANG/EVT_{entry[4]}.eb.bytes
-				//  [Optional] Assets/Resources/CommonAsset/EventEngine/EventAnimation/EVT_{entry[4]}.txt.bytes
-				//  [Optional] Assets/Resources/CommonAsset/MapConfigData/EVT_{entry[4]}.bytes
-				//  [Optional] Assets/Resources/CommonAsset/VibrationData/EVT_{entry[4]}.bytes
-			}
-			else if (String.Compare(entry[0], "BattleScene") == 0 && entry.Length >= 4)
-			{
-				// eg.: BattleScene 5000 CUSTOM_BATTLE BBG_B065
-				if (FF9DBAll.EventDB == null || FF9BattleDB.SceneData == null || FF9BattleDB.MapModel == null)
-					continue;
-				Int32 ID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				FF9DBAll.EventDB[ID] = "EVT_BATTLE_" + entry[2];
-				FF9BattleDB.SceneData["BSC_" + entry[2]] = ID;
-				FF9BattleDB.MapModel["BSC_" + entry[2]] = entry[3];
-				// p0data2:
-				//  Assets/Resources/BattleMap/BattleScene/EVT_BATTLE_{entry[2]}/{ID}.raw17.bytes
-				//  Assets/Resources/BattleMap/BattleScene/EVT_BATTLE_{entry[2]}/dbfile0000.raw16.bytes
-				// p0data7:
-				//  Assets/Resources/CommonAsset/EventEngine/EventBinary/Battle/{Lang}/EVT_BATTLE_{entry[2]}.eb.bytes
-				// resources:
-				//  EmbeddedAsset/Text/{Lang}/Battle/{ID}.mes
-			}
-			else if (String.Compare(entry[0], "CharacterDefaultName") == 0 && entry.Length >= 4)
-			{
-				// eg.: CharacterDefaultName 0 US Zinedine
-				// REMARK: Character default names can also be changed with the option "[Import] Text = 1" although it would monopolise the whole machinery of text importing
-				// "[Import] Text = 1" has the priority over DictionaryPatch
-				if (CharacterNamesFormatter._characterNames == null)
-					continue;
-				Int32 ID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				String[] nameArray;
-				if (!CharacterNamesFormatter._characterNames.TryGetValue(entry[2], out nameArray))
-					nameArray = new String[ID + 1];
-				if (nameArray.Length <= ID)
-				{
-					nameArray = new String[ID + 1];
-					CharacterNamesFormatter._characterNames[entry[2]].CopyTo(nameArray, 0);
-				}
-				nameArray[ID] = String.Join(" ", entry, 3, entry.Length - 3); // Character names can't have spaces now and are max 8 char long, so there's no real point in joining instead of using entry[3] directly
-				CharacterNamesFormatter._characterNames[entry[2]] = nameArray;
-			}
-			else if (String.Compare(entry[0], "3DModel") == 0)
-			{
-				// For both field models and enemy battle models (+ animations)
-				// eg.:
-				// 3DModel 98 GEO_NPC_F0_RMF
-				// 3DModelAnimation 200 ANH_NPC_F0_RMF_IDLE
-				// 3DModelAnimation 25 ANH_NPC_F0_RMF_WALK
-				// 3DModelAnimation 38 ANH_NPC_F0_RMF_RUN
-				// 3DModelAnimation 40 ANH_NPC_F0_RMF_TURN_L
-				// 3DModelAnimation 41 ANH_NPC_F0_RMF_TURN_R
-				// 3DModelAnimation 54 55 56 57 59 ANH_NPC_F0_RMF_ANGRY_INN
-				if (FF9BattleDB.GEO == null)
-					continue;
-				Int32 idcount = entry.Length - 2;
-				Int32[] ID = new Int32[entry.Length-2];
-				Boolean formatOK = true;
-				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
-					if (!Int32.TryParse(entry[idindex + 1], out ID[idindex]))
-						formatOK = false;
-				if (!formatOK)
-					continue;
-				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
-				{
-					FF9BattleDB.GEO[ID[idindex]] = entry[entry.Length - 1];
-				}
-				// TODO: make it work for replacing battle weapon models
-				// Currently, a line like "3DModel 476 GEO_ACC_F0_OPB" for replacing the dagger by a book freezes the game on black screen when battle starts
-			}
-			else if (String.Compare(entry[0], "3DModelAnimation") == 0)
-			{
-				// eg.: See above
-				// When adding custom animations, the name must follow the following pattern:
-				//   ANH_[MODEL TYPE]_[MODEL VERSION]_[MODEL 3 LETTER CODE]_[WHATEVER]
-				// in such a way that the model's name GEO_[...] and its new animation ANH_[...] have the middle block in common in their name
-				// Then that custom animation's file must be placed in that model's animation folder
-				// (eg. "assets/resources/animations/98/100000.anim" for a custom animation of Zidane with ID 100000)
-				if (FF9DBAll.AnimationDB == null || FF9BattleDB.Animation == null)
-					continue;
-				Int32 idcount = entry.Length - 2;
-				Int32[] ID = new Int32[entry.Length - 2];
-				Boolean formatOK = true;
-				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
-					if (!Int32.TryParse(entry[idindex + 1], out ID[idindex]))
-						formatOK = false;
-				if (!formatOK)
-					continue;
-				for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
-				{
-					FF9DBAll.AnimationDB[ID[idindex]] = entry[entry.Length - 1];
-					FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
-				}
-			}
-			else if (String.Compare(entry[0], "PlayerBattleModel") == 0 && entry.Length >= 39)
-			{
-				// For party battle models and animations
-				// Check btl_mot's note for the sorting of battle animations
-				// eg.:
-				// 3DModelAnimation 100000 ANH_SUB_F0_KJA_MYCUSTOM_ANIM
-				// PlayerBattleModel 0 GEO_SUB_F0_KJA GEO_SUB_F0_KJA 18
-				//   ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_MON_B3_125_003 ANH_MON_B3_125_040
-				//   ANH_SUB_F0_KJA_DOWN ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_MYCUSTOM_ANIM
-				//   ANH_SUB_F0_KJA_DOWN ANH_SUB_F0_KJA_IDLE ANH_SUB_F0_KJA_ARMS_CROSS_2_3 ANH_SUB_F0_KJA_ARMS_CROSS_2_2
-				//   ANH_SUB_F0_KJA_SHOW_OFF_1_1 ANH_SUB_F0_KJA_SHOW_OFF_1_2 ANH_SUB_F0_KJA_SHOW_OFF_1_3
-				//   ANH_MON_B3_125_021 ANH_SUB_F0_KJA_LAUGH_2_2 ANH_SUB_F0_KJA_SHOW_OFF_2_2
-				//   ANH_SUB_F0_KJA_OJIGI_1 ANH_SUB_F0_KJA_OJIGI_2
-				//   ANH_SUB_F0_KJA_GET_HSK_1 ANH_SUB_F0_KJA_GET_HSK_2 ANH_SUB_F0_KJA_GET_HSK_2 ANH_SUB_F0_KJA_GET_HSK_3 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2
-				//   ANH_MON_B3_125_020 ANH_MON_B3_125_021 ANH_MON_B3_125_022
-				//   ANH_SUB_F0_KJA_WALK ANH_SUB_F0_KJA_WALK ANH_SUB_F0_KJA_RAIN_1
-				//   ANH_SUB_F0_KJA_ARMS_CROSS_2_1 ANH_SUB_F0_KJA_ARMS_UP_KUBIFURI_2
-				// (in a single line)
-				if (FF9.btl_mot.mot == null || BattlePlayerCharacter.PlayerModelFileName == null || btl_init.model_id == null)
-					continue;
-				Int32 ID;
-				Byte boneID;
-				if (!Int32.TryParse(entry[1], out ID))
-					continue;
-				if (!Byte.TryParse(entry[4], out boneID))
-					continue;
-				if (ID < 0 || ID >= 19) // Replace only existing characters
-					continue;
-				BattlePlayerCharacter.PlayerModelFileName[ID] = entry[2]; // Model
-				btl_init.model_id[ID] = entry[2];
-				btl_init.model_id[ID + 19] = entry[3]; // Trance model
-				BattlePlayerCharacter.PlayerWeaponToBoneName[ID] = boneID; // Model's weapon bone
-				for (Int32 animid = 0; animid < 34; ++animid)
-					FF9.btl_mot.mot[ID, animid] = entry[animid + 5];
-				List<String> modelAnimList;
-				String animlistID = "Animations/" + entry[2];
-				String animID, animModelID;
-				if (!_animationInFolder.TryGetValue(animlistID, out modelAnimList))
-					modelAnimList = new List<String>();
-				for (Int32 animid = 0; animid < 34; ++animid)
-				{
-					if (!_animationReverseFolder.TryGetValue(entry[animid + 5], out animModelID)) // Animation registered in "AnimationFolderMapping.txt": use ID of registered model
-						animModelID = entry[2]; // Custom animation: the path is "Animation/[ID of battle model]/[Anim ID]"
-					animID = "Animations/" + animModelID + "/" + entry[animid + 5];
-					if (!modelAnimList.Contains(animID))
-					{
-						modelAnimList.Add(animID);
-						_animationReverseFolder[entry[animid + 5]] = animModelID;
-					}
-				}
-				_animationInFolder[animlistID] = modelAnimList;
-			}
-		}
-	}
-
+	// TODO: Maybe remove completly that ".memnfo" feature:
+	//  UIAtlas are better handled by .tpsheet
+	//  BTL_SCENE are better handled by BattlePatch.txt
+	//  The features it offers for textures, sounds and musics are not offered by any other system except modifying the binary files themselves, so it could be kept at least for that if it is useful
 	public const String MemoriaInfoExtension = ".memnfo";
-
-	public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
 
 	public const TextureFormat DefaultTextureFormat = TextureFormat.ARGB32;
 
@@ -970,9 +652,9 @@ public static class AssetManager
 
 	public static AssetFolder[] Folder;
 
-	private static Dictionary<String, List<String>> _animationInFolder;
+	public static Dictionary<String, List<String>> AnimationInFolder;
 
-	private static Dictionary<String, String> _animationReverseFolder;
+	public static Dictionary<String, String> AnimationReverseFolder;
 
 	public class AssetBundleRef
 	{

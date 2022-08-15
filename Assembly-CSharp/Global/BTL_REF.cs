@@ -2,10 +2,14 @@
 
 public class BTL_REF
 {
-    public Byte ScriptId;
-    public Byte Power;
-    public Byte Elements;
-    public Byte Rate;
+	[Memoria.PatchableFieldAttribute]
+	public Byte ScriptId;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Power;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Elements;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Rate;
 
     public BTL_REF()
 	{

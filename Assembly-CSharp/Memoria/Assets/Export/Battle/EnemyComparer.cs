@@ -18,11 +18,11 @@ namespace Memoria.Assets
                 if (baseValue == enemy)
                     continue;
 
-                if (baseValue.Status[0] != enemy.Status[0])
+                if (baseValue.ResistStatus != enemy.ResistStatus)
                     total++;
-                if (baseValue.Status[1] != enemy.Status[1])
+                if (baseValue.AutoStatus != enemy.AutoStatus)
                     total++;
-                if (baseValue.Status[2] != enemy.Status[2])
+                if (baseValue.InitialStatus != enemy.InitialStatus)
                     total++;
                 if (baseValue.MaxHP != enemy.MaxHP)
                     total++;
@@ -55,13 +55,13 @@ namespace Memoria.Assets
                 if (baseValue.AP != enemy.AP)
                     total++;
 
-                if (baseValue.Element.dex != enemy.Element.dex)
+                if (baseValue.Element.Speed != enemy.Element.Speed)
                     total++;
-                if (baseValue.Element.str != enemy.Element.str)
+                if (baseValue.Element.Strength != enemy.Element.Strength)
                     total++;
-                if (baseValue.Element.mgc != enemy.Element.mgc)
+                if (baseValue.Element.Magic != enemy.Element.Magic)
                     total++;
-                if (baseValue.Element.wpr != enemy.Element.wpr)
+                if (baseValue.Element.Spirit != enemy.Element.Spirit)
                     total++;
                 if (baseValue.Element.pad != enemy.Element.pad)
                     total++;
@@ -72,7 +72,7 @@ namespace Memoria.Assets
                 if (baseValue.Element.max_capa != enemy.Element.max_capa)
                     total++;
 
-                if (!baseValue.Attr.SequenceEqual(enemy.Attr))
+                if (baseValue.GuardElement != enemy.GuardElement || baseValue.AbsorbElement != enemy.AbsorbElement || baseValue.HalfElement != enemy.HalfElement || baseValue.WeakElement != enemy.WeakElement)
                     total++;
 
                 if (baseValue.Level != enemy.Level)
@@ -81,15 +81,15 @@ namespace Memoria.Assets
                     total++;
                 if (baseValue.HitRate != enemy.HitRate)
                     total++;
-                if (baseValue.P_DP != enemy.P_DP)
+                if (baseValue.PhysicalDefence != enemy.PhysicalDefence)
                     total++;
-                if (baseValue.P_AV != enemy.P_AV)
+                if (baseValue.PhysicalEvade != enemy.PhysicalEvade)
                     total++;
-                if (baseValue.M_DP != enemy.M_DP)
+                if (baseValue.MagicalDefence != enemy.MagicalDefence)
                     total++;
-                if (baseValue.M_AV != enemy.M_AV)
+                if (baseValue.MagicalEvade != enemy.MagicalEvade)
                     total++;
-                if (baseValue.Blue != enemy.Blue)
+                if (baseValue.BlueMagic != enemy.BlueMagic)
                     total++;
 
                 if (!baseValue.Bone.SequenceEqual(enemy.Bone))
@@ -119,7 +119,7 @@ namespace Memoria.Assets
                     total++;
                 if (baseValue.ShadowBone != enemy.ShadowBone)
                     total++;
-                if (baseValue.Card != enemy.Card)
+                if (baseValue.WinCard != enemy.WinCard)
                     total++;
                 if (baseValue.ShadowOfsX != enemy.ShadowOfsX)
                     total++;
@@ -150,9 +150,9 @@ namespace Memoria.Assets
             Int64 hashCode = obj.Key["US"].GetHashCode();
             SB2_MON_PARM enemy = obj.Value;
 
-            hashCode = (hashCode * 397) ^ (UInt32)enemy.Status[0];
-            hashCode = (hashCode * 397) ^ (UInt32)enemy.Status[1];
-            hashCode = (hashCode * 397) ^ (UInt32)enemy.Status[2];
+            hashCode = (hashCode * 397) ^ (UInt32)enemy.ResistStatus;
+            hashCode = (hashCode * 397) ^ (UInt32)enemy.AutoStatus;
+            hashCode = (hashCode * 397) ^ (UInt32)enemy.InitialStatus;
 
             hashCode = (hashCode * 397) ^ enemy.MaxHP;
             hashCode = (hashCode * 397) ^ enemy.MaxMP;
@@ -172,25 +172,25 @@ namespace Memoria.Assets
             hashCode = (hashCode * 397) ^ enemy.Flags;
             hashCode = (hashCode * 397) ^ enemy.AP;
 
-            hashCode = (hashCode * 397) ^ enemy.Element.dex;
-            hashCode = (hashCode * 397) ^ enemy.Element.str;
-            hashCode = (hashCode * 397) ^ enemy.Element.mgc;
-            hashCode = (hashCode * 397) ^ enemy.Element.wpr;
+            hashCode = (hashCode * 397) ^ enemy.Element.Speed;
+            hashCode = (hashCode * 397) ^ enemy.Element.Strength;
+            hashCode = (hashCode * 397) ^ enemy.Element.Magic;
+            hashCode = (hashCode * 397) ^ enemy.Element.Spirit;
             hashCode = (hashCode * 397) ^ enemy.Element.pad;
             hashCode = (hashCode * 397) ^ enemy.Element.trans;
             hashCode = (hashCode * 397) ^ enemy.Element.cur_capa;
             hashCode = (hashCode * 397) ^ enemy.Element.max_capa;
 
-            GetHashCode(ref hashCode, enemy.Attr);
+            GetHashCode(ref hashCode, new Byte[] { enemy.GuardElement, enemy.AbsorbElement, enemy.HalfElement, enemy.WeakElement });
 
             hashCode = (hashCode * 397) ^ enemy.Level;
             hashCode = (hashCode * 397) ^ enemy.Category;
             hashCode = (hashCode * 397) ^ enemy.HitRate;
-            hashCode = (hashCode * 397) ^ enemy.P_DP;
-            hashCode = (hashCode * 397) ^ enemy.P_AV;
-            hashCode = (hashCode * 397) ^ enemy.M_DP;
-            hashCode = (hashCode * 397) ^ enemy.M_AV;
-            hashCode = (hashCode * 397) ^ enemy.Blue;
+            hashCode = (hashCode * 397) ^ enemy.PhysicalDefence;
+            hashCode = (hashCode * 397) ^ enemy.PhysicalEvade;
+            hashCode = (hashCode * 397) ^ enemy.MagicalDefence;
+            hashCode = (hashCode * 397) ^ enemy.MagicalEvade;
+            hashCode = (hashCode * 397) ^ enemy.BlueMagic;
 
             GetHashCode(ref hashCode, enemy.Bone);
 
@@ -206,7 +206,7 @@ namespace Memoria.Assets
             hashCode = (hashCode * 397) ^ enemy.ShadowX;
             hashCode = (hashCode * 397) ^ enemy.ShadowZ;
             hashCode = (hashCode * 397) ^ enemy.ShadowBone;
-            hashCode = (hashCode * 397) ^ enemy.Card;
+            hashCode = (hashCode * 397) ^ enemy.WinCard;
             hashCode = (hashCode * 397) ^ enemy.ShadowOfsX;
             hashCode = (hashCode * 397) ^ enemy.ShadowOfsZ;
             hashCode = (hashCode * 397) ^ enemy.ShadowBone2;
@@ -237,10 +237,10 @@ namespace Memoria.Assets
 
         public static Boolean EqualElements(SB2_ELEMENT x, SB2_ELEMENT y)
         {
-            return x.dex == y.dex
-                   && x.str == y.str
-                   && x.mgc == y.mgc
-                   && x.wpr == y.wpr
+            return x.Speed == y.Speed
+                   && x.Strength == y.Strength
+                   && x.Magic == y.Magic
+                   && x.Spirit == y.Spirit
                    && x.pad == y.pad
                    && x.trans == y.trans
                    && x.cur_capa == y.cur_capa

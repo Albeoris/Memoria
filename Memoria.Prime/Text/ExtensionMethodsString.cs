@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -180,5 +181,68 @@ namespace Memoria.Prime.Text
                 return false;
             }
         }
+
+        public static Boolean TryTypeParse(this String source, Type t, out object obj)
+        {
+            if (t == typeof(String))
+            {
+                obj = source;
+                return true;
+            }
+            if (t.BaseType == typeof(Enum))
+            {
+                try
+                {
+                    obj = Enum.Parse(t, source);
+                    return true;
+                }
+                catch (Exception err)
+                {
+                    Log.Error(err);
+                    obj = null;
+                    return false;
+                }
+            }
+            obj = null;
+            Func<MethodInfo, Boolean> parserCondition =
+                meth =>
+                {
+                    if (meth.Name == "TryParse" && meth.IsStatic && meth.ReturnType == typeof(Boolean))
+                    {
+                        ParameterInfo[] paramInfo = meth.GetParameters();
+                        if (paramInfo.Length == 2 && paramInfo[0].ParameterType == typeof(String) && ((paramInfo[1].IsOut && paramInfo[1].ParameterType == t) || paramInfo[1].ParameterType == t.MakeByRefType()))
+                            return true;
+                    }
+                    return false;
+                };
+            MethodInfo tryparse = t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy).SingleOrDefault(parserCondition);
+            if (tryparse != null)
+            {
+                object[] parameters = new object[] { source, null };
+                if ((Boolean)tryparse.Invoke(null, parameters))
+                {
+                    obj = parameters[1];
+                    return true;
+                }
+            }
+            Log.Warning($"[{nameof(TryTypeParse)}] Unable to parse \"{source}\" as a {t}");
+            return false;
+        }
+
+        public static Boolean TryArrayParse(this String[] source, Type t, out object obj)
+		{
+            Array arr = Array.CreateInstance(t, source.Length);
+            Boolean ok = true;
+            object buffer;
+            for (Int32 i = 0; i < source.Length; i++)
+            {
+                if (source[i].TryTypeParse(t, out buffer))
+                    arr.SetValue(buffer, i);
+                else
+                    ok = false;
+            }
+            obj = ok ? arr : null;
+            return ok;
+		}
     }
 }

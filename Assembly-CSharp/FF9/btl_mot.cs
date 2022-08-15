@@ -1129,7 +1129,7 @@ namespace FF9
 				btl.evt.animFrame = 0;
 				return;
 			}
-			if (FF9StateSystem.Battle.FF9Battle.btl_phase == 6 && !btl_stat.CheckStatus(btl, BattleStatus.BattleEnd) && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose != 0 && btl_util.getPlayerPtr(btl).info.win_pose != 0)
+			if (FF9StateSystem.Battle.FF9Battle.btl_phase == 6 && !btl_stat.CheckStatus(btl, BattleStatus.BattleEnd) && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose && btl_util.getPlayerPtr(btl).info.win_pose != 0)
 				targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP;
 			else if (btl.bi.cover != 0)
 				targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_COVER;

@@ -10,7 +10,7 @@ public class BattleAchievement
 		Int32 battleMapIndex = FF9StateSystem.Battle.battleMapIndex;
 		BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
 		SB2_PATTERN sb2_PATTERN = btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-		BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.enemy_no, (Int32)sb2_PATTERN.MonCount);
+		BattleAchievement.IncreseNumber(ref BattleAchievement.achievement.enemy_no, (Int32)sb2_PATTERN.MonsterCount);
 		AchievementManager.ReportAchievement(AcheivementKey.Defeat100, BattleAchievement.achievement.enemy_no);
 		AchievementManager.ReportAchievement(AcheivementKey.Defeat1000, BattleAchievement.achievement.enemy_no);
 		AchievementManager.ReportAchievement(AcheivementKey.Defeat10000, BattleAchievement.achievement.enemy_no);

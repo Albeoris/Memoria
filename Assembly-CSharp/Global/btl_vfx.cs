@@ -124,6 +124,12 @@ public class btl_vfx
         BTL_DATA regist = cmd.regist;
         if (Configuration.Battle.SFXRework)
         {
+            if (cmd.aa.Info.VfxAction == null && !String.IsNullOrEmpty(cmd.aa.Info.SequenceFile))
+			{
+                String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile, out _);
+                if (sequenceText != null)
+                    cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
+            }
             if (cmd.aa.Info.VfxAction != null)
             {
                 UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(cmd.aa.Info.VfxAction);

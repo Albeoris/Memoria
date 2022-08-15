@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.IO;
 using FF9;
 using Memoria;
@@ -305,7 +306,53 @@ public class ModelFactory
 		return gameObject;
 	}
 
-    public static String GetNameFromFF9DBALL(String modelName)
+	public static void ChangeModelTexture(GameObject go, String[] newTexturePaths)
+	{
+		Texture[] newTextures = new Texture[newTexturePaths.Length];
+		for (Int32 i = 0; i < newTexturePaths.Length; i++)
+		{
+			Byte[] raw = AssetManager.LoadBytes(newTexturePaths[i], out _);
+			if (raw != null)
+				newTextures[i] = AssetManager.LoadTextureGeneric(raw);
+			else
+				newTextures[i] = null;
+		}
+		ChangeModelTextureRecursion(go.transform, "", newTextures);
+	}
+
+	private static void ChangeModelTextureRecursion(Transform transf, String hierarchyPath, Texture[] newTextures)
+	{
+		Material mat = transf.GetComponent<Material>();
+		if (mat == null)
+		{
+			SkinnedMeshRenderer skin = transf.GetComponent<SkinnedMeshRenderer>();
+			if (skin != null)
+				mat = skin.material;
+			if (mat == null)
+			{
+				MeshRenderer renderer = transf.GetComponent<MeshRenderer>();
+				if (renderer != null)
+					mat = renderer.material;
+			}
+		}
+		if (mat != null && mat.mainTexture != null)
+		{
+			// The texture name is [MODELID]_[TEXTUREINDEX] usually (always for enemy battle models?)
+			// That model ID can be different from SB2_MON_PARM.Geo because of upscale tables and such
+			Match formatMatch = new Regex(@"([0-9]+)_([0-9]+)").Match(mat.mainTexture.name);
+			if (formatMatch.Success)
+			{
+				Int32 textureIndex;
+				if (Int32.TryParse(formatMatch.Groups[2].Value, out textureIndex))
+					if (textureIndex < newTextures.Length && newTextures[textureIndex] != null)
+						mat.mainTexture = newTextures[textureIndex];
+			}
+		}
+		foreach (Transform child in transf)
+			ChangeModelTextureRecursion(child, hierarchyPath + transf.name + "/", newTextures);
+	}
+
+	public static String GetNameFromFF9DBALL(String modelName)
     {
         String text = Path.GetFileNameWithoutExtension(modelName);
         if (text == null)

@@ -173,12 +173,12 @@ namespace Memoria.Assets
             {
                 writer.BeginObject();
                 writer.WriteByte("rate", pattern.Rate);
-                writer.WriteByte("enemyCount", pattern.MonCount);
+                writer.WriteByte("enemyCount", pattern.MonsterCount);
                 writer.WriteByte("camera", pattern.Camera);
                 writer.WriteByte("pad0", pattern.Pad0);
                 writer.WriteUInt32("ap", pattern.AP);
                 writer.BeginComplexArray("spawn");
-                foreach (SB2_PUT point in pattern.Put)
+                foreach (SB2_PUT point in pattern.Monster)
                 {
                     writer.BeginObject();
                     writer.WriteByte("typeNo", point.TypeNo);
@@ -215,9 +215,9 @@ namespace Memoria.Assets
 
                 writer.BeginObject();
                 writer.WriteString("name", names["US"]);
-                writer.WriteUInt32("invalidStatus", (UInt32)enemy.Status[0]);
-                writer.WriteUInt32("permanentStatus", (UInt32)enemy.Status[1]);
-                writer.WriteUInt32("currentStatus", (UInt32)enemy.Status[2]);
+                writer.WriteUInt32("invalidStatus", (UInt32)enemy.ResistStatus);
+                writer.WriteUInt32("permanentStatus", (UInt32)enemy.AutoStatus);
+                writer.WriteUInt32("currentStatus", (UInt32)enemy.InitialStatus);
                 writer.WriteUInt16("maxHp", (UInt16)enemy.MaxHP);
                 writer.WriteUInt16("maxMp", (UInt16)enemy.MaxMP);
                 writer.WriteUInt16("winGil", (UInt16)enemy.WinGil);
@@ -248,27 +248,27 @@ namespace Memoria.Assets
                 writer.WriteUInt16("ap", (UInt16)enemy.AP);
 
                 writer.BeginObject("element");
-                writer.WriteByte("dex", enemy.Element.dex);
-                writer.WriteByte("str", enemy.Element.str);
-                writer.WriteByte("mgc", enemy.Element.mgc);
-                writer.WriteByte("wpr", enemy.Element.wpr);
+                writer.WriteByte("dex", enemy.Element.Speed);
+                writer.WriteByte("str", enemy.Element.Strength);
+                writer.WriteByte("mgc", enemy.Element.Magic);
+                writer.WriteByte("wpr", enemy.Element.Spirit);
                 writer.EndObject();
 
                 writer.BeginObject("attributes");
-                writer.WriteByte("invalid", enemy.Attr[0]);
-                writer.WriteByte("absorb", enemy.Attr[1]);
-                writer.WriteByte("half", enemy.Attr[2]);
-                writer.WriteByte("weak", enemy.Attr[3]);
+                writer.WriteByte("invalid", enemy.GuardElement);
+                writer.WriteByte("absorb", enemy.AbsorbElement);
+                writer.WriteByte("half", enemy.HalfElement);
+                writer.WriteByte("weak", enemy.WeakElement);
                 writer.EndObject();
 
                 writer.WriteByte("level", enemy.Level);
                 writer.WriteByte("category", enemy.Category);
                 writer.WriteByte("hitRate", enemy.HitRate);
-                writer.WriteByte("pdp", enemy.P_DP);
-                writer.WriteByte("pav", enemy.P_AV);
-                writer.WriteByte("mdp", enemy.M_DP);
-                writer.WriteByte("mav", enemy.M_AV);
-                writer.WriteByte("blue", enemy.Blue);
+                writer.WriteByte("pdp", enemy.PhysicalDefence);
+                writer.WriteByte("pav", enemy.PhysicalEvade);
+                writer.WriteByte("mdp", enemy.MagicalDefence);
+                writer.WriteByte("mav", enemy.MagicalEvade);
+                writer.WriteByte("blue", enemy.BlueMagic);
 
                 writer.BeginArray("bones"); // 4
                 foreach (Byte item in enemy.Bone)
@@ -287,7 +287,7 @@ namespace Memoria.Assets
                 writer.WriteUInt16("shadowX", enemy.ShadowX);
                 writer.WriteUInt16("shadowZ", enemy.ShadowZ);
                 writer.WriteByte("shadowBone", enemy.ShadowBone);
-                writer.WriteByteOrMinusOne("card", enemy.Card);
+                writer.WriteByteOrMinusOne("card", enemy.WinCard);
                 writer.WriteByte("shadowBone2", enemy.ShadowBone2);
 
                 writer.BeginComplexArray("messages");
@@ -327,7 +327,7 @@ namespace Memoria.Assets
                 writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
                 writer.WriteByte("rate", action.Ref.Rate);
                 writer.WriteByte("category", action.Category);
-                writer.WriteByte("addNo", action.AddNo);
+                writer.WriteByte("addNo", action.AddStatusNo);
                 writer.WriteByte("mp", action.MP);
                 writer.WriteByte("type", action.Type);
                 writer.WriteUInt16("name", UInt16.Parse(action.Name));
@@ -472,12 +472,12 @@ namespace Memoria.Assets
                             writer.WriteUInt16("id", id);
                             writer.WriteString("name", RemovePrefix(names["US"]));
 
-                            if (baseValue.Status[0] != enemy.Status[0])
-                                writer.WriteUInt32("invalidStatus", (UInt32)enemy.Status[0]);
-                            if (baseValue.Status[1] != enemy.Status[1])
-                                writer.WriteUInt32("permanentStatus", (UInt32)enemy.Status[1]);
-                            if (baseValue.Status[2] != enemy.Status[2])
-                                writer.WriteUInt32("currentStatus", (UInt32)enemy.Status[2]);
+                            if (baseValue.ResistStatus != enemy.ResistStatus)
+                                writer.WriteUInt32("invalidStatus", (UInt32)enemy.ResistStatus);
+                            if (baseValue.AutoStatus != enemy.AutoStatus)
+                                writer.WriteUInt32("permanentStatus", (UInt32)enemy.AutoStatus);
+                            if (baseValue.InitialStatus != enemy.InitialStatus)
+                                writer.WriteUInt32("currentStatus", (UInt32)enemy.InitialStatus);
                             if (baseValue.MaxHP != enemy.MaxHP)
                                 writer.WriteUInt16("maxHp", (UInt16)enemy.MaxHP);
                             if (baseValue.MaxMP != enemy.MaxMP)
@@ -532,28 +532,28 @@ namespace Memoria.Assets
                             if (!EnemyComparer.EqualElements(baseValue.Element, enemy.Element))
                             {
                                 writer.BeginObject("element");
-                                if (baseValue.Element.dex != enemy.Element.dex)
-                                    writer.WriteByte("dex", enemy.Element.dex);
-                                if (baseValue.Element.str != enemy.Element.str)
-                                    writer.WriteByte("str", enemy.Element.str);
-                                if (baseValue.Element.mgc != enemy.Element.mgc)
-                                    writer.WriteByte("mgc", enemy.Element.mgc);
-                                if (baseValue.Element.wpr != enemy.Element.wpr)
-                                    writer.WriteByte("wpr", enemy.Element.wpr);
+                                if (baseValue.Element.Speed != enemy.Element.Speed)
+                                    writer.WriteByte("dex", enemy.Element.Speed);
+                                if (baseValue.Element.Strength != enemy.Element.Strength)
+                                    writer.WriteByte("str", enemy.Element.Strength);
+                                if (baseValue.Element.Magic != enemy.Element.Magic)
+                                    writer.WriteByte("mgc", enemy.Element.Magic);
+                                if (baseValue.Element.Spirit != enemy.Element.Spirit)
+                                    writer.WriteByte("wpr", enemy.Element.Spirit);
                                 writer.EndObject();
                             }
 
-                            if (!baseValue.Attr.SequenceEqual(enemy.Attr))
+                            if (baseValue.GuardElement != enemy.GuardElement || baseValue.AbsorbElement != enemy.AbsorbElement || baseValue.HalfElement != enemy.HalfElement || baseValue.WeakElement != enemy.WeakElement)
                             {
                                 writer.BeginObject("attributes");
-                                if (baseValue.Attr[0] != enemy.Attr[0])
-                                    writer.WriteByte("invalid", enemy.Attr[0]);
-                                if (baseValue.Attr[1] != enemy.Attr[1])
-                                    writer.WriteByte("absorb", enemy.Attr[1]);
-                                if (baseValue.Attr[2] != enemy.Attr[2])
-                                    writer.WriteByte("half", enemy.Attr[2]);
-                                if (baseValue.Attr[3] != enemy.Attr[3])
-                                    writer.WriteByte("weak", enemy.Attr[3]);
+                                if (baseValue.GuardElement != enemy.GuardElement)
+                                    writer.WriteByte("invalid", enemy.GuardElement);
+                                if (baseValue.AbsorbElement != enemy.AbsorbElement)
+                                    writer.WriteByte("absorb", enemy.AbsorbElement);
+                                if (baseValue.HalfElement != enemy.HalfElement)
+                                    writer.WriteByte("half", enemy.HalfElement);
+                                if (baseValue.WeakElement != enemy.WeakElement)
+                                    writer.WriteByte("weak", enemy.WeakElement);
                                 writer.EndObject();
                             }
 
@@ -563,16 +563,16 @@ namespace Memoria.Assets
                                 writer.WriteByte("category", enemy.Category);
                             if (baseValue.HitRate != enemy.HitRate)
                                 writer.WriteByte("hitRate", enemy.HitRate);
-                            if (baseValue.P_DP != enemy.P_DP)
-                                writer.WriteByte("pdp", enemy.P_DP);
-                            if (baseValue.P_AV != enemy.P_AV)
-                                writer.WriteByte("pav", enemy.P_AV);
-                            if (baseValue.M_DP != enemy.M_DP)
-                                writer.WriteByte("mdp", enemy.M_DP);
-                            if (baseValue.M_AV != enemy.M_AV)
-                                writer.WriteByte("mav", enemy.M_AV);
-                            if (baseValue.Blue != enemy.Blue)
-                                writer.WriteByte("blue", enemy.Blue);
+                            if (baseValue.PhysicalDefence != enemy.PhysicalDefence)
+                                writer.WriteByte("pdp", enemy.PhysicalDefence);
+                            if (baseValue.PhysicalEvade != enemy.PhysicalEvade)
+                                writer.WriteByte("pav", enemy.PhysicalEvade);
+                            if (baseValue.MagicalDefence != enemy.MagicalDefence)
+                                writer.WriteByte("mdp", enemy.MagicalDefence);
+                            if (baseValue.MagicalEvade != enemy.MagicalEvade)
+                                writer.WriteByte("mav", enemy.MagicalEvade);
+                            if (baseValue.BlueMagic != enemy.BlueMagic)
+                                writer.WriteByte("blue", enemy.BlueMagic);
 
                             if (!baseValue.Bone.SequenceEqual(enemy.Bone))
                             {
@@ -612,8 +612,8 @@ namespace Memoria.Assets
                                 writer.WriteUInt16("shadowZ", enemy.ShadowZ);
                             if (baseValue.ShadowBone != enemy.ShadowBone)
                                 writer.WriteByte("shadowBone", enemy.ShadowBone);
-                            if (baseValue.Card != enemy.Card)
-                                writer.WriteByteOrMinusOne("card", enemy.Card);
+                            if (baseValue.WinCard != enemy.WinCard)
+                                writer.WriteByteOrMinusOne("card", enemy.WinCard);
                             if (baseValue.ShadowBone2 != enemy.ShadowBone2)
                                 writer.WriteByte("shadowBone2", enemy.ShadowBone2);
 
@@ -661,7 +661,7 @@ namespace Memoria.Assets
                     .ThenBy(v => v.Value.Ref.ScriptId < 9)
                     .ThenByDescending(v => v.Value.MP > 0)
                     .ThenBy(v => v.Value.Type)
-                    .ThenBy(v => v.Value.AddNo)
+                    .ThenBy(v => v.Value.AddStatusNo)
                     .ThenByDescending(v => v.Value.Ref.ScriptId)
                     .ThenBy(v => v.Value.Ref.Power)
                     .ThenBy(v => v.Value.Info.Target)
@@ -710,8 +710,8 @@ namespace Memoria.Assets
 
                             if (baseItem.Value.Category != action.Category)
                                 writer.WriteByte("category", action.Category);
-                            if (baseItem.Value.AddNo != action.AddNo)
-                                writer.WriteByte("addNo", action.AddNo);
+                            if (baseItem.Value.AddStatusNo != action.AddStatusNo)
+                                writer.WriteByte("addNo", action.AddStatusNo);
                             if (baseItem.Value.MP != action.MP)
                                 writer.WriteByte("mp", action.MP);
                             if (baseItem.Value.Type != action.Type)
@@ -780,7 +780,7 @@ namespace Memoria.Assets
                 sw.Byte(btlRef.Elements);
                 sw.Byte(btlRef.Rate);
                 sw.Byte(_aaData.Category);
-                sw.Byte(_aaData.AddNo);
+                sw.Byte(_aaData.AddStatusNo);
                 sw.Byte(_aaData.MP);
                 sw.Byte(_aaData.Type);
             }
@@ -830,9 +830,9 @@ namespace Memoria.Assets
             {
                 sw.UInt16(_index);
 
-                sw.UInt32((UInt32)_enData.Status[0]);
-                sw.UInt32((UInt32)_enData.Status[1]);
-                sw.UInt32((UInt32)_enData.Status[2]);
+                sw.UInt32((UInt32)_enData.ResistStatus);
+                sw.UInt32((UInt32)_enData.AutoStatus);
+                sw.UInt32((UInt32)_enData.InitialStatus);
                 sw.UInt16((UInt16)_enData.MaxHP);
                 sw.UInt16((UInt16)_enData.MaxMP);
                 sw.UInt16((UInt16)_enData.WinGil);
@@ -860,23 +860,24 @@ namespace Memoria.Assets
                 sw.UInt16(_enData.Flags);
                 sw.UInt16((UInt16)_enData.AP);
 
-                sw.Byte(_enData.Element.dex);
-                sw.Byte(_enData.Element.str);
-                sw.Byte(_enData.Element.mgc);
-                sw.Byte(_enData.Element.wpr);
+                sw.Byte(_enData.Element.Speed);
+                sw.Byte(_enData.Element.Strength);
+                sw.Byte(_enData.Element.Magic);
+                sw.Byte(_enData.Element.Spirit);
 
-                // 4
-                foreach (Byte item in _enData.Attr)
-                    sw.Byte(item);
+                sw.Byte(_enData.GuardElement);
+                sw.Byte(_enData.AbsorbElement);
+                sw.Byte(_enData.HalfElement);
+                sw.Byte(_enData.WeakElement);
 
                 sw.Byte(_enData.Level);
                 sw.Byte(_enData.Category);
                 sw.Byte(_enData.HitRate);
-                sw.Byte(_enData.P_DP);
-                sw.Byte(_enData.P_AV);
-                sw.Byte(_enData.M_DP);
-                sw.Byte(_enData.M_AV);
-                sw.Byte(_enData.Blue);
+                sw.Byte(_enData.PhysicalDefence);
+                sw.Byte(_enData.PhysicalEvade);
+                sw.Byte(_enData.MagicalDefence);
+                sw.Byte(_enData.MagicalEvade);
+                sw.Byte(_enData.BlueMagic);
 
                 // 4
                 foreach (Byte item in _enData.Bone)
@@ -893,7 +894,7 @@ namespace Memoria.Assets
                 sw.UInt16(_enData.ShadowX);
                 sw.UInt16(_enData.ShadowZ);
                 sw.Byte(_enData.ShadowBone);
-                sw.ByteOrMinusOne(_enData.Card);
+                sw.ByteOrMinusOne(_enData.WinCard);
                 sw.Byte(_enData.ShadowBone2);
             }
         }

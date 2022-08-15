@@ -17,7 +17,7 @@ namespace Memoria.Assets
                 if (x == y)
                     continue;
 
-                if (x.AddNo != y.AddNo)
+                if (x.AddStatusNo != y.AddStatusNo)
                     total++;
                 if (x.Category != y.Category)
                     total++;
@@ -58,7 +58,7 @@ namespace Memoria.Assets
         public Boolean Equals(KeyValuePair<Dictionary<String, String>, AA_DATA> x, KeyValuePair<Dictionary<String, String>, AA_DATA> y)
         {
             return Equals(x.Key["US"], y.Key["US"]) &&
-                CmdInfoEqualityComparer.Instance.Equals(x.Value.Info, y.Value.Info) && BtlRefEqualityComparer.Instance.Equals(x.Value.Ref, y.Value.Ref) && x.Value.Category == y.Value.Category && x.Value.AddNo == y.Value.AddNo && x.Value.MP == y.Value.MP && x.Value.Type == y.Value.Type && x.Value.Vfx2 == y.Value.Vfx2;
+                CmdInfoEqualityComparer.Instance.Equals(x.Value.Info, y.Value.Info) && BtlRefEqualityComparer.Instance.Equals(x.Value.Ref, y.Value.Ref) && x.Value.Category == y.Value.Category && x.Value.AddStatusNo == y.Value.AddStatusNo && x.Value.MP == y.Value.MP && x.Value.Type == y.Value.Type && x.Value.Vfx2 == y.Value.Vfx2;
         }
 
         public Int32 GetHashCode(KeyValuePair<Dictionary<String, String>, AA_DATA> obj)
@@ -69,7 +69,7 @@ namespace Memoria.Assets
                 hashCode = (hashCode * 397) ^ (obj.Value.Info == null ? 0 : CmdInfoEqualityComparer.Instance.GetHashCode(obj.Value.Info));
                 hashCode = (hashCode * 397) ^ (obj.Value.Ref == null ? 0 : BtlRefEqualityComparer.Instance.GetHashCode(obj.Value.Ref));
                 hashCode = (hashCode * 397) ^ obj.Value.Category.GetHashCode();
-                hashCode = (hashCode * 397) ^ obj.Value.AddNo.GetHashCode();
+                hashCode = (hashCode * 397) ^ obj.Value.AddStatusNo.GetHashCode();
                 hashCode = (hashCode * 397) ^ obj.Value.MP.GetHashCode();
                 hashCode = (hashCode * 397) ^ obj.Value.Type.GetHashCode();
                 hashCode = (hashCode * 397) ^ obj.Value.Vfx2.GetHashCode();

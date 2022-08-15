@@ -145,7 +145,7 @@ namespace Memoria
         public Byte GetWeaponPower(BattleCommand cmd)
         {
             return Data.weapon == null ? (Byte)0
-              : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack != 0 && cmd != null && (cmd.AbilityType & 0x8) != 0 ? (Byte)Math.Max(1, 60 - Data.weapon.Ref.Power)
+              : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack && cmd != null && (cmd.AbilityType & 0x8) != 0 ? (Byte)Math.Max(1, 60 - Data.weapon.Ref.Power)
               : Data.weapon.Ref.Power;
         }
 
@@ -451,24 +451,24 @@ namespace Memoria
             }
             if (updateStat)
             {
-                Strength = monsterParam.Element.str;
-                Magic = monsterParam.Element.mgc;
-                Dexterity = monsterParam.Element.dex;
-                Will = monsterParam.Element.wpr;
+                Strength = monsterParam.Element.Strength;
+                Magic = monsterParam.Element.Magic;
+                Dexterity = monsterParam.Element.Speed;
+                Will = monsterParam.Element.Spirit;
             }
             if (updateDef)
             {
-                Data.defence.PhisicalDefence = monsterParam.P_DP;
-                Data.defence.PhisicalEvade = monsterParam.P_AV;
-                Data.defence.MagicalDefence = monsterParam.M_DP;
-                Data.defence.MagicalEvade = monsterParam.M_AV;
+                Data.defence.PhisicalDefence = monsterParam.PhysicalDefence;
+                Data.defence.PhisicalEvade = monsterParam.PhysicalEvade;
+                Data.defence.MagicalDefence = monsterParam.MagicalDefence;
+                Data.defence.MagicalEvade = monsterParam.MagicalEvade;
             }
             if (updateElement)
             {
-                Data.def_attr.invalid = monsterParam.Attr[0];
-                Data.def_attr.absorb = monsterParam.Attr[1];
-                Data.def_attr.half = monsterParam.Attr[2];
-                Data.def_attr.weak = monsterParam.Attr[3];
+                Data.def_attr.invalid = monsterParam.GuardElement;
+                Data.def_attr.absorb = monsterParam.AbsorbElement;
+                Data.def_attr.half = monsterParam.HalfElement;
+                Data.def_attr.weak = monsterParam.WeakElement;
             }
             Data.mesh_current = monsterParam.Mesh[0];
             Data.mesh_banish = monsterParam.Mesh[1];
@@ -502,7 +502,7 @@ namespace Memoria
                 if (sequenceSfx >= 0)
 				{
                     scene.atk[i].Info.VfxIndex = (Int16)sequenceSfx;
-                    if (Configuration.Battle.SFXRework)
+                    if (Configuration.Battle.SFXRework && scene.atk[i].Info.VfxAction == null)
                         scene.atk[i].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], sequenceSfx);
                     if (sequenceContact)
                     {

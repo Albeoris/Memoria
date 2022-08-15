@@ -7,7 +7,7 @@ public class AA_DATA
 		this.Info = new BattleCommandInfo();
 		this.Ref = new BTL_REF();
 		Category = 0;
-		AddNo = 0;
+		AddStatusNo = 0;
 		MP = 0;
 		Type = 0;
 		Vfx2 = 0;
@@ -18,7 +18,7 @@ public class AA_DATA
 		Info = info;
 		Ref = @ref;
 		Category = category;
-		AddNo = statusSetIndex;
+		AddStatusNo = statusSetIndex;
 		MP = mp;
 		Type = type;
 		Vfx2 = vfx2;
@@ -26,10 +26,16 @@ public class AA_DATA
 
 	public BattleCommandInfo Info;
 	public BTL_REF Ref;
+
+	[Memoria.PatchableFieldAttribute]
 	public Byte Category;
-	public Byte AddNo;
+	[Memoria.PatchableFieldAttribute]
+	public Byte AddStatusNo;
+	[Memoria.PatchableFieldAttribute]
 	public Byte MP;
-    public Byte Type;
+	[Memoria.PatchableFieldAttribute]
+	public Byte Type;
+	[Memoria.PatchableFieldAttribute]
 	public UInt16 Vfx2;
 
     // Delayed initialization

@@ -36,7 +36,7 @@ public class btl_init
 		ObjList objList = new ObjList();
 		if (!FF9StateSystem.Battle.isDebug)
 			objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
-		Int32 monCount = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonCount;
+		Int32 monCount = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
 		Int32 i = 0;
 		Int32 j = 4;
 		while (i < monCount)
@@ -63,7 +63,7 @@ public class btl_init
 			btl_DATA2.bi.slave = enemy.info.slave;
 			BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
 			SB2_PATTERN sb2_PATTERN = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-			SB2_MON_PARM sb2_MON_PARM = btl_scene.MonAddr[sb2_PATTERN.Put[i].TypeNo];
+			SB2_MON_PARM sb2_MON_PARM = btl_scene.MonAddr[sb2_PATTERN.Monster[i].TypeNo];
 			UInt16 geoID = sb2_MON_PARM.Geo;
 			btl_DATA2.height = 0;
 			btl_DATA2.radius_effect = 0;
@@ -133,10 +133,10 @@ public class btl_init
 		BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
 		SB2_PATTERN sb2_PATTERN = patAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
 		num3 = 0;
-		while (num3 < sb2_PATTERN.MonCount && next != null)
+		while (num3 < sb2_PATTERN.MonsterCount && next != null)
 		{
-			btl_init.PutMonster(sb2_PATTERN.Put[num3], next, btl_scene, num3);
-			btl_init.SetMonsterData(monAddr[sb2_PATTERN.Put[num3].TypeNo], next, num3);
+			btl_init.PutMonster(sb2_PATTERN.Monster[num3], next, btl_scene, num3);
+			btl_init.SetMonsterData(monAddr[sb2_PATTERN.Monster[num3].TypeNo], next, num3);
 			num3++;
 			next = next.next;
 		}
@@ -144,31 +144,35 @@ public class btl_init
 
 	public static void SetMonsterData(SB2_MON_PARM pParm, BTL_DATA pBtl, Int16 pNo)
 	{
-		pBtl.stat.invalid = pParm.Status[0];
-		pBtl.stat.permanent = pParm.Status[1];
-		pBtl.stat.cur = pParm.Status[2];
+		pBtl.stat.invalid = pParm.ResistStatus;
+		pBtl.stat.permanent = pParm.AutoStatus;
+		pBtl.stat.cur = pParm.InitialStatus;
 		pBtl.cur.hp = pParm.MaxHP;
 		pBtl.cur.mp = pParm.MaxMP;
-		pBtl.defence.PhisicalDefence = pParm.P_DP;
-		pBtl.defence.PhisicalEvade = pParm.P_AV;
-		pBtl.defence.MagicalDefence = pParm.M_DP;
-		pBtl.defence.MagicalEvade = pParm.M_AV;
-		pBtl.elem.dex = pParm.Element.dex;
-		pBtl.elem.str = pParm.Element.str;
-		pBtl.elem.mgc = pParm.Element.mgc;
-		pBtl.elem.wpr = pParm.Element.wpr;
-		pBtl.def_attr.invalid = pParm.Attr[0];
-		pBtl.def_attr.absorb = pParm.Attr[1];
-		pBtl.def_attr.half = pParm.Attr[2];
-		pBtl.def_attr.weak = pParm.Attr[3];
+		pBtl.defence.PhisicalDefence = pParm.PhysicalDefence;
+		pBtl.defence.PhisicalEvade = pParm.PhysicalEvade;
+		pBtl.defence.MagicalDefence = pParm.MagicalDefence;
+		pBtl.defence.MagicalEvade = pParm.MagicalEvade;
+		pBtl.elem.dex = pParm.Element.Speed;
+		pBtl.elem.str = pParm.Element.Strength;
+		pBtl.elem.mgc = pParm.Element.Magic;
+		pBtl.elem.wpr = pParm.Element.Spirit;
+		pBtl.def_attr.invalid = pParm.GuardElement;
+		pBtl.def_attr.absorb = pParm.AbsorbElement;
+		pBtl.def_attr.half = pParm.HalfElement;
+		pBtl.def_attr.weak = pParm.WeakElement;
+		pBtl.p_up_attr = pParm.BonusElement;
 		pBtl.mesh_current = pParm.Mesh[0];
 		pBtl.mesh_banish = pParm.Mesh[1];
 		pBtl.tar_bone = pParm.Bone[3];
 		// New field "out_of_reach"
-		pBtl.out_of_reach = pParm.OutOfReach < 0 ? FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring != 0 : pParm.OutOfReach != 0;
+		pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
 		ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
 		for (Int32 i = 0; i < pParm.StealItems.Length; i++)
+		{
 			enemy.steal_item[i] = pParm.StealItems[i];
+			enemy.steal_item_rate[i] = pParm.StealItemRates[i];
+		}
 		enemy.steal_unsuccessful_counter = 0; // New field used for counting unsuccessful steals and force a successful steal when it becomes high enough
 		enemy.info.die_atk = (Byte)(((pParm.Flags & 1) == 0) ? 0 : 1);
 		enemy.info.die_dmg = (Byte)(((pParm.Flags & 2) == 0) ? 0 : 1);
@@ -234,13 +238,15 @@ public class btl_init
 		pType.radius = pParm.Radius;
 		pType.category = pParm.Category;
 		pType.level = pParm.Level;
-		pType.blue_magic_no = pParm.Blue;
+		pType.blue_magic_no = pParm.BlueMagic;
 		pType.max.hp = pParm.MaxHP;
 		pType.max.mp = pParm.MaxMP;
 		pType.bonus.gil = pParm.WinGil;
 		pType.bonus.exp = pParm.WinExp;
-		pType.bonus.card = pParm.Card;
+		pType.bonus.card = pParm.WinCard;
+		pType.bonus.card_rate = pParm.WinCardRate;
 		pType.bonus.item = pParm.WinItems;
+		pType.bonus.item_rate = pParm.WinItemRates;
 		for (Int16 num = 0; num < 6; num = (Int16)(num + 1))
 			pType.mot[num] = FF9BattleDB.Animation[pParm.Mot[num]];
 		for (Int16 num = 0; num < 3; num = (Int16)(num + 1))

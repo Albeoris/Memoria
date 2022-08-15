@@ -8,6 +8,7 @@ public class ENEMY
 		this.et = new ENEMY_TYPE();
 		this.info = new ENEMY.ENEMY_INFO();
 		this.steal_item = new Byte[4];
+		this.steal_item_rate = new UInt16[4];
 	}
 
 	public const Byte ENEMY_CATEGORY_OTHER = 0;
@@ -33,10 +34,10 @@ public class ENEMY
 	public ENEMY.ENEMY_INFO info;
 
 	public Byte[] steal_item;
+	public UInt16[] steal_item_rate;
 
 	public Vector3 base_pos;
 
-	// Custom field
 	public Byte steal_unsuccessful_counter;
 
 	public class ENEMY_INFO

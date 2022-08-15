@@ -60,7 +60,7 @@ namespace Memoria
         public new BattleStatusIndex AbilityStatusIndex
         {
             get => base.AbilityStatusIndex;
-            set => Data.aa.AddNo = (Byte)value;
+            set => Data.aa.AddStatusNo = (Byte)value;
         }
 
         public new EffectElement Element
@@ -113,6 +113,7 @@ namespace Memoria
                 ForDead = originalInfo.ForDead,
                 DefaultCamera = originalInfo.DefaultCamera,
                 DefaultOnDead = originalInfo.DefaultOnDead,
+                SequenceFile = null,
                 VfxAction = null
             };
 
@@ -130,7 +131,7 @@ namespace Memoria
                 Info = newInfo,
                 Ref = newRef,
                 Category = original.Category,
-                AddNo = original.AddNo,
+                AddStatusNo = original.AddStatusNo,
                 MP = original.MP,
                 Type = original.Type,
                 Vfx2 = original.Vfx2,

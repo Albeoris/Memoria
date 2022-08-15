@@ -50,6 +50,7 @@ public class ENEMY_TYPE
 		public ENEMY_BONUSES()
 		{
 			this.item = new Byte[4];
+			this.item_rate = new UInt16[4];
 		}
 
 		public UInt32 gil;
@@ -57,7 +58,9 @@ public class ENEMY_TYPE
 		public UInt32 exp;
 
 		public Byte[] item;
+		public UInt16[] item_rate;
 
 		public UInt32 card;
+		public UInt16 card_rate;
 	}
 }

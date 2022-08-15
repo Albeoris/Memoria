@@ -3,14 +3,23 @@ using Memoria.Data;
 
 public class BattleCommandInfo
 {
-    public TargetType Target;
-    public Boolean DefaultAlly;
-    public TargetDisplay DisplayStats;
-    public Int16 VfxIndex;
-    public Boolean ForDead;
-    public Boolean DefaultCamera;
-    public Boolean DefaultOnDead;
+	[Memoria.PatchableFieldAttribute]
+	public TargetType Target;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean DefaultAlly;
+	[Memoria.PatchableFieldAttribute]
+	public TargetDisplay DisplayStats;
+	[Memoria.PatchableFieldAttribute]
+	public Int16 VfxIndex;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean ForDead;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean DefaultCamera;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean DefaultOnDead;
 
+	[Memoria.PatchableFieldAttribute]
+	public String SequenceFile;
 	public UnifiedBattleSequencer.BattleAction VfxAction;
 
 	public BattleCommandInfo()
@@ -22,6 +31,7 @@ public class BattleCommandInfo
 		ForDead = false;
 		DefaultCamera = false;
 		DefaultOnDead = false;
+		SequenceFile = null;
 		VfxAction = null;
 	}
 
@@ -34,6 +44,7 @@ public class BattleCommandInfo
 		ForDead = forDead;
 		DefaultCamera = defaultCamera;
 		DefaultOnDead = defaultOnDead;
+		SequenceFile = null;
 		VfxAction = null;
 	}
 }

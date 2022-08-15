@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using Memoria.Prime.Collections;
 
 public static partial class FF9BattleDB
 {
-	public static readonly Dictionary<String, Int32> SceneData = new Dictionary<String, Int32>
+	public static readonly TwoWayDictionary<String, Int32> SceneData = new TwoWayDictionary<String, Int32>
 	{
 		{"BSC_AC_E028F", 66},
 		{"BSC_AC_E028H", 65},

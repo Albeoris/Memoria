@@ -495,39 +495,9 @@ public class btlseq
 
 	public static void SetupBattleScene()
 	{
-		SB2_HEAD header = FF9StateSystem.Battle.FF9Battle.btl_scene.header;
 		BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
-		UInt16 flags = header.Flags;
-		btl_scene.Info = new BTL_SCENE_INFO();
-		if ((flags & 1) != 0)
-			btl_scene.Info.SpecialStart = 1;
-		if ((flags & 2) != 0)
-			btl_scene.Info.BackAttack = 1;
-		if ((flags & 4) != 0)
-			btl_scene.Info.NoGameOver = 1;
-		if ((flags & 8) != 0)
-			btl_scene.Info.NoExp = 1;
-		if ((flags & 16) == 0)
-			btl_scene.Info.WinPose = 1;
-		if ((flags & 32) == 0)
-			btl_scene.Info.Runaway = 1;
-		if ((flags & 64) != 0)
-			btl_scene.Info.NoNeighboring = 1;
-		if ((flags & 128) != 0)
-			btl_scene.Info.NoMagical = true;
-		if ((flags & 256) != 0)
-			btl_scene.Info.ReverseAttack = 1;
-		if ((flags & 512) != 0)
-			btl_scene.Info.FixedCamera1 = 1;
-		if ((flags & 1024) != 0)
-			btl_scene.Info.FixedCamera2 = 1;
-		if ((flags & 2048) != 0)
-			btl_scene.Info.AfterEvent = 1;
-		if (FF9StateSystem.Battle.IsPlayFieldBGMInCurrentBattle)
-			btl_scene.Info.FieldBGM = 1;
-		else
-			btl_scene.Info.FieldBGM = 0;
-		battle.btl_bonus.ap = (UInt16)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].AP;
+		btl_scene.Info.FieldBGM = FF9StateSystem.Battle.IsPlayFieldBGMInCurrentBattle;
+		battle.btl_bonus.ap = (UInt16)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[btl_scene.PatNum].AP;
 	}
 
 	private static Int32 SeqExecEnd(SEQ_WORK pSeqWork, BTL_DATA pMe)
