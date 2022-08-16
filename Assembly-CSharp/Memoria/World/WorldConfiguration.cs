@@ -161,7 +161,7 @@ namespace Memoria
 						ff9.sw_weatherColorElement[] colors = CsvReader.Read<ff9.sw_weatherColorElement>(inputPath);
 						if (colors.Length != 23)
 						{
-							Log.Error($"[WorldConfiguration] You must set at least 12 colors, but there are {colors.Length} in '{inputPath}'.");
+							Log.Error($"[WorldConfiguration] You must set 23 colors, but there are {colors.Length} in '{inputPath}'.");
 							return false;
 						}
 						ff9.w_weatherColor.Color = colors;
@@ -269,7 +269,7 @@ namespace Memoria
 			// Default usage setting
 			Vector3 burmeciaPos = new Vector3(30986f, 101f, -23243f); // (247888, 808, -185944) in fixed-point coordinates
 			Byte wmID = ff9.byte_gEventGlobal(102);
-			if (wmID == 0 || wmID == 8) // No transport / Invicible
+			if (wmID == 0 || wmID == 8) // No transport / Invincible
 			{
 				Vector3 playerPos = ff9.w_moveActorPtr.RealPosition;
 				playerPos *= 32f;

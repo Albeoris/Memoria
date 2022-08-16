@@ -1484,8 +1484,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					1074815u,
-					3640605951u
+					0x0010667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 1: Yellow Chocobo
@@ -1508,8 +1508,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					1074815u,
-					3640605951u
+					0x0010667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 2: Light Blue Chocobo
@@ -1532,8 +1532,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					553150079u,
-					3640605951u
+					0x20F8667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 3: Red Chocobo
@@ -1556,8 +1556,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					553543295u,
-					3640605951u
+					0x20FE667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 4: Deep Blue Chocobo
@@ -1580,8 +1580,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					603940479u,
-					3640605951u
+					0x23FF667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 5: Gold Chocobo (ground)
@@ -1604,8 +1604,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					603940479u,
-					3640605951u
+					0x23FF667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 6: Gold Chocobo (air)
@@ -1629,8 +1629,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					2147444351u,
-					3640605951u
+					0x7FFF667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 7: Blue Narciss
@@ -1653,7 +1653,7 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-						39845888u,
+						0x2600000u,
 						0u
 				}
 			},
@@ -1677,8 +1677,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					2147444351u,
-					3640605951u
+					0x7FFF667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 9: Invincible
@@ -1701,8 +1701,8 @@ public static class ff9
 				pad2 = 0,
 				limit = new UInt32[]
 				{
-					2147444351u,
-					3640605951u
+					0x7FFF667Fu,
+					0xD8FF3CFFu
 				}
 			},
 			new ff9.s_moveCHRControl // 10: ???
@@ -6308,7 +6308,7 @@ public static class ff9
 
 	public static Boolean w_movementCheckTopographID(UInt32[] check, UInt32 id)
 	{
-		UInt32 num = (id & 252u) >> 2;
+		UInt32 num = (id & 0xFCu) >> 2;
 		if (num > 31u)
 		{
 			if ((check[0] >> (Int32)(num - 32u) & 1u) != 0u)
