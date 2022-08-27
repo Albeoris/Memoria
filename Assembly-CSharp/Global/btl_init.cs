@@ -245,19 +245,22 @@ public class btl_init
 		pType.bonus.exp = pParm.WinExp;
 		pType.bonus.card = pParm.WinCard;
 		pType.bonus.card_rate = pParm.WinCardRate;
-		pType.bonus.item = pParm.WinItems;
-		pType.bonus.item_rate = pParm.WinItemRates;
-		for (Int16 num = 0; num < 6; num = (Int16)(num + 1))
-			pType.mot[num] = FF9BattleDB.Animation[pParm.Mot[num]];
-		for (Int16 num = 0; num < 3; num = (Int16)(num + 1))
-			pType.cam_bone[num] = pParm.Bone[num];
+		for (Int16 i = 0; i < 4; i++)
+		{
+			pType.bonus.item[i] = pParm.WinItems[i];
+			pType.bonus.item_rate[i] = pParm.WinItemRates[i];
+		}
+		for (Int16 i = 0; i < 6; i++)
+			pType.mot[i] = FF9BattleDB.Animation[pParm.Mot[i]];
+		for (Int16 i = 0; i < 3; i++)
+			pType.cam_bone[i] = pParm.Bone[i];
 		pType.die_snd_no = pParm.DieSfx;
 		pType.p_atk_no = pParm.Konran;
-		for (Int16 num = 0; num < 6; num = (Int16)(num + 1))
+		for (Int16 i = 0; i < 6; i++)
 		{
-			pType.icon_bone[num] = pParm.IconBone[num];
-			pType.icon_y[num] = pParm.IconY[num];
-			pType.icon_z[num] = pParm.IconZ[num];
+			pType.icon_bone[i] = pParm.IconBone[i];
+			pType.icon_y[i] = pParm.IconY[i];
+			pType.icon_z[i] = pParm.IconZ[i];
 		}
 	}
 
