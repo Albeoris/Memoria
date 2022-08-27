@@ -586,7 +586,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         for (Int32 index = 0; index < 8; ++index)
             this._objPtrList[index] = null;
         this._opLStart = 0;
-        
+
         // Battle
         if (this.gMode == 2)
         {
@@ -605,7 +605,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         }
 
         this._opLStart = 4;
-        
+
         if (this.gMode == 1 && this.sEventContext1.inited == 1 && this.sEventContext1.lastmap == this._ff9.fldMapNo || this.gMode == 3 && this.sEventContext1.inited == 3 && this.sEventContext1.lastmap == this._ff9.wldMapNo || this._ff9Sys.prevMode == 9 && this.sEventContext1.inited != 0)
         {
             this.sEventContext0.copy(this.sEventContext1);
@@ -618,17 +618,19 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             {
                 Int32 scCounterSvr = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
                 Int32 mapIndexSvr = this.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-                
-                Boolean flag1 = this._ff9.fldMapNo == 70;
-                Boolean flag2 = this._ff9.fldMapNo == 2200 && scCounterSvr == 9450 && mapIndexSvr == 9999;
-                Boolean flag3 = this._ff9.fldMapNo == 150 && scCounterSvr == 1155 && mapIndexSvr == 325;
-                Boolean flag4 = this._ff9.fldMapNo == 1251 && scCounterSvr == 5400;
-                Boolean flag5 = this._ff9.fldMapNo == 1602 && scCounterSvr == 6645 && mapIndexSvr == 16;
-                Boolean flag6 = this._ff9.fldMapNo == 1757 && scCounterSvr == 6740;
-                Boolean flag7 = this._ff9.fldMapNo == 2752 && scCounterSvr == 11100 && mapIndexSvr == 9999;
-                Boolean flag8 = this._ff9.fldMapNo == 3001 && scCounterSvr == 12000 && mapIndexSvr == 0;
-                Boolean flag9 = this._ff9.fldMapNo == 2161 && scCounterSvr == 10000 && mapIndexSvr == 32;
-                if (!flag1 && !flag4 && (!flag5 && !flag6) && (!flag3 && !flag2 && (!flag7 && !flag8)) && !flag9)
+
+                Boolean noSave = false;
+                noSave |= this._ff9.fldMapNo == 70; // Opening-For FMV
+                noSave |= this._ff9.fldMapNo == 2200 && scCounterSvr == 9450 && mapIndexSvr == 9999; // Palace/Dungeon (first time entrance)
+                noSave |= this._ff9.fldMapNo == 150 && scCounterSvr == 1155 && mapIndexSvr == 325; // A. Castle/Guardhouse (Zidane & Blank after the sword fight)
+                noSave |= this._ff9.fldMapNo == 1251 && scCounterSvr == 5400; // Pinnacle Rocks/Hole (first time entrance)
+                noSave |= this._ff9.fldMapNo == 1602 && scCounterSvr == 6645 && mapIndexSvr == 16; // Mdn. Sari/Path (night-time Zidane & Vivi cutscene with Eiko eavesdropping)
+                noSave |= this._ff9.fldMapNo == 1757 && scCounterSvr == 6740; // Iifa Tree/Outer Seal (return after defeating Soulcage)
+                noSave |= this._ff9.fldMapNo == 2752 && scCounterSvr == 11100 && mapIndexSvr == 9999; // Invincible/Bridge (Assault of the Silver Dragons)
+                noSave |= this._ff9.fldMapNo == 3001 && scCounterSvr == 12000 && mapIndexSvr == 0; // Ending/AC ("Kuja...  What you did was wrong...")
+                noSave |= this._ff9.fldMapNo == 2161 && scCounterSvr == 10000 && mapIndexSvr == 32; // L. Castle/Guest Room (Zidane awakes after Mount Gulug)
+                noSave |= this.gMode == 1 && Configuration.SaveFile.AutoSaveOnlyAtMoogle && !EventEngine.IsMoogleField(this._ff9.fldMapNo, scCounterSvr, mapIndexSvr);
+                if (!noSave)
                 {
                     FF9StateSystem.Settings.UpdateTickTime();
                     ISharedDataSerializer serializer = FF9StateSystem.Serializer;

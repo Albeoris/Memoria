@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public partial class EventEngine : PersistenSingleton<EventEngine>
 {
@@ -108,6 +109,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private static Byte[,] d;
     private static PosObj sLastTalker;
     private static Int32 sTalkTimer;
+    private static HashSet<Int16> moogleFldMap;
 
     static EventEngine()
     {
@@ -156,6 +158,74 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             {(Byte)90, (Byte)167, (Byte)244, Byte.MaxValue},
             {(Byte)115, (Byte)217, (Byte)244, Byte.MaxValue}
         };
+        EventEngine.moogleFldMap = new HashSet<Int16>
+        {
+            115, // Alexandria/Steeple
+            150, // A. Castle/Guardhouse
+            206, // Prima Vista/Crash Site
+            253, // Evil Forest/Spring
+            300, // Ice Cavern/Entrance
+            306, // Ice Cavern/Cave
+            351, // Dali/Inn
+            407, // Dali/Storage Area
+            554, // Lindblum/Inn
+            602, // L. Castle/Dragon's Gate
+            611, // L. Castle/Guest Room
+            662, // Marsh/Thicket
+            706, // Gizamaluke/Cavern
+            764, // Burmecia/Vault
+            802, // S. Gate/Bohden Station
+            810, // S. Gate/Rest Stop
+            853, // S. Gate/Treno Arch
+            904, // Treno/Knight's House
+            950, // Gargan Roo/Entrance
+            1008, // Cleyra/Tree Trunk
+            1056, // Cleyra/Inn
+            1102, // Cleyra/Sandpit (moogle is not always there)
+            1106, // Cleyra/Inn
+            1109, // Cleyra/Cathedral (moogle is not always there)
+            1152, // Red Rose/Cabin
+            1205, // A. Castle/Chapel
+            1213, // A. Castle/Guardhouse
+            1252, // Pinnacle Rocks/Path
+            1304, // Lindblum/Inn
+            1352, // L. Castle/Dragon's Gate
+            1418, // Fossil Roo/Cavern
+            1421, // Fossil Roo/Mining Site (moogle must be unlocked)
+            1458, // Mage Village/Water Mill
+            1509, // Conde Petie/Item Shop
+            1553, // Mountain Path/Roots
+            1652, // Iifa Tree/Roots
+            1663, // Iifa Tree/Tree Trunk
+            1759, // Iifa Tree/Roots
+            1803, // A. Castle/Guardhouse
+            1865, // Alexandria/Steeple
+            1904, // Treno/Knight's House
+            2104, // Lindblum/Inn
+            2152, // L. Castle/Dragon's Gate
+            2161, // L. Castle/Guest Room
+            2203, // Palace/Rack
+            2220, // Palace/Library (moogle area must be unlocked)
+            2250, // Oeilvert/Outside
+            2259, // Oeilvert/Star Display
+            2304, // Esto Gaza/Terrace
+            2354, // Gulug/Room
+            2360, // Gulug/Path
+            2456, // Alexandria/Steeple
+            2504, // I. Castle/Small Room
+            2655, // Bran Bal/Storage (moogle must be unlocked)
+            2706, // Pand./Hall (moogle is not always here)
+            2714, // Pand./Maze
+            2801, // Daguerreo/Right Hall
+            2901, // Memoria/Entrance
+            2905, // Memoria/The Past (hidden)
+            2909, // Memoria/Ruins (hidden)
+            2913, // Memoria/Portal
+            2916, // Memoria/Time Warp (hidden)
+            2919, // Memoria/Gate to Space (hidden)
+            2925, // Crystal World
+            3057 // Mage Village/Water Mill
+        };
     }
 
     public static Int32 FindArrayIDFromEventID(Int32 eventID)
@@ -166,5 +236,22 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 return index;
         }
         return -1;
+    }
+
+    public static Boolean IsMoogleField(Int16 fldId, Int32 scCounter, Int32 mapIndex)
+	{
+        if (!EventEngine.moogleFldMap.Contains(fldId))
+            return false;
+        if (fldId == 300 && scCounter < 3900) // Ice Cavern/Entrance
+            return false;
+        if (fldId == 662 && scCounter < 11100) // Marsh/Thicket
+            return false;
+        if (fldId == 1102 && scCounter < 4900) // Cleyra/Sandpit
+            return false;
+        if (fldId == 1109 && scCounter < 4900) // Cleyra/Cathedral
+            return false;
+        if (fldId == 2706 && mapIndex == -1) // Pand./Hall
+            return false;
+        return true;
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.SiliconSocial;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
@@ -643,7 +644,15 @@ public class SaveLoadUI : UIScene
 
 	private void OnFinishedSaveFile(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot data)
 	{
-		base.StartCoroutine(this.OnFinishedSaveFile_delay(errNo, slotID, saveID, isSuccess, data));
+		if (Configuration.SaveFile.SaveOnCloud && isSuccess && errNo == DataSerializerErrorCode.Success)
+			FF9StateSystem.Serializer.UploadToCloud(null, OnFinishedUploadToCloud);
+		else
+			base.StartCoroutine(this.OnFinishedSaveFile_delay(errNo, slotID, saveID, isSuccess, data));
+	}
+
+	private void OnFinishedUploadToCloud(DataSerializerErrorCode errNo, Boolean isSuccess, SharedDataPreviewSlot localData, SharedDataPreviewSlot cloudData)
+	{
+		base.StartCoroutine(this.OnFinishedUploadToCloud_delay(errNo, isSuccess, localData, cloudData));
 	}
 
 	private IEnumerator OnFinishedSaveFile_delay(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot data)
@@ -671,6 +680,25 @@ public class SaveLoadUI : UIScene
 			this.DisplayCorruptAccessDialog(SaveLoadUI.FileGroupButton, SaveLoadUI.SerializeType.Save, errNo);
 			this.isFileCorrupt[saveID] = true;
 		}
+		yield break;
+	}
+
+	private IEnumerator OnFinishedUploadToCloud_delay(DataSerializerErrorCode errNo, Boolean isSuccess, SharedDataPreviewSlot localData, SharedDataPreviewSlot cloudData)
+	{
+		Single remainTime = Mathf.Max(2f - (Time.time - this.timeCounter), 0f);
+		yield return new WaitForSeconds(remainTime);
+		this.progressBar.value = 1f;
+		yield return new WaitForSeconds(0.1f);
+		base.Loading = false;
+		this.LoadingAccessPanel.SetActive(false);
+		if (isSuccess && errNo == DataSerializerErrorCode.Success)
+			FF9Sfx.FF9SFX_Play(1261);
+		else
+			FF9Sfx.FF9SFX_Play(1046);
+		this.isFileExistList[this.currentFile] = true;
+		this.isFileCorrupt[this.currentFile] = false;
+		this.DisplayFileInfo(this.currentFile, localData);
+		this.DisplaySuccessfulAccessDialog();
 		yield break;
 	}
 

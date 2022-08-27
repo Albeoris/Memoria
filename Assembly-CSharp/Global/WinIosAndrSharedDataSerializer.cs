@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Memoria;
 using Memoria.Prime;
 using SiliconStudio;
 using SimpleJSON;
@@ -86,13 +87,13 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 
 	public override void Autosave(ISharedDataSerializer.OnAutosaveAutoloadStart onStartDelegate, ISharedDataSerializer.OnAutosaveFinish onFinishDelegate)
 	{
+		if (Configuration.SaveFile.DisableAutoSave)
+			return;
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
 		this.onAutosaveAutoloadStartDelegate = onStartDelegate;
 		this.onAutosaveFinishDelegate = onFinishDelegate;
 		if (this.onAutosaveAutoloadStartDelegate != null)
-		{
 			this.onAutosaveAutoloadStartDelegate(ISharedDataSerializer.LastErrno);
-		}
 		SharedSerializerEvent.WillAutosave();
 		this.Parser.ParseFromFF9StateSystem();
 		SharedSerializerEvent.WillAutosaveDidParse();
