@@ -287,8 +287,6 @@ public class ff9play
         play.defence.PhisicalEvade = (Byte)skill.weapon[2];
         play.defence.MagicalDefence = (Byte)skill.weapon[3];
         play.defence.MagicalEvade = (Byte)skill.weapon[4];
-        play.cur.hp = skill.cur_hp;
-        play.cur.mp = skill.cur_mp;
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
         play.mpCostFactor = 100;
