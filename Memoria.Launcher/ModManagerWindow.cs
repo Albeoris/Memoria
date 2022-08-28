@@ -9,11 +9,14 @@ using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using Ini;
 using ListView = System.Windows.Controls.ListView;
+using GridView = System.Windows.Controls.GridView;
+using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Application = System.Windows.Application;
 
@@ -207,6 +210,27 @@ namespace Memoria.Launcher
         {
             if (!String.IsNullOrEmpty(currentMod.Website))
                 Process.Start(currentMod.Website);
+        }
+        private void OnClickCatalogHeader(Object sender, EventArgs e)
+        {
+            MethodInfo[] accessors = null;
+            if (sender == colCatalogName.Header)
+                accessors = typeof(Mod).GetProperty("Name")?.GetAccessors();
+            else if (sender == colCatalogAuthor.Header)
+                accessors = typeof(Mod).GetProperty("Author")?.GetAccessors();
+            else if (sender == colCatalogCategory.Header)
+                accessors = typeof(Mod).GetProperty("Category")?.GetAccessors();
+            else if (sender == colCatalogInstalled.Header)
+                accessors = typeof(Mod).GetProperty("Installed")?.GetAccessors();
+            if (accessors != null)
+            {
+                Boolean ascending = sender != ascendingSortedColumn;
+                ascendingSortedColumn = ascending ? sender : null;
+                if (accessors.Length > 0 && accessors[0].ReturnType != typeof(void))
+                    SortCatalog(accessors[0], ascending);
+                else if (accessors.Length > 1 && accessors[1].ReturnType != typeof(void))
+                    SortCatalog(accessors[1], ascending);
+            }
         }
 
         private void DownloadStart(Mod mod)
@@ -717,6 +741,27 @@ PS5 white button prompts - Pixel Type Button Prompts
             lstMods.Items.Refresh();
         }
 
+        private void SortCatalog(MethodInfo sortGetter, Boolean ascending)
+		{
+            if (sortGetter == null || sortGetter.DeclaringType != typeof(Mod) || sortGetter.ReturnType.GetInterface(nameof(IComparable)) == null || sortGetter.GetParameters().Length > 0)
+                return;
+            List<Mod> catalogList = new List<Mod>(modListCatalog);
+            catalogList.Sort(delegate(Mod a, Mod b)
+            {
+                IComparable ac = sortGetter.Invoke(a, null) as IComparable;
+                IComparable bc = sortGetter.Invoke(b, null) as IComparable;
+                if (ac == null && bc == null)
+                    return 0;
+                if (ac == null)
+                    return ascending ? 1 : -1;
+                if (bc == null)
+                    return ascending ? -1 : 1;
+                return ascending ? ac.CompareTo(bc) : -ac.CompareTo(bc);
+            });
+            modListCatalog = new ObservableCollection<Mod>(catalogList);
+            lstCatalogMods.ItemsSource = modListCatalog;
+        }
+
         private void LoadSettings()
         {
             modListInstalled.Clear();
@@ -809,10 +854,18 @@ PS5 white button prompts - Pixel Type Button Prompts
             btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;
             tabCatalog.Text = Lang.ModEditor.TabCatalog;
-            colCatalogName.Header = Lang.ModEditor.Name;
-            colCatalogAuthor.Header = Lang.ModEditor.Author;
-            colCatalogCategory.Header = Lang.ModEditor.Category;
-            colCatalogInstalled.Header = Lang.ModEditor.Installed;
+            GridViewColumnHeader header = new GridViewColumnHeader() { Content = Lang.ModEditor.Name };
+            header.Click += OnClickCatalogHeader;
+            colCatalogName.Header = header;
+            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Author };
+            header.Click += OnClickCatalogHeader;
+            colCatalogAuthor.Header = header;
+            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
+            header.Click += OnClickCatalogHeader;
+            colCatalogCategory.Header = header;
+            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Installed };
+            header.Click += OnClickCatalogHeader;
+            colCatalogInstalled.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;
             colDownloadProgress.Header = Lang.ModEditor.Progress;
             colDownloadSpeed.Header = Lang.ModEditor.Speed;
@@ -827,6 +880,7 @@ PS5 white button prompts - Pixel Type Button Prompts
         private DateTime downloadBytesTime;
         private Thread downloadThread;
         private WebClient downloadClient;
+        private object ascendingSortedColumn = null;
 
         private const String INI_PATH = "./Memoria.ini";
     }
