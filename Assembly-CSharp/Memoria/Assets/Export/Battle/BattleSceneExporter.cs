@@ -57,6 +57,7 @@ namespace Memoria.Assets
 
         private static void ExportSceneSafe(String battleSceneName)
         {
+            Boolean exportMap = true;
             try
             {
                 String relativePath = "BattleMap/BattleScene/EVT_BATTLE_" + battleSceneName + '/';
@@ -94,11 +95,37 @@ namespace Memoria.Assets
                 SerializeScene(btlScene, btlSeq, outputDirectory, text);
                 CompileScene(outputDirectory);
 
+                exportMap = false;
+
+                EmbadedTextResources.CurrentSymbol = "US";
+                String[] usBattleText = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + battleSceneName]);
+                EmbadedTextResources.CurrentSymbol = null;
+                Dictionary<String, BattleActionThread.TextGetter> langBattleText = new Dictionary<String, BattleActionThread.TextGetter>();
+                foreach (String symbol in Configuration.Export.Languages)
+                    langBattleText[symbol] = index => text[index][symbol];
+
+                for (Int32 i = 0; i < btlScene.header.AtkCount; i++)
+                {
+                    if (btlSeq.seq_work_set.SeqData[i] != 0)
+                    {
+                        List<BattleActionThread> atkSeq = BattleActionThread.LoadFromBtlSeq(btlScene, btlSeq, index => usBattleText[index], i, langBattleText);
+                        String seqStr = BattleActionThread.GetSequenceStringCode(atkSeq);
+                        if (!String.IsNullOrEmpty(seqStr))
+						{
+                            String seqPath = outputDirectory + i.ToString("D2") + " " + FF9TextTool.RemoveOpCode(usBattleText[btlScene.header.TypCount + i]) + UnifiedBattleSequencer.EXTENSION_SEQ;
+                            File.WriteAllText(seqPath, seqStr);
+                        }
+                    }
+                }
+
                 Log.Message("[BattleSceneExporter] Exporting completed successfully.");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[BattleSceneExporter] Failed to export map [{0}].", battleSceneName);
+                if (exportMap)
+                    Log.Error(ex, "[BattleSceneExporter] Failed to export map [{0}].", battleSceneName);
+                else
+                    Log.Error(ex, "[BattleSceneExporter] Failed to export attack sequences [{0}].", battleSceneName);
             }
         }
 
@@ -338,13 +365,12 @@ namespace Memoria.Assets
 
         private static void SerializeScripts(String outputDirectory, BTL_SCENE btlScene, btlseq.btlseqinstance btlSeq, JsonWriter writer, List<Dictionary<String, String>> localizableText, ref Int32 currentText)
         {
-            btlseq.InitSequencer();
-            FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = (byte)0;
+            btlSeq.seq_work_set.CameraNo = (byte)0;
 
             String outputPath = outputDirectory + "Scripts.cs";
             using (StreamWriter output = File.CreateText(outputPath))
             {
-                for (Int32 index = 0; index < btlseq.instance.seq_work_set.AnmOfsList.Length; index++)
+                for (Int32 index = 0; index < btlSeq.seq_work_set.AnmOfsList.Length; index++)
                 {
                     SEQ_WORK seqWork = new SEQ_WORK();
                     seqWork.Flags = new SeqFlag();
@@ -357,21 +383,21 @@ namespace Memoria.Assets
                     seqWork.TurnTime = (byte)0;
                     seqWork.SVfxTime = (byte)0;
                     seqWork.FadeTotal = (byte)0;
-                    seqWork.CurPtr = btlseq.instance.seq_work_set.SeqData[index];
-                    seqWork.AnmIDOfs = btlseq.instance.seq_work_set.AnmOfsList[index];
+                    seqWork.CurPtr = btlSeq.seq_work_set.SeqData[index];
+                    seqWork.AnmIDOfs = btlSeq.seq_work_set.AnmOfsList[index];
 
                     StringBuilder sb = new StringBuilder();
 
-                    using (btlseq.instance.sequenceReader = new BinaryReader(new MemoryStream(btlseq.instance.data)))
+                    using (btlSeq.sequenceReader = new BinaryReader(new MemoryStream(btlSeq.data)))
                     {
-                        for (Int32 code = 1; code != 0; code = btlseq1.gSeqProg[btlseq.instance.wSeqCode].Exec(seqWork, sb))
+                        for (Int32 code = 1; code != 0; code = btlseq1.gSeqProg[btlSeq.wSeqCode].Exec(btlSeq, seqWork, sb))
                         {
-                            btlseq.instance.sequenceReader.BaseStream.Seek(seqWork.CurPtr + 4, SeekOrigin.Begin);
-                            btlseq.instance.wSeqCode = btlseq.instance.sequenceReader.ReadByte();
-                            if (btlseq.instance.wSeqCode > btlseq.gSeqProg.Length)
-                                btlseq.instance.wSeqCode = 0;
-                            if (seqWork.CurPtr != seqWork.OldPtr && btlseq.gSeqProg[btlseq.instance.wSeqCode].Init != null)
-                                btlseq1.gSeqProg[btlseq.instance.wSeqCode].Init(seqWork, sb);
+                            btlSeq.sequenceReader.BaseStream.Seek(seqWork.CurPtr + 4, SeekOrigin.Begin);
+                            btlSeq.wSeqCode = btlSeq.sequenceReader.ReadByte();
+                            if (btlSeq.wSeqCode > btlseq.gSeqProg.Length)
+                                btlSeq.wSeqCode = 0;
+                            if (seqWork.CurPtr != seqWork.OldPtr && btlseq.gSeqProg[btlSeq.wSeqCode].Init != null)
+                                btlseq1.gSeqProg[btlSeq.wSeqCode].Init(btlSeq, seqWork, sb);
                             seqWork.OldPtr = seqWork.CurPtr;
                         }
                     }
@@ -384,26 +410,26 @@ namespace Memoria.Assets
 
             writer.BeginObject();
 
-            writer.WriteInt32("camOffset", btlseq.instance.camOffset);
+            writer.WriteInt32("camOffset", btlSeq.camOffset);
             writer.WriteInt32("projOffset", FF9StateSystem.Battle.battleMapIndex == 21 ? 100 : 0);
 
             writer.BeginArray("data");
-            foreach (Byte value in btlseq.instance.data)
+            foreach (Byte value in btlSeq.data)
                 writer.WriteByteValue(value);
             writer.EndArray();
 
             writer.BeginArray("SeqData");
-            foreach (Int32 value in btlseq.instance.seq_work_set.SeqData)
+            foreach (Int32 value in btlSeq.seq_work_set.SeqData)
                 writer.WriteInt32Value(value);
             writer.EndArray();
 
             writer.BeginArray("AnmAddrList");
-            foreach (Int32 value in btlseq.instance.seq_work_set.AnmAddrList)
+            foreach (Int32 value in btlSeq.seq_work_set.AnmAddrList)
                 writer.WriteInt32Value(value);
             writer.EndArray();
 
             writer.BeginArray("AnmOfsList");
-            foreach (Byte value in btlseq.instance.seq_work_set.AnmOfsList)
+            foreach (Byte value in btlSeq.seq_work_set.AnmOfsList)
                 writer.WriteByteValue(value);
             writer.EndArray();
 
@@ -1315,113 +1341,113 @@ namespace Memoria.Assets
             new SequenceProgram(null, _SeqExecMessage)
         };
 
-        private static Int32 _SeqExecEnd(SEQ_WORK pSeqWork, StringBuilder pMe)
+        private static Int32 _SeqExecEnd(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pMe.AppendLine($"SeqExecEnd();");
             pSeqWork.CmdPtr = null;
             return 0;
         }
 
-        public static void SeqInitMoveToTarget(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static void SeqInitMoveToTarget(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_MOVE wMove = new WK_MOVE();
             wMove.Next = (ushort)4;
             pSeqWork.IncCnt = (short)1;
-            wMove.Frames = (short)btlseq.instance.sequenceReader.ReadByte();
-            short num1 = btlseq.instance.sequenceReader.ReadInt16();
+            wMove.Frames = (short)btlSeq.sequenceReader.ReadByte();
+            short num1 = btlSeq.sequenceReader.ReadInt16();
             pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wMove);
-            pMe.AppendLine($"SeqInitMoveToTarget{btlseq.instance.wSeqCode}(frames: {wMove.Frames}, dst: {num1});");
+            pMe.AppendLine($"SeqInitMoveToTarget{btlSeq.wSeqCode}(frames: {wMove.Frames}, dst: {num1});");
         }
 
-        public static Int32 SeqExecMoveToTarget(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 SeqExecMoveToTarget(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_MOVE wkMove2 = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
             pSeqWork.CurPtr += wkMove2.Next;
             return 1;
         }
 
-        public static void SeqInitMoveToTurn(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static void SeqInitMoveToTurn(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_MOVE wMove = new WK_MOVE();
             wMove.Next = 2;
             pSeqWork.IncCnt = 1;
-            wMove.Frames = btlseq.instance.sequenceReader.ReadByte();
+            wMove.Frames = btlSeq.sequenceReader.ReadByte();
             pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wMove);
             pMe.AppendLine($"SeqInitMoveToTurn(frames: {wMove.Frames});");
         }
 
-        public static void SeqInitScale(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static void SeqInitScale(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_SCALE wScale = new WK_SCALE();
-            wScale.Org = btlseq.instance.sequenceReader.ReadInt16();
-            wScale.Frames = btlseq.instance.sequenceReader.ReadByte();
+            wScale.Org = btlSeq.sequenceReader.ReadInt16();
+            wScale.Frames = btlSeq.sequenceReader.ReadByte();
             pSeqWork.IncCnt = 1;
             pSeqWork.Work = btlseq.SequenceConverter.WkScaleToWork(wScale);
             pMe.AppendLine($"SeqInitScale(frames: {wScale.Frames}, num1: {wScale.Org});");
         }
 
-        public static Int32 SeqExecScale(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 SeqExecScale(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_SCALE wkScale = btlseq.SequenceConverter.WorkToWkScale(pSeqWork.Work);
             pSeqWork.CurPtr += 4;
             return 1;
         }
 
-        public static void SeqInitMoveToPoint(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static void SeqInitMoveToPoint(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_MOVE wkMove = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
             wkMove.Next = 8;
             pSeqWork.IncCnt = 1;
-            wkMove.Frames = btlseq.instance.sequenceReader.ReadByte();
+            wkMove.Frames = btlSeq.sequenceReader.ReadByte();
             pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wkMove);
-            wkMove.Dst[0] = btlseq.instance.sequenceReader.ReadInt16();
-            wkMove.Dst[1] = btlseq.instance.sequenceReader.ReadInt16();
-            wkMove.Dst[2] = btlseq.instance.sequenceReader.ReadInt16();
+            wkMove.Dst[0] = btlSeq.sequenceReader.ReadInt16();
+            wkMove.Dst[1] = btlSeq.sequenceReader.ReadInt16();
+            wkMove.Dst[2] = btlSeq.sequenceReader.ReadInt16();
             pMe.AppendLine($"SeqInitMoveToPoint(framse: {wkMove.Frames}, x: {wkMove.Dst[0]}, y: {wkMove.Dst[1]}, z: {wkMove.Dst[2]});");
         }
 
-        public static Int32 SeqExecMoveToPoint(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 SeqExecMoveToPoint(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_MOVE wkMove2 = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
             pSeqWork.CurPtr += wkMove2.Next;
             return 1;
         }
 
-        public static void SeqInitMoveToOffset(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static void SeqInitMoveToOffset(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             WK_MOVE wMove = new WK_MOVE();
             wMove.Next = 8;
             pSeqWork.IncCnt = 1;
-            wMove.Frames = btlseq.instance.sequenceReader.ReadByte();
+            wMove.Frames = btlSeq.sequenceReader.ReadByte();
             pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wMove);
-            var x = btlseq.instance.sequenceReader.ReadInt16();
-            var y = btlseq.instance.sequenceReader.ReadInt16();
-            var z = btlseq.instance.sequenceReader.ReadInt16();
+            var x = btlSeq.sequenceReader.ReadInt16();
+            var y = btlSeq.sequenceReader.ReadInt16();
+            var z = btlSeq.sequenceReader.ReadInt16();
             pMe.AppendLine($"SeqInitMoveToOffset(frames: {wMove.Frames}, x: {x}, y: {y}, z: {z});");
         }
 
-        public static void SeqInitWait(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static void SeqInitWait(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pSeqWork.DecCnt = btlseq.instance.sequenceReader.ReadByte();
+            pSeqWork.DecCnt = btlSeq.sequenceReader.ReadByte();
             pMe.AppendLine($"SeqInitWait(decCnt: {pSeqWork.DecCnt});");
         }
 
-        public static Int32 SeqExecWait(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 SeqExecWait(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecCalc(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecCalc(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pMe.AppendLine($"SeqExecCalc();");
             ++pSeqWork.CurPtr;
             return 1;
         }
 
-        public static Int32 _SeqExecAnim(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecAnim(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            Byte num = btlseq.instance.sequenceReader.ReadByte();
+            Byte num = btlSeq.sequenceReader.ReadByte();
             pMe.AppendLine($"SeqExecAnim(num: {num});");
 
             pSeqWork.AnmCnt = 0;
@@ -1429,75 +1455,75 @@ namespace Memoria.Assets
             return 1;
         }
 
-        public static Int32 _SeqExecSVfx(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecSVfx(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pSeqWork.SVfxNum = btlseq.instance.sequenceReader.ReadUInt16();
-            pSeqWork.SVfxParam = btlseq.instance.sequenceReader.ReadByte();
-            pSeqWork.SVfxTime = (Byte)(btlseq.instance.sequenceReader.ReadByte() + 1U);
+            pSeqWork.SVfxNum = btlSeq.sequenceReader.ReadUInt16();
+            pSeqWork.SVfxParam = btlSeq.sequenceReader.ReadByte();
+            pSeqWork.SVfxTime = (Byte)(btlSeq.sequenceReader.ReadByte() + 1U);
             pSeqWork.CurPtr += 5;
 
             pMe.AppendLine($"SeqExecSVfx(svfxNum: {pSeqWork.SVfxNum}, svfxParam: {pSeqWork.SVfxParam}, svfxTime: {pSeqWork.SVfxTime});");
             return 1;
         }
 
-        public static Int32 _SeqExecWaitAnim(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecWaitAnim(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             ++pSeqWork.CurPtr;
             pMe.AppendLine($"SeqExecWaitAnim();");
             return 1;
         }
 
-        public static Int32 _SeqExecVfx(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecVfx(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             Int16[] numArray = new Int16[4];
-            UInt16 num = btlseq.instance.sequenceReader.ReadUInt16();
-            numArray[0] = btlseq.instance.sequenceReader.ReadInt16();
-            numArray[1] = btlseq.instance.sequenceReader.ReadInt16();
-            numArray[2] = btlseq.instance.sequenceReader.ReadInt16();
-            numArray[3] = btlseq.instance.wSeqCode != 26 ? (Int16)0 : (Int16)1;
+            UInt16 num = btlSeq.sequenceReader.ReadUInt16();
+            numArray[0] = btlSeq.sequenceReader.ReadInt16();
+            numArray[1] = btlSeq.sequenceReader.ReadInt16();
+            numArray[2] = btlSeq.sequenceReader.ReadInt16();
+            numArray[3] = btlSeq.wSeqCode != 26 ? (Int16)0 : (Int16)1;
             pSeqWork.CurPtr += 9;
             pMe.AppendLine($"SeqExecVfx(fxNo: {num}, a0: {numArray[0]}, a1: {numArray[1]}, a2: {numArray[2]}, a3: {numArray[3]})");
             return 1;
         }
 
-        public static Int32 _SeqExecWaitLoadVfx(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecWaitLoadVfx(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pMe.AppendLine($"SeqExecWaitLoadVfx();");
             ++pSeqWork.CurPtr;
             return 1;
         }
 
-        public static Int32 _SeqExecStartVfx(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecStartVfx(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pMe.AppendLine($"SeqExecStartVfx();");
             ++pSeqWork.CurPtr;
             return 1;
         }
 
-        public static Int32 _SeqExecWaitVfx(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecWaitVfx(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pMe.AppendLine($"SeqExecWaitVfx();");
             ++pSeqWork.CurPtr;
             return 1;
         }
 
-        public static Int32 _SeqExecMeshHide(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecMeshHide(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            UInt16 mesh = btlseq.instance.sequenceReader.ReadUInt16();
+            UInt16 mesh = btlSeq.sequenceReader.ReadUInt16();
             pSeqWork.CurPtr += 3;
             pMe.AppendLine($"SeqExecMeshHide(mesh: {mesh});");
             return 1;
         }
 
-        public static Int32 _SeqExecMessage(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecMessage(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             btlseq.BattleLog("SeqExecMessage");
-            UInt16 num1 = btlseq.instance.sequenceReader.ReadByte();
+            UInt16 num1 = btlSeq.sequenceReader.ReadByte();
             if ((num1 & 128) != 0)
             {
                 pMe.AppendLine($"SeqExecMessage_Command();");
             }
-            else if (btlseq.instance.wSeqCode == 33)
+            else if (btlSeq.wSeqCode == 33)
             {
                 pMe.AppendLine($"SeqExecMessage_Title(message: {num1});");
             }
@@ -1510,108 +1536,108 @@ namespace Memoria.Assets
             return 1;
         }
 
-        public static Int32 _SeqExecMeshShow(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecMeshShow(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            UInt16 mesh = btlseq.instance.sequenceReader.ReadUInt16();
+            UInt16 mesh = btlSeq.sequenceReader.ReadUInt16();
             pMe.AppendLine($"SeqExecMeshShow(mesh: {mesh});");
             pSeqWork.CurPtr += 3;
             return 1;
         }
 
-        public static Int32 _SeqExecSetCamera(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecSetCamera(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            btlseq.instance.seq_work_set.CameraNo = btlseq.instance.sequenceReader.ReadByte();
-            pMe.AppendLine($"SeqExecSetCamera(cameraNo: {btlseq.instance.seq_work_set.CameraNo});");
+            btlSeq.seq_work_set.CameraNo = btlSeq.sequenceReader.ReadByte();
+            pMe.AppendLine($"SeqExecSetCamera(cameraNo: {btlSeq.seq_work_set.CameraNo});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecDefaultIdle(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecDefaultIdle(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            Byte defIdle = btlseq.instance.sequenceReader.ReadByte();
+            Byte defIdle = btlSeq.sequenceReader.ReadByte();
             pMe.AppendLine($"SeqExecDefaultIdle(defIdle: {defIdle});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecRunCamera(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecRunCamera(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            Byte cameraNo = btlseq.instance.sequenceReader.ReadByte();
-            pMe.AppendLine($"SeqExecRunCamera{btlseq.instance.wSeqCode}(cameraNo: {cameraNo});");
+            Byte cameraNo = btlSeq.sequenceReader.ReadByte();
+            pMe.AppendLine($"SeqExecRunCamera{btlSeq.wSeqCode}(cameraNo: {cameraNo});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecTurn(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecTurn(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            Int16 num1 = btlseq.instance.sequenceReader.ReadInt16();
-            Int16 num2 = (Int16)(btlseq.instance.sequenceReader.ReadInt16() / 4096.0 * 360.0);
-            pSeqWork.TurnTime = btlseq.instance.sequenceReader.ReadByte();
+            Int16 num1 = btlSeq.sequenceReader.ReadInt16();
+            Int16 num2 = (Int16)(btlSeq.sequenceReader.ReadInt16() / 4096.0 * 360.0);
+            pSeqWork.TurnTime = btlSeq.sequenceReader.ReadByte();
 
             pMe.AppendLine($"SeqExecTurn(num1: {num1}, num2: {num2}, turnTime: {pSeqWork.TurnTime});");
             pSeqWork.CurPtr += 6;
             return 1;
         }
 
-        public static Int32 _SeqExecTexAnimPlay(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecTexAnimPlay(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pMe.AppendLine($"SeqExecTexAnimPlay(animationNo: {btlseq.instance.sequenceReader.ReadByte()});");
+            pMe.AppendLine($"SeqExecTexAnimPlay(animationNo: {btlSeq.sequenceReader.ReadByte()});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecTexAnimOnce(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecTexAnimOnce(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pMe.AppendLine($"SeqExecTexAnimOnce(animationNo: {btlseq.instance.sequenceReader.ReadByte()});");
+            pMe.AppendLine($"SeqExecTexAnimOnce(animationNo: {btlSeq.sequenceReader.ReadByte()});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecTexAnimStop(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecTexAnimStop(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pMe.AppendLine($"SeqExecTexAnimStop(animationNo: {btlseq.instance.sequenceReader.ReadByte()});");
+            pMe.AppendLine($"SeqExecTexAnimStop(animationNo: {btlSeq.sequenceReader.ReadByte()});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecFastEnd(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecFastEnd(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
             pMe.AppendLine($"SeqExecFastEnd();");
             pSeqWork.CmdPtr = null;
             return 0;
         }
 
-        public static Int32 _SeqExecSfx(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecSfx(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pSeqWork.SfxNum = btlseq.instance.sequenceReader.ReadUInt16();
-            pSeqWork.SfxTime = (Byte)(btlseq.instance.sequenceReader.ReadByte() + 1U);
-            btlseq.instance.sequenceReader.Read();
-            pSeqWork.SfxVol = btlseq.instance.sequenceReader.ReadByte();
+            pSeqWork.SfxNum = btlSeq.sequenceReader.ReadUInt16();
+            pSeqWork.SfxTime = (Byte)(btlSeq.sequenceReader.ReadByte() + 1U);
+            btlSeq.sequenceReader.Read();
+            pSeqWork.SfxVol = btlSeq.sequenceReader.ReadByte();
 
             pMe.AppendLine($"SeqExecSfx(sfxNum: {pSeqWork.SfxNum}, sfxTime: {pSeqWork.SfxTime}, sfxVol: {pSeqWork.SfxVol});");
             pSeqWork.CurPtr += 6;
             return 1;
         }
 
-        public static Int32 _SeqExecTargetBone(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecTargetBone(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            Byte tarBone = btlseq.instance.sequenceReader.ReadByte();
+            Byte tarBone = btlSeq.sequenceReader.ReadByte();
             pMe.AppendLine($"SeqExecTargetBone(tarBone: {tarBone});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecFadeOut(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecFadeOut(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            pSeqWork.FadeTotal = pSeqWork.FadeStep = btlseq.instance.sequenceReader.ReadByte();
+            pSeqWork.FadeTotal = pSeqWork.FadeStep = btlSeq.sequenceReader.ReadByte();
             pMe.AppendLine($"SeqExecFadeOut(fadeTotal: {pSeqWork.FadeTotal});");
             pSeqWork.CurPtr += 2;
             return 1;
         }
 
-        public static Int32 _SeqExecShadow(SEQ_WORK pSeqWork, StringBuilder pMe)
+        public static Int32 _SeqExecShadow(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe)
         {
-            Byte shadow = btlseq.instance.sequenceReader.ReadByte();
+            Byte shadow = btlSeq.sequenceReader.ReadByte();
             pMe.AppendLine($"SeqExecShadow(shadow: {shadow});");
             pSeqWork.CurPtr += 2;
             return 1;
@@ -1628,9 +1654,9 @@ namespace Memoria.Assets
                 this.Exec = exec;
             }
 
-            public delegate void InitEvent(SEQ_WORK pSeqWork, StringBuilder pMe);
+            public delegate void InitEvent(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe);
 
-            public delegate Int32 ExecEvent(SEQ_WORK pSeqWork, StringBuilder pMe);
+            public delegate Int32 ExecEvent(btlseq.btlseqinstance btlSeq, SEQ_WORK pSeqWork, StringBuilder pMe);
         }
     }
 }

@@ -195,12 +195,12 @@ public class BattleActionThread
 		return result;
 	}
 
-	public static List<BattleActionThread> LoadFromBtlSeq(BTL_SCENE scene, btlseq.btlseqinstance seq, TextGetter battleText, Int32 atkNo)
+	public static List<BattleActionThread> LoadFromBtlSeq(BTL_SCENE scene, btlseq.btlseqinstance seq, TextGetter battleText, Int32 atkNo, Dictionary<String, TextGetter> langBattleText = null)
 	{
 		List<BattleActionThread> result = new List<BattleActionThread>();
 		BattleActionThread mainThread = new BattleActionThread();
 		result.Add(mainThread);
-		if (atkNo < 0 || atkNo >= FF9StateSystem.Battle.FF9Battle.seq_work_set.SeqData.Length || FF9StateSystem.Battle.FF9Battle.seq_work_set.SeqData[atkNo] == 0)
+		if (atkNo < 0 || atkNo >= seq.seq_work_set.SeqData.Length || seq.seq_work_set.SeqData[atkNo] == 0)
 		{
 			Log.Message($"[{nameof(BattleActionThread)}] Invalid enemy sequence {atkNo} (battle has {scene.header.AtkCount} attacks)");
 			return result;
@@ -216,6 +216,7 @@ public class BattleActionThread
 				messPtr += scene.MonAddr[i].MesCnt;
 		Int32 sfxNum = -1;
 		Int16 sfxBone0, sfxBone1, sfxArg;
+		String sfxName;
 		Boolean allowCamera = true;
 		using (seq.sequenceReader = new BinaryReader(new MemoryStream(seq.data)))
 		{
@@ -265,8 +266,9 @@ public class BattleActionThread
 						BattleActionThread sfxThread = new BattleActionThread();
 						sfxNum = r.ReadInt16();
 						sfxBone0 = r.ReadByte();
+						sfxName = Enum.IsDefined(typeof(SpecialEffect), sfxNum) ? ((SpecialEffect)sfxNum).ToString() : sfxNum.ToString();
 						sfxThread.code.AddLast(new BattleActionCode("SetupReflect"));
-						sfxThread.code.AddLast(new BattleActionCode("LoadSFX", "SFX", sfxNum.ToString(), "FirstBone", sfxBone0.ToString(), "Reflect", true.ToString()));
+						sfxThread.code.AddLast(new BattleActionCode("LoadSFX", "SFX", sfxName, "FirstBone", sfxBone0.ToString(), "Reflect", true.ToString()));
 						sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", (r.ReadByte() + 4).ToString(), "Reflect", true.ToString()));
 						sfxThread.code.AddLast(new BattleActionCode("WaitSFXLoaded", "Reflect", true.ToString()));
 						sfxThread.code.AddLast(new BattleActionCode("PlaySFX", "SkipSequence", (sfxBone0 != 0).ToString(), "Reflect", true.ToString()));
@@ -297,13 +299,14 @@ public class BattleActionThread
 						sfxBone0 = r.ReadInt16();
 						sfxBone1 = r.ReadInt16();
 						sfxArg = r.ReadInt16();
+						sfxName = Enum.IsDefined(typeof(SpecialEffect), sfxNum) ? ((SpecialEffect)sfxNum).ToString() : sfxNum.ToString();
 						if (seq.wSeqCode == 8 && (SpecialEffect)sfxNum != SpecialEffect.Special_Necron_Engage && (SpecialEffect)sfxNum != SpecialEffect.Neutron_Ring)
 							mainThread.code.AddLast(new BattleActionCode("Channel"));
 						mainThread.code.AddLast(new BattleActionCode("SetupReflect", "Delay", "SFXLoaded"));
 						if (SFXData.FixedCameraEffects.Contains((SpecialEffect)sfxNum))
-							mainThread.code.AddLast(new BattleActionCode("LoadMonsterSFX", "SFX", sfxNum.ToString(), "FirstBone", sfxBone0.ToString(), "SecondBone", sfxBone1.ToString(), "Args", sfxArg.ToString(), "UseCamera", true.ToString(), "Reflect", true.ToString()));
+							mainThread.code.AddLast(new BattleActionCode("LoadMonsterSFX", "SFX", sfxName, "FirstBone", sfxBone0.ToString(), "SecondBone", sfxBone1.ToString(), "Args", sfxArg.ToString(), "UseCamera", true.ToString(), "Reflect", true.ToString()));
 						else
-							mainThread.code.AddLast(new BattleActionCode("LoadMonsterSFX", "SFX", sfxNum.ToString(), "FirstBone", sfxBone0.ToString(), "SecondBone", sfxBone1.ToString(), "Args", sfxArg.ToString(), "Reflect", true.ToString()));
+							mainThread.code.AddLast(new BattleActionCode("LoadMonsterSFX", "SFX", sfxName, "FirstBone", sfxBone0.ToString(), "SecondBone", sfxBone1.ToString(), "Args", sfxArg.ToString(), "Reflect", true.ToString()));
 						allowCamera = false;
 						break;
 					case 9: // Wait Spell Loaded
@@ -331,7 +334,17 @@ public class BattleActionThread
 						Int32 messExactId = (messId & 128) != 0 ? scene.header.TypCount + atkNo : messPtr + messId;
 						String text = battleText(messExactId);
 						Int32 btlId;
-						mainThread.code.AddLast(new BattleActionCode("Message", "Text", (messId & 128) != 0 ? "[CastName]" : text, "Priority", (messId & 128) != 0 ? "1" : "4", "Title", (seq.wSeqCode == 33 || (messId & 128) != 0).ToString(), "Reflect", (seq.wSeqCode == 33).ToString()));
+						if (langBattleText == null || (messId & 128) != 0)
+						{
+							mainThread.code.AddLast(new BattleActionCode("Message", "Text", (messId & 128) != 0 ? "[CastName]" : text, "Priority", (messId & 128) != 0 ? "1" : "4", "Title", (seq.wSeqCode == 33 || (messId & 128) != 0).ToString(), "Reflect", (seq.wSeqCode == 33).ToString()));
+						}
+						else
+						{
+							BattleActionCode actionCode = new BattleActionCode("Message", "Priority", "4", "Title", (seq.wSeqCode == 33).ToString(), "Reflect", (seq.wSeqCode == 33).ToString());
+							foreach (KeyValuePair<String, TextGetter> langText in langBattleText)
+								actionCode.argument["Text" + langText.Key] = langText.Value(messExactId);
+							mainThread.code.AddLast(actionCode);
+						}
 						if (FF9BattleDB.SceneData.TryGetValue(scene.nameIdentifier, out btlId))
 						{
 							String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), messExactId, btlId);

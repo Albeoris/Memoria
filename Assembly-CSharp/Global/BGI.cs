@@ -64,11 +64,11 @@ public static class BGI
 
 	public const Int32 BGI_CHAR_SLIDING = 8;
 
-	public const Int32 BGI_CHAR_SLOPE_MODIFIED = 16;
+	public const Int32 BGI_CHAR_SLOPE_MODIFIED = 0x10;
 
-	public const Int32 BGI_CHAR_NDX_OUT_OF_RANGE = 16384;
+	public const Int32 BGI_CHAR_NDX_OUT_OF_RANGE = 0x4000;
 
-	public const Int32 BGI_CHAR_SYS_UNINITIALIZED = 32768;
+	public const Int32 BGI_CHAR_SYS_UNINITIALIZED = 0x8000;
 
 	public const UInt16 BGI_FLOOR_ACTIVE = 1;
 
@@ -76,9 +76,9 @@ public static class BGI
 
 	public const UInt16 BGI_TRI_ANIM_FRAME = 2;
 
-	public const UInt16 BGI_TRI_SELECT = 128;
+	public const UInt16 BGI_TRI_SELECT = 0x80;
 
-	public const UInt16 BGI_TRI_VISIT = 128;
+	public const UInt16 BGI_TRI_VISIT = 0x80;
 
 	public const Int16 BGI_SIM_ACTIVE = 1;
 
@@ -88,9 +88,9 @@ public static class BGI
 
 	public const Int16 BGI_SIM_LOOP = 8;
 
-	public const Int16 BGI_SIM_WRAP = 16;
+	public const Int16 BGI_SIM_WRAP = 0x10;
 
-	public const Int16 BGI_SIM_MAX = 30;
+	public const Int16 BGI_SIM_MAX = 0x1E;
 
 	public const UInt16 BGI_SIM_LINEAR = 0;
 
@@ -102,13 +102,13 @@ public static class BGI
 
 	public const Int16 BGI_SIM_ZAXIS = 2;
 
-	public const Byte BGI_ATTR_CPC = 128;
+	public const Byte BGI_ATTR_CPC = 0x80;
 
-	public const Byte BGI_ATTR_NPC = 64;
+	public const Byte BGI_ATTR_NPC = 0x40;
 
-	public const Byte BGI_ATTR_STEP1 = 32;
+	public const Byte BGI_ATTR_STEP1 = 0x20;
 
-	public const Byte BGI_ATTR_STEP2 = 16;
+	public const Byte BGI_ATTR_STEP2 = 0x10;
 
 	public const Byte BGI_ATTR_GROUND1 = 8;
 

@@ -75,8 +75,8 @@ public class UIKeyTrigger : MonoBehaviour
         }
         return (key != Control.Cancel || !PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog()) &&
                (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD ||
-                !PersistenSingleton<UIManager>.Instance.Booster.IsSliderActive && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || !(UICamera.selectedObject == UIManager.World.RotationLockButtonGameObject) && !(UICamera.selectedObject == UIManager.World.PerspectiveButtonGameObject)) && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || !(UICamera.selectedObject == gameObject))) &&
-               (PersistenSingleton<HonoInputManager>.Instance.IsInput((Int32)key) || lazyKeyCommand == key || key == Control.Confirm && UnityXInput.Input.GetMouseButtonDown(0) && (EventHUD.CurrentHUD == MinigameHUD.None && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.EndGame) && (PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && lazyKeyCommand == Control.None));
+                !PersistenSingleton<UIManager>.Instance.Booster.IsSliderActive && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || UICamera.selectedObject != UIManager.World.RotationLockButtonGameObject && UICamera.selectedObject != UIManager.World.PerspectiveButtonGameObject) && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || !(UICamera.selectedObject == gameObject))) &&
+               (PersistenSingleton<HonoInputManager>.Instance.IsInput((Int32)key) || lazyKeyCommand == key || key == Control.Confirm && UnityXInput.Input.GetMouseButtonDown(0) && EventHUD.CurrentHUD == MinigameHUD.None && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.EndGame && PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && lazyKeyCommand == Control.None);
     }
 
     public Boolean GetKeyTrigger(Control key)
@@ -85,7 +85,7 @@ public class UIKeyTrigger : MonoBehaviour
             return false;
         if (UnityXInput.Input.GetMouseButtonDown(0) || UnityXInput.Input.GetMouseButtonDown(1) || UnityXInput.Input.GetMouseButtonDown(2))
         {
-            if (key != Control.Left && key != Control.Right && (key != Control.Up && key != Control.Down) && PersistenSingleton<HonoInputManager>.Instance.IsInputUp((Int32)key))
+            if (key != Control.Left && key != Control.Right && key != Control.Up && key != Control.Down && PersistenSingleton<HonoInputManager>.Instance.IsInputUp((Int32)key))
                 return true;
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown((Int32)key))

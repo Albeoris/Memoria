@@ -205,34 +205,30 @@ namespace FF9
             BONUS btlBonus = battle.btl_bonus;
             btlBonus.gil += (Int32)et.bonus.gil;
             btlBonus.exp += et.bonus.exp;
-            Byte num1 = 0;
-            while (num1 < 16 && btlBonus.item[num1] != Byte.MaxValue)
-                ++num1;
-            if (num1 < 16)
+            Byte bonusSlot = 0;
+            while (bonusSlot < 16 && btlBonus.item[bonusSlot] != Byte.MaxValue)
+                ++bonusSlot;
+            if (bonusSlot < 16)
             {
                 if (Comn.random8() < et.bonus.item_rate[3] && et.bonus.item[3] != Byte.MaxValue)
                 {
-                    btlBonus.item[num1++] = et.bonus.item[3];
+                    btlBonus.item[bonusSlot++] = et.bonus.item[3];
                     et.bonus.item[3] = Byte.MaxValue;
                 }
                 else if (Comn.random8() < et.bonus.item_rate[2] && et.bonus.item[2] != Byte.MaxValue)
                 {
-                    btlBonus.item[num1++] = et.bonus.item[2];
+                    btlBonus.item[bonusSlot++] = et.bonus.item[2];
                     et.bonus.item[2] = Byte.MaxValue;
                 }
                 else if (Comn.random8() < et.bonus.item_rate[1] && et.bonus.item[1] != Byte.MaxValue)
                 {
-                    btlBonus.item[num1++] = et.bonus.item[1];
+                    btlBonus.item[bonusSlot++] = et.bonus.item[1];
                     et.bonus.item[1] = Byte.MaxValue;
                 }
                 if (Comn.random8() < et.bonus.item_rate[0] && et.bonus.item[0] != Byte.MaxValue)
                 {
-                    Byte[] numArray = btlBonus.item;
-                    Int32 index = num1;
-                    //int num2 = 1;
-                    //byte num3 = (byte)(index + num2);
-                    Int32 num4 = et.bonus.item[0];
-                    numArray[index] = (Byte)num4;
+                    btlBonus.item[bonusSlot++] = et.bonus.item[0];
+                    et.bonus.item[0] = Byte.MaxValue;
                 }
             }
             if (btlBonus.card != Byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= et.bonus.card_rate)
