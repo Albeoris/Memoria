@@ -54,7 +54,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     public Boolean enemyEnterCommand;
     public List<Int32> seqList;
     private Byte[] btlIDList;
-    private UInt64 battleResult;
+    private UInt32 battleResult;
     private Single debugUILastTouchTime;
     private Single showHideDebugUICoolDown;
     private Transform rootBone;
@@ -64,13 +64,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private Boolean needClampTime;
     private UInt32 counter;
     private Single cumulativeTime;
-    public static Int32 Speed;
-    private static Int32 fps;
-    private static Single frameTime;
     private Boolean isKeyFrame;
-
-    public static Single FrameTime => frameTime;
-    public static Single FPS => fps;
 
     static HonoluluBattleMain()
     {
@@ -81,24 +75,13 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     public HonoluluBattleMain()
     {
-        Int32[][] numArray1 = new Int32[4][];
-        numArray1[0] = new Int32[1];
-        Int32 index1 = 1;
-        Int32[] numArray2 = { 316, -316 };
-        numArray1[index1] = numArray2;
-        Int32 index2 = 2;
-        Int32[] numArray3 = { 632, 0, -632 };
-        numArray1[index2] = numArray3;
-        Int32 index3 = 3;
-        Int32[] numArray4 =
+        this.playerXPos = new Int32[][]
         {
-            948,
-            316,
-            -316,
-            -948
+            new Int32[]{ 0 },
+            new Int32[]{ 316, -316 },
+            new Int32[]{ 632, 0, -632 },
+            new Int32[]{ 948, 316, -316, -948 }
         };
-        numArray1[index3] = numArray4;
-        this.playerXPos = numArray1;
         this.showHideDebugUICoolDown = 0.5f;
         this.scaleEdit = String.Empty;
         this.distanceEdit = String.Empty;
@@ -107,7 +90,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     protected override void Awake()
     {
         base.Awake();
-        Application.targetFrameRate = 30;
+        FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
+        FPSManager.SetMainLoopSpeed(Configuration.Graphics.BattleTPS);
         this.playerMaterials = new List<Material>();
         this.monsterMaterials = new List<Material>();
         FF9StateSystem.Battle.isFade = false;
@@ -117,9 +101,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             string deviceModel = SystemInfo.deviceModel;
             if (string.Compare("Asus Nexus Player", deviceModel, true) == 0)
-            {
                 this.needClampTime = true;
-            }
         }
         FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
         FF9StateSystem.Battle.FF9Battle.map.nextMode = instance.prevMode;
@@ -139,7 +121,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         this.cameraController = GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>();
         this.InitBattleScene();
-        UpdateFrameTime(FF9StateSystem.Settings.FastForwardFactor);
+        FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
+        FPSManager.SetMainLoopSpeed(Configuration.Graphics.BattleTPS);
         GameObject gameObject1 = GameObject.Find("BattleMap Root");
         GameObject gameObject2 = new GameObject("BattleMap SPS");
         gameObject2.transform.parent = gameObject1.transform;
@@ -355,21 +338,22 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         return num3;
     }
 
+    // Dummied
     public static void UpdateFrameTime(Int32 newSpeed)
     {
-        Speed = newSpeed;
-        for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
-        {
-            if (btlData.gameObject == null)
-                return;
-
-            //foreach (object item in btlData.gameObject.GetComponent<Animation>())
-            //{
-            //    // do nothing?
-            //}
-        }
-        fps = Configuration.Graphics.BattleFPS * newSpeed;
-        frameTime = 1f / fps;
+        //Speed = newSpeed;
+        //for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
+        //{
+        //    if (btlData.gameObject == null)
+        //        return;
+        //
+        //    foreach (object item in btlData.gameObject.GetComponent<Animation>())
+        //    {
+        //        // do nothing?
+        //    }
+        //}
+        //fps = Configuration.Graphics.BattleFPS * newSpeed;
+        //frameTime = 1f / fps;
     }
 
     public static void playCommand(Int32 characterNo, Int32 slotNo, Int32 target, Boolean isTrance = false)
@@ -562,19 +546,33 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void UpdateFrames()
     {
-        this.cumulativeTime += Time.deltaTime;
-        if (this.needClampTime)
-            this.cumulativeTime = Mathf.Min(this.cumulativeTime, HonoluluBattleMain.frameTime * (float)SettingsState.FastForwardGameSpeed * 1.2f);
-
-        while (this.cumulativeTime >= (Double)frameTime)
+        //this.cumulativeTime += Time.deltaTime;
+        //if (this.needClampTime)
+        //    this.cumulativeTime = Mathf.Min(this.cumulativeTime, HonoluluBattleMain.frameTime * (float)SettingsState.FastForwardGameSpeed * 1.2f);
+        //
+        //while (this.cumulativeTime >= (Double)frameTime)
+        //{
+        //    this.cumulativeTime -= frameTime;
+        //    battleSPS.Service();
+        //    if (!IsOver)
+        //        UpdateBattleFrame();
+        //    else
+        //        UpdateOverFrame();
+        //}
+        for (Int32 updateCount = 0; updateCount < FPSManager.MainLoopUpdateCount; updateCount++)
         {
-            this.cumulativeTime -= frameTime;
+            if (!IsPaused)
+                SmoothFrameUpdater_Battle.ResetState();
             battleSPS.Service();
-            if (!IsOver)
-                UpdateBattleFrame();
-            else
+            if (IsOver)
                 UpdateOverFrame();
+            else
+                UpdateBattleFrame();
+            if (!IsPaused)
+                SmoothFrameUpdater_Battle.RegisterState();
         }
+        if (!IsPaused)
+            FPSManager.AddSmoothEffect(SmoothFrameUpdater_Battle.Apply);
     }
 
     private void UpdateBattleFrame()
@@ -588,7 +586,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             if (UIManager.Battle.FF9BMenu_IsEnable())
                 this.YMenu_ManagerActiveTime();
 
-            if ((Int64)this.battleResult == 1L)
+            if (this.battleResult == 1)
             {
                 PersistenSingleton<FF9StateSystem>.Instance.mode = 8;
                 IsOver = true;

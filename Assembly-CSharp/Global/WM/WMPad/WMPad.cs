@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 
 public class WMPad
 {
@@ -78,26 +79,18 @@ public class WMPad
 
 	private void OnUpdatePush()
 	{
-		if (UIManager.Input.GetKeyTrigger(Control.LeftTrigger))
-		{
+		if (FPSManager.IsDelayedInputTrigger(EventInput.PL2 | EventInput.LL2))
 			this.kPadL2 = true;
-		}
-		if (UIManager.Input.GetKeyTrigger(Control.RightTrigger))
-		{
+		if (FPSManager.IsDelayedInputTrigger(EventInput.PR2 | EventInput.LR2))
 			this.kPadR2 = true;
-		}
 	}
 
 	private void OnUpdatePush_DebugScene()
 	{
-		if (UIManager.Input.GetKeyTrigger(Control.LeftTrigger))
-		{
+		if (FPSManager.IsDelayedInputTrigger(EventInput.PL2 | EventInput.LL2))
 			this.kPadL2 = true;
-		}
-		if (UIManager.Input.GetKeyTrigger(Control.RightTrigger))
-		{
+		if (FPSManager.IsDelayedInputTrigger(EventInput.PR2 | EventInput.LR2))
 			this.kPadR2 = true;
-		}
 	}
 
 	private WMPadType Type;

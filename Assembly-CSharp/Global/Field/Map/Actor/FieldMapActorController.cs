@@ -7,7 +7,7 @@ using UnityEngine;
 using Memoria;
 using Object = System.Object;
 
-public class FieldMapActorController : HonoBehavior
+public partial class FieldMapActorController : HonoBehavior
 {
 	public Boolean IsActive()
 	{
@@ -401,6 +401,7 @@ public class FieldMapActorController : HonoBehavior
 	private void PlayAnimationViaEventScript()
 	{
 		String curAnim = FF9DBAll.AnimationDB.GetValue(this.originalActor.anim);
+		this._smoothUpdatePlayingAnim = false;
 		if (!this.animation.IsPlaying(curAnim))
 		{
 			AnimationClip clip = this.animation.GetClip(curAnim);
@@ -419,8 +420,12 @@ public class FieldMapActorController : HonoBehavior
 		}
 		else
 		{
+			Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[curAnim].length;
 			this.animation[curAnim].speed = 0f;
-			this.animation[curAnim].time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[curAnim].length;
+			this._smoothUpdatePlayingAnim = true;
+			this._smoothUpdateAnimTimePrevious = this.animation[curAnim].time;
+			this._smoothUpdateAnimTimeActual = time;
+			this.animation[curAnim].time = time;
 			this.animation.Sample();
 		}
 	}

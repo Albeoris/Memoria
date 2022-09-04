@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using SiliconStudio;
@@ -20,21 +21,25 @@ namespace Assets.Scripts.Common
 
 		public static void SetTargetFrameRateForCurrentScene()
 		{
-			if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0)
+			if (SceneDirector.IsBattleScene())
 			{
-				Application.targetFrameRate = 30;
+				FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
+				FPSManager.SetMainLoopSpeed(Configuration.Graphics.BattleTPS);
 			}
-			else if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.FieldMapSceneName) == 0)
+			else if (SceneDirector.IsFieldScene())
 			{
-				Application.targetFrameRate = 30;
+				FPSManager.SetTargetFPS(Configuration.Graphics.FieldFPS);
+				FPSManager.SetMainLoopSpeed(Configuration.Graphics.FieldTPS);
 			}
-			else if (String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.WorldMapSceneName) == 0)
+			else if (SceneDirector.IsWorldScene())
 			{
-				Application.targetFrameRate = 20;
-            }
+				FPSManager.SetTargetFPS(Configuration.Graphics.WorldFPS);
+				FPSManager.SetMainLoopSpeed(Configuration.Graphics.WorldTPS);
+			}
 			else
 			{
-				Application.targetFrameRate = 60;
+				FPSManager.SetTargetFPS(Configuration.Graphics.MenuFPS);
+				FPSManager.SetMainLoopSpeed(Configuration.Graphics.MenuTPS);
 			}
 		}
 
@@ -43,21 +48,27 @@ namespace Assets.Scripts.Common
 			return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0;
 		}
 
+		public static Boolean IsFieldScene()
+		{
+			return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.FieldMapSceneName) == 0;
+		}
+
+		public static Boolean IsWorldScene()
+		{
+			return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.WorldMapSceneName) == 0;
+		}
+
 		public static void ReplaceNow(String nextScene)
 		{
             MemoriaExport();
 
             if (String.IsNullOrEmpty(nextScene))
-            {
                 Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
-            }
 
             if (nextScene != "MainMenu")
 			{
-				if (Singleton<BubbleUI>.Instance != (UnityEngine.Object)null)
-				{
+				if (Singleton<BubbleUI>.Instance != null)
 					Singleton<BubbleUI>.Instance.SetGameObjectActive(false);
-				}
 				EventHUD.Cleanup();
 				EventInput.ClearPadMask();
 			}
@@ -97,23 +108,26 @@ namespace Assets.Scripts.Common
 	    public static void Replace(String nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
 		{
 		    if (String.IsNullOrEmpty(nextScene))
-		    {
 		        Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
-		    }
 
-		    if (nextScene != "MainMenu")
+			if (SceneDirector.IsBattleScene())
+				SmoothFrameUpdater_Battle.Skip = 1;
+			else if (SceneDirector.IsFieldScene())
+				SmoothFrameUpdater_Field.Skip = 1;
+			else if (SceneDirector.IsWorldScene())
+				SmoothFrameUpdater_World.Skip = 1;
+
+			if (nextScene != "MainMenu")
 			{
-				if (Singleton<BubbleUI>.Instance != (UnityEngine.Object)null)
-				{
+				if (Singleton<BubbleUI>.Instance != null)
 					Singleton<BubbleUI>.Instance.SetGameObjectActive(false);
-				}
 				EventHUD.Cleanup();
 				EventInput.ClearPadMask();
 			}
 			PersistenSingleton<SceneDirector>.Instance.Transition = transition;
 			if (transition == SceneTransition.SwirlInBlack || transition == SceneTransition.SwirlInWhite)
 			{
-				PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (Action)null);
+				PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
 				PersistenSingleton<SceneDirector>.Instance.Swirl(nextScene, transition);
 				return;
 			}
@@ -181,8 +195,11 @@ namespace Assets.Scripts.Common
 
 		private void Update()
 		{
-			this._logger.Update();
-			SiliconStudio.Social.ProcessCallbacks();
+			for (Int32 updateCount = 0; updateCount < FPSManager.MainLoopUpdateCount; updateCount++)
+			{
+				this._logger.Update();
+				SiliconStudio.Social.ProcessCallbacks();
+			}
 		}
 
 		private void OnGUI()
@@ -213,9 +230,7 @@ namespace Assets.Scripts.Common
 			Matrix4x4 matrix = GUI.matrix;
 			Color color = GUI.color;
 			if (this.Transition != SceneTransition.SwirlInBlack && this.Transition != SceneTransition.SwirlInWhite)
-			{
 				this._OnGUI_Fade();
-			}
 			GUI.color = color;
 			GUI.matrix = matrix;
 		}
@@ -246,17 +261,13 @@ namespace Assets.Scripts.Common
 				this.fadeAmount = 1f;
 			}
 			if (needChangeScene)
-			{
 				this.ChangeScene();
-			}
 			yield return new WaitForEndOfFrame();
 			this.IsReady = true;
 			if (fadeInTime < 0f)
 			{
 				if (needChangeScene)
-				{
 					this.IsFading = false;
-				}
 				yield break;
 			}
 			this.fadeAmount = 1f;
@@ -281,20 +292,14 @@ namespace Assets.Scripts.Common
 			{
 				SoundLib.StopAllSoundEffects(); // Issue #140: don't stop sounds in field transitions
 				if (String.Equals(this.CurrentScene, "QuadMist"))
-				{
 					SceneDirector.FF9Wipe_FadeInEx(30);
-				}
 				if (String.Equals(this.NextScene, "MainMenu"))
-				{
 					SoundLib.StopAllSounds(true);
-				}
 				if (String.Equals(this.NextScene, SceneDirector.FieldMapSceneName))
 				{
 					FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch);
 					if (String.Equals(this.CurrentScene, SceneDirector.WorldMapSceneName))
-					{
 						FF9Snd.HasJustChangedBetweenWorldAndField = true;
-					}
 				}
 				else if (String.Equals(this.NextScene, SceneDirector.WorldMapSceneName))
 				{
@@ -302,25 +307,19 @@ namespace Assets.Scripts.Common
 					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
 					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(new HashSet<Int32>
 					{
-						1261
+						1261 // Sounds02/SE00/se000026, Save and Load game confirmed
 					});
 					allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
 					FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9WorldSoundDispatch);
 					if (String.Equals(this.CurrentScene, SceneDirector.FieldMapSceneName))
-					{
 						FF9Snd.HasJustChangedBetweenWorldAndField = true;
-					}
 				}
 				else if (!String.Equals(this.NextScene, SceneDirector.BattleMapSceneName))
 				{
 					if (String.Equals(this.NextScene, "QuadMist"))
-					{
 						FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9MiniGameSoundDispatch);
-					}
 					else
-					{
 						FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9AllSoundDispatch);
-					}
 				}
 				if (String.IsNullOrEmpty(this.PendingCurrentScene))
 				{
@@ -342,45 +341,30 @@ namespace Assets.Scripts.Common
 		{
 			this.NeedFade = needFade;
 			if (this.IsFading)
-			{
 				return;
-			}
-			Single num = 1f / (Single)FF9StateSystem.Settings.FastForwardFactor;
+			Single num = 1f / FF9StateSystem.Settings.FastForwardFactor;
 			SceneTransition transition = this.Transition;
 			IEnumerator routine;
-			if (transition != SceneTransition.FadeOutToBlack)
-			{
-				if (transition != SceneTransition.FadeOutToBlack_FadeIn)
-				{
-					routine = this._Fade(this.GetFadeDuration() * num, this.GetFadeDuration() * num, Color.black, true);
-				}
-				else
-				{
-					routine = this._Fade(this.GetFadeDuration() * num, this.GetFadeDuration() * num, Color.black, true);
-				}
-			}
-			else
-			{
+			if (transition == SceneTransition.FadeOutToBlack)
 				routine = this._Fade(this.GetFadeDuration() * num, -1f, Color.black, true);
-			}
+			else if (transition == SceneTransition.FadeOutToBlack_FadeIn)
+				routine = this._Fade(this.GetFadeDuration() * num, this.GetFadeDuration() * num, Color.black, true);
+			else
+				routine = this._Fade(this.GetFadeDuration() * num, this.GetFadeDuration() * num, Color.black, true);
 			base.StartCoroutine(routine);
 		}
 
 		public Single GetFadeDuration()
 		{
 			if (this.NeedFade)
-			{
 				return this.DefaultFadeTime;
-			}
 			return 0.01f;
 		}
 
 		public void Swirl(String nextScene, SceneTransition transition)
 		{
 			if (this.IsFading)
-			{
 				return;
-			}
 			base.StartCoroutine(this._Swirl(nextScene, transition));
 		}
 
@@ -392,11 +376,9 @@ namespace Assets.Scripts.Common
 			UIManager.Field.Loading = true;
 			PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
 			PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
-			PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (Action)null);
-			for (Int32 waitFrames = (Int32)((!FF9StateSystem.Settings.IsFastForward) ? ((Int32)((!PersistenSingleton<UIManager>.Instance.Dialogs.Visible) ? 2 : 9)) : (FF9StateSystem.Settings.FastForwardFactor * 2)); waitFrames > 0; waitFrames--)
-			{
+			PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
+			for (Int32 waitFrames = FF9StateSystem.Settings.IsFastForward ? (2 * FF9StateSystem.Settings.FastForwardFactor) : (PersistenSingleton<UIManager>.Instance.Dialogs.Visible ? 9 : 2); waitFrames > 0; waitFrames--)
 				yield return new WaitForEndOfFrame();
-			}
 			SFX_Rush.CreateScreen();
 			yield return null;
 			Application.LoadLevel("SwirlScene");
@@ -423,13 +405,9 @@ namespace Assets.Scripts.Common
 		public static void ToggleFadeAll(Boolean isEnable)
 		{
 			if (isEnable)
-			{
 				Shader.SetGlobalInt("_FadeMode", (Int32)SceneDirector.fadeMode);
-			}
 			else
-			{
 				Shader.SetGlobalInt("_FadeMode", -1);
-			}
 		}
 
 		private static void _SetFadeMode(FadeMode mode)
@@ -445,13 +423,9 @@ namespace Assets.Scripts.Common
 						 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6930
 						 && mode == FadeMode.Add;
 			if (flag || flag2)
-			{
 				PersistenSingleton<SceneDirector>.Instance.StartCoroutine(SceneDirector.SetGlobalFade());
-			}
 			else
-			{
 				Shader.SetGlobalInt("_FadeMode", (Int32)mode);
-			}
 		}
 
 		private static IEnumerator SetGlobalFade()
@@ -465,10 +439,7 @@ namespace Assets.Scripts.Common
 
 		public static FadeMode GetFadeMode
 		{
-			get
-			{
-				return SceneDirector.fadeMode;
-			}
+			get => SceneDirector.fadeMode;
 		}
 
 		public static void ClearFadeColor()
@@ -480,7 +451,7 @@ namespace Assets.Scripts.Common
 		public static void InitFade(FadeMode mode, Int32 frame, Color32 target)
 		{
 			SceneDirector._curFrame = 0f;
-			SceneDirector._targetFrame = (Single)frame;
+			SceneDirector._targetFrame = frame;
 			SceneDirector._targetColor = target;
 			SceneDirector._SetFadeMode(mode);
 			SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
@@ -489,9 +460,7 @@ namespace Assets.Scripts.Common
 		public static void ServiceFade()
 		{
 			if (SceneDirector._curFrame > SceneDirector._targetFrame)
-			{
 				return;
-			}
 
 			SceneDirector._curFrame += 1f;
 			String propertyName = "_FadeColor_ABR" + (Int32)(SceneDirector.fadeMode + 1);

@@ -2,6 +2,7 @@
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
 using UnityEngine;
+using Memoria;
 using Memoria.Data;
 
 namespace SpecialEffectDebugRoom
@@ -10,7 +11,8 @@ namespace SpecialEffectDebugRoom
 	{
 		private void Awake()
 		{
-			Application.targetFrameRate = 15;
+			FPSManager.SetTargetFPS(15);
+			FPSManager.SetMainLoopSpeed(15);
 			this.effNum = 0;
 			this.strEffNum = this.effNum.ToString();
 			Camera.main.orthographic = false;
@@ -165,21 +167,24 @@ namespace SpecialEffectDebugRoom
 
 		private void Update()
 		{
-			if (SFX.isDebugAutoPlay && !SFX.isRunning)
+			for (Int32 updateCount = 0; updateCount < FPSManager.MainLoopUpdateCount; updateCount++)
 			{
-				this.effNum = SpecialEffectView.effTeble[UnityEngine.Random.Range(0, (Int32)SpecialEffectView.effTeble.Length)];
-				global::Debug.Log("effect id = " + this.effNum.ToString());
-				this.isPause = false;
-				SFX.Begin(0, 0, new Byte[2], default(PSX_LIBGTE.VECTOR));
-				SFX.SetDebug();
-				SFX.Play((SpecialEffect)this.effNum);
-			}
-			for (Int32 i = 0; i < (Int32)(SFX.isDebugAutoPlay ? 4 : 1); i++)
-			{
-				if (!this.isPause)
+				if (SFX.isDebugAutoPlay && !SFX.isRunning)
 				{
-					SFX.UpdateCamera();
-					SFX.UpdatePlugin();
+					this.effNum = SpecialEffectView.effTeble[UnityEngine.Random.Range(0, (Int32)SpecialEffectView.effTeble.Length)];
+					global::Debug.Log("effect id = " + this.effNum.ToString());
+					this.isPause = false;
+					SFX.Begin(0, 0, new Byte[2], default(PSX_LIBGTE.VECTOR));
+					SFX.SetDebug();
+					SFX.Play((SpecialEffect)this.effNum);
+				}
+				for (Int32 i = 0; i < (Int32)(SFX.isDebugAutoPlay ? 4 : 1); i++)
+				{
+					if (!this.isPause)
+					{
+						SFX.UpdateCamera();
+						SFX.UpdatePlugin();
+					}
 				}
 			}
 		}

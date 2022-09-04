@@ -629,8 +629,10 @@ public class btl_cmd
             return;
         if (cmd.cmd_no == BattleCommandId.SysEscape && btlsys.cur_cmd_list.Count > 0)
             return;
+        if (cmd.regist != null && cmd.regist.bi.player != 0 && btl_mot.checkMotion(cmd.regist, BattlePlayerCharacter.PlayerMotionIndex.MP_NORMAL_TO_CMD))
+            return;
 
-        btl_cmd.next_cmd_delay = btl_cmd.cmd_delay_max;
+            btl_cmd.next_cmd_delay = btl_cmd.cmd_delay_max;
         if (cmd.cmd_no < BattleCommandId.EnemyReaction)
         {
             BTL_DATA btl = cmd.regist;

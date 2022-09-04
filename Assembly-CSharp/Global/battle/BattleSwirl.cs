@@ -10,7 +10,10 @@ using UnityEngine;
 
 public class BattleSwirl : MonoBehaviour
 {
+    private const Single FRAME_LENGTH = 1f / 30f;
+
     private Single _time;
+    private Single _cumulativeTime;
     private Boolean _hasPlayEncounterSound;
     private Boolean _isReplaceCalled;
     private Int32 _eventEngineGmode;
@@ -36,24 +39,29 @@ public class BattleSwirl : MonoBehaviour
     private void Update()
     {
         _time += Time.deltaTime;
+        _cumulativeTime += Time.deltaTime;
         if (_time >= 1.3f && !_hasPlayEncounterSound)
         {
             RequestPlayBattleEncounterSong();
             _hasPlayEncounterSound = true;
         }
 
-        if (_rush.update() && !this._isReplaceCalled)
+        while (_cumulativeTime >= FRAME_LENGTH)
         {
-            if (!_hasPlayEncounterSound)
+            _cumulativeTime -= FRAME_LENGTH;
+            if (_rush.update() && !this._isReplaceCalled)
             {
-                _hasPlayEncounterSound = true;
-                RequestPlayBattleEncounterSong();
-            }
+                if (!_hasPlayEncounterSound)
+                {
+                    _hasPlayEncounterSound = true;
+                    RequestPlayBattleEncounterSong();
+                }
 
-            if (!this._isReplaceCalled)
-            {
-                this._isReplaceCalled = true;
-                SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+                if (!this._isReplaceCalled)
+                {
+                    this._isReplaceCalled = true;
+                    SceneDirector.ReplacePending(SceneTransition.FadeOutToBlack_FadeIn, true);
+                }
             }
         }
     }

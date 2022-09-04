@@ -42,7 +42,7 @@ public class FieldMap : HonoBehavior
 
     public FieldMap.EbgCombineMeshData GetCurrentCombineMeshData()
     {
-        return (FieldMap.EbgCombineMeshData)null;
+        return null;
     }
 
     public static String GetMapResourcePath(String mapName)
@@ -57,7 +57,6 @@ public class FieldMap : HonoBehavior
 
     private static String GetLocalizeNameSubfix(String language)
     {
-        String empty = String.Empty;
         switch (language)
         {
             case "English(UK)":
@@ -85,10 +84,8 @@ public class FieldMap : HonoBehavior
         if (FieldMap.HasAreaTitle(mapName))
         {
             String text = FF9StateSystem.Settings.CurrentLanguage;
-            if (text == "English(UK)" && !mapName.Equals("FBG_N16_STGT_MAP330_SG_RND_0"))
-            {
+            if (text == "English(UK)" && !mapName.Equals("FBG_N16_STGT_MAP330_SG_RND_0")) // South Gate/Bohden Gate, guarded entrance
                 text = "English(US)";
-            }
             String localizeNameSubfix = FieldMap.GetLocalizeNameSubfix(text);
             atlasName += localizeNameSubfix;
             atlasAlphaName += localizeNameSubfix;
@@ -101,59 +98,54 @@ public class FieldMap : HonoBehavior
         // debugRender = true;
         // FF9StateSystem.Field.isDebugWalkMesh = true;
 
-        GameObject gameObject = new GameObject("TriPosObj");
-        this.debugTriPosObj = gameObject.transform;
+        this.debugTriPosObj = new GameObject("TriPosObj").transform;
         this.debugTriPosObj.position = Vector3.zero;
-        GameObject gameObject2 = GameObject.Find("FieldMap Camera");
-        if (gameObject2 != (UnityEngine.Object)null)
+        GameObject goCamera = GameObject.Find("FieldMap Camera");
+        if (goCamera != null)
         {
-            this.mainCamera = gameObject2.GetComponent<Camera>();
-            this.rainRenderer = gameObject2.AddComponent<FieldRainRenderer>();
+            this.mainCamera = goCamera.GetComponent<Camera>();
+            this.rainRenderer = goCamera.AddComponent<FieldRainRenderer>();
         }
         this.camIdx = 0;
         this.curCamIdx = -1;
         this.charAimHeight = 324;
-        this.lastFrame = 0;
-        this.cumulativeTime = 0f;
         this.mapName = FF9StateSystem.Field.SceneName;
         this.UseUpscalFM = FF9StateSystem.Field.UseUpscalFM;
         if (this.mapName == String.Empty)
-        {
             this.mapName = "FBG_N00_TSHP_MAP001_TH_CGR_0";
-        }
         this.LoadFieldMap(this.mapName);
-        this.frameTime = 0.0333333351f;
         HonoBehaviorSystem.FrameSkipEnabled = false;
-        HonoBehaviorSystem.TargetFrameTime = this.frameTime;
+        HonoBehaviorSystem.TargetFrameTime = 0.0333333351f;
         this.attachList = new EBG_ATTACH_DEF[10];
         this.isBattleBackupPos = false;
         this.EBG_init();
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2507)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2507) // I. Castle/Stairwell, room with ladders and stairs
         {
             base.StartCoroutine(this.DelayedActiveTri());
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo >= 3009 && FF9StateSystem.Common.FF9.fldMapNo <= 3011)
         {
+            // Ending/TH
             HonoBehaviorSystem.FrameSkipEnabled = true;
-            HonoBehaviorSystem.TargetFrameTime = this.frameTime;
+            HonoBehaviorSystem.TargetFrameTime = 0.0333333351f;
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 2356)
         {
+            // Gulug/Room (with a Red Dragon bursting through wall)
             this.walkMesh.BGI_triSetActive(78u, 0u);
             this.walkMesh.BGI_triSetActive(79u, 0u);
             this.walkMesh.BGI_triSetActive(80u, 0u);
         }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 2161)
         {
+            // L. Castle/Guest Room (disc 3)
             this.walkMesh.BGI_triSetActive(69u, 0u);
         }
         this.fmEditor = base.gameObject.AddComponent<FieldMapEditor>();
         this.fmEditor.Init(this);
         this.debugPosMarker = new Vector3[5];
         for (Int32 i = 0; i < (Int32)this.debugPosMarker.Length; i++)
-        {
             this.debugPosMarker[i] = SettingUtils.fieldMapSettings.debugPosMarker[i];
-        }
         if (SettingUtils.fieldMapSettings.enable)
         {
             this.debugObjName = SettingUtils.fieldMapSettings.debugObjName;
@@ -164,17 +156,12 @@ public class FieldMap : HonoBehavior
     private IEnumerator DelayedActiveTri()
     {
         yield return new WaitForSeconds(0.5f);
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2507)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2507) // I. Castle/Stairwell, room with ladders and stairs
         {
             FieldMapActorController[] facs = UnityEngine.Object.FindObjectsOfType<FieldMapActorController>();
-            for (Int32 i = 0; i < (Int32)facs.Length; i++)
-            {
-                FieldMapActorController fac = facs[i];
-                if (!fac.isPlayer)
-                {
-                    this.walkMesh.BGI_charSetActive(fac, 0u);
-                }
-            }
+            for (Int32 i = 0; i < facs.Length; i++)
+                if (!facs[i].isPlayer)
+                    this.walkMesh.BGI_charSetActive(facs[i], 0u);
             this.walkMesh.BGI_triSetActive(174u, 0u);
             this.walkMesh.BGI_triSetActive(175u, 0u);
             this.walkMesh.BGI_triSetActive(177u, 0u);
@@ -186,7 +173,7 @@ public class FieldMap : HonoBehavior
     public override void HonoOnDestroy()
     {
         HonoBehaviorSystem.FrameSkipEnabled = false;
-        HonoBehaviorSystem.TargetFrameTime = this.frameTime;
+        HonoBehaviorSystem.TargetFrameTime = 0.0333333351f;
     }
 
     public Camera GetMainCamera()
@@ -196,14 +183,10 @@ public class FieldMap : HonoBehavior
 
     public BGCAM_DEF GetCurrentBgCamera()
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo == 70)
-        {
-            return (BGCAM_DEF)null;
-        }
+        if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
+            return null;
         if (this.curCamIdx < 0 || this.curCamIdx > this.scene.cameraList.Count)
-        {
-            return (BGCAM_DEF)null;
-        }
+            return null;
         return this.scene.cameraList[this.camIdx];
     }
 
@@ -223,8 +206,6 @@ public class FieldMap : HonoBehavior
         this.mapName = name;
         this.camIdx = 0;
         this.curCamIdx = -1;
-        this.lastFrame = 0;
-        this.cumulativeTime = 0f;
         foreach (Object obj in base.transform)
         {
             Transform transform = (Transform)obj;
@@ -245,72 +226,70 @@ public class FieldMap : HonoBehavior
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localRotation = Quaternion.identity;
             gameObject.transform.localScale = Vector3.one;
-            List<Vector3> list = new List<Vector3>();
-            List<Vector2> list2 = new List<Vector2>();
-            List<Int32> list3 = new List<Int32>();
-            list.Clear();
-            list2.Clear();
-            list3.Clear();
-            Int32 num4;
-            Int32 num3;
-            Int32 num2;
-            Int32 num = num2 = (num3 = (num4 = 0));
+            List<Vector3> vertList = new List<Vector3>();
+            List<Vector2> uvList = new List<Vector2>();
+            List<Int32> triList = new List<Int32>();
+            vertList.Clear();
+            uvList.Clear();
+            triList.Clear();
+            Int32 height = 0;
+            Int32 width = 0;
+            Int32 posX = 0;
+            Int32 posY = 0;
             Int32 index = this.curCamIdx;
             switch (i)
             {
                 case 0:
-                    num3 = (Int32)(-this.scene.cameraList[index].vrpMinX);
-                    num4 = (Int32)bgoverlay_DEF.h;
-                    num2 = 0;
-                    num = num4;
+                    width = -this.scene.cameraList[index].vrpMinX;
+                    height = bgoverlay_DEF.h;
+                    posX = 0;
+                    posY = height;
                     break;
                 case 1:
-                    num3 = (Int32)this.scene.cameraList[index].vrpMinX;
-                    num4 = (Int32)bgoverlay_DEF.h;
-                    num2 = (Int32)bgoverlay_DEF.w;
-                    num = num4;
+                    width = this.scene.cameraList[index].vrpMinX;
+                    height = bgoverlay_DEF.h;
+                    posX = bgoverlay_DEF.w;
+                    posY = height;
                     break;
                 case 2:
-                    num3 = (Int32)bgoverlay_DEF.w;
-                    num4 = (Int32)this.scene.cameraList[index].vrpMinY;
-                    num2 = 0;
-                    num = 0;
+                    width = bgoverlay_DEF.w;
+                    height = this.scene.cameraList[index].vrpMinY;
+                    posX = 0;
+                    posY = 0;
                     break;
                 case 3:
-                    num3 = (Int32)bgoverlay_DEF.w;
-                    num4 = (Int32)(-(Int32)this.scene.cameraList[0].vrpMinY);
-                    num2 = 0;
-                    num = (Int32)bgoverlay_DEF.h;
+                    width = bgoverlay_DEF.w;
+                    height = -this.scene.cameraList[0].vrpMinY;
+                    posX = 0;
+                    posY = bgoverlay_DEF.h;
                     break;
             }
-            list.Add(new Vector3((Single)num2, (Single)(num - num4), 0f));
-            list.Add(new Vector3((Single)(num2 + num3), (Single)(num - num4), 0f));
-            list.Add(new Vector3((Single)(num2 + num3), (Single)num, 0f));
-            list.Add(new Vector3((Single)num2, (Single)num, 0f));
-            list2.Add(new Vector2(0f, 0f));
-            list2.Add(new Vector2(1f, 0f));
-            list2.Add(new Vector2(1f, 1f));
-            list2.Add(new Vector2(0f, 1f));
-            list3.Add(2);
-            list3.Add(1);
-            list3.Add(0);
-            list3.Add(3);
-            list3.Add(2);
-            list3.Add(0);
+            vertList.Add(new Vector3(posX, posY - height, 0f));
+            vertList.Add(new Vector3(posX + width, posY - height, 0f));
+            vertList.Add(new Vector3(posX + width, posY, 0f));
+            vertList.Add(new Vector3(posX, posY, 0f));
+            uvList.Add(new Vector2(0f, 0f));
+            uvList.Add(new Vector2(1f, 0f));
+            uvList.Add(new Vector2(1f, 1f));
+            uvList.Add(new Vector2(0f, 1f));
+            triList.Add(2);
+            triList.Add(1);
+            triList.Add(0);
+            triList.Add(3);
+            triList.Add(2);
+            triList.Add(0);
             Mesh mesh = new Mesh();
-            mesh.vertices = list.ToArray();
-            mesh.uv = list2.ToArray();
-            mesh.triangles = list3.ToArray();
+            mesh.vertices = vertList.ToArray();
+            mesh.uv = uvList.ToArray();
+            mesh.triangles = triList.ToArray();
             MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;
             meshRenderer.material = material;
             Texture2D texture2D = new Texture2D(1, 1);
             Color[] pixels = texture2D.GetPixels();
-            for (Int32 j = 0; j < (Int32)pixels.Length; j++)
-            {
+            for (Int32 j = 0; j < pixels.Length; j++)
                 pixels[j] = new Color32(r, g, b, Byte.MaxValue);
-            }
             texture2D.SetPixels(pixels);
             texture2D.Apply();
             meshRenderer.material.mainTexture = texture2D;
@@ -330,7 +309,6 @@ public class FieldMap : HonoBehavior
             }
         }
         this.ActivateCamera();
-        this.cumulativeTime = 0f;
         this.EBG_animationService();
         this.EBG_attachService();
     }
@@ -341,23 +319,17 @@ public class FieldMap : HonoBehavior
         {
             this.walkMesh.RenderWalkMeshNormal();
             if (this.debugTriIdx < -1)
-            {
                 this.debugTriIdx = -1;
-            }
             else if (this.debugTriIdx >= this.walkMesh.tris.Count)
-            {
                 this.debugTriIdx = this.walkMesh.tris.Count - 1;
-            }
             this.walkMesh.RenderWalkMeshTris(this.debugTriIdx);
             if (this.debugTriIdx != -1)
             {
                 WalkMeshTriangle walkMeshTriangle = this.walkMesh.tris[this.debugTriIdx];
                 this.debugTriPosObj.position = walkMeshTriangle.originalCenter;
             }
-            for (Int32 i = 0; i < (Int32)this.debugPosMarker.Length; i++)
-            {
+            for (Int32 i = 0; i < this.debugPosMarker.Length; i++)
                 DebugUtil.DebugDrawMarker(this.debugPosMarker[i], 20f, Color.yellow);
-            }
         }
     }
 
@@ -371,32 +343,26 @@ public class FieldMap : HonoBehavior
                 if (obj is Actor)
                 {
                     Actor actor = (Actor)obj;
-                    if (actor.go != (UnityEngine.Object)null)
-                    {
+                    if (actor.go != null)
                         actor.go.transform.localRotation = Quaternion.AngleAxis(actor.rotAngle[2], Vector3.back) * Quaternion.AngleAxis(actor.rotAngle[1], Vector3.up) * Quaternion.AngleAxis(actor.rotAngle[0], Vector3.left);
-                    }
                 }
             }
         }
         foreach (Int32 key in FF9StateSystem.Common.FF9.charArray.Keys)
         {
             FF9Char ff9Char = FF9StateSystem.Common.FF9.charArray[key];
-            if (ff9Char != null && ff9Char.geo != (UnityEngine.Object)null && FF9Char.ff9charptr_attr_test(ff9Char, 4096) == 0)
+            if (ff9Char != null && ff9Char.geo != null && FF9Char.ff9charptr_attr_test(ff9Char, 4096) == 0)
             {
                 GeoTexAnim component = ff9Char.geo.GetComponent<GeoTexAnim>();
-                if (component != (UnityEngine.Object)null && component.geoTexAnimGetCount() >= 2 && !component.ff9fieldCharIsTexAnimActive())
-                {
+                if (component != null && component.geoTexAnimGetCount() >= 2 && !component.ff9fieldCharIsTexAnimActive())
                     component.geoTexAnimPlay(2);
-                }
             }
         }
         fldmcf.ff9fieldMCFService();
         if ((FF9StateSystem.Common.FF9.attr & 2u) == 0u)
         {
             for (Int32 i = 0; i < this.CharArray.Count; i++)
-            {
-                this.CharArray[i].evt = (PosObj)null;
-            }
+                this.CharArray[i].evt = null;
             Int32 charCount = FieldMap.ff9fieldCharGetActiveList(this.CharArray);
             FF9Snd.ff9fieldSoundCharService(this.CharArray, charCount);
         }
@@ -426,9 +392,7 @@ public class FieldMap : HonoBehavior
         this.EBG_sceneService3DScroll();
         this.EBG_sceneServiceScroll(this.scene);
         if (Configuration.Graphics.InitializeWidescreenSupport())
-        {
             OnWidescreenSupportChanged();
-        }
         this.CenterCameraOnPlayer();
         this.UpdateOverlayAll();
     }
@@ -441,16 +405,14 @@ public class FieldMap : HonoBehavior
     public void SetCurrentCameraIndex(Int32 newCamIdx)
     {
         if (this.camIdx == newCamIdx)
-        {
             return;
-        }
         this.camIdx = newCamIdx;
         this.ActivateCamera();
         this.walkMesh.ProjectedWalkMesh = this.GetCurrentBgCamera().projectedWalkMesh;
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
         Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
-        this.offset.x = (Single)(bgcam_DEF.w / 2) + centerOffset.x;
-        this.offset.y = -((Single)(bgcam_DEF.h / 2) + centerOffset.y);
+        this.offset.x = bgcam_DEF.w / 2 + centerOffset.x;
+        this.offset.y = -bgcam_DEF.h / 2 - centerOffset.y;
         this.offset.x = this.offset.x - HalfFieldWidth;
         this.offset.y = this.offset.y + HalfFieldHeight;
         Shader.SetGlobalFloat("_OffsetX", this.offset.x);
@@ -478,6 +440,7 @@ public class FieldMap : HonoBehavior
 
     public void LoadFieldMap(String name)
     {
+        Single loadStartTime = Time.realtimeSinceStartup;
         Transform transform = base.transform;
         transform.localScale = new Vector3(1f, 1f, 1f);
         this.scene = new BGSCENE_DEF(this.UseUpscalFM);
@@ -485,14 +448,12 @@ public class FieldMap : HonoBehavior
         this.bgi = new BGI_DEF();
         this.bgi.LoadBGI(this, FieldMap.GetMapResourcePath(name), name);
         this.ActivateCamera();
-        if (FF9StateSystem.Common.FF9.fldMapNo == 70)
-        {
+        if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
             return;
-        }
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
         Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
-        this.offset.x = (Single)(bgcam_DEF.w / 2) + centerOffset.x;
-        this.offset.y = -((Single)(bgcam_DEF.h / 2) + centerOffset.y);
+        this.offset.x = bgcam_DEF.w / 2 + centerOffset.x;
+        this.offset.y = -bgcam_DEF.h / 2 - centerOffset.y;
         this.offset.x = this.offset.x - HalfFieldWidth;
         this.offset.y = this.offset.y + HalfFieldHeight;
         Shader.SetGlobalFloat("_OffsetX", this.offset.x);
@@ -501,7 +462,7 @@ public class FieldMap : HonoBehavior
         Shader.SetGlobalFloat("_MulY", ShaderMulY);
         Shader.SetGlobalMatrix("_MatrixRT", bgcam_DEF.GetMatrixRT());
         Shader.SetGlobalFloat("_ViewDistance", bgcam_DEF.GetViewDistance());
-        Shader.SetGlobalFloat("_DepthOffset", (Single)bgcam_DEF.depthOffset);
+        Shader.SetGlobalFloat("_DepthOffset", bgcam_DEF.depthOffset);
         FF9StateSystem.Field.FF9Field.loc.map.charOTOffset = bgcam_DEF.depthOffset;
         FF9StateSystem.Common.FF9.cam = bgcam_DEF.GetMatrixRT();
         FF9StateSystem.Common.FF9.proj = bgcam_DEF.proj;
@@ -510,32 +471,26 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateWalkMesh();
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
+        FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
     }
 
     public void ActivateCamera()
     {
         if (this.camIdx == this.curCamIdx)
-        {
             return;
-        }
         if (this.camIdx >= this.scene.cameraList.Count)
         {
             this.camIdx = this.curCamIdx;
             return;
         }
         this.curCamIdx = this.camIdx;
-        this.lastFrame = 0;
         for (Int32 i = 0; i < this.scene.cameraList.Count; i++)
         {
             BGCAM_DEF bgcam_DEF = this.scene.cameraList[i];
             if (i == this.camIdx)
-            {
                 bgcam_DEF.transform.gameObject.SetActive(true);
-            }
             else
-            {
                 bgcam_DEF.transform.gameObject.SetActive(false);
-            }
         }
     }
 
@@ -564,7 +519,6 @@ public class FieldMap : HonoBehavior
         }
         else
         {
-            Vector3 startPos = FF9StateSystem.Field.startPos;
             fieldMapActorController.SetPosition(FF9StateSystem.Field.startPos, true, true);
             fieldMapActorController.transform.localRotation = Quaternion.Euler(new Vector3(0f, FF9StateSystem.Field.startRot, 0f));
         }
@@ -574,7 +528,7 @@ public class FieldMap : HonoBehavior
         {
             gameObject.transform.localScale = new Vector3(-1f, -1f, 1f);
             Renderer[] componentsInChildren = gameObject.GetComponentsInChildren<Renderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+            for (Int32 i = 0; i < componentsInChildren.Length; i++)
             {
                 Renderer renderer = componentsInChildren[i];
                 renderer.material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
@@ -584,7 +538,7 @@ public class FieldMap : HonoBehavior
         {
             gameObject.transform.localScale = new Vector3(-1f, -1f, 1f);
             Renderer[] componentsInChildren2 = gameObject.GetComponentsInChildren<Renderer>();
-            for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
+            for (Int32 j = 0; j < componentsInChildren2.Length; j++)
             {
                 Renderer renderer2 = componentsInChildren2[j];
                 renderer2.material.shader = ShadersLoader.Find("PSX/FieldMapActor");
@@ -612,9 +566,7 @@ public class FieldMap : HonoBehavior
     public void RestoreShadowOff(int actorUid, Actor actorOfObj)
     {
         if (actorOfObj.isShadowOff)
-        {
             ff9shadow.FF9ShadowOffField(actorUid);
-        }
     }
 
     private void SetCharScale(Actor actorOfObj, int sx, int sy, int sz)
@@ -622,10 +574,8 @@ public class FieldMap : HonoBehavior
         int num = 18;
         if (actorOfObj != null)
         {
-            if (actorOfObj.go != (UnityEngine.Object)null)
-            {
+            if (actorOfObj.go != null)
                 geo.geoScaleSetXYZ(actorOfObj.go, sx << 24 >> num, sy << 24 >> num, sz << 24 >> num);
-            }
             actorOfObj.scaley = (byte)sy;
         }
     }
@@ -641,9 +591,7 @@ public class FieldMap : HonoBehavior
         FF9BattleDBHeightAndRadius.TryFindNeckBoneIndex(actorOfObj.model, ref actorOfObj.neckBoneIndex);
 
         if (needRestore)
-        {
             this.RestoreModels(playerGO, actorOfObj);
-        }
 
         fieldMapActorController.fieldMap = this;
         fieldMapActorController.walkMesh = this.walkMesh;
@@ -651,19 +599,15 @@ public class FieldMap : HonoBehavior
         fieldMapActorController.originalActor = actorOfObj;
         fieldMapActorController.isPlayer = isPlayer;
         fieldMapActorController.SetPosition(pos, true, !needRestore);
-        fieldMapActorController.radius = (Single)actorOfObj.bgiRad * 4f;
+        fieldMapActorController.radius = actorOfObj.bgiRad * 4f;
         playerGO.transform.localRotation = rot;
 
         if (needRestore)
         {
-            if (FF9StateSystem.Common.FF9.fldMapNo == 1508)
-            {
+            if (FF9StateSystem.Common.FF9.fldMapNo == 1508) // Conde Petie/Inn
                 this.RestoreAttachModel(playerGO, actorOfObj);
-            }
-            if (FF9StateSystem.Common.FF9.fldMapNo == 1508 || FF9StateSystem.Common.FF9.fldMapNo == 1706)
-            {
-                this.RestoreShadowOff((int)fieldMapActor.actor.uid, actorOfObj);
-            }
+            if (FF9StateSystem.Common.FF9.fldMapNo == 1508 || FF9StateSystem.Common.FF9.fldMapNo == 1706) // Conde Petie/Inn or Mdn. Sari/Kitchen
+                this.RestoreShadowOff(fieldMapActor.actor.uid, actorOfObj);
         }
 
         if (isPlayer)
@@ -674,95 +618,69 @@ public class FieldMap : HonoBehavior
         if (FF9StateSystem.Field.isDebugWalkMesh)
         {
             playerGO.transform.localScale = new Vector3(-1f, -1f, 1f);
-            Renderer[] componentsInChildren = playerGO.GetComponentsInChildren<Renderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
-            {
-                Renderer renderer = componentsInChildren[i];
-                renderer.material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
-            }
+            Renderer[] renderers = playerGO.GetComponentsInChildren<Renderer>();
+            for (Int32 i = 0; i < renderers.Length; i++)
+                renderers[i].material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
         }
         else
         {
             playerGO.transform.localScale = new Vector3(-1f, -1f, 1f);
-            if (actorOfObj.model == 395)
+            if (actorOfObj.model == 395) // BlueMagicLight
             {
-                Renderer[] componentsInChildren2 = playerGO.GetComponentsInChildren<Renderer>();
-                for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
+                Renderer[] renderers = playerGO.GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
                 {
-                    Renderer renderer2 = componentsInChildren2[j];
-                    Material[] materials = renderer2.materials;
-                    for (Int32 k = 0; k < (Int32)materials.Length; k++)
-                    {
-                        Material material = materials[k];
-                        material.shader = ShadersLoader.Find("PSX/Actor_Abr_1");
-                    }
+                    Material[] materials = renderers[i].materials;
+                    for (Int32 j = 0; j < materials.Length; j++)
+                        materials[j].shader = ShadersLoader.Find("PSX/Actor_Abr_1");
                 }
             }
             else
             {
-                Renderer[] componentsInChildren3 = playerGO.GetComponentsInChildren<Renderer>();
-                for (Int32 l = 0; l < (Int32)componentsInChildren3.Length; l++)
+                Renderer[] renderers = playerGO.GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
                 {
-                    Renderer renderer3 = componentsInChildren3[l];
-                    Material[] materials2 = renderer3.materials;
-                    for (Int32 m = 0; m < (Int32)materials2.Length; m++)
-                    {
-                        Material material2 = materials2[m];
-                        material2.shader = ShadersLoader.Find("PSX/FieldMapActor");
-                    }
+                    Material[] materials = renderers[i].materials;
+                    for (Int32 j = 0; j < materials.Length; j++)
+                        materials[j].shader = ShadersLoader.Find("PSX/FieldMapActor");
                 }
             }
         }
-        if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706)
+        if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706) // Mdn. Sari/Kitchen
         {
             if (fieldMapActor.actor.uid == 4 && FF9StateSystem.Settings.CurrentLanguage == "Japanese")
-            {
                 this.SetCharScale(fieldMapActor.actor, 40, 40, 40);
-            }
             else if (fieldMapActor.actor.uid == 3 || fieldMapActor.actor.uid == 5)
-            {
                 this.SetCharScale(fieldMapActor.actor, 80, 80, 80);
-            }
         }
         if (FF9StateSystem.Common.FF9.fldMapNo == 2924 && fieldMapActorController.originalActor.sid == 8)
-        {
-            fieldMapActor.SetRenderQueue(2000);
-        }
+            fieldMapActor.SetRenderQueue(2000); // Crystal World (3rd area), Zidane
         else
-        {
             fieldMapActor.SetRenderQueue(-1);
-        }
-        if (fieldMapActor.GetComponent<Animation>().GetClip(FF9DBAll.AnimationDB.GetValue((Int32)fieldMapActorController.originalActor.idle)) != (UnityEngine.Object)null)
-        {
-            fieldMapActor.GetComponent<Animation>().Play(FF9DBAll.AnimationDB.GetValue((Int32)fieldMapActorController.originalActor.idle));
-        }
+        String animIdle = FF9DBAll.AnimationDB.GetValue(fieldMapActorController.originalActor.idle);
+        if (fieldMapActor.GetComponent<Animation>().GetClip(animIdle) != null)
+            fieldMapActor.GetComponent<Animation>().Play(animIdle);
     }
 
     public void updatePlayer(GameObject playerGO)
     {
-        FieldMapActor component = playerGO.GetComponent<FieldMapActor>();
-        FieldMapActorController component2 = playerGO.GetComponent<FieldMapActorController>();
-        component2.isPlayer = true;
-        this.player = component;
-        this.playerController = component2;
+        FieldMapActor p = playerGO.GetComponent<FieldMapActor>();
+        FieldMapActorController pc = playerGO.GetComponent<FieldMapActorController>();
+        pc.isPlayer = true;
+        this.player = p;
+        this.playerController = pc;
     }
 
     public void CenterCameraOnPlayer()
     {
         if (!MBG.IsNull && !MBG.Instance.IsFinished())
-        {
             return;
-        }
         Camera camera = this.GetMainCamera();
         Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
-        if (map == 70)
-        {
+        if (map == 70) // Opening-For FMV
             return;
-        }
         if (this.curCamIdx < 0 || this.curCamIdx > this.scene.cameraList.Count)
-        {
             return;
-        }
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
         Vector3 localPosition = camera.transform.localPosition;
         localPosition.x = bgcam_DEF.centerOffset[0] + this.charOffset.x;
@@ -770,66 +688,50 @@ public class FieldMap : HonoBehavior
 
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
-            int threshmargin = (int)(Math.Min((bgcam_DEF.w - PsxFieldWidth), 0)); //offset value for fields that are between 320 & 398
-            if (!IsNarrowMap() && map != 507)
+            Int32 threshmargin = Math.Min(bgcam_DEF.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
+            if (!IsNarrowMap() && map != 507) // Cargo Ship/Deck
             {
-
-                foreach (KeyValuePair<int, int> entry in mapCameraMargin)
-                {
+                foreach (KeyValuePair<Int32, Int32> entry in mapCameraMargin)
                     if (map == entry.Key)
-                    {
                         threshmargin = entry.Value;
-                    }
-                }
 
-                int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
+                Int32 threshright = bgcam_DEF.w - PsxFieldWidth - threshmargin;
 
-                if (map == 103 || map == 1853 || map == 2053 || map == 2606) // exception in alex center, branbal
-                {
-                    threshmargin = (int)(threshmargin + 16);
-                }
-                if (map == 2903) // exception in memoria castle
-                {
-                    threshright = (int)(threshright - 32);
-                }
-                if (map == 2923) // exception in crystal world
-                {
-                    threshmargin = (int)(threshmargin + 20);
-                }
+                if (map == 103 || map == 1853 || map == 2053 || map == 2606) // Exceptions in alex center, branbal
+                    threshmargin += 16;
+                else if (map == 2903) // Exception in memoria castle
+                    threshright -= 32;
+                else if (map == 2923) // Exception in crystal world
+                    threshmargin += 20;
 
-                localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
-                localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+                localPosition.x = (Int32)Math.Max(threshmargin, localPosition.x);
+                localPosition.x = (Int32)Math.Min(threshright, localPosition.x);
             }
             else if (map == 1205 || map == 154 || map == 1214 || map == 1807 || map == 1652 || map == 2552)
             {
-                if (map == 1652 && this.camIdx == 0)
-                {
-                    threshmargin = threshmargin + 16;
-                }
+                // A. Castle/Chapel, A. Castle/Hallway (x3), Iifa Tree/Roots or Earth Shrine/Interior
+                if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
+                    threshmargin += 16;
+
+                Int32 threshright = bgcam_DEF.w - PsxFieldWidth - threshmargin;
                 
-                int threshright = (int)(bgcam_DEF.w - PsxFieldWidth - threshmargin);
-                
-                localPosition.x = (int)(Math.Max(threshmargin, localPosition.x));
-                localPosition.x = (int)(Math.Min(threshright, localPosition.x));
+                localPosition.x = (Int32)Math.Max(threshmargin, localPosition.x);
+                localPosition.x = (Int32)Math.Min(threshright, localPosition.x);
             }
             else if (IsNarrowMap())
             {
-                foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
-                {
+                foreach (KeyValuePair<Int32, Int32> entry in actualNarrowMapWidthDict)
                     if (map == entry.Key)
-                    {
-                        localPosition.x = (int)((bgcam_DEF.w - entry.Value) / 2);
-                    }
-                }
+                        localPosition.x = (Int32)((bgcam_DEF.w - entry.Value) / 2);
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
-                    case 456:
+                    case 456: // Dali Mountain/Summit
                         localPosition.x = 160;
                         break;
-                    case 505: //Cargo ship offset
+                    case 505: // Cargo ship offset
                         localPosition.x = 105;
                         break;
-                    case 1153: //Rose Rouge cockpit offset
+                    case 1153: // Rose Rouge cockpit offset
                         localPosition.x = 175;
                         break;
                     default:
@@ -1095,9 +997,7 @@ public class FieldMap : HonoBehavior
     {
         this.EBG_stateInit();
         if (this.EBG_sceneInit() != 1)
-        {
             return;
-        }
         this.EBG_animationInit();
         this.EBG_attachInit();
     }
@@ -1116,10 +1016,8 @@ public class FieldMap : HonoBehavior
 
     private Int32 EBG_sceneInit()
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo == 70)
-        {
+        if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
             return 0;
-        }
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
         Single num = (Single)((bgcam_DEF.vrpMinX + bgcam_DEF.vrpMaxX) / 2 - bgcam_DEF.centerOffset[0]) - HalfFieldWidth;
         Single num2 = (Single)((bgcam_DEF.vrpMinY + bgcam_DEF.vrpMaxY) / 2 + bgcam_DEF.centerOffset[1]) - HalfFieldHeight;
@@ -1891,24 +1789,23 @@ public class FieldMap : HonoBehavior
         if (!IsActive)
             return;
 
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGCAM_DEF bgcam_DEF = bgscene_DEF.cameraList[this.curCamIdx];
-        this.startPoint[0] = (Single)((Int16)this.curVRP[0]);
-        this.startPoint[1] = (Single)((Int16)this.curVRP[1]);
-        BGCAM_DEF bgcam_DEF2 = this.scene.cameraList[this.camIdx];
+        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
+        this.startPoint[0] = (Int16)this.curVRP[0];
+        this.startPoint[1] = (Int16)this.curVRP[1];
         Vector3 vertex = Vector3.zero;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && this.playerController == (UnityEngine.Object)null)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && this.playerController == null)
         {
+            // Iifa Tree/Eidolon Moun, select Zidane
             this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(8)).fieldMapActorController;
             this.extraOffset = Vector2.zero;
         }
-        if (this.playerController != (UnityEngine.Object)null)
+        if (this.playerController != null)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 813 && this.playerController == ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(8)).fieldMapActorController)
             {
+                // S. Gate/Berkmea, controlling Dagger -> switch to Mary instead
                 this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(2)).fieldMapActorController;
             }
-            Camera camera = this.GetMainCamera();
             vertex = this.playerController.curPos;
             vertex.y += (Single)this.charAimHeight;
             vertex = PSX.CalculateGTE_RTPT(vertex, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.offset);
@@ -1918,31 +1815,23 @@ public class FieldMap : HonoBehavior
             vertex.x += this.offset.x;
             vertex.y += this.offset.y;
         }
-        Single num = (Single)((Int32)vertex.x);
-        Single num2 = (Single)((Int32)vertex.y);
-        Single num3 = (Single)((bgcam_DEF.w >> 1) + (Int32)bgcam_DEF.centerOffset[0]) + (num - HalfFieldWidth);
-        Single num4 = (Single)((bgcam_DEF.h >> 1) + (Int32)bgcam_DEF.centerOffset[1]) + (num2 - HalfFieldHeight);
+        Single num = (Int32)vertex.x;
+        Single num2 = (Int32)vertex.y;
+        Single num3 = (bgcam_DEF.w >> 1) + bgcam_DEF.centerOffset[0] + (num - HalfFieldWidth);
+        Single num4 = (bgcam_DEF.h >> 1) + bgcam_DEF.centerOffset[1] + (num2 - HalfFieldHeight);
         num3 -= this.offset.x - HalfFieldWidth;
         num4 += this.offset.y - HalfFieldHeight;
         num4 *= -1f;
-        if (num3 < (Single)bgcam_DEF.vrpMinX)
-        {
-            num3 = (Single)bgcam_DEF.vrpMinX;
-        }
-        else if (num3 > (Single)bgcam_DEF.vrpMaxX)
-        {
-            num3 = (Single)bgcam_DEF.vrpMaxX;
-        }
-        if (num4 < (Single)bgcam_DEF.vrpMinY)
-        {
-            num4 = (Single)bgcam_DEF.vrpMinY;
-        }
-        else if (num4 > (Single)bgcam_DEF.vrpMaxY)
-        {
-            num4 = (Single)bgcam_DEF.vrpMaxY;
-        }
-        this.endPoint[0] = (Single)((Int16)num3);
-        this.endPoint[1] = (Single)((Int16)num4);
+        if (num3 < bgcam_DEF.vrpMinX)
+            num3 = bgcam_DEF.vrpMinX;
+        else if (num3 > bgcam_DEF.vrpMaxX)
+            num3 = bgcam_DEF.vrpMaxX;
+        if (num4 < bgcam_DEF.vrpMinY)
+            num4 = bgcam_DEF.vrpMinY;
+        else if (num4 > bgcam_DEF.vrpMaxY)
+            num4 = bgcam_DEF.vrpMaxY;
+        this.endPoint[0] = (Int16)num3;
+        this.endPoint[1] = (Int16)num4;
         if (frameCount == -1)
             this.frameCount = 30;
         else
@@ -2036,32 +1925,26 @@ public class FieldMap : HonoBehavior
     private Int32 EBG_attachService()
     {
         if (this.attachCount == 0)
-        {
             return 0;
-        }
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
         BGSCENE_DEF bgscene_DEF = this.scene;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
         Vector3 vertex = this.playerController.curPos;
         vertex.y += (Single)this.charAimHeight;
-        Camera camera = this.GetMainCamera();
         vertex = PSX.CalculateGTE_RTPT(vertex, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.offset);
         vertex.y *= -1f;
-        EBG_ATTACH_DEF ebg_ATTACH_DEF = this.attachList[0];
-        Byte b = 0;
-        while ((UInt16)b < this.attachCount)
+        for (Byte i = 0; i < this.attachCount; i++)
         {
-            ebg_ATTACH_DEF = this.attachList[(Int32)b];
+            EBG_ATTACH_DEF ebg_ATTACH_DEF = this.attachList[i];
             UInt16 index = (UInt16)ebg_ATTACH_DEF.ndx;
-            if ((overlayList[(Int32)index].flags & 2) != 0 && (Int32)overlayList[(Int32)index].camNdx == this.curCamIdx)
+            if ((overlayList[index].flags & 2) != 0 && overlayList[index].camNdx == this.curCamIdx)
             {
                 Int16 x = ebg_ATTACH_DEF.x;
                 Int16 y = ebg_ATTACH_DEF.y;
-                Int16 num = overlayList[(Int32)index].curX = (Int16)(vertex.x - (Single)bgscene_DEF.curX - (Single)x + (Single)bgcam_DEF.vrpMinX);
-                Int16 num2 = overlayList[(Int32)index].curY = (Int16)(vertex.y - (Single)bgscene_DEF.curY - (Single)y + (Single)bgcam_DEF.vrpMinY);
-                overlayList[(Int32)index].transform.localPosition = new Vector3((Single)num * 1f, (Single)num2 * 1f, 0f);
+                Int16 overlayX = overlayList[index].curX = (Int16)(vertex.x - bgscene_DEF.curX - x + bgcam_DEF.vrpMinX);
+                Int16 overlayY = overlayList[index].curY = (Int16)(vertex.y - bgscene_DEF.curY - y + bgcam_DEF.vrpMinY);
+                overlayList[index].transform.localPosition = new Vector3(overlayX, overlayY, 0f);
             }
-            b = (Byte)(b + 1);
         }
         return 1;
     }
@@ -2309,7 +2192,7 @@ public class FieldMap : HonoBehavior
             return false;
         if (!IsActive)
             return false;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 70)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
             return false;
         if (this.curCamIdx < 0 || this.curCamIdx > this.scene.cameraList.Count)
             return false;
@@ -2539,13 +2422,7 @@ public class FieldMap : HonoBehavior
 
     public Int16[] scrollWindowAlphaY;
 
-    private Int32 lastFrame;
-
     private Int32[] frameCountList;
-
-    private Single cumulativeTime;
-
-    private Single frameTime;
 
     public Boolean isBattleBackupPos;
 

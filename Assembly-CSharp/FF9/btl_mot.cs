@@ -811,36 +811,36 @@ namespace FF9
 
 		public static void PlayAnim(BTL_DATA btl)
 		{
+			btl._smoothUpdatePlayingAnim = false;
 			if (btl.currentAnimationName == null)
 				return;
 			GameObject gameObject = btl.gameObject;
 			String currentAnimationName = btl.currentAnimationName;
 			UInt16 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, currentAnimationName);
-			Byte animFrame = btl.evt.animFrame;
+			Boolean reverseSpeed = btl.animSpeed < 0f;
+			Single animFrame = btl.evt.animFrame; // + (reverseSpeed ? -btl.animFrameFrac : btl.animFrameFrac);
 			if (!gameObject.GetComponent<Animation>().IsPlaying(currentAnimationName))
 			{
-				if (gameObject.GetComponent<Animation>().GetClip(currentAnimationName) != (UnityEngine.Object)null)
-				{
-					AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
-					gameObject.GetComponent<Animation>().Play(currentAnimationName);
-					clipState.speed = 0f;
-					if (animMaxFrame == 0)
-						clipState.time = 0f;
-					else
-						clipState.time = (Single)animFrame / (Single)animMaxFrame * gameObject.GetComponent<Animation>()[currentAnimationName].length;
-					gameObject.GetComponent<Animation>().Sample();
-				}
+				if (gameObject.GetComponent<Animation>().GetClip(currentAnimationName) == null)
+					return;
+				gameObject.GetComponent<Animation>().Play(currentAnimationName);
 			}
-			else
+			AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
+			Single time = animMaxFrame == 0 ? 0f : Mathf.Clamp(animFrame / animMaxFrame * clipState.length, 0f, clipState.length);
+			Int32 animLoopFrame = GeoAnim.getAnimationLoopFrame(btl);
+			clipState.speed = 0f;
+			btl._smoothUpdatePlayingAnim = true;
+			btl._smoothUpdateAnimTimePrevious = clipState.time;
+			if (animMaxFrame != 0 && btl.bi.disappear == 0 && !btl_mot.IsAnimationFrozen(btl))
 			{
-				AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
-				clipState.speed = 0f;
-				if (animMaxFrame == 0)
-					clipState.time = 0f;
-				else
-					clipState.time = (Single)animFrame / (Single)animMaxFrame * gameObject.GetComponent<Animation>()[currentAnimationName].length;
-				gameObject.GetComponent<Animation>().Sample();
+				if (btl.evt.animFrame == 0 && !reverseSpeed)
+					btl._smoothUpdateAnimTimePrevious = time - btl.animSpeed / animMaxFrame * clipState.length;
+				else if (btl.evt.animFrame == animLoopFrame && reverseSpeed)
+					btl._smoothUpdateAnimTimePrevious = time + btl.animSpeed / animMaxFrame * clipState.length;
 			}
+			btl._smoothUpdateAnimTimeActual = time;
+			clipState.time = time;
+			gameObject.GetComponent<Animation>().Sample();
 		}
 
 		public static Int32 GetDirection(BTL_DATA btl)

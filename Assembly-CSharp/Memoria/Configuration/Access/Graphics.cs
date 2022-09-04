@@ -8,6 +8,13 @@ namespace Memoria
         public static class Graphics
         {
             public static Int32 BattleFPS => Instance._graphics.BattleFPS;
+            public static Int32 BattleTPS => Instance._graphics.BattleTPS;
+            public static Int32 FieldFPS => Instance._graphics.FieldFPS;
+            public static Int32 FieldTPS => Instance._graphics.FieldTPS;
+            public static Int32 WorldFPS => Instance._graphics.WorldFPS;
+            public static Int32 WorldTPS => Instance._graphics.WorldTPS;
+            public static Int32 MenuFPS => Instance._graphics.MenuFPS;
+            public static Int32 MenuTPS => Instance._graphics.MenuTPS;
             public static Int32 BattleSwirlFrames => Instance._graphics.BattleSwirlFrames;
             public static Int32 SkipIntros = Instance._graphics.SkipIntros;
             public static Int32 GarnetHair => Instance._graphics.GarnetHair;

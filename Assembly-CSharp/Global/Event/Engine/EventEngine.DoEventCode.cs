@@ -670,6 +670,8 @@ public partial class EventEngine
                         activeActorByUid.fieldMapActorController.gameObject.name = "obj" + activeActorByUid.uid;
                     }
                 }
+                if (this.gMode == 3)
+                    SmoothFrameUpdater_World.Skip = 1;
                 this._context.controlUID = this.gExec.uid;
                 return 0;
             }

@@ -32,53 +32,37 @@ public class BattlePlayerCharacter : MonoBehaviour
 		return result;
 	}
 
-	public static void InitMaxFrame(BTL_DATA goPlayerCharacter, Byte[] maxFrames)
+	public static void InitMaxFrame(BTL_DATA btl, Byte[] maxFrames)
 	{
-		Animation component = goPlayerCharacter.gameObject.GetComponent<Animation>();
-		String text = String.Empty;
-		for (Int32 i = 0; i < (Int32)goPlayerCharacter.mot.Length; i++)
+		Animation component = btl.gameObject.GetComponent<Animation>();
+		String dbgMessage = String.Empty;
+		for (Int32 i = 0; i < btl.mot.Length; i++)
 		{
-			String text2 = goPlayerCharacter.mot[i];
-			Int32 num = 1;
-			if (component[text2] != (TrackedReference)null)
+			String motAnim = btl.mot[i];
+			maxFrames[i] = 1;
+			if (component[motAnim] != null)
 			{
-				component[text2].speed = 0.5f * (Single)HonoluluBattleMain.Speed;
-				Int32 num2 = Mathf.CeilToInt(component[text2].length * component[text2].clip.frameRate);
-				num = num2;
+				component[motAnim].speed = 0.5f * FF9StateSystem.Settings.FastForwardFactor;
+				maxFrames[i] = (Byte)Mathf.CeilToInt(component[motAnim].length * component[motAnim].clip.frameRate);
 			}
-			maxFrames[i] = (Byte)num;
-			String text3 = text;
-			text = String.Concat(new Object[]
-			{
-				text3,
-				"animName:",
-				text2,
-				":",
-				num,
-				"\n"
-			});
+			dbgMessage += "animName:" + motAnim + ":" + maxFrames[i] + "\n";
 		}
-		global::Debug.Log(text);
+		global::Debug.Log(dbgMessage);
 	}
 
 	public static void InitAnimation(BTL_DATA btl)
 	{
 		for (Int32 i = 0; i < 34; i++)
 		{
-			Int32 num = i;
-			String name = btl.mot[num];
-			if (!(btl.gameObject.GetComponent<Animation>()[name] == (TrackedReference)null))
+			String motAnim = btl.mot[i];
+			if (btl.gameObject.GetComponent<Animation>()[motAnim] != null)
 			{
-				AnimationState animationState = btl.gameObject.GetComponent<Animation>()[name];
-				if (num == 0 || num == 1 || num == 9 || num == 13 || num == 19 || num == 27 || num == 17 || animationState.name.Substring(animationState.name.Length - 3) == "000")
-				{
+				AnimationState animationState = btl.gameObject.GetComponent<Animation>()[motAnim];
+				if (i == 0 || i == 1 || i == 9 || i == 13 || i == 19 || i == 27 || i == 17 || animationState.name.Substring(animationState.name.Length - 3) == "000")
 					animationState.wrapMode = WrapMode.Loop;
-				}
 				else
-				{
 					animationState.wrapMode = WrapMode.Once;
-				}
-				animationState.speed = 0.5f * (Single)HonoluluBattleMain.Speed;
+				animationState.speed = 0.5f * FF9StateSystem.Settings.FastForwardFactor;
 			}
 		}
 	}

@@ -199,7 +199,7 @@ public class MBG : HonoBehavior
 
 	public void Play()
 	{
-		this.tempTargetFrameRate = Application.targetFrameRate;
+		this.tempTargetFrameRate = FPSManager.GetTargetFPS();
 		this.tempVirtualAnalogStatus = VirtualAnalog.IsEnable;
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(false);
 		this.isSkip = false;
@@ -225,8 +225,8 @@ public class MBG : HonoBehavior
 		}
         this.isWaitForPause = false;
         this.played = true;
-        Application.targetFrameRate = Mathf.RoundToInt((Single) this.movieMaterial.FPS);
-        PlayerWindow.Instance.SetTitle($"FPS: {Application.targetFrameRate}");
+		FPSManager.SetTargetFPS(Mathf.RoundToInt((Single)this.movieMaterial.FPS));
+        PlayerWindow.Instance.SetTitle($"FPS: {FPSManager.GetTargetFPS()}");
 		this.movieMaterial.Play();
 	}
 
@@ -314,7 +314,7 @@ public class MBG : HonoBehavior
 		}
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(this.tempVirtualAnalogStatus);
 		SceneDirector.ToggleFadeAll(true);
-		Application.targetFrameRate = this.tempTargetFrameRate;
+		FPSManager.SetTargetFPS(this.tempTargetFrameRate);
 		PlayerWindow.Instance.SetTitle(String.Empty);
 		vib.VIB_actuatorReset(0);
 		this.movieMaterial.Transparency = 0f;
@@ -542,7 +542,7 @@ public class MBG : HonoBehavior
 
 	private void Update()
 	{
-		Boolean flag = PersistenSingleton<UIManager>.Instance.IsPause || (UIManager.Field != (UnityEngine.Object)null && UIManager.Field.isShowSkipMovieDialog) || this.isSkip;
+		Boolean flag = PersistenSingleton<UIManager>.Instance.IsPause || (UIManager.Field != null && UIManager.Field.isShowSkipMovieDialog) || this.isSkip;
 		if (this.isPause != flag)
 		{
 			this.isPause = flag;
@@ -553,23 +553,18 @@ public class MBG : HonoBehavior
 	public override void HonoUpdate()
 	{
 		base.HonoUpdate();
-		if (FF9StateSystem.Common.FF9.fldMapNo != 2933)
-		{
+		if (FF9StateSystem.Common.FF9.fldMapNo != 2933) // last/cw mbg 1
 			this.MBGUpdate();
-		}
 	}
 
 	private void LateUpdate()
 	{
-		if (FF9StateSystem.Common.FF9.fldMapNo == 2933)
-		{
+		if (FF9StateSystem.Common.FF9.fldMapNo == 2933) // last/cw mbg 1
 			this.MBGUpdate();
-		}
 	}
 
 	public void MBGUpdate()
 	{
-		this.cumulativeTime = 0f;
 		if ((Int32)this.MBGInitialized <= 1)
 		{
 			return;
@@ -1075,8 +1070,6 @@ public class MBG : HonoBehavior
     public static Boolean MarkCharacterDepth = false;
 
 	private Boolean tempVirtualAnalogStatus;
-
-	private Single cumulativeTime;
 
 	private Boolean isPause;
 }

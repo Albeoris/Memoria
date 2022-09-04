@@ -277,21 +277,15 @@ public class GeoTexAnim : HonoBehavior
 	private void Update()
 	{
 		if (!this._isLoaded)
-		{
 			return;
-		}
 		if (!this.RenderTex.IsCreated())
-		{
 			base.StartCoroutine(this.WaitToRecreateTexAnim(this.RenderTex, this._mainTexture));
-		}
 	}
 
 	public override void HonoUpdate()
 	{
 		if (!this._isLoaded)
-		{
 			return;
-		}
 		this._cTime += Time.deltaTime;
 		if (this._cTime >= 0.06666667f)
 		{

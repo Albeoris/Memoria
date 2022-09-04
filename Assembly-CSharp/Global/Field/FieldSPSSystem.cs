@@ -14,9 +14,7 @@ public class FieldSPSSystem : HonoBehavior
 	private void LateUpdate()
 	{
 		if (!PersistenSingleton<UIManager>.Instance.IsPause)
-		{
 			this.GenerateSPS();
-		}
 	}
 
 	public void Init(FieldMap fieldMap)
@@ -54,9 +52,7 @@ public class FieldSPSSystem : HonoBehavior
 	public void Service()
 	{
 		if (!this._isReady)
-		{
 			return;
-		}
 		for (Int32 i = 0; i < this._spsList.Count; i++)
 		{
 			FieldSPS fieldSPS = this._spsList[i];
@@ -67,13 +63,9 @@ public class FieldSPSSystem : HonoBehavior
 					fieldSPS.lastFrame = fieldSPS.curFrame;
 					fieldSPS.curFrame += fieldSPS.frameRate;
 					if (fieldSPS.curFrame >= fieldSPS.frameCount)
-					{
 						fieldSPS.curFrame = 0;
-					}
 					else if (fieldSPS.curFrame < 0)
-					{
 						fieldSPS.curFrame = (fieldSPS.frameCount >> 4) - 1 << 4;
-					}
 				}
 			}
 		}

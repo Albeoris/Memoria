@@ -135,6 +135,10 @@ public class HonoBehavior : MonoBehaviour
 	{
 	}
 
+	public virtual void HonoFixedUpdate()
+	{
+	}
+
 	public virtual void HonoUpdate()
 	{
 	}

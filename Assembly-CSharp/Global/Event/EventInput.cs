@@ -5,66 +5,39 @@ public class EventInput
 {
 	public static Boolean IsJapaneseLayout
 	{
-		get
-		{
-			return EventInput.isJapaneseLayout;
-		}
+		get => EventInput.isJapaneseLayout;
 	}
 
 	public static Boolean IsMovementControl
 	{
-		get
-		{
-			return EventInput.isMovementControl;
-		}
+		get => EventInput.isMovementControl;
 	}
 
 	public static Boolean IsProcessingInput
 	{
-		get
-		{
-			return EventInput.isProcessingInput;
-		}
-		set
-		{
-			EventInput.isProcessingInput = value;
-		}
+		get => EventInput.isProcessingInput;
+		set => EventInput.isProcessingInput = value;
 	}
 
 	public static Boolean IsDialogConfirm
 	{
-		set
-		{
-			EventInput.isDialogConfirm = value;
-		}
+		set => EventInput.isDialogConfirm = value;
 	}
 
 	public static Boolean IsNeedAddStartSignal
 	{
-		set
-		{
-			EventInput.addStartSignal = (Int32)((!value) ? 0 : 1);
-		}
+		set => EventInput.addStartSignal = value ? 1 : 0;
 	}
 
 	public static Boolean IsPressedDig
 	{
-		get
-		{
-			return EventInput.isPressedDig;
-		}
-		set
-		{
-			EventInput.isPressedDig = value;
-		}
+		get => EventInput.isPressedDig;
+		set => EventInput.isPressedDig = value;
 	}
 
 	public static Boolean IsMenuON
 	{
-		get
-		{
-			return (EventInput.PSXCntlPadMask[0] & 262144u) <= 0u;
-		}
+		get => (EventInput.PSXCntlPadMask[0] & EventInput.Lmenu) == 0u;
 	}
 
 	public static Boolean IsKeyboardOrJoystickInput
@@ -90,71 +63,63 @@ public class EventInput
 	public static void ChangeInputLayout(String language)
 	{
 		if (language == "Japanese")
-		{
 			EventInput.SetJapaneseLayput();
-		}
 		else
-		{
 			EventInput.SetOtherLangLayout();
-		}
-		EventInput.ConfirmMask = (EventInput.Lcircle | 8192u);
-        CancelMask = (EventInput.Lx | 16384u);
+		EventInput.ConfirmMask = EventInput.Lcircle | EventInput.Pcircle;
+        CancelMask = EventInput.Lx | EventInput.Px;
 	}
 
 	private static void SetJapaneseLayput()
 	{
-		EventInput.Lcircle = 65536u;
-		EventInput.Lx = 131072u;
-		EventInput.Fcircle = 65536u;
-		EventInput.Fx = 131072u;
+		EventInput.Lcircle = 0x10000u;
+		EventInput.Lx = 0x20000u;
+		EventInput.Fcircle = 0x10000u;
+		EventInput.Fx = 0x20000u;
 		EventInput.isJapaneseLayout = true;
-		EventInput.HippualMask = (EventInput.Lcircle | 524288u);
+		EventInput.HippualMask = EventInput.Lcircle | EventInput.Lsquare;
 	}
 
 	private static void SetOtherLangLayout()
 	{
-		EventInput.Lcircle = 131072u;
-		EventInput.Lx = 65536u;
-		EventInput.Fcircle = 65536u;
-		EventInput.Fx = 131072u;
+		EventInput.Lcircle = 0x20000u;
+		EventInput.Lx = 0x10000u;
+		EventInput.Fcircle = 0x10000u;
+		EventInput.Fx = 0x20000u;
 		EventInput.isJapaneseLayout = false;
-		EventInput.HippualMask = (EventInput.Lx | 524288u);
+		EventInput.HippualMask = EventInput.Lx | EventInput.Lsquare;
 	}
 
 	public static UInt32 ReadInput()
 	{
-		UInt32 num = 0u;
+		UInt32 inputs = 0u;
 		if (!EventInput.isProcessingInput)
 		{
 			EventInput.ResetWorldTriggerButton();
-			return num;
+			return inputs;
 		}
-		Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+		Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 		Int32 gMode = PersistenSingleton<EventEngine>.Instance.gMode;
 		Boolean isKeyboardOrJoystickInput = EventInput.IsKeyboardOrJoystickInput;
 		if (Singleton<BubbleUI>.Instance.IsActive)
 		{
 			if (gMode == 1)
 			{
-				if (fldMapNo == 1420 && EventInput.CheckLadderFlag())
-				{
-					num = EventInput.ProcessInput(false, false);
-				}
+				if (fldMapNo == 1420 && EventInput.CheckLadderFlag()) // Fossil Roo/Cavern, climbing ivy
+					inputs = EventInput.ProcessInput(false, false);
 				else
-				{
-					num = EventInput.ProcessInput(false, true);
-				}
+					inputs = EventInput.ProcessInput(false, true);
 			}
 			else if (gMode == 3)
 			{
 				if (FF9StateSystem.MobilePlatform)
 				{
-					num = EventInput.ProcessInput(false, isKeyboardOrJoystickInput);
-					EventInput.GetWorldTriggerButton(ref num);
+					inputs = EventInput.ProcessInput(false, isKeyboardOrJoystickInput);
+					EventInput.GetWorldTriggerButton(ref inputs);
 				}
 				else
 				{
-					num = EventInput.ProcessInput(false, true);
+					inputs = EventInput.ProcessInput(false, true);
 				}
 			}
 		}
@@ -164,132 +129,142 @@ public class EventInput
 			if (currentHUD != MinigameHUD.Chanbara)
 			{
 				if (currentHUD != MinigameHUD.RacingHippaul)
-				{
-					num = EventInput.ProcessInput(false, true);
-				}
+					inputs = EventInput.ProcessInput(false, true);
 				else
-				{
-					num = EventInput.ProcessInput(false, false);
-				}
+					inputs = EventInput.ProcessInput(false, false);
 			}
 			else
 			{
-				num = EventInput.ProcessInput(true, true);
-				num &= EventInput.ChanbaraMask;
+				inputs = EventInput.ProcessInput(true, true);
+				inputs &= EventInput.ChanbaraMask;
 				if (FF9StateSystem.MobilePlatform)
 				{
-					if ((num & 8u) > 0u)
+					if ((inputs & EventInput.Pstart) > 0u)
 					{
 						EventInput.IsNeedAddStartSignal = true;
 					}
 					else if (EventInput.addStartSignal > 0)
 					{
-						num |= 8u;
+						inputs |= EventInput.Pstart;
 						EventInput.addStartSignal--;
 						EventInput.InputLog("Extra Start");
 					}
 				}
 			}
 		}
-		else if (fldMapNo == 606)
+		else if (fldMapNo == 606) // L. Castle/Event
 		{
 			if (EventHUD.CurrentHUD == MinigameHUD.Telescope)
-			{
-				num = EventInput.ProcessInput(false, true);
-			}
+				inputs = EventInput.ProcessInput(false, true);
 		}
-		else if (fldMapNo == 2204 && TimerUI.Enable)
+		else if (fldMapNo == 2204 && TimerUI.Enable) // Palace/Odyssey
 		{
-			num = EventInput.ProcessInput(false, false);
+			inputs = EventInput.ProcessInput(false, false);
 		}
-		else if (fldMapNo == 1607)
+		else if (fldMapNo == 1607) // Mdn. Sari/Kitchen
 		{
-			num = EventInput.ProcessInput(false, false);
+			inputs = EventInput.ProcessInput(false, false);
 		}
-		else if (fldMapNo == 1420)
+		else if (fldMapNo == 1420) // Fossil Roo/Cavern
 		{
-			num = EventInput.ProcessInput(false, true);
+			inputs = EventInput.ProcessInput(false, true);
 		}
-		else if (fldMapNo == 1422)
+		else if (fldMapNo == 1422) // Fossil Roo/Entrance
 		{
-			num = EventInput.ProcessInput(false, true);
+			inputs = EventInput.ProcessInput(false, true);
 		}
 		else
 		{
 			Dialog mognetDialog = Singleton<DialogManager>.Instance.GetMognetDialog();
-			if (mognetDialog != (UnityEngine.Object)null)
+			if (mognetDialog != null)
 			{
 				if (mognetDialog.IsChoiceReady)
-				{
-					num = EventInput.ProcessInput(false, true);
-				}
+					inputs = EventInput.ProcessInput(false, true);
 			}
 			else if (FF9StateSystem.MobilePlatform)
 			{
-				num = EventInput.ProcessInput(false, isKeyboardOrJoystickInput);
+				inputs = EventInput.ProcessInput(false, isKeyboardOrJoystickInput);
 				if (isKeyboardOrJoystickInput)
-				{
 					UIManager.Input.ResetTriggerEvent();
-				}
-				EventInput.GetWorldTriggerButton(ref num);
+				EventInput.GetWorldTriggerButton(ref inputs);
 			}
 			else
 			{
-				num = EventInput.ProcessInput(false, true);
+				inputs = EventInput.ProcessInput(false, true);
 			}
 		}
-		num |= EventInput.eventButtonInput;
+		inputs |= EventInput.eventButtonInput;
 		if (EventInput.isDialogConfirm)
 		{
-			num |= EventInput.ConfirmMask;
+			inputs |= EventInput.ConfirmMask;
 			EventInput.isDialogConfirm = false;
 		}
 		if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
 		{
 			if (FF9StateSystem.MobilePlatform)
 			{
-				if (fldMapNo == 909 || fldMapNo == 1909)
-				{
-					num = EventInput.FastForwardProcess(gMode, fldMapNo, num);
-				}
+				if (fldMapNo == 909 || fldMapNo == 1909) // Treno/Auction Site or Treno/Auction House
+					inputs = EventInput.FastForwardProcess(gMode, fldMapNo, inputs);
 			}
 			else
 			{
-				num = EventInput.FastForwardProcess(gMode, fldMapNo, num);
+				inputs = EventInput.FastForwardProcess(gMode, fldMapNo, inputs);
 			}
 		}
-		num &= ~EventInput.PSXCntlPadMask[0];
+		inputs &= ~EventInput.PSXCntlPadMask[0];
 		if (FF9StateSystem.MobilePlatform && gMode == 3 && EventCollision.IsRidingChocobo())
 		{
-			if ((num & 524288u) > 0u || (num & 32768u) > 0u)
-			{
+			if ((inputs & EventInput.Lsquare) > 0u || (inputs & EventInput.Psquare) > 0u)
 				EventInput.isPressedDig = true;
-			}
-			else if ((num & 16777216u) > 0u || (num & 4096u) > 0u)
-			{
+			else if ((inputs & EventInput.Ltriangle) > 0u || (inputs & EventInput.Ptriangle) > 0u)
 				EventInput.isPressedDig = false;
-			}
-			else if ((num & EventInput.Lx) > 0u || (num & 16384u) > 0u)
-			{
+			else if ((inputs & EventInput.Lx) > 0u || (inputs & EventInput.Px) > 0u)
 				EventInput.isPressedDig = false;
-			}
-			else if ((num & 1u) > 0u || (num & 1u) > 0u)
-			{
+			else if ((inputs & EventInput.Lselect) > 0u || (inputs & EventInput.Pselect) > 0u)
 				EventInput.isPressedDig = false;
-			}
 		}
 		if (gMode == 3 && EventEngineUtils.IsMogCalled(PersistenSingleton<EventEngine>.Instance))
-		{
 			ff9.w_isMogActive = true;
-		}
-		if (gMode == 3 && EMinigame.CheckBeachMinigame() && EventCollision.IsWorldTrigger() && (num & CancelMask) > 0u)
+		if (gMode == 3 && EMinigame.CheckBeachMinigame() && EventCollision.IsWorldTrigger() && (inputs & CancelMask) > 0u)
 		{
-			num &= ~CancelMask;
+			inputs &= ~CancelMask;
 			EventInput.InputLog("Remove cancel mask for <SQEX> #2893");
 		}
 		EventInput.eventButtonInput = 0u;
 		EventInput.ResetWorldTriggerButton();
-		return num;
+		return inputs;
+	}
+
+	public static UInt32 ReadInputLight()
+	{
+		UInt32 inputs = 0u;
+		if (!EventInput.isProcessingInput)
+			return inputs;
+		Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+		Int32 gMode = PersistenSingleton<EventEngine>.Instance.gMode;
+		inputs = EventInput.ProcessInput(false, false);
+		inputs |= EventInput.eventButtonInput;
+		if (EventInput.isDialogConfirm)
+		{
+			inputs |= EventInput.ConfirmMask;
+			EventInput.isDialogConfirm = false;
+		}
+		if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
+			inputs = EventInput.FastForwardProcess(gMode, fldMapNo, inputs);
+		inputs &= ~EventInput.PSXCntlPadMask[0];
+		//if (FF9StateSystem.MobilePlatform && gMode == 3 && EventCollision.IsRidingChocobo())
+		//{
+		//	if ((inputs & EventInput.Lsquare) > 0u || (inputs & EventInput.Psquare) > 0u)
+		//		EventInput.isPressedDig = true;
+		//	else if ((inputs & EventInput.Ltriangle) > 0u || (inputs & EventInput.Ptriangle) > 0u)
+		//		EventInput.isPressedDig = false;
+		//	else if ((inputs & EventInput.Lx) > 0u || (inputs & EventInput.Px) > 0u)
+		//		EventInput.isPressedDig = false;
+		//	else if ((inputs & EventInput.Lselect) > 0u || (inputs & EventInput.Pselect) > 0u)
+		//		EventInput.isPressedDig = false;
+		//}
+		EventInput.eventButtonInput = 0u;
+		return inputs;
 	}
 
 	private static UInt32 ProcessBubbleInput(BubbleInputInfo bubbleInput)
@@ -303,140 +278,119 @@ public class EventInput
 		return result;
 	}
 
-	private static UInt32 ProcessInput(Boolean isTriggerDirection, Boolean isTriggerButton)
+	public static UInt32 ProcessInput(Boolean isTriggerDirection, Boolean isTriggerButton)
 	{
-		UInt32 num = 0u;
-		Vector2 vector = Vector2.zero;
+		UInt32 inputs = 0u;
 		if (VirtualAnalog.HasInput())
 		{
-			vector = VirtualAnalog.GetAnalogValue();
+			Vector2 vector = VirtualAnalog.GetAnalogValue();
 			if (Mathf.Abs(vector.x) >= 0.1f || Mathf.Abs(vector.y) >= 0.1f)
 			{
 				if (vector.y > 0f)
-				{
-					num |= 16u;
-				}
+					inputs |= EventInput.Pup;
 				if (vector.y < 0f)
-				{
-					num |= 64u;
-				}
+					inputs |= EventInput.Pdown;
 				if (vector.x < 0f)
-				{
-					num |= 128u;
-				}
+					inputs |= EventInput.Pleft;
 				if (vector.x > 0f)
-				{
-					num |= 32u;
-				}
+					inputs |= EventInput.Pright;
 			}
 		}
 		if (EventInput.GetKey(Control.Menu, isTriggerButton))
 		{
-			num |= 16781312u;
+			inputs |= EventInput.Ptriangle | EventInput.Ltriangle;
 			EventInput.InputLog("Press /_\\");
 		}
 		if (EventInput.GetKey(Control.Confirm, isTriggerButton))
 		{
-			num |= (8192u | EventInput.Lcircle);
+			inputs |= EventInput.Pcircle | EventInput.Lcircle;
 			EventInput.InputLog("Press 0");
 		}
 		if (EventInput.GetKey(Control.Cancel, isTriggerButton))
 		{
-			num |= (16384u | EventInput.Lx);
+			inputs |= EventInput.Px | EventInput.Lx;
 			EventInput.InputLog("Press X");
 		}
 		if (EventInput.GetKey(Control.Special, isTriggerButton))
 		{
-			num |= 557056u;
+			inputs |= EventInput.Psquare | EventInput.Lsquare;
 			EventInput.InputLog("Press []");
 		}
 		if (EventInput.GetKey(Control.Select, isTriggerButton))
 		{
-			num |= 1u;
+			inputs |= EventInput.Pselect;
 			EventInput.InputLog("Press Select");
 		}
 		if (EventInput.GetKey(Control.Pause, isTriggerButton))
 		{
-			num |= 8u;
+			inputs |= EventInput.Pstart;
 			EventInput.InputLog("Press Start");
 		}
 		if (EventInput.GetKey(Control.LeftBumper, isTriggerButton))
 		{
-			num |= 1049600u;
+			inputs |= EventInput.PL1 | EventInput.LL1;
 			EventInput.InputLog("Press L1");
 		}
 		if (EventInput.GetKey(Control.RightBumper, isTriggerButton))
 		{
-			num |= 2099200u;
+			inputs |= EventInput.PR1 | EventInput.LR1;
 			EventInput.InputLog("Press R1");
 		}
 		if (EventInput.GetKey(Control.LeftTrigger, isTriggerButton))
 		{
-			num |= 4194560u;
+			inputs |= EventInput.PL2 | EventInput.LL2;
 			EventInput.InputLog("Press L2");
 		}
 		if (EventInput.GetKey(Control.RightTrigger, isTriggerButton))
 		{
-			num |= 8389120u;
+			inputs |= EventInput.PR2 | EventInput.LR2;
 			EventInput.InputLog("Press R2");
 		}
 		if (EventInput.GetKey(Control.Up, isTriggerDirection))
 		{
-			num |= 16u;
+			inputs |= EventInput.Pup;
 			EventInput.InputLog("Press ^");
 		}
 		if (EventInput.GetKey(Control.Down, isTriggerDirection))
 		{
-			num |= 64u;
+			inputs |= EventInput.Pdown;
 			EventInput.InputLog("Press v");
 		}
 		if (EventInput.GetKey(Control.Left, isTriggerDirection))
 		{
-			num |= 128u;
+			inputs |= EventInput.Pleft;
 			EventInput.InputLog("Press <");
 		}
 		if (EventInput.GetKey(Control.Right, isTriggerDirection))
 		{
-			num |= 32u;
+			inputs |= EventInput.Pright;
 			EventInput.InputLog("Press >");
 		}
-		return num;
+		return inputs;
 	}
 
 	public static Boolean GetKey(Control keyCode, Boolean isTriggerMode)
 	{
 		if (isTriggerMode)
-		{
 			return UIManager.Input.GetKeyTrigger(keyCode);
-		}
 		return UIManager.Input.GetKey(keyCode);
 	}
 
 	private static void InputLog(String log)
 	{
 		if (EventInput.showLog)
-		{
 			global::Debug.Log(log + " at " + RealTime.time);
-		}
 	}
 
 	private static UInt32 FastForwardProcess(Int32 eventMode, Int32 fldMapNo, UInt32 input)
 	{
 		if (EventInput.lastTimeInput == RealTime.time)
-		{
-			if (fldMapNo != 1420 || eventMode != 1)
-			{
+			if (fldMapNo != 1420 || eventMode != 1) // Fossil Roo/Cavern, climbing ivy
 				input &= ~EventInput.OperationMask;
-			}
-		}
 		else if (input != 0u)
-		{
 			EventInput.lastTimeInput = RealTime.time;
-		}
 		if (EventHUD.CurrentHUD == MinigameHUD.RacingHippaul && (input & EventInput.HippualMask) == EventInput.HippualMask)
-		{
 			input = 0u;
-		}
 		return input;
 	}
 
@@ -462,13 +416,9 @@ public class EventInput
 	private static void CheckPlayerControl()
 	{
 		if ((EventInput.PSXCntlPadMask[0] & EventInput.MovementMask) > 0u)
-		{
 			EventInput.isMovementControl = false;
-		}
 		else
-		{
 			EventInput.isMovementControl = true;
-		}
 	}
 
 	public static void RecieveDialogConfirm()
@@ -487,35 +437,25 @@ public class EventInput
 
 	public static Boolean CheckLadderFlag()
 	{
-		Boolean result = false;
 		PosObj controlChar = PersistenSingleton<EventEngine>.Instance.GetControlChar();
 		if (controlChar != null)
 		{
 			GameObject go = controlChar.go;
-			if (go != (UnityEngine.Object)null)
-			{
-				result = (go.GetComponent<FieldMapActorController>().GetLadderFlag() != 0);
-			}
+			if (go != null)
+				return go.GetComponent<FieldMapActorController>().GetLadderFlag() != 0;
 		}
-		return result;
+		return false;
 	}
 
 	private static SourceControl GetCurrentInputSource()
 	{
 		SourceControl sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
 		if (sourceControl != SourceControl.None)
-		{
 			return sourceControl;
-		}
 		Int32 num = 14;
 		for (Int32 i = 0; i < num; i++)
-		{
-			sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource((Control)i);
-			if (sourceControl != SourceControl.None)
-			{
+			if (PersistenSingleton<HonoInputManager>.Instance.GetSource((Control)i) != SourceControl.None)
 				break;
-			}
-		}
 		return sourceControl;
 	}
 
@@ -524,37 +464,35 @@ public class EventInput
 		if (FF9StateSystem.AndroidPlatform && PersistenSingleton<EventEngine>.Instance.gMode == 3 && EventInput.IsKeyboardOrJoystickInput)
 		{
 			currentInput &= ~EventInput.OperationMask;
-			UInt32 num = 0u;
+			UInt32 inputs = 0u;
 			if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Menu))
 			{
-				num |= 16781312u;
+				inputs |= EventInput.Ptriangle | EventInput.Ltriangle;
 				EventInput.InputLog("Press /_\\");
 			}
 			if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Confirm))
 			{
-				num |= (8192u | EventInput.Lcircle);
+				inputs |= EventInput.Pcircle | EventInput.Lcircle;
 				EventInput.InputLog("Press 0");
 			}
 			if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Cancel))
 			{
-				num |= (16384u | EventInput.Lx);
+				inputs |= EventInput.Px | EventInput.Lx;
 				EventInput.InputLog("Press X");
 			}
 			if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Special))
 			{
-				num |= 557056u;
+				inputs |= EventInput.Psquare | EventInput.Lsquare;
 				EventInput.InputLog("Press []");
 			}
-			currentInput |= num;
+			currentInput |= inputs;
 		}
 	}
 
 	private static void ResetWorldTriggerButton()
 	{
 		if (FF9StateSystem.AndroidPlatform && PersistenSingleton<EventEngine>.Instance.gMode == 3)
-		{
 			PersistenSingleton<AndroidEventInputManager>.Instance.Reset();
-		}
 	}
 
 	public const UInt32 Pselect = 1u;
@@ -565,65 +503,65 @@ public class EventInput
 
 	public const UInt32 Lstart = 8u;
 
-	public const UInt32 Pup = 16u;
+	public const UInt32 Pup = 0x10u;
 
-	public const UInt32 Lup = 16u;
+	public const UInt32 Lup = 0x10u;
 
-	public const UInt32 Pright = 32u;
+	public const UInt32 Pright = 0x20u;
 
-	public const UInt32 Lright = 32u;
+	public const UInt32 Lright = 0x20u;
 
-	public const UInt32 Pdown = 64u;
+	public const UInt32 Pdown = 0x40u;
 
-	public const UInt32 Ldown = 64u;
+	public const UInt32 Ldown = 0x40u;
 
-	public const UInt32 Pleft = 128u;
+	public const UInt32 Pleft = 0x80u;
 
-	public const UInt32 Lleft = 128u;
+	public const UInt32 Lleft = 0x80u;
 
-	public const UInt32 PL2 = 256u;
+	public const UInt32 PL2 = 0x100u;
 
-	public const UInt32 PR2 = 512u;
+	public const UInt32 PR2 = 0x200u;
 
-	public const UInt32 PL1 = 1024u;
+	public const UInt32 PL1 = 0x400u;
 
-	public const UInt32 PR1 = 2048u;
+	public const UInt32 PR1 = 0x800u;
 
-	public const UInt32 Ptriangle = 4096u;
+	public const UInt32 Ptriangle = 0x1000u;
 
-	public const UInt32 Pcircle = 8192u;
+	public const UInt32 Pcircle = 0x2000u;
 
-	public const UInt32 Px = 16384u;
+	public const UInt32 Px = 0x4000u;
 
-	public const UInt32 Psquare = 32768u;
+	public const UInt32 Psquare = 0x8000u;
 
-	public const UInt32 Lmenu = 262144u;
+	public const UInt32 Lmenu = 0x40000u;
 
-	public const UInt32 Lsquare = 524288u;
+	public const UInt32 Lsquare = 0x80000u;
 
-	public const UInt32 LL1 = 1048576u;
+	public const UInt32 LL1 = 0x100000u;
 
-	public const UInt32 LR1 = 2097152u;
+	public const UInt32 LR1 = 0x200000u;
 
-	public const UInt32 LL2 = 4194304u;
+	public const UInt32 LL2 = 0x400000u;
 
-	public const UInt32 LR2 = 8388608u;
+	public const UInt32 LR2 = 0x800000u;
 
-	public const UInt32 Ltriangle = 16777216u;
+	public const UInt32 Ltriangle = 0x1000000u;
 
-	public const UInt32 Lnavi = 33554432u;
+	public const UInt32 Lnavi = 0x2000000u;
 
-	public const UInt32 Lmog = 524288u;
+	public const UInt32 Lmog = EventInput.Lsquare;
 
 	public const Byte PSXCNTL_MAX_PADS = 2;
 
-	public static UInt32 Lcircle = 131072u;
+	public static UInt32 Lcircle = 0x20000u;
 
-	public static UInt32 Lx = 65536u;
+	public static UInt32 Lx = 0x10000u;
 
-	public static UInt32 Fcircle = 65536u;
+	public static UInt32 Fcircle = 0x10000u;
 
-	public static UInt32 Fx = 131072u;
+	public static UInt32 Fx = 0x20000u;
 
 	private static Boolean showLog = false;
 
@@ -631,11 +569,11 @@ public class EventInput
 
 	private static UInt32[] PSXCntlPadMask = new UInt32[2];
 
-	private static readonly UInt32 MovementMask = 240u;
+	private static readonly UInt32 MovementMask = EventInput.Pup | EventInput.Pright | EventInput.Pdown | EventInput.Pleft; // 0xF0
 
-	private static readonly UInt32 ChanbaraMask = 4294967294u;
+	private static readonly UInt32 ChanbaraMask = 0xFFFFFFFEu;
 
-	private static readonly UInt32 OperationMask = EventInput.Lx | 16384u | EventInput.Lcircle | 8192u | 32768u | 524288u | 16777216u | 4096u;
+	private static readonly UInt32 OperationMask = EventInput.Lx | EventInput.Px | EventInput.Lcircle | EventInput.Pcircle | EventInput.Lsquare | EventInput.Psquare | EventInput.Ltriangle | EventInput.Ptriangle; // 0x10BF000u
 
 	private static UInt32 ConfirmMask = 0u;
 

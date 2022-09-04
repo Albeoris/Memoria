@@ -21,6 +21,7 @@ public class WMScriptDirector : HonoBehavior
 
 	public override void HonoAwake()
 	{
+		Single loadStartTime = Time.realtimeSinceStartup;
 		global::Debug.Log("WMScriptDirector.HonoAwake(): This should be called first of all things in WorldMap, than other WM* signletons.");
 		WorldConfiguration.PatchAllWorldConfig();
 		if (!FF9StateSystem.World.IsBeeScene)
@@ -34,8 +35,9 @@ public class WMScriptDirector : HonoBehavior
 		PersistenSingleton<HonoInputManager>.Instance.IgnoreCheckingDirectionSources = true;
 		Transform transform = GameObject.Find("Bee").transform;
 		UnityEngine.Object.Destroy(transform.gameObject);
-		Application.targetFrameRate = 20;
-        Singleton<WMWorld>.Instance.Initialize();
+		FPSManager.SetTargetFPS(Configuration.Graphics.WorldFPS);
+		FPSManager.SetMainLoopSpeed(Configuration.Graphics.WorldTPS);
+		Singleton<WMWorld>.Instance.Initialize();
 		this.World = Singleton<WMWorld>.Instance;
 		this.World.ClipDistance = 300000;
 		this.World.Settings.WrapWorld = true;
@@ -55,20 +57,15 @@ public class WMScriptDirector : HonoBehavior
 		ff9.ff9InitStateWorldMap((Int32)this.FF9.wldMapNo);
 		base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateFieldText(68));
 		if (!FF9StateSystem.World.IsBeeScene)
-		{
 			PersistenSingleton<EventEngine>.Instance.ServiceEvents();
-		}
 		ff9.w_frameSystemConstructor();
 		if (!FF9StateSystem.World.IsBeeScene)
-		{
 			ff9.w_frameMapConstructor();
-		}
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			this.BeeMovementAnimation = Singleton<WMBeeMovementAnimation>.Instance;
-		}
 		this.RenderTextureBank = Singleton<WMRenderTextureBank>.Instance;
 		RenderSettings.fog = true;
+		FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
 	}
 
 	public void CreateDebugObjects()
@@ -101,52 +98,33 @@ public class WMScriptDirector : HonoBehavior
 		}
 	}
 
-	public override void HonoUpdate()
+	public override void HonoFixedUpdate()
 	{
 		if (this.World.LoadState == WMWorldLoadState.Initializing)
 		{
-			if (ff9.GetControlChar() != (UnityEngine.Object)null)
-			{
+			if (ff9.GetControlChar() != null)
 				ff9.w_moveActorPtr = ff9.GetControlChar();
-			}
 			return;
 		}
 		if (this.World.LoadState == WMWorldLoadState.LoadingTheRestOfBlocksInBackground)
-		{
 			this.World.OnUpdateLoading();
-		}
 		this.World.OnUpdate();
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			this.BeeMovementAnimation.OnUpdate();
-		}
-		if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
-		{
-			if (this.fastForwardFrameCounter == 0)
-			{
-				ff9.kPadPush.CollectInput();
-			}
-		}
-		else
-		{
-			ff9.kPadPush.CollectInput();
-		}
-		this.honoCumulativeTime += Time.deltaTime;
+	}
+
+	public override void HonoUpdate()
+	{
 		if (ff9.w_frameCounter < ff9.kframeEventStartLoop + 1)
 		{
 			this.HonoUpdate20FPS();
 		}
-		else if (this.honoCumulativeTime >= 0.05f)
+		else
 		{
+			ff9.kPadPush.CollectInput();
 			this.HonoUpdate20FPS();
 			this.honoFrameCounter++;
-			this.honoCumulativeTime -= 0.05f;
 			ff9.kPadPush.PurgeInput();
-		}
-		if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
-		{
-			this.fastForwardFrameCounter++;
-			this.fastForwardFrameCounter %= HonoBehaviorSystem.Instance.GetFastForwardFactor();
 		}
 		WMGizmos.DrawFrustum(Singleton<WMWorld>.Instance.MainCamera);
 	}
@@ -186,14 +164,10 @@ public class WMScriptDirector : HonoBehavior
 
 			this.RenderTextureBank.OnUpdate20FPS();
 			if ((this.FF9World.attr & 512U) == 0U)
-			{
 				SceneDirector.ServiceFade();
-			}
 
 			if ((this.FF9World.attr & 1024U) == 0U)
-			{
 				ff9.ff9worldInternalBattleEncountService();
-			}
 
 			if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
 			{
@@ -255,9 +229,7 @@ public class WMScriptDirector : HonoBehavior
 				{
 					WMActor wmActor = ((Actor) obj).wmActor;
 					if (obj.cid == 4 && wmActor != null)
-					{
 						wmActor.UpdateAnimationViaScript();
-					}
 				}
 			}
 		}
@@ -310,20 +282,17 @@ public class WMScriptDirector : HonoBehavior
 
 	private void OnLowFps()
 	{
-		GlobalFog globalFog = ff9.world.GlobalFog;
-		globalFog.enabled = false;
+		ff9.world.GlobalFog.enabled = false;
 		ff9.world.Settings.EnableFog = true;
 		RenderSettings.fog = true;
 	}
 
 	private void Update()
 	{
-		this.monoCumulativeTime += Time.deltaTime;
-		if (this.monoCumulativeTime >= 0.05f)
+		for (Int32 updateCount = 0; updateCount < FPSManager.MainLoopUpdateCount; updateCount++)
 		{
 			this.OnUpdate20FPS();
 			this.monoFrameCounter++;
-			this.monoCumulativeTime -= 0.05f;
 		}
 		Single time = Time.time;
 		if (time >= this.honoUpdateUpsTextTime)
@@ -331,52 +300,36 @@ public class WMScriptDirector : HonoBehavior
 			Single num = time - this.honoUpdateUpsLastTime;
 			this.Ups = (Single)this.honoFrameCounter / num;
 			if (this.HonoUpsText)
-			{
 				this.HonoUpsText.text = String.Format("{0:F2} ({1}) HUPS", this.Ups, this.honoFrameCounter);
-			}
 			this.honoFrameCounter = 0;
 			this.honoUpdateUpsTextTime = time + 1f;
 			this.honoUpdateUpsLastTime = time;
 		}
-		time = Time.time;
 		if (time >= this.monoUpdateUpsTextTime)
 		{
 			Single num2 = time - this.monoUpdateUpsLastTime;
 			Single num3 = (Single)this.monoFrameCounter / num2;
 			if (this.MonoUpsText)
-			{
 				this.MonoUpsText.text = String.Format("{0:F2} ({1}) MUPS", num3, this.monoFrameCounter);
-			}
 			this.monoFrameCounter = 0;
 			this.monoUpdateUpsTextTime = time + 1f;
 			this.monoUpdateUpsLastTime = time;
 		}
 		if (!this.didCheckTheDeviceModel && Application.platform == RuntimePlatform.Android)
 		{
-			String text = SystemInfo.deviceModel;
-			if (text == "Nexus 10" || text == "Nexus 7" || text == "P-02E")
-			{
+			String deviceName = SystemInfo.deviceModel.ToUpper();
+			if (deviceName.Contains("NEXUS 10") || deviceName.Contains("NEXUS 7") || deviceName.Contains("P-02E"))
 				FF9StateSystem.World.HasLowFpsOnDevice = true;
-			}
-			text = SystemInfo.deviceModel.ToUpper();
-			if (text.Contains("NEXUS 10") || text.Contains("NEXUS 7") || text.Contains("P-02E"))
-			{
-				FF9StateSystem.World.HasLowFpsOnDevice = true;
-			}
 			this.didCheckTheDeviceModel = true;
 		}
 		if (!this.didCheckTheGraphicsCard && (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor))
 		{
-			String text2 = SystemInfo.graphicsDeviceName.ToUpper();
-			if (text2.Contains("INTEL") || text2.Contains("ADD_MORE_HERE"))
-			{
+			String deviceName = SystemInfo.graphicsDeviceName.ToUpper();
+			if (deviceName.Contains("INTEL") || deviceName.Contains("ADD_MORE_HERE"))
 				FF9StateSystem.World.HasLowFpsOnDevice = true;
-			}
 			this.didCheckTheGraphicsCard = true;
 			if (FF9StateSystem.World.HasLowFpsOnDevice)
-			{
 				this.OnLowFps();
-			}
 		}
 		this.UpdateCheckingLowEndAndroidDevices();
 	}
@@ -384,9 +337,7 @@ public class WMScriptDirector : HonoBehavior
 	public override void HonoLateUpdate()
 	{
 		if (this.useCustomProjectionMatrix)
-		{
 			this.World.CreateProjectionMatrix();
-		}
 	}
 
 	[ContextMenu("Use Custom Projection Matrix")]
@@ -496,15 +447,13 @@ public class WMScriptDirector : HonoBehavior
 
 	public override void HonoOnStartFastForwardMode()
 	{
-		this.SetAnimationSpeeds(0.667f * (Single)HonoBehaviorSystem.Instance.GetFastForwardFactor());
-		this.fastForwardFrameCounter = 0;
+		this.SetAnimationSpeeds(0.667f * HonoBehaviorSystem.Instance.GetFastForwardFactor());
 		this.fastForwardFrameCounter20FPS = 0;
 	}
 
 	public override void HonoOnStopFastForwardMode()
 	{
 		this.SetAnimationSpeeds(0.667f);
-		this.fastForwardFrameCounter = 0;
 		this.fastForwardFrameCounter20FPS = 0;
 	}
 
@@ -542,8 +491,6 @@ public class WMScriptDirector : HonoBehavior
 
 	public WMRenderTextureBank RenderTextureBank;
 
-	private Single honoCumulativeTime;
-
 	private Int32 honoFrameCounter;
 
 	public GUIText HonoUpsText;
@@ -553,8 +500,6 @@ public class WMScriptDirector : HonoBehavior
 	private Single honoUpdateUpsTextTime;
 
 	private Single honoUpdateUpsLastTime;
-
-	private Single monoCumulativeTime;
 
 	public Int32 monoFrameCounter;
 
@@ -589,6 +534,4 @@ public class WMScriptDirector : HonoBehavior
 	public Single resetLowFpsTime;
 
 	private Boolean useCustomProjectionMatrix;
-
-	private Int32 fastForwardFrameCounter;
 }

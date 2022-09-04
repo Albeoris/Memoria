@@ -2176,15 +2176,11 @@ public static class ff9
 		if (FF9StateSystem.World.IsBeeScene)
 		{
 			if (ff9.w_moveCHRControlPtr == null)
-			{
 				ff9.w_moveCHRControlPtr = ff9.w_moveCHRControl[ff9.w_moveCHRControl_No];
-			}
 			return WMActor.ControlledDebugDebugActor;
 		}
 		if (PersistenSingleton<EventEngine>.Instance.GetControlChar() != null)
-		{
 			return ((Actor)PersistenSingleton<EventEngine>.Instance.GetControlChar()).wmActor;
-		}
 		return null;
 	}
 
@@ -2193,9 +2189,7 @@ public static class ff9
 		if (FF9StateSystem.World.IsBeeScene)
 		{
 			if (ff9.w_moveCHRControlPtr == null)
-			{
 				ff9.w_moveCHRControlPtr = ff9.w_moveCHRControl[ff9.w_moveCHRControl_No];
-			}
 			return WMActor.ControlledDebugDebugActor.originalActor;
 		}
 		return PersistenSingleton<EventEngine>.Instance.GetControlChar();
@@ -2214,9 +2208,7 @@ public static class ff9
 	public static ObjList GetActiveObjList()
 	{
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			return ff9.world.ActorList;
-		}
 		return PersistenSingleton<EventEngine>.Instance.GetActiveObjList();
 	}
 
@@ -2236,9 +2228,7 @@ public static class ff9
 		if (!FF9StateSystem.World.IsBeeScene)
 		{
 			if (ff9.w_isMogActive)
-			{
 				return num;
-			}
 			PersistenSingleton<EventEngine>.Instance.Request(PersistenSingleton<EventEngine>.Instance.FindObjByUID(0), 1, num, false);
 		}
 		return num;
@@ -2252,9 +2242,7 @@ public static class ff9
 	public static Int32 ServiceEvents()
 	{
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			return 0;
-		}
 		return PersistenSingleton<EventEngine>.Instance.ServiceEvents();
 	}
 
@@ -2266,9 +2254,7 @@ public static class ff9
 	public static Byte byte_gEventGlobal_keventNaviModeNo()
 	{
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			return 0;
-		}
 		return FF9StateSystem.EventState.gEventGlobal[100];
 	}
 
@@ -2304,18 +2290,13 @@ public static class ff9
 
 	public static Boolean IsBeeScene
 	{
-		get
-		{
-			return FF9StateSystem.World.IsBeeScene;
-		}
+		get => FF9StateSystem.World.IsBeeScene;
 	}
 
 	public static Byte ushort_gEventGlobal_keventScriptNo()
 	{
 		if (ff9.IsBeeScene)
-		{
 			return 1;
-		}
 		return ff9.byte_gEventGlobal(102);
 	}
 
@@ -2364,9 +2345,7 @@ public static class ff9
 		get
 		{
 			if (ff9.w_moveActorPtr == null)
-			{
 				return 0;
-			}
 			return ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index].id;
 		}
 	}
@@ -2410,50 +2389,32 @@ public static class ff9
 
 	public static FF9StateGlobal FF9Global
 	{
-		get
-		{
-			return FF9StateSystem.Common.FF9;
-		}
+		get => FF9StateSystem.Common.FF9;
 	}
 
 	public static FF9StateSystem FF9Sys
 	{
-		get
-		{
-			return PersistenSingleton<FF9StateSystem>.Instance;
-		}
+		get => PersistenSingleton<FF9StateSystem>.Instance;
 	}
 
 	public static WMWatcher watcher
 	{
-		get
-		{
-			return Singleton<WMWatcher>.Instance;
-		}
+		get => Singleton<WMWatcher>.Instance;
 	}
 
 	public static WMWorld world
 	{
-		get
-		{
-			return Singleton<WMWorld>.Instance;
-		}
+		get => Singleton<WMWorld>.Instance;
 	}
 
 	private static WMRenderTextureBank renderTextureBank
 	{
-		get
-		{
-			return Singleton<WMRenderTextureBank>.Instance;
-		}
+		get => Singleton<WMRenderTextureBank>.Instance;
 	}
 
 	public static WMTweaker tweaker
 	{
-		get
-		{
-			return Singleton<WMTweaker>.Instance;
-		}
+		get => Singleton<WMTweaker>.Instance;
 	}
 
 	public static Single S(Int32 fixedPoint)
@@ -2507,13 +2468,9 @@ public static class ff9
 		Single num3 = Math.Abs(b);
 		Single num4 = Math.Abs(a - b);
 		if (a == b)
-		{
 			return true;
-		}
 		if (a == 0f || b == 0f || num4 < 1.401298E-45f)
-		{
 			return num4 < num * Single.Epsilon;
-		}
 		return num4 / Math.Min(num2 + num3, Single.MaxValue) < num;
 	}
 
@@ -2521,9 +2478,7 @@ public static class ff9
 	public static void printf(String message, ff9.LogLevel level = LogLevel.Info)
 	{
 		if (!ff9.PrintDebug)
-		{
 			return;
-		}
 		switch (level)
 		{
 		case LogLevel.Info:
@@ -2573,27 +2528,21 @@ public static class ff9
 	public static void FF9Wipe_WhiteInEx(Int32 frame)
 	{
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			return;
-		}
 		SceneDirector.FF9Wipe_WhiteInEx(frame);
 	}
 
 	public static void FF9Wipe_WhiteOutEx(Int32 frame)
 	{
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			return;
-		}
 		SceneDirector.FF9Wipe_WhiteOutEx(frame);
 	}
 
 	public static void FF9Wipe_FadeOutEx(Int32 frame)
 	{
 		if (FF9StateSystem.World.IsBeeScene)
-		{
 			return;
-		}
 		SceneDirector.FF9Wipe_FadeOutEx(frame);
 	}
 
@@ -2607,81 +2556,43 @@ public static class ff9
 	public static String SC_COUNTER_ToString(Int32 value)
 	{
 		if (value == 1500)
-		{
 			return "SC_COUNTER_ARMOR_BLANK_START";
-		}
 		if (value == 1600)
-		{
 			return "SC_COUNTER_ARMOR_BLANK_END";
-		}
 		if (value == 2400)
-		{
 			return "SC_COUNTER_WMTITLE_BUNMEI_ON";
-		}
 		if (value == 2990)
-		{
 			return "SC_COUNTER_SGATE_DESTROYED";
-		}
 		if (value == 4990)
-		{
 			return "SC_COUNTER_CLAY_DESTROYED";
-		}
 		if (value == 5598)
-		{
 			return "SC_COUNTER_LIND_DESTROYED";
-		}
 		if (value == 5990)
-		{
 			return "SC_COUNTER_FOG_END";
-		}
 		if (value == 6200)
-		{
 			return "SC_COUNTER_KUROMA_APPEAR";
-		}
 		if (value == 6875)
-		{
 			return "SC_COUNTER_DAGGER_AWAKE";
-		}
 		if (value == 6990)
-		{
 			return "SC_COUNTER_SGATE_RECOVER";
-		}
 		if (value == 8800)
-		{
 			return "SC_COUNTER_ALEX_DESTROYED";
-		}
 		if (value == 9450)
-		{
 			return "SC_COUNTER_SUNA_MAKYU_ON";
-		}
 		if (value == 9600)
-		{
 			return "SC_COUNTER_WMTITLE_NEW_ON";
-		}
 		if (value == 9890)
-		{
 			return "SC_COUNTER_SUNA_MAKYU_OFF";
-		}
 		if (value == 10300)
-		{
 			return "SC_COUNTER_CUT_HAIR";
-		}
 		if (value == 10400)
-		{
 			return "SC_COUNTER_GET_HILDA3";
-		}
 		if (value == 10600)
-		{
 			return "SC_COUNTER_HOKORA_START";
-		}
 		if (value == 10700)
-		{
 			return "SC_COUNTER_HOKORA_END";
-		}
 		if (value == 11090)
-		{
 			return "SC_COUNTER_LAST_WORLD";
-		}
 		return String.Empty;
 	}
 
@@ -2721,13 +2632,9 @@ public static class ff9
 			ff9.w_cameraSysData.cameraNotrot = false;
 		}
 		if (ff9.w_cameraSysDataCamera.upperCounterSpeed < 0)
-		{
 			ff9.w_cameraSysDataCamera.upperCounter = 0;
-		}
 		if (ff9.w_cameraSysDataCamera.upperCounterSpeed > 0)
-		{
 			ff9.w_cameraSysDataCamera.upperCounter = 4096;
-		}
 		ff9.w_cameraChangeCounter = 0;
 		ff9.w_cameraChangeCounterSpeed = 0;
 		ff9.w_cameraPosstatNow = ff9.w_cameraPosstat[1];
@@ -2752,13 +2659,9 @@ public static class ff9
 		ff9.w_cameraChangeChr = (Byte)mode;
 		ff9.w_cameraPosstatPrev = ff9.w_cameraPosstatNow;
 		if (ff9.w_blockReady)
-		{
 			ff9.w_cameraChangeCounterSpeed = (Int16)step;
-		}
 		else
-		{
 			ff9.w_cameraChangeCounterSpeed = 0;
-		}
 	}
 
 	public static void w_cameraSmooth()
@@ -2771,43 +2674,26 @@ public static class ff9
 	public static void w_cameraUpdate()
 	{
 		if (!ff9.w_cameraFixMode)
-		{
 			ff9.w_cameraChangeUpdate();
-		}
 		Single num = 8f;
 		if (ff9.w_moveCHRControlPtr.type_cam == 0)
-		{
 			num = 8f;
-		}
 		else if (ff9.w_moveCHRControlPtr.type_cam == 1)
-		{
 			num = 8f;
-		}
 		else if (ff9.w_moveCHRControlPtr.type_cam == 4)
-		{
 			num = 8f;
-		}
 		else if (ff9.w_moveCHRControlPtr.type_cam == 2)
-		{
 			num = 9.5f;
-		}
 		else if (ff9.w_moveCHRControlPtr.type_cam == 3)
-		{
 			num = 8f;
-		}
 		ff9.world.MainCamera.fieldOfView = ff9.w_cameraPosstatNow.cameraPers / num;
 		if (ff9.w_moveCHRControlPtr.type == 1)
-		{
 			ff9.world.MainCamera.fieldOfView = 43.75f;
-		}
 		if (ff9.w_moveCHRControlPtr.type_cam == 1)
 		{
 			Int32 num2 = ff9.w_frameGetParameter(193);
 			if (num2 == 36 || num2 == 37 || num2 == 38)
-			{
-				num = 8f;
-				ff9.world.MainCamera.fieldOfView = 350f / num;
-			}
+				ff9.world.MainCamera.fieldOfView = 350f / 8f;
 		}
 		ff9.w_cameraSysDataCamera.rotation %= 360f;
 		ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHight;
@@ -2815,9 +2701,7 @@ public static class ff9
 		ff9.w_cameraEyeOffset.y = ff9.w_cameraPosstatNow.cameraHight;
 		ff9.w_cameraEyeOffset.z = ff9.rcos(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f);
 		if (!ff9.w_cameraFixMode)
-		{
 			ff9.w_cameraSetEyeAim();
-		}
 		ff9.setVector(ref ff9.w_cameraFocusEye, ff9.w_cameraWorldAim.x - ff9.w_cameraWorldEye.x, ff9.w_cameraWorldAim.y - ff9.w_cameraWorldEye.y, ff9.w_cameraWorldAim.z - ff9.w_cameraWorldEye.z);
 		if (ff9.tweaker.CustomCamera)
 		{
@@ -2846,33 +2730,25 @@ public static class ff9
 				{
 					ff9.tweaker.FixTypeCamEyeYCurrent += 25;
 					if (ff9.tweaker.FixTypeCamEyeYCurrent > ff9.tweaker.FixTypeCamEyeYTarget)
-					{
 						ff9.tweaker.FixTypeCamEyeYCurrent = ff9.tweaker.FixTypeCamEyeYTarget;
-					}
 				}
 				else if (ff9.tweaker.FixTypeCamEyeYCurrent > ff9.tweaker.FixTypeCamEyeYTarget)
 				{
 					ff9.tweaker.FixTypeCamEyeYCurrent -= 25;
 					if (ff9.tweaker.FixTypeCamEyeYCurrent < ff9.tweaker.FixTypeCamEyeYTarget)
-					{
 						ff9.tweaker.FixTypeCamEyeYCurrent = ff9.tweaker.FixTypeCamEyeYTarget;
-					}
 				}
 				if (ff9.tweaker.FixTypeCamAimYCurrent < ff9.tweaker.FixTypeCamAimYTarget)
 				{
 					ff9.tweaker.FixTypeCamAimYCurrent += 25;
 					if (ff9.tweaker.FixTypeCamAimYCurrent > ff9.tweaker.FixTypeCamAimYTarget)
-					{
 						ff9.tweaker.FixTypeCamAimYCurrent = ff9.tweaker.FixTypeCamAimYTarget;
-					}
 				}
 				else if (ff9.tweaker.FixTypeCamAimYCurrent > ff9.tweaker.FixTypeCamAimYTarget)
 				{
 					ff9.tweaker.FixTypeCamAimYCurrent -= 25;
 					if (ff9.tweaker.FixTypeCamAimYCurrent < ff9.tweaker.FixTypeCamAimYTarget)
-					{
 						ff9.tweaker.FixTypeCamAimYCurrent = ff9.tweaker.FixTypeCamAimYTarget;
-					}
 				}
 				ff9.tweaker.FixTypeCamEyeY = ff9.tweaker.FixTypeCamEyeYCurrent;
 				ff9.tweaker.FixTypeCamAimY = ff9.tweaker.FixTypeCamAimYCurrent;
@@ -2892,30 +2768,20 @@ public static class ff9
 		ff9.w_cameraDirVector.y = 0f;
 		ff9.w_cameraDirVector.z = ff9.w_cameraWorldAim.z - ff9.w_cameraWorldEye.z;
 		if (ff9.w_cameraDirVector.x > 65535f)
-		{
 			ff9.w_cameraDirVector.x = ff9.w_cameraDirVector.x - 393216f;
-		}
 		if (ff9.w_cameraDirVector.z > 65535f)
-		{
 			ff9.w_cameraDirVector.z = ff9.w_cameraDirVector.z - 327680f;
-		}
 		if (ff9.w_cameraDirVector.x < -65535f)
-		{
 			ff9.w_cameraDirVector.x = ff9.w_cameraDirVector.x + 393216f;
-		}
 		if (ff9.w_cameraDirVector.z < -65535f)
-		{
 			ff9.w_cameraDirVector.z = ff9.w_cameraDirVector.z + 327680f;
-		}
 		Single num3 = ff9.ratan2(ff9.w_cameraDirVector.z, ff9.w_cameraDirVector.x);
 		num3 += ff9.w_cameraRotAngle * 0f;
 		ff9.w_cameraDirVector.x = ff9.rcos(num3);
 		ff9.w_cameraDirVector.z = ff9.rsin(num3);
 		ff9.VectorNormal(ref ff9.w_cameraDirVector, out ff9.w_cameraDirVector);
 		if (ff9.w_frameScenePtr < 4990 && ff9.m_GetIDArea(ff9.m_moveActorID) == 12)
-		{
 			ff9.w_cameraSysDataCamera.upperCounterForce = true;
-		}
 		ff9.w_cameraDebugDist = ff9.tweaker.w_cameraDebugDist;
 	}
 
@@ -3293,7 +3159,7 @@ public static class ff9
 			ff9.w_cameraSysDataCamera.upperCounterSpeed = -128;
 		}
 		ff9.sworldStateCamera sworldStateCamera = ff9.w_cameraSysDataCamera;
-		sworldStateCamera.upperCounter = (Int16)(sworldStateCamera.upperCounter + (Int16)ff9.w_cameraSysDataCamera.upperCounterSpeed);
+		sworldStateCamera.upperCounter += (Int16)ff9.w_cameraSysDataCamera.upperCounterSpeed;
 		if (ff9.w_cameraSysDataCamera.upperCounter < 1)
 		{
 			ff9.w_cameraSysDataCamera.upperCounter = 0;
@@ -3308,11 +3174,9 @@ public static class ff9
 		}
 		if (ff9.w_cameraChangeCounterSpeed != 0)
 		{
-			ff9.w_cameraChangeCounter = (Int16)(ff9.w_cameraChangeCounter + ff9.w_cameraChangeCounterSpeed);
+			ff9.w_cameraChangeCounter += ff9.w_cameraChangeCounterSpeed;
 			if (ff9.w_cameraChangeCounter > 4096)
-			{
 				ff9.w_cameraChangeCounter = 4096;
-			}
 			ff9.s_cameraPosstat s_cameraPosstat;
 			ff9.w_cameraGetPosstat(ff9.w_moveActorPtr.pos[1], ff9.w_cameraChangeChr, area, ff9.w_cameraSysDataCamera.upperCounter, out s_cameraPosstat);
 			ff9.w_cameraPosstatNow.cameraPers = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraPers, s_cameraPosstat.cameraPers, ff9.w_cameraChangeCounter, 9);
@@ -3321,9 +3185,7 @@ public static class ff9
 			ff9.w_cameraPosstatNow.cameraCorrect = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraCorrect, s_cameraPosstat.cameraCorrect, ff9.w_cameraChangeCounter, 14);
 			ff9.w_cameraPosstatNow.aimHight = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.aimHight, s_cameraPosstat.aimHight, ff9.w_cameraChangeCounter, 14);
 			if (ff9.w_cameraChangeCounter >= 4096)
-			{
 				ff9.w_cameraChangeCounterSpeed = 0;
-			}
 		}
 		else
 		{
@@ -3352,49 +3214,47 @@ public static class ff9
 
 	public static UInt16 w_cameraGetHeightParam(Single height)
 	{
-		Int32 num = (Int32)(height * 256f);
-		Int32 num2 = num + 1000;
-		num2 *= 4096;
-		num2 /= 4500;
-		if (num2 > 4096)
-		{
-			num2 = 4096;
-		}
-		if (num2 < 0)
-		{
-			num2 = 0;
-		}
-		return (UInt16)num2;
+		Int32 hparam = (Int32)(height * 256f);
+		hparam += 1000;
+		hparam *= 4096;
+		hparam /= 4500;
+		if (hparam > 4096)
+			hparam = 4096;
+		if (hparam < 0)
+			hparam = 0;
+		return (UInt16)hparam;
 	}
 
 	public static void w_cameraChangeTrigger()
 	{
+		if (ff9.w_cameraTriggerTime >= RealTime.time - 0.1f)
+			return;
+		ff9.w_cameraTriggerTime = RealTime.time;
 		if (!ff9.w_cameraSysDataCamera.upperCounterForce && (ff9.w_frameScenePtr >= 4990 || ff9.m_GetIDArea(ff9.m_moveActorID) != 12))
 		{
-			Boolean flag = false;
+			Boolean atTip = false;
 			if (ff9.w_cameraSysDataCamera.upperCounter == 0)
 			{
-				flag = true;
+				atTip = true;
 				ff9.w_cameraSysDataCamera.upperCounterSpeed = 256;
 			}
 			if (ff9.w_cameraSysDataCamera.upperCounter == 4096)
 			{
-				flag = true;
+				atTip = true;
 				ff9.w_cameraSysDataCamera.upperCounterSpeed = -256;
 			}
-			if (!flag)
-			{
+			if (!atTip)
 				ff9.w_cameraSysDataCamera.upperCounterSpeed = -ff9.w_cameraSysDataCamera.upperCounterSpeed;
-			}
 		}
 	}
 
 	public static void w_cameraChangeNotrotMode()
 	{
+		if (ff9.w_cameraNotrotTime >= RealTime.time - 0.1f)
+			return;
+		ff9.w_cameraNotrotTime = RealTime.time;
 		if (ff9.w_cameraSysData.cameraNotrot)
-		{
 			ff9.w_movementSoftRot = true;
-		}
 		ff9.w_cameraSysData.cameraNotrot = !ff9.w_cameraSysData.cameraNotrot;
 	}
 
@@ -4087,13 +3947,9 @@ public static class ff9
 	{
 		String[] array = new String[5];
 		if (ff9.w_frameDisc == 1)
-		{
 			array = ff9.w_fileImagenameServer1;
-		}
 		else
-		{
 			array = ff9.w_fileImagenameServer4;
-		}
 		for (Int32 i = 0; i < 5; i++)
 		{
 			ff9.w_fileImagename[i] = array[i];
@@ -4115,13 +3971,9 @@ public static class ff9
 	public static void w_frameSystemConstructor()
 	{
 		if ((ff9.byte_gEventGlobal(101) & 1) != 0)
-		{
 			ff9.FF9Wipe_WhiteOutEx(1);
-		}
 		else
-		{
 			ff9.FF9Wipe_FadeOutEx(1);
-		}
 		ff9.w_frameScenePtr = ff9.ushort_gEventGlobal(0);
 		ff9.w_frameDisc = WorldConfiguration.GetDisc();
 		ff9.w_frameCameraPtr = GameObject.Find("WorldCamera").GetComponent<Camera>();
@@ -4165,9 +4017,7 @@ public static class ff9
 	{
 		ff9.w_frameInitialize = false;
 		if (ff9.w_frameInternalSwitchEnable)
-		{
 			ff9.FF9Global.worldState.internall = true;
-		}
 		ff9.w_frameResult = 0;
 		if ((ff9.FF9Global.attr & 2u) == 0u)
 		{
@@ -4202,21 +4052,10 @@ public static class ff9
 		ff9.w_frameService();
 		ff9.w_frameCounter++;
 		ff9.w_frameCounterReady++;
-		Int32 num = ff9.w_frameResult;
-		if (num != 3)
-		{
-			if (num != 4)
-			{
-			}
-		}
-		else if (ff9.m_GetIDTopograph(ff9.m_moveActorID) == 52)
-		{
+		if (ff9.w_frameResult == 3 && ff9.m_GetIDTopograph(ff9.m_moveActorID) == 52)
 			ff9.w_frameResult = 0;
-		}
 		if (ff9.w_frameInternalSwitchEnable)
-		{
 			ff9.FF9Global.worldState.internall = false;
-		}
 		ff9.totaltime = 0;
 		ff9.totaltime += ff9.updatetime;
 		ff9.totaltime += ff9.eventtime;
@@ -4227,9 +4066,7 @@ public static class ff9
 	public static void w_frameUpdateEvent()
 	{
 		if ((ff9.w_framePhase == 0 || ff9.w_framePhase == 2) && (ff9.w_framePhase == 0 || ff9.w_framePhase == 2))
-		{
 			ff9.w_frameResult = ff9.ServiceEvents();
-		}
 	}
 
 	private static void w_frameService()
@@ -4263,9 +4100,7 @@ public static class ff9
 		case 0:
 			ff9.w_frameUpdateEvent();
 			if (ff9.GetControlChar())
-			{
 				ff9.w_moveActorPtr = ff9.GetControlChar();
-			}
 			ff9.world.ActorList = ff9.GetActiveObjList();
 			break;
 		case 1:
@@ -4293,14 +4128,7 @@ public static class ff9
 			}
 			break;
 		}
-		if (ff9.UnityUnit(ff9.w_moveActorPtr.pos[0]) != ff9.UnityUnit(ff9.w_moveActorPtr.lastx) || ff9.UnityUnit(ff9.w_moveActorPtr.pos[1]) != ff9.UnityUnit(ff9.w_moveActorPtr.lasty) || ff9.UnityUnit(ff9.w_moveActorPtr.pos[2]) != ff9.UnityUnit(ff9.w_moveActorPtr.lastz))
-		{
-			ff9.w_moveCHRControl_Move = true;
-		}
-		else
-		{
-			ff9.w_moveCHRControl_Move = false;
-		}
+		ff9.w_moveCHRControl_Move = ff9.UnityUnit(ff9.w_moveActorPtr.pos[0]) != ff9.UnityUnit(ff9.w_moveActorPtr.lastx) || ff9.UnityUnit(ff9.w_moveActorPtr.pos[1]) != ff9.UnityUnit(ff9.w_moveActorPtr.lasty) || ff9.UnityUnit(ff9.w_moveActorPtr.pos[2]) != ff9.UnityUnit(ff9.w_moveActorPtr.lastz);
 		ff9.w_frameLine = 10u;
 		ff9.w_musicUpdate();
 	}
@@ -4684,9 +4512,7 @@ public static class ff9
 	{
 		Int32 idall = 0;
 		if (ff9.w_moveActorPtr != null && ff9.w_moveActorPtr.originalActor != null)
-		{
 			idall = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index].id;
-		}
 		switch (function)
 		{
 		case 192:
@@ -4696,13 +4522,9 @@ public static class ff9
 		case 194:
 		{
 			if (ff9.w_moveActorPtr == null)
-			{
 				return -1;
-			}
 			if (ff9.w_moveActorPtr.originalActor == null)
-			{
 				return -1;
-			}
 			Int32 num;
 			if (ff9.w_moveCHRControl_No == 6)
 			{
@@ -4739,9 +4561,7 @@ public static class ff9
 		case 205:
 		{
 			if (FF9StateSystem.Settings.IsNoEncounter)
-			{
 				return 0;
-			}
 			int num = 0;
 			if (UIManager.World.CurrentState != WorldHUD.State.FullMap)
 			{
@@ -4750,9 +4570,7 @@ public static class ff9
 				long num5 = num3 << 8 | num4;
 				long num6 = num5 % (long)(ff9.w_frameEventBattleProb + 1);
 				if (ff9.w_frameEncountEnable && ff9.w_moveCHRControl_Move && ff9.m_GetIDTopograph(idall) >= 36 && ff9.m_GetIDTopograph(idall) <= 38 && ff9.w_frameCounter > 400 && num6 == 1L)
-				{
 					num = 1;
-				}
 			}
 			return num;
 		}
@@ -4765,9 +4583,7 @@ public static class ff9
 			return (Int32)(ff9.w_moveCHRStatus[11].slice_height * 256f);
 		case 209:
 			if (ff9.w_framePhase == 2)
-			{
 				return 1;
-			}
 			return 0;
 		case 210:
 			return ff9.w_naviLocationDraw;
@@ -5398,27 +5214,16 @@ public static class ff9
 			if (obj.cid == 4)
 			{
 				PosObj posObj = (PosObj)obj;
-				ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[posObj.index];
 				if (ff9.objIsVisible(obj))
 				{
-					Boolean flag = true;
+					Boolean useOwnShadow = true;
 					Vector3 pos = ((Actor)obj).wmActor.pos;
 					if (posObj.index == 8)
-					{
-						flag = false;
-					}
+						useOwnShadow = false;
 					if ((posObj.index == 1 || posObj.index == 2) && ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6)
-					{
-						flag = false;
-					}
-					if (ff9.w_moveCHRStatus[posObj.index].slice_height >= ff9.S(-3) && flag)
-					{
-						ff9.w_FF9DisplayShadow(posObj, ref pos, 0, true);
-					}
-					else
-					{
-						ff9.w_FF9DisplayShadow(posObj, ref pos, 0, false);
-					}
+						useOwnShadow = false;
+					Boolean displayShadow = useOwnShadow && ff9.w_moveCHRStatus[posObj.index].slice_height >= ff9.S(-3);
+					ff9.w_FF9DisplayShadow(posObj, ref pos, 0, displayShadow);
 				}
 				else
 				{
@@ -6328,32 +6133,24 @@ public static class ff9
 		ff9.w_moveCHRControl_XZAlpha = 0f;
 		ff9.w_moveCHRControl_YAlpha = 0f;
 		ff9.w_movementAutoPilotOFF();
-		SByte b = ff9.w_moveCHRControl_No;
+		SByte previousTransport = ff9.w_moveCHRControl_No;
 		if (!FF9StateSystem.World.IsBeeScene)
-		{
 			ff9.w_moveCHRControl_No = (SByte)FF9StateSystem.EventState.gEventGlobal[190];
-		}
 		ff9.s_moveCHRControl s_moveCHRControl = ff9.w_moveCHRControlPtr;
 		ff9.s_moveCHRControl s_moveCHRControl2 = ff9.w_moveCHRControl[ff9.w_moveCHRControl_No];
 		ff9.w_moveCHRControlPtr = s_moveCHRControl2;
-		if (b == 7)
+		if (previousTransport == 7) // Blue Narciss
 		{
-			int num = 1000;
-			ushort tick = (ushort)((float)num * (float)Application.targetFrameRate / 1000f);
-			ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
-			ff9.w_musicSEStop((int)s_moveCHRControl.se, num);
+			ff9.w_musicSEVolumeIntpl(s_moveCHRControl.se, (UInt16)FPSManager.GetTargetFPS(), 0);
+			ff9.w_musicSEStop(s_moveCHRControl.se, 1000);
 		}
 		if (s_moveCHRControl2.se != 0)
 		{
 			ff9.w_musicSEPlay(s_moveCHRControl2.se, 0);
-			if (ff9.w_moveCHRControl_No != 7)
-			{
+			if (ff9.w_moveCHRControl_No != 7) // Blue Narciss
 				ff9.w_musicSEVolumeIntpl(s_moveCHRControl2.se, 60, 63);
-			}
-			if (ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9)
-			{
+			if (ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9) // Hilda Garde III or Invincible
 				ff9.w_musicSEPlay(38, 0);
-			}
 			ff9.w_cameraSysDataCamera.upperCounterForce = true;
 		}
 		if (s_moveCHRControl == null || s_moveCHRControl.music != s_moveCHRControl2.music)
@@ -6361,22 +6158,14 @@ public static class ff9
 			ff9.w_musicRequestSend(s_moveCHRControl2.music);
 			global::Debug.Log("w_musicRequestSend " + s_moveCHRControl2.music);
 		}
-		if (ff9.w_moveCHRControl_No == 0 && b >= 1 && b <= 6)
-		{
+		if (ff9.w_moveCHRControl_No == 0 && previousTransport >= 1 && previousTransport <= 6) // From chocobo to ground
 			global::Debug.LogWarning("Come visit this later! w_moveCHRControl_RotTrue = (w_moveChocoboPtr.rot[1] + 1024) & 0xfff");
-		}
-		if (ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6 && b == 0 && ff9.w_moveChocoboPtr != null)
-		{
-			ff9.w_moveCHRControl_RotTrue = ff9.w_moveChocoboPtr.rot[1];
-		}
-		if (ff9.w_moveCHRControl[b].flg_fly == ff9.w_moveCHRControl[ff9.w_moveCHRControl_No].flg_fly)
-		{
+		if (ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6 && previousTransport == 0 && ff9.w_moveChocoboPtr != null)
+			ff9.w_moveCHRControl_RotTrue = ff9.w_moveChocoboPtr.rot[1]; // From ground to chocobo
+		if (ff9.w_moveCHRControl[previousTransport].flg_fly == ff9.w_moveCHRControl[ff9.w_moveCHRControl_No].flg_fly)
 			ff9.w_cameraChange(s_moveCHRControl2.type_cam, 512);
-		}
 		else
-		{
 			ff9.w_cameraChange(s_moveCHRControl2.type_cam, 64);
-		}
 		ff9.w_cameraFuzzy = !ff9.w_moveCHRControlPtr.flg_fly;
 		ff9.w_movementUpdate();
 		ff9.w_tweakSomeValues();
@@ -6387,15 +6176,13 @@ public static class ff9
 		ff9.w_movementAutoPilotOFF();
 		ff9.w_moveCHRControl_XZAlpha = 0f;
 		ff9.w_moveCHRControl_YAlpha = 0f;
-		Int32 num = ff9.w_moveCHRControl_No;
-		ff9.s_moveCHRControl s_moveCHRControl = ff9.w_moveCHRControlPtr;
-		ff9.s_moveCHRControl s_moveCHRControl2 = ff9.w_moveCHRControl[0];
-		int num2 = 3000;
-		ushort tick = (ushort)((float)num2 * (float)Application.targetFrameRate / 1000f);
-		ff9.w_musicSEVolumeIntpl((int)s_moveCHRControl.se, tick, 0);
+		ff9.s_moveCHRControl currentTransport = ff9.w_moveCHRControlPtr;
+		ff9.s_moveCHRControl nextTransport = ff9.w_moveCHRControl[0];
+		UInt16 tick = (UInt16)(3 * FPSManager.GetTargetFPS());
+		ff9.w_musicSEVolumeIntpl(currentTransport.se, tick, 0);
 		ff9.w_musicSEVolumeIntpl(38, tick, 0);
-		ff9.w_musicRequestSend(s_moveCHRControl2.music);
-		ff9.w_cameraChange(s_moveCHRControl2.type_cam, 64);
+		ff9.w_musicRequestSend(nextTransport.music);
+		ff9.w_cameraChange(nextTransport.type_cam, 64);
 	}
 
 	public static void w_tweakSomeValues()
@@ -6503,9 +6290,7 @@ public static class ff9
 		ff9.w_moveCHRControl_No = (SByte)ff9.byte_gEventGlobal(190);
 		ff9.w_moveCHRControlPtr = ff9.w_moveCHRControl[ff9.w_moveCHRControl_No];
 		if (ff9.GetControlChar() != null)
-		{
 			ff9.w_moveActorPtr = ff9.GetControlChar();
-		}
 		ff9.w_cameraFuzzy = !ff9.w_moveCHRControlPtr.flg_fly;
 		ff9.w_movementUpdate();
 	}
@@ -6525,13 +6310,9 @@ public static class ff9
 			break;
 		}
 		if (ff9.w_moveCHRControlPtr.flg_upcam && ff9.w_getPadPush().kPadR2)
-		{
 			ff9.w_cameraChangeTrigger();
-		}
 		if (ff9.w_getPadPush().kPadL2)
-		{
 			ff9.w_cameraChangeNotrotMode();
-		}
 	}
 
 	private static void w_movementHumanOperation()
@@ -7110,9 +6891,7 @@ public static class ff9
 			ff9.w_moveAutoPilot = 0;
 			ff9.w_moveCHRControl_AutoPrev = 0f;
 			if (ff9.w_moveAutoPilotPrevCammode != ff9.w_cameraSysData.cameraNotrot)
-			{
 				ff9.w_cameraChangeNotrotMode();
-			}
 			ff9.w_cameraSysData.cameraNotrot = ff9.w_moveAutoPilotPrevCammode;
 		}
 	}
@@ -11437,6 +11216,9 @@ public static class ff9
 	public static ff9.sworldEncountSpecial[] w_worldEncountSpecial;
 
 	public static ff9.sNWBBlockHeader w_worldSeaBlockPtr;
+
+	private static Single w_cameraTriggerTime = 0f;
+	private static Single w_cameraNotrotTime = 0f;
 
 	public struct VECTOR
 	{

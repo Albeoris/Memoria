@@ -112,11 +112,8 @@ public class FieldMapActor : HonoBehavior
 
 	public override void HonoLateUpdate()
 	{
-		if (FF9StateSystem.Common.FF9.fldMapNo == 70)
-		{
+		if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
 			return;
-		}
-		BGCAM_DEF currentBgCamera = this._fieldMap.GetCurrentBgCamera();
 		Matrix4x4 cam = FF9StateSystem.Common.FF9.cam;
 		UInt16 proj = FF9StateSystem.Common.FF9.proj;
 		Vector2 projectionOffset = FF9StateSystem.Common.FF9.projectionOffset;
@@ -124,121 +121,89 @@ public class FieldMapActor : HonoBehavior
 		this.projectedPos = PSX.CalculateGTE_RTPT_POS(position, Matrix4x4.identity, cam, (Single)proj, projectionOffset, true);
 		this.projectedDepth = this.projectedPos.z / 4f + (Single)FF9StateSystem.Field.FF9Field.loc.map.charOTOffset;
 		this.charOTOffset = FF9StateSystem.Field.FF9Field.loc.map.charOTOffset;
-		if (this.projectedDepth < 100f || this.projectedDepth > 3996f)
-		{
-		}
-		Single num = PSX.CalculateGTE_RTPTZ(base.transform.position, Matrix4x4.identity, cam, (Single)proj, projectionOffset) * 1f;
-		Single num2 = num / 4f + (Single)FF9StateSystem.Field.FF9Field.loc.map.charOTOffset;
+		//if (this.projectedDepth < 100f || this.projectedDepth > 3996f)
+		//{
+		//}
+		Single psxZ = PSX.CalculateGTE_RTPTZ(base.transform.position, Matrix4x4.identity, cam, proj, projectionOffset);
+		Single psxDepth = psxZ / 4f + (Single)FF9StateSystem.Field.FF9Field.loc.map.charOTOffset;
 		if (this.meshRenderer != null)
 		{
 			if (this.actor != null)
 			{
-				PosObj posObj = this.actor;
-				if (num2 < 100f || num2 > 3996f)
+				if (psxDepth < 100f || psxDepth > 3996f)
 				{
 					if (FF9StateSystem.Common.FF9.fldMapNo == 1413)
 					{
+						// Fossil Roo/Nest
 						FieldMapActorController component = base.GetComponent<FieldMapActorController>();
-						if (component.originalActor.sid == 12)
-						{
-							posObj.frontCamera = true;
-						}
-						else
-						{
-							posObj.frontCamera = false;
-						}
+						this.actor.frontCamera = component.originalActor.sid == 12; // Zidane
 					}
 					else if (FF9StateSystem.Common.FF9.fldMapNo == 1414)
 					{
+						// Fossil Roo/Nest
 						FieldMapActorController component2 = base.GetComponent<FieldMapActorController>();
-						if (component2.originalActor.sid == 16)
-						{
-							posObj.frontCamera = true;
-						}
-						else
-						{
-							posObj.frontCamera = false;
-						}
+						this.actor.frontCamera = component2.originalActor.sid == 16; // Zidane
 					}
 					else if (FF9StateSystem.Common.FF9.fldMapNo != 2752 && FF9StateSystem.Common.FF9.fldMapNo != 1707)
 					{
-						posObj.frontCamera = false;
+						// Invincible/Bridge or Mdn. Sari/Secret Room
+						this.actor.frontCamera = false;
 					}
 					return;
 				}
-				posObj.frontCamera = true;
+				this.actor.frontCamera = true;
 			}
-			Renderer[] array = this.meshRenderer;
-			for (Int32 i = 0; i < (Int32)array.Length; i++)
+			for (Int32 i = 0; i < this.meshRenderer.Length; i++)
 			{
-				Renderer renderer = array[i];
+				Renderer renderer = this.meshRenderer[i];
 				if (renderer.enabled)
 				{
-					Single num3;
-					if (MBG.MarkCharacterDepth)
-					{
-						num3 = 8f;
-					}
-					else
-					{
-						num3 = num;
-					}
-					this.charPsxZ = num3;
-					this.charZ = (Single)(((Int32)num3 / 4 + FF9StateSystem.Field.FF9Field.loc.map.charOTOffset) * 1);
+					this.charPsxZ = MBG.MarkCharacterDepth ? 8f : psxZ;
+					this.charZ = (Single)(((Int32)this.charPsxZ / 4 + FF9StateSystem.Field.FF9Field.loc.map.charOTOffset) * 1);
 					this.charZ = (Single)(-(Single)((Int32)this.charZ));
 					if (FF9StateSystem.Common.FF9.fldMapNo == 2510 && this.actor.uid == 8)
 					{
+						// I. Castle/Mural Room, Water_Mirror
 						renderer.material.SetFloat("_CharZ", 20f);
 					}
 					if (FF9StateSystem.Common.FF9.fldMapNo == 2363 && this.actor.uid == 33)
 					{
+						// Gulug/Path, Thorn
 						renderer.material.SetFloat("_CharZ", 20f);
 					}
 				}
 			}
 		}
 		if (this.actor == null)
-		{
 			return;
-		}
-		FF9Shadow ff9Shadow = FF9StateSystem.Field.FF9Field.loc.map.shadowArray[(Int32)this.actor.uid];
-		Vector3 zero = Vector3.zero;
+		FF9Shadow ff9Shadow = FF9StateSystem.Field.FF9Field.loc.map.shadowArray[this.actor.uid];
+		Vector3 shadowOff = Vector3.zero;
 		if (FF9StateSystem.Common.FF9.fldMapNo == 661 && this.actor.uid == 3)
-		{
-			zero = new Vector3(-39f, -14f, 80f);
-		}
+			shadowOff = new Vector3(-39f, -14f, 80f); // Marsh/Master's House, Quale
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 1659 && this.actor.uid == 128)
-		{
-			zero = new Vector3(0f, -66f, 0f);
-		}
+			shadowOff = new Vector3(0f, -66f, 0f); // Iifa Tree/Seashore, Queen_Brahne (1)
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 1659 && this.actor.uid == 129)
-		{
-			zero = new Vector3(0f, -21f, 0f);
-		}
+			shadowOff = new Vector3(0f, -21f, 0f); // Iifa Tree/Seashore, Queen_Brahne (2)
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 2363 && (this.actor.uid == 16 || this.actor.uid == 15 || this.actor.uid == 32 || this.actor.uid == 33))
-		{
-			zero = new Vector3(0f, -15f, 0f);
-		}
-		Vector3 a = this.GetShadowCurrentPos();
+			shadowOff = new Vector3(0f, -15f, 0f); // Gulug/Path, Zorn or Thorn
+		Vector3 shadowPos = this.GetShadowCurrentPos();
         if ((FF9StateSystem.Common.FF9.fldMapNo == 2107 && this.actor.uid == 5) || (FF9StateSystem.Common.FF9.fldMapNo == 2102 && this.actor.uid == 4))
         {
-			a = base.transform.position;
-			a.y = 0f;
+			// Lindblum/Square or Lindblum/Main Street, Pickaxe
+			shadowPos = base.transform.position;
+			shadowPos.y = 0f;
 		}
-		this.shadowTran.localPosition = a + new Vector3(ff9Shadow.xOffset, this.shadowHeightOffset * 1f, ff9Shadow.zOffset) + zero;
-		Single num4 = PSX.CalculateGTE_RTPTZ(this.shadowTran.position, Matrix4x4.identity, cam, (Single)proj, projectionOffset);
-		num4 = (Single)(((Int32)num4 / 4 + FF9StateSystem.Field.FF9Field.loc.map.charOTOffset) * 1);
-		num4 = (Single)(-(Single)((Int32)num4));
-		this.shadowZ = (Int32)num4;
+		this.shadowTran.localPosition = shadowPos + new Vector3(ff9Shadow.xOffset, this.shadowHeightOffset * 1f, ff9Shadow.zOffset) + shadowOff;
+		Single shZ = PSX.CalculateGTE_RTPTZ(this.shadowTran.position, Matrix4x4.identity, cam, (Single)proj, projectionOffset);
+		shZ = (Int32)shZ / 4 + FF9StateSystem.Field.FF9Field.loc.map.charOTOffset;
+		this.shadowZ = -(Int32)shZ;
 		this.charAbsZ = base.transform.position.z;
 	}
 
 	private void LateUpdate()
 	{
 		if (!base.IsVisibled())
-		{
 			return;
-		}
 		this.UpdateGeoAttach();
 	}
 

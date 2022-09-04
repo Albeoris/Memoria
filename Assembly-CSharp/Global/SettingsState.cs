@@ -362,22 +362,25 @@ public class SettingsState : MonoBehaviour
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
                 HonoBehaviorSystem.Instance.StartFastForwardMode();
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
-                HonoluluBattleMain.UpdateFrameTime(HonoBehaviorSystem.Instance.GetFastForwardFactor());
+                HonoBehaviorSystem.Instance.StartFastForwardMode();
             else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Ending && !MBG.IsNull)
                 MBG.Instance.SetFastForward(true);
         }
-        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field)
+        else
         {
-            HonoBehaviorSystem.Instance.StopFastForwardMode();
-            if (!MBG.IsNull)
+            if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Field)
+            {
+                HonoBehaviorSystem.Instance.StopFastForwardMode();
+                if (!MBG.IsNull)
+                    MBG.Instance.SetFastForward(false);
+            }
+            else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
+                HonoBehaviorSystem.Instance.StopFastForwardMode();
+            else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                HonoBehaviorSystem.Instance.StopFastForwardMode();
+            else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Ending && !MBG.IsNull)
                 MBG.Instance.SetFastForward(false);
         }
-        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World)
-            HonoBehaviorSystem.Instance.StopFastForwardMode();
-        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
-            HonoluluBattleMain.UpdateFrameTime(1);
-        else if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Ending && !MBG.IsNull)
-            MBG.Instance.SetFastForward(false);
         SoundLib.UpdatePlayingSoundEffectPitchByGameSpeed();
     }
 

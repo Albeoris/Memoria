@@ -286,7 +286,8 @@ public partial class BattleHUD : UIScene
         if (!_oneTime)
             return;
         _oneTime = false;
-        Application.targetFrameRate = 60;
+        FPSManager.SetTargetFPS(Configuration.Graphics.MenuFPS);
+        FPSManager.SetMainLoopSpeed(Configuration.Graphics.MenuTPS);
 
         UInt32 gil = (UInt32)battle.btl_bonus.gil;
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
@@ -312,7 +313,8 @@ public partial class BattleHUD : UIScene
         if (!_oneTime)
             return;
         _oneTime = false;
-        Application.targetFrameRate = 60;
+        FPSManager.SetTargetFPS(Configuration.Graphics.MenuFPS);
+        FPSManager.SetMainLoopSpeed(Configuration.Graphics.MenuTPS);
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.GameOver));
     }
 

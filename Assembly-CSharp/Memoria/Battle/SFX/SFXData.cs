@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using AOT;
 using FF9;
+using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 
@@ -48,7 +49,8 @@ public class SFXData
     {
         Stopwatch watch = new Stopwatch();
         watch.Start();
-        while (!SFXData.lockLoading && watch.ElapsedMilliseconds * HonoBehaviorSystem.Instance.GetFastForwardFactor() < SFXData.LoadingTimeAllocatedPerFrame)
+        Int32 maxLoadingTime = (Int32)Mathf.Floor(1000f / Configuration.Graphics.BattleFPS);
+        while (!SFXData.lockLoading && watch.ElapsedMilliseconds < maxLoadingTime)
         {
             if (LoadCur == null)
             {

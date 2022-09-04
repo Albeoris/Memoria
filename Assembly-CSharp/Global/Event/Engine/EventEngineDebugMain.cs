@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 using UnityEngine;
 
 public class EventEngineDebugMain : MonoBehaviour
@@ -14,7 +15,8 @@ public class EventEngineDebugMain : MonoBehaviour
 
 	private void Update()
 	{
-		this.ee.ProcessEvents();
+		for (Int32 updateCount = 0; updateCount < FPSManager.MainLoopUpdateCount; updateCount++)
+			this.ee.ProcessEvents();
 	}
 
 	private void OnDestroy()

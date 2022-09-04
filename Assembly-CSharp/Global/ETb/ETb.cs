@@ -63,20 +63,20 @@ public class ETb
 
 	private void GenerateKeyEvent()
 	{
-		UInt32 num = this.PadReadE();
-		ETb.sKeyOn = (num & ~ETb.sKey0);
-		ETb.sKeyOff = (~num & ETb.sKey0);
-		ETb.sKey0 = num;
+		UInt32 inputs = this.PadReadE();
+		ETb.sKeyOn = inputs & ~ETb.sKey0;
+		ETb.sKeyOff = ~inputs & ETb.sKey0;
+		ETb.sKey0 = inputs;
 	}
 
 	public UInt32 PadReadE()
 	{
-		return this.getPad() & 67108863u;
+		return this.getPad() & 0x3FFFFFFu;
 	}
 
 	private UInt32 getPad()
 	{
-		return EventInput.ReadInput();
+		return FPSManager.DelayedInputs;
 	}
 
 	public void NewMesWin(Int32 mes, Int32 num, Int32 flags, PosObj targetPo)
@@ -428,15 +428,14 @@ public class ETb
 	public static void World2Screen(Vector3 v, out Single x, out Single y)
 	{
 		FieldMap fieldmap = PersistenSingleton<EventEngine>.Instance.fieldmap;
-		Camera mainCamera = fieldmap.GetMainCamera();
 		BGCAM_DEF currentBgCamera = fieldmap.GetCurrentBgCamera();
 		Vector3 vector = PSX.CalculateGTE_RTPT(v, Matrix4x4.identity, currentBgCamera.GetMatrixRT(), currentBgCamera.GetViewDistance(), fieldmap.GetProjectionOffset());
 		Vector2 cameraOffset = fieldmap.GetCameraOffset();
-		Single num = vector.x - cameraOffset.x;
-		Single num2 = vector.y - cameraOffset.y;
-		ETb.ConvertGTEToUIScreenPosition(ref num, ref num2);
-		x = num;
-		y = num2;
+		Single screenX = vector.x - cameraOffset.x;
+		Single screenY = vector.y - cameraOffset.y;
+		ETb.ConvertGTEToUIScreenPosition(ref screenX, ref screenY);
+		x = screenX;
+		y = screenY;
 	}
 
 	public static void ConvertGTEToUIScreenPosition(ref Single x, ref Single y)
@@ -449,34 +448,25 @@ public class ETb
 	{
 		x = 0f;
 		y = 0f;
-		if (po.go == (UnityEngine.Object)null)
-		{
+		if (po.go == null)
 			return;
-		}
-		Vector3 vector = new Vector3(po.pos[0], po.pos[1], po.pos[2]);
-		Vector3 zero = Vector3.zero;
-		zero.x = vector.x;
-		Byte scaley = po.scaley;
-		Single num = (Single)(-po.eye * (Int16)scaley >> 6);
-		zero.y = vector.y + num + 50f;
-		zero.z = vector.z;
+		Vector3 worldMesPos = new Vector3(po.pos[0], po.pos[1], po.pos[2]);
+		worldMesPos.y += ((-po.eye * po.scaley) >> 6) + 50f;
 		if (po.cid == 4)
 		{
 			Actor actor = (Actor)po;
-			zero.x += (Single)actor.mesofsX;
-			zero.y -= (Single)actor.mesofsY;
-			zero.z += (Single)actor.mesofsZ;
+			worldMesPos.x += actor.mesofsX;
+			worldMesPos.y -= actor.mesofsY;
+			worldMesPos.z += actor.mesofsZ;
 		}
-		ETb.World2Screen(zero, out x, out y);
+		ETb.World2Screen(worldMesPos, out x, out y);
 		y = UIManager.UIContentSize.y - y;
 	}
 
 	public static void SndMove()
 	{
 		if (RealTime.time - ETb.lastPlaySound < 0.01f)
-		{
 			return;
-		}
 		ETb.lastPlaySound = RealTime.time;
 		FF9Sfx.FF9SFX_Play(103);
 	}
@@ -484,9 +474,7 @@ public class ETb
 	public static void SndCancel()
 	{
 		if (RealTime.time - ETb.lastPlaySound < 0.01f)
-		{
 			return;
-		}
 		ETb.lastPlaySound = RealTime.time;
 		FF9Sfx.FF9SFX_Play(101);
 	}
@@ -500,18 +488,14 @@ public class ETb
 	{
 		Type type = scene.GetType();
 		if (type != typeof(FieldHUD) && type != typeof(WorldHUD))
-		{
 			ETb.SndOK();
-		}
 	}
 
 	public static void SndCancel(UIScene scene)
 	{
 		Type type = scene.GetType();
 		if (type != typeof(FieldHUD) && type != typeof(WorldHUD))
-		{
 			ETb.SndCancel();
-		}
 	}
 
     public static void ProcessDialog(Dialog dialog)

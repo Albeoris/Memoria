@@ -2,7 +2,7 @@
 using UnityEngine;
 using Object = System.Object;
 
-public class WMActor : MonoBehaviour
+public partial class WMActor : MonoBehaviour
 {
 	public Vector3 pos
 	{
@@ -117,10 +117,7 @@ public class WMActor : MonoBehaviour
 
 	public Int32 ControlNo
 	{
-		get
-		{
-			return (Int32)ff9.w_moveCHRStatus[(Int32)this.originalActor.index].control;
-		}
+		get => ff9.w_moveCHRStatus[this.originalActor.index].control;
 	}
 
 	public WMWorld World { get; private set; }
@@ -143,9 +140,7 @@ public class WMActor : MonoBehaviour
 		position.z = z * 0.00390625f;
 		base.transform.position = position;
 		if (this.World && this.World.Settings.WrapWorld)
-		{
 			this.World.SetAbsolutePositionOf(base.transform, new Vector3(position.x, position.y, position.z), 0f);
-		}
 		this.lastx = base.transform.position.x;
 		this.lasty = base.transform.position.y;
 		this.lastz = base.transform.position.z;
@@ -153,10 +148,8 @@ public class WMActor : MonoBehaviour
 
 	public void SetAnimationSpeed(Single factor)
 	{
-		if (this.Animation == (UnityEngine.Object)null)
-		{
+		if (this.Animation == null)
 			return;
-		}
 		foreach (Object obj in this.Animation)
 		{
 			AnimationState animationState = (AnimationState)obj;
@@ -170,9 +163,7 @@ public class WMActor : MonoBehaviour
 		get
 		{
 			if (this.World && this.World.Settings.WrapWorld)
-			{
 				return this.World.GetAbsolutePositionOf(base.transform);
-			}
 			return this.pos;
 		}
 	}
@@ -182,38 +173,35 @@ public class WMActor : MonoBehaviour
 		get
 		{
 			if (this.World && this.World.Settings.WrapWorld)
-			{
 				return this.World.GetAbsolutePositionOf(new Vector3(this.lastx, this.lasty, this.lastz));
-			}
 			return new Vector3(this.lastx, this.lasty, this.lastz);
 		}
 	}
 
     public void UpdateAnimationViaScript()
-    {
-        GameObject go = this.originalActor.go;
-        if (go == (UnityEngine.Object)null)
-        {
+	{
+		this._smoothUpdatePlayingAnim = false;
+		GameObject go = this.originalActor.go;
+        if (go == null)
             return;
-        }
-        if (!go.GetComponent<Animation>().IsPlaying(FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)))
-        {
-            if (go.GetComponent<Animation>().GetClip(FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)) != (UnityEngine.Object)null)
-            {
-                go.GetComponent<Animation>().Play(FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim));
-                go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].speed = 0f;
-                Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].length;
-                go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].time = time;
-                go.GetComponent<Animation>().Sample();
-            }
-        }
-        else
-        {
-            go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].speed = 0f;
-            Single time2 = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].length;
-            go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue((Int32)this.originalActor.anim)].time = time2;
-            go.GetComponent<Animation>().Sample();
-        }
+		String animName = FF9DBAll.AnimationDB.GetValue(this.originalActor.anim);
+		if (!go.GetComponent<Animation>().IsPlaying(animName))
+		{
+			if (go.GetComponent<Animation>().GetClip(animName) == null)
+				return;
+			go.GetComponent<Animation>().Play(animName);
+		}
+		else
+		{
+			this._smoothUpdatePlayingAnim = true;
+		}
+		AnimationState clipState = go.GetComponent<Animation>()[animName];
+		Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * clipState.length;
+		clipState.speed = 0f;
+		this._smoothUpdateAnimTimePrevious = clipState.time;
+		this._smoothUpdateAnimTimeActual = time;
+		clipState.time = time;
+        go.GetComponent<Animation>().Sample();
     }
 
     public void LateUpdate()

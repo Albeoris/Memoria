@@ -335,7 +335,11 @@
     <Compile Include="Global\Field\Map\NarrowMapList.cs" />
     <Compile Include="Global\Sound\VoicePlayer.cs" />
     <Compile Include="Global\TileSystem\TileSystem.cs" />
+    <Compile Include="Memoria\Application\FPSManager.cs" />
     <Compile Include="Memoria\Application\PlayerWindow.cs" />
+    <Compile Include="Memoria\Application\SmoothFrameUpdater_Battle.cs" />
+    <Compile Include="Memoria\Application\SmoothFrameUpdater_Field.cs" />
+    <Compile Include="Memoria\Application\SmoothFrameUpdater_World.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\AtlasImport.cs" />
     <Compile Include="Memoria\Assets\Import\Fields\PsdImport.cs" />
     <Compile Include="Memoria\Assets\Import\Text\CharacterNamesImporter.cs" />

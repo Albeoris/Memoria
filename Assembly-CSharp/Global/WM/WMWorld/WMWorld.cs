@@ -29,6 +29,8 @@ public class WMWorld : Singleton<WMWorld>
 
 	public Int32 ActiveBlockCount { get; private set; }
 
+	public Vector3 BlockShift { get; private set; }
+
 	public GlobalFog GlobalFog
 	{
 		get
@@ -76,9 +78,7 @@ public class WMWorld : Singleton<WMWorld>
 					{
 						ObjList objList2 = this.ActorList;
 						while (objList2.next != null)
-						{
 							objList2 = objList2.next;
-						}
 						objList2.next = objList;
 					}
 				}
@@ -94,6 +94,7 @@ public class WMWorld : Singleton<WMWorld>
 			this.TranslatingObjectsGroup = new GameObject("TranslatingObjectsGroup").transform;
 			this.TranslatingObjectsGroup.parent = gameObject2.transform;
 		}
+		this.BlockShift = new Vector3(0f, 0f, 0f);
 		this.InitialBlocks = WMWorld.BuildBlockArray(this.WorldDisc);
 		this.MainCamera = GameObject.Find("WorldCamera").GetComponent<Camera>();
 		GameObject original2 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/MoveFromBundle/kWorldPackEffectSky_Sky", out _, false);
@@ -116,16 +117,14 @@ public class WMWorld : Singleton<WMWorld>
 		if (FF9StateSystem.World.IsBeeScene)
 		{
 			if (ff9.w_frameDisc == 0)
-			{
 				ff9.w_frameDisc = 1;
-			}
 		}
 		else
 		{
 			ff9.w_frameScenePtr = ff9.ushort_gEventGlobal(0);
 			ff9.w_frameDisc = WorldConfiguration.GetDisc();
 		}
-		this.currentDisc = (Int32)ff9.w_frameDisc;
+		this.currentDisc = ff9.w_frameDisc;
 		if (!this.WorldDisc)
 		{
 			global::Debug.LogError("WorldDisc can't be null. Please set it in the scene.");
@@ -149,7 +148,7 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		MeshFilter[] componentsInChildren = base.GetComponentsInChildren<MeshFilter>(true);
 		MeshFilter[] array = componentsInChildren;
-		for (Int32 i = 0; i < (Int32)array.Length; i++)
+		for (Int32 i = 0; i < array.Length; i++)
 		{
 			MeshFilter meshFilter = array[i];
 			Bounds bounds = meshFilter.sharedMesh.bounds;
@@ -171,7 +170,7 @@ public class WMWorld : Singleton<WMWorld>
 		actor.wmActor.Intialize();
 		actor.wmActor.originalActor = actor;
 		actor.wmActor.SetScale(64, 64, 64);
-		if (ff9.w_moveCHRStatus[(Int32)actor.index].cache >= 4 && ff9.w_moveCHRStatus[(Int32)actor.index].cache <= 8)
+		if (ff9.w_moveCHRStatus[actor.index].cache >= 4 && ff9.w_moveCHRStatus[actor.index].cache <= 8)
 		{
 			GameObject gameObject2 = new GameObject(name + "Rot");
 			gameObject2.transform.parent = gameObject.transform;
@@ -203,7 +202,7 @@ public class WMWorld : Singleton<WMWorld>
 		originalActor.wmActor.SetScale(64, 64, 64);
 		String str = "obj" + originalActor.uid;
 		Transform transform = this.TranslatingObjectsGroup.Find(str + "_WM");
-		if (ff9.w_moveCHRStatus[(Int32)originalActor.index].cache >= 4 && ff9.w_moveCHRStatus[(Int32)originalActor.index].cache <= 8)
+		if (ff9.w_moveCHRStatus[originalActor.index].cache >= 4 && ff9.w_moveCHRStatus[originalActor.index].cache <= 8)
 		{
 			GameObject gameObject = new GameObject(str + "_Rot");
 			gameObject.transform.parent = transform.transform;
@@ -219,87 +218,66 @@ public class WMWorld : Singleton<WMWorld>
 	public Vector3 GetAbsolutePositionOf(Transform target)
 	{
 		if (this.Blocks == null)
-		{
 			return target.position;
-		}
 		Vector3 position = target.position;
-		Vector3 vector = new Vector3(position.x % 64f, 0f, position.z % 64f);
-		Int32 num = (Int32)(position.x / 64f);
-		Int32 num2 = (Int32)(Mathf.Abs(position.z) / 64f);
-		Int32 length = this.Blocks.GetLength(0);
-		Int32 length2 = this.Blocks.GetLength(1);
-		if (num < 0)
-		{
+		Vector3 localVec = new Vector3(position.x % 64f, 0f, position.z % 64f);
+		Int32 blockX = (Int32)(position.x / 64f);
+		Int32 blockZ = (Int32)(Mathf.Abs(position.z) / 64f);
+		Int32 lengthX = this.Blocks.GetLength(0);
+		Int32 lengthZ = this.Blocks.GetLength(1);
+		if (blockX < 0)
 			return target.position;
-		}
-		if (num >= length)
-		{
-			num = length - 1;
-		}
-		if (num2 < 0)
-		{
+		if (blockX >= lengthX)
+			blockX = lengthX - 1;
+		if (blockZ < 0)
 			return target.position;
-		}
-		if (num2 >= length2)
-		{
-			num2 = length2 - 1;
-		}
-		WMBlock wmblock = this.Blocks[num, num2];
+		if (blockZ >= lengthZ)
+			blockZ = lengthZ - 1;
+		WMBlock wmblock = this.Blocks[blockX, blockZ];
 		WMBlock component = wmblock.GetComponent<WMBlock>();
-		Vector3 result = new Vector3((Single)(component.InitialX * 64) + vector.x, position.y, (Single)(-(Single)component.InitialY * 64) + vector.z);
+		Vector3 result = new Vector3(component.InitialX * 64 + localVec.x, position.y, -component.InitialY * 64 + localVec.z);
 		return result;
 	}
 
 	public Vector3 GetAbsolutePositionOf(Vector3 vector)
 	{
 		if (this.Blocks == null)
-		{
 			return vector;
-		}
-		Vector3 vector2 = vector;
-		Vector3 vector3 = new Vector3(vector2.x % 64f, 0f, vector2.z % 64f);
-		Int32 num = (Int32)(vector2.x / 64f);
-		Int32 num2 = (Int32)(Mathf.Abs(vector2.z) / 64f);
-		WMBlock wmblock = this.Blocks[num, num2];
+		Vector3 localVec = new Vector3(vector.x % 64f, 0f, vector.z % 64f);
+		Int32 blockX = (Int32)(vector.x / 64f);
+		Int32 blockZ = (Int32)(Mathf.Abs(vector.z) / 64f);
+		WMBlock wmblock = this.Blocks[blockX, blockZ];
 		WMBlock component = wmblock.GetComponent<WMBlock>();
-		Vector3 result = new Vector3((Single)(component.InitialX * 64) + vector3.x, vector2.y, (Single)(-(Single)component.InitialY * 64) + vector3.z);
+		Vector3 result = new Vector3(component.InitialX * 64 + localVec.x, vector.y, -component.InitialY * 64 + localVec.z);
 		return result;
 	}
 
 	public void GetAbsolutePositionOf_FixedPoint(ref Int32 posX, ref Int32 posY, ref Int32 posZ)
 	{
 		if (this.Blocks == null)
-		{
 			return;
-		}
-		Int32 num = posX;
-		Int32 num3 = posZ;
-		Int32 num4 = num % 16384;
-		Int32 num5 = num3 % 16384;
-		Int32 num6 = num / 16384;
-		Int32 num7 = Math.Abs(num3) / 16384;
-		WMBlock wmblock = this.Blocks[num6, num7];
+		Int32 localX = posX % 16384;
+		Int32 localZ = posZ % 16384;
+		Int32 blockX = posX / 16384;
+		Int32 blockZ = Math.Abs(posZ) / 16384;
+		WMBlock wmblock = this.Blocks[blockX, blockZ];
 		WMBlock component = wmblock.GetComponent<WMBlock>();
-		posX = component.InitialX * 16384 + num4;
-		posZ = -component.InitialY * 16384 + num5;
+		posX = component.InitialX * 16384 + localX;
+		posZ = -component.InitialY * 16384 + localZ;
 	}
 
 	public void GetUnityPositionOf_FixedPoint(ref Int32 posX, ref Int32 posY, ref Int32 posZ)
 	{
 		if (this.Blocks == null)
-		{
 			return;
-		}
-		Int32 num = posX;
-		Int32 num2 = posZ;
-		Int32 num3 = num % 16384;
-		Int32 num4 = num2 % 16384;
-		Int32 num5 = num / 16384;
-		Int32 num6 = Math.Abs(num2) / 16384;
-		WMBlock wmblock = this.InitialBlocks[num5, num6];
+		Int32 localX = posX % 16384;
+		Int32 localZ = posZ % 16384;
+		Int32 blockX = posX / 16384;
+		Int32 blockZ = Math.Abs(posZ) / 16384;
+		WMBlock wmblock = this.InitialBlocks[blockX, blockZ];
 		WMBlock component = wmblock.GetComponent<WMBlock>();
-		posX = component.CurrentX * 16384 + num3;
-		posZ = -component.CurrentY * 16384 + num4;
+		posX = component.CurrentX * 16384 + localX;
+		posZ = -component.CurrentY * 16384 + localZ;
 	}
 
 	public WMBlock GetAbsoluteBlock(Transform target)
@@ -310,19 +288,13 @@ public class WMWorld : Singleton<WMWorld>
 	public WMBlock GetAbsoluteBlock(Vector3 position)
 	{
 		if (this.Blocks == null)
-		{
-			return (WMBlock)null;
-		}
+			return null;
 		Int32 x = (Int32)(position.x / 64f);
 		Int32 z = (Int32)(Mathf.Abs(position.z) / 64f);
 		if (x >= 24)
-		{
-			return (WMBlock)null;
-		}
+			return null;
 		if (z >= 20)
-		{
-			return (WMBlock)null;
-		}
+			return null;
 		WMBlock wmblock = this.Blocks[x, z];
 		return this.Blocks[wmblock.CurrentX, wmblock.CurrentY];
 	}
@@ -330,9 +302,7 @@ public class WMWorld : Singleton<WMWorld>
 	public void SetAbsolutePositionOf(Transform target, Vector3 position, Single rotationY = 0f)
 	{
 		if (this.Blocks == null)
-		{
 			return;
-		}
 		Vector3 vector = new Vector3(position.x % 64f, 0f, position.z % 64f);
 		Int32 x = (Int32)(position.x / 64f);
 		Int32 z = (Int32)(Mathf.Abs(position.z) / 64f);
@@ -346,8 +316,7 @@ public class WMWorld : Singleton<WMWorld>
 				WMBlock wmblock = blocks[i, j];
 				if (x == wmblock.InitialX && z == wmblock.InitialY)
 				{
-					Vector3 position2 = new Vector3((Single)(wmblock.CurrentX * 64) + vector.x, position.y, (Single)(-(Single)wmblock.CurrentY * 64) + vector.z);
-					target.position = position2;
+					target.position = new Vector3(wmblock.CurrentX * 64 + vector.x, position.y, -wmblock.CurrentY * 64 + vector.z);
 					return;
 				}
 			}
@@ -358,9 +327,7 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		outPosition = Vector3.zero;
 		if (this.Blocks == null)
-		{
 			return;
-		}
 		Vector3 vector = new Vector3(position.x % 64f, 0f, position.z % 64f);
 		Int32 x = (Int32)(position.x / 64f);
 		Int32 z = (Int32)(Mathf.Abs(position.z) / 64f);
@@ -374,7 +341,7 @@ public class WMWorld : Singleton<WMWorld>
 				WMBlock wmblock = blocks[i, j];
 				if (x == wmblock.InitialX && z == wmblock.InitialY)
 				{
-					outPosition = new Vector3((Single)(wmblock.CurrentX * 64) + vector.x, position.y, (Single)(-(Single)wmblock.CurrentY * 64) + vector.z);
+					outPosition = new Vector3(wmblock.CurrentX * 64 + vector.x, position.y, -wmblock.CurrentY * 64 + vector.z);
 					return;
 				}
 			}
@@ -396,22 +363,15 @@ public class WMWorld : Singleton<WMWorld>
 
 	private void UpdateInputDebug()
 	{
-		Int32 num = 0;
+		Int32 peak = 0;
 		for (Int32 i = 0; i < this.WorldSPSSystem.SpsList.Count; i++)
 		{
 			WorldSPS worldSPS = this.WorldSPSSystem.SpsList[i];
-			if (worldSPS.spsBin != null)
-			{
-				if (worldSPS.no != -1)
-				{
-					num++;
-				}
-			}
+			if (worldSPS.spsBin != null && worldSPS.no != -1)
+				peak++;
 		}
-		if (this.activeSpsPeak < num)
-		{
-			this.activeSpsPeak = num;
-		}
+		if (this.activeSpsPeak < peak)
+			this.activeSpsPeak = peak;
 		if (Input.GetKeyDown(KeyCode.Alpha5))
 		{
 			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[(Int32)ff9.w_moveActorPtr.originalActor.index];
@@ -419,9 +379,7 @@ public class WMWorld : Singleton<WMWorld>
 		}
 		Vector3 realPosition = ff9.w_moveActorPtr.RealPosition;
 		if (Input.GetKeyDown(KeyCode.Alpha7))
-		{
 			global::Debug.Log("ff9.w_moveActorPtr.RealPosition = " + ff9.w_moveActorPtr.RealPosition);
-		}
 		if (Input.GetKeyDown(KeyCode.Alpha6))
 		{
 			FF9StateSystem.World.FixTypeCam = !FF9StateSystem.World.FixTypeCam;
@@ -460,17 +418,15 @@ public class WMWorld : Singleton<WMWorld>
 		}
 		Vector3 pos = ff9.w_moveActorPtr.pos;
 		pos.y = 0f;
-		if (ff9.w_movePlanePtr != (UnityEngine.Object)null)
+		if (ff9.w_movePlanePtr != null)
 		{
-			Vector3 pos2 = ff9.w_movePlanePtr.pos;
-			pos2.y = 0f;
-			Single num2 = Vector3.Distance(pos, pos2);
+			pos = ff9.w_movePlanePtr.pos;
+			pos.y = 0f;
 		}
-		if (ff9.w_moveChocoboPtr != (UnityEngine.Object)null)
+		if (ff9.w_moveChocoboPtr != null)
 		{
-			Vector3 pos3 = ff9.w_moveChocoboPtr.pos;
-			pos3.y = 0f;
-			Single num3 = Vector3.Distance(pos, pos3);
+			pos = ff9.w_moveChocoboPtr.pos;
+			pos.y = 0f;
 		}
 	}
 
@@ -485,8 +441,8 @@ public class WMWorld : Singleton<WMWorld>
 				{
 					WMBlock wmblock = this.Blocks[j, i];
 					Vector3 position = default(Vector3);
-					position.x = (Single)(j * 16384) * 0.00390625f;
-					position.z = (Single)(i * -16384) * 0.00390625f;
+					position.x = j * 16384 * 0.00390625f;
+					position.z = i * -16384 * 0.00390625f;
 					wmblock.transform.position = position;
 				}
 			}
@@ -494,6 +450,7 @@ public class WMWorld : Singleton<WMWorld>
 			this.ActorList = ff9.GetActiveObjList();
 			if (this.Settings.WrapWorld)
 			{
+				this.BlockShift = new Vector3(0f, 0f, 0f);
 				while (!this.Wrap())
 				{
 				}
@@ -917,10 +874,7 @@ public class WMWorld : Singleton<WMWorld>
 			{
 				Transform transform27 = block.transform.Find("Object");
 				if (transform27)
-				{
-					Renderer component2 = transform27.GetComponent<Renderer>();
-					component2.enabled = false;
-				}
+					transform27.GetComponent<Renderer>().enabled = false;
 				GameObject gameObject8 = UnityEngine.Object.Instantiate<GameObject>(gameObject7);
 				gameObject8.transform.parent = block.transform;
 				gameObject8.transform.localPosition = new Vector3(0f, 0f, 0f);
@@ -958,10 +912,7 @@ public class WMWorld : Singleton<WMWorld>
 			{
 				Transform transform28 = block.transform.Find("Object");
 				if (transform28)
-				{
-					Renderer component3 = transform28.GetComponent<Renderer>();
-					component3.enabled = false;
-				}
+					transform28.GetComponent<Renderer>().enabled = false;
 				GameObject gameObject11 = UnityEngine.Object.Instantiate<GameObject>(gameObject10);
 				gameObject11.transform.parent = block.transform;
 				gameObject11.transform.localPosition = new Vector3(0f, 0f, 0f);
@@ -982,14 +933,10 @@ public class WMWorld : Singleton<WMWorld>
 		Boolean loadFromBundle = AssetManager.ForceUseBundles;
 		request = AssetManager.LoadAsync<GameObject>(prefabName);
 		if (FF9StateSystem.World.PrintLogOnLoadingBlocksAsync)
-		{
 			global::Debug.Log("Loading " + blockName + " in the background. " + ((!loadFromBundle) ? "[Resources]" : "[Bundle]"));
-		}
 		yield return request;
 		if (FF9StateSystem.World.PrintLogOnLoadingBlocksAsync)
-		{
 			global::Debug.Log("Done loading " + blockName);
-		}
 		GameObject blockObjectPrefab = (GameObject)request.asset;
 		this.LoadBlock(blockObjectPrefab, block);
 		block.IsReady = true;
@@ -1002,11 +949,12 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		if (this.Settings.WrapWorld)
 		{
+			this.BlockShift = new Vector3(0f, 0f, 0f);
 			while (!this.Wrap())
 			{
 			}
 		}
-		if (ff9.w_moveActorPtr != (UnityEngine.Object)null)
+		if (ff9.w_moveActorPtr != null)
 		{
 			Vector3 vector = new Vector3(0f, 0f, 0f);
 			vector.x += ff9.w_moveActorPtr.transform.position.x;
@@ -1021,66 +969,46 @@ public class WMWorld : Singleton<WMWorld>
 			this.SkyDome_Bg.position = vector;
 			this.SkyDome_Fog.position = vector + new Vector3(0f, -2f, 0f);
 			Vector3 b = ff9.w_effectLastPos + new Vector3(0f, -15.15f, 0f);
-			if (ff9.w_movePlanePtr != (UnityEngine.Object)null && ff9.w_frameCounter >= 10)
+			if (ff9.w_movePlanePtr != null && ff9.w_frameCounter >= 10)
 			{
 				Vector3 absolutePositionOf = this.GetAbsolutePositionOf(ff9.w_frameCameraPtr.transform.position);
 				Single num = Vector3.Distance(absolutePositionOf, b);
 				if (num < 12f)
 				{
 					if (this.treeMeshRenderers == null || this.treeMeshRenderers.Length == 0)
-					{
 						this.treeMeshRenderers = new MeshRenderer[4];
-					}
-					if (this.treeMeshRenderers[0] == (UnityEngine.Object)null)
+					if (this.treeMeshRenderers[0] == null)
 					{
 						WMBlock wmblock = this.InitialBlocks[11, 4];
 						if (wmblock.transform.childCount != 0)
-						{
-							MeshRenderer component = wmblock.transform.FindChild("Object").GetComponent<MeshRenderer>();
-							this.treeMeshRenderers[0] = component;
-						}
+							this.treeMeshRenderers[0] = wmblock.transform.FindChild("Object").GetComponent<MeshRenderer>();
 					}
-					if (this.treeMeshRenderers[1] == (UnityEngine.Object)null)
+					if (this.treeMeshRenderers[1] == null)
 					{
 						WMBlock wmblock2 = this.InitialBlocks[11, 5];
 						if (wmblock2.transform.childCount != 0)
-						{
-							MeshRenderer component2 = wmblock2.transform.FindChild("Object").GetComponent<MeshRenderer>();
-							this.treeMeshRenderers[1] = component2;
-						}
+							this.treeMeshRenderers[1] = wmblock2.transform.FindChild("Object").GetComponent<MeshRenderer>();
 					}
-					if (this.treeMeshRenderers[2] == (UnityEngine.Object)null)
+					if (this.treeMeshRenderers[2] == null)
 					{
 						WMBlock wmblock3 = this.InitialBlocks[12, 4];
 						if (wmblock3.transform.childCount != 0)
-						{
-							MeshRenderer component3 = wmblock3.transform.FindChild("Object").GetComponent<MeshRenderer>();
-							this.treeMeshRenderers[2] = component3;
-						}
+							this.treeMeshRenderers[2] = wmblock3.transform.FindChild("Object").GetComponent<MeshRenderer>();
 					}
-					if (this.treeMeshRenderers[3] == (UnityEngine.Object)null)
+					if (this.treeMeshRenderers[3] == null)
 					{
 						WMBlock wmblock4 = this.InitialBlocks[12, 5];
 						if (wmblock4.transform.childCount != 0)
-						{
-							MeshRenderer component4 = wmblock4.transform.FindChild("Object").GetComponent<MeshRenderer>();
-							this.treeMeshRenderers[3] = component4;
-						}
+							this.treeMeshRenderers[3] = wmblock4.transform.FindChild("Object").GetComponent<MeshRenderer>();
 					}
-					for (Int32 i = 0; i < (Int32)this.treeMeshRenderers.Length; i++)
-					{
+					for (Int32 i = 0; i < this.treeMeshRenderers.Length; i++)
 						this.treeMeshRenderers[i].enabled = false;
-					}
 				}
 				else
 				{
-					for (Int32 j = 0; j < (Int32)this.treeMeshRenderers.Length; j++)
-					{
-						if (this.treeMeshRenderers[j] != (UnityEngine.Object)null && !this.treeMeshRenderers[j].enabled)
-						{
+					for (Int32 j = 0; j < this.treeMeshRenderers.Length; j++)
+						if (this.treeMeshRenderers[j] != null && !this.treeMeshRenderers[j].enabled)
 							this.treeMeshRenderers[j].enabled = true;
-						}
-					}
 				}
 				if (this.HasAirGardenShadow && !this.DidCheckIfAirGardenIsInSpecialZone)
 				{
@@ -1088,9 +1016,7 @@ public class WMWorld : Singleton<WMWorld>
 					Vector3 b2 = new Vector3(1307.2f, 26.1f, -644.7f);
 					Single num2 = Vector3.Distance(absolutePositionOf2, b2);
 					if (num2 < 30f)
-					{
 						this.AirGardenIsInSpecialZone = true;
-					}
 				}
 			}
 		}
@@ -1230,33 +1156,33 @@ public class WMWorld : Singleton<WMWorld>
 
 	private Boolean Wrap()
 	{
-		if (ff9.w_moveActorPtr == (UnityEngine.Object)null)
-		{
+		if (ff9.w_moveActorPtr == null)
 			return true;
-		}
 		if (ff9.w_moveActorPtr == ff9.w_moveDummyCharacter)
-		{
 			return true;
-		}
 		Vector3 pos = ff9.w_moveActorPtr.pos;
 		Boolean result = true;
 		if (pos.x < this.wrapWorldLeftBound)
 		{
+			this.BlockShift += new Vector3(64f, 0f, 0f);
 			this.ShiftRightAllBlocks();
 			result = false;
 		}
 		if (pos.x > this.wrapWorldRightBound)
 		{
+			this.BlockShift += new Vector3(-64f, 0f, 0f);
 			this.ShiftLeftAllBlocks();
 			result = false;
 		}
 		if (pos.z > this.wrapWorldUpperBound)
 		{
+			this.BlockShift += new Vector3(0f, 0f, -64f);
 			this.ShiftDownAllBlocks();
 			result = false;
 		}
 		if (pos.z < this.wrapWorldLowerBound)
 		{
+			this.BlockShift += new Vector3(0f, 0f, 64f);
 			this.ShiftUpAllBlocks();
 			result = false;
 		}
@@ -1899,9 +1825,7 @@ public class WMWorld : Singleton<WMWorld>
 					Transform transform = (Transform)obj;
 					WMBlock component = transform.GetComponent<WMBlock>();
 					if (component.InitialX == i && component.InitialY == j)
-					{
 						array[i, j] = component;
-					}
 				}
 			}
 		}
@@ -1912,10 +1836,8 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		get
 		{
-			if (this._block31 == (UnityEngine.Object)null)
-			{
+			if (this._block31 == null)
 				this._block31 = this.InitialBlocks[7, 1];
-			}
 			return this._block31;
 		}
 	}
@@ -1924,10 +1846,8 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		get
 		{
-			if (this._block115 == (UnityEngine.Object)null)
-			{
+			if (this._block115 == null)
 				this._block115 = this.InitialBlocks[19, 14];
-			}
 			return this._block115;
 		}
 	}
@@ -1936,10 +1856,8 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		get
 		{
-			if (this._block219 == (UnityEngine.Object)null)
-			{
+			if (this._block219 == null)
 				this._block219 = this.InitialBlocks[3, 9];
-			}
 			return this._block219;
 		}
 	}
@@ -1948,10 +1866,8 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		get
 		{
-			if (this._worldMapRoot == (UnityEngine.Object)null)
-			{
+			if (this._worldMapRoot == null)
 				this._worldMapRoot = GameObject.Find("WorldMapRoot").transform;
-			}
 			return this._worldMapRoot;
 		}
 	}
@@ -1960,7 +1876,7 @@ public class WMWorld : Singleton<WMWorld>
 	{
 		get
 		{
-			if (this._worldMapEffectRoot == (UnityEngine.Object)null)
+			if (this._worldMapEffectRoot == null)
 			{
 				this._worldMapEffectRoot = new GameObject("EffectRoot").transform;
 				this._worldMapEffectRoot.transform.parent = this.WorldMapRoot;

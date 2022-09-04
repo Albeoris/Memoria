@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -13,18 +14,16 @@ public class HonoluluFieldMain : HonoBehavior
 		this.FF9 = FF9StateSystem.Common.FF9;
 		this.FF9Field = FF9StateSystem.Field.FF9Field;
 		this.FF9FieldMap = FF9StateSystem.Field.FF9Field.loc.map;
-		this.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[(Int32)this.FF9.fldMapNo];
+		this.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[this.FF9.fldMapNo];
 		PersistenSingleton<FF9StateSystem>.Instance.mode = 1;
-		String text = FF9DBAll.EventDB[(Int32)this.FF9.fldMapNo];
-		FF9StateSystem.Field.SceneName = EventEngineUtils.eventIDToFBGID[(Int32)this.FF9.fldMapNo];
+		FF9StateSystem.Field.SceneName = EventEngineUtils.eventIDToFBGID[this.FF9.fldMapNo];
 		this.ee = PersistenSingleton<EventEngine>.Instance;
 		HonoluluFieldMain.eventEngineRunningCount = 0;
-		this.cumulativeTime = 0f;
 		this.isInside = false;
 		this.stringToEdit = this.FF9.fldMapNo.ToString();
 		this.scString = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR).ToString();
 		this.mapIDString = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR).ToString();
-		this.ff9InitStateFieldLocation((Int32)this.FF9.fldLocNo);
+		this.ff9InitStateFieldLocation(this.FF9.fldLocNo);
 	}
 
 	public override void HonoStart()
@@ -65,17 +64,17 @@ public class HonoluluFieldMain : HonoBehavior
 	{
 		FF9StateFieldLocation loc = this.FF9Field.loc;
 		loc.ff9ResetStateFieldLocation();
-		this.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[(Int32)this.FF9.fldMapNo];
-		base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateFieldText((Int32)this.FF9.fldLocNo));
+		this.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[this.FF9.fldMapNo];
+		base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateFieldText(this.FF9.fldLocNo));
 	}
 
 	private void ff9InitStateFieldMap(Int32 MapNo)
 	{
+		Single loadStartTime = Time.realtimeSinceStartup;
 		FF9StateFieldMap map = this.FF9Field.loc.map;
 		map.ff9ResetStateFieldMap();
-		this.FF9Sys.attr &= 4294966512u;
+		this.FF9Sys.attr &= 0xFFFFFCF0u;
 		this.FF9Field.attr |= 4u;
-		FF9StateFieldSystem ff9Field = FF9StateSystem.Field.FF9Field;
 		this.FF9Field.playerID = 0;
 		map.nextMapNo = (this.FF9.fldMapNo = (Int16)MapNo);
 		for (Int32 i = 1; i >= 0; i--)
@@ -101,6 +100,7 @@ public class HonoluluFieldMain : HonoBehavior
 		PersistenSingleton<EventEngine>.Instance.fieldSps.Init(PersistenSingleton<EventEngine>.Instance.fieldmap);
 		if (MapNo >= 3000 && MapNo <= 3012)
 		{
+			// Ending fields
 			FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.BattleAssistance, false);
 			FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.HighSpeedMode, false);
 			FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.Attack9999, false);
@@ -122,7 +122,7 @@ public class HonoluluFieldMain : HonoBehavior
 		Int32 sndEffectResSoundID2 = allSoundDispatchPlayer.GetSndEffectResSoundID(1);
 		FF9Snd.BGMFieldSongCounter = 0;
 		this.ee.StartEvents(map.evtPtr);
-		FF9StateSystem.Field.SetTwistAD((Int32)this.ee.GetTwistA(), (Int32)this.ee.GetTwistD());
+		FF9StateSystem.Field.SetTwistAD(this.ee.GetTwistA(), this.ee.GetTwistD());
 		PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
 		PersistenSingleton<EventEngine>.Instance.eTb.InitMovieHitPoint(MapNo);
 		this.FF9.npcCount = (Byte)this.ee.GetNumberNPC();
@@ -132,100 +132,57 @@ public class HonoluluFieldMain : HonoBehavior
 		Int32 sndEffectResSoundID3 = allSoundDispatchPlayer.GetSndEffectResSoundID(0);
 		Int32 sndEffectResSoundID4 = allSoundDispatchPlayer.GetSndEffectResSoundID(1);
 		if (suspendSongID != -1 && suspendSongID2 != -1 && suspendSongID == suspendSongID2)
-		{
 			FF9Snd.ff9fldsnd_song_restore();
-		}
 		else
-		{
 			SoundLib.GetAllSoundDispatchPlayer().StopAndClearSuspendBGM(-1);
-		}
 		if (FF9Snd.LatestWorldPlayedSong != -1 && FF9Snd.LatestWorldPlayedSong == SoundLib.GetAllSoundDispatchPlayer().GetCurrentMusicId() && FF9Snd.BGMFieldSongCounter == 0)
-		{
 			SoundLib.GetAllSoundDispatchPlayer().FF9SOUND_SONG_STOPCURRENT();
-		}
 		FF9Snd.LatestWorldPlayedSong = -1;
 		FF9Snd.BGMFieldSongCounter = 0;
 		if (sndEffectResSoundID != -1 && sndEffectResSoundID == sndEffectResSoundID3)
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(0);
 		if (sndEffectResSoundID2 != -1 && sndEffectResSoundID2 == sndEffectResSoundID4)
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(1);
+		FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
 	}
 
 	public override void HonoUpdate()
 	{
-		this.frameTime = 1f / (30f * (Single)FF9StateSystem.Settings.FastForwardFactor);
-		if ((MBG.Instance.IsPlaying() & 2UL) != 0UL)
+		if ((MBG.Instance.IsPlaying() & 2UL) != 0UL && this.mbgFrameSkip)
 		{
-			this.frameTime = 1f / (15f * (Single)FF9StateSystem.Settings.FastForwardFactor);
+			this.mbgFrameSkip = false;
+			return;
 		}
-		Single deltaTime = Time.deltaTime;
-		Single num = this.cumulativeTime + deltaTime;
-		this.cumulativeTime = num;
-		if (this.cumulativeTime >= this.frameTime)
+		this.mbgFrameSkip = true;
+		SceneTransition transition = PersistenSingleton<SceneDirector>.Instance.Transition;
+		if (!PersistenSingleton<SceneDirector>.Instance.IsReady || (PersistenSingleton<SceneDirector>.Instance.IsFading && transition != SceneTransition.FadeInFromBlack && transition != SceneTransition.FadeInFromWhite))
+			return;
+		if (this.firstFrame)
 		{
-			if (!FF9StateSystem.Settings.IsFastForward)
-			{
-				this.cumulativeTime -= this.frameTime;
-			}
-			else
-			{
-				this.cumulativeTime = 0f;
-			}
-			SceneTransition transition = PersistenSingleton<SceneDirector>.Instance.Transition;
-			if (!PersistenSingleton<SceneDirector>.Instance.IsReady || (PersistenSingleton<SceneDirector>.Instance.IsFading && transition != SceneTransition.FadeInFromBlack && transition != SceneTransition.FadeInFromWhite))
-			{
-				return;
-			}
-			if (this.firstFrame)
-			{
-				this.firstFrame = false;
-				this.ff9InitStateFieldSystem();
-				this.ff9InitStateFieldMap((Int32)this.FF9.fldMapNo);
-				UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
-				if (sceneFromState != (UnityEngine.Object)null)
-				{
-					sceneFromState.Show((UIScene.SceneVoidDelegate)null);
-				}
-			}
-			this.FF9FieldLocationMain();
-			EMinigame.GetTheaterShipMaquetteAchievement();
+			this.firstFrame = false;
+			this.ff9InitStateFieldSystem();
+			this.ff9InitStateFieldMap(this.FF9.fldMapNo);
+			UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
+			if (sceneFromState != null)
+				sceneFromState.Show(null);
 		}
+		this.FF9FieldLocationMain();
+		EMinigame.GetTheaterShipMaquetteAchievement();
 	}
 
 	private void FF9FieldLocationMain()
 	{
-		this.FF9FieldMapMain((Int32)this.FF9.fldMapNo);
+		this.FF9FieldMapMain();
 	}
 
-	private void FF9FieldMapMain(Int32 MapNo)
+	private void FF9FieldMapMain()
 	{
-		EBin eBin = this.ee.eBin;
-		Int32 varManually = eBin.getVarManually(6357);
 		if ((this.FF9.attr & 256u) == 0u)
 		{
 			if (!MBG.IsNull)
-			{
 				Singleton<fldfmv>.Instance.ff9fieldFMVService();
-			}
 			if ((this.FF9.attr & 2u) == 0u)
 			{
-				Int32 varManually2 = eBin.getVarManually(6357);
-				if (varManually2 != this.prevPrg)
-				{
-					this.prevPrg = varManually2;
-					if (varManually2 != 1 || this.FF9.fldMapNo != 50)
-					{
-						if (this.FF9.fldMapNo != 150 || varManually2 != 5)
-						{
-							if (this.FF9.fldMapNo != 404)
-							{
-								if (this.FF9.fldMapNo == 404)
-								{
-								}
-							}
-						}
-					}
-				}
 				Int32 num = this.ee.ServiceEvents();
 				HonoluluFieldMain.eventEngineRunningCount++;
 				this.updatePlayerObj();
@@ -271,31 +228,19 @@ public class HonoluluFieldMain : HonoBehavior
 					break;
 				}
 			}
-			if ((this.FF9.attr & 4u) == 0u && this.fieldmap != (UnityEngine.Object)null)
-			{
+			if ((this.FF9.attr & 4u) == 0u && this.fieldmap != null)
 				this.fieldmap.ff9fieldCharService();
-			}
 			if ((this.FF9.attr & 8u) == 0u && FF9StateSystem.Common.FF9.fldMapNo != 70 && this.fieldmap.walkMesh != null)
-			{
 				this.fieldmap.walkMesh.BGI_simService();
-			}
 			if ((this.FF9Field.attr & 16u) == 0u)
-			{
 				vib.VIB_service();
-			}
 			if ((this.FF9Field.attr & 8u) == 0u)
-			{
 				this.fieldmap.rainRenderer.ServiceRain();
-			}
 			Boolean flag = !MBG.IsNull && MBG.Instance.isFMV55D;
 			if ((this.FF9Field.attr & 2048u) == 0u || flag)
-			{
 				SceneDirector.ServiceFade();
-			}
 			if ((this.FF9Field.attr & 4u) == 0u)
-			{
 				this.fieldmap.ff9fieldInternalBattleEncountService();
-			}
 		}
 		this.ff9fieldInternalLoopEnd();
 		UInt32 num2 = this.FF9Sys.attr & 15u;
@@ -315,10 +260,12 @@ public class HonoluluFieldMain : HonoBehavior
 			case 2:
 				if (FF9StateSystem.Common.FF9.fldMapNo == 1663)
 				{
-					Int32 varManually3 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-					Int32 varManually4 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-					if (varManually3 == 6950 && varManually4 == 40)
+					// Iifa Tree/Tree Trunk (cutscene with Kuja)
+					Int32 scCounterSvr = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+					Int32 mapIndexSvr = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+					if (scCounterSvr == 6950 && mapIndexSvr == 40)
 					{
+						// After Queen Brahne appeared: battle against Mistodons
 						global::Debug.Log("Force close all dialog for <SQEX> #3105");
 						PersistenSingleton<UIManager>.Instance.Dialogs.CloseAll();
 					}
@@ -372,7 +319,7 @@ public class HonoluluFieldMain : HonoBehavior
 	{
 		Obj objUID = this.ee.GetObjUID(250);
 		String text = "Player";
-		if (objUID != null && objUID.go != (UnityEngine.Object)null && objUID.go.name != text)
+		if (objUID != null && objUID.go != null && objUID.go.name != text)
 		{
 			this.player = objUID.go;
 			objUID.go.name = text;
@@ -415,9 +362,7 @@ public class HonoluluFieldMain : HonoBehavior
 	private void ff9ShutdownStateFieldMap()
 	{
 		FF9StateFieldMap map = FF9StateSystem.Field.FF9Field.loc.map;
-		FF9Snd.ff9fieldsound_stopall_mapsndeffect((Int32)this.FF9.fldMapNo);
-		EBin eBin = this.ee.eBin;
-		Int32 varManually = eBin.getVarManually(6357);
+		FF9Snd.ff9fieldsound_stopall_mapsndeffect(this.FF9.fldMapNo);
 		switch (map.nextMode)
 		{
 		case 1:
@@ -425,13 +370,13 @@ public class HonoluluFieldMain : HonoBehavior
 			break;
 		case 2:
 			this.FF9.btlMapNo = map.nextMapNo;
-			FF9StateSystem.Battle.battleMapIndex = (Int32)this.FF9.btlMapNo;
+			FF9StateSystem.Battle.battleMapIndex = this.FF9.btlMapNo;
 			this.FF9Sys.mode = 2;
 			this.FF9Sys.prevMode = 1;
 			break;
 		case 3:
 			this.FF9.wldMapNo = map.nextMapNo;
-			this.FF9.wldLocNo = (Int16)EventEngineUtils.eventIDToMESID[(Int32)this.FF9.wldMapNo];
+			this.FF9.wldLocNo = (Int16)EventEngineUtils.eventIDToMESID[this.FF9.wldMapNo];
 			this.FF9Sys.mode = 3;
 			this.FF9Sys.prevMode = 1;
 			break;
@@ -457,9 +402,7 @@ public class HonoluluFieldMain : HonoBehavior
 		{
 			Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
 			if (currentMusicId != -1)
-			{
 				FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
-			}
 			FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
 			AllSoundDispatchPlayer allSoundDispatchPlayer3 = SoundLib.GetAllSoundDispatchPlayer();
 			allSoundDispatchPlayer3.FF9SOUND_STREAM_STOP();
@@ -479,11 +422,7 @@ public class HonoluluFieldMain : HonoBehavior
 	private void OnGUI()
 	{
 		if (!EventEngineUtils.showDebugUI)
-		{
 			return;
-		}
-		EBin eBin = this.ee.eBin;
-		ETb eTb = this.ee.eTb;
 	}
 
 	private void changeScenePanel()
@@ -674,9 +613,7 @@ public class HonoluluFieldMain : HonoBehavior
 
 	private Int32 prevPrg = -1;
 
-	private Single cumulativeTime;
-
-	private Single frameTime = 0.0333333351f;
+	private Boolean mbgFrameSkip = true;
 
 	private Single debugUILastTouchTime;
 

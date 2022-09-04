@@ -4,7 +4,7 @@ using FF9;
 using Memoria.Data;
 using UnityEngine;
 
-public class BTL_DATA
+public partial class BTL_DATA
 {
 	public void SetDisappear(Boolean disappear, Byte priority)
 	{

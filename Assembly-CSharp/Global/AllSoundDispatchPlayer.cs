@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -101,9 +102,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public static Int32 ConvertTickToMillisec(Int32 ticks)
 	{
-		Single num = 1000f / (Single)Application.targetFrameRate;
-		Single num2 = (Single)ticks * num;
-		return (Int32)(((Int32)(num2 * 10f) % 10 > 5) ? ((Int32)num2 + 1) : ((Int32)num2));
+		Single msPerTick = 1000f / (Single)FPSManager.GetTargetFPS();
+		Single ms = ticks * msPerTick;
+		return ((Int32)(ms * 10f) % 10 > 5) ? (Int32)ms + 1 : (Int32)ms;
 	}
 
 	public Int32 GetCurrentMusicId()
