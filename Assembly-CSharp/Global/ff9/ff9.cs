@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
@@ -4067,6 +4068,23 @@ public static class ff9
 	{
 		if ((ff9.w_framePhase == 0 || ff9.w_framePhase == 2) && (ff9.w_framePhase == 0 || ff9.w_framePhase == 2))
 			ff9.w_frameResult = ff9.ServiceEvents();
+		String wldLocName = ff9.w_worldLocationName();
+		if (String.IsNullOrEmpty(wldLocName))
+			PlayerWindow.Instance.SetTitle($"World Map: {FF9StateSystem.Common.FF9.wldMapNo}");
+		else
+			PlayerWindow.Instance.SetTitle($"World Map: {FF9StateSystem.Common.FF9.wldMapNo}, {wldLocName}");
+	}
+
+	public static String w_worldLocationName()
+	{
+		if (ff9.w_moveActorPtr == null || ff9.w_moveActorPtr.originalActor == null)
+			return String.Empty;
+		Int32 idall = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index].id;
+		if (ff9.m_GetIDArea(idall) != 0 || ff9.m_GetIDTopograph(idall) == 0 || ff9.m_GetIDTopograph(idall) == 37)
+			return FF9TextTool.WorldLocationText(ff9.m_GetIDArea(idall));
+		//if (ff9.w_moveCHRControl_No >= 0 && ff9.w_moveCHRControl_No < ff9.w_moveCHRControl.Length)
+		//	return ff9.w_moveCHRControl_No.ToString();
+		return String.Empty;
 	}
 
 	private static void w_frameService()
@@ -6899,45 +6917,37 @@ public static class ff9
 	public static Boolean w_moveGetPadStateLX(out Int32 vx)
 	{
 		Single x = PersistenSingleton<HonoInputManager>.Instance.GetAxis().x;
-		Boolean flag = x < -0.1f;
-		Boolean flag2 = x > 0.1f;
+		Boolean goLeft = x < -0.1f;
+		Boolean goRight = x > 0.1f;
 		vx = 0;
 		if (Configuration.AnalogControl.Enabled)
 		{
-			if (flag || flag2)
-			{
-				vx = (int)(x * 128.0f);
-			}
+			if (goLeft || goRight)
+				vx = (Int32)(x * 128.0f);
 		}
 		else
 		{
-			if (flag)
-			{
+			if (goLeft)
 				vx = -128;
-			}
-			if (flag2)
-			{
+			if (goRight)
 				vx = 128;
-			}
-			if (!EventInput.IsMovementControl)
-			{
-				vx = 0;
-			}
 		}
+		if (!EventInput.IsMovementControl)
+			vx = 0;
 		return false;
 	}
 
 	public static Boolean w_moveGetPadStateLY(out Int32 vy)
 	{
-		Boolean flag = ff9.w_moveCHRControl_No == 6 || ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9;
-		if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flag)
+		Boolean flyingVehicle = ff9.w_moveCHRControl_No == 6 || ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9;
+		if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flyingVehicle)
 		{
-			Boolean flag2 = false;
-			Boolean flag3 = false;
+			Boolean goDown = false;
+			Boolean goUp = false;
 			SourceControl sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Down);
 			if (sourceControl == SourceControl.Touch)
 			{
-				flag2 = UIManager.Input.GetKey(Control.Down);
+				goDown = UIManager.Input.GetKey(Control.Down);
 			}
 			else
 			{
@@ -6945,14 +6955,14 @@ public static class ff9
 				if (sourceControl == SourceControl.Joystick || sourceControl == SourceControl.KeyBoard)
 				{
 					Single y = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
-					flag2 = (y > 0.1f);
-					flag3 = (y < -0.1f);
+					goDown = y > 0.1f;
+					goUp = y < -0.1f;
 				}
 			}
 			sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Up);
 			if (sourceControl == SourceControl.Touch)
 			{
-				flag3 = UIManager.Input.GetKey(Control.Up);
+				goUp = UIManager.Input.GetKey(Control.Up);
 			}
 			else
 			{
@@ -6960,103 +6970,74 @@ public static class ff9
 				if (sourceControl == SourceControl.Joystick || sourceControl == SourceControl.KeyBoard)
 				{
 					Single y2 = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
-					flag2 = (y2 > 0.1f);
-					flag3 = (y2 < -0.1f);
+					goDown = y2 > 0.1f;
+					goUp = y2 < -0.1f;
 				}
 			}
 			vy = 0;
-			if (flag2)
-			{
+			if (goDown)
 				vy = -128;
-			}
-			if (flag3)
-			{
+			if (goUp)
 				vy = 128;
-			}
-			if (!EventInput.IsMovementControl)
-			{
-				vy = 0;
-			}
-			return false;
 		}
-		Single y3 = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
-		Boolean flag4 = y3 > 0.1f;
-		Boolean flag5 = y3 < -0.1f;
-		vy = 0;
-		if (Configuration.AnalogControl.Enabled)
+		else
 		{
-			if (flag4 || flag5)
+			Single y3 = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
+			Boolean goDown = y3 > 0.1f;
+			Boolean goUp = y3 < -0.1f;
+			vy = 0;
+			if (Configuration.AnalogControl.Enabled)
 			{
-				vy = (int)(-y3 * 128.0f);
+				if (goDown || goUp)
+					vy = (Int32)(-y3 * 128.0f);
 			}
-
-		} else
-		{
-			if (flag4)
+			else
 			{
-				vy = -128;
-			}
-			if (flag5)
-			{
-				vy = 128;
+				if (goDown)
+					vy = -128;
+				if (goUp)
+					vy = 128;
 			}
 		}
 		if (!EventInput.IsMovementControl)
-		{
 			vy = 0;
-		}
 		return false;
 	}
 
 	public static Boolean w_moveGetPadStateR(out Int32 vy)
 	{
-		Boolean flag = ff9.w_moveCHRControl_No == 6 || ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9;
-		if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flag)
+		Boolean flyingVehicle = ff9.w_moveCHRControl_No == 6 || ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9;
+		Boolean goBackward = false;
+		Boolean goForward = false;
+		if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flyingVehicle)
 		{
-			Boolean flag2 = false;
-			Boolean flag3 = false;
 			SourceControl sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
 			if (sourceControl == SourceControl.Touch)
 			{
 				Single y = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
-				flag2 = (y < -0.1f);
-				flag3 = (y > 0.1f);
+				goBackward = y < -0.1f;
+				goForward = y > 0.1f;
 			}
 			else
 			{
 				sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Special);
 				if (sourceControl == SourceControl.Joystick || sourceControl == SourceControl.KeyBoard)
-				{
-					flag2 = UIManager.Input.GetKey(Control.Special);
-				}
+					goBackward = UIManager.Input.GetKey(Control.Special);
 				sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Confirm);
 				if (sourceControl == SourceControl.Joystick || sourceControl == SourceControl.KeyBoard)
-				{
-					flag3 = UIManager.Input.GetKey(Control.Confirm);
-				}
+					goForward = UIManager.Input.GetKey(Control.Confirm);
 			}
-			vy = 0;
-			if (flag2)
-			{
-				vy = -128;
-			}
-			if (flag3)
-			{
-				vy = 128;
-			}
-			return false;
 		}
-		Boolean key = UIManager.Input.GetKey(Control.Special);
-		Boolean key2 = UIManager.Input.GetKey(Control.Confirm);
+		else
+		{
+			goBackward = UIManager.Input.GetKey(Control.Special);
+			goForward = UIManager.Input.GetKey(Control.Confirm);
+		}
 		vy = 0;
-		if (key)
-		{
+		if (goBackward)
 			vy = -128;
-		}
-		if (key2)
-		{
+		if (goForward)
 			vy = 128;
-		}
 		return false;
 	}
 
@@ -7537,29 +7518,23 @@ public static class ff9
 
 	public static void w_naviTitleElement()
 	{
-		UInt32 num = ff9.w_naviFadeInTime + 120u;
-		UInt32 num2 = ff9.w_naviFadeInTime + 180u;
+		UInt32 fadeoutTime = ff9.w_naviFadeInTime + 120u;
+		UInt32 closeTime = ff9.w_naviFadeInTime + 180u;
 		ff9.w_naviLocationDraw = 0;
-		if (ff9.w_frameCounterReady > (Int64)((UInt64)ff9.w_naviFadeInTime))
-		{
+		if (ff9.w_frameCounterReady > ff9.w_naviFadeInTime)
 			ff9.w_naviLocationDraw = ff9.WorldTitleFadeInMode;
-		}
-		if (ff9.w_frameCounterReady > (Int64)((UInt64)num))
-		{
+		if (ff9.w_frameCounterReady > fadeoutTime)
 			ff9.w_naviLocationDraw = ff9.WorldTitleFadeOutMode;
-		}
-		if (ff9.w_frameCounterReady > (Int64)((UInt64)num2))
-		{
+		if (ff9.w_frameCounterReady > closeTime)
 			ff9.w_naviLocationDraw = ff9.WorldTitleCloseMode;
-		}
-		if (ff9.w_frameCounterReady >= (Int64)((UInt64)num2))
+		if (ff9.w_frameCounterReady >= closeTime)
 		{
-			EventInput.PSXCntlClearPadMask(0, 34078720u);
+			EventInput.PSXCntlClearPadMask(0, EventInput.Lsquare | EventInput.Lnavi);
 			PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableMapButton = true;
 		}
 		else
 		{
-			EventInput.PSXCntlSetPadMask(0, 34078720u);
+			EventInput.PSXCntlSetPadMask(0, EventInput.Lsquare | EventInput.Lnavi);
 			PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableMapButton = false;
 		}
 		if (ff9.w_naviLocationDraw == ff9.WorldTitleFadeInMode)
@@ -7570,12 +7545,10 @@ public static class ff9
 				ff9.ushort_gEventGlobal_Write(0, ff9.w_frameScenePtr);
 			}
 			if (ff9.w_naviTitleColor != 128)
-			{
-				ff9.w_naviTitleColor = (Byte)(ff9.w_naviTitleColor + 4);
-			}
+				ff9.w_naviTitleColor += 4;
 			if (ff9.w_naviLocationDraw != ff9.lastTitleDrawState)
 			{
-				Int32 fadeInFrames = Convert.ToInt32(num) - ff9.w_frameCounterReady;
+				Int32 fadeInFrames = Convert.ToInt32(fadeoutTime) - ff9.w_frameCounterReady;
 				PersistenSingleton<UIManager>.Instance.WorldHUDScene.SetContinentTitleSprite(ff9.w_naviTitle);
 				PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(true);
 				PersistenSingleton<UIManager>.Instance.WorldHUDScene.ShowContinentTitle(fadeInFrames);
@@ -7585,12 +7558,10 @@ public static class ff9
 		else if (ff9.w_naviLocationDraw == ff9.WorldTitleFadeOutMode)
 		{
 			if (ff9.w_naviTitleColor != 0)
-			{
-				ff9.w_naviTitleColor = (Byte)(ff9.w_naviTitleColor - 4);
-			}
+				ff9.w_naviTitleColor -= 4;
 			if (ff9.w_naviLocationDraw != ff9.lastTitleDrawState)
 			{
-				Int32 fadeOutFrames = Convert.ToInt32(num2) - ff9.w_frameCounterReady;
+				Int32 fadeOutFrames = Convert.ToInt32(closeTime) - ff9.w_frameCounterReady;
 				PersistenSingleton<UIManager>.Instance.WorldHUDScene.HideContinentTitle(fadeOutFrames);
 			}
 		}
@@ -9666,19 +9637,20 @@ public static class ff9
 	public static void ff9InitStateWorldMap(Int32 MapNo)
 	{
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-		FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
+		FF9StateSystem stateSystem = PersistenSingleton<FF9StateSystem>.Instance;
 		FF9StateWorldSystem ff9World = FF9StateSystem.World.FF9World;
 		FF9StateWorldMap map = FF9StateSystem.World.FF9World.map;
-		instance.attr &= 4294955006u;
+		stateSystem.attr &= 4294955006u;
 		ff9World.attr |= 1024u;
 		map.nextMapNo = (ff.wldMapNo = (Int16)MapNo);
 		if (!FF9StateSystem.World.IsBeeScene)
 		{
+			EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
 			String ebFileName = FF9DBAll.EventDB[MapNo];
 			map.evtPtr = EventEngineUtils.loadEventData(ebFileName, EventEngineUtils.ebSubFolderWorld);
-			PersistenSingleton<EventEngine>.Instance.StartEvents(map.evtPtr);
-			PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
-			PersistenSingleton<EventEngine>.Instance.updateModelsToBeAdded();
+			eventEngine.StartEvents(map.evtPtr);
+			eventEngine.eTb.InitMessage();
+			eventEngine.updateModelsToBeAdded();
 		}
 	}
 

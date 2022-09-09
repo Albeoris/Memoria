@@ -109,7 +109,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private static Byte[,] d;
     private static PosObj sLastTalker;
     private static Int32 sTalkTimer;
-    private static HashSet<Int16> moogleFldMap;
+    public static HashSet<Int16> moogleFldMap;
+    public static HashSet<Int16> moogleFldSpecialMap;
 
     static EventEngine()
     {
@@ -164,14 +165,14 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             150, // A. Castle/Guardhouse
             206, // Prima Vista/Crash Site
             253, // Evil Forest/Spring
-            300, // Ice Cavern/Entrance
+            300, // Ice Cavern/Entrance (moogle is not always there)
             306, // Ice Cavern/Cave
             351, // Dali/Inn
             407, // Dali/Storage Area
             554, // Lindblum/Inn
             602, // L. Castle/Dragon's Gate
             611, // L. Castle/Guest Room
-            662, // Marsh/Thicket
+            662, // Marsh/Thicket (moogle is not always there)
             706, // Gizamaluke/Cavern
             764, // Burmecia/Vault
             802, // S. Gate/Bohden Station
@@ -185,7 +186,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             1106, // Cleyra/Inn
             1109, // Cleyra/Cathedral (moogle is not always there)
             1152, // Red Rose/Cabin
-            1205, // A. Castle/Chapel
+            1205, // A. Castle/Chapel (moogle is not always there)
             1213, // A. Castle/Guardhouse
             1252, // Pinnacle Rocks/Path
             1304, // Lindblum/Inn
@@ -226,6 +227,18 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             2925, // Crystal World
             3057 // Mage Village/Water Mill
         };
+        EventEngine.moogleFldSpecialMap = new HashSet<Int16>
+        {
+            300, // Ice Cavern/Entrance (moogle is not always there)
+            662, // Marsh/Thicket (moogle is not always there)
+            1102, // Cleyra/Sandpit (moogle is not always there)
+            1109, // Cleyra/Cathedral (moogle is not always there)
+            1205, // A. Castle/Chapel (moogle is not always there)
+            1421, // Fossil Roo/Mining Site (moogle must be unlocked)
+            2220, // Palace/Library (moogle area must be unlocked)
+            2655, // Bran Bal/Storage (moogle must be unlocked)
+            2706  // Pand./Hall (moogle is not always here)
+        };
     }
 
     public static Int32 FindArrayIDFromEventID(Int32 eventID)
@@ -242,16 +255,19 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 	{
         if (!EventEngine.moogleFldMap.Contains(fldId))
             return false;
-        if (fldId == 300 && scCounter < 3900) // Ice Cavern/Entrance
-            return false;
-        if (fldId == 662 && scCounter < 11100) // Marsh/Thicket
-            return false;
-        if (fldId == 1102 && scCounter < 4900) // Cleyra/Sandpit
-            return false;
-        if (fldId == 1109 && scCounter < 4900) // Cleyra/Cathedral
-            return false;
-        if (fldId == 2706 && mapIndex == -1) // Pand./Hall
-            return false;
+        if (EventEngine.moogleFldSpecialMap.Contains(fldId))
+        {
+            if (fldId == 300 && scCounter < 3900) // Ice Cavern/Entrance
+                return false;
+            if (fldId == 662 && scCounter < 11100) // Marsh/Thicket
+                return false;
+            if (fldId == 1102 && scCounter < 4900) // Cleyra/Sandpit
+                return false;
+            if (fldId == 1109 && scCounter < 4900) // Cleyra/Cathedral
+                return false;
+            if (fldId == 2706 && mapIndex == -1) // Pand./Hall
+                return false;
+        }
         return true;
     }
 }

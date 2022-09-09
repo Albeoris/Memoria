@@ -222,8 +222,6 @@ namespace Assets.Sources.Scripts.UI.Common
             //    FF9TextTool.SetTableText(ExtractTableText(text));
             //}
 
-            PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}, Loc: {FF9StateSystem.Common.FF9.fldLocNo} Name: {FF9StateSystem.Common.FF9.mapNameStr}");
-
             IsLoading = false;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
         }

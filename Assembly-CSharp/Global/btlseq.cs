@@ -158,7 +158,7 @@ public class btlseq
 			pCmd.regist.rot.eulerAngles = new Vector3(eulerAngles.x, pCmd.regist.evt.rotBattle.eulerAngles.y, eulerAngles.z);
 		}
 	}
-
+	public static Int32 debugCounter = 0;
 	public static SEQ_WORK EntrySequence(CMD_DATA pCmd)
 	{
 		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
@@ -181,11 +181,13 @@ public class btlseq
 		seqWork[num].SVfxTime = 0;
 		seqWork[num].FadeTotal = 0;
 		FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = 0;
+		debugCounter = 0;
 		return seqWork[num];
 	}
 
 	public static void Sequencer()
 	{
+		debugCounter++;
 		instance.wSeqCode = 0;
 		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
 		for (Int32 i = 0; i < 4; i++)
@@ -196,10 +198,10 @@ public class btlseq
 				seqWork[i].DecCnt--;
 				seqWork[i].AnmCnt++;
 				BTL_DATA regist = seqWork[i].CmdPtr.regist;
-				Int32 num = 1;
+				Int32 continueSeq = 1;
 				using (instance.sequenceReader = new BinaryReader(new MemoryStream(instance.data)))
 				{
-					while (num != 0)
+					while (continueSeq != 0)
 					{
 						instance.sequenceReader.BaseStream.Seek(seqWork[i].CurPtr + 4, SeekOrigin.Begin);
 						instance.wSeqCode = instance.sequenceReader.ReadByte();
@@ -213,13 +215,13 @@ public class btlseq
 						if (seqWork[i].CurPtr != seqWork[i].OldPtr && btlseq.gSeqProg[instance.wSeqCode].Init != null)
 							btlseq.gSeqProg[instance.wSeqCode].Init(seqWork[i], regist);
 						seqWork[i].OldPtr = seqWork[i].CurPtr;
-						num = btlseq.gSeqProg[instance.wSeqCode].Exec(seqWork[i], regist);
+						continueSeq = btlseq.gSeqProg[instance.wSeqCode].Exec(seqWork[i], regist);
 					}
 				}
 				if (seqWork[i].TurnTime != 0)
 				{
 					Vector3 eulerAngles = regist.rot.eulerAngles;
-					eulerAngles.y = (Single)(seqWork[i].TurnOrg + seqWork[i].TurnRot * seqWork[i].TurnCnt / seqWork[i].TurnTime);
+					eulerAngles.y = seqWork[i].TurnOrg + seqWork[i].TurnRot * (Single)seqWork[i].TurnCnt / (Single)seqWork[i].TurnTime;
 					regist.rot = Quaternion.Euler(eulerAngles);
 					if (seqWork[i].TurnCnt++ >= seqWork[i].TurnTime)
 						seqWork[i].TurnTime = 0;
@@ -278,7 +280,7 @@ public class btlseq
 		}
 	}
 
-	public static void DispCharacter(BTL_DATA btl)
+	public static void DispCharacter(BTL_DATA btl, Boolean advanceAnim = true)
 	{
 		PosObj evt = btl.evt;
 		if (btl.bi.slave != 0)
@@ -309,9 +311,10 @@ public class btlseq
 		Int32 animLoopFrame = GeoAnim.getAnimationLoopFrame(btl);
 		if (!btl_mot.IsAnimationFrozen(btl))
 		{
-			if (btl.animation != (UnityEngine.Object)null)
+			if (btl.animation != null)
 				btl.animation.enabled = true;
-			btl.animFrameFrac += Math.Abs(btl.animSpeed);
+			if (advanceAnim)
+				btl.animFrameFrac += Math.Abs(btl.animSpeed);
 			while (btl.animFrameFrac >= 1f)
 			{
 				btl.animFrameFrac--;
@@ -321,12 +324,12 @@ public class btlseq
 					evt.animFrame++;
 			}
 		}
-		else if (btl.animation != (UnityEngine.Object)null)
+		else if (btl.animation != null)
 		{
 			btl.animation.enabled = false;
 		}
 		btl.animEndFrame = false;
-		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && (UInt16)evt.animFrame > animLoopFrame) || (reverseSpeed && (UInt16)evt.animFrame < 0))
+		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && evt.animFrame > animLoopFrame) || (reverseSpeed && evt.animFrame < 0))
 		{
 			btl.endedAnimationName = btl.currentAnimationName;
 			if (btl.bi.dmg_mot_f != 0)
@@ -358,46 +361,38 @@ public class btlseq
 			btl.monster_transform.fade_counter--;
 			MonsterTransformFading(btl);
 		}
-		Int32 num = btl.meshCount;
-		Int32 num2 = 0;
-		Int32 num3 = 0;
+		Int32 meshcnt = btl.meshCount;
+		Int32 meshoffcnt = 0;
+		Int32 meshoncnt = 0;
 		btl.flags &= (UInt16)~geo.GEO_FLAGS_RENDER;
-		for (Int32 i = 0; i < num; i++)
+		for (Int32 i = 0; i < meshcnt; i++)
 		{
 			if (geo.geoMeshChkFlags(btl, i) == 0)
 			{
 				btl.flags |= geo.GEO_FLAGS_RENDER;
 				btl.SetIsEnabledMeshRenderer(i, true);
-				num3++;
+				meshoncnt++;
 			}
 			else
 			{
 				btl.SetIsEnabledMeshRenderer(i, false);
-				num2++;
+				meshoffcnt++;
 			}
 		}
-		if (num2 == num)
+		if (meshoffcnt == meshcnt)
 		{
 			btl.SetIsEnabledBattleModelRenderer(false);
 			if ((btl.bi.slot_no == 2 && btl.bi.player != 0) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
 			{
-				Renderer[] componentsInChildren = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
-				Renderer[] array = componentsInChildren;
-				for (Int32 j = 0; j < (Int32)array.Length; j++)
-				{
-					Renderer renderer = array[j];
-					renderer.enabled = false;
-				}
-				Renderer[] componentsInChildren2 = btl.gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
-				Renderer[] array2 = componentsInChildren2;
-				for (Int32 k = 0; k < (Int32)array2.Length; k++)
-				{
-					Renderer renderer2 = array2[k];
-					renderer2.enabled = false;
-				}
+				Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
+				for (Int32 i = 0; i < longHairRenderers.Length; i++)
+					longHairRenderers[i].enabled = false;
+				Renderer[] shortHairRenderers = btl.gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
+				for (Int32 i = 0; i < shortHairRenderers.Length; i++)
+					shortHairRenderers[i].enabled = false;
 			}
 		}
-		if (num3 == num)
+		if (meshoncnt == meshcnt)
 		{
 			btl.SetIsEnabledBattleModelRenderer(true);
 			if ((btl.bi.slot_no == 2 && btl.bi.player != 0) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
@@ -405,30 +400,20 @@ public class btlseq
 				Byte serialNumber = btl_util.getSerialNumber(btl);
 				if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == 4 || serialNumber == 3 || Configuration.Graphics.GarnetHair == 1))
 				{
-					Renderer[] componentsInChildren3 = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
-					Renderer[] array3 = componentsInChildren3;
-					for (Int32 l = 0; l < (Int32)array3.Length; l++)
-					{
-						Renderer renderer3 = array3[l];
-						renderer3.enabled = true;
-					}
+					Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
+					for (Int32 i = 0; i < longHairRenderers.Length; i++)
+						longHairRenderers[i].enabled = true;
 				}
 				else
 				{
-					Renderer[] componentsInChildren4 = btl.gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
-					Renderer[] array4 = componentsInChildren4;
-					for (Int32 m = 0; m < (Int32)array4.Length; m++)
-					{
-						Renderer renderer4 = array4[m];
-						renderer4.enabled = true;
-					}
+					Renderer[] shortHairRenderers = btl.gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
+					for (Int32 i = 0; i < shortHairRenderers.Length; i++)
+						shortHairRenderers[i].enabled = true;
 				}
 			}
-			else if (btl.bi.slot_no == 0 && btl.bi.player != 0)
+			else if (btl.bi.slot_no == 0 && btl.bi.player != 0 && btl_util.getSerialNumber(btl) == 1)
 			{
-				Byte serialNumber2 = btl_util.getSerialNumber(btl);
-				if (serialNumber2 == 1)
-					btl.SetIsEnabledBattleModelRenderer(false);
+				btl.SetIsEnabledBattleModelRenderer(false);
 			}
 		}
 		if (!Status.checkCurStat(btl, BattleStatus.Jump))
@@ -436,11 +421,10 @@ public class btlseq
 			GeoTexAnim.geoTexAnimService(btl.texanimptr);
 			GeoTexAnim.geoTexAnimService(btl.tranceTexanimptr);
 		}
-		if (btl.weapon_geo != (UnityEngine.Object)null)
+		if (btl.weapon_geo != null)
 		{
-			num = btl.weaponMeshCount;
 			btl.weaponFlags &= (UInt16)~geo.GEO_FLAGS_RENDER;
-			for (Int32 n = 0; n < num; n++)
+			for (Int32 n = 0; n < btl.weaponMeshCount; n++)
 			{
 				if (geo.geoWeaponMeshChkFlags(btl, n) == 0)
 				{
@@ -457,38 +441,38 @@ public class btlseq
 
 	public static void FF9DrawShadowCharBattle(GameObject[] shadowArray, Int32 charNo, Int32 posY, Int32 BoneNo)
 	{
-		GameObject gameObject = shadowArray[charNo];
-		GameObject gameObject2 = (GameObject)null;
-		if (gameObject == (UnityEngine.Object)null)
+		GameObject shadowObj = shadowArray[charNo];
+		GameObject btlObj = null;
+		if (shadowObj == null)
 			return;
-		gameObject.SetActive(true);
+		shadowObj.SetActive(true);
 		if (charNo < 9)
 		{
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 				if (next.bi.player != 0 && (Int32)next.bi.slot_no == charNo)
-					gameObject2 = next.gameObject;
-			if (gameObject2 == (UnityEngine.Object)null)
+					btlObj = next.gameObject;
+			if (btlObj == null)
 				global::Debug.LogError("gameObject is NULL");
 		}
 		else
 		{
-			gameObject2 = FF9StateSystem.Battle.FF9Battle.btl_data[4 + charNo - 9].gameObject;
+			btlObj = FF9StateSystem.Battle.FF9Battle.btl_data[4 + charNo - 9].gameObject;
 		}
-		btlseq.ff9battleShadowCalculateMatrix(gameObject, gameObject2, posY, ff9btl.ff9btl_get_bonestart(BoneNo), ff9btl.ff9btl_get_boneend(BoneNo));
+		btlseq.ff9battleShadowCalculateMatrix(shadowObj, btlObj, posY, ff9btl.ff9btl_get_bonestart(BoneNo), ff9btl.ff9btl_get_boneend(BoneNo));
 	}
 
 	public static void ff9battleShadowCalculateMatrix(GameObject ObjPtr, GameObject CharPtr, Int32 PosY, Int32 BoneStartNo, Int32 BoneEndNo)
 	{
 		Vector3 localPosition = ObjPtr.transform.localPosition;
 		Transform childByName = CharPtr.transform.GetChildByName("bone" + BoneStartNo.ToString("D3"));
-		if (childByName == (UnityEngine.Object)null)
+		if (childByName == null)
 		{
 			if (ObjPtr.activeSelf)
 				ObjPtr.SetActive(false);
 			return;
 		}
 		localPosition.x = childByName.position.x;
-		localPosition.y = (Single)PosY + 2.5f;
+		localPosition.y = PosY + 2.5f;
 		localPosition.z = childByName.position.z;
 		ObjPtr.transform.localPosition = localPosition;
 	}
@@ -503,13 +487,13 @@ public class btlseq
 	private static Int32 SeqExecEnd(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecEnd!!!!!!!!!!!!");
-		if (!pSeqWork.Flags.FinishIdle && pSeqWork.AnmCnt != 0 && (UInt16)pMe.evt.animFrame >= GeoAnim.getAnimationLoopFrame(pMe))
+		if (!pSeqWork.Flags.FinishIdle && pSeqWork.AnmCnt != 0 && pMe.animEndFrame)
 		{
 			btl_mot.setMotion(pMe, pMe.bi.def_idle);
 			pMe.evt.animFrame = 0;
 			pSeqWork.Flags.FinishIdle = true;
 		}
-		if ((pMe.stat.cur & (BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Freeze)) == 0u && !pSeqWork.Flags.FinishIdle)
+		if (!btl_mot.IsAnimationFrozen(pMe) && !pSeqWork.Flags.FinishIdle)
 			return 0;
 		if (SFX.isRunning)
 			return 0;
@@ -519,7 +503,7 @@ public class btlseq
 			return 0;
 		if (!pSeqWork.Flags.EventMode)
 			btl_cmd.ReqFinishCommand(pSeqWork.CmdPtr);
-		pSeqWork.CmdPtr = (CMD_DATA)null;
+		pSeqWork.CmdPtr = null;
 		if (FF9StateSystem.Battle.isDebug)
 		{
 			pMe.pos = (pMe.base_pos = pMe.original_pos);
@@ -564,25 +548,25 @@ public class btlseq
 		WK_MOVE wk_MOVE = new WK_MOVE();
 		wk_MOVE.Next = 4;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
+		wk_MOVE.Frames = instance.sequenceReader.ReadByte();
 		for (Int32 i = 0; i < 3; i++)
 			wk_MOVE.Org[i] = (Int16)pMe.pos[i];
 		wk_MOVE.Dst[1] = wk_MOVE.Org[1];
 		btlseq.SeqSubTargetAveragePos(pSeqWork.CmdPtr.tar_id, out wk_MOVE.Dst[0], out wk_MOVE.Dst[2]);
-		Int16 num = instance.sequenceReader.ReadInt16();
+		Int16 distance = instance.sequenceReader.ReadInt16();
 		if (wk_MOVE.Org[0] != wk_MOVE.Dst[0] || wk_MOVE.Org[2] != wk_MOVE.Dst[2])
 		{
 			if (instance.wSeqCode == 30)
 			{
-				wk_MOVE.Dst[2] = (Int16)(wk_MOVE.Dst[2] + (Int16)(-num));
+				wk_MOVE.Dst[2] -= distance;
 			}
 			else
 			{
-				Double num3 = (Double)Mathf.Atan2((Single)(wk_MOVE.Dst[0] - wk_MOVE.Org[0]), (Single)(wk_MOVE.Dst[2] - wk_MOVE.Org[2]));
-				Double num4 = (Double)Mathf.Sin((Single)num3);
-				Double num5 = (Double)Mathf.Cos((Single)num3);
-				wk_MOVE.Dst[0] = (Int16)(wk_MOVE.Dst[0] + (Int16)(num4 * (Double)num));
-				wk_MOVE.Dst[2] = (Int16)(wk_MOVE.Dst[2] + (Int16)(num5 * (Double)num));
+				Single angle = Mathf.Atan2(wk_MOVE.Dst[0] - wk_MOVE.Org[0], wk_MOVE.Dst[2] - wk_MOVE.Org[2]);
+				Single sin = Mathf.Sin(angle);
+				Single cos = Mathf.Cos(angle);
+				wk_MOVE.Dst[0] += (Int16)(sin * distance);
+				wk_MOVE.Dst[2] += (Int16)(cos * distance);
 			}
 		}
 		pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wk_MOVE);
@@ -591,20 +575,15 @@ public class btlseq
 	public static Int32 SeqExecMoveToTarget(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMoveToTarget");
-		WK_MOVE wk_MOVE = new WK_MOVE();
-		wk_MOVE = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
-		Vector3 zero = Vector3.zero;
-		Vector3 zero2 = Vector3.zero;
-		for (Int16 num = 0; num < 3; num++)
+		WK_MOVE wk_MOVE = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
+		for (Int16 i = 0; i < 3; i++)
 		{
-			Int16 num2 = wk_MOVE.Org[num];
-			Int16 num3 = wk_MOVE.Dst[num];
-			zero[num] = pMe.pos[num];
-			zero2[num] = (Single)num3;
-			pMe.pos[num] = (Single)(num3 - num2) * ((Single)pSeqWork.IncCnt * 1f) / (Single)wk_MOVE.Frames + (Single)num2;
+			Int16 org = wk_MOVE.Org[i];
+			Int16 dst = wk_MOVE.Dst[i];
+			pMe.pos[i] = (dst - org) * (Single)pSeqWork.IncCnt / (Single)wk_MOVE.Frames + org;
 		}
 		if (pSeqWork.IncCnt >= wk_MOVE.Frames)
-			pSeqWork.CurPtr += (Int32)wk_MOVE.Next;
+			pSeqWork.CurPtr += wk_MOVE.Next;
 		return 0;
 	}
 
@@ -614,11 +593,11 @@ public class btlseq
 		WK_MOVE wk_MOVE = new WK_MOVE();
 		wk_MOVE.Next = 2;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
-		for (Int16 num = 0; num < 3; num++)
+		wk_MOVE.Frames = instance.sequenceReader.ReadByte();
+		for (Int16 i = 0; i < 3; i++)
 		{
-			wk_MOVE.Org[num] = (Int16)pMe.gameObject.transform.localPosition[num];
-			wk_MOVE.Dst[num] = (Int16)pMe.base_pos[num];
+			wk_MOVE.Org[i] = (Int16)pMe.gameObject.transform.localPosition[i];
+			wk_MOVE.Dst[i] = (Int16)pMe.base_pos[i];
 		}
 		pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wk_MOVE);
 	}
@@ -626,18 +605,18 @@ public class btlseq
 	public static Int32 SeqExecAnim(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecAnim");
-		Byte b = instance.sequenceReader.ReadByte();
-		if (b == 255)
+		Byte animCode = instance.sequenceReader.ReadByte();
+		if (animCode == 255)
 		{
-			Int32 num = (Int32)((pMe.bi.def_idle == 0) ? 0 : 1);
-			String name = FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mot[num];
-			btl_mot.setMotion(pMe, name);
+			Int32 motId = (pMe.bi.def_idle == 0) ? 0 : 1;
+			String animName = FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mot[motId];
+			btl_mot.setMotion(pMe, animName);
 		}
 		else
 		{
-			Int32 num = (Int32)(pSeqWork.AnmIDOfs + b);
-			String name2 = FF9BattleDB.Animation[instance.seq_work_set.AnmAddrList[num]];
-			btl_mot.setMotion(pMe, name2);
+			Int32 animId = pSeqWork.AnmIDOfs + animCode;
+			String animName = FF9BattleDB.Animation[instance.seq_work_set.AnmAddrList[animId]];
+			btl_mot.setMotion(pMe, animName);
 		}
 		pMe.evt.animFrame = 0;
 		pSeqWork.AnmCnt = 0;
@@ -658,7 +637,7 @@ public class btlseq
 	public static Int32 SeqExecWaitAnim(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecWaitAnim");
-		if (pSeqWork.AnmCnt != 0 && ((UInt16)pMe.evt.animFrame >= GeoAnim.getAnimationLoopFrame(pMe) || btl_mot.IsAnimationFrozen(pMe)))
+		if (pSeqWork.AnmCnt != 0 && (pMe.animEndFrame || btl_mot.IsAnimationFrozen(pMe)))
 		{
 			SFX.SetEffCamTrigger();
 			pSeqWork.CurPtr++;
@@ -719,14 +698,14 @@ public class btlseq
 		btlseq.BattleLog("SeqInitScale");
 		WK_SCALE wk_SCALE = new WK_SCALE();
 		wk_SCALE.Org = (Int16)(pMe.gameObject.transform.localScale.x * 4096f);
-		Int16 num = instance.sequenceReader.ReadInt16();
-		if (num == -1)
-			num = 4096;
+		Int16 scaleFactor = instance.sequenceReader.ReadInt16();
+		if (scaleFactor == -1)
+			scaleFactor = 4096;
 		else
-			num = (Int16)(wk_SCALE.Org * num / 4096);
-		wk_SCALE.Scl = (Int16)(num - wk_SCALE.Org);
+			scaleFactor = (Int16)(wk_SCALE.Org * scaleFactor / 4096);
+		wk_SCALE.Scl = (Int16)(scaleFactor - wk_SCALE.Org);
 		pSeqWork.IncCnt = 1;
-		wk_SCALE.Frames = (Int16)instance.sequenceReader.ReadByte();
+		wk_SCALE.Frames = instance.sequenceReader.ReadByte();
 		pSeqWork.Work = btlseq.SequenceConverter.WkScaleToWork(wk_SCALE);
 	}
 
@@ -734,10 +713,10 @@ public class btlseq
 	{
 		btlseq.BattleLog("SeqExecScale");
 		WK_SCALE wk_SCALE = btlseq.SequenceConverter.WorkToWkScale(pSeqWork.Work);
-		UInt16 num = (UInt16)(wk_SCALE.Scl * pSeqWork.IncCnt / wk_SCALE.Frames + wk_SCALE.Org);
-		geo.geoScaleSet(pMe, (Int32)num);
-		btl_scrp.SetCharacterData(pMe, 55u, (Int32)num);
-		if (num == 4096)
+		UInt16 scaleFactor = (UInt16)(wk_SCALE.Scl * pSeqWork.IncCnt / wk_SCALE.Frames + wk_SCALE.Org);
+		geo.geoScaleSet(pMe, scaleFactor);
+		btl_scrp.SetCharacterData(pMe, 55u, scaleFactor);
+		if (scaleFactor == 4096)
 			geo.geoScaleReset(pMe);
 		if (pSeqWork.IncCnt >= wk_SCALE.Frames)
 		{
@@ -750,10 +729,10 @@ public class btlseq
 	public static Int32 SeqExecMeshHide(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMeshHide");
-		UInt16 num = instance.sequenceReader.ReadUInt16();
-		pMe.meshflags |= (UInt32)num;
-		pMe.mesh_current = (UInt16)(pMe.mesh_current | num);
-		btl_mot.HideMesh(pMe, num, false);
+		UInt16 hiddenMesh = instance.sequenceReader.ReadUInt16();
+		pMe.meshflags |= hiddenMesh;
+		pMe.mesh_current |= hiddenMesh;
+		btl_mot.HideMesh(pMe, hiddenMesh, false);
 		pSeqWork.CurPtr += 3;
 		return 1;
 	}
@@ -761,8 +740,8 @@ public class btlseq
 	public static Int32 SeqExecMessage(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMessage");
-		UInt16 num = (UInt16)instance.sequenceReader.ReadByte();
-		if ((num & 128) != 0)
+		UInt16 messId = (UInt16)instance.sequenceReader.ReadByte();
+		if ((messId & 128) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
@@ -771,19 +750,13 @@ public class btlseq
 		}
 		else
 		{
-			num = (UInt16)(num + (UInt16)FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes);
-			string btlMessage;
+			messId += FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes;
+			String btlMessage = FF9TextTool.BattleText(messId);
 			if (instance.wSeqCode == 33)
-			{
-				btlMessage = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleTitle(btlMessage, 4);
-			}
 			else
-			{
-				btlMessage = FF9TextTool.BattleText((Int32)num);
 				UIManager.Battle.SetBattleMessage(btlMessage, 4);
-			}
-			VoicePlayer.PlayBattleVoice(num, btlMessage);
+			VoicePlayer.PlayBattleVoice(messId, btlMessage);
 		}
 		pSeqWork.CurPtr += 2;
 		return 1;
@@ -792,10 +765,10 @@ public class btlseq
 	public static Int32 SeqExecMeshShow(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMeshShow");
-		UInt16 num = instance.sequenceReader.ReadUInt16();
-		pMe.meshflags &= (UInt32)(~num);
-		pMe.mesh_current = (UInt16)(pMe.mesh_current & (UInt16)(~num));
-		btl_mot.ShowMesh(pMe, num, false);
+		UInt16 shownMesh = instance.sequenceReader.ReadUInt16();
+		pMe.meshflags &= (UInt32)~shownMesh;
+		pMe.mesh_current &= (UInt16)~shownMesh;
+		btl_mot.ShowMesh(pMe, shownMesh, false);
 		pSeqWork.CurPtr += 3;
 		return 1;
 	}
@@ -835,7 +808,7 @@ public class btlseq
 			Int16[] array = new Int16[3];
 			btlseq.SeqSubTargetAveragePos(pSeqWork.CmdPtr.tar_id, out array[0], out array[2]);
 			array[1] = 0;
-			seq_WORK_SET.CamTrgCPos = new Vector3((Single)array[0], (Single)array[1], (Single)array[2]);
+			seq_WORK_SET.CamTrgCPos = new Vector3(array[0], array[1], array[2]);
 			seq_WORK_SET.CamExe = pMe;
 			seq_WORK_SET.CamTrg = btlseq.SeqSubGetTarget(pSeqWork.CmdPtr.tar_id);
 			SFX.SetCameraTarget(seq_WORK_SET.CamTrgCPos, seq_WORK_SET.CamExe, seq_WORK_SET.CamTrg);
@@ -852,14 +825,13 @@ public class btlseq
 		WK_MOVE wk_MOVE = btlseq.SequenceConverter.WorkToWkMove(pSeqWork.Work);
 		wk_MOVE.Next = 8;
 		pSeqWork.IncCnt = 1;
-		wk_MOVE.Frames = (Int16)instance.sequenceReader.ReadByte();
-		for (Int16 num = 0; num < 3; num++)
+		wk_MOVE.Frames = instance.sequenceReader.ReadByte();
+		for (Int16 i = 0; i < 3; i++)
 		{
-			wk_MOVE.Org[num] = (Int16)pMe.gameObject.transform.localPosition[num];
-			Int16 num2 = instance.sequenceReader.ReadInt16();
-			if (num == 1)
-				num2 *= -1;
-			wk_MOVE.Dst[num] = num2;
+			wk_MOVE.Org[i] = (Int16)pMe.gameObject.transform.localPosition[i];
+			wk_MOVE.Dst[i] = instance.sequenceReader.ReadInt16();
+			if (i == 1)
+				wk_MOVE.Dst[i] *= -1;
 		}
 		pSeqWork.Work = btlseq.SequenceConverter.WkMoveToWork(wk_MOVE);
 	}
@@ -868,8 +840,8 @@ public class btlseq
 	{
 		btlseq.BattleLog("SeqExecMoveToPoint");
 		btlseq.SeqExecMoveToTarget(pSeqWork, pMe);
-		for (Int16 num = 0; num < 3; num++)
-			pMe.base_pos[num] = pMe.pos[num];
+		for (Int16 i = 0; i < 3; i++)
+			pMe.base_pos[i] = pMe.pos[i];
 		return 0;
 	}
 

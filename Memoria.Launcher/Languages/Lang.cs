@@ -177,7 +177,8 @@ namespace Memoria.Launcher
             public static readonly string UsePsxFont = GetSettings(nameof(UsePsxFont));
             public static readonly string FontChoice = GetSettings(nameof(FontChoice));
             public static readonly string SBUIenabled = GetSettings(nameof(SBUIenabled));
-            public static readonly string BattleFPS = GetSettings(nameof(BattleFPS));
+            public static readonly string BattleTPS = GetSettings(nameof(BattleTPS));
+            public static readonly string SharedFPS = GetSettings(nameof(SharedFPS));
 
         }
 

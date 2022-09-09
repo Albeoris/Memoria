@@ -99,22 +99,22 @@ namespace Memoria.Launcher
             masterSkill.Foreground = Brushes.White;
             masterSkill.Margin = rowMargin;
 
-            UiTextBlock battleFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleFPS), row: 19, col: 0, rowSpan: 2, colSpan: 8);
-            battleFpsText.Foreground = Brushes.White;
-            battleFpsText.Margin = rowMargin;
+            UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row: 19, col: 0, rowSpan: 2, colSpan: 8);
+            sharedFpsText.Foreground = Brushes.White;
+            sharedFpsText.Margin = rowMargin;
 
-            UiTextBlock battleFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row: 21, col: 0, rowSpan: 2, colSpan: 2);
-            battleFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
-            battleFpsIndex.Foreground = Brushes.White;
-            battleFpsIndex.Margin = rowMargin;
+            UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row: 21, col: 0, rowSpan: 2, colSpan: 2);
+            sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
+            sharedFpsIndex.Foreground = Brushes.White;
+            sharedFpsIndex.Margin = rowMargin;
 
-            Slider battleFps = AddUiElement(UiSliderFactory.Create(0), row: 21, col: 2, rowSpan: 1, colSpan: 6);
-            battleFps.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
-            battleFps.TickFrequency = 1;
-            battleFps.IsSnapToTickEnabled = true;
-            battleFps.Minimum = 15;
-            battleFps.Maximum = 60;
-            battleFps.Margin = new Thickness(0, 0, 3, 0);
+            Slider sharedFps = AddUiElement(UiSliderFactory.Create(0), row: 21, col: 2, rowSpan: 1, colSpan: 6);
+            sharedFps.SetBinding(Slider.ValueProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
+            sharedFps.TickFrequency = 1;
+            sharedFps.IsSnapToTickEnabled = true;
+            sharedFps.Minimum = 15;
+            sharedFps.Maximum = 120;
+            sharedFps.Margin = new Thickness(0, 0, 3, 0);
 
             LoadSettings();
         }
@@ -216,20 +216,20 @@ namespace Memoria.Launcher
             }
         }
 
-        public Int16 BattleFPS
+        public Int16 SharedFPS
         {
-            get { return _battlefps; }
+            get { return _sharedfps; }
             set
             {
-                if (_battlefps != value)
+                if (_sharedfps != value)
                 {
-                    _battlefps = value;
+                    _sharedfps = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _battlefps;
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _sharedfps;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -312,14 +312,20 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _masterskill))
                     _masterskill = 0;
 
-                value = iniFile.ReadValue("Graphics", nameof(BattleFPS));
+                value = null;
+                foreach (String prop in new String[] { "BattleFPS", "FieldFPS", "WorldFPS" })
+                {
+                    value = iniFile.ReadValue("Graphics", prop);
+                    if (!String.IsNullOrEmpty(value))
+                        break;
+                }
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "15";
-                    OnPropertyChanged(nameof(BattleFPS));
+                    value = "30";
+                    //OnPropertyChanged(nameof(SharedFPS));
                 }
-                if (!Int16.TryParse(value, out _battlefps))
-                    _battlefps = 15;
+                if (!Int16.TryParse(value, out _sharedfps))
+                    _sharedfps = 30;
 
 
                 Refresh(nameof(StealingAlwaysWorks));
@@ -330,7 +336,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(Attack9999));
                 Refresh(nameof(NoRandomEncounter));
                 Refresh(nameof(MasterSkill));
-                Refresh(nameof(BattleFPS));
+                Refresh(nameof(SharedFPS));
             }
             catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
@@ -421,8 +427,11 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
                         }
                         break;
-                    case nameof(BattleFPS):
-                        iniFile.WriteValue("Graphics", propertyName, " " + (BattleFPS).ToString());
+                    case nameof(SharedFPS):
+                        iniFile.WriteValue("Graphics", "BattleFPS", " " + (SharedFPS).ToString());
+                        iniFile.WriteValue("Graphics", "FieldFPS", " " + (SharedFPS).ToString());
+                        iniFile.WriteValue("Graphics", "WorldFPS", " " + (SharedFPS).ToString());
+                        iniFile.WriteValue("Graphics", "Enabled", " 1");
                         break;
                 }
             }

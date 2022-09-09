@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Assets.Scripts.Common;
 using UnityEngine;
 
 public class GeoTexAnim : HonoBehavior
@@ -10,7 +11,7 @@ public class GeoTexAnim : HonoBehavior
 	{
 		this.Count = 0;
 		this._isLoaded = false;
-		this._cTime = 0f;
+		this._cFrameCounter = 0;
 	}
 
 	public override void HonoOnDestroy()
@@ -286,10 +287,10 @@ public class GeoTexAnim : HonoBehavior
 	{
 		if (!this._isLoaded)
 			return;
-		this._cTime += Time.deltaTime;
-		if (this._cTime >= 0.06666667f)
+		this._cFrameCounter++;
+		if (this._cFrameCounter >= (SceneDirector.IsBattleScene() ? 2 : 1))
 		{
-			this._cTime = 0f;
+			this._cFrameCounter = 0;
 			for (Int32 i = 0; i < this.Count; i++)
 			{
 				GEOTEXANIMHEADER geotexanimheader = this.Anims[i];
@@ -566,7 +567,7 @@ public class GeoTexAnim : HonoBehavior
 
 	private Boolean _isLoaded;
 
-	private Single _cTime;
+	private Int32 _cFrameCounter;
 
 	private SkinnedMeshRenderer[] _smrs;
 

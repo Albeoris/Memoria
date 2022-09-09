@@ -68,7 +68,8 @@
 			UsePsxFont = "Использовать PSX-шрифт"
 			FontChoice = "шрифт"
 			SBUIenabled = "Масштабированный UI битвы"
-			BattleFPS = "Скорость анимации в бою (реком. 22)"
+			BattleTPS = "Скорость анимации в бою (реком. 22)"
+			SharedFPS = "Кадровая частота"
 			/>
 
 	<SdLib

@@ -6,15 +6,16 @@ namespace Memoria
 {
 	static class SmoothFrameUpdater_Field
 	{
-		// TODO: add a smooth effect for EBG overlays (FieldMap.scene.overlayList[].transform.localPosition etc)
 		// TODO: add a smooth effect for field SPS (FieldSPSSystem._spsList[].pos etc)
 
 		// Max (squared) distance per frame to be considered as a smooth movement for field actors
-		private static readonly Single ActorSmoothMovementMaxSqr = 100 * 100;
+		private const Single ActorSmoothMovementMaxSqr = 100f * 100f;
 		// Max degree turn per frame to be considered as a smooth movement for field actors
-		private static readonly Single ActorSmoothTurnMaxDeg = 20;
+		private const Single ActorSmoothTurnMaxDeg = 20f;
+		// Max (squared) distance per frame to be considered as a smooth movement for EBG overlays
+		private const Single OverlaySmoothMovementMaxSqr = 20f * 20f;
 		// Max (squared) distance per frame to be considered as a smooth movement for the camera
-		private static readonly Single CameraSmoothMovementMaxSqr = 450f * 450f;
+		private const Single CameraSmoothMovementMaxSqr = 450f * 450f;
 
 		// Disable smooth effects for the duration of a couple of main loop ticks
 		public static Int32 Skip
@@ -71,9 +72,25 @@ namespace Memoria
 					}
 				}
 			}
+			if (fieldmap?.scene?.overlayList != null)
+			{
+				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
+				{
+					if (bgLayer.transform != null && (bgLayer.flags & 2) != 0)
+					{
+						if (bgLayer._smoothUpdateRegistered)
+							bgLayer._smoothUpdatePosPrevious = bgLayer._smoothUpdatePosActual;
+						else
+							bgLayer._smoothUpdatePosPrevious = bgLayer.transform.position;
+						bgLayer._smoothUpdatePosActual = bgLayer.transform.position;
+						bgLayer._smoothUpdateRegistered = true;
+					}
+				}
+			}
 			Camera mainCamera = fieldmap?.GetMainCamera();
 			if (mainCamera != null)
 			{
+				_cameraReverseMove = _cameraRegistered && (mainCamera.transform.position - _cameraPosPrevious).sqrMagnitude < 1f;
 				if (_cameraRegistered)
 					_cameraPosPrevious = _cameraPosActual;
 				else
@@ -114,7 +131,21 @@ namespace Memoria
 					}
 				}
 			}
-			if (_cameraRegistered)
+			foreach (FF9FieldCharState charState in FF9StateSystem.Field.FF9Field.loc.map.charStateArray.Values)
+				fldchar.updateMirrorPosAndAnim(charState.mirror);
+			if (fieldmap?.scene?.overlayList != null)
+			{
+				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
+				{
+					if (bgLayer.transform != null && (bgLayer.flags & 2) != 0 && bgLayer._smoothUpdateRegistered)
+					{
+						Vector3 frameMove = bgLayer._smoothUpdatePosActual - bgLayer._smoothUpdatePosPrevious;
+						if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < OverlaySmoothMovementMaxSqr)
+							bgLayer.transform.position = bgLayer._smoothUpdatePosActual + smoothFactor * frameMove;
+					}
+				}
+			}
+			if (_cameraRegistered && !_cameraReverseMove)
 			{
 				Camera mainCamera = fieldmap?.GetMainCamera();
 				if (mainCamera != null && (_cameraPosActual - _cameraPosPrevious).sqrMagnitude < CameraSmoothMovementMaxSqr)
@@ -146,6 +177,10 @@ namespace Memoria
 					}
 				}
 			}
+			if (fieldmap?.scene?.overlayList != null)
+				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
+					if (bgLayer.transform != null && (bgLayer.flags & 2) != 0 && bgLayer._smoothUpdateRegistered)
+						bgLayer.transform.position = bgLayer._smoothUpdatePosActual;
 			if (_cameraRegistered)
 			{
 				Camera mainCamera = fieldmap?.GetMainCamera();
@@ -156,6 +191,7 @@ namespace Memoria
 
 		private static Int32 _skipCount = 0;
 		private static Boolean _cameraRegistered = false;
+		private static Boolean _cameraReverseMove = false; // Used to lower camera movement flickering effect in some situations
 		private static Vector3 _cameraPosPrevious;
 		private static Vector3 _cameraPosActual;
 	}
@@ -171,4 +207,10 @@ partial class FieldMapActorController
 	public Boolean _smoothUpdatePlayingAnim = false;
 	public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
+}
+partial class BGOVERLAY_DEF
+{
+	public Boolean _smoothUpdateRegistered = false;
+	public Vector3 _smoothUpdatePosPrevious;
+	public Vector3 _smoothUpdatePosActual;
 }

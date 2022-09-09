@@ -1903,8 +1903,12 @@ internal class EventEngineUtils
 
     public static Boolean IsMogCalled(EventEngine eventEngine)
     {
-        Int16 num = FF9StateSystem.Common.FF9.wldMapNo;
-        Int32 var = !MogCallAddressData.ContainsKey(num) ? 7893 : MogCallAddressData[num];
+        if (!eventEngine.IsEventContextValid())
+            return false;
+        if (eventEngine.GetMapVar() == null)
+            return false;
+        Int16 wldNo = FF9StateSystem.Common.FF9.wldMapNo;
+        Int32 var = !MogCallAddressData.ContainsKey(wldNo) ? 7893 : MogCallAddressData[wldNo];
         return eventEngine.eBin.getVarManually(var) == 1;
     }
 

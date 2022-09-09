@@ -69,7 +69,8 @@
 			UsePsxFont = " Utiliser la police PS1"
 			FontChoice = "Police"
 			SBUIenabled = " Scaled Battle UI"
-			BattleFPS = "Vitesse combats (déf. 15)"
+			BattleTPS = "Vitesse combats (déf. 15)"
+			SharedFPS = "Fréquence d'images / seconde"
 			/>
 
 	<SdLib

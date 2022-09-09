@@ -16,22 +16,30 @@ public class UIFollowTarget : MonoBehaviour
 
 	private Boolean isNull()
 	{
-		return this.worldCam == (UnityEngine.Object)null || this.uiCam == (UnityEngine.Object)null || this.target == (UnityEngine.Object)null;
+		return this.worldCam == null || this.uiCam == null || this.target == null;
 	}
 
 	public void UpdateUIPosition()
 	{
 		if (!this.mStart)
-		{
 			this.Start();
-		}
 		if (!this.isNull() && (this.lastPosition != this.target.position || !this.worldCam.worldToCameraMatrix.Equals(this.lastWorldMatrix) || this.updateEveryFrame))
 		{
-			this.lastPosition = this.target.position;
+			if (this.target.gameObject.activeInHierarchy)
+				this.lastPosition = this.target.position;
 			this.lastWorldMatrix = this.worldCam.worldToCameraMatrix;
-			Vector3 position = this.worldCam.WorldToScreenPoint(this.target.position + this.targetTransformOffset);
-			Vector3 vector = this.uiCam.ScreenToWorldPoint(position);
-			this.myTrans.position = new Vector3(vector.x, vector.y, 0f);
+			Vector3 screenPos = this.worldCam.WorldToScreenPoint(this.lastPosition + this.targetTransformOffset);
+			Single cameraMinX = (Screen.width - this.worldCam.pixelWidth) / 2f;
+			Single cameraMinY = (Screen.height - this.worldCam.pixelHeight) / 2f;
+			Single cameraMaxX = cameraMinX + this.worldCam.pixelWidth;
+			Single cameraMaxY = cameraMinY + this.worldCam.pixelHeight;
+			//UIWidget widget = this.myTrans.parent.GetComponent<UIWidget>();
+			Single textWidth2 = 50f;
+			Single textHeight2 = 20f;
+			screenPos.x = Mathf.Clamp(screenPos.x, cameraMinX + textWidth2, cameraMaxX - textWidth2);
+			screenPos.y = Mathf.Clamp(screenPos.y, cameraMinY + textHeight2, cameraMaxY - textHeight2);
+			Vector3 worldPos = this.uiCam.ScreenToWorldPoint(screenPos);
+			this.myTrans.position = new Vector3(worldPos.x, worldPos.y, 0f);
 			this.myTrans.localPosition += this.UIOffset;
 		}
 	}

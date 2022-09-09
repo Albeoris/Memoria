@@ -263,6 +263,8 @@ public class EventInput
 		//	else if ((inputs & EventInput.Lselect) > 0u || (inputs & EventInput.Pselect) > 0u)
 		//		EventInput.isPressedDig = false;
 		//}
+		if (gMode == 3 && EventEngineUtils.IsMogCalled(PersistenSingleton<EventEngine>.Instance))
+			ff9.w_isMogActive = true;
 		EventInput.eventButtonInput = 0u;
 		return inputs;
 	}

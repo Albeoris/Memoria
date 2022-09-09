@@ -406,6 +406,7 @@ public class FieldMap : HonoBehavior
     {
         if (this.camIdx == newCamIdx)
             return;
+        SmoothFrameUpdater_Field.Skip = 1;
         this.camIdx = newCamIdx;
         this.ActivateCamera();
         this.walkMesh.ProjectedWalkMesh = this.GetCurrentBgCamera().projectedWalkMesh;

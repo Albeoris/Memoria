@@ -8,16 +8,16 @@ namespace Memoria
 	static class SmoothFrameUpdater_Battle
 	{
 		// Max (squared) distance per frame to be considered as a smooth movement for battle units
-		private static readonly Single ActorSmoothMovementMaxSqr = 600f * 600f;
+		private const Single ActorSmoothMovementMaxSqr = 600f * 600f;
 		// Max degree turn per frame to be considered as a smooth movement for field actors
-		private static readonly Single ActorSmoothTurnMaxDeg = 30;
+		private const Single ActorSmoothTurnMaxDeg = 30f;
 		// Max scaling factor per frame to be considered as a smooth movement for field actors
-		private static readonly Single ActorSmoothScaleMaxChange = 1.3f;
-		private static readonly Single ActorSmoothScaleMinChange = 1f / 1.3f;
+		private const Single ActorSmoothScaleMaxChange = 1.3f;
+		private const Single ActorSmoothScaleMinChange = 1f / 1.3f;
 		// Max (squared) distance per frame to be considered as a smooth movement for the camera
-		private static readonly Single CameraSmoothMovementMaxSqr = 450f * 450f;
+		private const Single CameraSmoothMovementMaxSqr = 450f * 450f;
 		// Max degree turn per frame to be considered as a smooth movement for the camera
-		private static readonly Single CameraSmoothTurnMaxDeg = 15;
+		private const Single CameraSmoothTurnMaxDeg = 15f;
 
 		// Disable smooth effects for the duration of a couple of main loop ticks
 		public static Int32 Skip

@@ -417,11 +417,11 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "20";
+                    value = "115";
                     OnPropertyChanged(nameof(BattleSwirlFrames));
                 }
                 if (!Int16.TryParse(value, out _battleswirlframes))
-                    _battleswirlframes = 20;
+                    _battleswirlframes = 115;
                 value = iniFile.ReadValue("Audio", nameof(SoundVolume));
                 if (String.IsNullOrEmpty(value))
                 {

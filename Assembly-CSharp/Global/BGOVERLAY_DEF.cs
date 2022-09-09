@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class BGOVERLAY_DEF
+public partial class BGOVERLAY_DEF
 {
 	public BGOVERLAY_DEF()
 	{
@@ -14,35 +14,30 @@ public class BGOVERLAY_DEF
         this.isCreated = false;
     }
 
-	public void SetFlags(Byte flags, Boolean isSet)
+	public void SetFlags(Byte flagDiff, Boolean isSet)
 	{
 		if (isSet)
 		{
-			this.flags = (Byte)(this.flags | flags);
+			this.flags |= flagDiff;
 			if ((this.flags & 2) != 0)
-			{
 				this.transform.gameObject.SetActive(true);
-			}
 		}
 		else
 		{
-			this.flags = (Byte)(this.flags & (Byte)(~flags));
+			this.flags &= (Byte)~flagDiff;
 			if ((this.flags & 2) == 0)
-			{
 				this.transform.gameObject.SetActive(false);
-			}
 		}
 	}
 
 	public void ReadData(BinaryReader reader)
 	{
 		this.startOffset = reader.BaseStream.Position;
-		UInt32 num = reader.ReadUInt32();
-		this.oriData = num;
-		Byte b = 0;
-		this.flags = (Byte)(num & 255u);
-		this.curZ = (UInt16)(num >> 8 & 4095u);
-		this.orgZ = (UInt16)(num >> 20 & 4095u);
+		UInt32 buffer = reader.ReadUInt32();
+		this.oriData = buffer;
+		this.flags = (Byte)(buffer & 0xFFu);
+		this.curZ = (UInt16)(buffer >> 8 & 0xFFFu);
+		this.orgZ = (UInt16)(buffer >> 20 & 0xFFFu);
 		this.w = reader.ReadUInt16();
 		this.h = reader.ReadUInt16();
 		this.orgX = reader.ReadInt16();
@@ -59,12 +54,12 @@ public class BGOVERLAY_DEF
 		this.dY = reader.ReadInt16();
 		this.fracX = reader.ReadInt16();
 		this.fracY = reader.ReadInt16();
-		num = reader.ReadUInt32();
-		b = 0;
-		this.camNdx = (Byte)BitUtil.ReadBits(num, ref b, 8);
-		this.isXOffset = (Byte)BitUtil.ReadBits(num, ref b, 1);
-		this.viewportNdx = (Byte)BitUtil.ReadBits(num, ref b, 7);
-		this.spriteCount = (UInt16)BitUtil.ReadBits(num, ref b, 16);
+		Byte bitPos = 0;
+		buffer = reader.ReadUInt32();
+		this.camNdx = (Byte)BitUtil.ReadBits(buffer, ref bitPos, 8);
+		this.isXOffset = (Byte)BitUtil.ReadBits(buffer, ref bitPos, 1);
+		this.viewportNdx = (Byte)BitUtil.ReadBits(buffer, ref bitPos, 7);
+		this.spriteCount = (UInt16)BitUtil.ReadBits(buffer, ref bitPos, 16);
 		this.locOffset = reader.ReadUInt32();
 		this.prmOffset = reader.ReadUInt32();
 		this.sprtWork = reader.ReadUInt32();

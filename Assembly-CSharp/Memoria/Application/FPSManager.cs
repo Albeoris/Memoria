@@ -58,9 +58,14 @@ namespace Memoria
 			if (FPSManager._currentTick != Time.frameCount)
 				AdvanceUpdateCounter();
 			Single oldLoopTarget = FPSManager._loopTarget;
-			FPSManager._loopPerSecond = (Single)lps;
+			FPSManager._loopPerSecond = lps;
 			FPSManager._loopTarget = 1f / lps;
 			FPSManager._nextLoopTarget += FPSManager._loopTarget - oldLoopTarget;
+		}
+
+		public static Int32 GetMainLoopSpeed()
+		{
+			return FPSManager._loopPerSecond;
 		}
 
 		private static void AdvanceUpdateCounter()
@@ -127,7 +132,7 @@ namespace Memoria
 			FPSManager._delayedInputsOff = ~inputs & FPSManager._delayedInputsPrevious & ~FPSManager._delayedInputsOn;
 		}
 
-		private static Single _loopPerSecond = 30f;
+		private static Int32 _loopPerSecond = 30;
 		private static Single _loopTarget = 0.03333334f;
 		private static Single _nextLoopTarget = 0f;
 		private static Int32 _currentTick = 0;

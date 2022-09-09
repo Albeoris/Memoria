@@ -123,6 +123,7 @@ public class HUDMessageChild : MonoBehaviour
 		this.tweenPosition.animationCurve = Singleton<HUDMessage>.Instance.damageTweenCurve;
 		this.tweenPosition.to = HUDMessage.NormalTargetPosition;
 		this.EnableTween(true);
+		this.hideWithTarget = false;
 	}
 
 	private void CriticalSetting()
@@ -131,6 +132,7 @@ public class HUDMessageChild : MonoBehaviour
 		this.tweenPosition.animationCurve = Singleton<HUDMessage>.Instance.criticalTweenCurve;
 		this.tweenPosition.to = HUDMessage.NormalTargetPosition;
 		this.EnableTween(true);
+		this.hideWithTarget = false;
 	}
 
 	private void RestoreSetting()
@@ -139,18 +141,21 @@ public class HUDMessageChild : MonoBehaviour
 		this.tweenPosition.animationCurve = Singleton<HUDMessage>.Instance.restoreTweenCurve;
 		this.tweenPosition.to = HUDMessage.RecoverTargetPosition;
 		this.EnableTween(true);
+		this.hideWithTarget = false;
 	}
 
 	private void DeathSentencesSetting()
 	{
 		this.uiWidget.color = Singleton<HUDMessage>.Instance.damageColor;
 		this.EnableTween(false);
+		this.hideWithTarget = true;
 	}
 
 	private void PetrifySetting()
 	{
 		this.uiWidget.color = Singleton<HUDMessage>.Instance.damageColor;
 		this.EnableTween(false);
+		this.hideWithTarget = true;
 	}
 
 	private void PlayAnimation()
@@ -190,6 +195,14 @@ public class HUDMessageChild : MonoBehaviour
 		this.tweenAlpha.IsPause = isPause;
 	}
 
+	private void Update()
+	{
+		if (!this.isInitialized || this.displayStyle == HUDMessage.MessageStyle.NONE || this.follower.target == null)
+			return;
+		if (this.hideWithTarget && !this.follower.target.gameObject.activeInHierarchy)
+			this.label.text = String.Empty;
+	}
+
 	[SerializeField]
 	private GameObject parentGameObject;
 
@@ -218,4 +231,7 @@ public class HUDMessageChild : MonoBehaviour
 	private Single countdown;
 
 	private Boolean isInitialized;
+
+	[NonSerialized]
+	private Boolean hideWithTarget;
 }

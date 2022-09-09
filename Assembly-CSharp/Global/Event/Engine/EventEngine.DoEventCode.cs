@@ -1902,20 +1902,16 @@ public partial class EventEngine
             case EBin.event_code_binary.MENUON:
             {
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 2964 && EIcon.AIconMode == 0)
-                {
-                    return 0;
-                }
-                EventInput.PSXCntlClearPadMask(0, 262144U);
+                    return 0; // L. Castle/Telescope
+                EventInput.PSXCntlClearPadMask(0, EventInput.Lmenu);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
                 return 0;
             }
             case EBin.event_code_binary.MENUOFF:
             {
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2172 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) < 9100 && Localization.GetSymbol() == "JP" && this.gCur.sid == 1 && this.gCur.ip == 119 && EIcon.AIconMode == 0)
-                {
-                    return 0;
-                }
-                EventInput.PSXCntlSetPadMask(0, 262144U);
+                    return 0; // L. Castle/Telescope
+                EventInput.PSXCntlSetPadMask(0, EventInput.Lmenu);
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;
             }

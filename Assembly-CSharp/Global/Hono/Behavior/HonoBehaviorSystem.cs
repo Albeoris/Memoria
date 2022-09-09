@@ -174,6 +174,7 @@ public class HonoBehaviorSystem : MonoBehaviour
 
 	private void LateUpdate()
 	{
+		// Dummied: the FPSManager always handles the regularity of the main loop
 		return;
 		if (!HonoBehaviorSystem.FrameSkipEnabled)
 			return;

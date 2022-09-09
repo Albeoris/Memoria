@@ -258,6 +258,26 @@ namespace Memoria
 					for (Int32 i = 0; i < arraySize; i++)
 						Byte.TryParse(entry[1 + i], out ff9.w_musicSet[i]);
 				}
+				else if (String.Compare(entry[0], "MoogleFieldList") == 0)
+				{
+					// eg.: MoogleFieldList Remove 2905 2909 2916 2919
+					Boolean add = String.Compare(entry[1], "Remove") != 0;
+					if (String.Compare(entry[1], "Set") == 0)
+					{
+						EventEngine.moogleFldMap.Clear();
+						EventEngine.moogleFldSpecialMap.Clear();
+					}
+					Int16 fldid;
+					for (Int32 i = 2; i < entry.Length; i++)
+						if (Int16.TryParse(entry[i], out fldid))
+						{
+							EventEngine.moogleFldSpecialMap.Remove(fldid);
+							if (add)
+								EventEngine.moogleFldMap.Add(fldid);
+							else
+								EventEngine.moogleFldMap.Remove(fldid);
+						}
+				}
 				else if (String.Compare(entry[0], "BattleMapModel") == 0)
 				{
 					// eg.: BattleMapModel BSC_CUSTOM_FIELD BBG_B065

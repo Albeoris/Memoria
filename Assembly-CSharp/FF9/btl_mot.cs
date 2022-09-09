@@ -745,12 +745,12 @@ namespace FF9
 
 	    public static void setMotion(BattleUnit btl, Byte index)
         {
-			setMotion(btl.Data, btl.Data.mot[(Int32)index]);
+			setMotion(btl.Data, btl.Data.mot[index]);
 		}
 
         public static void setMotion(BTL_DATA btl, Byte index)
 		{
-			setMotion(btl, btl.mot[(Int32)index]);
+			setMotion(btl, btl.mot[index]);
 		}
 
 		public static void setMotion(BTL_DATA btl, BattlePlayerCharacter.PlayerMotionIndex index)
@@ -841,6 +841,25 @@ namespace FF9
 			btl._smoothUpdateAnimTimeActual = time;
 			clipState.time = time;
 			gameObject.GetComponent<Animation>().Sample();
+			if (btl.evt.animFrame == animLoopFrame && !reverseSpeed)
+			{
+				// Try to smoothen standard animation chains
+				if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN))
+				{
+					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK], 1f / FPSManager.GetMainLoopSpeed());
+					btl._smoothUpdatePlayingAnim = false;
+				}
+				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK))
+				{
+					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK], 1f / FPSManager.GetMainLoopSpeed());
+					btl._smoothUpdatePlayingAnim = false;
+				}
+				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK))
+				{
+					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK], 1f / FPSManager.GetMainLoopSpeed());
+					btl._smoothUpdatePlayingAnim = false;
+				}
+			}
 		}
 
 		public static Int32 GetDirection(BTL_DATA btl)
@@ -915,14 +934,14 @@ namespace FF9
 							btl_util.SetBattleSfx(btl, 121, 127);
 							btl_util.SetBattleSfx(btl, 120, 127);
 							btl.die_seq++;
-							btl_util.SetEnemyFadeToPacket(btl, (Int32)enemyPtr.info.die_fade_rate);
+							btl_util.SetEnemyFadeToPacket(btl, enemyPtr.info.die_fade_rate);
 							if (enemyPtr.info.die_fade_rate == 0)
 								btl.die_seq = 5;
 							else
 								enemyPtr.info.die_fade_rate -= 2;
 							break;
 						case 4:
-							btl_util.SetEnemyFadeToPacket(btl, (Int32)enemyPtr.info.die_fade_rate);
+							btl_util.SetEnemyFadeToPacket(btl, enemyPtr.info.die_fade_rate);
 							if (enemyPtr.info.die_fade_rate == 0)
 								btl.die_seq = 5;
 							else if (Configuration.Battle.Speed < 3 || enemyPtr.info.die_fade_rate > 2 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))

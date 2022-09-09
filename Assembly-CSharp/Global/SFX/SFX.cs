@@ -1202,7 +1202,7 @@ public class SFX
                         SFX.currentEffectID == SpecialEffect.Special_Sealion_Engage ? 3 : 1);
                     next.SetDisappear(arg0 != 0, priority);
                     if (arg0 == 0)
-                        btlseq.DispCharacter(next);
+                        btlseq.DispCharacter(next, false);
                 }
                 break;
             case 19: // Show/Hide Weapon

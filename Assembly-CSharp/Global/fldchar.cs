@@ -238,47 +238,50 @@ public class fldchar
 							ff9FieldCharState.clr[1] = default(FF9FieldCharColor);
 						}
 						FF9FieldCharMirror mirror = ff9FieldCharState.mirror;
-						if (mirror != null && FF9Char.ff9charptr_attr_test(mirror.chr, 16777216) != 0)
+						updateMirrorPosAndAnim(mirror);
+						if (mirror != null && FF9Char.ff9charptr_attr_test(mirror.chr, 0x1000000) != 0)
 						{
-							FF9Char chr = mirror.chr;
-							Vector3 vector = mirror.point + ff9Char.geo.transform.localPosition;
-							vector += mirror.point;
-							vector.y *= -1f;
-							mirror.geo.transform.position = vector;
-							mirror.geo.transform.eulerAngles = ff9Char.geo.transform.eulerAngles;
-							Animation component = ff9Char.geo.GetComponent<Animation>();
-							Animation component2 = mirror.geo.GetComponent<Animation>();
-							String text = FF9DBAll.AnimationDB.GetValue((Int32)ff9Char.evt.anim);
-							if (component2.GetClip(text) == (UnityEngine.Object)null)
-							{
-								AnimationClip clip = component.GetClip(text);
-								component2.AddClip(clip, text);
-							}
-							component2.Play(text);
-							component2[text].speed = 0f;
-							component2[text].time = component[text].time;
-							component2.Sample();
-							Renderer[] componentsInChildren2 = mirror.geo.GetComponentsInChildren<Renderer>();
+							Renderer[] mirrorRenderers = mirror.geo.GetComponentsInChildren<Renderer>();
 							if (mirror.clr[3] != 0)
 							{
-								Color32 c2 = default(Color32);
-								c2.r = mirror.clr[0];
-								c2.g = mirror.clr[1];
-								c2.b = mirror.clr[2];
-								Renderer[] array4 = componentsInChildren2;
-								for (Int32 n = 0; n < (Int32)array4.Length; n++)
-								{
-									Renderer renderer4 = array4[n];
-									renderer4.material.SetColor("_Color", c2);
-								}
+								Color32 mirrorColor = default(Color32);
+								mirrorColor.r = mirror.clr[0];
+								mirrorColor.g = mirror.clr[1];
+								mirrorColor.b = mirror.clr[2];
+								for (Int32 n = 0; n < mirrorRenderers.Length; n++)
+									mirrorRenderers[n].material.SetColor("_Color", mirrorColor);
 								Byte[] clr = mirror.clr;
-								Int32 num5 = 3;
-								clr[num5] = (Byte)(clr[num5] - 1);
+								clr[3]--;
 							}
 						}
 					}
 				}
 			}
+		}
+	}
+
+	public static void updateMirrorPosAndAnim(FF9FieldCharMirror mirror)
+	{
+		if (mirror != null && FF9Char.ff9charptr_attr_test(mirror.chr, 0x1000000) != 0)
+		{
+			FF9Char ff9Char = mirror.chr;
+			Vector3 mirrorPos = mirror.point + ff9Char.geo.transform.localPosition;
+			mirrorPos += mirror.point;
+			mirrorPos.y *= -1f;
+			mirror.geo.transform.position = mirrorPos;
+			mirror.geo.transform.eulerAngles = ff9Char.geo.transform.eulerAngles;
+			Animation charAnimation = ff9Char.geo.GetComponent<Animation>();
+			Animation mirrorAnimation = mirror.geo.GetComponent<Animation>();
+			String animName = FF9DBAll.AnimationDB.GetValue(ff9Char.evt.anim);
+			if (mirrorAnimation.GetClip(animName) == null)
+			{
+				AnimationClip clip = charAnimation.GetClip(animName);
+				mirrorAnimation.AddClip(clip, animName);
+			}
+			mirrorAnimation.Play(animName);
+			mirrorAnimation[animName].speed = 0f;
+			mirrorAnimation[animName].time = charAnimation[animName].time;
+			mirrorAnimation.Sample();
 		}
 	}
 

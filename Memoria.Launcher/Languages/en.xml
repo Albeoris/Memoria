@@ -69,7 +69,8 @@
 			UsePsxFont = "Use PSX font"
 			FontChoice = "Font"
 			SBUIenabled = "Scaled Battle UI"
-			BattleFPS = "Battle speed (def. 15)"
+			BattleTPS = "Battle speed (def. 15)"
+			SharedFPS = "Frames Per Second"
 
 			/>
 
