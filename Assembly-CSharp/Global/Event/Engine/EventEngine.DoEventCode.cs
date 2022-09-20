@@ -640,10 +640,11 @@ public partial class EventEngine
             {
                 this.getv1(); // rush_type
                 this._ff9.btlSubMapNo = -1;
-                Int32 num16 = this.getv2();
-                this._ff9.steiner_state = (Byte)(num16 >> 15 & 1);
-                this.SetBattleScene(num16 & (Int32)Int16.MaxValue);
+                Int32 btlId = this.getv2();
+                this._ff9.steiner_state = (Byte)(btlId >> 15 & 1);
+                this.SetBattleScene(btlId & Int16.MaxValue);
                 FF9StateSystem.Battle.isRandomEncounter = false;
+                this._encountBase = 0;
                 return 3;
             }
             case EBin.event_code_binary.MAPJUMP:
@@ -653,7 +654,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.CC:
             {
-                Actor activeActorByUid = this.getActiveActorByUID((Int32)this._context.controlUID);
+                Actor activeActorByUid = this.getActiveActorByUID(this._context.controlUID);
                 if (activeActorByUid != null && this.gMode == 1)
                 {
                     if (FF9StateSystem.Common.FF9.fldMapNo == 1607)
@@ -670,7 +671,7 @@ public partial class EventEngine
                         activeActorByUid.fieldMapActorController.gameObject.name = "obj" + activeActorByUid.uid;
                     }
                 }
-                if (this.gMode == 3)
+                if (this.gMode == 3 && this._context.controlUID != this.gExec.uid)
                     SmoothFrameUpdater_World.Skip = 1;
                 this._context.controlUID = this.gExec.uid;
                 return 0;
@@ -1556,10 +1557,11 @@ public partial class EventEngine
             {
                 this.getv1(); // rush_type
                 this._ff9.btlSubMapNo = (SByte)this.getv1();
-                Int32 num40 = this.getv2();
-                this._ff9.steiner_state = (Byte)(num40 >> 15 & 1);
-                this.SetBattleScene(num40 & (Int32)Int16.MaxValue);
+                Int32 btlId = this.getv2();
+                this._ff9.steiner_state = (Byte)(btlId >> 15 & 1);
+                this.SetBattleScene(btlId & Int16.MaxValue);
                 FF9StateSystem.Battle.isRandomEncounter = false;
+                this._encountBase = 0;
                 return 3;
             }
             case EBin.event_code_binary.TIMERDISPLAY:

@@ -120,50 +120,50 @@ public class btl_para
             btl.Kill();
     }
 
-    public static void SetRecover(BTL_DATA btl, UInt32 recover)
+    public static void SetRecover(BattleUnit btl, UInt32 recover)
     {
-        if (Status.checkCurStat(btl, BattleStatus.Death))
-            btl.fig_info = Param.FIG_INFO_MISS;
-        else if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
+        if (btl.IsUnderAnyStatus(BattleStatus.Death))
+            btl.Data.fig_info = Param.FIG_INFO_MISS;
+        else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
             recover = 0;
-        else if (btl.cur.hp + recover < btl.max.hp)
-            btl.cur.hp += recover;
+        else if (btl.CurrentHp + recover < btl.MaximumHp)
+            btl.CurrentHp += recover;
         else
-            btl.cur.hp = btl.max.hp;
-        btl.fig = (Int32)recover;
+            btl.CurrentHp = btl.MaximumHp;
+        btl.Data.fig = (Int32)recover;
     }
 
-    public static void SetMpDamage(BTL_DATA btl, UInt32 damage)
+    public static void SetMpDamage(BattleUnit btl, UInt32 damage)
     {
-        if (Status.checkCurStat(btl, BattleStatus.Death))
+        if (btl.IsUnderAnyStatus(BattleStatus.Death))
         {
-            btl.fig_info = Param.FIG_INFO_MISS;
+            btl.Data.fig_info = Param.FIG_INFO_MISS;
         }
-        else if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
+        else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
         {
             damage = 0;
         }
-        else if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
+        else if (!FF9StateSystem.Battle.isDebug && (btl.IsPlayer || !FF9StateSystem.Settings.IsHpMpFull))
         {
-            if (btl.cur.mp > damage)
-                btl.cur.mp -= damage;
+            if (btl.CurrentMp > damage)
+                btl.CurrentMp -= damage;
             else
-                btl.cur.mp = 0;
+                btl.CurrentMp = 0;
         }
-        btl.m_fig = (Int32)damage;
+        btl.Data.m_fig = (Int32)damage;
     }
 
-    public static void SetMpRecover(BTL_DATA btl, UInt32 recover)
+    public static void SetMpRecover(BattleUnit btl, UInt32 recover)
     {
-        if (Status.checkCurStat(btl, BattleStatus.Death))
-            btl.fig_info = Param.FIG_INFO_MISS;
-        else if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
+        if (btl.IsUnderAnyStatus(BattleStatus.Death))
+            btl.Data.fig_info = Param.FIG_INFO_MISS;
+        else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
             recover = 0;
-        else if (btl.cur.mp + recover < btl.max.mp)
-            btl.cur.mp += recover;
+        else if (btl.CurrentMp + recover < btl.MaximumMp)
+            btl.CurrentMp += recover;
         else
-            btl.cur.mp = btl.max.mp;
-        btl.m_fig = (Int32)recover;
+            btl.CurrentMp = btl.MaximumMp;
+        btl.Data.m_fig = (Int32)recover;
     }
 
     public static void SetPoisonDamage(BTL_DATA btl)
@@ -251,12 +251,12 @@ public class btl_para
         }
     }
 
-    public static void SwitchPlayerRow(BTL_DATA btl)
+    public static void SwitchPlayerRow(BTL_DATA btl, Boolean updatePos = true)
     {
-        Int32 delta = (btl.bi.row == 0) ? 400 : -400;
-        btl.pos[2] = btl.base_pos[2] + delta;
-        btl.base_pos[2] += delta;
+        btl.base_pos[2] += (btl.bi.row == 0) ? 400 : -400;
         btl.bi.row = (Byte)(btl.bi.row == 0 ? 1 : 0);
+        if (updatePos)
+            btl.pos[2] = btl.base_pos[2];
     }
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)

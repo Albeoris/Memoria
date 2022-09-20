@@ -56,25 +56,25 @@ namespace Memoria
 
         public void PenaltyDefenceAttack()
         {
-            if (IsUnderStatus(BattleStatus.Defend | BattleStatus.Protect))
+            if (IsUnderAnyStatus(BattleStatus.Defend | BattleStatus.Protect))
                 _context.Attack >>= 1;
         }
 
         public void PenaltyShellAttack()
         {
-            if (IsUnderStatus(BattleStatus.Shell))
+            if (IsUnderAnyStatus(BattleStatus.Shell))
                 _context.Attack >>= 1;
         }
 
         public void PenaltyShellHitRate()
         {
-            if (IsUnderStatus(BattleStatus.Shell))
+            if (IsUnderAnyStatus(BattleStatus.Shell))
                 _context.HitRate >>= 1;
         }
 
         public void PenaltyDefenceHitRate()
         {
-            if (IsUnderStatus(BattleStatus.Defend))
+            if (IsUnderAnyStatus(BattleStatus.Defend))
                 _context.HitRate /= 2;
         }
 
@@ -87,7 +87,7 @@ namespace Memoria
 
         public void PenaltyBanishHitRate()
         {
-            if (IsUnderStatus(BattleStatus.Vanish))
+            if (IsUnderAnyStatus(BattleStatus.Vanish))
                 _context.HitRate = 0;
         }
 
@@ -96,7 +96,7 @@ namespace Memoria
             const BattleStatus status = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus
                                         | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze;
 
-            if (IsUnderStatus(status))
+            if (IsUnderAnyStatus(status))
                 _context.Evade = 0;
         }
 
@@ -120,7 +120,7 @@ namespace Memoria
 
         private void BonusSleepOrMiniAttack()
         {
-            if (IsUnderStatus(BattleStatus.Sleep | BattleStatus.Mini))
+            if (IsUnderAnyStatus(BattleStatus.Sleep | BattleStatus.Mini))
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }
 
@@ -207,7 +207,7 @@ namespace Memoria
 
         public Boolean CanBeAttacked()
         {
-            if (!IsUnderStatus(BattleStatus.Petrify | BattleStatus.Death))
+            if (!IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Death))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -216,13 +216,13 @@ namespace Memoria
 
         public Boolean CanBeRevived()
         {
-            if (IsUnderStatus(BattleStatus.Petrify))
+            if (IsUnderAnyStatus(BattleStatus.Petrify))
             {
                 _context.Flags |= BattleCalcFlags.Miss;
                 return false;
             }
 
-            if (IsUnderStatus(BattleStatus.Death) && IsZombie)
+            if (IsUnderAnyStatus(BattleStatus.Death) && IsZombie)
             {
                 _context.Flags |= BattleCalcFlags.Miss;
                 return false;
@@ -233,7 +233,7 @@ namespace Memoria
 
         public Boolean CanBeHealed()
         {
-            if (!IsUnderStatus(BattleStatus.Death))
+            if (!IsUnderAnyStatus(BattleStatus.Death))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -242,7 +242,7 @@ namespace Memoria
 
         public Boolean CheckUnsafetyOrMiss()
         {
-            if (!IsUnderStatus(BattleStatus.EasyKill))
+            if (!IsUnderAnyStatus(BattleStatus.EasyKill))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Miss;
@@ -251,7 +251,7 @@ namespace Memoria
 
         public Boolean CheckUnsafetyOrGuard()
         {
-            if (!IsUnderStatus(BattleStatus.EasyKill))
+            if (!IsUnderAnyStatus(BattleStatus.EasyKill))
                 return true;
 
             _context.Flags |= BattleCalcFlags.Guard;
@@ -269,7 +269,7 @@ namespace Memoria
 
         public Boolean TryKillFrozen()
         {
-            if (!IsUnderStatus(BattleStatus.Freeze) || IsUnderStatus(BattleStatus.Petrify))
+            if (!IsUnderAnyStatus(BattleStatus.Freeze) || IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
 
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);

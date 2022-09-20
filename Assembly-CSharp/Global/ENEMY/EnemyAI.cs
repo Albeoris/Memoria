@@ -9,108 +9,110 @@ public class EnemyAI : MonoBehaviour
 		this.wise = EnemyData.Main.Wise;
 		Int32 playerScore = QuadMistGame.main.PlayerScore;
 		Int32 enemyScore = QuadMistGame.main.EnemyScore;
-		Int32[,,] array = new Int32[Board.SIZE_X, Board.SIZE_Y, hand.Count];
-		QuadMistCard defender = new QuadMistCard();
-		Int32 num;
-		Int32 num2;
+		Int32[,,] choiceScore = new Int32[Board.SIZE_X, Board.SIZE_Y, hand.Count];
+		QuadMistCard defender;
+		Int32 flipNoFightFactor;
+		Int32 fightFactor;
 		if (enemyScore == playerScore)
 		{
-			num = 64;
-			num2 = 1;
+			flipNoFightFactor = 64;
+			fightFactor = 1;
 		}
 		else if (enemyScore < playerScore)
 		{
-			num = 67;
-			num2 = 1;
+			flipNoFightFactor = 67;
+			fightFactor = 1;
 		}
 		else
 		{
-			num = 1;
-			num2 = 5;
+			flipNoFightFactor = 1;
+			fightFactor = 5;
 		}
 		if (UnityEngine.Random.Range(0, 100) > this.wiseResetChance[this.wise])
 		{
-			num = 0;
-			num2 = 0;
+			flipNoFightFactor = 0;
+			fightFactor = 0;
 		}
-		Int32 num3 = this.MIN_POINTS;
-		Int32 num4 = 0;
+		Int32 bestChoiceScore = this.MIN_POINTS;
+		Int32 bestScoreCount = 0;
 		for (Int32 i = 0; i < hand.Count; i++)
 		{
-			for (Int32 j = 0; j < Board.SIZE_X; j++)
+			for (Int32 x = 0; x < Board.SIZE_X; x++)
 			{
-				for (Int32 k = 0; k < Board.SIZE_Y; k++)
+				for (Int32 y = 0; y < Board.SIZE_Y; y++)
 				{
-					array[j, k, i] = 0;
-					if (!board.IsFree(j, k))
+					choiceScore[x, y, i] = 0;
+					if (!board.IsFree(x, y))
 					{
-						array[j, k, i] = this.MIN_POINTS;
+						choiceScore[x, y, i] = this.MIN_POINTS;
 					}
 					else
 					{
-						Int32 num5 = this.Check(board, hand[i], new Vector2((Single)j, (Single)k), out defender);
-						if (num5 > 0)
+						Int32 flipCount = this.Check(board, hand[i], new Vector2(x, y), out defender);
+						if (flipCount > 0)
 						{
-							array[j, k, i] += num5 * num;
+							choiceScore[x, y, i] += flipCount * flipNoFightFactor;
 						}
-						else if (num5 < 0)
+						else if (flipCount < 0) // A battle would occur
 						{
 							BattleCalculation battleCalculation = QuadMistGame.main.Calculate(hand[i], defender);
-							Int32 num6 = battleCalculation.atkStart * 100 / (battleCalculation.atkStart + battleCalculation.defStart);
+							Int32 winChance = battleCalculation.atkStart * 100 / (battleCalculation.atkStart + battleCalculation.defStart);
 							if (this.wise == 3)
 							{
-								num2 = 1;
-								if (num6 < 60)
-								{
-									num6 -= 100;
-								}
+								if (winChance < 60)
+									choiceScore[x, y, i] = winChance - 100;
 								else
-								{
-									num6 = 145 - num6;
-								}
+									choiceScore[x, y, i] = 145 - winChance;
 							}
-							array[j, k, i] = num6 * num2;
+							else
+							{
+								choiceScore[x, y, i] = winChance * fightFactor;
+							}
 						}
 					}
-					if (array[j, k, i] == num3)
+					if (choiceScore[x, y, i] == bestChoiceScore)
+						bestScoreCount++;
+					if (choiceScore[x, y, i] > bestChoiceScore)
 					{
-						num4++;
-					}
-					if (array[j, k, i] > num3)
-					{
-						num3 = array[j, k, i];
-						num4 = 1;
+						bestChoiceScore = choiceScore[x, y, i];
+						bestScoreCount = 1;
 					}
 				}
 			}
 		}
-		num3 = this.MIN_POINTS;
+		bestChoiceScore = this.MIN_POINTS;
 		result.x = 0;
 		result.y = 0;
 		result.index = 0;
 		result.selectedCard = hand[0];
-		for (Int32 l = 0; l < hand.Count; l++)
+		for (Int32 i = 0; i < hand.Count; i++)
 		{
-			for (Int32 m = 0; m < Board.SIZE_X; m++)
+			for (Int32 x = 0; x < Board.SIZE_X; x++)
 			{
-				for (Int32 n = 0; n < Board.SIZE_Y; n++)
+				for (Int32 y = 0; y < Board.SIZE_Y; y++)
 				{
-					Int32 num7 = 0;
-					if (num3 < array[m, n, l])
+					Boolean isBestChoice = false;
+					if (bestChoiceScore < choiceScore[x, y, i])
+						isBestChoice = true;
+					// This random pick is uneven when there are several choices with the same best score:
+					// - the first best-scored placement has way more chances to be kept (always higher than 1/e)
+					// - the second best-scored placement has less chances to be used
+					// - the k-th best-scored placement has increasingly more chances to be used
+					// - up to the last best-scored placement which has 1/bestScoreCount chances to be used
+					// Discounting the integer flooring of the division, the probability formulas would be:
+					//  P(1) = ((n-1)/n)^(n-1)
+					//  P(k) = ((n-1)/n)^(n-k) / n, for 2 <= k <= n
+					// Concretely, for turns with many best scored choices (eg. 1st turn or if "wiseResetChance" proc),
+					// putting the 1st card of the hand at the top-left-most position of the board will be more probable
+					if (bestChoiceScore == choiceScore[x, y, i] && UnityEngine.Random.Range(0, 1000) < 1000 / bestScoreCount)
+						isBestChoice = true;
+					if (isBestChoice)
 					{
-						num7++;
-					}
-					if (num3 == array[m, n, l] && UnityEngine.Random.Range(0, 1000) < 1000 / num4)
-					{
-						num7++;
-					}
-					if (num7 != 0)
-					{
-						result.x = m;
-						result.y = n;
-						result.index = l;
-						result.selectedCard = hand[l];
-						num3 = array[m, n, l];
+						result.x = x;
+						result.y = y;
+						result.index = i;
+						result.selectedCard = hand[i];
+						bestChoiceScore = choiceScore[x, y, i];
 					}
 				}
 			}
@@ -135,13 +137,9 @@ public class EnemyAI : MonoBehaviour
 		{
 			sel = tick / 4;
 			if (tick % 4 == 0)
-			{
 				SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_MOVE);
-			}
 			if (sel < hand.Count)
-			{
 				hand.EnemyFakeSelect = sel;
-			}
 			yield return base.StartCoroutine(Anim.Tick(2));
 		}
 		this.thinking = false;
@@ -150,41 +148,33 @@ public class EnemyAI : MonoBehaviour
 
 	private Int32 Check(Board board, QuadMistCard yourCard, Vector2 origin, out QuadMistCard target)
 	{
-		target = (QuadMistCard)null;
+		target = null;
 		QuadMistCard[] adjacentCards = board.GetAdjacentCards((Int32)origin.x, (Int32)origin.y);
-		Int32 num = 0;
-		Int32 num2 = 0;
-		for (Int32 i = 0; i < (Int32)adjacentCards.Length; i++)
+		Int32 flipCount = 0;
+		Int32 fightCount = 0;
+		for (Int32 i = 0; i < adjacentCards.Length; i++)
 		{
 			if (adjacentCards[i] != null)
 			{
 				QuadMistCard quadMistCard = adjacentCards[i];
 				if (quadMistCard.side != yourCard.side)
 				{
-					Int32 num3 = CardArrow.CheckDirection(yourCard.arrow, quadMistCard.arrow, (CardArrow.Type)i);
-					if (num3 == 1)
-					{
-						num++;
-					}
-					if (num3 == 2)
+					Int32 interactionType = CardArrow.CheckDirection(yourCard.arrow, quadMistCard.arrow, (CardArrow.Type)i);
+					if (interactionType == 1)
+						flipCount++;
+					if (interactionType == 2)
 					{
 						if (target == null)
-						{
 							target = adjacentCards[i];
-						}
-						num2++;
+						fightCount++;
 					}
 				}
 			}
 		}
-		if (num2 != 0)
-		{
-			return -num2;
-		}
-		if (num != 0)
-		{
-			return num;
-		}
+		if (fightCount != 0)
+			return -fightCount;
+		if (flipCount != 0)
+			return flipCount;
 		return 0;
 	}
 

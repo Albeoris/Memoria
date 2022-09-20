@@ -30,6 +30,7 @@ public class CMD_DATA
 	public BattleStatus AbilityStatus;
 	public Byte AbilityCategory;
 	public Byte AbilityType;
+	public SpecialEffect PatchedVfx;
 
 	public BTL_VFX_REQ vfxRequest;
 	public REFLEC_DATA reflec = new REFLEC_DATA();
@@ -47,6 +48,7 @@ public class CMD_DATA
 			AbilityStatus = FF9StateSystem.Battle.FF9Battle.add_status[aa.AddStatusNo].Value;
 			AbilityCategory = aa.Category;
 			AbilityType = aa.Type;
+			PatchedVfx = SpecialEffect.Special_No_Effect;
 			IsShortRange = false;
 		}
 	}

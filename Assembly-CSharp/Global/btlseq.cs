@@ -115,7 +115,7 @@ public class btlseq
 		cmd_DATA.regist = next;
 		cmd_DATA.SetAAData(FF9StateSystem.Battle.FF9Battle.enemy_attack[pSeqNo]);
 		cmd_DATA.info = new CMD_DATA.SELECT_INFO();
-		cmd_DATA.IsShortRange = btl_cmd.IsAttackShortRange(cmd_DATA);
+		cmd_DATA.IsShortRange = btl_util.IsAttackShortRange(cmd_DATA);
 		if (Configuration.Battle.SFXRework)
 		{
 			UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, cmd_DATA.sub_no);

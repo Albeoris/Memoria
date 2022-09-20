@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Memoria;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
@@ -114,12 +115,18 @@ public partial class BattleHUD : UIScene
                 case CommandMenu.Change:
                     _targetCursor = 0;
 
-                    CommandDetail command = ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual);
                     if (_isManualTrance)
-                        command.SubId = 96; // Trance
-
-                    SendCommand(command);
-                    SetIdle();
+                    {
+                        BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+                        btl.Trance = Byte.MaxValue;
+                        btl.AlterStatus(BattleStatus.Trance);
+                    }
+                    else
+                    {
+                        CommandDetail command = ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual);
+                        SendCommand(command);
+                        SetIdle();
+                    }
                     break;
             }
         }

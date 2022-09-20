@@ -92,6 +92,8 @@ public class btl_vfx
                 return 100 + btl_util.getSerialNumber(regist);
             else if (regist.is_monster_transform && cmd.sub_no == regist.monster_transform.attack)
                 return 100 + btl_util.getSerialNumber(regist);
+            else if (cmd.PatchedVfx != SpecialEffect.Special_No_Effect)
+                return (Int32)cmd.PatchedVfx;
             else if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || btl_vfx.UseBeatrixAlternateVfx(regist, (SpecialEffect)cmd.aa.Info.VfxIndex, (SpecialEffect)cmd.aa.Vfx2))
                 return cmd.aa.Vfx2;
             else

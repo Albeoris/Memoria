@@ -6,6 +6,16 @@
 ##  {Feature Type 2} {Feature Arguments 2 (possibly on multiple lines)}
 ##  etc...
 ##  
+#####################################################################################################
+## 
+##  The format for coding Active Ability features is the following:
+##  >AA {ID} {Comment}
+##  {Feature 1}
+##  {Feature 2}
+##  etc...
+##  
+#####################################################################################################
+##  
 ##  Generic comments should be placed at the beginning of the file
 ##  The 64 supporting abilities must be defined in the main AbilityFeatures.txt
 ##  However, only a part of them can be present in AbilityFeatures.txt of mod folders
@@ -16,16 +26,24 @@
 ##  These Global feature blocks can be used to link features with pieces of equipment
 ##  The "Global" block applies before other supporting abilities while "GlobalLast" applies after
 ##  
+##  Features of active abilities are optional; there can be features for each one of them or for none
+##  
 #####################################################################################################
 ##  
-##  It is important for the keyword ">SA" and for the feature types to be at the start of a new line
-##  The ID must be a number between 0 and 63 corresponding to the supporting ability
+##  It is important for the keywords ">SA", ">AA" and for the feature types to be at the start of a new line
+##  The ID of a ">SA" must be a number between 0 and 63 corresponding to the supporting ability
 ##  (0 is the first one, Auto-Reflect by default, and 63 is the last one that is unused by default)
+##  The ID of a ">AA" must be a number between 0 and 191 corresponding to the active ability
+##  (0 is Void, and 191 is Doomsday Sword)
 ##  Everything on the same line after the ID is ignored
 ##  
 #####################################################################################################
+##                                                                                                 ##
+##                                       SUPPORTING ABILITIES                                      ##
+##                                                                                                 ##
+#####################################################################################################
 ##  
-##  There are 6 different feature types:
+##  There are 6 different feature types for supporting abilities:
 ##  
 ##  Permanent -> Applies as soon as the ability is enabled (refreshes when equipment changes),
 ##    typically for stat modifications of a player character
@@ -105,7 +123,7 @@
 ##  Ability:
 ##    CasterHP, CasterMP, CasterATB, CasterTrance, CasterCurrentStatus, CasterPermanentStatus,
 ##    CasterResistStatus, CasterHalfElement, CasterGuardElement, CasterAbsorbElement, CasterWeakElement,
-##    CasterBonusElement, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence,
+##    CasterBonusElement, CasterRow, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence,
 ##    CasterEvade, CasterMagicDefence, CasterMagicEvade, CasterIsStrengthModified, CasterIsMagicModified,
 ##    CasterIsDefenceModified, CasterIsEvadeModified, CasterIsMagicDefenceModified,
 ##    CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
@@ -120,7 +138,8 @@
 ##  
 ##  Command:
 ##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
-##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate
+##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate,
+##    CommandTargetId
 ##  
 ##  BattleResult:
 ##    Status, BonusAP, BonusCard, BonusExp, BonusGil, BonusItem1, BonusItemCount1,
@@ -135,6 +154,7 @@
 ##  Common:
 ##    GetRandom(min, max)              -> Return a random number between min and max-1
 ##    GetRandom()                      -> Same as GetRandom(0, 256)
+##    GetRandomBit(number)             -> Return a random bit of the number seen as a binary number
 ##    GetAbilityUsageCount(ability ID) -> Return the number of times the player used an ability
 ##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
 ##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list
@@ -142,6 +162,13 @@
 ##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list
 ##    RemoveStatuses(list, removal)    -> Remove all the statuses from the list (do nothing for those that are not there)
 ##                                   Note that "condition", "addition" or "removal" above can be a comma-separated list
+##    BattleFilter(characters, player flag, targetable flag, status filter)
+##                                     └> Filter all the existing battle units by different kinds of filters
+##                                   "characters" is a bit flags identifying the units
+##                                    eg. 1 for the first player character, 16 for the first enemy, 17 for both
+##                                   "player flag" must be 0 for keeping only enemies, 1 for allies or -1 for both
+##                                   "targetable" must be 1 for keeping only targetable units
+##                                   "status filter" must be a list of filtering out statuses (eg. 256 will filter out dead units)
 ##    Gil                              -> The number of gil owned by the player
 ##    DragonCount                      -> The number of dragon-type enemies killed
 ##    FrogCount                        -> The number of frogs catched
@@ -154,9 +181,10 @@
 ##    GameTime                         -> The total duration of the played game, in seconds
 ##    BattleId                         -> The ID of the current battle
 ##    FieldId                          -> The ID of the current field
+##    UseSFXRework                     -> Whether the SFX Rework system is activated or not
 ##  
 ##  Permanent:
-##    Level, Exp, CharacterIndex, WeaponId, HeadId, WristId, ArmorId, AccessoryId,
+##    Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
 ##    HasSA(support ability ID),
 ##    (+ modifiable properties)
 ##  
@@ -165,9 +193,9 @@
 ##  StatusInit:
 ##    MaxHP, MaxMP, MaxATB, HP, MP, ATB, Trance, InTrance, ModelId, CurrentStatus, PermanentStatus,
 ##    ResistStatus, HalfElement, GuardElement, AbsorbElement, WeakElement, BonusElement, WeaponPower,
-##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, , WeaponId, HeadId, WristId, ArmorId,
-##    AccessoryId, Row, Position, SummonCount, IsPlayer, IsSlave, IsOutOfReach, Level, Exp, Speed,
-##    Strength, Magic, Spirit, Defence, Evade, MagicDefence, MagicEvade, PlayerCategory, Category,
+##    WeaponRate, WeaponElement, WeaponStatus, WeaponCategory, WeaponId, HeadId, WristId, ArmorId,
+##    AccessoryId, SerialNumber, Row, Position, SummonCount, IsPlayer, IsSlave, IsOutOfReach, Level, Exp,
+##    Speed, Strength, Magic, Spirit, Defence, Evade, MagicDefence, MagicEvade, PlayerCategory, Category,
 ##    CharacterIndex, IsStrengthModified, IsMagicModified, IsEvadeModified, IsDefenceModified,
 ##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
 ##    HasSA(support ability ID)
@@ -175,17 +203,17 @@
 ##  Ability:
 ##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
 ##    ReflectFactor, StatusesInflicted, CommandId, AbilityId, ScriptId, ItemUseId, WeaponThrowShape,
-##    SpecialEffectId, TargetType, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected, IsCovered,
-##    IsDodged, IsReflectNull, MPCost, CalcMainCounter,
+##    SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected,
+##    IsCovered, IsDodged, IsReflectNull, MPCost, CalcMainCounter,
 ##    (+ the other modifiable properties, except for "ClearStatus" and "ClearAutoStatus")
 ##  
 ##  Command:
-##    All those of "StatusInit" for both the caster and the target, but not in the condition formula,
+##    All those of "StatusInit" for both the caster and the target, except in the condition formula,
 ##    All those of "StatusInit" for the SA user (that can be neither the caster nor a target),
-##    CommandId, AbilityId, ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType,
+##    CommandId, AbilityId, ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand,
 ##    IsAbilityMultiTarget, IsSpellReflected, IsCovered, IsDodged, MPCost, CalcMainCounter,
-##    IsCasterWellDefined, IsTargeted, IsSingleTarget, IsTheCaster, IsAllyOfTarget, IsAllyOfCaster,
-##    IsEnemyOfTarget, IsEnemyOfCaster, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
+##    IsCasterWellDefined, IsTargeted, IsSingleTarget, IsSelfTarget, IsTheCaster, IsAllyOfTarget,
+##    IsAllyOfCaster, IsEnemyOfTarget, IsEnemyOfCaster, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
 ##    (+ the other modifiable properties)
 ##    Note that:
 ##      "CasterMaxHP" and such should only be used in formulas if "IsCasterWellDefined" is true
@@ -206,6 +234,7 @@
 ##  Make the claws Avenger start the battle with Doom
 ##  Also triggers a counter-attack with the sword Defender when the character is defending
 ##  Also make the staff Mace of Zeus reduce MP cost of all spells to 0
+##  Also make blinded characters be mistaken on their single-target actions
 ##  
 ##  >SA Global
 ##  StatusInit [code=Condition] WeaponId == 47 [/code] InitialStatus Doom
@@ -214,6 +243,9 @@
 ##   [code=Counter] 176 [/code]
 ##   DisableSA 36 54 56
 ##  Permanent [code=Condition] WeaponId == 78 [/code] [code=MPCostFactor] 0 [/code]
+##  Command EvenImmobilized
+##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && (CheckAnyStatus(CurrentStatus, 16) || CheckAnyStatus(PermanentStatus, 16)) [/code]
+##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, 1 << 30)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, 1 << 30)) [/code]
 ##  
 ##  
 ##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
@@ -315,12 +347,114 @@
 ##   256 -> Add Status, add the caster's weapon status at the end of the effect, before damage
 ##  
 #####################################################################################################
+##                                                                                                 ##
+##                                        ACTIVE ABILITIES                                         ##
+##                                                                                                 ##
+#####################################################################################################
+##  
+##  Active ability features work similarly as supporting ability features but consist of [code][/code] tags only
+##  Most of the time, formulas should use the format "{condition} ? {formula 1} : {formula 2}" in order to be efficient
+##  
+##  There are 7 possible different tags:
+##  
+##  [code=Patch] {Formula} [/code]          -> Swap the ability with another one
+##                                         This affects the ability in battles but also in the menu
+##  
+##  [code=Priority] {Formula} [/code]       -> Change the command's priority, to make it trigger as soon as inputted
+##  
+##  [code=GilCost] {Formula} [/code]        -> Add a gil cost to the cast of the ability
+##  
+##  [code=Element] {Formula} [/code]        -> Dynamically change the ability's element
+##  
+##  [code=Status] {Formula} [/code]         -> Dynamically change the ability's status
+##  
+##  [code=Target] {Formula} [/code]         -> Redefine the command's target(s)
+##  
+##  [code=SpecialEffect] {Formula} [/code]  -> Dynamically change the ability's special effect
+##  
+#####################################################################################################
+##  
+##  The feature "Patch" applies at any time
+##  Its formula may include the same variables and functions as a "Permanent" supporting ability feature
+##  
+##  The feature "Priority" applies as soon as a command is sent (either as a player input or as a reaction)
+##  Its formula may include the same variables and functions as below for the other features
+##  
+##  The other features apply when the command starts, on the tick before the "Command" supporting ability features take effect
+##  before the setup of a few informations ("IsCovered" will always return false, for example)
+##  Their formulas may include these variables and functions:
+##    Common variables and functions, IsSingleTarget, IsSelfTarget, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
+##    CasterMaxHP, CasterMaxMP, CasterMaxATB, CasterHP, CasterMP, CasterATB, CasterTrance, CasterInTrance, CasterModelId,
+##    CasterCurrentStatus, CasterPermanentStatus, CasterResistStatus, CasterHalfElement, CasterGuardElement, CasterAbsorbElement,
+##    CasterWeakElement, CasterBonusElement, CasterWeaponPower, CasterWeaponRate, CasterWeaponElement, CasterWeaponStatus,
+##    CasterWeaponCategory, CasterWeaponId, CasterHeadId, CasterWristId, CasterArmorId, CasterAccessoryId,
+##    CasterSerialNumber, CasterRow, CasterPosition, CasterSummonCount, CasterIsPlayer, CasterIsSlave, CasterIsOutOfReach,
+##    CasterLevel, CasterExp, CasterSpeed, CasterStrength, CasterMagic, CasterSpirit, CasterDefence, CasterEvade,
+##    CasterMagicDefence, CasterMagicEvade, CasterPlayerCategory, CasterCategory, CasterCharacterIndex,
+##    CasterIsStrengthModified, CasterIsMagicModified, CasterIsEvadeModified, CasterIsDefenceModified,
+##    CasterIsMagicDefenceModified, CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterHasSA(support ability ID)
+##    CommandId, AbilityId, ScriptId, Power, AbilityStatus, AbilityElement, AbilityElementForBonus,
+##    ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon,
+##    IsSpellReflected, IsCovered, IsDodged, IsShortRanged, IsReflectNull, IsMeteorMiss, AbilityCategory, MPCost,
+##    AbilityFlags, CommandTargetId, CalcMainCounter
+##  
+#####################################################################################################
+##  
+##  Examples:
+##  
+##  
+##  Alternate between Fenrir (Earth) and Fenrir (Wind) when casting it, 
+##  instead of patching the ability depending on Eiko's accessory
+##  
+##  >AA 66 Fenrir
+##  [code=Patch] GetAbilityUsageCount(66) <= GetAbilityUsageCount(67) ? 66 : 67 [/code]
+##  
+##  
+##  Curse elemental weaknesses using Amarant's weapon element when applicable,
+##  and a random element if Amarant's weapon has none
+##  Both of these formulas are valid for picking a random element
+##  
+##  >AA 129 Curse (single)
+##  [code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]
+##  >AA 137 Curse (multi)
+##  [code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : GetRandomBit(255) [/code]
+##  
+##  
+##  Have summons take priority over the other commands, once per character per battle
+##  
+##  >AA 49 Shiva
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  >AA 51 Ifrit
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  >AA 53 Ramuh
+##  [code=Priority] CasterSummonCount <= 1 ? 1 : -1 [/code]
+##  etc...
+##  
+##  
+##  Have Shell upgrade to Mighty Guard if Concentrate is equipped
+##  Note that returning the value -1 will not apply any change
+##  
+##  >AA 11 Shell
+##  [code=Patch] HasSA(33) ? 84 : -1 [/code]
+##  
+##  
+##  Have Haste upgrade to a party-wide spell if Concentrate is equipped
+##  Note that the SFX Rework system allows to use the special effect Haste (89) on multiple targets
+##  but it has to be switched to Carbuncle's Emerald effect (506) if that system is deactivated
+##  
+##  >AA 13 Haste
+##  [code=Target] HasSA(33) ? BattleFilter(255, 1, 1, CombineStatuses(256, 1 << 30)) : -1 [/code]
+##  [code=SpecialEffect] HasSA(33) ? (UseSFXRework ? 89 : 506) : -1 [/code]
+##  
+#####################################################################################################
 
 >SA Global Healing Rod's effect
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] CasterWeaponId == 60 && AbilityId == 176 && (TargetCategory & 16) == 0 && !CheckAnyStatus(TargetCurrentStatus, 64) [/code]
 [code=EffectTargetFlags] EffectTargetFlags | 2 [/code]
 
+_____________________________________________________________________________________________________
 
 >SA 0 Auto-Reflect
 StatusInit AutoStatus Reflect
@@ -595,3 +729,30 @@ Ability WhenSteal EvenImmobilized
 >SA 62 Bandit (effect is coded in 0058_StealScript.cs)
 
 >SA 63 Void
+
+_____________________________________________________________________________________________________
+
+>AA 46 Meteor (make it miss based on caster's level and spirit)
+[code=SpecialEffect] (CasterLevel / 2 + CasterSpirit >= GetRandom(0, 100)) ? 134 : 143 [/code]
+
+>AA 66 Fenrir (swap to the wind version if Maiden's Prayer is equipped)
+[code=Patch] AccessoryId == 222 ? 67 : -1 [/code]
+
+>AA 68 Carbuncle (swap to different versions depending on the jewel equipped)
+[code=Patch] AccessoryId == 227 ? 71 : (AccessoryId == 229 ? 70 : (AccessoryId == 228 ? 69 : -1)) [/code]
+
+>AA 82 Roulette (use a random target, targeting a living enemy with 50% chances and a living ally with 50% chances)
+[code=Target] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, 256)) [/code]
+
+>AA 126 Spare Change (single)
+[code=GilCost] Power * CasterLevel [/code]
+
+>AA 134 Spare Change (multi)
+[code=GilCost] Power * CasterLevel [/code]
+
+>AA 129 Curse (single)
+[code=Element] 1 << GetRandom(0, 8) [/code]
+
+>AA 137 Curse (multi)
+[code=Element] 1 << GetRandom(0, 8) [/code]
+

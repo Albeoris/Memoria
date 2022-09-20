@@ -859,6 +859,16 @@ namespace FF9
 					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK], 1f / FPSManager.GetMainLoopSpeed());
 					btl._smoothUpdatePlayingAnim = false;
 				}
+				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_BACK))
+				{
+					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
+					btl._smoothUpdatePlayingAnim = false;
+				}
+				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL))
+				{
+					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
+					btl._smoothUpdatePlayingAnim = false;
+				}
 			}
 		}
 

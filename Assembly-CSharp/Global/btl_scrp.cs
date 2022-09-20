@@ -553,7 +553,7 @@ public class btl_scrp
 		case 78u:
 			btl.cur.at = btl.max.at;
 			btl.sel_mode = 1;
-			btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SummonEiko, 187u, (UInt16)val, 8u);
+			btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SummonEiko, (UInt32)BattleAbilityId.TerraHoming, (UInt16)val, Comn.countBits((UInt64)val) > 1 ? 9u : 8u);
 			UIManager.Battle.FF9BMenu_EnableMenu(true);
 			break;
 		// The modifiers that Memoria adds
@@ -637,12 +637,8 @@ public class btl_scrp
 			}
 			else
 			{
-				int target_number = 0;
-				for (int i = 0; i < 8; i++)
-					if ((tar_id & (1 << i)) != 0)
-						target_number++;
 				if (!btl_cmd.CheckUsingCommand(btl.cmd[1]))
-					btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.Counter, (uint)val, tar_id, (target_number > 1) ? 1u : 0u);
+					btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.Counter, (uint)val, tar_id, (Comn.countBits(tar_id) > 1) ? 1u : 0u);
 			}
 			break;
 		}

@@ -783,7 +783,7 @@ public class AbilityUI : UIScene
 
     private Int32 PatchAbility(Int32 id)
     {
-        return (Int32) BattleAbilityHelper.ApplyEquipment((BattleAbilityId) id, this.currentPartyIndex);
+        return (Int32) BattleAbilityHelper.Patch((BattleAbilityId) id, this.currentPartyIndex);
     }
 
     private void DisplaySA()

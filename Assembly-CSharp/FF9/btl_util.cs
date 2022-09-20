@@ -111,7 +111,7 @@ namespace FF9
 						return true;
 				}
 			if ((mode & BusyMode.ANY_QUEUED) != 0)
-				for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
+				for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue.next; cmd != null; cmd = cmd.next)
 				{
 					if ((mode & BusyMode.QUEUED_CASTER) != 0 && cmd.regist == btl)
 						return true;
@@ -214,6 +214,46 @@ namespace FF9
 		public static UInt32 GetFF9CharNo(BTL_DATA btl)
 		{
 			return (UInt32)((btl.bi.player == 0) ? (9 + btl.bi.slot_no) : btl.bi.slot_no);
+		}
+
+		public static Boolean IsAttackShortRange(CMD_DATA cmd)
+		{
+			// Custom usage of "aa.Type & 0x8" (unused by default): flag for short range attacks
+			// One might want to check using "cmd.aa.Info.VfxIndex" and "cmd.aa.Vfx2" instead
+			if (cmd.aa == null)
+				return false;
+			if (cmd.regist == null)
+				return false;
+			if (cmd.regist.weapon != null && (cmd.regist.weapon.Category & Param.WPN_CATEGORY_SHORT_RANGE) == 0)
+				return false;
+			if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (cmd.AbilityType & 0x8) != 0)
+				return true;
+			if (Configuration.Battle.CustomBattleFlagsMeaning != 1 && (cmd.regist.bi.player == 0 || cmd.sub_no == 176))
+				return true;
+			return false;
+		}
+
+		public static Int32 GetCommandMainActionIndex(CMD_DATA cmd)
+		{
+			if (cmd.regist != null && cmd.regist.bi.player == 0)
+				return -1;
+			switch (cmd.cmd_no)
+			{
+				case BattleCommandId.SysEscape:
+					return 180;
+				case BattleCommandId.Throw:
+					return 190;
+				case BattleCommandId.Item:
+				case BattleCommandId.AutoPotion:
+				case BattleCommandId.SysDead:
+				case BattleCommandId.SysReraise:
+				case BattleCommandId.SysStone:
+					return 0;
+				case BattleCommandId.MagicCounter:
+					return -1;
+				default:
+					return cmd.sub_no;
+			}
 		}
 
 		public static void SetEnemyDieSound(BTL_DATA btl, UInt16 snd_no)

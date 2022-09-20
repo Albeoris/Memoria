@@ -56,6 +56,8 @@ namespace NCalc
                 args.Result = Comn.random8();
             else if (name == "GetRandom" && args.Parameters.Length == 2)
                 args.Result = UnityEngine.Random.Range((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0), (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), 0));
+            else if (name == "GetRandomBit" && args.Parameters.Length == 1)
+                args.Result = Comn.randomID((UInt32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetAbilityUsageCount" && args.Parameters.Length == 1)
                 args.Result = (Int32)GameState.AbilityUsage((Byte)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
@@ -83,6 +85,33 @@ namespace NCalc
                 for (Int32 i = 2; i < args.Parameters.Length; i++)
                     v2 |= (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), 0);
                 args.Result = name == "CombineStatuses" ? v1 | v2 : v1 & ~v2;
+            }
+            else if (name == "BattleFilter" && args.Parameters.Length >= 1)
+            {
+                UInt16 btlId = (UInt16)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
+                UInt16 btlIdFiltered = 0;
+                Nullable<Boolean> playerFilter = null;
+                Nullable<Boolean> targetableFilter = null;
+                UInt64 statusFilter = 0;
+                if (args.Parameters.Length >= 2)
+                {
+                    Int64 arg = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), -1);
+                    playerFilter = arg == 0 ? false : (arg == 1 ? true : null);
+                }
+                if (args.Parameters.Length >= 3)
+                {
+                    Int64 arg = NCalcUtility.ConvertNCalcResult(args.Parameters[2].Evaluate(), -1);
+                    targetableFilter = arg == 0 ? false : (arg == 1 ? true : null);
+                }
+                if (args.Parameters.Length >= 4)
+                    statusFilter = (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[3].Evaluate(), 0);
+                foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                    if ((unit.Id & btlId) != 0
+                      && (playerFilter == null || playerFilter.Value == unit.IsPlayer)
+                      && (targetableFilter == null || targetableFilter.Value == unit.IsSelected)
+                      && !unit.IsUnderAnyStatus((BattleStatus)statusFilter))
+                        btlIdFiltered |= unit.Id;
+                args.Result = btlIdFiltered;
             }
             else if (name == "Min" && args.Parameters.Length == 2)
             {
@@ -116,6 +145,7 @@ namespace NCalc
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
             else if (name == "ScenarioCounter") args.Result = (Int32)((FF9StateSystem.EventState.gEventGlobal[0] << 8) | FF9StateSystem.EventState.gEventGlobal[0]);
+            else if (name == "UseSFXRework") args.Result = Configuration.Battle.SFXRework;
         };
 
         public static EvaluateParameterHandler worldNCalcParameters = delegate (String name, ParameterArgs args)
@@ -140,6 +170,7 @@ namespace NCalc
             expr.Parameters["PlayerCategory"] = (Int32)play.category;
             expr.Parameters["MPCostFactor"] = (Int32)play.mpCostFactor;
             expr.Parameters["CharacterIndex"] = (Int32)play.Index;
+            expr.Parameters["SerialNumber"] = (Int32)play.info.serial_no;
             expr.Parameters["WeaponId"] = (Int32)play.equip.Weapon;
             expr.Parameters["HeadId"] = (Int32)play.equip.Head;
             expr.Parameters["WristId"] = (Int32)play.equip.Wrist;
@@ -198,6 +229,7 @@ namespace NCalc
             expr.Parameters[prefix + "WeaponElement"] = (Int32)unit.WeaponElement;
             expr.Parameters[prefix + "WeaponStatus"] = (UInt32)unit.WeaponStatus;
             expr.Parameters[prefix + "WeaponCategory"] = (Int32)unit.WeapCategory;
+            expr.Parameters[prefix + "SerialNumber"] = (Int32)unit.SerialNumber;
             expr.Parameters[prefix + "Row"] = (Int32)unit.Row;
             expr.Parameters[prefix + "Position"] = (Int32)unit.Position;
             expr.Parameters[prefix + "SummonCount"] = (Int32)unit.SummonCount;
@@ -288,6 +320,7 @@ namespace NCalc
             expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[(Int32)command.AbilityId].shape : -1;
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
             expr.Parameters["TargetType"] = (Int32)command.TargetType;
+            expr.Parameters["IsATBCommand"] = command.IsATBCommand;
             expr.Parameters["IsAbilityMultiTarget"] = command.IsManyTarget;
             expr.Parameters["IsShortSummon"] = command.IsShortSummon;
             expr.Parameters["IsSpellReflected"] = command.Data.info.reflec == 1; // "reflec == 2" for the first effect when there are both reflected and non-reflected instances
@@ -299,6 +332,7 @@ namespace NCalc
             expr.Parameters["AbilityCategory"] = (Int32)command.AbilityCategory;
             expr.Parameters["MPCost"] = (Int32)command.Data.aa.MP;
             expr.Parameters["AbilityFlags"] = (Int32)command.AbilityType;
+            expr.Parameters["CommandTargetId"] = (Int32)command.Data.tar_id;
             expr.Parameters["CalcMainCounter"] = (Int32)command.Data.info.effect_counter;
         }
     }

@@ -21,61 +21,68 @@ namespace Memoria
 
         internal static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Byte scriptId)
         {
-            if (caster == null || target == null)
-			{
-                if (scriptId == btl_sys.fleeScriptId)
-                {
-                    BattleScriptFactory fleeFactory = FindScriptFactory(scriptId);
-                    if (fleeFactory != null)
-                        fleeFactory(new BattleCalculator()).Perform();
-                    else
-                        Log.Warning($"[{nameof(CalcMain)}] Unknown script id with no caster/target: {scriptId}");
-                }
-                return;
-			}
-            command.ScriptId = scriptId;
-            BattleCalculator v = new BattleCalculator(caster, target, command);
-            BattleScriptFactory factory = FindScriptFactory(scriptId);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
-                saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
-                saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
-
-            if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
+            try
             {
-                if (command.IsShortRange)
+                if (caster == null || target == null)
                 {
-                    v.BonusBackstabAndPenaltyLongDistanceAsDamageModifiers();
-                    if ((command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
-                        v.Context.Flags |= BattleCalcFlags.Miss;
+                    if (scriptId == btl_sys.fleeScriptId)
+                    {
+                        BattleScriptFactory fleeFactory = FindScriptFactory(scriptId);
+                        if (fleeFactory != null)
+                            fleeFactory(new BattleCalculator()).Perform();
+                        else
+                            Log.Warning($"[{nameof(CalcMain)}] Unknown script id with no caster/target: {scriptId}");
+                    }
+                    return;
                 }
-                if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
+                command.ScriptId = scriptId;
+                BattleCalculator v = new BattleCalculator(caster, target, command);
+                BattleScriptFactory factory = FindScriptFactory(scriptId);
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
+                    saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
+                    saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
+
+                if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
                 {
-                    v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement, v.Caster.WeaponElement);
+                    if (command.IsShortRange)
+                    {
+                        v.BonusBackstabAndPenaltyLongDistanceAsDamageModifiers();
+                        if ((command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
+                            v.Context.Flags |= BattleCalcFlags.Miss;
+                    }
+                    if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
+                    {
+                        v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement, v.Caster.WeaponElement);
+                    }
+                    if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
+                    {
+                        SBattleCalculator.CalcResult(v);
+                        return;
+                    }
                 }
-                if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
+                if ((command.AbilityCategory & 8) != 0 && v.Target.TryKillFrozen()) // Is Physical
                 {
                     SBattleCalculator.CalcResult(v);
                     return;
                 }
-            }
-            if ((command.AbilityCategory & 8) != 0 && v.Target.TryKillFrozen()) // Is Physical
-            {
-                SBattleCalculator.CalcResult(v);
-                return;
-            }
-            if (factory != null)
-            {
-                IBattleScript script = factory(v);
-                script.Perform();
-            }
-            else
-            {
-                Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
-            }
+                if (factory != null)
+                {
+                    IBattleScript script = factory(v);
+                    script.Perform();
+                }
+                else
+                {
+                    Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
+                }
 
-            if (v.PerformCalcResult)
-                CalcResult(v);
+                if (v.PerformCalcResult)
+                    CalcResult(v);
+            }
+            catch (Exception err)
+			{
+                Log.Error(err);
+			}
         }
 
         public static void CalcResult(BattleCalculator v)
@@ -125,12 +132,8 @@ namespace Memoria
                     v.TryCriticalHit();
                 // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
                 if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
-                {
-                    if ((FF9StateSystem.Battle.FF9Battle.add_status[(int)caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !Status.checkCurStat(target, BattleStatus.EasyKill))
-                    {
-                        v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[(int)caster.weapon.StatusIndex].Value, false);
-                    }
-                }
+                    if ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !Status.checkCurStat(target, BattleStatus.EasyKill))
+                        v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
                 if ((v.Command.AbilityCategory & 8) != 0) // Is Physical
                 {
                     if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
@@ -184,13 +187,13 @@ namespace Memoria
                             v.Target.HpDamage = 9999;
                         if ((v.Target.Flags & CalcFlag.HpRecovery) != 0)
                         {
-                            btl_para.SetRecover(target, (UInt32)v.Target.HpDamage);
+                            btl_para.SetRecover(v.Target, (UInt32)v.Target.HpDamage);
                         }
                         else
                         {
                             if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != BattleCommandId.StageMagicZidane && v.Command.Data.cmd_no != BattleCommandId.StageMagicBlank) && (v.Command.Data.cmd_no != BattleCommandId.StageMagicMarcus && v.Command.Data.cmd_no != BattleCommandId.StageMagicCinna))
                                 v.Target.HpDamage = 9999;
-                            btl_para.SetDamage(v.Target, v.Target.HpDamage, !CheckDamageMotion(v) ? (Byte)0 : (Byte)1, v.Command.Data);
+                            btl_para.SetDamage(v.Target, v.Target.HpDamage, CheckDamageMotion(v) ? (Byte)1 : (Byte)0, v.Command.Data);
                             CheckDamageReaction(v);
                         }
                         if (v.Context.IsDrain)
@@ -210,9 +213,9 @@ namespace Memoria
                         if (v.Target.MpDamage > 999)
                             v.Target.MpDamage = 999;
                         if ((v.Target.Flags & CalcFlag.MpRecovery) != 0)
-                            btl_para.SetMpRecover(target, (UInt32)v.Target.MpDamage);
+                            btl_para.SetMpRecover(v.Target, (UInt32)v.Target.MpDamage);
                         else
-                            btl_para.SetMpDamage(target, (UInt32)v.Target.MpDamage);
+                            btl_para.SetMpDamage(v.Target, (UInt32)v.Target.MpDamage);
                         if (v.Context.IsDrain)
                         {
                             v.Caster.Flags |= CalcFlag.MpAlteration;
@@ -238,7 +241,7 @@ namespace Memoria
                         if (v.Caster.HpDamage > 9999)
                             v.Caster.HpDamage = 9999;
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
-                            btl_para.SetRecover(caster, (UInt32)v.Caster.HpDamage);
+                            btl_para.SetRecover(v.Caster, (UInt32)v.Caster.HpDamage);
                         else
                             btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0, v.Command.Data);
                     }
@@ -247,9 +250,9 @@ namespace Memoria
                         if (v.Caster.MpDamage > 999)
                             v.Caster.MpDamage = 999;
                         if ((v.Caster.Flags & CalcFlag.MpRecovery) != 0)
-                            btl_para.SetMpRecover(caster, (UInt32)v.Caster.MpDamage);
+                            btl_para.SetMpRecover(v.Caster, (UInt32)v.Caster.MpDamage);
                         else
-                            btl_para.SetMpDamage(caster, (UInt32)v.Caster.MpDamage);
+                            btl_para.SetMpDamage(v.Caster, (UInt32)v.Caster.MpDamage);
                     }
                 }
                 //if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))

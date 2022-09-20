@@ -57,6 +57,7 @@ namespace Memoria
     public static class BattleState
     {
         public static Boolean IsSpecialStart => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.SpecialStart;
+        public static Boolean IsATBEnabled => UIManager.Battle.FF9BMenu_IsEnable() && UIManager.Battle.FF9BMenu_IsEnableAtb();
         public static BattleCommand EscapeCommand => new BattleCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape);
 
         public static Int32 TargetCount(Boolean isPlayer)

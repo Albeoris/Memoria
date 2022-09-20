@@ -477,13 +477,14 @@ public class btl_stat
 
     public static Boolean CheckStatus(BTL_DATA btl, BattleStatus status)
     {
-        return ((Int32)btl.stat.permanent & (Int32)status) != 0 || ((Int32)btl.stat.cur & (Int32)status) != 0;
+        return (btl.stat.permanent & status) != 0 || (btl.stat.cur & status) != 0;
     }
 
     public static void CheckStatusLoop(BTL_DATA btl, Boolean ignoreAtb)
     {
         CheckStatuses(btl, ignoreAtb);
         RotateAfterCheckStatusLoop(btl);
+        btl.CheckDelayedModifier();
     }
 
     private static void CheckStatuses(BTL_DATA btl, Boolean ignoreAtb)
@@ -514,9 +515,9 @@ public class btl_stat
             if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
             {
                 if (btl.cmd[3].cmd_no == BattleCommandId.Jump)
-                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpAttack, (UInt32)185, btl.cmd[3].tar_id, 0U);
+                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpAttack, (UInt32)BattleAbilityId.Spear1, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
                 else
-                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpTrance, (UInt32)186, btl.cmd[3].tar_id, 0U);
+                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpTrance, (UInt32)BattleAbilityId.Spear2, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
             }
 
             return;
@@ -622,7 +623,7 @@ public class btl_stat
                     num3 = (Int16)(bbgInfoPtr.chr_g - -40);
                     num4 = (Int16)(bbgInfoPtr.chr_b - 80);
                 }
-                Byte num5 = (Int32)num1 >= 8 ? ((Int32)num1 >= 16 ? (Byte)(24U - num1) : (Byte)8) : num1;
+                Byte num5 = num1 >= 8 ? (num1 >= 16 ? (Byte)(24U - num1) : (Byte)8) : num1;
                 Int16 r = (Int16)(num2 * num5 >> 3);
                 Int16 g = (Int16)(num3 * num5 >> 3);
                 Int16 b = (Int16)(num4 * num5 >> 3);

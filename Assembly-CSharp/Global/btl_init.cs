@@ -421,7 +421,6 @@ public class btl_init
 		btl.level = p.level;
 		btl_init.CopyPoints(btl.max, p.max);
 		btl_init.CopyPoints(btl.cur, p.cur);
-		Byte serial_no = p.info.serial_no;
 		FF9Char ff9Char = new FF9Char();
 		ff9Char.btl = btl;
 		ff9Char.evt = btl.evt;
@@ -449,16 +448,19 @@ public class btl_init
 		if (btl.cur.hp * 6 < btl.max.hp)
 			btl.stat.cur |= BattleStatus.LowHP;
 
-        btl_stat.AlterStatuses(btl, (BattleStatus)p.status & (BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.Jump | BattleStatus.GradualPetrify));
+        btl_stat.AlterStatuses(btl, (BattleStatus)p.status & ~BattleStatus.Petrify);
 		if ((p.status & 1) != 0)
 			btl_stat.AlterStatus(btl, BattleStatus.Petrify);
 		btl_abil.CheckStatusAbility(new BattleUnit(btl));
+		BattleStatus resist_stat = btl.stat.invalid;
 		BattleStatus permanent_stat = btl.stat.permanent;
 		BattleStatus current_stat = btl.stat.cur;
+		btl.stat.invalid = 0;
 		btl.stat.permanent = 0;
 		btl.stat.cur = 0;
 		btl_stat.MakeStatusesPermanent(btl, permanent_stat);
 		btl_stat.AlterStatuses(btl, current_stat);
+		btl.stat.invalid = resist_stat;
 		btl.base_pos = btl.evt.posBattle;
 		Int16 geoID = btl.dms_geo_id;
 		btl.height = 0;
@@ -574,6 +576,7 @@ public class btl_init
 		btl.out_of_reach = false;
 		for (int i = 0; i < btl.stat_modifier.Length; i++)
 			btl.stat_modifier[i] = false;
+		btl.delayedModifierList.Clear();
 		btl.summon_count = 0;
 		btl.critical_rate_deal_bonus = 0;
 		btl.critical_rate_receive_bonus = 0;

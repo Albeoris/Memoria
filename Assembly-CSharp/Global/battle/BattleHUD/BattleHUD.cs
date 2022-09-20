@@ -1609,13 +1609,15 @@ public partial class BattleHUD : UIScene
         testCommand.ScriptId = scriptId;
         if (!Configuration.Battle.SelectBestTarget)
             return;
-        if (targetType != TargetType.SingleAny || CurrentPlayerIndex <= -1)
+        if ((targetType != TargetType.SingleAny && targetType != TargetType.SingleAlly && targetType != TargetType.SingleEnemy) || CurrentPlayerIndex <= -1)
             return;
 
+        Boolean allowAllies = targetType != TargetType.SingleEnemy;
+        Boolean allowEnemies = targetType != TargetType.SingleAlly;
         Single bestRating = 0;
         if (scriptId == 9) // Magic attack, not yet supported
             return;
-        
+
         BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(scriptId);
         if (factory == null)
             return;
@@ -1624,6 +1626,10 @@ public partial class BattleHUD : UIScene
         foreach (KnownUnit knownTarget in EnumerateKnownUnits())
         {
             BattleUnit target = knownTarget.Unit;
+            if (!allowAllies && target.IsPlayer)
+                continue;
+            if (!allowEnemies && !target.IsPlayer)
+                continue;
             if (!_targetDead && target.IsUnderAnyStatus(BattleStatus.Death))
                 continue;
 
@@ -1772,6 +1778,7 @@ public partial class BattleHUD : UIScene
             {
                 GONavigationButton target = _targetPanel.AllTargets[_bestTargetIndex];
                 ButtonGroupState.SetCursorStartSelect(target, TargetGroupButton);
+                _currentTargetIndex = _bestTargetIndex;
             }
             else if (_defaultTargetHealingAttack)
             {
@@ -1779,10 +1786,8 @@ public partial class BattleHUD : UIScene
                 if (targetIndex > -1)
                 {
                     targetIndex += HonoluluBattleMain.EnemyStartIndex;
-
                     if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform)
                         ValidateDefaultTarget(ref targetIndex);
-
                     GONavigationButton targetEnemy = _targetPanel.AllTargets[targetIndex];
                     ButtonGroupState.SetCursorStartSelect(targetEnemy, TargetGroupButton);
                 }
@@ -1792,47 +1797,39 @@ public partial class BattleHUD : UIScene
                     GONavigationButton ally = _targetPanel.Players[targetIndex];
                     ButtonGroupState.SetCursorStartSelect(ally, TargetGroupButton);
                 }
-
-                _currentTargetIndex = 0;
+                _currentTargetIndex = targetIndex;
             }
             else if (_defaultTargetAlly)
             {
                 if (_defaultTargetDead)
-                {
-                    UInt16 deadPlayerIndex = GetDeadOrCurrentPlayer(true);
-                    GONavigationButton deadPlayer = _targetPanel.Players[deadPlayerIndex];
-                    ButtonGroupState.SetCursorStartSelect(deadPlayer, TargetGroupButton);
-                }
+                    _currentTargetIndex = GetDeadOrCurrentPlayer(true);
                 else
-                {
-                    GONavigationButton currentPlayer = _targetPanel.Players[CurrentBattlePlayerIndex];
-                    ButtonGroupState.SetCursorStartSelect(currentPlayer, TargetGroupButton);
-                }
-
-                _currentTargetIndex = 0;
+                    _currentTargetIndex = CurrentBattlePlayerIndex;
+                GONavigationButton currentPlayer = _targetPanel.Players[_currentTargetIndex];
+                ButtonGroupState.SetCursorStartSelect(currentPlayer, TargetGroupButton);
             }
             else
             {
                 //int num = HonoluluBattleMain.EnemyStartIndex;
-                Int32 firstIndex;
+                Int32 targetIndex;
                 if (_defaultTargetDead)
                 {
-                    firstIndex = GetDeadOrCurrentPlayer(false);
-                    GONavigationButton deadPlayer = _targetPanel.AllTargets[firstIndex];
+                    targetIndex = GetDeadOrCurrentPlayer(false);
+                    GONavigationButton deadPlayer = _targetPanel.AllTargets[targetIndex];
                     ButtonGroupState.SetCursorStartSelect(deadPlayer, TargetGroupButton);
                 }
                 else
                 {
-                    firstIndex = GetFirstAliveEnemyIndex() + HonoluluBattleMain.EnemyStartIndex;
-                    if (firstIndex != -1)
+                    targetIndex = GetFirstAliveEnemyIndex() + HonoluluBattleMain.EnemyStartIndex;
+                    if (targetIndex != -1)
                     {
                         if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform)
-                            ValidateDefaultTarget(ref firstIndex);
-                        GONavigationButton currentEnemy = _targetPanel.AllTargets[firstIndex];
+                            ValidateDefaultTarget(ref targetIndex);
+                        GONavigationButton currentEnemy = _targetPanel.AllTargets[targetIndex];
                         ButtonGroupState.SetCursorStartSelect(currentEnemy, TargetGroupButton);
                     }
                 }
-                _currentTargetIndex = firstIndex;
+                _currentTargetIndex = targetIndex;
             }
         }
         else if (_targetCursor == TargetType.Self)
@@ -1997,7 +1994,7 @@ public partial class BattleHUD : UIScene
     private Byte PatchAbility(Int32 id)
     {
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-        return (Byte) BattleAbilityHelper.ApplyEquipment((BattleAbilityId) id, unit.Position); 
+        return (Byte) BattleAbilityHelper.Patch((BattleAbilityId) id, unit.Position); 
     }
 
     private UInt16 GetDeadOrCurrentPlayer(Boolean player)

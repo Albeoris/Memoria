@@ -48,7 +48,7 @@ namespace FF9
         {
             _FF9Abil_PaData = LoadCharacterAbilities();
             _FF9Abil_SaData = LoadCharacterAbilityGems();
-            _FF9Abil_SaFeature = LoadSupportingAbilityFeatures();
+            _FF9Abil_SaFeature = LoadAllAbilityFeatures();
         }
 
         public static Boolean FF9Abil_IsEnableSA(UInt32[] sa, Int32 abil_id)
@@ -264,7 +264,7 @@ namespace FF9
             }
         }
 
-        private static EntryCollection<SupportingAbilityFeature> LoadSupportingAbilityFeatures()
+        private static EntryCollection<SupportingAbilityFeature> LoadAllAbilityFeatures()
         {
             try
             {
@@ -273,7 +273,7 @@ namespace FF9
                     throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
 
                 EntryCollection<SupportingAbilityFeature> result = EntryCollection.CreateWithDefaultElement<SupportingAbilityFeature>(0);
-                LoadSupportingAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
+                LoadAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
                 for (Int32 i = 0; i < 64; i++)
                     if (!result.Contains(i))
                         Log.Error($"[ff9abil] Ability features of SA {i} is missing from [{inputPath}]");
@@ -281,7 +281,46 @@ namespace FF9
                 {
                     inputPath = DataResources.Characters.Abilities.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Abilities.SAFeaturesFile;
                     if (File.Exists(inputPath))
-                        LoadSupportingAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
+                        LoadAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
+                }
+                // Apply legacy Memoria.ini configurations
+                if (Configuration.Battle.CurseUseWeaponElement)
+				{
+                    BattleAbilityHelper.ParseAbilityFeature(BattleAbilityId.Curse1, $"[code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]");
+                    BattleAbilityHelper.ParseAbilityFeature(BattleAbilityId.Curse2, $"[code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]");
+                }
+                if (!String.IsNullOrEmpty(Configuration.Battle.SpareChangeGilSpentFormula))
+                {
+                    BattleAbilityHelper.ParseAbilityFeature(BattleAbilityId.SpareChange1, $"[code=GilCost] {Configuration.Battle.SpareChangeGilSpentFormula} [/code]");
+                    BattleAbilityHelper.ParseAbilityFeature(BattleAbilityId.SpareChange2, $"[code=GilCost] {Configuration.Battle.SpareChangeGilSpentFormula} [/code]");
+                }
+                if (Configuration.Battle.SummonPriorityCount != 0)
+                {
+                    BattleAbilityId[] summonAbils = new BattleAbilityId[]
+                    {
+                        BattleAbilityId.Shiva,
+                        BattleAbilityId.Ifrit,
+                        BattleAbilityId.Ramuh,
+                        BattleAbilityId.Atomos,
+                        BattleAbilityId.Odin,
+                        BattleAbilityId.Leviathan,
+                        BattleAbilityId.Bahamut,
+                        BattleAbilityId.Ark,
+                        BattleAbilityId.Carbuncle1,
+                        BattleAbilityId.Carbuncle2,
+                        BattleAbilityId.Carbuncle3,
+                        BattleAbilityId.Carbuncle4,
+                        BattleAbilityId.Fenrir1,
+                        BattleAbilityId.Fenrir2,
+                        BattleAbilityId.Phoenix,
+                        BattleAbilityId.Madeen
+                    };
+                    if (Configuration.Battle.SummonPriorityCount < 0)
+                        foreach (BattleAbilityId abil in summonAbils)
+                            BattleAbilityHelper.ParseAbilityFeature(abil, $"[code=Priority] 1 [/code]");
+                    else
+                        foreach (BattleAbilityId abil in summonAbils)
+                            BattleAbilityHelper.ParseAbilityFeature(abil, $"[code=Priority] CasterSummonCount <= {Configuration.Battle.SummonPriorityCount} ? 1 : -1 [/code]");
                 }
                 return result;
             }
@@ -293,25 +332,32 @@ namespace FF9
             }
         }
 
-        private static void LoadSupportingAbilityFeatureFile(ref EntryCollection<SupportingAbilityFeature> entries, String input)
+        private static void LoadAbilityFeatureFile(ref EntryCollection<SupportingAbilityFeature> entries, String input)
 		{
-            MatchCollection saMatches = new Regex(@"^(>SA)\s+(\d+|Global|GlobalLast).*()", RegexOptions.Multiline).Matches(input);
-            for (Int32 i = 0; i < saMatches.Count; i++)
+            MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|Global|GlobalLast).*()", RegexOptions.Multiline).Matches(input);
+            for (Int32 i = 0; i < abilMatches.Count; i++)
 			{
-                Int32 saIndex;
-                if (String.Compare(saMatches[i].Groups[2].Value, "Global") == 0)
-                    saIndex = -1;
-                else if (String.Compare(saMatches[i].Groups[2].Value, "GlobalLast") == 0)
-                    saIndex = -2;
-                else if (!Int32.TryParse(saMatches[i].Groups[2].Value, out saIndex))
+                Int32 abilIndex;
+                if (String.Compare(abilMatches[i].Groups[2].Value, "Global") == 0)
+                    abilIndex = -1;
+                else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalLast") == 0)
+                    abilIndex = -2;
+                else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
                     continue;
-                Int32 endPos, startPos = saMatches[i].Groups[3].Captures[0].Index+1;
-                if (i + 1 == saMatches.Count)
+                Int32 endPos, startPos = abilMatches[i].Groups[3].Captures[0].Index+1;
+                if (i + 1 == abilMatches.Count)
                     endPos = input.Length;
                 else
-                    endPos = saMatches[i + 1].Groups[1].Captures[0].Index;
-                entries[saIndex] = new SupportingAbilityFeature();
-                entries[saIndex].ParseFeatures(saIndex, input.Substring(startPos, endPos - startPos));
+                    endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
+                if (String.Compare(abilMatches[i].Groups[1].Value, ">SA") == 0)
+                {
+                    entries[abilIndex] = new SupportingAbilityFeature();
+                    entries[abilIndex].ParseFeatures(abilIndex, input.Substring(startPos, endPos - startPos));
+                }
+                else
+				{
+                    BattleAbilityHelper.ParseAbilityFeature((BattleAbilityId)abilIndex, input.Substring(startPos, endPos - startPos));
+                }
             }
 		}
     }

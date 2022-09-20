@@ -92,6 +92,29 @@ public partial class BTL_DATA
 		}
 	}
 
+	public void CheckDelayedModifier()
+	{
+		try
+		{
+			List<DelayedModifier> removedList = new List<DelayedModifier>();
+			Memoria.BattleUnit unit = new Memoria.BattleUnit(this);
+			foreach (DelayedModifier modifier in delayedModifierList)
+			{
+				if (!modifier.isDelayed(unit))
+				{
+					modifier.apply(unit);
+					removedList.Add(modifier);
+				}
+			}
+			foreach (DelayedModifier modifier in removedList)
+				delayedModifierList.Remove(modifier);
+		}
+		catch (Exception err)
+		{
+			Memoria.Prime.Log.Error(err);
+		}
+	}
+
 	public BTL_DATA next = null;
 
 	public List<CMD_DATA> cmd = new List<CMD_DATA>(new CMD_DATA[6]);
@@ -265,7 +288,10 @@ public partial class BTL_DATA
 	public Boolean animEndFrame;
 	public String endedAnimationName;
 
+	public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
+
 	public Boolean is_monster_transform;
+	public MONSTER_TRANSFORM monster_transform;
 
 	public class MONSTER_TRANSFORM
 	{
@@ -287,5 +313,12 @@ public partial class BTL_DATA
 		public List<BattleCommandId> disable_commands;
 	}
 
-	public MONSTER_TRANSFORM monster_transform;
+	public class DelayedModifier
+	{
+		public delegate Boolean IsDelayedDelegate(Memoria.BattleUnit btl);
+		public delegate void ApplyDelegate(Memoria.BattleUnit btl);
+
+		public IsDelayedDelegate isDelayed = null;
+		public ApplyDelegate apply = null;
+	}
 }

@@ -585,7 +585,7 @@ public partial class BattleHUD : UIScene
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)
         {
-            btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, 176U, enemy.Id, 0U);
+            btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (UInt32)BattleAbilityId.Attack, enemy.Id, 0U);
             InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;

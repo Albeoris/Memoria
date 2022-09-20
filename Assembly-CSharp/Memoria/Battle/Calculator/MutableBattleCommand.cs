@@ -1,5 +1,6 @@
 using System;
 using Memoria.Data;
+using FF9;
 
 namespace Memoria
 {
@@ -139,7 +140,7 @@ namespace Memoria
             };
 
             Data.SetAAData(newData);
-            Data.IsShortRange = btl_cmd.IsAttackShortRange(Data);
+            Data.IsShortRange = btl_util.IsAttackShortRange(Data);
         }
     }
 }

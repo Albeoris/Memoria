@@ -219,6 +219,11 @@ public class btl2d
 		}
 	}
 
+	public static void Btl2dReq(BattleUnit pBtl)
+	{
+		Btl2dReq(pBtl.Data, ref pBtl.Data.fig_info, ref pBtl.Data.fig, ref pBtl.Data.m_fig);
+	}
+
 	public static void Btl2dReq(BTL_DATA pBtl)
 	{
 		Btl2dReq(pBtl, ref pBtl.fig_info, ref pBtl.fig, ref pBtl.m_fig);

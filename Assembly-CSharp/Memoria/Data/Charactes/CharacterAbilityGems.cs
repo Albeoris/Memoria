@@ -277,6 +277,7 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "CasterEvade") == 0) caster.PhisicalEvade = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.PhisicalEvade);
                         else if (String.Compare(formula.Key, "CasterMagicDefence") == 0) caster.MagicDefence = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicDefence);
                         else if (String.Compare(formula.Key, "CasterMagicEvade") == 0) caster.MagicEvade = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicEvade);
+                        else if (String.Compare(formula.Key, "CasterRow") == 0) caster.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Row);
                         else if (String.Compare(formula.Key, "CasterIsStrengthModified") == 0) caster.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[0]);
                         else if (String.Compare(formula.Key, "CasterIsMagicModified") == 0) caster.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[1]);
                         else if (String.Compare(formula.Key, "CasterIsDefenceModified") == 0) caster.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[2]);
@@ -305,6 +306,7 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "TargetEvade") == 0) target.PhisicalEvade = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.PhisicalEvade);
                         else if (String.Compare(formula.Key, "TargetMagicDefence") == 0) target.MagicDefence = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicDefence);
                         else if (String.Compare(formula.Key, "TargetMagicEvade") == 0) target.MagicEvade = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicEvade);
+                        else if (String.Compare(formula.Key, "TargetRow") == 0) target.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Row);
                         else if (String.Compare(formula.Key, "TargetIsStrengthModified") == 0) target.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[0]);
                         else if (String.Compare(formula.Key, "TargetIsMagicModified") == 0) target.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[1]);
                         else if (String.Compare(formula.Key, "TargetIsDefenceModified") == 0) target.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[2]);
@@ -412,7 +414,8 @@ namespace Memoria.Data
                         c.Parameters["IsTargeted"] = (command.Data.tar_id & abilityUser.Id) != 0;
                         c.Parameters["IsCasterWellDefined"] = caster != null;
                         c.Parameters["IsSingleTarget"] = target != null;
-                        c.Parameters["IsTheCaster"] = caster != null && (caster.Id & abilityUser.Id) != 0;
+                        c.Parameters["IsTheCaster"] = caster != null && caster.Id == abilityUser.Id;
+                        c.Parameters["IsSelfTarget"] = caster != null && target != null && caster.Id == target.Id;
                         c.Parameters["IsAllyOfTarget"] = target != null && target.IsPlayer == abilityUser.IsPlayer;
                         c.Parameters["IsAllyOfCaster"] = caster != null && caster.IsPlayer == abilityUser.IsPlayer;
                         c.Parameters["IsEnemyOfTarget"] = target != null && target.IsPlayer != abilityUser.IsPlayer;
@@ -435,6 +438,7 @@ namespace Memoria.Data
                         e.Parameters["IsCasterWellDefined"] = caster != null;
                         e.Parameters["IsSingleTarget"] = target != null;
                         e.Parameters["IsTheCaster"] = caster != null && (caster.Id & abilityUser.Id) != 0;
+                        e.Parameters["IsSelfTarget"] = caster != null && target != null && caster.Id == target.Id;
                         e.Parameters["IsAllyOfTarget"] = target != null && target.IsPlayer == abilityUser.IsPlayer;
                         e.Parameters["IsAllyOfCaster"] = caster != null && caster.IsPlayer == abilityUser.IsPlayer;
                         e.Parameters["IsEnemyOfTarget"] = target != null && target.IsPlayer != abilityUser.IsPlayer;
@@ -456,6 +460,7 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "TryCover") == 0) tryCover |= NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), false) ? abilityUser.Id : (UInt16)0;
                         else if (String.Compare(formula.Key, "ScriptId") == 0) command.ScriptId = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.ScriptId);
                         else if (String.Compare(formula.Key, "HitRate") == 0) command.HitRate = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.HitRate);
+                        else if (String.Compare(formula.Key, "CommandTargetId") == 0) command.Data.tar_id = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Data.tar_id);
                     }
                 }
         }

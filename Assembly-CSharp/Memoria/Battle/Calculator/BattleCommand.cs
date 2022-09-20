@@ -13,6 +13,11 @@ namespace Memoria
             _data = data;
         }
 
+        public ITEM_DATA GetData
+        {
+            get => _data;
+        }
+
         public static BattleItem Find(Byte itemId)
         {
             return new BattleItem(ff9item._FF9Item_Info[btl_util.btlItemNum(itemId)]);
@@ -43,13 +48,18 @@ namespace Memoria
             Data = data;
         }
 
-        public String Name => Data.et.name;
-        public Byte[] StealableItems => Data.steal_item;
-        public UInt16[] StealableItemRates => Data.steal_item_rate;
         public ENEMY GetData
         {
             get => Data;
         }
+
+        public String Name => Data.et.name;
+        public Byte[] StealableItems => Data.steal_item;
+        public UInt16[] StealableItemRates => Data.steal_item_rate;
+        public Byte[] DroppableItems => Data.et.bonus.item;
+        public UInt16[] DroppableItemRates => Data.et.bonus.item_rate;
+        public UInt32 DroppableCard => Data.et.bonus.card;
+        public UInt16 DroppableCardRate => Data.et.bonus.card_rate;
 
         public static BattleEnemy Find(BattleUnit unit)
         {
@@ -87,12 +97,18 @@ namespace Memoria
             Data = data;
         }
 
+        public CMD_DATA GetData
+        {
+            get => Data;
+        }
+
         public BattleCommandId Id => (BattleCommandId)Data.cmd_no;
         public BattleAbilityId AbilityId => (BattleAbilityId)Data.sub_no;
-        public Boolean IsManyTarget => Data.info.cursor == 1;
+        public Boolean IsManyTarget => (Data.info.cursor & 1) != 0;
         public TargetType TargetType => (TargetType)Data.aa.Info.Target;
         public BattleStatusIndex AbilityStatusIndex => (BattleStatusIndex)Data.aa.AddStatusNo;
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
+        public Boolean IsATBCommand => Data.regist != null && Data == Data.regist.cmd[0];
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
         public Boolean IsShortSummon
         {

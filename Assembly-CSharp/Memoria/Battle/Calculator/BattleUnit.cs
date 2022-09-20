@@ -24,6 +24,11 @@ namespace Memoria
             Data = data;
         }
 
+        public BTL_DATA GetData
+        {
+            get => Data;
+        }
+
         public UInt16 Id => Data.btl_id;
         public Boolean IsPlayer => Data.bi.player != 0;
         public Boolean IsSelected => Data.bi.target != 0;
@@ -37,8 +42,16 @@ namespace Memoria
         public CharacterIndex PlayerIndex => Data.bi.slot_no;
 
         public Byte Level => Data.level;
-        public Byte Row => Data.bi.row;
         public Byte Position => Data.bi.line_no;
+        public Byte Row
+        {
+            get => Data.bi.row;
+            set
+            {
+                if (value != Data.bi.row)
+                    btl_para.SwitchPlayerRow(Data, false);
+            }
+        }
 
         public Boolean IsCovering => Data.bi.cover != 0;
 
@@ -137,6 +150,16 @@ namespace Memoria
             get => Data.fig;
             set => Data.fig = value;
         }
+        public Int32 MagicFig
+        {
+            get => Data.m_fig;
+            set => Data.m_fig = value;
+        }
+        public UInt16 FigInfo
+        {
+            get => Data.fig_info;
+            set => Data.fig_info = value;
+        }
 
         public Byte WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : (Byte)0;
         public Byte WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : (Byte)0;
@@ -150,6 +173,7 @@ namespace Memoria
         }
 
         public Character Player => Character.Find(this);
+        public Byte SerialNumber => btl_util.getSerialNumber(Data);
         public CharacterCategory PlayerCategory => Player.Category;
         public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
         public WeaponCategory WeapCategory => (WeaponCategory)(Data.weapon != null ? Data.weapon.Category : 0);
@@ -219,6 +243,25 @@ namespace Memoria
                 return this.Data.stat_modifier;
             }
         }
+
+        public void AddDelayedModifier(BTL_DATA.DelayedModifier.IsDelayedDelegate delayDelegate, BTL_DATA.DelayedModifier.ApplyDelegate applyDelegate)
+        {
+            if (delayDelegate == null || applyDelegate == null)
+                return;
+            if (!delayDelegate(this))
+            {
+                applyDelegate(this);
+                return;
+            }
+            Data.delayedModifierList.Add(new BTL_DATA.DelayedModifier()
+            {
+                isDelayed = delayDelegate,
+                apply = applyDelegate
+            });
+        }
+
+        public Boolean IsPlayingMotion(BattlePlayerCharacter.PlayerMotionIndex motionIndex) => btl_mot.checkMotion(Data, motionIndex);
+        public Boolean IsPlayingIdleMotion() => btl_mot.checkMotion(Data, Data.bi.def_idle);
 
         public UInt16 SummonCount => Data.summon_count;
         public Int16 CriticalRateBonus
