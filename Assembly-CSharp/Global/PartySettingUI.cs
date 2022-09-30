@@ -20,7 +20,6 @@ public class PartySettingUI : UIScene
     public class CharacterDetailPartyHUD : CharacterDetailHUD
     {
         public UILabel EmptyLabel;
-
         public UISprite[] StatusesAvatar;
 
         public CharacterDetailPartyHUD(GameObject go, Boolean isTargetHud) : base(go, isTargetHud)
@@ -38,17 +37,16 @@ public class PartySettingUI : UIScene
     public class CharacterOutsidePartyHud
     {
         public GameObject Self;
-
         public GameObject MoveButton;
-
+        public GameObject Highlight;
         public UISprite Avatar;
-
         public UISprite[] StatusesAvatar;
 
         public CharacterOutsidePartyHud(GameObject go)
         {
             this.Self = go;
             this.MoveButton = go.GetChild(0);
+            this.Highlight = go.GetChild(1);
             this.Avatar = go.GetChild(2).GetComponent<UISprite>();
             this.StatusesAvatar = new[]
             {
@@ -62,7 +60,6 @@ public class PartySettingUI : UIScene
     public class PartySelect
     {
         public Mode Group;
-
         public Int32 Index;
 
         public PartySelect(Mode _group, Int32 _index)
@@ -72,37 +69,26 @@ public class PartySettingUI : UIScene
         }
     }
 
-    public static Int32 FF9PARTY_PLAYER_MAX = 8;
-
-    public static Byte FF9PARTY_NONE = 255;
-
     private static String SelectCharGroupButton = "Party.Select";
-
     private static String MoveCharGroupButton = "Party.Move";
 
     public GameObject HelpDespLabelGameObject;
-
     public GameObject CurrentPartyPanel;
-
     public GameObject OutsidePartyPanel;
-
     public GameObject HelpInfoPanel;
-
     public GameObject ScreenFadeGameObject;
 
     private UILabel helpLabel;
-
     private CharacterDetailPartyHUD currentCharacterHud;
-
     private List<CharacterDetailPartyHUD> currentPartyHudList = new List<CharacterDetailPartyHUD>();
-
     private List<CharacterOutsidePartyHud> outsidePartyHudList = new List<CharacterOutsidePartyHud>();
-
     private PartySelect currentCharacterSelect = new PartySelect(Mode.None, 0);
-
-    private Byte currentCharacterId;
-
+    private CharacterId currentCharacterId;
     private FF9PARTY_INFO info = new FF9PARTY_INFO();
+
+    [NonSerialized]
+    private Int32 currentFloor;
+    private Int32 FloorMax => this.info == null || this.info.select == null || this.info.select.Length <= 8 ? 0 : (this.info.select.Length - 5) / 4;
 
     public FF9PARTY_INFO Info
     {
@@ -112,29 +98,33 @@ public class PartySettingUI : UIScene
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
+        currentFloor = 0;
         TryHackPartyInfo(this.info);
+        ExtendSelectSlots();
 
         SceneVoidDelegate sceneVoidDelegate = delegate
         {
             if (Configuration.Graphics.WidescreenSupport)
             {
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(150, -18f), MoveCharGroupButton);
+                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(150f, -18f), MoveCharGroupButton);
+                foreach (CharacterOutsidePartyHud charHud in this.outsidePartyHudList)
+                    charHud.Highlight.transform.localScale = new Vector3(0.45f, 1f, 1f);
             }
             else
             {
                 ButtonGroupState.SetPointerOffsetToGroup(new Vector2(18f, -18f), MoveCharGroupButton);
+                foreach (CharacterOutsidePartyHud charHud in this.outsidePartyHudList)
+                    charHud.Highlight.transform.localScale = new Vector3(1f, 1f, 1f);
             }
 
             ButtonGroupState.SetPointerDepthToGroup(6, MoveCharGroupButton);
             ButtonGroupState.ActiveGroup = SelectCharGroupButton;
         };
         if (afterFinished != null)
-        {
             sceneVoidDelegate = (SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
         base.Show(sceneVoidDelegate);
-        this.DisplayCharacter();
+        this.DisplayCharacters();
         this.DisplayCharacterInfo(this.currentCharacterId);
         this.DisplayHelpInfo();
         this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
@@ -147,9 +137,7 @@ public class PartySettingUI : UIScene
             SceneDirector.FF9Wipe_FadeInEx(12);
         };
         if (afterFinished != null)
-        {
             sceneVoidDelegate = (SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
         base.Hide(sceneVoidDelegate);
         BattleAchievement.UpdateParty();
         this.RemoveCursorMemorize();
@@ -161,12 +149,37 @@ public class PartySettingUI : UIScene
         ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
     }
 
+    public override GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
+    {
+        if (nextObj != null || currentObj == null)
+            return nextObj;
+        Boolean canChangeFloor = false;
+        if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
+            canChangeFloor = currentObj.transform.parent.parent.parent == this.OutsidePartyPanel.transform;
+        else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
+            canChangeFloor = currentObj.transform.parent.parent.parent.parent == this.OutsidePartyPanel.transform && this.currentCharacterSelect.Group == Mode.Menu;
+        if (!canChangeFloor)
+            return null;
+        if (direction == KeyCode.DownArrow && currentFloor < FloorMax)
+		{
+            currentFloor++;
+            DisplayOutsideCharacters();
+            OnItemSelect(currentObj);
+            FF9Sfx.FF9SFX_Play(103);
+        }
+        else if (direction == KeyCode.UpArrow && currentFloor > 0)
+        {
+            currentFloor--;
+            DisplayOutsideCharacters();
+            OnItemSelect(currentObj);
+            FF9Sfx.FF9SFX_Play(103);
+        }
+        return null;
+    }
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go))
-            return true;
-
-        if (TryHackCurrentCharacter(go))
             return true;
         
         if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
@@ -179,15 +192,13 @@ public class PartySettingUI : UIScene
             ButtonGroupState.ActiveGroup = MoveCharGroupButton;
             ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
             foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
-            {
-                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == FF9PARTY_NONE || !this.info.fix[this.currentCharacterId]);
-            }
+                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix[(Int32)this.currentCharacterId]);
         }
         else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
         {
             PartySelect currentSelect = this.GetCurrentSelect(go);
-            Byte currentId = this.GetCurrentId(go);
-            if (this.currentCharacterSelect.Group == Mode.Select && currentId != FF9PARTY_NONE && this.info.fix[currentId])
+            CharacterId currentId = this.GetCurrentId(go);
+            if (this.currentCharacterSelect.Group == Mode.Select && currentId != CharacterId.NONE && this.info.fix[(Int32)currentId])
             {
                 FF9Sfx.FF9SFX_Play(102);
             }
@@ -195,37 +206,13 @@ public class PartySettingUI : UIScene
             {
                 FF9Sfx.FF9SFX_Play(103);
                 this.SwapCharacter(this.currentCharacterSelect, currentSelect);
-                this.DisplayCharacter();
+                this.DisplayCharacters();
                 this.DisplayCharacterInfo(this.currentCharacterId);
                 ButtonGroupState.SetCursorMemorize(go.transform.parent.gameObject, SelectCharGroupButton);
                 ButtonGroupState.ActiveGroup = SelectCharGroupButton;
             }
         }
         return true;
-    }
-
-    private Boolean TryHackCurrentCharacter(GameObject go)
-    {
-        if (!UIKeyTrigger.IsShiftKeyPressed)
-            return false;
-        
-        Byte characterId = this.GetCurrentId(go);
-        if (characterId != FF9PARTY_NONE)
-        {
-            PLAYER player = FF9StateSystem.Common.FF9.player[characterId];
-            Byte category = BitUtil.InvertFlag(player.category, 16);
-            if (TryHackPlayer(player, category))
-            {
-                this.DisplayCharacter();
-                this.DisplayCharacterInfo(characterId);
-                FF9Sfx.FF9SFX_Play(103);
-                return true;
-            }
-        }
-        
-        FF9Sfx.FF9SFX_Play(102);
-        return true;
-
     }
 
     public override Boolean OnKeyCancel(GameObject go)
@@ -236,10 +223,8 @@ public class PartySettingUI : UIScene
             {
                 if (this.FF9Party_Check())
                 {
-                    for (Int32 i = 0; i < this.info.party_ct; i++)
-                    {
-                        ff9play.FF9Play_SetParty(i, (FF9PARTY_NONE != this.info.menu[i]) ? this.info.menu[i] : -1);
-                    }
+                    for (Int32 i = 0; i < 4; i++)
+                        ff9play.FF9Play_SetParty(i, this.info.menu[i]);
                     FF9Sfx.FF9SFX_Play(103);
                     this.Hide(delegate
                     {
@@ -266,7 +251,7 @@ public class PartySettingUI : UIScene
         {
             if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
             {
-                Byte currentId = this.GetCurrentId(go);
+                CharacterId currentId = this.GetCurrentId(go);
                 if (this.currentCharacterId != currentId)
                 {
                     this.currentCharacterId = currentId;
@@ -275,8 +260,8 @@ public class PartySettingUI : UIScene
             }
             else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
             {
-                Byte currentId2 = this.GetCurrentId(go);
-                this.DisplayCharacterInfo(currentId2);
+                CharacterId currentId = this.GetCurrentId(go);
+                this.DisplayCharacterInfo(currentId);
             }
         }
         return true;
@@ -304,56 +289,53 @@ public class PartySettingUI : UIScene
         }
     }
 
-    private void DisplayCharacter()
+    private void DisplayCharacters()
     {
-        Int32 num = 0;
-        Byte[] menu = this.info.menu;
+        Int32 hudIndex = 0;
+        CharacterId[] menu = this.info.menu;
         for (Int32 i = 0; i < menu.Length; i++)
         {
-            Byte b = menu[i];
-            CharacterDetailPartyHUD characterDetailPartyHUD = this.currentPartyHudList[num++];
-            if (b != FF9PARTY_NONE)
+            CharacterDetailPartyHUD characterDetailPartyHUD = this.currentPartyHudList[hudIndex++];
+            if (menu[i] != CharacterId.NONE)
             {
-                PLAYER player = FF9StateSystem.Common.FF9.player[b];
+                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(menu[i]);
                 characterDetailPartyHUD.Self.SetActive(true);
                 characterDetailPartyHUD.Content.SetActive(true);
                 characterDetailPartyHUD.EmptyLabel.gameObject.SetActive(false);
                 FF9UIDataTool.DisplayCharacterDetail(player, characterDetailPartyHUD);
-                this.DisplayCharacterPartyAvatar(b, player, (UISprite)(Object)characterDetailPartyHUD.AvatarSprite, characterDetailPartyHUD.StatusesAvatar);
+                this.DisplayCharacterPartyAvatar(menu[i], player, (UISprite)(Object)characterDetailPartyHUD.AvatarSprite, characterDetailPartyHUD.StatusesAvatar);
             }
             else
             {
-                characterDetailPartyHUD.EmptyLabel.text = String.Format(Localization.Get("EmptyCharNumber"), num);
+                characterDetailPartyHUD.EmptyLabel.text = String.Format(Localization.Get("EmptyCharNumber"), hudIndex);
                 characterDetailPartyHUD.Content.SetActive(false);
                 characterDetailPartyHUD.EmptyLabel.gameObject.SetActive(true);
             }
         }
-        num = 0;
-        Byte[] select = this.info.select;
-        for (Int32 j = 0; j < select.Length; j++)
+        DisplayOutsideCharacters();
+    }
+
+    private void DisplayOutsideCharacters()
+    {
+        for (Int32 i = 0; i < 8; i++)
         {
-            Byte b2 = select[j];
-            CharacterOutsidePartyHud characterOutsidePartyHud = this.outsidePartyHudList[num++];
-            if (b2 != FF9PARTY_NONE)
-            {
-                PLAYER player2 = FF9StateSystem.Common.FF9.player[b2];
-                this.DisplayCharacterPartyAvatar(b2, player2, characterOutsidePartyHud.Avatar, characterOutsidePartyHud.StatusesAvatar);
-            }
+            CharacterOutsidePartyHud characterOutsidePartyHud = this.outsidePartyHudList[i];
+            CharacterId select = this.info.select[4 * currentFloor + i];
+            if (select != CharacterId.NONE)
+                this.DisplayCharacterPartyAvatar(select, FF9StateSystem.Common.FF9.GetPlayer(select), characterOutsidePartyHud.Avatar, characterOutsidePartyHud.StatusesAvatar);
             else
-            {
                 characterOutsidePartyHud.Avatar.alpha = 0f;
-            }
         }
     }
 
-    private void DisplayCharacterInfo(Int32 charId)
+    private void DisplayCharacterInfo(CharacterId charId)
     {
-        if (charId != FF9PARTY_NONE)
+        if (charId != CharacterId.NONE)
         {
-            PLAYER player = FF9StateSystem.Common.FF9.player[charId];
+            PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
             this.currentCharacterHud.Content.SetActive(true);
             FF9UIDataTool.DisplayCharacterDetail(player, this.currentCharacterHud);
-            this.DisplayCharacterPartyAvatar((Byte)charId, player, (UISprite)(Object)this.currentCharacterHud.AvatarSprite, this.currentCharacterHud.StatusesAvatar);
+            this.DisplayCharacterPartyAvatar(charId, player, (UISprite)(Object)this.currentCharacterHud.AvatarSprite, this.currentCharacterHud.StatusesAvatar);
         }
         else
         {
@@ -361,58 +343,54 @@ public class PartySettingUI : UIScene
         }
     }
 
-    private void DisplayCharacterPartyAvatar(Byte id, PLAYER player, UISprite avatarSprite, UISprite[] avatarStatusAlignment)
+    private void DisplayCharacterPartyAvatar(CharacterId id, PLAYER player, UISprite avatarSprite, UISprite[] avatarStatusAlignment)
     {
         FF9UIDataTool.DisplayCharacterAvatar(player, default(Vector3), default(Vector3), avatarSprite, false);
-        avatarSprite.alpha = ((!this.info.fix[id]) ? 1f : 0.5f);
+        avatarSprite.alpha = this.info.fix[(Int32)id] ? 0.5f : 1f;
         for (Int32 i = 0; i < avatarStatusAlignment.Length; i++)
         {
             UISprite uISprite = avatarStatusAlignment[i];
             uISprite.alpha = 0f;
         }
-        Int32 num = 0;
-        if ((player.status & 2) != 0)
+        Int32 statusSlot = 0;
+        if ((player.status & (Int32)BattleStatus.Venom) != 0)
         {
-            avatarStatusAlignment[num].spriteName = Localization.Get("PartyStatusTextPoison");
-            avatarStatusAlignment[num].alpha = 1f;
-            num++;
+            avatarStatusAlignment[statusSlot].spriteName = Localization.Get("PartyStatusTextPoison");
+            avatarStatusAlignment[statusSlot].alpha = 1f;
+            statusSlot++;
         }
-        if ((player.status & 1) != 0)
+        if ((player.status & (Int32)BattleStatus.Petrify) != 0)
         {
-            avatarStatusAlignment[num].spriteName = Localization.Get("PartyStatusTextStone");
-            avatarStatusAlignment[num].alpha = 1f;
-            num++;
+            avatarStatusAlignment[statusSlot].spriteName = Localization.Get("PartyStatusTextStone");
+            avatarStatusAlignment[statusSlot].alpha = 1f;
+            statusSlot++;
         }
         if (player.cur.hp == 0)
         {
-            avatarStatusAlignment[num].spriteName = "text_ko";
-            avatarStatusAlignment[num].alpha = 1f;
-            num++;
+            avatarStatusAlignment[statusSlot].spriteName = "text_ko";
+            avatarStatusAlignment[statusSlot].alpha = 1f;
+            statusSlot++;
         }
     }
 
     private Boolean FF9Party_Check()
     {
-        Int32 num2;
-        Int32 i;
-        Int32 num = i = (num2 = 0);
-        while (i < 4)
+        Int32 healthyCnt = 0;
+        Int32 charCnt = 0;
+        for (Int32 i = 0; i < 4;i++)
         {
-            Int32 num3 = this.info.menu[i];
-            if (FF9PARTY_NONE != num3)
+            if (this.info.menu[i] != CharacterId.NONE)
             {
-                num++;
-                if (FF9StateSystem.Common.FF9.player[num3].cur.hp != 0 && (FF9StateSystem.Common.FF9.player[num3].status & 3) == 0)
-                {
-                    num2++;
-                }
+                charCnt++;
+                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(this.info.menu[i]);
+                if (player.cur.hp != 0 && (player.status & (Byte)(BattleStatus.Petrify | BattleStatus.Venom)) == 0)
+                    healthyCnt++;
             }
-            i++;
         }
-        return num >= this.info.party_ct && num2 != 0;
+        return charCnt >= this.info.party_ct && healthyCnt != 0;
     }
 
-    private Byte GetCurrentId(GameObject go)
+    private CharacterId GetCurrentId(GameObject go)
     {
         Int32 siblingIndex;
         GameObject obj;
@@ -427,70 +405,79 @@ public class PartySettingUI : UIScene
             obj = go.transform.parent.gameObject;
         }
         if (obj.transform.parent.parent == this.CurrentPartyPanel.transform)
-        {
             return this.info.menu[siblingIndex];
-        }
-        return this.info.select[siblingIndex];
+        return this.info.select[4 * currentFloor + siblingIndex];
     }
 
     private PartySelect GetCurrentSelect(GameObject go)
     {
         if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
-        {
-            return new PartySelect((!(go.transform.parent.parent == this.CurrentPartyPanel.transform)) ? Mode.Select : Mode.Menu, go.transform.GetSiblingIndex());
-        }
-        return new PartySelect((!(go.transform.parent.parent.parent == this.CurrentPartyPanel.transform)) ? Mode.Select : Mode.Menu, go.transform.parent.GetSiblingIndex());
+            return new PartySelect((go.transform.parent.parent != this.CurrentPartyPanel.transform) ? Mode.Select : Mode.Menu, go.transform.GetSiblingIndex());
+        return new PartySelect((go.transform.parent.parent.parent != this.CurrentPartyPanel.transform) ? Mode.Select : Mode.Menu, go.transform.parent.GetSiblingIndex());
     }
 
     private void SwapCharacter(PartySelect oldSelect, PartySelect newSelect)
     {
-        Byte b = this.currentCharacterId;
-        Byte b2 = FF9PARTY_NONE;
+        CharacterId char1 = this.currentCharacterId;
+        CharacterId char2 = CharacterId.NONE;
         if (newSelect.Group == Mode.Menu)
         {
-            b2 = this.info.menu[newSelect.Index];
-            this.info.menu[newSelect.Index] = b;
+            char2 = this.info.menu[newSelect.Index];
+            this.info.menu[newSelect.Index] = char1;
         }
         else if (newSelect.Group == Mode.Select)
         {
-            b2 = this.info.select[newSelect.Index];
-            this.info.select[newSelect.Index] = b;
+            char2 = this.info.select[4 * currentFloor + newSelect.Index];
+            this.info.select[4 * currentFloor + newSelect.Index] = char1;
         }
         if (oldSelect.Group == Mode.Menu)
-        {
-            this.info.menu[oldSelect.Index] = b2;
-        }
+            this.info.menu[oldSelect.Index] = char2;
         else if (oldSelect.Group == Mode.Select)
-        {
-            this.info.select[oldSelect.Index] = b2;
-        }
+            this.info.select[4 * currentFloor + oldSelect.Index] = char2;
     }
 
     private void Awake()
     {
         FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
         this.helpLabel = this.HelpInfoPanel.GetChild(0).GetComponent<UILabel>();
-        foreach (Transform trans in this.CurrentPartyPanel.GetChild(0).transform)
+        foreach (Transform transf in this.CurrentPartyPanel.GetChild(0).transform)
         {
-            GameObject obj = trans.gameObject;
-            UIEventListener expr_5D = UIEventListener.Get(obj);
-            expr_5D.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_5D.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            UIEventListener expr_8B = UIEventListener.Get(obj.GetChild(2));
-            expr_8B.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_8B.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            CharacterDetailPartyHUD item = new CharacterDetailPartyHUD(obj, true);
-            this.currentPartyHudList.Add(item);
+            GameObject go = transf.gameObject;
+            UIEventListener.Get(go).onClick += new UIEventListener.VoidDelegate(this.onClick);
+            UIEventListener.Get(go.GetChild(2)).onClick += new UIEventListener.VoidDelegate(this.onClick);
+            this.currentPartyHudList.Add(new CharacterDetailPartyHUD(go, true));
         }
-        foreach (Transform transform2 in this.OutsidePartyPanel.GetChild(1).GetChild(0).transform)
+        foreach (Transform transf in this.OutsidePartyPanel.GetChild(1).GetChild(0).transform)
         {
-            GameObject gameObject2 = transform2.gameObject;
-            UIEventListener expr_127 = UIEventListener.Get(gameObject2);
-            expr_127.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_127.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            UIEventListener expr_156 = UIEventListener.Get(gameObject2.GetChild(0));
-            expr_156.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_156.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            CharacterOutsidePartyHud item2 = new CharacterOutsidePartyHud(gameObject2);
-            this.outsidePartyHudList.Add(item2);
+            GameObject go = transf.gameObject;
+            UIEventListener.Get(go).onClick += new UIEventListener.VoidDelegate(this.onClick);
+            UIEventListener.Get(go.GetChild(0)).onClick += new UIEventListener.VoidDelegate(this.onClick);
+            this.outsidePartyHudList.Add(new CharacterOutsidePartyHud(go));
         }
         this.currentCharacterHud = new CharacterDetailPartyHUD(this.OutsidePartyPanel.GetChild(0), false);
+    }
+
+    private void ExtendSelectSlots()
+	{
+        Int32 oldCount;
+        if (this.info.select == null)
+        {
+            oldCount = 0;
+            this.info.select = new CharacterId[8];
+        }
+        else
+		{
+            oldCount = this.info.select.Length;
+        }
+        Int32 count = Math.Max(8, oldCount);
+        if ((count % 4) != 0)
+            count += 4 - (count % 4);
+        if (count != oldCount)
+        {
+            Array.Resize(ref this.info.select, count);
+            for (Int32 i = oldCount; i < count; i++)
+                this.info.select[i] = CharacterId.NONE;
+        }
     }
 
     private static void TryHackPartyInfo(FF9PARTY_INFO partyInfo)
@@ -499,69 +486,31 @@ public class PartySettingUI : UIScene
             return;
 
         Int32 availabilityMask = -1;
-
+        
         for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
         {
             PLAYER member = FF9StateSystem.Common.FF9.party.member[memberIndex];
             if (member != null)
             {
                 partyInfo.menu[memberIndex] = member.info.slot_no;
-                availabilityMask &= ~(1 << partyInfo.menu[memberIndex]);
+                availabilityMask &= ~(1 << (Int32)partyInfo.menu[memberIndex]);
             }
             else
             {
-                partyInfo.menu[memberIndex] = Byte.MaxValue;
+                partyInfo.menu[memberIndex] = CharacterId.NONE;
             }
         }
-
-        Byte characterIndex = 0;
+        
         Byte slotIndex = 0;
-        while (slotIndex < 9 && characterIndex < FF9PARTY_PLAYER_MAX && availabilityMask != 0)
+        List<CharacterId> selectList = new List<CharacterId>();
+        while (slotIndex < FF9StateSystem.Common.PlayerCount && availabilityMask != 0)
         {
             if ((availabilityMask & 1) > 0)
-                partyInfo.select[characterIndex++] = slotIndex;
-
+                selectList.Add((CharacterId)slotIndex);
+        
             ++slotIndex;
             availabilityMask >>= 1;
         }
-    }
-
-    private static Boolean TryHackPlayer(PLAYER player, Byte category)
-    {
-        CharacterPresetId presetId = player.PresetId;
-
-        if (presetId == CharacterPresetId.StageZidane)
-            player.PresetId = presetId = CharacterPresetId.Zidane;
-        else if (presetId == CharacterPresetId.Cinna1 || presetId == CharacterPresetId.StageCinna)
-            player.PresetId = presetId = CharacterPresetId.Cinna2;
-        else if (presetId == CharacterPresetId.Marcus1 || presetId == CharacterPresetId.StageMarcus)
-            player.PresetId = presetId = CharacterPresetId.Marcus2;
-        else if (presetId == CharacterPresetId.Blank1 || presetId == CharacterPresetId.StageBlank)
-            player.PresetId = presetId = CharacterPresetId.Blank2;
-
-        if (player.category == category)
-            return false;
-        
-        List<Int32> defaultEquipment = ff9play.GetDefaultEquipment(player.PresetId);
-
-        if (presetId == CharacterPresetId.Quina)
-            player.PresetId = CharacterPresetId.Cinna2;
-        else if (presetId == CharacterPresetId.Eiko)
-            player.PresetId = CharacterPresetId.Marcus2;
-        else if (presetId == CharacterPresetId.Amarant)
-            player.PresetId = CharacterPresetId.Blank2;
-        else if (presetId == CharacterPresetId.Cinna2)
-            player.PresetId = CharacterPresetId.Quina;
-        else if (presetId == CharacterPresetId.Marcus2)
-            player.PresetId = CharacterPresetId.Eiko;
-        else if (presetId == CharacterPresetId.Blank2)
-            player.PresetId = CharacterPresetId.Amarant;
-        else
-            return false;
-        
-        player.category = category;
-
-        ff9play.FF9Play_Change(player.info.slot_no, false, defaultEquipment, player.DefaultEquipmentSetId);
-        return true;
+        partyInfo.select = selectList.ToArray();
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
+using Memoria.Data;
 
 public class FF9PARTY_INFO
 {
 	public Int32 party_ct;
 
-	public Byte[] menu = new Byte[4];
+	public CharacterId[] menu = new CharacterId[4];
 
-	public Byte[] select = new Byte[PartySettingUI.FF9PARTY_PLAYER_MAX];
+	public CharacterId[] select = null;
 
-	public Boolean[] fix = new Boolean[9];
+	public Boolean[] fix = new Boolean[CommonState.DEFAULT_PLAYER_COUNT];
 }

@@ -880,40 +880,37 @@ public class ShopUI : UIScene
 	{
 		this.ClearCharacterInfo();
 		if (this.currentItemIndex < 0 || this.currentMenu == ShopUI.SubMenu.Sell)
-		{
 			return;
-		}
 		Int32 cureentItemId = this.itemIdList[this.currentItemIndex];
 		Int32 equipPart = ff9item.FF9Item_GetEquipPart(cureentItemId);
-		Boolean flag = equipPart > 0;
+		Boolean isArmor = equipPart > 0;
 		if (equipPart < 0)
-		{
 			return;
-		}
-		this.characterParamCaptionLabel.text = ((!flag) ? Localization.Get("AttackCaption") : Localization.Get("DefenseCaption"));
-		Int32 num3 = 0;
-		foreach (Int32 num4 in this.availableCharaList)
+		this.characterParamCaptionLabel.text = isArmor ? Localization.Get("DefenseCaption") : Localization.Get("AttackCaption");
+		Int32 hudIndex = 0;
+		foreach (CharacterId charId in this.availableCharaList)
 		{
-			ShopUI.CharacterWeaponInfoHUD characterWeaponInfoHUD = this.charInfoHud[num3++];
-			PLAYER player = FF9StateSystem.Common.FF9.player[num4];
-			Boolean flag2 = (ff9item._FF9Item_Data[cureentItemId].equip & this.charMask[(CharacterId)ff9play.FF9Play_GetCharID2(player.Index, player.IsSubCharacter)]) != 0;
+			ShopUI.CharacterWeaponInfoHUD characterWeaponInfoHUD = this.charInfoHud[hudIndex++];
+			PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
+			UInt16 playerMask = ff9feqp.GetCharacterEquipMask(player);
+			Boolean canEquip = (ff9item._FF9Item_Data[cureentItemId].equip & playerMask) != 0;
 			characterWeaponInfoHUD.AvatarSprite.gameObject.SetActive(true);
 			FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterWeaponInfoHUD.AvatarSprite, false);
-			if (flag2)
+			if (canEquip)
 			{
 				Int32 oldRating;
 				Int32 newRating;
-				if (!flag)
+				if (!isArmor)
 				{
 					oldRating = (Int32)ff9weap.WeaponData[(Int32)player.equip[0]].Ref.Power;
 					newRating = (Int32)ff9weap.WeaponData[cureentItemId].Ref.Power;
 				}
 				else
 				{
-				    CharacterEquipment array = player.equip.Clone();
-					array[equipPart] = (Byte)cureentItemId;
+				    CharacterEquipment equipCopy = player.equip.Clone();
+					equipCopy[equipPart] = (Byte)cureentItemId;
 					oldRating = ff9shop.FF9Shop_GetDefence(equipPart, player.equip);
-					newRating = ff9shop.FF9Shop_GetDefence(equipPart, array);
+					newRating = ff9shop.FF9Shop_GetDefence(equipPart, equipCopy);
 				}
 				characterWeaponInfoHUD.AvatarSprite.color = new Color(1f, 1f, 1f, 1f);
 				characterWeaponInfoHUD.EquipmentTypeSprite.gameObject.SetActive(true);
@@ -1042,15 +1039,13 @@ public class ShopUI : UIScene
 
 	private void UpdatePartyInfo()
 	{
-		for (Int32 i = 0; i < 9; i++)
+		for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; i++)
 		{
 			if (FF9StateSystem.Common.FF9.player[i].info.party != 0)
 			{
-				this.availableCharaList.Add(i);
-				if (this.availableCharaList.Count >= 8)
-				{
+				this.availableCharaList.Add(FF9StateSystem.Common.FF9.player[i].info.slot_no);
+				if (this.availableCharaList.Count >= 8) // TODO: allow to somehow display more than 8 characters
 					break;
-				}
 			}
 		}
 	}
@@ -1428,7 +1423,7 @@ public class ShopUI : UIScene
 
 	private Dictionary<Int32, Int32> soldItemIdDict = new Dictionary<Int32, Int32>();
 
-	private List<Int32> availableCharaList = new List<Int32>();
+	private List<CharacterId> availableCharaList = new List<CharacterId>();
 
 	private ShopUI.ShopType type;
 
@@ -1451,22 +1446,6 @@ public class ShopUI : UIScene
 	private Boolean isMinusQuantity;
 
 	private Single keepPressingTime;
-
-	private UInt16[] charMask = new UInt16[]
-	{
-		2048,
-		1024,
-		512,
-		256,
-		128,
-		64,
-		32,
-		16,
-		8,
-		4,
-		2,
-		1
-	};
 
 	private Byte[] partMask = new Byte[]
 	{

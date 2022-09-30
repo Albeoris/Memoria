@@ -398,6 +398,7 @@
     <Compile Include="Memoria\Data\Battle\AccessoryItem.cs" />
     <Compile Include="Memoria\Data\Battle\BattleAbilityHelper.cs" />
     <Compile Include="Memoria\Data\Battle\BattleStatusDataEntry.cs" />
+    <Compile Include="Memoria\Data\Charactes\CharacterSerialNumber.cs" />
     <Compile Include="Memoria\Data\Charactes\EquipmentSetId.cs" />
     <Compile Include="Memoria\Field\TileMap.cs" />
     <Compile Include="Memoria\Field\TileCoordinates.cs" />
@@ -1048,7 +1049,7 @@
     <Compile Include="Memoria\Data\Battle\BattleStatusNumber.cs" />
     <Compile Include="Memoria\Data\Charactes\CharacterAbilityGems.cs" />
     <Compile Include="Memoria\Data\Charactes\CharacterEquipment.cs" />
-    <Compile Include="Memoria\Data\Charactes\CharacterIndex.cs" />
+    <Compile Include="Memoria\Data\Charactes\CharacterOldIndex.cs" />
     <Compile Include="Memoria\Data\Charactes\CharacterBaseStats.cs" />
     <Compile Include="Memoria\Data\Charactes\CharacterLevelUp.cs" />
     <Compile Include="Memoria\Data\Items\ShopItems.cs" />

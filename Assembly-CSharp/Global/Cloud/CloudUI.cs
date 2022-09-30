@@ -2,6 +2,7 @@
 using System.Collections;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 using Memoria.Assets;
 using SiliconStudio;
 using UnityEngine;
@@ -296,7 +297,7 @@ public class CloudUI : UIScene
 						flag = true;
 					}
 					fileHud.CharacterAvatarList[num2].alpha = 1f;
-					FF9UIDataTool.DisplayCharacterAvatar(sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileHud.CharacterAvatarList[num2], false);
+					FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileHud.CharacterAvatarList[num2], false);
 				}
 				num2++;
 			}

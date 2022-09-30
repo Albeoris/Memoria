@@ -7,25 +7,26 @@ public partial class EventEngine
 {
     public void updateModelsToBeAdded()
     {
-        if (this.gMode != 1 && this.gMode != 3 && (Int32)this._ff9Sys.prevMode != 9 || (Int32)this.sEventContext1.inited == 0)
+        if (this.gMode != 1 && this.gMode != 3 && this._ff9Sys.prevMode != 9 || this.sEventContext1.inited == 0)
             return;
         for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
         {
             Obj obj = objList.obj;
-            if ((Int32)obj.cid == 4)
+            if (obj.cid == 4)
             {
                 PosObj posObj = (PosObj)obj;
-                if ((Int32)posObj.model != (Int32)UInt16.MaxValue)
+                if (posObj.model != UInt16.MaxValue)
                 {
-                    if (!((UnityEngine.Object)posObj.go != (UnityEngine.Object)null))
+                    if (posObj.go == null)
                     {
-                        posObj.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)posObj.model), false);
+                        posObj.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(posObj.model), false);
                         if (this.gMode == 1)
-                            GeoTexAnim.addTexAnim(posObj.go, FF9BattleDB.GEO.GetValue((Int32)posObj.model));
-                        if (this.gMode == 1)
+                        {
+                            GeoTexAnim.addTexAnim(posObj.go, FF9BattleDB.GEO.GetValue(posObj.model));
                             this.ReassignBasicAnimationForField((Actor)posObj);
+                        }
                     }
-                    if ((UnityEngine.Object)posObj.go != (UnityEngine.Object)null)
+                    if (posObj.go != null)
                     {
                         this.requiredAddActor = true;
                         this.toBeAddedObjUIDList.Add((Int32)posObj.uid);
@@ -35,10 +36,10 @@ public partial class EventEngine
                 }
             }
         }
-        this.sEventContext1.inited = (Byte)0;
+        this.sEventContext1.inited = 0;
         if (!this.requiredAddActor)
             return;
-        Int32 num = (Int32)this.GetControlUID();
+        Int32 playerUID = this.GetControlUID();
         this.requiredAddActor = false;
         using (List<Int32>.Enumerator enumerator = this.toBeAddedObjUIDList.GetEnumerator())
         {
@@ -46,7 +47,7 @@ public partial class EventEngine
             {
                 Int32 current = enumerator.Current;
                 Obj objUid = this.GetObjUID(current);
-                Boolean isPlayer = current == num;
+                Boolean isPlayer = current == playerUID;
                 if (this.gMode == 1)
                 {
                     if (isPlayer)
@@ -61,12 +62,12 @@ public partial class EventEngine
                     FF9Char ff9Char = new FF9Char();
                     ff9Char.geo = objUid.go;
                     ff9Char.evt = (PosObj)objUid;
-                    FF9StateSystem.Common.FF9.charArray.Add((Int32)objUid.uid, ff9Char);
+                    FF9StateSystem.Common.FF9.charArray.Add(objUid.uid, ff9Char);
                     FF9FieldCharState ff9FieldCharState = new FF9FieldCharState();
-                    FF9StateSystem.Field.FF9Field.loc.map.charStateArray.Add((Int32)objUid.uid, ff9FieldCharState);
-                    FF9StateSystem.Field.FF9Field.loc.map.shadowArray.Add((Int32)objUid.uid, new FF9Shadow());
+                    FF9StateSystem.Field.FF9Field.loc.map.charStateArray.Add(objUid.uid, ff9FieldCharState);
+                    FF9StateSystem.Field.FF9Field.loc.map.shadowArray.Add(objUid.uid, new FF9Shadow());
                     this.fieldmap.AddFieldChar(objUid.go, ((PosObj)objUid).posField, ((PosObj)objUid).rotField, isPlayer, (Actor)objUid, true);
-                    this.turnOffTriManually((Int32)objUid.sid);
+                    this.turnOffTriManually(objUid.sid);
                 }
                 else if (this.gMode == 3)
                 {

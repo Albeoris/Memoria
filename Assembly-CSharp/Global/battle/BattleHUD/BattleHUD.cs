@@ -244,17 +244,17 @@ public partial class BattleHUD : UIScene
         BattleCommandId command1;
         BattleCommandId command2;
 
-        if (btl.IsUnderStatus(BattleStatus.Trance))
+        if (btl.IsUnderAnyStatus(BattleStatus.Trance))
         {
-            command1 = CharacterCommands.CommandSets[presetId].Trance1;
-            command2 = CharacterCommands.CommandSets[presetId].Trance2;
+            command1 = CharacterCommands.CommandSets[(Int32)presetId].Trance1;
+            command2 = CharacterCommands.CommandSets[(Int32)presetId].Trance2;
             _commandPanel.SetCaptionText(Localization.Get("TranceCaption"));
             _isTranceMenu = true;
         }
         else
         {
-            command1 = CharacterCommands.CommandSets[presetId].Regular1;
-            command2 = CharacterCommands.CommandSets[presetId].Regular2;
+            command1 = CharacterCommands.CommandSets[(Int32)presetId].Regular1;
+            command2 = CharacterCommands.CommandSets[(Int32)presetId].Regular2;
             _commandPanel.SetCaptionText(Localization.Get("CommandCaption"));
             _commandPanel.SetCaptionColor(FF9TextTool.White);
             _isTranceMenu = false;
@@ -1023,15 +1023,14 @@ public partial class BattleHUD : UIScene
 
     private Int32 GetActionMpCost(AA_DATA aaData)
     {
-        Int32 num = aaData.MP;
+        Int32 mpCost = aaData.MP;
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-        CharacterIndex slotId = FF9StateSystem.Common.FF9.party.GetCharacter(unit.Position).Index;
         if ((aaData.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
-            num <<= 2;
+            mpCost <<= 2;
 
-        num = num * unit.Player.Data.mpCostFactor / 100;
+        mpCost = mpCost * unit.Player.Data.mpCostFactor / 100;
 
-        return num;
+        return mpCost;
     }
 
     private AbilityStatus GetBattleAbilityState(BattleAbilityId abilId) => GetAbilityState((Int32) abilId);
@@ -1041,7 +1040,7 @@ public partial class BattleHUD : UIScene
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
         AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
 
-        if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Id != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && abilId < 192)
+        if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && abilId < 192)
             return AbilityStatus.None;
         if (abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && abilId < 192 && (!abilityPlayerDetail.AbilityPaList.ContainsKey(abilId) || abilityPlayerDetail.AbilityPaList[abilId] < abilityPlayerDetail.AbilityMaxPaList[abilId]))
             return AbilityStatus.None;
@@ -1067,11 +1066,11 @@ public partial class BattleHUD : UIScene
         if (!abilityPlayer.HasAp)
             return;
 
-        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[player.PresetId];
+        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)player.PresetId];
         for (Int32 abilId = 0; abilId < 192; ++abilId)
         {
             Int32 index;
-            if ((index = ff9abil.FF9Abil_GetIndex(player.Index, abilId)) < 0)
+            if ((index = ff9abil.FF9Abil_GetIndex(player.Data, abilId)) < 0)
                 continue;
 
             abilityPlayer.AbilityPaList[abilId] = player.Data.pa[index];
@@ -1107,8 +1106,8 @@ public partial class BattleHUD : UIScene
 
         for (Int32 k = 0; k < 2; k++)
         {
-            BattleCommandId normalCommandId = CharacterCommands.CommandSets[presetId].GetRegular(k);
-            BattleCommandId tranceCommandId = CharacterCommands.CommandSets[presetId].GetTrance(k);
+            BattleCommandId normalCommandId = CharacterCommands.CommandSets[(Int32)presetId].GetRegular(k);
+            BattleCommandId tranceCommandId = CharacterCommands.CommandSets[(Int32)presetId].GetTrance(k);
             if (normalCommandId == tranceCommandId)
                 continue;
 
@@ -1137,12 +1136,12 @@ public partial class BattleHUD : UIScene
     private static void SetAbilityMagic(AbilityPlayerDetail abilityPlayer)
     {
         Character character = abilityPlayer.Player;
-        if (character.Index != CharacterIndex.Steiner)
+        if (character.Index != CharacterId.Steiner)
             return;
 
         CharacterCommand magicSwordCommand = CharacterCommands.Commands[(Int32)BattleCommandId.MagicSword];
-        PLAYER player2 = FF9StateSystem.Common.FF9.player[CharacterPresetId.Vivi];
-        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[CharacterPresetId.Vivi];
+        PLAYER vivi = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Vivi);
+        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)vivi.info.menu_type];
         BattleAbilityId[] abilities =
         {
             BattleAbilityId.Fire,
@@ -1164,17 +1163,17 @@ public partial class BattleHUD : UIScene
         for (Int32 i = 0; i < count; ++i)
         {
             Int32 abilityId = magicSwordCommand.Abilities[i];
-            Int32 index = ff9abil.FF9Abil_GetIndex(1, (Int32) abilities[i]);
-            if (index > -1)
+            Int32 index = ff9abil.FF9Abil_GetIndex(vivi, (Int32) abilities[i]);
+            if (index >= 0)
             {
-                abilityPlayer.AbilityPaList[abilityId] = player2.pa[index];
+                abilityPlayer.AbilityPaList[abilityId] = vivi.pa[index];
                 abilityPlayer.AbilityMaxPaList[abilityId] = paDataArray[index].Ap;
             }
         }
 
         for (Int32 equipSlot = 0; equipSlot < 5; ++equipSlot)
         {
-            Int32 equipId = player2.equip[equipSlot];
+            Int32 equipId = vivi.equip[equipSlot];
             if (equipId == Byte.MaxValue)
                 continue;
 
@@ -1328,7 +1327,7 @@ public partial class BattleHUD : UIScene
             return;
         
         BattleUnit caster = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-        if (caster.PlayerIndex != CharacterIndex.Vivi)
+        if (caster.PlayerIndex != CharacterId.Vivi)
             return;
         
         BattleUnit target = FF9StateSystem.Battle.FF9Battle.GetUnit(targetIndex);
@@ -2147,10 +2146,11 @@ public partial class BattleHUD : UIScene
     {
         const Byte saveTheQueenId = (Byte)WeaponItem.SaveTheQueen;
 
+        // This could be moved to AbilityFeatures.txt but whatever...
         if (_currentCommandId == BattleCommandId.Attack && CurrentBattlePlayerIndex > -1)
         {
             BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-            if (btl.PlayerIndex == CharacterIndex.Beatrix)
+            if (btl.PlayerIndex == CharacterId.Beatrix)
             {
                 Character player = btl.Player;
                 Byte weapon = player.Equipment.Weapon;

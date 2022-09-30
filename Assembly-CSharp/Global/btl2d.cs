@@ -6,183 +6,8 @@ using Memoria.Assets;
 using Memoria.Data;
 using UnityEngine;
 
-public class btl2d
+public static class btl2d
 {
-	static btl2d()
-	{
-		// Note: this type is marked as 'beforefieldinit'.
-		SByte[][] array = new SByte[19][];
-		array[0] = new SByte[]
-		{
-			-1,
-			-2,
-			-9,
-			-10,
-			-6,
-			0
-		};
-		array[1] = new SByte[]
-		{
-			-1,
-			-2,
-			-9,
-			-10,
-			-6,
-			0
-		};
-		array[2] = new SByte[]
-		{
-			0,
-			-1,
-			-7,
-			-8,
-			-3,
-			0
-		};
-		array[3] = new SByte[]
-		{
-			-1,
-			-2,
-			-9,
-			-8,
-			-5,
-			0
-		};
-		array[4] = new SByte[]
-		{
-			-1,
-			-2,
-			-9,
-			-8,
-			-5,
-			0
-		};
-		array[5] = new SByte[]
-		{
-			-1,
-			-2,
-			-9,
-			-8,
-			-5,
-			0
-		};
-		array[6] = new SByte[]
-		{
-			-1,
-			-2,
-			-9,
-			-8,
-			-5,
-			0
-		};
-		array[7] = new SByte[]
-		{
-			0,
-			-3,
-			-8,
-			-9,
-			-5,
-			0
-		};
-		array[8] = new SByte[]
-		{
-			0,
-			-3,
-			-8,
-			-9,
-			-5,
-			0
-		};
-		array[9] = new SByte[]
-		{
-			0,
-			-1,
-			-10,
-			-9,
-			-5,
-			0
-		};
-		array[10] = new SByte[]
-		{
-			-1,
-			0,
-			-7,
-			-7,
-			-5,
-			0
-		};
-		array[11] = new SByte[]
-		{
-			-1,
-			0,
-			-7,
-			-7,
-			-5,
-			0
-		};
-		array[12] = new SByte[]
-		{
-			0,
-			-2,
-			-8,
-			-8,
-			-4,
-			0
-		};
-		Int32 num = 13;
-		SByte[] array2 = new SByte[6];
-		array2[2] = -8;
-		array2[3] = -11;
-		array2[4] = -6;
-		array[num] = array2;
-		array[14] = new SByte[]
-		{
-			-2,
-			-2,
-			-9,
-			-9,
-			-6,
-			0
-		};
-		array[15] = new SByte[]
-		{
-			-1,
-			-1,
-			-9,
-			-9,
-			-5,
-			0
-		};
-		array[16] = new SByte[]
-		{
-			-1,
-			-1,
-			-8,
-			-8,
-			-5,
-			0
-		};
-		array[17] = new SByte[]
-		{
-			-1,
-			-1,
-			-8,
-			-8,
-			-5,
-			0
-		};
-		array[18] = new SByte[]
-		{
-			-1,
-			-2,
-			-7,
-			-8,
-			-5,
-			0
-		};
-		btl2d.wZofsPC = array;
-	}
-
 	public static void Btl2dInit()
 	{
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
@@ -480,7 +305,7 @@ public class btl2d
 										}
 										else
 										{
-											num4 = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
+											num4 = (Int16)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
 											array = btl2d.wBonePC[num4];
 											array2 = btl2d.wYofsPC[num4];
 											array3 = btl2d.wZofsPC[num4];
@@ -623,7 +448,7 @@ public class btl2d
 								Int16 num5;
 								if (next.bi.player != 0)
 								{
-									num3 = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
+									num3 = (Int16)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
 									num4 = btl2d.wBonePC[num3][5];
 									num5 = btl2d.wYofsPC[num3][5];
 								}
@@ -780,357 +605,74 @@ public class btl2d
 		new btl2d.STAT_ICON_TBL(BattleStatus.Berserk, 0u, null, 4, 1, 0, 0)
 	};
 
-	public static Byte[][] wBonePC = new Byte[][]
+	public static Byte[][] wBonePC = new Byte[][] // Indented by "CharacterSerialNumber"
 	{
-		new Byte[]
-		{
-			8,
-			8,
-			8,
-			8,
-			8,
-			1
-		},
-		new Byte[]
-		{
-			8,
-			8,
-			8,
-			8,
-			8,
-			1
-		},
-		new Byte[]
-		{
-			7,
-			7,
-			7,
-			7,
-			7,
-			1
-		},
-		new Byte[]
-		{
-			19,
-			19,
-			19,
-			19,
-			19,
-			1
-		},
-		new Byte[]
-		{
-			19,
-			19,
-			19,
-			19,
-			19,
-			1
-		},
-		new Byte[]
-		{
-			19,
-			19,
-			19,
-			19,
-			19,
-			1
-		},
-		new Byte[]
-		{
-			19,
-			19,
-			19,
-			19,
-			19,
-			1
-		},
-		new Byte[]
-		{
-			20,
-			20,
-			20,
-			20,
-			20,
-			1
-		},
-		new Byte[]
-		{
-			20,
-			20,
-			20,
-			20,
-			20,
-			1
-		},
-		new Byte[]
-		{
-			6,
-			6,
-			6,
-			6,
-			6,
-			1
-		},
-		new Byte[]
-		{
-			19,
-			19,
-			19,
-			19,
-			19,
-			1
-		},
-		new Byte[]
-		{
-			19,
-			19,
-			19,
-			19,
-			19,
-			1
-		},
-		new Byte[]
-		{
-			8,
-			8,
-			8,
-			8,
-			8,
-			1
-		},
-		new Byte[]
-		{
-			18,
-			18,
-			18,
-			18,
-			18,
-			1
-		},
-		new Byte[]
-		{
-			12,
-			12,
-			12,
-			12,
-			12,
-			1
-		},
-		new Byte[]
-		{
-			8,
-			8,
-			8,
-			8,
-			8,
-			1
-		},
-		new Byte[]
-		{
-			3,
-			3,
-			3,
-			3,
-			3,
-			1
-		},
-		new Byte[]
-		{
-			3,
-			3,
-			3,
-			3,
-			3,
-			1
-		},
-		new Byte[]
-		{
-			18,
-			18,
-			18,
-			18,
-			18,
-			1
-		}
+		new Byte[]{ 8, 8, 8, 8, 8, 1 },      // ZIDANE_DAGGER
+		new Byte[]{ 8, 8, 8, 8, 8, 1 },		 // ZIDANE_SWORD
+		new Byte[]{ 7, 7, 7, 7, 7, 1 },		 // VIVI
+		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_LH_ROD
+		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_LH_KNIFE
+		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_SH_ROD
+		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_SH_KNIFE
+		new Byte[]{ 20, 20, 20, 20, 20, 1 }, // STEINER_OUTDOOR
+		new Byte[]{ 20, 20, 20, 20, 20, 1 }, // STEINER_INDOOR
+		new Byte[]{ 6, 6, 6, 6, 6, 1 },		 // KUINA
+		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // EIKO_FLUTE
+		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // EIKO_KNIFE
+		new Byte[]{ 8, 8, 8, 8, 8, 1 },		 // FREIJA
+		new Byte[]{ 18, 18, 18, 18, 18, 1 }, // SALAMANDER
+		new Byte[]{ 12, 12, 12, 12, 12, 1 }, // CINNA
+		new Byte[]{ 8, 8, 8, 8, 8, 1 },		 // MARCUS
+		new Byte[]{ 3, 3, 3, 3, 3, 1 },		 // BLANK
+		new Byte[]{ 3, 3, 3, 3, 3, 1 },		 // BLANK_ARMOR
+		new Byte[]{ 18, 18, 18, 18, 18, 1 }	 // BEATRIX
 	};
 
-	private static SByte[][] wYofsPC = new SByte[][]
+	private static SByte[][] wYofsPC = new SByte[][] // Indented by "CharacterSerialNumber"
 	{
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-18
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-18
-		},
-		new SByte[]
-		{
-			-11,
-			0,
-			-8,
-			-3,
-			-8,
-			-18
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-18
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-18
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-18
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-18
-		},
-		new SByte[]
-		{
-			-11,
-			0,
-			-6,
-			-1,
-			-6,
-			-22
-		},
-		new SByte[]
-		{
-			-11,
-			0,
-			-6,
-			-1,
-			-6,
-			-22
-		},
-		new SByte[]
-		{
-			-12,
-			-2,
-			-9,
-			-1,
-			-9,
-			-23
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-17
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-7,
-			-1,
-			-7,
-			-17
-		},
-		new SByte[]
-		{
-			-13,
-			0,
-			-7,
-			-2,
-			-7,
-			-23
-		},
-		new SByte[]
-		{
-			-13,
-			-2,
-			-7,
-			1,
-			-7,
-			-21
-		},
-		new SByte[]
-		{
-			-11,
-			0,
-			-8,
-			-2,
-			-8,
-			-19
-		},
-		new SByte[]
-		{
-			-9,
-			0,
-			-6,
-			-1,
-			-6,
-			-21
-		},
-		new SByte[]
-		{
-			-12,
-			0,
-			-8,
-			-2,
-			-8,
-			-19
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-8,
-			-2,
-			-8,
-			-18
-		},
-		new SByte[]
-		{
-			-10,
-			0,
-			-6,
-			-1,
-			-6,
-			-18
-		}
+		new SByte[]{ -10, 0, -7, -1, -7, -18 },  // ZIDANE_DAGGER
+		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // ZIDANE_SWORD
+		new SByte[]{ -11, 0, -8, -3, -8, -18 },	 // VIVI
+		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_LH_ROD
+		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_LH_KNIFE
+		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_SH_ROD
+		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_SH_KNIFE
+		new SByte[]{ -11, 0, -6, -1, -6, -22 },	 // STEINER_OUTDOOR
+		new SByte[]{ -11, 0, -6, -1, -6, -22 },	 // STEINER_INDOOR
+		new SByte[]{ -12, -2, -9, -1, -9, -23 }, // KUINA
+		new SByte[]{ -10, 0, -7, -1, -7, -17 },	 // EIKO_FLUTE
+		new SByte[]{ -10, 0, -7, -1, -7, -17 },	 // EIKO_KNIFE
+		new SByte[]{ -13, 0, -7, -2, -7, -23 },	 // FREIJA
+		new SByte[]{ -13, -2, -7, 1, -7, -21 },	 // SALAMANDER
+		new SByte[]{ -11, 0, -8, -2, -8, -19 },	 // CINNA
+		new SByte[]{ -9, 0, -6, -1, -6, -21 },	 // MARCUS
+		new SByte[]{ -12, 0, -8, -2, -8, -19 },	 // BLANK
+		new SByte[]{ -10, 0, -8, -2, -8, -18 },	 // BLANK_ARMOR
+		new SByte[]{ -10, 0, -6, -1, -6, -18 }	 // BEATRIX
 	};
 
-	public static SByte[][] wZofsPC;
+	public static SByte[][] wZofsPC = new SByte[][] // Indented by "CharacterSerialNumber"
+	{
+		new SByte[]{ -1, -2, -9, -10, -6, 0 }, // ZIDANE_DAGGER
+		new SByte[]{ -1, -2, -9, -10, -6, 0 }, // ZIDANE_SWORD
+		new SByte[]{ 0, -1, -7, -8, -3, 0 },   // VIVI
+		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_LH_ROD
+		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_LH_KNIFE
+		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_SH_ROD
+		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_SH_KNIFE
+		new SByte[]{ 0, -3, -8, -9, -5, 0 },   // STEINER_OUTDOOR
+		new SByte[]{ 0, -3, -8, -9, -5, 0 },   // STEINER_INDOOR
+		new SByte[]{ 0, -1, -10, -9, -5, 0 },  // KUINA
+		new SByte[]{ -1, 0, -7, -7, -5, 0 },   // EIKO_FLUTE
+		new SByte[]{ -1, 0, -7, -7, -5, 0 },   // EIKO_KNIFE
+		new SByte[]{ 0, -2, -8, -8, -4, 0 },   // FREIJA
+		new SByte[]{ 0, 0, -8, -11, -6, 0 },   // SALAMANDER
+		new SByte[]{ -2, -2, -9, -9, -6, 0 },  // CINNA
+		new SByte[]{ -1, -1, -9, -9, -5, 0 },  // MARCUS
+		new SByte[]{ -1, -1, -8, -8, -5, 0 },  // BLANK
+		new SByte[]{ -1, -1, -8, -8, -5, 0 },  // BLANK_ARMOR
+		new SByte[]{ -1, -2, -7, -8, -5, 0 }   // BEATRIX
+	};
 
 	public class STAT_CNT_TBL
 	{

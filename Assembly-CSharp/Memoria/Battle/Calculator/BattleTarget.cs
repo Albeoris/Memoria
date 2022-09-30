@@ -274,7 +274,7 @@ namespace Memoria
 
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
             Kill();
-            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.ImpactCrushes);
+            UIManager.Battle.SetBattleFollowMessage(BattleMesages.ImpactCrushes);
             return true;
         }
 

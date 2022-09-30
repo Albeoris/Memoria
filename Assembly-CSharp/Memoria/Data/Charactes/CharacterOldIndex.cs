@@ -2,7 +2,7 @@
 
 namespace Memoria.Data
 {
-    public enum CharacterId : Byte
+    public enum CharacterOldIndex : UInt16
     {
         Zidane = 0,
         Vivi = 1,
@@ -12,10 +12,10 @@ namespace Memoria.Data
         Quina = 5,
         Eiko = 6,
         Amarant = 7,
-        Cinna = 8,
-        Marcus = 9,
-        Blank = 10,
-        Beatrix = 11,
-        NONE = Byte.MaxValue
+        Beatrix = 8,
+        Cinna = 9,
+        Marcus = 10,
+        Blank = 11,
+        NONE = UInt16.MaxValue
     }
 }

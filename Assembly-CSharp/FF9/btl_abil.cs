@@ -64,7 +64,7 @@ namespace FF9
         public static Boolean CheckCounterAbility(BattleTarget defender, BattleCaster attacker, BattleCommand command)
         {
             // Dummied
-            if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.EnemyAtk)
+            if (defender.IsUnderAnyStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.EnemyAtk)
                 return false;
 
             if (defender.HasSupportAbility(SupportAbility2.Counter) && (command.AbilityCategory & 8) != 0) // Physical
@@ -92,7 +92,7 @@ namespace FF9
             if (!defender.HasSupportAbility(SupportAbility2.AutoPotion))
                 return;
 
-            if (defender.IsUnderStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.EnemyAtk)
+            if (defender.IsUnderAnyStatus(BattleStatus.NoReaction) || command.Id > BattleCommandId.EnemyAtk)
                 return;
 
             byte itemId = IsDefualtAutoPotionBehaviourEnabled()

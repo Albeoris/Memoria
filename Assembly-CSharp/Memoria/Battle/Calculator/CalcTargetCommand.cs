@@ -60,7 +60,7 @@ namespace Memoria
                     if (_target.CanBeAttacked())
                         _target.CurrentHp = _target.MaximumHp;
                 }
-                else if (_target.IsUnderStatus(BattleStatus.EasyKill))
+                else if (_target.IsUnderAnyStatus(BattleStatus.EasyKill))
                     _context.Flags |= BattleCalcFlags.Guard;
                 else
                     _target.Kill();

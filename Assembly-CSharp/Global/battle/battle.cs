@@ -58,7 +58,7 @@ public class battle
         SFX.SetCameraPhase(1);
         FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
         ff9.btl_flag = 0;
-        ff9.player[3].info.serial_no = ff9.steiner_state == 0 ? (Byte)7 : (Byte)8;
+        ff9.GetPlayer(CharacterId.Steiner).info.serial_no = ff9.steiner_state == 0 ? CharacterSerialNumber.STEINER_OUTDOOR : CharacterSerialNumber.STEINER_INDOOR;
         ff9.btl_result = 0;
         btl_sys.InitBattleSystem();
         btl2d.Btl2dInit();
@@ -121,12 +121,12 @@ public class battle
                             UIManager.Battle.FF9BMenu_EnableMenu(true);
                         if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
                         {
-                            UIManager.Battle.SetBattleFollowMessage(2);
+                            UIManager.Battle.SetBattleFollowMessage(BattleMesages.BackAttack);
                             break;
                         }
                         if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                         {
-                            UIManager.Battle.SetBattleFollowMessage(1);
+                            UIManager.Battle.SetBattleFollowMessage(BattleMesages.PreEmptiveStrike);
                         }
                     }
                 }
@@ -227,7 +227,7 @@ public class battle
                     //        btl_mot.setMotion(next, data.bi.def_idle);
                     //    data.evt.animFrame = 0;
                     //}
-                    if (!next.IsUnderStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
+                    if (!next.IsUnderAnyStatus(BattleStatus.Petrify) && !btl_mot.checkMotion(data, data.bi.def_idle) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
                         flag = false;
                 }
                 //else if (btlsys.btl_phase == 6 && next.IsPlayer && !next.IsUnderStatus(BattleStatus.BattleEnd) && btlsys.btl_scene.Info.WinPose != 0 && (next.Player.Data.info.win_pose != 0 && data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data)))
@@ -409,17 +409,17 @@ public class battle
                     btlsys.btl_phase = 8;
                     if ((sys.btl_flag & 4) != 0)
                     {
-                        UInt32 num2 = gil / 10U;
-                        if (sys.party.gil > num2)
+                        UInt32 gilLost = gil / 10U;
+                        if (sys.party.gil > gilLost)
                         {
-                            sys.party.gil -= num2;
+                            sys.party.gil -= gilLost;
                         }
                         else
                         {
-                            num2 = sys.party.gil;
+                            gilLost = sys.party.gil;
                             sys.party.gil = 0U;
                         }
-                        UIManager.Battle.SetBattleFollowMessage(30, num2);
+                        UIManager.Battle.SetBattleFollowMessage(BattleMesages.DroppedGil, gilLost);
                     }
                     break;
             }

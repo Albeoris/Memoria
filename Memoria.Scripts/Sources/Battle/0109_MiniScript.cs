@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            if (_v.Target.IsUnderStatus(BattleStatus.Mini))
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
             {
                 _v.TargetCommand.TryAlterCommandStatuses();
                 return;

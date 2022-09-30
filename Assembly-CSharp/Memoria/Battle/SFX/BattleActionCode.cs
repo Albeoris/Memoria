@@ -176,7 +176,7 @@ public class BattleActionCode
 			{
 				if (caster.weapon == null)
 					return false;
-				value = SpecialEffect.Player_Attack_Zidane_Dagger + btl_util.getSerialNumber(caster);
+				value = btl_vfx.GetPlayerAttackVfx(caster);
 				return true;
 			}
 			Int32 asInt;
@@ -425,7 +425,7 @@ public class BattleActionCode
 			for (Int32 i = 0; i < partyNames.Length; i++)
 				if (args == partyNames[i])
 					for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-						if (next.bi.player != 0 && FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.menu_type == i)
+						if (next.bi.player != 0 && (Int32)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.slot_no == i)
 						{
 							value = next.btl_id;
 							return true;

@@ -13,10 +13,7 @@ namespace Memoria
             _data = data;
         }
 
-        public ITEM_DATA GetData
-        {
-            get => _data;
-        }
+        public ITEM_DATA GetData => _data;
 
         public static BattleItem Find(Byte itemId)
         {
@@ -48,10 +45,7 @@ namespace Memoria
             Data = data;
         }
 
-        public ENEMY GetData
-        {
-            get => Data;
-        }
+        public ENEMY GetData => Data;
 
         public String Name => Data.et.name;
         public Byte[] StealableItems => Data.steal_item;
@@ -97,10 +91,7 @@ namespace Memoria
             Data = data;
         }
 
-        public CMD_DATA GetData
-        {
-            get => Data;
-        }
+        public CMD_DATA GetData => Data;
 
         public BattleCommandId Id => (BattleCommandId)Data.cmd_no;
         public BattleAbilityId AbilityId => (BattleAbilityId)Data.sub_no;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Exceptions;
 using Memoria.Prime.Text;
@@ -172,28 +172,28 @@ namespace Memoria.Assets
                     OnDialogOffsetPositon(tag.Param);
                     break;
                 case FFIXTextTagCode.Zidane:
-                    OnCharacterName(0);
+                    OnCharacterName(CharacterId.Zidane);
                     break;
                 case FFIXTextTagCode.Vivi:
-                    OnCharacterName(1);
+                    OnCharacterName(CharacterId.Vivi);
                     break;
                 case FFIXTextTagCode.Dagger:
-                    OnCharacterName(2);
+                    OnCharacterName(CharacterId.Garnet);
                     break;
                 case FFIXTextTagCode.Steiner:
-                    OnCharacterName(3);
+                    OnCharacterName(CharacterId.Steiner);
                     break;
-                case FFIXTextTagCode.Fraya:
-                    OnCharacterName(4);
+                case FFIXTextTagCode.Freya:
+                    OnCharacterName(CharacterId.Freya);
                     break;
                 case FFIXTextTagCode.Quina:
-                    OnCharacterName(5);
+                    OnCharacterName(CharacterId.Quina);
                     break;
                 case FFIXTextTagCode.Eiko:
-                    OnCharacterName(6);
+                    OnCharacterName(CharacterId.Eiko);
                     break;
                 case FFIXTextTagCode.Amarant:
-                    OnCharacterName(7);
+                    OnCharacterName(CharacterId.Amarant);
                     break;
                 case FFIXTextTagCode.Party:
                     OnPartyMemberName(tag.Param[0] - 1);
@@ -420,53 +420,29 @@ namespace Memoria.Assets
                 String a2 = text3.Remove(0, 1);
                 newIndex = Array.IndexOf(_chars, ']', index + 4);
                 if (a2 == NGUIText.Zidane)
-                {
-                    OnCharacterName(0);
-                }
+                    OnCharacterName(CharacterId.Zidane);
                 else if (a2 == NGUIText.Vivi)
-                {
-                    OnCharacterName(1);
-                }
+                    OnCharacterName(CharacterId.Vivi);
                 else if (a2 == NGUIText.Dagger)
-                {
-                    OnCharacterName(2);
-                }
+                    OnCharacterName(CharacterId.Garnet);
                 else if (a2 == NGUIText.Steiner)
-                {
-                    OnCharacterName(3);
-                }
-                else if (a2 == NGUIText.Fraya)
-                {
-                    OnCharacterName(4);
-                }
+                    OnCharacterName(CharacterId.Steiner);
+                else if (a2 == NGUIText.Freya)
+                    OnCharacterName(CharacterId.Freya);
                 else if (a2 == NGUIText.Quina)
-                {
-                    OnCharacterName(5);
-                }
+                    OnCharacterName(CharacterId.Quina);
                 else if (a2 == NGUIText.Eiko)
-                {
-                    OnCharacterName(6);
-                }
+                    OnCharacterName(CharacterId.Eiko);
                 else if (a2 == NGUIText.Amarant)
-                {
-                    OnCharacterName(7);
-                }
+                    OnCharacterName(CharacterId.Amarant);
                 else if (a2 == NGUIText.Party1)
-                {
                     OnPartyMemberName(0);
-                }
                 else if (a2 == NGUIText.Party2)
-                {
                     OnPartyMemberName(1);
-                }
                 else if (a2 == NGUIText.Party3)
-                {
                     OnPartyMemberName(2);
-                }
                 else if (a2 == NGUIText.Party4)
-                {
                     OnPartyMemberName(3);
-                }
             }
             else if (text3 == "[" + NGUIText.NumberVar)
             {
@@ -596,14 +572,12 @@ namespace Memoria.Assets
 
         private void OnPartyMemberName(Int32 index)
         {
-            Int32 partyPlayer = PersistenSingleton<EventEngine>.Instance.GetPartyPlayer(index);
-            PLAYER player = _gameState.player[partyPlayer];
-            _sb.Append(player.name);
+            _sb.Append(_gameState.party.member[index].Name);
         }
 
-        private void OnCharacterName(Int32 index)
+        private void OnCharacterName(CharacterId charId)
         {
-            _sb.Append(FF9StateSystem.Common.FF9.player[index].name);
+            _sb.Append(FF9StateSystem.Common.FF9.GetPlayer(charId).Name);
         }
 
         private void OnDialogOffsetPositon(Int32[] allParametersFromTag6)

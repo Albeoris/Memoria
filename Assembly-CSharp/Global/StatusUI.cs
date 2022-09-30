@@ -285,7 +285,7 @@ public class StatusUI : UIScene
         FF9UIDataTool.DisplayItem(player.equip[3], _equipmentHud.Body.IconSprite, _equipmentHud.Body.NameLabel, true);
         FF9UIDataTool.DisplayItem(player.equip[4], _equipmentHud.Accessory.IconSprite, _equipmentHud.Accessory.NameLabel, true);
 
-        Byte presetId = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].info.menu_type;
+        Byte presetId = (Byte)FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].info.menu_type;
         Byte command1 = (Byte)CharacterCommands.CommandSets[presetId].Regular1;
         Byte command2 = (Byte)CharacterCommands.CommandSets[presetId].Regular2;
         _attackLabel.text = FF9TextTool.CommandName(1);
@@ -310,47 +310,43 @@ public class StatusUI : UIScene
     private void DrawAbilityInfo(AbilityItemHUD abilityHud, Int32 index)
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
-        Boolean flag = ff9abil.FF9Abil_HasAp(new Character(player));
-        if (flag && player.pa[index] == 0)
+        Boolean hasAP = ff9abil.FF9Abil_HasAp(new Character(player));
+        if (hasAP && player.pa[index] == 0)
         {
             abilityHud.Self.SetActive(false);
             return;
         }
 
-        Int32 index1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].Id;
+        Int32 abilId = ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type][index].Id;
         //int num1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].max_ap;
-        if (index1 == 0)
+        if (abilId == 0)
         {
             abilityHud.Self.SetActive(false);
         }
         else
         {
             //int num2 = player.pa[index];
-            String str1;
-            String str2;
+            String abilName;
+            String stoneSprite;
             Boolean isShowText;
-            if (index1 < 192)
+            if (abilId < 192)
             {
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[index1];
-                str1 = FF9TextTool.ActionAbilityName(index1);
-                str2 = "ability_stone";
+                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
+                abilName = FF9TextTool.ActionAbilityName(abilId);
+                stoneSprite = "ability_stone";
                 isShowText = (aaData.Type & 2) == 0;
             }
             else
             {
                 //SA_DATA saData = ff9abil._FF9Abil_SaData[index1 - 192];
-                str1 = FF9TextTool.SupportAbilityName(index1 - 192);
-                str2 = !ff9abil.FF9Abil_IsEnableSA(player.sa, index1) ? "skill_stone_off" : "skill_stone_on";
+                abilName = FF9TextTool.SupportAbilityName(abilId - 192);
+                stoneSprite = !ff9abil.FF9Abil_IsEnableSA(player.sa, abilId) ? "skill_stone_off" : "skill_stone_on";
                 isShowText = true;
             }
             abilityHud.Self.SetActive(true);
-            abilityHud.IconSprite.spriteName = str2;
-            abilityHud.NameLabel.text = str1;
-
-            if (flag)
-                FF9UIDataTool.DisplayAPBar(player, index1, isShowText, abilityHud.APBar);
-            else
-                FF9UIDataTool.DisplayAPBar(player, index1, isShowText, abilityHud.APBar);
+            abilityHud.IconSprite.spriteName = stoneSprite;
+            abilityHud.NameLabel.text = abilName;
+            FF9UIDataTool.DisplayAPBar(player, abilId, isShowText, abilityHud.APBar);
         }
     }
 

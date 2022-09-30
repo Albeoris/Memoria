@@ -523,14 +523,14 @@ public class BattleUI : MonoBehaviour
 			if (FF9StateSystem.Battle.selectPlayerCount <= 0)
 			{
 				FF9StateSystem.Battle.selectPlayerCount = 4;
-				ff9play.FF9Play_SetParty(0, 0);
-				ff9play.FF9Play_SetParty(1, 1);
-				ff9play.FF9Play_SetParty(2, 2);
-				ff9play.FF9Play_SetParty(3, 3);
+				ff9play.FF9Play_SetParty(0, CharacterId.Zidane);
+				ff9play.FF9Play_SetParty(1, CharacterId.Vivi);
+				ff9play.FF9Play_SetParty(2, CharacterId.Garnet);
+				ff9play.FF9Play_SetParty(3, CharacterId.Steiner);
 			}
 			else
 			{
-				ff9play.FF9Play_SetParty(FF9StateSystem.Battle.selectPlayerCount, -1);
+				ff9play.FF9Play_SetParty(FF9StateSystem.Battle.selectPlayerCount, CharacterId.NONE);
 			}
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
@@ -540,13 +540,13 @@ public class BattleUI : MonoBehaviour
 			if (FF9StateSystem.Battle.selectPlayerCount > 4)
 			{
 				FF9StateSystem.Battle.selectPlayerCount = 1;
-				ff9play.FF9Play_SetParty(3, -1);
-				ff9play.FF9Play_SetParty(2, -1);
-				ff9play.FF9Play_SetParty(1, -1);
+				ff9play.FF9Play_SetParty(3, CharacterId.NONE);
+				ff9play.FF9Play_SetParty(2, CharacterId.NONE);
+				ff9play.FF9Play_SetParty(1, CharacterId.NONE);
 			}
 			else
 			{
-				ff9play.FF9Play_SetParty(num, num);
+				ff9play.FF9Play_SetParty(num, (CharacterId)num);
 			}
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
@@ -587,7 +587,7 @@ public class BattleUI : MonoBehaviour
 				}
 			}
 			while (Array.IndexOf<Int32>(BattleUI.currentDebugSerialCharacter, num2) != -1);
-			ff9play.FF9Dbg_SetCharacter(num2, FF9StateSystem.Battle.selectCharPosID);
+			ff9play.FF9Dbg_SetCharacter((CharacterId)num2, FF9StateSystem.Battle.selectCharPosID);
 			BattleUI.currentDebugSerialCharacter[FF9StateSystem.Battle.selectCharPosID] = num2;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}
@@ -606,7 +606,7 @@ public class BattleUI : MonoBehaviour
 				}
 			}
 			while (Array.IndexOf<Int32>(BattleUI.currentDebugSerialCharacter, num3) != -1);
-			ff9play.FF9Dbg_SetCharacter(num3, FF9StateSystem.Battle.selectCharPosID);
+			ff9play.FF9Dbg_SetCharacter((CharacterId)num3, FF9StateSystem.Battle.selectCharPosID);
 			BattleUI.currentDebugSerialCharacter[FF9StateSystem.Battle.selectCharPosID] = num3;
 			SceneDirector.Replace("BattleMapDebug", SceneTransition.FadeOutToBlack_FadeIn, true);
 		}

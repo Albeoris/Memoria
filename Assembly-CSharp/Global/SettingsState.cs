@@ -324,10 +324,10 @@ public class SettingsState : MonoBehaviour
 
         foreach (BattleUnit btl in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderStatus(BattleStatus.CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.IsRunning())
+            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderAnyStatus(BattleStatus.CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.IsRunning())
             {
                 btl.Trance = Byte.MaxValue;
-                if (!btl.IsUnderStatus(BattleStatus.Trance))
+                if (!btl.IsUnderAnyStatus(BattleStatus.Trance))
                     btl.AlterStatus(BattleStatus.Trance);
             }
         }
@@ -339,10 +339,8 @@ public class SettingsState : MonoBehaviour
             return;
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-        {
-            if (unit.IsUnderStatus(BattleStatus.Trance))
+            if (unit.IsUnderAnyStatus(BattleStatus.Trance))
                 unit.Trance = Byte.MaxValue;
-        }
     }
 
     public void SetFastForward(Boolean isFastForward)
@@ -388,69 +386,68 @@ public class SettingsState : MonoBehaviour
     {
         if (!IsMasterSkill)
             return;
-        Boolean flag = false;
-        for (Int32 index1 = 0; index1 < 9; ++index1)
+        Boolean gotAchievement = false;
+        for (Int32 pIndex = 0; pIndex < FF9StateSystem.Common.PlayerCount; ++pIndex)
         {
-            PLAYER player = FF9StateSystem.Common.FF9.player[index1];
+            PLAYER player = FF9StateSystem.Common.FF9.player[pIndex];
             foreach (FF9ITEM ff9Item in FF9StateSystem.Common.FF9.item)
             {
                 if (ff9Item.count > 0 && ff9item.FF9Item_GetEquipPart(ff9Item.id) > -1)
                 {
-                    foreach (Byte num in ff9item._FF9Item_Data[ff9Item.id].ability)
+                    foreach (Byte abilId in ff9item._FF9Item_Data[ff9Item.id].ability)
                     {
-                        Int32 index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, num);
-                        if (index2 > -1)
+                        Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
+                        if (abilIndex > -1)
                         {
-                            player.pa[index2] = (Byte)ff9abil.FF9Abil_GetMax(player.info.slot_no, num);
-                            if (BattleAchievement.UpdateAbilitiesAchievement(num, false))
-                                flag = true;
+                            player.pa[abilIndex] = (Byte)ff9abil.FF9Abil_GetMax(player, abilId);
+                            if (BattleAchievement.UpdateAbilitiesAchievement(abilId, false))
+                                gotAchievement = true;
                         }
                     }
                 }
             }
-            for (Int32 index2 = 0; index2 < 5; ++index2)
+            for (Int32 equipIndex = 0; equipIndex < 5; ++equipIndex)
             {
-                Byte num1 = player.equip[index2];
-                if (num1 != Byte.MaxValue)
+                Byte itemId = player.equip[equipIndex];
+                if (itemId != Byte.MaxValue)
                 {
-                    foreach (Byte num2 in ff9item._FF9Item_Data[num1].ability)
+                    foreach (Byte abilId in ff9item._FF9Item_Data[itemId].ability)
                     {
-                        Int32 index3 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, num2);
-                        if (index3 > -1)
+                        Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
+                        if (abilIndex > -1)
                         {
-                            player.pa[index3] = (Byte)ff9abil.FF9Abil_GetMax(player.info.slot_no, num2);
-                            if (BattleAchievement.UpdateAbilitiesAchievement(num2, false))
-                                flag = true;
+                            player.pa[abilIndex] = (Byte)ff9abil.FF9Abil_GetMax(player, abilId);
+                            if (BattleAchievement.UpdateAbilitiesAchievement(abilId, false))
+                                gotAchievement = true;
                         }
                     }
                 }
             }
-            if (player.info.serial_no == 9)
+            if (player.info.serial_no == CharacterSerialNumber.KUINA)
             {
-                foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.info.menu_type])
+                foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type])
                 {
                     if (paData.Id != 0 && paData.Id < 192)
                     {
-                        Int32 index2 = ff9abil.FF9Abil_GetIndex(player.info.slot_no, paData.Id);
-                        player.pa[index2] = paData.Ap;
+                        Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, paData.Id);
+                        player.pa[abilIndex] = paData.Ap;
                         if (BattleAchievement.UpdateAbilitiesAchievement(paData.Id, false))
-                            flag = true;
+                            gotAchievement = true;
                     }
                 }
             }
         }
-        if (!flag)
-            return;
-        BattleAchievement.SendAbilitiesAchievement();
+        if (gotAchievement)
+            BattleAchievement.SendAbilitiesAchievement();
     }
 
     private void SetLvMax()
     {
-        for (Int32 slot_id = 0; slot_id < 9; ++slot_id)
+        for (Int32 pIndex = 0; pIndex < FF9StateSystem.Common.PlayerCount; ++pIndex)
         {
-            PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
+            PLAYER player = FF9StateSystem.Common.FF9.player[pIndex];
             player.SetMaxBonusBasisStatus();
-            ff9play.FF9Play_ChangeLevel(slot_id, 99, false);
+            ff9play.FF9Play_ChangeLevel(player, 99, false);
             Int32 num = player.max.capa - player.cur.capa;
             player.max.capa = 99;
             player.cur.capa = (Byte)(99 - num);

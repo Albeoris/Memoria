@@ -187,23 +187,21 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         BBGINFO bbginfo = new BBGINFO();
         bbginfo.ReadBattleInfo(battleModelPath);
         FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
-        btlshadow.ff9battleShadowInit(13);
+        btlshadow.ff9battleShadowInit(FF9StateSystem.Common.PlayerCount + 4);
         battle.InitBattleMap();
         this.seqList = new List<Int32>();
         SB2_PATTERN sb2Pattern = this.btlScene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-        Int32[] numArray = new Int32[sb2Pattern.MonsterCount];
-        for (Int32 index = 0; index < (Int32)sb2Pattern.MonsterCount; ++index)
-            numArray[index] = sb2Pattern.Monster[index].TypeNo;
-        foreach (Int32 num in numArray.Distinct().ToArray())
+        Int32[] monsterType = new Int32[sb2Pattern.MonsterCount];
+        for (Int32 i = 0; i < sb2Pattern.MonsterCount; ++i)
+            monsterType[i] = sb2Pattern.Monster[i].TypeNo;
+        foreach (Int32 typeNo in monsterType.Distinct().ToArray())
         {
-            for (Int32 index1 = 0; index1 < btlseq.instance.sequenceProperty.Length; ++index1)
+            for (Int32 i = 0; i < btlseq.instance.sequenceProperty.Length; ++i)
             {
-                SequenceProperty sequenceProperty = btlseq.instance.sequenceProperty[index1];
-                if (sequenceProperty.Montype == num)
-                {
-                    for (Int32 index2 = 0; index2 < sequenceProperty.PlayableSequence.Count; ++index2)
-                        this.seqList.Add(sequenceProperty.PlayableSequence[index2]);
-                }
+                SequenceProperty sequenceProperty = btlseq.instance.sequenceProperty[i];
+                if (sequenceProperty.Montype == typeNo)
+                    for (Int32 j = 0; j < sequenceProperty.PlayableSequence.Count; ++j)
+                        this.seqList.Add(sequenceProperty.PlayableSequence[j]);
             }
         }
         this.btlIDList = FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList.Distinct().ToArray();
@@ -222,8 +220,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             btlDataArray[i] = new BTL_DATA();
             if (FF9.party.member[i] != null)
             {
-                Byte num = FF9.party.member[i].info.serial_no;
-                BattlePlayerCharacter.CreatePlayer(btlDataArray[pindex], (BattlePlayerCharacter.PlayerSerialNumber)num);
+                BattlePlayerCharacter.CreatePlayer(btlDataArray[pindex], FF9.party.member[i].info.serial_no);
                 Int32 meshCount = 0;
                 IEnumerator enumerator = btlDataArray[pindex].gameObject.transform.GetEnumerator();
                 try
@@ -369,7 +366,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         else
         {
             BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[characterNo];
-            Byte presetId = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
+            Byte presetId = (Byte)FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
             BattleCommandId commandId = 0;
             Int32 commandIndex = (Int32)commandId;
             UInt32 sub_no = 0;
@@ -648,7 +645,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
             else if (btl.die_seq < 4)
             {
-                btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray, 9 + btl.bi.slot_no, 0, BoneNo);
+                btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray, FF9StateSystem.Common.PlayerCount + btl.bi.slot_no, 0, BoneNo);
             }
         }
     }

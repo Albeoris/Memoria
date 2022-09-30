@@ -258,7 +258,7 @@ public static class UnifiedBattleSequencer
 						tmpChar = cmd.regist.btl_id;
 					foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
 					{
-						Boolean useFluteSound = btl.bi.player != 0 && FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no == 10 && (!code.TryGetArgBoolean("SkipFlute", out tmpBool) || !tmpBool);
+						Boolean useFluteSound = btl.bi.player != 0 && btl_util.getPlayerPtr(btl).info.serial_no == CharacterSerialNumber.EIKO_FLUTE && (!code.TryGetArgBoolean("SkipFlute", out tmpBool) || !tmpBool);
 						SFXChannel.Play(tmpStr, btl, !useFluteSound);
 						if (useFluteSound)
 						{

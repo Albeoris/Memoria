@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -486,17 +487,15 @@ public class FieldHUD : UIScene
 
     private static void OnPartyClickSwitchScene()
     {
-        FF9PARTY_INFO ff9PartyInfo1 = new FF9PARTY_INFO
+        FF9PARTY_INFO defaultParty = new FF9PARTY_INFO
         {
-            menu = new Byte[4] { 0, 1, 2, 3 },
-            select = new Byte[8] { 4, 5, 6, 7, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, Byte.MaxValue }
+            menu = new CharacterId[4] { CharacterId.Zidane, CharacterId.Vivi, CharacterId.Garnet, CharacterId.Steiner },
+            select = new CharacterId[4] { CharacterId.Freya, CharacterId.Quina, CharacterId.Eiko, CharacterId.Amarant }
         };
-        FF9PARTY_INFO ff9PartyInfo2 = ff9PartyInfo1;
-        Boolean[] flagArray = new Boolean[9];
-        flagArray[0] = true;
-        ff9PartyInfo2.fix = flagArray;
-        ff9PartyInfo1.party_ct = 4;
-        PersistenSingleton<UIManager>.Instance.PartySettingScene.Info = ff9PartyInfo1;
+        defaultParty.fix = new Boolean[FF9StateSystem.Common.PlayerCount];
+        defaultParty.fix[0] = true;
+        defaultParty.party_ct = 4;
+        PersistenSingleton<UIManager>.Instance.PartySettingScene.Info = defaultParty;
         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.PartySetting);
     }
 
@@ -520,7 +519,7 @@ public class FieldHUD : UIScene
 
     private static void OnNameSettingClickAfterHide()
     {
-        PersistenSingleton<UIManager>.Instance.NameSettingScene.SubNo = 1;
+        PersistenSingleton<UIManager>.Instance.NameSettingScene.SubNo = CharacterId.Vivi;
         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.NameSetting);
     }
 

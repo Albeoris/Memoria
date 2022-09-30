@@ -32,7 +32,7 @@ namespace Memoria.Scripts.Battle
 
             Single result = defenceDiff * BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
 
-            if (_v.Target.IsUnderStatus(BattleStatus.Shell))
+            if (_v.Target.IsUnderAnyStatus(BattleStatus.Shell))
                 result *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate >> 1);
             else
                 result *= BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Memoria;
+using Memoria.Data;
 using UnityEngine;
 
 public partial class FF9StateGlobal
@@ -827,11 +827,9 @@ public partial class FF9StateGlobal
 	public FF9StateGlobal()
 	{
 		this.ot = new UInt32[2];
-		this.player = new PLAYER[9];
-		for (Int32 i = 0; i < (Int32)this.player.Length; i++)
-		{
+		this.player = new PLAYER[CommonState.DEFAULT_PLAYER_COUNT];
+		for (Int32 i = 0; i < CommonState.DEFAULT_PLAYER_COUNT; i++)
 			this.player[i] = new PLAYER();
-		}
 		this.party = new PARTY_DATA();
 		this.item = new FF9ITEM[256];
 		this.rare_item = new Byte[64];
@@ -844,6 +842,11 @@ public partial class FF9StateGlobal
 	public FF9Char FF9GetCharPtr(Int32 uid)
 	{
 		return this.charArray[uid];
+	}
+
+	public PLAYER GetPlayer(CharacterId id)
+	{
+		return player[(Int32)id];
 	}
 
 	public void ff9ResetStateGlobal()

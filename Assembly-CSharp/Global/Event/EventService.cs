@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Data;
 
 public class EventService
 {
@@ -10,16 +11,14 @@ public class EventService
 			EventService.OpenMainMenu();
 			break;
 		case 1u:
-			EventService.OpenNameMenu(Convert.ToInt32(subId));
+			EventService.OpenNameMenu((CharacterId)subId);
 			break;
 		case 2u:
 			EventService.OpenShopMenu(Convert.ToInt32(subId));
 			break;
 		case 4u:
 			if (subId == 0u)
-			{
 				EventService.OpenSaveMenu();
-			}
 			break;
 		case 5u:
 			EventService.OpenChocoGraph(Convert.ToInt32(subId));
@@ -47,7 +46,7 @@ public class EventService
 		});
 	}
 
-	private static void OpenNameMenu(Int32 playerId)
+	private static void OpenNameMenu(CharacterId playerId)
 	{
 		PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).NextSceneIsModal = false;
 		PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).Hide(delegate

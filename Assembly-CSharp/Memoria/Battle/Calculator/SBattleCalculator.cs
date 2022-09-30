@@ -153,7 +153,7 @@ namespace Memoria
                     Single modifier_factor = 1.0f;
                     Single modifier_bonus = 0.5f;
                     Byte modifier_index = 0;
-                    if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && v.Caster.PlayerIndex == CharacterIndex.Steiner)
+                    if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && v.Caster.PlayerIndex == CharacterId.Steiner)
                         modifier_bonus = 1.0f;
                     while (v.Context.DamageModifierCount > 0)
                     {

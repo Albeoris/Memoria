@@ -21,7 +21,7 @@ namespace Memoria.Assets
         /// <summary>
         /// [FRYA]
         /// </summary>
-        Fraya,
+        Freya,
         /// <summary>
         /// [QUIN]
         /// </summary>

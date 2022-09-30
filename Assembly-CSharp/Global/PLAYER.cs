@@ -21,11 +21,9 @@ public class PLAYER
 		this.mpCostFactor = 100;
 	}
 
-    public CharacterIndex Index => info.slot_no;
+    public CharacterId Index => info.slot_no;
     public Boolean IsSubCharacter => (Category & CharacterCategory.Subpc) == CharacterCategory.Subpc;
 
-    public CharacterId CharacterId => PresetId.ToCharacterId();
-    public EquipmentSetId DefaultEquipmentSetId => PresetId.ToEquipmentSetId();
     public CharacterPresetId PresetId
     {
         get { return info.menu_type; }
@@ -52,9 +50,7 @@ public class PLAYER
 	public void ValidateBasisStatus()
 	{
 		if (this.level == 99 && this.SetMaxBonusBasisStatus())
-		{
-			ff9play.FF9Play_Build((Int32)this.info.slot_no, (Int32)this.level, (PLAYER_INFO)null, false);
-		}
+			ff9play.FF9Play_Build(this, this.level, false, false);
 	}
 
 	public Boolean SetMaxBonusBasisStatus()
@@ -80,10 +76,8 @@ public class PLAYER
 
 	public void ValidateMaxStone()
 	{
-		if (this.max.capa < (Byte)ff9level.FF9Level_GetCap((Int32)this.info.slot_no, (Int32)this.level, false))
-		{
-			ff9play.FF9Play_Build((Int32)this.info.slot_no, (Int32)this.level, (PLAYER_INFO)null, false);
-		}
+		if (this.max.capa < (Byte)ff9level.FF9Level_GetCap(this, this.level, false))
+			ff9play.FF9Play_Build(this, this.level, false, false);
 	}
 
 	public Int32 GetActiveSupportAbilityPoint()
@@ -109,31 +103,23 @@ public class PLAYER
 		return num;
 	}
 
-    private String _name;
+	public String Name
+	{
+		get
+		{
+			if (String.IsNullOrEmpty(_name))
+				_name = FF9TextTool.CharacterDefaultName(info.slot_no);
+			return _name;
+		}
+		set
+		{
+			_name = value;
+		}
+	}
 
-    public String GetRealName()
-    {
-        return _name;
-    }
+	private String _name;
 
-    public void SetRealName(String name)
-    {
-	    _name = name;
-    }
-
-    private String GetName()
-    {
-	    if ((category & 16) == 16)
-        {
-	        GetDefaultName(out _, out var altName);
-	        return altName;
-        }
-
-	    SplitName(out var mainName, out _);
-	    return mainName;
-    }
-
-    public const Byte PLAYER_CATEGORY_MALE = 1;
+	public const Byte PLAYER_CATEGORY_MALE = 1;
 
 	public const Byte PLAYER_CATEGORY_FEMALE = 2;
 
@@ -174,84 +160,6 @@ public class PLAYER
 	public const Int32 EQUIP_ACCESSORY = 4;
 
 	public const Int32 EQUIP_MAX = 5;
-
-    public String name
-    {
-        get { return GetName(); }
-        set { SetName(value); }
-    }
-
-    private void SetName(String value)
-    {
-	    if ((category & 16) == 16)
-	    {
-		    // We cannot change the names of alternative characters
-		    if (String.IsNullOrEmpty(_name))
-		    {
-			    GetDefaultName(out var mainName, out _);
-			    _name = mainName;
-		    }
-	    }
-	    else
-	    {
-		    _name = value;
-		    SplitName(out var mainName, out _);
-		    _name = mainName;
-	    }
-    }
-
-    private void SplitName(out String mainName, out String altName)
-    {
-	    if (String.IsNullOrEmpty(_name))
-        {
-            GetDefaultName(out mainName, out altName);
-        }
-        else
-        {
-            String[] parts = _name.Split('\t');
-            if (parts.Length == 2)
-            {
-                mainName = parts[0];
-                altName = parts[1];
-            }
-            else if ((category & 16) == 16)
-            {
-                GetDefaultName(out mainName, out altName);
-                altName = parts[0];
-            }
-            else
-            {
-                GetDefaultName(out mainName, out altName);
-                mainName = parts[0];
-            }
-        }
-    }
-
-    private void GetDefaultName(out String mainName, out String altName)
-    {
-        CharacterPresetId presetId = PresetId;
-        if (presetId == CharacterPresetId.Cinna1 || presetId == CharacterPresetId.Cinna2 || presetId == CharacterPresetId.StageCinna)
-        {
-            mainName = FF9TextTool.CharacterDefaultName(CharacterPresetId.Quina);
-            altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-            return;
-        }
-        if (presetId == CharacterPresetId.Marcus1 || presetId == CharacterPresetId.Marcus2 || presetId == CharacterPresetId.StageMarcus)
-        {
-            mainName = FF9TextTool.CharacterDefaultName(CharacterPresetId.Eiko);
-            altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-            return;
-        }
-        if (presetId == CharacterPresetId.Blank1 || presetId == CharacterPresetId.Blank2 || presetId == CharacterPresetId.StageBlank)
-        {
-            mainName = FF9TextTool.CharacterDefaultName(CharacterPresetId.Amarant);
-            altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-            return;
-        }
-
-        mainName = FF9TextTool.CharacterDefaultName(info.menu_type);
-        altName = FF9TextTool.CharacterDefaultName(info.menu_type);
-    }
 
     public Byte category;
 

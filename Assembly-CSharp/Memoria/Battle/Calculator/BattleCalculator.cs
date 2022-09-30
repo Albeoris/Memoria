@@ -12,12 +12,12 @@ namespace Memoria
     {
         public static void SetBattleFollowMessage(BattleMesages message, EffectElement element)
         {
-            UIManager.Battle.SetBattleFollowMessage((Int32)message, UIManager.Battle.BtlGetAttrName((Int32)element));
+            UIManager.Battle.SetBattleFollowMessage(message, UIManager.Battle.BtlGetAttrName((Int32)element));
         }
 
         public static void SetBattleFollowFormatMessage(BattleMesages message, params Object[] args)
         {
-            UIManager.Battle.SetBattleFollowMessage((Int32)message, args);
+            UIManager.Battle.SetBattleFollowMessage(message, args);
         }
 
         public static void SetBattleFollowFormatMessage(Byte priority, String formatMessage, params Object[] args)
@@ -238,7 +238,7 @@ namespace Memoria
             {
                 BattleUnit unit = new BattleUnit(next);
                 const BattleStatus status = BattleStatus.Petrify | BattleStatus.Poison | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
-                if (next.bi.player != 0 && !unit.IsUnderStatus(status))
+                if (next.bi.player != 0 && !unit.IsUnderAnyStatus(status))
                     return true;
             }
 
@@ -658,7 +658,7 @@ namespace Memoria
 
         public void RaiseTrouble()
         {
-            if (Command.Data.tar_id == Target.Id && Target.IsUnderStatus(BattleStatus.Trouble) && (Context.AddedStatuses & BattleStatus.Trouble) == 0 && (Target.Flags & CalcFlag.HpRecovery) == 0)
+            if (Command.Data.tar_id == Target.Id && Target.IsUnderAnyStatus(BattleStatus.Trouble) && (Context.AddedStatuses & BattleStatus.Trouble) == 0 && (Target.Flags & CalcFlag.HpRecovery) == 0)
                 Target.Data.fig_info |= Param.FIG_INFO_TROUBLE;
         }
     }

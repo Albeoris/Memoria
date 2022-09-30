@@ -13,9 +13,10 @@ namespace Memoria
             Data = data;
         }
 
-        public String Name => Data.name;
-        public CharacterId Id => ff9play.FF9Play_GetCharID2(Index, IsSubCharacter);
-        public CharacterIndex Index => Data.Index;
+        public PLAYER GetData => Data;
+
+        public String Name => Data.Name;
+        public CharacterId Index => Data.Index;
         public CharacterPresetId PresetId => Data.PresetId;
         public CharacterEquipment Equipment => Data.equip;
         public Byte Row => Data.info.row;
@@ -25,7 +26,7 @@ namespace Memoria
 
         public static Character Find(BattleUnit unit)
         {
-            PLAYER data = FF9StateSystem.Common.FF9.player[unit.PlayerIndex];
+            PLAYER data = FF9StateSystem.Common.FF9.GetPlayer(unit.PlayerIndex);
             return new Character(data);
         }
     }

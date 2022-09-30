@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -28,26 +29,17 @@ public sealed class NameSettingUI : UIScene
     private Int32 _subNumber;
     private Int32 _currentCharId;
     private Int32 _currentSlotId;
-    private static readonly Int32[] _idChar;
-    private static readonly Byte[] _slot;
 
-    public Int32 SubNo
+    public CharacterId SubNo
     {
-        get { return _subNumber; }
-        set { _subNumber = value; }
-    }
-
-    static NameSettingUI()
-    {
-        _idChar = new Int32[12] { 0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10 };
-        _slot = new Byte[12] { 0, 1, 2, 3, 4, 5, 6, 7, 5, 6, 7, 8 };
+        get => (CharacterId)_subNumber;
+        set => InitID((Int32)value);
     }
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
         base.Show(afterFinished);
-        GetID();
         SetData();
         NameInputField.isSelected = true;
         Warning.SetActive(false);
@@ -96,7 +88,7 @@ public sealed class NameSettingUI : UIScene
     public void OnResetButtonClick()
     {
         FF9Sfx.FF9SFX_Play(103);
-        NameInputField.value = FF9TextTool.CharacterDefaultName(_currentCharId);
+        NameInputField.value = FF9TextTool.CharacterDefaultName(SubNo);
     }
 
     public void OnConfirmButtonClick()
@@ -127,11 +119,15 @@ public sealed class NameSettingUI : UIScene
             NameInputField.isSelected = true;
     }
 
-    private void GetID()
+    private void InitID(Int32 id)
     {
-        _isDefaultName = _subNumber < 12;
-        _currentCharId = FF9Name_EventToChar(!_isDefaultName ? _subNumber - 12 : _subNumber);
-        _currentSlotId = FF9Name_CharToSlot(_currentCharId);
+        _isDefaultName = id < 12;
+        if (_isDefaultName)
+            _subNumber = id;
+        else
+            _subNumber = id - 12;
+        _currentCharId = _subNumber;
+        _currentSlotId = _subNumber;
     }
 
     private void SetData()
@@ -139,40 +135,24 @@ public sealed class NameSettingUI : UIScene
 		String[] nameSpriteInfo;
         Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), out nameSpriteInfo, false);
         MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
-        CharacterProfile.text = FF9TextTool.CharacterProfile(_currentCharId);
-        NameInputField.value = _isDefaultName
-                                   ? FF9TextTool.CharacterDefaultName(_currentCharId)
-                                   : FF9StateSystem.Common.FF9.player[_currentSlotId].name;
+        CharacterProfile.text = FF9TextTool.CharacterProfile(_subNumber);
+        NameInputField.value = _isDefaultName ? FF9TextTool.CharacterDefaultName(SubNo) : FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name;
     }
 
     private String GetBackgroundSpritePath()
     {
-        switch (_currentCharId)
-        {
-            case 0:
-                return "name00";
-            case 1:
-                return "name01";
-            case 2:
-                return "name02";
-            case 3:
-                return "name03";
-            case 4:
-                return "name06";
-            case 5:
-                return "name04";
-            case 6:
-                return "name05";
-            case 7:
-                return "name07";
-            default:
-                return String.Empty;
-        }
+        if (SubNo == CharacterId.Freya)
+            return "name06";
+        if (SubNo == CharacterId.Quina)
+            return "name04";
+        if (SubNo == CharacterId.Eiko)
+            return "name05";
+        return $"name{_subNumber:D2}";
     }
 
     public void SetCharacterName()
     {
-        FF9StateSystem.Common.FF9.player[_currentSlotId].name = NameInputField.value;
+        FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name = NameInputField.value;
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.FieldHUD));
     }
 
@@ -183,16 +163,6 @@ public sealed class NameSettingUI : UIScene
         if (Regex.IsMatch(addedChar.ToString(), "[^\\u3041-\\u3096\\u30A0-\\u30FF\\u3400-\\u4DB5\\u4E00-\\u9FCB\\uF900-\\uFA6A\\u0021-\\u007E\\u00C0-\\u00FF\\uFF41-\\uFF5A]"))
             return Char.MinValue;
         return addedChar;
-    }
-
-    public static  Int32 FF9Name_EventToChar(Int32 eventID)
-    {
-        return _idChar[eventID];
-    }
-
-    public static  Int32 FF9Name_CharToSlot(Int32 charID)
-    {
-        return _slot[charID];
     }
 
     private void Awake()

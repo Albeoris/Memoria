@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -79,28 +80,28 @@ namespace Memoria.Assets
                     OnMobileIcon(tag.Param[0]);
                     break;
                 case FFIXTextTagCode.Zidane:
-                    OnCharacterName(0);
+                    OnCharacterName(CharacterId.Zidane);
                     break;
                 case FFIXTextTagCode.Vivi:
-                    OnCharacterName(1);
+                    OnCharacterName(CharacterId.Vivi);
                     break;
                 case FFIXTextTagCode.Dagger:
-                    OnCharacterName(2);
+                    OnCharacterName(CharacterId.Garnet);
                     break;
                 case FFIXTextTagCode.Steiner:
-                    OnCharacterName(3);
+                    OnCharacterName(CharacterId.Steiner);
                     break;
-                case FFIXTextTagCode.Fraya:
-                    OnCharacterName(4);
+                case FFIXTextTagCode.Freya:
+                    OnCharacterName(CharacterId.Freya);
                     break;
                 case FFIXTextTagCode.Quina:
-                    OnCharacterName(5);
+                    OnCharacterName(CharacterId.Quina);
                     break;
                 case FFIXTextTagCode.Eiko:
-                    OnCharacterName(6);
+                    OnCharacterName(CharacterId.Eiko);
                     break;
                 case FFIXTextTagCode.Amarant:
-                    OnCharacterName(7);
+                    OnCharacterName(CharacterId.Amarant);
                     break;
                 case FFIXTextTagCode.Party:
                     OnPartyMemberName(tag.Param[0] - 1);
@@ -160,53 +161,29 @@ namespace Memoria.Assets
                 String a = text3.Remove(0, 1);
                 num2 = Array.IndexOf(_chars, ']', index + 4);
                 if (a == NGUIText.Zidane)
-                {
-                    OnCharacterName(0);
-                }
+                    OnCharacterName(CharacterId.Zidane);
                 else if (a == NGUIText.Vivi)
-                {
-                    OnCharacterName(1);
-                }
+                    OnCharacterName(CharacterId.Vivi);
                 else if (a == NGUIText.Dagger)
-                {
-                    OnCharacterName(2);
-                }
+                    OnCharacterName(CharacterId.Garnet);
                 else if (a == NGUIText.Steiner)
-                {
-                    OnCharacterName(3);
-                }
-                else if (a == NGUIText.Fraya)
-                {
-                    OnCharacterName(4);
-                }
+                    OnCharacterName(CharacterId.Steiner);
+                else if (a == NGUIText.Freya)
+                    OnCharacterName(CharacterId.Freya);
                 else if (a == NGUIText.Quina)
-                {
-                    OnCharacterName(5);
-                }
+                    OnCharacterName(CharacterId.Quina);
                 else if (a == NGUIText.Eiko)
-                {
-                    OnCharacterName(6);
-                }
+                    OnCharacterName(CharacterId.Eiko);
                 else if (a == NGUIText.Amarant)
-                {
-                    OnCharacterName(7);
-                }
+                    OnCharacterName(CharacterId.Amarant);
                 else if (a == NGUIText.Party1)
-                {
                     OnPartyMemberName(0);
-                }
                 else if (a == NGUIText.Party2)
-                {
                     OnPartyMemberName(1);
-                }
                 else if (a == NGUIText.Party3)
-                {
                     OnPartyMemberName(2);
-                }
                 else if (a == NGUIText.Party4)
-                {
                     OnPartyMemberName(3);
-                }
             }
             else if (text3 == "[" + NGUIText.NumberVar)
             {
@@ -266,14 +243,14 @@ namespace Memoria.Assets
             _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, num5.ToString());
         }
 
-        private void OnCharacterName(Int32 index)
+        private void OnCharacterName(CharacterId charId)
         {
-            _sb.Append(FF9StateSystem.Common.FF9.player[index].name);
+            _sb.Append(FF9StateSystem.Common.FF9.GetPlayer(charId).Name);
         }
 
         private void OnPartyMemberName(Int32 index)
         {
-            String name = FF9StateSystem.Common.FF9.party.member[index].name;
+            String name = FF9StateSystem.Common.FF9.party.member[index].Name;
             _sb.Append(name);
             _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, name);
         }

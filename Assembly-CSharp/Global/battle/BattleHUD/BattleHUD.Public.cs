@@ -56,8 +56,9 @@ public partial class BattleHUD : UIScene
         _oneTime = true;
     }
     
-    public void SetBattleFollowMessage(Int32 pMesNo, params Object[] args)
+    public void SetBattleFollowMessage(BattleMesages pMes, params Object[] args)
     {
+        Int32 pMesNo = (Int32)pMes;
         String fmtMessage = FF9TextTool.BattleFollowText(pMesNo + 7);
         if (String.IsNullOrEmpty(fmtMessage))
             return;

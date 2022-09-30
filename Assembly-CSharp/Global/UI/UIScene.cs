@@ -121,6 +121,11 @@ public class UIScene : MonoBehaviour
 		}
 	}
 
+	public virtual GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
+	{
+		return nextObj;
+	}
+
 	public virtual Boolean OnKeyConfirm(GameObject go)
 	{
 		if (this.isLoading)

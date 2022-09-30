@@ -248,7 +248,7 @@ public class AbilityUI : UIScene
                         if (abilityType == AbilityType.Enable)
                         {
                             FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Index, abilityId, true);
+                            ff9abil.FF9Abil_SetEnableSA(player.Data, abilityId, true);
                             player.Data.cur.capa -= saData.GemsCount;
                             ff9play.FF9Play_Update(player.Data);
                             this.DisplaySA();
@@ -257,7 +257,7 @@ public class AbilityUI : UIScene
                         else if (abilityType == AbilityType.Selected)
                         {
                             FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Index, abilityId, false);
+                            ff9abil.FF9Abil_SetEnableSA(player.Data, abilityId, false);
                             player.Data.cur.capa += saData.GemsCount;
                             ff9play.FF9Play_Update(player.Data);
                             this.DisplaySA();
@@ -302,7 +302,7 @@ public class AbilityUI : UIScene
                         this.TargetListPanel.SetActive(false);
                         ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
                     }
-                    BattleAchievement.IncreseNumber(ref FF9StateSystem.Achievement.whtMag_no, 1);
+                    BattleAchievement.IncreaseNumber(ref FF9StateSystem.Achievement.whtMag_no, 1);
                     AchievementManager.ReportAchievement(AcheivementKey.WhtMag200, FF9StateSystem.Achievement.whtMag_no);
                     this.DisplayTarget();
                     this.DisplayCharacter(true);
@@ -947,16 +947,16 @@ public class AbilityUI : UIScene
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
-            Int32 index = ff9abil.FF9Abil_GetIndex(player.Index, abilityId);
+            Int32 index = ff9abil.FF9Abil_GetIndex(player.Data, abilityId);
             if (index < 0)
                 return AbilityType.NoDraw;
 
             if (ff9abil.FF9Abil_HasAp(player))
             {
-                if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && player.Id != CharacterId.Quina)
+                if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && player.Index != CharacterId.Quina)
                     return AbilityType.NoDraw;
                 Int32 currentAp = player.Data.pa[index];
-                Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
+                Int32 learnAp = ff9abil._FF9Abil_PaData[(Int32)player.PresetId][index].Ap;
                 if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
@@ -972,7 +972,7 @@ public class AbilityUI : UIScene
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
         {
-            if (ff9abil.FF9Abil_GetIndex(player.Index, abilityId) < 0)
+            if (ff9abil.FF9Abil_GetIndex(player.Data, abilityId) < 0)
                 return AbilityType.NoDraw;
             return this.equipmentPartInAbilityDict.ContainsKey(abilityId) ? AbilityType.CantDisable : AbilityType.CantSpell;
         }
@@ -982,14 +982,14 @@ public class AbilityUI : UIScene
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
-            Int32 index = ff9abil.FF9Abil_GetIndex(player.Index, abilityId);
+            Int32 index = ff9abil.FF9Abil_GetIndex(player.Data, abilityId);
             if (index < 0)
                 return AbilityType.NoDraw;
 
             if (ff9abil.FF9Abil_HasAp(player))
             {
                 Int32 currentAp = player.Data.pa[index];
-                Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
+                Int32 learnAp = ff9abil._FF9Abil_PaData[(Int32)player.PresetId][index].Ap;
                 if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
@@ -1010,7 +1010,7 @@ public class AbilityUI : UIScene
     {
         for (Int32 commandNumber = 0; commandNumber < 2; ++commandNumber)
         {
-            Int32 index2 = (Int32)CharacterCommands.CommandSets[play.PresetId].GetRegular(commandNumber);
+            Int32 index2 = (Int32)CharacterCommands.CommandSets[(Int32)play.PresetId].GetRegular(commandNumber);
             CharacterCommand ff9Command = CharacterCommands.Commands[index2];
             if (ff9Command.Type != CharacterCommandType.Ability)
                 continue;
@@ -1105,7 +1105,7 @@ public class AbilityUI : UIScene
         this.equipmentPartInAbilityDict.Clear();
         this.equipmentIdInAbilityDict.Clear();
         Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.PresetId])
+        foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[(Int32)player.PresetId])
         {
             if (paData.Id != 0)
             {

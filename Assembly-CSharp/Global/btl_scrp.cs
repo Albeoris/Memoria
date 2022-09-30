@@ -268,7 +268,7 @@ public class btl_scrp
 			result = btl.bi.line_no;
 			break;
 		case 66u:
-			result = btl_util.getPlayerPtr(btl).info.serial_no;
+			result = (Int32)btl_util.getPlayerPtr(btl).info.serial_no;
 			break;
 		case 67u:
 			result = btl_util.getPlayerPtr(btl).category;
@@ -734,8 +734,8 @@ public class btl_scrp
 			result = 0u;
 			for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
 			{
-				UInt32 serialNumber = btl_util.getSerialNumber(next);
-				if (serialNumber == 10u || serialNumber == 11u)
+				CharacterSerialNumber serialNumber = btl_util.getSerialNumber(next);
+				if (serialNumber == CharacterSerialNumber.EIKO_FLUTE || serialNumber == CharacterSerialNumber.EIKO_KNIFE)
 				{
 					result = !btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix) ? 0u : 1u;
 					break;

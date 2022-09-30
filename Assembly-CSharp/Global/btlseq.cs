@@ -240,7 +240,7 @@ public class btlseq
 							0,
 							0
 						};
-						btl_vfx.SetBattleVfx(seqWork[i].CmdPtr, seqWork[i].SVfxNum, arg);
+						btl_vfx.SetBattleVfx(seqWork[i].CmdPtr, (SpecialEffect)seqWork[i].SVfxNum, arg);
 					}
 				}
 				if (seqWork[i].FadeTotal != 0)
@@ -382,7 +382,7 @@ public class btlseq
 		if (meshoffcnt == meshcnt)
 		{
 			btl.SetIsEnabledBattleModelRenderer(false);
-			if ((btl.bi.slot_no == 2 && btl.bi.player != 0) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
+			if ((btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Garnet) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
 			{
 				Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
 				for (Int32 i = 0; i < longHairRenderers.Length; i++)
@@ -395,10 +395,10 @@ public class btlseq
 		if (meshoncnt == meshcnt)
 		{
 			btl.SetIsEnabledBattleModelRenderer(true);
-			if ((btl.bi.slot_no == 2 && btl.bi.player != 0) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
+			CharacterSerialNumber serialNumber = btl_util.getSerialNumber(btl);
+			if ((btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Garnet) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
 			{
-				Byte serialNumber = btl_util.getSerialNumber(btl);
-				if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == 4 || serialNumber == 3 || Configuration.Graphics.GarnetHair == 1))
+				if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == CharacterSerialNumber.GARNET_LH_ROD || serialNumber == CharacterSerialNumber.GARNET_LH_KNIFE || Configuration.Graphics.GarnetHair == 1))
 				{
 					Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
 					for (Int32 i = 0; i < longHairRenderers.Length; i++)
@@ -411,7 +411,7 @@ public class btlseq
 						shortHairRenderers[i].enabled = true;
 				}
 			}
-			else if (btl.bi.slot_no == 0 && btl.bi.player != 0 && btl_util.getSerialNumber(btl) == 1)
+			else if (btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Zidane && serialNumber == CharacterSerialNumber.ZIDANE_SWORD)
 			{
 				btl.SetIsEnabledBattleModelRenderer(false);
 			}
@@ -446,17 +446,17 @@ public class btlseq
 		if (shadowObj == null)
 			return;
 		shadowObj.SetActive(true);
-		if (charNo < 9)
+		if (charNo < FF9StateSystem.Common.PlayerCount)
 		{
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-				if (next.bi.player != 0 && (Int32)next.bi.slot_no == charNo)
+				if (next.bi.player != 0 && next.bi.slot_no == charNo)
 					btlObj = next.gameObject;
 			if (btlObj == null)
 				global::Debug.LogError("gameObject is NULL");
 		}
 		else
 		{
-			btlObj = FF9StateSystem.Battle.FF9Battle.btl_data[4 + charNo - 9].gameObject;
+			btlObj = FF9StateSystem.Battle.FF9Battle.btl_data[4 + charNo - FF9StateSystem.Common.PlayerCount].gameObject;
 		}
 		btlseq.ff9battleShadowCalculateMatrix(shadowObj, btlObj, posY, ff9btl.ff9btl_get_bonestart(BoneNo), ff9btl.ff9btl_get_boneend(BoneNo));
 	}
@@ -657,7 +657,7 @@ public class btlseq
 		array[1] = instance.sequenceReader.ReadInt16();
 		array[2] = instance.sequenceReader.ReadInt16();
 		array[3] = (Int16)((instance.wSeqCode != 26) ? 0 : 1);
-		btl_vfx.SetBattleVfx(pSeqWork.CmdPtr, (UInt32)fx_no, array);
+		btl_vfx.SetBattleVfx(pSeqWork.CmdPtr, (SpecialEffect)fx_no, array);
 		pSeqWork.Flags.WaitLoadVfx = true;
 		pSeqWork.CurPtr += 9;
 		return 1;

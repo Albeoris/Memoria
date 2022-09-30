@@ -5,12 +5,12 @@ using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 
-public class btl_vfx
+public static class btl_vfx
 {
-	public static void SetBattleVfx(CMD_DATA cmd, UInt32 fx_no, Int16[] arg = null)
+	public static void SetBattleVfx(CMD_DATA cmd, SpecialEffect fx_no, Int16[] arg = null)
 	{
         cmd.vfxRequest.SetupVfxRequest(cmd, arg);
-        cmd.vfxRequest.PlaySFX((SpecialEffect)fx_no);
+        cmd.vfxRequest.PlaySFX(fx_no);
     }
 
     public static void LoopBattleVfxForReflect(CMD_DATA cmd, UInt32 fx_no)
@@ -27,7 +27,7 @@ public class btl_vfx
     public static Boolean UseBeatrixAlternateVfx(BTL_DATA caster, SpecialEffect vfx1, SpecialEffect vfx2)
     {
         // Check if vfx1 and vfx2 are the two versions of a Sword Art spell animation: use the 2nd version when used by Beatrix
-        if (caster.bi.player != 0 || caster.bi.slot_no != CharacterIndex.Beatrix) return false;
+        if (caster.bi.player == 0 || (CharacterId)caster.bi.slot_no != CharacterId.Beatrix) return false;
         if (vfx1 == SpecialEffect.Darkside_1 && vfx2 == SpecialEffect.Darkside_2) return true;
         if (vfx1 == SpecialEffect.Minus_Strike_1 && vfx2 == SpecialEffect.Minus_Strike_2) return true;
         if (vfx1 == SpecialEffect.Iai_Strike_1 && vfx2 == SpecialEffect.Iai_Strike_2) return true;
@@ -38,68 +38,68 @@ public class btl_vfx
         return false;
     }
 
-    public static Int32 GetPlayerCommandSFX(CMD_DATA cmd)
+    public static SpecialEffect GetPlayerCommandSFX(CMD_DATA cmd)
     {
         BTL_DATA regist = cmd.regist;
         BattleCommandId cmd_no = cmd.cmd_no;
         if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item)
-            return ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.VfxIndex;
+            return (SpecialEffect)ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.VfxIndex;
         else if (cmd_no == BattleCommandId.SysTrans)
-            return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? (Int32)SpecialEffect.Special_Trance_Activate : (Int32)SpecialEffect.Special_Trance_End;
+            return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
         else if (cmd_no == BattleCommandId.Attack)
-            return 100 + btl_util.getSerialNumber(regist);
+            return btl_vfx.GetPlayerAttackVfx(regist);
         else if (cmd_no == BattleCommandId.Defend || cmd_no == BattleCommandId.Change)
-            return -1;
+            return SpecialEffect.Special_No_Effect;
         else if (cmd_no == BattleCommandId.Steal)
         {
-            Byte serialNumber = btl_util.getSerialNumber(regist);
+            Byte serialNumber = (Byte)btl_util.getSerialNumber(regist);
             if (serialNumber == 0)
-                return (Int32)SpecialEffect.Steal_Zidane_Dagger;
+                return SpecialEffect.Steal_Zidane_Dagger;
             else if (serialNumber == 1)
-                return (Int32)SpecialEffect.Steal_Zidane_Sword;
+                return SpecialEffect.Steal_Zidane_Sword;
             else if (serialNumber == 14)
-                return (Int32)SpecialEffect.Steal_Cinna;
+                return SpecialEffect.Steal_Cinna;
             else if (serialNumber == 15)
-                return (Int32)SpecialEffect.Steal_Marcus;
+                return SpecialEffect.Steal_Marcus;
             else
-                return (Int32)SpecialEffect.Steal_Blank;
+                return SpecialEffect.Steal_Blank;
         }
         else if (cmd_no == BattleCommandId.Throw)
         {
             Byte shape = ff9item._FF9Item_Data[(Int32)cmd.sub_no].shape;
             if (shape == 1)
-                return (Int32)SpecialEffect.Throw_Dagger;
+                return SpecialEffect.Throw_Dagger;
             else if (shape == 2)
-                return (Int32)SpecialEffect.Throw_Thief_Sword;
+                return SpecialEffect.Throw_Thief_Sword;
             else if (shape == 3 || shape == 4)
-                return (Int32)SpecialEffect.Throw_Sword;
+                return SpecialEffect.Throw_Sword;
             else if (shape == 5)
-                return (Int32)SpecialEffect.Throw_Spear;
+                return SpecialEffect.Throw_Spear;
             else if (shape == 6)
-                return (Int32)SpecialEffect.Throw_Claw;
+                return SpecialEffect.Throw_Claw;
             else if (shape == 7)
-                return (Int32)SpecialEffect.Throw_Racket;
+                return SpecialEffect.Throw_Racket;
             else if (shape == 8 || shape == 9 || shape == 10)
-                return (Int32)SpecialEffect.Throw_Rod;
+                return SpecialEffect.Throw_Rod;
             else if (shape == 11)
-                return (Int32)SpecialEffect.Throw_Fork;
+                return SpecialEffect.Throw_Fork;
             else if (shape == 12)
-                return (Int32)SpecialEffect.Throw_Disc;
+                return SpecialEffect.Throw_Disc;
         }
         else
         {
             if (cmd_no != BattleCommandId.MagicCounter && cmd.sub_no == 176)
-                return 100 + btl_util.getSerialNumber(regist);
+                return btl_vfx.GetPlayerAttackVfx(regist);
             else if (regist.is_monster_transform && cmd.sub_no == regist.monster_transform.attack)
-                return 100 + btl_util.getSerialNumber(regist);
+                return btl_vfx.GetPlayerAttackVfx(regist);
             else if (cmd.PatchedVfx != SpecialEffect.Special_No_Effect)
-                return (Int32)cmd.PatchedVfx;
+                return cmd.PatchedVfx;
             else if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || btl_vfx.UseBeatrixAlternateVfx(regist, (SpecialEffect)cmd.aa.Info.VfxIndex, (SpecialEffect)cmd.aa.Vfx2))
-                return cmd.aa.Vfx2;
+                return (SpecialEffect)cmd.aa.Vfx2;
             else
-                return cmd.aa.Info.VfxIndex;
+                return (SpecialEffect)cmd.aa.Info.VfxIndex;
         }
-        return -1;
+        return SpecialEffect.Special_No_Effect;
     }
 
     public static void SelectCommandVfx(CMD_DATA cmd)
@@ -144,10 +144,10 @@ public class btl_vfx
                 action.Execute(cmd);
                 return;
             }
-            Int32 sfxNum = GetPlayerCommandSFX(cmd);
-            if (sfxNum >= 0)
+            SpecialEffect sfxNum = GetPlayerCommandSFX(cmd);
+            if (sfxNum != SpecialEffect.Special_No_Effect)
             {
-                UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.SpecialEffect, sfxNum);
+                UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.SpecialEffect, (Int32)sfxNum);
                 action.Execute(cmd);
                 return;
             }
@@ -175,9 +175,9 @@ public class btl_vfx
                     btlseq.RunSequence(cmd);
                     break;
                 default:
-                    Int32 sfxNum = GetPlayerCommandSFX(cmd);
-                    if (sfxNum >= 0)
-                        SetBattleVfx(cmd, (UInt32)sfxNum, null);
+                    SpecialEffect sfxNum = GetPlayerCommandSFX(cmd);
+                    if (sfxNum != SpecialEffect.Special_No_Effect)
+                        SetBattleVfx(cmd, sfxNum, null);
                     else if (cmd.cmd_no == BattleCommandId.Change)
                         UIManager.Battle.SetBattleCommandTitle(cmd);
                     else if (cmd.cmd_no == BattleCommandId.Defend)
@@ -193,9 +193,7 @@ public class btl_vfx
 
     public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
 	{
-		Byte serialNo = btl_util.getSerialNumber(btl);
-		if (isTrance && serialNo + 19 >= (Int32)btl_init.model_id.Length)
-			return;
+		CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
 		if (isTrance)
 		{
 			btl.battleModelIsRendering = true;
@@ -209,7 +207,7 @@ public class btl_vfx
 			btl.originalGo.SetActive(true);
 			btl.tranceGo.SetActive(false);
 			btl.gameObject = btl.originalGo;
-			btl.dms_geo_id = btl_init.GetModelID((Int32)btl_util.getSerialNumber(btl));
+			btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
 			GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
 		}
         btl.meshCount = 0;
@@ -226,8 +224,16 @@ public class btl_vfx
 		BattlePlayerCharacter.InitAnimation(btl);
 		//btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
 		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[btl.bi.slot_no], btl);
-		if (serialNo == 7)
-            serialNo = 8;
-		AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_init.model_id[serialNo], true);
+		if (serialNo == CharacterSerialNumber.STEINER_OUTDOOR)
+            serialNo = CharacterSerialNumber.STEINER_INDOOR;
+		AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_init.model_id[(Int32)serialNo], true);
 	}
+
+    public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)
+	{
+        CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
+        if (serialNo < CharacterSerialNumber.MAX)
+            return SpecialEffect.Player_Attack_Zidane_Dagger + (Int32)serialNo;
+        return (SpecialEffect)1000 + (Int32)serialNo;
+    }
 }

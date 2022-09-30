@@ -3,6 +3,7 @@ using System.IO;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
 using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using Object = System.Object;
 
@@ -298,19 +299,19 @@ public class ETb
 
 	public static UInt32 KeyOn()
 	{
-		return ETb.sKeyOn & 67108863u;
+		return ETb.sKeyOn & 0x3FFFFFFu;
 	}
 
 	public static UInt32 KeyOff()
 	{
-		return ETb.sKeyOff & 67108863u;
+		return ETb.sKeyOff & 0x3FFFFFFu;
 	}
 
-	public Int32 GetPartyMember(Int32 index)
+	public CharacterId GetPartyMember(Int32 index)
 	{
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
 		PLAYER player = ff.party.member[index];
-		return (Int32)((player == null) ? -1 : ((Int32)player.info.slot_no));
+		return (player == null) ? CharacterId.NONE : player.info.slot_no;
 	}
 
 	public void YWindow_CloseAll()
@@ -331,21 +332,15 @@ public class ETb
 	public void SetMesValue(Int32 n, Int32 v)
 	{
 		if (n >= 0 && n < 8)
-		{
 			this.gMesValue[n] = v;
-		}
 	}
 
 	public static String GetItemName(Int32 index)
 	{
 		if (index < EventEngine.kSItemOfs)
-		{
 			return FF9TextTool.ItemName(index);
-		}
 		if (index < EventEngine.kCItemOfs)
-		{
 			return FF9TextTool.ImportantItemName(index - EventEngine.kSItemOfs);
-		}
 		return FF9TextTool.CardName(index - EventEngine.kCItemOfs);
 	}
 

@@ -214,15 +214,15 @@ public partial class BattleHUD : UIScene
                 break;
             case CommandMenu.Ability1:
             {
-                CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
-                Boolean underTrance = player.IsUnderStatus(BattleStatus.Trance);
+                CharacterCommandSet commandSet = CharacterCommands.CommandSets[(Int32)presetId];
+                Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
                 result = commandSet.Get(underTrance, 0);
                 break;
             }
             case CommandMenu.Ability2:
             {
-                CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
-                Boolean underTrance = player.IsUnderStatus(BattleStatus.Trance);
+                CharacterCommandSet commandSet = CharacterCommands.CommandSets[(Int32)presetId];
+                Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
                 result = commandSet.Get(underTrance, 1);
                 break;
             }
@@ -271,7 +271,7 @@ public partial class BattleHUD : UIScene
             if (unit.CurrentHp <= 0)
                 continue;
 
-            if (unit.IsUnderStatus(BattleStatus.Confuse | BattleStatus.Sleep))
+            if (unit.IsUnderAnyStatus(BattleStatus.Confuse | BattleStatus.Sleep))
                 return index;
 
             if (unit.CurrentHp < minHp)

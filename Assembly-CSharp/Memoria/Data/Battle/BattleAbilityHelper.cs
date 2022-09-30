@@ -56,7 +56,7 @@ namespace Memoria.Data
                     {
                         if (gilCost > partyState.gil)
                         {
-                            UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.NotEnoughGil);
+                            UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughGil);
                             return false;
                         }
                         partyState.gil -= (UInt32)gilCost;

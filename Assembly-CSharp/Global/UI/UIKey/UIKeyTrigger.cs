@@ -1,8 +1,9 @@
 ﻿using Assets.Scripts.Common;
 using System;
+using System.Collections.Generic;
 using Memoria;
+using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Scenes;
 using Memoria.Test;
 using UnityEngine;
 
@@ -722,14 +723,14 @@ namespace Memoria
             Int32 availableChatacters = 0;
             if (Configuration.Hacks.AllCharactersAvailable > 0)
             {
-                availableChatacters = 0x1FF;
+                availableChatacters = 0xFFFF;
                 party.party_ct = 4;
             }
             else
             {
-                for (Int32 characterIndex = 8; characterIndex >= 0; --characterIndex)
+                for (Int32 characterIndex = FF9StateSystem.Common.PlayerCount - 1; characterIndex >= 0; --characterIndex)
                 {
-                    Boolean isAvailable = (FF9StateSystem.Common.FF9.player[characterIndex].info.party != 0);
+                    Boolean isAvailable = FF9StateSystem.Common.FF9.player[characterIndex].info.party != 0;
                     if (isAvailable)
                         party.party_ct++;
 
@@ -744,27 +745,24 @@ namespace Memoria
             {
                 if (FF9StateSystem.Common.FF9.party.member[memberIndex] != null)
                 {
-                    Byte characterId = FF9StateSystem.Common.FF9.party.member[memberIndex].info.slot_no;
+                    CharacterId characterId = FF9StateSystem.Common.FF9.party.member[memberIndex].info.slot_no;
                     party.menu[memberIndex] = characterId;
-                    availableChatacters &= ~(1 << characterId);
+                    availableChatacters &= ~(1 << (Int32)characterId);
                 }
                 else
                 {
-                    party.menu[memberIndex] = Byte.MaxValue;
+                    party.menu[memberIndex] = CharacterId.NONE;
                 }
             }
 
-            Byte availableSlot = 0;
-            for (Byte characterId = 0; characterId < 9 && availableSlot < PartySettingUI.FF9PARTY_PLAYER_MAX && availableChatacters > 0; ++characterId)
+            List<CharacterId> selectList = new List<CharacterId>();
+            for (Byte characterId = 0; characterId < FF9StateSystem.Common.PlayerCount && availableChatacters > 0; ++characterId)
             {
                 if ((availableChatacters & 1) > 0)
-                    party.select[availableSlot++] = characterId;
-
+                    selectList.Add((CharacterId)characterId);
                 availableChatacters >>= 1;
             }
-
-            while (availableSlot < PartySettingUI.FF9PARTY_PLAYER_MAX)
-                party.select[availableSlot++] = PartySettingUI.FF9PARTY_NONE;
+            party.select = selectList.ToArray();
 
             EventService.OpenPartyMenu(party);
         }

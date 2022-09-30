@@ -15,13 +15,13 @@ namespace Memoria.Assets
 
         public static Dictionary<String, String[]> _characterNames = new Dictionary<String, String[]>()
         {
-            { "US", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank" } },
-            { "UK", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank" } },
-            { "JP", new String[]{ "ジタン", "ビビ", "ダガー", "スタイナー", "フライヤ", "クイナ", "エーコ", "サラマンダー", "シナ", "シナ", "マーカス", "マーカス", "ブランク", "ブランク", "ベアトリクス", "ベアトリクス", "ジタン", "シナ", "マーカス", "ブランク" } },
-            { "GR", new String[]{ "Zidane", "Vivi", "Lili", "Steiner", "Freya", "Quina", "Eiko", "Mahagon", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Zidane", "Cinna", "Marcus", "Blank" } },
-            { "FR", new String[]{ "Djidane", "Bibi", "Dagga", "Steiner", "Freyja", "Kweena", "Eiko", "Tarask", "Cina", "Cina", "Markus", "Markus", "Frank", "Frank", "Beate", "Beate", "Djidane", "Cina", "Markus", "Frank" } },
-            { "IT", new String[]{ "Gidan", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Er Cina", "Er Cina", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Gidan", "Er Cina", "Marcus", "Blank" } },
-            { "ES", new String[]{ "Yitán", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Cinna", "Cinna", "Marcus", "Marcus", "Blank", "Blank", "Beatrix", "Beatrix", "Yitán", "Cinna", "Marcus", "Blank" } }
+            { "US", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } },
+            { "UK", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } },
+            { "JP", new String[]{ "ジタン", "ビビ", "ダガー", "スタイナー", "フライヤ", "クイナ", "エーコ", "サラマンダー", "シナ", "マーカス", "ブランク", "ベアトリクス" } },
+            { "GR", new String[]{ "Zidane", "Vivi", "Lili", "Steiner", "Freya", "Quina", "Eiko", "Mahagon", "Cinna", "Marcus", "Blank", "Beatrix" } },
+            { "FR", new String[]{ "Djidane", "Bibi", "Dagga", "Steiner", "Freyja", "Kweena", "Eiko", "Tarask", "Cina", "Markus", "Frank", "Beate" } },
+            { "IT", new String[]{ "Gidan", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Er Cina", "Marcus", "Blank", "Beatrix" } },
+            { "ES", new String[]{ "Yitán", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } }
         };
 
         public static TxtEntry[] Build(String prefix, String[] characterNames)

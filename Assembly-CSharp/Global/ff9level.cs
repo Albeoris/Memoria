@@ -29,8 +29,8 @@ public static class ff9level
                 throw new FileNotFoundException($"File with base stats of characters not found: [{inputPath}]");
 
             CharacterBaseStats[] baseStats = CsvReader.Read<CharacterBaseStats>(inputPath);
-            if (baseStats.Length < CharacterId.CharacterCount)
-                throw new NotSupportedException($"You must set base stats for {CharacterId.CharacterCount} characters, but there {baseStats.Length}.");
+            if (baseStats.Length < 12)
+                throw new NotSupportedException($"You must set base stats for at least {12} characters, but there {baseStats.Length}.");
 
 			EntryCollection<CharacterBaseStats> result = EntryCollection.CreateWithDefaultElement(baseStats, e => e.Id);
 			for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
@@ -89,11 +89,10 @@ public static class ff9level
         }
     }
 
-    public static Int32 FF9Level_GetDex(Int32 slot_id, Int32 lv, Boolean lvup)
+    public static Int32 FF9Level_GetDex(PLAYER player, Int32 lv, Boolean lvup)
 	{
-		PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[ff9play.FF9Play_GetCharID(player.PresetId)];
+		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
 		if (lvup)
 		{
 			Int32 num = 0;
@@ -117,14 +116,13 @@ public static class ff9level
 		return num3;
 	}
 
-	public static Int32 FF9Level_GetStr(Int32 slot_id, Int32 lv, Boolean lvup)
+	public static Int32 FF9Level_GetStr(PLAYER player, Int32 lv, Boolean lvup)
 	{
-		PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[ff9play.FF9Play_GetCharID(player.PresetId)];
+		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
 		if (lvup)
 		{
-			Int32 num = (Int32)((player.cur.capa != 0) ? 0 : 3);
+			Int32 num = (player.cur.capa != 0) ? 0 : 3;
 			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 1);
 			bonus.str = (UInt16)(bonus.str + (UInt16)(num + num2));
 		}
@@ -145,14 +143,13 @@ public static class ff9level
 		return num3;
 	}
 
-	public static Int32 FF9Level_GetMgc(Int32 slot_id, Int32 lv, Boolean lvup)
+	public static Int32 FF9Level_GetMgc(PLAYER player, Int32 lv, Boolean lvup)
 	{
-		PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[ff9play.FF9Play_GetCharID(player.PresetId)];
+		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
 		if (lvup)
 		{
-			Int32 num = (Int32)((player.cur.capa != 0) ? 0 : 3);
+			Int32 num = (player.cur.capa != 0) ? 0 : 3;
 			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 2);
 			bonus.mgc = (UInt16)(bonus.mgc + (UInt16)(num + num2));
 		}
@@ -173,14 +170,13 @@ public static class ff9level
 		return num3;
 	}
 
-	public static Int32 FF9Level_GetWpr(Int32 slot_id, Int32 lv, Boolean lvup)
+	public static Int32 FF9Level_GetWpr(PLAYER player, Int32 lv, Boolean lvup)
 	{
-		PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[ff9play.FF9Play_GetCharID(player.PresetId)];
+		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
 		if (lvup)
 		{
-			Int32 num = (Int32)((player.cur.capa != 0) ? 0 : 1);
+			Int32 num = (player.cur.capa != 0) ? 0 : 1;
 			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 3);
 			bonus.wpr = (UInt16)(bonus.wpr + (UInt16)(num + num2));
 		}
@@ -201,14 +197,13 @@ public static class ff9level
 		return num3;
 	}
 
-	public static Int32 FF9Level_GetCap(Int32 slot_id, Int32 lv, Boolean lvup)
+	public static Int32 FF9Level_GetCap(PLAYER player, Int32 lv, Boolean lvup)
 	{
-		PLAYER player = FF9StateSystem.Common.FF9.player[slot_id];
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[ff9play.FF9Play_GetCharID(player.PresetId)];
+		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
 		if (lvup)
 		{
-			Int32 num = (Int32)((player.cur.capa != 0) ? 0 : 5);
+			Int32 num = (player.cur.capa != 0) ? 0 : 5;
 			Int32 num2 = 0;
 			bonus.cap = (UInt16)(bonus.cap + (UInt16)(num + num2));
 		}
@@ -231,51 +226,47 @@ public static class ff9level
 
 	public static UInt32 FF9Level_GetHp(Int32 lv, Int32 str)
 	{
-		UInt32 num = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusHP * str / 50);
-		if (num > 9999)
-		{
-			num = 9999;
-		}
-		return num;
+		UInt32 maxHp = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusHP * str / 50);
+		if (maxHp > 9999)
+			maxHp = 9999;
+		return maxHp;
 	}
 
 	public static UInt32 FF9Level_GetMp(Int32 lv, Int32 mgc)
 	{
-		UInt32 num = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusMP * mgc / 100);
-		if (num > 999)
-		{
-			num = 999;
-		}
-		return num;
+		UInt32 maxMp = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusMP * mgc / 100);
+		if (maxMp > 999)
+			maxMp = 999;
+		return maxMp;
 	}
 
 	public static Int32 FF9Level_GetEquipBonus(CharacterEquipment equip, Int32 base_type)
 	{
-		Int32 num = 0;
+		Int32 bonus = 0;
 		for (Int32 i = 0; i < 5; i++)
 		{
 			if (equip[i] != 255)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[(Int32)equip[i]];
-				ItemStats equip_PRIVILEGE = ff9equip.ItemStatsData[(Int32)ff9ITEM_DATA.bonus];
+				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[equip[i]];
+				ItemStats equip_PRIVILEGE = ff9equip.ItemStatsData[ff9ITEM_DATA.bonus];
 				switch (base_type)
 				{
 				case 0:
-					num += (Int32)equip_PRIVILEGE.dex;
+					bonus += equip_PRIVILEGE.dex;
 					break;
 				case 1:
-					num += (Int32)equip_PRIVILEGE.str;
+					bonus += equip_PRIVILEGE.str;
 					break;
 				case 2:
-					num += (Int32)equip_PRIVILEGE.mgc;
+					bonus += equip_PRIVILEGE.mgc;
 					break;
 				case 3:
-					num += (Int32)equip_PRIVILEGE.wpr;
+					bonus += equip_PRIVILEGE.wpr;
 					break;
 				}
 			}
 		}
-		return num;
+		return bonus;
 	}
 
 	// public const Byte FF9LEVEL_DEX_MAX = 50;

@@ -592,9 +592,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             for (Int32 index = 0; index < 4; ++index)
             {
-                Int32 partyMember = this.eTb.GetPartyMember(index);
-                if (partyMember >= 0)
-                    new Actor(this.sSourceObjN - 9 + partyMember, 0, sizeOfActor);
+                Int32 memberIndex = ff9play.CharacterIDToEventId(this.eTb.GetPartyMember(index));
+                if (memberIndex >= 0)
+                    new Actor(this.sSourceObjN - 9 + memberIndex, 0, sizeOfActor);
+                else
+                    new Actor(this.sSourceObjN - 9, this.sSourceObjN + (Int32)this.eTb.GetPartyMember(index), sizeOfActor);
             }
             this._context.partyObjTail = this._context.activeObjTail;
         }
@@ -672,56 +674,65 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void SetupPartyUID()
     {
-        Byte[] numArray1 = new Byte[9] {0, 6, 3, 1, 4, 5, 7, 2, 8};
-        Byte[] numArray2 = new Byte[9] {0, 3, 7, 2, 4, 5, 1, 6, 8};
-        Int32 num = 0;
+        // Order is Zidane, Eiko, Steiner, Vivi, Freya, Amarant, Garnet, Beatrix (ie. Beatrix can only be the 4th event member slot, identified by uid 254)
+        Byte[] reorderArray1 = new Byte[9]{ 0, 6, 3, 1, 4, 5, 7, 2, 8 };
+        Byte[] reorderArray2 = new Byte[9]{ 0, 3, 7, 2, 4, 5, 1, 6, 8 };
+        Int32 charFlags = 0;
         for (Int32 index = 0; index < 4; ++index)
             this._context.partyUID[index] = Byte.MaxValue;
         for (Int32 index = 0; index < 4; ++index)
         {
-            Int32 partyMember = this.eTb.GetPartyMember(index);
-            if (partyMember >= 0)
+            CharacterId memberId = this.eTb.GetPartyMember(index);
+            Int32 memberIndex = ff9play.CharacterIDToEventId(memberId);
+            Boolean shouldHackCharacter = false; // https://github.com/Albeoris/Memoria/issues/3
+            if (memberIndex >= 0)
             {
-                // https://github.com/Albeoris/Memoria/issues/3
-                // Tirlititi: If Beatrix is in the team and she has no script, we make it so the engine thinks it's another member instead
-                if (partyMember == 8) // The index-th team character is Beatrix
+                // If Beatrix is in the team and she has no script, we make it so the engine thinks it's another member instead
+                if (memberIndex == (Int32)CharacterOldIndex.Beatrix)
                 {
-                    Byte BeatrixSID = (Byte)((UInt32)(this.sSourceObjN - 9) + numArray1[partyMember]);
+                    Byte BeatrixSID = (Byte)(this.sSourceObjN - 9 + memberIndex);
                     if (this.GetIP(BeatrixSID, 0, this.allObjsEBData[BeatrixSID]) == this.nil) // The Main function of the Beatrix entry doesn't exist
-                    {
-                        if (!partychk(1))
-                            partyMember = 1;
-                        else if (!partychk(2))
-                            partyMember = 2;
-                        else if (!partychk(3))
-                            partyMember = 3;
-                        else
-                            partyMember = 0;
-                    }
+                        shouldHackCharacter = true;
                 }
                 // Note that, as for all the 9 characters, the Beatrix entry is not dependant on the model used by the entry but rather on the fact that it is at the end of the entry list
                 // (Even in battle scripts, in which character entries are never used nor tied to the team's battle datas, 9 entry slots are reserved at the end of the entry list)
                 // *********************
-
-                num |= 1 << numArray2[partyMember];
             }
-        }
-        Int32 index1 = 0;
-        Int32 index2 = 0;
-        while (num != 0)
-        {
-            if ((num & 1) != 0)
+            else if (memberId != CharacterId.NONE)
+			{
+                // TODO: Maybe identify a field actor corresponding to a party member without event ID
+                //  (Cinna/Marcus/Blank after they were replaced, or a custom character)
+                //  using the actor's model ID instead... provided that we can identify that ID before running any event script
+                shouldHackCharacter = true;
+            }
+            if (shouldHackCharacter)
             {
-                this._context.partyUID[index1] = (Byte)((UInt32)(this.sSourceObjN - 9) + numArray1[index2]);
-                ++index1;
+                if (!partychk((Int32)CharacterOldIndex.Eiko) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Eiko])) == 0)
+                    memberIndex = (Int32)CharacterOldIndex.Eiko;
+                else if (!partychk((Int32)CharacterOldIndex.Steiner) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Steiner])) == 0)
+                    memberIndex = (Int32)CharacterOldIndex.Steiner;
+                else if (!partychk((Int32)CharacterOldIndex.Vivi) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Vivi])) == 0)
+                    memberIndex = (Int32)CharacterOldIndex.Vivi;
+                else
+                    memberIndex = (Int32)CharacterOldIndex.Freya;
             }
-            ++index2;
-            num >>= 1;
+            if (memberIndex >= 0)
+                charFlags |= 1 << reorderArray2[memberIndex];
+        }
+        Int32 partyIndex = 0;
+        Int32 reorderIndex = 0;
+        while (charFlags != 0)
+        {
+            if ((charFlags & 1) != 0)
+                this._context.partyUID[partyIndex++] = (Byte)(this.sSourceObjN - 9 + reorderArray1[reorderIndex]);
+            ++reorderIndex;
+            charFlags >>= 1;
         }
     }
 
     public Int32 GetPartyPlayer(Int32 ix)
     {
+        // Dummied
         Int32 num = this._context.partyUID[ix] - (this.sSourceObjN - 9);
         if (num >= 0 && num < 9)
             return num;
@@ -730,47 +741,47 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public Boolean partychk(Int32 x)
     {
-        Int32 num = this.chr2slot(x);
+        CharacterId charId = this.chr2slot(x);
         Int32 index;
         for (index = 0; index < 4; ++index)
         {
             PLAYER player = FF9StateSystem.Common.FF9.party.member[index];
-            if (player != null && player.info.slot_no == num && !(player.info.serial_no >= 14 ^ x >= 8))
+            if (player != null && player.info.slot_no == charId)
                 break;
         }
         return index < 4;
     }
 
-    public Boolean partyadd(Int64 a)
+    public Boolean partyadd(Int32 x)
     {
-        Int64 num = 0;
-        if (!this.partychk((Int32)a))
+        Boolean failed = false;
+        if (!this.partychk(x))
         {
-            a = this.chr2slot((Int32)a);
-            if (a >= 0L && a < 9L)
+            CharacterId charId = this.chr2slot(x);
+            if (charId != CharacterId.NONE)
             {
-                Int64 index = 0;
-                while (index < 4L && this._ff9.party.member[index] != null)
+                Int32 index = 0;
+                while (index < 4 && this._ff9.party.member[index] != null)
                     ++index;
-                num = index < 4L ? 0L : 1L;
-                if (num == 0L)
+                failed = index >= 4;
+                if (!failed)
                 {
-                    ff9play.FF9Play_SetParty((Int32)index, (Int32)a);
+                    ff9play.FF9Play_SetParty(index, charId);
                     BattleAchievement.UpdateParty();
                     this.SetupPartyUID();
                 }
             }
             else
-                num = 1L;
+            {
+                failed = true;
+            }
         }
-        return num != 0L;
+        return failed;
     }
 
-    private Int32 chr2slot(Int32 x)
+    private CharacterId chr2slot(Int32 x)
     {
-        if (x < 9)
-            return x;
-        return x - 4;
+        return ff9play.CharacterOldIndexToID((CharacterOldIndex)x);
     }
 
     public Int32 GetNumberNPC()

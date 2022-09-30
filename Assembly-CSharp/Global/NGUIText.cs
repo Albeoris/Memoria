@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 using Memoria.Assets;
 using Memoria.Prime.Text;
 using UnityEngine;
@@ -27,7 +28,7 @@ public static class NGUIText
 			NGUIText.Vivi,
 			NGUIText.Dagger,
 			NGUIText.Steiner,
-			NGUIText.Fraya,
+			NGUIText.Freya,
 			NGUIText.Quina,
 			NGUIText.Eiko,
 			NGUIText.Amarant,
@@ -98,7 +99,7 @@ public static class NGUIText
 			NGUIText.Vivi,
 			NGUIText.Dagger,
 			NGUIText.Steiner,
-			NGUIText.Fraya,
+			NGUIText.Freya,
 			NGUIText.Quina,
 			NGUIText.Eiko,
 			NGUIText.Amarant,
@@ -146,8 +147,8 @@ public static class NGUIText
 	public static Single GetDialogWidthFromSpecialOpcode(List<Int32> specialCodeList, ETb eTb, UILabel phraseLabel)
 	{
 		Single num = 0f;
-		PLAYER[] player = FF9StateSystem.Common.FF9.player;
-		PLAYER[] member = FF9StateSystem.Common.FF9.party.member;
+		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
+		PLAYER[] member = ff.party.member;
 		for (Int32 i = 0; i < specialCodeList.Count; i++)
 		{
 			Int32 num2 = specialCodeList[i];
@@ -208,38 +209,36 @@ public static class NGUIText
 				break;
 			}
 			case 16:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[0].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Zidane).Name);
 				break;
 			case 17:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[1].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Vivi).Name);
 				break;
 			case 18:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[2].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Garnet).Name);
 				break;
 			case 19:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[3].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Steiner).Name);
 				break;
 			case 20:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[4].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Freya).Name);
 				break;
 			case 21:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[5].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Quina).Name);
 				break;
 			case 22:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[6].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Eiko).Name);
 				break;
 			case 23:
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player[7].name);
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Amarant).Name);
 				break;
 			case 24:
 			case 25:
 			case 26:
 			case 27:
 			{
-				FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-				Int32 partyPlayer = PersistenSingleton<EventEngine>.Instance.GetPartyPlayer(num2 - 24);
-				PLAYER player2 = ff.player[partyPlayer];
-				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player2.name);
+				PLAYER player2 = member[num2 - 24];
+				num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player2.Name);
 				break;
 			}
 			default:
@@ -2685,7 +2684,7 @@ public static class NGUIText
     public const String Vivi = "VIVI";
     public const String Dagger = "DGGR";
     public const String Steiner = "STNR";
-    public const String Fraya = "FRYA";
+    public const String Freya = "FRYA";
     public const String Quina = "QUIN";
     public const String Eiko = "EIKO";
     public const String Amarant = "AMRT";

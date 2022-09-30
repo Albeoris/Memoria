@@ -62,7 +62,7 @@ namespace FF9
 					this.trg[this.trgno++] = next;
 				if ((next.btl_id & reflect_tar) != 0)
 					this.rtrg[this.rtrgno++] = next;
-				if ((this.flgs & 4) != 0 && btl_util.getSerialNumber(next) == 2)
+				if ((this.flgs & 4) != 0 && btl_util.getSerialNumber(next) == CharacterSerialNumber.VIVI)
 					this.mexe = next;
 			}
 			this.useTargetAveragePosition = true;

@@ -9,94 +9,65 @@ public class EventContext
 		this.objbuf = new Int32[1280];
 		this.objlist = new List<ObjList>(32); // Start with 32 possible entries to be used simultaneously
 		for (Int32 i = 0; i < 32; i++)
-		{
 			this.objlist.Add(new ObjList());
-		}
 		this.partyUID = new Byte[EventContext.partyUIDSize];
 		this.watch = new Watch[16];
-		for (Int32 j = 0; j < 16; j++)
-		{
-			this.watch[j] = new Watch();
-		}
+		for (Int32 i = 0; i < 16; i++)
+			this.watch[i] = new Watch();
 	}
 
 	public void copy(EventContext ec)
 	{
 		for (Int32 i = 0; i < 80; i++)
-		{
 			this.mapvar[i] = ec.mapvar[i];
-		}
-		for (Int32 j = 0; j < 1280; j++)
+		for (Int32 i = 0; i < 1280; i++)
+			this.objbuf[i] = ec.objbuf[i];
+		for (Int32 i = 0; i < Math.Max(this.objlist.Count, ec.objlist.Count); i++)
 		{
-			this.objbuf[j] = ec.objbuf[j];
-		}
-		for (Int32 l = 0; l < Math.Max(this.objlist.Count, ec.objlist.Count); l++)
-		{
-			if (l >= this.objlist.Count)
+			if (i >= this.objlist.Count)
 				this.objlist.Add(new ObjList());
-			this.objlist[l] = (ObjList)null;
-			if (l < ec.objlist.Count && ec.objlist[l] != null)
+			this.objlist[i] = null;
+			if (i < ec.objlist.Count && ec.objlist[i] != null)
 			{
-				this.objlist[l] = new ObjList();
-				this.objlist[l].copy(ec.objlist[l]);
-				if (ec.objlist[l].obj != null)
-				{
-				}
+				this.objlist[i] = new ObjList();
+				this.objlist[i].copy(ec.objlist[i]);
 			}
 		}
-		for (Int32 m = 0; m < ec.objlist.Count; m++)
+		for (Int32 i = 0; i < ec.objlist.Count; i++)
 		{
-			ObjList next = ec.objlist[m].next;
+			ObjList next = ec.objlist[i].next;
 			if (next != null && next.obj != null)
-			{
-				for (Int32 n = 0; n < ec.objlist.Count; n++)
-				{
-					if (ec.objlist[n].obj != null && next.obj.uid == ec.objlist[n].obj.uid)
-					{
-						this.objlist[m].next = this.objlist[n];
-					}
-				}
-			}
+				for (Int32 j = 0; j < ec.objlist.Count; j++)
+					if (ec.objlist[j].obj != null && next.obj.uid == ec.objlist[j].obj.uid)
+						this.objlist[i].next = this.objlist[j];
 		}
-		this.activeObj = (ObjList)null;
+		this.activeObj = null;
 		if (ec.activeObj != null)
 		{
-			for (Int32 num = 0; num < this.objlist.Count; num++)
-			{
-				if (this.objlist[num].obj != null && ec.activeObj.obj != null && this.objlist[num].obj.uid == ec.activeObj.obj.uid)
-				{
-					this.activeObj = this.objlist[num];
-				}
-			}
+			for (Int32 i = 0; i < this.objlist.Count; i++)
+				if (this.objlist[i].obj != null && ec.activeObj.obj != null && this.objlist[i].obj.uid == ec.activeObj.obj.uid)
+					this.activeObj = this.objlist[i];
 			PersistenSingleton<EventEngine>.Instance.printObjsInObjList(this.activeObj);
 		}
-		this.activeObjTail = (ObjList)null;
+		this.activeObjTail = null;
 		if (ec.activeObjTail != null)
-		{
-			for (Int32 num2 = 0; num2 < this.objlist.Count; num2++)
-			{
-				if (this.objlist[num2].obj != null && ec.activeObjTail.obj != null && this.objlist[num2].obj.uid == ec.activeObjTail.obj.uid)
-				{
-					this.activeObjTail = this.objlist[num2];
-				}
-			}
-		}
-		this.freeObj = (ObjList)null;
+			for (Int32 i = 0; i < this.objlist.Count; i++)
+				if (this.objlist[i].obj != null && ec.activeObjTail.obj != null && this.objlist[i].obj.uid == ec.activeObjTail.obj.uid)
+					this.activeObjTail = this.objlist[i];
+		this.freeObj = null;
 		if (ec.freeObj != null)
 		{
-			for (Int32 num3 = 0; num3 < this.objlist.Count; num3++)
+			for (Int32 i = 0; i < this.objlist.Count; i++)
 			{
-				if (this.objlist[num3].obj == null)
+				if (this.objlist[i].obj == null)
 				{
-					this.objlist[num3].next = this.freeObj;
-					this.freeObj = this.objlist[num3];
+					this.objlist[i].next = this.freeObj;
+					this.freeObj = this.objlist[i];
 				}
 			}
 		}
-		for (Int32 num4 = 0; num4 < EventContext.partyUIDSize; num4++)
-		{
-			this.partyUID[num4] = ec.partyUID[num4];
-		}
+		for (Int32 i = 0; i < EventContext.partyUIDSize; i++)
+			this.partyUID[i] = ec.partyUID[i];
 		this.twist_a = ec.twist_a;
 		this.twist_d = ec.twist_d;
 		this.usercontrol = ec.usercontrol;
@@ -112,17 +83,11 @@ public class EventContext
 		this.pad3 = ec.pad3;
 		this.idletimer = ec.idletimer;
 		this.pad4 = ec.pad4;
-		this.partyObjTail = (ObjList)null;
+		this.partyObjTail = null;
 		if (ec.partyObjTail != null)
-		{
-			for (Int32 num5 = 0; num5 < this.objlist.Count; num5++)
-			{
-				if (this.objlist[num5].obj != null && ec.partyObjTail.obj != null && this.objlist[num5].obj.uid == ec.partyObjTail.obj.uid)
-				{
-					this.partyObjTail = this.objlist[num5];
-				}
-			}
-		}
+			for (Int32 i = 0; i < this.objlist.Count; i++)
+				if (this.objlist[i].obj != null && ec.partyObjTail.obj != null && this.objlist[i].obj.uid == ec.partyObjTail.obj.uid)
+					this.partyObjTail = this.objlist[i];
 	}
 
 	public ObjList AddObjList()

@@ -5,6 +5,7 @@ using Assets.Scripts.Common;
 using Assets.SiliconSocial;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
@@ -340,7 +341,7 @@ public class SaveLoadUI : UIScene
 						flag = true;
 					}
 					fileInfoHUD.CharacterAvatarList[num2].alpha = 1f;
-					FF9UIDataTool.DisplayCharacterAvatar(sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileInfoHUD.CharacterAvatarList[num2], false);
+					FF9UIDataTool.DisplayCharacterAvatar((CharacterSerialNumber)sharedDataPreviewCharacterInfo.SerialID, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), fileInfoHUD.CharacterAvatarList[num2], false);
 					String text3 = text2;
 					text2 = String.Concat(new String[]
 					{

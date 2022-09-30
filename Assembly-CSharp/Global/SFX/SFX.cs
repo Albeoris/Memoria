@@ -1758,12 +1758,12 @@ public class SFX
         init.tar_bone = btl.tar_bone;
         init.btl_id = btl.btl_id;
         init.bi_player = btl.bi.player;
-        init.bi_slot_no = btl.bi.slot_no;
+        init.bi_slot_no = Math.Min(btl.bi.slot_no, (Byte)CharacterOldIndex.Beatrix);
         init.bi_slave = btl.bi.slave;
         init.bi_line_no = btl.bi.line_no;
         if (btl.bi.player != 0)
         {
-            init.player_serial_no = btl_util.getSerialNumber(btl);
+            init.player_serial_no = Math.Min((Byte)btl_util.getSerialNumber(btl), (Byte)CharacterSerialNumber.BEATRIX);
             init.player_equip = btl_util.getWeaponNumber(btl);
             init.player_wep_bone = btl_util.getPlayerPtr(btl).wep_bone;
             init.enemy_radius = btl.radius_collision;

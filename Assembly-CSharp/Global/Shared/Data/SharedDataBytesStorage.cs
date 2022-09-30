@@ -597,7 +597,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			{
 				sharedDataPreviewCharacterInfo = new SharedDataPreviewCharacterInfo();
 				sharedDataPreviewCharacterInfo.SerialID = (Int32)player.info.serial_no;
-				sharedDataPreviewCharacterInfo.Name = player.name;
+				sharedDataPreviewCharacterInfo.Name = player.Name;
 				sharedDataPreviewCharacterInfo.Level = (Int32)player.level;
 			}
 			sharedDataPreviewSlot.CharacterInfoList.Add(sharedDataPreviewCharacterInfo);
@@ -740,7 +740,14 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				ISharedDataLog.LogError("Verification failed!");
 				return (JSONClass)null;
 			}
-			return this.ParseDataListToJsonTree(list, this.rootSchemaNode);
+			JSONClass tree = this.ParseDataListToJsonTree(list, this.rootSchemaNode);
+			if (File.Exists(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID)))
+			{
+				JSONNode memoriaNode = JSONNode.LoadFromFile(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID));
+				if (memoriaNode != null)
+					tree.Add("MemoriaExtraData", memoriaNode);
+			}
+			return tree;
 		}
 		catch (Exception message3)
 		{
@@ -755,6 +762,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		Boolean result;
 		try
 		{
+			JSONClass memoriaNode = rootNode.Remove("MemoriaExtraData")?.AsObject;
 			this.CreateDataSchema();
 			List<JSONData> list = this.ParseJsonTreeToDataList(rootNode);
 			if (!this.ValidateDataListWithSchemaDataList(list, this.dataTypeList))
@@ -810,6 +818,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
 						}
 					}
 				}
+				if (memoriaNode != null)
+					memoriaNode.SaveToFile(MetaData.GetMemoriaExtraSaveFilePath(isAutosave, slotID, saveID));
 				result = true;
 			}
 		}
@@ -1570,6 +1580,14 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		public static String FilePath = String.Empty;
 
 		public static String DirPath = String.Empty;
+
+		public static String GetMemoriaExtraSaveFilePath(Boolean isAutosave, Int32 slotID, Int32 saveID)
+		{
+			if (String.IsNullOrEmpty(MetaData.FilePath) || !MetaData.FilePath.EndsWith(".dat"))
+				return String.Empty;
+			String extraName = isAutosave ? "_Memoria_Autosave" : $"_Memoria_{slotID}_{saveID}";
+			return MetaData.FilePath.Substring(0, MetaData.FilePath.Length - 4) + extraName + ".dat";
+		}
 	}
 
 	private class JSONNodeWithIndex

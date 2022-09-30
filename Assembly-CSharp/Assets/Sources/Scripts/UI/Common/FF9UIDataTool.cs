@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FF9;
 using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 using XInputDotNetPure;
@@ -15,35 +16,31 @@ namespace Assets.Sources.Scripts.UI.Common
 			if (itemId != 255)
 			{
 				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[itemId];
-				Byte b = (Byte)((!isEnable) ? 15 : ff9ITEM_DATA.color);
-				if (itemIcon != (UnityEngine.Object)null)
+				Byte b = (Byte)(isEnable ? ff9ITEM_DATA.color : 15);
+				if (itemIcon != null)
 				{
 					itemIcon.spriteName = "item" + ff9ITEM_DATA.shape.ToString("0#") + "_" + b.ToString("0#");
-					itemIcon.alpha = ((!isEnable) ? 0.5f : 1f);
+					itemIcon.alpha = isEnable ? 1f : 0.5f;
 				}
-				if (itemName != (UnityEngine.Object)null)
+				if (itemName != null)
 				{
 					itemName.text = FF9TextTool.ItemName(itemId);
-					itemName.color = ((!isEnable) ? FF9TextTool.Gray : FF9TextTool.White);
+					itemName.color = isEnable ? FF9TextTool.White : FF9TextTool.Gray;
 				}
 			}
 			else
 			{
-				if (itemIcon != (UnityEngine.Object)null)
-				{
+				if (itemIcon != null)
 					itemIcon.spriteName = String.Empty;
-				}
-				if (itemName != (UnityEngine.Object)null)
-				{
+				if (itemName != null)
 					itemName.text = String.Empty;
-				}
 			}
 		}
 
 		public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
 		{
 			charHud.Self.SetActive(true);
-			charHud.NameLabel.text = player.name;
+			charHud.NameLabel.text = player.Name;
 			charHud.LvLabel.text = player.level.ToString();
 			Color color = (player.cur.hp != 0) ? ((player.cur.hp > player.max.hp / 6) ? FF9TextTool.White : FF9TextTool.Yellow) : FF9TextTool.Red;
 			charHud.HPLabel.text = player.cur.hp.ToString();
@@ -83,33 +80,25 @@ namespace Assets.Sources.Scripts.UI.Common
 		public static void DisplayCharacterAvatar(PLAYER player, Vector3 frontPos, Vector3 backPos, UISprite avatarSprite, Boolean rowUpdate)
 		{
 			avatarSprite.spriteName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
-			avatarSprite.alpha = ((player.cur.hp != 0) ? 1f : 0.5f);
+			avatarSprite.alpha = (player.cur.hp != 0) ? 1f : 0.5f;
 			if (rowUpdate)
 			{
 				if (player.info.row == 1)
-				{
 					avatarSprite.transform.localPosition = frontPos;
-				}
 				else if (player.info.row == 0)
-				{
 					avatarSprite.transform.localPosition = backPos;
-				}
 			}
 		}
 
-		public static void DisplayCharacterAvatar(Int32 serialId, Vector3 frontPos, Vector3 backPos, UISprite avatarSprite, Boolean rowUpdate)
+		public static void DisplayCharacterAvatar(CharacterSerialNumber serialId, Vector3 frontPos, Vector3 backPos, UISprite avatarSprite, Boolean rowUpdate)
 		{
-			avatarSprite.spriteName = FF9UIDataTool.AvatarSpriteName((Byte)serialId);
+			avatarSprite.spriteName = FF9UIDataTool.AvatarSpriteName(serialId);
 		}
 
 		public static void DisplayCard(QuadMistCard card, CardDetailHUD cardHud, Boolean subCard = false)
 		{
 			for (Int32 i = 0; i < 8; i++)
-			{
-				Boolean flag = ((Int32)card.arrow & (Int32)Mathf.Pow(2f, (Single)i)) != 0;
-				flag = (!subCard && flag);
-				cardHud.CardArrowList[i].SetActive(flag);
-			}
+				cardHud.CardArrowList[i].SetActive((card.arrow & (1 << i)) != 0 && !subCard);
 			cardHud.CardImageSprite.spriteName = "card_" + card.id.ToString("0#");
 			if (!subCard)
 			{
@@ -147,13 +136,13 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		public static void DisplayAPBar(PLAYER player, Int32 abilityId, Boolean isShowText, APBarHUD apBar)
 		{
-			Int32 num = ff9abil.FF9Abil_GetAp(player.Index, abilityId);
-			Int32 num2 = ff9abil.FF9Abil_GetMax(player.Index, abilityId);
-			if (num >= num2)
+			Int32 curAP = ff9abil.FF9Abil_GetAp(player, abilityId);
+			Int32 maxAP = ff9abil.FF9Abil_GetMax(player, abilityId);
+			if (curAP >= maxAP)
 			{
 				apBar.TextPanel.SetActive(false);
-				apBar.APLable.text = num.ToString();
-				apBar.APMaxLable.text = num2.ToString();
+				apBar.APLable.text = curAP.ToString();
+				apBar.APMaxLable.text = maxAP.ToString();
 				apBar.ForegroundSprite.spriteName = "ap_bar_complete";
 				apBar.MasterSprite.spriteName = "ap_bar_complete_star";
 				apBar.Slider.value = 1f;
@@ -161,11 +150,11 @@ namespace Assets.Sources.Scripts.UI.Common
 			else
 			{
 				apBar.TextPanel.SetActive(isShowText);
-				apBar.APLable.text = num.ToString();
-				apBar.APMaxLable.text = num2.ToString();
+				apBar.APLable.text = curAP.ToString();
+				apBar.APMaxLable.text = maxAP.ToString();
 				apBar.ForegroundSprite.spriteName = "ap_bar_progress";
 				apBar.MasterSprite.spriteName = String.Empty;
-				apBar.Slider.value = (Single)num / (Single)num2;
+				apBar.Slider.value = (Single)curAP / (Single)maxAP;
 			}
 		}
 
@@ -181,14 +170,14 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				if (FF9StateSystem.Settings.cfg.win_type == 0UL)
 				{
-					if (FF9UIDataTool.grayAtlas == (UnityEngine.Object)null)
+					if (FF9UIDataTool.grayAtlas == null)
 					{
 						String[] grayAtlasInfo;
 						FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", out grayAtlasInfo, false);
 					}
 					return FF9UIDataTool.grayAtlas;
 				}
-				if (FF9UIDataTool.blueAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.blueAtlas == null)
 				{
 					String[] blueAtlasInfo;
 					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", out blueAtlasInfo, false);
@@ -201,7 +190,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			get
 			{
-				if (FF9UIDataTool.grayAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.grayAtlas == null)
 				{
 					String[] atlasInfo;
 					FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", out atlasInfo, false);
@@ -214,7 +203,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			get
 			{
-				if (FF9UIDataTool.blueAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.blueAtlas == null)
 				{
 					String[] atlasInfo;
 					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", out atlasInfo, false);
@@ -227,7 +216,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			get
 			{
-				if (FF9UIDataTool.iconAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.iconAtlas == null)
 				{
 					String[] atlasInfo;
 					FF9UIDataTool.iconAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Icon Atlas", out atlasInfo, false);
@@ -240,7 +229,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			get
 			{
-				if (FF9UIDataTool.generalAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.generalAtlas == null)
 				{
 					String[] atlasInfo;
 					FF9UIDataTool.generalAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/General Atlas", out atlasInfo, false);
@@ -253,7 +242,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			get
 			{
-				if (FF9UIDataTool.screenButtonAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.screenButtonAtlas == null)
 				{
 					String[] atlasInfo;
 					FF9UIDataTool.screenButtonAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Screen Button Atlas", out atlasInfo, false);
@@ -266,7 +255,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			get
 			{
-				if (FF9UIDataTool.tutorialAtlas == (UnityEngine.Object)null)
+				if (FF9UIDataTool.tutorialAtlas == null)
 				{
 					String[] atlasInfo;
 					FF9UIDataTool.tutorialAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", out atlasInfo, false);
@@ -277,22 +266,13 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		public static GameObject IconGameObject(Int32 id)
 		{
-			GameObject result = (GameObject)null;
-			String spriteName = String.Empty;
+			GameObject result = null;
 			if (id == FF9UIDataTool.NewIconId)
-			{
 				result = FF9UIDataTool.DrawButton(BitmapIconType.New);
-			}
 			else if (FF9UIDataTool.TutorialIconSpriteName.ContainsKey(id))
-			{
-				spriteName = FF9UIDataTool.TutorialIconSpriteName[id];
-				result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
-			}
+				result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, FF9UIDataTool.TutorialIconSpriteName[id]);
 			else if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-			{
-				spriteName = FF9UIDataTool.IconSpriteName[id];
-				result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
-			}
+				result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.IconSpriteName[id]);
 			return result;
 		}
 
@@ -301,20 +281,15 @@ namespace Assets.Sources.Scripts.UI.Common
 			String spriteName = String.Empty;
 			Vector2 spriteSize = new Vector2(0f, 0f);
 			if (id == FF9UIDataTool.NewIconId)
-			{
 				spriteSize = new Vector2(115f, 64f);
-			}
 			else if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-			{
-				spriteName = FF9UIDataTool.IconSpriteName[id];
-				spriteSize = FF9UIDataTool.GetSpriteSize(spriteName);
-			}
+				spriteSize = FF9UIDataTool.GetSpriteSize(FF9UIDataTool.IconSpriteName[id]);
 			return spriteSize;
 		}
 
 		public static GameObject ButtonGameObject(Control key, Boolean checkFromConfig, String tag)
 		{
-			GameObject result = (GameObject)null;
+			GameObject result = null;
 			if (tag == NGUIText.JoyStickButtonIcon)
 			{
 				result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.DialogButtonSpriteName(key, checkFromConfig, tag));
@@ -380,19 +355,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static GameObject GetMobileButtonGameObject(Control key)
 		{
-			GameObject result = (GameObject)null;
+			GameObject result = null;
 			Int32 key2 = 0;
-			Int32 num = EventEngineUtils.eventIDToMESID[(Int32)FF9StateSystem.Common.FF9.fldMapNo];
-			if (num != 2)
-			{
-				if (num != 3)
-				{
-				}
-			}
-			else if (key == Control.Up)
-			{
+			Int32 mesID = EventEngineUtils.eventIDToMESID[FF9StateSystem.Common.FF9.fldMapNo];
+			if (mesID == 2 && key == Control.Up) // Prima Vista
 				key2 = 268;
-			}
 			FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.IconSpriteName[key2]);
 			return result;
 		}
@@ -745,48 +712,48 @@ namespace Assets.Sources.Scripts.UI.Common
 			return result;
 		}
 
-		public static String AvatarSpriteName(Byte serialNo)
+		public static String AvatarSpriteName(CharacterSerialNumber serialNo)
 		{
 			switch (serialNo)
 			{
-			case 0:
-			case 1:
-				return "face00";
-			case 2:
-				return "face01";
-			case 3:
-			case 4:
-			    if (Configuration.Graphics.GarnetHair == 2)
-			        return "face03";
-			    return "face02";
-			case 5:
-			case 6:
-			    if (Configuration.Graphics.GarnetHair == 1)
-			        return "face02";
-			    return "face03";
-			case 7:
-			case 8:
-				return "face04";
-			case 9:
-				return "face05";
-			case 10:
-			case 11:
-				return "face06";
-			case 12:
-				return "face07";
-			case 13:
-				return "face08";
-			case 14:
-				return "face09";
-			case 15:
-				return "face10";
-			case 16:
-			case 17:
-				return "face11";
-			case 18:
-				return "face12";
-			default:
-				return String.Empty;
+				case CharacterSerialNumber.ZIDANE_DAGGER:
+				case CharacterSerialNumber.ZIDANE_SWORD:
+					return "face00";
+				case CharacterSerialNumber.VIVI:
+					return "face01";
+				case CharacterSerialNumber.GARNET_LH_ROD:
+				case CharacterSerialNumber.GARNET_LH_KNIFE:
+					if (Configuration.Graphics.GarnetHair == 2)
+						return "face03";
+					return "face02";
+				case CharacterSerialNumber.GARNET_SH_ROD:
+				case CharacterSerialNumber.GARNET_SH_KNIFE:
+					if (Configuration.Graphics.GarnetHair == 1)
+						return "face02";
+					return "face03";
+				case CharacterSerialNumber.STEINER_OUTDOOR:
+				case CharacterSerialNumber.STEINER_INDOOR:
+					return "face04";
+				case CharacterSerialNumber.KUINA:
+					return "face05";
+				case CharacterSerialNumber.EIKO_FLUTE:
+				case CharacterSerialNumber.EIKO_KNIFE:
+					return "face06";
+				case CharacterSerialNumber.FREIJA:
+					return "face07";
+				case CharacterSerialNumber.SALAMANDER:
+					return "face08";
+				case CharacterSerialNumber.CINNA:
+					return "face09";
+				case CharacterSerialNumber.MARCUS:
+					return "face10";
+				case CharacterSerialNumber.BLANK:
+				case CharacterSerialNumber.BLANK_ARMOR:
+					return "face11";
+				case CharacterSerialNumber.BEATRIX:
+					return "face12";
+				default:
+					return String.Empty;
 			}
 		}
 

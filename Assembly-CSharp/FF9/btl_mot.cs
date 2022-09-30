@@ -1234,7 +1234,7 @@ namespace FF9
 					btl_mot.setMotion(btl, btl.bi.def_idle);
 				return false;
 			}
-			if (cur_cmd != null && (btl_stat.CheckStatus(btl, BattleStatus.FrozenAnimation) || btl.bi.dmg_mot_f != 0 || (btl_util.getSerialNumber(btl) == 2 && cur_cmd.cmd_no == BattleCommandId.MagicSword)))
+			if (cur_cmd != null && (btl_stat.CheckStatus(btl, BattleStatus.FrozenAnimation) || btl.bi.dmg_mot_f != 0 || (btl_util.getSerialNumber(btl) == CharacterSerialNumber.VIVI && cur_cmd.cmd_no == BattleCommandId.MagicSword)))
 				return false;
 			if (cur_cmd != null && btl == cur_cmd.regist && (cur_cmd.cmd_no < BattleCommandId.EnemyReaction || cur_cmd.cmd_no > BattleCommandId.SysReraise))
 			{
@@ -1476,12 +1476,12 @@ namespace FF9
 				geo.geoWeaponMeshShow(btl, i);
 		}
 
-		public static void SetPlayerDefMotion(BTL_DATA btl, UInt32 serial_no, UInt32 cnt)
+		public static void SetPlayerDefMotion(BTL_DATA btl, CharacterSerialNumber serial_no, UInt32 cnt)
 		{
 			FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-			for (UInt32 num = 0u; num < 34u; num += 1u)
-				ff9Battle.p_mot[(Int32)((UIntPtr)cnt)][(Int32)((UIntPtr)num)] = btl_mot.mot[(Int32)((UIntPtr)serial_no), (Int32)((UIntPtr)num)];
-			btl.mot = ff9Battle.p_mot[(Int32)((UIntPtr)cnt)];
+			for (Int32 i = 0; i < 34; i++)
+				ff9Battle.p_mot[cnt][i] = btl_mot.mot[(Int32)serial_no, i];
+			btl.mot = ff9Battle.p_mot[cnt];
 			btl.animFlag = 0;
 			btl.animSpeed = 1f;
 			btl.animFrameFrac = 0f;

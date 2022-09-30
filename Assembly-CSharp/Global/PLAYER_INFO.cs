@@ -1,8 +1,9 @@
 ﻿using System;
+using Memoria.Data;
 
 public class PLAYER_INFO
 {
-	public PLAYER_INFO(Byte index, Byte serial_no, Byte row, Byte win_pose, Byte party, Byte menu_type)
+	public PLAYER_INFO(CharacterId index, CharacterSerialNumber serial_no, Byte row, Byte win_pose, Byte party, CharacterPresetId menu_type)
 	{
 		this.slot_no = index;
 		this.serial_no = serial_no;
@@ -10,11 +11,12 @@ public class PLAYER_INFO
 		this.win_pose = win_pose;
 		this.party = party;
 		this.menu_type = menu_type;
+		this.sub_replaced = index <= CharacterId.Freya || index >= CharacterId.Cinna;
 	}
 
-	public Byte slot_no;
+	public CharacterId slot_no;
 
-	public Byte serial_no;
+	public CharacterSerialNumber serial_no;
 
 	public Byte row;
 
@@ -22,5 +24,7 @@ public class PLAYER_INFO
 
 	public Byte party;
 
-	public Byte menu_type;
+	public CharacterPresetId menu_type;
+
+	public Boolean sub_replaced;
 }

@@ -172,10 +172,8 @@ public partial class BattleHUD : UIScene
                 continue;
 
             BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(character.PlayerId);
-            if ((player.IsUnderStatus(BattleStatus.Confuse) || player.IsUnderStatus(BattleStatus.Berserk)) && character.ATBBlink)
-            {
+            if ((player.IsUnderAnyStatus(BattleStatus.Confuse) || player.IsUnderAnyStatus(BattleStatus.Berserk)) && character.ATBBlink)
                 character.ATBBlink = false;
-            }
             if (IsEnableInput(player) && !_isAutoAttack)
             {
                 if (character.ATBBlink)
@@ -240,7 +238,7 @@ public partial class BattleHUD : UIScene
                 if (ItemPanel.activeSelf)
                     DisplayItemRealTime();
 
-                if ((Int32)_currentCommandId == 31 && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
+                if (_currentCommandId == BattleCommandId.MagicSword && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
                 {
                     FF9Sfx.FF9SFX_Play(101);
                     ResetToReady();
@@ -265,7 +263,7 @@ public partial class BattleHUD : UIScene
                 continue;
 
             BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(ReadyQueue[index]);
-            Boolean needToClearCommand = unit.IsUnderStatus(BattleStatus.CmdCancel);
+            Boolean needToClearCommand = unit.IsUnderAnyStatus(BattleStatus.CmdCancel);
             RemovePlayerFromAction(unit.Id, needToClearCommand);
         }
 
@@ -368,7 +366,7 @@ public partial class BattleHUD : UIScene
             if (!unit.IsPlayer)
                 break;
 
-            if (unit.PlayerIndex == CharacterIndex.Vivi)
+            if (unit.PlayerIndex == CharacterId.Vivi)
             {
                 magicSwordCondition2.IsViviExist = true;
                 if (unit.CurrentHp == 0)
@@ -376,7 +374,7 @@ public partial class BattleHUD : UIScene
                 else if (unit.IsUnderAnyStatus((BattleStatus)318905611U))
                     magicSwordCondition2.IsViviDead = true;
             }
-            else if (unit.PlayerIndex == CharacterIndex.Steiner)
+            else if (unit.PlayerIndex == CharacterId.Steiner)
             {
                 magicSwordCondition2.IsSteinerMini = unit.IsUnderAnyStatus(BattleStatus.Mini);
             }
@@ -407,7 +405,7 @@ public partial class BattleHUD : UIScene
     private Boolean ManageTargetCommand()
     {
         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-        if ((Int32)_currentCommandId == 31 && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
+        if (_currentCommandId == BattleCommandId.MagicSword && (!_magicSwordCond.IsViviExist || _magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini))
         {
             FF9Sfx.FF9SFX_Play(101);
             ResetToReady();

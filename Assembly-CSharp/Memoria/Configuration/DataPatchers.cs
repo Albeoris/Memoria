@@ -441,7 +441,7 @@ namespace Memoria
 						continue;
 					BattlePlayerCharacter.PlayerModelFileName[ID] = entry[2]; // Model
 					btl_init.model_id[ID] = entry[2];
-					btl_init.model_id[ID + 19] = entry[3]; // Trance model
+					btl_init.trance_model_id[ID] = entry[3]; // Trance model
 					BattlePlayerCharacter.PlayerWeaponToBoneName[ID] = boneID; // Model's weapon bone
 					for (Int32 animid = 0; animid < 34; ++animid)
 						FF9.btl_mot.mot[ID, animid] = entry[animid + 5];

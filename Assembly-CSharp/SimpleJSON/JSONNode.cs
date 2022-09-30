@@ -556,7 +556,7 @@ namespace SimpleJSON
 
 		public static JSONNode Deserialize(BinaryReader aReader)
 		{
-			JSONBinaryTag jsonbinaryTag = (JSONBinaryTag)aReader.ReadByte();
+			JSONBinaryTag jsonbinaryTag = (JSONBinaryTag)aReader.ReadInt32();
 			switch (jsonbinaryTag)
 			{
 			case JSONBinaryTag.Array:
@@ -592,7 +592,7 @@ namespace SimpleJSON
 			case JSONBinaryTag.FloatValue:
 				return new JSONData(aReader.ReadSingle());
 			default:
-				throw new Exception("Error deserializing JSON. Unknown tag: " + jsonbinaryTag);
+				throw new Exception("Error deserializing JSON. Unknown tag: " + jsonbinaryTag + " at " + aReader.BaseStream.Position.ToString("X"));
 			}
 		}
 

@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
 
-            if (!_v.Target.IsUnderStatus(BattleStatus.Zombie))
+            if (!_v.Target.IsUnderAnyStatus(BattleStatus.Zombie))
                 _v.Target.Flags |= CalcFlag.HpRecovery;
 
             _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp / 3);

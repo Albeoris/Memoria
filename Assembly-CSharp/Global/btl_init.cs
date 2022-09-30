@@ -10,17 +10,15 @@ using UnityEngine;
 
 public class btl_init
 {
-	public static Int16 GetModelID(Int32 characterModelIndex)
+	public static Int16 GetModelID(CharacterSerialNumber characterModelIndex, Boolean isTrance = false)
 	{
-	    String[] playerModels = model_id;
-
-        if (characterModelIndex < 0 || characterModelIndex > playerModels.Length - 1)
+        if (characterModelIndex < 0 || (Int32)characterModelIndex >= model_id.Length)
         {
             Log.Warning("[btl_init] Invalid serial number: {0}", characterModelIndex);
 			return 0;
 		}
 
-	    String modelId = playerModels[characterModelIndex];
+	    String modelId = isTrance ? trance_model_id[(Int32)characterModelIndex] : model_id[(Int32)characterModelIndex];
 
         Int32 geoId;
 	    if (FF9BattleDB.GEO.TryGetKey(modelId, out geoId))
@@ -279,7 +277,7 @@ public class btl_init
 			{
 				BTL_DATA btl_DATA = btlsys.btl_data[num];
 
-			    btl_DATA.dms_geo_id = GetModelID(characterModelIndex: p.info.serial_no);
+			    btl_DATA.dms_geo_id = GetModelID(p.info.serial_no);
 
 				btl_init.OrganizePlayerData(p, btl_DATA, (UInt16)num2, (UInt16)num);
 				btl_init.SetBattleModel(btl_DATA);
@@ -377,7 +375,7 @@ public class btl_init
 //			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
 			next.gameObject.transform.localPosition = next.pos;
 			next.gameObject.transform.localRotation = next.rot;
-			Int16 serial_no = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
+			Int16 serial_no = (Int16)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
 			next.shadow_bone[0] = btl_init.ShadowDataPC[serial_no][0];
 			next.shadow_bone[1] = btl_init.ShadowDataPC[serial_no][1];
 			btl_util.SetShadow(next, btl_init.ShadowDataPC[serial_no][2], btl_init.ShadowDataPC[serial_no][3]);
@@ -398,11 +396,11 @@ public class btl_init
 		BONUS btl_bonus = battle.btl_bonus;
 		btl_bonus.member_flag = (Byte)(btl_bonus.member_flag | (Byte)(1 << cnt));
 		btl.bi.player = 1;
-		btl.bi.slot_no = p.info.slot_no;
+		btl.bi.slot_no = (Byte)p.info.slot_no;
 		btl.bi.target = 1;
 		btl.bi.line_no = (Byte)cnt;
 		btl.bi.slave = 0;
-		if (battle.TRANCE_GAUGE_FLAG == 0 || (p.category & 16) != 0 || (btl.bi.slot_no == 2 && battle.GARNET_DEPRESS_FLAG != 0))
+		if (battle.TRANCE_GAUGE_FLAG == 0 || (p.category & 16) != 0 || (btl.bi.slot_no == (Byte)CharacterId.Garnet && battle.GARNET_DEPRESS_FLAG != 0))
 		{
 			btl.bi.t_gauge = 0;
 			btl.trance = 0;
@@ -424,7 +422,10 @@ public class btl_init
 		FF9Char ff9Char = new FF9Char();
 		ff9Char.btl = btl;
 		ff9Char.evt = btl.evt;
-		FF9StateSystem.Common.FF9.charArray.Add(p.info.slot_no, ff9Char);
+		if (ff9play.CharacterIDToEventId(p.Index) >= 0)
+			FF9StateSystem.Common.FF9.charArray.Add(ff9play.CharacterIDToEventId(p.Index), ff9Char);
+		else
+			FF9StateSystem.Common.FF9.charArray.Add(9 + (Int32)p.Index, ff9Char);
 		btl_init.InitBattleData(btl, ff9Char);
 		btl.mesh_banish = UInt16.MaxValue;
 		btl_stat.InitCountDownStatus(btl);
@@ -595,13 +596,10 @@ public class btl_init
         geotexheader.ReadPlayerTextureAnim(btl, "Models/GeoTexAnim/" + modelName + ".tab", scale);
         btl.texanimptr = geotexheader;
 
-        // Set trance model
-        Byte serialNumber = btl_util.getSerialNumber(btl);
-        if (serialNumber + 19 >= btl_init.model_id.Length)
-            return;
-
-        Int32 num = serialNumber + 19;
-        String geoName = btl_init.model_id[num];
+		// Set trance model
+		if (btl.bi.player == 0)
+			return;
+        String geoName = btl_init.trance_model_id[(Int32)btl_util.getSerialNumber(btl)];
         
         GEOTEXHEADER geotexheader2 = new GEOTEXHEADER();
         geotexheader2.ReadTrancePlayerTextureAnim(btl, geoName, scale);
@@ -622,206 +620,77 @@ public class btl_init
 
 	public const Byte BTL_WAIT_PLAYER_APPEAR_DONE = 64;
 
-	public static String[] model_id = new String[] // Follow the list of "BattlePlayerCharacter.PlayerSerialNumber"
+	public static String[] model_id = new String[] // Indented by "CharacterSerialNumber"
 	{
 		// Normal models:
 		"GEO_MAIN_B0_000", // ZIDANE_DAGGER
-		"GEO_MAIN_B0_001", // ZIDANE_SWORD,
-		"GEO_MAIN_B0_006", // VIVI,
-		"GEO_MAIN_B0_002", // GARNET_LH_ROD,
-		"GEO_MAIN_B0_003", // GARNET_LH_KNIFE,
-		"GEO_MAIN_B0_004", // GARNET_SH_ROD,
-		"GEO_MAIN_B0_005", // GARNET_SH_KNIFE,
-		"GEO_MAIN_B0_018", // STEINER_OUTDOOR,
-		"GEO_MAIN_B0_007", // STEINER_INDOOR,
-		"GEO_MAIN_B0_008", // KUINA,
-		"GEO_MAIN_B0_009", // EIKO_FLUTE,
-		"GEO_MAIN_B0_010", // EIKO_KNIFE,
-		"GEO_MAIN_B0_011", // FREIJA,
-		"GEO_MAIN_B0_012", // SALAMANDER,
-		"GEO_MAIN_B0_013", // CINNA,
-		"GEO_MAIN_B0_014", // MARCUS,
-		"GEO_MAIN_B0_015", // BLANK,
-		"GEO_MAIN_B0_016", // BLANK_ARMOR,
-		"GEO_MAIN_B0_017", // BEATRIX,
-		// Trance models:
+		"GEO_MAIN_B0_001", // ZIDANE_SWORD
+		"GEO_MAIN_B0_006", // VIVI
+		"GEO_MAIN_B0_002", // GARNET_LH_ROD
+		"GEO_MAIN_B0_003", // GARNET_LH_KNIFE
+		"GEO_MAIN_B0_004", // GARNET_SH_ROD
+		"GEO_MAIN_B0_005", // GARNET_SH_KNIFE
+		"GEO_MAIN_B0_018", // STEINER_OUTDOOR
+		"GEO_MAIN_B0_007", // STEINER_INDOOR
+		"GEO_MAIN_B0_008", // KUINA
+		"GEO_MAIN_B0_009", // EIKO_FLUTE
+		"GEO_MAIN_B0_010", // EIKO_KNIFE
+		"GEO_MAIN_B0_011", // FREIJA
+		"GEO_MAIN_B0_012", // SALAMANDER
+		"GEO_MAIN_B0_013", // CINNA
+		"GEO_MAIN_B0_014", // MARCUS
+		"GEO_MAIN_B0_015", // BLANK
+		"GEO_MAIN_B0_016", // BLANK_ARMOR
+		"GEO_MAIN_B0_017"  // BEATRIX
+	};
+
+	public static String[] trance_model_id = new String[] // Indented by "CharacterSerialNumber"
+	{
 		"GEO_MAIN_B0_022", // ZIDANE_DAGGER
-		"GEO_MAIN_B0_023", // ZIDANE_SWORD,
-		"GEO_MAIN_B0_028", // VIVI,
-		"GEO_MAIN_B0_024", // GARNET_LH_ROD,
-		"GEO_MAIN_B0_025", // GARNET_LH_KNIFE,
-		"GEO_MAIN_B0_026", // GARNET_SH_ROD,
-		"GEO_MAIN_B0_027", // GARNET_SH_KNIFE,
-		"GEO_MAIN_B0_029", // STEINER_OUTDOOR,
-		"GEO_MAIN_B0_029", // STEINER_INDOOR,
-		"GEO_MAIN_B0_030", // KUINA,
-		"GEO_MAIN_B0_031", // EIKO_FLUTE,
-		"GEO_MAIN_B0_032", // EIKO_KNIFE,
-		"GEO_MAIN_B0_033", // FREIJA,
-		"GEO_MAIN_B0_034", // SALAMANDER,
+		"GEO_MAIN_B0_023", // ZIDANE_SWORD
+		"GEO_MAIN_B0_028", // VIVI
+		"GEO_MAIN_B0_024", // GARNET_LH_ROD
+		"GEO_MAIN_B0_025", // GARNET_LH_KNIFE
+		"GEO_MAIN_B0_026", // GARNET_SH_ROD
+		"GEO_MAIN_B0_027", // GARNET_SH_KNIFE
+		"GEO_MAIN_B0_029", // STEINER_OUTDOOR
+		"GEO_MAIN_B0_029", // STEINER_INDOOR
+		"GEO_MAIN_B0_030", // KUINA
+		"GEO_MAIN_B0_031", // EIKO_FLUTE
+		"GEO_MAIN_B0_032", // EIKO_KNIFE
+		"GEO_MAIN_B0_033", // FREIJA
+		"GEO_MAIN_B0_034", // SALAMANDER
 		// Trance models of temporary characters: use the same as normal models
-		"GEO_MAIN_B0_013", // CINNA,
-		"GEO_MAIN_B0_014", // MARCUS,
-		"GEO_MAIN_B0_015", // BLANK,
-		"GEO_MAIN_B0_016", // BLANK_ARMOR,
-		"GEO_MAIN_B0_017"  // BEATRIX,
+		"GEO_MAIN_B0_013", // CINNA
+		"GEO_MAIN_B0_014", // MARCUS
+		"GEO_MAIN_B0_015", // BLANK
+		"GEO_MAIN_B0_016", // BLANK_ARMOR
+		"GEO_MAIN_B0_017"  // BEATRIX
 	};
 
 	private static readonly UInt32[] enemy_dummy_sa = new UInt32[2];
 
-	public static Byte[][] ShadowDataPC = new Byte[][]
+	public static Byte[][] ShadowDataPC = new Byte[][] // Indented by "CharacterSerialNumber"
 	{
-		new Byte[]
-		{
-			1,
-			14,
-			196,
-			204,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			14,
-			196,
-			204,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			1,
-			154,
-			168,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			140,
-			144,
-			36
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			140,
-			144,
-			36
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			140,
-			144,
-			36
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			140,
-			144,
-			36
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			210,
-			204,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			210,
-			204,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			1,
-			224,
-			228,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			1,
-			126,
-			132,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			1,
-			126,
-			132,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			13,
-			182,
-			192,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			238,
-			240,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			10,
-			168,
-			168,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			1,
-			182,
-			204,
-			0
-		},
-		new Byte[]
-		{
-			16,
-			20,
-			140,
-			144,
-			0
-		},
-		new Byte[]
-		{
-			16,
-			20,
-			140,
-			144,
-			0
-		},
-		new Byte[]
-		{
-			1,
-			11,
-			168,
-			180,
-			0
-		}
+		// { bone1, bone2, sizeX, sizeZ, offsetY }
+		new Byte[]{ 1, 14, 196, 204, 0 },  // ZIDANE_DAGGER
+		new Byte[]{ 1, 14, 196, 204, 0 },  // ZIDANE_SWORD
+		new Byte[]{ 1, 1, 154, 168, 0 },   // VIVI
+		new Byte[]{ 1, 10, 140, 144, 36 }, // GARNET_LH_ROD
+		new Byte[]{ 1, 10, 140, 144, 36 }, // GARNET_LH_KNIFE
+		new Byte[]{ 1, 10, 140, 144, 36 }, // GARNET_SH_ROD
+		new Byte[]{ 1, 10, 140, 144, 36 }, // GARNET_SH_KNIFE
+		new Byte[]{ 1, 10, 210, 204, 0 },  // STEINER_OUTDOOR
+		new Byte[]{ 1, 10, 210, 204, 0 },  // STEINER_INDOOR
+		new Byte[]{ 1, 1, 224, 228, 0 },   // KUINA
+		new Byte[]{ 1, 1, 126, 132, 0 },   // EIKO_FLUTE
+		new Byte[]{ 1, 1, 126, 132, 0 },   // EIKO_KNIFE
+		new Byte[]{ 1, 13, 182, 192, 0 },  // FREIJA
+		new Byte[]{ 1, 10, 238, 240, 0 },  // SALAMANDER
+		new Byte[]{ 1, 10, 168, 168, 0 },  // CINNA
+		new Byte[]{ 1, 1, 182, 204, 0 },   // MARCUS
+		new Byte[]{ 16, 20, 140, 144, 0 }, // BLANK
+		new Byte[]{ 16, 20, 140, 144, 0 }, // BLANK_ARMOR
+		new Byte[]{ 1, 11, 168, 180, 0 }   // BEATRIX
 	};
 }

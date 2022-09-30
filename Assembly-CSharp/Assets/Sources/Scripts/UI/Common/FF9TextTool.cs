@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using Memoria.Prime;
 using UnityEngine;
@@ -234,7 +234,7 @@ namespace Assets.Sources.Scripts.UI.Common
             return str;
         }
 
-        public static String CharacterDefaultName(Int32 nameId)
+        public static String CharacterDefaultName(CharacterId nameId)
         {
             if (FF9StateSystem.Settings.CurrentLanguage == null)
                 FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
@@ -242,10 +242,10 @@ namespace Assets.Sources.Scripts.UI.Common
             if (characterNames == null)
                 characterNames = CharacterNamesFormatter.CharacterDefaultNames();
 
-            if (nameId < 0 || nameId >= characterNames.Length)
+            if ((Int32)nameId < 0 || (Int32)nameId >= characterNames.Length)
                 return "Unknown";
 
-            return characterNames[nameId];
+            return characterNames[(Int32)nameId];
         }
 
         public static String[] ExtractSentense(String text)

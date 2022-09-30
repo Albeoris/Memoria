@@ -20,22 +20,22 @@ namespace FF9
 
 		public static PLAYER getPlayerPtr(BTL_DATA btl)
 		{
-			return FF9StateSystem.Common.FF9.player[(Int32)btl.bi.slot_no];
+			return FF9StateSystem.Common.FF9.player[btl.bi.slot_no];
 		}
 
 		public static ENEMY getEnemyPtr(BTL_DATA btl)
 		{
-			return FF9StateSystem.Battle.FF9Battle.enemy[(Int32)btl.bi.slot_no];
+			return FF9StateSystem.Battle.FF9Battle.enemy[btl.bi.slot_no];
 		}
 
 		public static ENEMY_TYPE getEnemyTypePtr(BTL_DATA btl)
 		{
-			return FF9StateSystem.Battle.FF9Battle.enemy[(Int32)btl.bi.slot_no].et;
+			return FF9StateSystem.Battle.FF9Battle.enemy[btl.bi.slot_no].et;
 		}
 
 		public static Byte getWeaponNumber(BTL_DATA btl)
 		{
-			return FF9StateSystem.Common.FF9.player[(Int32)btl.bi.slot_no].equip[0];
+			return FF9StateSystem.Common.FF9.player[btl.bi.slot_no].equip[0];
 		}
 
 		public static Int32 btlItemNum(Int32 ff9item_no)
@@ -48,11 +48,11 @@ namespace FF9
 			return ff9item_no;
 		}
 
-		public static Byte getSerialNumber(BTL_DATA btl)
+		public static CharacterSerialNumber getSerialNumber(BTL_DATA btl)
 		{
 			if (btl.bi.player != 0)
-				return FF9StateSystem.Common.FF9.player[(Int32)btl.bi.slot_no].info.serial_no;
-			return 19;
+				return FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no;
+			return CharacterSerialNumber.MAX;
 		}
 
 		public static CMD_DATA getCurCmdPtr()
@@ -213,7 +213,7 @@ namespace FF9
 
 		public static UInt32 GetFF9CharNo(BTL_DATA btl)
 		{
-			return (UInt32)((btl.bi.player == 0) ? (9 + btl.bi.slot_no) : btl.bi.slot_no);
+			return (UInt32)((btl.bi.player == 0) ? (FF9StateSystem.Common.PlayerCount + btl.bi.slot_no) : btl.bi.slot_no);
 		}
 
 		public static Boolean IsAttackShortRange(CMD_DATA cmd)

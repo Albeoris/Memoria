@@ -187,29 +187,28 @@ public class UIKeyNavigation : MonoBehaviour
 	public virtual void OnNavigate(KeyCode key)
 	{
 		if (UIPopupList.isOpen)
-		{
 			return;
-		}
-		GameObject gameObject = (GameObject)null;
+		UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
+		GameObject gameObject = null;
 		switch (key)
 		{
-		case KeyCode.UpArrow:
-			gameObject = this.GetUp();
-			break;
-		case KeyCode.DownArrow:
-			gameObject = this.GetDown();
-			break;
-		case KeyCode.RightArrow:
-			gameObject = this.GetRight();
-			break;
-		case KeyCode.LeftArrow:
-			gameObject = this.GetLeft();
-			break;
+			case KeyCode.UpArrow:
+				gameObject = this.GetUp();
+				break;
+			case KeyCode.DownArrow:
+				gameObject = this.GetDown();
+				break;
+			case KeyCode.RightArrow:
+				gameObject = this.GetRight();
+				break;
+			case KeyCode.LeftArrow:
+				gameObject = this.GetLeft();
+				break;
 		}
-		if (gameObject != (UnityEngine.Object)null)
-		{
+		if (sceneFromState != null)
+			gameObject = sceneFromState.OnKeyNavigate(key, UICamera.selectedObject, gameObject);
+		if (gameObject != null)
 			UICamera.selectedObject = gameObject;
-		}
 	}
 
 	public virtual void OnKey(KeyCode key)

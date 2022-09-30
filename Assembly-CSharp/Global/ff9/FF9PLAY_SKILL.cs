@@ -5,7 +5,7 @@ public class FF9PLAY_SKILL
 	public FF9PLAY_SKILL()
 	{
 		this.Base = new Byte[4];
-		this.weapon = new UInt16[5];
+		this.defParam = new UInt16[5];
 	}
 
 	public UInt32 cur_hp;
@@ -18,5 +18,5 @@ public class FF9PLAY_SKILL
 
 	public Byte[] Base;
 
-	public UInt16[] weapon;
+	public UInt16[] defParam;
 }

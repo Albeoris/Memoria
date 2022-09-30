@@ -80,8 +80,8 @@ namespace FF9
                 {
                     switch (btl_util.getSerialNumber(next))
                     {
-                        case 10:
-                        case 11:
+                        case CharacterSerialNumber.EIKO_FLUTE:
+                        case CharacterSerialNumber.EIKO_KNIFE:
                             if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Stop))
                             {
                                 if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
@@ -99,7 +99,7 @@ namespace FF9
                 }
                 label_24:
                 ff9Battle.btl_seq = 1;
-                UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.Annihilated);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.Annihilated);
             }
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             ff9Battle.btl_phase = 5;
@@ -113,10 +113,10 @@ namespace FF9
 
             foreach (BattleUnit next in ff9Battle.EnumerateBattleUnits())
             {
-                if (next.PlayerIndex == CharacterIndex.Eiko)
+                if (next.PlayerIndex == CharacterId.Eiko)
                     btl1 = next;
 
-                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderStatus(BattleStatus.BattleEnd) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatus.BattleEnd) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderAnyStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
             }
 
@@ -240,7 +240,7 @@ namespace FF9
         {
             BattleUnit unit = new BattleUnit(btl);
             PLAYER playerPtr = btl_util.getPlayerPtr(btl);
-            playerPtr.trance = !unit.IsUnderStatus(BattleStatus.Trance) ? btl.trance : (Byte)0;
+            playerPtr.trance = unit.IsUnderAnyStatus(BattleStatus.Trance) ? (Byte)0 : btl.trance;
             btl_init.CopyPoints(playerPtr.cur, btl.cur);
             if (removingUnit)
                 if (btl.cur.hp == 0)
@@ -285,7 +285,7 @@ namespace FF9
 
             if (!ff9Battle.btl_scene.Info.Runaway)
             {
-                UIManager.Battle.SetBattleFollowMessage((Int32)BattleMesages.CannotEscape);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
             }
             else
             {

@@ -35,7 +35,7 @@ namespace Memoria.Scripts.Battle
             Boolean canAttack = false;
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                if (((BattleCalcFlags)unit.Id & _v.Context.Flags) == 0 || unit.IsUnderStatus(cannotAttack))
+                if (((BattleCalcFlags)unit.Id & _v.Context.Flags) == 0 || unit.IsUnderAnyStatus(cannotAttack))
                     continue;
 
                 canAttack = true;

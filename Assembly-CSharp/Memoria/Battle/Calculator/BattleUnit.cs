@@ -39,7 +39,7 @@ namespace Memoria
             set => Data.out_of_reach = value;
         }
         public Boolean CanMove => Data.bi.atb != 0;
-        public CharacterIndex PlayerIndex => Data.bi.slot_no;
+        public CharacterId PlayerIndex => (CharacterId)Data.bi.slot_no;
 
         public Byte Level => Data.level;
         public Byte Position => Data.bi.line_no;
@@ -173,7 +173,7 @@ namespace Memoria
         }
 
         public Character Player => Character.Find(this);
-        public Byte SerialNumber => btl_util.getSerialNumber(Data);
+        public CharacterSerialNumber SerialNumber => btl_util.getSerialNumber(Data);
         public CharacterCategory PlayerCategory => Player.Category;
         public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
         public WeaponCategory WeapCategory => (WeaponCategory)(Data.weapon != null ? Data.weapon.Category : 0);
@@ -230,19 +230,13 @@ namespace Memoria
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
         public WeaponItem Weapon => IsPlayer ? (WeaponItem)btl_util.getWeaponNumber(Data) : WeaponItem.NoWeapon;
-        public Byte Head => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Head : (Byte)255;
-        public Byte Wrist => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Wrist : (Byte)255;
-        public Byte Armor => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Armor : (Byte)255;
-        public Byte Accessory => IsPlayer ? FF9StateSystem.Common.FF9.player[PlayerIndex].equip.Accessory : (Byte)255;
+        public Byte Head => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Head : (Byte)255;
+        public Byte Wrist => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Wrist : (Byte)255;
+        public Byte Armor => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Armor : (Byte)255;
+        public Byte Accessory => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Accessory : (Byte)255;
         public Boolean IsHealingRod => IsPlayer && Weapon == WeaponItem.HealingRod;
 
-        public Boolean[] StatModifier
-        {
-            get
-            {
-                return this.Data.stat_modifier;
-            }
-        }
+        public Boolean[] StatModifier => this.Data.stat_modifier;
 
         public void AddDelayedModifier(BTL_DATA.DelayedModifier.IsDelayedDelegate delayDelegate, BTL_DATA.DelayedModifier.ApplyDelegate applyDelegate)
         {
@@ -620,8 +614,9 @@ namespace Memoria
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
             Data.gameObject = ModelFactory.CreateModel(geoName, true);
             Data.bi.t_gauge = 0;
-            if (IsUnderStatus(BattleStatus.Trance))
+            if (IsUnderAnyStatus(BattleStatus.Trance))
             {
+                Data.stat.permanent &= ~BattleStatus.Trance;
                 Data.stat.cur &= ~BattleStatus.Trance;
                 if (Trance == Byte.MaxValue)
                     Trance = Byte.MaxValue - 1;
@@ -746,28 +741,27 @@ namespace Memoria
                 Data.defence.MagicalEvade = p.defence.MagicalEvade;
             }
             if (Data.monster_transform.replace_element)
-            {
                 btl_eqp.InitEquipPrivilegeAttrib(p, Data);
-            }
             ResistStatus &= ~Data.monster_transform.resist_added;
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;
-            Data.shadow_bone[0] = btl_init.ShadowDataPC[p.info.serial_no][0];
-            Data.shadow_bone[1] = btl_init.ShadowDataPC[p.info.serial_no][1];
-            btl_util.SetShadow(Data, btl_init.ShadowDataPC[p.info.serial_no][2], btl_init.ShadowDataPC[p.info.serial_no][3]);
+            Int16 serial_no = (Int16)p.info.serial_no;
+            Data.shadow_bone[0] = btl_init.ShadowDataPC[serial_no][0];
+            Data.shadow_bone[1] = btl_init.ShadowDataPC[serial_no][1];
+            btl_util.SetShadow(Data, btl_init.ShadowDataPC[serial_no][2], btl_init.ShadowDataPC[serial_no][3]);
             Data.gameObject.SetActive(false);
             Data.gameObject = Data.originalGo;
             Data.geo_scale_default = 4096;
             geo.geoScaleReset(Data);
-            if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != 2 || battle.GARNET_DEPRESS_FLAG == 0))
+            if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != (Byte)CharacterId.Garnet || battle.GARNET_DEPRESS_FLAG == 0))
                 Data.bi.t_gauge = 1;
             // Reset the position even if ChangeToMonster doesn't change it by itself
             Data.pos.x = (Data.evt.posBattle.x = (Data.evt.pos[0] = (Data.base_pos.x = Data.original_pos.x)));
             Data.pos.y = (Data.evt.posBattle.y = (Data.evt.pos[1] = (Data.base_pos.y = (Data.original_pos.y + (!btl_stat.CheckStatus(Data, BattleStatus.Float) ? 0 : -200)))));
             Data.pos.z = (Data.evt.posBattle.z = (Data.evt.pos[2] = (Data.base_pos.z = (Data.original_pos.z + (Data.bi.row == 0 ? -400 : 0)))));
             for (Int32 i = 0; i < 34; i++)
-                Data.mot[i] = btl_mot.mot[p.info.serial_no, i];
+                Data.mot[i] = btl_mot.mot[serial_no, i];
             btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
             btl_mot.HideMesh(Data, UInt16.MaxValue);
