@@ -218,6 +218,7 @@
     Version = "Версия"
     Description = "Описание"
     ReleaseNotes = "Примечания к Выпуску"
+    SubModPanel = "Дополнительные Параметры"
     Priority = "Приоритет"
     Installed = "Установлены"
     Active = "Активный"

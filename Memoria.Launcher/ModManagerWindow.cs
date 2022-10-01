@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
+using System.Windows.Media.Imaging;
 using Ini;
 using ListView = System.Windows.Controls.ListView;
 using GridView = System.Windows.Controls.GridView;
@@ -51,6 +52,9 @@ namespace Memoria.Launcher
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
+            PreviewSubModList.SelectionChanged += OnSubModSelect;
+            PreviewSubModActive.Checked += OnSubModActivate;
+            PreviewSubModActive.Unchecked += OnSubModActivate;
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -89,6 +93,16 @@ namespace Memoria.Launcher
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
         {
+        }
+        private void OnSubModSelect(Object sender, RoutedEventArgs e)
+        {
+            UpdateSubModDetails((Mod)PreviewSubModList.SelectedItem);
+        }
+        private void OnSubModActivate(Object sender, RoutedEventArgs e)
+        {
+            Mod subMod = (Mod)PreviewSubModList.SelectedItem;
+            if (subMod != null)
+                subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
         }
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
@@ -231,6 +245,11 @@ namespace Memoria.Launcher
                 else if (accessors.Length > 1 && accessors[1].ReturnType != typeof(void))
                     SortCatalog(accessors[1], ascending);
             }
+        }
+        private void OnPreviewFileDownloaded(Object sender, EventArgs e)
+        {
+            if (PreviewModImage.Source == sender)
+                PreviewModImageMissing.Text = String.Empty;
         }
 
         private void DownloadStart(Mod mod)
@@ -467,7 +486,9 @@ namespace Memoria.Launcher
                 Description = "Use the Playstation button icons instead of the Xbox button icons.",
                 Category = "Visual",
                 Website = "https://steamcommunity.com/groups/ff-modding/discussions/13/350533172685612333/",
-                DownloadUrl = "https://www.dropbox.com/s/815zeapy32xp821/PC_PSXButtons.zip?dl=1"
+                DownloadUrl = "https://www.dropbox.com/s/815zeapy32xp821/PC_PSXButtons.zip?dl=1",
+                PreviewFileUrl = "https://i.imgur.com/eHSCN0r.png",
+                PreviewFile = "PreviewImage.png"
             });
             modListCatalog.Add(new Mod()
             {
@@ -489,7 +510,7 @@ namespace Memoria.Launcher
                     "The animations on the field are messed up.",
                 Category = "Visual",
                 Website = "https://steamcommunity.com/app/377840/discussions/0/4472613273101569368/",
-                DownloadUrl = "https://www.dropbox.com/s/y3dw2gxfdw5kkl8/PC_PlayAsKuja.zip?dl=1"
+                DownloadUrl = "https://www.dropbox.com/s/y3dw2gxfdw5kkl8/PC_PlayAsKuja.zip?dl=1",
             });
             modListCatalog.Add(new Mod()
             {
@@ -540,7 +561,9 @@ PS5 white button prompts - Pixel Type Button Prompts
 - Not compatible for older versions of the games and repacks.",
                 Category = "Visual",
                 Website = "https://www.nexusmods.com/finalfantasy9/mods/31",
-                DownloadUrl = "https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1"
+                DownloadUrl = "https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1",
+                PreviewFileUrl = "https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1632468409-614055669.png",
+                PreviewFile = "preview/mog-addons.png"
             });
             modListCatalog.Add(new Mod()
             {
@@ -552,7 +575,8 @@ PS5 white button prompts - Pixel Type Button Prompts
                 Category = "Visual",
                 Website = "https://forums.qhimm.com/index.php?topic=20657.0",
                 DownloadUrl = "https://i.imgur.com/tpdfrUQ.png",
-                DownloadFormat = "SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Chocograph Atlas"
+                DownloadFormat = "SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Chocograph Atlas",
+                PreviewFileUrl = "https://i.imgur.com/M4ce7hE.png"
             });
             modListCatalog.Add(new Mod()
             {
@@ -563,7 +587,8 @@ PS5 white button prompts - Pixel Type Button Prompts
                 Category = "Visual",
                 Website = "https://forums.qhimm.com/index.php?topic=19964.0",
                 DownloadUrl = "https://i.imgur.com/MkJA680.png",
-                DownloadFormat = "SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Face Atlas"
+                DownloadFormat = "SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Face Atlas",
+                PreviewFileUrl = "https://imgur.com/gqXYntO.png"
             });
             modListCatalog.Add(new Mod()
             {
@@ -571,11 +596,10 @@ PS5 white button prompts - Pixel Type Button Prompts
                 CurrentVersion = new Version(0, 2, 11),
                 InstallationPath = "TranceSeek",
                 Author = "DVlad666",
-                Description = "A gameplay mod.\n\n" +
-                    "Note: this mod doesn't support automatic installation yet. Download it from its website.",
+                Description = "A very advanced gameplay mod.",
                 Category = "Gameplay",
                 Website = "https://steamcommunity.com/app/377840/discussions/0/5362100202713255072/",
-                //DownloadUrl = "https://drive.google.com/file/d/1ONGayLWtVctUgM33aYWVvzSGqDBEsOIE"
+                DownloadUrl = "https://drive.google.com/uc?export=download&id=1ONGayLWtVctUgM33aYWVvzSGqDBEsOIE&confirm=t"
             });
             modListCatalog.Add(new Mod()
             {
@@ -583,11 +607,10 @@ PS5 white button prompts - Pixel Type Button Prompts
                 CurrentVersion = new Version(1, 6),
                 InstallationPath = "PlaystationSounds",
                 Author = "DVlad666",
-                Description = "Replace the sounds by the PSX sounds.\n\n" +
-                    "Note: this mod doesn't support automatic installation yet. Download it from its website.",
+                Description = "Replace the sound assets by the PSX sounds.",
                 Category = "Audio",
                 Website = "https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/",
-                //DownloadUrl = "https://drive.google.com/file/d/1RLcIQ9M6AB19IPGDXskoBGcC3siVbLQQ"
+                DownloadUrl = "https://drive.google.com/uc?export=download&id=1RLcIQ9M6AB19IPGDXskoBGcC3siVbLQQ&confirm=t"
             });
             modListCatalog.Add(new Mod()
             {
@@ -657,6 +680,7 @@ PS5 white button prompts - Pixel Type Button Prompts
                         Int32 index = modListInstalled.IndexOf(previousMod);
                         modListInstalled.RemoveAt(index);
                         modListInstalled.Insert(index, updatedMod);
+                        updatedMod.IsActive = previousMod.IsActive;
                     }
                 }
             }
@@ -708,6 +732,7 @@ PS5 white button prompts - Pixel Type Button Prompts
             }
             else
             {
+                Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "Unknown version";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "Unknown date";
@@ -717,7 +742,51 @@ PS5 white button prompts - Pixel Type Button Prompts
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
+                PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
+                if (hasSubMod)
+				{
+                    PreviewSubModList.ItemsSource = mod.SubMod;
+                    PreviewSubModList.SelectedItem = mod.SubMod[0];
+                    UpdateSubModDetails(mod.SubMod[0]);
+                }
+                if (mod.PreviewImage == null)
+                {
+                    if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFile != null)
+                    {
+                        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/" + mod.InstallationPath + "/" + mod.PreviewFile))
+                            mod.PreviewImage = new BitmapImage(new Uri("file://" + AppDomain.CurrentDomain.BaseDirectory + "/" + mod.InstallationPath + "/" + mod.PreviewFile, UriKind.Absolute));
+                    }
+                    else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
+                    {
+                        mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
+                        mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
+                    }
+                }
+                if (mod.PreviewImage == null)
+                {
+                    PreviewModImageMissing.Text = Lang.ModEditor.PreviewImageMissing;
+                    PreviewModImage.Source = null;
+                }
+                else if (mod.PreviewImage.IsDownloading)
+                {
+                    PreviewModImageMissing.Text = "🔄";
+                    PreviewModImage.Source = mod.PreviewImage;
+                }
+                else
+                {
+                    PreviewModImageMissing.Text = String.Empty;
+                    PreviewModImage.Source = mod.PreviewImage;
+                }
             }
+        }
+
+        private void UpdateSubModDetails(Mod subMod)
+		{
+            if (subMod == null)
+                return;
+            PreviewSubModActive.IsEnabled = tabCtrlMain.SelectedIndex == 0;
+            PreviewSubModActive.IsChecked = subMod.IsActive;
+            PreviewSubModDescription.Text = subMod.Description ?? "No description.";
         }
 
         private void UpdateCatalogInstallationState()
@@ -753,9 +822,9 @@ PS5 white button prompts - Pixel Type Button Prompts
                 if (ac == null && bc == null)
                     return 0;
                 if (ac == null)
-                    return ascending ? 1 : -1;
+                    return 1;
                 if (bc == null)
-                    return ascending ? -1 : 1;
+                    return -1;
                 return ascending ? ac.CompareTo(bc) : -ac.CompareTo(bc);
             });
             modListCatalog = new ObservableCollection<Mod>(catalogList);
@@ -779,12 +848,21 @@ PS5 white button prompts - Pixel Type Button Prompts
                 str = str.Trim().Trim('"');
                 String[] iniModPriorityList = Regex.Split(str, @""",\s*""");
                 String[][] listCouple = new String[][] { iniModPriorityList, iniModActiveList };
+                List<String> subModList = new List<String>();
                 for (Int32 listI = 0; listI < 2; ++listI)
                 {
                     for (Int32 i = 0; i < listCouple[listI].Length; ++i)
                     {
                         if (String.IsNullOrEmpty(listCouple[listI][i]))
                             continue;
+                        if (!Directory.Exists(listCouple[listI][i]))
+                            continue;
+                        if (listCouple[listI][i].Contains("/"))
+						{
+                            if (listI == 1)
+                                subModList.Add(listCouple[listI][i]);
+                            continue;
+                        }
                         Mod mod = Mod.SearchWithPath(modListInstalled, listCouple[listI][i]);
                         if (mod != null)
                         {
@@ -792,8 +870,15 @@ PS5 white button prompts - Pixel Type Button Prompts
                                 mod.IsActive = true;
                             continue;
                         }
-                        mod = Mod.SearchWithPath(modListCatalog, listCouple[listI][i]);
-                        if (mod == null)
+                        Mod catalogMod = Mod.SearchWithPath(modListCatalog, listCouple[listI][i]);
+                        if (catalogMod != null)
+                        {
+                            if (File.Exists(catalogMod.InstallationPath + "/" + Mod.DESCRIPTION_FILE))
+                                mod = new Mod(catalogMod.InstallationPath);
+                            else
+                                mod = catalogMod;
+                        }
+                        else
                         {
                             GenerateAutomaticDescriptionFile(listCouple[listI][i]);
                             if (File.Exists(listCouple[listI][i] + "/" + Mod.DESCRIPTION_FILE))
@@ -805,6 +890,18 @@ PS5 white button prompts - Pixel Type Button Prompts
                             mod.IsActive = true;
                         modListInstalled.Add(mod);
                     }
+                }
+                foreach (String path in subModList)
+				{
+                    Int32 sepIndex = path.IndexOf("/");
+                    String mainModPath = path.Substring(0, sepIndex);
+                    String subModPath = path.Substring(sepIndex + 1);
+                    Mod mod = Mod.SearchWithPath(modListInstalled, mainModPath);
+                    if (mod.SubMod == null)
+                        continue;
+                    foreach (Mod sub in mod.SubMod)
+                        if (sub.InstallationPath == subModPath)
+                            sub.IsActive = true;
                 }
             }
             catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }
@@ -819,7 +916,30 @@ PS5 white button prompts - Pixel Type Button Prompts
                 for (Int32 i = 0; i < modListInstalled.Count; ++i)
 				{
                     if (modListInstalled[i].IsActive)
-                        iniModActiveList.Add(modListInstalled[i].InstallationPath);
+                    {
+                        Mod mod = modListInstalled[i];
+                        Int32 subModIndex = 0;
+                        if (mod.SubMod != null)
+                        {
+                            mod.SubMod.Sort((a, b) => b.Priority - a.Priority);
+                            while (subModIndex < mod.SubMod.Count && mod.SubMod[subModIndex].Priority >= 0)
+                            {
+                                if (mod.SubMod[subModIndex].IsActive)
+                                    iniModActiveList.Add(mod.InstallationPath + "/" + mod.SubMod[subModIndex].InstallationPath);
+                                subModIndex++;
+                            }
+                        }
+                        iniModActiveList.Add(mod.InstallationPath);
+                        if (mod.SubMod != null)
+                        {
+                            while (subModIndex < mod.SubMod.Count)
+                            {
+                                if (mod.SubMod[subModIndex].IsActive)
+                                    iniModActiveList.Add(mod.InstallationPath + "/" + mod.SubMod[subModIndex].InstallationPath);
+                                subModIndex++;
+                            }
+                        }
+                    }
                     iniModPriorityList.Add(modListInstalled[i].InstallationPath);
                 }
                 IniFile iniFile = new IniFile(INI_PATH);
@@ -841,7 +961,9 @@ PS5 white button prompts - Pixel Type Button Prompts
             CaptionModVersion.Text = Lang.ModEditor.Version + ":";
             CaptionModDescription.Text = Lang.ModEditor.Description + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
-            CaptionPreviewImageMissing.Text = Lang.ModEditor.PreviewImageMissing;
+            PreviewModImageMissing.Text = Lang.ModEditor.PreviewImageMissing;
+            PreviewSubModActive.Content = Lang.ModEditor.Active;
+            CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
             colMyModsPriority.Header = Lang.ModEditor.Priority;
             colMyModsName.Header = Lang.ModEditor.Name;

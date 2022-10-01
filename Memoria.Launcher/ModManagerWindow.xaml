@@ -275,7 +275,7 @@
                                     Background="Transparent"/>-->
                         </WrapPanel>
 
-                        <Popup x:Name="popupModUpdateType"
+                        <!--<Popup x:Name="popupModUpdateType"
                                StaysOpen="False"
                                PlacementTarget="{Binding ElementName=btnUpdateModType}" 
                                HorizontalOffset="-116">
@@ -286,7 +286,7 @@
                                     <RadioButton FontSize="12" IsChecked="{Binding PreviewIsNotifyAboutUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/>
                                 </StackPanel>
                             </Border>
-                        </Popup>
+                        </Popup>-->
 
                         <WrapPanel Margin="3,0,3,10" Grid.Row="4" Grid.ColumnSpan="2">
                             <TextBlock x:Name="CaptionModDescription" Text="Description:" Style="{StaticResource ModInfoLabelStyle}"/>
@@ -294,7 +294,41 @@
                                Style="{StaticResource ModInfoDetailsStyle}"/>
                         </WrapPanel>
 
-                        <WrapPanel Margin="3,0,3,0" Grid.Row="5" Grid.ColumnSpan="2">
+                        <WrapPanel x:Name="PreviewSubModPanel" Margin="3,3,3,3" Grid.Row="5" Grid.ColumnSpan="2" Visibility="Collapsed">
+                            <Grid x:Name="gridSubModInfo" Margin="0,0,0,3">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <WrapPanel Margin="3,0,3,0" Grid.Row="0" Grid.ColumnSpan="2">
+                                    <TextBlock x:Name="CaptionSubModPanel" Text="Mod options:"
+                                    Style="{StaticResource ModInfoLabelStyle}"/>
+                                </WrapPanel>
+                                <WrapPanel Margin="3,0,3,0" Grid.Row="1">
+                                    <ComboBox x:Name="PreviewSubModList" DataContext="{Binding Name}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </WrapPanel>
+                                <WrapPanel Margin="3,0,3,0" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+                                    <CheckBox x:Name="PreviewSubModActive" Content="Active"/>
+                                </WrapPanel>
+                                <WrapPanel Margin="3,0,3,0" Grid.Row="2" Grid.ColumnSpan="2">
+                                    <TextBlock x:Name="PreviewSubModDescription" Text=""
+                                    Style="{StaticResource ModInfoDetailsStyle}"/>
+                                </WrapPanel>
+                            </Grid>
+                        </WrapPanel>
+
+                        <WrapPanel Margin="3,0,3,0" Grid.Row="6" Grid.ColumnSpan="2">
                             <TextBlock x:Name="CaptionModReleaseNotes" Text="Release Notes:" Style="{StaticResource ModInfoLabelStyle}"/>
                             <TextBlock x:Name="PreviewModReleaseNotes" Text=""
                                        Style="{StaticResource ModInfoDetailsStyle}"/>
@@ -302,26 +336,16 @@
                     </Grid>
                 </ScrollViewer>
 
-                <Image Grid.Row="1"
+                <Image x:Name="PreviewModImage"
+                       Grid.Row="1"
                        Margin="3"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Bottom"
                        Stretch="Uniform"
                        RenderOptions.BitmapScalingMode="HighQuality">
-                    <Image.Style>
-                        <!--Custom style to hide image when loading-->
-                        <Style TargetType="{x:Type Image}">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding PreviewModImageSource, FallbackValue=''}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Hidden"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Image.Style>
                 </Image>
 
-                <TextBlock x:Name="CaptionPreviewImageMissing"
+                <TextBlock x:Name="PreviewModImageMissing"
                            Grid.Row="1"
                            Visibility="{Binding NoImageTextVisibility}"
                            HorizontalAlignment="Center"

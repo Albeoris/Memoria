@@ -219,6 +219,7 @@
     Version = "Version"
     Description = "Description"
     ReleaseNotes = "Release Notes"
+    SubModPanel = "Mod options"
     Priority = "Priority"
     Installed = "Installed"
     Active = "Active"

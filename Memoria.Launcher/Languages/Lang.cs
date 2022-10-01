@@ -474,6 +474,7 @@ namespace Memoria.Launcher
             public static readonly String Version = GetModEditor(nameof(Version));
             public static readonly String Description = GetModEditor(nameof(Description));
             public static readonly String ReleaseNotes = GetModEditor(nameof(ReleaseNotes));
+            public static readonly String SubModPanel = GetModEditor(nameof(SubModPanel));
             public static readonly String Priority = GetModEditor(nameof(Priority));
             public static readonly String Installed = GetModEditor(nameof(Installed));
             public static readonly String Active = GetModEditor(nameof(Active));
