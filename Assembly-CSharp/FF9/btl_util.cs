@@ -52,7 +52,7 @@ namespace FF9
 		{
 			if (btl.bi.player != 0)
 				return FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no;
-			return CharacterSerialNumber.MAX;
+			return CharacterSerialNumber.NONE;
 		}
 
 		public static CMD_DATA getCurCmdPtr()

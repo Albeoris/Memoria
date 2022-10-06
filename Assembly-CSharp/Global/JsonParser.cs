@@ -47,16 +47,22 @@ public class JsonParser : ISharedDataParser
 		this.AddReservedBuffer(rootMainClass, schemaMainClass, "93000_MiniGame", 512);
 		this.AddReservedBuffer(rootMainClass, schemaMainClass, "94000_Common", 512);
 		JSONClass rootCommonClass = new JSONClass();
-		PLAYER[] player = FF9StateSystem.Common.FF9.player;
 		JSONArray rootCommonArray = new JSONArray();
+		PLAYER[] playerArray = new PLAYER[9];
+		for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; i++)
+		{
+			Int32 arrIndex = SelectOldSaveSlot(FF9StateSystem.Common.FF9.player[i]);
+			if (arrIndex >= 0)
+				playerArray[arrIndex] = FF9StateSystem.Common.FF9.player[i];
+		}
 		for (Int32 i = 0; i < 9; i++)
-			rootCommonArray.Add(player[i].bonus.cap.ToString());
+			rootCommonArray.Add(playerArray[i].bonus.cap.ToString());
 		rootCommonClass.Add("00001_player_bonus", rootCommonArray);
 		rootMainClass.Add("94000_Common", rootCommonClass);
 		JSONClass schemaCommonClass = new JSONClass();
 		JSONArray schemaCommonArray = new JSONArray();
 		for (Int32 j = 0; j < 9; j++)
-			schemaCommonArray.Add(((UInt32)player[j].bonus.cap).GetType().ToString());
+			schemaCommonArray.Add(typeof(UInt32).ToString());
 		schemaCommonClass.Add("00001_player_bonus", schemaCommonArray);
 		schemaMainClass.Add("94000_Common", schemaCommonClass);
 		this.AddReservedBuffer(rootMainClass["94000_Common"].AsObject, schemaMainClass["94000_Common"].AsObject, "99999_ReservedBuffer", 476);
@@ -223,10 +229,17 @@ public class JsonParser : ISharedDataParser
 		});
 		this.AddReservedBuffer(rootMainClass["98000_Achievement"].AsObject, schemaMainClass["98000_Achievement"].AsObject, "99999_ReservedBuffer", 492);
 		this.AddReservedBuffer(rootMainClass, schemaMainClass, "99000_Other", 1536);
+
 		JSONClass rootMemoriaClass = new JSONClass();
 		JSONClass schemaMemoriaClass = new JSONClass();
 		rootNode.Add("MemoriaExtraData", rootMemoriaClass);
 		this.ParseCommonDataToJson(FF9StateSystem.Common.FF9, rootMemoriaClass, schemaMemoriaClass, false);
+		JSONClass memoriaMagicStoneClass = new JSONClass();
+		JSONArray memoriaMagicStoneArray = new JSONArray();
+		for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; i++)
+			memoriaMagicStoneArray.Add(FF9StateSystem.Common.FF9.player[i].bonus.cap.ToString());
+		memoriaMagicStoneClass.Add("00001_player_bonus", memoriaMagicStoneArray);
+		rootMemoriaClass.Add("94000_Common", memoriaMagicStoneClass);
 	}
 
 	public void StoreData(JSONClass rootNode)
@@ -264,22 +277,8 @@ public class JsonParser : ISharedDataParser
 		{
 			for (Int32 i = 0; i < 9; i++)
 			{
-				PLAYER player = FF9StateSystem.Common.FF9.player[i];
-				UInt16 capBonus = (UInt16)rootMainClass["94000_Common"]["00001_player_bonus"][i].AsUInt;
-				if (capBonus == 0)
-				{
-					player.bonus.cap = (UInt16)((player.level - 1) * 5);
-					if (player.info.serial_no == CharacterSerialNumber.EIKO_FLUTE || player.info.serial_no == CharacterSerialNumber.EIKO_KNIFE)
-					{
-						FF9LEVEL_BONUS bonus = player.bonus;
-						bonus.cap = (UInt16)(bonus.cap + this.getExtraCap(player));
-					}
-				}
-				else
-				{
-					player.bonus.cap = capBonus;
-				}
-				player.ValidateMaxStone();
+				PLAYER player = GetPlayerFromOldSave(i, false);
+				player.bonus.cap = (UInt16)rootMainClass["94000_Common"]["00001_player_bonus"][i].AsUInt;
 			}
 		}
 		if (rootMainClass["50000_Setting"] != null && rootMainClass["95000_Setting"] != null && rootMainClass["50000_Setting"]["time"] != null && rootMainClass["95000_Setting"]["00001_time"] != null)
@@ -323,13 +322,27 @@ public class JsonParser : ISharedDataParser
 			FF9StateSystem.Achievement.summon_bahamut = rootMainClass["98000_Achievement"]["000016_summon_bahamut"].AsBool;
 		if (rootMainClass["98000_Achievement"]["000017_summon_arc"] != null)
 			FF9StateSystem.Achievement.summon_arc = rootMainClass["98000_Achievement"]["000017_summon_arc"].AsBool;
+
 		JSONNode memoriaClass = rootNode["MemoriaExtraData"];
 		if (memoriaClass["40000_Common"] != null)
 			this.ParseCommonJsonToData(memoriaClass["40000_Common"], false);
+		JSONArray memoriaMagicStoneArray = null;
+		if (memoriaClass["94000_Common"] != null && memoriaClass["94000_Common"]["00001_player_bonus"] != null)
+			memoriaMagicStoneArray = memoriaClass["94000_Common"]["00001_player_bonus"].AsArray;
 		for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; i++)
 		{
+			PLAYER player = FF9StateSystem.Common.FF9.player[i];
+			if (memoriaMagicStoneArray != null)
+				player.bonus.cap = (UInt16)memoriaMagicStoneArray[i].AsUInt;
+			if (player.bonus.cap == 0)
+			{
+				player.bonus.cap = (UInt16)((player.level - 1) * 5);
+				if (player.info.slot_no == CharacterId.Eiko)
+					player.bonus.cap += this.getExtraCap(player);
+			}
 			// Run "FF9Play_Update" anyway when loading data, mostly for "SupportingAbilityFeature.TriggerOnEnable"
-			ff9play.FF9Play_Update(FF9StateSystem.Common.FF9.player[i]);
+			player.ValidateMaxStone();
+			ff9play.FF9Play_Update(player);
 		}
 	}
 
@@ -1048,9 +1061,8 @@ public class JsonParser : ISharedDataParser
 				if (playerClass["status"] != null)
 					player.status = (Byte)playerClass["status"].AsInt;
 				if (playerClass["equip"] != null)
-					for (Int32 j = 0; j < playerClass["equip"].Count; j++)
-						if (playerClass["equip"][j] != null)
-							player.equip[j] = (Byte)playerClass["equip"][j].AsInt;
+					for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
+						player.equip[j] = (Byte)playerClass["equip"][j].AsInt;
 				JSONClass playerBonusClass = playerClass["bonus"].AsObject;
 				if (playerBonusClass["dex"] != null)
 					player.bonus.dex = (UInt16)playerBonusClass["dex"].AsInt;
@@ -1061,20 +1073,18 @@ public class JsonParser : ISharedDataParser
 				if (playerBonusClass["wpr"] != null)
 					player.bonus.wpr = (UInt16)playerBonusClass["wpr"].AsInt;
 				if (playerClass["pa"] != null)
-					for (Int32 j = 0; j < playerClass["pa"].Count; j++)
-						if (playerClass["pa"][j] != null)
-							player.pa[j] = (Byte)playerClass["pa"][j].AsInt;
+					for (Int32 j = 0; j < playerClass["pa"].Count && j < player.pa.Length; j++)
+						player.pa[j] = (Byte)playerClass["pa"][j].AsInt;
 				if (playerClass["sa"] != null)
-					for (Int32 j = 0; j < playerClass["sa"].Count; j++)
-						if (playerClass["sa"][j] != null)
-							player.sa[j] = playerClass["sa"][j].AsUInt;
+					for (Int32 j = 0; j < playerClass["sa"].Count && j < player.sa.Length; j++)
+						player.sa[j] = playerClass["sa"][j].AsUInt;
 				player.ValidateSupportAbility();
 				player.ValidateBasisStatus();
 			}
 		}
 		if (jsonData["slot"] != null)
 		{
-			for (Int32 i = 0; i < jsonData["slot"].Count; i++)
+			for (Int32 i = 0; i < jsonData["slot"].Count && i < 4; i++)
 			{
 				Int32 slotNo = jsonData["slot"][i].AsInt;
 				if (slotNo == 255 || slotNo < 0)
@@ -1101,9 +1111,9 @@ public class JsonParser : ISharedDataParser
 			ffglobal.dragon_no = (Int16)jsonData["dragon_no"].AsInt;
 		if (jsonData["items"] != null)
 		{
-			for (Int32 i = 0; i < jsonData["items"].Count; i++)
+			for (Int32 i = 0; i < jsonData["items"].Count && i < 256; i++)
 			{
-				if (jsonData["items"][i] != null || jsonData["items"][i].AsInt != 255)
+				if (jsonData["items"][i].AsInt != 255)
 				{
 					JSONClass itemClass = jsonData["items"][i].AsObject;
 					ffglobal.item[i].id = (Byte)itemClass["id"].AsInt;
@@ -1112,7 +1122,7 @@ public class JsonParser : ISharedDataParser
 			}
 		}
 		if (jsonData["rareItems"] != null)
-			for (Int32 i = 0; i < 64; i++)
+			for (Int32 i = 0; i < jsonData["rareItems"].Count && i < 64; i++)
 				ffglobal.rare_item[i] = (Byte)jsonData["rareItems"][i].AsInt;
 	}
 

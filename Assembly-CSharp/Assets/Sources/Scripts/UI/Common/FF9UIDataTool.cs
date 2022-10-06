@@ -9,17 +9,17 @@ using XInputDotNetPure;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
-	public class FF9UIDataTool
+	public static class FF9UIDataTool
 	{
 		public static void DisplayItem(Int32 itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
 		{
 			if (itemId != 255)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[itemId];
-				Byte b = (Byte)(isEnable ? ff9ITEM_DATA.color : 15);
+				FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
+				Byte colorIndex = isEnable ? item.color : (Byte)15;
 				if (itemIcon != null)
 				{
-					itemIcon.spriteName = "item" + ff9ITEM_DATA.shape.ToString("0#") + "_" + b.ToString("0#");
+					itemIcon.spriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
 					itemIcon.alpha = isEnable ? 1f : 0.5f;
 				}
 				if (itemName != null)
@@ -46,33 +46,33 @@ namespace Assets.Sources.Scripts.UI.Common
 			charHud.HPLabel.text = player.cur.hp.ToString();
 			charHud.HPMaxLabel.text = player.max.hp.ToString();
 			charHud.HPTextColor = color;
-			color = ((player.cur.mp > player.max.mp / 6) ? FF9TextTool.White : FF9TextTool.Yellow);
+			color = (player.cur.mp > player.max.mp / 6) ? FF9TextTool.White : FF9TextTool.Yellow;
 			charHud.MPLabel.text = player.cur.mp.ToString();
 			charHud.MPMaxLabel.text = player.max.mp.ToString();
 			charHud.MPTextColor = color;
-			if (charHud.MagicStoneLabel != (UnityEngine.Object)null)
+			if (charHud.MagicStoneLabel != null)
 			{
 				charHud.MagicStoneLabel.text = player.cur.capa.ToString();
 				charHud.MagicStoneMaxLabel.text = player.max.capa.ToString();
-				charHud.MagicStoneTextColor = ((player.cur.capa != 0) ? FF9TextTool.White : FF9TextTool.Yellow);
+				charHud.MagicStoneTextColor = (player.cur.capa != 0) ? FF9TextTool.White : FF9TextTool.Yellow;
 			}
 			if (charHud.StatusesSpriteList != null)
 			{
-				Int32 num = 0;
+				Int32 statusIndex = 0;
 				UISprite[] statusesSpriteList = charHud.StatusesSpriteList;
-				for (Int32 i = 0; i < (Int32)statusesSpriteList.Length; i++)
+				for (Int32 i = 0; i < statusesSpriteList.Length; i++)
 				{
 					UISprite uisprite = statusesSpriteList[i];
-					if (((Int32)player.status & 1 << num) != 0)
+					if ((player.status & (1 << statusIndex)) != 0)
 					{
-						uisprite.spriteName = FF9UIDataTool.IconSpriteName[FF9UIDataTool.status_id[num]];
+						uisprite.spriteName = FF9UIDataTool.IconSpriteName[FF9UIDataTool.status_id[statusIndex]];
 						uisprite.alpha = 1f;
 					}
 					else
 					{
 						uisprite.alpha = 0f;
 					}
-					num++;
+					statusIndex++;
 				}
 			}
 		}
@@ -311,20 +311,14 @@ namespace Assets.Sources.Scripts.UI.Common
 				case Control.LeftTrigger:
 				case Control.RightTrigger:
 				{
-					KeyCode keycode;
+					KeyCode primaryKey;
 					if (tag == NGUIText.KeyboardButtonIcon)
-					{
-						keycode = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-					}
+						primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
 					else if (checkFromConfig)
-					{
-						keycode = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
-					}
+						primaryKey = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
 					else
-					{
-						keycode = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-					}
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, keycode);
+						primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
+					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, primaryKey);
 					break;
 				}
 				case Control.Pause:
@@ -356,11 +350,11 @@ namespace Assets.Sources.Scripts.UI.Common
 		private static GameObject GetMobileButtonGameObject(Control key)
 		{
 			GameObject result = null;
-			Int32 key2 = 0;
+			Int32 iconIndex = 0;
 			Int32 mesID = EventEngineUtils.eventIDToMESID[FF9StateSystem.Common.FF9.fldMapNo];
 			if (mesID == 2 && key == Control.Up) // Prima Vista
-				key2 = 268;
-			FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.IconSpriteName[key2]);
+				iconIndex = 268; // icon_up
+			FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, FF9UIDataTool.IconSpriteName[iconIndex]);
 			return result;
 		}
 
@@ -401,34 +395,17 @@ namespace Assets.Sources.Scripts.UI.Common
 				}
 			}
             if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
-            {
-                bool flag = !global::GamePad.GetState(PlayerIndex.One).IsConnected;
-                if (flag)
-                {
-                    if (key == Control.Pause)
-                    {
-                        spriteName = "keyboard_button_backspace";
-                    }
-                }
-            }
+				if (!global::GamePad.GetState(PlayerIndex.One).IsConnected && key == Control.Pause)
+					spriteName = "keyboard_button_backspace";
             return FF9UIDataTool.GetSpriteSize(spriteName);
 		}
 
 		private static Vector2 GetSpriteSize(String spriteName)
 		{
 			UISpriteData sprite = FF9UIDataTool.IconAtlas.GetSprite(spriteName);
-			Vector2 result;
 			if (sprite == null)
-			{
-				result = new Vector2(64f, 64f);
-			}
-			else
-			{
-				Int32 num = sprite.width + sprite.paddingLeft + sprite.paddingRight;
-				Int32 num2 = sprite.height + sprite.paddingTop + sprite.paddingBottom;
-				result = new Vector2((Single)num, (Single)num2);
-			}
-			return result;
+				return new Vector2(64f, 64f);
+			return new Vector2(sprite.width + sprite.paddingLeft + sprite.paddingRight, sprite.height + sprite.paddingTop + sprite.paddingBottom);
 		}
 
 		private static GameObject DrawButton(BitmapIconType bitmapIconType)
@@ -453,58 +430,52 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static GameObject GetControllerGameObject(BitmapIconType bitmapIconType)
 		{
-			GameObject gameObject = (GameObject)null;
+			GameObject iconObject = null;
 			switch (bitmapIconType)
 			{
 			case BitmapIconType.Sprite:
-				gameObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapSpritePool);
-				if (gameObject == (UnityEngine.Object)null)
+				iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapSpritePool);
+				if (iconObject == null)
 				{
-					if (FF9UIDataTool.controllerSpritePrefab == (UnityEngine.Object)null)
-					{
+					if (FF9UIDataTool.controllerSpritePrefab == null)
 						FF9UIDataTool.controllerSpritePrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject);
-					}
-					gameObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerSpritePrefab);
-					gameObject.tag = "BitmapSprite";
+					iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerSpritePrefab);
+					iconObject.tag = "BitmapSprite";
 				}
-				gameObject.SetActive(false);
-				FF9UIDataTool.activeBitmapSpriteList.Push(gameObject);
+				iconObject.SetActive(false);
+				FF9UIDataTool.activeBitmapSpriteList.Push(iconObject);
 				break;
 			case BitmapIconType.Keyboard:
-				gameObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapKeyboardPool);
-				if (gameObject == (UnityEngine.Object)null)
+				iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapKeyboardPool);
+				if (iconObject == null)
 				{
-					if (FF9UIDataTool.controllerKeyboardPrefab == (UnityEngine.Object)null)
-					{
+					if (FF9UIDataTool.controllerKeyboardPrefab == null)
 						FF9UIDataTool.controllerKeyboardPrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject);
-					}
-					gameObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerKeyboardPrefab);
-					gameObject.tag = "BitmapKeyboard";
+					iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerKeyboardPrefab);
+					iconObject.tag = "BitmapKeyboard";
 				}
-				gameObject.SetActive(false);
-				FF9UIDataTool.activeBitmapKeyboardList.Push(gameObject);
+				iconObject.SetActive(false);
+				FF9UIDataTool.activeBitmapKeyboardList.Push(iconObject);
 				break;
 			case BitmapIconType.New:
-				gameObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapNewIconPool);
-				if (gameObject == (UnityEngine.Object)null)
+				iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapNewIconPool);
+				if (iconObject == null)
 				{
-					if (FF9UIDataTool.newIconPrefab == (UnityEngine.Object)null)
-					{
-						FF9UIDataTool.newIconPrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/New Icon") as GameObject);
-					}
-					gameObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.newIconPrefab);
-					gameObject.tag = "BitmapNewIcon";
+					if (FF9UIDataTool.newIconPrefab == null)
+						FF9UIDataTool.newIconPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/New Icon") as GameObject;
+					iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.newIconPrefab);
+					iconObject.tag = "BitmapNewIcon";
 				}
-				gameObject.SetActive(false);
-				FF9UIDataTool.activeBitmapNewIconList.Push(gameObject);
+				iconObject.SetActive(false);
+				FF9UIDataTool.activeBitmapNewIconList.Push(iconObject);
 				break;
 			}
-			return gameObject;
+			return iconObject;
 		}
 
 		private static GameObject GetGameObjectFromPool(List<GameObject> currentPool)
 		{
-			GameObject gameObject = (GameObject)null;
+			GameObject gameObject = null;
 			if (currentPool.Count > 0)
 			{
 				gameObject = currentPool.Pop<GameObject>();
@@ -517,21 +488,19 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			String key = spriteName + "#" + FF9StateSystem.Settings.CurrentLanguage;
 			if (FF9UIDataTool.iconLocalizeList.ContainsKey(key))
-			{
 				spriteName = FF9UIDataTool.iconLocalizeList[key];
-			}
 			return spriteName;
 		}
 
 		public static void ReleaseBitmapIconToPool(GameObject bitmap)
 		{
-			List<GameObject> theList;
-			List<GameObject> list;
-			FF9UIDataTool.GetCurrentPool(bitmap.tag, out theList, out list);
+			List<GameObject> inactivePool;
+			List<GameObject> activePool;
+			FF9UIDataTool.GetCurrentPool(bitmap.tag, out inactivePool, out activePool);
 			bitmap.transform.parent = PersistenSingleton<UIManager>.Instance.transform;
 			bitmap.SetActive(false);
-			list.Remove(bitmap);
-			theList.Push(bitmap);
+			activePool.Remove(bitmap);
+			inactivePool.Push(bitmap);
 		}
 
 		private static void GetCurrentPool(String tag, out List<GameObject> currentPool, out List<GameObject> currentActivePool)
@@ -569,17 +538,11 @@ namespace Assets.Sources.Scripts.UI.Common
 		public static void ReleaseAllTypeBitmapIconsToPool()
 		{
 			if (FF9UIDataTool.activeBitmapKeyboardList.Count != 0)
-			{
 				FF9UIDataTool.ReleaseAllBitmapIconsToPool(FF9UIDataTool.bitmapKeyboardPool, FF9UIDataTool.activeBitmapKeyboardList);
-			}
 			if (FF9UIDataTool.activeBitmapSpriteList.Count != 0)
-			{
 				FF9UIDataTool.ReleaseAllBitmapIconsToPool(FF9UIDataTool.bitmapSpritePool, FF9UIDataTool.activeBitmapSpriteList);
-			}
 			if (FF9UIDataTool.activeBitmapNewIconList.Count != 0)
-			{
 				FF9UIDataTool.ReleaseAllBitmapIconsToPool(FF9UIDataTool.bitmapNewIconPool, FF9UIDataTool.activeBitmapNewIconList);
-			}
 		}
 
 		public static void ClearAllPool()
@@ -599,13 +562,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		public static void DrawLabel(GameObject go, KeyCode keycode)
 		{
-			String text = String.Empty;
-			if (FF9UIDataTool.KeyboardIconLabel.ContainsKey(keycode))
-			{
-				text = FF9UIDataTool.KeyboardIconLabel[keycode];
-			}
-			UILabel component = go.GetComponent<UILabel>();
-			component.text = text;
+			go.GetComponent<UILabel>().text = FF9UIDataTool.KeyboardIconLabel.ContainsKey(keycode) ? FF9UIDataTool.KeyboardIconLabel[keycode] : String.Empty;
 			if (keycode >= KeyCode.Keypad0 && keycode <= KeyCode.KeypadPlus)
 			{
 				go.transform.localPosition = new Vector3(go.transform.localPosition.x, -37f, go.transform.localPosition.z);
@@ -623,19 +580,13 @@ namespace Assets.Sources.Scripts.UI.Common
 			String result = String.Empty;
 			if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || tag == NGUIText.JoyStickButtonIcon)
 			{
-				Dictionary<String, String> dictionary;
+				Dictionary<String, String> buttonSpriteDictionary;
 				if (Application.platform == RuntimePlatform.Android)
-				{
-					dictionary = FF9UIDataTool.buttonSpriteNameAndroidJoystick;
-				}
+					buttonSpriteDictionary = FF9UIDataTool.buttonSpriteNameAndroidJoystick;
 				else if (Application.platform == RuntimePlatform.IPhonePlayer)
-				{
-					dictionary = FF9UIDataTool.buttonSpriteNameiOSJoystick;
-				}
+					buttonSpriteDictionary = FF9UIDataTool.buttonSpriteNameiOSJoystick;
 				else
-				{
-					dictionary = FF9UIDataTool.buttonSpriteNameJoystick;
-				}
+					buttonSpriteDictionary = FF9UIDataTool.buttonSpriteNameJoystick;
 				switch (key)
 				{
 				case Control.Confirm:
@@ -647,19 +598,13 @@ namespace Assets.Sources.Scripts.UI.Common
 				case Control.LeftTrigger:
 				case Control.RightTrigger:
 				{
-					String key2;
+					String primaryKey;
 					if (checkFromConfig)
-					{
-						key2 = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
-					}
+						primaryKey = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
 					else
-					{
-						key2 = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
-					}
-					if (dictionary.ContainsKey(key2))
-					{
-						result = dictionary[key2];
-					}
+						primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
+					if (buttonSpriteDictionary.ContainsKey(primaryKey))
+						result = buttonSpriteDictionary[primaryKey];
 					break;
 				}
 				case Control.Pause:
@@ -669,19 +614,19 @@ namespace Assets.Sources.Scripts.UI.Common
 					result = FF9UIDataTool.buttonSpriteNameJoystick["JoystickButton7"];
 					break;
 				case Control.Up:
-					result = dictionary["Up"];
+					result = buttonSpriteDictionary["Up"];
 					break;
 				case Control.Down:
-					result = dictionary["Down"];
+					result = buttonSpriteDictionary["Down"];
 					break;
 				case Control.Left:
-					result = dictionary["Left"];
+					result = buttonSpriteDictionary["Left"];
 					break;
 				case Control.Right:
-					result = dictionary["Right"];
+					result = buttonSpriteDictionary["Right"];
 					break;
 				case Control.DPad:
-					result = dictionary["DPad"];
+					result = buttonSpriteDictionary["DPad"];
 					break;
 				}
 			}
@@ -694,16 +639,12 @@ namespace Assets.Sources.Scripts.UI.Common
 			if (Application.platform == RuntimePlatform.IPhonePlayer)
 			{
 				if (FF9UIDataTool.buttonSpriteNameiOSJoystick.ContainsKey(key))
-				{
 					result = FF9UIDataTool.buttonSpriteNameiOSJoystick[key];
-				}
 			}
 			else if (Application.platform == RuntimePlatform.Android)
 			{
 				if (FF9UIDataTool.buttonSpriteNameAndroidJoystick.ContainsKey(key))
-				{
 					result = FF9UIDataTool.buttonSpriteNameAndroidJoystick[key];
-				}
 			}
 			else if (FF9UIDataTool.buttonSpriteNameJoystick.ContainsKey(key))
 			{
@@ -714,94 +655,57 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		public static String AvatarSpriteName(CharacterSerialNumber serialNo)
 		{
-			switch (serialNo)
+			if (serialNo >= CharacterSerialNumber.GARNET_LH_ROD && serialNo <= CharacterSerialNumber.GARNET_SH_KNIFE)
 			{
-				case CharacterSerialNumber.ZIDANE_DAGGER:
-				case CharacterSerialNumber.ZIDANE_SWORD:
-					return "face00";
-				case CharacterSerialNumber.VIVI:
-					return "face01";
-				case CharacterSerialNumber.GARNET_LH_ROD:
-				case CharacterSerialNumber.GARNET_LH_KNIFE:
-					if (Configuration.Graphics.GarnetHair == 2)
-						return "face03";
+				if (Configuration.Graphics.GarnetHair == 1)
 					return "face02";
-				case CharacterSerialNumber.GARNET_SH_ROD:
-				case CharacterSerialNumber.GARNET_SH_KNIFE:
-					if (Configuration.Graphics.GarnetHair == 1)
-						return "face02";
+				if (Configuration.Graphics.GarnetHair == 2)
 					return "face03";
-				case CharacterSerialNumber.STEINER_OUTDOOR:
-				case CharacterSerialNumber.STEINER_INDOOR:
-					return "face04";
-				case CharacterSerialNumber.KUINA:
-					return "face05";
-				case CharacterSerialNumber.EIKO_FLUTE:
-				case CharacterSerialNumber.EIKO_KNIFE:
-					return "face06";
-				case CharacterSerialNumber.FREIJA:
-					return "face07";
-				case CharacterSerialNumber.SALAMANDER:
-					return "face08";
-				case CharacterSerialNumber.CINNA:
-					return "face09";
-				case CharacterSerialNumber.MARCUS:
-					return "face10";
-				case CharacterSerialNumber.BLANK:
-				case CharacterSerialNumber.BLANK_ARMOR:
-					return "face11";
-				case CharacterSerialNumber.BEATRIX:
-					return "face12";
-				default:
-					return String.Empty;
 			}
+			return btl_mot.BattleParameterList[(Int32)serialNo].AvatarSprite;
 		}
 
 		public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
 		{
-			Sprite sprite = (Sprite)null;
-			String text;
+			Sprite sprite = null;
+			String langSymbol;
 			if (FF9StateSystem.Settings.CurrentLanguage == "English(UK)")
+				langSymbol = "US";
+			else
+				langSymbol = Localization.GetSymbol();
+			String spriteName;
+			if (titleId == FF9UIDataTool.WorldTitleMistContinent)
 			{
-				text = "US";
+				spriteName = "title_world_mist";
+			}
+			else if (titleId == FF9UIDataTool.WorldTitleOuterContinent)
+			{
+				spriteName = "title_world_outer";
+			}
+			else if (titleId == FF9UIDataTool.WorldTitleForgottenContinent)
+			{
+				spriteName = "title_world_forgotten";
+			}
+			else if (titleId == FF9UIDataTool.WorldTitleLostContinent)
+			{
+				spriteName = "title_world_lost";
 			}
 			else
 			{
-				text = Localization.GetSymbol();
+				global::Debug.LogError("World Continent Title: Could not found resource from titleId:" + titleId);
+				return sprite;
 			}
-			String text2;
-			if ((Int32)titleId == (Int32)FF9UIDataTool.WorldTitleMistContinent)
+			spriteName += isShadow ? "_shadow_" + langSymbol.ToLower() : "_" + langSymbol.ToLower();
+			if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
 			{
-				text2 = "title_world_mist";
-			}
-			else if ((Int32)titleId == (Int32)FF9UIDataTool.WorldTitleOuterContinent)
-			{
-				text2 = "title_world_outer";
-			}
-			else if ((Int32)titleId == (Int32)FF9UIDataTool.WorldTitleForgottenContinent)
-			{
-				text2 = "title_world_forgotten";
+				sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
 			}
 			else
 			{
-				if ((Int32)titleId != (Int32)FF9UIDataTool.WorldTitleLostContinent)
-				{
-					global::Debug.LogError("World Continent Title: Could not found resource from titleId:" + titleId);
-					return sprite;
-				}
-				text2 = "title_world_lost";
-			}
-			text2 += ((!isShadow) ? ("_" + text.ToLower()) : ("_shadow_" + text.ToLower()));
-			if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(text2))
-			{
-				sprite = FF9UIDataTool.worldTitleSpriteList[text2];
-			}
-			else
-			{
-				String path = "EmbeddedAsset/UI/Sprites/" + text + "/" + text2;
+				String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
 				String[] spriteInfo;
 				sprite = AssetManager.Load<Sprite>(path, out spriteInfo, false);
-				FF9UIDataTool.worldTitleSpriteList.Add(text2, sprite);
+				FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
 			}
 			return sprite;
 		}
@@ -820,11 +724,11 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static UIAtlas tutorialAtlas;
 
-		private static GameObject controllerSpritePrefab = (GameObject)null;
+		private static GameObject controllerSpritePrefab = null;
 
-		private static GameObject controllerKeyboardPrefab = (GameObject)null;
+		private static GameObject controllerKeyboardPrefab = null;
 
-		private static GameObject newIconPrefab = (GameObject)null;
+		private static GameObject newIconPrefab = null;
 
 		private static List<GameObject> bitmapKeyboardPool = new List<GameObject>();
 

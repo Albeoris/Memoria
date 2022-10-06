@@ -15,22 +15,6 @@ using NCalc;
 
 public static class btl_stat
 {
-    public static Byte[][] tranceGlowingColor = new Byte[12][] // Indented by "CharacterId"
-    {
-        new Byte[3] {255, 96, 96},   // Zidane
-        new Byte[3] {104, 120, 255}, // Vivi
-        new Byte[3] {255, 184, 120}, // Garnet
-        new Byte[3] {128, 192, 208}, // Steiner
-        new Byte[3] {192, 104, 144}, // Freya
-        new Byte[3] {208, 112, 120}, // Quina
-        new Byte[3] {200, 216, 104}, // Eiko
-        new Byte[3] {208, 184, 104}, // Amarant
-        new Byte[3] {255, 160, 128}, // Cinna
-        new Byte[3] {255, 160, 128}, // Marcus
-        new Byte[3] {255, 160, 128}, // Blank
-        new Byte[3] {255, 160, 128}  // Beatrix
-    };
-
     public static void SaveStatus(PLAYER p, BTL_DATA btl)
     {
         p.status = (Byte)(btl.stat.cur & (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie));
@@ -648,9 +632,10 @@ public static class btl_stat
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
                 Byte num1 = (Byte)(ff9Battle.btl_cnt % 16);
-                Int16 r = (Int16)(bbgInfoPtr.chr_r - (128 - btl_stat.tranceGlowingColor[data.bi.slot_no][0]));
-                Int16 g = (Int16)(bbgInfoPtr.chr_g - (128 - btl_stat.tranceGlowingColor[data.bi.slot_no][1]));
-                Int16 b = (Int16)(bbgInfoPtr.chr_b - (128 - btl_stat.tranceGlowingColor[data.bi.slot_no][2]));
+                Byte[] glowingColor = btl_mot.BattleParameterList[(Int32)unit.SerialNumber].TranceGlowingColor;
+                Int16 r = (Int16)(bbgInfoPtr.chr_r - (128 - glowingColor[0]));
+                Int16 g = (Int16)(bbgInfoPtr.chr_g - (128 - glowingColor[1]));
+                Int16 b = (Int16)(bbgInfoPtr.chr_b - (128 - glowingColor[2]));
                 Byte num5 = num1 >= 8 ? (Byte)(16U - num1) : num1;
                 GeoAddColor2DrawPacket(data.gameObject, (Int16)(r * num5 >> 3), (Int16)(g * num5 >> 3), (Int16)(b * num5 >> 3));
                 if (data.weapon_geo)

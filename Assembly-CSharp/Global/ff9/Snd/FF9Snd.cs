@@ -1181,30 +1181,22 @@ public static class FF9Snd
 
 	public static Int32 FF9BattleSoundGetWeaponSndEffect01(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType Type)
 	{
-		Int32 num = (Int32)FF9StateSystem.Common.FF9.party.member[PartyCharNo].equip[0];
-		num = (Int32)ff9weap.WeaponData[num].ModelId;
-		for (Int32 i = 0; i < 85; i++)
-		{
-			if ((Int32)FF9Snd.ff9battleSoundWeaponSndEffect01[i][2] == num)
-			{
-				return (Int32)FF9Snd.ff9battleSoundWeaponSndEffect01[i][(Int32)Type];
-			}
-		}
+		Int32 weapModel = (Int32)FF9StateSystem.Common.FF9.party.member[PartyCharNo].equip[0];
+		weapModel = ff9weap.WeaponData[weapModel].ModelId;
+		for (Int32 i = 0; i < FF9Snd.ff9battleSoundWeaponSndEffect01.GetLength(0); i++)
+			if (FF9Snd.ff9battleSoundWeaponSndEffect01[i, 2] == weapModel)
+				return FF9Snd.ff9battleSoundWeaponSndEffect01[i, (Int32)Type];
 		return -1;
 	}
 
 	public static Int32 FF9BattleSoundGetWeaponSndEffect02(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType Type)
 	{
-		Int32 serial_no = (Int32)FF9StateSystem.Common.FF9.party.member[PartyCharNo].info.serial_no;
-		if (serial_no >= FF9Snd.ff9battleSoundWeaponSndEffect02.Length)
-		{
-			return -1;
-		}
 		if (Type >= FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_COUNT)
-		{
 			return -1;
-		}
-		return (Int32)FF9Snd.ff9battleSoundWeaponSndEffect02[serial_no, (Int32)Type];
+		Int32 serial_no = (Int32)FF9StateSystem.Common.FF9.party.member[PartyCharNo].info.serial_no;
+		if (serial_no >= FF9Snd.ff9battleSoundWeaponSndEffect02.GetLength(0))
+			return FF9BattleSoundGetWeaponSndEffect01(PartyCharNo, Type); // For non-standard serial numbers, use weapon sounds directly linked to weapons
+		return FF9Snd.ff9battleSoundWeaponSndEffect02[serial_no, (Int32)Type];
 	}
 
 	public static Int32 FF9BattleSoundGetWeaponInstr(Int32 PartyCharNo)
@@ -2518,598 +2510,116 @@ public static class FF9Snd
 
 	public static Boolean HasJustChangedBetweenWorldAndField;
 
-	private static Int16[][] ff9battleSoundWeaponSndEffect01 = new Int16[][]
+	private static Int16[,] ff9battleSoundWeaponSndEffect01 = new Int16[,] // Indexed by "WeaponItem"
 	{
-		new Int16[]
-		{
-			903,
-			44,
-			37
-		},
-		new Int16[]
-		{
-			899,
-			21,
-			476
-		},
-		new Int16[]
-		{
-			899,
-			21,
-			475
-		},
-		new Int16[]
-		{
-			899,
-			21,
-			501
-		},
-		new Int16[]
-		{
-			899,
-			21,
-			477
-		},
-		new Int16[]
-		{
-			899,
-			21,
-			441
-		},
-		new Int16[]
-		{
-			899,
-			21,
-			527
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			522
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			521
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			517
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			516
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			515
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			514
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			520
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			519
-		},
-		new Int16[]
-		{
-			900,
-			63,
-			518
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			366
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			385
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			384
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			389
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			388
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			387
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			386
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			392
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			391
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			629
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			390
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			367
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			595
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			383
-		},
-		new Int16[]
-		{
-			902,
-			0,
-			594
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			465
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			496
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			468
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			497
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			467
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			466
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			470
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			469
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			605
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			413
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			471
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			498
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			500
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			472
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			440
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			499
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			474
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			473
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			456
-		},
-		new Int16[]
-		{
-			905,
-			897,
-			455
-		},
-		new Int16[]
-		{
-			906,
-			898,
-			454
-		},
-		new Int16[]
-		{
-			906,
-			898,
-			453
-		},
-		new Int16[]
-		{
-			906,
-			898,
-			460
-		},
-		new Int16[]
-		{
-			906,
-			898,
-			459
-		},
-		new Int16[]
-		{
-			906,
-			898,
-			458
-		},
-		new Int16[]
-		{
-			906,
-			898,
-			457
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			461
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			491
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			493
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			492
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			463
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			462
-		},
-		new Int16[]
-		{
-			903,
-			44,
-			464
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			44
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			494
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			43
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			264
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			495
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			322
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			478
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			503
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			502
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			504
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			481
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			480
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			479
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			483
-		},
-		new Int16[]
-		{
-			904,
-			22,
-			482
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			484
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			507
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			506
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			505
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			486
-		},
-		new Int16[]
-		{
-			901,
-			83,
-			485
-		}
+		{ 903, 44, 37 },
+		{ 899, 21, 476 },
+		{ 899, 21, 475 },
+		{ 899, 21, 501 },
+		{ 899, 21, 477 },
+		{ 899, 21, 441 },
+		{ 899, 21, 527 },
+		{ 900, 63, 522 },
+		{ 900, 63, 521 },
+		{ 900, 63, 517 },
+		{ 900, 63, 516 },
+		{ 900, 63, 515 },
+		{ 900, 63, 514 },
+		{ 900, 63, 520 },
+		{ 900, 63, 519 },
+		{ 900, 63, 518 },
+		{ 902, 0, 366 },
+		{ 902, 0, 385 },
+		{ 902, 0, 384 },
+		{ 902, 0, 389 },
+		{ 902, 0, 388 },
+		{ 902, 0, 387 },
+		{ 902, 0, 386 },
+		{ 902, 0, 392 },
+		{ 902, 0, 391 },
+		{ 902, 0, 629 },
+		{ 902, 0, 390 },
+		{ 902, 0, 367 },
+		{ 902, 0, 595 },
+		{ 902, 0, 383 },
+		{ 902, 0, 594 },
+		{ 901, 83, 465 },
+		{ 901, 83, 496 },
+		{ 901, 83, 468 },
+		{ 901, 83, 497 },
+		{ 901, 83, 467 },
+		{ 901, 83, 466 },
+		{ 901, 83, 470 },
+		{ 901, 83, 469 },
+		{ 901, 83, 605 },
+		{ 901, 83, 413 },
+		{ 905, 897, 471 },
+		{ 905, 897, 498 },
+		{ 905, 897, 500 },
+		{ 905, 897, 472 },
+		{ 905, 897, 440 },
+		{ 905, 897, 499 },
+		{ 905, 897, 474 },
+		{ 905, 897, 473 },
+		{ 905, 897, 456 },
+		{ 905, 897, 455 },
+		{ 906, 898, 454 },
+		{ 906, 898, 453 },
+		{ 906, 898, 460 },
+		{ 906, 898, 459 },
+		{ 906, 898, 458 },
+		{ 906, 898, 457 },
+		{ 903, 44, 461 },
+		{ 903, 44, 491 },
+		{ 903, 44, 493 },
+		{ 903, 44, 492 },
+		{ 903, 44, 463 },
+		{ 903, 44, 462 },
+		{ 903, 44, 464 },
+		{ 904, 22, 44 },
+		{ 904, 22, 494 },
+		{ 904, 22, 43 },
+		{ 904, 22, 264 },
+		{ 904, 22, 495 },
+		{ 904, 22, 322 },
+		{ 904, 22, 478 },
+		{ 904, 22, 503 },
+		{ 904, 22, 502 },
+		{ 904, 22, 504 },
+		{ 904, 22, 481 },
+		{ 904, 22, 480 },
+		{ 904, 22, 479 },
+		{ 904, 22, 483 },
+		{ 904, 22, 482 },
+		{ 901, 83, 484 },
+		{ 901, 83, 507 },
+		{ 901, 83, 506 },
+		{ 901, 83, 505 },
+		{ 901, 83, 486 },
+		{ 901, 83, 485 }
 	};
 
-	private static Int16[,] ff9battleSoundWeaponSndEffect02 = new Int16[,]
+	private static Int16[,] ff9battleSoundWeaponSndEffect02 = new Int16[,] // Indexed by "CharacterSerialNumber"
 	{
-		{
-			899,
-			21
-		},
-		{
-			900,
-			63
-		},
-		{
-			904,
-			22
-		},
-		{
-			904,
-			22
-		},
-		{
-			906,
-			898
-		},
-		{
-			904,
-			22
-		},
-		{
-			906,
-			898
-		},
-		{
-			902,
-			70
-		},
-		{
-			902,
-			70
-		},
-		{
-			901,
-			20
-		},
-		{
-			904,
-			22
-		},
-		{
-			906,
-			898
-		},
-		{
-			901,
-			20
-		},
-		{
-			905,
-			897
-		},
-		{
-			900,
-			22
-		},
-		{
-			902,
-			63
-		},
-		{
-			902,
-			63
-		},
-		{
-			902,
-			63
-		},
-		{
-			900,
-			70
-		}
+		{ 899, 21 },  // ZIDANE_DAGGER
+		{ 900, 63 },  // ZIDANE_SWORD
+		{ 904, 22 },  // VIVI
+		{ 904, 22 },  // GARNET_LH_ROD
+		{ 906, 898 }, // GARNET_LH_KNIFE
+		{ 904, 22 },  // GARNET_SH_ROD
+		{ 906, 898 }, // GARNET_SH_KNIFE
+		{ 902, 70 },  // STEINER_OUTDOOR
+		{ 902, 70 },  // STEINER_INDOOR
+		{ 901, 20 },  // KUINA
+		{ 904, 22 },  // EIKO_FLUTE
+		{ 906, 898 }, // EIKO_KNIFE
+		{ 901, 20 },  // FREIJA
+		{ 905, 897 }, // SALAMANDER
+		{ 900, 22 },  // CINNA
+		{ 902, 63 },  // MARCUS
+		{ 902, 63 },  // BLANK
+		{ 902, 63 },  // BLANK_ARMOR
+		{ 900, 70 }   // BEATRIX
 	};
 
 	public static Int32 FLDINT_CHAR_SOUNDCOUNT = 20;

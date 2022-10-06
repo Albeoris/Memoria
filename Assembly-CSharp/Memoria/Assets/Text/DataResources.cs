@@ -56,6 +56,8 @@ namespace Memoria.Assets
             public static String CommandSetsFile => "CommandSets.csv";
             public static String CommandTitlesFile => "CommandTitles.csv";
             public static String DefaultEquipmentsFile => "DefaultEquipment.csv";
+            public static String CharacterParametersFile => "CharacterParameters.csv";
+            public static String CharacterBattleParametersFile => "BattleParameters.csv";
             public static String BaseStatsFile => "BaseStats.csv";
             public static String Leveling => "Leveling.csv";
 
@@ -115,6 +117,28 @@ namespace Memoria.Assets
             public static String CHRControlFile => "TransportControls.csv";
             public static String WeatherColorFile => "WeatherColors.csv";
             public static String EnvironmentPatchFile => "Environment.txt";
+
+            public static String ModDirectory(String modFolder)
+            {
+                if (modFolder == null || modFolder.Length == 0)
+                    return Directory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+            }
+        }
+
+        public static class Text
+        {
+            public static readonly String PureDirectory = PureDataDirectory + "Text/";
+            public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+
+            public static String LocalizationPatchFile => "LocalizationPatch.txt";
+
+            public static String ModDirectoryWithLang(String modFolder, String langSymbol)
+            {
+                if (modFolder == null || modFolder.Length == 0)
+                    return Directory + langSymbol + "/";
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory + langSymbol + "/";
+            }
 
             public static String ModDirectory(String modFolder)
             {

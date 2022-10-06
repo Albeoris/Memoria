@@ -224,16 +224,14 @@ public static class btl_vfx
 		BattlePlayerCharacter.InitAnimation(btl);
 		//btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
 		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[btl.bi.slot_no], btl);
-		if (serialNo == CharacterSerialNumber.STEINER_OUTDOOR)
-            serialNo = CharacterSerialNumber.STEINER_INDOOR;
-		AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_init.model_id[(Int32)serialNo], true);
+        AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[(Int32)serialNo].ModelId, true);
 	}
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)
 	{
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
-        if (serialNo < CharacterSerialNumber.MAX)
-            return SpecialEffect.Player_Attack_Zidane_Dagger + (Int32)serialNo;
-        return (SpecialEffect)1000 + (Int32)serialNo;
+        if (serialNo != CharacterSerialNumber.NONE)
+            return btl_mot.BattleParameterList[(Int32)serialNo].AttackSequence;
+        return SpecialEffect.Special_No_Effect;
     }
 }

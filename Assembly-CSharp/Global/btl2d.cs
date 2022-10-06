@@ -274,100 +274,84 @@ public static class btl2d
 		Vector3 rot;
 		rot.x = 0f;
 		rot.z = 0f;
-		for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+		for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
 		{
-			if (next.bi.disappear == 0)
+			if (btl.bi.disappear == 0)
 			{
-				if ((next.flags & geo.GEO_FLAGS_CLIP) == 0)
+				if ((btl.flags & geo.GEO_FLAGS_CLIP) == 0)
 				{
-					if ((btl2d_work_set.OldDisappear & next.btl_id) == 0)
+					if ((btl2d_work_set.OldDisappear & btl.btl_id) == 0)
 					{
-						BattleStatus num = next.stat.cur | next.stat.permanent;
-						if ((num & BattleStatus.Death) == 0u)
+						BattleStatus statusOn = btl.stat.cur | btl.stat.permanent;
+						if ((statusOn & BattleStatus.Death) == 0)
 						{
-							if ((num & STATUS_2D_ICON) != 0u)
+							if ((statusOn & STATUS_2D_ICON) != 0)
 							{
-								if (next.bi.player == 0 || !btl_mot.checkMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
+								if (btl.bi.player == 0 || !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
 								{
-									Int32 num2 = ff9.rsin(fixedPointAngle: (Int32)(next.rot.eulerAngles.y / 360f * 4096f));
-									Int32 num3 = ff9.rcos(fixedPointAngle: (Int32)(next.rot.eulerAngles.y / 360f * 4096f));
-									Int16 num4;
-									Byte[] array;
-									SByte[] array2;
-									SByte[] array3;
-									if (next.bi.player != 0)
+									Int32 angledx = ff9.rsin((Int32)(btl.rot.eulerAngles.y / 360f * 4096f));
+									Int32 angledz = ff9.rcos((Int32)(btl.rot.eulerAngles.y / 360f * 4096f));
+									Byte[] iconBone;
+									SByte[] iconOffY;
+									SByte[] iconOffZ;
+									if (btl.bi.player != 0)
 									{
-										if (next.is_monster_transform)
+										if (btl.is_monster_transform)
 										{
-											array = next.monster_transform.icon_bone;
-											array2 = next.monster_transform.icon_y;
-											array3 = next.monster_transform.icon_z;
+											iconBone = btl.monster_transform.icon_bone;
+											iconOffY = btl.monster_transform.icon_y;
+											iconOffZ = btl.monster_transform.icon_z;
 										}
 										else
 										{
-											num4 = (Int16)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
-											array = btl2d.wBonePC[num4];
-											array2 = btl2d.wYofsPC[num4];
-											array3 = btl2d.wZofsPC[num4];
+											CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no];
+											iconBone = param.StatusBone;
+											iconOffY = param.StatusOffsetY;
+											iconOffZ = param.StatusOffsetZ;
 										}
 									}
 									else
 									{
-										ENEMY_TYPE et = ff9Battle.enemy[next.bi.slot_no].et;
-										array = et.icon_bone;
-										array2 = et.icon_y;
-										array3 = et.icon_z;
+										ENEMY_TYPE et = ff9Battle.enemy[btl.bi.slot_no].et;
+										iconBone = et.icon_bone;
+										iconOffY = et.icon_y;
+										iconOffZ = et.icon_z;
 									}
-									Int32 num5 = 0;
-									num4 = 12;
-									for (;;)
+									for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
 									{
-										Int16 num6 = num4;
-										num4 = (Int16)(num6 - 1);
-										if (num6 == 0)
+										btl2d.STAT_ICON_TBL statTable = btl2d.wStatIconTbl[i];
+										if ((statusOn & statTable.Mask) != 0)
 										{
-											break;
-										}
-										btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[num5];
-										if ((num & stat_ICON_TBL.Mask) != 0u)
-										{
-											if ((num & stat_ICON_TBL.Mask2) == 0u)
+											if ((statusOn & statTable.Mask2) == 0)
 											{
-												Int16 num7 = (Int16)(array2[stat_ICON_TBL.Pos] << 4);
-												Int16 num8 = (Int16)(array3[stat_ICON_TBL.Pos] << 4);
-												if ((next.flags & geo.GEO_FLAGS_SCALE) != 0)
+												Int16 dy = (Int16)(iconOffY[statTable.Pos] << 4);
+												Int16 dz = (Int16)(iconOffZ[statTable.Pos] << 4);
+												if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
 												{
-													num7 = (Int16)((Int32)(num7 * next.gameObject.transform.localScale.y));
-													num8 = (Int16)((Int32)(num8 * next.gameObject.transform.localScale.z));
+													dy = (Int16)(dy * btl.gameObject.transform.localScale.y);
+													dz = (Int16)(dz * btl.gameObject.transform.localScale.z);
 												}
-												Vector3 position = next.gameObject.transform.GetChildByName("bone" + array[stat_ICON_TBL.Pos].ToString("D3")).position;
-												Vector3 pos;
-												pos.x = position.x + (num8 * num2 >> 12);
-												pos.y = position.y - num7;
-												pos.z = position.z + (num8 * num3 >> 12);
-												if (stat_ICON_TBL.Type != 0)
+												Vector3 pos = btl.gameObject.transform.GetChildByName("bone" + iconBone[statTable.Pos].ToString("D3")).position;
+												pos.x += dz * angledx >> 12;
+												pos.y -= dy;
+												pos.z += dz * angledz >> 12;
+												if (statTable.Type != 0)
 												{
 													rot.y = 0f;
-													HonoluluBattleMain.battleSPS.UpdateBtlStatus(next, stat_ICON_TBL.Mask, pos, rot, btl2d_work_set.Timer);
+												}
+												else if (statTable.Ang != 0)
+												{
+													Int32 angle = (Int32)(btl.rot.eulerAngles.y / 360f * 4095f);
+													angle = angle + 3072 & 4095;
+													rot.y = angle / 4095f * 360f;
 												}
 												else
 												{
-													Int32 ang = stat_ICON_TBL.Ang;
-													if (ang != 0)
-													{
-														Int32 num9 = (Int32)(next.rot.eulerAngles.y / 360f * 4095f);
-														num9 = (num9 + 3072 & 4095);
-														rot.y = num9 / 4095f * 360f;
-													}
-													else
-													{
-														rot.y = 0f;
-													}
-													HonoluluBattleMain.battleSPS.UpdateBtlStatus(next, stat_ICON_TBL.Mask, pos, rot, btl2d_work_set.Timer);
+													rot.y = 0f;
 												}
+												HonoluluBattleMain.battleSPS.UpdateBtlStatus(btl, statTable.Mask, pos, rot, btl2d_work_set.Timer);
 											}
 										}
-										num5++;
 									}
 								}
 							}
@@ -422,126 +406,100 @@ public static class btl2d
 
 	private static void Btl2dStatCount()
 	{
-		btl2d.STAT_CNT_TBL[] array = new btl2d.STAT_CNT_TBL[]
+		btl2d.STAT_CNT_TBL[] statusTableList = new btl2d.STAT_CNT_TBL[]
 		{
 			new btl2d.STAT_CNT_TBL(BattleStatus.Doom, 11, 0),
 			new btl2d.STAT_CNT_TBL(BattleStatus.GradualPetrify, 15, 1)
 		};
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-	    BattleStatus status = BattleStatus.Doom | BattleStatus.GradualPetrify;
-		Int16 num2 = 2;
-		for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+	    BattleStatus counterStatus = BattleStatus.Doom | BattleStatus.GradualPetrify;
+		for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
 		{
-			if (next.bi.disappear == 0)
+			if (btl.bi.disappear == 0)
 			{
-				if ((next.flags & geo.GEO_FLAGS_CLIP) == 0)
+				if ((btl.flags & geo.GEO_FLAGS_CLIP) == 0)
 				{
-					if ((ff9Battle.btl2d_work_set.OldDisappear & next.btl_id) == 0)
+					if ((ff9Battle.btl2d_work_set.OldDisappear & btl.btl_id) == 0)
 					{
-						BattleStatus cur = next.stat.cur;
-						if ((cur & BattleStatus.Death) == 0u)
+						BattleStatus statusOn = btl.stat.cur | btl.stat.permanent;
+						if ((statusOn & BattleStatus.Death) == 0)
 						{
-							if ((cur & status) != 0u)
+							if ((statusOn & counterStatus) != 0)
 							{
-								Int16 num3;
-								Int16 num4;
-								Int16 num5;
-								if (next.bi.player != 0)
+								Int16 iconBone;
+								Int16 iconOffY;
+								if (btl.bi.player != 0)
 								{
-									num3 = (Int16)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no;
-									num4 = btl2d.wBonePC[num3][5];
-									num5 = btl2d.wYofsPC[num3][5];
+									CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no];
+									iconBone = param.StatusBone[5];
+									iconOffY = param.StatusOffsetY[5];
 								}
 								else
 								{
-									ENEMY_TYPE et = ff9Battle.enemy[next.bi.slot_no].et;
-									num4 = et.icon_bone[5];
-									num5 = et.icon_y[5];
+									ENEMY_TYPE et = ff9Battle.enemy[btl.bi.slot_no].et;
+									iconBone = et.icon_bone[5];
+									iconOffY = et.icon_y[5];
 								}
-								if ((next.flags & geo.GEO_FLAGS_SCALE) != 0)
+								if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
+									iconOffY = (Int16)(iconOffY * btl.gameObject.transform.localScale.y);
+								Transform attachTransf = btl.gameObject.transform.GetChildByName("bone" + iconBone.ToString("D3"));
+								Int32 dy = -(iconOffY << 4);
+								for (Int32 i = 0; i < statusTableList.Length; i++)
 								{
-									num5 = (Int16)((Int32)(num5 * next.gameObject.transform.localScale.y));
-								}
-								Transform childByName = next.gameObject.transform.GetChildByName("bone" + num4.ToString("D3"));
-								Int32 num6 = -(num5 << 4);
-								Int32 num7 = 0;
-								num3 = num2;
-								for (;;)
-								{
-									Int16 num8 = num3;
-									num3 = (Int16)(num8 - 1);
-									if (num8 == 0)
+									btl2d.STAT_CNT_TBL statusTable = statusTableList[i];
+									if ((statusOn & statusTable.Mask) != 0)
 									{
-										break;
-									}
-									btl2d.STAT_CNT_TBL stat_CNT_TBL = array[num7];
-									if ((cur & stat_CNT_TBL.Mask) != 0u)
-									{
-										Int16 cdown_max;
-										if ((cdown_max = next.stat.cnt.cdown_max) < 1)
-										{
+										Int16 cdownMax = btl.stat.cnt.cdown_max;
+										if (cdownMax < 1)
 											break;
-										}
-										Int16 num9;
-										if ((num9 = next.stat.cnt.conti[stat_CNT_TBL.Idx]) < 0)
-										{
+										Int16 cdownConti = btl.stat.cnt.conti[statusTable.Idx];
+										if (cdownConti < 0)
 											break;
-										}
-										Int16 num10 = next.cur.at_coef;
-										num4 = (Int16)(num9 * 10 / cdown_max);
-										UInt16 num11;
-										if (num9 <= 0)
+										Int32 figureNb = (Int16)(cdownConti * 10 / cdownMax);
+										UInt16 abrCode;
+										if (cdownConti <= 0)
+											abrCode = 2;
+										else
+											abrCode = (UInt16)((figureNb == (cdownConti - btl.cur.at_coef) * 10 / cdownMax) ? 0 : 2);
+										Int32 color;
+										if (statusTable.Col != 0)
 										{
-											num11 = 2;
+											Byte intensity = (Byte)((figureNb << 4) + 32);
+											color = intensity << 16 | intensity << 8 | intensity;
 										}
 										else
 										{
-											num5 = (Int16)((num9 - num10) * 10 / cdown_max);
-											num11 = (UInt16)((num4 == num5) ? 0 : 2);
+											color = 0x1000000;
 										}
-										Int32 num12;
-										if (stat_CNT_TBL.Col != 0)
+										color |= abrCode << 24;
+										figureNb++;
+										if (figureNb > 10)
+											figureNb = 10;
+										if (statusTable.Mask == BattleStatus.Doom)
 										{
-											Byte b = (Byte)((num4 << 4) + 32);
-											num12 = (b << 16 | b << 8 | b);
-										}
-										else
-										{
-											num12 = 16777216;
-										}
-										num12 |= num11 << 24;
-										num4 = (Int16)(num4 + 1);
-										if (num4 > 10)
-										{
-											num4 = 10;
-										}
-										if (num7 == 0)
-										{
-											if (next.deathMessage == null)
+											if (btl.deathMessage == null)
 											{
-												next.deathMessage = Singleton<HUDMessage>.Instance.Show(childByName, "10", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, num6), 0);
+												btl.deathMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, "10", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, dy), 0);
 											    UIManager.Battle.DisplayParty();
 											}
 											else
 											{
-												next.deathMessage.Label = num4.ToString();
+												btl.deathMessage.Label = figureNb.ToString();
 											}
 										}
-										else if (num7 == 1)
+										else if (statusTable.Mask == BattleStatus.GradualPetrify)
 										{
-											if (next.petrifyMessage == null)
+											if (btl.petrifyMessage == null)
 											{
-												next.petrifyMessage = Singleton<HUDMessage>.Instance.Show(childByName, "10", HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, num6), 0);
+												btl.petrifyMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, "10", HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, dy), 0);
 											    UIManager.Battle.DisplayParty();
 											}
 											else
 											{
-												String str = "[" + (num12 & 16777215).ToString("X6") + "]";
-												next.petrifyMessage.Label = str + num4.ToString();
+												btl.petrifyMessage.Label = "[" + (color & 0xFFFFFF).ToString("X6") + "]" + figureNb.ToString();
 											}
 										}
 									}
-									num7++;
 								}
 							}
 						}
@@ -603,75 +561,6 @@ public static class btl2d
 		new btl2d.STAT_ICON_TBL(BattleStatus.Blind, 0u, null, 3, 2, 0, 0),
 		new btl2d.STAT_ICON_TBL(BattleStatus.Trouble, 0u, null, 4, Byte.MaxValue, 1, 0),
 		new btl2d.STAT_ICON_TBL(BattleStatus.Berserk, 0u, null, 4, 1, 0, 0)
-	};
-
-	public static Byte[][] wBonePC = new Byte[][] // Indented by "CharacterSerialNumber"
-	{
-		new Byte[]{ 8, 8, 8, 8, 8, 1 },      // ZIDANE_DAGGER
-		new Byte[]{ 8, 8, 8, 8, 8, 1 },		 // ZIDANE_SWORD
-		new Byte[]{ 7, 7, 7, 7, 7, 1 },		 // VIVI
-		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_LH_ROD
-		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_LH_KNIFE
-		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_SH_ROD
-		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // GARNET_SH_KNIFE
-		new Byte[]{ 20, 20, 20, 20, 20, 1 }, // STEINER_OUTDOOR
-		new Byte[]{ 20, 20, 20, 20, 20, 1 }, // STEINER_INDOOR
-		new Byte[]{ 6, 6, 6, 6, 6, 1 },		 // KUINA
-		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // EIKO_FLUTE
-		new Byte[]{ 19, 19, 19, 19, 19, 1 }, // EIKO_KNIFE
-		new Byte[]{ 8, 8, 8, 8, 8, 1 },		 // FREIJA
-		new Byte[]{ 18, 18, 18, 18, 18, 1 }, // SALAMANDER
-		new Byte[]{ 12, 12, 12, 12, 12, 1 }, // CINNA
-		new Byte[]{ 8, 8, 8, 8, 8, 1 },		 // MARCUS
-		new Byte[]{ 3, 3, 3, 3, 3, 1 },		 // BLANK
-		new Byte[]{ 3, 3, 3, 3, 3, 1 },		 // BLANK_ARMOR
-		new Byte[]{ 18, 18, 18, 18, 18, 1 }	 // BEATRIX
-	};
-
-	private static SByte[][] wYofsPC = new SByte[][] // Indented by "CharacterSerialNumber"
-	{
-		new SByte[]{ -10, 0, -7, -1, -7, -18 },  // ZIDANE_DAGGER
-		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // ZIDANE_SWORD
-		new SByte[]{ -11, 0, -8, -3, -8, -18 },	 // VIVI
-		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_LH_ROD
-		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_LH_KNIFE
-		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_SH_ROD
-		new SByte[]{ -10, 0, -7, -1, -7, -18 },	 // GARNET_SH_KNIFE
-		new SByte[]{ -11, 0, -6, -1, -6, -22 },	 // STEINER_OUTDOOR
-		new SByte[]{ -11, 0, -6, -1, -6, -22 },	 // STEINER_INDOOR
-		new SByte[]{ -12, -2, -9, -1, -9, -23 }, // KUINA
-		new SByte[]{ -10, 0, -7, -1, -7, -17 },	 // EIKO_FLUTE
-		new SByte[]{ -10, 0, -7, -1, -7, -17 },	 // EIKO_KNIFE
-		new SByte[]{ -13, 0, -7, -2, -7, -23 },	 // FREIJA
-		new SByte[]{ -13, -2, -7, 1, -7, -21 },	 // SALAMANDER
-		new SByte[]{ -11, 0, -8, -2, -8, -19 },	 // CINNA
-		new SByte[]{ -9, 0, -6, -1, -6, -21 },	 // MARCUS
-		new SByte[]{ -12, 0, -8, -2, -8, -19 },	 // BLANK
-		new SByte[]{ -10, 0, -8, -2, -8, -18 },	 // BLANK_ARMOR
-		new SByte[]{ -10, 0, -6, -1, -6, -18 }	 // BEATRIX
-	};
-
-	public static SByte[][] wZofsPC = new SByte[][] // Indented by "CharacterSerialNumber"
-	{
-		new SByte[]{ -1, -2, -9, -10, -6, 0 }, // ZIDANE_DAGGER
-		new SByte[]{ -1, -2, -9, -10, -6, 0 }, // ZIDANE_SWORD
-		new SByte[]{ 0, -1, -7, -8, -3, 0 },   // VIVI
-		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_LH_ROD
-		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_LH_KNIFE
-		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_SH_ROD
-		new SByte[]{ -1, -2, -9, -8, -5, 0 },  // GARNET_SH_KNIFE
-		new SByte[]{ 0, -3, -8, -9, -5, 0 },   // STEINER_OUTDOOR
-		new SByte[]{ 0, -3, -8, -9, -5, 0 },   // STEINER_INDOOR
-		new SByte[]{ 0, -1, -10, -9, -5, 0 },  // KUINA
-		new SByte[]{ -1, 0, -7, -7, -5, 0 },   // EIKO_FLUTE
-		new SByte[]{ -1, 0, -7, -7, -5, 0 },   // EIKO_KNIFE
-		new SByte[]{ 0, -2, -8, -8, -4, 0 },   // FREIJA
-		new SByte[]{ 0, 0, -8, -11, -6, 0 },   // SALAMANDER
-		new SByte[]{ -2, -2, -9, -9, -6, 0 },  // CINNA
-		new SByte[]{ -1, -1, -9, -9, -5, 0 },  // MARCUS
-		new SByte[]{ -1, -1, -8, -8, -5, 0 },  // BLANK
-		new SByte[]{ -1, -1, -8, -8, -5, 0 },  // BLANK_ARMOR
-		new SByte[]{ -1, -2, -7, -8, -5, 0 }   // BEATRIX
 	};
 
 	public class STAT_CNT_TBL

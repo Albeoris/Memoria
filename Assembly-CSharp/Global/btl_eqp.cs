@@ -15,7 +15,7 @@ public class btl_eqp
 		for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 			btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
 		btl_util.SetBBGColor(btl.weapon_geo);
-		p.wep_bone = BattlePlayerCharacter.PlayerWeaponToBoneName[(Int32)p.info.serial_no];
+		p.wep_bone = btl_mot.BattleParameterList[(Int32)p.info.serial_no].WeaponBone;
 		geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
 	}
 

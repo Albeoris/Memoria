@@ -92,6 +92,12 @@
     <None Include="StreamingAssets\Data\Characters\BaseStats.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\Characters\BattleParameters.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Data\Characters\CharacterParameters.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\Characters\CommandTitles.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

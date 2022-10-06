@@ -6,16 +6,16 @@ using Memoria.Data;
 
 public static class ff9feqp
 {
-	public static UInt16 GetCharacterEquipMask(PLAYER player)
+	public static UInt64 GetCharacterEquipMask(PLAYER player)
 	{
-		return (UInt16)((Int32)player.Index <= 11 ? 1 << (11 - (Int32)player.Index) : 1 << (Int32)player.Index);
+		return (Int32)player.Index <= 11 ? 1ul << (11 - (Int32)player.Index) : 1ul << (Int32)player.Index;
 	}
 
 	public static void FF9FEqp_UpdatePlayer(PLAYER play)
 	{
 		ff9feqp.FF9FEqp_UpdateSA(play);
 		ff9play.FF9Play_Update(play);
-		play.info.serial_no = ff9play.FF9Play_GetSerialID(play.info.slot_no, play.equip);
+		ff9play.FF9Play_UpdateSerialNumber(play);
 	}
 
 	public static void FF9FEqp_UpdateSA(PLAYER player)
@@ -77,7 +77,7 @@ public static class ff9feqp
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
 		Int32 itemSlot = 0;
 		PLAYER player = ff.party.member[ff9feqp._FF9FEqp.player];
-		UInt16 characterMask = ff9feqp.GetCharacterEquipMask(player);
+		UInt64 characterMask = ff9feqp.GetCharacterEquipMask(player);
 		Byte equipSlotMask = partMask[ff9feqp._FF9FEqp.equip];
 		for (Int32 i = 0; i < 256; i++)
 		{

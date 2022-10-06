@@ -100,6 +100,14 @@ namespace Memoria.Prime.CSV
             return raw.Split(',').Select(Byte).ToArray();
         }
 
+        public static SByte[] SByteArray(String raw)
+        {
+            if (System.String.IsNullOrEmpty(raw))
+                return new SByte[0];
+
+            return raw.Split(',').Select(SByte).ToArray();
+        }
+
         public static String String(String raw)
         {
             if (raw == "<null>")

@@ -352,12 +352,14 @@ namespace Memoria
 					if (!CharacterNamesFormatter._characterNames.TryGetValue(entry[2], out nameArray))
 						nameArray = new String[ID + 1];
 					if (nameArray.Length <= ID)
-					{
-						nameArray = new String[ID + 1];
-						CharacterNamesFormatter._characterNames[entry[2]].CopyTo(nameArray, 0);
-					}
-					nameArray[ID] = String.Join(" ", entry, 3, entry.Length - 3); // Character names can't have spaces now and are max 8 char long, so there's no real point in joining instead of using entry[3] directly
+						Array.Resize(ref nameArray, ID + 1);
+					nameArray[ID] = String.Join(" ", entry, 3, entry.Length - 3);
 					CharacterNamesFormatter._characterNames[entry[2]] = nameArray;
+					if (Localization.GetSymbol() == entry[2] && FF9StateSystem.Common?.FF9?.player != null && ID < FF9StateSystem.Common.PlayerCount)
+					{
+						FF9StateSystem.Common.FF9.GetPlayer((CharacterId)ID).Name = nameArray[ID];
+						FF9TextTool.ChangeCharacterName((CharacterId)ID, nameArray[ID]);
+					}
 				}
 				else if (String.Compare(entry[0], "3DModel") == 0)
 				{
@@ -410,58 +412,6 @@ namespace Memoria
 						FF9DBAll.AnimationDB[ID[idindex]] = entry[entry.Length - 1];
 						FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
 					}
-				}
-				else if (String.Compare(entry[0], "PlayerBattleModel") == 0 && entry.Length >= 39)
-				{
-					// For party battle models and animations
-					// Check btl_mot's note for the sorting of battle animations
-					// eg.:
-					// 3DModelAnimation 100000 ANH_SUB_F0_KJA_MYCUSTOM_ANIM
-					// PlayerBattleModel 0 GEO_SUB_F0_KJA GEO_SUB_F0_KJA 18
-					//   ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_MON_B3_125_003 ANH_MON_B3_125_040
-					//   ANH_SUB_F0_KJA_DOWN ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_MYCUSTOM_ANIM
-					//   ANH_SUB_F0_KJA_DOWN ANH_SUB_F0_KJA_IDLE ANH_SUB_F0_KJA_ARMS_CROSS_2_3 ANH_SUB_F0_KJA_ARMS_CROSS_2_2
-					//   ANH_SUB_F0_KJA_SHOW_OFF_1_1 ANH_SUB_F0_KJA_SHOW_OFF_1_2 ANH_SUB_F0_KJA_SHOW_OFF_1_3
-					//   ANH_MON_B3_125_021 ANH_SUB_F0_KJA_LAUGH_2_2 ANH_SUB_F0_KJA_SHOW_OFF_2_2
-					//   ANH_SUB_F0_KJA_OJIGI_1 ANH_SUB_F0_KJA_OJIGI_2
-					//   ANH_SUB_F0_KJA_GET_HSK_1 ANH_SUB_F0_KJA_GET_HSK_2 ANH_SUB_F0_KJA_GET_HSK_2 ANH_SUB_F0_KJA_GET_HSK_3 ANH_SUB_F0_KJA_ARMS_CROSS_2_2 ANH_SUB_F0_KJA_ARMS_CROSS_2_2
-					//   ANH_MON_B3_125_020 ANH_MON_B3_125_021 ANH_MON_B3_125_022
-					//   ANH_SUB_F0_KJA_WALK ANH_SUB_F0_KJA_WALK ANH_SUB_F0_KJA_RAIN_1
-					//   ANH_SUB_F0_KJA_ARMS_CROSS_2_1 ANH_SUB_F0_KJA_ARMS_UP_KUBIFURI_2
-					// (in a single line)
-					if (FF9.btl_mot.mot == null || BattlePlayerCharacter.PlayerModelFileName == null || btl_init.model_id == null)
-						continue;
-					Int32 ID;
-					Byte boneID;
-					if (!Int32.TryParse(entry[1], out ID))
-						continue;
-					if (!Byte.TryParse(entry[4], out boneID))
-						continue;
-					if (ID < 0 || ID >= 19) // Replace only existing characters
-						continue;
-					BattlePlayerCharacter.PlayerModelFileName[ID] = entry[2]; // Model
-					btl_init.model_id[ID] = entry[2];
-					btl_init.trance_model_id[ID] = entry[3]; // Trance model
-					BattlePlayerCharacter.PlayerWeaponToBoneName[ID] = boneID; // Model's weapon bone
-					for (Int32 animid = 0; animid < 34; ++animid)
-						FF9.btl_mot.mot[ID, animid] = entry[animid + 5];
-					List<String> modelAnimList;
-					String animlistID = "Animations/" + entry[2];
-					String animID, animModelID;
-					if (!AssetManager.AnimationInFolder.TryGetValue(animlistID, out modelAnimList))
-						modelAnimList = new List<String>();
-					for (Int32 animid = 0; animid < 34; ++animid)
-					{
-						if (!AssetManager.AnimationReverseFolder.TryGetValue(entry[animid + 5], out animModelID)) // Animation registered in "AnimationFolderMapping.txt": use ID of registered model
-							animModelID = entry[2]; // Custom animation: the path is "Animation/[ID of battle model]/[Anim ID]"
-						animID = "Animations/" + animModelID + "/" + entry[animid + 5];
-						if (!modelAnimList.Contains(animID))
-						{
-							modelAnimList.Add(animID);
-							AssetManager.AnimationReverseFolder[entry[animid + 5]] = animModelID;
-						}
-					}
-					AssetManager.AnimationInFolder[animlistID] = modelAnimList;
 				}
 			}
 		}

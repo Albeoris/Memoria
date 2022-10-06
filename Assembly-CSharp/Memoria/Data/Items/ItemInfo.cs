@@ -36,12 +36,15 @@ namespace Memoria.Data
 
             Order = CsvParser.Byte(raw[index++]);
 
-            UInt16 equippable = 0;
+            UInt64 equippable = 0;
             for (Int32 i = 0; i < 12; i++)
             {
                 equippable <<= 1;
                 equippable |= CsvParser.Byte(raw[index++]);
             }
+            for (Int32 i = 12; index < raw.Length; i++)
+                if (CsvParser.Byte(raw[index++]) != 0)
+                    equippable |= 1ul << i;
 
             CharacterMask = (ItemCharacter)equippable;
         }
@@ -82,7 +85,7 @@ namespace Memoria.Data
 
         public FF9ITEM_DATA ToItemData()
         {
-            return new FF9ITEM_DATA(0, 0, Price, (UInt16)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, (Byte)TypeMask, Order, 0);
+            return new FF9ITEM_DATA(0, 0, Price, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, (Byte)TypeMask, Order, 0);
         }
 
         public static ItemInfo FromItemData(FF9ITEM_DATA entry)
@@ -139,7 +142,7 @@ namespace Memoria.Data
     }
 
     [Flags]
-    public enum ItemCharacter : ushort
+    public enum ItemCharacter : UInt64
     {
         Zidane = 2048,
         Vivi = 1024,

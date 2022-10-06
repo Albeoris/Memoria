@@ -23,6 +23,6 @@ namespace Memoria.Data
 		BLANK,
 		BLANK_ARMOR,
 		BEATRIX,
-		MAX
+		NONE = Byte.MaxValue
 	}
 }

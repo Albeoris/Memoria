@@ -892,7 +892,7 @@ public class ShopUI : UIScene
 		{
 			ShopUI.CharacterWeaponInfoHUD characterWeaponInfoHUD = this.charInfoHud[hudIndex++];
 			PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-			UInt16 playerMask = ff9feqp.GetCharacterEquipMask(player);
+			UInt64 playerMask = ff9feqp.GetCharacterEquipMask(player);
 			Boolean canEquip = (ff9item._FF9Item_Data[cureentItemId].equip & playerMask) != 0;
 			characterWeaponInfoHUD.AvatarSprite.gameObject.SetActive(true);
 			FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterWeaponInfoHUD.AvatarSprite, false);

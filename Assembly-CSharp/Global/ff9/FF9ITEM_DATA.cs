@@ -2,7 +2,7 @@
 
 public class FF9ITEM_DATA
 {
-	public FF9ITEM_DATA(UInt16 name, UInt16 help, UInt16 price, UInt16 equip, Byte shape, Byte color, Byte eq_lv, Byte bonus, Byte[] ability, Byte type, Byte sort, Byte pad)
+	public FF9ITEM_DATA(UInt16 name, UInt16 help, UInt16 price, UInt64 equip, Byte shape, Byte color, Byte eq_lv, Byte bonus, Byte[] ability, Byte type, Byte sort, Byte pad)
 	{
 		this.name = name;
 		this.help = help;
@@ -24,7 +24,7 @@ public class FF9ITEM_DATA
 
 	public UInt16 price;
 
-	public UInt16 equip;
+	public UInt64 equip;
 
 	public Byte shape;
 

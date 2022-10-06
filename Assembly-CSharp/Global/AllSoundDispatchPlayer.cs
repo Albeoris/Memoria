@@ -965,19 +965,13 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	private void CreateSoundProfileIfNotExist(Int32 soundIndex, SoundProfileType type, AllSoundDispatchPlayer.OnCreateFinish onFinishDelegate)
 	{
 		this.onCreateDelegate = onFinishDelegate;
-		SoundDatabase soundDatabase = (SoundDatabase)null;
+		SoundDatabase soundDatabase = null;
 		if (type == SoundProfileType.Music)
-		{
 			soundDatabase = this.musicImmediateDB;
-		}
 		else if (type == SoundProfileType.SoundEffect)
-		{
 			soundDatabase = this.sfxImmediateDB;
-		}
 		else if (type == SoundProfileType.Song)
-		{
 			soundDatabase = this.songImmediateDB;
-		}
 		SoundProfile soundProfile = soundDatabase.Read(soundIndex);
 		if (soundProfile != null)
 		{
@@ -986,6 +980,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		else
 		{
 			soundProfile = SoundMetaData.GetSoundProfile(soundIndex, type);
+			if (soundProfile == null)
+				return;
 			this.immediateLoadedSoundProfile = soundProfile;
 			this.DeleteImmediateSoundProfileIfUnused();
 			base.LoadResource(soundProfile, soundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadImmediateSoundResourceCallback));

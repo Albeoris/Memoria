@@ -5,7 +5,6 @@ using System.Linq;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Memoria.Assets
 {
@@ -51,12 +50,13 @@ namespace Memoria.Assets
                 _languages.Add(language, dic);
             }
 
-            ReadText(reader, cellLanguages);
+            ReadText(reader, cellLanguages, true);
 
             _failbackLanguage = cellLanguages[1];
             _failback = _languages[_failbackLanguage];
             _current = _failback;
 
+            LoadModText(cellLanguages);
             LoadExternalText();
         }
 
@@ -137,7 +137,7 @@ namespace Memoria.Assets
             return false;
         }
 
-        private void ReadText(ByteReader reader, Dictionary<Int32, String> cellLanguages)
+        private void ReadText(ByteReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
         {
             while (reader.canRead)
             {
@@ -153,7 +153,25 @@ namespace Memoria.Assets
                 {
                     String value = cells[i];
                     String language = cellLanguages[i];
-                    StoreValue(language, key, value);
+                    if (init)
+                        StoreValue(language, key, value);
+                    else
+                        _languages[language][key] = value;
+                }
+            }
+        }
+
+        private void LoadModText(Dictionary<Int32, String> cellLanguages)
+        {
+            String inputPath;
+            for (Int32 i = AssetManager.Folder.Length - 1; i >= 0; --i)
+            {
+                inputPath = DataResources.Text.ModDirectory(AssetManager.Folder[i].FolderPath) + DataResources.Text.LocalizationPatchFile;
+                if (File.Exists(inputPath))
+                {
+                    Byte[] tableData = File.ReadAllBytes(inputPath);
+                    ByteReader reader = new ByteReader(tableData);
+                    ReadText(reader, cellLanguages, false);
                 }
             }
         }

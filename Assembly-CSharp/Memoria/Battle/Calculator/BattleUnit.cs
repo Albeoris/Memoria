@@ -746,10 +746,10 @@ namespace Memoria
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;
-            Int16 serial_no = (Int16)p.info.serial_no;
-            Data.shadow_bone[0] = btl_init.ShadowDataPC[serial_no][0];
-            Data.shadow_bone[1] = btl_init.ShadowDataPC[serial_no][1];
-            btl_util.SetShadow(Data, btl_init.ShadowDataPC[serial_no][2], btl_init.ShadowDataPC[serial_no][3]);
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[(Int16)p.info.serial_no];
+            Data.shadow_bone[0] = btlParam.ShadowData[0];
+            Data.shadow_bone[1] = btlParam.ShadowData[1];
+            btl_util.SetShadow(Data, btlParam.ShadowData[2], btlParam.ShadowData[3]);
             Data.gameObject.SetActive(false);
             Data.gameObject = Data.originalGo;
             Data.geo_scale_default = 4096;
@@ -761,7 +761,7 @@ namespace Memoria
             Data.pos.y = (Data.evt.posBattle.y = (Data.evt.pos[1] = (Data.base_pos.y = (Data.original_pos.y + (!btl_stat.CheckStatus(Data, BattleStatus.Float) ? 0 : -200)))));
             Data.pos.z = (Data.evt.posBattle.z = (Data.evt.pos[2] = (Data.base_pos.z = (Data.original_pos.z + (Data.bi.row == 0 ? -400 : 0)))));
             for (Int32 i = 0; i < 34; i++)
-                Data.mot[i] = btl_mot.mot[serial_no, i];
+                Data.mot[i] = btlParam.AnimationId[i];
             btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
             btl_mot.HideMesh(Data, UInt16.MaxValue);

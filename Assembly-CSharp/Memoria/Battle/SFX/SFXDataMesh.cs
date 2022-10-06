@@ -1190,8 +1190,16 @@ public abstract class SFXDataMesh
 						Vector2 vLocalPos = scale * vertex[i];
 						if (!useScreenSize)
 						{
-							vLocalPos.x *= 7000f / Math.Max(1f, basePos.z); // 7000 is arbitrary
-							vLocalPos.y *= 7000f / Math.Max(1f, basePos.z); // sizes are similar with and without useScreenSize for mid-distance camera
+							if (basePos.z >= 0f)
+							{
+								vLocalPos.x *= 7000f / Math.Max(1f, basePos.z); // 7000 is arbitrary
+								vLocalPos.y *= 7000f / Math.Max(1f, basePos.z); // sizes are similar with and without useScreenSize for mid-distance camera
+							}
+							else
+							{
+								vLocalPos.x *= 7000f / Math.Min(-1f, basePos.z);
+								vLocalPos.y *= 7000f / Math.Min(-1f, basePos.z);
+							}
 						}
 						Vector3 posScreen = basePos + (Vector3)vLocalPos;
 						posScreen.x = (posScreen.x - SFX.screenWidthOffset) * FieldMap.PsxScreenWidth / SFX.screenWidth; // Screen -> Render projection space
@@ -1201,6 +1209,8 @@ public abstract class SFXDataMesh
 						meshVert[vIndex + i] = posScreen;
 						meshUV[vIndex + i] = uv != null && i < uv.Length ? uv[i] : default(Vector2);
 						meshColor[vIndex + i] = col != null && i < col.Length ? col[i] : new Color32(255, 255, 255, 255);
+						if (posScreen.z > 0f)
+							meshColor[vIndex + i].a = 0;
 					}
 					for (Int32 i = 0; i < index.Length; i++)
 						meshIndex[iIndex++] = vIndex + index[i];

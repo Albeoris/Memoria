@@ -338,23 +338,31 @@ public class SoundMetaData
 	public static SoundProfile GetSoundProfile(Int32 soundIndex, SoundProfileType type)
 	{
 		String text = String.Empty;
+		Dictionary<Int32, String> musicDictionary = null;
 		switch (type)
 		{
-		case SoundProfileType.Music:
-			text = SoundMetaData.MusicIndex[soundIndex];
-			break;
-		case SoundProfileType.SoundEffect:
-			text = SoundMetaData.SoundEffectIndex[soundIndex];
-			break;
-		case SoundProfileType.MovieAudio:
-			text = SoundMetaData.MovieAudioIndex[soundIndex];
-			break;
-		case SoundProfileType.Song:
-			text = SoundMetaData.SongIndex[soundIndex];
-			break;
-		case SoundProfileType.Sfx:
-			SoundLib.Log("GetSoundProfile does not support type SoundProfileType.Sfx");
-			return (SoundProfile)null;
+			case SoundProfileType.Music:
+				musicDictionary = SoundMetaData.MusicIndex;
+				break;
+			case SoundProfileType.SoundEffect:
+				musicDictionary = SoundMetaData.SoundEffectIndex;
+				break;
+			case SoundProfileType.MovieAudio:
+				musicDictionary = SoundMetaData.MovieAudioIndex;
+				break;
+			case SoundProfileType.Song:
+				musicDictionary = SoundMetaData.SongIndex;
+				break;
+			case SoundProfileType.Sfx:
+				SoundLib.Log("GetSoundProfile does not support type SoundProfileType.Sfx");
+				return null;
+		}
+		if (musicDictionary == null || !musicDictionary.TryGetValue(soundIndex, out text))
+		{
+			// Log for Memoria.Prime.Log as well: a missing sound may indicate something needs to be fixed (possibly a missing asset or a missing entry in metadata as it was the case for enemy death sounds)
+			SoundLib.Log($"Could not find the {type} with Id {soundIndex}");
+			Memoria.Prime.Log.Warning($"Could not find the {type} with Id {soundIndex}");
+			return null;
 		}
 		return new SoundProfile
 		{

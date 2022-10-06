@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Data;
-using Object = System.Object;
+using FF9;
 
 public class BattlePlayerCharacter : MonoBehaviour
 {
@@ -70,8 +70,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 
 	public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
 	{
-		String text = BattlePlayerCharacter.PlayerModelFileName[(Int32)playerSerialNumber];
-		String path = text;
+		String path = btl_mot.BattleParameterList[(Int32)playerSerialNumber].ModelId;
 		GameObject gameObject = ModelFactory.CreateModel(path, true);
 		BattlePlayerCharacter.CreateTranceModel(btl, playerSerialNumber);
 		BattlePlayerCharacter.CheckToHideBattleModel(gameObject, playerSerialNumber);
@@ -81,7 +80,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 
 	private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
 	{
-		String path = btl_init.trance_model_id[(Int32)serial];
+		String path = btl_mot.BattleParameterList[(Int32)serial].TranceModelId;
 		btl.tranceGo = ModelFactory.CreateModel(path, true);
 		BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
 		btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
@@ -138,52 +137,6 @@ public class BattlePlayerCharacter : MonoBehaviour
 		"210", // MP_ITEM1
 		"010", // MP_CMD_TO_NORMAL
 		"220"  // MP_SPECIAL1
-	};
-
-	public static String[] PlayerModelFileName = new String[] // Indented by "CharacterSerialNumber"
-	{
-		"GEO_MAIN_B0_000", // ZIDANE_DAGGER
-		"GEO_MAIN_B0_001", // ZIDANE_SWORD
-		"GEO_MAIN_B0_006", // VIVI
-		"GEO_MAIN_B0_002", // GARNET_LH_ROD
-		"GEO_MAIN_B0_003", // GARNET_LH_KNIFE
-		"GEO_MAIN_B0_004", // GARNET_SH_ROD
-		"GEO_MAIN_B0_005", // GARNET_SH_KNIFE
-		"GEO_MAIN_B0_007", // STEINER_OUTDOOR
-		"GEO_MAIN_B0_018", // STEINER_INDOOR
-		"GEO_MAIN_B0_008", // KUINA
-		"GEO_MAIN_B0_009", // EIKO_FLUTE
-		"GEO_MAIN_B0_010", // EIKO_KNIFE
-		"GEO_MAIN_B0_011", // FREIJA
-		"GEO_MAIN_B0_012", // SALAMANDER
-		"GEO_MAIN_B0_013", // CINNA
-		"GEO_MAIN_B0_014", // MARCUS
-		"GEO_MAIN_B0_015", // BLANK
-		"GEO_MAIN_B0_016", // BLANK_ARMOR
-		"GEO_MAIN_B0_017"  // BEATRIX
-	};
-
-	public static Byte[] PlayerWeaponToBoneName = new Byte[] // Indented by "CharacterSerialNumber"
-	{
-		13, // ZIDANE_DAGGER
-		13, // ZIDANE_SWORD
-		16, // VIVI
-		15, // GARNET_LH_ROD
-		15, // GARNET_LH_KNIFE
-		15, // GARNET_SH_ROD
-		15, // GARNET_SH_KNIFE
-		16, // STEINER_OUTDOOR
-		16, // STEINER_INDOOR
-		14, // KUINA
-		15, // EIKO_FLUTE
-		15, // EIKO_KNIFE
-		6,  // FREIJA
-		16, // SALAMANDER
-		25, // CINNA
-		6,  // MARCUS
-		14, // BLANK
-		14, // BLANK_ARMOR
-		16  // BEATRIX
 	};
 
 	public static readonly Dictionary<String, String> PlayerModelToAnimationID = new Dictionary<String, String>

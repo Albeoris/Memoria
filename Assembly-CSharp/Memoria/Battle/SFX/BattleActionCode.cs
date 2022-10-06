@@ -421,7 +421,7 @@ public class BattleActionCode
 				value = btl_scrp.GetBattleID(2);
 				return true;
 			}
-			String[] partyNames = CharacterNamesFormatter._characterNames["US"];
+			String[] partyNames = CharacterNamesFormatter.CharacterScriptNames();
 			for (Int32 i = 0; i < partyNames.Length; i++)
 				if (args == partyNames[i])
 					for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)

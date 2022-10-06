@@ -2199,8 +2199,8 @@ public class SFX
 
     public static void SoundPlayChant(Int32 dno, Int32 attr, Int32 position)
     {
-        Int32 num = (dno & 16777215) * 3 + SFX.seChantIndex;
-        if ((dno & 16777215) == 3)
+        Int32 num = (dno & 0xFFFFFF) * 3 + SFX.seChantIndex;
+        if ((dno & 0xFFFFFF) == 3)
         {
             if (SFX.seChantIndex % 3 == 0)
                 SoundLib.PlaySoundEffect(REFLECT_SOUND_ID, 5f, 0f, 1f); // DEBUG: using 5f as sound volume because the current sound fix has a low volume... must fix that (same as SFXChannel.ExecuteLoop)

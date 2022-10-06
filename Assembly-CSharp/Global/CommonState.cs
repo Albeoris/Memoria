@@ -13,6 +13,15 @@ public class CommonState : MonoBehaviour
 		this.FF9 = new FF9StateGlobal();
 	}
 
+	public void ChangePlayerCount(Int32 newCount)
+	{
+		Int32 oldCount = this.FF9.player.Length;
+		Array.Resize(ref this.FF9.player, newCount);
+		PlayerCount = newCount;
+		for (Int32 i = oldCount; i < newCount; i++)
+			this.FF9.player[i] = new PLAYER();
+	}
+
 	public FF9StateGlobal FF9;
 
 	[NonSerialized]

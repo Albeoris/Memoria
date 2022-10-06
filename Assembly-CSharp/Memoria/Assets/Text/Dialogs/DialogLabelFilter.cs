@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 
@@ -184,6 +185,17 @@ namespace Memoria.Assets
                     OnPartyMemberName(2);
                 else if (a == NGUIText.Party4)
                     OnPartyMemberName(3);
+                else
+                {
+                    foreach (KeyValuePair<String, CharacterId> kv in NGUIText.nameCustomKeywords)
+                    {
+                        if (a == kv.Key)
+                        {
+                            OnCharacterName(kv.Value);
+                            break;
+                        }
+                    }
+                }
             }
             else if (text3 == "[" + NGUIText.NumberVar)
             {

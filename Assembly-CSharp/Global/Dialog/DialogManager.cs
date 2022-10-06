@@ -314,21 +314,16 @@ public class DialogManager : Singleton<DialogManager>
 
 	public void Close(Int32 dialogId)
 	{
-		Int32 count = this.activeDialogList.Count;
-		Dialog[] array = this.activeDialogList.ToArray();
-		for (Int32 i = 0; i < count; i++)
+		foreach (Dialog dialog in this.activeDialogList)
 		{
-			Dialog dialog = array[i];
 			if (dialog.gameObject.activeInHierarchy && dialog.Id == dialogId)
 			{
 				dialog.ForceClose();
-				if (FF9StateSystem.Common.FF9.fldMapNo == 100)
+				if (FF9StateSystem.Common.FF9.fldMapNo == 100) // Alexandria/Main Street
 				{
 					Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(8149);
-					if (varManually == 3)
-					{
+					if (varManually == 3) // When Puck hits Vivi
 						dialog.AfterHidden();
-					}
 				}
 			}
 		}
@@ -336,16 +331,9 @@ public class DialogManager : Singleton<DialogManager>
 
 	public void CloseAll()
 	{
-		Int32 count = this.activeDialogList.Count;
-		Dialog[] array = this.activeDialogList.ToArray();
-		for (Int32 i = 0; i < count; i++)
-		{
-			Dialog dialog = array[i];
+		foreach (Dialog dialog in this.activeDialogList)
 			if (dialog.gameObject.activeInHierarchy)
-			{
 				dialog.ForceClose();
-			}
-		}
 	}
 
 	public void ShowChoiceHud()

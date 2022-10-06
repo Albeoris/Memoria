@@ -39,7 +39,7 @@ public class PLAYER
     public void ValidateSupportAbility()
 	{
 		Int32 activeSupportAbilityPoint = this.GetActiveSupportAbilityPoint();
-		if ((Int32)this.cur.capa != (Int32)this.max.capa - activeSupportAbilityPoint)
+		if (this.cur.capa != this.max.capa - activeSupportAbilityPoint)
 		{
 			this.cur.capa = this.max.capa;
 			this.sa[0] = 0u;

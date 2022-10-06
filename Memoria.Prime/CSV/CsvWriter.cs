@@ -105,6 +105,11 @@ namespace Memoria.Prime.CSV
             String(System.String.Join(", ", array.Select(v => v.ToString(CultureInfo.InvariantCulture)).ToArray()));
         }
 
+        public void SByteArray(SByte[] array)
+        {
+            String(System.String.Join(", ", array.Select(v => v.ToString(CultureInfo.InvariantCulture)).ToArray()));
+        }
+
         public void EnumValue<T>(T value) where T : struct
         {
             UInt64 integer = EnumCache<T>.ToUInt64(value);

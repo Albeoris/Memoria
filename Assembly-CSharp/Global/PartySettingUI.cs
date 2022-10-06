@@ -84,7 +84,7 @@ public class PartySettingUI : UIScene
     private List<CharacterOutsidePartyHud> outsidePartyHudList = new List<CharacterOutsidePartyHud>();
     private PartySelect currentCharacterSelect = new PartySelect(Mode.None, 0);
     private CharacterId currentCharacterId;
-    private FF9PARTY_INFO info = new FF9PARTY_INFO();
+    private FF9PARTY_INFO info;
 
     [NonSerialized]
     private Int32 currentFloor;

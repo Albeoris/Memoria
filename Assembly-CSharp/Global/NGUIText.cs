@@ -108,12 +108,20 @@ public static class NGUIText
 			NGUIText.Party3,
 			NGUIText.Party4
 		});
+		NGUIText.nameCustomKeywords = new Dictionary<String, CharacterId>();
 		NGUIText.FF9WhiteColor = "[C8C8C8]";
 		NGUIText.FF9YellowColor = "[C8B040]";
 		NGUIText.FF9PinkColor = "[B880E0]";
 		NGUIText.MobileTouchToConfirmJP = 322;
 		NGUIText.MobileTouchToConfirmUS = 323;
 		NGUIText.forceShowButton = false;
+	}
+
+	public static void RegisterCustomNameKeywork(String keyword, CharacterId charId)
+	{
+		NGUIText.nameCustomKeywords[keyword] = charId;
+		if (!NGUIText.nameKeywordList.Contains(keyword))
+			NGUIText.nameKeywordList.Add(keyword);
 	}
 
 	public static Boolean ForceShowButton
@@ -2735,6 +2743,8 @@ public static class NGUIText
 	public static readonly List<Char> CharException;
 
 	public static readonly List<String> nameKeywordList;
+
+	public static readonly Dictionary<String, CharacterId> nameCustomKeywords;
 
 	public static readonly String FF9WhiteColor;
 

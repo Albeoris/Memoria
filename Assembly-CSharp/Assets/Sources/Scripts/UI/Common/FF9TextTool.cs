@@ -713,5 +713,17 @@ namespace Assets.Sources.Scripts.UI.Common
         {
             characterNames = value;
         }
+
+        public static void ChangeCharacterName(CharacterId charId, String value)
+        {
+            Int32 charIndex = (Int32)charId;
+            if (FF9StateSystem.Settings.CurrentLanguage == null)
+                FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
+            if (characterNames == null)
+                characterNames = CharacterNamesFormatter.CharacterDefaultNames();
+            if (characterNames.Length <= charIndex)
+                Array.Resize(ref characterNames, charIndex + 1);
+            characterNames[charIndex] = value;
+        }
     }
 }

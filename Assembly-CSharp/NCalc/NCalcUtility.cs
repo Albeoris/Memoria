@@ -172,6 +172,7 @@ namespace NCalc
             expr.Parameters["CharacterIndex"] = (Int32)play.Index;
             expr.Parameters["SerialNumber"] = (Int32)play.info.serial_no;
             expr.Parameters["WeaponId"] = (Int32)play.equip.Weapon;
+            expr.Parameters["WeaponShape"] = (Int32)ff9item._FF9Item_Data[play.equip.Weapon].shape;
             expr.Parameters["HeadId"] = (Int32)play.equip.Head;
             expr.Parameters["WristId"] = (Int32)play.equip.Wrist;
             expr.Parameters["ArmorId"] = (Int32)play.equip.Armor;

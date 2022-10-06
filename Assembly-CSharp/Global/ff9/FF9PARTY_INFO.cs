@@ -9,5 +9,5 @@ public class FF9PARTY_INFO
 
 	public CharacterId[] select = null;
 
-	public Boolean[] fix = new Boolean[CommonState.DEFAULT_PLAYER_COUNT];
+	public Boolean[] fix = new Boolean[FF9StateSystem.Common.PlayerCount];
 }

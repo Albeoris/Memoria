@@ -10,7 +10,6 @@ using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
 using UnityEngine;
-using Object = System.Object;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -55,30 +54,22 @@ public static class ff9play
 
     private static Boolean _FF9Play_Face;
     private static EntryCollection<CharacterEquipment> DefaultEquipment;
-
-    public static PLAYER_INFO[] PlayerInfoArray =
-    {
-        new PLAYER_INFO(CharacterId.Zidane, CharacterSerialNumber.ZIDANE_SWORD, 1, 1, 0, CharacterPresetId.Zidane),
-        new PLAYER_INFO(CharacterId.Vivi, CharacterSerialNumber.VIVI, 0, 1, 0, CharacterPresetId.Vivi),
-        new PLAYER_INFO(CharacterId.Garnet, CharacterSerialNumber.GARNET_LH_ROD, 0, 1, 0, CharacterPresetId.Garnet),
-        new PLAYER_INFO(CharacterId.Steiner, CharacterSerialNumber.STEINER_OUTDOOR, 1, 1, 0, CharacterPresetId.Steiner),
-        new PLAYER_INFO(CharacterId.Freya, CharacterSerialNumber.FREIJA, 0, 1, 0, CharacterPresetId.Freya),
-        new PLAYER_INFO(CharacterId.Quina, CharacterSerialNumber.KUINA, 1, 1, 0, CharacterPresetId.Quina),
-        new PLAYER_INFO(CharacterId.Eiko, CharacterSerialNumber.EIKO_FLUTE, 1, 1, 0, CharacterPresetId.Eiko),
-        new PLAYER_INFO(CharacterId.Amarant, CharacterSerialNumber.SALAMANDER, 1, 1, 0, CharacterPresetId.Amarant),
-        new PLAYER_INFO(CharacterId.Cinna, CharacterSerialNumber.CINNA, 1, 1, 0, CharacterPresetId.Cinna1),
-        new PLAYER_INFO(CharacterId.Marcus, CharacterSerialNumber.MARCUS, 1, 1, 0, CharacterPresetId.Marcus1),
-        new PLAYER_INFO(CharacterId.Blank, CharacterSerialNumber.BLANK, 1, 1, 0, CharacterPresetId.Blank1),
-        new PLAYER_INFO(CharacterId.Beatrix, CharacterSerialNumber.BEATRIX, 1, 1, 0, CharacterPresetId.Beatrix1)
-    };
-
-    // TODO: maybe have a system that allows to change the serial ID using a NCalc formula
-    public static Dictionary<CharacterId, CharacterSerialNumber> CustomPlayerSerial = new Dictionary<CharacterId, CharacterSerialNumber>();
+    private static EntryCollection<CharacterParameter> CharacterParameterList;
 
     public static void FF9Play_Init()
     {
         DefaultEquipment = LoadCharacterDefaultEquipment();
+        CharacterParameterList = LoadCharacterParameters();
+        btl_mot.Init();
 
+        CharacterId maxCharacterId = CharacterId.Beatrix;
+        foreach (CharacterParameter param in CharacterParameterList)
+        {
+            NGUIText.RegisterCustomNameKeywork(param.NameKeyword, param.Id);
+            if (maxCharacterId < param.Id)
+                maxCharacterId = param.Id;
+        }
+        FF9StateSystem.Common.ChangePlayerCount((Int32)(maxCharacterId + 1));
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         FF9Play_SetFaceDirty(false);
         for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; ++i)
@@ -125,20 +116,60 @@ public static class ff9play
         }
     }
 
+    private static EntryCollection<CharacterParameter> LoadCharacterParameters()
+    {
+        try
+        {
+            String inputPath = DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile;
+            if (!File.Exists(inputPath))
+                throw new FileNotFoundException($"File with character parameters not found: [{inputPath}]");
+
+            CharacterParameter[] param = CsvReader.Read<CharacterParameter>(inputPath);
+            if (param.Length < 12)
+                throw new NotSupportedException($"You must set at least 12 different entries, but there {param.Length}.");
+
+            EntryCollection<CharacterParameter> result = EntryCollection.CreateWithDefaultElement(param, p => (Int32)p.Id);
+            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            {
+                inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CharacterParametersFile;
+                if (File.Exists(inputPath))
+                {
+                    param = CsvReader.Read<CharacterParameter>(inputPath);
+                    foreach (CharacterParameter it in param)
+                        result[(Int32)it.Id] = it;
+                }
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ff9play] Load character parameters failed.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
+    }
+
     public static void FF9Play_New(Int32 slotId)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slotId];
-        play.info = PlayerInfoArray[slotId];
+        CharacterParameter parameter = CharacterParameterList[slotId];
+        play.info = new PLAYER_INFO(parameter.Id, CharacterSerialNumber.ZIDANE_DAGGER, parameter.DefaultRow, parameter.DefaultWinPose, 0, parameter.DefaultMenuType);
         play.status = 0;
-        play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
+        play.category = parameter.DefaultCategory;
         play.bonus = new FF9LEVEL_BONUS();
         play.Name = FF9TextTool.CharacterDefaultName(play.info.slot_no);
-        FF9Play_SetDefEquips(play.equip, CharacterDefaultEquipSet(play.info.slot_no));
-        play.info.serial_no = FF9Play_GetSerialID(play.info.slot_no, play.equip);
+        FF9Play_SetDefEquips(play.equip, parameter.DefaultEquipmentSet);
+        play.info.serial_no = parameter.GetSerialNumber();
         FF9Play_Build(play, FF9PLAY_DEF_LEVEL, true, false);
         play.cur.hp = play.max.hp;
         play.cur.mp = play.max.mp;
         play.cur.capa = play.max.capa;
+    }
+
+    public static void FF9Play_UpdateSerialNumber(PLAYER player)
+    {
+        CharacterParameter parameter = CharacterParameterList[(Int32)player.info.slot_no];
+        player.info.serial_no = parameter.GetSerialNumber();
     }
 
     public static void FF9Play_SetParty(Int32 partySlot, CharacterId charId)
@@ -350,47 +381,6 @@ public static class ff9play
         return skill;
     }
 
-    public static EquipmentSetId CharacterDefaultEquipSet(CharacterId characterId)
-    {
-        switch (characterId)
-		{
-            case CharacterId.Zidane: return EquipmentSetId.Zidane;
-            case CharacterId.Vivi: return EquipmentSetId.Vivi;
-            case CharacterId.Garnet: return EquipmentSetId.Garnet;
-            case CharacterId.Steiner: return EquipmentSetId.Steiner;
-            case CharacterId.Freya: return EquipmentSetId.Freya;
-            case CharacterId.Quina: return EquipmentSetId.Quina;
-            case CharacterId.Eiko: return EquipmentSetId.Eiko;
-            case CharacterId.Amarant: return EquipmentSetId.Amarant;
-            case CharacterId.Cinna: return EquipmentSetId.Cinna;
-            case CharacterId.Marcus: return EquipmentSetId.Marcus;
-            case CharacterId.Blank: return EquipmentSetId.Blank;
-            case CharacterId.Beatrix: return EquipmentSetId.Beatrix;
-        }
-        return EquipmentSetId.Empty;
-    }
-
-    public static CharacterId CharacterPresetToID(CharacterPresetId presetId)
-    {
-        if (presetId >= CharacterPresetId.Zidane && presetId <= CharacterPresetId.Amarant)
-            return (CharacterId)presetId;
-
-        if (presetId == CharacterPresetId.Marcus1 || presetId == CharacterPresetId.Marcus2 || presetId == CharacterPresetId.StageMarcus)
-            return CharacterId.Marcus;
-        if (presetId == CharacterPresetId.Blank1 || presetId == CharacterPresetId.Blank2 || presetId == CharacterPresetId.StageBlank)
-            return CharacterId.Blank;
-        if (presetId == CharacterPresetId.Cinna1 || presetId == CharacterPresetId.Cinna2 || presetId == CharacterPresetId.StageCinna)
-            return CharacterId.Cinna;
-
-        if (presetId == CharacterPresetId.Beatrix1 || presetId == CharacterPresetId.Beatrix2)
-            return CharacterId.Beatrix;
-
-        if (presetId == CharacterPresetId.StageZidane || presetId == CharacterPresetId.Zidane)
-            return CharacterId.Zidane;
-
-        throw new NotSupportedException(presetId.ToString());
-    }
-
     public static CharacterId CharacterOldIndexToID(CharacterOldIndex characterIndex)
     {
         if (characterIndex <= CharacterOldIndex.Amarant)
@@ -423,11 +413,6 @@ public static class ff9play
         return -1;
     }
 
-    public static Int32 FF9Play_GetCategory(CharacterPresetId menu_type)
-    {
-        return new Byte[] { 9, 5, 6, 5, 6, 5, 6, 5, 21, 21, 21, 22 }[(Int32)CharacterPresetToID(menu_type)];
-    }
-
     public static void FF9Play_SetFaceDirty(Boolean dirty)
     {
         _FF9Play_Face = dirty;
@@ -443,46 +428,6 @@ public static class ff9play
         CharacterEquipment newSet = DefaultEquipment[(Int32)equipmentId];
         for (Int32 i = 0; i < 5; i++)
             target[i] = newSet[i];
-    }
-
-    public static CharacterSerialNumber FF9Play_GetSerialID(CharacterId slot_id, CharacterEquipment equip)
-    {
-        Int32 weaponShape = ff9item._FF9Item_Data[equip[0]].shape;
-        UInt16 scCounter = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
-        switch (slot_id)
-        {
-            case CharacterId.Zidane:
-                return weaponShape == 1 ? CharacterSerialNumber.ZIDANE_DAGGER : CharacterSerialNumber.ZIDANE_SWORD;
-            case CharacterId.Vivi:
-                return CharacterSerialNumber.VIVI;
-            case CharacterId.Garnet:
-                if (10300 <= scCounter)
-                    return weaponShape == 7 ? CharacterSerialNumber.GARNET_SH_KNIFE : CharacterSerialNumber.GARNET_SH_ROD;
-                return weaponShape == 7 ? CharacterSerialNumber.GARNET_LH_KNIFE : CharacterSerialNumber.GARNET_LH_ROD;
-            case CharacterId.Steiner:
-                return CharacterSerialNumber.STEINER_OUTDOOR;
-            case CharacterId.Freya:
-                return CharacterSerialNumber.FREIJA;
-            case CharacterId.Quina:
-                return CharacterSerialNumber.KUINA;
-            case CharacterId.Eiko:
-                return weaponShape == 7 ? CharacterSerialNumber.EIKO_KNIFE : CharacterSerialNumber.EIKO_FLUTE;
-            case CharacterId.Amarant:
-                return CharacterSerialNumber.SALAMANDER;
-            case CharacterId.Cinna:
-                return CharacterSerialNumber.CINNA;
-            case CharacterId.Marcus:
-                return CharacterSerialNumber.MARCUS;
-            case CharacterId.Blank:
-                return 1500 <= scCounter && 1600 > scCounter ? CharacterSerialNumber.BLANK_ARMOR : CharacterSerialNumber.BLANK;
-            case CharacterId.Beatrix:
-                return CharacterSerialNumber.BEATRIX;
-            default:
-                CharacterSerialNumber serial;
-                if (CustomPlayerSerial.TryGetValue(slot_id, out serial))
-                    return serial;
-                return CharacterSerialNumber.MAX;
-        }
     }
 
     public static void FF9Play_GrowLevel(PLAYER player, Int32 lv)
@@ -524,8 +469,8 @@ public static class ff9play
     {
         if (equipSetId != EquipmentSetId.NONE)
             FF9Play_SetDefEquips(play.equip, equipSetId);
-        
-        play.info.serial_no = FF9Play_GetSerialID(play.info.slot_no, play.equip);
+
+        ff9play.FF9Play_UpdateSerialNumber(play);
         if (!update_lv && equipSetId == EquipmentSetId.NONE)
             return;
         
@@ -567,22 +512,23 @@ public static class ff9play
         {
             FF9DBG_CHAR ff9DbgChar = ff9DbgCharArray[(Byte)player];
             PLAYER play = ff9StateGlobal.party.member[slot] = ff9StateGlobal.player[ff9DbgChar.slot_no];
+            CharacterParameter parameter = CharacterParameterList[(Byte)player];
             if (ff9DbgChar.menu_type >= 0)
             {
-                if (player != CharacterPresetToID(play.info.menu_type))
+                if (player != parameter.Id)
                     play.info.menu_type = (CharacterPresetId)ff9DbgChar.menu_type;
-                play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
+                play.category = parameter.DefaultCategory;
                 if (!FF9Dbg_CheckEquip(play))
-                    FF9Play_SetDefEquips(play.equip, CharacterDefaultEquipSet(play.info.slot_no));
-                play.info.serial_no = FF9Play_GetSerialID(play.info.slot_no, play.equip);
+                    FF9Play_SetDefEquips(play.equip, parameter.DefaultEquipmentSet);
+                play.info.serial_no = parameter.GetSerialNumber();
             }
-            play.category = (Byte)FF9Play_GetCategory(play.info.menu_type);
+            play.category = parameter.DefaultCategory;
         }
     }
 
     private static Boolean FF9Dbg_CheckEquip(PLAYER play)
     {
-        UInt16 characterMask = ff9feqp.GetCharacterEquipMask(play);
+        UInt64 characterMask = ff9feqp.GetCharacterEquipMask(play);
         for (Int32 i = 0; i < 5; ++i)
         {
             Int32 itemIndex;

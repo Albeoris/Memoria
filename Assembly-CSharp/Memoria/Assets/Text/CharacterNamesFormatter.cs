@@ -13,6 +13,14 @@ namespace Memoria.Assets
             return new String[0];
         }
 
+        public static String[] CharacterScriptNames()
+        {
+            String[] nameArray;
+            if (_characterNames.TryGetValue("US", out nameArray))
+                return nameArray;
+            return new String[0];
+        }
+
         public static Dictionary<String, String[]> _characterNames = new Dictionary<String, String[]>()
         {
             { "US", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } },

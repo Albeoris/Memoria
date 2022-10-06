@@ -110,41 +110,33 @@ public class AnimationFactory
 
 	public static void AddAnimToGameObject(GameObject go, String modelName, Boolean addAutoAnim = false)
 	{
-		Animation component = go.GetComponent<Animation>();
+		Animation goAnimations = go.GetComponent<Animation>();
 		if (AnimationFactory.animationMapping.ContainsKey(modelName))
 		{
-			String[] array = AnimationFactory.animationMapping[modelName];
-			String[] array2 = array;
-			for (Int32 i = 0; i < (Int32)array2.Length; i++)
+			String[] animNameList = AnimationFactory.animationMapping[modelName];
+			for (Int32 i = 0; i < animNameList.Length; i++)
 			{
-				String text = array2[i];
-				AnimationClip clip = AnimationFactory.animationEventClip[text];
-				component.AddClip(clip, text);
+				String animName = animNameList[i];
+				AnimationClip clip = AnimationFactory.animationEventClip[animName];
+				goAnimations.AddClip(clip, animName);
 			}
 		}
 		if (addAutoAnim)
 		{
-			String name = "Animations/" + modelName;
-			AnimationClip[] array3 = AssetManager.LoadAll<AnimationClip>(name);
-			if (array3 == null)
-			{
+			String animPath = "Animations/" + modelName;
+			AnimationClip[] modelAnim = AssetManager.LoadAll<AnimationClip>(animPath);
+			if (modelAnim == null)
 				return;
-			}
-			AnimationClip[] array4 = array3;
-			for (Int32 j = 0; j < (Int32)array4.Length; j++)
+			for (Int32 i = 0; i < modelAnim.Length; i++)
 			{
-				AnimationClip animationClip = array4[j];
-				Int32 key = -1;
-				String text2 = animationClip.name;
-				if (Int32.TryParse(animationClip.name, out key))
-				{
-					text2 = FF9DBAll.AnimationDB.GetValue(key);
-				}
-				if (!AnimationFactory.animationEventClip.ContainsKey(text2))
-				{
-					AnimationFactory.animationEventClip.Add(text2, animationClip);
-				}
-				component.AddClip(animationClip, text2);
+				AnimationClip clip = modelAnim[i];
+				Int32 animKey;
+				String animName = clip.name;
+				if (Int32.TryParse(clip.name, out animKey))
+					animName = FF9DBAll.AnimationDB.GetValue(animKey);
+				if (!AnimationFactory.animationEventClip.ContainsKey(animName))
+					AnimationFactory.animationEventClip.Add(animName, clip);
+				goAnimations.AddClip(clip, animName);
 			}
 			// Wraith (Ice): the following code used to load Wraith (Fire)'s casting animations but it wasn't enough
 			// The current fix is to make Wraith (Ice) use Wraith (Ice)'s casting animations
@@ -170,32 +162,26 @@ public class AnimationFactory
 
 	public static String GetRenameAnimationDirectory(String animationDirectory)
 	{
-		String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(animationDirectory);
-		Int32 num = -1;
-		if (fileNameWithoutExtension.Equals("GEO_MON_B3_110"))
-		{
+		String modelName = Path.GetFileNameWithoutExtension(animationDirectory);
+		if (modelName.Equals("GEO_MON_B3_110"))
 			return "Animations/347";
-		}
-		if (fileNameWithoutExtension.Equals("GEO_MON_B3_109"))
-		{
+		if (modelName.Equals("GEO_MON_B3_109"))
 			return "Animations/5461";
-		}
-		if (FF9BattleDB.GEO.TryGetKey(fileNameWithoutExtension, out num))
-		{
-			return "Animations/" + num;
-		}
+		Int32 animKey;
+		if (FF9BattleDB.GEO.TryGetKey(modelName, out animKey))
+			return "Animations/" + animKey;
 		return animationDirectory;
 	}
 
 	public static String GetRenameAnimationPath(String animationPath)
 	{
-		String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(animationPath);
-		Int32 num = -1;
-		if (FF9DBAll.AnimationDB.TryGetKey(fileNameWithoutExtension, out num))
+		String animName = Path.GetFileNameWithoutExtension(animationPath);
+		Int32 animKey;
+		if (FF9DBAll.AnimationDB.TryGetKey(animName, out animKey))
 		{
-			String text = Path.GetDirectoryName(animationPath);
-			text = AnimationFactory.GetRenameAnimationDirectory(text);
-			return text + "/" + num;
+			String animDir = Path.GetDirectoryName(animationPath);
+			animDir = AnimationFactory.GetRenameAnimationDirectory(animDir);
+			return animDir + "/" + animKey;
 		}
 		return animationPath;
 	}

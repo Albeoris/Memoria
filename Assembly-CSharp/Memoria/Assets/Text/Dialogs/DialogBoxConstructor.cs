@@ -443,6 +443,17 @@ namespace Memoria.Assets
                     OnPartyMemberName(2);
                 else if (a2 == NGUIText.Party4)
                     OnPartyMemberName(3);
+                else
+                {
+                    foreach (KeyValuePair<String, CharacterId> kv in NGUIText.nameCustomKeywords)
+                    {
+                        if (a2 == kv.Key)
+                        {
+                            OnCharacterName(kv.Value);
+                            break;
+                        }
+                    }
+                }
             }
             else if (text3 == "[" + NGUIText.NumberVar)
             {

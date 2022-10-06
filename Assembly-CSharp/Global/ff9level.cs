@@ -92,129 +92,133 @@ public static class ff9level
     public static Int32 FF9Level_GetDex(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
 		if (lvup)
 		{
-			Int32 num = 0;
-			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 0);
-			bonus.dex = (UInt16)(bonus.dex + (UInt16)(num + num2));
+			Int32 capaBonus = 0;
+			Int32 equipBonus = ff9level.FF9Level_GetEquipBonus(player.equip, 0);
+			bonus.dex += (UInt16)(capaBonus + equipBonus);
 		}
-		Int32 num3 = Math.Min(50, (Int32)ff9LEVEL_BASE.Dexterity + lv / 10 + (bonus.dex >> 5));
+		Int32 speed = Math.Min(50, baseStats.Dexterity + lv / 10 + (bonus.dex >> 5));
 		if (Configuration.Battle.SpeedStatFormula.Length > 0)
 		{
 			Expression e = new Expression(Configuration.Battle.SpeedStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
 			e.Parameters["Level"] = lv; // overrides "player.level"
 			e.Parameters["SpeedBonus"] = (Int32)bonus.dex; // As it is, SpeedBonus contains only bonuses from equipment, no bonus is gotten from level ups
-			e.Parameters["SpeedBase"] = (Int32)ff9LEVEL_BASE.Dexterity;
+			e.Parameters["SpeedBase"] = (Int32)baseStats.Dexterity;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
 			e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 			Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
 			if (val >= 0)
-				num3 = Math.Min(val, Byte.MaxValue); // "player.basis.dex" is a Byte, so it's better to force a 255 limit there
+				speed = Math.Min(val, Byte.MaxValue); // "player.basis.dex" is a Byte, so it's better to force a 255 limit there
 		}
-		return num3;
+		return speed;
 	}
 
 	public static Int32 FF9Level_GetStr(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
 		if (lvup)
 		{
-			Int32 num = (player.cur.capa != 0) ? 0 : 3;
-			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 1);
-			bonus.str = (UInt16)(bonus.str + (UInt16)(num + num2));
+			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 3;
+			Int32 equipBonus = ff9level.FF9Level_GetEquipBonus(player.equip, 1);
+			bonus.str += (UInt16)(capaBonus + equipBonus);
 		}
-		Int32 num3 = Math.Min(99, (Int32)ff9LEVEL_BASE.Strength + lv * 3 / 10 + (bonus.str >> 5));
+		Int32 strength = Math.Min(99, baseStats.Strength + lv * 3 / 10 + (bonus.str >> 5));
 		if (Configuration.Battle.StrengthStatFormula.Length > 0)
 		{
 			Expression e = new Expression(Configuration.Battle.StrengthStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
 			e.Parameters["Level"] = lv; // overrides "player.level"
 			e.Parameters["StrengthBonus"] = (Int32)bonus.str; // As it is, StrengthBonus contains both bonuses from equipment and from level ups (x3)
-			e.Parameters["StrengthBase"] = (Int32)ff9LEVEL_BASE.Strength;
+			e.Parameters["StrengthBase"] = (Int32)baseStats.Strength;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
 			e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 			Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
 			if (val >= 0)
-				num3 = Math.Min(val, Byte.MaxValue); // "player.basis.str" is a Byte, so it's better to force a 255 limit there
+				strength = Math.Min(val, Byte.MaxValue); // "player.basis.str" is a Byte, so it's better to force a 255 limit there
 		}
-		return num3;
+		return strength;
 	}
 
 	public static Int32 FF9Level_GetMgc(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
 		if (lvup)
 		{
-			Int32 num = (player.cur.capa != 0) ? 0 : 3;
-			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 2);
-			bonus.mgc = (UInt16)(bonus.mgc + (UInt16)(num + num2));
+			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 3;
+			Int32 equipBonus = ff9level.FF9Level_GetEquipBonus(player.equip, 2);
+			bonus.mgc += (UInt16)(capaBonus + equipBonus);
 		}
-		Int32 num3 = Math.Min(99, (Int32)ff9LEVEL_BASE.Magic + lv * 3 / 10 + (bonus.mgc >> 5));
+		Int32 magic = Math.Min(99, baseStats.Magic + lv * 3 / 10 + (bonus.mgc >> 5));
 		if (Configuration.Battle.MagicStatFormula.Length > 0)
 		{
 			Expression e = new Expression(Configuration.Battle.MagicStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
 			e.Parameters["Level"] = lv; // overrides "player.level"
 			e.Parameters["MagicBonus"] = (Int32)bonus.mgc; // As it is, MagicBonus contains both bonuses from equipment and from level ups (x3)
-			e.Parameters["MagicBase"] = (Int32)ff9LEVEL_BASE.Magic;
+			e.Parameters["MagicBase"] = (Int32)baseStats.Magic;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
 			e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 			Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
 			if (val >= 0)
-				num3 = Math.Min(val, Byte.MaxValue); // "player.basis.mgc" is a Byte, so it's better to force a 255 limit there
+				magic = Math.Min(val, Byte.MaxValue); // "player.basis.mgc" is a Byte, so it's better to force a 255 limit there
 		}
-		return num3;
+		return magic;
 	}
 
 	public static Int32 FF9Level_GetWpr(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
 		if (lvup)
 		{
-			Int32 num = (player.cur.capa != 0) ? 0 : 1;
-			Int32 num2 = ff9level.FF9Level_GetEquipBonus(player.equip, 3);
-			bonus.wpr = (UInt16)(bonus.wpr + (UInt16)(num + num2));
+			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 1;
+			Int32 equipBonus = ff9level.FF9Level_GetEquipBonus(player.equip, 3);
+			bonus.wpr += (UInt16)(capaBonus + equipBonus);
 		}
-		Int32 num3 = Math.Min(50, (Int32)ff9LEVEL_BASE.Will + lv * 3 / 20 + (bonus.wpr >> 5));
+		Int32 spirit = Math.Min(50, baseStats.Will + lv * 3 / 20 + (bonus.wpr >> 5));
 		if (Configuration.Battle.SpiritStatFormula.Length > 0)
 		{
 			Expression e = new Expression(Configuration.Battle.SpiritStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
 			e.Parameters["Level"] = lv; // overrides "player.level"
 			e.Parameters["SpiritBonus"] = (Int32)bonus.wpr; // As it is, SpiritBonus contains both bonuses from equipment and from level ups (x1)
-			e.Parameters["SpiritBase"] = (Int32)ff9LEVEL_BASE.Will;
+			e.Parameters["SpiritBase"] = (Int32)baseStats.Will;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
 			e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 			Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
 			if (val >= 0)
-				num3 = Math.Min(val, Byte.MaxValue); // "player.basis.wpr" is a Byte, so it's better to force a 255 limit there
+				spirit = Math.Min(val, Byte.MaxValue); // "player.basis.wpr" is a Byte, so it's better to force a 255 limit there
 		}
-		return num3;
+		return spirit;
 	}
 
 	public static Int32 FF9Level_GetCap(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats ff9LEVEL_BASE = ff9level.CharacterBaseStats[(Int32)ff9play.CharacterPresetToID(player.PresetId)];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
+		// It seems that "bonus.cap" was meant to give a small amount of magic stone bonuses (~1 every 6 levels)
+		// but only as long as all the stones are used when leveling up
+		// However, since "ff9play.FF9Play_Build" resets "player.cur", the bonus is always given instead
+		// Same goes with the few "capaBonus" points given for other stats
 		if (lvup)
 		{
-			Int32 num = (player.cur.capa != 0) ? 0 : 5;
-			Int32 num2 = 0;
-			bonus.cap = (UInt16)(bonus.cap + (UInt16)(num + num2));
+			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 5;
+			Int32 equipBonus = 0;
+			bonus.cap += (UInt16)(capaBonus + equipBonus);
 		}
-		Int32 gemCount = Math.Min(99, (Int32)ff9LEVEL_BASE.Gems + lv * 4 / 10 + (bonus.cap >> 5));
+		Int32 gemCount = Math.Min(99, baseStats.Gems + lv * 4 / 10 + (bonus.cap >> 5));
 		if (Configuration.Battle.MagicStoneStockFormula.Length > 0)
 		{
 			Expression e = new Expression(Configuration.Battle.MagicStoneStockFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
 			e.Parameters["Level"] = lv; // overrides "player.level"
 			e.Parameters["MagicStoneBonus"] = (Int32)bonus.cap; // MagicStoneBonus contains the bonus from level ups (x5)
-			e.Parameters["MagicStoneBase"] = (Int32)ff9LEVEL_BASE.Gems;
+			e.Parameters["MagicStoneBase"] = (Int32)baseStats.Gems;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
 			e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
 			Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
@@ -227,16 +231,16 @@ public static class ff9level
 	public static UInt32 FF9Level_GetHp(Int32 lv, Int32 str)
 	{
 		UInt32 maxHp = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusHP * str / 50);
-		if (maxHp > 9999)
-			maxHp = 9999;
+		if (maxHp > ff9play.FF9PLAY_HP_MAX)
+			maxHp = ff9play.FF9PLAY_HP_MAX;
 		return maxHp;
 	}
 
 	public static UInt32 FF9Level_GetMp(Int32 lv, Int32 mgc)
 	{
 		UInt32 maxMp = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusMP * mgc / 100);
-		if (maxMp > 999)
-			maxMp = 999;
+		if (maxMp > ff9play.FF9PLAY_MP_MAX)
+			maxMp = ff9play.FF9PLAY_MP_MAX;
 		return maxMp;
 	}
 
