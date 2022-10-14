@@ -149,6 +149,16 @@ public class HonoluluFieldMain : HonoBehavior
 
 	public override void HonoUpdate()
 	{
+		if (Configuration.Debug.StartModelViewer)
+		{
+			if (this.firstFrame)
+			{
+				this.firstFrame = false;
+				Memoria.Assets.ModelViewerScene.Init();
+			}
+			Memoria.Assets.ModelViewerScene.Update();
+			return;
+		}
 		if ((MBG.Instance.IsPlaying() & 2UL) != 0UL && this.mbgFrameSkip)
 		{
 			this.mbgFrameSkip = false;

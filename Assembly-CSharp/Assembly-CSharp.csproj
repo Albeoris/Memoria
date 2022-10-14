@@ -344,6 +344,8 @@
     <Compile Include="Memoria\Assets\Import\Fields\PsdImport.cs" />
     <Compile Include="Memoria\Assets\Import\Text\CharacterNamesImporter.cs" />
     <Compile Include="Memoria\Assets\AnimationClipReader.cs" />
+    <Compile Include="Memoria\Assets\ModelViewer\BoneHierarchyNode.cs" />
+    <Compile Include="Memoria\Assets\ModelViewer\ModelViewerScene.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxConstructor.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxController.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\DialogBoxRenderer.cs" />

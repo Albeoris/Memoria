@@ -381,8 +381,9 @@ public class btlseq
 		}
 		if (meshoffcnt == meshcnt)
 		{
+			String modelName;
 			btl.SetIsEnabledBattleModelRenderer(false);
-			if ((btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Garnet) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
+			if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
 			{
 				Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
 				for (Int32 i = 0; i < longHairRenderers.Length; i++)
@@ -394,9 +395,10 @@ public class btlseq
 		}
 		if (meshoncnt == meshcnt)
 		{
+			String modelName;
 			btl.SetIsEnabledBattleModelRenderer(true);
 			CharacterSerialNumber serialNumber = btl_util.getSerialNumber(btl);
-			if ((btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Garnet) || (btl.bi.player == 0 && btl.dms_geo_id == 671))
+			if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
 			{
 				if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == CharacterSerialNumber.GARNET_LH_ROD || serialNumber == CharacterSerialNumber.GARNET_LH_KNIFE || Configuration.Graphics.GarnetHair == 1))
 				{

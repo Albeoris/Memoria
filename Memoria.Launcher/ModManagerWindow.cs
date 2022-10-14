@@ -507,11 +507,40 @@ namespace Memoria.Launcher
                 InstallationPath = "PlayAsKuja",
                 Author = "Tirlititi",
                 Description = "Turn Zidane's 3D model on the field and in battles into Kuja's 3D model.\n" +
-                    "The animations on the field are messed up.",
+                    "The animations on the field are messed up.\n\n" +
+                    "You should better use the Playable Characters Pack instead. This later one doesn't aim to replace Zidane by Kuja on the field but is less experimental.",
                 Category = "Visual",
                 Website = "https://steamcommunity.com/app/377840/discussions/0/4472613273101569368/",
                 DownloadUrl = "https://www.dropbox.com/s/y3dw2gxfdw5kkl8/PC_PlayAsKuja.zip?dl=1",
             });
+            Mod characterPackMod = new Mod()
+            {
+                Name = "Playable Characters Pack",
+                CurrentVersion = new Version(0, 5),
+                InstallationPath = "PlayableCharactersPack",
+                Author = "Tirlititi",
+                Description = @"Add Kuja, Fratley and Lani as playable characters.
+In order to use these characters, you must enable the Memoria.ini option [Hacks] AllCharactersAvailable, then press Alt+F2 in-game.
+You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.",
+                Category = "Gameplay",
+                Website = "https://steamcommunity.com/app/377840/discussions/0/4472613273101569368/",
+                DownloadUrl = "https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharactersPack.zip?dl=1",
+                PreviewFile = "Preview.png",
+                PreviewFileUrl = "https://i.imgur.com/vZ8DbNQ.png"
+            };
+            characterPackMod.SubMod.Add(new Mod()
+            {
+                Name = "Zidane Pluto outfit",
+                InstallationPath = "ZidaneArmor",
+                Description = "When enabled, Zidane's battle model will wear a Pluto armor."
+            });
+            characterPackMod.SubMod.Add(new Mod()
+            {
+                Name = "Garnet White Mage robe",
+                InstallationPath = "GarnetHooded",
+                Description = "When enabled, Garnet's battle model will wear the traditional White Mage robe."
+            });
+            modListCatalog.Add(characterPackMod);
             modListCatalog.Add(new Mod()
             {
                 Name = "Garnet is Main Character",
@@ -754,7 +783,13 @@ PS5 white button prompts - Pixel Type Button Prompts
                     if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFile != null)
                     {
                         if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/" + mod.InstallationPath + "/" + mod.PreviewFile))
-                            mod.PreviewImage = new BitmapImage(new Uri("file://" + AppDomain.CurrentDomain.BaseDirectory + "/" + mod.InstallationPath + "/" + mod.PreviewFile, UriKind.Absolute));
+                        {
+                            mod.PreviewImage = new BitmapImage();
+                            mod.PreviewImage.BeginInit();
+                            mod.PreviewImage.UriSource = new Uri("file://" + AppDomain.CurrentDomain.BaseDirectory + "/" + mod.InstallationPath + "/" + mod.PreviewFile, UriKind.Absolute);
+                            mod.PreviewImage.CacheOption = BitmapCacheOption.OnLoad;
+                            mod.PreviewImage.EndInit();
+                        }
                     }
                     else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
                     {

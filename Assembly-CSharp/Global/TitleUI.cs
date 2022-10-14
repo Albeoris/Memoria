@@ -1014,6 +1014,11 @@ public class TitleUI : UIScene
 
     public void ShowMenuPanel()
     {
+        if (Configuration.Debug.StartModelViewer)
+		{
+            OnNewGameButtonClick();
+            return;
+        }
         this.SlideShowHitArea.SetActive(false);
         this.MenuPanelObject.SetActive(true);
         this.CheckCloudAvalability();

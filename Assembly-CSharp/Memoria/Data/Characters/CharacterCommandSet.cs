@@ -6,6 +6,7 @@ namespace Memoria.Data
 {
     public sealed class CharacterCommandSet : ICsvEntry
     {
+        public Int32 Id;
         public BattleCommandId Regular1;
         public BattleCommandId Regular2;
         public BattleCommandId Trance1;
@@ -13,14 +14,20 @@ namespace Memoria.Data
 
         public void ParseEntry(String[] raw)
         {
-            Regular1 = (BattleCommandId)CsvParser.Byte(raw[0]);
-            Regular2 = (BattleCommandId)CsvParser.Byte(raw[1]);
-            Trance1 = (BattleCommandId)CsvParser.Byte(raw[2]);
-            Trance2 = (BattleCommandId)CsvParser.Byte(raw[3]);
+            Int32 index = 0;
+            if (raw.Length <= 4)
+                Id = -1;
+            else
+                Id = CsvParser.Int32(raw[index++]);
+            Regular1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
+            Regular2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
+            Trance1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
+            Trance2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
         }
 
         public void WriteEntry(CsvWriter sw)
         {
+            sw.Int32(Id);
             sw.Byte((Byte)Regular1);
             sw.Byte((Byte)Regular2);
             sw.Byte((Byte)Trance1);
