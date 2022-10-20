@@ -23,6 +23,7 @@ namespace Memoria.Data
        StageZidane = 16,
        StageCinna = 17,
        StageMarcus = 18,
-       StageBlank = 19
+       StageBlank = 19,
+       NONE = Byte.MaxValue
     }
 }

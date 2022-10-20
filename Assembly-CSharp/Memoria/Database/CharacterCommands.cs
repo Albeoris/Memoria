@@ -31,11 +31,11 @@ namespace Memoria.Database
                     if (File.Exists(inputPath))
                         return CsvReader.Read<CharacterCommand>(inputPath);
                 }
-                throw new FileNotFoundException($"[rdata] Cannot load character commands because a file does not exist: [{inputPath}].", inputPath);
+                throw new FileNotFoundException($"[CharacterCommands] Cannot load character commands because a file does not exist: [{inputPath}].", inputPath);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[rdata] Load battle commands failed.");
+                Log.Error(ex, "[CharacterCommands] Load battle commands failed.");
                 UIManager.Input.ConfirmQuit();
                 return null;
             }
@@ -54,9 +54,9 @@ namespace Memoria.Database
                     throw new NotSupportedException($"You must set at least 20 different entries, but there {cmdset.Length}.");
 
                 for (Int32 j = 0; j < cmdset.Length; j++)
-                    if (cmdset[j].Id < 0)
-                        cmdset[j].Id = j;
-                EntryCollection<CharacterCommandSet> result = EntryCollection.CreateWithDefaultElement(cmdset, s => s.Id);
+                    if (cmdset[j].Id == CharacterPresetId.NONE)
+                        cmdset[j].Id = (CharacterPresetId)j;
+                EntryCollection<CharacterCommandSet> result = EntryCollection.CreateWithDefaultElement(cmdset, s => (Int32)s.Id);
                 for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
                 {
                     inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CommandSetsFile;
@@ -65,9 +65,9 @@ namespace Memoria.Database
                         cmdset = CsvReader.Read<CharacterCommandSet>(inputPath);
                         for (Int32 j = 0; j < cmdset.Length; j++)
                         {
-                            if (cmdset[j].Id < 0)
-                                cmdset[j].Id = j;
-                            result[cmdset[j].Id] = cmdset[j];
+                            if (cmdset[j].Id == CharacterPresetId.NONE)
+                                cmdset[j].Id = (CharacterPresetId)j;
+                            result[(Int32)cmdset[j].Id] = cmdset[j];
                         }
                     }
                 }
@@ -75,32 +75,10 @@ namespace Memoria.Database
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[ff9play] Load character command sets failed.");
+                Log.Error(ex, "[CharacterCommands] Load character command sets failed.");
                 UIManager.Input.ConfirmQuit();
                 return null;
             }
         }
-
-        //private static EntryCollection<CharacterCommandSet> LoadBattleCommandSets()
-        //{
-        //    try
-        //    {
-        //        String inputPath = DataResources.Characters.Directory + DataResources.Characters.CommandSetsFile;
-        //        String[] dir = Configuration.Mod.AllFolderNames;
-        //        for (Int32 i = 0; i < dir.Length; i++)
-        //        {
-        //            inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CommandSetsFile;
-        //            if (File.Exists(inputPath))
-        //                return CsvReader.Read<CharacterCommandSet>(inputPath);
-        //        }
-        //        throw new FileNotFoundException($"[rdata] Cannot load character command sets because a file does not exist: [{inputPath}].", inputPath);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error(ex, "[rdata] Load battle command sets failed.");
-        //        UIManager.Input.ConfirmQuit();
-        //        return null;
-        //    }
-        //}
     }
 }

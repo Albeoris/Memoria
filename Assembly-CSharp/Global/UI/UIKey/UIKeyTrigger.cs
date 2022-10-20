@@ -719,27 +719,12 @@ namespace Memoria
         public static void OpenPartyMenu()
         {
             FF9PARTY_INFO party = new FF9PARTY_INFO();
+            List<CharacterId> selectList = new List<CharacterId>();
 
-            Int32 availableChatacters = 0;
-            if (Configuration.Hacks.AllCharactersAvailable > 0)
-            {
-                availableChatacters = 0xFFFF;
-                party.party_ct = 4;
-            }
-            else
-            {
-                for (Int32 characterIndex = FF9StateSystem.Common.PlayerCount - 1; characterIndex >= 0; --characterIndex)
-                {
-                    Boolean isAvailable = FF9StateSystem.Common.FF9.player[characterIndex].info.party != 0;
-                    if (isAvailable)
-                        party.party_ct++;
-
-                    availableChatacters = availableChatacters << 1 | (isAvailable ? 1 : 0);
-                }
-
-                if (party.party_ct > 4)
-                    party.party_ct = 4;
-            }
+            foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                if (p.info.party != 0)
+                    selectList.Add(p.info.slot_no);
+            party.party_ct = Math.Min(4, selectList.Count);
 
             for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
             {
@@ -747,7 +732,7 @@ namespace Memoria
                 {
                     CharacterId characterId = FF9StateSystem.Common.FF9.party.member[memberIndex].info.slot_no;
                     party.menu[memberIndex] = characterId;
-                    availableChatacters &= ~(1 << (Int32)characterId);
+                    selectList.Remove(characterId);
                 }
                 else
                 {
@@ -755,15 +740,7 @@ namespace Memoria
                 }
             }
 
-            List<CharacterId> selectList = new List<CharacterId>();
-            for (Byte characterId = 0; characterId < FF9StateSystem.Common.PlayerCount && availableChatacters > 0; ++characterId)
-            {
-                if ((availableChatacters & 1) > 0)
-                    selectList.Add((CharacterId)characterId);
-                availableChatacters >>= 1;
-            }
             party.select = selectList.ToArray();
-
             EventService.OpenPartyMenu(party);
         }
     }

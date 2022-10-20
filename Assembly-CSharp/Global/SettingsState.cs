@@ -387,9 +387,8 @@ public class SettingsState : MonoBehaviour
         if (!IsMasterSkill)
             return;
         Boolean gotAchievement = false;
-        for (Int32 pIndex = 0; pIndex < FF9StateSystem.Common.PlayerCount; ++pIndex)
+        foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
         {
-            PLAYER player = FF9StateSystem.Common.FF9.player[pIndex];
             foreach (FF9ITEM ff9Item in FF9StateSystem.Common.FF9.item)
             {
                 if (ff9Item.count > 0 && ff9item.FF9Item_GetEquipPart(ff9Item.id) > -1)
@@ -423,9 +422,9 @@ public class SettingsState : MonoBehaviour
                     }
                 }
             }
-            if (player.info.serial_no == CharacterSerialNumber.KUINA)
+            if (player.info.serial_no == CharacterSerialNumber.KUINA && ff9abil._FF9Abil_PaData.ContainsKey(player.PresetId))
             {
-                foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type])
+                foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.PresetId])
                 {
                     if (paData.Id != 0 && paData.Id < 192)
                     {
@@ -443,9 +442,8 @@ public class SettingsState : MonoBehaviour
 
     private void SetLvMax()
     {
-        for (Int32 pIndex = 0; pIndex < FF9StateSystem.Common.PlayerCount; ++pIndex)
+        foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
         {
-            PLAYER player = FF9StateSystem.Common.FF9.player[pIndex];
             player.SetMaxBonusBasisStatus();
             ff9play.FF9Play_ChangeLevel(player, 99, false);
             Int32 num = player.max.capa - player.cur.capa;

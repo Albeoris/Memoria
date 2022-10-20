@@ -164,10 +164,7 @@ public partial class BattleHUD : UIScene
             {
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                if (_currentCommandIndex == CommandMenu.Ability1)
-                    _ability1CursorMemorize[CurrentPlayerIndex] = _currentSubMenuIndex;
-                else if (_currentCommandIndex == CommandMenu.Ability2)
-                    _ability2CursorMemorize[CurrentPlayerIndex] = _currentSubMenuIndex;
+                _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
 
                 SetAbilityPanelVisibility(false, false);
                 SetTargetVisibility(true);
@@ -181,7 +178,7 @@ public partial class BattleHUD : UIScene
             {
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                _itemCursorMemorize[CurrentPlayerIndex] = _currentSubMenuIndex;
+                _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
                 SetItemPanelVisibility(false, false);
                 SetTargetVisibility(true);
             }
@@ -393,9 +390,7 @@ public partial class BattleHUD : UIScene
     private void RemoveCursorMemorize()
     {
         _commandCursorMemorize.Clear();
-        _ability1CursorMemorize.Clear();
-        _ability2CursorMemorize.Clear();
-        _itemCursorMemorize.Clear();
+        _abilityCursorMemorize.Clear();
 
         ButtonGroupState.RemoveCursorMemorize(CommandGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);

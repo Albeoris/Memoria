@@ -421,13 +421,13 @@ public class BattleActionCode
 				value = btl_scrp.GetBattleID(2);
 				return true;
 			}
-			String[] partyNames = CharacterNamesFormatter.CharacterScriptNames();
-			for (Int32 i = 0; i < partyNames.Length; i++)
-				if (args == partyNames[i])
-					for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-						if (next.bi.player != 0 && (Int32)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.slot_no == i)
+			Dictionary<CharacterId, String> partyNames = CharacterNamesFormatter.CharacterScriptNames();
+			foreach (KeyValuePair<CharacterId, String> pair in partyNames)
+				if (args == pair.Value)
+					for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+						if (btl.bi.player != 0 && (CharacterId)btl.bi.slot_no == pair.Key)
 						{
-							value = next.btl_id;
+							value = btl.btl_id;
 							return true;
 						}
 			Int32 targetIndex;

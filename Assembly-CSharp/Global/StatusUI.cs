@@ -311,13 +311,13 @@ public class StatusUI : UIScene
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
         Boolean hasAP = ff9abil.FF9Abil_HasAp(new Character(player));
-        if (hasAP && player.pa[index] == 0)
+        if (index >= player.pa.Length || (hasAP && player.pa[index] == 0))
         {
             abilityHud.Self.SetActive(false);
             return;
         }
 
-        Int32 abilId = ff9abil._FF9Abil_PaData[(Int32)player.info.menu_type][index].Id;
+        Int32 abilId = ff9abil._FF9Abil_PaData[player.PresetId][index].Id;
         //int num1 = ff9abil._FF9Abil_PaData[player.info.menu_type][index].max_ap;
         if (abilId == 0)
         {

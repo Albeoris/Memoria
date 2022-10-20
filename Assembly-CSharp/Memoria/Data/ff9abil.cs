@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
@@ -40,7 +41,7 @@ namespace FF9
         //private const Byte FF9ABIL_SA_ESCAPE_GIL = 238;
         //private const Byte FF9ABIL_EVENT_SUMMON_GARNET = 18;
 
-        public static CharacterAbility[][] _FF9Abil_PaData;
+        public static Dictionary<CharacterPresetId, CharacterAbility[]> _FF9Abil_PaData;
         public static EntryCollection<CharacterAbilityGems> _FF9Abil_SaData;
         public static EntryCollection<SupportingAbilityFeature> _FF9Abil_SaFeature;
 
@@ -114,26 +115,22 @@ namespace FF9
             if (index < 0)
                 return 0;
 
-            return _FF9Abil_PaData[(Int32)player.info.menu_type][index].Ap;
+            return _FF9Abil_PaData[player.PresetId][index].Ap;
         }
 
         public static Boolean FF9Abil_HasAp(Character play)
         {
-            if (play.IsMainCharacter && play.PresetId <= CharacterPresetId.Amarant)
-                return true;
-
-            if ((Int32)play.PresetId >= _FF9Abil_PaData.Length)
+            if (!_FF9Abil_PaData.ContainsKey(play.PresetId))
                 return false;
-
-            return _FF9Abil_PaData[(Int32)play.PresetId].Any(pa => pa.Ap > 0);
+            return _FF9Abil_PaData[play.PresetId].Any(pa => pa.Ap > 0);
         }
 
         public static Int32 FF9Abil_GetIndex(PLAYER player, Int32 abil_id)
         {
-            if ((Int32)player.info.menu_type >= _FF9Abil_PaData.Length)
+            if (!_FF9Abil_PaData.ContainsKey(player.PresetId))
                 return -1;
 
-            CharacterAbility[] paArray = _FF9Abil_PaData[(Int32)player.info.menu_type];
+            CharacterAbility[] paArray = _FF9Abil_PaData[player.PresetId];
             for (Int32 index = 0; index < paArray.Length; ++index)
                 if (paArray[index].Id == abil_id)
                     return index;
@@ -154,20 +151,21 @@ namespace FF9
             if (index < 0)
                 return false;
 
-            player.pa[index] = _FF9Abil_PaData[(Int32)player.info.menu_type][index].Ap;
+            player.pa[index] = _FF9Abil_PaData[player.PresetId][index].Ap;
             return true;
         }
 
-        private static CharacterAbility[][] LoadCharacterAbilities()
+        private static Dictionary<CharacterPresetId, CharacterAbility[]> LoadCharacterAbilities()
         {
             try
             {
                 if (!Directory.Exists(DataResources.Characters.Abilities.Directory))
                     throw new DirectoryNotFoundException($"[ff9abil] Cannot load character abilities because a directory does not exist: [{DataResources.Characters.Abilities.Directory}].");
 
-                CharacterAbility[][] result = new CharacterAbility[FF9StateSystem.Common.PlayerPresetCount][];
-                for (Int32 id = 0; id < result.Length; id++)
-                    result[id] = LoadCharacterAbilities((CharacterPresetId)id);
+                Dictionary<CharacterPresetId, CharacterAbility[]> result = new Dictionary<CharacterPresetId, CharacterAbility[]>();
+                foreach (CharacterCommandSet cmdset in CharacterCommands.CommandSets)
+                    LoadCharacterAbilities(result, cmdset.Id);
+
                 return result;
             }
             catch (Exception ex)
@@ -211,32 +209,29 @@ namespace FF9
             }
         }
 
-        private static CharacterAbility[] LoadCharacterAbilities(CharacterPresetId presetId)
+        private static Boolean LoadCharacterAbilities(Dictionary<CharacterPresetId, CharacterAbility[]> result, CharacterPresetId presetId)
         {
             try
             {
-                CharacterAbility[] abilities;
                 String inputPath;
                 for (Int32 i = 0; i < Configuration.Mod.FolderNames.Length; i++)
                 {
                     inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId, Configuration.Mod.FolderNames[i]);
                     if (File.Exists(inputPath))
                     {
-                        abilities = CsvReader.Read<CharacterAbility>(inputPath);
-                        if (abilities.Length != 48)
-                            throw new NotSupportedException($"You must set 48 abilities, but there {abilities.Length}. Any number of abilities will be available after a game stabilization."); // TODO Json, Player, SettingsState, EqupUI, ff9feqp
-                        return abilities;
+                        result[presetId] = CsvReader.Read<CharacterAbility>(inputPath);
+                        return true;
                     }
                 }
                 inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId);
-                if (!File.Exists(inputPath) && presetId <= CharacterPresetId.Beatrix2)
-                    throw new FileNotFoundException($"File with {presetId}'s abilities not found: [{inputPath}]");
-
-                abilities = CsvReader.Read<CharacterAbility>(inputPath);
-                if (abilities.Length != 48)
-                    throw new NotSupportedException($"You must set 48 abilities, but there {abilities.Length}. Any number of abilities will be available after a game stabilization."); // TODO Json, Player, SettingsState, EqupUI, ff9feqp
-
-                return abilities;
+                if (!File.Exists(inputPath))
+				{
+                    if (presetId <= CharacterPresetId.Beatrix2)
+                        throw new FileNotFoundException($"File with {presetId}'s abilities not found: [{inputPath}]");
+                    return false;
+                }
+                result[presetId] = CsvReader.Read<CharacterAbility>(inputPath);
+                return true;
             }
             catch (Exception ex)
             {

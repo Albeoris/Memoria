@@ -72,7 +72,7 @@ namespace FF9
 				}
 			}
 			if (updateShadow)
-				btlshadow.FF9ShadowSetScaleBattle(btl_util.GetFF9CharNo(btl), (Byte)Math.Round(btl.shadow_x * ssizex), (Byte)Math.Round(btl.shadow_z *ssizez));
+				btlshadow.FF9ShadowSetScaleBattle(btl, (Byte)Math.Round(btl.shadow_x * ssizex), (Byte)Math.Round(btl.shadow_z *ssizez));
 		}
 
 		public static void geoScaleSet(BTL_DATA btl, Int32 size, Boolean updateShadow = false, Boolean bypassMini = false)

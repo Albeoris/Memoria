@@ -12,7 +12,7 @@ public class ff9shadow
 	public static void FF9ShadowOnBattle(Int32 uid)
 	{
 		FF9StateSystem.Common.FF9.FF9GetCharPtr(uid).attr &= 0xFFFFFFEFu;
-		FF9StateSystem.Battle.FF9Battle.map.shadowArray[uid].GetComponent<MeshRenderer>().enabled = true;
+		FF9StateSystem.Battle.FF9Battle.map.GetShadowFromUID(uid).GetComponent<MeshRenderer>().enabled = true;
 	}
 
 	public static void FF9ShadowOnWorld(Int32 uid)
@@ -29,7 +29,7 @@ public class ff9shadow
 	public static void FF9ShadowOffBattle(Int32 uid)
 	{
 		FF9StateSystem.Common.FF9.FF9GetCharPtr(uid).attr |= 16u;
-		FF9StateSystem.Battle.FF9Battle.map.shadowArray[uid].GetComponent<MeshRenderer>().enabled = false;
+		FF9StateSystem.Battle.FF9Battle.map.GetShadowFromUID(uid).GetComponent<MeshRenderer>().enabled = false;
 	}
 
 	public static void FF9ShadowOffWorld(Int32 uid)
@@ -47,7 +47,7 @@ public class ff9shadow
 
 	public static void FF9ShadowSetScaleBattle(Int32 uid, Int32 xScale, Int32 zScale)
 	{
-		GameObject shadow = FF9StateSystem.Battle.FF9Battle.map.shadowArray[uid];
+		GameObject shadow = FF9StateSystem.Battle.FF9Battle.map.GetShadowFromUID(uid);
 		Vector3 localScale = shadow.transform.localScale;
 		localScale.x = (Single)(224 * xScale) * 1f / 16f;
 		localScale.z = (Single)(192 * zScale) * 1f / 16f;
@@ -119,7 +119,7 @@ public class ff9shadow
 
 	public static void FF9ShadowSetAmpBattle(Int32 uid, Int32 amp)
 	{
-		MeshRenderer component = FF9StateSystem.Battle.FF9Battle.map.shadowArray[uid].GetComponent<MeshRenderer>();
+		MeshRenderer component = FF9StateSystem.Battle.FF9Battle.map.GetShadowFromUID(uid).GetComponent<MeshRenderer>();
 		Byte b = (Byte)amp;
 		component.material.SetColor("_Color", new Color32(b, b, b, b));
 	}

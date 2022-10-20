@@ -1944,36 +1944,26 @@ public partial class EventEngine
             case EBin.event_code_binary.PARTYMENU:
             {
                 FF9PARTY_INFO sPartyInfo = new FF9PARTY_INFO();
+                List<CharacterId> selectList = new List<CharacterId>();
                 sPartyInfo.party_ct = this.getv1();
-                Int32 partyMembers = 0;
-                for (Int32 i = FF9StateSystem.Common.PlayerCount - 1; i >= 0; --i)
-                    partyMembers = partyMembers << 1 | (FF9StateSystem.Common.FF9.player[i].info.party == 0 ? 0 : 1);
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    if (p.info.party != 0)
+                        selectList.Add(p.info.slot_no);
                 Int32 fixedMembers = this.getv2();
-                for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; ++i)
-                {
-                    sPartyInfo.fix[i] = (fixedMembers & 1) != 0;
-                    fixedMembers >>= 1;
-                }
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    if ((fixedMembers & (1 << (Int32)p.info.slot_no)) != 0)
+                        sPartyInfo.fix.Add(p.info.slot_no);
                 for (Int32 i = 0; i < 4; ++i)
                 {
                     if (FF9StateSystem.Common.FF9.party.member[i] != null)
                     {
                         sPartyInfo.menu[i] = FF9StateSystem.Common.FF9.party.member[i].info.slot_no;
-                        partyMembers &= ~(1 << Convert.ToInt32(sPartyInfo.menu[i]));
+                        selectList.Remove(sPartyInfo.menu[i]);
                     }
                     else
                     {
                         sPartyInfo.menu[i] = CharacterId.NONE;
                     }
-                }
-                Int32 charIndex = 0;
-                List<CharacterId> selectList = new List<CharacterId>();
-                while (charIndex < FF9StateSystem.Common.PlayerCount && partyMembers > 0)
-                {
-                    if ((partyMembers & 1) != 0)
-                        selectList.Add((CharacterId)charIndex);
-                    ++charIndex;
-                    partyMembers >>= 1;
                 }
                 sPartyInfo.select = selectList.ToArray();
                 EventService.OpenPartyMenu(sPartyInfo);
@@ -1988,14 +1978,11 @@ public partial class EventEngine
             {
                 Int32 reserveList = this.getv2();
                 //Int32 reserveExtendedList = reserveList | reserveList >> 4 & 0xE0;
-                for (Int32 charId = 0; charId < FF9StateSystem.Common.PlayerCount; ++charId)
-                    ff9play.FF9Play_Delete(FF9StateSystem.Common.FF9.GetPlayer((CharacterId)charId));
-                for (Int32 charId = 0; charId < FF9StateSystem.Common.PlayerCount; ++charId)
-                {
-                    if ((reserveList & 1) > 0)
-                        ff9play.FF9Play_Add(FF9StateSystem.Common.FF9.GetPlayer((CharacterId)charId));
-                    reserveList >>= 1;
-                }
+                foreach (PLAYER p in  FF9StateSystem.Common.FF9.PlayerList)
+                    ff9play.FF9Play_Delete(p);
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    if ((reserveList & (1 << (Int32)p.info.slot_no)) != 0)
+                        ff9play.FF9Play_Add(p);
                 return 0;
             }
             case EBin.event_code_binary.PRETEND:
@@ -2618,10 +2605,10 @@ public partial class EventEngine
                 {
                     PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                     Int32 category = this.getv1();
-                    if (category != (Int32)Byte.MaxValue)
+                    if (category != Byte.MaxValue)
                         player.category = (Byte)category;
                     Int32 charPreset = this.getv1();
-                    if (charPreset != (Int32)Byte.MaxValue)
+                    if (charPreset != Byte.MaxValue)
                         player.info.menu_type = (CharacterPresetId)charPreset;
                     ff9play.FF9Play_Change(player, updateLevel != 0, eqp_id);
                     player.info.sub_replaced = true;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Memoria.Data;
 
 public class FF9PARTY_INFO
@@ -9,5 +10,5 @@ public class FF9PARTY_INFO
 
 	public CharacterId[] select = null;
 
-	public Boolean[] fix = new Boolean[FF9StateSystem.Common.PlayerCount];
+	public HashSet<CharacterId> fix = new HashSet<CharacterId>();
 }

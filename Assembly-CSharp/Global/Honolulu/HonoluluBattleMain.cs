@@ -187,7 +187,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         BBGINFO bbginfo = new BBGINFO();
         bbginfo.ReadBattleInfo(battleModelPath);
         FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
-        btlshadow.ff9battleShadowInit(FF9StateSystem.Common.PlayerCount + 4);
         battle.InitBattleMap();
         this.seqList = new List<Int32>();
         SB2_PATTERN sb2Pattern = this.btlScene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
@@ -641,12 +640,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         btl_mot.SetDefaultIdle(btl);
                     btl.escape_key = stateBattleSystem.btl_escape_key;
                 }
-                btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray, btl.bi.slot_no, 0, BoneNo);
             }
-            else if (btl.die_seq < 4)
-            {
-                btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray, FF9StateSystem.Common.PlayerCount + btl.bi.slot_no, 0, BoneNo);
-            }
+            btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray[btl], btl, 0, BoneNo);
         }
     }
 

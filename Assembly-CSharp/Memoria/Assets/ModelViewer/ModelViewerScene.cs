@@ -29,6 +29,7 @@ namespace Memoria.Assets
 
 		public static void Init()
 		{
+			ModelViewerScene.isLoadingModel = false;
 			ModelViewerScene.scaleFactor = new Vector3(1f, 1f, 1f);
 			ModelViewerScene.geoList = new List<String>();
 			ModelViewerScene.geoArchetype = new HashSet<Int32>();
@@ -61,6 +62,8 @@ namespace Memoria.Assets
 		{
 			try
 			{
+				if (ModelViewerScene.isLoadingModel)
+					return;
 				Boolean mouseLeftWasPressed = ModelViewerScene.mouseLeftPressed;
 				Boolean mouseRightWasPressed = ModelViewerScene.mouseRightPressed;
 				ModelViewerScene.mouseLeftPressed = false;
@@ -197,6 +200,7 @@ namespace Memoria.Assets
 			}
 			catch (Exception err)
 			{
+				ModelViewerScene.isLoadingModel = false;
 				Log.Error(err);
 			}
 		}
@@ -281,6 +285,7 @@ namespace Memoria.Assets
 
 		private static void ChangeModel(Int32 index)
 		{
+			ModelViewerScene.isLoadingModel = true;
 			while (index < 0)
 				index += ModelViewerScene.geoList.Count;
 			while (index >= ModelViewerScene.geoList.Count)
@@ -297,16 +302,33 @@ namespace Memoria.Assets
 				ModelViewerScene.modelAnimDialog.ForceClose();
 				ModelViewerScene.modelAnimDialog = null;
 			}
-			if (ModelViewerScene.currentModel == null)
-				return;
-			ModelViewerScene.currentModel.transform.position = Vector3.zero;
-			ModelViewerScene.currentModel.transform.localScale = ModelViewerScene.scaleFactor;
-			ModelViewerScene.currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
-			foreach (String anim in ModelViewerScene.animList)
-				AnimationFactory.AddAnimWithAnimatioName(ModelViewerScene.currentModel, anim);
-			ModelViewerScene.currentAnimIndex = 0;
-			ModelViewerScene.currentAnimName = ModelViewerScene.animList.Count > 0 ? ModelViewerScene.animList[0] : "";
-			ModelViewerScene.currentModelBones = BoneHierarchyNode.CreateFromModel(ModelViewerScene.currentModel);
+			if (ModelViewerScene.currentModel != null)
+			{
+				if (ModelFactory.garnetShortHairTable.Contains(ModelViewerScene.geoList[index]))
+				{
+					Boolean garnetShortHair =  ModelViewerScene.geoList[index] == "GEO_MAIN_F1_GRN"
+											|| ModelViewerScene.geoList[index] == "GEO_MAIN_B0_004"
+											|| ModelViewerScene.geoList[index] == "GEO_MAIN_B0_005"
+											|| ModelViewerScene.geoList[index] == "GEO_MON_B3_169"
+											|| ModelViewerScene.geoList[index] == "GEO_MAIN_B0_026"
+											|| ModelViewerScene.geoList[index] == "GEO_MAIN_B0_027";
+					Renderer[] longHairRenderers = ModelViewerScene.currentModel.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
+					Renderer[] shortHairRenderers = ModelViewerScene.currentModel.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
+					foreach (Renderer renderer in longHairRenderers)
+						renderer.enabled = !garnetShortHair;
+					foreach (Renderer renderer in shortHairRenderers)
+						renderer.enabled = garnetShortHair;
+				}
+				ModelViewerScene.currentModel.transform.position = Vector3.zero;
+				ModelViewerScene.currentModel.transform.localScale = ModelViewerScene.scaleFactor;
+				ModelViewerScene.currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+				foreach (String anim in ModelViewerScene.animList)
+					AnimationFactory.AddAnimWithAnimatioName(ModelViewerScene.currentModel, anim);
+				ModelViewerScene.currentAnimIndex = 0;
+				ModelViewerScene.currentAnimName = ModelViewerScene.animList.Count > 0 ? ModelViewerScene.animList[0] : "";
+				ModelViewerScene.currentModelBones = BoneHierarchyNode.CreateFromModel(ModelViewerScene.currentModel);
+			}
+			ModelViewerScene.isLoadingModel = false;
 		}
 
 		private static void ChangeAnimation(Int32 index)
@@ -645,6 +667,7 @@ namespace Memoria.Assets
 			return new Vector4(coordNum[0], coordNum[1], coordNum[2], coordNum[3]);
 		}
 
+		private static Boolean isLoadingModel;
 		private static Boolean mouseLeftPressed;
 		private static Boolean mouseRightPressed;
 		private static Vector3 mousePreviousPosition;

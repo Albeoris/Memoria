@@ -202,7 +202,7 @@ public class BattleActionThread
 		result.Add(mainThread);
 		if (atkNo < 0 || atkNo >= seq.seq_work_set.SeqData.Length || seq.seq_work_set.SeqData[atkNo] == 0)
 		{
-			Log.Message($"[{nameof(BattleActionThread)}] Invalid enemy sequence {atkNo} (battle has {scene.header.AtkCount} attacks)");
+			Log.Warning($"[{nameof(BattleActionThread)}] Invalid enemy sequence {atkNo} (battle has {scene.header.AtkCount} attacks)");
 			return result;
 		}
 		Int32 seqCodePtr = seq.seq_work_set.SeqData[atkNo] + 4;
@@ -210,7 +210,7 @@ public class BattleActionThread
 		Int32 messPtr = scene.header.TypCount + scene.header.AtkCount;
 		Int32 sceneTypeId = seq.GetEnemyIndexOfSequence(atkNo);
 		if (sceneTypeId >= scene.MonAddr.Length)
-			Log.Message($"[{nameof(BattleActionThread)}] Sequence says that {atkNo} belongs to enemy {sceneTypeId} that doesn't exist in scene");
+			Log.Warning($"[{nameof(BattleActionThread)}] Sequence says that {atkNo} belongs to enemy {sceneTypeId} that doesn't exist in scene");
 		else
 			for (Int32 i = 0; i < sceneTypeId; i++)
 				messPtr += scene.MonAddr[i].MesCnt;

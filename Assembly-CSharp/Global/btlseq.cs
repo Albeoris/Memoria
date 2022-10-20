@@ -258,9 +258,7 @@ public class btlseq
 	{
 		if (btl.monster_transform.fade_counter == 0)
 		{
-			btl.gameObject.SetActive(true);
 			btl_mot.ShowMesh(btl, UInt16.MaxValue);
-			btl.is_monster_transform = false;
 		}
 		else
 		{
@@ -356,7 +354,7 @@ public class btlseq
 			btl.evt.animFrame = Math.Min(btl.evt.animFrame, (Byte)animLoopFrame);
 			btl.animEndFrame = true;
 		}
-		if (btl.is_monster_transform && btl.monster_transform.fade_counter > 0)
+		if (btl.monster_transform != null && btl.monster_transform.fade_counter > 0)
 		{
 			btl.monster_transform.fade_counter--;
 			MonsterTransformFading(btl);
@@ -441,25 +439,14 @@ public class btlseq
 		}
 	}
 
-	public static void FF9DrawShadowCharBattle(GameObject[] shadowArray, Int32 charNo, Int32 posY, Int32 BoneNo)
+	public static void FF9DrawShadowCharBattle(GameObject shadowObj, BTL_DATA btl, Int32 posY, Int32 BoneNo)
 	{
-		GameObject shadowObj = shadowArray[charNo];
-		GameObject btlObj = null;
+		GameObject btlObj = btl.gameObject;
 		if (shadowObj == null)
 			return;
 		shadowObj.SetActive(true);
-		if (charNo < FF9StateSystem.Common.PlayerCount)
-		{
-			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-				if (next.bi.player != 0 && next.bi.slot_no == charNo)
-					btlObj = next.gameObject;
-			if (btlObj == null)
-				global::Debug.LogError("gameObject is NULL");
-		}
-		else
-		{
-			btlObj = FF9StateSystem.Battle.FF9Battle.btl_data[4 + charNo - FF9StateSystem.Common.PlayerCount].gameObject;
-		}
+		if (btlObj == null)
+			global::Debug.LogError("gameObject is NULL");
 		btlseq.ff9battleShadowCalculateMatrix(shadowObj, btlObj, posY, ff9btl.ff9btl_get_bonestart(BoneNo), ff9btl.ff9btl_get_boneend(BoneNo));
 	}
 

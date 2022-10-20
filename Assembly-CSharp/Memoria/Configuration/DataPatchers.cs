@@ -348,17 +348,15 @@ namespace Memoria
 					Int32 ID;
 					if (!Int32.TryParse(entry[1], out ID))
 						continue;
-					String[] nameArray;
-					if (!CharacterNamesFormatter._characterNames.TryGetValue(entry[2], out nameArray))
-						nameArray = new String[ID + 1];
-					if (nameArray.Length <= ID)
-						Array.Resize(ref nameArray, ID + 1);
-					nameArray[ID] = String.Join(" ", entry, 3, entry.Length - 3);
-					CharacterNamesFormatter._characterNames[entry[2]] = nameArray;
-					if (Localization.GetSymbol() == entry[2] && FF9StateSystem.Common?.FF9?.player != null && ID < FF9StateSystem.Common.PlayerCount)
+					Dictionary<CharacterId, String> nameDict;
+					if (!CharacterNamesFormatter._characterNames.TryGetValue(entry[2], out nameDict))
+						nameDict = new Dictionary<CharacterId, String>();
+					nameDict[(CharacterId)ID] = String.Join(" ", entry, 3, entry.Length - 3);
+					CharacterNamesFormatter._characterNames[entry[2]] = nameDict;
+					if (Localization.GetSymbol() == entry[2] && FF9StateSystem.Common?.FF9?.player != null && FF9StateSystem.Common.FF9.player.ContainsKey((CharacterId)ID))
 					{
-						FF9StateSystem.Common.FF9.GetPlayer((CharacterId)ID).Name = nameArray[ID];
-						FF9TextTool.ChangeCharacterName((CharacterId)ID, nameArray[ID]);
+						FF9StateSystem.Common.FF9.GetPlayer((CharacterId)ID).Name = nameDict[(CharacterId)ID];
+						FF9TextTool.ChangeCharacterName((CharacterId)ID, nameDict[(CharacterId)ID]);
 					}
 				}
 				else if (String.Compare(entry[0], "3DModel") == 0)

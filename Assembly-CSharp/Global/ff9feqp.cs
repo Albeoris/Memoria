@@ -38,7 +38,7 @@ public static class ff9feqp
 			}
 		}
 
-		CharacterAbility[] playerAbilList = ff9abil._FF9Abil_PaData[(Int32)player.PresetId];
+		CharacterAbility[] playerAbilList = ff9abil._FF9Abil_PaData[player.PresetId];
 		if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
 		{
 			for (Int32 saIndex = 0; saIndex < 64; saIndex++)
@@ -46,7 +46,7 @@ public static class ff9feqp
 		}
 		else
 		{
-			for (Int32 k = 0; k < 48; k++)
+			for (Int32 k = 0; k < playerAbilList.Length; k++)
 			{
 				if (192 <= playerAbilList[k].Id && ff9abil.FF9Abil_GetEnableSA(player, playerAbilList[k].Id) && !equipSAList.Contains(playerAbilList[k].Id - 192) && player.pa[k] < playerAbilList[k].Ap)
 				{

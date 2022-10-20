@@ -827,9 +827,7 @@ public partial class FF9StateGlobal
 	public FF9StateGlobal()
 	{
 		this.ot = new UInt32[2];
-		this.player = new PLAYER[CommonState.DEFAULT_PLAYER_COUNT];
-		for (Int32 i = 0; i < CommonState.DEFAULT_PLAYER_COUNT; i++)
-			this.player[i] = new PLAYER();
+		this.player = new Dictionary<CharacterId, PLAYER>();
 		this.party = new PARTY_DATA();
 		this.item = new FF9ITEM[256];
 		this.rare_item = new Byte[64];
@@ -846,7 +844,10 @@ public partial class FF9StateGlobal
 
 	public PLAYER GetPlayer(CharacterId id)
 	{
-		return player[(Int32)id];
+		PLAYER p;
+		if (player.TryGetValue(id, out p))
+			return p;
+		return null;
 	}
 
 	public void ff9ResetStateGlobal()
@@ -857,6 +858,8 @@ public partial class FF9StateGlobal
 	public const Int32 FF9_SIZE_OT = 4096;
 
 	public const Int32 FF9_BUFFER_COUNT = 2;
+
+	public IEnumerable<PLAYER> PlayerList => player.Values;
 
 	public UInt32 attr;
 
@@ -882,7 +885,7 @@ public partial class FF9StateGlobal
 
 	public Int16 fldLocNo;
 
-	public PLAYER[] player;
+	public Dictionary<CharacterId, PLAYER> player;
 
 	public PARTY_DATA party;
 

@@ -121,27 +121,34 @@ public class ff9item
         }
     }
 
+    private static void LoadInitialItems()
+    {
+        try
+        {
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = 0; i < dir.Length; i++)
+            {
+                String inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.InitialItemsFile;
+                if (File.Exists(inputPath))
+                {
+                    FF9ITEM[] items = CsvReader.Read<FF9ITEM>(inputPath);
+                    foreach (FF9ITEM item in items)
+                        FF9Item_Add(item.id, item.count);
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ff9item] Load initial items failed.");
+        }
+    }
+
     public static void FF9Item_Init()
     {
-        // TODO: initial items; they can be changed by modifying Prima Vista's script but it could be useful to be able to set them with Memoria as well (DictionaryPatch or CSV?)
-        FF9ITEM[] ff9ItemArray = new FF9ITEM[8]
-        {
-            new FF9ITEM(236, 7),
-            new FF9ITEM(237, 2),
-            new FF9ITEM(238, 2),
-            new FF9ITEM(240, 2),
-            new FF9ITEM(247, 2),
-            new FF9ITEM(249, 1),
-            new FF9ITEM(253, 1),
-            new FF9ITEM(Byte.MaxValue, 0)
-        };
         FF9Item_InitNormal();
         FF9Item_InitImportant();
-        for (Int32 index = 0; ff9ItemArray[index].id != Byte.MaxValue; ++index)
-        {
-            FF9ITEM ff9Item = ff9ItemArray[index];
-            FF9Item_Add(ff9Item.id, ff9Item.count);
-        }
+        LoadInitialItems();
     }
 
     public static void FF9Item_InitNormal()
@@ -249,19 +256,13 @@ public class ff9item
 
     public static Int32 FF9Item_GetEquipCount(Int32 id)
     {
-        Int32 num = 0;
-        for (Int32 index1 = 0; index1 < 9; ++index1)
-        {
-            if (FF9StateSystem.Common.FF9.player[index1].info.party != 0)
-            {
-                for (Int32 index2 = 0; index2 < 5; ++index2)
-                {
-                    if (id == FF9StateSystem.Common.FF9.player[index1].equip[index2])
-                        ++num;
-                }
-            }
-        }
-        return num;
+        Int32 count = 0;
+        foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+            if (p.info.party != 0)
+                for (Int32 i = 0; i < 5; ++i)
+                    if (id == p.equip[i])
+                        ++count;
+        return count;
     }
 
     public static void FF9Item_AddImportant(Int32 id)

@@ -1054,13 +1054,13 @@ public class EquipUI : UIScene
 
 		private static Dictionary<Byte, Int32> InitializeMap(Character character, UInt64 characterMask)
 		{
-			if ((Int32)character.PresetId >= FF9StateSystem.Common.PlayerPresetCount)
+			if (!ff9abil._FF9Abil_PaData.ContainsKey(character.PresetId))
 				return new Dictionary<Byte, Int32>(0);
 
 			Dictionary<Byte, Int32> abilityIdToLeftAp = new Dictionary<Byte, Int32>(128);
 
-			CharacterAbility[] array = ff9abil._FF9Abil_PaData[(Int32)character.PresetId];
-			foreach (var ability in array)
+			CharacterAbility[] abilArray = ff9abil._FF9Abil_PaData[character.PresetId];
+			foreach (var ability in abilArray)
 			{
 				Byte abilityId = ability.Id;
 

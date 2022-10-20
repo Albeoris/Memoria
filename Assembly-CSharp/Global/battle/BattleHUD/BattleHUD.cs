@@ -19,9 +19,7 @@ public partial class BattleHUD : UIScene
     private readonly List<DamageAnimationInfo> _hpInfoVal;
     private readonly List<DamageAnimationInfo> _mpInfoVal;
     private readonly Dictionary<Int32, CommandMenu> _commandCursorMemorize;
-    private readonly Dictionary<Int32, Int32> _ability1CursorMemorize;
-    private readonly Dictionary<Int32, Int32> _ability2CursorMemorize;
-    private readonly Dictionary<Int32, Int32> _itemCursorMemorize;
+    private readonly Dictionary<PairCharCommand, Int32> _abilityCursorMemorize;
     private readonly List<Int32> _matchBattleIdPlayerList;
     private readonly List<Int32> _matchBattleIdEnemyList;
     private readonly List<Byte> _itemIdList;
@@ -1066,11 +1064,11 @@ public partial class BattleHUD : UIScene
         if (!abilityPlayer.HasAp)
             return;
 
-        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)player.PresetId];
+        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[player.PresetId];
         for (Int32 abilId = 0; abilId < 192; ++abilId)
         {
-            Int32 index;
-            if ((index = ff9abil.FF9Abil_GetIndex(player.Data, abilId)) < 0)
+            Int32 index = ff9abil.FF9Abil_GetIndex(player.Data, abilId);
+            if (index < 0)
                 continue;
 
             abilityPlayer.AbilityPaList[abilId] = player.Data.pa[index];
@@ -1136,12 +1134,14 @@ public partial class BattleHUD : UIScene
     private static void SetAbilityMagic(AbilityPlayerDetail abilityPlayer)
     {
         Character character = abilityPlayer.Player;
-        if (character.Index != CharacterId.Steiner)
+        BattleCommandId command1 = CharacterCommands.CommandSets[(Int32)character.PresetId].Regular1;
+        BattleCommandId command2 = CharacterCommands.CommandSets[(Int32)character.PresetId].Regular2;
+        if (command1 != BattleCommandId.MagicSword && command2 != BattleCommandId.MagicSword)
             return;
 
         CharacterCommand magicSwordCommand = CharacterCommands.Commands[(Int32)BattleCommandId.MagicSword];
         PLAYER vivi = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Vivi);
-        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[(Int32)vivi.info.menu_type];
+        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[vivi.PresetId];
         BattleAbilityId[] abilities =
         {
             BattleAbilityId.Fire,
@@ -1163,7 +1163,7 @@ public partial class BattleHUD : UIScene
         for (Int32 i = 0; i < count; ++i)
         {
             Int32 abilityId = magicSwordCommand.Abilities[i];
-            Int32 index = ff9abil.FF9Abil_GetIndex(vivi, (Int32) abilities[i]);
+            Int32 index = ff9abil.FF9Abil_GetIndex(vivi, (Int32)abilities[i]);
             if (index >= 0)
             {
                 abilityPlayer.AbilityPaList[abilityId] = vivi.pa[index];
@@ -1464,8 +1464,9 @@ public partial class BattleHUD : UIScene
         {
             ItemPanel.SetActive(true);
             ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
-            if (_itemCursorMemorize.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
-                _itemScrollList.JumpToIndex(_itemCursorMemorize[CurrentPlayerIndex], true);
+            PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
+            if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
+                _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
             else
                 _itemScrollList.JumpToIndex(0, false);
             ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
@@ -1473,8 +1474,8 @@ public partial class BattleHUD : UIScene
         }
         else
         {
-            if (_currentCommandIndex == CommandMenu.Item && _currentSubMenuIndex != -1)
-                _itemCursorMemorize[CurrentPlayerIndex] = _currentSubMenuIndex;
+            if (_currentSubMenuIndex != -1)
+                _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
             ItemPanel.SetActive(false);
         }
     }
@@ -1488,12 +1489,9 @@ public partial class BattleHUD : UIScene
                 AbilityPanel.SetActive(true);
                 Int32 defaultIndex = 0;
                 ButtonGroupState.RemoveCursorMemorize(AbilityGroupButton);
-                if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2)
-                {
-                    Dictionary<Int32, Int32> dictionary = _currentCommandIndex != CommandMenu.Ability1 ? _ability2CursorMemorize : _ability1CursorMemorize;
-                    if (dictionary.ContainsKey(CurrentPlayerIndex) && (Int64)FF9StateSystem.Settings.cfg.cursor != 0L || forceCursorMemo)
-                        defaultIndex = dictionary[CurrentPlayerIndex];
-                }
+                PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
+                if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
+                    defaultIndex = _abilityCursorMemorize[cursorKey];
                 _abilityScrollList.JumpToIndex(defaultIndex, true);
             }
             if (IsDoubleCast && _doubleCastCount == 1)
@@ -1507,10 +1505,8 @@ public partial class BattleHUD : UIScene
         }
         else
         {
-            if (_currentCommandIndex == CommandMenu.Ability1 && _currentSubMenuIndex != -1)
-                _ability1CursorMemorize[CurrentPlayerIndex] = _currentSubMenuIndex;
-            else if (_currentCommandIndex == CommandMenu.Ability2 && _currentSubMenuIndex != -1)
-                _ability2CursorMemorize[CurrentPlayerIndex] = _currentSubMenuIndex;
+            if (_currentSubMenuIndex != -1)
+                _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
             AbilityPanel.SetActive(false);
         }
     }

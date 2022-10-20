@@ -1,12 +1,11 @@
 using System;
-using FF9;
 using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {
     public sealed class CharacterCommandSet : ICsvEntry
     {
-        public Int32 Id;
+        public CharacterPresetId Id;
         public BattleCommandId Regular1;
         public BattleCommandId Regular2;
         public BattleCommandId Trance1;
@@ -15,10 +14,10 @@ namespace Memoria.Data
         public void ParseEntry(String[] raw)
         {
             Int32 index = 0;
-            if (raw.Length <= 4)
-                Id = -1;
+            if (raw.Length <= 4 || !Byte.TryParse(raw[4], out _))
+                Id = CharacterPresetId.NONE;
             else
-                Id = CsvParser.Int32(raw[index++]);
+                Id = (CharacterPresetId)CsvParser.Int32(raw[index++]);
             Regular1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
             Regular2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
             Trance1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
@@ -27,7 +26,7 @@ namespace Memoria.Data
 
         public void WriteEntry(CsvWriter sw)
         {
-            sw.Int32(Id);
+            sw.Int32((Int32)Id);
             sw.Byte((Byte)Regular1);
             sw.Byte((Byte)Regular2);
             sw.Byte((Byte)Trance1);

@@ -540,7 +540,7 @@ namespace Memoria
 				{
                     scene.atk[i].Info.VfxIndex = (Int16)sequenceSfx;
                     if (Configuration.Battle.SFXRework && scene.atk[i].Info.VfxAction == null)
-                        scene.atk[i].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], sequenceSfx);
+                        scene.atk[i].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], i);
                     if (sequenceContact)
                     {
                         attackAA = scene.atk[i];
@@ -580,6 +580,7 @@ namespace Memoria
             FF9StateSystem.Battle.FF9Battle.aa_data[192 + aaList.Count] = attackAA;
             FF9TextTool.SetActionAbilityName(192 + aaList.Count, String.Empty);
             Data.is_monster_transform = true;
+            UIManager.Battle.ClearCursorMemorize(Position, commandAsMonster);
             Data.monster_transform = new BTL_DATA.MONSTER_TRANSFORM();
             Data.monster_transform.base_command = commandToReplace;
             Data.monster_transform.new_command = commandAsMonster;
@@ -627,80 +628,80 @@ namespace Memoria
                 Data.mot[i] = String.Empty;
             Boolean useAlternateAnim = geoName.CompareTo("MON_B3_072") == 0; // Gargoyle (to be completed)
             Boolean useDieDmg = (monsterParam.Flags & 2) != 0;
-            Data.mot[0] = FF9BattleDB.Animation[monsterParam.Mot[useAlternateAnim ? 1 : 0]];
-            Data.mot[1] = Data.mot[0];
-            Data.mot[2] = FF9BattleDB.Animation[monsterParam.Mot[useAlternateAnim ? 3 : 2]];
-            Data.mot[3] = Data.mot[2];
-            Data.mot[4] = !useDieDmg ? String.Empty : useAlternateAnim ? Data.mot[3] : Data.mot[2];
-            Data.mot[8] = FF9BattleDB.Animation[monsterParam.Mot[useDieDmg ? 3 : useAlternateAnim ? 5 : 4]];
-            Data.mot[9] = Data.mot[0];
-            Data.mot[13] = Data.mot[0];
-            Data.mot[15] = Data.mot[0];
-            Data.mot[16] = Data.mot[0];
-            Data.mot[17] = Data.mot[0];
-            Data.mot[19] = Data.mot[0];
-            Data.mot[27] = Data.mot[0];
-            Data.mot[29] = Data.mot[0];
-            Data.mot[30] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL] = FF9BattleDB.Animation[monsterParam.Mot[useAlternateAnim ? 1 : 0]];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1] = FF9BattleDB.Animation[monsterParam.Mot[useAlternateAnim ? 3 : 2]];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2] = Data.mot[2];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE] = String.Empty;
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE] = FF9BattleDB.Animation[monsterParam.Mot[useDieDmg ? 3 : useAlternateAnim ? 5 : 4]];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_COVER] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_FORWARD] = Data.mot[0];
+            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_BACK] = Data.mot[0];
             // Try to automatically get a few animations
             // Physical attack
-            if (geoName.CompareTo("MON_B3_147") == 0 && Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_040") != (UnityEngine.Object)null)
+            if (geoName.CompareTo("MON_B3_147") == 0 && Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_040") != null)
             {
-                Data.mot[20] = "ANH_" + geoName + "_040"; // Deathguise's Spin
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_041") != (UnityEngine.Object)null)
-                    Data.mot[21] = "ANH_" + geoName + "_041";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_042") != (UnityEngine.Object)null)
-                    Data.mot[22] = "ANH_" + geoName + "_042";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_043") != (UnityEngine.Object)null)
-                    Data.mot[23] = "ANH_" + geoName + "_043";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_044") != (UnityEngine.Object)null)
-                    Data.mot[24] = "ANH_" + geoName + "_044";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_045") != (UnityEngine.Object)null)
-                    Data.mot[25] = "ANH_" + geoName + "_045";
+                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_040"; // Deathguise's Spin
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_041") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN] = "ANH_" + geoName + "_041";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_042") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK] = "ANH_" + geoName + "_042";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_043") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK] = "ANH_" + geoName + "_043";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_044") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK] = "ANH_" + geoName + "_044";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_045") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL] = "ANH_" + geoName + "_045";
             }
-            else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_010") != (UnityEngine.Object)null)
+            else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_010") != null)
             {
-                Data.mot[20] = "ANH_" + geoName + "_010";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_011") != (UnityEngine.Object)null)
-                    Data.mot[21] = "ANH_" + geoName + "_011";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_012") != (UnityEngine.Object)null)
-                    Data.mot[22] = "ANH_" + geoName + "_012";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_013") != (UnityEngine.Object)null)
-                    Data.mot[23] = "ANH_" + geoName + "_013";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_014") != (UnityEngine.Object)null)
-                    Data.mot[24] = "ANH_" + geoName + "_014";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_015") != (UnityEngine.Object)null)
-                    Data.mot[25] = "ANH_" + geoName + "_015";
+                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_010";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_011") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN] = "ANH_" + geoName + "_011";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_012") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK] = "ANH_" + geoName + "_012";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_013") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK] = "ANH_" + geoName + "_013";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_014") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK] = "ANH_" + geoName + "_014";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_015") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL] = "ANH_" + geoName + "_015";
             }
-            else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_030") != (UnityEngine.Object)null)
+            else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_030") != null)
             {
-                Data.mot[20] = "ANH_" + geoName + "_030";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_031") != (UnityEngine.Object)null)
-                    Data.mot[21] = "ANH_" + geoName + "_031";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_032") != (UnityEngine.Object)null)
-                    Data.mot[22] = "ANH_" + geoName + "_032";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_033") != (UnityEngine.Object)null)
-                    Data.mot[23] = "ANH_" + geoName + "_033";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_034") != (UnityEngine.Object)null)
-                    Data.mot[24] = "ANH_" + geoName + "_034";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_035") != (UnityEngine.Object)null)
-                    Data.mot[25] = "ANH_" + geoName + "_035";
+                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_030";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_031") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN] = "ANH_" + geoName + "_031";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_032") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK] = "ANH_" + geoName + "_032";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_033") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK] = "ANH_" + geoName + "_033";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_034") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK] = "ANH_" + geoName + "_034";
+                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_035") != null)
+                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL] = "ANH_" + geoName + "_035";
             }
             // Cast Init / Loop / End
-            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_020") != (UnityEngine.Object)null)
-                Data.mot[26] = "ANH_" + geoName + "_020";
-            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_021") != (UnityEngine.Object)null)
-                Data.mot[27] = "ANH_" + geoName + "_021";
-            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_022") != (UnityEngine.Object)null)
-                Data.mot[28] = "ANH_" + geoName + "_022";
+            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_020") != null)
+                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT] = "ANH_" + geoName + "_020";
+            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_021") != null)
+                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT] = "ANH_" + geoName + "_021";
+            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_022") != null)
+                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC] = "ANH_" + geoName + "_022";
             // Duplicate existing animations or create dummy ones but have different names for btl_mot.checkMotion proper functioning
-            List<String> uniqueAnimList = new List<String>();
+            HashSet<String> uniqueAnimList = new HashSet<String>();
             for (i = 0; i < Data.mot.Length; i++)
 			{
                 if (String.IsNullOrEmpty(Data.mot[i]) || uniqueAnimList.Contains(Data.mot[i]))
                 {
                     String newName = "ANH_" + geoName + "_DUMMY_" + i;
-                    if (!String.IsNullOrEmpty(Data.mot[i]) && Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) != (UnityEngine.Object)null)
+                    if (!String.IsNullOrEmpty(Data.mot[i]) && Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) != null)
                         Data.gameObject.GetComponent<Animation>().AddClip(Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]), newName);
                     else
                         AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, newName);
@@ -708,7 +709,7 @@ namespace Memoria
                 }
                 else
 				{
-                    if (Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) == (UnityEngine.Object)null)
+                    if (Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) == null)
                         AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, Data.mot[i]);
                     uniqueAnimList.Add(Data.mot[i]);
                 }
@@ -762,10 +763,15 @@ namespace Memoria
             Data.pos.z = (Data.evt.posBattle.z = (Data.evt.pos[2] = (Data.base_pos.z = (Data.original_pos.z + (Data.bi.row == 0 ? -400 : 0)))));
             for (Int32 i = 0; i < 34; i++)
                 Data.mot[i] = btlParam.AnimationId[i];
-            btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+            if (Data.cur.hp == 0)
+                btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE);
+            else
+                btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
+            Data.gameObject.SetActive(true);
             btl_mot.HideMesh(Data, UInt16.MaxValue);
-            Data.monster_transform.fade_counter = 8;
+            Data.monster_transform.fade_counter = 2;
+            Data.is_monster_transform = false;
         }
     }
 }

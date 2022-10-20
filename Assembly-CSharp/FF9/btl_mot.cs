@@ -455,7 +455,8 @@ namespace FF9
 
 		public static Boolean DecidePlayerDieSequence(BTL_DATA btl)
 		{
-			if (btl.is_monster_transform && btl.monster_transform.cancel_on_death)
+			Boolean cancelMonsterTransform = btl.is_monster_transform && btl.monster_transform.cancel_on_death;
+			if (cancelMonsterTransform)
 				new BattleUnit(btl).ReleaseChangeToMonster();
 			GeoTexAnim.geoTexAnimStop(btl.texanimptr, 2);
 			GeoTexAnim.geoTexAnimPlayOnce(btl.texanimptr, 0);
@@ -469,11 +470,12 @@ namespace FF9
 				//btl.die_seq = 7;
 				//btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
 				btl_stat.RemoveStatus(btl, BattleStatus.AutoLife);
-				UIManager.Battle.RemovePlayerFromAction((Int32)btl.btl_id, true);
+				UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
 				btl.cur.hp = 1;
 				btl_stat.RemoveStatus(btl, BattleStatus.Death);
 				FF9StateSystem.Settings.SetHPFull();
-				btl_mot.SetDefaultIdle(btl);
+				if (!cancelMonsterTransform)
+					btl_mot.SetDefaultIdle(btl);
 				return false;
 			}
 			btl.die_seq = 6;
@@ -530,7 +532,7 @@ namespace FF9
 			BattlePlayerCharacter.PlayerMotionIndex currentAnim = btl_mot.getMotion(btl);
 			if (btl_stat.CheckStatus(btl, BattleStatus.Immobilized))
 			{
-				if (btl.bi.player != 0 && btl_stat.CheckStatus(btl, BattleStatus.Venom) && !btl.is_monster_transform)
+				if (btl.bi.player != 0 && !btl.is_monster_transform && btl_stat.CheckStatus(btl, BattleStatus.Venom))
 				{
 					btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
 					btl.evt.animFrame = 0;
@@ -538,13 +540,16 @@ namespace FF9
 				return;
 			}
 
-			Boolean useCmdMotion = btl_util.IsBtlUsingCommandMotion(btl);
-			if (btl.bi.player == 0 || btl.is_monster_transform)
+			CMD_DATA cmdUsed;
+			Boolean useCmdMotion = btl_util.IsBtlUsingCommandMotion(btl, false, out cmdUsed);
+			if (btl.bi.player == 0 || (btl.is_monster_transform && (btl.die_seq != 0 || (useCmdMotion && (cmdUsed.cmd_no == btl.monster_transform.new_command || cmdUsed.sub_no == btl.monster_transform.attack)))))
 			{
 				if (useCmdMotion && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2 && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1)
 					targetAnim = currentAnim;
 				else if ((btl.die_seq == 1 || btl.die_seq == 2) && btl.bi.player == 0 && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
 					targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2;
+				else if ((btl.die_seq == 1 || btl.die_seq == 2) && btl.is_monster_transform)
+					targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE;
 				else if (btl.die_seq == 1 || btl.die_seq == 2)
 					targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE + btl.bi.def_idle;
 				else if (btl.die_seq != 0)

@@ -154,33 +154,16 @@ public class BattleSPSSystem : MonoBehaviour
 
 	private Boolean _loadSPSTexture()
 	{
-		for (Int32 i = 0; i < (Int32)BattleSPSSystem.statusTextures.Length; i++)
+		for (Int32 i = 0; i < BattleSPSSystem.statusTextures.Length; i++)
 		{
 			BattleSPSSystem.SPSTexture spstexture = BattleSPSSystem.statusTextures[i];
-			for (Int32 j = 0; j < (Int32)spstexture.textures.Length; j++)
+			for (Int32 j = 0; j < spstexture.textures.Length; j++)
 			{
-				String str;
-				if (spstexture.type == "shp")
-				{
-					str = String.Concat(new Object[]
-					{
-						spstexture.name,
-						"/",
-						spstexture.name,
-						"_",
-						j + 1
-					});
-				}
-				else
-				{
-					str = spstexture.name;
-				}
+				String texturePath = spstexture.type == "shp" ? $"{spstexture.name}/{spstexture.name}_{j + 1}" : spstexture.name;
 				String[] pngInfo;
-				spstexture.textures[j] = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/Status/" + str, out pngInfo, false);
-				if (spstexture.textures[j] == (UnityEngine.Object)null)
-				{
+				spstexture.textures[j] = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/Status/" + texturePath, out pngInfo, true);
+				if (spstexture.textures[j] == null)
 					spstexture.textures[j] = new Texture2D(0, 0);
-				}
 			}
 		}
 		return true;

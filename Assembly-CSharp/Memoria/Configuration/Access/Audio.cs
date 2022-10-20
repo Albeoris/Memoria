@@ -17,7 +17,9 @@ namespace Memoria
                 get => Instance._audio.MusicVolume;
                 set => Instance._audio.MusicVolume.Value = value;
             }
+
             public static Boolean LogVoiceActing => Instance._audio.LogVoiceActing;
+            public static Boolean PriorityToOGG => Instance._audio.PriorityToOGG;
 
             public static void SaveSoundVolume()
             {

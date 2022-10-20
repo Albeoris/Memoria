@@ -110,6 +110,18 @@ public partial class BattleHUD : UIScene
         public UInt32 TargetType;
     }
 
+    private struct PairCharCommand
+    {
+        public Int32 PlayerIndex;
+        public BattleCommandId CommandId;
+
+        public PairCharCommand(Int32 pi, BattleCommandId ci)
+		{
+            PlayerIndex = pi;
+            CommandId = ci;
+        }
+    }
+
     private sealed class KnownUnit
     {
         public Int32 Index { get; }

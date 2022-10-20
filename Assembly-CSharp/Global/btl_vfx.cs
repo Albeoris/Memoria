@@ -90,7 +90,7 @@ public static class btl_vfx
         {
             if (cmd_no != BattleCommandId.MagicCounter && cmd.sub_no == 176)
                 return btl_vfx.GetPlayerAttackVfx(regist);
-            else if (regist.is_monster_transform && cmd.sub_no == regist.monster_transform.attack)
+            else if (!Configuration.Battle.SFXRework && regist.is_monster_transform && cmd.sub_no == regist.monster_transform.attack)
                 return btl_vfx.GetPlayerAttackVfx(regist);
             else if (cmd.PatchedVfx != SpecialEffect.Special_No_Effect)
                 return cmd.PatchedVfx;
@@ -223,7 +223,7 @@ public static class btl_vfx
 		btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
 		BattlePlayerCharacter.InitAnimation(btl);
 		//btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[btl.bi.slot_no], btl);
+		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[(Int32)serialNo].ModelId, true);
 	}
 

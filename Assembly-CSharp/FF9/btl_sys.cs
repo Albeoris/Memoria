@@ -260,7 +260,7 @@ namespace FF9
                 }
             }
             for (Int32 i = 0; i < UnifiedBattleSequencer.runningActions.Count; i++)
-                if (UnifiedBattleSequencer.runningActions[i].cmd.tar_id == btl.btl_id)
+                if (UnifiedBattleSequencer.runningActions[i].cmd.tar_id == btl.btl_id || UnifiedBattleSequencer.runningActions[i].cmd.regist == btl)
                     UnifiedBattleSequencer.runningActions[i].Cancel();
         }
 

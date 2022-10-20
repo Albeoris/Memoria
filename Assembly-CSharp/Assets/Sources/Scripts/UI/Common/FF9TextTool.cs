@@ -234,7 +234,7 @@ namespace Assets.Sources.Scripts.UI.Common
             return str;
         }
 
-        public static String CharacterDefaultName(CharacterId nameId)
+        public static String CharacterDefaultName(CharacterId charId)
         {
             if (FF9StateSystem.Settings.CurrentLanguage == null)
                 FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
@@ -242,10 +242,10 @@ namespace Assets.Sources.Scripts.UI.Common
             if (characterNames == null)
                 characterNames = CharacterNamesFormatter.CharacterDefaultNames();
 
-            if ((Int32)nameId < 0 || (Int32)nameId >= characterNames.Length)
+            if (!characterNames.ContainsKey(charId))
                 return "Unknown";
 
-            return characterNames[(Int32)nameId];
+            return characterNames[charId];
         }
 
         public static String[] ExtractSentense(String text)
@@ -524,7 +524,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         private static List<String> actionAbilityHelpDesc = new List<String>();
 
-        private static String[] characterNames;
+        private static Dictionary<CharacterId, String> characterNames;
 
         private static String[] commandName;
 
@@ -709,21 +709,18 @@ namespace Assets.Sources.Scripts.UI.Common
             }
         }
 
-        public static void SetCharacterNames(String[] value)
+        public static void SetCharacterNames(Dictionary<CharacterId, String> value)
         {
             characterNames = value;
         }
 
         public static void ChangeCharacterName(CharacterId charId, String value)
         {
-            Int32 charIndex = (Int32)charId;
             if (FF9StateSystem.Settings.CurrentLanguage == null)
                 FF9StateSystem.Settings.CurrentLanguage = FF9StateSystem.Settings.GetSystemLanguage();
             if (characterNames == null)
                 characterNames = CharacterNamesFormatter.CharacterDefaultNames();
-            if (characterNames.Length <= charIndex)
-                Array.Resize(ref characterNames, charIndex + 1);
-            characterNames[charIndex] = value;
+            characterNames[charId] = value;
         }
     }
 }

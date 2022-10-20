@@ -192,13 +192,13 @@ public class PartySettingUI : UIScene
             ButtonGroupState.ActiveGroup = MoveCharGroupButton;
             ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
             foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
-                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix[(Int32)this.currentCharacterId]);
+                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix.Contains(this.currentCharacterId));
         }
         else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
         {
             PartySelect currentSelect = this.GetCurrentSelect(go);
             CharacterId currentId = this.GetCurrentId(go);
-            if (this.currentCharacterSelect.Group == Mode.Select && currentId != CharacterId.NONE && this.info.fix[(Int32)currentId])
+            if (this.currentCharacterSelect.Group == Mode.Select && currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
             {
                 FF9Sfx.FF9SFX_Play(102);
             }
@@ -346,7 +346,7 @@ public class PartySettingUI : UIScene
     private void DisplayCharacterPartyAvatar(CharacterId id, PLAYER player, UISprite avatarSprite, UISprite[] avatarStatusAlignment)
     {
         FF9UIDataTool.DisplayCharacterAvatar(player, default(Vector3), default(Vector3), avatarSprite, false);
-        avatarSprite.alpha = this.info.fix[(Int32)id] ? 0.5f : 1f;
+        avatarSprite.alpha = this.info.fix.Contains(id) ? 0.5f : 1f;
         for (Int32 i = 0; i < avatarStatusAlignment.Length; i++)
         {
             UISprite uISprite = avatarStatusAlignment[i];
@@ -485,32 +485,24 @@ public class PartySettingUI : UIScene
         if (Configuration.Hacks.AllCharactersAvailable < 1)
             return;
 
-        Int32 availabilityMask = -1;
-        
+        List<CharacterId> selectList = new List<CharacterId>();
+        foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+            selectList.Add(p.info.slot_no);
+
         for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
         {
             PLAYER member = FF9StateSystem.Common.FF9.party.member[memberIndex];
             if (member != null)
             {
                 partyInfo.menu[memberIndex] = member.info.slot_no;
-                availabilityMask &= ~(1 << (Int32)partyInfo.menu[memberIndex]);
+                selectList.Remove(member.info.slot_no);
             }
             else
             {
                 partyInfo.menu[memberIndex] = CharacterId.NONE;
             }
         }
-        
-        Byte slotIndex = 0;
-        List<CharacterId> selectList = new List<CharacterId>();
-        while (slotIndex < FF9StateSystem.Common.PlayerCount && availabilityMask != 0)
-        {
-            if ((availabilityMask & 1) > 0)
-                selectList.Add((CharacterId)slotIndex);
-        
-            ++slotIndex;
-            availabilityMask >>= 1;
-        }
+
         partyInfo.select = selectList.ToArray();
     }
 }

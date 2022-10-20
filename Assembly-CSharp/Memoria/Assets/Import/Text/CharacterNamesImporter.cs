@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -11,13 +12,16 @@ namespace Memoria.Assets
 
         protected override void ProcessEntries(TxtEntry[] entreis)
         {
-            String[] characterNames = CharacterNamesFormatter.Parse(entreis);
+            String[] characterNamesArray = CharacterNamesFormatter.Parse(entreis);
+            Dictionary<CharacterId, String> characterNames = new Dictionary<CharacterId, String>();
+            for (Int32 i = 0; i < characterNamesArray.Length; i++)
+                characterNames[(CharacterId)i] = characterNamesArray[i];
             FF9TextTool.SetCharacterNames(characterNames);
         }
 
         protected override Boolean LoadInternal()
         {
-            String[] characterNames = CharacterNamesFormatter.CharacterDefaultNames();
+            Dictionary<CharacterId, String> characterNames = CharacterNamesFormatter.CharacterDefaultNames();
             FF9TextTool.SetCharacterNames(characterNames);
             return true;
         }

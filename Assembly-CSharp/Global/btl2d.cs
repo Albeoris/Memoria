@@ -304,7 +304,7 @@ public static class btl2d
 										}
 										else
 										{
-											CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no];
+											CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
 											iconBone = param.StatusBone;
 											iconOffY = param.StatusOffsetY;
 											iconOffZ = param.StatusOffsetZ;
@@ -430,7 +430,7 @@ public static class btl2d
 								Int16 iconOffY;
 								if (btl.bi.player != 0)
 								{
-									CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no];
+									CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
 									iconBone = param.StatusBone[5];
 									iconOffY = param.StatusOffsetY[5];
 								}

@@ -14,7 +14,6 @@ public class PLAYER
 		this.basis = new PLAYER_BASE();
 	    this.equip = new CharacterEquipment();
 		this.bonus = new FF9LEVEL_BONUS();
-		this.pa = new Byte[48];
 		this.sa = new UInt32[2];
 		this.sa[0] = 0u;
 		this.sa[1] = 0u;

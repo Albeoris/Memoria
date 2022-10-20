@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using Memoria;
 using Memoria.Prime;
 using Memoria.Prime.AKB2;
 using Memoria.Prime.NVorbis;
@@ -15,38 +16,31 @@ public class SoundLoaderResources : ISoundLoader
 	public override void Load(SoundProfile profile, ISoundLoader.ResultCallback callback, SoundDatabase soundDatabase)
 	{
 		String akbPath = "Sounds/" + profile.ResourceID + ".akb";
-		String[] akbInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(akbPath, out akbInfo);
+		String[] akbInfo = null;
+		Byte[] binAsset;
 		SoundLib.Log("Load: " + akbPath);
+		if (Configuration.Audio.PriorityToOGG)
+		{
+			binAsset = TryOpeningOgg(profile, callback);
+			if (binAsset == null)
+				binAsset = AssetManager.LoadBytes(akbPath, out akbInfo);
+		}
+		else
+		{
+			binAsset = AssetManager.LoadBytes(akbPath, out akbInfo);
+			if (binAsset == null)
+				binAsset = TryOpeningOgg(profile, callback);
+		}
 		if (binAsset == null)
 		{
-			String oggPath = AssetManager.SearchAssetOnDisc("Sounds/" + profile.ResourceID + ".ogg", true, false);
-			if (!String.IsNullOrEmpty(oggPath))
-			{
-				try
-				{
-					Byte[] binOgg = File.ReadAllBytes(oggPath);
-					binAsset = ReadAkbDataFromOgg(profile, binOgg);
-					File.WriteAllBytes(Path.ChangeExtension(oggPath, ".akb.bytes"), binAsset);
-				}
-				catch (Exception err)
-				{
-					Log.Error(err, $"[{nameof(SoundLoaderResources)}] Load {oggPath} failed.");
-					callback((SoundProfile)null, (SoundDatabase)null);
-					return;
-				}
-			}
-			else
-			{
-				SoundLib.LogError("File not found AT path: " + akbPath);
-				callback((SoundProfile)null, (SoundDatabase)null);
-				return;
-			}
+			SoundLib.LogError("File not found AT path: " + akbPath);
+			callback(null, null);
+			return;
 		}
 		// if (((binAsset[0] << 24) | (binAsset[1] << 16) | (binAsset[2] << 8) | binAsset[3]) == 0x4F676753)
-		IntPtr intPtr = Marshal.AllocHGlobal((Int32)binAsset.Length);
-		Marshal.Copy(binAsset, 0, intPtr, (Int32)binAsset.Length);
-		if (akbInfo.Length > 0)
+		IntPtr intPtr = Marshal.AllocHGlobal(binAsset.Length);
+		Marshal.Copy(binAsset, 0, intPtr, binAsset.Length);
+		if (akbInfo != null && akbInfo.Length > 0)
         {
 			// Assume that AKB header is always of size 304 (split "intPtr" into AkbBin + OggBin if ever that changes)
 			// Maybe use a constant instead of 304 ("SoundImporter.AkbHeaderSize" or something defined at a better place?)
@@ -74,6 +68,28 @@ public class SoundLoaderResources : ISoundLoader
 		profile.AkbBin = intPtr;
 		profile.BankID = bankID;
 		callback(profile, soundDatabase);
+	}
+
+	private Byte[] TryOpeningOgg(SoundProfile profile, ISoundLoader.ResultCallback callback)
+	{
+		String oggPath = AssetManager.SearchAssetOnDisc("Sounds/" + profile.ResourceID + ".ogg", true, false);
+		if (!String.IsNullOrEmpty(oggPath))
+		{
+			try
+			{
+				Byte[] binOgg = File.ReadAllBytes(oggPath);
+				Byte[] binAsset = ReadAkbDataFromOgg(profile, binOgg);
+				File.WriteAllBytes(Path.ChangeExtension(oggPath, ".akb.bytes"), binAsset);
+				return binAsset;
+			}
+			catch (Exception err)
+			{
+				Log.Error(err, $"[{nameof(SoundLoaderResources)}] Load {oggPath} failed.");
+				callback(null, null);
+				return null;
+			}
+		}
+		return null;
 	}
 
 	// Duplicate of SoundImporter.ReadAkbDataFromOgg

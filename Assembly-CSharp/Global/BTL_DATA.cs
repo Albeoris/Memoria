@@ -19,9 +19,7 @@ public partial class BTL_DATA
 
 	public GameObject getShadow()
 	{
-		if (this.bi.player != 0)
-			return FF9StateSystem.Battle.FF9Battle.map.shadowArray[this.bi.slot_no];
-		return FF9StateSystem.Battle.FF9Battle.map.shadowArray[FF9StateSystem.Common.PlayerCount + this.bi.slot_no];
+		return FF9StateSystem.Battle.FF9Battle.map.shadowArray[this];
 	}
 
 	public void SetActiveBtlData(Boolean value)

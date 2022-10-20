@@ -31,65 +31,66 @@ public static class btl_init
 
 	public static void InitEnemyData(FF9StateBattleSystem btlsys)
 	{
-		BTL_DATA btl_DATA = null;
+		BTL_DATA monLastBtl = null;
 		ObjList objList = new ObjList();
 		if (!FF9StateSystem.Battle.isDebug)
 			objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
 		Int32 monCount = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
-		Int32 i = 0;
-		Int32 j = 4;
-		while (i < monCount)
+		Int32 enemyIndex = 0;
+		Int32 btlIndex = 4;
+		while (enemyIndex < monCount)
 		{
-			ENEMY enemy = btlsys.enemy[i];
-			BTL_DATA btl_DATA2 = btlsys.btl_data[j];
+			ENEMY enemy = btlsys.enemy[enemyIndex];
+			BTL_DATA monBtl = btlsys.btl_data[btlIndex];
+			btlshadow.ff9battleShadowInit(monBtl);
 			enemy.info.die_fade_rate = 32;
-			if ((btl_DATA2.dms_geo_id = BTL_SCENE.GetMonGeoID(i)) < 0)
+			if ((monBtl.dms_geo_id = BTL_SCENE.GetMonGeoID(enemyIndex)) < 0)
 			{
 				enemy.info.slave = 1;
 			}
 			else
 			{
-				btl_init.SetBattleModel(btl_DATA2);
+				btl_init.SetBattleModel(monBtl);
 				enemy.info.slave = 0;
 				if (!FF9StateSystem.Battle.isDebug)
 					objList = objList.next;
 			}
-			btl_DATA2.btl_id = (UInt16)(16 << i);
-			btl_DATA2.bi.player = 0;
-			btl_DATA2.bi.slot_no = (Byte)i;
-			btl_DATA2.bi.line_no = (Byte)(4 + i);
-			btl_DATA2.bi.t_gauge = 0;
-			btl_DATA2.bi.slave = enemy.info.slave;
+			monBtl.btl_id = (UInt16)(16 << enemyIndex);
+			monBtl.bi.player = 0;
+			monBtl.bi.slot_no = (Byte)enemyIndex;
+			monBtl.bi.line_no = (Byte)(4 + enemyIndex);
+			monBtl.bi.t_gauge = 0;
+			monBtl.bi.slave = enemy.info.slave;
 			BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
-			SB2_PATTERN sb2_PATTERN = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-			SB2_MON_PARM sb2_MON_PARM = btl_scene.MonAddr[sb2_PATTERN.Monster[i].TypeNo];
-			UInt16 geoID = sb2_MON_PARM.Geo;
-			btl_DATA2.height = 0;
-			btl_DATA2.radius_effect = 0;
-			btl_DATA2.radius_collision = sb2_MON_PARM.Radius;
+			SB2_PATTERN battlePattern = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+			SB2_MON_PARM monParam = btl_scene.MonAddr[battlePattern.Monster[enemyIndex].TypeNo];
+			UInt16 geoID = monParam.Geo;
+			monBtl.height = 0;
+			monBtl.radius_effect = 0;
+			monBtl.radius_collision = monParam.Radius;
 			FF9Char ff9char = new FF9Char();
-			btl_init.InitBattleData(btl_DATA2, ff9char);
-			btl_DATA2.bi.def_idle = 0;
-			btl_DATA2.base_pos = enemy.base_pos;
-			String path = (btl_DATA2.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl_DATA2.dms_geo_id);
+			btl_init.InitBattleData(monBtl, ff9char);
+			monBtl.bi.def_idle = 0;
+			monBtl.base_pos = enemy.base_pos;
+			String path = (monBtl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(monBtl.dms_geo_id);
 			if (!ModelFactory.IsUseAsEnemyCharacter(path))
-				btl_DATA2.weapon_geo = null;
-			btl_DATA2.sa = btl_init.enemy_dummy_sa; // Might want to use "= new UInt32[2]" for letting enemies use SA... doesn't seem to be useful for now though
+				monBtl.weapon_geo = null;
+			monBtl.sa = btl_init.enemy_dummy_sa; // Might want to use "= new UInt32[2]" for letting enemies use SA... doesn't seem to be useful for now though
 
-		    FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl_DATA2.height, ref btl_DATA2.radius_effect);
+		    FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref monBtl.height, ref monBtl.radius_effect);
             
-			if (btl_DATA != null)
-				btl_DATA.next = btl_DATA2;
-			btl_DATA = btl_DATA2;
-			i++;
-			j++;
+			if (monLastBtl != null)
+				monLastBtl.next = monBtl;
+			monLastBtl = monBtl;
+			enemyIndex++;
+			btlIndex++;
 		}
-		while (j < 8)
+		while (btlIndex < 8)
 		{
-			btlsys.btl_data[j].btl_id = 0;
-			j++;
+			btlsys.btl_data[btlIndex].btl_id = 0;
+			btlIndex++;
 		}
-		btl_DATA.next = null;
+		monLastBtl.next = null;
 		btlsys.btl_list.next = btlsys.btl_data[4];
 		btlsys.btl_load_status |= ff9btl.LOAD_INITNPC;
 		btl_init.SetupBattleEnemy();
@@ -268,61 +269,59 @@ public static class btl_init
 		ObjList objList = new ObjList();
 		if (!FF9StateSystem.Battle.isDebug)
 			objList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList().next;
-		Int16 num2;
-		Int16 num = num2 = 0;
-		PLAYER p;
-		while (num2 < 4)
+		Int16 btlIndex = 0;
+		PLAYER player;
+		for (Int32 memberIndex = 0; memberIndex < 4; memberIndex++)
 		{
-			p = FF9StateSystem.Common.FF9.party.member[num2];
-			if (p != null)
+			player = FF9StateSystem.Common.FF9.party.member[memberIndex];
+			if (player != null)
 			{
-				BTL_DATA btl_DATA = btlsys.btl_data[num];
+				BTL_DATA btl = btlsys.btl_data[btlIndex];
 
-			    btl_DATA.dms_geo_id = GetModelID(p.info.serial_no);
+			    btl.dms_geo_id = GetModelID(player.info.serial_no);
 
-				btl_init.OrganizePlayerData(p, btl_DATA, (UInt16)num2, (UInt16)num);
-				btl_init.SetBattleModel(btl_DATA);
-				if (Status.checkCurStat(btl_DATA, BattleStatus.Death))
+				btl_init.OrganizePlayerData(player, btl, (UInt16)memberIndex, (UInt16)btlIndex);
+				btl_init.SetBattleModel(btl);
+				if (Status.checkCurStat(btl, BattleStatus.Death))
 				{
-					GeoTexAnim.geoTexAnimStop(btl_DATA.texanimptr, 2);
-					GeoTexAnim.geoTexAnimPlayOnce(btl_DATA.texanimptr, 0);
-					if (btl_DATA.bi.player != 0)
+					GeoTexAnim.geoTexAnimStop(btl.texanimptr, 2);
+					GeoTexAnim.geoTexAnimPlayOnce(btl.texanimptr, 0);
+					if (btl.bi.player != 0)
 					{
-						GeoTexAnim.geoTexAnimStop(btl_DATA.tranceTexanimptr, 2);
-						GeoTexAnim.geoTexAnimPlayOnce(btl_DATA.tranceTexanimptr, 0);
+						GeoTexAnim.geoTexAnimStop(btl.tranceTexanimptr, 2);
+						GeoTexAnim.geoTexAnimPlayOnce(btl.tranceTexanimptr, 0);
 					}
 				}
 				else
 				{
-					GeoTexAnim.geoTexAnimPlay(btl_DATA.texanimptr, 2);
+					GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
 				}
 				if (!FF9StateSystem.Battle.isDebug)
 					objList = objList.next;
-				num++;
-				btl_sys.AddCharacter(btl_DATA);
+				btlIndex++;
+				btl_sys.AddCharacter(btl);
 				if (btlsys.cmd_escape.regist == null)
-					btlsys.cmd_escape.regist = btl_DATA;
+					btlsys.cmd_escape.regist = btl;
 			}
-			num2++;
 		}
-		while (num < 4)
+		while (btlIndex < 4)
 		{
-			btlsys.btl_data[num].btl_id = 0;
-			num++;
+			btlsys.btl_data[btlIndex].btl_id = 0;
+			btlIndex++;
 		}
 		btlsys.btl_load_status |= ff9btl.LOAD_INITCHR;
 		btl_init.SetupBattlePlayer();
 		if (btlsys.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
 		{
-			for (BTL_DATA btl_DATA = btlsys.btl_list.next; btl_DATA != null; btl_DATA = btl_DATA.next)
-				if (btl_DATA.bi.player != 0)
-					btl_DATA.cur.at = 0;
+			for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
+				if (btl.bi.player != 0)
+					btl.cur.at = 0;
 		}
 		else if (btlsys.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
 		{
-			for (BTL_DATA btl_DATA = btlsys.btl_list.next; btl_DATA != null; btl_DATA = btl_DATA.next)
-				if (btl_DATA.bi.player == 0)
-					btl_DATA.cur.at = 0;
+			for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
+				if (btl.bi.player == 0)
+					btl.cur.at = 0;
 		}
 	}
 
@@ -347,7 +346,8 @@ public static class btl_init
 		{
 			if (next.bi.player == 0)
 				break;
-			next.bi.row = FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.row;
+			CharacterId charId = (CharacterId)next.bi.slot_no;
+			next.bi.row = FF9StateSystem.Common.FF9.player[charId].info.row;
 			if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
 			{
 				BTL_INFO bi = next.bi;
@@ -376,12 +376,12 @@ public static class btl_init
 //			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
 			next.gameObject.transform.localPosition = next.pos;
 			next.gameObject.transform.localRotation = next.rot;
-			CharacterBattleParameter btlParam = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[next.bi.slot_no].info.serial_no];
+			CharacterBattleParameter btlParam = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[charId].info.serial_no];
 			next.shadow_bone[0] = btlParam.ShadowData[0];
 			next.shadow_bone[1] = btlParam.ShadowData[1];
 			btl_util.SetShadow(next, btlParam.ShadowData[2], btlParam.ShadowData[3]);
 			next.geo_scale_x = next.geo_scale_y = next.geo_scale_z = next.geo_scale_default = 4096;
-			GameObject shadowObj = FF9StateSystem.Battle.FF9Battle.map.shadowArray[next.bi.slot_no];
+			GameObject shadowObj = FF9StateSystem.Battle.FF9Battle.map.shadowArray[next];
 			Vector3 shadowPos = shadowObj.transform.localPosition;
 			shadowPos.z = btlParam.ShadowData[4];
 			shadowObj.transform.localPosition = shadowPos;
@@ -393,6 +393,7 @@ public static class btl_init
 
 	public static void OrganizePlayerData(PLAYER p, BTL_DATA btl, UInt16 cnt, UInt16 btl_no)
 	{
+		btlshadow.ff9battleShadowInit(btl);
 		btl.btl_id = (UInt16)(1 << btl_no);
 		BONUS btl_bonus = battle.btl_bonus;
 		btl_bonus.member_flag = (Byte)(btl_bonus.member_flag | (Byte)(1 << cnt));
@@ -489,41 +490,41 @@ public static class btl_init
 		for (Int32 i = 0; i < BTL_SCENE.GetMonCount(); i++)
 		{
 			ENEMY_TYPE et = btlsys.enemy[i].et;
-			BTL_DATA btl_DATA = btlsys.btl_data[4 + i];
-			btl_DATA.level = et.level;
-			btl_DATA.max.at = (Int16)((60 - btl_DATA.elem.dex) * 40 << 2);
-			btl_para.InitATB(btl_DATA);
-			btl_DATA.cur.at = (Int16)(Comn.random16() % btl_DATA.max.at);
-			btl_DATA.weapon = null;
-			btl_stat.InitCountDownStatus(btl_DATA);
-			btl_mot.HideMesh(btl_DATA, btl_DATA.mesh_current, false);
-			if (btl_DATA.bi.slave != 0)
+			BTL_DATA btl = btlsys.btl_data[4 + i];
+			btl.level = et.level;
+			btl.max.at = (Int16)((60 - btl.elem.dex) * 40 << 2);
+			btl_para.InitATB(btl);
+			btl.cur.at = (Int16)(Comn.random16() % btl.max.at);
+			btl.weapon = null;
+			btl_stat.InitCountDownStatus(btl);
+			btl_mot.HideMesh(btl, btl.mesh_current, false);
+			if (btl.bi.slave != 0)
 			{
-				btl_DATA.cur.at = 0;
-				btl_DATA.cur.at_coef = 0;
-				btl_DATA.gameObject.transform.localRotation = btl_DATA.rot;
-				btl_DATA.gameObject.transform.localPosition = btl_DATA.evt.posBattle;
-				btl_DATA.currentAnimationName = btl_DATA.mot[btl_DATA.bi.def_idle];
-				btl_mot.setMotion(btl_DATA, btl_DATA.currentAnimationName);
-				btl_mot.setSlavePos(btl_DATA, ref btl_DATA.base_pos);
-				UnityEngine.Object.Destroy(btl_DATA.gameObject);
-				UnityEngine.Object.Destroy(btl_DATA.getShadow());
-				btl_DATA.gameObject = btl_util.GetMasterEnemyBtlPtr().Data.gameObject;
+				btl.cur.at = 0;
+				btl.cur.at_coef = 0;
+				btl.gameObject.transform.localRotation = btl.rot;
+				btl.gameObject.transform.localPosition = btl.evt.posBattle;
+				btl.currentAnimationName = btl.mot[btl.bi.def_idle];
+				btl_mot.setMotion(btl, btl.currentAnimationName);
+				btl_mot.setSlavePos(btl, ref btl.base_pos);
+				UnityEngine.Object.Destroy(btl.gameObject);
+				UnityEngine.Object.Destroy(btl.getShadow());
+				btl.gameObject = btl_util.GetMasterEnemyBtlPtr().Data.gameObject;
 			}
 			else
 			{
-				btl_DATA.base_pos[0] = btl_DATA.evt.posBattle[0];
-				btl_DATA.base_pos[1] = btl_DATA.evt.posBattle[1];
-				btl_DATA.base_pos[2] = btl_DATA.evt.posBattle[2];
-				btl_DATA.currentAnimationName = btl_DATA.mot[btl_DATA.bi.def_idle];
-				btl_DATA.evt.animFrame = (Byte)(Comn.random8() % GeoAnim.geoAnimGetNumFrames(btl_DATA));
+				btl.base_pos[0] = btl.evt.posBattle[0];
+				btl.base_pos[1] = btl.evt.posBattle[1];
+				btl.base_pos[2] = btl.evt.posBattle[2];
+				btl.currentAnimationName = btl.mot[btl.bi.def_idle];
+				btl.evt.animFrame = (Byte)(Comn.random8() % GeoAnim.geoAnimGetNumFrames(btl));
 			}
-			BattleStatus permanent_stat = btl_DATA.stat.permanent;
-			BattleStatus current_stat = btl_DATA.stat.cur;
-			btl_DATA.stat.permanent = 0;
-			btl_DATA.stat.cur = 0;
-			btl_stat.MakeStatusesPermanent(btl_DATA, permanent_stat);
-			btl_stat.AlterStatuses(btl_DATA, current_stat);
+			BattleStatus permanent_stat = btl.stat.permanent;
+			BattleStatus current_stat = btl.stat.cur;
+			btl.stat.permanent = 0;
+			btl.stat.cur = 0;
+			btl_stat.MakeStatusesPermanent(btl, permanent_stat);
+			btl_stat.AlterStatuses(btl, current_stat);
 		}
 	}
 

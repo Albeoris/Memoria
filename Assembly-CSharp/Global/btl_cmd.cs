@@ -632,14 +632,14 @@ public class btl_cmd
                     if (caster != null && caster.bi.player != 0)
                     {
                         Int32 aaIndex = btl_util.GetCommandMainActionIndex(cmd);
-                        if (aaIndex > 0)
+                        if (aaIndex > 0 && aaIndex < 192)
                             FF9StateSystem.EventState.IncreaseAAUsageCounter((Byte)aaIndex);
                     }
                     cmd.info.mode = command_mode_index.CMD_MODE_SELECT_VFX;
                     break;
                 case command_mode_index.CMD_MODE_SELECT_VFX:
                 {
-                    if (cmd.regist != null && cmd.regist.bi.player != 0 && cmd.cmd_no <= BattleCommandId.RushAttack)
+                    if (cmd.regist != null && cmd.regist.bi.player != 0 && !cmd.regist.is_monster_transform && cmd.cmd_no <= BattleCommandId.RushAttack)
                     {
                         BattlePlayerCharacter.PlayerMotionIndex motion = btl_mot.getMotion(cmd.regist);
                         BattlePlayerCharacter.PlayerMotionStance stance = btl_mot.EndingMotionStance(motion);
@@ -958,26 +958,28 @@ public class btl_cmd
             }*/
         }
 
-        if (cmd.ScriptId == 52 && ff9item.FF9Item_GetCount(cmd.Power) < btl_util.SumOfTarget(1U)) // AngelSnackScript
+        if (cmd.ScriptId == 52 && ff9item.FF9Item_GetCount(cmd.Power) < btl_util.SumOfTarget(1)) // AngelSnackScript
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
             return false;
         }
 
+        BattleCommandId commandId = cmd.cmd_no;
+        if (caster != null && caster.IsMonsterTransform && commandId == caster.Data.monster_transform.new_command)
+            return true;
         if (!BattleAbilityHelper.ApplySpecialCommandCondition(cmd))
             return false;
 
-        BattleCommandId commandId = cmd.cmd_no;
         switch (commandId)
         {
             case BattleCommandId.JumpTrance:
-                caster.Data.cmd[3].tar_id = btl_util.GetStatusBtlID(1U, 0U);
+                caster.Data.cmd[3].tar_id = btl_util.GetStatusBtlID(1, 0);
                 break;
             case BattleCommandId.Jump:
             case BattleCommandId.Jump2:
                 caster.AlterStatus(BattleStatus.Jump);
                 caster.Data.cmd[3].cmd_no = cmd.cmd_no;
-                caster.Data.cmd[3].tar_id = cmd.cmd_no != BattleCommandId.Jump ? btl_util.GetStatusBtlID(1U, 0U) : cmd.tar_id;
+                caster.Data.cmd[3].tar_id = cmd.cmd_no != BattleCommandId.Jump ? btl_util.GetStatusBtlID(1, 0) : cmd.tar_id;
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
@@ -1031,7 +1033,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                     else
-                        btlsys.cmd_status &= 65534;
+                        btlsys.cmd_status &= 0xFFFE;
                     return false;
                 }
                 break;
@@ -1076,7 +1078,7 @@ public class btl_cmd
                 caster.Data.stat.cur |= BattleStatus.Petrify;
                 caster.CurrentAtb = 0;
                 btl_sys.CheckBattlePhase(caster.Data);
-                caster.RemoveStatus((BattleStatus)2147483648U);
+                caster.RemoveStatus(BattleStatus.GradualPetrify);
                 btl_stat.SetStatusClut(caster.Data, true);
                 return false;
             case BattleCommandId.None:
@@ -1179,7 +1181,7 @@ public class btl_cmd
         if (cmd.regist != null)
         {
             if (cmd.regist.bi.player != 0)
-                mp = mp * FF9StateSystem.Common.FF9.player[cmd.regist.bi.slot_no].mpCostFactor / 100;
+                mp = mp * FF9StateSystem.Common.FF9.player[(CharacterId)cmd.regist.bi.slot_no].mpCostFactor / 100;
             if (cmd.cmd_no == BattleCommandId.MagicCounter || ConsumeMp(cmd.regist, mp))
                 return true;
         }

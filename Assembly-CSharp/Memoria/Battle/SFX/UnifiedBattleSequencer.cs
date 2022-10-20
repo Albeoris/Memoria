@@ -113,7 +113,7 @@ public static class UnifiedBattleSequencer
 					else
 					{
 						threadList = new List<BattleActionThread>();
-						Log.Message($"[{nameof(UnifiedBattleSequencer)}] Trying to use the {effectType} {effectNum} ({(SpecialEffect)effectNum}) but {path} is missing");
+						Log.Warning($"[{nameof(UnifiedBattleSequencer)}] Trying to use the {effectType} {effectNum} ({(SpecialEffect)effectNum}) but {path} is missing");
 					}
 					break;
 			}
@@ -1179,6 +1179,7 @@ public static class UnifiedBattleSequencer
 			}
 			// Check if BattleAction is over
 			Boolean isOver = true;
+			Boolean hasRunningSFX = false;
 			foreach (BattleActionThread th in threadList)
 				if (th.active)
 				{
@@ -1195,22 +1196,32 @@ public static class UnifiedBattleSequencer
 				foreach (SFXData sfx in sfxList)
 				{
 					if (sfx.runningSFX.Count > 0)
-						PSXTextureMgr.isCaptureBlur = true;
+						hasRunningSFX = true;
 					foreach (SFXData.RunningInstance run in sfx.runningSFX)
 						run.frame++;
 				}
+				if (hasRunningSFX)
+					PSXTextureMgr.isCaptureBlur = true;
 			}
-			else if (cancel)
+			if (cancel)
 			{
-				// Make sure that cancelled sequence take the caster back to the base position
-				Single dist = (cmd.regist.pos - cmd.regist.base_pos).magnitude;
-				if (dist < 10)
+				if (cmd.regist.bi.disappear != 0 && !hasRunningSFX)
 				{
 					cmd.regist.pos = cmd.regist.base_pos;
 					return true;
 				}
-				cmd.regist.pos = cmd.regist.pos + Math.Min(100f, dist) * BattleActionCode.PolarVector(cmd.regist.base_pos - cmd.regist.pos);
-				return false;
+				if (!isOver)
+				{
+					// Make sure that cancelled sequence take the caster back to the base position
+					Single dist = (cmd.regist.pos - cmd.regist.base_pos).magnitude;
+					if (dist < 10)
+					{
+						cmd.regist.pos = cmd.regist.base_pos;
+						return true;
+					}
+					cmd.regist.pos = cmd.regist.pos + Math.Min(100f, dist) * BattleActionCode.PolarVector(cmd.regist.base_pos - cmd.regist.pos);
+					return false;
+				}
 			}
 			return isOver;
 		}

@@ -47,9 +47,7 @@ public partial class BattleHUD : UIScene
         _unconsciousStateList = new List<Int32>();
         _firstCommand = new CommandDetail();
         _commandCursorMemorize = new Dictionary<Int32, CommandMenu>();
-        _ability1CursorMemorize = new Dictionary<Int32, Int32>();
-        _ability2CursorMemorize = new Dictionary<Int32, Int32>();
-        _itemCursorMemorize = new Dictionary<Int32, Int32>();
+        _abilityCursorMemorize = new Dictionary<PairCharCommand, Int32>();
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
         _itemIdList = new List<Byte>();
@@ -487,6 +485,11 @@ public partial class BattleHUD : UIScene
 
         if (_targetPanel.AllTargets[index].ButtonGroup.enabled)
             CheckDoubleCast(modelIndex, CursorGroup.Individual);
+    }
+
+    public void ClearCursorMemorize(Int32 playerIndex, BattleCommandId commandId)
+	{
+        _abilityCursorMemorize.Remove(new PairCharCommand(playerIndex, commandId));
     }
 }
 

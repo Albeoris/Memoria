@@ -492,8 +492,7 @@ public class FieldHUD : UIScene
             menu = new CharacterId[4] { CharacterId.Zidane, CharacterId.Vivi, CharacterId.Garnet, CharacterId.Steiner },
             select = new CharacterId[4] { CharacterId.Freya, CharacterId.Quina, CharacterId.Eiko, CharacterId.Amarant }
         };
-        defaultParty.fix = new Boolean[FF9StateSystem.Common.PlayerCount];
-        defaultParty.fix[0] = true;
+        defaultParty.fix.Add(CharacterId.Zidane);
         defaultParty.party_ct = 4;
         PersistenSingleton<UIManager>.Instance.PartySettingScene.Info = defaultParty;
         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.PartySetting);

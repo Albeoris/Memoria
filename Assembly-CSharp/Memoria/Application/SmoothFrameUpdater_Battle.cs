@@ -88,6 +88,8 @@ namespace Memoria
 		{
 			if (_skipCount > 0)
 				return;
+			if (Configuration.Battle.SFXRework)
+				SFXData.LoadLoop();
 			Single unclampedFactor = 1f + smoothFactor;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{

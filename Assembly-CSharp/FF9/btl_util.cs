@@ -20,7 +20,7 @@ namespace FF9
 
 		public static PLAYER getPlayerPtr(BTL_DATA btl)
 		{
-			return FF9StateSystem.Common.FF9.player[btl.bi.slot_no];
+			return btl.bi.player != 0 ? FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no] : null;
 		}
 
 		public static ENEMY getEnemyPtr(BTL_DATA btl)
@@ -35,7 +35,7 @@ namespace FF9
 
 		public static Byte getWeaponNumber(BTL_DATA btl)
 		{
-			return FF9StateSystem.Common.FF9.player[btl.bi.slot_no].equip[0];
+			return btl.bi.player != 0 ? FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].equip[0] : Byte.MaxValue;
 		}
 
 		public static Int32 btlItemNum(Int32 ff9item_no)
@@ -50,9 +50,7 @@ namespace FF9
 
 		public static CharacterSerialNumber getSerialNumber(BTL_DATA btl)
 		{
-			if (btl.bi.player != 0)
-				return FF9StateSystem.Common.FF9.player[btl.bi.slot_no].info.serial_no;
-			return CharacterSerialNumber.NONE;
+			return btl.bi.player != 0 ? FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no : CharacterSerialNumber.NONE;
 		}
 
 		public static CMD_DATA getCurCmdPtr()
@@ -90,12 +88,21 @@ namespace FF9
 			return IsBtlUsingCommand(btl, out _);
 		}
 
-		public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd = false)
+		public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd, out CMD_DATA cmdUsed)
 		{
+			cmdUsed = null;
 			foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
 				if (cmd.regist == btl && cmd.info.cmd_motion && (includeSysCmd || cmd.cmd_no <= BattleCommandId.EnemyReaction || cmd.cmd_no >= BattleCommandId.ScriptCounter1))
+				{
+					cmdUsed = cmd;
 					return true;
+				}
 			return false;
+		}
+
+		public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd = false)
+		{
+			return IsBtlUsingCommandMotion(btl, includeSysCmd, out _);
 		}
 
 		public static Boolean IsBtlBusy(BTL_DATA btl, BusyMode mode)
@@ -211,11 +218,6 @@ namespace FF9
 			return btl.bi.player == 0 && (btl_util.getEnemyTypePtr(btl).category & category) != 0;
 		}
 
-		public static UInt32 GetFF9CharNo(BTL_DATA btl)
-		{
-			return (UInt32)((btl.bi.player == 0) ? (FF9StateSystem.Common.PlayerCount + btl.bi.slot_no) : btl.bi.slot_no);
-		}
-
 		public static Boolean IsAttackShortRange(CMD_DATA cmd)
 		{
 			// Custom usage of "aa.Type & 0x8" (unused by default): flag for short range attacks
@@ -237,6 +239,8 @@ namespace FF9
 		{
 			if (cmd.regist != null && cmd.regist.bi.player == 0)
 				return -1;
+			if (cmd.regist != null && cmd.regist.is_monster_transform && cmd.regist.monster_transform.new_command == cmd.cmd_no)
+				return cmd.sub_no;
 			switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
@@ -284,10 +288,9 @@ namespace FF9
 
 		public static void SetShadow(BTL_DATA btl, UInt16 x_radius, UInt32 z_radius)
 		{
-			UInt32 ff9CharNo = btl_util.GetFF9CharNo(btl);
 			btl.shadow_x = (Byte)(x_radius * 16 / 224);
 			btl.shadow_z = (Byte)(z_radius * 16u / 192u);
-			btlshadow.FF9ShadowSetScaleBattle(ff9CharNo, btl.shadow_x, btl.shadow_z);
+			btlshadow.FF9ShadowSetScaleBattle(btl, btl.shadow_x, btl.shadow_z);
 		}
 
 		public static void SetFadeRate(BTL_DATA btl, Int32 rate)

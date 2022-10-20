@@ -644,7 +644,7 @@ public class BattleResultUI : UIScene
 						Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player.Data, ff9ITEM_DATA.ability[j]);
 						if (abilIndex >= 0)
 						{
-							Int32 max_ap = ff9abil._FF9Abil_PaData[(Int32)player.PresetId][abilIndex].Ap;
+							Int32 max_ap = ff9abil._FF9Abil_PaData[player.PresetId][abilIndex].Ap;
 							Int32 cur_ap = player.Data.pa[abilIndex];
 							if (max_ap > cur_ap)
 							{

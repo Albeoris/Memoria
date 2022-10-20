@@ -62,18 +62,15 @@ public static class ff9play
         CharacterParameterList = LoadCharacterParameters();
         btl_mot.Init();
 
-        CharacterId maxCharacterId = CharacterId.Beatrix;
         foreach (CharacterParameter param in CharacterParameterList)
         {
             NGUIText.RegisterCustomNameKeywork(param.NameKeyword, param.Id);
-            if (maxCharacterId < param.Id)
-                maxCharacterId = param.Id;
+            FF9StateSystem.Common.FF9.player[param.Id] = new PLAYER();
         }
-        FF9StateSystem.Common.ChangePlayerCount((Int32)(maxCharacterId + 1));
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         FF9Play_SetFaceDirty(false);
-        for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; ++i)
-            FF9Play_New(i);
+        foreach (CharacterParameter param in CharacterParameterList)
+            FF9Play_New(param.Id);
         FF9Play_Add(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Zidane));
         FF9Play_SetParty(0, CharacterId.Zidane);
         FF9Play_SetParty(1, CharacterId.NONE);
@@ -149,11 +146,12 @@ public static class ff9play
         }
     }
 
-    public static void FF9Play_New(Int32 slotId)
+    public static void FF9Play_New(CharacterId slotId)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slotId];
-        CharacterParameter parameter = CharacterParameterList[slotId];
+        CharacterParameter parameter = CharacterParameterList[(Int32)slotId];
         play.info = new PLAYER_INFO(parameter.Id, CharacterSerialNumber.ZIDANE_DAGGER, parameter.DefaultRow, parameter.DefaultWinPose, 0, parameter.DefaultMenuType);
+        play.pa = new Byte[ff9abil._FF9Abil_PaData.ContainsKey(play.info.menu_type) ? ff9abil._FF9Abil_PaData[play.info.menu_type].Length : 0];
         play.status = 0;
         play.category = parameter.DefaultCategory;
         play.bonus = new FF9LEVEL_BONUS();
@@ -217,11 +215,11 @@ public static class ff9play
         Int32 playCount = 0;
         Int32 lvlSum = 0;
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
-        for (Int32 i = 0; i < FF9StateSystem.Common.PlayerCount; ++i)
+        foreach (PLAYER player in ff9StateGlobal.PlayerList)
         {
-            if (i != (Int32)exceptionId && ff9StateGlobal.player[i].info.party != 0)
+            if (player.Index != exceptionId && player.info.party != 0)
             {
-                lvlSum += ff9StateGlobal.player[i].level;
+                lvlSum += player.level;
                 ++playCount;
             }
         }
@@ -511,7 +509,7 @@ public static class ff9play
         else
         {
             FF9DBG_CHAR ff9DbgChar = ff9DbgCharArray[(Byte)player];
-            PLAYER play = ff9StateGlobal.party.member[slot] = ff9StateGlobal.player[ff9DbgChar.slot_no];
+            PLAYER play = ff9StateGlobal.party.member[slot] = ff9StateGlobal.player[(CharacterId)ff9DbgChar.slot_no];
             CharacterParameter parameter = CharacterParameterList[(Byte)player];
             if (ff9DbgChar.menu_type >= 0)
             {

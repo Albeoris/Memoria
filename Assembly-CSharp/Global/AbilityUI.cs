@@ -956,7 +956,7 @@ public class AbilityUI : UIScene
                 if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && player.Index != CharacterId.Quina)
                     return AbilityType.NoDraw;
                 Int32 currentAp = player.Data.pa[index];
-                Int32 learnAp = ff9abil._FF9Abil_PaData[(Int32)player.PresetId][index].Ap;
+                Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
                 if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
@@ -989,7 +989,7 @@ public class AbilityUI : UIScene
             if (ff9abil.FF9Abil_HasAp(player))
             {
                 Int32 currentAp = player.Data.pa[index];
-                Int32 learnAp = ff9abil._FF9Abil_PaData[(Int32)player.PresetId][index].Ap;
+                Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
                 if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
@@ -1105,29 +1105,32 @@ public class AbilityUI : UIScene
         this.equipmentPartInAbilityDict.Clear();
         this.equipmentIdInAbilityDict.Clear();
         Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[(Int32)player.PresetId])
+        if (ff9abil._FF9Abil_PaData.ContainsKey(player.PresetId))
         {
-            if (paData.Id != 0)
+            foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.PresetId])
             {
-                if (paData.Id < 192)
-                    this.aaIdList.Add(paData.Id);
-                else
-                    this.saIdList.Add(paData.Id);
+                if (paData.Id != 0)
+                {
+                    if (paData.Id < 192)
+                        this.aaIdList.Add(paData.Id);
+                    else
+                        this.saIdList.Add(paData.Id);
+                }
             }
         }
-        for (Int32 index1 = 0; index1 < 5; ++index1)
+        for (Int32 i = 0; i < 5; ++i)
         {
-            Byte num1 = player.Equipment[index1];
-            if (num1 != Byte.MaxValue)
+            Byte itemId = player.Equipment[i];
+            if (itemId != Byte.MaxValue)
             {
-                foreach (Byte num2 in ff9item._FF9Item_Data[num1].ability)
+                foreach (Byte abilId in ff9item._FF9Item_Data[itemId].ability)
                 {
-                    if (!this.equipmentPartInAbilityDict.ContainsKey(num2))
-                        this.equipmentPartInAbilityDict[num2] = 0;
-                    this.equipmentPartInAbilityDict[num2] |= 1 << index1;
-                    if (!this.equipmentIdInAbilityDict.ContainsKey(num2))
-                        this.equipmentIdInAbilityDict[num2] = new Int32[5];
-                    this.equipmentIdInAbilityDict[num2][index1] = num1;
+                    if (!this.equipmentPartInAbilityDict.ContainsKey(abilId))
+                        this.equipmentPartInAbilityDict[abilId] = 0;
+                    this.equipmentPartInAbilityDict[abilId] |= 1 << i;
+                    if (!this.equipmentIdInAbilityDict.ContainsKey(abilId))
+                        this.equipmentIdInAbilityDict[abilId] = new Int32[5];
+                    this.equipmentIdInAbilityDict[abilId][i] = itemId;
                 }
             }
         }

@@ -1,42 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
     public static class CharacterNamesFormatter
     {
-        public static String[] CharacterDefaultNames()
+        public static Dictionary<CharacterId, String> CharacterDefaultNames()
         {
-            String[] nameArray;
-            if (_characterNames.TryGetValue(EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol(), out nameArray))
-                return nameArray;
-            return new String[0];
+            Dictionary<CharacterId, String> nameDict;
+            if (_characterNames.TryGetValue(EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol(), out nameDict))
+                return nameDict;
+            return new Dictionary<CharacterId, String>();
         }
 
-        public static String[] CharacterScriptNames()
+        public static Dictionary<CharacterId, String> CharacterScriptNames()
         {
-            String[] nameArray;
-            if (_characterNames.TryGetValue("US", out nameArray))
-                return nameArray;
-            return new String[0];
+            Dictionary<CharacterId, String> nameDict;
+            if (_characterNames.TryGetValue("US", out nameDict))
+                return nameDict;
+            return new Dictionary<CharacterId, String>();
         }
 
-        public static Dictionary<String, String[]> _characterNames = new Dictionary<String, String[]>()
+        public static Dictionary<String, Dictionary<CharacterId, String>> _characterNames = new Dictionary<String, Dictionary<CharacterId, String>>()
         {
-            { "US", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } },
-            { "UK", new String[]{ "Zidane", "Vivi", "Dagger", "Steiner", "Freya", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } },
-            { "JP", new String[]{ "ジタン", "ビビ", "ダガー", "スタイナー", "フライヤ", "クイナ", "エーコ", "サラマンダー", "シナ", "マーカス", "ブランク", "ベアトリクス" } },
-            { "GR", new String[]{ "Zidane", "Vivi", "Lili", "Steiner", "Freya", "Quina", "Eiko", "Mahagon", "Cinna", "Marcus", "Blank", "Beatrix" } },
-            { "FR", new String[]{ "Djidane", "Bibi", "Dagga", "Steiner", "Freyja", "Kweena", "Eiko", "Tarask", "Cina", "Markus", "Frank", "Beate" } },
-            { "IT", new String[]{ "Gidan", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Er Cina", "Marcus", "Blank", "Beatrix" } },
-            { "ES", new String[]{ "Yitán", "Vivi", "Daga", "Steiner", "Freija", "Quina", "Eiko", "Amarant", "Cinna", "Marcus", "Blank", "Beatrix" } }
+            { "US", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "Zidane" },
+                { CharacterId.Vivi, "Vivi" },
+                { CharacterId.Garnet, "Dagger" },
+                { CharacterId.Steiner, "Steiner" },
+                { CharacterId.Freya, "Freya" },
+                { CharacterId.Quina, "Quina" },
+                { CharacterId.Eiko, "Eiko" },
+                { CharacterId.Amarant, "Amarant" },
+                { CharacterId.Cinna, "Cinna" },
+                { CharacterId.Marcus, "Marcus" },
+                { CharacterId.Blank, "Blank" },
+                { CharacterId.Beatrix, "Beatrix" }
+            } },
+            { "UK", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "Zidane" },
+                { CharacterId.Vivi, "Vivi" },
+                { CharacterId.Garnet, "Dagger" },
+                { CharacterId.Steiner, "Steiner" },
+                { CharacterId.Freya, "Freya" },
+                { CharacterId.Quina, "Quina" },
+                { CharacterId.Eiko, "Eiko" },
+                { CharacterId.Amarant, "Amarant" },
+                { CharacterId.Cinna, "Cinna" },
+                { CharacterId.Marcus, "Marcus" },
+                { CharacterId.Blank, "Blank" },
+                { CharacterId.Beatrix, "Beatrix" }
+            } },
+            { "JP", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "ジタン" },
+                { CharacterId.Vivi, "ビビ" },
+                { CharacterId.Garnet, "ダガー" },
+                { CharacterId.Steiner, "スタイナー" },
+                { CharacterId.Freya, "フライヤ" },
+                { CharacterId.Quina, "クイナ" },
+                { CharacterId.Eiko, "エーコ" },
+                { CharacterId.Amarant, "サラマンダー" },
+                { CharacterId.Cinna, "シナ" },
+                { CharacterId.Marcus, "マーカス" },
+                { CharacterId.Blank, "ブランク" },
+                { CharacterId.Beatrix, "ベアトリクス" }
+            } },
+            { "GR", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "Zidane" },
+                { CharacterId.Vivi, "Vivi" },
+                { CharacterId.Garnet, "Lili" },
+                { CharacterId.Steiner, "Steiner" },
+                { CharacterId.Freya, "Freya" },
+                { CharacterId.Quina, "Quina" },
+                { CharacterId.Eiko, "Eiko" },
+                { CharacterId.Amarant, "Mahagon" },
+                { CharacterId.Cinna, "Cinna" },
+                { CharacterId.Marcus, "Marcus" },
+                { CharacterId.Blank, "Blank" },
+                { CharacterId.Beatrix, "Beatrix" }
+            } },
+            { "FR", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "Djidane" },
+                { CharacterId.Vivi, "Bibi" },
+                { CharacterId.Garnet, "Dagga" },
+                { CharacterId.Steiner, "Steiner" },
+                { CharacterId.Freya, "Freyja" },
+                { CharacterId.Quina, "Kweena" },
+                { CharacterId.Eiko, "Eiko" },
+                { CharacterId.Amarant, "Tarask" },
+                { CharacterId.Cinna, "Cina" },
+                { CharacterId.Marcus, "Markus" },
+                { CharacterId.Blank, "Frank" },
+                { CharacterId.Beatrix, "Beate" }
+            } },
+            { "IT", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "Gidan" },
+                { CharacterId.Vivi, "Vivi" },
+                { CharacterId.Garnet, "Daga" },
+                { CharacterId.Steiner, "Steiner" },
+                { CharacterId.Freya, "Freija" },
+                { CharacterId.Quina, "Quina" },
+                { CharacterId.Eiko, "Eiko" },
+                { CharacterId.Amarant, "Amarant" },
+                { CharacterId.Cinna, "Er Cina" },
+                { CharacterId.Marcus, "Marcus" },
+                { CharacterId.Blank, "Blank" },
+                { CharacterId.Beatrix, "Beatrix" }
+            } },
+            { "ES", new Dictionary<CharacterId, String>
+            {
+                { CharacterId.Zidane, "Yitán" },
+                { CharacterId.Vivi, "Vivi" },
+                { CharacterId.Garnet, "Daga" },
+                { CharacterId.Steiner, "Steiner" },
+                { CharacterId.Freya, "Freija" },
+                { CharacterId.Quina, "Quina" },
+                { CharacterId.Eiko, "Eiko" },
+                { CharacterId.Amarant, "Amarant" },
+                { CharacterId.Cinna, "Cinna" },
+                { CharacterId.Marcus, "Marcus" },
+                { CharacterId.Blank, "Blank" },
+                { CharacterId.Beatrix, "Beatrix" }
+            } }
         };
 
-        public static TxtEntry[] Build(String prefix, String[] characterNames)
+        public static TxtEntry[] Build(String prefix, Dictionary<CharacterId, String> characterNames)
         {
-            TxtEntry[] names = new TxtEntry[characterNames.Length];
-            for (Int32 i = 0; i < names.Length; i++)
-                names[i] = new TxtEntry {Prefix = prefix, Value = characterNames[i]};
+            TxtEntry[] names = new TxtEntry[characterNames.Count];
+            Int32 index = 0;
+            foreach (KeyValuePair<CharacterId, String> pair in characterNames)
+                names[index] = new TxtEntry { Index = (Int32)pair.Key, Prefix = prefix, Value = pair.Value };
             return names;
         }
 

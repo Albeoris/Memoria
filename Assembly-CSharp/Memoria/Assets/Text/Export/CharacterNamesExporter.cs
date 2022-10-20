@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -11,7 +13,7 @@ namespace Memoria.Assets
 
         protected override TxtEntry[] PrepareEntries()
         {
-            String[] characterNames = CharacterNamesFormatter.CharacterDefaultNames();
+            Dictionary<CharacterId, String> characterNames = CharacterNamesFormatter.CharacterDefaultNames();
             return CharacterNamesFormatter.Build(Prefix, characterNames);
         }
     }
