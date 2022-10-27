@@ -22,7 +22,7 @@
     <ProjectGuid>{DE23C520-C1E9-4120-BDAE-4966C1DD7F8E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MemoriaInjection</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
