@@ -31,25 +31,15 @@ public class VoicePlayer : SoundPlayer
 	 * Overrides to stop duplicate files playing when multiple text boxes appear at once
 	 */
 
-	private static Dictionary<string, Boolean> preventMultiPlay = new Dictionary<string, Boolean>()
+	private static Dictionary<string, UInt16> preventMultiPlay = new Dictionary<string, UInt16>()
 	{
-		["Voices/US/2/va_46"] = false
+		["Voices/US/2/va_46"] = 0
 	};
 
 	new public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f) => StaticStartSound(soundProfile, playerVolume);
 
 	new public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f)
 	{
-        if (preventMultiPlay.ContainsKey(soundProfile.Name) && preventMultiPlay[soundProfile.Name]) {
-			return;
-        }
-        else
-        {
-			if (preventMultiPlay.ContainsKey(soundProfile.Name))
-			{
-				preventMultiPlay[soundProfile.Name] = true;
-			}
-		}
 
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
@@ -70,6 +60,7 @@ public class VoicePlayer : SoundPlayer
 		if (btlId < 0)
 			btlId = FF9StateSystem.Battle.battleMapIndex;
 		String btlFolder = asSharedMessage ? "general" : btlId.ToString();
+
 		String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder);
 		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 		{
@@ -89,6 +80,12 @@ public class VoicePlayer : SoundPlayer
 			Panning = 0f,
 			Pitch = 0.5f
 		};
+
+		if (preventMultiPlay.ContainsKey(currentVAFile.Name))
+		{
+			currentVAFile.Name = String.Format("_{0}", preventMultiPlay[currentVAFile.Name]);
+			preventMultiPlay[currentVAFile.Name]++;
+		}
 
 		SoundLoaderProxy.Instance.Load(currentVAFile,
 		(soundProfile, db) =>
