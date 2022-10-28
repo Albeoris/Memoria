@@ -31,7 +31,7 @@ public class VoicePlayer : SoundPlayer
 	 * Overrides to stop duplicate files playing when multiple text boxes appear at once
 	 */
 
-	private static Dictionary<string, UInt16> preventMultiPlay = new Dictionary<string, UInt16>()
+	public static Dictionary<string, UInt16> preventMultiPlay { get; set; } = new Dictionary<string, UInt16>()
 	{
 		["Voices/US/2/va_46"] = 0
 	};
@@ -40,7 +40,6 @@ public class VoicePlayer : SoundPlayer
 
 	new public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f)
 	{
-
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
 		{
@@ -80,12 +79,6 @@ public class VoicePlayer : SoundPlayer
 			Panning = 0f,
 			Pitch = 0.5f
 		};
-
-		if (preventMultiPlay.ContainsKey(currentVAFile.Name))
-		{
-			currentVAFile.Name = String.Format("_{0}", preventMultiPlay[currentVAFile.Name]);
-			preventMultiPlay[currentVAFile.Name]++;
-		}
 
 		SoundLoaderProxy.Instance.Load(currentVAFile,
 		(soundProfile, db) =>
