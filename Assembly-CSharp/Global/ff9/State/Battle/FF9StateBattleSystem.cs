@@ -22,9 +22,16 @@ public class FF9StateBattleSystem
 		this.enemy_type = new ENEMY_TYPE[4] { new ENEMY_TYPE(), new ENEMY_TYPE(), new ENEMY_TYPE(), new ENEMY_TYPE() };
 		this.btl_list = new BTL_DATA();
 		this.btl_data = new BTL_DATA[8] { new BTL_DATA(), new BTL_DATA(), new BTL_DATA(), new BTL_DATA(), new BTL_DATA(), new BTL_DATA(), new BTL_DATA(), new BTL_DATA() };
-		this.cmd_buffer = new CMD_DATA[48]; // enemy_type.Length * 12
-		for (Int32 l = 0; l < (Int32)this.cmd_buffer.Length; l++)
-			this.cmd_buffer[l] = new CMD_DATA();
+		this.cmd_buffer = new CMD_DATA[48] {
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(),
+			new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA(), new CMD_DATA()
+		};
 		this.cmd_escape = new CMD_DATA();
 		this.cmd_queue = new CMD_DATA();
 		this.cur_cmd_list = new List<CMD_DATA>();
