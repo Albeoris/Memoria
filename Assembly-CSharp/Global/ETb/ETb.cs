@@ -10,7 +10,7 @@ using Object = System.Object;
 public class ETb
 {
 	public static SoundDatabase voiceDatabase = new SoundDatabase();
-	private SoundProfile currentVAFile;
+	public static SoundProfile currentVAFile;
 
 	public void InitMessage()
 	{
@@ -299,10 +299,10 @@ public class ETb
 
 	public void OnDialogFinish(Int32 choice)
 	{
-		if (currentVAFile != null)
-			SoundLib.voicePlayer.StopSound(currentVAFile);
 		if (choice > -1)
 		{
+			if (currentVAFile != null)
+				SoundLib.voicePlayer.StopSound(currentVAFile);
 		}
 	}
 
