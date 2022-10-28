@@ -31,10 +31,7 @@ public class VoicePlayer : SoundPlayer
 	 * Overrides to stop duplicate files playing when multiple text boxes appear at once
 	 */
 
-	public static Dictionary<string, UInt16> preventMultiPlay { get; set; } = new Dictionary<string, UInt16>()
-	{
-		["Voices/US/2/va_46"] = 0
-	};
+	public static Dictionary<string, UInt16> preventMultiPlay { get; set; } = Configuration.Audio.preventMultiPlay;
 
 	new public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f) => StaticStartSound(soundProfile, playerVolume);
 

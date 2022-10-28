@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Memoria
 {
@@ -30,6 +31,37 @@ namespace Memoria
             {
                 SaveValue(Instance._audio.Name, Instance._audio.MusicVolume);
             }
+
+            public static string[] preventmultiplay = Instance._audio.PreventMultiPlay;
+            private static Dictionary<string, UInt16> tmp;
+            public static Dictionary<string, UInt16> preventMultiPlay
+            {
+                get
+                {
+                    if (tmp == null) {
+                        tmp = new Dictionary<string, UInt16>();
+                        foreach (string filePath in preventmultiplay)
+                        {
+                            tmp.Add(filePath, 0);
+                        }
+                    }
+                    return tmp;
+                }
+            }
         }
+
+        /*
+            public static String[] FolderNames => Instance._mod.FolderNames;
+            public static String[] AllFolderNames
+            {
+                get
+                {
+                    String[] res = new String[FolderNames.Length + 1];
+                    FolderNames.CopyTo(res, 0);
+                    res[FolderNames.Length] = "";
+                    return res;
+                }
+            }
+         */
     }
 }

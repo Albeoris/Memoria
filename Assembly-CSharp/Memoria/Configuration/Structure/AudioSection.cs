@@ -12,12 +12,15 @@ namespace Memoria
             public readonly IniValue<Boolean> LogVoiceActing;
             public readonly IniValue<Boolean> PriorityToOGG;
 
+            public readonly IniArray<String> PreventMultiPlay;
+
             public AudioSection() : base(nameof(AudioSection), true)
             {
                 SoundVolume = BindInt32(nameof(SoundVolume), 100);
                 MusicVolume = BindInt32(nameof(MusicVolume), 100);
                 LogVoiceActing = BindBoolean(nameof(LogVoiceActing), false);
                 PriorityToOGG = BindBoolean(nameof(PriorityToOGG), false);
+                PreventMultiPlay = BindStringArray(nameof(PreventMultiPlay), new String[0]);
             }
         }
     }
