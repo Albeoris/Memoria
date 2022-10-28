@@ -32,6 +32,9 @@ namespace Memoria
                 SaveValue(Instance._audio.Name, Instance._audio.MusicVolume);
             }
 
+            public static Int32 CharAttackAudioChance => Instance._audio.CharAttackAudioChance;
+            public static Int32 CharHitAudioChance => Instance._audio.CharHitAudioChance;
+
             public static string[] preventmultiplay = Instance._audio.PreventMultiPlay;
             private static Dictionary<string, UInt16> tmp;
             public static Dictionary<string, UInt16> preventMultiPlay

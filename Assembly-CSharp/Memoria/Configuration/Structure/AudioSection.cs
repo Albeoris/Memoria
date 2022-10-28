@@ -13,6 +13,8 @@ namespace Memoria
             public readonly IniValue<Boolean> PriorityToOGG;
 
             public readonly IniArray<String> PreventMultiPlay;
+            public readonly IniValue<Int32> CharAttackAudioChance;
+            public readonly IniValue<Int32> CharHitAudioChance;
 
             public AudioSection() : base(nameof(AudioSection), true)
             {
@@ -21,6 +23,8 @@ namespace Memoria
                 LogVoiceActing = BindBoolean(nameof(LogVoiceActing), false);
                 PriorityToOGG = BindBoolean(nameof(PriorityToOGG), false);
                 PreventMultiPlay = BindStringArray(nameof(PreventMultiPlay), new String[0]);
+                CharAttackAudioChance = BindInt32(nameof(CharAttackAudioChance), 1);
+                CharHitAudioChance = BindInt32(nameof(CharHitAudioChance), 1);
             }
         }
     }
