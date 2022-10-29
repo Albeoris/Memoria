@@ -34,6 +34,8 @@ namespace Memoria
 
             public static Int32 CharAttackAudioChance => Instance._audio.CharAttackAudioChance;
             public static Int32 CharHitAudioChance => Instance._audio.CharHitAudioChance;
+            public static Int32 StartBattleChance => Instance._audio.StartBattleChance;
+            public static Int32 EndBattleChance => Instance._audio.EndBattleChance;
 
             public static string[] preventmultiplay = Instance._audio.PreventMultiPlay;
             private static Dictionary<string, UInt16> tmp;

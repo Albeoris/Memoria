@@ -258,6 +258,138 @@ public class VoicePlayer : SoundPlayer
 		}
 	}
 
+	public enum BattleStartType : byte
+	{
+		Normal = 0,
+		Special = 2,
+		Back = 3,
+		Preemtive = 4
+    }
+
+	public enum BattleEndType : byte
+    {
+		GameOver = 1,
+		Victory = 2,
+		Forced = 3
+    }
+
+	public static void PlayBattleStartVoice(ref PLAYER[] characters, BattleStartType bst)
+    {
+		string battleType = "normal";
+        switch (bst)
+        {
+			case BattleStartType.Special:
+				battleType = "special";
+				break;
+			case BattleStartType.Back:
+				battleType = "back";
+				break;
+			case BattleStartType.Preemtive:
+				battleType = "preemtive";
+				break;
+		}
+		foreach (PLAYER character in characters)
+		{
+			String playerName = character.Name;
+			int soundIndex = 2142000000 + (int)character.info.serial_no;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_start_{2}", Localization.GetSymbol(), playerName.ToLower(), battleType);
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, BattleStart:{0} StartType:{1} path:{2} (not found)", playerName, battleType, vaPath));
+				return;
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.StartBattleChance);
+			if (randomNumber == (int)(Configuration.Audio.StartBattleChance / 2) || (int)(Configuration.Audio.StartBattleChance / 2) == 0)
+			{
+				var currentVAFile = new SoundProfile
+				{
+					Code = soundIndex.ToString(),
+					Name = vaPath,
+					SoundIndex = soundIndex,
+					ResourceID = vaPath,
+					SoundProfileType = SoundProfileType.Voice,
+					SoundVolume = 1f,
+					Panning = 0f,
+					Pitch = 0.5f
+				};
+
+				SoundLoaderProxy.Instance.Load(currentVAFile,
+				(soundProfile, db) =>
+				{
+					if (soundProfile != null)
+					{
+						SoundLib.voicePlayer.CreateSound(soundProfile);
+						SoundLib.voicePlayer.StartSound(soundProfile);
+						if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+							db.Update(soundProfile);
+						else
+							db.Create(soundProfile);
+					}
+				},
+				ETb.voiceDatabase);
+			}
+		}
+	}
+
+	public static void PlayBattleEndVoice(ref PLAYER[] characters, BattleEndType bet)
+	{
+		string endType = "victory";
+		switch (bet)
+		{
+			case BattleEndType.GameOver:
+				endType = "gameover";
+				break;
+			case BattleEndType.Forced:
+				endType = "forced";
+				break;
+		}
+		foreach (PLAYER character in characters)
+		{
+			String playerName = character.Name;
+			int soundIndex = 2143000000 + (int)character.info.serial_no;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}", Localization.GetSymbol(), playerName.ToLower(), endType);
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, BattleEnd:{0}, EndType:{1} path:{1} (not found)", playerName, endType, vaPath));
+				return;
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.EndBattleChance);
+			if (randomNumber == (int)(Configuration.Audio.EndBattleChance / 2) || (int)(Configuration.Audio.EndBattleChance / 2) == 0)
+			{
+				var currentVAFile = new SoundProfile
+				{
+					Code = soundIndex.ToString(),
+					Name = vaPath,
+					SoundIndex = soundIndex,
+					ResourceID = vaPath,
+					SoundProfileType = SoundProfileType.Voice,
+					SoundVolume = 1f,
+					Panning = 0f,
+					Pitch = 0.5f
+				};
+
+				SoundLoaderProxy.Instance.Load(currentVAFile,
+				(soundProfile, db) =>
+				{
+					if (soundProfile != null)
+					{
+						SoundLib.voicePlayer.CreateSound(soundProfile);
+						SoundLib.voicePlayer.StartSound(soundProfile);
+						if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
+							db.Update(soundProfile);
+						else
+							db.Create(soundProfile);
+					}
+				},
+				ETb.voiceDatabase);
+			}
+		}
+	}
+
 	public static void PlayBattleVoice(Int32 va_id, String text, Boolean asSharedMessage = false, Int32 btlId = -1)
     {
 		if (btlId < 0)

@@ -15,6 +15,8 @@ namespace Memoria
             public readonly IniArray<String> PreventMultiPlay;
             public readonly IniValue<Int32> CharAttackAudioChance;
             public readonly IniValue<Int32> CharHitAudioChance;
+            public readonly IniValue<Int32> StartBattleChance;
+            public readonly IniValue<Int32> EndBattleChance;
 
             public AudioSection() : base(nameof(AudioSection), true)
             {
@@ -25,6 +27,8 @@ namespace Memoria
                 PreventMultiPlay = BindStringArray(nameof(PreventMultiPlay), new String[0]);
                 CharAttackAudioChance = BindInt32(nameof(CharAttackAudioChance), 1);
                 CharHitAudioChance = BindInt32(nameof(CharHitAudioChance), 1);
+                StartBattleChance = BindInt32(nameof(CharHitAudioChance), 1);
+                EndBattleChance = BindInt32(nameof(CharHitAudioChance), 1);
             }
         }
     }
