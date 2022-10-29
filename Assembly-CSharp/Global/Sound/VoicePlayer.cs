@@ -93,6 +93,43 @@ public class VoicePlayer : SoundPlayer
 			case BattleCommandId.YellowMagic1:
 			case BattleCommandId.YellowMagic2:
 				return "YellowMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.BlackMagic:
+				return "BlackMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.StageMagicZidane:
+			case BattleCommandId.StageMagicBlank:
+			case BattleCommandId.StageMagicMarcus:
+			case BattleCommandId.StageMagicCinna:
+				return "StageMagic";
+			default:
+				return Enum.GetName(typeof(BattleCommandId), cmd.cmd_no);
+		}
+	}
+
+	private static string getGenericCommandName(CMD_DATA cmd)
+	{
+		switch (cmd.cmd_no)
+		{
+			case BattleCommandId.Jump2:
+				return "Jump";
+			case BattleCommandId.SummonGarnet:
+			case BattleCommandId.SummonEiko:
+				return "Summon";
+			case BattleCommandId.WhiteMagicGarnet:
+			case BattleCommandId.WhiteMagicEiko:
+			case BattleCommandId.WhiteMagicCinna1:
+			case BattleCommandId.WhiteMagicCinna2:
+				return "WhiteMagic";
+			case BattleCommandId.HolySword1:
+			case BattleCommandId.HolySword2:
+				return "HolySword";
+			case BattleCommandId.RedMagic1:
+			case BattleCommandId.RedMagic2:
+				return "RedMagic";
+			case BattleCommandId.YellowMagic1:
+			case BattleCommandId.YellowMagic2:
+				return "YellowMagic";
+			case BattleCommandId.BlackMagic:
+				return "BlackMagic";
 			case BattleCommandId.StageMagicZidane:
 			case BattleCommandId.StageMagicBlank:
 			case BattleCommandId.StageMagicMarcus:
@@ -107,46 +144,59 @@ public class VoicePlayer : SoundPlayer
 
 	public static void PlayBattleActionTakenVoice(BattleUnit unit, CMD_DATA cmd)
     {
-		string cmdName = getCommandName(cmd);
-        
-		// hopefully this is a uniuqe ID set.
-		int soundIndex = 2140000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no*100) + unit.Id;
-
-		String vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName, unit.Player.Name).ToLower();
-		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+		if (unit.IsPlayer)
 		{
-			SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
-			return;
-		}
+			string cmdName = getCommandName(cmd);
+			string playerName = Enum.GetName(typeof(CharacterId), unit.PlayerIndex);
 
-		int randomNumber = rand.Next(0, Configuration.Audio.CharAttackAudioChance);
-		if (randomNumber == (int)(Configuration.Audio.CharAttackAudioChance / 2) || (int)(Configuration.Audio.CharAttackAudioChance / 2) == 0)
-		{
-			SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2}", cmdName.ToLower(), unit.Player.Name, vaPath));
-			CreateLoadThenPlayVoice(soundIndex, vaPath);
+			// hopefully this is a uniuqe ID set.
+			int soundIndex = 2140000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + (int)unit.PlayerIndex;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName, playerName).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				cmdName = getGenericCommandName(cmd);
+				vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName, playerName).ToLower();
+				if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+				{
+					SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), playerName, vaPath));
+					return;
+				}
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.CharAttackAudioChance);
+			if (randomNumber == (int)(Configuration.Audio.CharAttackAudioChance / 2) || (int)(Configuration.Audio.CharAttackAudioChance / 2) == 0)
+			{
+				SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2}", cmdName.ToLower(), playerName, vaPath));
+				CreateLoadThenPlayVoice(soundIndex, vaPath);
+			}
 		}
 	}
 
 	public static void PlayBattleActionRecivedVoice(BattleUnit unit, CMD_DATA cmd)
 	{
-		string cmdName = getCommandName(cmd);
-		// hopefully this is a uniuqe ID set.
-		int soundIndex = 2141000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + unit.Id;
-
-		String vaPath = String.Format("Voices/{0}/battle/shared/va_hit_{1}_{2}", Localization.GetSymbol(), cmdName, unit.Player.Name).ToLower();
-		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+		if (unit.IsPlayer)
 		{
-			SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
-			return;
-		}
+			string cmdName = getCommandName(cmd);
+			string playerName = Enum.GetName(typeof(CharacterId), unit.PlayerIndex);
+			// hopefully this is a uniuqe ID set.
+			int soundIndex = 2141000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + unit.Id;
 
-		int randomNumber = rand.Next(0, Configuration.Audio.CharHitAudioChance);
-		if (randomNumber == (int)(Configuration.Audio.CharHitAudioChance / 2) || (int)(Configuration.Audio.CharHitAudioChance / 2) == 0)
-		{
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_hit_{1}_{2}", Localization.GetSymbol(), cmdName, unit.Player.Name).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
+				return;
+			}
 
-			SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2}", cmdName.ToLower(), unit.Player.Name, vaPath));
+			int randomNumber = rand.Next(0, Configuration.Audio.CharHitAudioChance);
+			if (randomNumber == (int)(Configuration.Audio.CharHitAudioChance / 2) || (int)(Configuration.Audio.CharHitAudioChance / 2) == 0)
+			{
 
-			CreateLoadThenPlayVoice(soundIndex, vaPath);
+				SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2}", cmdName.ToLower(), unit.Player.Name, vaPath));
+
+				CreateLoadThenPlayVoice(soundIndex, vaPath);
+			}
 		}
 	}
 
