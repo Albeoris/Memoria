@@ -11,6 +11,7 @@ namespace Memoria
             public readonly IniValue<Int32> MusicVolume;
             public readonly IniValue<Boolean> LogVoiceActing;
             public readonly IniValue<Boolean> PriorityToOGG;
+            public readonly IniValue<Boolean> StopVoiceWhenDialogDismissed;
 
             public readonly IniArray<String> PreventMultiPlay;
 
@@ -38,6 +39,8 @@ namespace Memoria
                 CharAutoLifeChance = BindInt32(nameof(CharAutoLifeChance), 1);
                 CharStatusRemovedChance = BindInt32(nameof(CharStatusRemovedChance), 1);
                 CharStatusAfflictedChance = BindInt32(nameof(CharStatusAfflictedChance), 1);
+
+                StopVoiceWhenDialogDismissed = BindBoolean(nameof(StopVoiceWhenDialogDismissed), false);
             }
         }
     }

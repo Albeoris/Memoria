@@ -22,6 +22,8 @@ namespace Memoria
             public static Boolean LogVoiceActing => Instance._audio.LogVoiceActing;
             public static Boolean PriorityToOGG => Instance._audio.PriorityToOGG;
 
+            public static Boolean StopVoiceWhenDialogDismissed = Instance._audio.StopVoiceWhenDialogDismissed;
+
             public static void SaveSoundVolume()
             {
                 SaveValue(Instance._audio.Name, Instance._audio.SoundVolume);

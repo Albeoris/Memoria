@@ -299,6 +299,10 @@ public class ETb
 
 	public void OnDialogFinish(Int32 choice)
 	{
+        if (Configuration.Audio.StopVoiceWhenDialogDismissed)
+        {
+			SoundLib.voicePlayer.StopSound(currentVAFile);
+		}
 		if (choice > -1)
 		{
 			if (currentVAFile != null)
