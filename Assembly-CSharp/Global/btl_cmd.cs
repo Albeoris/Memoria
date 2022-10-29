@@ -1514,11 +1514,11 @@ public class btl_cmd
         BattleUnit bu_caster = new BattleUnit(cmd.regist);
         BattleUnit bu_target = new BattleUnit(target);
 
-        if (bu_caster.IsPlayer)
+        if (bu_caster.IsPlayer || bu_caster.Player.Name.ToLower() == "baku")
         {
             VoicePlayer.PlayBattleActionTakenVoice(bu_caster, num, cmd);
         }
-        if(bu_target.IsPlayer)
+        if(bu_target.IsPlayer || bu_target.Player.Name.ToLower() == "baku")
         {
             VoicePlayer.PlayBattleActionRecivedVoice(bu_target, num, cmd);
         }

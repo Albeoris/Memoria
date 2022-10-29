@@ -131,7 +131,7 @@ public class VoicePlayer : SoundPlayer
 				break;
 		}
 		// hopefully this is a uniuqe ID set.
-		int soundIndex = 2147000000 + ((int)command_id * 1000) + (cmd.sub_no*10) + unit.Id;
+		int soundIndex = 2140000000 + ((int)command_id * 10000) + (cmd.sub_no*100) + unit.Id;
 
 		String vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName.ToLower(), unit.Player.Name);
 		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
@@ -215,7 +215,7 @@ public class VoicePlayer : SoundPlayer
 				break;
 		}
 		// hopefully this is a uniuqe ID set.
-		int soundIndex = 2147100000 + ((int)command_id * 1000) + (cmd.sub_no * 10) + unit.Id;
+		int soundIndex = 2141000000 + ((int)command_id * 10000) + (cmd.sub_no * 100) + unit.Id;
 
 		String vaPath = String.Format("Voices/{0}/battle/shared/va_hit_{1}_{2}", Localization.GetSymbol(), cmdName.ToLower(), unit.Player.Name);
 		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
