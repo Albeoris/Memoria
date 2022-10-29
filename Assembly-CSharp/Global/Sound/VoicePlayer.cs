@@ -278,7 +278,7 @@ public class VoicePlayer : SoundPlayer
 			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_end_{2}", Localization.GetSymbol(), playerName.ToLower(), endType);
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
-				SoundLib.VALog(String.Format("field:battle/shared, BattleEnd:{0}, EndType:{1} path:{1} (not found)", playerName, endType, vaPath));
+				SoundLib.VALog(String.Format("field:battle/shared, BattleEnd:{0}, EndType:{1} path:{2} (not found)", playerName, endType, vaPath));
 				return;
 			}
 
