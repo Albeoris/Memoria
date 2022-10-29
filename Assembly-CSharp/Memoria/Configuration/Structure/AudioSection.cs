@@ -27,8 +27,8 @@ namespace Memoria
                 PreventMultiPlay = BindStringArray(nameof(PreventMultiPlay), new String[0]);
                 CharAttackAudioChance = BindInt32(nameof(CharAttackAudioChance), 1);
                 CharHitAudioChance = BindInt32(nameof(CharHitAudioChance), 1);
-                StartBattleChance = BindInt32(nameof(CharHitAudioChance), 1);
-                EndBattleChance = BindInt32(nameof(CharHitAudioChance), 1);
+                StartBattleChance = BindInt32(nameof(StartBattleChance), 1);
+                EndBattleChance = BindInt32(nameof(EndBattleChance), 1);
             }
         }
     }
