@@ -152,14 +152,21 @@ public class VoicePlayer : SoundPlayer
 			// hopefully this is a uniuqe ID set.
 			int soundIndex = 2140000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + (int)unit.PlayerIndex;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName, playerName).ToLower();
+			// this should change between these based on the hit they are doing
+			// normal hit = atk_norm
+			// criti hit = atk_crit
+			// missed = atk_miss
+			// dodged = atk_dodge
+			string status = "use";
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, playerName).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				cmdName = getGenericCommandName(cmd);
-				vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName, playerName).ToLower();
+				vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, playerName).ToLower();
 				if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 				{
-					SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), playerName, vaPath));
+					SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{1} caster:{2} path:{3} (not found)", cmdName.ToLower(), playerName, vaPath));
 					return;
 				}
 			}
@@ -167,7 +174,7 @@ public class VoicePlayer : SoundPlayer
 			int randomNumber = rand.Next(0, Configuration.Audio.CharAttackAudioChance);
 			if (randomNumber == (int)(Configuration.Audio.CharAttackAudioChance / 2) || (int)(Configuration.Audio.CharAttackAudioChance / 2) == 0)
 			{
-				SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2}", cmdName.ToLower(), playerName, vaPath));
+				SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{0}, caster:{1} path:{2}", cmdName.ToLower(), playerName, vaPath));
 				CreateLoadThenPlayVoice(soundIndex, vaPath);
 			}
 		}
@@ -182,7 +189,15 @@ public class VoicePlayer : SoundPlayer
 			// hopefully this is a uniuqe ID set.
 			int soundIndex = 2141000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + unit.Id;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_hit_{1}_{2}", Localization.GetSymbol(), cmdName, unit.Player.Name).ToLower();
+			// this should change between below when they are hit
+			// normal hit = dmg_norm
+			// criti hit = dmg_crit
+			// missed = dmg_miss
+			// dodged = dmg_dodge
+
+			string status = "atk_norm";
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, unit.Player.Name).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
@@ -193,7 +208,7 @@ public class VoicePlayer : SoundPlayer
 			if (randomNumber == (int)(Configuration.Audio.CharHitAudioChance / 2) || (int)(Configuration.Audio.CharHitAudioChance / 2) == 0)
 			{
 
-				SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2}", cmdName.ToLower(), unit.Player.Name, vaPath));
+				SoundLib.VALog(String.Format("Player Char {0} with Abbility, msg:{1}, caster:{2} path:{4}", status, cmdName.ToLower(), unit.Player.Name, vaPath));
 
 				CreateLoadThenPlayVoice(soundIndex, vaPath);
 			}
