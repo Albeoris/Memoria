@@ -52,88 +52,67 @@ public class VoicePlayer : SoundPlayer
 		SoundLib.Log("StartSound Success");
 	}
 
-	private static string getSummonName(byte summon_id)
+	private static string getAbillityNameName(BattleAbilityId id)
     {
-		switch (summon_id)
+		switch (id)
 		{
-			case 49:
-				return "shiva";
-			case 51:
-				return "ifrit";
-			case 53:
-				return "ramuh";
-			case 55:
-				return "atomos";
-			case 58:
-				return "odin";
-			case 60:
-				return "leviathan";
-			case 62:
-				return "bahamut";
-			case 64:
-				return "arc";
-			case 68:
-			case 69:
-			case 70:
-			case 71:
-				return "carbuncle";
-			case 66:
-			case 67:
-				return "fenrir";
-			case 72:
-				return "phoenix";
-			case 74:
-				return "madeen";
+
+			case BattleAbilityId.Carbuncle1:
+			case BattleAbilityId.Carbuncle2:
+			case BattleAbilityId.Carbuncle3:
+			case BattleAbilityId.Carbuncle4:
+				return "Carbuncle";
+			case BattleAbilityId.Fenrir1:
+			case BattleAbilityId.Fenrir2:
+				return "Fenrir";
+			default:
+				return Enum.GetName(typeof(BattleAbilityId), id);
 		}
-		return "";
 	}
 
-	private static System.Random rand = new System.Random();
-
-	public static void PlayBattleActionTakenVoice(BattleUnit unit, BattleCommandId command_id, CMD_DATA cmd)
+	private static string getCommandName(CMD_DATA cmd)
     {
-		string cmdName = "";
-        switch (command_id)
-        {
+		switch (cmd.cmd_no)
+		{
 			case BattleCommandId.Jump2:
-				cmdName = "Jump";
-				break;
+				return "Jump";
 			case BattleCommandId.SummonGarnet:
 			case BattleCommandId.SummonEiko:
-				cmdName = "Summon_" + getSummonName(cmd.sub_no) + ((cmd.info.short_summon == 1) ? "_short" : "_full");
-				break;
+				return "Summon_" + getAbillityNameName((BattleAbilityId)cmd.sub_no) + ((cmd.info.short_summon == 1) ? "_short" : "_full");
 			case BattleCommandId.WhiteMagicGarnet:
 			case BattleCommandId.WhiteMagicEiko:
 			case BattleCommandId.WhiteMagicCinna1:
 			case BattleCommandId.WhiteMagicCinna2:
-				cmdName = "WhiteMagic";
-				break;
+				return "WhiteMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
 			case BattleCommandId.HolySword1:
 			case BattleCommandId.HolySword2:
-				cmdName = "HolySword";
-				break;
+				return "HolySword_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
 			case BattleCommandId.RedMagic1:
 			case BattleCommandId.RedMagic2:
-				cmdName = "RedMagic";
-				break;
+				return "RedMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
 			case BattleCommandId.YellowMagic1:
 			case BattleCommandId.YellowMagic2:
-				cmdName = "YellowMagic";
-				break;
+				return "YellowMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
 			case BattleCommandId.StageMagicZidane:
 			case BattleCommandId.StageMagicBlank:
 			case BattleCommandId.StageMagicMarcus:
 			case BattleCommandId.StageMagicCinna:
-				cmdName = "StageMagic";
-				break;
-			default: 
-				cmdName = Enum.GetName(typeof(BattleCommandId), command_id);
-				break;
+				return "StageMagic";
+			default:
+				return Enum.GetName(typeof(BattleCommandId), cmd.cmd_no);
 		}
-		// hopefully this is a uniuqe ID set.
-		int soundIndex = 2140000000 + ((int)command_id * 10000) + (cmd.sub_no*100) + unit.Id;
+	}
 
-		String vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName.ToLower(), unit.Player.Name);
+	private static System.Random rand = new System.Random();
+
+	public static void PlayBattleActionTakenVoice(BattleUnit unit, CMD_DATA cmd)
+    {
+		string cmdName = getCommandName(cmd);
+        
+		// hopefully this is a uniuqe ID set.
+		int soundIndex = 2140000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no*100) + unit.Id;
+
+		String vaPath = String.Format("Voices/{0}/battle/shared/va_use_{1}_{2}", Localization.GetSymbol(), cmdName, unit.Player.Name).ToLower();
 		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 		{
 			SoundLib.VALog(String.Format("Player Char used Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
@@ -148,50 +127,13 @@ public class VoicePlayer : SoundPlayer
 		}
 	}
 
-	public static void PlayBattleActionRecivedVoice(BattleUnit unit, BattleCommandId command_id, CMD_DATA cmd)
+	public static void PlayBattleActionRecivedVoice(BattleUnit unit, CMD_DATA cmd)
 	{
-		string cmdName = "";
-		switch (command_id)
-		{
-			case BattleCommandId.Jump2:
-				cmdName = "Jump";
-				break;
-			case BattleCommandId.SummonGarnet:
-			case BattleCommandId.SummonEiko:
-				cmdName = "Summon_" + getSummonName(cmd.sub_no)+((cmd.info.short_summon == 1)? "_short":"_full");
-				break;
-			case BattleCommandId.WhiteMagicGarnet:
-			case BattleCommandId.WhiteMagicEiko:
-			case BattleCommandId.WhiteMagicCinna1:
-			case BattleCommandId.WhiteMagicCinna2:
-				cmdName = "WhiteMagic";
-				break;
-			case BattleCommandId.HolySword1:
-			case BattleCommandId.HolySword2:
-				cmdName = "HolySword";
-				break;
-			case BattleCommandId.RedMagic1:
-			case BattleCommandId.RedMagic2:
-				cmdName = "RedMagic";
-				break;
-			case BattleCommandId.YellowMagic1:
-			case BattleCommandId.YellowMagic2:
-				cmdName = "YellowMagic";
-				break;
-			case BattleCommandId.StageMagicZidane:
-			case BattleCommandId.StageMagicBlank:
-			case BattleCommandId.StageMagicMarcus:
-			case BattleCommandId.StageMagicCinna:
-				cmdName = "StageMagic";
-				break;
-			default:
-				cmdName = Enum.GetName(typeof(BattleCommandId), command_id);
-				break;
-		}
+		string cmdName = getCommandName(cmd);
 		// hopefully this is a uniuqe ID set.
-		int soundIndex = 2141000000 + ((int)command_id * 10000) + (cmd.sub_no * 100) + unit.Id;
+		int soundIndex = 2141000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + unit.Id;
 
-		String vaPath = String.Format("Voices/{0}/battle/shared/va_hit_{1}_{2}", Localization.GetSymbol(), cmdName.ToLower(), unit.Player.Name);
+		String vaPath = String.Format("Voices/{0}/battle/shared/va_hit_{1}_{2}", Localization.GetSymbol(), cmdName, unit.Player.Name).ToLower();
 		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 		{
 			SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
@@ -243,7 +185,7 @@ public class VoicePlayer : SoundPlayer
 			String playerName = character.Name;
 			int soundIndex = 2142000000 + (int)character.info.serial_no;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_start_{2}", Localization.GetSymbol(), playerName.ToLower(), battleType);
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_start_{2}", Localization.GetSymbol(), playerName, battleType).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("field:battle/shared, BattleStart:{0} StartType:{1} path:{2} (not found)", playerName, battleType, vaPath));
@@ -275,7 +217,7 @@ public class VoicePlayer : SoundPlayer
 			String playerName = character.Name;
 			int soundIndex = 2143000000 + (int)character.info.serial_no;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_end_{2}", Localization.GetSymbol(), playerName.ToLower(), endType);
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_end_{2}", Localization.GetSymbol(), playerName, endType).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("field:battle/shared, BattleEnd:{0}, EndType:{1} path:{2} (not found)", playerName, endType, vaPath));
@@ -300,7 +242,7 @@ public class VoicePlayer : SoundPlayer
 			string playerName = bu.Player.Name;
 			int soundIndex = 2145051000 + (int)bu.Player.PresetId;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_died", Localization.GetSymbol(), playerName.ToLower());
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_died", Localization.GetSymbol(), playerName).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("field:battle/shared, death:{0}, path:{1} (not found)", playerName, vaPath));
@@ -323,7 +265,7 @@ public class VoicePlayer : SoundPlayer
 			string playerName = bu.Player.Name;
 			int soundIndex = 2145052000 + (int)bu.Player.PresetId;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_autoressed", Localization.GetSymbol(), playerName.ToLower());
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_autoressed", Localization.GetSymbol(), playerName).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("field:battle/shared, autolife:{0}, path:{1} (not found)", playerName, vaPath));
@@ -346,7 +288,7 @@ public class VoicePlayer : SoundPlayer
 			string statusName = Enum.GetName(typeof(BattleStatus), status);
 			int soundIndex = 2145053000 + (int)bu.Player.PresetId;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_removed", Localization.GetSymbol(), playerName.ToLower(), statusName);
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_removed", Localization.GetSymbol(), playerName, statusName).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("field:battle/shared, statusRemoved:{0}, char:{1} path:{2} (not found)", statusName, playerName, vaPath));
@@ -370,7 +312,7 @@ public class VoicePlayer : SoundPlayer
 			string statusName = Enum.GetName(typeof(BattleStatus), status);
 			int soundIndex = 2145053000 + (int)bu.Player.PresetId;
 
-			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_afflicted", Localization.GetSymbol(), playerName.ToLower(), statusName);
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_afflicted", Localization.GetSymbol(), playerName, statusName).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
 				SoundLib.VALog(String.Format("field:battle/shared, statusAfflicted:{0}, char:{1} path:{2} (not found)", statusName, playerName, vaPath));
@@ -419,7 +361,7 @@ public class VoicePlayer : SoundPlayer
 			btlId = FF9StateSystem.Battle.battleMapIndex;
 		String btlFolder = asSharedMessage ? "general" : btlId.ToString();
 
-		String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder);
+		String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder).ToLower();
 		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 		{
 			SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlFolder, va_id, text, vaPath));

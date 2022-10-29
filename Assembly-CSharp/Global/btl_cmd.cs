@@ -1516,11 +1516,11 @@ public class btl_cmd
 
         if (bu_caster.IsPlayer || bu_caster.Player.Name.ToLower() == "baku")
         {
-            VoicePlayer.PlayBattleActionTakenVoice(bu_caster, num, cmd);
+            VoicePlayer.PlayBattleActionTakenVoice(bu_caster, cmd);
         }
         if(bu_target.IsPlayer || bu_target.Player.Name.ToLower() == "baku")
         {
-            VoicePlayer.PlayBattleActionRecivedVoice(bu_target, num, cmd);
+            VoicePlayer.PlayBattleActionRecivedVoice(bu_target, cmd);
         }
         
         switch (num)
