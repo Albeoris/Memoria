@@ -475,6 +475,7 @@ public class btl_scrp
 			btl.def_attr.weak = (Byte)val;
 			break;
 		case 52u:
+			//very start of battle
 			if (ff9Battle.btl_phase == 2)
 			{
 				btl.tar_mode = 0;

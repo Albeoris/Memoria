@@ -212,7 +212,10 @@ public static class btl_stat
             SetOprStatusCount(btl, statusIndex);
         HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit, status);
         if (btl.bi.player != 0)
+        {
+            VoicePlayer.PlayBattleStatusAdded(btl, status);
             BattleAchievement.UpdateAbnormalStatus(status);
+        }
         return 2;
     }
 
@@ -334,6 +337,7 @@ public static class btl_stat
                 btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 break;
         }
+        VoicePlayer.PlayBattleStatusRemoved(btl, status);
         HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status);
         return 2;
     }
