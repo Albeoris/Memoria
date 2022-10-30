@@ -195,18 +195,22 @@ public class VoicePlayer : SoundPlayer
 			VoicePlayer.preventMultiPlay[vaPath]++;
 			vaPath = tmp;
 		}
+
 		string[] msgStrings = dialog.Phrase.Split(new string[] { "[CHOO]" }, StringSplitOptions.RemoveEmptyEntries);
 		string msgString = reg.Replace(msgStrings[0], (match) => { return ""; });
+
 		if (dialog.ChoiceNumber > 0)
 		{
 			dialog.onOptionChange = (int msg, int optionIndex) =>
 			{
 				if (currentVAFile != null && nth)
+				{
 					SoundLib.voicePlayer.StopSound(currentVAFile);
+				}
 
 				nth = true;
 
-				string vaPath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, msg, optionIndex);
+				string vaPath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, optionIndex);
 				int soundIndex = 100000000 + (FieldZoneId * 1000) + messageNumber + (optionIndex * 1000000);
 
 				string[] options = msgStrings[1].Split('\n');
@@ -222,7 +226,11 @@ public class VoicePlayer : SoundPlayer
 					currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath);
 				}
 			};
-		}
+        }
+        else
+        {
+			dialog.onOptionChange = null;
+        }
 		if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
         {
             
@@ -231,7 +239,7 @@ public class VoicePlayer : SoundPlayer
 		}
 		else
 		{
-			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaPath));
 			currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath);
 		}
 	}
