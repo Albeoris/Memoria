@@ -144,7 +144,7 @@ public class VoicePlayer : SoundPlayer
 
 	public static void PlayBattleActionTakenVoice(BattleUnit unit, CMD_DATA cmd)
     {
-		if (unit.IsPlayer)
+		if (unit.IsPlayer || unit.IsSlave)
 		{
 			string cmdName = getCommandName(cmd);
 			string playerName = Enum.GetName(typeof(CharacterId), unit.PlayerIndex);
@@ -153,11 +153,11 @@ public class VoicePlayer : SoundPlayer
 			int soundIndex = 2140000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + (int)unit.PlayerIndex;
 
 			// this should change between these based on the hit they are doing
-			// normal hit = atk_norm
-			// criti hit = atk_crit
-			// missed = atk_miss
-			// dodged = atk_dodge
-			string status = "use";
+			// normal hit = deal_norm
+			// criti hit = deal_crit
+			// missed = deal_miss
+			// dodged = deal_dodge
+			string status = "atk_norm";
 
 			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, playerName).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
@@ -166,7 +166,7 @@ public class VoicePlayer : SoundPlayer
 				vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, playerName).ToLower();
 				if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 				{
-					SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{1} caster:{2} path:{3} (not found)", cmdName.ToLower(), playerName, vaPath));
+					SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{1} caster:{2} path:{3} (not found)", status, cmdName.ToLower(), playerName, vaPath));
 					return;
 				}
 			}
@@ -174,7 +174,7 @@ public class VoicePlayer : SoundPlayer
 			int randomNumber = rand.Next(0, Configuration.Audio.CharAttackAudioChance);
 			if (randomNumber == (int)(Configuration.Audio.CharAttackAudioChance / 2) || (int)(Configuration.Audio.CharAttackAudioChance / 2) == 0)
 			{
-				SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{0}, caster:{1} path:{2}", cmdName.ToLower(), playerName, vaPath));
+				SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{1}, caster:{2} path:{3}", status, cmdName.ToLower(), playerName, vaPath));
 				CreateLoadThenPlayVoice(soundIndex, vaPath);
 			}
 		}
@@ -182,7 +182,7 @@ public class VoicePlayer : SoundPlayer
 
 	public static void PlayBattleActionRecivedVoice(BattleUnit unit, CMD_DATA cmd)
 	{
-		if (unit.IsPlayer)
+		if (unit.IsPlayer || unit.IsSlave)
 		{
 			string cmdName = getCommandName(cmd);
 			string playerName = Enum.GetName(typeof(CharacterId), unit.PlayerIndex);
@@ -190,17 +190,17 @@ public class VoicePlayer : SoundPlayer
 			int soundIndex = 2141000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + unit.Id;
 
 			// this should change between below when they are hit
-			// normal hit = dmg_norm
-			// criti hit = dmg_crit
-			// missed = dmg_miss
-			// dodged = dmg_dodge
+			// normal hit = rcv_norm
+			// criti hit = rcv_crit
+			// missed = rcv_miss
+			// dodged = rcv_dodge
 
-			string status = "atk_norm";
+			string status = "dmg_norm";
 
 			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, unit.Player.Name).ToLower();
 			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
 			{
-				SoundLib.VALog(String.Format("Player Char hit with Abbility, msg:{0}, caster:{1} path:{2} (not found)", cmdName.ToLower(), unit.Player.Name, vaPath));
+				SoundLib.VALog(String.Format("Player Char {0} with Abbility, msg:{0}, caster:{1} path:{2} (not found)", status, cmdName.ToLower(), unit.Player.Name, vaPath));
 				return;
 			}
 
@@ -208,7 +208,7 @@ public class VoicePlayer : SoundPlayer
 			if (randomNumber == (int)(Configuration.Audio.CharHitAudioChance / 2) || (int)(Configuration.Audio.CharHitAudioChance / 2) == 0)
 			{
 
-				SoundLib.VALog(String.Format("Player Char {0} with Abbility, msg:{1}, caster:{2} path:{4}", status, cmdName.ToLower(), unit.Player.Name, vaPath));
+				SoundLib.VALog(String.Format("Player Char {0} with Abbility, msg:{1}, caster:{2} path:{3}", status, cmdName.ToLower(), unit.Player.Name, vaPath));
 
 				CreateLoadThenPlayVoice(soundIndex, vaPath);
 			}
