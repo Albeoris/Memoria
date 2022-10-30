@@ -195,6 +195,8 @@ public class VoicePlayer : SoundPlayer
 			VoicePlayer.preventMultiPlay[vaPath]++;
 			vaPath = tmp;
 		}
+		string[] msgStrings = dialog.Phrase.Split(new string[] { "[CHOO]" }, StringSplitOptions.RemoveEmptyEntries);
+		string msgString = reg.Replace(msgStrings[0], (match) => { return ""; });
 		if (dialog.ChoiceNumber > 0)
 		{
 			dialog.onOptionChange = (int msg, int optionIndex) =>
@@ -207,29 +209,29 @@ public class VoicePlayer : SoundPlayer
 				string vaPath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, msg, optionIndex);
 				int soundIndex = 100000000 + (FieldZoneId * 1000) + messageNumber + (optionIndex * 1000000);
 
-				string optionsString = dialog.Phrase.Split(new string[] { "[CHOO]" }, StringSplitOptions.RemoveEmptyEntries)[1];
-				string[] options = optionsString.Split('\n');
+				string[] options = msgStrings[1].Split('\n');
+				string msgString = reg.Replace(options[optionIndex].Trim(), (match) => { return ""; });
 
 				if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
 				{
-					string msgString = reg.Replace(options[optionIndex].Trim(), (match) => { return ""; });
 					SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4} (not found)", FieldZoneId, messageNumber, optionIndex, msgString, vaPath));
 				}
 				else
 				{
+					SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4}", FieldZoneId, messageNumber, optionIndex, msgString, vaPath));
 					currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath);
 				}
 			};
 		}
 		if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
         {
-            string msgString = dialog.Phrase.Split(new string[] { "[CHOO]" }, StringSplitOptions.RemoveEmptyEntries)[0];
-			msgString = reg.Replace(msgString, (match) => { return ""; });
+            
             SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
 			return;
 		}
 		else
 		{
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
 			currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath);
 		}
 	}
