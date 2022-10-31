@@ -227,10 +227,6 @@ public class VoicePlayer : SoundPlayer
 				}
 			};
         }
-        else
-        {
-			dialog.onOptionChange = null;
-        }
 		if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
         {
             
