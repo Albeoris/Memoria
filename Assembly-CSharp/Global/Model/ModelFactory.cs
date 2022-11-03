@@ -319,11 +319,19 @@ public class ModelFactory
 		Texture[] newTextures = new Texture[newTexturePaths.Length];
 		for (Int32 i = 0; i < newTexturePaths.Length; i++)
 		{
-			Byte[] raw = AssetManager.LoadBytes(newTexturePaths[i], out _);
-			if (raw != null)
-				newTextures[i] = AssetManager.LoadTextureGeneric(raw);
+			Texture2D texture = AssetManager.Load<Texture2D>(newTexturePaths[i], out _, true);
+			if (texture != null)
+			{
+				newTextures[i] = texture;
+			}
 			else
-				newTextures[i] = null;
+			{
+				Byte[] raw = AssetManager.LoadBytes(newTexturePaths[i], out _);
+				if (raw != null)
+					newTextures[i] = AssetManager.LoadTextureGeneric(raw);
+				else
+					newTextures[i] = null;
+			}
 		}
 		ChangeModelTextureRecursion(go.transform, "", newTextures);
 	}

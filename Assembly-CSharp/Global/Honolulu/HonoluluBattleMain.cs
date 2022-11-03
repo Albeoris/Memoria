@@ -62,7 +62,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private String scaleEdit;
     private String distanceEdit;
     private Boolean needClampTime;
-    private UInt32 counter;
+    public static Int32 counterATB;
     private Single cumulativeTime;
     private Boolean isKeyFrame;
 
@@ -423,6 +423,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         Boolean needContinue = battleSpeed == 1 || battleSpeed == 2;
         do
         {
+            HonoluluBattleMain.counterATB++;
             for (btl = source; btl != null; btl = btl.next)
             {
                 if (btl.cur.hp == 0)
@@ -576,11 +577,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (IsPaused)
             return;
 
+        HonoluluBattleMain.counterATB = 0;
         this.battleResult = battle.BattleMain();
         if (!FF9StateSystem.Battle.isDebug)
         {
             if (UIManager.Battle.FF9BMenu_IsEnable())
                 this.YMenu_ManagerActiveTime();
+
+            for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                btl.CheckDelayedModifier();
+            BattleCalculator.FrameAppliedEffectList.Clear();
 
             if (this.battleResult == 1)
             {

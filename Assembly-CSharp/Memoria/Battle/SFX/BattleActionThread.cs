@@ -317,11 +317,11 @@ public class BattleActionThread
 						allowCamera = true;
 						break;
 					case 12: // Resize
-						Single factor = r.ReadInt16();
+						Int16 factor = r.ReadInt16();
 						if (factor == -1)
 							mainThread.code.AddLast(new BattleActionCode("ChangeSize", "Char", "Caster", "Size", "Reset", "Time", r.ReadByte().ToString()));
 						else
-							mainThread.code.AddLast(new BattleActionCode("ChangeSize", "Char", "Caster", "Size", factor.ToString(), "IsRelative", true.ToString(), "Time", r.ReadByte().ToString()));
+							mainThread.code.AddLast(new BattleActionCode("ChangeSize", "Char", "Caster", "Size", (factor / 4096f).ToString(), "IsRelative", true.ToString(), "Time", r.ReadByte().ToString()));
 						mainThread.code.AddLast(new BattleActionCode("WaitSize", "Char", "Caster"));
 						break;
 					case 13: // Hide Mesh
@@ -366,12 +366,14 @@ public class BattleActionThread
 						mainThread.code.AddLast(new BattleActionCode("ToggleStandAnimation", "Char", "Caster", "Alternate", (r.ReadByte() != 0).ToString()));
 						break;
 					case 19: // Walk Absolute
-					case 27: // Walk Relative
-						mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", r.ReadByte().ToString(), seq.wSeqCode == 19 ? "AbsolutePosition" : "RelativePosition", new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16()).ToString(), "MoveHeight", "true"));
+					{
+						Byte time = r.ReadByte();
+						Vector3 pos = new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16());
+						mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", time.ToString(), "AbsolutePosition", pos.ToString(), "MoveHeight", "true"));
+						mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", pos.ToString()));
 						mainThread.code.AddLast(new BattleActionCode("WaitMove", "Char", "Caster"));
-						if (seq.wSeqCode == 19) // Do not update base_pos on relative walks for safety
-							mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", "Current"));
 						break;
+					}
 					case 20: // Turn
 						UInt16 baseAngle = r.ReadUInt16();
 						String baseAngleName = (baseAngle & 32768) == 0 ? (baseAngle * 360f / 4096f).ToString()
@@ -394,6 +396,15 @@ public class BattleActionThread
 						mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
 						result.Add(soundThread);
 						break;
+					case 27: // Walk Relative
+					{
+						Byte time = r.ReadByte();
+						Vector3 pos = new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16());
+						mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", time.ToString(), "RelativePosition", pos.ToString(), "MoveHeight", "true"));
+						mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", "+" + pos.ToString()));
+						mainThread.code.AddLast(new BattleActionCode("WaitMove", "Char", "Caster"));
+						break;
+					}
 					case 28: // Change Target Bone
 						mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "tar_bone", "Value", r.ReadByte().ToString()));
 						break;

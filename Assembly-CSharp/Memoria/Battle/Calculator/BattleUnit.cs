@@ -240,8 +240,17 @@ namespace Memoria
 
         public void AddDelayedModifier(BTL_DATA.DelayedModifier.IsDelayedDelegate delayDelegate, BTL_DATA.DelayedModifier.ApplyDelegate applyDelegate)
         {
-            if (delayDelegate == null || applyDelegate == null)
+            if (applyDelegate == null)
                 return;
+            if (delayDelegate == null)
+            {
+                Data.delayedModifierList.Add(new BTL_DATA.DelayedModifier()
+                {
+                    isDelayed = btl => false,
+                    apply = applyDelegate
+                });
+                return;
+            }
             if (!delayDelegate(this))
             {
                 applyDelegate(this);

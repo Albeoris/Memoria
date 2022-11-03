@@ -26,25 +26,22 @@ public partial class BTL_DATA
 	{
 		GameObject shadow = this.getShadow();
 		this.gameObject.SetActive(value);
+		btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatus.Petrify));
 		if (this.bi.shadow != 0)
 			shadow.SetActive(value);
 	}
 
 	public void SetIsEnabledMeshRenderer(Int32 mesh, Boolean isEnabled)
 	{
-		if (this.meshIsRendering[mesh] != isEnabled && this.gameObject != (UnityEngine.Object)null)
+		if (this.meshIsRendering[mesh] != isEnabled && this.gameObject != null)
 		{
-			Transform childByName = this.gameObject.transform.GetChildByName("mesh" + mesh);
-			if (childByName != (UnityEngine.Object)null)
+			Transform meshNode = this.gameObject.transform.GetChildByName("mesh" + mesh);
+			if (meshNode != null)
 			{
-				Renderer[] componentsInChildren = childByName.GetComponentsInChildren<Renderer>();
-				Renderer[] array = componentsInChildren;
-				for (Int32 i = 0; i < (Int32)array.Length; i++)
-				{
-					Renderer renderer = array[i];
+				Renderer[] renderers = meshNode.GetComponentsInChildren<Renderer>();
+				foreach (Renderer renderer in renderers)
 					if (renderer.enabled != isEnabled)
 						renderer.enabled = isEnabled;
-				}
 				this.meshIsRendering[mesh] = isEnabled;
 			}
 		}
@@ -52,19 +49,15 @@ public partial class BTL_DATA
 
 	public void SetIsEnabledWeaponRenderer(Boolean isEnabled)
 	{
-		if (this.weaponIsRendering != isEnabled && this.gameObject != (UnityEngine.Object)null)
+		if (this.weaponIsRendering != isEnabled && this.gameObject != null)
 		{
-			Transform childByName = this.gameObject.transform.GetChildByName("bone000");
-			if (childByName != (UnityEngine.Object)null)
+			Transform rootNode = this.gameObject.transform.GetChildByName("bone000");
+			if (rootNode != null)
 			{
-				Renderer[] componentsInChildren = childByName.GetComponentsInChildren<Renderer>();
-				Renderer[] array = componentsInChildren;
-				for (Int32 i = 0; i < (Int32)array.Length; i++)
-				{
-					Renderer renderer = array[i];
+				Renderer[] renderers = rootNode.GetComponentsInChildren<Renderer>();
+				foreach (Renderer renderer in renderers)
 					if (renderer.enabled != isEnabled)
 						renderer.enabled = isEnabled;
-				}
 				this.weaponIsRendering = isEnabled;
 			}
 		}
@@ -72,19 +65,15 @@ public partial class BTL_DATA
 
 	public void SetIsEnabledBattleModelRenderer(Boolean isEnabled)
 	{
-		if (this.battleModelIsRendering != isEnabled && this.gameObject != (UnityEngine.Object)null)
+		if (this.battleModelIsRendering != isEnabled && this.gameObject != null)
 		{
-			Transform childByName = this.gameObject.transform.GetChildByName("battle_model");
-			if (childByName != (UnityEngine.Object)null)
+			Transform battleNode = this.gameObject.transform.GetChildByName("battle_model");
+			if (battleNode != null)
 			{
-				Renderer[] componentsInChildren = childByName.GetComponentsInChildren<Renderer>();
-				Renderer[] array = componentsInChildren;
-				for (Int32 i = 0; i < (Int32)array.Length; i++)
-				{
-					Renderer renderer = array[i];
+				Renderer[] renderers = battleNode.GetComponentsInChildren<Renderer>();
+				foreach (Renderer renderer in renderers)
 					if (renderer.enabled != isEnabled)
 						renderer.enabled = isEnabled;
-				}
 				this.battleModelIsRendering = isEnabled;
 			}
 		}

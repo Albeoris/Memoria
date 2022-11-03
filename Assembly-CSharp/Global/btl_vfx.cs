@@ -126,23 +126,26 @@ public static class btl_vfx
         BTL_DATA regist = cmd.regist;
         if (Configuration.Battle.SFXRework)
         {
-            if (cmd.aa.Info.VfxAction == null && !String.IsNullOrEmpty(cmd.aa.Info.SequenceFile))
-			{
-                String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile, out _);
-                if (sequenceText != null)
-                    cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
-            }
-            if (cmd.aa.Info.VfxAction != null)
+            if (cmd.cmd_no != BattleCommandId.MagicCounter)
             {
-                UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(cmd.aa.Info.VfxAction);
-                action.Execute(cmd);
-                return;
-            }
-            if (regist != null && regist.bi.player == 0)
-            {
-                UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, cmd.sub_no);
-                action.Execute(cmd);
-                return;
+                if (cmd.aa.Info.VfxAction == null && !String.IsNullOrEmpty(cmd.aa.Info.SequenceFile))
+                {
+                    String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile, out _);
+                    if (sequenceText != null)
+                        cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
+                }
+                if (cmd.aa.Info.VfxAction != null)
+                {
+                    UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(cmd.aa.Info.VfxAction);
+                    action.Execute(cmd);
+                    return;
+                }
+                if (regist != null && regist.bi.player == 0)
+                {
+                    UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, cmd.sub_no);
+                    action.Execute(cmd);
+                    return;
+                }
             }
             SpecialEffect sfxNum = GetPlayerCommandSFX(cmd);
             if (sfxNum != SpecialEffect.Special_No_Effect)
@@ -222,8 +225,9 @@ public static class btl_vfx
 			btl.meshIsRendering[i] = true;
 		btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
 		BattlePlayerCharacter.InitAnimation(btl);
-		//btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-		btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
+        //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+        geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
+        //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[(Int32)serialNo].ModelId, true);
 	}
 

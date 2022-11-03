@@ -314,7 +314,7 @@ public class DialogManager : Singleton<DialogManager>
 
 	public void Close(Int32 dialogId)
 	{
-		foreach (Dialog dialog in this.activeDialogList)
+		foreach (Dialog dialog in this.activeDialogList.ToList()) // Copy the list in case closing a dialog immediately releases it
 		{
 			if (dialog.gameObject.activeInHierarchy && dialog.Id == dialogId)
 			{
@@ -331,7 +331,7 @@ public class DialogManager : Singleton<DialogManager>
 
 	public void CloseAll()
 	{
-		foreach (Dialog dialog in this.activeDialogList)
+		foreach (Dialog dialog in this.activeDialogList.ToList())
 			if (dialog.gameObject.activeInHierarchy)
 				dialog.ForceClose();
 	}
@@ -447,25 +447,17 @@ public class DialogManager : Singleton<DialogManager>
 	public void OnKeyConfirm(GameObject go)
 	{
 		if (PersistenSingleton<UIManager>.Instance.IsPause)
-		{
 			return;
-		}
-		for (Int32 i = 0; i < this.activeDialogList.Count; i++)
-		{
-			this.activeDialogList[i].OnKeyConfirm(go);
-		}
+		foreach (Dialog dialog in this.activeDialogList.ToList())
+			dialog.OnKeyConfirm(go);
 	}
 
 	public void OnKeyCancel(GameObject go)
 	{
 		if (PersistenSingleton<UIManager>.Instance.IsPause)
-		{
 			return;
-		}
-		for (Int32 i = 0; i < this.activeDialogList.Count; i++)
-		{
-			this.activeDialogList[i].OnKeyCancel(go);
-		}
+		foreach (Dialog dialog in this.activeDialogList.ToList())
+			dialog.OnKeyCancel(go);
 	}
 
 	public void OnItemSelect(GameObject go)

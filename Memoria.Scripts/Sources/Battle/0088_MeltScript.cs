@@ -20,13 +20,20 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
+            _v.Target.HpDamage = (Int32)_v.Caster.CurrentHp;
+
             if (_v.Caster.CurrentHp != 0)
             {
-                _v.Caster.Fig = (Int32)_v.Caster.CurrentHp;
-                _v.Caster.Kill();
+                _v.Caster.AddDelayedModifier(
+                    null,
+                    caster =>
+                    {
+                        if (!BattleState.IsBattleStateEnabled || caster.CurrentHp == 0)
+                            return;
+                        caster.Kill();
+                    }
+                );
             }
-
-            _v.Target.HpDamage = _v.Caster.Fig;
         }
     }
 }

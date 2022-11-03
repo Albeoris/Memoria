@@ -240,9 +240,9 @@ namespace Memoria
 						foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
 							if (String.Compare(entry[i], cmdid.ToString()) == 0)
 							{
-								if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdid))
+								if (add)
 									BattleHUD.DoubleCastSet.Add(cmdid);
-								else if (!add)
+								else
 									BattleHUD.DoubleCastSet.Remove(cmdid);
 								break;
 							}

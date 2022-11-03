@@ -187,13 +187,13 @@ namespace Memoria
                             v.Target.HpDamage = 9999;
                         if ((v.Target.Flags & CalcFlag.HpRecovery) != 0)
                         {
-                            btl_para.SetRecover(v.Target, (UInt32)v.Target.HpDamage);
+                            v.Target.HpDamage = btl_para.SetRecover(v.Target, (UInt32)v.Target.HpDamage);
                         }
                         else
                         {
                             if (FF9StateSystem.Settings.IsDmg9999 && caster.bi.player != 0 && (v.Command.Data.cmd_no != BattleCommandId.StageMagicZidane && v.Command.Data.cmd_no != BattleCommandId.StageMagicBlank) && (v.Command.Data.cmd_no != BattleCommandId.StageMagicMarcus && v.Command.Data.cmd_no != BattleCommandId.StageMagicCinna))
                                 v.Target.HpDamage = 9999;
-                            btl_para.SetDamage(v.Target, v.Target.HpDamage, CheckDamageMotion(v) ? (Byte)1 : (Byte)0, v.Command.Data);
+                            v.Target.HpDamage = btl_para.SetDamage(v.Target, v.Target.HpDamage, CheckDamageMotion(v) ? (Byte)1 : (Byte)0, v.Command.Data);
                             CheckDamageReaction(v);
                         }
                         if (v.Context.IsDrain)
@@ -213,9 +213,9 @@ namespace Memoria
                         if (v.Target.MpDamage > 999)
                             v.Target.MpDamage = 999;
                         if ((v.Target.Flags & CalcFlag.MpRecovery) != 0)
-                            btl_para.SetMpRecover(v.Target, (UInt32)v.Target.MpDamage);
+                            v.Target.MpDamage = btl_para.SetMpRecover(v.Target, (UInt32)v.Target.MpDamage);
                         else
-                            btl_para.SetMpDamage(v.Target, (UInt32)v.Target.MpDamage);
+                            v.Target.MpDamage = btl_para.SetMpDamage(v.Target, (UInt32)v.Target.MpDamage);
                         if (v.Context.IsDrain)
                         {
                             v.Caster.Flags |= CalcFlag.MpAlteration;
@@ -241,24 +241,20 @@ namespace Memoria
                         if (v.Caster.HpDamage > 9999)
                             v.Caster.HpDamage = 9999;
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
-                            btl_para.SetRecover(v.Caster, (UInt32)v.Caster.HpDamage);
+                            v.Caster.HpDamage = btl_para.SetRecover(v.Caster, (UInt32)v.Caster.HpDamage);
                         else
-                            btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0, v.Command.Data);
+                            v.Caster.HpDamage = btl_para.SetDamage(v.Caster, v.Caster.HpDamage, 0, v.Command.Data);
                     }
                     if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                     {
                         if (v.Caster.MpDamage > 999)
                             v.Caster.MpDamage = 999;
                         if ((v.Caster.Flags & CalcFlag.MpRecovery) != 0)
-                            btl_para.SetMpRecover(v.Caster, (UInt32)v.Caster.MpDamage);
+                            v.Caster.MpDamage = btl_para.SetMpRecover(v.Caster, (UInt32)v.Caster.MpDamage);
                         else
-                            btl_para.SetMpDamage(v.Caster, (UInt32)v.Caster.MpDamage);
+                            v.Caster.MpDamage = btl_para.SetMpDamage(v.Caster, (UInt32)v.Caster.MpDamage);
                     }
                 }
-                //if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0 && ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !v.Target.IsUnderStatus(BattleStatus.EasyKill)))
-                //{
-                //    v.Target.TryAlterStatuses((BattleStatus)FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
-                //}
                 if (target.bi.player != 0 && FF9StateSystem.Settings.IsHpMpFull && target.cur.hp != 0)
                 {
                     target.cur.hp = target.max.hp;
@@ -281,6 +277,7 @@ namespace Memoria
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, commandAndScript, v.Command.Data);
             }
             PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, commandAndScript, v.Command.Data);
+            BattleCalculator.FrameAppliedEffectList.Add(v);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
@@ -303,11 +300,12 @@ namespace Memoria
 
         private static void CheckDamageReaction(BattleCalculator v)
         {
+            if (!UIManager.Battle.FF9BMenu_IsEnable())
+                return;
             if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
                 return;
             if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatus.CannotTrance))
                 return;
-
 
             if (v.Target.Trance + v.Context.TranceIncrease < 0)
             {

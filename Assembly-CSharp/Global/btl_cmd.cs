@@ -497,6 +497,8 @@ public class btl_cmd
                 return;
             }
         }
+        ClearCommand(cmd);
+        ClearReflecData(cmd);
         cmd.SetAAData(stateBattleSystem.enemy_attack[sub_no]);
         cmd.tar_id = tar_id;
         cmd.cmd_no = cmd_no;

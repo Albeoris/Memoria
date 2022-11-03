@@ -97,7 +97,7 @@ public class battle
             case 3:
                 if (battle.BattleIdleLoop(ff9, ff9Battle))
                 {
-                    if (FF9StateSystem.Common.FF9.btlMapNo == 336 && !battle.isAlreadyShowTutorial)
+                    if (ff9.btlMapNo == 336 && !battle.isAlreadyShowTutorial)
                     {
                         PersistenSingleton<UIManager>.Instance.TutorialScene.DisplayMode = TutorialUI.Mode.Battle;
                         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Tutorial);
@@ -171,6 +171,32 @@ public class battle
         }
         if (!FF9StateSystem.Battle.isDebug)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
+        if (ff9Battle.btl_phase == 4 && ff9Battle.cur_cmd_list.Count == 0 && btl_scrp.GetBattleID(1u) == 0)
+		{
+            // Automatically end a battle when there is no enemy anymore, typically they escaped (warning: enemies that are not targetable but still present don't trigger the end)
+            UIManager.Battle.FF9BMenu_EnableMenu(false);
+            ff9Battle.btl_escape_key = 0;
+            ff9Battle.cmd_status &= 65533;
+            ff9Battle.btl_phase = 5;
+            ff9Battle.btl_seq = 2;
+            btl_cmd.KillAllCommand(ff9Battle);
+            for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+                next.bi.cmd_idle = 0;
+            // Don't wait for btl_phase to turn to 1
+            ff9.btl_result = battle.btl_bonus.exp > 0 ? (Byte)1 : (Byte)7;
+            if (ff9.btl_result == 1 && ff9Battle.btl_scene.Info.WinPose)
+            {
+                ff9Battle.btl_phase = 5;
+                ff9Battle.btl_seq = 4;
+            }
+            else
+            {
+                if (ff9.btl_result == 1)
+                    ff9.btl_result = 2;
+                ff9Battle.btl_phase = 8;
+                ff9Battle.btl_seq = 0;
+            }
+        }
         ++ff9Battle.btl_cnt;
         return 0;
     }
@@ -345,7 +371,7 @@ public class battle
                             if (next.bi.player != 0)
                             {
                                 /*int num2 = (int)*/
-                                btl_stat.RemoveStatuses(next, BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify);
+                                btl_stat.RemoveStatuses(next, BattleStatus.VictoryClear);
                                 if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop))
                                 {
                                     if (next.cur.hp > 0)

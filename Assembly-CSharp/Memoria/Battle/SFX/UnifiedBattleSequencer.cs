@@ -614,11 +614,11 @@ public static class UnifiedBattleSequencer
 						if (btl.bi.slave != 0)
 							continue;
 						Vector3 scaleVec = isRelative ?
-							new Vector3(btl.gameObject.transform.localScale.x * tmpVec.x, btl.gameObject.transform.localScale.y * tmpVec.y, btl.gameObject.transform.localScale.z * tmpVec.z) :
+							4096f * new Vector3(btl.gameObject.transform.localScale.x * tmpVec.x, btl.gameObject.transform.localScale.y * tmpVec.y, btl.gameObject.transform.localScale.z * tmpVec.z) :
 							btl.geo_scale_default * tmpVec;
 						if (tmpInt == 0)
 						{
-							geo.geoScaleSetXYZ(btl, (Int32)(scaleVec.x), (Int32)(scaleVec.y), (Int32)(scaleVec.z), tmpBool);
+							geo.geoScaleSetXYZ(btl, (Int32)scaleVec.x, (Int32)scaleVec.y, (Int32)scaleVec.z, tmpBool);
 						}
 						else
 						{

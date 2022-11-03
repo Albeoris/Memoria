@@ -75,7 +75,7 @@ public static class btl_stat
             case BattleStatus.Petrify:
                 if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
                 {
-                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2)
+                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && Configuration.Battle.Speed < 3)
                     {
                         btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysStone, 0U, btl.btl_id, 0U);
                         break;
@@ -83,6 +83,11 @@ public static class btl_stat
                     stat.cur |= status;
                     btl.bi.atb = 0;
                     SetStatusClut(btl, true);
+                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2)
+                    {
+                        StatusCommandCancel(btl, status);
+                        btl_sys.CheckBattlePhase(btl);
+                    }
                 }
                 break;
             case BattleStatus.Venom:
@@ -241,6 +246,7 @@ public static class btl_stat
         switch (status)
         {
             case BattleStatus.Petrify:
+                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 SetStatusClut(btl, false);
                 break;
             case BattleStatus.Zombie:
@@ -480,7 +486,6 @@ public static class btl_stat
     {
         CheckStatuses(btl, ignoreAtb);
         RotateAfterCheckStatusLoop(btl);
-        btl.CheckDelayedModifier();
     }
 
     private static void CheckStatuses(BTL_DATA btl, Boolean ignoreAtb)

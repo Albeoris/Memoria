@@ -48,12 +48,17 @@ public class btl_para
 
     public static void InitATB(BTL_DATA btl)
     {
+        btl.cur.at_coef = GetATBCoef();
+    }
+
+    public static SByte GetATBCoef()
+	{
         SettingsState settings = (SettingsState)(Object)FF9StateSystem.Settings;
-        btl.cur.at_coef = 10;
         if (settings.cfg.btl_speed == 0uL)
-            btl.cur.at_coef -= 2;
+            return 8;
         else if (settings.cfg.btl_speed == 2uL)
-            btl.cur.at_coef += 4;
+            return 14;
+        return 10;
     }
 
     public static void CheckPointData(BTL_DATA btl)
@@ -80,7 +85,7 @@ public class btl_para
             btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatus.IdleDying) ? 1 : 0);
     }
 
-    public static void SetDamage(BattleUnit btl, Int32 damage, Byte dmg_mot, CMD_DATA cmd = null)
+    public static Int32 SetDamage(BattleUnit btl, Int32 damage, Byte dmg_mot, CMD_DATA cmd = null)
     {
         // "damage" and the different "fig" numbers are signed integers now
         // Maybe choose to have these unsigned or have everything signed (including "hp.cur" etc...) or to keep things as they are now
@@ -88,13 +93,13 @@ public class btl_para
         if (btl.IsUnderStatus(BattleStatus.Death))
         {
             btl.Data.fig_info = Param.FIG_INFO_MISS;
-            return;
+            return 0;
         }
 
         if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
         {
             btl.Fig = 0;
-            return;
+            return 0;
         }
 
         if (!btl_util.IsBtlBusy(btl.Data, btl_util.BusyMode.CASTER))
@@ -118,30 +123,40 @@ public class btl_para
             btl_mot.SetDamageMotion(btl, cmd);
         else if (btl.CurrentHp == 0)
             btl.Kill();
+        return damage;
     }
 
-    public static void SetRecover(BattleUnit btl, UInt32 recover)
+    public static Int32 SetRecover(BattleUnit btl, UInt32 recover)
     {
         if (btl.IsUnderAnyStatus(BattleStatus.Death))
+        {
             btl.Data.fig_info = Param.FIG_INFO_MISS;
-        else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
-            recover = 0;
-        else if (btl.CurrentHp + recover < btl.MaximumHp)
+            return 0;
+        }
+        if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
+        {
+            btl.Data.fig = 0;
+            return 0;
+        }
+        if (btl.CurrentHp + recover < btl.MaximumHp)
             btl.CurrentHp += recover;
         else
             btl.CurrentHp = btl.MaximumHp;
         btl.Data.fig = (Int32)recover;
+        return (Int32)recover;
     }
 
-    public static void SetMpDamage(BattleUnit btl, UInt32 damage)
+    public static Int32 SetMpDamage(BattleUnit btl, UInt32 damage)
     {
         if (btl.IsUnderAnyStatus(BattleStatus.Death))
         {
             btl.Data.fig_info = Param.FIG_INFO_MISS;
+            return 0;
         }
         else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
         {
-            damage = 0;
+            btl.Data.m_fig = 0;
+            return 0;
         }
         else if (!FF9StateSystem.Battle.isDebug && (btl.IsPlayer || !FF9StateSystem.Settings.IsHpMpFull))
         {
@@ -151,19 +166,27 @@ public class btl_para
                 btl.CurrentMp = 0;
         }
         btl.Data.m_fig = (Int32)damage;
+        return (Int32)damage;
     }
 
-    public static void SetMpRecover(BattleUnit btl, UInt32 recover)
+    public static Int32 SetMpRecover(BattleUnit btl, UInt32 recover)
     {
         if (btl.IsUnderAnyStatus(BattleStatus.Death))
+        {
             btl.Data.fig_info = Param.FIG_INFO_MISS;
-        else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
-            recover = 0;
-        else if (btl.CurrentMp + recover < btl.MaximumMp)
+            return 0;
+        }
+        if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
+        {
+            btl.Data.m_fig = 0;
+            return 0;
+        }
+        if (btl.CurrentMp + recover < btl.MaximumMp)
             btl.CurrentMp += recover;
         else
             btl.CurrentMp = btl.MaximumMp;
         btl.Data.m_fig = (Int32)recover;
+        return (Int32)recover;
     }
 
     public static void SetPoisonDamage(BTL_DATA btl)

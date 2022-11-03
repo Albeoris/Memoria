@@ -114,7 +114,7 @@ public class btlseq
 		cmd_DATA.tar_id = (UInt16)pTarID;
 		cmd_DATA.regist = next;
 		cmd_DATA.SetAAData(FF9StateSystem.Battle.FF9Battle.enemy_attack[pSeqNo]);
-		cmd_DATA.info = new CMD_DATA.SELECT_INFO();
+		cmd_DATA.info.Reset();
 		cmd_DATA.IsShortRange = btl_util.IsAttackShortRange(cmd_DATA);
 		if (Configuration.Battle.SFXRework)
 		{

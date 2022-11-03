@@ -454,7 +454,7 @@ public class btl_scrp
 		case 45u:
 			btl.stat.permanent = (BattleStatus)(((UInt32)btl.stat.permanent & 0xFF000000u) | (UInt32)val);
 			break;
-		case 46u: // Statuses can be modified by battle scripts thanks to these: set SV_FunctionEnemy[STATUS_CURRENT_A] |= Status to add
+		case 46u: // Statuses can be modified by battle scripts thanks to these: set SV_FunctionEnemy[STATUS_CURRENT_A] |=$ Status to add
 			btl_stat.RemoveStatuses(btl, (BattleStatus)((UInt32)btl.stat.cur & (~((UInt32)val << 24)) & 0xFF000000u));
 			btl_stat.AlterStatuses(btl, (BattleStatus)(val << 24));
 			break;

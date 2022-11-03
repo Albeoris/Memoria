@@ -5,6 +5,7 @@ using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Assets;
 
 public class BattleActionCode
@@ -292,6 +293,15 @@ public class BattleActionCode
 				catch (Exception err)
 				{
 					value = args;
+					try
+					{
+						if (btl.gameObject.GetComponent<Animation>().GetClip(args) == null)
+							AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, args);
+					}
+					catch (Exception err2)
+					{
+						Log.Error(err2);
+					}
 					if (btl.gameObject.GetComponent<Animation>().GetClip(args) == null)
 						return false;
 				}
@@ -306,20 +316,26 @@ public class BattleActionCode
 		String args;
 		value = new Vector3();
 		if (argument.TryGetValue(key, out args))
+			return ParseStringToVector(args, out value);
+		return false;
+	}
+
+	private Boolean ParseStringToVector(String str, out Vector3 value)
+	{
+		value = new Vector3();
+		str = str.Trim();
+		if (str.StartsWith("(") && str.EndsWith(")"))
+			str = str.Substring(1, str.Length - 2);
+		String[] coords = str.Split(',');
+		if (coords.Length == 1 && Single.TryParse(coords[0], out value.x))
 		{
-			if (args.StartsWith("(") && args.EndsWith(")"))
-				args = args.Substring(1, args.Length - 2);
-			String[] coords = args.Split(',');
-			if (coords.Length == 1 && Single.TryParse(coords[0], out value.x))
-			{
-				value.y = value.z = value.x;
-				return true;
-			}
-			if (coords.Length == 2 && Single.TryParse(coords[0], out value.x) && Single.TryParse(coords[1], out value.z))
-				return true;
-			if (coords.Length == 3 && Single.TryParse(coords[0], out value.x) && Single.TryParse(coords[1], out value.y) && Single.TryParse(coords[2], out value.z))
-				return true;
+			value.y = value.z = value.x;
+			return true;
 		}
+		if (coords.Length == 2 && Single.TryParse(coords[0], out value.x) && Single.TryParse(coords[1], out value.z))
+			return true;
+		if (coords.Length == 3 && Single.TryParse(coords[0], out value.x) && Single.TryParse(coords[1], out value.y) && Single.TryParse(coords[2], out value.z))
+			return true;
 		return false;
 	}
 
@@ -507,8 +523,33 @@ public class BattleActionCode
 					btl.base_pos = btl.original_pos;
 				else if (value == "Current")
 					btl.base_pos = btl.pos;
-				else if (TryGetArgVector(keyVal, out newPos))
-					btl.base_pos = newPos;
+				else
+				{
+					Boolean plus = false;
+					Boolean minus = false;
+					value = value.Trim();
+					if (value.StartsWith("+"))
+					{
+						plus = true;
+						value = value.Substring(1);
+					}
+					else if (value.StartsWith("-"))
+					{
+						minus = true;
+						value = value.Substring(1);
+					}
+					if (ParseStringToVector(value, out newPos))
+					{
+						if (plus)
+							btl.base_pos += newPos;
+						else if (minus)
+							btl.base_pos -= newPos;
+						else
+							btl.base_pos = newPos;
+						return true;
+					}
+					return false;
+				}
 				return true;
 			case "tar_bone":
 				btl.tar_bone = (Byte)ChangeVariable(btl.tar_bone, value);
@@ -575,8 +616,8 @@ public class BattleActionCode
 			return value;
 		if (op == 1)
 			return currentValue + value;
-		if (op == 2)
-			return currentValue - value;
+		//if (op == 2)
+		//	return currentValue - value;
 		if (op == 3)
 			return currentValue | value;
 		if (op == 4)

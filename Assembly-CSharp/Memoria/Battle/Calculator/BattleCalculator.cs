@@ -57,7 +57,10 @@ namespace Memoria
     public static class BattleState
     {
         public static Boolean IsSpecialStart => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.SpecialStart;
+        public static Boolean IsBattleStateEnabled => UIManager.Battle.FF9BMenu_IsEnable();
         public static Boolean IsATBEnabled => UIManager.Battle.FF9BMenu_IsEnable() && UIManager.Battle.FF9BMenu_IsEnableAtb();
+        public static Int32 ATBTickCount => HonoluluBattleMain.counterATB; // Number of times the ATB advanced this tick (there are >1 only in turn-based and fast speed modes)
+        public static Int32 SharedATBSpeedCoef => btl_para.GetATBCoef(); // Default increment for each ATB advancement
         public static BattleCommand EscapeCommand => new BattleCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape);
 
         public static Int32 TargetCount(Boolean isPlayer)
@@ -109,6 +112,8 @@ namespace Memoria
 
     public sealed class BattleCalculator
     {
+        public static List<BattleCalculator> FrameAppliedEffectList = new List<BattleCalculator>();
+
         public readonly CalcContext Context;
         public readonly BattleCommand Command;
         public readonly BattleCaster Caster;
