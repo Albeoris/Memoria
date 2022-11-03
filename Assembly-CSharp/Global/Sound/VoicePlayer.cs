@@ -183,6 +183,13 @@ public class VoicePlayer : SoundPlayer
 
 	public static SoundProfile currentVAFile;
 	private static Regex reg = new Regex(@"\[[A-Za-z0-9=]*\]");
+
+	public static Int32 slectedChoice
+    {
+		get;
+		set;
+    }
+
 	public static void PlayFieldZoneDialogAudio(int FieldZoneId, int messageNumber, Dialog dialog)
 	{
 		String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FieldZoneId, messageNumber);
@@ -214,7 +221,16 @@ public class VoicePlayer : SoundPlayer
 				int soundIndex = 100000000 + (FieldZoneId * 1000) + messageNumber + (optionIndex * 1000000);
 
 				string[] options = msgStrings[1].Split('\n');
-				string msgString = reg.Replace(options[optionIndex].Trim(), (match) => { return ""; });
+				int selectedVisibleOption = 0;
+				for(int j = 0;  j <= dialog.ActiveIndexes.Count; ++j)
+                {
+					if(dialog.ActiveIndexes[j] == optionIndex)
+                    {
+						selectedVisibleOption = j;
+						break;
+                    }
+                }
+				string msgString = reg.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; });
 
 				if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
 				{
@@ -229,7 +245,6 @@ public class VoicePlayer : SoundPlayer
         }
 		if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
         {
-            
             SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
 			return;
 		}

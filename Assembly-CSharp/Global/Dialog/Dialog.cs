@@ -94,8 +94,17 @@ public class Dialog : MonoBehaviour
 		}
 		set
 		{
-			if (this.onOptionChange != null && this.selectedChoice != value)
-				this.onOptionChange(this.id, value);
+			try
+			{
+				if (this.onOptionChange != null && this.selectedChoice != value)
+				{
+					this.onOptionChange(this.id, value);
+				}
+			}
+			catch (Exception e)
+			{
+				SoundLib.VALog(String.Format("Exception in onOptionChange: {0}", e.ToString()));
+			}
 			this.selectedChoice = value;
 			DialogManager.SelectChoice = value;
 		}
@@ -1492,6 +1501,7 @@ public class Dialog : MonoBehaviour
 		this.currentPage = 0;
 		this.dialogAnimator.Pause = false;
 		this.dialogAnimator.ShowWithoutAnimation = false;
+		this.onOptionChange = null;
 		this.ResetChoose();
 		this.isOverlayDialog = false;
 		this.isOverlayChecked = false;
