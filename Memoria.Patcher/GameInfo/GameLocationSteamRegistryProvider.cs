@@ -33,5 +33,32 @@ namespace Memoria.Patcher
                 return result;
             }
         }
+
+        public static Boolean IsSteamOverlayFixed()
+        {
+            try
+            {
+                using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
+                {
+                    using (var subKey = registryKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\FF9_Launcher.exe"))
+                    {
+                        if (subKey?.GetValue("Debugger") == null)
+                            return false;
+                    }
+                }
+
+                //var bak = new FileInfo("FF9_Launcher.bak");
+                //var exe = new FileInfo("FF9_Launcher.exe");
+                //
+                //if (bak.Exists && exe.Exists && bak.Length != exe.Length)
+                //    return false;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

@@ -94,6 +94,11 @@ namespace Memoria.Patcher
                 if (magicNumber != 0x004149524F4D454D) // MEMORIA\0
                     throw new InvalidDataException("Invalid magic number: " + magicNumber);
 
+                Boolean isSteamOverlayFixed = GameLocationSteamRegistryProvider.IsSteamOverlayFixed();
+                Boolean fixReleased = false;
+                if (isSteamOverlayFixed)
+                    fixReleased = gameLocation.FixSteamOverlay(false); // Release the registry lock
+
                 inputFile.Position = compressedDataPosition;
                 using (ConsoleProgressHandler progressHandler = new ConsoleProgressHandler(uncompressedDataSize))
                 using (GZipStream input = new GZipStream(inputFile, CompressionMode.Decompress))
@@ -102,6 +107,9 @@ namespace Memoria.Patcher
                     Int64 leftSize = uncompressedDataSize;
                     ExtractFiles(gameLocation, input, br, ref leftSize, progressHandler);
                 }
+
+                if (isSteamOverlayFixed && fixReleased)
+                    gameLocation.FixSteamOverlay(true); // Backup and redo the registry lock
             }
         }
 
@@ -191,6 +199,8 @@ namespace Memoria.Patcher
         private static void ExtractFile(GZipStream input, Int64 uncompressedSize, Byte[] buff, DateTime writeTimeUtc, ConsoleProgressHandler progressHandler, params String[] outputPaths)
         {
             List<FileStream> outputs = new List<FileStream>(outputPaths.Length);
+            Boolean isIni = outputPaths.Length > 0 && _iniFileName.Contains(Path.GetFileName(outputPaths[0]));
+            Boolean success = false;
             try
             {
                 foreach (String outputPath in outputPaths)
@@ -206,6 +216,8 @@ namespace Memoria.Patcher
 
                     progressHandler.IncrementProcessedSize(readed);
                 }
+
+                success = true;
             }
             finally
             {
@@ -213,20 +225,34 @@ namespace Memoria.Patcher
                     output.Dispose();
             }
 
+            if (isIni && success && File.Exists(outputPaths[0]) && File.Exists(outputPaths[0] + ".bak"))
+            {
+                File.WriteAllLines(outputPaths[0], MergeIniFiles(File.ReadAllLines(outputPaths[0]), File.ReadAllLines(outputPaths[0] + ".bak")));
+                File.Delete(outputPaths[0] + ".bak");
+            }
+
             foreach (String outputPath in outputPaths)
                 File.SetLastWriteTimeUtc(outputPath, writeTimeUtc);
         }
 
         private static readonly HashSet<String> _filesForBackup = new HashSet<String>(StringComparer.OrdinalIgnoreCase) {".exe", ".dll"};
+        private static readonly HashSet<String> _iniFileName = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { "Memoria.ini", "Settings.ini" };
 
         private static FileStream OverwriteFile(String outputPath)
         {
             if (File.Exists(outputPath))
             {
                 String extension = Path.GetExtension(outputPath);
+                String outputName = Path.GetFileName(outputPath);
                 if (_filesForBackup.Contains(extension))
                 {
                     String backupPath = Path.ChangeExtension(outputPath, ".bak");
+                    if (!File.Exists(backupPath))
+                        File.Move(outputPath, backupPath);
+                }
+                else if (_iniFileName.Contains(outputName))
+                {
+                    String backupPath = outputPath + ".bak";
                     if (!File.Exists(backupPath))
                         File.Move(outputPath, backupPath);
                 }
@@ -239,6 +265,74 @@ namespace Memoria.Patcher
             }
 
             return File.Create(outputPath);
+        }
+
+        private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
+		{
+            List<String> mergedIni = new List<String>(previousIni);
+            String currentSection = "";
+            Int32 sectionFirstLine = 0;
+            Int32 sectionLastLine = 0;
+            foreach (String line in newIni)
+            {
+                String trimmedLine = line.Trim();
+                if (trimmedLine.Length == 0)
+                    continue;
+                if (trimmedLine.StartsWith("["))
+                {
+                    currentSection = trimmedLine.Substring(1, trimmedLine.IndexOf("]") - 1);
+                    sectionFirstLine = mergedIni.FindIndex(s => s.Trim().StartsWith("[" + currentSection + "]"));
+                    Boolean hasSection = sectionFirstLine >= 0;
+                    if (hasSection)
+					{
+                        sectionFirstLine++;
+                        sectionLastLine = sectionFirstLine;
+                        while (sectionLastLine < mergedIni.Count)
+						{
+                            if (mergedIni[sectionLastLine].Trim().StartsWith("["))
+                                break;
+                            sectionLastLine++;
+                        }
+                        while (sectionLastLine > 0 && mergedIni[sectionLastLine - 1].Trim().Length == 0)
+                            sectionLastLine--;
+                    }
+                    else
+					{
+                        mergedIni.Add("[" + currentSection + "]");
+                        sectionFirstLine = mergedIni.Count;
+                        sectionLastLine = sectionFirstLine;
+                    }
+                }
+                else if (trimmedLine.StartsWith(";"))
+				{
+                    if (!mergedIni.Exists(s => s.Trim() == trimmedLine))
+					{
+                        mergedIni.Insert(sectionFirstLine, line);
+                        sectionFirstLine++;
+                        sectionLastLine++;
+                    }
+                }
+                else
+                {
+                    String fieldName = trimmedLine.Substring(0, trimmedLine.IndexOfAny(new char[] { ' ', '\t', '=' }));
+                    Boolean fieldKnown = false;
+                    for (Int32 i = sectionFirstLine; i < sectionLastLine; i++)
+                    {
+                        if (mergedIni[i].Trim().StartsWith(fieldName))
+                        {
+                            fieldKnown = true;
+                            break;
+                        }
+                    }
+                    if (!fieldKnown)
+                    {
+                        mergedIni.Insert(sectionLastLine, line);
+                        sectionFirstLine++;
+                        sectionLastLine++;
+                    }
+                }
+            }
+            return mergedIni.ToArray();
         }
 
         private static GameLocationInfo GetGameLocation(String[] args)

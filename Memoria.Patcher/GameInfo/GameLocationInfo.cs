@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace Memoria.Patcher
 {
@@ -34,6 +35,22 @@ namespace Memoria.Patcher
         public Boolean IsValid()
         {
             return File.Exists(LauncherPath);
+        }
+
+        public Boolean FixSteamOverlay(Boolean fix)
+        {
+            String fixerPath = Path.Combine(RootDirectory, "Memoria.SteamFix.exe");
+            if (!File.Exists(fixerPath))
+                return false;
+
+            Console.WriteLine(fix ? "Re-enabling Steam overlay fix." : "Disabling Steam overlay fix.");
+            Process process;
+            if (fix)
+                process = Process.Start(new ProcessStartInfo(fixerPath, @$" ""{LauncherPath}"" ") { Verb = "runas" });
+            else
+                process = Process.Start(new ProcessStartInfo(fixerPath) { Verb = "runas" });
+            process.WaitForExit();
+            return true;
         }
     }
 }
