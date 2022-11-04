@@ -49,6 +49,18 @@ public class ISdLibAPI
 		return 0;
 	}
 
+	public virtual Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
+	{
+		SoundLib.Log("No Implementation");
+		return 0;
+	}
+
+	public virtual Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID)
+	{
+		SoundLib.Log("No Implementation");
+		return 0;
+	}
+
 	public virtual Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
 	{
 		SoundLib.Log("No Implementation");

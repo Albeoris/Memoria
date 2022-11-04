@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -36,10 +37,39 @@ public class VoicePlayer : SoundPlayer
 	public static Dictionary<string, UInt16> preventMultiPlay { get; set; } = Configuration.Audio.preventMultiPlay;
 
 	new public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f) => StaticStartSound(soundProfile, playerVolume);
+	public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f, Func<bool> finished = null) => StaticStartSound(soundProfile, playerVolume, finished);
 
-	new public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f)
+	new public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f, Func<bool> finished = null)
 	{
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+
+		if (finished != null && Configuration.Audio.AutoDismisDialogAfterCompletion)
+		{
+			soundProfile.onComplete = () =>
+			{
+				finished();
+			};
+			new Thread(() =>
+			{
+				bool ended = false;
+				// we need to delay if we run it instantly we're at 0 = 0 which is usless
+				Thread.Sleep(1000);
+				while (!ended)
+				{
+					int currentTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundProfile.SoundID);
+					int totalTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetPlayTime(soundProfile.SoundID);
+					if (currentTime == totalTime)
+					{
+						if (soundProfile.onComplete != null)
+						{
+							soundProfile.onComplete();
+						}
+						ended = true;
+					}
+				}
+			}).Start(soundProfile);
+		}
+
 		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
 		{
 			SoundLib.Log("failed to play sound");
@@ -50,6 +80,8 @@ public class VoicePlayer : SoundPlayer
 		SoundLib.Log("Panning: " + soundProfile.Panning);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetPlayTime(soundProfile.SoundID);
 		SoundLib.Log("StartSound Success");
 	}
 
@@ -251,7 +283,10 @@ public class VoicePlayer : SoundPlayer
 		else
 		{
 			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaPath));
-			currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath);
+			currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath, () => {
+				dialog.ForceClose();
+				return true;
+			});
 		}
 	}
 
@@ -478,7 +513,7 @@ public class VoicePlayer : SoundPlayer
 		}
 	}
 
-	private static SoundProfile CreateLoadThenPlayVoice(int soundIndex, string vaPath)
+	private static SoundProfile CreateLoadThenPlayVoice(int soundIndex, string vaPath, Func<bool> finished = null)
     {
 		SoundProfile soundProfile = new SoundProfile
 		{
@@ -498,7 +533,7 @@ public class VoicePlayer : SoundPlayer
 			if (soundProfile != null)
 			{
 				SoundLib.voicePlayer.CreateSound(soundProfile);
-				SoundLib.voicePlayer.StartSound(soundProfile);
+				SoundLib.voicePlayer.StartSound(soundProfile, 1, finished);
 				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
 					db.Update(soundProfile);
 				else

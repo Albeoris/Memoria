@@ -24,6 +24,8 @@ namespace Memoria
 
             public static Boolean StopVoiceWhenDialogDismissed = Instance._audio.StopVoiceWhenDialogDismissed;
 
+            public static Boolean AutoDismisDialogAfterCompletion = Instance._audio.AutoDismisDialogAfterCompletion;
+
             public static void SaveSoundVolume()
             {
                 SaveValue(Instance._audio.Name, Instance._audio.SoundVolume);
