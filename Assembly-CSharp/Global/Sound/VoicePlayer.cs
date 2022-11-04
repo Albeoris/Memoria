@@ -43,7 +43,7 @@ public class VoicePlayer : SoundPlayer
 	{
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 
-		if (finished != null && Configuration.Audio.AutoDismisDialogAfterCompletion)
+		if (finished != null && Configuration.Audio.AutoDismissDialogAfterCompletion)
 		{
 			soundProfile.onComplete = () =>
 			{

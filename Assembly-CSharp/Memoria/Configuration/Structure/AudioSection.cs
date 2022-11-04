@@ -12,7 +12,7 @@ namespace Memoria
             public readonly IniValue<Boolean> LogVoiceActing;
             public readonly IniValue<Boolean> PriorityToOGG;
             public readonly IniValue<Boolean> StopVoiceWhenDialogDismissed;
-            public readonly IniValue<Boolean> AutoDismisDialogAfterCompletion;
+            public readonly IniValue<Boolean> AutoDismissDialogAfterCompletion;
 
             public readonly IniArray<String> PreventMultiPlay;
 
@@ -42,7 +42,7 @@ namespace Memoria
                 CharStatusAfflictedChance = BindInt32(nameof(CharStatusAfflictedChance), 1);
 
                 StopVoiceWhenDialogDismissed = BindBoolean(nameof(StopVoiceWhenDialogDismissed), false);
-                AutoDismisDialogAfterCompletion = BindBoolean(nameof(AutoDismisDialogAfterCompletion), false);
+                AutoDismissDialogAfterCompletion = BindBoolean(nameof(AutoDismissDialogAfterCompletion), false);
             }
         }
     }
