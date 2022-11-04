@@ -66,6 +66,7 @@ public class VoicePlayer : SoundPlayer
 						}
 						ended = true;
 					}
+					Thread.Sleep(200);
 				}
 			}).Start(soundProfile);
 		}
