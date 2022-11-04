@@ -473,12 +473,15 @@ namespace FF9
 				UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
 				btl.cur.hp = 1;
 				btl_stat.RemoveStatus(btl, BattleStatus.Death);
+				// auto life has triggered
+				VoicePlayer.PlayBattleAutoLifeVoice(btl);
 				FF9StateSystem.Settings.SetHPFull();
 				if (!cancelMonsterTransform)
 					btl_mot.SetDefaultIdle(btl);
 				return false;
 			}
 			btl.die_seq = 6;
+			VoicePlayer.PlayBattleDeathVoice(btl);
 			return true;
 		}
 

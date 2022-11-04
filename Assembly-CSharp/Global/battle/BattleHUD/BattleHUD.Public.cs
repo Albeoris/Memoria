@@ -261,6 +261,7 @@ public partial class BattleHUD : UIScene
         if (_unconsciousStateList.Contains(playerId))
             return;
 
+        // ATB bar is full
         ReadyQueue.Add(playerId);
         _partyDetail.GetCharacter(playerId).ATBBlink = true;
     }

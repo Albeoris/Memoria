@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Threading;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
 using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
@@ -26,24 +30,497 @@ public class VoicePlayer : SoundPlayer
 		this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound), SoundProfileState.CrossfadeIn, SoundProfileState.Stopped);
 	}
 
-	public static void PlayBattleVoice(Int32 va_id, String text, Boolean asSharedMessage = false, Int32 btlId = -1)
-    {
-		if (btlId < 0)
-			btlId = FF9StateSystem.Battle.battleMapIndex;
-		String btlFolder = asSharedMessage ? "general" : btlId.ToString();
-		String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder);
-		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+	/*
+	 * Overrides to stop duplicate files playing when multiple text boxes appear at once
+	 */
+
+	public static Dictionary<string, UInt16> preventMultiPlay { get; set; } = Configuration.Audio.preventMultiPlay;
+
+	new public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f) => StaticStartSound(soundProfile, playerVolume);
+	public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f, Func<bool> finished = null) => StaticStartSound(soundProfile, playerVolume, finished);
+
+	new public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f, Func<bool> finished = null)
+	{
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+
+		if (finished != null && Configuration.Audio.AutoDismissDialogAfterCompletion)
 		{
-			SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlFolder, va_id, text, vaPath));
-			return;
+			soundProfile.onComplete = () =>
+			{
+				finished();
+			};
+			new Thread(() =>
+			{
+				bool ended = false;
+				// we need to delay if we run it instantly we're at 0 = 0 which is usless
+				Thread.Sleep(1000);
+				while (!ended)
+				{
+					int currentTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundProfile.SoundID);
+					int totalTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetPlayTime(soundProfile.SoundID);
+					if (currentTime == totalTime)
+					{
+						if (soundProfile.onComplete != null)
+						{
+							soundProfile.onComplete();
+						}
+						ended = true;
+					}
+					Thread.Sleep(200);
+				}
+			}).Start(soundProfile);
 		}
 
-		SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3}", btlFolder, va_id, text, vaPath));
-		var currentVAFile = new SoundProfile
+		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
 		{
-			Code = va_id.ToString(),
+			SoundLib.Log("failed to play sound");
+			soundProfile.SoundID = 0;
+			return;
+		}
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * playerVolume, 0);
+		SoundLib.Log("Panning: " + soundProfile.Panning);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetPlayTime(soundProfile.SoundID);
+		SoundLib.Log("StartSound Success");
+	}
+
+	private static string getAbillityNameName(BattleAbilityId id)
+    {
+		switch (id)
+		{
+
+			case BattleAbilityId.Carbuncle1:
+			case BattleAbilityId.Carbuncle2:
+			case BattleAbilityId.Carbuncle3:
+			case BattleAbilityId.Carbuncle4:
+				return "Carbuncle";
+			case BattleAbilityId.Fenrir1:
+			case BattleAbilityId.Fenrir2:
+				return "Fenrir";
+			default:
+				return Enum.GetName(typeof(BattleAbilityId), id);
+		}
+	}
+
+	private static string getCommandName(CMD_DATA cmd)
+    {
+		switch (cmd.cmd_no)
+		{
+			case BattleCommandId.Jump2:
+				return "Jump";
+			case BattleCommandId.SummonGarnet:
+			case BattleCommandId.SummonEiko:
+				return "Summon_" + getAbillityNameName((BattleAbilityId)cmd.sub_no) + ((cmd.info.short_summon == 1) ? "_short" : "_full");
+			case BattleCommandId.WhiteMagicGarnet:
+			case BattleCommandId.WhiteMagicEiko:
+			case BattleCommandId.WhiteMagicCinna1:
+			case BattleCommandId.WhiteMagicCinna2:
+				return "WhiteMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.HolySword1:
+			case BattleCommandId.HolySword2:
+				return "HolySword_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.RedMagic1:
+			case BattleCommandId.RedMagic2:
+				return "RedMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.YellowMagic1:
+			case BattleCommandId.YellowMagic2:
+				return "YellowMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.BlackMagic:
+				return "BlackMagic_" + getAbillityNameName((BattleAbilityId)cmd.sub_no);
+			case BattleCommandId.StageMagicZidane:
+			case BattleCommandId.StageMagicBlank:
+			case BattleCommandId.StageMagicMarcus:
+			case BattleCommandId.StageMagicCinna:
+				return "StageMagic";
+			default:
+				return Enum.GetName(typeof(BattleCommandId), cmd.cmd_no);
+		}
+	}
+
+	private static string getGenericCommandName(CMD_DATA cmd)
+	{
+		switch (cmd.cmd_no)
+		{
+			case BattleCommandId.Jump2:
+				return "Jump";
+			case BattleCommandId.SummonGarnet:
+			case BattleCommandId.SummonEiko:
+				return "Summon";
+			case BattleCommandId.WhiteMagicGarnet:
+			case BattleCommandId.WhiteMagicEiko:
+			case BattleCommandId.WhiteMagicCinna1:
+			case BattleCommandId.WhiteMagicCinna2:
+				return "WhiteMagic";
+			case BattleCommandId.HolySword1:
+			case BattleCommandId.HolySword2:
+				return "HolySword";
+			case BattleCommandId.RedMagic1:
+			case BattleCommandId.RedMagic2:
+				return "RedMagic";
+			case BattleCommandId.YellowMagic1:
+			case BattleCommandId.YellowMagic2:
+				return "YellowMagic";
+			case BattleCommandId.BlackMagic:
+				return "BlackMagic";
+			case BattleCommandId.StageMagicZidane:
+			case BattleCommandId.StageMagicBlank:
+			case BattleCommandId.StageMagicMarcus:
+			case BattleCommandId.StageMagicCinna:
+				return "StageMagic";
+			default:
+				return Enum.GetName(typeof(BattleCommandId), cmd.cmd_no);
+		}
+	}
+
+	private static System.Random rand = new System.Random();
+
+	public static void PlayBattleActionTakenVoice(BattleUnit unit, CMD_DATA cmd)
+    {
+		if (unit.IsPlayer || unit.IsSlave)
+		{
+			string cmdName = getCommandName(cmd);
+			string playerName = Enum.GetName(typeof(CharacterId), unit.PlayerIndex);
+
+			// hopefully this is a uniuqe ID set.
+			int soundIndex = 2140000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + (int)unit.PlayerIndex;
+
+			// this should change between these based on the hit they are doing
+			// normal hit = deal_norm
+			// criti hit = deal_crit
+			// missed = deal_miss
+			// dodged = deal_dodge
+			string status = "atk_norm";
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, playerName).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				cmdName = getGenericCommandName(cmd);
+				vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, playerName).ToLower();
+				if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+				{
+					SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{1} caster:{2} path:{3} (not found)", status, cmdName.ToLower(), playerName, vaPath));
+					return;
+				}
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.CharAttackAudioChance);
+			if (randomNumber == (int)(Configuration.Audio.CharAttackAudioChance / 2) || (int)(Configuration.Audio.CharAttackAudioChance / 2) == 0)
+			{
+				SoundLib.VALog(String.Format("Player Char {0} Abbility, used:{1}, caster:{2} path:{3}", status, cmdName.ToLower(), playerName, vaPath));
+				CreateLoadThenPlayVoice(soundIndex, vaPath);
+			}
+		}
+	}
+
+	public static SoundProfile currentVAFile;
+	private static Regex reg = new Regex(@"\[[A-Za-z0-9=]*\]");
+
+	public static Int32 slectedChoice
+    {
+		get;
+		set;
+    }
+
+	public static void PlayFieldZoneDialogAudio(int FieldZoneId, int messageNumber, Dialog dialog)
+	{
+		String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FieldZoneId, messageNumber);
+		int soundIndex = 201000000 + (FieldZoneId * 1000) + messageNumber;
+		bool nth = false;
+
+		if (VoicePlayer.preventMultiPlay.ContainsKey(vaPath))
+		{
+			string tmp = String.Format("{0}_{1}", vaPath, VoicePlayer.preventMultiPlay[vaPath].ToString());
+			VoicePlayer.preventMultiPlay[vaPath]++;
+			vaPath = tmp;
+		}
+
+		string[] msgStrings = dialog.Phrase.Split(new string[] { "[CHOO]" }, StringSplitOptions.RemoveEmptyEntries);
+		string msgString = reg.Replace(msgStrings[0], (match) => { return ""; });
+
+		if (dialog.ChoiceNumber > 0)
+		{
+			dialog.onOptionChange = (int msg, int optionIndex) =>
+			{
+				if (currentVAFile != null && nth)
+				{
+					SoundLib.voicePlayer.StopSound(currentVAFile);
+				}
+
+				nth = true;
+
+				string vaPath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, optionIndex);
+				int soundIndex = 100000000 + (FieldZoneId * 1000) + messageNumber + (optionIndex * 1000000);
+
+				string[] options = msgStrings[1].Split('\n');
+				int selectedVisibleOption = 0;
+				for(int j = 0;  j <= dialog.ActiveIndexes.Count; ++j)
+                {
+					if(dialog.ActiveIndexes[j] == optionIndex)
+                    {
+						selectedVisibleOption = j;
+						break;
+                    }
+                }
+				string msgString = reg.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; });
+
+				if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
+				{
+					SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4} (not found)", FieldZoneId, messageNumber, optionIndex, msgString, vaPath));
+				}
+				else
+				{
+					SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4}", FieldZoneId, messageNumber, optionIndex, msgString, vaPath));
+					currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath);
+				}
+			};
+        }
+		if (!AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
+        {
+            SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
+			return;
+		}
+		else
+		{
+			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaPath));
+			currentVAFile = CreateLoadThenPlayVoice(soundIndex, vaPath, () => {
+				dialog.ForceClose();
+				return true;
+			});
+		}
+	}
+
+	public static void FieldZoneDialogAudioFinished(Int32 choice)
+    {
+		if (Configuration.Audio.StopVoiceWhenDialogDismissed)
+		{
+			SoundLib.voicePlayer.StopSound(currentVAFile);
+		}
+		if (choice > -1)
+		{
+			if (currentVAFile != null)
+				SoundLib.voicePlayer.StopSound(currentVAFile);
+		}
+	}
+
+	public static void PlayBattleActionRecivedVoice(BattleUnit unit, CMD_DATA cmd)
+	{
+		if (unit.IsPlayer || unit.IsSlave)
+		{
+			string cmdName = getCommandName(cmd);
+			string playerName = Enum.GetName(typeof(CharacterId), unit.PlayerIndex);
+			// hopefully this is a uniuqe ID set.
+			int soundIndex = 2141000000 + ((int)cmd.cmd_no * 10000) + (cmd.sub_no * 100) + unit.Id;
+
+			// this should change between below when they are hit
+			// normal hit = rcv_norm
+			// criti hit = rcv_crit
+			// missed = rcv_miss
+			// dodged = rcv_dodge
+
+			string status = "dmg_norm";
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_{3}", Localization.GetSymbol(), status, cmdName, unit.Player.Name).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("Player Char {0} with Abbility, msg:{0}, caster:{1} path:{2} (not found)", status, cmdName.ToLower(), unit.Player.Name, vaPath));
+				return;
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.CharHitAudioChance);
+			if (randomNumber == (int)(Configuration.Audio.CharHitAudioChance / 2) || (int)(Configuration.Audio.CharHitAudioChance / 2) == 0)
+			{
+
+				SoundLib.VALog(String.Format("Player Char {0} with Abbility, msg:{1}, caster:{2} path:{3}", status, cmdName.ToLower(), unit.Player.Name, vaPath));
+
+				CreateLoadThenPlayVoice(soundIndex, vaPath);
+			}
+		}
+	}
+
+	public enum BattleStartType : byte
+	{
+		Normal = 0,
+		Special = 2,
+		Back = 3,
+		Preemtive = 4
+    }
+
+	public enum BattleEndType : byte
+    {
+		GameOver = 1,
+		Victory = 2,
+		Forced = 3
+    }
+
+	public static void PlayBattleStartVoice(ref PLAYER[] characters, BattleStartType bst)
+    {
+		string battleType = "normal";
+        switch (bst)
+        {
+			case BattleStartType.Special:
+				battleType = "special";
+				break;
+			case BattleStartType.Back:
+				battleType = "back";
+				break;
+			case BattleStartType.Preemtive:
+				battleType = "preemtive";
+				break;
+		}
+		foreach (PLAYER character in characters)
+		{
+			String playerName = character.Name;
+			int soundIndex = 2142000000 + (int)character.info.serial_no;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_start_{2}", Localization.GetSymbol(), playerName, battleType).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, BattleStart:{0} StartType:{1} path:{2} (not found)", playerName, battleType, vaPath));
+				return;
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.StartBattleChance);
+			if (randomNumber == (int)(Configuration.Audio.StartBattleChance / 2) || (int)(Configuration.Audio.StartBattleChance / 2) == 0)
+			{
+				CreateLoadThenPlayVoice(soundIndex, vaPath);
+			}
+		}
+	}
+
+	public static void PlayBattleEndVoice(ref PLAYER[] characters, BattleEndType bet)
+	{
+		string endType = "victory";
+		switch (bet)
+		{
+			case BattleEndType.GameOver:
+				endType = "gameover";
+				break;
+			case BattleEndType.Forced:
+				endType = "forced";
+				break;
+		}
+		foreach (PLAYER character in characters)
+		{
+			String playerName = character.Name;
+			int soundIndex = 2143000000 + (int)character.info.serial_no;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_end_{2}", Localization.GetSymbol(), playerName, endType).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, BattleEnd:{0}, EndType:{1} path:{2} (not found)", playerName, endType, vaPath));
+				return;
+			}
+
+			int randomNumber = rand.Next(0, Configuration.Audio.EndBattleChance);
+			if (randomNumber == (int)(Configuration.Audio.EndBattleChance / 2) || (int)(Configuration.Audio.EndBattleChance / 2) == 0)
+			{
+				CreateLoadThenPlayVoice(soundIndex, vaPath);
+			}
+		}
+	}
+
+	public static void PlayBattleDeathVoice(BTL_DATA btl)
+	{
+		int randomNumber = rand.Next(0, Configuration.Audio.CharDeathChance);
+		BattleUnit bu = new BattleUnit(btl);
+
+        if (bu.IsPlayer && (randomNumber == (int)(Configuration.Audio.CharDeathChance / 2) || (int)(Configuration.Audio.CharDeathChance / 2) == 0))
+        {
+			string playerName = bu.Player.Name;
+			int soundIndex = 2145051000 + (int)bu.Player.PresetId;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_died", Localization.GetSymbol(), playerName).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, death:{0}, path:{1} (not found)", playerName, vaPath));
+				return;
+			}
+
+			SoundLib.VALog(String.Format("field:battle/shared, death:{0}, path:{1}", playerName, vaPath));
+
+			CreateLoadThenPlayVoice(soundIndex, vaPath);
+		}
+	}
+
+	public static void PlayBattleAutoLifeVoice(BTL_DATA btl)
+	{
+		int randomNumber = rand.Next(0, Configuration.Audio.CharAutoLifeChance);
+		BattleUnit bu = new BattleUnit(btl);
+
+		if (bu.IsPlayer && (randomNumber == (int)(Configuration.Audio.CharAutoLifeChance / 2) || (int)(Configuration.Audio.CharAutoLifeChance / 2) == 0))
+		{
+			string playerName = bu.Player.Name;
+			int soundIndex = 2145052000 + (int)bu.Player.PresetId;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_autoressed", Localization.GetSymbol(), playerName).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, autolife:{0}, path:{1} (not found)", playerName, vaPath));
+				return;
+			}
+
+			SoundLib.VALog(String.Format("field:battle/shared, autolife:{0}, path:{1}", playerName, vaPath));
+
+			CreateLoadThenPlayVoice(soundIndex, vaPath);
+		}
+	}
+	public static void PlayBattleStatusRemoved(BTL_DATA btl, BattleStatus status)
+	{
+		int randomNumber = rand.Next(0, Configuration.Audio.CharStatusRemovedChance);
+		BattleUnit bu = new BattleUnit(btl);
+
+		if (bu.IsPlayer && (randomNumber == (int)(Configuration.Audio.CharStatusRemovedChance / 2) || (int)(Configuration.Audio.CharStatusRemovedChance / 2) == 0))
+		{
+			string playerName = bu.Player.Name;
+			string statusName = Enum.GetName(typeof(BattleStatus), status);
+			int soundIndex = 2145053000 + (int)bu.Player.PresetId;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_removed", Localization.GetSymbol(), playerName, statusName).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, statusRemoved:{0}, char:{1} path:{2} (not found)", statusName, playerName, vaPath));
+				return;
+			}
+
+			SoundLib.VALog(String.Format("field:battle/shared, statusRemoved:{0}, char:{1} path:{2}", statusName, playerName, vaPath));
+
+			CreateLoadThenPlayVoice(soundIndex, vaPath);
+		}
+	}
+
+	public static void PlayBattleStatusAdded(BTL_DATA btl, BattleStatus status)
+	{
+		int randomNumber = rand.Next(0, Configuration.Audio.CharStatusAfflictedChance);
+		BattleUnit bu = new BattleUnit(btl);
+
+		if (bu.IsPlayer && (randomNumber == (int)(Configuration.Audio.CharStatusAfflictedChance / 2) || (int)(Configuration.Audio.CharStatusAfflictedChance / 2) == 0))
+		{
+			string playerName = bu.Player.Name;
+			string statusName = Enum.GetName(typeof(BattleStatus), status);
+			int soundIndex = 2145053000 + (int)bu.Player.PresetId;
+
+			String vaPath = String.Format("Voices/{0}/battle/shared/va_{1}_{2}_afflicted", Localization.GetSymbol(), playerName, statusName).ToLower();
+			if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+			{
+				SoundLib.VALog(String.Format("field:battle/shared, statusAfflicted:{0}, char:{1} path:{2} (not found)", statusName, playerName, vaPath));
+				return;
+			}
+
+			SoundLib.VALog(String.Format("field:battle/shared, statusAfflicted:{0}, char:{1} path:{2}", statusName, playerName, vaPath));
+
+			CreateLoadThenPlayVoice(soundIndex, vaPath);
+		}
+	}
+
+	private static SoundProfile CreateLoadThenPlayVoice(int soundIndex, string vaPath, Func<bool> finished = null)
+    {
+		SoundProfile soundProfile = new SoundProfile
+		{
+			Code = soundIndex.ToString(),
 			Name = vaPath,
-			SoundIndex = va_id,
+			SoundIndex = soundIndex,
 			ResourceID = vaPath,
 			SoundProfileType = SoundProfileType.Voice,
 			SoundVolume = 1f,
@@ -51,13 +528,13 @@ public class VoicePlayer : SoundPlayer
 			Pitch = 0.5f
 		};
 
-		SoundLoaderProxy.Instance.Load(currentVAFile,
+		SoundLoaderProxy.Instance.Load(soundProfile,
 		(soundProfile, db) =>
 		{
 			if (soundProfile != null)
 			{
 				SoundLib.voicePlayer.CreateSound(soundProfile);
-				SoundLib.voicePlayer.StartSound(soundProfile);
+				SoundLib.voicePlayer.StartSound(soundProfile, 1, finished);
 				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
 					db.Update(soundProfile);
 				else
@@ -65,148 +542,26 @@ public class VoicePlayer : SoundPlayer
 			}
 		},
 		ETb.voiceDatabase);
+
+		return soundProfile;
 	}
 
-	public void LoadMusic(String metaData)
-	{
-		base.LoadResource(metaData, this.soundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadSoundResourceCallback));
-	}
+	public static void PlayBattleVoice(Int32 va_id, String text, Boolean asSharedMessage = false, Int32 btlId = -1)
+    {
+		if (btlId < 0)
+			btlId = FF9StateSystem.Battle.battleMapIndex;
+		String btlFolder = asSharedMessage ? "general" : btlId.ToString();
 
-	private void LoadSoundResourceCallback(SoundDatabase soundDatabase, Boolean isError)
-	{
-		SoundLib.Log("LoadVoiceResourceCallback: " + ((!isError) ? "Success" : "Error"));
-	}
+		String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), va_id, btlFolder).ToLower();
+		if (!(AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false)))
+		{
+			SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlFolder, va_id, text, vaPath));
+			return;
+		}
 
-	public void UnloadMusic()
-	{
-		base.UnloadResource(this.soundDatabase);
-	}
+		SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3}", btlFolder, va_id, text, vaPath));
 
-	public void PlayMusic(Int32 soundIndex)
-	{
-		this.PlayMusic(soundIndex, 0, SoundProfileType.Music);
-	}
-
-	public void PlayMusic(Int32 soundIndex, Int32 fadeIn, SoundProfileType type = SoundProfileType.Music)
-	{
-		SoundProfile soundProfile = this.soundDatabase.Read(soundIndex);
-		if (soundProfile == null)
-		{
-			soundProfile = this.onTheFlySoundDatabase.Read(soundIndex);
-		}
-		if (soundProfile != null)
-		{
-			this.PlayMusic(soundProfile, fadeIn);
-		}
-		else
-		{
-			soundProfile = SoundMetaData.GetSoundProfile(soundIndex, type);
-			this.onTheFlyLoadedSoundProfile = soundProfile;
-			this.onTheFlyLoadedFadeIn = fadeIn;
-			if (this.onTheFlySoundDatabase.ReadAll().Count >= 10)
-			{
-				SoundLib.Log("Unload on the fly voice database.");
-				base.UnloadResource(this.onTheFlySoundDatabase);
-			}
-			base.LoadResource(soundProfile, this.onTheFlySoundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadOnTheFlySoundResourceCallback));
-		}
-	}
-
-	public void NextLoopRegion(Int32 soundIndex)
-	{
-		SoundProfile soundProfile = this.soundDatabase.Read(soundIndex);
-		if (soundProfile == null)
-		{
-			soundProfile = this.onTheFlySoundDatabase.Read(soundIndex);
-		}
-		if (soundProfile != null)
-		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetNextLoopRegion(soundProfile.SoundID);
-		}
-		else
-		{
-			SoundLib.Log("NextLoopRegion(), soundProfile is null!");
-		}
-	}
-
-	private void LoadOnTheFlySoundResourceCallback(SoundDatabase soundDatabase, Boolean isError)
-	{
-		if (!isError)
-		{
-			if (this.onTheFlyLoadedSoundProfile != null)
-			{
-				this.PlayMusic(this.onTheFlyLoadedSoundProfile, this.onTheFlyLoadedFadeIn);
-			}
-		}
-		else
-		{
-			SoundLib.Log("LoadOnTheFlySoundResourceCallback is Error");
-		}
-	}
-
-	public void PlayMusic(SoundProfile soundProfileFromIndex, Int32 fadeIn)
-	{
-		this.fadeInDuration = (Single)fadeIn / 1000f;
-		this.fadeInTimeRemain = this.fadeInDuration;
-		if (this.activeSoundProfile == soundProfileFromIndex)
-		{
-			if (this.activeSoundProfile.SoundProfileState == SoundProfileState.Paused)
-			{
-				this.stateTransition.Transition(soundProfileFromIndex, new SdLibSoundProfileStateGraph.TransitionDelegate(base.ResumeSound));
-				this.SetMusicVolume(this.playerVolume * this.optionVolume, soundProfileFromIndex);
-				this.SetMusicPanning(this.playerPanning, soundProfileFromIndex);
-				this.SetMusicPitch(this.playerPitch, soundProfileFromIndex);
-			}
-		}
-		else if (this.upcomingSoundProfile == soundProfileFromIndex)
-		{
-			if (this.activeSoundProfile != null && this.stateTransition.Transition(this.activeSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound)) == 0)
-			{
-				this.activeSoundProfile = (SoundProfile)null;
-			}
-			if (this.upcomingSoundProfile != null && (this.upcomingSoundProfile.SoundProfileState == SoundProfileState.CrossfadeIn || this.upcomingSoundProfile.SoundProfileState == SoundProfileState.Paused))
-			{
-				this.stateTransition.Transition(this.upcomingSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.ResumeSound));
-				this.upcomingSoundProfile.SoundVolume = this.playerVolume * this.optionVolume;
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.upcomingSoundProfile.SoundID, this.playerVolume * this.optionVolume, (Int32)(this.fadeInTimeRemain * 1000f));
-				this.SetMusicPanning(this.playerPanning, this.upcomingSoundProfile);
-				this.SetMusicPitch(this.playerPitch, this.upcomingSoundProfile);
-				this.activeSoundProfile = this.upcomingSoundProfile;
-				this.activeSoundProfile.SoundProfileState = SoundProfileState.Played;
-				this.upcomingSoundProfile = (SoundProfile)null;
-			}
-		}
-		else
-		{
-			if (this.upcomingSoundProfile != null)
-			{
-				if (this.activeSoundProfile != null)
-				{
-					if (this.stateTransition.Transition(this.activeSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound)) == 0)
-					{
-						this.activeSoundProfile = this.upcomingSoundProfile;
-						this.upcomingSoundProfile = (SoundProfile)null;
-					}
-				}
-				else
-				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.upcomingSoundProfile.SoundID, fadeIn);
-					this.upcomingSoundProfile.SoundProfileState = SoundProfileState.Stopped;
-					this.upcomingSoundProfile = (SoundProfile)null;
-				}
-			}
-			this.stateTransition.Transition(soundProfileFromIndex, new SdLibSoundProfileStateGraph.TransitionDelegate(base.CreateSound));
-			if (this.stateTransition.Transition(soundProfileFromIndex, new SdLibSoundProfileStateGraph.TransitionDelegate(this.StartSoundCrossfadeIn)) == 0)
-			{
-				this.fadeOutDuration = (Single)fadeIn / 1000f;
-				if (this.activeSoundProfile != null)
-				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, fadeIn);
-					this.activeSoundProfile.SoundProfileState = SoundProfileState.Stopped;
-					this.activeSoundProfile = (SoundProfile)null;
-				}
-			}
-		}
+		CreateLoadThenPlayVoice(va_id, vaPath);
 	}
 
 	private void StartSoundCrossfadeIn(SoundProfile soundProfile)
@@ -230,139 +585,16 @@ public class VoicePlayer : SoundPlayer
 	{
 	}
 
-	public void PauseMusic()
-	{
-		this.stateTransition.Transition(this.activeSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.PauseSound));
-		this.stateTransition.Transition(this.upcomingSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.PauseSound));
-	}
-
-	public void ResumeMusic()
-	{
-		this.stateTransition.Transition(this.activeSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.ResumeSound));
-		this.stateTransition.Transition(this.upcomingSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.ResumeSound));
-	}
-
-	public Int32 GetActiveSoundID()
-	{
-		if (this.activeSoundProfile != null)
-		{
-			return this.activeSoundProfile.SoundID;
-		}
-		return -1;
-	}
-
-	public void StopMusic()
-	{
-		if (this.stateTransition.Transition(this.activeSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound)) == 0)
-		{
-			this.activeSoundProfile = (SoundProfile)null;
-		}
-		if (this.stateTransition.Transition(this.upcomingSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.StopSound)) == 0)
-		{
-			this.upcomingSoundProfile = (SoundProfile)null;
-		}
-	}
-
-	public void StopMusic(Int32 fadeOut)
-	{
-		if (this.activeSoundProfile != null)
-		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, fadeOut);
-			this.activeSoundProfile.SoundProfileState = SoundProfileState.Stopped;
-			this.activeSoundProfile = (SoundProfile)null;
-		}
-		if (this.upcomingSoundProfile != null)
-		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.upcomingSoundProfile.SoundID, fadeOut);
-			this.upcomingSoundProfile.SoundProfileState = SoundProfileState.Stopped;
-			this.upcomingSoundProfile = (SoundProfile)null;
-		}
-	}
-
-	public void SetOptionVolume(Int32 volume)
-	{
-		this.optionVolume = volume / 100f;
-		this.SetMusicVolume(this.playerVolume);
-	}
-
-	public void SetMusicVolume(Single volume)
-	{
-		Single oldPlayerVolume = this.playerVolume;
-		this.playerVolume = volume;
-		if (this.activeSoundProfile != null && this.activeSoundProfile.SoundProfileState == SoundProfileState.Played)
-		{
-			this.SetMusicVolume(volume, this.activeSoundProfile);
-		}
-		if (this.upcomingSoundProfile != null && this.upcomingSoundProfile.SoundProfileState == SoundProfileState.CrossfadeIn)
-		{
-			this.SetMusicVolumeWhileFade(oldPlayerVolume, volume, this.upcomingSoundProfile);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.upcomingSoundProfile.SoundID, volume, (Int32)(this.fadeInTimeRemain * 1000f));
-		}
-	}
-
-	private void SetMusicVolume(Single volume, SoundProfile soundProfile)
-	{
-		soundProfile.SoundVolume = this.optionVolume * volume;
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume, 0);
-	}
-
-	private void SetMusicVolumeWhileFade(Single oldPlayerVolume, Single newPlayerVolume, SoundProfile soundProfile)
-	{
-		Single num = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
-		Single volume = 0f;
-		if (oldPlayerVolume != 0f)
-		{
-			Single num2 = num / oldPlayerVolume;
-			Single num3 = newPlayerVolume - oldPlayerVolume;
-			volume = num + num3 * num2;
-		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, volume, 0);
-	}
-
-	public void SetMusicPanning(Single panning)
-	{
-		this.playerPanning = panning;
-		if (this.activeSoundProfile != null)
-		{
-			this.SetMusicPanning(panning, this.activeSoundProfile);
-		}
-	}
-
 	private void SetMusicPanning(Single panning, SoundProfile soundProfile)
 	{
 		soundProfile.Panning = panning;
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
 	}
 
-	public void SetMusicPitch(Single pitch)
-	{
-		this.playerPitch = pitch;
-		if (this.activeSoundProfile != null)
-		{
-			this.SetMusicPitch(pitch, this.activeSoundProfile);
-		}
-	}
-
 	private void SetMusicPitch(Single pitch, SoundProfile soundProfile)
 	{
 		soundProfile.Pitch = pitch;
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-	}
-
-	public void SeekActiveSound(Int32 offsetTimeMSec)
-	{
-		if (this.activeSoundProfile == null)
-		{
-			SoundLib.Log("(activeSoundProfile == null");
-			return;
-		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, 0);
-		this.activeSoundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(this.activeSoundProfile.BankID);
-		Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
-		if (num != 0)
-		{
-			SoundLib.LogError("startSoundErrno errors with value: " + num);
-		}
 	}
 
 	public override void Update()

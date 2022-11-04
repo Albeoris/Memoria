@@ -39,51 +39,11 @@ public abstract class SoundPlayer
 		this.m_isInitialized = false;
 	}
 
-	public void CreateSound(SoundProfile soundProfile)
-	{
-		Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
-		if (num == 0)
-		{
-			SoundLib.Log("CreateSound failure");
-			return;
-		}
-		soundProfile.SoundID = num;
-		SoundLib.Log("CreateSound Success");
-	}
-
-	public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f)
-	{
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
-		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
-		{
-			SoundLib.Log("failed to play sound");
-			soundProfile.SoundID = 0;
-			return;
-		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * playerVolume, 0);
-		SoundLib.Log("Panning: " + soundProfile.Panning);
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-		SoundLib.Log("StartSound Success");
-	}
-
-	public void PauseSound(SoundProfile soundProfile)
-	{
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
-		SoundLib.Log("PauseSound Success");
-	}
-
-	public void ResumeSound(SoundProfile soundProfile)
-	{
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
-		SoundLib.Log("ResumeSound Success");
-	}
-
-	public void StopSound(SoundProfile soundProfile)
-	{
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
-		SoundLib.Log("StopSound Success");
-	}
+	public void CreateSound(SoundProfile soundProfile) => StaticCreateSound(soundProfile);
+	public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f) => StaticStartSound(soundProfile, playerVolume);
+	public void PauseSound(SoundProfile soundProfile) => StaticPauseSound(soundProfile);
+	public void ResumeSound(SoundProfile soundProfile) => StaticResumeSound(soundProfile);
+	public void StopSound(SoundProfile soundProfile) => StaticStopSound(soundProfile);
 
 	public static void StaticCreateSound(SoundProfile soundProfile)
 	{

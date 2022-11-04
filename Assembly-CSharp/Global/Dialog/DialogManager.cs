@@ -214,6 +214,7 @@ public class DialogManager : Singleton<DialogManager>
 			dialogFromPool.TextId = textId;
 			dialogFromPool.Caption = FF9TextTool.GetDialogCaptionText(captionType);
 			dialogFromPool.CapType = captionType;
+			dialogFromPool.onOptionChange = null;
 			if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
 			{
 				if (FF9TextTool.IsBattleTextLoaded)

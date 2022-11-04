@@ -475,6 +475,7 @@ public class btl_scrp
 			btl.def_attr.weak = (Byte)val;
 			break;
 		case 52u:
+			//very start of battle
 			if (ff9Battle.btl_phase == 2)
 			{
 				btl.tar_mode = 0;
@@ -756,6 +757,7 @@ public class btl_scrp
 		switch (id)
 		{
 		case 32u:
+			// end of fight? before Baku chat
 			UIManager.Battle.FF9BMenu_EnableMenu(false);
 			ff9Battle.btl_escape_key = 0;
 			ff9Battle.cmd_status &= 65533;
@@ -766,6 +768,7 @@ public class btl_scrp
 				next.bi.cmd_idle = 0;
 			break;
 		case 33u:
+			// end of fight
 			if (ff9Battle.btl_phase == 1)
 			{
 				ff.btl_result = (Byte)val;
@@ -792,6 +795,7 @@ public class btl_scrp
 			}
 			break;
 		case 35u:
+			// start of fight system (Baku tutorial)
 			if (ff9Battle.btl_phase == 1)
 			{
 				BTL_SCENE_INFO info = ff9Battle.btl_scene.Info;

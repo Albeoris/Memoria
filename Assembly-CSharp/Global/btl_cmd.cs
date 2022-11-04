@@ -671,6 +671,7 @@ public class btl_cmd
                     }
                     if (!ConfirmValidTarget(cmd))
                         break;
+
                     btl_vfx.SelectCommandVfx(cmd);
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
                     break;
@@ -690,6 +691,7 @@ public class btl_cmd
             }
             if (cmd.info.mode == command_mode_index.CMD_MODE_DONE)
                 FinishCommand(btlsys, cmd);
+            
         }
     }
 
@@ -1511,6 +1513,12 @@ public class btl_cmd
 
         BTL_DATA caster = cmd.regist;
         BattleCommandId num = cmd.cmd_no;
+        BattleUnit bu_caster = new BattleUnit(cmd.regist);
+        BattleUnit bu_target = new BattleUnit(target);
+
+        VoicePlayer.PlayBattleActionTakenVoice(bu_caster, cmd);
+        VoicePlayer.PlayBattleActionRecivedVoice(bu_target, cmd);
+        
         switch (num)
         {
             case BattleCommandId.Jump:

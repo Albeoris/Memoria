@@ -1,7 +1,26 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 public class SdLibAPIWithProLicense : ISdLibAPI
 {
+	[DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime")]
+	private static extern Int32 DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID);
+
+	[DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_SoundCtrl_GetPlayTime")]
+	private static extern Int32 DLLSdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID);
+
+    public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
+    {
+		Int32 t = DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID);
+		return t;
+	}
+
+	public override Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID)
+	{
+		Int32 t = DLLSdSoundSystem_SoundCtrl_GetPlayTime(soundID);
+		return t;
+	}
+
 	public override Int32 SdSoundSystem_Create(String config)
 	{
 		return SdLibAPI.SdSoundSystem_Create(config);

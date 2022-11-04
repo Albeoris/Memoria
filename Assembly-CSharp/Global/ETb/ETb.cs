@@ -10,7 +10,7 @@ using Object = System.Object;
 public class ETb
 {
 	public static SoundDatabase voiceDatabase = new SoundDatabase();
-	private SoundProfile currentVAFile;
+	public static SoundProfile currentVAFile;
 
 	public void InitMessage()
 	{
@@ -193,80 +193,7 @@ public class ETb
 			}));
 		}
 
-		String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes);
-		if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
-		{
-			if (dialog.ChoiceNumber > 0)
-			{
-				dialog.onOptionChange = (int msg, int optionIndex) =>
-				{
-					if (currentVAFile != null)
-						SoundLib.voicePlayer.StopSound(currentVAFile);
-
-					string choicePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FF9TextTool.FieldZoneId, mes, optionIndex);
-					SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, optionIndex, choicePath));
-
-					currentVAFile = new SoundProfile
-					{
-						Code = num.ToString(),
-						Name = choicePath,
-						SoundIndex = num,
-						ResourceID = choicePath,
-						SoundProfileType = SoundProfileType.Voice,
-						SoundVolume = 1f,
-						Panning = 0f,
-						Pitch = 0.5f
-					};
-
-					SoundLoaderProxy.Instance.Load(currentVAFile,
-					(soundProfile, db) =>
-					{
-						if (soundProfile != null)
-						{
-							SoundLib.voicePlayer.CreateSound(soundProfile);
-							SoundLib.voicePlayer.StartSound(soundProfile);
-							if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-								db.Update(soundProfile);
-							else
-								db.Create(soundProfile);
-						}
-					},
-					ETb.voiceDatabase);
-				};
-			}
-
-			currentVAFile = new SoundProfile
-			{
-				Code = num.ToString(),
-				Name = vaPath,
-				SoundIndex = num,
-				ResourceID = vaPath,
-				SoundProfileType = SoundProfileType.Voice,
-				SoundVolume = 1f,
-				Panning = 0f,
-				Pitch = 0.5f
-			};
-			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FF9TextTool.FieldZoneId, mes, dialog.Phrase, vaPath));
-
-			SoundLoaderProxy.Instance.Load(currentVAFile,
-			(soundProfile, db) =>
-			{
-				if (soundProfile != null)
-				{
-					SoundLib.voicePlayer.CreateSound(soundProfile);
-					SoundLib.voicePlayer.StartSound(soundProfile);
-					if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
-						db.Update(soundProfile);
-					else
-						db.Create(soundProfile);
-				}
-			},
-			ETb.voiceDatabase);
-        }
-        else
-		{
-			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FF9TextTool.FieldZoneId, mes, dialog.Phrase, vaPath));
-		}
+		VoicePlayer.PlayFieldZoneDialogAudio(FF9TextTool.FieldZoneId, mes, dialog);
 
 		this.gMesCount++;
 		EIcon.SetHereIcon(0);
@@ -285,11 +212,7 @@ public class ETb
 
 	public void OnDialogFinish(Int32 choice)
 	{
-		if (currentVAFile != null)
-			SoundLib.voicePlayer.StopSound(currentVAFile);
-		if (choice > -1)
-		{
-		}
+		VoicePlayer.FieldZoneDialogAudioFinished(choice);
 	}
 
 	public Boolean MesWinActive(Int32 num)
