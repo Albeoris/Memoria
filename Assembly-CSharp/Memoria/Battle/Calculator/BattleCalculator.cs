@@ -61,11 +61,24 @@ namespace Memoria
         public static Boolean IsATBEnabled => UIManager.Battle.FF9BMenu_IsEnable() && UIManager.Battle.FF9BMenu_IsEnableAtb();
         public static Int32 ATBTickCount => HonoluluBattleMain.counterATB; // Number of times the ATB advanced this tick (there are >1 only in turn-based and fast speed modes)
         public static Int32 SharedATBSpeedCoef => btl_para.GetATBCoef(); // Default increment for each ATB advancement
+        public static Boolean IsRandomBattle => FF9StateSystem.Battle.isRandomEncounter && !IsFriendlyBattle;
+        public static Boolean IsFriendlyBattle => ff9.w_friendlyBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);
+        public static Boolean IsRagtimeBattle => ff9.w_ragtimeBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);
         public static BattleCommand EscapeCommand => new BattleCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape);
 
         public static Int32 TargetCount(Boolean isPlayer)
         {
             return (Int32)btl_util.SumOfTarget(isPlayer ? 1u : 0u);
+        }
+
+        public static Int32 BattleUnitCount(Boolean isPlayer)
+        {
+            Int32 count = 0;
+            Byte playerByte = isPlayer ? (Byte)1: (Byte)0;
+            for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                if (next.bi.player == playerByte)
+                    count++;
+            return count;
         }
 
         public static IEnumerable<BattleUnit> EnumerateUnits()

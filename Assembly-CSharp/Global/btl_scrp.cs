@@ -756,8 +756,7 @@ public class btl_scrp
 		FF9StateGlobal ff = FF9StateSystem.Common.FF9;
 		switch (id)
 		{
-		case 32u:
-			// end of fight? before Baku chat
+		case 32u: // Disable ATB
 			UIManager.Battle.FF9BMenu_EnableMenu(false);
 			ff9Battle.btl_escape_key = 0;
 			ff9Battle.cmd_status &= 65533;
@@ -767,8 +766,7 @@ public class btl_scrp
 			for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
 				next.bi.cmd_idle = 0;
 			break;
-		case 33u:
-			// end of fight
+		case 33u: // End battle
 			if (ff9Battle.btl_phase == 1)
 			{
 				ff.btl_result = (Byte)val;
@@ -784,9 +782,13 @@ public class btl_scrp
 					ff9Battle.btl_phase = 8;
 					ff9Battle.btl_seq = 0;
 				}
+				if (ff.btl_result == 5) // Scripted interruption, such as Black Waltz 3 (first time)
+					BattleVoice.TriggerOnBattleInOut("BattleInterrupted");
+				else if (ff.btl_result == 7) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
+					BattleVoice.TriggerOnBattleInOut("EnemyEscape");
 			}
 			break;
-		case 34u:
+		case 34u: // Game Over
 			if (ff9Battle.btl_phase == 1)
 			{
 				ff9Battle.btl_phase = 7;
@@ -794,8 +796,7 @@ public class btl_scrp
 				ff.btl_result = 3;
 			}
 			break;
-		case 35u:
-			// start of fight system (Baku tutorial)
+		case 35u: // Enable ATB
 			if (ff9Battle.btl_phase == 1)
 			{
 				BTL_SCENE_INFO info = ff9Battle.btl_scene.Info;
@@ -805,11 +806,11 @@ public class btl_scrp
 					info.StartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
 			}
 			break;
-		case 36u:
+		case 36u: // Run Camera
 			if (ff9Battle.btl_phase == 1)
 				SFX.SetCamera(val);
 			break;
-		case 37u:
+		case 37u: // Change next field
 		{
 			FF9StateGlobal ff9StateGlobal = ff;
 			ff9StateGlobal.btl_flag = (Byte)(ff9StateGlobal.btl_flag | 1);

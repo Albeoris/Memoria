@@ -145,34 +145,24 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             switch (ff9.btl_result)
             {
-                // battle has been lost
-                case 3:
-                case 6:
-                    // is this loss scripted E.G (Beatrix fights) and if so it's not a Game Over
+                case 3: // Scripted defeat
+                case 6: // Normal defeat
                     if (!btlsys.btl_scene.Info.NoGameOver)
                     {
                         ff9.btl_result = 6;
-
-                        VoicePlayer.PlayBattleEndVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleEndType.Forced);
                         break;
                     }
+                    // Non-critical battles, such as battles during the Festival of the Hunt
                     for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                         if (next.bi.player != 0)
                             SavePlayerData(next, false);
-
-                    VoicePlayer.PlayBattleEndVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleEndType.GameOver);
                     break;
-                // battle has been won
-                default:
+                default: // Battle has been won or interrupted
                     if (ff9.btl_result == 1 || ff9.btl_result == 2)
-                    {
                         BattleAchievement.UpdateEndBattleAchievement();
-                    }
                     for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                         if (next.bi.player != 0)
                             SavePlayerData(next, false);
-
-                    VoicePlayer.PlayBattleEndVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleEndType.Victory);
                     break;
             }
             return 1;
@@ -192,12 +182,8 @@ namespace FF9
             {
                 PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
                 if (player != null)
-                {
                     foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
-                    {
                         saFeature.TriggerOnBattleStart(ref backAttackChance, ref preemptiveChance, ref preemptivePriority);
-                    }
-                }
             }
             if (!info.SpecialStart && !info.BackAttack && !info.Preemptive)
             {
@@ -212,15 +198,6 @@ namespace FF9
             }
             if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
-
-            if (info.SpecialStart)
-                VoicePlayer.PlayBattleStartVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleStartType.Special);
-            else if (info.BackAttack || start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
-                VoicePlayer.PlayBattleStartVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleStartType.Back);
-            else if (info.Preemptive || start_type == battle_start_type_tags.BTL_START_FIRST_ATTACK)
-                VoicePlayer.PlayBattleStartVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleStartType.Preemtive);
-            else
-                VoicePlayer.PlayBattleStartVoice(ref FF9StateSystem.Common.FF9.party.member, VoicePlayer.BattleStartType.Normal);
 
             return start_type;
         }

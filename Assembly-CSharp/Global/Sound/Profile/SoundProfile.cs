@@ -16,12 +16,8 @@ public class SoundProfile
 		this.Pitch = 0f;
 		this.SoundProfileState = SoundProfileState.Idle;
 		this.SoundProfileType = SoundProfileType.Default;
-        this.StartPlayTime = 0f;
-		this.onComplete = null;
+		this.StartPlayTime = 0f;
     }
-	public delegate void onCompleteDelegate();
-
-	public onCompleteDelegate onComplete;
 
 	public String Code;
 

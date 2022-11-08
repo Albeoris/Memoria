@@ -10,6 +10,7 @@ public partial class EventEngine
 {
     public Int32 ProcessEvents()
     {
+        VoicePlayer.scriptRequestedButtonPress = false;
         if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 303 || (Int32)FF9StateSystem.Common.FF9.fldMapNo == 304)
         {
             if (FF9StateSystem.Settings.IsNoEncounter)

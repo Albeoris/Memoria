@@ -1024,6 +1024,7 @@ public class EBin
             }
             case op_binary.B_KEYON: // B_KEYON = 79
             {
+                VoicePlayer.scriptRequestedButtonPress = true;
                 Int32 keyOn = (Int32)ETb.KeyOn();
                 _v0 = EvaluateValueExpression();
                 _v0 &= keyOn;

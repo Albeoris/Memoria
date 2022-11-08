@@ -183,6 +183,13 @@ public static class btl_stat
                 btl_mot.HideMesh(btl, btl.mesh_banish, true);
                 break;
             case BattleStatus.Mini:
+                if ((stat.permanent & BattleStatus.Mini) != 0)
+                    return 1;
+                if ((stat.cur & BattleStatus.Mini) != 0)
+                {
+                    btl_stat.RemoveStatus(btl, BattleStatus.Mini);
+                    return 2;
+                }
                 stat.cur ^= status;
                 geo.geoScaleUpdate(btl, true);
                 break;
@@ -217,10 +224,8 @@ public static class btl_stat
             SetOprStatusCount(btl, statusIndex);
         HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit, status);
         if (btl.bi.player != 0)
-        {
-            VoicePlayer.PlayBattleStatusAdded(btl, status);
             BattleAchievement.UpdateAbnormalStatus(status);
-        }
+        BattleVoice.TriggerOnStatusChange(btl, "Added", status);
         return 2;
     }
 
@@ -343,8 +348,8 @@ public static class btl_stat
                 btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 break;
         }
-        VoicePlayer.PlayBattleStatusRemoved(btl, status);
         HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status);
+        BattleVoice.TriggerOnStatusChange(btl, "Removed", status);
         return 2;
     }
 
@@ -756,11 +761,18 @@ public static class btl_stat
             {
                 if (((Int32)status & Int32.MinValue) != 0)
                 {
-                    if (!btl_cmd.CheckUsingCommand(btl.cmd[2]) && (Int32)AlterStatus(btl, BattleStatus.Petrify) != 2)
+                    if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
                     {
-                        RemoveStatus(btl, BattleStatus.GradualPetrify);
-                        btl.fig_info |= Param.FIG_INFO_MISS;
-                        btl2d.Btl2dReq(btl);
+                        if (AlterStatus(btl, BattleStatus.Petrify) == 2)
+                        {
+                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.GradualPetrify);
+                        }
+                        else
+                        {
+                            RemoveStatus(btl, BattleStatus.GradualPetrify);
+                            btl.fig_info |= Param.FIG_INFO_MISS;
+                            btl2d.Btl2dReq(btl);
+                        }
                     }
                 }
                 else if ((status & BattleStatus.Doom) != 0)
@@ -774,6 +786,7 @@ public static class btl_stat
                             doom_damage = (Int32)btl.cur.hp - 1;
                         if (doom_damage > 0)
                         {
+                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
                             btl_stat.RemoveStatus(btl, status);
                             btl.fig_info = Param.FIG_INFO_DISP_HP;
                             btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
@@ -787,6 +800,7 @@ public static class btl_stat
                     }
                     else
                     {
+                        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
                         btl_stat.AlterStatus(btl, BattleStatus.Death);
                         btl2d.Btl2dReq(btl);
                     }

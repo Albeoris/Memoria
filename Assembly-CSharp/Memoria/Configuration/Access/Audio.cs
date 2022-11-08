@@ -19,12 +19,7 @@ namespace Memoria
                 set => Instance._audio.MusicVolume.Value = value;
             }
 
-            public static Boolean LogVoiceActing => Instance._audio.LogVoiceActing;
             public static Boolean PriorityToOGG => Instance._audio.PriorityToOGG;
-
-            public static Boolean StopVoiceWhenDialogDismissed = Instance._audio.StopVoiceWhenDialogDismissed;
-
-            public static Boolean AutoDismissDialogAfterCompletion = Instance._audio.AutoDismissDialogAfterCompletion;
 
             public static void SaveSoundVolume()
             {
@@ -34,32 +29,6 @@ namespace Memoria
             public static void SaveMusicVolume()
             {
                 SaveValue(Instance._audio.Name, Instance._audio.MusicVolume);
-            }
-
-            public static Int32 CharAttackAudioChance => Instance._audio.CharAttackAudioChance;
-            public static Int32 CharHitAudioChance => Instance._audio.CharHitAudioChance;
-            public static Int32 StartBattleChance => Instance._audio.StartBattleChance;
-            public static Int32 EndBattleChance => Instance._audio.EndBattleChance;
-            public static Int32 CharDeathChance => Instance._audio.CharDeathChance;
-            public static Int32 CharAutoLifeChance => Instance._audio.CharAutoLifeChance;
-            public static Int32 CharStatusRemovedChance => Instance._audio.CharStatusRemovedChance;
-            public static Int32 CharStatusAfflictedChance => Instance._audio.CharStatusAfflictedChance;
-
-            public static string[] preventmultiplay = Instance._audio.PreventMultiPlay;
-            private static Dictionary<string, UInt16> tmp;
-            public static Dictionary<string, UInt16> preventMultiPlay
-            {
-                get
-                {
-                    if (tmp == null) {
-                        tmp = new Dictionary<string, UInt16>();
-                        foreach (string filePath in preventmultiplay)
-                        {
-                            tmp.Add(filePath, 0);
-                        }
-                    }
-                    return tmp;
-                }
             }
         }
     }

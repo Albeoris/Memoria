@@ -10,18 +10,13 @@ using Object = System.Object;
 public class ETb
 {
 	public static SoundDatabase voiceDatabase = new SoundDatabase();
-	public static SoundProfile currentVAFile;
 
 	public void InitMessage()
 	{
 		if (this.sInitMesInh)
-		{
 			this.sInitMesInh = false;
-		}
 		else
-		{
 			this.YWindow_CloseAll();
-		}
 		this.InitMesWin();
 	}
 
@@ -82,12 +77,9 @@ public class ETb
 
 	public void NewMesWin(Int32 mes, Int32 num, Int32 flags, PosObj targetPo)
 	{
-		currentVAFile = null;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		if (this.IsSkipped(instance, mes, num, flags, targetPo))
-		{
 			return;
-		}
 		this.DisposWindowByID(num);
 		Dialog.CaptionType captionType = Dialog.CaptionType.None;
 		Dialog.WindowStyle windowStyle;
@@ -99,26 +91,16 @@ public class ETb
 		{
 			windowStyle = Dialog.WindowStyle.WindowStylePlain;
 			if ((flags & 8) > 0)
-			{
 				captionType = Dialog.CaptionType.Mognet;
-			}
 			else if ((flags & 64) > 0)
-			{
 				captionType = Dialog.CaptionType.ActiveTimeEvent;
-			}
 		}
 		if (windowStyle == Dialog.WindowStyle.WindowStylePlain)
-		{
-			targetPo = (PosObj)null;
-		}
+			targetPo = null;
 		if ((flags & 16) > 0)
-		{
 			windowStyle = Dialog.WindowStyle.WindowStyleTransparent;
-		}
 		else if ((flags & 4) > 0)
-		{
 			windowStyle = Dialog.WindowStyle.WindowStyleNoTail;
-		}
 		if ((flags & 1) <= 0)
 		{
 			ETb.sChoose = ETb.sChooseInit;
@@ -126,27 +108,23 @@ public class ETb
 		}
 		if (instance.gMode == 3)
 		{
-			targetPo = (PosObj)null;
-			if (mes != 40)
-			{
-				if (mes == 41)
-				{
-					EIcon.ShowDialogBubble(true);
-				}
-			}
-			else
-			{
+			targetPo = null;
+			if (mes == 40)
 				EIcon.ShowDialogBubble(false);
-			}
+			else if (mes == 41)
+				EIcon.ShowDialogBubble(true);
 		}
 		EventHUD.CheckSpecialHUDFromMesId(mes, true);
 		if (FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (mes == 147 || mes == 148))
-		{
-			NGUIText.ForceShowButton = true;
-		}
-		Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, this.OnDialogFinish, captionType);
+			NGUIText.ForceShowButton = true; // Alexandria/Main Street, "Press [BTN] and [BTN] alternately!"
 
-		if (FF9StateSystem.Common.FF9.fldMapNo == 1657)
+		Dialog dialog = null;
+		if (Configuration.VoiceActing.Enabled) // Lambda expression captures the variable "dialog", taking the correct assignment into account
+			dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, choiceIndex => VoicePlayer.FieldZoneDialogClosed(dialog), captionType);
+		else
+			dialog = Singleton<DialogManager>.Instance.AttachDialog(num, windowStyle, mes, targetPo, null, captionType);
+
+		if (FF9StateSystem.Common.FF9.fldMapNo == 1657) // Iifa Tree/Tree Roots
 		{
 			switch (FF9StateSystem.Settings.CurrentLanguage)
 			{
@@ -155,25 +133,21 @@ public class ETb
 				case "Spanish":
 				case "German":
 				case "Italian":
-					dialog.FocusToActor = !(mes == 183 || mes == 166);
+					dialog.FocusToActor = mes != 183 && mes != 166; // "H-Hey!" or "Whoa!" when Amarant passes next to Vivi/Garnet/Eiko on the narrow root
 					break;
 				case "Japanese":
-					dialog.FocusToActor = !(mes == 187 || mes == 170);
+					dialog.FocusToActor = mes != 187 && mes != 170;
 					break;
 				case "French":
-					dialog.FocusToActor = !(mes == 185 || mes == 168);
+					dialog.FocusToActor = mes != 185 && mes != 168;
 					break;
 			}
 		}
 
-		if (dialog == (UnityEngine.Object)null)
-		{
+		if (dialog == null)
 			return;
-		}
 		if ((flags & 32) > 0)
-		{
 			dialog.FocusToActor = false;
-		}
 		if (ETb.isMessageDebug)
 		{
 			global::Debug.Log(String.Concat(new Object[]
@@ -208,11 +182,6 @@ public class ETb
 		EMinigame.AtleteQueenAchievement_Debug(currentLanguage, mes);
 		EMinigame.TreasureHunterSAchievement(currentLanguage, mes);
 		ETb.FixChocoAccidenlyFly(dialog);
-	}
-
-	public void OnDialogFinish(Int32 choice)
-	{
-		VoicePlayer.FieldZoneDialogAudioFinished(choice);
 	}
 
 	public Boolean MesWinActive(Int32 num)
@@ -267,26 +236,25 @@ public class ETb
 		return FF9TextTool.CardName(index - EventEngine.kCItemOfs);
 	}
 
-	public void SetChooseParam(Int32 mask, Int32 pos)
+	public void SetChooseParam(Int32 availMask, Int32 initAbsoluteOptionIndex)
 	{
-		ETb.sChooseMaskInit = mask;
-		Int32 num = -1;
-		while (pos >= 0 && mask > 0)
+		ETb.sChooseMaskInit = availMask;
+		Int32 initAvailOptionIndex = -1;
+		while (initAbsoluteOptionIndex >= 0 && availMask > 0)
 		{
-			num += (mask & 1);
-			pos--;
-			mask >>= 1;
+			if ((availMask & 1) != 0)
+				initAvailOptionIndex++;
+			initAbsoluteOptionIndex--;
+			availMask >>= 1;
 		}
-		ETb.sChooseInit = (Int32)((num < 0) ? 0 : num);
+		ETb.sChooseInit = Math.Max(0, initAvailOptionIndex);
 	}
 
 	public Int32 GetChoose()
 	{
 		ETb.sChoose = DialogManager.SelectChoice;
 		if (ETb.isMessageDebug)
-		{
 			global::Debug.Log("Event choice value:" + ETb.sChoose);
-		}
 		return ETb.sChoose;
 	}
 
@@ -298,11 +266,9 @@ public class ETb
 			String[] tableText = FF9TextTool.GetTableText(bank);
 			if (tableText != null)
 			{
-				Int32 num = this.gMesValue[(Int32)((UIntPtr)index)];
-				if (num < (Int32)tableText.Length)
-				{
-					result = tableText[num];
-				}
+				Int32 tableIndex = this.gMesValue[index];
+				if (tableIndex < tableText.Length)
+					result = tableText[tableIndex];
 			}
 		}
 		return result;
@@ -312,8 +278,8 @@ public class ETb
 	{
 		if (eventEngine.gMode == 1)
 		{
-			Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
-			if (fldMapNo == 1652)
+			Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+			if (fldMapNo == 1652) // Iifa Tree/Roots
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 			    switch (currentLanguage)
@@ -322,22 +288,20 @@ public class ETb
                         return mes == 146;
                     case "French":
                         return mes == 144;
-
                 }
-			    
-				return mes == 142;
+				return mes == 142; // Zidane: "How far is it gonna go...?"
 			}
-			if (fldMapNo == 1659)
+			if (fldMapNo == 1659) // Iifa Tree/Seashore
 			{
-				if (targetPo.sid == 1)
+				if (targetPo.sid == 1) // Queen Brahne
 				{
 					Dialog dialogByTextId = Singleton<DialogManager>.Instance.GetDialogByTextId(mes);
-					return dialogByTextId != (UnityEngine.Object)null;
+					return dialogByTextId != null;
 				}
 			}
-			else if (fldMapNo == 2209 && targetPo.sid == 9)
+			else if (fldMapNo == 2209 && targetPo.sid == 9) // Palace/Sanctum, Zidane
 			{
-				return mes == 393;
+				return mes == 393; // "No!!!" (when chasing after Kuja)
 			}
 		}
 		return false;
@@ -419,21 +383,18 @@ public class ETb
     public static void ProcessDialog(Dialog dialog)
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        if (instance == (UnityEngine.Object)null)
-        {
+        if (instance == null)
             return;
-        }
-        if (instance.gMode == 3)
+        if (instance.gMode == 3) // World map
         {
-            if (dialog.TextId == 40 || dialog.TextId == 41)
-            {
-                EIcon.HideDialogBubble();
-            }
+            if (dialog.TextId == 40 || dialog.TextId == 41) // "Enter with [BTN]"
+				EIcon.HideDialogBubble();
             ETb.CheckVehicleTutorial(dialog);
         }
         else if (instance.gMode == 1 && FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (dialog.TextId == 147 || dialog.TextId == 148))
         {
-            NGUIText.ForceShowButton = false;
+			// Alexandria/Main Street, "Press [BTN] and [BTN] alternately!"
+			NGUIText.ForceShowButton = false;
         }
     }
 
@@ -448,27 +409,21 @@ public class ETb
 				", numOfChoices ",
 				dialog.ChoiceNumber
 			}));
-			Boolean isCompulsory = false;
-			if (ETb.LastATEDialogID == -1 && dialog.Id == 0)
-			{
-				isCompulsory = true;
-			}
+			Boolean isCompulsory = ETb.LastATEDialogID == -1 && dialog.Id == 0;
 			if (dialog.Id != 1 || DialogManager.SelectChoice != dialog.ChoiceNumber - 1 || dialog.ChoiceNumber <= 0)
 			{
 				if (dialog.Id != 0 || ETb.LastATEDialogID != 1)
 				{
-					Int32 num = EMinigame.MappingATEID(dialog, DialogManager.SelectChoice, isCompulsory);
-					EMinigame.ATE80Achievement(num);
-					global::Debug.Log("ATEID = " + num);
+					Int32 ateID = EMinigame.MappingATEID(dialog, DialogManager.SelectChoice, isCompulsory);
+					EMinigame.ATE80Achievement(ateID);
+					global::Debug.Log("ATEID = " + ateID);
 				}
 			}
 			ETb.LastATEDialogID = dialog.Id;
 			if (FF9StateSystem.Common.FF9.fldLocNo == 40 && FF9StateSystem.Common.FF9.fldMapNo == 206 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 1900)
 			{
-				if (DialogManager.SelectChoice == 1)
-				{
+				if (DialogManager.SelectChoice == 1) // Prima Vista/Crash Site, trying to avoid the ATE
 					ETb.LastATEDialogID = -1;
-				}
 			}
 			else if (dialog.Id == 0)
 			{
@@ -499,9 +454,7 @@ public class ETb
 	private static void FixChocoAccidenlyFly(Dialog dialog)
 	{
 		if (PersistenSingleton<EventEngine>.Instance.gMode == 3 && EventCollision.IsChocoboWalkingInForestArea() && (dialog.TextId == 54 || dialog.TextId == 55 || dialog.TextId == 56 || dialog.TextId == 57 || dialog.TextId == 58 || dialog.TextId == 59 || dialog.TextId == 60 || dialog.TextId == 61 || dialog.TextId == 62))
-		{
-			PersistenSingleton<UIManager>.Instance.Dialogs.EnableCollider(false);
-		}
+			PersistenSingleton<UIManager>.Instance.Dialogs.EnableCollider(false); // "Kweh?" and the other messages displayed with the beak button
 	}
 
 	public const Int32 kMesValueN = 8;

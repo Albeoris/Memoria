@@ -188,7 +188,7 @@ public class SoundLib : MonoBehaviour
 
 	public static void VALog(Object message)
     {
-		if (Configuration.Audio.LogVoiceActing)
+		if (Configuration.VoiceActing.LogVoiceActing)
 			MLog.Message("[VoiceActing] " + message);
 	}
 
@@ -768,6 +768,7 @@ public class SoundLib : MonoBehaviour
 			SoundLib.movieAudioPlayer.PauseMusic();
 			SoundLib.allSoundDispatchPlayer.PauseAllSounds();
 			SoundLib.sfxSoundPlayer.PauseAllSounds();
+			SoundLib.voicePlayer.PauseAllSounds();
 			SoundLib.isSuspendAllSounds = true;
 		}
 	}
@@ -779,6 +780,7 @@ public class SoundLib : MonoBehaviour
 			SoundLib.movieAudioPlayer.ResumeMusic();
 			SoundLib.allSoundDispatchPlayer.ResumeAllSounds();
 			SoundLib.sfxSoundPlayer.ResumeAllSounds();
+			SoundLib.voicePlayer.ResumeAllSounds();
 			SoundLib.isSuspendAllSounds = false;
 		}
 	}

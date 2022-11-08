@@ -9,6 +9,8 @@ namespace Memoria
         HpRecovery = 2,
         Critical = 4,
         MpAlteration = 8,
-        MpRecovery = 16
+        MpRecovery = 16,
+        HpDamageOrHeal = HpAlteration | HpRecovery,
+        MpDamageOrHeal = MpAlteration | MpRecovery
     }
 }

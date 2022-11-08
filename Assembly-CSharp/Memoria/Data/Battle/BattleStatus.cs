@@ -62,6 +62,7 @@ namespace Memoria.Data
         AlterNoSet = Petrify | Haste | Slow | Mini, // 0x10180001
         PreventEnemyCmd = Immobilized | Death | Sleep, // 0x2021103
         CannotAct = Immobilized | Jump | Death | Sleep,
-        VictoryClear = Confuse | Berserk | Stop | AutoLife | Defend | Poison | Sleep | Regen | Haste | Slow | Float | Shell | Protect | Heat | Freeze | Vanish | Doom | Mini | Reflect | GradualPetrify
+        VictoryClear = Confuse | Berserk | Stop | AutoLife | Defend | Poison | Sleep | Regen | Haste | Slow | Float | Shell | Protect | Heat | Freeze | Vanish | Doom | Mini | Reflect | GradualPetrify,
+        CannotSpeak = Petrify | Venom | Silence | Death | Stop | Sleep | Freeze | Jump
     }
 }

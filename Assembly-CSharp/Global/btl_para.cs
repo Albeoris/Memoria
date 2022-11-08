@@ -212,6 +212,7 @@ public class btl_para
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
         btl.fig_poison_hp = (Int32)num;
+        BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatus.Venom : BattleStatus.Poison);
     }
 
     public static void SetRegeneRecover(BTL_DATA btl)
@@ -239,6 +240,7 @@ public class btl_para
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
         btl.fig_regene_hp = (Int32)num;
+        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Regen);
     }
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
@@ -270,6 +272,7 @@ public class btl_para
                 next.Data.fig_info = Param.FIG_INFO_DISP_HP;
                 SetDamage(next, dmg, 0);
                 btl2d.Btl2dReq(next.Data);
+                BattleVoice.TriggerOnStatusChange(next.Data, "Used", BattleStatus.Trouble);
             }
         }
     }

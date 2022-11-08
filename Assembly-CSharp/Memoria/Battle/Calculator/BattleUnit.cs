@@ -39,7 +39,7 @@ namespace Memoria
             set => Data.out_of_reach = value;
         }
         public Boolean CanMove => Data.bi.atb != 0;
-        public CharacterId PlayerIndex => (CharacterId)Data.bi.slot_no;
+        public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
         public Byte Level => Data.level;
         public Byte Position => Data.bi.line_no;
@@ -174,7 +174,7 @@ namespace Memoria
 
         public Character Player => Character.Find(this);
         public CharacterSerialNumber SerialNumber => btl_util.getSerialNumber(Data);
-        public CharacterCategory PlayerCategory => Player.Category;
+        public CharacterCategory PlayerCategory => IsPlayer ? Player.Category : 0;
         public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
         public WeaponCategory WeapCategory => (WeaponCategory)(Data.weapon != null ? Data.weapon.Category : 0);
         public BattleEnemy Enemy => new BattleEnemy(btl_util.getEnemyPtr(Data));

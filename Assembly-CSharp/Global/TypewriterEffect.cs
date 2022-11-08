@@ -7,45 +7,21 @@ using UnityEngine;
 [AddComponentMenu("NGUI/Interaction/Typewriter Effect")]
 public class TypewriterEffect : MonoBehaviour
 {
-	public Boolean isActive
-	{
-		get
-		{
-			return this.mActive;
-		}
-	}
+	public Boolean isActive => this.mActive;
 
-	public Dictionary<Int32, Int32> DynamicCharsPerSecond
+	public Dictionary<Int32, Single> DynamicCharsPerSecond
 	{
-		set
-		{
-			this.mDynamicCharsPerSecond = value;
-		}
+		set => this.mDynamicCharsPerSecond = value;
 	}
 
 	public Dictionary<Int32, Single> WaitList
 	{
-		set
-		{
-			this.mWaitList = value;
-		}
+		set => this.mWaitList = value;
 	}
 
-	public Int32 CurrentOffset
-	{
-		get
-		{
-			return this.mCurrentOffset;
-		}
-	}
+	public Int32 CurrentOffset => this.mCurrentOffset;
 
-	public Int32 FullTextOffset
-	{
-		get
-		{
-			return this.mFullText.Length;
-		}
-	}
+	public Int32 FullTextOffset => this.mFullText.Length;
 
 	public void ResetToBeginning()
 	{
@@ -130,7 +106,7 @@ public class TypewriterEffect : MonoBehaviour
 		while (this.mCurrentOffset < this.mFullText.Length && this.mNextChar <= RealTime.time)
 		{
 			Int32 num = this.mCurrentOffset;
-			this.charsPerSecond = (Int32)((!this.mDynamicCharsPerSecond.ContainsKey(this.mCurrentOffset)) ? Mathf.Max(1, this.charsPerSecond) : this.mDynamicCharsPerSecond[this.mCurrentOffset]);
+			this.charsPerSecond = this.mDynamicCharsPerSecond.ContainsKey(this.mCurrentOffset) ? this.mDynamicCharsPerSecond[this.mCurrentOffset] : Mathf.Max(1f, this.charsPerSecond);
 			if (this.mWaitList.ContainsKey(this.mCurrentOffset))
 			{
 				if (this.mWaitList[this.mCurrentOffset] > 0f)
@@ -161,7 +137,7 @@ public class TypewriterEffect : MonoBehaviour
 			{
 				break;
 			}
-			Single num3 = (!HonoBehaviorSystem.Instance.IsFastForwardModeActive()) ? (1f / (Single)this.charsPerSecond) : (1f / (Single)(this.charsPerSecond * FF9StateSystem.Settings.FastForwardFactor));
+			Single num3 = HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? 1f / (this.charsPerSecond * FF9StateSystem.Settings.FastForwardFactor) : 1f / this.charsPerSecond;
 			Char c = (Char)((num >= this.mFullText.Length) ? '\n' : this.mFullText[num]);
 			if (c == '\n')
 			{
@@ -277,7 +253,7 @@ public class TypewriterEffect : MonoBehaviour
 
 	public static TypewriterEffect current;
 
-	public Int32 charsPerSecond = 20;
+	public Single charsPerSecond = 20f;
 
 	public Single fadeInTime;
 
@@ -307,7 +283,7 @@ public class TypewriterEffect : MonoBehaviour
 
 	private Boolean mActive;
 
-	private Dictionary<Int32, Int32> mDynamicCharsPerSecond = new Dictionary<Int32, Int32>();
+	private Dictionary<Int32, Single> mDynamicCharsPerSecond = new Dictionary<Int32, Single>();
 
 	private Dictionary<Int32, Single> mWaitList = new Dictionary<Int32, Single>();
 

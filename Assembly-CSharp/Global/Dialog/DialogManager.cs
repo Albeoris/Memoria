@@ -13,30 +13,27 @@ using Object = System.Object;
 
 public class DialogManager : Singleton<DialogManager>
 {
-	public void StartSignalProcess(UILabel label, String fullText, Int32 targetSignal, Dictionary<Int32, Int32> dynamicCharsPerSecond, Dictionary<Int32, Single> waitList)
+	public void StartSignalProcess(UILabel label, String fullText, Int32 targetSignal, Dictionary<Int32, Single> dynamicCharsPerSecond, Dictionary<Int32, Single> waitList)
 	{
 		base.StartCoroutine(this.SignalProcess(label, fullText, targetSignal, dynamicCharsPerSecond, waitList));
 	}
 
-	private IEnumerator SignalProcess(UILabel label, String fullText, Int32 targetSignal, Dictionary<Int32, Int32> dynamicCharsPerSecond, Dictionary<Int32, Single> waitList)
+	private IEnumerator SignalProcess(UILabel label, String fullText, Int32 targetSignal, Dictionary<Int32, Single> dynamicCharsPerSecond, Dictionary<Int32, Single> waitList)
 	{
 		Int32 currentOffset = 0;
 		Int32 length = fullText.Length;
 		Single nextCharTime = 0f;
 		Int32 ff9Signal = 0;
-		Dialog.DialogImage insertImage = (Dialog.DialogImage)null;
+		Dialog.DialogImage insertImage = null;
 		Single charsPerSecond = 0f;
 		while (currentOffset < length)
 		{
 			while (nextCharTime <= RealTime.time)
 			{
-				charsPerSecond = ((!dynamicCharsPerSecond.ContainsKey(currentOffset)) ? Mathf.Max(1f, charsPerSecond) : ((Single)dynamicCharsPerSecond[currentOffset]));
+				charsPerSecond = dynamicCharsPerSecond.ContainsKey(currentOffset) ? dynamicCharsPerSecond[currentOffset] : Mathf.Max(1f, charsPerSecond);
 				if (waitList.ContainsKey(currentOffset) && waitList[currentOffset] > 0f)
 				{
-					Int32 key2;
-					Int32 key = key2 = currentOffset;
-					Single num = waitList[key2];
-					waitList[key] = num - ((!HonoBehaviorSystem.Instance.IsFastForwardModeActive()) ? Time.deltaTime : (Time.deltaTime * (Single)FF9StateSystem.Settings.FastForwardFactor));
+					waitList[currentOffset] -= HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? Time.deltaTime * FF9StateSystem.Settings.FastForwardFactor : Time.deltaTime;
 					break;
 				}
 				if (label.supportEncoding)
@@ -46,15 +43,11 @@ public class DialogManager : Singleton<DialogManager>
 					}
 				}
 				currentOffset++;
-				Single delay = (!HonoBehaviorSystem.Instance.IsFastForwardModeActive()) ? (1f / charsPerSecond) : (1f / (charsPerSecond * (Single)FF9StateSystem.Settings.FastForwardFactor));
+				Single delay = HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? 1f / (charsPerSecond * FF9StateSystem.Settings.FastForwardFactor) : 1f / charsPerSecond;
 				if (nextCharTime == 0f || nextCharTime + delay > RealTime.time)
-				{
 					nextCharTime = RealTime.time + delay;
-				}
 				else
-				{
 					nextCharTime += delay;
-				}
 				NGUIText.ProcessFF9Signal(ref ff9Signal);
 			}
 			yield return new WaitForEndOfFrame();
@@ -94,10 +87,8 @@ public class DialogManager : Singleton<DialogManager>
 	{
 		get
 		{
-			if (this.uiCamera == (UnityEngine.Object)null)
-			{
+			if (this.uiCamera == null)
 				this.uiCamera = base.transform.parent.FindChild("Camera").GetComponent<Camera>();
-			}
 			return this.uiCamera;
 		}
 	}
@@ -106,10 +97,8 @@ public class DialogManager : Singleton<DialogManager>
 	{
 		get
 		{
-			if (this.pointerPanel == (UnityEngine.Object)null)
-			{
+			if (this.pointerPanel == null)
 				this.pointerPanel = base.transform.parent.FindChild("Pointer Container").GetComponent<UIPanel>();
-			}
 			return this.pointerPanel;
 		}
 	}
@@ -135,12 +124,8 @@ public class DialogManager : Singleton<DialogManager>
 		get
 		{
 			foreach (Dialog dialog in this.activeDialogList)
-			{
 				if (dialog.CurrentState != Dialog.State.CompleteAnimation)
-				{
 					return false;
-				}
-			}
 			return this.Visible;
 		}
 	}
@@ -157,7 +142,7 @@ public class DialogManager : Singleton<DialogManager>
 	{
 		get
 		{
-			return EventCollision.IsRidingChocobo() && (this.GetChoiceDialog() != (UnityEngine.Object)null || this.IsDialogNeedControl());
+			return EventCollision.IsRidingChocobo() && (this.GetChoiceDialog() != null || this.IsDialogNeedControl());
 		}
 	}
 
@@ -182,11 +167,11 @@ public class DialogManager : Singleton<DialogManager>
     public Dialog AttachDialog(String phrase, Int32 width, Int32 lineCount, Dialog.TailPosition tailPos, Dialog.WindowStyle style, Vector2 pos, Dialog.CaptionType captionType = Dialog.CaptionType.None)
 	{
 		Dialog dialogFromPool = this.GetDialogFromPool();
-		if (dialogFromPool != (UnityEngine.Object)null)
+		if (dialogFromPool != null)
 		{
 			dialogFromPool.Reset();
-			dialogFromPool.Width = (Single)width;
-			dialogFromPool.LineNumber = (Single)lineCount;
+			dialogFromPool.Width = width;
+			dialogFromPool.LineNumber = lineCount;
 			dialogFromPool.Style = style;
 			dialogFromPool.Tail = tailPos;
 			dialogFromPool.Position = pos;
@@ -195,9 +180,7 @@ public class DialogManager : Singleton<DialogManager>
 			dialogFromPool.Phrase = phrase;
 			dialogFromPool.Show();
 			if (!this.isActivate)
-			{
 				this.ActivateDialogScene();
-			}
 		}
 		return dialogFromPool;
 	}
@@ -214,7 +197,7 @@ public class DialogManager : Singleton<DialogManager>
 			dialogFromPool.TextId = textId;
 			dialogFromPool.Caption = FF9TextTool.GetDialogCaptionText(captionType);
 			dialogFromPool.CapType = captionType;
-			dialogFromPool.onOptionChange = null;
+			dialogFromPool.OnOptionChange = null;
 			if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
 			{
 				if (FF9TextTool.IsBattleTextLoaded)
@@ -241,34 +224,26 @@ public class DialogManager : Singleton<DialogManager>
 
                 // Unsubscribe
                 Dialog.DialogIntDelegate unsubscribe = (c) => FF9TextTool.FieldTextUpdated -= onFieldTextUpdated;
-                listener = (Dialog.DialogIntDelegate)Delegate.Combine(unsubscribe, listener);
+                listener = listener != null ? (Dialog.DialogIntDelegate)Delegate.Combine(unsubscribe, listener) : unsubscribe;
             }
             dialogFromPool.Show();
 			dialogFromPool.AfterDialogHidden = listener;
 			if (!this.isActivate)
-			{
 				this.ActivateDialogScene();
-			}
 		}
 		return dialogFromPool;
 	}
 
 	public Boolean CheckDialogOverlap(Dialog dialog)
 	{
-		foreach (Dialog dialog2 in this.activeDialogList)
+		foreach (Dialog otherDialog in this.activeDialogList)
 		{
-			if (dialog2.gameObject.activeSelf)
+			if (otherDialog.gameObject.activeSelf && otherDialog.IsActive)
 			{
-				Dialog dialog3 = dialog2;
-				if (dialog3.IsActive)
-				{
-					Boolean flag = dialog.FF9Position.x < dialog3.FF9Position.x + dialog3.Size.x && dialog.FF9Position.x + dialog.Size.x > dialog3.FF9Position.x;
-					Boolean flag2 = dialog.FF9Position.y < dialog3.FF9Position.y + dialog3.Size.y && dialog.FF9Position.y + dialog.Size.y > dialog3.FF9Position.y;
-					if (flag && flag2)
-					{
-						return true;
-					}
-				}
+				Boolean overlapX = dialog.FF9Position.x < otherDialog.FF9Position.x + otherDialog.Size.x && dialog.FF9Position.x + dialog.Size.x > otherDialog.FF9Position.x;
+				Boolean overlapY = dialog.FF9Position.y < otherDialog.FF9Position.y + otherDialog.Size.y && dialog.FF9Position.y + dialog.Size.y > otherDialog.FF9Position.y;
+				if (overlapX && overlapY)
+					return true;
 			}
 		}
 		return false;
@@ -277,37 +252,27 @@ public class DialogManager : Singleton<DialogManager>
 	public Boolean CheckDialogShowing(Int32 dialogId)
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			if (dialog.Id == dialogId)
-			{
 				return true;
-			}
-		}
 		return false;
 	}
 
 	public Dialog GetDialogFromPool()
 	{
-		Dialog dialog = (Dialog)null;
+		Dialog dialog = null;
 		try
 		{
 
 			if (this.DialogPool.Count > 0)
-			{
 				dialog = this.DialogPool.Dequeue();
-			}
 			else
-			{
 				dialog = NGUITools.AddChild(base.gameObject, this.DialogPrefab).GetComponent<Dialog>();
-			}
 		}
 		catch
 		{
 		}
-		if (dialog == (UnityEngine.Object)null)
-		{
-			return dialog;
-		}
+		if (dialog == null)
+			return null;
 		this.activeDialogList.Add(dialog);
 		dialog.gameObject.SetActive(true);
 		return dialog;
@@ -406,19 +371,15 @@ public class DialogManager : Singleton<DialogManager>
 
 	private void PreloadDialog()
 	{
-		for (Int32 i = 0; i < (Int32)(DialogManager.MaximumDialogCount - 1); i++)
-		{
+		for (Int32 i = 0; i < DialogManager.MaximumDialogCount - 1; i++)
 			this.AttachDialog("[STRT=10,1][IMME]Load[TIME=1]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, new Vector2(10000f, 10000f), Dialog.CaptionType.None);
-		}
 	}
 
 	private void OnClick()
 	{
 		if (this.isHudActive)
-		{
 			return;
-		}
-		if (this.GetChoiceDialog() == (UnityEngine.Object)null)
+		if (this.GetChoiceDialog() == null)
 		{
 			this.OnKeyConfirm(base.gameObject);
 			EventInput.RecieveDialogConfirm();
@@ -428,20 +389,14 @@ public class DialogManager : Singleton<DialogManager>
 	public void OnDrag(Vector2 delta)
 	{
 		if (PersistenSingleton<UIManager>.Instance.IsPause)
-		{
 			return;
-		}
 		Dialog choiceDialog = this.GetChoiceDialog();
-		if (choiceDialog != (UnityEngine.Object)null)
+		if (choiceDialog != null)
 		{
 			if (delta.y < -50f)
-			{
 				choiceDialog.SetCurrentChoiceRef(1);
-			}
 			else if (delta.y > 50f)
-			{
 				choiceDialog.SetCurrentChoiceRef(-1);
-			}
 		}
 	}
 
@@ -464,37 +419,33 @@ public class DialogManager : Singleton<DialogManager>
 	public void OnItemSelect(GameObject go)
 	{
 		if (PersistenSingleton<UIManager>.Instance.IsPause)
-		{
 			return;
-		}
 		Dialog choiceDialog = this.GetChoiceDialog();
-		if (choiceDialog != (UnityEngine.Object)null)
-		{
+		if (choiceDialog != null)
 			choiceDialog.OnItemSelect(go);
-		}
 	}
 
 	private void ActivateDialogScene()
 	{
-		Boolean flag = true;
+		Boolean shouldActivate = true;
 		if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD)
 		{
-			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[(Int32)ff9.w_moveActorPtr.originalActor.index];
+			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index];
 			if (ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && UIManager.World.CurrentState != WorldHUD.State.FullMap && !this.HasChocoboMenu && !ff9.w_isMogActive)
 			{
-				Boolean flag2 = false;
+				Boolean hasUIDialog = false;
 				foreach (Dialog dialog in this.activeDialogList)
 				{
 					if (dialog.Id == DialogManager.UIDialogId)
 					{
-						flag2 = true;
+						hasUIDialog = true;
 						break;
 					}
 				}
-				flag = flag2;
+				shouldActivate = hasUIDialog;
 			}
 		}
-		if (flag)
+		if (shouldActivate)
 		{
 			base.gameObject.GetComponent<BoxCollider>().enabled = true;
 			this.isActivate = true;
@@ -503,16 +454,14 @@ public class DialogManager : Singleton<DialogManager>
 
 	private void DeactivateDialogScene()
 	{
-		Boolean flag = this.activeDialogList.Count == 0;
+		Boolean shouldDeactivate = this.activeDialogList.Count == 0;
 		if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD)
 		{
-			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[(Int32)ff9.w_moveActorPtr.originalActor.index];
+			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index];
 			if (ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && UIManager.World.CurrentState != WorldHUD.State.FullMap && !this.HasChocoboMenu && !ff9.w_isMogActive)
-			{
-				flag = true;
-			}
+				shouldDeactivate = true;
 		}
-		if (flag)
+		if (shouldDeactivate)
 		{
 			this.DialogChoiceConfirmHud.SetActive(false);
 			this.DialogChoiceCancelHud.SetActive(false);
@@ -525,115 +474,84 @@ public class DialogManager : Singleton<DialogManager>
 	public void PauseAllDialog(Boolean isPause)
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			dialog.PauseDialog(isPause);
-		}
 	}
 
-	public Dialog GetDialogByWindowID(Int32 follow)
+	public Dialog GetDialogByWindowID(Int32 winId)
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
-			if (dialog.Id == follow)
-			{
+			if (dialog.Id == winId)
 				return dialog;
-			}
-		}
-		return (Dialog)null;
+		return null;
 	}
 
 	public Dialog GetChoiceDialog()
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			if (dialog.StartChoiceRow > -1)
-			{
 				return dialog;
-			}
-		}
-		return (Dialog)null;
+		return null;
 	}
 
 	public Boolean IsDialogNeedControl()
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			if (!dialog.FlagButtonInh)
-			{
 				return true;
-			}
-		}
 		return false;
 	}
 
 	public void ForceControlByEvent(Boolean control)
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			dialog.FlagButtonInh = control;
-		}
 	}
 
 	public void RiseAll()
 	{
 		foreach (Dialog dialog in this.activeDialogList)
 		{
-			if (dialog.Panel.depth < (Int32)(Dialog.DialogAdditionalRaiseDepth + Dialog.DialogMaximumDepth))
+			if (dialog.Panel.depth < Dialog.DialogAdditionalRaiseDepth + Dialog.DialogMaximumDepth)
 			{
-				dialog.Panel.depth += (Int32)Dialog.DialogAdditionalRaiseDepth;
-				dialog.phrasePanel.depth += (Int32)Dialog.DialogAdditionalRaiseDepth;
+				dialog.Panel.depth += Dialog.DialogAdditionalRaiseDepth;
+				dialog.phrasePanel.depth += Dialog.DialogAdditionalRaiseDepth;
 			}
 		}
 	}
 
 	public UILabel GetDialogLabel()
 	{
-		foreach (Object obj in base.transform)
+		foreach (Transform transform in base.transform)
 		{
-			Transform transform = (Transform)obj;
 			Dialog component = transform.GetComponent<Dialog>();
-			if (component != (UnityEngine.Object)null)
-			{
+			if (component != null)
 				return component.PhraseLabel;
-			}
 		}
-		return (UILabel)null;
+		return null;
 	}
 
 	public Dialog GetDialogByTextId(Int32 textId)
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			if (dialog.TextId == textId)
-			{
 				return dialog;
-			}
-		}
-		return (Dialog)null;
+		return null;
 	}
 
 	public Dialog GetOverlayDialog()
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			if (dialog.IsOverlayDialog)
-			{
 				return dialog;
-			}
-		}
-		return (Dialog)null;
+		return null;
 	}
 
 	public Dialog GetMognetDialog()
 	{
 		foreach (Dialog dialog in this.activeDialogList)
-		{
 			if (dialog.CapType == Dialog.CaptionType.Mognet && dialog.StartChoiceRow > -1)
-			{
 				return dialog;
-			}
-		}
-		return (Dialog)null;
+		return null;
 	}
 
 	public void EnableCollider(Boolean value)

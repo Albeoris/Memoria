@@ -111,5 +111,5 @@ public class BattleState : MonoBehaviour
 
 	public Boolean IsPlayFieldBGMInCurrentBattle;
 	
-	public bool isEncount;
+	public Boolean isEncount;
 }

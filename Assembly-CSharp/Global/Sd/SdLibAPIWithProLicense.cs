@@ -11,14 +11,14 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 
     public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
     {
-		Int32 t = DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID);
-		return t;
+		// The duration during which the sound has played; it turns back to 0 when the sound stops
+		return DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID);
 	}
 
 	public override Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID)
 	{
-		Int32 t = DLLSdSoundSystem_SoundCtrl_GetPlayTime(soundID);
-		return t;
+		// Some loop duration (either the time at which the sound loops or the loop duration); 0 if it doesn't loop
+		return DLLSdSoundSystem_SoundCtrl_GetPlayTime(soundID);
 	}
 
 	public override Int32 SdSoundSystem_Create(String config)

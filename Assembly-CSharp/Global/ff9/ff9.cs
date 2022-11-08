@@ -9220,6 +9220,18 @@ public static class ff9
 		for (Int32 i = 41; i < 53; i++)
 			ff9.w_effectDataList[i - 41] = ff9.w_framePackGetPtr_s_effectDataList(ff9.w_memorySPSData, i);
 		ff9.w_EvaCore = ff9.w_framePackGetPtr_Eva(ff9.w_memorySPSData, 37);
+		if (w_friendlyBattles.Count == 0)
+		{
+			for (Int32 i = 0; i < 9; i++)
+			{
+				for (Int32 j = 0; j < 12; j++)
+				{
+					Int32 specialArea = ff9.w_worldEncountSpecial[i].area[j] - 1;
+					if (specialArea > 0 && specialArea < ff9.w_frameBattleScenePtr.Length)
+						w_friendlyBattles.Add(ff9.w_frameBattleScenePtr[specialArea].scene[3]);
+				}
+			}
+		}
 	}
 
 	public static ff9.sNWBBlockHeader w_framePackGetPtr_sNWBBlockHeader(Byte[] data, Int32 no)
@@ -11191,6 +11203,19 @@ public static class ff9
 
 	private static Single w_cameraTriggerTime = 0f;
 	private static Single w_cameraNotrotTime = 0f;
+
+	public static HashSet<UInt16> w_friendlyBattles = new HashSet<UInt16>();
+	public static HashSet<UInt16> w_ragtimeBattles = new HashSet<UInt16>()
+	{
+		627, // Green forest, Quizz result
+		634, // Green forest + Mist, Quizz result
+		753, // Brown forest, Quizz result
+		755, // Black forest, Quizz result
+		941, // Green forest + Mist, Quizz question
+		942, // Green forest, Quizz question
+		943, // Black forest, Quizz question
+		944	 // Brown forest, Quizz question
+	};
 
 	public struct VECTOR
 	{

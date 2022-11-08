@@ -131,6 +131,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         Byte num = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Camera;
         FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = (Int32)num >= 3 ? (Byte)UnityEngine.Random.Range(0, 3) : num;
         SFX.StartBattle();
+        BattleVoice.InitBattle();
 
         if ((Int64)FF9StateSystem.Settings.cfg.skip_btl_camera == 0L && FF9StateSystem.Battle.isRandomEncounter)
             SFX.SkipCameraAnimation(-1);
@@ -536,9 +537,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void Update()
     {
-        this.UpdateAttachModel();
-        UpdateFrames();
-        UpdateData();
+        try
+        {
+            this.UpdateAttachModel();
+            UpdateFrames();
+            UpdateData();
+        }
+        catch (Exception err)
+		{
+            Memoria.Prime.Log.Error(err);
+		}
     }
 
     private void UpdateFrames()

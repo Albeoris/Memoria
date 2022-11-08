@@ -5,18 +5,7 @@ public class EventButton : MonoBehaviour
 {
 	private void Start()
 	{
-		if (this.AlwaysShow)
-		{
-			base.gameObject.SetActive(true);
-		}
-		else if (FF9StateSystem.MobilePlatform)
-		{
-			base.gameObject.SetActive(true);
-		}
-		else
-		{
-			base.gameObject.SetActive(false);
-		}
+		base.gameObject.SetActive(this.AlwaysShow || FF9StateSystem.MobilePlatform);
 	}
 
 	protected virtual void OnClick()
@@ -31,16 +20,7 @@ public class EventButton : MonoBehaviour
 
 	private Boolean CheckInput()
 	{
-		Boolean result;
-		if (FF9StateSystem.Settings.IsFastForward)
-		{
-			result = ((EventHUD.CurrentHUD != MinigameHUD.RacingHippaul) ? this.isPressed : this.isClicked);
-		}
-		else
-		{
-			result = this.isPressed;
-		}
-		return result;
+		return FF9StateSystem.Settings.IsFastForward && EventHUD.CurrentHUD == MinigameHUD.RacingHippaul ? this.isClicked : this.isPressed;
 	}
 
 	private void CleanUp()
@@ -53,46 +33,46 @@ public class EventButton : MonoBehaviour
 		switch (this.KeyCommand)
 		{
 		case Control.Confirm:
-			EventInput.ReceiveInput(EventInput.Lcircle | 8192u);
+			EventInput.ReceiveInput(EventInput.Lcircle | EventInput.Pcircle);
 			break;
 		case Control.Cancel:
-			EventInput.ReceiveInput(16384u | EventInput.Lx);
+			EventInput.ReceiveInput(EventInput.Lx | EventInput.Px);
 			break;
 		case Control.Menu:
-			EventInput.ReceiveInput(16781312u);
+			EventInput.ReceiveInput(EventInput.Ltriangle | EventInput.Ptriangle);
 			break;
 		case Control.Special:
-			EventInput.ReceiveInput(557056u);
+			EventInput.ReceiveInput(EventInput.Lsquare | EventInput.Psquare);
 			break;
 		case Control.LeftBumper:
-			EventInput.ReceiveInput(1049600u);
+			EventInput.ReceiveInput(EventInput.LL1 | EventInput.PL1);
 			break;
 		case Control.RightBumper:
-			EventInput.ReceiveInput(2099200u);
+			EventInput.ReceiveInput(EventInput.LR1 | EventInput.PR1);
 			break;
 		case Control.LeftTrigger:
-			EventInput.ReceiveInput(4194560u);
+			EventInput.ReceiveInput(EventInput.LL2 | EventInput.PL2);
 			break;
 		case Control.RightTrigger:
-			EventInput.ReceiveInput(8389120u);
+			EventInput.ReceiveInput(EventInput.LR2 | EventInput.PR2);
 			break;
 		case Control.Pause:
-			EventInput.ReceiveInput(8u);
+			EventInput.ReceiveInput(EventInput.Pstart);
 			break;
 		case Control.Select:
-			EventInput.ReceiveInput(1u);
+			EventInput.ReceiveInput(EventInput.Pselect);
 			break;
 		case Control.Up:
-			EventInput.ReceiveInput(16u);
+			EventInput.ReceiveInput(EventInput.Pup);
 			break;
 		case Control.Down:
-			EventInput.ReceiveInput(64u);
+			EventInput.ReceiveInput(EventInput.Pdown);
 			break;
 		case Control.Left:
-			EventInput.ReceiveInput(128u);
+			EventInput.ReceiveInput(EventInput.Pleft);
 			break;
 		case Control.Right:
-			EventInput.ReceiveInput(32u);
+			EventInput.ReceiveInput(EventInput.Pright);
 			break;
 		}
 	}
@@ -100,9 +80,7 @@ public class EventButton : MonoBehaviour
 	private void Update()
 	{
 		if (this.CheckInput())
-		{
 			this.SendInputToEvent();
-		}
 		this.CleanUp();
 	}
 

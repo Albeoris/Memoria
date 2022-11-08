@@ -829,9 +829,9 @@ public static class UnifiedBattleSequencer
 							{
 								Int32 sepPos = soundAsName.IndexOf(':');
 								Int32 messId;
-								Int32 btlId;
-								if (Int32.TryParse(soundAsName.Substring(0, sepPos), out btlId) && Int32.TryParse(soundAsName.Substring(sepPos + 1), out messId))
-									VoicePlayer.PlayBattleVoice(messId, FF9TextTool.BattleText(messId), false, btlId);
+								Int32 battleId;
+								if (Int32.TryParse(soundAsName.Substring(0, sepPos), out battleId) && Int32.TryParse(soundAsName.Substring(sepPos + 1), out messId))
+									VoicePlayer.PlayBattleVoice(messId, FF9TextTool.BattleText(messId), false, battleId);
 							}
 							else
 							{

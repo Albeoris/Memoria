@@ -12,6 +12,21 @@ namespace NCalc
 {
 	public class NCalcUtility
     {
+        public static readonly Type[] UsableEnumTypes = new Type[]
+        {
+            typeof(CharacterId),
+            typeof(BattleCommandId),
+            typeof(BattleAbilityId),
+            typeof(WeaponItem),
+            typeof(AccessoryItem),
+            typeof(BattleStatus),
+            typeof(EffectElement),
+            typeof(CharacterCategory),
+            typeof(EnemyCategory),
+            typeof(BattleCalcFlags),
+            typeof(CalcFlag)
+        };
+
         public static Int64 ConvertNCalcResult(Object obj, Int64 noChangeValue)
         {
             if (obj is SByte) return (SByte)obj;
@@ -144,8 +159,27 @@ namespace NCalc
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+            else if (name == "IsRandomBattle") args.Result = Memoria.BattleState.IsRandomBattle;
+            else if (name == "IsFriendlyBattle") args.Result = Memoria.BattleState.IsFriendlyBattle;
+            else if (name == "IsRagtimeBattle") args.Result = Memoria.BattleState.IsRagtimeBattle;
+            else if (name == "CurrentPartyCount") args.Result = Memoria.BattleState.BattleUnitCount(true);
+            else if (name == "CurrentEnemyCount") args.Result = Memoria.BattleState.BattleUnitCount(false);
+            else if (name == "IsBattlePreemptive") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK;
+            else if (name == "IsBattleBackAttack") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK;
             else if (name == "ScenarioCounter") args.Result = (Int32)((FF9StateSystem.EventState.gEventGlobal[0] << 8) | FF9StateSystem.EventState.gEventGlobal[0]);
             else if (name == "UseSFXRework") args.Result = Configuration.Battle.SFXRework;
+            else
+			{
+                foreach (Type t in UsableEnumTypes)
+				{
+                    if (name.StartsWith(t.ToString() + "_"))
+					{
+                        String enumValueStr = name.Substring(t.ToString().Length + 1);
+                        args.Result = (Int32)Enum.Parse(t, enumValueStr);
+                        return;
+                    }
+				}
+			}
         };
 
         public static EvaluateParameterHandler worldNCalcParameters = delegate (String name, ParameterArgs args)
@@ -238,7 +272,7 @@ namespace NCalc
             expr.Parameters[prefix + "IsSlave"] = unit.Data.bi.slave == 1;
             expr.Parameters[prefix + "IsOutOfReach"] = unit.IsOutOfReach;
             expr.Parameters[prefix + "Level"] = (Int32)unit.Level;
-            expr.Parameters[prefix + "Exp"] = unit.Player.Data.exp;
+            expr.Parameters[prefix + "Exp"] = unit.IsPlayer ? unit.Player.Data.exp : 0;
             expr.Parameters[prefix + "Speed"] = (Int32)unit.Dexterity;
             expr.Parameters[prefix + "Strength"] = (Int32)unit.Strength;
             expr.Parameters[prefix + "Magic"] = (Int32)unit.Magic;

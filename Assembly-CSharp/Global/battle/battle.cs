@@ -159,6 +159,15 @@ public class battle
                     ff9.btl_flag |= 64;
                     if (ff9Battle.btl_seq == 0)
                     {
+                        if (ff9.btl_result == 3 || ff9.btl_result == 6)
+                        {
+                            if (ff9Battle.btl_scene.Info.NoGameOver)
+                                BattleVoice.TriggerOnBattleInOut("Defeated");
+                            else
+                                BattleVoice.TriggerOnBattleInOut("GameOver");
+                        }
+                        if ((!ff9Battle.btl_scene.Info.WinPose && ff9.btl_result == 1) || ff9.btl_result == 2)
+                            BattleVoice.TriggerOnBattleInOut("Victory");
                         if (ff9.btl_result != 5)
                             SceneDirector.FF9Wipe_FadeOutEx(32);
                         ++ff9Battle.btl_seq;
@@ -195,6 +204,8 @@ public class battle
                     ff9.btl_result = 2;
                 ff9Battle.btl_phase = 8;
                 ff9Battle.btl_seq = 0;
+                if (ff9.btl_result == 7) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
+                    BattleVoice.TriggerOnBattleInOut("EnemyEscape");
             }
         }
         ++ff9Battle.btl_cnt;
@@ -365,6 +376,7 @@ public class battle
                     {
                         if (!btl_util.ManageBattleSong(sys, 30U, 5U))
                             break;
+                        BattleVoice.TriggerOnBattleInOut("VictoryPose");
                         btlsys.btl_phase = 6;
                         for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                         {
@@ -447,6 +459,7 @@ public class battle
                         }
                         UIManager.Battle.SetBattleFollowMessage(BattleMesages.DroppedGil, gilLost);
                     }
+                    BattleVoice.TriggerOnBattleInOut("Flee");
                     break;
             }
             if (btlsys.btl_phase != 5)
@@ -519,10 +532,13 @@ public class battle
         {
             if ((btlsys.btl_load_status & ff9btl.LOAD_FADECHR) == 0)
                 return;
-            if (btlsys.player_load_fade >= 32)
-                btlsys.btl_load_status |= ff9btl.LOAD_CHR;
-            else
+            if (btlsys.player_load_fade < 32)
+            {
                 btlsys.player_load_fade += 8;
+                return;
+            }
+            btlsys.btl_load_status |= ff9btl.LOAD_CHR;
+            BattleVoice.TriggerOnBattleInOut("BattleStart");
         }
     }
 

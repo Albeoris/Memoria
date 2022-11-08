@@ -168,17 +168,24 @@ public class HonoluluFieldMain : HonoBehavior
 		SceneTransition transition = PersistenSingleton<SceneDirector>.Instance.Transition;
 		if (!PersistenSingleton<SceneDirector>.Instance.IsReady || (PersistenSingleton<SceneDirector>.Instance.IsFading && transition != SceneTransition.FadeInFromBlack && transition != SceneTransition.FadeInFromWhite))
 			return;
-		if (this.firstFrame)
+		try
 		{
-			this.firstFrame = false;
-			this.ff9InitStateFieldSystem();
-			this.ff9InitStateFieldMap(this.FF9.fldMapNo);
-			UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
-			if (sceneFromState != null)
-				sceneFromState.Show(null);
+			if (this.firstFrame)
+			{
+				this.firstFrame = false;
+				this.ff9InitStateFieldSystem();
+				this.ff9InitStateFieldMap(this.FF9.fldMapNo);
+				UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
+				if (sceneFromState != null)
+					sceneFromState.Show(null);
+			}
+			this.FF9FieldLocationMain();
+			EMinigame.GetTheaterShipMaquetteAchievement();
 		}
-		this.FF9FieldLocationMain();
-		EMinigame.GetTheaterShipMaquetteAchievement();
+		catch (Exception err)
+		{
+			Memoria.Prime.Log.Error(err);
+		}
 	}
 
 	private void FF9FieldLocationMain()
