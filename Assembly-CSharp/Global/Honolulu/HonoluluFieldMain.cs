@@ -285,7 +285,7 @@ public class HonoluluFieldMain : HonoBehavior
 					{
 						// After Queen Brahne appeared: battle against Mistodons
 						global::Debug.Log("Force close all dialog for <SQEX> #3105");
-						PersistenSingleton<UIManager>.Instance.Dialogs.CloseAll();
+						PersistenSingleton<UIManager>.Instance.Dialogs.CloseAll(true);
 					}
 				}
 				SFX_Rush.SetCenterPosition(0);

@@ -80,7 +80,7 @@ public class ETb
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		if (this.IsSkipped(instance, mes, num, flags, targetPo))
 			return;
-		this.DisposWindowByID(num);
+		this.DisposWindowByID(num, true);
 		Dialog.CaptionType captionType = Dialog.CaptionType.None;
 		Dialog.WindowStyle windowStyle;
 		if ((flags & 128) > 0)
@@ -206,14 +206,14 @@ public class ETb
 		return (player == null) ? CharacterId.NONE : player.info.slot_no;
 	}
 
-	public void YWindow_CloseAll()
+	public void YWindow_CloseAll(Boolean scriptedClose = false)
 	{
-		Singleton<DialogManager>.Instance.CloseAll();
+		Singleton<DialogManager>.Instance.CloseAll(scriptedClose);
 	}
 
-	public void DisposWindowByID(Int32 p)
+	public void DisposWindowByID(Int32 p, Boolean scriptedClose = false)
 	{
-		Singleton<DialogManager>.Instance.Close(p);
+		Singleton<DialogManager>.Instance.Close(p, scriptedClose);
 	}
 
 	public void RaiseAllWindow()

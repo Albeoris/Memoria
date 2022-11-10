@@ -278,12 +278,14 @@ public class DialogManager : Singleton<DialogManager>
 		return dialog;
 	}
 
-	public void Close(Int32 dialogId)
+	public void Close(Int32 dialogId, Boolean scriptedClose = false)
 	{
 		foreach (Dialog dialog in this.activeDialogList.ToList()) // Copy the list in case closing a dialog immediately releases it
 		{
 			if (dialog.gameObject.activeInHierarchy && dialog.Id == dialogId)
 			{
+				if (scriptedClose)
+					dialog.IsClosedByScript = true;
 				dialog.ForceClose();
 				if (FF9StateSystem.Common.FF9.fldMapNo == 100) // Alexandria/Main Street
 				{
@@ -295,11 +297,17 @@ public class DialogManager : Singleton<DialogManager>
 		}
 	}
 
-	public void CloseAll()
+	public void CloseAll(Boolean scriptedClose = false)
 	{
 		foreach (Dialog dialog in this.activeDialogList.ToList())
+		{
 			if (dialog.gameObject.activeInHierarchy)
+			{
+				if (scriptedClose)
+					dialog.IsClosedByScript = true;
 				dialog.ForceClose();
+			}
+		}
 	}
 
 	public void ShowChoiceHud()

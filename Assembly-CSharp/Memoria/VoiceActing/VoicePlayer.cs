@@ -119,7 +119,7 @@ public class VoicePlayer : SoundPlayer
 					return; // Timed dialog: let the dialog's own timed automatic closure handle it
 				while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation)
 					Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
-				if (dialog.CurrentState != Dialog.State.CompleteAnimation)
+				if (!dialog.gameObject.activeInHierarchy || dialog.CurrentState != Dialog.State.CompleteAnimation)
 					return;
 				if (!dialog.FlagButtonInh) // This dialog can be closed normally
 					dialog.ForceClose();
@@ -175,7 +175,7 @@ public class VoicePlayer : SoundPlayer
 
 	public static void FieldZoneDialogClosed(Dialog dialog)
 	{
-		FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && (!dialog.FlagButtonInh || (FPSManager.DelayedInputs & (EventInput.Pcircle | EventInput.Lcircle)) != 0));
+		FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
 	}
 
 	private static void FieldZoneReleaseVoice(Dialog dialog, Boolean stopSound)

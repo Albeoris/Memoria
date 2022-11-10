@@ -373,7 +373,7 @@ public partial class EventEngine
                 }
 
                 var v1 = this.getv1();
-                this.eTb.DisposWindowByID(v1);
+                this.eTb.DisposWindowByID(v1, true);
                 return 0;
             }
             case EBin.event_code_binary.MOVE:
@@ -2410,7 +2410,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.CLOSEALL:
             {
-                this.eTb.YWindow_CloseAll();
+                this.eTb.YWindow_CloseAll(true);
                 return 0;
             }
             case EBin.event_code_binary.WIPERGB:

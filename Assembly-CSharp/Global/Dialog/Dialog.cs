@@ -93,6 +93,12 @@ public class Dialog : MonoBehaviour
 
 	public Boolean IsChoiceReady => this.isChoiceReady;
 
+	public Boolean IsClosedByScript
+	{
+		get => this.isClosedByScript;
+		set => this.isClosedByScript = value;
+	}
+
 	private void InitializeChoice()
 	{
 		if (this.isNeedResetChoice)
@@ -1167,14 +1173,13 @@ public class Dialog : MonoBehaviour
 		this.isOverlayChecked = false;
 		this.overlayMessageNumber = -1;
 		this.isChoiceReady = false;
+		this.isClosedByScript = false;
 	}
 
-	private void setTailAutoPosition(Dialog.TailPosition _position, Boolean isUpdate)
+	private void setTailAutoPosition(Dialog.TailPosition tailPos, Boolean isUpdate)
 	{
 		if (!isUpdate)
-		{
-			this.setTailPosition(_position);
-		}
+			this.setTailPosition(tailPos);
 		this.tailTransform.localPosition = new Vector3(this.tailMargin, this.tailTransform.localPosition.y, 0f);
 	}
 
@@ -1976,6 +1981,9 @@ public class Dialog : MonoBehaviour
 	private Single dialogShowTime;
 
 	private Single dialogHideTime;
+
+	[NonSerialized]
+	private Boolean isClosedByScript = false;
 
 	private Boolean isMuteSelectSound;
 
