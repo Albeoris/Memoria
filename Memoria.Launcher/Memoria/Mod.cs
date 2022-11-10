@@ -262,7 +262,29 @@ namespace Memoria.Launcher
                     mod.AppendChild(el);
                 }
             }
-            File.WriteAllText(folderPath + "/" + DESCRIPTION_FILE, Regex.Replace(doc.OuterXml, @">(<[^/])", ">\n\t$1").Replace("</Mod>", "\n</Mod>"));
+            File.WriteAllText(folderPath + "/" + DESCRIPTION_FILE, IndentXml(doc.OuterXml));
+        }
+
+        public static String IndentXml(String xmlRaw)
+		{
+            String indented = Regex.Replace(xmlRaw, @">(<[^/])", ">\n\t$1").Replace("</Mod>", "\n</Mod>").Replace("</SubMod>", "\n\t</SubMod>");
+            String[] lines = indented.Split('\n');
+            indented = "";
+            Boolean inSubMod = false;
+            Boolean firstLine = true;
+            foreach (String line in lines)
+			{
+                if (line == "\t</SubMod>")
+                    inSubMod = false;
+                if (firstLine)
+                    firstLine = false;
+                else
+                    indented += "\n";
+                indented += inSubMod ? "\t" + line : line;
+                if (line == "\t<SubMod>")
+                    inSubMod = true;
+            }
+            return indented;
         }
 
         public static Mod SearchWithName(IEnumerable<Mod> modList, String queryName)

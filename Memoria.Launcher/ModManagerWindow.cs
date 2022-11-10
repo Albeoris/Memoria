@@ -296,6 +296,7 @@ namespace Memoria.Launcher
             downloadingPath = "";
             Dispatcher.BeginInvoke((MethodInvoker)delegate
             {
+                Boolean success = false;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingMod.Name);
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || downloadingMod.DownloadFormat == "Zip")
                 {
@@ -401,8 +402,7 @@ namespace Memoria.Launcher
                                     downloadingMod.GenerateDescription(destPath);
                                 if (Directory.Exists(path))
                                     Directory.Delete(path, true);
-                                if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
-                                    Directory.Delete(Mod.INSTALLATION_TMP);
+                                success = true;
                             }
                         }
                     }
@@ -417,8 +417,15 @@ namespace Memoria.Launcher
                     Directory.CreateDirectory(destPath.Substring(0, destPath.LastIndexOf('/')));
                     File.Move(path + ".zip", destPath);
                     downloadingMod.GenerateDescription(downloadingMod.InstallationPath ?? downloadingMod.Name);
+                    success = true;
+                }
+                if (success)
+				{
                     if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
                         Directory.Delete(Mod.INSTALLATION_TMP);
+                    Mod previousMod = Mod.SearchWithName(modListInstalled, downloadingMod.Name);
+                    if (previousMod != null)
+                        previousMod.CurrentVersion = null;
                 }
                 downloadList.Remove(downloadingMod);
                 downloadingMod = null;
@@ -433,8 +440,6 @@ namespace Memoria.Launcher
         {
             // TODO: fetch the catalog online
             // Also, TehMighty's Scaled UI is painfully missing; it can't be implemented only with a mod folder for now
-            // TODO: add more from Nexusmods
-            // TODO: Have sub-mod supports (eg. MoguriSoundtrack)
             modListCatalog.Clear();
             modListCatalog.Add(new Mod()
             {
@@ -449,7 +454,7 @@ namespace Memoria.Launcher
                     "- HD textures (worldmap, NPC, battles...)\n" +
                     "- Many bugfixes\n" +
                     "...And much more!\n\n" +
-                    "Note: this mod doesn't support automatic installation yet. Download it from its website, install it, and then update Memoria. Also, it is usually better to place it at the bottom of the list of installed mods for compatibility purpose.",
+                    "Note: this mod doesn't support automatic installation yet. Download it from its website, install it, and then update Memoria. Also, it is usually better to place it at the bottom of the list of installed mods for compatibility purposes.",
                 Category = "Visual",
                 Website = "https://sites.google.com/view/moguri-mod",
                 //DownloadUrl = "https://www.moddb.com/downloads/mirror/216757/122/3381820ec0869d559baf7ca59abcc388"
@@ -457,13 +462,20 @@ namespace Memoria.Launcher
             modListCatalog.Add(new Mod()
             {
                 Name = "Alternate Fantasy",
-                CurrentVersion = new Version(5,2),
+                CurrentVersion = new Version(6, 0),
                 InstallationPath = "AlternateFantasy",
                 Author = "Tirlititi",
-                Description = "A gameplay mod.",
+                Description = @"This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
+It includes:
+- Many changes in the battle system, the enemies and the abilities
+- The possibility to recruit Beatrix in the party at a certain point
+- The re-introduction of a few scenes that were sidelined by the original developpers
+- A couple of new boss battles...
+
+More informations can be found on the mod's webpage.",
                 Category = "Gameplay",
                 Website = "https://forums.qhimm.com/index.php?topic=16324.0",
-                DownloadUrl = "https://www.hiveworkshop.com/attachments/alternatefantasy_v5-2-zip.384576/"
+                DownloadUrl = "https://www.dropbox.com/s/fyx4uqdhumbimeg/PC_AlternateFantasy.zip?dl=1"
             });
             modListCatalog.Add(new Mod()
             {
@@ -473,7 +485,7 @@ namespace Memoria.Launcher
                 Author = "Tirlititi",
                 Description = "Allow the optional recruitment of Beatrix as a permanent character.\n" +
                         "She must be met in Alexandria once the Hilda Gard III is obtained and before moving to Terra.\n\n" +
-                        "Alternate Fantasy contains it already so do not use them both at the same time.",
+                        "This is actually a lighter version of Alternate Fantasy, to benefit from its added content without changing the extensive modifications of the gameplay. Don't use both simultaneously.",
                 Category = "Gameplay",
                 Website = "https://forums.qhimm.com/index.php?topic=16324.0",
                 DownloadUrl = "https://www.hiveworkshop.com/attachments/afbeatrixonly-zip.384575/"
@@ -515,16 +527,16 @@ namespace Memoria.Launcher
             });
             Mod characterPackMod = new Mod()
             {
-                Name = "Playable Characters Pack",
+                Name = "Playable Character Pack",
                 CurrentVersion = new Version(0, 5),
-                InstallationPath = "PlayableCharactersPack",
+                InstallationPath = "PlayableCharacterPack",
                 Author = "Tirlititi",
                 Description = @"Add Kuja, Fratley and Lani as playable characters.
-In order to use these characters, you must enable the Memoria.ini option [Hacks] AllCharactersAvailable, then press Alt+F2 in-game.
+You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.",
                 Category = "Gameplay",
-                Website = "https://steamcommunity.com/app/377840/discussions/0/4472613273101569368/",
-                DownloadUrl = "https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharactersPack.zip?dl=1",
+                Website = "https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/",
+                DownloadUrl = "https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharacterPack.zip?dl=1",
                 PreviewFile = "Preview.png",
                 PreviewFileUrl = "https://i.imgur.com/vZ8DbNQ.png"
             };
@@ -562,23 +574,23 @@ You should set the priority of this mod to be higher than the priority of the Mo
                 Website = "https://forums.qhimm.com/index.php?topic=19499.0",
                 DownloadUrl = "https://www.dropbox.com/s/k5o64e3g8iyah63/FF9%20DBE%20v1.16%20Memoria.zip?dl=1"
             });
-            modListCatalog.Add(new Mod()
+            Mod magAddOnMod = new Mod()
             {
                 Name = "Mog Add-ons",
-                CurrentVersion = new Version(2, 5),
+                CurrentVersion = new Version(2, 6),
                 InstallationPath = "MogAddons",
+                ReleaseDate = "04 Sep 2022, 02:31PM",
                 Author = "faospark",
-                Description = @"Easy to install UI enhancements for Final Fantasy IX which includes Darker UI for Gray and Class Boxes, Opera Omnia Style Portrait Artworks PlayStation or PS5 Style Button Prompts. 
+                Description = @"Easy to install UI enhancements for Final Fantasy IX which includes Darker UI for Gray and Class Boxes, Opera Omnia Style Portrait Artworks PlayStation or PS5 Style Button Prompts.
 
 :: Features ::
-Darker UI for Gray and Classic Dialogue Boxes
-Opera Omnia Style Portraits
+Darker UI for Gray and Classic Dialogue Boxes (default)
+Opera Omnia Style Portraits (default)
 Upscaled PS1 Portrait Artworks (New)
-PlayStation Vanilla (the closest to the game stock UI)
-PlayStation Gloss (a more glossy type and default install)
+PlayStation Vanilla prompts(the closest to the game stock UI)
+PlayStation Gloss prompts(a more glossy type and default install)
 PS5 white button prompts - Pixel Type Button Prompts
-(Optional) Make Ability Gems Require only 1 gem (new)
-(Optional) Make EXP requirements cut in half (new)
+(Optional) Make Ability Gems Require only 1 gem (new) (Optional) Make EXP requirements cut in half (new)
 
 :: OPTIONS ::
 - For Other Options Just Open the Folder Option you want eg: /O-Buttons - Playstation 5 Style
@@ -593,7 +605,26 @@ PS5 white button prompts - Pixel Type Button Prompts
                 DownloadUrl = "https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1",
                 PreviewFileUrl = "https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1632468409-614055669.png",
                 PreviewFile = "preview/mog-addons.png"
+            };
+            magAddOnMod.SubMod.Add(new Mod()
+            {
+                Name = "Buttons PS5",
+                InstallationPath = "Mps5buttons",
+                Description = "Makes Button 5 like in PS5."
             });
+            magAddOnMod.SubMod.Add(new Mod()
+            {
+                Name = "Buttons PS4",
+                InstallationPath = "Mps4buttons",
+                Description = "Glossy PS4 buttons."
+            });
+            magAddOnMod.SubMod.Add(new Mod()
+            {
+                Name = "Buttons Vanilla PS",
+                InstallationPath = "Mpsbuttons",
+                Description = "Same style as the original in game."
+            });
+            modListCatalog.Add(magAddOnMod);
             modListCatalog.Add(new Mod()
             {
                 Name = "High-Res Chocographs",
@@ -680,7 +711,7 @@ PS5 white button prompts - Pixel Type Button Prompts
                 Category = "Translation",
                 Website = "https://ff9.ffrtt.ru/viewtopic.php?f=14&t=38"
             });
-            // This one doesn't seem to have a valid download link anymore
+            // This one needs investigation to know who are the authors
             //modListCatalog.Add(new Mod()
             //{
             //    Name = "Chinese Translation",
@@ -689,6 +720,7 @@ PS5 white button prompts - Pixel Type Button Prompts
             //        "Note: this mod doesn't support automatic installation yet. Download it from its website.",
             //    Category = "Translation",
             //    Website = "https://steamcommunity.com/sharedfiles/filedetails/?id=2797209969"
+            //    Website = "https://steamcommunity.com/app/377840/discussions/0/2956041222219522184/"
             //});
         }
 
@@ -706,6 +738,12 @@ PS5 white button prompts - Pixel Type Button Prompts
                     }
                     else if ((updatedMod.CurrentVersion != null && previousMod.CurrentVersion == null) || (previousMod.CurrentVersion != null && updatedMod.CurrentVersion != null && previousMod.CurrentVersion < updatedMod.CurrentVersion))
                     {
+                        foreach (Mod subMod in updatedMod.SubMod)
+                        {
+                            Mod previousSub = Mod.SearchWithPath(previousMod.SubMod, subMod.InstallationPath);
+                            if (previousSub != null)
+                                subMod.IsActive = previousSub.IsActive;
+                        }
                         Int32 index = modListInstalled.IndexOf(previousMod);
                         modListInstalled.RemoveAt(index);
                         modListInstalled.Insert(index, updatedMod);
@@ -774,6 +812,19 @@ PS5 white button prompts - Pixel Type Button Prompts
                 PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
                 if (hasSubMod)
 				{
+                    if (modListCatalog.Contains(mod))
+					{
+                        Mod installedVersion = Mod.SearchWithName(modListInstalled, mod.Name);
+                        if (installedVersion != null)
+						{
+                            foreach (Mod subMod in mod.SubMod)
+                            {
+                                Mod installedSub = Mod.SearchWithPath(installedVersion.SubMod, subMod.InstallationPath);
+                                if (installedSub != null)
+                                    subMod.IsActive = installedSub.IsActive;
+                            }
+						}
+					}
                     PreviewSubModList.ItemsSource = mod.SubMod;
                     PreviewSubModList.SelectedItem = mod.SubMod[0];
                     UpdateSubModDetails(mod.SubMod[0]);
@@ -905,22 +956,11 @@ PS5 white button prompts - Pixel Type Button Prompts
                                 mod.IsActive = true;
                             continue;
                         }
-                        Mod catalogMod = Mod.SearchWithPath(modListCatalog, listCouple[listI][i]);
-                        if (catalogMod != null)
-                        {
-                            if (File.Exists(catalogMod.InstallationPath + "/" + Mod.DESCRIPTION_FILE))
-                                mod = new Mod(catalogMod.InstallationPath);
-                            else
-                                mod = catalogMod;
-                        }
+                        GenerateAutomaticDescriptionFile(listCouple[listI][i]);
+                        if (File.Exists(listCouple[listI][i] + "/" + Mod.DESCRIPTION_FILE))
+                            mod = new Mod(listCouple[listI][i]);
                         else
-                        {
-                            GenerateAutomaticDescriptionFile(listCouple[listI][i]);
-                            if (File.Exists(listCouple[listI][i] + "/" + Mod.DESCRIPTION_FILE))
-                                mod = new Mod(listCouple[listI][i]);
-                            else
-                                mod = new Mod(listCouple[listI][i], listCouple[listI][i]);
-                        }
+                            mod = new Mod(listCouple[listI][i], listCouple[listI][i]);
                         if (listI == 1)
                             mod.IsActive = true;
                         modListInstalled.Add(mod);
@@ -948,11 +988,10 @@ PS5 white button prompts - Pixel Type Button Prompts
             {
                 List<String> iniModActiveList = new List<String>();
                 List<String> iniModPriorityList = new List<String>();
-                for (Int32 i = 0; i < modListInstalled.Count; ++i)
+                foreach (Mod mod in modListInstalled)
 				{
-                    if (modListInstalled[i].IsActive)
+                    if (mod.IsActive)
                     {
-                        Mod mod = modListInstalled[i];
                         Int32 subModIndex = 0;
                         if (mod.SubMod != null)
                         {
@@ -975,7 +1014,7 @@ PS5 white button prompts - Pixel Type Button Prompts
                             }
                         }
                     }
-                    iniModPriorityList.Add(modListInstalled[i].InstallationPath);
+                    iniModPriorityList.Add(mod.InstallationPath);
                 }
                 IniFile iniFile = new IniFile(INI_PATH);
                 iniFile.WriteValue("Mod", "FolderNames", iniModActiveList.Count > 0 ? " \"" + String.Join("\", \"", iniModActiveList) + "\"" : "");
