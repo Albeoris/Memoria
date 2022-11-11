@@ -7,6 +7,7 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
+using Memoria.Prime.Text;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 // ReSharper disable UnusedMember.Global
@@ -57,6 +58,14 @@ public class ff9item
     {
         _FF9Item_Data = LoadItems();
         _FF9Item_Info = LoadItemEffects();
+        PatchItemEquipability(_FF9Item_Data);
+    }
+
+    public static void FF9Item_Init()
+    {
+        FF9Item_InitNormal();
+        FF9Item_InitImportant();
+        LoadInitialItems();
     }
 
     private static FF9ITEM_DATA[] LoadItems()
@@ -87,6 +96,24 @@ public class ff9item
             Log.Error(ex, "[ff9item] Load items failed.");
             UIManager.Input.ConfirmQuit();
             return null;
+        }
+    }
+
+    private static void PatchItemEquipability(FF9ITEM_DATA[] itemDatabase)
+    {
+        try
+        {
+            String inputPath;
+            for (Int32 i = AssetManager.Folder.Length - 1; i >= 0; --i)
+            {
+                inputPath = DataResources.Items.ModDirectory(AssetManager.Folder[i].FolderPath) + DataResources.Items.ItemEquipPatchFile;
+                if (File.Exists(inputPath))
+                    ApplyItemEquipabilityPatchFile(itemDatabase, File.ReadAllLines(inputPath));
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ff9item] Patch item equipability failed.");
         }
     }
 
@@ -142,13 +169,6 @@ public class ff9item
         {
             Log.Error(ex, "[ff9item] Load initial items failed.");
         }
-    }
-
-    public static void FF9Item_Init()
-    {
-        FF9Item_InitNormal();
-        FF9Item_InitImportant();
-        LoadInitialItems();
     }
 
     public static void FF9Item_InitNormal()
@@ -386,5 +406,57 @@ public class ff9item
         Int32 num = FF9StateSystem.Achievement.EvtReservedArray[0] - 1;
         FF9StateSystem.Achievement.EvtReservedArray[0] = num;
         return num;
+    }
+
+    private static void ApplyItemEquipabilityPatchFile(FF9ITEM_DATA[] itemDatabase, String[] allLines)
+	{
+        foreach (String line in allLines)
+        {
+            // eg.: Garnet Add 1 2 Remove 56
+            // (allows Garnet to equip Dagger and Mage Masher but disallows her to equip Tiger Racket)
+            if (String.IsNullOrEmpty(line) || line.Trim().StartsWith("//"))
+                continue;
+            String[] allWords = line.Trim().Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            if (allWords.Length < 3)
+                continue;
+            Int32 charId;
+            if (!Int32.TryParse(allWords[0], out charId))
+            {
+                CharacterId charIdAsStr;
+                if (!allWords[0].TryEnumParse(out charIdAsStr))
+                    continue;
+                charId = (Int32)charIdAsStr;
+            }
+            Boolean isAdd = false;
+            Boolean isRemove = false;
+            Int32 itemId;
+            UInt64 charMask = ff9feqp.GetCharacterEquipMaskFromId((CharacterId)charId);
+            for (Int32 wordIndex = 1; wordIndex < allWords.Length; wordIndex++)
+			{
+                String word = allWords[wordIndex].Trim();
+                if (String.Compare(word, "Add") == 0)
+				{
+                    isAdd = true;
+                    isRemove = false;
+                }
+                else if (String.Compare(word, "Remove") == 0)
+                {
+                    isAdd = false;
+                    isRemove = true;
+                }
+                else if (isAdd)
+                {
+                    if (!Int32.TryParse(word, out itemId) || itemId < 0 || itemId >= itemDatabase.Length)
+                        continue;
+                    itemDatabase[itemId].equip |= charMask;
+                }
+                else if (isRemove)
+                {
+                    if (!Int32.TryParse(word, out itemId) || itemId < 0 || itemId >= itemDatabase.Length)
+                        continue;
+                    itemDatabase[itemId].equip &= ~charMask;
+                }
+            }
+        }
     }
 }

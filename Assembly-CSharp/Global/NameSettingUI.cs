@@ -30,6 +30,11 @@ public sealed class NameSettingUI : UIScene
     private Int32 _currentCharId;
     private Int32 _currentSlotId;
 
+    public static Boolean IsDefaultName(CharacterId subNo)
+	{
+        return (Int32)subNo < 12;
+    }
+
     public CharacterId SubNo
     {
         get => (CharacterId)_subNumber;

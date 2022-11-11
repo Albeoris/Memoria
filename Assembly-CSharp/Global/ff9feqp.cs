@@ -6,9 +6,14 @@ using Memoria.Data;
 
 public static class ff9feqp
 {
+	public static UInt64 GetCharacterEquipMaskFromId(CharacterId id)
+	{
+		return (Int32)id <= 11 ? 1ul << (11 - (Int32)id) : 1ul << (Int32)id;
+	}
+
 	public static UInt64 GetCharacterEquipMask(PLAYER player)
 	{
-		return (Int32)player.Index <= 11 ? 1ul << (11 - (Int32)player.Index) : 1ul << (Int32)player.Index;
+		return GetCharacterEquipMaskFromId(player.Index);
 	}
 
 	public static void FF9FEqp_UpdatePlayer(PLAYER play)

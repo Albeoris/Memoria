@@ -1418,7 +1418,12 @@ public partial class EventEngine
                 UInt32 menuId = Convert.ToUInt32(this.getv1());
                 UInt32 subId = Convert.ToUInt32(this.getv1());
                 if (Configuration.Hacks.DisableNameChoice && menuId == 1)
+                {
+                    CharacterId charId = this.chr2slot((Int32)subId);
+                    if (charId != CharacterId.NONE && NameSettingUI.IsDefaultName(charId))
+                        this._ff9.GetPlayer(charId).Name = FF9TextTool.CharacterDefaultName(charId);
                     return 0;
+                }
                 EventService.StartMenu(menuId, subId);
                 PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
                 return 1;
