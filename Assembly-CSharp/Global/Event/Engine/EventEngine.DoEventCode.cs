@@ -1982,11 +1982,14 @@ public partial class EventEngine
             case EBin.event_code_binary.FULLMEMBER:
             {
                 Int32 reserveList = this.getv2();
-                //Int32 reserveExtendedList = reserveList | reserveList >> 4 & 0xE0;
+                Int32 reserveExtendedList = reserveList & ~0xF00; // This opcode puts Beatrix as the 8th character, before Cinna/Marcus/Blank
+                reserveExtendedList |= (reserveList >> 1) & 0x700; // Cinna/Marcus/Blank -> shift the ID by 1
+                if ((reserveList & 0x100) != 0)
+                    reserveExtendedList |= 0x800; // Beatrix
                 foreach (PLAYER p in  FF9StateSystem.Common.FF9.PlayerList)
                     ff9play.FF9Play_Delete(p);
                 foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
-                    if ((reserveList & (1 << (Int32)p.info.slot_no)) != 0)
+                    if ((reserveExtendedList & (1 << (Int32)p.info.slot_no)) != 0)
                         ff9play.FF9Play_Add(p);
                 return 0;
             }
