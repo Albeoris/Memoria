@@ -5,6 +5,7 @@ namespace Memoria.Data
     [Flags]
     public enum BattleStatus : uint
     {
+
         Petrify = 1 << 0, // 1,
         Venom = 1 << 1, //2
         Virus = 1 << 2, //4,

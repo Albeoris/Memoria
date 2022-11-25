@@ -141,6 +141,20 @@ namespace NCalc
                 Int64 v2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), Int64.MinValue);
                 if (v1 != Int64.MinValue || v2 != Int64.MinValue)
                     args.Result = Math.Max(v1, v2);
+            }else if(name == "IsStolenItem" && args.Parameters.Length == 1)
+            {
+                if (BattleVoice.ItemStolen != null)
+                {
+                    String itemName = args.Parameters[0].ParsedExpression.ToString().Trim(new char[] { '[', ']' });
+                    args.Result = itemName.ToLower().Equals(BattleVoice.ItemStolen.ToLower());
+                }
+                else
+                {
+                    args.Result = false;
+                }
+            }else if(name == "HasStolenItem" && args.Parameters.Length == 0)
+            {
+                args.Result = BattleVoice.ItemStolen != null;
             }
         };
 

@@ -10,8 +10,8 @@ public class VoicePlayer : SoundPlayer
 {
 	public VoicePlayer()
 	{
-		this.playerVolume = Configuration.Audio.MusicVolume / 100f;
-		this.playerPitch = 1f;
+		this.playerVolume = 1f;
+		this.playerPitch = 0.5f;
 		this.playerPanning = 0f;
 		this.fadeInDuration = 0f;
 		this.fadeOutDuration = 0f;
@@ -82,7 +82,7 @@ public class VoicePlayer : SoundPlayer
 			soundProfile.SoundID = 0;
 			return;
 		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * playerVolume, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 1f, 0);
 		SoundLib.Log("Panning: " + soundProfile.Panning);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);

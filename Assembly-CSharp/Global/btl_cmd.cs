@@ -680,17 +680,7 @@ public class btl_cmd
                     if (!ConfirmValidTarget(cmd))
                         break;
 
-                    if (cmd.regist != null)
-                    {
-                        if (cmd == cmd.regist.cmd[0] && cmd.cmd_no == BattleCommandId.Attack)
-                        {
-                            if (btl_stat.CheckStatus(cmd.regist, BattleStatus.Confuse))
-                                BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Confuse);
-                            if (btl_stat.CheckStatus(cmd.regist, BattleStatus.Berserk))
-                                BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Berserk);
-                        }
-                        BattleVoice.TriggerOnBattleAct(cmd.regist, "CommandPerform", cmd);
-                    }
+                    
                     btl_vfx.SelectCommandVfx(cmd);
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
                     break;
@@ -1534,7 +1524,7 @@ public class btl_cmd
 
         BTL_DATA caster = cmd.regist;
         BattleCommandId num = cmd.cmd_no;
-        
+
         switch (num)
         {
             case BattleCommandId.Jump:
@@ -1586,6 +1576,18 @@ public class btl_cmd
                     SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), caster.weapon.Ref.ScriptId);
                 else
                     SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
+
+                if (caster != null)
+                {
+                    if (cmd == caster.cmd[0] && num == BattleCommandId.Attack)
+                    {
+                        if (btl_stat.CheckStatus(caster, BattleStatus.Confuse))
+                            BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Confuse);
+                        if (btl_stat.CheckStatus(caster, BattleStatus.Berserk))
+                            BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Berserk);
+                    }
+                    BattleVoice.TriggerOnBattleAct(caster, "CommandPerform", cmd);
+                }
                 return;
         }
     }

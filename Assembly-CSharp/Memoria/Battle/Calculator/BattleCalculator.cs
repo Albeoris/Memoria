@@ -656,12 +656,14 @@ namespace Memoria
         public void StealItem(BattleEnemy enemy, Int32 slot)
         {
             Context.ItemSteal = enemy.StealableItems[slot];
+            // if slot is empty
             if (Context.ItemSteal == Byte.MaxValue)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                 return;
             }
-
+            BattleVoice.ItemStolen = FF9TextTool.ItemName(Context.ItemSteal);
+            // set the slot to empty
             enemy.StealableItems[slot] = Byte.MaxValue;
             GameState.Thefts++;
 
@@ -669,9 +671,11 @@ namespace Memoria
                 saFeature.TriggerOnAbility(this, "Steal", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
                 saFeature.TriggerOnAbility(this, "Steal", true);
-
+            // add item to invetory
             BattleItem.AddToInventory(Context.ItemSteal);
+            // show message box
             UiState.SetBattleFollowFormatMessage(BattleMesages.Stole, FF9TextTool.ItemName(Context.ItemSteal));
+            
         }
 
         public void RaiseTrouble()

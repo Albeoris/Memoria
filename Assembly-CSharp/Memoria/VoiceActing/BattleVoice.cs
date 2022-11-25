@@ -199,6 +199,8 @@ namespace Memoria.Data
             }
         }
 
+        public static string ItemStolen = null;
+
         public static void TriggerOnBattleAct(BTL_DATA actingChar, String when, CMD_DATA cmdUsed, BattleCalculator calc = null)
         {
             if (!Configuration.VoiceActing.Enabled)
@@ -210,7 +212,10 @@ namespace Memoria.Data
                 Int32 retainedPriority = Int32.MinValue;
                 foreach (BattleAct effect in ActEffect)
                 {
-                    if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(actingChar))
+                    int t1 = String.Compare(effect.When, when);
+                    bool t2 = effect.CheckSpeakerAll();
+                    bool t3 = effect.CheckIsFirstSpeaker(actingChar);
+                    if (t1 != 0 || effect.Priority < retainedPriority || !t2 || !t3)
                         continue;
                     if (!String.IsNullOrEmpty(effect.Condition))
                     {
@@ -223,7 +228,9 @@ namespace Memoria.Data
                             NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                        if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
+                        bool eval = NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+                        
+                        if (!eval)
                             continue;
                     }
                     if (effect.Priority > retainedPriority)
@@ -241,6 +248,10 @@ namespace Memoria.Data
 			{
                 Log.Error(err);
 			}
+            if (ItemStolen != null)
+            {
+                ItemStolen = null;
+            }
         }
 
         public static void TriggerOnHitted(BTL_DATA hittedChar, BattleCalculator calc)
