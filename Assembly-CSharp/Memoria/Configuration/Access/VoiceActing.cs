@@ -12,6 +12,7 @@ namespace Memoria
             public static Boolean LogVoiceActing => Instance._voiceActing.LogVoiceActing;
             public static Boolean StopVoiceWhenDialogDismissed = Instance._voiceActing.StopVoiceWhenDialogDismissed;
             public static Boolean AutoDismissDialogAfterCompletion = Instance._voiceActing.AutoDismissDialogAfterCompletion;
+            public static Int32 Volume = Instance._voiceActing.Volume;
         }
     }
 }
