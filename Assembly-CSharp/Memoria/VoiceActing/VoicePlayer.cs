@@ -10,7 +10,7 @@ public class VoicePlayer : SoundPlayer
 {
 	public VoicePlayer()
 	{
-		this.playerVolume = Configuration.Audio.MusicVolume / 100f;
+		this.playerVolume = Configuration.VoiceActing.Volume/10f;
 		this.playerPitch = 1f;
 		this.playerPanning = 0f;
 		this.fadeInDuration = 0f;
@@ -45,7 +45,6 @@ public class VoicePlayer : SoundPlayer
 
 	public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f, Action onFinished = null)
 	{
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 
 		if (onFinished != null)
 		{
@@ -82,10 +81,11 @@ public class VoicePlayer : SoundPlayer
 			soundProfile.SoundID = 0;
 			return;
 		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * playerVolume, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, Configuration.VoiceActing.Volume / 10f * soundProfile.SoundVolume, 0);
 		SoundLib.Log("Panning: " + soundProfile.Panning);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 		SoundLib.Log("StartSound Success");
 	}
 
