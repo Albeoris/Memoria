@@ -152,10 +152,7 @@ public class VoicePlayer : SoundPlayer
 				if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
 					return;
 
-				FieldZoneReleaseVoice(dialog, true);
-
 				String vaOptionPath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, optionIndex);
-
 				String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : new String[0];
 				Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
 				String optString = selectedVisibleOption < options.Length ? messageOpcodeRegex.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; }) : "[Invalid option index]";
@@ -166,6 +163,7 @@ public class VoicePlayer : SoundPlayer
 				}
 				else
 				{
+					FieldZoneReleaseVoice(dialog, true);
 					SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4}", FieldZoneId, messageNumber, optionIndex, optString, vaOptionPath));
 					soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPath.GetHashCode(), vaOptionPath, nonDismissAction);
 				}
