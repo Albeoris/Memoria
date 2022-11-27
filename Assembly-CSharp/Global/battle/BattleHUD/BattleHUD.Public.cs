@@ -51,6 +51,7 @@ public partial class BattleHUD : UIScene
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
         _itemIdList = new List<Byte>();
+        _messageQueue = new Dictionary<String, Message>();
         _oneTime = true;
     }
     
@@ -71,8 +72,8 @@ public partial class BattleHUD : UIScene
             parsedMessage = !Int32.TryParse(str3, out result) ? parsedMessage.Replace("%", str3) : parsedMessage.Replace("&", str3);
         }
 
-        SetBattleMessage(parsedMessage, priority);
         VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
+        SetBattleMessage(parsedMessage, priority);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)
@@ -185,26 +186,63 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    public void SetBattleTitle(String str, Byte priority)
+    public void SetBattleTitle(String str, Byte strPriority)
     {
-        if (_currentMessagePriority > priority)
+        _messageQueue[str] = new Message()
+        {
+            message = str,
+            priority = strPriority,
+            counter = 0f,
+            isRect = true
+        };
+
+        if (_currentMessagePriority > strPriority)
             return;
 
-        _currentMessagePriority = priority;
+        _currentMessagePriority = strPriority;
         _battleMessageCounter = 0.0f;
         DisplayBattleMessage(str, true);
     }
 
-    public void SetBattleMessage(String str, Byte priority)
+    public void SetBattleMessage(String str, Byte strPriority)
     {
-        if (_currentMessagePriority > priority)
+        _messageQueue[str] = new Message()
+        {
+            message = str,
+            priority = strPriority,
+            counter = 0f,
+            isRect = false
+        };
+
+        if (_currentMessagePriority > strPriority)
             return;
 
-        _currentMessagePriority = priority;
+        _currentMessagePriority = strPriority;
         _battleMessageCounter = 0.0f;
         DisplayBattleMessage(str, false);
     }
-    
+
+    public Boolean IsMessageQueued(String str)
+	{
+        return _messageQueue.ContainsKey(str);
+    }
+
+    public Single GetQueuedMessageCounter(String str)
+    {
+        Message mess;
+        if (!_messageQueue.TryGetValue(str, out mess))
+            return -1f;
+        return mess.counter;
+    }
+
+    public Byte GetQueuedMessagePriority(String str)
+    {
+        Message mess;
+        if (!_messageQueue.TryGetValue(str, out mess))
+            return 0;
+        return mess.priority;
+    }
+
     public void DisplayParty()
     {
         Int32 partyIndex = 0;

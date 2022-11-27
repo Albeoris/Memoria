@@ -142,6 +142,16 @@ public partial class BattleHUD : UIScene
         if (!BattleDialogGameObject.activeSelf || PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD)
             return;
 
+        List<String> queueRemove = new List<String>();
+        foreach (Message mess in _messageQueue.Values)
+        {
+            mess.counter += Time.deltaTime * FF9StateSystem.Settings.FastForwardFactor;
+            if (mess.counter >= BattleMessageTimeTick[FF9StateSystem.Settings.cfg.btl_msg] / 15.0)
+                queueRemove.Add(mess.message);
+        }
+        foreach (String mess in queueRemove)
+            _messageQueue.Remove(mess);
+
         _battleMessageCounter += Time.deltaTime * FF9StateSystem.Settings.FastForwardFactor;
         if (_battleMessageCounter < BattleMessageTimeTick[FF9StateSystem.Settings.cfg.btl_msg] / 15.0)
             return;
@@ -150,12 +160,36 @@ public partial class BattleHUD : UIScene
         _currentMessagePriority = 0;
 
         if (_currentLibraMessageNumber > 0)
+        {
             DisplayMessageLibra();
-
-        if (_currentPeepingMessageCount <= 0)
             return;
+        }
+        if (_currentPeepingMessageCount > 0)
+        {
+            DisplayMessagePeeping();
+            return;
+        }
 
-        DisplayMessagePeeping();
+        Byte maxPriority = 0;
+        String maxMess = null;
+        Single maxCounter = 0f;
+        Boolean maxIsRect = false;
+        foreach (Message mess in _messageQueue.Values)
+        {
+            if (mess.priority >= maxPriority)
+            {
+                maxPriority = mess.priority;
+                maxMess = mess.message;
+                maxCounter = mess.counter;
+                maxIsRect = mess.isRect;
+            }
+        }
+        if (!String.IsNullOrEmpty(maxMess))
+        {
+            _currentMessagePriority = maxPriority;
+            _battleMessageCounter = maxCounter;
+            DisplayBattleMessage(maxMess, maxIsRect);
+        }
     }
 
     private void UpdatePlayer()

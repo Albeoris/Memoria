@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Prime;
 using Memoria.Data;
 using Memoria.Assets;
@@ -334,6 +334,14 @@ public class BattleActionThread
 						Int32 messExactId = (messId & 128) != 0 ? scene.header.TypCount + atkNo : messPtr + messId;
 						String text = battleText(messExactId);
 						Int32 btlId;
+						if (Configuration.VoiceActing.Enabled && FF9BattleDB.SceneData.TryGetValue(scene.nameIdentifier, out btlId))
+						{
+							String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), messExactId, btlId);
+							if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
+								mainThread.code.AddLast(new BattleActionCode("PlaySound", "SoundType", "Voice", "Sound", btlId + ":" + messExactId));
+							else
+								SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlId, messExactId, text, vaPath));
+						}
 						if (langBattleText == null || (messId & 128) != 0)
 						{
 							mainThread.code.AddLast(new BattleActionCode("Message", "Text", (messId & 128) != 0 ? "[CastName]" : text, "Priority", (messId & 128) != 0 ? "1" : "4", "Title", (seq.wSeqCode == 33 || (messId & 128) != 0).ToString(), "Reflect", (seq.wSeqCode == 33).ToString()));
@@ -344,14 +352,6 @@ public class BattleActionThread
 							foreach (KeyValuePair<String, TextGetter> langText in langBattleText)
 								actionCode.argument["Text" + langText.Key] = langText.Value(messExactId);
 							mainThread.code.AddLast(actionCode);
-						}
-						if (FF9BattleDB.SceneData.TryGetValue(scene.nameIdentifier, out btlId))
-						{
-							String vaPath = String.Format("Voices/{0}/battle/{2}/va_{1}", Localization.GetSymbol(), messExactId, btlId);
-							if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
-								mainThread.code.AddLast(new BattleActionCode("PlaySound", "SoundType", "Voice", "Sound", btlId + ":" + messExactId));
-							else
-								SoundLib.VALog(String.Format("field:battle/{0}, msg:{1}, text:{2} path:{3} (not found)", btlId, messExactId, text, vaPath));
 						}
 						break;
 					case 16: // Run Camera

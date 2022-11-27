@@ -171,15 +171,15 @@ namespace NCalc
             else
 			{
                 foreach (Type t in UsableEnumTypes)
-				{
-                    if (name.StartsWith(t.ToString() + "_"))
+                {
+                    if (name.StartsWith(t.Name + "_"))
 					{
-                        String enumValueStr = name.Substring(t.ToString().Length + 1);
-                        args.Result = (Int32)Enum.Parse(t, enumValueStr);
+                        String enumValueStr = name.Substring(t.Name.Length + 1);
+                        args.Result = Convert.ToInt32(Enum.Parse(t, enumValueStr));
                         return;
                     }
 				}
-			}
+            }
         };
 
         public static EvaluateParameterHandler worldNCalcParameters = delegate (String name, ParameterArgs args)

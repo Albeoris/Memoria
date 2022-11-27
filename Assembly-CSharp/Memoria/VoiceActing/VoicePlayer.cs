@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class VoicePlayer : SoundPlayer
 {
 	public VoicePlayer()
 	{
-		this.playerVolume = Configuration.VoiceActing.Volume/10f;
+		this.playerVolume = Configuration.VoiceActing.Volume / 10f;
 		this.playerPitch = 1f;
 		this.playerPanning = 0f;
 		this.fadeInDuration = 0f;
@@ -45,7 +46,6 @@ public class VoicePlayer : SoundPlayer
 
 	public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f, Action onFinished = null)
 	{
-
 		if (onFinished != null)
 		{
 			Thread onFinishThread = new Thread(() =>
@@ -149,7 +149,7 @@ public class VoicePlayer : SoundPlayer
 		{
 			dialog.OnOptionChange = (Int32 msg, Int32 optionIndex) =>
 			{
-				if (dialog.CurrentState != Dialog.State.CompleteAnimation)
+				if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
 					return;
 
 				FieldZoneReleaseVoice(dialog, true);
@@ -230,6 +230,9 @@ public class VoicePlayer : SoundPlayer
 	public static void PlayBattleVoice(Int32 va_id, String text, Boolean asSharedMessage = false, Int32 battleId = -1)
 	{
 		if (!Configuration.VoiceActing.Enabled)
+			return;
+
+		if (!asSharedMessage && UIManager.Battle.IsMessageQueued(FF9TextTool.BattleText(va_id)))
 			return;
 
 		if (battleId < 0)

@@ -2198,9 +2198,9 @@ public partial class EventEngine
             case EBin.event_code_binary.MESB:
             {
                 Int32 battleTextId = this.getv2();
-                string text = FF9TextTool.BattleText(battleTextId);
-                UIManager.Battle.SetBattleMessage(text, (Byte)4);
+                String text = FF9TextTool.BattleText(battleTextId);
                 VoicePlayer.PlayBattleVoice(battleTextId, text);
+                UIManager.Battle.SetBattleMessage(text, 4);
                 return 0;
             }
             case EBin.event_code_binary.GLOBALCLEAR:

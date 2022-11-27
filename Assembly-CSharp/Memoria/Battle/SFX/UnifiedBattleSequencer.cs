@@ -825,6 +825,8 @@ public static class UnifiedBattleSequencer
 							//SoundLib.PlaySfxSound(tmpInt, tmpSingle, panning, pitch);
 							break;
 						case SoundProfileType.Voice:
+							if (!Configuration.VoiceActing.Enabled)
+								break;
 							if (soundAsName.Contains(":"))
 							{
 								Int32 sepPos = soundAsName.IndexOf(':');

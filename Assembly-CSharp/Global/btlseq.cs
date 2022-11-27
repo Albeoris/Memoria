@@ -733,19 +733,19 @@ public class btlseq
 		if ((messId & 128) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
-			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
 			Int32 cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqWork.CmdPtr.sub_no;
 			VoicePlayer.PlayBattleVoice(cmdNameIndex, pSeqWork.CmdPtr.aa.Name);
+			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
 		}
 		else
 		{
 			messId += FF9StateSystem.Battle.FF9Battle.enemy[pMe.bi.slot_no].et.mes;
 			String btlMessage = FF9TextTool.BattleText(messId);
+			VoicePlayer.PlayBattleVoice(messId, btlMessage);
 			if (instance.wSeqCode == 33)
 				UIManager.Battle.SetBattleTitle(btlMessage, 4);
 			else
 				UIManager.Battle.SetBattleMessage(btlMessage, 4);
-			VoicePlayer.PlayBattleVoice(messId, btlMessage);
 		}
 		pSeqWork.CurPtr += 2;
 		return 1;

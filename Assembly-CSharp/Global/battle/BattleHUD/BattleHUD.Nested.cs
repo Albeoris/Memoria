@@ -43,7 +43,6 @@ public partial class BattleHUD : UIScene
         None,
     }
 
-
     private enum AbilityStatus
     {
         None,
@@ -132,5 +131,13 @@ public partial class BattleHUD : UIScene
             Index = index;
             Unit = unit;
         }
+    }
+
+    private class Message
+    {
+        public String message;
+        public Byte priority;
+        public Single counter;
+        public Boolean isRect;
     }
 }

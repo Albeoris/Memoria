@@ -23,6 +23,7 @@ public partial class BattleHUD : UIScene
     private readonly List<Int32> _matchBattleIdPlayerList;
     private readonly List<Int32> _matchBattleIdEnemyList;
     private readonly List<Byte> _itemIdList;
+    private readonly Dictionary<String, Message> _messageQueue;
 
     private Single _lastFrameRightTriggerAxis;
     private Boolean _lastFramePressOnMenu;
