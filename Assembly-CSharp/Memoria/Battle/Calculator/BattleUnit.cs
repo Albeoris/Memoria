@@ -229,7 +229,7 @@ namespace Memoria
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatus.Zombie);
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
-        public WeaponItem Weapon => IsPlayer ? (WeaponItem)btl_util.getWeaponNumber(Data) : WeaponItem.NoWeapon;
+        public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);
         public Byte Head => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Head : (Byte)255;
         public Byte Wrist => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Wrist : (Byte)255;
         public Byte Armor => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Armor : (Byte)255;
@@ -400,7 +400,7 @@ namespace Memoria
                 return;
 
             Data.bi.death_f = 1;
-            if (!IsPlayer)
+            if (!IsPlayer && btl_util.getEnemyPtr(Data).info.die_atk == 0)
             {
                 btl_util.SetEnemyDieSound(Data, btl_util.getEnemyTypePtr(Data).die_snd_no);
                 Data.die_seq = 3;

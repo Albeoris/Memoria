@@ -123,7 +123,7 @@ public static class UnifiedBattleSequencer
 		{
 			effectNum = atkNo;
 			effectType = EffectType.EnemySequence;
-			threadList = BattleActionThread.LoadFromBtlSeq(scene, seq, battleText, effectNum);
+			threadList = BattleActionThread.LoadFromBtlSeq(scene, seq, battleText, effectNum, null, true);
 		}
 
 		public BattleAction(String sequenceText)

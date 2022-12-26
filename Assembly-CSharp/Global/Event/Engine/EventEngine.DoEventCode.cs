@@ -2269,12 +2269,9 @@ public partial class EventEngine
                 if (!player.info.sub_replaced)
                     SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), (Byte)statusList);
                 if (charId == CharacterId.Amarant)
-                {
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Cinna), (Byte)statusList);
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Marcus), (Byte)statusList);
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Blank), (Byte)statusList);
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Beatrix), (Byte)statusList);
-                }
+                    foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                        if (play.Index > CharacterId.Amarant)
+                            SFieldCalculator.FieldRemoveStatus(play, (Byte)statusList);
                 return 0;
             }
             case EBin.event_code_binary.SPS2:
@@ -2465,6 +2462,8 @@ public partial class EventEngine
                 {
                     PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                     Int32 newHp = this.getv2();
+                    Single hpHealProp = newHp <= player.cur.hp ? -1f :
+                        newHp >= 9999 ? 1f : (Single)(newHp - player.cur.hp) / player.max.hp;
 
                     player.cur.hp = (UInt32)Math.Min(player.max.hp, newHp);
 
@@ -2474,17 +2473,10 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.hp = (UInt32)Math.Min(subPlayer.max.hp, newHp);
                     }
-                    if (charId == CharacterId.Amarant && newHp >= player.max.hp)
-                    {
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Cinna);
-                        player.cur.hp = player.max.hp;
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Marcus);
-                        player.cur.hp = player.max.hp;
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Blank);
-                        player.cur.hp = player.max.hp;
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Beatrix);
-                        player.cur.hp = player.max.hp;
-                    }
+                    if (charId == CharacterId.Amarant && hpHealProp >= 0f)
+                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                            if (play.Index > CharacterId.Amarant)
+                                play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
                 }
                 return 0;
             }
@@ -2495,6 +2487,8 @@ public partial class EventEngine
                 {
                     PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                     Int32 newMp = this.getv2();
+                    Single mpHealProp = newMp <= player.cur.mp ? -1f :
+                        newMp >= 999 ? 1f : (Single)(newMp - player.cur.mp) / player.max.mp;
 
                     player.cur.mp = (UInt32)Math.Min(player.max.mp, newMp);
 
@@ -2504,17 +2498,10 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.mp = (UInt32)Math.Min(subPlayer.max.mp, newMp);
                     }
-                    if (charId == CharacterId.Amarant && newMp >= player.max.mp)
-                    {
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Cinna);
-                        player.cur.mp = player.max.mp;
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Marcus);
-                        player.cur.mp = player.max.mp;
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Blank);
-                        player.cur.mp = player.max.mp;
-                        player = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Beatrix);
-                        player.cur.mp = player.max.mp;
-                    }
+                    if (charId == CharacterId.Amarant && mpHealProp >= 0f)
+                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                            if (play.Index > CharacterId.Amarant)
+                                play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
                 }
                 return 0;
             }

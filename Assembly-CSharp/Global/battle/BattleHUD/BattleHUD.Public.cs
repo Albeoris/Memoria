@@ -133,12 +133,12 @@ public partial class BattleHUD : UIScene
 
     public void SetBattleCommandTitle(CMD_DATA pCmd)
     {
-        String str1 = GetBattleCommandTitle(pCmd);
+        String title = GetBattleCommandTitle(pCmd);
 
-        if (String.IsNullOrEmpty(str1) || (pCmd.cmd_no == BattleCommandId.Change && pCmd.sub_no == 96))
+        if (String.IsNullOrEmpty(title)) 
             return;
-
-        SetBattleTitle(str1, 1);
+        
+        SetBattleTitle(title, 1);
     }
 
     public String BtlGetAttrName(Int32 pAttr)

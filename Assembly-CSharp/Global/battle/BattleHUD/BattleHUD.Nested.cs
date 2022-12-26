@@ -54,7 +54,7 @@ public partial class BattleHUD : UIScene
     {
         Normal,
         Critical,
-        Empty,
+        Dead,
     }
 
     private enum SubMenuType

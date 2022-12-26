@@ -195,7 +195,7 @@ public class BattleActionThread
 		return result;
 	}
 
-	public static List<BattleActionThread> LoadFromBtlSeq(BTL_SCENE scene, btlseq.btlseqinstance seq, TextGetter battleText, Int32 atkNo, Dictionary<String, TextGetter> langBattleText = null)
+	public static List<BattleActionThread> LoadFromBtlSeq(BTL_SCENE scene, btlseq.btlseqinstance seq, TextGetter battleText, Int32 atkNo, Dictionary<String, TextGetter> langBattleText = null, Boolean forPlayerUsage = false)
 	{
 		List<BattleActionThread> result = new List<BattleActionThread>();
 		BattleActionThread mainThread = new BattleActionThread();
@@ -357,7 +357,7 @@ public class BattleActionThread
 					case 16: // Run Camera
 					case 18: // Run Camera Target Alternate
 					case 32: // Run Camera Target
-						if (allowCamera)
+						if (allowCamera && !forPlayerUsage)
 							mainThread.code.AddLast(new BattleActionCode("PlayCamera", "Camera", r.ReadByte().ToString(), "Char", seq.wSeqCode == 16 ? "0" : "AllTargets", "Alternate", (seq.wSeqCode == 18 ? true : false).ToString()));
 						else
 							r.ReadByte();
@@ -385,7 +385,10 @@ public class BattleActionThread
 					case 21: // Play Texture Animation
 					case 22: // Play Texture Animation Once
 					case 23: // Stop Texture Animation
-						mainThread.code.AddLast(new BattleActionCode("PlayTextureAnimation", "Char", "Caster", "Anim", r.ReadByte().ToString(), "Once", (seq.wSeqCode == 22).ToString(), "Stop", (seq.wSeqCode == 23).ToString()));
+						if (forPlayerUsage) // TODO: make it work in MonsterTransform state
+							r.ReadByte();
+						else
+							mainThread.code.AddLast(new BattleActionCode("PlayTextureAnimation", "Char", "Caster", "Anim", r.ReadByte().ToString(), "Once", (seq.wSeqCode == 22).ToString(), "Stop", (seq.wSeqCode == 23).ToString()));
 						break;
 					case 25: // Play Sound
 						BattleActionThread soundThread = new BattleActionThread();

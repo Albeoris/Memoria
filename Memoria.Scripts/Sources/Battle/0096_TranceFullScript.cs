@@ -20,6 +20,11 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
+            if (!_v.Target.HasTrance)
+            {
+                _v.Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
             _v.Target.Trance = Byte.MaxValue;
             _v.Target.AlterStatus(BattleStatus.Trance);
         }

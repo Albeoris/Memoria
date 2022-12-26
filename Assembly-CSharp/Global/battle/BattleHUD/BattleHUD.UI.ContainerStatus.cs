@@ -140,7 +140,7 @@ public partial class BattleHUD : UIScene
                 {
                     switch (CheckHPState(bd))
                     {
-                        case ParameterStatus.Empty:
+                        case ParameterStatus.Dead:
                             hud.SetColor(FF9TextTool.Red);
                             return;
                         case ParameterStatus.Critical:
@@ -161,7 +161,7 @@ public partial class BattleHUD : UIScene
                 numberSubModeHud.MaxValue.SetText(bd.MaximumMp.ToString());
                 if (!bd.IsSelected)
                     numberSubModeHud.SetColor(FF9TextTool.Gray);
-                else if (CheckMPState(bd) == ParameterStatus.Empty)
+                else if (CheckMPState(bd) == ParameterStatus.Dead)
                     numberSubModeHud.SetColor(FF9TextTool.Yellow);
                 else
                     numberSubModeHud.SetColor(FF9TextTool.White);

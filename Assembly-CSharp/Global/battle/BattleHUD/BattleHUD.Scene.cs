@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Runtime.CompilerServices;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Prime;
+
 using Memoria.Scenes;
 using UnityEngine;
 
@@ -82,24 +83,24 @@ public partial class BattleHUD : UIScene
                     break;
                 case CommandMenu.Ability1:
                 case CommandMenu.Ability2:
-                    //int num = currentCommandIndex != CommandMenu.Ability2 ? 0 : 1;
+
                     CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
                     if (ff9Command.Type == CharacterCommandType.Normal)
                     {
                         _subMenuType = SubMenuType.Normal;
                         SetCommandVisibility(false, false);
                         SetTargetVisibility(true);
-                        break;
+
                     }
-                    if (ff9Command.Type == CharacterCommandType.Ability)
+                    else if (ff9Command.Type == CharacterCommandType.Ability)
                     {
                         _subMenuType = SubMenuType.Ability;
                         DisplayAbility();
                         SetCommandVisibility(false, false);
                         SetAbilityPanelVisibility(true, false);
-                        break;
+
                     }
-                    if (ff9Command.Type == CharacterCommandType.Throw)
+                    else if (ff9Command.Type == CharacterCommandType.Throw)
                     {
                         _subMenuType = SubMenuType.Throw;
                         DisplayItem(true);
@@ -170,7 +171,9 @@ public partial class BattleHUD : UIScene
                 SetTargetVisibility(true);
             }
             else
+            {
                 FF9Sfx.FF9SFX_Play(102);
+            }
         }
         else if (ButtonGroupState.ActiveGroup == ItemGroupButton)
         {
@@ -183,7 +186,9 @@ public partial class BattleHUD : UIScene
                 SetTargetVisibility(true);
             }
             else
+            {
                 FF9Sfx.FF9SFX_Play(102);
+            }
         }
         return true;
     }
@@ -191,9 +196,9 @@ public partial class BattleHUD : UIScene
     public override Boolean OnKeyCancel(GameObject go)
     {
         if (UIManager.Input.GetKey(Control.Special))
-        {
+
             return true;
-        }
+
 
         if (base.OnKeyCancel(go) && !_hidingHud && ButtonGroupState.ActiveGroup != CommandGroupButton)
         {
@@ -239,7 +244,9 @@ public partial class BattleHUD : UIScene
                     SetCommandVisibility(true, true);
                 }
                 else
+                {
                     SetAbilityPanelVisibility(true, false);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == ItemGroupButton)
             {
@@ -248,7 +255,9 @@ public partial class BattleHUD : UIScene
                 SetCommandVisibility(true, true);
             }
             else if (ButtonGroupState.ActiveGroup == String.Empty && UIManager.Input.ContainsAndroidQuitKey())
+            {
                 OnKeyQuit();
+            }
         }
         return true;
     }
@@ -259,9 +268,9 @@ public partial class BattleHUD : UIScene
         {
             if (ReadyQueue.Count > 1)
             {
-                Int32 num = ReadyQueue[0];
+                Int32 postponed = ReadyQueue[0];
                 ReadyQueue.RemoveAt(0);
-                ReadyQueue.Add(num);
+                ReadyQueue.Add(postponed);
                 using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
@@ -281,7 +290,9 @@ public partial class BattleHUD : UIScene
                 }
             }
             else if (ReadyQueue.Count == 1)
+            {
                 SwitchPlayer(ReadyQueue[0]);
+            }
         }
         return true;
     }
@@ -349,10 +360,10 @@ public partial class BattleHUD : UIScene
         if (base.OnItemSelect(go))
         {
             if (ButtonGroupState.ActiveGroup == CommandGroupButton)
-            {
-                Int32 siblingIndex = go.transform.GetSiblingIndex();
-                _currentCommandIndex = (CommandMenu)siblingIndex;
-            }
+
+                _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
+
+
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
             if (ButtonGroupState.ActiveGroup == TargetGroupButton)
@@ -361,11 +372,13 @@ public partial class BattleHUD : UIScene
                 {
                     if (_cursorType == CursorGroup.Individual)
                     {
-                        Int32 num = go.GetComponent<ModelButton>().index;
-                        Int32 index = num >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(num) + 4 : _matchBattleIdPlayerList.IndexOf(num);
-                        if (index != -1)
+                        Int32 targetIndex = go.GetComponent<ModelButton>().index;
+                        Int32 targetLabelIndex = targetIndex >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(targetIndex) : _matchBattleIdPlayerList.IndexOf(targetIndex);
+                        if (targetLabelIndex != -1)
                         {
-                            GONavigationButton targetHud = _targetPanel.AllTargets[index];
+                            if (targetIndex >= HonoluluBattleMain.EnemyStartIndex)
+                                targetLabelIndex += HonoluluBattleMain.EnemyStartIndex;
+                            GONavigationButton targetHud = _targetPanel.AllTargets[targetLabelIndex];
                             if (targetHud.ButtonGroup.enabled)
                                 ButtonGroupState.ActiveButton = targetHud.GameObject;
                         }
@@ -373,12 +386,12 @@ public partial class BattleHUD : UIScene
                 }
                 else if (go.transform.parent.parent == TargetPanel.transform && _cursorType == CursorGroup.Individual)
                 {
-                    Int32 siblingIndex = go.transform.GetSiblingIndex();
+                    Int32 targetIndex = go.transform.GetSiblingIndex();
                     if (go.GetParent().transform.GetSiblingIndex() == 1)
-                        siblingIndex += HonoluluBattleMain.EnemyStartIndex;
-                    if (_currentTargetIndex != siblingIndex)
+                        targetIndex += HonoluluBattleMain.EnemyStartIndex;
+                    if (_currentTargetIndex != targetIndex)
                     {
-                        _currentTargetIndex = siblingIndex;
+                        _currentTargetIndex = targetIndex;
                         DisplayTargetPointer();
                     }
                 }
@@ -405,12 +418,15 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus CheckAbilityStatus(Int32 subMenuIndex)
     {
+        if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
+            return AbilityStatus.Enable;
         CharacterCommand command = CharacterCommands.Commands[(Int32)_currentCommandId];
-        if (subMenuIndex >= command.Abilities.Length)
+        Byte abilId = (Byte)command.GetAbilityId(subMenuIndex);
+        if (abilId == (Byte)BattleAbilityId.Void)
             return AbilityStatus.None;
+        return GetAbilityState(abilId);
 
-        Int32 abilityId = command.Abilities[subMenuIndex];
-        return GetAbilityState(abilityId);
+
     }
 
     private void ToggleAllTarget()
@@ -425,7 +441,7 @@ public partial class BattleHUD : UIScene
             {
                 foreach (GONavigationButton button in _targetPanel.AllTargets)
                     ButtonGroupState.SetButtonAnimation(button, true);
-                
+
                 ButtonGroupState.ActiveButton = ButtonGroupState.GetCursorStartSelect(TargetGroupButton);
             }
             _cursorType = CursorGroup.Individual;

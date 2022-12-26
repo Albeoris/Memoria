@@ -361,7 +361,7 @@ public partial class BattleHUD : UIScene
             {
                 switch (CheckHPState(player))
                 {
-                    case ParameterStatus.Empty:
+                    case ParameterStatus.Dead:
                         numberSubModeHud.SetColor(FF9TextTool.Red);
                         break;
                     case ParameterStatus.Critical:
@@ -396,7 +396,7 @@ public partial class BattleHUD : UIScene
 
             if (!player.IsSelected)
                 numberSubModeHud.SetColor(FF9TextTool.Gray);
-            else if (CheckMPState(player) == ParameterStatus.Empty)
+            else if (CheckMPState(player) == ParameterStatus.Dead)
                 numberSubModeHud.SetColor(FF9TextTool.Yellow);
             else
                 numberSubModeHud.SetColor(FF9TextTool.White);
@@ -569,6 +569,30 @@ public partial class BattleHUD : UIScene
         }
     }
 
+    private Boolean CommandIsMonsterTransformCommand(Int32 playerIndex, BattleCommandId cmdId, out BTL_DATA.MONSTER_TRANSFORM transform)
+    {
+        if (playerIndex < 0)
+        {
+            transform = null;
+            return false;
+        }
+        BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
+        transform = btl.Data.monster_transform;
+        return btl.Data.is_monster_transform && btl.Data.monster_transform.new_command == cmdId;
+    }
+
+    private AA_DATA GetSelectedActiveAbility(Int32 playerIndex, BattleCommandId cmdId, Int32 abilityIndex, out Int32 subNo)
+    {
+        if (CommandIsMonsterTransformCommand(playerIndex, cmdId, out BTL_DATA.MONSTER_TRANSFORM transform))
+        {
+            subNo = abilityIndex;
+            return FF9StateSystem.Battle.FF9Battle.aa_data[abilityIndex];
+        }
+        CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)cmdId];
+        BattleAbilityId abilityId = (BattleAbilityId)PatchAbility((Int32)ff9Command.GetAbilityId(abilityIndex));
+        subNo = (Int32)abilityId;
+        return FF9StateSystem.Battle.FF9Battle.aa_data[subNo];
+    }
 
     private void DisplayAbility()
     {
@@ -644,11 +668,11 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private void DisplayTarget()
+    private void UpdateTargetStates()
     {
-        Boolean flag1 = false;
-        Int32 enCount = _enemyCount;
-        Int32 plCount = _playerCount;
+        Boolean shouldUpdatePointer = false;
+        Int32 enemyCountOld = _enemyCount;
+        Int32 playerCountOld = _playerCount;
         Int32 enemyCount = 0;
         Int32 playerCount = 0;
 
@@ -663,9 +687,9 @@ public partial class BattleHUD : UIScene
                 enemyCount++;
         }
 
-        if (enemyCount != enCount || playerCount != plCount)
+        if (enemyCount != enemyCountOld || playerCount != playerCountOld)
         {
-            flag1 = true;
+            shouldUpdatePointer = true;
             _matchBattleIdPlayerList.Clear();
             _currentCharacterHp.Clear();
             _matchBattleIdEnemyList.Clear();
@@ -674,8 +698,8 @@ public partial class BattleHUD : UIScene
             _playerCount = playerCount;
         }
 
-        Int32 index1 = 0;
-        Int32 index2 = 0;
+        Int32 playerIndex = 0;
+        Int32 enemyIndex = 0;
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
@@ -686,52 +710,52 @@ public partial class BattleHUD : UIScene
 
             if (unit.IsPlayer)
             {
-                ParameterStatus parameterStatus = CheckHPState(unit);
-                if (index1 >= _currentCharacterHp.Count)
+                ParameterStatus playerHpState = CheckHPState(unit);
+                if (playerIndex >= _currentCharacterHp.Count)
                 {
-                    _currentCharacterHp.Add(parameterStatus);
+                    _currentCharacterHp.Add(playerHpState);
                     _matchBattleIdPlayerList.Add(unitIndex);
-                    flag1 = true;
+                    shouldUpdatePointer = true;
                 }
-                else if (parameterStatus != _currentCharacterHp[index1])
+                else if (playerHpState != _currentCharacterHp[playerIndex])
                 {
-                    _currentCharacterHp[index1] = parameterStatus;
-                    flag1 = true;
+                    _currentCharacterHp[playerIndex] = playerHpState;
+                    shouldUpdatePointer = true;
                 }
-                ++index1;
+                ++playerIndex;
             }
             else
             {
-                Boolean isDead = unit.IsUnderStatus(BattleStatus.Death);
-                if (index2 >= _currentEnemyDieState.Count)
+                Boolean enemyIsDead = unit.IsUnderStatus(BattleStatus.Death);
+                if (enemyIndex >= _currentEnemyDieState.Count)
                 {
-                    _currentEnemyDieState.Add(isDead);
+                    _currentEnemyDieState.Add(enemyIsDead);
                     _matchBattleIdEnemyList.Add(unitIndex);
-                    flag1 = true;
+                    shouldUpdatePointer = true;
                 }
-                else if (isDead != _currentEnemyDieState[index2])
+                else if (enemyIsDead != _currentEnemyDieState[enemyIndex])
                 {
-                    _currentEnemyDieState[index2] = isDead;
-                    flag1 = true;
+                    _currentEnemyDieState[enemyIndex] = enemyIsDead;
+                    shouldUpdatePointer = true;
                 }
-                ++index2;
+                ++enemyIndex;
             }
         }
 
-        if (!flag1)
+        if (!shouldUpdatePointer)
             return;
 
-        foreach (GONavigationButton current in _targetPanel.EnumerateTargets())
+        foreach (GONavigationButton targetHud in _targetPanel.EnumerateTargets())
         {
-            current.KeyNavigation.startsSelected = false;
-            current.IsActive = false;
+            targetHud.KeyNavigation.startsSelected = false;
+            targetHud.IsActive = false;
         }
 
-        GameObject obj = null;
-        Int32 playerIndex = 0;
-        Int32 enemyIndex = 0;
+        GameObject currentTargetLabel = null;
+        playerIndex = 0;
+        enemyIndex = 0;
         if (_cursorType == CursorGroup.Individual)
-            obj = ButtonGroupState.ActiveButton;
+            currentTargetLabel = ButtonGroupState.ActiveButton;
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
@@ -740,103 +764,109 @@ public partial class BattleHUD : UIScene
 
             if (unit.IsPlayer)
             {
-                GONavigationButton targetHud = _targetPanel.Players[playerIndex];
-                GameObject go = targetHud.GameObject;
-                UILabel uiLabel = targetHud.Name.Label;
-                go.SetActive(true);
-                uiLabel.text = unit.Player.Name;
-                if (_currentCharacterHp[playerIndex] == ParameterStatus.Empty)
+                GONavigationButton playerHUD = _targetPanel.Players[playerIndex];
+                GameObject labelObj = playerHUD.GameObject;
+                UILabel nameLabel = playerHUD.Name.Label;
+                labelObj.SetActive(true);
+                nameLabel.text = unit.Player.Name;
+                if (_currentCharacterHp[playerIndex] == ParameterStatus.Dead)
                 {
                     if (_cursorType == CursorGroup.Individual)
                     {
-                        if (_targetDead == false)
+                        if (!_targetDead)
                         {
-                            ButtonGroupState.SetButtonEnable(go, false);
-                            if (go == obj)
+                            ButtonGroupState.SetButtonEnable(labelObj, false);
+                            if (labelObj == currentTargetLabel)
                             {
                                 Int32 firstPlayer = GetFirstAlivePlayerIndex();
                                 if (firstPlayer != -1)
                                 {
                                     _currentTargetIndex = firstPlayer;
-                                    obj = _targetPanel.Players[firstPlayer].GameObject;
+                                    currentTargetLabel = _targetPanel.Players[firstPlayer].GameObject;
                                 }
                                 else
                                 {
                                     Debug.LogError("NO player active !!");
                                 }
-                                Singleton<PointerManager>.Instance.RemovePointerFromGameObject(go);
+                                Singleton<PointerManager>.Instance.RemovePointerFromGameObject(labelObj);
                             }
                         }
                         else
-                            ButtonGroupState.SetButtonEnable(go, true);
+                        {
+                            ButtonGroupState.SetButtonEnable(labelObj, true);
+                        }
                     }
-                    uiLabel.color = FF9TextTool.Red;
+                    nameLabel.color = FF9TextTool.Red;
                 }
                 else if (_currentCharacterHp[playerIndex] == ParameterStatus.Critical)
                 {
                     if (_cursorType == CursorGroup.Individual)
-                        ButtonGroupState.SetButtonEnable(go, true);
-                    uiLabel.color = FF9TextTool.Yellow;
+                        ButtonGroupState.SetButtonEnable(labelObj, true);
+                    nameLabel.color = FF9TextTool.Yellow;
                 }
                 else
                 {
                     if (_cursorType == CursorGroup.Individual)
-                        ButtonGroupState.SetButtonEnable(go, true);
-                    uiLabel.color = FF9TextTool.White;
+                        ButtonGroupState.SetButtonEnable(labelObj, true);
+                    nameLabel.color = FF9TextTool.White;
                 }
                 ++playerIndex;
             }
             else
             {
-                GONavigationButton targetHud = _targetPanel.Enemies[enemyIndex];
-                GameObject go = targetHud.GameObject;
-                UILabel uiLabel = targetHud.Name.Label;
+                GONavigationButton enemyHUD = _targetPanel.Enemies[enemyIndex];
+                GameObject labelObj = enemyHUD.GameObject;
+                UILabel nameLabel = enemyHUD.Name.Label;
                 Single additionalWidth = 0.0f;
-                go.SetActive(true);
-                uiLabel.text = uiLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name, ref additionalWidth);
+                labelObj.SetActive(true);
+                nameLabel.text = nameLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name, ref additionalWidth);
                 if (_currentEnemyDieState[enemyIndex])
                 {
                     if (_cursorType == CursorGroup.Individual)
                     {
-                        ButtonGroupState.SetButtonEnable(go, false);
+                        ButtonGroupState.SetButtonEnable(labelObj, false);
                         if (_targetDead == false)
                         {
-                            if (go == obj)
+                            if (labelObj == currentTargetLabel)
                             {
-                                Int32 enemyIndexEx = GetFirstAliveEnemyIndex() + HonoluluBattleMain.EnemyStartIndex;
-                                if (enemyIndexEx != -1)
+                                Int32 nextValidTarget = GetFirstAliveEnemyIndex();
+                                if (nextValidTarget != -1)
                                 {
                                     if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform && _enemyCount > 1)
                                     {
-                                        Int32 nextEnemyIndexEx = _currentTargetIndex == enemyIndexEx ? enemyIndexEx + 1 : enemyIndexEx;
-                                        Int32 firstIndex = nextEnemyIndexEx >= _targetPanel.AllTargets.Length ? enemyIndexEx : nextEnemyIndexEx;
-                                        ValidateDefaultTarget(ref firstIndex);
-                                        enemyIndexEx = firstIndex;
+                                        if (_currentTargetIndex == nextValidTarget && nextValidTarget + 1 < _targetPanel.AllTargets.Length)
+                                            nextValidTarget++;
+                                        ValidateDefaultTarget(ref nextValidTarget);
+
                                     }
-                                    _currentTargetIndex = enemyIndexEx;
-                                    obj = _targetPanel.AllTargets[enemyIndexEx].GameObject;
+                                    _currentTargetIndex = nextValidTarget;
+                                    currentTargetLabel = _targetPanel.AllTargets[nextValidTarget].GameObject;
                                 }
                                 else
+                                {
                                     Debug.LogError("NO enemy active !!");
-                                Singleton<PointerManager>.Instance.RemovePointerFromGameObject(go);
+                                }
+                                Singleton<PointerManager>.Instance.RemovePointerFromGameObject(labelObj);
                             }
                         }
                         else
-                            ButtonGroupState.SetButtonEnable(go, true);
+                        {
+                            ButtonGroupState.SetButtonEnable(labelObj, true);
+                        }
                     }
-                    uiLabel.color = FF9TextTool.Gray;
+                    nameLabel.color = FF9TextTool.Gray;
                 }
                 else
                 {
                     if (_cursorType == CursorGroup.Individual)
-                        ButtonGroupState.SetButtonEnable(go, true);
-                    uiLabel.color = FF9TextTool.White;
+                        ButtonGroupState.SetButtonEnable(labelObj, true);
+                    nameLabel.color = FF9TextTool.White;
                 }
                 ++enemyIndex;
             }
         }
 
-        if ((enCount != enemyCount || plCount != playerCount) && ButtonGroupState.ActiveGroup == TargetGroupButton)
+        if ((enemyCountOld != enemyCount || playerCountOld != playerCount) && ButtonGroupState.ActiveGroup == TargetGroupButton)
         {
             SetTargetDefault();
             modelButtonManager.Reset();
@@ -846,8 +876,8 @@ public partial class BattleHUD : UIScene
             ButtonGroupState.ActiveGroup = TargetGroupButton;
         }
 
-        if (obj != null && _cursorType == CursorGroup.Individual && obj.activeSelf)
-            ButtonGroupState.ActiveButton = obj;
+        if (currentTargetLabel != null && _cursorType == CursorGroup.Individual && currentTargetLabel.activeSelf)
+            ButtonGroupState.ActiveButton = currentTargetLabel;
         else
             DisplayTargetPointer();
     }
@@ -861,7 +891,7 @@ public partial class BattleHUD : UIScene
 
         switch (parameterStatus)
         {
-            case ParameterStatus.Empty:
+            case ParameterStatus.Dead:
                 playerHud.ATBBar.SetProgress(0.0f);
                 playerHud.HP.SetColor(FF9TextTool.Red);
                 playerHud.Name.SetColor(FF9TextTool.Red);
@@ -893,7 +923,7 @@ public partial class BattleHUD : UIScene
             return;
 
         playerHud.TranceBar.SetProgress(bd.Trance / 256f);
-        if (parameterStatus == ParameterStatus.Empty)
+        if (parameterStatus == ParameterStatus.Dead)
             return;
 
         if (bd.Trance == Byte.MaxValue && !playerHud.TranceBlink)
@@ -930,7 +960,7 @@ public partial class BattleHUD : UIScene
     private static ParameterStatus CheckHPState(BattleUnit bd)
     {
         if (bd.CurrentHp == 0)
-            return ParameterStatus.Empty;
+            return ParameterStatus.Dead;
 
         if (bd.IsPlayer)
         {
@@ -1523,11 +1553,9 @@ public partial class BattleHUD : UIScene
             _defaultTargetDead = false;
             _targetDead = false;
             _bestTargetIndex = -1;
-            if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2 || (CurrentPlayerIndex > -1 && FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Data.is_monster_transform && _currentCommandId == FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Data.monster_transform.new_command))
+            if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2 || CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
             {
-                CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
-                Byte abilityId = PatchAbility(ff9Command.Type != CharacterCommandType.Ability ? ff9Command.Ability : ff9Command.Abilities[_currentSubMenuIndex]);
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilityId];
+                AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo);
                 targetType = aaData.Info.Target;
                 _defaultTargetAlly = aaData.Info.DefaultAlly;
                 _defaultTargetDead = aaData.Info.DefaultOnDead;
@@ -1537,7 +1565,7 @@ public partial class BattleHUD : UIScene
                 CMD_DATA testCommand = new CMD_DATA
                 {
                     cmd_no = _currentCommandId,
-                    sub_no = abilityId,
+                    sub_no = (Byte)subNo,
                     info = new CMD_DATA.SELECT_INFO()
                 };
                 testCommand.SetAAData(aaData);
@@ -1575,9 +1603,9 @@ public partial class BattleHUD : UIScene
             _isAllTarget = false;
             TargetPanel.SetActive(true);
             EnableTargetArea();
-            DisplayTarget();
+            UpdateTargetStates();
             DisplayStatus(subMode);
-            SetTargetAvalability(targetType);
+            SetTargetAvailability(targetType);
             SetTargetDefault();
             SetTargetHelp();
             ButtonGroupState.ActiveGroup = TargetGroupButton;
@@ -1645,7 +1673,7 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private void SetTargetAvalability(TargetType cursor)
+    private void SetTargetAvailability(TargetType cursor)
     {
         _targetCursor = cursor;
         if (cursor == TargetType.SingleAny)
@@ -1738,7 +1766,7 @@ public partial class BattleHUD : UIScene
 
     private void SetTargetDefault()
     {
-        if (_targetDead == false)
+        if (!_targetDead)
         {
             Int32 playerIndex = 0;
             Int32 enemyIndex = 0;
@@ -1806,7 +1834,6 @@ public partial class BattleHUD : UIScene
             }
             else
             {
-                //int num = HonoluluBattleMain.EnemyStartIndex;
                 Int32 targetIndex;
                 if (_defaultTargetDead)
                 {
@@ -1816,7 +1843,7 @@ public partial class BattleHUD : UIScene
                 }
                 else
                 {
-                    targetIndex = GetFirstAliveEnemyIndex() + HonoluluBattleMain.EnemyStartIndex;
+                    targetIndex = GetFirstAliveEnemyIndex();
                     if (targetIndex != -1)
                     {
                         if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform)
@@ -1841,67 +1868,67 @@ public partial class BattleHUD : UIScene
 
     private void SetTargetHelp()
     {
-        String str1 = String.Empty;
-        Boolean flag = (Int32)_targetCursor < 6 || (Int32)_targetCursor > 12;
+        String cursorHelp = String.Empty;
+        Boolean displayName = _targetCursor <= TargetType.ManyEnemy || _targetCursor == TargetType.Self;
         switch (_targetCursor)
         {
             case TargetType.SingleAny:
-                str1 = Localization.Get("BattleTargetHelpIndividual");
+                cursorHelp = Localization.Get("BattleTargetHelpIndividual");
                 break;
             case TargetType.SingleAlly:
-                str1 = Localization.Get("BattleTargetHelpIndividualPC");
+                cursorHelp = Localization.Get("BattleTargetHelpIndividualPC");
                 break;
             case TargetType.SingleEnemy:
-                str1 = Localization.Get("BattleTargetHelpIndividualNPC");
+                cursorHelp = Localization.Get("BattleTargetHelpIndividualNPC");
                 break;
             case TargetType.ManyAny:
-                str1 = Localization.Get("BattleTargetHelpMultiS");
+                cursorHelp = Localization.Get("BattleTargetHelpMultiS");
                 break;
             case TargetType.ManyAlly:
-                str1 = Localization.Get("BattleTargetHelpMultiPCS");
+                cursorHelp = Localization.Get("BattleTargetHelpMultiPCS");
                 break;
             case TargetType.ManyEnemy:
-                str1 = Localization.Get("BattleTargetHelpMultiNPCS");
+                cursorHelp = Localization.Get("BattleTargetHelpMultiNPCS");
                 break;
             case TargetType.All:
-                str1 = Localization.Get("BattleTargetHelpAll");
+                cursorHelp = Localization.Get("BattleTargetHelpAll");
                 break;
             case TargetType.AllAlly:
-                str1 = Localization.Get("BattleTargetHelpAllPC");
+                cursorHelp = Localization.Get("BattleTargetHelpAllPC");
                 break;
             case TargetType.AllEnemy:
-                str1 = Localization.Get("BattleTargetHelpAllNPC");
+                cursorHelp = Localization.Get("BattleTargetHelpAllNPC");
                 break;
             case TargetType.Random:
-                str1 = Localization.Get("BattleTargetHelpRand");
+                cursorHelp = Localization.Get("BattleTargetHelpRand");
                 break;
             case TargetType.RandomAlly:
-                str1 = Localization.Get("BattleTargetHelpRandPC");
+                cursorHelp = Localization.Get("BattleTargetHelpRandPC");
                 break;
             case TargetType.RandomEnemy:
-                str1 = Localization.Get("BattleTargetHelpRandNPC");
+                cursorHelp = Localization.Get("BattleTargetHelpRandNPC");
                 break;
             case TargetType.Everyone:
-                str1 = Localization.Get("BattleTargetHelpWhole");
+                cursorHelp = Localization.Get("BattleTargetHelpWhole");
                 break;
             case TargetType.Self:
-                str1 = Localization.Get("BattleTargetHelpSelf");
+                cursorHelp = Localization.Get("BattleTargetHelpSelf");
                 break;
         }
 
         if (_isAllTarget)
         {
-            flag = false;
+            displayName = false;
             switch (_targetCursor)
             {
                 case TargetType.ManyAny:
-                    str1 = Localization.Get("BattleTargetHelpMultiM");
+                    cursorHelp = Localization.Get("BattleTargetHelpMultiM");
                     break;
                 case TargetType.ManyAlly:
-                    str1 = Localization.Get("BattleTargetHelpMultiPCM");
+                    cursorHelp = Localization.Get("BattleTargetHelpMultiPCM");
                     break;
                 case TargetType.ManyEnemy:
-                    str1 = Localization.Get("BattleTargetHelpMultiNPCM");
+                    cursorHelp = Localization.Get("BattleTargetHelpMultiNPCM");
                     break;
             }
         }
@@ -1916,18 +1943,18 @@ public partial class BattleHUD : UIScene
             if (unit.IsPlayer)
             {
                 GONavigationButton targetHud = _targetPanel.Players[playerIndex];
-                String str2 = !flag ? String.Empty : unit.Player.Name;
+                String targetName = displayName ? unit.Player.Name : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
-                targetHud.ButtonGroup.Help.Text = str1 + "\n" + str2;
+                targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++playerIndex;
             }
             else
             {
                 GONavigationButton targetHud = _targetPanel.Enemies[enemyIndex];
                 Single additionalWidth = 0.0f;
-                String str2 = !flag ? String.Empty : Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name, ref additionalWidth);
+                String targetName = displayName ? Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name, ref additionalWidth) : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
-                targetHud.ButtonGroup.Help.Text = str1 + "\n" + str2;
+                targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++enemyIndex;
             }
         }
@@ -1935,9 +1962,8 @@ public partial class BattleHUD : UIScene
 
     private void SetHelpMessageVisibility(Boolean active)
     {
-        if (!ButtonGroupState.HelpEnabled)
-            return;
-        Singleton<HelpDialog>.Instance.gameObject.SetActive(active && (CommandPanel.activeSelf || ItemPanel.activeSelf || AbilityPanel.activeSelf || TargetPanel.activeSelf));
+        if (ButtonGroupState.HelpEnabled)
+            Singleton<HelpDialog>.Instance.gameObject.SetActive(active && (CommandPanel.activeSelf || ItemPanel.activeSelf || AbilityPanel.activeSelf || TargetPanel.activeSelf));
     }
 
     private void SetHudVisibility(Boolean active)
@@ -2102,6 +2128,7 @@ public partial class BattleHUD : UIScene
     {
         if (ButtonGroupState.ActiveGroup != TargetGroupButton)
             return;
+
         if (_cursorType == CursorGroup.Individual)
         {
             PointToModel(_cursorType, _currentTargetIndex);
@@ -2115,26 +2142,25 @@ public partial class BattleHUD : UIScene
 
             if (_cursorType == CursorGroup.AllPlayer)
             {
-                List<GameObject> goList = new List<GameObject>();
-                for (Int32 index = 0; index < _playerCount; ++index)
-                {
-                    if (_currentCharacterHp[index] != ParameterStatus.Empty || _targetDead)
-                        goList.Add(_targetPanel.Players[index]);
-                }
-                ButtonGroupState.SetMultipleTarget(goList, true);
+                List<GameObject> targetList = new List<GameObject>();
+                for (Int32 playerIndex = 0; playerIndex < _playerCount; ++playerIndex)
+                    if (_targetDead || _currentCharacterHp[playerIndex] != ParameterStatus.Dead)
+                        targetList.Add(_targetPanel.Players[playerIndex]);
+                ButtonGroupState.SetMultipleTarget(targetList, true);
             }
             else if (_cursorType == CursorGroup.AllEnemy)
             {
-                List<GameObject> goList = new List<GameObject>();
-                for (Int32 index = 0; index < _enemyCount; ++index)
-                {
-                    if (_targetDead || index < _currentEnemyDieState.Count && !_currentEnemyDieState[index])
-                        goList.Add(_targetPanel.Enemies[index]);
-                }
-                ButtonGroupState.SetMultipleTarget(goList, true);
+                List<GameObject> targetList = new List<GameObject>();
+                for (Int32 enemyIndex = 0; enemyIndex < _enemyCount; ++enemyIndex)
+
+                    if (_targetDead || enemyIndex < _currentEnemyDieState.Count && !_currentEnemyDieState[enemyIndex])
+                        targetList.Add(_targetPanel.Enemies[enemyIndex]);
+                ButtonGroupState.SetMultipleTarget(targetList, true);
             }
             else
+            {
                 ButtonGroupState.SetAllTarget(true);
+            }
         }
     }
 

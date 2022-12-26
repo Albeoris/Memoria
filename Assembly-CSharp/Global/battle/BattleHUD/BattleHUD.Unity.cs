@@ -237,7 +237,7 @@ public partial class BattleHUD : UIScene
 
         if (TargetPanel.activeSelf)
         {
-            DisplayTarget();
+            UpdateTargetStates();
             _statusPanel.DisplayStatusRealtime();
         }
 

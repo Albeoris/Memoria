@@ -51,7 +51,7 @@ public static class btl_stat
             return 0;
         if ((stat.permanent & status) != 0 || (stat.cur & status) != 0 && (status & BattleStatus.NoReset) != 0)
             return 1;
-        BattleStatus invalidStatuses = 0;
+        BattleStatus invalidStatuses = btl.bi.t_gauge == 0 ? BattleStatus.Trance : 0;
         for (Int32 i = 0; i < 32; ++i)
         {
             BattleStatus bsi = (BattleStatus)(1U << i);
@@ -543,7 +543,9 @@ public static class btl_stat
                 btl2d.Btl2dStatReq(btl);
             }
             else
+            {
                 stat.cnt.opr[0] -= btl.cur.at_coef;
+            }
         }
 
         if (unit.IsUnderAnyStatus(BattleStatus.Poison))
@@ -555,7 +557,9 @@ public static class btl_stat
                 btl2d.Btl2dStatReq(btl);
             }
             else
+            {
                 stat.cnt.opr[1] -= btl.cur.at_coef;
+            }
         }
 
         if (unit.IsUnderAnyStatus(BattleStatus.Regen))
@@ -567,7 +571,9 @@ public static class btl_stat
                 btl2d.Btl2dStatReq(btl);
             }
             else
+            {
                 stat.cnt.opr[2] -= btl.cur.at_coef;
+            }
         }
 
         if (unit.IsUnderAnyStatus(BattleStatus.Trance) && btl.bi.slot_no == (Byte)CharacterId.Garnet && (ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0)
@@ -578,7 +584,9 @@ public static class btl_stat
                 ff9Battle.cmd_status |= 8;
             }
             else
+            {
                 ff9Battle.phantom_cnt -= btl.cur.at_coef;
+            }
         }
 
         ActiveTimeStatus(btl);
@@ -617,26 +625,26 @@ public static class btl_stat
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                Byte num1 = (Byte)(ff9Battle.btl_cnt % 24);
-                Int16 num2;
-                Int16 num3;
-                Int16 num4;
+                Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
+                Int16 r;
+                Int16 g;
+                Int16 b;
                 if ((!CheckStatus(data, BattleStatus.Protect) || !CheckStatus(data, BattleStatus.Shell) ? (!CheckStatus(data, BattleStatus.Protect) ? 1 : 0) : (ff9Battle.btl_cnt % 48 >= 24 ? 1 : 0)) != 0)
                 {
-                    num2 = (Int16)(bbgInfoPtr.chr_r - 64);
-                    num3 = (Int16)(bbgInfoPtr.chr_g - -24);
-                    num4 = (Int16)(bbgInfoPtr.chr_b - -72);
+                    r = (Int16)(bbgInfoPtr.chr_r - 64);
+                    g = (Int16)(bbgInfoPtr.chr_g - -24);
+                    b = (Int16)(bbgInfoPtr.chr_b - -72);
                 }
                 else
                 {
-                    num2 = (Int16)(bbgInfoPtr.chr_r - -40);
-                    num3 = (Int16)(bbgInfoPtr.chr_g - -40);
-                    num4 = (Int16)(bbgInfoPtr.chr_b - 80);
+                    r = (Int16)(bbgInfoPtr.chr_r - -40);
+                    g = (Int16)(bbgInfoPtr.chr_g - -40);
+                    b = (Int16)(bbgInfoPtr.chr_b - 80);
                 }
-                Byte num5 = num1 >= 8 ? (num1 >= 16 ? (Byte)(24U - num1) : (Byte)8) : num1;
-                Int16 r = (Int16)(num2 * num5 >> 3);
-                Int16 g = (Int16)(num3 * num5 >> 3);
-                Int16 b = (Int16)(num4 * num5 >> 3);
+                Byte strength = counter >= 8 ? (counter >= 16 ? (Byte)(24U - counter) : (Byte)8) : counter;
+                r = (Int16)(r * strength >> 3);
+                g = (Int16)(g * strength >> 3);
+                b = (Int16)(b * strength >> 3);
                 GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                 if (data.weapon_geo)
                     GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
@@ -645,15 +653,15 @@ public static class btl_stat
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                Byte num1 = (Byte)(ff9Battle.btl_cnt % 16);
+                Byte counter = (Byte)(ff9Battle.btl_cnt % 16);
                 Byte[] glowingColor = btl_mot.BattleParameterList[(Int32)unit.SerialNumber].TranceGlowingColor;
                 Int16 r = (Int16)(bbgInfoPtr.chr_r - (128 - glowingColor[0]));
                 Int16 g = (Int16)(bbgInfoPtr.chr_g - (128 - glowingColor[1]));
                 Int16 b = (Int16)(bbgInfoPtr.chr_b - (128 - glowingColor[2]));
-                Byte num5 = num1 >= 8 ? (Byte)(16U - num1) : num1;
-                GeoAddColor2DrawPacket(data.gameObject, (Int16)(r * num5 >> 3), (Int16)(g * num5 >> 3), (Int16)(b * num5 >> 3));
+                Byte strength = counter >= 8 ? (Byte)(16U - counter) : counter;
+                GeoAddColor2DrawPacket(data.gameObject, (Int16)(r * strength >> 3), (Int16)(g * strength >> 3), (Int16)(b * strength >> 3));
                 if (data.weapon_geo)
-                    GeoAddColor2DrawPacket(data.weapon_geo, (Int16)(r * num5 >> 3), (Int16)(g * num5 >> 3), (Int16)(b * num5 >> 3));
+                    GeoAddColor2DrawPacket(data.weapon_geo, (Int16)(r * strength >> 3), (Int16)(g * strength >> 3), (Int16)(b * strength >> 3));
             }
             else
             {

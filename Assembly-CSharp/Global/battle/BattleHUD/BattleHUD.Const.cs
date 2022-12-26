@@ -243,17 +243,17 @@ public partial class BattleHUD : UIScene
 
     private static Int32 GetFirstAlivePlayerIndex()
     {
-        Int32 index = -1;
+        Int32 index = 0;
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (unit.IsPlayer)
             {
-                index++;
                 if (unit.CurrentHp > 0)
                     return index;
+                index++;
             }
         }
-        return index; // The bug is possible
+        return -1;
     }
 
     private static Int32 GetAlivePlayerIndexForHealingAttack()
@@ -285,17 +285,17 @@ public partial class BattleHUD : UIScene
 
     private static Int32 GetFirstAliveEnemyIndex()
     {
-        Int32 index = -1;
+        Int32 index = 0;
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (!unit.IsPlayer)
             {
-                index++;
                 if (unit.CurrentHp > 0)
-                    return index;
+                    return HonoluluBattleMain.EnemyStartIndex + index;
+                index++;
             }
         }
-        return index; // The bug is possible
+        return -1;
     }
 
     private static BattleUnit GetFirstAliveEnemy()
