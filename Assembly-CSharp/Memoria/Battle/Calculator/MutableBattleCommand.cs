@@ -6,13 +6,31 @@ namespace Memoria
 {
     public sealed class MutableBattleCommand : BattleCommand
     {
-        internal MutableBattleCommand(CMD_DATA data)
-            : base(data)
+        private MutableBattleCommand(BTL_DATA caster, UInt16 targetId, BattleCommandId cmdNo, Int32 subNo)
+            : base(new CMD_DATA())
+        {
+            btl_cmd.ClearCommand(Data);
+            btl_cmd.ClearReflecData(Data);
+            Data.regist = caster;
+            Data.cmd_no = cmdNo;
+            Data.sub_no = subNo;
+            Data.SetAAData(btl_util.GetCommandAction(Data));
+            Data.ScriptId = btl_util.GetCommandScriptId(Data);
+            Data.tar_id = targetId;
+            Data.info.cursor = Comn.countBits(targetId) > 1 ? (Byte)1 : (Byte)0;
+            Data.info.cover = 0;
+            Data.info.dodge = 0;
+            Data.info.reflec = 0;
+            Data.IsShortRange = btl_util.IsAttackShortRange(Data);
+        }
+
+        public MutableBattleCommand(BattleUnit caster, UInt16 targetId, BattleCommandId cmdNo, BattleAbilityId mainAbilId)
+            : this(caster.Data, targetId, cmdNo, (Int32)mainAbilId)
         {
         }
 
-        public MutableBattleCommand()
-            : this(new CMD_DATA())
+        public MutableBattleCommand(BattleUnit caster, UInt16 targetId, RegularItem itemUse)
+            : this(caster.Data, targetId, BattleCommandId.Item, (Int32)itemUse)
         {
         }
 
@@ -24,8 +42,14 @@ namespace Memoria
 
         public new BattleAbilityId AbilityId
         {
-            get => base.AbilityId;
-            set => Data.sub_no = (Byte)value;
+            get => btl_util.GetCommandMainActionIndex(Data);
+            set => Data.sub_no = (Int32)value;
+        }
+
+        public new RegularItem ItemId
+        {
+            get => btl_util.GetCommandItem(Data);
+            set => Data.sub_no = (Int32)value;
         }
 
         public new Byte ScriptId
@@ -61,7 +85,7 @@ namespace Memoria
         public new BattleStatusIndex AbilityStatusIndex
         {
             get => base.AbilityStatusIndex;
-            set => Data.aa.AddStatusNo = (Byte)value;
+            set => Data.aa.AddStatusNo = value;
         }
 
         public new EffectElement Element
@@ -98,49 +122,6 @@ namespace Memoria
         {
             get => base.IsZeroMP;
             set => Data.info.IsZeroMP = value;
-        }
-
-        public void LoadAbility()
-        {
-            AA_DATA original = FF9StateSystem.Battle.FF9Battle.aa_data[Data.sub_no];
-
-            BattleCommandInfo originalInfo = original.Info;
-            BattleCommandInfo newInfo = new BattleCommandInfo
-            {
-                Target = originalInfo.Target,
-                DefaultAlly = originalInfo.DefaultAlly,
-                DisplayStats = originalInfo.DisplayStats,
-                VfxIndex = originalInfo.VfxIndex,
-                ForDead = originalInfo.ForDead,
-                DefaultCamera = originalInfo.DefaultCamera,
-                DefaultOnDead = originalInfo.DefaultOnDead,
-                SequenceFile = null,
-                VfxAction = null
-            };
-
-            BTL_REF originalRef = original.Ref;
-            BTL_REF newRef = new BTL_REF
-            {
-                ScriptId = originalRef.ScriptId,
-                Power = originalRef.Power,
-                Elements = originalRef.Elements,
-                Rate = originalRef.Rate
-            };
-
-            AA_DATA newData = new AA_DATA
-            {
-                Info = newInfo,
-                Ref = newRef,
-                Category = original.Category,
-                AddStatusNo = original.AddStatusNo,
-                MP = original.MP,
-                Type = original.Type,
-                Vfx2 = original.Vfx2,
-                Name = original.Name
-            };
-
-            Data.SetAAData(newData);
-            Data.IsShortRange = btl_util.IsAttackShortRange(Data);
         }
     }
 }

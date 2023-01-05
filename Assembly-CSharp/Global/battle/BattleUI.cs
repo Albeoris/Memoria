@@ -225,7 +225,7 @@ public class BattleUI : MonoBehaviour
 		}
 		if (GUILayout.Button(" Play "))
 		{
-			btl_cmd.SetEnemyCommandBySequence(1, BattleCommandId.EnemyAtk, (UInt32)this.seqList[this.seqNo]);
+			btl_cmd.SetEnemyCommandBySequence(1, BattleCommandId.EnemyAtk, this.seqList[this.seqNo]);
 		}
 		GUI.enabled = true;
 		GUILayout.EndHorizontal();

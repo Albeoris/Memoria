@@ -100,8 +100,7 @@ public class FieldSPSSystem : HonoBehavior
 
 	private Boolean _loadSPSTexture()
 	{
-		String[] tcbInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("FieldMaps/" + this.MapName + "/spt.tcb", out tcbInfo);
+		Byte[] binAsset = AssetManager.LoadBytes("FieldMaps/" + this.MapName + "/spt.tcb");
 		if (binAsset != null)
 		{
 			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
@@ -152,22 +151,10 @@ public class FieldSPSSystem : HonoBehavior
 	private Boolean _loadSPSBin(Int32 spsNo)
 	{
 		if (this._spsBinDict.ContainsKey(spsNo))
-		{
 			return true;
-		}
-		String[] spsInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(String.Concat(new Object[]
-		{
-			"FieldMaps/",
-			this.MapName,
-			"/",
-			spsNo,
-			".sps"
-		}), out spsInfo);
+		Byte[] binAsset = AssetManager.LoadBytes($"FieldMaps/{this.MapName}/{spsNo}.sps");
 		if (binAsset == null)
-		{
 			return false;
-		}
 		Int32 key = this._GetSpsFrameCount(binAsset);
 		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, binAsset));
 		return true;

@@ -18,18 +18,18 @@ public class FF9StateBattleSystem
 			new String[34]
 		};
 		this.enemy = new ENEMY[4];
-		for (Int32 i = 0; i < (Int32)this.enemy.Length; i++)
+		for (Int32 i = 0; i < this.enemy.Length; i++)
 			this.enemy[i] = new ENEMY();
 		this.enemy_type = new ENEMY_TYPE[4];
-		for (Int32 j = 0; j < (Int32)this.enemy_type.Length; j++)
-			this.enemy_type[j] = new ENEMY_TYPE();
+		for (Int32 i = 0; i < this.enemy_type.Length; i++)
+			this.enemy_type[i] = new ENEMY_TYPE();
 		this.btl_list = new BTL_DATA();
 		this.btl_data = new BTL_DATA[8];
-		for (Int32 k = 0; k < (Int32)this.btl_data.Length; k++)
-			this.btl_data[k] = new BTL_DATA();
-		this.cmd_buffer = new CMD_DATA[48]; // enemy_type.Length * 12
-		for (Int32 l = 0; l < (Int32)this.cmd_buffer.Length; l++)
-			this.cmd_buffer[l] = new CMD_DATA();
+		for (Int32 i = 0; i < this.btl_data.Length; i++)
+			this.btl_data[i] = new BTL_DATA();
+		this.cmd_buffer = new CMD_DATA[48]; // enemy_type.Length * 12, although unused
+		for (Int32 i = 0; i < this.cmd_buffer.Length; i++)
+			this.cmd_buffer[i] = new CMD_DATA();
 		this.cmd_escape = new CMD_DATA();
 		this.cmd_queue = new CMD_DATA();
 		this.cur_cmd_list = new List<CMD_DATA>();
@@ -37,8 +37,8 @@ public class FF9StateBattleSystem
 		this.btl_scene = new BTL_SCENE();
 		this.btl2d_work_set = new BTL2D_WORK();
 		this.status_data = EntryCollection.CreateWithDefaultElement<STAT_DATA>(32);
-	    this.aa_data = EntryCollection.CreateWithDefaultElement<AA_DATA>(192);
-	    this.add_status = EntryCollection.CreateWithDefaultElement<BattleStatusEntry>(64);
+	    this.aa_data = new Dictionary<BattleAbilityId, AA_DATA>();
+	    this.add_status = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
 		this.map = new FF9StateBattleMap();
 	}
 
@@ -105,7 +105,7 @@ public class FF9StateBattleSystem
 
 	//public command_mode_index cmd_mode; // Each cmd has its cmd.info.mode
 
-	public Byte phantom_no;
+	public BattleAbilityId phantom_no;
 
 	public Int16 phantom_cnt;
 
@@ -121,9 +121,9 @@ public class FF9StateBattleSystem
 
 	public EntryCollection<STAT_DATA> status_data;
 
-	public EntryCollection<AA_DATA> aa_data;
+	public Dictionary<BattleAbilityId, AA_DATA> aa_data;
 
-	public EntryCollection<BattleStatusEntry> add_status;
+	public Dictionary<BattleStatusIndex, BattleStatusEntry> add_status;
 
 	public IEnumerable<BattleUnit> EnumerateBattleUnits()
     {

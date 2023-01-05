@@ -1,22 +1,22 @@
 # This file contains a set of learnable Beatrix1's abilities.
-# You must set 48 different items.
-# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# UInt8;UInt8
+# Ability;UInt8
 # -----------------------------------
-149;0;# Thunder Slash
-150;0;# Stock Break
-151;0;# Climhazzard
-152;0;# Shock
-2;0;# Cura
-5;0;# Life
-6;0;# Full-Life
-10;0;# Esuna
-14;0;# Silence
-16;0;# Reflect
-19;0;# Blind
-24;0;# Holy
+AA:149;0;# Thunder Slash
+AA:150;0;# Stock Break
+AA:151;0;# Climhazzard
+AA:152;0;# Shock
+AA:2;0;# Cura
+AA:5;0;# Life
+AA:6;0;# Full-Life
+AA:10;0;# Esuna
+AA:14;0;# Silence
+AA:16;0;# Reflect
+AA:19;0;# Blind
+AA:24;0;# Holy
 0;0;# Void
 0;0;# Void
 0;0;# Void

@@ -260,16 +260,16 @@ namespace Memoria.Assets
 
         private static IEnumerable<String> CreateMapList()
         {
-            String[] strArray1 = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/mapList.txt", out _).Split('\n');
+            String[] mapParamLine = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/mapList.txt").Split('\n');
             //for (Int32 i = 0; i < 100; i++)
-            foreach (String str in strArray1)
+            foreach (String line in mapParamLine)
             {
                 //String str = strArray1[i];
-                if (str == String.Empty)
+                if (line == String.Empty)
                     break;
 
-                String[] strArray2 = str.Split(',');
-                yield return strArray2[1];
+                String[] mapParams = line.Split(',');
+                yield return mapParams[1];
             }
         }
     }

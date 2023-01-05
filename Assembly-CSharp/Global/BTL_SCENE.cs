@@ -11,8 +11,7 @@ public class BTL_SCENE
 		nameIdentifier = "BSC_" + name;
 		name = "EVT_BATTLE_" + name;
 		this.header = new SB2_HEAD();
-		String[] bsceneInfo;
-		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleScene/" + name + "/dbfile0000.raw16", out bsceneInfo);
+		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleScene/" + name + "/dbfile0000.raw16");
 		if (bytes == null)
 			return;
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(bytes)))
@@ -60,12 +59,12 @@ public class BTL_SCENE
 				sb2_MON_PARM.WinExp = binaryReader.ReadUInt16();
 				for (Int32 j = 0; j < 4; j++)
 				{
-					sb2_MON_PARM.WinItems[j] = binaryReader.ReadByte();
+					sb2_MON_PARM.WinItems[j] = (RegularItem)binaryReader.ReadByte();
 					sb2_MON_PARM.WinItemRates[j] = SB2_MON_PARM.DefaultWinItemRates[j];
 				}
 				for (Int32 j = 0; j < 4; j++)
 				{
-					sb2_MON_PARM.StealItems[j] = binaryReader.ReadByte();
+					sb2_MON_PARM.StealItems[j] = (RegularItem)binaryReader.ReadByte();
 					sb2_MON_PARM.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
 				}
 				sb2_MON_PARM.Radius = binaryReader.ReadUInt16();
@@ -142,7 +141,7 @@ public class BTL_SCENE
 				btl_REF.Elements = binaryReader.ReadByte();
 				btl_REF.Rate = binaryReader.ReadByte();
 				aa_DATA.Category = binaryReader.ReadByte();
-				aa_DATA.AddStatusNo = binaryReader.ReadByte();
+				aa_DATA.AddStatusNo = (BattleStatusIndex)binaryReader.ReadByte();
 				aa_DATA.MP = binaryReader.ReadByte();
 				aa_DATA.Type = binaryReader.ReadByte();
 				aa_DATA.Vfx2 = binaryReader.ReadUInt16();
@@ -151,39 +150,13 @@ public class BTL_SCENE
 		}
 		SetupSceneInfo();
 		DataPatchers.ApplyBattlePatch(this);
-		//---- TODO: maybe delete the followings and possibly the whole ".memnfo" things
-		Int32 typIndex = -1;
-		Int32 attIndex = -1;
-		foreach (String s in bsceneInfo)
-		{
-			String[] bsceneCode = s.Split(' ');
-			if (bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Enemy") == 0)
-				Int32.TryParse(bsceneCode[1], out typIndex);
-			else if (bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Attack") == 0)
-				Int32.TryParse(bsceneCode[1], out attIndex);
-			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "MaxHP") == 0)
-				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxHP);
-			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "MaxMP") == 0)
-				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].MaxMP);
-			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Gil") == 0)
-				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinGil);
-			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Exp") == 0)
-				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].WinExp);
-			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "AttackPower") == 0)
-				UInt32.TryParse(bsceneCode[1], out this.MonAddr[typIndex].AP); // AP is unused by default
-			else if (typIndex >= 0 && typIndex < this.MonAddr.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "OutOfReach") == 0)
-				Boolean.TryParse(bsceneCode[1], out this.MonAddr[typIndex].OutOfReach);
-			else if (attIndex >= 0 && attIndex < this.atk.Length && bsceneCode.Length >= 2 && String.Compare(bsceneCode[0], "Vfx") == 0)
-				this.atk[attIndex].Info.SequenceFile = bsceneCode[1];
-		}
-		//----
 		if (Configuration.Battle.SFXRework)
 		{
 			foreach (AA_DATA aa in this.atk)
 			{
 				if (!String.IsNullOrEmpty(aa.Info.SequenceFile))
 				{
-					String sequenceText = AssetManager.LoadString(aa.Info.SequenceFile, out _);
+					String sequenceText = AssetManager.LoadString(aa.Info.SequenceFile);
 					if (sequenceText != null)
 						aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
 				}

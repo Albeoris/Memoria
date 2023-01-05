@@ -1,6 +1,6 @@
 ﻿namespace Memoria.Data
 {
-    public enum GemItem : byte
+    public enum GemItem : int
     {
         /// <summary>
         /// Restores HP. It cannot be used in the field.

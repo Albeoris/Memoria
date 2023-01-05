@@ -366,39 +366,39 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         else
         {
             BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[characterNo];
-            Byte presetId = (Byte)FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
-            BattleCommandId commandId = 0;
-            Int32 commandIndex = (Int32)commandId;
-            UInt32 sub_no = 0;
+            CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
+            BattleCommandId commandId = BattleCommandId.None;
+            Int32 sub_no = 0;
             switch (slotNo)
             {
                 case 0:
                     commandId = BattleCommandId.Attack;
-                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
                     break;
                 case 1:
                     commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, 0);
-                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
                     break;
                 case 2:
                     commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, 1);
-                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
                     break;
                 case 3:
                     commandId = BattleCommandId.Item;
-                    sub_no = 236U;
+                    sub_no = 236; // Potion
                     break;
                 case 4:
                     commandId = BattleCommandId.Defend;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
                     break;
                 case 5:
                     commandId = BattleCommandId.Change;
-                    sub_no = CharacterCommands.Commands[commandIndex].Ability;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
                     break;
             }
 
-            if (CharacterCommands.Commands[commandIndex].Type == CharacterCommandType.Throw)
-                sub_no = 1U;
+            if (CharacterCommands.Commands[commandId].Type == CharacterCommandType.Throw)
+                sub_no = (Int32)RegularItem.Dagger;
 
             if (commandId == BattleCommandId.None)
                 return;
@@ -519,7 +519,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 }
                 else if (!FF9StateSystem.Battle.isDebug)
                 {
-                    if (PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyAtk, btl.btl_id, 0, 0))
+                    if (PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyAtk, btl.btl_id, 0, 0, 0))
                         btl.sel_mode = 1;
                 }
                 else

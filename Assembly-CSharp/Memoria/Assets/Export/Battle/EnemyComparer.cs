@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -160,7 +161,6 @@ namespace Memoria.Assets
             hashCode = (hashCode * 397) ^ enemy.WinExp;
 
             GetHashCode(ref hashCode, enemy.WinItems);
-            GetHashCode(ref hashCode, enemy.WinItems);
             GetHashCode(ref hashCode, enemy.StealItems);
 
             hashCode = (hashCode * 397) ^ enemy.Radius;
@@ -232,6 +232,18 @@ namespace Memoria.Assets
         private void GetHashCode(ref Int64 hashCode, UInt16[] array)
         {
             foreach (UInt16 item in array)
+                hashCode = (hashCode * 397) ^ item;
+        }
+
+        private void GetHashCode(ref Int64 hashCode, Int32[] array)
+        {
+            foreach (Int32 item in array)
+                hashCode = (hashCode * 397) ^ item;
+        }
+
+        private void GetHashCode(ref Int64 hashCode, RegularItem[] array)
+        {
+            foreach (Int32 item in array)
                 hashCode = (hashCode * 397) ^ item;
         }
 

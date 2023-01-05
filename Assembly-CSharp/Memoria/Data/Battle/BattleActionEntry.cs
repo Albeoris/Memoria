@@ -6,60 +6,67 @@ namespace Memoria.Data
     public class BattleActionEntry : ICsvEntry
     {
         public String Comment;
-        public Int32 Id;
+        public BattleAbilityId Id;
 
         public AA_DATA ActionData;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
-            Comment = CsvParser.String(raw[0]);
-            Id = CsvParser.Int32(raw[1]);
+            Int32 index = 0;
 
-            TargetDisplay menuWindow = CsvParser.EnumValue<TargetDisplay>(raw[2]);
-            TargetType targets = CsvParser.EnumValue<TargetType>(raw[3]);
-            Boolean defaultAlly = CsvParser.Boolean(raw[4]);
-            Boolean forDead = CsvParser.Boolean(raw[5]);
-            Boolean defaultOnDead = CsvParser.Boolean(raw[6]);
-            Boolean defaultCamera = CsvParser.Boolean(raw[7]);
-            Int16 animation1 = CsvParser.Int16(raw[8]);
-            UInt16 animation2 = CsvParser.UInt16(raw[9]);
-            Byte scriptId = CsvParser.Byte(raw[10]);
-            Byte power = CsvParser.Byte(raw[11]);
-            Byte elements = CsvParser.Byte(raw[12]);
-            Byte rate = CsvParser.ByteOrMinusOne(raw[13]);
-            Byte category = CsvParser.Byte(raw[14]);
-            Byte statusIndex = CsvParser.Byte(raw[15]);
-            Byte mp = CsvParser.Byte(raw[16]);
-            Byte type = CsvParser.Byte(raw[17]);
+            Comment = CsvParser.String(raw[index++]);
+            Id = (BattleAbilityId)CsvParser.Int32(raw[index++]);
+
+            TargetDisplay menuWindow = CsvParser.EnumValue<TargetDisplay>(raw[index++]);
+            TargetType targets = CsvParser.EnumValue<TargetType>(raw[index++]);
+            Boolean defaultAlly = CsvParser.Boolean(raw[index++]);
+            Boolean forDead = CsvParser.Boolean(raw[index++]);
+            Boolean defaultOnDead = CsvParser.Boolean(raw[index++]);
+            Boolean defaultCamera = CsvParser.Boolean(raw[index++]);
+            Int16 animation1 = CsvParser.Int16(raw[index++]);
+            UInt16 animation2 = CsvParser.UInt16(raw[index++]);
+            Byte scriptId = CsvParser.Byte(raw[index++]);
+            Byte power = CsvParser.Byte(raw[index++]);
+            Byte elements = CsvParser.Byte(raw[index++]);
+            Byte rate = CsvParser.ByteOrMinusOne(raw[index++]);
+            Byte category = CsvParser.Byte(raw[index++]);
+            BattleStatusIndex statusIndex = (BattleStatusIndex)CsvParser.Int32(raw[index++]);
+            Int32 mp = CsvParser.Int32(raw[index++]);
+            Byte type = CsvParser.Byte(raw[index++]);
 
             BattleCommandInfo cmd = new BattleCommandInfo(targets, defaultAlly, menuWindow, animation1, forDead, defaultCamera, defaultOnDead);
             BTL_REF btl = new BTL_REF(scriptId, power, elements, rate);
             ActionData = new AA_DATA(cmd, btl, category, statusIndex, mp, type, animation2);
+
+            if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
+                ActionData.CastingTitleType = CsvParser.Byte(raw[index++]);
         }
 
-        public void WriteEntry(CsvWriter sw)
+        public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
             sw.String(Comment);
-            sw.Int32(Id);
+            sw.Int32((Int32)Id);
 
             BattleCommandInfo cmdInfo = ActionData.Info;
             BTL_REF btlRef = ActionData.Ref;
             sw.EnumValue(cmdInfo.DisplayStats);
-            sw.EnumValue(cmdInfo.Target); // target
+            sw.EnumValue(cmdInfo.Target);
             sw.Boolean(cmdInfo.DefaultAlly);
             sw.Boolean(cmdInfo.ForDead);
             sw.Boolean(cmdInfo.DefaultOnDead);
             sw.Boolean(cmdInfo.DefaultCamera);
             sw.Int16(cmdInfo.VfxIndex);
             sw.UInt16(ActionData.Vfx2);
-            sw.Byte(btlRef.ScriptId); // scriptId
+            sw.Byte(btlRef.ScriptId);
             sw.Byte(btlRef.Power);
             sw.Byte(btlRef.Elements);
             sw.ByteOrMinusOne(btlRef.Rate);
             sw.Byte(ActionData.Category);
-            sw.Byte(ActionData.AddStatusNo);
-            sw.Byte(ActionData.MP);
+            sw.Int32((Int32)ActionData.AddStatusNo);
+            sw.Int32(ActionData.MP);
             sw.Byte(ActionData.Type);
+            if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
+                sw.Byte(ActionData.CastingTitleType);
         }
     }
 }

@@ -1,134 +1,45 @@
-# This file contains set of statuses what will be applied to targets in the battle.;;;;;;;;;;;;
-# You must set 128 different items.;;;;;;;;;;;;
-# --------------------------------------------------------------------------------------------------------------------------------------------------;;;;;;;;;;;;
-# Comment;Id;State01;State02;State03;State04;State05;State06;State07;State08;State09;State10;
-#;Int32;# UInt32;UInt32;UInt32;UInt32;UInt32;UInt32;UInt32;UInt32;UInt32;UInt32;
-# --------------------------------------------------------------------------------------------------------------------------------------------------;;;;;;;;;;;;
- Set 0;0;None(0);;;;;;;;;;# Set 0
- Set 1;1;Regen(19);;;;;;;;;;# Set 1
- Set 2;2;Death(9);;;;;;;;;;# Set 2
- Set 3;3;Venom(2);Poison(17);;;;;;;;;# Set 3
- Set 4;4;Petrify(1);GradualPetrify(32);;;;;;;;;# Set 4
- Set 5;5;Silence(4);Blind(5);Confuse(11);Poison(17);Sleep(18);Heat(25);Freeze(26);Mini(29);GradualPetrify(32);;# Set 5
- Set 6;6;Shell(23);;;;;;;;;;# Set 6
- Set 7;7;Protect(24);;;;;;;;;;# Set 7
- Set 8;8;Haste(20);;;;;;;;;;# Set 8
- Set 9;9;Silence(4);;;;;;;;;;# Set 9
- Set 10;10;Mini(29);;;;;;;;;;# Set 10
- Set 11;11;Reflect(30);;;;;;;;;;# Set 11
- Set 12;12;Confuse(11);;;;;;;;;;# Set 12
- Set 13;13;Berserk(12);;;;;;;;;;# Set 13
- Set 14;14;Blind(5);;;;;;;;;;# Set 14
- Set 15;15;Float(22);;;;;;;;;;# Set 15
- Set 16;16;Stop(13);AutoLife(14);Regen(19);Haste(20);Slow(21);Float(22);Shell(23);Protect(24);Vanish(27);Reflect(30);# Set 16
- Set 17;17;Sleep(18);;;;;;;;;;# Set 17
- Set 18;18;Slow(21);;;;;;;;;;# Set 18
- Set 19;19;Stop(13);;;;;;;;;;# Set 19
- Set 20;20;Poison(17);;;;;;;;;;# Set 20
- Set 21;21;Death(9);;;;;;;;;;# Set 21
- Set 22;22;Petrify(1);;;;;;;;;;# Set 22
- Set 23;23;Petrify(1);Virus(3);Zombie(7);Death(9);;;;;;;# Set 23
- Set 24;24;Vanish(27);;;;;;;;;;# Set 24
- Set 25;25;Doom(28);;;;;;;;;;# Set 25
- Set 26;26;Shell(23);Protect(24);;;;;;;;;# Set 26
- Set 27;27;Blind(5);Confuse(11);Poison(17);Slow(21);Mini(29);;;;;;# Set 27
- Set 28;28;Freeze(26);;;;;;;;;;# Set 28
- Set 29;29;Heat(25);;;;;;;;;;# Set 29
- Set 30;30;AutoLife(14);;;;;;;;;;# Set 30
- Set 31;31;Trouble(6);;;;;;;;;;# Set 31
- Set 32;32;AutoLife(14);Regen(19);;;;;;;;;# Set 32
- Set 33;33;Defend(16);;;;;;;;;;# Set 33
- Set 34;34;Zombie(7);;;;;;;;;;# Set 34
- Set 35;35;Virus(3);;;;;;;;;;# Set 35
- Set 36;36;GradualPetrify(32);;;;;;;;;;# Set 36
- Set 37;37;Venom(2);;;;;;;;;;# Set 37
- Set 38;38;Blind(5);Confuse(11);Slow(21);Mini(29);;;;;;;# Set 38
- Set 39;39;None(0);;;;;;;;;;# Set 39
- Set 40;40;None(0);;;;;;;;;;# Set 40
- Set 41;41;None(0);;;;;;;;;;# Set 41
- Set 42;42;None(0);;;;;;;;;;# Set 42
- Set 43;43;None(0);;;;;;;;;;# Set 43
- Set 44;44;None(0);;;;;;;;;;# Set 44
- Set 45;45;None(0);;;;;;;;;;# Set 45
- Set 46;46;None(0);;;;;;;;;;# Set 46
- Set 47;47;None(0);;;;;;;;;;# Set 47
- Set 48;48;None(0);;;;;;;;;;# Set 48
- Set 49;49;None(0);;;;;;;;;;# Set 49
- Set 50;50;None(0);;;;;;;;;;# Set 50
- Set 51;51;None(0);;;;;;;;;;# Set 51
- Set 52;52;None(0);;;;;;;;;;# Set 52
- Set 53;53;None(0);;;;;;;;;;# Set 53
- Set 54;54;None(0);;;;;;;;;;# Set 54
- Set 55;55;None(0);;;;;;;;;;# Set 55
- Set 56;56;None(0);;;;;;;;;;# Set 56
- Set 57;57;None(0);;;;;;;;;;# Set 57
- Set 58;58;None(0);;;;;;;;;;# Set 58
- Set 59;59;None(0);;;;;;;;;;# Set 59
- Set 60;60;None(0);;;;;;;;;;# Set 60
- Set 61;61;None(0);;;;;;;;;;# Set 61
- Set 62;62;None(0);;;;;;;;;;# Set 62
- Set 63;63;None(0);;;;;;;;;;# Set 63
- Set 64;64;None(0);;;;;;;;;;# Set 64
- Set 65;65;None(0);;;;;;;;;;# Set 65
- Set 66;66;None(0);;;;;;;;;;# Set 66
- Set 67;67;None(0);;;;;;;;;;# Set 67
- Set 68;68;None(0);;;;;;;;;;# Set 68
- Set 69;69;None(0);;;;;;;;;;# Set 69
- Set 70;70;None(0);;;;;;;;;;# Set 70
- Set 71;71;None(0);;;;;;;;;;# Set 71
- Set 72;72;None(0);;;;;;;;;;# Set 72
- Set 73;73;None(0);;;;;;;;;;# Set 73
- Set 74;74;None(0);;;;;;;;;;# Set 74
- Set 75;75;None(0);;;;;;;;;;# Set 75
- Set 76;76;None(0);;;;;;;;;;# Set 76
- Set 77;77;None(0);;;;;;;;;;# Set 77
- Set 78;78;None(0);;;;;;;;;;# Set 78
- Set 79;79;None(0);;;;;;;;;;# Set 79
- Set 80;80;None(0);;;;;;;;;;# Set 80
- Set 81;81;None(0);;;;;;;;;;# Set 81
- Set 82;82;None(0);;;;;;;;;;# Set 82
- Set 83;83;None(0);;;;;;;;;;# Set 83
- Set 84;84;None(0);;;;;;;;;;# Set 84
- Set 85;85;None(0);;;;;;;;;;# Set 85
- Set 86;86;None(0);;;;;;;;;;# Set 86
- Set 87;87;None(0);;;;;;;;;;# Set 87
- Set 88;88;None(0);;;;;;;;;;# Set 88
- Set 89;89;None(0);;;;;;;;;;# Set 89
- Set 90;90;None(0);;;;;;;;;;# Set 90
- Set 91;91;None(0);;;;;;;;;;# Set 91
- Set 92;92;None(0);;;;;;;;;;# Set 92
- Set 93;93;None(0);;;;;;;;;;# Set 93
- Set 94;94;None(0);;;;;;;;;;# Set 94
- Set 95;95;None(0);;;;;;;;;;# Set 95
- Set 96;96;None(0);;;;;;;;;;# Set 96
- Set 97;97;None(0);;;;;;;;;;# Set 97
- Set 98;98;None(0);;;;;;;;;;# Set 98
- Set 99;99;None(0);;;;;;;;;;# Set 99
- Set 100;100;None(0);;;;;;;;;;# Set 100
- Set 101;101;None(0);;;;;;;;;;# Set 101
- Set 102;102;None(0);;;;;;;;;;# Set 102
- Set 103;103;None(0);;;;;;;;;;# Set 103
- Set 104;104;None(0);;;;;;;;;;# Set 104
- Set 105;105;None(0);;;;;;;;;;# Set 105
- Set 106;106;None(0);;;;;;;;;;# Set 106
- Set 107;107;None(0);;;;;;;;;;# Set 107
- Set 108;108;None(0);;;;;;;;;;# Set 108
- Set 109;109;None(0);;;;;;;;;;# Set 109
- Set 110;110;None(0);;;;;;;;;;# Set 110
- Set 111;111;None(0);;;;;;;;;;# Set 111
- Set 112;112;None(0);;;;;;;;;;# Set 112
- Set 113;113;None(0);;;;;;;;;;# Set 113
- Set 114;114;None(0);;;;;;;;;;# Set 114
- Set 115;115;None(0);;;;;;;;;;# Set 115
- Set 116;116;None(0);;;;;;;;;;# Set 116
- Set 117;117;None(0);;;;;;;;;;# Set 117
- Set 118;118;None(0);;;;;;;;;;# Set 118
- Set 119;119;None(0);;;;;;;;;;# Set 119
- Set 120;120;None(0);;;;;;;;;;# Set 120
- Set 121;121;None(0);;;;;;;;;;# Set 121
- Set 122;122;None(0);;;;;;;;;;# Set 122
- Set 123;123;None(0);;;;;;;;;;# Set 123
- Set 124;124;None(0);;;;;;;;;;# Set 124
- Set 125;125;None(0);;;;;;;;;;# Set 125
- Set 126;126;None(0);;;;;;;;;;# Set 126
- Set 127;127;None(0);;;;;;;;;;# Set 127
+# This file contains set of statuses what will be applied to targets in the battle.
+# You must set at least 39 different items.
+# -----------------------------------------------
+# Comment;Id;Statuses
+# ;Int32;UInt32[]
+# -----------------------------------------------
+Set 0;0;None(0);# No status
+Set 1;1;Regen(19);# Regen
+Set 2;2;Death(9);# Life
+Set 3;3;Venom(2), Poison(17);# Panacea
+Set 4;4;Petrify(1), GradualPetrify(32);# Stona
+Set 5;5;Silence(4), Blind(5), Confuse(11), Poison(17), Sleep(18), Heat(25), Freeze(26), Mini(29), GradualPetrify(32);# Esuna
+Set 6;6;Shell(23);# Shell
+Set 7;7;Protect(24);# Protect
+Set 8;8;Haste(20);# Haste
+Set 9;9;Silence(4);# Silence
+Set 10;10;Mini(29);# Mini
+Set 11;11;Reflect(30);# Reflect
+Set 12;12;Confuse(11);# Confuse
+Set 13;13;Berserk(12);# Berserk
+Set 14;14;Blind(5);# Blind
+Set 15;15;Float(22);# Float
+Set 16;16;Stop(13), AutoLife(14), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Vanish(27), Reflect(30);# Dispel
+Set 17;17;Sleep(18);# Sleep
+Set 18;18;Slow(21);# Slow
+Set 19;19;Stop(13);# Stop
+Set 20;20;Poison(17);# Poison
+Set 21;21;Death(9);# Death
+Set 22;22;Petrify(1);# Petrify
+Set 23;23;Petrify(1), Virus(3), Zombie(7), Death(9);# No Exp
+Set 24;24;Vanish(27);# Vanish
+Set 25;25;Doom(28);# Doom
+Set 26;26;Shell(23), Protect(24);# Mighty Guard
+Set 27;27;Blind(5), Confuse(11), Poison(17), Slow(21), Mini(29);# Bad Breath
+Set 28;28;Freeze(26);# Freeze
+Set 29;29;Heat(25);# Heat
+Set 30;30;AutoLife(14);# AutoLife
+Set 31;31;Trouble(6);# Trouble
+Set 32;32;AutoLife(14), Regen(19);# Aura
+Set 33;33;Defend(16);# Defend
+Set 34;34;Zombie(7);# Zombie
+Set 35;35;Virus(3);# Virus
+Set 36;36;GradualPetrify(32);# Gradual Petrify
+Set 37;37;Venom(2);# Venom
+Set 38;38;Blind(5), Confuse(11), Slow(21), Mini(29);# Lesser Bad Breath

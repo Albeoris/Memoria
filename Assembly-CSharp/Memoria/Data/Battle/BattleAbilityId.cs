@@ -1,6 +1,6 @@
 ﻿namespace Memoria.Data
 {
-    public enum BattleAbilityId : byte
+    public enum BattleAbilityId : int
     {
         ///<summary></summary>
         Void = 0000,

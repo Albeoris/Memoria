@@ -268,7 +268,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         return 1 << numArray[index];
     }
 
-    public Boolean RequestAction(BattleCommandId cmd, Int32 target, Int32 prm1, Int32 commandAndScript, CMD_DATA triggeringCmd = null)
+    public Boolean RequestAction(BattleCommandId cmd, Int32 target, Int32 reactCaster, Int32 reactCmdId, Int32 reactSubId, CMD_DATA triggeringCmd = null)
     {
         Int32 index;
         for (index = 0; index < 8 && (target & 1) == 0; ++index)
@@ -294,17 +294,18 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             case BattleCommandId.EnemyCounter:
                 tagNumber = 6;
-                this.SetSysList(0, prm1);
+                this.SetSysList(0, reactCaster);
                 level = 1;
                 break;
             case BattleCommandId.EnemyDying:
                 tagNumber = 9;
-                this.SetSysList(0, prm1);
+                this.SetSysList(0, reactCaster);
                 level = 0;
                 break;
         }
 
-        _btlCmdPrm = commandAndScript;
+        _btlCmdPrmCmd = reactCmdId;
+        _btlCmdPrmSub = reactSubId;
         _requestCommandTrigger[index, level] = triggeringCmd;
         return this.Request(p, level, tagNumber, false);
     }
@@ -501,8 +502,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public void StartEventsByEBFileName(String ebFileName)
     {
-		String[] ebInfo;
-        this._currentEBAsset = AssetManager.LoadBytes(ebFileName, out ebInfo);
+        this._currentEBAsset = AssetManager.LoadBytes(ebFileName);
         this.StartEvents(this._currentEBAsset);
     }
 

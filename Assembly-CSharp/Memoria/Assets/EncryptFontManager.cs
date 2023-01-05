@@ -33,8 +33,7 @@ namespace Memoria.Assets
             String path = "EmbeddedAsset/FA/" + AssetManagerUtil.GetPlatformPrefix(Application.platform) + "_fa.mpc";
             if (fontBundle == null)
             {
-				String[] fontInfo;
-                Byte[] binAsset = AssetManager.LoadBytes(path, out fontInfo);
+                Byte[] binAsset = AssetManager.LoadBytes(path);
                 Byte[] binary = ByteEncryption.Decryption(binAsset);
                 fontBundle = AssetBundle.CreateFromMemoryImmediate(binary);
             }

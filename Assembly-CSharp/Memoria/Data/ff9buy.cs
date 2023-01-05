@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -11,36 +12,36 @@ namespace FF9
 {
     public class ff9buy
     {
-        public static readonly EntryCollection<ShopItems> ShopItems;
+        public static readonly Dictionary<Int32, ShopItems> ShopItems;
 
         static ff9buy()
         {
             ShopItems = LoadShopItems();
         }
 
-        private static EntryCollection<ShopItems> LoadShopItems()
+        private static Dictionary<Int32, ShopItems> LoadShopItems()
         {
             try
             {
-                String inputPath = DataResources.Items.Directory + DataResources.Items.ShopItems;
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"File with shop items not found: [{inputPath}]");
-
-                ShopItems[] shopItems = CsvReader.Read<ShopItems>(inputPath);
-                if (shopItems.Length < FF9BUY_SHOP_MAX)
-                    throw new NotSupportedException($"You must set an assortment for {FF9BUY_SHOP_MAX} shops, but there {shopItems.Length}.");
-
-                EntryCollection<ShopItems> result = EntryCollection.CreateWithDefaultElement(shopItems, e => e.Id);
-                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+                Dictionary<Int32, ShopItems> result = new Dictionary<Int32, ShopItems>();
+                ShopItems[] shops;
+                String inputPath;
+                String[] dir = Configuration.Mod.AllFolderNames;
+                for (Int32 i = dir.Length - 1; i >= 0; --i)
                 {
-                    inputPath = DataResources.Items.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Items.ShopItems;
+                    inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.ShopItems;
                     if (File.Exists(inputPath))
                     {
-                        shopItems = CsvReader.Read<ShopItems>(inputPath);
-                        foreach (ShopItems it in shopItems)
-                            result[it.Id] = it;
+                        shops = CsvReader.Read<ShopItems>(inputPath);
+                        for (Int32 j = 0; j < shops.Length; j++)
+                            result[shops[j].Id] = shops[j];
                     }
                 }
+                if (result.Count == 0)
+                    throw new FileNotFoundException($"Cannot load shop items because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ShopItems}].", DataResources.Items.Directory + DataResources.Items.ShopItems);
+                for (Int32 j = 0; j < 32; j++)
+                    if (!result.ContainsKey(j))
+                        throw new NotSupportedException($"You must define at least 32 shop items, with IDs between 0 and 31.");
                 return result;
             }
             catch (Exception ex)
@@ -54,22 +55,16 @@ namespace FF9
         public static ShopUI.ShopType FF9Buy_GetType(Int32 shopId)
         {
             ShopItems assortiment;
-            if (!ShopItems.TryGet(shopId, out assortiment))
+            if (!ShopItems.TryGetValue(shopId, out assortiment))
                 return ShopUI.ShopType.Synthesis;
 
             for (Int32 i = 0; i < assortiment.Length; i++)
-            {
-                Byte itemId = assortiment[i];
-                Byte itemType = ff9item._FF9Item_Data[itemId].type;
-                if ((itemType & FF9BUY_TYPE_WEAPON) == 0)
+                if ((ff9item._FF9Item_Data[assortiment[i]].type & FF9BUY_TYPE_WEAPON) == 0)
                     return ShopUI.ShopType.Item;
-            }
 
             return ShopUI.ShopType.Weapon;
         }
 
-        public const UInt16 FF9BUY_SHOP_MAX = 32;
-
-        public const Byte FF9BUY_TYPE_WEAPON = 240;
+        public const ItemType FF9BUY_TYPE_WEAPON = ItemType.Weapon | ItemType.Armlet | ItemType.Helmet | ItemType.Armor;
     }
 }

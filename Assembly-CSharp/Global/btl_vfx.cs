@@ -43,7 +43,7 @@ public static class btl_vfx
         BTL_DATA regist = cmd.regist;
         BattleCommandId cmd_no = cmd.cmd_no;
         if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item)
-            return (SpecialEffect)ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.VfxIndex;
+            return (SpecialEffect)ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.VfxIndex;
         else if (cmd_no == BattleCommandId.SysTrans)
             return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
         else if (cmd_no == BattleCommandId.Attack)
@@ -66,7 +66,7 @@ public static class btl_vfx
         }
         else if (cmd_no == BattleCommandId.Throw)
         {
-            Byte shape = ff9item._FF9Item_Data[(Int32)cmd.sub_no].shape;
+            Byte shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
             if (shape == 1)
                 return SpecialEffect.Throw_Dagger;
             else if (shape == 2)
@@ -88,12 +88,13 @@ public static class btl_vfx
         }
         else
         {
-            if (cmd_no != BattleCommandId.MagicCounter && cmd.sub_no == 176)
-                return btl_vfx.GetPlayerAttackVfx(regist);
-            else if (!Configuration.Battle.SFXRework && regist.is_monster_transform && cmd.sub_no == regist.monster_transform.attack)
+            BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+            if (btl_util.IsCommandMonsterTransformAttack(cmd))
                 return btl_vfx.GetPlayerAttackVfx(regist);
             else if (cmd.PatchedVfx != SpecialEffect.Special_No_Effect)
                 return cmd.PatchedVfx;
+            else if (abilId == BattleAbilityId.Attack)
+                return btl_vfx.GetPlayerAttackVfx(regist);
             else if ((cmd.aa.Info.Target == TargetType.ManyAny && cmd.info.cursor == 0) || cmd.info.meteor_miss != 0 || cmd.info.short_summon != 0 || btl_vfx.UseBeatrixAlternateVfx(regist, (SpecialEffect)cmd.aa.Info.VfxIndex, (SpecialEffect)cmd.aa.Vfx2))
                 return (SpecialEffect)cmd.aa.Vfx2;
             else
@@ -106,22 +107,23 @@ public static class btl_vfx
     {
         if (cmd.cmd_no == BattleCommandId.Phantom)
         {
-            if (cmd.sub_no == 49)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 153;
-            else if (cmd.sub_no == 51)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 154;
-            else if (cmd.sub_no == 53)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 155;
-            else if (cmd.sub_no == 55)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 156;
-            else if (cmd.sub_no == 58)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 157;
-            else if (cmd.sub_no == 60)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 158;
-            else if (cmd.sub_no == 62)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 159;
-            else if (cmd.sub_no == 64)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = 160;
+            BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+            if (abilId == BattleAbilityId.Shiva)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.DiamondDust;
+            else if (abilId == BattleAbilityId.Ifrit)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.FlamesofHell;
+            else if (abilId == BattleAbilityId.Ramuh)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.JudgementBolt;
+            else if (abilId == BattleAbilityId.Atomos)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.WormHole;
+            else if (abilId == BattleAbilityId.Odin)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.Zantetsuken;
+            else if (abilId == BattleAbilityId.Leviathan)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.Tsunami;
+            else if (abilId == BattleAbilityId.Bahamut)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.MegaFlare;
+            else if (abilId == BattleAbilityId.Ark)
+                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.EternalDarkness;
         }
         BTL_DATA regist = cmd.regist;
         if (Configuration.Battle.SFXRework)
@@ -130,7 +132,7 @@ public static class btl_vfx
             {
                 if (cmd.aa.Info.VfxAction == null && !String.IsNullOrEmpty(cmd.aa.Info.SequenceFile))
                 {
-                    String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile, out _);
+                    String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile);
                     if (sequenceText != null)
                         cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
                 }
@@ -157,8 +159,7 @@ public static class btl_vfx
             else if (cmd.cmd_no == BattleCommandId.Change || cmd.cmd_no == BattleCommandId.Defend)
             {
                 String seqName = cmd.cmd_no == BattleCommandId.Change ? "SequenceChange" : "SequenceDefend";
-                String[] efInfo;
-                String sequenceText = AssetManager.LoadString(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/Common/" + seqName + UnifiedBattleSequencer.EXTENSION_SEQ, out efInfo);
+                String sequenceText = AssetManager.LoadString(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/Common/" + seqName + UnifiedBattleSequencer.EXTENSION_SEQ);
                 if (sequenceText != null)
                 {
                     UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(sequenceText);
@@ -228,14 +229,14 @@ public static class btl_vfx
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
         geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
-        AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[(Int32)serialNo].ModelId, true);
+        AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
 	}
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)
 	{
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
         if (serialNo != CharacterSerialNumber.NONE)
-            return btl_mot.BattleParameterList[(Int32)serialNo].AttackSequence;
+            return btl_mot.BattleParameterList[serialNo].AttackSequence;
         return SpecialEffect.Special_No_Effect;
     }
 }

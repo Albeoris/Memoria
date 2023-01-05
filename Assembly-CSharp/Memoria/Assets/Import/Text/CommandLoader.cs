@@ -1,5 +1,6 @@
 using System;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -13,17 +14,14 @@ namespace Memoria.Assets
             String[] commandNames, commandHelps;
             AbilityFormatter.Parse(entreis, out commandNames, out commandHelps);
 
-            FF9TextTool.SetCommandName(commandNames);
-            FF9TextTool.SetCommandHelpDesc(commandHelps);
+            FF9TextTool.ImportArrayToDictionary<BattleCommandId>(commandNames, FF9TextTool.SetCommandName);
+            FF9TextTool.ImportArrayToDictionary<BattleCommandId>(commandHelps, FF9TextTool.SetCommandHelpDesc);
         }
 
         protected override Boolean LoadInternal()
         {
-            String[] commandNames = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.CommandNames);
-            String[] commandHelps = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.CommandHelps);
-
-            FF9TextTool.SetCommandName(commandNames);
-            FF9TextTool.SetCommandHelpDesc(commandHelps);
+            FF9TextTool.ImportWithCumulativeModFiles<BattleCommandId>(EmbadedTextResources.CommandNames, FF9TextTool.SetCommandName);
+            FF9TextTool.ImportWithCumulativeModFiles<BattleCommandId>(EmbadedTextResources.CommandHelps, FF9TextTool.SetCommandHelpDesc);
             return true;
         }
     }

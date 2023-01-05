@@ -18,12 +18,20 @@ namespace Memoria.Prime.CSV
         {
             LinkedList<Exception> exceptions = new LinkedList<Exception>();
             LinkedList<T> entries = new LinkedList<T>();
+            CsvMetaData metadata = new CsvMetaData();
             using (StreamReader sr = new StreamReader(input))
             {
                 while (!sr.EndOfStream)
                 {
                     String line = sr.ReadLine();
-                    if (String.IsNullOrEmpty(line) || line[0] == '#')
+                    if (String.IsNullOrEmpty(line))
+                        continue;
+                    if (line.StartsWith("#!"))
+                    {
+                        metadata.ParseLine(line.Substring(2).TrimStart());
+                        continue;
+                    }
+                    if (line[0] == '#')
                         continue;
 
                     try
@@ -40,7 +48,7 @@ namespace Memoria.Prime.CSV
                         }
 
                         T entry = new T();
-                        entry.ParseEntry(raw);
+                        entry.ParseEntry(raw, metadata);
                         entries.AddLast(entry);
                     }
                     catch (Exception ex)

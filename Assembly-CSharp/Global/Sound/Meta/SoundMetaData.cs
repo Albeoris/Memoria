@@ -116,13 +116,13 @@ public class SoundMetaData
 
     private static void LoadMetaDataFromResourcesRecursively()
     {
-        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt", out _);
-        String textAsset2 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt", out _);
-        String textAsset3 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt", out _);
-        String textAsset4 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt", out _);
-        String textAsset5 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt", out _);
-        String textAsset6 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt", out _);
-        String textAsset7 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt", out _);
+        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt");
+        String textAsset2 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt");
+        String textAsset3 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt");
+        String textAsset4 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt");
+        String textAsset5 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt");
+        String textAsset6 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt");
+        String textAsset7 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt");
 
 
         Exception exception = null;

@@ -383,49 +383,49 @@ public class HonoluluFieldMain : HonoBehavior
 		FF9Snd.ff9fieldsound_stopall_mapsndeffect(this.FF9.fldMapNo);
 		switch (map.nextMode)
 		{
-		case 1:
-			this.FF9.fldMapNo = map.nextMapNo;
-			break;
-		case 2:
-			this.FF9.btlMapNo = map.nextMapNo;
-			FF9StateSystem.Battle.battleMapIndex = this.FF9.btlMapNo;
-			this.FF9Sys.mode = 2;
-			this.FF9Sys.prevMode = 1;
-			break;
-		case 3:
-			this.FF9.wldMapNo = map.nextMapNo;
-			this.FF9.wldLocNo = (Int16)EventEngineUtils.eventIDToMESID[this.FF9.wldMapNo];
-			this.FF9Sys.mode = 3;
-			this.FF9Sys.prevMode = 1;
-			break;
-		case 4:
-		{
-			AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
-			allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
-			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-			allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
-			break;
-		}
-		case 7:
-		{
-			AllSoundDispatchPlayer allSoundDispatchPlayer2 = SoundLib.GetAllSoundDispatchPlayer();
-			allSoundDispatchPlayer2.FF9SOUND_SNDEFFECT_STOP_ALL(null);
-			allSoundDispatchPlayer2.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-			allSoundDispatchPlayer2.FF9SOUND_STREAM_STOP();
-			this.FF9Sys.mode = 7;
-			this.FF9Sys.prevMode = 1;
-			break;
-		}
-		case 9:
-		{
-			Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
-			if (currentMusicId != -1)
-				FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
-			FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
-			AllSoundDispatchPlayer allSoundDispatchPlayer3 = SoundLib.GetAllSoundDispatchPlayer();
-			allSoundDispatchPlayer3.FF9SOUND_STREAM_STOP();
-			break;
-		}
+			case 1:
+				this.FF9.fldMapNo = map.nextMapNo;
+				break;
+			case 2:
+				this.FF9.btlMapNo = map.nextMapNo;
+				FF9StateSystem.Battle.battleMapIndex = this.FF9.btlMapNo;
+				this.FF9Sys.mode = 2;
+				this.FF9Sys.prevMode = 1;
+				break;
+			case 3:
+				this.FF9.wldMapNo = map.nextMapNo;
+				this.FF9.wldLocNo = (Int16)EventEngineUtils.eventIDToMESID[this.FF9.wldMapNo];
+				this.FF9Sys.mode = 3;
+				this.FF9Sys.prevMode = 1;
+				break;
+			case 4:
+			{
+				AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
+				allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
+				allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+				allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
+				break;
+			}
+			case 7:
+			{
+				AllSoundDispatchPlayer allSoundDispatchPlayer2 = SoundLib.GetAllSoundDispatchPlayer();
+				allSoundDispatchPlayer2.FF9SOUND_SNDEFFECT_STOP_ALL(null);
+				allSoundDispatchPlayer2.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+				allSoundDispatchPlayer2.FF9SOUND_STREAM_STOP();
+				this.FF9Sys.mode = 7;
+				this.FF9Sys.prevMode = 1;
+				break;
+			}
+			case 9:
+			{
+				Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
+				if (currentMusicId != -1)
+					FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
+				FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
+				AllSoundDispatchPlayer allSoundDispatchPlayer3 = SoundLib.GetAllSoundDispatchPlayer();
+				allSoundDispatchPlayer3.FF9SOUND_STREAM_STOP();
+				break;
+			}
 		}
 	}
 

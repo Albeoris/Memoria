@@ -20,38 +20,12 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            MutableBattleCommand command = CreateCommand();
-            Byte scriptId = PrepareCommand(command);
-            SBattleCalculator.Calc(_v.Caster, _v.Target, command, scriptId);
+            Boolean applyToPlayer = _v.Target.IsPlayer;
+            MutableBattleCommand command = new MutableBattleCommand(_v.Caster, _v.Target.Id, _v.Command.Id, applyToPlayer ? BattleAbilityId.RebirthFlame : BattleAbilityId.Phoenix);
+            command.IsShortSummon = _v.Command.IsShortSummon;
+            command.ScriptId = (Byte)(applyToPlayer ? ReviveScript.Id : MagicAttackScript.Id);
+            SBattleCalculator.CalcMain(_v.Caster, _v.Target, command);
             _v.PerformCalcResult = false;
-        }
-
-        private MutableBattleCommand CreateCommand()
-        {
-            return new MutableBattleCommand
-            {
-                Id = _v.Command.Id,
-                IsShortSummon = _v.Command.IsShortSummon
-            };
-        }
-
-        private Byte PrepareCommand(MutableBattleCommand command)
-        {
-            Byte scriptId;
-
-            if (_v.Target.IsPlayer)
-            {
-                command.AbilityId = BattleAbilityId.RebirthFlame;
-                scriptId = ReviveScript.Id;
-            }
-            else
-            {
-                command.AbilityId = BattleAbilityId.Phoenix;
-                scriptId = MagicAttackScript.Id;
-            }
-
-            command.LoadAbility();
-            return scriptId;
         }
     }
 }

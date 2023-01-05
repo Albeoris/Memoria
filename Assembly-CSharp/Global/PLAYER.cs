@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
@@ -17,6 +18,7 @@ public class PLAYER
 		this.sa = new UInt32[2];
 		this.sa[0] = 0u;
 		this.sa[1] = 0u;
+		this.saExtended = new HashSet<SupportAbility>();
 		this.mpCostFactor = 100;
 	}
 
@@ -43,13 +45,14 @@ public class PLAYER
 			this.cur.capa = this.max.capa;
 			this.sa[0] = 0u;
 			this.sa[1] = 0u;
+			this.saExtended.Clear();
 		}
 	}
 
 	public void ValidateBasisStatus()
 	{
-		if (this.level == 99 && this.SetMaxBonusBasisStatus())
-			ff9play.FF9Play_Build(this, this.level, false, false);
+		if (this.level >= ff9level.LEVEL_COUNT && this.SetMaxBonusBasisStatus())
+			ff9play.FF9Play_Build(this, ff9level.LEVEL_COUNT, false, false);
 	}
 
 	public Boolean SetMaxBonusBasisStatus()
@@ -81,25 +84,10 @@ public class PLAYER
 
 	public Int32 GetActiveSupportAbilityPoint()
 	{
-		Int32 num = 0;
-		Int32 num2 = 0;
-		UInt32[] array = this.sa;
-		for (Int32 i = 0; i < (Int32)array.Length; i++)
-		{
-			UInt32 num3 = array[i];
-			UInt32 num4 = num3;
-			for (Int32 j = 0; j < 32; j++)
-			{
-				if (num4 % 2u == 1u)
-				{
-					CharacterAbilityGems sa_DATA = ff9abil._FF9Abil_SaData[num2];
-					num += (Int32)sa_DATA.GemsCount;
-				}
-				num4 >>= 1;
-				num2++;
-			}
-		}
-		return num;
+		Int32 gemCount = 0;
+		foreach (SupportAbility saIndex in saExtended)
+			gemCount += ff9abil._FF9Abil_SaData[saIndex].GemsCount;
+		return gemCount;
 	}
 
 	public String Name
@@ -191,6 +179,7 @@ public class PLAYER
 	public Byte[] pa;
 
 	public UInt32[] sa;
+	public HashSet<SupportAbility> saExtended;
 
 	// Custom fields
 	public Int16 mpCostFactor;

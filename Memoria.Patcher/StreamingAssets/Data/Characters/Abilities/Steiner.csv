@@ -1,55 +1,55 @@
 # This file contains a set of learnable Steiner's abilities.
-# You must set 48 different items.
-# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# UInt8;UInt8
+# Ability;UInt8
 # -----------------------------------
-141;30;# Darkside
-142;35;# Minus Strike
-143;40;# Iai Strike
-144;40;# Power Break
-145;30;# Armor Break
-146;45;# Mental Break
-147;25;# Magic Break
-148;30;# Charge!
-149;30;# Thunder Slash
-150;35;# Stock Break
-151;70;# Climhazzard
-152;60;# Shock
-192;95;# Auto-Reflect
-193;20;# Auto-Float
-194;65;# Auto-Haste
-195;75;# Auto-Regen
-196;155;# Auto-Life
-197;20;# HP+10%
-198;60;# HP+20%
-201;40;# Accuracy+
-202;30;# Distract
-203;200;# Long Reach
-204;50;# MP Attack
-205;25;# Bird Killer
-206;50;# Bug Killer
-207;20;# Stone Killer
-208;30;# Undead Killer
-210;30;# Devil Killer
-211;55;# Beast Killer
-212;20;# Man Eater
-217;50;# Add Status
-219;20;# Chemist
-227;35;# High Tide
-228;100;# Counter
-229;20;# Cover
-231;35;# Eye 4 Eye
-232;35;# Body Temp
-233;60;# Alert
-235;50;# Level Up
-236;70;# Ability Up
-240;25;# Insomniac
-241;35;# Antibody
-242;25;# Bright Eyes
-244;100;# Restore HP
-245;30;# Jelly
-248;20;# Auto-Potion
-249;35;# Locomotion
-250;30;# Clear Headed
+AA:141;30;# Darkside
+AA:142;35;# Minus Strike
+AA:143;40;# Iai Strike
+AA:144;40;# Power Break
+AA:145;30;# Armor Break
+AA:146;45;# Mental Break
+AA:147;25;# Magic Break
+AA:148;30;# Charge!
+AA:149;30;# Thunder Slash
+AA:150;35;# Stock Break
+AA:151;70;# Climhazzard
+AA:152;60;# Shock
+SA:0;95;# Auto-Reflect
+SA:1;20;# Auto-Float
+SA:2;65;# Auto-Haste
+SA:3;75;# Auto-Regen
+SA:4;155;# Auto-Life
+SA:5;20;# HP+10%
+SA:6;60;# HP+20%
+SA:9;40;# Accuracy+
+SA:10;30;# Distract
+SA:11;200;# Long Reach
+SA:12;50;# MP Attack
+SA:13;25;# Bird Killer
+SA:14;50;# Bug Killer
+SA:15;20;# Stone Killer
+SA:16;30;# Undead Killer
+SA:18;30;# Devil Killer
+SA:19;55;# Beast Killer
+SA:20;20;# Man Eater
+SA:25;50;# Add Status
+SA:27;20;# Chemist
+SA:35;35;# High Tide
+SA:36;100;# Counter
+SA:37;20;# Cover
+SA:39;35;# Eye 4 Eye
+SA:40;35;# Body Temp
+SA:41;60;# Alert
+SA:43;50;# Level Up
+SA:44;70;# Ability Up
+SA:48;25;# Insomniac
+SA:49;35;# Antibody
+SA:50;25;# Bright Eyes
+SA:52;100;# Restore HP
+SA:53;30;# Jelly
+SA:56;20;# Auto-Potion
+SA:57;35;# Locomotion
+SA:58;30;# Clear Headed

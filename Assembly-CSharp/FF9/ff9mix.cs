@@ -29,8 +29,6 @@ namespace FF9
                     throw new FileNotFoundException($"[ff9mix] Cannot load synthesis info because a file does not exist: [{inputPath}].", inputPath);
 
                 FF9MIX_DATA[] items = CsvReader.Read<FF9MIX_DATA>(inputPath);
-                if (items.Length < 64)
-                    throw new NotSupportedException($"You must set at least 64 synthesis info, but there {items.Length}. Any number of items will be available after a game stabilization.");
 
                 EntryCollection<FF9MIX_DATA> result = EntryCollection.CreateWithDefaultElement(items, i => i.Id);
                 for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
@@ -53,15 +51,15 @@ namespace FF9
             }
         }
 
-        public static void FF9Mix_Buy(Byte synthesis_id)
+        public static void FF9Mix_Buy(Byte synthId)
         {
-            FF9MIX_DATA ff9MIX_DATA = ff9mix._FF9Mix.item[(Int32)synthesis_id];
-            Int32 num;
-            if ((num = ff9item.FF9Item_Add((Int32)ff9MIX_DATA.Result, (Int32)ff9mix._FF9Mix.mix_ct)) > 0)
+            FF9MIX_DATA synthData = ff9mix._FF9Mix.item[synthId];
+            Int32 synthCount;
+            if ((synthCount = ff9item.FF9Item_Add(synthData.Result, ff9mix._FF9Mix.mix_ct)) > 0)
             {
-                ff9item.FF9Item_Remove((Int32)ff9MIX_DATA.Ingredients[0], num);
-                ff9item.FF9Item_Remove((Int32)ff9MIX_DATA.Ingredients[1], num);
-                FF9StateSystem.Common.FF9.party.gil -= UInt32.Parse(((Int32)ff9MIX_DATA.Price * num).ToString());
+                ff9item.FF9Item_Remove(synthData.Ingredients[0], synthCount);
+                ff9item.FF9Item_Remove(synthData.Ingredients[1], synthCount);
+                FF9StateSystem.Common.FF9.party.gil -= synthData.Price * (UInt32)synthCount;
             }
         }
     }

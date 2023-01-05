@@ -1,5 +1,6 @@
 ﻿using System;
 using FF9;
+using Memoria.Data;
 
 namespace Memoria.Field
 {
@@ -28,132 +29,94 @@ namespace Memoria.Field
                 Flags = 0
             };
             v.TargetHp = v.TargetMp = 0;
-            Byte num = scriptId;
-            switch (num)
+            switch (scriptId)
             {
-                case 62:
-                case 73:
-                    if (tbl.Info.VfxIndex == 289)
-                        return PersistenSingleton<UIManager>.Instance.ItemScene.FF9FItem_Vegetable();
-                    FldCalcSub_305(v);
-                    goto case 64;
-                case 64:
-                case 75:
-                    label_29:
-                    return FieldCalcResult(v);
-                case 69:
-                    if (FldCalcSub_12A(v))
+                case 10: // Magic Recovery
+                    if (CanBeHealed(v))
                     {
                         if (target.cur.hp == target.max.hp)
                         {
-                            v.Flags |= 1;
-                            goto case 64;
+                            v.Flags |= BattleCalcFlags.Miss;
                         }
                         else
                         {
-                            FldCalcSub_171(v);
-                            FldCalcSub_202(v);
-                            goto case 64;
+                            SetupSpellHeal(v);
+                            ApplyConcentrate(v);
+                            ApplyNullStatus(v);
+                            ApplyMultiTarget(v);
+                            HealHp(v);
                         }
                     }
-                    else
-                        goto case 64;
-                case 70:
-                    if (FldCalcSub_12A(v))
+                    break;
+                case 12: // Magic Cure Status
+                    CureSpellStatus(v);
+                    break;
+                case 13: // Revive
+                    if (CanBeRevived(v))
+                        ReviveSpell(v);
+                    break;
+                case 62: // Item Soft
+                case 73: // Item Cure Status
+                    if (tbl.Info.VfxIndex == (Int32)SpecialEffect.Gysahl_Greens)
+                        return PersistenSingleton<UIManager>.Instance.ItemScene.FF9FItem_Vegetable();
+                    CureItemStatus(v);
+                    break;
+                case 69: // Item Potion
+                    if (CanBeHealed(v))
+                    {
+                        if (target.cur.hp == target.max.hp)
+                        {
+                            v.Flags |= BattleCalcFlags.Miss;
+                        }
+                        else
+                        {
+                            SetupItemHeal(v);
+                            HealHp(v);
+                        }
+                    }
+                    break;
+                case 70: // Item Ether
+                    if (CanBeHealed(v))
                     {
                         if (target.cur.mp == target.max.mp)
                         {
-                            v.Flags |= 1;
-                            goto case 64;
+                            v.Flags |= BattleCalcFlags.Miss;
                         }
                         else
                         {
-                            FldCalcSub_171(v);
-                            FldCalcSub_21E(v);
-                            goto case 64;
+                            SetupItemHeal(v);
+                            HealMp(v);
                         }
                     }
-                    else
-                        goto case 64;
-                case 71:
-                    if (FldCalcSub_12A(v))
+                    break;
+                case 71: // Item Elixir
+                    if (CanBeHealed(v))
                     {
                         if (target.cur.hp == target.max.hp && target.cur.mp == target.max.mp)
-                        {
-                            v.Flags |= 1;
-                            goto case 64;
-                        }
+                            v.Flags |= BattleCalcFlags.Miss;
                         else
-                        {
-                            FldCalcSub_21F(v);
-                            goto case 64;
-                        }
+                            HealFull(v);
                     }
-                    else
-                        goto case 64;
-                case 72:
-                    if (FldCalcSub_12B(v))
-                    {
-                        FldCalcSub_220(v);
-                        goto case 64;
-                    }
-                    else
-                        goto case 64;
-                case 74:
+                    break;
+                case 72: // Item Phoenix
+                    if (CanBeRevived(v))
+                        ReviveLow(v);
+                    break;
+                case 74: // Item Gem
                     return PersistenSingleton<UIManager>.Instance.ItemScene.FF9FItem_Vegetable();
-                case 76:
-                    if (FldCalcSub_12A(v))
-                    {
-                        FldCalcSub_223(v);
-                        goto case 64;
-                    }
-                    else
-                        goto case 64;
-                default:
-                    switch (num)
-                    {
-                        case 10:
-                            if (FldCalcSub_12A(v))
-                            {
-                                if (target.cur.hp == target.max.hp)
-                                {
-                                    v.Flags |= 1;
-                                    goto label_29;
-                                }
-                                else
-                                {
-                                    FldCalcSub_137(v);
-                                    FldCalcSub_146(v);
-                                    FldCalcSub_144(v);
-                                    FldCalcSub_156(v);
-                                    FldCalcSub_202(v);
-                                    goto label_29;
-                                }
-                            }
-                            else
-                                goto label_29;
-                        case 12:
-                            FldCalcSub_302(v);
-                            goto label_29;
-                        case 13:
-                            if (FldCalcSub_12B(v))
-                            {
-                                FldCalcSub_204(v);
-                                goto label_29;
-                            }
-                            else
-                                goto label_29;
-                        default:
-                            goto label_29;
-                    }
+                case 76: // Item Tent
+                    if (CanBeHealed(v))
+                        RecoverHalfHpMp(v);
+                    break;
             }
+            return FieldCalcResult(v);
         }
 
         private static Boolean FieldCalcResult(Context v)
         {
-            if ((v.Flags & 1) != 0)
+            if ((v.Flags & BattleCalcFlags.Miss) != 0)
             {
-                v.TargetInfo |= 32;
+                v.TargetInfo |= Param.FIG_INFO_MISS;
                 return false;
             }
             if (v.TargetHp > 0)
@@ -163,118 +126,113 @@ namespace Memoria.Field
             return true;
         }
 
-        private static Boolean FldCalcSub_12A(Context v)
+        private static Boolean CanBeHealed(Context v)
         {
-            if (!FieldCheckStatus(v.Target, 65) && v.Target.cur.hp != 0)
+            if (!FieldCheckStatus(v.Target, BattleStatus.Petrify | BattleStatus.Zombie) && v.Target.cur.hp != 0)
                 return true;
-            v.Flags |= 1;
+            v.Flags |= BattleCalcFlags.Miss;
             return false;
         }
 
-        private static Boolean FldCalcSub_12B(Context v)
+        private static Boolean CanBeRevived(Context v)
         {
-            if (!FieldCheckStatus(v.Target, 1) && v.Target.cur.hp <= 0 && (!FieldCheckStatus(v.Target, 64) || v.Target.cur.hp != 0))
+            if (!FieldCheckStatus(v.Target, BattleStatus.Petrify) && v.Target.cur.hp <= 0 && (!FieldCheckStatus(v.Target, BattleStatus.Zombie) || v.Target.cur.hp != 0))
                 return true;
-            v.Flags |= 1;
+            v.Flags |= BattleCalcFlags.Miss;
             return false;
         }
 
-        private static void FldCalcSub_137(Context v)
+        private static void SetupSpellHeal(Context v)
         {
-            v.AttackNumber = (Int16)(v.Caster.elem.mgc + Comn.random16() % (1 + (v.Caster.level + v.Caster.elem.mgc >> 3)));
+            v.AttackNumber = v.Caster.elem.mgc + Comn.random16() % (1 + (v.Caster.level + v.Caster.elem.mgc >> 3));
             v.AttackPower = v.Tbl.Ref.Power;
             v.DefencePower = v.Target.defence.MagicalDefence;
         }
 
-        private static void FldCalcSub_171(Context v)
+        private static void SetupItemHeal(Context v)
         {
             v.AttackNumber = 10;
             v.AttackPower = v.Tbl.Ref.Power;
             v.DefencePower = 0;
         }
 
-        private static void FldCalcSub_144(Context v)
+        private static void ApplyNullStatus(Context v)
         {
-            if (!FieldCheckStatus(v.Caster, 0))
-                return;
-            v.AttackNumber /= 2;
+            if (FieldCheckStatus(v.Caster, 0))
+                v.AttackNumber /= 2;
         }
 
-        private static void FldCalcSub_146(Context v)
+        private static void ApplyConcentrate(Context v)
         {
-            if (((Int32)v.Caster.sa[1] & 2) == 0) // Concentrate
-                return;
-            v.AttackNumber = (Int16)(v.AttackNumber * 3 >> 1);
+            if (ff9abil.FF9Abil_IsEnableSA(v.Caster.saExtended, SupportAbility.Concentrate))
+                v.AttackNumber = (Int16)(v.AttackNumber * 3 >> 1);
         }
 
-        private static void FldCalcSub_156(Context v)
+        private static void ApplyMultiTarget(Context v)
         {
-            if ((Int32)v.Cursor != 1 || (Int32)v.Tbl.Info.Target <= 2 || (Int32)v.Tbl.Info.Target >= 6)
-                return;
-            v.AttackNumber /= 2;
+            if (v.Cursor == 1 && v.Tbl.Info.Target >= TargetType.ManyAny && v.Tbl.Info.Target <= TargetType.ManyEnemy)
+                v.AttackNumber /= 2;
         }
 
-        private static void FldCalcSub_202(Context v)
+        private static void HealHp(Context v)
         {
-            Int16 num = (Int16)(v.AttackPower * v.AttackNumber);
-            if (num > 9999)
-                num = 9999;
-            v.TargetHp = num;
+            Int32 newHp = v.AttackPower * v.AttackNumber;
+            if (newHp > ff9play.FF9PLAY_HP_MAX)
+                newHp = ff9play.FF9PLAY_HP_MAX;
+            v.TargetHp = newHp;
         }
 
-        private static void FldCalcSub_204(Context v)
+        private static void ReviveSpell(Context v)
         {
-            Int32 num1 = (Int32)v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power);
-            Int32 num2 = ((Int32)v.Caster.sa[1] & 2) == 0 ? num1 / 100 : num1 / 50; // Concentrate
-            if (num2 > 9999)
-                num2 = 9999;
-            v.TargetHp = (Int32)num2;
+            Int32 newHp = (Int32)(v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power));
+            newHp /= ff9abil.FF9Abil_IsEnableSA(v.Caster.saExtended, SupportAbility.Concentrate) ? 50 : 100;
+            if (newHp > ff9play.FF9PLAY_HP_MAX)
+                newHp = ff9play.FF9PLAY_HP_MAX;
+            v.TargetHp = newHp;
         }
 
-        private static void FldCalcSub_21E(Context v)
+        private static void HealMp(Context v)
         {
-            Int16 num = (Int16)(v.AttackPower * v.AttackNumber);
-            if (num > 9999)
-                num = 9999;
-            v.TargetMp = num;
+            Int32 newMp = v.AttackPower * v.AttackNumber;
+            if (newMp > ff9play.FF9PLAY_MP_MAX)
+                newMp = ff9play.FF9PLAY_MP_MAX;
+            v.TargetMp = newMp;
         }
 
-        private static void FldCalcSub_21F(Context v)
+        private static void HealFull(Context v)
         {
             v.Target.cur.hp = v.Target.max.hp;
             v.Target.cur.mp = v.Target.max.mp;
         }
 
-        private static void FldCalcSub_220(Context v)
+        private static void ReviveLow(Context v)
         {
-            v.Target.cur.hp = (UInt16)(1 + Comn.random8() % 10);
+            v.Target.cur.hp = (UInt32)(1 + Comn.random8() % 10);
         }
 
-        private static void FldCalcSub_223(Context v)
+        private static void RecoverHalfHpMp(Context v)
         {
-            v.TargetHp = (Int16)(v.Target.max.hp >> 1);
-            v.TargetMp = (Int16)(v.Target.max.mp >> 1);
+            v.TargetHp = (Int32)(v.Target.max.hp >> 1);
+            v.TargetMp = (Int32)(v.Target.max.mp >> 1);
         }
 
-        private static void FldCalcSub_302(Context v)
+        private static void CureSpellStatus(Context v)
         {
             // Use the status set list initialized through CSV reading
             // Might use "....Value & 127" instead of the plain Value although that doesn't seem required
-            if ((Int32)FieldRemoveStatuses(v.Target, (Byte)FF9BattleDB.StatusSets[v.Tbl.AddNo].Value) == 2)
-                return;
-            v.Flags |= 1;
+            if (FieldRemoveStatuses(v.Target, (Byte)FF9BattleDB.StatusSets[v.Tbl.AddNo].Value) != 2)
+                v.Flags |= BattleCalcFlags.Miss;
         }
 
-        private static void FldCalcSub_305(Context v)
+        private static void CureItemStatus(Context v)
         {
-            if ((Int32)FieldRemoveStatuses(v.Target, (Byte)v.Tbl.Status) == 2)
-                return;
-            v.Flags |= 1;
+            if (FieldRemoveStatuses(v.Target, (Byte)v.Tbl.Status) != 2)
+                v.Flags |= BattleCalcFlags.Miss;
         }
 
         private static void FieldSetRecover(PLAYER player, UInt32 recover)
         {
-            if (FieldCheckStatus(player, 1))
+            if (FieldCheckStatus(player, BattleStatus.Petrify))
                 return;
             player.cur.hp += recover;
             if (player.cur.hp <= player.max.hp)
@@ -284,7 +242,7 @@ namespace Memoria.Field
 
         private static void FieldSetMpRecover(PLAYER player, UInt32 recover)
         {
-            if (FieldCheckStatus(player, 1))
+            if (FieldCheckStatus(player, BattleStatus.Petrify))
                 return;
             player.cur.mp += recover;
             if (player.cur.mp <= player.max.mp)
@@ -292,29 +250,29 @@ namespace Memoria.Field
             player.cur.mp = player.max.mp;
         }
 
-        public static UInt32 FieldRemoveStatus(PLAYER player, Byte status)
+        public static Int32 FieldRemoveStatus(PLAYER player, Byte status)
         {
             if ((player.status & status) == 0)
                 return 1;
-            player.status = (Byte)(player.status & ~status);
+            player.status &= unchecked((Byte)~status);
             return 2;
         }
 
-        private static UInt32 FieldRemoveStatuses(PLAYER player, Byte statuses)
+        private static Int32 FieldRemoveStatuses(PLAYER player, Byte statuses)
         {
-            UInt32 num = 1;
-            for (Int32 index = 0; index < 8; ++index)
+            Int32 success = 1;
+            for (Int32 i = 0; i < 8; ++i)
             {
-                Byte status = (Byte)(1 << index);
-                if ((statuses & status) != 0 && (Int32)FieldRemoveStatus(player, status) == 2)
-                    num = 2U;
+                Byte status = (Byte)(1 << i);
+                if ((statuses & status) != 0 && FieldRemoveStatus(player, status) == 2)
+                    success = 2;
             }
-            return num;
+            return success;
         }
 
-        private static Boolean FieldCheckStatus(PLAYER player, Byte status)
+        private static Boolean FieldCheckStatus(PLAYER player, BattleStatus status)
         {
-            return (player.status & status) != 0;
+            return (player.status & (Int32)status) != 0;
         }
 
         private sealed class ItemActionData
@@ -322,8 +280,8 @@ namespace Memoria.Field
             public BattleCommandInfo Info;
             public BTL_REF Ref;
             public Byte Category;
-            public Byte AddNo;
-            public Byte MP;
+            public BattleStatusIndex AddNo;
+            public Int32 MP;
             public Byte Type;
             public UInt16 Vfx2;
             public String Name;
@@ -355,8 +313,8 @@ namespace Memoria.Field
             public PLAYER Target;
             public ItemActionData Tbl;
             public UInt32 Cursor;
-            public Byte Flags;
-            public Byte TargetInfo;
+            public BattleCalcFlags Flags;
+            public UInt16 TargetInfo;
             public Int32 AttackPower;
             public Int32 DefencePower;
             public Int32 AttackNumber;

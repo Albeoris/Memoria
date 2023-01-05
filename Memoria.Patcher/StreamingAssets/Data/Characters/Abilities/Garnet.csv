@@ -1,55 +1,55 @@
 # This file contains a set of learnable Garnet's abilities.
-# You must set 48 different items.
-# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# UInt8;UInt8
+# Ability;UInt8
 # -----------------------------------
-49;20;# Shiva
-51;35;# Ifrit
-53;30;# Ramuh
-55;30;# Atomos
-58;30;# Odin
-60;40;# Leviathan
-62;80;# Bahamut
-64;100;# Ark
-1;30;# Cure
-2;50;# Cura
-3;155;# Curaga
-5;30;# Life
-7;25;# Scan
-8;15;# Panacea
-9;25;# Stona
-11;35;# Shell
-12;30;# Protect
-14;30;# Silence
-15;40;# Mini
-16;20;# Reflect
-17;35;# Confuse
-18;30;# Berserk
-19;40;# Blind
-20;20;# Float
-192;75;# Auto-Reflect
-193;20;# Auto-Float
-194;55;# Auto-Haste
-195;35;# Auto-Regen
-196;105;# Auto-Life
-200;45;# MP+20%
-216;30;# Healer
-219;15;# Chemist
-222;45;# Reflect-Null
-225;80;# Concentrate
-226;125;# Half MP
-227;30;# High Tide
-232;25;# Body Temp
-235;50;# Level Up
-236;60;# Ability Up
-240;25;# Insomniac
-241;15;# Antibody
-243;20;# Loudmouth
-245;40;# Jelly
-248;20;# Auto-Potion
-249;30;# Locomotion
-250;25;# Clear Headed
-251;190;# Boost
-252;50;# Odin’s Sword
+AA:49;20;# Shiva
+AA:51;35;# Ifrit
+AA:53;30;# Ramuh
+AA:55;30;# Atomos
+AA:58;30;# Odin
+AA:60;40;# Leviathan
+AA:62;80;# Bahamut
+AA:64;100;# Ark
+AA:1;30;# Cure
+AA:2;50;# Cura
+AA:3;155;# Curaga
+AA:5;30;# Life
+AA:7;25;# Scan
+AA:8;15;# Panacea
+AA:9;25;# Stona
+AA:11;35;# Shell
+AA:12;30;# Protect
+AA:14;30;# Silence
+AA:15;40;# Mini
+AA:16;20;# Reflect
+AA:17;35;# Confuse
+AA:18;30;# Berserk
+AA:19;40;# Blind
+AA:20;20;# Float
+SA:0;75;# Auto-Reflect
+SA:1;20;# Auto-Float
+SA:2;55;# Auto-Haste
+SA:3;35;# Auto-Regen
+SA:4;105;# Auto-Life
+SA:8;45;# MP+20%
+SA:24;30;# Healer
+SA:27;15;# Chemist
+SA:30;45;# Reflect-Null
+SA:33;80;# Concentrate
+SA:34;125;# Half MP
+SA:35;30;# High Tide
+SA:40;25;# Body Temp
+SA:43;50;# Level Up
+SA:44;60;# Ability Up
+SA:48;25;# Insomniac
+SA:49;15;# Antibody
+SA:51;20;# Loudmouth
+SA:53;40;# Jelly
+SA:56;20;# Auto-Potion
+SA:57;30;# Locomotion
+SA:58;25;# Clear Headed
+SA:59;190;# Boost
+SA:60;50;# Odin’s Sword

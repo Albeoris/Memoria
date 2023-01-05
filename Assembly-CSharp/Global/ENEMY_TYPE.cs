@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Data;
 
 public class ENEMY_TYPE
 {
@@ -27,7 +28,7 @@ public class ENEMY_TYPE
 
 	public Byte p_atk_no;
 
-	public Byte blue_magic_no;
+	public Int32 blue_magic_no;
 
 	public Byte mes;
 
@@ -49,7 +50,7 @@ public class ENEMY_TYPE
 	{
 		public ENEMY_BONUSES()
 		{
-			this.item = new Byte[4];
+			this.item = new RegularItem[4];
 			this.item_rate = new UInt16[4];
 		}
 
@@ -57,7 +58,7 @@ public class ENEMY_TYPE
 
 		public UInt32 exp;
 
-		public Byte[] item;
+		public RegularItem[] item;
 		public UInt16[] item_rate;
 
 		public UInt32 card;

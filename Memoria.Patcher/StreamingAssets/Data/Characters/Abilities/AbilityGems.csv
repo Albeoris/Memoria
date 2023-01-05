@@ -1,9 +1,9 @@
-# This file contains a number of gems, which are required for the activation of passive abilities.;;
-# You must set 64 different items.;;
-# ---------------------------------------;;
+# This file contains a number of gems, which are required for the activation of passive abilities.
+# You must set at least 64 different items.
+# -----------------------------------------------
 # Comment;Id;Gems
-#;Int32;UInt8
-# ---------------------------------------;;
+# ;Int32;UInt8
+# -----------------------------------------------
 Auto-Reflect;0;15
 Auto-Float;1;6
 Auto-Haste;2;9

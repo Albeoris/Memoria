@@ -21,7 +21,7 @@ public static class btl2d
 
 	public static void InitBattleSPSBin()
 	{
-		String[] arg = new String[]
+		String[] spsBinNames = new String[]
 		{
 			"st_doku.dat",
 			"st_mdoku.dat",
@@ -38,7 +38,7 @@ public static class btl2d
 		};
 		for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
 		{
-			Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + arg + ".sps", out _);
+			Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + spsBinNames[i] + ".sps");
 			if (bytes == null)
 				return;
 		}
@@ -304,7 +304,7 @@ public static class btl2d
 										}
 										else
 										{
-											CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
+											CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
 											iconBone = param.StatusBone;
 											iconOffY = param.StatusOffsetY;
 											iconOffZ = param.StatusOffsetZ;
@@ -430,7 +430,7 @@ public static class btl2d
 								Int16 iconOffY;
 								if (btl.bi.player != 0)
 								{
-									CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
+									CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
 									iconBone = param.StatusBone[5];
 									iconOffY = param.StatusOffsetY[5];
 								}

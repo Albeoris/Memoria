@@ -121,8 +121,8 @@ public class ShopUI : UIScene
 	        ShopItems assortiment = ff9buy.ShopItems[this.id];
 	        for (Int32 i = 0; i < assortiment.Length; i++)
 	        {
-	            Byte itemId = assortiment[i];
-	            Byte itemType = ff9item._FF9Item_Data[itemId].type;
+				RegularItem itemId = assortiment[i];
+				ItemType itemType = ff9item._FF9Item_Data[itemId].type;
 	            if ((itemType & ff9buy.FF9BUY_TYPE_WEAPON) != 0)
 	            {
 	                this.isGrocery = true;
@@ -240,8 +240,8 @@ public class ShopUI : UIScene
 				if (ButtonGroupState.ContainButtonInGroup(go, ShopUI.SellItemGroupButton))
 				{
 					this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-					Int32 key = this.sellItemIdList[this.currentItemIndex];
-					if (!this.soldItemIdDict.ContainsKey(key))
+					RegularItem sellingItem = this.sellItemIdList[this.currentItemIndex];
+					if (!this.soldItemIdDict.ContainsKey(sellingItem))
 					{
 						FF9Sfx.FF9SFX_Play(103);
 						this.StartCountSell();
@@ -312,18 +312,18 @@ public class ShopUI : UIScene
 				else
 				{
 					FF9Sfx.FF9SFX_Play(1045);
-					Int32 itemIndex = this.sellItemIdList[this.currentItemIndex];
-					FF9ITEM_DATA item = ff9item._FF9Item_Data[itemIndex];
-					Int32 sellingPrice = item.price >> 1;
-					Int32 countRemoved = ff9item.FF9Item_Remove(itemIndex, this.count);
+					RegularItem sellingItem = this.sellItemIdList[this.currentItemIndex];
+					FF9ITEM_DATA item = ff9item._FF9Item_Data[sellingItem];
+					UInt32 sellingPrice = item.price >> 1;
+					Int32 countRemoved = ff9item.FF9Item_Remove(sellingItem, this.count);
 					if (countRemoved != 0)
 					{
 						FF9StateSystem.Common.FF9.party.gil += (UInt32)(sellingPrice * this.count);
 						if (FF9StateSystem.Common.FF9.party.gil > 9999999u)
 							FF9StateSystem.Common.FF9.party.gil = 9999999u;
 					}
-					if (ff9item.FF9Item_GetCount(itemIndex) == 0)
-						this.soldItemIdDict[itemIndex] = this.currentItemIndex;
+					if (ff9item.FF9Item_GetCount(sellingItem) == 0)
+						this.soldItemIdDict[sellingItem] = this.currentItemIndex;
 					this.DisplaySellItem();
 					if (this.sellItemIdList.Count == 0)
 					{
@@ -581,7 +581,7 @@ public class ShopUI : UIScene
 	{
 		if (shopType == ShopUI.ShopType.Item)
 		{
-			Int32 itemId = this.itemIdList[this.currentItemIndex];
+			RegularItem itemId = this.itemIdList[this.currentItemIndex];
 			this.itemFundLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
 			this.itemCountLabel.text = ff9item.FF9Item_GetCount(itemId).ToString();
 			this.requiredItem1Hud.Self.SetActive(false);
@@ -589,11 +589,11 @@ public class ShopUI : UIScene
 		}
 		else if (shopType == ShopUI.ShopType.Weapon)
 		{
-			Int32 itemId = this.itemIdList[this.currentItemIndex];
+			RegularItem itemId = this.itemIdList[this.currentItemIndex];
 			this.weaponFundLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
 			this.weaponCountLabel.text = ff9item.FF9Item_GetCount(this.itemIdList[this.currentItemIndex]).ToString();
 			this.weaponEquipLabel.text = ff9item.FF9Item_GetEquipCount(this.itemIdList[this.currentItemIndex]).ToString();
-			if (ff9item.FF9Item_GetEquipPart(itemId) != -1)
+			if (ff9item.FF9Item_GetEquipPart(itemId) < 0)
 			{
 				this.weaponEquipLabel.color = FF9TextTool.White;
 				this.weaponEquipTextLabel.color = FF9TextTool.White;
@@ -615,7 +615,7 @@ public class ShopUI : UIScene
 			this.weaponEquipLabel.text = ff9item.FF9Item_GetEquipCount(synth.Result).ToString();
 			this.requiredItem1Hud.Self.SetActive(true);
 			FF9UIDataTool.DisplayItem(synth.Ingredients[0], this.requiredItem1Hud.IconSprite, this.requiredItem1Hud.NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[0]) != 0);
-			if (synth.Ingredients[1] != 255)
+			if (synth.Ingredients[1] != RegularItem.NoItem)
 			{
 				this.requiredItem2Hud.Self.SetActive(true);
 				if (synth.Ingredients[0] != synth.Ingredients[1])
@@ -641,9 +641,9 @@ public class ShopUI : UIScene
 
         for (Int32 i = 0; i < assortiment.Length; i++)
 		{
-			Int32 itemId = assortiment[i];
+			RegularItem itemId = assortiment[i];
 			FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
-			Boolean isEnabled = ff9item.FF9Item_GetCount(itemId) < 99 && FF9StateSystem.Common.FF9.party.gil >= item.price;
+			Boolean isEnabled = ff9item.FF9Item_GetCount(itemId) < ff9item.FF9ITEM_COUNT_MAX && FF9StateSystem.Common.FF9.party.gil >= item.price;
 			this.isItemEnableList.Add(isEnabled);
 			this.itemIdList.Add(itemId);
 			list.Add(new ShopUI.ShopItemListData
@@ -702,9 +702,9 @@ public class ShopUI : UIScene
 
             for (Int32 i = 0; i < assortiment.Length; i++)
 			{
-				Int32 itemId = assortiment[i];
+				RegularItem itemId = assortiment[i];
 				FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
-				Boolean isEnabled = ff9item.FF9Item_GetCount(itemId) < 99 && FF9StateSystem.Common.FF9.party.gil >= item.price;
+				Boolean isEnabled = ff9item.FF9Item_GetCount(itemId) < ff9item.FF9ITEM_COUNT_MAX && FF9StateSystem.Common.FF9.party.gil >= item.price;
 				this.isItemEnableList.Add(isEnabled);
 				this.itemIdList.Add(itemId);
 				list.Add(new ShopUI.ShopItemListData
@@ -720,11 +720,11 @@ public class ShopUI : UIScene
 			for (Int32 j = 0; j < this.mixItemList.Count; j++)
 			{
 				FF9MIX_DATA synth = this.mixItemList[j];
-				Boolean canBeSynthesized = ff9item.FF9Item_GetCount(synth.Result) < 99 && FF9StateSystem.Common.FF9.party.gil >= synth.Price;
+				Boolean canBeSynthesized = ff9item.FF9Item_GetCount(synth.Result) < ff9item.FF9ITEM_COUNT_MAX && FF9StateSystem.Common.FF9.party.gil >= synth.Price;
 
-			    if (synth.Ingredients[0] == synth.Ingredients[1] && synth.Ingredients[0] != 255)
+			    if (synth.Ingredients[0] == synth.Ingredients[1] && synth.Ingredients[0] != RegularItem.NoItem)
 			    {
-			        Byte itemId = synth.Ingredients[0]; // Fix it if you change ff9mix.FF9MIX_SRC_MAX
+					RegularItem itemId = synth.Ingredients[0]; // Fix it if you change ff9mix.FF9MIX_SRC_MAX
 			        if (ff9item.FF9Item_GetCount(itemId) < 2)
 			            canBeSynthesized = false;
 			    }
@@ -732,10 +732,10 @@ public class ShopUI : UIScene
 			    {
 			        for (Int32 k = 0; canBeSynthesized && k < ff9mix.FF9MIX_SRC_MAX; k++)
 			        {
-			            if (synth.Ingredients[k] == 255)
+			            if (synth.Ingredients[k] == RegularItem.NoItem)
 			                continue;
 
-                        Byte itemId = synth.Ingredients[k];
+						RegularItem itemId = synth.Ingredients[k];
 			            if (ff9item.FF9Item_GetCount(itemId) < 1)
 			                canBeSynthesized = false;
 			        }
@@ -790,10 +790,8 @@ public class ShopUI : UIScene
 	{
 		this.sellItemIdList.Clear();
 		List<ListDataTypeBase> list = new List<ListDataTypeBase>();
-		FF9ITEM[] itemList = FF9StateSystem.Common.FF9.item;
-		for (Int32 i = 0; i < itemList.Length; i++)
+		foreach (FF9ITEM item in FF9StateSystem.Common.FF9.item)
 		{
-			FF9ITEM item = itemList[i];
 			if (item.count > 0)
 			{
 				if (this.soldItemIdDict.ContainsKey(item.id))
@@ -806,7 +804,7 @@ public class ShopUI : UIScene
 				});
 			}
 		}
-		foreach (KeyValuePair<Int32, Int32> keyValuePair in from key in this.soldItemIdDict
+		foreach (KeyValuePair<RegularItem, Int32> keyValuePair in from key in this.soldItemIdDict
 		orderby key.Value
 		select key)
 		{
@@ -857,8 +855,8 @@ public class ShopUI : UIScene
 		this.ClearCharacterInfo();
 		if (this.currentItemIndex < 0 || this.currentMenu == ShopUI.SubMenu.Sell)
 			return;
-		Int32 cureentItemId = this.itemIdList[this.currentItemIndex];
-		Int32 equipPart = ff9item.FF9Item_GetEquipPart(cureentItemId);
+		RegularItem currentItemId = this.itemIdList[this.currentItemIndex];
+		Int32 equipPart = ff9item.FF9Item_GetEquipPart(currentItemId);
 		Boolean isArmor = equipPart > 0;
 		if (equipPart < 0)
 			return;
@@ -871,7 +869,7 @@ public class ShopUI : UIScene
 			ShopUI.CharacterWeaponInfoHUD characterWeaponInfoHUD = this.charInfoHud[hudIndex++];
 			PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(this.availableCharaList[i]);
 			UInt64 playerMask = ff9feqp.GetCharacterEquipMask(player);
-			Boolean canEquip = (ff9item._FF9Item_Data[cureentItemId].equip & playerMask) != 0;
+			Boolean canEquip = (ff9item._FF9Item_Data[currentItemId].equip & playerMask) != 0;
 			characterWeaponInfoHUD.AvatarSprite.gameObject.SetActive(true);
 			FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterWeaponInfoHUD.AvatarSprite, false);
 			if (canEquip)
@@ -880,13 +878,13 @@ public class ShopUI : UIScene
 				Int32 newRating;
 				if (!isArmor)
 				{
-					oldRating = ff9weap.WeaponData[player.equip[0]].Ref.Power;
-					newRating = ff9weap.WeaponData[cureentItemId].Ref.Power;
+					oldRating = ff9item.GetItemWeapon(player.equip[0]).Ref.Power;
+					newRating = ff9item.GetItemWeapon(currentItemId).Ref.Power;
 				}
 				else
 				{
 				    CharacterEquipment equipCopy = player.equip.Clone();
-					equipCopy[equipPart] = (Byte)cureentItemId;
+					equipCopy[equipPart] = currentItemId;
 					oldRating = ff9shop.FF9Shop_GetDefence(equipPart, player.equip);
 					newRating = ff9shop.FF9Shop_GetDefence(equipPart, equipCopy);
 				}
@@ -954,12 +952,12 @@ public class ShopUI : UIScene
 			this.InputQuantityDialog.transform.localPosition = new Vector3(0f, 50f, 0f);
 			FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SellQtyHelp");
 			this.InfoDialog.SetActive(true);
-			Int32 itemId = this.sellItemIdList[this.currentItemIndex];
+			RegularItem itemId = this.sellItemIdList[this.currentItemIndex];
 			FF9UIDataTool.DisplayItem(itemId, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
-			Int32 sellingPrice = ff9item._FF9Item_Data[itemId].price >> 1;
+			UInt32 sellingPrice = ff9item._FF9Item_Data[itemId].price >> 1;
 			this.confirmQuantityLabel.text = this.count.ToString();
 			this.confirmPriceLabel.text = (this.count * sellingPrice).ToString() + "[YSUB=1.3][sub]G";
-			Boolean isEquipment = (ff9item._FF9Item_Data[itemId].type & 0xF8) != 0;
+			Boolean isEquipment = (ff9item._FF9Item_Data[itemId].type & ItemType.AnyEquipment) != 0;
 			this.confirmFundLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
 			this.confirmCountLabel.text = ff9item.FF9Item_GetCount(itemId).ToString();
 			if (isEquipment)
@@ -1024,38 +1022,24 @@ public class ShopUI : UIScene
 
     private void AnalyzeArgument()
     {
-        Int32 shopNumber = this.id - 32;
-        Byte shopFlag = Byte.Parse((1 << shopNumber).ToString());
         foreach (FF9MIX_DATA data in ff9mix.SynthesisData)
-        {
-            if ((data.Shops & shopFlag) <= 0 || data.Result == 255)
-                continue;
-
-            mixItemList.Add(data);
-            if (mixItemList.Count > 31)
-                break;
-        }
+			if (data.Shops.Contains(this.id) && data.Result != RegularItem.NoItem)
+				mixItemList.Add(data);
 
         foreach (FF9MIX_DATA data in mixItemList)
-        {
-            Byte itemType = ff9item._FF9Item_Data[data.Result].type;
-            if ((itemType & 0xF8) > 0)
-                this.mixPartyList.Add(true);
-            else
-                this.mixPartyList.Add(false);
-        }
+			this.mixPartyList.Add((ff9item._FF9Item_Data[data.Result].type & ItemType.AnyEquipment) != 0);
     }
 
     private void StartCountItem()
 	{
-		Int32 itemId = this.itemIdList[this.currentItemIndex];
+		RegularItem itemId = this.itemIdList[this.currentItemIndex];
 		Int32 itemCount = ff9item.FF9Item_GetCount(itemId);
 		FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
-		if (itemCount < 99 && item.price <= FF9StateSystem.Common.FF9.party.gil)
+		if (itemCount < ff9item.FF9ITEM_COUNT_MAX && item.price <= FF9StateSystem.Common.FF9.party.gil)
 		{
 			this.count = 1;
-			Int32 maxBuy = (Int32)(item.price == 0 ? 99 : FF9StateSystem.Common.FF9.party.gil / item.price);
-			this.maxCount = Math.Min(99 - itemCount, maxBuy);
+			Int32 maxBuy = (Int32)(item.price == 0 ? ff9item.FF9ITEM_COUNT_MAX : FF9StateSystem.Common.FF9.party.gil / item.price);
+			this.maxCount = Math.Min(ff9item.FF9ITEM_COUNT_MAX - itemCount, maxBuy);
 			this.minCount = 1;
 		}
 		this.isPlusQuantity = false;
@@ -1066,16 +1050,16 @@ public class ShopUI : UIScene
 	{
 		FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex];
 		Int32 requiredCount = synth.Ingredients[0] != synth.Ingredients[1] ? 1 : 2;
-		Int32 resultItemCount = ff9item.FF9Item_GetCount((Int32)synth.Result);
-		if (resultItemCount < 99 && synth.Price <= FF9StateSystem.Common.FF9.party.gil && (synth.Ingredients[0] == 255 || requiredCount <= ff9item.FF9Item_GetCount(synth.Ingredients[0])) && (synth.Ingredients[1] == 255 || requiredCount <= ff9item.FF9Item_GetCount(synth.Ingredients[1])))
+		Int32 resultItemCount = ff9item.FF9Item_GetCount(synth.Result);
+		if (resultItemCount < ff9item.FF9ITEM_COUNT_MAX && synth.Price <= FF9StateSystem.Common.FF9.party.gil && (synth.Ingredients[0] == RegularItem.NoItem || requiredCount <= ff9item.FF9Item_GetCount(synth.Ingredients[0])) && (synth.Ingredients[1] == RegularItem.NoItem || requiredCount <= ff9item.FF9Item_GetCount(synth.Ingredients[1])))
 		{
 			this.count = 1;
 			this.minCount = 1;
-			Int32 maxBuy = (Int32)(synth.Price == 0 ? 99u : FF9StateSystem.Common.FF9.party.gil / synth.Price);
-			this.maxCount = Math.Min(99 - resultItemCount, maxBuy);
-			if (synth.Ingredients[0] != 255)
+			Int32 maxBuy = (Int32)(synth.Price == 0 ? ff9item.FF9ITEM_COUNT_MAX : FF9StateSystem.Common.FF9.party.gil / synth.Price);
+			this.maxCount = Math.Min(ff9item.FF9ITEM_COUNT_MAX - resultItemCount, maxBuy);
+			if (synth.Ingredients[0] != RegularItem.NoItem)
 				this.maxCount = Math.Min(this.maxCount, ff9item.FF9Item_GetCount(synth.Ingredients[0]) / requiredCount);
-			if (synth.Ingredients[1] != 255)
+			if (synth.Ingredients[1] != RegularItem.NoItem)
 				this.maxCount = Math.Min(this.maxCount, ff9item.FF9Item_GetCount(synth.Ingredients[1]) / requiredCount);
 		}
 		this.isPlusQuantity = false;
@@ -1084,7 +1068,7 @@ public class ShopUI : UIScene
 
 	private void StartCountSell()
 	{
-		Int32 itemId = this.sellItemIdList[this.currentItemIndex];
+		RegularItem itemId = this.sellItemIdList[this.currentItemIndex];
 		this.count = 1;
 		this.minCount = 1;
 		this.maxCount = ff9item.FF9Item_GetCount(itemId);
@@ -1339,7 +1323,7 @@ public class ShopUI : UIScene
 
 	private Int32 id;
 
-	private List<Int32> itemIdList = new List<Int32>();
+	private List<RegularItem> itemIdList = new List<RegularItem>();
 
 	private List<Boolean> isItemEnableList = new List<Boolean>();
 
@@ -1347,9 +1331,9 @@ public class ShopUI : UIScene
 
 	private List<Boolean> mixPartyList = new List<Boolean>();
 
-	private List<Int32> sellItemIdList = new List<Int32>();
+	private List<RegularItem> sellItemIdList = new List<RegularItem>();
 
-	private Dictionary<Int32, Int32> soldItemIdDict = new Dictionary<Int32, Int32>();
+	private Dictionary<RegularItem, Int32> soldItemIdDict = new Dictionary<RegularItem, Int32>();
 
 	private List<CharacterId> availableCharaList = new List<CharacterId>();
 
@@ -1426,16 +1410,16 @@ public class ShopUI : UIScene
 
 	public class ShopItemListData : ListDataTypeBase
 	{
-		public Int32 Id;
+		public RegularItem Id;
 
 		public Boolean Enable;
 
-		public Int32 Price;
+		public UInt32 Price;
 	}
 
 	public class ShopSellItemListData : ListDataTypeBase
 	{
-		public Int32 Id;
+		public RegularItem Id;
 
 		public Int32 Count;
 	}

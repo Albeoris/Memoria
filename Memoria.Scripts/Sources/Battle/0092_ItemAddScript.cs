@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            Byte itemId = _v.Command.Power;
+            RegularItem itemId = (RegularItem)_v.Command.Power;
             BattleItem.AddToInventory(itemId);
         }
     }

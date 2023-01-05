@@ -198,7 +198,7 @@ public class BattleResultUI : UIScene
 			{
 				ItemListDetailWithIconHUD itemListDetailWithIconHUD = this.itemHudList[num];
 				itemListDetailWithIconHUD.Self.SetActive(true);
-				FF9UIDataTool.DisplayItem((Int32)ff9ITEM.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
+				FF9UIDataTool.DisplayItem(ff9ITEM.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
 				itemListDetailWithIconHUD.NumberLabel.text = ff9ITEM.count.ToString();
 				num++;
 			}
@@ -223,7 +223,7 @@ public class BattleResultUI : UIScene
 			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
 			if (player != null)
 			{
-				UInt64 num = (player.level >= 99) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
+				UInt64 num = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
 				BattleResultUI.CharacterBattleResultInfoHUD characterBattleResultInfoHUD = this.characterBRInfoHudList[i];
 				characterBattleResultInfoHUD.Content.SetActive(true);
 				characterBattleResultInfoHUD.NameLabel.text = player.Name;
@@ -232,23 +232,21 @@ public class BattleResultUI : UIScene
 				characterBattleResultInfoHUD.NextLvLabel.text = (num - player.exp).ToString();
 				FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterBattleResultInfoHUD.AvatarSprite, false);
 				UISprite[] statusesSpriteList = characterBattleResultInfoHUD.StatusesSpriteList;
-				for (Int32 j = 0; j < (Int32)statusesSpriteList.Length; j++)
+				for (Int32 j = 0; j < statusesSpriteList.Length; j++)
 				{
 					UISprite uisprite = statusesSpriteList[j];
 					uisprite.alpha = 0f;
 				}
-				Int32 num2 = 0;
+				Int32 spriteSlot = 0;
 				foreach (KeyValuePair<UInt32, Byte> keyValuePair in BattleResultUI.BadIconDict)
 				{
-					if (((UInt32)player.status & keyValuePair.Key) != 0u)
+					if (spriteSlot >= characterBattleResultInfoHUD.StatusesSpriteList.Length)
+						break;
+					if ((player.status & keyValuePair.Key) != 0u)
 					{
-						characterBattleResultInfoHUD.StatusesSpriteList[num2].alpha = 1f;
-						characterBattleResultInfoHUD.StatusesSpriteList[num2].spriteName = FF9UIDataTool.IconSpriteName[(Int32)keyValuePair.Value];
-						num2++;
-						if (num2 > (Int32)characterBattleResultInfoHUD.StatusesSpriteList.Length)
-						{
-							break;
-						}
+						characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
+						characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].spriteName = FF9UIDataTool.IconSpriteName[keyValuePair.Value];
+						spriteSlot++;
 					}
 				}
 				if (!this.IsEnableDraw(player, i))
@@ -447,12 +445,18 @@ public class BattleResultUI : UIScene
 	{
 		this.AnalyzeBonusItem();
 		PLAYER[] party = FF9StateSystem.Common.FF9.party.member;
-		for (Int32 saIndex = 0; saIndex < 64; saIndex++)
+		HashSet<SupportAbility> triggeredSA = new HashSet<SupportAbility>();
+		for (Int32 playIndex = 0; playIndex < 4; playIndex++)
 		{
-			Boolean triggered = false;
-			for (Int32 playIndex = 0; playIndex < 4 && !triggered; playIndex++)
-				if (party[playIndex] != null && ff9abil.FF9Abil_IsEnableSA(party[playIndex].sa, 192 + saIndex))
-					triggered = ff9abil._FF9Abil_SaFeature[saIndex].TriggerOnBattleResult(party[playIndex], battle.btl_bonus, this.itemList, "RewardAll", 0U);
+			if (party[playIndex] == null)
+				continue;
+			foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(party[playIndex].saExtended))
+			{
+				if (triggeredSA.Contains(saFeature.Id))
+					continue;
+				if (saFeature.TriggerOnBattleResult(party[playIndex], battle.btl_bonus, this.itemList, "RewardAll", 0U))
+					triggeredSA.Add(saFeature.Id);
+			}
 		}
 		this.AnalyzeArgument();
 		for (Int32 i = 0; i < 4; i++)
@@ -465,7 +469,7 @@ public class BattleResultUI : UIScene
 				individualBonus.card = (Byte)this.defaultCard;
 				individualBonus.exp = this.defaultExp;
 				individualBonus.gil = this.defaultGil;
-				foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
+				foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
 					saFeature.TriggerOnBattleResult(player, individualBonus, this.itemList, "RewardSingle", 0U);
 				this.defaultCard = individualBonus.card;
 				this.defaultGil = individualBonus.gil;
@@ -527,27 +531,25 @@ public class BattleResultUI : UIScene
 	private void AnalyzeBonusItem()
 	{
 		this.itemList.Clear();
-		for (Int32 i = 0; i < BattleResultUI.ItemArgMax; i++)
+		for (Int32 i = 0; i < battle.btl_bonus.item.Count; i++)
 		{
-			if (battle.btl_bonus.item[i] != 255)
+			if (battle.btl_bonus.item[i] != RegularItem.NoItem)
 			{
-				Boolean flag = false;
+				Boolean hasItem = false;
 				for (Int32 j = 0; j < this.itemList.Count; j++)
 				{
 					if (battle.btl_bonus.item[i] == this.itemList[j].id)
 					{
 						FF9ITEM ff9ITEM = this.itemList[j];
-						ff9ITEM.count = (Byte)(ff9ITEM.count + 1);
-						flag = true;
+						ff9ITEM.count++;
+						hasItem = true;
 						break;
 					}
 				}
-				if (!flag)
+				if (!hasItem)
 				{
 					if (this.itemList.Count >= BattleResultUI.ItemMax)
-					{
 						return;
-					}
 					FF9ITEM item = new FF9ITEM(battle.btl_bonus.item[i], 1);
 					this.itemList.Add(item);
 				}
@@ -575,29 +577,25 @@ public class BattleResultUI : UIScene
 			{
 				if (player != null)
 				{
-					UInt32 num = (UInt32)((battleEndValue.current + battleEndValue.step > battleEndValue.value) ? (battleEndValue.value - battleEndValue.current) : battleEndValue.step);
+					UInt32 tickGain = (UInt32)((battleEndValue.current + battleEndValue.step > battleEndValue.value) ? (battleEndValue.value - battleEndValue.current) : battleEndValue.step);
 					if (battleEndValue.current < battleEndValue.value)
 					{
 						this.expEndTick = false;
-						if (num != 0u)
+						if (tickGain != 0u)
 						{
 							if (9999999u > player.exp)
 							{
-								battleEndValue.current += num;
-								player.exp += num;
+								battleEndValue.current += tickGain;
+								player.exp += tickGain;
 								if (9999999u <= player.exp)
-								{
 									player.exp = 9999999u;
-								}
-								if (99 > player.level)
+								if (player.level < ff9level.LEVEL_COUNT)
 								{
 									for (UInt32 exp = ff9level.CharacterLevelUps[player.level].ExperienceToLevel; exp <= player.exp; exp = ff9level.CharacterLevelUps[player.level].ExperienceToLevel)
 									{
 										this.DisplayLevelup(i);
-										if (player.level >= 99)
-										{
+										if (player.level >= ff9level.LEVEL_COUNT)
 											break;
-										}
 									}
 								}
 							}
@@ -634,14 +632,14 @@ public class BattleResultUI : UIScene
 		this.apValue[id].current += ap;
 		for (Int32 i = 0; i < 5; i++)
 		{
-			if (player.Equipment[i] != 255)
+			if (player.Equipment[i] != RegularItem.NoItem)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[player.Equipment[i]];
-				for (Int32 j = 0; j < 3; j++)
+				FF9ITEM_DATA itemData = ff9item._FF9Item_Data[player.Equipment[i]];
+				foreach (Int32 abil in itemData.ability)
 				{
-					if (ff9ITEM_DATA.ability[j] != 0)
+					if (abil != 0)
 					{
-						Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player.Data, ff9ITEM_DATA.ability[j]);
+						Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player.Data, abil);
 						if (abilIndex >= 0)
 						{
 							Int32 max_ap = ff9abil._FF9Abil_PaData[player.PresetId][abilIndex].Ap;
@@ -651,7 +649,7 @@ public class BattleResultUI : UIScene
 								if (max_ap <= cur_ap + ap)
 								{
 									player.Data.pa[abilIndex] = (Byte)max_ap;
-									this.ApLearned(id, ff9ITEM_DATA.ability[j]);
+									this.ApLearned(id, abil);
 								}
 								else
 								{
@@ -697,16 +695,16 @@ public class BattleResultUI : UIScene
 		this.abilityLearned[id].RemoveAt(0);
 		String abilName;
 		String spriteName;
-		if (abilId < 192)
+		if (ff9abil.IsAbilityActive(abilId))
 		{
-			abilName = FF9TextTool.ActionAbilityName(abilId);
+			abilName = FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(abilId));
 			spriteName = "ability_stone";
 		}
 		else
 		{
-			abilName = FF9TextTool.SupportAbilityName(abilId - 192);
-			PLAYER player = FF9StateSystem.Common.FF9.party.member[id];
-			spriteName = ff9abil.FF9Abil_IsEnableSA(player.sa, abilId) ? "skill_stone_on" : "skill_stone_off";
+			SupportAbility saIndex = ff9abil.GetSupportAbilityFromAbilityId(abilId);
+			abilName = FF9TextTool.SupportAbilityName(saIndex);
+			spriteName = ff9abil.FF9Abil_IsEnableSA(FF9StateSystem.Common.FF9.party.member[id], saIndex) ? "skill_stone_on" : "skill_stone_off";
 		}
 		this.characterBRInfoHudList[id].AbiltySprite.spriteName = spriteName;
 		this.characterBRInfoHudList[id].AbilityLabel.text = abilName;
@@ -746,24 +744,20 @@ public class BattleResultUI : UIScene
 
 	private Boolean UpdateItem()
 	{
-		Boolean flag = false;
+		Boolean gainedItem = false;
 		for (Int32 i = 0; i < this.itemList.Count; i++)
 		{
-			if ((Int32)this.itemList[i].count != ff9item.FF9Item_Add((Int32)this.itemList[i].id, (Int32)this.itemList[i].count))
+			if (this.itemList[i].count != ff9item.FF9Item_Add(this.itemList[i].id, this.itemList[i].count))
 			{
 				FF9Sfx.FF9SFX_Play(1046);
-				flag = true;
+				gainedItem = true;
 			}
 		}
-		if (this.defaultCard != 255)
-		{
+		if (this.defaultCard != Byte.MaxValue)
 			QuadMistDatabase.MiniGame_SetCard(this.defaultCard);
-		}
-		if (flag && (this.itemList.Count != 0 || this.defaultCard != 255))
-		{
+		if (gainedItem && (this.itemList.Count != 0 || this.defaultCard != Byte.MaxValue))
 			FF9Sfx.FF9SFX_Play(108);
-		}
-		return !flag;
+		return !gainedItem;
 	}
 
 	private void UpdateState()
@@ -771,12 +765,8 @@ public class BattleResultUI : UIScene
 		if (this.expEndTick && this.apEndTick)
 		{
 			for (Int32 i = 0; i < 4; i++)
-			{
 				if (this.abilityLearned[i].Count != 0)
-				{
 					return;
-				}
-			}
 			FF9Sfx.FF9SFX_StopLoop(105);
 			FF9Sfx.FF9SFX_Play(103);
 			this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
@@ -790,13 +780,13 @@ public class BattleResultUI : UIScene
 			0,
 			1,
 			2
-		}, (UIScene.SceneVoidDelegate)null);
+		}, null);
 		this.expRightSideTween.TweenOut(new Byte[]
 		{
 			0,
 			1,
 			2
-		}, (UIScene.SceneVoidDelegate)null);
+		}, null);
 		base.Loading = true;
 		base.FadingComponent.FadePingPong(new UIScene.SceneVoidDelegate(this.AfterShowGilAndItem), delegate
 		{

@@ -77,7 +77,7 @@ public static class btl_stat
                 {
                     if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && Configuration.Battle.Speed < 3)
                     {
-                        btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysStone, 0U, btl.btl_id, 0U);
+                        btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysStone, 0, btl.btl_id, 0U);
                         break;
                     }
                     stat.cur |= status;
@@ -145,7 +145,7 @@ public static class btl_stat
                 btl_sys.CheckBattlePhase(btl);
                 break;
             case BattleStatus.Trance:
-                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0U, btl.btl_id, 0U);
+                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
                 break;
             case BattleStatus.Sleep:
                 if (unit.IsPlayer)
@@ -306,7 +306,7 @@ public static class btl_stat
                     btl_mot.setMotion(btl, btl.bi.def_idle);
                     btl.evt.animFrame = 0;
                 }
-                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0U, btl.btl_id, 0U);
+                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
                 break;
             case BattleStatus.Haste:
             case BattleStatus.Slow:
@@ -525,9 +525,9 @@ public static class btl_stat
             if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
             {
                 if (btl.cmd[3].cmd_no == BattleCommandId.Jump)
-                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpAttack, (UInt32)BattleAbilityId.Spear1, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
+                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpAttack, (Int32)BattleAbilityId.Spear1, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
                 else
-                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpTrance, (UInt32)BattleAbilityId.Spear2, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
+                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpTrance, (Int32)BattleAbilityId.Spear2, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
             }
 
             return;
@@ -580,7 +580,7 @@ public static class btl_stat
         {
             if (ff9Battle.phantom_cnt <= 0)
             {
-                btl_cmd.SetCommand(btl.cmd[3], BattleCommandId.SysPhantom, ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
+                btl_cmd.SetCommand(btl.cmd[3], BattleCommandId.SysPhantom, (Int32)ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
                 ff9Battle.cmd_status |= 8;
             }
             else
@@ -654,7 +654,7 @@ public static class btl_stat
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
                 Byte counter = (Byte)(ff9Battle.btl_cnt % 16);
-                Byte[] glowingColor = btl_mot.BattleParameterList[(Int32)unit.SerialNumber].TranceGlowingColor;
+                Byte[] glowingColor = btl_mot.BattleParameterList[unit.SerialNumber].TranceGlowingColor;
                 Int16 r = (Int16)(bbgInfoPtr.chr_r - (128 - glowingColor[0]));
                 Int16 g = (Int16)(bbgInfoPtr.chr_g - (128 - glowingColor[1]));
                 Int16 b = (Int16)(bbgInfoPtr.chr_b - (128 - glowingColor[2]));

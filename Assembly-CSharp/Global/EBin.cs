@@ -82,8 +82,7 @@ public class EBin
 
     private void InitializeATanTable()
     {
-		String[] tblInfo;
-        Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/ratan_tbl.bin", out tblInfo);
+        Byte[] binAsset = AssetManager.LoadBytes("EmbeddedAsset/ratan_tbl.bin");
         if (binAsset == null)
         {
             //Debug.LogError("InitializeATanTable: cannot load ratan_tble.bin.bytes");

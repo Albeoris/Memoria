@@ -87,6 +87,21 @@ public class QuadMistDatabase : MonoBehaviour
 		}
 	}
 
+	public static Int32 Remove(Int32 cardId, Int32 count)
+	{
+		Int32 countDiscarded = 0;
+		while (count > 0)
+		{
+			QuadMistCard card = MiniGame_GetCardInfoPtr(cardId, 0);
+			if (card == null)
+				break;
+			Remove(card);
+			countDiscarded++;
+			count--;
+		}
+		return countDiscarded;
+	}
+
 	public static Int16 GetWinCount()
 	{
 		return QuadMistDatabase.instance.data.sWin;
@@ -401,19 +416,13 @@ public class QuadMistDatabase : MonoBehaviour
 		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Clear();
 	}
 
-	public static Int32 MiniGame_SetCard(Int32 ID)
+	public static Int32 MiniGame_SetCard(Int32 cardId)
 	{
 		if (QuadMistDatabase.MiniGame_GetAllCardCount() >= 100)
-		{
-			return -1;
-		}
-		QuadMistCard item = CardPool.CreateQuadMistCard(ID);
+			return 0;
+		QuadMistCard item = CardPool.CreateQuadMistCard(cardId);
 		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Add(item);
-		if (QuadMistDatabase.MiniGame_GetCardCount(ID) == 1)
-		{
-			return 1;
-		}
-		return 0;
+		return 1;
 	}
 
 	public static void MiniGame_ContinueInit()

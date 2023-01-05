@@ -11,7 +11,7 @@ public class FieldMapExtraOffset
 		this.offsetDict = new Dictionary<String, FieldMapExtraOffset.ExtraOffset[]>();
 		this.notMoveDict = new Dictionary<String, FieldMapExtraOffset.ExtraOffset[]>();
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapExtraOffsetList.txt";
-		String textAsset = AssetManager.LoadString(name, out _);
+		String textAsset = AssetManager.LoadString(name);
 		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)

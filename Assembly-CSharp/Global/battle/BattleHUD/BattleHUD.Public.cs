@@ -50,7 +50,7 @@ public partial class BattleHUD : UIScene
         _abilityCursorMemorize = new Dictionary<PairCharCommand, Int32>();
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
-        _itemIdList = new List<Byte>();
+        _itemIdList = new List<RegularItem>();
         _messageQueue = new Dictionary<String, Message>();
         _oneTime = true;
     }
@@ -96,35 +96,43 @@ public partial class BattleHUD : UIScene
     }
 
     public String GetBattleCommandTitle(CMD_DATA pCmd)
-	{
+    {
+        if (btl_util.IsCommandMonsterTransform(pCmd))
+        {
+            AA_DATA aaData = btl_util.GetCommandMonsterAttack(pCmd);
+            if (aaData != null)
+                return aaData.Name;
+            return String.Empty;
+        }
         switch (pCmd.cmd_no)
         {
             case BattleCommandId.Item:
             case BattleCommandId.Throw:
-                return FF9TextTool.ItemName(pCmd.sub_no);
+                return FF9TextTool.ItemName((RegularItem)pCmd.sub_no);
             case BattleCommandId.AutoPotion:
                 return String.Empty;
             case BattleCommandId.MagicCounter:
                 return pCmd.aa.Name;
             default:
-                if (pCmd.sub_no < 192)
+                BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(pCmd);
+                if (abilId != BattleAbilityId.Void)
                 {
-                    Int32 id = CmdTitleTable[pCmd.sub_no].MappedId;
-                    switch (id)
+                    Byte type = FF9StateSystem.Battle.FF9Battle.aa_data[abilId].CastingTitleType;
+                    switch (type)
                     {
                         case 254: // Magic sword
                             return FormatMagicSwordAbility(pCmd);
                         case 255:
-                            return FF9TextTool.ActionAbilityName(pCmd.sub_no);
+                            return FF9TextTool.ActionAbilityName(abilId);
                         case 0:
                             break;
                         default:
-                            return id >= 192 ? FF9TextTool.BattleCommandTitleText((id & 63) + 1) : FF9TextTool.ActionAbilityName(id);
+                            return type < 192 ? FF9TextTool.ActionAbilityName((BattleAbilityId)type) : FF9TextTool.BattleCommandTitleText((type & 63) + 1);
                     }
                 }
                 else
                 {
-                    return FF9TextTool.ActionAbilityName(pCmd.sub_no);
+                    return FF9TextTool.ActionAbilityName(abilId);
                 }
                 break;
         }
@@ -135,9 +143,9 @@ public partial class BattleHUD : UIScene
     {
         String title = GetBattleCommandTitle(pCmd);
 
-        if (String.IsNullOrEmpty(title)) 
+        if (String.IsNullOrEmpty(title))
             return;
-        
+
         SetBattleTitle(title, 1);
     }
 
@@ -167,7 +175,7 @@ public partial class BattleHUD : UIScene
         Boolean flag = false;
         for (Int32 index = 0; index < 4; ++index)
         {
-            if (_peepingEnmData.StealableItems[index] == Byte.MaxValue)
+            if (_peepingEnmData.StealableItems[index] == RegularItem.NoItem)
                 continue;
 
             flag = true;
@@ -337,7 +345,7 @@ public partial class BattleHUD : UIScene
         {
             PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
             if (player != null)
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
                     saFeature.TriggerOnBattleResult(player, battle.btl_bonus, new List<FF9ITEM>(), "BattleEnd", gil / 10U);
         }
         if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != Byte.MaxValue))
@@ -459,31 +467,31 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    public void ItemRequest(Int32 id)
+    public void ItemRequest(RegularItem id)
     {
         _needItemUpdate = true;
     }
 
-    public void ItemUse(Int32 id)
-    {
-        if (ff9item.FF9Item_Remove(id, 1) == 0)
-            return;
-        _needItemUpdate = true;
-    }
-
-    public void ItemUnuse(Int32 id)
-    {
-        _needItemUpdate = true;
-    }
-
-    public void ItemRemove(Int32 id)
+    public void ItemUse(RegularItem id)
     {
         if (ff9item.FF9Item_Remove(id, 1) == 0)
             return;
         _needItemUpdate = true;
     }
 
-    public void ItemAdd(Int32 id)
+    public void ItemUnuse(RegularItem id)
+    {
+        _needItemUpdate = true;
+    }
+
+    public void ItemRemove(RegularItem id)
+    {
+        if (ff9item.FF9Item_Remove(id, 1) == 0)
+            return;
+        _needItemUpdate = true;
+    }
+
+    public void ItemAdd(RegularItem id)
     {
         if (ff9item.FF9Item_Add(id, 1) == 0)
             return;

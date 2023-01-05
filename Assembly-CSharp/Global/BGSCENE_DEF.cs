@@ -304,18 +304,15 @@ public class BGSCENE_DEF
     private void _LoadDummyEBG(BGSCENE_DEF sceneUS, String path, String newName, FieldMapLocalizeAreaTitleInfo info, String localizeSymbol)
     {
         this.name = newName;
-        String a = String.Concat(path, newName, "_", localizeSymbol, ".bgs");
-		String[] bgsInfo;
-        this.ebgBin = AssetManager.LoadBytes(a, out bgsInfo);
+        path += $"{newName}_{localizeSymbol}.bgs";
+        this.ebgBin = AssetManager.LoadBytes(path);
         if (this.ebgBin == null)
-        {
             return;
-        }
         using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(this.ebgBin)))
         {
             this.ExtractHeaderData(binaryReader);
             this.ExtractOverlayData(binaryReader);
-            Int32 atlasWidth = (Int32) this.ATLAS_W;
+            Int32 atlasWidth = (Int32)this.ATLAS_W;
             Int32 startOvrIdx = info.startOvrIdx;
             Int32 endOvrIdx = info.endOvrIdx;
             Int32 spriteStartIndex = info.GetSpriteStartIndex(localizeSymbol);
@@ -325,31 +322,29 @@ public class BGSCENE_DEF
             {
                 BGOVERLAY_DEF overlayInfo = this.overlayList[i];
                 binaryReader.BaseStream.Seek(overlayInfo.prmOffset, SeekOrigin.Begin);
-                for (Int32 j = 0; j < (Int32)overlayInfo.spriteCount; j++)
+                for (Int32 j = 0; j < overlayInfo.spriteCount; j++)
                 {
                     BGSPRITE_LOC_DEF spriteInfo = new BGSPRITE_LOC_DEF();
                     spriteInfo.ReadData_BGSPRITE_DEF(binaryReader);
                     overlayInfo.spriteList.Add(spriteInfo);
                 }
                 binaryReader.BaseStream.Seek(overlayInfo.locOffset, SeekOrigin.Begin);
-                for (Int32 k = 0; k < (Int32)overlayInfo.spriteCount; k++)
+                for (Int32 j = 0; j < overlayInfo.spriteCount; j++)
                 {
-                    BGSPRITE_LOC_DEF spriteInfo2 = overlayInfo.spriteList[k];
-                    spriteInfo2.ReadData_BGSPRITELOC_DEF(binaryReader);
+                    BGSPRITE_LOC_DEF spriteInfo = overlayInfo.spriteList[j];
+                    spriteInfo.ReadData_BGSPRITELOC_DEF(binaryReader);
                     if (this.useUpscaleFM)
                     {
-                        spriteInfo2.atlasX = (UInt16)(2 + spriteIndex % num * (TileSize + 4));
-                        spriteInfo2.atlasY = (UInt16)(2 + spriteIndex / num * (TileSize + 4));
-                        spriteInfo2.w = (ushort)TileSize;
-                        spriteInfo2.h = (ushort)TileSize;
+                        spriteInfo.atlasX = (UInt16)(2 + spriteIndex % num * (TileSize + 4));
+                        spriteInfo.atlasY = (UInt16)(2 + spriteIndex / num * (TileSize + 4));
+                        spriteInfo.w = (ushort)TileSize;
+                        spriteInfo.h = (ushort)TileSize;
                         spriteIndex++;
                     }
                 }
             }
             for (Int32 l = startOvrIdx; l <= endOvrIdx; l++)
-            {
                 sceneUS.overlayList[l] = this.overlayList[l];
-            }
         }
     }
 
@@ -362,23 +357,17 @@ public class BGSCENE_DEF
         }
         else
         {
-			String[] pngInfo;
-            Texture2D x = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas"), out pngInfo, false);
+            Texture2D atlasTexture = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas"), false);
 
-            if (x != null)
+            if (atlasTexture != null)
             {
-                this.atlas = x;
-                
+                this.atlas = atlasTexture;
                 if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.WindowsEditor)
-                {
-                    this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), out pngInfo, false);
-                }
+                    this.atlasAlpha = AssetManager.Load<Texture2D>(Path.Combine(path, "atlas_a"), false);
                 else
-                {
                     this.atlasAlpha = null;
-                }
-                this.SPRITE_W = (ushort)TileSize;
-                this.SPRITE_H = (ushort)TileSize;
+                this.SPRITE_W = (UInt16)TileSize;
+                this.SPRITE_H = (UInt16)TileSize;
             }
             else
             {
@@ -387,23 +376,20 @@ public class BGSCENE_DEF
             }
         }
         if (!this.useUpscaleFM)
-        {
             this.vram.LoadTIMs(path);
-        }
         Byte[] binAsset;
-		String[] bgsInfo;
         if (!FieldMapEditor.useOriginalVersion)
         {
-            binAsset = AssetManager.LoadBytes(path + FieldMapEditor.GetFieldMapModName(newName) + ".bgs", out bgsInfo);
+            binAsset = AssetManager.LoadBytes(path + FieldMapEditor.GetFieldMapModName(newName) + ".bgs");
             if (binAsset == null)
             {
                 Debug.Log("Cannot find MOD version.");
-                binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo);
+                binAsset = AssetManager.LoadBytes(path + newName + ".bgs");
             }
         }
         else
         {
-            binAsset = AssetManager.LoadBytes(path + newName + ".bgs", out bgsInfo);
+            binAsset = AssetManager.LoadBytes(path + newName + ".bgs");
         }
 
         if (binAsset == null)
@@ -417,9 +403,7 @@ public class BGSCENE_DEF
 
         FieldMapInfo.fieldmapExtraOffset.SetOffset(name, this.overlayList);
         if (!this.useUpscaleFM)
-        {
             this.GenerateAtlasFromBinary();
-        }
     }
 
     private void loadLocalizationInfo(String newName, String path)

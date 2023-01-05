@@ -97,15 +97,15 @@ public class WMWorld : Singleton<WMWorld>
 		this.BlockShift = new Vector3(0f, 0f, 0f);
 		this.InitialBlocks = WMWorld.BuildBlockArray(this.WorldDisc);
 		this.MainCamera = GameObject.Find("WorldCamera").GetComponent<Camera>();
-		GameObject original2 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/MoveFromBundle/kWorldPackEffectSky_Sky", out _, false);
+		GameObject original2 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/MoveFromBundle/kWorldPackEffectSky_Sky", false);
 		this.SkyDome_Sky = UnityEngine.Object.Instantiate<GameObject>(original2).transform;
 		this.SkyDome_Sky.parent = this.WorldMapEffectRoot;
 		this.SkyDome_SkyMaterial = this.SkyDome_Sky.GetComponentInChildren<MeshRenderer>().material;
-		GameObject original3 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/MoveFromBundle/kWorldPackEffectSky_Bg", out _, false);
+		GameObject original3 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/MoveFromBundle/kWorldPackEffectSky_Bg", false);
 		this.SkyDome_Bg = UnityEngine.Object.Instantiate<GameObject>(original3).transform;
 		this.SkyDome_Bg.parent = this.WorldMapEffectRoot;
 		this.SkyDowm_BgMaterial = this.SkyDome_Bg.GetComponentInChildren<MeshRenderer>().material;
-		GameObject original4 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/kWorldPackEffectSky_Fog", out _, false);
+		GameObject original4 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/kWorldPackEffectSky_Fog", false);
 		this.SkyDome_Fog = UnityEngine.Object.Instantiate<GameObject>(original4).transform;
 		this.SkyDome_Fog.parent = this.WorldMapEffectRoot;
 		this.SkyDowm_FogMaterial = this.SkyDome_Fog.GetComponentInChildren<MeshRenderer>().material;
@@ -488,7 +488,7 @@ public class WMWorld : Singleton<WMWorld>
 		{
 			String arg = String.Format("Block[{0}][{1}]", initialX, initialY);
 			String name = String.Format("WorldMap/Prefabs/WorldDisc{0}/r{1}/{2}", disc, initialY, arg);
-			GameObject blockObjectPrefab = AssetManager.Load<GameObject>(name, out _, false);
+			GameObject blockObjectPrefab = AssetManager.Load<GameObject>(name, false);
 			this.LoadBlock(blockObjectPrefab, block);
 		}
 	}
@@ -614,7 +614,7 @@ public class WMWorld : Singleton<WMWorld>
 				block.AddWalkMeshForm2(sharedMesh10);
 				block.AddForm2Transform(transform10);
 			}
-			GameObject gameObject = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", out _, false);
+			GameObject gameObject = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", false);
 			if (gameObject)
 			{
 				GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject);
@@ -843,7 +843,7 @@ public class WMWorld : Singleton<WMWorld>
 		}
 		if (block.Number == 91)
 		{
-			GameObject gameObject3 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", out _, false);
+			GameObject gameObject3 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
 			if (gameObject3)
 			{
 				GameObject gameObject4 = UnityEngine.Object.Instantiate<GameObject>(gameObject3);
@@ -853,7 +853,7 @@ public class WMWorld : Singleton<WMWorld>
 		}
 		if (block.Number == 115)
 		{
-			GameObject gameObject5 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", out _, false);
+			GameObject gameObject5 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
 			if (gameObject5)
 			{
 				GameObject gameObject6 = UnityEngine.Object.Instantiate<GameObject>(gameObject5);
@@ -869,7 +869,7 @@ public class WMWorld : Singleton<WMWorld>
 		}
 		if (block.Number == 158 && ff9.w_frameDisc == 4)
 		{
-			GameObject gameObject7 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object", out _, false);
+			GameObject gameObject7 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object", false);
 			if (gameObject7)
 			{
 				Transform transform27 = block.transform.Find("Object");
@@ -879,7 +879,7 @@ public class WMWorld : Singleton<WMWorld>
 				gameObject8.transform.parent = block.transform;
 				gameObject8.transform.localPosition = new Vector3(0f, 0f, 0f);
 			}
-			gameObject7 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object_tree", out _, false);
+			gameObject7 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object_tree", false);
 			if (gameObject7)
 			{
 				GameObject gameObject9 = UnityEngine.Object.Instantiate<GameObject>(gameObject7);
@@ -907,7 +907,7 @@ public class WMWorld : Singleton<WMWorld>
 		}
 		if (block.Number == 389)
 		{
-			GameObject gameObject10 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[5][16] Object", out _, false);
+			GameObject gameObject10 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[5][16] Object", false);
 			if (gameObject10)
 			{
 				Transform transform28 = block.transform.Find("Object");
@@ -1236,7 +1236,7 @@ public class WMWorld : Singleton<WMWorld>
 		WMProfiler.Begin("WMWorld.LoadBlocks()");
 		String arg = String.Format("Block[{0}][{1}]f", 12, 0);
 		String name = String.Format("WorldMap/Prefabs/WorldDisc{0}/r{1}/{2}", 1, 0, arg);
-		this.SeaBlockPrefab = AssetManager.Load<GameObject>(name, out _, false);
+		this.SeaBlockPrefab = AssetManager.Load<GameObject>(name, false);
 		this.DetectUnseenBlocks();
 		for (Int32 y = 0; y < 20; y++)
 		{
@@ -1939,7 +1939,7 @@ public class WMWorld : Singleton<WMWorld>
 
 	private Transform LoadEffect(String effect)
 	{
-		Transform transform = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/" + effect, out _, false).transform;
+		Transform transform = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/" + effect, false).transform;
 		Transform transform2 = UnityEngine.Object.Instantiate<Transform>(transform);
 		transform2.parent = this.WorldMapEffectRoot;
 		return transform2;
@@ -1947,7 +1947,7 @@ public class WMWorld : Singleton<WMWorld>
 
 	private Transform[] LoadEffects(String effect, Int32 count, Boolean createNewMaterial = false)
 	{
-		Transform transform = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/" + effect, out _, false).transform;
+		Transform transform = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/" + effect, false).transform;
 		Transform[] array = new Transform[count];
 		for (Int32 i = 0; i < count; i++)
 		{
@@ -2038,21 +2038,19 @@ public class WMWorld : Singleton<WMWorld>
 			str = "geo_sub_w0_003_2";
 			break;
 		}
-		String[] pngInfo;
-		return AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, out pngInfo, false);
+		return AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, false);
 	}
 
 	public void LoadQuicksandMaterial()
 	{
-		this.QuicksandMaterial = AssetManager.Load<Material>("WorldMap/Materials/quicksand_mat", out _, false);
-		String[] pngInfo;
-		Texture2D texture = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Textures/SeamlessRock", out pngInfo, false);
+		this.QuicksandMaterial = AssetManager.Load<Material>("WorldMap/Materials/quicksand_mat", false);
+		Texture2D texture = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Textures/SeamlessRock", false);
 		this.QuicksandMaterial.SetTexture("_DetailTex", texture);
 	}
 
 	public void LoadWaterShrineMaterial()
 	{
-		this.WaterShrineMaterial = AssetManager.Load<Material>("WorldMap/Materials/WaterShrine_mat", out _, false);
+		this.WaterShrineMaterial = AssetManager.Load<Material>("WorldMap/Materials/WaterShrine_mat", false);
 	}
 
 	public void CreateProjectionMatrix()

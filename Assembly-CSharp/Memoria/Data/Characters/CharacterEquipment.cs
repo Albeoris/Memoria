@@ -6,16 +6,15 @@ namespace Memoria.Data
     public sealed class CharacterEquipment : ICsvEntry
     {
         public const Int32 Length = 5;
-        public const Byte EmptyItemId = Byte.MaxValue;
 
         public String Comment;
-        public Int32 Id;
+        public EquipmentSetId Id;
 
-        public Byte Weapon;
-        public Byte Head;
-        public Byte Wrist;
-        public Byte Armor;
-        public Byte Accessory;
+        public RegularItem Weapon;
+        public RegularItem Head;
+        public RegularItem Wrist;
+        public RegularItem Armor;
+        public RegularItem Accessory;
 
         public void Absorb(CharacterEquipment other)
         {
@@ -28,34 +27,34 @@ namespace Memoria.Data
 
         public CharacterEquipment Clone()
         {
-            return new CharacterEquipment {Weapon = Weapon, Head = Head, Wrist = Wrist, Armor = Armor, Accessory = Accessory};
+            return new CharacterEquipment { Weapon = Weapon, Head = Head, Wrist = Wrist, Armor = Armor, Accessory = Accessory };
         }
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
-            Id = CsvParser.Int32(raw[1]);
+            Id = (EquipmentSetId)CsvParser.Int32(raw[1]);
 
-            Weapon = CsvParser.ByteOrMinusOne(raw[2]);
-            Head = CsvParser.ByteOrMinusOne(raw[3]);
-            Wrist = CsvParser.ByteOrMinusOne(raw[4]);
-            Armor = CsvParser.ByteOrMinusOne(raw[5]);
-            Accessory = CsvParser.ByteOrMinusOne(raw[6]);
+            Weapon = (RegularItem)CsvParser.Item(raw[2]);
+            Head = (RegularItem)CsvParser.Item(raw[3]);
+            Wrist = (RegularItem)CsvParser.Item(raw[4]);
+            Armor = (RegularItem)CsvParser.Item(raw[5]);
+            Accessory = (RegularItem)CsvParser.Item(raw[6]);
         }
 
-        public void WriteEntry(CsvWriter writer)
+        public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
             writer.String(Comment);
-            writer.Int32(Id);
+            writer.Int32((Int32)Id);
 
-            writer.ByteOrMinusOne(Weapon);
-            writer.ByteOrMinusOne(Head);
-            writer.ByteOrMinusOne(Wrist);
-            writer.ByteOrMinusOne(Armor);
-            writer.ByteOrMinusOne(Accessory);
+            writer.Item((Int32)Weapon);
+            writer.Item((Int32)Head);
+            writer.Item((Int32)Wrist);
+            writer.Item((Int32)Armor);
+            writer.Item((Int32)Accessory);
         }
 
-        public Byte this[Int32 index]
+        public RegularItem this[Int32 index]
         {
             get
             {
@@ -100,23 +99,23 @@ namespace Memoria.Data
             }
         }
 
-        public void Change(Int32 itemType, Byte itemId)
+        public void Change(Int32 itemType, RegularItem itemId)
         {
-            Byte currentItemId = this[itemType];
+            RegularItem currentItemId = this[itemType];
             if (currentItemId == itemId)
                 return;
 
             // Unequip
-            if (currentItemId != Byte.MaxValue)
+            if (currentItemId != RegularItem.NoItem)
             {
-                if (currentItemId == (Int32)GemItem.Moonstone)
+                if (currentItemId == RegularItem.Moonstone)
                     ff9item.DecreaseMoonStoneCount();
 
                 ff9item.FF9Item_Add(currentItemId, 1);
             }
 
             // Equip
-            if (itemId != Byte.MaxValue)
+            if (itemId != RegularItem.NoItem)
                 ff9item.FF9Item_Remove(itemId, 1); // Ignore missing item
             
             this[itemType] = itemId;

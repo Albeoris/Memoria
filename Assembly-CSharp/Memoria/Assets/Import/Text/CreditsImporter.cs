@@ -67,7 +67,7 @@ namespace Memoria.Assets
 
         protected override Boolean LoadInternal()
         {
-            String text = AssetManager.LoadString(_internalPath, out _);
+            String text = AssetManager.LoadString(_internalPath);
             if (text != null)
             {
                 Result = text;

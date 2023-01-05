@@ -1,55 +1,55 @@
 # This file contains a set of learnable Amarant's abilities.
-# You must set 48 different items.
-# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# UInt8;UInt8
+# Ability;UInt8
 # -----------------------------------
-125;30;# Chakra
-126;90;# Spare Change
-127;25;# No Mercy
-128;25;# Aura
-129;20;# Curse
-130;35;# Revive
-131;50;# Demi Shock
-132;40;# Countdown
-192;85;# Auto-Reflect
-193;35;# Auto-Float
-194;70;# Auto-Haste
-195;35;# Auto-Regen
-196;140;# Auto-Life
-197;10;# HP+10%
-198;40;# HP+20%
-201;30;# Accuracy+
-203;210;# Long Reach
-204;60;# MP Attack
-205;10;# Bird Killer
-206;10;# Bug Killer
-207;10;# Stone Killer
-208;10;# Undead Killer
-210;10;# Devil Killer
-211;10;# Beast Killer
-212;10;# Man Eater
-216;40;# Healer
-217;20;# Add Status
-218;35;# Gamble Defense
-220;125;# Power Throw
-221;30;# Power Up
-227;60;# High Tide
-228;240;# Counter
-229;90;# Cover
-231;50;# Eye 4 Eye
-232;30;# Body Temp
-233;30;# Alert
-235;50;# Level Up
-236;80;# Ability Up
-238;30;# Flee-Gil
-240;20;# Insomniac
-241;25;# Antibody
-242;25;# Bright Eyes
-244;75;# Restore HP
-245;15;# Jelly
-246;170;# Return Magic
-248;30;# Auto-Potion
-249;20;# Locomotion
-250;30;# Clear Headed
+AA:125;30;# Chakra
+AA:126;90;# Spare Change
+AA:127;25;# No Mercy
+AA:128;25;# Aura
+AA:129;20;# Curse
+AA:130;35;# Revive
+AA:131;50;# Demi Shock
+AA:132;40;# Countdown
+SA:0;85;# Auto-Reflect
+SA:1;35;# Auto-Float
+SA:2;70;# Auto-Haste
+SA:3;35;# Auto-Regen
+SA:4;140;# Auto-Life
+SA:5;10;# HP+10%
+SA:6;40;# HP+20%
+SA:9;30;# Accuracy+
+SA:11;210;# Long Reach
+SA:12;60;# MP Attack
+SA:13;10;# Bird Killer
+SA:14;10;# Bug Killer
+SA:15;10;# Stone Killer
+SA:16;10;# Undead Killer
+SA:18;10;# Devil Killer
+SA:19;10;# Beast Killer
+SA:20;10;# Man Eater
+SA:24;40;# Healer
+SA:25;20;# Add Status
+SA:26;35;# Gamble Defense
+SA:28;125;# Power Throw
+SA:29;30;# Power Up
+SA:35;60;# High Tide
+SA:36;240;# Counter
+SA:37;90;# Cover
+SA:39;50;# Eye 4 Eye
+SA:40;30;# Body Temp
+SA:41;30;# Alert
+SA:43;50;# Level Up
+SA:44;80;# Ability Up
+SA:46;30;# Flee-Gil
+SA:48;20;# Insomniac
+SA:49;25;# Antibody
+SA:50;25;# Bright Eyes
+SA:52;75;# Restore HP
+SA:53;15;# Jelly
+SA:54;170;# Return Magic
+SA:56;30;# Auto-Potion
+SA:57;20;# Locomotion
+SA:58;30;# Clear Headed

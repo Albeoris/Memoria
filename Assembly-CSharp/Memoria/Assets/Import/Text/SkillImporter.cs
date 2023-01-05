@@ -1,5 +1,6 @@
 using System;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -13,17 +14,14 @@ namespace Memoria.Assets
             String[] skillNames, skillHelps;
             AbilityFormatter.Parse(entreis, out skillNames, out skillHelps);
 
-            FF9TextTool.SetActionAbilityName(skillNames);
-            FF9TextTool.SetActionAbilityHelpDesc(skillHelps);
+            FF9TextTool.ImportArrayToDictionary<BattleAbilityId>(skillNames, FF9TextTool.SetActionAbilityName);
+            FF9TextTool.ImportArrayToDictionary<BattleAbilityId>(skillHelps, FF9TextTool.SetActionAbilityHelpDesc);
         }
 
         protected override Boolean LoadInternal()
         {
-            String[] skillNames = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.SkillNames);
-            String[] skillHelps = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.SkillHelps);
-
-            FF9TextTool.SetActionAbilityName(skillNames);
-            FF9TextTool.SetActionAbilityHelpDesc(skillHelps);
+            FF9TextTool.ImportWithCumulativeModFiles<BattleAbilityId>(EmbadedTextResources.SkillNames, FF9TextTool.SetActionAbilityName);
+            FF9TextTool.ImportWithCumulativeModFiles<BattleAbilityId>(EmbadedTextResources.SkillHelps, FF9TextTool.SetActionAbilityHelpDesc);
             return true;
         }
     }

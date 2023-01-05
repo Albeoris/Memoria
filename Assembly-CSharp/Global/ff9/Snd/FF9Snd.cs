@@ -1181,8 +1181,7 @@ public static class FF9Snd
 
 	public static Int32 FF9BattleSoundGetWeaponSndEffect01(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType Type)
 	{
-		Int32 weapModel = (Int32)FF9StateSystem.Common.FF9.party.member[PartyCharNo].equip[0];
-		weapModel = ff9weap.WeaponData[weapModel].ModelId;
+		Int32 weapModel = ff9item.GetItemWeapon(FF9StateSystem.Common.FF9.party.member[PartyCharNo].equip[0]).ModelId;
 		for (Int32 i = 0; i < FF9Snd.ff9battleSoundWeaponSndEffect01.GetLength(0); i++)
 			if (FF9Snd.ff9battleSoundWeaponSndEffect01[i, 2] == weapModel)
 				return FF9Snd.ff9battleSoundWeaponSndEffect01[i, (Int32)Type];

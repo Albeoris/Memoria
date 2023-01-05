@@ -1,55 +1,55 @@
 # This file contains a set of learnable Freya's abilities.
-# You must set 48 different items.
-# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# UInt8;UInt8
+# Ability;UInt8
 # -----------------------------------
-117;20;# Lancer
-118;40;# Reis’s Wind
-119;205;# Dragon Breath
-120;90;# White Draw
-121;30;# Luna
-122;25;# Six Dragons
-123;40;# Cherry Blossom
-124;45;# Dragon’s Crest
-192;95;# Auto-Reflect
-193;20;# Auto-Float
-194;75;# Auto-Haste
-195;25;# Auto-Regen
-196;125;# Auto-Life
-197;30;# HP+10%
-198;75;# HP+20%
-199;35;# MP+10%
-201;30;# Accuracy+
-202;25;# Distract
-203;210;# Long Reach
-204;20;# MP Attack
-205;30;# Bird Killer
-206;25;# Bug Killer
-207;20;# Stone Killer
-208;20;# Undead Killer
-209;70;# Dragon Killer
-210;30;# Devil Killer
-211;25;# Beast Killer
-212;20;# Man Eater
-213;75;# High Jump
-217;25;# Add Status
-218;20;# Gamble Defense
-219;35;# Chemist
-227;20;# High Tide
-228;85;# Counter
-229;30;# Cover
-231;35;# Eye 4 Eye
-232;20;# Body Temp
-234;95;# Initiative
-235;40;# Level Up
-236;65;# Ability Up
-240;30;# Insomniac
-241;15;# Antibody
-242;20;# Bright Eyes
-244;85;# Restore HP
-245;30;# Jelly
-248;30;# Auto-Potion
-249;25;# Locomotion
-250;35;# Clear Headed
+AA:117;20;# Lancer
+AA:118;40;# Reis’s Wind
+AA:119;205;# Dragon Breath
+AA:120;90;# White Draw
+AA:121;30;# Luna
+AA:122;25;# Six Dragons
+AA:123;40;# Cherry Blossom
+AA:124;45;# Dragon’s Crest
+SA:0;95;# Auto-Reflect
+SA:1;20;# Auto-Float
+SA:2;75;# Auto-Haste
+SA:3;25;# Auto-Regen
+SA:4;125;# Auto-Life
+SA:5;30;# HP+10%
+SA:6;75;# HP+20%
+SA:7;35;# MP+10%
+SA:9;30;# Accuracy+
+SA:10;25;# Distract
+SA:11;210;# Long Reach
+SA:12;20;# MP Attack
+SA:13;30;# Bird Killer
+SA:14;25;# Bug Killer
+SA:15;20;# Stone Killer
+SA:16;20;# Undead Killer
+SA:17;70;# Dragon Killer
+SA:18;30;# Devil Killer
+SA:19;25;# Beast Killer
+SA:20;20;# Man Eater
+SA:21;75;# High Jump
+SA:25;25;# Add Status
+SA:26;20;# Gamble Defense
+SA:27;35;# Chemist
+SA:35;20;# High Tide
+SA:36;85;# Counter
+SA:37;30;# Cover
+SA:39;35;# Eye 4 Eye
+SA:40;20;# Body Temp
+SA:42;95;# Initiative
+SA:43;40;# Level Up
+SA:44;65;# Ability Up
+SA:48;30;# Insomniac
+SA:49;15;# Antibody
+SA:50;20;# Bright Eyes
+SA:52;85;# Restore HP
+SA:53;30;# Jelly
+SA:56;30;# Auto-Potion
+SA:57;25;# Locomotion
+SA:58;35;# Clear Headed

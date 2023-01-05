@@ -2499,8 +2499,7 @@ public static class ff9
 		if (buffer.Length < size)
 		{
 		}
-		String[] worldRawInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(fileName, out worldRawInfo);
+		Byte[] binAsset = AssetManager.LoadBytes(fileName);
 		if (binAsset == null)
 		{
 		}
@@ -11480,7 +11479,7 @@ public static class ff9
 		public UInt16 pad2;
 		public UInt32[] limit = new UInt32[2];
 
-		public void ParseEntry(String[] raw)
+		public void ParseEntry(String[] raw, CsvMetaData metadata)
 		{
 			Int32 index = 0;
 			type = CsvParser.Byte(raw[index++]);
@@ -11504,7 +11503,7 @@ public static class ff9
 			limit[1] = CsvParser.UInt32(raw[index++]);
 		}
 
-		public void WriteEntry(CsvWriter writer)
+		public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
 		{
 			writer.Byte(type);
 			writer.Byte(flg_gake);
@@ -11728,7 +11727,7 @@ public static class ff9
 		public Color skyFogColor = new Color();
 		public Single lightColorFactor;
 
-		public void ParseEntry(String[] raw)
+		public void ParseEntry(String[] raw, CsvMetaData metadata)
 		{
 			Int32 index = 0;
 			light0.vx = CsvParser.Int16(raw[index++]);
@@ -11781,7 +11780,7 @@ public static class ff9
 			lightColorFactor = CsvParser.Single(raw[index++]);
 		}
 
-		public void WriteEntry(CsvWriter writer)
+		public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
 		{
 			writer.Int16(light0.vx);
 			writer.Int16(light0.vy);

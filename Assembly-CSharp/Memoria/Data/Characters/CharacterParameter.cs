@@ -28,7 +28,7 @@ namespace Memoria.Data
             return CharacterSerialNumber.ZIDANE_DAGGER;
         }
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Id = (CharacterId)CsvParser.Byte(raw[0]);
             DefaultRow = CsvParser.Byte(raw[1]);
@@ -40,7 +40,7 @@ namespace Memoria.Data
             NameKeyword = CsvParser.String(raw[7]);
         }
 
-        public void WriteEntry(CsvWriter writer)
+        public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
             writer.Byte((Byte)Id);
             writer.Byte(DefaultRow);

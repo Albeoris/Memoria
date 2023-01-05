@@ -15,7 +15,7 @@ public partial class BattleHUD : UIScene
 
     private class BattleItemListData : ListDataTypeBase
     {
-        public Int32 Id;
+        public RegularItem Id;
         public Int32 Count;
     }
 
@@ -104,7 +104,7 @@ public partial class BattleHUD : UIScene
     private class CommandDetail
     {
         public BattleCommandId CommandId;
-        public UInt32 SubId;
+        public Int32 SubId;
         public UInt16 TargetId;
         public UInt32 TargetType;
     }

@@ -75,6 +75,7 @@
     <Compile Include="Collections\IStack.cs" />
     <Compile Include="CrossPlatformBinaryReader.cs" />
     <Compile Include="CrossPlatformBinaryWriter.cs" />
+    <Compile Include="CSV\CsvMetaData.cs" />
     <Compile Include="CSV\CsvParseException.cs" />
     <Compile Include="CSV\CsvParser.cs" />
     <Compile Include="CSV\CsvReader.cs" />

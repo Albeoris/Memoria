@@ -8,14 +8,14 @@ namespace Memoria.Data
         public const Int32 SetsCount = 128;
 
         public String Comment;
-        public Int32 Id;
+        public BattleStatusIndex Id;
 
         public BattleStatus Value;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
-            Id = CsvParser.Int32(raw[1]);
+            Id = (BattleStatusIndex)CsvParser.Int32(raw[1]);
 
             BattleStatus result = 0;
             for (Int32 index = 2; index < raw.Length; index++)
@@ -24,19 +24,26 @@ namespace Memoria.Data
                 if (String.IsNullOrEmpty(value))
                     continue;
 
-                Int32 number = (Int32)CsvParser.EnumValue<BattleStatusNumber>(value);
-                if (number == 0)
-                    continue;
+                foreach (String fullToken in value.Split(','))
+                {
+                    String token = fullToken.Trim();
+                    if (String.IsNullOrEmpty(token))
+                        continue;
 
-                result |= (BattleStatus)(1 << checked(number - 1));
+                    Int32 number = (Int32)CsvParser.EnumValue<BattleStatusNumber>(token);
+                    if (number == 0)
+                        continue;
+
+                    result |= (BattleStatus)(1 << checked(number - 1));
+                }
             }
             Value = result;
         }
 
-        public void WriteEntry(CsvWriter sw)
+        public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
             sw.String(Comment);
-            sw.Int32(Id);
+            sw.Int32((Int32)Id);
 
             UInt32 flags = (UInt32)Value;
             if (flags == 0)

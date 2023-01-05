@@ -15,10 +15,8 @@ public class MBG : HonoBehavior
 	{
 		get
 		{
-			if (MBG.instance == (UnityEngine.Object)null)
-			{
-				MBG.instance = UnityEngine.Object.Instantiate<GameObject>(AssetManager.Load<GameObject>("CommonAsset/MBGData/MBG", out _, false)).GetComponent<MBG>();
-			}
+			if (MBG.instance == null)
+				MBG.instance = UnityEngine.Object.Instantiate<GameObject>(AssetManager.Load<GameObject>("CommonAsset/MBGData/MBG", false)).GetComponent<MBG>();
 			return MBG.instance;
 		}
 	}
@@ -150,8 +148,7 @@ public class MBG : HonoBehavior
 					i,
 					".txt"
 				});
-				String[] mbgInfo;
-				String textAsset = AssetManager.LoadString(name, out mbgInfo);
+				String textAsset = AssetManager.LoadString(name);
 				JSONNode jsonnode = JSONNode.Parse(textAsset);
 				JSONClass asObject = jsonnode["frames"].AsObject;
 				foreach (Object obj in asObject)

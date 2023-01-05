@@ -50,8 +50,8 @@ public class ItemUI : UIScene
     private static Int32 FF9FITEM_EVENT_KIND_CHOCOBO;
     private static Int32 MaxItemSlot;
     private static Single TargetPositionXOffset;
-    private readonly List<Int32> _itemIdList;
-    private readonly List<Int32> _usedItemIdList;
+    private readonly List<RegularItem> _itemIdList;
+    private readonly List<RegularItem> _usedItemIdList;
     //private List<Int32> _ketIdList;
     private readonly List<Int32> _keyItemIdList;
     private List<CharacterDetailHUD> _targetHudList;
@@ -83,7 +83,6 @@ public class ItemUI : UIScene
         ItemArrangeGroupButton = "Item.Arrange";
         FF9FITEM_RARE_MAX = 80;
         FF9FITEM_RARE_NONE = Byte.MaxValue;
-        FF9FITEM_ID_VEGETABLE = 251;
         FF9FITEM_EVENT_VEGETABLE = 181;
         FF9FITEM_EVENT_KIND_CHOCOBO = 191;
         MaxItemSlot = 256;
@@ -92,8 +91,8 @@ public class ItemUI : UIScene
 
     public ItemUI()
     {
-        _itemIdList = new List<Int32>();
-        _usedItemIdList = new List<Int32>();
+        _itemIdList = new List<RegularItem>();
+        _usedItemIdList = new List<RegularItem>();
         //this._ketIdList = new List<Int32>();
         _keyItemIdList = new List<Int32>();
         _targetHudList = new List<CharacterDetailHUD>();
@@ -233,18 +232,18 @@ public class ItemUI : UIScene
                     if (_currentArrangeMode == 0)
                     {
                         PLAYER player = FF9StateSystem.Common.FF9.party.member[0];
-                        Int32 itemId = _itemIdList[_currentItemIndex];
-                        FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[itemId];
-                        if (citem.YCITEM_IS_ITEM(itemId))
+                        RegularItem itemId = _itemIdList[_currentItemIndex];
+                        FF9ITEM_DATA itemData = ff9item._FF9Item_Data[itemId];
+                        if (ff9item.HasItemEffect(itemId))
                         {
-                            ITEM_DATA tbl = ff9item._FF9Item_Info[itemId - 224];
-                            if ((ff9ItemData.type & 1) == 1)
+                            ITEM_DATA itemEffect = ff9item.GetItemEffect(itemId);
+                            if ((itemData.type & ItemType.Usable) != 0)
                             {
                                 if (!_usedItemIdList.Contains(itemId))
                                 {
-                                    if ((FF9FITEM_ID_VEGETABLE != itemId ? tbl.info.DisplayStats : 0) == 0)
+                                    if ((RegularItem.GysahlGreens != itemId ? itemEffect.info.DisplayStats : 0) == 0)
                                     {
-                                        if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.ScriptId, 0U))
+                                        if (SFieldCalculator.FieldCalcMain(player, player, itemEffect, itemEffect.Ref.ScriptId, 0U))
                                         {
                                             FF9Sfx.FF9SFX_Play(106);
                                             ff9item.FF9Item_Remove(itemId, 1);
@@ -327,9 +326,9 @@ public class ItemUI : UIScene
                 if (ButtonGroupState.ContainButtonInGroup(go, TargetGroupButton))
                 {
                     Int32 siblingIndex = go.transform.GetSiblingIndex();
-                    Int32 itemId = _itemIdList[_currentItemIndex];
+                    RegularItem itemId = _itemIdList[_currentItemIndex];
                     PLAYER player = FF9StateSystem.Common.FF9.party.member[siblingIndex];
-                    ITEM_DATA tbl = ff9item._FF9Item_Info[itemId - 224];
+                    ITEM_DATA tbl = ff9item.GetItemEffect(itemId);
                     if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.ScriptId, 0U))
                     {
                         FF9Sfx.FF9SFX_Play(106);
@@ -542,10 +541,10 @@ public class ItemUI : UIScene
             if (ff9Item.count > 0)
             {
                 _itemIdList.Add(ff9Item.id);
-                Boolean flag = (ff9item._FF9Item_Data[ff9Item.id].type & 1) != 0;
+                Boolean usableInMenu = (ff9item._FF9Item_Data[ff9Item.id].type & ItemType.Usable) != 0;
                 FieldItemListData fieldItemListData = new FieldItemListData
                 {
-                    Enable = flag,
+                    Enable = usableInMenu,
                     ItemId = ff9Item.id,
                     ItemCount = ff9Item.count
                 };
@@ -612,11 +611,8 @@ public class ItemUI : UIScene
     private void DisplayKeyItem()
     {
         _keyItemIdList.Clear();
-        for (Int32 id = 0; id < FF9FITEM_RARE_MAX; ++id)
-        {
-            if (ff9item.FF9Item_IsExistImportant(id))
-                _keyItemIdList.Add(id);
-        }
+        foreach (Int32 id in FF9StateSystem.Common.FF9.rare_item_obtained)
+            _keyItemIdList.Add(id);
         if (_keyItemIdList.Count == 0)
             _keyItemIdList.Add(FF9FITEM_RARE_NONE);
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
@@ -624,8 +620,7 @@ public class ItemUI : UIScene
         {
             while (enumerator.MoveNext())
             {
-                Byte current = (Byte)enumerator.Current;
-                FieldKeyItemListData fieldKeyItemListData = new FieldKeyItemListData { KeyItemId = current };
+                FieldKeyItemListData fieldKeyItemListData = new FieldKeyItemListData { KeyItemId = enumerator.Current };
                 inDataList.Add(fieldKeyItemListData);
             }
         }
@@ -688,7 +683,7 @@ public class ItemUI : UIScene
                 targetHud.Content.SetActive(true);
                 FF9UIDataTool.DisplayCharacterDetail(player, targetHud);
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), targetHud.AvatarSprite, false);
-                switch (ff9item._FF9Item_Info[_itemIdList[_currentItemIndex] - 224].info.DisplayStats)
+                switch (ff9item.GetItemEffect(_itemIdList[_currentItemIndex]).info.DisplayStats)
                 {
                     case TargetDisplay.None:
                     case TargetDisplay.Hp:
@@ -720,9 +715,9 @@ public class ItemUI : UIScene
             Int32 keyItemId = _keyItemIdList[_currentItemIndex];
             _keyItemDetailName.text = FF9TextTool.ImportantItemName(keyItemId);
             _keyItemDetailDescription.spacingY = _defaultSkinLabelSpacingY;
-            String text = FF9TextTool.ImportantItemSkin(keyItemId);
+            String description = FF9TextTool.ImportantItemSkin(keyItemId);
             Single additionalWidth = 0.0f;
-            _keyItemDetailDescription.text = _keyItemDetailDescription.PhrasePreOpcodeSymbol(text, ref additionalWidth);
+            _keyItemDetailDescription.text = _keyItemDetailDescription.PhrasePreOpcodeSymbol(description, ref additionalWidth);
             Loading = true;
             // ISSUE: method pointer
             _keyItemSkinTransition.TweenIn(new Byte[1], () =>
@@ -797,40 +792,17 @@ public class ItemUI : UIScene
 
     private void ArrangeAuto()
     {
-        FF9ITEM[] ff9ItemArray = new FF9ITEM[256];
-        Int32 num = 0;
-        for (Int32 index = 0; index < 256; ++index)
+        FF9StateSystem.Common.FF9.item.RemoveAll(item => item.id == RegularItem.NoItem || item.count <= 0);
+        FF9StateSystem.Common.FF9.item.Sort((i1, i2) =>
         {
-            if (FF9StateSystem.Common.FF9.item[index].count != 0 && FF9StateSystem.Common.FF9.item[index].id != Byte.MaxValue)
-                ff9ItemArray[num++] = new FF9ITEM(FF9StateSystem.Common.FF9.item[index].id, FF9StateSystem.Common.FF9.item[index].count);
-        }
-        for (Int32 index1 = 0; index1 < num - 1; ++index1)
-        {
-            for (Int32 index2 = index1 + 1; index2 < num; ++index2)
-            {
-                FF9ITEM_DATA ff9ItemData1 = ff9item._FF9Item_Data[ff9ItemArray[index1].id];
-                FF9ITEM_DATA ff9ItemData2 = ff9item._FF9Item_Data[ff9ItemArray[index2].id];
-                if (ff9ItemData1.sort > ff9ItemData2.sort)
-                {
-                    FF9ITEM ff9Item = ff9ItemArray[index1];
-                    ff9ItemArray[index1] = ff9ItemArray[index2];
-                    ff9ItemArray[index2] = ff9Item;
-                }
-                else if (ff9ItemData1.sort == ff9ItemData2.sort && ff9ItemArray[index1].id > ff9ItemArray[index2].id)
-                {
-                    FF9ITEM ff9Item = ff9ItemArray[index1];
-                    ff9ItemArray[index1] = ff9ItemArray[index2];
-                    ff9ItemArray[index2] = ff9Item;
-                }
-            }
-        }
-        for (Int32 index = 0; index < num; ++index)
-        {
-            FF9StateSystem.Common.FF9.item[index].id = ff9ItemArray[index].id;
-            FF9StateSystem.Common.FF9.item[index].count = ff9ItemArray[index].count;
-        }
-        for (Int32 index = num; index < 256; ++index)
-            FF9StateSystem.Common.FF9.item[index].count = 0;
+            if (i1.id == i2.id)
+                return 0;
+            FF9ITEM_DATA itemData1 = ff9item._FF9Item_Data[i1.id];
+            FF9ITEM_DATA itemData2 = ff9item._FF9Item_Data[i2.id];
+            return itemData1.sort > itemData2.sort
+                || itemData1.sort == itemData2.sort && i1.id > i2.id
+                ? 1 : -1;
+        });
     }
 
     public SubMenu GetSubMenuFromGameObject(GameObject go)
@@ -973,7 +945,7 @@ public class ItemUI : UIScene
     public class FieldItemListData : ListDataTypeBase
     {
         public Boolean Enable;
-        public Int32 ItemId;
+        public RegularItem ItemId;
         public Int32 ItemCount;
 
         public FieldItemListData()

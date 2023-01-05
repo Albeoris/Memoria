@@ -14,12 +14,17 @@ namespace Memoria
         public static readonly BattleScriptFactory[] BaseScripts = ScriptsLoader.GetBaseScripts();
         public static readonly Dictionary<Int32, BattleScriptFactory> ExtendedScripts = ScriptsLoader.GetExtendedScripts();
 
-        public static void Calc(BattleUnit caster, BattleUnit target, BattleCommand command, Byte scriptId)
+        public static void CalcMain(BattleUnit caster, BattleUnit target, BattleCommand command)
         {
-            CalcMain(caster.Data, target.Data, command, scriptId);
+            CalcMain(caster.Data, target.Data, command, command.ScriptId);
         }
 
-        internal static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Byte scriptId)
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, CMD_DATA cmd)
+        {
+            CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
+        }
+
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Byte scriptId)
         {
             try
             {
@@ -38,9 +43,9 @@ namespace Memoria
                 command.ScriptId = scriptId;
                 BattleCalculator v = new BattleCalculator(caster, target, command);
                 BattleScriptFactory factory = FindScriptFactory(scriptId);
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.sa))
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.saExtended))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.sa))
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.saExtended))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
                 if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
@@ -90,9 +95,9 @@ namespace Memoria
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
             CMD_DATA cmd = v.Command.Data;
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.saExtended))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.saExtended))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
             v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
@@ -262,9 +267,9 @@ namespace Memoria
                     target.cur.mp = target.max.mp;
                 }
             }
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.saExtended))
                 saFeature.TriggerOnAbility(v, "EffectDone", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.saExtended))
                 saFeature.TriggerOnAbility(v, "EffectDone", true);
             BattleVoice.TriggerOnBattleAct(caster, "HitEffect", cmd, v);
             BattleVoice.TriggerOnHitted(target, v);
@@ -272,15 +277,14 @@ namespace Memoria
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
-            UInt16 commandAndScript = (UInt16)((UInt32)cmd.cmd_no << 8 | cmd.sub_no);
             if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatus.Immobilized))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
-                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, commandAndScript, cmd);
+                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
                 else if (target.cur.hp != 0 && cmd.cmd_no < BattleCommandId.BoundaryCheck)
-                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, commandAndScript, cmd);
+                    PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
             }
-            PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, commandAndScript, cmd);
+            PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
         }
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)

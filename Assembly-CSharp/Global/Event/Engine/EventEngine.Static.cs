@@ -98,7 +98,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     private static Int32 kNeckNear2;
     public static Int16 kNeckAngle;
     public static Int16 kNeckAngle0;
-    private static Int32 _btlCmdPrm;
+    private static Int32 _btlCmdPrmCmd;
+    private static Int32 _btlCmdPrmSub;
     private static Int32 kLook;
     private static Int32 kDefaultHeight;
     public static Int32 resyncBGMSignal;

@@ -365,8 +365,7 @@ public class FieldMapActor : HonoBehavior
 		meshFilter.mesh = mesh;
 		Shader shader = ShadersLoader.Find("PSX/FieldMapActorShadow");
 		Material material = new Material(shader);
-		String[] pngInfo;
-		this.shadowTex = AssetManager.Load<Texture2D>("CommonAsset/Common/shadow_plate", out pngInfo, false);
+		this.shadowTex = AssetManager.Load<Texture2D>("CommonAsset/Common/shadow_plate", false);
 		material.mainTexture = this.shadowTex;
 		meshRenderer.material = material;
 		this.shadowTran = this.shadowObj.transform;

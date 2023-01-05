@@ -37,8 +37,8 @@ namespace Memoria
         public static Int16 TetraMasterLoss => FF9StateSystem.MiniGame.SavedData.sLose;
         public static Int16 TetraMasterDraw => FF9StateSystem.MiniGame.SavedData.sDraw;
         public static Int32 GameTime => Convert.ToInt32(FF9StateSystem.Settings.time);
-        public static Byte AbilityUsage(Byte index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
-        public static Int32 ItemCount(Int32 id) => id >= EventEngine.kSItemOfs ? (id >= EventEngine.kCItemOfs ? QuadMistDatabase.MiniGame_GetCardCount(id - EventEngine.kCItemOfs) : (!ff9item.FF9Item_IsExistImportant(id - EventEngine.kSItemOfs) ? 0 : 1)) : ff9item.FF9Item_GetCount(id); // Same as "EventEngine.DoCalcOperationExt(100)"
+        public static Int32 AbilityUsage(BattleAbilityId index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
+        public static Int32 ItemCount(Int32 id) => ff9item.FF9Item_GetCount_Generic(id);
         public static Byte[] GeneralVariable => FF9StateSystem.EventState.gEventGlobal;
 
         public static UInt32 Gil
@@ -94,7 +94,7 @@ namespace Memoria
 
         public static void EnqueueCommand(BattleCommand escapeCommand, BattleCommandId commandId, BattleAbilityId abilityId, UInt16 targetId, Boolean isManyTarget)
         {
-            btl_cmd.SetCommand(escapeCommand.Data, commandId, (UInt32)abilityId, targetId, isManyTarget ? 1u : 0u);
+            btl_cmd.SetCommand(escapeCommand.Data, commandId, (Int32)abilityId, targetId, isManyTarget ? 1u : 0u);
         }
 
         public static void EnqueueConter(BattleUnit unit, BattleCommandId commandId, BattleAbilityId abilityId, UInt16 target)
@@ -337,7 +337,7 @@ namespace Memoria
 
             Int16 rate = (Int16)(200 / (enemyLevels / enemyCount) * (playerLevels / playerCount) / 16);
             if (rate > Comn.random16() % 100)
-                btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1U, 15, 1U);
+                btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1U);
         }
 
         public Boolean TryPhysicalHit()
@@ -350,9 +350,9 @@ namespace Memoria
             if (Target.IsUnderAnyStatus(BattleStatus.Float))
                 Context.Evade += (Int16)Configuration.Battle.FloatEvadeBonus;
 
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", true);
 
             if (Context.HitRate <= Comn.random16() % 100)
@@ -373,9 +373,9 @@ namespace Memoria
 
         public void TryAlterMagicStatuses()
         {
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", true);
 
             if (Command.HitRate > Comn.random16() % 100)
@@ -384,9 +384,9 @@ namespace Memoria
 
         public Boolean TryMagicHit()
         {
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", true);
 
             if (Context.HitRate <= Comn.random16() % 100)
@@ -422,9 +422,9 @@ namespace Memoria
                 Context.DefensePower = 0;
             }
 
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "CalcDamage", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "CalcDamage", true);
         }
 
@@ -456,9 +456,9 @@ namespace Memoria
                 Target.Flags |= CalcFlag.MpRecovery;
                 Context.DefensePower = 0;
             }
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "CalcDamage", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "CalcDamage", true);
 
             Target.MpDamage = Math.Max(0, Context.PowerDifference) * Context.EnsureAttack >> 2;
@@ -502,9 +502,9 @@ namespace Memoria
             if (!Target.IsZombie)
                 Target.Flags |= CalcFlag.MpRecovery;
 
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "CalcDamage", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "CalcDamage", true);
 
             Target.MpDamage = Context.AttackPower * Context.Attack;
@@ -619,7 +619,7 @@ namespace Memoria
 
         public Boolean CheckHasCommandItem()
         {
-            if (ff9item.FF9Item_GetCount(Command.Power) > 0)
+            if (ff9item.FF9Item_GetCount((RegularItem)Command.Power) > 0)
                 return true;
 
             Context.Flags |= BattleCalcFlags.Miss;
@@ -656,18 +656,18 @@ namespace Memoria
         public void StealItem(BattleEnemy enemy, Int32 slot)
         {
             Context.ItemSteal = enemy.StealableItems[slot];
-            if (Context.ItemSteal == Byte.MaxValue)
+            if (Context.ItemSteal == RegularItem.NoItem)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
                 return;
             }
 
-            enemy.StealableItems[slot] = Byte.MaxValue;
+            enemy.StealableItems[slot] = RegularItem.NoItem;
             GameState.Thefts++;
 
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "Steal", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.sa))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "Steal", true);
 
             BattleItem.AddToInventory(Context.ItemSteal);

@@ -11,17 +11,11 @@ public class EnemyData : MonoBehaviour
 
 	private void Load()
 	{
-		String[] cardStratInfo;
-		Byte[] bytes = AssetManager.LoadBytes(this.stageDataPath, out cardStratInfo);
-		Int32 miniGameArg = (Int32)FF9StateSystem.Common.FF9.miniGameArg;
-		Char c = (Char)bytes[miniGameArg * 2];
-		Int32 num = (Int32)c;
-		c = (Char)bytes[miniGameArg * 2 + 1];
-		Int32 wise = (Int32)c;
-		this.cardLevel = num;
-		this.Wise = wise;
-		String[] cardListInfo;
-		this.enemyData = AssetManager.LoadBytes(this.cardLevelDataPath, out cardListInfo);
+		Byte[] stageData = AssetManager.LoadBytes(this.stageDataPath);
+		Int32 miniGameArg = FF9StateSystem.Common.FF9.miniGameArg;
+		this.cardLevel = stageData[miniGameArg * 2];
+		this.Wise = stageData[miniGameArg * 2 + 1];
+		this.enemyData = AssetManager.LoadBytes(this.cardLevelDataPath);
 	}
 
 	public Int32 GetCardID()

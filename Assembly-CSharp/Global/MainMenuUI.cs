@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
@@ -391,98 +392,56 @@ public class MainMenuUI : UIScene
 	private void DisplayHelp(MainMenuUI.SubMenu currentMenu)
 	{
 		if (currentMenu == MainMenuUI.SubMenu.Ability || currentMenu == MainMenuUI.SubMenu.Order)
-		{
-			foreach (CharacterDetailHUD characterDetailHUD in this.CharacterHUDList)
-			{
-				ButtonGroupState component = characterDetailHUD.Self.GetComponent<ButtonGroupState>();
-				component.Help.TextKey = ((!FF9StateSystem.MobilePlatform) ? "TargetHelp" : "TargetHelpMobile");
-			}
-		}
+			foreach (CharacterDetailHUD characterHUD in this.CharacterHUDList)
+				characterHUD.Self.GetComponent<ButtonGroupState>().Help.TextKey = FF9StateSystem.MobilePlatform ? "TargetHelpMobile" : "TargetHelp";
 		else if (currentMenu == MainMenuUI.SubMenu.Equip)
 		{
-			Int32 num = 0;
-			foreach (CharacterDetailHUD characterDetailHUD2 in this.CharacterHUDList)
+			Int32 memberIndex = 0;
+			foreach (CharacterDetailHUD characterHUD in this.CharacterHUDList)
 			{
-				ButtonGroupState component2 = characterDetailHUD2.Self.GetComponent<ButtonGroupState>();
-				String text = Localization.Get((!FF9StateSystem.MobilePlatform) ? "TargetHelp" : "TargetHelpMobile") + "\n";
-				PLAYER player = FF9StateSystem.Common.FF9.party.member[num];
+				ButtonGroupState button = characterHUD.Self.GetComponent<ButtonGroupState>();
+				String help = Localization.Get(FF9StateSystem.MobilePlatform ? "TargetHelpMobile" : "TargetHelp") + "\n";
+				PLAYER player = FF9StateSystem.Common.FF9.party.member[memberIndex];
 				if (player != null)
 				{
 					for (Int32 i = 0; i < 5; i++)
 					{
-						text = text + "[ICON=" + (625 + i).ToString() + "] [FEED=1]:[FEED=2]";
-						Int32 num2 = (Int32)player.equip[i];
-						if (num2 != 255)
+						help += "[ICON=" + (625 + i).ToString() + "] [FEED=1]:[FEED=2]";
+						RegularItem equipId = player.equip[i];
+						if (equipId != RegularItem.NoItem)
 						{
-							FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[num2];
-							String itemIconSpriteName = "item" + ff9ITEM_DATA.shape.ToString("0#") + "_" + ff9ITEM_DATA.color.ToString("0#");
-							Int32 key = FF9UIDataTool.IconSpriteName.FirstOrDefault((KeyValuePair<Int32, String> pair) => pair.Value == itemIconSpriteName).Key;
-							String text2 = text;
-							text = String.Concat(new String[]
-							{
-								text2,
-								"[ICON=",
-								key.ToString(),
-								"] [FEED=1]",
-								FF9TextTool.ItemName(num2)
-							});
+							FF9ITEM_DATA itemData = ff9item._FF9Item_Data[equipId];
+							String itemIconSpriteName = "item" + itemData.shape.ToString("0#") + "_" + itemData.color.ToString("0#");
+							Int32 spriteKey = FF9UIDataTool.IconSpriteName.FirstOrDefault(pair => pair.Value == itemIconSpriteName).Key;
+							help += $"[ICON={spriteKey}] [FEED=1]{FF9TextTool.ItemName(equipId)}";
 						}
 						if (i < 4)
-						{
-							text += "\n";
-						}
+							help += "\n";
 					}
 				}
-				component2.Help.TextKey = String.Empty;
-				component2.Help.Text = text;
-				num++;
+				button.Help.TextKey = String.Empty;
+				button.Help.Text = help;
+				memberIndex++;
 			}
 		}
 		else if (currentMenu == MainMenuUI.SubMenu.Status)
 		{
-			Int32 num3 = 0;
-			foreach (CharacterDetailHUD characterDetailHUD3 in this.CharacterHUDList)
+			Int32 memberIndex = 0;
+			foreach (CharacterDetailHUD characterHUD in this.CharacterHUDList)
 			{
-				ButtonGroupState component3 = characterDetailHUD3.Self.GetComponent<ButtonGroupState>();
-				String text3 = Localization.Get((!FF9StateSystem.MobilePlatform) ? "TargetHelp" : "TargetHelpMobile") + "\n";
-				PLAYER player2 = FF9StateSystem.Common.FF9.party.member[num3];
-				if (player2 != null)
+				ButtonGroupState button = characterHUD.Self.GetComponent<ButtonGroupState>();
+				String help = Localization.Get(FF9StateSystem.MobilePlatform ? "TargetHelpMobile" : "TargetHelp") + "\n";
+				PLAYER player = FF9StateSystem.Common.FF9.party.member[memberIndex];
+				if (player != null)
 				{
-					UInt32 exp = (player2.level < 99) ? ff9level.CharacterLevelUps[player2.level].ExperienceToLevel : player2.exp;
-					Int32 num5;
-					if (Localization.CurrentLanguage == "English(US)" || Localization.CurrentLanguage == "English(UK)" || Localization.CurrentLanguage == "German")
-					{
-						num5 = 82;
-					}
-					else
-					{
-						num5 = 64;
-					}
-					String text2 = text3;
-					text3 = String.Concat(new Object[]
-					{
-						text2,
-						Localization.Get("EXP"),
-						"[XTAB=",
-						num5,
-						"]",
-						player2.exp.ToString(),
-						"\n"
-					});
-					text2 = text3;
-					text3 = String.Concat(new Object[]
-					{
-						text2,
-						Localization.Get("NextLevel"),
-						" [XTAB=",
-						num5,
-						"]",
-						(exp - player2.exp).ToString()
-					});
+					UInt32 exp = (player.level < ff9level.LEVEL_COUNT) ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
+					Int32 expSpriteKey = (Localization.CurrentLanguage == "English(US)" || Localization.CurrentLanguage == "English(UK)" || Localization.CurrentLanguage == "German") ? 82 : 64;
+					help += $"{Localization.Get("EXP")}[XTAB={expSpriteKey}]{player.exp}\n";
+					help += $"{Localization.Get("NextLevel")}[XTAB={expSpriteKey}]{exp - player.exp}";
 				}
-				component3.Help.TextKey = String.Empty;
-				component3.Help.Text = text3;
-				num3++;
+				button.Help.TextKey = String.Empty;
+				button.Help.Text = help;
+				memberIndex++;
 			}
 		}
 	}

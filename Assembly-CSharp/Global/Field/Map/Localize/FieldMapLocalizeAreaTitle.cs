@@ -13,7 +13,7 @@ public class FieldMapLocalizeAreaTitle
 	public void Load()
 	{
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapLocalizeAreaTitle.txt";
-		String textAsset = AssetManager.LoadString(name, out _);
+		String textAsset = AssetManager.LoadString(name);
 		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)

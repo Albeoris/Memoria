@@ -137,8 +137,7 @@ public sealed class NameSettingUI : UIScene
 
     private void SetData()
     {
-		String[] nameSpriteInfo;
-        Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), out nameSpriteInfo, false);
+        Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), false);
         MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
         CharacterProfile.text = FF9TextTool.CharacterProfile(_subNumber);
         NameInputField.value = _isDefaultName ? FF9TextTool.CharacterDefaultName(SubNo) : FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name;

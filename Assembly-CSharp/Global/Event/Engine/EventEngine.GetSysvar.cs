@@ -107,10 +107,10 @@ public partial class EventEngine
                 num = (Int32)this._ff9.btl_result;
                 break;
             case 28:
-                num = EventEngine._btlCmdPrm >> 8 & (Int32)Byte.MaxValue;
+                num = EventEngine._btlCmdPrmCmd;
                 break;
             case 29:
-                num = EventEngine._btlCmdPrm & (Int32)Byte.MaxValue;
+                num = EventEngine._btlCmdPrmSub;
                 break;
             case 30:
                 num = (Int32)stateBattleSystem.btl_phase;

@@ -251,13 +251,13 @@ namespace Memoria.Assets
                 writer.WriteUInt16("winExp", (UInt16)enemy.WinExp);
 
                 writer.BeginArray("winItems"); // 4
-                foreach (Byte item in enemy.WinItems)
-                    writer.WriteByteValueOrMinusOne(item);
+                foreach (Int32 item in enemy.WinItems)
+                    writer.WriteItem(item);
                 writer.EndArray();
 
                 writer.BeginArray("stealItems"); // 4
-                foreach (Byte item in enemy.StealItems)
-                    writer.WriteByteValueOrMinusOne(item);
+                foreach (Int32 item in enemy.StealItems)
+                    writer.WriteItem(item);
                 writer.EndArray();
 
                 writer.WriteUInt16("radius", enemy.Radius);
@@ -295,7 +295,7 @@ namespace Memoria.Assets
                 writer.WriteByte("pav", enemy.PhysicalEvade);
                 writer.WriteByte("mdp", enemy.MagicalDefence);
                 writer.WriteByte("mav", enemy.MagicalEvade);
-                writer.WriteByte("blue", enemy.BlueMagic);
+                writer.WriteInt32("blue", enemy.BlueMagic);
 
                 writer.BeginArray("bones"); // 4
                 foreach (Byte item in enemy.Bone)
@@ -344,7 +344,7 @@ namespace Memoria.Assets
 
                 writer.BeginObject();
                 writer.WriteString("name", names["US"]);
-                writer.WriteEnum("targets", (TargetType)action.Info.Target);
+                writer.WriteEnum("targets", action.Info.Target);
                 writer.WriteBoolean("defaultAlly", action.Info.DefaultAlly);
                 writer.WriteBoolean("defaultCamera", action.Info.DefaultCamera);
                 writer.WriteInt16("animationId1", action.Info.VfxIndex);
@@ -354,8 +354,8 @@ namespace Memoria.Assets
                 writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
                 writer.WriteByte("rate", action.Ref.Rate);
                 writer.WriteByte("category", action.Category);
-                writer.WriteByte("addNo", action.AddStatusNo);
-                writer.WriteByte("mp", action.MP);
+                writer.WriteEnum("addNo", action.AddStatusNo);
+                writer.WriteInt32("mp", action.MP);
                 writer.WriteByte("type", action.Type);
                 writer.WriteUInt16("name", UInt16.Parse(action.Name));
                 writer.EndObject();
@@ -458,6 +458,7 @@ namespace Memoria.Assets
             Directory.CreateDirectory(outputDirectory);
 
             UInt16 id = 0;
+            CsvMetaData csvOptions = new CsvMetaData();
             using (CsvWriter csv = new CsvWriter(outputDirectory + "Enemies.csv"))
             {
                 Dictionary<String, List<TxtEntry>> localizationCsv = new Dictionary<String, List<TxtEntry>>(Configuration.Export.Languages.Length);
@@ -466,6 +467,7 @@ namespace Memoria.Assets
                     localizationCsv.Add(symbol, new List<TxtEntry>());
                 }
 
+                csv.WriteMetaData(csvOptions);
                 csv.WriteLine("# This file contains NPCs.");
                 csv.WriteLine("# ----------------------------------------------------------------------------------------------------------------------------------");
                 csv.WriteLine("# Id;invalidStatus;permanentStatus;currentStatus;maxHp;maxMp;winGil;winExp;winItem1;winItem2;winItem3;winItem4;stealItem1;stealItem2;stealItem3;stealItem4;radius;geo;anim1;anim2;anim3;anim4;anim5;anim6;currentMesh;banishMesh;flags;ap;dex;str;mgc;wpr;invalid;absorb;half;weak;level;category;hitRate;pdp;pav;mdp;mav;blue;camBone1;camBone2;camBone3;targetBone;dieSfx;defaultAttack;iconBone1;iconBone2;iconBone3;iconBone4;iconBone5;iconBone6;startSfx;shadowX;shadowZ;shadowBone;card;shadowBone2;");
@@ -479,7 +481,7 @@ namespace Memoria.Assets
                 {
                     KeyValuePair<Dictionary<String, String>, SB2_MON_PARM>[] items = group.OrderBy(v => EnemyComparer.CalcDiff(v, group)).ToArray();
                     KeyValuePair<Dictionary<String, String>, SB2_MON_PARM> baseItem = items.First();
-                    csv.WriteEntry(new EnemyEntry(id, baseItem.Value), RemovePrefix(baseItem.Key["US"]));
+                    csv.WriteEntry(new EnemyEntry(id, baseItem.Value), csvOptions, RemovePrefix(baseItem.Key["US"]));
 
                     foreach (KeyValuePair<String, String> pair in baseItem.Key)
                         localizationCsv[pair.Key].Add(new TxtEntry {Index = id, Prefix = "$battleEnemy", Value = pair.Value});
@@ -518,7 +520,7 @@ namespace Memoria.Assets
                                 writer.BeginObject("winItems");
                                 for (Int32 i = 0; i < enemy.WinItems.Length; i++) // 4
                                     if (baseValue.WinItems[i] != enemy.WinItems[i])
-                                        writer.WriteByteOrMinusOne("i" + (i + 1).ToString(CultureInfo.InvariantCulture), enemy.WinItems[i]);
+                                        writer.WriteItem("i" + (i + 1).ToString(CultureInfo.InvariantCulture), (Int32)enemy.WinItems[i]);
                                 writer.EndObject();
                             }
 
@@ -527,7 +529,7 @@ namespace Memoria.Assets
                                 writer.BeginObject("stealItems");
                                 for (Int32 i = 0; i < enemy.StealItems.Length; i++) // 4
                                     if (baseValue.StealItems[i] != enemy.StealItems[i])
-                                        writer.WriteByteOrMinusOne("i" + (i + 1).ToString(CultureInfo.InvariantCulture), enemy.StealItems[i]);
+                                        writer.WriteItem("i" + (i + 1).ToString(CultureInfo.InvariantCulture), (Int32)enemy.StealItems[i]);
                                 writer.EndObject();
                             }
 
@@ -598,7 +600,7 @@ namespace Memoria.Assets
                             if (baseValue.MagicalEvade != enemy.MagicalEvade)
                                 writer.WriteByte("mav", enemy.MagicalEvade);
                             if (baseValue.BlueMagic != enemy.BlueMagic)
-                                writer.WriteByte("blue", enemy.BlueMagic);
+                                writer.WriteInt32("blue", enemy.BlueMagic);
 
                             if (!baseValue.Bone.SequenceEqual(enemy.Bone))
                             {
@@ -665,6 +667,7 @@ namespace Memoria.Assets
             Directory.CreateDirectory(outputDirectory);
 
             UInt16 id = 0;
+            CsvMetaData csvOptions = new CsvMetaData();
             using (CsvWriter csv = new CsvWriter(outputDirectory + "Actions.csv"))
             {
                 Dictionary<String, List<TxtEntry>> localizationCsv = new Dictionary<String, List<TxtEntry>>(Configuration.Export.Languages.Length);
@@ -673,6 +676,7 @@ namespace Memoria.Assets
                     localizationCsv.Add(symbol, new List<TxtEntry>());
                 }
 
+                csv.WriteMetaData(csvOptions);
                 csv.WriteLine("# This file contains NPC actions.");
                 csv.WriteLine("# ----------------------------------------------------------------------------------------------------------------------------------");
                 csv.WriteLine("# Id;cursor;def_cur;vfx_no;Vfx2;def_cam;prog_no;power;attr;rate;Category;AddNo;MP;Type");
@@ -699,7 +703,7 @@ namespace Memoria.Assets
                 {
                     KeyValuePair<Dictionary<String, String>, AA_DATA>[] items = group.OrderBy(v => ActionComparer.CalcDiff(v, group)).ToArray();
                     KeyValuePair<Dictionary<String, String>, AA_DATA> baseItem = items.First();
-                    csv.WriteEntry(new ActionEntry(id, baseItem.Value), RemovePrefix(baseItem.Key["US"]));
+                    csv.WriteEntry(new ActionEntry(id, baseItem.Value), csvOptions, RemovePrefix(baseItem.Key["US"]));
 
                     foreach (KeyValuePair<String, String> pair in baseItem.Key)
                         localizationCsv[pair.Key].Add(new TxtEntry {Index = id, Prefix = "$battleAction", Value = pair.Value});
@@ -717,7 +721,7 @@ namespace Memoria.Assets
                             writer.WriteUInt16("id", id);
                             writer.WriteString("name", RemovePrefix(names["US"]));
                             if (baseItem.Value.Info.Target != action.Info.Target)
-                                writer.WriteEnum("targets", (TargetType)action.Info.Target);
+                                writer.WriteEnum("targets", action.Info.Target);
                             if (baseItem.Value.Info.DefaultAlly != action.Info.DefaultAlly)
                                 writer.WriteBoolean("defaultAlly", action.Info.DefaultAlly);
                             if (baseItem.Value.Info.VfxIndex != action.Info.VfxIndex)
@@ -737,9 +741,9 @@ namespace Memoria.Assets
                             if (baseItem.Value.Category != action.Category)
                                 writer.WriteByte("category", action.Category);
                             if (baseItem.Value.AddStatusNo != action.AddStatusNo)
-                                writer.WriteByte("addNo", action.AddStatusNo);
+                                writer.WriteEnum("addNo", action.AddStatusNo);
                             if (baseItem.Value.MP != action.MP)
-                                writer.WriteByte("mp", action.MP);
+                                writer.WriteInt32("mp", action.MP);
                             if (baseItem.Value.Type != action.Type)
                                 writer.WriteByte("type", action.Type);
                             writer.EndObject();
@@ -786,12 +790,12 @@ namespace Memoria.Assets
                 return null;
             }
 
-            public void ParseEntry(String[] raw)
+            public void ParseEntry(String[] raw, CsvMetaData metadata)
             {
                 throw new NotImplementedException();
             }
 
-            public void WriteEntry(CsvWriter sw)
+            public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
             {
                 sw.UInt16(_index);
                 var cmdInfo = _aaData.Info;
@@ -806,8 +810,8 @@ namespace Memoria.Assets
                 sw.Byte(btlRef.Elements);
                 sw.Byte(btlRef.Rate);
                 sw.Byte(_aaData.Category);
-                sw.Byte(_aaData.AddStatusNo);
-                sw.Byte(_aaData.MP);
+                sw.EnumValue(_aaData.AddStatusNo);
+                sw.Int32(_aaData.MP);
                 sw.Byte(_aaData.Type);
             }
         }
@@ -817,13 +821,13 @@ namespace Memoria.Assets
             public UInt16 Id;
             public String Text;
 
-            public void ParseEntry(String[] raw)
+            public void ParseEntry(String[] raw, CsvMetaData metadata)
             {
                 Id = CsvParser.UInt16(raw[0]);
                 Text = raw[1];
             }
 
-            public void WriteEntry(CsvWriter sw)
+            public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
             {
                 sw.UInt16(Id);
                 sw.String(Text);
@@ -847,12 +851,12 @@ namespace Memoria.Assets
                 return null;
             }
 
-            public void ParseEntry(String[] raw)
+            public void ParseEntry(String[] raw, CsvMetaData metadata)
             {
                 throw new NotImplementedException();
             }
 
-            public void WriteEntry(CsvWriter sw)
+            public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
             {
                 sw.UInt16(_index);
 
@@ -865,23 +869,23 @@ namespace Memoria.Assets
                 sw.UInt16((UInt16)_enData.WinExp);
 
                 // 4
-                foreach (Byte item in _enData.WinItems)
-                    sw.ByteOrMinusOne(item);
+                foreach (Int32 item in _enData.WinItems)
+                    sw.Item(item);
 
                 // 4
-                foreach (Byte item in _enData.StealItems)
-                    sw.ByteOrMinusOne(item);
+                foreach (Int32 item in _enData.StealItems)
+                    sw.Item(item);
 
                 sw.UInt16(_enData.Radius);
                 sw.UInt16(_enData.Geo);
 
                 // 6
-                foreach (UInt16 item in _enData.Mot)
-                    sw.UInt16(item);
+                foreach (UInt16 anim in _enData.Mot)
+                    sw.UInt16(anim);
 
                 // 2
-                foreach (UInt16 item in _enData.Mesh)
-                    sw.UInt16(item);
+                foreach (UInt16 mesh in _enData.Mesh)
+                    sw.UInt16(mesh);
 
                 sw.UInt16(_enData.Flags);
                 sw.UInt16((UInt16)_enData.AP);
@@ -903,11 +907,11 @@ namespace Memoria.Assets
                 sw.Byte(_enData.PhysicalEvade);
                 sw.Byte(_enData.MagicalDefence);
                 sw.Byte(_enData.MagicalEvade);
-                sw.Byte(_enData.BlueMagic);
+                sw.Int32(_enData.BlueMagic);
 
                 // 4
-                foreach (Byte item in _enData.Bone)
-                    sw.Byte(item);
+                foreach (Byte bone in _enData.Bone)
+                    sw.Byte(bone);
 
                 sw.UInt16OrMinusOne(_enData.DieSfx);
                 sw.Byte(_enData.Konran);
@@ -1091,6 +1095,23 @@ namespace Memoria.Assets
         }
 
         public void WriteByteValueOrMinusOne(Byte value)
+        {
+            AtValueBegin();
+            if (value == Byte.MaxValue)
+                _streamWriter.Write("-1");
+            else
+                _streamWriter.Write(value.ToString(CultureInfo.InvariantCulture));
+            AtValueEnd();
+        }
+
+        public void WriteItem(String tag, Int32 value)
+        {
+            WriteTag(tag);
+            WriteItem(value);
+            WriteLine();
+        }
+
+        public void WriteItem(Int32 value)
         {
             AtValueBegin();
             if (value == Byte.MaxValue)

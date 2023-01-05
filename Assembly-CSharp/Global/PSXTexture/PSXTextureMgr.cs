@@ -293,24 +293,23 @@ public static class PSXTextureMgr
 	{
 		PSXTextureMgr.eff435Tex = new Texture[9];
 		PSXTextureMgr.eff435Key = new UInt32[9];
-		String[] pngInfo;
 		if (FF9StateSystem.Battle.battleMapIndex != 938)
 		{
-			PSXTextureMgr.eff435Tex[0] = AssetManager.Load<Texture2D>(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/ef435/Background0.png", out pngInfo, false);
+			PSXTextureMgr.eff435Tex[0] = AssetManager.Load<Texture2D>(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/ef435/Background0.png", false);
 			PSXTextureMgr.eff435Key[0] = SFXKey.GenerateKey(1, 10, 0, 0, 224);
-			PSXTextureMgr.eff435Tex[1] = AssetManager.Load<Texture2D>(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/ef435/Background1.png", out pngInfo, false);
+			PSXTextureMgr.eff435Tex[1] = AssetManager.Load<Texture2D>(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/ef435/Background1.png", false);
 			PSXTextureMgr.eff435Key[1] = SFXKey.GenerateKey(1, 12, 0, 0, 225);
-			PSXTextureMgr.eff435Tex[2] = AssetManager.Load<Texture2D>("BattleMap/BattleModel/BattleMap_All/BBG_B172/image0", out pngInfo, false);
+			PSXTextureMgr.eff435Tex[2] = AssetManager.Load<Texture2D>("BattleMap/BattleModel/BattleMap_All/BBG_B172/image0", false);
 			PSXTextureMgr.eff435Key[2] = SFXKey.GenerateKey(1, 14, 0, 0, 228);
 		}
 		else
 		{
 			GameObject btlBGPtr = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
 			MeshRenderer[] componentsInChildren = btlBGPtr.GetComponentsInChildren<MeshRenderer>();
-			for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+			for (Int32 i = 0; i < componentsInChildren.Length; i++)
 			{
 				Material[] materials = componentsInChildren[i].materials;
-				for (Int32 j = 0; j < (Int32)materials.Length; j++)
+				for (Int32 j = 0; j < materials.Length; j++)
 				{
 					if (materials[j].name == "135_tex9 (Instance)")
 					{
@@ -330,11 +329,11 @@ public static class PSXTextureMgr
 				}
 			}
 		}
-		PSXTextureMgr.eff435Tex[3] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_02", out pngInfo, false);
+		PSXTextureMgr.eff435Tex[3] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_02", false);
 		PSXTextureMgr.eff435Key[3] = SFXKey.GenerateKey(1, 0, 0, 0, 0);
-		PSXTextureMgr.eff435Tex[4] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_00", out pngInfo, false);
+		PSXTextureMgr.eff435Tex[4] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_00", false);
 		PSXTextureMgr.eff435Key[4] = SFXKey.GenerateKey(1, 1, 0, 0, 0);
-		PSXTextureMgr.eff435Tex[5] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_01", out pngInfo, false);
+		PSXTextureMgr.eff435Tex[5] = AssetManager.Load<Texture2D>("SpecialEffects/geo_mon_b3_199_01", false);
 		PSXTextureMgr.eff435Key[5] = SFXKey.GenerateKey(1, 2, 0, 0, 0);
 		PSXTextureMgr.eff435Tex[6] = PSXTextureMgr.eff435Tex[5];
 		PSXTextureMgr.eff435Key[6] = SFXKey.GenerateKey(1, 3, 0, 0, 0);

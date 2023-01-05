@@ -33,19 +33,9 @@ namespace FF9
 			return FF9StateSystem.Battle.FF9Battle.enemy[btl.bi.slot_no].et;
 		}
 
-		public static Byte getWeaponNumber(BTL_DATA btl)
+		public static RegularItem getWeaponNumber(BTL_DATA btl)
 		{
-			return btl.bi.player != 0 ? FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].equip[0] : Byte.MaxValue;
-		}
-
-		public static Int32 btlItemNum(Int32 ff9item_no)
-		{
-			return ff9item_no - 224;
-		}
-
-		public static Int32 ff9WeaponNum(Int32 ff9item_no)
-		{
-			return ff9item_no;
+			return btl.bi.player != 0 ? FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].equip[0] : RegularItem.NoItem;
 		}
 
 		public static CharacterSerialNumber getSerialNumber(BTL_DATA btl)
@@ -226,37 +216,108 @@ namespace FF9
 				return false;
 			if (cmd.regist == null)
 				return false;
-			if (cmd.regist.weapon != null && (cmd.regist.weapon.Category & Param.WPN_CATEGORY_SHORT_RANGE) == 0)
+			if (cmd.regist.weapon != null && (cmd.regist.weapon.Category & WeaponCategory.ShortRange) == 0)
 				return false;
 			if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (cmd.AbilityType & 0x8) != 0)
 				return true;
-			if (Configuration.Battle.CustomBattleFlagsMeaning != 1 && (cmd.regist.bi.player == 0 || cmd.sub_no == 176))
+			if (Configuration.Battle.CustomBattleFlagsMeaning != 1 && (cmd.regist.bi.player == 0 || GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack))
 				return true;
 			return false;
 		}
 
-		public static Int32 GetCommandMainActionIndex(CMD_DATA cmd)
+		public static Boolean IsCommandMonsterTransform(CMD_DATA cmd)
+		{
+			return cmd.regist != null && cmd.regist.is_monster_transform && cmd.regist.monster_transform.new_command == cmd.cmd_no;
+		}
+
+		public static Boolean IsCommandMonsterTransformAttack(CMD_DATA cmd)
+		{
+			return btl_util.IsCommandMonsterTransformAttack(cmd.regist, cmd.cmd_no, cmd.sub_no);
+		}
+
+		public static Boolean IsCommandMonsterTransformAttack(BTL_DATA btl, BattleCommandId commandId, Int32 sub_no)
+		{
+			return btl != null && btl.is_monster_transform && (commandId == BattleCommandId.Attack || commandId == BattleCommandId.Counter || commandId == BattleCommandId.RushAttack) && sub_no == (Int32)BattleAbilityId.Attack;
+		}
+
+		public static BattleAbilityId GetCommandMainActionIndex(CMD_DATA cmd)
 		{
 			if (cmd.regist != null && cmd.regist.bi.player == 0)
-				return -1;
-			if (cmd.regist != null && cmd.regist.is_monster_transform && cmd.regist.monster_transform.new_command == cmd.cmd_no)
-				return cmd.sub_no;
+				return BattleAbilityId.Void;
+			if (IsCommandMonsterTransform(cmd))
+				return BattleAbilityId.Void;
+			if (IsCommandMonsterTransformAttack(cmd))
+				return BattleAbilityId.Attack;
 			switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
-					return 180;
+					return BattleAbilityId.Flee2;
 				case BattleCommandId.Throw:
-					return 190;
+					return BattleAbilityId.Throw;
 				case BattleCommandId.Item:
 				case BattleCommandId.AutoPotion:
 				case BattleCommandId.SysDead:
 				case BattleCommandId.SysReraise:
 				case BattleCommandId.SysStone:
-					return 0;
+					return BattleAbilityId.Void;
 				case BattleCommandId.MagicCounter:
-					return -1;
+					return BattleAbilityId.Void;
 				default:
-					return cmd.sub_no;
+					return (BattleAbilityId)cmd.sub_no;
+			}
+		}
+
+		public static RegularItem GetCommandItem(CMD_DATA cmd)
+		{
+			if (cmd.regist != null && cmd.regist.bi.player == 0)
+				return RegularItem.NoItem;
+			if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
+				return RegularItem.NoItem;
+			switch (cmd.cmd_no)
+			{
+				case BattleCommandId.Throw:
+				case BattleCommandId.Item:
+				case BattleCommandId.AutoPotion:
+					return (RegularItem)cmd.sub_no;
+				default:
+					return RegularItem.NoItem;
+			}
+		}
+
+		public static AA_DATA GetCommandMonsterAttack(CMD_DATA cmd)
+		{
+			if (IsCommandMonsterTransform(cmd))
+				return cmd.regist.monster_transform.spell[cmd.sub_no];
+			if (IsCommandMonsterTransformAttack(cmd))
+				return cmd.regist.monster_transform.attack;
+			return null;
+		}
+
+		public static AA_DATA GetCommandAction(CMD_DATA cmd)
+		{
+			if ((cmd.regist != null && cmd.regist.bi.player == 0) || cmd.cmd_no == BattleCommandId.MagicCounter)
+				return FF9StateSystem.Battle.FF9Battle.enemy_attack[cmd.sub_no];
+			AA_DATA monsterAA = GetCommandMonsterAttack(cmd);
+			if (monsterAA != null)
+				return monsterAA;
+			return FF9StateSystem.Battle.FF9Battle.aa_data[GetCommandMainActionIndex(cmd)];
+		}
+
+		public static Byte GetCommandScriptId(CMD_DATA cmd)
+		{
+			switch (cmd.cmd_no)
+			{
+				case BattleCommandId.Jump:
+				case BattleCommandId.Jump2:
+				case BattleCommandId.SysTrans:
+					return 0;
+				case BattleCommandId.Item:
+				case BattleCommandId.AutoPotion:
+					return ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).Ref.ScriptId;
+				default:
+					if (cmd.regist?.weapon != null && btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack && !btl_util.IsCommandMonsterTransformAttack(cmd))
+						return cmd.regist.weapon.Ref.ScriptId;
+					return cmd.ScriptId;
 			}
 		}
 

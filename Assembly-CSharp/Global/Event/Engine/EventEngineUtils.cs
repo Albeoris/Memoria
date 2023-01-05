@@ -1864,8 +1864,7 @@ internal class EventEngineUtils
             str = "US/";
 
         ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
-		String[] ebInfo;
-        Byte[] binAsset = AssetManager.LoadBytes(ebFileName, out ebInfo);
+        Byte[] binAsset = AssetManager.LoadBytes(ebFileName);
         if (binAsset != null)
             return binAsset;
 
@@ -1876,8 +1875,7 @@ internal class EventEngineUtils
     public static EventEngineUtils.BinaryScript loadEventAsScript(String ebFileName, String ebSubFolder)
     {
         ebFileName = ebFilePath + ebSubFolder + Localization.GetSymbol() + "/" + ebFileName + ebFileExt;
-        String[] ebInfo;
-        Byte[] binAsset = AssetManager.LoadBytes(ebFileName, out ebInfo);
+        Byte[] binAsset = AssetManager.LoadBytes(ebFileName);
         if (binAsset != null)
             return new BinaryScript(binAsset);
         return null;

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using System.Runtime.CompilerServices;
 using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
-
 using Memoria.Scenes;
 using UnityEngine;
 
@@ -83,14 +81,12 @@ public partial class BattleHUD : UIScene
                     break;
                 case CommandMenu.Ability1:
                 case CommandMenu.Ability2:
-
-                    CharacterCommand ff9Command = CharacterCommands.Commands[(Int32)_currentCommandId];
+                    CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
                     if (ff9Command.Type == CharacterCommandType.Normal)
                     {
                         _subMenuType = SubMenuType.Normal;
                         SetCommandVisibility(false, false);
                         SetTargetVisibility(true);
-
                     }
                     else if (ff9Command.Type == CharacterCommandType.Ability)
                     {
@@ -98,7 +94,6 @@ public partial class BattleHUD : UIScene
                         DisplayAbility();
                         SetCommandVisibility(false, false);
                         SetAbilityPanelVisibility(true, false);
-
                     }
                     else if (ff9Command.Type == CharacterCommandType.Throw)
                     {
@@ -115,7 +110,6 @@ public partial class BattleHUD : UIScene
                     break;
                 case CommandMenu.Change:
                     _targetCursor = 0;
-
                     if (_isManualTrance)
                     {
                         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
@@ -177,7 +171,7 @@ public partial class BattleHUD : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == ItemGroupButton)
         {
-            if (_itemIdList[_currentSubMenuIndex] != Byte.MaxValue)
+            if (_itemIdList[_currentSubMenuIndex] != RegularItem.NoItem)
             {
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
@@ -196,9 +190,7 @@ public partial class BattleHUD : UIScene
     public override Boolean OnKeyCancel(GameObject go)
     {
         if (UIManager.Input.GetKey(Control.Special))
-
             return true;
-
 
         if (base.OnKeyCancel(go) && !_hidingHud && ButtonGroupState.ActiveGroup != CommandGroupButton)
         {
@@ -360,10 +352,7 @@ public partial class BattleHUD : UIScene
         if (base.OnItemSelect(go))
         {
             if (ButtonGroupState.ActiveGroup == CommandGroupButton)
-
                 _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
-
-
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
             if (ButtonGroupState.ActiveGroup == TargetGroupButton)
@@ -420,13 +409,11 @@ public partial class BattleHUD : UIScene
     {
         if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
             return AbilityStatus.Enable;
-        CharacterCommand command = CharacterCommands.Commands[(Int32)_currentCommandId];
-        Byte abilId = (Byte)command.GetAbilityId(subMenuIndex);
-        if (abilId == (Byte)BattleAbilityId.Void)
+        CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
+        BattleAbilityId abilId = command.GetAbilityId(subMenuIndex);
+        if (abilId == BattleAbilityId.Void)
             return AbilityStatus.None;
-        return GetAbilityState(abilId);
-
-
+        return GetAbilityState(ff9abil.GetAbilityIdFromActiveAbility(abilId));
     }
 
     private void ToggleAllTarget()
@@ -441,7 +428,7 @@ public partial class BattleHUD : UIScene
             {
                 foreach (GONavigationButton button in _targetPanel.AllTargets)
                     ButtonGroupState.SetButtonAnimation(button, true);
-
+                
                 ButtonGroupState.ActiveButton = ButtonGroupState.GetCursorStartSelect(TargetGroupButton);
             }
             _cursorType = CursorGroup.Individual;

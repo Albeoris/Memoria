@@ -2227,17 +2227,15 @@ public partial class FieldMapActorController : HonoBehavior
 	{
 		if (this.isPlayer)
 		{
-			if (this.questionMark == (UnityEngine.Object)null)
+			if (this.questionMark == null)
 			{
-				String[] pngInfo;
-				this.questionMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/balloon_question", out pngInfo, false);
-				this.exclamationMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/balloon_exclamation", out pngInfo, false);
-				this.targetMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/cursor_hand_here", out pngInfo, false);
-				this.warpMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/cursor_warp", out pngInfo, false);
+				this.questionMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/balloon_question", false);
+				this.exclamationMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/balloon_exclamation", false);
+				this.targetMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/cursor_hand_here", false);
+				this.warpMark = AssetManager.Load<Texture2D>("CommonAsset/EventIcons/cursor_warp", false);
 			}
-			this.targetMarkSize = (Single)Screen.height * 0.1f;
-			GameObject gameObject = GameObject.Find("NPC mog");
-			this.npc = gameObject?.transform;
+			this.targetMarkSize = Screen.height * 0.1f;
+			this.npc = GameObject.Find("NPC mog")?.transform;
 			this.aspect = UnityEngine.Object.FindObjectOfType<PSXCameraAspect>();
 		}
 	}

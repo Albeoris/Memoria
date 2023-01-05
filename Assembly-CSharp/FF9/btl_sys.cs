@@ -32,7 +32,7 @@ namespace FF9
             ff9Battle.btl_load_status = 0;
             ff9Battle.player_load_fade = 0;
             ff9Battle.enemy_load_fade = 0;
-            ff9Battle.phantom_no = 0;
+            ff9Battle.phantom_no = BattleAbilityId.Void;
             ff9Battle.phantom_cnt = 0;
             ff9Battle.enemy_die = 0;
             battle.btl_bonus.member_flag = 0;
@@ -45,8 +45,7 @@ namespace FF9
             btlBonus.gil = 0;
             btlBonus.exp = 0U;
             btlBonus.ap = 0;
-            for (Int32 index = 0; index < 16; ++index)
-                btlBonus.item[index] = Byte.MaxValue;
+            btlBonus.item.Clear();
             btlBonus.card = Byte.MaxValue;
             btlBonus.escape_gil = false;
         }
@@ -86,10 +85,10 @@ namespace FF9
                             {
                                 if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
                                     return;
-                                if (ff9item.FF9Item_GetCount(249) > Comn.random8())
+                                if (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
                                 {
                                     UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                    btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, 73U, btl_scrp.GetBattleID(0U), 1U);
+                                    btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
                                     return;
                                 }
                                 break;
@@ -182,7 +181,7 @@ namespace FF9
             {
                 PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
                 if (player != null)
-                    foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.sa))
+                    foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
                         saFeature.TriggerOnBattleStart(ref backAttackChance, ref preemptiveChance, ref preemptivePriority);
             }
             if (!info.SpecialStart && !info.BackAttack && !info.Preemptive)
@@ -207,31 +206,25 @@ namespace FF9
             BONUS btlBonus = battle.btl_bonus;
             btlBonus.gil += (Int32)et.bonus.gil;
             btlBonus.exp += et.bonus.exp;
-            Byte bonusSlot = 0;
-            while (bonusSlot < 16 && btlBonus.item[bonusSlot] != Byte.MaxValue)
-                ++bonusSlot;
-            if (bonusSlot < 16)
+            if (Comn.random8() < et.bonus.item_rate[3] && et.bonus.item[3] != RegularItem.NoItem)
             {
-                if (Comn.random8() < et.bonus.item_rate[3] && et.bonus.item[3] != Byte.MaxValue)
-                {
-                    btlBonus.item[bonusSlot++] = et.bonus.item[3];
-                    et.bonus.item[3] = Byte.MaxValue;
-                }
-                else if (Comn.random8() < et.bonus.item_rate[2] && et.bonus.item[2] != Byte.MaxValue)
-                {
-                    btlBonus.item[bonusSlot++] = et.bonus.item[2];
-                    et.bonus.item[2] = Byte.MaxValue;
-                }
-                else if (Comn.random8() < et.bonus.item_rate[1] && et.bonus.item[1] != Byte.MaxValue)
-                {
-                    btlBonus.item[bonusSlot++] = et.bonus.item[1];
-                    et.bonus.item[1] = Byte.MaxValue;
-                }
-                if (Comn.random8() < et.bonus.item_rate[0] && et.bonus.item[0] != Byte.MaxValue)
-                {
-                    btlBonus.item[bonusSlot++] = et.bonus.item[0];
-                    et.bonus.item[0] = Byte.MaxValue;
-                }
+                btlBonus.item.Add(et.bonus.item[3]);
+                et.bonus.item[3] = RegularItem.NoItem;
+            }
+            else if (Comn.random8() < et.bonus.item_rate[2] && et.bonus.item[2] != RegularItem.NoItem)
+            {
+                btlBonus.item.Add(et.bonus.item[2]);
+                et.bonus.item[2] = RegularItem.NoItem;
+            }
+            else if (Comn.random8() < et.bonus.item_rate[1] && et.bonus.item[1] != RegularItem.NoItem)
+            {
+                btlBonus.item.Add(et.bonus.item[1]);
+                et.bonus.item[1] = RegularItem.NoItem;
+            }
+            if (Comn.random8() < et.bonus.item_rate[0] && et.bonus.item[0] != RegularItem.NoItem)
+            {
+                btlBonus.item.Add(et.bonus.item[0]);
+                et.bonus.item[0] = RegularItem.NoItem;
             }
             if (btlBonus.card != Byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= et.bonus.card_rate)
                 return;

@@ -18,7 +18,7 @@ public static class btl_init
 			return 0;
 		}
 
-		CharacterBattleParameter param = btl_mot.BattleParameterList[(Int32)characterModelIndex];
+		CharacterBattleParameter param = btl_mot.BattleParameterList[characterModelIndex];
 		String modelId = isTrance ? param.TranceModelId : param.ModelId;
 
         Int32 geoId;
@@ -76,6 +76,7 @@ public static class btl_init
 			if (!ModelFactory.IsUseAsEnemyCharacter(path))
 				monBtl.weapon_geo = null;
 			monBtl.sa = btl_init.enemy_dummy_sa; // Might want to use "= new UInt32[2]" for letting enemies use SA... doesn't seem to be useful for now though
+			monBtl.saExtended = new HashSet<SupportAbility>();
 
 		    FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref monBtl.height, ref monBtl.radius_effect);
             
@@ -376,7 +377,7 @@ public static class btl_init
 //			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
 			next.gameObject.transform.localPosition = next.pos;
 			next.gameObject.transform.localRotation = next.rot;
-			CharacterBattleParameter btlParam = btl_mot.BattleParameterList[(Int32)FF9StateSystem.Common.FF9.player[charId].info.serial_no];
+			CharacterBattleParameter btlParam = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[charId].info.serial_no];
 			next.shadow_bone[0] = btlParam.ShadowData[0];
 			next.shadow_bone[1] = btlParam.ShadowData[1];
 			btl_util.SetShadow(next, btlParam.ShadowData[2], btlParam.ShadowData[3]);
@@ -414,6 +415,7 @@ public static class btl_init
 		}
 		btl.tar_bone = 0;
 		btl.sa = p.sa;
+		btl.saExtended = p.saExtended;
 		btl.elem.dex = p.elem.dex;
 		btl.elem.str = p.elem.str;
 		btl.elem.mgc = p.elem.mgc;
@@ -601,8 +603,8 @@ public static class btl_init
 		// Set trance model
 		if (btl.bi.player == 0)
 			return;
-		String tranceModelName = btl_mot.BattleParameterList[(Int32)btl_util.getSerialNumber(btl)].TranceModelId;
-        
+
+		String tranceModelName = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceModelId;
         GEOTEXHEADER tranceTextureAnim = new GEOTEXHEADER();
         tranceTextureAnim.ReadTrancePlayerTextureAnim(btl, tranceModelName, scale);
         btl.tranceTexanimptr = tranceTextureAnim;

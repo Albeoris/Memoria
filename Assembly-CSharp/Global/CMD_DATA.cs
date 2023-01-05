@@ -17,7 +17,7 @@ public class CMD_DATA
 	public AA_DATA aa;
 	public UInt16 tar_id;
 	public BattleCommandId cmd_no;
-	public Byte sub_no;
+	public Int32 sub_no;
 	public CMD_DATA.SELECT_INFO info;
 
 	// Having duplicates allow to modify these fields (eg. SA features) without modifying the base AA's fields

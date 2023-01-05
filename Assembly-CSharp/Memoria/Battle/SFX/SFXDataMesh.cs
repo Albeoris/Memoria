@@ -132,7 +132,7 @@ public abstract class SFXDataMesh
 				if (texture == null)
 				{
 					if (textureKind == TextureKind.IMAGE)
-						texture = AssetManager.Load<Texture2D>(texturePath, out _);
+						texture = AssetManager.Load<Texture2D>(texturePath);
 					else if (textureKind == TextureKind.BLUR)
 						texture = PSXTextureMgr.blurTexture;
 					else if (textureKind == TextureKind.BACKGROUND)
@@ -713,8 +713,7 @@ public abstract class SFXDataMesh
 						String animName = Path.GetFileNameWithoutExtension(anim);
 						if (component.GetClip(animName) == null)
 						{
-							String[] animInfo;
-							AnimationClip clip = AssetManager.Load<AnimationClip>(anim, out animInfo, false);
+							AnimationClip clip = AssetManager.Load<AnimationClip>(anim, false);
 							if (anim != null)
 							{
 								component.AddClip(clip, animName);
@@ -861,7 +860,7 @@ public abstract class SFXDataMesh
 
 		public static ModelSequence Load(String path)
 		{
-			String fileStr = AssetManager.LoadString(path, out _);
+			String fileStr = AssetManager.LoadString(path);
 			if (fileStr == null)
 				return null;
 			JSONNode rootNode = JSONNode.Parse(fileStr);

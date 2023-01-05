@@ -826,11 +826,12 @@ public partial class FF9StateGlobal
 	*/
 	public FF9StateGlobal()
 	{
-		this.ot = new UInt32[2];
+		//this.ot = new UInt32[2];
 		this.player = new Dictionary<CharacterId, PLAYER>();
 		this.party = new PARTY_DATA();
-		this.item = new FF9ITEM[256];
-		this.rare_item = new Byte[64];
+		this.item = new List<FF9ITEM>();
+		this.rare_item_obtained = new HashSet<Int32>();
+		this.rare_item_used = new HashSet<Int32>();
 		this.charArray = new Dictionary<Int32, FF9Char>();
 	    this.Frogs = new FrogHandler();
 		this.steal_no = 0;
@@ -855,8 +856,39 @@ public partial class FF9StateGlobal
 		this.hintmap_id = 0;
 	}
 
-	public const Int32 FF9_SIZE_OT = 4096;
+	public Byte GetRareItemByteFormat(Int32 index)
+	{
+		if (index < 0 || index >= 64)
+			return 0;
+		index <<= 2;
+		Byte result = 0;
+		for (Int32 i = 0; i < 8; i += 2)
+		{
+			if (rare_item_obtained.Contains(index))
+				result |= (Byte)(1 << i);
+			if (rare_item_used.Contains(index))
+				result |= (Byte)(1 << (i + 1));
+			index++;
+		}
+		return result;
+	}
 
+	public void ParseRareItemByteFormat(Int32 index, Byte byteValue)
+	{
+		if (index < 0 || index >= 64)
+			return;
+		index <<= 2;
+		for (Int32 i = 0; i < 8; i += 2)
+		{
+			if ((byteValue & (1 << i)) != 0)
+				rare_item_obtained.Add(index);
+			if ((byteValue & (1 << (i + 1))) != 0)
+				rare_item_used.Add(index);
+			index++;
+		}
+	}
+
+	public const Int32 FF9_SIZE_OT = 4096;
 	public const Int32 FF9_BUFFER_COUNT = 2;
 
 	public IEnumerable<PLAYER> PlayerList => player.Values;
@@ -874,8 +906,6 @@ public partial class FF9StateGlobal
 	public Int16 fldMapNo;
 
 	public Int16 btlMapNo;
-
-	public UInt32[] ot;
 
 	public Matrix4x4 cam;
 
@@ -903,9 +933,10 @@ public partial class FF9StateGlobal
 
 	public Byte steiner_state;
 
-	public FF9ITEM[] item;
+	public List<FF9ITEM> item;
 
-	public Byte[] rare_item;
+	public HashSet<Int32> rare_item_obtained;
+	public HashSet<Int32> rare_item_used;
 
 	public SByte btlSubMapNo;
 

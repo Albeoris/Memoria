@@ -104,8 +104,7 @@ public static class UnifiedBattleSequencer
 					break;
 				case EffectType.SpecialEffect:
 					String path = AssetManagerUtil.GetMemoriaAssetsPath() + $"SpecialEffects/ef{effectNum:D3}/" + PLAYER_SEQUENCE_FILE;
-					String[] efInfo;
-					String sequenceText = AssetManager.LoadString(path, out efInfo);
+					String sequenceText = AssetManager.LoadString(path);
 					if (sequenceText != null)
 					{
 						threadList = BattleActionThread.LoadFromTextSequence(sequenceText);

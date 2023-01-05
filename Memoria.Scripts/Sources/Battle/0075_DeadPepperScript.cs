@@ -19,10 +19,8 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            Byte itemId = (Byte)_v.Command.AbilityId;
-
             _v.Target.Flags |= CalcFlag.HpAlteration;
-            _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(itemId) + 1);
+            _v.Target.HpDamage = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
         }
     }
 }

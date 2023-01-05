@@ -144,45 +144,32 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, UInt32 sub_no, UInt16 tar_id, UInt32 cursor)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
         cmd.cmd_no = commandId;
-        cmd.sub_no = (Byte)sub_no;
-        Int32 aaIndex = btl_util.GetCommandMainActionIndex(cmd);
+        cmd.sub_no = sub_no;
         BTL_DATA caster = cmd.regist;
         switch (commandId)
         {
             case BattleCommandId.SysEscape:
                 if ((FF9StateSystem.Battle.FF9Battle.cmd_status & 1) != 0)
-                {
-                    cmd.sub_no = (Byte)sub_no;
                     return;
-                }
                 FF9StateSystem.Battle.FF9Battle.cmd_status |= 1;
-                cmd.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[180]);
                 break;
             case BattleCommandId.JumpAttack:
             case BattleCommandId.JumpTrance:
                 FF9StateSystem.Battle.FF9Battle.cmd_status |= 16;
-                cmd.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[sub_no]);
-                break;
-            case BattleCommandId.MagicCounter:
-                cmd.SetAAData(FF9StateSystem.Battle.FF9Battle.enemy_attack[sub_no]);
-                break;
-            default:
-                if (aaIndex >= 0)
-                    cmd.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[aaIndex]);
-                else
-                    cmd.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[0]);
                 break;
         }
+        cmd.SetAAData(btl_util.GetCommandAction(cmd));
+        cmd.ScriptId = btl_util.GetCommandScriptId(cmd);
         // ScriptId 80: Double cast with AA specified by "Power" and "Rate"
         if (caster != null && caster.bi.player != 0 && cmd.ScriptId == 80)
         {
-            AA_DATA first_aa = FF9StateSystem.Battle.FF9Battle.aa_data[cmd.Power];
-            AA_DATA second_aa = FF9StateSystem.Battle.FF9Battle.aa_data[cmd.HitRate];
+            AA_DATA first_aa = FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)cmd.Power];
+            AA_DATA second_aa = FF9StateSystem.Battle.FF9Battle.aa_data[(BattleAbilityId)cmd.HitRate];
             UInt16 first_tar_id;
             UInt16 second_tar_id;
             if (first_aa.Info.Target == TargetType.AllAlly || first_aa.Info.Target == TargetType.RandomAlly)
@@ -256,8 +243,6 @@ public class btl_cmd
             return;
         }
 
-        cmd.cmd_no = commandId;
-        cmd.sub_no = (Byte)sub_no;
         cmd.tar_id = tar_id;
         cmd.info.cursor = (Byte)cursor;
         cmd.info.cover = 0;
@@ -304,13 +289,9 @@ public class btl_cmd
     {
         if (btl_stat.CheckStatus(btl, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Death) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
             return;
-        if (sub_no == 176 && btl.is_monster_transform)
-		{
-            if (btl.monster_transform.attack == 0)
-                return;
-            sub_no = (Int32)btl.monster_transform.attack;
-        }
-        SetCommand(btl.cmd[1], commandId, (UInt32)sub_no, tar_id, Comn.countBits(tar_id) > 1 ? 1u : 0u);
+        if (btl_util.IsCommandMonsterTransformAttack(btl, commandId, sub_no) && btl.monster_transform.attack == null)
+            return;
+        SetCommand(btl.cmd[1], commandId, sub_no, tar_id, Comn.countBits(tar_id) > 1 ? 1u : 0u);
     }
 
     public static Int16 GetPhantomCount(BattleUnit btl)
@@ -321,12 +302,12 @@ public class btl_cmd
     public static void SetAutoCommand(BTL_DATA btl)
     {
         if (btl_stat.CheckStatus(btl, BattleStatus.Confuse))
-            SetCommand(btl.cmd[0], BattleCommandId.Attack, (UInt32)BattleAbilityId.Attack, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
+            SetCommand(btl.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID((UInt32)(Comn.random8() & 1)), 0U);
         else if (btl_stat.CheckStatus(btl, BattleStatus.Berserk))
-            SetCommand(btl.cmd[0], BattleCommandId.Attack, (UInt32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0U), 0U);
+            SetCommand(btl.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0U), 0U);
     }
 
-    public static void SetEnemyCommandBySequence(UInt16 tar_id, BattleCommandId cmd_no, UInt32 sub_no)
+    public static void SetEnemyCommandBySequence(UInt16 tar_id, BattleCommandId cmd_no, Int32 sub_no)
     {
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         BattleUnit btl = btl_scrp.FindBattleUnit(16);
@@ -393,12 +374,12 @@ public class btl_cmd
                 btl.Data.sel_mode = 0;
                 return;
             }
-            cmd.SetAAData(stateBattleSystem.enemy_attack[sub_no]);
+            cmd.cmd_no = cmd_no;
+            cmd.sub_no = sub_no;
+            cmd.SetAAData(btl_util.GetCommandAction(cmd));
             cmd.ScriptId = 26;
             cmd.tar_id = tar_id;
-            cmd.cmd_no = cmd_no;
-            cmd.sub_no = (Byte)sub_no;
-            cmd.info.cursor = (Int32)cmd.aa.Info.Target < 6 || (Int32)cmd.aa.Info.Target >= 13 ? (Byte)0 : (Byte)1;
+            cmd.info.cursor = cmd.aa.Info.Target <= TargetType.ManyEnemy || cmd.aa.Info.Target >= TargetType.Self ? (Byte)0 : (Byte)1;
             cmd.IsShortRange = btl_util.IsAttackShortRange(cmd);
             if (cmd_no > BattleCommandId.BoundaryCheck)
             {
@@ -417,7 +398,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetEnemyCommand(UInt16 own_id, UInt16 tar_id, BattleCommandId cmd_no, UInt32 sub_no)
+    public static void SetEnemyCommand(UInt16 own_id, UInt16 tar_id, BattleCommandId cmd_no, Int32 sub_no)
     {
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         BattleUnit caster = btl_scrp.FindBattleUnit(own_id);
@@ -501,21 +482,17 @@ public class btl_cmd
         }
         ClearCommand(cmd);
         ClearReflecData(cmd);
-        cmd.SetAAData(stateBattleSystem.enemy_attack[sub_no]);
-        cmd.tar_id = tar_id;
         cmd.cmd_no = cmd_no;
-        cmd.sub_no = (Byte)sub_no;
-        cmd.info.cursor = (Int32)cmd.aa.Info.Target < 6 || (Int32)cmd.aa.Info.Target >= 13 ? (Byte)0 : (Byte)1;
+        cmd.sub_no = sub_no;
+        cmd.SetAAData(btl_util.GetCommandAction(cmd));
+        cmd.ScriptId = btl_util.GetCommandScriptId(cmd);
+        cmd.tar_id = tar_id;
+        cmd.info.cursor = cmd.aa.Info.Target <= TargetType.ManyEnemy || cmd.aa.Info.Target >= TargetType.Self ? (Byte)0 : (Byte)1;
         cmd.IsShortRange = btl_util.IsAttackShortRange(cmd);
         if (cmd_no > BattleCommandId.BoundaryCheck)
-        {
             cmd.info.priority = 1;
-        }
         else
-        {
-            /*int num = (int)*/
             btl_stat.RemoveStatus(cmd.regist, BattleStatus.Defend);
-        }
         cmd.info.cover = 0;
         cmd.info.dodge = 0;
         cmd.info.reflec = 0;
@@ -638,9 +615,9 @@ public class btl_cmd
                     //}
                     if (caster != null && caster.bi.player != 0)
                     {
-                        Int32 aaIndex = btl_util.GetCommandMainActionIndex(cmd);
-                        if (aaIndex > 0 && aaIndex < 192)
-                            FF9StateSystem.EventState.IncreaseAAUsageCounter((Byte)aaIndex);
+                        BattleAbilityId aaIndex = btl_util.GetCommandMainActionIndex(cmd);
+                        if (aaIndex != BattleAbilityId.Void)
+                            FF9StateSystem.EventState.IncreaseAAUsageCounter(aaIndex);
                     }
                     cmd.info.mode = command_mode_index.CMD_MODE_SELECT_VFX;
                     break;
@@ -659,7 +636,7 @@ public class btl_cmd
                         break;
                     UInt16 tryCover = 0;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(next.sa))
+                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(next.saExtended))
                             saFeature.TriggerOnCommand(new BattleUnit(next), new BattleCommand(cmd), ref tryCover);
                     if (tryCover != 0)
                     {
@@ -765,9 +742,10 @@ public class btl_cmd
 
     private static void ResetItemCount(CMD_DATA cmd)
     {
-        if (cmd.cmd_no != BattleCommandId.Item && cmd.cmd_no != BattleCommandId.Throw && cmd.cmd_no != BattleCommandId.AutoPotion)
+        RegularItem itemId = btl_util.GetCommandItem(cmd);
+        if (itemId == RegularItem.NoItem)
             return;
-        UIManager.Battle.ItemUnuse(cmd.sub_no);
+        UIManager.Battle.ItemUnuse(itemId);
     }
 
     private static void DequeueCommand(CMD_DATA cmd, Boolean escape_check)
@@ -984,19 +962,25 @@ public class btl_cmd
             }*/
         }
 
-        if (cmd.ScriptId == 52 && ff9item.FF9Item_GetCount(cmd.Power) < btl_util.SumOfTarget(1)) // AngelSnackScript
+        if (cmd.ScriptId == 52 && ff9item.FF9Item_GetCount((RegularItem)cmd.Power) < btl_util.SumOfTarget(1)) // AngelSnackScript
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
             return false;
         }
 
-        BattleCommandId commandId = cmd.cmd_no;
-        if (caster != null && caster.IsMonsterTransform && commandId == caster.Data.monster_transform.new_command)
+        if (btl_util.IsCommandMonsterTransform(cmd))
             return true;
         if (!BattleAbilityHelper.ApplySpecialCommandCondition(cmd))
             return false;
 
-        switch (commandId)
+        RegularItem itemId = btl_util.GetCommandItem(cmd);
+        if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0)
+        {
+            UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
+            return false;
+        }
+
+        switch (cmd.cmd_no)
         {
             case BattleCommandId.JumpTrance:
                 caster.Data.cmd[3].tar_id = btl_util.GetStatusBtlID(1, 0);
@@ -1011,16 +995,8 @@ public class btl_cmd
             case BattleCommandId.MagicCounter:
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic);
                 break;
-            case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
-            case BattleCommandId.Throw:
-                if (ff9item.FF9Item_GetCount(cmd.sub_no) == 0)
-                {
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
-                    return false;
-                }
-                if (cmd.cmd_no == BattleCommandId.AutoPotion)
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion);
                 break;
             case BattleCommandId.SummonGarnet:
             case BattleCommandId.SummonEiko:
@@ -1030,7 +1006,7 @@ public class btl_cmd
             case BattleCommandId.MagicSword:
                 return DecideMagicSword(caster, cmd.aa.MP);
             case BattleCommandId.Counter:
-                if (cmd.sub_no == (Byte)BattleAbilityId.Attack)
+                if (btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack)
                     UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack);
                 break;
             case BattleCommandId.SysEscape:
@@ -1064,10 +1040,11 @@ public class btl_cmd
                 }
                 break;
             case BattleCommandId.SysPhantom:
-                if (cmd.sub_no != btlsys.phantom_no)
+                if (cmd.sub_no != (Int32)btlsys.phantom_no)
                 {
-                    cmd.sub_no = btlsys.phantom_no;
-                    cmd.SetAAData(btlsys.aa_data[cmd.sub_no]);
+                    cmd.sub_no = (Int32)btlsys.phantom_no;
+                    cmd.SetAAData(btlsys.aa_data[(BattleAbilityId)cmd.sub_no]);
+                    cmd.ScriptId = btl_util.GetCommandScriptId(cmd);
                     cmd.IsShortRange = btl_util.IsAttackShortRange(cmd);
                 }
                 break;
@@ -1160,7 +1137,7 @@ public class btl_cmd
                 cp = ncp;
         }
         btlsys.cmd_status &= 65523;
-        btlsys.phantom_no = (Byte)BattleAbilityId.Void;
+        btlsys.phantom_no = BattleAbilityId.Void;
         btlsys.phantom_cnt = 0;
     }
 
@@ -1171,7 +1148,7 @@ public class btl_cmd
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         KillSpecificCommand(btl, BattleCommandId.SysPhantom);
         stateBattleSystem.cmd_status &= 65523;
-        stateBattleSystem.phantom_no = (Byte)BattleAbilityId.Void;
+        stateBattleSystem.phantom_no = BattleAbilityId.Void;
         stateBattleSystem.phantom_cnt = 0;
     }
 
@@ -1228,7 +1205,7 @@ public class btl_cmd
         {
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
-                forDead = ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].info.ForDead;
+                forDead = ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.ForDead;
                 break;
             case BattleCommandId.SysTrans:
                 return true;
@@ -1329,7 +1306,7 @@ public class btl_cmd
                 else if (!FF9StateSystem.Battle.isDebug)
                     caster.RemoveStatus(BattleStatus.Trance);
 
-                if (cmd.cmd_no == BattleCommandId.Phantom && btlsys.phantom_no != 0)
+                if (cmd.cmd_no == BattleCommandId.Phantom && btlsys.phantom_no != BattleAbilityId.Void)
                 {
                     btlsys.cmd_status |= 4;
                     btlsys.phantom_cnt = GetPhantomCount(caster);
@@ -1528,24 +1505,18 @@ public class btl_cmd
         }
 
         BTL_DATA caster = cmd.regist;
-        BattleCommandId num = cmd.cmd_no;
-        
-        switch (num)
+
+        RegularItem itemId = btl_util.GetCommandItem(cmd);
+        if (itemId != RegularItem.NoItem)
+            UIManager.Battle.ItemUse(itemId);
+
+        switch (cmd.cmd_no)
         {
             case BattleCommandId.Jump:
             case BattleCommandId.Jump2:
                 caster.tar_mode = 2;
                 caster.SetDisappear(true, 2);
-                break;
-            case BattleCommandId.Item:
-            case BattleCommandId.AutoPotion:
-                UIManager.Battle.ItemUse(cmd.sub_no);
-                SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), ff9item._FF9Item_Info[btl_util.btlItemNum(cmd.sub_no)].Ref.ScriptId);
-                break;
-            case BattleCommandId.Throw:
-                UIManager.Battle.ItemUse(cmd.sub_no);
-                SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
-                break;
+                return;
             case BattleCommandId.SysLastPhoenix:
                 UInt16 battleId = btl_scrp.GetBattleID(1U);
                 UInt16 statusBtlId = btl_util.GetStatusBtlID(1U, BattleStatus.BattleEnd);
@@ -1560,7 +1531,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                 }
-                SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
+                SBattleCalculator.CalcMain(caster, target, cmd);
                 return;
             case BattleCommandId.SysTrans:
                 if (btl_stat.CheckStatus(cmd.regist, BattleStatus.Trance))
@@ -1573,11 +1544,10 @@ public class btl_cmd
                     btl_vfx.SetTranceModel(cmd.regist, false);
                 }
                 return;
+            case BattleCommandId.Item:
+            case BattleCommandId.AutoPotion:
             default:
-                if (cmd.sub_no == 176)
-                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), caster.weapon.Ref.ScriptId);
-                else
-                    SBattleCalculator.CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
+                SBattleCalculator.CalcMain(caster, target, cmd);
                 return;
         }
     }
@@ -1595,22 +1565,23 @@ public class btl_cmd
     private static void DecideSummonType(CMD_DATA cmd)
     {
         AchievementState achievement = FF9StateSystem.Achievement;
-        if (cmd.sub_no == 49 && !achievement.summon_shiva ||
-            cmd.sub_no == 51 && !achievement.summon_ifrit ||
-            cmd.sub_no == 53 && !achievement.summon_ramuh ||
-            cmd.sub_no == 55 && !achievement.summon_atomos ||
-            cmd.sub_no == 58 && !achievement.summon_odin ||
-            cmd.sub_no == 60 && !achievement.summon_leviathan ||
-            cmd.sub_no == 62 && !achievement.summon_bahamut ||
-            cmd.sub_no == 64 && !achievement.summon_arc ||
-            cmd.sub_no == 68 && !achievement.summon_carbuncle_haste ||
-            cmd.sub_no == 69 && !achievement.summon_carbuncle_protect ||
-            cmd.sub_no == 70 && !achievement.summon_carbuncle_reflector ||
-            cmd.sub_no == 71 && !achievement.summon_carbuncle_shell ||
-            cmd.sub_no == 66 && !achievement.summon_fenrir_earth ||
-            cmd.sub_no == 67 && achievement.summon_fenrir_wind ||
-            cmd.sub_no == 72 && !achievement.summon_phoenix ||
-            cmd.sub_no == 74 && !achievement.summon_madeen)
+        BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+        if (abilId == BattleAbilityId.Shiva && !achievement.summon_shiva ||
+            abilId == BattleAbilityId.Ifrit && !achievement.summon_ifrit ||
+            abilId == BattleAbilityId.Ramuh && !achievement.summon_ramuh ||
+            abilId == BattleAbilityId.Atomos && !achievement.summon_atomos ||
+            abilId == BattleAbilityId.Odin && !achievement.summon_odin ||
+            abilId == BattleAbilityId.Leviathan && !achievement.summon_leviathan ||
+            abilId == BattleAbilityId.Bahamut && !achievement.summon_bahamut ||
+            abilId == BattleAbilityId.Ark && !achievement.summon_arc ||
+            abilId == BattleAbilityId.Carbuncle1 && !achievement.summon_carbuncle_haste ||
+            abilId == BattleAbilityId.Carbuncle2 && !achievement.summon_carbuncle_protect ||
+            abilId == BattleAbilityId.Carbuncle3 && !achievement.summon_carbuncle_reflector ||
+            abilId == BattleAbilityId.Carbuncle4 && !achievement.summon_carbuncle_shell ||
+            abilId == BattleAbilityId.Fenrir1 && !achievement.summon_fenrir_earth ||
+            abilId == BattleAbilityId.Fenrir2 && !achievement.summon_fenrir_wind ||
+            abilId == BattleAbilityId.Phoenix && !achievement.summon_phoenix ||
+            abilId == BattleAbilityId.Madeen && !achievement.summon_madeen)
             return;
 
         if (cmd.regist.cur.mp > cmd.aa.MP * 2)

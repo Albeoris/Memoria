@@ -1,9 +1,9 @@
-﻿# This file define basic parameters of characters.;;;;;;;
-# You must set at least 12 different items.;;;;;;;
-# -------------------------------------------------------------;;;;;;;
+﻿# This file define basic parameters of characters.
+# You must set at least 12 different items.
+# -----------------------------------------------
 # Id;DefaultRow;DefaultWinPose;DefaultCategory;DefaultCommandSet;DefaultEquipmentSet;BattleParameterFormula;NameKeyword
-# UInt8;Boolean;Boolean;UInt8;UInt8;UInt8;String;String
-# -------------------------------------------------------------;;;;;;;
+# Int32;Boolean;Boolean;UInt8;Int32;Int32;String;String
+# -----------------------------------------------
 0;1;1;9;0;0;WeaponShape == 1 ? 0 : 1;ZDNE;# Zidane
 1;0;1;5;1;1;2;VIVI;# Vivi
 2;0;1;6;2;2;ScenarioCounter < 10300 ? (WeaponShape == 7 ? 4 : 3) : (WeaponShape == 7 ? 6 : 5);DGGR;# Garnet

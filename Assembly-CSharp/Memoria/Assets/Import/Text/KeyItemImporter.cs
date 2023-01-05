@@ -13,20 +13,16 @@ namespace Memoria.Assets
             String[] itemNames, itemHelps, itemDescs;
             KeyItemFormatter.Parse(entreis, out itemNames, out itemHelps, out itemDescs);
 
-            FF9TextTool.SetImportantItemName(itemNames);
-            FF9TextTool.SetImportantItemHelpDesc(itemHelps);
-            FF9TextTool.SetImportantSkinDesc(itemDescs);
+            FF9TextTool.ImportArrayToDictionary<Int32>(itemNames, FF9TextTool.SetImportantItemName);
+            FF9TextTool.ImportArrayToDictionary<Int32>(itemHelps, FF9TextTool.SetImportantItemHelpDesc);
+            FF9TextTool.ImportArrayToDictionary<Int32>(itemDescs, FF9TextTool.SetImportantSkinDesc);
         }
 
         protected override Boolean LoadInternal()
         {
-            String[] itemNames = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.KeyItemNames);
-            String[] itemHelps = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.KeyItemHelps);
-            String[] itemDescs = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.KeyItemDescriptions);
-
-            FF9TextTool.SetImportantItemName(itemNames);
-            FF9TextTool.SetImportantItemHelpDesc(itemHelps);
-            FF9TextTool.SetImportantSkinDesc(itemDescs);
+            FF9TextTool.ImportWithCumulativeModFiles<Int32>(EmbadedTextResources.KeyItemNames, FF9TextTool.SetImportantItemName);
+            FF9TextTool.ImportWithCumulativeModFiles<Int32>(EmbadedTextResources.KeyItemHelps, FF9TextTool.SetImportantItemHelpDesc);
+            FF9TextTool.ImportWithCumulativeModFiles<Int32>(EmbadedTextResources.KeyItemDescriptions, FF9TextTool.SetImportantSkinDesc);
             return true;
         }
     }

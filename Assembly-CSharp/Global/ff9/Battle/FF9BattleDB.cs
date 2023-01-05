@@ -12,8 +12,8 @@ using Memoria.Prime.CSV;
 
 public static partial class FF9BattleDB
 {
-    public static readonly EntryCollection<BattleStatusEntry> StatusSets;
-    public static readonly EntryCollection<AA_DATA> CharacterActions;
+    public static readonly Dictionary<BattleStatusIndex, BattleStatusEntry> StatusSets;
+    public static readonly Dictionary<BattleAbilityId, AA_DATA> CharacterActions;
     public static readonly EntryCollection<STAT_DATA> StatusData;
 
     static FF9BattleDB()
@@ -23,67 +23,64 @@ public static partial class FF9BattleDB
         StatusData = LoadStatusData();
     }
 
-    private static EntryCollection<BattleStatusEntry> LoadStatusSets()
+    private static Dictionary<BattleStatusIndex, BattleStatusEntry> LoadStatusSets()
     {
         try
         {
-            String inputPath = DataResources.Battle.Directory + DataResources.Battle.StatusSetsFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"File with status sets not found: [{inputPath}]");
-
-            BattleStatusEntry[] statusSets = CsvReader.Read<BattleStatusEntry>(inputPath);
-            if (statusSets.Length < BattleStatusEntry.SetsCount)
-                throw new NotSupportedException($"You must set {BattleStatusEntry.SetsCount} status sets, but there {statusSets.Length}.");
-
-            EntryCollection<BattleStatusEntry> result = EntryCollection.CreateWithDefaultElement(statusSets, e => e.Id);
-            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            Dictionary<BattleStatusIndex, BattleStatusEntry> result = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
+            BattleStatusEntry[] statusSets;
+            String inputPath;
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = dir.Length - 1; i >= 0; --i)
             {
-                inputPath = DataResources.Battle.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Battle.StatusSetsFile;
+                inputPath = DataResources.Battle.ModDirectory(dir[i]) + DataResources.Battle.StatusSetsFile;
                 if (File.Exists(inputPath))
                 {
                     statusSets = CsvReader.Read<BattleStatusEntry>(inputPath);
-                    foreach (BattleStatusEntry it in statusSets)
-                        result[it.Id] = it;
+                    for (Int32 j = 0; j < statusSets.Length; j++)
+                        result[statusSets[j].Id] = statusSets[j];
                 }
             }
+            if (result.Count == 0)
+                throw new FileNotFoundException($"Cannot load status sets because a file does not exist: [{DataResources.Battle.Directory + DataResources.Battle.StatusSetsFile}].", DataResources.Battle.Directory + DataResources.Battle.StatusSetsFile);
             return result;
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[FF9BattleDB] Load base stats of characters failed.");
+            Log.Error(ex, "[FF9BattleDB] Load status sets failed.");
             UIManager.Input.ConfirmQuit();
             return null;
         }
     }
 
-    private static EntryCollection<AA_DATA> LoadActions()
+    private static Dictionary<BattleAbilityId, AA_DATA> LoadActions()
     {
         try
         {
-            String inputPath = DataResources.Battle.Directory + DataResources.Battle.ActionsFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"File with character actions not found: [{inputPath}]");
-
-            BattleActionEntry[] statusSets = CsvReader.Read<BattleActionEntry>(inputPath);
-            if (statusSets.Length < BattleStatusEntry.SetsCount)
-                throw new NotSupportedException($"You must set {BattleStatusEntry.SetsCount} status sets, but there {statusSets.Length}.");
-
-            EntryCollection<AA_DATA> result = EntryCollection.CreateWithDefaultElement(statusSets, e => e.Id, e => e.ActionData);
-            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            Dictionary<BattleAbilityId, AA_DATA> result = new Dictionary<BattleAbilityId, AA_DATA>();
+            BattleActionEntry[] actions;
+            String inputPath;
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = dir.Length - 1; i >= 0; --i)
             {
-                inputPath = DataResources.Battle.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Battle.ActionsFile;
+                inputPath = DataResources.Battle.ModDirectory(dir[i]) + DataResources.Battle.ActionsFile;
                 if (File.Exists(inputPath))
                 {
-                    statusSets = CsvReader.Read<BattleActionEntry>(inputPath);
-                    foreach (BattleActionEntry it in statusSets)
-                        result[it.Id] = it.ActionData;
+                    actions = CsvReader.Read<BattleActionEntry>(inputPath);
+                    for (Int32 j = 0; j < actions.Length; j++)
+                        result[actions[j].Id] = actions[j].ActionData;
                 }
             }
+            if (result.Count == 0)
+                throw new FileNotFoundException($"Cannot load actions because a file does not exist: [{DataResources.Battle.Directory + DataResources.Battle.ActionsFile}].", DataResources.Battle.Directory + DataResources.Battle.ActionsFile);
+            for (Int32 j = 0; j < 192; j++)
+                if (!result.ContainsKey((BattleAbilityId)j))
+                    throw new NotSupportedException($"You must define at least the 192 actions, with IDs between 0 and 191.");
             return result;
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[FF9BattleDB] Load base stats of characters failed.");
+            Log.Error(ex, "[FF9BattleDB] Load actions failed.");
             UIManager.Input.ConfirmQuit();
             return null;
         }

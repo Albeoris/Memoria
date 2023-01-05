@@ -16,23 +16,15 @@ public class BattleState : MonoBehaviour
 	private void InitMapName()
 	{
 		this.mapName = new Dictionary<Int32, String>();
-		String[] bmapInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt", out bmapInfo);
-		StringReader stringReader = new StringReader(textAsset);
-		String text;
-		while ((text = stringReader.ReadLine()) != null)
+		String battleListStr = AssetManager.LoadString("EmbeddedAsset/Manifest/BattleMap/BattleMapList.txt");
+		StringReader battleList = new StringReader(battleListStr);
+		String battleParamLine;
+		while ((battleParamLine = battleList.ReadLine()) != null)
 		{
-			String[] array = text.Split(new Char[]
-			{
-				','
-			});
-			Int32 num = -1;
-			String empty = String.Empty;
-			Int32.TryParse(array[0], out num);
-			if (num != -1)
-			{
-				this.mapName.Add(num, array[1]);
-			}
+			String[] battleParams = battleParamLine.Split(new Char[]{ ',' });
+			Int32.TryParse(battleParams[0], out Int32 battleId);
+			if (battleId != -1)
+				this.mapName.Add(battleId, battleParams[1]);
 		}
 	}
 
@@ -43,10 +35,8 @@ public class BattleState : MonoBehaviour
 		this.debugStartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
 		this.isLevitate = false;
 		this.isTrance = new Boolean[4];
-		for (Int32 i = 0; i < (Int32)this.isTrance.Length; i++)
-		{
+		for (Int32 i = 0; i < this.isTrance.Length; i++)
 			this.isTrance[i] = false;
-		}
 		this.isFade = false;
 		this.selectCharPosID = 0;
 		this.selectPlayerCount = 4;
@@ -62,8 +52,7 @@ public class BattleState : MonoBehaviour
 		this.fadeShader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
 		this.battleShader = ShadersLoader.Find("PSX/BattleMap_StatusEffect");
 		this.shadowShader = ShadersLoader.Find("PSX/BattleMap_Abr_2");
-		String[] pngInfo;
-		this.detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture", out pngInfo, false);
+		this.detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture", false);
 	}
 
 	public Boolean isNoBoosterMap()

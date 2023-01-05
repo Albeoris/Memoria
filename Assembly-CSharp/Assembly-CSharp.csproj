@@ -333,6 +333,7 @@
     <Compile Include="Global\Card\CardUI.cs" />
     <Compile Include="Global\ff9\State\FF9StateGlobal.FrogHandler.cs" />
     <Compile Include="Global\Field\Map\NarrowMapList.cs" />
+    <Compile Include="Memoria\Data\Battle\RegularItem.cs" />
     <Compile Include="Memoria\VoiceActing\BattleVoice.cs" />
     <Compile Include="Memoria\VoiceActing\VoicePlayer.cs" />
     <Compile Include="Global\TileSystem\TileSystem.cs" />
@@ -1081,7 +1082,6 @@
     <Compile Include="FF9\BTL_VFX_REQ.cs" />
     <Compile Include="FF9\ccommon.cs" />
     <Compile Include="FF9\chara_script_id_tags.cs" />
-    <Compile Include="FF9\citem.cs" />
     <Compile Include="FF9\Command.cs" />
     <Compile Include="FF9\command_data_buf_tags.cs" />
     <Compile Include="FF9\command_mode_index.cs" />

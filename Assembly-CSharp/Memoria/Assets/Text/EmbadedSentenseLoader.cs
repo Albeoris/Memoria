@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Memoria.Assets
 {
@@ -7,18 +6,20 @@ namespace Memoria.Assets
     {
         public static String[] LoadSentense(String path)
         {
-            String text = AssetManager.LoadString(path, out _);
+            String text = AssetManager.LoadString(path);
             return text == null ? null : ExtractSentenseEnd(text);
         }
 
         public static String LoadText(String path)
         {
-            return AssetManager.LoadString(path, out _);
+            return AssetManager.LoadString(path);
         }
 
-        private static String[] ExtractSentenseEnd(String text)
+        public static String[] ExtractSentenseEnd(String text)
         {
-            return text.Split(new[] { "[ENDN]" }, StringSplitOptions.None);
+            return text.Split(DELIM, StringSplitOptions.None);
         }
-    }
+
+        private static readonly String[] DELIM = new[] { "[ENDN]" };
+}
 }

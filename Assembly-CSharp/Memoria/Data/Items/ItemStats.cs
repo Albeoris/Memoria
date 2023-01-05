@@ -15,7 +15,7 @@ namespace FF9
         public Byte p_up_attr;
         public DEF_ATTR def_attr;
 
-	    public void ParseEntry(String[] raw)
+	    public void ParseEntry(String[] raw, CsvMetaData metadata)
 	    {
 	        Comment = CsvParser.String(raw[0]);
 	        Id = CsvParser.Int32(raw[1]);
@@ -34,7 +34,7 @@ namespace FF9
 	        def_attr = new DEF_ATTR(invalid, absorb, half, weak);
 	    }
 
-	    public void WriteEntry(CsvWriter sw)
+	    public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
 	    {
 	        sw.String(Comment);
 	        sw.Int32(Id);

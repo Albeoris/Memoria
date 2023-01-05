@@ -1,9 +1,10 @@
-# This file contains character command sets.;;;;
-# You must set 20 different items.;;;;
-# -----------------------------------;;;;
-# Id;Regular 1;Regular 2;Trance 1;Trance 2;
-# Int32;UInt8;UInt8;UInt8;UInt8;# Indices from Commands.csv
-# -----------------------------------;;;;
+#! IncludeId
+# This file contains character command sets.
+# You must set at least 20 different items.
+# -----------------------------------------------
+# Id;Regular 1;Regular 2;Trance 1;Trance 2
+# Int32;Int32;Int32;Int32;Int32
+# -----------------------------------------------
 0;2;25;2;26;# Zidane: Steal, Skill, Steal, Dyne
 1;22;13;23;13;# Vivi: Blk Mag, Focus, Dbl Blk, Focus
 2;16;17;18;17;# Garnet: Summon, Wht Mag, Eidolon, Wht Mag

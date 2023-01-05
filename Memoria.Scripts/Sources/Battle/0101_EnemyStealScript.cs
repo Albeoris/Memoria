@@ -30,14 +30,13 @@ namespace Memoria.Scripts.Battle
 
         private void RemoveItem()
         {
-            Int16 rate = _v.Command.HitRate;
-            if (ff9item.FF9Item_GetCount(rate) == 0)
+            RegularItem itemId = (RegularItem)_v.Command.HitRate;
+            if (ff9item.FF9Item_GetCount(itemId) == 0)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
             else
             {
-                Byte itemId = (Byte)rate;
                 BattleItem.RemoveFromInventory(itemId);
                 UiState.SetBattleFollowFormatMessage(BattleMesages.WasStolen, FF9TextTool.ItemName(itemId));
             }

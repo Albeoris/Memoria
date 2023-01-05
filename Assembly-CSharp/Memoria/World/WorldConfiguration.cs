@@ -27,53 +27,56 @@ namespace Memoria
 				String relativePath = DataResources.World.PureDirectory;
 				String outputDirectory = Path.Combine(Configuration.Export.Path, relativePath);
 				Directory.CreateDirectory(outputDirectory);
+				CsvMetaData csvOptions = new CsvMetaData();
 				using (CsvWriter csv = new CsvWriter(outputDirectory + DataResources.World.CHRControlFile))
 				{
+					csv.WriteMetaData(csvOptions);
 					csv.WriteLine("# This file contains world map transport control parameters.");
 					csv.WriteLine("# ----------------------------------------------------------------------------------------------------------------------------------");
 					csv.WriteLine("# type;flg_gake;speed_move;speed_rotation;speed_updown;speed_roll;speed_rollback;flg_fly;flg_upcam;fetchdist;music;se;encount;radius;camrot;type_cam;pad2;limit0;limit1;");
 					csv.WriteLine("# Byte;Byte;Int16;Byte;Byte;SByte;SByte;Boolean;Boolean;Byte;Byte;Byte;Boolean;Int16;Boolean;Byte;UInt16;UInt32;UInt32;");
 					csv.WriteLine("# ----------------------------------------------------------------------------------------------------------------------------------");
-					csv.WriteEntry(ff9.w_moveCHRControl[0], "Walking");
-					csv.WriteEntry(ff9.w_moveCHRControl[1], "Yellow Chocobo");
-					csv.WriteEntry(ff9.w_moveCHRControl[2], "Light Blue Chocobo");
-					csv.WriteEntry(ff9.w_moveCHRControl[3], "Red Chocobo");
-					csv.WriteEntry(ff9.w_moveCHRControl[4], "Deep Blue Chocobo");
-					csv.WriteEntry(ff9.w_moveCHRControl[5], "Gold Chocobo (ground)");
-					csv.WriteEntry(ff9.w_moveCHRControl[6], "Gold Chocobo (air)");
-					csv.WriteEntry(ff9.w_moveCHRControl[7], "Blue Narciss");
-					csv.WriteEntry(ff9.w_moveCHRControl[8], "Hilda Garde III");
-					csv.WriteEntry(ff9.w_moveCHRControl[9], "Invincible");
-					csv.WriteEntry(ff9.w_moveCHRControl[10], "???");
-					csv.WriteEntry(ff9.w_moveCHRControl[11], "???");
+					csv.WriteEntry(ff9.w_moveCHRControl[0], csvOptions, "Walking");
+					csv.WriteEntry(ff9.w_moveCHRControl[1], csvOptions, "Yellow Chocobo");
+					csv.WriteEntry(ff9.w_moveCHRControl[2], csvOptions, "Light Blue Chocobo");
+					csv.WriteEntry(ff9.w_moveCHRControl[3], csvOptions, "Red Chocobo");
+					csv.WriteEntry(ff9.w_moveCHRControl[4], csvOptions, "Deep Blue Chocobo");
+					csv.WriteEntry(ff9.w_moveCHRControl[5], csvOptions, "Gold Chocobo (ground)");
+					csv.WriteEntry(ff9.w_moveCHRControl[6], csvOptions, "Gold Chocobo (air)");
+					csv.WriteEntry(ff9.w_moveCHRControl[7], csvOptions, "Blue Narciss");
+					csv.WriteEntry(ff9.w_moveCHRControl[8], csvOptions, "Hilda Garde III");
+					csv.WriteEntry(ff9.w_moveCHRControl[9], csvOptions, "Invincible");
+					csv.WriteEntry(ff9.w_moveCHRControl[10], csvOptions, "???");
+					csv.WriteEntry(ff9.w_moveCHRControl[11], csvOptions, "???");
 					for (Int32 i = 12; i < ff9.w_moveCHRControl.Length; i++)
-						csv.WriteEntry(ff9.w_moveCHRControl[i], "???");
+						csv.WriteEntry(ff9.w_moveCHRControl[i], csvOptions, "???");
 				}
 				using (CsvWriter csv = new CsvWriter(outputDirectory + DataResources.World.WeatherColorFile))
 				{
+					csv.WriteMetaData(csvOptions);
 					csv.WriteLine("# This file contains world map weather colors.");
 					csv.WriteLine("# ----------------------------------------------------------------------------------------------------------------------------------");
 					csv.WriteLine("# light0.vx;light0.vy;light0.vz;light1.vx;light1.vy;light1.vz;light2.vx;light2.vy;light2.vz;light0c.vx;light0c.vy;light0c.vz;ambient.vx;ambient.vy;ambient.vz;ambientcl.vx;ambientcl.vy;ambientcl.vz;goffsetup;toffsetup;fogUP.vx;fogUP.vy;fogUP.vz;goffsetdw;toffsetdw;fogDW.vx;fogDW.vy;fogDW.vz;goffsetcl;toffsetcl;fogCL.vx;fogCL.vy;fogCL.vz;chrBIAS.vx;chrBIAS.vy;chrBIAS.vz;fogAMP;offsetX;scaleY;skyBgColor.r;skyBgColor.g;skyBgColor.b;skyBgColor.a;skyFogColor.r;skyFogColor.g;skyFogColor.b;skyFogColor.a;lightColorFactor;");
 					csv.WriteLine("# Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;Int16;UInt16;UInt16;Int16;Int16;Int16;UInt16;UInt16;Int16;Int16;Int16;UInt16;UInt16;Int16;Int16;Int16;Int16;Int16;Int16;UInt16;Single;Single;Single;Single;Single;Single;Single;Single;Single;Single;Single;");
 					csv.WriteLine("# ----------------------------------------------------------------------------------------------------------------------------------");
-					csv.WriteEntry(ff9.w_weatherColor.Color[0], "Daylight 0");
-					csv.WriteEntry(ff9.w_weatherColor.Color[1], "Daylight 1");
-					csv.WriteEntry(ff9.w_weatherColor.Color[2], "Daylight 2");
-					csv.WriteEntry(ff9.w_weatherColor.Color[3], "Daylight 3");
-					csv.WriteEntry(ff9.w_weatherColor.Color[4], "Evening 0");
-					csv.WriteEntry(ff9.w_weatherColor.Color[5], "Evening 1");
-					csv.WriteEntry(ff9.w_weatherColor.Color[6], "Evening 2");
-					csv.WriteEntry(ff9.w_weatherColor.Color[7], "Evening 3");
-					csv.WriteEntry(ff9.w_weatherColor.Color[8], "Night 0");
-					csv.WriteEntry(ff9.w_weatherColor.Color[9], "Night 1");
-					csv.WriteEntry(ff9.w_weatherColor.Color[10], "Night 2");
-					csv.WriteEntry(ff9.w_weatherColor.Color[11], "Night 3");
-					csv.WriteEntry(ff9.w_weatherColor.Color[12], "Purple Sky 0");
-					csv.WriteEntry(ff9.w_weatherColor.Color[13], "Purple Sky 1");
-					csv.WriteEntry(ff9.w_weatherColor.Color[14], "Purple Sky 2");
-					csv.WriteEntry(ff9.w_weatherColor.Color[15], "Purple Sky 3");
+					csv.WriteEntry(ff9.w_weatherColor.Color[0], csvOptions, "Daylight 0");
+					csv.WriteEntry(ff9.w_weatherColor.Color[1], csvOptions, "Daylight 1");
+					csv.WriteEntry(ff9.w_weatherColor.Color[2], csvOptions, "Daylight 2");
+					csv.WriteEntry(ff9.w_weatherColor.Color[3], csvOptions, "Daylight 3");
+					csv.WriteEntry(ff9.w_weatherColor.Color[4], csvOptions, "Evening 0");
+					csv.WriteEntry(ff9.w_weatherColor.Color[5], csvOptions, "Evening 1");
+					csv.WriteEntry(ff9.w_weatherColor.Color[6], csvOptions, "Evening 2");
+					csv.WriteEntry(ff9.w_weatherColor.Color[7], csvOptions, "Evening 3");
+					csv.WriteEntry(ff9.w_weatherColor.Color[8], csvOptions, "Night 0");
+					csv.WriteEntry(ff9.w_weatherColor.Color[9], csvOptions, "Night 1");
+					csv.WriteEntry(ff9.w_weatherColor.Color[10], csvOptions, "Night 2");
+					csv.WriteEntry(ff9.w_weatherColor.Color[11], csvOptions, "Night 3");
+					csv.WriteEntry(ff9.w_weatherColor.Color[12], csvOptions, "Purple Sky 0");
+					csv.WriteEntry(ff9.w_weatherColor.Color[13], csvOptions, "Purple Sky 1");
+					csv.WriteEntry(ff9.w_weatherColor.Color[14], csvOptions, "Purple Sky 2");
+					csv.WriteEntry(ff9.w_weatherColor.Color[15], csvOptions, "Purple Sky 3");
 					for (Int32 i = 16; i < ff9.w_weatherColor.Color.Length; i++)
-						csv.WriteEntry(ff9.w_weatherColor.Color[i], "Runtime color");
+						csv.WriteEntry(ff9.w_weatherColor.Color[i], csvOptions, "Runtime color");
 				}
 			}
 			catch (Exception ex)

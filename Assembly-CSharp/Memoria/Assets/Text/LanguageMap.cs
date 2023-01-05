@@ -218,7 +218,7 @@ namespace Memoria.Assets
 
         private static Byte[] ReadEmbadedTable()
         {
-            return AssetManager.LoadBytes("EmbeddedAsset/Manifest/Text/Localization.txt", out _);
+            return AssetManager.LoadBytes("EmbeddedAsset/Manifest/Text/Localization.txt");
         }
 
         private void StoreValue(String language, String key, String value)

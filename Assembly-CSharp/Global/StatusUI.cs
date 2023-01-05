@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using Memoria.Database;
 using UnityEngine;
@@ -259,13 +260,13 @@ public class StatusUI : UIScene
         _parameterHud.StrengthLabel.text = player.elem.str.ToString();
         _parameterHud.MagicLabel.text = player.elem.mgc.ToString();
         _parameterHud.SpiritLabel.text = player.elem.wpr.ToString();
-        _parameterHud.AttackLabel.text = ff9weap.WeaponData[player.equip[0]].Ref.Power.ToString();
+        _parameterHud.AttackLabel.text = ff9item.GetItemWeapon(player.equip[0]).Ref.Power.ToString();
         _parameterHud.DefendLabel.text = player.defence.PhisicalDefence.ToString();
         _parameterHud.EvadeLabel.text = player.defence.PhisicalEvade.ToString();
         _parameterHud.MagicDefLabel.text = player.defence.MagicalDefence.ToString();
         _parameterHud.MagicEvaLabel.text = player.defence.MagicalEvade.ToString();
 
-        UInt32 exp = player.level < 99 ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
+        UInt32 exp = player.level < ff9level.LEVEL_COUNT ? ff9level.CharacterLevelUps[player.level].ExperienceToLevel : player.exp;
         if (FF9StateSystem.EventState.gEventGlobal[16] != 0 && (player.category & 16) == 0)
         {
             _tranceGameObject.SetActive(true);
@@ -285,13 +286,13 @@ public class StatusUI : UIScene
         FF9UIDataTool.DisplayItem(player.equip[3], _equipmentHud.Body.IconSprite, _equipmentHud.Body.NameLabel, true);
         FF9UIDataTool.DisplayItem(player.equip[4], _equipmentHud.Accessory.IconSprite, _equipmentHud.Accessory.NameLabel, true);
 
-        Byte presetId = (Byte)FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].info.menu_type;
-        Byte command1 = (Byte)CharacterCommands.CommandSets[presetId].Regular1;
-        Byte command2 = (Byte)CharacterCommands.CommandSets[presetId].Regular2;
-        _attackLabel.text = FF9TextTool.CommandName(1);
+        CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].info.menu_type;
+        BattleCommandId command1 = CharacterCommands.CommandSets[presetId].Regular1;
+        BattleCommandId command2 = CharacterCommands.CommandSets[presetId].Regular2;
+        _attackLabel.text = FF9TextTool.CommandName(BattleCommandId.Attack);
         _ability1Label.text = FF9TextTool.CommandName(command1);
         _ability2Label.text = FF9TextTool.CommandName(command2);
-        _itemLabel.text = FF9TextTool.CommandName(14);
+        _itemLabel.text = FF9TextTool.CommandName(BattleCommandId.Item);
 
         for (Int32 index = 0; index < _abilityHudList.Count; ++index)
             DrawAbilityInfo(_abilityHudList[index], index);
@@ -329,18 +330,19 @@ public class StatusUI : UIScene
             String abilName;
             String stoneSprite;
             Boolean isShowText;
-            if (abilId < 192)
+            if (ff9abil.IsAbilityActive(abilId))
             {
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
-                abilName = FF9TextTool.ActionAbilityName(abilId);
+                BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilId);
+                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[battleAbilId];
+                abilName = FF9TextTool.ActionAbilityName(battleAbilId);
                 stoneSprite = "ability_stone";
                 isShowText = (aaData.Type & 2) == 0;
             }
             else
             {
-                //SA_DATA saData = ff9abil._FF9Abil_SaData[index1 - 192];
-                abilName = FF9TextTool.SupportAbilityName(abilId - 192);
-                stoneSprite = !ff9abil.FF9Abil_IsEnableSA(player.sa, abilId) ? "skill_stone_off" : "skill_stone_on";
+                SupportAbility saIndex = ff9abil.GetSupportAbilityFromAbilityId(abilId);
+                abilName = FF9TextTool.SupportAbilityName(saIndex);
+                stoneSprite = ff9abil.FF9Abil_IsEnableSA(player.saExtended, saIndex) ? "skill_stone_on" : "skill_stone_off";
                 isShowText = true;
             }
             abilityHud.Self.SetActive(true);

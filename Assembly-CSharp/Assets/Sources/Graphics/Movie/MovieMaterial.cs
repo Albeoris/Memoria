@@ -509,15 +509,12 @@ namespace Assets.Sources.Graphics.Movie
 
 		public static MovieMaterial New(MovieMaterialProcessor processor)
 		{
-			if (processor == (UnityEngine.Object)null)
-			{
+			if (processor == null)
 				throw new NullReferenceException("MovieMaterialProcessor cannot be null");
-			}
-			Material material = AssetManager.Load<Material>("EmbeddedAsset/Shaders/Movie/Movie", out _, false);
-			if (material == (UnityEngine.Object)null)
-			{
+			Material material = AssetManager.Load<Material>("EmbeddedAsset/Shaders/Movie/Movie", false);
+			if (material == null)
 				throw new ArgumentException("Failed to load material Movie/Movie");
-			}
+
 			material.SetColor("_TintColor", Color.clear);
 			MovieMaterial movieMaterial = new MovieMaterial
 			{

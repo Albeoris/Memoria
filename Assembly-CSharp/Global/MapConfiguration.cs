@@ -6,12 +6,9 @@ public class MapConfiguration
 {
 	public static DMSMapConf? LoadMapConfigData(String fileName)
 	{
-		String[] mapConfInfo;
-		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MapConfigData/" + fileName, out mapConfInfo, true);
+		Byte[] binAsset = AssetManager.LoadBytes("CommonAsset/MapConfigData/" + fileName, true);
 		if (binAsset == null)
-		{
 			return null;
-		}
 		MemoryStream memoryStream = new MemoryStream(binAsset);
 		BinaryReader binaryReader = new BinaryReader(memoryStream);
 		DMSMapConf value = MapConfiguration.DMSParseMapConfFile(binaryReader);

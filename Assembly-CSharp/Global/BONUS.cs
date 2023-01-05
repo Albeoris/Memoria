@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using Memoria.Data;
 
 public class BONUS
 {
 	public BONUS()
 	{
-		this.item = new Byte[16];
+		this.item = new List<RegularItem>();
 	}
 
 	public Int32 gil;
@@ -17,7 +19,7 @@ public class BONUS
 
 	public Boolean Event;
 
-	public Byte[] item;
+	public List<RegularItem> item;
 
 	public Byte card;
 

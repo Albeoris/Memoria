@@ -227,13 +227,15 @@ public class ETb
 			this.gMesValue[n] = v;
 	}
 
-	public static String GetItemName(Int32 index)
+	public static String GetItemName(Int32 itemId)
 	{
-		if (index < EventEngine.kSItemOfs)
-			return FF9TextTool.ItemName(index);
-		if (index < EventEngine.kCItemOfs)
-			return FF9TextTool.ImportantItemName(index - EventEngine.kSItemOfs);
-		return FF9TextTool.CardName(index - EventEngine.kCItemOfs);
+		if (ff9item.IsItemRegular(itemId))
+			return FF9TextTool.ItemName(ff9item.GetRegularIdFromItemId(itemId));
+		if (ff9item.IsItemImportant(itemId))
+			return FF9TextTool.ImportantItemName(ff9item.GetImportantIdFromItemId(itemId));
+		if (ff9item.IsItemCard(itemId))
+			return FF9TextTool.CardName(ff9item.GetCardIdFromItemId(itemId));
+		return String.Empty;
 	}
 
 	public void SetChooseParam(Int32 availMask, Int32 initAbsoluteOptionIndex)

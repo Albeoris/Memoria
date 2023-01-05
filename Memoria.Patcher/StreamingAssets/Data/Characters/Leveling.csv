@@ -1,9 +1,9 @@
-# This file contains amount of experience to the next level and bonus for HP and MP.;;;
-# You must set 99 different items.;;;
-# ----------------------------------------;;;
-# Experience;BonusHP;BonusMP;
-# UInt32;UInt16;UInt16;
-# ----------------------------------------;;;
+# This file contains amount of experience to the next level and bonus for HP and MP.
+# You must set 99 different items.
+# -----------------------------------------------
+# Experience;BonusHP;BonusMP
+# UInt32;UInt16;UInt16
+# -----------------------------------------------
 0;250;200;# Level 1
 16;314;206;# Level 2
 47;382;212;# Level 3

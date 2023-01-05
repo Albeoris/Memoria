@@ -4,6 +4,7 @@ using System.Globalization;
 using Memoria.Data;
 using SimpleJSON;
 using UnityEngine;
+using FF9;
 
 public class JsonParser : ISharedDataParser
 {
@@ -78,7 +79,7 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"00001_time",
-				FF9StateSystem.Settings.time.GetType().ToString()
+				typeof(Double).ToString()
 			}
 		});
 		this.AddReservedBuffer(rootMainClass["95000_Setting"].AsObject, schemaMainClass["95000_Setting"].AsObject, "99999_ReservedBuffer", 504);
@@ -89,7 +90,7 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"00001_abnormal_status",
-				((UInt32)FF9StateSystem.Achievement.abnormal_status).ToString()
+				FF9StateSystem.Achievement.abnormal_status.ToString()
 			},
 			{
 				"00002_summon_shiva",
@@ -160,71 +161,71 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"00001_abnormal_status",
-				((UInt32)FF9StateSystem.Achievement.abnormal_status).GetType().ToString()
+				typeof(UInt32).ToString()
 			},
 			{
 				"00002_summon_shiva",
-				FF9StateSystem.Achievement.summon_shiva.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00003_summon_ifrit",
-				FF9StateSystem.Achievement.summon_ifrit.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00004_summon_ramuh",
-				FF9StateSystem.Achievement.summon_ramuh.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00005_summon_carbuncle_reflector",
-				FF9StateSystem.Achievement.summon_carbuncle_reflector.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00006_summon_carbuncle_haste",
-				FF9StateSystem.Achievement.summon_carbuncle_haste.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00007_summon_carbuncle_protect",
-				FF9StateSystem.Achievement.summon_carbuncle_protect.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00008_summon_carbuncle_shell",
-				FF9StateSystem.Achievement.summon_carbuncle_shell.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"00009_summon_fenrir_earth",
-				FF9StateSystem.Achievement.summon_fenrir_earth.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000010_summon_fenrir_wind",
-				FF9StateSystem.Achievement.summon_fenrir_wind.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000011_summon_atomos",
-				FF9StateSystem.Achievement.summon_atomos.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000012_summon_phoenix",
-				FF9StateSystem.Achievement.summon_phoenix.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000013_summon_leviathan",
-				FF9StateSystem.Achievement.summon_leviathan.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000014_summon_odin",
-				FF9StateSystem.Achievement.summon_odin.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000015_summon_madeen",
-				FF9StateSystem.Achievement.summon_madeen.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000016_summon_bahamut",
-				FF9StateSystem.Achievement.summon_bahamut.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"000017_summon_arc",
-				FF9StateSystem.Achievement.summon_arc.GetType().ToString()
+				typeof(Boolean).ToString()
 			}
 		});
 		this.AddReservedBuffer(rootMainClass["98000_Achievement"].AsObject, schemaMainClass["98000_Achievement"].AsObject, "99999_ReservedBuffer", 492);
@@ -457,47 +458,47 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"mode",
-				ffsystem.mode.GetType().ToString()
+				typeof(Byte).ToString()
 			},
 			{
 				"prevMode",
-				ffsystem.prevMode.GetType().ToString()
+				typeof(Byte).ToString()
 			},
 			{
 				"fldMapNo",
-				ffglobal.fldMapNo.GetType().ToString()
+				typeof(Int16).ToString()
 			},
 			{
 				"fldLocNo",
-				ffglobal.fldLocNo.GetType().ToString()
+				typeof(Int16).ToString()
 			},
 			{
 				"btlMapNo",
-				ffglobal.btlMapNo.GetType().ToString()
+				typeof(Int16).ToString()
 			},
 			{
 				"btlSubMapNo",
-				ffglobal.btlSubMapNo.GetType().ToString()
+				typeof(SByte).ToString()
 			},
 			{
 				"wldMapNo",
-				ffglobal.wldMapNo.GetType().ToString()
+				typeof(Int16).ToString()
 			},
 			{
 				"wldLocNo",
-				ffglobal.wldLocNo.GetType().ToString()
+				typeof(Int16).ToString()
 			},
 			{
 				"timeCounter",
-				time.GetType().ToString()
+				typeof(Single).ToString()
 			},
 			{
 				"timerControl",
-				ffglobal.timerControl.GetType().ToString()
+				typeof(Boolean).ToString()
 			},
 			{
 				"timerDisplay",
-				ffglobal.timerDisplay.GetType().ToString()
+				typeof(Boolean).ToString()
 			}
 		});
 	}
@@ -528,7 +529,7 @@ public class JsonParser : ISharedDataParser
 		{
 			{
 				"gStepCount",
-				data.gStepCount.GetType().ToString()
+				typeof(Int32).ToString()
 			},
 			{
 				"gEventGlobal",
@@ -654,9 +655,9 @@ public class JsonParser : ISharedDataParser
 		dataProfileClass.Add("MiniGameCard", dataProfileArray);
 		dataNode.Add("30000_MiniGame", dataProfileClass);
 		JSONClass schemaProfileClass = new JSONClass();
-		schemaProfileClass.Add("sWin", data.sWin.GetType().ToString());
-		schemaProfileClass.Add("sLose", data.sLose.GetType().ToString());
-		schemaProfileClass.Add("sDraw", data.sDraw.GetType().ToString());
+		schemaProfileClass.Add("sWin", typeof(Int16).ToString());
+		schemaProfileClass.Add("sLose", typeof(Int16).ToString());
+		schemaProfileClass.Add("sDraw", typeof(Int16).ToString());
 		JSONArray schemaProfileArray = new JSONArray();
 		for (Int32 j = 0; j < 100; j++)
 		{
@@ -665,15 +666,15 @@ public class JsonParser : ISharedDataParser
 			{
 				{
 					"id",
-					card.id.GetType().ToString()
+					typeof(Byte).ToString()
 				},
 				{
 					"side",
-					card.side.GetType().ToString()
+					typeof(Byte).ToString()
 				},
 				{
 					"atk",
-					card.atk.GetType().ToString()
+					typeof(Byte).ToString()
 				},
 				{
 					"type",
@@ -681,19 +682,19 @@ public class JsonParser : ISharedDataParser
 				},
 				{
 					"pdef",
-					card.pdef.GetType().ToString()
+					typeof(Byte).ToString()
 				},
 				{
 					"mdef",
-					card.mdef.GetType().ToString()
+					typeof(Byte).ToString()
 				},
 				{
 					"cpoint",
-					card.cpoint.GetType().ToString()
+					typeof(Byte).ToString()
 				},
 				{
 					"arrow",
-					card.arrow.GetType().ToString()
+					typeof(Byte).ToString()
 				}
 			});
 		}
@@ -793,7 +794,7 @@ public class JsonParser : ISharedDataParser
 			playerClass.Add("status", p.status.ToString());
 			JSONArray equipClass = new JSONArray();
 			for (Int32 j = 0; j < 5; j++)
-				equipClass.Add(p.equip[j].ToString());
+				equipClass.Add(((Int32)p.equip[j]).ToString());
 			playerClass.Add("equip", equipClass);
 			playerClass.Add("bonus", oldSaveFormat ? new JSONClass
 			{
@@ -814,10 +815,20 @@ public class JsonParser : ISharedDataParser
 			for (Int32 j = 0; j < paCount; j++)
 				apClass.Add((j < p.pa.Length ? p.pa[j] : 0).ToString());
 			playerClass.Add("pa", apClass);
-			JSONArray saClass = new JSONArray();
-			for (Int32 j = 0; j < 2; j++)
-				saClass.Add(p.sa[j].ToString());
-			playerClass.Add("sa", saClass);
+			if (oldSaveFormat)
+			{
+				JSONArray saClass = new JSONArray();
+				for (Int32 j = 0; j < 2; j++)
+					saClass.Add(p.sa[j].ToString());
+				playerClass.Add("sa", saClass);
+			}
+			else
+			{
+				JSONArray saClass = new JSONArray();
+				foreach (SupportAbility saIndex in p.saExtended)
+					saClass.Add(((Int32)saIndex).ToString());
+				playerClass.Add("sa_extended", saClass);
+			}
 			dataPlayerArray.Add(playerClass);
 		}
 		dataProfileClass.Add("players", dataPlayerArray);
@@ -837,16 +848,16 @@ public class JsonParser : ISharedDataParser
 		dataProfileClass.Add("frog_no", data.Frogs.Number.ToString());
 		dataProfileClass.Add("steal_no", data.steal_no.ToString());
 		dataProfileClass.Add("dragon_no", data.dragon_no.ToString());
-		FF9ITEM[] item = data.item;
 		JSONArray dataItemClass = new JSONArray();
-		for (Int32 i = 0; i < 256; i++)
+		Int32 itemCount = oldSaveFormat ? 256 : data.item.Count;
+		for (Int32 i = 0; i < itemCount; i++)
 		{
-			if (i < item.Length)
+			if (i < data.item.Count)
 			{
 				dataItemClass.Add(new JSONClass
 				{
-					{ "id", item[i].id.ToString() },
-					{ "count",item[i].count.ToString() }
+					{ "id", ((Int32)data.item[i].id).ToString() },
+					{ "count", data.item[i].count.ToString() }
 				});
 			}
 			else
@@ -859,10 +870,31 @@ public class JsonParser : ISharedDataParser
 			}
 		}
 		dataProfileClass.Add("items", dataItemClass);
-		JSONArray dataRareItemClass = new JSONArray();
-		for (Int32 i = 0; i < 64; i++)
-			dataRareItemClass.Add(data.rare_item[i].ToString());
-		dataProfileClass.Add("rareItems", dataRareItemClass);
+		if (oldSaveFormat)
+		{
+			JSONArray dataRareItemClass = new JSONArray();
+			for (Int32 i = 0; i < 64; i++)
+				dataRareItemClass.Add(data.GetRareItemByteFormat(i).ToString());
+			dataProfileClass.Add("rareItems", dataRareItemClass);
+		}
+		else
+		{
+			JSONArray dataRareItemClass = new JSONArray();
+			HashSet<Int32> rareItemKnown = new HashSet<Int32>();
+			foreach (Int32 rareItemId in data.rare_item_obtained)
+				rareItemKnown.Add(rareItemId);
+			foreach (Int32 rareItemId in data.rare_item_used)
+				rareItemKnown.Add(rareItemId);
+			foreach (Int32 rareItemId in rareItemKnown)
+			{
+				JSONClass rareItemClass = new JSONClass();
+				rareItemClass.Add("id", rareItemId.ToString());
+				rareItemClass.Add("obtained", data.rare_item_obtained.Contains(rareItemId).ToString());
+				rareItemClass.Add("used", data.rare_item_used.Contains(rareItemId).ToString());
+				dataRareItemClass.Add(rareItemClass);
+			}
+			dataProfileClass.Add("rareItemsEx", dataRareItemClass);
+		}
 		dataNode.Add("40000_Common", dataProfileClass);
 		if (!oldSaveFormat)
 			return;
@@ -872,80 +904,79 @@ public class JsonParser : ISharedDataParser
 		{
 			JSONClass playerClass = new JSONClass();
 			PLAYER p = data.player[CharacterId.Zidane];
-			playerClass.Add("name", p.Name.GetType().ToString());
-			playerClass.Add("category", p.category.GetType().ToString());
-			playerClass.Add("level", p.level.GetType().ToString());
-			playerClass.Add("exp", p.exp.GetType().ToString());
+			playerClass.Add("name", typeof(String).ToString());
+			playerClass.Add("category", typeof(Byte).ToString());
+			playerClass.Add("level", typeof(Byte).ToString());
+			playerClass.Add("exp", typeof(UInt32).ToString());
 			playerClass.Add("cur", new JSONClass
 			{
 				{ "hp", typeof(UInt16).ToString() },
 				{ "mp", typeof(Int16).ToString() },
-				{ "at", p.cur.at.GetType().ToString() },
-				{ "at_coef", p.cur.at_coef.GetType().ToString() },
-				{ "capa", p.cur.capa.GetType().ToString() }
+				{ "at", typeof(Int16).ToString() },
+				{ "at_coef", typeof(SByte).ToString() },
+				{ "capa", typeof(Byte).ToString() }
 			});
 			playerClass.Add("max", new JSONClass
 			{
 				{ "hp", typeof(UInt16).ToString() },
 				{ "mp", typeof(Int16).ToString() },
-				{ "at", p.max.at.GetType().ToString() },
-				{ "at_coef", p.max.at_coef.GetType().ToString() },
-				{ "capa", p.max.capa.GetType().ToString() }
+				{ "at", typeof(Int16).ToString() },
+				{ "at_coef", typeof(SByte).ToString() },
+				{ "capa", typeof(Byte).ToString() }
 			});
-			playerClass.Add("trance", p.trance.GetType().ToString());
-			playerClass.Add("web_bone", p.wep_bone.GetType().ToString());
+			playerClass.Add("trance", typeof(Byte).ToString());
+			playerClass.Add("web_bone", typeof(Byte).ToString());
 			playerClass.Add("elem", new JSONClass
 			{
-				{ "dex", p.elem.dex.GetType().ToString() },
-				{ "str", p.elem.str.GetType().ToString() },
-				{ "mgc", p.elem.mgc.GetType().ToString() },
-				{ "wpr", p.elem.wpr.GetType().ToString() }
+				{ "dex", typeof(Byte).ToString() },
+				{ "str", typeof(Byte).ToString() },
+				{ "mgc", typeof(Byte).ToString() },
+				{ "wpr", typeof(Byte).ToString() }
 			});
 			playerClass.Add("defence", new JSONClass
 			{
-				{ "p_def", p.defence.PhisicalDefence.GetType().ToString() },
-				{ "p_ev", p.defence.PhisicalEvade.GetType().ToString() },
-				{ "m_def", p.defence.MagicalDefence.GetType().ToString() },
-				{ "m_ev", p.defence.MagicalEvade.GetType().ToString() }
+				{ "p_def", typeof(Byte).ToString() },
+				{ "p_ev", typeof(Byte).ToString() },
+				{ "m_def", typeof(Byte).ToString() },
+				{ "m_ev", typeof(Byte).ToString() }
 			});
 			playerClass.Add("basis", new JSONClass
 			{
 				{ "max_hp", typeof(Int16).ToString() },
 				{ "max_mp", typeof(Int16).ToString() },
-				{ "dex", p.basis.dex.GetType().ToString() },
-				{ "str", p.basis.str.GetType().ToString() },
-				{ "mgc", p.basis.mgc.GetType().ToString() },
-				{ "wpr", p.basis.wpr.GetType().ToString() }
+				{ "dex", typeof(Byte).ToString() },
+				{ "str", typeof(Byte).ToString() },
+				{ "mgc", typeof(Byte).ToString() },
+				{ "wpr", typeof(Byte).ToString() }
 			});
 			playerClass.Add("info", new JSONClass
 			{
 				{ "slot_no", typeof(Byte).ToString() },
 				{ "serial_no", typeof(Byte).ToString() },
-				{ "row", p.info.row.GetType().ToString() },
-				{ "win_pose", p.info.win_pose.GetType().ToString() },
-				{ "party", p.info.party.GetType().ToString() },
+				{ "row", typeof(Byte).ToString() },
+				{ "win_pose", typeof(Byte).ToString() },
+				{ "party", typeof(Byte).ToString() },
 				{ "menu_type", typeof(Byte).ToString() }
 			});
-			playerClass.Add("status", p.status.GetType().ToString());
+			playerClass.Add("status", typeof(Byte).ToString());
 			JSONArray equipArray = new JSONArray();
 			for (Int32 j = 0; j < 5; j++)
 				equipArray.Add(typeof(Byte).ToString());
 			playerClass.Add("equip", equipArray);
 			playerClass.Add("bonus", new JSONClass
 			{
-				{ "dex", p.bonus.dex.GetType().ToString() },
-				{ "str", p.bonus.str.GetType().ToString() },
-				{ "mgc", p.bonus.mgc.GetType().ToString() },
-				{ "wpr", p.bonus.wpr.GetType().ToString() }
+				{ "dex", typeof(UInt16).ToString() },
+				{ "str", typeof(UInt16).ToString() },
+				{ "mgc", typeof(UInt16).ToString() },
+				{ "wpr", typeof(UInt16).ToString() }
 			});
 			JSONArray apArray = new JSONArray();
-			Int32 paCount = oldSaveFormat ? 48 : p.pa.Length;
-			for (Int32 j = 0; j < paCount; j++)
+			for (Int32 j = 0; j < 48; j++)
 				apArray.Add(typeof(Byte).ToString());
 			playerClass.Add("pa", apArray);
 			JSONArray saArray = new JSONArray();
 			for (Int32 j = 0; j < 2; j++)
-				saArray.Add(p.sa[j].GetType().ToString());
+				saArray.Add(typeof(UInt32).ToString());
 			playerClass.Add("sa", saArray);
 			schemaPlayerArray.Add(playerClass);
 		}
@@ -954,12 +985,12 @@ public class JsonParser : ISharedDataParser
 		for (Int32 i = 0; i < 4; i++)
 			schemaMemberArray.Add(typeof(Byte).ToString());
 		schemaProfileClass.Add("slot", schemaMemberArray);
-		schemaProfileClass.Add("escape_no", party.escape_no.GetType().ToString());
-		schemaProfileClass.Add("summon_flag", party.summon_flag.GetType().ToString());
-		schemaProfileClass.Add("gil", party.gil.GetType().ToString());
-		schemaProfileClass.Add("frog_no", data.Frogs.Number.GetType().ToString());
-		schemaProfileClass.Add("steal_no", data.steal_no.GetType().ToString());
-		schemaProfileClass.Add("dragon_no", data.dragon_no.GetType().ToString());
+		schemaProfileClass.Add("escape_no", typeof(UInt16).ToString());
+		schemaProfileClass.Add("summon_flag", typeof(UInt16).ToString());
+		schemaProfileClass.Add("gil", typeof(UInt32).ToString());
+		schemaProfileClass.Add("frog_no", typeof(Int16).ToString());
+		schemaProfileClass.Add("steal_no", typeof(Int16).ToString());
+		schemaProfileClass.Add("dragon_no", typeof(Int16).ToString());
 		JSONArray schemaItemArray = new JSONArray();
 		for (Int32 i = 0; i < 256; i++)
 		{
@@ -1079,7 +1110,7 @@ public class JsonParser : ISharedDataParser
 					player.status = (Byte)playerClass["status"].AsInt;
 				if (playerClass["equip"] != null)
 					for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
-						player.equip[j] = (Byte)playerClass["equip"][j].AsInt;
+						player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
 				JSONClass playerBonusClass = playerClass["bonus"].AsObject;
 				if (playerBonusClass["dex"] != null)
 					player.bonus.dex = (UInt16)playerBonusClass["dex"].AsInt;
@@ -1094,9 +1125,24 @@ public class JsonParser : ISharedDataParser
 				if (playerClass["pa"] != null)
 					for (Int32 j = 0; j < player.pa.Length; j++)
 						player.pa[j] = (Byte)(j < playerClass["pa"].Count ? playerClass["pa"][j].AsInt : 0);
-				if (playerClass["sa"] != null)
-					for (Int32 j = 0; j < playerClass["sa"].Count && j < player.sa.Length; j++)
-						player.sa[j] = playerClass["sa"][j].AsUInt;
+				if (playerClass["sa"] != null || playerClass["sa_extended"] != null)
+				{
+					player.sa[0] = player.sa[1] = 0u;
+					player.saExtended.Clear();
+					if (playerClass["sa"] != null)
+					{
+						for (Int32 j = 0; j < playerClass["sa"].Count && j < player.sa.Length; j++)
+							player.sa[j] = playerClass["sa"][j].AsUInt;
+						for (Int32 j = 0; j < 64; j++)
+							if ((player.sa[j >> 5] & (1u << j)) != 0u)
+								player.saExtended.Add((SupportAbility)j);
+					}
+					else if (playerClass["sa_extended"] != null)
+					{
+						for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
+							ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
+					}
+				}
 				player.ValidateSupportAbility();
 				player.ValidateBasisStatus();
 			}
@@ -1128,19 +1174,42 @@ public class JsonParser : ISharedDataParser
 			ffglobal.dragon_no = (Int16)jsonData["dragon_no"].AsInt;
 		if (jsonData["items"] != null)
 		{
-			for (Int32 i = 0; i < jsonData["items"].Count && i < 256; i++)
+			ffglobal.item.Clear();
+			for (Int32 i = 0; i < jsonData["items"].Count; i++)
 			{
-				if (jsonData["items"][i].AsInt != 255)
+				JSONClass itemClass = jsonData["items"][i].AsObject;
+				if (itemClass != null)
 				{
-					JSONClass itemClass = jsonData["items"][i].AsObject;
-					ffglobal.item[i].id = (Byte)itemClass["id"].AsInt;
-					ffglobal.item[i].count = (Byte)itemClass["count"].AsInt;
+					RegularItem itemId = (RegularItem)itemClass["id"].AsInt;
+					if (itemId != RegularItem.NoItem)
+						ffglobal.item.Add(new FF9ITEM(itemId, (Byte)itemClass["count"].AsInt));
 				}
 			}
 		}
-		if (jsonData["rareItems"] != null)
-			for (Int32 i = 0; i < jsonData["rareItems"].Count && i < 64; i++)
-				ffglobal.rare_item[i] = (Byte)jsonData["rareItems"][i].AsInt;
+		if (jsonData["rareItems"] != null || jsonData["rareItemsEx"] != null)
+		{
+			ffglobal.rare_item_obtained.Clear();
+			ffglobal.rare_item_used.Clear();
+			if (jsonData["rareItems"] != null)
+			{
+				for (Int32 i = 0; i < jsonData["rareItems"].Count && i < 64; i++)
+					ffglobal.ParseRareItemByteFormat(i, (Byte)jsonData["rareItems"][i].AsInt);
+			}
+			if (jsonData["rareItemsEx"] != null)
+			{
+				for (Int32 i = 0; i < jsonData["rareItemsEx"].Count; i++)
+				{
+					JSONClass rareItemClass = jsonData["rareItemsEx"][i].AsObject;
+					if (rareItemClass == null || rareItemClass["id"] == null)
+						continue;
+					Int32 rareItemId = rareItemClass["id"].AsInt;
+					if (rareItemClass["obtained"] != null && rareItemClass["obtained"].AsBool)
+						ffglobal.rare_item_obtained.Add(rareItemId);
+					if (rareItemClass["used"] != null && rareItemClass["used"].AsBool)
+						ffglobal.rare_item_used.Add(rareItemId);
+				}
+			}
+		}
 	}
 
 	private void ParseSettingDataToJson(SettingsState data, JSONClass dataNode, JSONClass schemaNode)

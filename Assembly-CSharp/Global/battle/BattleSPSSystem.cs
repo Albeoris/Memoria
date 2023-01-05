@@ -160,8 +160,7 @@ public class BattleSPSSystem : MonoBehaviour
 			for (Int32 j = 0; j < spstexture.textures.Length; j++)
 			{
 				String texturePath = spstexture.type == "shp" ? $"{spstexture.name}/{spstexture.name}_{j + 1}" : spstexture.name;
-				String[] pngInfo;
-				spstexture.textures[j] = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/Status/" + texturePath, out pngInfo, true);
+				spstexture.textures[j] = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/Status/" + texturePath, true);
 				if (spstexture.textures[j] == null)
 					spstexture.textures[j] = new Texture2D(0, 0);
 			}
@@ -177,10 +176,8 @@ public class BattleSPSSystem : MonoBehaviour
 	private Boolean _loadSPSBin(Int32 spsNo)
 	{
 		if (this._spsBinDict.ContainsKey(spsNo))
-		{
 			return true;
-		}
-		String[] array = new String[]
+		String[] spsNames = new String[]
 		{
 			"st_doku",
 			"st_mdoku",
@@ -195,12 +192,9 @@ public class BattleSPSSystem : MonoBehaviour
 			"st_meiwa",
 			"st_basak"
 		};
-		String[] spsInfo;
-		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + array[spsNo] + ".sps", out spsInfo, true);
+		Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + spsNames[spsNo] + ".sps", true);
 		if (bytes == null)
-		{
 			return false;
-		}
 		Int32 key = this._GetSpsFrameCount(bytes);
 		this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(key, bytes));
 		return true;

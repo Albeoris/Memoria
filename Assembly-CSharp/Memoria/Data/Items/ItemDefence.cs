@@ -13,7 +13,7 @@ namespace Memoria.Data
         public Byte MagicalDefence;
         public Byte MagicalEvade;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
             Id = CsvParser.Int32(raw[1]);
@@ -24,7 +24,7 @@ namespace Memoria.Data
             MagicalEvade = CsvParser.ByteOrMinusOne(raw[5]);
         }
 
-        public void WriteEntry(CsvWriter writer)
+        public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
             writer.String(Comment);
             writer.Int32(Id);

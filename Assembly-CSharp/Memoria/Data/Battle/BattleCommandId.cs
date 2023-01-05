@@ -1,6 +1,6 @@
 ﻿namespace Memoria.Data
 {
-    public enum BattleCommandId : byte
+    public enum BattleCommandId : int
     {
         None = 0,
         Attack = 1,
@@ -65,8 +65,8 @@
         SysDead = 60,
         SysReraise = 61,
         SysStone = 62,
-        ScriptCounter1,
-        ScriptCounter2,
-        ScriptCounter3
+        ScriptCounter1 = 63,
+        ScriptCounter2 = 64,
+        ScriptCounter3 = 65
     }
 }

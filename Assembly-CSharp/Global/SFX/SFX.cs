@@ -1764,7 +1764,7 @@ public class SFX
         if (btl.bi.player != 0)
         {
             init.player_serial_no = Math.Min((Byte)btl_util.getSerialNumber(btl), (Byte)CharacterSerialNumber.BEATRIX);
-            init.player_equip = btl_util.getWeaponNumber(btl);
+            init.player_equip = (Byte)btl_util.getWeaponNumber(btl);
             init.player_wep_bone = btl_util.getPlayerPtr(btl).wep_bone;
             init.enemy_radius = btl.radius_collision;
             init.geo_radius = init.enemy_radius;
@@ -1956,8 +1956,7 @@ public class SFX
         if (effNum == SpecialEffect.Special_Necron_Death)
             PSXTextureMgr.SpEff435();
         String path = "SpecialEffects/ef" + ((Int32)effNum).ToString("D3");
-		String[] efInfo;
-        Byte[] binAsset = AssetManager.LoadBytes(path, out efInfo, true);
+        Byte[] binAsset = AssetManager.LoadBytes(path, true);
         if (binAsset != null)
         {
             GCHandle gCHandle2 = GCHandle.Alloc(binAsset, GCHandleType.Pinned);

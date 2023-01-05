@@ -80,7 +80,7 @@ public class btl_para
             if (!Status.checkCurStat(btl, BattleStatus.LowHP))
                 btl_stat.AlterStatus(btl, BattleStatus.LowHP);
         }
-        btl.cur.mp = ((btl.cur.mp <= btl.max.mp) ? btl.cur.mp : btl.max.mp);
+        btl.cur.mp = btl.cur.mp <= btl.max.mp ? btl.cur.mp : btl.max.mp;
         if (btl.bi.player != 0)
             btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatus.IdleDying) ? 1 : 0);
     }

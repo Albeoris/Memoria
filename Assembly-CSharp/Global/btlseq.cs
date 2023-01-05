@@ -21,16 +21,8 @@ public class btlseq
 	public static void ReadBattleSequence(String name, ref btlseqinstance inst, Boolean useGlobalWorkSet = false)
 	{
 		inst.enemy = FF9StateSystem.Battle.FF9Battle.enemy;
-		String name2 = String.Concat(new Object[]
-		{
-			"BattleMap/BattleScene/EVT_BATTLE_",
-			name,
-			"/",
-			FF9BattleDB.SceneData["BSC_" + name],
-			".raw17"
-		});
-		String[] bscInfo;
-		inst.data = AssetManager.LoadBytes(name2, out bscInfo);
+		String path = $"BattleMap/BattleScene/EVT_BATTLE_{name}/{FF9BattleDB.SceneData["BSC_" + name]}.raw17";
+		inst.data = AssetManager.LoadBytes(path);
 		if (inst.data == null)
 			return;
 		if (useGlobalWorkSet)
@@ -39,52 +31,52 @@ public class btlseq
 			inst.seq_work_set = new SEQ_WORK_SET();
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(inst.data)))
 		{
-			Int16 num = binaryReader.ReadInt16();
+			Int16 seqBlockOffset = binaryReader.ReadInt16();
 			inst.camOffset = binaryReader.ReadInt16();
-			Int16 num2 = binaryReader.ReadInt16();
-			Int16 num3 = binaryReader.ReadInt16();
-			Int32[] array = new Int32[num2];
-			for (Int32 i = 0; i < num2; i++)
-				array[i] = (Int32)binaryReader.ReadInt16();
-			Int32[] array2 = new Int32[num3];
-			for (Int32 j = 0; j < num3; j++)
-				array2[j] = binaryReader.ReadInt32();
-			Byte[] array3 = new Byte[num2];
-			for (Int32 k = 0; k < num2; k++)
-				array3[k] = binaryReader.ReadByte();
-			inst.seq_work_set.SeqData = array;
-			inst.seq_work_set.AnmAddrList = array2;
-			inst.seq_work_set.AnmOfsList = array3;
-			Byte[] array4 = array3.Distinct<Byte>().ToArray<Byte>();
-			ChangeToSequenceListNumber(array4);
-			Byte[] array5 = new Byte[array3.Length];
-			Array.Copy(array3, array5, array3.Length);
-			ChangeToSequenceListNumber(array5);
-			inst.sequenceProperty = new SequenceProperty[array4.Length];
-			for (Int32 l = 0; l < array4.Length; l++)
+			Int16 seqCount = binaryReader.ReadInt16();
+			Int16 animCount = binaryReader.ReadInt16();
+			Int32[] seqOffset = new Int32[seqCount];
+			for (Int32 i = 0; i < seqCount; i++)
+				seqOffset[i] = binaryReader.ReadInt16();
+			Int32[] animList = new Int32[animCount];
+			for (Int32 i = 0; i < animCount; i++)
+				animList[i] = binaryReader.ReadInt32();
+			Byte[] seqBaseAnim = new Byte[seqCount];
+			for (Int32 i = 0; i < seqCount; i++)
+				seqBaseAnim[i] = binaryReader.ReadByte();
+			inst.seq_work_set.SeqData = seqOffset;
+			inst.seq_work_set.AnmAddrList = animList;
+			inst.seq_work_set.AnmOfsList = seqBaseAnim;
+			Byte[] seqDistinctIndices = seqBaseAnim.Distinct<Byte>().ToArray<Byte>();
+			ChangeToSequenceListNumber(seqDistinctIndices);
+			Byte[] seqDistinctMonType = new Byte[seqBaseAnim.Length]; // Surely this is convoluted
+			Array.Copy(seqBaseAnim, seqDistinctMonType, seqBaseAnim.Length);
+			ChangeToSequenceListNumber(seqDistinctMonType);
+			inst.sequenceProperty = new SequenceProperty[seqDistinctIndices.Length];
+			for (Int32 i = 0; i < seqDistinctIndices.Length; i++)
 			{
-				inst.sequenceProperty[l] = new SequenceProperty();
-				inst.sequenceProperty[l].Montype = array4[l];
+				inst.sequenceProperty[i] = new SequenceProperty();
+				inst.sequenceProperty[i].Montype = seqDistinctIndices[i];
 			}
-			for (Int32 m = 0; m < num2; m++)
+			for (Int32 i = 0; i < seqCount; i++)
 			{
-				binaryReader.BaseStream.Seek(array[m] + 4, SeekOrigin.Begin);
+				binaryReader.BaseStream.Seek(seqOffset[i] + 4, SeekOrigin.Begin);
 				Byte b = binaryReader.ReadByte();
 				Byte b2 = binaryReader.ReadByte();
 				if ((b != 24 && b != 7) || b2 != 0)
-					for (Int32 n = 0; n < array4.Length; n++)
-						if (inst.sequenceProperty[n].Montype == array5[m])
-							inst.sequenceProperty[n].PlayableSequence.Add(m);
+					for (Int32 j = 0; j < seqDistinctIndices.Length; j++)
+						if (inst.sequenceProperty[j].Montype == seqDistinctMonType[i])
+							inst.sequenceProperty[j].PlayableSequence.Add(i);
 			}
 		}
 	}
 
 	private static void ChangeToSequenceListNumber(Byte[] list)
 	{
-		Byte[] array = list.Distinct<Byte>().ToArray<Byte>();
-		for (Int32 i = 0; i < (Int32)list.Length; i++)
-			for (Int32 j = 0; j < (Int32)array.Length; j++)
-				if (list[i] == array[j])
+		Byte[] distinct = list.Distinct<Byte>().ToArray<Byte>();
+		for (Int32 i = 0; i < list.Length; i++)
+			for (Int32 j = 0; j < distinct.Length; j++)
+				if (list[i] == distinct[j])
 					list[i] = (Byte)j;
 	}
 
@@ -104,21 +96,22 @@ public class btlseq
 			return;
 		BTL_DATA next;
 		for (next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-			if (((Int32)next.btl_id & pBtlID) != 0)
+			if ((next.btl_id & pBtlID) != 0)
 				break;
 		if (next == null)
 			return;
 		CMD_DATA cmd_DATA = next.cmd[0];
 		cmd_DATA.cmd_no = BattleCommandId.None;
-		cmd_DATA.sub_no = (Byte)pSeqNo;
+		cmd_DATA.sub_no = pSeqNo;
 		cmd_DATA.tar_id = (UInt16)pTarID;
 		cmd_DATA.regist = next;
 		cmd_DATA.SetAAData(FF9StateSystem.Battle.FF9Battle.enemy_attack[pSeqNo]);
+		cmd_DATA.ScriptId = btl_util.GetCommandScriptId(cmd_DATA);
 		cmd_DATA.info.Reset();
 		cmd_DATA.IsShortRange = btl_util.IsAttackShortRange(cmd_DATA);
 		if (Configuration.Battle.SFXRework)
 		{
-			UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, cmd_DATA.sub_no);
+			UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, pSeqNo);
 			action.Execute(cmd_DATA);
 		}
 		else

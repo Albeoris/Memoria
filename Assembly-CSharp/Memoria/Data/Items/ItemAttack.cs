@@ -8,21 +8,21 @@ namespace Memoria.Data
         public String Comment;
         public Int32 Id;
 
-        public Byte Category;
-        public Byte StatusIndex;
+        public WeaponCategory Category;
+        public BattleStatusIndex StatusIndex;
         public String ModelName;
         public UInt16 ModelId;
         public BTL_REF Ref;
         public Int16 Offset1;
         public Int16 Offset2;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
             Id = CsvParser.Int32(raw[1]);
 
-            Category = CsvParser.Byte(raw[2]);
-            StatusIndex = CsvParser.Byte(raw[3]);
+            Category = (WeaponCategory)CsvParser.Byte(raw[2]);
+            StatusIndex = (BattleStatusIndex)CsvParser.Int32(raw[3]);
             ModelName = CsvParser.String(raw[4]);
             if (!String.IsNullOrEmpty(ModelName))
                 ModelId = (UInt16)FF9BattleDB.GEO.GetKey(ModelName);
@@ -37,13 +37,13 @@ namespace Memoria.Data
             Offset2 = Int16.Parse(raw[10]);
         }
 
-        public void WriteEntry(CsvWriter sw)
+        public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
             sw.String(Comment);
             sw.Int32(Id);
 
-            sw.Byte(Category);
-            sw.Byte(StatusIndex);
+            sw.Byte((Byte)Category);
+            sw.Int32((Int32)StatusIndex);
             sw.String(ModelName);
 
             BTL_REF btl = Ref;

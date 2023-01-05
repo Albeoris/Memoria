@@ -5,26 +5,36 @@ namespace Memoria.Data
 {
     public class ItemInfo : ICsvEntry
     {
-        public UInt16 Price;
+        public RegularItem Id;
+        public UInt32 Price;
         public ItemCharacter CharacterMask;
         public Byte GraphicsId;
         public Byte ColorId;
-        public Byte Quality;
-        public Byte BonusId;
-        public Byte[] AbilityIds;
+        public Single Quality;
+        public Int32 BonusId;
+        public Int32[] AbilityIds;
         public ItemType TypeMask;
-        public Byte Order;
+        public Single Order;
+        public Int32 WeaponId;
+        public Int32 ArmorId;
+        public Int32 EffectId;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
+            Boolean hasAuxIds = metadata.HasOption($"IncludeAuxiliaryIds");
 
-            Price = CsvParser.UInt16(raw[index++]);
+            Id = metadata.HasOption($"Include{nameof(Id)}") ? (RegularItem)CsvParser.Int32(raw[index++]) : (RegularItem)(-1);
+            WeaponId = hasAuxIds || metadata.HasOption($"Include{nameof(WeaponId)}") ? CsvParser.Int32(raw[index++]) : -1;
+            ArmorId = hasAuxIds || metadata.HasOption($"Include{nameof(ArmorId)}") ? CsvParser.Int32(raw[index++]) : -1;
+            EffectId = hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}") ? CsvParser.Int32(raw[index++]) : -1;
+
+            Price = CsvParser.UInt32(raw[index++]);
             GraphicsId = CsvParser.Byte(raw[index++]);
             ColorId = CsvParser.Byte(raw[index++]);
-            Quality = CsvParser.Byte(raw[index++]);
-            BonusId = CsvParser.Byte(raw[index++]);
-            AbilityIds = CsvParser.ByteArray(raw[index++]);
+            Quality = CsvParser.Single(raw[index++]);
+            BonusId = CsvParser.Int32(raw[index++]);
+            AbilityIds = CsvParser.AnyAbilityArray(raw[index++]);
 
             Byte type = 0;
             for (Int32 i = 0; i < 8; i++)
@@ -34,7 +44,7 @@ namespace Memoria.Data
             }
             TypeMask = (ItemType)type;
 
-            Order = CsvParser.Byte(raw[index++]);
+            Order = CsvParser.Single(raw[index++]);
 
             UInt64 equippable = 0;
             for (Int32 i = 0; i < 12; i++)
@@ -49,14 +59,24 @@ namespace Memoria.Data
             CharacterMask = (ItemCharacter)equippable;
         }
 
-        public void WriteEntry(CsvWriter writer)
+        public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
-            writer.UInt16(Price);
+            Boolean hasAuxIds = metadata.HasOption($"IncludeAuxiliaryIds");
+            if (metadata.HasOption($"Include{nameof(Id)}"))
+                writer.Int32((Int32)Id);
+            if (hasAuxIds || metadata.HasOption($"Include{nameof(WeaponId)}"))
+                writer.Int32(WeaponId);
+            if (hasAuxIds || metadata.HasOption($"Include{nameof(ArmorId)}"))
+                writer.Int32(ArmorId);
+            if (hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}"))
+                writer.Int32(EffectId);
+
+            writer.UInt32(Price);
             writer.Byte(GraphicsId);
             writer.Byte(ColorId);
-            writer.Byte(Quality);
-            writer.Byte(BonusId);
-            writer.ByteArray(AbilityIds);
+            writer.Single(Quality);
+            writer.Int32(BonusId);
+            writer.AnyAbilityArray(AbilityIds);
 
             writer.Boolean(Weapon);
             writer.Boolean(Armlet);
@@ -67,7 +87,7 @@ namespace Memoria.Data
             writer.Boolean(Gem);
             writer.Boolean(Usable);
 
-            writer.Byte(Order);
+            writer.Single(Order);
 
             writer.Boolean(Zidane);
             writer.Boolean(Vivi);
@@ -85,23 +105,7 @@ namespace Memoria.Data
 
         public FF9ITEM_DATA ToItemData()
         {
-            return new FF9ITEM_DATA(0, 0, Price, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, (Byte)TypeMask, Order, 0);
-        }
-
-        public static ItemInfo FromItemData(FF9ITEM_DATA entry)
-        {
-            return new ItemInfo
-            {
-                Price = entry.price,
-                CharacterMask = (ItemCharacter)entry.equip,
-                GraphicsId = entry.shape,
-                ColorId = entry.color,
-                Quality = entry.eq_lv,
-                BonusId = entry.bonus,
-                AbilityIds = entry.ability,
-                TypeMask = (ItemType)entry.type,
-                Order = entry.sort
-            };
+            return new FF9ITEM_DATA(Price, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, TypeMask, Order, WeaponId, ArmorId, EffectId);
         }
 
         public Boolean Weapon => (TypeMask & ItemType.Weapon) == ItemType.Weapon;
@@ -138,7 +142,9 @@ namespace Memoria.Data
 
         Item = 4,
         Gem = 2,
-        Usable = 1
+        Usable = 1,
+
+        AnyEquipment = Weapon | Armlet | Helmet | Armor | Accessory
     }
 
     [Flags]

@@ -1,55 +1,55 @@
 # This file contains a set of learnable Quina's abilities.
-# You must set 48 different items.
-# Use 0 for a void ability, 1-191 for active abilities and 192-254 (id + 192) for passive abilities.
+# You can set any number of different items.
+# Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# UInt8;UInt8
+# Ability;UInt8
 # -----------------------------------
-77;1;# Goblin Punch
-78;1;# LV5 Death
-79;1;# LV4 Holy
-80;1;# LV3 Def-less
-81;1;# Doom
-82;1;# Roulette
-83;1;# Aqua Breath
-84;1;# Mighty Guard
-85;1;# Matra Magic
-86;1;# Bad Breath
-87;1;# Limit Glove
-88;1;# 1,000 Needles
-89;1;# Pumpkin Head
-90;1;# Night
-91;1;# Twister
-92;1;# Earth Shake
-93;1;# Angel’s Snack
-94;1;# Frog Drop
-95;1;# White Wind
-96;1;# Vanish
-97;1;# Frost
-98;1;# Mustard Bomb
-99;1;# Magic Hammer
-100;1;# Auto-Life
-192;75;# Auto-Reflect
-193;40;# Auto-Float
-194;70;# Auto-Haste
-195;30;# Auto-Regen
-196;165;# Auto-Life
-199;50;# MP+10%
-216;60;# Healer
-217;35;# Add Status
-218;40;# Gamble Defense
-226;90;# Half MP
-227;250;# High Tide
-228;55;# Counter
-232;20;# Body Temp
-235;60;# Level Up
-236;40;# Ability Up
-237;100;# Millionaire
-240;40;# Insomniac
-241;20;# Antibody
-243;30;# Loudmouth
-245;35;# Jelly
-247;80;# Absorb MP
-248;30;# Auto-Potion
-249;20;# Locomotion
-250;25;# Clear Headed
+AA:77;1;# Goblin Punch
+AA:78;1;# LV5 Death
+AA:79;1;# LV4 Holy
+AA:80;1;# LV3 Def-less
+AA:81;1;# Doom
+AA:82;1;# Roulette
+AA:83;1;# Aqua Breath
+AA:84;1;# Mighty Guard
+AA:85;1;# Matra Magic
+AA:86;1;# Bad Breath
+AA:87;1;# Limit Glove
+AA:88;1;# 1,000 Needles
+AA:89;1;# Pumpkin Head
+AA:90;1;# Night
+AA:91;1;# Twister
+AA:92;1;# Earth Shake
+AA:93;1;# Angel’s Snack
+AA:94;1;# Frog Drop
+AA:95;1;# White Wind
+AA:96;1;# Vanish
+AA:97;1;# Frost
+AA:98;1;# Mustard Bomb
+AA:99;1;# Magic Hammer
+AA:100;1;# Auto-Life
+SA:0;75;# Auto-Reflect
+SA:1;40;# Auto-Float
+SA:2;70;# Auto-Haste
+SA:3;30;# Auto-Regen
+SA:4;165;# Auto-Life
+SA:7;50;# MP+10%
+SA:24;60;# Healer
+SA:25;35;# Add Status
+SA:26;40;# Gamble Defense
+SA:34;90;# Half MP
+SA:35;250;# High Tide
+SA:36;55;# Counter
+SA:40;20;# Body Temp
+SA:43;60;# Level Up
+SA:44;40;# Ability Up
+SA:45;100;# Millionaire
+SA:48;40;# Insomniac
+SA:49;20;# Antibody
+SA:51;30;# Loudmouth
+SA:53;35;# Jelly
+SA:55;80;# Absorb MP
+SA:56;30;# Auto-Potion
+SA:57;20;# Locomotion
+SA:58;25;# Clear Headed

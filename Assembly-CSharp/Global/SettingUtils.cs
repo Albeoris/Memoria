@@ -6,47 +6,29 @@ public static class SettingUtils
 {
 	public static void LoadSettings()
 	{
-		String[] settInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/settingUtils.txt", out settInfo);
-		if (textAsset == null)
-		{
+		String jsonStr = AssetManager.LoadString("EmbeddedAsset/Manifest/FieldMap/settingUtils.txt");
+		if (jsonStr == null)
 			return;
-		}
-		SettingUtils.jsNode = JSON.Parse(textAsset);
+		SettingUtils.jsNode = JSON.Parse(jsonStr);
 		if (SettingUtils.jsNode == null)
-		{
 			return;
-		}
-		JSONNode jsonnode = SettingUtils.jsNode["FieldMapSettings"];
-		if (jsonnode == null)
-		{
+		JSONNode mainNode = SettingUtils.jsNode["FieldMapSettings"];
+		if (mainNode == null)
 			return;
-		}
-		if (jsonnode["enable"] != null)
-		{
-			SettingUtils.fieldMapSettings.enable = jsonnode["enable"].AsBool;
-		}
-		SettingUtils._ReadFieldMapSettingsFromJSONNode(jsonnode);
-		if (jsonnode["activeProfileId"] != null)
-		{
-			SettingUtils.fieldMapSettings.activeProfileId = jsonnode["activeProfileId"].AsInt;
-		}
+		if (mainNode["enable"] != null)
+			SettingUtils.fieldMapSettings.enable = mainNode["enable"].AsBool;
+		SettingUtils._ReadFieldMapSettingsFromJSONNode(mainNode);
+		if (mainNode["activeProfileId"] != null)
+			SettingUtils.fieldMapSettings.activeProfileId = mainNode["activeProfileId"].AsInt;
 		if (SettingUtils.fieldMapSettings.activeProfileId == -1)
-		{
 			return;
-		}
-		JSONNode jsonnode2 = jsonnode["debugProfile"];
-		if (jsonnode2 == null)
-		{
+		JSONNode allDebugProfiles = mainNode["debugProfile"];
+		if (allDebugProfiles == null)
 			return;
-		}
-		String aKey = "profile_" + SettingUtils.fieldMapSettings.activeProfileId;
-		JSONNode jsonnode3 = jsonnode2[aKey];
-		if (jsonnode3 == null)
-		{
+		JSONNode activeDebugProfile = allDebugProfiles["profile_" + SettingUtils.fieldMapSettings.activeProfileId];
+		if (activeDebugProfile == null)
 			return;
-		}
-		SettingUtils._ReadFieldMapSettingsFromJSONNode(jsonnode3);
+		SettingUtils._ReadFieldMapSettingsFromJSONNode(activeDebugProfile);
 	}
 
 	public static Vector3 ReadVector3(JSONNode node, String key)

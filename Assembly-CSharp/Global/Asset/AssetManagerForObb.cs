@@ -18,7 +18,7 @@ public class AssetManagerForObb
 	private static void _LoadAnimationFolderMapping()
 	{
 		AssetManagerForObb._animationInFolder = new Dictionary<String, List<String>>();
-		String filestr = AssetManager.LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", out _);
+		String filestr = AssetManager.LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt");
 		if (filestr == null)
 		{
 			global::Debug.LogWarning("Cannot load resource [AnimationFolderMapping]");
@@ -55,33 +55,23 @@ public class AssetManagerForObb
 		}
 	}
 
-	public static T Load<T>(String name, Boolean suppressError = false) where T : UnityEngine.Object
+	public static T Load<T>(String name) where T : UnityEngine.Object
 	{
-		T t = Resources.Load<T>(name);
-		if (t != (UnityEngine.Object)null)
+		T asset = Resources.Load<T>(name);
+		if (asset != null)
+			return asset;
+		String path = AssetManagerUtil.GetResourcesBasePath() + name;
+		path += AssetManagerUtil.GetAssetExtension<T>(name);
+		if (AssetManagerForObb.obbAssetBundle != null)
 		{
-			return t;
+			asset = AssetManagerForObb.obbAssetBundle.LoadAsset<T>(path);
+			if (asset != null)
+				return asset;
 		}
-		String text = AssetManagerUtil.GetResourcesBasePath() + name;
-		text += AssetManagerUtil.GetAssetExtension<T>(name);
-		Boolean flag = name.IndexOf("atlas_a") != -1;
-		if (AssetManagerForObb.obbAssetBundle != (UnityEngine.Object)null)
-		{
-			T t2 = AssetManagerForObb.obbAssetBundle.LoadAsset<T>(text);
-			if (t2 != (UnityEngine.Object)null)
-			{
-				return t2;
-			}
-		}
-		if (Application.platform != RuntimePlatform.Android && flag)
-		{
-			return (T)((Object)null);
-		}
-		if (!suppressError)
-		{
-			global::Debug.LogWarning("Cannot find " + name + " in bundles!!!");
-		}
-		return (T)((Object)null);
+		Boolean isAtlas = name.IndexOf("atlas_a") != -1;
+		if (Application.platform != RuntimePlatform.Android && isAtlas)
+			return null;
+		return null;
 	}
 
 	public static AssetManagerRequest LoadAsync<T>(String name) where T : UnityEngine.Object
@@ -122,21 +112,19 @@ public class AssetManagerForObb
 			return null;
 		}
 		name = AnimationFactory.GetRenameAnimationDirectory(name);
-		T[] array = Resources.LoadAll<T>(name);
-		if (array != null)
-		{
-			return array;
-		}
+		T[] assets = Resources.LoadAll<T>(name);
+		if (assets != null)
+			return assets;
 		if (AssetManagerForObb._animationInFolder.ContainsKey(name))
 		{
-			List<String> list = AssetManagerForObb._animationInFolder[name];
-			T[] array2 = new T[list.Count];
-			for (Int32 i = 0; i < list.Count; i++)
+			List<String> animList = AssetManagerForObb._animationInFolder[name];
+			assets = new T[animList.Count];
+			for (Int32 i = 0; i < animList.Count; i++)
 			{
-				String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(list[i]);
-				array2[i] = AssetManagerForObb.Load<T>(renameAnimationPath, false);
+				String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(animList[i]);
+				assets[i] = AssetManagerForObb.Load<T>(renameAnimationPath);
 			}
-			return array2;
+			return assets;
 		}
 		global::Debug.LogError("Cannot find " + name + " in bundles!!!");
 		return null;

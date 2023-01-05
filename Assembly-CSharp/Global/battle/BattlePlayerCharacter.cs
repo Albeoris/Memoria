@@ -70,7 +70,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 
 	public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
 	{
-		String path = btl_mot.BattleParameterList[(Int32)playerSerialNumber].ModelId;
+		String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;
 		GameObject gameObject = ModelFactory.CreateModel(path, true);
 		BattlePlayerCharacter.CreateTranceModel(btl, playerSerialNumber);
 		BattlePlayerCharacter.CheckToHideBattleModel(gameObject, playerSerialNumber);
@@ -80,7 +80,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 
 	private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
 	{
-		String path = btl_mot.BattleParameterList[(Int32)serial].TranceModelId;
+		String path = btl_mot.BattleParameterList[serial].TranceModelId;
 		btl.tranceGo = ModelFactory.CreateModel(path, true);
 		BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
 		btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);

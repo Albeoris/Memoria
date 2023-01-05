@@ -33,7 +33,7 @@ public partial class BattleHUD : UIScene
     public GameObject StatusContainer;
     public GameObject TransitionGameObject;
     public GameObject ScreenFadeGameObject;
-    
+
     private void Update()
     {
         if (PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI || PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.BattleHUD)
@@ -455,14 +455,9 @@ public partial class BattleHUD : UIScene
 
         if (_subMenuType == SubMenuType.Ability)
         {
-            CharacterCommand command = CharacterCommands.Commands[(Int32)_currentCommandId];
-            if (_currentSubMenuIndex >= command.Abilities.Length)
-                return true;
+            AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out _);
 
-            AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[PatchAbility(command.Abilities[_currentSubMenuIndex])];
-            Int32 mpCost = aaData.MP * btl.Player.Data.mpCostFactor / 100;
-
-            if (btl.CurrentMp < mpCost)
+            if (btl.CurrentMp < GetActionMpCost(aaData))
             {
                 FF9Sfx.FF9SFX_Play(101);
                 DisplayAbility();
@@ -482,8 +477,7 @@ public partial class BattleHUD : UIScene
                 return false;
             }
         }
-
-        if ((_subMenuType == SubMenuType.Item || _subMenuType == SubMenuType.Throw) && ff9item.FF9Item_GetCount(_itemIdList[_currentSubMenuIndex]) == 0)
+        else if ((_subMenuType == SubMenuType.Item || _subMenuType == SubMenuType.Throw) && ff9item.FF9Item_GetCount(_itemIdList[_currentSubMenuIndex]) == 0)
         {
             FF9Sfx.FF9SFX_Play(101);
             DisplayItem(_subMenuType == SubMenuType.Throw);
@@ -617,7 +611,7 @@ public partial class BattleHUD : UIScene
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)
         {
-            btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (UInt32)BattleAbilityId.Attack, enemy.Id, 0U);
+            btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, enemy.Id, 0U);
             InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;

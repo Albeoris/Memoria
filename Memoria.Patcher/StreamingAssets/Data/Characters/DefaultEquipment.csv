@@ -1,9 +1,9 @@
-# This file contains predefined equipment sets;;;;;;;
-# You must set at least 15 different items.;;;;;;;
-# -------------------------------------------------------------;;;;;;;
-# Comment;Id;# Weapon;Head;Wrist;Armor;Accessory;
-#;Int32;# UInt8;UInt8;UInt8;UInt8;UInt8;
-# -------------------------------------------------------------;;;;;;;
+# This file contains predefined equipment sets.
+# You must set at least 15 different items.
+# -----------------------------------------------
+# Comment;Id;Weapon;Head;Wrist;Armor;Accessory
+# ;Int32;Int32;Int32;Int32;Int32;Int32
+# -----------------------------------------------
 Zidane;0;1;112;88;149;-1;# 0000 - Zidane (Dagger, Leather Hat, Wrist, Leather Shirt)
 Vivi;1;70;112;-1;149;-1;# 0001 - Vivi (Mage Staff, Leather Hat, Leather Shirt)
 Garnet;2;57;-1;-1;150;-1;# 0002 - Garnet (Rod, Silk Shirt)
@@ -18,5 +18,5 @@ Blank;10;16;-1;-1;150;-1;# 0010 - Blank (Broadsword, Silk Shirt)
 Beatrix;11;26;138;104;179;192;# 0011 - Beatrix (Save the Queen, Iron Helm, Mythril Gloves, Chain Mail, Desert Boots)
 Marcus 2;12;17;114;88;151;-1;# 0012 - Marcus 2 (Iron Sword, Feather Hat, Wrist, Leather Plate)
 Beatrix 2;13;26;142;105;181;212;# 0013 - Beatrix 2 (Save the Queen, Cross Helm, Thunder Gloves, Plate Mail, Yellow Scarf)
-Blank 2;14;17;112;-1;150;-1;# 0014 - Blank 2(Iron Sword, Leather Hat, Silk Shirt)
+Blank 2;14;17;112;-1;150;-1;# 0014 - Blank 2 (Iron Sword, Leather Hat, Silk Shirt)
 Empty;15;-1;-1;-1;-1;-1;# 0015 - Empty

@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.SiliconSocial;
 using Memoria.Data;
+using FF9;
 
 public class BattleAchievement
 {
@@ -90,72 +91,73 @@ public class BattleAchievement
 		{
 			BattleAchievement.IncreaseNumber(ref BattleAchievement.achievement.summon_no, 1);
 			AchievementManager.ReportAchievement(AcheivementKey.Summon50, BattleAchievement.achievement.summon_no);
-			if (cmd.sub_no == (Byte)BattleAbilityId.Shiva)
+			BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+			if (abilId == BattleAbilityId.Shiva)
 			{
 				BattleAchievement.achievement.summon_shiva = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonShiva, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Ifrit)
+			else if (abilId == BattleAbilityId.Ifrit)
 			{
 				BattleAchievement.achievement.summon_ifrit = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonIfrit, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Ramuh)
+			else if (abilId == BattleAbilityId.Ramuh)
 			{
 				BattleAchievement.achievement.summon_ramuh = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonRamuh, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Atomos)
+			else if (abilId == BattleAbilityId.Atomos)
 			{
 				BattleAchievement.achievement.summon_atomos = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonAtomos, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Odin)
+			else if (abilId == BattleAbilityId.Odin)
 			{
 				BattleAchievement.achievement.summon_odin = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonOdin, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Leviathan)
+			else if (abilId == BattleAbilityId.Leviathan)
 			{
 				BattleAchievement.achievement.summon_leviathan = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonLeviathan, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Bahamut)
+			else if (abilId == BattleAbilityId.Bahamut)
 			{
 				BattleAchievement.achievement.summon_bahamut = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonBahamut, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Ark)
+			else if (abilId == BattleAbilityId.Ark)
 			{
 				BattleAchievement.achievement.summon_arc = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonArk, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Carbuncle1 || cmd.sub_no == (Byte)BattleAbilityId.Carbuncle2 || cmd.sub_no == (Byte)BattleAbilityId.Carbuncle3 || cmd.sub_no == (Byte)BattleAbilityId.Carbuncle4)
+			else if (abilId == BattleAbilityId.Carbuncle1 || abilId == BattleAbilityId.Carbuncle2 || abilId == BattleAbilityId.Carbuncle3 || abilId == BattleAbilityId.Carbuncle4)
 			{
-				if (cmd.sub_no == (Byte)BattleAbilityId.Carbuncle1)
+				if (abilId == BattleAbilityId.Carbuncle1)
 					BattleAchievement.achievement.summon_carbuncle_haste = true;
-				else if (cmd.sub_no == (Byte)BattleAbilityId.Carbuncle2)
+				else if (abilId == BattleAbilityId.Carbuncle2)
 					BattleAchievement.achievement.summon_carbuncle_protect = true;
-				else if (cmd.sub_no == (Byte)BattleAbilityId.Carbuncle3)
+				else if (abilId == BattleAbilityId.Carbuncle3)
 					BattleAchievement.achievement.summon_carbuncle_reflector = true;
-				else if (cmd.sub_no == (Byte)BattleAbilityId.Carbuncle4)
+				else if (abilId == BattleAbilityId.Carbuncle4)
 					BattleAchievement.achievement.summon_carbuncle_shell = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonCarbuncle, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Fenrir1 || cmd.sub_no == (Byte)BattleAbilityId.Fenrir2)
+			else if (abilId == BattleAbilityId.Fenrir1 || abilId == BattleAbilityId.Fenrir2)
 			{
-				if (cmd.sub_no == (Byte)BattleAbilityId.Fenrir1)
+				if (abilId == BattleAbilityId.Fenrir1)
 					BattleAchievement.achievement.summon_fenrir_earth = true;
-				else if (cmd.sub_no == (Byte)BattleAbilityId.Fenrir2)
+				else if (abilId == BattleAbilityId.Fenrir2)
 					BattleAchievement.achievement.summon_fenrir_wind = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonFenrir, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Phoenix)
+			else if (abilId == BattleAbilityId.Phoenix)
 			{
 				BattleAchievement.achievement.summon_phoenix = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonPhoenix, 1);
 			}
-			else if (cmd.sub_no == (Byte)BattleAbilityId.Madeen)
+			else if (abilId == BattleAbilityId.Madeen)
 			{
 				BattleAchievement.achievement.summon_madeen = true;
 				AchievementManager.ReportAchievement(AcheivementKey.SummonMadeen, 1);
@@ -260,7 +262,7 @@ public class BattleAchievement
 
 	public static void GetReachLv99Achievement(Int32 lv)
 	{
-		if (lv >= 99)
+		if (lv >= ff9level.LEVEL_COUNT)
 			AchievementManager.ReportAchievement(AcheivementKey.CharLv99, 1);
 	}
 
@@ -269,7 +271,7 @@ public class BattleAchievement
 		Boolean gotAchievement = false;
 		if (abilId == 0)
 			return gotAchievement;
-		if (abilId < 192)
+		if (ff9abil.IsAbilityActive(abilId))
 		{
 			if (!FF9StateSystem.Achievement.abilities.Contains(abilId))
 			{

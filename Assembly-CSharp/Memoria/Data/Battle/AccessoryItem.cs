@@ -1,6 +1,6 @@
 ﻿namespace Memoria.Data
 {
-    public enum AccessoryItem : byte
+    public enum AccessoryItem : int
     {
         DesertBoots = 192,
         MagicianShoes = 193,
@@ -33,6 +33,20 @@
         Extension = 220,
         Ribbon = 221,
         MaidenPrayer = 222,
-        AncientAroma = 223
+        AncientAroma = 223,
+        Garnet = 224,
+        Amethyst = 225,
+        Aquamarine = 226,
+        Diamond = 227,
+        Emerald = 228,
+        Moonstone = 229,
+        Ruby = 230,
+        Peridot = 231,
+        Sapphire = 232,
+        Opal = 233,
+        Topaz = 234,
+        LapisLazuli = 235,
+        PhoenixPinion = 249,
+        DarkMatter = 250
     }
 }

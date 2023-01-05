@@ -176,7 +176,7 @@ namespace Memoria
         public CharacterSerialNumber SerialNumber => btl_util.getSerialNumber(Data);
         public CharacterCategory PlayerCategory => IsPlayer ? Player.Category : 0;
         public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
-        public WeaponCategory WeapCategory => (WeaponCategory)(Data.weapon != null ? Data.weapon.Category : 0);
+        public WeaponCategory WeapCategory => Data.weapon != null ? Data.weapon.Category : 0;
         public BattleEnemy Enemy => new BattleEnemy(btl_util.getEnemyPtr(Data));
         public ENEMY_TYPE EnemyType => btl_util.getEnemyTypePtr(Data);
         public String Name => IsPlayer ? Player.Name : Enemy.Name;
@@ -229,12 +229,12 @@ namespace Memoria
         public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatus.Zombie);
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
-        public WeaponItem Weapon => (WeaponItem)btl_util.getWeaponNumber(Data);
-        public Byte Head => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Head : (Byte)255;
-        public Byte Wrist => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Wrist : (Byte)255;
-        public Byte Armor => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Armor : (Byte)255;
-        public Byte Accessory => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Accessory : (Byte)255;
-        public Boolean IsHealingRod => IsPlayer && Weapon == WeaponItem.HealingRod;
+        public RegularItem Weapon => btl_util.getWeaponNumber(Data);
+        public RegularItem Head => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Head : RegularItem.NoItem;
+        public RegularItem Wrist => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Wrist : RegularItem.NoItem;
+        public RegularItem Armor => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Armor : RegularItem.NoItem;
+        public RegularItem Accessory => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Accessory : RegularItem.NoItem;
+        public Boolean IsHealingRod => IsPlayer && Weapon == RegularItem.HealingRod;
 
         public Boolean[] StatModifier => this.Data.stat_modifier;
 
@@ -277,11 +277,6 @@ namespace Memoria
             get => Data.critical_rate_receive_bonus;
             set => Data.critical_rate_receive_bonus = value;
         }
-
-        public MutableBattleCommand AttackCommand => Commands[0];
-
-        private MutableBattleCommand[] _commands;
-        public MutableBattleCommand[] Commands => _commands ??= Data.cmd.Select(cmd => new MutableBattleCommand(cmd)).ToArray();
 
         public Boolean IsMonsterTransform => Data.is_monster_transform;
 
@@ -365,7 +360,7 @@ namespace Memoria
             if (Data.weapon == null)
                 return false;
 
-            return ((WeaponCategory)Data.weapon.Category & category) != 0;
+            return (Data.weapon.Category & category) != 0;
         }
 
         public Boolean HasSupportAbility(SupportAbility1 ability)
@@ -376,6 +371,16 @@ namespace Memoria
         public Boolean HasSupportAbility(SupportAbility2 ability)
         {
             return (Data.sa[1] & (UInt32)ability) != 0;
+        }
+
+        public Boolean HasSupportAbilityByIndex(SupportAbility saIndex)
+        {
+            return Data.saExtended.Contains(saIndex);
+            //Int32 index = (Int32)saIndex;
+            //if (abilId < 0) return false;
+            //if (abilId < 32) return HasSupportAbility((SupportAbility1)(1u << index));
+            //if (abilId < 64) return HasSupportAbility((SupportAbility2)(1u << index));
+            //return Data.saExtended.Contains(saIndex);
         }
 
         public Boolean TryRemoveStatuses(BattleStatus status)
@@ -539,11 +544,8 @@ namespace Memoria
                     continue;
                 if (scene.atk[i].Ref.ScriptId == 64) // Usually scripted dialogs
                     continue;
-                //if (scene.atk[i].Ref.ScriptId == 8 || scene.atk[i].Ref.ScriptId == 100) // Enemy attack / Enemy accurate attack
-				//{
-                //    attackAA = scene.atk[i];
-                //    continue;
-                //}
+                if (scene.header.TypCount + i < battleRawText.Length)
+                    scene.atk[i].Name = battleRawText[scene.header.TypCount + i];
                 sequenceSfx = seqreader.GetSFXOfSequence(i, out sequenceChannel, out sequenceContact);
                 if (sequenceSfx >= 0)
 				{
@@ -573,27 +575,21 @@ namespace Memoria
                     scene.atk[i].Info.Target = TargetType.SingleEnemy;
                 else if (scene.atk[i].Info.Target == TargetType.SingleEnemy)
                     scene.atk[i].Info.Target = TargetType.SingleAlly;
-                if (scene.header.TypCount + i < battleRawText.Length)
-                    scene.atk[i].Name = battleRawText[scene.header.TypCount + i];
                 aaList.Add(scene.atk[i]);
             }
-            CharacterCommands.Commands[(Byte)commandAsMonster].Type = CharacterCommandType.Ability;
-            CharacterCommands.Commands[(Byte)commandAsMonster].Abilities = new Byte[aaList.Count];
+            CharacterCommands.Commands[commandAsMonster].Type = CharacterCommandType.Ability;
+            CharacterCommands.Commands[commandAsMonster].ListEntry = new Int32[aaList.Count];
             for (i = 0; i < aaList.Count; i++)
-            {
-                CharacterCommands.Commands[(Byte)commandAsMonster].Abilities[i] = (Byte)(192 + i);
-                FF9StateSystem.Battle.FF9Battle.aa_data[192 + i] = aaList[i];
-                FF9TextTool.SetActionAbilityName(192 + i, aaList[i].Name);
-                //FF9TextTool.SetActionAbilityHelpDesc(192 + i, "");
-            }
-            FF9StateSystem.Battle.FF9Battle.aa_data[192 + aaList.Count] = attackAA;
-            FF9TextTool.SetActionAbilityName(192 + aaList.Count, String.Empty);
+                CharacterCommands.Commands[commandAsMonster].ListEntry[i] = i;
             Data.is_monster_transform = true;
             UIManager.Battle.ClearCursorMemorize(Position, commandAsMonster);
+            if (attackAA == null)
+                btl_cmd.KillSpecificCommand(Data, BattleCommandId.Attack);
             Data.monster_transform = new BTL_DATA.MONSTER_TRANSFORM();
             Data.monster_transform.base_command = commandToReplace;
             Data.monster_transform.new_command = commandAsMonster;
-            Data.monster_transform.attack = attackAA == null ? 0 : (UInt32)(192 + aaList.Count);
+            Data.monster_transform.attack = attackAA;
+            Data.monster_transform.spell = aaList;
             Data.monster_transform.replace_point = updatePts;
             Data.monster_transform.replace_stat = updateStat;
             Data.monster_transform.replace_defence = updateDef;
@@ -756,7 +752,7 @@ namespace Memoria
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;
-            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[(Int16)p.info.serial_no];
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
             Data.shadow_bone[0] = btlParam.ShadowData[0];
             Data.shadow_bone[1] = btlParam.ShadowData[1];
             btl_util.SetShadow(Data, btlParam.ShadowData[2], btlParam.ShadowData[3]);

@@ -393,7 +393,7 @@ public class SettingsState : MonoBehaviour
             {
                 if (ff9Item.count > 0 && ff9item.FF9Item_GetEquipPart(ff9Item.id) > -1)
                 {
-                    foreach (Byte abilId in ff9item._FF9Item_Data[ff9Item.id].ability)
+                    foreach (Int32 abilId in ff9item._FF9Item_Data[ff9Item.id].ability)
                     {
                         Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
                         if (abilIndex > -1)
@@ -407,10 +407,10 @@ public class SettingsState : MonoBehaviour
             }
             for (Int32 equipIndex = 0; equipIndex < 5; ++equipIndex)
             {
-                Byte itemId = player.equip[equipIndex];
-                if (itemId != Byte.MaxValue)
+                RegularItem itemId = player.equip[equipIndex];
+                if (itemId != RegularItem.NoItem)
                 {
-                    foreach (Byte abilId in ff9item._FF9Item_Data[itemId].ability)
+                    foreach (Int32 abilId in ff9item._FF9Item_Data[itemId].ability)
                     {
                         Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
                         if (abilIndex > -1)
@@ -426,7 +426,7 @@ public class SettingsState : MonoBehaviour
             {
                 foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.PresetId])
                 {
-                    if (paData.Id != 0 && paData.Id < 192)
+                    if (paData.Id != 0 && ff9abil.IsAbilityActive(paData.Id))
                     {
                         Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, paData.Id);
                         player.pa[abilIndex] = paData.Ap;
@@ -445,7 +445,7 @@ public class SettingsState : MonoBehaviour
         foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
         {
             player.SetMaxBonusBasisStatus();
-            ff9play.FF9Play_ChangeLevel(player, 99, false);
+            ff9play.FF9Play_ChangeLevel(player, ff9level.LEVEL_COUNT, false);
             Int32 num = player.max.capa - player.cur.capa;
             player.max.capa = 99;
             player.cur.capa = (Byte)(99 - num);

@@ -1,11 +1,10 @@
 ﻿using System;
+using Memoria.Data;
 
 public class FF9ITEM_DATA
 {
-	public FF9ITEM_DATA(UInt16 name, UInt16 help, UInt16 price, UInt64 equip, Byte shape, Byte color, Byte eq_lv, Byte bonus, Byte[] ability, Byte type, Byte sort, Byte pad)
+	public FF9ITEM_DATA(UInt32 price, UInt64 equip, Byte shape, Byte color, Single eq_lv, Int32 bonus, Int32[] ability, ItemType type, Single sort, Int32 weapon = -1, Int32 armor = -1, Int32 effect = -1)
 	{
-		this.name = name;
-		this.help = help;
 		this.price = price;
 		this.equip = equip;
 		this.shape = shape;
@@ -15,14 +14,13 @@ public class FF9ITEM_DATA
 		this.ability = ability;
 		this.type = type;
 		this.sort = sort;
-		this.pad = pad;
+		this.pad = 0;
+		this.weapon_id = weapon;
+		this.armor_id = armor;
+		this.effect_id = effect;
 	}
 
-	public UInt16 name;
-
-	public UInt16 help;
-
-	public UInt16 price;
+	public UInt32 price;
 
 	public UInt64 equip;
 
@@ -30,15 +28,19 @@ public class FF9ITEM_DATA
 
 	public Byte color;
 
-	public Byte eq_lv;
+	public Single eq_lv;
 
-	public Byte bonus;
+	public Int32 bonus;
 
-	public Byte[] ability;
+	public Int32[] ability;
 
-	public Byte type;
+	public ItemType type;
 
-	public Byte sort;
+	public Single sort;
 
 	public Byte pad;
+
+	public Int32 weapon_id;
+	public Int32 armor_id;
+	public Int32 effect_id;
 }

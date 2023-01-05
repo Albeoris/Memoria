@@ -25,17 +25,9 @@ namespace Memoria.Scripts.Battle
             if (!_v.CheckHasCommandItem())
                 return;
 
-            Byte itemId = _v.Command.Power;
-            BattleItem item = BattleItem.Find(itemId);
-            Byte itemScript = item.ScriptId;
-
-            MutableBattleCommand itemCommand = new MutableBattleCommand();
-            itemCommand.Id = BattleCommandId.Item;
-            itemCommand.AbilityId = BattleAbilityId.Void;
-            itemCommand.LoadAbility();
-            itemCommand.AbilityId = (BattleAbilityId)itemId;
-
-            SBattleCalculator.Calc(_v.Caster, _v.Target, itemCommand, itemScript);
+            RegularItem itemId = (RegularItem)_v.Command.Power;
+            MutableBattleCommand itemCommand = new MutableBattleCommand(_v.Caster, _v.Target.Id, itemId);
+            SBattleCalculator.CalcMain(_v.Caster, _v.Target, itemCommand);
             BattleItem.RemoveFromInventory(itemId);
             _v.PerformCalcResult = false;
         }

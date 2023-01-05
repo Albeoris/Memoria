@@ -15,7 +15,7 @@ namespace Memoria.Data
 
         public STAT_DATA Value;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
             Id = CsvParser.Int32(raw[1]);
@@ -54,7 +54,7 @@ namespace Memoria.Data
             Value = new STAT_DATA(priority, opr_cnt, conti_cnt, clear, invalid);
         }
 
-        public void WriteEntry(CsvWriter sw)
+        public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
             sw.String(Comment);
             sw.Int32(Id);

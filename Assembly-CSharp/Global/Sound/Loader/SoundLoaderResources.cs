@@ -16,18 +16,17 @@ public class SoundLoaderResources : ISoundLoader
 	public override void Load(SoundProfile profile, ISoundLoader.ResultCallback callback, SoundDatabase soundDatabase)
 	{
 		String akbPath = "Sounds/" + profile.ResourceID + ".akb";
-		String[] akbInfo = null;
 		Byte[] binAsset;
 		SoundLib.Log("Load: " + akbPath);
 		if (Configuration.Audio.PriorityToOGG)
 		{
 			binAsset = TryOpeningOgg(profile, callback);
 			if (binAsset == null)
-				binAsset = AssetManager.LoadBytes(akbPath, out akbInfo);
+				binAsset = AssetManager.LoadBytes(akbPath);
 		}
 		else
 		{
-			binAsset = AssetManager.LoadBytes(akbPath, out akbInfo);
+			binAsset = AssetManager.LoadBytes(akbPath);
 			if (binAsset == null)
 				binAsset = TryOpeningOgg(profile, callback);
 		}
@@ -40,6 +39,10 @@ public class SoundLoaderResources : ISoundLoader
 		// if (((binAsset[0] << 24) | (binAsset[1] << 16) | (binAsset[2] << 8) | binAsset[3]) == 0x4F676753)
 		IntPtr intPtr = Marshal.AllocHGlobal(binAsset.Length);
 		Marshal.Copy(binAsset, 0, intPtr, binAsset.Length);
+		String[] akbInfo = null;
+		String akbInfoPath = AssetManager.SearchAssetOnDisc(Path.ChangeExtension(akbPath, AssetManager.MemoriaInfoExtension), true, false);
+		if (!String.IsNullOrEmpty(akbInfoPath))
+			akbInfo = File.ReadAllLines(akbInfoPath);
 		if (akbInfo != null && akbInfo.Length > 0)
         {
 			// Assume that AKB header is always of size 304 (split "intPtr" into AkbBin + OggBin if ever that changes)

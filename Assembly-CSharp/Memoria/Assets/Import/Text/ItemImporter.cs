@@ -1,5 +1,6 @@
 using System;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -13,20 +14,16 @@ namespace Memoria.Assets
             String[] itemNames, itemHelps, itemBattle;
             ItemFormatter.Parse(entreis, out itemNames, out itemHelps, out itemBattle);
 
-            FF9TextTool.SetItemName(itemNames);
-            FF9TextTool.SetItemHelpDesc(itemHelps);
-            FF9TextTool.SetItemBattleDesc(itemBattle);
+            FF9TextTool.ImportArrayToDictionary<RegularItem>(itemNames, FF9TextTool.SetItemName);
+            FF9TextTool.ImportArrayToDictionary<RegularItem>(itemHelps, FF9TextTool.SetItemHelpDesc);
+            FF9TextTool.ImportArrayToDictionary<RegularItem>(itemBattle, FF9TextTool.SetItemBattleDesc);
         }
 
         protected override Boolean LoadInternal()
         {
-            String[] itemNames = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.ItemNames);
-            String[] itemHelps = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.ItemHelps);
-            String[] itemBattle = EmbadedSentenseLoader.LoadSentense(EmbadedTextResources.ItemBattle);
-
-            FF9TextTool.SetItemName(itemNames);
-            FF9TextTool.SetItemHelpDesc(itemHelps);
-            FF9TextTool.SetItemBattleDesc(itemBattle);
+            FF9TextTool.ImportWithCumulativeModFiles<RegularItem>(EmbadedTextResources.ItemNames, FF9TextTool.SetItemName);
+            FF9TextTool.ImportWithCumulativeModFiles<RegularItem>(EmbadedTextResources.ItemHelps, FF9TextTool.SetItemHelpDesc);
+            FF9TextTool.ImportWithCumulativeModFiles<RegularItem>(EmbadedTextResources.ItemBattle, FF9TextTool.SetItemBattleDesc);
             return true;
         }
     }

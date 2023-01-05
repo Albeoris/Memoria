@@ -6,6 +6,8 @@ namespace Memoria.Data
 {
     public sealed class ItemEffect : ICsvEntry
     {
+        public Int32 Id;
+
         public TargetType Targets;
         public Boolean DefaultAlly;
         public TargetDisplay Display;
@@ -24,9 +26,10 @@ namespace Memoria.Data
         {
             return new ItemEffect
             {
-                Targets = (TargetType)data.info.Target,
+                Id = -1,
+                Targets = data.info.Target,
                 DefaultAlly = data.info.DefaultAlly,
-                Display = (TargetDisplay)data.info.DisplayStats,
+                Display = data.info.DisplayStats,
                 AnimationId = data.info.VfxIndex,
                 Dead = data.info.ForDead,
                 DefaultDead = data.info.DefaultOnDead,
@@ -40,9 +43,14 @@ namespace Memoria.Data
             };
         }
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
+
+            if (metadata.HasOption($"Include{nameof(Id)}"))
+                Id = CsvParser.Int32(raw[index++]);
+            else
+                Id = -1;
 
             Targets = (TargetType)CsvParser.Byte(raw[index++]);
             DefaultAlly = CsvParser.Boolean(raw[index++]);
@@ -59,8 +67,11 @@ namespace Memoria.Data
             Status = (BattleStatus)CsvParser.UInt32(raw[index]);
         }
 
-        public void WriteEntry(CsvWriter sw)
+        public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
+            if (metadata.HasOption($"Include{nameof(Id)}"))
+                sw.Int32(Id);
+
             sw.Byte((Byte)Targets);
             sw.Boolean(DefaultAlly);
             sw.Byte((Byte)Display);

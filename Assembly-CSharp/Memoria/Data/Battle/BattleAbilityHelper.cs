@@ -40,12 +40,12 @@ namespace Memoria.Data
 
         public static Boolean ApplySpecialCommandCondition(CMD_DATA cmd)
         {
-            if (btl_util.GetCommandMainActionIndex(cmd) <= 0)
+            BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+            if (abilId == BattleAbilityId.Void)
                 return true;
             try
             {
                 String featureStr;
-                BattleAbilityId abilId = (BattleAbilityId)cmd.sub_no;
                 if (AbilityGilCost.TryGetValue(abilId, out featureStr))
                 {
                     PARTY_DATA partyState = FF9StateSystem.Common.FF9.party;
@@ -111,10 +111,10 @@ namespace Memoria.Data
 
         public static void SetCustomPriority(CMD_DATA cmd)
         {
-            if (btl_util.GetCommandMainActionIndex(cmd) <= 0)
+            BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+            if (abilId == BattleAbilityId.Void)
                 return;
             String featureStr;
-            BattleAbilityId abilId = (BattleAbilityId)cmd.sub_no;
             if (AbilityPriority.TryGetValue(abilId, out featureStr))
             {
                 try
@@ -147,7 +147,7 @@ namespace Memoria.Data
             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
         }
 
-        public static BattleAbilityId Patch(BattleAbilityId id, Int32 partyIndex)
+        public static BattleAbilityId Patch(BattleAbilityId id, PLAYER character)
         {
             String patchStr;
             if (AbilityPatch.TryGetValue(id, out patchStr))
@@ -157,7 +157,6 @@ namespace Memoria.Data
                     Expression e = new Expression(patchStr);
                     e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                     e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                    PLAYER character = FF9StateSystem.Common.FF9.party.member[partyIndex];
                     NCalcUtility.InitializeExpressionPlayer(ref e, character);
                     Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                     if (val >= 0)

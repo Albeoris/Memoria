@@ -48,6 +48,10 @@ public partial class BattleHUD : UIScene
     static BattleHUD()
     {
         CmdTitleTable = LoadBattleCommandTitles();
+        if (CmdTitleTable != null)
+            foreach (IdMap mappingId in CmdTitleTable)
+                if (FF9BattleDB.CharacterActions.ContainsKey(mappingId.Id))
+                    FF9BattleDB.CharacterActions[mappingId.Id].CastingTitleType = mappingId.MappedId;
 
         DebuffIconNames = new Dictionary<BattleStatus, String>
         {
@@ -103,7 +107,7 @@ public partial class BattleHUD : UIScene
     public static String FormatMagicSwordAbility(CMD_DATA pCmd)
     {
         // TODO: Move it to an external file
-        String abilityName = FF9TextTool.ActionAbilityName(pCmd.sub_no);
+        String abilityName = FF9TextTool.ActionAbilityName(btl_util.GetCommandMainActionIndex(pCmd));
         
         String result;
         if (TryFormatRussianMagicSwordAbility(abilityName, out result))
@@ -214,14 +218,14 @@ public partial class BattleHUD : UIScene
                 break;
             case CommandMenu.Ability1:
             {
-                CharacterCommandSet commandSet = CharacterCommands.CommandSets[(Int32)presetId];
+                CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
                 Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
                 result = commandSet.Get(underTrance, 0);
                 break;
             }
             case CommandMenu.Ability2:
             {
-                CharacterCommandSet commandSet = CharacterCommands.CommandSets[(Int32)presetId];
+                CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
                 Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
                 result = commandSet.Get(underTrance, 1);
                 break;
@@ -329,13 +333,13 @@ public partial class BattleHUD : UIScene
         {
             String inputPath = DataResources.Characters.Directory + DataResources.Characters.CommandTitlesFile;
             if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"[BattleHUD] Cannot load character command titles because a file does not exist: [{inputPath}].", inputPath);
+                return null;
 
             IdMap[] maps = CsvReader.Read<IdMap>(inputPath);
-            if (maps.Length < 192)
-                throw new NotSupportedException($"You must set titles for 192 battle commands, but there {maps.Length}.");
+            //if (maps.Length < 192)
+            //    throw new NotSupportedException($"You must set titles for 192 battle commands, but there {maps.Length}.");
 
-            EntryCollection<IdMap> result = EntryCollection.CreateWithDefaultElement(maps, g => g.Id);
+            EntryCollection<IdMap> result = EntryCollection.CreateWithDefaultElement(maps, g => (Int32)g.Id);
             for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
             {
                 inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CommandTitlesFile;
@@ -343,7 +347,7 @@ public partial class BattleHUD : UIScene
                 {
                     maps = CsvReader.Read<IdMap>(inputPath);
                     foreach (IdMap it in maps)
-                        result[it.Id] = it;
+                        result[(Int32)it.Id] = it;
                 }
             }
             return result;

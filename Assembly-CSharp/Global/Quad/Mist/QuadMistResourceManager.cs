@@ -79,10 +79,7 @@ public class QuadMistResourceManager : MonoBehaviour
 			Texture2D moddedAtlas = null;
 			String atlasOnDisc = AssetManager.SearchAssetOnDisc(text, true, false);
 			if (!String.IsNullOrEmpty(atlasOnDisc))
-			{
-				String[] atlasInfo = new String[0];
-				moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, ref atlasInfo, "");
-			}
+				moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
 			Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
 			List<String> list = new List<String>();
 			this.AddCenterTable(list);

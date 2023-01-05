@@ -15,7 +15,7 @@ namespace FF9
 	{
 		public static BattlePlayerCharacter.PlayerMotionStance[,] mot_stance;
 		public static HashSet<BattlePlayerCharacter.PlayerMotionIndex> unstoppable_mot;
-		public static EntryCollection<CharacterBattleParameter> BattleParameterList;
+		public static Dictionary<CharacterSerialNumber, CharacterBattleParameter> BattleParameterList;
 
 		static btl_mot()
 		{
@@ -107,38 +107,38 @@ namespace FF9
 		public static void Init()
 		{
 			BattleParameterList = LoadCharacterBattleParameters();
-			foreach (CharacterBattleParameter param in BattleParameterList)
+			foreach (CharacterBattleParameter param in BattleParameterList.Values)
 				AssetManager.UpdateAutoAnimMapping(param.ModelId, param.AnimationId);
 		}
 
-		private static EntryCollection<CharacterBattleParameter> LoadCharacterBattleParameters()
+		private static Dictionary<CharacterSerialNumber, CharacterBattleParameter> LoadCharacterBattleParameters()
 		{
 			try
 			{
-				String inputPath = DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile;
-				if (!File.Exists(inputPath))
-					throw new FileNotFoundException($"File with characters default equipments not found: [{inputPath}]");
-
-				CharacterBattleParameter[] param = CsvReader.Read<CharacterBattleParameter>(inputPath);
-				if (param.Length < 19)
-					throw new NotSupportedException($"You must set at least 19 different entries, but there {param.Length}.");
-
-				EntryCollection<CharacterBattleParameter> result = EntryCollection.CreateWithDefaultElement(param, p => (Int32)p.Id);
-				for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+				Dictionary<CharacterSerialNumber, CharacterBattleParameter> result = new Dictionary<CharacterSerialNumber, CharacterBattleParameter>();
+				CharacterBattleParameter[] btlParams;
+				String inputPath;
+				String[] dir = Configuration.Mod.AllFolderNames;
+				for (Int32 i = dir.Length - 1; i >= 0; i--)
 				{
-					inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CharacterBattleParametersFile;
+					inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CharacterBattleParametersFile;
 					if (File.Exists(inputPath))
 					{
-						param = CsvReader.Read<CharacterBattleParameter>(inputPath);
-						foreach (CharacterBattleParameter it in param)
-							result[(Int32)it.Id] = it;
+						btlParams = CsvReader.Read<CharacterBattleParameter>(inputPath);
+						foreach (CharacterBattleParameter it in btlParams)
+							result[it.Id] = it;
 					}
 				}
+				if (result.Count == 0)
+					throw new FileNotFoundException($"File with character battle parameters not found: [{DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile}].", DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile);
+				for (Int32 j = 0; j < 19; j++)
+					if (!result.ContainsKey((CharacterSerialNumber)j))
+						throw new NotSupportedException($"You must define at least the 19 battle parameters, with IDs between 0 and 18.");
 				return result;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "[ff9play] Load characters default equipments failed.");
+				Log.Error(ex, "[btl_mot] Load character battle parameters failed.");
 				UIManager.Input.ConfirmQuit();
 				return null;
 			}
@@ -325,6 +325,8 @@ namespace FF9
 					switch (btl.die_seq)
 					{
 						case 1:
+							if (btl_util.IsBtlUsingCommandMotion(btl, true) || btl_util.IsBtlBusy(btl, btl_util.BusyMode.QUEUED_CASTER))
+								return;
 							//btl_mot.setMotion(btl, (Byte)(4 + btl.bi.def_idle));
 							//btl.evt.animFrame = 0;
 							btl.die_seq++;
@@ -544,7 +546,7 @@ namespace FF9
 
 			CMD_DATA cmdUsed;
 			Boolean useCmdMotion = btl_util.IsBtlUsingCommandMotion(btl, false, out cmdUsed);
-			if (btl.bi.player == 0 || (btl.is_monster_transform && (btl.die_seq != 0 || (useCmdMotion && (cmdUsed.cmd_no == btl.monster_transform.new_command || cmdUsed.sub_no == btl.monster_transform.attack)))))
+			if (btl.bi.player == 0 || (btl.is_monster_transform && (btl.die_seq != 0 || (useCmdMotion && (cmdUsed.cmd_no == btl.monster_transform.new_command || cmdUsed.cmd_no == BattleCommandId.Attack)))))
 			{
 				if (useCmdMotion && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2 && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1)
 					targetAnim = currentAnim;
@@ -882,7 +884,7 @@ namespace FF9
 
 		public static void SetPlayerDefMotion(BTL_DATA btl, CharacterSerialNumber serial_no, UInt32 cnt)
 		{
-			String[] animSource = btl_mot.BattleParameterList[(Int32)serial_no].AnimationId;
+			String[] animSource = btl_mot.BattleParameterList[serial_no].AnimationId;
 			String[] animDest = FF9StateSystem.Battle.FF9Battle.p_mot[cnt];
 			for (Int32 i = 0; i < 34; i++)
 				animDest[i] = animSource[i];

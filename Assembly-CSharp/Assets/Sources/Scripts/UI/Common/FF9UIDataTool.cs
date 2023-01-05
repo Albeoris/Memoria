@@ -11,9 +11,9 @@ namespace Assets.Sources.Scripts.UI.Common
 {
 	public static class FF9UIDataTool
 	{
-		public static void DisplayItem(Int32 itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
+		public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
 		{
-			if (itemId != 255)
+			if (itemId != RegularItem.NoItem)
 			{
 				FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
 				Byte colorIndex = isEnable ? item.color : (Byte)15;
@@ -171,17 +171,11 @@ namespace Assets.Sources.Scripts.UI.Common
 				if (FF9StateSystem.Settings.cfg.win_type == 0UL)
 				{
 					if (FF9UIDataTool.grayAtlas == null)
-					{
-						String[] grayAtlasInfo;
-						FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", out grayAtlasInfo, false);
-					}
+						FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", false);
 					return FF9UIDataTool.grayAtlas;
 				}
 				if (FF9UIDataTool.blueAtlas == null)
-				{
-					String[] blueAtlasInfo;
-					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", out blueAtlasInfo, false);
-				}
+					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", false);
 				return FF9UIDataTool.blueAtlas;
 			}
 		}
@@ -191,10 +185,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			get
 			{
 				if (FF9UIDataTool.grayAtlas == null)
-				{
-					String[] atlasInfo;
-					FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", out atlasInfo, false);
-				}
+					FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", false);
 				return FF9UIDataTool.grayAtlas;
 			}
 		}
@@ -204,10 +195,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			get
 			{
 				if (FF9UIDataTool.blueAtlas == null)
-				{
-					String[] atlasInfo;
-					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", out atlasInfo, false);
-				}
+					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", false);
 				return FF9UIDataTool.blueAtlas;
 			}
 		}
@@ -217,10 +205,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			get
 			{
 				if (FF9UIDataTool.iconAtlas == null)
-				{
-					String[] atlasInfo;
-					FF9UIDataTool.iconAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Icon Atlas", out atlasInfo, false);
-				}
+					FF9UIDataTool.iconAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Icon Atlas", false);
 				return FF9UIDataTool.iconAtlas;
 			}
 		}
@@ -230,10 +215,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			get
 			{
 				if (FF9UIDataTool.generalAtlas == null)
-				{
-					String[] atlasInfo;
-					FF9UIDataTool.generalAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/General Atlas", out atlasInfo, false);
-				}
+					FF9UIDataTool.generalAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/General Atlas", false);
 				return FF9UIDataTool.generalAtlas;
 			}
 		}
@@ -243,10 +225,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			get
 			{
 				if (FF9UIDataTool.screenButtonAtlas == null)
-				{
-					String[] atlasInfo;
-					FF9UIDataTool.screenButtonAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Screen Button Atlas", out atlasInfo, false);
-				}
+					FF9UIDataTool.screenButtonAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Screen Button Atlas", false);
 				return FF9UIDataTool.screenButtonAtlas;
 			}
 		}
@@ -256,10 +235,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			get
 			{
 				if (FF9UIDataTool.tutorialAtlas == null)
-				{
-					String[] atlasInfo;
-					FF9UIDataTool.tutorialAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", out atlasInfo, false);
-				}
+					FF9UIDataTool.tutorialAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", false);
 				return FF9UIDataTool.tutorialAtlas;
 			}
 		}
@@ -662,7 +638,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				if (Configuration.Graphics.GarnetHair == 2)
 					return "face03";
 			}
-			return btl_mot.BattleParameterList[(Int32)serialNo].AvatarSprite;
+			return btl_mot.BattleParameterList[serialNo].AvatarSprite;
 		}
 
 		public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
@@ -703,8 +679,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			else
 			{
 				String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
-				String[] spriteInfo;
-				sprite = AssetManager.Load<Sprite>(path, out spriteInfo, false);
+				sprite = AssetManager.Load<Sprite>(path, false);
 				FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
 			}
 			return sprite;

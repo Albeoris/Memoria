@@ -2,7 +2,7 @@
 
 namespace Memoria.Data
 {
-	public enum CharacterSerialNumber : Byte
+	public enum CharacterSerialNumber : int
 	{
 		ZIDANE_DAGGER,
 		ZIDANE_SWORD,

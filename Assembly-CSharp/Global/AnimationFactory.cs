@@ -9,52 +9,35 @@ public class AnimationFactory
 	{
 		AnimationFactory.animationEventClip.Clear();
 		AnimationFactory.animationMapping.Clear();
-		String[] animInfo;
-		String text = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt", out animInfo);
-		if (text == null)
+		String animDB = AssetManager.LoadString("CommonAsset/EventEngine/EventAnimation/" + animationEventData + ".txt");
+		if (animDB == null)
 			return;
-		text = text.Replace("\r", String.Empty);
-		if (!text.StartsWith("animation:"))
-		{
+		animDB = animDB.Replace("\r", String.Empty);
+		if (!animDB.StartsWith("animation:"))
 			return;
-		}
-		String[] array = text.Split(new Char[]
+		String[] allLines = animDB.Split(new Char[]{ '\n' });
+		String[] allAnims = allLines[0].Replace("animation:", String.Empty).Split(new Char[]{ ',' });
+		for (Int32 i = 0; i < allAnims.Length; i++)
 		{
-			'\n'
-		});
-		String[] array2 = array[0].Replace("animation:", String.Empty).Split(new Char[]
-		{
-			','
-		});
-		String[] array3 = array2;
-		for (Int32 i = 0; i < (Int32)array3.Length; i++)
-		{
-			String text2 = array3[i];
-			if (!String.IsNullOrEmpty(text2) && !AnimationFactory.animationEventClip.ContainsKey(text2))
+			String animName = allAnims[i];
+			if (!String.IsNullOrEmpty(animName) && !AnimationFactory.animationEventClip.ContainsKey(animName))
 			{
-				String animationFolder = AnimationFactory.GetAnimationFolder(text2);
-				String text3 = "Animations/" + animationFolder + "/" + text2;
-				text3 = AnimationFactory.GetRenameAnimationPath(text3);
-				AnimationClip value = AssetManager.Load<AnimationClip>(text3, out animInfo, false);
-				AnimationFactory.animationEventClip.Add(text2, value);
+				String animationFolder = AnimationFactory.GetAnimationFolder(animName);
+				String animPath = "Animations/" + animationFolder + "/" + animName;
+				animPath = AnimationFactory.GetRenameAnimationPath(animPath);
+				AnimationClip value = AssetManager.Load<AnimationClip>(animPath, false);
+				AnimationFactory.animationEventClip.Add(animName, value);
 			}
 		}
-		Int32 num = (Int32)array.Length;
-		for (Int32 j = 1; j < num; j++)
+		for (Int32 i = 1; i < allLines.Length; i++)
 		{
-			String text4 = array[j];
-			if (!String.IsNullOrEmpty(text4))
+			String modelAnimDB = allLines[i];
+			if (!String.IsNullOrEmpty(modelAnimDB))
 			{
-				String text5 = text4.Split(new Char[]
-				{
-					':'
-				})[0];
-				text4 = text4.Replace(text5 + ":", String.Empty);
-				String[] value2 = text4.Split(new Char[]
-				{
-					','
-				});
-				AnimationFactory.animationMapping.Add(text5, value2);
+				String modelName = modelAnimDB.Split(new Char[]{ ':' })[0];
+				modelAnimDB = modelAnimDB.Replace(modelName + ":", String.Empty);
+				String[] animNames = modelAnimDB.Split(new Char[]{ ',' });
+				AnimationFactory.animationMapping.Add(modelName, animNames);
 			}
 		}
 	}
@@ -102,8 +85,7 @@ public class AnimationFactory
 			});
 			String text = "Animations/" + str + "/" + animationName;
 			text = AnimationFactory.GetRenameAnimationPath(text);
-			String[] animInfo;
-			AnimationClip clip = AssetManager.Load<AnimationClip>(text, out animInfo, false);
+			AnimationClip clip = AssetManager.Load<AnimationClip>(text, false);
 			component.AddClip(clip, animationName);
 		}
 	}

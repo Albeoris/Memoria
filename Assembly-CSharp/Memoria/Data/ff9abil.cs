@@ -21,6 +21,12 @@ namespace FF9
 {
     public static class ff9abil
     {
+        // Each ability (active/support) has 2 IDs:
+        // - Active Abilities have a BattleAbilityId (any number) and an integer ID (such that 0 <= (ID % 256) < 192)
+        // - Supporting Abilities have a SupportAbility (any number) and an integer ID (such that 192 <= (ID % 256) < 256)
+        // Thus that second ID can represent either AA or SA; it is used when something can refer to either one (eg. abilities taught by equipments)
+        // Warning: sometimes, an Int32 can actually be a BattleAbilityId or a SupportAbility directly (eg. CMD_DATA.sub_no when applicable)
+
         //private const Byte FF9ABIL_PLAYER_MAX = 8;
         //private const Byte FF9ABIL_EQUIP_MAX = 3;
         //private const Byte FF9ABIL_NONE = 0;
@@ -42,8 +48,8 @@ namespace FF9
         //private const Byte FF9ABIL_EVENT_SUMMON_GARNET = 18;
 
         public static Dictionary<CharacterPresetId, CharacterAbility[]> _FF9Abil_PaData;
-        public static EntryCollection<CharacterAbilityGems> _FF9Abil_SaData;
-        public static EntryCollection<SupportingAbilityFeature> _FF9Abil_SaFeature;
+        public static Dictionary<SupportAbility, CharacterAbilityGems> _FF9Abil_SaData;
+        public static Dictionary<SupportAbility, SupportingAbilityFeature> _FF9Abil_SaFeature;
 
         static ff9abil()
         {
@@ -52,38 +58,41 @@ namespace FF9
             _FF9Abil_SaFeature = LoadAllAbilityFeatures();
         }
 
-        public static Boolean FF9Abil_IsEnableSA(UInt32[] sa, Int32 abil_id)
+        public static Boolean FF9Abil_IsEnableSA(HashSet<SupportAbility> sa, SupportAbility saIndex)
         {
-            Int32 num = abil_id - 192;
-            return (sa[num >> 5] & 1 << num) != 0L;
+            return sa.Contains(saIndex);
         }
 
-        public static List<SupportingAbilityFeature> GetEnabledSA(UInt32[] sa)
+        public static Boolean FF9Abil_IsEnableSA(PLAYER player, SupportAbility saIndex)
+        {
+            return FF9Abil_IsEnableSA(player.saExtended, saIndex);
+        }
+
+        public static List<SupportingAbilityFeature> GetEnabledSA(HashSet<SupportAbility> saExtended)
         {
             List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
-            if (_FF9Abil_SaFeature.Contains(-1)) // Global
-                result.Add(_FF9Abil_SaFeature[-1]);
-            for (Int32 saIndex = 0; saIndex < 64; saIndex++)
-                if ((sa[saIndex >> 5] & 1 << saIndex) != 0L)
-                    result.Add(_FF9Abil_SaFeature[saIndex]);
-            if (_FF9Abil_SaFeature.Contains(-2)) // GlobalLast
-                result.Add(_FF9Abil_SaFeature[-2]);
+            if (_FF9Abil_SaFeature.ContainsKey((SupportAbility)(-1))) // Global
+                result.Add(_FF9Abil_SaFeature[(SupportAbility)(-1)]);
+            foreach (SupportAbility saIndex in saExtended)
+                result.Add(_FF9Abil_SaFeature[saIndex]);
+            if (_FF9Abil_SaFeature.ContainsKey((SupportAbility)(-2))) // GlobalLast
+                result.Add(_FF9Abil_SaFeature[(SupportAbility)(-2)]);
             return result;
         }
 
-        public static void FF9Abil_SetEnableSA(PLAYER player, Int32 abil_id, Boolean enable)
+        public static void FF9Abil_SetEnableSA(PLAYER player, SupportAbility saIndex, Boolean enable)
         {
-            UInt32[] numArray = player.sa;
-            Int32 num = abil_id - 192;
             if (enable)
-                numArray[num >> 5] |= (UInt32)(1 << num);
+                player.saExtended.Add(saIndex);
             else
-                numArray[num >> 5] &= (UInt32)~(1 << num);
-        }
-
-        public static Boolean FF9Abil_GetEnableSA(PLAYER player, Int32 abil_id)
-        {
-            return FF9Abil_IsEnableSA(player.sa, abil_id);
+                player.saExtended.Remove(saIndex);
+            if (saIndex <= SupportAbility.Void)
+            {
+                if (enable)
+                    player.sa[(Int32)saIndex >> 5] |= (UInt32)(1 << (Int32)saIndex);
+                else
+                    player.sa[(Int32)saIndex >> 5] &= (UInt32)~(1 << (Int32)saIndex);
+            }
         }
 
         public static Int32 FF9Abil_GetAp(PLAYER player, Int32 abil_id)
@@ -114,7 +123,6 @@ namespace FF9
             Int32 index = FF9Abil_GetIndex(player, abil_id);
             if (index < 0)
                 return 0;
-
             return _FF9Abil_PaData[player.PresetId][index].Ap;
         }
 
@@ -123,6 +131,13 @@ namespace FF9
             if (!_FF9Abil_PaData.ContainsKey(play.PresetId))
                 return false;
             return _FF9Abil_PaData[play.PresetId].Any(pa => pa.Ap > 0);
+        }
+
+        public static Boolean FF9Abil_HasSA(Character play)
+        {
+            if (!_FF9Abil_PaData.ContainsKey(play.PresetId))
+                return false;
+            return _FF9Abil_PaData[play.PresetId].Any(pa => pa.IsPassive);
         }
 
         public static Int32 FF9Abil_GetIndex(PLAYER player, Int32 abil_id)
@@ -155,6 +170,73 @@ namespace FF9
             return true;
         }
 
+        // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well
+        public static Boolean IsAbilityActive(Int32 abilId)
+        {
+            Int32 modId = GetAbilityModuledId(abilId);
+            return modId < 192;
+        }
+
+        public static Boolean IsAbilitySupport(Int32 abilId)
+        {
+            Int32 modId = GetAbilityModuledId(abilId);
+            return modId >= 192;
+        }
+
+        public static BattleAbilityId GetActiveAbilityFromAbilityId(Int32 abilId)
+        {
+            if (!IsAbilityActive(abilId))
+                return BattleAbilityId.Void;
+            Int32 poolNum = abilId / 256;
+            Int32 idInPool = abilId % 256;
+            return (BattleAbilityId)(poolNum * 192 + idInPool);
+        }
+
+        public static SupportAbility GetSupportAbilityFromAbilityId(Int32 abilId)
+        {
+            if (!IsAbilitySupport(abilId))
+                return SupportAbility.Void;
+            Int32 poolNum = abilId / 256;
+            Int32 idInPool = abilId % 256 - 192;
+            return (SupportAbility)(poolNum * 64 + idInPool);
+        }
+
+        public static Int32 GetAbilityIdFromActiveAbility(BattleAbilityId battleAbil)
+        {
+            Int32 idAsInt = (Int32)battleAbil;
+            Int32 poolNum = idAsInt / 192;
+            Int32 idInPool = idAsInt % 192;
+            return poolNum * 256 + idInPool;
+        }
+
+        public static Int32 GetAbilityIdFromSupportAbility(SupportAbility saIndex)
+        {
+            Int32 idAsInt = (Int32)saIndex;
+            Int32 poolNum = idAsInt / 64;
+            Int32 idInPool = idAsInt % 64;
+            return poolNum * 256 + idInPool + 192;
+        }
+
+        public static CharacterAbilityGems GetSupportAbilityGem(Int32 abilId)
+        {
+            return ff9abil._FF9Abil_SaData[GetSupportAbilityFromAbilityId(abilId)];
+        }
+
+        public static SupportingAbilityFeature GetSupportAbilityFeature(Int32 abilId)
+        {
+            return ff9abil._FF9Abil_SaFeature[GetSupportAbilityFromAbilityId(abilId)];
+        }
+
+        public static AA_DATA GetActionAbility(Int32 abilId)
+        {
+            return FF9StateSystem.Battle.FF9Battle.aa_data[GetActiveAbilityFromAbilityId(abilId)];
+        }
+
+        private static Int32 GetAbilityModuledId(Int32 abilId)
+        {
+            return abilId % 256;
+        }
+
         private static Dictionary<CharacterPresetId, CharacterAbility[]> LoadCharacterAbilities()
         {
             try
@@ -163,7 +245,7 @@ namespace FF9
                     throw new DirectoryNotFoundException($"[ff9abil] Cannot load character abilities because a directory does not exist: [{DataResources.Characters.Abilities.Directory}].");
 
                 Dictionary<CharacterPresetId, CharacterAbility[]> result = new Dictionary<CharacterPresetId, CharacterAbility[]>();
-                foreach (CharacterCommandSet cmdset in CharacterCommands.CommandSets)
+                foreach (CharacterCommandSet cmdset in CharacterCommands.CommandSets.Values)
                     LoadCharacterAbilities(result, cmdset.Id);
 
                 return result;
@@ -176,29 +258,29 @@ namespace FF9
             }
         }
 
-        private static EntryCollection<CharacterAbilityGems> LoadCharacterAbilityGems()
+        private static Dictionary<SupportAbility, CharacterAbilityGems> LoadCharacterAbilityGems()
         {
             try
             {
-                String inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.GemsFile;
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"File with ability gems not found: [{inputPath}]");
-
-                CharacterAbilityGems[] gems = CsvReader.Read<CharacterAbilityGems>(inputPath);
-                if (gems.Length != 64)
-                    throw new NotSupportedException($"You must set number of gems for 64 abilities, but there {gems.Length}. Any number of abilities will be available after a game stabilization.");
-
-                EntryCollection<CharacterAbilityGems> result = EntryCollection.CreateWithDefaultElement(gems, g => g.Id);
-                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+                Dictionary<SupportAbility, CharacterAbilityGems> result = new Dictionary<SupportAbility, CharacterAbilityGems>();
+                CharacterAbilityGems[] gems;
+                String inputPath;
+                String[] dir = Configuration.Mod.AllFolderNames;
+                for (Int32 i = dir.Length - 1; i >= 0; --i)
                 {
-                    inputPath = DataResources.Characters.Abilities.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Abilities.GemsFile;
+                    inputPath = DataResources.Characters.Abilities.ModDirectory(dir[i]) + DataResources.Characters.Abilities.GemsFile;
                     if (File.Exists(inputPath))
                     {
                         gems = CsvReader.Read<CharacterAbilityGems>(inputPath);
-                        foreach (CharacterAbilityGems it in gems)
-                            result[it.Id] = it;
+                        for (Int32 j = 0; j < gems.Length; j++)
+                            result[gems[j].Id] = gems[j];
                     }
                 }
+                if (result.Count == 0)
+                    throw new FileNotFoundException($"Cannot load supporting abilities because a file does not exist: [{DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.GemsFile}].", DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.GemsFile);
+                for (Int32 j = 0; j < 64; j++)
+                    if (!result.ContainsKey((SupportAbility)j))
+                        throw new NotSupportedException($"You must define at least the 64 supporting abilities, with IDs between 0 and 63.");
                 return result;
             }
             catch (Exception ex)
@@ -239,7 +321,7 @@ namespace FF9
             }
         }
 
-        private static EntryCollection<SupportingAbilityFeature> LoadAllAbilityFeatures()
+        private static Dictionary<SupportAbility, SupportingAbilityFeature> LoadAllAbilityFeatures()
         {
             try
             {
@@ -247,11 +329,11 @@ namespace FF9
                 if (!File.Exists(inputPath))
                     throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
 
-                EntryCollection<SupportingAbilityFeature> result = EntryCollection.CreateWithDefaultElement<SupportingAbilityFeature>(0);
+                Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
                 LoadAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
                 for (Int32 i = 0; i < 64; i++)
-                    if (!result.Contains(i))
-                        Log.Error($"[ff9abil] Ability features of SA {i} is missing from [{inputPath}]");
+                    if (!result.ContainsKey((SupportAbility)i))
+                        Log.Error($"[ff9abil] Ability features of SA {(SupportAbility)i} ({i}) is missing from [{inputPath}]");
                 for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
                 {
                     inputPath = DataResources.Characters.Abilities.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Abilities.SAFeaturesFile;
@@ -307,7 +389,7 @@ namespace FF9
             }
         }
 
-        private static void LoadAbilityFeatureFile(ref EntryCollection<SupportingAbilityFeature> entries, String input)
+        private static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
 		{
             MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|Global|GlobalLast).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
@@ -326,8 +408,8 @@ namespace FF9
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
                 if (String.Compare(abilMatches[i].Groups[1].Value, ">SA") == 0)
                 {
-                    entries[abilIndex] = new SupportingAbilityFeature();
-                    entries[abilIndex].ParseFeatures(abilIndex, input.Substring(startPos, endPos - startPos));
+                    entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
+                    entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
                 else
 				{

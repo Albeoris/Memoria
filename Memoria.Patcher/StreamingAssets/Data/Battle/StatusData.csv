@@ -1,9 +1,9 @@
-# This file contains data of statuses.;;;;;;;;;;;;;;;;;;
-# You must set 32 different items.;;;;;;;;;;;;;;;;;;
-# ----------------------------------------------------------------------------------------------------------------------------------;;;;;;;;;;;;;;;;;;
-# Comment;id;priority(unused);oprCount(tick);contiCount(duration);clear;invalid;
-#;Int32;UInt8;UInt8;UInt16;UInt32[];UInt32[];
-# ----------------------------------------------------------------------------------------------------------------------------------;;;;;;;;;;;;;;;;;;
+# This file contains data of statuses.
+# You must set 32 different items.
+# -----------------------------------------------
+# Comment;id;priority(unused);oprCount(tick);contiCount(duration);clear;invalid
+# ;Int32;UInt8;UInt8;UInt16;UInt32[];UInt32[]
+# -----------------------------------------------
 Petrify;0;2;0;0;Doom(28);Petrify(1), Venom(2), Virus(3), Silence(4), Blind(5), Trouble(6), Zombie(7), EasyKill(8), Death(9), LowHP(10), Confuse(11), Berserk(12), Stop(13), AutoLife(14), Trance(15), Defend(16), Poison(17), Sleep(18), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Heat(25), Freeze(26), Vanish(27), Doom(28), Mini(29), Reflect(30), Jump(31), GradualPetrify(32);# Petrify
 Venom;1;7;20;0;Defend(16), Poison(17);Venom(2), Poison(17);# Venom
 Virus;2;0;0;0;None(0);Virus(3);# Virus

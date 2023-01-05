@@ -42,11 +42,11 @@ namespace Memoria.Scripts.Battle
             if (Configuration.Hacks.StealingAlwaysWorks >= 1) // cheat
             {
 
-                if (enemy.StealableItems[3] != Byte.MaxValue)
+                if (enemy.StealableItems[3] != RegularItem.NoItem)
                     _v.StealItem(enemy, 3);
-                else if (enemy.StealableItems[2] != Byte.MaxValue)
+                else if (enemy.StealableItems[2] != RegularItem.NoItem)
                     _v.StealItem(enemy, 2);
-                else if (enemy.StealableItems[1] != Byte.MaxValue)
+                else if (enemy.StealableItems[1] != RegularItem.NoItem)
                     _v.StealItem(enemy, 1);
                 else
                     _v.StealItem(enemy, 0);
@@ -55,13 +55,13 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Caster.HasSupportAbility(SupportAbility1.MasterThief))
             {
-                if (enemy.StealableItems[3] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[3]))
+                if (enemy.StealableItems[3] != RegularItem.NoItem && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[3]))
                     _v.StealItem(enemy, 3);
-                else if (enemy.StealableItems[2] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[2]))
+                else if (enemy.StealableItems[2] != RegularItem.NoItem && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[2]))
                     _v.StealItem(enemy, 2);
-                else if (enemy.StealableItems[1] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[1]))
+                else if (enemy.StealableItems[1] != RegularItem.NoItem && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[1]))
                     _v.StealItem(enemy, 1);
-                else if (enemy.StealableItems[0] != Byte.MaxValue && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[0]))
+                else if (enemy.StealableItems[0] != RegularItem.NoItem && GameRandom.Next8() < Math.Max(32, (Int32)enemy.StealableItemRates[0]))
                     _v.StealItem(enemy, 0);
                 else
                     UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
@@ -84,13 +84,10 @@ namespace Memoria.Scripts.Battle
 
         private static Boolean HasStealableItems(BattleEnemy enemy)
         {
-            Boolean hasStealableItems = false;
             for (Int16 slot = 0; slot < 4; ++slot)
-            {
-                if (enemy.StealableItems[slot] != Byte.MaxValue)
-                    hasStealableItems = true;
-            }
-            return hasStealableItems;
+                if (enemy.StealableItems[slot] != RegularItem.NoItem)
+                    return true;
+            return false;
         }
     }
 }

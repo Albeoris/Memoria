@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Memoria.Data;
 
 public class ENEMY
 {
@@ -7,7 +8,7 @@ public class ENEMY
 	{
 		this.et = new ENEMY_TYPE();
 		this.info = new ENEMY.ENEMY_INFO();
-		this.steal_item = new Byte[4];
+		this.steal_item = new RegularItem[4];
 		this.steal_item_rate = new UInt16[4];
 	}
 
@@ -33,7 +34,7 @@ public class ENEMY
 
 	public ENEMY.ENEMY_INFO info;
 
-	public Byte[] steal_item;
+	public RegularItem[] steal_item;
 	public UInt16[] steal_item_rate;
 
 	public Vector3 base_pos;

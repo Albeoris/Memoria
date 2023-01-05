@@ -30,26 +30,26 @@ namespace Memoria.Scripts.Battle
             switch (_v.Command.AbilityId)
             {
                 case BattleAbilityId.Shiva:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.Opal);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.Opal);
                     break;
                 case BattleAbilityId.Ifrit:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.Topaz);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.Topaz);
                     break;
                 case BattleAbilityId.Ramuh:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.Peridot);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.Peridot);
                     break;
                 case BattleAbilityId.Leviathan:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.Aquamarine);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.Aquamarine);
                     break;
                 case BattleAbilityId.Bahamut:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.Garnet);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.Garnet);
                     break;
                 case BattleAbilityId.Ark:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.LapisLazuli);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.LapisLazuli);
                     break;
                 case BattleAbilityId.Fenrir1:
                 case BattleAbilityId.Fenrir2:
-                    _v.Context.AttackPower += (Int16)ff9item.FF9Item_GetCount((Int32)GemItem.Sapphire);
+                    _v.Context.AttackPower += ff9item.FF9Item_GetCount(RegularItem.Sapphire);
                     break;
                 case BattleAbilityId.Madeen:
                     _v.Context.AttackPower += _v.Caster.Level;

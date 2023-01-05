@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
 
         private void RemoveItem()
         {
-            Byte itemId = (Byte)_v.Command.HitRate;
+            RegularItem itemId = (RegularItem)_v.Command.HitRate;
             if (ff9item.FF9Item_GetCount(itemId) == 0)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);

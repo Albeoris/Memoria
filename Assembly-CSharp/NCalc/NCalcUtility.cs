@@ -19,6 +19,8 @@ namespace NCalc
             typeof(BattleAbilityId),
             typeof(WeaponItem),
             typeof(AccessoryItem),
+            typeof(GemItem),
+            typeof(RegularItem),
             typeof(BattleStatus),
             typeof(EffectElement),
             typeof(CharacterCategory),
@@ -74,7 +76,7 @@ namespace NCalc
             else if (name == "GetRandomBit" && args.Parameters.Length == 1)
                 args.Result = Comn.randomID((UInt32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetAbilityUsageCount" && args.Parameters.Length == 1)
-                args.Result = (Int32)GameState.AbilityUsage((Byte)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
+                args.Result = GameState.AbilityUsage((BattleAbilityId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue));
             else if (name == "GetEventGlobalByte" && args.Parameters.Length == 1)
@@ -215,9 +217,8 @@ namespace NCalc
             {
                 if (name == "HasSA" && args.Parameters.Length == 1)
                 {
-                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
-                    if (saIndex < 0) args.Result = false;
-                    else args.Result = ff9abil.FF9Abil_IsEnableSA(play.sa, 192 + (Int32)args.Parameters[0].Evaluate());
+                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 63);
+                    args.Result = ff9abil.FF9Abil_IsEnableSA(play.saExtended, (SupportAbility)saIndex);
                 }
             };
         }
@@ -236,7 +237,7 @@ namespace NCalc
                 }
                 else
                 {
-                    expr.Parameters["BonusItem" + (i + 1)] = (Int32)Byte.MaxValue;
+                    expr.Parameters["BonusItem" + (i + 1)] = (Int32)RegularItem.NoItem;
                     expr.Parameters["BonusItemCount" + (i + 1)] = 0;
                 }
         }
@@ -272,7 +273,7 @@ namespace NCalc
             expr.Parameters[prefix + "IsSlave"] = unit.Data.bi.slave == 1;
             expr.Parameters[prefix + "IsOutOfReach"] = unit.IsOutOfReach;
             expr.Parameters[prefix + "Level"] = (Int32)unit.Level;
-            expr.Parameters[prefix + "Exp"] = unit.IsPlayer ? unit.Player.Data.exp : 0;
+            expr.Parameters[prefix + "Exp"] = unit.IsPlayer ? unit.Player.Data.exp : 0u;
             expr.Parameters[prefix + "Speed"] = (Int32)unit.Dexterity;
             expr.Parameters[prefix + "Strength"] = (Int32)unit.Strength;
             expr.Parameters[prefix + "Magic"] = (Int32)unit.Magic;
@@ -302,9 +303,8 @@ namespace NCalc
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
                 {
-                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 64);
-                    if (saIndex < 32) args.Result = unit.HasSupportAbility((SupportAbility1)(1 << saIndex));
-                    else if (saIndex < 64) args.Result = unit.HasSupportAbility((SupportAbility2)(1 << saIndex));
+                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 63);
+                    args.Result = unit.HasSupportAbilityByIndex((SupportAbility)saIndex);
                 }
             };
         }
@@ -326,7 +326,7 @@ namespace NCalc
             expr.Parameters["EffectTargetFlags"] = (Int32)target.Flags;
             expr.Parameters["HPDamage"] = target.HpDamage;
             expr.Parameters["MPDamage"] = target.MpDamage;
-            expr.Parameters["FigureInfo"] = target.Data.fig_info;
+            expr.Parameters["FigureInfo"] = (Int32)target.Data.fig_info;
             expr.Parameters["Attack"] = context.Attack;
             expr.Parameters["AttackPower"] = context.AttackPower;
             expr.Parameters["DefencePower"] = context.DefensePower;
@@ -351,8 +351,8 @@ namespace NCalc
             expr.Parameters["AbilityStatus"] = (UInt32)command.AbilityStatus;
             expr.Parameters["AbilityElement"] = (Int32)command.Element;
             expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
-            expr.Parameters["ItemUseId"] = command.Id == BattleCommandId.Item || command.Id == BattleCommandId.AutoPotion ? (Int32)command.AbilityId : Byte.MaxValue;
-            expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[(Int32)command.AbilityId].shape : -1;
+            expr.Parameters["ItemUseId"] = (Int32)command.ItemId;
+            expr.Parameters["WeaponThrowShape"] = (Int32)(command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].shape : -1);
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
             expr.Parameters["TargetType"] = (Int32)command.TargetType;
             expr.Parameters["IsATBCommand"] = command.IsATBCommand;

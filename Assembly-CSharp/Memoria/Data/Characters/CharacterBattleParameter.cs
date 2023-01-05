@@ -18,10 +18,10 @@ namespace Memoria.Data
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 rawIndex = 0;
-            Id = (CharacterSerialNumber)CsvParser.Byte(raw[rawIndex++]);
+            Id = (CharacterSerialNumber)CsvParser.Int32(raw[rawIndex++]);
             AvatarSprite = CsvParser.String(raw[rawIndex++]);
             ModelId = CsvParser.String(raw[rawIndex++]);
             TranceModelId = CsvParser.String(raw[rawIndex++]);
@@ -46,9 +46,9 @@ namespace Memoria.Data
                 Array.Resize(ref StatusOffsetZ, 6);
         }
 
-        public void WriteEntry(CsvWriter writer)
+        public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
-            writer.Byte((Byte)Id);
+            writer.Int32((Int32)Id);
             writer.String(AvatarSprite);
             writer.String(ModelId);
             writer.String(TranceModelId);

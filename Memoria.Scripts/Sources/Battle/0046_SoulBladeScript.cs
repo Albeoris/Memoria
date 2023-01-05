@@ -20,18 +20,18 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            WeaponItem weaponNumber = _v.Caster.Weapon;
+            RegularItem weaponNumber = _v.Caster.Weapon;
             switch (weaponNumber)
             {
-                case WeaponItem.ButterflySword:
-                case WeaponItem.TheOgre:
-                case WeaponItem.Exploda:
-                case WeaponItem.RuneTooth:
-                case WeaponItem.AngelBless:
-                case WeaponItem.Sargatanas:
-                case WeaponItem.Masamune:
-                case WeaponItem.TheTower:
-                case WeaponItem.UltimaWeapon:
+                case RegularItem.ButterflySword:
+                case RegularItem.TheOgre:
+                case RegularItem.Exploda:
+                case RegularItem.RuneTooth:
+                case RegularItem.AngelBless:
+                case RegularItem.Sargatanas:
+                case RegularItem.Masamune:
+                case RegularItem.TheTower:
+                case RegularItem.UltimaWeapon:
                     break;
                 default:
                     _v.Context.Flags |= BattleCalcFlags.Miss;

@@ -138,7 +138,7 @@ public class btl_scrp
 		{
 			case 1000: cmd.tar_id = (UInt16)val; return;
 			case 1001: cmd.cmd_no = (BattleCommandId)val; return;
-			case 1002: cmd.sub_no = (Byte)val; return;
+			case 1002: cmd.sub_no = val; return;
 			case 1003: cmd.IsShortRange = val != 0; return;
 			case 1004: cmd.info.cursor = (Byte)val; return;
 			case 1005: cmd.info.stat = (Byte)val; return;
@@ -179,13 +179,13 @@ public class btl_scrp
 			case 10: cmd.aa.Ref.Elements = (Byte)val; return;
 			case 11: cmd.aa.Ref.Rate = (Byte)val; return;
 			case 12: cmd.aa.Category = (Byte)val; return;
-			case 13: cmd.aa.AddStatusNo = (Byte)val; return;
-			case 14: cmd.aa.MP = (Byte)val; return;
+			case 13: cmd.aa.AddStatusNo = (BattleStatusIndex)val; return;
+			case 14: cmd.aa.MP = val; return;
 			case 15: cmd.aa.Type = (Byte)val; return;
 			case 16: cmd.aa.Vfx2 = (UInt16)val; return;
 			case 17: cmd.tar_id = (UInt16)val; return;
 			case 18: cmd.cmd_no = (BattleCommandId)val; return;
-			case 19: cmd.sub_no = (Byte)val; return;
+			case 19: cmd.sub_no = val; return;
 		}
 	}
 	#endregion
@@ -302,39 +302,39 @@ public class btl_scrp
 			break;
 		case 100u: // access/modify an enemy's item to steal with SV_FunctionEnemy[100] and followings
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyPtr(btl).steal_item[0];
+				result = (Int32)btl_util.getEnemyPtr(btl).steal_item[0];
 			break;
 		case 101u:
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyPtr(btl).steal_item[1];
+				result = (Int32)btl_util.getEnemyPtr(btl).steal_item[1];
 			break;
 		case 102u:
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyPtr(btl).steal_item[2];
+				result = (Int32)btl_util.getEnemyPtr(btl).steal_item[2];
 			break;
 		case 103u:
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyPtr(btl).steal_item[3];
+				result = (Int32)btl_util.getEnemyPtr(btl).steal_item[3];
 			break;
 		case 104u: // access/modify an enemy's item to drop with SV_FunctionEnemy[104] and followings
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyTypePtr(btl).bonus.item[0];
+				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[0];
 			break;
 		case 105u:
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyTypePtr(btl).bonus.item[1];
+				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[1];
 			break;
 		case 106u:
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyTypePtr(btl).bonus.item[2];
+				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[2];
 			break;
 		case 107u:
 			if (btl.bi.player == 0)
-				result = btl_util.getEnemyTypePtr(btl).bonus.item[3];
+				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[3];
 			break;
 		case 108u:
 			if (btl.bi.player == 0)
-				result = (Int32)(btl_util.getEnemyTypePtr(btl).bonus.card);
+				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.card;
 			break;
 		case 109u: // flags (die_atk, die_dmg, then 6 custom flags)
 			if (btl.bi.player == 0)
@@ -554,49 +554,49 @@ public class btl_scrp
 		case 78u:
 			btl.cur.at = btl.max.at;
 			btl.sel_mode = 1;
-			btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SummonEiko, (UInt32)BattleAbilityId.TerraHoming, (UInt16)val, Comn.countBits((UInt64)val) > 1 ? 9u : 8u);
+			btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SummonEiko, (Int32)BattleAbilityId.TerraHoming, (UInt16)val, Comn.countBits((UInt64)val) > 1 ? 9u : 8u);
 			UIManager.Battle.FF9BMenu_EnableMenu(true);
 			break;
 		// The modifiers that Memoria adds
 		case 100u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyPtr(btl).steal_item[0] = (byte)val;
+				btl_util.getEnemyPtr(btl).steal_item[0] = (RegularItem)val;
 			break;
 		case 101u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyPtr(btl).steal_item[1] = (byte)val;
+				btl_util.getEnemyPtr(btl).steal_item[1] = (RegularItem)val;
 			break;
 		case 102u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyPtr(btl).steal_item[2] = (byte)val;
+				btl_util.getEnemyPtr(btl).steal_item[2] = (RegularItem)val;
 			break;
 		case 103u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyPtr(btl).steal_item[3] = (byte)val;
+				btl_util.getEnemyPtr(btl).steal_item[3] = (RegularItem)val;
 			break;
 		case 104u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[0] = (byte)val;
+				btl_util.getEnemyTypePtr(btl).bonus.item[0] = (RegularItem)val;
 			break;
 		case 105u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[1] = (byte)val;
+				btl_util.getEnemyTypePtr(btl).bonus.item[1] = (RegularItem)val;
 			break;
 		case 106u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[2] = (byte)val;
+				btl_util.getEnemyTypePtr(btl).bonus.item[2] = (RegularItem)val;
 			break;
 		case 107u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[3] = (byte)val;
+				btl_util.getEnemyTypePtr(btl).bonus.item[3] = (RegularItem)val;
 			break;
 		case 108u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.card = (byte)val;
+				btl_util.getEnemyTypePtr(btl).bonus.card = (UInt32)val;
 			break;
 		case 109u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyPtr(btl).info.flags = (byte)val;
+				btl_util.getEnemyPtr(btl).info.flags = (UInt16)val;
 			break;
 		case 110u:
 			btl.out_of_reach = val != 0;
@@ -616,7 +616,7 @@ public class btl_scrp
 			break;
 		case 114u:
 		{
-			ushort tar_id = (ushort)PersistenSingleton<EventEngine>.Instance.GetSysList(0);
+			UInt16 tar_id = (UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(0);
 			if (btl.bi.player == 0)
 			{
 				if (btl_cmd.CheckUsingCommand(btl.cmd[3]))
@@ -624,22 +624,22 @@ public class btl_scrp
 					if (btl_cmd.CheckUsingCommand(btl.cmd[4]))
 					{
 						if (!btl_cmd.CheckUsingCommand(btl.cmd[5]))
-							btl_cmd.SetEnemyCommand((ushort)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter3, (uint)val);
+							btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter3, val);
 					}
 					else
 					{
-						btl_cmd.SetEnemyCommand((ushort)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter2, (uint)val);
+						btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter2, val);
 					}
 				}
 				else
 				{
-					btl_cmd.SetEnemyCommand((ushort)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter1, (uint)val);
+					btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter1, val);
 				}
 			}
 			else
 			{
 				if (!btl_cmd.CheckUsingCommand(btl.cmd[1]))
-					btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.Counter, (uint)val, tar_id, (Comn.countBits(tar_id) > 1) ? 1u : 0u);
+					btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.Counter, val, tar_id, (Comn.countBits(tar_id) > 1) ? 1u : 0u);
 			}
 			break;
 		}

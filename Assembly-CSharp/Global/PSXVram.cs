@@ -58,12 +58,9 @@ public class PSXVram
 		for (Int32 i = 0; i < 16; i++)
 		{
 			String name = baseResPath + i.ToString("D4") + ".tim";
-			String[] timInfo;
-			Byte[] binAsset = AssetManager.LoadBytes(name, out timInfo);
+			Byte[] binAsset = AssetManager.LoadBytes(name);
 			if (binAsset == null)
-			{
 				break;
-			}
 			using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 			{
 				if (binaryReader.ReadUInt32() == 16u)
@@ -127,7 +124,7 @@ public class PSXVram
 
 	public void LoadRAWVram(String resPath)
 	{
-		this.rawData = AssetManager.LoadBytes(resPath, out _);
+		this.rawData = AssetManager.LoadBytes(resPath);
 	}
 
 	public void LoadRAWVram(Byte[] data)

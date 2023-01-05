@@ -1,17 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
 using NCalc;
 
 public static class ff9level
 {
-    public static readonly EntryCollection<CharacterBaseStats> CharacterBaseStats;
+	public const Int32 LEVEL_COUNT = 99;
+
+	public static readonly Dictionary<CharacterId, CharacterBaseStats> CharacterBaseStats;
     public static readonly CharacterLevelUp[] CharacterLevelUps;
 
     static ff9level()
@@ -20,29 +22,29 @@ public static class ff9level
         CharacterLevelUps = LoadLeveling();
     }
 
-    private static EntryCollection<CharacterBaseStats> LoadBaseStats()
+    private static Dictionary<CharacterId, CharacterBaseStats> LoadBaseStats()
     {
         try
-        {
-            String inputPath = DataResources.Characters.Directory + DataResources.Characters.BaseStatsFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"File with base stats of characters not found: [{inputPath}]");
-
-            CharacterBaseStats[] baseStats = CsvReader.Read<CharacterBaseStats>(inputPath);
-            if (baseStats.Length < 12)
-                throw new NotSupportedException($"You must set base stats for at least {12} characters, but there {baseStats.Length}.");
-
-			EntryCollection<CharacterBaseStats> result = EntryCollection.CreateWithDefaultElement(baseStats, e => e.Id);
-			for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+		{
+			Dictionary<CharacterId, CharacterBaseStats> result = new Dictionary<CharacterId, CharacterBaseStats>();
+			CharacterBaseStats[] stats;
+			String inputPath;
+			String[] dir = Configuration.Mod.AllFolderNames;
+			for (Int32 i = dir.Length - 1; i >= 0; --i)
 			{
-				inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.BaseStatsFile;
+				inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.BaseStatsFile;
 				if (File.Exists(inputPath))
 				{
-					baseStats = CsvReader.Read<CharacterBaseStats>(inputPath);
-					foreach (CharacterBaseStats it in baseStats)
-						result[it.Id] = it;
+					stats = CsvReader.Read<CharacterBaseStats>(inputPath);
+					for (Int32 j = 0; j < stats.Length; j++)
+						result[stats[j].Id] = stats[j];
 				}
 			}
+			if (result.Count == 0)
+				throw new FileNotFoundException($"Cannot load base stats because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.BaseStatsFile}].", DataResources.Characters.Directory + DataResources.Characters.BaseStatsFile);
+			for (Int32 j = 0; j < 12; j++)
+				if (!result.ContainsKey((CharacterId)j))
+					throw new NotSupportedException($"You must set base stats for at least 12 characters, with IDs between 0 and 11.");
 			return result;
         }
         catch (Exception ex)
@@ -66,8 +68,8 @@ public static class ff9level
 				if (File.Exists(inputPath))
 				{
 					levels = CsvReader.Read<CharacterLevelUp>(inputPath);
-					if (levels.Length < CharacterLevelUp.LevelCount)
-						throw new NotSupportedException($"You must set level up info for {CharacterLevelUp.LevelCount} levels, but there {levels.Length}.");
+					if (levels.Length < LEVEL_COUNT)
+						throw new NotSupportedException($"You must set level up info for {LEVEL_COUNT} levels, but there {levels.Length}.");
 					return levels;
 				}
 			}
@@ -76,8 +78,8 @@ public static class ff9level
                 throw new FileNotFoundException($"File with leveling info not found: [{inputPath}]");
 
             levels = CsvReader.Read<CharacterLevelUp>(inputPath);
-            if (levels.Length < CharacterLevelUp.LevelCount)
-                throw new NotSupportedException($"You must set level up info for {CharacterLevelUp.LevelCount} levels, but there {levels.Length}.");
+            if (levels.Length < LEVEL_COUNT)
+                throw new NotSupportedException($"You must set level up info for {LEVEL_COUNT} levels, but there {levels.Length}.");
 
 			return levels;
         }
@@ -92,7 +94,7 @@ public static class ff9level
     public static Int32 FF9Level_GetDex(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
 		if (lvup)
 		{
 			Int32 capaBonus = 0;
@@ -104,7 +106,7 @@ public static class ff9level
 		{
 			Expression e = new Expression(Configuration.Battle.SpeedStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
-			e.Parameters["Level"] = lv; // overrides "player.level"
+			e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
 			e.Parameters["SpeedBonus"] = (Int32)bonus.dex; // As it is, SpeedBonus contains only bonuses from equipment, no bonus is gotten from level ups
 			e.Parameters["SpeedBase"] = (Int32)baseStats.Dexterity;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -119,7 +121,7 @@ public static class ff9level
 	public static Int32 FF9Level_GetStr(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
 		if (lvup)
 		{
 			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 3;
@@ -131,7 +133,7 @@ public static class ff9level
 		{
 			Expression e = new Expression(Configuration.Battle.StrengthStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
-			e.Parameters["Level"] = lv; // overrides "player.level"
+			e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
 			e.Parameters["StrengthBonus"] = (Int32)bonus.str; // As it is, StrengthBonus contains both bonuses from equipment and from level ups (x3)
 			e.Parameters["StrengthBase"] = (Int32)baseStats.Strength;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -146,7 +148,7 @@ public static class ff9level
 	public static Int32 FF9Level_GetMgc(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
 		if (lvup)
 		{
 			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 3;
@@ -158,7 +160,7 @@ public static class ff9level
 		{
 			Expression e = new Expression(Configuration.Battle.MagicStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
-			e.Parameters["Level"] = lv; // overrides "player.level"
+			e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
 			e.Parameters["MagicBonus"] = (Int32)bonus.mgc; // As it is, MagicBonus contains both bonuses from equipment and from level ups (x3)
 			e.Parameters["MagicBase"] = (Int32)baseStats.Magic;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -173,7 +175,7 @@ public static class ff9level
 	public static Int32 FF9Level_GetWpr(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
 		if (lvup)
 		{
 			Int32 capaBonus = (player.cur.capa != 0) ? 0 : 1;
@@ -185,7 +187,7 @@ public static class ff9level
 		{
 			Expression e = new Expression(Configuration.Battle.SpiritStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
-			e.Parameters["Level"] = lv; // overrides "player.level"
+			e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
 			e.Parameters["SpiritBonus"] = (Int32)bonus.wpr; // As it is, SpiritBonus contains both bonuses from equipment and from level ups (x1)
 			e.Parameters["SpiritBase"] = (Int32)baseStats.Will;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -200,7 +202,7 @@ public static class ff9level
 	public static Int32 FF9Level_GetCap(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
-		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[(Int32)player.Index];
+		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
 		// It seems that "bonus.cap" was meant to give a small amount of magic stone bonuses (~1 every 6 levels)
 		// but only as long as all the stones are used when leveling up
 		// However, since "ff9play.FF9Play_Build" resets "player.cur", the bonus is always given instead
@@ -216,7 +218,7 @@ public static class ff9level
 		{
 			Expression e = new Expression(Configuration.Battle.MagicStoneStockFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
-			e.Parameters["Level"] = lv; // overrides "player.level"
+			e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
 			e.Parameters["MagicStoneBonus"] = (Int32)bonus.cap; // MagicStoneBonus contains the bonus from level ups (x5)
 			e.Parameters["MagicStoneBase"] = (Int32)baseStats.Gems;
 			e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -249,23 +251,23 @@ public static class ff9level
 		Int32 bonus = 0;
 		for (Int32 i = 0; i < 5; i++)
 		{
-			if (equip[i] != 255)
+			if (equip[i] != RegularItem.NoItem)
 			{
-				FF9ITEM_DATA ff9ITEM_DATA = ff9item._FF9Item_Data[equip[i]];
-				ItemStats equip_PRIVILEGE = ff9equip.ItemStatsData[ff9ITEM_DATA.bonus];
+				FF9ITEM_DATA itemData = ff9item._FF9Item_Data[equip[i]];
+				ItemStats equipPrivilege = ff9equip.ItemStatsData[itemData.bonus];
 				switch (base_type)
 				{
 				case 0:
-					bonus += equip_PRIVILEGE.dex;
+					bonus += equipPrivilege.dex;
 					break;
 				case 1:
-					bonus += equip_PRIVILEGE.str;
+					bonus += equipPrivilege.str;
 					break;
 				case 2:
-					bonus += equip_PRIVILEGE.mgc;
+					bonus += equipPrivilege.mgc;
 					break;
 				case 3:
-					bonus += equip_PRIVILEGE.wpr;
+					bonus += equipPrivilege.wpr;
 					break;
 				}
 			}

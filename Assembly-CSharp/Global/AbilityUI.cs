@@ -74,7 +74,7 @@ public class AbilityUI : UIScene
     private Boolean multiTarget;
     private Boolean canMultiTarget;
     private Dictionary<Int32, Int32> equipmentPartInAbilityDict;
-    private Dictionary<Int32, Int32[]> equipmentIdInAbilityDict;
+    private Dictionary<Int32, RegularItem[]> equipmentIdInAbilityDict;
 
     public Int32 CurrentPartyIndex
     {
@@ -98,7 +98,7 @@ public class AbilityUI : UIScene
         this.aaIdList = new List<Int32>();
         this.saIdList = new List<Int32>();
         this.equipmentPartInAbilityDict = new Dictionary<Int32, Int32>();
-        this.equipmentIdInAbilityDict = new Dictionary<Int32, Int32[]>();
+        this.equipmentIdInAbilityDict = new Dictionary<Int32, RegularItem[]>();
     }
 
     public override void Show(SceneVoidDelegate afterFinished = null)
@@ -181,11 +181,11 @@ public class AbilityUI : UIScene
                 {
                     Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
                     this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                    Int32 num = this.aaIdList[this.currentAbilityIndex];
-                    this.canMultiTarget = this.IsMulti(num);
-                    if (num != 0 && num < 192)
+                    Int32 abilId = this.aaIdList[this.currentAbilityIndex];
+                    this.canMultiTarget = this.IsMulti(abilId);
+                    if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
                     {
-                        if (this.CheckAAType(num, player) == AbilityType.Enable)
+                        if (this.CheckAAType(abilId, player) == AbilityType.Enable)
                         {
                             if (this.canMultiTarget)
                             {
@@ -244,11 +244,11 @@ public class AbilityUI : UIScene
                     {
                         Int32 abilityId = this.saIdList[this.currentAbilityIndex];
                         AbilityType abilityType = this.CheckSAType(abilityId, player);
-                        CharacterAbilityGems saData = ff9abil._FF9Abil_SaData[abilityId - 192];
+                        CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityId);
                         if (abilityType == AbilityType.Enable)
                         {
                             FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Data, abilityId, true);
+                            ff9abil.FF9Abil_SetEnableSA(player.Data, ff9abil.GetSupportAbilityFromAbilityId(abilityId), true);
                             player.Data.cur.capa -= saData.GemsCount;
                             ff9play.FF9Play_Update(player.Data);
                             this.DisplaySA();
@@ -257,7 +257,7 @@ public class AbilityUI : UIScene
                         else if (abilityType == AbilityType.Selected)
                         {
                             FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Data, abilityId, false);
+                            ff9abil.FF9Abil_SetEnableSA(player.Data, ff9abil.GetSupportAbilityFromAbilityId(abilityId), false);
                             player.Data.cur.capa += saData.GemsCount;
                             ff9play.FF9Play_Update(player.Data);
                             this.DisplaySA();
@@ -277,7 +277,7 @@ public class AbilityUI : UIScene
                 Boolean flag = false;
                 Int32 siblingIndex = go.transform.GetSiblingIndex();
                 PLAYER caster = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[this.aaIdList[this.currentAbilityIndex]];
+                AA_DATA aaData = ff9abil.GetActionAbility(this.aaIdList[this.currentAbilityIndex]);
                 if (!this.multiTarget)
                 {
                     flag = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[siblingIndex], aaData, aaData.Ref.ScriptId, 0U);
@@ -534,58 +534,27 @@ public class AbilityUI : UIScene
     private void DisplayHelp()
     {
         Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        ButtonGroupState component = this.UseSubMenu.GetComponent<ButtonGroupState>();
-        ButtonGroupState component2 = this.EquipSubMenu.GetComponent<ButtonGroupState>();
-        string text = Localization.Get("UseAbilityHelp");
+        ButtonGroupState useSubMenu = this.UseSubMenu.GetComponent<ButtonGroupState>();
+        ButtonGroupState equipSubMenu = this.EquipSubMenu.GetComponent<ButtonGroupState>();
+        String mobileSuffix = FF9StateSystem.MobilePlatform ? "Mobile" : "";
+        String localizationPrefix;
+        String help = Localization.Get("UseAbilityHelp");
         if (FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] != 0)
-        {
-            if (FF9StateSystem.MobilePlatform)
-            {
-                text += Localization.Get("UseAbilityNoMagicMobile");
-            }
-            else
-            {
-                text += Localization.Get("UseAbilityNoMagic");
-            }
-        }
-        else if (FF9StateSystem.MobilePlatform)
-        {
-            text += this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatusMobile") : Localization.Get("UseAbilityHelpForeverMobile");
-        }
+            localizationPrefix = "UseAbilityNoMagic";
+        else if (this.aaIdList.Count != 0)
+            localizationPrefix = "UseAbilityHelpStatus";
         else
-        {
-            text += this.aaIdList.Count != 0 ? Localization.Get("UseAbilityHelpStatus") : Localization.Get("UseAbilityHelpForever");
-        }
-        component.Help.Text = text;
-        text = Localization.Get("EquipAbilityHelp");
-        if (!ff9abil.FF9Abil_HasAp(player))
-        {
-            if (FF9StateSystem.MobilePlatform)
-            {
-                text += player.IsSubCharacter ? Localization.Get("EquipAbilityHelpNowMobile") : Localization.Get("EquipAbilityForeverMobile");
-            }
-            else
-            {
-                text += player.IsSubCharacter ? Localization.Get("EquipAbilityHelpNow") : Localization.Get("EquipAbilityForever");
-            }
-        }
-        else if (FF9StateSystem.MobilePlatform)
-        {
-            text += Localization.Get("EquipAbilityPlayerMobile");
-        }
+            localizationPrefix = "UseAbilityHelpForever";
+        help += Localization.Get(localizationPrefix + mobileSuffix);
+        useSubMenu.Help.Text = help;
+        help = Localization.Get("EquipAbilityHelp");
+        if (!ff9abil.FF9Abil_HasSA(player))
+            localizationPrefix = player.IsSubCharacter ? "EquipAbilityHelpNow" : "EquipAbilityForever";
         else
-        {
-            text += Localization.Get("EquipAbilityPlayer");
-        }
-        component2.Help.Text = text;
-        if (FF9StateSystem.PCPlatform)
-        {
-            this.HelpDespLabelGameObject.SetActive(true);
-        }
-        else
-        {
-            this.HelpDespLabelGameObject.SetActive(false);
-        }
+            localizationPrefix = "EquipAbilityPlayer";
+        help += Localization.Get(localizationPrefix + mobileSuffix);
+        equipSubMenu.Help.Text = help;
+        this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
     }
 
     private void DisplaySubMenuArrow(Boolean isEnable)
@@ -644,19 +613,19 @@ public class AbilityUI : UIScene
         if (isVisible)
         {
             Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-            Int32 index1;
+            Int32 abilId;
             AbilityType abilityType;
             Boolean isShowText;
             if (this.currentSubMenu == SubMenu.Use)
             {
-                index1 = this.aaIdList[this.currentAbilityIndex];
-                abilityType = this.CheckAAType(index1, player);
-                isShowText = (FF9StateSystem.Battle.FF9Battle.aa_data[index1].Type & 2) == 0;
+                abilId = this.aaIdList[this.currentAbilityIndex];
+                abilityType = this.CheckAAType(abilId, player);
+                isShowText = (ff9abil.GetActionAbility(abilId).Type & 2) == 0;
             }
             else
             {
-                index1 = this.saIdList[this.currentAbilityIndex];
-                abilityType = this.CheckSAType(index1, player);
+                abilId = this.saIdList[this.currentAbilityIndex];
+                abilityType = this.CheckSAType(abilId, player);
                 isShowText = true;
             }
             this.abilityInfoHud.ClearEquipmentIcon();
@@ -668,23 +637,23 @@ public class AbilityUI : UIScene
             {
                 this.abilityInfoHud.APBar.Slider.gameObject.SetActive(true);
                 if (ff9abil.FF9Abil_HasAp(player))
-                    FF9UIDataTool.DisplayAPBar(player.Data, index1, isShowText, this.abilityInfoHud.APBar);
-                Int32 index2 = 0;
-                if (this.equipmentPartInAbilityDict.ContainsKey(index1))
+                    FF9UIDataTool.DisplayAPBar(player.Data, abilId, isShowText, this.abilityInfoHud.APBar);
+                Int32 spriteSlot = 0;
+                if (this.equipmentPartInAbilityDict.ContainsKey(abilId))
                 {
-                    for (Int32 index3 = 0; index3 < 5; ++index3)
+                    for (Int32 i = 0; i < 5; ++i)
                     {
-                        if ((this.equipmentPartInAbilityDict[index1] & 1 << index3) != 0)
+                        if ((this.equipmentPartInAbilityDict[abilId] & (1 << i)) != 0)
                         {
-                            this.abilityInfoHud.EquipmentSpriteList[index2].alpha = 1f;
-                            FF9UIDataTool.DisplayItem(this.equipmentIdInAbilityDict[index1][index3], this.abilityInfoHud.EquipmentSpriteList[index2], null, true);
-                            ++index2;
+                            this.abilityInfoHud.EquipmentSpriteList[spriteSlot].alpha = 1f;
+                            FF9UIDataTool.DisplayItem(this.equipmentIdInAbilityDict[abilId][i], this.abilityInfoHud.EquipmentSpriteList[spriteSlot], null, true);
+                            ++spriteSlot;
                         }
                     }
-                    for (Int32 index3 = 0; index3 < this.abilityInfoHud.EquipmentSpriteList.Length; ++index3)
+                    for (Int32 i = 0; i < this.abilityInfoHud.EquipmentSpriteList.Length; ++i)
                     {
-                        if (index3 >= index2)
-                            this.abilityInfoHud.EquipmentSpriteList[index3].alpha = 0.0f;
+                        if (i >= spriteSlot)
+                            this.abilityInfoHud.EquipmentSpriteList[i].alpha = 0.0f;
                     }
                 }
             }
@@ -760,10 +729,11 @@ public class AbilityUI : UIScene
         }
         else
         {
+            BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilityListData.Id);
             itemListDetailHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, abilityListData.Type == AbilityType.Enable);
-            Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[abilityListData.Id]);
-            Int32 patchedId = this.PatchAbility(abilityListData.Id);	
+            Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[battleAbilId]);
+            BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
             itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedId);
             itemListDetailHud.NumberLabel.text = mp != 0 ? mp.ToString() : String.Empty;
             if (abilityListData.Type == AbilityType.CantSpell)
@@ -781,9 +751,9 @@ public class AbilityUI : UIScene
         }
     }
 
-    private Int32 PatchAbility(Int32 id)
+    private BattleAbilityId PatchAbility(BattleAbilityId id)
     {
-        return (Int32) BattleAbilityHelper.Patch((BattleAbilityId) id, this.currentPartyIndex);
+        return BattleAbilityHelper.Patch(id, FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex]);
     }
 
     private void DisplaySA()
@@ -829,7 +799,7 @@ public class AbilityUI : UIScene
         ItemListDetailWithIconHUD detailWithIconHud = new ItemListDetailWithIconHUD(item.gameObject, true);
         if (isInit)
             this.DisplayWindowBackground(item.gameObject, null);
-        CharacterAbilityGems saData = ff9abil._FF9Abil_SaData[abilityListData.Id - 192];
+        CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityListData.Id);
         if (abilityListData.Type == AbilityType.NoDraw)
         {
             detailWithIconHud.Content.SetActive(false);
@@ -840,7 +810,7 @@ public class AbilityUI : UIScene
         {
             detailWithIconHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(detailWithIconHud.Self, true);
-            detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(abilityListData.Id - 192);
+            detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(abilityListData.Id));
             detailWithIconHud.NumberLabel.text = saData.GemsCount.ToString();
             if (abilityListData.Type == AbilityType.CantSpell)
             {
@@ -875,7 +845,7 @@ public class AbilityUI : UIScene
                 detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
             }
             detailWithIconHud.Button.Help.Enable = true;
-            detailWithIconHud.Button.Help.Text = FF9TextTool.SupportAbilityHelpDescription(abilityListData.Id - 192);
+            detailWithIconHud.Button.Help.Text = FF9TextTool.SupportAbilityHelpDescription(ff9abil.GetSupportAbilityFromAbilityId(abilityListData.Id));
         }
     }
 
@@ -891,7 +861,7 @@ public class AbilityUI : UIScene
                 charHud.Content.SetActive(true);
                 FF9UIDataTool.DisplayCharacterDetail(player, charHud);
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), charHud.AvatarSprite, false);
-                switch (FF9StateSystem.Battle.FF9Battle.aa_data[this.aaIdList[this.currentAbilityIndex]].Info.DisplayStats)
+                switch (ff9abil.GetActionAbility(this.aaIdList[this.currentAbilityIndex]).Info.DisplayStats)
                 {
                     case TargetDisplay.None:
                     case TargetDisplay.Hp:
@@ -918,7 +888,8 @@ public class AbilityUI : UIScene
 
     private Boolean IsMulti(Int32 abil_id)
     {
-        switch (FF9BattleDB.CharacterActions[abil_id].Info.Target)
+        BattleAbilityId battleAbilityId = ff9abil.GetActiveAbilityFromAbilityId(abil_id);
+        switch (FF9BattleDB.CharacterActions[battleAbilityId].Info.Target)
         {
             case TargetType.ManyAny:
             case TargetType.ManyAlly:
@@ -930,20 +901,17 @@ public class AbilityUI : UIScene
 
         Int32 membersCount = 0;
         for (Int32 index = 0; index < 4; ++index)
-        {
             if (FF9StateSystem.Common.FF9.party.member[index] != null)
-            {
                 if (++membersCount > 1)
                     return true;
-            }
-        }
 
         return false;
     }
 
     private AbilityType CheckAAType(Int32 abilityId, Character player)
     {
-        AA_DATA aa_data = FF9BattleDB.CharacterActions[abilityId];
+        BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilityId);
+        AA_DATA aa_data = FF9BattleDB.CharacterActions[battleAbilId];
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
@@ -962,12 +930,12 @@ public class AbilityUI : UIScene
             }
         }
 
-        return (player.Data.status & 9) != 0 || (aa_data.Type & 1) == 0 || GetMp(aa_data) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
+        return (player.Data.status & (Int32)(BattleStatus.Petrify | BattleStatus.Silence)) != 0 || (aa_data.Type & 1) == 0 || GetMp(aa_data) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
     }
 
     private AbilityType CheckSAType(Int32 abilityId, Character player)
     {
-        if (abilityId < 192)
+        if (!ff9abil.IsAbilitySupport(abilityId))
             return AbilityType.NoDraw;
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
@@ -977,7 +945,7 @@ public class AbilityUI : UIScene
             return this.equipmentPartInAbilityDict.ContainsKey(abilityId) ? AbilityType.CantDisable : AbilityType.CantSpell;
         }
 
-        if (ff9abil.FF9Abil_IsEnableSA(player.Data.sa, abilityId))
+        if (ff9abil.FF9Abil_IsEnableSA(player.Data.saExtended, ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
             return AbilityType.Selected;
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
@@ -995,29 +963,29 @@ public class AbilityUI : UIScene
             }
         }
 
-        return ff9abil._FF9Abil_SaData[abilityId - 192].GemsCount > player.Data.cur.capa ? AbilityType.CantSpell : AbilityType.Enable;
+        return ff9abil.GetSupportAbilityGem(abilityId).GemsCount > player.Data.cur.capa ? AbilityType.CantSpell : AbilityType.Enable;
     }
 
     private static Int32 GetMp(AA_DATA aa_data)
     {
-        Int32 num = aa_data.MP;
+        Int32 mpCost = aa_data.MP;
         if ((aa_data.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
-            num <<= 2;
-        return num;
+            mpCost <<= 2;
+        return mpCost;
     }
 
-    private static Int32 GetCommand(Int32 abil_id, Character play)
+    private static BattleCommandId GetCommand(Int32 abil_id, Character play)
     {
+        BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abil_id);
         for (Int32 commandNumber = 0; commandNumber < 2; ++commandNumber)
         {
-            Int32 index2 = (Int32)CharacterCommands.CommandSets[(Int32)play.PresetId].GetRegular(commandNumber);
-            CharacterCommand ff9Command = CharacterCommands.Commands[index2];
-            if (ff9Command.Type != CharacterCommandType.Ability)
-                continue;
-            if (ff9Command.Abilities.Any(abilityIndex => abil_id == abilityIndex))
-                return index2;
+            BattleCommandId cmdId = CharacterCommands.CommandSets[play.PresetId].GetRegular(commandNumber);
+            CharacterCommand ff9Command = CharacterCommands.Commands[cmdId];
+            foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
+                if (BattleAbilityHelper.Patch(abilId, play.Data) == battleAbilId)
+                    return cmdId;
         }
-        return 0;
+        return BattleCommandId.None;
     }
 
     private void SwitchCharacter(Boolean updateAvatar)
@@ -1111,31 +1079,31 @@ public class AbilityUI : UIScene
             {
                 if (paData.Id != 0)
                 {
-                    if (paData.Id < 192)
-                        this.aaIdList.Add(paData.Id);
-                    else
+                    if (paData.IsPassive)
                         this.saIdList.Add(paData.Id);
+                    else
+                        this.aaIdList.Add(paData.Id);
                 }
             }
         }
         for (Int32 i = 0; i < 5; ++i)
         {
-            Byte itemId = player.Equipment[i];
-            if (itemId != Byte.MaxValue)
+            RegularItem itemId = player.Equipment[i];
+            if (itemId != RegularItem.NoItem)
             {
-                foreach (Byte abilId in ff9item._FF9Item_Data[itemId].ability)
+                foreach (Int32 abilId in ff9item._FF9Item_Data[itemId].ability)
                 {
                     if (!this.equipmentPartInAbilityDict.ContainsKey(abilId))
                         this.equipmentPartInAbilityDict[abilId] = 0;
                     this.equipmentPartInAbilityDict[abilId] |= 1 << i;
                     if (!this.equipmentIdInAbilityDict.ContainsKey(abilId))
-                        this.equipmentIdInAbilityDict[abilId] = new Int32[5];
+                        this.equipmentIdInAbilityDict[abilId] = new RegularItem[5];
                     this.equipmentIdInAbilityDict[abilId][i] = itemId;
                 }
             }
         }
-        this.isAAEnable = player.Data.cur.hp > 0 && (player.Data.status & 9) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
-        this.isSAEnable = ff9abil.FF9Abil_HasAp(player);
+        this.isAAEnable = player.Data.cur.hp > 0 && (player.Data.status & (Int32)(BattleStatus.Petrify | BattleStatus.Silence)) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
+        this.isSAEnable = ff9abil.FF9Abil_HasSA(player);
         this.useSubMenuLabel.color = !this.isAAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         this.equipSubMenuLabel.color = !this.isSAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         ButtonGroupState.SetButtonAnimation(this.UseSubMenu, this.isAAEnable);

@@ -1,7 +1,7 @@
 # This file contains world map transport control parameters.
 # ----------------------------------------------------------------------------------------------------------------------------------
-# type;flg_gake;speed_move;speed_rotation;speed_updown;speed_roll;speed_rollback;flg_fly;flg_upcam;fetchdist;music;se;encount;radius;camrot;type_cam;pad2;limit0;limit1;
-# Byte;Byte;Int16;Byte;Byte;SByte;SByte;Boolean;Boolean;Byte;Byte;Byte;Boolean;Int16;Boolean;Byte;UInt16;UInt32;UInt32;
+# type;flg_gake;speed_move;speed_rotation;speed_updown;speed_roll;speed_rollback;flg_fly;flg_upcam;fetchdist;music;se;encount;radius;camrot;type_cam;pad2;limit0;limit1
+# Byte;Byte;Int16;Byte;Byte;SByte;SByte;Boolean;Boolean;Byte;Byte;Byte;Boolean;Int16;Boolean;Byte;UInt16;UInt32;UInt32
 # ----------------------------------------------------------------------------------------------------------------------------------
 0;0;112;64;0;0;0;0;1;2;0;0;1;0;1;0;0;1074815;3640605951;# Walking
 0;0;200;64;0;0;0;0;1;2;1;0;0;300;1;1;0;1074815;3640605951;# Yellow Chocobo

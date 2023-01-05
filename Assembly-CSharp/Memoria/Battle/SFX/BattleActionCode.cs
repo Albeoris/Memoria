@@ -393,7 +393,7 @@ public class BattleActionCode
 			if ((codeEnd = args.IndexOf(']', codeStart + codeLen)) < 0)
 				args = args.Remove(codeStart);
 			else if (Int32.TryParse(args.Substring(codeStart + codeLen, codeEnd - codeStart - codeLen), out codeNum))
-				args = args.Substring(0, codeStart) + FF9TextTool.ActionAbilityName(codeNum) + args.Substring(codeEnd + 1);
+				args = args.Substring(0, codeStart) + FF9TextTool.ActionAbilityName((BattleAbilityId)codeNum) + args.Substring(codeEnd + 1);
 			else
 				args = args.Substring(0, codeStart) + args.Substring(codeEnd + 1);
 		}

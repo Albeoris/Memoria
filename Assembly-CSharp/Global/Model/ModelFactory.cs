@@ -60,79 +60,55 @@ public class ModelFactory
 
 	public static GameObject CreateModel(String path, Boolean isBattle = false)
 	{
-		String text = path;
+		String modelNameId = path;
 		path = ModelFactory.CheckUpscale(path);
 		String renameModelPath = ModelFactory.GetRenameModelPath(path);
-		UnityEngine.Object @object = AssetManager.Load<GameObject>(renameModelPath, out _, false);
-		if (@object == (UnityEngine.Object)null)
+		UnityEngine.Object model = AssetManager.Load<GameObject>(renameModelPath, false);
+		if (model == null)
+			return null;
+		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(model);
+		if (modelNameId == "GEO_MAIN_F3_ZDN" || modelNameId == "GEO_MAIN_F4_ZDN" || modelNameId == "GEO_MAIN_F5_ZDN")
 		{
-			return (GameObject)null;
-		}
-		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(@object);
-		if (text == "GEO_MAIN_F3_ZDN" || text == "GEO_MAIN_F4_ZDN" || text == "GEO_MAIN_F5_ZDN")
-		{
-			Renderer[] componentsInChildren = gameObject.GetComponentsInChildren<Renderer>();
-			Renderer[] array = componentsInChildren;
-			for (Int32 i = 0; i < (Int32)array.Length; i++)
+			Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+			for (Int32 i = 0; i < renderers.Length; i++)
 			{
-				Renderer renderer = array[i];
+				Renderer renderer = renderers[i];
 				String name = renderer.material.mainTexture.name;
-				Char c = name[name.Length - 1];
-				String text2 = ModelFactory.GetGEOID(text).ToString();
-				String str = text2 + "_" + c;
-				String name2 = "Models/2/" + text2 + "/" + str;
-				String[] pngInfo;
-				Texture texture = AssetManager.Load<Texture>(name2, out pngInfo, false);
+				Char textureId = name[name.Length - 1];
+				String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
+				String textureFileName = geoId + "_" + textureId;
+				String texturePath = "Models/2/" + geoId + "/" + textureFileName;
+				Texture texture = AssetManager.Load<Texture>(texturePath, false);
 				renderer.material.SetTexture("_MainTex", texture);
 			}
 		}
 		Shader shader;
-		if (text.Contains("GEO_SUB_W0"))
-		{
-			if (text.Contains("GEO_SUB_W0_025"))
-			{
-				shader = ShadersLoader.Find("WorldMap/ShadowActor");
-			}
-			else
-			{
-				shader = ShadersLoader.Find("WorldMap/Actor");
-			}
-		}
+		if (modelNameId.Contains("GEO_SUB_W0"))
+			shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");
 		else
+			shader = ShadersLoader.Find(isBattle ? "BattleMap_Common" : "Unlit/Transparent Cutout");
+		SkinnedMeshRenderer[] skinnedRenderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+		for (Int32 i = 0; i < skinnedRenderers.Length; i++)
+			skinnedRenderers[i].material.shader = shader;
+		MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+		for (Int32 k = 0; k < meshRenderers.Length; k++)
 		{
-			shader = ShadersLoader.Find((!isBattle) ? "Unlit/Transparent Cutout" : "BattleMap_Common");
-		}
-		SkinnedMeshRenderer[] componentsInChildren2 = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-		for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
-		{
-			componentsInChildren2[j].material.shader = shader;
-		}
-		MeshRenderer[] componentsInChildren3 = gameObject.GetComponentsInChildren<MeshRenderer>();
-		for (Int32 k = 0; k < (Int32)componentsInChildren3.Length; k++)
-		{
-			Material[] materials = componentsInChildren3[k].materials;
-			for (Int32 l = 0; l < (Int32)materials.Length; l++)
+			Material[] materials = meshRenderers[k].materials;
+			for (Int32 l = 0; l < materials.Length; l++)
 			{
 				Material material = materials[l];
-				String text3 = material.name.Replace("(Instance)", String.Empty);
-				if (componentsInChildren3[k].name == "Group_2")
-				{
+				String materialName = material.name.Replace("(Instance)", String.Empty);
+				if (meshRenderers[k].name == "Group_2")
 					material.shader = ShadersLoader.Find("BattleMap_Ground");
-				}
-				else if (text3.Contains("a"))
-				{
+				else if (materialName.Contains("a"))
 					material.shader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
-				}
 				else
-				{
 					material.shader = shader;
-				}
 			}
 		}
-		if (ModelFactory.garnetShortHairTable.Contains(text))
+		if (ModelFactory.garnetShortHairTable.Contains(modelNameId))
 		{
 		    Boolean garnetShortHair;
-
 		    if (Configuration.Graphics.GarnetHair == 1)
 		        garnetShortHair = false;
             else if (Configuration.Graphics.GarnetHair == 2)
@@ -142,52 +118,38 @@ public class ModelFactory
 
             if (garnetShortHair)
 			{
-				Renderer[] componentsInChildren4 = gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
-				Renderer[] array2 = componentsInChildren4;
-				for (Int32 m = 0; m < (Int32)array2.Length; m++)
-				{
-					Renderer renderer2 = array2[m];
-					renderer2.enabled = false;
-				}
+				Renderer[] renderers = gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
+				for (Int32 i = 0; i < renderers.Length; i++)
+					renderers[i].enabled = false;
 			}
 			else
 			{
-				Renderer[] componentsInChildren5 = gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
-				Renderer[] array3 = componentsInChildren5;
-				for (Int32 n = 0; n < (Int32)array3.Length; n++)
-				{
-					Renderer renderer3 = array3[n];
-					renderer3.enabled = false;
-				}
+				Renderer[] renderers = gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
+				for (Int32 i = 0; i < renderers.Length; i++)
+					renderers[i].enabled = false;
 			}
 		}
-		if (gameObject != (UnityEngine.Object)null)
+		if (gameObject != null)
 		{
-			AnimationFactory.AddAnimToGameObject(gameObject, text, (isBattle && !text.Contains("_B1_")) || text.Contains("_W0_"));
-			if (text.Contains("GEO_MON_"))
+			AnimationFactory.AddAnimToGameObject(gameObject, modelNameId, (isBattle && !modelNameId.Contains("_B1_")) || modelNameId.Contains("_W0_"));
+			if (modelNameId.Contains("GEO_MON_"))
 			{
-				if (ModelFactory.upscaleTable.ContainsKey(text))
-				{
-					text = ModelFactory.upscaleTable[text];
-				}
-				text = text.Replace("_UP0", "_B3");
-				AnimationFactory.AddAnimToGameObject(gameObject, text, (isBattle && !text.Contains("_B1_")) || text.Contains("_W0_"));
+				if (ModelFactory.upscaleTable.ContainsKey(modelNameId))
+					modelNameId = ModelFactory.upscaleTable[modelNameId];
+				modelNameId = modelNameId.Replace("_UP0", "_B3");
+				AnimationFactory.AddAnimToGameObject(gameObject, modelNameId, (isBattle && !modelNameId.Contains("_B1_")) || modelNameId.Contains("_W0_"));
 			}
 		}
-		if (gameObject != (UnityEngine.Object)null)
+		if (gameObject != null)
 		{
 			if (isBattle)
 			{
-				Transform childByName = gameObject.transform.GetChildByName("field_model");
-				if (childByName != (UnityEngine.Object)null)
+				Transform fieldSubModel = gameObject.transform.GetChildByName("field_model");
+				if (fieldSubModel != null)
 				{
-					Renderer[] componentsInChildren6 = childByName.GetComponentsInChildren<Renderer>();
-					Renderer[] array4 = componentsInChildren6;
-					for (Int32 num2 = 0; num2 < (Int32)array4.Length; num2++)
-					{
-						Renderer renderer4 = array4[num2];
-						renderer4.enabled = false;
-					}
+					Renderer[] renderers = fieldSubModel.GetComponentsInChildren<Renderer>();
+					for (Int32 i = 0; i < renderers.Length; i++)
+						renderers[i].enabled = false;
 				}
 				// TODO: Handle weapons that are parts of models
 				//Int32 weaponBoneID;
@@ -200,16 +162,12 @@ public class ModelFactory
 			}
 			else
 			{
-				Transform childByName2 = gameObject.transform.GetChildByName("battle_model");
-				if (childByName2 != (UnityEngine.Object)null)
+				Transform battleSubModel = gameObject.transform.GetChildByName("battle_model");
+				if (battleSubModel != null)
 				{
-					Renderer[] componentsInChildren7 = childByName2.GetComponentsInChildren<Renderer>();
-					Renderer[] array5 = componentsInChildren7;
-					for (Int32 num3 = 0; num3 < (Int32)array5.Length; num3++)
-					{
-						Renderer renderer5 = array5[num3];
-						renderer5.enabled = false;
-					}
+					Renderer[] renderers = battleSubModel.GetComponentsInChildren<Renderer>();
+					for (Int32 i = 0; i < renderers.Length; i++)
+						renderers[i].enabled = false;
 				}
 			}
 		}
@@ -223,11 +181,11 @@ public class ModelFactory
 
 	public static GameObject CreateDefaultWeaponForCharacterWhenUseAsEnemy(String path)
 	{
-		Int32 num = ModelFactory.defaultWeaponTable[path];
-		ItemAttack weapon = ff9weap.WeaponData[num];
-		String text = FF9BattleDB.GEO.GetValue((Int32)weapon.ModelId);
+		RegularItem weaponId = ModelFactory.defaultWeaponTable[path];
+		ItemAttack weapon = ff9item.GetItemWeapon(weaponId);
+		String geoName = FF9BattleDB.GEO.GetValue(weapon.ModelId);
 		global::Debug.LogWarning("-------------------------------------------------------------------------");
-		return ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + text + "/" + text, true);
+		return ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + geoName + "/" + geoName, true);
 	}
 
 	public static Int32 GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(String path)
@@ -319,14 +277,14 @@ public class ModelFactory
 		Texture[] newTextures = new Texture[newTexturePaths.Length];
 		for (Int32 i = 0; i < newTexturePaths.Length; i++)
 		{
-			Texture2D texture = AssetManager.Load<Texture2D>(newTexturePaths[i], out _, true);
+			Texture2D texture = AssetManager.Load<Texture2D>(newTexturePaths[i], true);
 			if (texture != null)
 			{
 				newTextures[i] = texture;
 			}
 			else
 			{
-				Byte[] raw = AssetManager.LoadBytes(newTexturePaths[i], out _);
+				Byte[] raw = AssetManager.LoadBytes(newTexturePaths[i]);
 				if (raw != null)
 					newTextures[i] = AssetManager.LoadTextureGeneric(raw);
 				else
@@ -1573,55 +1531,55 @@ public class ModelFactory
 		}
 	};
 
-	private static Dictionary<String, Int32> defaultWeaponTable = new Dictionary<String, Int32>
+	private static Dictionary<String, RegularItem> defaultWeaponTable = new Dictionary<String, RegularItem>
 	{
 		{
 			"GEO_MON_B3_168",
-			1
+			RegularItem.Dagger
 		},
 		{
 			"GEO_MON_B3_170",
-			70
+			RegularItem.MageStaff
 		},
 		{
 			"GEO_MON_B3_169",
-			57
+			RegularItem.Rod
 		},
 		{
 			"GEO_MON_B3_148",
-			16
+			RegularItem.Broadsword
 		},
 		{
 			"GEO_MON_B3_171",
-			16
+			RegularItem.Broadsword
 		},
 		{
 			"GEO_MON_B3_174",
-			31
+			RegularItem.Javelin
 		},
 		{
 			"GEO_MON_B3_172",
-			79
+			RegularItem.Fork
 		},
 		{
 			"GEO_MON_B3_173",
-			64
+			RegularItem.GolemFlute
 		},
 		{
 			"GEO_MON_B3_175",
-			41
+			RegularItem.CatClaws
 		},
 		{
 			"GEO_MON_B3_182",
-			41
+			RegularItem.CatClaws
 		},
 		{
 			"GEO_MON_B3_195",
-			16
+			RegularItem.Broadsword
 		},
 		{
 			"GEO_MON_B3_155",
-			26
+			RegularItem.SaveTheQueen
 		}
 	};
 

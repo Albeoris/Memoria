@@ -5,9 +5,9 @@ public class SB2_MON_PARM
 {
 	public SB2_MON_PARM()
 	{
-		this.WinItems = new Byte[4];
+		this.WinItems = new RegularItem[4];
 		this.WinItemRates = new UInt16[4];
-		this.StealItems = new Byte[4];
+		this.StealItems = new RegularItem[4];
 		this.StealItemRates = new UInt16[4];
 		this.Mot = new UInt16[6];
 		this.Mesh = new UInt16[2];
@@ -46,12 +46,12 @@ public class SB2_MON_PARM
 	public UInt32 WinExp;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte[] WinItems;
+	public RegularItem[] WinItems;
 	[Memoria.PatchableFieldAttribute]
 	public UInt16[] WinItemRates;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte[] StealItems;
+	public RegularItem[] StealItems;
 	[Memoria.PatchableFieldAttribute]
 	public UInt16[] StealItemRates;
 
@@ -102,7 +102,7 @@ public class SB2_MON_PARM
 	public Byte MagicalEvade;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte BlueMagic;
+	public Int32 BlueMagic;
 
 	public Byte[] Bone;
 

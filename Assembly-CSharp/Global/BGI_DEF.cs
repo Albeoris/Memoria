@@ -120,11 +120,8 @@ public class BGI_DEF
 	{
 		this.name = name;
 		if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
-		{
 			return;
-		}
-		String[] bgiInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(path + name + ".bgi", out bgiInfo);
+		Byte[] binAsset = AssetManager.LoadBytes(path + name + ".bgi");
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
 			this.ReadData(binaryReader);

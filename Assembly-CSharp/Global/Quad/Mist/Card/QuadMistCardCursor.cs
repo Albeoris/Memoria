@@ -108,10 +108,7 @@ public class QuadMistCardCursor : MonoBehaviour
 		Texture2D moddedAtlas = null;
 		String atlasOnDisc = AssetManager.SearchAssetOnDisc(atlasName, true, false);
 		if (!String.IsNullOrEmpty(atlasOnDisc))
-		{
-			String[] atlasInfo = new String[0];
-			moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, ref atlasInfo, "");
-		}
+			moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
 		for (Int32 i = 0; i <= 6; i++)
 			list.Add("card_cursor_" + i + ".png");
 		for (Int32 j = 0; j < spriteArray.Length; j++)

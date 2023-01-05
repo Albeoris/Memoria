@@ -13,22 +13,22 @@ namespace Memoria.Data
     public sealed class CharacterAbilityGems : ICsvEntry
     {
         public String Comment;
-        public Int32 Id;
+        public SupportAbility Id;
 
         public Byte GemsCount;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
-            Id = CsvParser.Int32(raw[1]);
+            Id = (SupportAbility)CsvParser.Int32(raw[1]);
 
             GemsCount = CsvParser.Byte(raw[2]);
         }
 
-        public void WriteEntry(CsvWriter writer)
+        public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
         {
             writer.String(Comment);
-            writer.Int32(Id);
+            writer.Int32((Int32)Id);
 
             writer.Byte(GemsCount);
         }
@@ -68,7 +68,7 @@ namespace Memoria.Data
             public Dictionary<String, String> Effect = new Dictionary<String, String>();
             public Boolean AsTarget = false;
             public Boolean EvenImmobilized = false;
-            public List<Int32> DisableSA = new List<Int32>();
+            public List<SupportAbility> DisableSA = new List<SupportAbility>();
         }
         public class SupportingAbilityEffectCommandStart
         {
@@ -77,7 +77,7 @@ namespace Memoria.Data
             public Boolean EvenImmobilized = false;
         }
 
-        public Int32 Id;
+        public SupportAbility Id;
         public List<SupportingAbilityEffectPermanent> PermanentEffect = new List<SupportingAbilityEffectPermanent>();
         public List<SupportingAbilityEffectBattleStartType> BattleStartEffect = new List<SupportingAbilityEffectBattleStartType>();
         public List<SupportingAbilityEffectBattleResult> BattleResultEffect = new List<SupportingAbilityEffectBattleResult>();
@@ -158,7 +158,7 @@ namespace Memoria.Data
                         c.Parameters["IsFlee"] = FF9StateSystem.Common.FF9.btl_result == 4;
                         c.Parameters["IsFleeByLuck"] = FF9StateSystem.Common.FF9.btl_result == 4 && (FF9StateSystem.Common.FF9.btl_flag & 4) == 0;
                         c.Parameters["FleeGil"] = fleeGil;
-                        c.Parameters["Status"] = play.status;
+                        c.Parameters["Status"] = (UInt32)play.status;
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
@@ -173,7 +173,7 @@ namespace Memoria.Data
                         e.Parameters["IsFlee"] = FF9StateSystem.Common.FF9.btl_result == 4;
                         e.Parameters["IsFleeByLuck"] = FF9StateSystem.Common.FF9.btl_result == 4 && (FF9StateSystem.Common.FF9.btl_flag & 4) == 0;
                         e.Parameters["FleeGil"] = fleeGil;
-                        e.Parameters["Status"] = play.status;
+                        e.Parameters["Status"] = (UInt32)play.status;
                         e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (String.Compare(formula.Key, "FleeGil") == 0) fleeGil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), fleeGil);
@@ -185,18 +185,20 @@ namespace Memoria.Data
                         else
                         {
                             for (Int32 j = 0; j < BattleResultUI.ItemMax; j++)
+                            {
                                 if (String.Compare(formula.Key, "BonusItem" + (j + 1)) == 0)
-								{
-                                    while (bonus_item.Count < j) bonus_item.Add(new FF9ITEM(Byte.MaxValue, 0));
-                                    bonus_item[j].id = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus_item[j].id);
-                                    if (bonus_item[j].id == Byte.MaxValue) bonus_item[j].count = 0;
+                                {
+                                    while (bonus_item.Count <= j) bonus_item.Add(new FF9ITEM(RegularItem.NoItem, 0));
+                                    bonus_item[j].id = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus_item[j].id);
+                                    if (bonus_item[j].id == RegularItem.NoItem) bonus_item[j].count = 0;
                                 }
                                 else if (String.Compare(formula.Key, "BonusItemCount" + (j + 1)) == 0)
                                 {
-                                    while (bonus_item.Count < j) bonus_item.Add(new FF9ITEM(Byte.MaxValue, 0));
+                                    while (bonus_item.Count <= j) bonus_item.Add(new FF9ITEM(RegularItem.NoItem, 0));
                                     bonus_item[j].count = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus_item[j].count);
-                                    if (bonus_item[j].count == 0) bonus_item[j].id = Byte.MaxValue;
+                                    if (bonus_item[j].count == 0) bonus_item[j].id = RegularItem.NoItem;
                                 }
+                            }
                         }
                     }
                 }
@@ -226,7 +228,7 @@ namespace Memoria.Data
 
         public void TriggerOnAbility(BattleCalculator calc, String when, Boolean asTarget)
         {
-            if (Id >= 0 && calc.Context.DisabledSA[Id])
+            if (Id >= 0 && calc.Context.DisabledSA.Contains(Id))
                 return;
             Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatus.NoReaction) : !calc.Caster.IsUnderAnyStatus(BattleStatus.NoReaction);
             for (Int32 i = 0; i < AbilityEffect.Count; i++)
@@ -339,7 +341,7 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "EffectFlags") == 0) context.Flags = (BattleCalcFlags)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt16)context.Flags);
                         else if (String.Compare(formula.Key, "DamageModifierCount") == 0) context.DamageModifierCount = (SByte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.DamageModifierCount);
                         else if (String.Compare(formula.Key, "TranceIncrease") == 0) context.TranceIncrease = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.TranceIncrease);
-                        else if (String.Compare(formula.Key, "ItemSteal") == 0) context.ItemSteal = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.ItemSteal);
+                        else if (String.Compare(formula.Key, "ItemSteal") == 0) context.ItemSteal = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)context.ItemSteal);
                         else if (String.Compare(formula.Key, "Gil") == 0) GameState.Gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), GameState.Gil);
                         else if (String.Compare(formula.Key, "Counter") == 0)
 						{
@@ -359,8 +361,8 @@ namespace Memoria.Data
                         }
                         else if (String.Compare(formula.Key, "AutoItem") == 0)
                         {
-                            Int32 itemId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), 236);
-                            if (Configuration.Battle.AutoPotionOverhealLimit >= 0 && Id == 56 && asTarget && (itemId == 236 || itemId == 237))
+                            RegularItem itemId = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)RegularItem.Potion);
+                            if (Configuration.Battle.AutoPotionOverhealLimit >= 0 && Id == SupportAbility.AutoPotion && asTarget && (itemId == RegularItem.Potion || itemId == RegularItem.HiPotion))
                             {
                                 // A bit hacky but painlessly keeps the "AutoPotionOverhealLimit" option
                                 btl_abil.CheckAutoItemAbility(target, command);
@@ -371,9 +373,9 @@ namespace Memoria.Data
                                 {
                                     UIManager.Battle.ItemRequest(itemId);
                                     if (asTarget)
-                                        btl_cmd.SetCounter(target.Data, BattleCommandId.AutoPotion, itemId, target.Id);
+                                        btl_cmd.SetCounter(target.Data, BattleCommandId.AutoPotion, (Int32)itemId, target.Id);
                                     else
-                                        btl_cmd.SetCounter(caster.Data, BattleCommandId.AutoPotion, itemId, caster.Id);
+                                        btl_cmd.SetCounter(caster.Data, BattleCommandId.AutoPotion, (Int32)itemId, caster.Id);
                                 }
                             }
                         }
@@ -388,9 +390,8 @@ namespace Memoria.Data
                     if (target.ResistStatus != tResistStat) target.ResistStatus = tResistStat;
                     if (target.PermanentStatus != tAutoStat) btl_stat.MakeStatusesPermanent(target.Data, tAutoStat & ~target.PermanentStatus, true);
                     if (target.CurrentStatus != tCurStat) btl_stat.AlterStatuses(target.Data, tCurStat & ~target.CurrentStatus);
-                    foreach (Int32 saIndex in AbilityEffect[i].DisableSA)
-                        if (saIndex < 64)
-                            context.DisabledSA[saIndex] = true;
+                    foreach (SupportAbility disSA in AbilityEffect[i].DisableSA)
+                        context.DisabledSA.Add(disSA);
                 }
         }
 
@@ -465,7 +466,7 @@ namespace Memoria.Data
                 }
         }
 
-        public void ParseFeatures(Int32 id, String featureCode)
+        public void ParseFeatures(SupportAbility id, String featureCode)
         {
             Id = id;
             MatchCollection codeMatches = new Regex(@"^(Permanent|BattleStart|BattleResult|StatusInit|Ability|Command)\b", RegexOptions.Multiline).Matches(featureCode);
@@ -576,7 +577,7 @@ namespace Memoria.Data
                     if (disableSA.Success)
                         foreach (Capture saValueStr in disableSA.Groups[1].Captures)
                             if (Int32.TryParse(saValueStr.Value, out saValue))
-                                newEffect.DisableSA.Add(saValue);
+                                newEffect.DisableSA.Add((SupportAbility)saValue);
                     AbilityEffect.Add(newEffect);
                 }
                 else if (String.Compare(saCode, "Command") == 0)

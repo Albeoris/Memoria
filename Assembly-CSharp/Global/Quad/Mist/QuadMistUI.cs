@@ -49,8 +49,7 @@ public class QuadMistUI : UIScene
 			this.BuildCard();
 			this.UpdateAmountLabel();
 		}
-		String[] atlasInfo;
-		this.textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", out atlasInfo, false);
+		this.textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", false);
 		PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
 		this.DisplayInfo();
 		this.DisplayCardList();

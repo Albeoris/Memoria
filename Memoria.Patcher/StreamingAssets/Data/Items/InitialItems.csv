@@ -1,9 +1,9 @@
 ﻿# This file contains the items with which the player starts a new game.
 # You can set any number of entries.
-# ---------------------------------------------------------------------
-# ItemID;Count;
-# UInt8;UInt8
-# ---------------------------------------------------------------------
+# -----------------------------------------------
+# ItemID;Count
+# Int32;UInt8
+# -----------------------------------------------
 236;7;# Potion
 237;2;# Hi-Potion
 238;2;# Ether

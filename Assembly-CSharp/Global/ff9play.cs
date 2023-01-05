@@ -53,8 +53,8 @@ public static class ff9play
     public static readonly Byte[] FF9PLAY_STAT_MAX = { 50, 99, 99, 50 };
 
     private static Boolean _FF9Play_Face;
-    private static EntryCollection<CharacterEquipment> DefaultEquipment;
-    private static EntryCollection<CharacterParameter> CharacterParameterList;
+    private static Dictionary<EquipmentSetId, CharacterEquipment> DefaultEquipment;
+    private static Dictionary<CharacterId, CharacterParameter> CharacterParameterList;
 
     public static void FF9Play_Init()
     {
@@ -62,14 +62,14 @@ public static class ff9play
         CharacterParameterList = LoadCharacterParameters();
         btl_mot.Init();
 
-        foreach (CharacterParameter param in CharacterParameterList)
+        foreach (CharacterParameter param in CharacterParameterList.Values)
         {
             NGUIText.RegisterCustomNameKeywork(param.NameKeyword, param.Id);
             FF9StateSystem.Common.FF9.player[param.Id] = new PLAYER();
         }
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         FF9Play_SetFaceDirty(false);
-        foreach (CharacterParameter param in CharacterParameterList)
+        foreach (CharacterParameter param in CharacterParameterList.Values)
             FF9Play_New(param.Id);
         FF9Play_Add(FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Zidane));
         FF9Play_SetParty(0, CharacterId.Zidane);
@@ -80,29 +80,29 @@ public static class ff9play
         ff9StateGlobal.party.summon_flag = 0;
     }
 
-    private static EntryCollection<CharacterEquipment> LoadCharacterDefaultEquipment()
+    private static Dictionary<EquipmentSetId, CharacterEquipment> LoadCharacterDefaultEquipment()
     {
         try
         {
-            String inputPath = DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"File with characters default equipments not found: [{inputPath}]");
-
-            CharacterEquipment[] equipment = CsvReader.Read<CharacterEquipment>(inputPath);
-            if (equipment.Length < 15)
-                throw new NotSupportedException($"You must set at least 15 different entries, but there {equipment.Length}.");
-
-            EntryCollection<CharacterEquipment> result = EntryCollection.CreateWithDefaultElement(equipment, e => e.Id);
-            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            Dictionary<EquipmentSetId, CharacterEquipment> result = new Dictionary<EquipmentSetId, CharacterEquipment>();
+            CharacterEquipment[] equips;
+            String inputPath;
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = dir.Length - 1; i >= 0; --i)
             {
-                inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.DefaultEquipmentsFile;
+                inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.DefaultEquipmentsFile;
                 if (File.Exists(inputPath))
                 {
-                    equipment = CsvReader.Read<CharacterEquipment>(inputPath);
-                    foreach (CharacterEquipment it in equipment)
-                        result[it.Id] = it;
+                    equips = CsvReader.Read<CharacterEquipment>(inputPath);
+                    for (Int32 j = 0; j < equips.Length; j++)
+                        result[equips[j].Id] = equips[j];
                 }
             }
+            if (result.Count == 0)
+                throw new FileNotFoundException($"Cannot load equipment sets because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile}].", DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile);
+            for (Int32 j = 0; j < 15; j++)
+                if (!result.ContainsKey((EquipmentSetId)j))
+                    throw new NotSupportedException($"You must define at least the 15 equipment sets, with IDs between 0 and 14.");
             return result;
         }
         catch (Exception ex)
@@ -113,29 +113,29 @@ public static class ff9play
         }
     }
 
-    private static EntryCollection<CharacterParameter> LoadCharacterParameters()
+    private static Dictionary<CharacterId, CharacterParameter> LoadCharacterParameters()
     {
         try
         {
-            String inputPath = DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"File with character parameters not found: [{inputPath}]");
-
-            CharacterParameter[] param = CsvReader.Read<CharacterParameter>(inputPath);
-            if (param.Length < 12)
-                throw new NotSupportedException($"You must set at least 12 different entries, but there {param.Length}.");
-
-            EntryCollection<CharacterParameter> result = EntryCollection.CreateWithDefaultElement(param, p => (Int32)p.Id);
-            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+            Dictionary<CharacterId, CharacterParameter> result = new Dictionary<CharacterId, CharacterParameter>();
+            CharacterParameter[] characters;
+            String inputPath;
+            String[] dir = Configuration.Mod.AllFolderNames;
+            for (Int32 i = dir.Length - 1; i >= 0; --i)
             {
-                inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CharacterParametersFile;
+                inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CharacterParametersFile;
                 if (File.Exists(inputPath))
                 {
-                    param = CsvReader.Read<CharacterParameter>(inputPath);
-                    foreach (CharacterParameter it in param)
-                        result[(Int32)it.Id] = it;
+                    characters = CsvReader.Read<CharacterParameter>(inputPath);
+                    for (Int32 j = 0; j < characters.Length; j++)
+                        result[characters[j].Id] = characters[j];
                 }
             }
+            if (result.Count == 0)
+                throw new FileNotFoundException($"Cannot load character parameters because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile}].", DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile);
+            for (Int32 j = 0; j < 12; j++)
+                if (!result.ContainsKey((CharacterId)j))
+                    throw new NotSupportedException($"You must define at least 12 character parameters, with IDs between 0 and 11.");
             return result;
         }
         catch (Exception ex)
@@ -149,7 +149,7 @@ public static class ff9play
     public static void FF9Play_New(CharacterId slotId)
     {
         PLAYER play = FF9StateSystem.Common.FF9.player[slotId];
-        CharacterParameter parameter = CharacterParameterList[(Int32)slotId];
+        CharacterParameter parameter = CharacterParameterList[slotId];
         play.info = new PLAYER_INFO(parameter.Id, CharacterSerialNumber.ZIDANE_DAGGER, parameter.DefaultRow, parameter.DefaultWinPose, 0, parameter.DefaultMenuType);
         play.pa = new Byte[ff9abil._FF9Abil_PaData.ContainsKey(play.info.menu_type) ? ff9abil._FF9Abil_PaData[play.info.menu_type].Length : 0];
         play.status = 0;
@@ -166,7 +166,7 @@ public static class ff9play
 
     public static void FF9Play_UpdateSerialNumber(PLAYER player)
     {
-        CharacterParameter parameter = CharacterParameterList[(Int32)player.info.slot_no];
+        CharacterParameter parameter = CharacterParameterList[player.info.slot_no];
         player.info.serial_no = parameter.GetSerialNumber();
     }
 
@@ -293,8 +293,6 @@ public static class ff9play
         info.Base = play.basis;
         info.cur_hp = play.cur.hp;
         info.cur_mp = play.cur.mp;
-        for (Int32 i = 0; i < 1; ++i)
-            info.sa[i] = play.sa[i];
         info.equip.Absorb(play.equip);
         FF9Play_GetSkill(ref info, ref skill);
         play.elem.dex = skill.Base[0];
@@ -308,7 +306,7 @@ public static class ff9play
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
         play.mpCostFactor = 100;
-        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play.sa))
+        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play.saExtended))
             saFeature.TriggerOnEnable(play);
         if (play.max.hp > FF9PLAY_HP_MAX)
             play.max.hp = FF9PLAY_HP_MAX;
@@ -336,14 +334,14 @@ public static class ff9play
                 [3] = info.Base.wpr
             }
         };
-        if (info.equip[0] != Byte.MaxValue)
-            skill.defParam[0] = ff9weap.WeaponData[info.equip[0]].Ref.Power;
+        if (info.equip[0] != RegularItem.NoItem)
+            skill.defParam[0] = ff9item.GetItemWeapon(info.equip[0]).Ref.Power;
         for (Int32 i = 1; i < 5; ++i)
         {
-            Int32 itemId = info.equip[i];
-            if (itemId != Byte.MaxValue && itemId >= 88 && itemId < 224)
+            RegularItem itemId = info.equip[i];
+            if (itemId != RegularItem.NoItem && ff9item.HasItemArmor(itemId))
             {
-                ItemDefence defParams = ff9armor.ArmorData[itemId - 88];
+                ItemDefence defParams = ff9item.GetItemArmor(itemId);
                 skill.defParam[1] += defParams.PhisicalDefence;
                 skill.defParam[2] += defParams.PhisicalEvade;
                 skill.defParam[3] += defParams.MagicalDefence;
@@ -352,7 +350,7 @@ public static class ff9play
         }
         for (Int32 i = 0; i < 5; ++i)
         {
-            if (info.equip[i] != Byte.MaxValue)
+            if (info.equip[i] != RegularItem.NoItem)
             {
                 FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[info.equip[i]];
                 ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9ItemData.bonus];
@@ -423,7 +421,7 @@ public static class ff9play
 
     public static void FF9Play_SetDefEquips(CharacterEquipment target, EquipmentSetId equipmentId)
     {
-        CharacterEquipment newSet = DefaultEquipment[(Int32)equipmentId];
+        CharacterEquipment newSet = DefaultEquipment[equipmentId];
         for (Int32 i = 0; i < 5; i++)
             target[i] = newSet[i];
     }
@@ -451,15 +449,12 @@ public static class ff9play
         play.cur.capa = play.max.capa;
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
             return;
-        for (Int32 index = 0; index < 64; ++index)
+        foreach (SupportAbility saIndex in play.saExtended)
         {
-            if (ff9abil.FF9Abil_GetEnableSA(play, 192 + index))
-            {
-                if (play.cur.capa >= ff9abil._FF9Abil_SaData[index].GemsCount)
-                    play.cur.capa -= ff9abil._FF9Abil_SaData[index].GemsCount;
-                else
-                    ff9abil.FF9Abil_SetEnableSA(play, 192 + index, false);
-            }
+            if (play.cur.capa >= ff9abil._FF9Abil_SaData[saIndex].GemsCount)
+                play.cur.capa -= ff9abil._FF9Abil_SaData[saIndex].GemsCount;
+            else
+                ff9abil.FF9Abil_SetEnableSA(play, saIndex, false);
         }
     }
 
@@ -510,7 +505,7 @@ public static class ff9play
         {
             FF9DBG_CHAR ff9DbgChar = ff9DbgCharArray[(Byte)player];
             PLAYER play = ff9StateGlobal.party.member[slot] = ff9StateGlobal.player[(CharacterId)ff9DbgChar.slot_no];
-            CharacterParameter parameter = CharacterParameterList[(Byte)player];
+            CharacterParameter parameter = CharacterParameterList[player];
             if (ff9DbgChar.menu_type >= 0)
             {
                 if (player != parameter.Id)
@@ -529,8 +524,8 @@ public static class ff9play
         UInt64 characterMask = ff9feqp.GetCharacterEquipMask(play);
         for (Int32 i = 0; i < 5; ++i)
         {
-            Int32 itemIndex;
-            if ((itemIndex = play.equip[i]) != Byte.MaxValue && (ff9item._FF9Item_Data[itemIndex].equip & characterMask) == 0)
+            RegularItem itemIndex;
+            if ((itemIndex = play.equip[i]) != RegularItem.NoItem && (ff9item._FF9Item_Data[itemIndex].equip & characterMask) == 0)
                 return false;
         }
         return true;

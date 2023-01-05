@@ -15,13 +15,13 @@ namespace Memoria.Assets
 
         public static String ScriptsModDirectory(String modFolder)
         {
-            if (modFolder == null || modFolder.Length == 0)
+            if (String.IsNullOrEmpty(modFolder))
                 return ScriptsDirectory;
             return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/Scripts/";
         }
         public static String ShadersModDirectory(String modFolder)
         {
-            if (modFolder == null || modFolder.Length == 0)
+            if (String.IsNullOrEmpty(modFolder))
                 return ShadersDirectory;
             return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/Shaders/";
         }
@@ -43,7 +43,7 @@ namespace Memoria.Assets
 
             public static String ModDirectory(String modFolder)
             {
-                if (modFolder == null || modFolder.Length == 0)
+                if (String.IsNullOrEmpty(modFolder))
                     return Directory;
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
@@ -65,7 +65,7 @@ namespace Memoria.Assets
 
             public static String ModDirectory(String modFolder)
             {
-                if (modFolder == null || modFolder.Length == 0)
+                if (String.IsNullOrEmpty(modFolder))
                     return Directory;
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
@@ -81,13 +81,13 @@ namespace Memoria.Assets
 
                 public static String GetPresetAbilitiesPath(CharacterPresetId presetId, String modFolder = null)
                 {
-                    if (modFolder == null || modFolder.Length == 0)
+                    if (String.IsNullOrEmpty(modFolder))
                         return Directory + presetId + ".csv";
                     return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory + presetId + ".csv";
                 }
                 public static String ModDirectory(String modFolder)
                 {
-                    if (modFolder == null || modFolder.Length == 0)
+                    if (String.IsNullOrEmpty(modFolder))
                         return Directory;
                     return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
                 }
@@ -105,7 +105,7 @@ namespace Memoria.Assets
 
             public static String ModDirectory(String modFolder)
             {
-                if (modFolder == null || modFolder.Length == 0)
+                if (String.IsNullOrEmpty(modFolder))
                     return Directory;
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
@@ -122,7 +122,7 @@ namespace Memoria.Assets
 
             public static String ModDirectory(String modFolder)
             {
-                if (modFolder == null || modFolder.Length == 0)
+                if (String.IsNullOrEmpty(modFolder))
                     return Directory;
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
@@ -137,14 +137,14 @@ namespace Memoria.Assets
 
             public static String ModDirectoryWithLang(String modFolder, String langSymbol)
             {
-                if (modFolder == null || modFolder.Length == 0)
+                if (String.IsNullOrEmpty(modFolder))
                     return Directory + langSymbol + "/";
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory + langSymbol + "/";
             }
 
             public static String ModDirectory(String modFolder)
             {
-                if (modFolder == null || modFolder.Length == 0)
+                if (String.IsNullOrEmpty(modFolder))
                     return Directory;
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }

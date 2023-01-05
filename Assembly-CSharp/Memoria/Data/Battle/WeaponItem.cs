@@ -1,6 +1,6 @@
 ﻿namespace Memoria.Data
 {
-    public enum WeaponItem : byte
+    public enum WeaponItem : int
     {
         ///<summary> Cinna’s hammer."</summary>
         Hammer = 0000,

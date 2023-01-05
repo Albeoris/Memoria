@@ -12,7 +12,7 @@ public partial class EventEngine
         {
             case EBin.op_binary.B_HAVE_ITEM:
                 Int32 id = this.eBin.getv();
-                result = id >= EventEngine.kSItemOfs ? (id >= EventEngine.kCItemOfs ? QuadMistDatabase.MiniGame_GetCardCount(id - EventEngine.kCItemOfs) : (!ff9item.FF9Item_IsExistImportant(id - EventEngine.kSItemOfs) ? 0 : 1)) : ff9item.FF9Item_GetCount(id);
+                result = ff9item.FF9Item_GetCount_Generic(id);
                 break;
             case EBin.op_binary.B_BAFRAME:
                 this.fieldmap.walkMesh.BGI_animGetFrame((UInt32)this.eBin.getv(), ref result);

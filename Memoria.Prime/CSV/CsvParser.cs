@@ -30,6 +30,33 @@ namespace Memoria.Prime.CSV
             return Byte(raw);
         }
 
+        public static Int32 Item(String raw)
+        {
+            if (raw.Contains("-1"))
+                return System.Byte.MaxValue;
+
+            return Int32(raw);
+        }
+
+        public static Int32 AnyAbility(String raw)
+        {
+            if (raw.StartsWith("AA:"))
+			{
+                Int32 activeId = System.Int32.Parse(raw.Substring(3), NumberStyle, CultureInfo.InvariantCulture);
+                Int32 poolNum = activeId / 192;
+                Int32 idInPool = activeId % 192;
+                return poolNum * 256 + idInPool;
+            }
+            else if (raw.StartsWith("SA:"))
+            {
+                Int32 supportId = System.Int32.Parse(raw.Substring(3), NumberStyle, CultureInfo.InvariantCulture);
+                Int32 poolNum = supportId / 64;
+                Int32 idInPool = supportId % 64;
+                return poolNum * 256 + idInPool + 192;
+            }
+            return System.Int32.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
+        }
+
         public static Byte Byte(String raw)
         {
             return System.Byte.Parse(raw, NumberStyle, CultureInfo.InvariantCulture);
@@ -92,6 +119,22 @@ namespace Memoria.Prime.CSV
             return Caster<UInt64, T>.Cast(value);
         }
 
+        public static Int32[] ItemArray(String raw)
+        {
+            if (System.String.IsNullOrEmpty(raw))
+                return new Int32[0];
+
+            return raw.Split(',').Select(Item).ToArray();
+        }
+
+        public static Int32[] AnyAbilityArray(String raw)
+        {
+            if (System.String.IsNullOrEmpty(raw))
+                return new Int32[0];
+
+            return raw.Split(',').Select(AnyAbility).ToArray();
+        }
+
         public static Byte[] ByteArray(String raw)
         {
             if (System.String.IsNullOrEmpty(raw))
@@ -106,6 +149,14 @@ namespace Memoria.Prime.CSV
                 return new SByte[0];
 
             return raw.Split(',').Select(SByte).ToArray();
+        }
+
+        public static Int32[] Int32Array(String raw)
+        {
+            if (System.String.IsNullOrEmpty(raw))
+                return new Int32[0];
+
+            return raw.Split(',').Select(Int32).ToArray();
         }
 
         public static String String(String raw)

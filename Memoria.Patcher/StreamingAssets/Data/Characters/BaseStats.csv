@@ -1,9 +1,9 @@
-# This file contains base stats of characters.;;;;;;
-# You must set 12 different items.;;;;;;
-# -------------------------------------------------------------;;;;;;
+# This file contains base stats of characters.
+# You must set 12 different items.
+# -----------------------------------------------
 # Comment;Id;Dexterity;Strength;Magic;Will;Gems
-#;Int32;UInt8;UInt8;UInt8;UInt8;UInt8
-# -------------------------------------------------------------;;;;;;
+# ;Int32;UInt8;UInt8;UInt8;UInt8;UInt8
+# -----------------------------------------------
 Zidane;0;23;21;18;23;18
 Vivi ;1;16;12;24;19;14
 Garnet;2;21;14;23;17;14

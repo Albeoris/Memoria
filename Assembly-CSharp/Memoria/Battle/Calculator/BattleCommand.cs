@@ -15,9 +15,9 @@ namespace Memoria
 
         public ITEM_DATA GetData => _data;
 
-        public static BattleItem Find(Byte itemId)
+        public static BattleItem Find(RegularItem itemId)
         {
-            return new BattleItem(ff9item._FF9Item_Info[btl_util.btlItemNum(itemId)]);
+            return new BattleItem(ff9item.GetItemEffect(itemId));
         }
 
         public Byte ScriptId => _data.Ref.ScriptId;
@@ -25,12 +25,12 @@ namespace Memoria
         public Byte Power => _data.Ref.Power;
         public BattleStatus Status => (BattleStatus)_data.status;
 
-        public static void AddToInventory(Int32 itemId)
+        public static void AddToInventory(RegularItem itemId)
         {
             UIManager.Battle.ItemAdd(itemId);
         }
 
-        public static void RemoveFromInventory(Byte itemId)
+        public static void RemoveFromInventory(RegularItem itemId)
         {
             UIManager.Battle.ItemRemove(itemId);
         }
@@ -48,9 +48,9 @@ namespace Memoria
         public ENEMY GetData => Data;
 
         public String Name => Data.et.name;
-        public Byte[] StealableItems => Data.steal_item;
+        public RegularItem[] StealableItems => Data.steal_item;
         public UInt16[] StealableItemRates => Data.steal_item_rate;
-        public Byte[] DroppableItems => Data.et.bonus.item;
+        public RegularItem[] DroppableItems => Data.et.bonus.item;
         public UInt16[] DroppableItemRates => Data.et.bonus.item_rate;
         public UInt32 DroppableCard => Data.et.bonus.card;
         public UInt16 DroppableCardRate => Data.et.bonus.card_rate;
@@ -71,7 +71,7 @@ namespace Memoria
             _data = data;
         }
 
-        public Byte BlueMagicId => _data.blue_magic_no;
+        public Int32 BlueMagicId => _data.blue_magic_no;
 
         public static BattleEnemyPrototype Find(BattleUnit unit)
         {
@@ -94,10 +94,11 @@ namespace Memoria
         public CMD_DATA GetData => Data;
 
         public BattleCommandId Id => (BattleCommandId)Data.cmd_no;
-        public BattleAbilityId AbilityId => (BattleAbilityId)Data.sub_no;
+        public BattleAbilityId AbilityId => btl_util.GetCommandMainActionIndex(Data);
+        public RegularItem ItemId => btl_util.GetCommandItem(Data);
         public Boolean IsManyTarget => (Data.info.cursor & 1) != 0;
-        public TargetType TargetType => (TargetType)Data.aa.Info.Target;
-        public BattleStatusIndex AbilityStatusIndex => (BattleStatusIndex)Data.aa.AddStatusNo;
+        public TargetType TargetType => Data.aa.Info.Target;
+        public BattleStatusIndex AbilityStatusIndex => Data.aa.AddStatusNo;
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
         public Boolean IsATBCommand => Data.regist != null && Data == Data.regist.cmd[0];
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
@@ -110,9 +111,9 @@ namespace Memoria
 
         public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;
 
-        public BattleItem Item => BattleItem.Find((Byte)AbilityId);
+        public BattleItem Item => BattleItem.Find(ItemId);
         public BattleStatus ItemStatus => Item.Status;
-        public Weapon Weapon => Weapon.Find((Byte)AbilityId);
+        public Weapon Weapon => Weapon.Find(ItemId);
 
         public Boolean IsHeat => HasElement(EffectElement.Fire);
         public Boolean IsQuench => HasElement(EffectElement.Aqua | EffectElement.Cold);

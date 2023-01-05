@@ -845,18 +845,18 @@ public partial class EventEngine
                 {
                     case 0:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, (UInt32)this.getv1());
+                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, this.getv1());
                         break;
                     }
                     case 1:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, (UInt32)this.getv1());
+                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, this.getv1());
                         break;
                     }
                     case 3:
                     {
                         this.gExec.btlchk = (Byte)0;
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, (UInt32)this.getv1());
+                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, this.getv1());
                         break;
                     }
                 }
@@ -1035,39 +1035,26 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.ITEMADD:
             {
-                Int32 id1 = this.getv2();
-                Int32 count1 = this.getv1();
-                if (id1 < EventEngine.kSItemOfs)
-                    ff9item.FF9Item_Add(id1, count1);
-                else if (id1 < EventEngine.kCItemOfs)
-                {
-                    ff9item.FF9Item_AddImportant(id1 - EventEngine.kSItemOfs);
-                }
-                else
-                {
-                    while (count1-- > 0)
-                        QuadMistDatabase.MiniGame_SetCard(id1 - EventEngine.kCItemOfs);
-                }
+                Int32 id = this.getv2();
+                Int32 count = this.getv1();
+                ff9item.FF9Item_Add_Generic(id, count);
                 EMinigame.Auction10TimesAchievement(this.gCur);
-                if (id1 == 288)
+                if (id == 288)
                     EMinigame.ViviWinHuntAchievement();
-                else if (id1 == 203)
+                else if (id == 203)
                     EMinigame.DigUpMadainRingAchievement();
-                else if (id1 == 324)
+                else if (id == 324)
                     EMinigame.SuperSlickOilAchievement();
-                else if (id1 == 283)
+                else if (id == 283)
                     EMinigame.AtleteQueenAchievement();
                 return 0;
             }
             case EBin.event_code_binary.ITEMDELETE:
             {
-                Int32 id2 = this.getv2();
-                Int32 count2 = this.getv1();
-                if (id2 < EventEngine.kSItemOfs)
-                    ff9item.FF9Item_Remove(id2, count2);
-                else if (id2 < EventEngine.kCItemOfs)
-                    ff9item.FF9Item_RemoveImportant(id2 - EventEngine.kSItemOfs);
-                if (id2 == 324)
+                Int32 id = this.getv2();
+                Int32 count = this.getv1();
+                ff9item.FF9Item_Remove_Generic(id, count);
+                if (id == 324)
                     EMinigame.MognetCentralAchievement();
                 return 0;
             }
@@ -2268,9 +2255,9 @@ public partial class EventEngine
                 // https://github.com/Albeoris/Memoria/issues/22
                 if (!player.info.sub_replaced)
                     SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), (Byte)statusList);
-                if (charId == CharacterId.Amarant)
+                if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                        if (play.Index > CharacterId.Amarant)
+                        if (play.Index > CharacterId.Beatrix)
                             SFieldCalculator.FieldRemoveStatus(play, (Byte)statusList);
                 return 0;
             }
@@ -2473,9 +2460,9 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.hp = (UInt32)Math.Min(subPlayer.max.hp, newHp);
                     }
-                    if (charId == CharacterId.Amarant && hpHealProp >= 0f)
+                    if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
                         foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant)
+                            if (play.Index > CharacterId.Beatrix)
                                 play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
                 }
                 return 0;
@@ -2498,9 +2485,9 @@ public partial class EventEngine
                         PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
                         subPlayer.cur.mp = (UInt32)Math.Min(subPlayer.max.mp, newMp);
                     }
-                    if (charId == CharacterId.Amarant && mpHealProp >= 0f)
+                    if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
                         foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant)
+                            if (play.Index > CharacterId.Beatrix)
                                 play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
                 }
                 return 0;
@@ -2602,9 +2589,9 @@ public partial class EventEngine
                     Int32 category = this.getv1();
                     if (category != Byte.MaxValue)
                         player.category = (Byte)category;
-                    Int32 charPreset = this.getv1();
-                    if (charPreset != Byte.MaxValue)
-                        player.info.menu_type = (CharacterPresetId)charPreset;
+                    CharacterPresetId charPreset = (CharacterPresetId)this.getv1();
+                    if (charPreset != CharacterPresetId.NONE)
+                        player.info.menu_type = charPreset;
                     ff9play.FF9Play_Change(player, updateLevel != 0, eqp_id);
                     player.info.sub_replaced = true;
                 }

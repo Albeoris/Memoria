@@ -11,22 +11,24 @@ namespace Memoria.Data
         public BattleCommandId Trance1;
         public BattleCommandId Trance2;
 
-        public void ParseEntry(String[] raw)
+        public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Int32 index = 0;
-            if (raw.Length <= 4 || !Byte.TryParse(raw[4], out _))
-                Id = CharacterPresetId.NONE;
-            else
+
+            if (metadata.HasOption($"Include{nameof(Id)}"))
                 Id = (CharacterPresetId)CsvParser.Int32(raw[index++]);
+            else
+                Id = (CharacterPresetId)(-1);
             Regular1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
             Regular2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
             Trance1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
             Trance2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
         }
 
-        public void WriteEntry(CsvWriter sw)
+        public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
-            sw.Int32((Int32)Id);
+            if (metadata.HasOption($"Include{nameof(Id)}"))
+                sw.Int32((Int32)Id);
             sw.Byte((Byte)Regular1);
             sw.Byte((Byte)Regular2);
             sw.Byte((Byte)Trance1);

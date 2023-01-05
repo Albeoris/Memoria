@@ -21,12 +21,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            const Int32 oreItemId = (Int32)GemItem.Ore;
-
             _v.MagicAccuracy();
             _v.Target.PenaltyShellHitRate();
             if (_v.TryMagicHit())
-                BattleItem.AddToInventory(oreItemId);
+                BattleItem.AddToInventory(RegularItem.Ore);
         }
     }
 }

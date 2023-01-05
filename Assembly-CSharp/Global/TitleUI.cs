@@ -1699,7 +1699,7 @@ public class TitleUI : UIScene
                 break;
         }
 
-        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/License_" + str + ".txt", out _);
+        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/License_" + str + ".txt");
         if (textAsset != null)
             this.UpdateLicenseText(textAsset);
 
@@ -1832,19 +1832,18 @@ public class TitleUI : UIScene
 
         public Sprite GetPicture(Type kind, Int32 idx)
         {
-			String[] spriteInfo;
             if (kind == Type.Sequence1)
             {
                 switch (idx)
                 {
                     case 0:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_00", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_00", false);
                     case 1:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_01", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_01", false);
                     case 2:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_02", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_02", false);
                     case 3:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_03", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_03", false);
                 }
             }
             else if (kind == Type.Sequence2)
@@ -1852,13 +1851,13 @@ public class TitleUI : UIScene
                 switch (idx)
                 {
                     case 0:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_04", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_04", false);
                     case 1:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_05", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_05", false);
                     case 2:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_06", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_06", false);
                     case 3:
-                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_07", out spriteInfo, false);
+                        return AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/title_image_07", false);
                 }
             }
             else if (kind == Type.SplashScreen)
@@ -1902,8 +1901,7 @@ public class TitleUI : UIScene
 
         private Sprite LoadSprite(String relativePath)
         {
-			String[] spriteInfo;
-            Sprite result = AssetManager.Load<Sprite>("EmbeddedAsset/" + relativePath, out spriteInfo, false);
+            Sprite result = AssetManager.Load<Sprite>("EmbeddedAsset/" + relativePath, false);
 
             try
             {
@@ -2175,8 +2173,7 @@ public class TitleUI : UIScene
             //{
             //    text = "US";
             //}
-			String[] warningInfo;
-            this.spashText.text = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning", out warningInfo);
+            this.spashText.text = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning");
             this.spashText.alignment = NGUIText.Alignment.Left;
             this.spashText.gameObject.SetActive(true);
             SceneVoidDelegate postIdleScreenFadeOut = delegate

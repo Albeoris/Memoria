@@ -183,6 +183,7 @@ public partial class BTL_DATA
 	public Byte[] add_col = new Byte[3];
 
 	public UInt32[] sa;
+	public HashSet<SupportAbility> saExtended;
 
 	public Int32 fig_regene_hp;
 
@@ -284,7 +285,8 @@ public partial class BTL_DATA
 	{
 		public BattleCommandId base_command;
 		public BattleCommandId new_command;
-		public UInt32 attack;
+		public AA_DATA attack;
+		public List<AA_DATA> spell;
 		public Boolean replace_point;
 		public Boolean replace_stat;
 		public Boolean replace_defence;

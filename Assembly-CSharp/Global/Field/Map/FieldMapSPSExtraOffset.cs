@@ -9,7 +9,7 @@ public class FieldMapSPSExtraOffset
 	{
 		this.offsetDict = new Dictionary<String, FieldMapSPSExtraOffset.SPSExtraOffset[]>();
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapSPSExtraOffsetList.txt";
-		String textAsset = AssetManager.LoadString(name, out _);
+		String textAsset = AssetManager.LoadString(name);
 		StringReader stringReader = new StringReader(textAsset);
 		String text;
 		while ((text = stringReader.ReadLine()) != null)

@@ -2,7 +2,7 @@
 
 namespace Memoria.Data
 {
-    public enum CharacterPresetId : Byte
+    public enum CharacterPresetId : int
     {
        Zidane = 0,
        Vivi = 1,

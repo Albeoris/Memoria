@@ -28,16 +28,13 @@ public class GeoTexAnim : HonoBehavior
 	{
 		this._mainTextureIndex = mainTextureIndex;
 		this._subTextureIndex = subTextureIndex;
-		String[] tabInfo;
-		Byte[] binAsset = AssetManager.LoadBytes(modelName + ".tab", out tabInfo, true);
+		Byte[] binAsset = AssetManager.LoadBytes(modelName + ".tab", true);
 		if (binAsset == null)
-		{
 			return;
-		}
 		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
 		{
-			this.Count = (Int32)binaryReader.ReadUInt16();
-			Int32 num = (Int32)binaryReader.ReadUInt16();
+			this.Count = binaryReader.ReadUInt16();
+			Int32 num = binaryReader.ReadUInt16();
 			this.Anims = new GEOTEXANIMHEADER[this.Count];
 			for (Int32 i = 0; i < this.Count; i++)
 			{
@@ -61,36 +58,36 @@ public class GeoTexAnim : HonoBehavior
 		this.RenderTex.filterMode = FilterMode.Bilinear;
 		this.RenderTex.wrapMode = TextureWrapMode.Repeat;
 		this.RenderTex.name = modelName + "_RT";
-		this.RenderTexWidth = (Single)this._mainTexture.width;
-		this.RenderTexHeight = (Single)this._mainTexture.height;
+		this.RenderTexWidth = this._mainTexture.width;
+		this.RenderTexHeight = this._mainTexture.height;
 		this._smrs[this._mainTextureIndex].material.mainTexture = this.RenderTex;
-		Single num2 = (Single)this._subTexture.width;
-		Single num3 = (Single)this._subTexture.height;
-		for (Int32 j = 0; j < this.Count; j++)
+		Single w = this._subTexture.width;
+		Single h = this._subTexture.height;
+		for (Int32 i = 0; i < this.Count; i++)
 		{
-			Rect rect = this.Anims[j].targetuv;
-			rect.x *= (Single)scale;
-			rect.y *= (Single)scale;
-			rect.width *= (Single)scale;
-			rect.height *= (Single)scale;
-			this.Anims[j].targetuv = rect;
-			for (Int32 k = 0; k < (Int32)this.Anims[j].numframes; k++)
+			Rect rect = this.Anims[i].targetuv;
+			rect.x *= scale;
+			rect.y *= scale;
+			rect.width *= scale;
+			rect.height *= scale;
+			this.Anims[i].targetuv = rect;
+			for (Int32 j = 0; j < this.Anims[i].numframes; j++)
 			{
-				rect = this.Anims[j].rectuvs[k];
-				rect.x *= (Single)scale;
-				rect.y *= (Single)scale;
-				rect.width *= (Single)scale;
-				rect.height *= (Single)scale;
-				rect.y = num3 - rect.y - rect.height;
+				rect = this.Anims[i].rectuvs[j];
+				rect.x *= scale;
+				rect.y *= scale;
+				rect.width *= scale;
+				rect.height *= scale;
+				rect.y = h - rect.y - rect.height;
 				rect.x += 0.5f;
 				rect.y += 0.5f;
 				rect.width -= 1f;
 				rect.height -= 1f;
-				rect.x /= num2;
-				rect.y /= num3;
-				rect.width /= num2;
-				rect.height /= num3;
-				this.Anims[j].rectuvs[k] = rect;
+				rect.x /= w;
+				rect.y /= h;
+				rect.width /= w;
+				rect.height /= h;
+				this.Anims[i].rectuvs[j] = rect;
 			}
 		}
 		RenderTexture active = RenderTexture.active;
@@ -465,12 +462,9 @@ public class GeoTexAnim : HonoBehavior
 	{
 		mainTextureIndex = 0;
 		subTextureIndex = 0;
-		String[] csvInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo);
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv");
 		if (textAsset == null)
-		{
 			return;
-		}
 		String[] array = textAsset.Split(new Char[]
 		{
 			'\n'
@@ -496,8 +490,7 @@ public class GeoTexAnim : HonoBehavior
 
 	public static void SetTexAnimIndexs(String geoName, out Int32[] mainTextureIndexs, out Int32[] subTextureIndexs)
 	{
-		String[] csvInfo;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", out csvInfo);
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv");
 		if (textAsset == null)
 		{
 			mainTextureIndexs = null;

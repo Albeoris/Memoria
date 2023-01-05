@@ -6,24 +6,20 @@ public class SlideshowUI : MonoBehaviour
 	public void SetupEndingText()
 	{
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-		GameObject gameObject;
+		GameObject endingText;
 		if (currentLanguage == "English(UK)" || currentLanguage == "English(US)" || currentLanguage == "Japanese" || currentLanguage == "German")
-		{
-			gameObject = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_US_JP_GR_Atlas", out _, false);
-		}
+			endingText = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_US_JP_GR_Atlas", false);
 		else
-		{
-			gameObject = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_FR_IT_ES_Atlas", out _, false);
-		}
-		UIAtlas component = gameObject.GetComponent<UIAtlas>();
-		this.text1Sprite.atlas = component;
-		this.text2Sprite.atlas = component;
-		this.text3Sprite.atlas = component;
-		this.text4Sprite.atlas = component;
-		this.text5Sprite.atlas = component;
-		this.text6Sprite.atlas = component;
-		this.text7Sprite.atlas = component;
-		this.text8Sprite.atlas = component;
+			endingText = AssetManager.Load<GameObject>("EmbeddedAsset/UI/Atlas/Ending_Text_FR_IT_ES_Atlas", false);
+		UIAtlas endingTextAtlas = endingText.GetComponent<UIAtlas>();
+		this.text1Sprite.atlas = endingTextAtlas;
+		this.text2Sprite.atlas = endingTextAtlas;
+		this.text3Sprite.atlas = endingTextAtlas;
+		this.text4Sprite.atlas = endingTextAtlas;
+		this.text5Sprite.atlas = endingTextAtlas;
+		this.text6Sprite.atlas = endingTextAtlas;
+		this.text7Sprite.atlas = endingTextAtlas;
+		this.text8Sprite.atlas = endingTextAtlas;
 		this.text1Sprite.spriteName = "ending_text_01" + this.GetLocalizeNameSubfix(currentLanguage);
 		this.text2Sprite.spriteName = "ending_text_02" + this.GetLocalizeNameSubfix(currentLanguage);
 		this.text3Sprite.spriteName = "ending_text_03" + this.GetLocalizeNameSubfix(currentLanguage);

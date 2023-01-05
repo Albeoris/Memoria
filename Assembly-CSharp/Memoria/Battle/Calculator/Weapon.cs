@@ -40,7 +40,7 @@ namespace Memoria
             _data = data;
         }
 
-        public WeaponCategory Category => (WeaponCategory)_data.Category;
+        public WeaponCategory Category => _data.Category;
         public BattleStatus Status => FF9StateSystem.Battle.FF9Battle.add_status[_data.StatusIndex].Value;
         public UInt16 ModelId => _data.ModelId;
         public Byte ScriptId => _data.Ref.ScriptId;
@@ -48,9 +48,9 @@ namespace Memoria
         public EffectElement Element => (EffectElement)_data.Ref.Elements;
         public Byte HitRate => _data.Ref.Rate;
 
-        public static Weapon Find(Byte weaponId)
+        public static Weapon Find(RegularItem weaponId)
         {
-            return new Weapon(ff9weap.WeaponData[btl_util.ff9WeaponNum(weaponId)]);
+            return new Weapon(ff9item.GetItemWeapon(weaponId));
         }
     }
 }

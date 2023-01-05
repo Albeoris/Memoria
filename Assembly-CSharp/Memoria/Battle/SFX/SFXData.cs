@@ -119,7 +119,7 @@ public class SFXData
         mesh = null;
         runningSFX = new List<RunningInstance>();
         String defaultFolder = AssetManagerUtil.GetMemoriaAssetsPath() + $"SpecialEffects/ef{(Int32)effNum:D3}/";
-        String sfxInfo = AssetManager.LoadString(defaultFolder + UnifiedBattleSequencer.INFORMATION_FILE, out _, true);
+        String sfxInfo = AssetManager.LoadString(defaultFolder + UnifiedBattleSequencer.INFORMATION_FILE, true);
         if (sfxInfo != null)
             LoadSFXFromInfo(sfxInfo, defaultFolder);
         LoadSequenceFromFile(defaultFolder + UnifiedBattleSequencer.SEQUENCE_FILE);
@@ -146,8 +146,7 @@ public class SFXData
 
     private void LoadSequenceFromFile(String seqPath)
 	{
-        String[] efInfo;
-        String sequenceText = AssetManager.LoadString(seqPath, out efInfo, true);
+        String sequenceText = AssetManager.LoadString(seqPath, true);
         if (sequenceText != null)
         {
             sfxthread = BattleActionThread.LoadFromTextSequence(sequenceText);
