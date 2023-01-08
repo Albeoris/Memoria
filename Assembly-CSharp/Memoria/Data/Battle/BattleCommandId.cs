@@ -67,6 +67,7 @@
         SysStone = 62,
         ScriptCounter1 = 63,
         ScriptCounter2 = 64,
-        ScriptCounter3 = 65
+        ScriptCounter3 = 65,
+        BoundaryUpperCheck = 99
     }
 }

@@ -240,6 +240,11 @@ namespace FF9
 			return btl != null && btl.is_monster_transform && (commandId == BattleCommandId.Attack || commandId == BattleCommandId.Counter || commandId == BattleCommandId.RushAttack) && sub_no == (Int32)BattleAbilityId.Attack;
 		}
 
+		public static Boolean IsCommandDeclarable(BattleCommandId cmdNo)
+		{
+			return cmdNo < BattleCommandId.BoundaryCheck || cmdNo > BattleCommandId.BoundaryUpperCheck;
+		}
+
 		public static BattleAbilityId GetCommandMainActionIndex(CMD_DATA cmd)
 		{
 			if (cmd.regist != null && cmd.regist.bi.player == 0)

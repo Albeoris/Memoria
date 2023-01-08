@@ -281,7 +281,7 @@ namespace Memoria
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
-                else if (target.cur.hp != 0 && cmd.cmd_no < BattleCommandId.BoundaryCheck)
+                else if (target.cur.hp != 0 && btl_util.IsCommandDeclarable(cmd.cmd_no))
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
             }
             PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyReaction, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);

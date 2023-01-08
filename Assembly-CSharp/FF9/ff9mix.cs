@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -13,32 +14,31 @@ namespace FF9
     {
         public static FF9MIX_INFO _FF9Mix;
         public static Int32 FF9MIX_SRC_MAX = 2;
-        public static readonly EntryCollection<FF9MIX_DATA> SynthesisData;
+        public static readonly Dictionary<Int32, FF9MIX_DATA> SynthesisData;
 
         static ff9mix()
         {
             SynthesisData = LoadSynthesis();
         }
 
-        private static EntryCollection<FF9MIX_DATA> LoadSynthesis()
+        private static Dictionary<Int32, FF9MIX_DATA> LoadSynthesis()
         {
             try
             {
                 String inputPath = DataResources.Items.Directory + DataResources.Items.SynthesisFile;
                 if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"[ff9mix] Cannot load synthesis info because a file does not exist: [{inputPath}].", inputPath);
-
-                FF9MIX_DATA[] items = CsvReader.Read<FF9MIX_DATA>(inputPath);
-
-                EntryCollection<FF9MIX_DATA> result = EntryCollection.CreateWithDefaultElement(items, i => i.Id);
-                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
+                    throw new FileNotFoundException($"Cannot load synthesis info because a file does not exist: [{inputPath}].", inputPath);
+                Dictionary<Int32, FF9MIX_DATA> result = new Dictionary<Int32, FF9MIX_DATA>();
+                FF9MIX_DATA[] mixes;
+                String[] dir = Configuration.Mod.AllFolderNames;
+                for (Int32 i = dir.Length - 1; i >= 0; --i)
                 {
-                    inputPath = DataResources.Items.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Items.SynthesisFile;
+                    inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.SynthesisFile;
                     if (File.Exists(inputPath))
                     {
-                        items = CsvReader.Read<FF9MIX_DATA>(inputPath);
-                        foreach (FF9MIX_DATA it in items)
-                            result[it.Id] = it;
+                        mixes = CsvReader.Read<FF9MIX_DATA>(inputPath);
+                        for (Int32 j = 0; j < mixes.Length; j++)
+                            result[mixes[j].Id] = mixes[j];
                     }
                 }
                 return result;

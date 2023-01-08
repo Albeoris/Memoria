@@ -238,6 +238,7 @@ public class JsonParser : ISharedDataParser
 		{
 			{ "00001_time", FF9StateSystem.Settings.time.ToString() }
 		});
+		this.ParseEventDataToJson(FF9StateSystem.EventState, rootMemoriaClass, schemaMemoriaClass, false);
 		this.ParseCommonDataToJson(FF9StateSystem.Common.FF9, rootMemoriaClass, schemaMemoriaClass, false);
 	}
 
@@ -330,6 +331,8 @@ public class JsonParser : ISharedDataParser
 		}
 		if (isMemoriaValid)
 		{
+			if (memoriaClass["20000_Event"] != null)
+				this.ParseEventJsonToData(memoriaClass["20000_Event"], false);
 			if (memoriaClass["40000_Common"] != null)
 				this.ParseCommonJsonToData(memoriaClass["40000_Common"], false);
 		}
@@ -344,6 +347,7 @@ public class JsonParser : ISharedDataParser
 			// Run "FF9Play_Update" anyway when loading data, mostly for "SupportingAbilityFeature.TriggerOnEnable"
 			player.ValidateMaxStone();
 			ff9play.FF9Play_Update(player);
+			ff9play.FF9Play_UpdateSerialNumber(player);
 		}
 	}
 
@@ -503,38 +507,56 @@ public class JsonParser : ISharedDataParser
 		});
 	}
 
-	private void ParseEventJsonToData(JSONNode jsonData)
+	private void ParseEventJsonToData(JSONNode jsonData, Boolean oldSaveFormat = true)
 	{
 		EventState eventState = FF9StateSystem.EventState;
 		if (jsonData["gStepCount"] != null)
 			eventState.gStepCount = jsonData["gStepCount"].AsInt;
 		if (jsonData["gEventGlobal"] != null)
 			eventState.gEventGlobal = Convert.FromBase64String(jsonData["gEventGlobal"].Value);
+		eventState.gAbilityUsage.Clear();
+		if (jsonData["gAbilityUsage"] != null)
+		{
+			for (Int32 i = 0; i < jsonData["gAbilityUsage"].Count; i++)
+			{
+				JSONClass abilClass = jsonData["gAbilityUsage"][i].AsObject;
+				if (abilClass != null && abilClass["id"] != null && abilClass["count"] != null)
+					eventState.gAbilityUsage[(BattleAbilityId)abilClass["id"].AsInt] = abilClass["count"].AsInt;
+			}
+		}
+		else
+		{
+			// Ability usage count used to be stored in gEventGlobal
+			for (Int32 i = 1; i < 192; i++)
+				eventState.gAbilityUsage[(BattleAbilityId)i] = eventState.gEventGlobal[1100 + i];
+		}
 	}
 
-	private void ParseEventDataToJson(EventState data, JSONClass dataNode, JSONClass schemaNode)
+	private void ParseEventDataToJson(EventState data, JSONClass dataNode, JSONClass schemaNode, Boolean oldSaveFormat = true)
 	{
-		dataNode.Add("20000_Event", new JSONClass
+		JSONClass dataProfileClass = new JSONClass();
+		dataProfileClass.Add("gStepCount", data.gStepCount.ToString());
+		dataProfileClass.Add("gEventGlobal", Convert.ToBase64String(data.gEventGlobal));
+		if (!oldSaveFormat)
 		{
+			JSONArray abilArray = new JSONArray();
+			foreach (KeyValuePair<BattleAbilityId, Int32> kp in data.gAbilityUsage)
 			{
-				"gStepCount",
-				data.gStepCount.ToString()
-			},
-			{
-				"gEventGlobal",
-				Convert.ToBase64String(data.gEventGlobal)
+				abilArray.Add(new JSONClass
+				{
+					{ "id", ((Int32)kp.Key).ToString() },
+					{ "count", kp.Value.ToString() }
+				});
 			}
-		});
+			dataProfileClass.Add("gAbilityUsage", abilArray);
+		}
+		dataNode.Add("20000_Event", dataProfileClass);
+		if (!oldSaveFormat)
+			return;
 		schemaNode.Add("20000_Event", new JSONClass
 		{
-			{
-				"gStepCount",
-				typeof(Int32).ToString()
-			},
-			{
-				"gEventGlobal",
-				SharedDataBytesStorage.TypeString4K
-			}
+			{ "gStepCount", typeof(Int32).ToString() },
+			{ "gEventGlobal", SharedDataBytesStorage.TypeString4K }
 		});
 	}
 
@@ -810,13 +832,13 @@ public class JsonParser : ISharedDataParser
 				{ "wpr", p.bonus.wpr.ToString() },
 				{ "cap", p.bonus.cap.ToString() }
 			});
-			JSONArray apClass = new JSONArray();
-			Int32 paCount = oldSaveFormat ? 48 : p.pa.Length;
-			for (Int32 j = 0; j < paCount; j++)
-				apClass.Add((j < p.pa.Length ? p.pa[j] : 0).ToString());
-			playerClass.Add("pa", apClass);
-			if (oldSaveFormat)
+			if (oldSaveFormat || !ff9abil._FF9Abil_PaData.ContainsKey(p.info.menu_type))
 			{
+				JSONArray apClass = new JSONArray();
+				Int32 paCount = oldSaveFormat ? 48 : p.pa.Length;
+				for (Int32 j = 0; j < paCount; j++)
+					apClass.Add((j < p.pa.Length ? p.pa[j] : 0).ToString());
+				playerClass.Add("pa", apClass);
 				JSONArray saClass = new JSONArray();
 				for (Int32 j = 0; j < 2; j++)
 					saClass.Add(p.sa[j].ToString());
@@ -824,6 +846,17 @@ public class JsonParser : ISharedDataParser
 			}
 			else
 			{
+				JSONArray apClass = new JSONArray();
+				CharacterAbility[] pAbilPool = ff9abil._FF9Abil_PaData[p.info.menu_type];
+				for (Int32 j = 0; j < pAbilPool.Length && j < p.pa.Length; j++)
+				{
+					apClass.Add(new JSONClass
+					{
+						{ "id", pAbilPool[j].Id.ToString() },
+						{ "cur", p.pa[j].ToString() }
+					});
+				}
+				playerClass.Add("pa_extended", apClass);
 				JSONArray saClass = new JSONArray();
 				foreach (SupportAbility saIndex in p.saExtended)
 					saClass.Add(((Int32)saIndex).ToString());
@@ -1122,9 +1155,29 @@ public class JsonParser : ISharedDataParser
 					player.bonus.wpr = (UInt16)playerBonusClass["wpr"].AsInt;
 				if (playerBonusClass["cap"] != null)
 					player.bonus.cap = (UInt16)playerBonusClass["cap"].AsInt;
-				if (playerClass["pa"] != null)
+				if (playerClass["pa"] != null || playerClass["pa_extended"] != null)
+				{
 					for (Int32 j = 0; j < player.pa.Length; j++)
-						player.pa[j] = (Byte)(j < playerClass["pa"].Count ? playerClass["pa"][j].AsInt : 0);
+						player.pa[j] = 0;
+					if (playerClass["pa"] != null)
+					{
+						for (Int32 j = 0; j < player.pa.Length; j++)
+							player.pa[j] = (Byte)(j < playerClass["pa"].Count ? playerClass["pa"][j].AsInt : 0);
+					}
+					else if (playerClass["pa_extended"] != null)
+					{
+						for (Int32 j = 0; j < playerClass["pa_extended"].Count; j++)
+						{
+							JSONClass apClass = playerClass["pa_extended"][j].AsObject;
+							if (apClass != null && apClass["id"] != null && apClass["cur"] != null)
+							{
+								Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, apClass["id"].AsInt);
+								if (abilIndex >= 0)
+									player.pa[abilIndex] = (Byte)apClass["cur"].AsInt;
+							}
+						}
+					}
+				}
 				if (playerClass["sa"] != null || playerClass["sa_extended"] != null)
 				{
 					player.sa[0] = player.sa[1] = 0u;

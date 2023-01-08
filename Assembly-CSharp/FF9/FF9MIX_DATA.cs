@@ -8,8 +8,6 @@ namespace FF9
 {
     public class FF9MIX_DATA : ICsvEntry
     {
-        private const Int32 SynthesisItemCount = 2;
-
         public String Comment;
         public Int32 Id;
 
@@ -17,6 +15,27 @@ namespace FF9
         public UInt32 Price;
         public RegularItem Result;
         public RegularItem[] Ingredients;
+
+        public Dictionary<RegularItem, Int32> IngredientsAsDictionary()
+        {
+            Dictionary<RegularItem, Int32> ingrCount = new Dictionary<RegularItem, Int32>();
+            foreach (RegularItem ingr in Ingredients)
+            {
+                if (ingr == RegularItem.NoItem)
+                    continue;
+                if (!ingrCount.TryGetValue(ingr, out Int32 count))
+                    count = 0;
+                ingrCount[ingr] = ++count;
+            }
+            return ingrCount;
+        }
+
+        public Boolean CanBeSynthesized()
+		{
+            if (ff9item.FF9Item_GetCount(Result) >= ff9item.FF9ITEM_COUNT_MAX || FF9StateSystem.Common.FF9.party.gil < Price)
+                return false;
+            return !IngredientsAsDictionary().Any(kvp => ff9item.FF9Item_GetCount(kvp.Key) < kvp.Value);
+        }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -39,10 +58,14 @@ namespace FF9
             Price = CsvParser.UInt32(raw[3]);
             Result = (RegularItem)CsvParser.Item(raw[4]);
 
-            Ingredients = new RegularItem[SynthesisItemCount];
-
-            for (Int32 i = 0; i < SynthesisItemCount; i++)
-                Ingredients[i] = (RegularItem)CsvParser.Item(raw[5+i]);
+            List<RegularItem> ingredientList = new List<RegularItem>();
+            for (Int32 i = 5; i < raw.Length; i++)
+            {
+                Int32[] itemArray = CsvParser.ItemArray(raw[i]);
+                foreach (Int32 itemInt in itemArray)
+                    ingredientList.Add((RegularItem)itemInt);
+            }
+            Ingredients = ingredientList.ToArray();
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -65,8 +88,7 @@ namespace FF9
             sw.UInt32(Price);
             sw.Item((Int32)Result);
 
-            foreach (RegularItem itemId in Ingredients)
-                sw.Item((Int32)itemId);
+            sw.ItemArray(Ingredients.Select(it => (Int32)it).ToArray());
         }
     }
 }

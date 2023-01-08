@@ -391,9 +391,10 @@ public class SettingsState : MonoBehaviour
         {
             foreach (FF9ITEM ff9Item in FF9StateSystem.Common.FF9.item)
             {
-                if (ff9Item.count > 0 && ff9item.FF9Item_GetEquipPart(ff9Item.id) > -1)
+                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[ff9Item.id];
+                if (ff9Item.count > 0 && (itemData.type & ItemType.AnyEquipment) != 0)
                 {
-                    foreach (Int32 abilId in ff9item._FF9Item_Data[ff9Item.id].ability)
+                    foreach (Int32 abilId in itemData.ability)
                     {
                         Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abilId);
                         if (abilIndex > -1)

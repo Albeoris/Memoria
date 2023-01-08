@@ -8,32 +8,19 @@ using FF9;
 using Memoria.Assets;
 using Memoria.Data;
 using UnityEngine;
-using Object = System.Object;
 
 public class ShopUI : UIScene
 {
 	public Int32 Id
 	{
-		get
-		{
-			return this.id;
-		}
-		set
-		{
-			this.id = value;
-		}
+		get => this.id;
+		set => this.id = value;
 	}
 
 	public ShopUI.ShopType Type
 	{
-		get
-		{
-			return this.type;
-		}
-		set
-		{
-			this.type = value;
-		}
+		get => this.type;
+		set => this.type = value;
 	}
 
 	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
@@ -50,19 +37,13 @@ public class ShopUI : UIScene
 			ButtonGroupState.SetScrollButtonToGroup(this.shopWeaponScrollList.ScrollButton, ShopUI.WeaponGroupButton);
 			ButtonGroupState.SetScrollButtonToGroup(this.shopSellItemScrollList.ScrollButton, ShopUI.SellItemGroupButton);
 			ButtonGroupState.SetPointerDepthToGroup(4, ShopUI.SellItemGroupButton);
-			if (this.type != ShopUI.ShopType.Synthesis)
-			{
-				ButtonGroupState.ActiveGroup = ShopUI.SubMenuGroupButton;
-			}
-			else
-			{
+			if (this.type == ShopUI.ShopType.Synthesis) // No Buy/Sell options: directly select items
 				ButtonGroupState.ActiveGroup = ShopUI.WeaponGroupButton;
-			}
+			else
+				ButtonGroupState.ActiveGroup = ShopUI.SubMenuGroupButton;
 		};
 		if (afterFinished != null)
-		{
-			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-		}
+			sceneVoidDelegate += afterFinished;
 		SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
 		base.Show(sceneVoidDelegate);
 		this.InitializeData();
@@ -89,9 +70,7 @@ public class ShopUI : UIScene
 			PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
 		};
 		if (afterFinished != null)
-		{
-			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-		}
+			sceneVoidDelegate += afterFinished;
 		base.Hide(sceneVoidDelegate);
 		this.RemoveCursorMemorize();
 		this.soldItemIdDict.Clear();
@@ -116,30 +95,18 @@ public class ShopUI : UIScene
 		this.mixItemList.Clear();
 		this.type = ff9shop.FF9Shop_GetType(this.id);
 		this.isGrocery = false;
-	    if (this.type == ShopUI.ShopType.Item)
-	    {
-	        ShopItems assortiment = ff9buy.ShopItems[this.id];
-	        for (Int32 i = 0; i < assortiment.Length; i++)
-	        {
-				RegularItem itemId = assortiment[i];
-				ItemType itemType = ff9item._FF9Item_Data[itemId].type;
-	            if ((itemType & ff9buy.FF9BUY_TYPE_WEAPON) != 0)
-	            {
-	                this.isGrocery = true;
-	                this.type = ShopUI.ShopType.Weapon;
-	                break;
-	            }
-	        }
-	    }
-	    if (this.type == ShopUI.ShopType.Synthesis)
+		this.InitializeMixList();
+		if (this.type == ShopUI.ShopType.Item)
 		{
-			this.AnalyzeArgument();
-			this.UpdatePartyInfo();
+			ShopItems assortiment = ff9buy.ShopItems[this.id];
+			if (this.mixItemList.Count > 0 || assortiment.ItemIds.Any(itemId => (ff9item._FF9Item_Data[itemId].type & ff9buy.FF9BUY_TYPE_WEAPON) != 0))
+			{
+				this.isGrocery = true;
+				this.type = ShopUI.ShopType.Weapon;
+			}
 		}
-		else if (this.type == ShopUI.ShopType.Weapon)
-		{
+		if (this.type != ShopUI.ShopType.Item)
 			this.UpdatePartyInfo();
-		}
 	}
 
 	public override Boolean OnKeyConfirm(GameObject go)
@@ -293,15 +260,17 @@ public class ShopUI : UIScene
 					else if (this.type == ShopUI.ShopType.Synthesis)
 					{
 						FF9Sfx.FF9SFX_Play(1045);
-						FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex];
+						FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex - this.mixStartIndex];
 						Int32 countAdded = ff9item.FF9Item_Add(synth.Result, this.count);
 						if (countAdded != 0)
 						{
-							ff9item.FF9Item_Remove(synth.Ingredients[0], countAdded);
-							ff9item.FF9Item_Remove(synth.Ingredients[1], countAdded);
+							foreach (RegularItem ingr in synth.Ingredients.Where(ingr => ingr != RegularItem.NoItem))
+								ff9item.FF9Item_Remove(ingr, countAdded);
 							FF9StateSystem.Common.FF9.party.gil -= (UInt32)(synth.Price * countAdded);
 							this.DisplayInfo(this.currentMenu != ShopUI.SubMenu.Sell ? this.Type : ShopUI.ShopType.Sell);
+							this.UpdateWeaponOrSynthType(true);
 							this.DisplayWeapon();
+							this.UpdateWeaponOrSynthType();
 							ButtonGroupState.ActiveGroup = ShopUI.WeaponGroupButton;
 							FF9StateSystem.Achievement.synthesisCount++;
 							AchievementManager.ReportAchievement(AcheivementKey.Synth10, FF9StateSystem.Achievement.synthesisCount);
@@ -361,6 +330,7 @@ public class ShopUI : UIScene
 			else if (ButtonGroupState.ActiveGroup == ShopUI.WeaponGroupButton)
 			{
 				FF9Sfx.FF9SFX_Play(101);
+				this.UpdateWeaponOrSynthType(true);
 				if (this.Type != ShopUI.ShopType.Synthesis)
 				{
 					this.ClearCharacterInfo();
@@ -426,7 +396,7 @@ public class ShopUI : UIScene
 				if (this.currentItemIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
 				{
 					this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-					this.DisplayInfo((ShopUI.ShopType)((this.currentMenu != ShopUI.SubMenu.Sell) ? this.Type : ShopUI.ShopType.Sell));
+					this.DisplayInfo(this.currentMenu != ShopUI.SubMenu.Sell ? this.Type : ShopUI.ShopType.Sell);
 				}
 			}
 			else if (ButtonGroupState.ActiveGroup == ShopUI.WeaponGroupButton)
@@ -434,6 +404,7 @@ public class ShopUI : UIScene
 				if (this.currentItemIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
 				{
 					this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+					this.UpdateWeaponOrSynthType();
 					this.DisplayInfo(this.currentMenu != ShopUI.SubMenu.Sell ? this.Type : ShopUI.ShopType.Sell);
 					this.DisplayCharacterInfo();
 				}
@@ -593,7 +564,7 @@ public class ShopUI : UIScene
 			this.weaponFundLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
 			this.weaponCountLabel.text = ff9item.FF9Item_GetCount(this.itemIdList[this.currentItemIndex]).ToString();
 			this.weaponEquipLabel.text = ff9item.FF9Item_GetEquipCount(this.itemIdList[this.currentItemIndex]).ToString();
-			if (ff9item.FF9Item_GetEquipPart(itemId) < 0)
+			if ((ff9item._FF9Item_Data[itemId].type & ItemType.AnyEquipment) != 0)
 			{
 				this.weaponEquipLabel.color = FF9TextTool.White;
 				this.weaponEquipTextLabel.color = FF9TextTool.White;
@@ -608,24 +579,35 @@ public class ShopUI : UIScene
 		}
 		else if (shopType == ShopUI.ShopType.Synthesis)
 		{
-			FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex];
+			FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex - this.mixStartIndex];
 			this.weaponFundLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
 			this.weaponCountLabel.text = ff9item.FF9Item_GetCount(synth.Result).ToString();
-			this.weaponEquipLabel.color = FF9TextTool.White;
 			this.weaponEquipLabel.text = ff9item.FF9Item_GetEquipCount(synth.Result).ToString();
-			this.requiredItem1Hud.Self.SetActive(true);
-			FF9UIDataTool.DisplayItem(synth.Ingredients[0], this.requiredItem1Hud.IconSprite, this.requiredItem1Hud.NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[0]) != 0);
-			if (synth.Ingredients[1] != RegularItem.NoItem)
+			if ((ff9item._FF9Item_Data[synth.Result].type & ItemType.AnyEquipment) != 0)
 			{
-				this.requiredItem2Hud.Self.SetActive(true);
-				if (synth.Ingredients[0] != synth.Ingredients[1])
-					FF9UIDataTool.DisplayItem(synth.Ingredients[1], this.requiredItem2Hud.IconSprite, this.requiredItem2Hud.NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[1]) != 0);
-				else
-					FF9UIDataTool.DisplayItem(synth.Ingredients[1], this.requiredItem2Hud.IconSprite, this.requiredItem2Hud.NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[1]) > 1);
+				this.weaponEquipLabel.color = FF9TextTool.White;
+				this.weaponEquipTextLabel.color = FF9TextTool.White;
 			}
 			else
 			{
-				this.requiredItem2Hud.Self.SetActive(false);
+				this.weaponEquipLabel.color = FF9TextTool.Gray;
+				this.weaponEquipTextLabel.color = FF9TextTool.Gray;
+			}
+			// Todo: only 2 ingredients can be displayed for now
+			ItemListDetailWithIconHUD[] hud = new ItemListDetailWithIconHUD[] { this.requiredItem1Hud, this.requiredItem2Hud };
+			Dictionary<RegularItem, Int32> ingredients = synth.IngredientsAsDictionary();
+			for (Int32 i = 1; i >= 0; i--)
+			{
+				if (i < synth.Ingredients.Length && synth.Ingredients[i] != RegularItem.NoItem)
+				{
+					hud[i].Self.SetActive(true);
+					FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]]);
+					ingredients[synth.Ingredients[i]]--;
+				}
+				else
+				{
+					hud[i].Self.SetActive(false);
+				}
 			}
 		}
 	}
@@ -715,40 +697,19 @@ public class ShopUI : UIScene
 				});
 			}
 		}
-		else if (this.type == ShopUI.ShopType.Synthesis)
+		this.mixStartIndex = list.Count;
+		for (Int32 i = 0; i < this.mixItemList.Count; i++)
 		{
-			for (Int32 j = 0; j < this.mixItemList.Count; j++)
+			FF9MIX_DATA synth = this.mixItemList[i];
+			Boolean canBeSynthesized = synth.CanBeSynthesized();
+			this.itemIdList.Add(synth.Result);
+			this.isItemEnableList.Add(canBeSynthesized);
+			list.Add(new ShopUI.ShopItemListData
 			{
-				FF9MIX_DATA synth = this.mixItemList[j];
-				Boolean canBeSynthesized = ff9item.FF9Item_GetCount(synth.Result) < ff9item.FF9ITEM_COUNT_MAX && FF9StateSystem.Common.FF9.party.gil >= synth.Price;
-
-			    if (synth.Ingredients[0] == synth.Ingredients[1] && synth.Ingredients[0] != RegularItem.NoItem)
-			    {
-					RegularItem itemId = synth.Ingredients[0]; // Fix it if you change ff9mix.FF9MIX_SRC_MAX
-			        if (ff9item.FF9Item_GetCount(itemId) < 2)
-			            canBeSynthesized = false;
-			    }
-			    else
-			    {
-			        for (Int32 k = 0; canBeSynthesized && k < ff9mix.FF9MIX_SRC_MAX; k++)
-			        {
-			            if (synth.Ingredients[k] == RegularItem.NoItem)
-			                continue;
-
-						RegularItem itemId = synth.Ingredients[k];
-			            if (ff9item.FF9Item_GetCount(itemId) < 1)
-			                canBeSynthesized = false;
-			        }
-			    }
-			    this.itemIdList.Add(synth.Result);
-				this.isItemEnableList.Add(canBeSynthesized);
-				list.Add(new ShopUI.ShopItemListData
-				{
-					Id = synth.Result,
-					Price = synth.Price,
-					Enable = canBeSynthesized
-				});
-			}
+				Id = synth.Result,
+				Price = synth.Price,
+				Enable = canBeSynthesized
+			});
 		}
 		if (this.shopWeaponScrollList.ItemsPool.Count == 0)
 		{
@@ -942,8 +903,8 @@ public class ShopUI : UIScene
 			else
 			{
 				FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "MixQtyHelp");
-				FF9UIDataTool.DisplayItem(this.mixItemList[this.currentItemIndex].Result, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
-				this.confirmPriceLabel.text = (this.count * this.mixItemList[this.currentItemIndex].Price).ToString() + "[YSUB=1.3][sub]G";
+				FF9UIDataTool.DisplayItem(this.mixItemList[this.currentItemIndex - this.mixStartIndex].Result, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
+				this.confirmPriceLabel.text = (this.count * this.mixItemList[this.currentItemIndex - this.mixStartIndex].Price).ToString() + "[YSUB=1.3][sub]G";
 			}
 		}
 		else
@@ -1020,9 +981,9 @@ public class ShopUI : UIScene
 				this.availableCharaList.Add(player.info.slot_no);
 	}
 
-    private void AnalyzeArgument()
+    private void InitializeMixList()
     {
-        foreach (FF9MIX_DATA data in ff9mix.SynthesisData)
+        foreach (FF9MIX_DATA data in ff9mix.SynthesisData.Values)
 			if (data.Shops.Contains(this.id) && data.Result != RegularItem.NoItem)
 				mixItemList.Add(data);
 
@@ -1048,19 +1009,16 @@ public class ShopUI : UIScene
 
 	private void StartCountMix()
 	{
-		FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex];
-		Int32 requiredCount = synth.Ingredients[0] != synth.Ingredients[1] ? 1 : 2;
+		FF9MIX_DATA synth = this.mixItemList[this.currentItemIndex - this.mixStartIndex];
 		Int32 resultItemCount = ff9item.FF9Item_GetCount(synth.Result);
-		if (resultItemCount < ff9item.FF9ITEM_COUNT_MAX && synth.Price <= FF9StateSystem.Common.FF9.party.gil && (synth.Ingredients[0] == RegularItem.NoItem || requiredCount <= ff9item.FF9Item_GetCount(synth.Ingredients[0])) && (synth.Ingredients[1] == RegularItem.NoItem || requiredCount <= ff9item.FF9Item_GetCount(synth.Ingredients[1])))
+		if (synth.CanBeSynthesized())
 		{
 			this.count = 1;
 			this.minCount = 1;
 			Int32 maxBuy = (Int32)(synth.Price == 0 ? ff9item.FF9ITEM_COUNT_MAX : FF9StateSystem.Common.FF9.party.gil / synth.Price);
 			this.maxCount = Math.Min(ff9item.FF9ITEM_COUNT_MAX - resultItemCount, maxBuy);
-			if (synth.Ingredients[0] != RegularItem.NoItem)
-				this.maxCount = Math.Min(this.maxCount, ff9item.FF9Item_GetCount(synth.Ingredients[0]) / requiredCount);
-			if (synth.Ingredients[1] != RegularItem.NoItem)
-				this.maxCount = Math.Min(this.maxCount, ff9item.FF9Item_GetCount(synth.Ingredients[1]) / requiredCount);
+			foreach (KeyValuePair<RegularItem, Int32> kvp in synth.IngredientsAsDictionary())
+				this.maxCount = Math.Min(this.maxCount, ff9item.FF9Item_GetCount(kvp.Key) / kvp.Value);
 		}
 		this.isPlusQuantity = false;
 		this.isMinusQuantity = false;
@@ -1135,6 +1093,8 @@ public class ShopUI : UIScene
 		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
 		this.itemFundLabel = this.ItemInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
 		this.itemCountLabel = this.ItemInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
+		this.ItemInfoPanel.GetChild(2).GetChild(0).SetActive(false); // Completly hide "Equipped: 0" in item shops
+		this.ItemInfoPanel.GetChild(2).GetChild(1).SetActive(false);
 		this.weaponFundLabel = this.WeaponInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
 		this.weaponCountLabel = this.WeaponInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
 		this.weaponEquipLabel = this.WeaponInfoPanel.GetChild(2).GetChild(1).GetComponent<UILabel>();
@@ -1218,6 +1178,20 @@ public class ShopUI : UIScene
 			FF9Sfx.FF9SFX_Play(103);
 			this.count = newCount;
 			this.DisplayConfirmDialog(this.currentMenu != ShopUI.SubMenu.Sell ? this.Type : ShopUI.ShopType.Sell);
+		}
+	}
+
+	private void UpdateWeaponOrSynthType(Boolean exitSelection = false)
+	{
+		if (this.mixItemList.Count > 0 && this.mixStartIndex > 0)
+		{
+			ShopType newType = !exitSelection && this.currentItemIndex >= this.mixStartIndex ? ShopType.Synthesis : ShopType.Weapon;
+			if (this.type != newType)
+			{
+				this.type = newType;
+				this.SynthesisPartInfoPanel.SetActive(newType == ShopType.Synthesis);
+				this.DisplayHelpPanel(newType);
+			}
 		}
 	}
 
@@ -1343,6 +1317,8 @@ public class ShopUI : UIScene
 
 	private Int32 currentItemIndex = -1;
 
+	private Int32 mixStartIndex = 0;
+
 	private Boolean isGrocery;
 
 	private Int32 availableCharaStart;
@@ -1360,15 +1336,6 @@ public class ShopUI : UIScene
 	private Boolean isMinusQuantity;
 
 	private Single keepPressingTime;
-
-	private Byte[] partMask = new Byte[]
-	{
-		128,
-		32,
-		64,
-		16,
-		8
-	};
 
 	private class CharacterWeaponInfoHUD
 	{

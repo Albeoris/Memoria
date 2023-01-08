@@ -1185,8 +1185,8 @@ public partial class BattleHUD : UIScene
         Int32 count = Math.Min(magicSwordCommand.ListEntry.Length, abilities.Length);
         for (Int32 i = 0; i < count; ++i)
         {
-            Int32 abilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)magicSwordCommand.ListEntry[i]);
-            Int32 index = ff9abil.FF9Abil_GetIndex(vivi, (Int32)abilities[i]);
+            Int32 abilityId = ff9abil.GetAbilityIdFromActiveAbility(magicSwordCommand.GetAbilityId(i));
+            Int32 index = ff9abil.FF9Abil_GetIndex(vivi, ff9abil.GetAbilityIdFromActiveAbility(abilities[i]));
             if (index >= 0)
             {
                 abilityPlayer.AbilityPaList[abilityId] = vivi.pa[index];

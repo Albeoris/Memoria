@@ -278,8 +278,7 @@ public static class btl_stat
                     //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_GET_UP_DISABLE);
                     //btl.evt.animFrame = 0;
                 }
-                CMD_DATA cmd;
-                if (!btl_util.IsBtlUsingCommand(btl, out cmd) || cmd.cmd_no > BattleCommandId.BoundaryCheck)
+                if (!btl_util.IsBtlUsingCommand(btl, out CMD_DATA cmd) || !btl_util.IsCommandDeclarable(cmd.cmd_no))
                     btl.sel_mode = 0;
                 btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysDead);
                 if ((btl.stat.permanent & BattleStatus.Regen) != 0)
