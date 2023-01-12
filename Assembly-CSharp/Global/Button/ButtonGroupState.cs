@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Memoria.Assets;
 using UnityEngine;
@@ -7,102 +8,58 @@ public class ButtonGroupState : MonoBehaviour
 {
 	public static String ActiveGroup
 	{
-		get
-		{
-			return ButtonGroupState.activeGroup;
-		}
-		set
-		{
-			ButtonGroupState.ActiveGroupChanged(value);
-		}
+		get => ButtonGroupState.activeGroup;
+		set => ButtonGroupState.ActiveGroupChanged(value);
 	}
 
 	public static GameObject PrevActiveButton
 	{
-		get
-		{
-			return ButtonGroupState.prevActiveButton;
-		}
+		get => ButtonGroupState.prevActiveButton;
 		set
 		{
 			ButtonGroupState.prevActiveButton = value;
-			if (value != (UnityEngine.Object)null && value.GetComponent<ButtonGroupState>())
-			{
+			if (value != null && value.GetComponent<ButtonGroupState>())
 				ButtonGroupState.prevActiveGroup = value.GetComponent<ButtonGroupState>().GroupName;
-			}
 			else
-			{
 				ButtonGroupState.prevActiveGroup = String.Empty;
-			}
 		}
 	}
 
 	public static String PrevActiveGroup
 	{
-		get
-		{
-			return ButtonGroupState.prevActiveGroup;
-		}
+		get => ButtonGroupState.prevActiveGroup;
 	}
 
 	public static List<String> IgnorePrevendTouchList
 	{
-		get
-		{
-			return ButtonGroupState.ignorePrevendTouchList;
-		}
+		get => ButtonGroupState.ignorePrevendTouchList;
 	}
 
 	public static GameObject ActiveButton
 	{
-		get
-		{
-			return (!ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup)) ? null : ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup];
-		}
-		set
-		{
-			ButtonGroupState.ActiveButtonChanged(value, true);
-		}
+		get => ButtonGroupState.activeButtonList.TryGetValue(ButtonGroupState.activeGroup, out GameObject button) ? button : null;
+		set => ButtonGroupState.ActiveButtonChanged(value, true);
 	}
 
 	public static Boolean HelpEnabled
 	{
-		get
-		{
-			return ButtonGroupState.helpEnabled;
-		}
-		set
-		{
-			ButtonGroupState.helpEnabled = value;
-		}
+		get => ButtonGroupState.helpEnabled;
+		set => ButtonGroupState.helpEnabled = value;
 	}
 
 	public static Boolean AllTargetEnabled
 	{
-		get
-		{
-			return ButtonGroupState.allTarget;
-		}
+		get => ButtonGroupState.allTarget;
 	}
 
 	public static Boolean MuteActiveSound
 	{
-		set
-		{
-			ButtonGroupState.muteActiveSound = value;
-		}
+		set => ButtonGroupState.muteActiveSound = value;
 	}
 
 	public static ScrollButton ActiveScrollButton
 	{
-		get
-		{
-			if (ButtonGroupState.scrollButtonList.ContainsKey(ButtonGroupState.activeGroup))
-			{
-				return ButtonGroupState.scrollButtonList[ButtonGroupState.activeGroup];
-			}
-			return (ScrollButton)null;
-		}
+		get => ButtonGroupState.scrollButtonList.TryGetValue(ButtonGroupState.activeGroup, out ScrollButton button) ? button : null;
 	}
 
 	private void Awake()
@@ -114,9 +71,7 @@ public class ButtonGroupState : MonoBehaviour
 	private void OnEnable()
 	{
 		if (!ButtonGroupState.ButtonGroupList.ContainsKey(this.GroupName))
-		{
 			ButtonGroupState.ButtonGroupList.Add(this.GroupName, new List<GameObject>());
-		}
 		ButtonGroupState.ButtonGroupList[this.GroupName].Add(base.gameObject);
 		if (this.GroupName == ButtonGroupState.activeGroup)
 		{
@@ -130,15 +85,13 @@ public class ButtonGroupState : MonoBehaviour
 			base.gameObject.GetComponent<UIKeyNavigation>().enabled = false;
 			base.gameObject.GetComponent<UIButton>().enabled = false;
 		}
-		if (ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup) && ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] == (UnityEngine.Object)null)
-		{
+		if (ButtonGroupState.activeButtonList.TryGetValue(ButtonGroupState.activeGroup, out GameObject button) && button == null)
 			ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] = base.gameObject;
-		}
 	}
 
 	private void OnDisable()
 	{
-		if (base.gameObject != (UnityEngine.Object)null)
+		if (base.gameObject != null)
 		{
 			Singleton<PointerManager>.Instance.RemovePointerFromGameObject(base.gameObject);
 			ButtonGroupState.ButtonGroupList[this.GroupName].Remove(base.gameObject);
@@ -151,9 +104,7 @@ public class ButtonGroupState : MonoBehaviour
 		{
 			this.processJoyStick();
 			if (this.GroupName == ButtonGroupState.ActiveGroup && UICamera.selectedObject == base.gameObject && ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup) && ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] != base.gameObject)
-			{
 				ButtonGroupState.ActiveButtonChanged(base.gameObject, false);
-			}
 		}
 	}
 
@@ -162,13 +113,11 @@ public class ButtonGroupState : MonoBehaviour
 		if (this.GroupName == ButtonGroupState.ActiveGroup)
 		{
 			if (!ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup))
-			{
 				return false;
-			}
 			if (UICamera.selectedObject == base.gameObject)
 			{
-				Boolean flag = ButtonGroupState.ignorePrevendTouchList.Contains(this.GroupName);
-				if (ButtonGroupState.prevActiveButton == base.gameObject || ButtonGroupState.PrevActiveGroup != this.GroupName || ButtonGroupState.prevActiveGroup == String.Empty || flag)
+				Boolean updateAnyway = ButtonGroupState.ignorePrevendTouchList.Contains(this.GroupName);
+				if (ButtonGroupState.prevActiveButton == base.gameObject || ButtonGroupState.PrevActiveGroup != this.GroupName || ButtonGroupState.prevActiveGroup == String.Empty || updateAnyway)
 				{
 					ButtonGroupState.ActiveButtonChanged(base.gameObject, false);
 					return true;
@@ -182,88 +131,48 @@ public class ButtonGroupState : MonoBehaviour
 	private void processJoyStick()
 	{
 		if (PersistenSingleton<UIManager>.Instance.IsLoading)
-		{
 			return;
-		}
 		if (ButtonGroupState.activeGroup != this.GroupName)
-		{
 			return;
-		}
 		if (this.button.gameObject == UICamera.selectedObject && !ButtonGroupState.allTarget)
 		{
-			if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(0) || PersistenSingleton<HonoInputManager>.Instance.IsInputDown(1)) && this.button.state != UIButtonColor.State.Pressed)
-			{
+			if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel)) && this.button.state != UIButtonColor.State.Pressed)
 				this.button.SetState(UIButtonColor.State.Pressed, false);
-			}
-			if ((PersistenSingleton<HonoInputManager>.Instance.IsInputUp(0) || PersistenSingleton<HonoInputManager>.Instance.IsInputUp(1)) && this.button.state != UIButtonColor.State.Hover)
-			{
+			if ((PersistenSingleton<HonoInputManager>.Instance.IsInputUp(Control.Confirm) || PersistenSingleton<HonoInputManager>.Instance.IsInputUp(Control.Cancel)) && this.button.state != UIButtonColor.State.Hover)
 				this.button.SetState(UIButtonColor.State.Hover, false);
-			}
 		}
 	}
 
 	protected virtual void OnHover(Boolean isOver)
 	{
-		if (!NGUITools.GetActive(this))
-		{
+		if (!NGUITools.GetActive(this) || ButtonGroupState.secondaryGroup.Contains(this.GroupName))
 			return;
-		}
-		if (ButtonGroupState.secondaryGroup.Contains(this.GroupName))
-		{
-			return;
-		}
 		if (!isOver && UICamera.selectedObject == base.gameObject)
-		{
 			this.SetHover(false);
-		}
 	}
 
 	protected virtual void OnClick()
 	{
-		if (!base.gameObject)
-		{
+		if (!base.gameObject || ButtonGroupState.secondaryGroup.Contains(this.GroupName))
 			return;
-		}
-		if (ButtonGroupState.secondaryGroup.Contains(this.GroupName))
-		{
-			return;
-		}
 		if (base.enabled && UIKeyTrigger.IsOnlyTouchAndLeftClick())
-		{
 			this.SetHover(false);
-		}
 	}
 
 	protected virtual void OnDragOver(GameObject draggedObject)
 	{
-		if (!base.gameObject)
-		{
+		if (!base.gameObject || ButtonGroupState.secondaryGroup.Contains(this.GroupName))
 			return;
-		}
-		if (ButtonGroupState.secondaryGroup.Contains(this.GroupName))
-		{
-			return;
-		}
-		if (base.enabled && UIKeyTrigger.IsOnlyTouchAndLeftClick() && ButtonGroupState.activeGroup != String.Empty && base.gameObject.GetComponent<UIDragScrollView>() == (UnityEngine.Object)null)
-		{
+		if (base.enabled && UIKeyTrigger.IsOnlyTouchAndLeftClick() && ButtonGroupState.activeGroup != String.Empty && base.gameObject.GetComponent<UIDragScrollView>() == null)
 			ButtonGroupState.ActiveButtonChanged(base.gameObject, true);
-		}
 	}
 
 	protected virtual void OnDragOut(GameObject draggedObject)
 	{
-		if (!base.gameObject)
-		{
+		if (!base.gameObject || ButtonGroupState.secondaryGroup.Contains(this.GroupName))
 			return;
-		}
-		if (ButtonGroupState.secondaryGroup.Contains(this.GroupName))
-		{
-			return;
-		}
 		if (base.gameObject == UICamera.selectedObject && base.enabled)
-		{
 			this.button.SetState(UIButtonColor.State.Pressed, true);
-		}
 	}
 
 	public static Boolean ContainButtonInGroup(GameObject go, String group)
@@ -274,12 +183,8 @@ public class ButtonGroupState : MonoBehaviour
 	public static Boolean ContainButtonInSecondaryGroup(GameObject go)
 	{
 		foreach (String group in ButtonGroupState.secondaryGroup)
-		{
 			if (ButtonGroupState.ContainButtonInGroup(go, group))
-			{
 				return true;
-			}
-		}
 		return false;
 	}
 
@@ -606,18 +511,9 @@ public class ButtonGroupState : MonoBehaviour
 
 	public static GameObject GetCursorStartSelect(String group)
 	{
-		if (ButtonGroupState.ButtonGroupList.ContainsKey(group))
-		{
-			foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[group])
-			{
-				UIKeyNavigation component = gameObject.GetComponent<UIKeyNavigation>();
-				if (component.startsSelected)
-				{
-					return gameObject;
-				}
-			}
-		}
-		return (GameObject)null;
+		if (ButtonGroupState.ButtonGroupList.TryGetValue(group, out List<GameObject> objList))
+			return objList.FirstOrDefault(button => button.GetComponent<UIKeyNavigation>().startsSelected);
+		return null;
 	}
 
 	public static void ToggleHelp(bool playSFX = true)
@@ -723,18 +619,12 @@ public class ButtonGroupState : MonoBehaviour
 		ButtonGroupState.PrevActiveButton = ((!ButtonGroupState.activeButtonList.ContainsKey(ButtonGroupState.activeGroup) || !(ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] != (UnityEngine.Object)null)) ? PersistenSingleton<UIManager>.Instance.gameObject : ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup]);
 		ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup] = go;
 		if (setSelect)
-		{
 			UICamera.selectedObject = ButtonGroupState.activeButtonList[ButtonGroupState.activeGroup];
-		}
-		if (go == (UnityEngine.Object)null)
-		{
+		if (go == null)
 			return;
-		}
 		ButtonGroupState.UpdateActiveButton();
 		if (ButtonGroupState.PrevActiveButton != go && ButtonGroupState.activeGroup != Dialog.DialogGroupButton && !ButtonGroupState.muteActiveSound)
-		{
 			FF9Sfx.FF9SFX_Play(103);
-		}
 		UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnItemSelect", go);
 	}
 

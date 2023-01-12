@@ -1,6 +1,8 @@
 ﻿using System;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
+using Memoria;
 
 public class UIScene : MonoBehaviour
 {
@@ -246,6 +248,8 @@ public class UIScene : MonoBehaviour
 
 	public virtual void OnListItemClick(GameObject go)
 	{
+		if (SceneDirector.IsBattleScene() ? Configuration.Control.DisableMouseInBattles : Configuration.Control.DisableMouseForMenus)
+			return;
 		this.onPress(go, false);
 	}
 
@@ -292,6 +296,8 @@ public class UIScene : MonoBehaviour
 
 	public virtual void onClick(GameObject go)
 	{
+		if (SceneDirector.IsBattleScene() ? Configuration.Control.DisableMouseInBattles : Configuration.Control.DisableMouseForMenus)
+			return;
 		this.onPress(go, false);
 	}
 

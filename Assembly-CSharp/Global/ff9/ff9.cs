@@ -7029,8 +7029,19 @@ public static class ff9
 		}
 		else
 		{
-			goBackward = UIManager.Input.GetKey(Control.Special);
-			goForward = UIManager.Input.GetKey(Control.Confirm);
+			Single rightStickY = PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.ThumbSticks.Right.Y;
+			if (rightStickY < -0.1f || rightStickY > 0.1f)
+			{
+				if (Configuration.AnalogControl.Enabled)
+					vy = (Int32)(rightStickY * 128.0f);
+				else if (rightStickY < -0.1f)
+					vy = -128;
+				else
+					vy = 128;
+				return false;
+			}
+			goBackward = rightStickY < -0.1f || UIManager.Input.GetKey(Control.Special);
+			goForward = rightStickY > 0.1f || UIManager.Input.GetKey(Control.Confirm);
 		}
 		vy = 0;
 		if (goBackward)

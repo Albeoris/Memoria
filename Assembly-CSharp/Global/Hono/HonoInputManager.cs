@@ -1116,43 +1116,34 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		}
 	}
 
-	public Boolean IsInput(Int32 index)
+	public Boolean IsInput(Control index)
 	{
-		if (index >= (Int32)this.KeyName.Length || index < 0)
-		{
-			return this.GetDirectionKey((Control)index);
-		}
-		if (UIKeyTrigger.IsNeedToRemap() && index == 0)
-		{
-			return UnityXInput.Input.GetKey(KeyCode.Escape) || this.isInput[0];
-		}
-		return this.isInput[index];
+		Int32 indexInt = (Int32)index;
+		if (indexInt >= this.KeyName.Length || indexInt < 0)
+			return this.GetDirectionKey(index);
+		if (UIKeyTrigger.IsNeedToRemap() && index == Control.Confirm)
+			return UnityXInput.Input.GetKey(KeyCode.Escape) || this.isInput[(Int32)Control.Confirm];
+		return this.isInput[indexInt];
 	}
 
-	public Boolean IsInputDown(Int32 index)
+	public Boolean IsInputDown(Control index)
 	{
-		if (index >= (Int32)this.KeyName.Length || index < 0)
-		{
-			return this.GetDirectionKeyDown((Control)index);
-		}
-		if (UIKeyTrigger.IsNeedToRemap() && index == 0)
-		{
-			return UnityXInput.Input.GetKeyDown(KeyCode.Escape) || this.isInputDown[0];
-		}
-		return this.isInputDown[index];
+		Int32 indexInt = (Int32)index;
+		if (indexInt >= this.KeyName.Length || index < 0)
+			return this.GetDirectionKeyDown(index);
+		if (UIKeyTrigger.IsNeedToRemap() && index == Control.Confirm)
+			return UnityXInput.Input.GetKeyDown(KeyCode.Escape) || this.isInputDown[(Int32)Control.Confirm];
+		return this.isInputDown[indexInt];
 	}
 
-	public Boolean IsInputUp(Int32 index)
+	public Boolean IsInputUp(Control index)
 	{
-		if (index >= (Int32)this.KeyName.Length || index < 0)
-		{
-			return this.GetDirectionKeyUp((Control)index);
-		}
-		if (UIKeyTrigger.IsNeedToRemap() && index == 0)
-		{
-			return UnityXInput.Input.GetKeyUp(KeyCode.Escape) || this.isInputUp[0];
-		}
-		return this.isInputUp[index];
+		Int32 indexInt = (Int32)index;
+		if (indexInt >= this.KeyName.Length || indexInt < 0)
+			return this.GetDirectionKeyUp(index);
+		if (UIKeyTrigger.IsNeedToRemap() && index == Control.Confirm)
+			return UnityXInput.Input.GetKeyUp(KeyCode.Escape) || this.isInputUp[(Int32)Control.Confirm];
+		return this.isInputUp[indexInt];
 	}
 
 	public Vector2 GetAxis()

@@ -1,10 +1,12 @@
 ﻿using Assets.Scripts.Common;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Test;
+using Memoria.Prime.Text;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -50,9 +52,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     public static Boolean IsOnlyTouchAndLeftClick()
     {
-        if (UICamera.currentTouchID > -2)
-            return UICamera.currentTouchID < 2;
-        return false;
+        return UICamera.currentTouchID > -2 && UICamera.currentTouchID < 2;
     }
 
     public static Boolean IsNeedToRemap()
@@ -76,8 +76,9 @@ public class UIKeyTrigger : MonoBehaviour
         }
         return (key != Control.Cancel || !PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog()) &&
                (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD ||
-                !PersistenSingleton<UIManager>.Instance.Booster.IsSliderActive && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || UICamera.selectedObject != UIManager.World.RotationLockButtonGameObject && UICamera.selectedObject != UIManager.World.PerspectiveButtonGameObject) && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || !(UICamera.selectedObject == gameObject))) &&
-               (PersistenSingleton<HonoInputManager>.Instance.IsInput((Int32)key) || lazyKeyCommand == key || key == Control.Confirm && UnityXInput.Input.GetMouseButtonDown(0) && EventHUD.CurrentHUD == MinigameHUD.None && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.EndGame && PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && lazyKeyCommand == Control.None);
+                 !PersistenSingleton<UIManager>.Instance.Booster.IsSliderActive && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || UICamera.selectedObject != UIManager.World.RotationLockButtonGameObject && UICamera.selectedObject != UIManager.World.PerspectiveButtonGameObject) && (key != Control.Confirm || !UnityXInput.Input.GetMouseButtonDown(0) || UICamera.selectedObject != gameObject)) &&
+               (PersistenSingleton<HonoInputManager>.Instance.IsInput(key) || lazyKeyCommand == key ||
+                 key == Control.Confirm && UnityXInput.Input.GetMouseButtonDown(0) && EventHUD.CurrentHUD == MinigameHUD.None && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.EndGame && PersistenSingleton<UIManager>.Instance.Dialogs.GetChoiceDialog() == null && lazyKeyCommand == Control.None && !Configuration.Control.DisableMouseInFields);
     }
 
     public Boolean GetKeyTrigger(Control key)
@@ -86,11 +87,13 @@ public class UIKeyTrigger : MonoBehaviour
             return false;
         if (UnityXInput.Input.GetMouseButtonDown(0) || UnityXInput.Input.GetMouseButtonDown(1) || UnityXInput.Input.GetMouseButtonDown(2))
         {
-            if (key != Control.Left && key != Control.Right && key != Control.Up && key != Control.Down && PersistenSingleton<HonoInputManager>.Instance.IsInputUp((Int32)key))
+            if (key != Control.Left && key != Control.Right && key != Control.Up && key != Control.Down && PersistenSingleton<HonoInputManager>.Instance.IsInputUp(key))
                 return true;
         }
-        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown((Int32)key))
+        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(key))
+        {
             return true;
+        }
         if (lazyKeyCommand != key)
             return false;
         ResetKeyCode();
@@ -425,40 +428,38 @@ public class UIKeyTrigger : MonoBehaviour
             activeButton = UICamera.selectedObject;
         if (sceneFromState != null && (!PersistenSingleton<UIManager>.Instance.Dialogs.Activate || PersistenSingleton<UIManager>.Instance.IsPause))
         {
-            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(8))
+            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause))
             {
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
-                {
                     sceneFromState.OnKeyPause(activeButton);
-                }
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(1) || keyCommand == Control.Cancel)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || keyCommand == Control.Cancel)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeyCancel(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(0) || keyCommand == Control.Confirm)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || keyCommand == Control.Confirm)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeyConfirm(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(8) || keyCommand == Control.Pause)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
             {
                 keyCommand = Control.None;
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                     sceneFromState.OnKeyPause(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(9) || keyCommand == Control.Select)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select) || keyCommand == Control.Select)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeySelect(UICamera.selectedObject);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(2) || keyCommand == Control.Menu)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Menu) || keyCommand == Control.Menu)
             {
                 keyCommand = Control.None;
                 if (FF9StateSystem.AndroidTVPlatform && FF9StateSystem.EnableAndroidTVJoystickMode && (PersistenSingleton<HonoInputManager>.Instance.GetSource(Control.Menu) == SourceControl.Joystick && PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause))
@@ -467,32 +468,32 @@ public class UIKeyTrigger : MonoBehaviour
                     sceneFromState.OnKeyMenu(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(3) || keyCommand == Control.Special)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Special) || keyCommand == Control.Special)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeySpecial(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(4) || keyCommand == Control.LeftBumper)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) || keyCommand == Control.LeftBumper)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftBumper(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(5) || keyCommand == Control.RightBumper)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) || keyCommand == Control.RightBumper)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeyRightBumper(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(6) || keyCommand == Control.LeftTrigger)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || keyCommand == Control.LeftTrigger)
             {
                 BattleHUD.ForceNextTurn = true;
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftTrigger(activeButton);
                 return true;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(7) || keyCommand == Control.RightTrigger)
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger) || keyCommand == Control.RightTrigger)
             {
                 keyCommand = Control.None;
                 sceneFromState.OnKeyRightTrigger(activeButton);
@@ -564,7 +565,11 @@ public class UIKeyTrigger : MonoBehaviour
         if (activeButton == null)
             activeButton = UICamera.selectedObject;
 
-        if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(0) || keyCommand == Control.Confirm)
+        List<Control> dialogConfirmKeys = new List<Control>();
+        foreach (String key in Configuration.Control.DialogProgressButtons)
+            if (key.TryEnumParse<Control>(out Control ctrl))
+                dialogConfirmKeys.Add(ctrl);
+        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl))
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyConfirm(activeButton);
@@ -573,22 +578,20 @@ public class UIKeyTrigger : MonoBehaviour
 
             triggleEventDialog = true;
         }
-        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(1) || keyCommand == Control.Cancel)
+        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || keyCommand == Control.Cancel)
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyCancel(activeButton);
         }
-        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(8) || keyCommand == Control.Pause)
+        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
         {
             keyCommand = Control.None;
             if (!PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                 return;
             PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(activeButton);
         }
-        else
+        else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Menu) || keyCommand == Control.Menu)
         {
-            if (!PersistenSingleton<HonoInputManager>.Instance.IsInputDown(2) && keyCommand != Control.Menu)
-                return;
             keyCommand = Control.None;
             if (!PersistenSingleton<UIManager>.Instance.IsMenuControlEnable)
                 return;

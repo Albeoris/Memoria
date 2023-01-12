@@ -387,7 +387,7 @@
     <Compile Include="Memoria\Configuration\MemoriaConfigurationMenu.cs" />
     <Compile Include="Memoria\Configuration\Structure\ModSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\CheatsSection.cs" />
-    <Compile Include="Memoria\Configuration\Structure\AnalogControlSection.cs" />
+    <Compile Include="Memoria\Configuration\Structure\ControlSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\AudioSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ExportSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\FontSection.cs" />

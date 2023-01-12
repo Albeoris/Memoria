@@ -106,9 +106,9 @@ public class RecycleListPopulator : MonoBehaviour
 		}
 	}
 
-	public void JumpToIndex(Int32 _activeIndex, Boolean forceReset = false)
+	public void JumpToIndex(Int32 _activeIndex, Boolean forceReset = false, Boolean preventReset = false)
 	{
-		if (this.CheckNeedToJump(_activeIndex) || forceReset)
+		if (!preventReset && (this.CheckNeedToJump(_activeIndex) || forceReset))
 		{
 			this.activeNumber = _activeIndex;
 			this.InitTableViewImp(this.dataList, _activeIndex);
@@ -152,7 +152,7 @@ public class RecycleListPopulator : MonoBehaviour
 		foreach (Transform transform in this.itemsPool)
 		{
 			RecycleListItem component = transform.gameObject.GetComponent<RecycleListItem>();
-			component.CheckVisibilty();
+			component.CheckVisibility();
 		}
 	}
 
@@ -163,7 +163,7 @@ public class RecycleListPopulator : MonoBehaviour
 			Int32 index = this.dataTracker[dataId];
 			return this.itemsPool[index];
 		}
-		return (Transform)null;
+		return null;
 	}
 
 	public void SwitchActiveItem()
@@ -300,15 +300,12 @@ public class RecycleListPopulator : MonoBehaviour
 
 	private void UpdateTableViewImp()
 	{
-		foreach (Int32 num in this.dataTracker.Keys)
+		foreach (KeyValuePair<Int32, Int32> kvp in this.dataTracker)
 		{
-			Int32 index = this.dataTracker[num];
-			Transform transform = this.itemsPool[index];
-			if (transform.GetComponent<UIKeyNavigation>())
-			{
-				transform.GetComponent<UIKeyNavigation>().startsSelected = (this.activeNumber == num);
-			}
-			this.PopulateListItemWithData(transform, this.dataList[num], num, false);
+			Transform poolObj = this.itemsPool[kvp.Value];
+			if (poolObj.GetComponent<UIKeyNavigation>())
+				poolObj.GetComponent<UIKeyNavigation>().startsSelected = this.activeNumber == kvp.Key;
+			this.PopulateListItemWithData(poolObj, this.dataList[kvp.Key], kvp.Key, false);
 		}
 	}
 
@@ -316,26 +313,19 @@ public class RecycleListPopulator : MonoBehaviour
 	{
 		this.table.Reposition();
 		this.draggablePanel.SetDragAmount(0f, 0f, false);
-		foreach (Int32 num in this.dataTracker.Keys)
+		foreach (KeyValuePair<Int32, Int32> kvp in this.dataTracker)
 		{
-			Int32 index = this.dataTracker[num];
-			Int32 num2 = num / this.Column;
-			Transform transform = this.itemsPool[index];
+			Int32 lineNo = kvp.Key / this.Column;
+			Transform poolObj = this.itemsPool[kvp.Value];
 			if (this.startNumber > 0)
-			{
-				num2 -= this.startNumber / this.Column;
-			}
-			transform.localPosition = new Vector3(transform.localPosition.x, -(this.cellHeight / 2f + (Single)num2 * this.cellHeight), transform.localPosition.z);
+				lineNo -= this.startNumber / this.Column;
+			poolObj.localPosition = new Vector3(poolObj.localPosition.x, -(this.cellHeight / 2f + lineNo * this.cellHeight), poolObj.localPosition.z);
 		}
 		this.draggablePanel.SetDragAmount(0f, 0f, true);
 		if (this.ScrollButton)
-		{
 			this.ScrollButton.CheckScrollPosition();
-		}
 		if (this.snapDragPanel)
-		{
 			this.snapDragPanel.StartPostionY = this.panel.transform.localPosition.y;
-		}
 	}
 
 	private void InitListItemWithIndex(Transform item, Int32 dataIndex, Int32 poolIndex)

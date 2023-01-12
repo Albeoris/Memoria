@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityXInput;
+using Assets.Scripts.Common;
+using Memoria;
 using Object = System.Object;
 
 [RequireComponent(typeof(Camera))]
@@ -1162,26 +1163,26 @@ public class UICamera : MonoBehaviour
 
 	public void ProcessMouse()
 	{
-		Boolean flag = false;
-		Boolean flag2 = false;
+		if (SceneDirector.IsBattleScene() ? Configuration.Control.DisableMouseInBattles : Configuration.Control.DisableMouseForMenus)
+			return;
+		Boolean isClicking = false;
+		Boolean isClickingNow = false;
 		for (Int32 i = 0; i < 3; i++)
 		{
 			if (UnityXInput.Input.GetMouseButtonDown(i))
 			{
 				UICamera.currentKey = KeyCode.Mouse0 + i;
-				flag2 = true;
-				flag = true;
+				isClickingNow = true;
+				isClicking = true;
 			}
 			else if (UnityXInput.Input.GetMouseButton(i))
 			{
 				UICamera.currentKey = KeyCode.Mouse0 + i;
-				flag = true;
+				isClicking = true;
 			}
 		}
 		if (UICamera.currentScheme == UICamera.ControlScheme.Touch)
-		{
 			return;
-		}
 		UICamera.currentTouch = UICamera.mMouse[0];
 		Vector2 mousePosition = UnityXInput.Input.mousePosition;
 		if (UICamera.currentTouch.ignoreDelta == 0)
@@ -1194,91 +1195,75 @@ public class UICamera : MonoBehaviour
 			UICamera.currentTouch.delta.x = 0f;
 			UICamera.currentTouch.delta.y = 0f;
 		}
-		Single sqrMagnitude = UICamera.currentTouch.delta.sqrMagnitude;
+		Single mouseMoveSqrDist = UICamera.currentTouch.delta.sqrMagnitude;
 		UICamera.currentTouch.pos = mousePosition;
 		UICamera.mLastPos = mousePosition;
-		Boolean flag3 = false;
+		Boolean movingMouse = false;
 		if (UICamera.currentScheme != UICamera.ControlScheme.Mouse)
 		{
-			if (sqrMagnitude < 0.001f)
-			{
+			if (mouseMoveSqrDist < 0.001f)
 				return;
-			}
 			UICamera.currentKey = KeyCode.Mouse0;
-			flag3 = true;
+			movingMouse = true;
 		}
-		else if (sqrMagnitude > 0.001f)
+		else if (mouseMoveSqrDist > 0.001f)
 		{
-			flag3 = true;
+			movingMouse = true;
 		}
-		for (Int32 j = 1; j < 3; j++)
+		for (Int32 i = 1; i < 3; i++)
 		{
-			UICamera.mMouse[j].pos = UICamera.currentTouch.pos;
-			UICamera.mMouse[j].delta = UICamera.currentTouch.delta;
+			UICamera.mMouse[i].pos = UICamera.currentTouch.pos;
+			UICamera.mMouse[i].delta = UICamera.currentTouch.delta;
 		}
-		if (flag || flag3 || this.mNextRaycast < RealTime.time)
+		if (isClicking || movingMouse || this.mNextRaycast < RealTime.time)
 		{
 			this.mNextRaycast = RealTime.time + 0.02f;
 			UICamera.Raycast(UICamera.currentTouch);
-			for (Int32 k = 0; k < 3; k++)
-			{
-				UICamera.mMouse[k].current = UICamera.currentTouch.current;
-			}
+			for (Int32 i = 0; i < 3; i++)
+				UICamera.mMouse[i].current = UICamera.currentTouch.current;
 		}
-		Boolean flag4 = UICamera.currentTouch.last != UICamera.currentTouch.current;
-		Boolean flag5 = UICamera.currentTouch.pressed != (UnityEngine.Object)null;
-		if (!flag5)
-		{
+		Boolean touchHasChanged = UICamera.currentTouch.last != UICamera.currentTouch.current;
+		Boolean pressingButton = UICamera.currentTouch.pressed != null;
+		if (!pressingButton)
 			UICamera.hoveredObject = UICamera.currentTouch.current;
-		}
 		UICamera.currentTouchID = -1;
-		if (flag4)
-		{
+		if (touchHasChanged)
 			UICamera.currentKey = KeyCode.Mouse0;
-		}
-		if (!flag && flag3 && (!this.stickyTooltip || flag4))
+		if (!isClicking && movingMouse && (!this.stickyTooltip || touchHasChanged))
 		{
 			if (UICamera.mTooltipTime != 0f)
-			{
 				UICamera.mTooltipTime = Time.unscaledTime + this.tooltipDelay;
-			}
-			else if (UICamera.mTooltip != (UnityEngine.Object)null)
-			{
-				UICamera.ShowTooltip((GameObject)null);
-			}
+			else if (UICamera.mTooltip != null)
+				UICamera.ShowTooltip(null);
 		}
-		if (flag3 && UICamera.onMouseMove != null)
+		if (movingMouse && UICamera.onMouseMove != null)
 		{
 			UICamera.onMouseMove(UICamera.currentTouch.delta);
-			UICamera.currentTouch = (UICamera.MouseOrTouch)null;
+			UICamera.currentTouch = null;
 		}
-		if (flag4 && (flag2 || (flag5 && !flag)))
+		if (touchHasChanged && (isClickingNow || (pressingButton && !isClicking)))
+			UICamera.hoveredObject = null;
+		for (Int32 i = 0; i < 3; i++)
 		{
-			UICamera.hoveredObject = (GameObject)null;
-		}
-		for (Int32 l = 0; l < 3; l++)
-		{
-			Boolean mouseButtonDown = UnityXInput.Input.GetMouseButtonDown(l);
-			Boolean mouseButtonUp = UnityXInput.Input.GetMouseButtonUp(l);
+			Boolean mouseButtonDown = UnityXInput.Input.GetMouseButtonDown(i);
+			Boolean mouseButtonUp = UnityXInput.Input.GetMouseButtonUp(i);
 			if (mouseButtonDown || mouseButtonUp)
-			{
-				UICamera.currentKey = KeyCode.Mouse0 + l;
-			}
-			UICamera.currentTouch = UICamera.mMouse[l];
-			UICamera.currentTouchID = -1 - l;
-			UICamera.currentKey = KeyCode.Mouse0 + l;
+				UICamera.currentKey = KeyCode.Mouse0 + i;
+			UICamera.currentTouch = UICamera.mMouse[i];
+			UICamera.currentTouchID = -1 - i;
+			UICamera.currentKey = KeyCode.Mouse0 + i;
 			if (mouseButtonDown)
 			{
 				UICamera.currentTouch.pressedCam = UICamera.currentCamera;
 				UICamera.currentTouch.pressTime = RealTime.time;
 			}
-			else if (UICamera.currentTouch.pressed != (UnityEngine.Object)null)
+			else if (UICamera.currentTouch.pressed != null)
 			{
 				UICamera.currentCamera = UICamera.currentTouch.pressedCam;
 			}
 			this.ProcessTouch(mouseButtonDown, mouseButtonUp);
 		}
-		if (!flag && flag4)
+		if (!isClicking && touchHasChanged)
 		{
 			UICamera.currentTouch = UICamera.mMouse[0];
 			UICamera.mTooltipTime = RealTime.time + this.tooltipDelay;
@@ -1286,12 +1271,10 @@ public class UICamera : MonoBehaviour
 			UICamera.currentKey = KeyCode.Mouse0;
 			UICamera.hoveredObject = UICamera.currentTouch.current;
 		}
-		UICamera.currentTouch = (UICamera.MouseOrTouch)null;
+		UICamera.currentTouch = null;
 		UICamera.mMouse[0].last = UICamera.mMouse[0].current;
-		for (Int32 m = 1; m < 3; m++)
-		{
-			UICamera.mMouse[m].last = UICamera.mMouse[0].last;
-		}
+		for (Int32 i = 1; i < 3; i++)
+			UICamera.mMouse[i].last = UICamera.mMouse[0].last;
 	}
 
 	public void ProcessTouches()

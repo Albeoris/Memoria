@@ -52,6 +52,27 @@ public partial class BattleHUD : UIScene
         RemoveCursorMemorize();
     }
 
+    //public override GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
+    //{
+    //    if (nextObj != null || currentObj == null)
+    //        return nextObj;
+    //    if (!Configuration.Control.WrapSomeMenus)
+    //        return null;
+    //    if (ButtonGroupState.ActiveGroup == CommandGroupButton)
+    //    {
+    //        if ((CommandMenu)currentObj.transform.GetSiblingIndex() == CommandMenu.Item && direction == KeyCode.DownArrow)
+    //        {
+    //            return _commandPanel.GetCommandButton(CommandMenu.Attack);
+    //            //OnItemSelect();
+    //            //FF9Sfx.FF9SFX_Play(103);
+    //        }
+    //    }
+    //    else if (ButtonGroupState.ActiveGroup == TargetGroupButton && _cursorType == CursorGroup.Individual)
+    //    {
+    //    }
+    //    return null;
+    //}
+
     public override Boolean OnKeyConfirm(GameObject go)
     {
         if (!base.OnKeyConfirm(go) || _hidingHud)
@@ -355,25 +376,22 @@ public partial class BattleHUD : UIScene
                 _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-            if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+            if (ButtonGroupState.ActiveGroup == TargetGroupButton && _cursorType == CursorGroup.Individual)
             {
                 if (go.transform.parent == modelButtonManager.transform)
                 {
-                    if (_cursorType == CursorGroup.Individual)
+                    Int32 targetIndex = go.GetComponent<ModelButton>().index;
+                    Int32 targetLabelIndex = targetIndex >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(targetIndex) : _matchBattleIdPlayerList.IndexOf(targetIndex);
+                    if (targetLabelIndex != -1)
                     {
-                        Int32 targetIndex = go.GetComponent<ModelButton>().index;
-                        Int32 targetLabelIndex = targetIndex >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(targetIndex) : _matchBattleIdPlayerList.IndexOf(targetIndex);
-                        if (targetLabelIndex != -1)
-                        {
-                            if (targetIndex >= HonoluluBattleMain.EnemyStartIndex)
-                                targetLabelIndex += HonoluluBattleMain.EnemyStartIndex;
-                            GONavigationButton targetHud = _targetPanel.AllTargets[targetLabelIndex];
-                            if (targetHud.ButtonGroup.enabled)
-                                ButtonGroupState.ActiveButton = targetHud.GameObject;
-                        }
+                        if (targetIndex >= HonoluluBattleMain.EnemyStartIndex)
+                            targetLabelIndex += HonoluluBattleMain.EnemyStartIndex;
+                        GONavigationButton targetHud = _targetPanel.AllTargets[targetLabelIndex];
+                        if (targetHud.ButtonGroup.enabled)
+                            ButtonGroupState.ActiveButton = targetHud.GameObject;
                     }
                 }
-                else if (go.transform.parent.parent == TargetPanel.transform && _cursorType == CursorGroup.Individual)
+                else if (go.transform.parent.parent == TargetPanel.transform)
                 {
                     Int32 targetIndex = go.transform.GetSiblingIndex();
                     if (go.GetParent().transform.GetSiblingIndex() == 1)

@@ -97,7 +97,7 @@ public class battle
             case 3:
                 if (battle.BattleIdleLoop(ff9, ff9Battle))
                 {
-                    if (ff9.btlMapNo == 336 && !battle.isAlreadyShowTutorial)
+                    if (ff9.btlMapNo == 336 && !battle.isAlreadyShowTutorial) // Masked Man
                     {
                         PersistenSingleton<UIManager>.Instance.TutorialScene.DisplayMode = TutorialUI.Mode.Battle;
                         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Tutorial);
@@ -120,14 +120,9 @@ public class battle
                         if (battle.SUMMON_RAY_FLAG == 0)
                             UIManager.Battle.FF9BMenu_EnableMenu(true);
                         if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
-                        {
                             UIManager.Battle.SetBattleFollowMessage(BattleMesages.BackAttack);
-                            break;
-                        }
-                        if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
-                        {
+                        else if (ff9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
                             UIManager.Battle.SetBattleFollowMessage(BattleMesages.PreEmptiveStrike);
-                        }
                     }
                 }
                 break;
@@ -473,11 +468,12 @@ public class battle
     private static void BattleLoadLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
         //uint id = sys.id;
+        Boolean noDelayFade = FF9StateSystem.Settings.cfg.skip_btl_camera == 0 && FF9StateSystem.Battle.isRandomEncounter;
         btlsys.attr |= ff9btl.ATTR.LOADNPC;
         btlsys.attr |= ff9btl.ATTR.LOADCHR;
-        if ((btlsys.attr & ff9btl.ATTR.LOADNPC) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_FADENPC) == 0 && (btlsys.btl_load_status & ff9btl.LOAD_INITNPC) != 0)
+        if ((noDelayFade || btlsys.btl_cnt > 20) && (btlsys.attr & ff9btl.ATTR.LOADNPC) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_FADENPC) == 0 && (btlsys.btl_load_status & ff9btl.LOAD_INITNPC) != 0)
             btlsys.btl_load_status |= ff9btl.LOAD_FADENPC;
-        else if ((btlsys.attr & ff9btl.ATTR.LOADCHR) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_FADECHR) == 0 && (btlsys.btl_load_status & ff9btl.LOAD_INITCHR) != 0)
+        else if ((noDelayFade || btlsys.btl_cnt > 40) && (btlsys.attr & ff9btl.ATTR.LOADCHR) != 0 && (btlsys.btl_load_status & ff9btl.LOAD_FADECHR) == 0 && (btlsys.btl_load_status & ff9btl.LOAD_INITCHR) != 0)
             btlsys.btl_load_status |= ff9btl.LOAD_FADECHR;
 
         foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
@@ -512,7 +508,7 @@ public class battle
                 if (btlsys.enemy_load_fade >= 32)
                     btlsys.btl_load_status |= ff9btl.LOAD_NPC;
                 else
-                    btlsys.enemy_load_fade += 4;
+                    btlsys.enemy_load_fade += (SByte)(noDelayFade ? 4 : 2);
             }
         }
         if ((btlsys.attr & ff9btl.ATTR.LOADCHR) == 0 || (btlsys.btl_load_status & ff9btl.LOAD_CHR) != 0)
@@ -534,7 +530,7 @@ public class battle
                 return;
             if (btlsys.player_load_fade < 32)
             {
-                btlsys.player_load_fade += 8;
+                btlsys.player_load_fade += (SByte)(noDelayFade ? 8 : 4);
                 return;
             }
             btlsys.btl_load_status |= ff9btl.LOAD_CHR;

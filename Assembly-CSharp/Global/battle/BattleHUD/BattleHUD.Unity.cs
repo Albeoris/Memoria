@@ -102,7 +102,9 @@ public partial class BattleHUD : UIScene
             eventListener.Press += OnRunPress;
         }
         else
+        {
             RunButton.SetActive(false);
+        }
 
         _battleDialogWidget = BattleDialogGameObject.GetComponent<UIWidget>();
         _battleDialogLabel = BattleDialogGameObject.GetChild(1).GetComponent<UILabel>();
@@ -119,6 +121,18 @@ public partial class BattleHUD : UIScene
         //_abilityTransition = TransitionGameObject.GetChild(1).GetComponent<HonoTweenClipping>();
         //_targetTransition = TransitionGameObject.GetChild(2).GetComponent<HonoTweenClipping>();
         _onResumeFromQuit = GeneratedAwake;
+
+        if (Configuration.Control.WrapSomeMenus)
+        {
+            //_commandPanel.Attack.KeyNavigation.wrapUpDown = true;
+            //_commandPanel.Defend.KeyNavigation.wrapUpDown = true;
+            //_commandPanel.Skill1.KeyNavigation.wrapUpDown = true;
+            //_commandPanel.Skill2.KeyNavigation.wrapUpDown = true;
+            //_commandPanel.Item.KeyNavigation.wrapUpDown = true;
+            //_commandPanel.Change.KeyNavigation.wrapUpDown = true;
+            foreach (GONavigationButton button in _targetPanel.AllTargets)
+                button.KeyNavigation.wrapUpDown = true;
+        }
     }
 
     private void UpdateAndroidTV()

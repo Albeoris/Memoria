@@ -103,28 +103,18 @@ public class OnScreenButton : MonoBehaviour
 			case Control.Left:
 			case Control.Right:
 				if (sourceControl == SourceControl.None)
-				{
 					sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
-				}
 				break;
 			}
 			if (this.IgnoreAutoBattleButton(sourceControl))
-			{
 				return;
-			}
-			Control index = (Control)((sourceControl != SourceControl.Touch) ? this.highlightKeyCommand : this.KeyCommand);
-			if (PersistenSingleton<HonoInputManager>.Instance.IsInputUp((Int32)index))
-			{
+			Control index = sourceControl == SourceControl.Touch ? this.KeyCommand : this.highlightKeyCommand;
+			if (PersistenSingleton<HonoInputManager>.Instance.IsInputUp(index))
 				this.SetButtonState(UIButtonColor.State.Normal);
-			}
 			if (PersistenSingleton<UIManager>.Instance.IsLoading || PersistenSingleton<UIManager>.Instance.IsPause)
-			{
 				return;
-			}
-			if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown((Int32)index))
-			{
+			if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(index))
 				this.SetButtonState(UIButtonColor.State.Pressed);
-			}
 		}
 	}
 

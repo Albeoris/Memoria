@@ -773,7 +773,9 @@ public class CardUI : UIScene
                     UiLocalize = obj.GetExactComponent<UILocalize>();
                     UiLabel = obj.GetExactComponent<UILabel>();
                     UiEventListener = obj.EnsureExactComponent<UIEventListener>();
-                }
+					if (Configuration.Control.WrapSomeMenus)
+						obj.GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
+				}
 
                 public void OnAutoButtonAdded()
                 {

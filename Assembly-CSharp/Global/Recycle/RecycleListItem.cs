@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria;
 
 public class RecycleListItem : MonoBehaviour
 {
@@ -17,57 +18,45 @@ public class RecycleListItem : MonoBehaviour
 	private void Update()
 	{
 		if (Mathf.Abs(this.ListPopulator.draggablePanel.currentMomentum.y) > 0f)
-		{
-			this.CheckVisibilty();
-		}
+			this.CheckVisibility();
 	}
 
 	public Boolean VerifyVisibility()
 	{
-		return this.Panel != (UnityEngine.Object)null && this.Panel.IsVisible(this.VisionCheckWidget);
+		return this.Panel != null && this.Panel.IsVisible(this.VisionCheckWidget);
 	}
 
 	private void OnClick()
 	{
 		if (UIKeyTrigger.IsOnlyTouchAndLeftClick())
-		{
 			this.ListPopulator.itemClicked(this.ItemDataIndex);
-		}
 	}
 
 	private void OnPress(Boolean isDown)
 	{
 		if (UIKeyTrigger.IsOnlyTouchAndLeftClick())
-		{
 			this.ListPopulator.itemIsPressed(this.ItemDataIndex, isDown);
-		}
 	}
 
 	private void OnTriggerClick(GameObject go)
 	{
 		if (UIKeyTrigger.IsOnlyTouchAndLeftClick())
-		{
 			this.ListPopulator.itemClicked(go);
-		}
 	}
 
-	public void CheckVisibilty()
+	public void CheckVisibility()
 	{
 		if (!base.gameObject.activeSelf)
-		{
 			return;
-		}
-		Boolean flag = this.Panel.IsVisible(this.VisionCheckWidget);
-		if (flag != this.isVisible)
+		Boolean isVisibleNow = this.Panel.IsVisible(this.VisionCheckWidget);
+		if (isVisibleNow != this.isVisible)
 		{
-			this.isVisible = flag;
+			this.isVisible = isVisibleNow;
 			if (!this.isVisible)
 			{
 				base.StartCoroutine(this.ListPopulator.ItemIsInvisible(this.ItemNumber));
 				if (ButtonGroupState.ActiveButton == base.gameObject)
-				{
 					this.ListPopulator.SwitchActiveItem();
-				}
 			}
 		}
 	}

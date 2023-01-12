@@ -5,11 +5,12 @@ using FF9;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Memoria;
 using Memoria.Assets;
+using Memoria.Scenes;
 using Memoria.Data;
 using Memoria.Field;
 using Memoria.Prime;
-using Memoria.Scenes.BattleHUD;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Global
@@ -849,21 +850,15 @@ public class ItemUI : UIScene
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
-        UIEventListener uiEventListener1 = UIEventListener.Get(UseSubMenu);
-        uiEventListener1.Click += onClick;
-
-        UIEventListener uiEventListener2 = UIEventListener.Get(ArrangeSubMenu);
-        uiEventListener2.Click += onClick;
-
-        UIEventListener uiEventListener3 = UIEventListener.Get(KeySubMenu);
-        uiEventListener3.Click += onClick;
+        UIEventListener.Get(UseSubMenu).Click += onClick;
+        UIEventListener.Get(ArrangeSubMenu).Click += onClick;
+        UIEventListener.Get(KeySubMenu).Click += onClick;
 
         foreach (Component component in TargetListPanel.GetChild(0).transform)
         {
             GameObject go = component.gameObject;
 
-            UIEventListener uiEventListener4 = UIEventListener.Get(go);
-            uiEventListener4.Click += onClick;
+            UIEventListener.Get(go).Click += onClick;
 
             _targetHudList.Add(new CharacterDetailHUD(go, true));
             if (FF9StateSystem.MobilePlatform)
@@ -880,15 +875,18 @@ public class ItemUI : UIScene
 
         RemoveLeftAnchorFromItemNumberLabels();
 
-        UIEventListener uiEventListener5 = UIEventListener.Get(ArrangeDialog.GetChild(0).GetChild(0));
-        uiEventListener5.Click += onClick;
-
-        UIEventListener uiEventListener6 = UIEventListener.Get(ArrangeDialog.GetChild(0).GetChild(1));
-        uiEventListener6.Click += onClick;
+        UIEventListener.Get(ArrangeDialog.GetChild(0).GetChild(0)).Click += onClick;
+        UIEventListener.Get(ArrangeDialog.GetChild(0).GetChild(1)).Click += onClick;
 
         _targetTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
         _keyItemSkinTransition = TransitionGroup.GetChild(1).GetComponent<HonoTweenPosition>();
         _arrangeTransition = TransitionGroup.GetChild(2).GetComponent<HonoTweenClipping>();
+
+        if (Configuration.Control.WrapSomeMenus)
+        {
+            ArrangeDialog.GetChild(0).GetChild(0).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
+            ArrangeDialog.GetChild(0).GetChild(1).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
+        }
     }
 
     private void RemoveLeftAnchorFromItemNumberLabels()

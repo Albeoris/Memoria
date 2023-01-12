@@ -1,6 +1,9 @@
 ﻿using System;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
+using Memoria;
+using Memoria.Prime;
+using Memoria.Scenes;
 
 public class QuitUI : MonoBehaviour
 {
@@ -131,18 +134,9 @@ public class QuitUI : MonoBehaviour
                 }
                 else
                 {
-                    ButtonGroupState component = go.GetComponent<ButtonGroupState>();
-                    if (component)
-                    {
-                        if (component.ProcessTouch())
-                        {
-                            OnKeyConfirm(go);
-                        }
-                    }
-                    else
-                    {
+                    ButtonGroupState buttonInGroup = go.GetComponent<ButtonGroupState>();
+                    if (!buttonInGroup || buttonInGroup.ProcessTouch())
                         OnKeyConfirm(go);
-                    }
                 }
                 break;
         }
@@ -157,19 +151,11 @@ public class QuitUI : MonoBehaviour
     {
         if (ButtonGroupState.ActiveGroup == WarningMenuGroupButton)
         {
-            Int32 siblingIndex = go.transform.GetSiblingIndex();
-            Int32 num = siblingIndex;
-            if (num != 2)
-            {
-                if (num == 3)
-                {
-                    Hide();
-                }
-            }
-            else
-            {
+            Int32 buttonId = go.transform.GetSiblingIndex();
+            if (buttonId == 2)
                 UIManager.Input.ConfirmQuit();
-            }
+            else if (buttonId == 3)
+                Hide();
         }
         return true;
     }
@@ -182,21 +168,20 @@ public class QuitUI : MonoBehaviour
 
     public void DisplayWindowBackground(GameObject go, UIAtlas forceColor = null)
     {
-        UIAtlas uIAtlas = (!(forceColor != null)) ? (UIAtlas)(UnityEngine.Object)Assets.Sources.Scripts.UI.Common.FF9UIDataTool.WindowAtlas : forceColor;
-        UISprite[] componentsInChildren = go.GetComponentsInChildren<UISprite>(true);
-        UISprite[] array = componentsInChildren;
-        for (Int32 i = 0; i < array.Length; i++)
-        {
-            UISprite uISprite = array[i];
-            GameObject obj = uISprite.gameObject;
-            if (obj.tag == "Window Color" && uISprite.atlas != Assets.Sources.Scripts.UI.Common.FF9UIDataTool.GeneralAtlas && uISprite.atlas != Assets.Sources.Scripts.UI.Common.FF9UIDataTool.IconAtlas && uISprite.atlas != uIAtlas)
-                uISprite.atlas = uIAtlas;
-        }
+        UIAtlas atlas = forceColor == null ? (UIAtlas)(UnityEngine.Object)FF9UIDataTool.WindowAtlas : forceColor;
+        foreach (UISprite sprite in go.GetComponentsInChildren<UISprite>(true))
+            if (sprite.gameObject.tag == "Window Color" && sprite.atlas != FF9UIDataTool.GeneralAtlas && sprite.atlas != FF9UIDataTool.IconAtlas && sprite.atlas != atlas)
+                sprite.atlas = atlas;
     }
 
     public void Awake()
     {
         UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).Click += onClick;
         UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).Click += onClick;
+        if (Configuration.Control.WrapSomeMenus)
+        {
+            WarningDialog.GetChild(0).GetChild(2).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
+            WarningDialog.GetChild(0).GetChild(3).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
+        }
     }
 }

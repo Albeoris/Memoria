@@ -385,7 +385,7 @@ public class DialogManager : Singleton<DialogManager>
 
 	private void OnClick()
 	{
-		if (this.isHudActive)
+		if (this.isHudActive || Configuration.Control.DisableMouseForMenus)
 			return;
 		if (this.GetChoiceDialog() == null)
 		{

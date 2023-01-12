@@ -9,6 +9,7 @@ namespace Memoria
         private volatile ModSection _mod;
         private volatile FontSection _font;
         private volatile AnalogControlSection _analogControl;
+        private volatile ControlSection _control;
         private volatile GraphicsSection _graphics;
         private volatile CheatsSection _cheats;
         private volatile ImportSection _import;
@@ -28,6 +29,7 @@ namespace Memoria
             BindingSection(out _mod, v => _mod = v);
             BindingSection(out _font, v => _font = v);
             BindingSection(out _analogControl, v => _analogControl = v);
+            BindingSection(out _control, v => _control = v);
             BindingSection(out _graphics, v => _graphics = v);
             BindingSection(out _cheats, v => _cheats = v);
             BindingSection(out _import, v => _import = v);

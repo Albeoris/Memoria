@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria;
 
 public class ModelButtonManager : MonoBehaviour
 {
@@ -143,14 +144,16 @@ public class ModelButtonManager : MonoBehaviour
 
 	private void onClick(GameObject go)
 	{
+		if (Configuration.Control.DisableMouseInBattles)
+			return;
 		if (UIKeyTrigger.IsOnlyTouchAndLeftClick())
-		{
 			UIManager.Battle.VerifyTarget(go.GetComponent<ModelButton>().index);
-		}
 	}
 
 	private void onHover(GameObject go, Boolean isHover)
 	{
+		if (Configuration.Control.DisableMouseInBattles)
+			return;
 		if (isHover && this.currentHoverIndex != go.GetComponent<ModelButton>().index)
 		{
 			this.currentHoverIndex = go.GetComponent<ModelButton>().index;

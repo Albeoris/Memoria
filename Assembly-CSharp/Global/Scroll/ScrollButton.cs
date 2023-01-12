@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
-using Object = System.Object;
 
 public class ScrollButton : MonoBehaviour
 {
@@ -38,7 +38,7 @@ public class ScrollButton : MonoBehaviour
 		if (this.isEnable)
 		{
 			this.isScrollMove = false;
-			if (this.listPopulator != (UnityEngine.Object)null)
+			if (this.listPopulator != null)
 			{
 				if (this.listPopulator.ItemCount > this.listPopulator.VisibleItemCount)
 				{
@@ -175,51 +175,85 @@ public class ScrollButton : MonoBehaviour
 
 	private void JumpScroll(Boolean isUp)
 	{
-		Int32 num;
-		Int32 num2;
-		Int32 num3;
-		if (this.listPopulator != (UnityEngine.Object)null)
+		Int32 currentSelection;
+		Int32 newSelection;
+		Int32 countPerPage;
+		Int32 maxCount;
+		if (this.listPopulator != null)
 		{
-			if (ButtonGroupState.ActiveButton == (UnityEngine.Object)null)
-			{
+			if (ButtonGroupState.ActiveButton == null)
 				return;
-			}
 			if (ButtonGroupState.ActiveGroup == ItemUI.ItemArrangeGroupButton)
+				currentSelection = ButtonGroupState.ActiveButton.GetParent().GetComponent<RecycleListItem>().ItemDataIndex;
+			else
+				currentSelection = ButtonGroupState.ActiveButton.GetComponent<RecycleListItem>().ItemDataIndex;
+			countPerPage = this.listPopulator.VisibleItemCount;
+			maxCount = this.listPopulator.MaxItemCount;
+		}
+		else
+		{
+			currentSelection = ButtonGroupState.ActiveButton.GetComponent<ScrollItemKeyNavigation>().ID;
+			countPerPage = this.snapScrollView.VisibleItem;
+			maxCount = this.snapScrollView.MaxItem;
+		}
+		if (Configuration.Control.ScrollLikePSX)
+		{
+			if (maxCount <= countPerPage)
+				return;
+			Int32 firstItemInPage = currentSelection;
+			Int32 columnCount = this.listPopulator != null ? this.listPopulator.Column : 1;
+			if (this.listPopulator != null)
 			{
-				num = ButtonGroupState.ActiveButton.GetParent().GetComponent<RecycleListItem>().ItemDataIndex;
+				foreach (Transform itemTransform in this.listPopulator.ItemsPool)
+				{
+					GameObject itemObj = itemTransform.gameObject;
+					RecycleListItem itemRecycle = itemObj.GetComponent<RecycleListItem>();
+					if (itemRecycle.ItemDataIndex < firstItemInPage && itemRecycle.VerifyVisibility())
+						firstItemInPage = itemRecycle.ItemDataIndex;
+				}
 			}
 			else
 			{
-				num = ButtonGroupState.ActiveButton.GetComponent<RecycleListItem>().ItemDataIndex;
+				foreach (Transform itemTransform in this.snapScrollView.transform.GetChild(0))
+				{
+					GameObject itemObj = itemTransform.gameObject;
+					ScrollItemKeyNavigation itemNavig = itemObj.GetComponent<ScrollItemKeyNavigation>();
+					if (itemNavig.ID < firstItemInPage && itemNavig.ScrollPanel.IsVisible(itemNavig.VisionCheckWidget))
+						firstItemInPage = itemNavig.ID;
+				}
 			}
-			num2 = this.listPopulator.VisibleItemCount;
-			num3 = this.listPopulator.MaxItemCount;
+			if (firstItemInPage == 0 && isUp)
+				return;
+			Int32 currentSelectionInPage = currentSelection - firstItemInPage;
+			Int32 newPageLastItem = isUp ? Math.Max(0, firstItemInPage - columnCount) : Math.Min(maxCount - 1, firstItemInPage + 2 * countPerPage - columnCount);
+			for (Int32 i = 1; i <= columnCount; i++)
+				if (firstItemInPage + countPerPage == newPageLastItem + i)
+					return;
+			if (this.listPopulator != null)
+				this.listPopulator.JumpToIndex(newPageLastItem, true);
+			else
+				this.snapScrollView.ScrollToIndex(newPageLastItem);
+			newSelection = Math.Max(0, newPageLastItem - countPerPage + columnCount);
+			newSelection -= newSelection % columnCount;
+			newSelection = Math.Min(maxCount - 1, newSelection + currentSelectionInPage);
+			if (this.listPopulator != null)
+				this.listPopulator.JumpToIndex(newSelection, false, true);
+			else
+				ButtonGroupState.ActiveButton = this.snapScrollView.transform.GetChild(0).GetChild(newSelection).gameObject;
 		}
 		else
 		{
-			num = ButtonGroupState.ActiveButton.GetComponent<ScrollItemKeyNavigation>().ID;
-			num2 = this.snapScrollView.VisibleItem;
-			num3 = this.snapScrollView.MaxItem;
-		}
-		Int32 num4;
-		if (isUp)
-		{
-			num4 = num - num2;
-		}
-		else
-		{
-			num4 = num + num2;
-		}
-		num4 /= num2;
-		num4 = (num4 + 1) * num2;
-		num4 = Mathf.Clamp(num4 - 1, 0, num3 - 1);
-		if (this.listPopulator != (UnityEngine.Object)null)
-		{
-			this.listPopulator.JumpToIndex(num4, num4 != num);
-		}
-		else
-		{
-			this.snapScrollView.ScrollToIndex(num4);
+			if (isUp)
+				newSelection = currentSelection - countPerPage;
+			else
+				newSelection = currentSelection + countPerPage;
+			newSelection /= countPerPage;
+			newSelection = (newSelection + 1) * countPerPage;
+			newSelection = Mathf.Clamp(newSelection - 1, 0, maxCount - 1);
+			if (this.listPopulator != null)
+				this.listPopulator.JumpToIndex(newSelection, newSelection != currentSelection);
+			else
+				this.snapScrollView.ScrollToIndex(newSelection);
 		}
 	}
 
@@ -230,20 +264,17 @@ public class ScrollButton : MonoBehaviour
 			this.isScrollMove = false;
 			ButtonGroupState.MuteActiveSound = true;
 			this.CheckScrollPosition();
-			foreach (Object obj in this.ScrollViewPanel.transform.GetChild(0))
+			foreach (Transform itemTransform in this.ScrollViewPanel.transform.GetChild(0))
 			{
-				Transform transform = (Transform)obj;
-				GameObject gameObject = transform.gameObject;
-				if (gameObject.activeSelf)
+				GameObject itemObj = itemTransform.gameObject;
+				if (itemObj.activeSelf)
 				{
-					ScrollItemKeyNavigation component = gameObject.GetComponent<ScrollItemKeyNavigation>();
-					component.enabled = true;
-					component.CheckVisibility();
-					RecycleListItem component2 = gameObject.GetComponent<RecycleListItem>();
-					if (component2)
-					{
-						component2.CheckVisibilty();
-					}
+					ScrollItemKeyNavigation navig = itemObj.GetComponent<ScrollItemKeyNavigation>();
+					navig.enabled = true;
+					navig.CheckVisibility();
+					RecycleListItem recycleList = itemObj.GetComponent<RecycleListItem>();
+					if (recycleList)
+						recycleList.CheckVisibility();
 				}
 			}
 			ButtonGroupState.MuteActiveSound = false;

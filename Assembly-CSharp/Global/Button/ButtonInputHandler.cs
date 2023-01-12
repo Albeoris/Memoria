@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria;
 
 public class ButtonInputHandler : InputHandler
 {
@@ -99,49 +100,42 @@ public class ButtonInputHandler : InputHandler
 		if (playerHand.State == Hand.STATE.PLAYER_SELECT_CARD)
 		{
 			if (this.delegateInputHandler.LastActiveInputHandler == InputDelegatorHandler.InputType.Mouse)
-			{
 				this.playSelect = playerHand.Select;
-			}
 			this.prevPlaySelect = this.playSelect;
 			playerHand.cursor.gameObject.SetActive(true);
 			playerHand.CardCursor.SetNormalState();
-			if (this.playSelect >= playerHand.Count - 1)
+			this.playSelect = Mathf.Clamp(this.playSelect, 0, playerHand.Count - 1);
+			Boolean changeSelection = false;
+			if (UIManager.Input.GetKeyTrigger(Control.Down))
 			{
-				this.playSelect = playerHand.Count - 1;
+				if (Configuration.Control.WrapSomeMenus || this.playSelect < playerHand.Count - 1)
+				{
+					this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
+					this.playSelect = (this.playSelect + 1) % playerHand.Count;
+					changeSelection = true;
+				}
 			}
-			else if (this.playSelect < 0)
+			if (UIManager.Input.GetKeyTrigger(Control.Up))
 			{
-				this.playSelect = 0;
-			}
-			Boolean flag = false;
-			if (UIManager.Input.GetKeyTrigger(Control.Down) && this.playSelect != playerHand.Count - 1)
-			{
-				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
-				this.playSelect++;
-				flag = true;
-			}
-			if (UIManager.Input.GetKeyTrigger(Control.Up) && this.playSelect != 0)
-			{
-				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
-				this.playSelect--;
-				flag = true;
+				if (Configuration.Control.WrapSomeMenus || this.playSelect > 0)
+				{
+					this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
+					this.playSelect = this.playSelect > 0 ? this.playSelect - 1 : playerHand.Count - 1;
+					changeSelection = true;
+				}
 			}
 			if (this.delegateInputHandler.LastActiveInputHandler == InputDelegatorHandler.InputType.Keyboard)
 			{
 				playerHand.Select = this.playSelect;
 				this.launched = true;
 			}
-			if (flag)
+			if (changeSelection)
 			{
 				SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
 				if (QuadMistGame.main.CardNameDialogSlider.IsShowCardName)
-				{
 					QuadMistGame.main.CardNameDialogSlider.ShowCardNameDialog(playerHand);
-				}
 				else
-				{
 					QuadMistGame.main.CardNameDialogSlider.HideCardNameDialog(playerHand);
-				}
 			}
 			if (UIManager.Input.GetKeyTrigger(Control.Confirm))
 			{
@@ -159,68 +153,65 @@ public class ButtonInputHandler : InputHandler
 			this.prevBoardSelectX = this.boardSelectX;
 			this.prevBoardSelectY = this.boardSelectY;
 			board.cursor.gameObject.SetActive(true);
-			Boolean flag2 = false;
-			if (UIManager.Input.GetKeyTrigger(Control.Up) && this.boardSelectY != 0)
+			Boolean changeSelection = false;
+			if (UIManager.Input.GetKeyTrigger(Control.Up) && this.boardSelectY > 0)
 			{
 				this.boardSelectY--;
-				flag2 = true;
+				changeSelection = true;
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Down) && this.boardSelectY != 3)
+			if (UIManager.Input.GetKeyTrigger(Control.Down) && this.boardSelectY < Board.SIZE_Y - 1)
 			{
 				this.boardSelectY++;
-				flag2 = true;
+				changeSelection = true;
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Left) && this.boardSelectX != 0)
+			if (UIManager.Input.GetKeyTrigger(Control.Left) && this.boardSelectX > 0)
 			{
 				this.boardSelectX--;
-				flag2 = true;
+				changeSelection = true;
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Right) && this.boardSelectX != 3)
+			if (UIManager.Input.GetKeyTrigger(Control.Right) && this.boardSelectX < Board.SIZE_X - 1)
 			{
 				this.boardSelectX++;
-				flag2 = true;
+				changeSelection = true;
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 			}
-			if (flag2)
-			{
+			if (changeSelection)
 				SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
-			}
 			if (this.prevBoardSelectX != this.boardSelectX || this.prevBoardSelectY != this.boardSelectY || !this.launched)
 			{
-				Vector2 boardCursorPosition = new Vector2((Single)this.boardSelectX, (Single)this.boardSelectY);
-				Single num = 0.429f;
-				Single num2 = -0.525f;
-				Single num3 = -1f;
-				Single num4 = 0.73f;
-				boardCursorPosition.x *= num;
-				boardCursorPosition.y *= num2;
-				boardCursorPosition.x += num3;
-				boardCursorPosition.y += num4;
+				Vector2 boardCursorPosition = new Vector2(this.boardSelectX, this.boardSelectY);
+				boardCursorPosition.x *= 0.429f;
+				boardCursorPosition.y *= -0.525f;
+				boardCursorPosition.x += -1f;
+				boardCursorPosition.y += 0.73f;
 				board.SetBoardCursorPosition(boardCursorPosition);
 				this.launched = true;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Confirm) && board.IsFree(this.boardSelectX, this.boardSelectY))
+			if (UIManager.Input.GetKeyTrigger(Control.Confirm))
 			{
-				SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_MOVE);
-				QuadMistGame.main.CardNameDialogSlider.HideCardNameDialog(playerHand);
-				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
-				this.delegateInputHandler.StrictActiveInputHandler = InputDelegatorHandler.InputType.None;
-				result.selectedCard = playerHand[this.playSelect];
-				playerHand.RemoveAt(this.playSelect);
-				result.x = this.boardSelectX;
-				result.y = this.boardSelectY;
-				result.Used();
-				this.launched = false;
-				board.HideBoardCursor();
-				playerHand.HideCardCursor();
-				this.requestUpdatePlayerHandSelect = true;
-			}
-			else if (UIManager.Input.GetKeyTrigger(Control.Confirm))
-			{
-				SoundEffect.Play(QuadMistSoundID.MINI_SE_WARNING);
+				if (board.IsFree(this.boardSelectX, this.boardSelectY))
+				{
+					SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_MOVE);
+					QuadMistGame.main.CardNameDialogSlider.HideCardNameDialog(playerHand);
+					this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
+					this.delegateInputHandler.StrictActiveInputHandler = InputDelegatorHandler.InputType.None;
+					result.selectedCard = playerHand[this.playSelect];
+					playerHand.RemoveAt(this.playSelect);
+					result.x = this.boardSelectX;
+					result.y = this.boardSelectY;
+					result.Used();
+					this.launched = false;
+					board.HideBoardCursor();
+					playerHand.HideCardCursor();
+					this.requestUpdatePlayerHandSelect = true;
+				}
+				else
+				{
+					SoundEffect.Play(QuadMistSoundID.MINI_SE_WARNING);
+				}
 			}
 			else if (UIManager.Input.GetKeyTrigger(Control.Cancel))
 			{
@@ -239,13 +230,11 @@ public class ButtonInputHandler : InputHandler
 		board.ShowBoardCursor();
 		if (!this.blacken)
 		{
-			for (Int32 i = 0; i < (Int32)board.field.Length; i++)
+			for (Int32 i = 0; i < board.field.Length; i++)
 			{
 				QuadMistCardUI cardUI = board.GetCardUI(i);
-				if (cardUI != (UnityEngine.Object)null && cardUI != board.GetCardUI(origin))
-				{
+				if (cardUI != null && cardUI != board.GetCardUI(origin))
 					cardUI.Black = true;
-				}
 			}
 			this.blacken = true;
 		}
@@ -263,22 +252,22 @@ public class ButtonInputHandler : InputHandler
 			this.prevBoardSelectX = this.boardSelectX;
 			this.prevBoardSelectY = this.boardSelectY;
 			board.cursor.gameObject.SetActive(true);
-			if (UIManager.Input.GetKeyTrigger(Control.Up) && this.boardSelectY != 0)
+			if (UIManager.Input.GetKeyTrigger(Control.Up) && this.boardSelectY > 0)
 			{
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 				this.boardSelectY--;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Down) && this.boardSelectY != 3)
+			if (UIManager.Input.GetKeyTrigger(Control.Down) && this.boardSelectY < Board.SIZE_Y - 1)
 			{
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 				this.boardSelectY++;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Left) && this.boardSelectX != 0)
+			if (UIManager.Input.GetKeyTrigger(Control.Left) && this.boardSelectX > 0)
 			{
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 				this.boardSelectX--;
 			}
-			if (UIManager.Input.GetKeyTrigger(Control.Right) && this.boardSelectX != 3)
+			if (UIManager.Input.GetKeyTrigger(Control.Right) && this.boardSelectX < Board.SIZE_X - 1)
 			{
 				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 				this.boardSelectX++;
@@ -287,15 +276,11 @@ public class ButtonInputHandler : InputHandler
 			{
 				SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
 				board.PlaceCursor(this.boardSelectX, this.boardSelectY);
-				Vector2 boardCursorPosition = new Vector2((Single)this.boardSelectX, (Single)this.boardSelectY);
-				Single num = 0.429f;
-				Single num2 = -0.525f;
-				Single num3 = -1f;
-				Single num4 = 0.73f;
-				boardCursorPosition.x *= num;
-				boardCursorPosition.y *= num2;
-				boardCursorPosition.x += num3;
-				boardCursorPosition.y += num4;
+				Vector2 boardCursorPosition = new Vector2(this.boardSelectX, this.boardSelectY);
+				boardCursorPosition.x *= 0.429f;
+				boardCursorPosition.y *= -0.525f;
+				boardCursorPosition.x += -1f;
+				boardCursorPosition.y += 0.73f;
 				board.SetBoardCursorPosition(boardCursorPosition);
 			}
 			if (UIManager.Input.GetKeyTrigger(Control.Confirm))
@@ -310,12 +295,10 @@ public class ButtonInputHandler : InputHandler
 			}
 			if (result.IsValid())
 			{
-				QuadMistCardUI[] field = board.field;
-				for (Int32 j = 0; j < (Int32)field.Length; j++)
+				foreach (QuadMistCardUI cardUI in board.field)
 				{
-					QuadMistCardUI quadMistCardUI = field[j];
-					quadMistCardUI.Black = false;
-					quadMistCardUI.Select = false;
+					cardUI.Black = false;
+					cardUI.Select = false;
 				}
 				this.launched = false;
 				this.blacken = false;
@@ -333,54 +316,48 @@ public class ButtonInputHandler : InputHandler
 	public override void HandlePostSelection(Hand enemyHand, List<Int32> selectable, ref InputResult result)
 	{
 		enemyHand.cursor.gameObject.SetActive(true);
-		if (this.endSelect < 0)
-		{
-			this.endSelect = 0;
-		}
-		else if (this.endSelect > selectable.Count - 1)
-		{
-			this.endSelect = selectable.Count - 1;
-		}
+		this.endSelect = Mathf.Clamp(this.endSelect, 0, selectable.Count - 1);
 		this.prevEndSelect = this.endSelect;
-		Boolean flag = false;
+		Boolean changeSelection = false;
 		if (!this.hasCalledHandlePostSelection)
 		{
 			this.hasCalledHandlePostSelection = true;
 			this.endSelect = 0;
-			flag = true;
+			changeSelection = true;
 		}
-		if (UIManager.Input.GetKeyTrigger(Control.Up) && this.endSelect != 0)
+		if (UIManager.Input.GetKeyTrigger(Control.Up))
 		{
-			this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
-			this.endSelect--;
-			flag = true;
+			if (Configuration.Control.WrapSomeMenus || this.endSelect > 0)
+			{
+				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
+				this.endSelect = this.endSelect > 0 ? this.endSelect - 1 : selectable.Count - 1;
+				changeSelection = true;
+			}
 		}
-		if (UIManager.Input.GetKeyTrigger(Control.Down) && this.endSelect != selectable.Count - 1)
+		if (UIManager.Input.GetKeyTrigger(Control.Down))
 		{
-			this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
-			this.endSelect++;
-			flag = true;
+			if (Configuration.Control.WrapSomeMenus || this.endSelect < selectable.Count - 1)
+			{
+				this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
+				this.endSelect = (this.endSelect + 1) % selectable.Count;
+				changeSelection = true;
+			}
 		}
-		if (flag)
+		Boolean confirmSelection = UIManager.Input.GetKeyTrigger(Control.Confirm);
+		if (changeSelection || confirmSelection)
 		{
-			SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
-			enemyHand.Select = selectable[this.endSelect];
+			if (changeSelection)
+			{
+				SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
+				enemyHand.Select = selectable[this.endSelect];
+			}
+			if (confirmSelection)
+				SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_MOVE);
 			this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
 			Int32 num = selectable[this.endSelect];
 			result.selectedCard = enemyHand[num];
 			result.Used();
 			result.selectedHandIndex = num;
-			enemyHand.cursor.gameObject.SetActive(false);
-			this.launched = false;
-		}
-		if (UIManager.Input.GetKeyTrigger(Control.Confirm))
-		{
-			SoundEffect.Play(QuadMistSoundID.MINI_SE_CARD_MOVE);
-			this.delegateInputHandler.LastActiveInputHandler = InputDelegatorHandler.InputType.Keyboard;
-			Int32 num2 = selectable[this.endSelect];
-			result.selectedCard = enemyHand[num2];
-			result.Used();
-			result.selectedHandIndex = num2;
 			enemyHand.cursor.gameObject.SetActive(false);
 			this.launched = false;
 		}

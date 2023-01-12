@@ -883,7 +883,7 @@ public class AbilityUI : UIScene
             else
                 charHud.Content.SetActive(false);
         }
-        this.SetAvalableCharacter();
+        this.SetAvailableCharacter();
     }
 
     private Boolean IsMulti(Int32 abil_id)
@@ -1011,37 +1011,39 @@ public class AbilityUI : UIScene
         }
     }
 
-    private void SetAvalableCharacter()
+    private void SetAvailableCharacter()
     {
-        List<CharacterDetailHUD> list = new List<CharacterDetailHUD>();
+        List<CharacterDetailHUD> targetList = new List<CharacterDetailHUD>();
         using (List<CharacterDetailHUD>.Enumerator enumerator = this.targetHudList.GetEnumerator())
         {
             while (enumerator.MoveNext())
             {
-                CharacterDetailHUD current = enumerator.Current;
+                CharacterDetailHUD curCharacter = enumerator.Current;
                 if (!this.multiTarget)
                 {
-                    if (current.Content.activeSelf)
+                    if (curCharacter.Content.activeSelf)
                     {
-                        list.Add(current);
-                        ButtonGroupState.SetButtonEnable(current.Self, true);
+                        targetList.Add(curCharacter);
+                        ButtonGroupState.SetButtonEnable(curCharacter.Self, true);
                     }
                     else
-                        ButtonGroupState.SetButtonEnable(current.Self, false);
+                    {
+                        ButtonGroupState.SetButtonEnable(curCharacter.Self, false);
+                    }
                 }
             }
         }
-        for (Int32 index1 = 0; index1 < list.Count; ++index1)
+        for (Int32 charIndex = 0; charIndex < targetList.Count; ++charIndex)
         {
-            Int32 index2 = index1 - 1;
-            Int32 index3 = index1 + 1;
-            if (index1 == 0)
-                index2 = list.Count - 1;
-            else if (index1 == list.Count - 1)
-                index3 = 0;
-            UIKeyNavigation component = list[index1].Self.GetComponent<UIKeyNavigation>();
-            component.onUp = list[index2].Self;
-            component.onDown = list[index3].Self;
+            Int32 prevIndex = charIndex - 1;
+            Int32 nextIndex = charIndex + 1;
+            if (charIndex == 0)
+                prevIndex = targetList.Count - 1;
+            if (charIndex == targetList.Count - 1)
+                nextIndex = 0;
+            UIKeyNavigation navig = targetList[charIndex].Self.GetComponent<UIKeyNavigation>();
+            navig.onUp = targetList[prevIndex].Self;
+            navig.onDown = targetList[nextIndex].Self;
         }
     }
 

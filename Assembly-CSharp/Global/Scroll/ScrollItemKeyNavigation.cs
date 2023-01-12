@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Memoria;
 
 internal class ScrollItemKeyNavigation : MonoBehaviour
 {
@@ -87,7 +88,7 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 		}
 		if (this.listItem != (UnityEngine.Object)null)
 		{
-			this.listItem.CheckVisibilty();
+			this.listItem.CheckVisibility();
 		}
 	}
 
@@ -112,18 +113,15 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 
 	private void CheckEmptyLastRow()
 	{
-		UIKeyNavigation component = base.gameObject.GetComponent<UIKeyNavigation>();
-		if (this.listPopulator != (UnityEngine.Object)null)
+		UIKeyNavigation navig = base.gameObject.GetComponent<UIKeyNavigation>();
+		if (this.listPopulator != null)
 		{
+			// Pressing the key "down" when selecting the bottom-left item brings to the bottom-right item
+			// We might want to add the condition "this.listPopulator.ItemCount % 2 == 1" to disable this behaviour
 			if (this.listItem.ItemDataIndex == this.listPopulator.ItemCount - 2)
-			{
-				GameObject gameObject = this.listPopulator.ItemsPool[this.listPopulator.DataTracker[this.listPopulator.ItemCount - 1]].gameObject;
-				component.onDown = gameObject;
-			}
-			else if (component.onDown != (UnityEngine.Object)null)
-			{
-				base.gameObject.GetComponent<UIKeyNavigation>().onDown = (GameObject)null;
-			}
+				navig.onDown = this.listPopulator.ItemsPool[this.listPopulator.DataTracker[this.listPopulator.ItemCount - 1]].gameObject;
+			else if (navig.onDown != null)
+				navig.onDown = null;
 		}
 	}
 

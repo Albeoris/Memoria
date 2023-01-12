@@ -1730,6 +1730,8 @@ public partial class FieldMapActorController : HonoBehavior
 
 	private void CheckPosInProjectedWalkMesh()
 	{
+		if (Configuration.Control.DisableMouseInFields)
+			return;
 		if ((this.charFlags & 1) == 0)
 			return;
 		Boolean issueMoveByMouse = false;
