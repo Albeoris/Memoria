@@ -18,6 +18,22 @@ namespace FF9
 			return result;
 		}
 
+		public static BTL_DATA getBattlePtr(PLAYER player)
+		{
+			for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+				if (btl_util.getPlayerPtr(btl) == player)
+					return btl;
+			return null;
+		}
+
+		public static BTL_DATA getBattlePtr(ENEMY enemy)
+		{
+			for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+				if (btl_util.getEnemyPtr(btl) == enemy)
+					return btl;
+			return null;
+		}
+
 		public static PLAYER getPlayerPtr(BTL_DATA btl)
 		{
 			return btl.bi.player != 0 ? FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no] : null;

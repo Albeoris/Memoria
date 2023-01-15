@@ -26,6 +26,8 @@ namespace Memoria
             public static Int32 SummonPriorityCount => Instance._battle.SummonPriorityCount;
             public static Boolean CurseUseWeaponElement => Instance._battle.CurseUseWeaponElement;
             public static Int32 FloatEvadeBonus => Instance._battle.FloatEvadeBonus;
+            public static Int32 AccessMenus => Instance._battle.AccessMenus;
+            public static String[] AvailableMenus => Instance._battle.AvailableMenus;
             public static Int32 CustomBattleFlagsMeaning => Instance._battle.CustomBattleFlagsMeaning;
             public static String SpareChangeGilSpentFormula => Instance._battle.SpareChangeGilSpentFormula;
             public static String StatusDurationFormula => Instance._battle.StatusDurationFormula;

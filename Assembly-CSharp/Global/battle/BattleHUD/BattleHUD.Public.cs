@@ -251,33 +251,40 @@ public partial class BattleHUD : UIScene
         return mess.priority;
     }
 
-    public void DisplayParty()
+    public void DisplayParty(Boolean resetPointAnimations = false)
     {
-        Int32 partyIndex = 0;
+        Int32 hudIndex = 0;
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (!unit.IsPlayer)
                 continue;
 
             Int32 playerId = unit.GetIndex();
-            UI.PanelParty.Character character = _partyDetail.Characters[partyIndex];
-            DamageAnimationInfo hp = _hpInfoVal[partyIndex];
-            DamageAnimationInfo mp = _mpInfoVal[partyIndex];
+            UI.PanelParty.Character character = _partyDetail.Characters[hudIndex];
+            DamageAnimationInfo hp = _hpInfoVal[hudIndex];
+            DamageAnimationInfo mp = _mpInfoVal[hudIndex];
+            if (resetPointAnimations)
+			{
+                hp.RequiredValue = hp.CurrentValue = (Int32)unit.CurrentHp;
+                mp.RequiredValue = mp.CurrentValue = (Int32)unit.CurrentMp;
+                hp.FrameLeft = mp.FrameLeft = 0;
+                hp.IncrementStep = mp.IncrementStep = 0;
+            }
             character.PlayerId = playerId;
+            character.ATBBlink = ReadyQueue.Contains(playerId) && !InputFinishList.Contains(playerId);
             character.IsActive = true;
             DisplayCharacterParameter(character, unit, hp, mp);
             character.TranceBar.IsActive = unit.HasTrance;
-            partyIndex++;
+            hudIndex++;
         }
         
-        PartyDetailPanel.transform.localPosition = new Vector3(PartyDetailPanel.transform.localPosition.x, DefaultPartyPanelPosY - PartyItemHeight * (_partyDetail.Characters.Count - partyIndex), PartyDetailPanel.transform.localPosition.z);
-        
-        CorrectPartyPanelPosition(partyIndex);
+        PartyDetailPanel.transform.localPosition = new Vector3(PartyDetailPanel.transform.localPosition.x, DefaultPartyPanelPosY - PartyItemHeight * (_partyDetail.Characters.Count - hudIndex), PartyDetailPanel.transform.localPosition.z);
+        CorrectPartyPanelPosition(hudIndex);
 
-        for (; partyIndex < _partyDetail.Characters.Count ; ++partyIndex)
+        for (; hudIndex < _partyDetail.Characters.Count ; ++hudIndex)
         {
-            _partyDetail.Characters[partyIndex].IsActive = false;
-            _partyDetail.Characters[partyIndex].PlayerId = -1;
+            _partyDetail.Characters[hudIndex].IsActive = false;
+            _partyDetail.Characters[hudIndex].PlayerId = -1;
         }
     }
 
@@ -314,17 +321,16 @@ public partial class BattleHUD : UIScene
 
     public void RemovePlayerFromAction(Int32 btlId, Boolean isNeedToClearCommand)
     {
-        Int32 num = 0;
-        while (1 << num != btlId)
-            ++num;
-
-        if (InputFinishList.Contains(num) && isNeedToClearCommand)
-            InputFinishList.Remove(num);
-
-        if (!ReadyQueue.Contains(num) || !isNeedToClearCommand)
+        if (!isNeedToClearCommand)
             return;
 
-        ReadyQueue.Remove(num);
+        Int32 btlIndex = 0;
+        while (1 << btlIndex != btlId)
+            ++btlIndex;
+
+        InputFinishList.Remove(btlIndex);
+        ReadyQueue.Remove(btlIndex);
+        _partyDetail.SetBlink(btlIndex, false);
     }
 
     public void GoToBattleResult()
@@ -496,6 +502,28 @@ public partial class BattleHUD : UIScene
         if (ff9item.FF9Item_Add(id, 1) == 0)
             return;
         _needItemUpdate = true;
+    }
+
+    public void SwitchAvailablePlayerOrIdle()
+	{
+        if (ReadyQueue.Count > 0)
+        {
+            for (Int32 i = 0; i < ReadyQueue.Count; i++)
+            {
+                Int32 current = ReadyQueue[i];
+                if (!InputFinishList.Contains(current) && !_unconsciousStateList.Contains(current))
+                {
+                    if (ReadyQueue.IndexOf(current) > 0)
+                    {
+                        ReadyQueue.Remove(current);
+                        ReadyQueue.Insert(0, current);
+                    }
+                    SwitchPlayer(current);
+                    return;
+                }
+            }
+        }
+        SetIdle();
     }
 
     public void SetIdle()

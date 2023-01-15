@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FF9;
 using Memoria;
 using Memoria.Data;
 
@@ -139,5 +140,44 @@ public partial class BattleHUD : UIScene
         public Byte priority;
         public Single counter;
         public Boolean isRect;
+    }
+
+    private class PlayerMemo
+	{
+        public PlayerMemo(PLAYER p, Boolean updateRow)
+		{
+            original = p;
+            max = new POINTS();
+            btl_init.CopyPoints(max, p.max);
+            elem = new ELEMENT();
+            elem.dex = p.elem.dex;
+            elem.str = p.elem.str;
+            elem.mgc = p.elem.mgc;
+            elem.wpr = p.elem.wpr;
+            defence = new ItemDefence();
+            defence.PhisicalDefence = p.defence.PhisicalDefence;
+            defence.PhisicalEvade = p.defence.PhisicalEvade;
+            defence.MagicalDefence = p.defence.MagicalDefence;
+            defence.MagicalEvade = p.defence.MagicalEvade;
+            saExtended = new HashSet<SupportAbility>(p.saExtended);
+            serialNo = p.info.serial_no;
+            row = p.info.row;
+            battleRow = row;
+            BTL_DATA btl = btl_util.getBattlePtr(p);
+            if (updateRow && btl != null)
+            {
+                battleRow = btl.bi.row;
+                p.info.row = battleRow;
+            }
+        }
+
+        public PLAYER original;
+		public POINTS max;
+		public ELEMENT elem;
+		public ItemDefence defence;
+		public HashSet<SupportAbility> saExtended;
+        public CharacterSerialNumber serialNo;
+        public Byte row;
+        public Byte battleRow;
     }
 }

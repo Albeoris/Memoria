@@ -17,7 +17,7 @@ public static class btl_stat
 {
     public static void SaveStatus(PLAYER p, BTL_DATA btl)
     {
-        p.status = (Byte)(btl.stat.cur & (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie));
+        p.status = (Byte)(btl.stat.cur & BattleStatus.OutOfBattle);
     }
 
     public static void InitCountDownStatus(BTL_DATA btl)

@@ -337,67 +337,72 @@ public partial class BattleHUD : UIScene
 
     private void YMenu_ManagerHpMp()
     {
-        Int32 index1 = 0;
+        Int32 charIndex = 0;
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (!unit.IsPlayer)
                 continue;
 
-            DamageAnimationInfo infoVal1 = _hpInfoVal[index1];
-            DamageAnimationInfo infoVal2 = _mpInfoVal[index1];
-            for (Int32 index2 = 0; index2 < 2; ++index2)
+            DamageAnimationInfo hpAnimation = _hpInfoVal[charIndex];
+            DamageAnimationInfo mpAnimation = _mpInfoVal[charIndex];
+            for (Int32 pointNum = 0; pointNum < 2; ++pointNum)
             {
-                DamageAnimationInfo infoVal3 = index2 != 0 ? infoVal2 : infoVal1;
-                if (infoVal3.FrameLeft != 0)
+                DamageAnimationInfo curAnimation = pointNum != 0 ? mpAnimation : hpAnimation;
+                if (curAnimation.FrameLeft != 0)
                 {
-                    if (infoVal3.IncrementStep >= 0)
+                    if (curAnimation.IncrementStep >= 0)
                     {
-                        if (infoVal3.CurrentValue + infoVal3.IncrementStep >= infoVal3.RequiredValue)
+                        if (curAnimation.CurrentValue + curAnimation.IncrementStep >= curAnimation.RequiredValue)
                         {
-                            infoVal3.CurrentValue = infoVal3.RequiredValue;
-                            infoVal3.FrameLeft = 0;
+                            curAnimation.CurrentValue = curAnimation.RequiredValue;
+                            curAnimation.FrameLeft = 0;
                         }
                         else
                         {
-                            infoVal3.CurrentValue += infoVal3.IncrementStep;
-                            --infoVal3.FrameLeft;
+                            curAnimation.CurrentValue += curAnimation.IncrementStep;
+                            --curAnimation.FrameLeft;
                         }
                     }
-                    else if (infoVal3.CurrentValue + infoVal3.IncrementStep <= infoVal3.RequiredValue)
+                    else if (curAnimation.CurrentValue + curAnimation.IncrementStep <= curAnimation.RequiredValue)
                     {
-                        infoVal3.CurrentValue = infoVal3.RequiredValue;
-                        infoVal3.FrameLeft = 0;
+                        curAnimation.CurrentValue = curAnimation.RequiredValue;
+                        curAnimation.FrameLeft = 0;
                     }
                     else
                     {
-                        infoVal3.CurrentValue += infoVal3.IncrementStep;
-                        --infoVal3.FrameLeft;
+                        curAnimation.CurrentValue += curAnimation.IncrementStep;
+                        --curAnimation.FrameLeft;
                     }
                 }
                 else
                 {
-                    Int32 num1 = index2 != 0 ? (Int32)unit.CurrentMp : (Int32)unit.CurrentHp;
-                    Int32 num2 = index2 != 0 ? (Int32)unit.MaximumMp : (Int32)unit.MaximumHp;
-                    Int32 num3;
-                    if ((num3 = num1 - infoVal3.CurrentValue) == 0)
+                    Int32 curPoint = pointNum != 0 ? (Int32)unit.CurrentMp : (Int32)unit.CurrentHp;
+                    Int32 maxPoint = pointNum != 0 ? (Int32)unit.MaximumMp : (Int32)unit.MaximumHp;
+                    Int32 diff = curPoint - curAnimation.CurrentValue;
+                    if (diff == 0)
                         continue;
+                    if (curAnimation.CurrentValue > maxPoint)
+					{
+                        curAnimation.CurrentValue = maxPoint;
+                        continue;
+                    }
 
-                    Int32 num4 = Mathf.Abs(num3);
-                    infoVal3.RequiredValue = num1;
-                    if (num4 < YINFO_ANIM_HPMP_MIN)
+                    Int32 absDiff = Mathf.Abs(diff);
+                    curAnimation.RequiredValue = curPoint;
+                    if (absDiff < YINFO_ANIM_HPMP_MIN)
                     {
-                        infoVal3.FrameLeft = num4;
+                        curAnimation.FrameLeft = absDiff;
                     }
                     else
                     {
-                        infoVal3.FrameLeft = num4 * YINFO_ANIM_HPMP_MAX / num2;
-                        if (YINFO_ANIM_HPMP_MIN > infoVal3.FrameLeft)
-                            infoVal3.FrameLeft = YINFO_ANIM_HPMP_MIN;
+                        curAnimation.FrameLeft = absDiff * YINFO_ANIM_HPMP_MAX / maxPoint;
+                        if (YINFO_ANIM_HPMP_MIN > curAnimation.FrameLeft)
+                            curAnimation.FrameLeft = YINFO_ANIM_HPMP_MIN;
                     }
-                    infoVal3.IncrementStep = 0 > num3 ? (num3 - (infoVal3.FrameLeft - 1)) / infoVal3.FrameLeft : (num3 + (infoVal3.FrameLeft - 1)) / infoVal3.FrameLeft;
+                    curAnimation.IncrementStep = diff < 0 ? (diff - (curAnimation.FrameLeft - 1)) / curAnimation.FrameLeft : (diff + (curAnimation.FrameLeft - 1)) / curAnimation.FrameLeft;
                 }
             }
-            ++index1;
+            ++charIndex;
         }
     }
 
@@ -419,7 +424,7 @@ public partial class BattleHUD : UIScene
                 magicSwordCondition2.IsViviExist = true;
                 if (unit.CurrentHp == 0)
                     magicSwordCondition2.IsViviDead = true;
-                else if (unit.IsUnderAnyStatus((BattleStatus)318905611U))
+                else if (unit.IsUnderAnyStatus(BattleStatus.NoMagic))
                     magicSwordCondition2.IsViviDead = true;
             }
             else if (unit.PlayerIndex == CharacterId.Steiner)

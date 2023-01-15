@@ -207,6 +207,18 @@ namespace Memoria.Data
 
         public void TriggerOnStatusInit(BattleUnit unit)
         {
+            GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb);
+            unit.PermanentStatus |= permanent;
+            unit.CurrentStatus |= initial;
+            unit.ResistStatus |= resist;
+            if (atb >= 0)
+                unit.CurrentAtb = atb;
+        }
+
+        public void GetStatusInitQuietly(BattleUnit unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb)
+		{
+            permanent = initial = resist = 0;
+            atb = -1;
             for (Int32 i = 0; i < StatusEffect.Count; i++)
             {
                 if (StatusEffect[i].Condition.Length > 0)
@@ -218,11 +230,11 @@ namespace Memoria.Data
                     if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                         continue;
                 }
-                unit.PermanentStatus |= StatusEffect[i].PermanentStatus;
-                unit.CurrentStatus |= StatusEffect[i].InitialStatus;
-                unit.ResistStatus |= StatusEffect[i].ResistStatus;
+                permanent |= StatusEffect[i].PermanentStatus;
+                initial |= StatusEffect[i].InitialStatus;
+                resist |= StatusEffect[i].ResistStatus;
                 if (StatusEffect[i].InitialATB >= 0)
-                    unit.CurrentAtb = (Int16)Math.Max(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
+                    atb = (Int16)Math.Max(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
             }
         }
 

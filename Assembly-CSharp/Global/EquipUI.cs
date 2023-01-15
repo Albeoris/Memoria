@@ -109,21 +109,22 @@ public class EquipUI : UIScene
 			return;
 		}
 
+		PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
 		FF9Sfx.FF9SFX_Play(107);
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-		RegularItem itemId = player.equip[this.currentEquipPart];
-		RegularItem id = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
-		if (itemId != RegularItem.NoItem)
+		RegularItem oldEquip = player.equip[this.currentEquipPart];
+		RegularItem newEquip = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
+		if (oldEquip != RegularItem.NoItem)
 		{
-			if (itemId == RegularItem.Moonstone)
+			if (oldEquip == RegularItem.Moonstone)
 				ff9item.DecreaseMoonStoneCount();
 
-			ff9item.FF9Item_Add(itemId, 1);
+			ff9item.FF9Item_Add(oldEquip, 1);
 		}
 
-		if (ff9item.FF9Item_Remove(id, 1) != 0)
+		if (ff9item.FF9Item_Remove(newEquip, 1) != 0)
 		{
-			player.equip[this.currentEquipPart] = id;
+			player.equip[this.currentEquipPart] = newEquip;
 			this.UpdateCharacterData(player);
 			this.DisplayEquipment();
 			this.DisplayParameter();
@@ -152,6 +153,7 @@ public class EquipUI : UIScene
 			Boolean equipChanged = false;
 			if (this.currentEquipPart != 0)
 			{
+				PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
 				PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
 				RegularItem itemId = player.equip[this.currentEquipPart];
 				if (itemId != RegularItem.NoItem)
@@ -241,6 +243,7 @@ public class EquipUI : UIScene
 				this.DisplayParameter();
 				break;
 			case EquipUI.SubMenu.Optimize:
+				PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
 				if (_equipForAbilityLearning)
 					this.EquipForAbilityLearning();
 				else
@@ -323,10 +326,14 @@ public class EquipUI : UIScene
 
 	public override Boolean OnKeySpecial(GameObject go)
 	{
-		if (!base.OnKeySpecial(go) 
-		    || ButtonGroupState.ActiveGroup != SubMenuGroupButton)
+		if (!base.OnKeySpecial(go) || ButtonGroupState.ActiveGroup != SubMenuGroupButton)
 			return true;
-		
+
+		if (!PersistenSingleton<UIManager>.Instance.MainMenuScene.IsSubMenuEnabled(MainMenuUI.SubMenu.Ability))
+		{
+			FF9Sfx.FF9SFX_Play(102);
+			return true;
+		}
 		FF9Sfx.FF9SFX_Play(103);
 		this.fastSwitch = true;
 		this.Hide(delegate
@@ -682,15 +689,59 @@ public class EquipUI : UIScene
 			this.equipmentAbilitySelectHudList[0].Self.SetActive(false);
 			this.equipmentAbilitySelectHudList[1].Self.SetActive(false);
 			this.equipmentAbilitySelectHudList[2].Self.SetActive(false);
-			Int32 abilHudSlot = 0;
-			foreach (Int32 abilityId in itemData.ability)
+			// Todo: can only display at most 3 abilities for now; they are sorted to try to display most pertinent abilities first but maybe it could be improved
+			List<Int32> sortedAbilities;
+			if (itemData.ability.Length <= 3 || !ff9abil.FF9Abil_HasAp(player))
 			{
-				if (abilHudSlot >= 3) // Todo: can only display at most 3 abilities for now
+				sortedAbilities = new List<Int32>(itemData.ability);
+			}
+			else
+			{
+				Boolean hasPertinentAfter3 = false;
+				for (Int32 i = 3; i < itemData.ability.Length && !hasPertinentAfter3; i++)
+					if (itemData.ability[i] != 0 && ff9abil.FF9Abil_GetIndex(player.Data, itemData.ability[i]) >= 0)
+						hasPertinentAfter3 = true;
+
+				Int32 pertinentAbilityCount = 0;
+				foreach (Int32 abilityId in itemData.ability)
+					if (abilityId != 0 && ff9abil.FF9Abil_GetIndex(player.Data, abilityId) >= 0)
+						pertinentAbilityCount++;
+
+				HashSet<Int32> processedAbilities = new HashSet<Int32>();
+				Int32 priorityStage = !hasPertinentAfter3 ? 0 :
+									  pertinentAbilityCount <= 3 ? 1 : 2;
+				sortedAbilities = new List<Int32>();
+				while (priorityStage >= 0)
+				{
+					foreach (Int32 abilityId in itemData.ability)
+					{
+						if (abilityId == 0 || processedAbilities.Contains(abilityId))
+							continue;
+						Boolean shouldAdd;
+						if (priorityStage == 0)
+							shouldAdd = true;
+						else if (priorityStage == 1)
+							shouldAdd = ff9abil.FF9Abil_GetIndex(player.Data, abilityId) >= 0;
+						else
+							shouldAdd = ff9abil.FF9Abil_GetIndex(player.Data, abilityId) >= 0 && ff9abil.FF9Abil_GetAp(player.Data, abilityId) < ff9abil.FF9Abil_GetMax(player.Data, abilityId);
+						if (shouldAdd)
+						{
+							sortedAbilities.Add(abilityId);
+							processedAbilities.Add(abilityId);
+						}
+					}
+					priorityStage--;
+				}
+			}
+			Int32 abilHudSlot = 0;
+			foreach (Int32 abilityId in sortedAbilities)
+			{
+				if (abilHudSlot >= 3)
 					break;
 
 				if (abilityId != 0)
 				{
-					String text = ff9abil.IsAbilityActive(abilityId) ? FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(abilityId)) : FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(abilityId));
+					String abilityName = ff9abil.IsAbilityActive(abilityId) ? FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(abilityId)) : FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(abilityId));
 
 					this.equipmentAbilitySelectHudList[abilHudSlot].Self.SetActive(true);
 					if (ff9abil.FF9Abil_HasAp(player))
@@ -720,7 +771,7 @@ public class EquipUI : UIScene
 							this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(false);
 						}
 
-						this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = text;
+						this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = abilityName;
 						this.equipmentAbilitySelectHudList[abilHudSlot].IconSprite.spriteName = stoneSprite;
 						this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.color = hasAbil ? FF9TextTool.White : FF9TextTool.Gray;
 					}
@@ -728,7 +779,7 @@ public class EquipUI : UIScene
 					{
 						String stoneSprite = ff9abil.IsAbilityActive(abilityId) ? "ability_stone_null" : "skill_stone_null";
 
-						this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = text;
+						this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = abilityName;
 						this.equipmentAbilitySelectHudList[abilHudSlot].IconSprite.spriteName = stoneSprite;
 						this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.color = FF9TextTool.Gray;
 						this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(false);

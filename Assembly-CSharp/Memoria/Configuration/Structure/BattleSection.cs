@@ -22,6 +22,8 @@ namespace Memoria
             public readonly IniValue<Int32> SummonPriorityCount;
             public readonly IniValue<Boolean> CurseUseWeaponElement;
             public readonly IniValue<Int32> FloatEvadeBonus;
+            public readonly IniValue<Int32> AccessMenus;
+            public readonly IniArray<String> AvailableMenus;
             /* CustomBattleFlagsMeaning:
              0 - default
              1 - Alternate Fantasy:
@@ -67,6 +69,8 @@ namespace Memoria
                 SummonPriorityCount = BindInt32(nameof(SummonPriorityCount), 0);
                 CurseUseWeaponElement = BindBoolean(nameof(CurseUseWeaponElement), false);
                 FloatEvadeBonus = BindInt32(nameof(FloatEvadeBonus), 0);
+                AccessMenus = BindInt32(nameof(AccessMenus), 0);
+                AvailableMenus = BindStringArray(nameof(AvailableMenus), new String[] { "Equip", "SupportingAbility" });
                 CustomBattleFlagsMeaning = BindInt32(nameof(CustomBattleFlagsMeaning), 0);
                 SpareChangeGilSpentFormula = BindString(nameof(SpareChangeGilSpentFormula), "");
                 StatusDurationFormula = BindString(nameof(StatusDurationFormula), "");

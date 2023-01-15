@@ -594,21 +594,39 @@ public class ShopUI : UIScene
 				this.weaponEquipLabel.color = FF9TextTool.Gray;
 				this.weaponEquipTextLabel.color = FF9TextTool.Gray;
 			}
-			// Todo: only 2 ingredients can be displayed for now
 			ItemListDetailWithIconHUD[] hud = new ItemListDetailWithIconHUD[] { this.requiredItem1Hud, this.requiredItem2Hud };
 			Dictionary<RegularItem, Int32> ingredients = synth.IngredientsAsDictionary();
-			for (Int32 i = 1; i >= 0; i--)
+			if (synth.Ingredients.Length <= 2)
 			{
-				if (i < synth.Ingredients.Length && synth.Ingredients[i] != RegularItem.NoItem)
+				for (Int32 i = 1; i >= 0; i--)
 				{
-					hud[i].Self.SetActive(true);
-					FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]]);
-					ingredients[synth.Ingredients[i]]--;
+					if (i < synth.Ingredients.Length && synth.Ingredients[i] != RegularItem.NoItem)
+					{
+						hud[i].Self.SetActive(true);
+						FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]]);
+						ingredients[synth.Ingredients[i]]--;
+					}
+					else
+					{
+						hud[i].Self.SetActive(false);
+					}
 				}
-				else
+			}
+			else
+			{
+				Dictionary<RegularItem, Int32>[] ingrSplit = new Dictionary<RegularItem, Int32>[] { new Dictionary<RegularItem, Int32>(), new Dictionary<RegularItem, Int32>() };
+				Dictionary<RegularItem, Boolean>[] ingrEnabled = new Dictionary<RegularItem, Boolean>[] { new Dictionary<RegularItem, Boolean>(), new Dictionary<RegularItem, Boolean>() };
+				Int32 numInFirstLabel = (ingredients.Count + 1) / 2;
+				Int32 ingrNum = 0;
+				foreach (KeyValuePair<RegularItem, Int32> kvp in ingredients)
 				{
-					hud[i].Self.SetActive(false);
+					Int32 splitIndex = ingrNum < numInFirstLabel ? 0 : 1;
+					ingrSplit[splitIndex].Add(kvp.Key, kvp.Value);
+					ingrEnabled[splitIndex].Add(kvp.Key, ff9item.FF9Item_GetCount(kvp.Key) >= kvp.Value);
+					ingrNum++;
 				}
+				for (Int32 i = 0; i < 2; i++)
+					FF9UIDataTool.DisplayMultipleItems(ingrSplit[i], hud[i].IconSprite, hud[i].NameLabel, ingrEnabled[i]);
 			}
 		}
 	}

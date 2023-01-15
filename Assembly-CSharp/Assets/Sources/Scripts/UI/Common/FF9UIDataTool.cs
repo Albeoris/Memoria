@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using FF9;
 using Memoria;
@@ -26,6 +27,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				{
 					itemName.text = FF9TextTool.ItemName(itemId);
 					itemName.color = isEnable ? FF9TextTool.White : FF9TextTool.Gray;
+					itemName.multiLine = true;
 				}
 			}
 			else
@@ -34,6 +36,39 @@ namespace Assets.Sources.Scripts.UI.Common
 					itemIcon.spriteName = String.Empty;
 				if (itemName != null)
 					itemName.text = String.Empty;
+			}
+		}
+
+		public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable)
+		{
+			String itemLabel = String.Empty;
+			String spriteName = String.Empty;
+			Boolean allEnabled = items.Keys.All(itemId => isEnable.TryGetValue(itemId, out Boolean enabled) && enabled);
+			foreach (KeyValuePair<RegularItem, Int32> kvp in items)
+			{
+				if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
+					continue;
+				FF9ITEM_DATA item = ff9item._FF9Item_Data[kvp.Key];
+				if (!isEnable.TryGetValue(kvp.Key, out Boolean enabled))
+					enabled = false;
+				Byte colorIndex = allEnabled ? item.color : (Byte)15;
+				String itemSpriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
+				if (String.IsNullOrEmpty(spriteName))
+					spriteName = itemSpriteName;
+				if (itemLabel.Length > 0)
+					itemLabel += "\n";
+				itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
+				if (kvp.Value > 1)
+					itemLabel += $" ×{kvp.Value}";
+			}
+			if (itemIcon != null)
+				itemIcon.spriteName = spriteName;
+			if (itemName != null)
+			{
+				itemName.multiLine = true;
+				itemName.overflowMethod = UILabel.Overflow.ShrinkContent;
+				itemName.color = Color.white;
+				itemName.text = itemLabel;
 			}
 		}
 

@@ -6938,7 +6938,7 @@ public static class ff9
 
 	public static Boolean w_moveGetPadStateLY(out Int32 vy)
 	{
-		Boolean flyingVehicle = ff9.w_moveCHRControl_No == 6 || ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9;
+		Boolean flyingVehicle = ff9.w_moveCHRControlPtr != null && ff9.w_moveCHRControlPtr.flg_fly;
 		if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flyingVehicle)
 		{
 			Boolean goDown = false;
@@ -7005,7 +7005,7 @@ public static class ff9
 
 	public static Boolean w_moveGetPadStateR(out Int32 vy)
 	{
-		Boolean flyingVehicle = ff9.w_moveCHRControl_No == 6 || ff9.w_moveCHRControl_No == 8 || ff9.w_moveCHRControl_No == 9;
+		Boolean flyingVehicle = ff9.w_moveCHRControlPtr != null && ff9.w_moveCHRControlPtr.flg_fly;
 		Boolean goBackward = false;
 		Boolean goForward = false;
 		if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flyingVehicle)
@@ -7040,8 +7040,8 @@ public static class ff9
 					vy = 128;
 				return false;
 			}
-			goBackward = rightStickY < -0.1f || UIManager.Input.GetKey(Control.Special);
-			goForward = rightStickY > 0.1f || UIManager.Input.GetKey(Control.Confirm);
+			goBackward = UIManager.Input.GetKey(Control.Special);
+			goForward = UIManager.Input.GetKey(Control.Confirm);
 		}
 		vy = 0;
 		if (goBackward)

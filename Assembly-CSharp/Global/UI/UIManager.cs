@@ -14,12 +14,10 @@ public class UIManager : PersistenSingleton<UIManager>
 	{
 		get
 		{
-			Single num = 1f;
+			Single pixelAdjustment = 1f;
 			if (UIRoot.list.Count > 0)
-			{
-				num = UIRoot.list[0].pixelSizeAdjustment;
-			}
-			return new Vector2((Single)Screen.width * num, (Single)Screen.height * num);
+				pixelAdjustment = UIRoot.list[0].pixelSizeAdjustment;
+			return new Vector2(Screen.width * pixelAdjustment, Screen.height * pixelAdjustment);
 		}
 	}
 
@@ -27,8 +25,8 @@ public class UIManager : PersistenSingleton<UIManager>
 	{
 		get
 		{
-			Single x = (Single)(-(Single)UIRoot.list[0].manualWidth / 2);
-			Single y = (Single)(-(Single)UIRoot.list[0].manualHeight / 2);
+			Single x = -(Single)UIRoot.list[0].manualWidth / 2;
+			Single y = -(Single)UIRoot.list[0].manualHeight / 2;
 			Camera mainCamera = UICamera.mainCamera;
 			Vector3 position = UIRoot.list[0].transform.TransformPoint(new Vector3(x, y, 0f));
 			return mainCamera.WorldToScreenPoint(position);
@@ -39,43 +37,30 @@ public class UIManager : PersistenSingleton<UIManager>
 	{
 		get
 		{
-			Single y = (Single)(-(Single)UIRoot.list[0].manualHeight / 2);
-			Camera mainCamera = UICamera.mainCamera;
-			Vector3 position = UIRoot.list[0].transform.TransformPoint(new Vector3(0f, y, 0f));
-			return mainCamera.WorldToScreenPoint(position).y;
+			Single y = -(Single)UIRoot.list[0].manualHeight / 2;
+			Vector3 worldHeight = UIRoot.list[0].transform.TransformPoint(new Vector3(0f, y, 0f));
+			return UICamera.mainCamera.WorldToScreenPoint(worldHeight).y;
 		}
 	}
 
 	public static Vector2 UIScreenTopLeftCoOrdinate
 	{
-		get
-		{
-			return new Vector2(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f);
-		}
+		get => new Vector2(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f);
 	}
 
 	public static Vector2 UIScreenBottomRightCoOrdinate
 	{
-		get
-		{
-			return new Vector2(UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
-		}
+		get => new Vector2(UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
 	}
 
 	public static Vector4 UIScreenCoOrdinate
 	{
-		get
-		{
-			return new Vector4(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f, UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
-		}
+		get => new Vector4(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f, UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
 	}
 
 	public UIManager.UIState State
 	{
-		get
-		{
-			return this.state;
-		}
+		get => this.state;
 		set
 		{
             if (value == UIState.FieldHUD && FieldMap.IsNarrowMap())
@@ -89,14 +74,8 @@ public class UIManager : PersistenSingleton<UIManager>
 
 	public UIManager.UIState PreviousState
 	{
-		get
-		{
-			return this.prevState;
-		}
-		set
-		{
-			this.prevState = value;
-		}
+		get => this.prevState;
+		set => this.prevState = value;
 	}
 
 	public UIManager.UIState HUDState
@@ -104,9 +83,7 @@ public class UIManager : PersistenSingleton<UIManager>
 		get
 		{
 			if (this.prevState == UIManager.UIState.Config || this.prevState == UIManager.UIState.QuadMistBattle)
-			{
 				return this.prevState;
-			}
 			switch (this.UnityScene)
 			{
 			case UIManager.Scene.Field:
@@ -127,26 +104,17 @@ public class UIManager : PersistenSingleton<UIManager>
 
 	public Boolean IsPause
 	{
-		get
-		{
-			return this.state == UIManager.UIState.Pause || this.state == UIManager.UIState.Quit || this.QuitScene.isShowQuitUI;
-		}
+		get => this.state == UIManager.UIState.Pause || this.state == UIManager.UIState.Quit || this.QuitScene.isShowQuitUI;
 	}
 
 	public Boolean IsEventEnable
 	{
-		get
-		{
-			return (FF9StateSystem.Common.FF9.attr & 2u) == 0u;
-		}
+		get => (FF9StateSystem.Common.FF9.attr & 2u) == 0u;
 	}
 
 	public Boolean IsLoading
 	{
-		get
-		{
-			return (PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State) != (UnityEngine.Object)null && PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).Loading) || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.None;
-		}
+		get => (PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State) != null && PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).Loading) || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.None;
 	}
 
 	public String StateName
@@ -216,10 +184,8 @@ public class UIManager : PersistenSingleton<UIManager>
 	{
 		get
 		{
-			if (this.eventFadeTextureAdd == (UnityEngine.Object)null)
-			{
+			if (this.eventFadeTextureAdd == null)
 				this.InitFadeTexture();
-			}
 			return this.eventFadeTextureAdd;
 		}
 	}
@@ -228,60 +194,40 @@ public class UIManager : PersistenSingleton<UIManager>
 	{
 		get
 		{
-			if (this.eventFadeTextureSub == (UnityEngine.Object)null)
-			{
+			if (this.eventFadeTextureSub == null)
 				this.InitFadeTexture();
-			}
 			return this.eventFadeTextureSub;
 		}
 	}
 
 	public static UIKeyTrigger Input
 	{
-		get
-		{
-			return (!(PersistenSingleton<UIManager>.Instance.gameObject == (UnityEngine.Object)null)) ? PersistenSingleton<UIManager>.Instance.gameObject.GetComponent<UIKeyTrigger>() : ((UIKeyTrigger)null);
-		}
+		get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.gameObject.GetComponent<UIKeyTrigger>() : null;
 	}
 
 	public static FieldHUD Field
 	{
-		get
-		{
-			return (!(PersistenSingleton<UIManager>.Instance.gameObject == (UnityEngine.Object)null)) ? PersistenSingleton<UIManager>.Instance.FieldHUDScene : ((FieldHUD)null);
-		}
+		get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.FieldHUDScene : null;
 	}
 
 	public static BattleHUD Battle
 	{
-		get
-		{
-			return (!(PersistenSingleton<UIManager>.Instance.gameObject == (UnityEngine.Object)null)) ? PersistenSingleton<UIManager>.Instance.BattleHUDScene : ((BattleHUD)null);
-		}
+		get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.BattleHUDScene : null;
 	}
 
 	public static WorldHUD World
 	{
-		get
-		{
-			return (!(PersistenSingleton<UIManager>.Instance.gameObject == (UnityEngine.Object)null)) ? PersistenSingleton<UIManager>.Instance.WorldHUDScene : ((WorldHUD)null);
-		}
+		get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.WorldHUDScene : null;
 	}
 
 	public Camera BattleCamera
 	{
-		get
-		{
-			return this.battleCamera;
-		}
+		get => this.battleCamera;
 	}
 
 	public GameObject FastTrophy
 	{
-		get
-		{
-			return this.fastTrophy;
-		}
+		get => this.fastTrophy;
 	}
 
 	private void Start()
@@ -323,10 +269,8 @@ public class UIManager : PersistenSingleton<UIManager>
 		this.MainMenuScene.SubMenuPanel.SetActive(false);
 		ButtonGroupState.DisableAllGroup(true);
 		ButtonGroupState.HelpEnabled = false;
-		if (this.Dialogs != (UnityEngine.Object)null)
-		{
+		if (this.Dialogs != null)
 			this.Dialogs.CloseAll();
-		}
 		String loadedLevelName = Application.loadedLevelName;
 		Boolean active = false;
 		Boolean isEnable = false;
@@ -413,7 +357,7 @@ public class UIManager : PersistenSingleton<UIManager>
 		{
 			PersistenSingleton<OverlayCanvas>.Instance.overlayBoosterUI.UpdateBoosterSize();
 			PersistenSingleton<OverlayCanvas>.Instance.overlayBoosterUI.boosterContainer.SetActive(active);
-			this.SetPlayerControlEnable(isEnable, (Action)null);
+			this.SetPlayerControlEnable(isEnable, null);
 			this.SetMenuControlEnable(false);
 		}
 		FF9StateSystem.Settings.SetFastForward(FF9StateSystem.Settings.IsFastForward);
@@ -489,15 +433,13 @@ public class UIManager : PersistenSingleton<UIManager>
 			return this.EndGameScene;
 		}
 		if (this.QuitScene.isShowQuitUI)
-		{
 			return this.NoneScene;
-		}
-		return (UIScene)null;
+		return null;
 	}
 
 	public void SetGameCameraEnable(Boolean isEnable)
 	{
-		Camera camera = (Camera)null;
+		Camera camera = null;
 		switch (this.UnityScene)
 		{
 		case UIManager.Scene.Field:
@@ -510,10 +452,8 @@ public class UIManager : PersistenSingleton<UIManager>
 			camera = this.battleCamera;
 			break;
 		}
-		if (camera != (UnityEngine.Object)null)
-		{
+		if (camera != null)
 			camera.enabled = isEnable;
-		}
 	}
 
 	public void SetEventEnable(Boolean isEnable)
@@ -738,9 +678,14 @@ public class UIManager : PersistenSingleton<UIManager>
             if (Configuration.Graphics.WidescreenSupport)
                 eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
         }
-    }
+	}
 
-    public static Vector2 UIContentSize = GetUIContentSize();
+	public static Boolean IsUIStateMenu(UIManager.UIState state)
+	{
+		return (state >= UIState.MainMenu && state <= UIState.Tutorial) || state == UIState.QuadMist || state == UIState.Chocograph;
+	}
+
+	public static Vector2 UIContentSize = GetUIContentSize();
 
     private static Vector2 GetUIContentSize()
     {

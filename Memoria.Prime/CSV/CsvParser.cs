@@ -40,6 +40,7 @@ namespace Memoria.Prime.CSV
 
         public static Int32 AnyAbility(String raw)
         {
+            raw = raw.Trim();
             if (raw.StartsWith("AA:"))
 			{
                 Int32 activeId = System.Int32.Parse(raw.Substring(3), NumberStyle, CultureInfo.InvariantCulture);

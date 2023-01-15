@@ -47,7 +47,7 @@
         StageMagicBlank = 42,
         StageMagicMarcus = 43,
         StageMagicCinna = 44,
-        Reserve3 = 45,
+        AccessMenu = 45,
         Reserve4 = 46,
         EnemyAtk = 47,
         BoundaryCheck = 48,

@@ -63,9 +63,7 @@ public class CardUI : UIScene
 			if (ButtonGroupState.ActiveGroup == CardUI.CardGroupButton)
 			{
 				if (go != this.DeleteSubmenuButton)
-				{
 					this.currentCardId = this.cardHudList[go.transform.GetSiblingIndex()].Id;
-				}
 				if (this.count[this.currentCardId] > 0)
 				{
 					FF9Sfx.FF9SFX_Play(103);
@@ -89,9 +87,7 @@ public class CardUI : UIScene
 			else if (ButtonGroupState.ActiveGroup == CardUI.DiscardDialogButtonGroup)
 			{
 				if (go == this.DeleteSubmenuButton)
-				{
 					return true;
-				}
 
 			    OnDiscardDialogKeyConfirm(go);
 
@@ -133,11 +129,12 @@ public class CardUI : UIScene
     }
 
     private void DiscardSeletctedCard()
-    {
-        FF9Sfx.FF9SFX_Play(103);
+	{
+		PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+		FF9Sfx.FF9SFX_Play(103);
         QuadMistDatabase.MiniGame_AwayCard(this.deleteCardId, this.offset[this.deleteCardId]);
-        count[deleteCardId] = (Byte)(count[deleteCardId] - 1);
-        this.offset[this.deleteCardId] = Math.Min(this.offset[this.deleteCardId], (Int32)(this.count[this.deleteCardId] - 1));
+        count[deleteCardId]--;
+        this.offset[this.deleteCardId] = Math.Min(this.offset[this.deleteCardId], this.count[this.deleteCardId] - 1);
         this.DisplayHelp();
         this.DisplayInfo();
         this.DisplayCardList();
@@ -145,8 +142,9 @@ public class CardUI : UIScene
     }
 
     private void DiscardUnnecessaryCards()
-    {
-        FF9Sfx.FF9SFX_Play(103);
+	{
+		PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+		FF9Sfx.FF9SFX_Play(103);
         QuadMistDatabase.DiscardUnnecessaryCards();
 
         for (Int32 i = 0; i < 100; i++)
@@ -156,9 +154,7 @@ public class CardUI : UIScene
         }
 
         foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
-        {
             this.count[quadMistCard.id]++;
-        }
 
         this.DisplayHelp();
         this.DisplayCardList();

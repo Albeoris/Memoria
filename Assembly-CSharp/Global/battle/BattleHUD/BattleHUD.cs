@@ -55,6 +55,9 @@ public partial class BattleHUD : UIScene
     private UI.PanelTarget _targetPanel;
     private UI.ContainerStatus _statusPanel;
     private UI.PanelParty _partyDetail;
+    private Boolean _usingMainMenu;
+    private PLAYER _mainMenuSinglePlayer;
+    private List<PlayerMemo> _mainMenuPlayerMemo = new List<PlayerMemo>();
     private Boolean _commandEnable;
     private Boolean _beforePauseCommandEnable;
     private Boolean _isFromPause;
@@ -2212,5 +2215,130 @@ public partial class BattleHUD : UIScene
             detailWithIconHud.Button.Help.TextKey = String.Empty;
             detailWithIconHud.Button.Help.Text = FF9TextTool.ItemBattleDescription(battleItemListData.Id);
         }
+    }
+
+    private void UpdatePlayersForMainMenu()
+    {
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        {
+            if (!unit.IsPlayer)
+                continue;
+            Character playerPtr = unit.Player;
+            playerPtr.Data.trance = unit.Trance;
+            btl_init.CopyPoints(playerPtr.Data.cur, unit.Data.cur);
+            btl_stat.SaveStatus(playerPtr.Data, unit.Data);
+        }
+        _mainMenuPlayerMemo.Clear();
+        for (Int32 i = 0; i < 4; i++)
+            _mainMenuPlayerMemo.Add(new PlayerMemo(FF9StateSystem.Common.FF9.party.member[i], true));
+        if (_mainMenuSinglePlayer != null)
+            for (Int32 i = 0; i < 4; i++)
+                if (_mainMenuSinglePlayer != FF9StateSystem.Common.FF9.party.member[i])
+                    FF9StateSystem.Common.FF9.party.member[i] = null;
+    }
+
+    private void UpdateBattleAfterMainMenu()
+    {
+        Boolean menuHadImpact = PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount > 0;
+        if (menuHadImpact)
+        {
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
+                if (!unit.IsPlayer)
+                    continue;
+                if (_mainMenuSinglePlayer != null && unit.Player.Data != _mainMenuSinglePlayer)
+                    continue;
+                Character playerPtr = unit.Player;
+                BTL_DATA btl = unit.Data;
+                PLAYER player = playerPtr.Data;
+                PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
+                unit.Trance = player.trance;
+                btl_init.CopyPoints(btl.cur, player.cur);
+                BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatus.OutOfBattle & ~(BattleStatus)player.status;
+                btl_stat.RemoveStatuses(btl, statusesToRemove);
+                if ((unit.CurrentStatus & BattleStatus.Death) != 0 && player.cur.hp > 0)
+                    btl_stat.RemoveStatus(btl, BattleStatus.Death);
+
+                BattleStatus oldPermanent = 0, oldResist = 0, newPermanent = 0, newResist = 0;
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(beforeMenu.saExtended))
+                {
+                    saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb);
+                    oldPermanent |= permanent;
+                    oldResist |= resist;
+                }
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
+                {
+                    saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb);
+                    newPermanent |= permanent;
+                    newResist |= resist;
+                }
+                btl.sa = player.sa;
+                btl.saExtended = player.saExtended;
+                btl_stat.MakeStatusesPermanent(btl, oldPermanent & ~newPermanent, false);
+                unit.ResistStatus &= ~(oldResist & ~newResist);
+                btl_stat.MakeStatusesPermanent(btl, newPermanent & ~oldPermanent, true);
+                unit.ResistStatus |= newResist & ~oldResist;
+
+                btl.max.hp = Math.Max(1, btl.max.hp + player.max.hp - beforeMenu.max.hp);
+                btl.max.mp = Math.Max(0, btl.max.mp + player.max.mp - beforeMenu.max.mp);
+                btl.elem.dex = (Byte)Mathf.Clamp(player.elem.dex + player.elem.dex - beforeMenu.elem.dex, 0, Byte.MaxValue);
+                btl.elem.str = (Byte)Mathf.Clamp(player.elem.str + player.elem.str - beforeMenu.elem.str, 0, Byte.MaxValue);
+                btl.elem.mgc = (Byte)Mathf.Clamp(player.elem.mgc + player.elem.mgc - beforeMenu.elem.mgc, 0, Byte.MaxValue);
+                btl.elem.wpr = (Byte)Mathf.Clamp(player.elem.wpr + player.elem.wpr - beforeMenu.elem.wpr, 0, Byte.MaxValue);
+                btl.defence.PhisicalDefence = (Byte)Mathf.Clamp(btl.defence.PhisicalDefence + player.defence.PhisicalDefence - beforeMenu.defence.PhisicalDefence, 0, Byte.MaxValue);
+                btl.defence.PhisicalEvade = (Byte)Mathf.Clamp(btl.defence.PhisicalEvade + player.defence.PhisicalEvade - beforeMenu.defence.PhisicalEvade, 0, Byte.MaxValue);
+                btl.defence.MagicalDefence = (Byte)Mathf.Clamp(btl.defence.MagicalDefence + player.defence.MagicalDefence - beforeMenu.defence.MagicalDefence, 0, Byte.MaxValue);
+                btl.defence.MagicalEvade = (Byte)Mathf.Clamp(btl.defence.MagicalEvade + player.defence.MagicalEvade - beforeMenu.defence.MagicalEvade, 0, Byte.MaxValue);
+                if (beforeMenu.battleRow != player.info.row)
+                    btl_para.SwitchPlayerRow(btl, !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER));
+
+                // Todo: Serial number changed
+                //BattlePlayerCharacter.InitAnimation(btl);
+                if (btl.weapon_geo != null && btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
+                {
+                    UnityEngine.Object.Destroy(btl.weapon_geo);
+                    btl_eqp.InitWeapon(player, btl);
+                }
+                btl_eqp.InitEquipPrivilegeAttrib(player, btl);
+            }
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
+                if (!unit.IsPlayer)
+                    continue;
+                AbilityPlayerDetail abilityPlayer = _abilityDetailDict[unit.GetIndex()];
+                abilityPlayer.AbilityEquipList.Clear();
+                SetAbilityEquip(abilityPlayer);
+                SetAbilityTrance(abilityPlayer);
+                SetAbilityMagic(abilityPlayer);
+            }
+        }
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        {
+            if (!unit.IsPlayer)
+                continue;
+            PLAYER player = unit.Player.Data;
+            PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
+            player.info.row = beforeMenu.row;
+        }
+        if (_mainMenuSinglePlayer != null)
+        {
+            for (Int32 i = 0; i < 4; i++)
+                FF9StateSystem.Common.FF9.party.member[i] = _mainMenuPlayerMemo[i].original;
+            if (Configuration.Battle.AccessMenus <= 1 && menuHadImpact)
+			{
+                BTL_DATA playerBtl = btl_util.getBattlePtr(_mainMenuSinglePlayer);
+                if (playerBtl != null)
+                {
+                    playerBtl.cur.at = 0;
+                    RemovePlayerFromAction(playerBtl.btl_id, true);
+                    if (1 << CurrentPlayerIndex == playerBtl.btl_id)
+                        SwitchAvailablePlayerOrIdle();
+                }
+            }
+        }
+        if (AbilityPanel.activeSelf)
+            DisplayAbility();
+        if (ItemPanel.activeSelf)
+            DisplayItem(_subMenuType == SubMenuType.Throw);
     }
 }

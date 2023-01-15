@@ -173,7 +173,9 @@ public class AbilityUI : UIScene
                     ButtonGroupState.HoldActiveStateOnGroup(SubMenuGroupButton);
                 }
                 else
+                {
                     FF9Sfx.FF9SFX_Play(102);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
             {
@@ -228,11 +230,15 @@ public class AbilityUI : UIScene
                             });
                         }
                         else
+                        {
                             FF9Sfx.FF9SFX_Play(102);
+                        }
                     }
                 }
                 else
+                {
                     this.OnSecondaryGroupClick(go);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
             {
@@ -247,6 +253,7 @@ public class AbilityUI : UIScene
                         CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityId);
                         if (abilityType == AbilityType.Enable)
                         {
+                            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                             FF9Sfx.FF9SFX_Play(107);
                             ff9abil.FF9Abil_SetEnableSA(player.Data, ff9abil.GetSupportAbilityFromAbilityId(abilityId), true);
                             player.Data.cur.capa -= saData.GemsCount;
@@ -256,6 +263,7 @@ public class AbilityUI : UIScene
                         }
                         else if (abilityType == AbilityType.Selected)
                         {
+                            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                             FF9Sfx.FF9SFX_Play(107);
                             ff9abil.FF9Abil_SetEnableSA(player.Data, ff9abil.GetSupportAbilityFromAbilityId(abilityId), false);
                             player.Data.cur.capa += saData.GemsCount;
@@ -264,51 +272,60 @@ public class AbilityUI : UIScene
                             this.DisplayCharacter(true);
                         }
                         else
+                        {
                             FF9Sfx.FF9SFX_Play(102);
+                        }
                     }
                     else
+                    {
                         FF9Sfx.FF9SFX_Play(102);
+                    }
                 }
                 else
+                {
                     this.OnSecondaryGroupClick(go);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == TargetGroupButton && (ButtonGroupState.ContainButtonInGroup(go, TargetGroupButton) || go == this.allTargetHitArea))
             {
-                Boolean flag = false;
-                Int32 siblingIndex = go.transform.GetSiblingIndex();
+                Boolean canUseAbility = false;
+                Int32 memberIndex = go.transform.GetSiblingIndex();
                 PLAYER caster = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-                AA_DATA aaData = ff9abil.GetActionAbility(this.aaIdList[this.currentAbilityIndex]);
+                BattleAbilityId abilId = ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]);
+                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
                 if (!this.multiTarget)
                 {
-                    flag = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[siblingIndex], aaData, aaData.Ref.ScriptId, 0U);
+                    canUseAbility = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[memberIndex], aaData, aaData.Ref.ScriptId, 0U);
                 }
                 else
                 {
-                    for (Int32 index = 0; index < 4; ++index)
-                    {
-                        if (FF9StateSystem.Common.FF9.party.member[index] != null)
-                            flag |= SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[index], aaData, aaData.Ref.ScriptId, 1U);
-                    }
+                    for (Int32 i = 0; i < 4; ++i)
+                        if (FF9StateSystem.Common.FF9.party.member[i] != null)
+                            canUseAbility |= SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[i], aaData, aaData.Ref.ScriptId, 1U);
                 }
-                if (flag)
+                if (canUseAbility)
                 {
+                    PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                     FF9Sfx.FF9SFX_Play(106);
-                    Int32 num = GetMp(aaData);
+                    Int32 mpCost = GetMp(aaData);
                     if (!FF9StateSystem.Settings.IsHpMpFull)
-                        caster.cur.mp = (UInt32)(caster.cur.mp - num);
-                    if (caster.cur.mp < num)
+                        caster.cur.mp = (UInt32)(caster.cur.mp - mpCost);
+                    if (caster.cur.mp < mpCost)
                     {
                         this.DisplayAA();
                         this.TargetListPanel.SetActive(false);
                         ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
                     }
+                    FF9StateSystem.EventState.IncreaseAAUsageCounter(abilId);
                     BattleAchievement.IncreaseNumber(ref FF9StateSystem.Achievement.whtMag_no, 1);
                     AchievementManager.ReportAchievement(AcheivementKey.WhtMag200, FF9StateSystem.Achievement.whtMag_no);
                     this.DisplayTarget();
                     this.DisplayCharacter(true);
                 }
                 else
+                {
                     FF9Sfx.FF9SFX_Play(102);
+                }
             }
         }
         return true;
@@ -365,14 +382,21 @@ public class AbilityUI : UIScene
     {
         if (base.OnKeySpecial(go) && ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
-            FF9Sfx.FF9SFX_Play(103);
-            this.fastSwitch = true;
-            this.Hide(() =>
+            if (PersistenSingleton<UIManager>.Instance.MainMenuScene.IsSubMenuEnabled(MainMenuUI.SubMenu.Equip))
             {
-                this.RemoveCursorMemorize();
-                PersistenSingleton<UIManager>.Instance.EquipScene.CurrentPartyIndex = this.currentPartyIndex;
-                PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Equip);
-            });
+                FF9Sfx.FF9SFX_Play(103);
+                this.fastSwitch = true;
+                this.Hide(() =>
+                {
+                    this.RemoveCursorMemorize();
+                    PersistenSingleton<UIManager>.Instance.EquipScene.CurrentPartyIndex = this.currentPartyIndex;
+                    PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Equip);
+                });
+            }
+            else
+            {
+                FF9Sfx.FF9SFX_Play(102);
+            }
         }
         return true;
     }
@@ -519,11 +543,8 @@ public class AbilityUI : UIScene
             FF9Sfx.muteSfx = false;
             this.OnKeyConfirm(go);
         }
-        else
+        else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup != SupportAbilityGroupButton)
-                return;
-
             FF9Sfx.muteSfx = true;
             this.OnKeyCancel(this.supportAbilityScrollList.GetItem(this.currentAbilityIndex).gameObject);
             FF9Sfx.muteSfx = false;
@@ -539,7 +560,7 @@ public class AbilityUI : UIScene
         String mobileSuffix = FF9StateSystem.MobilePlatform ? "Mobile" : "";
         String localizationPrefix;
         String help = Localization.Get("UseAbilityHelp");
-        if (FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] != 0)
+        if (FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] != 0 || IsSubMenuDisabledByMainMenu(true))
             localizationPrefix = "UseAbilityNoMagic";
         else if (this.aaIdList.Count != 0)
             localizationPrefix = "UseAbilityHelpStatus";
@@ -551,7 +572,7 @@ public class AbilityUI : UIScene
         if (!ff9abil.FF9Abil_HasSA(player))
             localizationPrefix = player.IsSubCharacter ? "EquipAbilityHelpNow" : "EquipAbilityForever";
         else
-            localizationPrefix = "EquipAbilityPlayer";
+            localizationPrefix = IsSubMenuDisabledByMainMenu(false) ? "EquipAbilityHelpNow" : "EquipAbilityPlayer";
         help += Localization.Get(localizationPrefix + mobileSuffix);
         equipSubMenu.Help.Text = help;
         this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
@@ -1104,8 +1125,8 @@ public class AbilityUI : UIScene
                 }
             }
         }
-        this.isAAEnable = player.Data.cur.hp > 0 && (player.Data.status & (Int32)(BattleStatus.Petrify | BattleStatus.Silence)) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
-        this.isSAEnable = ff9abil.FF9Abil_HasSA(player);
+        this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.Data.cur.hp > 0 && (player.Data.status & (Int32)(BattleStatus.Petrify | BattleStatus.Silence)) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
+        this.isSAEnable = !IsSubMenuDisabledByMainMenu(false) && ff9abil.FF9Abil_HasSA(player);
         this.useSubMenuLabel.color = !this.isAAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         this.equipSubMenuLabel.color = !this.isSAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         ButtonGroupState.SetButtonAnimation(this.UseSubMenu, this.isAAEnable);
@@ -1163,6 +1184,12 @@ public class AbilityUI : UIScene
         this.avatarTransition = this.CharacterDetailPanel.GetChild(0).GetChild(6).GetChild(0).GetComponent<HonoAvatarTweenPosition>();
     }
 
+    private Boolean IsSubMenuDisabledByMainMenu(Boolean useMenu)
+	{
+        String subMenuStr = useMenu ? "ActiveAbility" : "SupportingAbility";
+        HashSet<String> enabledSet = PersistenSingleton<UIManager>.Instance.MainMenuScene.EnabledSubMenus;
+        return enabledSet.Count > 0 && !enabledSet.Contains(MainMenuUI.SubMenu.Ability.ToString()) && !enabledSet.Contains(subMenuStr);
+    }
 
     public class AbilityInfoHUD
     {

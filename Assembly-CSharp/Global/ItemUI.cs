@@ -242,10 +242,11 @@ public class ItemUI : UIScene
                             {
                                 if (!_usedItemIdList.Contains(itemId))
                                 {
-                                    if ((RegularItem.GysahlGreens != itemId ? itemEffect.info.DisplayStats : 0) == 0)
+                                    if ((itemId != RegularItem.GysahlGreens ? itemEffect.info.DisplayStats : 0) == 0)
                                     {
                                         if (SFieldCalculator.FieldCalcMain(player, player, itemEffect, itemEffect.Ref.ScriptId, 0U))
                                         {
+                                            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                                             FF9Sfx.FF9SFX_Play(106);
                                             ff9item.FF9Item_Remove(itemId, 1);
                                             if (ff9item.FF9Item_GetCount(itemId) == 0)
@@ -253,7 +254,9 @@ public class ItemUI : UIScene
                                             DisplayItem();
                                         }
                                         else
+                                        {
                                             FF9Sfx.FF9SFX_Play(102);
+                                        }
                                     }
                                     else
                                     {
@@ -270,10 +273,7 @@ public class ItemUI : UIScene
                                             _targetTransition.animatedOutEndPosition = new Vector3(-1543f, 0.0f, 0.0f);
                                             TargetListPanel.transform.localPosition = new Vector3((Single)(-TargetPositionXOffset - 60.0), 0.0f, 0.0f);
                                         }
-                                        _targetTransition.DestinationPosition = new Vector3[1]
-                                        {
-                                            TargetListPanel.transform.localPosition
-                                        };
+                                        _targetTransition.DestinationPosition = new Vector3[1] { TargetListPanel.transform.localPosition };
                                         DisplayTarget();
                                         Loading = true;
                                         _targetTransition.TweenIn(new Byte[1], () =>
@@ -286,13 +286,19 @@ public class ItemUI : UIScene
                                     }
                                 }
                                 else
+                                {
                                     FF9Sfx.FF9SFX_Play(102);
+                                }
                             }
                             else
+                            {
                                 FF9Sfx.FF9SFX_Play(102);
+                            }
                         }
                         else
+                        {
                             FF9Sfx.FF9SFX_Play(102);
+                        }
                     }
                     else if (_currentArrangeMode == 2)
                     {
@@ -304,7 +310,9 @@ public class ItemUI : UIScene
                     }
                 }
                 else
+                {
                     OnSecondaryGroupClick(go);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == KeyItemGroupButton)
             {
@@ -317,10 +325,14 @@ public class ItemUI : UIScene
                         DisplayKeyItemSkin(true);
                     }
                     else
+                    {
                         FF9Sfx.FF9SFX_Play(102);
+                    }
                 }
                 else
+                {
                     OnSecondaryGroupClick(go);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
             {
@@ -332,6 +344,7 @@ public class ItemUI : UIScene
                     ITEM_DATA tbl = ff9item.GetItemEffect(itemId);
                     if (SFieldCalculator.FieldCalcMain(player, player, tbl, tbl.Ref.ScriptId, 0U))
                     {
+                        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                         FF9Sfx.FF9SFX_Play(106);
                         ff9item.FF9Item_Remove(itemId, 1);
                         if (ff9item.FF9Item_GetCount(itemId) > 0)
@@ -350,7 +363,9 @@ public class ItemUI : UIScene
                         }
                     }
                     else
+                    {
                         FF9Sfx.FF9SFX_Play(102);
+                    }
                 }
             }
             else if (ButtonGroupState.ActiveGroup == ItemArrangeGroupButton)
@@ -371,7 +386,9 @@ public class ItemUI : UIScene
                     _switchingItem = false;
                 }
                 else
+                {
                     OnSecondaryGroupClick(go);
+                }
             }
         }
         return true;

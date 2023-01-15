@@ -12,13 +12,13 @@ public partial class BattleHUD : UIScene
 {
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
-        SceneVoidDelegate action = GeneratedShow;
+        SceneVoidDelegate afterShowAction = GeneratedShow;
         if (afterFinished != null)
-            action = (SceneVoidDelegate)Delegate.Combine(action, afterFinished);
+            afterShowAction += afterFinished;
 
         if (!_isFromPause)
         {
-            base.Show(action);
+            base.Show(afterShowAction);
             PersistenSingleton<UIManager>.Instance.Booster.SetBoosterState(PersistenSingleton<UIManager>.Instance.UnityScene);
             FF9StateSystem.Settings.SetMasterSkill();
             this._doubleCastCount = 0;
@@ -29,7 +29,7 @@ public partial class BattleHUD : UIScene
             _commandEnable = _beforePauseCommandEnable;
             _isTryingToRun = false;
             Singleton<HUDMessage>.Instance.Pause(false);
-            base.Show(action);
+            base.Show(afterShowAction);
             if (_commandEnable && !_hidingHud)
             {
                 FF9BMenu_EnableMenu(true);
@@ -37,6 +37,10 @@ public partial class BattleHUD : UIScene
                 DisplayTargetPointer();
             }
         }
+
+        if (_usingMainMenu)
+            UpdateBattleAfterMainMenu();
+
         _isFromPause = false;
         _oneTime = true;
     }
@@ -52,37 +56,16 @@ public partial class BattleHUD : UIScene
         RemoveCursorMemorize();
     }
 
-    //public override GameObject OnKeyNavigate(KeyCode direction, GameObject currentObj, GameObject nextObj)
-    //{
-    //    if (nextObj != null || currentObj == null)
-    //        return nextObj;
-    //    if (!Configuration.Control.WrapSomeMenus)
-    //        return null;
-    //    if (ButtonGroupState.ActiveGroup == CommandGroupButton)
-    //    {
-    //        if ((CommandMenu)currentObj.transform.GetSiblingIndex() == CommandMenu.Item && direction == KeyCode.DownArrow)
-    //        {
-    //            return _commandPanel.GetCommandButton(CommandMenu.Attack);
-    //            //OnItemSelect();
-    //            //FF9Sfx.FF9SFX_Play(103);
-    //        }
-    //    }
-    //    else if (ButtonGroupState.ActiveGroup == TargetGroupButton && _cursorType == CursorGroup.Individual)
-    //    {
-    //    }
-    //    return null;
-    //}
-
     public override Boolean OnKeyConfirm(GameObject go)
     {
-        if (!base.OnKeyConfirm(go) || _hidingHud)
+        if (!base.OnKeyConfirm(go) || _hidingHud || _usingMainMenu)
             return true;
 
         if (ButtonGroupState.ActiveGroup == CommandGroupButton)
         {
             FF9Sfx.FF9SFX_Play(103);
-            CommandMenu menuType = _currentCommandIndex;
             _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
+            CommandMenu menuType = _currentCommandIndex;
             _currentCommandId = GetCommandFromCommandIndex(ref menuType, CurrentPlayerIndex);
             _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
             _subMenuType = SubMenuType.Normal;
@@ -213,7 +196,7 @@ public partial class BattleHUD : UIScene
         if (UIManager.Input.GetKey(Control.Special))
             return true;
 
-        if (base.OnKeyCancel(go) && !_hidingHud && ButtonGroupState.ActiveGroup != CommandGroupButton)
+        if (base.OnKeyCancel(go) && !_hidingHud && !_usingMainMenu && ButtonGroupState.ActiveGroup != CommandGroupButton)
         {
             if (ButtonGroupState.ActiveGroup == TargetGroupButton)
             {
@@ -277,35 +260,50 @@ public partial class BattleHUD : UIScene
 
     public override Boolean OnKeyMenu(GameObject go)
     {
-        if (base.OnKeyMenu(go) && !_hidingHud && ButtonGroupState.ActiveGroup == CommandGroupButton)
+        if (base.OnKeyMenu(go))
         {
-            if (ReadyQueue.Count > 1)
+            if (_usingMainMenu)
+                return true;
+            if (!_hidingHud && ButtonGroupState.ActiveGroup == CommandGroupButton)
             {
-                Int32 postponed = ReadyQueue[0];
-                ReadyQueue.RemoveAt(0);
-                ReadyQueue.Add(postponed);
-                using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
+                if (ReadyQueue.Count > 1)
                 {
-                    while (enumerator.MoveNext())
+                    Int32 postponed = ReadyQueue[0];
+                    ReadyQueue.RemoveAt(0);
+                    ReadyQueue.Add(postponed);
+                    using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
                     {
-                        Int32 current = enumerator.Current;
-                        if (!InputFinishList.Contains(current) && !_unconsciousStateList.Contains(current) && current != CurrentPlayerIndex)
+                        while (enumerator.MoveNext())
                         {
-                            if (ReadyQueue.IndexOf(current) > 0)
+                            Int32 current = enumerator.Current;
+                            if (!InputFinishList.Contains(current) && !_unconsciousStateList.Contains(current) && current != CurrentPlayerIndex)
                             {
-                                ReadyQueue.Remove(current);
-                                ReadyQueue.Insert(0, current);
+                                if (ReadyQueue.IndexOf(current) > 0)
+                                {
+                                    ReadyQueue.Remove(current);
+                                    ReadyQueue.Insert(0, current);
+                                }
+                                SwitchPlayer(current);
+                                break;
                             }
-                            SwitchPlayer(current);
-                            break;
                         }
                     }
                 }
+                else if (ReadyQueue.Count == 1)
+                {
+                    SwitchPlayer(ReadyQueue[0]);
+                }
             }
-            else if (ReadyQueue.Count == 1)
-            {
-                SwitchPlayer(ReadyQueue[0]);
-            }
+            if (Configuration.Battle.AccessMenus <= 0)
+                return true;
+            Boolean canOpen = true;
+            BattleUnit selectedChar = CurrentPlayerIndex >= 0 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex) : null;
+            if (Configuration.Battle.AccessMenus == 1 || Configuration.Battle.AccessMenus == 2)
+                canOpen = !_hidingHud && ButtonGroupState.ActiveGroup == ItemGroupButton && _currentCommandId == BattleCommandId.Item && (selectedChar == null || !selectedChar.IsMonsterTransform || !selectedChar.Data.monster_transform.disable_commands.Contains(BattleCommandId.AccessMenu));
+            else if (Configuration.Battle.AccessMenus == 3)
+                canOpen = FF9BMenu_IsEnable() && ButtonGroupState.ActiveGroup != CommandGroupButton && ButtonGroupState.ActiveGroup != TargetGroupButton;
+            if (canOpen)
+                OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? selectedChar?.Player?.Data : null);
         }
         return true;
     }
@@ -407,6 +405,28 @@ public partial class BattleHUD : UIScene
         return true;
     }
 
+    private void OpenMainMenu(PLAYER singlePlayerMenu = null)
+    {
+        _usingMainMenu = true;
+        _mainMenuSinglePlayer = singlePlayerMenu;
+        _isFromPause = true;
+        _beforePauseCommandEnable = _commandEnable;
+        _currentButtonGroup = !_hidingHud ? ButtonGroupState.ActiveGroup : _currentButtonGroup;
+        FF9BMenu_EnableMenu(false);
+        UpdatePlayersForMainMenu();
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
+        PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
+        Hide(OpenMainMenuAfterHide);
+    }
+
+    private static void OpenMainMenuAfterHide()
+    {
+        PersistenSingleton<UIManager>.Instance.MainMenuScene.EnabledSubMenus = new HashSet<String>(Configuration.Battle.AvailableMenus);
+        PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = PersistenSingleton<UIManager>.Instance.MainMenuScene.GetFirstAvailableSubMenu();
+        PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = true;
+        PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
+    }
+
     private void RemoveCursorMemorize()
     {
         _commandCursorMemorize.Clear();
@@ -480,5 +500,7 @@ public partial class BattleHUD : UIScene
         ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0.0f), CommandGroupButton);
         ButtonGroupState.SetPointerLimitRectToGroup(AbilityPanel.GetComponent<UIWidget>(), _abilityScrollList.cellHeight, AbilityGroupButton);
         ButtonGroupState.SetPointerLimitRectToGroup(ItemPanel.GetComponent<UIWidget>(), _itemScrollList.cellHeight, ItemGroupButton);
+
+        _usingMainMenu = false;
     }
 }

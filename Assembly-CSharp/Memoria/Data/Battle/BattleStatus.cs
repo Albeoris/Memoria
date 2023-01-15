@@ -38,6 +38,7 @@ namespace Memoria.Data
         Jump = 1 << 30, //1073741824,
         GradualPetrify = 1u << 31, //2147483648,
 
+        OutOfBattle = Petrify | Venom | Virus | Silence | Blind | Trouble | Zombie, // Death is not a status out of battles but only a HP check
         Achievement = Petrify | Venom | Virus | Silence | Blind | Trouble | Zombie | Death | LowHP | Confuse | Berserk | Stop | AutoLife | Poison | Sleep | Regen | Haste | Slow | Float | Shell | Protect | Heat | Freeze | Vanish | Doom | Mini | Reflect | GradualPetrify,
         ContiGood = Regen | Haste | Float | Shell | Protect | Vanish | Reflect, // 0x24EC0000
         ContiBad = Poison | Sleep | Slow | Heat | Freeze | Doom | Mini | GradualPetrify, // 0x9B130000
