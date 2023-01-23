@@ -287,7 +287,7 @@ namespace Memoria.Launcher
             });
             downloadThread.Start();
         }
-        private void DownloadLoop(object sender, DownloadProgressChangedEventArgs e)
+        private void DownloadLoop(Object sender, DownloadProgressChangedEventArgs e)
         {
             Dispatcher.BeginInvoke((MethodInvoker)delegate
             {
@@ -300,7 +300,7 @@ namespace Memoria.Launcher
                 lstDownloads.Items.Refresh();
             });
         }
-        private void DownloadEnd(object sender, AsyncCompletedEventArgs e)
+        private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
         {
             if (e.Cancelled || e.Error != null)
             {
@@ -480,6 +480,22 @@ namespace Memoria.Launcher
                 UpdateCatalogInstallationState();
             });
         }
+        private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)
+        {
+            if (e.Cancelled || e.Error != null)
+            {
+                if (File.Exists(CATALOG_PATH + ".tmp"))
+                    File.Delete(CATALOG_PATH + ".tmp");
+                return;
+            }
+            Dispatcher.BeginInvoke((MethodInvoker)delegate
+            {
+                if (File.Exists(CATALOG_PATH))
+                    File.Delete(CATALOG_PATH);
+                File.Move(CATALOG_PATH + ".tmp", CATALOG_PATH);
+                ReadCatalog();
+            });
+        }
 
         private void UpdateCatalog()
         {
@@ -489,20 +505,7 @@ namespace Memoria.Launcher
             downloadCatalogThread = new Thread(() =>
             {
                 downloadCatalogClient = new WebClient();
-                downloadCatalogClient.DownloadFileCompleted += delegate(Object sender, AsyncCompletedEventArgs e)
-                {
-                    if (e.Cancelled || e.Error != null)
-                    {
-                        if (File.Exists(CATALOG_PATH + ".tmp"))
-                            File.Delete(CATALOG_PATH + ".tmp");
-                        return;
-                    }
-                    if (File.Exists(CATALOG_PATH))
-                        File.Delete(CATALOG_PATH);
-                    File.Move(CATALOG_PATH + ".tmp", CATALOG_PATH);
-                    ReadCatalog();
-                    lstCatalogMods.Items.Refresh();
-                };
+                downloadCatalogClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCatalogEnd);
                 downloadCatalogClient.DownloadFileAsync(new Uri(CATALOG_URL), CATALOG_PATH + ".tmp");
             });
             downloadCatalogThread.Start();
@@ -512,12 +515,13 @@ namespace Memoria.Launcher
 		{
             if (!File.Exists(CATALOG_PATH))
                 return;
-            modListCatalog.Clear();
             try
             {
+                modListCatalog.Clear();
                 using (Stream input = File.OpenRead(CATALOG_PATH))
                 using (StreamReader reader = new StreamReader(input))
                     Mod.LoadModDescriptions(reader, ref modListCatalog);
+                UpdateCatalogInstallationState();
             }
             catch (Exception err)
             {
