@@ -97,6 +97,8 @@ public partial class BattleHUD : UIScene
 
     public String GetBattleCommandTitle(CMD_DATA pCmd)
     {
+        if (pCmd.regist != null && pCmd.regist.bi.player == 0)
+            return pCmd.aa.Name;
         if (btl_util.IsCommandMonsterTransform(pCmd))
         {
             AA_DATA aaData = btl_util.GetCommandMonsterAttack(pCmd);

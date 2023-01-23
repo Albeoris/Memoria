@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using FF9;
+using Memoria.Assets;
 
 class SFXChannel
 {
@@ -103,7 +104,7 @@ class SFXChannel
 
 	public static SFXDataMesh.JSON LoadSingle(String chantype)
 	{
-		String modelPathBase = AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/Common/Channel";
+		String modelPathBase = DataResources.PureDataDirectory + "SpecialEffects/Common/Channel";
 		SFXDataMesh.ModelSequence modelJSON = SFXDataMesh.ModelSequence.Load(modelPathBase + chantype + UnifiedBattleSequencer.EXTENSION_SFXMESH_MODEL);
 		if (modelJSON != null)
 		{
@@ -117,7 +118,7 @@ class SFXChannel
 
 	public static void LoadAll()
 	{
-		String modelPathBase = AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/Common/Channel";
+		String modelPathBase = DataResources.PureDataDirectory + "SpecialEffects/Common/Channel";
 		foreach (String chantype in CHANNEL_TYPE.Keys)
 		{
 			SFXDataMesh.JSON dataMesh = new SFXDataMesh.JSON();
@@ -127,7 +128,7 @@ class SFXChannel
 			ModelList[chantype] = dataMesh;
 		}
 		ModelReflect = new SFXDataMesh.JSON();
-		SFXDataMesh.ModelSequence reflectJSON = SFXDataMesh.ModelSequence.Load(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/Common/Reflect" + UnifiedBattleSequencer.EXTENSION_SFXMESH_MODEL);
+		SFXDataMesh.ModelSequence reflectJSON = SFXDataMesh.ModelSequence.Load(DataResources.PureDataDirectory + "SpecialEffects/Common/Reflect" + UnifiedBattleSequencer.EXTENSION_SFXMESH_MODEL);
 		if (reflectJSON != null)
 			ModelReflect.model.Add(reflectJSON);
 	}

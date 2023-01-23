@@ -57,6 +57,8 @@ namespace Memoria.Assets.TexturePacker
                         ReadNex();
                 }
 
+                // x86/FF9_Data/output.log.txt says:
+                // "SpriteSheet must be instantiated using the ScriptableObject.CreateInstance method instead of new SpriteSheet."
                 return new SpriteSheet
                 {
                     name = "TPSheet_" + _textureName + Interlocked.Increment(ref _counter),

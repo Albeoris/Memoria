@@ -253,55 +253,30 @@ namespace Assets.Sources.Graphics.Movie
 
 		private void Open()
 		{
-			Int64 num = 0L;
-			Int64 num2 = 0L;
 			RuntimePlatform platform = Application.platform;
-			String text = "";
-			String[] folderNames = Configuration.Mod.AllFolderNames;
+			String moviePath = "ma/" + this.MovieFile;
+			String fullPath = "";
+			Int64 fileOffset = 0L;
+			Int64 fileLength = 0L;
 			switch (platform)
 			{
 			case RuntimePlatform.WindowsEditor:
-				for (Int32 i = 0; i < folderNames.Length; i++)
-				{
-					text = folderNames[i] + (folderNames[i].Length > 0 ? "/" : "") + AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
-					if (File.Exists(text))
-						break;
-				}
-				break;
 			case RuntimePlatform.IPhonePlayer:
-				for (Int32 i = 0; i < folderNames.Length; i++)
-				{
-					text = folderNames[i] + (folderNames[i].Length > 0 ? "/" : "") + AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
-					if (File.Exists(text))
+			case RuntimePlatform.WindowsPlayer:
+				foreach (AssetManager.AssetFolder folder in AssetManager.FolderHighToLow)
+					if (folder.TryFindAssetInModOnDisc(moviePath, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
 						break;
-				}
-				break;
-			case RuntimePlatform.PS3:
-			case RuntimePlatform.XBOX360:
-				IL_2A:
-				if (platform != RuntimePlatform.WindowsPlayer)
-				{
-					throw new Exception("[Movie.MovieMaterial.GLPlugin]  Platform: " + Application.platform + " Not supported.");
-				}
-				for (Int32 i = 0; i < folderNames.Length; i++)
-				{
-					text = folderNames[i] + (folderNames[i].Length > 0 ? "/" : "") + AssetManagerUtil.GetStreamingAssetsPath() + "/ma/" + this.MovieFile;
-					if (File.Exists(text))
-						break;
-				}
 				break;
 			case RuntimePlatform.Android:
-				text = Application.dataPath;
-				if (!AssetStream.GetZipFileOffsetLength(Application.dataPath, "ma/" + this.MovieFile, out num, out num2))
-				{
+				fullPath = Application.dataPath;
+				if (!AssetStream.GetZipFileOffsetLength(Application.dataPath, moviePath, out fileOffset, out fileLength))
 					throw new Exception("[Movie.MovieMaterial.GLPlugin] Error opening movie via AssetStream");
-				}
 				break;
 			default:
-				goto IL_2A;
+				throw new Exception("[Movie.MovieMaterial.GLPlugin]  Platform: " + Application.platform + " Not supported.");
 			}
 			this.isFMV = this.MovieFile.StartsWith("FMV");
-            if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, text, (Int32)num, (Int32)num2, false, this.scanDuration, 16))
+            if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, fullPath, (Int32)fileOffset, (Int32)fileLength, false, this.scanDuration, 16))
 			{
 				this.Width = MovieMaterial.GetPicWidth(this.m_nativeContext);
 				this.Height = MovieMaterial.GetPicHeight(this.m_nativeContext);
@@ -313,11 +288,11 @@ namespace Assets.Sources.Graphics.Movie
 				this.m_uvHeight = MovieMaterial.GetUVHeight(this.m_nativeContext);
 				this.currentFPS = this.FPS;
 				this.currentDuration = MovieMaterial.GetDuration(this.m_nativeContext);
-				this.playSpeed = (Single) (15.0 / currentFPS); 
+				this.playSpeed = (Single)(15.0 / currentFPS); 
 				this.CalculateUVScaleOffset();
 				return;
 			}
-			throw new FileLoadException("Error opening movie during stream opening at path: " + text);
+			throw new FileLoadException("Error opening movie during stream opening at path: " + fullPath);
 		}
 
 		private void AllocateTexures()

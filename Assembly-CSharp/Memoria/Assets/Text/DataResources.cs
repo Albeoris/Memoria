@@ -6,12 +6,14 @@ namespace Memoria.Assets
     public static class DataResources
     {
         // In general:
-        // - Default file path is obtained by DataResources.SECTION.Directory + DataResources.SECTION.TYPEFile
-        // - File path inside one of the Configuration.Mod.FolderNames is obtained by DataResources.SECTION.ModDirectory(modName) + DataResources.SECTION.TYPEFile
+        // - Default file path is obtained by DataResources.SECTION.PureDirectory + DataResources.SECTION.TYPEFile
+        // - The Asset Path Prefix to be used in TryFindAssetInModOnDisc is: AssetManagerUtil.GetStreamingAssetsPath() + "/"
         public static readonly String PureDataDirectory = "Data/";
+        public static readonly String PureScriptsDirectory = "Scripts/";
+        public static readonly String PureShadersDirectory = "Shaders/";
         public static readonly String DataDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDataDirectory;
-        public static readonly String ScriptsDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Scripts/";
-        public static readonly String ShadersDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/Shaders/";
+        public static readonly String ScriptsDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureScriptsDirectory;
+        public static readonly String ShadersDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureShadersDirectory;
 
         public static String ScriptsModDirectory(String modFolder)
         {
@@ -79,12 +81,11 @@ namespace Memoria.Assets
                 public static String GemsFile => "AbilityGems.csv";
                 public static String SAFeaturesFile => "AbilityFeatures.txt";
 
-                public static String GetPresetAbilitiesPath(CharacterPresetId presetId, String modFolder = null)
+                public static String GetPresetAbilitiesPath(CharacterPresetId presetId)
                 {
-                    if (String.IsNullOrEmpty(modFolder))
-                        return Directory + presetId + ".csv";
-                    return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory + presetId + ".csv";
+                    return PureDirectory + presetId + ".csv";
                 }
+
                 public static String ModDirectory(String modFolder)
                 {
                     if (String.IsNullOrEmpty(modFolder))

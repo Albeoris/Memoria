@@ -375,7 +375,7 @@ public class BattleActionCode
 			return false;
 		}
 		Int32 codeStart, codeEnd, codeNum, codeLen;
-		args = args.Replace("[CastName]", cmd.regist.bi.player == 0 ? cmd.aa.Name : UIManager.Battle.GetBattleCommandTitle(cmd));
+		args = args.Replace("[CastName]", UIManager.Battle.GetBattleCommandTitle(cmd));
 		args = args.Replace("[MagicSword]", BattleHUD.FormatMagicSwordAbility(cmd));
 		while ((codeStart = args.IndexOf("[CommandTitle=")) >= 0)
 		{

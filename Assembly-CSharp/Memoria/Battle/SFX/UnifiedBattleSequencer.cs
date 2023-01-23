@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Assets;
 using NCalc;
 
 public static class UnifiedBattleSequencer
@@ -103,7 +104,7 @@ public static class UnifiedBattleSequencer
 					threadList = BattleActionThread.LoadFromBtlSeq(FF9StateSystem.Battle.FF9Battle.btl_scene, btlseq.instance, FF9TextTool.BattleText, effectNum);
 					break;
 				case EffectType.SpecialEffect:
-					String path = AssetManagerUtil.GetMemoriaAssetsPath() + $"SpecialEffects/ef{effectNum:D3}/" + PLAYER_SEQUENCE_FILE;
+					String path = DataResources.PureDataDirectory + $"SpecialEffects/ef{effectNum:D3}/" + PLAYER_SEQUENCE_FILE;
 					String sequenceText = AssetManager.LoadString(path);
 					if (sequenceText != null)
 					{

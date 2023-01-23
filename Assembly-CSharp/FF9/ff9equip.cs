@@ -21,20 +21,11 @@ namespace FF9
 	    {
 	        try
             {
+                String inputPath = DataResources.Items.PureDirectory + DataResources.Items.StatsFile;
                 Dictionary<Int32, ItemStats> result = new Dictionary<Int32, ItemStats>();
-                ItemStats[] stats;
-                String inputPath;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
-                {
-                    inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.StatsFile;
-                    if (File.Exists(inputPath))
-                    {
-                        stats = CsvReader.Read<ItemStats>(inputPath);
-                        for (Int32 j = 0; j < stats.Length; j++)
-                            result[stats[j].Id] = stats[j];
-                    }
-                }
+                foreach (ItemStats[] stats in AssetManager.EnumerateCsvFromLowToHigh<ItemStats>(inputPath))
+                    foreach (ItemStats stat in stats)
+                        result[stat.Id] = stat;
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load item stats because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.StatsFile}].", DataResources.Items.Directory + DataResources.Items.StatsFile);
                 return result;

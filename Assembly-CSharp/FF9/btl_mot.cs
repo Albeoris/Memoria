@@ -115,24 +115,15 @@ namespace FF9
 		{
 			try
 			{
+				String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CharacterBattleParametersFile;
 				Dictionary<CharacterSerialNumber, CharacterBattleParameter> result = new Dictionary<CharacterSerialNumber, CharacterBattleParameter>();
-				CharacterBattleParameter[] btlParams;
-				String inputPath;
-				String[] dir = Configuration.Mod.AllFolderNames;
-				for (Int32 i = dir.Length - 1; i >= 0; i--)
-				{
-					inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CharacterBattleParametersFile;
-					if (File.Exists(inputPath))
-					{
-						btlParams = CsvReader.Read<CharacterBattleParameter>(inputPath);
-						foreach (CharacterBattleParameter it in btlParams)
-							result[it.Id] = it;
-					}
-				}
+				foreach (CharacterBattleParameter[] btlParams in AssetManager.EnumerateCsvFromLowToHigh<CharacterBattleParameter>(inputPath))
+					foreach (CharacterBattleParameter it in btlParams)
+						result[it.Id] = it;
 				if (result.Count == 0)
 					throw new FileNotFoundException($"File with character battle parameters not found: [{DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile}].", DataResources.Characters.Directory + DataResources.Characters.CharacterBattleParametersFile);
-				for (Int32 j = 0; j < 19; j++)
-					if (!result.ContainsKey((CharacterSerialNumber)j))
+				for (Int32 i = 0; i < 19; i++)
+					if (!result.ContainsKey((CharacterSerialNumber)i))
 						throw new NotSupportedException($"You must define at least the 19 battle parameters, with IDs between 0 and 18.");
 				return result;
 			}

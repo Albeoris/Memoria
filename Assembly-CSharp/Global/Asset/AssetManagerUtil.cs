@@ -419,13 +419,8 @@ public static class AssetManagerUtil
 
 	public static Boolean IsMemoriaAssets(String name)
 	{
-		String text = "StreamingAssets/Data/";
+		String text = "Data/";
 		return String.Compare(name, 0, text, 0, text.Length, StringComparison.OrdinalIgnoreCase) == 0;
-	}
-
-	public static String GetMemoriaAssetsPath()
-	{
-		return "StreamingAssets/Data/";
 	}
 
 	public static String GetAssetExtension<T>(String name) where T : UnityEngine.Object

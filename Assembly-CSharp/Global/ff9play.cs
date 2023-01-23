@@ -84,24 +84,15 @@ public static class ff9play
     {
         try
         {
+            String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.DefaultEquipmentsFile;
             Dictionary<EquipmentSetId, CharacterEquipment> result = new Dictionary<EquipmentSetId, CharacterEquipment>();
-            CharacterEquipment[] equips;
-            String inputPath;
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = dir.Length - 1; i >= 0; --i)
-            {
-                inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.DefaultEquipmentsFile;
-                if (File.Exists(inputPath))
-                {
-                    equips = CsvReader.Read<CharacterEquipment>(inputPath);
-                    for (Int32 j = 0; j < equips.Length; j++)
-                        result[equips[j].Id] = equips[j];
-                }
-            }
+            foreach (CharacterEquipment[] equips in AssetManager.EnumerateCsvFromLowToHigh<CharacterEquipment>(inputPath))
+                foreach (CharacterEquipment equip in equips)
+                    result[equip.Id] = equip;
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load equipment sets because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile}].", DataResources.Characters.Directory + DataResources.Characters.DefaultEquipmentsFile);
-            for (Int32 j = 0; j < 15; j++)
-                if (!result.ContainsKey((EquipmentSetId)j))
+            for (Int32 i = 0; i < 15; i++)
+                if (!result.ContainsKey((EquipmentSetId)i))
                     throw new NotSupportedException($"You must define at least the 15 equipment sets, with IDs between 0 and 14.");
             return result;
         }
@@ -117,24 +108,15 @@ public static class ff9play
     {
         try
         {
+            String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CharacterParametersFile;
             Dictionary<CharacterId, CharacterParameter> result = new Dictionary<CharacterId, CharacterParameter>();
-            CharacterParameter[] characters;
-            String inputPath;
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = dir.Length - 1; i >= 0; --i)
-            {
-                inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CharacterParametersFile;
-                if (File.Exists(inputPath))
-                {
-                    characters = CsvReader.Read<CharacterParameter>(inputPath);
-                    for (Int32 j = 0; j < characters.Length; j++)
-                        result[characters[j].Id] = characters[j];
-                }
-            }
+            foreach (CharacterParameter[] characters in AssetManager.EnumerateCsvFromLowToHigh<CharacterParameter>(inputPath))
+                foreach (CharacterParameter character in characters)
+                    result[character.Id] = character;
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load character parameters because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile}].", DataResources.Characters.Directory + DataResources.Characters.CharacterParametersFile);
-            for (Int32 j = 0; j < 12; j++)
-                if (!result.ContainsKey((CharacterId)j))
+            for (Int32 i = 0; i < 12; i++)
+                if (!result.ContainsKey((CharacterId)i))
                     throw new NotSupportedException($"You must define at least 12 character parameters, with IDs between 0 and 11.");
             return result;
         }

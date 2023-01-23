@@ -23,27 +23,20 @@ namespace Memoria.Database
         {
             try
             {
+                String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CommandsFile;
                 Dictionary<BattleCommandId, CharacterCommand> result = new Dictionary<BattleCommandId, CharacterCommand>();
-                CharacterCommand[] cmds;
-                String inputPath;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
+                foreach (CharacterCommand[] cmds in AssetManager.EnumerateCsvFromLowToHigh<CharacterCommand>(inputPath))
                 {
-                    inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CommandsFile;
-                    if (File.Exists(inputPath))
-                    {
-                        cmds = CsvReader.Read<CharacterCommand>(inputPath);
-                        for (Int32 j = 0; j < cmds.Length; j++)
-                            if (cmds[j].Id < 0)
-                                cmds[j].Id = (BattleCommandId)j;
-                        for (Int32 j = 0; j < cmds.Length; j++)
-                            result[cmds[j].Id] = cmds[j];
-                    }
+                    for (Int32 i = 0; i < cmds.Length; i++)
+                        if (cmds[i].Id < 0)
+                            cmds[i].Id = (BattleCommandId)i;
+                    foreach (CharacterCommand cmd in cmds)
+                        result[cmd.Id] = cmd;
                 }
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load character commands because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.CommandsFile}].", DataResources.Characters.Directory + DataResources.Characters.CommandsFile);
-                for (Int32 j = 0; j < 45; j++)
-                    if (!result.ContainsKey((BattleCommandId)j))
+                for (Int32 i = 0; i < 45; i++)
+                    if (!result.ContainsKey((BattleCommandId)i))
                         throw new NotSupportedException($"You must define at least the 45 character commands, with IDs between 0 and 44.");
                 return result;
             }
@@ -59,27 +52,20 @@ namespace Memoria.Database
         {
             try
             {
+                String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CommandSetsFile;
                 Dictionary<CharacterPresetId, CharacterCommandSet> result = new Dictionary<CharacterPresetId, CharacterCommandSet>();
-                CharacterCommandSet[] sets;
-                String inputPath;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
+                foreach (CharacterCommandSet[] sets in AssetManager.EnumerateCsvFromLowToHigh<CharacterCommandSet>(inputPath))
                 {
-                    inputPath = DataResources.Characters.ModDirectory(dir[i]) + DataResources.Characters.CommandSetsFile;
-                    if (File.Exists(inputPath))
-                    {
-                        sets = CsvReader.Read<CharacterCommandSet>(inputPath);
-                        for (Int32 j = 0; j < sets.Length; j++)
-                            if (sets[j].Id < 0)
-                                sets[j].Id = (CharacterPresetId)j;
-                        for (Int32 j = 0; j < sets.Length; j++)
-                            result[sets[j].Id] = sets[j];
-                    }
+                    for (Int32 i = 0; i < sets.Length; i++)
+                        if (sets[i].Id < 0)
+                            sets[i].Id = (CharacterPresetId)i;
+                    for (Int32 i = 0; i < sets.Length; i++)
+                        result[sets[i].Id] = sets[i];
                 }
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load command sets because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.CommandSetsFile}].", DataResources.Characters.Directory + DataResources.Characters.CommandSetsFile);
-                for (Int32 j = 0; j < 20; j++)
-                    if (!result.ContainsKey((CharacterPresetId)j))
+                for (Int32 i = 0; i < 20; i++)
+                    if (!result.ContainsKey((CharacterPresetId)i))
                         throw new NotSupportedException($"You must define at least the 20 command sets, with IDs between 0 and 19.");
                 return result;
             }

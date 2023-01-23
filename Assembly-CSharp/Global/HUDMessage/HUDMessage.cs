@@ -151,19 +151,15 @@ public class HUDMessage : Singleton<HUDMessage>
 
 	public HUDMessageChild Show(Transform target, String message, HUDMessage.MessageStyle style, Vector3 offset, Byte delay = 0)
 	{
-		HUDMessageChild hudmessageChild = (HUDMessageChild)null;
+		HUDMessageChild hudmessageChild = null;
 		if (base.gameObject.activeInHierarchy)
 		{
 			Byte readyObjectIndex = this.GetReadyObjectIndex();
-			hudmessageChild = this.childHud[(Int32)readyObjectIndex];
+			hudmessageChild = this.childHud[readyObjectIndex];
 			if (delay > 0)
-			{
 				base.StartCoroutine(this.ShowProcess(hudmessageChild, target, message, style, offset, delay));
-			}
 			else
-			{
 				hudmessageChild.Show(target, message, style, offset);
-			}
 		}
 		return hudmessageChild;
 	}
@@ -198,9 +194,7 @@ public class HUDMessage : Singleton<HUDMessage>
 	{
 		yield return base.StartCoroutine(this.WaitForOriginalDelay(delay));
 		while (PersistenSingleton<UIManager>.Instance.IsPause)
-		{
 			yield return new WaitForEndOfFrame();
-		}
 		messsageObject.Show(target, message, style, offset);
 		yield break;
 	}

@@ -36,8 +36,8 @@ public class FF9StateBattleSystem
 		this.seq_work_set = new SEQ_WORK_SET();
 		this.btl_scene = new BTL_SCENE();
 		this.btl2d_work_set = new BTL2D_WORK();
-		this.status_data = EntryCollection.CreateWithDefaultElement<STAT_DATA>(32);
-	    this.aa_data = new Dictionary<BattleAbilityId, AA_DATA>();
+		this.status_data = new Dictionary<Int32, STAT_DATA>();
+		this.aa_data = new Dictionary<BattleAbilityId, AA_DATA>();
 	    this.add_status = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
 		this.map = new FF9StateBattleMap();
 	}
@@ -119,7 +119,7 @@ public class FF9StateBattleSystem
 
 	public BTL2D_WORK btl2d_work_set;
 
-	public EntryCollection<STAT_DATA> status_data;
+	public Dictionary<Int32, STAT_DATA> status_data;
 
 	public Dictionary<BattleAbilityId, AA_DATA> aa_data;
 

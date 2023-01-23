@@ -101,6 +101,7 @@
 		<Compile Include="Memoria\UiTextBlock.cs" />
 		<Compile Include="Memoria\UiTextBlockFactory.cs" />
 		<Compile Include="Memoria\UiTextBoxFactory.cs" />
+		<Compile Include="ModConflictWindow.cs" />
 		<Compile Include="ModManagerWindow.cs" />
 	</ItemGroup>
 	<ItemGroup>
@@ -115,6 +116,10 @@
 			<Generator>MSBuild:Compile</Generator>
 			<SubType>Designer</SubType>
 		</Page>
+		<Page Include="ModConflictWindow.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Include="ModManagerWindow.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
@@ -126,6 +131,7 @@
 		<EmbeddedResource Include="Ini\Memoria.ini" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="Catalogs\MemoriaCatalog.xml" />
 		<Content Include="ff9.ico" />
 		<Resource Include="Images\new_launcher_bg.png" />
 		<EmbeddedResource Include="Languages\en.xml" />

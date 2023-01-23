@@ -23,24 +23,15 @@ namespace FF9
         {
             try
             {
+                String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ShopItems;
                 Dictionary<Int32, ShopItems> result = new Dictionary<Int32, ShopItems>();
-                ShopItems[] shops;
-                String inputPath;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
-                {
-                    inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.ShopItems;
-                    if (File.Exists(inputPath))
-                    {
-                        shops = CsvReader.Read<ShopItems>(inputPath);
-                        for (Int32 j = 0; j < shops.Length; j++)
-                            result[shops[j].Id] = shops[j];
-                    }
-                }
+                foreach (ShopItems[] shops in AssetManager.EnumerateCsvFromLowToHigh<ShopItems>(inputPath))
+                    foreach (ShopItems shop in shops)
+                        result[shop.Id] = shop;
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load shop items because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ShopItems}].", DataResources.Items.Directory + DataResources.Items.ShopItems);
-                for (Int32 j = 0; j < 32; j++)
-                    if (!result.ContainsKey(j))
+                for (Int32 i = 0; i < 32; i++)
+                    if (!result.ContainsKey(i))
                         throw new NotSupportedException($"You must define at least 32 shop items, with IDs between 0 and 31.");
                 return result;
             }

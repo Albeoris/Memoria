@@ -176,7 +176,7 @@ public static class btl2d
 		return freeEntry;
 	}
 
-	public static BTL2D_ENT Btl2dReqSymbol(BTL_DATA pBtl, Byte pNum, UInt16 pCol, Byte pDelay)
+	public static BTL2D_ENT Btl2dReqSymbol(BTL_DATA pBtl, UInt32 pNum, UInt16 pCol, Byte pDelay)
 	{
 		BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
 		freeEntry.Type = 2;
@@ -189,82 +189,87 @@ public static class btl2d
 	public static void Btl2dMain()
 	{
 		FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-		BTL2D_WORK btl2d_work_set = ff9Battle.btl2d_work_set;
-		Int16 num = btl2d_work_set.NewID;
-		for (Int16 num2 = 0; num2 < 16; num2++)
+		BTL2D_WORK workSet = ff9Battle.btl2d_work_set;
+		Int16 entryIndex = workSet.NewID;
+		for (Int16 i = 0; i < 16; i++)
 		{
-			BTL2D_ENT btl2D_ENT = btl2d_work_set.Entry[num];
-			if (btl2D_ENT.BtlPtr != null)
+			BTL2D_ENT btl2dMessage = workSet.Entry[entryIndex];
+			if (btl2dMessage.BtlPtr != null)
 			{
-				if (btl2D_ENT.Type > 2)
+				if (btl2dMessage.Type > 2)
 				{
-					btl2D_ENT.BtlPtr = null;
+					btl2dMessage.BtlPtr = null;
 				}
-				else if (btl2D_ENT.Delay != 0)
+				else if (btl2dMessage.Delay != 0)
 				{
-					btl2D_ENT.Delay--;
+					btl2dMessage.Delay--;
 				}
 				else
 				{
-					String text = String.Empty;
 					HUDMessage.MessageStyle style = HUDMessage.MessageStyle.DAMAGE;
-					if (btl2D_ENT.Type == 0)
+					String message = String.Empty;
+					if (btl2dMessage.Type == 0)
 					{
-						if (btl2D_ENT.Work.Num.Color == 0)
+						if (btl2dMessage.Work.Num.Color == 0)
 							style = HUDMessage.MessageStyle.DAMAGE;
 						else
 							style = HUDMessage.MessageStyle.RESTORE_HP;
-						text = btl2D_ENT.Work.Num.Value.ToString();
+						message = btl2dMessage.Work.Num.Value.ToString();
 					}
-					else if (btl2D_ENT.Type == 1)
+					else if (btl2dMessage.Type == 1)
 					{
-						if (btl2D_ENT.Work.Num.Color == 0)
+						if (btl2dMessage.Work.Num.Color == 0)
 							style = HUDMessage.MessageStyle.DAMAGE;
 						else
 							style = HUDMessage.MessageStyle.RESTORE_MP;
-						text = btl2D_ENT.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
+						message = btl2dMessage.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
 					}
-					else if (btl2D_ENT.Type == 2)
+					else if (btl2dMessage.Type == 2)
 					{
-						if (btl2D_ENT.Work.Num.Value == 0u)
+						if (btl2dMessage.Work.Num.Value == 0u)
 						{
-							text = Localization.Get("Miss");
+							message = Localization.Get("Miss");
 							style = HUDMessage.MessageStyle.MISS;
 						}
-						else if (btl2D_ENT.Work.Num.Value == 1u)
+						else if (btl2dMessage.Work.Num.Value == 1u)
 						{
-							text = Localization.Get("Death");
+							message = Localization.Get("Death");
 							style = HUDMessage.MessageStyle.DEATH;
 						}
-						else if (btl2D_ENT.Work.Num.Value == 2u)
+						else if (btl2dMessage.Work.Num.Value == 2u)
 						{
-							text = Localization.Get("Guard");
+							message = Localization.Get("Guard");
 							style = HUDMessage.MessageStyle.GUARD;
 						}
-						else if (btl2D_ENT.Work.Num.Value == 3u)
+						else if (btl2dMessage.Work.Num.Value == 3u)
 						{
-							text = NGUIText.FF9YellowColor + Localization.Get("Critical") + "[-] \n " + text;
+							message = NGUIText.FF9YellowColor + Localization.Get("Critical") + "[-] \n ";
 							style = HUDMessage.MessageStyle.CRITICAL;
 						}
+						else if (btl2dMessage.Work.Num.Value == 0x10000u)
+						{
+							message = NGUIText.FF9PinkColor + "DLL Error!\nCheck Memoria.log";
+							style = HUDMessage.MessageStyle.DAMAGE;
+						}
 					}
-					Singleton<HUDMessage>.Instance.Show(btl2D_ENT.trans, text, style, new Vector3(0f, btl2D_ENT.Yofs, 0f), 0);
+					Singleton<HUDMessage>.Instance.Show(btl2dMessage.trans, message, style, new Vector3(0f, btl2dMessage.Yofs, 0f), 0);
 				    UIManager.Battle.DisplayParty();
-				    btl2D_ENT.BtlPtr = null;
+				    btl2dMessage.BtlPtr = null;
 				}
 			}
-			num++;
-			if (num >= 16)
-				num = 0;
+			entryIndex++;
+			if (entryIndex >= 16)
+				entryIndex = 0;
 		}
 		btl2d.Btl2dStatCount();
 		if (SFX.GetEffectJTexUsed() == 0)
 			btl2d.Btl2dStatIcon();
-		btl2d_work_set.Timer++;
-		Byte b = Byte.MaxValue;
-		for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-			if (next.bi.disappear == 0)
-				b &= (Byte)(~(Byte)next.btl_id);
-		btl2d_work_set.OldDisappear = b;
+		workSet.Timer++;
+		Byte oldDisappear = Byte.MaxValue;
+		for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
+			if (btl.bi.disappear == 0)
+				oldDisappear &= (Byte)~btl.btl_id;
+		workSet.OldDisappear = oldDisappear;
 	}
 
 	private static void Btl2dStatIcon()

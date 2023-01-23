@@ -222,7 +222,7 @@ public class BundleSceneIOS : MonoBehaviour
 	public IEnumerator DownloadAssetBundles()
 	{
 		Screen.sleepTimeout = -1;
-		foreach (AssetManager.AssetFolder modfold in AssetManager.Folder)
+		foreach (AssetManager.AssetFolder modfold in AssetManager.FolderHighToLow)
 		{
 			Int32 curItem = 0;
 			Int32 numItem = modfold.DictAssetBundleRefs.Count;

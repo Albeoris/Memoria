@@ -62,34 +62,27 @@ public class ff9item
     {
         try
         {
+            String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemsFile;
             Dictionary<RegularItem, FF9ITEM_DATA> result = new Dictionary<RegularItem, FF9ITEM_DATA>();
-            ItemInfo[] items;
-            String inputPath;
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = dir.Length - 1; i >= 0; --i)
+            foreach (ItemInfo[] infos in AssetManager.EnumerateCsvFromLowToHigh<ItemInfo>(inputPath))
             {
-                inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.ItemsFile;
-                if (File.Exists(inputPath))
+                for (Int32 i = 0; i < infos.Length; i++)
                 {
-                    items = CsvReader.Read<ItemInfo>(inputPath);
-                    for (Int32 j = 0; j < items.Length; j++)
+                    if (infos[i].Id < 0)
                     {
-                        if (items[j].Id < 0)
-                        {
-                            items[j].Id = (RegularItem)j;
-                            items[j].WeaponId = j < ff9weap.WEAPON_COUNT ? j : -1;
-                            items[j].ArmorId = j >= ff9armor.ARMOR_START && j < ff9armor.ARMOR_START + ff9armor.ARMOR_COUNT ? j - ff9armor.ARMOR_START : -1;
-                            items[j].EffectId = j >= EFFECT_START && j < EFFECT_START + EFFECT_COUNT ? j - EFFECT_START : -1;
-                        }
+                        infos[i].Id = (RegularItem)i;
+                        infos[i].WeaponId = i < ff9weap.WEAPON_COUNT ? i : -1;
+                        infos[i].ArmorId = i >= ff9armor.ARMOR_START && i < ff9armor.ARMOR_START + ff9armor.ARMOR_COUNT ? i - ff9armor.ARMOR_START : -1;
+                        infos[i].EffectId = i >= EFFECT_START && i < EFFECT_START + EFFECT_COUNT ? i - EFFECT_START : -1;
                     }
-                    for (Int32 j = 0; j < items.Length; j++)
-                        result[items[j].Id] = items[j].ToItemData();
                 }
+                foreach (ItemInfo info in infos)
+                    result[info.Id] = info.ToItemData();
             }
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load items because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ItemsFile}].", DataResources.Items.Directory + DataResources.Items.ItemsFile);
-            for (Int32 j = 0; j < 256; j++)
-                if (!result.ContainsKey((RegularItem)j))
+            for (Int32 i = 0; i < 256; i++)
+                if (!result.ContainsKey((RegularItem)i))
                     throw new NotSupportedException($"You must define at least the 256 base items, with IDs between 0 and 255.");
             return result;
         }
@@ -106,9 +99,9 @@ public class ff9item
         try
         {
             String inputPath;
-            for (Int32 i = AssetManager.Folder.Length - 1; i >= 0; --i)
+            for (Int32 i = AssetManager.FolderHighToLow.Length - 1; i >= 0; --i)
             {
-                inputPath = DataResources.Items.ModDirectory(AssetManager.Folder[i].FolderPath) + DataResources.Items.ItemEquipPatchFile;
+                inputPath = DataResources.Items.ModDirectory(AssetManager.FolderHighToLow[i].FolderPath) + DataResources.Items.ItemEquipPatchFile;
                 if (File.Exists(inputPath))
                     ApplyItemEquipabilityPatchFile(itemDatabase, File.ReadAllLines(inputPath));
             }
@@ -123,27 +116,20 @@ public class ff9item
     {
         try
         {
+            String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemEffectsFile;
             Dictionary<Int32, ITEM_DATA> result = new Dictionary<Int32, ITEM_DATA>();
-            ItemEffect[] effects;
-            String inputPath;
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = dir.Length - 1; i >= 0; --i)
+            foreach (ItemEffect[] effects in AssetManager.EnumerateCsvFromLowToHigh<ItemEffect>(inputPath))
             {
-                inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.ItemEffectsFile;
-                if (File.Exists(inputPath))
-                {
-                    effects = CsvReader.Read<ItemEffect>(inputPath);
-                    for (Int32 j = 0; j < effects.Length; j++)
-                        if (effects[j].Id < 0)
-                            effects[j].Id = j;
-                    for (Int32 j = 0; j < effects.Length; j++)
-                        result[effects[j].Id] = effects[j].ToItemData();
-                }
+                for (Int32 i = 0; i < effects.Length; i++)
+                    if (effects[i].Id < 0)
+                        effects[i].Id = i;
+                foreach (ItemEffect effect in effects)
+                    result[effect.Id] = effect.ToItemData();
             }
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load item effects because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.ItemEffectsFile}].", DataResources.Items.Directory + DataResources.Items.ItemEffectsFile);
-            for (Int32 j = 0; j < EFFECT_COUNT; j++)
-                if (!result.ContainsKey(j))
+            for (Int32 i = 0; i < EFFECT_COUNT; i++)
+                if (!result.ContainsKey(i))
                     throw new NotSupportedException($"You must define at least the 32 base item effects, with IDs between 0 and 31.");
             return result;
         }
@@ -159,18 +145,12 @@ public class ff9item
     {
         try
         {
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = 0; i < dir.Length; i++)
-            {
-                String inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.InitialItemsFile;
-                if (File.Exists(inputPath))
-                {
-                    FF9ITEM[] items = CsvReader.Read<FF9ITEM>(inputPath);
-                    foreach (FF9ITEM item in items)
-                        FF9Item_Add(item.id, item.count);
-                    return;
-                }
-            }
+            String inputPath = DataResources.Items.PureDirectory + DataResources.Items.InitialItemsFile;
+            FF9ITEM[] items = AssetManager.GetCsvWithHighestPriority<FF9ITEM>(inputPath);
+            if (items == null)
+                return;
+            foreach (FF9ITEM item in items)
+                FF9Item_Add(item.id, item.count);
         }
         catch (Exception ex)
         {

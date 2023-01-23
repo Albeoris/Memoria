@@ -118,27 +118,15 @@ namespace Memoria
 		{
 			try
 			{
-				String[] dir = Configuration.Mod.AllFolderNames;
-				String inputPath;
-				for (Int32 i = 0; i < dir.Length; i++)
+				String inputPath = DataResources.World.PureDirectory + DataResources.World.CHRControlFile;
+				ff9.s_moveCHRControl[] controls = AssetManager.GetCsvWithHighestPriority<ff9.s_moveCHRControl>(inputPath);
+				if (controls == null || controls.Length < 12)
 				{
-					if (String.IsNullOrEmpty(dir[i]))
-						inputPath = DataResources.World.Directory + DataResources.World.CHRControlFile;
-					else
-						inputPath = DataResources.World.ModDirectory(dir[i]) + DataResources.World.CHRControlFile;
-					if (File.Exists(inputPath))
-					{
-						ff9.s_moveCHRControl[] controls = CsvReader.Read<ff9.s_moveCHRControl>(inputPath);
-						if (controls.Length < 12)
-						{
-							Log.Error($"[WorldConfiguration] You must set at least 12 controls, but there are {controls.Length} in '{inputPath}'.");
-							return false;
-						}
-						ff9.w_moveCHRControl = controls;
-						return true;
-					}
+					Log.Error($"[WorldConfiguration] You must set at least 12 controls, but there are {controls.Length} in '{inputPath}'.");
+					return false;
 				}
-				return false;
+				ff9.w_moveCHRControl = controls;
+				return true;
 			}
 			catch (Exception ex)
 			{
@@ -151,27 +139,15 @@ namespace Memoria
 		{
 			try
 			{
-				String[] dir = Configuration.Mod.AllFolderNames;
-				String inputPath;
-				for (Int32 i = 0; i < dir.Length; i++)
+				String inputPath = DataResources.World.PureDirectory + DataResources.World.WeatherColorFile;
+				ff9.sw_weatherColorElement[] colors = AssetManager.GetCsvWithHighestPriority<ff9.sw_weatherColorElement>(inputPath);
+				if (colors == null || colors.Length != 23)
 				{
-					if (String.IsNullOrEmpty(dir[i]))
-						inputPath = DataResources.World.Directory + DataResources.World.WeatherColorFile;
-					else
-						inputPath = DataResources.World.ModDirectory(dir[i]) + DataResources.World.WeatherColorFile;
-					if (File.Exists(inputPath))
-					{
-						ff9.sw_weatherColorElement[] colors = CsvReader.Read<ff9.sw_weatherColorElement>(inputPath);
-						if (colors.Length != 23)
-						{
-							Log.Error($"[WorldConfiguration] You must set 23 colors, but there are {colors.Length} in '{inputPath}'.");
-							return false;
-						}
-						ff9.w_weatherColor.Color = colors;
-						return true;
-					}
+					Log.Error($"[WorldConfiguration] You must set 23 colors, but there are {colors.Length} in '{inputPath}'.");
+					return false;
 				}
-				return false;
+				ff9.w_weatherColor.Color = colors;
+				return true;
 			}
 			catch (Exception ex)
 			{

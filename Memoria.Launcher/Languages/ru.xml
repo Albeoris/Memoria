@@ -228,6 +228,7 @@
     PreviewImageMissing = "Отсутствует Картина"
     TooltipMoveUp = "Вверх / Переместить Наверх (правый клик)"
     TooltipMoveDown = "Вниз / Переместить к Последнему (правый клик)"
+    TooltipCheckCompatibility = "Совместимость Мод(ы) / Все установленные Мод(ы) (правый клик)"
     TooltipActivateAll = "Активировать Все"
     TooltipDeactivateAll = "Деактивировать Все"
     TooltipUninstall = "Удалить Мод(ы)"

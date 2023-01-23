@@ -196,6 +196,7 @@ namespace Memoria.Scripts
     {
         private static volatile Task s_initializationTask;
         private static volatile Result s_result;
+        private static String s_dllUsed = String.Empty;
 
         public static void InitializeAsync()
         {
@@ -212,26 +213,31 @@ namespace Memoria.Scripts
             return GetResult(r => r.BattleExtendedScripts);
         }
 
+        public static String GetScriptDLL(Int32 scriptId)
+		{
+            return s_dllUsed;
+        }
+
         private static void Initialize()
         {
             try
             {
-                String inputPath = DataResources.ScriptsDirectory + "Memoria.Scripts.dll";
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = 0; i < dir.Length; i++)
+                String inputPath = DataResources.PureScriptsDirectory + "Memoria.Scripts.dll";
+                foreach (AssetManager.AssetFolder folder in AssetManager.FolderHighToLow)
                 {
-                    inputPath = DataResources.ScriptsModDirectory(dir[i]) + "Memoria.Scripts.dll";
-                    if (File.Exists(inputPath))
+                    if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                     {
-                        Assembly assembly = Assembly.LoadFile(inputPath);
+                        Assembly assembly = Assembly.LoadFile(fullPath);
                         Result result = new Result();
                         TypeOrderer orderer = new TypeOrderer();
                         foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
                             ProcessType(type, result);
                         s_result = result;
+                        s_dllUsed = inputPath;
                         return;
                     }
                 }
+                inputPath = DataResources.ScriptsDirectory + "Memoria.Scripts.dll";
                 throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{inputPath}].", inputPath);
             }
             catch (Exception ex)

@@ -2,6 +2,7 @@
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
 
@@ -159,7 +160,7 @@ public static class btl_vfx
             else if (cmd.cmd_no == BattleCommandId.Change || cmd.cmd_no == BattleCommandId.Defend)
             {
                 String seqName = cmd.cmd_no == BattleCommandId.Change ? "SequenceChange" : "SequenceDefend";
-                String sequenceText = AssetManager.LoadString(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/Common/" + seqName + UnifiedBattleSequencer.EXTENSION_SEQ);
+                String sequenceText = AssetManager.LoadString(DataResources.PureDataDirectory + "SpecialEffects/Common/" + seqName + UnifiedBattleSequencer.EXTENSION_SEQ);
                 if (sequenceText != null)
                 {
                     UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(sequenceText);

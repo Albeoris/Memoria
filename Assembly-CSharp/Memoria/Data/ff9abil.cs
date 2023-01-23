@@ -262,24 +262,15 @@ namespace FF9
         {
             try
             {
+                String inputPath = DataResources.Characters.Abilities.PureDirectory + DataResources.Characters.Abilities.GemsFile;
                 Dictionary<SupportAbility, CharacterAbilityGems> result = new Dictionary<SupportAbility, CharacterAbilityGems>();
-                CharacterAbilityGems[] gems;
-                String inputPath;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
-                {
-                    inputPath = DataResources.Characters.Abilities.ModDirectory(dir[i]) + DataResources.Characters.Abilities.GemsFile;
-                    if (File.Exists(inputPath))
-                    {
-                        gems = CsvReader.Read<CharacterAbilityGems>(inputPath);
-                        for (Int32 j = 0; j < gems.Length; j++)
-                            result[gems[j].Id] = gems[j];
-                    }
-                }
+                foreach (CharacterAbilityGems[] gems in AssetManager.EnumerateCsvFromLowToHigh<CharacterAbilityGems>(inputPath))
+                    foreach (CharacterAbilityGems gem in gems)
+                        result[gem.Id] = gem;
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load supporting abilities because a file does not exist: [{DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.GemsFile}].", DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.GemsFile);
-                for (Int32 j = 0; j < 64; j++)
-                    if (!result.ContainsKey((SupportAbility)j))
+                for (Int32 i = 0; i < 64; i++)
+                    if (!result.ContainsKey((SupportAbility)i))
                         throw new NotSupportedException($"You must define at least the 64 supporting abilities, with IDs between 0 and 63.");
                 return result;
             }
@@ -295,25 +286,16 @@ namespace FF9
         {
             try
             {
-                String inputPath;
-                for (Int32 i = 0; i < Configuration.Mod.FolderNames.Length; i++)
+                String inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId);
+                CharacterAbility[] abilitySet = AssetManager.GetCsvWithHighestPriority<CharacterAbility>(inputPath);
+                if (abilitySet != null)
                 {
-                    inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId, Configuration.Mod.FolderNames[i]);
-                    if (File.Exists(inputPath))
-                    {
-                        result[presetId] = CsvReader.Read<CharacterAbility>(inputPath);
-                        return true;
-                    }
+                    result[presetId] = abilitySet;
+                    return true;
                 }
-                inputPath = DataResources.Characters.Abilities.GetPresetAbilitiesPath(presetId);
-                if (!File.Exists(inputPath))
-				{
-                    if (presetId <= CharacterPresetId.Beatrix2)
-                        throw new FileNotFoundException($"File with {presetId}'s abilities not found: [{inputPath}]");
-                    return false;
-                }
-                result[presetId] = CsvReader.Read<CharacterAbility>(inputPath);
-                return true;
+                if (presetId <= CharacterPresetId.Beatrix2)
+                    throw new FileNotFoundException($"File with {presetId}'s abilities not found: [{inputPath}]");
+                return false;
             }
             catch (Exception ex)
             {
@@ -325,24 +307,21 @@ namespace FF9
         {
             try
             {
-                String inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.SAFeaturesFile;
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
-
+                String inputPath = DataResources.Characters.Abilities.PureDirectory + DataResources.Characters.Abilities.SAFeaturesFile;
                 Dictionary<SupportAbility, SupportingAbilityFeature> result = new Dictionary<SupportAbility, SupportingAbilityFeature>();
-                LoadAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
+                foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+                    if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                        LoadAbilityFeatureFile(ref result, File.ReadAllText(fullPath));
+                inputPath = DataResources.Characters.Abilities.Directory + DataResources.Characters.Abilities.SAFeaturesFile;
+                if (result.Count == 0)
+                    throw new FileNotFoundException($"File with ability features not found: [{inputPath}]");
                 for (Int32 i = 0; i < 64; i++)
                     if (!result.ContainsKey((SupportAbility)i))
                         Log.Error($"[ff9abil] Ability features of SA {(SupportAbility)i} ({i}) is missing from [{inputPath}]");
-                for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
-                {
-                    inputPath = DataResources.Characters.Abilities.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.Abilities.SAFeaturesFile;
-                    if (File.Exists(inputPath))
-                        LoadAbilityFeatureFile(ref result, File.ReadAllText(inputPath));
-                }
+
                 // Apply legacy Memoria.ini configurations
                 if (Configuration.Battle.CurseUseWeaponElement)
-				{
+                {
                     BattleAbilityHelper.ParseAbilityFeature(BattleAbilityId.Curse1, $"[code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]");
                     BattleAbilityHelper.ParseAbilityFeature(BattleAbilityId.Curse2, $"[code=Element] CasterWeaponElement != 0 ? CasterWeaponElement : (1 << GetRandom(0, 8)) [/code]");
                 }

@@ -229,6 +229,7 @@
     PreviewImageMissing = "No Preview Image"
     TooltipMoveUp = "Move Up/Right-Click to Move to Top"
     TooltipMoveDown = "Move Down/Right-Click to Move to Bottom"
+    TooltipCheckCompatibility = "Check Mod Compatibilities/Right-Click to Check All"
     TooltipActivateAll = "Activate All Mods"
     TooltipDeactivateAll = "Deactivate All Mods"
     TooltipUninstall = "Uninstall Mod(s)"

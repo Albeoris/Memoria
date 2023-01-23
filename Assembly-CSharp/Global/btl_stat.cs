@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using Memoria.Prime.Collections;
 using NCalc;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -44,7 +44,7 @@ public static class btl_stat
     public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status)
     {
         BattleUnit unit = new BattleUnit(btl);
-        EntryCollection<STAT_DATA> statusData = FF9StateSystem.Battle.FF9Battle.status_data;
+        Dictionary<Int32, STAT_DATA> statusData = FF9StateSystem.Battle.FF9Battle.status_data;
         STAT_INFO stat = btl.stat;
         Int32 statusIndex = 0;
         if ((stat.invalid & status) != 0)

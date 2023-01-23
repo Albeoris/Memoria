@@ -9,6 +9,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Assets;
 
 public class SFXData
 {
@@ -118,7 +119,7 @@ public class SFXData
         camera = new List<SFXDataCamera>();
         mesh = null;
         runningSFX = new List<RunningInstance>();
-        String defaultFolder = AssetManagerUtil.GetMemoriaAssetsPath() + $"SpecialEffects/ef{(Int32)effNum:D3}/";
+        String defaultFolder = DataResources.PureDataDirectory + $"SpecialEffects/ef{(Int32)effNum:D3}/";
         String sfxInfo = AssetManager.LoadString(defaultFolder + UnifiedBattleSequencer.INFORMATION_FILE, true);
         if (sfxInfo != null)
             LoadSFXFromInfo(sfxInfo, defaultFolder);

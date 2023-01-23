@@ -1,4 +1,5 @@
 using System;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
 
@@ -93,7 +94,9 @@ namespace Memoria
 
         public CMD_DATA GetData => Data;
 
-        public BattleCommandId Id => (BattleCommandId)Data.cmd_no;
+        public BattleCommandId Id => Data.cmd_no;
+        public String AbilityName => AbilityId != BattleAbilityId.Void ? FF9TextTool.ActionAbilityName(AbilityId) : ItemId != RegularItem.NoItem ? FF9TextTool.ItemName(ItemId) : Data.aa.Name;
+        public String AbilityCastingName => UIManager.Battle.GetBattleCommandTitle(Data);
         public BattleAbilityId AbilityId => btl_util.GetCommandMainActionIndex(Data);
         public RegularItem ItemId => btl_util.GetCommandItem(Data);
         public Boolean IsManyTarget => (Data.info.cursor & 1) != 0;

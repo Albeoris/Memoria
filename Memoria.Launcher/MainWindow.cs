@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -16,9 +17,23 @@ namespace Memoria.Launcher
     public partial class MainWindow : Window, IComponentConnector
     {
         public ModManagerWindow ModdingWindow;
+        public DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()
         {
+            try
+            {
+                // Official version since Aug 6, 2020:                          1.0.7141.27878
+                // Memoria versions based on it until Nov 11, 2022 (included):  1.0.7141.27878
+                // Memoria versions after it:                                   1.1.*
+                Version assemblyVersion = Assembly.LoadFile(Path.GetFullPath(".") + ASSEMBLY_CSHARP_PATH).GetName().Version;
+                MemoriaAssemblyCompileDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
+            }
+            catch (Exception err)
+			{
+                MemoriaAssemblyCompileDate = new DateTime(2000, 1, 1);
+            }
+
             InitializeComponent();
             TryLoadImage();
 
@@ -77,5 +92,7 @@ namespace Memoria.Launcher
             Process.Start(e.Uri.AbsoluteUri);
             e.Handled = true;
         }
+
+        private const String ASSEMBLY_CSHARP_PATH = "/x64/FF9_Data/Managed/Assembly-CSharp.dll";
     }
 }

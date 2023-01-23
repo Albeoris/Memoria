@@ -14,7 +14,7 @@ public static partial class FF9BattleDB
 {
     public static readonly Dictionary<BattleStatusIndex, BattleStatusEntry> StatusSets;
     public static readonly Dictionary<BattleAbilityId, AA_DATA> CharacterActions;
-    public static readonly EntryCollection<STAT_DATA> StatusData;
+    public static readonly Dictionary<Int32, STAT_DATA> StatusData;
 
     static FF9BattleDB()
 	{
@@ -27,20 +27,11 @@ public static partial class FF9BattleDB
     {
         try
         {
+            String inputPath = DataResources.Battle.PureDirectory + DataResources.Battle.StatusSetsFile;
             Dictionary<BattleStatusIndex, BattleStatusEntry> result = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
-            BattleStatusEntry[] statusSets;
-            String inputPath;
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = dir.Length - 1; i >= 0; --i)
-            {
-                inputPath = DataResources.Battle.ModDirectory(dir[i]) + DataResources.Battle.StatusSetsFile;
-                if (File.Exists(inputPath))
-                {
-                    statusSets = CsvReader.Read<BattleStatusEntry>(inputPath);
-                    for (Int32 j = 0; j < statusSets.Length; j++)
-                        result[statusSets[j].Id] = statusSets[j];
-                }
-            }
+            foreach (BattleStatusEntry[] statusSets in AssetManager.EnumerateCsvFromLowToHigh<BattleStatusEntry>(inputPath))
+                foreach (BattleStatusEntry set in statusSets)
+                    result[set.Id] = set;
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load status sets because a file does not exist: [{DataResources.Battle.Directory + DataResources.Battle.StatusSetsFile}].", DataResources.Battle.Directory + DataResources.Battle.StatusSetsFile);
             return result;
@@ -57,24 +48,15 @@ public static partial class FF9BattleDB
     {
         try
         {
+            String inputPath = DataResources.Battle.PureDirectory + DataResources.Battle.ActionsFile;
             Dictionary<BattleAbilityId, AA_DATA> result = new Dictionary<BattleAbilityId, AA_DATA>();
-            BattleActionEntry[] actions;
-            String inputPath;
-            String[] dir = Configuration.Mod.AllFolderNames;
-            for (Int32 i = dir.Length - 1; i >= 0; --i)
-            {
-                inputPath = DataResources.Battle.ModDirectory(dir[i]) + DataResources.Battle.ActionsFile;
-                if (File.Exists(inputPath))
-                {
-                    actions = CsvReader.Read<BattleActionEntry>(inputPath);
-                    for (Int32 j = 0; j < actions.Length; j++)
-                        result[actions[j].Id] = actions[j].ActionData;
-                }
-            }
+            foreach (BattleActionEntry[] actions in AssetManager.EnumerateCsvFromLowToHigh<BattleActionEntry>(inputPath))
+                foreach (BattleActionEntry action in actions)
+                    result[action.Id] = action.ActionData;
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load actions because a file does not exist: [{DataResources.Battle.Directory + DataResources.Battle.ActionsFile}].", DataResources.Battle.Directory + DataResources.Battle.ActionsFile);
-            for (Int32 j = 0; j < 192; j++)
-                if (!result.ContainsKey((BattleAbilityId)j))
+            for (Int32 i = 0; i < 192; i++)
+                if (!result.ContainsKey((BattleAbilityId)i))
                     throw new NotSupportedException($"You must define at least the 192 actions, with IDs between 0 and 191.");
             return result;
         }
@@ -86,29 +68,21 @@ public static partial class FF9BattleDB
         }
     }
 
-    private static EntryCollection<STAT_DATA> LoadStatusData()
+    private static Dictionary<Int32, STAT_DATA> LoadStatusData()
     {
         try
         {
-            String inputPath = DataResources.Battle.Directory + DataResources.Battle.StatusDataFile;
-            if (!File.Exists(inputPath))
-                throw new FileNotFoundException($"File with character actions not found: [{inputPath}]");
-
-            BattleStatusDataEntry[] statusData = CsvReader.Read<BattleStatusDataEntry>(inputPath);
-            if (statusData.Length < BattleStatusDataEntry.StatusCount)
-                throw new NotSupportedException($"You must set {BattleStatusDataEntry.StatusCount} status sets, but there {statusData.Length}.");
-
-            EntryCollection<STAT_DATA> result = EntryCollection.CreateWithDefaultElement(statusData, e => e.Id, e => e.Value);
-            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
-            {
-                inputPath = DataResources.Battle.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Battle.StatusDataFile;
-                if (File.Exists(inputPath))
-                {
-                    statusData = CsvReader.Read<BattleStatusDataEntry>(inputPath);
-                    foreach (BattleStatusDataEntry it in statusData)
-                        result[it.Id] = it.Value;
-                }
-            }
+            String inputPath = DataResources.Battle.PureDirectory + DataResources.Battle.StatusDataFile;
+            Dictionary<Int32, STAT_DATA> result = new Dictionary<Int32, STAT_DATA>();
+            foreach (BattleStatusDataEntry[] statusData in AssetManager.EnumerateCsvFromLowToHigh<BattleStatusDataEntry>(inputPath))
+                foreach (BattleStatusDataEntry it in statusData)
+                    result[it.Id] = it.Value;
+            inputPath = DataResources.Battle.Directory + DataResources.Battle.StatusDataFile;
+            if (result.Count == 0)
+                throw new FileNotFoundException($"File with status datas not found: [{inputPath}]");
+            for (Int32 i = 0; i < 32; i++)
+                if (!result.ContainsKey(i))
+                    throw new NotSupportedException($"You must define at least 32 status datas, with IDs between 0 and 31");
             return result;
         }
         catch (Exception ex)

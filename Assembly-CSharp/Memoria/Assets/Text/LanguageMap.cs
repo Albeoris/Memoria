@@ -163,13 +163,12 @@ namespace Memoria.Assets
 
         private void LoadModText(Dictionary<Int32, String> cellLanguages)
         {
-            String inputPath;
-            for (Int32 i = AssetManager.Folder.Length - 1; i >= 0; --i)
+            String inputPath = DataResources.Text.PureDirectory + DataResources.Text.LocalizationPatchFile;
+            foreach(AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
             {
-                inputPath = DataResources.Text.ModDirectory(AssetManager.Folder[i].FolderPath) + DataResources.Text.LocalizationPatchFile;
-                if (File.Exists(inputPath))
+                if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                 {
-                    Byte[] tableData = File.ReadAllBytes(inputPath);
+                    Byte[] tableData = File.ReadAllBytes(fullPath);
                     ByteReader reader = new ByteReader(tableData);
                     ReadText(reader, cellLanguages, false);
                 }

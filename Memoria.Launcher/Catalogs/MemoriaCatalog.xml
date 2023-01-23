@@ -1,0 +1,348 @@
+﻿<ModCatalog>
+
+<Mod>
+	<Name>Moguri Mod</Name>
+	<Version>8.3.0.0</Version>
+	<InstallationPath>MoguriFiles</InstallationPath>
+	<Author>Ze_PilOt / Snouz</Author>
+	<PatchNotes>Download/Install the Moguri Mod, then update Memoria to its newest version</PatchNotes>
+	<Description>Moguri Mod is a faithful revamp of the PC version of Final Fantasy IX helped by deep learning techniques (ESRGAN). The most important changes are in the background arts, that are now cleaner, more detailed and higher resolution.
+
+Main Features:
+- HD backgrounds (aided by AI and polished by hand)
+- Manual redraw of all 11k layer edges and area names
+- HD textures (worldmap, NPC, battles...)
+- Many bugfixes
+...And much more!
+
+Note: this mod doesn't support automatic installation yet. Download it from its website, install it, and then update Memoria. Also, it is usually better to place it at the bottom of the list of installed mods for compatibility purposes.</Description>
+	<Category>Visual</Category>
+	<Website>https://sites.google.com/view/moguri-mod</Website>
+	<!-- Download URL: https://www.moddb.com/downloads/mirror/216757/122/3381820ec0869d559baf7ca59abcc388 -->
+</Mod>
+
+<Mod>
+	<Name>Alternate Fantasy</Name>
+	<Version>6.0</Version>
+	<InstallationPath>AlternateFantasy</InstallationPath>
+	<Author>Tirlititi</Author>
+	<PatchNotes>Requires Memoria v2022.11.11</PatchNotes>
+	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
+It includes:
+- Many changes in the battle system, the enemies and the abilities
+- The possibility to recruit Beatrix in the party at a certain point
+- The re-introduction of a few scenes that were sidelined by the original developpers
+- A couple of new boss battles...
+
+More informations can be found on the mod's webpage.</Description>
+	<Category>Gameplay</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=16324.0</Website>
+	<DownloadUrl>https://www.dropbox.com/s/fyx4uqdhumbimeg/PC_AlternateFantasy.zip?dl=1</DownloadUrl>
+	<CompatibilityNotes OtherModLow="MoguriFiles">Keeping Moguri at the lowest priority is surely the best:
+- ".raw16" and ".raw17" assets are duplicates of the base game's assets in Moguri
+- Most of the "EventEngine" assets (field event scripts and battle AI) are also duplicates, except a couple of field scripts that don't overlap with Alternate Fantasy's</CompatibilityNotes>
+	<CompatibilityNotes OtherModHigh="MoguriFiles">You must move the Moguri mod to the bottom of the list for a proper installation of Alternate Fantasy</CompatibilityNotes>
+</Mod>
+
+<Mod>
+	<Name>Beatrix Mod</Name>
+	<Version>5.2</Version>
+	<InstallationPath>BeatrixMod</InstallationPath>
+	<Author>Tirlititi</Author>
+	<Description>Allow the optional recruitment of Beatrix as a permanent character.
+She must be met in Alexandria once the Hilda Gard III is obtained and before moving to Terra.
+
+This is actually a lighter version of Alternate Fantasy, to benefit from its added content without changing the extensive modifications of the gameplay. Don't use both simultaneously.</Description>
+	<Category>Gameplay</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=16324.0</Website>
+	<DownloadUrl>https://www.hiveworkshop.com/attachments/afbeatrixonly-zip.384575/</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>PSX Buttons</Name>
+	<InstallationPath>PSXButtons</InstallationPath>
+	<Author>gdi</Author>
+	<Description>Use the Playstation button icons instead of the Xbox button icons.</Description>
+	<Category>Visual</Category>
+	<Website>https://steamcommunity.com/groups/ff-modding/discussions/13/350533172685612333/</Website>
+	<DownloadUrl>https://www.dropbox.com/s/815zeapy32xp821/PC_PSXButtons.zip?dl=1</DownloadUrl>
+	<PreviewFileUrl>https://i.imgur.com/eHSCN0r.png</PreviewFileUrl>
+	<PreviewFile>PreviewImage.png</PreviewFile>
+</Mod>
+
+<Mod>
+	<Name>No Cutscene</Name>
+	<Version>0.5</Version>
+	<InstallationPath>NoCutsceneMemoria</InstallationPath>
+	<Author>Tirlititi</Author>
+	<Description>Removes most of cutscenes from the game for speedrunning purpose.</Description>
+	<Category>Story</Category>
+	<DownloadUrl>https://www.dropbox.com/s/uczf83l2a81jma2/PC_NoCutscene.zip?dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Play as Kuja</Name>
+	<Version>0.1</Version>
+	<InstallationPath>PlayAsKuja</InstallationPath>
+	<Author>Tirlititi</Author>
+	<PatchNotes>Requires Memoria between v2021.05.10 and v2022.09.09 to work in battles</PatchNotes>
+	<Description>Turn Zidane's 3D model on the field and in battles into Kuja's 3D model.
+The animations on the field are messed up.
+
+You should better use the Playable Characters Pack instead. This later one doesn't aim to replace Zidane by Kuja on the field but is less experimental.</Description>
+	<Category>Visual</Category>
+	<Website>https://steamcommunity.com/app/377840/discussions/0/4472613273101569368/</Website>
+	<DownloadUrl>https://www.dropbox.com/s/y3dw2gxfdw5kkl8/PC_PlayAsKuja.zip?dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Playable Character Pack</Name>
+	<Version>0.5</Version>
+	<InstallationPath>PlayableCharacterPack</InstallationPath>
+	<Author>Tirlititi</Author>
+	<PatchNotes>Requires Memoria v2022.11.11</PatchNotes>
+	<Description>Add Kuja, Fratley and Lani as playable characters.
+You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
+You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.</Description>
+	<Category>Gameplay</Category>
+	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
+	<DownloadUrl>https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharacterPack.zip?dl=1</DownloadUrl>
+	<PreviewFile>Preview.png</PreviewFile>
+	<PreviewFileUrl>https://i.imgur.com/vZ8DbNQ.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Zidane Pluto outfit</Name>
+		<InstallationPath>ZidaneArmor</InstallationPath>
+		<Description>When enabled, Zidane's battle model will wear a Pluto armor.</Description>
+	</SubMod>
+	<SubMod>
+		<Name>Garnet White Mage robe</Name>
+		<InstallationPath>GarnetHooded</InstallationPath>
+		<Description>When enabled, Garnet's battle model will wear the traditional White Mage robe.</Description>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>Garnet is Main Character</Name>
+	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
+	<Author>piano221</Author>
+	<Description>This mod allow you to change Zidane for Garnet as the field main character.</Description>
+	<Category>Visual</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=20605.0</Website>
+	<DownloadUrl>https://download944.mediafire.com/ud6vuwre8sag/10illq7tkuxixhb/p0data7.bin</DownloadUrl>
+	<DownloadFormat>SingleFileWithPath:StreamingAssets/p0data7.bin</DownloadFormat>
+</Mod>
+
+<Mod>
+	<Name>David Bowie Edition</Name>
+	<InstallationPath>DavidBowie</InstallationPath>
+	<Author>Clem Fandango</Author>
+	<Description>Final Fantasy IX: David Bowie Edition (DBE) is a gameplay mod that is meant to function as a rebalance, or better yet a remix of the original game. This mod includes new skills, items, enemy behavior, Chocograph rewards and a number of smaller tweaks.</Description>
+	<Category>Gameplay</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=19499.0</Website>
+	<DownloadUrl>https://www.dropbox.com/s/k5o64e3g8iyah63/FF9%20DBE%20v1.16%20Memoria.zip?dl=1</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Mog Add-ons</Name>
+	<Version>2.71</Version>
+	<InstallationPath>MogAddons</InstallationPath>
+	<ReleaseDate>21 Nov 2022, 10:14PM</ReleaseDate>
+	<Author>faospark</Author>
+	<Description>Easy to install UI enhancements for Final Fantasy IX.
+Version 2.7 uses the submod capability of Memoria Mod Manager to activate mods.
+
+:: Features ::
+Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts , Ability Gems = 1, Half exp to level up
+Portrait option : Default with extended cast, Opera Omnia and Upscaled PS1 Portrait Artworks
+Button Prompts Options: PlayStation Vanilla prompts, PS Gloss , PS5 , Pixel Style
+UI : Default , Darker UI and Flat
+
+:: Submod activation ::
+Use the Mod Manager UI to activate each submods you like
+
+:: Requirements ::
+- Memoria version v2022.11.11 or higher
+
+:: 2.7 Log ::
+- applied some fixes
+- Switched to SubMod capability of Memoria
+- Added Compatibility with new mods by Tirtilili (Playable Character Pack)
+
+:: Compatibility ::
+- Not compatible for older versions of the games and repacks.</Description>
+	<Category>Visual</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1632468409-614055669.png</PreviewFileUrl>
+	<PreviewFile>preview/mog-addons.png</PreviewFile>
+	<SubMod>
+		<Name>Buttons : PS5</Name>
+		<InstallationPath>Features/Buttons/ButtonsPS5</InstallationPath>
+		<Description>Makes Button 5 like in PS5</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : PS Gloss</Name>
+		<InstallationPath>Features/Buttons/ButtonsPS4Gloss</InstallationPath>
+		<Description>Glossy PS4 buttons</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : Vanilla PS </Name>
+		<InstallationPath>Features/Buttons/ButtonsPSX</InstallationPath>
+		<Description>Same Style as the default xbox prompts</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : Pixels </Name>
+		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
+		<Description>Pixelated Prompts if that is your thing</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits : Default Extended Cast </Name>
+		<InstallationPath>Features/Portraits/PortraitDefault</InstallationPath>
+		<Description>Default Portraits that includes Kuja, Fratly and Lani </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits : PSX Upscaled</Name>
+		<InstallationPath>Features/Portraits/PortraitPSXUpscale</InstallationPath>
+		<Description>Portraits based from the original psx release Upscaled using waifu2x and giga pixel </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits : Opera Omnia </Name>
+		<InstallationPath>Features/Portraits/PortraitOperaOmnia</InstallationPath>
+		<Description>Only activate this when base is buggy </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Dialogue Box : Default </Name>
+		<InstallationPath>Features/DialogueBox/DxDefault</InstallationPath>
+		<Description>Disables Darker UI </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Dialogue Box : Darker UI </Name>
+		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
+		<Description>Forces Darker UI </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Dialogue Box : Flat </Name>
+		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
+		<Description>Just a Full Solid colors like the old games </Description>
+		<Priority>1</Priority>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>High-Res Chocographs</Name>
+	<InstallationPath>HDChocographs</InstallationPath>
+	<Author>Caledor</Author>
+	<Description>Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.
+(English layout only)</Description>
+	<Category>Visual</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=20657.0</Website>
+	<DownloadUrl>https://i.imgur.com/tpdfrUQ.png</DownloadUrl>
+	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Chocograph Atlas</DownloadFormat>
+	<PreviewFileUrl>https://i.imgur.com/M4ce7hE.png</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Tweaked Portraits</Name>
+	<InstallationPath>TweakedPortraits</InstallationPath>
+	<Author>Lykon</Author>
+	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
+	<Category>Visual</Category>
+	<Website>https://forums.qhimm.com/index.php?topic=19964.0</Website>
+	<DownloadUrl>https://i.imgur.com/MkJA680.png</DownloadUrl>
+	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Face Atlas</DownloadFormat>
+	<PreviewFileUrl>https://imgur.com/gqXYntO.png</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Trance Seek</Name>
+	<Version>0.2.11</Version>
+	<InstallationPath>TranceSeek</InstallationPath>
+	<Author>DVlad666</Author>
+	<Description>A very advanced gameplay mod.</Description>
+	<Category>Gameplay</Category>
+	<Website>https://steamcommunity.com/app/377840/discussions/0/5362100202713255072/</Website>
+	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1ONGayLWtVctUgM33aYWVvzSGqDBEsOIE&amp;confirm=t</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Playstation Sounds</Name>
+	<Version>1.6</Version>
+	<InstallationPath>PlaystationSounds</InstallationPath>
+	<Author>DVlad666</Author>
+	<Description>Replace the sound assets by the PSX sounds.</Description>
+	<Category>Audio</Category>
+	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
+	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1RLcIQ9M6AB19IPGDXskoBGcC3siVbLQQ&amp;confirm=t</DownloadUrl>
+</Mod>
+
+<Mod>
+	<Name>Nexus Mods</Name>
+	<Description>There are many mods available on the Nexus Mods website.
+Because there is no public direct link for many of them, they cannot be installed directly from this manager.
+Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/</Website>
+</Mod>
+
+<!--
+TODO: manage translation mods
+many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
+-->
+
+<Mod>
+	<Name>Brazilian-Portuguese Translation</Name>
+	<InstallationPath>BrazilianTranslation</InstallationPath>
+	<Author>P.O.B.R.E. / Brigandier</Author>
+	<Description>Tradução do jogo em português do Brasil.
+
+Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
+	<Category>Translation</Category>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
+</Mod>
+
+<Mod>
+	<Name>Polish Translation</Name>
+	<InstallationPath>PolishTranslation</InstallationPath>
+	<Author>Grupa CosmoFF (w składzie Em i Robin)</Author>
+	<Description>Tłumaczenie gry na język polski.
+
+Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
+	<Category>Translation</Category>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2621590946</Website>
+</Mod>
+
+<Mod>
+	<Name>Russian Translation</Name>
+	<InstallationPath>RussianTranslation</InstallationPath>
+	<Author>RGR Studio</Author> <!-- Note to Albeoris: you know better about the genesis of it -->
+	<Description>Перевод игры на русский язык.
+
+Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
+	<Category>Translation</Category>
+	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&amp;t=38</Website>
+</Mod>
+
+<!--
+This one needs investigation to know who are the authors:
+
+<Mod>
+	<Name>Chinese Translation</Name>
+	<InstallationPath>ChineseTranslation</InstallationPath>
+	<Description>把游戏翻译成中文.
+
+Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
+	<Category>Translation</Category>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2797209969</Website>
+	<Website>https://steamcommunity.com/app/377840/discussions/0/2956041222219522184/</Website>
+</Mod>
+-->
+
+</ModCatalog>

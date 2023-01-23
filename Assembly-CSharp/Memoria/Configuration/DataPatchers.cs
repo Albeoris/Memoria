@@ -30,16 +30,18 @@ namespace Memoria
 			// Apply patches; the default folder (out of any mod folder) is ignored
 			try
 			{
-				for (Int32 i = AssetManager.Folder.Length - 2; i >= 0; --i)
+				foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
 				{
-					if (File.Exists(AssetManager.Folder[i].FolderPath + DataPatchers.MemoriaDictionaryPatcherPath))
+					if (String.IsNullOrEmpty(folder.FolderPath))
+						continue;
+					if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaDictionaryPatcherPath, out String dictionaryPath))
 					{
-						String[] patch = File.ReadAllLines(AssetManager.Folder[i].FolderPath + DataPatchers.MemoriaDictionaryPatcherPath);
+						String[] patch = File.ReadAllLines(dictionaryPath);
 						DataPatchers.PatchDictionaries(patch);
 					}
-					if (File.Exists(AssetManager.Folder[i].FolderPath + DataPatchers.MemoriaBattlePatcherPath))
+					if (folder.TryFindAssetInModOnDisc(DataPatchers.MemoriaBattlePatcherPath, out String battlePath))
 					{
-						String[] patch = File.ReadAllLines(AssetManager.Folder[i].FolderPath + DataPatchers.MemoriaBattlePatcherPath);
+						String[] patch = File.ReadAllLines(battlePath);
 						DataPatchers.PatchBattles(patch);
 					}
 				}

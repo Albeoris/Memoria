@@ -26,24 +26,15 @@ namespace FF9
         {
             try
             {
+                String inputPath = DataResources.Items.PureDirectory + DataResources.Items.WeaponsFile;
                 Dictionary<Int32, ItemAttack> result = new Dictionary<Int32, ItemAttack>();
-                ItemAttack[] items;
-                String inputPath;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
-                {
-                    inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.WeaponsFile;
-                    if (File.Exists(inputPath))
-                    {
-                        items = CsvReader.Read<ItemAttack>(inputPath);
-                        for (Int32 j = 0; j < items.Length; j++)
-                            result[items[j].Id] = items[j];
-                    }
-                }
+                foreach (ItemAttack[] attacks in AssetManager.EnumerateCsvFromLowToHigh<ItemAttack>(inputPath))
+                    foreach (ItemAttack attack in attacks)
+                        result[attack.Id] = attack;
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load weapons because a file does not exist: [{DataResources.Items.Directory + DataResources.Items.WeaponsFile}].", DataResources.Items.Directory + DataResources.Items.WeaponsFile);
-                for (Int32 j = 0; j < WEAPON_COUNT; j++)
-                    if (!result.ContainsKey(j))
+                for (Int32 i = 0; i < WEAPON_COUNT; i++)
+                    if (!result.ContainsKey(i))
                         throw new NotSupportedException($"You must define at least the 88 weapons, with IDs between 0 and 87.");
                 return result;
             }

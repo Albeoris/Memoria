@@ -17,12 +17,9 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
-            foreach (String folder in Configuration.Mod.AllFolderNames)
-            {
-                String inputPath = String.IsNullOrEmpty(folder) ? BattleVoicePath : folder + "/" + BattleVoicePath;
-                if (File.Exists(inputPath))
-                    ParseEffect(File.ReadAllText(inputPath));
-            }
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+                if (folder.TryFindAssetInModOnDisc(BattleVoicePath, out String fullPath))
+                    ParseEffect(File.ReadAllText(fullPath));
         }
 
         public static void InitBattle()

@@ -28,11 +28,13 @@ public class UIAtlas : MonoBehaviour
 			String[] modPath = Configuration.Mod.FolderNames;
 			String atlasFilePath = GraphicResources.AtlasList[name];
 			for (Int32 i = 0; i < modPath.Length; i++)
+			{
 				if (File.Exists(modPath[i] + "/" + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + atlasFilePath) || File.Exists(modPath[i] + "/" + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + atlasFilePath + ".tpsheet"))
 				{
 					ReadFromDisc(modPath[i] + "/" + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + atlasFilePath);
 					return;
 				}
+			}
 		}
 	}
 

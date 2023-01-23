@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 
@@ -9,35 +11,44 @@ namespace Memoria.Launcher
 {
 	public class Mod
     {
+        // Entries that can be defined in .xml descriptions
         public String Name { get; set; }
         public Version CurrentVersion { get; set; }
         public String ReleaseDate { get; set; }
         public String Author { get; set; }
         public String Description { get; set; }
         public String PatchNotes { get; set; }
+        public CompatibilityNoteClass CompatibilityNotes { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }
-        public String DescriptionUrl { get; set; } // TODO (fetch ModDescription.xml online)
         public String DownloadUrl { get; set; }
         public String InstallationPath { get; set; }
         public String DownloadFormat { get; set; }
         public String PreviewFile { get; set; }
         public String PreviewFileUrl { get; set; }
-        public List<String> FileContent { get; set; } // TODO (give informations about mod compatibilities)
         public Int64 DownloadSize { get; set; } // TODO
         public Int64 FullSize { get; set; } // TODO
         public List<Mod> SubMod { get; set; }
+        public Mod ParentMod { get; set; }
+
+        // Entries that are computed in the Mod Manager
+        public HashSet<String> FileContent { get; set; }
         public Boolean IsActive { get; set; }
         public String Installed { get; set; }
-        public String DownloadSpeed { get; set; }
-        public String RemainingTime { get; set; }
-        public Int64 PercentComplete { get; set; }
         public Int32 Priority { get; set; }
         public BitmapImage PreviewImage { get; set; }
 
+        // Entries for current download
+        public String DownloadSpeed { get; set; }
+        public String RemainingTime { get; set; }
+        public Int64 PercentComplete { get; set; }
+
+        public String FullInstallationPath => ParentMod != null ? ParentMod.InstallationPath + "/" + InstallationPath : InstallationPath;
+
         public Mod()
         {
-            FileContent = new List<String>();
+            CompatibilityNotes = new CompatibilityNoteClass();
+            FileContent = new HashSet<String>();
             SubMod = new List<Mod>();
         }
 
@@ -45,20 +56,23 @@ namespace Memoria.Launcher
         {
             Name = name;
             InstallationPath = path;
-            FileContent = new List<String>();
+            CompatibilityNotes = new CompatibilityNoteClass();
+            FileContent = new HashSet<String>();
             SubMod = new List<Mod>();
         }
 
         public Mod(StreamReader reader)
         {
-            FileContent = new List<String>();
+            CompatibilityNotes = new CompatibilityNoteClass();
+            FileContent = new HashSet<String>();
             SubMod = new List<Mod>();
             ReadDescription(reader);
         }
 
         public Mod(String folderPath)
         {
-            FileContent = new List<String>();
+            CompatibilityNotes = new CompatibilityNoteClass();
+            FileContent = new HashSet<String>();
             SubMod = new List<Mod>();
             try
             {
@@ -73,6 +87,53 @@ namespace Memoria.Launcher
 			}
         }
 
+        public IEnumerable<Mod> EnumerateModAndSubModsOrdered(Boolean activeOnly)
+		{
+            return EnumerateModAndSubModsOrdered_Generic(false, activeOnly).Select(obj => obj as Mod);
+        }
+
+        public IEnumerable<String> EnumerateModAndSubModFoldersOrdered(Boolean activeOnly)
+        {
+            return EnumerateModAndSubModsOrdered_Generic(true, activeOnly).Select(obj => obj as String);
+        }
+
+        private IEnumerable<Object> EnumerateModAndSubModsOrdered_Generic(Boolean returnPaths, Boolean activeOnly)
+        {
+            if (activeOnly && !IsActive)
+                yield break;
+            Int32 subModIndex = 0;
+            SubMod.Sort((a, b) => b.Priority - a.Priority);
+            while (subModIndex < SubMod.Count && SubMod[subModIndex].Priority >= 0)
+            {
+                if (!activeOnly || SubMod[subModIndex].IsActive)
+                    yield return returnPaths ? SubMod[subModIndex].FullInstallationPath : SubMod[subModIndex];
+                subModIndex++;
+            }
+            yield return returnPaths ? InstallationPath : this;
+            while (subModIndex < SubMod.Count)
+            {
+                if (!activeOnly || SubMod[subModIndex].IsActive)
+                    yield return returnPaths ? SubMod[subModIndex].FullInstallationPath : SubMod[subModIndex];
+                subModIndex++;
+            }
+        }
+
+        public static void LoadModDescriptions(StreamReader reader, ref ObservableCollection<Mod> modList)
+		{
+            XmlDocument doc = new XmlDocument();
+            doc.Load(reader);
+            XmlNodeList rootNode = doc.SelectNodes("/ModCatalog");
+            if (rootNode.Count != 1)
+                return;
+            XmlNodeList modNodes = rootNode[0].SelectNodes("Mod");
+            foreach (XmlNode node in modNodes)
+            {
+                Mod mod = new Mod();
+                if (mod.ReadDescription(node))
+                    modList.Add(mod);
+            }
+        }
+
         public Boolean ReadDescription(StreamReader reader)
         {
             XmlDocument doc = new XmlDocument();
@@ -80,40 +141,47 @@ namespace Memoria.Launcher
             XmlNodeList modList = doc.SelectNodes("/Mod");
             if (modList.Count != 1)
                 return false;
-            XmlElement elName = modList[0]["Name"];
-            XmlElement elInstPath = modList[0]["InstallationPath"];
+            return ReadDescription(modList[0]);
+        }
+
+        public Boolean ReadDescription(XmlNode modNode)
+        {
+            XmlElement elName = modNode["Name"];
+            XmlElement elInstPath = modNode["InstallationPath"];
             if (elName == null || elInstPath == null)
                 return false;
-            XmlElement elVer = modList[0]["Version"];
-            XmlElement elRelease = modList[0]["ReleaseDate"];
-            XmlElement elAuthor = modList[0]["Author"];
-            XmlElement elDescription = modList[0]["Description"];
-            XmlElement elPatchNotes = modList[0]["PatchNotes"];
-            XmlElement elCategory = modList[0]["Category"];
-            XmlElement elWebsite = modList[0]["Website"];
-            XmlElement elDL = modList[0]["DownloadUrl"];
-            XmlElement elFormat = modList[0]["DownloadFormat"];
-            XmlElement elFullSize = modList[0]["FullSize"];
-            XmlElement elDLSize = modList[0]["DownloadSize"];
-            XmlElement elPreviewFile = modList[0]["PreviewFile"];
-            XmlElement elPreviewFileUrl = modList[0]["PreviewFileUrl"];
-            XmlNodeList elSubMod = modList[0].SelectNodes("SubMod");
+            XmlElement elVer = modNode["Version"];
+            XmlNodeList elSubMod = modNode.SelectNodes("SubMod");
             Int64 outParse;
             Name = elName.InnerText;
-            CurrentVersion = elVer != null ? new Version(elVer.InnerText) : null;
             InstallationPath = elInstPath.InnerText;
-            ReleaseDate = elRelease?.InnerText;
-            Author = elAuthor?.InnerText;
-            Description = elDescription?.InnerText;
-            PatchNotes = elPatchNotes?.InnerText;
-            Category = elCategory?.InnerText;
-            Website = elWebsite?.InnerText;
-            DownloadUrl = elDL?.InnerText;
-            DownloadFormat = elFormat?.InnerText;
-            PreviewFile = elPreviewFile?.InnerText;
-            PreviewFileUrl = elPreviewFileUrl?.InnerText;
-            if (Int64.TryParse(elFullSize?.InnerText ?? "0", out outParse)) FullSize = outParse;
-            if (Int64.TryParse(elDLSize?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
+            CurrentVersion = elVer != null ? new Version(elVer.InnerText) : null;
+            ReleaseDate = modNode["ReleaseDate"]?.InnerText;
+            Author = modNode["Author"]?.InnerText;
+            Description = modNode["Description"]?.InnerText;
+            PatchNotes = modNode["PatchNotes"]?.InnerText;
+            foreach (XmlElement elComp in modNode.SelectNodes("CompatibilityNotes"))
+            {
+                if (elComp.HasAttribute("OtherModLow") || elComp.HasAttribute("OtherModHigh"))
+                {
+                    if (elComp.HasAttribute("OtherModLow"))
+                        CompatibilityNotes.OtherModLow[elComp.GetAttribute("OtherModLow")] = elComp.InnerText;
+                    if (elComp.HasAttribute("OtherModHigh"))
+                        CompatibilityNotes.OtherModHigh[elComp.GetAttribute("OtherModHigh")] = elComp.InnerText;
+                }
+                else
+                {
+                    CompatibilityNotes.GenericNotes = elComp.InnerText;
+                }
+            }
+            Category = modNode["Category"]?.InnerText;
+            Website = modNode["Website"]?.InnerText;
+            DownloadUrl = modNode["DownloadUrl"]?.InnerText;
+            DownloadFormat = modNode["DownloadFormat"]?.InnerText;
+            PreviewFile = modNode["PreviewFile"]?.InnerText;
+            PreviewFileUrl = modNode["PreviewFileUrl"]?.InnerText;
+            if (Int64.TryParse(modNode["FullSize"]?.InnerText ?? "0", out outParse)) FullSize = outParse;
+            if (Int64.TryParse(modNode["DownloadSize"]?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
             SubMod.Clear();
             foreach (XmlNode subNode in elSubMod)
 			{
@@ -122,17 +190,15 @@ namespace Memoria.Launcher
                 elInstPath = subNode["InstallationPath"];
                 if (elName == null || elInstPath == null)
                     continue;
-                XmlElement elPriority = subNode["Priority"];
-                elDescription = subNode["Description"];
-                elCategory = subNode["Category"];
                 sub.Name = elName.InnerText;
                 sub.InstallationPath = elInstPath.InnerText;
-                sub.Description = elDescription?.InnerText;
-                sub.Category = elCategory?.InnerText;
-                if (Int64.TryParse(elPriority?.InnerText ?? "0", out outParse))
+                sub.Description = subNode["Description"]?.InnerText;
+                sub.Category = subNode["Category"]?.InnerText;
+                if (Int64.TryParse(subNode["Priority"]?.InnerText ?? "0", out outParse))
                     sub.Priority = (Int32)outParse;
                 else
                     sub.Priority = 0;
+                sub.ParentMod = this;
                 SubMod.Add(sub);
             }
             return true;
@@ -314,7 +380,44 @@ namespace Memoria.Launcher
             return false;
         }
 
+        public class CompatibilityNoteClass
+		{
+            public String GenericNotes = String.Empty;
+            public Dictionary<String, String> OtherModLow = new Dictionary<String, String>();
+            public Dictionary<String, String> OtherModHigh = new Dictionary<String, String>();
+        }
+
+        public static readonly HashSet<String> MEMORIA_ROOT_FILES = new HashSet<String>()
+        {
+            "memoria.ini",
+            "dictionarypatch.txt",
+            "battlepatch.txt",
+            "battlevoiceeffects.txt"
+        };
+
+        public static readonly HashSet<String> ARCHIVE_BUNDLE_FILES = new HashSet<String>()
+        {
+            "p0data11.bin",
+            "p0data12.bin",
+            "p0data13.bin",
+            "p0data14.bin",
+            "p0data15.bin",
+            "p0data16.bin",
+            "p0data17.bin",
+            "p0data18.bin",
+            "p0data19.bin",
+            "p0data2.bin",
+            "p0data3.bin",
+            "p0data4.bin",
+            "p0data5.bin",
+            "p0data61.bin",
+            "p0data62.bin",
+            "p0data63.bin",
+            "p0data7.bin"
+        };
+
         public const String DESCRIPTION_FILE = "ModDescription.xml";
+        public const String MOD_CONTENT_FILE = "ModFileList.txt";
         public const String INSTALLATION_TMP = "MemoriaInstallTmp";
     }
 }

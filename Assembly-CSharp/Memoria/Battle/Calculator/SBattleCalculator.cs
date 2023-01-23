@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
@@ -34,10 +35,12 @@ namespace Memoria
                     {
                         BattleScriptFactory fleeFactory = FindScriptFactory(scriptId);
                         if (fleeFactory != null)
+                        {
                             fleeFactory(new BattleCalculator()).Perform();
-                        else
-                            Log.Warning($"[{nameof(CalcMain)}] Unknown script id with no caster/target: {scriptId}");
+                            return;
+                        }
                     }
+                    Log.Warning($"[{nameof(CalcMain)}] Unknown script id with no caster/target: {scriptId}");
                     return;
                 }
                 command.ScriptId = scriptId;
@@ -78,7 +81,8 @@ namespace Memoria
                 }
                 else
                 {
-                    Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
+                    if (scriptId != 64) // Script 64 is extensively used for enemy moves that have no effect or only an event scripted effect
+                        Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
                 }
 
                 if (v.PerformCalcResult)
@@ -86,7 +90,26 @@ namespace Memoria
             }
             catch (Exception err)
 			{
-                Log.Error(err);
+                if (err is MissingMemberException)
+                {
+                    // Most likely, Memoria.Scripts.dll was compiled with another version of Assembly-CSharp.dll that is incompatible
+                    MissingMemberException memberErr = err as MissingMemberException;
+                    Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                    String faultyMod = ScriptsLoader.GetScriptDLL(scriptId).Split('/')[0];
+                    btl2d.Btl2dReqSymbol(target, 0x10000u, 0, 0);
+                    Log.Error($"[Memoria.Scripts.dll] Error when using the spell {command.AbilityName}\n" +
+                        $"The spell script {scriptId} loaded from '{ScriptsLoader.GetScriptDLL(scriptId)}' is incompatible with the current version of Memoria\n" +
+                        $"{memberErr.Message}\n" +
+                        (String.Compare(faultyMod, "StreamingAssets") == 0 ?
+                            $"Try to update Memoria (https://github.com/Albeoris/Memoria/releases)\n" :
+                            $"Try to update both Memoria (https://github.com/Albeoris/Memoria/releases) and the mod {faultyMod} (from the Mod Manager)\n") +
+                        $"Your current version of Memoria dates from {new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2):Y}\n" +
+                        $" ");
+                }
+                else
+                {
+                    Log.Error(err);
+                }
 			}
         }
 

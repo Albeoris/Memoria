@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEngine;
 using Memoria.Data;
+using Memoria.Assets;
 
 public static class PSXTextureMgr
 {
@@ -295,9 +296,9 @@ public static class PSXTextureMgr
 		PSXTextureMgr.eff435Key = new UInt32[9];
 		if (FF9StateSystem.Battle.battleMapIndex != 938)
 		{
-			PSXTextureMgr.eff435Tex[0] = AssetManager.Load<Texture2D>(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/ef435/Background0.png", false);
+			PSXTextureMgr.eff435Tex[0] = AssetManager.Load<Texture2D>(DataResources.PureDataDirectory + "SpecialEffects/ef435/Background0.png", false);
 			PSXTextureMgr.eff435Key[0] = SFXKey.GenerateKey(1, 10, 0, 0, 224);
-			PSXTextureMgr.eff435Tex[1] = AssetManager.Load<Texture2D>(AssetManagerUtil.GetMemoriaAssetsPath() + "SpecialEffects/ef435/Background1.png", false);
+			PSXTextureMgr.eff435Tex[1] = AssetManager.Load<Texture2D>(DataResources.PureDataDirectory + "SpecialEffects/ef435/Background1.png", false);
 			PSXTextureMgr.eff435Key[1] = SFXKey.GenerateKey(1, 12, 0, 0, 225);
 			PSXTextureMgr.eff435Tex[2] = AssetManager.Load<Texture2D>("BattleMap/BattleModel/BattleMap_All/BBG_B172/image0", false);
 			PSXTextureMgr.eff435Key[2] = SFXKey.GenerateKey(1, 14, 0, 0, 228);

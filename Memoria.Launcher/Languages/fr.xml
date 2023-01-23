@@ -228,6 +228,7 @@
     PreviewImageMissing = "Illustration Manquante"
     TooltipMoveUp = "Déplacer vers le Haut (clic gauche) / En 1ère Position (clic droit)"
     TooltipMoveDown = "Déplacer vers le Bas (clic gauche) / En dernière Position (clic droit)"
+    TooltipCheckCompatibility = "Vérifier la Compatibilité des Mods activés (clic gauche) / De tous les Mods installés (clic droit)"
     TooltipActivateAll = "Activer Tous les Mods"
     TooltipDeactivateAll = "Désactiver Tous les Mods"
     TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"

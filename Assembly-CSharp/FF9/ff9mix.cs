@@ -25,22 +25,11 @@ namespace FF9
         {
             try
             {
-                String inputPath = DataResources.Items.Directory + DataResources.Items.SynthesisFile;
-                if (!File.Exists(inputPath))
-                    throw new FileNotFoundException($"Cannot load synthesis info because a file does not exist: [{inputPath}].", inputPath);
+                String inputPath = DataResources.Items.PureDirectory + DataResources.Items.SynthesisFile;
                 Dictionary<Int32, FF9MIX_DATA> result = new Dictionary<Int32, FF9MIX_DATA>();
-                FF9MIX_DATA[] mixes;
-                String[] dir = Configuration.Mod.AllFolderNames;
-                for (Int32 i = dir.Length - 1; i >= 0; --i)
-                {
-                    inputPath = DataResources.Items.ModDirectory(dir[i]) + DataResources.Items.SynthesisFile;
-                    if (File.Exists(inputPath))
-                    {
-                        mixes = CsvReader.Read<FF9MIX_DATA>(inputPath);
-                        for (Int32 j = 0; j < mixes.Length; j++)
-                            result[mixes[j].Id] = mixes[j];
-                    }
-                }
+                foreach (FF9MIX_DATA[] mixes in AssetManager.EnumerateCsvFromLowToHigh<FF9MIX_DATA>(inputPath))
+                    foreach (FF9MIX_DATA mix in mixes)
+                        result[mix.Id] = mix;
                 return result;
             }
             catch (Exception ex)

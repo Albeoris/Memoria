@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using Memoria;
 using Memoria.Prime;
+using Memoria.Prime.CSV;
 using Memoria.Assets;
 using Object = System.Object;
 
@@ -38,10 +39,12 @@ public static class AssetManager
 		for (Int32 i = 0; i < Configuration.Mod.FolderNames.Length; ++i)
 			foldname[i] = Configuration.Mod.FolderNames[i] + "/";
 		foldname[Configuration.Mod.FolderNames.Length] = "";
-		Folder = new AssetFolder[foldname.Length];
+		FolderHighToLow = new AssetFolder[foldname.Length];
+		FolderLowToHigh = new AssetFolder[foldname.Length];
 		for (Int32 i = 0; i < foldname.Length; ++i)
 		{
-			Folder[i] = new AssetFolder(foldname[i]);
+			FolderHighToLow[i] = new AssetFolder(foldname[i]);
+			FolderLowToHigh[foldname.Length - i - 1] = FolderHighToLow[i];
 			foreach (Object module in moduleList)
 			{
 				AssetManagerUtil.ModuleBundle moduleBundle = (AssetManagerUtil.ModuleBundle)module;
@@ -53,7 +56,7 @@ public static class AssetManager
 						AssetManagerUtil.FieldMapBundleId bundleId = (AssetManagerUtil.FieldMapBundleId)fieldModule;
 						path = foldname[i] + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.CreateFieldMapBundleFilename(Application.platform, false, bundleId);
 						if (File.Exists(path))
-							Folder[i].DictAssetBundleRefs.Add(AssetManagerUtil.GetFieldMapBundleName(bundleId), new AssetBundleRef(path, 0));
+							FolderHighToLow[i].DictAssetBundleRefs.Add(AssetManagerUtil.GetFieldMapBundleName(bundleId), new AssetBundleRef(path, 0));
 					}
 				}
 				else if (moduleBundle == AssetManagerUtil.ModuleBundle.Sounds)
@@ -64,27 +67,40 @@ public static class AssetManager
 						AssetManagerUtil.SoundBundleId bundleId = (AssetManagerUtil.SoundBundleId)soundModule;
 						path = foldname[i] + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.CreateSoundBundleFilename(Application.platform, false, bundleId);
 						if (File.Exists(path))
-							Folder[i].DictAssetBundleRefs.Add(AssetManagerUtil.GetSoundBundleName(bundleId), new AssetBundleRef(path, 0));
+							FolderHighToLow[i].DictAssetBundleRefs.Add(AssetManagerUtil.GetSoundBundleName(bundleId), new AssetBundleRef(path, 0));
 					}
 				}
 				else
 				{
 					path = foldname[i] + AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.CreateModuleBundleFilename(Application.platform, false, moduleBundle);
 					if (File.Exists(path))
-						Folder[i].DictAssetBundleRefs.Add(AssetManagerUtil.GetModuleBundleName(moduleBundle), new AssetBundleRef(path, 0));
+						FolderHighToLow[i].DictAssetBundleRefs.Add(AssetManagerUtil.GetModuleBundleName(moduleBundle), new AssetBundleRef(path, 0));
 				}
 			}
 		}
-		_LoadAnimationFolderMapping();
+
+		if (Configuration.Mod.GenerateFileList != 0)
+		{
+			String[] modFolders = Configuration.Mod.GenerateFileList == 1 ? Configuration.Mod.FolderNames : Configuration.Mod.Priorities;
+			foreach (String folder in modFolders)
+				AssetManager.GenerateFileList(folder);
+		}
+		foreach (AssetFolder folder in FolderHighToLow)
+			folder.ReadFileList();
+
+		_LoadAnimationFolderMapping(true);
 	}
 
-	private static void _LoadAnimationFolderMapping()
+	private static void _LoadAnimationFolderMapping(Boolean suppressMissingError = false)
 	{
-		AnimationInFolder = new Dictionary<String, List<String>>();
-		AnimationReverseFolder = new Dictionary<String, String>();
-		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt");
+		// Because FolderHighToLow/FolderLowToHigh are requested very soon in the game initialization now,
+		// it happens that Resources.Load is not usable yet when this method is called the first time
+		// Thus this method is called again afterwards if needed
+		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", suppressMissingError);
 		if (filestr == null)
 			return;
+		AnimationInFolder = new Dictionary<String, List<String>>();
+		AnimationReverseFolder = new Dictionary<String, String>();
 		String[] folderList = filestr.Split('\n');
 		for (Int32 i = 0; i < folderList.Length; i++)
 		{
@@ -106,8 +122,101 @@ public static class AssetManager
 		}
 	}
 
+	private static void GenerateFileList(String folder)
+	{
+		try
+		{
+			if (!Directory.Exists(folder))
+				return;
+			if (File.Exists(folder + "/" + AssetManager.MOD_CONTENT_FILE))
+				return;
+			List<String> modAndSubmods = new List<String>();
+			String[] allFiles = Directory.GetFiles(folder, "*", SearchOption.AllDirectories);
+			// Detect submod folders
+			for (Int32 i = 0; i < allFiles.Length; i++)
+			{
+				allFiles[i] = allFiles[i].Replace("\\", "/").ToLower();
+				String modFolderPath = null;
+				if (MemoriaRootFiles.Any(str => allFiles[i].EndsWith("/" + str)))
+				{
+					modFolderPath = Path.GetDirectoryName(allFiles[i]);
+				}
+				else
+				{
+					Int32 rootFolderIndex = allFiles[i].IndexOf("/streamingassets/");
+					if (rootFolderIndex == -1)
+						rootFolderIndex = allFiles[i].IndexOf("/ff9_data/");
+					if (rootFolderIndex != -1)
+						modFolderPath = allFiles[i].Substring(0, rootFolderIndex);
+				}
+				if (!String.IsNullOrEmpty(modFolderPath) && !modAndSubmods.Contains(modFolderPath))
+					modAndSubmods.Add(modFolderPath);
+			}
+			// Generate the file lists for the mod and its submods, sorted depending on whether they belong to an AssetBundle or not
+			Dictionary<String, Dictionary<String, String>> allLists = new Dictionary<String, Dictionary<String, String>>();
+			foreach (String anyMod in modAndSubmods)
+			{
+				allLists[anyMod] = new Dictionary<String, String>();
+				allLists[anyMod][String.Empty] = "";
+			}
+			modAndSubmods.Sort();
+			modAndSubmods.Reverse();
+			foreach (String filePath in allFiles)
+			{
+				String shortPath = null;
+				String belongingMod = null;
+				foreach (String subMod in modAndSubmods)
+				{
+					if (filePath.StartsWith(subMod + "/"))
+					{
+						shortPath = filePath.Substring(subMod.Length + 1);
+						belongingMod = subMod;
+						break;
+					}
+				}
+				if (String.IsNullOrEmpty(belongingMod))
+					continue;
+				else if (shortPath.StartsWith("streamingassets/"))
+					shortPath = shortPath.Substring("streamingassets/".Length);
+				else if (shortPath.StartsWith("ff9_data/"))
+					shortPath = shortPath.Substring("ff9_data/".Length);
+				else if (!AssetManager.MemoriaRootFiles.Contains(shortPath))
+					continue;
+				if (AssetManager.ArchiveBundleFiles.Contains(shortPath))
+				{
+					allLists[belongingMod][shortPath] = "";
+					AssetBundle bundle = AssetBundle.CreateFromFile(filePath);
+					String[] assetsInBundle = bundle.GetAllAssetNames();
+					foreach (String assetPath in assetsInBundle)
+						if (!assetPath.StartsWith("xxxxxx/xxxxxxxxx/")) // For now, when Hades Workshop creates a copy of an AssetBundle with deleted assets, the deleted assets are still registered but are named like that
+							allLists[belongingMod][shortPath] += assetPath + "\n";
+				}
+				else
+				{
+					allLists[belongingMod][String.Empty] += shortPath + "\n";
+				}
+			}
+			// Export the lists to the .txt file
+			foreach (String anyMod in modAndSubmods)
+			{
+				String listPath = anyMod + "/" + AssetManager.MOD_CONTENT_FILE;
+				String completeList = allLists[anyMod][String.Empty];
+				foreach (KeyValuePair<String, String> kvp in allLists[anyMod])
+					if (kvp.Key != String.Empty)
+						completeList += $"<{kvp.Key}>\n" + kvp.Value;
+				File.WriteAllText(listPath, completeList);
+			}
+		}
+		catch (Exception err)
+		{
+			Log.Error(err);
+		}
+	}
+
 	public static void UpdateAutoAnimMapping(String modelName, String[] addedAnimList)
 	{
+		if (AssetManager.AnimationInFolder == null)
+			_LoadAnimationFolderMapping();
 		List<String> modelAnimList;
 		String animDir = "Animations/" + modelName;
 		String animPath, animModelName;
@@ -130,7 +239,8 @@ public static class AssetManager
 	public static void ClearCache()
 	{
 		Caching.CleanCache();
-		foreach (AssetFolder modfold in Folder)
+		foreach (AssetFolder modfold in FolderHighToLow)
+		{
 			foreach (KeyValuePair<String, AssetBundleRef> keyValuePair in modfold.DictAssetBundleRefs)
 			{
 				AssetBundleRef value = keyValuePair.Value;
@@ -140,6 +250,7 @@ public static class AssetManager
 					value.assetBundle = null;
 				}
 			}
+		}
 	}
 
 	public static void ApplyTextureGenericMemoriaInfo<T>(ref T texture, ref String[] memoriaInfo) where T : UnityEngine.Texture
@@ -296,18 +407,16 @@ public static class AssetManager
 		}
 		if (AssetManagerUtil.IsMemoriaAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + name))
-					yield return LoadFromDisc<T>(modfold.FolderPath + name, name);
-			if (File.Exists(name))
-				yield return LoadFromDisc<T>(name, name);
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+					yield return LoadFromDisc<T>(fullPath, name);
 			yield break;
 		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
-					yield return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, name);
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+					yield return LoadFromDisc<T>(fullPath, name);
 			result = Resources.Load<T>(name);
 			if (result != null)
 				yield return result;
@@ -317,13 +426,11 @@ public static class AssetManager
 		if (!String.IsNullOrEmpty(belongingBundleFilename))
 		{
 			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<T>(name);
-			foreach (AssetFolder modfold in Folder)
+			foreach (AssetFolder modfold in FolderHighToLow)
 			{
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle))
-					yield return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, nameInBundle);
-				AssetBundleRef assetBundleRef = null;
-				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
-				if (assetBundleRef != null && assetBundleRef.assetBundle != null)
+				if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+					yield return LoadFromDisc<T>(fullPath, nameInBundle);
+				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
 				{
 					result = assetBundleRef.assetBundle.LoadAsset<T>(nameInBundle);
 					if (result != null)
@@ -333,9 +440,9 @@ public static class AssetManager
 		}
 		if (ForceUseBundles)
 			yield break;
-		foreach (AssetFolder modfold in Folder)
-			if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
-				yield return LoadFromDisc<T>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, name);
+		foreach (AssetFolder modfold in FolderHighToLow)
+			if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				yield return LoadFromDisc<T>(fullPath, name);
 		result = Resources.Load<T>(name);
 		if (result != null)
 			yield return result;
@@ -354,18 +461,16 @@ public static class AssetManager
 		}
 		if (AssetManagerUtil.IsMemoriaAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + name))
-					yield return LoadFromDisc<String>(modfold.FolderPath + name, name);
-			if (File.Exists(name))
-				yield return LoadFromDisc<String>(name, name);
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+					yield return LoadFromDisc<String>(fullPath, name);
 			yield break;
 		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
-					yield return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, name);
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+					yield return LoadFromDisc<String>(fullPath, name);
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != null)
 				yield return txt.text;
@@ -375,13 +480,11 @@ public static class AssetManager
 		if (!String.IsNullOrEmpty(belongingBundleFilename))
 		{
 			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<TextAsset>(name);
-			foreach (AssetFolder modfold in Folder)
+			foreach (AssetFolder modfold in FolderHighToLow)
 			{
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle))
-					yield return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, nameInBundle);
-				AssetBundleRef assetBundleRef = null;
-				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
-				if (assetBundleRef != null && assetBundleRef.assetBundle != null)
+				if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+					yield return LoadFromDisc<String>(fullPath, nameInBundle);
+				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
 				{
 					txt = assetBundleRef.assetBundle.LoadAsset<TextAsset>(nameInBundle);
 					if (txt != null)
@@ -391,9 +494,9 @@ public static class AssetManager
 		}
 		if (ForceUseBundles)
 			yield break;
-		foreach (AssetFolder modfold in Folder)
-			if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
-				yield return LoadFromDisc<String>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, name);
+		foreach (AssetFolder modfold in FolderHighToLow)
+			if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				yield return LoadFromDisc<String>(fullPath, name);
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != null)
 			yield return txt.text;
@@ -412,18 +515,16 @@ public static class AssetManager
 		}
 		if (AssetManagerUtil.IsMemoriaAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + name))
-					yield return LoadFromDisc<Byte[]>(modfold.FolderPath + name, name);
-			if (File.Exists(name))
-				yield return LoadFromDisc<Byte[]>(name, name);
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+					yield return LoadFromDisc<Byte[]>(fullPath, name);
 			yield break;
 		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
-					yield return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, name);
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+					yield return LoadFromDisc<Byte[]>(fullPath, name);
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != null)
 				yield return txt.bytes;
@@ -433,13 +534,11 @@ public static class AssetManager
 		if (!String.IsNullOrEmpty(belongingBundleFilename))
 		{
 			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<TextAsset>(name);
-			foreach (AssetFolder modfold in Folder)
+			foreach (AssetFolder modfold in FolderHighToLow)
 			{
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle))
-					yield return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle, nameInBundle);
-				AssetBundleRef assetBundleRef = null;
-				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
-				if (assetBundleRef != null && assetBundleRef.assetBundle != null)
+				if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+					yield return LoadFromDisc<Byte[]>(fullPath, nameInBundle);
+				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
 				{
 					txt = assetBundleRef.assetBundle.LoadAsset<TextAsset>(nameInBundle);
 					if (txt != null)
@@ -449,9 +548,9 @@ public static class AssetManager
 		}
 		if (ForceUseBundles)
 			yield break;
-		foreach (AssetFolder modfold in Folder)
-			if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
-				yield return LoadFromDisc<Byte[]>(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name, name);
+		foreach (AssetFolder modfold in FolderHighToLow)
+			if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				yield return LoadFromDisc<Byte[]>(fullPath, name);
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != null)
 			yield return txt.bytes;
@@ -496,11 +595,9 @@ public static class AssetManager
 		if (!String.IsNullOrEmpty(belongingBundleFilename))
 		{
 			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<T>(name);
-			foreach (AssetFolder modfold in Folder)
+			foreach (AssetFolder modfold in FolderHighToLow)
 			{
-				AssetBundleRef assetBundleRef;
-				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
-				if (assetBundleRef != null && assetBundleRef.assetBundle != null)
+				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
 				{
 					AssetBundleRequest assetBundleRequest = assetBundleRef.assetBundle.LoadAssetAsync(nameInBundle);
 					if (assetBundleRequest != null)
@@ -521,59 +618,56 @@ public static class AssetManager
 	{
 		if (checkDisc && AssetManagerUtil.IsMemoriaAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + name))
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
 					return true;
-			if (File.Exists(name))
-				return true;
 			return false;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
 		if (!String.IsNullOrEmpty(belongingBundleFilename))
 		{
 			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<T>(name);
-			foreach (AssetFolder modfold in Folder)
+			foreach (AssetFolder modfold in FolderHighToLow)
 			{
-				if (checkDisc && File.Exists(modfold.FolderPath + AssetManagerUtil.GetStreamingAssetsPath() + "/" + nameInBundle))
+				if (checkDisc && modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
 					return true;
 				if (!checkBundle)
 					continue;
-				AssetBundleRef assetBundleRef;
-				modfold.DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef);
-				if (assetBundleRef != null && assetBundleRef.assetBundle != null)
-					if (assetBundleRef.assetBundle.Contains(nameInBundle))
-						return true;
+				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
+					return true;
 			}
 		}
 		if (checkDisc)
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + AssetManagerUtil.GetResourcesAssetsPath(true) + "/" + name))
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
 					return true;
 		return checkResources ? Resources.Load<T>(name) != null : false;
 	}
 
 	public static String SearchAssetOnDisc(String name, Boolean includeAssetPath, Boolean includeAssetExtension)
 	{
+		String resourcePath = includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) + "/" : "";
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
 		{
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) + "/" : "") + name))
-					return modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) + "/" : "") + name;
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, resourcePath))
+					return fullPath;
 			return String.Empty;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
 		if (!String.IsNullOrEmpty(belongingBundleFilename))
 		{
-			String nameInBundle = (includeAssetPath ? AssetManagerUtil.GetStreamingAssetsPath() + "/" + AssetManagerUtil.GetResourcesBasePath() : "") + name + (includeAssetExtension ? AssetManagerUtil.GetAssetExtension<TextAsset>(name) : "");
-			foreach (AssetFolder modfold in Folder)
-				if (File.Exists(modfold.FolderPath + nameInBundle))
-					return modfold.FolderPath + nameInBundle;
+			String streamingPath = includeAssetPath ? AssetManagerUtil.GetStreamingAssetsPath() + "/" : "";
+			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + (includeAssetExtension ? AssetManagerUtil.GetAssetExtension<TextAsset>(name) : "");
+			foreach (AssetFolder modfold in FolderHighToLow)
+				if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, streamingPath))
+					return fullPath;
 		}
 		if (ForceUseBundles)
 			return String.Empty;
-		foreach (AssetFolder modfold in Folder)
-			if (File.Exists(modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) : "") + "/" + name))
-				return modfold.FolderPath + (includeAssetPath ? AssetManagerUtil.GetResourcesAssetsPath(true) : "") + "/" + name;
+		foreach (AssetFolder modfold in FolderHighToLow)
+			if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, resourcePath))
+				return fullPath;
 		return String.Empty;
 	}
 
@@ -590,6 +684,8 @@ public static class AssetManager
 			return null;
 		if (!UseBundles)
 			return Resources.LoadAll<T>(AnimationFactory.GetRenameAnimationDirectory(name));
+		if (AssetManager.AnimationInFolder == null)
+			_LoadAnimationFolderMapping();
 		if (AnimationInFolder.ContainsKey(name))
 		{
 			List<String> clipNameList = AnimationInFolder[name];
@@ -607,20 +703,63 @@ public static class AssetManager
 		return null;
 	}
 
+	public static IEnumerable<T[]> EnumerateCsvFromLowToHigh<T>(String inputPath) where T : class, ICsvEntry, new()
+	{
+		foreach (AssetFolder folder in AssetManager.FolderLowToHigh)
+			if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+				yield return CsvReader.Read<T>(fullPath);
+	}
+
+	public static T[] GetCsvWithHighestPriority<T>(String inputPath) where T : class, ICsvEntry, new()
+	{
+		foreach (AssetFolder folder in AssetManager.FolderHighToLow)
+			if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+				return CsvReader.Read<T>(fullPath);
+		return null;
+	}
+
 	// .memnfo files are not used anymore, except for sound meta-datas
 	// Even for these, setting proper meta-datas in the OGG is better
 	public const String MemoriaInfoExtension = ".memnfo";
-
+	public const String MOD_CONTENT_FILE = "ModFileList.txt";
 	public const TextureFormat DefaultTextureFormat = TextureFormat.ARGB32;
 
-	public static Boolean UseBundles;
+	public static readonly HashSet<String> MemoriaRootFiles = new HashSet<String>()
+	{
+		"memoria.ini",
+		"dictionarypatch.txt",
+		"battlepatch.txt",
+		"battlevoiceeffects.txt"
+	};
 
+	public static readonly HashSet<String> ArchiveBundleFiles = new HashSet<String>()
+	{
+		"p0data11.bin",
+		"p0data12.bin",
+		"p0data13.bin",
+		"p0data14.bin",
+		"p0data15.bin",
+		"p0data16.bin",
+		"p0data17.bin",
+		"p0data18.bin",
+		"p0data19.bin",
+		"p0data2.bin",
+		"p0data3.bin",
+		"p0data4.bin",
+		"p0data5.bin",
+		"p0data61.bin",
+		"p0data62.bin",
+		"p0data63.bin",
+		"p0data7.bin"
+	};
+
+	public static Boolean UseBundles;
 	public static Boolean ForceUseBundles;
 
-	public static AssetFolder[] Folder;
+	public static AssetFolder[] FolderHighToLow; // Priority from highest to lowest: better suited for non-cumulating resources
+	public static AssetFolder[] FolderLowToHigh; // Priority from lowest to highest: better suited for resources that patch themselves
 
 	public static Dictionary<String, List<String>> AnimationInFolder;
-
 	public static Dictionary<String, String> AnimationReverseFolder;
 
 	public class AssetBundleRef
@@ -632,9 +771,7 @@ public static class AssetManager
 		}
 
 		public AssetBundle assetBundle;
-
 		public Int32 version;
-
 		public String fullUrl;
 	}
 	
@@ -644,10 +781,57 @@ public static class AssetManager
 		{
 			this.FolderPath = path;
 			this.DictAssetBundleRefs = new Dictionary<String, AssetBundleRef>();
+			this.AssetList = new HashSet<String>();
+			this.AssetListInBundle = new HashSet<String>();
+		}
+
+		public void ReadFileList()
+		{
+			if (String.IsNullOrEmpty(this.FolderPath))
+				return; // Don't use ModFileList.txt for the assets out of mods
+			AssetList.Clear();
+			AssetListInBundle.Clear();
+			if (!File.Exists(this.FolderPath + AssetManager.MOD_CONTENT_FILE))
+				return;
+			String bundleName = String.Empty;
+			foreach (String line in File.ReadAllLines(this.FolderPath + AssetManager.MOD_CONTENT_FILE))
+			{
+				String trimmedLine = line.Trim().ToLower();
+				if (trimmedLine.Length == 0)
+					continue;
+				Int32 bracketStart = trimmedLine.IndexOf('<');
+				if (bracketStart >= 0)
+				{
+					Int32 bracketEnd = trimmedLine.IndexOf('>');
+					if (bracketEnd < 0)
+						continue;
+					bundleName = trimmedLine.Substring(bracketStart, bracketEnd - bracketStart - 1);
+				}
+				if (!String.IsNullOrEmpty(bundleName))
+					AssetListInBundle.Add(trimmedLine);
+				else
+					AssetList.Add(trimmedLine);
+			}
+		}
+
+		public Boolean TryFindAssetInModOnDisc(String assetPath, out String pathOnDisc, String assetPathPrefix = "")
+		{
+			pathOnDisc = this.FolderPath + assetPathPrefix + assetPath;
+			if (AssetList.Count == 0)
+				return File.Exists(pathOnDisc);
+			return AssetList.Contains(assetPath.ToLower());
+		}
+
+		public Boolean IsAssetInModInBundle(String belongingBundleFilename, String nameInBundle, out AssetBundleRef assetBundleRef)
+		{
+			if (DictAssetBundleRefs.TryGetValue(belongingBundleFilename, out assetBundleRef) && assetBundleRef?.assetBundle != null)
+				return assetBundleRef.assetBundle.Contains(nameInBundle);
+			return false;
 		}
 
 		public String FolderPath;
-
 		public Dictionary<String, AssetBundleRef> DictAssetBundleRefs;
+		public HashSet<String> AssetList;
+		public HashSet<String> AssetListInBundle;
 	}
 }

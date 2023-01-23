@@ -9,6 +9,8 @@ namespace Memoria.Launcher
 {
     public sealed partial class Lang
     {
+        public static String LangName = "en";
+
         #region Lazy
 
         private static readonly Lazy<Lang> Instance = new Lazy<Lang>(Initialize, true);
@@ -32,7 +34,10 @@ namespace Memoria.Launcher
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");
                     if (cur != null)
+                    {
+                        LangName = name;
                         break;
+                    }
                 }
                 //File.AppendAllText("MBROutput2.txt", name + \n");
                 
@@ -484,6 +489,7 @@ namespace Memoria.Launcher
             public static readonly String PreviewImageMissing = GetModEditor(nameof(PreviewImageMissing));
             public static readonly String TooltipMoveUp = GetModEditor(nameof(TooltipMoveUp));
             public static readonly String TooltipMoveDown = GetModEditor(nameof(TooltipMoveDown));
+            public static readonly String TooltipCheckCompatibility = GetModEditor(nameof(TooltipCheckCompatibility));
             public static readonly String TooltipActivateAll = GetModEditor(nameof(TooltipActivateAll));
             public static readonly String TooltipDeactivateAll = GetModEditor(nameof(TooltipDeactivateAll));
             public static readonly String TooltipUninstall = GetModEditor(nameof(TooltipUninstall));

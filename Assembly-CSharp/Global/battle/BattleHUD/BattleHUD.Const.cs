@@ -8,7 +8,6 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
 using UnityEngine;
 
@@ -29,7 +28,7 @@ public partial class BattleHUD : UIScene
     public const String ItemGroupButton = "Battle.Item";
 
     private static readonly Byte[] BattleMessageTimeTick = new Byte[7] {54, 46, 48, 30, 24, 18, 12};
-    private static readonly EntryCollection<IdMap> CmdTitleTable;
+    private static readonly Dictionary<BattleAbilityId, IdMap> CmdTitleTable;
     private static readonly Int32 YINFO_ANIM_HPMP_MIN = 4;
     private static readonly Int32 YINFO_ANIM_HPMP_MAX = 16;
     private static readonly Int32 AbilFenril = 66;
@@ -48,10 +47,9 @@ public partial class BattleHUD : UIScene
     static BattleHUD()
     {
         CmdTitleTable = LoadBattleCommandTitles();
-        if (CmdTitleTable != null)
-            foreach (IdMap mappingId in CmdTitleTable)
-                if (FF9BattleDB.CharacterActions.ContainsKey(mappingId.Id))
-                    FF9BattleDB.CharacterActions[mappingId.Id].CastingTitleType = mappingId.MappedId;
+        foreach (IdMap mappingId in CmdTitleTable.Values)
+            if (FF9BattleDB.CharacterActions.ContainsKey(mappingId.Id))
+                FF9BattleDB.CharacterActions[mappingId.Id].CastingTitleType = mappingId.MappedId;
 
         DebuffIconNames = new Dictionary<BattleStatus, String>
         {
@@ -327,36 +325,21 @@ public partial class BattleHUD : UIScene
         return -1;
     }
 
-    private static EntryCollection<IdMap> LoadBattleCommandTitles()
+    private static Dictionary<BattleAbilityId, IdMap> LoadBattleCommandTitles()
     {
         try
         {
-            String inputPath = DataResources.Characters.Directory + DataResources.Characters.CommandTitlesFile;
-            if (!File.Exists(inputPath))
-                return null;
-
-            IdMap[] maps = CsvReader.Read<IdMap>(inputPath);
-            //if (maps.Length < 192)
-            //    throw new NotSupportedException($"You must set titles for 192 battle commands, but there {maps.Length}.");
-
-            EntryCollection<IdMap> result = EntryCollection.CreateWithDefaultElement(maps, g => (Int32)g.Id);
-            for (Int32 i = Configuration.Mod.FolderNames.Length - 1; i >= 0; i--)
-            {
-                inputPath = DataResources.Characters.ModDirectory(Configuration.Mod.FolderNames[i]) + DataResources.Characters.CommandTitlesFile;
-                if (File.Exists(inputPath))
-                {
-                    maps = CsvReader.Read<IdMap>(inputPath);
-                    foreach (IdMap it in maps)
-                        result[(Int32)it.Id] = it;
-                }
-            }
+            String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.CommandTitlesFile;
+            Dictionary<BattleAbilityId, IdMap> result = new Dictionary<BattleAbilityId, IdMap>();
+            foreach (IdMap[] maps in AssetManager.EnumerateCsvFromLowToHigh<IdMap>(inputPath))
+                foreach (IdMap it in maps)
+                    result[it.Id] = it;
             return result;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "[BattleHUD] Load character command titles failed.");
-            UIManager.Input.ConfirmQuit();
-            return null;
+            return new Dictionary<BattleAbilityId, IdMap>();
         }
     }
 }

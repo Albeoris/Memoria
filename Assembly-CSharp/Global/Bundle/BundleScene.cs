@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -261,17 +262,15 @@ public class BundleScene : MonoBehaviour
 	public IEnumerator DownloadAssetBundles()
 	{
 		Screen.sleepTimeout = -1;
-		foreach (AssetManager.AssetFolder modfold in AssetManager.Folder)
+		foreach (AssetManager.AssetFolder modfold in AssetManager.FolderHighToLow)
 		{
 			Int32 curItem = 0;
 			Int32 numItem = modfold.DictAssetBundleRefs.Count;
 			foreach (KeyValuePair<String, AssetManager.AssetBundleRef> entry in modfold.DictAssetBundleRefs)
 			{
 				AssetManager.AssetBundleRef abRef = entry.Value;
-				if (abRef.assetBundle != (UnityEngine.Object)null)
-				{
+				if (abRef.assetBundle != null)
 					break;
-				}
 				yield return base.StartCoroutine(this.DownloadAssetBundle(abRef, curItem, numItem));
 				curItem++;
 			}
@@ -287,18 +286,12 @@ public class BundleScene : MonoBehaviour
 	public IEnumerator DownloadAssetBundle(AssetManager.AssetBundleRef abRef, Int32 curItem, Int32 numItem)
 	{
 		while (!Caching.ready)
-		{
 			yield return null;
-		}
 		this._AddLogOutput("Downloading : " + abRef.fullUrl);
-		String fullUrl = String.Concat(new String[]
-		{
-			this._baseUrl,
-			abRef.fullUrl
-		});
+		String fullUrl = this._baseUrl + abRef.fullUrl;
 		this._AddLogOutput("    At : " + fullUrl);
 		ExpansionVerifier.printLog("BundleScene : Downloading " + abRef.fullUrl + " AT " + fullUrl);
-		if (!this._isCompressedBundles && fullUrl.IndexOf("http://") == -1)
+		if (!this._isCompressedBundles && !fullUrl.Contains("http://"))
 		{
 			this._AddLogOutput("Loading Uncompressed Bundle.");
 			AssetBundle ab = AssetBundle.CreateFromFile(fullUrl);
@@ -310,16 +303,7 @@ public class BundleScene : MonoBehaviour
 			this._AddLogOutput("Loading Compressed Bundle.");
 			while (!www.isDone)
 			{
-				this._SetStatusText(String.Concat(new Object[]
-				{
-					"Loading Progress : [",
-					Mathf.FloorToInt(www.progress * 100f),
-					"%] ",
-					curItem,
-					"/",
-					numItem,
-					" | Will auto change scene when finished."
-				}));
+				this._SetStatusText($"Loading Progress : [{Mathf.FloorToInt(www.progress * 100f)} %] {curItem}/{numItem} | Will auto change scene when finished.");
 				yield return new WaitForSeconds(0.01f);
 			}
 			if (www.error != null)

@@ -1626,35 +1626,42 @@ public partial class BattleHUD : UIScene
         if (testCommand.ScriptId == 9) // Magic attack, not yet supported
             return;
 
-        BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(testCommand.ScriptId);
-        if (factory == null)
-            return;
-
-        BTL_DATA caster = testCommand.regist;
-        foreach (KnownUnit knownTarget in EnumerateKnownUnits())
+        try
         {
-            BattleUnit target = knownTarget.Unit;
-            if (!allowAllies && target.IsPlayer)
-                continue;
-            if (!allowEnemies && !target.IsPlayer)
-                continue;
-            if (!_targetDead && target.IsUnderAnyStatus(BattleStatus.Death))
-                continue;
+            BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(testCommand.ScriptId);
+            if (factory == null)
+                return;
 
-            testCommand.tar_id = target.Id;
-
-            BattleCalculator v = new BattleCalculator(caster, target.Data, new BattleCommand(testCommand));
-            IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
-            if (script == null)
-                break;
-
-            Single rating = script.RateTarget();
-            if (rating > bestRating)
+            BTL_DATA caster = testCommand.regist;
+            foreach (KnownUnit knownTarget in EnumerateKnownUnits())
             {
-                bestRating = rating;
-                _bestTargetIndex = knownTarget.Index;
+                BattleUnit target = knownTarget.Unit;
+                if (!allowAllies && target.IsPlayer)
+                    continue;
+                if (!allowEnemies && !target.IsPlayer)
+                    continue;
+                if (!_targetDead && target.IsUnderAnyStatus(BattleStatus.Death))
+                    continue;
+
+                testCommand.tar_id = target.Id;
+
+                BattleCalculator v = new BattleCalculator(caster, target.Data, new BattleCommand(testCommand));
+                IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
+                if (script == null)
+                    break;
+
+                Single rating = script.RateTarget();
+                if (rating > bestRating)
+                {
+                    bestRating = rating;
+                    _bestTargetIndex = knownTarget.Index;
+                }
             }
         }
+        catch (Exception err)
+		{
+            Log.Error(err);
+		}
     }
 
     private void SetTargetAvailability(TargetType cursor)
