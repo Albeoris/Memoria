@@ -98,13 +98,10 @@ public class ff9item
     {
         try
         {
-            String inputPath;
-            for (Int32 i = AssetManager.FolderHighToLow.Length - 1; i >= 0; --i)
-            {
-                inputPath = DataResources.Items.ModDirectory(AssetManager.FolderHighToLow[i].FolderPath) + DataResources.Items.ItemEquipPatchFile;
-                if (File.Exists(inputPath))
-                    ApplyItemEquipabilityPatchFile(itemDatabase, File.ReadAllLines(inputPath));
-            }
+            String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemEquipPatchFile;
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+                if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                    ApplyItemEquipabilityPatchFile(itemDatabase, File.ReadAllLines(fullPath));
         }
         catch (Exception ex)
         {

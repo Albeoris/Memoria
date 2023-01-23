@@ -33,6 +33,7 @@ public static class AssetManager
 
 	static AssetManager()
 	{
+		AssetManager.IsFullyInitialized = false;
 		Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
 		String[] foldname = new String[Configuration.Mod.FolderNames.Length + 1];
 		String path;
@@ -79,6 +80,16 @@ public static class AssetManager
 			}
 		}
 
+		DelayedInitialization();
+	}
+
+	private static void DelayedInitialization()
+	{
+		// For some reason, it happens that Resources.Load is not usable yet when this method is called the first time
+		// Thus this method is called again afterwards if needed
+		if (!_LoadAnimationFolderMapping())
+			return;
+
 		if (Configuration.Mod.GenerateFileList != 0)
 		{
 			String[] modFolders = Configuration.Mod.GenerateFileList == 1 ? Configuration.Mod.FolderNames : Configuration.Mod.Priorities;
@@ -87,18 +98,14 @@ public static class AssetManager
 		}
 		foreach (AssetFolder folder in FolderHighToLow)
 			folder.ReadFileList();
-
-		_LoadAnimationFolderMapping(true);
+		AssetManager.IsFullyInitialized = true;
 	}
 
-	private static void _LoadAnimationFolderMapping(Boolean suppressMissingError = false)
+	private static Boolean _LoadAnimationFolderMapping()
 	{
-		// Because FolderHighToLow/FolderLowToHigh are requested very soon in the game initialization now,
-		// it happens that Resources.Load is not usable yet when this method is called the first time
-		// Thus this method is called again afterwards if needed
-		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", suppressMissingError);
+		String filestr = LoadString("EmbeddedAsset/Manifest/Animations/AnimationFolderMapping.txt", true);
 		if (filestr == null)
-			return;
+			return false;
 		AnimationInFolder = new Dictionary<String, List<String>>();
 		AnimationReverseFolder = new Dictionary<String, String>();
 		String[] folderList = filestr.Split('\n');
@@ -120,6 +127,7 @@ public static class AssetManager
 			}
 			AnimationInFolder.Add(geoFolder, animFolderList);
 		}
+		return true;
 	}
 
 	private static void GenerateFileList(String folder)
@@ -216,7 +224,7 @@ public static class AssetManager
 	public static void UpdateAutoAnimMapping(String modelName, String[] addedAnimList)
 	{
 		if (AssetManager.AnimationInFolder == null)
-			_LoadAnimationFolderMapping();
+			DelayedInitialization();
 		List<String> modelAnimList;
 		String animDir = "Animations/" + modelName;
 		String animPath, animModelName;
@@ -559,6 +567,8 @@ public static class AssetManager
 
 	public static T Load<T>(String name, Boolean suppressMissingError = false) where T : UnityEngine.Object
 	{
+		if (AssetManager.AnimationInFolder == null)
+			DelayedInitialization();
 		T mainFile = LoadMultiple<T>(name).FirstOrDefault();
 		if (mainFile == null && !suppressMissingError)
 			Log.Message("[AssetManager] Memoria asset not found: " + name);
@@ -575,6 +585,8 @@ public static class AssetManager
 
 	public static Byte[] LoadBytes(String name, Boolean suppressMissingError = false)
 	{
+		if (AssetManager.AnimationInFolder == null)
+			DelayedInitialization();
 		Byte[] mainFile = LoadBytesMultiple(name).FirstOrDefault();
 		if (mainFile == null && !suppressMissingError)
 			Log.Message("[AssetManager] Memoria asset not found: " + name);
@@ -685,7 +697,7 @@ public static class AssetManager
 		if (!UseBundles)
 			return Resources.LoadAll<T>(AnimationFactory.GetRenameAnimationDirectory(name));
 		if (AssetManager.AnimationInFolder == null)
-			_LoadAnimationFolderMapping();
+			DelayedInitialization();
 		if (AnimationInFolder.ContainsKey(name))
 		{
 			List<String> clipNameList = AnimationInFolder[name];
@@ -753,6 +765,7 @@ public static class AssetManager
 		"p0data7.bin"
 	};
 
+	public static Boolean IsFullyInitialized;
 	public static Boolean UseBundles;
 	public static Boolean ForceUseBundles;
 
