@@ -441,20 +441,11 @@ public class GeoTexAnim : HonoBehavior
 	public static void addTexAnim(GameObject go, String geoName)
 	{
 		GeoTexAnim geoTexAnim = go.AddComponent<GeoTexAnim>();
-		Int32 mainTextureIndex = 1;
-		Int32 subTextureIndex = 1;
-		Int32 scale = 1;
-		if (ModelFactory.HaveUpScaleModel(geoName))
-		{
-			scale = 4;
-		}
-		UInt16 num = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
-		Boolean flag = num >= 10300;
-		if (geoName.Equals("GEO_MAIN_F0_GRN") && flag)
-		{
+		Int32 scale = ModelFactory.HaveUpScaleModel(geoName) ? 4 : 1;
+		Boolean garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
+		if (geoName.Equals("GEO_MAIN_F0_GRN") && garnetShortHair)
 			geoName = "GEO_MAIN_F1_GRN";
-		}
-		GeoTexAnim.SetTexAnimIndex(geoName, out mainTextureIndex, out subTextureIndex);
+		GeoTexAnim.SetTexAnimIndex(geoName, out Int32 mainTextureIndex, out Int32 subTextureIndex);
 		geoTexAnim.Load("Models/GeoTexAnim/" + geoName, mainTextureIndex, subTextureIndex, scale);
 	}
 

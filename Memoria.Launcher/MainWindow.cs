@@ -26,8 +26,11 @@ namespace Memoria.Launcher
                 // Official version since Aug 6, 2020:                          1.0.7141.27878
                 // Memoria versions based on it until Nov 11, 2022 (included):  1.0.7141.27878
                 // Memoria versions after it:                                   1.1.*
-                Version assemblyVersion = Assembly.LoadFile(Path.GetFullPath(".") + ASSEMBLY_CSHARP_PATH).GetName().Version;
+                AppDomain csharpDomain = AppDomain.CreateDomain("AssemblyTemp");
+                Assembly csharpDll = csharpDomain.Load(Path.GetFullPath(".") + ASSEMBLY_CSHARP_PATH);
+                Version assemblyVersion = csharpDll.GetName().Version;
                 MemoriaAssemblyCompileDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
+                AppDomain.Unload(csharpDomain);
             }
             catch (Exception err)
 			{

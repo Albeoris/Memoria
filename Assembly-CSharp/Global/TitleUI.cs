@@ -11,6 +11,7 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Scenes;
+using Memoria.Speedrun;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -1014,6 +1015,7 @@ public class TitleUI : UIScene
 
     public void ShowMenuPanel()
     {
+        AutoSplitterPipe.SignalLoadEnd();
         if (Configuration.Debug.StartModelViewer)
 		{
             OnNewGameButtonClick();
@@ -1075,6 +1077,7 @@ public class TitleUI : UIScene
 
     private void OnNewGameButtonClick()
     {
+        AutoSplitterPipe.SignalGameStart();
         FF9Sfx.FF9SFX_Play(3096);
         FadingComponent.fadeInDuration = 2f;
         this.Hide(delegate

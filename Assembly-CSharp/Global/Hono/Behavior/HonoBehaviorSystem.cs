@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using UnityEngine;
 using Memoria;
+using Memoria.Speedrun;
 
 public class HonoBehaviorSystem : MonoBehaviour
 {
@@ -170,6 +171,8 @@ public class HonoBehaviorSystem : MonoBehaviour
 			FPSManager.AddSmoothEffect(SmoothFrameUpdater_Field.Apply);
 		else if (inWorld)
 			FPSManager.AddSmoothEffect(SmoothFrameUpdater_World.Apply);
+		if (FPSManager.MainLoopUpdateCount > 0 && SpeedrunSettings.LogGameTimeEnabled)
+			FF9StateSystem.Settings.UpdateTickTime();
 	}
 
 	private void LateUpdate()

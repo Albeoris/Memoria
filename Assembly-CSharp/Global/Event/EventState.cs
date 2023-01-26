@@ -11,6 +11,16 @@ public class EventState : MonoBehaviour
 
 	public Dictionary<BattleAbilityId, Int32> gAbilityUsage = new Dictionary<BattleAbilityId, Int32>();
 
+	public Int32 ScenarioCounter
+	{
+		get => gEventGlobal[1] << 8 | gEventGlobal [0];
+		set
+		{
+			gEventGlobal[0] = (Byte)(value & 0xFF);
+			gEventGlobal[1] = (Byte)(value >> 8 & 0xFF);
+		}
+	}
+
 	public Int32 GetAAUsageCounter(BattleAbilityId abilityId)
 	{
 		if (gAbilityUsage.TryGetValue(abilityId, out Int32 result))

@@ -6,6 +6,7 @@ using System.Threading;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
+using Memoria.Speedrun;
 using SiliconStudio;
 using UnityEngine;
 
@@ -73,6 +74,7 @@ namespace Assets.Scripts.Common
 				EventInput.ClearPadMask();
 			}
 			PersistenSingleton<SceneDirector>.Instance.NextScene = nextScene;
+			AutoSplitterPipe.SignalLoadStart();
 			Application.LoadLevel("Loading");
 			Resources.UnloadUnusedAssets();
 			//GC.Collect();
@@ -97,7 +99,8 @@ namespace Assets.Scripts.Common
 	                throw new ArgumentException(nameof(nextScene));
 
                 Application.LoadLevel(this.NextScene);
-	        }
+				AutoSplitterPipe.SignalLoadEnd();
+			}
 	        catch (Exception ex)
 	        {
 	            Log.Error(ex, "Failed to load next scene.");
@@ -284,6 +287,9 @@ namespace Assets.Scripts.Common
 
 		private void ChangeScene()
 		{
+			AutoSplitterPipe.SignalLoadStart();
+			if (this.CurrentScene == SceneDirector.BattleMapSceneName)
+				AutoSplitterPipe.SignalBattleEnd();
 			Application.LoadLevel("Loading");
 			Resources.UnloadUnusedAssets();
 			//GC.Collect();

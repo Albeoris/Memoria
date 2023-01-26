@@ -40,6 +40,7 @@ namespace Memoria
         public static Int32 AbilityUsage(BattleAbilityId index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
         public static Int32 ItemCount(Int32 id) => ff9item.FF9Item_GetCount_Generic(id);
         public static Byte[] GeneralVariable => FF9StateSystem.EventState.gEventGlobal;
+        public static Int32 ScenarioCounter => FF9StateSystem.EventState.ScenarioCounter;
 
         public static UInt32 Gil
         {

@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Test;
 using Memoria.Prime.Text;
+using Memoria.Test;
+using Memoria.Speedrun;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -277,6 +278,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     public void ConfirmQuit()
     {
+        AutoSplitterPipe.SignalLoadStart(); // Pause the in-game time when closing the program
         quitConfirm = true;
         BroadcastAll("OnQuit");
         Application.Quit();

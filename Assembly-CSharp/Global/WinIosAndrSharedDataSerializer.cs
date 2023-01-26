@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Prime;
+using Memoria.Speedrun;
 using SiliconStudio;
 using SimpleJSON;
 using UnityEngine;
@@ -54,7 +55,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void Load(Int32 slotID, Int32 saveID, ISharedDataSerializer.OnSaveLoadStart onStartDelegate, ISharedDataSerializer.OnLoadFinish onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.previewSlotCache = (SharedDataPreviewSlot)null;
+		this.previewSlotCache = null;
 		this.slotIDCache = slotID;
 		this.saveIDCache = saveID;
 		this.onSaveLoadStartDelegate = onStartDelegate;
@@ -82,6 +83,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 		{
 			this.Parser.ParseToFF9StateSystem(rootNode);
 			this.onLoadFinishDelegate(ISharedDataSerializer.LastErrno, slotID, saveID, true);
+			AutoSplitterPipe.SignalGameResume();
 		}
 	}
 
@@ -111,9 +113,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 		this.onAutosaveAutoloadStartDelegate = onStartDelegate;
 		this.onAutoloadFinishDelegate = onFinishDelegate;
 		if (this.onAutosaveAutoloadStartDelegate != null)
-		{
 			this.onAutosaveAutoloadStartDelegate(ISharedDataSerializer.LastErrno);
-		}
 		base.StartCoroutine(this.AutoloadWithCoroutine());
 	}
 
@@ -134,6 +134,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 			this.Parser.ParseToFF9StateSystem(rootNode);
 			SharedSerializerEvent.DidAutoload();
 			this.onAutoloadFinishDelegate(ISharedDataSerializer.LastErrno, true);
+			AutoSplitterPipe.SignalGameResume();
 		}
 	}
 

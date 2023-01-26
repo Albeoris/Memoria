@@ -333,7 +333,12 @@
     <Compile Include="Global\Card\CardUI.cs" />
     <Compile Include="Global\ff9\State\FF9StateGlobal.FrogHandler.cs" />
     <Compile Include="Global\Field\Map\NarrowMapList.cs" />
+    <Compile Include="Memoria\Configuration\Access\Speedrun.cs" />
+    <Compile Include="Memoria\Configuration\Structure\SpeedrunSection.cs" />
     <Compile Include="Memoria\Data\Battle\RegularItem.cs" />
+    <Compile Include="Memoria\Speedrun\AutoSplitterPipe.cs" />
+    <Compile Include="Memoria\Speedrun\Split.cs" />
+    <Compile Include="Memoria\Speedrun\SpeedrunSettings.cs" />
     <Compile Include="Memoria\VoiceActing\BattleVoice.cs" />
     <Compile Include="Memoria\VoiceActing\VoicePlayer.cs" />
     <Compile Include="Global\TileSystem\TileSystem.cs" />

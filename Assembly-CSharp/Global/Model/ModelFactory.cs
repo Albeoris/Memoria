@@ -114,7 +114,7 @@ public class ModelFactory
             else if (Configuration.Graphics.GarnetHair == 2)
 		        garnetShortHair = true;
 		    else
-		        garnetShortHair = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0) >= 10300;
+		        garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
 
             if (garnetShortHair)
 			{

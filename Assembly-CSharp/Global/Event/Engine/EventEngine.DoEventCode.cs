@@ -727,8 +727,7 @@ public partial class EventEngine
                     if (ModelFactory.garnetShortHairTable.Contains(str))
                     {
                         po.garnet = true;
-                        UInt16 scCounter = BitConverter.ToUInt16(FF9StateSystem.EventState.gEventGlobal, 0);
-                        po.shortHair = scCounter >= 10300;
+                        po.shortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
                     }
                     if (po.go != null)
                     {

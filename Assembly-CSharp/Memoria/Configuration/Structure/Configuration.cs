@@ -22,6 +22,7 @@ namespace Memoria
         private volatile AudioSection _audio;
         private volatile VoiceActingSection _voiceActing;
         private volatile SaveFileSection _saves;
+        private volatile SpeedrunSection _speedrun;
         private volatile DebugSection _debug;
 
         public Configuration()
@@ -42,6 +43,7 @@ namespace Memoria
             BindingSection(out _audio, v => _audio = v);
             BindingSection(out _voiceActing, v => _voiceActing = v);
             BindingSection(out _saves, v => _saves = v);
+            BindingSection(out _speedrun, v => _speedrun = v);
             BindingSection(out _debug, v => _debug = v);
         }
     }

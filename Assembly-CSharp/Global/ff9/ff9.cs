@@ -7463,7 +7463,7 @@ public static class ff9
 		ff9.w_naviFadeInTime = (!ff9.w_setNaviFadeInTime) ? 20u : ff9.w_naviFadeInTime;
 		ff9.w_naviPointLoc = 63;
 		ff9.w_naviPointLocFlg = false;
-		ff9.w_naviLocationDraw = 3;
+		ff9.w_naviLocationDraw = ff9.WorldTitleCloseMode;
 		ff9.w_naviCursolDraw = true;
 		ff9.w_naviDrawItems = true;
 		ff9.w_setNaviFadeInTime = false;

@@ -3,6 +3,7 @@ using System.Linq;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Speedrun;
 
 public class btl_scrp
 {
@@ -757,6 +758,7 @@ public class btl_scrp
 		switch (id)
 		{
 		case 32u: // Disable ATB
+			AutoSplitterPipe.SignalBattleStop();
 			UIManager.Battle.FF9BMenu_EnableMenu(false);
 			ff9Battle.btl_escape_key = 0;
 			ff9Battle.cmd_status &= 65533;

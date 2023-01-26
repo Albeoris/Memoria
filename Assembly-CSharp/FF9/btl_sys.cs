@@ -1,6 +1,7 @@
 ﻿using System;
 using Memoria;
 using Memoria.Data;
+using Memoria.Speedrun;
 using System.Collections.Generic;
 
 // ReSharper disable InconsistentNaming
@@ -53,22 +54,22 @@ namespace FF9
         public static void CheckBattlePhase(BTL_DATA btl)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            Int32 num1 = 6; /*btl.bi.player == 0 ? 6 : 6*/
+            Int32 dieSeqEnd = 6; /*btl.bi.player == 0 ? 6 : 6*/
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatus.BattleEnd) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != num1))
+                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatus.BattleEnd) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
                     return;
             if (btl.bi.player == 0)
             {
-                Int32 num2 = 0;
+                Boolean playerStillAliver = false;
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
                     if (next.bi.player != 0 && (!btl_stat.CheckStatus(next, BattleStatus.BattleEnd) || (next.cur.hp == 0 || Status.checkCurStat(next, BattleStatus.Death)) && btl_stat.CheckStatus(next, BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
                     {
-                        num2 = 1;
+                        playerStillAliver = true;
                         break;
                     }
                 }
-                if (num2 == 0)
+                if (!playerStillAliver)
                     return;
                 if (ff9Battle.btl_seq != 1)
                     ff9Battle.btl_seq = 0;
@@ -77,26 +78,23 @@ namespace FF9
             {
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    switch (btl_util.getSerialNumber(next))
+                    CharacterSerialNumber serialNo = btl_util.getSerialNumber(next);
+                    if (serialNo == CharacterSerialNumber.EIKO_FLUTE || serialNo == CharacterSerialNumber.EIKO_KNIFE)
                     {
-                        case CharacterSerialNumber.EIKO_FLUTE:
-                        case CharacterSerialNumber.EIKO_KNIFE:
-                            if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Stop))
+                        if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Stop))
+                        {
+                            if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
+                                return;
+                            if (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
                             {
-                                if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
-                                    return;
-                                if (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
-                                {
-                                    UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                    btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
-                                    return;
-                                }
-                                break;
+                                UIManager.Battle.FF9BMenu_EnableMenu(true);
+                                btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
+                                return;
                             }
-                            goto label_24;
+                        }
+                        break;
                     }
                 }
-                label_24:
                 ff9Battle.btl_seq = 1;
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.Annihilated);
             }
@@ -133,6 +131,7 @@ namespace FF9
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 if (next.bi.player == 0 && !Status.checkCurStat(next, BattleStatus.Death))
                     return;
+            AutoSplitterPipe.SignalBattleWin();
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             btl_cmd.KillNormalCommand(ff9Battle);
             ff9Battle.btl_escape_key = 0;

@@ -6,6 +6,7 @@ using System;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Speedrun;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -171,6 +172,7 @@ public class SettingsState : MonoBehaviour
         Double num = Time.time;
         time = Math.Min(time + (num - StartGameTime), 2160001.0);
         StartGameTime = num;
+        SpeedrunSettings.LogGameTime();
     }
 
     public String GetSystemLanguage()

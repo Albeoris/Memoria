@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Memoria.Data;
+using Memoria.Speedrun;
 using UnityEngine;
 
 public partial class FF9StateGlobal
@@ -891,7 +892,41 @@ public partial class FF9StateGlobal
 	public const Int32 FF9_SIZE_OT = 4096;
 	public const Int32 FF9_BUFFER_COUNT = 2;
 
+	public Int16 fldMapNo
+	{
+		get => _fldMapNo;
+		set
+		{
+			previousFldWldMapNo = currentFldWldMapNo;
+			currentFldWldMapNo = _fldMapNo = value;
+			AutoSplitterPipe.SignalFieldChange();
+		}
+	}
+
+	public Int16 wldMapNo
+	{
+		get => _wldMapNo;
+		set
+		{
+			previousFldWldMapNo = currentFldWldMapNo;
+			currentFldWldMapNo = _wldMapNo = value;
+			AutoSplitterPipe.SignalFieldChange();
+		}
+	}
+
+	public Int16 btlMapNo
+	{
+		get => _btlMapNo;
+		set
+		{
+			previousBtlMapNo = _btlMapNo;
+			_btlMapNo = value;
+		}
+	}
+
 	public IEnumerable<PLAYER> PlayerList => player.Values;
+	public Dictionary<CharacterId, PLAYER> player;
+	public PARTY_DATA party;
 
 	public UInt32 attr;
 
@@ -903,52 +938,35 @@ public partial class FF9StateGlobal
 
 	public UInt16 proj;
 
-	public Int16 fldMapNo;
-
-	public Int16 btlMapNo;
+	public Int16 currentFldWldMapNo;
+	public Int16 previousFldWldMapNo;
+	public Int16 previousBtlMapNo;
+	public Int16 fldLocNo;
+	public Int16 wldLocNo;
+	public SByte btlSubMapNo;
+	public String mapNameStr;
 
 	public Matrix4x4 cam;
 
 	public Byte npcCount;
-
 	public Byte npcUsed;
 
-	public Int16 fldLocNo;
-
-	public Dictionary<CharacterId, PLAYER> player;
-
-	public PARTY_DATA party;
-
 	public FrogHandler Frogs;
-
 	public Int16 steal_no;
-
 	public Int16 dragon_no;
 
 	public Byte btl_result; // FF9.battle_result
-
 	public Byte btl_flag;
-
 	public Byte btl_rain;
-
 	public Byte steiner_state;
 
 	public List<FF9ITEM> item;
-
 	public HashSet<Int32> rare_item_obtained;
 	public HashSet<Int32> rare_item_used;
-
-	public SByte btlSubMapNo;
-
-	public Int16 wldMapNo;
-
-	public Int16 wldLocNo;
 
 	public UInt16 miniGameArg;
 
 	public Int32 hintmap_id;
-
-	public String mapNameStr;
 
 	public ff9.sworldState worldState = new ff9.sworldState();
 
@@ -961,4 +979,8 @@ public partial class FF9StateGlobal
 	public CharInitFuncPtr charInitFuncPtr;
 
 	public Dictionary<Int32, FF9Char> charArray;
+
+	private Int16 _fldMapNo;
+	private Int16 _wldMapNo;
+	private Int16 _btlMapNo;
 }

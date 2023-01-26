@@ -168,7 +168,7 @@ namespace NCalc
             else if (name == "CurrentEnemyCount") args.Result = Memoria.BattleState.BattleUnitCount(false);
             else if (name == "IsBattlePreemptive") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK;
             else if (name == "IsBattleBackAttack") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK;
-            else if (name == "ScenarioCounter") args.Result = (Int32)((FF9StateSystem.EventState.gEventGlobal[1] << 8) | FF9StateSystem.EventState.gEventGlobal[0]);
+            else if (name == "ScenarioCounter") args.Result = (Int32)GameState.ScenarioCounter;
             else if (name == "UseSFXRework") args.Result = Configuration.Battle.SFXRework;
             else
 			{
