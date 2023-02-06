@@ -1,6 +1,5 @@
 ﻿using System;
 using Memoria;
-using Memoria.Prime;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -9,18 +8,24 @@ public class UISprite : UIBasicSprite
 {
 	public override Material material
 	{
+		get => this.mAtlas?.spriteMaterial;
+	}
+
+	public override Texture mainTexture
+	{
 		get
 		{
-			return (!(this.mAtlas != (UnityEngine.Object)null)) ? null : this.mAtlas.spriteMaterial;
+			if (this.mSprite == null)
+				this.mSprite = this.atlas.GetSprite(this.spriteName);
+			if (this.mSprite != null && this.mSprite.texture != null)
+				return this.mSprite.texture;
+			return this.material?.mainTexture;
 		}
 	}
 
 	public UIAtlas atlas
 	{
-		get
-		{
-			return this.mAtlas;
-		}
+		get => this.mAtlas;
 		set
 		{
 			if (this.mAtlas != value)
@@ -28,8 +33,8 @@ public class UISprite : UIBasicSprite
 				base.RemoveFromPanel();
 				this.mAtlas = value;
 				this.mSpriteSet = false;
-				this.mSprite = (UISpriteData)null;
-				if (String.IsNullOrEmpty(this.mSpriteName) && this.mAtlas != (UnityEngine.Object)null && this.mAtlas.spriteList.Count > 0)
+				this.mSprite = null;
+				if (String.IsNullOrEmpty(this.mSpriteName) && this.mAtlas != null && this.mAtlas.spriteList.Count > 0)
 				{
 					this.SetAtlasSprite(this.mAtlas.spriteList[0]);
 					this.mSpriteName = this.mSprite.name;
@@ -47,27 +52,24 @@ public class UISprite : UIBasicSprite
 
 	public String spriteName
 	{
-		get
-		{
-			return this.mSpriteName;
-		}
+		get => this.mSpriteName;
 		set
 		{
 			if (String.IsNullOrEmpty(value))
 			{
 				if (String.IsNullOrEmpty(this.mSpriteName))
-				{
 					return;
-				}
 				this.mSpriteName = String.Empty;
-				this.mSprite = (UISpriteData)null;
+				this.mSprite = null;
 				this.mChanged = true;
 				this.mSpriteSet = false;
 			}
 			else if (this.mSpriteName != value)
 			{
+				if (!String.IsNullOrEmpty(this.mSpriteName) && this.drawCall != null)
+					this.panel.RebuildAllDrawCalls();
 				this.mSpriteName = value;
-				this.mSprite = (UISpriteData)null;
+				this.mSprite = null;
 				this.mChanged = true;
 				this.mSpriteSet = false;
 			}
@@ -76,24 +78,18 @@ public class UISprite : UIBasicSprite
 
 	public Boolean isValid
 	{
-		get
-		{
-			return this.GetAtlasSprite() != (UISpriteData)null;
-		}
+		get => this.GetAtlasSprite() != null;
 	}
 
 	[Obsolete("Use 'centerType' instead")]
 	public Boolean fillCenter
 	{
-		get
-		{
-			return this.centerType != UIBasicSprite.AdvancedType.Invisible;
-		}
+		get => this.centerType != UIBasicSprite.AdvancedType.Invisible;
 		set
 		{
 			if (value != (this.centerType != UIBasicSprite.AdvancedType.Invisible))
 			{
-				this.centerType = (UIBasicSprite.AdvancedType)((!value) ? UIBasicSprite.AdvancedType.Invisible : UIBasicSprite.AdvancedType.Sliced);
+				this.centerType = value ? UIBasicSprite.AdvancedType.Sliced : UIBasicSprite.AdvancedType.Invisible;
 				this.MarkAsChanged();
 			}
 		}
@@ -105,19 +101,14 @@ public class UISprite : UIBasicSprite
 		{
 			UISpriteData atlasSprite = this.GetAtlasSprite();
 			if (atlasSprite == null)
-			{
 				return base.border;
-			}
-			return new Vector4((Single)atlasSprite.borderLeft, (Single)atlasSprite.borderBottom, (Single)atlasSprite.borderRight, (Single)atlasSprite.borderTop);
+			return new Vector4(atlasSprite.borderLeft, atlasSprite.borderBottom, atlasSprite.borderRight, atlasSprite.borderTop);
 		}
 	}
 
 	public override Single pixelSize
 	{
-		get
-		{
-			return (!(this.mAtlas != (UnityEngine.Object)null)) ? 1f : this.mAtlas.pixelSize;
-		}
+		get => this.mAtlas == null ? 1f : this.mAtlas.pixelSize;
 	}
 
 	public override Int32 minWidth
@@ -130,15 +121,14 @@ public class UISprite : UIBasicSprite
 
             if (this.type == UIBasicSprite.Type.Sliced || this.type == UIBasicSprite.Type.Advanced)
 			{
-				Single pixelSize = this.pixelSize;
-				Vector4 vector = this.border * this.pixelSize;
-				Int32 num = Mathf.RoundToInt(vector.x + vector.z);
+				Vector4 pixelBorder = this.border * this.pixelSize;
+				Int32 widthResult = Mathf.RoundToInt(pixelBorder.x + pixelBorder.z);
 				UISpriteData atlasSprite = this.GetAtlasSprite();
 				if (atlasSprite != null)
-				{
-					num += Mathf.RoundToInt(pixelSize * (Single)(atlasSprite.paddingLeft + atlasSprite.paddingRight));
-				}
-				return Mathf.Max(base.minWidth, (Int32)(((num & 1) != 1) ? num : (num + 1)));
+					widthResult += Mathf.RoundToInt(this.pixelSize * (atlasSprite.paddingLeft + atlasSprite.paddingRight));
+				if ((widthResult & 1) == 1)
+					widthResult++;
+				return Mathf.Max(base.minWidth, widthResult);
 			}
 			return base.minWidth;
 		}
@@ -150,14 +140,14 @@ public class UISprite : UIBasicSprite
 		{
 			if (this.type == UIBasicSprite.Type.Sliced || this.type == UIBasicSprite.Type.Advanced)
 			{
-				Vector4 vector = this.border * this.pixelSize;
-				Int32 num = Mathf.RoundToInt(vector.y + vector.w);
+				Vector4 pixelBorder = this.border * this.pixelSize;
+				Int32 heightResult = Mathf.RoundToInt(pixelBorder.y + pixelBorder.w);
 				UISpriteData atlasSprite = this.GetAtlasSprite();
 				if (atlasSprite != null)
-				{
-					num += atlasSprite.paddingTop + atlasSprite.paddingBottom;
-				}
-				return Mathf.Max(base.minHeight, (Int32)(((num & 1) != 1) ? num : (num + 1)));
+					heightResult += atlasSprite.paddingTop + atlasSprite.paddingBottom;
+				if ((heightResult & 1) == 1)
+					heightResult++;
+				return Mathf.Max(base.minHeight, heightResult);
 			}
 			return base.minHeight;
 		}

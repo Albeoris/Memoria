@@ -27,6 +27,7 @@ namespace Memoria.Assets.TexturePacker
         private Int32 _textureHeight;
         private LinkedList<Sprite> _sprites;
         private LinkedList<SpriteSheet.Info> _spriteInfos;
+        private Boolean _appendTexture;
 
         public TPSpriteSheetLoader(String tpsheetPath)
         {
@@ -63,7 +64,8 @@ namespace Memoria.Assets.TexturePacker
                 {
                     name = "TPSheet_" + _textureName + Interlocked.Increment(ref _counter),
                     sheet = _sprites.ToArray(),
-                    info = _spriteInfos.ToArray()
+                    info = _spriteInfos.ToArray(),
+                    appendTexture = _appendTexture
                 };
             }
             finally
@@ -75,6 +77,7 @@ namespace Memoria.Assets.TexturePacker
                 _textureHeight = 0;
                 _texture = null;
                 _sprites = null;
+                _appendTexture = false;
             }
         }
 
@@ -119,6 +122,9 @@ namespace Memoria.Assets.TexturePacker
                     case ":normalmap":
                         ParseNormalMapValue(pair);
                         break;
+                    case ":append":
+                        ParseAppendValue(pair);
+                        break;
                     default:
                         Log.Warning("An unknown tpsheet config occurred: " + line);
                         break;
@@ -152,6 +158,11 @@ namespace Memoria.Assets.TexturePacker
         private void ParseNormalMapValue(String[] pair)
         {
             _normalMapName = pair[1];
+        }
+
+        private void ParseAppendValue(String[] pair)
+        {
+            _appendTexture = Boolean.Parse(pair[1]);
         }
 
         private void ReadSprite()
