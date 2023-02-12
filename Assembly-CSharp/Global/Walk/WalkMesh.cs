@@ -2614,6 +2614,20 @@ public class WalkMesh
 		return edgeNdx != -1;
 	}
 
+	public Single GetTriangleSlopeFactor(Int32 triangleIndex)
+	{
+		if (triangleIndex >= 0)
+		{
+			Int32 activeNormalNdx = this.fieldMap.bgi.triList[triangleIndex].normalNdx;
+			if (activeNormalNdx >= 0)
+			{
+				Vector3 activeNormal = this.fieldMap.bgi.normalList[activeNormalNdx].ToVector3();
+				return Math.Abs(Vector3.Dot(activeNormal.normalized, Vector3.up));
+			}
+		}
+		return 1f;
+	}
+
 	public List<WalkMeshTriangle>[] trisPerCamera;
 
 	public List<WalkMeshTriangle> tris;

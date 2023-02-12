@@ -25,6 +25,7 @@ namespace Memoria
             public readonly IniArray<String> DialogProgressButtons;
             public readonly IniValue<Boolean> WrapSomeMenus;
             public readonly IniValue<Boolean> ScrollLikePSX;
+            public readonly IniValue<Boolean> PSXMovementMethod;
 
             public ControlSection() : base(nameof(ControlSection), true)
             {
@@ -32,6 +33,7 @@ namespace Memoria
                 DialogProgressButtons = BindStringArray(nameof(DialogProgressButtons), new String[1] { "Confirm" });
                 WrapSomeMenus = BindBoolean(nameof(WrapSomeMenus), true);
                 ScrollLikePSX = BindBoolean(nameof(ScrollLikePSX), true);
+                PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
             }
         }
     }

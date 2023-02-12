@@ -13,6 +13,7 @@ namespace Memoria
             public readonly IniValue<Int32> EncounterInterval;
             public readonly IniValue<Int32> EncounterInitial;
             public readonly IniValue<Boolean> PersistentDangerValue;
+            public readonly IniValue<Boolean> PSXEncounterMethod;
             public readonly IniValue<Int32> AutoPotionOverhealLimit;
             public readonly IniValue<Boolean> GarnetConcentrate;
             public readonly IniValue<Boolean> SelectBestTarget;
@@ -60,6 +61,7 @@ namespace Memoria
                 EncounterInterval = BindInt32(nameof(EncounterInterval), 960);
                 EncounterInitial = BindInt32(nameof(EncounterInitial), -1440);
                 PersistentDangerValue = BindBoolean(nameof(PersistentDangerValue), false);
+                PSXEncounterMethod = BindBoolean(nameof(PSXEncounterMethod), false);
                 AutoPotionOverhealLimit = BindInt32(nameof(AutoPotionOverhealLimit), -1);
                 GarnetConcentrate = BindBoolean(nameof(GarnetConcentrate), false);
                 SelectBestTarget = BindBoolean(nameof(SelectBestTarget), true);
