@@ -16,14 +16,8 @@ public partial class FieldMapActorController : HonoBehavior
 
 	public Int32 MoveFrame
 	{
-		get
-		{
-			return this.moveFrame;
-		}
-		set
-		{
-			this.moveFrame = value;
-		}
+		get => this.moveFrame;
+		set => this.moveFrame = value;
 	}
 
 	public void SetActive(Boolean active)
@@ -201,13 +195,15 @@ public partial class FieldMapActorController : HonoBehavior
 		Boolean dashInhibited = PersistenSingleton<EventEngine>.Instance.GetDashInh() == 1;
 		if (this.isPlayer && ((UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) || !analogControlEnabled && VirtualAnalog.GetMagnitudeRatio() > 0.95f || this.totalPathLengthSq > nearRadiusSq) && !dashInhibited)
 		{
+			// Running movement for the PC (60/tick) is done by moving twice at the walking speed (30/tick)
 			this.isRunning = true;
-			this.UpdateMovement();
-			this.UpdateMovement();
+			this.UpdateMovement(true);
+			// The PC's last position was already copied above; copying it again misleads the engine into thinking the distance travelled is ~twice shorter than it actually was (especially with respect to the encounter rate)
+			this.UpdateMovement(!Configuration.Battle.PSXEncounterMethod);
 		}
 		else
 		{
-			this.UpdateMovement();
+			this.UpdateMovement(true);
 		}
 		if (this.isPlayer && PersistenSingleton<EventEngine>.Instance.GetUserControl())
 			this.originalActor.speed = (Byte)(this.isRunning ? 60 : 30);
@@ -319,7 +315,7 @@ public partial class FieldMapActorController : HonoBehavior
 		base.HonoDefaultStopFastForwardMode();
 	}
 
-	public void UpdateMovement()
+	public void UpdateMovement(Boolean copyLastPos = true)
 	{
 		this.cTime = 0f;
 		this.isMoving = false;
@@ -332,7 +328,8 @@ public partial class FieldMapActorController : HonoBehavior
 				// or Prima Vista/Hallway (front of Steiner's cell), Steiner
 				// or L. Castle/Royal Chamber, Zidane
 				// or Treno/Pub, Dagger
-				this.CopyLastPos();
+				if (copyLastPos)
+					this.CopyLastPos();
 			}
 			this.MovePC();
 			if (FF9StateSystem.Common.FF9.fldMapNo == 916 && this.originalActor.uid == 10 && this.curPos.z > -15900f && this.curPos.z < -15700f && this.curPos.x < 130f)
@@ -349,7 +346,13 @@ public partial class FieldMapActorController : HonoBehavior
 		else
 		{
 			if ((FF9StateSystem.Common.FF9.fldMapNo == 2050 && this.originalActor.sid == 5) || (FF9StateSystem.Common.FF9.fldMapNo == 350 && this.originalActor.sid == 11) || (FF9StateSystem.Common.FF9.fldMapNo == 1315 && this.originalActor.sid == 12))
-				this.CopyLastPos(); // (Alexandria/Main Street, Mistodon) or (Dali/Village Road, Dali_GirlA) or (Lindblum/Town Walls, Lindblum_Soldier)
+			{
+				// Alexandria/Main Street, Mistodon
+				// or Dali/Village Road, Dali_GirlA
+				// or Lindblum/Town Walls, Lindblum_Soldier
+				if (copyLastPos)
+					this.CopyLastPos();
+			}
 			this.MoveNPC();
 		}
 		Int32 movementFlags = 0;
@@ -742,6 +745,9 @@ public partial class FieldMapActorController : HonoBehavior
 				actualMoveVec = Vector3.zero;
 		}
 
+		if (Configuration.Control.PSXMovementMethod)
+			actualMoveVec *= this.fieldMap.walkMesh.GetTriangleSlopeFactor(this.activeTri);
+
 		this.curPos += actualMoveVec;
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		// Prevent rotation if below threshold
@@ -908,7 +914,11 @@ public partial class FieldMapActorController : HonoBehavior
 		{
 			this.moveVec = Vector3.zero;
 		}
-		this.curPos += this.moveVec * this.speed;
+
+		Vector3 actualMoveVec = this.moveVec * this.speed;
+		if (Configuration.Control.PSXMovementMethod)
+			actualMoveVec *= this.fieldMap.walkMesh.GetTriangleSlopeFactor(this.activeTri);
+		this.curPos += actualMoveVec;
 	}
 
 	public void SetTwist(Int32 twistA, Int32 twistD)
