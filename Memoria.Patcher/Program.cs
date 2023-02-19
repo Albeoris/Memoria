@@ -269,7 +269,7 @@ namespace Memoria.Patcher
 
         private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
 		{
-            List<String> mergedIni = new List<String>(previousIni);
+            List<String> mergedIni = new List<String>(previousIni.Where(line => !line.StartsWith("\t; "))); // In order to have a persisting custom comment, the user must use a slightly different format than "	; " (eg. "	;; ")
             String currentSection = "";
             Int32 sectionFirstLine = 0;
             Int32 sectionLastLine = 0;
@@ -314,7 +314,7 @@ namespace Memoria.Patcher
                 }
                 else
                 {
-                    String fieldName = trimmedLine.Substring(0, trimmedLine.IndexOfAny(new char[] { ' ', '\t', '=' }));
+                    String fieldName = trimmedLine.Substring(0, trimmedLine.IndexOfAny(new Char[] { ' ', '\t', '=' }));
                     Boolean fieldKnown = false;
                     for (Int32 i = sectionFirstLine; i < sectionLastLine; i++)
                     {
