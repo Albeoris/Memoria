@@ -295,7 +295,7 @@ public class btlseq
 		{
 			btl.gameObject.transform.localRotation = btl.rot;
 		}
-		if ((!(HonoluluBattleMain.battleSceneName == "EF_E006") && !(HonoluluBattleMain.battleSceneName == "EF_E007")) || btl != FF9StateSystem.Battle.FF9Battle.btl_data[5])
+		if (!HonoluluBattleMain.IsAttachedModel(btl))
 			btl.gameObject.transform.localPosition = btl.pos;
 		btl_mot.PlayAnim(btl);
 		Boolean reverseSpeed = btl.animSpeed < 0f;

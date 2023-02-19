@@ -31,7 +31,7 @@ namespace Memoria
 					_cameraRegistered = false;
 					for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 					{
-						if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy)
+						if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 						{
 							next._smoothUpdateRegistered = false;
 							next._smoothUpdatePlayingAnim = false;
@@ -45,7 +45,7 @@ namespace Memoria
 		{
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy)
+				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 				{
 					if (next._smoothUpdateRegistered)
 					{
@@ -93,7 +93,7 @@ namespace Memoria
 			Single unclampedFactor = 1f + smoothFactor;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy)
+				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 				{
 					Vector3 frameMove = next._smoothUpdatePosActual - next._smoothUpdatePosPrevious;
 					if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
@@ -166,7 +166,7 @@ namespace Memoria
 				_skipCount--;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy)
+				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 				{
 					if (next._smoothUpdateRegistered)
 					{

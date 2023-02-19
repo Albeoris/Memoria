@@ -58,7 +58,8 @@ public class battle
         SFX.SetCameraPhase(1);
         FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
         ff9.btl_flag = 0;
-        ff9.GetPlayer(CharacterId.Steiner).info.serial_no = ff9.steiner_state == 0 ? CharacterSerialNumber.STEINER_OUTDOOR : CharacterSerialNumber.STEINER_INDOOR;
+        // "steiner_state" is never activated anyways, in none of any "ENCOUNT" or "ENCOUNT2" event script line
+        //ff9.GetPlayer(CharacterId.Steiner).info.serial_no = ff9.steiner_state == 0 ? CharacterSerialNumber.STEINER_OUTDOOR : CharacterSerialNumber.STEINER_INDOOR;
         ff9.btl_result = 0;
         btl_sys.InitBattleSystem();
         btl2d.Btl2dInit();

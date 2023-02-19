@@ -639,10 +639,71 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                     serializer.Autosave(null, (e, s) => { });
                 }
             }
+
+            // Hotfix: clear the party right after obtaining the Gulug Stone, even if "AllCharactersAvailable = 2" (field "Palace/Dungeon"); the script normally takes care of adding characters back
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2200 && FF9StateSystem.EventState.ScenarioCounter == 9790 && FF9StateSystem.EventState.FieldEntrance == 114)
+            {
+                ff9play.FF9Play_SetParty(0, CharacterId.NONE);
+                ff9play.FF9Play_SetParty(1, CharacterId.NONE);
+                ff9play.FF9Play_SetParty(2, CharacterId.NONE);
+                ff9play.FF9Play_SetParty(3, CharacterId.NONE);
+                this.SetupPartyUID();
+            }
+            // Hotfix: force the party to be exactly Oeilvert's team when bringing the Gulug Stone back (field "Palace/Hall")
+            // The player has the possibility to Alt+F2 hack the team on that screen: that can cause another soft-lock a bit later, so don't do that
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2207 && FF9StateSystem.EventState.ScenarioCounter == 9835)
+            {
+                CharacterId[] variableToCharacter = new CharacterId[]
+                {
+                    CharacterId.Garnet,
+                    CharacterId.Amarant,
+                    CharacterId.Quina,
+                    CharacterId.Freya,
+                    CharacterId.Vivi,
+                    CharacterId.Steiner,
+                    CharacterId.Eiko
+                };
+                Int32 memberIndex = 0;
+                ff9play.FF9Play_SetParty(memberIndex++, CharacterId.Zidane);
+                for (Int32 varIndex = 3536; varIndex <= 3542 && memberIndex < 4; varIndex++) // "VARL_GenBool_3536" etc.
+                    if (eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, varIndex, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
+                        ff9play.FF9Play_SetParty(memberIndex++, variableToCharacter[varIndex - 3536]);
+                this.SetupPartyUID();
+            }
+            // Hotfix: make sure there is at least one normal character for the Esto Gaza Priest cutscene (field "Esto Gaza/Altar")
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2301 && FF9StateSystem.EventState.ScenarioCounter == 9910)
+            {
+                Boolean shouldHack = !partychk((Int32)CharacterOldIndex.Garnet) && !partychk((Int32)CharacterOldIndex.Steiner) && !partychk((Int32)CharacterOldIndex.Freya) && !partychk((Int32)CharacterOldIndex.Quina) && !partychk((Int32)CharacterOldIndex.Amarant);
+                if (shouldHack)
+                {
+                    ff9play.FF9Play_SetParty(0, CharacterId.Zidane);
+                    ff9play.FF9Play_SetParty(1, CharacterId.Steiner);
+                    ff9play.FF9Play_SetParty(2, CharacterId.NONE);
+                    ff9play.FF9Play_SetParty(3, CharacterId.NONE);
+                }
+                this.SetupPartyUID();
+            }
+            // Hotfix: force a normal team for the cutscene at the bottom of Gulug (field "Gulug/Path")
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2362 && FF9StateSystem.EventState.ScenarioCounter == 9950 && eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, 3262, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
+            {
+                Boolean shouldHack = !partychk((Int32)CharacterOldIndex.Zidane) || !partychk((Int32)CharacterOldIndex.Vivi);
+                for (Int32 memberIndex = 0; memberIndex < 4; memberIndex++)
+                    if (FF9StateSystem.Common.FF9.party.GetCharacterId(memberIndex) == CharacterId.Eiko || FF9StateSystem.Common.FF9.party.GetCharacterId(memberIndex) > CharacterId.Amarant)
+                        shouldHack = true;
+                if (shouldHack)
+                {
+                    ff9play.FF9Play_SetParty(0, CharacterId.Zidane);
+                    ff9play.FF9Play_SetParty(1, CharacterId.Vivi);
+                    ff9play.FF9Play_SetParty(2, CharacterId.Steiner);
+                    ff9play.FF9Play_SetParty(3, CharacterId.Garnet);
+                }
+                this.SetupPartyUID();
+            }
+
             this.ProcessEvents();
         }
         this._context.inited = (Byte)this.gMode;
-        this._context.lastmap = this.gMode != 1 ? (this.gMode != 3 ? (UInt16)0 : (UInt16)this._ff9.wldMapNo) : (UInt16)this._ff9.fldMapNo;
+        this._context.lastmap = this.gMode == 1 ? (UInt16)this._ff9.fldMapNo : (this.gMode == 3 ? (UInt16)this._ff9.wldMapNo : (UInt16)0);
         br.Close();
 
         SpawnCustomChatacters();
@@ -674,17 +735,23 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private void SetupPartyUID()
     {
-        // Order is Zidane, Eiko, Steiner, Vivi, Freya, Amarant, Garnet, Beatrix (ie. Beatrix can only be the 4th event member slot, identified by uid 254)
+        // Order of script objects is Zidane, Vivi, Dagger, Steiner, Freya, Quina, Eiko, Amarant, Beatrix
+        // Order of priorities is Zidane, Eiko, Steiner, Vivi, Freya, Amarant, Garnet, Beatrix, others...
         Byte[] reorderArray1 = new Byte[9]{ 0, 6, 3, 1, 4, 5, 7, 2, 8 };
         Byte[] reorderArray2 = new Byte[9]{ 0, 3, 7, 2, 4, 5, 1, 6, 8 };
+        Dictionary<Int32, CharacterId> reorderToChar = new Dictionary<Int32, CharacterId>();
         Int32 charFlags = 0;
         for (Int32 index = 0; index < 4; ++index)
+        {
             this._context.partyUID[index] = Byte.MaxValue;
+            this._context.eventPartyMember[index] = CharacterId.NONE;
+        }
         for (Int32 index = 0; index < 4; ++index)
         {
             CharacterId memberId = this.eTb.GetPartyMember(index);
             Int32 memberIndex = ff9play.CharacterIDToEventId(memberId);
-            Boolean shouldHackCharacter = false; // https://github.com/Albeoris/Memoria/issues/3
+            Boolean shouldHack = false; // https://github.com/Albeoris/Memoria/issues/3
+            Boolean eikoAbducted = FF9StateSystem.EventState.IsEikoAbducted;
             if (memberIndex >= 0)
             {
                 // If Beatrix is in the team and she has no script, we make it so the engine thinks it's another member instead
@@ -692,64 +759,72 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 {
                     Byte BeatrixSID = (Byte)(this.sSourceObjN - 9 + memberIndex);
                     if (this.GetIP(BeatrixSID, 0, this.allObjsEBData[BeatrixSID]) == this.nil) // The Main function of the Beatrix entry doesn't exist
-                        shouldHackCharacter = true;
+                        shouldHack = true;
+                }
+                else if (memberIndex == (Int32)CharacterOldIndex.Eiko && eikoAbducted)
+                {
+                    shouldHack = true;
                 }
                 // Note that, as for all the 9 characters, the Beatrix entry is not dependant on the model used by the entry but rather on the fact that it is at the end of the entry list
                 // (Even in battle scripts, in which character entries are never used nor tied to the team's battle datas, 9 entry slots are reserved at the end of the entry list)
                 // *********************
             }
             else if (memberId != CharacterId.NONE)
-			{
+            {
                 // TODO: Maybe identify a field actor corresponding to a party member without event ID
                 //  (Cinna/Marcus/Blank after they were replaced, or a custom character)
                 //  using the actor's model ID instead... provided that we can identify that ID before running any event script
-                shouldHackCharacter = true;
+                shouldHack = true;
             }
-            if (shouldHackCharacter)
+            if (shouldHack)
             {
-                if (!partychk((Int32)CharacterOldIndex.Eiko) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Eiko])) == 0)
+                if (!eikoAbducted && !partychk((Int32)CharacterOldIndex.Eiko) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Eiko])) == 0)
                     memberIndex = (Int32)CharacterOldIndex.Eiko;
                 else if (!partychk((Int32)CharacterOldIndex.Steiner) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Steiner])) == 0)
                     memberIndex = (Int32)CharacterOldIndex.Steiner;
                 else if (!partychk((Int32)CharacterOldIndex.Vivi) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Vivi])) == 0)
                     memberIndex = (Int32)CharacterOldIndex.Vivi;
-                else
+                else if (!partychk((Int32)CharacterOldIndex.Freya) && (charFlags & (1 << reorderArray2[(Int32)CharacterOldIndex.Freya])) == 0)
                     memberIndex = (Int32)CharacterOldIndex.Freya;
+                else
+                    memberIndex = (Int32)CharacterOldIndex.Garnet;
             }
             if (memberIndex >= 0)
+            {
                 charFlags |= 1 << reorderArray2[memberIndex];
+                reorderToChar[reorderArray2[memberIndex]] = memberId;
+            }
         }
         Int32 partyIndex = 0;
         Int32 reorderIndex = 0;
         while (charFlags != 0)
         {
             if ((charFlags & 1) != 0)
-                this._context.partyUID[partyIndex++] = (Byte)(this.sSourceObjN - 9 + reorderArray1[reorderIndex]);
+            {
+                this._context.partyUID[partyIndex] = (Byte)(this.sSourceObjN - 9 + reorderArray1[reorderIndex]);
+                this._context.eventPartyMember[partyIndex] = reorderToChar[reorderIndex];
+                partyIndex++;
+            }
             ++reorderIndex;
             charFlags >>= 1;
         }
     }
 
-    public Int32 GetPartyPlayer(Int32 ix)
+    public CharacterId GetEventPartyPlayer(Int32 partyIndex)
     {
-        // Dummied
-        Int32 num = this._context.partyUID[ix] - (this.sSourceObjN - 9);
-        if (num >= 0 && num < 9)
-            return num;
-        return 0;
+        return this._context.eventPartyMember[partyIndex];
     }
 
     public Boolean partychk(Int32 x)
     {
         CharacterId charId = this.chr2slot(x);
-        Int32 index;
-        for (index = 0; index < 4; ++index)
+        for (Int32 index = 0; index < 4; ++index)
         {
             PLAYER player = FF9StateSystem.Common.FF9.party.member[index];
             if (player != null && player.info.slot_no == charId)
-                break;
+                return true;
         }
-        return index < 4;
+        return false;
     }
 
     public Boolean partyadd(Int32 x)

@@ -297,86 +297,76 @@ public static class NGUIText
 		Control control;
 		switch (parameterStr)
 		{
-		case "UP":
-			control = Control.Up;
-			goto IL_200;
-		case "DOWN":
-			control = Control.Down;
-			goto IL_200;
-		case "LEFT":
-			control = Control.Left;
-			goto IL_200;
-		case "RIGHT":
-			control = Control.Right;
-			goto IL_200;
-		case "CIRCLE":
-			if (checkConfig)
-			{
-				control = (Control)((!EventInput.IsJapaneseLayout) ? Control.Cancel : Control.Confirm);
-			}
-			else
-			{
-				control = Control.Confirm;
-			}
-			goto IL_200;
-		case "CROSS":
-			if (checkConfig)
-			{
-				control = (Control)((!EventInput.IsJapaneseLayout) ? Control.Confirm : Control.Cancel);
-			}
-			else
-			{
-				control = Control.Cancel;
-			}
-			goto IL_200;
-		case "TRIANGLE":
-			control = Control.Menu;
-			goto IL_200;
-		case "SQUARE":
-			control = Control.Special;
-			goto IL_200;
-		case "R1":
-			control = Control.RightBumper;
-			goto IL_200;
-		case "R2":
-			control = Control.RightTrigger;
-			goto IL_200;
-		case "L1":
-			control = Control.LeftBumper;
-			goto IL_200;
-		case "L2":
-			control = Control.LeftTrigger;
-			goto IL_200;
-		case "SELECT":
-			control = Control.Select;
-			goto IL_200;
-		case "START":
-			control = Control.Pause;
-			goto IL_200;
-		case "PAD":
-			control = Control.DPad;
-			goto IL_200;
+			case "UP":
+				control = Control.Up;
+				break;
+			case "DOWN":
+				control = Control.Down;
+				break;
+			case "LEFT":
+				control = Control.Left;
+				break;
+			case "RIGHT":
+				control = Control.Right;
+				break;
+			case "CIRCLE":
+				if (checkConfig)
+					control = EventInput.IsJapaneseLayout ? Control.Confirm : Control.Cancel;
+				else
+					control = Control.Confirm;
+				break;
+			case "CROSS":
+				if (checkConfig)
+					control = EventInput.IsJapaneseLayout ? Control.Cancel : Control.Confirm;
+				else
+					control = Control.Cancel;
+				break;
+			case "TRIANGLE":
+				control = Control.Menu;
+				break;
+			case "SQUARE":
+				control = Control.Special;
+				break;
+			case "R1":
+				control = Control.RightBumper;
+				break;
+			case "R2":
+				control = Control.RightTrigger;
+				break;
+			case "L1":
+				control = Control.LeftBumper;
+				break;
+			case "L2":
+				control = Control.LeftTrigger;
+				break;
+			case "SELECT":
+				control = Control.Select;
+				break;
+			case "START":
+				control = Control.Pause;
+				break;
+			case "PAD":
+				control = Control.DPad;
+				break;
+			default:
+				control = Control.None;
+				break;
 		}
-		control = Control.None;
-		IL_200:
 		dialogImage.Size = FF9UIDataTool.GetButtonSize(control, checkConfig, tag);
 		dialogImage.Id = (Int32)control;
 		dialogImage.tag = tag;
+		dialogImage.checkFromConfig = checkConfig;
 		return dialogImage;
 	}
 
-    public static Dialog.DialogImage CreateIconImage(int iconId)
+    public static Dialog.DialogImage CreateIconImage(Int32 iconId)
     {
         Dialog.DialogImage dialogImage = new Dialog.DialogImage();
         dialogImage.Size = FF9UIDataTool.GetIconSize(iconId);
-        if (iconId == 180)
-        {
+        if (iconId == 180) // text_lv_us_uk_jp_gr_it
             dialogImage.Offset = new Vector3(0f, -15.2f);
-        }
         else
-        {
             dialogImage.Offset = new Vector3(0f, -10f);
-        }
         dialogImage.Id = iconId;
         dialogImage.IsButton = false;
         return dialogImage;

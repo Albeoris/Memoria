@@ -583,7 +583,9 @@ namespace Memoria.Assets
 
         private void OnPartyMemberName(Int32 index)
         {
-            _sb.Append(_gameState.party.member[index].Name);
+            CharacterId partyPlayer = PersistenSingleton<EventEngine>.Instance.GetEventPartyPlayer(index);
+            PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(partyPlayer);
+            _sb.Append(player?.Name);
         }
 
         private void OnCharacterName(CharacterId charId)

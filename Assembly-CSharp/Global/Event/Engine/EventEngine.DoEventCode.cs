@@ -86,23 +86,8 @@ public partial class EventEngine
                 Obj p1 = this.GetObj1();
                 Int32 tag1 = this.geti();
                 this.Request(p1, level, tag1, false);
-                if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 900 && p1 != null && (level == 2 && tag1 == 11) && (Int32)p1.uid == 14)
-                    this.fieldmap.walkMesh.BGI_triSetActive(62U, 1U);
-                // Hotfix: Beatrix hacked in the team to Oeilvert -> pretend another member was picked when returning to DP (field "Palace/Dock", start of function "Zidane_14")
-                if (FF9StateSystem.Common.FF9.fldMapNo == 2211 && p1 != null && p1.sid == 19 && tag1 == 14)
-                {
-                    Int32 oeilvertPartyCount = 0;
-                    Int32 missingMemberVar = -1;
-                    for (Int32 varIndex = 3536; varIndex <= 3542; varIndex++)
-                    {
-                        if (eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, varIndex, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
-                            oeilvertPartyCount++;
-                        else if (missingMemberVar < 0)
-                            missingMemberVar = varIndex;
-                    }
-                    if (oeilvertPartyCount < 3 && missingMemberVar >= 0)
-                        eBin.SetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, missingMemberVar, (Int32)EBin.VariableType.Bit << 3, 0, 0);
-                }
+                if (FF9StateSystem.Common.FF9.fldMapNo == 900 && p1 != null && level == 2 && tag1 == 11 && p1.uid == 14)
+                    this.fieldmap.walkMesh.BGI_triSetActive(62U, 1U); // Treno/Pub, function "Steiner_11"
                 return 0;
             }
             case EBin.event_code_binary.REQSW:
@@ -110,24 +95,27 @@ public partial class EventEngine
                 Int32 num4 = this.getv1();
                 Obj p2 = this.GetObj1();
                 Int32 tag2 = this.geti();
-                if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2803 && p2 != null && (tag2 == 18 && (Int32)p2.uid == 20))
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2803 && p2 != null && tag2 == 18 && p2.uid == 20)
                 {
+                    // Daguerreo/2nd Floor, LibrarianB, moving after Zidane says where is the book he searches
                     this.fieldmap.walkMesh.BGI_triSetActive(105U, 1U);
                     this.fieldmap.walkMesh.BGI_triSetActive(106U, 1U);
                 }
                 if (this.requestAcceptable(p2, num4))
                 {
                     this.Request(p2, num4, tag2, false);
-                    if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 262)
+                    if (FF9StateSystem.Common.FF9.fldMapNo == 262) // Evil Forest/Exit
                     {
                         this._geoTexAnim = this.GetObjUID(12).go.GetComponent<GeoTexAnim>();
-                        if ((Int32)p2.sid == 10 && tag2 == 12)
+                        if (p2.sid == 10 && tag2 == 12) // Zidane, yawning in front of tent
                         {
                             this._geoTexAnim.geoTexAnimStop(2);
                             this._geoTexAnim.geoTexAnimPlay(0);
                         }
-                        else if ((Int32)p2.sid == 12 && tag2 == 20)
+                        else if (p2.sid == 12 && tag2 == 20) // Dagger, awakening
+                        {
                             this._geoTexAnim.geoTexAnimPlay(2);
+                        }
                     }
                     return 0;
                 }
@@ -156,6 +144,24 @@ public partial class EventEngine
                     this.Request(p3, num5, tag3, true);
                 else
                     this.stay();
+                // Hotfix: non-standard characters hacked in the team to Oeilvert -> pretend other member(s) were picked instead (field "Palace/Sanctum", start of function "Kuja_74")
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2209 && p3 != null && p3.sid == 4 && tag3 == 74)
+                {
+                    Int32 oeilvertPartyCount = 0;
+                    Queue<Int32> missingMemberVar = new Queue<Int32>();
+                    for (Int32 varIndex = 3536; varIndex <= 3542; varIndex++) // "VARL_GenBool_3536" etc.
+                    {
+                        if (eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, varIndex, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
+                            oeilvertPartyCount++;
+                        else
+                            missingMemberVar.Enqueue(varIndex);
+                    }
+                    while (oeilvertPartyCount < 3 && missingMemberVar.Count > 0)
+                    {
+                        eBin.SetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, missingMemberVar.Dequeue(), (Int32)EBin.VariableType.Bit << 3, 0, 0);
+                        oeilvertPartyCount++;
+                    }
+                }
                 return 1;
             }
             case EBin.event_code_binary.REPLY:

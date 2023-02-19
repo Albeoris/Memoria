@@ -147,6 +147,8 @@ public partial class BattleHUD : UIScene
         public PlayerMemo(PLAYER p, Boolean updateRow)
 		{
             original = p;
+            if (p == null)
+                return;
             max = new POINTS();
             btl_init.CopyPoints(max, p.max);
             elem = new ELEMENT();

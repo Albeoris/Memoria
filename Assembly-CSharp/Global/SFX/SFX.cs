@@ -1153,11 +1153,11 @@ public class SFX
                 {
                     case 0: // Get Bone Position
                         *(Int16*)p = (Int16)matrix4x.m03;
-                        *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)(matrix4x.m13 + next.attachOffset));
+                        *(Int16*)((Byte*)p + 2) = (Int16)(-(Int16)matrix4x.m13);
                         *(Int16*)((Byte*)p + 4) = (Int16)matrix4x.m23;
                         break;
                     case 1: // Get Bone Height
-                        return -(Int32)(matrix4x.m13 + next.attachOffset);
+                        return -(Int32)matrix4x.m13;
                     case 2: // Get Bone Orientation & Position
                         PSXMAT* matPtr = (PSXMAT*)p;
                         Int16* rptr = matPtr->r;
@@ -1176,7 +1176,7 @@ public class SFX
                         rptr[8] = (Int16)(matrix4x.m22 * 4096f);
 
                         tptr[0] = (Int32)matrix4x.m03;
-                        tptr[1] = -(Int32)(matrix4x.m13 + next.attachOffset);
+                        tptr[1] = -(Int32)matrix4x.m13;
                         tptr[2] = (Int32)matrix4x.m23;
                         break;
                 }

@@ -578,7 +578,8 @@ public class UIKeyTrigger : MonoBehaviour
             if (PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() || !PersistenSingleton<UIManager>.Instance.Dialogs.CompletlyVisible)
                 return;
 
-            triggleEventDialog = true;
+            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm))
+                triggleEventDialog = true;
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel) || keyCommand == Control.Cancel)
         {

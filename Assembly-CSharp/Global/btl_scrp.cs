@@ -660,31 +660,31 @@ public class btl_scrp
 				HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(0);
 			break;
 		case 140:
-			btl.pos.x = (float)val;
+			btl.pos.x = val;
 			btl.evt.posBattle.x = btl.pos.x;
-			btl.evt.pos[0] = btl.pos.z;
+			btl.evt.pos[0] = btl.pos.x;
 			break;
 		case 141:
-			btl.pos.y = -(float)val;
+			btl.pos.y = -val;
 			btl.evt.posBattle.y = btl.pos.y;
-			btl.evt.pos[1] = btl.pos.z;
+			btl.evt.pos[1] = btl.pos.y;
 			break;
 		case 142:
-			btl.pos.z = (float)val;
+			btl.pos.z = val;
 			btl.evt.posBattle.z = btl.pos.z;
 			btl.evt.pos[2] = btl.pos.z;
 			break;
 		case 143:
-			btl.rot.eulerAngles = new UnityEngine.Vector3((float)val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
-			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3((float)val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
+			btl.rot.eulerAngles = new UnityEngine.Vector3(val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
+			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
 			break;
 		case 144:
-			btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, (float)val, btl.rot.eulerAngles.z);
-			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, (float)val, btl.rot.eulerAngles.z);
+			btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, val, btl.rot.eulerAngles.z);
+			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, val, btl.rot.eulerAngles.z);
 			break;
 		case 145:
-			btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, (float)val);
-			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, (float)val);
+			btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
+			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
 			break;
 		}
 	}

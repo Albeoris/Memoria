@@ -106,8 +106,6 @@ public class SFXData
 
     public void LoadSFX(SpecialEffect effNum, CMD_DATA cmd, BTL_VFX_REQ request, Boolean applyCamera)
 	{
-        if (IsShortSpecialEffect(effNum))
-            applyCamera = false;
         id = effNum;
         cmdRef = cmd;
         sfxRequest = request;

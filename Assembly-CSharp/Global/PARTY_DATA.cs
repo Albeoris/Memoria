@@ -1,5 +1,6 @@
 ﻿using System;
 using Memoria;
+using Memoria.Data;
 
 public class PARTY_DATA
 {
@@ -19,4 +20,5 @@ public class PARTY_DATA
 	public UInt32 pad;
 
     public Character GetCharacter(Int32 index) => new Character(member[index]);
+	public CharacterId GetCharacterId(Int32 index) => member[index] == null ? CharacterId.NONE : member[index].info.slot_no;
 }

@@ -262,9 +262,13 @@ namespace Memoria.Assets
 
         private void OnPartyMemberName(Int32 index)
         {
-            String name = FF9StateSystem.Common.FF9.party.member[index].Name;
-            _sb.Append(name);
-            _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, name);
+            CharacterId partyPlayer = PersistenSingleton<EventEngine>.Instance.GetEventPartyPlayer(index);
+            PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(partyPlayer);
+            if (player != null)
+            {
+                _sb.Append(player.Name);
+                _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, player.Name);
+            }
         }
 
         private void OnMobileIcon(Int32 oneParameterFromTag2)

@@ -93,6 +93,7 @@ public static class UnifiedBattleSequencer
 		private UInt16 turningChar;
 		private UInt16 scalingChar;
 		private Boolean cancel;
+		private Boolean useCameraTarget;
 
 		public BattleAction(EffectType type, Int32 eff)
 		{
@@ -156,6 +157,7 @@ public static class UnifiedBattleSequencer
 			reflectTriggered = false;
 			reflectingBtl = 0;
 			cancel = false;
+			useCameraTarget = false;
 			runningActions.Add(this);
 		}
 
@@ -323,6 +325,10 @@ public static class UnifiedBattleSequencer
 						}
 						if (!code.TryGetArgBoolean("UseCamera", out tmpBool))
 							tmpBool = Configuration.Battle.Speed < 3 || FF9StateSystem.Battle.FF9Battle.btl_phase != 4 || !UIManager.Battle.FF9BMenu_IsEnable();
+						if (useCameraTarget)
+							tmpBool = true;
+						else if (SFXData.IsShortSpecialEffect(tmpSfx))
+							tmpBool = false;
 						sfxData.LoadSFX(tmpSfx, cmd, customRequest, tmpBool);
 						runningThread.defaultSFXIndex = sfxList.Count;
 						sfxList.Add(sfxData);
@@ -752,6 +758,7 @@ public static class UnifiedBattleSequencer
 						SFX.SetCameraTarget(trgCPos, cmd.regist, camTrg);
 						btlseq.instance.seq_work_set.CameraNo = (Byte)tmpInt;
 						SFX.SetEnemyCamera(cmd.regist);
+						useCameraTarget = true;
 					}
 					else
 					{

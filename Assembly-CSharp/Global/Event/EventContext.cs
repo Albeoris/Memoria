@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria.Data;
 
 public class EventContext
 {
@@ -11,6 +12,7 @@ public class EventContext
 		for (Int32 i = 0; i < 32; i++)
 			this.objlist.Add(new ObjList());
 		this.partyUID = new Byte[EventContext.partyUIDSize];
+		this.eventPartyMember = new CharacterId[EventContext.partyUIDSize];
 		this.watch = new Watch[16];
 		for (Int32 i = 0; i < 16; i++)
 			this.watch[i] = new Watch();
@@ -121,6 +123,7 @@ public class EventContext
 	public ObjList freeObj;
 
 	public Byte[] partyUID;
+	public CharacterId[] eventPartyMember;
 
 	public Int16 twist_a;
 

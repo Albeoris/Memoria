@@ -37,40 +37,40 @@ using UnityEngine;
 
 public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 {
-    public BTL_SCENE btlScene;
     public static String battleSceneName;
-    public BattleMapCameraController cameraController;
-    private Boolean isSetup;
-    public String[] animationName;
-    private static readonly Int32[] CurPlayerSerialNum;
     public static Int32[] CurPlayerWeaponIndex;
     public static Int32 EnemyStartIndex;
-    private readonly Int32[][] playerXPos;
-    private List<Material> playerMaterials;
-    private List<Material> monsterMaterials;
-    private BattleState battleState;
     public static Boolean playerEnterCommand;
+    public static BattleSPSSystem battleSPS;
+    public static Int32 counterATB;
+    private static List<KeyValuePair<BTL_DATA, BTL_DATA>> attachModel;
+
+    public BTL_SCENE btlScene;
+    public BattleMapCameraController cameraController;
+    public String[] animationName;
     public Boolean playerCastingSkill;
     public Boolean enemyEnterCommand;
     public List<Int32> seqList;
+    private Boolean isSetup;
+    private List<Material> playerMaterials;
+    private List<Material> monsterMaterials;
+    private BattleState battleState;
     private Byte[] btlIDList;
     private UInt32 battleResult;
     private Single debugUILastTouchTime;
     private Single showHideDebugUICoolDown;
-    private Transform rootBone;
-    public static BattleSPSSystem battleSPS;
     private String scaleEdit;
     private String distanceEdit;
     private Boolean needClampTime;
-    public static Int32 counterATB;
     private Single cumulativeTime;
     private Boolean isKeyFrame;
+    private readonly Int32[][] playerXPos;
 
     static HonoluluBattleMain()
     {
-        CurPlayerSerialNum = new Int32[4];
         CurPlayerWeaponIndex = new Int32[4];
         EnemyStartIndex = 4;
+        attachModel = new List<KeyValuePair<BTL_DATA, BTL_DATA>>();
     }
 
     public HonoluluBattleMain()
@@ -99,8 +99,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         this.needClampTime = false;
         if (Application.platform == RuntimePlatform.Android)
         {
-            string deviceModel = SystemInfo.deviceModel;
-            if (string.Compare("Asus Nexus Player", deviceModel, true) == 0)
+            String deviceModel = SystemInfo.deviceModel;
+            if (String.Compare("Asus Nexus Player", deviceModel, true) == 0)
                 this.needClampTime = true;
         }
         FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
@@ -148,6 +148,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         FF9StateGlobal FF9 = FF9StateSystem.Common.FF9;
         FF9.charArray.Clear();
+        attachModel.Clear();
         this.btlScene = FF9StateSystem.Battle.FF9Battle.btl_scene = new BTL_SCENE();
         Debug.Log("battleID = " + FF9StateSystem.Battle.battleMapIndex);
 
@@ -176,10 +177,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         this.CreateBattleData(FF9);
         if (battleSceneName == "EF_E006" || battleSceneName == "EF_E007")
         {
-            BTL_DATA btlData1 = FF9StateSystem.Battle.FF9Battle.btl_data[4];
-            BTL_DATA btlData2 = FF9StateSystem.Battle.FF9Battle.btl_data[5];
-            this.GeoBattleAttach(btlData2.gameObject, btlData1.gameObject, 55);
-            btlData2.attachOffset = 100;
+            BTL_DATA prisonCage = FF9StateSystem.Battle.FF9Battle.btl_data[4];
+            BTL_DATA prisoner = FF9StateSystem.Battle.FF9Battle.btl_data[5];
+            SetupAttachModel(prisonCage, prisoner, 55, 100);
         }
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         GEOTEXHEADER geotexheader = new GEOTEXHEADER();
@@ -539,7 +539,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         try
         {
-            this.UpdateAttachModel();
+            UpdateAttachModel();
             UpdateFrames();
             UpdateData();
         }
@@ -659,43 +659,56 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         }
     }
 
-    private void UpdateAttachModel()
+    private static void UpdateAttachModel()
     {
-        if (battleSceneName != "EF_E006" && battleSceneName != "EF_E007")
-            return;
-        //GameObject gameObject1 = FF9StateSystem.Battle.FF9Battle.btl_data[4].gameObject;
-        GameObject gameObject2 = FF9StateSystem.Battle.FF9Battle.btl_data[5].gameObject;
-        gameObject2.transform.localPosition = Vector3.zero;
-        gameObject2.transform.localRotation = Quaternion.identity;
-        gameObject2.transform.localScale = Vector3.one;
-        this.rootBone.transform.localPosition = Vector3.zero;
-        this.rootBone.transform.localRotation = Quaternion.identity;
-        this.rootBone.transform.localScale = Vector3.one;
+        foreach (KeyValuePair<BTL_DATA, BTL_DATA> kvp in attachModel)
+        {
+            BTL_DATA carryingBtl = kvp.Key;
+            BTL_DATA attachedBtl = kvp.Value;
+            Transform attachedTransform = attachedBtl.gameObject.transform;
+            Transform rootTransform = attachedTransform.GetChildByName("bone000").transform;
+            attachedTransform.localPosition = Vector3.zero;
+            attachedTransform.localRotation = Quaternion.identity;
+            attachedTransform.localScale = Vector3.one;
+            rootTransform.localPosition = Vector3.zero;
+            rootTransform.localRotation = Quaternion.identity;
+            rootTransform.localScale = Vector3.one;
+            attachedBtl.pos = carryingBtl.pos;
+        }
     }
 
-    public void GeoBattleAttach(GameObject src, GameObject target, Int32 boneIndex)
+    public static void SetupAttachModel(BTL_DATA carryingBtl, BTL_DATA attachedBtl, Int32 boneIndex, Int32 offset)
     {
-        this.rootBone = src.transform.GetChildByName("bone000");
-        Transform childByName = target.transform.GetChildByName("bone" + boneIndex.ToString("D3"));
-        src.transform.parent = childByName.transform;
-        src.transform.localPosition = Vector3.zero;
-        src.transform.localRotation = Quaternion.identity;
-        src.transform.localScale = Vector3.one;
-        this.rootBone.transform.localPosition = Vector3.zero;
-        this.rootBone.transform.localRotation = Quaternion.identity;
-        this.rootBone.transform.localScale = Vector3.one;
+        Transform attachedTransform = attachedBtl.gameObject.transform;
+        Transform rootTransform = attachedTransform.GetChildByName("bone000").transform;
+        Transform carryingBone = carryingBtl.gameObject.transform.GetChildByName("bone" + boneIndex.ToString("D3"));
+        attachedTransform.parent = carryingBone.transform;
+        attachedTransform.localPosition = Vector3.zero;
+        attachedTransform.localRotation = Quaternion.identity;
+        attachedTransform.localScale = Vector3.one;
+        rootTransform.localPosition = Vector3.zero;
+        rootTransform.localRotation = Quaternion.identity;
+        rootTransform.localScale = Vector3.one;
+        attachedBtl.attachOffset = offset;
+        attachModel.Add(new KeyValuePair<BTL_DATA, BTL_DATA>(carryingBtl, attachedBtl));
+    }
+
+    public static void ClearAttachModel(BTL_DATA attachedBtl)
+	{
+        attachModel.RemoveAll(kvp => kvp.Value == attachedBtl);
+        attachedBtl.gameObject.transform.parent = null;
+    }
+
+    public static Boolean IsAttachedModel(BTL_DATA btl)
+	{
+        return attachModel.Any(kvp => kvp.Value == btl);
     }
 
     private void LateUpdate()
     {
-        this.UpdateAttachModel();
+        UpdateAttachModel();
         UIManager.Battle.modelButtonManager.UpdateModelButtonPosition();
         Singleton<HUDMessage>.Instance.UpdateChildPosition();
-    }
-
-    public Int32 GetPlayerSerialNum(Int32 battlePlayerPosID)
-    {
-        return CurPlayerSerialNum[battlePlayerPosID];
     }
 
     public Int32 GetWeaponID(Int32 battlePlayerPosID)
@@ -759,20 +772,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         IsPaused = true;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
-        {
             if (btlData.animation != null)
                 btlData.animation.enabled = false;
-        }
     }
 
     private void ResumeBattle()
     {
         IsPaused = false;
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
-        {
             if (btlData.animation != null)
                 btlData.animation.enabled = true;
-        }
     }
 
     public enum BattleState
@@ -793,7 +802,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private static Boolean IsInitialized
     {
-        get { return (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.LOADBBG) == ff9btl.ATTR.LOADBBG; }
+        get => (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.LOADBBG) == ff9btl.ATTR.LOADBBG;
         set
         {
             if (value)
@@ -805,7 +814,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private static Boolean IsPaused
     {
-        get { return (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.NOPUTDISPENV) == ff9btl.ATTR.NOPUTDISPENV; }
+        get => (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.NOPUTDISPENV) == ff9btl.ATTR.NOPUTDISPENV;
         set
         {
             if (value)
@@ -817,7 +826,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private static Boolean IsOver
     {
-        get { return (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.EXITBATTLE) == ff9btl.ATTR.EXITBATTLE; }
+        get => (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.EXITBATTLE) == ff9btl.ATTR.EXITBATTLE;
         set
         {
             if (value)

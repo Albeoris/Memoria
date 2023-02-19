@@ -21,6 +21,18 @@ public class EventState : MonoBehaviour
 		}
 	}
 
+	public Int32 FieldEntrance
+	{
+		get => gEventGlobal[3] << 8 | gEventGlobal[2];
+		set
+		{
+			gEventGlobal[2] = (Byte)(value & 0xFF);
+			gEventGlobal[3] = (Byte)(value >> 8 & 0xFF);
+		}
+	}
+
+	public Boolean IsEikoAbducted => ScenarioCounter >= 9860 && ScenarioCounter < 9990;
+
 	public Int32 GetAAUsageCounter(BattleAbilityId abilityId)
 	{
 		if (gAbilityUsage.TryGetValue(abilityId, out Int32 result))

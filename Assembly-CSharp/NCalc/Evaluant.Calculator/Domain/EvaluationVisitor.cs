@@ -117,9 +117,8 @@ namespace NCalc.Domain
                     break;
 
                 case BinaryExpressionType.Div:
-                    Result = IsReal(left()) || IsReal(right())
-                                 ? Numbers.Divide(left(), right())
-                                 : Numbers.Divide(Convert.ToDouble(left()), right());
+                    // Use C# division rule: integral if both operands are integral and floating-point otherwise
+                    Result = Numbers.Divide(left(), right());
                     break;
 
                 case BinaryExpressionType.Equal:
@@ -176,24 +175,25 @@ namespace NCalc.Domain
                     Result = Numbers.Multiply(left(), right());
                     break;
 
+                // Bitwise operations are performed on UInt32 types, so don't use expressions with bitwise operations on UInt64 for now
                 case BinaryExpressionType.BitwiseAnd:
-                    Result = Convert.ToUInt16(left()) & Convert.ToUInt16(right());
+                    Result = Convert.ToUInt32(left()) & Convert.ToUInt32(right());
                     break;
 
                 case BinaryExpressionType.BitwiseOr:
-                    Result = Convert.ToUInt16(left()) | Convert.ToUInt16(right());
+                    Result = Convert.ToUInt32(left()) | Convert.ToUInt32(right());
                     break;
 
                 case BinaryExpressionType.BitwiseXOr:
-                    Result = Convert.ToUInt16(left()) ^ Convert.ToUInt16(right());
+                    Result = Convert.ToUInt32(left()) ^ Convert.ToUInt32(right());
                     break;
 
                 case BinaryExpressionType.LeftShift:
-                    Result = Convert.ToUInt16(left()) << Convert.ToUInt16(right());
+                    Result = Convert.ToUInt32(left()) << Convert.ToInt32(right());
                     break;
 
                 case BinaryExpressionType.RightShift:
-                    Result = Convert.ToUInt16(left()) >> Convert.ToUInt16(right());
+                    Result = Convert.ToUInt32(left()) >> Convert.ToInt32(right());
                     break;
             }
         }

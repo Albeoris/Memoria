@@ -66,7 +66,7 @@ public class UISprite : UIBasicSprite
 			}
 			else if (this.mSpriteName != value)
 			{
-				if (!String.IsNullOrEmpty(this.mSpriteName) && this.drawCall != null)
+				if (this.drawCall != null)
 					this.panel.RebuildAllDrawCalls();
 				this.mSpriteName = value;
 				this.mSprite = null;
