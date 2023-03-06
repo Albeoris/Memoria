@@ -84,7 +84,7 @@ namespace Memoria.Assets
                 Log.Message("[FieldSceneExporter] Exporting [{0}]...", mapName);
 
                 BGSCENE_DEF scene = new BGSCENE_DEF(true);
-                scene.LoadResources(null, relativePath, mapName);
+                scene.LoadResources(relativePath, mapName);
 
                 //String directoryPath = Path.GetDirectoryName(outputPath);
 

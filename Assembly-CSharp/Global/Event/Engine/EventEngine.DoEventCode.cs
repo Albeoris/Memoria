@@ -271,7 +271,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGVPORT:
             {
-                this.fieldmap.EBG_cameraSetViewport((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
+                this.fieldmap.EBG_cameraSetViewport(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
                 return 0;
             }
             case EBin.event_code_binary.MES:
@@ -1264,7 +1264,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLCOLOR:
             {
-                this.fieldmap.EBG_overlaySetShadeColor((UInt32)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
+                this.fieldmap.EBG_overlaySetShadeColor(this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
                 return 0;
             }
             case EBin.event_code_binary.BGLMOVE:
@@ -1279,12 +1279,12 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLLOOP:
             {
-                this.fieldmap.EBG_overlaySetLoop((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2());
+                this.fieldmap.EBG_overlaySetLoop(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2());
                 return 0;
             }
             case EBin.event_code_binary.BGLPARALLAX:
             {
-                this.fieldmap.EBG_overlaySetParallax((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2());
+                this.fieldmap.EBG_overlaySetParallax(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2());
                 return 0;
             }
             case EBin.event_code_binary.BGLORIGIN:
@@ -1306,8 +1306,8 @@ public partial class EventEngine
             {
                 Int32 animNdx = this.getv1();
                 Int32 frameRate = this.getv2();
-                if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 66 && FF9StateSystem.Settings.IsFastForward && (animNdx == 3 || animNdx == 2) && frameRate == 128)
-                    frameRate = 320;
+                if (FF9StateSystem.Common.FF9.fldMapNo == 66 && FF9StateSystem.Settings.IsFastForward && (animNdx == 3 || animNdx == 2) && frameRate == 128)
+                    frameRate = 320; // Prima Vista/Interior
                 this.fieldmap.EBG_animSetFrameRate(animNdx, frameRate);
                 return 0;
             }
@@ -1587,7 +1587,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLATTACH:
             {
-                this.fieldmap.EBG_charAttachOverlay((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv1(), (SByte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
+                this.fieldmap.EBG_charAttachOverlay(this.getv1(), (Int16)this.getv2(), (Int16)this.getv1(), (SByte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
                 return 0;
             }
             case EBin.event_code_binary.CFLAG:
@@ -2084,7 +2084,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGVSET:
             {
-                this.fieldmap.EBG_overlaySetViewport((UInt32)this.getv1(), (UInt32)this.getv1());
+                this.fieldmap.EBG_overlaySetViewport(this.getv1(), this.getv1());
                 return 0;
             }
             case EBin.event_code_binary.WPRM:
@@ -2103,8 +2103,9 @@ public partial class EventEngine
                 Int32 _objno1 = this.getv2();
                 Int32 num66 = this.getv3();
                 FF9Snd.FF9SoundArg1(_parmtype1, _objno1, num66);
-                if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2928 && _objno1 == 2787)
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2928 && _objno1 == 2787)
                 {
+                    // Hill of Despair, Stop Sound 2787
                     FF9Snd.FF9SoundArg1(_parmtype1, 2982, num66);
                     FF9Snd.FF9SoundArg1(_parmtype1, 2983, num66);
                 }
@@ -2147,7 +2148,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGVDEFINE:
             {
-                this.fieldmap.EBG_overlayDefineViewport((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
+                this.fieldmap.EBG_overlayDefineViewport(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2());
                 return 0;
             }
             case EBin.event_code_binary.BGAVISIBLE:
@@ -2367,7 +2368,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLSCROLLOFFSET:
             {
-                this.fieldmap.EBG_overlaySetScrollWithOffset((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2(), (UInt32)this.getv1());
+                this.fieldmap.EBG_overlaySetScrollWithOffset(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2(), (UInt32)this.getv1());
                 return 0;
             }
             case EBin.event_code_binary.BTLSEQ:
@@ -2377,7 +2378,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLLOOPTYPE:
             {
-                this.fieldmap.EBG_overlaySetLoopType((UInt32)this.getv1(), (UInt32)this.getv1());
+                this.fieldmap.EBG_overlaySetLoopType(this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
             case EBin.event_code_binary.BGAFRAME:
@@ -2387,7 +2388,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.MOVE3H:
             {
-                if (this.MoveToward_mixed((Single)this.getv2(), -this.getv2(), (Single)this.getv2(), 3, (PosObj)null))
+                if (this.MoveToward_mixed(this.getv2(), -this.getv2(), this.getv2(), 3, null))
                     this.stay();
                 return 1;
             }
@@ -2401,8 +2402,8 @@ public partial class EventEngine
                 Int16 x2 = 0;
                 Int16 y2 = 0;
                 this.fieldmap.EBG_sceneGetVRP(ref x2, ref y2);
-                this.sSysX = (Int32)x2;
-                this.sSysY = (Int32)y2;
+                this.sSysX = x2;
+                this.sSysY = y2;
                 return 0;
             }
             case EBin.event_code_binary.CLOSEALL:
@@ -2429,7 +2430,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGVALPHA:
             {
-                this.fieldmap.EBG_overlayDefineViewportAlpha((UInt32)this.getv1(), this.getv2(), this.getv2());
+                this.fieldmap.EBG_overlayDefineViewportAlpha(this.getv1(), this.getv2(), this.getv2());
                 return 0;
             }
             case EBin.event_code_binary.SLEEPON:

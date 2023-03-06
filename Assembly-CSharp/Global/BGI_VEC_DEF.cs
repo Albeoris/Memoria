@@ -16,6 +16,13 @@ public class BGI_VEC_DEF
 		this.coord[2] = reader.ReadInt16();
 	}
 
+	public void WriteData(BinaryWriter writer)
+	{
+		writer.Write(this.coord[0]);
+		writer.Write(this.coord[1]);
+		writer.Write(this.coord[2]);
+	}
+
 	public Vector3 ToVector3()
 	{
 		return new Vector3
@@ -24,6 +31,15 @@ public class BGI_VEC_DEF
 			y = Convert.ToSingle(this.coord[1]) * 1f,
 			z = Convert.ToSingle(this.coord[2]) * 1f
 		};
+	}
+
+	public static BGI_VEC_DEF FromVector3(Vector3 v)
+	{
+		BGI_VEC_DEF vec = new BGI_VEC_DEF();
+		vec.coord[0] = (Int16)Math.Round(v.x);
+		vec.coord[1] = (Int16)Math.Round(v.y);
+		vec.coord[2] = (Int16)Math.Round(v.z);
+		return vec;
 	}
 
 	public Int16[] coord;

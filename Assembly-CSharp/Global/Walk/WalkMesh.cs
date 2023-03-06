@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using Memoria.Prime;
 using Memoria.Scenes;
 using Memoria.Scripts;
@@ -15,14 +16,12 @@ public class WalkMesh
         this.useCachedBounds = true;
         this.fieldMap = fieldMap;
 		this.tris = new List<WalkMeshTriangle>();
-		this.ProjectedWalkMesh = (GameObject)null;
-		this.OriginalWalkMesh = (GameObject)null;
+		this.ProjectedWalkMesh = null;
+		this.OriginalWalkMesh = null;
 
-        this.trisPerCamera = new List<WalkMeshTriangle>[(Int32)fieldMap.scene.cameraCount];
-		for (Int32 i = 0; i < (Int32)this.trisPerCamera.Length; i++)
-		{
+        this.trisPerCamera = new List<WalkMeshTriangle>[fieldMap.scene.cameraCount];
+		for (Int32 i = 0; i < this.trisPerCamera.Length; i++)
 			this.trisPerCamera[i] = null;
-		}
 		this.ProcessBGI();
 	}
 
@@ -33,143 +32,160 @@ public class WalkMesh
             this.tris = this.trisPerCamera[this.fieldMap.camIdx];
             return;
         }
-        BGSCENE_DEF scene = this.fieldMap.scene;
         BGI_DEF bgi = this.fieldMap.bgi;
-        BGCAM_DEF bgcam_DEF = scene.cameraList[this.fieldMap.camIdx];
-        this.trisPerCamera[this.fieldMap.camIdx] = new List<WalkMeshTriangle>();
-        this.bgiCharPos = bgi.charPos.ToVector3();
-        List<Vector3> originalVertices = new List<Vector3>();
-        List<Vector3> transformedVertices = new List<Vector3>();
-        for (ushort num = 0; num < bgi.floorCount; num = (ushort)(num + 1))
-        {
-            BGI_FLOOR_DEF bgi_FLOOR_DEF = bgi.floorList[(int)num];
-            originalVertices.Clear();
-            transformedVertices.Clear();
-            for (int i = 0; i < bgi.vertexList.Count; i++)
-            {
-                Vector3 vector = bgi.vertexList[i].ToVector3() + bgi_FLOOR_DEF.orgPos.ToVector3() + bgi.orgPos.ToVector3();
-                vector.y *= -1f;
-                originalVertices.Add(vector);
-                float num2 = PSX.CalculateGTE_RTPTZ(vector, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.fieldMap.offset);
-                vector = PSX.CalculateGTE_RTPT(vector, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.fieldMap.offset);
-                transformedVertices.Add(vector);
-            }
-            for (ushort num3 = 0; num3 < bgi_FLOOR_DEF.triCount; num3 = (ushort)(num3 + 1))
-            {
-                BGI_TRI_DEF bgi_TRI_DEF = bgi.triList[bgi_FLOOR_DEF.triNdxList[(int)num3]];
-                WalkMeshTriangle walkMeshTriangle = new WalkMeshTriangle();
-                walkMeshTriangle.floorIdx = (int)num;
-                walkMeshTriangle.triIdx = bgi_TRI_DEF.triIdx;
-                for (int j = 0; j < 3; j++)
-                {
-                    walkMeshTriangle.originalVertices[j] = originalVertices[(int)bgi_TRI_DEF.vertexNdx[j]];
-                    walkMeshTriangle.transformedVertices[j] = transformedVertices[(int)bgi_TRI_DEF.vertexNdx[j]];
-                    walkMeshTriangle.neighborIdx[j] = (int)bgi_TRI_DEF.neighborNdx[j];
-                }
-                walkMeshTriangle.originalBounds = new Bounds(walkMeshTriangle.originalVertices[0], Vector3.zero);
-                walkMeshTriangle.originalBounds.Encapsulate(walkMeshTriangle.originalVertices[1]);
-                walkMeshTriangle.originalBounds.Encapsulate(walkMeshTriangle.originalVertices[2]);
-                Vector3 size = walkMeshTriangle.originalBounds.size;
-                size.y = 1f;
-                walkMeshTriangle.originalBounds.size = size;
-                Vector3 center = walkMeshTriangle.originalBounds.center;
-                center.y = 0f;
-                walkMeshTriangle.originalBounds.center = center;
-                walkMeshTriangle.originalBoundsMin = walkMeshTriangle.originalBounds.min;
-                walkMeshTriangle.originalBoundsMax = walkMeshTriangle.originalBounds.max;
-                walkMeshTriangle.originalCenter = (walkMeshTriangle.originalVertices[0] + walkMeshTriangle.originalVertices[1] + walkMeshTriangle.originalVertices[2]) / 3f;
-                walkMeshTriangle.transformedCenter = (walkMeshTriangle.transformedVertices[0] + walkMeshTriangle.transformedVertices[1] + walkMeshTriangle.transformedVertices[2]) / 3f;
-                walkMeshTriangle.CalculateTransformedRect();
-                walkMeshTriangle.transformedZ = PSX.CalculateGTE_RTPTZ(walkMeshTriangle.originalCenter, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.fieldMap.offset);
-                this.trisPerCamera[this.fieldMap.camIdx].Add(walkMeshTriangle);
-            }
-        }
-        this.tris = this.trisPerCamera[this.fieldMap.camIdx];
-    }
+		this.trisPerCamera[this.fieldMap.camIdx] = WalkMesh.ProcessBGI(bgi, this.fieldMap.scene.cameraList[this.fieldMap.camIdx], this.fieldMap.offset);
+		this.tris = this.trisPerCamera[this.fieldMap.camIdx];
+		this.bgiCharPos = bgi.charPos.ToVector3();
+	}
 
-    public void CreateProjectedWalkMesh()
+	public static List<WalkMeshTriangle> ProcessBGI(BGI_DEF bgi, BGCAM_DEF bgCamera, Vector2 fieldMapOffset)
 	{
-        if (!this.fieldMap.debugRender)
-            return;
+		List<WalkMeshTriangle> cameraTriangles = new List<WalkMeshTriangle>();
+		List<Vector3> absoluteVertexList = new List<Vector3>();
+		List<Vector3> vertexList = new List<Vector3>();
+		for (Int32 i = 0; i < bgi.floorCount; i++)
+		{
+			BGI_FLOOR_DEF floor = bgi.floorList[i];
+			absoluteVertexList.Clear();
+			vertexList.Clear();
+			for (Int32 j = 0; j < bgi.vertexList.Count; j++)
+			{
+				Vector3 vertexPos = bgi.vertexList[j].ToVector3() + floor.orgPos.ToVector3() + bgi.orgPos.ToVector3();
+				vertexPos.y *= -1f;
+				absoluteVertexList.Add(vertexPos);
+				//Single rtptz = PSX.CalculateGTE_RTPTZ(vector, Matrix4x4.identity, bgCamera.GetMatrixRT(), bgCamera.GetViewDistance(), fieldMapOffset);
+				vertexPos = PSX.CalculateGTE_RTPT(vertexPos, Matrix4x4.identity, bgCamera.GetMatrixRT(), bgCamera.GetViewDistance(), fieldMapOffset);
+				vertexList.Add(vertexPos);
+			}
+			for (Int32 j = 0; j < floor.triCount; j++)
+			{
+				BGI_TRI_DEF floorTri = bgi.triList[floor.triNdxList[j]];
+				WalkMeshTriangle walkMeshTriangle = new WalkMeshTriangle();
+				walkMeshTriangle.floorIdx = i;
+				walkMeshTriangle.triIdx = floorTri.triIdx;
+				for (Int32 k = 0; k < 3; k++)
+				{
+					walkMeshTriangle.originalVertices[k] = absoluteVertexList[floorTri.vertexNdx[k]];
+					walkMeshTriangle.transformedVertices[k] = vertexList[floorTri.vertexNdx[k]];
+					walkMeshTriangle.neighborIdx[k] = floorTri.neighborNdx[k];
+				}
+				walkMeshTriangle.originalBounds = new Bounds(walkMeshTriangle.originalVertices[0], Vector3.zero);
+				walkMeshTriangle.originalBounds.Encapsulate(walkMeshTriangle.originalVertices[1]);
+				walkMeshTriangle.originalBounds.Encapsulate(walkMeshTriangle.originalVertices[2]);
+				Vector3 triSize = walkMeshTriangle.originalBounds.size;
+				triSize.y = 1f;
+				walkMeshTriangle.originalBounds.size = triSize;
+				Vector3 triCenter = walkMeshTriangle.originalBounds.center;
+				triCenter.y = 0f;
+				walkMeshTriangle.originalBounds.center = triCenter;
+				walkMeshTriangle.originalBoundsMin = walkMeshTriangle.originalBounds.min;
+				walkMeshTriangle.originalBoundsMax = walkMeshTriangle.originalBounds.max;
+				walkMeshTriangle.originalCenter = (walkMeshTriangle.originalVertices[0] + walkMeshTriangle.originalVertices[1] + walkMeshTriangle.originalVertices[2]) / 3f;
+				walkMeshTriangle.transformedCenter = (walkMeshTriangle.transformedVertices[0] + walkMeshTriangle.transformedVertices[1] + walkMeshTriangle.transformedVertices[2]) / 3f;
+				walkMeshTriangle.CalculateTransformedRect();
+				walkMeshTriangle.transformedZ = PSX.CalculateGTE_RTPTZ(walkMeshTriangle.originalCenter, Matrix4x4.identity, bgCamera.GetMatrixRT(), bgCamera.GetViewDistance(), fieldMapOffset);
+				cameraTriangles.Add(walkMeshTriangle);
+			}
+		}
+		return cameraTriangles;
+	}
 
-        BGSCENE_DEF scene = this.fieldMap.scene;
-		BGI_DEF bgi = this.fieldMap.bgi;
+	public void CreateProjectedWalkMesh()
+	{
+		if (!this.fieldMap.debugRender && !Configuration.Debug.RenderWalkmeshes)
+			return;
+
 		if (!FF9StateSystem.Field.isDebugWalkMesh)
 		{
-			GameObject gameObject = GameObject.Find("WalkMesh");
-			if (gameObject != (UnityEngine.Object)null)
-			{
-				gameObject.SetActive(false);
-			}
+			GameObject walkmeshGo = GameObject.Find("WalkMesh");
+			if (walkmeshGo != null)
+				walkmeshGo.SetActive(false);
 		}
-		for (Int32 i = 0; i < (Int32)scene.cameraCount; i++)
+		WalkMesh.CreateProjectedWalkMesh(this.fieldMap.transform, this.fieldMap.scene, this.fieldMap.bgi, this.fieldMap.camIdx, new Color(0.5f, 0f, 0.8f, 0.5f));
+		this.ProjectedWalkMesh = this.fieldMap.scene.cameraList[this.fieldMap.camIdx].projectedWalkMesh;
+	}
+
+	public static void CreateProjectedWalkMesh(Transform parent, BGSCENE_DEF scene, BGI_DEF bgi, Int32 activeCamera, Color materialColor)
+	{
+		for (Int32 i = 0; i < scene.cameraList.Count; i++)
 		{
-			BGCAM_DEF bgcam_DEF = scene.cameraList[i];
-			Vector3 camPos = bgcam_DEF.GetCamPos();
-			Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
-			Vector2 zero = Vector2.zero;
-			zero.x = (Single)(bgcam_DEF.w / 2) + centerOffset.x;
-			zero.y = -((Single)(bgcam_DEF.h / 2) + centerOffset.y);
-			zero.x -= FieldMap.HalfFieldWidth;
-			zero.y += FieldMap.HalfFieldHeight;
-			GameObject gameObject2 = new GameObject("Projected_WalkMesh_Camera_" + i.ToString("D2"));
-			gameObject2.transform.parent = this.fieldMap.transform;
-			gameObject2.transform.localPosition = new Vector3(0f, 0f, (Single)scene.curZ);
-			gameObject2.transform.localScale = new Vector3(1f, 1f, 1f);
-			List<Vector3> list = new List<Vector3>();
-			List<Vector3> list2 = new List<Vector3>();
-			List<Vector2> list3 = new List<Vector2>();
-			List<Int32> list4 = new List<Int32>();
-			for (UInt16 num = 0; num < bgi.floorCount; num = (UInt16)(num + 1))
+			BGCAM_DEF bgCamera = scene.cameraList[i];
+			Matrix4x4 cameraRT = bgCamera.GetMatrixRT();
+			Vector3 camPos = bgCamera.GetCamPos();
+			Vector2 centerOffset = bgCamera.GetCenterOffset();
+			Vector2 cameraOffset = new Vector2(
+				(bgCamera.w / 2) + centerOffset.x - FieldMap.HalfFieldWidth,
+				-(bgCamera.h / 2) - centerOffset.y + FieldMap.HalfFieldHeight);
+			GameObject walkCameraGo = new GameObject($"Projected_WalkMesh_Camera_{i:D2}");
+			walkCameraGo.transform.parent = parent;
+			walkCameraGo.transform.localPosition = new Vector3(0f, 0f, scene.curZ);
+			walkCameraGo.transform.localScale = new Vector3(1f, 1f, 1f);
+			List<Vector3> absoluteVertexList = new List<Vector3>();
+			List<Vector3> vertexList = new List<Vector3>();
+			List<Vector2> uvList = new List<Vector2>();
+			List<Int32> triangleList = new List<Int32>();
+			for (UInt16 j = 0; j < bgi.floorList.Count; j++)
 			{
-				BGI_FLOOR_DEF bgi_FLOOR_DEF = bgi.floorList[(Int32)num];
-				String name = "Projected_Floor_" + num.ToString("D2");
-				GameObject gameObject3 = new GameObject(name);
-				Transform transform = gameObject3.transform;
-				transform.parent = gameObject2.transform;
+				BGI_FLOOR_DEF bgiFloor = bgi.floorList[j];
+				GameObject floorGo = new GameObject($"Projected_Floor_{j:D2}");
+				Transform transform = floorGo.transform;
+				transform.parent = walkCameraGo.transform;
 				transform.localPosition = new Vector3(0f, 0f, 0f);
 				transform.localScale = new Vector3(1f, 1f, 1f);
-				list.Clear();
-				list2.Clear();
-				list3.Clear();
-				list4.Clear();
-				for (Int32 j = 0; j < bgi.vertexList.Count; j++)
+				absoluteVertexList.Clear();
+				vertexList.Clear();
+				uvList.Clear();
+				triangleList.Clear();
+				for (Int32 k = 0; k < bgi.vertexList.Count; k++)
 				{
-					Vector3 vector = bgi.vertexList[j].ToVector3() + bgi_FLOOR_DEF.orgPos.ToVector3() + bgi.orgPos.ToVector3();
-					vector.y *= -1f;
-					list.Add(vector);
-					Single num2 = PSX.CalculateGTE_RTPTZ(vector, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.fieldMap.offset);
-					vector = PSX.CalculateGTE_RTPT(vector, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), zero);
-					list2.Add(vector);
-					list3.Add(Vector2.zero);
+					Vector3 vertexPos = bgi.vertexList[k].ToVector3() + bgiFloor.orgPos.ToVector3() + bgi.orgPos.ToVector3();
+					vertexPos.y *= -1f;
+					absoluteVertexList.Add(vertexPos);
+					//Single rtptz = PSX.CalculateGTE_RTPTZ(vertexPos, Matrix4x4.identity, cameraRT, bgCamera.GetViewDistance(), this.fieldMap.offset);
+					vertexPos = PSX.CalculateGTE_RTPT(vertexPos, Matrix4x4.identity, cameraRT, bgCamera.GetViewDistance(), cameraOffset);
+					vertexList.Add(vertexPos);
+					uvList.Add(Vector2.zero);
 				}
-				for (UInt16 num3 = 0; num3 < bgi_FLOOR_DEF.triCount; num3 = (UInt16)(num3 + 1))
+				for (UInt16 k = 0; k < bgiFloor.triNdxList.Count; k++)
 				{
-					BGI_TRI_DEF bgi_TRI_DEF = bgi.triList[bgi_FLOOR_DEF.triNdxList[(Int32)num3]];
-					for (Int32 k = 0; k < 3; k++)
-					{
-						list4.Add((Int32)bgi_TRI_DEF.vertexNdx[k]);
-					}
+					BGI_TRI_DEF bgiTriangle = bgi.triList[bgiFloor.triNdxList[k]];
+					triangleList.Add(bgiTriangle.vertexNdx[0]); // Double-sided
+					triangleList.Add(bgiTriangle.vertexNdx[1]);
+					triangleList.Add(bgiTriangle.vertexNdx[2]);
+					triangleList.Add(bgiTriangle.vertexNdx[0]);
+					triangleList.Add(bgiTriangle.vertexNdx[2]);
+					triangleList.Add(bgiTriangle.vertexNdx[1]);
 				}
 				Mesh mesh = new Mesh();
-				mesh.vertices = list2.ToArray();
-				mesh.uv = list3.ToArray();
-				mesh.triangles = list4.ToArray();
+				mesh.vertices = vertexList.ToArray();
+				mesh.uv = uvList.ToArray();
+				mesh.triangles = triangleList.ToArray();
 				mesh.RecalculateNormals();
 				mesh.RecalculateBounds();
-				MeshFilter meshFilter = gameObject3.AddComponent<MeshFilter>();
-				MeshRenderer meshRenderer = gameObject3.AddComponent<MeshRenderer>();
+				MeshFilter meshFilter = floorGo.AddComponent<MeshFilter>();
+				MeshRenderer meshRenderer = floorGo.AddComponent<MeshRenderer>();
 				meshFilter.mesh = mesh;
-				meshRenderer.material = new Material(ShadersLoader.Find("Sprites/Default"))
-				{
-					color = new Color(1f, 1f, 1f, 0.5f)
-				};
+				//meshRenderer.material = new Material(ShadersLoader.Find("Sprites/Default"));
+				meshRenderer.material = new Material(ShadersLoader.Find("Unlit/AdjustableTransparent"));
+				meshRenderer.material.SetColor("_TintColor", materialColor);
 			}
-			gameObject2.SetActive(false);
-			bgcam_DEF.projectedWalkMesh = gameObject2;
+			walkCameraGo.SetActive(i == activeCamera);
+			bgCamera.projectedWalkMesh = walkCameraGo;
 		}
-		BGCAM_DEF bgcam_DEF2 = scene.cameraList[this.fieldMap.camIdx];
-		this.ProjectedWalkMesh = bgcam_DEF2.projectedWalkMesh;
+	}
+
+	public void UpdateActiveCameraWalkmesh()
+	{
+		if (!this.fieldMap.debugRender && !Configuration.Debug.RenderWalkmeshes)
+			return;
+
+		Int32 cameraCount = this.fieldMap.scene.cameraList.Count;
+		for (Int32 i = 0; i < cameraCount; i++)
+		{
+			Transform walkCameraTransf = this.fieldMap.transform.GetChildByName($"Projected_WalkMesh_Camera_{i:D2}");
+			if (walkCameraTransf != null)
+				walkCameraTransf.gameObject.SetActive(i == this.fieldMap.camIdx);
+		}
 	}
 
 	public void CreateWalkMesh()
@@ -178,78 +194,68 @@ public class WalkMesh
             return;
 
         BGI_DEF bgi = this.fieldMap.bgi;
-		GameObject gameObject = new GameObject("WalkMesh");
-		gameObject.transform.parent = this.fieldMap.transform;
-		gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
-		gameObject.transform.localScale = new Vector3(1f, -1f, 1f);
-		List<Vector3> list = new List<Vector3>();
-		List<Vector2> list2 = new List<Vector2>();
-		List<Int32> list3 = new List<Int32>();
-		for (UInt16 num = 0; num < bgi.floorCount; num = (UInt16)(num + 1))
+		GameObject walkmeshGo = new GameObject("WalkMesh");
+		walkmeshGo.transform.parent = this.fieldMap.transform;
+		walkmeshGo.transform.localPosition = new Vector3(0f, 0f, 0f);
+		walkmeshGo.transform.localScale = new Vector3(1f, -1f, 1f);
+		List<Vector3> vertexList = new List<Vector3>();
+		List<Vector2> uvList = new List<Vector2>();
+		List<Int32> triangleList = new List<Int32>();
+		for (UInt16 i = 0; i < bgi.floorCount; i++)
 		{
-			BGI_FLOOR_DEF bgi_FLOOR_DEF = bgi.floorList[(Int32)num];
-			String name = "Floor_" + num.ToString("D2");
-			GameObject gameObject2 = new GameObject(name);
-			Transform transform = gameObject2.transform;
-			transform.parent = gameObject.transform;
+			BGI_FLOOR_DEF bgiFloor = bgi.floorList[i];
+			GameObject floorGo = new GameObject($"Floor_{i:D2}");
+			Transform transform = floorGo.transform;
+			transform.parent = walkmeshGo.transform;
 			transform.localPosition = new Vector3(0f, 0f, 0f);
 			transform.localScale = new Vector3(1f, 1f, 1f);
-			list.Clear();
-			list2.Clear();
-			list3.Clear();
-			for (Int32 i = 0; i < bgi.vertexList.Count; i++)
+			vertexList.Clear();
+			uvList.Clear();
+			triangleList.Clear();
+			for (Int32 j = 0; j < bgi.vertexList.Count; j++)
 			{
-				Vector3 item = bgi.vertexList[i].ToVector3() + bgi_FLOOR_DEF.orgPos.ToVector3() + bgi.orgPos.ToVector3();
-				list.Add(item);
-				list2.Add(Vector2.zero);
+				Vector3 vertexPos = bgi.vertexList[j].ToVector3() + bgiFloor.orgPos.ToVector3() + bgi.orgPos.ToVector3();
+				vertexList.Add(vertexPos);
+				uvList.Add(Vector2.zero);
 			}
-			for (UInt16 num2 = 0; num2 < bgi_FLOOR_DEF.triCount; num2 = (UInt16)(num2 + 1))
+			for (UInt16 j = 0; j < bgiFloor.triCount; j++)
 			{
-				BGI_TRI_DEF bgi_TRI_DEF = bgi.triList[bgi_FLOOR_DEF.triNdxList[(Int32)num2]];
-				for (Int32 j = 0; j < (Int32)bgi_TRI_DEF.vertexNdx.Length; j += 3)
+				BGI_TRI_DEF bgiTriangle = bgi.triList[bgiFloor.triNdxList[j]];
+				for (Int32 k = 0; k < bgiTriangle.vertexNdx.Length; k += 3)
 				{
-					Vector3 b = list[(Int32)bgi_TRI_DEF.vertexNdx[j]];
-					Vector3 vector = list[(Int32)bgi_TRI_DEF.vertexNdx[j + 1]];
-					Vector3 a = list[(Int32)bgi_TRI_DEF.vertexNdx[j + 2]];
-					Vector3 lhs = Vector3.Cross(vector - b, a - vector);
-					if (Vector3.Dot(lhs, Vector3.up) > 0f)
+					Vector3 pos0 = vertexList[bgiTriangle.vertexNdx[k]];
+					Vector3 pos1 = vertexList[bgiTriangle.vertexNdx[k + 1]];
+					Vector3 pos2 = vertexList[bgiTriangle.vertexNdx[k + 2]];
+					Vector3 triangleNormal = Vector3.Cross(pos1 - pos0, pos2 - pos1);
+					if (Vector3.Dot(triangleNormal, Vector3.up) > 0f)
 					{
-						list3.Add((Int32)bgi_TRI_DEF.vertexNdx[j + 2]);
-						list3.Add((Int32)bgi_TRI_DEF.vertexNdx[j + 1]);
-						list3.Add((Int32)bgi_TRI_DEF.vertexNdx[j]);
+						triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
+						triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
+						triangleList.Add(bgiTriangle.vertexNdx[k]);
 					}
 					else
 					{
-						list3.Add((Int32)bgi_TRI_DEF.vertexNdx[j]);
-						list3.Add((Int32)bgi_TRI_DEF.vertexNdx[j + 1]);
-						list3.Add((Int32)bgi_TRI_DEF.vertexNdx[j + 2]);
+						triangleList.Add(bgiTriangle.vertexNdx[k]);
+						triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
+						triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
 					}
 				}
 			}
 			Mesh mesh = new Mesh();
-			mesh.vertices = list.ToArray();
-			mesh.uv = list2.ToArray();
-			mesh.triangles = list3.ToArray();
+			mesh.vertices = vertexList.ToArray();
+			mesh.uv = uvList.ToArray();
+			mesh.triangles = triangleList.ToArray();
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
-            MeshRenderer meshRenderer = gameObject2.AddComponent<MeshRenderer>();
-			MeshFilter meshFilter = gameObject2.AddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = floorGo.AddComponent<MeshRenderer>();
+			MeshFilter meshFilter = floorGo.AddComponent<MeshFilter>();
 			meshFilter.mesh = mesh;
-			Material material;
-			if (FF9StateSystem.Field.isDebugWalkMesh)
-			{
-				material = new Material(ShadersLoader.Find("Sprites/Default"));
-			}
-			else
-			{
-			    material = new Material(ShadersLoader.Find("PSX/FieldMapActor"));
-
-			}
+			Material material = new Material(ShadersLoader.Find(FF9StateSystem.Field.isDebugWalkMesh ? "Sprites/Default" : "PSX/FieldMapActor"));
 			material.color = new Color(1f, 1f, 1f, 0.5f);
 			meshRenderer.material = material;
-			FieldMapActor fieldMapActor = gameObject2.AddComponent<FieldMapActor>();
+			FieldMapActor fieldMapActor = floorGo.AddComponent<FieldMapActor>();
 		}
-		this.OriginalWalkMesh = gameObject;
+		this.OriginalWalkMesh = walkmeshGo;
 	}
 
 	private void CreateWalls(FieldMap fieldMap)

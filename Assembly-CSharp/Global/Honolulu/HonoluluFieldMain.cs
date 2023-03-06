@@ -2,6 +2,7 @@
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
 
@@ -149,27 +150,38 @@ public class HonoluluFieldMain : HonoBehavior
 
 	public override void HonoUpdate()
 	{
-		if (Configuration.Debug.StartModelViewer)
-		{
-			if (this.firstFrame)
-			{
-				this.firstFrame = false;
-				Memoria.Assets.ModelViewerScene.Init();
-			}
-			Memoria.Assets.ModelViewerScene.Update();
-			return;
-		}
-		if ((MBG.Instance.IsPlaying() & 2UL) != 0UL && this.mbgFrameSkip)
-		{
-			this.mbgFrameSkip = false;
-			return;
-		}
-		this.mbgFrameSkip = true;
-		SceneTransition transition = PersistenSingleton<SceneDirector>.Instance.Transition;
-		if (!PersistenSingleton<SceneDirector>.Instance.IsReady || (PersistenSingleton<SceneDirector>.Instance.IsFading && transition != SceneTransition.FadeInFromBlack && transition != SceneTransition.FadeInFromWhite))
-			return;
 		try
 		{
+			if (Configuration.Debug.StartModelViewer)
+			{
+				if (this.firstFrame)
+				{
+					this.firstFrame = false;
+					ModelViewerScene.Init();
+				}
+				ModelViewerScene.Update();
+				return;
+			}
+			if (Configuration.Debug.StartFieldCreator)
+			{
+				if (this.firstFrame)
+				{
+					this.firstFrame = false;
+					FieldCreatorScene.Init();
+				}
+				FieldCreatorScene.Update();
+				return;
+			}
+
+			if ((MBG.Instance.IsPlaying() & 2UL) != 0UL && this.mbgFrameSkip)
+			{
+				this.mbgFrameSkip = false;
+				return;
+			}
+			this.mbgFrameSkip = true;
+			SceneTransition transition = PersistenSingleton<SceneDirector>.Instance.Transition;
+			if (!PersistenSingleton<SceneDirector>.Instance.IsReady || (PersistenSingleton<SceneDirector>.Instance.IsFading && transition != SceneTransition.FadeInFromBlack && transition != SceneTransition.FadeInFromWhite))
+				return;
 			if (this.firstFrame)
 			{
 				this.firstFrame = false;

@@ -120,12 +120,12 @@ public class RecycleListPopulator : MonoBehaviour
 		}
 	}
 
-	public void SetOriginalData(List<ListDataTypeBase> inDataList)
+	public void SetOriginalData(List<ListDataTypeBase> inDataList, Boolean refreshSelection = true)
 	{
 		if (this.dataList.Count == inDataList.Count)
 		{
 			this.dataList = new List<ListDataTypeBase>(inDataList);
-			this.UpdateTableViewImp();
+			this.UpdateTableViewImp(refreshSelection);
 		}
 		else
 		{
@@ -298,12 +298,12 @@ public class RecycleListPopulator : MonoBehaviour
 		base.Invoke("RepositionList", 0.02f);
 	}
 
-	private void UpdateTableViewImp()
+	private void UpdateTableViewImp(Boolean refreshSelection = true)
 	{
 		foreach (KeyValuePair<Int32, Int32> kvp in this.dataTracker)
 		{
 			Transform poolObj = this.itemsPool[kvp.Value];
-			if (poolObj.GetComponent<UIKeyNavigation>())
+			if (refreshSelection && poolObj.GetComponent<UIKeyNavigation>())
 				poolObj.GetComponent<UIKeyNavigation>().startsSelected = this.activeNumber == kvp.Key;
 			this.PopulateListItemWithData(poolObj, this.dataList[kvp.Key], kvp.Key, false);
 		}

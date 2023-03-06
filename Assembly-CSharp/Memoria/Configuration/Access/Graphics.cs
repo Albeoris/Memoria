@@ -26,11 +26,11 @@ namespace Memoria
             {
                 if (!Instance._graphics.WidescreenSupport)
                     return false;
+                if (Instance._debug.Enabled && Instance._debug.StartFieldCreator)
+                    return false;
 
                 if (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.001)
-                {
                     return true;
-                }
 
                 return false;
             }

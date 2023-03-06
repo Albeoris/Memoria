@@ -192,10 +192,10 @@ public class UIScene : MonoBehaviour
 		if (Math.Abs(currentTime - _lastPausePressed) < 1)
 			return false;
 
-		Boolean result = !this.isLoading && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI;
-		if (result)
+		Boolean doPause = !this.isLoading && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI && UICamera.selectedObject?.GetComponent<UIInput>() == null;
+		if (doPause)
 			_lastPausePressed = currentTime;
-		return result;
+		return doPause;
 	}
 
 	public virtual Boolean OnKeyLeftBumper(GameObject go)

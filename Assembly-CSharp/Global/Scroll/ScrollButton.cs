@@ -196,7 +196,7 @@ public class ScrollButton : MonoBehaviour
 			countPerPage = this.snapScrollView.VisibleItem;
 			maxCount = this.snapScrollView.MaxItem;
 		}
-		if (Configuration.Control.ScrollLikePSX)
+		if (Configuration.Control.PSXScrollingMethod)
 		{
 			if (maxCount <= countPerPage)
 				return;

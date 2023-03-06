@@ -76,7 +76,7 @@ namespace Memoria
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 				{
-					if (bgLayer.transform != null && (bgLayer.flags & 2) != 0)
+					if (bgLayer.transform != null && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0)
 					{
 						if (bgLayer._smoothUpdateRegistered)
 							bgLayer._smoothUpdatePosPrevious = bgLayer._smoothUpdatePosActual;
@@ -137,7 +137,7 @@ namespace Memoria
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 				{
-					if (bgLayer.transform != null && (bgLayer.flags & 2) != 0 && bgLayer._smoothUpdateRegistered)
+					if (bgLayer.transform != null && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0 && bgLayer._smoothUpdateRegistered)
 					{
 						Vector3 frameMove = bgLayer._smoothUpdatePosActual - bgLayer._smoothUpdatePosPrevious;
 						if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < OverlaySmoothMovementMaxSqr)
@@ -179,7 +179,7 @@ namespace Memoria
 			}
 			if (fieldmap?.scene?.overlayList != null)
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
-					if (bgLayer.transform != null && (bgLayer.flags & 2) != 0 && bgLayer._smoothUpdateRegistered)
+					if (bgLayer.transform != null && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0 && bgLayer._smoothUpdateRegistered)
 						bgLayer.transform.position = bgLayer._smoothUpdatePosActual;
 			if (_cameraRegistered)
 			{

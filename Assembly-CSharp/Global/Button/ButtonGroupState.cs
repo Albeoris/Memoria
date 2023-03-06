@@ -450,30 +450,26 @@ public class ButtonGroupState : MonoBehaviour
 	public void SetHover(Boolean isImmediate)
 	{
 		if (PersistenSingleton<UIManager>.Instance.IsLoading)
-		{
 			return;
-		}
 		if (base.gameObject.GetComponent<BoxCollider>().enabled)
 		{
-			foreach (GameObject gameObject in ButtonGroupState.ButtonGroupList[ButtonGroupState.ActiveGroup])
+			foreach (GameObject go in ButtonGroupState.ButtonGroupList[ButtonGroupState.ActiveGroup])
 			{
-				if (base.gameObject != gameObject)
+				if (base.gameObject != go)
 				{
-					gameObject.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, true);
-					Singleton<PointerManager>.Instance.RemovePointerFromGameObject(gameObject);
+					go.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, true);
+					Singleton<PointerManager>.Instance.RemovePointerFromGameObject(go);
 				}
 			}
 		}
 		this.button.SetState(UIButtonColor.State.Hover, isImmediate);
+		if (ButtonGroupState.DisablePointerCursor.Contains(this.GroupName))
+			return;
 		Singleton<PointerManager>.Instance.AttachPointerToGameObject(this.button.gameObject);
 		if (ButtonGroupState.pointerLimitBehavior.ContainsKey(ButtonGroupState.activeGroup))
-		{
 			Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(base.gameObject, ButtonGroupState.pointerLimitBehavior[ButtonGroupState.activeGroup]);
-		}
 		else
-		{
 			Singleton<PointerManager>.Instance.SetPointerLimitRectBehavior(base.gameObject, PointerManager.LimitRectBehavior.Limit);
-		}
 	}
 
 	public static Boolean HaveCursorMemorize(String group)
@@ -720,6 +716,8 @@ public class ButtonGroupState : MonoBehaviour
 	}
 
 	public static Dictionary<String, List<GameObject>> ButtonGroupList = new Dictionary<String, List<GameObject>>();
+
+	public static HashSet<String> DisablePointerCursor = new HashSet<String>();
 
 	private static Dictionary<String, Vector2> pointerOffsetList = new Dictionary<String, Vector2>();
 

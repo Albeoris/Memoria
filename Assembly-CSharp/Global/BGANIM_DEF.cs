@@ -12,51 +12,59 @@ public class BGANIM_DEF
 	public void ReadData(BinaryReader reader)
 	{
 		UInt32 input = reader.ReadUInt32();
-		Byte b = 0;
-		this.flags = (Byte)BitUtil.ReadBits(input, ref b, 8);
-		this.frameCount = (Int32)BitUtil.ReadBits(input, ref b, 24);
+		Byte bitIndex = 0;
+		this.flags = (ANIM_FLAG)BitUtil.ReadBits(input, ref bitIndex, 8);
+		this.frameCount = (Int32)BitUtil.ReadBits(input, ref bitIndex, 24);
 		input = reader.ReadUInt32();
-		b = 0;
-		this.camNdx = (Byte)BitUtil.ReadBits(input, ref b, 8);
-		this.curFrame = (Int32)BitUtil.ReadBits(input, ref b, 24);
+		bitIndex = 0;
+		this.camNdx = (Byte)BitUtil.ReadBits(input, ref bitIndex, 8);
+		this.curFrame = (Int32)BitUtil.ReadBits(input, ref bitIndex, 24);
 		this.frameRate = reader.ReadInt16();
 		this.counter = reader.ReadUInt16();
 		this.offset = reader.ReadUInt32();
 		this.curFrame = 0;
 		this.frameRate = 256;
 		this.counter = 0;
-		this.flags = 1;
+		this.flags = BGANIM_DEF.ANIM_FLAG.SingleFrame;
         this.CalculateActualFrameCount();
     }
 
     public void CalculateActualFrameCount()
     {
-        Int32 num = 256;
-        Int32 num2 = (this.frameCount - 1) * (Int32)this.frameRate;
-        Int32 num3 = (this.frameCount - 1) * num;
+        const Int32 defaultRate = 256;
+        Int32 completeCount = (this.frameCount - 1) * this.frameRate;
+        Int32 completeDefault = (this.frameCount - 1) * defaultRate;
         this.actualFrameCount = this.frameCount;
-        Int32 num4 = num2 - num3;
-        if (num4 >= num)
-        {
-            this.actualFrameCount = this.frameCount - num4 / num;
-        }
-    }
+        Int32 excess = completeCount - completeDefault;
+		if (Math.Abs(excess) >= defaultRate)
+			this.actualFrameCount = this.frameCount - excess / defaultRate;
+	}
 
-    public Byte flags;
-
-	public Int32 frameCount;
+    public ANIM_FLAG flags;
 
 	public Byte camNdx;
 
+	public Int32 frameCount;
 	public Int32 curFrame;
-
 	public Int16 frameRate;
-
 	public UInt16 counter;
+	public Int32 actualFrameCount;
 
 	public UInt32 offset;
 
-    public Int32 actualFrameCount;
+	public List<BGANIMFRAME_DEF> frameList;
 
-    public List<BGANIMFRAME_DEF> frameList;
+	[Flags]
+	public enum ANIM_FLAG
+	{
+		SingleFrame = 1,
+		Animate = 2,
+		HasNotFinished = 4,
+		Loop = 16,
+		Palindrome = 32,
+
+		StartPlay = Animate | HasNotFinished,
+		ContinuePlay = HasNotFinished | Loop,
+		Modifiables = Loop | Palindrome
+	}
 }

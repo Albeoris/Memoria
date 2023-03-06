@@ -1016,7 +1016,7 @@ public class TitleUI : UIScene
     public void ShowMenuPanel()
     {
         AutoSplitterPipe.SignalLoadEnd();
-        if (Configuration.Debug.StartModelViewer)
+        if (Configuration.Debug.StartModelViewer || Configuration.Debug.StartFieldCreator)
 		{
             OnNewGameButtonClick();
             return;

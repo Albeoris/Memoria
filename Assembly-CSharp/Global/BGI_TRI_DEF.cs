@@ -33,26 +33,40 @@ public class BGI_TRI_DEF
 		this.d = reader.ReadInt32();
 	}
 
-	public UInt16 triFlags;
+	public void WriteData(BinaryWriter writer)
+	{
+		writer.Write(this.triFlags);
+		writer.Write(this.triData);
+		writer.Write(this.floorNdx);
+		writer.Write(this.normalNdx);
+		writer.Write(this.thetaX);
+		writer.Write(this.thetaZ);
+		writer.Write(this.vertexNdx[0]);
+		writer.Write(this.vertexNdx[1]);
+		writer.Write(this.vertexNdx[2]);
+		writer.Write(this.edgeNdx[0]);
+		writer.Write(this.edgeNdx[1]);
+		writer.Write(this.edgeNdx[2]);
+		writer.Write(this.neighborNdx[0]);
+		writer.Write(this.neighborNdx[1]);
+		writer.Write(this.neighborNdx[2]);
+		this.center.WriteData(writer);
+		writer.Write(this.d);
+	}
 
+	public UInt16 triFlags;
 	public UInt16 triData;
 
 	public Int16 floorNdx;
-
 	public Int16 normalNdx;
-
 	public Int16 thetaX;
-
 	public Int16 thetaZ;
 
 	public Int16[] vertexNdx;
-
 	public Int16[] edgeNdx;
-
 	public Int16[] neighborNdx;
 
 	public BGI_VEC_DEF center;
-
 	public Int32 d;
 
 	public Int32 triIdx;

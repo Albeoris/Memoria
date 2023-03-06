@@ -14,6 +14,7 @@ namespace Assets.Sources.Scripts.UI.Common
     {
         public static Color White => new Color(0.784313738f, 0.784313738f, 0.784313738f);
         public static Color Gray => new Color(0.5647059f, 0.5647059f, 0.5647059f);
+        public static Color Black => new Color(0.145f, 0.145f, 0.145f);
         public static Color Green => new Color(0.470588237f, 0.784313738f, 0.2509804f);
         public static Color Cyan => new Color(0.407843143f, 0.7529412f, 0.847058833f);
         public static Color Red => new Color(0.8156863f, 0.3764706f, 0.3137255f);

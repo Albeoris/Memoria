@@ -14,18 +14,18 @@ public partial class BGOVERLAY_DEF
         this.isCreated = false;
     }
 
-	public void SetFlags(Byte flagDiff, Boolean isSet)
+	public void SetFlags(OVERLAY_FLAG flagDiff, Boolean isSet)
 	{
 		if (isSet)
 		{
 			this.flags |= flagDiff;
-			if ((this.flags & 2) != 0)
+			if ((this.flags & OVERLAY_FLAG.Active) != 0)
 				this.transform.gameObject.SetActive(true);
 		}
 		else
 		{
-			this.flags &= (Byte)~flagDiff;
-			if ((this.flags & 2) == 0)
+			this.flags &= ~flagDiff;
+			if ((this.flags & OVERLAY_FLAG.Active) == 0)
 				this.transform.gameObject.SetActive(false);
 		}
 	}
@@ -35,7 +35,7 @@ public partial class BGOVERLAY_DEF
 		this.startOffset = reader.BaseStream.Position;
 		UInt32 buffer = reader.ReadUInt32();
 		this.oriData = buffer;
-		this.flags = (Byte)(buffer & 0xFFu);
+		this.flags = (OVERLAY_FLAG)(buffer & 0xFFu);
 		this.curZ = (UInt16)(buffer >> 8 & 0xFFFu);
 		this.orgZ = (UInt16)(buffer >> 20 & 0xFFFu);
 		this.w = reader.ReadUInt16();
@@ -66,62 +66,42 @@ public partial class BGOVERLAY_DEF
 		this.tpageWork = reader.ReadUInt32();
 	}
 
-	public Byte flags;
+	public OVERLAY_FLAG flags;
 
 	public UInt16 curZ;
-
 	public UInt16 orgZ;
-
 	public UInt16 w;
-
 	public UInt16 h;
-
 	public Int16 orgX;
-
 	public Int16 orgY;
-
 	public Int16 curX;
-
 	public Int16 curY;
 
 	public Int16 minX;
-
 	public Int16 maxX;
-
 	public Int16 minY;
-
 	public Int16 maxY;
 
 	public Int16 scrX;
-
 	public Int16 scrY;
 
 	public Int16 dX;
-
 	public Int16 dY;
 
 	public Int16 fracX;
-
 	public Int16 fracY;
 
 	public Byte camNdx;
-
 	public Byte isXOffset;
-
     public UInt32 indnum;
-
 	public Byte viewportNdx;
 
 	public UInt16 spriteCount;
 
 	public UInt32 locOffset;
-
 	public UInt32 prmOffset;
-
 	public UInt32 sprtWork;
-
 	public UInt32 tpageWork;
-
 	public Int64 startOffset;
 
 	public UInt32 oriData;
@@ -130,13 +110,26 @@ public partial class BGOVERLAY_DEF
 
 	public Transform transform;
 
-    public bool canCombine;
-
-    public bool isCreated;
+    public Boolean canCombine;
+    public Boolean isCreated;
 
     public Boolean isSpecialParallax;
 
 	public Single parallaxCurX;
-
 	public Single parallaxCurY;
+
+	public Boolean isMemoria = false;
+	public Vector2 memoriaSize;
+	public Texture2D memoriaImage;
+	public Material memoriaMaterial;
+
+	[Flags]
+	public enum OVERLAY_FLAG
+	{
+		ScreenAnchored = 1,
+		Active = 2,
+		Loop = 4,
+		Parallax = 8,
+		ScrollWithOffset = 128
+	}
 }

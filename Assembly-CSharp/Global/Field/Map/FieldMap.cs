@@ -410,28 +410,26 @@ public class FieldMap : HonoBehavior
         this.camIdx = newCamIdx;
         this.ActivateCamera();
         this.walkMesh.ProjectedWalkMesh = this.GetCurrentBgCamera().projectedWalkMesh;
-        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
-        Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
-        this.offset.x = bgcam_DEF.w / 2 + centerOffset.x;
-        this.offset.y = -bgcam_DEF.h / 2 - centerOffset.y;
-        this.offset.x = this.offset.x - HalfFieldWidth;
-        this.offset.y = this.offset.y + HalfFieldHeight;
+        BGCAM_DEF bgCamera = this.scene.cameraList[this.camIdx];
+        Vector2 centerOffset = bgCamera.GetCenterOffset();
+        this.offset.x = centerOffset.x + bgCamera.w / 2 - HalfFieldWidth;
+        this.offset.y = -centerOffset.y - bgCamera.h / 2 + HalfFieldHeight;
         Shader.SetGlobalFloat("_OffsetX", this.offset.x);
         Shader.SetGlobalFloat("_OffsetY", this.offset.y);
         Shader.SetGlobalFloat("_MulX", ShaderMulX);
         Shader.SetGlobalFloat("_MulY", ShaderMulY);
-        Shader.SetGlobalMatrix("_MatrixRT", bgcam_DEF.GetMatrixRT());
-        Shader.SetGlobalFloat("_ViewDistance", bgcam_DEF.GetViewDistance());
-        Shader.SetGlobalFloat("_DepthOffset", (Single)bgcam_DEF.depthOffset);
-        FF9StateSystem.Field.FF9Field.loc.map.charOTOffset = bgcam_DEF.depthOffset;
-        FF9StateSystem.Common.FF9.cam = bgcam_DEF.GetMatrixRT();
-        FF9StateSystem.Common.FF9.proj = bgcam_DEF.proj;
+        Shader.SetGlobalMatrix("_MatrixRT", bgCamera.GetMatrixRT());
+        Shader.SetGlobalFloat("_ViewDistance", bgCamera.GetViewDistance());
+        Shader.SetGlobalFloat("_DepthOffset", bgCamera.depthOffset);
+        FF9StateSystem.Field.FF9Field.loc.map.charOTOffset = bgCamera.depthOffset;
+        FF9StateSystem.Common.FF9.cam = bgCamera.GetMatrixRT();
+        FF9StateSystem.Common.FF9.proj = bgCamera.proj;
         FF9StateSystem.Common.FF9.projectionOffset = this.offset;
-        BGCAM_DEF bgcam_DEF2 = this.scene.cameraList[this.camIdx];
-        this.scene.maxX = bgcam_DEF2.vrpMaxX;
-        this.scene.maxY = bgcam_DEF2.vrpMaxY;
+        this.scene.maxX = bgCamera.vrpMaxX;
+        this.scene.maxY = bgCamera.vrpMaxY;
         this.flags |= FieldMapFlags.Unknown128;
         this.walkMesh.ProcessBGI();
+        this.walkMesh.UpdateActiveCameraWalkmesh();
     }
 
     public static Boolean IsNarrowMap()
@@ -451,22 +449,20 @@ public class FieldMap : HonoBehavior
         this.ActivateCamera();
         if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
             return;
-        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
-        Vector2 centerOffset = bgcam_DEF.GetCenterOffset();
-        this.offset.x = bgcam_DEF.w / 2 + centerOffset.x;
-        this.offset.y = -bgcam_DEF.h / 2 - centerOffset.y;
-        this.offset.x = this.offset.x - HalfFieldWidth;
-        this.offset.y = this.offset.y + HalfFieldHeight;
+        BGCAM_DEF bgCamera = this.scene.cameraList[this.camIdx];
+        Vector2 centerOffset = bgCamera.GetCenterOffset();
+        this.offset.x = centerOffset.x + bgCamera.w / 2 - HalfFieldWidth;
+        this.offset.y = -centerOffset.y - bgCamera.h / 2 + HalfFieldHeight;
         Shader.SetGlobalFloat("_OffsetX", this.offset.x);
         Shader.SetGlobalFloat("_OffsetY", this.offset.y);
         Shader.SetGlobalFloat("_MulX", ShaderMulX);
         Shader.SetGlobalFloat("_MulY", ShaderMulY);
-        Shader.SetGlobalMatrix("_MatrixRT", bgcam_DEF.GetMatrixRT());
-        Shader.SetGlobalFloat("_ViewDistance", bgcam_DEF.GetViewDistance());
-        Shader.SetGlobalFloat("_DepthOffset", bgcam_DEF.depthOffset);
-        FF9StateSystem.Field.FF9Field.loc.map.charOTOffset = bgcam_DEF.depthOffset;
-        FF9StateSystem.Common.FF9.cam = bgcam_DEF.GetMatrixRT();
-        FF9StateSystem.Common.FF9.proj = bgcam_DEF.proj;
+        Shader.SetGlobalMatrix("_MatrixRT", bgCamera.GetMatrixRT());
+        Shader.SetGlobalFloat("_ViewDistance", bgCamera.GetViewDistance());
+        Shader.SetGlobalFloat("_DepthOffset", bgCamera.depthOffset);
+        FF9StateSystem.Field.FF9Field.loc.map.charOTOffset = bgCamera.depthOffset;
+        FF9StateSystem.Common.FF9.cam = bgCamera.GetMatrixRT();
+        FF9StateSystem.Common.FF9.proj = bgCamera.proj;
         FF9StateSystem.Common.FF9.projectionOffset = this.offset;
         this.walkMesh = new WalkMesh(this);
         this.walkMesh.CreateWalkMesh();
@@ -487,11 +483,8 @@ public class FieldMap : HonoBehavior
         this.curCamIdx = this.camIdx;
         for (Int32 i = 0; i < this.scene.cameraList.Count; i++)
         {
-            BGCAM_DEF bgcam_DEF = this.scene.cameraList[i];
-            if (i == this.camIdx)
-                bgcam_DEF.transform.gameObject.SetActive(true);
-            else
-                bgcam_DEF.transform.gameObject.SetActive(false);
+            BGCAM_DEF bgCamera = this.scene.cameraList[i];
+            bgCamera.transform.gameObject.SetActive(i == this.camIdx);
         }
     }
 
@@ -547,20 +540,20 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    public void RestoreModels(GameObject playerGO, Actor actorOfObj)
+    public void RestoreModels(GameObject modelGo, Actor actorOfObj)
     {
-        FieldMapActorController component = playerGO.GetComponent<FieldMapActorController>();
+        FieldMapActorController component = modelGo.GetComponent<FieldMapActorController>();
         component.charFlags = (UInt16)actorOfObj.charFlags;
         component.activeFloor = (Int32)actorOfObj.activeFloor;
         component.activeTri = (Int32)actorOfObj.activeTri;
     }
 
-    public void RestoreAttachModel(GameObject playerGO, Actor actorOfObj)
+    public void RestoreAttachModel(GameObject modelGo, Actor actorOfObj)
     {
         if (actorOfObj.attatchTargetUid != -1)
         {
             Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(actorOfObj.attatchTargetUid);
-            geo.geoAttach(playerGO, objUID.go, actorOfObj.attachTargetBoneIndex);
+            geo.geoAttach(modelGo, objUID.go, actorOfObj.attachTargetBoneIndex);
         }
     }
 
@@ -581,18 +574,18 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    public void AddFieldChar(GameObject playerGO, Vector3 pos, Quaternion rot, Boolean isPlayer, Actor actorOfObj, Boolean needRestore = false)
+    public void AddFieldChar(GameObject modelGo, Vector3 pos, Quaternion rot, Boolean isPlayer, Actor actorOfObj, Boolean needRestore = false)
     {
-        playerGO.transform.parent = base.transform;
-        playerGO.transform.localScale = new Vector3(1f, 1f, 1f);
-        FieldMapActor fieldMapActor = FieldMapActor.CreateFieldMapActor(playerGO, actorOfObj);
-        FieldMapActorController fieldMapActorController = playerGO.AddComponent<FieldMapActorController>();
+        modelGo.transform.parent = base.transform;
+        modelGo.transform.localScale = new Vector3(1f, 1f, 1f);
+        FieldMapActor fieldMapActor = FieldMapActor.CreateFieldMapActor(modelGo, actorOfObj);
+        FieldMapActorController fieldMapActorController = modelGo.AddComponent<FieldMapActorController>();
         actorOfObj.fieldMapActorController = fieldMapActorController;
 
         FF9BattleDBHeightAndRadius.TryFindNeckBoneIndex(actorOfObj.model, ref actorOfObj.neckBoneIndex);
 
         if (needRestore)
-            this.RestoreModels(playerGO, actorOfObj);
+            this.RestoreModels(modelGo, actorOfObj);
 
         fieldMapActorController.fieldMap = this;
         fieldMapActorController.walkMesh = this.walkMesh;
@@ -601,12 +594,12 @@ public class FieldMap : HonoBehavior
         fieldMapActorController.isPlayer = isPlayer;
         fieldMapActorController.SetPosition(pos, true, !needRestore);
         fieldMapActorController.radius = actorOfObj.bgiRad * 4f;
-        playerGO.transform.localRotation = rot;
+        modelGo.transform.localRotation = rot;
 
         if (needRestore)
         {
             if (FF9StateSystem.Common.FF9.fldMapNo == 1508) // Conde Petie/Inn
-                this.RestoreAttachModel(playerGO, actorOfObj);
+                this.RestoreAttachModel(modelGo, actorOfObj);
             if (FF9StateSystem.Common.FF9.fldMapNo == 1508 || FF9StateSystem.Common.FF9.fldMapNo == 1706) // Conde Petie/Inn or Mdn. Sari/Kitchen
                 this.RestoreShadowOff(fieldMapActor.actor.uid, actorOfObj);
         }
@@ -618,17 +611,17 @@ public class FieldMap : HonoBehavior
         }
         if (FF9StateSystem.Field.isDebugWalkMesh)
         {
-            playerGO.transform.localScale = new Vector3(-1f, -1f, 1f);
-            Renderer[] renderers = playerGO.GetComponentsInChildren<Renderer>();
+            modelGo.transform.localScale = new Vector3(-1f, -1f, 1f);
+            Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
             for (Int32 i = 0; i < renderers.Length; i++)
                 renderers[i].material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
         }
         else
         {
-            playerGO.transform.localScale = new Vector3(-1f, -1f, 1f);
+            modelGo.transform.localScale = new Vector3(-1f, -1f, 1f);
             if (actorOfObj.model == 395) // BlueMagicLight
             {
-                Renderer[] renderers = playerGO.GetComponentsInChildren<Renderer>();
+                Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
                 for (Int32 i = 0; i < renderers.Length; i++)
                 {
                     Material[] materials = renderers[i].materials;
@@ -638,7 +631,7 @@ public class FieldMap : HonoBehavior
             }
             else
             {
-                Renderer[] renderers = playerGO.GetComponentsInChildren<Renderer>();
+                Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
                 for (Int32 i = 0; i < renderers.Length; i++)
                 {
                     Material[] materials = renderers[i].materials;
@@ -663,10 +656,10 @@ public class FieldMap : HonoBehavior
             fieldMapActor.GetComponent<Animation>().Play(animIdle);
     }
 
-    public void updatePlayer(GameObject playerGO)
+    public void updatePlayer(GameObject playerModelGo)
     {
-        FieldMapActor p = playerGO.GetComponent<FieldMapActor>();
-        FieldMapActorController pc = playerGO.GetComponent<FieldMapActorController>();
+        FieldMapActor p = playerModelGo.GetComponent<FieldMapActor>();
+        FieldMapActorController pc = playerModelGo.GetComponent<FieldMapActorController>();
         pc.isPlayer = true;
         this.player = p;
         this.playerController = pc;
@@ -1052,17 +1045,16 @@ public class FieldMap : HonoBehavior
     {
         List<BGANIM_DEF> animList = this.scene.animList;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        Int32 animCount = (Int32)bgscene_DEF.animCount;
+        Int32 animCount = this.scene.animCount;
         for (Int32 i = 0; i < animCount; i++)
         {
-            BGANIM_DEF bganim_DEF = animList[i];
-            bganim_DEF.curFrame = 0;
-            bganim_DEF.frameRate = 256;
-            bganim_DEF.counter = 0;
-            bganim_DEF.flags = 1;
-            List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
-            overlayList[(Int32)frameList[0].target].SetFlags(2, true);
+            BGANIM_DEF bgAnim = animList[i];
+            bgAnim.curFrame = 0;
+            bgAnim.frameRate = 256;
+            bgAnim.counter = 0;
+            bgAnim.flags = BGANIM_DEF.ANIM_FLAG.SingleFrame;
+            List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
+            overlayList[frameList[0].target].SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, true);
         }
         return 1;
     }
@@ -1070,16 +1062,16 @@ public class FieldMap : HonoBehavior
     public Int32 EBG_attachInit()
     {
         this.attachCount = 0;
-        for (UInt16 num = 0; num < 10; num = (UInt16)(num + 1))
+        for (Int32 i = 0; i < 10; i++)
         {
-            this.attachList[(Int32)num] = new EBG_ATTACH_DEF();
-            this.attachList[(Int32)num].surroundMode = -1;
-            this.attachList[(Int32)num].r = 128;
-            this.attachList[(Int32)num].g = 128;
-            this.attachList[(Int32)num].b = 128;
-            this.attachList[(Int32)num].ndx = -1;
-            this.attachList[(Int32)num].x = 0;
-            this.attachList[(Int32)num].y = 0;
+            this.attachList[i] = new EBG_ATTACH_DEF();
+            this.attachList[i].surroundMode = -1;
+            this.attachList[i].r = 128;
+            this.attachList[i].g = 128;
+            this.attachList[i].b = 128;
+            this.attachList[i].ndx = -1;
+            this.attachList[i].x = 0;
+            this.attachList[i].y = 0;
         }
         return 1;
     }
@@ -1087,466 +1079,321 @@ public class FieldMap : HonoBehavior
     public Int32 EBG_sceneGetVRP(ref Int16 x, ref Int16 y)
     {
         if (this.scene.cameraList.Count <= 0)
-        {
             return 0;
-        }
-        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-        x = (Int16)(this.curVRP[0] + (Single)bgcam_DEF.centerOffset[0] + HalfFieldWidth);
-        y = (Int16)(this.curVRP[1] - (Single)bgcam_DEF.centerOffset[1] + HalfFieldHeight);
+        BGCAM_DEF bgCamera = this.scene.cameraList[this.curCamIdx];
+        x = (Int16)(this.curVRP[0] + bgCamera.centerOffset[0] + HalfFieldWidth);
+        y = (Int16)(this.curVRP[1] - bgCamera.centerOffset[1] + HalfFieldHeight);
         return 1;
     }
 
     public Int32 EBG_overlaySetActive(Int32 overlayNdx, Int32 activeFlag)
     {
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[overlayNdx];
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        if (activeFlag != 0)
-        {
-            bgoverlay_DEF.SetFlags(2, true);
-        }
-        else
-        {
-            bgoverlay_DEF.SetFlags(2, false);
-        }
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+        bgOverlay.SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, activeFlag != 0);
         return 1;
     }
 
-    public Int32 EBG_overlayDefineViewport(UInt32 viewportNdx, Int16 x, Int16 y, Int16 w, Int16 h)
+    public Int32 EBG_overlayDefineViewport(Int32 viewportNdx, Int16 x, Int16 y, Int16 w, Int16 h)
     {
-        this.scrollWindowPos[(Int32)viewportNdx][0] = x;
-        this.scrollWindowPos[(Int32)viewportNdx][1] = y;
-        this.scrollWindowDim[(Int32)viewportNdx][0] = w;
-        this.scrollWindowDim[(Int32)viewportNdx][1] = h;
+        this.scrollWindowPos[viewportNdx][0] = x;
+        this.scrollWindowPos[viewportNdx][1] = y;
+        this.scrollWindowDim[viewportNdx][0] = w;
+        this.scrollWindowDim[viewportNdx][1] = h;
         return 1;
     }
 
-    public Int32 EBG_overlayDefineViewportAlpha(UInt32 viewportNdx, Int32 alphaX, Int32 alphaY)
+    public Int32 EBG_overlayDefineViewportAlpha(Int32 viewportNdx, Int32 alphaX, Int32 alphaY)
     {
-        this.scrollWindowAlphaX[(Int32)((UIntPtr)viewportNdx)] = (Int16)alphaX;
-        this.scrollWindowAlphaY[(Int32)((UIntPtr)viewportNdx)] = (Int16)alphaY;
+        this.scrollWindowAlphaX[viewportNdx] = (Int16)alphaX;
+        this.scrollWindowAlphaY[viewportNdx] = (Int16)alphaY;
         return 1;
     }
 
-    public Int32 EBG_overlaySetViewport(UInt32 overlayNdx, UInt32 viewportNdx)
+    public Int32 EBG_overlaySetViewport(Int32 overlayNdx, Int32 viewportNdx)
     {
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(Int32)overlayNdx];
-        bgoverlay_DEF.viewportNdx = (Byte)viewportNdx;
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+        bgOverlay.viewportNdx = (Byte)viewportNdx;
         return 1;
     }
 
-    public Int32 EBG_overlaySetLoop(UInt32 overlayNdx, UInt32 flag, Int32 dx, Int32 dy)
+    public Int32 EBG_overlaySetLoop(Int32 overlayNdx, UInt32 flag, Int32 dx, Int32 dy)
     {
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(Int32)overlayNdx];
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         if (flag != 0u)
         {
-            BGOVERLAY_DEF bgoverlay_DEF2 = bgoverlay_DEF;
-            bgoverlay_DEF2.flags = (Byte)(bgoverlay_DEF2.flags | 4);
+            bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.Loop;
             if (this.scene.combineMeshes)
-            {
                 this.scene.CreateSeparateOverlay(this, this.UseUpscalFM, overlayNdx);
-            }
         }
         else
         {
-            BGOVERLAY_DEF bgoverlay_DEF3 = bgoverlay_DEF;
-            bgoverlay_DEF3.flags = (Byte)(bgoverlay_DEF3.flags & 251);
+            bgOverlay.flags &= ~BGOVERLAY_DEF.OVERLAY_FLAG.Loop;
         }
-        bgoverlay_DEF.dX = (Int16)dx;
-        bgoverlay_DEF.fracX = 0;
-        bgoverlay_DEF.dY = (Int16)dy;
-        bgoverlay_DEF.fracY = 0;
+        bgOverlay.dX = (Int16)dx;
+        bgOverlay.fracX = 0;
+        bgOverlay.dY = (Int16)dy;
+        bgOverlay.fracY = 0;
         return 1;
     }
 
-    public Int32 EBG_overlaySetLoopType(UInt32 overlayNdx, UInt32 isScreenAnchored)
+    public Int32 EBG_overlaySetLoopType(Int32 overlayNdx, UInt32 isScreenAnchored)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(Int32)overlayNdx];
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         if (isScreenAnchored != 0u)
-        {
-            BGOVERLAY_DEF bgoverlay_DEF2 = bgoverlay_DEF;
-            bgoverlay_DEF2.flags = (Byte)(bgoverlay_DEF2.flags | 1);
-        }
+            bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored;
         else
-        {
-            BGOVERLAY_DEF bgoverlay_DEF3 = bgoverlay_DEF;
-            bgoverlay_DEF3.flags = (Byte)(bgoverlay_DEF3.flags & 254);
-        }
+            bgOverlay.flags &= ~BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored;
         return 1;
     }
 
-    public Int32 EBG_overlaySetScrollWithOffset(UInt32 overlayNdx, UInt32 flag, Int32 delta, Int32 offset, UInt32 isXOffset)
+    public Int32 EBG_overlaySetScrollWithOffset(Int32 overlayNdx, UInt32 flag, Int32 delta, Int32 offset, UInt32 isXOffset)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(Int32)overlayNdx];
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         if (flag != 0u)
         {
-            BGOVERLAY_DEF bgoverlay_DEF2 = bgoverlay_DEF;
-            bgoverlay_DEF2.flags = (Byte)(bgoverlay_DEF2.flags | 128);
+            bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset;
             if (this.scene.combineMeshes)
-            {
                 this.scene.CreateSeparateOverlay(this, this.UseUpscalFM, overlayNdx);
-            }
         }
         else
         {
-            BGOVERLAY_DEF bgoverlay_DEF3 = bgoverlay_DEF;
-            bgoverlay_DEF3.flags = (Byte)(bgoverlay_DEF3.flags & 127);
+            bgOverlay.flags &= ~BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset;
         }
         if (isXOffset != 0u)
         {
-            bgoverlay_DEF.dX = (Int16)offset;
-            bgoverlay_DEF.dY = (Int16)delta;
-            bgoverlay_DEF.isXOffset = 1;
+            bgOverlay.dX = (Int16)offset;
+            bgOverlay.dY = (Int16)delta;
+            bgOverlay.isXOffset = 1;
         }
         else
         {
-            bgoverlay_DEF.dX = (Int16)delta;
-            bgoverlay_DEF.dY = (Int16)offset;
-            bgoverlay_DEF.isXOffset = 0;
+            bgOverlay.dX = (Int16)delta;
+            bgOverlay.dY = (Int16)offset;
+            bgOverlay.isXOffset = 0;
         }
-        bgoverlay_DEF.fracX = 0;
-        bgoverlay_DEF.fracY = 0;
+        bgOverlay.fracX = 0;
+        bgOverlay.fracY = 0;
         return 1;
     }
 
-    public Int32 EBG_charAttachOverlay(UInt32 overlayNdx, Int16 attachX, Int16 attachY, SByte surroundMode, Byte r, Byte g, Byte b)
+    public Int32 EBG_charAttachOverlay(Int32 overlayNdx, Int16 attachX, Int16 attachY, SByte surroundMode, Byte r, Byte g, Byte b)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        this.attachList[(Int32)this.attachCount].ndx = (Int16)overlayNdx;
-        this.attachList[(Int32)this.attachCount].x = attachX;
-        this.attachList[(Int32)this.attachCount].y = attachY;
-        this.attachList[(Int32)this.attachCount].surroundMode = surroundMode;
-        if ((Int32)surroundMode >= 0)
+        this.attachList[this.attachCount].ndx = (Int16)overlayNdx;
+        this.attachList[this.attachCount].x = attachX;
+        this.attachList[this.attachCount].y = attachY;
+        this.attachList[this.attachCount].surroundMode = surroundMode;
+        if (surroundMode >= 0)
         {
-            this.attachList[(Int32)this.attachCount].r = r;
-            this.attachList[(Int32)this.attachCount].g = g;
-            this.attachList[(Int32)this.attachCount].b = b;
-            this.CreateBorder((Int32)overlayNdx, r, g, b);
+            this.attachList[this.attachCount].r = r;
+            this.attachList[this.attachCount].g = g;
+            this.attachList[this.attachCount].b = b;
+            this.CreateBorder(overlayNdx, r, g, b);
         }
-        this.attachCount = (UInt16)(this.attachCount + 1);
+        this.attachCount++;
         return 1;
     }
 
     public Int32 EBG_animAnimate(Int32 animNdx, Int32 frameNdx)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        BGANIM_DEF bganim_DEF2 = bganim_DEF;
-        bganim_DEF2.flags = (Byte)(bganim_DEF2.flags | 2);
-        bganim_DEF.curFrame = frameNdx << 8;
-        bganim_DEF.counter = 0;
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.Animate;
+        bgAnim.curFrame = frameNdx << 8;
+        bgAnim.counter = 0;
         return 1;
     }
 
     public Int32 EBG_animShowFrame(Int32 animNdx, Int32 frameNdx)
     {
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        for (Int32 i = 0; i < bganim_DEF.frameCount; i++)
-        {
-            BGANIMFRAME_DEF bganimframe_DEF = frameList[i];
-            if (i == frameNdx)
-            {
-                overlayList[(Int32)bganimframe_DEF.target].SetFlags(2, true);
-            }
-            else
-            {
-                overlayList[(Int32)bganimframe_DEF.target].SetFlags(2, false);
-            }
-        }
-        bganim_DEF.flags = 1;
+        for (Int32 i = 0; i < bgAnim.frameCount; i++)
+            overlayList[frameList[i].target].SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, i == frameNdx);
+        bgAnim.flags = BGANIM_DEF.ANIM_FLAG.SingleFrame;
         return 1;
     }
 
     public Int32 EBG_animSetActive(Int32 animNdx, Int32 flag)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
         if (flag != 0)
-        {
-            BGANIM_DEF bganim_DEF2 = bganim_DEF;
-            bganim_DEF2.flags = (Byte)(bganim_DEF2.flags | 6);
-        }
+            bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.StartPlay;
         else
-        {
-            BGANIM_DEF bganim_DEF3 = bganim_DEF;
-            bganim_DEF3.flags = (Byte)(bganim_DEF3.flags & 249);
-        }
+            bgAnim.flags &= ~BGANIM_DEF.ANIM_FLAG.StartPlay;
         return 1;
     }
 
     public Int32 EBG_animSetFrameRate(Int32 animNdx, Int32 frameRate)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        bganim_DEF.frameRate = (Int16)frameRate;
-        bganim_DEF.CalculateActualFrameCount();
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        bgAnim.frameRate = (Int16)frameRate;
+        bgAnim.CalculateActualFrameCount();
         return 1;
     }
 
-    public Int32 EBG_animSetFrameWaitAll(UInt32 animNdx, Int32 frameWait)
+    public Int32 EBG_animSetFrameWaitAll(Int32 animNdx, Int32 frameWait)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF = this.scene.animList[(Int32)animNdx];
-        List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
-        Int32 num = bganim_DEF.frameCount;
-        for (Int32 i = 0; i < num; i++)
-        {
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
+        for (Int32 i = 0; i < bgAnim.frameCount; i++)
             frameList[i].value = (SByte)frameWait;
-        }
         return 1;
     }
 
     public Int32 EBG_animSetFrameWait(Int32 animNdx, Int32 frameNdx, Int32 frameWait)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
         frameList[frameNdx].value = (SByte)frameWait;
         return 1;
     }
 
     public Int32 EBG_animSetFlags(Int32 animNdx, Int32 flags)
     {
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF2 = bganim_DEF;
-        bganim_DEF2.flags = (Byte)(bganim_DEF2.flags | (Byte)(flags & 48));
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        bgAnim.flags |= (BGANIM_DEF.ANIM_FLAG)flags & BGANIM_DEF.ANIM_FLAG.Modifiables;
         return 1;
     }
 
     public Int32 EBG_animSetPlayRange(Int32 animNdx, Int32 frameStart, Int32 frameEnd)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
-        BGANIM_DEF bganim_DEF2 = bganim_DEF;
-        bganim_DEF2.flags = (Byte)(bganim_DEF2.flags | 6);
-        bganim_DEF.curFrame = frameStart << 8;
-        bganim_DEF.counter = 0;
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
+        bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.StartPlay;
+        bgAnim.curFrame = frameStart << 8;
+        bgAnim.counter = 0;
         frameList[frameEnd].value = -1;
-        if ((bganim_DEF.frameRate > 0 && frameEnd < frameStart) || (bganim_DEF.frameRate < 0 && frameEnd > frameStart))
-        {
-            bganim_DEF.frameRate = (Int16)(-bganim_DEF.frameRate);
-        }
+        if ((bgAnim.frameRate > 0 && frameEnd < frameStart) || (bgAnim.frameRate < 0 && frameEnd > frameStart))
+            bgAnim.frameRate = (Int16)(-bgAnim.frameRate);
         return 1;
     }
 
     public Int32 EBG_animSetVisible(Int32 animNdx, Int32 isVisible)
     {
-        BGANIM_DEF bganim_DEF = this.scene.animList[animNdx];
-        List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
-        BGSCENE_DEF bgscene_DEF = this.scene;
+        BGANIM_DEF bgAnim = this.scene.animList[animNdx];
+        List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
-        bganim_DEF.curFrame = 0;
-        bganim_DEF.frameRate = 256;
-        bganim_DEF.counter = 0;
-        bganim_DEF.flags = 1;
-        for (Int32 i = 0; i < bganim_DEF.frameCount; i++)
-        {
-            if (isVisible != 0 && i == 0)
-            {
-                overlayList[(Int32)frameList[i].target].SetFlags(2, true);
-            }
-            else
-            {
-                overlayList[(Int32)frameList[i].target].SetFlags(2, false);
-            }
-        }
+        bgAnim.curFrame = 0;
+        bgAnim.frameRate = 256;
+        bgAnim.counter = 0;
+        bgAnim.flags = BGANIM_DEF.ANIM_FLAG.SingleFrame;
+        for (Int32 i = 0; i < bgAnim.frameCount; i++)
+            overlayList[frameList[i].target].SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, isVisible != 0 && i == 0);
         return 1;
     }
 
-    public Int32 EBG_cameraSetViewport(UInt32 camNdx, Int16 minX, Int16 maxX, Int16 minY, Int16 maxY)
+    public Int32 EBG_cameraSetViewport(Int32 camNdx, Int16 minX, Int16 maxX, Int16 minY, Int16 maxY)
     {
-        BGCAM_DEF bgcam_DEF = this.scene.cameraList[(Int32)camNdx];
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        bgcam_DEF.vrpMinX = (Int16)(minX + HalfFieldWidthNative);
-        if (bgcam_DEF.vrpMinX > bgcam_DEF.w - HalfFieldWidthNative)
-        {
-            bgcam_DEF.vrpMinX = (Int16)(bgcam_DEF.w - HalfFieldWidthNative);
-        }
-        bgcam_DEF.vrpMaxX = (Int16)(maxX - HalfFieldWidthNative);
-        if (bgcam_DEF.vrpMaxX < HalfFieldWidthNative)
-        {
-            bgcam_DEF.vrpMaxX = HalfFieldWidthNative;
-        }
-        bgcam_DEF.vrpMinY = (Int16)(minY + HalfFieldHeight);
-        if (bgcam_DEF.vrpMinY > bgcam_DEF.h - HalfFieldHeight)
-        {
-            bgcam_DEF.vrpMinY = (Int16)(bgcam_DEF.h - HalfFieldHeight);
-        }
-        bgcam_DEF.vrpMaxY = (Int16)(maxY - HalfFieldHeight);
-        if (bgcam_DEF.vrpMaxY < HalfFieldHeight)
-        {
-            bgcam_DEF.vrpMaxY = HalfFieldHeight;
-        }
+        BGCAM_DEF bgCamera = this.scene.cameraList[camNdx];
+        bgCamera.vrpMinX = (Int16)Math.Min(minX + HalfFieldWidthNative, bgCamera.w - HalfFieldWidthNative);
+        bgCamera.vrpMaxX = (Int16)Math.Max(maxX - HalfFieldWidthNative, HalfFieldWidthNative);
+        bgCamera.vrpMinY = (Int16)Math.Min(minY + HalfFieldHeight, bgCamera.h - HalfFieldHeight);
+        bgCamera.vrpMaxY = (Int16)Math.Max(maxY - HalfFieldHeight, HalfFieldHeight);
         return 1;
     }
 
     public bool EBG_isCombineMesh(BGOVERLAY_DEF overlayPtr)
     {
-        return overlayPtr.transform.GetComponent<MeshRenderer>() != (UnityEngine.Object)null;
+        return overlayPtr.transform.GetComponent<MeshRenderer>() != null;
     }
 
-    public int EBG_overlaySetSpriteShadeColorOffScreen(BGSCENE_DEF scenePtr, uint overlayNdx, byte r, byte g, byte b)
+    public Int32 EBG_overlaySetShadeColor(Int32 overlayNdx, Byte r, Byte g, Byte b)
     {
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(int)overlayNdx];
-        List<BGSPRITE_LOC_DEF> spriteList = bgoverlay_DEF.spriteList;
-        if (spriteList.Count == 0)
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+        List<BGSPRITE_LOC_DEF> spriteList = bgOverlay.spriteList;
+        if (this.EBG_isCombineMesh(bgOverlay))
         {
-            return 1;
+            Material material = bgOverlay.transform.gameObject.GetComponent<MeshRenderer>().material;
+            material.SetColor("_Color", new Color(r / 128f, g / 128f, b / 128f, 1f));
+            bgOverlay.transform.gameObject.GetComponent<MeshRenderer>().material = material;
         }
-        if (this.EBG_isCombineMesh(bgoverlay_DEF))
+        else if (spriteList.Count > 0)
         {
-            Material material = bgoverlay_DEF.transform.gameObject.GetComponent<MeshRenderer>().material;
-            material.SetColor("_Color", new Color((float)r / 128f, (float)g / 128f, (float)b / 128f, 1f));
-            bgoverlay_DEF.transform.gameObject.GetComponent<MeshRenderer>().material = material;
+            Material material = spriteList[0].transform.gameObject.GetComponent<MeshRenderer>().material;
+            Int32 spriteCount = bgOverlay.spriteCount;
+            Int32 indexShift = FF9StateSystem.Common.FF9.id != 0 ? spriteCount : 0;
+            material.SetColor("_Color", new Color(r / 128f, g / 128f, b / 128f, 1f));
+            for (Int32 i = 0; i < spriteCount; i++)
+                spriteList[i + indexShift].transform.gameObject.GetComponent<MeshRenderer>().material = material;
         }
-        else
-        {
-            Material material2 = spriteList[0].transform.gameObject.GetComponent<MeshRenderer>().material;
-            ushort spriteCount = bgoverlay_DEF.spriteCount;
-            int num;
-            if (FF9StateSystem.Common.FF9.id != 0)
-            {
-                num = (int)spriteCount;
-            }
-            else
-            {
-                num = 0;
-            }
-            material2.SetColor("_Color", new Color((float)r / 128f, (float)g / 128f, (float)b / 128f, 1f));
-            for (ushort num2 = 0; num2 < spriteCount; num2 = (ushort)(num2 + 1))
-            {
-                spriteList[(int)num2 + num].transform.gameObject.GetComponent<MeshRenderer>().material = material2;
-            }
-        }
-        return 1;
-    }
-
-    public Int32 EBG_overlaySetShadeColor(UInt32 overlayNdx, Byte r, Byte g, Byte b)
-    {
-        BGSCENE_DEF scenePtr = this.scene;
-        this.EBG_overlaySetSpriteShadeColorOffScreen(scenePtr, overlayNdx, r, g, b);
         return 1;
     }
 
     public Int32 EBG_overlayMove(Int32 overlayNdx, Int16 dx, Int16 dy, Int16 dz)
     {
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[overlayNdx];
-        BGSCENE_DEF bgscene_DEF = this.scene;
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         FieldMapInfo.fieldmapExtraOffset.UpdateOverlayOffset(this.mapName, overlayNdx, ref dz);
-        Int16 num = (Int16)(bgoverlay_DEF.orgX + dx);
-        Int16 num2 = (Int16)(bgoverlay_DEF.orgY + dy);
-        
+        Int16 destX = (Int16)Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
+        Int16 destY = (Int16)Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
+
         // TODO Check Native: #147
-        Int16 num3;
+        UInt16 destZ;
         if (FF9StateSystem.Common.FF9.fldMapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17)
-        {
-            num3 = 3000;
-        }
+            destZ = 3000;
         else
-        {
-            num3 = (Int16)(bgoverlay_DEF.orgZ + (UInt16)dz);
-        }
-        
-        if (num < bgoverlay_DEF.minX)
-        {
-            num = bgoverlay_DEF.minX;
-        }
-        else if (num > bgoverlay_DEF.maxX)
-        {
-            num = bgoverlay_DEF.maxX;
-        }
-        if (num2 < bgoverlay_DEF.minY)
-        {
-            num2 = bgoverlay_DEF.minY;
-        }
-        else if (num2 > bgoverlay_DEF.maxY)
-        {
-            num2 = bgoverlay_DEF.maxY;
-        }
-        bgoverlay_DEF.orgX = num;
-        bgoverlay_DEF.orgY = num2;
-        bgoverlay_DEF.orgZ = (UInt16)num3;
-        bgoverlay_DEF.curX = num;
-        bgoverlay_DEF.curY = num2;
-        bgoverlay_DEF.curZ = (UInt16)num3;
-        bgoverlay_DEF.transform.localPosition = new Vector3((Single)num, (Single)num2, (Single)num3);
+            destZ = (UInt16)(bgOverlay.orgZ + (UInt16)dz);
+
+        bgOverlay.orgX = destX;
+        bgOverlay.orgY = destY;
+        bgOverlay.orgZ = destZ;
+        bgOverlay.curX = destX;
+        bgOverlay.curY = destY;
+        bgOverlay.curZ = destZ;
+        bgOverlay.transform.localPosition = new Vector3(destX, destY, destZ);
         return 1;
     }
 
     public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Int32 orgX, Int32 orgY)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGOVERLAY_DEF bgoverlay_DEF = bgscene_DEF.overlayList[overlayNdx];
-        bgoverlay_DEF.curX = (Int16)orgX;
-        bgoverlay_DEF.curY = (Int16)orgY;
-        bgoverlay_DEF.orgX = bgoverlay_DEF.curX;
-        bgoverlay_DEF.orgY = bgoverlay_DEF.curY;
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+        bgOverlay.curX = (Int16)orgX;
+        bgOverlay.curY = (Int16)orgY;
+        bgOverlay.orgX = bgOverlay.curX;
+        bgOverlay.orgY = bgOverlay.curY;
         this.flags |= FieldMapFlags.Unknown128;
         return 1;
     }
 
-    public Int32 EBG_overlaySetParallax(UInt32 overlayNdx, UInt32 flag, Int32 dx, Int32 dy)
+    public Int32 EBG_overlaySetParallax(Int32 overlayNdx, UInt32 flag, Int32 dx, Int32 dy)
     {
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        BGOVERLAY_DEF bgoverlay_DEF = this.scene.overlayList[(Int32)overlayNdx];
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         if (flag != 0u)
-        {
-            BGOVERLAY_DEF bgoverlay_DEF2 = bgoverlay_DEF;
-            bgoverlay_DEF2.flags = (Byte)(bgoverlay_DEF2.flags | 8);
-        }
+            bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.Parallax;
         else
-        {
-            BGOVERLAY_DEF bgoverlay_DEF3 = bgoverlay_DEF;
-            bgoverlay_DEF3.flags = (Byte)(bgoverlay_DEF3.flags & 247);
-        }
-        bgoverlay_DEF.dX = (Int16)dx;
-        bgoverlay_DEF.dY = (Int16)dy;
+            bgOverlay.flags &= BGOVERLAY_DEF.OVERLAY_FLAG.Parallax;
+        bgOverlay.dX = (Int16)dx;
+        bgOverlay.dY = (Int16)dy;
         return 1;
     }
 
     public void UpdateOverlayAll()
     {
-        if (this.scene.cameraList.Count <= 0)
-        {
+        if (this.scene.cameraList.Count <= 0 || this.curCamIdx == -1)
             return;
-        }
-        if (this.curCamIdx == -1)
-        {
-            return;
-        }
-        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-        Vector2 zero = Vector2.zero;
-        zero[0] = this.curVRP[0] + (float)bgcam_DEF.centerOffset[0] + HalfFieldWidth;
-        zero[1] = this.curVRP[1] - (float)bgcam_DEF.centerOffset[1] + HalfFieldHeight;
-        this.scene.scrX = (short)((float)this.scene.curX + HalfFieldWidth - zero[0]);
-        this.scene.scrY = (short)((float)this.scene.curY + HalfFieldHeight - zero[1]);
-        ushort overlayCount = this.scene.overlayCount;
+        BGCAM_DEF bgCamera = this.scene.cameraList[this.curCamIdx];
+        Vector2 realVrp = new Vector2();
+        realVrp[0] = this.curVRP[0] + bgCamera.centerOffset[0] + HalfFieldWidth;
+        realVrp[1] = this.curVRP[1] - bgCamera.centerOffset[1] + HalfFieldHeight;
+        this.scene.scrX = (Int16)(this.scene.curX + HalfFieldWidth - realVrp[0]);
+        this.scene.scrY = (Int16)(this.scene.curY + HalfFieldHeight - realVrp[1]);
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
-        for (int i = 0; i < (int)overlayCount; i++)
-        {
-            this.UpdateOverlay((uint)i, overlayList[i], zero);
-        }
+        for (int i = 0; i < this.scene.overlayCount; i++)
+            this.UpdateOverlay(i, overlayList[i], realVrp);
     }
 
-    private void UpdateOverlay(uint ovrNdx, BGOVERLAY_DEF overlayPtr, Vector2 realVrp)
+    private void UpdateOverlay(Int32 ovrNdx, BGOVERLAY_DEF overlayPtr, Vector2 realVrp)
     {
+        BGSCENE_DEF bgScene = this.scene;
         ushort spriteCount = overlayPtr.spriteCount;
         List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
-        BGSCENE_DEF bgscene_DEF = this.scene;
-        short num = (short)(overlayPtr.curX + bgscene_DEF.scrX);
-        short num2 = (short)(overlayPtr.curY + bgscene_DEF.scrY);
-        short num3 = (short)(overlayPtr.curZ + (ushort)bgscene_DEF.curZ);
-        if ((overlayPtr.flags & 4) != 0)
+        short num = (short)(overlayPtr.curX + bgScene.scrX);
+        short num2 = (short)(overlayPtr.curY + bgScene.scrY);
+        short num3 = (short)(overlayPtr.curZ + (ushort)bgScene.curZ);
+        if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             short num4;
             short num5;
-            if ((overlayPtr.flags & 1) != 0)
+            if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
                 num4 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
                 num5 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
@@ -1561,12 +1408,12 @@ public class FieldMap : HonoBehavior
             if (overlayPtr.dX < 0)
             {
                 short num8 = (short)(256 - (overlayPtr.dX << 8 >> 8));
-                num = (short)((((int)overlayPtr.curX << 8 | (int)overlayPtr.fracX) + (int)num8 >> 8) + (int)bgscene_DEF.scrX);
+                num = (short)((((int)overlayPtr.curX << 8 | (int)overlayPtr.fracX) + (int)num8 >> 8) + (int)bgScene.scrX);
             }
             if (overlayPtr.dY < 0)
             {
                 short num9 = (short)(256 - (overlayPtr.dX << 8 >> 8));
-                num2 = (short)((((int)overlayPtr.curY << 8 | (int)overlayPtr.fracY) + (int)num9 >> 8) + (int)bgscene_DEF.scrY);
+                num2 = (short)((((int)overlayPtr.curY << 8 | (int)overlayPtr.fracY) + (int)num9 >> 8) + (int)bgScene.scrY);
             }
             if (overlayPtr.dX != 0)
             {
@@ -1581,7 +1428,7 @@ public class FieldMap : HonoBehavior
             {
                 BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(int)num10];
                 Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
-                if ((overlayPtr.flags & 1) != 0)
+                if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
                     short num11 = (short)(num + (short)bgsprite_LOC_DEF.offX);
                     if (overlayPtr.dX != 0)
@@ -1659,11 +1506,11 @@ public class FieldMap : HonoBehavior
             }
             overlayPtr.transform.localPosition = new Vector3((float)overlayPtr.curX * 1f, (float)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
         }
-        else if ((overlayPtr.flags & 128) != 0)
+        else if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
             short num4;
             short num5;
-            if ((overlayPtr.flags & 1) != 0)
+            if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
                 num4 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
                 num5 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
@@ -1736,7 +1583,7 @@ public class FieldMap : HonoBehavior
         {
             float num16;
             float num17;
-            if ((overlayPtr.flags & 8) != 0 && overlayPtr.isSpecialParallax)
+            if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0 && overlayPtr.isSpecialParallax)
             {
                 num16 = overlayPtr.parallaxCurX;
                 num17 = overlayPtr.parallaxCurY;
@@ -1761,8 +1608,8 @@ public class FieldMap : HonoBehavior
         if (!IsActive)
             return;
 
-        this.startPoint[0] = (Single)((Int16)this.curVRP[0]);
-        this.startPoint[1] = (Single)((Int16)this.curVRP[1]);
+        this.startPoint[0] = (Int16)this.curVRP[0];
+        this.startPoint[1] = (Int16)this.curVRP[1];
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
 
         if (Configuration.Graphics.WidescreenSupport)
@@ -1773,15 +1620,13 @@ public class FieldMap : HonoBehavior
                 destX = bgcam_DEF.vrpMinX;
         }
 
-        this.endPoint[0] = (Single)destX;
-        this.endPoint[1] = (Single)destY;
+        this.endPoint[0] = destX;
+        this.endPoint[1] = destY;
         this.frameCount = (Int16)frameCount;
         this.curFrame = 1;
-        this.flags = (this.flags & ~FieldMapFlags.Generic15);
-        if (scrollType == (UInt64)FieldMapFlags.RotationScroll)
-        {
+        this.flags &= ~FieldMapFlags.Generic15;
+        if (scrollType == (UInt32)FieldMapFlags.RotationScroll)
             IsRotationScroll = true;
-        }
         this.flags |= FieldMapFlags.Unknown1;
     }
 
@@ -1850,72 +1695,59 @@ public class FieldMap : HonoBehavior
     {
         for (Int32 i = 0; i < this.scene.animList.Count; i++)
         {
-            Byte b = 4;
-            BGANIM_DEF bganim_DEF = this.scene.animList[i];
-            Int32 num = bganim_DEF.curFrame;
-            if ((bganim_DEF.flags & 2) != 0 && (bganim_DEF.flags & 20) != 0 && (Int32)bganim_DEF.camNdx == this.camIdx && this.animIdx[i])
+            BGANIM_DEF bgAnim = this.scene.animList[i];
+            if ((bgAnim.flags & BGANIM_DEF.ANIM_FLAG.Animate) != 0 && (bgAnim.flags & BGANIM_DEF.ANIM_FLAG.ContinuePlay) != 0 && bgAnim.camNdx == this.camIdx && this.animIdx[i])
             {
-                List<BGANIMFRAME_DEF> frameList = bganim_DEF.frameList;
-                Int32 num2 = bganim_DEF.frameCount;
-                for (Int32 j = 0; j < num2; j++)
+                List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
+                for (Int32 j = 0; j < bgAnim.frameCount; j++)
+                    this.scene.overlayList[frameList[j].target].SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, false);
+                Int32 curFrame = bgAnim.curFrame >> 8;
+                Byte target = frameList[curFrame].target;
+                this.scene.overlayList[target].SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, true);
+                if (frameList[curFrame].value < 0)
                 {
-                    this.scene.overlayList[(Int32)frameList[j].target].SetFlags(2, false);
-                }
-                Byte target = frameList[num >> 8].target;
-                this.scene.overlayList[(Int32)target].SetFlags(2, true);
-                if ((Int32)frameList[num >> 8].value < 0)
-                {
-                    frameList[num >> 8].value = 0;
-                    bganim_DEF.counter = 0;
-                    BGANIM_DEF bganim_DEF2 = bganim_DEF;
-                    bganim_DEF2.flags = (Byte)(bganim_DEF2.flags & (Byte)(~b));
+                    frameList[curFrame].value = 0;
+                    bgAnim.counter = 0;
+                    bgAnim.flags &= ~BGANIM_DEF.ANIM_FLAG.HasNotFinished;
                     return 1;
                 }
                 Int32 fastForwardFactor = FF9StateSystem.Settings.FastForwardFactor;
-                Single num3 = 1f / (Single)fastForwardFactor;
+                Single fastForwardInvert = 1f / fastForwardFactor;
                 if (this.animIdx[i])
+                    this.scene.animList[i].counter++;
+                if (bgAnim.counter >= frameList[curFrame].value)
                 {
-                    BGANIM_DEF bganim_DEF3 = this.scene.animList[i];
-                    bganim_DEF3.counter = (UInt16)(bganim_DEF3.counter + 1);
-                }
-                if ((Int32)bganim_DEF.counter >= (Int32)frameList[num >> 8].value)
-                {
-                    bganim_DEF.counter = 0;
-                    if (fastForwardFactor != 1 && (bganim_DEF.frameCount % fastForwardFactor == 0 || fastForwardFactor % bganim_DEF.frameCount == 0))
-                    {
-                        bganim_DEF.curFrame = num + (Int32)((Single)bganim_DEF.frameRate * num3 * 2f);
-                    }
+                    bgAnim.counter = 0;
+                    if (fastForwardFactor != 1 && (bgAnim.frameCount % fastForwardFactor == 0 || fastForwardFactor % bgAnim.frameCount == 0))
+                        bgAnim.curFrame += (Int32)(bgAnim.frameRate * fastForwardInvert * 2f);
                     else
+                        bgAnim.curFrame += bgAnim.frameRate;
+                    curFrame = bgAnim.curFrame >> 8;
+                    if (curFrame >= bgAnim.frameCount)
                     {
-                        bganim_DEF.curFrame = num + (Int32)bganim_DEF.frameRate;
-                    }
-                    if (bganim_DEF.curFrame >> 8 >= bganim_DEF.frameCount)
-                    {
-                        if ((bganim_DEF.flags & 32) != 0)
+                        if ((bgAnim.flags & BGANIM_DEF.ANIM_FLAG.Palindrome) != 0)
                         {
-                            bganim_DEF.curFrame = bganim_DEF.frameCount - 1 << 8;
-                            this.EBG_animSetFrameRate(i, (Int32)(-(Int32)bganim_DEF.frameRate));
+                            bgAnim.curFrame = bgAnim.frameCount - 1 << 8;
+                            this.EBG_animSetFrameRate(i, -bgAnim.frameRate);
                         }
                         else
                         {
-                            bganim_DEF.curFrame = 0;
+                            bgAnim.curFrame = 0;
                         }
-                        BGANIM_DEF bganim_DEF4 = bganim_DEF;
-                        bganim_DEF4.flags = (Byte)(bganim_DEF4.flags & (Byte)(~b));
+                        bgAnim.flags &= ~BGANIM_DEF.ANIM_FLAG.HasNotFinished;
                     }
-                    else if (bganim_DEF.curFrame >> 8 < 0)
+                    else if (curFrame < 0)
                     {
-                        if ((bganim_DEF.flags & 32) != 0)
+                        if ((bgAnim.flags & BGANIM_DEF.ANIM_FLAG.Palindrome) != 0)
                         {
-                            bganim_DEF.curFrame = 0;
-                            this.EBG_animSetFrameRate(i, (Int32)(-(Int32)bganim_DEF.frameRate));
+                            bgAnim.curFrame = 0;
+                            this.EBG_animSetFrameRate(i, -bgAnim.frameRate);
                         }
                         else
                         {
-                            bganim_DEF.curFrame = bganim_DEF.frameCount - 1 << 8;
+                            bgAnim.curFrame = bgAnim.frameCount - 1 << 8;
                         }
-                        BGANIM_DEF bganim_DEF5 = bganim_DEF;
-                        bganim_DEF5.flags = (Byte)(bganim_DEF5.flags & (Byte)(~b));
+                        bgAnim.flags &= ~BGANIM_DEF.ANIM_FLAG.HasNotFinished;
                     }
                 }
             }
@@ -1938,7 +1770,7 @@ public class FieldMap : HonoBehavior
         {
             EBG_ATTACH_DEF ebg_ATTACH_DEF = this.attachList[i];
             UInt16 index = (UInt16)ebg_ATTACH_DEF.ndx;
-            if ((overlayList[index].flags & 2) != 0 && overlayList[index].camNdx == this.curCamIdx)
+            if ((overlayList[index].flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0 && overlayList[index].camNdx == this.curCamIdx)
             {
                 Int16 x = ebg_ATTACH_DEF.x;
                 Int16 y = ebg_ATTACH_DEF.y;
@@ -1957,7 +1789,7 @@ public class FieldMap : HonoBehavior
         for (Int32 i = 0; i < overlayCount; i++)
         {
             BGOVERLAY_DEF bgoverlay_DEF = overlayList[i];
-            if ((bgoverlay_DEF.flags & 4) != 0)
+            if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
                 if (bgoverlay_DEF.dX != 0 && bgoverlay_DEF.dX != 32767)
                 {
@@ -1974,7 +1806,7 @@ public class FieldMap : HonoBehavior
                     bgoverlay_DEF.fracY = (Int16)(num & 255);
                 }
             }
-            if ((bgoverlay_DEF.flags & 128) != 0)
+            if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
             {
                 if (bgoverlay_DEF.isXOffset != 0)
                 {
@@ -1994,7 +1826,7 @@ public class FieldMap : HonoBehavior
                     bgoverlay_DEF.fracX = (Int16)(num & 255);
                 }
             }
-            if ((bgoverlay_DEF.flags & 8) != 0)
+            if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
                 Int32 num = (Int32)((Single)(bgoverlay_DEF.orgX << 8) + (this.curVRP[0] - this.parallaxOrg[0]) * (Single)bgoverlay_DEF.dX);
                 bgoverlay_DEF.curX = (Int16)(num >> 8);
@@ -2087,7 +1919,7 @@ public class FieldMap : HonoBehavior
         for (Int32 overlayIndex = 0; overlayIndex < this.scene.overlayCount; overlayIndex++)
         {
             BGOVERLAY_DEF overlay = this.scene.overlayList[overlayIndex];
-            if ((overlay.flags & 4) != 0)
+            if ((overlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
                 if (overlay.dX != 0)
                     overlay.curX = (Int16)(overlay.curX + dx);
@@ -2097,7 +1929,7 @@ public class FieldMap : HonoBehavior
                 this.EBG_alphaScaleX(overlay, dx);
                 this.EBG_alphaScaleY(overlay, dy);
             }
-            else if ((overlay.flags & 128) != 0)
+            else if ((overlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
             {
                 if (overlay.isXOffset != 0)
                     overlay.curY = (Int16)(overlay.curY + dy);

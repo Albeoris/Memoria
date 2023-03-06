@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Memoria.Prime;
-using Memoria.Assets;
+using Memoria.Scripts;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -377,7 +377,7 @@ namespace Memoria.Assets
 			mesh.triangles = meshIndex;
 			GameObject go = ModelFactory.CreateModel("GEO_ACC_F0_BON");
 			go.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh = mesh;
-			go.GetComponentInChildren<SkinnedMeshRenderer>().material.shader = Shader.Find("SFX_RUSH_ADD");
+			go.GetComponentInChildren<SkinnedMeshRenderer>().material.shader = ShadersLoader.Find("SFX_RUSH_ADD");
 			return go;
 		}
 
@@ -395,7 +395,7 @@ namespace Memoria.Assets
 			mesh.triangles = meshIndex;
 			GameObject go = ModelFactory.CreateModel("GEO_ACC_F0_BON");
 			go.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh = mesh;
-			go.GetComponentInChildren<SkinnedMeshRenderer>().material.shader = Shader.Find("SFX_RUSH_ADD");
+			go.GetComponentInChildren<SkinnedMeshRenderer>().material.shader = ShadersLoader.Find("SFX_RUSH_ADD");
 			go.transform.localRotation = Quaternion.Euler(0f, 180f, -90f);
 			return go;
 		}
