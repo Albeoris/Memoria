@@ -24,7 +24,8 @@ namespace Memoria.Assets
             if (texture == null)
                 return null;
 
-            RenderTexture oldTarget = Camera.main.targetTexture;
+            Camera camera = Camera.main ?? GameObject.Find("FieldMap Camera").GetComponent<Camera>();
+            RenderTexture oldTarget = camera.targetTexture;
             RenderTexture oldActive = RenderTexture.active;
 
             Texture2D result = new Texture2D(texture.width, texture.height, TextureFormat.ARGB32, false);
@@ -32,8 +33,8 @@ namespace Memoria.Assets
             RenderTexture rt = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.ARGB32);
             try
             {
-                Camera.main.targetTexture = rt;
-                //Camera.main.Render();
+                camera.targetTexture = rt;
+                //camera.Render();
                 Graphics.Blit(texture, rt);
 
                 RenderTexture.active = rt;
@@ -42,7 +43,7 @@ namespace Memoria.Assets
             finally
             {
                 RenderTexture.active = oldActive;
-                Camera.main.targetTexture = oldTarget;
+                camera.targetTexture = oldTarget;
                 RenderTexture.ReleaseTemporary(rt);
             }
             return result;

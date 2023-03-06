@@ -138,7 +138,7 @@ public static class ff9play
         play.category = parameter.DefaultCategory;
         play.bonus = new FF9LEVEL_BONUS();
         play.Name = FF9TextTool.CharacterDefaultName(play.info.slot_no);
-        FF9Play_SetDefEquips(play.equip, parameter.DefaultEquipmentSet);
+        FF9Play_SetDefEquips(play.equip, parameter.DefaultEquipmentSet, true);
         play.info.serial_no = parameter.GetSerialNumber();
         FF9Play_Build(play, FF9PLAY_DEF_LEVEL, true, false);
         play.cur.hp = play.max.hp;
@@ -401,11 +401,19 @@ public static class ff9play
         return _FF9Play_Face;
     }
 
-    public static void FF9Play_SetDefEquips(CharacterEquipment target, EquipmentSetId equipmentId)
+    public static void FF9Play_SetDefEquips(CharacterEquipment target, EquipmentSetId equipmentId, Boolean isNewPlayer)
     {
         CharacterEquipment newSet = DefaultEquipment[equipmentId];
         for (Int32 i = 0; i < 5; i++)
+        {
+            if (Configuration.Hacks.DisableEquipmentLoss && target[i] != RegularItem.NoItem && target[i] != newSet[i])
+            {
+                if (target[i] == RegularItem.Moonstone)
+                    ff9item.DecreaseMoonStoneCount();
+                ff9item.FF9Item_Add(target[i], 1);
+            }
             target[i] = newSet[i];
+        }
     }
 
     public static void FF9Play_GrowLevel(PLAYER player, Int32 lv)
@@ -443,7 +451,7 @@ public static class ff9play
     public static void FF9Play_Change(PLAYER play, Boolean update_lv, EquipmentSetId equipSetId)
     {
         if (equipSetId != EquipmentSetId.NONE)
-            FF9Play_SetDefEquips(play.equip, equipSetId);
+            FF9Play_SetDefEquips(play.equip, equipSetId, false);
 
         ff9play.FF9Play_UpdateSerialNumber(play);
         if (!update_lv && equipSetId == EquipmentSetId.NONE)
@@ -451,8 +459,7 @@ public static class ff9play
         
         if (update_lv)
         {
-            Int32 avgLevel = FF9Play_GetAvgLevel(play.Index);
-            Int32 lv = (Int32)play.info.serial_no == 10 || (Int32)play.info.serial_no == 11 ? avgLevel : Mathf.Max(play.level, avgLevel);
+            Int32 lv = Mathf.Max(play.level, FF9Play_GetAvgLevel(play.Index));
             FF9Play_Build(play, lv, false, false);
         }
         else
@@ -494,7 +501,7 @@ public static class ff9play
                     play.info.menu_type = (CharacterPresetId)ff9DbgChar.menu_type;
                 play.category = parameter.DefaultCategory;
                 if (!FF9Dbg_CheckEquip(play))
-                    FF9Play_SetDefEquips(play.equip, parameter.DefaultEquipmentSet);
+                    FF9Play_SetDefEquips(play.equip, parameter.DefaultEquipmentSet, true);
                 play.info.serial_no = parameter.GetSerialNumber();
             }
             play.category = parameter.DefaultCategory;

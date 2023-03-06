@@ -22,7 +22,7 @@ namespace Memoria
             public static Boolean DisableMouseInBattles => (DisableMouse & 4) != 0;
             public static String[] DialogProgressButtons => Instance._control.DialogProgressButtons;
             public static Boolean WrapSomeMenus => Instance._control.WrapSomeMenus;
-            public static Boolean ScrollLikePSX => Instance._control.ScrollLikePSX;
+            public static Boolean PSXScrollingMethod => Instance._control.PSXScrollingMethod;
             /*
             The PSX movement algorithm is different than the remaster's movement algorithm
             In remaster, characters move at a given speed (eg. 60/tick for running with player character) in the horizontal plane, then the height is adjusted to launch on a valid walkmesh triangle
