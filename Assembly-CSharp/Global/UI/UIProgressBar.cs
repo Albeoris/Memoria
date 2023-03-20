@@ -259,7 +259,7 @@ public class UIProgressBar : UIWidgetContainer
 		}
 	}
 
-	protected Single ScreenToValue(Vector2 screenPos)
+	public Single ScreenToValue(Vector2 screenPos)
 	{
 		Transform cachedTransform = this.cachedTransform;
 		Plane plane = new Plane(cachedTransform.rotation * Vector3.back, cachedTransform.position);
@@ -272,7 +272,7 @@ public class UIProgressBar : UIWidgetContainer
 		return this.LocalToValue(cachedTransform.InverseTransformPoint(ray.GetPoint(distance)));
 	}
 
-	protected virtual Single LocalToValue(Vector2 localPos)
+	public virtual Single LocalToValue(Vector2 localPos)
 	{
 		if (!(this.mFG != (UnityEngine.Object)null))
 		{

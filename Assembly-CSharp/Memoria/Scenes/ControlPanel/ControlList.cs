@@ -13,18 +13,28 @@ namespace Memoria.Scenes
 		public readonly RecycleListPopulator Populator;
 		public readonly ButtonGroupState ButtonGroup;
 		public readonly Boolean IsMultiSelection;
-		public readonly List<T> ObjectList;
 
+		private List<T> _objectList;
 		private Func<T, String> LabelPicker;
 		private Func<T, Boolean> ValidChecker;
 		private Func<T, Boolean> EnabledChecker;
+
+		public List<T> ObjectList
+		{
+			get => _objectList;
+			set
+			{
+				_objectList = value;
+				UpdateList();
+			}
+		}
 
 		public ControlList(ControlPanel control, Int32 panelIndex,
 			List<T> list, String name, Boolean isMultiSelection,
 			Func<T, String> labelPicker, Func<T, Boolean> validChecker, Func<T, Boolean> enabledChecker, Action<T> selectAction)
 		{
 			IsMultiSelection = isMultiSelection;
-			ObjectList = list;
+			_objectList = list;
 			LabelPicker = labelPicker;
 			ValidChecker = validChecker;
 			EnabledChecker = enabledChecker;
@@ -63,7 +73,7 @@ namespace Memoria.Scenes
 				if (!selectData.Valid)
 					return;
 				if (onClick != null)
-					onClick(ObjectList[index]);
+					onClick(_objectList[index]);
 				UpdateList();
 			};
 			Populator.PopulateListItemWithData = SelectListPopulator;
@@ -82,7 +92,7 @@ namespace Memoria.Scenes
 					return;
 				toggleData.IsToggled = !toggleData.IsToggled;
 				if (onClick != null)
-					onClick(ObjectList[index]);
+					onClick(_objectList[index]);
 				UpdateList();
 			};
 			Populator.PopulateListItemWithData = ToggleListPopulator;
@@ -150,7 +160,7 @@ namespace Memoria.Scenes
 		private List<ListDataTypeBase> ListDataFromObjectList()
 		{
 			List<ListDataTypeBase> listData = new List<ListDataTypeBase>();
-			foreach (T obj in ObjectList)
+			foreach (T obj in _objectList)
 			{
 				SelectListData toggleData = IsMultiSelection ? new ToggleListData() : new SelectListData();
 				toggleData.Valid = ValidChecker(obj);

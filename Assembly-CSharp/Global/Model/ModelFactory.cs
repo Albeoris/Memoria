@@ -8,7 +8,7 @@ using Memoria.Data;
 using Memoria.Scripts;
 using UnityEngine;
 
-public class ModelFactory
+public static class ModelFactory
 {
 	public static String GetRenameModelPath(String upscalePath)
 	{
@@ -397,6 +397,32 @@ public class ModelFactory
 		Int32 num2 = modelName.IndexOf('_', num + 1);
 		String value = modelName.Substring(num + 1, num2 - num - 1).ToLower();
 		return (ModelType)((Int32)Enum.Parse(typeof(ModelType), value));
+	}
+
+	public static GameObject CreateUIModel(PrimitiveType shape, Color color, Single size, Vector3 screenPosition, Vector3? screenPosition2 = null)
+	{
+		GameObject model = GameObject.CreatePrimitive(shape);
+		foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>())
+		{
+			Texture2D colorTexture = new Texture2D(1, 1, TextureFormat.RGBAFloat, false);
+			colorTexture.SetPixel(0, 0, color);
+			colorTexture.Apply();
+			renderer.material.mainTexture = colorTexture;
+			renderer.material.shader = ShadersLoader.Find("PSX/FieldMap_Abr_0");
+		}
+		if (shape == PrimitiveType.Cylinder && screenPosition2.HasValue)
+		{
+			Vector3 endPoint = screenPosition2.Value;
+			model.transform.position = (screenPosition + endPoint) / 2f;
+			model.transform.localScale = new Vector3(size, (endPoint - screenPosition).magnitude / 2f, size);
+			model.transform.up = endPoint - model.transform.position;
+		}
+		else
+		{
+			model.transform.position = screenPosition;
+			model.transform.localScale = new Vector3(size, size, size);
+		}
+		return model;
 	}
 
 	public static Dictionary<String, String> upscaleTable = new Dictionary<String, String>

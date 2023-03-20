@@ -1966,8 +1966,8 @@ public class FieldMap : HonoBehavior
         }
 
         this.prevScr = prevScrOffset;
-        Single aimX = (currentCamera.w >> 1) + currentCamera.centerOffset[0] + (prevScrOffset.x - HalfFieldWidth);
-        Single aimY = (currentCamera.h >> 1) + currentCamera.centerOffset[1] + (prevScrOffset.y - HalfFieldHeight);
+        Single aimX = (currentCamera.w >> 1) + currentCamera.centerOffset[0] + prevScrOffset.x - HalfFieldWidth;
+        Single aimY = (currentCamera.h >> 1) + currentCamera.centerOffset[1] + prevScrOffset.y - HalfFieldHeight;
         Single prevScrX = prevScrOffset.x;
         Single prevScrY = prevScrOffset.y;
         aimX -= this.offset.x - HalfFieldWidth;
@@ -1975,14 +1975,14 @@ public class FieldMap : HonoBehavior
         aimY *= -1f;
 
         if (aimX < currentCamera.vrpMinX)
-            prevScrX = this.offset.x + HalfFieldWidth - ((currentCamera.w >> 1) + currentCamera.centerOffset[0] + HalfFieldWidth - currentCamera.vrpMinX);
+            prevScrX = this.offset.x - (currentCamera.w >> 1) - currentCamera.centerOffset[0] + currentCamera.vrpMinX;
         else if (aimX > currentCamera.vrpMaxX)
-            prevScrX = this.offset.x + HalfFieldWidth - ((currentCamera.w >> 1) + currentCamera.centerOffset[0] + HalfFieldWidth - currentCamera.vrpMaxX);
+            prevScrX = this.offset.x - (currentCamera.w >> 1) - currentCamera.centerOffset[0] + currentCamera.vrpMaxX;
 
         if (aimY < currentCamera.vrpMinY)
-            prevScrY = -(-this.offset.y + HalfFieldHeight - ((currentCamera.h >> 1) + currentCamera.centerOffset[1] + HalfFieldHeight - currentCamera.vrpMinY));
+            prevScrY = this.offset.y + (currentCamera.h >> 1) + currentCamera.centerOffset[1] - currentCamera.vrpMinY;
         else if (aimY > currentCamera.vrpMaxY)
-            prevScrY = -(-this.offset.y + HalfFieldHeight - ((currentCamera.h >> 1) + currentCamera.centerOffset[1] + HalfFieldHeight - currentCamera.vrpMaxY));
+            prevScrY = this.offset.y + (currentCamera.h >> 1) + currentCamera.centerOffset[1] - currentCamera.vrpMaxY;
 
         this.charOffset.x = prevScrX - currentCamera.centerOffset[0];
         this.charOffset.y = -(prevScrY - currentCamera.centerOffset[1]);

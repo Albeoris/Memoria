@@ -334,6 +334,7 @@
     <Compile Include="Global\ff9\State\FF9StateGlobal.FrogHandler.cs" />
     <Compile Include="Global\Field\Map\NarrowMapList.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
+    <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHelp.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHitBox.cs" />
@@ -344,6 +345,7 @@
     <Compile Include="Memoria\Configuration\Structure\SpeedrunSection.cs" />
     <Compile Include="Memoria\Data\Battle\RegularItem.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlRoll.cs" />
+    <Compile Include="Memoria\Scenes\ControlPanel\ControlSlider.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlToggle.cs" />
     <Compile Include="Memoria\Speedrun\AutoSplitterPipe.cs" />
     <Compile Include="Memoria\Speedrun\Split.cs" />

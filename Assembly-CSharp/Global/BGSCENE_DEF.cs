@@ -362,9 +362,11 @@ public class BGSCENE_DEF
         return true;
     }
 
-    public void CreateMemoriaScene(Transform parent)
+    public void CreateMemoriaScene(Transform parent, Boolean nonProjectedMode = false)
     {
         this.CreateScene_Background(parent);
+        if (nonProjectedMode)
+            parent.GetChildByName("Background").transform.localPosition = Vector3.zero;
 
         for (Int32 i = 0; i < this.overlayList.Count; i++)
         {
@@ -373,13 +375,28 @@ public class BGSCENE_DEF
             if (bgOverlay.memoriaMaterial == null)
                 bgOverlay.memoriaMaterial = new Material(ShadersLoader.Find("PSX/FieldMap_Abr_0"));
             GameObject meshGo = bgOverlay.transform.gameObject;
+            Matrix4x4 cameraTransform = Matrix4x4.identity;
+            Vector3 overlayOrigin = Vector3.zero;
+            Single scaleFactor = 1f;
+            if (nonProjectedMode)
+            {
+                BGCAM_DEF bgCamera = this.cameraList[bgOverlay.camNdx];
+                bgOverlay.transform.localPosition = Vector3.zero;
+
+                scaleFactor = bgCamera.GetViewDistance() / FieldMap.HalfFieldHeight;
+                cameraTransform = bgCamera.GetMatrixRT().inverse;
+                overlayOrigin = new Vector3(this.curX - FieldMap.HalfFieldWidth + bgOverlay.curX, this.curY - FieldMap.HalfFieldHeight + bgOverlay.curY, this.curZ + bgOverlay.curZ);
+                overlayOrigin.x *= scaleFactor;
+                overlayOrigin.y *= scaleFactor;
+                overlayOrigin.z *= scaleFactor; // bgCamera.depthOffset
+            }
             List<Vector3> vertexList = new List<Vector3>();
             List<Vector2> uvList = new List<Vector2>();
             List<Int32> triangleList = new List<Int32>();
-            vertexList.Add(new Vector3(0f, 0f, 0f));
-            vertexList.Add(new Vector3(bgOverlay.memoriaSize[0], 0f, 0f));
-            vertexList.Add(new Vector3(bgOverlay.memoriaSize[0], bgOverlay.memoriaSize[1], 0f));
-            vertexList.Add(new Vector3(0f, bgOverlay.memoriaSize[1], 0f));
+            vertexList.Add(cameraTransform.MultiplyPoint(overlayOrigin + scaleFactor * new Vector3(0f, 0f, 0f)));
+            vertexList.Add(cameraTransform.MultiplyPoint(overlayOrigin + scaleFactor * new Vector3(bgOverlay.memoriaSize[0], 0f, 0f)));
+            vertexList.Add(cameraTransform.MultiplyPoint(overlayOrigin + scaleFactor * new Vector3(bgOverlay.memoriaSize[0], bgOverlay.memoriaSize[1], 0f)));
+            vertexList.Add(cameraTransform.MultiplyPoint(overlayOrigin + scaleFactor * new Vector3(0f, bgOverlay.memoriaSize[1], 0f)));
             uvList.Add(new Vector2(0f, 1f));
             uvList.Add(new Vector2(1f, 1f));
             uvList.Add(new Vector2(1f, 0f));
@@ -390,6 +407,16 @@ public class BGSCENE_DEF
             triangleList.Add(3);
             triangleList.Add(2);
             triangleList.Add(0);
+            if (nonProjectedMode)
+            {
+                // Double-sided
+                triangleList.Add(1);
+                triangleList.Add(2);
+                triangleList.Add(0);
+                triangleList.Add(2);
+                triangleList.Add(3);
+                triangleList.Add(0);
+            }
             Mesh mesh = new Mesh
             {
                 vertices = vertexList.ToArray(),
@@ -401,7 +428,15 @@ public class BGSCENE_DEF
             meshFilter.mesh = mesh;
             meshGo.name += $"_Depth({this.curZ + bgOverlay.curZ:D5})";
             meshGo.name += $"_[{bgOverlay.memoriaMaterial.shader.name}]";
-            meshRenderer.material = bgOverlay.memoriaMaterial;
+            if (nonProjectedMode)
+            {
+                meshRenderer.material = new Material(ShadersLoader.Find("Unlit/Transparent Cutout"));
+                meshRenderer.material.mainTexture = bgOverlay.memoriaImage;
+            }
+            else
+            {
+                meshRenderer.material = bgOverlay.memoriaMaterial;
+            }
             bgOverlay.transform.gameObject.SetActive((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0);
         }
 
@@ -782,9 +817,7 @@ public class BGSCENE_DEF
 
         this.ebgBin = binAsset;
         using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(this.ebgBin)))
-        {
             this.ReadData(binaryReader);
-        }
 
         FieldMapInfo.fieldmapExtraOffset.SetOffset(name, this.overlayList);
         if (!this.useUpscaleFM)

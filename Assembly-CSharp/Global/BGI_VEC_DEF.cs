@@ -27,9 +27,9 @@ public class BGI_VEC_DEF
 	{
 		return new Vector3
 		{
-			x = Convert.ToSingle(this.coord[0]) * 1f,
-			y = Convert.ToSingle(this.coord[1]) * 1f,
-			z = Convert.ToSingle(this.coord[2]) * 1f
+			x = Convert.ToSingle(this.coord[0]),
+			y = Convert.ToSingle(this.coord[1]),
+			z = Convert.ToSingle(this.coord[2])
 		};
 	}
 

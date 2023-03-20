@@ -193,9 +193,19 @@ public class WalkMesh
         if (!this.fieldMap.debugRender)
             return;
 
-        BGI_DEF bgi = this.fieldMap.bgi;
+		GameObject walkmeshGo = WalkMesh.CreateWalkMesh(this.fieldMap.transform, this.fieldMap.bgi, new Color(1f, 1f, 1f, 0.5f));
+		for (UInt16 i = 0; i < this.fieldMap.bgi.floorCount; i++)
+		{
+			GameObject floorGo = walkmeshGo.transform.FindChild($"Floor_{i:D2}").gameObject;
+			FieldMapActor fieldMapActor = floorGo.AddComponent<FieldMapActor>();
+		}
+		this.OriginalWalkMesh = walkmeshGo;
+	}
+
+	public static GameObject CreateWalkMesh(Transform parent, BGI_DEF bgi, Color materialColor, Boolean doubleSided = true)
+	{
 		GameObject walkmeshGo = new GameObject("WalkMesh");
-		walkmeshGo.transform.parent = this.fieldMap.transform;
+		walkmeshGo.transform.parent = parent;
 		walkmeshGo.transform.localPosition = new Vector3(0f, 0f, 0f);
 		walkmeshGo.transform.localScale = new Vector3(1f, -1f, 1f);
 		List<Vector3> vertexList = new List<Vector3>();
@@ -223,21 +233,33 @@ public class WalkMesh
 				BGI_TRI_DEF bgiTriangle = bgi.triList[bgiFloor.triNdxList[j]];
 				for (Int32 k = 0; k < bgiTriangle.vertexNdx.Length; k += 3)
 				{
-					Vector3 pos0 = vertexList[bgiTriangle.vertexNdx[k]];
-					Vector3 pos1 = vertexList[bgiTriangle.vertexNdx[k + 1]];
-					Vector3 pos2 = vertexList[bgiTriangle.vertexNdx[k + 2]];
-					Vector3 triangleNormal = Vector3.Cross(pos1 - pos0, pos2 - pos1);
-					if (Vector3.Dot(triangleNormal, Vector3.up) > 0f)
+					if (doubleSided)
 					{
+						triangleList.Add(bgiTriangle.vertexNdx[k]);
+						triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
+						triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
 						triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
 						triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
 						triangleList.Add(bgiTriangle.vertexNdx[k]);
 					}
 					else
 					{
-						triangleList.Add(bgiTriangle.vertexNdx[k]);
-						triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
-						triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
+						Vector3 pos0 = vertexList[bgiTriangle.vertexNdx[k]];
+						Vector3 pos1 = vertexList[bgiTriangle.vertexNdx[k + 1]];
+						Vector3 pos2 = vertexList[bgiTriangle.vertexNdx[k + 2]];
+						Vector3 triangleNormal = Vector3.Cross(pos1 - pos0, pos2 - pos1);
+						if (Vector3.Dot(triangleNormal, Vector3.up) > 0f)
+						{
+							triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
+							triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
+							triangleList.Add(bgiTriangle.vertexNdx[k]);
+						}
+						else
+						{
+							triangleList.Add(bgiTriangle.vertexNdx[k]);
+							triangleList.Add(bgiTriangle.vertexNdx[k + 1]);
+							triangleList.Add(bgiTriangle.vertexNdx[k + 2]);
+						}
 					}
 				}
 			}
@@ -247,15 +269,17 @@ public class WalkMesh
 			mesh.triangles = triangleList.ToArray();
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
-            MeshRenderer meshRenderer = floorGo.AddComponent<MeshRenderer>();
+			MeshRenderer meshRenderer = floorGo.AddComponent<MeshRenderer>();
 			MeshFilter meshFilter = floorGo.AddComponent<MeshFilter>();
 			meshFilter.mesh = mesh;
-			Material material = new Material(ShadersLoader.Find(FF9StateSystem.Field.isDebugWalkMesh ? "Sprites/Default" : "PSX/FieldMapActor"));
-			material.color = new Color(1f, 1f, 1f, 0.5f);
+			Material material = new Material(ShadersLoader.Find("Unlit/Transparent Colored"));
+			Texture2D colorTexture = new Texture2D(1, 1, TextureFormat.RGBAFloat, false);
+			colorTexture.SetPixel(0, 0, materialColor);
+			colorTexture.Apply();
+			material.mainTexture = colorTexture;
 			meshRenderer.material = material;
-			FieldMapActor fieldMapActor = floorGo.AddComponent<FieldMapActor>();
 		}
-		this.OriginalWalkMesh = walkmeshGo;
+		return walkmeshGo;
 	}
 
 	private void CreateWalls(FieldMap fieldMap)

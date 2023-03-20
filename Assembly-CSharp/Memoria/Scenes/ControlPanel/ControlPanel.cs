@@ -88,6 +88,20 @@ namespace Memoria.Scenes
 			return panelRegister[allPanels[panelIndex]][row][column];
 		}
 
+		public UILabel AddSimpleLabel(String message, NGUIText.Alignment alignment, Int32 lineCount, Int32 panelIndex = 0)
+		{
+			UIWidget panel = GetPanel(panelIndex);
+			UILabel label = CreateUIElementForPanel<UILabel>(panel);
+			label.overflowMethod = UILabel.Overflow.ClampContent;
+			label.text = message;
+			label.alignment = alignment;
+			if (lineCount < 0)
+				label.bottomAnchor.Set(panel.transform, 0f, 50);
+			else if (lineCount > 1)
+				label.bottomAnchor.absolute -= (lineCount - 1) * rowHeight;
+			return label;
+		}
+
 		public ControlHelp AddHelpSubPanel(String name, String help, Int32 panelIndex = 0)
 		{
 			ControlHelp control = new ControlHelp(this, panelIndex, name, help);
@@ -117,6 +131,14 @@ namespace Memoria.Scenes
 			ControlInput control = new ControlInput(this, panelIndex, kind);
 			control.Input.label.alignment = NGUIText.Alignment.Left;
 			control.Input.value = defaultValue;
+			return control;
+		}
+
+		public ControlSlider AddSlider(String description, Single initial, Func<Single, Single> valueToSlide, Func<Single, Single> slideToValue, Action<Single> slideAction, Int32 panelIndex = 0)
+		{
+			ControlSlider control = new ControlSlider(this, panelIndex, slideAction);
+			control.SetupScale(valueToSlide, slideToValue, initial);
+			control.Label.text = description;
 			return control;
 		}
 
@@ -244,6 +266,14 @@ namespace Memoria.Scenes
 				label.alignment = NGUIText.Alignment.Left;
 				defaultWidth = 200;
 				result = label as T;
+			}
+			else if (typeof(T) == typeof(UISlider))
+			{
+				go = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.ConfigScene.ConfigList.GetChild(1).GetChild(0).GetChild(8).GetChild(1).GetChild(1).gameObject);
+				UISlider slider = go.GetComponent<UISlider>();
+				slider.numberOfSteps = 0;
+				defaultWidth = 350;
+				result = slider as T;
 			}
 			else if (typeof(T) == typeof(UIInput))
 			{

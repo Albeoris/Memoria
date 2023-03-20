@@ -152,26 +152,8 @@ public class HonoluluFieldMain : HonoBehavior
 	{
 		try
 		{
-			if (Configuration.Debug.StartModelViewer)
-			{
-				if (this.firstFrame)
-				{
-					this.firstFrame = false;
-					ModelViewerScene.Init();
-				}
-				ModelViewerScene.Update();
+			if (Configuration.Debug.StartModelViewer || Configuration.Debug.StartFieldCreator)
 				return;
-			}
-			if (Configuration.Debug.StartFieldCreator)
-			{
-				if (this.firstFrame)
-				{
-					this.firstFrame = false;
-					FieldCreatorScene.Init();
-				}
-				FieldCreatorScene.Update();
-				return;
-			}
 
 			if ((MBG.Instance.IsPlaying() & 2UL) != 0UL && this.mbgFrameSkip)
 			{

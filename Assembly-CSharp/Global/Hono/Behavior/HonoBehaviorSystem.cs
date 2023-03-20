@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using UnityEngine;
 using Memoria;
+using Memoria.Prime;
+using Memoria.Assets;
 using Memoria.Speedrun;
 
 public class HonoBehaviorSystem : MonoBehaviour
@@ -173,6 +175,35 @@ public class HonoBehaviorSystem : MonoBehaviour
 			FPSManager.AddSmoothEffect(SmoothFrameUpdater_World.Apply);
 		if (FPSManager.MainLoopUpdateCount > 0 && SpeedrunSettings.LogGameTimeEnabled)
 			FF9StateSystem.Settings.UpdateTickTime();
+
+		if (Configuration.Debug.StartModelViewer)
+		{
+			try
+			{
+				if (!ModelViewerScene.initialized)
+					ModelViewerScene.Init();
+				if (ModelViewerScene.initialized)
+					ModelViewerScene.Update();
+			}
+			catch (Exception err)
+			{
+				Log.Error(err);
+			}
+		}
+		else if (Configuration.Debug.StartFieldCreator)
+		{
+			try
+			{
+				if (!FieldCreatorScene.initialized)
+					FieldCreatorScene.Init();
+				if (FieldCreatorScene.initialized)
+					FieldCreatorScene.Update();
+			}
+			catch (Exception err)
+			{
+				Log.Error(err);
+			}
+		}
 	}
 
 	private void LateUpdate()
