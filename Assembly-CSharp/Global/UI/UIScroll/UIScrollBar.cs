@@ -80,37 +80,31 @@ public class UIScrollBar : UISlider
 		}
 	}
 
-	protected override Single LocalToValue(Vector2 localPos)
+	public override Single LocalToValue(Vector2 localPos)
 	{
-		if (!(this.mFG != (UnityEngine.Object)null))
-		{
+		if (this.mFG == null)
 			return base.LocalToValue(localPos);
-		}
-		Single num = Mathf.Clamp01(this.mSize) * 0.5f;
-		Single num2 = num;
-		Single num3 = 1f - num;
+		Single halfBarRange = Mathf.Clamp01(this.mSize) * 0.5f;
+		Single pageStart = halfBarRange;
+		Single pageEnd = 1f - halfBarRange;
 		Vector3[] localCorners = this.mFG.localCorners;
 		if (base.isHorizontal)
 		{
-			num2 = Mathf.Lerp(localCorners[0].x, localCorners[2].x, num2);
-			num3 = Mathf.Lerp(localCorners[0].x, localCorners[2].x, num3);
-			Single num4 = num3 - num2;
-			if (num4 == 0f)
-			{
+			pageStart = Mathf.Lerp(localCorners[0].x, localCorners[2].x, pageStart);
+			pageEnd = Mathf.Lerp(localCorners[0].x, localCorners[2].x, pageEnd);
+			Single pageWidth = pageEnd - pageStart;
+			if (pageWidth == 0f)
 				return base.value;
-			}
-			return (!base.isInverted) ? ((localPos.x - num2) / num4) : ((num3 - localPos.x) / num4);
+			return base.isInverted ? ((pageEnd - localPos.x) / pageWidth) : ((localPos.x - pageStart) / pageWidth);
 		}
 		else
 		{
-			num2 = Mathf.Lerp(localCorners[0].y, localCorners[1].y, num2);
-			num3 = Mathf.Lerp(localCorners[3].y, localCorners[2].y, num3);
-			Single num5 = num3 - num2;
-			if (num5 == 0f)
-			{
+			pageStart = Mathf.Lerp(localCorners[0].y, localCorners[1].y, pageStart);
+			pageEnd = Mathf.Lerp(localCorners[3].y, localCorners[2].y, pageEnd);
+			Single pageHeight = pageEnd - pageStart;
+			if (pageHeight == 0f)
 				return base.value;
-			}
-			return (!base.isInverted) ? ((localPos.y - num2) / num5) : ((num3 - localPos.y) / num5);
+			return base.isInverted ? ((pageEnd - localPos.y) / pageHeight) : ((localPos.y - pageStart) / pageHeight);
 		}
 	}
 
