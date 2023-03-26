@@ -426,6 +426,7 @@ namespace Memoria
 				new FieldInfo[][]{ typeof(AA_DATA).GetFields(), typeof(BTL_REF).GetFields(), typeof(BattleCommandInfo).GetFields() }
 			};
 			BattlePatch currentPatch = null;
+			_selectedBattleId = -1;
 			foreach (String s in patchCode)
 			{
 				String[] entry = s.Trim(new char[] { ' ', '\t', '\r', '\n', '=' }).Split(new char[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
@@ -435,6 +436,11 @@ namespace Memoria
 				String oparg = entry[1];
 				if (!TryParseBattleSelector(opcode, oparg, ref currentPatch) && currentPatch != null)
 				{
+					if (_selectedBattleId >= 0 && String.Compare(opcode, "Music") == 0)
+					{
+						if (Int32.TryParse(oparg.Trim(), out Int32 musicId))
+							FF9SndMetaData.BtlBgmPatcherMapper[_selectedBattleId] = musicId;
+					}
 					foreach (FieldInfo[] fieldArr in battleFields[(Int32)currentPatch.TokenType])
 					{
 						foreach (FieldInfo field in fieldArr.Where(h => h.IsDefined(typeof(PatchableFieldAttribute), false)))
@@ -476,6 +482,8 @@ namespace Memoria
 					selectedBattle = idstr;
 				else
 					selectedBattle = oparg;
+				if (!FF9BattleDB.SceneData.TryGetValue(selectedBattle, out _selectedBattleId))
+					_selectedBattleId = -1;
 				patch = new BattlePatch(BattlePatch.BattleTokenType.Scene,
 					(scene, str) => String.Compare(scene.nameIdentifier, selectedBattle) == 0,
 					(scene, str, index) => false);
@@ -484,6 +492,7 @@ namespace Memoria
 			}
 			else if (String.Compare(opcode, "AnyEnemyByName") == 0)
 			{
+				_selectedBattleId = -1;
 				patch = new BattlePatch(BattlePatch.BattleTokenType.Enemy,
 					(scene, str) => Array.Exists(str, (name) => String.Compare(name, oparg) == 0),
 					(scene, str, index) => String.Compare(str[index], oparg) == 0);
@@ -492,6 +501,7 @@ namespace Memoria
 			}
 			else if (String.Compare(opcode, "AnyAttackByName") == 0)
 			{
+				_selectedBattleId = -1;
 				patch = new BattlePatch(BattlePatch.BattleTokenType.Attack,
 					(scene, str) => Array.Exists(str, (name) => String.Compare(name, oparg) == 0),
 					(scene, str, index) => String.Compare(str[scene.header.TypCount + index], oparg) == 0);
@@ -575,5 +585,6 @@ namespace Memoria
 		}
 
 		private static List<BattlePatch> _battlePatch = new List<BattlePatch>();
+		private static Int32 _selectedBattleId;
 	}
 }

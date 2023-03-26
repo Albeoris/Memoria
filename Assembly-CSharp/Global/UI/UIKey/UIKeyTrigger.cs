@@ -322,6 +322,13 @@ public class UIKeyTrigger : MonoBehaviour
         switch (PersistenSingleton<UIManager>.Instance.State)
         {
             case UIManager.UIState.FieldHUD:
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2207 && FF9StateSystem.EventState.ScenarioCounter == 9840)
+                {
+                    // Hotfix: prevent party switch in "Palace/Hall" when Zidane returns with the Gulug Stone
+                    FF9Sfx.FF9SFX_Play(102);
+                    return;
+                }
+                break;
             case UIManager.UIState.WorldHUD:
                 break;
             default:

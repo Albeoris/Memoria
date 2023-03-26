@@ -168,27 +168,37 @@ namespace FF9
 			return array[Comn.random8() % (Int32)btlCount];
 		}
 
-		public static Boolean ManageBattleSong(FF9StateGlobal sys, UInt32 ticks, UInt32 song_id)
+		public static Boolean ManageBattleSong(FF9StateGlobal sys, Int32 ticks, Int32 song_id)
 		{
 			if ((sys.btl_flag & 16) == 0)
 			{
-				btlsnd.ff9btlsnd_song_vol_intplall((Int32)ticks, 0);
-				sys.btl_flag = (Byte)(sys.btl_flag | 16);
+				btlsnd.ff9btlsnd_song_vol_intplall(ticks, 0);
+				sys.btl_flag |= 16;
 			}
 			if ((sys.btl_flag & 2) == 0)
 			{
-				FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-				if ((Int64)(ff9Battle.player_load_fade = (SByte)((Int32)ff9Battle.player_load_fade + 4)) < (Int64)((UInt64)ticks))
+				if ((FF9StateSystem.Battle.FF9Battle.player_load_fade += 4) < ticks)
 					return false;
-				btlsnd.ff9btlsnd_song_load((Int32)song_id);
-				sys.btl_flag = (Byte)(sys.btl_flag | 2);
+				AllSoundDispatchPlayer player = SoundLib.GetAllSoundDispatchPlayer();
+				Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
+				Int32 suspendedMusicId = player.GetSuspendSongID();
+				if (currentMusicId >= 0 && suspendedMusicId < 0 && currentMusicId != 0 && currentMusicId != 35 && currentMusicId != 61)
+				{
+					// Don't suspend the musics Battle / Boss Battle / Faerie Battle, but assume that the other musics could rightfully be resumed in the field
+					player.FF9SOUND_SONG_VOL(currentMusicId, AllSoundDispatchPlayer.VOLUME_MAX);
+					player.FF9SOUND_SONG_SUSPEND(currentMusicId);
+				}
+				if (song_id >= 0)
+					btlsnd.ff9btlsnd_song_load(song_id);
+				sys.btl_flag |= 2;
 			}
-			if (btlsnd.ff9btlsnd_sync() != 0)
+			if (song_id >= 0 && btlsnd.ff9btlsnd_sync() != 0)
 				return false;
 			if ((sys.btl_flag & 32) == 0)
 			{
-				btlsnd.ff9btlsnd_song_play((Int32)song_id);
-				sys.btl_flag = (Byte)(sys.btl_flag | 32);
+				if (song_id >= 0)
+					btlsnd.ff9btlsnd_song_play(song_id);
+				sys.btl_flag |= 32;
 			}
 			return true;
 		}

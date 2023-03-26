@@ -28,17 +28,14 @@ public static class btl_stat
 
     public static void StatusCommandCancel(BTL_DATA btl, BattleStatus status)
     {
+        if (btl.bi.player != 0)
+            UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
         if (!btl_cmd.KillCommand2(btl))
             return;
         btl.bi.atb = 0;
         if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
             btl.cur.at = 0;
-        if ((status & BattleStatus.Death) != 0)
-            return;
         btl.sel_mode = 0;
-        if (btl.bi.player != 0)
-            UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
-        btl.cmd[0].cmd_no = BattleCommandId.None;
     }
 
     public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status)

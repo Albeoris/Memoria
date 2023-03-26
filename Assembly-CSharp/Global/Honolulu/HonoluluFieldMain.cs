@@ -255,8 +255,8 @@ public class HonoluluFieldMain : HonoBehavior
 				this.fieldmap.ff9fieldInternalBattleEncountService();
 		}
 		this.ff9fieldInternalLoopEnd();
-		UInt32 num2 = this.FF9Sys.attr & 15u;
-		if (num2 != 0u)
+		UInt32 changeScene = this.FF9Sys.attr & 15u;
+		if (changeScene != 0u)
 		{
 			if (this.ff9fieldDiscCondition())
 			{
@@ -266,36 +266,56 @@ public class HonoluluFieldMain : HonoBehavior
 			this.shutdownField();
 			switch (this.FF9FieldMap.nextMode)
 			{
-			case 1:
-				SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, false);
-				break;
-			case 2:
-				if (FF9StateSystem.Common.FF9.fldMapNo == 1663)
-				{
-					// Iifa Tree/Tree Trunk (cutscene with Kuja)
-					Int32 scCounterSvr = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-					Int32 mapIndexSvr = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-					if (scCounterSvr == 6950 && mapIndexSvr == 40)
+				case 1:
+					SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, false);
+					break;
+				case 2:
+					if (FF9StateSystem.Common.FF9.fldMapNo == 1663)
 					{
-						// After Queen Brahne appeared: battle against Mistodons
-						global::Debug.Log("Force close all dialog for <SQEX> #3105");
-						PersistenSingleton<UIManager>.Instance.Dialogs.CloseAll(true);
+						// Iifa Tree/Tree Trunk (cutscene with Kuja)
+						Int32 scCounterSvr = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+						Int32 mapIndexSvr = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+						if (scCounterSvr == 6950 && mapIndexSvr == 40)
+						{
+							// After Queen Brahne appeared: battle against Mistodons
+							global::Debug.Log("Force close all dialog for <SQEX> #3105");
+							PersistenSingleton<UIManager>.Instance.Dialogs.CloseAll(true);
+						}
 					}
-				}
-				SFX_Rush.SetCenterPosition(0);
-				SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
-				break;
-			case 3:
-				SceneDirector.Replace("WorldMap", SceneTransition.FadeOutToBlack_FadeIn, false);
-				break;
-			case 4:
-				SceneDirector.Replace("Ending", SceneTransition.FadeOutToBlack_FadeIn, false);
-				break;
-			case 9:
-				SceneDirector.Replace("QuadMist", SceneTransition.FadeOutToBlack_FadeIn, true);
-				break;
+					// Suspend field music/sounds as soon as the battle swirl starts, not when the battle music starts
+					Int32 btlMusicid = FF9SndMetaData.GetMusicForBattle(FF9SndMetaData.BtlBgmMapperForFieldMap, FF9StateSystem.Common.FF9.fldMapNo, FF9StateSystem.Field.FF9Field.loc.map.nextMapNo);
+					Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
+					if (btlMusicid != -1 && btlMusicid != currentMusicId)
+						FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
+					SuspendResidentSounds();
+					SFX_Rush.SetCenterPosition(0);
+					SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
+					break;
+				case 3:
+					SceneDirector.Replace("WorldMap", SceneTransition.FadeOutToBlack_FadeIn, false);
+					break;
+				case 4:
+					SceneDirector.Replace("Ending", SceneTransition.FadeOutToBlack_FadeIn, false);
+					break;
+				case 9:
+					SceneDirector.Replace("QuadMist", SceneTransition.FadeOutToBlack_FadeIn, true);
+					break;
 			}
 		}
+	}
+
+	private void SuspendResidentSounds()
+	{
+		AllSoundDispatchPlayer soundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
+		FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
+		AllSoundDispatchPlayer.PlayingSfx[] residentSoundSlot = soundDispatchPlayer.GetResidentSndEffectSlot();
+		Int32 baseVolume1 = residentSoundSlot[0]?.SndEffectVol ?? 0;
+		Int32 baseVolume2 = residentSoundSlot[1]?.SndEffectVol ?? 0;
+		soundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPLALL(15, 0);
+		if (residentSoundSlot[0] != null)
+			residentSoundSlot[0].SndEffectVol = baseVolume1;
+		if (residentSoundSlot[1] != null)
+			residentSoundSlot[1].SndEffectVol = baseVolume2;
 	}
 
 	private Boolean ff9fieldDiscCondition()

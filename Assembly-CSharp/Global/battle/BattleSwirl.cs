@@ -82,59 +82,28 @@ public class BattleSwirl : MonoBehaviour
     private void RequestPlayBattleEncounterSong()
     {
         if (_eventEngineGmode == 1)
-        {
             RequestPlayBattleEncounterSongForField();
-        }
-        else
-        {
-            if (_eventEngineGmode != 3)
-                return;
+        else if (_eventEngineGmode == 3)
             RequestPlayBattleEncounterSongForWorld();
-        }
     }
 
     private void RequestPlayBattleEncounterSongForField()
     {
-        AllSoundDispatchPlayer soundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
-        FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
-        AllSoundDispatchPlayer.PlayingSfx[] residentSndEffectSlot1 = soundDispatchPlayer.GetResidentSndEffectSlot();
-        Int32 num1 = residentSndEffectSlot1[0]?.SndEffectVol ?? 0;
-        Int32 num2 = residentSndEffectSlot1[1]?.SndEffectVol ?? 0;
-        soundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPLALL(15, 0);
-        AllSoundDispatchPlayer.PlayingSfx[] residentSndEffectSlot2 = soundDispatchPlayer.GetResidentSndEffectSlot();
-        if (residentSndEffectSlot2[0] != null)
-            residentSndEffectSlot2[0].SndEffectVol = num1;
-        if (residentSndEffectSlot2[1] != null)
-            residentSndEffectSlot2[1].SndEffectVol = num2;
-
-        Int32 index = FF9StateSystem.Common.FF9.fldMapNo;
-        FF9StateFieldMap ff9StateFieldMap = FF9StateSystem.Field.FF9Field.loc.map;
-        Dictionary<Int32, Int32> dictionary = FF9SndMetaData.BtlBgmMapperForFieldMap[index];
-        Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
         FF9StateSystem.Battle.IsPlayFieldBGMInCurrentBattle = true;
-        if (dictionary.Count == 0 || !dictionary.ContainsKey(ff9StateFieldMap.nextMapNo))
+        Int32 songid = FF9SndMetaData.GetMusicForBattle(FF9SndMetaData.BtlBgmMapperForFieldMap, FF9StateSystem.Common.FF9.fldMapNo, FF9StateSystem.Field.FF9Field.loc.map.nextMapNo);
+        Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
+        if (songid == -1 || songid == currentMusicId)
             return;
 
-        Int32 songid = dictionary[ff9StateFieldMap.nextMapNo];
-        if (songid == currentMusicId)
-            return;
-
-        FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
         btlsnd.ff9btlsnd_song_play(songid);
         FF9StateSystem.Battle.IsPlayFieldBGMInCurrentBattle = false;
     }
 
     private void RequestPlayBattleEncounterSongForWorld()
     {
-        Int32 index = FF9StateSystem.Common.FF9.wldMapNo;
-        FF9StateWorldMap ff9StateWorldMap = FF9StateSystem.World.FF9World.map;
-        Dictionary<Int32, Int32> dictionary = FF9SndMetaData.BtlBgmMapperForWorldMap[index];
+        Int32 songid = FF9SndMetaData.GetMusicForBattle(FF9SndMetaData.BtlBgmMapperForWorldMap, FF9StateSystem.Common.FF9.wldMapNo, FF9StateSystem.World.FF9World.map.nextMapNo);
         Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
-        if (dictionary.Count == 0 || !dictionary.ContainsKey(ff9StateWorldMap.nextMapNo))
-            return;
-
-        Int32 songid = dictionary[(Int32)ff9StateWorldMap.nextMapNo];
-        if (songid == currentMusicId)
+        if (songid == -1 || songid == currentMusicId)
             return;
 
         SoundLib.GetAllSoundDispatchPlayer().FF9SOUND_SONG_SUSPEND(currentMusicId, true);

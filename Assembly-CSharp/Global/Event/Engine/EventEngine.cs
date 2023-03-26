@@ -650,7 +650,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 this.SetupPartyUID();
             }
             // Hotfix: force the party to be exactly Oeilvert's team when bringing the Gulug Stone back (field "Palace/Hall")
-            // The player has the possibility to Alt+F2 hack the team on that screen: that can cause another soft-lock a bit later, so don't do that
+            // Alt+F2 hack the team on that screen is disabled because that could cause another soft-lock a bit later
             if (FF9StateSystem.Common.FF9.fldMapNo == 2207 && FF9StateSystem.EventState.ScenarioCounter == 9835)
             {
                 CharacterId[] variableToCharacter = new CharacterId[]

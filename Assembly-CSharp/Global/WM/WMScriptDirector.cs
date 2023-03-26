@@ -194,21 +194,30 @@ public class WMScriptDirector : HonoBehavior
 			ff9.ff9ShutdownStateWorldSystem();
 			if (this.FF9Sys.mode == 1)
 			{
-				AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
-				allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-				allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
-				allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
+				AllSoundDispatchPlayer soundPlayer = SoundLib.GetAllSoundDispatchPlayer();
+				soundPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+				soundPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
+				soundPlayer.FF9SOUND_STREAM_STOP();
 				SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack_FadeIn, true);
 			}
 			else if (this.FF9Sys.mode == 2)
 			{
-				EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
-				Obj objUID = eventEngine.GetObjUID(250);
-				PosObj posObj = (PosObj) objUID;
 				EventInput.IsProcessingInput = false;
 				if (flag)
 				{
-					SoundLib.StopAllSounds(false);
+					Int32 btlMusicid = FF9SndMetaData.GetMusicForBattle(FF9SndMetaData.BtlBgmMapperForWorldMap, FF9StateSystem.Common.FF9.wldMapNo, FF9StateSystem.World.FF9World.map.nextMapNo);
+					Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
+					if (btlMusicid != -1 && btlMusicid != currentMusicId)
+					{
+						SoundLib.StopAllSounds(false);
+					}
+					else
+					{
+						AllSoundDispatchPlayer soundPlayer = SoundLib.GetAllSoundDispatchPlayer();
+						soundPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+						soundPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
+						soundPlayer.FF9SOUND_STREAM_STOP();
+					}
 					SFX_Rush.SetCenterPosition(1);
 					SceneDirector.Replace("BattleMap", SceneTransition.SwirlInBlack, true);
 				}

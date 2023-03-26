@@ -1086,13 +1086,13 @@ public static class UnifiedBattleSequencer
 		{
 			// Update waits and progressive changes
 			frameIndex++;
-			animatedChar = 0xFFFF;
+			animatedChar = 0;
 			movingChar = 0;
 			turningChar = 0;
 			scalingChar = 0;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-				if (next.animEndFrame)
-					animatedChar &= (UInt16)~next.btl_id;
+				if (next.bi.disappear == 0 && !next.animEndFrame)
+					animatedChar |= next.btl_id;
 			foreach (SequenceMove seqm in move)
 			{
 				seqm.frameCur++;

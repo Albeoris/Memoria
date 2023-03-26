@@ -272,7 +272,7 @@ public class battle
             }
             btl_mot.DieSequence(data);
         }
-        if (btlsys.btl_phase == 7 && !btlsys.btl_scene.Info.NoGameOver && !btl_util.ManageBattleSong(sys, 30U, 6U))
+        if (btlsys.btl_phase == 7 && !btlsys.btl_scene.Info.NoGameOver && !btl_util.ManageBattleSong(sys, 30, 6))
             flag = false;
         battle.BattleSubSystem(sys, btlsys);
         return flag;
@@ -370,7 +370,7 @@ public class battle
                     sys.btl_result = 1;
                     if (btlsys.btl_scene.Info.WinPose)
                     {
-                        if (!btl_util.ManageBattleSong(sys, 30U, 5U))
+                        if (!btl_util.ManageBattleSong(sys, 30, 5))
                             break;
                         BattleVoice.TriggerOnBattleInOut("VictoryPose");
                         btlsys.btl_phase = 6;

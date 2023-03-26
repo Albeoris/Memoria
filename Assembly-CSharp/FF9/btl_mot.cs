@@ -463,10 +463,9 @@ namespace FF9
 				//btl.die_seq = 7;
 				//btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
 				btl_stat.RemoveStatus(btl, BattleStatus.AutoLife);
-				UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
 				btl.cur.hp = 1;
 				btl_stat.RemoveStatus(btl, BattleStatus.Death);
-				// auto life has triggered
+				// Auto-life has triggered
 				BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.AutoLife);
 				FF9StateSystem.Settings.SetHPFull();
 				if (!cancelMonsterTransform)
