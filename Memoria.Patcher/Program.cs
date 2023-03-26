@@ -270,6 +270,15 @@ namespace Memoria.Patcher
         private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
 		{
             List<String> mergedIni = new List<String>(previousIni.Where(line => !line.StartsWith("\t; "))); // In order to have a persisting custom comment, the user must use a slightly different format than "	; " (eg. "	;; ")
+            for (Int32 i = 0; i < mergedIni.Count; i++)
+			{
+                // Hotfix: replace incorrect default formulas by the correct ones
+                if (String.Compare(mergedIni[i], "StatusDurationFormula = ContiCnt * (IsNegativeStatus ? 8 * (60 - TargetSpirit) : 8 * TargetSpirit)") == 0
+                    || String.Compare(mergedIni[i], "StatusTickFormula = OprCnt * (IsNegativeStatus ? 4 * (60 - TargetSpirit) : 4 * TargetSpirit)") == 0)
+                {
+                    mergedIni.RemoveAt(i--);
+                }
+            }
             String currentSection = "";
             Int32 sectionFirstLine = 0;
             Int32 sectionLastLine = 0;
