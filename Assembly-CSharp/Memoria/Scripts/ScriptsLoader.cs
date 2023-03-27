@@ -195,50 +195,102 @@ namespace Memoria.Scripts
     public static class ScriptsLoader
     {
         private static volatile Task s_initializationTask;
-        private static volatile Result s_result;
-        private static String s_dllUsed = String.Empty;
+        private static volatile List<Result> s_result = new List<Result>();
 
         public static void InitializeAsync()
         {
             s_initializationTask = Task.Run(Initialize);
         }
 
-        public static BattleScriptFactory[] GetBaseScripts()
+        public static BattleScriptFactory GetBattleScript(Int32 scriptId)
         {
-            return GetResult(r => r.BattleBaseScripts);
-        }
+            Result result = GetScriptResult(scriptId);
+            if (result == null)
+                return null;
 
-        public static Dictionary<Int32, BattleScriptFactory> GetExtendedScripts()
-        {
-            return GetResult(r => r.BattleExtendedScripts);
+            if (scriptId >= 0 && scriptId < result.BattleBaseScripts.Length)
+                return result.BattleBaseScripts[scriptId];
+            return result.BattleExtendedScripts.TryGetValue(scriptId, out BattleScriptFactory script) ? script : null;
         }
 
         public static String GetScriptDLL(Int32 scriptId)
 		{
-            return s_dllUsed;
+            Result result = GetScriptResult(scriptId);
+            if (result != null)
+                return result.DLLPath;
+            return String.Empty;
+        }
+
+        private static Result GetScriptResult(Int32 scriptId)
+        {
+            if (s_result.Count == 1)
+                return s_result[0];
+            if (s_result.Count == 0)
+            {
+                try
+                {
+                    if (s_initializationTask == null)
+                        InitializeAsync();
+
+                    s_initializationTask.Wait();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[ScriptsLoader] Failed to get battle calculator's script.");
+                    UIManager.Input.ConfirmQuit();
+                    return null;
+                }
+            }
+            foreach (Result result in s_result)
+            {
+                if (scriptId >= 0 && scriptId < result.BattleBaseScripts.Length && result.BattleBaseScripts[scriptId] != null)
+                    return result;
+                if (result.BattleExtendedScripts.ContainsKey(scriptId))
+                    return result;
+            }
+            return null;
         }
 
         private static void Initialize()
         {
             try
             {
-                String inputPath = DataResources.PureScriptsDirectory + "Memoria.Scripts.dll";
+                s_result.Clear();
+                String mainDllPath = DataResources.PureScriptsDirectory + "Memoria.Scripts.dll";
+                TypeOrderer orderer = new TypeOrderer();
+                Int32 dllCount = 0;
                 foreach (AssetManager.AssetFolder folder in AssetManager.FolderHighToLow)
                 {
-                    if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                    // Assume that the DLL file name matches the internal DLL name (ie. "Memoria.Scripts.MyMod.dll" is not just a renamed "Memoria.Scripts.dll")
+                    String fullPath;
+                    if (!String.IsNullOrEmpty(folder.FolderPath))
+                    {
+                        String partialDllName = $"Memoria.Scripts.{folder.FolderPath.Trim('/').Replace('/', '.')}.dll";
+                        if (folder.TryFindAssetInModOnDisc(DataResources.PureScriptsDirectory + partialDllName, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                        {
+                            Assembly assembly = Assembly.LoadFile(fullPath);
+                            Result result = new Result(fullPath);
+                            foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
+                                ProcessType(type, result);
+                            s_result.Add(result);
+                            dllCount++;
+                        }
+                    }
+                    if (folder.TryFindAssetInModOnDisc(mainDllPath, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                     {
                         Assembly assembly = Assembly.LoadFile(fullPath);
-                        Result result = new Result();
-                        TypeOrderer orderer = new TypeOrderer();
+                        Result result = new Result(fullPath);
                         foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
                             ProcessType(type, result);
-                        s_result = result;
-                        s_dllUsed = inputPath;
+                        s_result.Add(result);
                         return;
                     }
                 }
-                inputPath = DataResources.ScriptsDirectory + "Memoria.Scripts.dll";
-                throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{inputPath}].", inputPath);
+                if (dllCount == 0)
+                {
+                    mainDllPath = DataResources.ScriptsDirectory + "Memoria.Scripts.dll";
+                    throw new FileNotFoundException($"[ScriptsLoader] Cannot load Memoria.Scripts.dll because a file does not exist: [{mainDllPath}].", mainDllPath);
+                }
             }
             catch (Exception ex)
             {
@@ -270,36 +322,17 @@ namespace Memoria.Scripts
                 result.BattleExtendedScripts[bsa.Id] = factory;
         }
 
-        private static T GetResult<T>(Func<Result, T> selector) where T : class
-        {
-            try
-            {
-                if (s_result != null)
-                    return selector(s_result);
-
-                if (s_initializationTask == null)
-                    InitializeAsync();
-
-                s_initializationTask.Wait();
-                return selector(s_result);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "[ScriptsLoader] Failed to get battle calculator's script.");
-                UIManager.Input.ConfirmQuit();
-                return null;
-            }
-        }
-
         private sealed class Result
         {
             public readonly BattleScriptFactory[] BattleBaseScripts;
             public readonly Dictionary<Int32, BattleScriptFactory> BattleExtendedScripts;
+            public readonly String DLLPath;
 
-            public Result()
+            public Result(String dllPath)
             {
                 BattleBaseScripts = new BattleScriptFactory[256];
                 BattleExtendedScripts = new Dictionary<Int32, BattleScriptFactory>();
+                DLLPath = dllPath;
             }
         }
 

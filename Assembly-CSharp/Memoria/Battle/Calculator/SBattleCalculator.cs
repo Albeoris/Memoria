@@ -12,9 +12,6 @@ namespace Memoria
 {
     public static class SBattleCalculator
     {
-        public static readonly BattleScriptFactory[] BaseScripts = ScriptsLoader.GetBaseScripts();
-        public static readonly Dictionary<Int32, BattleScriptFactory> ExtendedScripts = ScriptsLoader.GetExtendedScripts();
-
         public static void CalcMain(BattleUnit caster, BattleUnit target, BattleCommand command)
         {
             CalcMain(caster.Data, target.Data, command, command.ScriptId);
@@ -312,11 +309,7 @@ namespace Memoria
 
         public static BattleScriptFactory FindScriptFactory(Int32 scriptId)
         {
-            if (scriptId >= 0 && scriptId < BaseScripts.Length)
-                return BaseScripts[scriptId];
-
-            BattleScriptFactory result;
-            return ExtendedScripts.TryGetValue(scriptId, out result) ? result : null;
+            return ScriptsLoader.GetBattleScript(scriptId);
         }
 
         private static Boolean CheckDamageMotion(BattleCalculator v)

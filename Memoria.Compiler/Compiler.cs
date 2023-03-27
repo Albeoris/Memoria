@@ -89,7 +89,8 @@ namespace Memoria.Compiler
                 allowUnsafe: true,
                 assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default);
 
-            CSharpCompilation compilation = CSharpCompilation.Create("Memoria.Scripts")
+            String dllInternalName = Path.GetFileNameWithoutExtension(_outputFileName);
+            CSharpCompilation compilation = CSharpCompilation.Create(dllInternalName)
                 .WithOptions(options)
                 .AddReferences(references)
                 .AddSyntaxTrees(_sources);

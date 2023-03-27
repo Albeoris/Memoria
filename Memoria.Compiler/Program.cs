@@ -10,6 +10,9 @@ namespace Memoria.Compiler
         private const String DefaultSourcesPath = "../Sources/";
         private const String DefaultOutputPath = "../";
         private const String DefaultOutputName = "Memoria.Scripts.dll";
+        private const String GameRootPath = "../../../";
+        private const String ModSourcesPath = "/StreamingAssets/Scripts/Sources/";
+        private const String ModOutputPath = "/StreamingAssets/Scripts/";
 
         internal static void Main(String[] args)
         {
@@ -52,6 +55,29 @@ namespace Memoria.Compiler
             
             Compiler compiler = new Compiler(referencesDirectoryPath, sourcesDirectoryPath, outputDirectoryPath, outputFileName);
             compiler.Compile();
+            Console.WriteLine($"Compilation of the main sources succeeded.");
+            Console.WriteLine();
+
+            foreach (String folder in Directory.GetDirectories(Path.GetFullPath(GameRootPath)))
+            {
+                if (!Directory.Exists(folder + ModSourcesPath))
+                    continue;
+                String modName = Path.GetFileName(folder);
+
+                Console.WriteLine($"Found mod script to compile for '{modName}'. Proceed?");
+                Console.WriteLine($"Y/N");
+                if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                {
+                    Console.WriteLine($"{modName} skipped.");
+                    Console.WriteLine();
+                    continue;
+                }
+
+                Compiler modCompiler = new Compiler(referencesDirectoryPath, folder + ModSourcesPath, folder + ModOutputPath, $"Memoria.Scripts.{modName}.dll");
+                modCompiler.Compile();
+                Console.WriteLine($"Compilation of the {modName} sources succeeded.");
+                Console.WriteLine();
+            }
         }
     }
 }
