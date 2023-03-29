@@ -134,6 +134,8 @@ public partial class BattleHUD : UIScene
                     ATBBar = new GOProgressBar(obj.GetChild(3));
                     TranceBar = new GOProgressBar(obj.GetChild(4));
                     Highlight = new GOSprite(obj.GetChild(5));
+                    HP.Label.overflowMethod = UILabel.Overflow.ResizeFreely;
+                    MP.Label.overflowMethod = UILabel.Overflow.ResizeFreely;
 
                     Label = obj.GetComponent<UILabel>();
                     ButtonGroup = obj.GetComponent<ButtonGroupState>();

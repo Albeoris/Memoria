@@ -209,8 +209,8 @@ namespace Memoria
                                     ++reflectMultiplier;
                             v.Target.HpDamage *= reflectMultiplier;
                         }
-                        if (v.Target.HpDamage > 9999)
-                            v.Target.HpDamage = 9999;
+                        if (v.Target.HpDamage > v.Caster.MaxDamageLimit)
+                            v.Target.HpDamage = (Int32)v.Caster.MaxDamageLimit;
                         if ((v.Target.Flags & CalcFlag.HpRecovery) != 0)
                         {
                             v.Target.HpDamage = btl_para.SetRecover(v.Target, (UInt32)v.Target.HpDamage);
@@ -236,8 +236,8 @@ namespace Memoria
                     if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                     {
                         v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
-                        if (v.Target.MpDamage > 999)
-                            v.Target.MpDamage = 999;
+                        if (v.Target.MpDamage > v.Caster.MaxMpDamageLimit)
+                            v.Target.MpDamage = (Int32)v.Caster.MaxMpDamageLimit;
                         if ((v.Target.Flags & CalcFlag.MpRecovery) != 0)
                             v.Target.MpDamage = btl_para.SetMpRecover(v.Target, (UInt32)v.Target.MpDamage);
                         else
@@ -264,8 +264,8 @@ namespace Memoria
                     caster.fig_info |= (UInt16)v.Caster.Flags;
                     if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
                     {
-                        if (v.Caster.HpDamage > 9999)
-                            v.Caster.HpDamage = 9999;
+                        if (v.Caster.HpDamage > v.Caster.MaxDamageLimit)
+                            v.Caster.HpDamage = (Int32)v.Caster.MaxDamageLimit;
                         if ((v.Caster.Flags & CalcFlag.HpRecovery) != 0)
                             v.Caster.HpDamage = btl_para.SetRecover(v.Caster, (UInt32)v.Caster.HpDamage);
                         else
@@ -273,8 +273,8 @@ namespace Memoria
                     }
                     if ((v.Caster.Flags & CalcFlag.MpAlteration) != 0)
                     {
-                        if (v.Caster.MpDamage > 999)
-                            v.Caster.MpDamage = 999;
+                        if (v.Caster.MpDamage > v.Caster.MaxMpDamageLimit)
+                            v.Caster.MpDamage = (Int32)v.Caster.MaxMpDamageLimit;
                         if ((v.Caster.Flags & CalcFlag.MpRecovery) != 0)
                             v.Caster.MpDamage = btl_para.SetMpRecover(v.Caster, (UInt32)v.Caster.MpDamage);
                         else

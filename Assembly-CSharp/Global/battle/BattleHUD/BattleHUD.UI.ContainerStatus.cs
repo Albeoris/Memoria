@@ -71,6 +71,8 @@ public partial class BattleHUD : UIScene
                     Slash = new GOLabel(obj.GetChild(1));
                     MaxValue = new GOLabel(obj.GetChild(2));
                     Background = new GOThinBackground(obj.GetChild(3));
+                    Value.Label.overflowMethod = UILabel.Overflow.ResizeFreely;
+                    MaxValue.Label.overflowMethod = UILabel.Overflow.ResizeFreely;
                 }
 
                 public void SetColor(Color value)

@@ -862,6 +862,13 @@ public class JsonParser : ISharedDataParser
 					saClass.Add(((Int32)saIndex).ToString());
 				playerClass.Add("sa_extended", saClass);
 			}
+			if (!oldSaveFormat)
+			{
+				playerClass.Add("maxHpLimit", p.maxHpLimit.ToString());
+				playerClass.Add("maxMpLimit", p.maxMpLimit.ToString());
+				playerClass.Add("maxDamageLimit", p.maxDamageLimit.ToString());
+				playerClass.Add("maxMpDamageLimit", p.maxMpDamageLimit.ToString());
+			}
 			dataPlayerArray.Add(playerClass);
 		}
 		dataProfileClass.Add("players", dataPlayerArray);
@@ -1196,6 +1203,14 @@ public class JsonParser : ISharedDataParser
 							ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
 					}
 				}
+				if (playerBonusClass["maxHpLimit"] != null)
+					player.maxHpLimit = playerBonusClass["maxHpLimit"].AsUInt;
+				if (playerBonusClass["maxMpLimit"] != null)
+					player.maxMpLimit = playerBonusClass["maxMpLimit"].AsUInt;
+				if (playerBonusClass["maxDamageLimit"] != null)
+					player.maxDamageLimit = playerBonusClass["maxDamageLimit"].AsUInt;
+				if (playerBonusClass["maxMpDamageLimit"] != null)
+					player.maxMpDamageLimit = playerBonusClass["maxMpDamageLimit"].AsUInt;
 				player.ValidateSupportAbility();
 				player.ValidateBasisStatus();
 			}

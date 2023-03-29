@@ -15,6 +15,8 @@ public class SB2_MON_PARM
 		this.IconBone = new Byte[6];
 		this.IconY = new SByte[6];
 		this.IconZ = new SByte[6];
+		this.MaxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
+		this.MaxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 	}
 
 	public const Byte MON_PRM_FLG_DEADATK = 1;
@@ -153,4 +155,9 @@ public class SB2_MON_PARM
 	public String WeaponModel;
 	[Memoria.PatchableFieldAttribute]
 	public Int32 WeaponAttachment;
+
+	[Memoria.PatchableFieldAttribute]
+	public UInt32 MaxDamageLimit;
+	[Memoria.PatchableFieldAttribute]
+	public UInt32 MaxMpDamageLimit;
 }

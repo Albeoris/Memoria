@@ -265,7 +265,6 @@ public partial class BTL_DATA
 	public UInt16 summon_count; // Counter of the number of uses of a summon spell in a battle
 
 	public Int16 critical_rate_deal_bonus; // Absolute increase/decrease in the % of critical strikes dealt by the BTL_DATA
-
 	public Int16 critical_rate_receive_bonus; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
 
 	public Int32 geo_scale_x; // For geo.geoScaleSet
@@ -275,6 +274,9 @@ public partial class BTL_DATA
 
 	public Boolean animEndFrame;
 	public String endedAnimationName;
+
+	public UInt32 maxDamageLimit;
+	public UInt32 maxMpDamageLimit;
 
 	public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
 

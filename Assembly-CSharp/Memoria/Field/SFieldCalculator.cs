@@ -177,8 +177,6 @@ namespace Memoria.Field
         private static void HealHp(Context v)
         {
             Int32 newHp = v.AttackPower * v.AttackNumber;
-            if (newHp > ff9play.FF9PLAY_HP_MAX)
-                newHp = ff9play.FF9PLAY_HP_MAX;
             v.TargetHp = newHp;
         }
 
@@ -186,16 +184,12 @@ namespace Memoria.Field
         {
             Int32 newHp = (Int32)(v.Target.max.hp * (v.Target.elem.wpr + v.Tbl.Ref.Power));
             newHp /= ff9abil.FF9Abil_IsEnableSA(v.Caster.saExtended, SupportAbility.Concentrate) ? 50 : 100;
-            if (newHp > ff9play.FF9PLAY_HP_MAX)
-                newHp = ff9play.FF9PLAY_HP_MAX;
             v.TargetHp = newHp;
         }
 
         private static void HealMp(Context v)
         {
             Int32 newMp = v.AttackPower * v.AttackNumber;
-            if (newMp > ff9play.FF9PLAY_MP_MAX)
-                newMp = ff9play.FF9PLAY_MP_MAX;
             v.TargetMp = newMp;
         }
 
@@ -234,20 +228,14 @@ namespace Memoria.Field
         {
             if (FieldCheckStatus(player, BattleStatus.Petrify))
                 return;
-            player.cur.hp += recover;
-            if (player.cur.hp <= player.max.hp)
-                return;
-            player.cur.hp = player.max.hp;
+            player.cur.hp = Math.Min(player.cur.hp + recover, player.max.hp);
         }
 
         private static void FieldSetMpRecover(PLAYER player, UInt32 recover)
         {
             if (FieldCheckStatus(player, BattleStatus.Petrify))
                 return;
-            player.cur.mp += recover;
-            if (player.cur.mp <= player.max.mp)
-                return;
-            player.cur.mp = player.max.mp;
+            player.cur.mp = Math.Min(player.cur.mp + recover, player.max.mp);
         }
 
         public static Int32 FieldRemoveStatus(PLAYER player, Byte status)

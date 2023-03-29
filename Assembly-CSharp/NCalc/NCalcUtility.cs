@@ -203,6 +203,10 @@ namespace NCalc
             expr.Parameters["Evade"] = (Int32)play.defence.PhisicalEvade;
             expr.Parameters["MagicDefence"] = (Int32)play.defence.MagicalDefence;
             expr.Parameters["MagicEvade"] = (Int32)play.defence.MagicalEvade;
+            expr.Parameters["MaxHPLimit"] = play.maxHpLimit;
+            expr.Parameters["MaxMPLimit"] = play.maxMpLimit;
+            expr.Parameters["MaxDamageLimit"] = play.maxDamageLimit;
+            expr.Parameters["MaxMPDamageLimit"] = play.maxMpDamageLimit;
             expr.Parameters["PlayerCategory"] = (Int32)play.category;
             expr.Parameters["MPCostFactor"] = (Int32)play.mpCostFactor;
             expr.Parameters["CharacterIndex"] = (Int32)play.Index;
@@ -249,6 +253,8 @@ namespace NCalc
             expr.Parameters[prefix + "MaxATB"] = (Int32)unit.MaximumAtb;
             expr.Parameters[prefix + "HP"] = unit.CurrentHp;
             expr.Parameters[prefix + "MP"] = unit.CurrentMp;
+            expr.Parameters[prefix + "MaxDamageLimit"] = unit.MaxDamageLimit;
+            expr.Parameters[prefix + "MaxMPDamageLimit"] = unit.MaxMpDamageLimit;
             expr.Parameters[prefix + "ATB"] = (Int32)unit.CurrentAtb;
             expr.Parameters[prefix + "Trance"] = (Int32)unit.Trance;
             expr.Parameters[prefix + "InTrance"] = unit.InTrance;

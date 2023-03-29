@@ -21,6 +21,7 @@ namespace Memoria
 
             public static Boolean GarnetConcentrate => Instance._battle.GarnetConcentrate;
             public static Boolean SelectBestTarget => Instance._battle.SelectBestTarget;
+            public static Boolean BreakDamageLimit => Instance._battle.BreakDamageLimit;
             public static Boolean ViviAutoAttack => Instance._battle.ViviAutoAttack;
             public static Boolean CountersBetterTarget => Instance._battle.CountersBetterTarget;
             public static Int32 LockEquippedAbilities => Instance._battle.LockEquippedAbilities;

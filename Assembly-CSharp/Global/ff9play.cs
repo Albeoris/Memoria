@@ -41,6 +41,8 @@ using UnityEngine;
 
 public static class ff9play
 {
+    public const Int32 FF9PLAY_DAMAGE_MAX = 9999;
+    public const Int32 FF9PLAY_MPDAMAGE_MAX = 999;
     public const Int32 FF9PLAY_HP_MAX = 9999;
     public const Int32 FF9PLAY_MP_MAX = 999;
     public const Int32 FF9PLAY_DEFPARAM_VAL_MAX = 999;
@@ -239,9 +241,9 @@ public static class ff9play
         play.basis.str = (Byte)ff9level.FF9Level_GetStr(play, play.level, lvup);
         play.basis.mgc = (Byte)ff9level.FF9Level_GetMgc(play, play.level, lvup);
         play.basis.wpr = (Byte)ff9level.FF9Level_GetWpr(play, play.level, lvup);
-        play.max.hp = ff9level.FF9Level_GetHp(play.level, play.basis.str);
+        play.max.hp = ff9level.FF9Level_GetHp(play, play.level, play.basis.str);
         play.basis.max_hp = play.max.hp;
-        play.max.mp = play.basis.max_mp = ff9level.FF9Level_GetMp(play.level, play.basis.mgc);
+        play.max.mp = play.basis.max_mp = ff9level.FF9Level_GetMp(play, play.level, play.basis.mgc);
         play.max.capa = (Byte)ff9level.FF9Level_GetCap(play, play.level, lvup);
         play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
         play.cur.mp = ccommon.min((UInt32)oldMP, play.max.mp);
@@ -288,12 +290,16 @@ public static class ff9play
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
         play.mpCostFactor = 100;
+        play.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
+        play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
+        play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
+        play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
         foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play.saExtended))
             saFeature.TriggerOnEnable(play);
-        if (play.max.hp > FF9PLAY_HP_MAX)
-            play.max.hp = FF9PLAY_HP_MAX;
-        if (play.max.mp > FF9PLAY_MP_MAX)
-            play.max.mp = FF9PLAY_MP_MAX;
+        if (play.max.hp > play.maxHpLimit)
+            play.max.hp = play.maxHpLimit;
+        if (play.max.mp > play.maxMpLimit)
+            play.max.mp = play.maxMpLimit;
         if (play.cur.hp > play.max.hp)
             play.cur.hp = play.max.hp;
         if (play.cur.mp > play.max.mp)
@@ -348,10 +354,6 @@ public static class ff9play
         for (Int32 i = 0; i < 5; ++i)
             if (skill.defParam[i] > FF9PLAY_DEFPARAM_VAL_MAX)
                 skill.defParam[i] = FF9PLAY_DEFPARAM_VAL_MAX;
-        if (skill.max_hp > FF9PLAY_HP_MAX)
-            skill.max_hp = FF9PLAY_HP_MAX;
-        if (skill.max_mp > FF9PLAY_MP_MAX)
-            skill.max_mp = FF9PLAY_MP_MAX;
         if (skill.cur_hp > skill.max_hp)
             skill.cur_hp = skill.max_hp;
         if (skill.cur_mp > skill.max_mp)

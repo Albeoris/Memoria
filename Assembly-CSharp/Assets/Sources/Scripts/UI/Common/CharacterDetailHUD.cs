@@ -7,7 +7,6 @@ namespace Assets.Sources.Scripts.UI.Common
 	{
 		public CharacterDetailHUD(GameObject go, Boolean isTargetHud)
 		{
-			Int32 childCount = go.GetChild(0).transform.childCount;
 			this.Self = go;
 			this.Content = go.GetChild(0);
 			this.HPPanel = this.Content.GetChild(2);
@@ -70,6 +69,10 @@ namespace Assets.Sources.Scripts.UI.Common
 					};
 				}
 			}
+			this.HPLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+			this.HPMaxLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+			this.MPLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+			this.MPMaxLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
 		}
 
 		public Color HPTextColor

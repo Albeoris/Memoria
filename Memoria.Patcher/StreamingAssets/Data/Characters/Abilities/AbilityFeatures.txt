@@ -114,7 +114,8 @@
 ##  
 ##  Permanent:
 ##    MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
-##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor
+##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor,
+##    MaxHPLimit, MaxMPLimit, MaxDamageLimit, MaxMPDamageLimit
 ##  
 ##  BattleStart:
 ##    BackAttack (chances of having a back attack, with 0 for 0% and 255 for 100%)
@@ -127,6 +128,7 @@
 ##    CasterEvade, CasterMagicDefence, CasterMagicEvade, CasterIsStrengthModified, CasterIsMagicModified,
 ##    CasterIsDefenceModified, CasterIsEvadeModified, CasterIsMagicDefenceModified,
 ##    CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
 ##    (+ same as above for the target, eg. TargetHP),
 ##    EffectCasterFlags, CasterHPDamage, CasterMPDamage, EffectTargetFlags, HPDamage, MPDamage,
 ##    FigureInfo, Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged,
@@ -157,10 +159,10 @@
 ##    GetRandomBit(number)             -> Return a random bit of the number seen as a binary number
 ##    GetAbilityUsageCount(ability ID) -> Return the number of times the player used an ability
 ##    GetItemCount(item ID)            -> Return the number of items owned by the player (works also on cards and key items)
-##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list
-##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list
-##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list
-##    RemoveStatuses(list, removal)    -> Remove all the statuses from the list (do nothing for those that are not there)
+##    CheckAnyStatus(list, condition)  -> Check if any status of the conditions is in the list (same as "(list & condition) != 0")
+##    CheckAllStatus(list, condition)  -> Check if all the statuses of the conditions are in the list (same as "(list & condition) == condition")
+##    CombineStatuses(list, addition)  -> Add all the additional statuses to the list (same as "list | addition")
+##    RemoveStatuses(list, removal)    -> Remove all the statuses from the list (same as "list & ~removal")
 ##                                   Note that "condition", "addition" or "removal" above can be a comma-separated list
 ##    BattleFilter(characters, player flag, targetable flag, status filter)
 ##                                     └> Filter all the existing battle units by different kinds of filters
@@ -168,7 +170,7 @@
 ##                                    eg. 1 for the first player character, 16 for the first enemy, 17 for both
 ##                                   "player flag" must be 0 for keeping only enemies, 1 for allies or -1 for both
 ##                                   "targetable" must be 1 for keeping only targetable units
-##                                   "status filter" must be a list of filtering out statuses (eg. 256 will filter out dead units)
+##                                   "status filter" must be a list of filtering out statuses (eg. BattleStatus_Death will filter out dead units)
 ##    Gil                              -> The number of gil owned by the player
 ##    DragonCount                      -> The number of dragon-type enemies killed
 ##    FrogCount                        -> The number of frogs catched
@@ -237,15 +239,15 @@
 ##  Also make blinded characters be mistaken on their single-target actions
 ##  
 ##  >SA Global
-##  StatusInit [code=Condition] WeaponId == 47 [/code] InitialStatus Doom
+##  StatusInit [code=Condition] WeaponId == RegularItem_Avenger [/code] InitialStatus Doom
 ##  Ability AsTarget
-##   [code=Condition] TargetWeaponId == 25 && CheckAnyStatus(TargetCurrentStatus, 32768) && CommandId <= 47 && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
-##   [code=Counter] 176 [/code]
+##   [code=Condition] TargetWeaponId == RegularItem_Defender && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+##   [code=Counter] BattleAbilityId_Attack [/code]
 ##   DisableSA 36 54 56
-##  Permanent [code=Condition] WeaponId == 78 [/code] [code=MPCostFactor] 0 [/code]
+##  Permanent [code=Condition] WeaponId == RegularItem_MaceOfZeus [/code] [code=MPCostFactor] 0 [/code]
 ##  Command EvenImmobilized
-##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && (CheckAnyStatus(CurrentStatus, 16) || CheckAnyStatus(PermanentStatus, 16)) [/code]
-##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, 1 << 30)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, 1 << 30)) [/code]
+##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Blind) [/code]
+##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) [/code]
 ##  
 ##  
 ##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
@@ -258,21 +260,15 @@
 ##  
 ##  Save the user from fatal damage at the cost of half of the trance gauge (max is 255),
 ##  and add Berserk, Vanish and Reflect permanently when doing so
-##  Note that EffectTargetFlags is a bit flags consisting of the followings:
-##   1  -> Ability deals HP damage
-##   2  -> Ability heals HP instead of damaging (both bits are set)
-##   4  -> Critical strike connected
-##   8  -> Ability deals MP damage
-##   16 -> Ability heals MP instead of damaging (both bits are set)
-##  So "(EffectTargetFlags & 3) == 1" verifies that the ability deals damage and doesn't heal
+##  Note how the "EffectTargetFlags" check verifies that the ability deals damage but doesn't heal
 ##  Also note that the effect triggers both if the user is in trance and if s/he is not
 ##  
 ##  >SA 1
 ##  Ability AsTarget WhenBattleScriptEnd
-##  [code=Condition] HPDamage >= TargetHP && TargetTrance >= 128 && (EffectTargetFlags & 3) == 1
-##                && CasterIsPlayer != TargetIsPlayer [/code]
+##  [code=Condition] HPDamage >= TargetHP && TargetTrance >= 128 && CasterIsPlayer != TargetIsPlayer
+##                && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration [/code]
 ##  [code=TranceIncrease] -128 [/code]
-##  [code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, 1 << 11, 1 << 26, 1 << 29) [/code]
+##  [code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Berserk | BattleStatus_Vanish | BattleStatus_Reflect) [/code]
 ##  [code=HPDamage] 0 [/code]
 ##  
 ##  
@@ -296,7 +292,7 @@
 ##  Ability AsTarget
 ##  [code=Condition] CasterIsPlayer == TargetIsPlayer && CasterHP < CasterMaxHP
 ##                && CasterCharacterIndex != TargetCharacterIndex [/code]
-##  [code=Counter] 2 [/code]
+##  [code=Counter] BattleAbilityId_Cura [/code]
 ##  
 ##  
 ##  Give a 1.5x, 2.5x or 5x bonus experience depending on the user's level
@@ -312,39 +308,72 @@
 ##  
 #####################################################################################################
 ##  
-##  Bit flags meaning:
+##  Constants
 ##  
-##  Elements:
-##    1 -> Fire        2 -> Ice        4 -> Thunder       8 -> Earth
-##   16 -> Water      32 -> Wind      64 -> Holy        128 -> Shadow
-##   
-##  Statuses (Warning! Do not use the & or | operators with these):
-##         1 -> Petrify          2 -> Venom             4 -> Virus           8 -> Silence
-##        16 -> Darkness        32 -> Trouble          64 -> Zombie        128 -> Easy kill proof
-##       256 -> Death          512 -> Low HP         1024 -> Confuse      2048 -> Berserk
-##      4096 -> Stop          8192 -> Auto-Life     16384 -> Trance      32768 -> Defend
-##   1 << 16 -> Poison     1 << 17 -> Sleep       1 << 18 -> Regen     1 << 19 -> Haste
-##   1 << 20 -> Slow       1 << 21 -> Float       1 << 22 -> Shell     1 << 23 -> Protect
-##   1 << 24 -> Heat       1 << 25 -> Freeze      1 << 26 -> Vanish    1 << 27 -> Doom
-##   1 << 28 -> Mini       1 << 29 -> Reflect     1 << 30 -> Jump      1 << 31 -> Gradual Petrify
+##  The different statuses are:
+##   BattleStatus_Petrify		BattleStatus_Venom		BattleStatus_Virus			BattleStatus_Silence
+##   BattleStatus_Blind			BattleStatus_Trouble	BattleStatus_Zombie			BattleStatus_EasyKill
+##   BattleStatus_Death			BattleStatus_LowHP		BattleStatus_Confuse		BattleStatus_Berserk
+##   BattleStatus_Stop			BattleStatus_AutoLife	BattleStatus_Trance			BattleStatus_Defend
+##   BattleStatus_Poison		BattleStatus_Sleep		BattleStatus_Regen			BattleStatus_Haste
+##   BattleStatus_Slow			BattleStatus_Float		BattleStatus_Shell			BattleStatus_Protect
+##   BattleStatus_Heat			BattleStatus_Freeze		BattleStatus_Vanish			BattleStatus_Doom
+##   BattleStatus_Mini			BattleStatus_Reflect	BattleStatus_Jump			BattleStatus_GradualPetrify
+##   + several shorthands for multiple statuses
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleStatus.cs
 ##  
-##  EffectCasterFlags and EffectTargetFlags:
-##   1  -> Ability deals HP damage
-##   2  -> Ability heals HP instead of damaging (both bits are set)
-##   4  -> Critical strike connected
-##   8  -> Ability deals MP damage
-##   16 -> Ability heals MP instead of damaging (both bits are set)
+##  The different elements are:
+##   EffectElement_Fire			EffectElement_Cold		EffectElement_Thunder		EffectElement_Earth
+##   EffectElement_Aqua			EffectElement_Wind		EffectElement_Holy			EffectElement_Darkness
 ##  
-##  EffectFlags:
-##   1   -> Ability has missed
-##   2   -> Ability is dodged (usually together with miss)
-##   4   -> MP Attack, consume 1/8 of CasterMaxMP at the end of the effect
-##   8   -> Target absorbs the element
-##   16  -> Unknown/unused
-##   32  -> Unknown/unused
-##   64  -> Target is guarded
-##   128 -> Direct HP damage, such as Matra Magic that brings HP to a specific number (and doesn't show damage numbers)
-##   256 -> Add Status, add the caster's weapon status at the end of the effect, before damage
+##  The followings can be used for "CharacterIndex":
+##   CharacterIndex_Zidane		CharacterIndex_Vivi		CharacterIndex_Garnet		CharacterIndex_Steiner
+##   CharacterIndex_Freya		CharacterIndex_Quina	CharacterIndex_Eiko			CharacterIndex_Amarant
+##   CharacterIndex_Cinna		CharacterIndex_Marcus	CharacterIndex_Blank		CharacterIndex_Beatrix
+##  
+##  The followings can be used for "PlayerCategory":
+##   CharacterCategory_Male				CharacterCategory_Female
+##   CharacterCategory_Terra			CharacterCategory_Gaia
+##   CharacterCategory_Subpc
+##  
+##  The followings can be used for "Category" (most likely "TargetCategory"):
+##   EnemyCategory_Humanoid		EnemyCategory_Beast		EnemyCategory_Devil			EnemyCategory_Dragon
+##   EnemyCategory_Undead		EnemyCategory_Stone		EnemyCategory_Soul			EnemyCategory_Flight
+##  
+##  The followings can be used for "CommandId":
+##   BattleCommandId_Attack		BattleCommandId_Steal	BattleCommandId_Item		BattleCommandId_SummonGarnet
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleCommandId.cs
+##  
+##  The followings can be used for "AbilityId":
+##   BattleAbilityId_Void		BattleAbilityId_Cure	BattleAbilityId_Cura		BattleAbilityId_Curaga
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleAbilityId.cs
+##  
+##  The different items are:
+##   RegularItem_Hammer			RegularItem_Dagger		RegularItem_MageMasher		RegularItem_MythrilDagger
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/RegularItem.cs
+##  
+##  The different "EffectCasterFlags" and "EffectTargetFlags" are:
+##   CalcFlag_HpAlteration	-> Ability deals HP damage
+##   CalcFlag_HpRecovery	-> Ability heals HP instead of damaging (both bits are set)
+##   CalcFlag_Critical		-> Critical strike connected
+##   CalcFlag_MpAlteration	-> Ability deals MP damage
+##   CalcFlag_MpRecovery	-> Ability heals MP instead of damaging (both bits are set)
+##   CalcFlag_HpDamageOrHeal -> Shorthand for CalcFlag_HpAlteration | CalcFlag_HpRecovery
+##   CalcFlag_MpDamageOrHeal -> Shorthand for CalcFlag_MpAlteration | CalcFlag_MpRecovery
+##  
+##  The different "EffectFlags" are:
+##   BattleCalcFlags_Miss		-> Ability has missed
+##   BattleCalcFlags_Dodge		-> Ability is dodged (usually together with miss)
+##   BattleCalcFlags_MpAttack	-> MP Attack, consume 1/8 of CasterMaxMP at the end of the effect
+##   BattleCalcFlags_Absorb		-> Target absorbs the element
+##   BattleCalcFlags_TrueFB		-> Unknown/unused
+##   BattleCalcFlags_FalseFB	-> Unknown/unused
+##   BattleCalcFlags_Guard		-> Target is guarded
+##   BattleCalcFlags_DirectHP	-> Direct HP damage, such as Matra Magic that brings HP to a specific number (and doesn't show damage numbers)
+##   BattleCalcFlags_AddStat	-> Add Status, add the caster's weapon status at the end of the effect, before damage
 ##  
 #####################################################################################################
 ##                                                                                                 ##
@@ -393,6 +422,7 @@
 ##    CasterMagicDefence, CasterMagicEvade, CasterPlayerCategory, CasterCategory, CasterCharacterIndex,
 ##    CasterIsStrengthModified, CasterIsMagicModified, CasterIsEvadeModified, CasterIsDefenceModified,
 ##    CasterIsMagicDefenceModified, CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
 ##    CasterHasSA(support ability ID)
 ##    CommandId, AbilityId, ScriptId, Power, AbilityStatus, AbilityElement, AbilityElementForBonus,
 ##    ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon,
@@ -436,7 +466,7 @@
 ##  Note that returning the value -1 will not apply any change
 ##  
 ##  >AA 11 Shell
-##  [code=Patch] HasSA(33) ? 84 : -1 [/code]
+##  [code=Patch] HasSA(33) ? BattleAbilityId_MightyGuard : -1 [/code]
 ##  
 ##  
 ##  Have Haste upgrade to a party-wide spell if Concentrate is equipped
@@ -444,15 +474,15 @@
 ##  but it has to be switched to Carbuncle's Emerald effect (506) if that system is deactivated
 ##  
 ##  >AA 13 Haste
-##  [code=Target] HasSA(33) ? BattleFilter(255, 1, 1, CombineStatuses(256, 1 << 30)) : -1 [/code]
+##  [code=Target] HasSA(33) ? BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump) : -1 [/code]
 ##  [code=SpecialEffect] HasSA(33) ? (UseSFXRework ? 89 : 506) : -1 [/code]
 ##  
 #####################################################################################################
 
 >SA Global Healing Rod's effect
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] CasterWeaponId == 60 && AbilityId == 176 && (TargetCategory & 16) == 0 && !CheckAnyStatus(TargetCurrentStatus, 64) [/code]
-[code=EffectTargetFlags] EffectTargetFlags | 2 [/code]
+[code=Condition] CasterWeaponId == RegularItem_HealingRod && AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Zombie) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
 
 _____________________________________________________________________________________________________
 
@@ -485,7 +515,7 @@ Permanent [code=MaxMP] MaxMP + MaxMP / 5 [/code]
 
 >SA 9 Accuracy+
 Ability WhenHitRateSetup EvenImmobilized
-[code=Condition] AbilityId == 176 [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack [/code]
 [code=HitRate] 100 [/code]
 [code=Evade] 0 [/code]
 
@@ -500,55 +530,55 @@ Ability WhenBattleScriptStart EvenImmobilized
 
 >SA 12 MP Attack
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && CasterMP > 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && CasterMP > 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
-[code=EffectFlags] EffectFlags | 4 [/code]
+[code=EffectFlags] EffectFlags | BattleCalcFlags_MpAttack [/code]
 
 >SA 13 Bird Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 128) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 14 Bug Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 64) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Soul) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 15 Stone Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 32) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Stone) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 16 Undead Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 16) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 17 Dragon Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 8) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Dragon) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 18 Devil Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 4) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Devil) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 19 Beast Killer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 2) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Beast) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 20 Man Eater
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 1) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Humanoid) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
 [code=Attack] Attack + Attack / 2 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
@@ -565,13 +595,13 @@ Ability WhenSteal EvenImmobilized
 
 >SA 24 Healer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && (TargetCategory & 16) == 0 && !CheckAnyStatus(TargetCurrentStatus, 64) [/code]
-[code=EffectTargetFlags] EffectTargetFlags | 2 [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Zombie) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
 
 >SA 25 Add Status
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == 176 && GetRandom(0, 100) < CasterWeaponRate && CasterIsPlayer != TargetIsPlayer [/code]
-[code=EffectFlags] EffectFlags | 256 [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && GetRandom(0, 100) < CasterWeaponRate && CasterIsPlayer != TargetIsPlayer [/code]
+[code=EffectFlags] EffectFlags | BattleCalcFlags_AddStat [/code]
 
 >SA 26 Gamble Defence
 Ability AsTarget WhenCalcDamage EvenImmobilized
@@ -606,7 +636,7 @@ Ability WhenBattleScriptEnd EvenImmobilized
 
 >SA 32 Mag Elem Null
 Command EvenImmobilized
-[code=Condition] IsTheCaster && AbilityId != 176 [/code]
+[code=Condition] IsTheCaster && AbilityId != BattleAbilityId_Attack [/code]
 [code=AbilityElement] 0 [/code]
 
 >SA 33 Concentrate
@@ -623,19 +653,19 @@ Ability AsTarget WhenBattleScriptStart EvenImmobilized
 
 >SA 36 Counter
 Ability AsTarget
-[code=Condition] CommandId <= 47 && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && (TargetHasSA(39) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) [/code]
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && (TargetHasSA(39) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) [/code]
 [code=Counter] 176 [/code]
 DisableSA 36 54 56
 
 >SA 37 Cover
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == 47 && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, 1 << 24) [/code]
-[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, 257) && CheckAnyStatus(TargetCurrentStatus, 512) [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Heat) [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Death | BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_LowHP) [/code]
 
 >SA 38 Protect Girls
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == 47 && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, 1 << 24) [/code]
-[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, 257) && (TargetPlayerCategory & 2) != 0 && TargetHP < TargetMaxHP / 2 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Heat) [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Death | BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
 
 >SA 39 Eye 4 Eye (effect is coded in SA 36)
 
@@ -679,7 +709,7 @@ StatusInit ResistStatus Silence
 
 >SA 52 Restore HP
 Ability AsTarget
-[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & 128) != 0) && TargetHP != 0 && CheckAnyStatus(TargetCurrentStatus, 512) [/code]
+[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) && TargetHP != 0 && CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_LowHP) [/code]
 [code=TargetHP] TargetHP + TargetMaxHP / 2 [/code]
 
 >SA 53 Jelly
@@ -687,19 +717,19 @@ StatusInit ResistStatus Petrify ResistStatus GradualPetrify
 
 >SA 54 Return Magic
 Ability AsTarget
-[code=Condition] CommandId <= 47 && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 128) != 0 [/code]
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 128) != 0 [/code]
 [code=ReturnMagic] 0 [/code]
 DisableSA 36 54 56
 
 >SA 55 Absorb MP
 Ability AsTarget
-[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & 128) != 0) [/code]
+[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
 [code=TargetMP] Min(TargetMaxMP, TargetMP + MPCost) [/code]
 
 >SA 56 Auto-Potion
 Ability AsTarget
-[code=Condition] CommandId <= 47 && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & 128) != 0) [/code]
-[code=AutoItem] GetItemCount(236) != 0 ? 236 : 237 [/code]
+[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
+[code=AutoItem] GetItemCount(RegularItem_Potion) != 0 ? RegularItem_Potion : RegularItem_HiPotion [/code]
 DisableSA 36 54 56
 
 >SA 57 Locomotion
@@ -715,14 +745,14 @@ Command EvenImmobilized
 
 >SA 60 Odin’s Sword
 Ability WhenBattleScriptEnd EvenImmobilized
-[code=Condition] ScriptId == 87 && (EffectFlags & 65) != 0 [/code]
+[code=Condition] ScriptId == 87 && (EffectFlags & (BattleCalcFlags_Miss | BattleCalcFlags_Guard)) != 0 [/code]
 [code=EffectFlags] EffectFlags & 65470 [/code]
-[code=EffectTargetFlags] EffectTargetFlags | 1 [/code]
-[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(254) - TargetMagicDefence)) [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
+[code=HPDamage] (IsShortSummon ? 0.666667 : 1.0) * (GetRandom(CasterMagic, CasterMagic + (CasterLevel + CasterMagic) / 8 + 1) * Max(1, 100 + Power - GetItemCount(RegularItem_Ore) - TargetMagicDefence)) [/code]
 
 >SA 61 Mug
 Ability WhenSteal EvenImmobilized
-[code=EffectTargetFlags] EffectTargetFlags | 1 [/code]
+[code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpAlteration [/code]
 [code=HPDamage] GetRandom(0, CasterLevel * TargetLevel / 2) [/code]
 [code=AbilityCategory] (AbilityCategory & 191) | 8 [/code]
 
@@ -736,13 +766,13 @@ ________________________________________________________________________________
 [code=SpecialEffect] (CasterLevel / 2 + CasterSpirit >= GetRandom(0, 100)) ? 134 : 143 [/code]
 
 >AA 66 Fenrir (swap to the wind version if Maiden's Prayer is equipped)
-[code=Patch] AccessoryId == 222 ? 67 : -1 [/code]
+[code=Patch] AccessoryId == RegularItem_MaidenPrayer ? 67 : -1 [/code]
 
 >AA 68 Carbuncle (swap to different versions depending on the jewel equipped)
-[code=Patch] AccessoryId == 227 ? 71 : (AccessoryId == 229 ? 70 : (AccessoryId == 228 ? 69 : -1)) [/code]
+[code=Patch] AccessoryId == RegularItem_Diamond ? 71 : (AccessoryId == RegularItem_Moonstone ? 70 : (AccessoryId == RegularItem_Emerald ? 69 : -1)) [/code]
 
 >AA 82 Roulette (use a random target, targeting a living enemy with 50% chances and a living ally with 50% chances)
-[code=Target] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, 256)) [/code]
+[code=Target] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, BattleStatus_Death)) [/code]
 
 >AA 126 Spare Change (single)
 [code=GilCost] Power * CasterLevel [/code]

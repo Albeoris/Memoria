@@ -208,19 +208,19 @@ public static class ff9level
 		return gemCount;
 	}
 
-	public static UInt32 FF9Level_GetHp(Int32 lv, Int32 str)
+	public static UInt32 FF9Level_GetHp(PLAYER play, Int32 lv, Int32 str)
 	{
 		UInt32 maxHp = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusHP * str / 50);
-		if (maxHp > ff9play.FF9PLAY_HP_MAX)
-			maxHp = ff9play.FF9PLAY_HP_MAX;
+		if (maxHp > play.maxHpLimit)
+			maxHp = play.maxHpLimit;
 		return maxHp;
 	}
 
-	public static UInt32 FF9Level_GetMp(Int32 lv, Int32 mgc)
+	public static UInt32 FF9Level_GetMp(PLAYER play, Int32 lv, Int32 mgc)
 	{
 		UInt32 maxMp = (UInt32)(ff9level.CharacterLevelUps[lv - 1].BonusMP * mgc / 100);
-		if (maxMp > ff9play.FF9PLAY_MP_MAX)
-			maxMp = ff9play.FF9PLAY_MP_MAX;
+		if (maxMp > play.maxMpLimit)
+			maxMp = play.maxMpLimit;
 		return maxMp;
 	}
 
@@ -252,12 +252,4 @@ public static class ff9level
 		}
 		return bonus;
 	}
-
-	// public const Byte FF9LEVEL_DEX_MAX = 50;
-	// public const Byte FF9LEVEL_STR_MAX = 99;
-	// public const Byte FF9LEVEL_MGC_MAX = 99;
-	// public const Byte FF9LEVEL_WPR_MAX = 50;
-	// public const Byte FF9LEVEL_CAP_MAX = 99;
-	// public const Int32 FF9LEVEL_HP_MAX = 9999;
-	// public const Int32 FF9LEVEL_MP_MAX = 999;
 }

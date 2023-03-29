@@ -158,6 +158,8 @@ public static class btl_init
 		pBtl.elem.str = pParm.Element.Strength;
 		pBtl.elem.mgc = pParm.Element.Magic;
 		pBtl.elem.wpr = pParm.Element.Spirit;
+		pBtl.maxDamageLimit = Configuration.Battle.BreakDamageLimit ? Int32.MaxValue : pParm.MaxDamageLimit;
+		pBtl.maxMpDamageLimit = Configuration.Battle.BreakDamageLimit ? Int32.MaxValue : pParm.MaxMpDamageLimit;
 		pBtl.def_attr.invalid = pParm.GuardElement;
 		pBtl.def_attr.absorb = pParm.AbsorbElement;
 		pBtl.def_attr.half = pParm.HalfElement;
@@ -423,6 +425,8 @@ public static class btl_init
 		btl.level = p.level;
 		btl_init.CopyPoints(btl.max, p.max);
 		btl_init.CopyPoints(btl.cur, p.cur);
+		btl.maxDamageLimit = Configuration.Battle.BreakDamageLimit ? Int32.MaxValue : p.maxDamageLimit;
+		btl.maxMpDamageLimit = Configuration.Battle.BreakDamageLimit ? Int32.MaxValue : p.maxMpDamageLimit;
 		FF9Char ff9Char = new FF9Char();
 		ff9Char.btl = btl;
 		ff9Char.evt = btl.evt;

@@ -2456,7 +2456,9 @@ public partial class EventEngine
                     PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                     Int32 newHp = this.getv2();
                     Single hpHealProp = newHp <= player.cur.hp ? -1f :
-                        newHp >= 9999 ? 1f : (Single)(newHp - player.cur.hp) / player.max.hp;
+                        newHp == 9999 ? 1f : (Single)(newHp - player.cur.hp) / player.max.hp;
+                    if (newHp == 9999)
+                        newHp = Int32.MaxValue;
 
                     player.cur.hp = (UInt32)Math.Min(player.max.hp, newHp);
 
@@ -2481,7 +2483,9 @@ public partial class EventEngine
                     PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                     Int32 newMp = this.getv2();
                     Single mpHealProp = newMp <= player.cur.mp ? -1f :
-                        newMp >= 999 ? 1f : (Single)(newMp - player.cur.mp) / player.max.mp;
+                        newMp == 999 ? 1f : (Single)(newMp - player.cur.mp) / player.max.mp;
+                    if (newMp == 999)
+                        newMp = Int32.MaxValue;
 
                     player.cur.mp = (UInt32)Math.Min(player.max.mp, newMp);
 

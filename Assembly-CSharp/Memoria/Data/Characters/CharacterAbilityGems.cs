@@ -116,6 +116,10 @@ namespace Memoria.Data
                     else if (String.Compare(formula.Key, "MagicEvade") == 0) play.defence.MagicalEvade = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalEvade);
                     else if (String.Compare(formula.Key, "PlayerCategory") == 0) play.category = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.category);
                     else if (String.Compare(formula.Key, "MPCostFactor") == 0) play.mpCostFactor = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.mpCostFactor);
+                    else if (String.Compare(formula.Key, "MaxHPLimit") == 0) play.maxHpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxHpLimit);
+                    else if (String.Compare(formula.Key, "MaxMPLimit") == 0) play.maxMpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpLimit);
+                    else if (String.Compare(formula.Key, "MaxDamageLimit") == 0) play.maxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxDamageLimit);
+                    else if (String.Compare(formula.Key, "MaxMPDamageLimit") == 0) play.maxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpDamageLimit);
                 }
             }
         }
@@ -300,6 +304,8 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "CasterIsMagicEvadeModified") == 0) caster.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[5]);
                         else if (String.Compare(formula.Key, "CasterCriticalRateBonus") == 0) caster.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CriticalRateBonus);
                         else if (String.Compare(formula.Key, "CasterCriticalRateWeakening") == 0) caster.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CriticalRateWeakening);
+                        else if (String.Compare(formula.Key, "CasterMaxDamageLimit") == 0) caster.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaxDamageLimit);
+                        else if (String.Compare(formula.Key, "CasterMaxMPDamageLimit") == 0) caster.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaxMpDamageLimit);
                         else if (String.Compare(formula.Key, "TargetHP") == 0) target.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentHp);
                         else if (String.Compare(formula.Key, "TargetMP") == 0) target.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentMp);
                         else if (String.Compare(formula.Key, "TargetATB") == 0) target.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentAtb);
@@ -329,6 +335,8 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "TargetIsMagicEvadeModified") == 0) target.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[5]);
                         else if (String.Compare(formula.Key, "TargetCriticalRateBonus") == 0) target.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CriticalRateBonus);
                         else if (String.Compare(formula.Key, "TargetCriticalRateWeakening") == 0) target.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CriticalRateWeakening);
+                        else if (String.Compare(formula.Key, "TargetMaxDamageLimit") == 0) target.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaxDamageLimit);
+                        else if (String.Compare(formula.Key, "TargetMaxMPDamageLimit") == 0) target.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaxMpDamageLimit);
                         else if (String.Compare(formula.Key, "EffectCasterFlags") == 0) caster.Flags = (CalcFlag)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.Flags);
                         else if (String.Compare(formula.Key, "CasterHPDamage") == 0) caster.HpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.HpDamage);
                         else if (String.Compare(formula.Key, "CasterMPDamage") == 0) caster.MpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MpDamage);

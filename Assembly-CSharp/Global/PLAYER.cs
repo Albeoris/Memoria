@@ -20,6 +20,10 @@ public class PLAYER
 		this.sa[1] = 0u;
 		this.saExtended = new HashSet<SupportAbility>();
 		this.mpCostFactor = 100;
+		this.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
+		this.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
+		this.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
+		this.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 	}
 
     public CharacterId Index => info.slot_no;
@@ -104,58 +108,39 @@ public class PLAYER
 		}
 	}
 
-	private String _name;
-
 	public const Byte PLAYER_CATEGORY_MALE = 1;
-
 	public const Byte PLAYER_CATEGORY_FEMALE = 2;
-
 	public const Byte PLAYER_CATEGORY_GAIA = 4;
-
 	public const Byte PLAYER_CATEGORY_TERRA = 8;
-
 	public const Byte PLAYER_CATEGORY_SUBPC = 16;
-
 	public const Byte PLAYER_CATEGORY_RESERVE1 = 32;
-
 	public const Byte PLAYER_CATEGORY_RESERVE2 = 64;
-
 	public const Byte PLAYER_CATEGORY_RESERVE3 = 128;
 
 	public const Byte ADVANCED_GUARD = 1;
-
 	public const Byte REAR_GUARD = 0;
 
 	public const Int32 TRANCE_MODEL_ID_OFS = 19;
-
 	public const Int32 SLOT_MAX = 9;
-
 	public const Int32 PARTY_MAX = 4;
-
-    // CharacterIndex
 
     public const Int32 PLAYER_NAME_MAX = 10;
 
 	public const Int32 EQUIP_WEAPON = 0;
-
 	public const Int32 EQUIP_ARMOR_HEAD = 1;
-
 	public const Int32 EQUIP_ARMOR_WRIST = 2;
-
 	public const Int32 EQUIP_ARMOR_BODY = 3;
-
 	public const Int32 EQUIP_ACCESSORY = 4;
-
 	public const Int32 EQUIP_MAX = 5;
 
-    public Byte category;
+	private String _name;
+
+	public Byte category;
 
 	public Byte level;
-
 	public UInt32 exp;
 
 	public POINTS cur;
-
 	public POINTS max;
 
 	public Byte trance;
@@ -163,17 +148,13 @@ public class PLAYER
 	public Byte wep_bone;
 
 	public ELEMENT elem;
-
 	public ItemDefence defence;
-
 	public PLAYER_BASE basis;
-
 	public PLAYER_INFO info;
 
 	public Byte status;
 
 	public CharacterEquipment equip;
-
 	public FF9LEVEL_BONUS bonus;
 
 	public Byte[] pa;
@@ -183,4 +164,8 @@ public class PLAYER
 
 	// Custom fields
 	public Int16 mpCostFactor;
+	public UInt32 maxHpLimit;
+	public UInt32 maxMpLimit;
+	public UInt32 maxDamageLimit;
+	public UInt32 maxMpDamageLimit;
 }

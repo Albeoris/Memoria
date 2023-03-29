@@ -131,10 +131,23 @@ namespace Memoria
             get => Data.elem.dex;
             set => Data.elem.dex = value;
         }
+
         public Byte Will
         {
             get => Data.elem.wpr;
             set => Data.elem.wpr = value;
+        }
+
+        public UInt32 MaxDamageLimit
+        {
+            get => Data.maxDamageLimit;
+            set => Data.maxDamageLimit = value;
+        }
+
+        public UInt32 MaxMpDamageLimit
+        {
+            get => Data.maxMpDamageLimit;
+            set => Data.maxMpDamageLimit = value;
         }
 
         public Boolean HasTrance => Data.bi.t_gauge != 0;

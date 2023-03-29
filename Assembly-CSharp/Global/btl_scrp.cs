@@ -826,10 +826,7 @@ public class btl_scrp
 			break;
 		case 39u:
 			if (ff.dragon_no < 9999)
-			{
-				FF9StateGlobal ff9StateGlobal2 = ff;
-				ff9StateGlobal2.dragon_no = (Int16)(ff9StateGlobal2.dragon_no + 1);
-			}
+				ff.dragon_no++;
 			break;
 		case 40u:
 		{
