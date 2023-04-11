@@ -56,9 +56,24 @@ public static class TransformExtension
     public static void SetZ(this Transform self, Single value)
     {
         self.localPosition = self.localPosition.SetZ(value);
-    }
+	}
 
-    public static void AddX(this Transform self, Single value)
+	public static void SetXY(this Transform self, Single x, Single y)
+	{
+		self.localPosition = self.localPosition.SetXY(x, y);
+	}
+
+	public static void SetXZ(this Transform self, Single x, Single z)
+	{
+		self.localPosition = self.localPosition.SetXZ(x, z);
+	}
+
+	public static void SetYZ(this Transform self, Single y, Single z)
+	{
+		self.localPosition = self.localPosition.SetYZ(y, z);
+	}
+
+	public static void AddX(this Transform self, Single value)
     {
         Vector3 position = self.localPosition;
         self.localPosition = position.SetX(position.x + value);
@@ -74,5 +89,23 @@ public static class TransformExtension
     {
         Vector3 position = self.localPosition;
         self.localPosition = position.SetZ(position.z + value);
-    }
+	}
+
+	public static void AddXY(this Transform self, Single x, Single y)
+	{
+		Vector3 position = self.localPosition;
+		self.localPosition = new Vector3(position.x + x, position.y + y, position.z);
+	}
+
+	public static void AddXZ(this Transform self, Single x, Single z)
+	{
+		Vector3 position = self.localPosition;
+		self.localPosition = new Vector3(position.x + x, position.y, position.z + z);
+	}
+
+	public static void AddYZ(this Transform self, Single y, Single z)
+	{
+		Vector3 position = self.localPosition;
+		self.localPosition = new Vector3(position.x, position.y + y, position.z + z);
+	}
 }

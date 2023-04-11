@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scenes;
-using Memoria.Scenes.BattleHUD;
 using UnityEngine;
 using Object = System.Object;
 

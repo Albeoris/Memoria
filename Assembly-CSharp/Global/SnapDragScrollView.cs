@@ -6,10 +6,7 @@ internal class SnapDragScrollView : MonoBehaviour
 {
 	public Single StartPostionY
 	{
-		set
-		{
-			this.startPosY = value;
-		}
+		set => this.startPosY = value;
 	}
 
 	private void Awake()
@@ -22,8 +19,8 @@ internal class SnapDragScrollView : MonoBehaviour
 
 	private void Start()
 	{
-		UIScrollView component = this.scrollViewPanel.GetComponent<UIScrollView>();
-		component.onStoppedMoving = (UIScrollView.OnDragNotification)Delegate.Combine(component.onStoppedMoving, new UIScrollView.OnDragNotification(this.SnappingScroll));
+		this.scrollViewPanel.GetComponent<UIScrollView>().onStoppedMoving += this.SnappingScroll;
+		this.startPosY = this.scrollViewPanel.transform.localPosition.y;
 	}
 
 	private void Update()
@@ -67,24 +64,17 @@ internal class SnapDragScrollView : MonoBehaviour
 		if (base.enabled)
 		{
 			this.isStartMove = false;
-			Single num = this.scrollViewPanel.transform.localPosition.y - this.startPosY;
-			Single w = this.scrollViewPanel.baseClipRegion.w;
-			Int32 num2 = Mathf.RoundToInt(num);
-			Int32 num3 = Mathf.RoundToInt((Single)this.ItemHeight);
-			if (num2 % num3 != 0)
+			Single distY = this.scrollViewPanel.transform.localPosition.y - this.startPosY;
+			if (Mathf.RoundToInt(distY) % Mathf.RoundToInt(this.ItemHeight) != 0)
 			{
 				if (this.isScrollMove)
 				{
 					this.OnSnapFinish();
 					UnityEngine.Object.DestroyImmediate(SpringPanel.current);
 				}
+				Int32 deltaY = (Int32)Math.Round(distY / this.ItemHeight) * this.ItemHeight;
 				this.isScrollMove = true;
-				Int32 num4 = (Int32)(num / (Single)this.ItemHeight) * this.ItemHeight;
-				if (num % (Single)this.ItemHeight > (Single)(this.ItemHeight / 2))
-				{
-					num4 += this.ItemHeight;
-				}
-				SpringPanel.Begin(this.scrollViewPanel.cachedGameObject, new Vector3(this.scrollViewPanel.transform.localPosition.x, this.startPosY + (Single)num4, this.scrollViewPanel.transform.localPosition.z), (Single)this.Speed).onFinished = new SpringPanel.OnFinished(this.OnSnapFinish);
+				SpringPanel.Begin(this.scrollViewPanel.cachedGameObject, new Vector3(this.scrollViewPanel.transform.localPosition.x, this.startPosY + deltaY, this.scrollViewPanel.transform.localPosition.z), this.Speed, this.OnSnapFinish);
 			}
 			else
 			{

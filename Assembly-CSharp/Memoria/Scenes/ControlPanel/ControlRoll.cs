@@ -112,5 +112,15 @@ namespace Memoria.Scenes
 			if (invokeAction)
 				SelectAction(Selection);
 		}
+
+		public static List<Int32> GetNonEmptyIndexList(Int32 count)
+		{
+			if (count <= 0)
+				return new List<Int32>() { 0 };
+			List<Int32> list = new List<Int32>();
+			for (Int32 i = 0; i < count; i++)
+				list.Add(i);
+			return list;
+		}
 	}
 }

@@ -6,6 +6,7 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
+using Memoria.Scenes;
 using Memoria.Test;
 using Memoria.Speedrun;
 using UnityEngine;
@@ -36,6 +37,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean F4Key => UnityXInput.Input.GetKey(KeyCode.F4);
     private Boolean F5Key => UnityXInput.Input.GetKey(KeyCode.F5);
     private Boolean F9Key => UnityXInput.Input.GetKey(KeyCode.F9);
+    private Boolean F1KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F1);
     private Boolean F2KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F2);
     private Boolean F4KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F4);
     private Boolean F5KeyDown => UnityXInput.Input.GetKeyDown(KeyCode.F5);
@@ -304,6 +306,34 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
+    private void OnUIConfigDetected(UIScene scene)
+    {
+        UIManager uiManager = PersistenSingleton<UIManager>.Instance;
+        if (uiManager.IsLoading || uiManager.QuitScene.isShowQuitUI || uiManager.State == UIManager.UIState.Serialize)
+        {
+            FF9Sfx.FF9SFX_Play(102);
+            return;
+        }
+
+        switch (PersistenSingleton<UIManager>.Instance.State)
+        {
+            case UIManager.UIState.BattleHUD:
+            {
+                BattleHUD battleHUD = scene as BattleHUD;
+                if (battleHUD == null)
+                    break;
+                if (battleHUD.UIControlPanel == null)
+                    battleHUD.UIControlPanel = new BattleUIControlPanel(battleHUD);
+                else if (battleHUD.UIControlPanel.Show)
+                    Configuration.Interface.SaveValues();
+                battleHUD.UIControlPanel.Show = !battleHUD.UIControlPanel.Show;
+                FF9Sfx.FF9SFX_Play(103);
+                return;
+            }
+        }
+        FF9Sfx.FF9SFX_Play(102);
+    }
+
     private void OnPartySceneCommandDetected(UIScene scene)
     {
         UIManager uiManager = PersistenSingleton<UIManager>.Instance;
@@ -512,6 +542,11 @@ public class UIKeyTrigger : MonoBehaviour
 
         if (AltKey)
         {
+            if (F1KeyDown)
+            {
+                OnUIConfigDetected(sceneFromState);
+                return true;
+            }
             if (F2KeyDown)
             {
                 OnPartySceneCommandDetected(sceneFromState);

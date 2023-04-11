@@ -40,7 +40,7 @@ namespace Memoria.Scenes
 			set => Label.color = value ? FF9TextTool.White : FF9TextTool.Gray;
 		}
 
-		public ControlSlider(ControlPanel control, Int32 panelIndex, Action<Single> slideAction)
+		public ControlSlider(ControlPanel control, Int32 panelIndex, Boolean shiftAnchor, Action<Single> slideAction)
 		{
 			SlideAction = slideAction;
 			UIWidget panel = control.GetPanel(panelIndex);
@@ -51,8 +51,11 @@ namespace Memoria.Scenes
 			Thumb = Slider.transform.GetChild(1).gameObject.GetComponent<UISprite>();
 			ValueLabel = control.InstantiateUIElement<UILabel>(out GameObject valueLabelGo, out _, out _);
 			Label.rightAnchor.absolute = 100;
-			Label.topAnchor.absolute -= 20;
-			Label.bottomAnchor.absolute -= 20;
+			if (shiftAnchor)
+			{
+				Label.topAnchor.absolute -= 20;
+				Label.bottomAnchor.absolute -= 20;
+			}
 			valueLabelGo.transform.parent = panel.transform;
 			ValueLabel.leftAnchor.Set(Background.transform, 0f, 0);
 			ValueLabel.rightAnchor.Set(Background.transform, 1f, 0);

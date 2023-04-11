@@ -336,6 +336,9 @@
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
+    <Compile Include="Memoria\Configuration\Access\Interface.cs" />
+    <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
+    <Compile Include="Memoria\Scenes\BattleHUD\BattleUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHelp.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHitBox.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlInput.cs" />
@@ -347,6 +350,7 @@
     <Compile Include="Memoria\Scenes\ControlPanel\ControlRoll.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlSlider.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlToggle.cs" />
+    <Compile Include="Memoria\Scenes\GOButtonPrefab.cs" />
     <Compile Include="Memoria\Speedrun\AutoSplitterPipe.cs" />
     <Compile Include="Memoria\Speedrun\Split.cs" />
     <Compile Include="Memoria\Speedrun\SpeedrunSettings.cs" />

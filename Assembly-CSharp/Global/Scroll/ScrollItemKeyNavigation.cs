@@ -4,12 +4,12 @@ using Memoria;
 
 internal class ScrollItemKeyNavigation : MonoBehaviour
 {
-	public RecycleListPopulator ListPopulator
+	public RecycleListPopulator ListPopulator => this.listPopulator;
+
+	public Single ItemHeight
 	{
-		get
-		{
-			return this.listPopulator;
-		}
+		get => this.itemHeight;
+		set => this.itemHeight = value;
 	}
 
 	public void OnOtherObjectSelect(GameObject go, Boolean selected)
@@ -20,42 +20,32 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 	private void OnSelect(Boolean selected)
 	{
 		if (!selected)
-		{
 			return;
-		}
 		if (!base.enabled)
-		{
 			return;
-		}
-		if (this.scrollView != (UnityEngine.Object)null)
+		if (this.scrollView != null)
 		{
 			this.CheckEmptyLastRow();
-			Boolean flag;
-			if (this.listItem != (UnityEngine.Object)null)
+			Boolean shouldScroll = this.listItem != null ? !this.listItem.VerifyFullVisibility() : !this.ScrollPanel.IsVisible(this.VisionCheckWidget);
+			if (shouldScroll && !PersistenSingleton<UIManager>.Instance.IsLoading)
 			{
-				flag = !this.listItem.VerifyVisibility();
-			}
-			else
-			{
-				flag = !this.ScrollPanel.IsVisible(this.VisionCheckWidget);
-			}
-			if (flag && !PersistenSingleton<UIManager>.Instance.IsLoading)
-			{
-				Vector3 pos = -this.ScrollPanel.cachedTransform.InverseTransformPoint(base.transform.position);
-				if (!this.scrollView.canMoveHorizontally)
+				Single deltaX;
+				Single deltaY;
+				if (this.listItem != null)
 				{
-					pos.x = this.ScrollPanel.cachedTransform.localPosition.x;
-				}
-				if (pos.y > this.ScrollPanel.cachedTransform.localPosition.y)
-				{
-					pos.y = this.ScrollPanel.cachedTransform.localPosition.y + this.itemHeight;
+					Vector3 targetDist = this.ScrollPanel.DistanceToFullVisibleArea(this.listItem.VisionCheckWidget);
+					deltaX = this.scrollView.canMoveHorizontally ? targetDist.x : 0f;
+					deltaY = (Single)Math.Round(targetDist.y / this.itemHeight) * this.itemHeight;
 				}
 				else
 				{
-					pos.y = this.ScrollPanel.cachedTransform.localPosition.y - this.itemHeight;
+					Vector3 targetPos = -this.ScrollPanel.cachedTransform.InverseTransformPoint(base.transform.position);
+					Boolean isUp = targetPos.y <= this.ScrollPanel.cachedTransform.localPosition.y;
+					deltaX = this.scrollView.canMoveHorizontally ? targetPos.x - this.ScrollPanel.cachedTransform.localPosition.x : 0f;
+					deltaY = isUp ? -this.itemHeight : this.itemHeight;
 				}
 				ScrollItemKeyNavigation.IsScrollMove = true;
-				SpringPanel.Begin(this.ScrollPanel.cachedGameObject, pos, this.Speed).onFinished = new SpringPanel.OnFinished(this.onScrollFinished);
+				SpringPanel.Begin(this.ScrollPanel.cachedGameObject, this.ScrollPanel.cachedTransform.localPosition + new Vector3(deltaX, deltaY, 0f), this.Speed, this.onScrollFinished);
 			}
 		}
 	}
@@ -63,46 +53,33 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 	private void OnEnable()
 	{
 		if (this.HidePointerOnMoving)
-		{
-			String groupName = base.gameObject.GetComponent<ButtonGroupState>().GroupName;
-			ButtonGroupState.SetPointerVisibilityToGroup(true, groupName);
-		}
+			ButtonGroupState.SetPointerVisibilityToGroup(true, base.gameObject.GetComponent<ButtonGroupState>().GroupName);
 	}
 
 	private void OnDisable()
 	{
 		if (this.HidePointerOnMoving)
-		{
-			String groupName = base.gameObject.GetComponent<ButtonGroupState>().GroupName;
-			ButtonGroupState.SetPointerVisibilityToGroup(false, groupName);
-		}
+			ButtonGroupState.SetPointerVisibilityToGroup(false, base.gameObject.GetComponent<ButtonGroupState>().GroupName);
 	}
 
 	private void onScrollFinished()
 	{
 		ScrollItemKeyNavigation.IsScrollMove = false;
 		this.ScrollButton.CheckScrollPosition();
-		if (this.listPopulator != (UnityEngine.Object)null)
-		{
+		if (this.listPopulator != null)
 			this.listPopulator.CheckAllVisibilty();
-		}
-		if (this.listItem != (UnityEngine.Object)null)
-		{
+		if (this.listItem != null)
 			this.listItem.CheckVisibility();
-		}
 	}
 
 	public void CheckVisibility()
 	{
 		if (ButtonGroupState.ActiveButton == base.gameObject)
 		{
-			if (this.listPopulator != (UnityEngine.Object)null)
+			if (this.listPopulator != null)
 			{
-				RecycleListItem component = base.gameObject.GetComponent<RecycleListItem>();
-				if (!component.VerifyVisibility())
-				{
+				if (!this.listItem.VerifyVisibility())
 					this.listPopulator.SwitchActiveItem();
-				}
 			}
 			else if (!this.ScrollPanel.IsVisible(this.VisionCheckWidget))
 			{
@@ -116,9 +93,9 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 		UIKeyNavigation navig = base.gameObject.GetComponent<UIKeyNavigation>();
 		if (this.listPopulator != null)
 		{
-			// Pressing the key "down" when selecting the bottom-left item brings to the bottom-right item
-			// We might want to add the condition "this.listPopulator.ItemCount % 2 == 1" to disable this behaviour
-			if (this.listItem.ItemDataIndex == this.listPopulator.ItemCount - 2)
+			Int32 rowIndex = this.listItem.ItemDataIndex / this.listPopulator.Column;
+			Int32 lastRowIndex = (this.listPopulator.ItemCount - 1) / this.listPopulator.Column;
+			if (rowIndex < lastRowIndex && this.listItem.ItemDataIndex + this.listPopulator.Column >= this.listPopulator.ItemCount)
 				navig.onDown = this.listPopulator.ItemsPool[this.listPopulator.DataTracker[this.listPopulator.ItemCount - 1]].gameObject;
 			else if (navig.onDown != null)
 				navig.onDown = null;
@@ -178,34 +155,24 @@ internal class ScrollItemKeyNavigation : MonoBehaviour
 	private void Start()
 	{
 		if (this.ID == -1)
-		{
 			this.ID = base.gameObject.transform.GetSiblingIndex();
-		}
 		this.listItem = base.gameObject.GetComponent<RecycleListItem>();
 		this.scrollView = this.ScrollPanel.GetComponent<UIScrollView>();
 		this.listPopulator = this.ScrollPanel.GetComponent<RecycleListPopulator>();
-		this.itemHeight = (Single)base.gameObject.GetComponent<UIWidget>().height;
+		this.itemHeight = base.gameObject.GetComponent<UIWidget>().height;
 	}
-
-	public Int32 ID = -1;
-
-	public Single Speed = 24f;
-
-	public Boolean HidePointerOnMoving;
 
 	public static Boolean IsScrollMove;
 
+	public Int32 ID = -1;
+	public Single Speed = 24f;
+	public Boolean HidePointerOnMoving;
 	private Single itemHeight;
 
 	public UIPanel ScrollPanel;
-
 	public ScrollButton ScrollButton;
-
 	public UIWidget VisionCheckWidget;
-
 	private RecycleListPopulator listPopulator;
-
 	private UIScrollView scrollView;
-
 	private RecycleListItem listItem;
 }

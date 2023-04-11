@@ -168,9 +168,9 @@ public class ScrollButton : MonoBehaviour
 	private void MoveScroll(Single multiple, Boolean isUp)
 	{
 		FF9Sfx.FF9SFX_Play(103);
-		Single y = (!isUp) ? (this.ScrollViewPanel.transform.localPosition.y + (Single)this.Offset) : (this.ScrollViewPanel.transform.localPosition.y - (Single)this.Offset);
+		Single y = this.ScrollViewPanel.transform.localPosition.y + (isUp ? -this.Offset : this.Offset);
 		this.isScrollMove = true;
-		SpringPanel.Begin(this.ScrollViewPanel.cachedGameObject, new Vector3(this.ScrollViewPanel.transform.localPosition.x, y, this.ScrollViewPanel.transform.localPosition.z), this.Speed * multiple).onFinished = new SpringPanel.OnFinished(this.onScrollFinished);
+		SpringPanel.Begin(this.ScrollViewPanel.cachedGameObject, new Vector3(this.ScrollViewPanel.transform.localPosition.x, y, this.ScrollViewPanel.transform.localPosition.z), this.Speed * multiple, this.onScrollFinished);
 	}
 
 	private void JumpScroll(Boolean isUp)
@@ -204,20 +204,15 @@ public class ScrollButton : MonoBehaviour
 			Int32 columnCount = this.listPopulator != null ? this.listPopulator.Column : 1;
 			if (this.listPopulator != null)
 			{
-				foreach (Transform itemTransform in this.listPopulator.ItemsPool)
-				{
-					GameObject itemObj = itemTransform.gameObject;
-					RecycleListItem itemRecycle = itemObj.GetComponent<RecycleListItem>();
-					if (itemRecycle.ItemDataIndex < firstItemInPage && itemRecycle.VerifyVisibility())
-						firstItemInPage = itemRecycle.ItemDataIndex;
-				}
+				firstItemInPage = this.listPopulator.PageFirstItem;
+				if (firstItemInPage == Int32.MaxValue)
+					return;
 			}
 			else
 			{
 				foreach (Transform itemTransform in this.snapScrollView.transform.GetChild(0))
 				{
-					GameObject itemObj = itemTransform.gameObject;
-					ScrollItemKeyNavigation itemNavig = itemObj.GetComponent<ScrollItemKeyNavigation>();
+					ScrollItemKeyNavigation itemNavig = itemTransform.GetComponent<ScrollItemKeyNavigation>();
 					if (itemNavig.ID < firstItemInPage && itemNavig.ScrollPanel.IsVisible(itemNavig.VisionCheckWidget))
 						firstItemInPage = itemNavig.ID;
 				}

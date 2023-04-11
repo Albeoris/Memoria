@@ -12,14 +12,44 @@ public partial class BattleHUD : UIScene
         {
             public readonly GOScrollButton ScrollButton;
             public readonly GOSubPanel SubPanel;
-            public readonly GOPanel<GOLocalizableLabel> Panel;
+            public readonly CaptionBackground Background;
 
             public ScrollablePanel(GameObject obj)
                 : base(obj)
             {
                 ScrollButton = new GOScrollButton(obj.GetChild(0));
                 SubPanel = new GOSubPanel(obj.GetChild(1));
-                Panel = new GOPanel<GOLocalizableLabel>(obj.GetChild(2));
+                Background = new CaptionBackground(obj.GetChild(2));
+            }
+
+            internal sealed class CaptionBackground : GOWidget
+            {
+                public readonly GOSprite Body;
+                public readonly GOSprite TopBorder;
+                public readonly GOSprite Border;
+                public readonly CaptionPanel Panel;
+
+                public CaptionBackground(GameObject obj)
+                    : base(obj)
+                {
+                    TopBorder = new GOSprite(obj.GetChild(0));
+                    Border = new GOSprite(obj.GetChild(1));
+                    Body = new GOSprite(obj.GetChild(2));
+                    Panel = new CaptionPanel(obj.GetChild(3));
+                }
+            }
+
+            internal sealed class CaptionPanel : GOPanel
+            {
+                public readonly GOLocalizableLabel Name;
+                public readonly GOLocalizableLabel Info;
+
+                public CaptionPanel(GameObject obj)
+                    : base(obj)
+                {
+                    Name = new GOLocalizableLabel(obj.GetChild(0));
+                    Info = new GOLocalizableLabel(obj.GetChild(1));
+                }
             }
         }
     }

@@ -411,6 +411,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void YMenu_ManagerActiveTime()
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next;
+        UIManager.Battle.UpdateSlidingButtonState();
         if (UIManager.Battle.FF9BMenu_IsEnableAtb())
             ProcessActiveTime(btl);
     }

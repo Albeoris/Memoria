@@ -37,13 +37,32 @@ namespace Memoria.Scenes
 			return panelIndex;
 		}
 
-		public void EndInitialization()
+		public void EndInitialization(UIWidget.Pivot pivot = UIWidget.Pivot.Right)
 		{
 			foreach (UIWidget panel in allPanels)
 			{
 				ExtendLastRowToMax(panel, false);
-				panel.pivot = UIWidget.Pivot.Right;
-				panel.SetRect(0f, 0f, 700f, 1000f);
+				panel.pivot = pivot;
+				switch (pivot)
+				{
+					case UIWidget.Pivot.Left:
+					case UIWidget.Pivot.Right:
+						panel.SetRect(0f, 0f, 700f, 1000f);
+						break;
+					case UIWidget.Pivot.Top:
+					case UIWidget.Pivot.Bottom:
+						panel.SetRect(0f, 0f, 1600f, 500f);
+						break;
+					case UIWidget.Pivot.TopLeft:
+					case UIWidget.Pivot.TopRight:
+					case UIWidget.Pivot.BottomLeft:
+					case UIWidget.Pivot.BottomRight:
+						panel.SetRect(0f, 0f, 700f, 500f);
+						break;
+					case UIWidget.Pivot.Center:
+						panel.SetRect(0f, 0f, 1600f, 1000f);
+						break;
+				}
 				panel.gameObject.SetActive(false);
 			}
 			activePanelIndex = 0;
@@ -136,7 +155,7 @@ namespace Memoria.Scenes
 
 		public ControlSlider AddSlider(String description, Single initial, Func<Single, Single> valueToSlide, Func<Single, Single> slideToValue, Action<Single> slideAction, Int32 panelIndex = 0)
 		{
-			ControlSlider control = new ControlSlider(this, panelIndex, slideAction);
+			ControlSlider control = new ControlSlider(this, panelIndex, GetPanelLastRow(GetPanel(panelIndex)).Count == 0, slideAction);
 			control.SetupScale(valueToSlide, slideToValue, initial);
 			control.Label.text = description;
 			return control;

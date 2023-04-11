@@ -225,32 +225,26 @@ public class UICenterOnChild : MonoBehaviour
 
 	private void CenterOn(Transform target, Vector3 panelCenter)
 	{
-		if (target != (UnityEngine.Object)null && this.mScrollView != (UnityEngine.Object)null && this.mScrollView.panel != (UnityEngine.Object)null)
+		if (target != null && this.mScrollView != null && this.mScrollView.panel != null)
 		{
-			Transform cachedTransform = this.mScrollView.panel.cachedTransform;
+			Transform panelTransf = this.mScrollView.panel.cachedTransform;
 			this.mCenteredObject = target.gameObject;
-			Vector3 a = cachedTransform.InverseTransformPoint(target.position);
-			Vector3 b = cachedTransform.InverseTransformPoint(panelCenter);
-			Vector3 b2 = a - b;
+			Vector3 targetPos = panelTransf.InverseTransformPoint(target.position);
+			Vector3 centerPos = panelTransf.InverseTransformPoint(panelCenter);
+			Vector3 delta = centerPos - targetPos;
 			if (!this.mScrollView.canMoveHorizontally)
-			{
-				b2.x = 0f;
-			}
+				delta.x = 0f;
 			if (!this.mScrollView.canMoveVertically)
-			{
-				b2.y = 0f;
-			}
-			b2.z = 0f;
-			SpringPanel.Begin(this.mScrollView.panel.cachedGameObject, cachedTransform.localPosition - b2, this.springStrength).onFinished = this.onFinished;
+				delta.y = 0f;
+			delta.z = 0f;
+			SpringPanel.Begin(this.mScrollView.panel.cachedGameObject, panelTransf.localPosition + delta, this.springStrength, this.onFinished);
 		}
 		else
 		{
-			this.mCenteredObject = (GameObject)null;
+			this.mCenteredObject = null;
 		}
 		if (this.onCenter != null)
-		{
 			this.onCenter(this.mCenteredObject);
-		}
 	}
 
 	public void CenterOn(Transform target)

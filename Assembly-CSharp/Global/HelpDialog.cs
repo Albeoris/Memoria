@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -6,18 +7,12 @@ public class HelpDialog : Singleton<HelpDialog>
 {
 	public Vector2 PointerOffset
 	{
-		set
-		{
-			this.pointerOffset = value;
-		}
+		set => this.pointerOffset = value;
 	}
 
 	public Vector4 PointerLimitRect
 	{
-		set
-		{
-			this.pointerLimitRect = value;
-		}
+		set => this.pointerLimitRect = value;
 	}
 
 	public String Phrase
@@ -39,9 +34,7 @@ public class HelpDialog : Singleton<HelpDialog>
 			this.position.x = Mathf.Clamp(this.position.x, this.pointerLimitRect.x, this.pointerLimitRect.z);
 			this.position.y = Mathf.Clamp(this.position.y, this.pointerLimitRect.y, this.pointerLimitRect.w);
 			if (this.position.y < -480f)
-			{
 				this.position.y = this.position.y + 20f;
-			}
 			this.position.x = this.position.x + UIManager.UIContentSize.x / 2f;
 			this.position.y = -this.position.y + UIManager.UIContentSize.y / 2f;
 		}
@@ -49,35 +42,22 @@ public class HelpDialog : Singleton<HelpDialog>
 
 	public Boolean Tail
 	{
-		set
-		{
-			this.tail = value;
-		}
+		set => this.tail = value;
 	}
 
 	public Vector4 ClipRect
 	{
-		set
-		{
-			this.clipRect = value;
-		}
+		set => this.clipRect = value;
 	}
 
 	public Int32 Depth
 	{
-		set
-		{
-			this.depth = value;
-		}
+		set => this.depth = value;
 	}
 
-	public UILabel PhraseLabel
-	{
-		get
-		{
-			return this.phraseLabel;
-		}
-	}
+	public UILabel PhraseLabel => this.phraseLabel;
+
+	public Boolean IsShown => base.gameObject.activeSelf;
 
 	public void ShowDialog()
 	{
@@ -115,19 +95,27 @@ public class HelpDialog : Singleton<HelpDialog>
 		this.phraseLabel.width = (Int32)UIManager.UIContentSize.x;
 		this.phraseLabel.height = (Int32)UIManager.UIContentSize.y;
 		this.phraseLabel.fontSize = 42;
-		Vector4 vector = default(Vector4);
-		Single x = 0f;
+		Vector4 rectVector;
+		Single tailX = 0f;
 		if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
 		{
-			x = this.FF9Help_ComputeWindow();
-			vector = this.dialogRect;
+			tailX = this.FF9Help_ComputeWindow();
+			rectVector = this.dialogRect;
 		}
 		else
 		{
 			this.dialogTail = HelpDialog.FF9HELP_NONE;
-			if (ButtonGroupState.ActiveGroup == BattleHUD.TargetGroupButton)
+			if (Configuration.Interface.IsEnabled)
 			{
-				// TODO Check Native: #147
+				this.dialogRect.x = Configuration.Interface.BattleDetailPos.x + UIManager.UIContentSize.x / 2f;
+				this.dialogRect.y = UIManager.UIContentSize.y / 2f - Configuration.Interface.BattleDetailPos.y - 22f;
+				this.dialogRect.z = Configuration.Interface.BattleDetailSize.x - 2f * HelpDialog.HelpDialogXPadding + 48f;
+				this.dialogRect.w = Configuration.Interface.BattleDetailSize.y - 2f * HelpDialog.HelpDialogYPadding + 158f;
+				this.phraseLabel.fontSize = (Int32)Math.Round(42f * (Configuration.Interface.BattleDetailSize.y / 230f));
+			}
+			else if (ButtonGroupState.ActiveGroup == BattleHUD.TargetGroupButton)
+			{
+				// Official patch https://store.steampowered.com/news/app/377840/view/2735326880600635615 resized the battle help
 				// New:
 				this.dialogRect.x = 1282f;
 				this.dialogRect.y = 898f;
@@ -140,13 +128,10 @@ public class HelpDialog : Singleton<HelpDialog>
 				// this.dialogRect.z = 420f;
 				// this.dialogRect.w = 332f;
 				if (Localization.CurrentLanguage != "Japanese")
-				{
 					this.phraseLabel.fontSize = 32;
-				}
 			}
 			else
 			{
-				// TODO Check Native: #147
 				// New:
 				this.dialogRect.x = 1116.5f;
 				this.dialogRect.y = 898f;
@@ -159,24 +144,24 @@ public class HelpDialog : Singleton<HelpDialog>
 				// this.dialogRect.z = 798f;
 				// this.dialogRect.w = 332f;
 			}
-			vector = this.dialogRect;
+			rectVector = this.dialogRect;
 		}
-		this.dialogRect.z = this.dialogRect.z + (Single)(HelpDialog.HelpDialogXPadding * 2);
-		this.dialogRect.w = this.dialogRect.w + (Single)(HelpDialog.HelpDialogYPadding * 2);
+		this.dialogRect.z = this.dialogRect.z + 2f * HelpDialog.HelpDialogXPadding;
+		this.dialogRect.w = this.dialogRect.w + 2f * HelpDialog.HelpDialogYPadding;
 		this.dialogRect.x = this.dialogRect.x - UIManager.UIContentSize.x / 2f;
 		this.dialogRect.y = UIManager.UIContentSize.y / 2f - this.dialogRect.y;
 		base.transform.localPosition = new Vector3(this.dialogRect.x, this.dialogRect.y, 0f);
 		this.panel.baseClipRegion = new Vector4(0f, 0f, this.dialogRect.z, this.dialogRect.w);
 		this.panel.depth = this.depth;
-		this.bodyWidget.width = (Int32)vector.z;
-		this.bodyWidget.height = (Int32)vector.w;
-		this.borderWidget.width = (Int32)(vector.z + 36f);
-		this.borderWidget.height = (Int32)(vector.w + 36f);
-		this.captionWidget.transform.localPosition = new Vector3(-(vector.z / 2f - (Single)(this.captionWidget.width / 2) - 22f), vector.w / 2f - (Single)(this.captionWidget.height / 2) + 2f, 0f);
-		this.phraseLabel.width = (Int32)(vector.z - (Single)(HelpDialog.HelpDialogTextXPadding * 2 - 4));
-		this.phraseLabel.height = (Int32)(vector.w - (Single)(HelpDialog.HelpDialogTextYPadding - 4));
-		this.phraseLabel.transform.localPosition = new Vector3(-(vector.z / 2f) + (Single)HelpDialog.HelpDialogTextXPadding, vector.w / 2f - (Single)HelpDialog.HelpDialogTextYPadding, 0f);
-		this.DisplayDialogTail(x);
+		this.bodyWidget.width = (Int32)rectVector.z;
+		this.bodyWidget.height = (Int32)rectVector.w;
+		this.borderWidget.width = (Int32)(rectVector.z + 36f);
+		this.borderWidget.height = (Int32)(rectVector.w + 36f);
+		this.captionWidget.transform.localPosition = new Vector3(-(rectVector.z / 2f - (Single)(this.captionWidget.width / 2) - 22f), rectVector.w / 2f - (Single)(this.captionWidget.height / 2) + 2f, 0f);
+		this.phraseLabel.width = (Int32)(rectVector.z - (Single)(HelpDialog.HelpDialogTextXPadding * 2 - 4));
+		this.phraseLabel.height = (Int32)(rectVector.w - (Single)(HelpDialog.HelpDialogTextYPadding - 4));
+		this.phraseLabel.transform.localPosition = new Vector3(-(rectVector.z / 2f) + (Single)HelpDialog.HelpDialogTextXPadding, rectVector.w / 2f - (Single)HelpDialog.HelpDialogTextYPadding, 0f);
+		this.DisplayDialogTail(tailX);
 	}
 
 	private Single FF9Help_ComputeWindow()

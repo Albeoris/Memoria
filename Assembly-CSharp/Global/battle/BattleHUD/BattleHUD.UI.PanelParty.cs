@@ -169,7 +169,7 @@ public partial class BattleHUD : UIScene
             internal sealed class CaptionBackground : GOWidget
             {
                 public readonly GOSprite TopBorder;
-                public readonly GOLocalizableLabel Caption1;
+                public readonly GOLocalizableLabel Name;
                 public readonly GOLocalizableLabel HP;
                 public readonly GOLocalizableLabel MP;
                 public readonly GOLocalizableLabel ATB;
@@ -178,7 +178,7 @@ public partial class BattleHUD : UIScene
                     : base(obj)
                 {
                     TopBorder = new GOSprite(obj.GetChild(0));
-                    Caption1 = new GOLocalizableLabel(obj.GetChild(1));
+                    Name = new GOLocalizableLabel(obj.GetChild(1));
                     HP = new GOLocalizableLabel(obj.GetChild(2));
                     MP = new GOLocalizableLabel(obj.GetChild(3));
                     ATB = new GOLocalizableLabel(obj.GetChild(4));

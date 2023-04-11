@@ -50,10 +50,95 @@ public partial class BattleHUD : UIScene
         base.Hide(afterFinished);
         PauseButtonGameObject.SetActive(false);
         HelpButtonGameObject.SetActive(false);
-        if (_isFromPause)
-            return;
+        if ((!_isFromPause || _usingMainMenu) && UIControlPanel != null && UIControlPanel.Show)
+        {
+            Configuration.Interface.SaveValues();
+            UIControlPanel.Show = false;
+        }
 
-        RemoveCursorMemorize();
+        if (!_isFromPause)
+            RemoveCursorMemorize();
+    }
+
+    public void UpdateSlidingButtonState()
+	{
+        if (!Configuration.Interface.PSXBattleMenu || ButtonGroupState.ActiveGroup != CommandGroupButton)
+            return;
+        Boolean leftPressed = (ETb.sKey0 & (EventInput.Lleft | EventInput.Pleft)) != 0;
+        Boolean rightPressed = (ETb.sKey0 & (EventInput.Lright | EventInput.Pright)) != 0;
+        if (_buttonSliding == null)
+		{
+            GONavigationButton nextSlidingButton = null;
+            if (leftPressed)
+                nextSlidingButton = _commandPanel.Change;
+            else if (rightPressed)
+                nextSlidingButton = _commandPanel.Defend;
+            if (nextSlidingButton != null)
+            {
+                Single rowCount = _commandPanel.AccessMenu == null ? 4f : 5f;
+                Single row = 0f;
+                if (_currentCommandIndex == CommandMenu.Attack)
+                    row = 0f;
+                else if (_currentCommandIndex == CommandMenu.Ability1)
+                    row = 1f;
+                else if (_currentCommandIndex == CommandMenu.Ability2)
+                    row = 2f;
+                else if (_currentCommandIndex == CommandMenu.Item)
+                    row = 3f;
+                else if (_currentCommandIndex == CommandMenu.AccessMenu)
+                    row = 4f;
+                else
+                    return;
+                _buttonSliding = nextSlidingButton;
+                _buttonSlidePos = new Vector2(1f - (row + 1f) / rowCount, 1f - row / rowCount);
+                _buttonSlideInitial = _currentCommandIndex;
+                _buttonSliding.IsActive = true;
+                _commandPanel.GetCommandButton(_buttonSlideInitial).SetActive(false);
+                ButtonGroupState.ActiveButton = _buttonSliding;
+                _currentCommandIndex = (CommandMenu)_buttonSliding.Transform.GetSiblingIndex();
+            }
+        }
+        if (_buttonSliding != null)
+		{
+            if (_buttonSliding == _commandPanel.Change && leftPressed)
+                _buttonSlideFactor += 0.3f;
+            else if (_buttonSliding == _commandPanel.Defend && rightPressed)
+                _buttonSlideFactor += 0.3f;
+            else
+                _buttonSlideFactor -= 0.4f;
+            if (ButtonGroupState.ActiveButton != _buttonSliding)
+                _buttonSlideFactor = 0f;
+            _buttonSlideFactor = Mathf.Clamp01(_buttonSlideFactor);
+            if (_buttonSlideFactor > 0f)
+            {
+                Single slideX = _buttonSliding == _commandPanel.Defend ? 0f : 1f - _buttonSlideFactor;
+                Single slideY = _buttonSliding == _commandPanel.Change ? 1f : _buttonSlideFactor;
+                _buttonSliding.Widget.SetAnchor(target: _commandPanel.Transform, relLeft: slideX, relRight: slideY, relBottom: _buttonSlidePos.x, relTop: _buttonSlidePos.y);
+                _buttonSliding.Name.Label.ResetAndUpdateAnchors();
+                _buttonSliding.Highlight.Sprite.ResetAndUpdateAnchors();
+                _buttonSliding.Background.Widget.ResetAndUpdateAnchors();
+                _buttonSliding.Background.Border.Sprite.ResetAndUpdateAnchors();
+            }
+            else
+            {
+                ResetSlidingButton();
+            }
+        }
+    }
+
+    private void ResetSlidingButton(Boolean selectInitialButton = true)
+    {
+        if (_buttonSliding == null)
+            return;
+        _buttonSlideFactor = 0f;
+        _commandPanel.GetCommandButton(_buttonSlideInitial).SetActive(true);
+        _buttonSliding.IsActive = false;
+        _buttonSliding = null;
+        if (selectInitialButton && ButtonGroupState.ActiveGroup == CommandGroupButton)
+        {
+            ButtonGroupState.ActiveButton = _commandPanel.GetCommandButton(_buttonSlideInitial);
+            _currentCommandIndex = _buttonSlideInitial;
+        }
     }
 
     public override Boolean OnKeyConfirm(GameObject go)
@@ -67,7 +152,8 @@ public partial class BattleHUD : UIScene
             _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
             CommandMenu menuType = _currentCommandIndex;
             _currentCommandId = GetCommandFromCommandIndex(ref menuType, CurrentPlayerIndex);
-            _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
+            ResetSlidingButton();
+            TryMemorizeCommand();
             _subMenuType = SubMenuType.Normal;
             if (IsDoubleCast && _doubleCastCount < 2)
                 ++_doubleCastCount;
@@ -126,6 +212,9 @@ public partial class BattleHUD : UIScene
                         SendCommand(command);
                         SetIdle();
                     }
+                    break;
+                case CommandMenu.AccessMenu:
+                    OpenMainMenu(FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player?.Data);
                     break;
             }
         }
@@ -296,12 +385,13 @@ public partial class BattleHUD : UIScene
             }
             if (Configuration.Battle.AccessMenus <= 0)
                 return true;
+            Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null;
             Boolean canOpen = true;
             BattleUnit selectedChar = CurrentPlayerIndex >= 0 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex) : null;
             if (Configuration.Battle.AccessMenus == 1 || Configuration.Battle.AccessMenus == 2)
-                canOpen = !_hidingHud && ButtonGroupState.ActiveGroup == ItemGroupButton && _currentCommandId == BattleCommandId.Item && (selectedChar == null || !selectedChar.IsMonsterTransform || !selectedChar.Data.monster_transform.disable_commands.Contains(BattleCommandId.AccessMenu));
+                canOpen = !hasAccessMenuButton && !_hidingHud && ButtonGroupState.ActiveGroup == ItemGroupButton && _currentCommandId == BattleCommandId.Item && (selectedChar == null || !selectedChar.IsMonsterTransform || !selectedChar.Data.monster_transform.disable_commands.Contains(BattleCommandId.AccessMenu));
             else if (Configuration.Battle.AccessMenus == 3)
-                canOpen = FF9BMenu_IsEnable() && ButtonGroupState.ActiveGroup != CommandGroupButton && ButtonGroupState.ActiveGroup != TargetGroupButton;
+                canOpen = FF9BMenu_IsEnable() && ((!hasAccessMenuButton && ButtonGroupState.ActiveGroup != CommandGroupButton && ButtonGroupState.ActiveGroup != TargetGroupButton) || (hasAccessMenuButton && selectedChar == null));
             if (canOpen)
                 OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? selectedChar?.Player?.Data : null);
         }
@@ -371,9 +461,15 @@ public partial class BattleHUD : UIScene
         if (base.OnItemSelect(go))
         {
             if (ButtonGroupState.ActiveGroup == CommandGroupButton)
+            {
                 _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
+                if (_currentCommandIndex != CommandMenu.Defend && _currentCommandIndex != CommandMenu.Change)
+                    ResetSlidingButton(false);
+            }
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)
+            {
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+            }
             if (ButtonGroupState.ActiveGroup == TargetGroupButton && _cursorType == CursorGroup.Individual)
             {
                 if (go.transform.parent == modelButtonManager.transform)

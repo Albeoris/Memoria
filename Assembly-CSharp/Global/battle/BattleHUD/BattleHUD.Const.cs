@@ -37,7 +37,6 @@ public partial class BattleHUD : UIScene
     private static readonly String ATENormal = "battle_bar_atb";
     private static readonly String ATEGray = "battle_bar_slow";
     private static readonly String ATEOrange = "battle_bar_haste";
-    // TODO Check Native: #147
     private static readonly Single DefaultPartyPanelPosY = -420f;
     private static readonly Single PartyItemHeight = 60f;
     public static Dictionary<BattleStatus, String> DebuffIconNames;

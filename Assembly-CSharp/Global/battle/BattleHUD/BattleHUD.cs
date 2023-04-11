@@ -35,8 +35,11 @@ public partial class BattleHUD : UIScene
     private Byte _currentMessagePriority;
     private Single _battleMessageCounter;
     private UI.PanelCommand _commandPanel;
+    private UI.ScrollablePanel _abilityPanel;
+    private UI.ScrollablePanel _itemPanel;
     private Int32 _enemyCount;
     private Int32 _playerCount;
+    private Int32 _playerDetailCount;
     private RecycleListPopulator _itemScrollList;
     private RecycleListPopulator _abilityScrollList;
     private Boolean _isTranceMenu;
@@ -86,6 +89,10 @@ public partial class BattleHUD : UIScene
     private CommandDetail _firstCommand;
     private Action _onResumeFromQuit;
     private Boolean _oneTime;
+    private Single _buttonSlideFactor;
+    private Vector2 _buttonSlidePos;
+    private CommandMenu _buttonSlideInitial;
+    private GONavigationButton _buttonSliding;
     private Int32 CurrentBattlePlayerIndex => _matchBattleIdPlayerList.IndexOf(CurrentPlayerIndex);
 
     private void DisplayBattleMessage(String str, Boolean isRect)
@@ -308,6 +315,8 @@ public partial class BattleHUD : UIScene
         SetupCommandButton(_commandPanel.Attack, attackCmdId, attackIsEnable);
         SetupCommandButton(_commandPanel.Defend, defendCmdId, defendIsEnable);
         SetupCommandButton(_commandPanel.Item, itemCmdId, itemIsEnable);
+        if (_commandPanel.AccessMenu != null)
+            SetupCommandButton(_commandPanel.AccessMenu, BattleCommandId.AccessMenu, Configuration.Battle.AccessMenus > 0);
 
         if (ButtonGroupState.ActiveGroup != CommandGroupButton)
             return;
@@ -1263,6 +1272,7 @@ public partial class BattleHUD : UIScene
         _currentCharacterHp.Clear();
         _enemyCount = 0;
         _playerCount = 0;
+        _playerDetailCount = 0;
 
         _partyDetail.SetBlink(false);
 
@@ -1429,7 +1439,8 @@ public partial class BattleHUD : UIScene
 
         if (!isVisible)
         {
-            _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
+            ResetSlidingButton();
+            TryMemorizeCommand();
             _commandPanel.IsActive = false;
             return;
         }
@@ -1461,6 +1472,13 @@ public partial class BattleHUD : UIScene
             _currentButtonGroup = CommandGroupButton;
         else
             ButtonGroupState.ActiveGroup = CommandGroupButton;
+    }
+
+    private void TryMemorizeCommand()
+    {
+        if (Configuration.Interface.PSXBattleMenu && (_currentCommandIndex == CommandMenu.Defend || _currentCommandIndex == CommandMenu.Change))
+            return;
+        _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
     }
 
     private void TryGetMemorizedCommandObject(ref GameObject commandObject, Boolean forceCursorMemo)

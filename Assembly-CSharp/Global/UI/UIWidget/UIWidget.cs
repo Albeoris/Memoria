@@ -531,6 +531,13 @@ public class UIWidget : UIRect
 		return (!(parent != (UnityEngine.Object)null)) ? this.mColor.a : (parent.CalculateFinalAlpha(frameID) * this.mColor.a);
 	}
 
+	public void SetRawRect(Single x, Single y, Single width, Single height)
+	{
+		this.transform.SetXY(x, y);
+		this.width = (Int32)width;
+		this.height = (Int32)height;
+	}
+
 	public override void SetRect(Single x, Single y, Single width, Single height)
 	{
 		Vector2 pivotOffset = this.pivotOffset;

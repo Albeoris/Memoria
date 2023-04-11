@@ -57,17 +57,14 @@ public class PointerManager : Singleton<PointerManager>
 
 	public void AttachPointerToGameObject(GameObject go, Boolean isSnapCenter)
 	{
-		if (go != (UnityEngine.Object)null)
+		if (go != null)
 		{
 			if (!this.attachList.ContainsKey(go))
 			{
 				UIPointer pointerFromPool = this.GetPointerFromPool(this.PointerDepth);
-				UIWidget component = pointerFromPool.GetComponent<UIWidget>();
-				UIWidget component2 = go.GetComponent<UIWidget>();
 				pointerFromPool.name = go.name + " Pointer";
 				pointerFromPool.transform.position = go.transform.position;
-				Vector3 referenceVector = (!isSnapCenter) ? new Vector3((Single)(0 - component2.width / 2 + component.width / 4), (Single)(0 - component.height / 4), 0f) : Vector3.zero;
-				pointerFromPool.AttachToGameObject(go.transform, referenceVector, this.pointerOffset, this.pointerLimitRect);
+				pointerFromPool.AttachToGameObject(go.transform, !isSnapCenter, this.pointerOffset, this.pointerLimitRect);
 				this.attachList.Add(go, pointerFromPool);
 			}
 			else
@@ -263,6 +260,7 @@ public class PointerManager : Singleton<PointerManager>
 	public enum LimitRectBehavior
 	{
 		Limit,
-		Hide
+		Hide,
+		None
 	}
 }

@@ -425,11 +425,17 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String CommandName(BattleCommandId id)
         {
+            if (id == BattleCommandId.AccessMenu && FF9TextTool.commandName.TryGetValue(id, out String name))
+                if (name == "None" || name == "みてい")
+                    return Localization.Get("Menu");
             return FF9TextTool.commandName.ContainsKey(id) ? FF9TextTool.commandName[id] : String.Empty;
         }
 
         public static String CommandHelpDescription(BattleCommandId id)
         {
+            if (id == BattleCommandId.AccessMenu && FF9TextTool.commandHelpDesc.TryGetValue(id, out String help))
+                if (help == "" || help == "みていを使います。")
+                    return Localization.Get("Menu");
             return FF9TextTool.commandHelpDesc.ContainsKey(id) ? FF9TextTool.commandHelpDesc[id] : String.Empty;
         }
 

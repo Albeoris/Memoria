@@ -21,6 +21,7 @@ namespace Memoria.Scenes
             Name = new GOLabel(obj.GetChild(0));
             Highlight = new GOSprite(obj.GetChild(1));
             Background = new GOThinBackground(obj.GetChild(2));
+            Name.Label.overflowMethod = UILabel.Overflow.ResizeFreely;
         }
 
         public void SetLabelText(String value)

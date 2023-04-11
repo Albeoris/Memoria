@@ -10,78 +10,54 @@ public class RecycleListPopulator : MonoBehaviour
 
 	public event RecycleListPopulator.RecycleListItemClick OnRecycleListItemClick;
 
-	public Int32 ItemCount
+	public Int32 ItemCount => this.dataList.Count;
+
+	public Int32 VisibleItemCount => this.visibleSize;
+
+	public Int32 PageFirstItem
 	{
 		get
 		{
-			return this.dataList.Count;
+			Int32 it = Int32.MaxValue;
+			foreach (Transform itemTransform in this.ItemsPool)
+			{
+				RecycleListItem itemRecycle = itemTransform.GetComponent<RecycleListItem>();
+				if (itemRecycle.ItemDataIndex < it)
+				{
+					Vector3 dist = this.panel.DistanceToFullVisibleArea(itemRecycle.VisionCheckWidget);
+					if (Math.Abs(dist.y) < itemRecycle.VisionCheckWidget.height / 2f)
+						it = itemRecycle.ItemDataIndex;
+				}
+			}
+			return it;
 		}
 	}
 
-	public Int32 VisibleItemCount
-	{
-		get
-		{
-			return this.visibleSize;
-		}
-	}
+	public Int32 MaxItemCount => this.dataList.Count<ListDataTypeBase>();
 
-	public Int32 MaxItemCount
-	{
-		get
-		{
-			return this.dataList.Count<ListDataTypeBase>();
-		}
-	}
+	public Int32 Column => Math.Max(1, this.table.columns);
 
-	public Int32 Column
-	{
-		get
-		{
-			return (Int32)((this.table.columns <= 0) ? 1 : this.table.columns);
-		}
-	}
+	public Dictionary<Int32, Int32> DataTracker => this.dataTracker;
 
-	public Dictionary<Int32, Int32> DataTracker
-	{
-		get
-		{
-			return this.dataTracker;
-		}
-	}
-
-	public List<Transform> ItemsPool
-	{
-		get
-		{
-			return this.itemsPool;
-		}
-	}
+	public List<Transform> ItemsPool => this.itemsPool;
 
 	public Int32 ActiveNumber
 	{
-		set
-		{
-			this.activeNumber = value;
-		}
+		set => this.activeNumber = value;
 	}
 
 	private void Awake()
 	{
-		if (this.itemPrefab == (UnityEngine.Object)null)
-		{
+		if (this.itemPrefab == null)
 			global::Debug.LogError("InfiniteListPopulator:: itemPrefab is not assigned");
-		}
-		else if (!this.itemPrefab.tag.Equals("Item List"))
-		{
+		else if (!this.itemPrefab.tag.Equals(ITEM_TAG))
 			global::Debug.LogError("InfiniteListPopulator:: itemPrefab tag should be Item List");
-		}
 		this.snapDragPanel = base.gameObject.GetComponent<SnapDragScrollView>();
 	}
 
 	private void Update()
 	{
-		if (this.scrollIndicator != (UnityEngine.Object)null)
+		if (this.scrollIndicator != null)
 		{
 			if (Mathf.Abs(this.draggablePanel.currentMomentum.y) > 0f && this.scrollIndicator.GetComponent<TweenAlpha>().from > 0f)
 			{
@@ -101,7 +77,7 @@ public class RecycleListPopulator : MonoBehaviour
 				this.scrollIndicator.GetComponent<TweenAlpha>().delay = 1f;
 				UITweener.Begin<TweenAlpha>(this.scrollIndicator.gameObject, 0.25f);
 			}
-			Single y = (Single)(-(Single)this.scrollCursor) / (Single)this.dataList.Count * this.panel.baseClipRegion.w;
+			Single y = (Single)(-this.scrollCursor) / (Single)this.dataList.Count * this.panel.baseClipRegion.w;
 			this.scrollIndicator.localPosition = new Vector3(this.scrollIndicator.localPosition.x, y, this.scrollIndicator.localPosition.z);
 		}
 	}
@@ -137,8 +113,7 @@ public class RecycleListPopulator : MonoBehaviour
 	public void RefreshTableView()
 	{
 		if (this.dataList == null || this.dataList.Count == 0)
-		{
-		}
+			return;
 		this.InitTableView(this.dataList, 0);
 	}
 
@@ -168,26 +143,21 @@ public class RecycleListPopulator : MonoBehaviour
 
 	public void SwitchActiveItem()
 	{
-		Int32 num = this.dataTracker[this.activeNumber];
-		if (this.dataTracker.ContainsKey(this.activeNumber + this.Column))
+		if (this.dataTracker.TryGetValue(this.activeNumber + this.Column, out Int32 poolIndex))
 		{
-			Int32 index = this.dataTracker[this.activeNumber + this.Column];
-			Transform transform = this.itemsPool[index];
-			RecycleListItem component = this.itemsPool[index].GetComponent<RecycleListItem>();
-			if (component.VerifyVisibility())
+			RecycleListItem item = this.itemsPool[poolIndex].GetComponent<RecycleListItem>();
+			if (item.VerifyVisibility())
 			{
-				ButtonGroupState.ActiveButton = transform.gameObject;
+				ButtonGroupState.ActiveButton = this.itemsPool[poolIndex].gameObject;
 				return;
 			}
 		}
-		if (this.dataTracker.ContainsKey(this.activeNumber - this.Column))
+		if (this.dataTracker.TryGetValue(this.activeNumber - this.Column, out poolIndex))
 		{
-			Int32 index2 = this.dataTracker[this.activeNumber - this.Column];
-			Transform transform2 = this.itemsPool[index2];
-			RecycleListItem component2 = this.itemsPool[index2].GetComponent<RecycleListItem>();
-			if (component2.VerifyVisibility())
+			RecycleListItem item = this.itemsPool[poolIndex].GetComponent<RecycleListItem>();
+			if (item.VerifyVisibility())
 			{
-				ButtonGroupState.ActiveButton = transform2.gameObject;
+				ButtonGroupState.ActiveButton = this.itemsPool[poolIndex].gameObject;
 				return;
 			}
 		}
@@ -199,101 +169,75 @@ public class RecycleListPopulator : MonoBehaviour
 		this.activeNumber = inActiveIndex;
 		this.dataTracker.Clear();
 		this.dataList = new List<ListDataTypeBase>(inDataList);
-		if (this.dataList.Count < this.visibleSize)
-		{
+		if (this.dataList.Count < this.visibleSize || this.activeNumber < this.visibleSize)
 			this.startNumber = 0;
-		}
-		else if (this.activeNumber < this.visibleSize)
-		{
-			this.startNumber = 0;
-		}
 		else
-		{
 			this.startNumber = this.activeNumber - (this.visibleSize - this.Column);
-		}
 		this.scrollCursor = this.startNumber;
-		Int32 num = this.poolSize - this.extraBuffer;
-		Int32 num2 = this.startNumber - this.startNumber / this.poolSize * this.poolSize;
-		Int32 num3;
-		Int32 num4;
+		Int32 visibleCount = this.poolSize - this.extraBuffer;
+		Int32 startPoolIndex = this.startNumber - this.startNumber / this.poolSize * this.poolSize;
+		Int32 beforeStartCount;
+		Int32 afterVisibleMaxCount;
 		if (this.dataList.Count <= this.poolSize)
 		{
-			num3 = this.startNumber;
-			num4 = this.dataList.Count - (this.startNumber + this.visibleSize);
+			beforeStartCount = this.startNumber;
+			afterVisibleMaxCount = this.dataList.Count - (this.startNumber + this.visibleSize);
 		}
 		else if (this.startNumber < this.extraBuffer / 2)
 		{
-			num3 = this.startNumber;
-			num4 = this.extraBuffer - num3;
+			beforeStartCount = this.startNumber;
+			afterVisibleMaxCount = this.extraBuffer - beforeStartCount;
 		}
 		else if (this.dataList.Count > this.poolSize && this.dataList.Count - (this.startNumber + this.visibleSize) < this.extraBuffer / 2)
 		{
-			num4 = this.dataList.Count - (this.startNumber + this.visibleSize);
-			num3 = this.extraBuffer - num4;
+			afterVisibleMaxCount = this.dataList.Count - (this.startNumber + this.visibleSize);
+			beforeStartCount = this.extraBuffer - afterVisibleMaxCount;
 		}
 		else
 		{
-			num4 = (num3 = this.extraBuffer / 2);
+			afterVisibleMaxCount = (beforeStartCount = this.extraBuffer / 2);
 		}
-		Int32 i = 0;
-		Int32 num5 = 0;
-		Int32 num6 = 0;
-		Int32 num7 = this.startNumber;
-		while (i < this.poolSize)
+		Int32 visibleIndex = 0;
+		Int32 afterVisibleIndex = 0;
+		Int32 dataIndex;
+		Int32 poolIndex;
+		for (Int32 i = 0; i < this.poolSize; i++)
 		{
-			if (num3 > 0)
+			if (beforeStartCount > 0)
 			{
-				num7 = this.startNumber - num3;
-				Int32 num8 = num2 - num3;
-				if (num8 < 0)
-				{
-					num8 += this.poolSize;
-				}
-				if (num7 >= this.dataList.Count)
-				{
+				dataIndex = this.startNumber - beforeStartCount;
+				poolIndex = startPoolIndex - beforeStartCount;
+				if (poolIndex < 0)
+					poolIndex += this.poolSize;
+				if (dataIndex >= this.dataList.Count)
 					break;
-				}
-				Transform itemFromPool = this.GetItemFromPool(num8);
-				this.InitListItemWithIndex(itemFromPool, num7, num8);
-				num3--;
+				this.InitListItemWithIndex(dataIndex, poolIndex);
+				beforeStartCount--;
 			}
-			else if (num5 < num)
+			else if (visibleIndex < visibleCount)
 			{
-				num7 = this.startNumber + num5;
-				Int32 num8 = num2 + num5;
-				if (num8 >= this.poolSize)
-				{
-					num8 -= this.poolSize;
-				}
-				if (num7 >= this.dataList.Count)
-				{
+				dataIndex = this.startNumber + visibleIndex;
+				poolIndex = startPoolIndex + visibleIndex;
+				if (poolIndex >= this.poolSize)
+					poolIndex -= this.poolSize;
+				if (dataIndex >= this.dataList.Count)
 					break;
-				}
-				Transform itemFromPool2 = this.GetItemFromPool(num8);
-				this.InitListItemWithIndex(itemFromPool2, num7, num8);
-				num5++;
+				this.InitListItemWithIndex(dataIndex, poolIndex);
+				visibleIndex++;
 			}
 			else
 			{
-				if (num6 >= num4)
-				{
+				if (afterVisibleIndex >= afterVisibleMaxCount)
 					break;
-				}
-				num7 = this.startNumber + num + num6;
-				Int32 num8 = num2 + num + num6;
-				if (num8 >= this.poolSize)
-				{
-					num8 -= this.poolSize;
-				}
-				if (num7 >= this.dataList.Count)
-				{
+				dataIndex = this.startNumber + visibleCount + afterVisibleIndex;
+				poolIndex = startPoolIndex + visibleCount + afterVisibleIndex;
+				if (poolIndex >= this.poolSize)
+					poolIndex -= this.poolSize;
+				if (dataIndex >= this.dataList.Count)
 					break;
-				}
-				Transform itemFromPool3 = this.GetItemFromPool(num8);
-				this.InitListItemWithIndex(itemFromPool3, num7, num8);
-				num6++;
+				this.InitListItemWithIndex(dataIndex, poolIndex);
+				afterVisibleIndex++;
 			}
-			i++;
 		}
 		base.Invoke("RepositionList", 0.02f);
 	}
@@ -328,68 +272,45 @@ public class RecycleListPopulator : MonoBehaviour
 			this.snapDragPanel.StartPostionY = this.panel.transform.localPosition.y;
 	}
 
-	private void InitListItemWithIndex(Transform item, Int32 dataIndex, Int32 poolIndex)
+	private void InitListItemWithIndex(Int32 dataIndex, Int32 poolIndex)
 	{
-		RecycleListItem component = item.GetComponent<RecycleListItem>();
-		component.ItemDataIndex = dataIndex;
-		component.ListPopulator = this;
-		component.Panel = this.panel;
-		ScrollItemKeyNavigation component2 = item.GetComponent<ScrollItemKeyNavigation>();
-		if (component2)
+		Transform poolObj = this.GetItemFromPool(poolIndex);
+		RecycleListItem recylceItem = poolObj.GetComponent<RecycleListItem>();
+		recylceItem.ItemDataIndex = dataIndex;
+		recylceItem.ListPopulator = this;
+		recylceItem.Panel = this.panel;
+		ScrollItemKeyNavigation scrollNavig = poolObj.GetComponent<ScrollItemKeyNavigation>();
+		if (scrollNavig)
 		{
-			component2.ScrollButton = this.ScrollButton;
-			component2.ScrollPanel = this.panel;
+			scrollNavig.ScrollButton = this.ScrollButton;
+			scrollNavig.ScrollPanel = this.panel;
 		}
-		UIKeyNavigation component3;
-		if (ButtonGroupState.ActiveGroup == ItemUI.ItemArrangeGroupButton)
-		{
-			component3 = item.GetChild(1).GetComponent<UIKeyNavigation>();
-		}
-		else
-		{
-			component3 = item.GetComponent<UIKeyNavigation>();
-		}
-		if (component3)
-		{
-			component3.startsSelected = (this.activeNumber == dataIndex);
-		}
-		ButtonGroupState component4 = item.GetComponent<ButtonGroupState>();
-		if (component4)
-		{
-			ButtonGroupState.RemoveActiveStateOnGroup(item.gameObject, component4.GroupName);
-		}
-		item.name = "Item " + dataIndex;
-		this.PopulateListItemWithData(item, this.dataList[dataIndex], dataIndex, true);
-		this.dataTracker.Add(this.itemsPool[poolIndex].GetComponent<RecycleListItem>().ItemDataIndex, this.itemsPool[poolIndex].GetComponent<RecycleListItem>().ItemNumber);
+		UIKeyNavigation navig = ButtonGroupState.ActiveGroup == ItemUI.ItemArrangeGroupButton ? poolObj.GetChild(1).GetComponent<UIKeyNavigation>() : poolObj.GetComponent<UIKeyNavigation>();
+		if (navig)
+			navig.startsSelected = this.activeNumber == dataIndex;
+		ButtonGroupState buttonGroup = poolObj.GetComponent<ButtonGroupState>();
+		if (buttonGroup)
+			ButtonGroupState.RemoveActiveStateOnGroup(poolObj.gameObject, buttonGroup.GroupName);
+		poolObj.name = $"Item {dataIndex}";
+		this.PopulateListItemWithData(poolObj, this.dataList[dataIndex], dataIndex, true);
+		this.dataTracker.Add(dataIndex, poolIndex);
 	}
 
 	private void PrepareListItemWithIndex(Transform item, Int32 newIndex, Int32 oldIndex)
 	{
 		if (newIndex < oldIndex)
-		{
-			item.localPosition += new Vector3(0f, (Single)(this.poolSize / this.Column) * this.cellHeight, 0f);
-		}
+			item.localPosition += new Vector3(0f, (this.poolSize / this.Column) * this.cellHeight, 0f);
 		else
-		{
-			item.localPosition -= new Vector3(0f, (Single)(this.poolSize / this.Column) * this.cellHeight, 0f);
-		}
+			item.localPosition -= new Vector3(0f, (this.poolSize / this.Column) * this.cellHeight, 0f);
 		item.GetComponent<RecycleListItem>().ItemDataIndex = newIndex;
-		UIKeyNavigation component = item.GetComponent<UIKeyNavigation>();
-		if (component)
-		{
-			component.startsSelected = (this.activeNumber == newIndex);
-		}
+		UIKeyNavigation navig = item.GetComponent<UIKeyNavigation>();
+		if (navig)
+			navig.startsSelected = this.activeNumber == newIndex;
 		if (oldIndex == this.activeNumber)
-		{
-			ButtonGroupState component2 = item.GetComponent<ButtonGroupState>();
-			ButtonGroupState.RemoveActiveStateOnGroup(item.gameObject, component2.GroupName);
-		}
+			ButtonGroupState.RemoveActiveStateOnGroup(item.gameObject, item.GetComponent<ButtonGroupState>().GroupName);
 		if (newIndex == this.activeNumber)
-		{
-			ButtonGroupState component3 = item.GetComponent<ButtonGroupState>();
-			ButtonGroupState.HoldActiveStateOnGroup(item.gameObject, component3.GroupName);
-		}
-		item.name = "Item " + newIndex;
+			ButtonGroupState.HoldActiveStateOnGroup(item.gameObject, item.GetComponent<ButtonGroupState>().GroupName);
+		item.name = $"Item {newIndex}";
 		this.PopulateListItemWithData(item, this.dataList[newIndex], newIndex, false);
 		this.dataTracker.Add(newIndex, this.dataTracker[oldIndex]);
 		this.dataTracker.Remove(oldIndex);
@@ -419,37 +340,30 @@ public class RecycleListPopulator : MonoBehaviour
 		{
 			this.draggablePanel.restrictWithinPanel = true;
 			this.draggablePanel.UpdateScrollbars(true);
-			return;
 		}
-		if (itemNumber > this.dataList.Count - (this.visibleSize + this.Column * 4) && !isTop)
+		else if (itemNumber > this.dataList.Count - (this.visibleSize + this.Column * 4) && !isTop)
 		{
 			this.draggablePanel.restrictWithinPanel = true;
 			this.draggablePanel.UpdateScrollbars(true);
-			return;
 		}
 	}
 
 	public IEnumerator ItemIsInvisible(Int32 itemNumber)
 	{
 		if (this.isUpdatingList)
-		{
 			yield return null;
-		}
-		Int32 itemDataIndex = 0;
 		Transform item = this.itemsPool[itemNumber];
-		RecycleListItem infItem = (RecycleListItem)null;
+		Int32 itemDataIndex = 0;
 		this.isUpdatingList = true;
 		if (this.dataList.Count > this.poolSize)
 		{
-			if (item.tag.Equals("Item List"))
-			{
+			if (item.tag.Equals(ITEM_TAG))
 				itemDataIndex = item.GetComponent<RecycleListItem>().ItemDataIndex;
-			}
-			Int32 indexToCheck = 0;
+			Int32 indexToCheck;
 			if (this.dataTracker.ContainsKey(itemDataIndex + 1))
 			{
-				infItem = this.itemsPool[this.dataTracker[itemDataIndex + 1]].GetComponent<RecycleListItem>();
-				if (infItem != (UnityEngine.Object)null && infItem.VerifyVisibility())
+				RecycleListItem nextItem = this.itemsPool[this.dataTracker[itemDataIndex + 1]].GetComponent<RecycleListItem>();
+				if (nextItem != null && nextItem.VerifyVisibility())
 				{
 					indexToCheck = itemDataIndex - this.extraBuffer / 2;
 					if (this.dataTracker.ContainsKey(indexToCheck))
@@ -462,11 +376,11 @@ public class RecycleListPopulator : MonoBehaviour
 								this.CheckEndOfList(this.scrollCursor, false);
 								break;
 							}
-							infItem = this.itemsPool[this.dataTracker[i]].GetComponent<RecycleListItem>();
-							if (infItem != (UnityEngine.Object)null && !infItem.VerifyVisibility())
+							nextItem = this.itemsPool[this.dataTracker[i]].GetComponent<RecycleListItem>();
+							if (nextItem != null && !nextItem.VerifyVisibility())
 							{
 								item = this.itemsPool[this.dataTracker[i]];
-								if (i + this.poolSize < this.dataList.Count && i > -1)
+								if (i + this.poolSize < this.dataList.Count)
 								{
 									this.PrepareListItemWithIndex(item, i + this.poolSize, i);
 									this.CheckEndOfList(this.scrollCursor, false);
@@ -478,27 +392,27 @@ public class RecycleListPopulator : MonoBehaviour
 			}
 			if (this.dataTracker.ContainsKey(itemDataIndex - 1))
 			{
-				infItem = this.itemsPool[this.dataTracker[itemDataIndex - 1]].GetComponent<RecycleListItem>();
-				if (infItem != (UnityEngine.Object)null && infItem.VerifyVisibility())
+				RecycleListItem previousItem = this.itemsPool[this.dataTracker[itemDataIndex - 1]].GetComponent<RecycleListItem>();
+				if (previousItem != null && previousItem.VerifyVisibility())
 				{
 					indexToCheck = itemDataIndex + this.extraBuffer / 2;
 					if (this.dataTracker.ContainsKey(indexToCheck))
 					{
-						for (Int32 j = indexToCheck; j < this.dataList.Count; j++)
+						for (Int32 i = indexToCheck; i < this.dataList.Count; i++)
 						{
-							if (!this.dataTracker.ContainsKey(j))
+							if (!this.dataTracker.ContainsKey(i))
 							{
 								this.scrollCursor = itemDataIndex + this.Column;
 								this.CheckEndOfList(this.scrollCursor, true);
 								break;
 							}
-							infItem = this.itemsPool[this.dataTracker[j]].GetComponent<RecycleListItem>();
-							if (infItem != (UnityEngine.Object)null && !infItem.VerifyVisibility())
+							previousItem = this.itemsPool[this.dataTracker[i]].GetComponent<RecycleListItem>();
+							if (previousItem != null && !previousItem.VerifyVisibility())
 							{
-								item = this.itemsPool[this.dataTracker[j]];
-								if (j - this.poolSize > -1 && j < this.dataList.Count)
+								item = this.itemsPool[this.dataTracker[i]];
+								if (i - this.poolSize > -1 && i < this.dataList.Count)
 								{
-									this.PrepareListItemWithIndex(item, j - this.poolSize, j);
+									this.PrepareListItemWithIndex(item, i - this.poolSize, i);
 									this.CheckEndOfList(this.scrollCursor, true);
 								}
 							}
@@ -519,25 +433,19 @@ public class RecycleListPopulator : MonoBehaviour
 	public void itemIsPressed(Int32 itemDataIndex, Boolean isDown)
 	{
 		if (this.OnRecycleListItemPress != null)
-		{
 			this.OnRecycleListItemPress(this.itemsPool[this.dataTracker[itemDataIndex]].gameObject, isDown);
-		}
 	}
 
 	public void itemClicked(Int32 itemDataIndex)
 	{
 		if (this.OnRecycleListItemClick != null)
-		{
 			this.OnRecycleListItemClick(this.itemsPool[this.dataTracker[itemDataIndex]].gameObject);
-		}
 	}
 
 	public void itemClicked(GameObject go)
 	{
 		if (this.OnRecycleListItemClick != null)
-		{
 			this.OnRecycleListItemClick(go);
-		}
 	}
 
 	public void itemHasChanged(GameObject go)
@@ -565,70 +473,62 @@ public class RecycleListPopulator : MonoBehaviour
 			this.itemsPool[i].gameObject.SetActive(true);
 			return this.itemsPool[i];
 		}
-		return (Transform)null;
+		throw new NullReferenceException();
+	}
+
+	private void ScrollToPoolObj(RecycleListItem item)
+	{
+		Vector3 shiftRequired = item.Panel.DistanceToFullVisibleArea(item.VisionCheckWidget);
 	}
 
 	private void RefreshPool()
 	{
-		this.visibleSize = (Int32)((Single)Mathf.RoundToInt(this.panel.baseClipRegion.w) / this.cellHeight * (Single)this.Column);
+		this.extraBuffer = this.Column < 3 ? 8 : this.Column * 4;
+		this.visibleSize = (Int32)(Math.Round(this.panel.baseClipRegion.w) / this.cellHeight * this.Column);
 		this.poolSize = this.visibleSize + this.extraBuffer;
 		for (Int32 i = 0; i < this.itemsPool.Count; i++)
-		{
 			UnityEngine.Object.Destroy(this.itemsPool[i].gameObject);
-		}
 		this.itemsPool.Clear();
-		for (Int32 j = 0; j < this.poolSize; j++)
+		for (Int32 i = 0; i < this.poolSize; i++)
 		{
 			Transform transform = UnityEngine.Object.Instantiate<Transform>(this.itemPrefab);
 			transform.gameObject.SetActive(false);
-			transform.GetComponent<RecycleListItem>().ItemNumber = j;
-			transform.name = "Item " + j;
+			transform.GetComponent<RecycleListItem>().ItemNumber = i;
+			transform.name = $"Item {i}";
 			transform.parent = this.table.transform;
 			this.itemsPool.Add(transform);
 		}
 	}
 
-	private const String listItemTag = "Item List";
+	private const String ITEM_TAG = "Item List";
 
 	public Action<Transform, ListDataTypeBase, Int32, Boolean> PopulateListItemWithData;
 
 	public Transform itemPrefab;
 
 	public UITable table;
-
 	public UIScrollView draggablePanel;
-
 	public UIPanel panel;
-
 	public ScrollButton ScrollButton;
-
 	private SnapDragScrollView snapDragPanel;
-
 	public Transform scrollIndicator;
 
 	private Int32 scrollCursor;
-
 	public Single cellHeight = 94f;
-
 	private Int32 poolSize = 6;
-
 	private Int32 visibleSize;
 
 	private List<Transform> itemsPool = new List<Transform>();
-
 	private Int32 extraBuffer = 8;
 
 	private Int32 startNumber;
-
 	private Int32 activeNumber;
 
 	private Dictionary<Int32, Int32> dataTracker = new Dictionary<Int32, Int32>();
-
 	private List<ListDataTypeBase> dataList = new List<ListDataTypeBase>();
 
 	private Boolean isUpdatingList;
 
 	public delegate void RecycleListItemPress(GameObject item, Boolean isDown);
-
 	public delegate void RecycleListItemClick(GameObject item);
 }

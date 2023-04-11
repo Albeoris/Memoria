@@ -33,6 +33,7 @@ public partial class BattleHUD : UIScene
         Ability2,
         Item,
         Change,
+        AccessMenu = 7,
     }
 
     private enum CursorGroup

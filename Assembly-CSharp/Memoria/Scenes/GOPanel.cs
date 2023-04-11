@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Memoria.Scenes
 {
-    internal sealed class GOPanel<T> : GOArray<T> where T : GOBase
+    internal class GOPanel : GOBase
     {
         public readonly UIPanel Panel;
 

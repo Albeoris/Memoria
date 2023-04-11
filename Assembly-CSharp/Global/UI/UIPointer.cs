@@ -39,10 +39,11 @@ public class UIPointer : MonoBehaviour
 		}
 	}
 
-	public void AttachToGameObject(Transform target, Vector3 referenceVector, Vector2 pointerOffset, Vector4 pointerLimitRect)
+	public void AttachToGameObject(Transform target, Boolean autoUpdatePos, Vector2 pointerOffset, Vector4 pointerLimitRect)
 	{
 		this.target = target;
-		this.referenceVector = referenceVector;
+		this.referenceVector = Vector3.zero;
+		this.autoUpdateReference = autoUpdatePos;
 		this.pointerOffset = pointerOffset;
 		this.pointerLimitRect = pointerLimitRect;
 		this.RefreshPosition();
@@ -51,6 +52,12 @@ public class UIPointer : MonoBehaviour
 	private void RefreshPosition()
 	{
 		base.transform.position = this.target.position;
+		if (autoUpdateReference)
+		{
+			UIWidget pointerWidget = this.GetComponent<UIWidget>();
+			UIWidget targetWidget = this.target.GetComponent<UIWidget>();
+			this.referenceVector = new Vector3(-targetWidget.width / 2f + pointerWidget.width / 4f, -pointerWidget.height / 4f, 0f);
+		}
 		Vector3 localPosition = base.transform.localPosition + this.referenceVector;
 		localPosition.x += this.pointerOffset.x;
 		localPosition.y += this.pointerOffset.y;
@@ -252,4 +259,7 @@ public class UIPointer : MonoBehaviour
 	private Boolean lastBlinkStat;
 
 	private Boolean isHidden;
+
+	[NonSerialized]
+	private Boolean autoUpdateReference;
 }

@@ -323,32 +323,31 @@ public abstract class UIRect : MonoBehaviour
 
 	public void SetAnchor(GameObject go)
 	{
-		Transform target = (!(go != (UnityEngine.Object)null)) ? null : go.transform;
+		SetAnchor(go?.transform);
+	}
+
+	public void SetAnchor(Transform target = null, Single relLeft = 0f, Single relBottom = 0f, Single relRight = 1f, Single relTop = 1f, Single left = 0f, Single bottom = 0f, Single right = 0f, Single top = 0f)
+	{
+		this.updateAnchors = UIRect.AnchorUpdate.OnUpdate;
 		this.leftAnchor.target = target;
 		this.rightAnchor.target = target;
 		this.topAnchor.target = target;
 		this.bottomAnchor.target = target;
+		this.leftAnchor.relative = relLeft;
+		this.rightAnchor.relative = relRight;
+		this.bottomAnchor.relative = relBottom;
+		this.topAnchor.relative = relTop;
+		this.leftAnchor.absolute = (Int32)left;
+		this.rightAnchor.absolute = (Int32)right;
+		this.bottomAnchor.absolute = (Int32)bottom;
+		this.topAnchor.absolute = (Int32)top;
 		this.ResetAnchors();
 		this.UpdateAnchors();
 	}
 
-	public void SetAnchor(GameObject go, Int32 left, Int32 bottom, Int32 right, Int32 top)
+	public void SetAnchor(GameObject go = null, Single relLeft = 0f, Single relBottom = 0f, Single relRight = 1f, Single relTop = 1f, Single left = 0f, Single bottom = 0f, Single right = 0f, Single top = 0f)
 	{
-		Transform target = (!(go != (UnityEngine.Object)null)) ? null : go.transform;
-		this.leftAnchor.target = target;
-		this.rightAnchor.target = target;
-		this.topAnchor.target = target;
-		this.bottomAnchor.target = target;
-		this.leftAnchor.relative = 0f;
-		this.rightAnchor.relative = 1f;
-		this.bottomAnchor.relative = 0f;
-		this.topAnchor.relative = 1f;
-		this.leftAnchor.absolute = left;
-		this.rightAnchor.absolute = right;
-		this.bottomAnchor.absolute = bottom;
-		this.topAnchor.absolute = top;
-		this.ResetAnchors();
-		this.UpdateAnchors();
+		SetAnchor(go?.transform, relLeft, relBottom, relRight, relTop, left, bottom, right, top);
 	}
 
 	public void ResetAnchors()

@@ -159,7 +159,7 @@ namespace Memoria.Assets
 
 			// Setup Cameras panel
 			controlSetupCameraPanel = controlPanel.CreateSubPanel("Setup Cameras");
-			controlListSelectCamera.Add(controlPanel.AddRollOption(GetNonEmptyIndexList(scene.cameraList.Count), sel => $"Camera {sel}", sel => ChangeCameraSelection(sel, false), controlSetupCameraPanel));
+			controlListSelectCamera.Add(controlPanel.AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(scene.cameraList.Count), sel => $"Camera {sel}", sel => ChangeCameraSelection(sel, false), controlSetupCameraPanel));
 			controlPanel.PanelAddRow(controlSetupCameraPanel);
 			controlAnchorCameraOption = controlPanel.AddToggleOption("Select Anchors", false, StartAnchors, controlSetupCameraPanel);
 			controlPanel.PanelAddRow(controlSetupCameraPanel);
@@ -171,9 +171,9 @@ namespace Memoria.Assets
 			controlPanel.PanelAddRow();
 			// Setup Overlays panel
 			controlSetupOverlayPanel = controlPanel.CreateSubPanel("Setup Overlays");
-			controlListSelectCamera.Add(controlPanel.AddRollOption(GetNonEmptyIndexList(scene.cameraList.Count), sel => $"Camera {sel}", sel => ChangeCameraSelection(sel, false), controlSetupOverlayPanel));
+			controlListSelectCamera.Add(controlPanel.AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(scene.cameraList.Count), sel => $"Camera {sel}", sel => ChangeCameraSelection(sel, false), controlSetupOverlayPanel));
 			controlPanel.PanelAddRow(controlSetupOverlayPanel);
-			controlSelectOverlay = controlPanel.AddRollOption(GetNonEmptyIndexList(scene.overlayList.Count), sel => $"Overlay {sel}", ChangeOverlaySelection, controlSetupOverlayPanel);
+			controlSelectOverlay = controlPanel.AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(scene.overlayList.Count), sel => $"Overlay {sel}", ChangeOverlaySelection, controlSetupOverlayPanel);
 			controlPanel.PanelAddRow(controlSetupOverlayPanel);
 			controlOverlayDepth = controlPanel.AddSlider("Depth", 0f, val => ControlSlider.LinearScaleIn(val, 0f, 5000f), t => ControlSlider.LinearScaleOut(t, 0f, 5000f), val => SetOverlayDepth(overlaySelection, val), controlSetupOverlayPanel);
 			controlOverlayDepthReset = controlPanel.AddHitBoxOption("Reset", () => ResetOverlayDepth(overlaySelection), controlSetupOverlayPanel);
@@ -188,7 +188,7 @@ namespace Memoria.Assets
 			//controlPanel.PanelAddRow();
 			// Setup Walkmesh panel
 			controlSetupWalkmeshPanel = controlPanel.CreateSubPanel("Setup Walkmesh");
-			controlSelectWalkpath = controlPanel.AddRollOption(GetNonEmptyIndexList(bgi.floorList.Count), sel => $"Walkpath {sel}", ChangeWalkpathSelection, controlSetupWalkmeshPanel);
+			controlSelectWalkpath = controlPanel.AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(bgi.floorList.Count), sel => $"Walkpath {sel}", ChangeWalkpathSelection, controlSetupWalkmeshPanel);
 			controlPanel.PanelAddRow(controlSetupWalkmeshPanel);
 			controlWalkpathActiveOption = controlPanel.AddToggleOption("Active by default", false, b => SetWalkpathFlag(walkpathSelection, 1, b), controlSetupWalkmeshPanel);
 			controlPanel.PanelAddRow(controlSetupWalkmeshPanel);
@@ -205,7 +205,7 @@ namespace Memoria.Assets
 			controlSelectCharacter = controlPanel.AddRollOption(dummyModels, str => str, ControlChangeDummyModel);
 			controlSelectCharacter.Loop = false;
 			controlPanel.PanelAddRow();
-			controlListSelectCamera.Add(controlPanel.AddRollOption(GetNonEmptyIndexList(scene.cameraList.Count), sel => $"Camera {sel}", sel => ChangeCameraSelection(sel, false)));
+			controlListSelectCamera.Add(controlPanel.AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(scene.cameraList.Count), sel => $"Camera {sel}", sel => ChangeCameraSelection(sel, false)));
 			controlPanel.PanelAddRow();
 			controlSaveFileName = controlPanel.AddInputField("CUSTOM_FIELD_000", UIInput.Validation.Filename);
 			controlSaveOption = controlPanel.AddHitBoxOption("Save", ExportField);
@@ -396,7 +396,7 @@ namespace Memoria.Assets
 			cameraSelection = scene.cameraList.Count - 1;
 			foreach (ControlRoll<Int32> cameraSelector in controlListSelectCamera)
 			{
-				cameraSelector.ChangeList(GetNonEmptyIndexList(scene.cameraList.Count), cameraSelection);
+				cameraSelector.ChangeList(ControlRoll<Int32>.GetNonEmptyIndexList(scene.cameraList.Count), cameraSelection);
 				cameraSelector.IsEnabled = true;
 			}
 		}
@@ -494,16 +494,6 @@ namespace Memoria.Assets
 			return list;
 		}
 
-		private static List<Int32> GetNonEmptyIndexList(Int32 count)
-		{
-			if (count <= 0)
-				return new List<Int32>() { 0 };
-			List<Int32> list = new List<Int32>();
-			for (Int32 i = 0; i < count; i++)
-				list.Add(i);
-			return list;
-		}
-
 		private static void ControlChangePath(String newPath, Boolean isInternalPath)
 		{
 			ControlChangeWalkmesh(newPath, isInternalPath);
@@ -547,7 +537,7 @@ namespace Memoria.Assets
 			}
 			if (initialized)
 			{
-				controlSelectWalkpath.ChangeList(GetNonEmptyIndexList(bgi.floorList.Count), walkpathSelection);
+				controlSelectWalkpath.ChangeList(ControlRoll<Int32>.GetNonEmptyIndexList(bgi.floorList.Count), walkpathSelection);
 				controlSelectWalkpath.IsEnabled = bgi.floorList.Count > 0;
 			}
 			shouldRefreshWalkmesh = true;
@@ -588,12 +578,12 @@ namespace Memoria.Assets
 			}
 			foreach (ControlRoll<Int32> cameraSelector in controlListSelectCamera)
 			{
-				cameraSelector.ChangeList(GetNonEmptyIndexList(scene.cameraList.Count), cameraSelection);
+				cameraSelector.ChangeList(ControlRoll<Int32>.GetNonEmptyIndexList(scene.cameraList.Count), cameraSelection);
 				cameraSelector.IsEnabled = scene.cameraList.Count > 0;
 			}
 			if (initialized)
 			{
-				controlSelectOverlay.ChangeList(GetNonEmptyIndexList(scene.overlayList.Count), overlaySelection);
+				controlSelectOverlay.ChangeList(ControlRoll<Int32>.GetNonEmptyIndexList(scene.overlayList.Count), overlaySelection);
 				controlSelectOverlay.IsEnabled = scene.overlayList.Count > 0;
 				controlOverlayDepth.IsEnabled = scene.overlayList.Count > 0;
 				controlOverlayDepthReset.IsEnabled = scene.overlayList.Count > 0;

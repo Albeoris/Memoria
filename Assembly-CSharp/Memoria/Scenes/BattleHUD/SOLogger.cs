@@ -6,7 +6,7 @@ using Memoria.Prime.Text;
 using UnityEngine;
 using Object = System.Object;
 
-namespace Memoria.Scenes.BattleHUD
+namespace Memoria.Scenes
 {
     public class SOLogger
     {

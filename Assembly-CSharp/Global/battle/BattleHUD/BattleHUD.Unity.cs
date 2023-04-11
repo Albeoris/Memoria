@@ -33,6 +33,7 @@ public partial class BattleHUD : UIScene
     public GameObject StatusContainer;
     public GameObject TransitionGameObject;
     public GameObject ScreenFadeGameObject;
+    public BattleUIControlPanel UIControlPanel { get; set; }
 
     private void Update()
     {
@@ -62,23 +63,6 @@ public partial class BattleHUD : UIScene
 
         SetHudVisibility(!UIManager.Input.GetKey(Control.Special));
         UpdateAndroidTV();
-
-        // TODO
-        //if (true)
-        //{
-        //    _partyDetail.Transform.SetY(-450);
-        //    _partyDetail.Captions.TopBorder.Sprite.width = 360;
-        //    _partyDetail.Captions.TopBorder.Transform.SetX(80);
-        //    _partyDetail.Characters.Table.padding.y -= 15;
-        //    _partyDetail.Characters.Transform.SetY(150);
-        //    foreach (UI.PanelParty.Character character in _partyDetail.Characters.Entries)
-        //    {
-        //        character.Name.Transform.SetX(-220);
-        //        //character.Highlight.Transform.AddY(3);
-        //        character.Highlight.Sprite.height = 41;
-        //        character.Highlight.Sprite.width = 460;
-        //    }
-        //}
     }
     
     private void Awake()
@@ -94,12 +78,15 @@ public partial class BattleHUD : UIScene
         _allTargetToggle.validator = OnAllTargetToggleValidate;
         _commandPanel = new UI.PanelCommand(this, CommandPanel);
         _targetPanel = new UI.PanelTarget(this, TargetPanel);
+        _abilityPanel = new UI.ScrollablePanel(AbilityPanel);
+        _itemPanel = new UI.ScrollablePanel(ItemPanel);
+        _abilityScrollList = _abilityPanel.SubPanel.RecycleListPopulator;
+        _itemScrollList = _itemPanel.SubPanel.RecycleListPopulator;
 
         if (FF9StateSystem.MobilePlatform)
         {
             RunButton.SetActive(true);
-            UIEventListener eventListener = UIEventListener.Get(RunButton);
-            eventListener.Press += OnRunPress;
+            UIEventListener.Get(RunButton).Press += OnRunPress;
         }
         else
         {
@@ -115,24 +102,14 @@ public partial class BattleHUD : UIScene
         _targetPanel.Buttons.Enemy.EventListener.Hover += OnAllTargetHover;
 
         _statusPanel = new UI.ContainerStatus(this, StatusContainer);
-        _itemScrollList = ItemPanel.GetChild(1).GetComponent<RecycleListPopulator>();
-        _abilityScrollList = AbilityPanel.GetChild(1).GetComponent<RecycleListPopulator>();
         //_itemTransition = TransitionGameObject.GetChild(0).GetComponent<HonoTweenClipping>();
         //_abilityTransition = TransitionGameObject.GetChild(1).GetComponent<HonoTweenClipping>();
         //_targetTransition = TransitionGameObject.GetChild(2).GetComponent<HonoTweenClipping>();
         _onResumeFromQuit = GeneratedAwake;
 
         if (Configuration.Control.WrapSomeMenus)
-        {
-            //_commandPanel.Attack.KeyNavigation.wrapUpDown = true;
-            //_commandPanel.Defend.KeyNavigation.wrapUpDown = true;
-            //_commandPanel.Skill1.KeyNavigation.wrapUpDown = true;
-            //_commandPanel.Skill2.KeyNavigation.wrapUpDown = true;
-            //_commandPanel.Item.KeyNavigation.wrapUpDown = true;
-            //_commandPanel.Change.KeyNavigation.wrapUpDown = true;
             foreach (GONavigationButton button in _targetPanel.AllTargets)
                 button.KeyNavigation.wrapUpDown = true;
-        }
     }
 
     private void UpdateAndroidTV()

@@ -26,6 +26,11 @@ public class RecycleListItem : MonoBehaviour
 		return this.Panel != null && this.Panel.IsVisible(this.VisionCheckWidget);
 	}
 
+	public Boolean VerifyFullVisibility()
+	{
+		return this.Panel != null && this.Panel.IsFullyVisible(this.VisionCheckWidget);
+	}
+
 	private void OnClick()
 	{
 		if (UIKeyTrigger.IsOnlyTouchAndLeftClick())

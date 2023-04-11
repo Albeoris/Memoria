@@ -536,6 +536,65 @@ public class UIPanel : UIRect
 		return num2 >= this.mMin.x && num4 >= this.mMin.y && num <= this.mMax.x && num3 <= this.mMax.y;
 	}
 
+	public Boolean IsFullyVisible(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+	{
+		this.UpdateTransformMatrix();
+		a = this.worldToLocal.MultiplyPoint3x4(a);
+		b = this.worldToLocal.MultiplyPoint3x4(b);
+		c = this.worldToLocal.MultiplyPoint3x4(c);
+		d = this.worldToLocal.MultiplyPoint3x4(d);
+		UIPanel.mTemp[0] = a.x;
+		UIPanel.mTemp[1] = b.x;
+		UIPanel.mTemp[2] = c.x;
+		UIPanel.mTemp[3] = d.x;
+		Single minx = Mathf.Min(UIPanel.mTemp);
+		Single maxx = Mathf.Max(UIPanel.mTemp);
+		UIPanel.mTemp[0] = a.y;
+		UIPanel.mTemp[1] = b.y;
+		UIPanel.mTemp[2] = c.y;
+		UIPanel.mTemp[3] = d.y;
+		Single miny = Mathf.Min(UIPanel.mTemp);
+		Single maxy = Mathf.Max(UIPanel.mTemp);
+		return maxx <= this.mMax.x && maxy <= this.mMax.y && minx >= this.mMin.x && miny >= this.mMin.y;
+	}
+
+	public Vector3 DistanceToFullVisibleArea(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+	{
+		this.UpdateTransformMatrix();
+		a = this.worldToLocal.MultiplyPoint3x4(a);
+		b = this.worldToLocal.MultiplyPoint3x4(b);
+		c = this.worldToLocal.MultiplyPoint3x4(c);
+		d = this.worldToLocal.MultiplyPoint3x4(d);
+		UIPanel.mTemp[0] = a.x;
+		UIPanel.mTemp[1] = b.x;
+		UIPanel.mTemp[2] = c.x;
+		UIPanel.mTemp[3] = d.x;
+		Single minx = Mathf.Min(UIPanel.mTemp);
+		Single maxx = Mathf.Max(UIPanel.mTemp);
+		UIPanel.mTemp[0] = a.y;
+		UIPanel.mTemp[1] = b.y;
+		UIPanel.mTemp[2] = c.y;
+		UIPanel.mTemp[3] = d.y;
+		Single miny = Mathf.Min(UIPanel.mTemp);
+		Single maxy = Mathf.Max(UIPanel.mTemp);
+		Vector3 dist = Vector3.zero;
+		if (minx < this.mMin.x)
+			dist.x = this.mMin.x - minx;
+		else if (maxx > this.mMax.x)
+			dist.x = this.mMax.x - maxx;
+		if (miny < this.mMin.y)
+			dist.y = this.mMin.y - miny;
+		else if (maxy > this.mMax.y)
+			dist.y = this.mMax.y - maxy;
+		return dist;
+	}
+
+	public Vector3 DistanceToFullVisibleArea(UIWidget w)
+	{
+		Vector3[] array = w.worldCorners;
+		return this.DistanceToFullVisibleArea(array[0], array[1], array[2], array[3]);
+	}
+
 	public Boolean IsVisible(Vector3 worldPos)
 	{
 		if (this.mAlpha < 0.001f)
@@ -555,7 +614,7 @@ public class UIPanel : UIRect
 	{
 		UIPanel uipanel = this;
 		Vector3[] array = null;
-		while (uipanel != (UnityEngine.Object)null)
+		while (uipanel != null)
 		{
 			if ((uipanel.mClipping == UIDrawCall.Clipping.None || uipanel.mClipping == UIDrawCall.Clipping.ConstrainButDontClip) && !w.hideIfOffScreen)
 			{
@@ -564,13 +623,31 @@ public class UIPanel : UIRect
 			else
 			{
 				if (array == null)
-				{
 					array = w.worldCorners;
-				}
 				if (!uipanel.IsVisible(array[0], array[1], array[2], array[3]))
-				{
 					return false;
-				}
+				uipanel = uipanel.mParentPanel;
+			}
+		}
+		return true;
+	}
+
+	public Boolean IsFullyVisible(UIWidget w)
+	{
+		UIPanel uipanel = this;
+		Vector3[] array = null;
+		while (uipanel != null)
+		{
+			if ((uipanel.mClipping == UIDrawCall.Clipping.None || uipanel.mClipping == UIDrawCall.Clipping.ConstrainButDontClip) && !w.hideIfOffScreen)
+			{
+				uipanel = uipanel.mParentPanel;
+			}
+			else
+			{
+				if (array == null)
+					array = w.worldCorners;
+				if (!uipanel.IsFullyVisible(array[0], array[1], array[2], array[3]))
+					return false;
 				uipanel = uipanel.mParentPanel;
 			}
 		}

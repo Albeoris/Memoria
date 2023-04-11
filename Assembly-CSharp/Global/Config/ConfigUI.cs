@@ -37,13 +37,12 @@ using UnityEngine;
 
 public class ConfigUI : UIScene
 {
+    private const Int32 VIBRATION_CONFIG_INDEX = 12;
+
     private enum TriggerState
     {
-
         Idle,
-
         Waiting,
-
         Triggered
     }
 
@@ -1461,107 +1460,90 @@ public class ConfigUI : UIScene
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         ConfigFieldList = new List<ConfigField>();
 		// If the cheats of the Configuration menu are disabled, hide them and expand the ConfigList menu
-		if (!Configuration.Cheats.Enabled || (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax))
+		if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
 			ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
-        Int32 num = ConfigList.GetChild(1).GetChild(0).transform.childCount;
+        Int32 configCount = ConfigList.GetChild(1).GetChild(0).transform.childCount;
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
             ConfigField configField = new ConfigField();
-            GameObject obj = trans.gameObject;
-            Int32 id = obj.GetComponent<ScrollItemKeyNavigation>().ID;
+            GameObject configTopObj = trans.gameObject;
+            Int32 id = configTopObj.GetComponent<ScrollItemKeyNavigation>().ID;
             
             // Hide vibration settings from menu
             if (!FF9StateSystem.IsPlatformVibration)
             {
-                if (id == 12) // Configurator.Vibration
+                if (id == VIBRATION_CONFIG_INDEX) // Configurator.Vibration
                 {
-                    num--;
+                    configCount--;
                     gameObject.SetActive(false);
                 }
-                else if (id > 12) //  ControlTutorial, CombatTutorial, Title, QuitGame
+                else if (id > VIBRATION_CONFIG_INDEX) //  ControlTutorial, CombatTutorial, Title, QuitGame
                 {
                     gameObject.GetComponent<ScrollItemKeyNavigation>().ID = id - 1;
                 }
             }
             
-            configField.ConfigParent = obj;
-            configField.Button = obj.GetComponent<ButtonGroupState>();
+            configField.ConfigParent = configTopObj;
+            configField.Button = configTopObj.GetComponent<ButtonGroupState>();
             configField.Configurator = (Configurator)id;
             if (ConfigSliderIdList.Contains(configField.Configurator))
             {
                 configField.ConfigChoice.Add(trans.GetChild(1).GetChild(1).gameObject);
                 configField.IsSlider = true;
-                UIEventListener expr_150 = UIEventListener.Get(configField.ConfigChoice[0]);
-                expr_150.onSelect = (UIEventListener.BoolDelegate)Delegate.Combine(expr_150.onSelect, new UIEventListener.BoolDelegate(OnSelectValue));
+                UIEventListener.Get(configField.ConfigChoice[0]).onSelect += OnSelectValue;
             }
             else if (configField.Configurator == Configurator.Title)
             {
-                toTitleGameObject = obj;
-                UIEventListener expr_193 = UIEventListener.Get(obj);
-                expr_193.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_193.onClick, new UIEventListener.VoidDelegate(onClick));
+                toTitleGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else if (configField.Configurator == Configurator.ControlTutorial || configField.Configurator == Configurator.CombatTutorial || configField.Configurator == Configurator.QuitGame)
             {
-                UIEventListener expr_1EB = UIEventListener.Get(obj);
-                expr_1EB.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_1EB.onClick, new UIEventListener.VoidDelegate(onClick));
+                UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else
             {
                 configField.ConfigChoice.Add(trans.GetChild(1).gameObject);
                 configField.ConfigChoice.Add(trans.GetChild(2).gameObject);
                 configField.IsSlider = false;
-                UIEventListener expr_25C = UIEventListener.Get(configField.ConfigChoice[0]);
-                expr_25C.onSelect = (UIEventListener.BoolDelegate)Delegate.Combine(expr_25C.onSelect, new UIEventListener.BoolDelegate(OnSelectValue));
-                UIEventListener expr_28F = UIEventListener.Get(configField.ConfigChoice[1]);
-                expr_28F.onSelect = (UIEventListener.BoolDelegate)Delegate.Combine(expr_28F.onSelect, new UIEventListener.BoolDelegate(OnSelectValue));
+                UIEventListener.Get(configField.ConfigChoice[0]).onSelect += OnSelectValue;
+                UIEventListener.Get(configField.ConfigChoice[1]).onSelect += OnSelectValue;
             }
-            UIEventListener expr_2BB = UIEventListener.Get(trans.gameObject);
-            expr_2BB.onNavigate = (UIEventListener.KeyCodeDelegate)Delegate.Combine(expr_2BB.onNavigate, new UIEventListener.KeyCodeDelegate(OnKeyChoice));
+            UIEventListener.Get(trans.gameObject).onNavigate += OnKeyChoice;
             ConfigFieldList.Add(configField);
         }
         
         if (!FF9StateSystem.IsPlatformVibration)
         {
-            int num3 = 12;
-            this.ConfigFieldList[num3 - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = this.ConfigFieldList[num3 + 1].ConfigParent;
-            this.ConfigFieldList[num3 + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = this.ConfigFieldList[num3 - 1].ConfigParent;
+            this.ConfigFieldList[VIBRATION_CONFIG_INDEX - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = this.ConfigFieldList[VIBRATION_CONFIG_INDEX + 1].ConfigParent;
+            this.ConfigFieldList[VIBRATION_CONFIG_INDEX + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = this.ConfigFieldList[VIBRATION_CONFIG_INDEX - 1].ConfigParent;
         }
         
         configScrollButton = ConfigList.GetChild(0).GetComponent<ScrollButton>();
         configScrollView = ConfigList.GetChild(1).GetComponent<SnapDragScrollView>();
-        configScrollView.MaxItem = num;
-        UIEventListener expr_40D = UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2));
-        expr_40D.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_40D.onClick, new UIEventListener.VoidDelegate(onClick));
-        UIEventListener expr_446 = UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3));
-        expr_446.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_446.onClick, new UIEventListener.VoidDelegate(onClick));
+        configScrollView.MaxItem = configCount;
+        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).onClick += onClick;
+        UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).onClick += onClick;
         warningTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenClipping>();
         hitpointScreenButton = WarningDialogHitPoint.GetChild(0).GetComponent<OnScreenButton>();
-        UIEventListener expr_4A1 = UIEventListener.Get(KeyboardButton);
-        expr_4A1.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_4A1.onClick, new UIEventListener.VoidDelegate(onClick));
-        UIEventListener expr_4CE = UIEventListener.Get(JoystickButton);
-        expr_4CE.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_4CE.onClick, new UIEventListener.VoidDelegate(onClick));
+        UIEventListener.Get(KeyboardButton).onClick += onClick;
+        UIEventListener.Get(JoystickButton).onClick += onClick;
         masterSkillButtonGameObject = BoosterPanel.GetChild(0);
         lvMaxButtonGameObject = BoosterPanel.GetChild(1);
         gilMaxButtonGameObject = BoosterPanel.GetChild(2);
         masterSkillLabel = masterSkillButtonGameObject.GetChild(0).GetComponent<UILabel>();
         lvMaxLabel = lvMaxButtonGameObject.GetChild(0).GetComponent<UILabel>();
         gilMaxLabel = gilMaxButtonGameObject.GetChild(0).GetComponent<UILabel>();
-        UIEventListener expr_548 = UIEventListener.Get(masterSkillButtonGameObject);
-        expr_548.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_548.onClick, new UIEventListener.VoidDelegate(OnBoosterClick));
-        UIEventListener expr_574 = UIEventListener.Get(lvMaxButtonGameObject);
-        expr_574.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_574.onClick, new UIEventListener.VoidDelegate(OnBoosterClick));
-        UIEventListener expr_5A0 = UIEventListener.Get(gilMaxButtonGameObject);
-        expr_5A0.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_5A0.onClick, new UIEventListener.VoidDelegate(OnBoosterClick));
-        UIEventListener expr_5CC = UIEventListener.Get(masterSkillButtonGameObject);
-        expr_5CC.onNavigate = (UIEventListener.KeyCodeDelegate)Delegate.Combine(expr_5CC.onNavigate, new UIEventListener.KeyCodeDelegate(OnBoosterNavigate));
-        UIEventListener expr_5F8 = UIEventListener.Get(lvMaxButtonGameObject);
-        expr_5F8.onNavigate = (UIEventListener.KeyCodeDelegate)Delegate.Combine(expr_5F8.onNavigate, new UIEventListener.KeyCodeDelegate(OnBoosterNavigate));
-        UIEventListener expr_624 = UIEventListener.Get(gilMaxButtonGameObject);
-        expr_624.onNavigate = (UIEventListener.KeyCodeDelegate)Delegate.Combine(expr_624.onNavigate, new UIEventListener.KeyCodeDelegate(OnBoosterNavigate));
+        UIEventListener.Get(masterSkillButtonGameObject).onClick += OnBoosterClick;
+        UIEventListener.Get(lvMaxButtonGameObject).onClick += OnBoosterClick;
+        UIEventListener.Get(gilMaxButtonGameObject).onClick += OnBoosterClick;
+        UIEventListener.Get(masterSkillButtonGameObject).onNavigate += OnBoosterNavigate;
+        UIEventListener.Get(lvMaxButtonGameObject).onNavigate += OnBoosterNavigate;
+        UIEventListener.Get(gilMaxButtonGameObject).onNavigate += OnBoosterNavigate;
         configScrollButton.DisplayScrollButton(false, false);
         transform.GetChild(3).GetChild(4).gameObject.SetActive(false);
         backButtonGameObject = ControlPanelGroup.GetChild(1);
-		if (!Configuration.Cheats.Enabled || (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax))
+		if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
 			BoosterPanel.SetActive(false);
     }
 }
