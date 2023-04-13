@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteDisplay))]
@@ -8,18 +9,18 @@ public class CardArrow : MonoBehaviour
 	{
 		get
 		{
-			return this._small;
+			return _small;
 		}
 		set
 		{
-			this._small = value;
-			if (this.Small)
+			_small = value;
+			if (Small)
 			{
-				base.transform.localPosition = CardArrow.POSITION2[(Int32)this.type];
+				base.transform.localPosition = CardArrow.POSITION2[(Int32)type];
 			}
 			else
 			{
-				base.transform.localPosition = CardArrow.POSITION[(Int32)this.type];
+				base.transform.localPosition = CardArrow.POSITION[(Int32)type];
 			}
 		}
 	}
@@ -28,14 +29,14 @@ public class CardArrow : MonoBehaviour
 	{
 		get
 		{
-			return this._type;
+			return _type;
 		}
 		set
 		{
-			this._type = value;
+			_type = value;
 			base.name = value.ToString();
-			this.Small = this.Small;
-			base.GetComponent<SpriteDisplay>().ID = (Int32)this.type;
+			Small = Small;
+			base.GetComponent<SpriteDisplay>().ID = (Int32)type;
 		}
 	}
 

@@ -7,11 +7,11 @@ public class QuadMistResourceManager : MonoBehaviour
 {
 	private void Start()
 	{
-		this.InitAtlasPath();
-		this.LoadSprite();
-		this.CreateUpScaleMapperData();
-		this.CreateAssetData();
-		this.CreateFontMap();
+		InitAtlasPath();
+        LoadSprite();
+		CreateUpScaleMapperData();
+		CreateAssetData();
+		CreateFontMap();
 		QuadMistResourceManager.Instance = this;
 	}
 
@@ -43,12 +43,12 @@ public class QuadMistResourceManager : MonoBehaviour
 			text = "quadmist_text_uk";
 			break;
 		}
-		this.atlasPathList[0] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image0";
-		this.atlasPathList[1] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image1";
-		this.atlasPathList[2] = "EmbeddedAsset/QuadMist/Atlas/" + text;
-		this.atlasNameList[0] = "quadmist_image0";
-		this.atlasNameList[1] = "quadmist_image1";
-		this.atlasNameList[2] = text;
+		atlasPathList[0] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image0";
+		atlasPathList[1] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image1";
+		atlasPathList[2] = "EmbeddedAsset/QuadMist/Atlas/" + text;
+		atlasNameList[0] = "quadmist_image0";
+		atlasNameList[1] = "quadmist_image1";
+		atlasNameList[2] = text;
 	}
 
 	private void AddCenterTable(List<String> centerTable)
@@ -70,8 +70,8 @@ public class QuadMistResourceManager : MonoBehaviour
 
 	private void LoadSprite()
 	{
-		this.spriteData = new Dictionary<String, Dictionary<String, Sprite>>();
-		String[] atlasArray = this.atlasPathList;
+		spriteData = new Dictionary<String, Dictionary<String, Sprite>>();
+		String[] atlasArray = atlasPathList;
 		for (Int32 i = 0; i < (Int32)atlasArray.Length; i++)
 		{
 			String text = atlasArray[i];
@@ -79,10 +79,12 @@ public class QuadMistResourceManager : MonoBehaviour
 			Texture2D moddedAtlas = null;
 			String atlasOnDisc = AssetManager.SearchAssetOnDisc(text, true, false);
 			if (!String.IsNullOrEmpty(atlasOnDisc))
-				moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
-			Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
+			{
+                moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
+            }
+            Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
 			List<String> list = new List<String>();
-			this.AddCenterTable(list);
+			AddCenterTable(list);
 			for (Int32 j = 0; j < spriteArray.Length; j++)
 			{
 				Sprite sprite = spriteArray[j];
@@ -97,16 +99,16 @@ public class QuadMistResourceManager : MonoBehaviour
 					dictionary.Add(sprite.name, value);
 				}
 			}
-			this.spriteData.Add(text, dictionary);
+			spriteData.Add(text, dictionary);
 		}
 	}
 
-	private void CreateUpScaleMapperData()
+    private void CreateUpScaleMapperData()
 	{
-		this.mapperData = new Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>>();
-		if (this.mapperData.ContainsKey("BattleNum"))
+		mapperData = new Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>>();
+		if (mapperData.ContainsKey("BattleNum"))
 		{
-			this.mapperData.Remove("BattleNum");
+			mapperData.Remove("BattleNum");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_0.png"));
@@ -119,20 +121,20 @@ public class QuadMistResourceManager : MonoBehaviour
 		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_7.png"));
 		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_8.png"));
 		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_9.png"));
-		this.mapperData.Add("BattleNum", list);
-		if (this.mapperData.ContainsKey("CardIconCounter"))
+		mapperData.Add("BattleNum", list);
+		if (mapperData.ContainsKey("CardIconCounter"))
 		{
-			this.mapperData.Remove("CardIconCounter");
+			mapperData.Remove("CardIconCounter");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list2 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 i = 0; i <= 9; i++)
 		{
 			list2.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_total_" + i + ".png"));
 		}
-		this.mapperData.Add("CardIconCounter", list2);
-		if (this.mapperData.ContainsKey("CardStat"))
+		mapperData.Add("CardIconCounter", list2);
+		if (mapperData.ContainsKey("CardStat"))
 		{
-			this.mapperData.Remove("CardStat");
+			mapperData.Remove("CardStat");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list3 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 j = 0; j <= 9; j++)
@@ -164,40 +166,40 @@ public class QuadMistResourceManager : MonoBehaviour
 		{
 			list3.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
 		}
-		this.mapperData.Add("CardStat", list3);
-		if (this.mapperData.ContainsKey("Combo"))
+		mapperData.Add("CardStat", list3);
+		if (mapperData.ContainsKey("Combo"))
 		{
-			this.mapperData.Remove("Combo");
+			mapperData.Remove("Combo");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list4 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num = 0; num <= 9; num++)
 		{
 			list4.Add(new QuadMistResourceManager.QuadMistMapperData("text_combo_" + num + ".png"));
 		}
-		this.mapperData.Add("Combo", list4);
-		if (this.mapperData.ContainsKey("EnemyScore"))
+		mapperData.Add("Combo", list4);
+		if (mapperData.ContainsKey("EnemyScore"))
 		{
-			this.mapperData.Remove("EnemyScore");
+			mapperData.Remove("EnemyScore");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list5 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num2 = 0; num2 <= 10; num2++)
 		{
 			list5.Add(new QuadMistResourceManager.QuadMistMapperData("card_score_digit_" + num2 + "_red.png"));
 		}
-		this.mapperData.Add("EnemyScore", list5);
-		if (this.mapperData.ContainsKey("PlayerScore"))
+		mapperData.Add("EnemyScore", list5);
+		if (mapperData.ContainsKey("PlayerScore"))
 		{
-			this.mapperData.Remove("PlayerScore");
+			mapperData.Remove("PlayerScore");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list6 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num3 = 0; num3 <= 10; num3++)
 		{
 			list6.Add(new QuadMistResourceManager.QuadMistMapperData("card_score_digit_" + num3 + "_blue.png"));
 		}
-		this.mapperData.Add("PlayerScore", list6);
-		if (this.mapperData.ContainsKey("Background"))
+		mapperData.Add("PlayerScore", list6);
+		if (mapperData.ContainsKey("Background"))
 		{
-			this.mapperData.Remove("Background");
+			mapperData.Remove("Background");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list7 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_bg.png"));
@@ -209,10 +211,10 @@ public class QuadMistResourceManager : MonoBehaviour
 		{
 			list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_mg.png"));
 		}
-		this.mapperData.Add("Background", list7);
-		if (this.mapperData.ContainsKey("Card"))
+		mapperData.Add("Background", list7);
+		if (mapperData.ContainsKey("Card"))
 		{
-			this.mapperData.Remove("Card");
+			mapperData.Remove("Card");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list8 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num4 = 0; num4 <= 9; num4++)
@@ -227,10 +229,10 @@ public class QuadMistResourceManager : MonoBehaviour
 		{
 			list8.Add(new QuadMistResourceManager.QuadMistMapperData("card_" + num6 + ".png"));
 		}
-		this.mapperData.Add("Card", list8);
-		if (this.mapperData.ContainsKey("CardArrow"))
+		mapperData.Add("Card", list8);
+		if (mapperData.ContainsKey("CardArrow"))
 		{
-			this.mapperData.Remove("CardArrow");
+			mapperData.Remove("CardArrow");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list9 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_top.png"));
@@ -241,10 +243,10 @@ public class QuadMistResourceManager : MonoBehaviour
 		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_leftbuttom.png"));
 		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_left.png"));
 		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_lefttop.png"));
-		this.mapperData.Add("CardArrow", list9);
-		if (this.mapperData.ContainsKey("CardBackground"))
+		mapperData.Add("CardArrow", list9);
+		if (mapperData.ContainsKey("CardBackground"))
 		{
-			this.mapperData.Remove("CardBackground");
+			mapperData.Remove("CardBackground");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list10 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_player_bg.png"));
@@ -254,18 +256,20 @@ public class QuadMistResourceManager : MonoBehaviour
 		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_back.png"));
 		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_player_frame.png"));
 		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_opponent_frame.png"));
-		this.mapperData.Add("CardBackground", list10);
-		if (this.mapperData.ContainsKey("CardBlock"))
+		list10.Add(new QuadMistResourceManager.QuadMistMapperData("goldenbluecardframe.png"));
+		list10.Add(new QuadMistResourceManager.QuadMistMapperData("goldenredcardframe.png"));
+		mapperData.Add("CardBackground", list10);
+		if (mapperData.ContainsKey("CardBlock"))
 		{
-			this.mapperData.Remove("CardBlock");
+			mapperData.Remove("CardBlock");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list11 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list11.Add(new QuadMistResourceManager.QuadMistMapperData("block_a.png"));
 		list11.Add(new QuadMistResourceManager.QuadMistMapperData("block_b.png"));
-		this.mapperData.Add("CardBlock", list11);
-		if (this.mapperData.ContainsKey("CardIcon"))
+		mapperData.Add("CardBlock", list11);
+		if (mapperData.ContainsKey("CardIcon"))
 		{
-			this.mapperData.Remove("CardIcon");
+			mapperData.Remove("CardIcon");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list12 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list12.Add(new QuadMistResourceManager.QuadMistMapperData("card_slot.png"));
@@ -277,44 +281,44 @@ public class QuadMistResourceManager : MonoBehaviour
 		{
 			list12.Add(new QuadMistResourceManager.QuadMistMapperData("card_type" + num8 + "_select.png"));
 		}
-		this.mapperData.Add("CardIcon", list12);
-		if (this.mapperData.ContainsKey("CardSelect"))
+		mapperData.Add("CardIcon", list12);
+		if (mapperData.ContainsKey("CardSelect"))
 		{
-			this.mapperData.Remove("CardSelect");
+			mapperData.Remove("CardSelect");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list13 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list13.Add(new QuadMistResourceManager.QuadMistMapperData("text_select.png"));
-		this.mapperData.Add("CardSelect", list13);
-		if (this.mapperData.ContainsKey("Coin"))
+		mapperData.Add("CardSelect", list13);
+		if (mapperData.ContainsKey("Coin"))
 		{
-			this.mapperData.Remove("Coin");
+			mapperData.Remove("Coin");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list14 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num9 = 8; num9 >= 1; num9--)
 		{
 			list14.Add(new QuadMistResourceManager.QuadMistMapperData("coin_0" + num9 + ".png"));
 		}
-		this.mapperData.Add("Coin", list14);
-		if (this.mapperData.ContainsKey("Cursor"))
+		mapperData.Add("Coin", list14);
+		if (mapperData.ContainsKey("Cursor"))
 		{
-			this.mapperData.Remove("Cursor");
+			mapperData.Remove("Cursor");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list15 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num10 = 0; num10 <= 6; num10++)
 		{
 			list15.Add(new QuadMistResourceManager.QuadMistMapperData("card_cursor_" + num10 + ".png"));
 		}
-		this.mapperData.Add("Cursor", list15);
-		if (this.mapperData.ContainsKey("CursorPreBoard"))
+		mapperData.Add("Cursor", list15);
+		if (mapperData.ContainsKey("CursorPreBoard"))
 		{
-			this.mapperData.Remove("CursorPreBoard");
+			mapperData.Remove("CursorPreBoard");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list16 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list16.Add(new QuadMistResourceManager.QuadMistMapperData("cursor_hand_choice.png"));
-		this.mapperData.Add("CursorPreBoard", list16);
-		if (this.mapperData.ContainsKey("Explosion"))
+		mapperData.Add("CursorPreBoard", list16);
+		if (mapperData.ContainsKey("Explosion"))
 		{
-			this.mapperData.Remove("Explosion");
+			mapperData.Remove("Explosion");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list17 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 num11 = 0; num11 <= 8; num11++)
@@ -325,72 +329,72 @@ public class QuadMistResourceManager : MonoBehaviour
 		{
 			list17.Add(new QuadMistResourceManager.QuadMistMapperData("bomb_" + (num12 + 1) + ".png"));
 		}
-		this.mapperData.Add("Explosion", list17);
-		if (this.mapperData.ContainsKey("GetCardMessage"))
+		mapperData.Add("Explosion", list17);
+		if (mapperData.ContainsKey("GetCardMessage"))
 		{
-			this.mapperData.Remove("GetCardMessage");
+			mapperData.Remove("GetCardMessage");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list18 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list18.Add(new QuadMistResourceManager.QuadMistMapperData("card_notice_new.png"));
 		list18.Add(new QuadMistResourceManager.QuadMistMapperData("card_notice_last.png"));
-		this.mapperData.Add("GetCardMessage", list18);
-		if (this.mapperData.ContainsKey("LRButton"))
+		mapperData.Add("GetCardMessage", list18);
+		if (mapperData.ContainsKey("LRButton"))
 		{
-			this.mapperData.Remove("LRButton");
+			mapperData.Remove("LRButton");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list19 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list19.Add(new QuadMistResourceManager.QuadMistMapperData("button_previous.png"));
 		list19.Add(new QuadMistResourceManager.QuadMistMapperData("button_next.png"));
-		this.mapperData.Add("LRButton", list19);
-		if (this.mapperData.ContainsKey("PreBoardTitle"))
+		mapperData.Add("LRButton", list19);
+		if (mapperData.ContainsKey("PreBoardTitle"))
 		{
-			this.mapperData.Remove("PreBoardTitle");
+			mapperData.Remove("PreBoardTitle");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list20 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list20.Add(new QuadMistResourceManager.QuadMistMapperData("text_card.png"));
 		list20.Add(new QuadMistResourceManager.QuadMistMapperData("text_selection.png"));
-		this.mapperData.Add("PreBoardTitle", list20);
-		if (this.mapperData.ContainsKey("Result"))
+		mapperData.Add("PreBoardTitle", list20);
+		if (mapperData.ContainsKey("Result"))
 		{
-			this.mapperData.Remove("Result");
+			mapperData.Remove("Result");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list21 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_win.png"));
 		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_lose.png"));
 		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_draw.png"));
 		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_perfect.png"));
-		this.mapperData.Add("Result", list21);
-		if (this.mapperData.ContainsKey("ResultShadow"))
+		mapperData.Add("Result", list21);
+		if (mapperData.ContainsKey("ResultShadow"))
 		{
-			this.mapperData.Remove("ResultShadow");
+			mapperData.Remove("ResultShadow");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list22 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_win_shadow.png"));
 		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_lose_shadow.png"));
 		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_draw_shadow.png"));
 		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_perfect_shadow.png"));
-		this.mapperData.Add("ResultShadow", list22);
-		if (this.mapperData.ContainsKey("ScoreDivider"))
+		mapperData.Add("ResultShadow", list22);
+		if (mapperData.ContainsKey("ScoreDivider"))
 		{
-			this.mapperData.Remove("ScoreDivider");
+			mapperData.Remove("ScoreDivider");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list23 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list23.Add(new QuadMistResourceManager.QuadMistMapperData("arrow.png"));
-		this.mapperData.Add("ScoreDivider", list23);
-		if (this.mapperData.ContainsKey("CardNameToggle"))
+		mapperData.Add("ScoreDivider", list23);
+		if (mapperData.ContainsKey("CardNameToggle"))
 		{
-			this.mapperData.Remove("CardNameToggle");
+			mapperData.Remove("CardNameToggle");
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list24 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list24.Add(new QuadMistResourceManager.QuadMistMapperData("text_name.png"));
 		list24.Add(new QuadMistResourceManager.QuadMistMapperData("text_name_hilight.png"));
-		this.mapperData.Add("CardNameToggle", list24);
+		mapperData.Add("CardNameToggle", list24);
 	}
 
 	private void CreateAssetData()
 	{
-		this.assetData = new Dictionary<String, List<QuadMistAssetData>>();
-		foreach (KeyValuePair<String, List<QuadMistResourceManager.QuadMistMapperData>> keyValuePair in this.mapperData)
+		assetData = new Dictionary<String, List<QuadMistAssetData>>();
+		foreach (KeyValuePair<String, List<QuadMistResourceManager.QuadMistMapperData>> keyValuePair in mapperData)
 		{
 			List<QuadMistAssetData> list = new List<QuadMistAssetData>();
 			for (Int32 i = 0; i < keyValuePair.Value.Count; i++)
@@ -400,9 +404,9 @@ public class QuadMistResourceManager : MonoBehaviour
 				QuadMistAssetData quadMistAssetData = (QuadMistAssetData)null;
 				for (Int32 j = 0; j < 3; j++)
 				{
-					if (!String.IsNullOrEmpty(quadMistMapperData.SpriteName) && this.spriteData.ContainsKey(this.atlasPathList[j]) && this.spriteData[this.atlasPathList[j]].ContainsKey(quadMistMapperData.SpriteName))
+					if (!String.IsNullOrEmpty(quadMistMapperData.SpriteName) && spriteData.ContainsKey(atlasPathList[j]) && spriteData[atlasPathList[j]].ContainsKey(quadMistMapperData.SpriteName))
 					{
-						Sprite sprite = this.spriteData[this.atlasPathList[j]][quadMistMapperData.SpriteName];
+						Sprite sprite = spriteData[atlasPathList[j]][quadMistMapperData.SpriteName];
 						quadMistAssetData = new QuadMistAssetData(keyValuePair.Key, i, sprite);
 					}
 				}
@@ -412,26 +416,26 @@ public class QuadMistResourceManager : MonoBehaviour
 				}
 				list.Add(quadMistAssetData);
 			}
-			this.assetData.Add(keyValuePair.Key, list);
+			assetData.Add(keyValuePair.Key, list);
 		}
 	}
 
 	private void CreateFontMap()
 	{
-		this.fontMap = new Dictionary<String, Dictionary<Char, Int32>>();
+		fontMap = new Dictionary<String, Dictionary<Char, Int32>>();
 		Int32 num = 48;
 		Dictionary<Char, Int32> dictionary = new Dictionary<Char, Int32>();
 		for (Int32 i = 0; i <= 9; i++)
 		{
 			dictionary.Add((Char)(i + num), i);
 		}
-		this.fontMap.Add("BattleNum", dictionary);
+		fontMap.Add("BattleNum", dictionary);
 		Dictionary<Char, Int32> dictionary2 = new Dictionary<Char, Int32>();
 		for (Int32 j = 0; j <= 9; j++)
 		{
 			dictionary2.Add((Char)(j + num), j);
 		}
-		this.fontMap.Add("CardIconCounter", dictionary2);
+		fontMap.Add("CardIconCounter", dictionary2);
 		Dictionary<Char, Int32> dictionary3 = new Dictionary<Char, Int32>();
 		for (Int32 k = 0; k <= 9; k++)
 		{
@@ -446,45 +450,45 @@ public class QuadMistResourceManager : MonoBehaviour
 		dictionary3.Add('m', 22);
 		dictionary3.Add('p', 25);
 		dictionary3.Add('x', 33);
-		this.fontMap.Add("CardStat", dictionary3);
+		fontMap.Add("CardStat", dictionary3);
 		Dictionary<Char, Int32> dictionary4 = new Dictionary<Char, Int32>();
 		for (Int32 l = 0; l <= 9; l++)
 		{
 			dictionary4.Add((Char)(l + num), l);
 		}
-		this.fontMap.Add("Combo", dictionary4);
+		fontMap.Add("Combo", dictionary4);
 		Dictionary<Char, Int32> dictionary5 = new Dictionary<Char, Int32>();
 		for (Int32 m = 0; m <= 9; m++)
 		{
 			dictionary5.Add((Char)(m + num), m);
 		}
 		dictionary5.Add('a', 10);
-		this.fontMap.Add("EnemyScore", dictionary5);
+		fontMap.Add("EnemyScore", dictionary5);
 		Dictionary<Char, Int32> dictionary6 = new Dictionary<Char, Int32>();
 		for (Int32 n = 0; n <= 9; n++)
 		{
 			dictionary6.Add((Char)(n + num), n);
 		}
 		dictionary6.Add('a', 10);
-		this.fontMap.Add("PlayerScore", dictionary6);
+		fontMap.Add("PlayerScore", dictionary6);
 	}
 
 	public QuadMistAssetData GetFont(String sheetAssetName, Char character)
 	{
-		Dictionary<Char, Int32> dictionary = this.fontMap[sheetAssetName];
-		return this.GetResource(sheetAssetName, this.fontMap[sheetAssetName][character]);
+		Dictionary<Char, Int32> dictionary = fontMap[sheetAssetName];
+		return GetResource(sheetAssetName, fontMap[sheetAssetName][character]);
 	}
 
 	public QuadMistAssetData GetResource(String sheetAssetName, Int32 spriteIndex)
 	{
-		Int32 count = this.assetData[sheetAssetName].Count;
-		return this.assetData[sheetAssetName][spriteIndex];
+		Int32 count = assetData[sheetAssetName].Count;
+		return assetData[sheetAssetName][spriteIndex];
 	}
 
 	public Sprite GetSprite(String spriteName)
 	{
 		Sprite result = (Sprite)null;
-		foreach (KeyValuePair<String, Dictionary<String, Sprite>> keyValuePair in this.spriteData)
+		foreach (KeyValuePair<String, Dictionary<String, Sprite>> keyValuePair in spriteData)
 		{
 			if (keyValuePair.Value.ContainsKey(spriteName))
 			{
@@ -523,7 +527,7 @@ public class QuadMistResourceManager : MonoBehaviour
 	{
 		public QuadMistMapperData(String spriteName)
 		{
-			this.SpriteName = spriteName;
+			SpriteName = spriteName;
 		}
 
 		public String SpriteName;

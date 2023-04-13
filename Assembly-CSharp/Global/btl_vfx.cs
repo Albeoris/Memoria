@@ -8,8 +8,8 @@ using Object = System.Object;
 
 public static class btl_vfx
 {
-	public static void SetBattleVfx(CMD_DATA cmd, SpecialEffect fx_no, Int16[] arg = null)
-	{
+    public static void SetBattleVfx(CMD_DATA cmd, SpecialEffect fx_no, Int16[] arg = null)
+    {
         cmd.vfxRequest.SetupVfxRequest(cmd, arg);
         cmd.vfxRequest.PlaySFX(fx_no);
     }
@@ -46,7 +46,14 @@ public static class btl_vfx
         if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item)
             return (SpecialEffect)ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.VfxIndex;
         else if (cmd_no == BattleCommandId.SysTrans)
-            return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
+            if (btl_stat.CheckStatus(regist, BattleStatus.Death) && Configuration.Mod.TranceSeek) // TRANCE SEEK - Prevent Trance when character die in multi-hit attack
+            {
+                return SpecialEffect.Special_No_Effect;
+            }
+            else
+            {
+                return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
+            }
         else if (cmd_no == BattleCommandId.Attack)
             return btl_vfx.GetPlayerAttackVfx(regist);
         else if (cmd_no == BattleCommandId.Defend || cmd_no == BattleCommandId.Change)
@@ -172,7 +179,7 @@ public static class btl_vfx
         else
         {
             switch (cmd.cmd_no)
-			{
+            {
                 case BattleCommandId.EnemyAtk:
                 case BattleCommandId.EnemyCounter:
                 case BattleCommandId.EnemyDying:
@@ -197,44 +204,44 @@ public static class btl_vfx
     }
 
     public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
-	{
-		CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
-		if (isTrance)
-		{
-			btl.battleModelIsRendering = true;
-			btl.tranceGo.SetActive(true);
-			btl.gameObject = btl.tranceGo;
-			GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
-		}
-		else
-		{
-			btl.battleModelIsRendering = true;
-			btl.originalGo.SetActive(true);
-			btl.tranceGo.SetActive(false);
-			btl.gameObject = btl.originalGo;
-			btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
-			GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
-		}
+    {
+        CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
+        if (isTrance)
+        {
+            btl.battleModelIsRendering = true;
+            btl.tranceGo.SetActive(true);
+            btl.gameObject = btl.tranceGo;
+            GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
+        }
+        else
+        {
+            btl.battleModelIsRendering = true;
+            btl.originalGo.SetActive(true);
+            btl.tranceGo.SetActive(false);
+            btl.gameObject = btl.originalGo;
+            btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
+            GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
+        }
         btl.meshCount = 0;
-		foreach (Object obj in btl.gameObject.transform)
-		{
-			Transform transform = (Transform)obj;
-			if (transform.name.Contains("mesh"))
+        foreach (Object obj in btl.gameObject.transform)
+        {
+            Transform transform = (Transform)obj;
+            if (transform.name.Contains("mesh"))
                 btl.meshCount++;
-		}
-		btl.meshIsRendering = new Boolean[btl.meshCount];
-		for (Int32 i = 0; i < btl.meshCount; i++)
-			btl.meshIsRendering[i] = true;
-		btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
-		BattlePlayerCharacter.InitAnimation(btl);
+        }
+        btl.meshIsRendering = new Boolean[btl.meshCount];
+        for (Int32 i = 0; i < btl.meshCount; i++)
+            btl.meshIsRendering[i] = true;
+        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+        BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
         geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
-	}
+    }
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)
-	{
+    {
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
         if (serialNo != CharacterSerialNumber.NONE)
             return btl_mot.BattleParameterList[serialNo].AttackSequence;

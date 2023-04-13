@@ -195,6 +195,9 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.Amarant:
                     OnCharacterName(CharacterId.Amarant);
                     break;
+                case FFIXTextTagCode.Beatrix: // TRANCE SEEK
+                    OnCharacterName(CharacterId.Beatrix);
+                    break;
                 case FFIXTextTagCode.Party:
                     OnPartyMemberName(tag.Param[0] - 1);
                     break;
@@ -435,6 +438,8 @@ namespace Memoria.Assets
                     OnCharacterName(CharacterId.Eiko);
                 else if (a2 == NGUIText.Amarant)
                     OnCharacterName(CharacterId.Amarant);
+                else if (a2 == NGUIText.Beatrix) // TRANCE SEEK - RENAME BEATRIX
+                    OnCharacterName(CharacterId.Beatrix);
                 else if (a2 == NGUIText.Party1)
                     OnPartyMemberName(0);
                 else if (a2 == NGUIText.Party2)

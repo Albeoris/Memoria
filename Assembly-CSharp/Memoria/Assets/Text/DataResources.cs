@@ -150,5 +150,20 @@ namespace Memoria.Assets
                 return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
             }
         }
+
+        public static class TetraMaster
+        {
+            public static readonly String PureDirectory = PureDataDirectory + "TetraMaster/";
+            public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+
+            public static String TripleTriadFile => "TripleTriad.csv";
+
+            public static String ModDirectory(String modFolder)
+            {
+                if (String.IsNullOrEmpty(modFolder))
+                    return Directory;
+                return modFolder + "/" + AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
+            }
+        }
     }
 }

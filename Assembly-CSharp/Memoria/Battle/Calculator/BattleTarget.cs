@@ -41,11 +41,23 @@ namespace Memoria
         public void SetMagicDefense()
         {
             _context.DefensePower = MagicDefence;
+            if ((_context.DefensePower == 255) && Configuration.Mod.TranceSeek)
+            {
+                _context.Flags |= BattleCalcFlags.Guard;
+                _context.AttackPower = 0;
+                _context.Attack = 0;
+            }
         }
 
         public void SetPhisicalDefense()
         {
             _context.DefensePower = PhisicalDefence;
+            if ((_context.DefensePower == 255) && Configuration.Mod.TranceSeek)
+            {
+                _context.Flags |= BattleCalcFlags.Guard;
+                _context.AttackPower = 0;
+                _context.Attack = 0;
+            }
         }
 
         public void PhysicalPenaltyAndBonusAttack()
@@ -56,8 +68,22 @@ namespace Memoria
 
         public void PenaltyDefenceAttack()
         {
-            if (IsUnderAnyStatus(BattleStatus.Defend | BattleStatus.Protect))
-                _context.Attack >>= 1;
+            if (Configuration.Mod.TranceSeek)
+            {
+                if (IsUnderAnyStatus(BattleStatus.Defend))
+                {
+                    _context.Attack >>= 1;
+                }
+                if (IsUnderAnyStatus(BattleStatus.Protect))
+                {
+                    _context.Attack >>= 1;
+                }
+            }
+            else
+            {
+                if (IsUnderAnyStatus(BattleStatus.Defend | BattleStatus.Protect))
+                    _context.Attack >>= 1;
+            }
         }
 
         public void PenaltyShellAttack()
@@ -74,8 +100,16 @@ namespace Memoria
 
         public void PenaltyDefenceHitRate()
         {
-            if (IsUnderAnyStatus(BattleStatus.Defend))
-                _context.HitRate /= 2;
+            if (Configuration.Mod.TranceSeek)
+            {
+                if (IsUnderAnyStatus(BattleStatus.Defend))
+                    _context.Evade = 0;
+            }
+            else
+            {
+                if (IsUnderAnyStatus(BattleStatus.Defend))
+                    _context.HitRate /= 2;
+            }
         }
 
         public void PenaltyDistractHitRate()
@@ -94,7 +128,7 @@ namespace Memoria
         public void PenaltyPhysicalEvade()
         {
             const BattleStatus status = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus
-                                        | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze;
+                                        | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Defend;
 
             if (IsUnderAnyStatus(status))
                 _context.Evade = 0;
@@ -108,8 +142,8 @@ namespace Memoria
 
         public void PenaltyAbsorbElement(EffectElement element)
         {
-            if (CanAbsorbElement(element))
-                _context.DefensePower = 0;
+           if (CanAbsorbElement(element))
+                _context.DefensePower = Configuration.Mod.TranceSeek ? _context.DefensePower : 0;
         }
 
         public void BonusWeakElement(EffectElement element)
@@ -169,10 +203,10 @@ namespace Memoria
             return false;
         }
 
-        public void TryAlterStatuses(BattleStatus status, Boolean changeContext)
+        public void TryAlterStatuses(BattleStatus status, Boolean changeContext, Boolean forced = false, byte casterwill = 0)
         {
             BattleStatus prev_status = this.PermanentStatus | this.CurrentStatus;
-            UInt32 result = btl_stat.AlterStatuses(Data, status);
+            UInt32 result = btl_stat.AlterStatuses(Data, status, forced, casterwill);
             this._context.AddedStatuses |= (this.PermanentStatus | this.CurrentStatus) & ~prev_status;
             if (changeContext)
             {

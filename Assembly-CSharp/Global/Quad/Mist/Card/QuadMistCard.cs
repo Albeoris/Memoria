@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using FF9;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Prime.PsdFile;
 using UnityEngine;
 using Object = System.Object;
 
@@ -11,36 +18,36 @@ public class QuadMistCard
 
 	public QuadMistCard(QuadMistCard card)
 	{
-		this.id = card.id;
-		this.side = card.side;
-		this.atk = card.atk;
-		this.type = card.type;
-		this.pdef = card.pdef;
-		this.mdef = card.mdef;
-		this.cpoint = card.cpoint;
-		this.arrow = card.arrow;
-	}
+		id = card.id;
+		side = card.side;
+		atk = card.atk;
+		type = card.type;
+		pdef = card.pdef;
+		mdef = card.mdef;
+		cpoint = card.cpoint;
+		arrow = card.arrow;
+    }
 
-	public void LevelUpInMatch()
+    public void LevelUpInMatch()
 	{
 		switch (UnityEngine.Random.Range(0, 3))
 		{
 		case 0:
-			if (this.atk != CardPool.GetMaxStatCard((Int32)this.id).atk)
+			if (atk != CardPool.GetMaxStatCard((Int32)id).atk)
 			{
-				this.atk = (Byte)(this.atk + 1);
+				atk = (Byte)(atk + 1);
 			}
 			break;
 		case 1:
-			if (this.pdef != CardPool.GetMaxStatCard((Int32)this.id).pdef)
+			if (pdef != CardPool.GetMaxStatCard((Int32)id).pdef)
 			{
-				this.pdef = (Byte)(this.pdef + 1);
+				pdef = (Byte)(pdef + 1);
 			}
 			break;
 		case 2:
-			if (this.mdef != CardPool.GetMaxStatCard((Int32)this.id).mdef)
+			if (mdef != CardPool.GetMaxStatCard((Int32)id).mdef)
 			{
-				this.mdef = (Byte)(this.mdef + 1);
+				mdef = (Byte)(mdef + 1);
 			}
 			break;
 		}
@@ -48,24 +55,24 @@ public class QuadMistCard
 
 	public void LevelUpInBattle()
 	{
-		switch (this.type)
+		switch (type)
 		{
 		case QuadMistCard.Type.PHYSICAL:
 			if (UnityEngine.Random.Range(0, 64) == 0)
 			{
-				this.type = QuadMistCard.Type.FLEXIABLE;
+				type = QuadMistCard.Type.FLEXIABLE;
 			}
 			break;
 		case QuadMistCard.Type.MAGIC:
 			if (UnityEngine.Random.Range(0, 64) == 0)
 			{
-				this.type = QuadMistCard.Type.FLEXIABLE;
+				type = QuadMistCard.Type.FLEXIABLE;
 			}
 			break;
 		case QuadMistCard.Type.FLEXIABLE:
 			if (UnityEngine.Random.Range(0, 128) == 0)
 			{
-				this.type = QuadMistCard.Type.ASSAULT;
+				type = QuadMistCard.Type.ASSAULT;
 			}
 			break;
 		}
@@ -73,26 +80,51 @@ public class QuadMistCard
 
 	public override String ToString()
 	{
-		Char c = 'p';
-		if (this.type == QuadMistCard.Type.MAGIC)
+		if (Configuration.Mod.TranceSeek || (Configuration.TetraMaster.TripleTriad > 0))
 		{
-			c = 'm';
-		}
-		if (this.type == QuadMistCard.Type.FLEXIABLE)
+            if (IsBlock)
+            {
+                char c = '1';
+                return string.Concat(new object[]
+                {
+                atk.ToString("X").ToLower()[0],
+                c.ToString(),
+                pdef.ToString("X").ToLower()[0],
+                mdef.ToString("X").ToLower()[0]
+                });
+            }
+            TripleTriadCard baseCard = TripleTriad.TripleTriadCardStats[(TripleTriadId)id];
+			return string.Concat(new object[]
+            {
+            baseCard.atk.ToString("X").ToLower()[0],
+            baseCard.matk.ToString("X").ToLower()[0],
+            baseCard.pdef.ToString("X").ToLower()[0],
+            baseCard.mdef.ToString("X").ToLower()[0]
+            });
+        }
+		else
 		{
-			c = 'x';
-		}
-		if (this.type == QuadMistCard.Type.ASSAULT)
-		{
-			c = 'a';
-		}
-		return String.Concat(new Object[]
-		{
-			(this.atk >> 4).ToString("X").ToLower()[0],
-			c.ToString(),
-			(this.pdef >> 4).ToString("X").ToLower()[0],
-			(this.mdef >> 4).ToString("X").ToLower()[0]
-		});
+            Char c = 'p';
+            if (type == QuadMistCard.Type.MAGIC)
+            {
+                c = 'm';
+            }
+            if (type == QuadMistCard.Type.FLEXIABLE)
+            {
+                c = 'x';
+            }
+            if (type == QuadMistCard.Type.ASSAULT)
+            {
+                c = 'a';
+            }
+            return String.Concat(new Object[]
+            {
+            (atk >> 4).ToString("X").ToLower()[0],
+            c.ToString(),
+            (pdef >> 4).ToString("X").ToLower()[0],
+            (mdef >> 4).ToString("X").ToLower()[0]
+            });
+        }
 	}
 
 	public Int32 ArrowNumber => MathEx.BitCount(arrow);
@@ -101,7 +133,7 @@ public class QuadMistCard
 	{
 		get
 		{
-			return this.id >= 100;
+			return id >= 100;
 		}
 	}
 
@@ -110,17 +142,17 @@ public class QuadMistCard
 		global::Debug.Log(String.Concat(new Object[]
 		{
 			"isTheSameCard 1 current card: id = ",
-			this.id,
+			id,
 			", atk = ",
-			this.atk,
+			atk,
 			", arrow = ",
-			this.arrow,
+			arrow,
 			", type = ",
-			this.type,
+			type,
 			", pdef = ",
-			this.pdef,
+			pdef,
 			", mdef = ",
-			this.mdef
+			mdef
 		}));
 		global::Debug.Log(String.Concat(new Object[]
 		{
@@ -137,7 +169,7 @@ public class QuadMistCard
 			", mdef = ",
 			card.mdef
 		}));
-		if (this.id == card.id && this.atk == card.atk && this.arrow == card.arrow && this.type == card.type && this.pdef == card.pdef && this.mdef == card.mdef)
+		if (id == card.id && atk == card.atk && arrow == card.arrow && type == card.type && pdef == card.pdef && mdef == card.mdef)
 		{
 			global::Debug.Log("isTheSameCard 3 return true");
 			return true;

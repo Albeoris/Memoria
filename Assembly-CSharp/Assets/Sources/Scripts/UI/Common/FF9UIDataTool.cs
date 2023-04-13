@@ -5,74 +5,75 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Prime;
 using UnityEngine;
 using XInputDotNetPure;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
-	public static class FF9UIDataTool
-	{
-		public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
-		{
-			if (itemId != RegularItem.NoItem)
-			{
-				FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
-				Byte colorIndex = isEnable ? item.color : (Byte)15;
-				if (itemIcon != null)
-				{
-					itemIcon.spriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
-					itemIcon.alpha = isEnable ? 1f : 0.5f;
-				}
-				if (itemName != null)
-				{
-					itemName.text = FF9TextTool.ItemName(itemId);
-					itemName.color = isEnable ? FF9TextTool.White : FF9TextTool.Gray;
-					itemName.multiLine = true;
-				}
-			}
-			else
-			{
-				if (itemIcon != null)
-					itemIcon.spriteName = String.Empty;
-				if (itemName != null)
-					itemName.text = String.Empty;
-			}
-		}
+    public static class FF9UIDataTool
+    {
+        public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
+        {
+            if (itemId != RegularItem.NoItem)
+            {
+                FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
+                Byte colorIndex = isEnable ? item.color : (Byte)15;
+                if (itemIcon != null)
+                {
+                    itemIcon.spriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
+                    itemIcon.alpha = isEnable ? 1f : 0.5f;
+                }
+                if (itemName != null)
+                {
+                    itemName.text = FF9TextTool.ItemName(itemId);
+                    itemName.color = isEnable ? FF9TextTool.White : FF9TextTool.Gray;
+                    itemName.multiLine = true;
+                }
+            }
+            else
+            {
+                if (itemIcon != null)
+                    itemIcon.spriteName = String.Empty;
+                if (itemName != null)
+                    itemName.text = String.Empty;
+            }
+        }
 
-		public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable)
-		{
-			String itemLabel = String.Empty;
-			String spriteName = String.Empty;
-			Boolean allEnabled = items.Keys.All(itemId => isEnable.TryGetValue(itemId, out Boolean enabled) && enabled);
-			foreach (KeyValuePair<RegularItem, Int32> kvp in items)
-			{
-				if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
-					continue;
-				FF9ITEM_DATA item = ff9item._FF9Item_Data[kvp.Key];
-				if (!isEnable.TryGetValue(kvp.Key, out Boolean enabled))
-					enabled = false;
-				Byte colorIndex = allEnabled ? item.color : (Byte)15;
-				String itemSpriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
-				if (String.IsNullOrEmpty(spriteName))
-					spriteName = itemSpriteName;
-				if (itemLabel.Length > 0)
-					itemLabel += "\n";
-				itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
-				if (kvp.Value > 1)
-					itemLabel += $" ×{kvp.Value}";
-			}
-			if (itemIcon != null)
-				itemIcon.spriteName = spriteName;
-			if (itemName != null)
-			{
-				itemName.multiLine = true;
-				itemName.overflowMethod = UILabel.Overflow.ShrinkContent;
-				itemName.color = Color.white;
-				itemName.text = itemLabel;
-			}
-		}
+        public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable)
+        {
+            String itemLabel = String.Empty;
+            String spriteName = String.Empty;
+            Boolean allEnabled = items.Keys.All(itemId => isEnable.TryGetValue(itemId, out Boolean enabled) && enabled);
+            foreach (KeyValuePair<RegularItem, Int32> kvp in items)
+            {
+                if (kvp.Key == RegularItem.NoItem || kvp.Value <= 0)
+                    continue;
+                FF9ITEM_DATA item = ff9item._FF9Item_Data[kvp.Key];
+                if (!isEnable.TryGetValue(kvp.Key, out Boolean enabled))
+                    enabled = false;
+                Byte colorIndex = allEnabled ? item.color : (Byte)15;
+                String itemSpriteName = "item" + item.shape.ToString("0#") + "_" + colorIndex.ToString("0#");
+                if (String.IsNullOrEmpty(spriteName))
+                    spriteName = itemSpriteName;
+                if (itemLabel.Length > 0)
+                    itemLabel += "\n";
+                itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
+                if (kvp.Value > 1)
+                    itemLabel += $" ×{kvp.Value}";
+            }
+            if (itemIcon != null)
+                itemIcon.spriteName = spriteName;
+            if (itemName != null)
+            {
+                itemName.multiLine = true;
+                itemName.overflowMethod = UILabel.Overflow.ShrinkContent;
+                itemName.color = Color.white;
+                itemName.text = itemLabel;
+            }
+        }
 
-		public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
+        public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
 		{
 			charHud.Self.SetActive(true);
 			charHud.NameLabel.text = player.Name;
@@ -133,39 +134,58 @@ namespace Assets.Sources.Scripts.UI.Common
 		public static void DisplayCard(QuadMistCard card, CardDetailHUD cardHud, Boolean subCard = false)
 		{
 			for (Int32 i = 0; i < 8; i++)
-				cardHud.CardArrowList[i].SetActive((card.arrow & (1 << i)) != 0 && !subCard);
-			cardHud.CardImageSprite.spriteName = "card_" + card.id.ToString("0#");
-			if (!subCard)
 			{
-				cardHud.AtkParamSprite.gameObject.SetActive(true);
-				cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
-				cardHud.MagicDefParamSprite.gameObject.SetActive(true);
-				cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
-				cardHud.AtkParamSprite.spriteName = "card_point_" + (card.atk >> 4).ToString("x");
-				cardHud.PhysicDefParamSprite.spriteName = "card_point_" + (card.pdef >> 4).ToString("x");
-				cardHud.MagicDefParamSprite.spriteName = "card_point_" + (card.mdef >> 4).ToString("x");
-				switch (card.type)
-				{
-				case QuadMistCard.Type.PHYSICAL:
-					cardHud.AtkTypeParamSprite.spriteName = "card_point_p";
-					break;
-				case QuadMistCard.Type.MAGIC:
-					cardHud.AtkTypeParamSprite.spriteName = "card_point_m";
-					break;
-				case QuadMistCard.Type.FLEXIABLE:
-					cardHud.AtkTypeParamSprite.spriteName = "card_point_x";
-					break;
-				case QuadMistCard.Type.ASSAULT:
-					cardHud.AtkTypeParamSprite.spriteName = "card_point_a";
-					break;
-				}
-			}
-			else
+				cardHud.CardArrowList[i].SetActive((Configuration.TetraMaster.TripleTriad < 2) ? ((card.arrow & (1 << i)) != 0 && !subCard) : false); // HIDE ARROW
+            }
+			cardHud.CardImageSprite.spriteName = "card_" + card.id.ToString("0#");
+			if (subCard)
 			{
 				cardHud.AtkParamSprite.gameObject.SetActive(false);
 				cardHud.PhysicDefParamSprite.gameObject.SetActive(false);
 				cardHud.MagicDefParamSprite.gameObject.SetActive(false);
 				cardHud.AtkTypeParamSprite.gameObject.SetActive(false);
+				return;
+			}
+			cardHud.AtkParamSprite.gameObject.SetActive(true);
+			cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
+			cardHud.MagicDefParamSprite.gameObject.SetActive(true);
+			cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
+			if (Configuration.Mod.TranceSeek || Configuration.TetraMaster.TripleTriad > 0)
+			{
+                TripleTriadCard baseCard = TripleTriad.TripleTriadCardStats[(TripleTriadId)card.id];
+                cardHud.AtkParamSprite.spriteName = "card_point_" + baseCard.atk.ToString("x");
+                cardHud.PhysicDefParamSprite.spriteName = "card_point_" + baseCard.pdef.ToString("x");
+                cardHud.MagicDefParamSprite.spriteName = "card_point_" + baseCard.mdef.ToString("x");
+                cardHud.AtkTypeParamSprite.spriteName = "card_point_" + baseCard.matk.ToString("x");
+            }
+			else
+			{
+                cardHud.AtkParamSprite.spriteName = "card_point_" + (card.atk >> 4).ToString("x");
+                cardHud.PhysicDefParamSprite.spriteName = "card_point_" + (card.pdef >> 4).ToString("x");
+                cardHud.MagicDefParamSprite.spriteName = "card_point_" + (card.mdef >> 4).ToString("x");
+                switch (card.type)
+                {
+                    case QuadMistCard.Type.PHYSICAL:
+                        cardHud.AtkTypeParamSprite.spriteName = "card_point_p";
+                        break;
+                    case QuadMistCard.Type.MAGIC:
+                        cardHud.AtkTypeParamSprite.spriteName = "card_point_m";
+                        break;
+                    case QuadMistCard.Type.FLEXIABLE:
+                        cardHud.AtkTypeParamSprite.spriteName = "card_point_x";
+                        break;
+                    case QuadMistCard.Type.ASSAULT:
+                        cardHud.AtkTypeParamSprite.spriteName = "card_point_a";
+                        break;
+                }
+            }
+			if ((card.arrow == byte.MaxValue) && Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad < 2)
+			{
+				cardHud.CardBorderSprite.spriteName = "goldenbluecardframe";
+			}
+			else
+			{
+				cardHud.CardBorderSprite.spriteName = "card_player_frame";
 			}
 		}
 
@@ -199,83 +219,83 @@ namespace Assets.Sources.Scripts.UI.Common
 			go.GetComponent<UILabel>().text = Localization.Get(key);
 		}
 
-		public static UIAtlas WindowAtlas
-		{
-			get
-			{
-				if (FF9StateSystem.Settings.cfg.win_type == 0UL)
-				{
-					if (FF9UIDataTool.grayAtlas == null)
-						FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", false);
-					return FF9UIDataTool.grayAtlas;
-				}
-				if (FF9UIDataTool.blueAtlas == null)
-					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", false);
-				return FF9UIDataTool.blueAtlas;
-			}
-		}
+        public static UIAtlas WindowAtlas
+        {
+            get
+            {
+                if (FF9StateSystem.Settings.cfg.win_type == 0UL)
+                {
+                    if (FF9UIDataTool.grayAtlas == null)
+                        FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", false);
+                    return FF9UIDataTool.grayAtlas;
+                }
+                if (FF9UIDataTool.blueAtlas == null)
+                    FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", false);
+                return FF9UIDataTool.blueAtlas;
+            }
+        }
 
-		public static UIAtlas GrayAtlas
-		{
-			get
-			{
-				if (FF9UIDataTool.grayAtlas == null)
-					FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", false);
-				return FF9UIDataTool.grayAtlas;
-			}
-		}
+        public static UIAtlas GrayAtlas
+        {
+            get
+            {
+                if (FF9UIDataTool.grayAtlas == null)
+                    FF9UIDataTool.grayAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Gray Atlas", false);
+                return FF9UIDataTool.grayAtlas;
+            }
+        }
 
-		public static UIAtlas BlueAtlas
-		{
-			get
-			{
-				if (FF9UIDataTool.blueAtlas == null)
-					FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", false);
-				return FF9UIDataTool.blueAtlas;
-			}
-		}
+        public static UIAtlas BlueAtlas
+        {
+            get
+            {
+                if (FF9UIDataTool.blueAtlas == null)
+                    FF9UIDataTool.blueAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Blue Atlas", false);
+                return FF9UIDataTool.blueAtlas;
+            }
+        }
 
-		public static UIAtlas IconAtlas
-		{
-			get
-			{
-				if (FF9UIDataTool.iconAtlas == null)
-					FF9UIDataTool.iconAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Icon Atlas", false);
-				return FF9UIDataTool.iconAtlas;
-			}
-		}
+        public static UIAtlas IconAtlas
+        {
+            get
+            {
+                if (FF9UIDataTool.iconAtlas == null)
+                    FF9UIDataTool.iconAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Icon Atlas", false);
+                return FF9UIDataTool.iconAtlas;
+            }
+        }
 
-		public static UIAtlas GeneralAtlas
-		{
-			get
-			{
-				if (FF9UIDataTool.generalAtlas == null)
-					FF9UIDataTool.generalAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/General Atlas", false);
-				return FF9UIDataTool.generalAtlas;
-			}
-		}
+        public static UIAtlas GeneralAtlas
+        {
+            get
+            {
+                if (FF9UIDataTool.generalAtlas == null)
+                    FF9UIDataTool.generalAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/General Atlas", false);
+                return FF9UIDataTool.generalAtlas;
+            }
+        }
 
-		public static UIAtlas ScreenButtonAtlas
-		{
-			get
-			{
-				if (FF9UIDataTool.screenButtonAtlas == null)
-					FF9UIDataTool.screenButtonAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Screen Button Atlas", false);
-				return FF9UIDataTool.screenButtonAtlas;
-			}
-		}
+        public static UIAtlas ScreenButtonAtlas
+        {
+            get
+            {
+                if (FF9UIDataTool.screenButtonAtlas == null)
+                    FF9UIDataTool.screenButtonAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/Screen Button Atlas", false);
+                return FF9UIDataTool.screenButtonAtlas;
+            }
+        }
 
-		public static UIAtlas TutorialAtlas
-		{
-			get
-			{
-				if (FF9UIDataTool.tutorialAtlas == null)
-					FF9UIDataTool.tutorialAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", false);
-				return FF9UIDataTool.tutorialAtlas;
-			}
-		}
+        public static UIAtlas TutorialAtlas
+        {
+            get
+            {
+                if (FF9UIDataTool.tutorialAtlas == null)
+                    FF9UIDataTool.tutorialAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/UI/Atlas/TutorialUI Atlas", false);
+                return FF9UIDataTool.tutorialAtlas;
+            }
+        }
 
-		public static GameObject IconGameObject(Int32 id)
+        public static GameObject IconGameObject(Int32 id)
 		{
 			GameObject result = null;
 			if (id == FF9UIDataTool.NewIconId)
@@ -313,46 +333,46 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				switch (key)
 				{
-				case Control.Confirm:
-				case Control.Cancel:
-				case Control.Menu:
-				case Control.Special:
-				case Control.LeftBumper:
-				case Control.RightBumper:
-				case Control.LeftTrigger:
-				case Control.RightTrigger:
-				{
-					KeyCode primaryKey;
-					if (tag == NGUIText.KeyboardButtonIcon)
-						primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-					else if (checkFromConfig)
-						primaryKey = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
-					else
-						primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, primaryKey);
-					break;
-				}
-				case Control.Pause:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
-					break;
-				case Control.Select:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.Alpha1);
-					break;
-				case Control.Up:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.W);
-					break;
-				case Control.Down:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.S);
-					break;
-				case Control.Left:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.A);
-					break;
-				case Control.Right:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.D);
-					break;
-				case Control.DPad:
-					result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "ps_dpad");
-					break;
+					case Control.Confirm:
+					case Control.Cancel:
+					case Control.Menu:
+					case Control.Special:
+					case Control.LeftBumper:
+					case Control.RightBumper:
+					case Control.LeftTrigger:
+					case Control.RightTrigger:
+						{
+							KeyCode primaryKey;
+							if (tag == NGUIText.KeyboardButtonIcon)
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
+							else if (checkFromConfig)
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
+							else
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
+							result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, primaryKey);
+							break;
+						}
+					case Control.Pause:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
+						break;
+					case Control.Select:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.Alpha1);
+						break;
+					case Control.Up:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.W);
+						break;
+					case Control.Down:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.S);
+						break;
+					case Control.Left:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.A);
+						break;
+					case Control.Right:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.D);
+						break;
+					case Control.DPad:
+						result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "ps_dpad");
+						break;
 				}
 			}
 			return result;
@@ -384,31 +404,31 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				switch (key)
 				{
-				case Control.Confirm:
-				case Control.Cancel:
-				case Control.Menu:
-				case Control.Special:
-				case Control.LeftBumper:
-				case Control.RightBumper:
-				case Control.LeftTrigger:
-				case Control.RightTrigger:
-				case Control.Pause:
-				case Control.Select:
-				case Control.Up:
-				case Control.Down:
-				case Control.Left:
-				case Control.Right:
-					spriteName = "keyboard_button";
-					break;
-				case Control.DPad:
-					spriteName = "ps_dpad";
-					break;
+					case Control.Confirm:
+					case Control.Cancel:
+					case Control.Menu:
+					case Control.Special:
+					case Control.LeftBumper:
+					case Control.RightBumper:
+					case Control.LeftTrigger:
+					case Control.RightTrigger:
+					case Control.Pause:
+					case Control.Select:
+					case Control.Up:
+					case Control.Down:
+					case Control.Left:
+					case Control.Right:
+						spriteName = "keyboard_button";
+						break;
+					case Control.DPad:
+						spriteName = "ps_dpad";
+						break;
 				}
 			}
-            if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
+			if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
 				if (!global::GamePad.GetState(PlayerIndex.One).IsConnected && key == Control.Pause)
 					spriteName = "keyboard_button_backspace";
-            return FF9UIDataTool.GetSpriteSize(spriteName);
+			return FF9UIDataTool.GetSpriteSize(spriteName);
 		}
 
 		private static Vector2 GetSpriteSize(String spriteName)
@@ -444,42 +464,42 @@ namespace Assets.Sources.Scripts.UI.Common
 			GameObject iconObject = null;
 			switch (bitmapIconType)
 			{
-			case BitmapIconType.Sprite:
-				iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapSpritePool);
-				if (iconObject == null)
-				{
-					if (FF9UIDataTool.controllerSpritePrefab == null)
-						FF9UIDataTool.controllerSpritePrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject);
-					iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerSpritePrefab);
-					iconObject.tag = "BitmapSprite";
-				}
-				iconObject.SetActive(false);
-				FF9UIDataTool.activeBitmapSpriteList.Push(iconObject);
-				break;
-			case BitmapIconType.Keyboard:
-				iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapKeyboardPool);
-				if (iconObject == null)
-				{
-					if (FF9UIDataTool.controllerKeyboardPrefab == null)
-						FF9UIDataTool.controllerKeyboardPrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject);
-					iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerKeyboardPrefab);
-					iconObject.tag = "BitmapKeyboard";
-				}
-				iconObject.SetActive(false);
-				FF9UIDataTool.activeBitmapKeyboardList.Push(iconObject);
-				break;
-			case BitmapIconType.New:
-				iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapNewIconPool);
-				if (iconObject == null)
-				{
-					if (FF9UIDataTool.newIconPrefab == null)
-						FF9UIDataTool.newIconPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/New Icon") as GameObject;
-					iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.newIconPrefab);
-					iconObject.tag = "BitmapNewIcon";
-				}
-				iconObject.SetActive(false);
-				FF9UIDataTool.activeBitmapNewIconList.Push(iconObject);
-				break;
+				case BitmapIconType.Sprite:
+					iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapSpritePool);
+					if (iconObject == null)
+					{
+						if (FF9UIDataTool.controllerSpritePrefab == null)
+							FF9UIDataTool.controllerSpritePrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject);
+						iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerSpritePrefab);
+						iconObject.tag = "BitmapSprite";
+					}
+					iconObject.SetActive(false);
+					FF9UIDataTool.activeBitmapSpriteList.Push(iconObject);
+					break;
+				case BitmapIconType.Keyboard:
+					iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapKeyboardPool);
+					if (iconObject == null)
+					{
+						if (FF9UIDataTool.controllerKeyboardPrefab == null)
+							FF9UIDataTool.controllerKeyboardPrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject);
+						iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerKeyboardPrefab);
+						iconObject.tag = "BitmapKeyboard";
+					}
+					iconObject.SetActive(false);
+					FF9UIDataTool.activeBitmapKeyboardList.Push(iconObject);
+					break;
+				case BitmapIconType.New:
+					iconObject = FF9UIDataTool.GetGameObjectFromPool(FF9UIDataTool.bitmapNewIconPool);
+					if (iconObject == null)
+					{
+						if (FF9UIDataTool.newIconPrefab == null)
+							FF9UIDataTool.newIconPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/New Icon") as GameObject;
+						iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.newIconPrefab);
+						iconObject.tag = "BitmapNewIcon";
+					}
+					iconObject.SetActive(false);
+					FF9UIDataTool.activeBitmapNewIconList.Push(iconObject);
+					break;
 			}
 			return iconObject;
 		}
@@ -518,18 +538,18 @@ namespace Assets.Sources.Scripts.UI.Common
 		{
 			switch (tag)
 			{
-			case "BitmapKeyboard":
-				currentPool = FF9UIDataTool.bitmapKeyboardPool;
-				currentActivePool = FF9UIDataTool.activeBitmapKeyboardList;
-				return;
-			case "BitmapSprite":
-				currentPool = FF9UIDataTool.bitmapSpritePool;
-				currentActivePool = FF9UIDataTool.activeBitmapSpriteList;
-				return;
-			case "BitmapNewIcon":
-				currentPool = FF9UIDataTool.bitmapNewIconPool;
-				currentActivePool = FF9UIDataTool.activeBitmapNewIconList;
-				return;
+				case "BitmapKeyboard":
+					currentPool = FF9UIDataTool.bitmapKeyboardPool;
+					currentActivePool = FF9UIDataTool.activeBitmapKeyboardList;
+					return;
+				case "BitmapSprite":
+					currentPool = FF9UIDataTool.bitmapSpritePool;
+					currentActivePool = FF9UIDataTool.activeBitmapSpriteList;
+					return;
+				case "BitmapNewIcon":
+					currentPool = FF9UIDataTool.bitmapNewIconPool;
+					currentActivePool = FF9UIDataTool.activeBitmapNewIconList;
+					return;
 			}
 			currentPool = null;
 			currentActivePool = null;
@@ -600,45 +620,45 @@ namespace Assets.Sources.Scripts.UI.Common
 					buttonSpriteDictionary = FF9UIDataTool.buttonSpriteNameJoystick;
 				switch (key)
 				{
-				case Control.Confirm:
-				case Control.Cancel:
-				case Control.Menu:
-				case Control.Special:
-				case Control.LeftBumper:
-				case Control.RightBumper:
-				case Control.LeftTrigger:
-				case Control.RightTrigger:
-				{
-					String primaryKey;
-					if (checkFromConfig)
-						primaryKey = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
-					else
-						primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
-					if (buttonSpriteDictionary.ContainsKey(primaryKey))
-						result = buttonSpriteDictionary[primaryKey];
-					break;
-				}
-				case Control.Pause:
-					result = FF9UIDataTool.buttonSpriteNameJoystick["JoystickButton6"];
-					break;
-				case Control.Select:
-					result = FF9UIDataTool.buttonSpriteNameJoystick["JoystickButton7"];
-					break;
-				case Control.Up:
-					result = buttonSpriteDictionary["Up"];
-					break;
-				case Control.Down:
-					result = buttonSpriteDictionary["Down"];
-					break;
-				case Control.Left:
-					result = buttonSpriteDictionary["Left"];
-					break;
-				case Control.Right:
-					result = buttonSpriteDictionary["Right"];
-					break;
-				case Control.DPad:
-					result = buttonSpriteDictionary["DPad"];
-					break;
+					case Control.Confirm:
+					case Control.Cancel:
+					case Control.Menu:
+					case Control.Special:
+					case Control.LeftBumper:
+					case Control.RightBumper:
+					case Control.LeftTrigger:
+					case Control.RightTrigger:
+						{
+							String primaryKey;
+							if (checkFromConfig)
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
+							else
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
+							if (buttonSpriteDictionary.ContainsKey(primaryKey))
+								result = buttonSpriteDictionary[primaryKey];
+							break;
+						}
+					case Control.Pause:
+						result = FF9UIDataTool.buttonSpriteNameJoystick["JoystickButton6"];
+						break;
+					case Control.Select:
+						result = FF9UIDataTool.buttonSpriteNameJoystick["JoystickButton7"];
+						break;
+					case Control.Up:
+						result = buttonSpriteDictionary["Up"];
+						break;
+					case Control.Down:
+						result = buttonSpriteDictionary["Down"];
+						break;
+					case Control.Left:
+						result = buttonSpriteDictionary["Left"];
+						break;
+					case Control.Right:
+						result = buttonSpriteDictionary["Right"];
+						break;
+					case Control.DPad:
+						result = buttonSpriteDictionary["DPad"];
+						break;
 				}
 			}
 			return result;
@@ -673,10 +693,10 @@ namespace Assets.Sources.Scripts.UI.Common
 				if (Configuration.Graphics.GarnetHair == 2)
 					return "face03";
 			}
-			return btl_mot.BattleParameterList[serialNo].AvatarSprite;
-		}
+            return btl_mot.BattleParameterList[serialNo].AvatarSprite;
+        }
 
-		public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
+        public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
 		{
 			Sprite sprite = null;
 			String langSymbol;
@@ -711,13 +731,13 @@ namespace Assets.Sources.Scripts.UI.Common
 			{
 				sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
 			}
-			else
-			{
-				String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
-				sprite = AssetManager.Load<Sprite>(path, false);
-				FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
-			}
-			return sprite;
+            else
+            {
+                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
+                sprite = AssetManager.Load<Sprite>(path, false);
+                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
+            }
+            return sprite;
 		}
 
 		public static readonly Int32 NewIconId = 400;

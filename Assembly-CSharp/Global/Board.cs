@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.IO;
+using Memoria;
+using Memoria.Prime;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -9,8 +13,8 @@ public class Board : MonoBehaviour
 	{
 		for (Int32 i = 0; i < Board.SIZE_X * Board.SIZE_Y; i++)
 		{
-			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.cardPrefab);
-			this.field[i] = gameObject.GetComponent<QuadMistCardUI>();
+			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(cardPrefab);
+			field[i] = gameObject.GetComponent<QuadMistCardUI>();
 			gameObject.name = "fileCard" + ((i > 9) ? String.Empty : "0") + i;
 			gameObject.transform.parent = base.transform;
 			gameObject.SetActive(false);
@@ -21,14 +25,14 @@ public class Board : MonoBehaviour
 	{
 		for (Int32 i = 0; i < Board.SIZE_X * Board.SIZE_Y; i++)
 		{
-			Int32 num = i % 4;
-			Int32 num2 = i / 4;
-			this.field[i].gameObject.SetActive(false);
-			this.field[i].transform.localPosition = new Vector3((Single)num * (QuadMistCardUI.SIZE_W + (Single)Board.FIELD_LINE_W * 0.01f), -((Single)num2 * (QuadMistCardUI.SIZE_H + (Single)Board.FIELD_LINE_H * 0.01f)), 0f);
-			this.field[i].name = num + "," + num2;
-		}
-		this.background.color = new Color(1f, 1f, 1f, 0f);
-		this.hash = new Dictionary<QuadMistCard, QuadMistCardUI>();
+			Int32 num = i % ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3);
+			Int32 num2 = i / ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3);
+			field[i].gameObject.SetActive(false);
+			field[i].transform.localPosition = new Vector3((Single)num * (QuadMistCardUI.SIZE_W + (Single)Board.FIELD_LINE_W * 0.01f), -((Single)num2 * (QuadMistCardUI.SIZE_H + (Single)Board.FIELD_LINE_H * 0.01f)), 0f);
+			field[i].name = num + "," + num2;
+        }
+		background.color = new Color(1f, 1f, 1f, 0f);
+		hash = new Dictionary<QuadMistCard, QuadMistCardUI>();
 	}
 
 	public QuadMistCard this[Single i, Single j]
@@ -55,11 +59,11 @@ public class Board : MonoBehaviour
 			{
 				return (QuadMistCard)null;
 			}
-			return this[i + j * 4];
+			return this[i + j * ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3)];
 		}
 		set
 		{
-			this[i + j * 4] = value;
+			this[i + j * ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3)] = value;
 		}
 	}
 
@@ -67,49 +71,49 @@ public class Board : MonoBehaviour
 	{
 		get
 		{
-			return this.field[i].Data;
+			return field[i].Data;
 		}
 		set
 		{
-			if (this.field[i].Data != null)
+			if (field[i].Data != null)
 			{
-				this.hash.Remove(this.field[i].Data);
+				hash.Remove(field[i].Data);
 			}
-			this.field[i].Data = value;
+			field[i].Data = value;
 			if (value != null)
 			{
-				this.hash.Add(value, this.field[i]);
+				hash.Add(value, field[i]);
 			}
 		}
 	}
 
 	public Boolean IsFree(Int32 i, Int32 j)
 	{
-		return this.IsFree(i + j * 4);
+		return IsFree(i + j * ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3));
 	}
 
 	public Boolean IsFree(Int32 i)
 	{
-		return !this.field[i].gameObject.activeSelf;
+		return !field[i].gameObject.activeSelf;
 	}
 
 	public void PlaceCursor(Int32 i, Int32 j)
 	{
 		if (i < 0 || i >= Board.SIZE_X || j < 0 || j >= Board.SIZE_Y)
 		{
-			this.cursor.Active = false;
+			cursor.Active = false;
 		}
 		else
 		{
-			this.cursor.Active = true;
-			this.cursor.transform.position = this.field[i + j * 4].transform.position + new Vector3(0f, 0f, -1f);
+			cursor.Active = true;
+			cursor.transform.position = field[i + j * ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3)].transform.position + new Vector3(0f, 0f, -1f);
 		}
 	}
 
 	public QuadMistCardUI GetCardUI(QuadMistCard card)
 	{
 		QuadMistCardUI result = (QuadMistCardUI)null;
-		this.hash.TryGetValue(card, out result);
+		hash.TryGetValue(card, out result);
 		return result;
 	}
 
@@ -123,21 +127,21 @@ public class Board : MonoBehaviour
 		{
 			return (QuadMistCardUI)null;
 		}
-		return this.field[i + j * 4];
+		return field[i + j * ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3)];
 	}
 
 	public QuadMistCardUI GetCardUI(Single i, Single j)
 	{
-		return this.GetCardUI((Int32)i, (Int32)j);
+		return GetCardUI((Int32)i, (Int32)j);
 	}
 
 	public QuadMistCardUI GetCardUI(Int32 i)
 	{
-		if (i < 0 || i >= (Int32)this.field.Length)
+		if (i < 0 || i >= (Int32)field.Length)
 		{
 			return (QuadMistCardUI)null;
 		}
-		return this.field[i];
+		return field[i];
 	}
 
 	public Vector2 GetCardLocation(QuadMistCard card)
@@ -157,8 +161,8 @@ public class Board : MonoBehaviour
 
 	public QuadMistCard[] GetAdjacentCards(QuadMistCard card)
 	{
-		Vector2 cardLocation = this.GetCardLocation(card);
-		return this.GetAdjacentCards((Int32)cardLocation.x, (Int32)cardLocation.y);
+		Vector2 cardLocation = GetCardLocation(card);
+		return GetAdjacentCards((Int32)cardLocation.x, (Int32)cardLocation.y);
 	}
 
 	public QuadMistCard[] GetAdjacentCards(Int32 x, Int32 y)
@@ -182,19 +186,19 @@ public class Board : MonoBehaviour
 
 	public Vector2 GetVectorByWorldPoint(Vector3 worldPoint, Boolean checkForFree = false)
 	{
-		Int32 indexByWorldPoint = this.GetIndexByWorldPoint(worldPoint, checkForFree);
+		Int32 indexByWorldPoint = GetIndexByWorldPoint(worldPoint, checkForFree);
 		if (indexByWorldPoint == -1)
 		{
 			return new Vector2(-100f, -100f);
 		}
-		return new Vector2((Single)(indexByWorldPoint % 4), (Single)(indexByWorldPoint / 4));
+		return new Vector2((Single)(indexByWorldPoint % ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3)), (Single)(indexByWorldPoint / ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3)));
 	}
 
 	public Int32 GetIndexByWorldPoint(Vector3 worldPoint, Boolean checkForFree = false)
 	{
 		for (Int32 i = 0; i < Board.SIZE_X * Board.SIZE_Y; i++)
 		{
-			if ((!checkForFree || this.IsFree(i)) && this.field[i].Contains(worldPoint))
+			if ((!checkForFree || IsFree(i)) && field[i].Contains(worldPoint))
 			{
 				return i;
 			}
@@ -213,15 +217,16 @@ public class Board : MonoBehaviour
 	public IEnumerator FadeInBoard()
 	{
 		Single alpha = 0f;
-		this.background.color = new Color(1f, 1f, 1f, 0f);
-		this.background.gameObject.SetActive(true);
+		background.color = new Color(1f, 1f, 1f, 0f);
+		if (Configuration.TetraMaster.TripleTriad < 2)
+			background.gameObject.SetActive(true);
 		for (Int32 tick = 0; tick <= 32; tick++)
 		{
 			alpha = (Single)(tick * 8) / 255f;
-			this.background.color = new Color(1f, 1f, 1f, alpha);
+			background.color = new Color(1f, 1f, 1f, alpha);
 			yield return base.StartCoroutine(Anim.Tick());
 		}
-		this.background.color = new Color(1f, 1f, 1f, 1f);
+		background.color = new Color(1f, 1f, 1f, 1f);
 		yield break;
 	}
 
@@ -232,7 +237,7 @@ public class Board : MonoBehaviour
 		Single bigheight = 0f;
 		for (Int32 i = 0; i < n; i++)
 		{
-			QuadMistCardUI block = this.RandomBlock();
+			QuadMistCardUI block = RandomBlock();
 			Vector3 pos = block.transform.localPosition;
 			Vector3 scale = block.transform.localScale;
 			for (Int32 j = 0; j <= 8; j++)
@@ -257,40 +262,40 @@ public class Board : MonoBehaviour
 
 	private QuadMistCardUI RandomBlock()
 	{
-		Int32 num = UnityEngine.Random.Range(0, 16);
-		while (!this.IsFree(num))
+        Int32 num = UnityEngine.Random.Range(0, 16);
+		while (!IsFree(num))
 		{
 			num = UnityEngine.Random.Range(0, 16);
 		}
-		this.field[num].Data = CardPool.GetBlockCard((Int32)((Byte)UnityEngine.Random.Range(0, 2)));
-		this.field[num].gameObject.SetActive(true);
-		return this.field[num];
+		field[num].Data = CardPool.GetBlockCard((Int32)((Byte)UnityEngine.Random.Range(0, 2)));
+		field[num].gameObject.SetActive(true);
+		return field[num];
 	}
 
 	public void SetBoardCursorPosition(Vector2 position)
 	{
-		this.BoardCursor.gameObject.transform.position = new Vector3(position.x, position.y, -8f);
+		BoardCursor.gameObject.transform.position = new Vector3(position.x, position.y, -8f);
 	}
 
 	public void ShowBoardCursor()
 	{
-		this.BoardCursor.Show();
+		BoardCursor.Show();
 	}
 
 	public void HideBoardCursor()
 	{
-		this.BoardCursor.Hide();
+		BoardCursor.Hide();
 	}
 
-	public static Int32 SIZE_X = 4;
+	public static Int32 SIZE_X = (Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3;
 
-	public static Int32 SIZE_Y = 4;
+	public static Int32 SIZE_Y = (Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3;
 
-	public static Int32 FIELD_LINE_W = 1;
+    public static Int32 FIELD_LINE_W = (Configuration.TetraMaster.TripleTriad < 2) ? 1 : 10;
 
-	public static Int32 FIELD_LINE_H = 1;
+    public static Int32 FIELD_LINE_H = (Configuration.TetraMaster.TripleTriad < 2) ? 1 : 10;
 
-	public QuadMistCursor cursor;
+    public QuadMistCursor cursor;
 
 	public QuadMistCardUI[] field = new QuadMistCardUI[Board.SIZE_X * Board.SIZE_Y];
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,14 +8,14 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 {
 	Boolean ICollection<QuadMistCard>.Remove(QuadMistCard item)
 	{
-		Boolean result = this.cards.Remove(item);
-		this.OnListChanged();
+		Boolean result = cards.Remove(item);
+		OnListChanged();
 		return result;
 	}
 
 	IEnumerator IEnumerable.GetEnumerator()
 	{
-		return this.GetEnumerator();
+		return GetEnumerator();
 	}
 
 	private static Vector3 DEFAULT_TILING(Int32 count)
@@ -26,55 +27,55 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 	{
 		get
 		{
-			return this._dragged;
+			return _dragged;
 		}
 		set
 		{
-			this._dragged = value;
+			_dragged = value;
 		}
 	}
 
 	public void HideCardCursor()
 	{
-		this.CardCursor.Hide();
+		CardCursor.Hide();
 	}
 
 	public void ShowCardCursor()
 	{
-		this.CardCursor.Show();
+		CardCursor.Show();
 	}
 
 	public void SetCardCursorTopMost()
 	{
-		Vector3 position = this.CardCursor.gameObject.transform.position;
+		Vector3 position = CardCursor.gameObject.transform.position;
 		position.z = -1.8f;
-		this.CardCursor.gameObject.transform.position = position;
+		CardCursor.gameObject.transform.position = position;
 	}
 
 	public void HideShadowCard()
 	{
-		this.shadowCard.gameObject.SetActive(false);
+		shadowCard.gameObject.SetActive(false);
 	}
 
 	public void ShowShadowCard()
 	{
-		this.shadowCard.gameObject.SetActive(true);
+		shadowCard.gameObject.SetActive(true);
 	}
 
 	public Hand.STATE State
 	{
 		get
 		{
-			return this._state;
+			return _state;
 		}
 		set
 		{
-			if (this.State != value)
+			if (State != value)
 			{
-				this.OnStateChanged(this.State, value);
-				this._state = value;
-				this.Select = this.Select;
-				this.OnSelectChanged(this.Select, this.Select);
+				OnStateChanged(State, value);
+				_state = value;
+				Select = Select;
+				OnSelectChanged(Select, Select);
 			}
 		}
 	}
@@ -83,43 +84,43 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 	{
 		set
 		{
-			if (value >= this.Count || value < 0)
+			if (value >= Count || value < 0)
 			{
 				value = -1;
 			}
-			if (this.Select != value)
+			if (Select != value)
 			{
-				this.OnEnemyFakeSelectChanged(this.Select, value);
-				this._select = value;
+				OnEnemyFakeSelectChanged(Select, value);
+				_select = value;
 			}
 		}
 	}
 
 	public void ForceUpdateCursor()
 	{
-		this.OnSelectChanged(-1, this._select);
+		OnSelectChanged(-1, _select);
 	}
 
 	public Int32 Select
 	{
 		get
 		{
-			return this._select;
+			return _select;
 		}
 		set
 		{
-			if (value == this.Count)
+			if (value == Count)
 			{
-				value = this.Count - 1;
+				value = Count - 1;
 			}
 			if (value < 0)
 			{
 				value = -1;
 			}
-			if (this.Select != value)
+			if (Select != value)
 			{
-				this.OnSelectChanged(this.Select, value);
-				this._select = value;
+				OnSelectChanged(Select, value);
+				_select = value;
 			}
 		}
 	}
@@ -128,9 +129,9 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 	{
 		get
 		{
-			if (this.Select != -1)
+			if (Select != -1)
 			{
-				return this.cardUIs[this.Select];
+				return cardUIs[Select];
 			}
 			return (QuadMistCardUI)null;
 		}
@@ -139,11 +140,11 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 	public Int32 GetIndexByWorldPoint(Vector3 worldPoint)
 	{
 		Int32 num = -1;
-		for (Int32 i = 0; i < (Int32)this.cardUIs.Length; i++)
+		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
-			if (this.cardUIs[i].gameObject.activeSelf && this.cardUIs[i].Contains(worldPoint))
+			if (cardUIs[i].gameObject.activeSelf && cardUIs[i].Contains(worldPoint))
 			{
-				if (num != -1 && this.cardUIs[i].transform.position.z < this.cardUIs[num].transform.position.z)
+				if (num != -1 && cardUIs[i].transform.position.z < cardUIs[num].transform.position.z)
 				{
 					num = i;
 				}
@@ -158,12 +159,12 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	public QuadMistCardUI GetCardUI(Int32 i)
 	{
-		return this.cardUIs[i];
+		return cardUIs[i];
 	}
 
 	public QuadMistCardUI GetCardUI(QuadMistCard card)
 	{
-		QuadMistCardUI[] array = this.cardUIs;
+		QuadMistCardUI[] array = cardUIs;
 		for (Int32 i = 0; i < (Int32)array.Length; i++)
 		{
 			QuadMistCardUI quadMistCardUI = array[i];
@@ -177,26 +178,26 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	private void Start()
 	{
-		this.InitResources();
-		for (Int32 i = 0; i < (Int32)this.cardUIs.Length; i++)
+		InitResources();
+		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
-			this.cardUIs[i].gameObject.SetActive(false);
+			cardUIs[i].gameObject.SetActive(false);
 		}
-		this.Select = -1;
+		Select = -1;
 	}
 
 	private void InitResources()
 	{
-		this.InitCards();
-		this.InitShadowCard();
+		InitCards();
+		InitShadowCard();
 	}
 
 	private void InitCards()
 	{
 		for (Int32 i = 0; i < Hand.MAX_CARDS; i++)
 		{
-			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.cardPrefab);
-			this.cardUIs[i] = gameObject.GetComponent<QuadMistCardUI>();
+			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(cardPrefab);
+			cardUIs[i] = gameObject.GetComponent<QuadMistCardUI>();
 			gameObject.name = "cardUIs" + ((i > 9) ? String.Empty : "0") + i;
 			gameObject.transform.parent = base.transform;
 			gameObject.SetActive(false);
@@ -205,45 +206,45 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	private void InitShadowCard()
 	{
-		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.cardPrefab);
-		this.shadowCard = gameObject.GetComponent<QuadMistCardUI>();
+		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(cardPrefab);
+		shadowCard = gameObject.GetComponent<QuadMistCardUI>();
 		gameObject.name = "shadowCardUI";
 		gameObject.transform.parent = base.transform;
 		gameObject.SetActive(false);
-		this.shadowCard.Black = true;
+		shadowCard.Black = true;
 	}
 
 	private void OnStateChanged(Hand.STATE oldState, Hand.STATE newState)
 	{
-		for (Int32 i = 0; i < (Int32)this.cardUIs.Length; i++)
+		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
-			QuadMistCardUI quadMistCardUI = this.cardUIs[i];
+			QuadMistCardUI quadMistCardUI = cardUIs[i];
 			switch (newState)
 			{
 			case Hand.STATE.ENEMY_HIDE:
-				quadMistCardUI.Flip = true;
+				quadMistCardUI.Flip = (Configuration.TetraMaster.TripleTriad < 2) ? true : false;
 				base.transform.localPosition = Hand.ENEMY_POSITION;
 				quadMistCardUI.transform.localPosition = new Vector3(0f, -3.2f, 0f);
 				break;
 			case Hand.STATE.ENEMY_SHOW:
-				quadMistCardUI.Flip = true;
+				quadMistCardUI.Flip = (Configuration.TetraMaster.TripleTriad < 2) ? true : false;
 				base.transform.localPosition = Hand.ENEMY_POSITION;
-				this.SlideToEnemyHand(quadMistCardUI.transform, Hand.ENEMY_TILING * (Single)i, i);
+				SlideToEnemyHand(quadMistCardUI.transform, Hand.ENEMY_TILING * (Single)i, i);
 				break;
 			case Hand.STATE.ENEMY_WAIT:
-				quadMistCardUI.Flip = true;
+				quadMistCardUI.Flip = (Configuration.TetraMaster.TripleTriad < 2) ? true : false;
 				base.transform.localPosition = Hand.ENEMY_POSITION;
 				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * (Single)i;
 				break;
 			case Hand.STATE.ENEMY_PLAY:
-				quadMistCardUI.Flip = true;
+				quadMistCardUI.Flip = (Configuration.TetraMaster.TripleTriad < 2) ? true : false;
 				base.transform.localPosition = Hand.ENEMY_POSITION;
 				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * (Single)i;
 				break;
 			case Hand.STATE.ENEMY_POSTGAME:
 				quadMistCardUI.Flip = false;
 				base.transform.localPosition = Hand.ENEMY_POST_POSITION;
-				this.SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(this.Count) * (Single)i, Anim.TickToTime(20));
+				SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(Count) * (Single)i, Anim.TickToTime(20));
 				break;
 			case Hand.STATE.PLAYER_PREGAME:
 				quadMistCardUI.Flip = false;
@@ -253,7 +254,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 				break;
 			case Hand.STATE.PLAYER_WAIT:
 				base.transform.localPosition = Hand.PLAYER_POSITION;
-				if (this.Count == 5)
+				if (Count == 5)
 				{
 					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * (Single)i;
 					quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
@@ -267,22 +268,22 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			case Hand.STATE.PLAYER_SELECT_CARD:
 			{
 				base.transform.localPosition = Hand.PLAYER_POSITION;
-				Single num = this.SpeedFormula(quadMistCardUI.transform, Hand.PLAYER_TILING_S * (Single)i);
-				if (this.Count == 5)
+				Single num = SpeedFormula(quadMistCardUI.transform, Hand.PLAYER_TILING_S * (Single)i);
+				if (Count == 5)
 				{
-					base.StartCoroutine(this.SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_S * (Single)i, num));
-					this.ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_S, num);
+					base.StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_S * (Single)i, num));
+					ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_S, num);
 				}
 				else
 				{
-					base.StartCoroutine(this.SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_L * (Single)i, num));
+					base.StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_L * (Single)i, num));
 				}
-				this.CardCursor.Hide();
+				CardCursor.Hide();
 				break;
 			}
 			case Hand.STATE.PLAYER_SELECT_BOARD:
 				base.transform.localPosition = Hand.PLAYER_POSITION;
-				if (this.Count == 5)
+				if (Count == 5)
 				{
 					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * (Single)i;
 					quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
@@ -296,7 +297,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			case Hand.STATE.PLAYER_POSTGAME:
 				base.transform.localPosition = Hand.PLAYER_POST_POSITION;
 				quadMistCardUI.transform.localScale = Vector3.one;
-				this.SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(this.Count) * (Single)i, Anim.TickToTime(20));
+				SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(Count) * (Single)i, Anim.TickToTime(20));
 				break;
 			default:
 				base.transform.position = Hand.PLAYER_POSITION;
@@ -309,121 +310,121 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 	{
 		for (Int32 i = 0; i < 10; i++)
 		{
-			this.enemyFakeOffsetList[i] = 0f;
+			enemyFakeOffsetList[i] = 0f;
 		}
 	}
 
 	private void OnEnemyFakeSelectChanged(Int32 oldSelect, Int32 newSelect)
 	{
 		Single num = 0.12f;
-		for (Int32 i = 0; i < (Int32)this.cardUIs.Length; i++)
+		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
-			QuadMistCardUI quadMistCardUI = this.cardUIs[i];
+			QuadMistCardUI quadMistCardUI = cardUIs[i];
 			if (i == newSelect)
 			{
 				Vector3 position = quadMistCardUI.transform.position;
 				position.x += num;
 				quadMistCardUI.transform.position = position;
-				this.enemyFakeOffsetList[i] = 0.12f;
+				enemyFakeOffsetList[i] = 0.12f;
 			}
 			else if (i == oldSelect)
 			{
 				Vector3 position2 = quadMistCardUI.transform.position;
-				position2.x -= this.enemyFakeOffsetList[i];
+				position2.x -= enemyFakeOffsetList[i];
 				quadMistCardUI.transform.position = position2;
-				this.enemyFakeOffsetList[i] = 0f;
+				enemyFakeOffsetList[i] = 0f;
 			}
 		}
 	}
 
 	public void UpdateShadowCard(Int32 select)
 	{
-		QuadMistCardUI quadMistCardUI = this.cardUIs[select];
-		this.shadowCard.Data = quadMistCardUI.Data;
+		QuadMistCardUI quadMistCardUI = cardUIs[select];
+		shadowCard.Data = quadMistCardUI.Data;
 		Vector3 position = quadMistCardUI.transform.position;
 		Vector3 localScale = quadMistCardUI.transform.localScale;
-		this.shadowCard.transform.position = new Vector3(position.x, position.y, position.z + 5f);
-		this.shadowCard.transform.localScale = localScale;
+		shadowCard.transform.position = new Vector3(position.x, position.y, position.z + 5f);
+		shadowCard.transform.localScale = localScale;
 	}
 
 	public void UpdateCursorToShadowCard()
 	{
-		Vector3 position = this.shadowCard.transform.position;
-		this.CardCursor.Show();
+		Vector3 position = shadowCard.transform.position;
+		CardCursor.Show();
 		Single num = -0.16f;
-		if (this.Count != 5)
+		if (Count != 5)
 		{
 			num = -0.248f;
 		}
-		this.CardCursor.transform.position = new Vector3(position.x - 0.1f, position.y + num, position.z - 2f);
+		CardCursor.transform.position = new Vector3(position.x - 0.1f, position.y + num, position.z - 2f);
 	}
 
 	public void UpdateEnemyCardCursorToPosition(Vector3 cardPosition)
 	{
-		this.CardCursor.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 180f);
-		Vector3 localPosition = this.CardCursor.gameObject.transform.localPosition;
+		CardCursor.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 180f);
+		Vector3 localPosition = CardCursor.gameObject.transform.localPosition;
 		localPosition.z = -10f;
 		localPosition.x = 0.65f;
 		localPosition.y = cardPosition.y - 0.05f;
-		this.CardCursor.gameObject.transform.localPosition = localPosition;
+		CardCursor.gameObject.transform.localPosition = localPosition;
 	}
 
 	private void OnSelectChanged(Int32 oldSelect, Int32 newSelect)
 	{
-		this.cursor.Active = false;
-		this.cursor.Black = false;
+		cursor.Active = false;
+		cursor.Black = false;
 		Int32 i = 0;
-		while (i < (Int32)this.cardUIs.Length)
+		while (i < (Int32)cardUIs.Length)
 		{
-			QuadMistCardUI quadMistCardUI = this.cardUIs[i];
+			QuadMistCardUI quadMistCardUI = cardUIs[i];
 			quadMistCardUI.ResetEffect();
-			switch (this.State)
+			switch (State)
 			{
 			case Hand.STATE.PLAYER_SELECT_CARD:
 				if (i == newSelect)
 				{
-					Boolean flag = this.cardAnimatingCount == 0;
-					Boolean flag2 = this.lastSelectedCard != newSelect;
+					Boolean flag = cardAnimatingCount == 0;
+					Boolean flag2 = lastSelectedCard != newSelect;
 					if (flag || flag2)
 					{
-						this.UpdateShadowCard(newSelect);
+						UpdateShadowCard(newSelect);
 					}
-					if (this.Count == 5)
+					if (Count == 5)
 					{
-						this.cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
+						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
 					}
 					else
 					{
-						this.cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
+						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
 					}
-					this.cursor.Active = true;
+					cursor.Active = true;
 					if (oldSelect != newSelect)
 					{
-						this.UpdateCursorToShadowCard();
+						UpdateCursorToShadowCard();
 					}
-					this.lastSelectedCard = newSelect;
+					lastSelectedCard = newSelect;
 				}
 				break;
 			case Hand.STATE.PLAYER_SELECT_BOARD:
 				if (i == newSelect)
 				{
-					this.cursor.Active = true;
-					this.cursor.Black = true;
+					cursor.Active = true;
+					cursor.Black = true;
 					quadMistCardUI.Black = false;
-					this.CardCursor.SetNormalState();
-					if (this.Count == 5)
+					CardCursor.SetNormalState();
+					if (Count == 5)
 					{
-						this.cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
+						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
 					}
 					else
 					{
-						this.cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
+						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
 					}
 				}
 				else
 				{
 					quadMistCardUI.Black = true;
-					this.CardCursor.SetBlackState();
+					CardCursor.SetBlackState();
 				}
 				break;
 			}
@@ -433,31 +434,31 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	private void OnListChanged()
 	{
-		Int32 select = this.Select;
-		this.Select = -1;
-		for (Int32 i = 0; i < (Int32)this.cardUIs.Length; i++)
+		Int32 select = Select;
+		Select = -1;
+		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
-			if (i < this.Count)
+			if (i < Count)
 			{
-				this.cardUIs[i].gameObject.SetActive(true);
-				this.cardUIs[i].Data = this[i];
+				cardUIs[i].gameObject.SetActive(true);
+				cardUIs[i].Data = this[i];
 			}
 			else
 			{
-				this.cardUIs[i].gameObject.SetActive(false);
+				cardUIs[i].gameObject.SetActive(false);
 			}
 		}
-		this.OnListChanged2();
-		this.Select = select;
+		OnListChanged2();
+		Select = select;
 	}
 
 	private void OnListChanged2()
 	{
 		Int32 i = 0;
-		while (i < (Int32)this.cardUIs.Length)
+		while (i < (Int32)cardUIs.Length)
 		{
-			QuadMistCardUI quadMistCardUI = this.cardUIs[i];
-			switch (this.State)
+			QuadMistCardUI quadMistCardUI = cardUIs[i];
+			switch (State)
 			{
 			case Hand.STATE.ENEMY_HIDE:
 				quadMistCardUI.Flip = true;
@@ -472,7 +473,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			case Hand.STATE.ENEMY_POSTGAME:
 				quadMistCardUI.Flip = false;
 				base.transform.localPosition = Hand.ENEMY_POST_POSITION;
-				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(this.Count) * (Single)i;
+				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(Count) * (Single)i;
 				break;
 			case Hand.STATE.PLAYER_PREGAME:
 				base.transform.localPosition = Hand.PLAYER_POSITION;
@@ -481,7 +482,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 				break;
 			case Hand.STATE.PLAYER_SELECT_BOARD:
 				base.transform.localPosition = Hand.PLAYER_POSITION;
-				if (this.Count == 5)
+				if (Count == 5)
 				{
 					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * (Single)i;
 					quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
@@ -495,7 +496,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			case Hand.STATE.PLAYER_POSTGAME:
 				base.transform.localPosition = Hand.PLAYER_POST_POSITION;
 				quadMistCardUI.transform.localScale = Vector3.one;
-				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(this.Count) * (Single)i;
+				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(Count) * (Single)i;
 				break;
 			}
 			i++;
@@ -511,15 +512,15 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
     {
         get
         {
-            return this.cardAnimatingCount;
+            return cardAnimatingCount;
         }
     }
 
     private IEnumerator SlideCardBackToTheFormerPosition(Transform origin, Vector3 target, Single duration)
 	{
-		this.cardAnimatingCount++;
+		cardAnimatingCount++;
 		yield return base.StartCoroutine(Anim.MoveLerp(origin, target, duration, true));
-		this.cardAnimatingCount--;
+		cardAnimatingCount--;
 		yield break;
 	}
 
@@ -534,7 +535,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	private void SlideToEnemyHand(Transform t, Vector3 mov, Int32 i)
 	{
-		base.StartCoroutine(this.SlideEnemyCard(t, mov, i));
+		base.StartCoroutine(SlideEnemyCard(t, mov, i));
 	}
 
 	private void ScaleTo(Transform t, Vector3 scal, Single time)
@@ -570,119 +571,119 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	public void ApplyScaleToSelectedCard(Int32 cardIndex)
 	{
-		QuadMistCardUI quadMistCardUI = this.cardUIs[cardIndex];
-		if (this.Count == 5)
+		QuadMistCardUI quadMistCardUI = cardUIs[cardIndex];
+		if (Count == 5)
 		{
-			this.ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_L, Hand.SCALE_SPEED);
+			ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_L, Hand.SCALE_SPEED);
 		}
 	}
 
 	public void SetCardScaleBecauseOfUserCancellation()
 	{
-		if (this.Count == 5)
+		if (Count == 5)
 		{
 			for (Int32 i = 0; i < 5; i++)
 			{
-				QuadMistCardUI quadMistCardUI = this.cardUIs[i];
-				this.ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_S, Hand.SCALE_SPEED);
+				QuadMistCardUI quadMistCardUI = cardUIs[i];
+				ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_S, Hand.SCALE_SPEED);
 			}
 		}
 	}
 
 	public void Add(QuadMistCard item)
 	{
-		this.cards.Add(item);
-		this.OnListChanged();
+		cards.Add(item);
+		OnListChanged();
 	}
 
 	public void ReplaceCard(Int32 cardsArrayIndex, QuadMistCard newCard)
 	{
-		this.cards[cardsArrayIndex].id = newCard.id;
-		this.cards[cardsArrayIndex].atk = newCard.atk;
-		this.cards[cardsArrayIndex].arrow = newCard.arrow;
-		this.cards[cardsArrayIndex].type = newCard.type;
-		this.cards[cardsArrayIndex].pdef = newCard.pdef;
-		this.cards[cardsArrayIndex].mdef = newCard.mdef;
-		this.OnListChanged();
+		cards[cardsArrayIndex].id = newCard.id;
+		cards[cardsArrayIndex].atk = newCard.atk;
+		cards[cardsArrayIndex].arrow = newCard.arrow;
+		cards[cardsArrayIndex].type = newCard.type;
+		cards[cardsArrayIndex].pdef = newCard.pdef;
+		cards[cardsArrayIndex].mdef = newCard.mdef;
+		OnListChanged();
 	}
 
 	public void AddWithoutChanged(QuadMistCard item)
 	{
-		this.cards.Add(item);
-		Int32 select = this.Select;
-		this.Select = -1;
-		for (Int32 i = 0; i < (Int32)this.cardUIs.Length; i++)
+		cards.Add(item);
+		Int32 select = Select;
+		Select = -1;
+		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
-			if (i < this.Count)
+			if (i < Count)
 			{
-				this.cardUIs[i].gameObject.SetActive(true);
-				this.cardUIs[i].Data = this[i];
+				cardUIs[i].gameObject.SetActive(true);
+				cardUIs[i].Data = this[i];
 			}
 			else
 			{
-				this.cardUIs[i].gameObject.SetActive(false);
+				cardUIs[i].gameObject.SetActive(false);
 			}
 		}
-		this.Select = select;
+		Select = select;
 	}
 
 	public Int32 IndexOf(QuadMistCard item)
 	{
-		return this.cards.IndexOf(item);
+		return cards.IndexOf(item);
 	}
 
 	public void Insert(Int32 index, QuadMistCard item)
 	{
-		this.cards.Insert(index, item);
-		this.OnListChanged();
+		cards.Insert(index, item);
+		OnListChanged();
 	}
 
 	public Boolean Remove(QuadMistCard card)
 	{
-		Boolean result = this.cards.Remove(card);
-		this.OnListChanged();
+		Boolean result = cards.Remove(card);
+		OnListChanged();
 		return result;
 	}
 
 	public void RemoveAt(Int32 index)
 	{
-		this.cards.RemoveAt(index);
-		this.OnListChanged();
+		cards.RemoveAt(index);
+		OnListChanged();
 	}
 
 	public QuadMistCard this[Int32 index]
 	{
 		get
 		{
-			return this.cards[index];
+			return cards[index];
 		}
 		set
 		{
-			this.cards[index] = value;
+			cards[index] = value;
 		}
 	}
 
 	public void Clear()
 	{
-		this.cards.Clear();
-		this.OnListChanged();
+		cards.Clear();
+		OnListChanged();
 	}
 
 	public Boolean Contains(QuadMistCard item)
 	{
-		return this.cards.Contains(item);
+		return cards.Contains(item);
 	}
 
 	public void CopyTo(QuadMistCard[] array, Int32 arrayIndex)
 	{
-		this.cards.CopyTo(array, arrayIndex);
+		cards.CopyTo(array, arrayIndex);
 	}
 
 	public Int32 Count
 	{
 		get
 		{
-			return this.cards.Count;
+			return cards.Count;
 		}
 	}
 
@@ -696,7 +697,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	public IEnumerator<QuadMistCard> GetEnumerator()
 	{
-		foreach (QuadMistCard item in this.cards)
+		foreach (QuadMistCard item in cards)
 		{
 			yield return item;
 		}
@@ -705,7 +706,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 
 	public List<QuadMistCard> GetQuadMistCards()
 	{
-		return this.cards;
+		return cards;
 	}
 
 	private static Int32 MAX_CARDS = 10;

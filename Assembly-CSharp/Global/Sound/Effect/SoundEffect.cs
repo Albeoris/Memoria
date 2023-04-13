@@ -17,7 +17,7 @@ public static class SoundEffect
 	{
 		{
 			QuadMistSoundID.MINI_SE_CURSOL,
-			1853
+			103 // 1853 PREVIOUS
 		},
 		{
 			QuadMistSoundID.MINI_SE_WARNING,
@@ -25,7 +25,7 @@ public static class SoundEffect
 		},
 		{
 			QuadMistSoundID.MINI_SE_CANCEL,
-			1855
+            101 // 1855 PREVIOUS
 		},
 		{
 			QuadMistSoundID.MINI_SE_CARD_GET,

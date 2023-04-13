@@ -263,6 +263,21 @@ public class UIKeyTrigger : MonoBehaviour
 
             PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
         }
+        if (Configuration.Mod.TranceSeek & UnityXInput.Input.GetKeyDown(KeyCode.F8) & PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Reset game, back to main menu
+        {
+            PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
+            PersistenSingleton<UIManager>.Instance.HideAllHUD();
+            ButtonGroupState.DisableAllGroup(true);
+            UIManager.Battle.FF9BMenu_EnableMenu(false);
+            Configuration.Graphics.SkipIntros = 3;
+            PersistenSingleton<UIManager>.Instance.PauseScene.Hide(null);
+            EventHUD.Cleanup();
+            EventInput.ClearPadMask();
+            TimerUI.SetEnable(false);
+            SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
+            SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
+            return;
+        }
     }
 
     private void OnApplicationQuit()
@@ -401,7 +416,7 @@ public class UIKeyTrigger : MonoBehaviour
     {
         SceneDirector.Replace("SoundDebugRoom", SceneTransition.FadeOutToBlack_FadeIn, true);
     }
-    
+
     private void OnMemoriaMenuCommandDetected()
     {
         var instance = PersistenSingleton<MemoriaConfigurationMenu>.Instance;

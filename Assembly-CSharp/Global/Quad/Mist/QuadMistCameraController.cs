@@ -6,14 +6,14 @@ public class QuadMistCameraController : MonoBehaviour
 {
 	private void Start()
 	{
-		this.aspectFit = new AspectFit(1.6001482f, 1.12f, this.CanvasCamera);
+		aspectFit = new AspectFit(1.6001482f, 1.12f, CanvasCamera);
 	}
 
 	private void Update()
 	{
-		if (this.aspectFit != null)
+		if (aspectFit != null)
 		{
-			this.aspectFit.setAspectFit();
+			aspectFit.setAspectFit();
 		}
 	}
 

@@ -16,7 +16,7 @@ public class CardEffect : MonoBehaviour
 			{
 				base.transform.localScale = Vector3.one;
 			}
-			this.arrowWhiteOut.Small = value;
+			arrowWhiteOut.Small = value;
 		}
 	}
 
@@ -24,11 +24,11 @@ public class CardEffect : MonoBehaviour
 	{
 		get
 		{
-			return this.blackOut.GetComponent<SpriteRenderer>().color.a;
+			return blackOut.GetComponent<SpriteRenderer>().color.a;
 		}
 		set
 		{
-			this.blackOut.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, value);
+			blackOut.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, value);
 		}
 	}
 
@@ -36,11 +36,11 @@ public class CardEffect : MonoBehaviour
 	{
 		get
 		{
-			return this.whiteOut.GetComponent<SpriteRenderer>().color.a;
+			return whiteOut.GetComponent<SpriteRenderer>().color.a;
 		}
 		set
 		{
-			this.whiteOut.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, value);
+			whiteOut.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, value);
 		}
 	}
 
@@ -48,10 +48,10 @@ public class CardEffect : MonoBehaviour
 	{
 		Single time = 0f;
 		Boolean dir = false;
-		this.White = 0f;
-		while (!dir || this.White > 0f)
+		White = 0f;
+		while (!dir || White > 0f)
 		{
-			this.White = this.Flash1BrightnessFormula(time, ref dir);
+			White = Flash1BrightnessFormula(time, ref dir);
 			if (dir && action != null)
 			{
 				Action[] array = action;
@@ -65,7 +65,7 @@ public class CardEffect : MonoBehaviour
 			time += Time.deltaTime;
 			yield return 0;
 		}
-		this.White = 0f;
+		White = 0f;
 		yield break;
 	}
 
@@ -158,15 +158,15 @@ public class CardEffect : MonoBehaviour
 			sca2f = new Vector3(width, thickness, 0f);
 			break;
 		}
-		this.combo[0].gameObject.SetActive(true);
-		this.combo[1].gameObject.SetActive(true);
+		combo[0].gameObject.SetActive(true);
+		combo[1].gameObject.SetActive(true);
 		Single brightness = 0f;
 		Boolean dir = false;
-		this.combo[0].sharedMaterial.color = new Color(1f, 1f, 1f, 1f);
-		this.combo[1].sharedMaterial.color = new Color(1f, 1f, 1f, 1f);
+		combo[0].sharedMaterial.color = new Color(1f, 1f, 1f, 1f);
+		combo[1].sharedMaterial.color = new Color(1f, 1f, 1f, 1f);
 		for (Single time = 0f; time < duration; time += Time.deltaTime)
 		{
-			this.Flash1BrightnessFormula(time, ref dir);
+			Flash1BrightnessFormula(time, ref dir);
 			if (dir && action != null)
 			{
 				Action[] array = action;
@@ -177,17 +177,17 @@ public class CardEffect : MonoBehaviour
 				}
 				action = null;
 			}
-			brightness = this.Flash2BrightnessFormula(time);
-			this.combo[0].transform.localPosition = Vector3.Lerp(pos, pos1f, time / duration);
-			this.combo[0].transform.localScale = Vector3.Lerp(sca, sca1f, time / duration);
-			this.combo[1].transform.localPosition = Vector3.Lerp(pos2, pos2f, time / duration);
-			this.combo[1].transform.localScale = Vector3.Lerp(sca2, sca2f, time / duration);
-			this.combo[0].sharedMaterial.color = new Color(1f, 1f, 1f, brightness);
-			this.combo[1].sharedMaterial.color = new Color(1f, 1f, 1f, brightness);
+			brightness = Flash2BrightnessFormula(time);
+			combo[0].transform.localPosition = Vector3.Lerp(pos, pos1f, time / duration);
+			combo[0].transform.localScale = Vector3.Lerp(sca, sca1f, time / duration);
+			combo[1].transform.localPosition = Vector3.Lerp(pos2, pos2f, time / duration);
+			combo[1].transform.localScale = Vector3.Lerp(sca2, sca2f, time / duration);
+			combo[0].sharedMaterial.color = new Color(1f, 1f, 1f, brightness);
+			combo[1].sharedMaterial.color = new Color(1f, 1f, 1f, brightness);
 			yield return 0;
 		}
-		this.combo[0].gameObject.SetActive(false);
-		this.combo[1].gameObject.SetActive(false);
+		combo[0].gameObject.SetActive(false);
+		combo[1].gameObject.SetActive(false);
 		yield break;
 	}
 
@@ -198,7 +198,7 @@ public class CardEffect : MonoBehaviour
 		Single brightness = 0f;
 		while (!dir || brightness > 0f)
 		{
-			this.Flash1BrightnessFormula(time, ref dir);
+			Flash1BrightnessFormula(time, ref dir);
 			if (dir && action != null)
 			{
 				Action[] array = action;
@@ -209,25 +209,25 @@ public class CardEffect : MonoBehaviour
 				}
 				action = null;
 			}
-			this.White = this.Flash3BrightnessFormula(time);
+			White = Flash3BrightnessFormula(time);
 			time += Time.deltaTime;
 			yield return 0;
 		}
-		this.White = 0f;
+		White = 0f;
 		yield break;
 	}
 
 	public IEnumerator FlashArrows(Int32 mask)
 	{
 		Boolean flip = false;
-		this.arrowWhiteOut.Arrow = mask;
+		arrowWhiteOut.Arrow = mask;
 		for (Int32 i = 0; i <= 20; i++)
 		{
-			this.SetColorArrows((!flip) ? Color.black : Color.white);
+			SetColorArrows((!flip) ? Color.black : Color.white);
 			flip = !flip;
 			yield return base.StartCoroutine(Anim.Tick());
 		}
-		this.arrowWhiteOut.Arrow = 0;
+		arrowWhiteOut.Arrow = 0;
 		yield break;
 	}
 
@@ -266,9 +266,9 @@ public class CardEffect : MonoBehaviour
 
 	private void SetColorArrows(Color c)
 	{
-		for (Int32 i = 0; i < (Int32)this.arrowWhiteOut.ui.Length; i++)
+		for (Int32 i = 0; i < (Int32)arrowWhiteOut.ui.Length; i++)
 		{
-			this.arrowWhiteOut.ui[i].GetComponent<SpriteRenderer>().color = c;
+			arrowWhiteOut.ui[i].GetComponent<SpriteRenderer>().color = c;
 		}
 	}
 

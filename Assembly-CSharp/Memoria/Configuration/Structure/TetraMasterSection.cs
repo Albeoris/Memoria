@@ -23,6 +23,7 @@ namespace Memoria
             public readonly IniValue<Int32> DiscardKeepSameType;
             public readonly IniValue<Int32> DiscardKeepSameArrow;
             public readonly IniSet<Int32> DiscardExclusions;
+            public readonly IniValue<Int32> TripleTriad;
 
             public TetraMasterSection() : base(nameof(TetraMasterSection), true)
             {
@@ -39,6 +40,7 @@ namespace Memoria
                 DiscardKeepSameType = BindInt32(nameof(DiscardKeepSameType), 1);
                 DiscardKeepSameArrow = BindInt32(nameof(DiscardKeepSameArrow), 0);
                 DiscardExclusions = BindInt32Set(nameof(DiscardExclusions), DefaultExclusions);
+                TripleTriad = BindInt32(nameof(TripleTriad), 0);
             }
         }
     }

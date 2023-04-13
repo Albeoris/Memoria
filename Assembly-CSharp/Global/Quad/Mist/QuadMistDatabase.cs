@@ -75,34 +75,36 @@ public class QuadMistDatabase : MonoBehaviour
 		QuadMistDatabase.instance.data.MiniGameCard.Add(card);
 	}
 
-	public static void Remove(QuadMistCard card)
-	{
-		foreach (QuadMistCard quadMistCard in QuadMistDatabase.instance.data.MiniGameCard)
-		{
-			if (quadMistCard.id == card.id)
-			{
-				QuadMistDatabase.instance.data.MiniGameCard.Remove(quadMistCard);
-				break;
-			}
-		}
-	}
+    public static void Remove(QuadMistCard card)
+    {
+        QuadMistDatabase.LoadData(); // Fixed ? Don't work without it :(
+        foreach (QuadMistCard quadMistCard in QuadMistDatabase.instance.data.MiniGameCard)
+        {
+            if (quadMistCard.id == card.id)
+            {
+                QuadMistDatabase.instance.data.MiniGameCard.Remove(quadMistCard);
+                break;
+            }
+        }
+    }
 
-	public static Int32 Remove(Int32 cardId, Int32 count)
-	{
-		Int32 countDiscarded = 0;
-		while (count > 0)
-		{
-			QuadMistCard card = MiniGame_GetCardInfoPtr(cardId, 0);
-			if (card == null)
-				break;
-			Remove(card);
-			countDiscarded++;
-			count--;
-		}
-		return countDiscarded;
-	}
+    public static Int32 Remove(Int32 cardId, Int32 count)
+    {
+        Int32 countDiscarded = 0;
+        while (count > 0)
+        {
+            QuadMistCard card = MiniGame_GetCardInfoPtr(cardId, 0);
+            if (card == null)
+                break;
+            Remove(card);
+            QuadMistDatabase.SaveData(); // Fixed ? Don't work without it :(
+            countDiscarded++;
+            count--;
+        }
+        return countDiscarded;
+    }
 
-	public static Int16 GetWinCount()
+    public static Int16 GetWinCount()
 	{
 		return QuadMistDatabase.instance.data.sWin;
 	}
@@ -278,87 +280,126 @@ public class QuadMistDatabase : MonoBehaviour
         foreach (List<QuadMistCard> list in cardsByArrow.Values)
             list.Sort(CompareCard);
 
-        Int32 maxSameArrows = Configuration.TetraMaster.DiscardKeepSameArrow;
+        Int32 maxSameArrows = (!Configuration.Mod.TranceSeek && (Configuration.TetraMaster.TripleTriad == 0)) ? Configuration.TetraMaster.DiscardKeepSameArrow : 1;
         Int32 maxSameType = Configuration.TetraMaster.DiscardKeepSameType;
 
         Log.Message("-------------------");
         Log.Message("Discarding cards...");
 
-        foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsByArrow.OrderByDescending(p => MathEx.BitCount(p.Key)))
-        {
-            Int32 sameArrows = maxSameArrows;
-            List<QuadMistCard> list = pair.Value;
+		if (Configuration.Mod.TranceSeek && (Configuration.TetraMaster.TripleTriad > 0))
+		{
+			foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsByArrow.OrderBy(p => MathEx.BitCount(p.Key)))
+			{
+				Int32 sameArrows = maxSameArrows;
+				List<QuadMistCard> list = pair.Value;
 
-            for (Int32 i = 0; (i < list.Count && i < list.Count - sameArrows); i++)
-            {
-                QuadMistCard card = list[i];
-                if (!CanDiscard(card))
-                {
-                    sameArrows--;
-                    continue;
-                }
+				for (Int32 i = 0; (i < list.Count); i++)
+				{
+					QuadMistCard card = list[i];
+					if (!CanDiscard(card))
+					{
+						sameArrows--;
+						continue;
+					}
 
-                List<QuadMistCard> sameCards = cardsById[card.id];
-                if (sameCards.Count <= maxSameType)
-                {
-                    sameArrows--;
-                    continue;
-                }
+					List<QuadMistCard> sameCards = cardsById[card.id];
+					if (sameCards.Count <= Configuration.TetraMaster.DiscardKeepSameArrow)
+					{
+						sameArrows--;
+						continue;
+					}
 
-                list.RemoveAt(i);
-                sameCards.Remove(card);
-                cards.Remove(card);
-                i--;
-                LogDiscardingCard(card);
+					list.RemoveAt(i);
+					sameCards.Remove(card);
+					cards.Remove(card);
+					i--;
+					LogDiscardingCard(card);
 
-                if (cards.Count <= minDeckSize)
-                    break;
-            }
+					if (cards.Count <= minDeckSize)
+						break;
+				}
 
-            if (cards.Count <= minDeckSize)
-                break;
-        }
+				if (cards.Count <= minDeckSize)
+					break;
+			}
+		}
+		else
+		{
+			foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsByArrow.OrderByDescending(p => MathEx.BitCount(p.Key)))
+			{
+				Int32 sameArrows = maxSameArrows;
+				List<QuadMistCard> list = pair.Value;
 
-        foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsById.OrderBy(p => p.Key))
-        {
-            Int32 sameType = maxSameType;
+				for (Int32 i = 0; (i < list.Count && i < list.Count - sameArrows); i++)
+				{
+					QuadMistCard card = list[i];
+					if (!CanDiscard(card))
+					{
+						sameArrows--;
+						continue;
+					}
 
-            List<QuadMistCard> list = pair.Value;
+					List<QuadMistCard> sameCards = cardsById[card.id];
+					if (sameCards.Count <= maxSameType)
+					{
+						sameArrows--;
+						continue;
+					}
 
-            for (Int32 i = 0; (i < list.Count && i < list.Count - sameType); i++)
-            {
-                QuadMistCard card = list[i];
-                if (!CanDiscard(card))
-                {
-                    sameType--;
-                    continue;
-                }
+					list.RemoveAt(i);
+					sameCards.Remove(card);
+					cards.Remove(card);
+					i--;
+					LogDiscardingCard(card);
 
-                List<QuadMistCard> arrowCards = cardsByArrow[card.arrow];
-                if (arrowCards.Count <= maxSameArrows)
-                {
-                    sameType--;
-                    continue;
-                }
+					if (cards.Count <= minDeckSize)
+						break;
+				}
 
-                list.RemoveAt(i);
-                arrowCards.Remove(card);
-                cards.Remove(card);
-                i--;
-                LogDiscardingCard(card);
+				if (cards.Count <= minDeckSize)
+					break;
+			}
 
-                if (cards.Count <= minDeckSize)
-                    break;
-            }
+			foreach (KeyValuePair<Byte, List<QuadMistCard>> pair in cardsById.OrderBy(p => p.Key))
+			{
+				Int32 sameType = maxSameType;
 
-            if (cards.Count <= minDeckSize)
-                break;
-        }
+				List<QuadMistCard> list = pair.Value;
 
+				for (Int32 i = 0; (i < list.Count && i < list.Count - sameType); i++)
+				{
+					QuadMistCard card = list[i];
+					if (!CanDiscard(card))
+					{
+						sameType--;
+						continue;
+					}
+
+					List<QuadMistCard> arrowCards = cardsByArrow[card.arrow];
+					if (arrowCards.Count <= maxSameArrows)
+					{
+						sameType--;
+						continue;
+					}
+
+					list.RemoveAt(i);
+					arrowCards.Remove(card);
+					cards.Remove(card);
+					i--;
+					LogDiscardingCard(card);
+
+					if (cards.Count <= minDeckSize)
+						break;
+				}
+
+				if (cards.Count <= minDeckSize)
+					break;
+			}
+		}
         Log.Message("-------------------");
     }
 
-    private static void LogDiscardingCard(QuadMistCard card)
+	private static void LogDiscardingCard(QuadMistCard card)
     {
         String cardName = FF9TextTool.CardName(card.id);
         String displayInfo = card.ToString();
@@ -416,16 +457,16 @@ public class QuadMistDatabase : MonoBehaviour
 		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Clear();
 	}
 
-	public static Int32 MiniGame_SetCard(Int32 cardId)
-	{
-		if (QuadMistDatabase.MiniGame_GetAllCardCount() >= 100)
-			return 0;
-		QuadMistCard item = CardPool.CreateQuadMistCard(cardId);
-		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Add(item);
-		return 1;
-	}
+    public static Int32 MiniGame_SetCard(Int32 cardId)
+    {
+        if (QuadMistDatabase.MiniGame_GetAllCardCount() >= 100)
+            return 0;
+        QuadMistCard item = CardPool.CreateQuadMistCard(cardId);
+        FF9StateSystem.MiniGame.SavedData.MiniGameCard.Add(item);
+        return 1;
+    }
 
-	public static void MiniGame_ContinueInit()
+    public static void MiniGame_ContinueInit()
 	{
 		QuadMistDatabase.MiniGame_LastBattleResult = 1;
 	}

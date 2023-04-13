@@ -7,12 +7,12 @@ public class CardIconUI : MonoBehaviour
 	{
 		get
 		{
-			return this.id;
+			return id;
 		}
 		set
 		{
-			this.id = value;
-			this.UpdateIcon();
+			id = value;
+			UpdateIcon();
 		}
 	}
 
@@ -20,42 +20,42 @@ public class CardIconUI : MonoBehaviour
 	{
 		get
 		{
-			return this.count;
+			return count;
 		}
 		set
 		{
-			this.count = value;
-			if (this.count > 0)
+			count = value;
+			if (count > 0)
 			{
-				this.countText.Text = this.count.ToString();
+				countText.Text = count.ToString();
 			}
 			else
 			{
-				this.countText.Text = String.Empty;
+				countText.Text = String.Empty;
 			}
-			this.UpdateIcon();
+			UpdateIcon();
 		}
 	}
 
 	public void UpdateIcon()
 	{
-		if (this.count == 0)
+		if (count == 0)
 		{
-			this.iconSprite.ID = CardIcon.EMPTY_ATTRIBUTE;
+			iconSprite.ID = CardIcon.EMPTY_ATTRIBUTE;
 		}
-		else if (this.count == 1)
+		else if (count == 1)
 		{
-			this.iconSprite.ID = (Int32)(CardIcon.GetCardAttribute(this.id) + CardIcon.SINGLE);
+			iconSprite.ID = (Int32)(CardIcon.GetCardAttribute(id) + CardIcon.SINGLE);
 		}
 		else
 		{
-			this.iconSprite.ID = (Int32)(CardIcon.GetCardAttribute(this.id) + CardIcon.MULTIPLE);
+			iconSprite.ID = (Int32)(CardIcon.GetCardAttribute(id) + CardIcon.MULTIPLE);
 		}
 	}
 
 	public Boolean Contains(Vector3 worldPoint)
 	{
-		return this.iconSprite.GetComponent<SpriteClickable>().Contains(worldPoint);
+		return iconSprite.GetComponent<SpriteClickable>().Contains(worldPoint);
 	}
 
 	public static Single SIZE_H = 0.15f;

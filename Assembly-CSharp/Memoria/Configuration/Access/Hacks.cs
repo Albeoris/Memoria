@@ -6,7 +6,7 @@ namespace Memoria
     {
         public static class Hacks
         {
-            public static Boolean Enabled => Instance._hacks.Enabled.Value;
+            public static Boolean Enabled => Configuration.Mod.TranceSeek ? false : Instance._hacks.Enabled.Value;
             public static Int32 AllCharactersAvailable => Instance._hacks.AllCharactersAvailable;
             public static Int32 RopeJumpingIncrement => Instance._hacks.RopeJumpingIncrement;
             public static Int32 FrogCatchingIncrement => Instance._hacks.FrogCatchingIncrement;
