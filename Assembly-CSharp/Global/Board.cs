@@ -27,8 +27,13 @@ public class Board : MonoBehaviour
 		{
 			Int32 num = i % ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3);
 			Int32 num2 = i / ((Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3);
-			field[i].gameObject.SetActive(false);
-			field[i].transform.localPosition = new Vector3((Single)num * (QuadMistCardUI.SIZE_W + (Single)Board.FIELD_LINE_W * 0.01f), -((Single)num2 * (QuadMistCardUI.SIZE_H + (Single)Board.FIELD_LINE_H * 0.01f)), 0f);
+			float factor = (Configuration.TetraMaster.TripleTriad > 1) ? 0.0001f : 0.01f;
+			float adjustementX = (Configuration.TetraMaster.TripleTriad > 1) ? 0.06f : 0f; // Adjust positions for Triple Triad.
+            float adjustementY = (Configuration.TetraMaster.TripleTriad > 1) ? 0.08f : 0f; // Adjust positions for Triple Triad.
+            field[i].gameObject.SetActive(false);
+			field[i].transform.localPosition = new Vector3((Single)num * (QuadMistCardUI.SIZE_W + (Single)Board.FIELD_LINE_W * factor) + adjustementX, -((Single)num2 * (QuadMistCardUI.SIZE_H + (Single)Board.FIELD_LINE_H * factor)) - adjustementY, 0f);
+			if (Configuration.TetraMaster.TripleTriad > 1) // Resize Triple Triad cards
+				field[i].transform.localScale = new Vector3(1.3f, 1.25f, 1f);
 			field[i].name = num + "," + num2;
         }
 		background.color = new Color(1f, 1f, 1f, 0f);
@@ -291,9 +296,9 @@ public class Board : MonoBehaviour
 
 	public static Int32 SIZE_Y = (Configuration.TetraMaster.TripleTriad < 2) ? 4 : 3;
 
-    public static Int32 FIELD_LINE_W = (Configuration.TetraMaster.TripleTriad < 2) ? 1 : 10;
+    public static Int32 FIELD_LINE_W = 1;
 
-    public static Int32 FIELD_LINE_H = (Configuration.TetraMaster.TripleTriad < 2) ? 1 : 10;
+    public static Int32 FIELD_LINE_H = 1;
 
     public QuadMistCursor cursor;
 

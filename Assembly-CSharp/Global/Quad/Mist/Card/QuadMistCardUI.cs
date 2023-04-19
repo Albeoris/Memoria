@@ -82,7 +82,7 @@ public class QuadMistCardUI : MonoBehaviour
 				cardDisplay.frame.ID = 7 + value;
 
 			}
-		}
+        }
 	}
 
 	public Boolean Flip
@@ -140,12 +140,11 @@ public class QuadMistCardUI : MonoBehaviour
 				{
                     cardArrows.Arrow = (Int32)Data.arrow;
                 }
-                if ((cardArrows.Arrow == 255) && Configuration.Mod.TranceSeek)
+                if ((cardArrows.Arrow == 255) && Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad < 2)
                 {
 					cardDisplay.frame.ID = 7 + Data.side;
 				}
-
-			}
+            }
 			else
 			{
 				gameObject.SetActive(false);
@@ -217,9 +216,9 @@ public class QuadMistCardUI : MonoBehaviour
 
 	public static Int32 PLAYER_SIDE;
 
-	public static Single SIZE_W = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.42f : 0.56f); // Position des cartes
+	public static Single SIZE_W = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.42f : 0.54f); // Position des cartes
 
-	public static Single SIZE_H = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.51f : 0.68f); // Position des cartes
+	public static Single SIZE_H = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.51f : 0.64f); // Position des cartes
 
     public static Single SIZESMALL_W = 0.34f;
 

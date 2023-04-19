@@ -22,11 +22,11 @@ public class QuadMistCursor : MonoBehaviour
 		{
 			if (value)
 			{
-				cursor.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+				cursor.color = new Color(0.5f, 0.5f, 0.5f, -1f);
 			}
 			else
 			{
-				cursor.color = new Color(1f, 1f, 1f, 1f);
+				cursor.color = new Color(1f, 1f, 1f, -1f);
 			}
 		}
 	}

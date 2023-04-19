@@ -56,7 +56,7 @@ public class CardDisplay : MonoBehaviour
 			if (background != null)
 			{
 				background.ID = value;
-			}
+            }
 			if (frame != null)
             {
 				frame.ID = value + 5;

@@ -89,6 +89,8 @@ public class QuadMistGame : MonoBehaviour
         {
             score.PlayerScore = value;
             playerScore = value;
+            if (Configuration.TetraMaster.TripleTriad > 1)
+                score.player.transform.localPosition = new Vector3(2.75f, -2f, -2f);
         }
     }
 
@@ -99,6 +101,8 @@ public class QuadMistGame : MonoBehaviour
         {
             score.EnemyScore = value;
             enemyScore = value;
+            if (Configuration.TetraMaster.TripleTriad > 1)
+                score.enemy.transform.localPosition = new Vector3(0.3f, -2f, -8f);
         }
     }
 
