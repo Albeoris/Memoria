@@ -9,11 +9,11 @@ public class Score : MonoBehaviour
 		{
 			if (value == 10)
 			{
-				this.enemy.Text = "a";
+				enemy.Text = "a";
 			}
 			else
 			{
-				this.enemy.Text = value.ToString();
+				enemy.Text = value.ToString();
 			}
 		}
 	}
@@ -24,11 +24,11 @@ public class Score : MonoBehaviour
 		{
 			if (value == 10)
 			{
-				this.player.Text = "a";
+				player.Text = "a";
 			}
 			else
 			{
-				this.player.Text = value.ToString();
+				player.Text = value.ToString();
 			}
 		}
 	}

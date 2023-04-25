@@ -104,8 +104,8 @@ Viltgance;87;6;8;2;10;WEAPON
 Chocobo;88;9;4;8;4;ANIMAL
 FatChocobo;89;4;4;8;9;ANIMAL
 Mog;90;9;2;9;3;ANIMAL
-Frog;91;1;1;1;10;ANIMAL
-Oglop;92;1;10;1;1;ANIMAL
+Frog;91;3;3;3;3;ANIMAL
+Oglop;92;4;4;4;4;ANIMAL
 Alexandria;93;6;9;10;4;CASTLE
 Lindblum;94;10;4;6;9;CASTLE
 TwoMoons;95;3;9;7;6;MYSTERY

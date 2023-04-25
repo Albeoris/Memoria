@@ -311,6 +311,19 @@ Use the Mod Manager UI to activate each submods you like
 </Mod>
 
 <Mod>
+	<Name>Triple Triad</Name>
+	<Version>1.0</Version>
+	<InstallationPath>TripleTriad</InstallationPath>
+	<Author>DVlad666</Author>
+	<Description>
+		Change the music and background to the Triple Triad FF8 version (based on Tripod !)
+		Change some card textures (add boss + characters)
+	</Description>
+	<Category>Visual</Category>
+	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1H2Z-a656qBdjht2h7UfhujzfW1znpJdU&amp;confirm=t</DownloadUrl>
+</Mod>
+
+<Mod>
 	<Name>Nexus Mods</Name>
 	<Description>There are many mods available on the Nexus Mods website.
 Because there is no public direct link for many of them, they cannot be installed directly from this manager.

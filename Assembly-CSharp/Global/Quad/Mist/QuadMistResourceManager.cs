@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Memoria;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -380,7 +381,8 @@ public class QuadMistResourceManager : MonoBehaviour
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list23 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list23.Add(new QuadMistResourceManager.QuadMistMapperData("arrow.png"));
-		mapperData.Add("ScoreDivider", list23);
+		if (Configuration.TetraMaster.TripleTriad < 2)
+			mapperData.Add("ScoreDivider", list23);
 		if (mapperData.ContainsKey("CardNameToggle"))
 		{
 			mapperData.Remove("CardNameToggle");

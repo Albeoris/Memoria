@@ -301,8 +301,8 @@ public class QuadMistGame : MonoBehaviour
                 board.Clear();
                 playGame.gameObject.SetActive(true);
                 ++StartState;
-                PlayerScore = 0;
-                EnemyScore = 0;
+                PlayerScore = (Configuration.TetraMaster.TripleTriad < 2) ? 0 : playerHand.Count;
+                EnemyScore = (Configuration.TetraMaster.TripleTriad < 2) ? 0 : enemyHand.Count;
                 break;
             case START_STATE.SETUP_BOARD:
                 AnimCoroutine(Anim.Enable(board.gameObject), board.FadeInBoard());
@@ -354,7 +354,7 @@ public class QuadMistGame : MonoBehaviour
         switch (PlayState)
         {
             case PLAY_STATE.INPUT_PLAYER:
-                if (playerTurnCount == 0 && !hasShowTutorial02 && (InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial()))
+                if (playerTurnCount == 0 && !hasShowTutorial02 && (InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial()) && Configuration.TetraMaster.TripleTriad < 2)
                 {
                     TutorialUI tutorialScene = PersistenSingleton<UIManager>.Instance.TutorialScene;
                     tutorialScene.DisplayMode = TutorialUI.Mode.QuadMist;
@@ -365,7 +365,7 @@ public class QuadMistGame : MonoBehaviour
                     hasShowTutorial02 = true;
                     break;
                 }
-                if (playerTurnCount == 1 && !hasShowTutorial03 && (InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial()))
+                if (playerTurnCount == 1 && !hasShowTutorial03 && (InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial()) && Configuration.TetraMaster.TripleTriad < 2)
                 {
                     TutorialUI tutorialScene = PersistenSingleton<UIManager>.Instance.TutorialScene;
                     tutorialScene.DisplayMode = TutorialUI.Mode.QuadMist;
@@ -445,7 +445,7 @@ public class QuadMistGame : MonoBehaviour
                 }
                 else
                     enemyHand.State = Hand.STATE.ENEMY_PLAY;
-                if (EnemyScore + PlayerScore == ((Configuration.TetraMaster.TripleTriad < 2) ? 10 : 9))
+                if (((Configuration.TetraMaster.TripleTriad < 2) && (EnemyScore + PlayerScore == 10)) || ((Configuration.TetraMaster.TripleTriad > 1) & (enemyHand.Count + playerHand.Count == 1)))
                     ++GameState;
                 playerHand.HideShadowCard();
                 break;
@@ -957,8 +957,8 @@ public class QuadMistGame : MonoBehaviour
                     ++num2;
             }
         }
-        PlayerScore = num1;
-        EnemyScore = num2;
+        PlayerScore = Configuration.TetraMaster.TripleTriad < 2 ? num1 : (playerHand.Count + num1);
+        EnemyScore = Configuration.TetraMaster.TripleTriad < 2 ? num2 : (enemyHand.Count + num2); ;
     }
 
     public BattleCalculation Calculate(QuadMistCard attacker, QuadMistCard defender)
