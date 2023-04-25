@@ -177,7 +177,7 @@ public class battle
         if (!FF9StateSystem.Battle.isDebug)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
         if (ff9Battle.btl_phase == 4 && ff9Battle.cur_cmd_list.Count == 0 && btl_scrp.GetBattleID(1u) == 0)
-		{
+        {
             // Automatically end a battle when there is no enemy anymore, typically they escaped (warning: enemies that are not targetable but still present don't trigger the end)
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             ff9Battle.btl_escape_key = 0;
@@ -280,6 +280,7 @@ public class battle
 
     private static void BattleTrailingLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
+        BattleStatus Immobilized = Configuration.Mod.TranceSeek ? (BattleStatus.Immobilized & ~BattleStatus.Venom) : BattleStatus.Immobilized; // TRANCE SEEK - VENOM
         //uint id = sys.id;
         Boolean proceedEnd = true;
         if (SFX.IsRunning() || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
@@ -295,11 +296,11 @@ public class battle
                 {
                     case 0:
                         btl_para.CheckPointData(data);
-                        if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE))
+                        if ((!next.IsPlayer && (Configuration.Mod.TranceSeek ? !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Stop) : !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE)) // TRANCE SEEK - VENOM
                             proceedEnd = false;
                         break;
                     case 1:
-                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))
+                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && (Configuration.Mod.TranceSeek ? !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Stop) : !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))) // TRANCE SEEK - VENOM
                             proceedEnd = false;
                         break;
                     case 2:
@@ -320,7 +321,7 @@ public class battle
                                 proceedEnd = false;
                             break;
                         }
-                        if (!btl_stat.CheckStatus(data, BattleStatus.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
+                        if (!btl_stat.CheckStatus(data, Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
                             proceedEnd = false;
                         break;
                     case 3:
@@ -333,7 +334,7 @@ public class battle
                                 proceedEnd = false;
                             break;
                         }
-                        if (next.IsPlayer && !btl_stat.CheckStatus(data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump))
+                        if (next.IsPlayer && (Configuration.Mod.TranceSeek ? !btl_stat.CheckStatus(data, BattleStatus.Petrify | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump) : !btl_stat.CheckStatus(data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump)))  // TRANCE SEEK - VENOM
                         {
                             FF9StateSystem.Battle.isFade = true;
                             data.pos[2] -= 100f;
@@ -380,7 +381,7 @@ public class battle
                             {
                                 /*int num2 = (int)*/
                                 btl_stat.RemoveStatuses(next, BattleStatus.VictoryClear);
-                                if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop))
+                                if (Configuration.Mod.TranceSeek ? !btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop) : !btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop)) // TRANCE SEEK - VENOM
                                 {
                                     if (next.cur.hp > 0)
                                     {

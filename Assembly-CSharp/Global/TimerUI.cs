@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
+using Memoria;
 
 public class TimerUI : Singleton<TimerUI>
 {
@@ -210,6 +211,10 @@ public class TimerUI : Singleton<TimerUI>
 			Single num = (Single)(FF9StateSystem.Settings.time - TimerUI.lastTime);
 			TimerUI.lastTime = FF9StateSystem.Settings.time;
 			TimerUI.time -= num;
+			if (FF9StateSystem.Settings.IsBoosterButtonActive[1] && Configuration.Mod.TranceSeek)
+			{
+				TimerUI.time -= num * (float)Configuration.Cheats.SpeedFactor;
+			}
 			if (TimerUI.time < 0f)
 			{
 				TimerUI.time = 0f;

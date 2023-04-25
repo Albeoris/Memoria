@@ -22,87 +22,87 @@ public partial class BTL_DATA
 		return FF9StateSystem.Battle.FF9Battle.map.shadowArray[this];
 	}
 
-	public void SetActiveBtlData(Boolean value)
-	{
-		GameObject shadow = this.getShadow();
-		this.gameObject.SetActive(value);
-		btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatus.Petrify));
-		if (this.bi.shadow != 0)
-			shadow.SetActive(value);
-	}
+    public void SetActiveBtlData(Boolean value)
+    {
+        GameObject shadow = this.getShadow();
+        this.gameObject.SetActive(value);
+        btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatus.Petrify));
+        if (this.bi.shadow != 0)
+            shadow.SetActive(value);
+    }
 
-	public void SetIsEnabledMeshRenderer(Int32 mesh, Boolean isEnabled)
-	{
-		if (this.meshIsRendering[mesh] != isEnabled && this.gameObject != null)
-		{
-			Transform meshNode = this.gameObject.transform.GetChildByName("mesh" + mesh);
-			if (meshNode != null)
-			{
-				Renderer[] renderers = meshNode.GetComponentsInChildren<Renderer>();
-				foreach (Renderer renderer in renderers)
-					if (renderer.enabled != isEnabled)
-						renderer.enabled = isEnabled;
-				this.meshIsRendering[mesh] = isEnabled;
-			}
-		}
-	}
+    public void SetIsEnabledMeshRenderer(Int32 mesh, Boolean isEnabled)
+    {
+        if (this.meshIsRendering[mesh] != isEnabled && this.gameObject != null)
+        {
+            Transform meshNode = this.gameObject.transform.GetChildByName("mesh" + mesh);
+            if (meshNode != null)
+            {
+                Renderer[] renderers = meshNode.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers)
+                    if (renderer.enabled != isEnabled)
+                        renderer.enabled = isEnabled;
+                this.meshIsRendering[mesh] = isEnabled;
+            }
+        }
+    }
 
-	public void SetIsEnabledWeaponRenderer(Boolean isEnabled)
-	{
-		if (this.weaponIsRendering != isEnabled && this.gameObject != null)
-		{
-			Transform rootNode = this.gameObject.transform.GetChildByName("bone000");
-			if (rootNode != null)
-			{
-				Renderer[] renderers = rootNode.GetComponentsInChildren<Renderer>();
-				foreach (Renderer renderer in renderers)
-					if (renderer.enabled != isEnabled)
-						renderer.enabled = isEnabled;
-				this.weaponIsRendering = isEnabled;
-			}
-		}
-	}
+    public void SetIsEnabledWeaponRenderer(Boolean isEnabled)
+    {
+        if (this.weaponIsRendering != isEnabled && this.gameObject != null)
+        {
+            Transform rootNode = this.gameObject.transform.GetChildByName("bone000");
+            if (rootNode != null)
+            {
+                Renderer[] renderers = rootNode.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers)
+                    if (renderer.enabled != isEnabled)
+                        renderer.enabled = isEnabled;
+                this.weaponIsRendering = isEnabled;
+            }
+        }
+    }
 
-	public void SetIsEnabledBattleModelRenderer(Boolean isEnabled)
-	{
-		if (this.battleModelIsRendering != isEnabled && this.gameObject != null)
-		{
-			Transform battleNode = this.gameObject.transform.GetChildByName("battle_model");
-			if (battleNode != null)
-			{
-				Renderer[] renderers = battleNode.GetComponentsInChildren<Renderer>();
-				foreach (Renderer renderer in renderers)
-					if (renderer.enabled != isEnabled)
-						renderer.enabled = isEnabled;
-				this.battleModelIsRendering = isEnabled;
-			}
-		}
-	}
+    public void SetIsEnabledBattleModelRenderer(Boolean isEnabled)
+    {
+        if (this.battleModelIsRendering != isEnabled && this.gameObject != null)
+        {
+            Transform battleNode = this.gameObject.transform.GetChildByName("battle_model");
+            if (battleNode != null)
+            {
+                Renderer[] renderers = battleNode.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers)
+                    if (renderer.enabled != isEnabled)
+                        renderer.enabled = isEnabled;
+                this.battleModelIsRendering = isEnabled;
+            }
+        }
+    }
 
-	public void CheckDelayedModifier()
-	{
-		try
-		{
-			List<DelayedModifier> removedList = new List<DelayedModifier>();
-			Memoria.BattleUnit unit = new Memoria.BattleUnit(this);
-			foreach (DelayedModifier modifier in delayedModifierList)
-			{
-				if (!modifier.isDelayed(unit))
-				{
-					modifier.apply(unit);
-					removedList.Add(modifier);
-				}
-			}
-			foreach (DelayedModifier modifier in removedList)
-				delayedModifierList.Remove(modifier);
-		}
-		catch (Exception err)
-		{
-			Memoria.Prime.Log.Error(err);
-		}
-	}
+    public void CheckDelayedModifier()
+    {
+        try
+        {
+            List<DelayedModifier> removedList = new List<DelayedModifier>();
+            Memoria.BattleUnit unit = new Memoria.BattleUnit(this);
+            foreach (DelayedModifier modifier in delayedModifierList)
+            {
+                if (!modifier.isDelayed(unit))
+                {
+                    modifier.apply(unit);
+                    removedList.Add(modifier);
+                }
+            }
+            foreach (DelayedModifier modifier in removedList)
+                delayedModifierList.Remove(modifier);
+        }
+        catch (Exception err)
+        {
+            Memoria.Prime.Log.Error(err);
+        }
+    }
 
-	public BTL_DATA next = null;
+    public BTL_DATA next = null;
 
 	public List<CMD_DATA> cmd = new List<CMD_DATA>(new CMD_DATA[6]);
 
@@ -182,10 +182,10 @@ public partial class BTL_DATA
 
 	public Byte[] add_col = new Byte[3];
 
-	public UInt32[] sa;
-	public HashSet<SupportAbility> saExtended;
+    public UInt32[] sa;
+    public HashSet<SupportAbility> saExtended;
 
-	public Int32 fig_regene_hp;
+    public Int32 fig_regene_hp;
 
 	public Int32 fig_poison_hp;
 
@@ -241,6 +241,12 @@ public partial class BTL_DATA
 
 	public Boolean battleModelIsRendering = true;
 
+	public Boolean oldstatus; // TRANCE SEEK - Old Status
+
+	public Boolean luna; // TRANCE SEEK - Luna mechanic
+
+	public Int32 reaction;
+
 	public String currentAnimationName;
 
 	public Int32 height;
@@ -275,41 +281,41 @@ public partial class BTL_DATA
 	public Boolean animEndFrame;
 	public String endedAnimationName;
 
-	public UInt32 maxDamageLimit;
-	public UInt32 maxMpDamageLimit;
+    public UInt32 maxDamageLimit;
+    public UInt32 maxMpDamageLimit;
 
-	public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
+    public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
 
-	public Boolean is_monster_transform;
-	public MONSTER_TRANSFORM monster_transform;
+    public Boolean is_monster_transform;
+    public MONSTER_TRANSFORM monster_transform;
 
-	public class MONSTER_TRANSFORM
-	{
-		public BattleCommandId base_command;
-		public BattleCommandId new_command;
-		public AA_DATA attack;
-		public List<AA_DATA> spell;
-		public Boolean replace_point;
-		public Boolean replace_stat;
-		public Boolean replace_defence;
-		public Boolean replace_element;
-		public Boolean cancel_on_death;
-		public Byte[] cam_bone = new Byte[3];
-		public Byte[] icon_bone = new Byte[6];
-		public SByte[] icon_y = new SByte[6];
-		public SByte[] icon_z = new SByte[6];
-		public BattleStatus resist_added;
-		public UInt16 death_sound;
-		public Int32 fade_counter;
-		public List<BattleCommandId> disable_commands;
-	}
+    public class MONSTER_TRANSFORM
+    {
+        public BattleCommandId base_command;
+        public BattleCommandId new_command;
+        public AA_DATA attack;
+        public List<AA_DATA> spell;
+        public Boolean replace_point;
+        public Boolean replace_stat;
+        public Boolean replace_defence;
+        public Boolean replace_element;
+        public Boolean cancel_on_death;
+        public Byte[] cam_bone = new Byte[3];
+        public Byte[] icon_bone = new Byte[6];
+        public SByte[] icon_y = new SByte[6];
+        public SByte[] icon_z = new SByte[6];
+        public BattleStatus resist_added;
+        public UInt16 death_sound;
+        public Int32 fade_counter;
+        public List<BattleCommandId> disable_commands;
+    }
 
-	public class DelayedModifier
-	{
-		public delegate Boolean IsDelayedDelegate(Memoria.BattleUnit btl);
-		public delegate void ApplyDelegate(Memoria.BattleUnit btl);
+    public class DelayedModifier
+    {
+        public delegate Boolean IsDelayedDelegate(Memoria.BattleUnit btl);
+        public delegate void ApplyDelegate(Memoria.BattleUnit btl);
 
-		public IsDelayedDelegate isDelayed = null;
-		public ApplyDelegate apply = null;
-	}
+        public IsDelayedDelegate isDelayed = null;
+        public ApplyDelegate apply = null;
+    }
 }

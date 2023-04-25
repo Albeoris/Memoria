@@ -5,9 +5,9 @@ public class QuadMistAssetData
 {
 	public QuadMistAssetData(String assetName, Int32 code, Sprite sprite)
 	{
-		this.AssetName = assetName;
-		this.Code = code;
-		this.Sprite = sprite;
+		AssetName = assetName;
+		Code = code;
+		Sprite = sprite;
 	}
 
 	public String AssetName;

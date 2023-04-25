@@ -17,9 +17,9 @@ namespace Memoria
         public Int32 HpDamage;
         public Int32 MpDamage;
 
-        internal BTL_DATA Data;
+        public BTL_DATA Data;
 
-        internal BattleUnit(BTL_DATA data)
+        public BattleUnit(BTL_DATA data)
         {
             Data = data;
         }
@@ -28,7 +28,6 @@ namespace Memoria
         {
             get => Data;
         }
-
         public UInt16 Id => Data.btl_id;
         public Boolean IsPlayer => Data.bi.player != 0;
         public Boolean IsSelected => Data.bi.target != 0;
@@ -41,8 +40,9 @@ namespace Memoria
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
-        public Byte Level => Data.level;
+        public Byte Level => Data.oldstatus ? ((byte)(Data.level << 3)) : Data.level;
         public Byte Position => Data.bi.line_no;
+
         public Byte Row
         {
             get => Data.bi.row;
@@ -52,7 +52,6 @@ namespace Memoria
                     btl_para.SwitchPlayerRow(Data, false);
             }
         }
-
         public Boolean IsCovering => Data.bi.cover != 0;
 
         public Boolean IsDodged
@@ -92,49 +91,49 @@ namespace Memoria
 
         public Byte Strength
         {
-            get => Data.elem.str;
+            get => Data.oldstatus ? ((byte)(Data.elem.str >> 3)) : Data.elem.str;
             set => Data.elem.str = value;
         }
 
         public Byte PhisicalDefence
         {
-            get => Data.defence.PhisicalDefence;
+            get => Data.oldstatus ? ((byte)(Data.defence.PhisicalDefence >> 3)) : Data.defence.PhisicalDefence;
             set => Data.defence.PhisicalDefence = value;
         }
 
         public Byte PhisicalEvade
         {
-            get => Data.defence.PhisicalEvade;
+            get => Data.oldstatus ? ((byte)(Data.defence.PhisicalEvade >> 3)) : Data.defence.PhisicalEvade;
             set => Data.defence.PhisicalEvade = value;
         }
 
         public Byte Magic
         {
-            get => Data.elem.mgc;
+            get => Data.oldstatus ? ((byte)(Data.elem.mgc >> 3)) : Data.elem.mgc;
             set => Data.elem.mgc = value;
         }
 
         public Byte MagicDefence
         {
-            get => Data.defence.MagicalDefence;
+            get => Data.oldstatus ? ((byte)(Data.defence.MagicalDefence >> 3)) : Data.defence.MagicalDefence;
             set => Data.defence.MagicalDefence = value;
         }
 
         public Byte MagicEvade
         {
-            get => Data.defence.MagicalEvade;
+            get => Data.oldstatus ? ((byte)(Data.defence.MagicalEvade >> 3)) : Data.defence.MagicalEvade;
             set => Data.defence.MagicalEvade = value;
         }
 
         public Byte Dexterity
         {
-            get => Data.elem.dex;
+            get => Data.oldstatus ? ((byte)(Data.elem.dex >> 3)) : Data.elem.dex;
             set => Data.elem.dex = value;
         }
 
         public Byte Will
         {
-            get => Data.elem.wpr;
+            get => Data.oldstatus ? ((byte)(Data.elem.wpr >> 3)) : Data.elem.wpr;
             set => Data.elem.wpr = value;
         }
 
@@ -163,6 +162,7 @@ namespace Memoria
             get => Data.fig;
             set => Data.fig = value;
         }
+
         public Int32 MagicFig
         {
             get => Data.m_fig;
@@ -173,7 +173,6 @@ namespace Memoria
             get => Data.fig_info;
             set => Data.fig_info = value;
         }
-
         public Byte WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : (Byte)0;
         public Byte WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : (Byte)0;
         public EffectElement WeaponElement => (EffectElement)(Data.weapon != null ? Data.weapon.Ref.Elements : 0);
@@ -406,9 +405,9 @@ namespace Memoria
             btl_stat.RemoveStatus(Data, status);
         }
 
-        public void AlterStatus(BattleStatus status)
+        public void AlterStatus(BattleStatus status, byte casterwill = 0)
         {
-            btl_stat.AlterStatus(Data, status);
+            btl_stat.AlterStatus(Data, status, casterwill);
         }
 
         public void Kill()
@@ -443,6 +442,17 @@ namespace Memoria
             // It seems to fix the bug without introducing another one (the HP/MP figures update strangely but that's because of how the UI cells are managed)
             UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
             UIManager.Battle.DisplayParty(true);
+        }
+
+        public void RemoveAlt() // TRANCE SEEK - Special move for Larvalar Junior
+        {
+            battle.btl_bonus.member_flag &= (Byte)~(1 << Data.bi.line_no);
+            btl_cmd.ClearSysPhantom(Data);
+            btl_cmd.KillCommand3(Data);
+            btl_sys.SavePlayerData(Data, true);
+            btl_sys.DelCharacter(Data);
+            UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
+            UIManager.Battle.DisplayParty();
         }
 
         public void FaceTheEnemy()
@@ -493,7 +503,7 @@ namespace Memoria
         }
 
         public void ChangeToMonster(String btlName, Int32 monsterIndex, BattleCommandId commandToReplace, BattleCommandId commandAsMonster, Boolean cancelOnDeath, Boolean updatePts, Boolean updateStat, Boolean updateDef, Boolean updateElement, List<BattleCommandId> disableCommands = null)
-		{
+        {
             if (!IsPlayer) // In order to implement something similar for enemies, script has to be update for that enemy's entry, among other things
                 return;
             BTL_SCENE scene = new BTL_SCENE();
@@ -552,7 +562,7 @@ namespace Memoria
             Boolean sequenceChannel, sequenceContact;
             // In order to have more than 1 character transformation, one needs to rewrite the way the new AA are handled (either by rewriting BattleHUD thoroughly or using a better way to insert new AA in the FF9Battle.aa_data list)
             for (i = 0; i < scene.header.AtkCount && aaList.Count < 63; i++)
-			{
+            {
                 if (seqreader.GetEnemyIndexOfSequence(i) != monsterIndex)
                     continue;
                 if (scene.atk[i].Ref.ScriptId == 64) // Usually scripted dialogs
@@ -561,7 +571,7 @@ namespace Memoria
                     scene.atk[i].Name = battleRawText[scene.header.TypCount + i];
                 sequenceSfx = seqreader.GetSFXOfSequence(i, out sequenceChannel, out sequenceContact);
                 if (sequenceSfx >= 0)
-				{
+                {
                     scene.atk[i].Info.VfxIndex = (Int16)sequenceSfx;
                     if (Configuration.Battle.SFXRework && scene.atk[i].Info.VfxAction == null)
                         scene.atk[i].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], i);
@@ -570,7 +580,7 @@ namespace Memoria
                         attackAA = scene.atk[i];
                         continue;
                     }
-				}
+                }
                 // Swap the TargetType but keep the DefaultAlly flag since it is on by default only for curative/buffing enemy spells
                 if (scene.atk[i].Info.Target == TargetType.AllAlly)
                     scene.atk[i].Info.Target = TargetType.AllEnemy;
@@ -715,7 +725,7 @@ namespace Memoria
             // Duplicate existing animations or create dummy ones but have different names for btl_mot.checkMotion proper functioning
             HashSet<String> uniqueAnimList = new HashSet<String>();
             for (i = 0; i < Data.mot.Length; i++)
-			{
+            {
                 if (String.IsNullOrEmpty(Data.mot[i]) || uniqueAnimList.Contains(Data.mot[i]))
                 {
                     String newName = "ANH_" + geoName + "_DUMMY_" + i;
@@ -726,7 +736,7 @@ namespace Memoria
                     Data.mot[i] = newName;
                 }
                 else
-				{
+                {
                     if (Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) == null)
                         AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, Data.mot[i]);
                     uniqueAnimList.Add(Data.mot[i]);

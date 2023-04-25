@@ -20,6 +20,8 @@ namespace Memoria
             public readonly IniValue<Boolean> MasterSkill;
             public readonly IniValue<Boolean> LvMax;
             public readonly IniValue<Boolean> GilMax;
+            public readonly IniValue<String> SuperCheat9999; // TRANCE SEEK - Debug function, i will remove it later !
+            public readonly IniValue<Boolean> AutoBattle;
 
             public CheatsSection() : base(nameof(CheatsSection), false)
             {
@@ -35,6 +37,8 @@ namespace Memoria
                 MasterSkill = BindBoolean(nameof(MasterSkill), false);
                 LvMax = BindBoolean(nameof(LvMax), false);
                 GilMax = BindBoolean(nameof(GilMax), false);
+                SuperCheat9999 = BindString(nameof(SuperCheat9999), "null");
+                AutoBattle = BindBoolean(nameof(AutoBattle), true);
             }
         }
     }

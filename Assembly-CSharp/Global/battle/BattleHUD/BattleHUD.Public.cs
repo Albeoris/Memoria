@@ -25,7 +25,7 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleWhiteMagic
     };
     public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
-    
+
     public BattleHUD()
     {
         _abilityDetailDict = new Dictionary<Int32, AbilityPlayerDetail>();
@@ -54,7 +54,7 @@ public partial class BattleHUD : UIScene
         _messageQueue = new Dictionary<String, Message>();
         _oneTime = true;
     }
-    
+
     public void SetBattleFollowMessage(BattleMesages pMes, params Object[] args)
     {
         Int32 pMesNo = (Int32)pMes;
@@ -162,6 +162,8 @@ public partial class BattleHUD : UIScene
 
     public void SetBattleLibra(BattleUnit pBtl)
     {
+        if (!pBtl.IsPlayer && Configuration.Mod.TranceSeek)
+            _peepingEnmData = pBtl.Enemy;
         _currentLibraMessageNumber = 1;
         _libraBtlData = pBtl;
         DisplayMessageLibra();
@@ -233,7 +235,7 @@ public partial class BattleHUD : UIScene
     }
 
     public Boolean IsMessageQueued(String str)
-	{
+    {
         return _messageQueue.ContainsKey(str);
     }
 
@@ -266,7 +268,7 @@ public partial class BattleHUD : UIScene
             DamageAnimationInfo hp = _hpInfoVal[hudIndex];
             DamageAnimationInfo mp = _mpInfoVal[hudIndex];
             if (resetPointAnimations)
-			{
+            {
                 hp.RequiredValue = hp.CurrentValue = (Int32)unit.CurrentHp;
                 mp.RequiredValue = mp.CurrentValue = (Int32)unit.CurrentMp;
                 hp.FrameLeft = mp.FrameLeft = 0;
@@ -472,9 +474,9 @@ public partial class BattleHUD : UIScene
                 Singleton<HelpDialog>.Instance.ShowDialog();
         }
         catch (Exception err)
-		{
+        {
             Memoria.Prime.Log.Error(err);
-		}
+        }
     }
 
     public void AddPlayerToReady(Int32 playerId)
@@ -673,7 +675,7 @@ public partial class BattleHUD : UIScene
     }
 
     public void SwitchAvailablePlayerOrIdle()
-	{
+    {
         if (ReadyQueue.Count > 0)
         {
             for (Int32 i = 0; i < ReadyQueue.Count; i++)
@@ -731,7 +733,7 @@ public partial class BattleHUD : UIScene
     }
 
     public void ClearCursorMemorize(Int32 playerIndex, BattleCommandId commandId)
-	{
+    {
         _abilityCursorMemorize.Remove(new PairCharCommand(playerIndex, commandId));
     }
 }

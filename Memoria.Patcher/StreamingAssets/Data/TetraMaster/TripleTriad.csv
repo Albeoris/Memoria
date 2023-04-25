@@ -1,0 +1,115 @@
+# This file contains base stats of cards.;;;;;;
+# You must set at least 100 different items.;;;;;;
+#;;;;;;
+# Values card are display like this :;;;;;;
+#        ATK;;;;;;
+#    PDEF    MDEF;;;;;;
+#        MATK;;;;;;
+#;;;;;;
+#;;;;;;
+# Icon values available : MONSTER, SUMMON, WEAPON, SHIP, ANIMAL, CASTLE, MYSTERY ;;;;;;
+#;;;;;;
+# -----------------------------------------------;;;;;;
+# Comment;Id;ATK(UP);MDEF(RIGHT);MATK(DOWN);PDEF(LEFT);Icon
+# ;Int32;UInt8;UInt8;UInt8;UInt8;String
+# -----------------------------------------------;;;;;;
+Goblin;0;2;5;1;3;MONSTER
+Fang;1;6;1;1;2;MONSTER
+Skeleton;2;1;2;4;5;MONSTER
+Flan;3;5;1;1;3;MONSTER
+Zaghnol;4;4;2;4;3;MONSTER
+LizardMan;5;2;1;5;3;MONSTER
+Zombie;6;1;5;4;1;MONSTER
+Bomb;7;3;4;2;2;MONSTER
+Ironite;8;2;2;5;2;MONSTER
+Sahagin;9;2;1;2;6;MONSTER
+Yeti;10;6;2;2;3;MONSTER
+Mimic;11;7;1;1;3;MONSTER
+Wyerd;12;5;2;3;5;MONSTER
+Mandragora;13;6;1;3;4;MONSTER
+Crawler;14;5;1;3;5;MONSTER
+SandScorpion;15;3;4;4;4;MONSTER
+Nymph;16;2;3;5;5;MONSTER
+SandGolem;17;5;2;5;2;MONSTER
+Zuu;18;3;3;7;2;MONSTER
+Dragonfly;19;3;2;1;7;MONSTER
+CarrionWorm;20;2;6;6;3;MONSTER
+Cerberus;21;5;5;5;3;MONSTER
+Antlion;22;7;3;2;5;MONSTER
+Cactuar;23;6;3;2;6;MONSTER
+GimmeCat;24;1;1;1;10;MONSTER
+Ragtimer;25;4;4;4;4;MONSTER
+HedgehogPie;26;5;4;2;6;MONSTER
+Ralvuimago;27;3;5;7;2;MONSTER
+Ochu;28;3;3;6;5;MONSTER
+Troll;29;6;3;4;4;MONSTER
+BlazerBeetle;30;7;6;3;2;MONSTER
+Abomination;31;4;6;7;1;MONSTER
+Zemzelett;32;2;7;4;6;MONSTER
+Stroper;33;4;5;6;5;MONSTER
+Tantarian;34;4;4;7;4;MONSTER
+GrandDragon;35;6;3;3;7;MONSTER
+FeatherCircle;36;2;7;7;3;MONSTER
+Hecteyes;37;1;3;7;7;MONSTER
+Ogre;38;7;2;3;5;MONSTER
+Armstrong;39;7;4;3;6;MONSTER
+Ash;40;3;6;7;5;MONSTER
+WraithMan;41;4;5;7;5;MONSTER
+Gargoyle;42;5;6;5;6;MONSTER
+Vepal;43;7;4;7;2;MONSTER
+Grimlock;44;6;7;3;5;MONSTER
+Tonberry;45;4;7;6;4;MONSTER
+Veteran;46;6;3;5;7;MONSTER
+Garuda;47;5;5;7;5;MONSTER
+Malboro;48;7;7;2;4;MONSTER
+Mover;49;6;6;3;6;MONSTER
+Abadon;50;8;8;4;2;MONSTER
+Behemoth;51;7;3;8;4;MONSTER
+IronMan;52;4;8;7;3;MONSTER
+NovaDragon;53;7;5;2;8;MONSTER
+Ozma;54;2;7;8;7;MONSTER
+Hades;55;8;7;2;7;MONSTER
+Holy;56;1;8;8;3;SUMMON
+Meteor;57;8;2;8;2;SUMMON
+Flare;58;6;5;4;8;SUMMON
+Shiva;59;7;6;4;9;SUMMON
+Ifrit;60;9;8;2;6;SUMMON
+Ramuh;61;9;4;2;9;SUMMON
+Atomos;62;3;8;10;5;SUMMON
+Odin;63;10;8;5;3;SUMMON
+Leviathan;64;7;10;7;1;SUMMON
+Bahamut;65;10;8;6;2;SUMMON
+Ark;66;4;4;10;9;SUMMON
+Fenrir;67;9;2;5;9;SUMMON
+Madeen;68;7;10;7;2;SUMMON
+Alexander;69;4;9;10;2;SUMMON
+ExcaliburII;70;10;3;3;10;WEAPON
+UltimaWeapon;71;10;8;3;6;WEAPON
+Masamune;72;7;6;6;10;WEAPON
+Elixir;73;5;9;3;10;WEAPON
+DarkMatter;74;6;8;10;4;WEAPON
+Ribbon;75;9;10;5;3;WEAPON
+TigerRacket;76;2;6;10;9;WEAPON
+SavetheQueen;77;8;6;10;5;WEAPON
+Genji;78;10;3;10;3;WEAPON
+MythrilSword;79;8;2;3;1;WEAPON
+BlueNarciss;80;4;2;9;9;WEAPON
+HildaGarde3;81;8;4;10;4;WEAPON
+Invincible;82;10;7;7;1;WEAPON
+CargoShip;83;7;6;4;10;WEAPON
+HildaGarde1;84;9;8;6;2;WEAPON
+RedRose;85;10;10;1;3;WEAPON
+TheaterShip;86;6;9;2;8;WEAPON
+Viltgance;87;6;8;2;10;WEAPON
+Chocobo;88;9;4;8;4;ANIMAL
+FatChocobo;89;4;4;8;9;ANIMAL
+Mog;90;9;2;9;3;ANIMAL
+Frog;91;3;3;3;3;ANIMAL
+Oglop;92;4;4;4;4;ANIMAL
+Alexandria;93;6;9;10;4;CASTLE
+Lindblum;94;10;4;6;9;CASTLE
+TwoMoons;95;3;9;7;6;MYSTERY
+Gargant;96;8;6;7;3;MYSTERY
+Namingway;97;9;3;7;6;MYSTERY
+Boco;98;4;8;4;9;MYSTERY
+Airship;99;4;10;4;8;MYSTERY

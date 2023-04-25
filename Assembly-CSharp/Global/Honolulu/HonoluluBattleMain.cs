@@ -481,11 +481,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     }
                     else
                     {
-                        if (!btl_stat.CheckStatus(btl, BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze))
+                        if (!btl_stat.CheckStatus(btl, (Configuration.Mod.TranceSeek ? (BattleStatus.Sleep | BattleStatus.Freeze) : (BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze)))) // TRANCE SEEK - VENOM
                             needContinue = false;
                     }
                 }
-                else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze))
+                else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, (Configuration.Mod.TranceSeek ? (BattleStatus.Sleep | BattleStatus.Freeze) : (BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze)))) // TRANCE SEEK - VENOM
                 {
                     needContinue = false;
                 }
@@ -493,7 +493,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (!Configuration.Fixes.IsKeepRestTimeInBattle)
                     current.at = maximum.at;
 
-                if (btl_stat.CheckStatus(btl, BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze))
+                if (btl_stat.CheckStatus(btl, (Configuration.Mod.TranceSeek ? (BattleStatus.Sleep | BattleStatus.Freeze) : (BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze)))) // TRANCE SEEK - VENOM
                     continue;
 
                 if (btl.bi.player != 0)
@@ -545,9 +545,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             UpdateData();
         }
         catch (Exception err)
-		{
+        {
             Memoria.Prime.Log.Error(err);
-		}
+        }
     }
 
     private void UpdateFrames()
@@ -695,13 +695,13 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     }
 
     public static void ClearAttachModel(BTL_DATA attachedBtl)
-	{
+    {
         attachModel.RemoveAll(kvp => kvp.Value == attachedBtl);
         attachedBtl.gameObject.transform.parent = null;
     }
 
     public static Boolean IsAttachedModel(BTL_DATA btl)
-	{
+    {
         return attachModel.Any(kvp => kvp.Value == btl);
     }
 

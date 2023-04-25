@@ -13,16 +13,16 @@ public class QuadMistConfirmDialog : MonoBehaviour
 	{
 		get
 		{
-			return this._select;
+			return _select;
 		}
 		set
 		{
-			this._select = value;
+			_select = value;
 			QuadMistConfirmDialog.main.okMesh.color = Color.white;
 			QuadMistConfirmDialog.main.cancelMesh.color = Color.white;
-			if (this.highlight)
+			if (highlight)
 			{
-				if (!this.Select)
+				if (!Select)
 				{
 					QuadMistConfirmDialog.main.okMesh.color = Color.gray;
 				}

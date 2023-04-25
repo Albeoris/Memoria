@@ -21,6 +21,7 @@ namespace Memoria
             public static Int32 DiscardMinDeckSize => Instance._tetraMaster.DiscardMinDeckSize;
             public static Int32 DiscardKeepSameType => Instance._tetraMaster.DiscardKeepSameType;
             public static Int32 DiscardKeepSameArrow => Instance._tetraMaster.DiscardKeepSameArrow;
+            public static Int32 TripleTriad => Instance._tetraMaster.TripleTriad;
             public static HashSet<Int32> DiscardExclusions => Instance._tetraMaster.DiscardExclusions;
         }
     }

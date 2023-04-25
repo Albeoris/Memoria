@@ -6,7 +6,7 @@ namespace Memoria
 {
     public sealed class Character
     {
-        internal readonly PLAYER Data;
+        public readonly PLAYER Data; // TRANCE SEEK - Change Readonly to public for scripts
 
         internal Character(PLAYER data)
         {

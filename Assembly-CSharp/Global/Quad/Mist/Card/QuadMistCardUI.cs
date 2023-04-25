@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,23 +7,23 @@ public class QuadMistCardUI : MonoBehaviour
 {
 	private void Update()
 	{
-		if (this.cardDisplay.select.gameObject.activeSelf)
+		if (cardDisplay.select.gameObject.activeSelf)
 		{
-			if (!this.isToDisplay)
+			if (!isToDisplay)
 			{
-				this.cardDisplay.select.gameObject.transform.localPosition = this.farAwayPosition;
+				cardDisplay.select.gameObject.transform.localPosition = farAwayPosition;
 			}
 			else
 			{
-				this.cardDisplay.select.gameObject.transform.localPosition = this.originalPosition;
+				cardDisplay.select.gameObject.transform.localPosition = originalPosition;
 			}
 			if (DateTime.Now.Millisecond <= 500)
 			{
-				this.isToDisplay = true;
+				isToDisplay = true;
 			}
 			else
 			{
-				this.isToDisplay = false;
+				isToDisplay = false;
 			}
 		}
 	}
@@ -31,14 +32,14 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return this._small;
+			return _small;
 		}
 		set
 		{
-			this._small = value;
-			this.cardEffect.Small = this._small;
-			this.cardDisplay.Small = this._small;
-			this.cardArrows.Small = this._small;
+			_small = value;
+			cardEffect.Small = _small;
+			cardDisplay.Small = _small;
+			cardArrows.Small = _small;
 		}
 	}
 
@@ -46,11 +47,11 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return this.cardEffect.White;
+			return cardEffect.White;
 		}
 		set
 		{
-			this.cardEffect.White = value;
+			cardEffect.White = value;
 		}
 	}
 
@@ -58,11 +59,11 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return this.cardEffect.Black > 0f;
+			return cardEffect.Black > 0f;
 		}
 		set
 		{
-			this.cardEffect.Black = ((!value) ? 0f : 0.5f);
+			cardEffect.Black = ((!value) ? 0f : 0.5f);
 		}
 	}
 
@@ -70,24 +71,29 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return (Int32)this.Data.side;
+			return (Int32)Data.side;
 		}
 		set
 		{
-			this._data.side = (Byte)value;
-			this.cardDisplay.Side = value;
-		}
+			_data.side = (Byte)value;
+			cardDisplay.Side = value;
+			if ((cardArrows.Arrow == 255) && Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad < 2)
+			{
+				cardDisplay.frame.ID = 7 + value;
+
+			}
+        }
 	}
 
 	public Boolean Flip
 	{
 		get
 		{
-			return this.cardDisplay.Flip;
+			return cardDisplay.Flip;
 		}
 		set
 		{
-			this.cardDisplay.Flip = value;
+			cardDisplay.Flip = value;
 		}
 	}
 
@@ -95,7 +101,7 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return this.cardDisplay.IsBlock;
+			return cardDisplay.IsBlock;
 		}
 	}
 
@@ -103,11 +109,11 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return this.cardDisplay.Select;
+			return cardDisplay.Select;
 		}
 		set
 		{
-			this.cardDisplay.Select = value;
+			cardDisplay.Select = value;
 		}
 	}
 
@@ -115,22 +121,33 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return this._data;
+			return _data;
 		}
 		set
 		{
-			this._data = value;
+			_data = value;
 			if (value != null)
 			{
-				base.gameObject.SetActive(true);
-				this.cardDisplay.Status = this.Data.ToString();
-				this.cardDisplay.ID = (Int32)this.Data.id;
-				this.cardDisplay.Side = (Int32)this.Data.side;
-				this.cardArrows.Arrow = (Int32)this.Data.arrow;
-			}
+				gameObject.SetActive(true);
+				cardDisplay.Status = Data.ToString();
+				cardDisplay.ID = (Int32)Data.id;
+				cardDisplay.Side = (Int32)Data.side;
+				if (Configuration.TetraMaster.TripleTriad < 2)
+				{
+                    cardArrows.Arrow = (Int32)Data.arrow;
+                }
+				else
+				{
+                    cardArrows.Arrow = (Int32)Data.arrow;
+                }
+                if ((cardArrows.Arrow == 255) && Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad < 2)
+                {
+					cardDisplay.frame.ID = 7 + Data.side;
+				}
+            }
 			else
 			{
-				base.gameObject.SetActive(false);
+				gameObject.SetActive(false);
 			}
 		}
 	}
@@ -139,8 +156,8 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		get
 		{
-			return (!this.Small) ? new Vector3(QuadMistCardUI.SIZE_W, QuadMistCardUI.SIZE_H) : new Vector3(QuadMistCardUI.SIZESMALL_W, QuadMistCardUI.SIZESMALL_H, 0f);
-		}
+			return (!Small) ? new Vector3(QuadMistCardUI.SIZE_W, QuadMistCardUI.SIZE_H) : new Vector3(QuadMistCardUI.SIZESMALL_W, QuadMistCardUI.SIZESMALL_H, 0f);
+        }
 	}
 
 	public IEnumerator FlashBattle(Action<QuadMistCardUI> actionThis)
@@ -149,7 +166,7 @@ public class QuadMistCardUI : MonoBehaviour
 		{
 			actionThis(this);
 		};
-		return this.cardEffect.Flash3Battle(new Action[]
+		return cardEffect.Flash3Battle(new Action[]
 		{
 			action
 		});
@@ -161,7 +178,7 @@ public class QuadMistCardUI : MonoBehaviour
 		{
 			actionThis(this);
 		};
-		return this.cardEffect.Flash2Combo(arrow, new Action[]
+		return cardEffect.Flash2Combo(arrow, new Action[]
 		{
 			action
 		});
@@ -173,7 +190,7 @@ public class QuadMistCardUI : MonoBehaviour
 		{
 			actionThis(this);
 		};
-		return this.cardEffect.Flash1Normal(new Action[]
+		return cardEffect.Flash1Normal(new Action[]
 		{
 			action
 		});
@@ -181,33 +198,33 @@ public class QuadMistCardUI : MonoBehaviour
 
 	public IEnumerator FlashArrow(Byte mask)
 	{
-		return this.cardEffect.FlashArrows((Int32)mask);
+		return cardEffect.FlashArrows((Int32)mask);
 	}
 
 	public void ResetEffect()
 	{
-		this.White = 0f;
-		this.Black = false;
+		White = 0f;
+		Black = false;
 	}
 
 	public Boolean Contains(Vector3 worldPoint)
 	{
-		return this.cardDisplay.Contains(worldPoint);
+		return cardDisplay.Contains(worldPoint);
 	}
 
 	public static Int32 ENEMY_SIDE = 1;
 
 	public static Int32 PLAYER_SIDE;
 
-	public static Single SIZE_W = 0.42f;
+	public static Single SIZE_W = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.42f : 0.54f); // Position des cartes
 
-	public static Single SIZE_H = 0.51f;
+	public static Single SIZE_H = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.51f : 0.64f); // Position des cartes
 
-	public static Single SIZESMALL_W = 0.34f;
+    public static Single SIZESMALL_W = 0.34f;
 
-	public static Single SIZESMALL_H = 0.41f;
+    public static Single SIZESMALL_H = 0.41f;
 
-	public CardEffect cardEffect;
+    public CardEffect cardEffect;
 
 	public CardDisplay cardDisplay;
 

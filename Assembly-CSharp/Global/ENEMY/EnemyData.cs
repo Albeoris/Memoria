@@ -1,21 +1,22 @@
 using System;
 using UnityEngine;
+using Memoria.Prime;
 
 public class EnemyData : MonoBehaviour
 {
 	private void Awake()
 	{
-		this.Load();
+		Load();
 		EnemyData.Main = this;
 	}
 
 	private void Load()
 	{
-		Byte[] stageData = AssetManager.LoadBytes(this.stageDataPath);
+		Byte[] stageData = AssetManager.LoadBytes(stageDataPath);
 		Int32 miniGameArg = FF9StateSystem.Common.FF9.miniGameArg;
-		this.cardLevel = stageData[miniGameArg * 2];
-		this.Wise = stageData[miniGameArg * 2 + 1];
-		this.enemyData = AssetManager.LoadBytes(this.cardLevelDataPath);
+		cardLevel = stageData[miniGameArg * 2];
+		Wise = stageData[miniGameArg * 2 + 1];
+		enemyData = AssetManager.LoadBytes(cardLevelDataPath);
 	}
 
 	public Int32 GetCardID()
@@ -23,14 +24,14 @@ public class EnemyData : MonoBehaviour
 		Int32 rnd = UnityEngine.Random.Range(0, 256);
 		Int32 cardIndex = 15;
 		
-		for (Int32 i = this.probability.Length - 1; i >= 0; i--)
+		for (Int32 i = probability.Length - 1; i >= 0; i--)
 		{
-			if (rnd >= this.probability[i])
+			if (rnd >= probability[i])
 				break;
 			
 			cardIndex = i;
 		}
-		return this.enemyData[this.cardLevel * 16 + cardIndex];
+		return enemyData[cardLevel * 16 + cardIndex];
 	}
 
 	public void Initialize(Hand hand)
@@ -38,7 +39,7 @@ public class EnemyData : MonoBehaviour
 		hand.Clear();
 		for (Int32 i = 0; i < 5; i++)
 		{
-			QuadMistCard quadMistCard = CardPool.CreateQuadMistCard(this.GetCardID());
+			QuadMistCard quadMistCard = CardPool.CreateQuadMistCard(GetCardID());
 			quadMistCard.side = 1;
 			hand.Add(quadMistCard);
 		}

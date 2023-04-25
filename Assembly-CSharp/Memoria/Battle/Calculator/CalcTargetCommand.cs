@@ -21,7 +21,7 @@ namespace Memoria
 
         public Boolean CanUseCommandForFlight()
         {
-            if (_target.IsLevitate && _command.IsGround)
+            if ((_target.IsLevitate && _command.IsGround) || (_target.MagicDefence == 255 && Configuration.Mod.TranceSeek))
             {
                 _context.Flags |= BattleCalcFlags.Miss;
                 return false;
@@ -39,15 +39,21 @@ namespace Memoria
             _target.TryAlterStatuses(status, true);
         }
 
-        public void TryRemoveAbilityStatuses()
+        public void TryAlterCommandStatusesTranceSeek(byte casterwill = 0)
         {
-            if (!_target.TryRemoveStatuses(_command.AbilityStatus))
+            BattleStatus status = _command.AbilityStatus;
+            _target.TryAlterStatuses(status, true, false, casterwill);
+        }
+
+        public void TryRemoveAbilityStatuses(Boolean CureOld = false)
+        {
+            if (!_target.TryRemoveStatuses(_command.AbilityStatus) && !CureOld)
                 _context.Flags |= BattleCalcFlags.Miss;
         }
 
-        public void TryRemoveItemStatuses()
+        public void TryRemoveItemStatuses(Boolean CureOld = false)
         {
-            if (!_target.TryRemoveStatuses(_command.ItemStatus))
+            if (!_target.TryRemoveStatuses(_command.ItemStatus) && !CureOld)
                 _context.Flags |= BattleCalcFlags.Miss;
         }
 

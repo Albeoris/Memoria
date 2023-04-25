@@ -21,7 +21,8 @@ namespace Memoria.Assets
             {"[FRYA]", "{Fraya}"},
             {"[QUIN]", "{Quina}"},
             {"[EIKO]", "{Eiko}"},
-            {"[AMRT]", "{Amarant}"}
+            {"[AMRT]", "{Amarant}"},
+            {"[BTRX]", "{Beatrix}"}
         }.ToArray();
 
         private static readonly TextReplacements ValueTextTags = new TextReplacements
@@ -34,6 +35,7 @@ namespace Memoria.Assets
             {"[QUIN]", "{Quina}"},
             {"[EIKO]", "{Eiko}"},
             {"[AMRT]", "{Amarant}"},
+            {"[BTRX]", "{Beatrix}"},
             {"[FLIM]", "{Flash}"},
             {"[MOVE=18,0]", "{Tab}"},
             {"[C8C8C8][HSHD]", "{White}"},

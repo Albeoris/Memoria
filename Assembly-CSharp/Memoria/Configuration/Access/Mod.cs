@@ -9,6 +9,7 @@ namespace Memoria
             public static String[] FolderNames => Instance._mod.FolderNames;
             public static String[] Priorities => Instance._mod.Priorities;
             public static Int32 GenerateFileList => Instance._mod.GenerateFileList;
+            public static Boolean TranceSeek => Instance._mod.TranceSeek;
             public static String[] AllFolderNames
             {
                 get

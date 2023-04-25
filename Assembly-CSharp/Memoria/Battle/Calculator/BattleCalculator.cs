@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
 using Assets.Sources.Scripts.UI.Common;
+using System.Runtime.Remoting.Contexts;
 
 namespace Memoria
 {
@@ -66,7 +68,6 @@ namespace Memoria
         public static Boolean IsFriendlyBattle => ff9.w_friendlyBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);
         public static Boolean IsRagtimeBattle => ff9.w_ragtimeBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);
         public static BattleCommand EscapeCommand => new BattleCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape);
-
         public static Int32 TargetCount(Boolean isPlayer)
         {
             return (Int32)btl_util.SumOfTarget(isPlayer ? 1u : 0u);
@@ -348,7 +349,7 @@ namespace Memoria
             Target.PenaltyPhysicalEvade();
             Target.PenaltyDefenceHitRate();
             Target.PenaltyBanishHitRate();
-            if (Target.IsUnderAnyStatus(BattleStatus.Float))
+            if (Target.IsUnderAnyStatus(BattleStatus.Float) && !Configuration.Mod.TranceSeek)
                 Context.Evade += (Int16)Configuration.Battle.FloatEvadeBonus;
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
@@ -356,12 +357,15 @@ namespace Memoria
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", true);
 
-            if (Context.HitRate <= Comn.random16() % 100)
+            if (Caster.HasSupportAbility(SupportAbility1.Healer) && Target.IsPlayer && Configuration.Mod.TranceSeek)
             {
-                Context.Flags |= BattleCalcFlags.Miss;
+                return true;
+            }
+            else if (Context.HitRate <= Comn.random16() % 100 || ((Target.PhisicalEvade == 255) && Configuration.Mod.TranceSeek))
+            {
+                this.Context.Flags |= BattleCalcFlags.Miss;
                 return false;
             }
-
             if (Target.Data == Caster.Data || Context.Evade <= Comn.random16() % 100)
                 return true;
 
@@ -381,6 +385,21 @@ namespace Memoria
 
             if (Command.HitRate > Comn.random16() % 100)
                 Target.TryAlterStatuses(Command.AbilityStatus, false);
+        }
+
+        public void TryAlterMagicStatusesTranceSeek(byte casterwill = 0)
+        {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", true);
+
+            if (Target.IsUnderAnyStatus(Command.AbilityStatus))
+            {
+                return;
+            }
+            if (Command.HitRate > Comn.random16() % 100)
+                Target.TryAlterStatuses(Command.AbilityStatus, false, false, casterwill);
         }
 
         public Boolean TryMagicHit()
@@ -417,10 +436,21 @@ namespace Memoria
         public void CalcDamageCommon()
         {
             Target.Flags |= CalcFlag.HpAlteration;
+            if (Configuration.Mod.TranceSeek && Target.IsZombie && (Command.AbilityId == BattleAbilityId.Poison || Command.AbilityId == BattleAbilityId.Bio || Command.AbilityId == BattleAbilityId.BioSword || Command.AbilityId == BattleAbilityId.None5))
+            {
+                Target.Flags |= CalcFlag.HpRecovery;
+            }
             if (Context.IsAbsorb)
             {
                 Target.Flags |= CalcFlag.HpRecovery;
-                Context.DefensePower = 0;
+                if (!Configuration.Mod.TranceSeek)
+                    Context.DefensePower = 0;
+            }
+            // Originally I wanted to reduce the character's strength and magic permanently but it doesn't work very well in the AbilityFeature...
+            // I'm doing this for the moment.
+            if (Configuration.Mod.TranceSeek && Caster.HasSupportAbility(SupportAbility1.GambleDefence) && Caster.IsPlayer)
+            { 
+                Context.Attack -= Context.Attack / 4; 
             }
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
@@ -431,6 +461,10 @@ namespace Memoria
 
         public void CalcPhysicalHpDamage()
         {
+            if (!Target.IsZombie && Caster.IsHealingRod && Configuration.Mod.TranceSeek)
+            {
+                Target.Flags |= CalcFlag.HpRecovery;
+            }
             CalcDamageCommon();
 
             Target.HpDamage = Context.EnsureAttack * Context.EnsurePowerDifference;
@@ -471,7 +505,8 @@ namespace Memoria
 
             if (Context.Attack > 100)
                 Context.Attack = 100;
-            Int32 damage = (Int32)Target.MaximumHp * Context.Attack / 100;
+
+            Int32 damage = (Int32)(Configuration.Mod.TranceSeek ? Target.CurrentHp : Target.MaximumHp) * Context.Attack / 100;
             if (Command.IsShortSummon)
                 damage = damage * 2 / 3;
 
@@ -544,7 +579,8 @@ namespace Memoria
         {
             // Dummied
             BonusKillerAbilities();
-            BonusMpAttack();
+            if (!Configuration.Mod.TranceSeek)
+                BonusMpAttack();
         }
 
         public void BonusBackstabAndPenaltyLongDistance()
@@ -556,6 +592,50 @@ namespace Memoria
             // LONG_RANGE is used for this penalty while SHORT_RANGE is used both for that and for "out of range" enemies
             if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange)
                 Context.Attack /= 2;
+        }
+
+        public void BonusBackstabAndPenaltyLongDistanceTranceSeek()
+        {
+            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
+            if (IsCasterSameDirectionTarget() || Target.IsRunningAway())
+                Context.Attack = Context.Attack * 3 >> 1;
+
+            bool flag = false;
+            if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange && Caster.IsPlayer)
+            {
+                Context.Attack /= 2;
+                return;
+            }
+            using (IEnumerator<BattleUnit> enumerator = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    if (enumerator.Current.IsPlayer)
+                    {
+                        int index = Target.GetIndex();
+                        if (index < 3)
+                        {
+                            BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(index + 1);
+                            if (Mathf.Abs(Caster.Row - unit.Row) <= 1 && !unit.IsUnderStatus(NoReaction))
+                            {
+                                flag = true;
+                            }
+                        }
+                        if (index > 0)
+                        {
+                            BattleUnit unit2 = FF9StateSystem.Battle.FF9Battle.GetUnit(index - 1);
+                            if (Mathf.Abs(Caster.Row - unit2.Row) <= 1 && !unit2.IsUnderStatus(NoReaction))
+                            {
+                                flag = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (flag)
+            {
+                Context.Attack /= 2;
+            }
         }
 
         public void BonusBackstabAndPenaltyLongDistanceAsDamageModifiers()
@@ -570,7 +650,7 @@ namespace Memoria
         public void PenaltyReverseAttack()
         {
             // Ipsen's Castle
-            if (!FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack)
+            if (!FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack || (!Caster.IsPlayer && Configuration.Mod.TranceSeek))
                 return;
 
             Context.AttackPower = 60 - Context.AttackPower;
@@ -587,6 +667,22 @@ namespace Memoria
                 Target.HpDamage *= 2; // In case TryCriticalHit is called after "Calc...HpDamage"
                 Target.MpDamage *= 2;
                 Target.Flags |= CalcFlag.Critical;
+                Context.IsCritical = true;
+            }
+        }
+
+        public void TryCriticalHitDragon()
+        {
+            BTL_DATA unit = Target.Data;
+            Int32 quarterWill = Caster.Data.elem.wpr >> 2;
+            if (((quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.Data.critical_rate_deal_bonus + Target.Data.critical_rate_receive_bonus > Comn.random16() % 100)) || (unit.luna))
+            {
+                Context.Attack *= 2; // In case TryCriticalHit is called before "Calc...HpDamage"
+                Target.HpDamage *= 2; // In case TryCriticalHit is called after "Calc...HpDamage"
+                Target.MpDamage *= 2;
+                Target.Flags |= CalcFlag.Critical;
+                Context.IsCritical = true;
+                unit.luna = false;
             }
         }
 

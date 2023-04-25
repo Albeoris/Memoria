@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public class CardDisplay : MonoBehaviour
@@ -7,7 +8,14 @@ public class CardDisplay : MonoBehaviour
 	{
 		set
 		{
-			this.status.Text = value;
+			status.Text = value;
+			if (Configuration.Mod.TranceSeek || Configuration.TetraMaster.TripleTriad > 0)
+			{
+                status.letters[0].transform.localPosition = new Vector3(0.05f, -0.05f, -0.02f);
+                status.letters[1].transform.localPosition = new Vector3(0.05f, -0.19f, -0.02f);
+                status.letters[2].transform.localPosition = new Vector3(0.02f, -0.12f, -0.02f);
+                status.letters[3].transform.localPosition = new Vector3(0.08f, -0.12f, -0.02f);
+            }
 		}
 	}
 
@@ -15,19 +23,19 @@ public class CardDisplay : MonoBehaviour
 	{
 		get
 		{
-			return this.character.ID;
+			return character.ID;
 		}
 		set
 		{
 			if (value < 100)
 			{
-				this.character.ID = value;
-				this.block.gameObject.SetActive(false);
+				character.ID = value;
+				block.gameObject.SetActive(false);
 			}
 			else
 			{
-				this.block.ID = value - 100;
-				this.block.gameObject.SetActive(true);
+				block.ID = value - 100;
+				block.gameObject.SetActive(true);
 			}
 		}
 	}
@@ -36,22 +44,22 @@ public class CardDisplay : MonoBehaviour
 	{
 		get
 		{
-			if (this.background != (UnityEngine.Object)null)
+			if (background != null)
 			{
-				return this.background.ID;
+				return background.ID;
 			}
 			return 0;
 		}
 		set
 		{
 			value = Mathf.Max(0, Mathf.Min(value, 1));
-			if (this.background != (UnityEngine.Object)null)
+			if (background != null)
 			{
-				this.background.ID = value;
-			}
-			if (this.frame != (UnityEngine.Object)null)
-			{
-				this.frame.ID = value + 5;
+				background.ID = value;
+            }
+			if (frame != null)
+            {
+				frame.ID = value + 5;
 			}
 		}
 	}
@@ -60,11 +68,11 @@ public class CardDisplay : MonoBehaviour
 	{
 		get
 		{
-			return this.flip.gameObject.activeSelf;
+			return flip.gameObject.activeSelf;
 		}
 		set
 		{
-			this.flip.gameObject.SetActive(value);
+			flip.gameObject.SetActive(value);
 		}
 	}
 
@@ -75,12 +83,12 @@ public class CardDisplay : MonoBehaviour
 			if (value)
 			{
 				base.transform.localScale = new Vector3(QuadMistCardUI.SIZESMALL_W / QuadMistCardUI.SIZE_W, QuadMistCardUI.SIZESMALL_H / QuadMistCardUI.SIZE_H, 1f);
-				this.status.transform.localPosition = CardDisplay.STATUS_SMALL;
+                status.transform.localPosition = CardDisplay.STATUS_SMALL;
 			}
 			else
 			{
 				base.transform.localScale = Vector3.one;
-				this.status.transform.localPosition = CardDisplay.STATUS;
+				status.transform.localPosition = CardDisplay.STATUS;
 			}
 		}
 	}
@@ -89,11 +97,11 @@ public class CardDisplay : MonoBehaviour
 	{
 		get
 		{
-			return this.select.gameObject.activeSelf;
+			return select.gameObject.activeSelf;
 		}
 		set
 		{
-			this.select.gameObject.SetActive(value);
+			select.gameObject.SetActive(value);
 		}
 	}
 
@@ -101,13 +109,13 @@ public class CardDisplay : MonoBehaviour
 	{
 		get
 		{
-			return this.block.gameObject.activeSelf;
+			return block.gameObject.activeSelf;
 		}
 	}
 
 	public Boolean Contains(Vector3 worldPoint)
 	{
-		return this.background.GetComponent<SpriteClickable>().Contains(worldPoint);
+		return background.GetComponent<SpriteClickable>().Contains(worldPoint);
 	}
 
 	public static Vector3 STATUS = new Vector3(0f, 0.02f, -0.02f);

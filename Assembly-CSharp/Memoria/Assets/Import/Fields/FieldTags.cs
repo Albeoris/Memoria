@@ -27,6 +27,7 @@ namespace Memoria.Assets
                 {"[QUIN]", "{Quina}"},
                 {"[EIKO]", "{Eiko}"},
                 {"[AMRT]", "{Amarant}"},
+                {"[BTRX]", "{Beatrix}"},
                 {"[IMME]", "{Instantly}"},
                 {"[FLIM]", "{Flash}"},
                 {"[NFOC]", "{NoFocus}"},

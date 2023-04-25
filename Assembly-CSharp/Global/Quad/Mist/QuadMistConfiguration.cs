@@ -9,16 +9,16 @@ public class QuadMistConfiguration : MonoBehaviour
 
 	private void Update()
 	{
-		QuadMistConfiguration.s_dummyRatioX = this.dummyRatioX;
-		QuadMistConfiguration.s_dummyRatioY = this.dummyRatioY;
-		QuadMistConfiguration.s_dummyOffsetX = this.dummyOffsetX;
-		QuadMistConfiguration.s_dummyOffsetY = this.dummyOffsetY;
-		QuadMistConfiguration.s_initPositionX = this.initPositionX;
-		QuadMistConfiguration.s_initPositionY = this.initPositionY;
-		QuadMistConfiguration.s_destPositionX = this.destPositionX;
-		QuadMistConfiguration.s_destPositionY = this.destPositionY;
-		QuadMistConfiguration.s_pivotCode = this.pivotCode;
-		QuadMistConfiguration.s_cardName = this.cardName;
+		QuadMistConfiguration.s_dummyRatioX = dummyRatioX;
+		QuadMistConfiguration.s_dummyRatioY = dummyRatioY;
+		QuadMistConfiguration.s_dummyOffsetX = dummyOffsetX;
+		QuadMistConfiguration.s_dummyOffsetY = dummyOffsetY;
+		QuadMistConfiguration.s_initPositionX = initPositionX;
+		QuadMistConfiguration.s_initPositionY = initPositionY;
+		QuadMistConfiguration.s_destPositionX = destPositionX;
+		QuadMistConfiguration.s_destPositionY = destPositionY;
+		QuadMistConfiguration.s_pivotCode = pivotCode;
+		QuadMistConfiguration.s_cardName = cardName;
 	}
 
 	public Single dummyRatioX;

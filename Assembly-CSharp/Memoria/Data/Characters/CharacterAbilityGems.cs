@@ -6,6 +6,7 @@ using NCalc;
 using Memoria.Prime.CSV;
 using System.Runtime.InteropServices;
 using UnityEngine.Networking.Types;
+using Memoria.Prime;
 //using System.Linq.Expressions;
 
 namespace Memoria.Data
@@ -220,7 +221,7 @@ namespace Memoria.Data
         }
 
         public void GetStatusInitQuietly(BattleUnit unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb)
-		{
+        {
             permanent = initial = resist = 0;
             atb = -1;
             for (Int32 i = 0; i < StatusEffect.Count; i++)
@@ -244,9 +245,10 @@ namespace Memoria.Data
 
         public void TriggerOnAbility(BattleCalculator calc, String when, Boolean asTarget)
         {
+            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
             if (Id >= 0 && calc.Context.DisabledSA.Contains(Id))
                 return;
-            Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatus.NoReaction) : !calc.Caster.IsUnderAnyStatus(BattleStatus.NoReaction);
+            Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(NoReaction) : !calc.Caster.IsUnderAnyStatus(NoReaction);
             for (Int32 i = 0; i < AbilityEffect.Count; i++)
                 if (AbilityEffect[i].AsTarget == asTarget && (canMove || AbilityEffect[i].EvenImmobilized) && String.Compare(AbilityEffect[i].When, when) == 0)
                 {
@@ -364,7 +366,7 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "ItemSteal") == 0) context.ItemSteal = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)context.ItemSteal);
                         else if (String.Compare(formula.Key, "Gil") == 0) GameState.Gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), GameState.Gil);
                         else if (String.Compare(formula.Key, "Counter") == 0)
-						{
+                        {
                             Int32 attackId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), 176);
                             if (asTarget)
                                 btl_cmd.SetCounter(target.Data, BattleCommandId.Counter, attackId, caster.Id);
@@ -417,7 +419,8 @@ namespace Memoria.Data
 
         public void TriggerOnCommand(BattleUnit abilityUser, BattleCommand command, ref UInt16 tryCover)
         {
-            Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatus.NoReaction);
+            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
+            Boolean canMove = !abilityUser.IsUnderAnyStatus(NoReaction);
             BattleUnit caster = null;
             BattleUnit target = null;
             for (Int32 i = 0; i < CommandEffect.Count; i++)
@@ -574,7 +577,7 @@ namespace Memoria.Data
                                     newEffect.ResistStatus |= stat;
                             }
                         }
-					}
+                    }
                     StatusEffect.Add(newEffect);
                 }
                 else if (String.Compare(saCode, "Ability") == 0)

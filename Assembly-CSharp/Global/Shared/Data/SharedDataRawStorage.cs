@@ -78,8 +78,8 @@ public class SharedDataRawStorage : SharedDataBytesStorage
 		Int32 num2 = 2937152;
 		if (num == num2)
 		{
-			onFinishDelegate(true, num2);
-		}
+			onFinishDelegate(true, num2); // TranceSeekSave => Always true, no size checking
+        }
 		else
 		{
 			onFinishDelegate(false, 0);
