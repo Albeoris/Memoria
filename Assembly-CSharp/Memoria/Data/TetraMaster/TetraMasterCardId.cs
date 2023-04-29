@@ -2,7 +2,7 @@ using System;
 
 namespace Memoria.Data
 {
-    public enum TripleTriadId : int
+    public enum TetraMasterCardId : int
     {
         Goblin = 0,
         Fang = 1,
@@ -103,6 +103,7 @@ namespace Memoria.Data
         Gargant = 96,
         Namingway = 97,
         Boco = 98,
-        Airship = 99
+        Airship = 99,
+        NONE = 255
     }
 }

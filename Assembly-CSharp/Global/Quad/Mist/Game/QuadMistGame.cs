@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -89,7 +90,7 @@ public class QuadMistGame : MonoBehaviour
         {
             score.PlayerScore = value;
             playerScore = value;
-            if (Configuration.TetraMaster.TripleTriad > 1)
+            if (Board.USE_SMALL_BOARD)
                 score.player.transform.localPosition = new Vector3(2.75f, -2f, -2f);
         }
     }
@@ -101,7 +102,7 @@ public class QuadMistGame : MonoBehaviour
         {
             score.EnemyScore = value;
             enemyScore = value;
-            if (Configuration.TetraMaster.TripleTriad > 1)
+            if (Board.USE_SMALL_BOARD)
                 score.enemy.transform.localPosition = new Vector3(0.3f, -2f, -8f);
         }
     }
@@ -188,14 +189,14 @@ public class QuadMistGame : MonoBehaviour
             }
             SpriteRenderer component = CardNameToggleButton.GetComponent<SpriteRenderer>();
             if (component != null)
-                component.sprite = !CardNameDialogSlider.IsShowCardName ? CardNameToggleButtonRenderer.sprite : CardNameToggleButtonRendererHilight.sprite;
+                component.sprite = CardNameDialogSlider.IsShowCardName ? CardNameToggleButtonRendererHilight.sprite : CardNameToggleButtonRenderer.sprite;
         }
         SceneDirector.ServiceFade();
     }
 
     private Boolean ShouldShowTutorial()
     {
-        return QuadMistDatabase.GetWinCount() == 0 && QuadMistDatabase.GetLoseCount() == 0 && QuadMistDatabase.GetDrawCount() == 0;
+        return QuadMistDatabase.WinCount == 0 && QuadMistDatabase.LoseCount == 0 && QuadMistDatabase.DrawCount == 0 && Configuration.TetraMaster.TripleTriad <= 1;
     }
 
     private void onFinishTutorial01()
@@ -229,9 +230,9 @@ public class QuadMistGame : MonoBehaviour
                 preBoard.collection.CreateCards();
                 preBoard.UpdateCollection(-1);
                 preBoard.SetPreviewCardID(0);
-                winScore.text = String.Empty + QuadMistDatabase.GetWinCount();
-                loseScore.text = String.Empty + QuadMistDatabase.GetLoseCount();
-                drawScore.text = String.Empty + QuadMistDatabase.GetDrawCount();
+                winScore.text = QuadMistDatabase.WinCount.ToString();
+                loseScore.text = QuadMistDatabase.LoseCount.ToString();
+                drawScore.text = QuadMistDatabase.DrawCount.ToString();
                 Int32 totalCount = 0;
                 Int32 typeCount = 0;
                 foreach (List<QuadMistCard> card in preBoard.collection.cards)
@@ -288,21 +289,21 @@ public class QuadMistGame : MonoBehaviour
         switch (StartState)
         {
             case START_STATE.SETUP:
-                Int32 num = Random.Range(0, 100);
-                numberOfBlocks = num < 0 || num >= 3 ? (num < 3 || num >= 7 ? (num < 7 || num >= 12 ? (num < 12 || num >= 17 ? (num < 17 || num >= 27 ? (num < 27 || num >= 97 ? 6 : 5) : 4) : 3) : 2) : 1) : 0;
+                Int32 rnd = Random.Range(0, 100);
+                numberOfBlocks = rnd < 0 || rnd >= 3 ? (rnd < 3 || rnd >= 7 ? (rnd < 7 || rnd >= 12 ? (rnd < 12 || rnd >= 17 ? (rnd < 17 || rnd >= 27 ? (rnd < 27 || rnd >= 97 ? 6 : 5) : 4) : 3) : 2) : 1) : 0;
                 EnemyData.Setup(enemyHand);
                 if (StackCardCount != 0)
                     EnemyData.RestorePlayerLostCard(enemyHand, Random.Range(0, 4), StackCardInfo);
                 enemyHand.HideCardCursor();
                 matchCards = new QuadMistCard[10];
-                for (Int32 index = 0; index < matchCards.Length; ++index)
-                    matchCards[index] = index >= 5 ? enemyHand[index - 5] : playerHand[index];
+                for (Int32 i = 0; i < matchCards.Length; ++i)
+                    matchCards[i] = i >= 5 ? enemyHand[i - 5] : playerHand[i];
                 UpdateScore();
                 board.Clear();
                 playGame.gameObject.SetActive(true);
                 ++StartState;
-                PlayerScore = (Configuration.TetraMaster.TripleTriad < 2) ? 0 : playerHand.Count;
-                EnemyScore = (Configuration.TetraMaster.TripleTriad < 2) ? 0 : enemyHand.Count;
+                PlayerScore = (Configuration.TetraMaster.TripleTriad <= 1) ? 0 : playerHand.Count;
+                EnemyScore = (Configuration.TetraMaster.TripleTriad <= 1) ? 0 : enemyHand.Count;
                 break;
             case START_STATE.SETUP_BOARD:
                 AnimCoroutine(Anim.Enable(board.gameObject), board.FadeInBoard());
@@ -310,7 +311,7 @@ public class QuadMistGame : MonoBehaviour
                 break;
             case START_STATE.SETUP_FIELD:
                 enemyHand.State = Hand.STATE.ENEMY_SHOW;
-                if (Configuration.TetraMaster.TripleTriad < 2)
+                if (Configuration.TetraMaster.TripleTriad <= 1)
                     AnimCoroutine(board.ScaleInBlocks(numberOfBlocks));
                 ++StartState;
                 break;
@@ -341,7 +342,7 @@ public class QuadMistGame : MonoBehaviour
     private void PlayGame()
     {
         if (PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
-            return; 
+            return;
         if (UIManager.Input.GetKeyTrigger(Control.RightBumper) && CardNameDialogSlider.IsReady)
         {
             CardNameDialogSlider.IsShowCardName = !CardNameDialogSlider.IsShowCardName;
@@ -354,7 +355,7 @@ public class QuadMistGame : MonoBehaviour
         switch (PlayState)
         {
             case PLAY_STATE.INPUT_PLAYER:
-                if (playerTurnCount == 0 && !hasShowTutorial02 && (InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial()) && Configuration.TetraMaster.TripleTriad < 2)
+                if (playerTurnCount == 0 && !hasShowTutorial02 && InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial())
                 {
                     TutorialUI tutorialScene = PersistenSingleton<UIManager>.Instance.TutorialScene;
                     tutorialScene.DisplayMode = TutorialUI.Mode.QuadMist;
@@ -365,7 +366,7 @@ public class QuadMistGame : MonoBehaviour
                     hasShowTutorial02 = true;
                     break;
                 }
-                if (playerTurnCount == 1 && !hasShowTutorial03 && (InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial()) && Configuration.TetraMaster.TripleTriad < 2)
+                if (playerTurnCount == 1 && !hasShowTutorial03 && InputState == INPUT_STATE.SELECT_CARD && ShouldShowTutorial())
                 {
                     TutorialUI tutorialScene = PersistenSingleton<UIManager>.Instance.TutorialScene;
                     tutorialScene.DisplayMode = TutorialUI.Mode.QuadMist;
@@ -390,14 +391,7 @@ public class QuadMistGame : MonoBehaviour
                 {
                     QuadMistCard attacker = _battleResult.attacker;
                     QuadMistCard defender = _battleResult.defender;
-                    if (Configuration.Mod.TranceSeek || (Configuration.TetraMaster.TripleTriad > 0))
-                    {
-                        _battleResult.calculation = CalculateTripleTriad(attacker, defender);
-                    }
-                    else
-                    {
-                        _battleResult.calculation = Calculate(attacker, defender);
-                    }
+                    _battleResult.calculation = Calculate(attacker, defender);
                     _battleResult.type = _battleResult.calculation.atkFinish <= _battleResult.calculation.defFinish ? BattleResult.Type.LOSE : BattleResult.Type.WIN;
                     if (_battleResult.type == BattleResult.Type.WIN)
                     {
@@ -411,7 +405,9 @@ public class QuadMistGame : MonoBehaviour
                     }
                 }
                 else
-                _battleResult.type = BattleResult.Type.NOTHING;
+                {
+                    _battleResult.type = BattleResult.Type.NOTHING;
+                }
                 _battleResult.beats = _beatableTargets;
                 AnimCoroutine(BattleAnimation(_battleResult));
                 PlayState = PLAY_STATE.ANIMATE_BATTLE;
@@ -429,7 +425,7 @@ public class QuadMistGame : MonoBehaviour
                 yourTurn = !yourTurn;
                 PlayState = !yourTurn ? PLAY_STATE.INPUT_ENEMY : PLAY_STATE.INPUT_PLAYER;
                 _battleResult.defender = null;
-                if ((Configuration.TetraMaster.TripleTriad > 1) && (enemyHand.Count == 0)) // Fix a minor issue when player starts (his last card placed on board automatically)
+                if (Configuration.TetraMaster.TripleTriad >= 2 && enemyHand.Count == 0) // Fix a minor issue when player starts (his last card placed on board automatically)
                 {
                     ++GameState;
                     playerHand.HideShadowCard();
@@ -445,7 +441,7 @@ public class QuadMistGame : MonoBehaviour
                 }
                 else
                     enemyHand.State = Hand.STATE.ENEMY_PLAY;
-                if (((Configuration.TetraMaster.TripleTriad < 2) && (EnemyScore + PlayerScore == 10)) || ((Configuration.TetraMaster.TripleTriad > 1) & (enemyHand.Count + playerHand.Count == 1)))
+                if (Configuration.TetraMaster.TripleTriad <= 1 ? EnemyScore + PlayerScore == 10 : enemyHand.Count + playerHand.Count == 1)
                     ++GameState;
                 playerHand.HideShadowCard();
                 break;
@@ -458,8 +454,9 @@ public class QuadMistGame : MonoBehaviour
         switch (EndState)
         {
             case END_STATE.RESULT:
-                matchResult = new MatchResult {perfect = PlayerScore == ((Configuration.TetraMaster.TripleTriad < 2) ? 10 : 9) || EnemyScore == ((Configuration.TetraMaster.TripleTriad < 2) ? 10 : 9) };
-                PostState = !matchResult.perfect ? POSTGAME_STATE.SELECT_CARD : POSTGAME_STATE.PERFECT_SELECT_CARD;
+                Int32 perfectScore = Configuration.TetraMaster.TripleTriad <= 1 ? 10 : 9;
+                matchResult = new MatchResult { perfect = PlayerScore == perfectScore || EnemyScore == perfectScore };
+                PostState = matchResult.perfect ? POSTGAME_STATE.PERFECT_SELECT_CARD : POSTGAME_STATE.SELECT_CARD;
                 if (PlayerScore > EnemyScore)
                 {
                     matchResult.type = MatchResult.Type.WIN;
@@ -475,7 +472,7 @@ public class QuadMistGame : MonoBehaviour
                                 matchResult.selectable.Add(index - 5);
                         }
                     }
-                    QuadMistDatabase.SetWinCount((Int16)(QuadMistDatabase.GetWinCount() + 1));
+                    QuadMistDatabase.WinCount++;
                 }
                 else if (EnemyScore > PlayerScore)
                 {
@@ -492,13 +489,13 @@ public class QuadMistGame : MonoBehaviour
                                 matchResult.selectable.Add(index);
                         }
                     }
-                    QuadMistDatabase.SetLoseCount((Int16)(QuadMistDatabase.GetLoseCount() + 1));
+                    QuadMistDatabase.LoseCount++;
                 }
                 else
                 {
                     matchResult.type = MatchResult.Type.DRAW;
                     PostState = POSTGAME_STATE.PRE_REMATCH;
-                    QuadMistDatabase.SetDrawCount((Int16)(QuadMistDatabase.GetDrawCount() + 1));
+                    QuadMistDatabase.DrawCount++;
                 }
                 if (matchResult.type == MatchResult.Type.WIN)
                     QuadMistDatabase.MiniGame_SetLastBattleResult(0);
@@ -587,13 +584,13 @@ public class QuadMistGame : MonoBehaviour
                 AnimCoroutine(ChangeCardToCenter(matchResult));
                 PostState = POSTGAME_STATE.CONFIRM;
                 QuadMistDatabase.Remove(matchResult.selectedCard);
-                QuadMistCard selectedCard1 = matchResult.selectedCard;
-                StackCardInfo.id = selectedCard1.id;
-                StackCardInfo.atk = selectedCard1.atk;
-                StackCardInfo.arrow = selectedCard1.arrow;
-                StackCardInfo.type = selectedCard1.type;
-                StackCardInfo.pdef = selectedCard1.pdef;
-                StackCardInfo.mdef = selectedCard1.mdef;
+                QuadMistCard lostCard = matchResult.selectedCard;
+                StackCardInfo.id = lostCard.id;
+                StackCardInfo.atk = lostCard.atk;
+                StackCardInfo.arrow = lostCard.arrow;
+                StackCardInfo.type = lostCard.type;
+                StackCardInfo.pdef = lostCard.pdef;
+                StackCardInfo.mdef = lostCard.mdef;
                 StackCardCount = 1;
                 break;
             case POSTGAME_STATE.PERFECT_SELECT_CARD:
@@ -617,13 +614,13 @@ public class QuadMistGame : MonoBehaviour
                     AnimCoroutine(ChangeCardToCenter2(matchResult));
                     PostState = POSTGAME_STATE.CONFIRM;
                     QuadMistDatabase.Remove(matchResult.selectedCard);
-                    QuadMistCard selectedCard2 = matchResult.selectedCard;
-                    StackCardInfo.id = selectedCard2.id;
-                    StackCardInfo.atk = selectedCard2.atk;
-                    StackCardInfo.arrow = selectedCard2.arrow;
-                    StackCardInfo.type = selectedCard2.type;
-                    StackCardInfo.pdef = selectedCard2.pdef;
-                    StackCardInfo.mdef = selectedCard2.mdef;
+                    QuadMistCard lostCardLoop = matchResult.selectedCard;
+                    StackCardInfo.id = lostCardLoop.id;
+                    StackCardInfo.atk = lostCardLoop.atk;
+                    StackCardInfo.arrow = lostCardLoop.arrow;
+                    StackCardInfo.type = lostCardLoop.type;
+                    StackCardInfo.pdef = lostCardLoop.pdef;
+                    StackCardInfo.mdef = lostCardLoop.mdef;
                     StackCardCount = 1;
                     break;
                 }
@@ -662,8 +659,8 @@ public class QuadMistGame : MonoBehaviour
     {
         PostState = POSTGAME_STATE.REMATCH_CONFIRM;
         ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
-        Boolean flag = FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == SByte.MaxValue;
-        if (!flag && choice == 0 || flag && choice == -1)
+        Boolean isTournamentMatch = FF9StateSystem.Common.FF9.miniGameArg == 124 || FF9StateSystem.Common.FF9.miniGameArg == 125 || FF9StateSystem.Common.FF9.miniGameArg == 126 || FF9StateSystem.Common.FF9.miniGameArg == 127;
+        if (!isTournamentMatch && choice == 0 || isTournamentMatch && choice == -1)
         {
             board.BoardCursor.ForceHide();
             RestoreCollection();
@@ -673,7 +670,9 @@ public class QuadMistGame : MonoBehaviour
             ClearStates();
         }
         else
+        {
             QuitQuadMist();
+        }
     }
 
     public void QuitQuadMist()
@@ -878,24 +877,16 @@ public class QuadMistGame : MonoBehaviour
             {
                 if (Configuration.TetraMaster.TripleTriad >= 2)
                 {
-                    TripleTriadCard baseCardAttacker = TripleTriad.TripleTriadCardStats[(TripleTriadId)inputResult.selectedCard.id];
-                    TripleTriadCard baseCardDefender = TripleTriad.TripleTriadCardStats[(TripleTriadId)adjacentTarget.id];
+                    TripleTriadCard baseCardAttacker = TripleTriad.TripleTriadCardStats[inputResult.selectedCard.id];
+                    TripleTriadCard baseCardDefender = TripleTriad.TripleTriadCardStats[adjacentTarget.id];
                     if (index == 0 && baseCardAttacker.atk > baseCardDefender.matk)
-                    {
                         _beatableTargets.Add(_adjacentTargets[index]);
-                    }
                     else if (index == 2 && baseCardAttacker.mdef > baseCardDefender.pdef)
-                    {
                         _beatableTargets.Add(_adjacentTargets[index]);
-                    }
                     else if (index == 4 && baseCardAttacker.matk > baseCardDefender.atk)
-                    {
                         _beatableTargets.Add(_adjacentTargets[index]);
-                    }
                     else if (index == 6 && baseCardAttacker.pdef > baseCardDefender.mdef)
-                    {
                         _beatableTargets.Add(_adjacentTargets[index]);
-                    }
                 }
                 else
                 {
@@ -905,7 +896,7 @@ public class QuadMistGame : MonoBehaviour
                         _selectableTargets.Add(_adjacentTargets[index]);
                     if (num == 1)
                         _beatableTargets.Add(_adjacentTargets[index]);
-                }    
+                }
             }
         }
     }
@@ -945,24 +936,26 @@ public class QuadMistGame : MonoBehaviour
 
     public void UpdateScore()
     {
-        Int32 num1 = 0;
-        Int32 num2 = 0;
+        Int32 playerBoardCnt = 0;
+        Int32 enemyBoardCnt = 0;
         for (Int32 index = 0; index < Board.SIZE_Y * Board.SIZE_X; ++index)
         {
             if (board[index] != null && !board[index].IsBlock)
             {
                 if (board[index].side == QuadMistCardUI.PLAYER_SIDE)
-                    ++num1;
+                    ++playerBoardCnt;
                 else
-                    ++num2;
+                    ++enemyBoardCnt;
             }
         }
-        PlayerScore = Configuration.TetraMaster.TripleTriad < 2 ? num1 : (playerHand.Count + num1);
-        EnemyScore = Configuration.TetraMaster.TripleTriad < 2 ? num2 : (enemyHand.Count + num2); ;
+        PlayerScore = Configuration.TetraMaster.TripleTriad <= 1 ? playerBoardCnt : playerHand.Count + playerBoardCnt;
+        EnemyScore = Configuration.TetraMaster.TripleTriad <= 1 ? enemyBoardCnt : enemyHand.Count + enemyBoardCnt;
     }
 
-    public BattleCalculation Calculate(QuadMistCard attacker, QuadMistCard defender)
+    public BattleCalculation Calculate(QuadMistCard attacker, QuadMistCard defender, Int32 boardX = -1, Int32 boardY = -1)
     {
+        if (Configuration.TetraMaster.TripleTriad > 0)
+            return CalculateTripleTriad(attacker, defender, boardX, boardY);
         BattleCalculation battleCalculation = new BattleCalculation();
         switch (attacker.type)
         {
@@ -1027,146 +1020,80 @@ public class QuadMistGame : MonoBehaviour
         return battleCalculation;
     }
 
-    public BattleCalculation CalculateTripleTriad(QuadMistCard attacker, QuadMistCard defender, int j = -1, int k = -1)
+    public BattleCalculation CalculateTripleTriad(QuadMistCard attacker, QuadMistCard defender, Int32 boardX = -1, Int32 boardY = -1)
     {
         BattleCalculation battleCalculation = new BattleCalculation();
-        TripleTriadCard baseCardAttacker = TripleTriad.TripleTriadCardStats[(TripleTriadId)attacker.id];
-        TripleTriadCard baseCardDefender = TripleTriad.TripleTriadCardStats[(TripleTriadId)defender.id];
-        Vector2 cardLocation = new Vector2(j, k);
-        if (j < 0 && k < 0)
-        {
-            cardLocation = board.GetCardLocation(attacker);
-        }
-        Vector2 cardLocation2 = board.GetCardLocation(defender);
-        Vector2 vector = cardLocation - cardLocation2;
-        if (vector.x == 0f && vector.y == 1f)
+        TripleTriadCard baseCardAttacker = TripleTriad.TripleTriadCardStats[attacker.id];
+        TripleTriadCard baseCardDefender = TripleTriad.TripleTriadCardStats[defender.id];
+        Vector2 attackerLocation = new Vector2(boardX, boardY);
+        if (boardX < 0 || boardY < 0)
+            attackerLocation = board.GetCardLocation(attacker);
+        Vector2 defenderLocation = board.GetCardLocation(defender);
+        Vector2 defToAtk = attackerLocation - defenderLocation;
+        if (defToAtk.x == 0f && defToAtk.y == 1f)
         {
             battleCalculation.atkStart = baseCardAttacker.atk;
             battleCalculation.defStart = baseCardDefender.matk;
         }
-        else if (vector.x == -1f && vector.y == 1f)
+        else if (defToAtk.x == -1f && defToAtk.y == 1f)
         {
-            if (((baseCardAttacker.atk + baseCardAttacker.mdef) / 2) % 1 == 0)
-            {
-                battleCalculation.atkStart = (baseCardAttacker.atk + baseCardAttacker.mdef) / 2;
-            }
-            else
-            {
-                battleCalculation.atkStart = (int)Random.Range((baseCardAttacker.atk + baseCardAttacker.mdef) / 2, (int)Math.Ceiling((decimal)((baseCardAttacker.atk + baseCardAttacker.mdef) / 2)) + 1);
-            }
-            if (((baseCardDefender.matk + baseCardDefender.pdef) / 2) % 1 == 0)
-            {
-                battleCalculation.defStart = (baseCardDefender.matk + baseCardDefender.pdef) / 2;
-            }
-            else
-            {
-                battleCalculation.defStart = (int)Random.Range((baseCardDefender.matk + baseCardDefender.pdef) / 2, (int)Math.Ceiling((decimal)((baseCardDefender.matk + baseCardDefender.pdef) / 2)) + 1);
-            }
-            
+            battleCalculation.atkStart = (baseCardAttacker.atk + baseCardAttacker.mdef) / 2;
+            battleCalculation.defStart = (baseCardDefender.matk + baseCardDefender.pdef) / 2;
         }
-        else if (vector.x == -1f && vector.y == 0f)
+        else if (defToAtk.x == -1f && defToAtk.y == 0f)
         {
             battleCalculation.atkStart = baseCardAttacker.mdef;
             battleCalculation.defStart = baseCardDefender.pdef;
         }
-        else if (vector.x == -1f && vector.y == -1f)
+        else if (defToAtk.x == -1f && defToAtk.y == -1f)
         {
-            if (((baseCardAttacker.matk + baseCardAttacker.mdef) / 2) % 1 == 0)
-            {
-                battleCalculation.atkStart = (baseCardAttacker.matk + baseCardAttacker.mdef) / 2;
-            }
-            else
-            {
-                battleCalculation.atkStart = (int)Random.Range((baseCardAttacker.matk + baseCardAttacker.mdef) / 2, (int)Math.Ceiling((decimal)((baseCardAttacker.matk + baseCardAttacker.mdef) / 2)) + 1);
-            }
-            if (((baseCardDefender.atk + baseCardDefender.pdef) / 2) % 1 == 0)
-            {
-                battleCalculation.defStart = (baseCardDefender.atk + baseCardDefender.pdef) / 2;
-            }
-            else
-            {
-                battleCalculation.defStart = (int)Random.Range((baseCardDefender.atk + baseCardDefender.pdef) / 2, (int)Math.Ceiling((decimal)((baseCardDefender.atk + baseCardDefender.pdef) / 2)) + 1);
-            }
+            battleCalculation.atkStart = (baseCardAttacker.matk + baseCardAttacker.mdef) / 2;
+            battleCalculation.defStart = (baseCardDefender.atk + baseCardDefender.pdef) / 2;
         }
-        else if (vector.x == 0f && vector.y == -1f)
+        else if (defToAtk.x == 0f && defToAtk.y == -1f)
         {
-
             battleCalculation.atkStart = baseCardAttacker.matk;
             battleCalculation.defStart = baseCardDefender.atk;
         }
-        else if (vector.x == 1f && vector.y == -1f)
+        else if (defToAtk.x == 1f && defToAtk.y == -1f)
         {
-            if (((baseCardAttacker.matk + baseCardDefender.pdef) / 2) % 1 == 0)
-            {
-                battleCalculation.atkStart = (baseCardAttacker.matk + baseCardAttacker.pdef) / 2;
-            }
-            else
-            {
-                battleCalculation.atkStart = (int)Random.Range(((baseCardAttacker.matk + baseCardAttacker.pdef) / 2), (int)Math.Ceiling((decimal)((baseCardAttacker.matk + baseCardAttacker.pdef) / 2)) + 1);
-            }
-            if (((baseCardDefender.atk + baseCardDefender.mdef) / 2) % 1 == 0)
-            {
-                battleCalculation.defStart = (baseCardDefender.atk + baseCardDefender.mdef) / 2;
-            }
-            else
-            {
-                battleCalculation.defStart = (int)Random.Range(((baseCardDefender.atk + baseCardDefender.mdef) / 2), (int)Math.Ceiling((decimal)((baseCardDefender.atk + baseCardDefender.mdef) / 2)) + 1);
-            }
-            
-           
+            battleCalculation.atkStart = (baseCardAttacker.matk + baseCardAttacker.pdef) / 2;
+            battleCalculation.defStart = (baseCardDefender.atk + baseCardDefender.mdef) / 2;
         }
-        else if (vector.x == 1f && vector.y == 0f)
+        else if (defToAtk.x == 1f && defToAtk.y == 0f)
         {
             battleCalculation.atkStart = baseCardAttacker.pdef;
             battleCalculation.defStart = baseCardDefender.mdef;
         }
         else
         {
-            if (((baseCardAttacker.atk + baseCardAttacker.pdef) / 2) % 1 == 0)
-            {
-                battleCalculation.atkStart = (baseCardAttacker.atk + baseCardAttacker.pdef) / 2;
-            }
-            else
-            {
-                battleCalculation.atkStart = (int)Random.Range(((baseCardAttacker.atk + baseCardAttacker.pdef) / 2), (int)Math.Ceiling((decimal)((baseCardAttacker.atk + baseCardAttacker.pdef) / 2)) + 1);
-            }
-            if (((baseCardDefender.matk + baseCardDefender.mdef) / 2) % 1 == 0)
-            {
-                battleCalculation.defStart = (baseCardDefender.matk + baseCardDefender.mdef) / 2;
-            }
-            else
-            {
-                battleCalculation.defStart = (int)Random.Range(((baseCardDefender.matk + baseCardDefender.mdef) / 2), (int)Math.Ceiling((decimal)((baseCardDefender.matk + baseCardDefender.mdef) / 2)) + 1);
-            }
-           
-           
+            battleCalculation.atkStart = (baseCardAttacker.atk + baseCardAttacker.pdef) / 2;
+            battleCalculation.defStart = (baseCardDefender.matk + baseCardDefender.mdef) / 2;
         }
- 
-            if (battleCalculation.atkStart == battleCalculation.defStart)
+
+        if (battleCalculation.atkStart == battleCalculation.defStart)
+        {
+            if ((GameRandom.Next16() % 2) == 0)
             {
-                if ((GameRandom.Next16() % 2) == 0)
-                {
-                    battleCalculation.atkFinish = 1;
-                    battleCalculation.defFinish = battleCalculation.atkStart - battleCalculation.defStart;
-
-                }
-                else
-                {
-                    battleCalculation.atkFinish = battleCalculation.atkStart - battleCalculation.defStart;
-                    battleCalculation.defFinish = 1;
-                }
-                return battleCalculation;
-
+                battleCalculation.atkFinish = 1;
+                battleCalculation.defFinish = battleCalculation.atkStart - battleCalculation.defStart;
             }
-        
-        if (battleCalculation.atkStart > battleCalculation.defStart)
+            else
+            {
+                battleCalculation.atkFinish = battleCalculation.atkStart - battleCalculation.defStart;
+                battleCalculation.defFinish = 1;
+            }
+        }
+        else if (battleCalculation.atkStart > battleCalculation.defStart)
         {
             battleCalculation.atkFinish = battleCalculation.atkStart - battleCalculation.defStart;
             battleCalculation.defFinish = 0;
-            return battleCalculation;
         }
-        battleCalculation.atkFinish = 0;
-        battleCalculation.defFinish = battleCalculation.defStart - battleCalculation.atkStart;
+        else
+        {
+            battleCalculation.atkFinish = 0;
+            battleCalculation.defFinish = battleCalculation.defStart - battleCalculation.atkStart;
+        }
         return battleCalculation;
     }
 
@@ -1273,7 +1200,7 @@ public class QuadMistGame : MonoBehaviour
             playerHand.Select = -1;
         }
         StartCoroutine(RestoreCards(result));
-       
+
         yield return StartCoroutine(Anim.MoveLerp(movedCard.transform, transform.TransformPoint(new Vector3(1.6f - movedCard.Size.x / 2f, -1.12f + movedCard.Size.y / 2f, -1f)), Anim.TickToTime(20), false));
 
         if (collection.GetCardsWithID(movedCard.Data.id).Count == 0)
@@ -1298,7 +1225,7 @@ public class QuadMistGame : MonoBehaviour
         }
         if (resultTypeText != String.Empty)
         {
-            String monsterName = Assets.Sources.Scripts.UI.Common.FF9TextTool.CardName(result.selectedCard.id);
+            String monsterName = FF9TextTool.CardName((Int32)result.selectedCard.id);
             resultTypeText = resultTypeText.Replace("[CARD]", monsterName);
         }
         QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), resultTypeText);
@@ -1330,7 +1257,7 @@ public class QuadMistGame : MonoBehaviour
             playerHand.Remove(selected);
             SoundEffect.Play(QuadMistSoundID.MINI_SE_WINDOW);
         }
-        
+
         yield return StartCoroutine(Anim.MoveLerp(movedCard.transform, transform.TransformPoint(new Vector3(1.6f - movedCard.Size.x / 2f, -1.12f + movedCard.Size.y / 2f, -1f)), Anim.TickToTime(20), false));
 
         if (collection.GetCardsWithID(movedCard.Data.id).Count == 0)
@@ -1356,7 +1283,7 @@ public class QuadMistGame : MonoBehaviour
         }
         if (resultTypeText != String.Empty)
         {
-            String monsterName = Assets.Sources.Scripts.UI.Common.FF9TextTool.CardName(result.selectedCard.id);
+            String monsterName = FF9TextTool.CardName((Int32)result.selectedCard.id);
             resultTypeText = resultTypeText.Replace("[CARD]", monsterName);
         }
         QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), resultTypeText);
@@ -1365,31 +1292,18 @@ public class QuadMistGame : MonoBehaviour
     [DebuggerHidden]
     private IEnumerator RestoreCards(MatchResult result)
     {
-        Action<QuadMistCardUI> functor0 = c =>
+        Action<QuadMistCardUI> swapToPlayer = c =>
         {
-            c.Side = 0;
-            if (result.type == MatchResult.Type.WIN)
-            {
-                if (!Configuration.Mod.TranceSeek && (Configuration.TetraMaster.TripleTriad == 0))
-                    c.Data.LevelUpInMatch();
-            }
+            c.Side = QuadMistCardUI.PLAYER_SIDE;
+            if (Configuration.TetraMaster.TripleTriad == 0 && result.type == MatchResult.Type.WIN)
+                c.Data.LevelUpInMatch();
         };
+        Action<QuadMistCardUI> swapToEnemy = c => c.Side = QuadMistCardUI.ENEMY_SIDE;
 
-        Action<QuadMistCardUI> functor1 = c => c.Side = 1;
-        Int32 index = 0;
-        while (index < playerHand.Count)
-        {
-            QuadMistCardUI cardUi = playerHand.GetCardUI(index);
-            StartCoroutine(cardUi.FlashNormal(functor0));
-            index++;
-        }
-        Int32 index2 = 0;
-        while (index2 < enemyHand.Count)
-        {
-            QuadMistCardUI cardUi = enemyHand.GetCardUI(index2);
-            StartCoroutine(cardUi.FlashNormal(functor1));
-            index2++;
-        }
+        for (Int32 i = 0; i < playerHand.Count; i++)
+            StartCoroutine(playerHand.GetCardUI(i).FlashNormal(swapToPlayer));
+        for (Int32 i = 0; i < enemyHand.Count; i++)
+            StartCoroutine(enemyHand.GetCardUI(i).FlashNormal(swapToEnemy));
         yield return StartCoroutine(Anim.Tick(CardEffect.FLASH_TICK_DURATION));
     }
 

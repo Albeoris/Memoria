@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria;
+using FF9;
+using Memoria.Data;
 
 public static class FF9Snd
 {
@@ -590,450 +591,450 @@ public static class FF9Snd
 			switch (num)
 			{
 				case FF9SOUND_SONG_PLAY: // 0
-					{
-						SoundLib.Log("FF9SOUND_SONG_PLAY");
-						allSoundDispatchPlayer.FF9SOUND_SONG_PLAY(ObjNo, 127, 0);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_PLAY");
+					allSoundDispatchPlayer.FF9SOUND_SONG_PLAY(ObjNo, 127, 0);
+					break;
+				}
 				case FF9SOUND_SONG_STOP: // 256
-					{
-						SoundLib.Log("FF9SOUND_SONG_STOP");
-						allSoundDispatchPlayer.FF9SOUND_SONG_STOP(ObjNo);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_STOP");
+					allSoundDispatchPlayer.FF9SOUND_SONG_STOP(ObjNo);
+					break;
+				}
 				case FF9SOUND_SONG_STOPCURRENT: // 265
-					{
-						SoundLib.Log("FF9SOUND_SONG_STOPCURRENT");
-						allSoundDispatchPlayer.FF9SOUND_SONG_STOPCURRENT();
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_STOPCURRENT");
+					allSoundDispatchPlayer.FF9SOUND_SONG_STOPCURRENT();
+					break;
+				}
 				case FF9SOUND_SONG_NULL: // 520
-					{
-						SoundLib.Log("FF9SOUND_SONG_NULL means ignore");
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_NULL means ignore");
+					break;
+				}
 				case FF9SOUND_SONG_TEMPOPITCH_FADE: // 1028
-					{
-						SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH_FADE stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH_FADE stubbed case");
+					break;
+				}
 				case FF9SOUND_SONG_LOAD: // 1792
-					{
-						SoundLib.Log("FF9SOUND_SONG_LOAD");
-						allSoundDispatchPlayer.FF9SOUND_SONG_LOAD(ObjNo);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_LOAD");
+					allSoundDispatchPlayer.FF9SOUND_SONG_LOAD(ObjNo);
+					break;
+				}
 				case FF9SOUND_SONG_SUSPEND: // 2048
-					{
-						SoundLib.Log("FF9SOUND_SONG_SUSPEND");
-						allSoundDispatchPlayer.FF9SOUND_SONG_SUSPEND(ObjNo, false);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_SUSPEND");
+					allSoundDispatchPlayer.FF9SOUND_SONG_SUSPEND(ObjNo, false);
+					break;
+				}
 				case FF9SOUND_SONG_RESTORE: // 2304
-					{
-						SoundLib.Log("FF9SOUND_SONG_RESTORE");
-						allSoundDispatchPlayer.FF9SOUND_SONG_RESTORE();
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_RESTORE");
+					allSoundDispatchPlayer.FF9SOUND_SONG_RESTORE();
+					break;
+				}
 				case FF9SOUND_SONG_JUMPPOINT: // 2566
-					{
-						SoundLib.Log("FF9SOUND_SONG_JUMPPOINT");
-						SoundLib.Log("ObjNo: " + ObjNo);
-						allSoundDispatchPlayer.FF9SOUND_SONG_JUMPPOINT();
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_JUMPPOINT");
+					SoundLib.Log("ObjNo: " + ObjNo);
+					allSoundDispatchPlayer.FF9SOUND_SONG_JUMPPOINT();
+					break;
+				}
 				case FF9SOUND_SYNC: // 3072
-					{
-						SoundLib.Log("Call SOUND_SYNC, stub");
-						break;
-					}
+				{
+					SoundLib.Log("Call SOUND_SYNC, stub");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_STOPCURRENT: // 4489
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOPCURRENT");
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOPCURRENT");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_NULL: // 4616
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_NULL means ignore");
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_NULL means ignore");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_SUSPEND: // 6272
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_SUSPEND");
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_SUSPEND(slot);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_SUSPEND");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_SUSPEND(slot);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_RESTORE: // 6528
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_RESTORE");
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(slot);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_RESTORE");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(slot);
+					break;
+				}
 				case FF9SOUND_STREAM_STOP: // 8448
-					{
-						SoundLib.Log("FF9SOUND_STREAM_STOP");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_STREAM_STOP should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_STREAM_STOP");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_STOP should be 0, but ObjNo: " + ObjNo);
 
-						allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
-						break;
-					}
+					allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
+					break;
+				}
 				case FF9SOUND_STREAM_NULL: // 8712
-					{
-						SoundLib.Log("Call FF9SOUND_STREAM_NULL, stub");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_STREAM_NULL, stub");
+					break;
+				}
 				case FF9SOUND_SONG_VOL: // 16897
-					{
-						SoundLib.Log("FF9SOUND_SONG_VOL");
-						Int32 vol = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SONG_VOL(ObjNo, vol);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL");
+					Int32 vol = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL(ObjNo, vol);
+					break;
+				}
 				case FF9SOUND_SONG_TEMPO: // 16898
-					{
-						SoundLib.Log("Call FF9SOUND_SONG_TEMPO stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPO stubbed case");
+					break;
+				}
 				case FF9SOUND_SONG_PITCH: // 16899
-					{
-						SoundLib.Log("FF9SOUND_SONG_PITCH");
-						Int32 pitch = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SONG_PITCH(ObjNo, pitch);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_PITCH");
+					Int32 pitch = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SONG_PITCH(ObjNo, pitch);
+					break;
+				}
 				case FF9SOUND_SONG_TEMPOPITCH: // 16900
-					{
-						SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH stubbed case");
+					break;
+				}
 				case FF9SOUND_SONG_SKIPPHRASE: // 16903
+				{
+					SoundLib.Log("FF9SOUND_SONG_SKIPPHRASE");
+					Int32 num10 = Arg1;
+					SoundLib.Log("_phrase: " + num10);
+					Int32 offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE = FF9Snd.GetOffsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE(ObjNo, num10);
+					if (offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE != -1)
 					{
-						SoundLib.Log("FF9SOUND_SONG_SKIPPHRASE");
-						Int32 num10 = Arg1;
-						SoundLib.Log("_phrase: " + num10);
-						Int32 offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE = FF9Snd.GetOffsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE(ObjNo, num10);
-						if (offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE != -1)
-						{
-							allSoundDispatchPlayer.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(ObjNo, offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE);
-						}
-
-						break;
+						allSoundDispatchPlayer.FF9SOUND_SONG_SKIPPHRASE_MILLISEC(ObjNo, offsetMillisecondFromFF9SOUND_SONG_SKIPPHRASE);
 					}
+
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_STOP: // 20736
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_STOP");
-						Int32 attr6 = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP(ObjNo, attr6);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_STOP");
+					Int32 attr6 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP(ObjNo, attr6);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_STOP: // 20864
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOP");
-						Int32 timeMsec = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOP(slot, ObjNo, timeMsec);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_STOP");
+					Int32 timeMsec = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOP(slot, ObjNo, timeMsec);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_VOL_ALL: // 21761
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_ALL");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_ALL should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_ALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_ALL should be 0, but ObjNo: " + ObjNo);
 
-						Int32 vol2 = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_ALL(vol2);
-						break;
-					}
+					Int32 vol2 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_ALL(vol2);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_PITCH_ALL: // 21763
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_ALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_ALL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_POS_ALL: // 21765
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_ALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_ALL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_VOL_ALL: // 21889
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_ALL");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_ALL should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_ALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_ALL should be 0, but ObjNo: " + ObjNo);
 
-						Int32 vol3 = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_ALL(vol3);
-						break;
-					}
+					Int32 vol3 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_ALL(vol3);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_PITCH_ALL: // 21891
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_ALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_ALL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_POS_ALL: // 21893
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_ALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_ALL stubbed case");
+					break;
+				}
 				case FF9SOUND_STREAM_VOL: // 25089
-					{
-						SoundLib.Log("FF9SOUND_STREAM_VOL");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_STREAM_VOL should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_STREAM_VOL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_VOL should be 0, but ObjNo: " + ObjNo);
 
-						Int32 vol7 = Arg1;
-						allSoundDispatchPlayer.FF9SOUND_STREAM_VOL(vol7);
-						break;
-					}
+					Int32 vol7 = Arg1;
+					allSoundDispatchPlayer.FF9SOUND_STREAM_VOL(vol7);
+					break;
+				}
 				case FF9SOUND_STREAM_POS: // 25093
-					{
-						SoundLib.Log("FF9SOUND_STREAM_POS");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_STREAM_POS should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_STREAM_POS");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_POS should be 0, but ObjNo: " + ObjNo);
 
-						SoundLib.Log("No implementation!");
-						break;
-					}
+					SoundLib.Log("No implementation!");
+					break;
+				}
 				case FF9SOUND_STREAMFMV_VOL: // 25098
-					{
-						SoundLib.Log("FF9SOUND_STREAMFMV_VOL");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_STREAMFMV_VOL should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_STREAMFMV_VOL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAMFMV_VOL should be 0, but ObjNo: " + ObjNo);
 
-						SoundLib.Log("No implementation!");
-						break;
-					}
+					SoundLib.Log("No implementation!");
+					break;
+				}
 				case FF9SOUND_STREAM_REVERB: // 25100
-					{
-						SoundLib.Log("FF9SOUND_STREAM_REVERB");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_STREAM_REVERB should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_STREAM_REVERB");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_STREAM_REVERB should be 0, but ObjNo: " + ObjNo);
 
-						SoundLib.Log("No implementation!");
-						break;
-					}
+					SoundLib.Log("No implementation!");
+					break;
+				}
 				case FF9SOUND_INSTR_LOAD: // 30464
-					{
-						SoundLib.Log("Call FF9SOUND_INSTR_LOAD, stub");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_INSTR_LOAD, stub");
+					break;
+				}
 				case FF9SOUND_SONG_VOL_INTPL: // 33537
-					{
-						SoundLib.Log("FF9SOUND_SONG_VOL_INTPL");
-						Int32 ticks4 = Arg1;
-						Int32 to4 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPL(ObjNo, ticks4, to4);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_INTPL");
+					Int32 ticks4 = Arg1;
+					Int32 to4 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPL(ObjNo, ticks4, to4);
+					break;
+				}
 				case FF9SOUND_SONG_TEMPO_INTPL: // 33538
-					{
-						SoundLib.Log("Call FF9SOUND_SONG_TEMPO_INTPL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPO_INTPL stubbed case");
+					break;
+				}
 				case FF9SOUND_SONG_PITCH_INTPL: // 33539
-					{
-						SoundLib.Log("FF9SOUND_SONG_PITCH_INTPL");
-						Int32 tick = Arg1;
-						Int32 to5 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_INTPL(ObjNo, tick, to5);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_PITCH_INTPL");
+					Int32 tick = Arg1;
+					Int32 to5 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_INTPL(ObjNo, tick, to5);
+					break;
+				}
 				case FF9SOUND_SONG_TEMPOPITCH_INTPL: // 33540
-					{
-						SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH_INTPL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPOPITCH_INTPL stubbed case");
+					break;
+				}
 				case FF9SOUND_SONG_VOL_INTPLALL: // 34305
-					{
-						SoundLib.Log("FF9SOUND_SONG_VOL_INTPLALL");
-						Int32 ticks7 = Arg1;
-						Int32 to9 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPLALL(ticks7, to9);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_INTPLALL");
+					Int32 ticks7 = Arg1;
+					Int32 to9 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_INTPLALL(ticks7, to9);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_VOL: // 37377
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_VOL");
-						Int32 attr = Arg1;
-						Int32 vol4 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL(ObjNo, attr, vol4);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL");
+					Int32 attr = Arg1;
+					Int32 vol4 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL(ObjNo, attr, vol4);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_PITCH: // 37379
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_PITCH");
-						Int32 attr7 = Arg1;
-						Int32 pitch2 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PITCH(ObjNo, attr7, pitch2);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_PITCH");
+					Int32 attr7 = Arg1;
+					Int32 pitch2 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PITCH(ObjNo, attr7, pitch2);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_VOL: // 37505
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL");
-						Int32 attr2 = Arg1;
-						Int32 vol5 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL(slot, ObjNo, attr2, vol5);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL");
+					Int32 attr2 = Arg1;
+					Int32 vol5 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL(slot, ObjNo, attr2, vol5);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_PITCH: // 37507
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_POS: // 37509
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_POS: // 37381
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_VOL_INTPLALL: // 38401
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPLALL");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPLALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECT_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
 
-						Int32 ticks = Arg1;
-						Int32 to = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPLALL(ticks, to);
-						break;
-					}
+					Int32 ticks = Arg1;
+					Int32 to = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPLALL(ticks, to);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_PITCH_INTPLALL: // 38403
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_INTPLALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_INTPLALL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_POS_INTPLALL: // 38405
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_INTPLALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_INTPLALL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_VOL_INTPLALL: // 38529
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPLALL");
-						if (ObjNo != -1)
-							SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPLALL");
+					if (ObjNo != -1)
+						SoundLib.Log("ObjNo for FF9SOUND_SNDEFFECTRES_VOL_INTPLALL should be 0, but ObjNo: " + ObjNo);
 
-						Int32 ticks2 = Arg1;
-						Int32 to2 = Arg2;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPLALL(ticks2, to2);
-						break;
-					}
+					Int32 ticks2 = Arg1;
+					Int32 to2 = Arg2;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPLALL(ticks2, to2);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_PITCH_INTPLALL: // 38531
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_INTPLALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_INTPLALL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_POS_INTPLALL: // 38533
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_INTPLALL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_INTPLALL stubbed case");
+					break;
+				}
 				case FF9SOUND_STREAM_PLAY: // 40960
-					{
-						SoundLib.Log("FF9SOUND_STREAM_PLAY");
-						Int32 streamid = ObjNo;
-						Int32 num8 = Arg1;
-						Int32 num9 = Arg2;
-						SoundLib.Log($"ObjNo: {ObjNo},  pos: {num8}, reverb: {num9}");
-						if (!SoundLib.SoundEffectIsMute)
-							allSoundDispatchPlayer.FF9SOUND_STREAM_PLAY(streamid, num8, num9);
+				{
+					SoundLib.Log("FF9SOUND_STREAM_PLAY");
+					Int32 streamid = ObjNo;
+					Int32 num8 = Arg1;
+					Int32 num9 = Arg2;
+					SoundLib.Log($"ObjNo: {ObjNo},  pos: {num8}, reverb: {num9}");
+					if (!SoundLib.SoundEffectIsMute)
+						allSoundDispatchPlayer.FF9SOUND_STREAM_PLAY(streamid, num8, num9);
 
-						break;
-					}
+					break;
+				}
 				case FF9SOUND_SONG_VOL_FADE: // 50177
-					{
-						SoundLib.Log("FF9SOUND_SONG_VOL_FADE");
-						Int32 ticks5 = Arg1;
-						Int32 from = Arg2;
-						Int32 to6 = Arg3;
-						allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADE(ObjNo, ticks5, from, to6);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_FADE");
+					Int32 ticks5 = Arg1;
+					Int32 from = Arg2;
+					Int32 to6 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADE(ObjNo, ticks5, from, to6);
+					break;
+				}
 				case FF9SOUND_SONG_TEMPO_FADE: // 50178
-					{
-						SoundLib.Log("Call FF9SOUND_SONG_TEMPO_FADE stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SONG_TEMPO_FADE stubbed case");
+					break;
+				}
 				case FF9SOUND_SONG_PITCH_FADE: // 50179
-					{
-						SoundLib.Log("FF9SOUND_SONG_PITCH_FADE");
-						Int32 tick2 = Arg1;
-						Int32 from2 = Arg2;
-						Int32 to7 = Arg3;
-						allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_FADE(ObjNo, tick2, from2, to7);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_PITCH_FADE");
+					Int32 tick2 = Arg1;
+					Int32 from2 = Arg2;
+					Int32 to7 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SONG_PITCH_FADE(ObjNo, tick2, from2, to7);
+					break;
+				}
 				case FF9SOUND_SONG_VOL_FADEALL: // 51969
-					{
-						SoundLib.Log("FF9SOUND_SONG_VOL_FADEALL");
-						Int32 ticks6 = Arg1;
-						Int32 from3 = Arg2;
-						Int32 to8 = Arg3;
-						allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADEALL(ticks6, from3, to8);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SONG_VOL_FADEALL");
+					Int32 ticks6 = Arg1;
+					Int32 from3 = Arg2;
+					Int32 to8 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SONG_VOL_FADEALL(ticks6, from3, to8);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_PLAY: // 53248
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_PLAY");
-						Int32 attr = Arg1;
-						Int32 pos = Arg2;
-						Int32 volume = Arg3;
-						SoundLib.Log($"ObjNo: {ObjNo}, attr: {attr}  pos: {pos}, vol: {volume}");
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PLAY(ObjNo, attr, pos, volume);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_PLAY");
+					Int32 attr = Arg1;
+					Int32 pos = Arg2;
+					Int32 volume = Arg3;
+					SoundLib.Log($"ObjNo: {ObjNo}, attr: {attr}  pos: {pos}, vol: {volume}");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_PLAY(ObjNo, attr, pos, volume);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_PLAY: // 53376
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_PLAY");
-						Int32 timeMsec = Arg1;
-						Int32 pos = Arg2;
-						Int32 volume = Arg3;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_PLAY(slot, ObjNo, timeMsec, pos, volume);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_PLAY");
+					Int32 timeMsec = Arg1;
+					Int32 pos = Arg2;
+					Int32 volume = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_PLAY(slot, ObjNo, timeMsec, pos, volume);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_VOL_INTPL: // 54017
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPL");
-						Int32 attr3 = Arg1;
-						Int32 ticks3 = Arg2;
-						Int32 to3 = Arg3;
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPL(ObjNo, attr3, ticks3, to3);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECT_VOL_INTPL");
+					Int32 attr3 = Arg1;
+					Int32 ticks3 = Arg2;
+					Int32 to3 = Arg3;
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_VOL_INTPL(ObjNo, attr3, ticks3, to3);
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_PITCH_INTPL: // 54019
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_INTPL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_PITCH_INTPL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECT_POS_INTPL: // 54021
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_INTPL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECT_POS_INTPL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_VOL_INTPL: // 54145
-					{
-						SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPL");
-						Int32 unused = Arg1;
-						Int32 ticks = Arg2;
-						Int32 volume = Arg3;
-						SoundLib.Log($"ObjNo: {ObjNo}, attr: {unused}  ticks: {ticks}, to: {volume}");
-						allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPL(slot, ObjNo, unused, ticks, volume);
-						break;
-					}
+				{
+					SoundLib.Log("FF9SOUND_SNDEFFECTRES_VOL_INTPL");
+					Int32 unused = Arg1;
+					Int32 ticks = Arg2;
+					Int32 volume = Arg3;
+					SoundLib.Log($"ObjNo: {ObjNo}, attr: {unused}  ticks: {ticks}, to: {volume}");
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_VOL_INTPL(slot, ObjNo, unused, ticks, volume);
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_PITCH_INTPL: // 54147
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_INTPL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_PITCH_INTPL stubbed case");
+					break;
+				}
 				case FF9SOUND_SNDEFFECTRES_POS_INTPL: // 54149
-					{
-						SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_INTPL stubbed case");
-						break;
-					}
+				{
+					SoundLib.Log("Call FF9SOUND_SNDEFFECTRES_POS_INTPL stubbed case");
+					break;
+				}
 				case 16901:
 				case 16902:
 				case 21762:
@@ -1054,10 +1055,10 @@ public static class FF9Snd
 				case 54146:
 				case 54148:
 				default:
-					{
-						SoundLib.Log($"Not founded case with ParmType: {ParmType}\nParmType Value: {Convert.ToString(ParmType, 2)}");
-						break;
-					}
+				{
+					SoundLib.Log($"Not founded case with ParmType: {ParmType}\nParmType Value: {Convert.ToString(ParmType, 2)}");
+					break;
+				}
 			}
 		}
 		catch (Exception ex)
@@ -1173,30 +1174,26 @@ public static class FF9Snd
 		return FF9Snd.FF9AllSoundDispatch(ParmType, ObjNo, Arg1, Arg2, Arg3);
 	}
 
-	public static Int32 FF9BattleSoundGetWeaponSndEffect(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType Type)
+	public static Int32 FF9BattleSoundGetWeaponSndEffect(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType type)
 	{
-		return FF9Snd.FF9BattleSoundGetWeaponSndEffect02(PartyCharNo, Type);
+		return FF9Snd.FF9BattleSoundGetWeaponSndEffect02(PartyCharNo, type);
 	}
 
-    public static Int32 FF9BattleSoundGetWeaponSndEffect01(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType Type)
-    {
-        Int32 weapModel = ff9item.GetItemWeapon(FF9StateSystem.Common.FF9.party.member[PartyCharNo].equip[0]).ModelId;
-        for (Int32 i = 0; i < FF9Snd.ff9battleSoundWeaponSndEffect01.GetLength(0); i++)
-            if (FF9Snd.ff9battleSoundWeaponSndEffect01[i, 2] == weapModel)
-                return FF9Snd.ff9battleSoundWeaponSndEffect01[i, (Int32)Type];
-        return -1;
-    }
+	public static Int32 FF9BattleSoundGetWeaponSndEffect01(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType type)
+	{
+		Int32 weapModel = ff9item.GetItemWeapon(FF9StateSystem.Common.FF9.party.member[PartyCharNo].equip[0]).ModelId;
+		for (Int32 i = 0; i < FF9Snd.ff9battleSoundWeaponSndEffect01.GetLength(0); i++)
+			if (FF9Snd.ff9battleSoundWeaponSndEffect01[i, 2] == weapModel)
+				return FF9Snd.ff9battleSoundWeaponSndEffect01[i, (Int32)type];
+		return -1;
+	}
 
-    public static Int32 FF9BattleSoundGetWeaponSndEffect02(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType Type)
-	{	
-		if (Type >= FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_COUNT)
-			return -1;
-		Int32 serial_no = (Int32)FF9StateSystem.Common.FF9.party.member[PartyCharNo].info.serial_no;
-		if (Configuration.Mod.TranceSeek && serial_no == 1 && Type == FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT) // Fix Thief Sword Zidane with Trance Seek or a specific option for my PSX Fix Sounds ? We need to find the right ID for that...
-			return 104;
-        if (serial_no >= FF9Snd.ff9battleSoundWeaponSndEffect02.GetLength(0))
-			return FF9BattleSoundGetWeaponSndEffect01(PartyCharNo, Type); // For non-standard serial numbers, use weapon sounds directly linked to weapons
-		return FF9Snd.ff9battleSoundWeaponSndEffect02[serial_no, (Int32)Type];
+	public static Int32 FF9BattleSoundGetWeaponSndEffect02(Int32 PartyCharNo, FF9BatteSoundWeaponSndEffectType type)
+	{
+		CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.party.member[PartyCharNo].info.serial_no];
+		if ((Int32)type >= param.WeaponSound.Length) // For unregistered serial numbers, use weapon sounds directly linked to weapon models
+			return FF9BattleSoundGetWeaponSndEffect01(PartyCharNo, type);
+		return param.WeaponSound[(Int32)type];
 	}
 
 	public static Int32 FF9BattleSoundGetWeaponInstr(Int32 PartyCharNo)
@@ -2510,9 +2507,9 @@ public static class FF9Snd
 
 	public static Boolean HasJustChangedBetweenWorldAndField;
 
-    private static Int16[,] ff9battleSoundWeaponSndEffect01 = new Int16[,] // Indexed by "WeaponItem"
-        {
-        { 903, 44, 37 },    // Hammer
+	private static Int16[,] ff9battleSoundWeaponSndEffect01 = new Int16[,] // Indexed by "WeaponItem"
+	{
+		{ 903, 44, 37 },    // Hammer
 		{ 899, 21, 476 },	// Dagger
 		{ 899, 21, 475 },	// MageMasher
 		{ 899, 21, 501 },	// MythrilDagger
@@ -2597,29 +2594,29 @@ public static class FF9Snd
 		{ 901, 83, 505 },	// SilverFork
 		{ 901, 83, 486 },	// BistroFork
 		{ 901, 83, 485 }	// GastroFork
-        };
+	};
 
-    private static Int16[,] ff9battleSoundWeaponSndEffect02 = new Int16[,] // Indexed by "CharacterSerialNumber"
+	public static Dictionary<CharacterSerialNumber, Int32[]> ff9battleSoundWeaponSndEffect02 = new Dictionary<CharacterSerialNumber, Int32[]>
 	{
-		{ 899, 21 },  // ZIDANE_DAGGER
-		{ 900, 63 },  // ZIDANE_SWORD => TODO, FIND ANOTHER ID F0OR MY FIX SOUND, 63 -> ? (DV)
-		{ 904, 22 },  // VIVI
-		{ 904, 22 },  // GARNET_LH_ROD
-		{ 906, 898 }, // GARNET_LH_KNIFE
-		{ 904, 22 },  // GARNET_SH_ROD
-		{ 906, 898 }, // GARNET_SH_KNIFE
-		{ 902, 70 },  // STEINER_OUTDOOR
-		{ 902, 70 },  // STEINER_INDOOR
-		{ 901, 20 },  // KUINA
-		{ 904, 22 },  // EIKO_FLUTE
-		{ 906, 898 }, // EIKO_KNIFE
-		{ 901, 20 },  // FREIJA
-		{ 905, 897 }, // SALAMANDER
-		{ 900, 22 },  // CINNA
-		{ 902, 63 },  // MARCUS
-		{ 902, 63 },  // BLANK
-		{ 902, 63 },  // BLANK_ARMOR
-		{ 900, 70 }   // BEATRIX
+		{ CharacterSerialNumber.ZIDANE_DAGGER,		new Int32[]{ 899, 21 } },
+		{ CharacterSerialNumber.ZIDANE_SWORD,		new Int32[]{ 900, 83 } },
+		{ CharacterSerialNumber.VIVI,				new Int32[]{ 904, 22 } },
+		{ CharacterSerialNumber.GARNET_LH_ROD,		new Int32[]{ 904, 22 } },
+		{ CharacterSerialNumber.GARNET_LH_KNIFE,	new Int32[]{ 906, 898 } },
+		{ CharacterSerialNumber.GARNET_SH_ROD,		new Int32[]{ 904, 22 } },
+		{ CharacterSerialNumber.GARNET_SH_KNIFE,	new Int32[]{ 906, 898 } },
+		{ CharacterSerialNumber.STEINER_OUTDOOR,	new Int32[]{ 902, 70 } },
+		{ CharacterSerialNumber.STEINER_INDOOR,		new Int32[]{ 902, 70 } },
+		{ CharacterSerialNumber.KUINA,				new Int32[]{ 901, 20 } },
+		{ CharacterSerialNumber.EIKO_FLUTE,			new Int32[]{ 904, 22 } },
+		{ CharacterSerialNumber.EIKO_KNIFE,			new Int32[]{ 906, 898 } },
+		{ CharacterSerialNumber.FREIJA,				new Int32[]{ 901, 20 } },
+		{ CharacterSerialNumber.SALAMANDER,			new Int32[]{ 905, 897 } },
+		{ CharacterSerialNumber.CINNA,				new Int32[]{ 900, 22 } },
+		{ CharacterSerialNumber.MARCUS,				new Int32[]{ 902, 63 } },
+		{ CharacterSerialNumber.BLANK,				new Int32[]{ 902, 63 } },
+		{ CharacterSerialNumber.BLANK_ARMOR,		new Int32[]{ 902, 63 } },
+		{ CharacterSerialNumber.BEATRIX,			new Int32[]{ 900, 70 } }
 	};
 
 	public static Int32 FLDINT_CHAR_SOUNDCOUNT = 20;

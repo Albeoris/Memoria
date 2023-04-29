@@ -1,6 +1,6 @@
-﻿using Memoria;
-using System;
+﻿using System;
 using UnityEngine;
+using Memoria;
 
 [RequireComponent(typeof(SpriteDisplay))]
 public class CardArrow : MonoBehaviour

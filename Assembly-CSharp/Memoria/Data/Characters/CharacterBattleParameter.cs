@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Memoria.Prime.CSV;
 
 namespace Memoria.Data
@@ -17,6 +18,7 @@ namespace Memoria.Data
         public Byte[] StatusBone = new Byte[6];
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
+        public Int32[] WeaponSound = new Int32[0];
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -44,6 +46,11 @@ namespace Memoria.Data
             StatusOffsetZ = CsvParser.SByteArray(raw[rawIndex++]);
             if (StatusOffsetZ.Length < 6)
                 Array.Resize(ref StatusOffsetZ, 6);
+
+            if (metadata.HasOption($"Include{nameof(CharacterBattleParameter.WeaponSound)}"))
+                WeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
+            else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
+                WeaponSound = sounds;
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
@@ -60,6 +67,9 @@ namespace Memoria.Data
             writer.ByteArray(StatusBone);
             writer.SByteArray(StatusOffsetY);
             writer.SByteArray(StatusOffsetZ);
+
+            if (metadata.HasOption($"Include{nameof(CharacterBattleParameter.WeaponSound)}"))
+                writer.Int32Array(WeaponSound);
         }
     }
 }

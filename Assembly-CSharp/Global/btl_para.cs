@@ -82,7 +82,7 @@ public class btl_para
         }
         btl.cur.mp = btl.cur.mp <= btl.max.mp ? btl.cur.mp : btl.max.mp;
         if (btl.bi.player != 0)
-            btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatus.IdleDying) ? 1 : (btl.oldstatus ? 1 : 0));
+            btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying) || btl.special_status_old ? 1 : 0);
     }
 
     public static Int32 SetDamage(BattleUnit btl, Int32 damage, Byte dmg_mot, CMD_DATA cmd = null)
@@ -192,45 +192,45 @@ public class btl_para
     public static void SetPoisonDamage(BTL_DATA btl)
     {
         BattleUnit battleUnit = new BattleUnit(btl);
-        UInt32 num = 0;
+        UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
             if (Configuration.Mod.TranceSeek)
             {
-                num = GetLogicalHP(btl, true) >> 5;
+                damage = GetLogicalHP(btl, true) >> 5;
                 if (battleUnit.IsUnderStatus(BattleStatus.Venom))
-                    num = GetLogicalHP(btl, true) >> 4;
+                    damage = GetLogicalHP(btl, true) >> 4;
             }
             else
             {
-                num = GetLogicalHP(btl, true) >> 4;
+                damage = GetLogicalHP(btl, true) >> 4;
             }
             if (Status.checkCurStat(btl, BattleStatus.EasyKill))
-                num >>= 2;
+                damage >>= 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
-                if (battleUnit.IsZombie && Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
                 {
                     if (battleUnit.IsUnderStatus(BattleStatus.Poison))
                     {
-                        btl.cur.hp += num;
-                        btl.fig_stat_info |= 1;
-                        btl.fig_regene_hp = (int)num;
+                        btl.cur.hp += damage;
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                        btl.fig_regene_hp = (Int32)damage;
                         return;
                     }
                     if (battleUnit.IsUnderStatus(BattleStatus.Venom))
                     {
-                        num /= 2U;
-                        btl.cur.hp -= num;
-                        btl.fig_stat_info |= 2;
-                        btl.fig_poison_hp = (int)num;
+                        damage /= 2U;
+                        btl.cur.hp -= damage;
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
+                        btl.fig_poison_hp = (Int32)damage;
                         return;
                     }
                 }
-                if (GetLogicalHP(btl, false) > num)
+                if (GetLogicalHP(btl, false) > damage)
                 {
                     if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
-                        btl.cur.hp -= num;
+                        btl.cur.hp -= damage;
                 }
                 else
                 {
@@ -239,26 +239,27 @@ public class btl_para
             }
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
-        btl.fig_poison_hp = (Int32)num;
+        btl.fig_poison_hp = (Int32)damage;
         BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatus.Venom : BattleStatus.Poison);
     }
+
     public static void SetRegeneRecover(BTL_DATA btl)
     {
-        UInt32 num = 0;
+        UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            num = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? 5 : 4);
+            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? 5 : 4);
             if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
                 btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
-                if (GetLogicalHP(btl, false) > num)
-                    btl.cur.hp -= num;
+                if (GetLogicalHP(btl, false) > recover)
+                    btl.cur.hp -= recover;
                 else
                     new BattleUnit(btl).Kill();
             }
-            else if (btl.cur.hp + num < btl.max.hp)
+            else if (btl.cur.hp + recover < btl.max.hp)
             {
-                btl.cur.hp += num;
+                btl.cur.hp += recover;
             }
             else
             {
@@ -266,30 +267,30 @@ public class btl_para
             }
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-        btl.fig_regene_hp = (Int32)num;
+        btl.fig_regene_hp = (Int32)recover;
         BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Regen);
     }
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
-        UInt32 num = 0;
+        UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            num = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
+            damage = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
             if (Status.checkCurStat(btl, BattleStatus.EasyKill))
-                num >>= 2;
+                damage >>= 2;
             if (Status.checkCurStat(btl, BattleStatus.Venom) && Configuration.Mod.TranceSeek)
-                num = btl.max.mp >> 4;
+                damage = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {
-                if (btl.cur.mp > num)
-                    btl.cur.mp -= num;
+                if (btl.cur.mp > damage)
+                    btl.cur.mp -= damage;
                 else
                     btl.cur.mp = 0;
             }
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_MP;
-        btl.fig_poison_mp = (Int32)num;
+        btl.fig_poison_mp = (Int32)damage;
     }
 
     public static void SetTroubleDamage(BattleUnit btl, Int32 dmg)
@@ -322,7 +323,7 @@ public class btl_para
 		{
             if (FF9StateSystem.Battle.battleMapIndex == 338 && btl.max.hp < 10000) // King Leo + Zenero + Benero
                 return false;
-            if ((FF9StateSystem.Battle.battleMapIndex == 4) && (btl.dms_geo_id == 142) && Configuration.Mod.TranceSeek) // TRANCE SEEK - Dark Beatrix fight, make true form vulnerable.
+            if (Configuration.Mod.TranceSeek && FF9StateSystem.Battle.battleMapIndex == 4 && btl.dms_geo_id == 142) // TRANCE SEEK - Dark Beatrix fight, make true form vulnerable.
                 return false;
             return true;
         }

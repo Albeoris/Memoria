@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria.Data;
 
 public class PreBoard : MonoBehaviour
 {
@@ -53,19 +54,19 @@ public class PreBoard : MonoBehaviour
 
 	public void UpdateCollection(Int32 n = -1)
 	{
-		if (this.collection != (UnityEngine.Object)null)
+		if (this.collection != null)
 		{
 			if (n == -1)
 			{
-				for (Int32 i = 0; i < 100; i++)
+				for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
 				{
 					this.cardIconUIs[i].ID = i;
-					this.cardIconUIs[i].Count = this.collection.GetCardsWithID(i).Count;
+					this.cardIconUIs[i].Count = this.collection.GetCardsWithID((TetraMasterCardId)i).Count;
 				}
 			}
 			else
 			{
-				this.cardIconUIs[n].Count = this.collection.GetCardsWithID(n).Count;
+				this.cardIconUIs[n].Count = this.collection.GetCardsWithID((TetraMasterCardId)n).Count;
 			}
 		}
 	}
@@ -106,7 +107,7 @@ public class PreBoard : MonoBehaviour
 
 	public void SetPreviewCardID(Int32 indx)
 	{
-		this.list = this.collection.GetCardsWithID(indx);
+		this.list = this.collection.GetCardsWithID((TetraMasterCardId)indx);
 		this.listIndex = indx;
 		this.UpdatePreview();
 		this.UpdateCursor(indx);

@@ -4,10 +4,7 @@ using System.Text.RegularExpressions;
 using FF9;
 using NCalc;
 using Memoria.Prime.CSV;
-using System.Runtime.InteropServices;
-using UnityEngine.Networking.Types;
-using Memoria.Prime;
-//using System.Linq.Expressions;
+using Memoria.Prime.Text;
 
 namespace Memoria.Data
 {
@@ -60,6 +57,8 @@ namespace Memoria.Data
             public BattleStatus PermanentStatus = 0;
             public BattleStatus InitialStatus = 0;
             public BattleStatus ResistStatus = 0;
+            public List<KeyValuePair<BattleStatus, String>> PartialResistStatus = new List<KeyValuePair<BattleStatus, String>>();
+            public List<KeyValuePair<BattleStatus, String>> DurationFactorStatus = new List<KeyValuePair<BattleStatus, String>>();
             public Int32 InitialATB = -1;
         }
         public class SupportingAbilityEffectAbilityUse
@@ -212,17 +211,21 @@ namespace Memoria.Data
 
         public void TriggerOnStatusInit(BattleUnit unit)
         {
-            GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb);
+            GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
             unit.PermanentStatus |= permanent;
             unit.CurrentStatus |= initial;
             unit.ResistStatus |= resist;
+            unit.Data.stat_partial_resist = partialResist;
+            unit.Data.stat_duration_factor = durationFactor;
             if (atb >= 0)
                 unit.CurrentAtb = atb;
         }
 
-        public void GetStatusInitQuietly(BattleUnit unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb)
+        public void GetStatusInitQuietly(BattleUnit unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb)
         {
             permanent = initial = resist = 0;
+            partialResist = unit.PartialResistStatus;
+            durationFactor = unit.StatusDurationFactor;
             atb = -1;
             for (Int32 i = 0; i < StatusEffect.Count; i++)
             {
@@ -238,6 +241,22 @@ namespace Memoria.Data
                 permanent |= StatusEffect[i].PermanentStatus;
                 initial |= StatusEffect[i].InitialStatus;
                 resist |= StatusEffect[i].ResistStatus;
+                foreach (KeyValuePair<BattleStatus, String> kvp in StatusEffect[i].PartialResistStatus)
+                {
+                    Expression e = new Expression(kvp.Value);
+                    NCalcUtility.InitializeExpressionUnit(ref e, unit);
+                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    partialResist[kvp.Key] = NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0f);
+                }
+                foreach (KeyValuePair<BattleStatus, String> kvp in StatusEffect[i].DurationFactorStatus)
+                {
+                    Expression e = new Expression(kvp.Value);
+                    NCalcUtility.InitializeExpressionUnit(ref e, unit);
+                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    durationFactor[kvp.Key] = NCalcUtility.ConvertNCalcResult(e.Evaluate(), 1f);
+                }
                 if (StatusEffect[i].InitialATB >= 0)
                     atb = (Int16)Math.Max(unit.MaximumAtb - 1, unit.MaximumAtb * StatusEffect[i].InitialATB / 100);
             }
@@ -245,10 +264,9 @@ namespace Memoria.Data
 
         public void TriggerOnAbility(BattleCalculator calc, String when, Boolean asTarget)
         {
-            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
             if (Id >= 0 && calc.Context.DisabledSA.Contains(Id))
                 return;
-            Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(NoReaction) : !calc.Caster.IsUnderAnyStatus(NoReaction);
+            Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatusConst.NoReaction) : !calc.Caster.IsUnderAnyStatus(BattleStatusConst.NoReaction);
             for (Int32 i = 0; i < AbilityEffect.Count; i++)
                 if (AbilityEffect[i].AsTarget == asTarget && (canMove || AbilityEffect[i].EvenImmobilized) && String.Compare(AbilityEffect[i].When, when) == 0)
                 {
@@ -419,8 +437,7 @@ namespace Memoria.Data
 
         public void TriggerOnCommand(BattleUnit abilityUser, BattleCommand command, ref UInt16 tryCover)
         {
-            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
-            Boolean canMove = !abilityUser.IsUnderAnyStatus(NoReaction);
+            Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatusConst.NoReaction);
             BattleUnit caster = null;
             BattleUnit target = null;
             for (Int32 i = 0; i < CommandEffect.Count; i++)
@@ -549,8 +566,21 @@ namespace Memoria.Data
                     SupportingAbilityEffectBattleInitStatus newEffect = new SupportingAbilityEffectBattleInitStatus();
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
-                        if (String.Compare(formula.Groups[1].Value, "Condition") == 0)
+                        String codeName = formula.Groups[1].Value;
+                        if (String.Compare(codeName, "Condition") == 0)
+                        {
                             newEffect.Condition = formula.Groups[2].Value;
+                        }
+                        else if (codeName.StartsWith("PartialResist"))
+                        {
+                            if (codeName.Substring("PartialResist".Length).TryEnumParse(out BattleStatus status))
+                                newEffect.PartialResistStatus.Add(new KeyValuePair<BattleStatus, String>(status, formula.Groups[2].Value));
+                        }
+                        else if (codeName.StartsWith("DurationFactor"))
+                        {
+                            if (codeName.Substring("DurationFactor".Length).TryEnumParse(out BattleStatus status))
+                                newEffect.DurationFactorStatus.Add(new KeyValuePair<BattleStatus, String>(status, formula.Groups[2].Value));
+                        }
                     }
                     foreach (Match statusMatch in new Regex(@"\b((Auto|Initial|Resist)Status|InitialATB)\s+(\w+|\d+)\b").Matches(saArgs))
                     {
@@ -560,21 +590,14 @@ namespace Memoria.Data
                         }
                         else
                         {
-                            BattleStatus stat = 0;
-                            foreach (BattleStatus s in (BattleStatus[])Enum.GetValues(typeof(BattleStatus)))
-                                if (String.Compare(statusMatch.Groups[3].Value, s.ToString()) == 0)
-                                {
-                                    stat = s;
-                                    break;
-                                }
-                            if (stat != 0)
+                            if (statusMatch.Groups[3].Value.TryEnumParse(out BattleStatus status))
                             {
                                 if (String.Compare(statusMatch.Groups[2].Value, "Auto") == 0)
-                                    newEffect.PermanentStatus |= stat;
+                                    newEffect.PermanentStatus |= status;
                                 else if (String.Compare(statusMatch.Groups[2].Value, "Initial") == 0)
-                                    newEffect.InitialStatus |= stat;
+                                    newEffect.InitialStatus |= status;
                                 else if (String.Compare(statusMatch.Groups[2].Value, "Resist") == 0)
-                                    newEffect.ResistStatus |= stat;
+                                    newEffect.ResistStatus |= status;
                             }
                         }
                     }

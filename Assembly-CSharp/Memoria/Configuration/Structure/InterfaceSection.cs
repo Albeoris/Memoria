@@ -18,6 +18,10 @@ namespace Memoria
             public readonly IniValue<Int32> BattleDetailPosY;
             public readonly IniValue<Int32> BattleDetailWidth;
             public readonly IniValue<Int32> BattleDetailHeight;
+            public readonly IniValue<String> BattleDamageTextFormat;
+            public readonly IniValue<String> BattleRestoreTextFormat;
+            public readonly IniValue<String> BattleMPDamageTextFormat;
+            public readonly IniValue<String> BattleMPRestoreTextFormat;
 
             public InterfaceSection() : base(nameof(InterfaceSection), false)
             {
@@ -31,6 +35,10 @@ namespace Memoria
                 BattleDetailPosY = BindInt32(nameof(BattleDetailPosY), -380);
                 BattleDetailWidth = BindInt32(nameof(BattleDetailWidth), 796);
                 BattleDetailHeight = BindInt32(nameof(BattleDetailHeight), 230);
+                BattleDamageTextFormat = BindString(nameof(BattleDamageTextFormat), String.Empty);
+                BattleRestoreTextFormat = BindString(nameof(BattleRestoreTextFormat), String.Empty);
+                BattleMPDamageTextFormat = BindString(nameof(BattleMPDamageTextFormat), String.Empty);
+                BattleMPRestoreTextFormat = BindString(nameof(BattleMPRestoreTextFormat), String.Empty);
             }
         }
     }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime.Text;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -153,7 +155,7 @@ namespace NCalc
             else if (name == "FrogCount") args.Result = (Int32)GameState.Frogs;
             else if (name == "StealCount") args.Result = (Int32)GameState.Thefts;
             else if (name == "EscapeCount") args.Result = (Int32)GameState.EscapeCount;
-            else if (name == "StepCount") args.Result = (Int32)GameState.StepCount;
+            else if (name == "StepCount") args.Result = (Int32)GameState.StepCount; // TODO: not currently tracked
             else if (name == "TonberryCount") args.Result = (Int32)GameState.Tonberies;
             else if (name == "TetraMasterWinCount") args.Result = (Int32)GameState.TetraMasterWin;
             else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
@@ -166,9 +168,12 @@ namespace NCalc
             else if (name == "IsRagtimeBattle") args.Result = Memoria.BattleState.IsRagtimeBattle;
             else if (name == "CurrentPartyCount") args.Result = Memoria.BattleState.BattleUnitCount(true);
             else if (name == "CurrentEnemyCount") args.Result = Memoria.BattleState.BattleUnitCount(false);
+            else if (name == "CurrentTargetablePartyCount") args.Result = Memoria.BattleState.TargetCount(true);
+            else if (name == "CurrentTargetableEnemyCount") args.Result = Memoria.BattleState.TargetCount(false);
             else if (name == "IsBattlePreemptive") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK;
             else if (name == "IsBattleBackAttack") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK;
             else if (name == "ScenarioCounter") args.Result = (Int32)GameState.ScenarioCounter;
+            else if (name == "IsGarnetDepressed") args.Result = battle.GARNET_DEPRESS_FLAG != 0;
             else if (name == "UseSFXRework") args.Result = Configuration.Battle.SFXRework;
             else
 			{
@@ -177,6 +182,11 @@ namespace NCalc
                     if (name.StartsWith(t.Name + "_"))
 					{
                         String enumValueStr = name.Substring(t.Name.Length + 1);
+                        if (t == typeof(BattleStatus) && enumValueStr.TryStaticFieldParse(typeof(BattleStatusConst), out FieldInfo field))
+                        {
+                            args.Result = Convert.ToInt32(field.GetValue(null));
+                            return;
+                        }
                         args.Result = Convert.ToInt32(Enum.Parse(t, enumValueStr));
                         return;
                     }
@@ -315,6 +325,77 @@ namespace NCalc
             };
         }
 
+        public static void InitializeExpressionNullableUnit(ref Expression expr, BattleUnit unit, String prefix = "")
+		{
+            if (unit != null)
+			{
+                InitializeExpressionUnit(ref expr, unit, prefix);
+                return;
+            }
+            expr.Parameters[prefix + "MaxHP"] = 0;
+            expr.Parameters[prefix + "MaxMP"] = 0;
+            expr.Parameters[prefix + "MaxATB"] = 0;
+            expr.Parameters[prefix + "HP"] = 0;
+            expr.Parameters[prefix + "MP"] = 0;
+            expr.Parameters[prefix + "MaxDamageLimit"] = 0;
+            expr.Parameters[prefix + "MaxMPDamageLimit"] = 0;
+            expr.Parameters[prefix + "ATB"] = 0;
+            expr.Parameters[prefix + "Trance"] = 0;
+            expr.Parameters[prefix + "InTrance"] = 0;
+            expr.Parameters[prefix + "CurrentStatus"] = 0;
+            expr.Parameters[prefix + "PermanentStatus"] = 0;
+            expr.Parameters[prefix + "ResistStatus"] = 0;
+            expr.Parameters[prefix + "HalfElement"] = 0;
+            expr.Parameters[prefix + "GuardElement"] = 0;
+            expr.Parameters[prefix + "AbsorbElement"] = 0;
+            expr.Parameters[prefix + "WeakElement"] = 0;
+            expr.Parameters[prefix + "BonusElement"] = 0;
+            expr.Parameters[prefix + "WeaponPower"] = 0;
+            expr.Parameters[prefix + "WeaponRate"] = 0;
+            expr.Parameters[prefix + "WeaponElement"] = 0;
+            expr.Parameters[prefix + "WeaponStatus"] = 0;
+            expr.Parameters[prefix + "WeaponCategory"] = 0;
+            expr.Parameters[prefix + "SerialNumber"] = 0;
+            expr.Parameters[prefix + "Row"] = 0;
+            expr.Parameters[prefix + "Position"] = 0;
+            expr.Parameters[prefix + "SummonCount"] = 0;
+            expr.Parameters[prefix + "IsPlayer"] = false;
+            expr.Parameters[prefix + "IsSlave"] = false;
+            expr.Parameters[prefix + "IsOutOfReach"] = false;
+            expr.Parameters[prefix + "Level"] = 0;
+            expr.Parameters[prefix + "Exp"] = 0;
+            expr.Parameters[prefix + "Speed"] = 0;
+            expr.Parameters[prefix + "Strength"] = 0;
+            expr.Parameters[prefix + "Magic"] = 0;
+            expr.Parameters[prefix + "Spirit"] = 0;
+            expr.Parameters[prefix + "Defence"] = 0;
+            expr.Parameters[prefix + "Evade"] = 0;
+            expr.Parameters[prefix + "MagicDefence"] = 0;
+            expr.Parameters[prefix + "MagicEvade"] = 0;
+            expr.Parameters[prefix + "PlayerCategory"] = 0;
+            expr.Parameters[prefix + "Category"] = 0;
+            expr.Parameters[prefix + "CharacterIndex"] = 0;
+            expr.Parameters[prefix + "IsStrengthModified"] = false;
+            expr.Parameters[prefix + "IsMagicModified"] = false;
+            expr.Parameters[prefix + "IsDefenceModified"] = false;
+            expr.Parameters[prefix + "IsEvadeModified"] = false;
+            expr.Parameters[prefix + "IsMagicDefenceModified"] = false;
+            expr.Parameters[prefix + "IsMagicEvadeModified"] = false;
+            expr.Parameters[prefix + "CriticalRateBonus"] = 0;
+            expr.Parameters[prefix + "CriticalRateWeakening"] = 0;
+            expr.Parameters[prefix + "WeaponId"] = 0;
+            expr.Parameters[prefix + "HeadId"] = 0;
+            expr.Parameters[prefix + "WristId"] = 0;
+            expr.Parameters[prefix + "ArmorId"] = 0;
+            expr.Parameters[prefix + "AccessoryId"] = 0;
+            expr.Parameters[prefix + "ModelId"] = 0;
+            expr.EvaluateFunction += delegate (String name, FunctionArgs args)
+            {
+                if (name == prefix + "HasSA" && args.Parameters.Length == 1)
+                    args.Result = false;
+            };
+        }
+
         public static void InitializeExpressionAbilityContext(ref Expression expr, BattleCalculator calc)
         {
             BattleCaster caster = calc.Caster;
@@ -374,6 +455,7 @@ namespace NCalc
             expr.Parameters["MPCost"] = (Int32)command.Data.aa.MP;
             expr.Parameters["AbilityFlags"] = (Int32)command.AbilityType;
             expr.Parameters["CommandTargetId"] = (Int32)command.Data.tar_id;
+            expr.Parameters["CommandTargetCount"] = command.TargetCount;
             expr.Parameters["CalcMainCounter"] = (Int32)command.Data.info.effect_counter;
         }
     }

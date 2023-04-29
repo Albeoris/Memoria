@@ -35,10 +35,6 @@ namespace Memoria.Assets
         /// </summary>
         Amarant,
         /// <summary>
-        /// [BTRX]
-        /// </summary>
-        Beatrix, // TRANCE SEEK
-        /// <summary>
         /// [IMME]
         /// </summary>
         Instantly,

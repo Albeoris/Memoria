@@ -263,7 +263,7 @@ public class UIKeyTrigger : MonoBehaviour
 
             PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
         }
-        if (Configuration.Mod.TranceSeek & UnityXInput.Input.GetKeyDown(KeyCode.F8) & PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Reset game, back to main menu
+        if (Configuration.Mod.TranceSeek && UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Reset game, back to main menu
         {
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
             PersistenSingleton<UIManager>.Instance.HideAllHUD();

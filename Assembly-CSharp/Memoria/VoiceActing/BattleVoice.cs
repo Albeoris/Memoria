@@ -56,7 +56,7 @@ namespace Memoria.Data
             {
                 if (btl.bi.disappear != 0)
                     return false;
-                if (btl_stat.CheckStatus(btl, BattleStatus.CannotSpeak & ~statusException))
+                if (btl_stat.CheckStatus(btl, BattleStatusConst.CannotSpeak & ~statusException))
                     return false;
                 KeyValuePair<Int32, SoundProfile> playingVoice;
                 if (_currentVoicePlay.TryGetValue(btl, out playingVoice))

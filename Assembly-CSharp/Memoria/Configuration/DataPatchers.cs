@@ -133,6 +133,7 @@ namespace Memoria
 
 		private static void PatchDictionaries(String[] patchCode)
 		{
+			Boolean shouldUpdateBattleStatus = false;
 			// Process each line one by one
 			foreach (String s in patchCode)
 			{
@@ -213,6 +214,29 @@ namespace Memoria
 						BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = entry[2];
 					}
 				}
+				else if (String.Compare(entry[0], "BattleStatus") == 0)
+				{
+					// eg.: BattleStatus IdleDying Remove Poison Venom
+					// eg.: BattleStatus BattleEnd Add Zombie
+					if (!entry[1].TryStaticFieldParse(typeof(BattleStatusConst), out FieldInfo field))
+						continue;
+					BattleStatus fieldStatus = 0;
+					Boolean add = String.Compare(entry[2], "Remove") != 0;
+					if (String.Compare(entry[2], "Set") != 0)
+						fieldStatus = (BattleStatus)field.GetValue(null);
+					for (Int32 i = 3; i < entry.Length; i++)
+					{
+						if (entry[i].TryEnumParse(out BattleStatus status))
+						{
+							if (add)
+								fieldStatus |= status;
+							else
+								fieldStatus &= ~status;
+						}
+					}
+					field.SetValue(null, fieldStatus);
+					shouldUpdateBattleStatus = true;
+				}
 				else if (String.Compare(entry[0], "HalfTranceCommand") == 0)
 				{
 					// eg.: HalfTranceCommand Set DoubleWhiteMagic DoubleBlackMagic HolySword2
@@ -222,15 +246,15 @@ namespace Memoria
 					if (String.Compare(entry[1], "Set") == 0)
 						btl_cmd.half_trance_cmd_list.Clear();
 					for (Int32 i = 2; i < entry.Length; i++)
-						foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
-							if (String.Compare(entry[i], cmdid.ToString()) == 0)
-							{
-								if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdid))
-									btl_cmd.half_trance_cmd_list.Add(cmdid);
-								else if (!add)
-									btl_cmd.half_trance_cmd_list.Remove(cmdid);
-								break;
-							}
+					{
+						if (entry[i].TryEnumParse(out BattleCommandId cmdId))
+						{
+							if (add && !btl_cmd.half_trance_cmd_list.Contains(cmdId))
+								btl_cmd.half_trance_cmd_list.Add(cmdId);
+							else if (!add)
+								btl_cmd.half_trance_cmd_list.Remove(cmdId);
+						}
+					}
 				}
 				else if (String.Compare(entry[0], "DoubleCastCommand") == 0)
 				{
@@ -239,15 +263,15 @@ namespace Memoria
 					if (String.Compare(entry[1], "Set") == 0)
 						BattleHUD.DoubleCastSet.Clear();
 					for (Int32 i = 2; i < entry.Length; i++)
-						foreach (BattleCommandId cmdid in (BattleCommandId[])Enum.GetValues(typeof(BattleCommandId)))
-							if (String.Compare(entry[i], cmdid.ToString()) == 0)
-							{
-								if (add)
-									BattleHUD.DoubleCastSet.Add(cmdid);
-								else
-									BattleHUD.DoubleCastSet.Remove(cmdid);
-								break;
-							}
+					{
+						if (entry[i].TryEnumParse(out BattleCommandId cmdId))
+						{
+							if (add)
+								BattleHUD.DoubleCastSet.Add(cmdId);
+							else
+								BattleHUD.DoubleCastSet.Remove(cmdId);
+						}
+					}
 				}
 				else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
 				{
@@ -260,6 +284,21 @@ namespace Memoria
 					for (Int32 i = 0; i < arraySize; i++)
 						Byte.TryParse(entry[1 + i], out ff9.w_musicSet[i]);
 				}
+				else if (String.Compare(entry[0], "TetraMasterSound") == 0)
+				{
+					// eg.: TetraMasterSound CANCEL 101
+					if (SoundEffect.soundIdMap == null)
+						continue;
+					QuadMistSoundID effectID;
+					Int32 soundID;
+					if (!entry[1].StartsWith("MINI_SE_"))
+						entry[1] = "MINI_SE_" + entry[1];
+					if (!entry[1].TryEnumParse(out effectID))
+						continue;
+					if (!Int32.TryParse(entry[2], out soundID))
+						continue;
+					SoundEffect.soundIdMap[effectID] = soundID;
+				}
 				else if (String.Compare(entry[0], "MoogleFieldList") == 0)
 				{
 					// eg.: MoogleFieldList Remove 2905 2909 2916 2919
@@ -271,6 +310,7 @@ namespace Memoria
 					}
 					Int16 fldid;
 					for (Int32 i = 2; i < entry.Length; i++)
+					{
 						if (Int16.TryParse(entry[i], out fldid))
 						{
 							EventEngine.moogleFldSpecialMap.Remove(fldid);
@@ -279,6 +319,7 @@ namespace Memoria
 							else
 								EventEngine.moogleFldMap.Remove(fldid);
 						}
+					}
 				}
 				else if (String.Compare(entry[0], "BattleMapModel") == 0)
 				{
@@ -414,6 +455,8 @@ namespace Memoria
 					}
 				}
 			}
+			if (shouldUpdateBattleStatus)
+				BattleStatusConst.Update();
 		}
 
 		private static void PatchBattles(String[] patchCode)

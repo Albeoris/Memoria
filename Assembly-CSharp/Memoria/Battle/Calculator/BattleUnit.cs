@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using FF9;
 using Assets.Sources.Scripts.UI.Common;
@@ -17,9 +16,9 @@ namespace Memoria
         public Int32 HpDamage;
         public Int32 MpDamage;
 
-        public BTL_DATA Data;
+        internal BTL_DATA Data;
 
-        public BattleUnit(BTL_DATA data)
+        internal BattleUnit(BTL_DATA data)
         {
             Data = data;
         }
@@ -40,7 +39,7 @@ namespace Memoria
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
-        public Byte Level => Data.oldstatus ? ((byte)(Data.level << 3)) : Data.level;
+        public Byte Level => Data.special_status_old ? ((byte)(Data.level << 3)) : Data.level;
         public Byte Position => Data.bi.line_no;
 
         public Byte Row
@@ -91,49 +90,49 @@ namespace Memoria
 
         public Byte Strength
         {
-            get => Data.oldstatus ? ((byte)(Data.elem.str >> 3)) : Data.elem.str;
+            get => Data.special_status_old ? ((Byte)(Data.elem.str >> 3)) : Data.elem.str;
             set => Data.elem.str = value;
         }
 
         public Byte PhisicalDefence
         {
-            get => Data.oldstatus ? ((byte)(Data.defence.PhisicalDefence >> 3)) : Data.defence.PhisicalDefence;
+            get => Data.special_status_old ? ((Byte)(Data.defence.PhisicalDefence >> 3)) : Data.defence.PhisicalDefence;
             set => Data.defence.PhisicalDefence = value;
         }
 
         public Byte PhisicalEvade
         {
-            get => Data.oldstatus ? ((byte)(Data.defence.PhisicalEvade >> 3)) : Data.defence.PhisicalEvade;
+            get => Data.special_status_old ? ((Byte)(Data.defence.PhisicalEvade >> 3)) : Data.defence.PhisicalEvade;
             set => Data.defence.PhisicalEvade = value;
         }
 
         public Byte Magic
         {
-            get => Data.oldstatus ? ((byte)(Data.elem.mgc >> 3)) : Data.elem.mgc;
+            get => Data.special_status_old ? ((Byte)(Data.elem.mgc >> 3)) : Data.elem.mgc;
             set => Data.elem.mgc = value;
         }
 
         public Byte MagicDefence
         {
-            get => Data.oldstatus ? ((byte)(Data.defence.MagicalDefence >> 3)) : Data.defence.MagicalDefence;
+            get => Data.special_status_old ? ((Byte)(Data.defence.MagicalDefence >> 3)) : Data.defence.MagicalDefence;
             set => Data.defence.MagicalDefence = value;
         }
 
         public Byte MagicEvade
         {
-            get => Data.oldstatus ? ((byte)(Data.defence.MagicalEvade >> 3)) : Data.defence.MagicalEvade;
+            get => Data.special_status_old ? ((Byte)(Data.defence.MagicalEvade >> 3)) : Data.defence.MagicalEvade;
             set => Data.defence.MagicalEvade = value;
         }
 
         public Byte Dexterity
         {
-            get => Data.oldstatus ? ((byte)(Data.elem.dex >> 3)) : Data.elem.dex;
+            get => Data.special_status_old ? ((Byte)(Data.elem.dex >> 3)) : Data.elem.dex;
             set => Data.elem.dex = value;
         }
 
         public Byte Will
         {
-            get => Data.oldstatus ? ((byte)(Data.elem.wpr >> 3)) : Data.elem.wpr;
+            get => Data.special_status_old ? ((Byte)(Data.elem.wpr >> 3)) : Data.elem.wpr;
             set => Data.elem.wpr = value;
         }
 
@@ -210,6 +209,9 @@ namespace Memoria
             get => Data.stat.invalid;
             set => Data.stat.invalid = value;
         }
+
+        public StatusModifier PartialResistStatus => Data.stat_partial_resist;
+        public StatusModifier StatusDurationFactor => Data.stat_duration_factor;
 
         public EffectElement BonusElement
         {
@@ -336,7 +338,7 @@ namespace Memoria
         }
 
         public void ScaleModel(Int32 size, Boolean setDefault = false) // 4096 is the default size
-		{
+        {
             if (setDefault)
                 Data.geo_scale_default = size;
             geo.geoScaleSet(Data, size, true);
@@ -405,9 +407,9 @@ namespace Memoria
             btl_stat.RemoveStatus(Data, status);
         }
 
-        public void AlterStatus(BattleStatus status, byte casterwill = 0)
+        public void AlterStatus(BattleStatus status, BattleUnit inflicter = null)
         {
-            btl_stat.AlterStatus(Data, status, casterwill);
+            btl_stat.AlterStatus(Data, status, inflicter?.Data);
         }
 
         public void Kill()
@@ -430,29 +432,19 @@ namespace Memoria
             //}
         }
 
-        public void Remove()
+        public void Remove(Boolean makeDisappear = true)
         {
             battle.btl_bonus.member_flag &= (Byte)~(1 << Data.bi.line_no);
             btl_cmd.ClearSysPhantom(Data);
             btl_cmd.KillCommand3(Data);
             btl_sys.SavePlayerData(Data, true);
             btl_sys.DelCharacter(Data);
-            Data.SetDisappear(true, 5);
+            if (makeDisappear)
+                Data.SetDisappear(true, 5);
             // The two following lines have been switched for fixing an UI bug (ATB bar glowing, etc... when an ally is snorted)
             // It seems to fix the bug without introducing another one (the HP/MP figures update strangely but that's because of how the UI cells are managed)
             UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
             UIManager.Battle.DisplayParty(true);
-        }
-
-        public void RemoveAlt() // TRANCE SEEK - Special move for Larvalar Junior
-        {
-            battle.btl_bonus.member_flag &= (Byte)~(1 << Data.bi.line_no);
-            btl_cmd.ClearSysPhantom(Data);
-            btl_cmd.KillCommand3(Data);
-            btl_sys.SavePlayerData(Data, true);
-            btl_sys.DelCharacter(Data);
-            UIManager.Battle.RemovePlayerFromAction(Data.btl_id, true);
-            UIManager.Battle.DisplayParty();
         }
 
         public void FaceTheEnemy()
@@ -482,14 +474,14 @@ namespace Memoria
             Data = unit.Data;
         }
 
-        public void Libra()
+        public void Libra(Boolean showSteals = false)
         {
-            UIManager.Battle.SetBattleLibra(this);
+            UIManager.Battle.SetBattleLibra(this, showSteals);
         }
 
-        public void Detect()
+        public void Detect(Boolean reverseOrder = true)
         {
-            UIManager.Battle.SetBattlePeeping(this);
+            UIManager.Battle.SetBattlePeeping(this, reverseOrder);
         }
 
         public Int32 GetIndex()

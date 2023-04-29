@@ -31,11 +31,18 @@
 #####################################################################################################
 ##  
 ##  It is important for the keywords ">SA", ">AA" and for the feature types to be at the start of a new line
-##  The ID of a ">SA" must be a number between 0 and 63 corresponding to the supporting ability
-##  (0 is the first one, Auto-Reflect by default, and 63 is the last one that is unused by default)
-##  The ID of a ">AA" must be a number between 0 and 191 corresponding to the active ability
-##  (0 is Void, and 191 is Doomsday Sword)
-##  Everything on the same line after the ID is ignored
+##  The ID of a ">SA" must be a number corresponding to the supporting ability
+##  (0 is the first one, Auto-Reflect by default; 63 is Void, unused by default)
+##  The ID of a ">AA" must be a number corresponding to the active ability
+##  (0 is Void; 191 is Doomsday Sword, the last one that is used by default)
+##  
+##  Optionally, writing "+" after the ID cumulates the features across mods:
+##  Without "+", all the features tied to that ability's ID that are defined in mods of lower priorities are cleared
+##  With "+", the features defined are added on top of the base features
+##  Generally, it is better to use this option for ">SA Global+"
+##  (eg. to keep Healing Rod's effect when adding an unrelated global effect)
+##  
+##  Everything on the same line after the ID and the optional "+" is ignored
 ##  
 #####################################################################################################
 ##                                                                                                 ##
@@ -61,11 +68,15 @@
 ##  
 ##  StatusInit -> Applies a status modification at the start of each battle
 ##    Arguments:
-##      [code=Condition] {Formula} [/code] -> Define a condition for the feature to apply
-##      AutoStatus {Status Name}           -> Let the character have a permanent status
-##      InitialStatus {Status Name}        -> Let the character start the battle with a status
-##      ResistStatus {Status Name}         -> Let the character be immune to a status
-##      InitialATB {ATB Pourcent}          -> Fill the character's ATB at start (100 for a full gauge)
+##      [code=Condition] {Formula} [/code]                   -> Define a condition for the feature to apply
+##      AutoStatus {Status Name}                             -> Let the character have a permanent status
+##      InitialStatus {Status Name}                          -> Let the character start the battle with a status
+##      ResistStatus {Status Name}                           -> Let the character be immune to a status
+##      InitialATB {ATB Pourcent}                            -> Fill the character's ATB at start (100 for a full gauge)
+##      [code=PartialResist{Status Name}] {Formula} [/code]  -> Let the character have a status-specific evasion
+##                                                          0.0: no bonus evasion -- 1.0: always evade that status
+##      [code=DurationFactor{Status Name}] {Formula} [/code] -> Change the duration of specific statuses for the character
+##                                                          1.0: normal duration
 ##  
 ##  Ability -> Apply an effect at some point during an ability's effect calculation
 ##    typically for increasing the power of some attacks or triggering a reaction
@@ -183,6 +194,15 @@
 ##    GameTime                         -> The total duration of the played game, in seconds
 ##    BattleId                         -> The ID of the current battle
 ##    FieldId                          -> The ID of the current field
+##    IsRandomBattle                   -> Whether the current battle is a random battle (excluding friendly and Ragtime encounters)
+##    IsFriendlyBattle                 -> Whether the current battle is a friendly battle
+##    IsRagtimeBattle                  -> Whether the current battle is a Ragtime encounter
+##    CurrentPartyCount                -> The total number of player characters in the battle
+##    CurrentEnemyCount                -> The total number of enemies in the battle
+##    IsBattlePreemptive               -> Whether the current battle started as a preemptive
+##    IsBattleBackAttack               -> Whether the current battle started as a back attack
+##    ScenarioCounter                  -> The scenario counter, see https://github.com/Albeoris/Memoria/wiki/Scenario-counter
+##    IsGarnetDepressed                -> Whether Garnet is in a depression state
 ##    UseSFXRework                     -> Whether the SFX Rework system is activated or not
 ##  
 ##  Permanent:
@@ -206,7 +226,7 @@
 ##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
 ##    ReflectFactor, StatusesInflicted, CommandId, AbilityId, ScriptId, ItemUseId, WeaponThrowShape,
 ##    SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon, IsSpellReflected,
-##    IsCovered, IsDodged, IsReflectNull, MPCost, CalcMainCounter,
+##    IsCovered, IsDodged, IsReflectNull, MPCost, CalcMainCounter, CommandTargetCount,
 ##    (+ the other modifiable properties, except for "ClearStatus" and "ClearAutoStatus")
 ##  
 ##  Command:
@@ -237,8 +257,9 @@
 ##  Also triggers a counter-attack with the sword Defender when the character is defending
 ##  Also make the staff Mace of Zeus reduce MP cost of all spells to 0
 ##  Also make blinded characters be mistaken on their single-target actions
+##  Also make the Rosetta Ring give a partial protection against Heat (50% bonus evasion and reduce duration to 50%)
 ##  
-##  >SA Global
+##  >SA Global+
 ##  StatusInit [code=Condition] WeaponId == RegularItem_Avenger [/code] InitialStatus Doom
 ##  Ability AsTarget
 ##   [code=Condition] TargetWeaponId == RegularItem_Defender && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
@@ -248,6 +269,7 @@
 ##  Command EvenImmobilized
 ##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Blind) [/code]
 ##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) [/code]
+##  StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] [code=PartialResistHeat] 0.5 [/code] [code=DurationFactorHeat] 0.5 [/code]
 ##  
 ##  
 ##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
@@ -319,7 +341,7 @@
 ##   BattleStatus_Slow			BattleStatus_Float		BattleStatus_Shell			BattleStatus_Protect
 ##   BattleStatus_Heat			BattleStatus_Freeze		BattleStatus_Vanish			BattleStatus_Doom
 ##   BattleStatus_Mini			BattleStatus_Reflect	BattleStatus_Jump			BattleStatus_GradualPetrify
-##   + several shorthands for multiple statuses
+##   + several shorthands for multiple statuses (eg. BattleStatus_PreventCounter)
 ##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/BattleStatus.cs
 ##  
 ##  The different elements are:
@@ -384,22 +406,30 @@
 ##  Active ability features work similarly as supporting ability features but consist of [code][/code] tags only
 ##  Most of the time, formulas should use the format "{condition} ? {formula 1} : {formula 2}" in order to be efficient
 ##  
-##  There are 7 possible different tags:
+##  There are 10 possible different tags:
 ##  
-##  [code=Patch] {Formula} [/code]          -> Swap the ability with another one
-##                                         This affects the ability in battles but also in the menu
+##  [code=Patch] {Formula} [/code]              -> Swap the ability with another one
+##                                             This affects the ability in battles but also in the menu
 ##  
-##  [code=Priority] {Formula} [/code]       -> Change the command's priority, to make it trigger as soon as inputted
+##  [code=Priority] {Formula} [/code]           -> Change the command's priority, to make it trigger as soon as inputted
 ##  
-##  [code=GilCost] {Formula} [/code]        -> Add a gil cost to the cast of the ability
+##  [code=GilCost] {Formula} [/code]            -> Add a gil cost to the cast of the ability
 ##  
-##  [code=Element] {Formula} [/code]        -> Dynamically change the ability's element
+##  [code=ItemRequirement] {Formulas} [/code]   -> Add item requirement(s) to the cast of the ability, without using it (them) directly
+##                                             There can be several formulas separated by a semi-colon ;
+##                                             Formulas go 2 by 2, with the 1st one defining the item ID and the 2nd one defining the item amount (default: 1)
 ##  
-##  [code=Status] {Formula} [/code]         -> Dynamically change the ability's status
+##  [code=Power] {Formula} [/code]              -> Dynamically change the ability's power
 ##  
-##  [code=Target] {Formula} [/code]         -> Redefine the command's target(s)
+##  [code=HitRate] {Formula} [/code]            -> Dynamically change the ability's hit rate
 ##  
-##  [code=SpecialEffect] {Formula} [/code]  -> Dynamically change the ability's special effect
+##  [code=Element] {Formula} [/code]            -> Dynamically change the ability's element
+##  
+##  [code=Status] {Formula} [/code]             -> Dynamically change the ability's status
+##  
+##  [code=Target] {Formula} [/code]             -> Redefine the command's target(s)
+##  
+##  [code=SpecialEffect] {Formula} [/code]      -> Dynamically change the ability's special effect
 ##  
 #####################################################################################################
 ##  
@@ -476,6 +506,15 @@
 ##  >AA 13 Haste
 ##  [code=Target] HasSA(33) ? BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump) : -1 [/code]
 ##  [code=SpecialEffect] HasSA(33) ? (UseSFXRework ? 89 : 506) : -1 [/code]
+##  
+##  
+##  Have a custom Mix ability requiring 2 Ores + 1 other random jewel
+##  The actual ability effect has to be coded in a custom battle script
+##  (see https://github.com/Albeoris/Memoria/wiki/External-Battle-scripts)
+##  
+##  >AA 200 Mix Jewels
+##  [code=Power] RegularItem_Garnet + GetRandom(0, 12) [/code]
+##  [code=ItemRequirement] RegularItem_Ore ; 2 ; Power ; 1 [/code]
 ##  
 #####################################################################################################
 
@@ -773,6 +812,9 @@ ________________________________________________________________________________
 
 >AA 82 Roulette (use a random target, targeting a living enemy with 50% chances and a living ally with 50% chances)
 [code=Target] GetRandomBit(BattleFilter(255, GetRandom(0, 2), 1, BattleStatus_Death)) [/code]
+
+>AA 93 Angel's Snack (fail completly if there is not enough item for everyone)
+[code=ItemRequirement] Power ; CommandTargetCount [/code]
 
 >AA 126 Spare Change (single)
 [code=GilCost] Power * CasterLevel [/code]

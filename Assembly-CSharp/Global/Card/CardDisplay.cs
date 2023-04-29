@@ -9,7 +9,7 @@ public class CardDisplay : MonoBehaviour
 		set
 		{
 			status.Text = value;
-			if (Configuration.Mod.TranceSeek || Configuration.TetraMaster.TripleTriad > 0)
+			if (Configuration.TetraMaster.TripleTriad > 0)
 			{
                 status.letters[0].transform.localPosition = new Vector3(0.05f, -0.05f, -0.02f);
                 status.letters[1].transform.localPosition = new Vector3(0.05f, -0.19f, -0.02f);

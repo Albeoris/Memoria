@@ -100,6 +100,7 @@ namespace Memoria
         public BattleAbilityId AbilityId => btl_util.GetCommandMainActionIndex(Data);
         public RegularItem ItemId => btl_util.GetCommandItem(Data);
         public Boolean IsManyTarget => (Data.info.cursor & 1) != 0;
+        public Int32 TargetCount => (Int32)btl_util.SumOfTarget(Data);
         public TargetType TargetType => Data.aa.Info.Target;
         public BattleStatusIndex AbilityStatusIndex => Data.aa.AddStatusNo;
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;

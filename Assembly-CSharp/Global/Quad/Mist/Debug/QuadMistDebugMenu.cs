@@ -103,9 +103,9 @@ public class QuadMistDebugMenu : MonoBehaviour
 		if (GUILayout.Button("Reset all stat", new GUILayoutOption[0]))
 		{
 			QuadMistDatabase.LoadData();
-			QuadMistDatabase.SetWinCount(0);
-			QuadMistDatabase.SetLoseCount(0);
-			QuadMistDatabase.SetDrawCount(0);
+			QuadMistDatabase.WinCount = 0;
+			QuadMistDatabase.LoseCount = 0;
+			QuadMistDatabase.DrawCount = 0;
 			QuadMistDatabase.SaveData();
 		}
 		GUILayout.Label("Game generates new 8 cards", new GUILayoutOption[0]);

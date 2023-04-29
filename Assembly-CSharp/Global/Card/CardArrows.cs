@@ -1,6 +1,6 @@
-﻿using Memoria;
-using System;
+﻿using System;
 using UnityEngine;
+using Memoria;
 
 public class CardArrows : MonoBehaviour
 {
@@ -12,20 +12,10 @@ public class CardArrows : MonoBehaviour
 		}
 		set
 		{
-			_arrow = value;
-			if (_arrow > 255)
-			{
-				_arrow = 255;
-			}
-			if (_arrow < 0)
-			{
-				_arrow = 0;
-			}
+			_arrow = Mathf.Clamp(value, 0, 255);
 			for (Int32 i = 0; i < 8; i++)
-			{
-                ui[i].gameObject.SetActive((Configuration.TetraMaster.TripleTriad < 2) ? ((_arrow & 1 << i) > 0) : false); // HIDE ARROW
-            }
-        }
+				ui[i].gameObject.SetActive((Configuration.TetraMaster.TripleTriad <= 1) ? ((_arrow & 1 << i) > 0) : false); // HIDE ARROW
+		}
 	}
 
 	public Boolean Small

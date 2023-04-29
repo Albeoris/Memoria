@@ -579,7 +579,7 @@ public class JsonParser : ISharedDataParser
 				{
 					QuadMistCard card = new QuadMistCard();
 					if (asObject["id"] != null)
-						card.id = (Byte)asObject["id"].AsInt;
+						card.id = (TetraMasterCardId)asObject["id"].AsInt;
 					if (asObject["side"] != null)
 						card.side = (Byte)asObject["side"].AsInt;
 					if (asObject["atk"] != null)
@@ -625,7 +625,7 @@ public class JsonParser : ISharedDataParser
 			{
 				QuadMistCard card = data.MiniGameCard[i];
 				JSONClass cardClass = new JSONClass();
-				cardClass.Add("id", card.id.ToString());
+				cardClass.Add("id", ((Int32)card.id).ToString());
 				cardClass.Add("side", "0");
 				cardClass.Add("atk", card.atk.ToString());
 				cardClass.Add("type", ((Int32)card.type).ToString());

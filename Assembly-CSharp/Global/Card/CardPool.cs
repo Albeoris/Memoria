@@ -1,6 +1,7 @@
-using Memoria;
 using System;
 using UnityEngine;
+using Memoria;
+using Memoria.Data;
 
 public class CardPool : MonoBehaviour
 {
@@ -12,11 +13,11 @@ public class CardPool : MonoBehaviour
 
 	public void LoadMetaData()
 	{
-        Byte[] bytes = AssetManager.LoadBytes(dataPath);
-        for (Int32 i = 0; i < (Int32)CardPool.TOTAL_CARDS; i++)
-        {
-            cardData[i] = new QuadMistCard();
-			cardData[i].id = (Byte)i;
+		Byte[] bytes = AssetManager.LoadBytes(dataPath);
+		for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
+		{
+			cardData[i] = new QuadMistCard();
+			cardData[i].id = (TetraMasterCardId)i;
 			cardData[i].side = 0;
 			cardData[i].atk = bytes[i * 5];
 			cardData[i].type = (QuadMistCard.Type)bytes[i * 5 + 1];
@@ -28,27 +29,14 @@ public class CardPool : MonoBehaviour
 
 	public static QuadMistCard CreateQuadMistCard(Int32 id)
 	{
-		QuadMistCard quadMistCard = new QuadMistCard();
-		quadMistCard = new QuadMistCard(CardPool.GetMaxStatCard(id));
-		if (Configuration.Mod.TranceSeek || Configuration.TetraMaster.TripleTriad > 0)
-		{
-            quadMistCard.atk = (byte)Math.Max(1, UnityEngine.Random.Range((int)(quadMistCard.atk / 2 - 1), (byte)Math.Min(11, (int)(quadMistCard.atk / 2 + 1))));
-            quadMistCard.pdef = (byte)Math.Max(1, UnityEngine.Random.Range((int)(quadMistCard.pdef / 2 - 1), (byte)Math.Min(11, (int)(quadMistCard.pdef / 2 + 1))));
-            quadMistCard.mdef = (byte)Math.Max(1, UnityEngine.Random.Range((int)(quadMistCard.mdef / 2 - 1), (byte)Math.Min(11, (int)(quadMistCard.mdef / 2 + 1))));
-        }
-		else
-		{
-            quadMistCard.atk = (Byte)((Int32)(quadMistCard.atk / 2) + UnityEngine.Random.Range(0, (Int32)(quadMistCard.atk / 2)));
-            quadMistCard.pdef = (Byte)((Int32)(quadMistCard.pdef / 2) + UnityEngine.Random.Range(0, (Int32)(quadMistCard.pdef / 2)));
-            quadMistCard.mdef = (Byte)((Int32)(quadMistCard.mdef / 2) + UnityEngine.Random.Range(0, (Int32)(quadMistCard.mdef / 2)));
-            if (UnityEngine.Random.Range(0, 127) == 0)
-            {
-                quadMistCard.type = QuadMistCard.Type.FLEXIABLE;
-            }
-
-        }
-        quadMistCard.arrow = CardPool.RandomCardArrow();
-		return quadMistCard;
+		QuadMistCard newCard = new QuadMistCard(CardPool.GetMaxStatCard(id));
+		newCard.atk = (Byte)(newCard.atk / 2 + UnityEngine.Random.Range(0, newCard.atk / 2));
+		newCard.pdef = (Byte)(newCard.pdef / 2 + UnityEngine.Random.Range(0, newCard.pdef / 2));
+		newCard.mdef = (Byte)(newCard.mdef / 2 + UnityEngine.Random.Range(0, newCard.mdef / 2));
+		if (UnityEngine.Random.Range(0, 127) == 0)
+			newCard.type = QuadMistCard.Type.FLEXIABLE;
+		newCard.arrow = CardPool.RandomCardArrow();
+		return newCard;
 	}
 
 	private static Byte RandomCardArrow()
@@ -103,7 +91,7 @@ public class CardPool : MonoBehaviour
 	{
 		return new QuadMistCard
 		{
-			id = (Byte)((Int32)CardPool.TOTAL_CARDS + id)
+			id = (TetraMasterCardId)(CardPool.TOTAL_CARDS + id)
 		};
 	}
 
@@ -113,7 +101,7 @@ public class CardPool : MonoBehaviour
 
 	public static Byte TOTAL_CARDS = 100;
 
-	private QuadMistCard[] cardData = new QuadMistCard[(Int32)CardPool.TOTAL_CARDS];
+	private QuadMistCard[] cardData = new QuadMistCard[CardPool.TOTAL_CARDS];
 
 	private static Int32[] probability = new Int32[]
 	{

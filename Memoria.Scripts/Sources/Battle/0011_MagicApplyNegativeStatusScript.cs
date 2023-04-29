@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())
-                _v.TargetCommand.TryAlterCommandStatuses();
+                _v.TargetCommand.TryAlterCommandStatuses(_v.Caster);
         }
     }
 }

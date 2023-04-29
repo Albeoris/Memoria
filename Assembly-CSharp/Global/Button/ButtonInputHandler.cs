@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria;
-using Memoria.Prime;
 
 public class ButtonInputHandler : InputHandler
 {
@@ -184,10 +183,10 @@ public class ButtonInputHandler : InputHandler
 			if (this.prevBoardSelectX != this.boardSelectX || this.prevBoardSelectY != this.boardSelectY || !this.launched)
 			{
 				Vector2 boardCursorPosition = new Vector2(this.boardSelectX, this.boardSelectY);
-				boardCursorPosition.x *= (Configuration.TetraMaster.TripleTriad < 2) ? 0.429f : 0.572f;
-				boardCursorPosition.y *= (Configuration.TetraMaster.TripleTriad < 2) ? -0.525f : -0.7f;
-				boardCursorPosition.x += (Configuration.TetraMaster.TripleTriad < 2) ? -1f : -1f;
-				boardCursorPosition.y += (Configuration.TetraMaster.TripleTriad < 2) ? 0.73f : 0.73f;
+				boardCursorPosition.x *= Board.USE_SMALL_BOARD ? 0.572f : 0.429f;
+				boardCursorPosition.y *= Board.USE_SMALL_BOARD ? -0.7f : -0.525f;
+				boardCursorPosition.x += Board.USE_SMALL_BOARD ? -1f : -1f;
+				boardCursorPosition.y += Board.USE_SMALL_BOARD ? 0.73f : 0.73f;
                 board.SetBoardCursorPosition(boardCursorPosition);
 				this.launched = true;
 			}
@@ -278,10 +277,10 @@ public class ButtonInputHandler : InputHandler
 				SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
 				board.PlaceCursor(this.boardSelectX, this.boardSelectY);
 				Vector2 boardCursorPosition = new Vector2(this.boardSelectX, this.boardSelectY);
-                boardCursorPosition.x *= (Configuration.TetraMaster.TripleTriad < 2) ? 0.429f : 0.572f;
-                boardCursorPosition.y *= (Configuration.TetraMaster.TripleTriad < 2) ? -0.525f : -0.7f;
-                boardCursorPosition.x += (Configuration.TetraMaster.TripleTriad < 2) ? -1f : -1f;
-                boardCursorPosition.y += (Configuration.TetraMaster.TripleTriad < 2) ? 0.73f : 0.73f;
+                boardCursorPosition.x *= Board.USE_SMALL_BOARD ? 0.572f : 0.429f;
+                boardCursorPosition.y *= Board.USE_SMALL_BOARD ? -0.7f : -0.525f;
+                boardCursorPosition.x += Board.USE_SMALL_BOARD ? -1f : -1f;
+                boardCursorPosition.y += Board.USE_SMALL_BOARD ? 0.73f : 0.73f;
                 board.SetBoardCursorPosition(boardCursorPosition);
 			}
 			if (UIManager.Input.GetKeyTrigger(Control.Confirm))

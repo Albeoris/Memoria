@@ -104,9 +104,6 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.Amarant:
                     OnCharacterName(CharacterId.Amarant);
                     break;
-                case FFIXTextTagCode.Beatrix: // TRANCE SEEK
-                    OnCharacterName(CharacterId.Beatrix);
-                    break;
                 case FFIXTextTagCode.Party:
                     OnPartyMemberName(tag.Param[0] - 1);
                     break;
@@ -180,8 +177,6 @@ namespace Memoria.Assets
                     OnCharacterName(CharacterId.Eiko);
                 else if (a == NGUIText.Amarant)
                     OnCharacterName(CharacterId.Amarant);
-                else if (a == NGUIText.Beatrix) // TRANCE SEEK - RENAME BEATRIX
-                    OnCharacterName(CharacterId.Beatrix);
                 else if (a == NGUIText.Party1)
                     OnPartyMemberName(0);
                 else if (a == NGUIText.Party2)
@@ -284,80 +279,53 @@ namespace Memoria.Assets
 
         private void OnIcon(Int32 oneParameterFromTag)
         {
-            String text4;
-            Boolean flag = true;
-            Int32 num3 = oneParameterFromTag;
-            switch (num3)
+            String parsed;
+            Boolean isIcon = true;
+            switch (oneParameterFromTag)
             {
                 case 34:
-                    text4 = "[sub]0[/sub]";
+                    parsed = "[sub]0[/sub]";
                     break;
                 case 35:
-                    text4 = "[sub]1[/sub]";
-                    break;
-                case 36:
-                case 37:
-                case 38:
-                    IL_D2:
-                    switch (num3)
-                    {
-                        case 159:
-                            text4 = "[sup]" + Localization.Get("Miss") + "[/sup]";
-                            break;
-                        case 160:
-                            text4 = "[sup]" + Localization.Get("Death") + "[/sup]";
-                            break;
-                        case 161:
-                            text4 = "[sup]" + Localization.Get("Guard") + "[/sup]";
-                            break;
-                        case 162:
-                            text4 = "[B880E0][sup]" + Localization.Get("Critical") + "[/sup][C8C8C8]";
-                            break;
-                        case 163:
-                            text4 = "[sup]MP[/sup]";
-                            break;
-                        default:
-                            if (num3 == 173)
-                            {
-                                text4 = "9";
-                            }
-                            else
-                            {
-                                if (num3 == 174)
-                                {
-                                    text4 = "/";
-                                }
-                                else
-                                {
-                                    if (num3 == 45)
-                                    {
-                                        text4 = "[sub]/[/sub]";
-                                    }
-                                    else
-                                    {
-                                        text4 = String.Concat("[ICON", "=", oneParameterFromTag, "] ");
-                                        flag = false;
-                                    }
-                                }
-                            }
-                            break;
-                    }
+                    parsed = "[sub]1[/sub]";
                     break;
                 case 39:
-                    text4 = "[sub]5[/sub]";
+                    parsed = "[sub]5[/sub]";
+                    break;
+                case 45:
+                    parsed = "[sub]/[/sub]";
+                    break;
+                case 159:
+                    parsed = "[sup]" + Localization.Get("Miss") + "[/sup]";
+                    break;
+                case 160:
+                    parsed = "[sup]" + Localization.Get("Death") + "[/sup]";
+                    break;
+                case 161:
+                    parsed = "[sup]" + Localization.Get("Guard") + "[/sup]";
+                    break;
+                case 162:
+                    parsed = "[B880E0][sup]" + Localization.Get("Critical") + "[/sup][C8C8C8]";
+                    break;
+                case 163:
+                    parsed = "[sup]MP[/sup]";
+                    break;
+                case 173:
+                    parsed = "9";
+                    break;
+                case 174:
+                    parsed = "/";
                     break;
                 default:
-                    goto IL_D2;
+                    parsed = String.Concat("[ICON", "=", oneParameterFromTag, "] ");
+                    isIcon = false;
+                    break;
             }
-            _sb.Append(text4);
-            if (flag)
-            {
-                _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, FF9TextTool.RemoveOpCode(text4));
-            }
+            _sb.Append(parsed);
+            if (isIcon)
+                _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, FF9TextTool.RemoveOpCode(parsed));
             else
-            {
                 _currentWidth += FF9UIDataTool.GetIconSize(oneParameterFromTag).x;
-            }
         }
     }
 }

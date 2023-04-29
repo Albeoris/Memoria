@@ -11,11 +11,14 @@ namespace Memoria.Data
     {
         private static Dictionary<BattleAbilityId, String> AbilityPatch = new Dictionary<BattleAbilityId, String>();
         private static Dictionary<BattleAbilityId, String> AbilityPriority = new Dictionary<BattleAbilityId, String>();
-        private static Dictionary<BattleAbilityId, String> AbilityGilCost = new Dictionary<BattleAbilityId, String>();
+        private static Dictionary<BattleAbilityId, String> AbilityPowerPatch = new Dictionary<BattleAbilityId, String>();
+        private static Dictionary<BattleAbilityId, String> AbilityHitRatePatch = new Dictionary<BattleAbilityId, String>();
         private static Dictionary<BattleAbilityId, String> AbilityElementPatch = new Dictionary<BattleAbilityId, String>();
         private static Dictionary<BattleAbilityId, String> AbilityStatusPatch = new Dictionary<BattleAbilityId, String>();
         private static Dictionary<BattleAbilityId, String> AbilityTargetPatch = new Dictionary<BattleAbilityId, String>();
         private static Dictionary<BattleAbilityId, String> AbilitySpecialEffectPatch = new Dictionary<BattleAbilityId, String>();
+        private static Dictionary<BattleAbilityId, String> AbilityGilCost = new Dictionary<BattleAbilityId, String>();
+        private static Dictionary<BattleAbilityId, String> AbilityItemRequirement = new Dictionary<BattleAbilityId, String>();
 
         public static void ParseAbilityFeature(BattleAbilityId id, String input)
         {
@@ -25,8 +28,10 @@ namespace Memoria.Data
                     AbilityPatch[id] = formula.Groups[2].Value;
                 else if (String.Compare(formula.Groups[1].Value, "Priority") == 0)
                     AbilityPriority[id] = formula.Groups[2].Value;
-                else if (String.Compare(formula.Groups[1].Value, "GilCost") == 0)
-                    AbilityGilCost[id] = formula.Groups[2].Value;
+                else if (String.Compare(formula.Groups[1].Value, "Power") == 0)
+                    AbilityPowerPatch[id] = formula.Groups[2].Value;
+                else if (String.Compare(formula.Groups[1].Value, "HitRate") == 0)
+                    AbilityHitRatePatch[id] = formula.Groups[2].Value;
                 else if (String.Compare(formula.Groups[1].Value, "Element") == 0)
                     AbilityElementPatch[id] = formula.Groups[2].Value;
                 else if (String.Compare(formula.Groups[1].Value, "Status") == 0)
@@ -35,7 +40,25 @@ namespace Memoria.Data
                     AbilityTargetPatch[id] = formula.Groups[2].Value;
                 else if (String.Compare(formula.Groups[1].Value, "SpecialEffect") == 0)
                     AbilitySpecialEffectPatch[id] = formula.Groups[2].Value;
+                else if (String.Compare(formula.Groups[1].Value, "GilCost") == 0)
+                    AbilityGilCost[id] = formula.Groups[2].Value;
+                else if (String.Compare(formula.Groups[1].Value, "ItemRequirement") == 0)
+                    AbilityItemRequirement[id] = formula.Groups[2].Value;
             }
+        }
+
+        public static void ClearAbilityFeature(BattleAbilityId id)
+		{
+            AbilityPatch.Remove(id);
+            AbilityPriority.Remove(id);
+            AbilityPowerPatch.Remove(id);
+            AbilityHitRatePatch.Remove(id);
+            AbilityElementPatch.Remove(id);
+            AbilityStatusPatch.Remove(id);
+            AbilityTargetPatch.Remove(id);
+            AbilitySpecialEffectPatch.Remove(id);
+            AbilityGilCost.Remove(id);
+            AbilityItemRequirement.Remove(id);
         }
 
         public static Boolean ApplySpecialCommandCondition(CMD_DATA cmd)
@@ -46,21 +69,21 @@ namespace Memoria.Data
             try
             {
                 String featureStr;
-                if (AbilityGilCost.TryGetValue(abilId, out featureStr))
+                if (AbilityPowerPatch.TryGetValue(abilId, out featureStr))
                 {
-                    PARTY_DATA partyState = FF9StateSystem.Common.FF9.party;
                     Expression e = new Expression(featureStr);
                     InitCommandExpression(ref e, cmd);
-                    Int64 gilCost = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
-                    if (gilCost >= 0)
-                    {
-                        if (gilCost > partyState.gil)
-                        {
-                            UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughGil);
-                            return false;
-                        }
-                        partyState.gil -= (UInt32)gilCost;
-                    }
+                    Int64 power = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                    if (power >= 0)
+                        cmd.Power = (Byte)power;
+                }
+                if (AbilityHitRatePatch.TryGetValue(abilId, out featureStr))
+                {
+                    Expression e = new Expression(featureStr);
+                    InitCommandExpression(ref e, cmd);
+                    Int64 hitRate = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                    if (hitRate >= 0)
+                        cmd.HitRate = (Byte)hitRate;
                 }
                 if (AbilityElementPatch.TryGetValue(abilId, out featureStr))
                 {
@@ -99,6 +122,53 @@ namespace Memoria.Data
                         cmd.PatchedVfx = (SpecialEffect)vfx;
                         if (cmd.PatchedVfx == SpecialEffect.Meteor__Fail)
                             cmd.info.meteor_miss = 1;
+                    }
+                }
+                if (AbilityItemRequirement.TryGetValue(abilId, out featureStr))
+                {
+                    String[] featureSplit = featureStr.Split(';');
+                    Int64 itemType = -1;
+                    Int64 itemCount = 1;
+                    for (Int32 i = 0; i < featureSplit.Length; i++)
+                    {
+                        Expression e = new Expression(featureSplit[i]);
+                        InitCommandExpression(ref e, cmd);
+                        if ((i % 2) == 0)
+                        {
+                            itemType = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                        }
+                        else
+                        {
+                            itemCount = NCalcUtility.ConvertNCalcResult(e.Evaluate(), itemCount);
+                            if (itemType >= 0 && ff9item.FF9Item_GetCount((RegularItem)itemType) < itemCount)
+                            {
+                                UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
+                                return false;
+                            }
+                            itemType = -1;
+                            itemCount = 1;
+                        }
+                    }
+                    if (itemType >= 0 && ff9item.FF9Item_GetCount((RegularItem)itemType) < itemCount)
+                    {
+                        UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
+                        return false;
+                    }
+                }
+                if (AbilityGilCost.TryGetValue(abilId, out featureStr))
+                {
+                    PARTY_DATA partyState = FF9StateSystem.Common.FF9.party;
+                    Expression e = new Expression(featureStr);
+                    InitCommandExpression(ref e, cmd);
+                    Int64 gilCost = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                    if (gilCost >= 0)
+                    {
+                        if (gilCost > partyState.gil)
+                        {
+                            UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughGil);
+                            return false;
+                        }
+                        partyState.gil -= (UInt32)gilCost;
                     }
                 }
             }

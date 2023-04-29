@@ -154,6 +154,15 @@ namespace FF9
 			return count;
 		}
 
+		public static UInt32 SumOfTarget(CMD_DATA cmd)
+		{
+			UInt32 count = 0u;
+			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+				if (next.bi.target != 0 && (next.btl_id & cmd.tar_id) != 0)
+					count++;
+			return count;
+		}
+
 		public static UInt16 GetRandomBtlID(UInt32 player, Boolean allowDead = false)
 		{
 			UInt16[] array = new UInt16[4];

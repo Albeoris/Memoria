@@ -211,22 +211,32 @@ public static class btl2d
                     if (btl2dMessage.Type == 0)
                     {
                         if (btl2dMessage.Work.Num.Color == 0)
+                        {
                             style = HUDMessage.MessageStyle.DAMAGE;
+                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleDamageTextFormat))
+                                message = Configuration.Interface.BattleDamageTextFormat;
+                        }
                         else
+                        {
                             style = HUDMessage.MessageStyle.RESTORE_HP;
-                        message = btl2dMessage.Work.Num.Value.ToString();
+                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleRestoreTextFormat))
+                                message = Configuration.Interface.BattleRestoreTextFormat;
+                        }
+                        message += btl2dMessage.Work.Num.Value.ToString();
                     }
                     else if (btl2dMessage.Type == 1)
                     {
-                        message = null;
                         if (btl2dMessage.Work.Num.Color == 0)
                         {
                             style = HUDMessage.MessageStyle.DAMAGE;
+                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPDamageTextFormat))
+                                message = Configuration.Interface.BattleMPDamageTextFormat;
                         }
                         else
                         {
                             style = HUDMessage.MessageStyle.RESTORE_MP;
-                            message = (Configuration.Mod.TranceSeek ? NGUIText.FF9BlueColor : null);
+                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPRestoreTextFormat))
+                                message = Configuration.Interface.BattleMPRestoreTextFormat;
                         }
                         message += btl2dMessage.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
                     }

@@ -26,6 +26,8 @@ namespace Memoria.Data
             ModelName = CsvParser.String(raw[4]);
             if (!String.IsNullOrEmpty(ModelName))
                 ModelId = (UInt16)FF9BattleDB.GEO.GetKey(ModelName);
+            else
+                ModelId = UInt16.MaxValue;
 
             Byte scriptId = CsvParser.Byte(raw[5]);
             Byte power = CsvParser.Byte(raw[6]);

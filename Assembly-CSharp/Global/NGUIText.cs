@@ -32,7 +32,6 @@ public static class NGUIText
             NGUIText.Quina,
             NGUIText.Eiko,
             NGUIText.Amarant,
-            NGUIText.Beatrix,
             NGUIText.Party1,
             NGUIText.Party2,
             NGUIText.Party3,
@@ -104,7 +103,6 @@ public static class NGUIText
             NGUIText.Quina,
             NGUIText.Eiko,
             NGUIText.Amarant,
-            NGUIText.Beatrix,
             NGUIText.Party1,
             NGUIText.Party2,
             NGUIText.Party3,
@@ -114,7 +112,7 @@ public static class NGUIText
         NGUIText.FF9WhiteColor = "[C8C8C8]";
         NGUIText.FF9YellowColor = "[C8B040]";
         NGUIText.FF9PinkColor = "[B880E0]";
-        NGUIText.FF9BlueColor = "[2870FB]"; // TRANCE SEEK - MP restoration in blue instead of green
+        NGUIText.FF9BlueColor = "[2870FB]";
         NGUIText.MobileTouchToConfirmJP = 322;
         NGUIText.MobileTouchToConfirmUS = 323;
         NGUIText.forceShowButton = false;
@@ -167,23 +165,23 @@ public static class NGUIText
             switch (num3)
             {
                 case 6:
+                {
+                    UInt32 num4 = Convert.ToUInt32(specialCodeList[i + 1]);
+                    if (num4 > 255u)
                     {
-                        UInt32 num4 = Convert.ToUInt32(specialCodeList[i + 1]);
-                        if (num4 > 255u)
-                        {
-                            UInt32 num5 = Convert.ToUInt32(specialCodeList[i + 2]);
-                            String[] tableText = FF9TextTool.GetTableText(0u);
-                            String text = tableText[(Int32)((UIntPtr)num5)];
-                            num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, text);
-                            i += 2;
-                        }
-                        else
-                        {
-                            num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, eTb.GetStringFromTable(num4 >> 4 & 3u, num4 & 7u));
-                            i++;
-                        }
-                        break;
+                        UInt32 num5 = Convert.ToUInt32(specialCodeList[i + 2]);
+                        String[] tableText = FF9TextTool.GetTableText(0u);
+                        String text = tableText[(Int32)((UIntPtr)num5)];
+                        num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, text);
+                        i += 2;
                     }
+                    else
+                    {
+                        num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, eTb.GetStringFromTable(num4 >> 4 & 3u, num4 & 7u));
+                        i++;
+                    }
+                    break;
+                }
                 case 7:
                 case 8:
                 case 9:
@@ -212,13 +210,13 @@ public static class NGUIText
                     }
                     break;
                 case 14:
-                    {
-                        Int32 num8 = specialCodeList[i + 1];
-                        String itemName = ETb.GetItemName(eTb.gMesValue[num8]);
-                        num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, itemName);
-                        i++;
-                        break;
-                    }
+                {
+                    Int32 num8 = specialCodeList[i + 1];
+                    String itemName = ETb.GetItemName(eTb.gMesValue[num8]);
+                    num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, itemName);
+                    i++;
+                    break;
+                }
                 case 16:
                     num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ff.GetPlayer(CharacterId.Zidane).Name);
                     break;
@@ -247,11 +245,11 @@ public static class NGUIText
                 case 25:
                 case 26:
                 case 27:
-                    {
-                        PLAYER player2 = member[num2 - 24];
-                        num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player2.Name);
-                        break;
-                    }
+                {
+                    PLAYER player2 = member[num2 - 24];
+                    num += NGUIText.GetTextWidthFromFF9Font(phraseLabel, player2.Name);
+                    break;
+                }
                 default:
                     goto IL_A0;
             }
@@ -1052,6 +1050,7 @@ public static class NGUIText
         switch (NGUIText.alignment)
         {
             case NGUIText.Alignment.Left:
+            {
                 if (verts.buffer != null)
                 {
                     Single num = ((Single)NGUIText.rectWidth - printedWidth) * 0.5f;
@@ -1076,96 +1075,97 @@ public static class NGUIText
                     }
                 }
                 break;
+            }
             case NGUIText.Alignment.Center:
+            {
+                Single num7 = ((Single)NGUIText.rectWidth - printedWidth) * 0.5f;
+                if (num7 < 0f)
                 {
-                    Single num7 = ((Single)NGUIText.rectWidth - printedWidth) * 0.5f;
-                    if (num7 < 0f)
-                    {
-                        return;
-                    }
-                    Int32 num8 = Mathf.RoundToInt((Single)NGUIText.rectWidth - printedWidth);
-                    Int32 num9 = Mathf.RoundToInt((Single)NGUIText.rectWidth);
-                    Boolean flag3 = (num8 & 1) == 1;
-                    Boolean flag4 = (num9 & 1) == 1;
-                    if ((flag3 && !flag4) || (!flag3 && flag4))
-                    {
-                        num7 += 0.5f * NGUIText.fontScale;
-                    }
-                    for (Int32 j = indexOffset; j < verts.size; j++)
-                    {
-                        Vector3[] buffer2 = verts.buffer;
-                        Int32 num10 = j;
-                        buffer2[num10].x = buffer2[num10].x + num7;
-                    }
-                    break;
+                    return;
                 }
+                Int32 num8 = Mathf.RoundToInt((Single)NGUIText.rectWidth - printedWidth);
+                Int32 num9 = Mathf.RoundToInt((Single)NGUIText.rectWidth);
+                Boolean flag3 = (num8 & 1) == 1;
+                Boolean flag4 = (num9 & 1) == 1;
+                if ((flag3 && !flag4) || (!flag3 && flag4))
+                {
+                    num7 += 0.5f * NGUIText.fontScale;
+                }
+                for (Int32 j = indexOffset; j < verts.size; j++)
+                {
+                    Vector3[] buffer2 = verts.buffer;
+                    Int32 num10 = j;
+                    buffer2[num10].x = buffer2[num10].x + num7;
+                }
+                break;
+            }
             case NGUIText.Alignment.Right:
+            {
+                Single num11 = (Single)NGUIText.rectWidth - printedWidth;
+                if (num11 < 0f)
                 {
-                    Single num11 = (Single)NGUIText.rectWidth - printedWidth;
-                    if (num11 < 0f)
-                    {
-                        return;
-                    }
-                    for (Int32 k = indexOffset; k < verts.size; k++)
-                    {
-                        Vector3[] buffer3 = verts.buffer;
-                        Int32 num12 = k;
-                        buffer3[num12].x = buffer3[num12].x + num11;
-                    }
-                    break;
+                    return;
                 }
+                for (Int32 k = indexOffset; k < verts.size; k++)
+                {
+                    Vector3[] buffer3 = verts.buffer;
+                    Int32 num12 = k;
+                    buffer3[num12].x = buffer3[num12].x + num11;
+                }
+                break;
+            }
             case NGUIText.Alignment.Justified:
+            {
+                if (printedWidth < (Single)NGUIText.rectWidth * 0.65f)
                 {
-                    if (printedWidth < (Single)NGUIText.rectWidth * 0.65f)
-                    {
-                        return;
-                    }
-                    Single margin = (NGUIText.rectWidth - printedWidth) * 0.5f;
-                    if (margin < 1f)
-                        return;
-
-                    Int32 padding = (verts.size - indexOffset) / elements;
-                    if (padding < 2)
-                        return;
-
-                    Single paddingFactor = 1f / (padding - 1);
-                    Single widthRatio = NGUIText.rectWidth / printedWidth;
-                    Int32 l = indexOffset + elements;
-                    Int32 counter = 1;
-                    while (l < verts.size)
-                    {
-                        Single currentX1 = verts.buffer[l].x;
-                        Single currentX2 = verts.buffer[l + elements / 2].x;
-                        Single deltaX = currentX2 - currentX1;
-                        Single scaledX1 = currentX1 * widthRatio;
-                        Single a = scaledX1 + deltaX;
-                        Single scaledX2 = currentX2 * widthRatio;
-                        Single b = scaledX2 - deltaX;
-                        Single t = counter * paddingFactor;
-                        currentX2 = Mathf.Lerp(a, scaledX2, t);
-                        currentX1 = Mathf.Lerp(scaledX1, b, t);
-                        currentX1 = Mathf.Round(currentX1);
-                        currentX2 = Mathf.Round(currentX2);
-                        if (elements == 4)
-                        {
-                            verts.buffer[l++].x = currentX1;
-                            verts.buffer[l++].x = currentX1;
-                            verts.buffer[l++].x = currentX2;
-                            verts.buffer[l++].x = currentX2;
-                        }
-                        else if (elements == 2)
-                        {
-                            verts.buffer[l++].x = currentX1;
-                            verts.buffer[l++].x = currentX2;
-                        }
-                        else if (elements == 1)
-                        {
-                            verts.buffer[l++].x = currentX1;
-                        }
-                        counter++;
-                    }
-                    break;
+                    return;
                 }
+                Single margin = (NGUIText.rectWidth - printedWidth) * 0.5f;
+                if (margin < 1f)
+                    return;
+
+                Int32 padding = (verts.size - indexOffset) / elements;
+                if (padding < 2)
+                    return;
+
+                Single paddingFactor = 1f / (padding - 1);
+                Single widthRatio = NGUIText.rectWidth / printedWidth;
+                Int32 l = indexOffset + elements;
+                Int32 counter = 1;
+                while (l < verts.size)
+                {
+                    Single currentX1 = verts.buffer[l].x;
+                    Single currentX2 = verts.buffer[l + elements / 2].x;
+                    Single deltaX = currentX2 - currentX1;
+                    Single scaledX1 = currentX1 * widthRatio;
+                    Single a = scaledX1 + deltaX;
+                    Single scaledX2 = currentX2 * widthRatio;
+                    Single b = scaledX2 - deltaX;
+                    Single t = counter * paddingFactor;
+                    currentX2 = Mathf.Lerp(a, scaledX2, t);
+                    currentX1 = Mathf.Lerp(scaledX1, b, t);
+                    currentX1 = Mathf.Round(currentX1);
+                    currentX2 = Mathf.Round(currentX2);
+                    if (elements == 4)
+                    {
+                        verts.buffer[l++].x = currentX1;
+                        verts.buffer[l++].x = currentX1;
+                        verts.buffer[l++].x = currentX2;
+                        verts.buffer[l++].x = currentX2;
+                    }
+                    else if (elements == 2)
+                    {
+                        verts.buffer[l++].x = currentX1;
+                        verts.buffer[l++].x = currentX2;
+                    }
+                    else if (elements == 1)
+                    {
+                        verts.buffer[l++].x = currentX1;
+                    }
+                    counter++;
+                }
+                break;
+            }
         }
     }
 
@@ -1788,7 +1788,7 @@ public static class NGUIText
             }
             else
             {
-                if(justified)
+                if (justified)
                 {
                     NGUIText.alignment = NGUIText.Alignment.Justified;
                 }
@@ -2689,7 +2689,6 @@ public static class NGUIText
     public const String Quina = "QUIN";
     public const String Eiko = "EIKO";
     public const String Amarant = "AMRT";
-    public const String Beatrix = "BTRX";
     public const String Party1 = "PTY1";
     public const String Party2 = "PTY2";
     public const String Party3 = "PTY3";
@@ -2746,7 +2745,7 @@ public static class NGUIText
 
     public static readonly String FF9PinkColor;
 
-    public static readonly String FF9BlueColor; // TRANCE SEEK - MP restoration in blue instead of green
+    public static readonly String FF9BlueColor;
 
     public static readonly Int32 MobileTouchToConfirmJP;
 

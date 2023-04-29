@@ -53,18 +53,17 @@ namespace FF9
 
         public static void CheckBattlePhase(BTL_DATA btl)
         {
-            BattleStatus BattleEnd = Configuration.Mod.TranceSeek ? (BattleStatus.BattleEnd & ~BattleStatus.Venom) : BattleStatus.BattleEnd; // TRANCE SEEK - VENOM
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             Int32 dieSeqEnd = 6; /*btl.bi.player == 0 ? 6 : 6*/
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleEnd) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
+                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
                     return;
             if (btl.bi.player == 0)
             {
                 Boolean playerStillAliver = false;
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    if (next.bi.player != 0 && (!btl_stat.CheckStatus(next, BattleEnd) || (next.cur.hp == 0 || Status.checkCurStat(next, BattleStatus.Death)) && btl_stat.CheckStatus(next, BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
+                    if (next.bi.player != 0 && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || (next.cur.hp == 0 || Status.checkCurStat(next, BattleStatus.Death)) && btl_stat.CheckStatus(next, BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
                     {
                         playerStillAliver = true;
                         break;
@@ -82,40 +81,34 @@ namespace FF9
                     CharacterSerialNumber serialNo = btl_util.getSerialNumber(next);
                     if (serialNo == CharacterSerialNumber.EIKO_FLUTE || serialNo == CharacterSerialNumber.EIKO_KNIFE)
                     {
-                        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - VENOM + RebirthFlame
+                        if (!btl_stat.CheckStatus(next, BattleStatusConst.NoRebirthFlame))
                         {
-                            if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Zombie | BattleStatus.Stop))
+                            if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
+                                return;
+                            Boolean procRebirthFlame = false;
+                            if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
                             {
                                 BattleUnit unit = new BattleUnit(next);
                                 Character player = unit.Player;
-                                if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
-                                    return;
-                                if (player.Equipment.Accessory == RegularItem.PhoenixDown && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > 9 && (ff9item.FF9Item_GetCount(RegularItem.PhoenixDown)) > (Comn.random16() % 100))
+                                if (player.Equipment.Accessory == RegularItem.PhoenixDown && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > 9 && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > (Comn.random16() % 100))
                                 {
                                     ff9item.FF9Item_Remove(RegularItem.PhoenixDown, 99);
                                     ff9item.FF9Item_Add(RegularItem.PhoenixDown, Comn.random16() % 10);
-                                    UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                    btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
-                                    return;
+                                    procRebirthFlame = true;
                                 }
                             }
-                            break;
-                        }
-                        else
-                        {
-                            if (!btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Stop))
+                            else
                             {
-                                if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
-                                    return;
-                                if (ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
-                                {
-                                    UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                    btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
-                                    return;
-                                }
+                                procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
                             }
-                            break;
+                            if (procRebirthFlame)
+                            {
+                                UIManager.Battle.FF9BMenu_EnableMenu(true);
+                                btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
+                                return;
+                            }
                         }
+                        break;
                     }
                 }
                 ff9Battle.btl_seq = 1;
@@ -128,7 +121,6 @@ namespace FF9
 
         public static void CheckBattleMenuOff(BattleUnit btl)
         {
-            BattleStatus BattleEnd = Configuration.Mod.TranceSeek ? (BattleStatus.BattleEnd & ~BattleStatus.Venom) : BattleStatus.BattleEnd; // TRANCE SEEK - VENOM
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             BattleUnit btl1 = null;
 
@@ -137,7 +129,7 @@ namespace FF9
                 if (next.PlayerIndex == CharacterId.Eiko)
                     btl1 = next;
 
-                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleEnd) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderAnyStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderAnyStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
             }
 
@@ -222,7 +214,10 @@ namespace FF9
                 BattleAchievement.UpdateBackAttack();
 
             // TRANCE SEEK VERSION - Disable back/first attack from specific battles (custom ennemies)
-            if ((FF9StateSystem.Battle.battleMapIndex == 850) && (FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2) || (FF9StateSystem.Battle.battleMapIndex == 849) && (FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2) || (FF9StateSystem.Battle.battleMapIndex == 851) && (FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2))
+            if (Configuration.Mod.TranceSeek &&
+                (FF9StateSystem.Battle.battleMapIndex == 850 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
+                || FF9StateSystem.Battle.battleMapIndex == 849 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
+                || FF9StateSystem.Battle.battleMapIndex == 851 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2))
             {
                 start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
             }
@@ -268,7 +263,7 @@ namespace FF9
             if (removingUnit)
                 if (btl.cur.hp == 0)
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
-            if (battle.GARNET_DEPRESS_FLAG != 0 && unit.IsPlayer && unit.PlayerIndex == CharacterId.Garnet) // Garnet depressed Trance Seek version
+            if (battle.GARNET_DEPRESS_FLAG != 0 && unit.IsPlayer && unit.PlayerIndex == CharacterId.Garnet)
             {
                 btl.stat.permanent &= ~BattleStatus.Silence;
                 btl_stat.RemoveStatuses(btl, BattleStatus.Silence);

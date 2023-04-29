@@ -4,7 +4,6 @@ using UnityEngine;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using Memoria.Prime;
 using NCalc;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -18,7 +17,7 @@ public static class btl_stat
 {
     public static void SaveStatus(PLAYER p, BTL_DATA btl)
     {
-        p.status = (Byte)(btl.stat.cur & BattleStatus.OutOfBattle);
+        p.status = (Byte)(btl.stat.cur & BattleStatusConst.OutOfBattle);
     }
 
     public static void InitCountDownStatus(BTL_DATA btl)
@@ -39,34 +38,15 @@ public static class btl_stat
         btl.sel_mode = 0;
     }
 
-    public static void CommandCancel(BTL_DATA btl) // TRANCE SEEK - Still usefull or can i find an another way/function ?
+    public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status, BTL_DATA inflicter = null)
     {
-        if (!btl_cmd.KillCommand2(btl))
-            return;
-        btl.bi.atb = 0;
-        if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
-            btl.cur.at = 0;
-        btl.sel_mode = 0;
-        if (btl.bi.player != 0)
-            UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
-        btl.cmd[0].cmd_no = BattleCommandId.None;
-    }
-
-    public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status, byte btlcaster = 0)
-    {
-        BattleStatus CmdCancel = Configuration.Mod.TranceSeek ? (BattleStatus.CmdCancel & ~BattleStatus.Venom) : BattleStatus.CmdCancel;
-        Int16 CasterWill = 0;
-        if (btlcaster != 0)
-        {
-            CasterWill += (Int16)btlcaster;
-        }
         BattleUnit unit = new BattleUnit(btl);
         Dictionary<Int32, STAT_DATA> statusData = FF9StateSystem.Battle.FF9Battle.status_data;
         STAT_INFO stat = btl.stat;
         Int32 statusIndex = 0;
-        if ((stat.invalid & status) != 0)
+        if ((status & stat.invalid) != 0)
             return 0;
-        if ((stat.permanent & status) != 0 || (stat.cur & status) != 0 && (status & BattleStatus.NoReset) != 0)
+        if ((status & stat.permanent) != 0 || ((status & stat.cur) != 0 && (status & BattleStatusConst.NoReset) != 0))
             return 1;
         BattleStatus invalidStatuses = btl.bi.t_gauge == 0 ? BattleStatus.Trance : 0;
         for (Int32 i = 0; i < 32; ++i)
@@ -79,11 +59,11 @@ public static class btl_stat
         }
         if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysStone))
             invalidStatuses |= statusData[0].invalid;
-        if ((invalidStatuses & status) != 0)
+        if ((status & invalidStatuses) != 0)
             return 1;
-        if ((status & BattleStatus.AlterNoSet) == 0)
+        if ((status & BattleStatusConst.AlterNoSet) == 0)
         {
-            if ((status & CmdCancel) != 0)
+            if ((status & BattleStatusConst.CmdCancel) != 0)
                 StatusCommandCancel(btl, status);
             stat.cur |= status;
         }
@@ -100,21 +80,11 @@ public static class btl_stat
                     stat.cur |= status;
                     btl.bi.atb = 0;
                     SetStatusClut(btl, true);
-                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2)
-                    {
+                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && (status & BattleStatusConst.CmdCancel) != 0)
                         StatusCommandCancel(btl, status);
-                        btl_sys.CheckBattlePhase(btl);
-                    }
                 }
                 break;
             case BattleStatus.Venom:
-                if ((FF9StateSystem.Battle.FF9Battle.btl_phase > 2) && !Configuration.Mod.TranceSeek)
-                    btl_sys.CheckBattlePhase(btl);
-                if (btl.bi.player != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
-                {
-                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
-                    btl.evt.animFrame = 0;
-                }
                 break;
             case BattleStatus.Zombie:
                 if (unit.IsPlayer && !unit.IsUnderAnyStatus(BattleStatus.Trance))
@@ -131,9 +101,7 @@ public static class btl_stat
                 {
                     unit.CurrentHp = 0;
                 }
-
                 unit.CurrentAtb = 0;
-
                 if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
                 {
                     //btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysDead, 0U, btl.btl_id, 0U);
@@ -149,7 +117,6 @@ public static class btl_stat
                         btl_sys.CheckForecastMenuOff(btl);
                     }
                 }
-
                 //btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
                 break;
             case BattleStatus.Berserk:
@@ -158,10 +125,9 @@ public static class btl_stat
                 SetStatusPolyColor(btl);
                 break;
             case BattleStatus.Stop:
-                btl_sys.CheckBattlePhase(btl);
                 break;
             case BattleStatus.Trance:
-                btl.oldstatus = false;
+                btl.special_status_old = false;
                 btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
                 break;
             case BattleStatus.Sleep:
@@ -211,54 +177,52 @@ public static class btl_stat
                 geo.geoScaleUpdate(btl, true);
                 break;
         }
-        RemoveStatuses(btl, statusData[statusIndex].clear);
-        if (CheckStatus(btl, BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Jump))
-            btl.bi.atb = 0;
-        Int16 defaultFactor = 0;
-        if ((status & BattleStatus.ContiCount) != 0)
+        if (btl.bi.player != 0 && (status & BattleStatusConst.Immobilized & BattleStatusConst.IdleDying) != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
         {
-            if (Configuration.Mod.TranceSeek)
-            {
-                defaultFactor = (status & BattleStatus.ContiBad) != 0 ? (Int16)((400 + CasterWill * 2) - btl.elem.wpr) :
-                (status & BattleStatus.ContiGood) != 0 ? (Int16)(400 + (CasterWill * 3)) : (Int16)(200);
-                if (((status & (BattleStatus.Freeze | BattleStatus.Heat)) != 0u) & (unit.HasSupportAbility(SupportAbility2.BodyTemp)) || ((status & (BattleStatus.Sleep)) != 0u) & (unit.HasSupportAbility(SupportAbility2.Insomniac)) || ((status & (BattleStatus.Slow)) != 0u) & (unit.HasSupportAbility(SupportAbility2.Locomotion)))
-                    defaultFactor = (Int16)(defaultFactor / 4);
-            }
-            else
-            {
-                defaultFactor = (status & BattleStatus.ContiBad) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
-                (status & BattleStatus.ContiGood) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
-            }
+            btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
+            btl.evt.animFrame = 0;
+        }
+        if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && (status & BattleStatusConst.BattleEnd) != 0)
+            btl_sys.CheckBattlePhase(btl);
+        RemoveStatuses(btl, statusData[statusIndex].clear);
+        if (CheckStatus(btl, BattleStatusConst.StopAtb))
+            btl.bi.atb = 0;
+        if ((status & BattleStatusConst.ContiCount) != 0)
+        {
+            Int16 defaultFactor = (status & BattleStatusConst.ContiBad) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
+                                  (status & BattleStatusConst.ContiGood) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
             btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor);
             if (Configuration.Battle.StatusDurationFormula.Length > 0)
             {
                 Expression e = new Expression(Configuration.Battle.StatusDurationFormula);
                 e.Parameters["StatusIndex"] = (Int32)statusIndex;
-                e.Parameters["IsPositiveStatus"] = (status & BattleStatus.ContiGood) != 0;
-                e.Parameters["IsNegativeStatus"] = (status & BattleStatus.ContiBad) != 0;
+                e.Parameters["IsPositiveStatus"] = (status & BattleStatusConst.ContiGood) != 0;
+                e.Parameters["IsNegativeStatus"] = (status & BattleStatusConst.ContiBad) != 0;
                 e.Parameters["ContiCnt"] = (Int32)statusData[statusIndex].conti_cnt;
                 e.Parameters["OprCnt"] = (Int32)statusData[statusIndex].opr_cnt;
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
+                NCalcUtility.InitializeExpressionNullableUnit(ref e, inflicter != null ? new BattleUnit(inflicter) : null, "Inflicter");
                 Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                 if (val >= 0)
                     btl.stat.cnt.conti[statusIndex - 16U] = (Int16)Math.Min(val, Int16.MaxValue);
             }
+            btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(btl.stat_duration_factor[status] * btl.stat.cnt.conti[statusIndex - 16U]);
             if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
             {
-                if ((unit.HasSupportAbility(SupportAbility1.AutoRegen) && Configuration.Mod.TranceSeek))
+                if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen))
                 {
-                    btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(statusData[statusIndex].conti_cnt * (defaultFactor * 2));
-                    btl.stat.cnt.cdown_max = (Int16)(btl.stat.cnt.conti[statusIndex - 16U] / 2);
+                    btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor * 2);
+                    btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusIndex - 16U] / 2);
                 }
                 else
                 {
-                    btl.stat.cnt.cdown_max = btl.stat.cnt.conti[statusIndex - 16U];
+                    btl.stat.cnt.cdown_max = Math.Max((Int16)1, btl.stat.cnt.conti[statusIndex - 16U]);
                 }
             }
         }
-        if ((status & BattleStatus.OprCount) != 0)
+        if ((status & BattleStatusConst.OprCount) != 0)
             SetOprStatusCount(btl, statusIndex);
         HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit, status);
         if (btl.bi.player != 0)
@@ -267,67 +231,28 @@ public static class btl_stat
         return 2;
     }
 
-    public static UInt32 AlterStatuses(BTL_DATA btl, BattleStatus statuses, Boolean forced = false, byte casterwill = 0)
+    public static UInt32 AlterStatuses(BTL_DATA btl, BattleStatus statuses, BTL_DATA inflicter = null, Boolean usePartialResist = false)
     {
-        UInt32 num1 = 0;
+        UInt32 bestResult = 0;
         for (Int32 index = 0; index < 32U; ++index)
         {
             BattleStatus status = (BattleStatus)(1U << index);
             if ((statuses & status) != 0)
             {
-                if (!forced && (GameRandom.Next8() % 2 == 0) && SA_ImmuneStatusTranceSeek(btl, status) && Configuration.Mod.TranceSeek) // TRANCE SEEK - Feature on AbilityFeatures ?
-                    continue;
-                UInt32 num2 = AlterStatus(btl, status, casterwill);
-                if ((Int32)num1 == 0 && num2 > 0U || (Int32)num1 == 1 && num2 > 1U)
-                    num1 = num2;
+                Single rate = btl.stat_partial_resist[status];
+                if (usePartialResist && rate > 0f && Comn.random16() < rate * 65536f)
+                    bestResult = Math.Max(bestResult, 1);
+                else
+                    bestResult = Math.Max(bestResult, AlterStatus(btl, status, inflicter));
             }
         }
-        return num1;
-    }
-
-    public static Boolean SA_ImmuneStatusTranceSeek(BTL_DATA btl, BattleStatus status)
-    {
-        BattleUnit battleUnit = new BattleUnit(btl);
-        switch (status)
-        {
-            case BattleStatus.Poison:
-            case BattleStatus.Venom:
-                if (battleUnit.HasSupportAbility(SupportAbility2.Antibody))
-                    return true;
-                break;
-            case BattleStatus.Silence:
-                if (battleUnit.HasSupportAbility(SupportAbility2.Loudmouth))
-                    return true;
-                break;
-            case BattleStatus.Blind:
-                if (battleUnit.HasSupportAbility(SupportAbility2.BrightEyes))
-                    return true;
-                break;
-            case BattleStatus.Petrify:
-            case BattleStatus.GradualPetrify:
-                if (battleUnit.HasSupportAbility(SupportAbility2.Jelly))
-                    return true;
-                break;
-            case BattleStatus.Stop:
-                if (battleUnit.HasSupportAbility(SupportAbility2.Locomotion))
-                    return true;
-                break;
-            case BattleStatus.Confuse:
-                if (battleUnit.HasSupportAbility(SupportAbility2.ClearHeaded))
-                    return true;
-                break;
-            case BattleStatus.Berserk:
-                if (battleUnit.HasSupportAbility(SupportAbility1.ReflectNull))
-                    return true;
-                break;
-        }
-        return false;
+        return bestResult;
     }
 
     public static UInt32 RemoveStatus(BTL_DATA btl, BattleStatus status)
     {
         STAT_INFO stat = btl.stat;
-        if ((stat.permanent & status) != 0 || (stat.cur & status) == 0 || btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & (Configuration.Mod.TranceSeek ? (BattleStatus.Petrify | BattleStatus.Stop) : (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))) != 0) // TRANCE SEEK - VENOM
+        if ((stat.permanent & status) != 0 || (stat.cur & status) == 0 || btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & BattleStatusConst.BattleEnd) != 0)
             return 1;
         stat.cur &= ~status;
         switch (status)
@@ -339,7 +264,7 @@ public static class btl_stat
             case BattleStatus.Zombie:
             case BattleStatus.Heat:
             case BattleStatus.Freeze:
-                if (CheckStatus(btl, BattleStatus.ChgPolyCol))
+                if (CheckStatus(btl, BattleStatusConst.ChgPolyCol))
                     SetStatusPolyColor(btl);
                 break;
             case BattleStatus.Death:
@@ -371,20 +296,20 @@ public static class btl_stat
                 break;
             case BattleStatus.Berserk:
                 StatusCommandCancel(btl, status);
-                if (CheckStatus(btl, BattleStatus.ChgPolyCol))
+                if (CheckStatus(btl, BattleStatusConst.ChgPolyCol))
                     SetStatusPolyColor(btl);
                 break;
             case BattleStatus.Trance:
-                if (btl.gameObject == btl.tranceGo) 
+                if (!Configuration.Mod.TranceSeek || btl.gameObject == btl.tranceGo) // TRANCE SEEK - other usage of trance
                 {
                     btl.trance = 0;
                     if (Status.checkCurStat(btl, BattleStatus.Jump))
                     {
-                    RemoveStatus(btl, BattleStatus.Jump);
-                    btl.SetDisappear(false, 2);
-                    btl_mot.setBasePos(btl);
-                    btl_mot.setMotion(btl, btl.bi.def_idle);
-                    btl.evt.animFrame = 0;
+                        RemoveStatus(btl, BattleStatus.Jump);
+                        btl.SetDisappear(false, 2);
+                        btl_mot.setBasePos(btl);
+                        btl_mot.setMotion(btl, btl.bi.def_idle);
+                        btl.evt.animFrame = 0;
                     }
                     btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
                 }
@@ -446,7 +371,7 @@ public static class btl_stat
         return num;
     }
 
-    public static void MakeStatusesPermanent(BTL_DATA btl, BattleStatus statuses, Boolean flag = true)
+    public static void MakeStatusesPermanent(BTL_DATA btl, BattleStatus statuses, Boolean flag = true, BTL_DATA inflicter = null)
     {
         if (flag)
         {
@@ -454,7 +379,7 @@ public static class btl_stat
                 RemoveStatus(btl, BattleStatus.Slow);
             if ((statuses & BattleStatus.Slow) != 0)
                 RemoveStatus(btl, BattleStatus.Haste);
-            AlterStatuses(btl, statuses);
+            AlterStatuses(btl, statuses, inflicter);
             btl.stat.permanent |= statuses;
             // Permanent statuses should also be registered as current statuses
             //btl.stat.cur &= ~(statuses & btl.stat.cur);
@@ -470,41 +395,20 @@ public static class btl_stat
     {
         UInt16 oprIndex;
         UInt16 defaultFactor;
-        if (Configuration.Mod.TranceSeek)
+        if (statTblNo == 1)
         {
-            if (statTblNo == 1)
-            {
-                oprIndex = 0;
-                defaultFactor = 10;
-            }
-            else if (statTblNo == 16)
-            {
-                oprIndex = 1;
-                defaultFactor = 60;
-            }
-            else
-            {
-                oprIndex = 2;
-                defaultFactor = 60;
-            }
+            oprIndex = 0;
+            defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
+        }
+        else if (statTblNo == 16)
+        {
+            oprIndex = 1;
+            defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
         }
         else
         {
-            if (statTblNo == 1)
-            {
-                oprIndex = 0;
-                defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
-            }
-            else if (statTblNo == 16)
-            {
-                oprIndex = 1;
-                defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
-            }
-            else
-            {
-                oprIndex = 2;
-                defaultFactor = (UInt16)(60 - btl.elem.wpr << 2);
-            }
+            oprIndex = 2;
+            defaultFactor = (UInt16)(60 - btl.elem.wpr << 2);
         }
         btl.stat.cnt.opr[oprIndex] = (Int16)(FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt * defaultFactor);
         if (Configuration.Battle.StatusTickFormula.Length > 0)
@@ -528,7 +432,7 @@ public static class btl_stat
     {
         if (CheckStatus(btl, BattleStatus.Petrify))
             SetStatusClut(btl, true);
-        else if (CheckStatus(btl, BattleStatus.ChgPolyCol))
+        else if (CheckStatus(btl, BattleStatusConst.ChgPolyCol))
             SetStatusPolyColor(btl);
         btl_util.SetBBGColor(btl.gameObject);
         if (btl.bi.player == 0)
@@ -609,10 +513,11 @@ public static class btl_stat
 
         if (unit.IsUnderStatus(BattleStatus.Death))
         {
-            if (unit.IsPlayer && Configuration.Mod.TranceSeek)
+            if (Configuration.Mod.TranceSeek && unit.IsPlayer)
             {
                 if (unit.Trance == 255 && unit.IsUnderStatus(BattleStatus.Trance) && btl.gameObject != btl.tranceGo)
                 {
+                    btl_cmd.KillSpecificCommand(unit.Data, BattleCommandId.SysTrans);
                     unit.RemoveStatus(BattleStatus.Trance);
                     unit.Trance = 254;
                 }
@@ -628,7 +533,7 @@ public static class btl_stat
             btl_mot.DieSequence(btl);
             return;
         }
-        if (!unit.IsUnderStatus(BattleStatus.Death | BattleStatus.Trance) && unit.Trance == 255 && Configuration.Mod.TranceSeek)
+        if (Configuration.Mod.TranceSeek && !unit.IsUnderStatus(BattleStatus.Death | BattleStatus.Trance) && unit.Trance == 255)
         {
             unit.RemoveStatus(BattleStatus.Petrify);
             unit.AlterStatus(BattleStatus.Trance);
@@ -669,7 +574,7 @@ public static class btl_stat
             else
             {
                 stat.cnt.opr[0] -= btl.cur.at_coef;
-            }             
+            }
         }
 
         if (unit.IsUnderAnyStatus(BattleStatus.Poison))
@@ -704,36 +609,22 @@ public static class btl_stat
             if (unit.IsUnderAnyStatus(BattleStatus.Virus))
             {
                 if (btl.cur.hp > 0U)
-                {
                     btl.cur.hp -= 1U;
-                }
                 else
-                {
                     new BattleUnit(btl).Kill();
-                }
             }
             if (unit.IsUnderStatus(BattleStatus.Trance)) // TRANCE SEEK - TODO - Move to AbilityFeatures
             {
                 if (unit.PlayerIndex == CharacterId.Zidane && !unit.IsUnderStatus(BattleStatus.Haste))
-                {
                     unit.AlterStatus(BattleStatus.Haste);
-                }
                 if (unit.PlayerIndex == CharacterId.Steiner && !unit.IsUnderStatus(BattleStatus.Protect))
-                {
                     unit.AlterStatus(BattleStatus.Protect);
-                }
                 if (unit.PlayerIndex == CharacterId.Garnet && !unit.IsUnderStatus(BattleStatus.Shell))
-                {
                     unit.AlterStatus(BattleStatus.Shell);
-                }
                 if (unit.PlayerIndex == CharacterId.Freya && !unit.IsUnderStatus(BattleStatus.Float))
-                {
                     unit.AlterStatus(BattleStatus.Float);
-                }
                 if (unit.PlayerIndex == CharacterId.Eiko && !unit.IsUnderStatus(BattleStatus.Regen))
-                {
                     unit.AlterStatus(BattleStatus.Regen);
-                }
             }
         }
         if (unit.IsUnderAnyStatus(BattleStatus.Trance) && btl.bi.slot_no == (Byte)CharacterId.Garnet && (ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0)
@@ -772,7 +663,7 @@ public static class btl_stat
         if (data.bi.disappear == 0 && !CheckStatus(data, BattleStatus.Petrify))
         {
             BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
-            if (CheckStatus(data, BattleStatus.ChgPolyCol))
+            if (CheckStatus(data, BattleStatusConst.ChgPolyCol))
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
@@ -780,11 +671,11 @@ public static class btl_stat
                 if (data.weapon_geo)
                     btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
             }
-            else if (data.oldstatus)
+            else if (data.special_status_old)
             {
                 btl_util.GeoSetColor2DrawPacket(data.gameObject, 255, 255, 255);
             }
-            else if (unit.IsUnderStatus(BattleStatus.EasyKill) && unit.IsUnderStatus(BattleStatus.AutoLife) && Configuration.Mod.TranceSeek) // TRANCE SEEK - Boss Trance (TODO Improved)
+            else if (Configuration.Mod.TranceSeek && unit.IsUnderStatus(BattleStatus.EasyKill) && unit.IsUnderStatus(BattleStatus.AutoLife)) // TRANCE SEEK - Boss Trance (TODO Improved)
             {
                 if (!FF9StateSystem.Battle.isFade)
                 {
@@ -862,7 +753,7 @@ public static class btl_stat
             {
                 // TRANCE SEEK - Friendly Ladybug (Miskoxy), swap wings colors
                 SetDefaultShader(data);
-                if ((data.dms_geo_id == 405) && Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek && data.dms_geo_id == 405)
                 {
                     if (unit.Strength == 31)
                     {
@@ -880,7 +771,6 @@ public static class btl_stat
                     {
                         SetupCustomEnemyPartColor(data.gameObject, 0, 0, 255, true, 3);
                     }
-
                 }
             }
         }
@@ -1121,5 +1011,12 @@ public static class btl_stat
             cnt.opr[index] = 0;
         for (UInt32 index = 0; index < 14U; ++index)
             cnt.conti[index] = 0;
+    }
+}
+
+public class StatusModifier : Memoria.Prime.Collections.EntryCollection<BattleStatus, Single>
+{
+    public StatusModifier(Single defaultValue) : base(defaultValue)
+    {
     }
 }

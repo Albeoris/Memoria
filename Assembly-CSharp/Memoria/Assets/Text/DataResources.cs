@@ -103,6 +103,7 @@ namespace Memoria.Assets
             public static String StatusSetsFile => "StatusSets.csv";
             public static String ActionsFile => "Actions.csv";
             public static String StatusDataFile => "StatusData.csv";
+            public static String MagicSwordSetFile => "MagicSwordSets.csv";
 
             public static String ModDirectory(String modFolder)
             {

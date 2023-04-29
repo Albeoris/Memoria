@@ -49,9 +49,9 @@ public class QuadMistUI : UIScene
 			BuildCard();
 			UpdateAmountLabel();
 		}
-        textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", false);
-        PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
-        DisplayInfo();
+		textAtlas = AssetManager.Load<UIAtlas>("EmbeddedAsset/QuadMist/Atlas/QuadMist Text " + Localization.GetSymbol() + " Atlas", false);
+		PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
+		DisplayInfo();
 		DisplayCardList();
 		if (currentState == QuadMistUI.CardState.CardSelection)
 		{
@@ -81,33 +81,33 @@ public class QuadMistUI : UIScene
 			String language = Localization.CurrentLanguage;
 			switch (language)
 			{
-			case "English(US)":
-			case "English(UK)":
-				discardTitleBulletWidget[0].leftAnchor.absolute = 128;
-				discardTitleBulletWidget[0].rightAnchor.absolute = 186;
-				discardTitleBulletWidget[1].leftAnchor.absolute = -186;
-				discardTitleBulletWidget[1].rightAnchor.absolute = -128;
-				break;
-			case "Japanese":
-				discardTitleBulletWidget[0].leftAnchor.absolute = 0;
-				discardTitleBulletWidget[0].rightAnchor.absolute = 58;
-				discardTitleBulletWidget[1].leftAnchor.absolute = -58;
-				discardTitleBulletWidget[1].rightAnchor.absolute = 0;
-				break;
-			case "Spanish":
-			case "German":
-			case "Italian":
-				discardTitleBulletWidget[0].leftAnchor.absolute = -58;
-				discardTitleBulletWidget[0].rightAnchor.absolute = 0;
-				discardTitleBulletWidget[1].leftAnchor.absolute = 0;
-				discardTitleBulletWidget[1].rightAnchor.absolute = 58;
-				break;
-			case "French":
-				discardTitleBulletWidget[0].leftAnchor.absolute = -28;
-				discardTitleBulletWidget[0].rightAnchor.absolute = 30;
-				discardTitleBulletWidget[1].leftAnchor.absolute = -30;
-				discardTitleBulletWidget[1].rightAnchor.absolute = 28;
-				break;
+				case "English(US)":
+				case "English(UK)":
+					discardTitleBulletWidget[0].leftAnchor.absolute = 128;
+					discardTitleBulletWidget[0].rightAnchor.absolute = 186;
+					discardTitleBulletWidget[1].leftAnchor.absolute = -186;
+					discardTitleBulletWidget[1].rightAnchor.absolute = -128;
+					break;
+				case "Japanese":
+					discardTitleBulletWidget[0].leftAnchor.absolute = 0;
+					discardTitleBulletWidget[0].rightAnchor.absolute = 58;
+					discardTitleBulletWidget[1].leftAnchor.absolute = -58;
+					discardTitleBulletWidget[1].rightAnchor.absolute = 0;
+					break;
+				case "Spanish":
+				case "German":
+				case "Italian":
+					discardTitleBulletWidget[0].leftAnchor.absolute = -58;
+					discardTitleBulletWidget[0].rightAnchor.absolute = 0;
+					discardTitleBulletWidget[1].leftAnchor.absolute = 0;
+					discardTitleBulletWidget[1].rightAnchor.absolute = 58;
+					break;
+				case "French":
+					discardTitleBulletWidget[0].leftAnchor.absolute = -28;
+					discardTitleBulletWidget[0].rightAnchor.absolute = 30;
+					discardTitleBulletWidget[1].leftAnchor.absolute = -30;
+					discardTitleBulletWidget[1].rightAnchor.absolute = 28;
+					break;
 			}
 			discardTitleBulletWidget[0].UpdateAnchors();
 			discardTitleBulletWidget[1].UpdateAnchors();
@@ -220,9 +220,7 @@ public class QuadMistUI : UIScene
 				QuadMistCard quadMistCard = selectedCardList[siblingIndex];
 				selectedCardList.RemoveAt(siblingIndex);
 				QuadMistUI.allCardList.Add(quadMistCard);
-				Byte[] array = count;
-				Byte id = quadMistCard.id;
-				array[(Int32)id] = (Byte)(array[(Int32)id] + 1);
+				count[(Int32)quadMistCard.id]++;
 				QuadMistGame.UpdateSelectedCardList(selectedCardList);
 				DisplayCardList();
 			}
@@ -238,9 +236,7 @@ public class QuadMistUI : UIScene
 			QuadMistCard quadMistCard = selectedCardList[siblingIndex];
 			selectedCardList.RemoveAt(siblingIndex);
 			QuadMistUI.allCardList.Add(quadMistCard);
-			Byte[] array = count;
-			Byte id = quadMistCard.id;
-			array[(Int32)id] = (Byte)(array[(Int32)id] + 1);
+			count[(Int32)quadMistCard.id]++;
 			QuadMistGame.UpdateSelectedCardList(selectedCardList);
 			DisplayCardList();
 			DisplayCardDetail();
@@ -257,7 +253,7 @@ public class QuadMistUI : UIScene
 				FF9Sfx.FF9SFX_Play(1047);
 				currentCardOffset = (currentCardOffset + (Int32)b - 1) % (Int32)b;
 				Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-				select (Byte)i).ToArray<Byte>();
+										select (Byte)i).ToArray<Byte>();
 				base.ShowPointerWhenLoading = true;
 				base.Loading = true;
 				cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
@@ -281,7 +277,7 @@ public class QuadMistUI : UIScene
 				FF9Sfx.FF9SFX_Play(1047);
 				currentCardOffset = (currentCardOffset + (Int32)b + 1) % (Int32)b;
 				Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-				select (Byte)i).ToArray<Byte>();
+										select (Byte)i).ToArray<Byte>();
 				base.ShowPointerWhenLoading = true;
 				base.Loading = true;
 				cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
@@ -363,9 +359,7 @@ public class QuadMistUI : UIScene
 			if (QuadMistDatabase.MiniGame_GetAllCardCount() > 100)
 			{
 				QuadMistUI.allCardList.Remove(GetCardInfo(currentCardId, currentCardOffset));
-				Byte[] array = count;
-				Int32 num = deleteCardId;
-				array[num] = (Byte)(array[num] - 1);
+				count[deleteCardId]--;
 				currentCardOffset = 0;
 				DisplayCardList();
 				DisplayCardDetail();
@@ -474,44 +468,33 @@ public class QuadMistUI : UIScene
 
 	private void BuildCard()
 	{
-		List<QuadMistCard> list = new List<QuadMistCard>();
+		List<QuadMistCard> fullList = new List<QuadMistCard>();
 		QuadMistGame.main.preBoard.collection.CreateCards();
 		QuadMistGame.main.preBoard.UpdateCollection(-1);
 		List<QuadMistCard>[] cards = QuadMistGame.main.preBoard.collection.cards;
-		for (Int32 i = 0; i < (Int32)cards.Length; i++)
-		{
-			List<QuadMistCard> list2 = cards[i];
-			foreach (QuadMistCard quadMistCard in list2)
-			{
+		for (Int32 i = 0; i < cards.Length; i++)
+			foreach (QuadMistCard quadMistCard in cards[i])
 				if (quadMistCard != null)
-				{
-					list.Add(quadMistCard);
-				}
-			}
-		}
-		QuadMistUI.allCardList = list;
+					fullList.Add(quadMistCard);
+		QuadMistUI.allCardList = fullList;
 		selectedCardList.Clear();
-		for (Int32 j = 0; j < 100; j++)
-		{
+		for (Int32 j = 0; j < CardPool.TOTAL_CARDS; j++)
 			count[j] = (Byte)QuadMistDatabase.MiniGame_GetCardCount(j);
-		}
 	}
 
 	private QuadMistCard GetCardInfo(Int32 id, Int32 offset)
 	{
-		Int32 num = 0;
+		Int32 idIndex = 0;
 		foreach (QuadMistCard quadMistCard in QuadMistUI.allCardList)
 		{
 			if ((Int32)quadMistCard.id == id)
 			{
-				if (offset == num)
-				{
+				if (offset == idIndex)
 					return quadMistCard;
-				}
-				num++;
+				idIndex++;
 			}
 		}
-		return (QuadMistCard)null;
+		return null;
 	}
 
 	private void ShowCardDetailHudAmount(Int32 number)
@@ -519,14 +502,7 @@ public class QuadMistUI : UIScene
 		Int32 num = 0;
 		foreach (CardDetailHUD cardDetailHUD in cardDetailHudList)
 		{
-			if (num < number)
-			{
-				cardDetailHUD.Self.SetActive(true);
-			}
-			else
-			{
-				cardDetailHUD.Self.SetActive(false);
-			}
+			cardDetailHUD.Self.SetActive(num < number);
 			num++;
 		}
 	}
@@ -536,8 +512,7 @@ public class QuadMistUI : UIScene
 		QuadMistCard cardInfo = GetCardInfo(id, offset);
 		selectedCardList.Add(cardInfo);
 		QuadMistUI.allCardList.Remove(cardInfo);
-		Byte[] array = count;
-		array[id] = (Byte)(array[id] - 1);
+		count[id]--;
 		QuadMistGame.UpdateSelectedCardList(selectedCardList);
 		DisplayCardList();
 	}
@@ -547,9 +522,7 @@ public class QuadMistUI : UIScene
 		QuadMistCard quadMistCard = selectedCardList[index];
 		selectedCardList.Remove(quadMistCard);
 		QuadMistUI.allCardList.Add(quadMistCard);
-		Byte[] array = count;
-		Byte id = quadMistCard.id;
-		array[(Int32)id] = (Byte)(array[(Int32)id] + 1);
+		count[(Int32)quadMistCard.id]++;
 		QuadMistGame.UpdateSelectedCardList(selectedCardList);
 		DisplayCardList();
 	}
@@ -587,14 +560,14 @@ public class QuadMistUI : UIScene
 			DiscardTitle.GetChild(0).GetComponent<UIWidget>(),
 			DiscardTitle.GetChild(1).GetComponent<UIWidget>()
 		};
-		Int32 num = 0;
+		Int32 tableIndex = 0;
 		foreach (Object obj in CardSelectionListPanel.transform.GetChild(0))
 		{
 			Transform transform = (Transform)obj;
-			Int32 num2 = num % 10 * 10;
-			num2 += num / 10;
-			num++;
-			QuadMistUI.CardListHUD cardListHUD = new QuadMistUI.CardListHUD(transform.gameObject, num2);
+			Int32 invTableIndex = tableIndex % 10 * 10;
+			invTableIndex += tableIndex / 10;
+			tableIndex++;
+			QuadMistUI.CardListHUD cardListHUD = new QuadMistUI.CardListHUD(transform.gameObject, invTableIndex);
 			cardHudList.Add(cardListHUD);
 			UIEventListener uieventListener = UIEventListener.Get(cardListHUD.Self);
 			uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(onClick));

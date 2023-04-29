@@ -115,13 +115,11 @@ namespace Memoria
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
             CMD_DATA cmd = v.Command.Data;
-            BattleStatus Immobilized = Configuration.Mod.TranceSeek ? (BattleStatus.Immobilized & ~BattleStatus.Venom) : BattleStatus.Immobilized; // TRANCE SEEK - VENOM
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.saExtended))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.saExtended))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
-            if (!Configuration.Mod.TranceSeek)
-                v.ConsumeMpAttack();
+            v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
                 target.fig_info |= Param.FIG_INFO_GUARD;
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
@@ -161,7 +159,7 @@ namespace Memoria
                 // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
                 if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
                     if ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !Status.checkCurStat(target, BattleStatus.EasyKill))
-                        v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false);
+                        v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false, v.Caster);
                 if ((v.Command.AbilityCategory & 8) != 0) // Is Physical
                 {
                     if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
@@ -299,7 +297,7 @@ namespace Memoria
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
-            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, Immobilized))
+            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.Immobilized))
             {
                 if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
@@ -316,22 +314,20 @@ namespace Memoria
 
         private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & NoReaction) == 0)
+            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatusConst.NoReaction) == 0)
                 && (v.Command.AbilityCategory & 64) == 0
                 && v.Command.Data.info.cover == 0
-                && !btl_stat.CheckStatus(v.Target.Data, (Configuration.Mod.TranceSeek ? (BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump) : (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze | BattleStatus.Jump))) // TRANCE SEEK - VENOM
+                && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.NoDamageMotion)
                 && v.Caster.Data != v.Target.Data;
         }
 
         private static void CheckDamageReaction(BattleCalculator v)
         {
-            BattleStatus CannotTrance = Configuration.Mod.TranceSeek ? (BattleStatus.CannotTrance & ~BattleStatus.Venom) : BattleStatus.CannotTrance;
             if (!UIManager.Battle.FF9BMenu_IsEnable())
                 return;
             if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
                 return;
-            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, CannotTrance)) // TRANCE SEEK - VENOM
+            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // TRANCE SEEK - VENOM
                 return;
 
             if (v.Target.Trance + v.Context.TranceIncrease < 0)

@@ -8,28 +8,28 @@ using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
 
-public class btl_init
+public static class btl_init
 {
-    public static Int16 GetModelID(CharacterSerialNumber characterModelIndex, Boolean isTrance = false)
-    {
-        if (characterModelIndex == CharacterSerialNumber.NONE)
-        {
-            Log.Warning("[btl_init] Invalid serial number: {0}", characterModelIndex);
-            return 0;
-        }
+	public static Int16 GetModelID(CharacterSerialNumber characterModelIndex, Boolean isTrance = false)
+	{
+		if (characterModelIndex == CharacterSerialNumber.NONE)
+		{
+			Log.Warning("[btl_init] Invalid serial number: {0}", characterModelIndex);
+			return 0;
+		}
 
-        CharacterBattleParameter param = btl_mot.BattleParameterList[characterModelIndex];
-        String modelId = isTrance ? param.TranceModelId : param.ModelId;
+		CharacterBattleParameter param = btl_mot.BattleParameterList[characterModelIndex];
+		String modelId = isTrance ? param.TranceModelId : param.ModelId;
 
-        Int32 geoId;
-        if (FF9BattleDB.GEO.TryGetKey(modelId, out geoId))
-            return (Int16)geoId;
+		Int32 geoId;
+		if (FF9BattleDB.GEO.TryGetKey(modelId, out geoId))
+			return (Int16)geoId;
 
-        Log.Warning("[btl_init] Unknown model id: {0}", modelId);
-        return 0;
-    }
+		Log.Warning("[btl_init] Unknown model id: {0}", modelId);
+		return 0;
+	}
 
-    public static void InitEnemyData(FF9StateBattleSystem btlsys)
+	public static void InitEnemyData(FF9StateBattleSystem btlsys)
 	{
 		BTL_DATA monLastBtl = null;
 		ObjList objList = new ObjList();
@@ -76,9 +76,9 @@ public class btl_init
 			if (!ModelFactory.IsUseAsEnemyCharacter(path))
 				monBtl.weapon_geo = null;
 			monBtl.sa = btl_init.enemy_dummy_sa; // Might want to use "= new UInt32[2]" for letting enemies use SA... doesn't seem to be useful for now though
-            monBtl.saExtended = new HashSet<SupportAbility>();
+			monBtl.saExtended = new HashSet<SupportAbility>();
 
-            FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref monBtl.height, ref monBtl.radius_effect);
+			FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref monBtl.height, ref monBtl.radius_effect);
 
 			if (monLastBtl != null)
 				monLastBtl.next = monBtl;
@@ -157,11 +157,11 @@ public class btl_init
 		pBtl.elem.dex = pParm.Element.Speed;
 		pBtl.elem.str = pParm.Element.Strength;
 		pBtl.elem.mgc = pParm.Element.Magic;
-        pBtl.elem.wpr = pParm.Element.Spirit;
+		pBtl.elem.wpr = pParm.Element.Spirit;
 		pBtl.maxDamageLimit = pParm.MaxDamageLimit;
 		pBtl.maxMpDamageLimit = pParm.MaxMpDamageLimit;
-        pBtl.def_attr.invalid = pParm.GuardElement;
-        pBtl.def_attr.absorb = pParm.AbsorbElement;
+		pBtl.def_attr.invalid = pParm.GuardElement;
+		pBtl.def_attr.absorb = pParm.AbsorbElement;
 		pBtl.def_attr.half = pParm.HalfElement;
 		pBtl.def_attr.weak = pParm.WeakElement;
 		pBtl.p_up_attr = pParm.BonusElement;
@@ -184,9 +184,8 @@ public class btl_init
 		pBtl.shadow_bone[0] = pParm.ShadowBone;
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
 		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
-		pBtl.oldstatus = false; // TRANCE SEEK - Old Status
-		pBtl.reaction = 0; // TRANCE SEEK - Meltigemini mechanic
-		pBtl.luna = false; // TRANCE SEEK - Luna Freyja
+		pBtl.special_status_old = false; // TRANCE SEEK - Old Status
+		pBtl.special_status_luna = false; // TRANCE SEEK - Luna Freyja
 	}
 
 	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int16 pNo)
@@ -239,36 +238,36 @@ public class btl_init
 		pEatk = pAttk;
 	}
 
-    public static void SetMonsterParameter(SB2_MON_PARM pParm, ref ENEMY_TYPE pType)
-    {
-        pType.radius = pParm.Radius;
-        pType.category = pParm.Category;
-        pType.level = pParm.Level;
-        pType.blue_magic_no = pParm.BlueMagic;
-        pType.max.hp = pParm.MaxHP;
-        pType.max.mp = pParm.MaxMP;
-        pType.bonus.gil = pParm.WinGil;
-        pType.bonus.exp = pParm.WinExp;
-        pType.bonus.card = pParm.WinCard;
-        pType.bonus.card_rate = pParm.WinCardRate;
-        for (Int16 i = 0; i < 4; i++)
-        {
-            pType.bonus.item[i] = pParm.WinItems[i];
-            pType.bonus.item_rate[i] = pParm.WinItemRates[i];
-        }
-        for (Int16 i = 0; i < 6; i++)
-            pType.mot[i] = FF9BattleDB.Animation[pParm.Mot[i]];
-        for (Int16 i = 0; i < 3; i++)
-            pType.cam_bone[i] = pParm.Bone[i];
-        pType.die_snd_no = pParm.DieSfx;
-        pType.p_atk_no = pParm.Konran;
-        for (Int16 i = 0; i < 6; i++)
-        {
-            pType.icon_bone[i] = pParm.IconBone[i];
-            pType.icon_y[i] = pParm.IconY[i];
-            pType.icon_z[i] = pParm.IconZ[i];
-        }
-    }
+	public static void SetMonsterParameter(SB2_MON_PARM pParm, ref ENEMY_TYPE pType)
+	{
+		pType.radius = pParm.Radius;
+		pType.category = pParm.Category;
+		pType.level = pParm.Level;
+		pType.blue_magic_no = pParm.BlueMagic;
+		pType.max.hp = pParm.MaxHP;
+		pType.max.mp = pParm.MaxMP;
+		pType.bonus.gil = pParm.WinGil;
+		pType.bonus.exp = pParm.WinExp;
+		pType.bonus.card = pParm.WinCard;
+		pType.bonus.card_rate = pParm.WinCardRate;
+		for (Int16 i = 0; i < 4; i++)
+		{
+			pType.bonus.item[i] = pParm.WinItems[i];
+			pType.bonus.item_rate[i] = pParm.WinItemRates[i];
+		}
+		for (Int16 i = 0; i < 6; i++)
+			pType.mot[i] = FF9BattleDB.Animation[pParm.Mot[i]];
+		for (Int16 i = 0; i < 3; i++)
+			pType.cam_bone[i] = pParm.Bone[i];
+		pType.die_snd_no = pParm.DieSfx;
+		pType.p_atk_no = pParm.Konran;
+		for (Int16 i = 0; i < 6; i++)
+		{
+			pType.icon_bone[i] = pParm.IconBone[i];
+			pType.icon_y[i] = pParm.IconY[i];
+			pType.icon_z[i] = pParm.IconZ[i];
+		}
+	}
 
 	public static void InitPlayerData(FF9StateBattleSystem btlsys)
 	{
@@ -379,11 +378,11 @@ public class btl_init
 			btl_DATA3.pos[2] = num7;
 			next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 180f, 180f));
 			next.rot = Quaternion.Euler(new Vector3(0f, (Single)num6, 180f));
-			//			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
+//			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
 			next.gameObject.transform.localPosition = next.pos;
 			next.gameObject.transform.localRotation = next.rot;
-            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[charId].info.serial_no];
-            next.shadow_bone[0] = btlParam.ShadowData[0];
+			CharacterBattleParameter btlParam = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[charId].info.serial_no];
+			next.shadow_bone[0] = btlParam.ShadowData[0];
 			next.shadow_bone[1] = btlParam.ShadowData[1];
 			btl_util.SetShadow(next, btlParam.ShadowData[2], btlParam.ShadowData[3]);
 			next.geo_scale_x = next.geo_scale_y = next.geo_scale_z = next.geo_scale_default = 4096;
@@ -399,18 +398,18 @@ public class btl_init
 
 	public static void OrganizePlayerData(PLAYER p, BTL_DATA btl, UInt16 cnt, UInt16 btl_no)
 	{
-        btlshadow.ff9battleShadowInit(btl);
+		btlshadow.ff9battleShadowInit(btl);
 		btl.btl_id = (UInt16)(1 << btl_no);
 		BONUS btl_bonus = battle.btl_bonus;
-		btl_bonus.member_flag = (Byte)(btl_bonus.member_flag | (Byte)(1 << cnt));
+		btl_bonus.member_flag |= (Byte)(1 << cnt);
 		btl.bi.player = 1;
-        btl.bi.slot_no = (Byte)p.info.slot_no;
-        btl.bi.target = 1;
+		btl.bi.slot_no = (Byte)p.info.slot_no;
+		btl.bi.target = 1;
 		btl.bi.line_no = (Byte)cnt;
 		btl.bi.slave = 0;
-        if (battle.TRANCE_GAUGE_FLAG == 0 || (p.category & 16) != 0 || (btl.bi.slot_no == (Byte)CharacterId.Garnet && battle.GARNET_DEPRESS_FLAG != 0))
-        {
-            btl.bi.t_gauge = 0;
+		if (battle.TRANCE_GAUGE_FLAG == 0 || (p.category & 16) != 0 || (btl.bi.slot_no == (Byte)CharacterId.Garnet && battle.GARNET_DEPRESS_FLAG != 0))
+		{
+			btl.bi.t_gauge = 0;
 			btl.trance = 0;
 		}
 		else
@@ -420,24 +419,24 @@ public class btl_init
 		}
 		btl.tar_bone = 0;
 		btl.sa = p.sa;
-        btl.saExtended = p.saExtended;
-        btl.elem.dex = p.elem.dex;
+		btl.saExtended = p.saExtended;
+		btl.elem.dex = p.elem.dex;
 		btl.elem.str = p.elem.str;
 		btl.elem.mgc = p.elem.mgc;
 		btl.elem.wpr = p.elem.wpr;
 		btl.level = p.level;
 		btl_init.CopyPoints(btl.max, p.max);
-        btl_init.CopyPoints(btl.cur, p.cur);
-        btl.maxDamageLimit = p.maxDamageLimit;
-        btl.maxMpDamageLimit = p.maxMpDamageLimit;
-        FF9Char ff9Char = new FF9Char();
-        ff9Char.btl = btl;
+		btl_init.CopyPoints(btl.cur, p.cur);
+		btl.maxDamageLimit = p.maxDamageLimit;
+		btl.maxMpDamageLimit = p.maxMpDamageLimit;
+		FF9Char ff9Char = new FF9Char();
+		ff9Char.btl = btl;
 		ff9Char.evt = btl.evt;
-        if (ff9play.CharacterIDToEventId(p.Index) >= 0)
-            FF9StateSystem.Common.FF9.charArray.Add(ff9play.CharacterIDToEventId(p.Index), ff9Char);
-        else
-            FF9StateSystem.Common.FF9.charArray.Add(9 + (Int32)p.Index, ff9Char);
-        btl_init.InitBattleData(btl, ff9Char);
+		if (ff9play.CharacterIDToEventId(p.Index) >= 0)
+			FF9StateSystem.Common.FF9.charArray.Add(ff9play.CharacterIDToEventId(p.Index), ff9Char);
+		else
+			FF9StateSystem.Common.FF9.charArray.Add(9 + (Int32)p.Index, ff9Char);
+		btl_init.InitBattleData(btl, ff9Char);
 		btl.mesh_banish = UInt16.MaxValue;
 		btl_stat.InitCountDownStatus(btl);
 		btl.max.at = (Int16)((60 - btl.elem.dex) * 40 << 2);
@@ -460,25 +459,20 @@ public class btl_init
 		if (btl.cur.hp * 6 < btl.max.hp)
 			btl.stat.cur |= BattleStatus.LowHP;
 
-        btl_stat.AlterStatuses(btl, (BattleStatus)p.status & ~BattleStatus.Petrify);
-        if ((p.status & 1) != 0)
+		btl_stat.AlterStatuses(btl, (BattleStatus)p.status & ~BattleStatus.Petrify);
+		if ((p.status & 1) != 0)
 			btl_stat.AlterStatus(btl, BattleStatus.Petrify);
 		btl_abil.CheckStatusAbility(new BattleUnit(btl));
-        BattleStatus resist_stat = btl.stat.invalid;
-        BattleStatus permanent_stat = btl.stat.permanent;
+		BattleStatus resist_stat = btl.stat.invalid;
+		BattleStatus permanent_stat = btl.stat.permanent;
 		BattleStatus current_stat = btl.stat.cur;
-        btl.stat.invalid = 0;
-        btl.stat.permanent = 0;
-        btl.stat.cur = 0;
-        BattleUnit unit = new BattleUnit(btl);
-		if (battle.GARNET_DEPRESS_FLAG != 0 && unit.IsPlayer && unit.PlayerIndex == CharacterId.Garnet && Configuration.Mod.TranceSeek) // TRANCE SEEK - Garnet depressed, perma silence
-		{
-			btl_stat.MakeStatusesPermanent(btl, BattleStatus.Silence);
-		}
+		btl.stat.invalid = 0;
+		btl.stat.permanent = 0;
+		btl.stat.cur = 0;
 		btl_stat.MakeStatusesPermanent(btl, permanent_stat);
 		btl_stat.AlterStatuses(btl, current_stat);
-        btl.stat.invalid = resist_stat;
-        btl.base_pos = btl.evt.posBattle;
+		btl.stat.invalid = resist_stat;
+		btl.base_pos = btl.evt.posBattle;
 		Int16 geoID = btl.dms_geo_id;
 		btl.height = 0;
 		btl.radius_effect = 0;
@@ -486,7 +480,7 @@ public class btl_init
 
 		FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref btl.height, ref btl.radius_effect);
 
-        if (btl.cur.hp == 0 && btl_stat.AlterStatus(btl, BattleStatus.Death) == 2u)
+		if (btl.cur.hp == 0 && btl_stat.AlterStatus(btl, BattleStatus.Death) == 2u)
 		{
 			btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE);
 			btl.evt.animFrame = 0;
@@ -494,7 +488,7 @@ public class btl_init
 			//btl_mot.DecidePlayerDieSequence(btl);
 			return;
 		}
-		btl.bi.def_idle = Convert.ToByte(btl_stat.CheckStatus(btl, BattleStatus.IdleDying));
+		btl.bi.def_idle = Convert.ToByte(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying));
 		btl_mot.setMotion(btl, btl.bi.def_idle);
 		btl.evt.animFrame = 0;
 	}
@@ -593,48 +587,42 @@ public class btl_init
 		btl.out_of_reach = false;
 		for (int i = 0; i < btl.stat_modifier.Length; i++)
 			btl.stat_modifier[i] = false;
-        btl.delayedModifierList.Clear();
-        btl.summon_count = 0;
+		btl.delayedModifierList.Clear();
+		btl.summon_count = 0;
 		btl.critical_rate_deal_bonus = 0;
 		btl.critical_rate_receive_bonus = 0;
 		btl.is_monster_transform = false;
 	}
 
-    public static void SetBattleModel(BTL_DATA btl)
-    {
-        // Set normal model
-        String modelName = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-        Int32 scale = 1;
-        if (ModelFactory.HaveUpScaleModel(modelName))
-            scale = 4;
+	public static void SetBattleModel(BTL_DATA btl)
+	{
+		// Set normal model
+		String modelName = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
+		Int32 scale = 1;
+		if (ModelFactory.HaveUpScaleModel(modelName))
+			scale = 4;
 
-        GEOTEXHEADER textureAnim = new GEOTEXHEADER();
-        textureAnim.ReadPlayerTextureAnim(btl, "Models/GeoTexAnim/" + modelName + ".tab", scale);
-        btl.texanimptr = textureAnim;
+		GEOTEXHEADER textureAnim = new GEOTEXHEADER();
+		textureAnim.ReadPlayerTextureAnim(btl, "Models/GeoTexAnim/" + modelName + ".tab", scale);
+		btl.texanimptr = textureAnim;
 
-        // Set trance model
-        if (btl.bi.player == 0)
-            return;
+		// Set trance model
+		if (btl.bi.player == 0)
+			return;
 
-        String tranceModelName = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceModelId;
-        GEOTEXHEADER tranceTextureAnim = new GEOTEXHEADER();
-        tranceTextureAnim.ReadTrancePlayerTextureAnim(btl, tranceModelName, scale);
-        btl.tranceTexanimptr = tranceTextureAnim;
-    }
+		String tranceModelName = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceModelId;
+		GEOTEXHEADER tranceTextureAnim = new GEOTEXHEADER();
+		tranceTextureAnim.ReadTrancePlayerTextureAnim(btl, tranceModelName, scale);
+		btl.tranceTexanimptr = tranceTextureAnim;
+	}
 
-    public const Byte BTL_LOAD_BG_DONE = 1;
+	public const Byte BTL_LOAD_BG_DONE = 1;
+	public const Byte BTL_LOAD_ENEMY_DONE = 2;
+	public const Byte BTL_LOAD_PLAYER_DONE = 4;
+	public const Byte BTL_WAIT_ENEMY_STONE_DONE = 8;
+	public const Byte BTL_WAIT_WEAPON_STONE_DONE = 16;
+	public const Byte BTL_WAIT_ENEMY_APPEAR_DONE = 32;
+	public const Byte BTL_WAIT_PLAYER_APPEAR_DONE = 64;
 
-    public const Byte BTL_LOAD_ENEMY_DONE = 2;
-
-    public const Byte BTL_LOAD_PLAYER_DONE = 4;
-
-    public const Byte BTL_WAIT_ENEMY_STONE_DONE = 8;
-
-    public const Byte BTL_WAIT_WEAPON_STONE_DONE = 16;
-
-    public const Byte BTL_WAIT_ENEMY_APPEAR_DONE = 32;
-
-    public const Byte BTL_WAIT_PLAYER_APPEAR_DONE = 64;
-
-    private static readonly UInt32[] enemy_dummy_sa = new UInt32[2];
+	private static readonly UInt32[] enemy_dummy_sa = new UInt32[2];
 }

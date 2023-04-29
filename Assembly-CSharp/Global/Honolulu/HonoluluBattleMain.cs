@@ -481,11 +481,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     }
                     else
                     {
-                        if (!btl_stat.CheckStatus(btl, (Configuration.Mod.TranceSeek ? (BattleStatus.Sleep | BattleStatus.Freeze) : (BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze)))) // TRANCE SEEK - VENOM
+                        if (!btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
                             needContinue = false;
                     }
                 }
-                else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, (Configuration.Mod.TranceSeek ? (BattleStatus.Sleep | BattleStatus.Freeze) : (BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze)))) // TRANCE SEEK - VENOM
+                else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
                 {
                     needContinue = false;
                 }
@@ -493,7 +493,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (!Configuration.Fixes.IsKeepRestTimeInBattle)
                     current.at = maximum.at;
 
-                if (btl_stat.CheckStatus(btl, (Configuration.Mod.TranceSeek ? (BattleStatus.Sleep | BattleStatus.Freeze) : (BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze)))) // TRANCE SEEK - VENOM
+                if (btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
                     continue;
 
                 if (btl.bi.player != 0)

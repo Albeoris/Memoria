@@ -80,6 +80,9 @@
     <None Include="StreamingAssets\Data\Battle\Actions.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\Battle\MagicSwordSets.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\Battle\StatusData.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2988,6 +2991,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\SpecialEffects\ef510\Sequence.seq">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Data\TetraMaster\TripleTriad.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Data\World\TransportControls.csv">
