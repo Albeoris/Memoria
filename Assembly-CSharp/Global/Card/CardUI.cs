@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Prime;
-using Memoria.Prime.Threading;
 using Memoria.Scenes;
-using Memoria.Test;
 using UnityEngine;
 using Object = System.Object;
 
@@ -63,8 +56,8 @@ public class CardUI : UIScene
 			if (ButtonGroupState.ActiveGroup == CardUI.CardGroupButton)
 			{
 				if (go != DeleteSubmenuButton)
-                    currentCardId = cardHudList[go.transform.GetSiblingIndex()].Id;
-                if (count[currentCardId] > 0)
+					currentCardId = cardHudList[go.transform.GetSiblingIndex()].Id;
+				if (count[currentCardId] > 0)
 				{
 					FF9Sfx.FF9SFX_Play(103);
 					base.Loading = true;
@@ -91,7 +84,7 @@ public class CardUI : UIScene
 					return true;
 				}
 
-			    OnDiscardDialogKeyConfirm(go);
+				OnDiscardDialogKeyConfirm(go);
 
 				base.Loading = true;
 				deleteDialogTransition.TweenOut(delegate
@@ -107,63 +100,63 @@ public class CardUI : UIScene
 		return true;
 	}
 
-    private void OnDiscardDialogKeyConfirm(GameObject go)
-    {
-        switch (go.transform.GetSiblingIndex())
-        {
-            case 1: // Confirm
-            {
-                if (count[deleteCardId] < 1)
-                    goto case 2;
+	private void OnDiscardDialogKeyConfirm(GameObject go)
+	{
+		switch (go.transform.GetSiblingIndex())
+		{
+			case 1: // Confirm
+			{
+				if (count[deleteCardId] < 1)
+					goto case 2;
 
-                DiscardSeletctedCard();
-                break;
-            }
-            case 2: // Cancel
-                FF9Sfx.FF9SFX_Play(101);
-                break;
-            case 3: // Auto
-                DiscardUnnecessaryCards();
-                break;
+				DiscardSeletctedCard();
+				break;
+			}
+			case 2: // Cancel
+				FF9Sfx.FF9SFX_Play(101);
+				break;
+			case 3: // Auto
+				DiscardUnnecessaryCards();
+				break;
 			default:
-                goto case 2;
-        }
-    }
+				goto case 2;
+		}
+	}
 
-    private void DiscardSeletctedCard()
-    {
-        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
-        FF9Sfx.FF9SFX_Play(103);
-        QuadMistDatabase.MiniGame_AwayCard(deleteCardId, offset[deleteCardId]);
-        count[deleteCardId]--;
-        offset[deleteCardId] = Math.Min(offset[deleteCardId], count[deleteCardId] - 1);
-        DisplayHelp();
-        DisplayInfo();
-        DisplayCardList();
-        DisplayCardDetail();
-    }
+	private void DiscardSeletctedCard()
+	{
+		PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+		FF9Sfx.FF9SFX_Play(103);
+		QuadMistDatabase.MiniGame_AwayCard(deleteCardId, offset[deleteCardId]);
+		count[deleteCardId]--;
+		offset[deleteCardId] = Math.Min(offset[deleteCardId], count[deleteCardId] - 1);
+		DisplayHelp();
+		DisplayInfo();
+		DisplayCardList();
+		DisplayCardDetail();
+	}
 
-    private void DiscardUnnecessaryCards()
-    {
-        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
-        FF9Sfx.FF9SFX_Play(103);
-        QuadMistDatabase.DiscardUnnecessaryCards();
+	private void DiscardUnnecessaryCards()
+	{
+		PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+		FF9Sfx.FF9SFX_Play(103);
+		QuadMistDatabase.DiscardUnnecessaryCards();
 
-        for (Int32 i = 0; i < 100; i++)
-        {
-            count[i] = 0;
-            offset[i] = 0;
-        }
+		for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
+		{
+			count[i] = 0;
+			offset[i] = 0;
+		}
 
-        foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
-            count[quadMistCard.id]++;
+		foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
+			count[(Int32)quadMistCard.id]++;
 
-        DisplayHelp();
-        DisplayCardList();
-        DisplayCardDetail();
-    }
+		DisplayHelp();
+		DisplayCardList();
+		DisplayCardDetail();
+	}
 
-    public override Boolean OnKeyCancel(GameObject go)
+	public override Boolean OnKeyCancel(GameObject go)
 	{
 		if (base.OnKeyCancel(go))
 		{
@@ -208,7 +201,7 @@ public class CardUI : UIScene
 				FF9Sfx.FF9SFX_Play(1047);
 				offset[currentCardId] = (offset[currentCardId] + (Int32)b - 1) % (Int32)b;
 				Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-				select (Byte)i).ToArray<Byte>();
+										select (Byte)i).ToArray<Byte>();
 				base.ShowPointerWhenLoading = true;
 				base.Loading = true;
 				cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
@@ -232,7 +225,7 @@ public class CardUI : UIScene
 				FF9Sfx.FF9SFX_Play(1047);
 				offset[currentCardId] = (offset[currentCardId] + (Int32)b + 1) % (Int32)b;
 				Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-				select (Byte)i).ToArray<Byte>();
+										select (Byte)i).ToArray<Byte>();
 				base.ShowPointerWhenLoading = true;
 				base.Loading = true;
 				cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
@@ -281,19 +274,19 @@ public class CardUI : UIScene
 			DiscardConfirmButton.Help.TextKey = "ConfirmDiscardHelp";
 			DiscardConfirmButton.Help.Tail = true;
 
-            DiscardCancelButton.Help.Enable = true;
+			DiscardCancelButton.Help.Enable = true;
 			DiscardCancelButton.Help.TextKey = "CancelDiscardHelp";
 			DiscardCancelButton.Help.Tail = true;
 
-		    if (DiscardAutoButton != null)
-		    {
-		        DiscardAutoButton.Help.Enable = true;
-		        DiscardAutoButton.Help.TextKey = String.Empty;
-		        DiscardAutoButton.Help.Text = "Discard all unnecessary cards.";
-		        DiscardAutoButton.Help.Tail = true;
-		    }
+			if (DiscardAutoButton != null)
+			{
+				DiscardAutoButton.Help.Enable = true;
+				DiscardAutoButton.Help.TextKey = String.Empty;
+				DiscardAutoButton.Help.Text = "Discard all unnecessary cards.";
+				DiscardAutoButton.Help.Tail = true;
+			}
 
-		    foreach (CardUI.CardListHUD cardListHUD in cardHudList)
+			foreach (CardUI.CardListHUD cardListHUD in cardHudList)
 			{
 				if (count[cardListHUD.Id] > 1)
 				{
@@ -325,15 +318,15 @@ public class CardUI : UIScene
 			DiscardCancelButton.Help.TextKey = String.Empty;
 			DiscardCancelButton.Help.Tail = false;
 
-		    if (DiscardAutoButton != null)
-		    {
-		        DiscardAutoButton.Help.Enable = false;
-		        DiscardAutoButton.Help.TextKey = String.Empty;
-		        DiscardAutoButton.Help.Text = String.Empty;
-		        DiscardAutoButton.Help.Tail = false;
-		    }
+			if (DiscardAutoButton != null)
+			{
+				DiscardAutoButton.Help.Enable = false;
+				DiscardAutoButton.Help.TextKey = String.Empty;
+				DiscardAutoButton.Help.Text = String.Empty;
+				DiscardAutoButton.Help.Tail = false;
+			}
 
-		    foreach (CardUI.CardListHUD cardListHUD2 in cardHudList)
+			foreach (CardUI.CardListHUD cardListHUD2 in cardHudList)
 			{
 				cardListHUD2.CardButtonGroup.Help.Enable = false;
 				cardListHUD2.CardButtonGroup.Help.TextKey = String.Empty;
@@ -345,7 +338,7 @@ public class CardUI : UIScene
 	private void DisplayCardList()
 	{
 		Int32 id;
-		for (id = 0; id < 100; id++)
+		for (id = 0; id < CardPool.TOTAL_CARDS; id++)
 		{
 			Byte b = count[id];
 			CardUI.CardListHUD cardListHUD = cardHudList.First((CardUI.CardListHUD hud) => hud.Id == id);
@@ -425,7 +418,7 @@ public class CardUI : UIScene
 
 	private void FF9FCard_Build()
 	{
-		Int16[] array = new Int16[]
+		Int16[] levelThresholds = new Int16[]
 		{
 			0,
 			300,
@@ -461,24 +454,22 @@ public class CardUI : UIScene
 			1700
 		};
 
-        for (Int32 i = 0; i < 100; i++)
+		for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
 		{
-		    count[i] = 0;
+			count[i] = 0;
 			offset[i] = 0;
 		}
 
-        foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
-        {
-            count[quadMistCard.id]++;
-        }
+		foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
+			count[(Int32)quadMistCard.id]++;
 
-        FF9FCard_GetPoint();
-        lv_collector = CardUI.FF9FCAZRD_LV_MAX - 1;
-        for (Int32 j = 1; j < CardUI.FF9FCAZRD_LV_MAX; j++)
+		FF9FCard_GetPoint();
+		lv_collector = CardUI.FF9FCAZRD_LV_MAX - 1;
+		for (Int32 i = 1; i < CardUI.FF9FCAZRD_LV_MAX; i++)
 		{
-			if (point < (Int32)array[j])
+			if (point < levelThresholds[i])
 			{
-				lv_collector = j - 1;
+				lv_collector = i - 1;
 				break;
 			}
 		}
@@ -486,35 +477,23 @@ public class CardUI : UIScene
 
 	private void FF9FCard_GetPoint()
 	{
-		List<QuadMistCard> list = QuadMistDatabase.MiniGame_GetCardBinPtr();
-		bool[] array = new bool[CardUI.FF9FCARD_ARROW_TYPE_MAX];
-		int num = 0;
-		int num2 = 0;
-		byte[] array2 = new byte[]
+		Byte[] typePtsWorth = new Byte[] { 0, 0, 1, 2 };
+		Boolean[] arrowPatternUsed = new Boolean[CardUI.FF9FCARD_ARROW_TYPE_MAX];
+		Int32 typePts = 0;
+		Int32 arrowPts = 0;
+		Int32 idPts = QuadMistDatabase.MiniGame_GetCardKindCount() * 10;
+		for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
 		{
-			0,
-			0,
-			1,
-			2
-		};
-		int num3 = QuadMistDatabase.MiniGame_GetCardKindCount() * 10;
-		for (int i = 0; i < 100; i++)
-		{
-			for (int j = 0; j < (int)count[i]; j++)
+			for (Int32 j = 0; j < count[i]; j++)
 			{
 				QuadMistCard quadMistCard = QuadMistDatabase.MiniGame_GetCardInfoPtr(i, j);
-				array[(int)quadMistCard.arrow] = true;
-				num += (int)array2[(int)quadMistCard.type];
+				if (!arrowPatternUsed[quadMistCard.arrow])
+					arrowPts += 5;
+				arrowPatternUsed[quadMistCard.arrow] = true;
+				typePts += typePtsWorth[(Int32)quadMistCard.type];
 			}
 		}
-		for (int k = 0; k < CardUI.FF9FCARD_ARROW_TYPE_MAX; k++)
-		{
-			if (array[k])
-			{
-				num2 += 5;
-			}
-		}
-		point = num3 + num + num2;
+		point = idPts + typePts + arrowPts;
 	}
 
 	private void ShowCardDetailHudNumber(Int32 number)
@@ -536,7 +515,7 @@ public class CardUI : UIScene
 
 	private void Awake()
 	{
-        base.FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
+		base.FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
 		levelLabel = PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(3).GetComponent<UILabel>();
 		classNameLabel = PlayerInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
 		winCountLabel = PlayerInfoPanel.GetChild(1).GetChild(0).GetChild(2).GetComponent<UILabel>();
@@ -551,44 +530,40 @@ public class CardUI : UIScene
 		cardNameLabel = CardInfoPanel.GetChild(0).GetChild(2).GetChild(1).GetComponent<UILabel>();
 		prevOffsetButton = CardInfoPanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<BoxCollider>();
 		nextOffsetButton = CardInfoPanel.GetChild(0).GetChild(1).GetChild(4).GetComponent<BoxCollider>();
-		Int32 num = 0;
-		foreach (Object obj in CardSelectionListPanel.transform.GetChild(0))
+		Int32 cardIndex = 0;
+		foreach (Transform transf in CardSelectionListPanel.transform.GetChild(0))
 		{
-			Transform transform = (Transform)obj;
-			Int32 num2 = num % 10 * 10;
-			num2 += num / 10;
-			num++;
-			CardUI.CardListHUD cardListHUD = new CardUI.CardListHUD(transform.gameObject, num2);
+			Int32 invertIndex = cardIndex % 10 * 10;
+			invertIndex += cardIndex / 10;
+			cardIndex++;
+			CardUI.CardListHUD cardListHUD = new CardUI.CardListHUD(transf.gameObject, invertIndex);
 			cardHudList.Add(cardListHUD);
 			cardListHUD.CardHighlightAnimation.enabled = false;
-			UIEventListener uieventListener = UIEventListener.Get(cardListHUD.Self);
-			uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(onClick));
+			UIEventListener.Get(cardListHUD.Self).onClick += onClick;
 		}
-		foreach (Object obj2 in CardInfoPanel.GetChild(0).GetChild(0).transform)
+		foreach (Transform transf in CardInfoPanel.GetChild(0).GetChild(0).transform)
 		{
-			Transform transform2 = (Transform)obj2;
-			CardDetailHUD item = new CardDetailHUD(transform2.gameObject);
+			CardDetailHUD item = new CardDetailHUD(transf.gameObject);
 			cardDetailHudList.Add(item);
 		}
-		UIEventListener uieventListener2 = UIEventListener.Get(DeleteSubmenuButton);
-	    uieventListener2.Click += onClick;
+		UIEventListener.Get(DeleteSubmenuButton).Click += onClick;
 
-        _uiDiscardDialog = new UiDiscardDialog(DeleteDialogGameObject);
-	    _uiDiscardDialog.Content.Confirm.UiEventListener.onClick += onClick;
-        _uiDiscardDialog.Content.Cancel.UiEventListener.onClick += onClick;
+		_uiDiscardDialog = new UiDiscardDialog(DeleteDialogGameObject);
+		_uiDiscardDialog.Content.Confirm.UiEventListener.onClick += onClick;
+		_uiDiscardDialog.Content.Cancel.UiEventListener.onClick += onClick;
 
-	    if (_uiDiscardDialog.Content.Auto != null)
-	        _uiDiscardDialog.Content.Auto.UiEventListener.onClick += onClick;
+		if (_uiDiscardDialog.Content.Auto != null)
+			_uiDiscardDialog.Content.Auto.UiEventListener.onClick += onClick;
 
-        cardDetailTransition = TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
+		cardDetailTransition = TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
 		deleteDialogTransition = TransitionPanel.GetChild(1).GetComponent<HonoTweenClipping>();
-        UILabel component = PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetComponent<UILabel>();
-        component.SetAnchor((Transform)null);
-        component.width = 332;
-        component.height = 40;
-    }
+		UILabel component = PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetComponent<UILabel>();
+		component.SetAnchor((Transform)null);
+		component.width = 332;
+		component.height = 40;
+	}
 
-    private static String CardGroupButton = "Card.Card";
+	private static String CardGroupButton = "Card.Card";
 
 	private static String DiscardDialogButtonGroup = "Card.Choice";
 
@@ -631,7 +606,7 @@ public class CardUI : UIScene
 	private GameObject cardNumberGameObject;
 
 	//private ButtonGroupState discardConfirmButton;
-    //
+	//
 	//private ButtonGroupState discardCancelButton;
 
 	private UILabel currentCardNumberLabel;
@@ -658,21 +633,21 @@ public class CardUI : UIScene
 
 	private Int32 deleteCardId;
 
-	private Int32[] offset = new Int32[100];
+	private Int32[] offset = new Int32[CardPool.TOTAL_CARDS];
 
-	private Byte[] count = new Byte[100];
+	private Byte[] count = new Byte[CardPool.TOTAL_CARDS];
 
 	private Int32 lv_collector;
 
 	private Int32 point;
 
-    private UiDiscardDialog _uiDiscardDialog;
+	private UiDiscardDialog _uiDiscardDialog;
 
-    private ButtonGroupState DiscardConfirmButton => _uiDiscardDialog.Content.Confirm.GroupState;
-    private ButtonGroupState DiscardCancelButton => _uiDiscardDialog.Content.Cancel.GroupState;
-    private ButtonGroupState DiscardAutoButton => _uiDiscardDialog.Content.Auto?.GroupState;
+	private ButtonGroupState DiscardConfirmButton => _uiDiscardDialog.Content.Confirm.GroupState;
+	private ButtonGroupState DiscardCancelButton => _uiDiscardDialog.Content.Cancel.GroupState;
+	private ButtonGroupState DiscardAutoButton => _uiDiscardDialog.Content.Auto?.GroupState;
 
-    public class CardListHUD
+	public class CardListHUD
 	{
 		public CardListHUD(GameObject go, Int32 id)
 		{
@@ -697,111 +672,111 @@ public class CardUI : UIScene
 		public ButtonGroupState CardButtonGroup;
 	}
 
-    private sealed class UiDiscardDialog
-    {
-        public readonly TextPanel Content;
-        public readonly FrameBackground Background;
-        public readonly UIPanel Panel;
+	private sealed class UiDiscardDialog
+	{
+		public readonly TextPanel Content;
+		public readonly FrameBackground Background;
+		public readonly UIPanel Panel;
 
-        public UiDiscardDialog(GameObject obj)
-        {
-            Content = new TextPanel(obj.GetChild(0));
-            Background = new FrameBackground(obj.GetChild(1));
-            Panel = obj.GetExactComponent<UIPanel>();
+		public UiDiscardDialog(GameObject obj)
+		{
+			Content = new TextPanel(obj.GetChild(0));
+			Background = new FrameBackground(obj.GetChild(1));
+			Panel = obj.GetExactComponent<UIPanel>();
 
-            if (Configuration.TetraMaster.DiscardAutoButton)
-                AddAutoButton();
-        }
+			if (Configuration.TetraMaster.DiscardAutoButton)
+				AddAutoButton();
+		}
 
-        public void AddAutoButton()
-        {
-            Panel.clipping = UIDrawCall.Clipping.None;
+		public void AddAutoButton()
+		{
+			Panel.clipping = UIDrawCall.Clipping.None;
 
-            Background.OnAutoButtonAdded();
-            Content.OnAutoButtonAdded();
-        }
+			Background.OnAutoButtonAdded();
+			Content.OnAutoButtonAdded();
+		}
 
-        public sealed class TextPanel : GOBase
-        {
-            public readonly GOLocalizableLabel Question;
-            public readonly Button Confirm;
-            public readonly Button Cancel;
-            public Button Auto;
+		public sealed class TextPanel : GOBase
+		{
+			public readonly GOLocalizableLabel Question;
+			public readonly Button Confirm;
+			public readonly Button Cancel;
+			public Button Auto;
 
-            public TextPanel(GameObject obj)
-                : base(obj)
-            {
-                Question = new GOLocalizableLabel(obj.GetChild(0));
-                Confirm = new Button(obj.GetChild(1));
-                Cancel = new Button(obj.GetChild(2));
-            }
+			public TextPanel(GameObject obj)
+				: base(obj)
+			{
+				Question = new GOLocalizableLabel(obj.GetChild(0));
+				Confirm = new Button(obj.GetChild(1));
+				Cancel = new Button(obj.GetChild(2));
+			}
 
-            public void OnAutoButtonAdded()
-            {
-                Transform.localPosition = new Vector3(-13, 40, 0);
-                Question.Transform.localPosition = new Vector3(-90, Question.Transform.localPosition.y, Question.Transform.localPosition.z);
+			public void OnAutoButtonAdded()
+			{
+				Transform.localPosition = new Vector3(-13, 40, 0);
+				Question.Transform.localPosition = new Vector3(-90, Question.Transform.localPosition.y, Question.Transform.localPosition.z);
 
-                GameObject autoGo = Instantiate(Cancel.GameObject);
-                autoGo.name = "Auto";
-                autoGo.transform.SetParent(Transform, false);
+				GameObject autoGo = Instantiate(Cancel.GameObject);
+				autoGo.name = "Auto";
+				autoGo.transform.SetParent(Transform, false);
 
-                Auto = new Button(autoGo);
-                Auto.Transform.localPosition = new Vector3(0, -386f, 0);
-                Auto.UiLocalize.key = null;
-                Auto.UiLabel.text = "Auto";
+				Auto = new Button(autoGo);
+				Auto.Transform.localPosition = new Vector3(0, -386f, 0);
+				Auto.UiLocalize.key = null;
+				Auto.UiLabel.text = "Auto";
 
-                Confirm.OnAutoButtonAdded();
-                Cancel.OnAutoButtonAdded();
-                Auto.OnAutoButtonAdded();
-            }
+				Confirm.OnAutoButtonAdded();
+				Cancel.OnAutoButtonAdded();
+				Auto.OnAutoButtonAdded();
+			}
 
-            public sealed class Button : GOBase
-            {
-                public readonly ButtonGroupState GroupState;
-                public readonly UIButton UiButton;
-                public readonly UILocalize UiLocalize;
-                public readonly UILabel UiLabel;
-                public readonly UIEventListener UiEventListener;
+			public sealed class Button : GOBase
+			{
+				public readonly ButtonGroupState GroupState;
+				public readonly UIButton UiButton;
+				public readonly UILocalize UiLocalize;
+				public readonly UILabel UiLabel;
+				public readonly UIEventListener UiEventListener;
 
-                public Button(GameObject obj)
-                    : base(obj)
-                {
-                    GroupState = obj.GetExactComponent<ButtonGroupState>();
-                    UiButton = obj.GetExactComponent<UIButton>();
-                    UiLocalize = obj.GetExactComponent<UILocalize>();
-                    UiLabel = obj.GetExactComponent<UILabel>();
-                    UiEventListener = obj.EnsureExactComponent<UIEventListener>();
-                    if (Configuration.Control.WrapSomeMenus)
-                        obj.GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
-                }
+				public Button(GameObject obj)
+					: base(obj)
+				{
+					GroupState = obj.GetExactComponent<ButtonGroupState>();
+					UiButton = obj.GetExactComponent<UIButton>();
+					UiLocalize = obj.GetExactComponent<UILocalize>();
+					UiLabel = obj.GetExactComponent<UILabel>();
+					UiEventListener = obj.EnsureExactComponent<UIEventListener>();
+					if (Configuration.Control.WrapSomeMenus)
+						obj.GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
+				}
 
-                public void OnAutoButtonAdded()
-                {
-                    UiLocalize.TextOverwriting += OnTextOverwriting;
-                    Transform.localPosition = new Vector3(0, Transform.localPosition.y, Transform.localPosition.z);
-                }
+				public void OnAutoButtonAdded()
+				{
+					UiLocalize.TextOverwriting += OnTextOverwriting;
+					Transform.localPosition = new Vector3(0, Transform.localPosition.y, Transform.localPosition.z);
+				}
 
-                private String OnTextOverwriting(String key, String text)
-                {
-                    if (text.StartsWith("[CENT]"))
-                        return text;
+				private String OnTextOverwriting(String key, String text)
+				{
+					if (text.StartsWith("[CENT]"))
+						return text;
 
-                    return "[CENT]" + text;
-                }
-            }
-        }
+					return "[CENT]" + text;
+				}
+			}
+		}
 
-        public sealed class FrameBackground : GOWidget
-        {
-            public FrameBackground(GameObject obj)
-                : base(obj)
-            {
-            }
+		public sealed class FrameBackground : GOWidget
+		{
+			public FrameBackground(GameObject obj)
+				: base(obj)
+			{
+			}
 
-            public void OnAutoButtonAdded()
-            {
-                Widget.height = 408;
-            }
-        }
-    }
+			public void OnAutoButtonAdded()
+			{
+				Widget.height = 408;
+			}
+		}
+	}
 }

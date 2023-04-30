@@ -35,7 +35,7 @@ namespace Memoria
                 _context.Attack = 1;
             else if (IsUnderAnyStatus(BattleStatus.Berserk | BattleStatus.Trance))
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
-            }
+        }
 
         public void PenaltyMini()
         {
@@ -45,16 +45,8 @@ namespace Memoria
 
         public void PenaltyPhysicalHitRate()
         {
-            if (Configuration.Mod.TranceSeek)
-            {
-                if (IsUnderAnyStatus(BattleStatus.Blind))
-                    _context.HitRate /= 2;
-            }
-            else
-            {
-                if (IsUnderAnyStatus(BattleStatus.Blind | BattleStatus.Confuse))
-                    _context.HitRate /= 2;
-            }
+            if (IsUnderAnyStatus(BattleStatus.Blind | BattleStatus.Confuse))
+                _context.HitRate /= 2;
         }
 
         public void BonusConcentrate()

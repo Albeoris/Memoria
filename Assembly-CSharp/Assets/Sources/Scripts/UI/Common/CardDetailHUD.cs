@@ -1,4 +1,5 @@
-﻿using Memoria;
+﻿using System;
+using Memoria;
 using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common
@@ -26,7 +27,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				Self.GetChild(0).GetChild(7)
 			};
 
-			if (Configuration.Mod.TranceSeek || Configuration.TetraMaster.TripleTriad > 0)
+			if (Configuration.TetraMaster.TripleTriad > 0)
 			{
                 AtkParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 190);
                 AtkParamSprite.TopAnchorPosition = new UIRect.Position(0f, 220);
@@ -44,7 +45,7 @@ namespace Assets.Sources.Scripts.UI.Common
                 MagicDefParamSprite.TopAnchorPosition = new UIRect.Position(1f, 0);
                 MagicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
                 MagicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, 30);
-                if ((CardBorderSprite.atlas.spriteList.Find(sprt => sprt.name == "goldenbluecardframe") == null) && Configuration.Mod.TranceSeek)
+				if (QuadMistResourceManager.UseArrowGoldenFrame && CardBorderSprite.atlas.spriteList.Find(sprt => sprt.name == "goldenbluecardframe") == null)
 				{
                     CardBorderSprite.atlas.spriteList.Add(new UISpriteData
                     {
@@ -56,21 +57,15 @@ namespace Assets.Sources.Scripts.UI.Common
                     });
                 }
             }
-
 		}
 
 		public GameObject Self;
 
 		public UISprite CardImageSprite;
-
 		public UISprite AtkParamSprite;
-
 		public UISprite AtkTypeParamSprite;
-
 		public UISprite PhysicDefParamSprite;
-
 		public UISprite MagicDefParamSprite;
-
 		public UISprite CardBorderSprite;
 
 		public GameObject[] CardArrowList;

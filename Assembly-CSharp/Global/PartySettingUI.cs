@@ -383,7 +383,7 @@ public class PartySettingUI : UIScene
             {
                 charCnt++;
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(this.info.menu[i]);
-                if (player.cur.hp != 0 && (player.status & (Byte)(BattleStatus.Petrify | BattleStatus.Venom)) == 0)
+                if (player.cur.hp != 0 && (player.status & (Byte)BattleStatusConst.CannotActInMenu) == 0)
                     healthyCnt++;
             }
         }

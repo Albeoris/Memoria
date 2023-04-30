@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Memoria
 {
@@ -8,8 +9,7 @@ namespace Memoria
         {
             public static String[] FolderNames => Instance._mod.FolderNames;
             public static String[] Priorities => Instance._mod.Priorities;
-            public static Int32 GenerateFileList => Instance._mod.GenerateFileList;
-            public static Boolean TranceSeek => Instance._mod.TranceSeek;
+            public static Int32 UseFileList => Instance._mod.UseFileList;
             public static String[] AllFolderNames
             {
                 get
@@ -20,6 +20,17 @@ namespace Memoria
                     return res;
                 }
             }
+
+            private static Boolean? _tranceSeek = null;
+            public static Boolean TranceSeek
+			{
+                get
+                {
+                    if (!_tranceSeek.HasValue)
+                        _tranceSeek = FolderNames.Contains("TranceSeek");
+                    return _tranceSeek.Value;
+                }
+			}
         }
     }
 }

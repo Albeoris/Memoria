@@ -12,12 +12,12 @@ using Object = System.Object;
 
 public class SharedDataBytesStorage : ISharedDataStorage
 {
-    static SharedDataBytesStorage()
-    {
-        SetPCPath();
-    }
+	static SharedDataBytesStorage()
+	{
+		SetPCPath();
+	}
 
-    private void Awake()
+	private void Awake()
 	{
 		if (Application.isEditor)
 		{
@@ -32,61 +32,25 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
 	private static void SetPCPath()
 	{
-	    if (!String.IsNullOrEmpty(MetaData.FilePath))
-	        return;
+		if (!String.IsNullOrEmpty(MetaData.FilePath))
+			return;
 
-        String fileName;
+		String fileName;
 		String str2 = "/Steam/EncryptedSavedData";
 
-        if (FF9StateSystem.PCEStorePlatform)
-        {
-            String text2 = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            text2 = text2.Replace('\\', '/');
-            MetaData.DirPath = text2 + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
-        }
-        else
-        {
-            MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + str2;
-        }
+		if (FF9StateSystem.PCEStorePlatform)
+		{
+			String text2 = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			text2 = text2.Replace('\\', '/');
+			MetaData.DirPath = text2 + "/My Games/FINAL FANTASY IX/EncryptedSaveData";
+		}
+		else
+		{
+			MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + str2;
+		}
 
-        Directory.CreateDirectory(MetaData.DirPath);
+		Directory.CreateDirectory(MetaData.DirPath);
 
-		// TranceSeekSave => Create new file save
-		//	String[] saveDataFiles = Directory.GetFiles(MetaData.DirPath, "SavedData_tranceseek_??.dat");
-		//	if (saveDataFiles.Length == 0)
-		//	{
-		//		String[] saveDataVanillaFiles = Directory.GetFiles(MetaData.DirPath, "SavedData_??.dat");
-		//		if (saveDataVanillaFiles.Length == 1)
-		//		{
-		//			Log.Message("##########CREATE A COPY SAVE FILE FOR TRANCE SEEK##########");
-		//			String fileNameTranceSeek;
-		//			if (Localization.CurrentLanguage == "Japanese")
-		//				fileName = "SavedData_tranceseek_jp.dat";
-		//			else
-		//				fileName = "SavedData_tranceseek_ww.dat";
-		//			Log.Message("SavedData_ww.dat found ! Creating a copy...");
-		//			string fileNameVanilla = Path.GetFileName(saveDataVanillaFiles[0]);
-		//			String CopyVanilla = MetaData.DirPath + '/' + fileNameVanilla;
-		//			String CopyTranceSeek = MetaData.DirPath + '/' + fileName;
-		//			CopyVanilla = CopyVanilla.Replace('/', '\\');
-		//			CopyTranceSeek = CopyTranceSeek.Replace('/', '\\');
-		//			Log.Message($"FileNameVanilla : {CopyVanilla} / FileTranceSeek : {CopyTranceSeek}");
-		//			File.Copy(CopyVanilla, CopyTranceSeek, false);
-		//			Log.Message($"Copied Done ! New file save for Trance Seek => {CopyTranceSeek}");
-		//		}
-		//		else
-		//		{
-		//
-		//			Log.Message("##########CREATE NEW SAVE FILE FOR TRANCE SEEK##########");
-		//			if (Localization.CurrentLanguage == "Japanese")
-		//				fileName = "SavedData_tranceseek_jp.dat";
-		//			else
-		//				fileName = "SavedData_tranceseek_ww.dat";
-		//
-		//			Log.Message($"There is no SavedData_tranceseek_??.dat files. Choose by a language: {fileName}");
-		//		}
-		//	}
-		
 		String[] saveDataFiles = Directory.GetFiles(MetaData.DirPath, "SavedData_??.dat");
 		if (saveDataFiles.Length == 0)
 		{
@@ -98,42 +62,41 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			Log.Message($"There is no SavedData_??.dat files. Choose by a language: {fileName}");
 		}
 		else if (saveDataFiles.Length == 1)
-	    {
-	        fileName = Path.GetFileName(saveDataFiles[0]);
-	    }
-	    else
-	    {
-	        String lastWritePath = null;
-	        DateTime lastWriteTime = DateTime.MinValue;
-	        foreach (String file in saveDataFiles)
-	        {
-	            DateTime time = File.GetLastWriteTimeUtc(file);
+		{
+			fileName = Path.GetFileName(saveDataFiles[0]);
+		}
+		else
+		{
+			String lastWritePath = null;
+			DateTime lastWriteTime = DateTime.MinValue;
+			foreach (String file in saveDataFiles)
+			{
+				DateTime time = File.GetLastWriteTimeUtc(file);
 
-                if (time > lastWriteTime)
-	            {
-                    lastWritePath = file;
-	                lastWriteTime = time;
-	            }
-	        }
+				if (time > lastWriteTime)
+				{
+					lastWritePath = file;
+					lastWriteTime = time;
+				}
+			}
 
-            fileName = Path.GetFileName(lastWritePath);
-	        Log.Message($"There is many SavedData_??.dat files. Choose by a last write time: {fileName}");
-	    }
+			fileName = Path.GetFileName(lastWritePath);
+			Log.Message($"There is many SavedData_??.dat files. Choose by a last write time: {fileName}");
+		}
 
-        MetaData.FilePath = Application.persistentDataPath + str2 + "/" + fileName;
-	//	Log.Message($"########## Save file used for FFIX Trance Seek : {MetaData.FilePath} ##########");
+		MetaData.FilePath = Application.persistentDataPath + str2 + "/" + fileName;
 	}
 
-    private void SetOtherPlatformPath()
+	private void SetOtherPlatformPath()
 	{
-        MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
-        MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData";
+		MetaData.FilePath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData/SavedData.dat";
+		MetaData.DirPath = AssetManagerUtil.GetPersistentDataPath() + "/EncryptedSavedData";
 	}
 
 	private void SetEditorPath()
 	{
-        MetaData.FilePath = Application.persistentDataPath + "/SavedData/SavedData.dat";
-        MetaData.DirPath = Application.persistentDataPath + "/SavedData";
+		MetaData.FilePath = Application.persistentDataPath + "/SavedData/SavedData.dat";
+		MetaData.DirPath = Application.persistentDataPath + "/SavedData";
 	}
 
 	private JsonParser LazyCreateJsonParser()
@@ -352,7 +315,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				ISharedDataLog.LogError("Data type not found, AT type estimation, with type: " + d);
 			}
 		}
-		if (num > 18432) // TRANCE SEEK - Default value 18432
+		if (num > 18432)
 		{
 			ISharedDataSerializer.LastErrno = DataSerializerErrorCode.DataCorruption;
 			ISharedDataLog.LogError(String.Concat(new Object[]
@@ -360,7 +323,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				"Estimated saved data size(",
 				num,
 				") larger than Save reserved size(",
-                18432, // TRANCE SEEK - Default value 18432
+				18432,
 				")!"
 			}));
 		}
@@ -562,9 +525,9 @@ public class SharedDataBytesStorage : ISharedDataStorage
 						}
 					}
 					Byte[] array5 = this.Encryption.Encrypt(array4);
-					Int32 num3 = 18432 - (Int32)array5.Length;  // TranceSeekSave => Default value : 18432
+					Int32 num3 = 18432 - (Int32)array5.Length;
 					Byte[] array6 = new Byte[num3];
-					Int32 num4 = 18432; // TranceSeekSave => Default value : 18432
+					Int32 num4 = 18432;
 					buffer = new Byte[num4];
 					binaryWriter.Write(array5, 0, (Int32)array5.Length);
 					binaryWriter.Write(array6, 0, (Int32)array6.Length);
@@ -634,8 +597,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			{
 				sharedDataPreviewCharacterInfo = new SharedDataPreviewCharacterInfo();
 				sharedDataPreviewCharacterInfo.SerialID = (Int32)player.info.serial_no;
-                sharedDataPreviewCharacterInfo.Name = player.Name;
-                sharedDataPreviewCharacterInfo.Level = (Int32)player.level;
+				sharedDataPreviewCharacterInfo.Name = player.Name;
+				sharedDataPreviewCharacterInfo.Level = (Int32)player.level;
 			}
 			sharedDataPreviewSlot.CharacterInfoList.Add(sharedDataPreviewCharacterInfo);
 		}
@@ -653,7 +616,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				{
 					using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
 					{
-						SlotPreviewReadWriterUtil.Instance.WriteSlotPreview(sharedDataPreviewSlot, this.metaData, saveID, slotID, fileStream, binaryReader, binaryWriter, this.Encryption, delegate(Int32 outSlotID, Int32 outSaveID, SharedDataPreviewSlot data)
+						SlotPreviewReadWriterUtil.Instance.WriteSlotPreview(sharedDataPreviewSlot, this.metaData, saveID, slotID, fileStream, binaryReader, binaryWriter, this.Encryption, delegate (Int32 outSlotID, Int32 outSaveID, SharedDataPreviewSlot data)
 						{
 							cacheOutSlotID = outSlotID;
 							cacheOutSaveID = outSaveID;
@@ -673,19 +636,19 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		onFinishDelegate(slotID, saveID, sharedDataPreviewSlot);
 	}
 
-    protected void CreateDataSchema()
-    {
-        this.jsonParser = this.LazyCreateJsonParser();
-        JSONClass rootNode = new JSONClass();
-        this.rootSchemaNode = new JSONClass();
-        this.jsonParser.ParseFromFF9StateSystem(rootNode, this.rootSchemaNode);
-        this.dataTypeList = this.ParseJsonTreeToDataList(this.rootSchemaNode);
-        this.dataNodeList = new List<JSONNode>();
-        Int32 dataSize = this.EstimateDataSize(this.dataTypeList);
-        this.metaData.DataSize = dataSize;
-    }
+	protected void CreateDataSchema()
+	{
+		this.jsonParser = this.LazyCreateJsonParser();
+		JSONClass rootNode = new JSONClass();
+		this.rootSchemaNode = new JSONClass();
+		this.jsonParser.ParseFromFF9StateSystem(rootNode, this.rootSchemaNode);
+		this.dataTypeList = this.ParseJsonTreeToDataList(this.rootSchemaNode);
+		this.dataNodeList = new List<JSONNode>();
+		Int32 dataSize = this.EstimateDataSize(this.dataTypeList);
+		this.metaData.DataSize = dataSize;
+	}
 
-    protected JSONClass Load(Boolean isAutoload, Int32 slotID, Int32 saveID)
+	protected JSONClass Load(Boolean isAutoload, Int32 slotID, Int32 saveID)
 	{
 		try
 		{
@@ -777,15 +740,15 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				ISharedDataLog.LogError("Verification failed!");
 				return (JSONClass)null;
 			}
-            JSONClass tree = this.ParseDataListToJsonTree(list, this.rootSchemaNode);
-            if (File.Exists(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID)))
-            {
-                JSONNode memoriaNode = JSONNode.LoadFromFile(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID));
-                if (memoriaNode != null)
-                    tree.Add("MemoriaExtraData", memoriaNode);
-            }
-            return tree;
-        }
+			JSONClass tree = this.ParseDataListToJsonTree(list, this.rootSchemaNode);
+			if (File.Exists(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID)))
+			{
+				JSONNode memoriaNode = JSONNode.LoadFromFile(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID));
+				if (memoriaNode != null)
+					tree.Add("MemoriaExtraData", memoriaNode);
+			}
+			return tree;
+		}
 		catch (Exception message3)
 		{
 			ISharedDataLog.LogError(message3);
@@ -799,8 +762,8 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		Boolean result;
 		try
 		{
-            JSONClass memoriaNode = rootNode.Remove("MemoriaExtraData")?.AsObject;
-            this.CreateDataSchema();
+			JSONClass memoriaNode = rootNode.Remove("MemoriaExtraData")?.AsObject;
+			this.CreateDataSchema();
 			List<JSONData> list = this.ParseJsonTreeToDataList(rootNode);
 			if (!this.ValidateDataListWithSchemaDataList(list, this.dataTypeList))
 			{
@@ -855,9 +818,9 @@ public class SharedDataBytesStorage : ISharedDataStorage
 						}
 					}
 				}
-                if (memoriaNode != null)
-                    memoriaNode.SaveToFile(MetaData.GetMemoriaExtraSaveFilePath(isAutosave, slotID, saveID));
-                result = true;
+				if (memoriaNode != null)
+					memoriaNode.SaveToFile(MetaData.GetMemoriaExtraSaveFilePath(isAutosave, slotID, saveID));
+				result = true;
 			}
 		}
 		catch (Exception message)
@@ -1347,43 +1310,39 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			return;
 		}
 		FileInfo fileInfo = new FileInfo(MetaData.FilePath);
-		Int32 num = (Int32)fileInfo.Length;
-		Int32 num2 = 2937152;
-		if (num == num2)
-		{
-			onFinishDelegate(true, num2); // TRANCE SEEK - MAKE IT ALWAYS TRUE
-		}
+		Int32 fileSize = (Int32)fileInfo.Length;
+		Int32 expectedSize = 2937152;
+		if (fileSize == expectedSize)
+			onFinishDelegate(true, expectedSize);
 		else
-		{
 			onFinishDelegate(false, 0);
-		}
 	}
 
 	private const Int32 tmpMaxParseCount = 10000;
 
-    public static readonly String TypeByte = typeof(Byte).FullName;
+	public static readonly String TypeByte = typeof(Byte).FullName;
 
 	public static readonly String TypeSByte = typeof(SByte).FullName;
 
-    public static readonly String TypeInt16 = typeof(Int16).FullName;
+	public static readonly String TypeInt16 = typeof(Int16).FullName;
 
-    public static readonly String TypeUInt16 = typeof(UInt16).FullName;
+	public static readonly String TypeUInt16 = typeof(UInt16).FullName;
 
-    public static readonly String TypeInt32 = typeof(Int32).FullName;
+	public static readonly String TypeInt32 = typeof(Int32).FullName;
 
-    public static readonly String TypeUInt32 = typeof(UInt32).FullName;
+	public static readonly String TypeUInt32 = typeof(UInt32).FullName;
 
-    public static readonly String TypeInt64 = typeof(Int64).FullName;
+	public static readonly String TypeInt64 = typeof(Int64).FullName;
 
-    public static readonly String TypeUInt64 = typeof(UInt64).FullName;
+	public static readonly String TypeUInt64 = typeof(UInt64).FullName;
 
-    public static readonly String TypeSingle = typeof(Single).FullName;
+	public static readonly String TypeSingle = typeof(Single).FullName;
 
-    public static readonly String TypeDouble = typeof(Double).FullName;
+	public static readonly String TypeDouble = typeof(Double).FullName;
 
-    public static readonly String TypeBoolean = typeof(Boolean).FullName;
+	public static readonly String TypeBoolean = typeof(Boolean).FullName;
 
-    public static readonly String TypeString128 = typeof(String).FullName;
+	public static readonly String TypeString128 = typeof(String).FullName;
 
 	public static String TypeString4K = "String4K";
 
@@ -1616,18 +1575,18 @@ public class SharedDataBytesStorage : ISharedDataStorage
 
 		public static String FilePath = String.Empty;
 
-        public static String DirPath = String.Empty;
+		public static String DirPath = String.Empty;
 
-        public static String GetMemoriaExtraSaveFilePath(Boolean isAutosave, Int32 slotID, Int32 saveID)
-        {
-            if (String.IsNullOrEmpty(MetaData.FilePath) || !MetaData.FilePath.EndsWith(".dat"))
-                return String.Empty;
-            String extraName = isAutosave ? "_Memoria_Autosave" : $"_Memoria_{slotID}_{saveID}";
-            return MetaData.FilePath.Substring(0, MetaData.FilePath.Length - 4) + extraName + ".dat";
-        }
-    }
+		public static String GetMemoriaExtraSaveFilePath(Boolean isAutosave, Int32 slotID, Int32 saveID)
+		{
+			if (String.IsNullOrEmpty(MetaData.FilePath) || !MetaData.FilePath.EndsWith(".dat"))
+				return String.Empty;
+			String extraName = isAutosave ? "_Memoria_Autosave" : $"_Memoria_{slotID}_{saveID}";
+			return MetaData.FilePath.Substring(0, MetaData.FilePath.Length - 4) + extraName + ".dat";
+		}
+	}
 
-    private class JSONNodeWithIndex
+	private class JSONNodeWithIndex
 	{
 		public JSONNodeWithIndex(JSONNode node)
 		{

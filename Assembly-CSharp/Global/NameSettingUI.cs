@@ -92,18 +92,8 @@ public sealed class NameSettingUI : UIScene
 
     public void OnResetButtonClick()
     {
-        FF9Sfx.FF9SFX_Play(103);      
-        if (_currentCharId != 11) // TRANCE SEEK - RENAME BEATRIX
-        {
-            NameInputField.value = FF9TextTool.CharacterDefaultName(SubNo);
-            return;
-        }
-        if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "JP")
-        {
-            NameInputField.value = "ベアトリクス";
-            return;
-        }
-        NameInputField.value = "Beatrix";
+        FF9Sfx.FF9SFX_Play(103);
+        NameInputField.value = FF9TextTool.CharacterDefaultName(SubNo);
     }
 
     public void OnConfirmButtonClick()
@@ -150,17 +140,7 @@ public sealed class NameSettingUI : UIScene
         Background.sprite2D = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/" + GetBackgroundSpritePath(), false);
         MaxCharacterLabel.text = Localization.Get("MaxCharacters") + (Application.platform != RuntimePlatform.WindowsPlayer ? String.Empty : Localization.Get("MaxCharacters2"));
         CharacterProfile.text = FF9TextTool.CharacterProfile(_subNumber);
-        if (_currentCharId != 11) // TRANCE SEEK - RENAME BEATRIX
-        {
-            NameInputField.value = _isDefaultName ? FF9TextTool.CharacterDefaultName(SubNo) : FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name; 
-            return;
-        }
-        if ((EmbadedTextResources.CurrentSymbol ?? Localization.GetSymbol()) == "JP")
-        {
-            NameInputField.value = "ベアトリクス";
-            return;
-        }
-        NameInputField.value = "Beatrix";
+        NameInputField.value = _isDefaultName ? FF9TextTool.CharacterDefaultName(SubNo) : FF9StateSystem.Common.FF9.GetPlayer(SubNo).Name;
     }
 
     private String GetBackgroundSpritePath()
@@ -171,8 +151,6 @@ public sealed class NameSettingUI : UIScene
             return "name04";
         if (SubNo == CharacterId.Eiko)
             return "name05";
-        if (SubNo == CharacterId.Beatrix)
-            return "name08";
         return $"name{_subNumber:D2}";
     }
 

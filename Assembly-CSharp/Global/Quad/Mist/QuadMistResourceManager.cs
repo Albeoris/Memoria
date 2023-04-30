@@ -6,10 +6,12 @@ using UnityEngine;
 
 public class QuadMistResourceManager : MonoBehaviour
 {
+	public static Boolean UseArrowGoldenFrame => Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad <= 1;
+
 	private void Start()
 	{
 		InitAtlasPath();
-        LoadSprite();
+		LoadSprite();
 		CreateUpScaleMapperData();
 		CreateAssetData();
 		CreateFontMap();
@@ -22,27 +24,27 @@ public class QuadMistResourceManager : MonoBehaviour
 		String language = Localization.CurrentLanguage;
 		switch (language)
 		{
-		case "English(US)":
-			text = "quadmist_text_us";
-			break;
-		case "Japanese":
-			text = "quadmist_text_jp";
-			break;
-		case "German":
-			text = "quadmist_text_gr";
-			break;
-		case "Spanish":
-			text = "quadmist_text_es";
-			break;
-		case "Italian":
-			text = "quadmist_text_it";
-			break;
-		case "French":
-			text = "quadmist_text_fr";
-			break;
-		case "English(UK)":
-			text = "quadmist_text_uk";
-			break;
+			case "English(US)":
+				text = "quadmist_text_us";
+				break;
+			case "Japanese":
+				text = "quadmist_text_jp";
+				break;
+			case "German":
+				text = "quadmist_text_gr";
+				break;
+			case "Spanish":
+				text = "quadmist_text_es";
+				break;
+			case "Italian":
+				text = "quadmist_text_it";
+				break;
+			case "French":
+				text = "quadmist_text_fr";
+				break;
+			case "English(UK)":
+				text = "quadmist_text_uk";
+				break;
 		}
 		atlasPathList[0] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image0";
 		atlasPathList[1] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image1";
@@ -81,9 +83,9 @@ public class QuadMistResourceManager : MonoBehaviour
 			String atlasOnDisc = AssetManager.SearchAssetOnDisc(text, true, false);
 			if (!String.IsNullOrEmpty(atlasOnDisc))
 			{
-                moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
-            }
-            Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
+				moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
+			}
+			Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
 			List<String> list = new List<String>();
 			AddCenterTable(list);
 			for (Int32 j = 0; j < spriteArray.Length; j++)
@@ -104,7 +106,7 @@ public class QuadMistResourceManager : MonoBehaviour
 		}
 	}
 
-    private void CreateUpScaleMapperData()
+	private void CreateUpScaleMapperData()
 	{
 		mapperData = new Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>>();
 		if (mapperData.ContainsKey("BattleNum"))
@@ -381,7 +383,7 @@ public class QuadMistResourceManager : MonoBehaviour
 		}
 		List<QuadMistResourceManager.QuadMistMapperData> list23 = new List<QuadMistResourceManager.QuadMistMapperData>();
 		list23.Add(new QuadMistResourceManager.QuadMistMapperData("arrow.png"));
-		if (Configuration.TetraMaster.TripleTriad < 2)
+		if (Configuration.TetraMaster.TripleTriad <= 1)
 			mapperData.Add("ScoreDivider", list23);
 		if (mapperData.ContainsKey("CardNameToggle"))
 		{
@@ -502,11 +504,8 @@ public class QuadMistResourceManager : MonoBehaviour
 	}
 
 	private Dictionary<String, Dictionary<String, Sprite>> spriteData;
-
 	private Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>> mapperData;
-
 	private Dictionary<String, List<QuadMistAssetData>> assetData;
-
 	private Dictionary<String, Dictionary<Char, Int32>> fontMap;
 
 	public static QuadMistResourceManager Instance;

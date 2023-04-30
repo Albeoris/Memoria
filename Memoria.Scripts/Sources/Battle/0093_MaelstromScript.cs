@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Context.Flags |= BattleCalcFlags.DirectHP;
                 _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 9);
-                _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, false);
+                _v.Target.TryAlterStatuses(_v.Command.AbilityStatus, false, _v.Caster);
             }
         }
     }

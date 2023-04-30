@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             if (item.HitRate < GameRandom.Next16() % 100)
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Bitten);
-                _v.Target.TryAlterStatuses(item.Status, false);
+                _v.Target.TryAlterStatuses(item.Status, false, _v.Caster);
             }
         }
     }

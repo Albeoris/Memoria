@@ -21,7 +21,7 @@ namespace Memoria
 
         public Boolean CanUseCommandForFlight()
         {
-            if ((_target.IsLevitate && _command.IsGround) || (_target.MagicDefence == 255 && Configuration.Mod.TranceSeek))
+            if (_target.IsLevitate && _command.IsGround)
             {
                 _context.Flags |= BattleCalcFlags.Miss;
                 return false;
@@ -30,30 +30,24 @@ namespace Memoria
             return true;
         }
 
-        public void TryAlterCommandStatuses()
+        public void TryAlterCommandStatuses(BattleUnit inflicter = null)
         {
             BattleStatus status = _command.AbilityStatus;
             if (!_command.IsShortSummon && _command.Id == BattleCommandId.SummonEiko)
                 status |= BattleStatus.Protect;
 
-            _target.TryAlterStatuses(status, true);
+            _target.TryAlterStatuses(status, true, inflicter);
         }
 
-        public void TryAlterCommandStatusesTranceSeek(byte casterwill = 0)
+        public void TryRemoveAbilityStatuses()
         {
-            BattleStatus status = _command.AbilityStatus;
-            _target.TryAlterStatuses(status, true, false, casterwill);
-        }
-
-        public void TryRemoveAbilityStatuses(Boolean CureOld = false)
-        {
-            if (!_target.TryRemoveStatuses(_command.AbilityStatus) && !CureOld)
+            if (!_target.TryRemoveStatuses(_command.AbilityStatus))
                 _context.Flags |= BattleCalcFlags.Miss;
         }
 
-        public void TryRemoveItemStatuses(Boolean CureOld = false)
+        public void TryRemoveItemStatuses()
         {
-            if (!_target.TryRemoveStatuses(_command.ItemStatus) && !CureOld)
+            if (!_target.TryRemoveStatuses(_command.ItemStatus))
                 _context.Flags |= BattleCalcFlags.Miss;
         }
 

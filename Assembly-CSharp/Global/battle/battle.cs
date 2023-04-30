@@ -280,7 +280,6 @@ public class battle
 
     private static void BattleTrailingLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
-        BattleStatus Immobilized = Configuration.Mod.TranceSeek ? (BattleStatus.Immobilized & ~BattleStatus.Venom) : BattleStatus.Immobilized; // TRANCE SEEK - VENOM
         //uint id = sys.id;
         Boolean proceedEnd = true;
         if (SFX.IsRunning() || btlsys.cmd_queue.next != null || btlsys.cur_cmd != null)
@@ -296,11 +295,11 @@ public class battle
                 {
                     case 0:
                         btl_para.CheckPointData(data);
-                        if ((!next.IsPlayer && (Configuration.Mod.TranceSeek ? !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Stop) : !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death)) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE)) // TRANCE SEEK - VENOM
+                        if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE)))
                             proceedEnd = false;
                         break;
                     case 1:
-                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && (Configuration.Mod.TranceSeek ? !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Stop) : !next.IsUnderAnyStatus(BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop))) // TRANCE SEEK - VENOM
+                        if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd))
                             proceedEnd = false;
                         break;
                     case 2:
@@ -308,7 +307,7 @@ public class battle
                             proceedEnd = true;
                         btl_para.CheckPointData(data);
                         if (next.IsPlayer)
-                            next.TryRemoveStatuses(BattleStatus.CancelEvent);
+                            next.TryRemoveStatuses(BattleStatusConst.CancelEvent);
                         if (btlsys.cur_cmd != null)
                             proceedEnd = false;
                         if (next.IsUnderStatus(BattleStatus.Death))
@@ -321,7 +320,7 @@ public class battle
                                 proceedEnd = false;
                             break;
                         }
-                        if (!btl_stat.CheckStatus(data, Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
+                        if (!btl_stat.CheckStatus(data, BattleStatusConst.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
                             proceedEnd = false;
                         break;
                     case 3:
@@ -334,7 +333,7 @@ public class battle
                                 proceedEnd = false;
                             break;
                         }
-                        if (next.IsPlayer && (Configuration.Mod.TranceSeek ? !btl_stat.CheckStatus(data, BattleStatus.Petrify | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump) : !btl_stat.CheckStatus(data, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump)))  // TRANCE SEEK - VENOM
+                        if (next.IsPlayer && !btl_stat.CheckStatus(data, BattleStatusConst.CannotEscape))
                         {
                             FF9StateSystem.Battle.isFade = true;
                             data.pos[2] -= 100f;
@@ -380,14 +379,14 @@ public class battle
                             if (next.bi.player != 0)
                             {
                                 /*int num2 = (int)*/
-                                btl_stat.RemoveStatuses(next, BattleStatus.VictoryClear);
-                                if (Configuration.Mod.TranceSeek ? !btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop) : !btl_stat.CheckStatus(next, BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Stop)) // TRANCE SEEK - VENOM
+                                btl_stat.RemoveStatuses(next, BattleStatusConst.VictoryClear);
+                                if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
                                 {
                                     if (next.cur.hp > 0)
                                     {
                                         Int32 num3 = btl_mot.GetDirection(next);
                                         next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                        next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatus.IdleDying) ? (Byte)0 : (Byte)1;
+                                        next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)0 : (Byte)1;
                                         next.bi.cmd_idle = 0;
                                         btl_mot.SetDefaultIdle(next);
                                         //if (btl_util.getPlayerPtr(next).info.win_pose != 0)

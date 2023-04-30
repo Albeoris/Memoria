@@ -1,6 +1,7 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
@@ -30,7 +31,9 @@ public partial class BattleHUD : UIScene
     private Byte _currentLibraMessageNumber;
     private Byte _currentLibraMessageCount;
     private BattleUnit _libraBtlData;
+    private HashSet<Byte> _libraDisabledMessage = new HashSet<Byte>();
     private Byte _currentPeepingMessageCount;
+    private Boolean _currentPeepingReverseOrder;
     private BattleEnemy _peepingEnmData;
     private Byte _currentMessagePriority;
     private Single _battleMessageCounter;
@@ -124,6 +127,14 @@ public partial class BattleHUD : UIScene
         BattleDialogGameObject.SetActive(true);
     }
 
+    private void AdvanceLibraMessageNumber()
+    {
+        _currentLibraMessageCount = 0;
+        _currentLibraMessageNumber++;
+        while (_currentLibraMessageNumber < 6 && _libraDisabledMessage.Contains(_currentLibraMessageNumber))
+            _currentLibraMessageNumber++;
+    }
+
     private void DisplayMessageLibra()
     {
         if (_libraBtlData == null)
@@ -133,9 +144,11 @@ public partial class BattleHUD : UIScene
         if (_currentLibraMessageNumber == 1)
         {
             str = _libraBtlData.Name + FF9TextTool.BattleLibraText(10) + _libraBtlData.Level.ToString();
-            _currentLibraMessageNumber = 2;
+            SetBattleMessage(str, 3);
+            AdvanceLibraMessageNumber();
+            return;
         }
-        else if (_currentLibraMessageNumber == 2)
+        if (_currentLibraMessageNumber == 2)
         {
             str = FF9TextTool.BattleLibraText(11);
             str += btl_para.GetLogicalHP(_libraBtlData.Data, false);
@@ -145,98 +158,61 @@ public partial class BattleHUD : UIScene
             str += _libraBtlData.CurrentMp;
             str += FF9TextTool.BattleLibraText(13);
             str += _libraBtlData.MaximumMp;
-            _currentLibraMessageCount = 0;
-            _currentLibraMessageNumber = 3;
+            SetBattleMessage(str, 3);
+            AdvanceLibraMessageNumber();
+            return;
         }
-        else if (_currentLibraMessageNumber == 3)
+        if (_currentLibraMessageNumber == 3)
         {
             if (!_libraBtlData.IsPlayer)
             {
                 Int32 enemyCategory = _libraBtlData.Enemy.Data.et.category;
-                Int32 id;
-                do
+                while (_currentLibraMessageCount < 8 && (enemyCategory & 1 << _currentLibraMessageCount) == 0)
+                    _currentLibraMessageCount++;
+                if (_currentLibraMessageCount < 8)
                 {
-                    Byte num2 = _currentLibraMessageCount++;
-                    if ((id = num2) >= 8)
-                        goto label_11;
-                } while ((enemyCategory & 1 << id) == 0);
-                SetBattleMessage(FF9TextTool.BattleLibraText(id), 3);
-                return;
-            }
-        label_11:
-            _currentLibraMessageCount = 0;
-            _currentLibraMessageNumber = 4;
-        }
-
-        if (_currentLibraMessageNumber == 4)
-        {
-            EffectElement num1 = _libraBtlData.WeakElement & ~_libraBtlData.GuardElement;
-            Int32 num2;
-            do
-            {
-                Byte num3 = _currentLibraMessageCount++;
-                if ((num2 = num3) >= 8)
-                    goto label_17;
-            } while ((num1 & (EffectElement)(1 << num2)) == 0);
-            SetBattleMessage(Localization.GetSymbol() != "JP" ? str + FF9TextTool.BattleLibraText(14 + num2) : BtlGetAttrName(1 << num2) + FF9TextTool.BattleLibraText(14), 3);
-            return;
-        label_17:
-            _currentLibraMessageCount = 0;
-            _currentLibraMessageNumber = 5;
-        }
-        if (Configuration.Mod.TranceSeek)
-        {
-            if (_currentLibraMessageNumber == 5)
-            {
-                if (_libraBtlData != null)
-                {
-                    RegularItem id;
-                    for (; ; )
-                    {
-                        byte currentLibraMessageCount3 = _currentLibraMessageCount;
-                        _currentLibraMessageCount = (byte)(currentLibraMessageCount3 + 1);
-                        if (_currentLibraMessageCount >= _peepingEnmData.StealableItems.Length + 1)
-                        {
-                            break;
-                        }
-                        id = _peepingEnmData.StealableItems[_currentLibraMessageCount - 1];
-                        if (id != RegularItem.NoItem)
-                        {
-                            goto Block_14;
-                        }
-                    }
-                    goto IL_32D;
-                Block_14:
-                    SetBattleMessage((Localization.GetSymbol() != "JP") ? (FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id)) : (FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8)), 2);
+                    SetBattleMessage(FF9TextTool.BattleLibraText(_currentLibraMessageCount), 3);
+                    _currentLibraMessageCount++;
                     return;
                 }
-                IL_32D:
-                _currentLibraMessageCount = 0;
-                _currentLibraMessageNumber = 6;
             }
-            if (_currentLibraMessageNumber == 6)
-            {
-                _libraBtlData = null;
-                _currentLibraMessageCount = 0;
-                _currentLibraMessageNumber = 0;
-            }
-            else
-            {
-                SetBattleMessage(str, 3);
-            }
+            AdvanceLibraMessageNumber();
         }
-        else
+        if (_currentLibraMessageNumber == 4)
         {
-            if (_currentLibraMessageNumber == 5)
+            EffectElement element = _libraBtlData.WeakElement & ~_libraBtlData.GuardElement;
+            while (_currentLibraMessageCount < 8 && (element & (EffectElement)(1 << _currentLibraMessageCount)) == 0)
+                _currentLibraMessageCount++;
+            if (_currentLibraMessageCount < 8)
             {
-                _libraBtlData = null;
-                _currentLibraMessageCount = 0;
-                _currentLibraMessageNumber = 0;
+                SetBattleMessage(Localization.GetSymbol() != "JP" ? str + FF9TextTool.BattleLibraText(14 + _currentLibraMessageCount) : BtlGetAttrName(1 << _currentLibraMessageCount) + FF9TextTool.BattleLibraText(14), 3);
+                _currentLibraMessageCount++;
+                return;
             }
-            else
+            AdvanceLibraMessageNumber();
+        }
+        if (_currentLibraMessageNumber == 5)
+        {
+            if (!_libraBtlData.IsPlayer)
             {
-                SetBattleMessage(str, 3);
+                RegularItem itemId = RegularItem.NoItem;
+                BattleEnemy enemy = _libraBtlData.Enemy;
+                while (_currentLibraMessageCount < enemy.StealableItems.Length && (itemId = enemy.StealableItems[_currentLibraMessageCount]) != RegularItem.NoItem)
+                    _currentLibraMessageCount++;
+                if (itemId != RegularItem.NoItem)
+                {
+                    SetBattleMessage(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(itemId) : FF9TextTool.ItemName(itemId) + FF9TextTool.BattleLibraText(8), 2);
+                    _currentLibraMessageCount++;
+                    return;
+                }
             }
+            AdvanceLibraMessageNumber();
+        }
+        if (_currentLibraMessageNumber >= 6)
+        {
+            _libraBtlData = null;
+            _currentLibraMessageCount = 0;
+            _currentLibraMessageNumber = 0;
         }
     }
 
@@ -255,7 +231,7 @@ public partial class BattleHUD : UIScene
                 _currentPeepingMessageCount = 0;
                 return;
             }
-            id = _peepingEnmData.StealableItems[Configuration.Mod.TranceSeek ? (stealIndex - 1) : (_peepingEnmData.StealableItems.Length - stealIndex)];
+            id = _peepingEnmData.StealableItems[_currentPeepingReverseOrder ? _peepingEnmData.StealableItems.Length - stealIndex : stealIndex - 1];
         } while (id == RegularItem.NoItem);
 
         SetBattleMessage(Localization.GetSymbol() != "JP"
@@ -1210,77 +1186,38 @@ public partial class BattleHUD : UIScene
 
     private static void SetAbilityMagic(AbilityPlayerDetail abilityPlayer)
     {
-        Character character = abilityPlayer.Player;
-        BattleCommandId command1 = CharacterCommands.CommandSets[character.PresetId].Regular1;
-        BattleCommandId command2 = CharacterCommands.CommandSets[character.PresetId].Regular2;
-        if (command1 != BattleCommandId.MagicSword && command2 != BattleCommandId.MagicSword)
-            return;
-
-        CharacterCommand magicSwordCommand = CharacterCommands.Commands[BattleCommandId.MagicSword];
-        PLAYER vivi = FF9StateSystem.Common.FF9.GetPlayer(CharacterId.Vivi);
-        CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[vivi.PresetId];
-            BattleAbilityId[] abilities =
-            {
-            BattleAbilityId.Fire,
-            BattleAbilityId.Fira,
-            BattleAbilityId.Firaga,
-            BattleAbilityId.Blizzard,
-            BattleAbilityId.Blizzara,
-            BattleAbilityId.Blizzaga,
-            BattleAbilityId.Thunder,
-            BattleAbilityId.Thundara,
-            BattleAbilityId.Thundaga,
-            BattleAbilityId.Bio,
-            BattleAbilityId.Water,
-            BattleAbilityId.Flare,
-            BattleAbilityId.Doomsday,
-            BattleAbilityId.Void,
-            BattleAbilityId.Void,
-            BattleAbilityId.Void
-            }; // TODO: Move to the resource file
-
-        if (Configuration.Mod.TranceSeek)
-        {
-            abilities[9] = BattleAbilityId.Poison; // TRANCE SEEK - Poison Sword
-            abilities[10] = BattleAbilityId.Bio;
-            abilities[11] = BattleAbilityId.Jewel; // TRANCE SEEK - Water Sword
-            abilities[12] = BattleAbilityId.Water; // TRANCE SEEK - Watera Sword
-            abilities[13] = BattleAbilityId.Osmose; // TRANCE SEEK - Waterga Sword
-            abilities[14] = BattleAbilityId.Flare;
-            abilities[15] = BattleAbilityId.Doomsday;
-        }
-        Int32 count = Math.Min(magicSwordCommand.ListEntry.Length, abilities.Length);
-        for (Int32 i = 0; i < count; ++i)
-        {
-            Int32 abilityId = ff9abil.GetAbilityIdFromActiveAbility(magicSwordCommand.GetAbilityId(i));
-            Int32 index = ff9abil.FF9Abil_GetIndex(vivi, ff9abil.GetAbilityIdFromActiveAbility(abilities[i]));
-            if (index >= 0)
-            {
-                abilityPlayer.AbilityPaList[abilityId] = vivi.pa[index];
-                abilityPlayer.AbilityMaxPaList[abilityId] = paDataArray[index].Ap;
-            }
-        }
-
-        for (Int32 equipSlot = 0; equipSlot < 5; ++equipSlot)
-        {
-            RegularItem equipId = vivi.equip[equipSlot];
-            if (equipId == RegularItem.NoItem)
+        foreach (BattleMagicSwordSet magicSet in FF9BattleDB.MagicSwordData.Values)
+		{
+            if (magicSet.Beneficiary != abilityPlayer.Player.Index)
+                continue;
+            if (!FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Any(btl => btl.IsPlayer && btl.PlayerIndex == magicSet.Supporter))
                 continue;
 
-            FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[equipId];
-            foreach (Int32 equipAbil in ff9ItemData.ability)
+            PLAYER supporter = FF9StateSystem.Common.FF9.GetPlayer(magicSet.Supporter);
+            CharacterAbility[] paDataArray = ff9abil._FF9Abil_PaData[supporter.PresetId];
+            Int32 count = Math.Min(magicSet.BaseAbilities.Length, magicSet.UnlockedAbilities.Length);
+            for (Int32 i = 0; i < count; ++i)
             {
-                if (equipAbil == 0 || !ff9abil.IsAbilityActive(equipAbil))
-                    continue;
-
-                BattleAbilityId equipAbilityId = ff9abil.GetActiveAbilityFromAbilityId(equipAbil);
-                for (Int32 i = 0; i < count; ++i)
+                Int32 index = ff9abil.FF9Abil_GetIndex(supporter, magicSet.BaseAbilities[i]);
+                if (index >= 0)
                 {
-                    if (equipAbilityId != abilities[i])
+                    abilityPlayer.AbilityPaList[magicSet.UnlockedAbilities[i]] = supporter.pa[index];
+                    abilityPlayer.AbilityMaxPaList[magicSet.UnlockedAbilities[i]] = paDataArray[index].Ap;
+                }
+            }
+            for (Int32 equipSlot = 0; equipSlot < 5; ++equipSlot)
+            {
+                RegularItem equipId = supporter.equip[equipSlot];
+                if (equipId == RegularItem.NoItem)
+                    continue;
+                FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[equipId];
+                foreach (Int32 equipAbil in ff9ItemData.ability)
+                {
+                    if (equipAbil == 0)
                         continue;
-
-                    Int32 abilityId = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)magicSwordCommand.ListEntry[i]);
-                    abilityPlayer.AbilityEquipList[abilityId] = true;
+                    for (Int32 i = 0; i < count; ++i)
+                        if (equipAbil == magicSet.BaseAbilities[i])
+                            abilityPlayer.AbilityEquipList[magicSet.UnlockedAbilities[i]] = true;
                 }
             }
         }
@@ -2102,7 +2039,7 @@ public partial class BattleHUD : UIScene
 
     private static Boolean IsEnableInput(BattleUnit unit)
     {
-        return unit != null && unit.CurrentHp != 0 && !unit.IsUnderAnyStatus(Configuration.Mod.TranceSeek ? (BattleStatus.NoInput & ~BattleStatus.Venom) : BattleStatus.NoInput) && (battle.btl_bonus.member_flag & 1 << unit.Position) != 0; // TRANCE SEEK - VENOM
+        return unit != null && unit.CurrentHp != 0 && !unit.IsUnderAnyStatus(BattleStatusConst.NoInput) && (battle.btl_bonus.member_flag & 1 << unit.Position) != 0;
     }
 
     private Int32 GetSelectMode(CursorGroup cursor)
@@ -2334,7 +2271,7 @@ public partial class BattleHUD : UIScene
                 PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
                 unit.Trance = player.trance;
                 btl_init.CopyPoints(btl.cur, player.cur);
-                BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatus.OutOfBattle & ~(BattleStatus)player.status;
+                BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~(BattleStatus)player.status;
                 btl_stat.RemoveStatuses(btl, statusesToRemove);
                 if ((unit.CurrentStatus & BattleStatus.Death) != 0 && player.cur.hp > 0)
                     btl_stat.RemoveStatus(btl, BattleStatus.Death);
@@ -2342,13 +2279,13 @@ public partial class BattleHUD : UIScene
                 BattleStatus oldPermanent = 0, oldResist = 0, newPermanent = 0, newResist = 0;
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(beforeMenu.saExtended))
                 {
-                    saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb);
+                    saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partial, out StatusModifier duration, out Int16 atb);
                     oldPermanent |= permanent;
                     oldResist |= resist;
                 }
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
                 {
-                    saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out Int16 atb);
+                    saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partial, out StatusModifier duration, out Int16 atb);
                     newPermanent |= permanent;
                     newResist |= resist;
                 }

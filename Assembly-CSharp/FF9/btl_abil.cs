@@ -11,8 +11,8 @@ namespace FF9
 
         public static Boolean TryReturnMagic(BattleUnit returner, BattleUnit originalCaster, BattleCommand command)
         {
-            if (returner.IsUnderAnyStatus(Configuration.Mod.TranceSeek ? (BattleStatus.Petrify | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Death) : (BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Death)) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4) // TRANCE SEEK - VENOM
-                    return false;
+            if (returner.IsUnderAnyStatus(BattleStatusConst.CannotAct) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4) // TRANCE SEEK - VENOM
+                return false;
             BattleCommandId cmdId = originalCaster.IsPlayer ? BattleCommandId.Counter : BattleCommandId.MagicCounter;
             if (Configuration.Battle.CountersBetterTarget)
             {
@@ -47,9 +47,8 @@ namespace FF9
 
         public static Boolean CheckCounterAbility(BattleTarget defender, BattleCaster attacker, BattleCommand command)
         {
-            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
             // Dummied
-            if (defender.IsUnderAnyStatus(NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
+            if (defender.IsUnderAnyStatus(BattleStatusConst.NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
                 return false;
 
             if (defender.HasSupportAbility(SupportAbility2.Counter) && (command.AbilityCategory & 8) != 0) // Physical
@@ -74,11 +73,10 @@ namespace FF9
 
         public static void CheckAutoItemAbility(BattleTarget defender, BattleCommand command)
         {
-            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
             if (!defender.HasSupportAbility(SupportAbility2.AutoPotion))
                 return;
 
-            if (defender.IsUnderAnyStatus(NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
+            if (defender.IsUnderAnyStatus(BattleStatusConst.NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
                 return;
 
             RegularItem itemId = IsDefualtAutoPotionBehaviourEnabled()
@@ -233,9 +231,8 @@ namespace FF9
 
         public static void CheckReactionAbility(BTL_DATA btl, AA_DATA aa)
         {
-            BattleStatus NoReaction = Configuration.Mod.TranceSeek ? (BattleStatus.NoReaction & ~BattleStatus.Venom) : BattleStatus.NoReaction; // TRANCE SEEK - VENOM
             // Dummied
-            if (!btl_stat.CheckStatus(btl, NoReaction))
+            if (!btl_stat.CheckStatus(btl, BattleStatusConst.NoReaction))
             {
                 if ((btl.sa[1] & (Int32)SupportAbility2.RestoreHP) != 0u && btl.cur.hp != 0 && Status.checkCurStat(btl, BattleStatus.LowHP))
                     btl.cur.hp = Math.Min(btl.cur.hp + btl.max.hp / 2, btl.max.hp);

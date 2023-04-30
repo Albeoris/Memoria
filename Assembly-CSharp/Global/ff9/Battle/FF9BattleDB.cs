@@ -15,12 +15,14 @@ public static partial class FF9BattleDB
     public static readonly Dictionary<BattleStatusIndex, BattleStatusEntry> StatusSets;
     public static readonly Dictionary<BattleAbilityId, AA_DATA> CharacterActions;
     public static readonly Dictionary<Int32, STAT_DATA> StatusData;
+    public static readonly Dictionary<Int32, BattleMagicSwordSet> MagicSwordData;
 
     static FF9BattleDB()
 	{
 	    StatusSets = LoadStatusSets();
 	    CharacterActions = LoadActions();
         StatusData = LoadStatusData();
+        MagicSwordData = LoadMagicSwordSets();
     }
 
     private static Dictionary<BattleStatusIndex, BattleStatusEntry> LoadStatusSets()
@@ -90,6 +92,24 @@ public static partial class FF9BattleDB
             Log.Error(ex, "[FF9BattleDB] Load base stats of characters failed.");
             UIManager.Input.ConfirmQuit();
             return null;
+        }
+    }
+
+    private static Dictionary<Int32, BattleMagicSwordSet> LoadMagicSwordSets()
+    {
+        try
+        {
+            String inputPath = DataResources.Battle.PureDirectory + DataResources.Battle.MagicSwordSetFile;
+            Dictionary<Int32, BattleMagicSwordSet> result = new Dictionary<Int32, BattleMagicSwordSet>();
+            foreach (BattleMagicSwordSet[] magicSet in AssetManager.EnumerateCsvFromLowToHigh<BattleMagicSwordSet>(inputPath))
+                foreach (BattleMagicSwordSet set in magicSet)
+                    result[set.Id] = set;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[FF9BattleDB] Load magic sword sets failed.");
+            return new Dictionary<Int32, BattleMagicSwordSet>();
         }
     }
 }

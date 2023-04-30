@@ -168,6 +168,20 @@ namespace Memoria.Prime.Text
             return source.Substring(0, index);
         }
 
+        public static Boolean TryStaticFieldParse(this String source, Type type, out FieldInfo field)
+        {
+            foreach (FieldInfo f in type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            {
+                if (f.Name == source)
+				{
+                    field = f;
+                    return true;
+				}
+			}
+            field = null;
+            return false;
+        }
+
         public static Boolean TryEnumParse<T>(this String source, out T value) where T : Enum
 		{
             try

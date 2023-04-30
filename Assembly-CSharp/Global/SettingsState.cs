@@ -321,13 +321,12 @@ public class SettingsState : MonoBehaviour
 
     public void SetTranceFull()
     {
-        BattleStatus CannotTrance = Configuration.Mod.TranceSeek ? (BattleStatus.CannotTrance & ~BattleStatus.Venom) : BattleStatus.CannotTrance;
         if (!IsTranceFull || !SceneDirector.IsBattleScene())
             return;
 
         foreach (BattleUnit btl in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderAnyStatus(CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.IsRunning()) // TRANCE SEEK - VENOM
+            if (btl.HasTrance && btl.IsPlayer && !btl.IsUnderAnyStatus(BattleStatusConst.CannotTrance) && btl.Data.cmd[4] != btl_util.getCurCmdPtr() && !SFX.IsRunning())
             {
                 btl.Trance = Byte.MaxValue;
                 if (!btl.IsUnderAnyStatus(BattleStatus.Trance))

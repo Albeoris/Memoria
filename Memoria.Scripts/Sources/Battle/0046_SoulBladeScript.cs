@@ -40,7 +40,7 @@ namespace Memoria.Scripts.Battle
 
             BattleStatus status = _v.Caster.WeaponStatus;
             if ((status & BattleStatus.Death) == 0 || _v.Target.CheckUnsafetyOrGuard())
-                _v.Target.TryAlterStatuses(status, true);
+                _v.Target.TryAlterStatuses(status, true, _v.Caster);
         }
     }
 }

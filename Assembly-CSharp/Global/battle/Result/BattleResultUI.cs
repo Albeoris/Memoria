@@ -208,7 +208,7 @@ public class BattleResultUI : UIScene
 			this.ItemDetailPanel.SetActive(false);
 			this.noItemLabel.SetActive(true);
 		}
-		if (this.defaultCard != 255)
+		if (this.defaultCard != Byte.MaxValue)
 		{
 			this.ItemDetailPanel.SetActive(true);
 			this.cardHud.Self.SetActive(true);

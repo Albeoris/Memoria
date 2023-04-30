@@ -46,14 +46,7 @@ public static class btl_vfx
         if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item)
             return (SpecialEffect)ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.VfxIndex;
         else if (cmd_no == BattleCommandId.SysTrans)
-            if (btl_stat.CheckStatus(regist, BattleStatus.Death) && Configuration.Mod.TranceSeek) // TRANCE SEEK - Prevent Trance when character die in multi-hit attack
-            {
-                return SpecialEffect.Special_No_Effect;
-            }
-            else
-            {
-                return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
-            }
+            return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
         else if (cmd_no == BattleCommandId.Attack)
             return btl_vfx.GetPlayerAttackVfx(regist);
         else if (cmd_no == BattleCommandId.Defend || cmd_no == BattleCommandId.Change)

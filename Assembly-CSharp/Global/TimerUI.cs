@@ -205,43 +205,30 @@ public class TimerUI : Singleton<TimerUI>
 		if (TimerUI.Play)
 		{
 			if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
-			{
 				FF9StateSystem.Settings.UpdateTickTime();
-			}
-			Single num = (Single)(FF9StateSystem.Settings.time - TimerUI.lastTime);
+			Single diffTime = (Single)(FF9StateSystem.Settings.time - TimerUI.lastTime);
 			TimerUI.lastTime = FF9StateSystem.Settings.time;
-			TimerUI.time -= num;
-			if (FF9StateSystem.Settings.IsBoosterButtonActive[1] && Configuration.Mod.TranceSeek)
-			{
-				TimerUI.time -= num * (float)Configuration.Cheats.SpeedFactor;
-			}
+			if (FF9StateSystem.Settings.IsFastForward && Configuration.Cheats.SpeedTimer)
+				TimerUI.time -= diffTime * Configuration.Cheats.SpeedFactor;
+			else
+				TimerUI.time -= diffTime;
 			if (TimerUI.time < 0f)
-			{
 				TimerUI.time = 0f;
-			}
-			TimeSpan displayTime = TimeSpan.FromSeconds((Double)TimerUI.time);
-			TimerUI.blinkState = (displayTime.Milliseconds > 500);
+			TimeSpan displayTime = TimeSpan.FromSeconds(TimerUI.time);
+			TimerUI.blinkState = displayTime.Milliseconds > 500;
 			if (TimerUI.lastBlinkState != TimerUI.blinkState)
-			{
 				TimerUI.UpdateBlinkState();
-			}
 			if (TimerUI.lastTimespan.Seconds != displayTime.Seconds)
-			{
 				TimerUI.SetDisplayTime(displayTime);
-			}
 			TimerUI.lastTimespan = displayTime;
 		}
 		else if (TimerUI.enable)
 		{
 			if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
-			{
 				FF9StateSystem.Settings.UpdateTickTime();
-			}
-			TimerUI.blinkState = (TimeSpan.FromSeconds(FF9StateSystem.Settings.time).Milliseconds > 500);
+			TimerUI.blinkState = TimeSpan.FromSeconds(FF9StateSystem.Settings.time).Milliseconds > 500;
 			if (TimerUI.lastBlinkState != TimerUI.blinkState)
-			{
 				TimerUI.UpdateBlinkState();
-			}
 		}
 	}
 

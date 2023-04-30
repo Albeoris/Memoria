@@ -74,16 +74,12 @@ public class SharedDataRawStorage : SharedDataBytesStorage
 			onFinishDelegate(false, 0);
 			return;
 		}
-		Int32 num = (Int32)this.RawData.Length;
-		Int32 num2 = 2937152;
-		if (num == num2)
-		{
-			onFinishDelegate(true, num2); // TranceSeekSave => Always true, no size checking
-        }
+		Int32 rawSize = this.RawData.Length;
+		Int32 expectedSize = 2937152;
+		if (rawSize == expectedSize)
+			onFinishDelegate(true, expectedSize);
 		else
-		{
 			onFinishDelegate(false, 0);
-		}
 	}
 
 	public override void SaveSlotPreview(Int32 slotID, Int32 saveID, ISharedDataStorage.OnSaveSlotFinish onFinishDelegate)

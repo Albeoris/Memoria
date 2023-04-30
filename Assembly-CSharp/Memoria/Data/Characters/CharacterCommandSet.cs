@@ -19,20 +19,20 @@ namespace Memoria.Data
                 Id = (CharacterPresetId)CsvParser.Int32(raw[index++]);
             else
                 Id = (CharacterPresetId)(-1);
-            Regular1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
-            Regular2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
-            Trance1 = (BattleCommandId)CsvParser.Byte(raw[index++]);
-            Trance2 = (BattleCommandId)CsvParser.Byte(raw[index++]);
+            Regular1 = (BattleCommandId)CsvParser.Int32(raw[index++]);
+            Regular2 = (BattleCommandId)CsvParser.Int32(raw[index++]);
+            Trance1 = (BattleCommandId)CsvParser.Int32(raw[index++]);
+            Trance2 = (BattleCommandId)CsvParser.Int32(raw[index++]);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
         {
             if (metadata.HasOption($"Include{nameof(Id)}"))
                 sw.Int32((Int32)Id);
-            sw.Byte((Byte)Regular1);
-            sw.Byte((Byte)Regular2);
-            sw.Byte((Byte)Trance1);
-            sw.Byte((Byte)Trance2);
+            sw.Int32((Int32)Regular1);
+            sw.Int32((Int32)Regular2);
+            sw.Int32((Int32)Trance1);
+            sw.Int32((Int32)Trance2);
         }
 
         public BattleCommandId GetRegular(Int32 number)

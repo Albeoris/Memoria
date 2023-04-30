@@ -338,6 +338,10 @@
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
+    <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
+    <Compile Include="Memoria\Data\TetraMaster\TripleTriad.cs" />
+    <Compile Include="Memoria\Data\TetraMaster\TripleTriadCard.cs" />
+    <Compile Include="Memoria\Data\TetraMaster\TetraMasterCardId.cs" />
     <Compile Include="Memoria\Scenes\BattleHUD\BattleUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHelp.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHitBox.cs" />

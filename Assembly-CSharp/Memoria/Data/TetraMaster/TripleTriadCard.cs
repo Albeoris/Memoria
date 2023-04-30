@@ -6,7 +6,7 @@ namespace Memoria.Data
     public class TripleTriadCard : ICsvEntry
     {
         public String Comment;
-        public TripleTriadId Id;
+        public TetraMasterCardId Id;
 
         public Byte atk;
         public Byte mdef;
@@ -17,7 +17,7 @@ namespace Memoria.Data
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
-            Id = (TripleTriadId)CsvParser.Byte(raw[1]);
+            Id = (TetraMasterCardId)CsvParser.Byte(raw[1]);
 
             atk = CsvParser.Byte(raw[2]);
             mdef = CsvParser.Byte(raw[3]);

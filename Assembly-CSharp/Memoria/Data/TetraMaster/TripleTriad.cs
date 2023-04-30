@@ -7,27 +7,27 @@ using Memoria.Prime;
 
 public static class TripleTriad
 {
-    public static readonly Dictionary<TripleTriadId, TripleTriadCard> TripleTriadCardStats;
+    public static readonly Dictionary<TetraMasterCardId, TripleTriadCard> TripleTriadCardStats;
 
     static TripleTriad()
     {
         TripleTriadCardStats = LoadBaseStats();
     }
 
-    private static Dictionary<TripleTriadId, TripleTriadCard> LoadBaseStats()
+    private static Dictionary<TetraMasterCardId, TripleTriadCard> LoadBaseStats()
     {
         try
         {
             String inputPath = DataResources.TetraMaster.PureDirectory + DataResources.TetraMaster.TripleTriadFile;
-            Dictionary<TripleTriadId, TripleTriadCard> result = new Dictionary<TripleTriadId, TripleTriadCard>();
+            Dictionary<TetraMasterCardId, TripleTriadCard> result = new Dictionary<TetraMasterCardId, TripleTriadCard>();
             foreach (TripleTriadCard[] stats in AssetManager.EnumerateCsvFromLowToHigh<TripleTriadCard>(inputPath))
                 foreach (TripleTriadCard stat in stats)
                     result[stat.Id] = stat;
             if (result.Count == 0)
                 throw new FileNotFoundException($"Cannot load triple triad card because a file does not exist: [{DataResources.TetraMaster.Directory + DataResources.TetraMaster.TripleTriadFile}].", DataResources.Characters.Directory + DataResources.TetraMaster.TripleTriadFile);
-            for (Int32 i = 0; i < 99; i++)
-                if (!result.ContainsKey((TripleTriadId)i))
-                    throw new NotSupportedException($"You must set base stats for at least 100 card, with IDs between 0 and 99.");
+            for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
+                if (!result.ContainsKey((TetraMasterCardId)i))
+                    throw new NotSupportedException($"You must set base stats for at least {CardPool.TOTAL_CARDS} card, with IDs between 0 and {CardPool.TOTAL_CARDS - 1}.");
             return result;
         }
         catch (Exception ex)

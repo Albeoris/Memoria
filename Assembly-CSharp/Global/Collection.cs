@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria.Data;
 
 public class Collection : MonoBehaviour
 {
 	private void Start()
 	{
-		for (Int32 i = 0; i < (Int32)this.cards.Length; i++)
-		{
+		for (Int32 i = 0; i < this.cards.Length; i++)
 			this.cards[i] = new List<QuadMistCard>();
-		}
 	}
 
 	public void CreateCards()
@@ -17,9 +16,7 @@ public class Collection : MonoBehaviour
 		this.Clear();
 		List<QuadMistCard> cardList = QuadMistDatabase.GetCardList();
 		foreach (QuadMistCard c in cardList)
-		{
 			this.Add(c);
-		}
 	}
 
 	public void Add(QuadMistCard c)
@@ -34,21 +31,19 @@ public class Collection : MonoBehaviour
 
 	public void Clear()
 	{
-		for (Int32 i = 0; i < (Int32)this.cards.Length; i++)
-		{
+		for (Int32 i = 0; i < this.cards.Length; i++)
 			this.cards[i].Clear();
-		}
 	}
 
-	public Int32 Count(Int32 id)
+	public Int32 Count(TetraMasterCardId id)
 	{
-		return this.cards[id].Count;
+		return this.cards[(Int32)id].Count;
 	}
 
-	public List<QuadMistCard> GetCardsWithID(Int32 id)
+	public List<QuadMistCard> GetCardsWithID(TetraMasterCardId id)
 	{
-		return this.cards[id];
+		return this.cards[(Int32)id];
 	}
 
-	public List<QuadMistCard>[] cards = new List<QuadMistCard>[100];
+	public List<QuadMistCard>[] cards = new List<QuadMistCard>[CardPool.TOTAL_CARDS];
 }

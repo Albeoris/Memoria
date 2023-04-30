@@ -60,6 +60,11 @@ namespace Memoria
                 }
             }
 
+            public static String BattleDamageTextFormat => Instance._interface.BattleDamageTextFormat;
+            public static String BattleRestoreTextFormat => Instance._interface.BattleRestoreTextFormat;
+            public static String BattleMPDamageTextFormat => Instance._interface.BattleMPDamageTextFormat;
+            public static String BattleMPRestoreTextFormat => Instance._interface.BattleMPRestoreTextFormat;
+
             public static void SaveValues()
             {
                 SaveValue(Instance._interface.Name, Instance._interface.Enabled);

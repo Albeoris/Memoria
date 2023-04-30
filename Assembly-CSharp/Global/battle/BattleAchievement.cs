@@ -182,8 +182,8 @@ public class BattleAchievement
 
 	public static void UpdateAbnormalStatus(BattleStatus status)
 	{
-		BattleAchievement.achievement.abnormal_status |= (UInt32) status;
-		if ((BattleAchievement.achievement.abnormal_status & (UInt64) BattleStatus.Achievement) == (UInt64) BattleStatus.Achievement)
+		BattleAchievement.achievement.abnormal_status |= (UInt32)status;
+		if ((BattleAchievement.achievement.abnormal_status & (UInt32)BattleStatusConst.Achievement) == (UInt32)BattleStatusConst.Achievement)
 			AchievementManager.ReportAchievement(AcheivementKey.AbnormalStatus, 1);
 	}
 

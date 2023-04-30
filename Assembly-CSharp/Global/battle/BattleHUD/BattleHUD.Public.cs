@@ -160,16 +160,17 @@ public partial class BattleHUD : UIScene
         return FF9TextTool.BattleFollowText(id);
     }
 
-    public void SetBattleLibra(BattleUnit pBtl)
+    public void SetBattleLibra(BattleUnit pBtl, Boolean showSteals = false)
     {
-        if (!pBtl.IsPlayer && Configuration.Mod.TranceSeek)
-            _peepingEnmData = pBtl.Enemy;
         _currentLibraMessageNumber = 1;
         _libraBtlData = pBtl;
+        _libraDisabledMessage.Clear();
+        if (!showSteals)
+            _libraDisabledMessage.Add(5);
         DisplayMessageLibra();
     }
 
-    public void SetBattlePeeping(BattleUnit pBtl)
+    public void SetBattlePeeping(BattleUnit pBtl, Boolean reverseOrder = true)
     {
         if (pBtl.IsPlayer)
             return;
@@ -193,6 +194,7 @@ public partial class BattleHUD : UIScene
         }
         else
         {
+            _currentPeepingReverseOrder = reverseOrder;
             _currentPeepingMessageCount = 1;
             DisplayMessagePeeping();
         }

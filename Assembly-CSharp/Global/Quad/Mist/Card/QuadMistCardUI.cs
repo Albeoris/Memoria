@@ -1,7 +1,8 @@
-﻿using Memoria;
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 
 public class QuadMistCardUI : MonoBehaviour
 {
@@ -9,31 +10,14 @@ public class QuadMistCardUI : MonoBehaviour
 	{
 		if (cardDisplay.select.gameObject.activeSelf)
 		{
-			if (!isToDisplay)
-			{
-				cardDisplay.select.gameObject.transform.localPosition = farAwayPosition;
-			}
-			else
-			{
-				cardDisplay.select.gameObject.transform.localPosition = originalPosition;
-			}
-			if (DateTime.Now.Millisecond <= 500)
-			{
-				isToDisplay = true;
-			}
-			else
-			{
-				isToDisplay = false;
-			}
+			cardDisplay.select.gameObject.transform.localPosition = isToDisplay ? originalPosition : farAwayPosition;
+			isToDisplay = DateTime.Now.Millisecond <= 500;
 		}
 	}
 
 	public Boolean Small
 	{
-		get
-		{
-			return _small;
-		}
+		get => _small;
 		set
 		{
 			_small = value;
@@ -45,84 +29,45 @@ public class QuadMistCardUI : MonoBehaviour
 
 	public Single White
 	{
-		get
-		{
-			return cardEffect.White;
-		}
-		set
-		{
-			cardEffect.White = value;
-		}
+		get => cardEffect.White;
+		set => cardEffect.White = value;
 	}
 
 	public Boolean Black
 	{
-		get
-		{
-			return cardEffect.Black > 0f;
-		}
-		set
-		{
-			cardEffect.Black = ((!value) ? 0f : 0.5f);
-		}
+		get => cardEffect.Black > 0f;
+		set => cardEffect.Black = value ? 0.5f : 0f;
 	}
 
 	public Int32 Side
 	{
-		get
-		{
-			return (Int32)Data.side;
-		}
+		get => Data.side;
 		set
 		{
 			_data.side = (Byte)value;
 			cardDisplay.Side = value;
-			if ((cardArrows.Arrow == 255) && Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad < 2)
-			{
+			if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
 				cardDisplay.frame.ID = 7 + value;
-
-			}
         }
 	}
 
 	public Boolean Flip
 	{
-		get
-		{
-			return cardDisplay.Flip;
-		}
-		set
-		{
-			cardDisplay.Flip = value;
-		}
+		get => cardDisplay.Flip;
+		set => cardDisplay.Flip = value;
 	}
 
-	public Boolean IsBlock
-	{
-		get
-		{
-			return cardDisplay.IsBlock;
-		}
-	}
+	public Boolean IsBlock => cardDisplay.IsBlock;
 
 	public Boolean Select
 	{
-		get
-		{
-			return cardDisplay.Select;
-		}
-		set
-		{
-			cardDisplay.Select = value;
-		}
+		get => cardDisplay.Select;
+		set => cardDisplay.Select = value;
 	}
 
 	public QuadMistCard Data
 	{
-		get
-		{
-			return _data;
-		}
+		get => _data;
 		set
 		{
 			_data = value;
@@ -131,19 +76,10 @@ public class QuadMistCardUI : MonoBehaviour
 				gameObject.SetActive(true);
 				cardDisplay.Status = Data.ToString();
 				cardDisplay.ID = (Int32)Data.id;
-				cardDisplay.Side = (Int32)Data.side;
-				if (Configuration.TetraMaster.TripleTriad < 2)
-				{
-                    cardArrows.Arrow = (Int32)Data.arrow;
-                }
-				else
-				{
-                    cardArrows.Arrow = (Int32)Data.arrow;
-                }
-                if ((cardArrows.Arrow == 255) && Configuration.Mod.TranceSeek && Configuration.TetraMaster.TripleTriad < 2)
-                {
+				cardDisplay.Side = Data.side;
+				cardArrows.Arrow = Data.arrow;
+                if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
 					cardDisplay.frame.ID = 7 + Data.side;
-				}
             }
 			else
 			{
@@ -152,13 +88,7 @@ public class QuadMistCardUI : MonoBehaviour
 		}
 	}
 
-	public Vector3 Size
-	{
-		get
-		{
-			return (!Small) ? new Vector3(QuadMistCardUI.SIZE_W, QuadMistCardUI.SIZE_H) : new Vector3(QuadMistCardUI.SIZESMALL_W, QuadMistCardUI.SIZESMALL_H, 0f);
-        }
-	}
+	public Vector3 Size => Small ? new Vector3(QuadMistCardUI.SIZESMALL_W, QuadMistCardUI.SIZESMALL_H, 0f) : new Vector3(QuadMistCardUI.SIZE_W, QuadMistCardUI.SIZE_H);
 
 	public IEnumerator FlashBattle(Action<QuadMistCardUI> actionThis)
 	{
@@ -213,27 +143,18 @@ public class QuadMistCardUI : MonoBehaviour
 	}
 
 	public static Int32 ENEMY_SIDE = 1;
-
-	public static Int32 PLAYER_SIDE;
-
-	public static Single SIZE_W = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.42f : 0.54f); // Position des cartes
-
-	public static Single SIZE_H = ((Configuration.TetraMaster.TripleTriad < 2) ? 0.51f : 0.64f); // Position des cartes
-
-    public static Single SIZESMALL_W = 0.34f;
-
+	public static Int32 PLAYER_SIDE = 0;
+	public static Single SIZE_W = Board.USE_SMALL_BOARD ? 0.54f : 0.42f; // Card positions
+	public static Single SIZE_H = Board.USE_SMALL_BOARD ? 0.64f : 0.51f; // Card positions
+	public static Single SIZESMALL_W = 0.34f;
     public static Single SIZESMALL_H = 0.41f;
 
     public CardEffect cardEffect;
-
 	public CardDisplay cardDisplay;
-
 	public CardArrows cardArrows;
-
 	private Boolean isToDisplay;
 
 	private Vector3 farAwayPosition = new Vector3(-10000f, -10000f, -10000f);
-
 	private Vector3 originalPosition = new Vector3(-0.015f, -0.195f, -0.25f);
 
 	private QuadMistCard _data;

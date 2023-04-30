@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
                 _v.MagicAccuracy();
                 _v.Context.HitRate += (Int16)(ff9item.FF9Item_GetCount(RegularItem.Ore) >> 1);
                 if (_v.TryMagicHit())
-                    _v.TargetCommand.TryAlterCommandStatuses();
+                    _v.TargetCommand.TryAlterCommandStatuses(_v.Caster);
             }
 
             // The effect of OdinSword is now coded in AbilityFeatures.txt

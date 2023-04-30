@@ -991,26 +991,16 @@ public class btlseq
 	}
 
 	public const Int32 BTL_LIST_PLAYER_0 = 0;
-
 	public const Int32 BTL_LIST_PLAYER_1 = 1;
-
 	public const Int32 BTL_LIST_PLAYER_2 = 2;
-
 	public const Int32 BTL_LIST_PLAYER_3 = 3;
-
 	public const Int32 BTL_LIST_ENERMY_0 = 4;
-
 	public const Int32 BTL_LIST_ENERMY_1 = 5;
-
 	public const Int32 BTL_LIST_ENERMY_2 = 6;
-
 	public const Int32 BTL_LIST_ENERMY_3 = 7;
 
 	public const Int32 RET_BLOCK = 0;
-
 	public const Int32 RET_CONTINUE = 1;
-
-	public const BattleStatus ANIM_STOP_STATUS = BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Freeze;
 
 	public class btlseqinstance
 	{

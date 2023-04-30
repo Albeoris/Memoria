@@ -8,15 +8,22 @@ public class btl_eqp
 	public static void InitWeapon(PLAYER p, BTL_DATA btl)
 	{
 		btl.weapon = ff9item.GetItemWeapon(p.equip[0]);
-		String text = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
-		btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + text + "/" + text, true);
+		p.wep_bone = btl_mot.BattleParameterList[p.info.serial_no].WeaponBone;
+		if (btl.weapon.ModelId != UInt16.MaxValue)
+		{
+			String modelName = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
+			btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true);
+		}
+		else
+		{
+			btl.weapon_geo = new GameObject("Dummy weapon");
+		}
 		MeshRenderer[] componentsInChildren = btl.weapon_geo.GetComponentsInChildren<MeshRenderer>();
 		btl.weaponMeshCount = componentsInChildren.Length;
 		btl.weaponRenderer = new Renderer[btl.weaponMeshCount];
 		for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 			btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
 		btl_util.SetBBGColor(btl.weapon_geo);
-		p.wep_bone = btl_mot.BattleParameterList[p.info.serial_no].WeaponBone;
 		geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
 	}
 

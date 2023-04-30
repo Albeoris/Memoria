@@ -370,7 +370,7 @@ namespace FF9
 
         private static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
 		{
-            MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|Global|GlobalLast).*()", RegexOptions.Multiline).Matches(input);
+            MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|Global|GlobalLast)(\+?).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
 			{
                 Int32 abilIndex;
@@ -380,18 +380,22 @@ namespace FF9
                     abilIndex = -2;
                 else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
                     continue;
-                Int32 endPos, startPos = abilMatches[i].Groups[3].Captures[0].Index+1;
+                Boolean cumulate = String.Compare(abilMatches[i].Groups[3].Value, "+") == 0;
+                Int32 endPos, startPos = abilMatches[i].Groups[4].Captures[0].Index+1;
                 if (i + 1 == abilMatches.Count)
                     endPos = input.Length;
                 else
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
                 if (String.Compare(abilMatches[i].Groups[1].Value, ">SA") == 0)
                 {
-                    entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
+                    if (!cumulate || !entries.ContainsKey((SupportAbility)abilIndex))
+                        entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
                 else
 				{
+                    if (!cumulate)
+                        BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
                     BattleAbilityHelper.ParseAbilityFeature((BattleAbilityId)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
             }

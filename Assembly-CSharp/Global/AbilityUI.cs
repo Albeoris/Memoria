@@ -421,7 +421,7 @@ public class AbilityUI : UIScene
                         this.ShowPointerWhenLoading = true;
                         this.Loading = true;
                         Boolean isKnockOut = player.cur.hp == 0;
-                        
+
                         this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, () =>
                         {
                             this.DisplayHelp();
@@ -708,11 +708,10 @@ public class AbilityUI : UIScene
         {
             while (enumerator.MoveNext())
             {
-                Byte num = (Byte)enumerator.Current;
                 AbilityListData abilityListData = new AbilityListData
                 {
-                    Id = num,
-                    Type = this.CheckAAType(num, player)
+                    Id = enumerator.Current,
+                    Type = this.CheckAAType(enumerator.Current, player)
                 };
                 inDataList.Add(abilityListData);
                 if (this.firstActiveAbility == -1 && abilityListData.Type == AbilityType.Enable)
@@ -786,11 +785,10 @@ public class AbilityUI : UIScene
         {
             while (enumerator.MoveNext())
             {
-                Byte num = (Byte)enumerator.Current;
                 AbilityListData abilityListData = new AbilityListData
                 {
-                    Id = num,
-                    Type = this.CheckSAType(num, player)
+                    Id = enumerator.Current,
+                    Type = this.CheckSAType(enumerator.Current, player)
                 };
                 inDataList.Add(abilityListData);
                 if (this.firstActiveAbility == -1 && (abilityListData.Type == AbilityType.Enable || abilityListData.Type == AbilityType.Selected || abilityListData.Type == AbilityType.CantDisable))
@@ -1185,7 +1183,7 @@ public class AbilityUI : UIScene
     }
 
     private Boolean IsSubMenuDisabledByMainMenu(Boolean useMenu)
-	{
+    {
         String subMenuStr = useMenu ? "ActiveAbility" : "SupportingAbility";
         HashSet<String> enabledSet = PersistenSingleton<UIManager>.Instance.MainMenuScene.EnabledSubMenus;
         return enabledSet.Count > 0 && !enabledSet.Contains(MainMenuUI.SubMenu.Ability.ToString()) && !enabledSet.Contains(subMenuStr);

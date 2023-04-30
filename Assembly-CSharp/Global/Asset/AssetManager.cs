@@ -90,14 +90,17 @@ public static class AssetManager
 		if (!_LoadAnimationFolderMapping())
 			return;
 
-		if (Configuration.Mod.GenerateFileList != 0)
+		if (Configuration.Mod.UseFileList > 0)
 		{
-			String[] modFolders = Configuration.Mod.GenerateFileList == 1 ? Configuration.Mod.FolderNames : Configuration.Mod.Priorities;
-			foreach (String folder in modFolders)
-				AssetManager.GenerateFileList(folder);
+			if (Configuration.Mod.UseFileList >= 2)
+			{
+				String[] modFolders = Configuration.Mod.UseFileList == 2 ? Configuration.Mod.FolderNames : Configuration.Mod.Priorities;
+				foreach (String folder in modFolders)
+					AssetManager.GenerateFileList(folder);
+			}
+			foreach (AssetFolder folder in FolderHighToLow)
+				folder.ReadFileList();
 		}
-		foreach (AssetFolder folder in FolderHighToLow)
-			folder.ReadFileList();
 		AssetManager.IsFullyInitialized = true;
 	}
 
