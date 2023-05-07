@@ -43,9 +43,9 @@ namespace Memoria
             _context.DefensePower = MagicDefence;
         }
 
-        public void SetPhisicalDefense()
+        public void SetPhysicalDefense()
         {
-            _context.DefensePower = PhisicalDefence;
+            _context.DefensePower = PhysicalDefence;
         }
 
         public void PhysicalPenaltyAndBonusAttack()
@@ -93,10 +93,7 @@ namespace Memoria
 
         public void PenaltyPhysicalEvade()
         {
-            const BattleStatus status = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus
-                                        | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Defend;
-
-            if (IsUnderAnyStatus(status))
+            if (IsUnderAnyStatus(BattleStatusConst.PenaltyEvade))
                 _context.Evade = 0;
         }
 

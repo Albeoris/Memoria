@@ -22,13 +22,13 @@ namespace Memoria.Scripts.Battle
         {
             if (!_v.Target.HasCategory(EnemyCategory.Stone))
             {
-                _v.TargetCommand.TryRemoveItemStatuses();
+                _v.TryRemoveItemStatuses();
                 return;
             }
 
             if (_v.Target.CanBeAttacked())
             {
-                _v.Target.Kill();
+                _v.Target.Kill(_v.Caster);
                 UiState.SetBattleFollowFormatMessage(BattleMesages.BecameTooSoftToLive);
             }
         }

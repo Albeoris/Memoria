@@ -29,15 +29,15 @@ public class QuadMistCard
 		switch (UnityEngine.Random.Range(0, 3))
 		{
 			case 0:
-				if (atk != CardPool.GetMaxStatCard((Int32)id).atk)
+				if (atk != CardPool.GetMaxStatCard(id).atk)
 					atk++;
 				break;
 			case 1:
-				if (pdef != CardPool.GetMaxStatCard((Int32)id).pdef)
+				if (pdef != CardPool.GetMaxStatCard(id).pdef)
 					pdef++;
 				break;
 			case 2:
-				if (mdef != CardPool.GetMaxStatCard((Int32)id).mdef)
+				if (mdef != CardPool.GetMaxStatCard(id).mdef)
 					mdef++;
 				break;
 		}

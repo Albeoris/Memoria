@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.PhisicalDefence /= 2;
+            _v.Target.PhysicalDefence /= 2;
             _v.Target.MagicDefence /= 2;
         }
     }

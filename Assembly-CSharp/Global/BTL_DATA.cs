@@ -250,9 +250,10 @@ public partial class BTL_DATA
 	public UInt32 maxMpDamageLimit;
 
 	public Boolean special_status_old; // TRANCE SEEK - Old Status
-	public Boolean special_status_luna; // TRANCE SEEK - Luna mechanic
 
 	public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
+
+	public BTL_DATA killer_track;
 
 	public Boolean is_monster_transform;
 	public MONSTER_TRANSFORM monster_transform;

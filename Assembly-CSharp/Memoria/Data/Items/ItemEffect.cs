@@ -15,9 +15,9 @@ namespace Memoria.Data
         public Boolean Dead;
         public Boolean DefaultDead;
 
-        public Byte ScriptId;
-        public Byte Power;
-        public Byte Rate;
+        public Int32 ScriptId;
+        public Int32 Power;
+        public Int32 Rate;
         public EffectElement Element;
 
         public BattleStatus Status;
@@ -59,9 +59,9 @@ namespace Memoria.Data
             Dead = CsvParser.Boolean(raw[index++]);
             DefaultDead = CsvParser.Boolean(raw[index++]);
 
-            ScriptId = CsvParser.Byte(raw[index++]);
-            Power = CsvParser.Byte(raw[index++]);
-            Rate = CsvParser.Byte(raw[index++]);
+            ScriptId = CsvParser.Int32(raw[index++]);
+            Power = CsvParser.Int32(raw[index++]);
+            Rate = CsvParser.Int32(raw[index++]);
             Element = (EffectElement)CsvParser.Byte(raw[index++]);
 
             Status = (BattleStatus)CsvParser.UInt32(raw[index]);
@@ -79,9 +79,9 @@ namespace Memoria.Data
             sw.Boolean(Dead);
             sw.Boolean(DefaultDead);
 
-            sw.Byte(ScriptId);
-            sw.Byte(Power);
-            sw.Byte(Rate);
+            sw.Int32(ScriptId);
+            sw.Int32(Power);
+            sw.Int32(Rate);
             sw.Byte((Byte)Element);
 
             sw.UInt32((UInt32)Status);

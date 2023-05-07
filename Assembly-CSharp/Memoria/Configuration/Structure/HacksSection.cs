@@ -14,7 +14,6 @@ namespace Memoria
             public readonly IniValue<Int32> HippaulRacingViviSpeed;
             public readonly IniValue<Int32> StealingAlwaysWorks;
             public readonly IniValue<Boolean> DisableNameChoice;
-            public readonly IniValue<Boolean> DisableEquipmentLoss;
 
             public HacksSection() : base(nameof(HacksSection), false)
             {
@@ -25,7 +24,6 @@ namespace Memoria
                 HippaulRacingViviSpeed = BindInt32(nameof(HippaulRacingViviSpeed), 33);
                 StealingAlwaysWorks = BindInt32(nameof(StealingAlwaysWorks), 0);
                 DisableNameChoice = BindBoolean(nameof(DisableNameChoice), false);
-                DisableEquipmentLoss = BindBoolean(nameof(DisableEquipmentLoss), false);
             }
         }
     }

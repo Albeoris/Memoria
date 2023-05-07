@@ -6,19 +6,19 @@ namespace Memoria.Field
 {
     public static class SFieldCalculator
     {
-        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, AA_DATA tbl, Byte scriptId, UInt32 cursor)
+        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, AA_DATA tbl, Int32 scriptId, UInt32 cursor)
         {
             ItemActionData tbl1 = new ItemActionData(tbl);
             return FieldCalcMain(caster, target, tbl1, scriptId, cursor);
         }
 
-        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ITEM_DATA tbl, Byte scriptId, UInt32 cursor)
+        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ITEM_DATA tbl, Int32 scriptId, UInt32 cursor)
         {
             ItemActionData tbl1 = new ItemActionData(tbl);
             return FieldCalcMain(caster, target, tbl1, scriptId, cursor);
         }
 
-        private static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ItemActionData tbl, Byte scriptId, UInt32 cursor)
+        private static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ItemActionData tbl, Int32 scriptId, UInt32 cursor)
         {
             Context v = new Context
             {

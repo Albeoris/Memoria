@@ -23,8 +23,8 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.TryKillFrozen())
                 return;
 
-            _v.Caster.SetLowPhisicalAttack();
-            _v.Target.SetPhisicalDefense();
+            _v.Caster.SetLowPhysicalAttack();
+            _v.Target.SetPhysicalDefense();
             _v.Context.AttackPower = _v.Command.Weapon.Power << 1;
 
             _v.Caster.PhysicalPenaltyAndBonusAttack();

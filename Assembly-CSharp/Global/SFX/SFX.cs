@@ -1764,7 +1764,7 @@ public class SFX
         if (btl.bi.player != 0)
         {
             init.player_serial_no = Math.Min((Byte)btl_util.getSerialNumber(btl), (Byte)CharacterSerialNumber.BEATRIX);
-            init.player_equip = (Byte)btl_util.getWeaponNumber(btl);
+            init.player_equip = btl.weapon.HitSfx;
             init.player_wep_bone = btl_util.getPlayerPtr(btl).wep_bone;
             init.enemy_radius = btl.radius_collision;
             init.geo_radius = init.enemy_radius;

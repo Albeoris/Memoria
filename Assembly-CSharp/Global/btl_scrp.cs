@@ -145,10 +145,10 @@ public class btl_scrp
 			case 1005: cmd.info.stat = (Byte)val; return;
 			case 1006: cmd.info.priority = (Byte)val; return;
 			case 1007: cmd.info.cover = (Byte)val; return;
-			case 1008: cmd.ScriptId = (Byte)val; return;
-			case 1009: cmd.Power = (Byte)val; return;
+			case 1008: cmd.ScriptId = val; return;
+			case 1009: cmd.Power = val; return;
 			case 1010: cmd.Element = (EffectElement)val; return;
-			case 1011: cmd.HitRate = (Byte)val; return;
+			case 1011: cmd.HitRate = val; return;
 			case 1012: cmd.AbilityCategory = (Byte)val; return;
 			case 1013: return;
 			case 1014: cmd.info.CustomMPCost = val; return;
@@ -175,10 +175,10 @@ public class btl_scrp
 			case 5: cmd.aa.Info.ForDead = val != 0; return;
 			case 6: cmd.aa.Info.DefaultCamera = val != 0; return;
 			case 7: cmd.aa.Info.DefaultOnDead = val != 0; return;
-			case 8: cmd.aa.Ref.ScriptId = (Byte)val; return;
-			case 9: cmd.aa.Ref.Power = (Byte)val; return;
+			case 8: cmd.aa.Ref.ScriptId = val; return;
+			case 9: cmd.aa.Ref.Power = val; return;
 			case 10: cmd.aa.Ref.Elements = (Byte)val; return;
-			case 11: cmd.aa.Ref.Rate = (Byte)val; return;
+			case 11: cmd.aa.Ref.Rate = val; return;
 			case 12: cmd.aa.Category = (Byte)val; return;
 			case 13: cmd.aa.AddStatusNo = (BattleStatusIndex)val; return;
 			case 14: cmd.aa.MP = val; return;
@@ -290,10 +290,10 @@ public class btl_scrp
 			result = btl.elem.mgc;
 			break;
 		case 74u:
-			result = btl.defence.PhisicalDefence;
+			result = btl.defence.PhysicalDefence;
 			break;
 		case 75u:
-			result = btl.defence.PhisicalEvade;
+			result = btl.defence.PhysicalEvade;
 			break;
 		case 76u:
 			result = btl.defence.MagicalDefence;
@@ -537,19 +537,19 @@ public class btl_scrp
 			btl.stat_modifier[1] = false;
 			break;
 		case 74u:
-			btl.defence.PhisicalDefence = (Byte)val;
+			btl.defence.PhysicalDefence = val;
 			btl.stat_modifier[2] = false;
 			break;
 		case 75u:
-			btl.defence.PhisicalEvade = (Byte)val;
+			btl.defence.PhysicalEvade = val;
 			btl.stat_modifier[3] = false;
 			break;
 		case 76u:
-			btl.defence.MagicalDefence = (Byte)val;
+			btl.defence.MagicalDefence = val;
 			btl.stat_modifier[4] = false;
 			break;
 		case 77u:
-			btl.defence.MagicalEvade = (Byte)val;
+			btl.defence.MagicalEvade = val;
 			btl.stat_modifier[5] = false;
 			break;
 		case 78u:
@@ -593,7 +593,7 @@ public class btl_scrp
 			break;
 		case 108u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.card = (UInt32)val;
+				btl_util.getEnemyTypePtr(btl).bonus.card = (TetraMasterCardId)val;
 			break;
 		case 109u:
 			if (btl.bi.player == 0)

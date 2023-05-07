@@ -63,6 +63,7 @@ public class battle
         ff9.btl_result = 0;
         btl_sys.InitBattleSystem();
         btl2d.Btl2dInit();
+        ++FF9StateSystem.Common.FF9.party.battle_no;
     }
 
     public static void InitBattleMap()

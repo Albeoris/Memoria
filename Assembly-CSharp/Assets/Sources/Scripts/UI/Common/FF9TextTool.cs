@@ -461,7 +461,7 @@ namespace Assets.Sources.Scripts.UI.Common
             return (id >= (Int32)FF9TextTool.battleText.Length) ? Localization.Get("EnemyDummy") : FF9TextTool.battleText[id];
         }
 
-        public static String CardName(Int32 id)
+        public static String CardName(TetraMasterCardId id)
         {
             return FF9TextTool.cardName.ContainsKey(id) ? FF9TextTool.cardName[id] : String.Empty;
         }
@@ -551,7 +551,7 @@ namespace Assets.Sources.Scripts.UI.Common
         private static Dictionary<BattleCommandId, String> commandName = new Dictionary<BattleCommandId, String>();
         private static Dictionary<BattleCommandId, String> commandHelpDesc = new Dictionary<BattleCommandId, String>();
 
-        private static Dictionary<Int32, String> cardName = new Dictionary<Int32, String>();
+        private static Dictionary<TetraMasterCardId, String> cardName = new Dictionary<TetraMasterCardId, String>();
         private static String[] chocoUIText;
         private static String[] cardLvName;
         private static String[] followText;
@@ -621,10 +621,10 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void SetCardName(String[] value)
         {
-            FF9TextTool.ImportArrayToDictionary<Int32>(value, FF9TextTool.SetCardName);
+            FF9TextTool.ImportArrayToDictionary<TetraMasterCardId>(value, FF9TextTool.SetCardName);
         }
 
-        public static void SetCardName(Int32 id, String value)
+        public static void SetCardName(TetraMasterCardId id, String value)
         {
             cardName[id] = value;
         }

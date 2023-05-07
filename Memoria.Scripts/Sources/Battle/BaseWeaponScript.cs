@@ -25,7 +25,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.TryPhysicalHit())
                 return;
 
-            _v.WeaponPhisicalParams(_bonus);
+            _v.WeaponPhysicalParams(_bonus);
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             if (_v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && _v.Caster.PlayerIndex == CharacterId.Steiner)

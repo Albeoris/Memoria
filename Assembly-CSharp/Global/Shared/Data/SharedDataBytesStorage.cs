@@ -585,20 +585,20 @@ public class SharedDataBytesStorage : ISharedDataStorage
 	{
 		SharedDataPreviewSlot sharedDataPreviewSlot = new SharedDataPreviewSlot();
 		sharedDataPreviewSlot.CharacterInfoList = new List<SharedDataPreviewCharacterInfo>();
-		sharedDataPreviewSlot.Gil = (Int64)((UInt64)FF9StateSystem.Common.FF9.party.gil);
+		sharedDataPreviewSlot.Gil = FF9StateSystem.Common.FF9.party.gil;
 		sharedDataPreviewSlot.PlayDuration = (UInt64)FF9StateSystem.Settings.time;
-		sharedDataPreviewSlot.Location = ((FF9StateSystem.Common.FF9.mapNameStr == null) ? "Undefinded" : FF9StateSystem.Common.FF9.mapNameStr);
+		sharedDataPreviewSlot.Location = FF9StateSystem.Common.FF9.mapNameStr == null ? "Undefinded" : FF9StateSystem.Common.FF9.mapNameStr;
 		sharedDataPreviewSlot.win_type = FF9StateSystem.Settings.cfg.win_type;
 		for (Int32 i = 0; i < 4; i++)
 		{
-			SharedDataPreviewCharacterInfo sharedDataPreviewCharacterInfo = (SharedDataPreviewCharacterInfo)null;
+			SharedDataPreviewCharacterInfo sharedDataPreviewCharacterInfo = null;
 			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
 			if (player != null)
 			{
 				sharedDataPreviewCharacterInfo = new SharedDataPreviewCharacterInfo();
 				sharedDataPreviewCharacterInfo.SerialID = (Int32)player.info.serial_no;
 				sharedDataPreviewCharacterInfo.Name = player.Name;
-				sharedDataPreviewCharacterInfo.Level = (Int32)player.level;
+				sharedDataPreviewCharacterInfo.Level = player.level;
 			}
 			sharedDataPreviewSlot.CharacterInfoList.Add(sharedDataPreviewCharacterInfo);
 		}
@@ -609,7 +609,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 			List<SharedDataPreviewSlot> list = new List<SharedDataPreviewSlot>();
 			Int32 cacheOutSlotID = -1;
 			Int32 cacheOutSaveID = -1;
-			SharedDataPreviewSlot cacheData = (SharedDataPreviewSlot)null;
+			SharedDataPreviewSlot cacheData = null;
 			using (FileStream fileStream = File.Open(MetaData.FilePath, FileMode.Open, FileAccess.ReadWrite))
 			{
 				using (BinaryReader binaryReader = new BinaryReader(fileStream))
@@ -630,7 +630,7 @@ public class SharedDataBytesStorage : ISharedDataStorage
 		{
 			ISharedDataLog.LogError(message);
 			ISharedDataSerializer.LastErrno = DataSerializerErrorCode.FileCorruption;
-			onFinishDelegate(-1, -1, (SharedDataPreviewSlot)null);
+			onFinishDelegate(-1, -1, null);
 			return;
 		}
 		onFinishDelegate(slotID, saveID, sharedDataPreviewSlot);

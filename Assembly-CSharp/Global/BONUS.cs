@@ -10,18 +10,13 @@ public class BONUS
 	}
 
 	public Int32 gil;
-
 	public UInt32 exp;
-
 	public UInt16 ap;
 
 	public Byte member_flag;
-
 	public Boolean Event;
 
 	public List<RegularItem> item;
-
-	public Byte card;
-
+	public TetraMasterCardId card;
 	public Boolean escape_gil;
 }

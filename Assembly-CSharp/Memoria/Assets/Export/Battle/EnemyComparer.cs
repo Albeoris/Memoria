@@ -206,7 +206,7 @@ namespace Memoria.Assets
             hashCode = (hashCode * 397) ^ enemy.ShadowX;
             hashCode = (hashCode * 397) ^ enemy.ShadowZ;
             hashCode = (hashCode * 397) ^ enemy.ShadowBone;
-            hashCode = (hashCode * 397) ^ enemy.WinCard;
+            hashCode = (hashCode * 397) ^ (Int32)enemy.WinCard;
             hashCode = (hashCode * 397) ^ enemy.ShadowOfsX;
             hashCode = (hashCode * 397) ^ enemy.ShadowOfsZ;
             hashCode = (hashCode * 397) ^ enemy.ShadowBone2;

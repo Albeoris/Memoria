@@ -61,7 +61,7 @@ public class ENEMY_TYPE
 		public RegularItem[] item;
 		public UInt16[] item_rate;
 
-		public UInt32 card;
+		public TetraMasterCardId card;
 		public UInt16 card_rate;
 	}
 }

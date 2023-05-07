@@ -22,7 +22,7 @@ namespace Memoria
             CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
         }
 
-        public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Byte scriptId)
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Int32 scriptId)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace Memoria
                     v.TryCriticalHit();
                 // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
                 if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
-                    if ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !Status.checkCurStat(target, BattleStatus.EasyKill))
+                    if ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !btl_stat.CheckStatus(target, BattleStatus.EasyKill))
                         v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false, v.Caster);
                 if ((v.Command.AbilityCategory & 8) != 0) // Is Physical
                 {

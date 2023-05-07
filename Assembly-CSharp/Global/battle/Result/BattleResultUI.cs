@@ -90,55 +90,42 @@ public class BattleResultUI : UIScene
 		{
 			switch (this.currentState)
 			{
-			case BattleResultUI.ResultState.Start:
-				FF9Sfx.FF9SFX_PlayLoop(105);
-				this.currentState = BattleResultUI.ResultState.EXPAndAPTick;
-				break;
-			case BattleResultUI.ResultState.EXPAndAPTick:
-			{
-				FF9Sfx.FF9SFX_StopLoop(105);
-				this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
-				BattleEndValue[] array = this.expValue;
-				for (Int32 i = 0; i < (Int32)array.Length; i++)
+				case BattleResultUI.ResultState.Start:
+					FF9Sfx.FF9SFX_PlayLoop(105);
+					this.currentState = BattleResultUI.ResultState.EXPAndAPTick;
+					break;
+				case BattleResultUI.ResultState.EXPAndAPTick:
 				{
-					BattleEndValue battleEndValue = array[i];
-					battleEndValue.step = battleEndValue.value;
+					FF9Sfx.FF9SFX_StopLoop(105);
+					this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
+					BattleEndValue[] array = this.expValue;
+					for (Int32 i = 0; i < (Int32)array.Length; i++)
+					{
+						BattleEndValue battleEndValue = array[i];
+						battleEndValue.step = battleEndValue.value;
+					}
+					this.UpdateExp();
+					BattleEndValue[] array2 = this.apValue;
+					for (Int32 j = 0; j < (Int32)array2.Length; j++)
+					{
+						BattleEndValue battleEndValue2 = array2[j];
+						battleEndValue2.step = battleEndValue2.value;
+					}
+					this.UpdateAp();
+					this.DisplayEXPAndAPInfo();
+					this.ApplyTweenAndFade();
+					break;
 				}
-				this.UpdateExp();
-				BattleEndValue[] array2 = this.apValue;
-				for (Int32 j = 0; j < (Int32)array2.Length; j++)
-				{
-					BattleEndValue battleEndValue2 = array2[j];
-					battleEndValue2.step = battleEndValue2.value;
-				}
-				this.UpdateAp();
-				this.DisplayEXPAndAPInfo();
-				this.ApplyTweenAndFade();
-				break;
-			}
-			case BattleResultUI.ResultState.EndEXPAndAP:
-				this.ApplyTweenAndFade();
-				break;
-			case BattleResultUI.ResultState.StartGilAndItem:
-				if (!this.UpdateItem())
-				{
-					this.ItemOverflowPanelTween.TweenIn((Action)null);
-					this.currentState = BattleResultUI.ResultState.ItemFullDialog;
-				}
-				else if (this.gilValue.value == 0u)
-				{
-					this.currentState = BattleResultUI.ResultState.End;
-				}
-				else
-				{
-					FF9Sfx.FF9SFX_PlayLoop(109);
-					this.currentState = BattleResultUI.ResultState.GilTick;
-				}
-				break;
-			case BattleResultUI.ResultState.ItemFullDialog:
-				this.ItemOverflowPanelTween.TweenOut(delegate
-				{
-					if (this.gilValue.value == 0u)
+				case BattleResultUI.ResultState.EndEXPAndAP:
+					this.ApplyTweenAndFade();
+					break;
+				case BattleResultUI.ResultState.StartGilAndItem:
+					if (!this.UpdateItem())
+					{
+						this.ItemOverflowPanelTween.TweenIn((Action)null);
+						this.currentState = BattleResultUI.ResultState.ItemFullDialog;
+					}
+					else if (this.gilValue.value == 0u)
 					{
 						this.currentState = BattleResultUI.ResultState.End;
 					}
@@ -147,19 +134,32 @@ public class BattleResultUI : UIScene
 						FF9Sfx.FF9SFX_PlayLoop(109);
 						this.currentState = BattleResultUI.ResultState.GilTick;
 					}
-				});
-				break;
-			case BattleResultUI.ResultState.GilTick:
-				this.currentState = BattleResultUI.ResultState.End;
-				this.gilValue.step = this.gilValue.value;
-				FF9Sfx.FF9SFX_StopLoop(109);
-				this.UpdateGil();
-				this.DisplayGilAndItemInfo();
-				break;
-			case BattleResultUI.ResultState.End:
-				this.currentState = BattleResultUI.ResultState.Hide;
-				this.Hide((UIScene.SceneVoidDelegate)null);
-				break;
+					break;
+				case BattleResultUI.ResultState.ItemFullDialog:
+					this.ItemOverflowPanelTween.TweenOut(delegate
+					{
+						if (this.gilValue.value == 0u)
+						{
+							this.currentState = BattleResultUI.ResultState.End;
+						}
+						else
+						{
+							FF9Sfx.FF9SFX_PlayLoop(109);
+							this.currentState = BattleResultUI.ResultState.GilTick;
+						}
+					});
+					break;
+				case BattleResultUI.ResultState.GilTick:
+					this.currentState = BattleResultUI.ResultState.End;
+					this.gilValue.step = this.gilValue.value;
+					FF9Sfx.FF9SFX_StopLoop(109);
+					this.UpdateGil();
+					this.DisplayGilAndItemInfo();
+					break;
+				case BattleResultUI.ResultState.End:
+					this.currentState = BattleResultUI.ResultState.Hide;
+					this.Hide((UIScene.SceneVoidDelegate)null);
+					break;
 			}
 		}
 		return true;
@@ -208,7 +208,7 @@ public class BattleResultUI : UIScene
 			this.ItemDetailPanel.SetActive(false);
 			this.noItemLabel.SetActive(true);
 		}
-		if (this.defaultCard != Byte.MaxValue)
+		if (this.defaultCard != TetraMasterCardId.NONE)
 		{
 			this.ItemDetailPanel.SetActive(true);
 			this.cardHud.Self.SetActive(true);
@@ -323,9 +323,9 @@ public class BattleResultUI : UIScene
 		{
 			if ((battle.btl_bonus.member_flag & 1 << i) != 0 && FF9StateSystem.Common.FF9.party.member[i] != null)
 			{
-			    Character player = FF9StateSystem.Common.FF9.party.GetCharacter(i);
+				Character player = FF9StateSystem.Common.FF9.party.GetCharacter(i);
 
-                this.isNeedExp[i] = this.IsNeedExp(player);
+				this.isNeedExp[i] = this.IsNeedExp(player);
 				this.isNeedAp[i] = this.IsNeedAp(player);
 				if (this.isNeedExp[i])
 					this.remainPlayerCounter++;
@@ -388,13 +388,7 @@ public class BattleResultUI : UIScene
 		this.abilityLearned[1] = new List<Int32>();
 		this.abilityLearned[2] = new List<Int32>();
 		this.abilityLearned[3] = new List<Int32>();
-		this.isReadyToShowNextAbil = new Boolean[]
-		{
-			true,
-			true,
-			true,
-			true
-		};
+		this.isReadyToShowNextAbil = new Boolean[] { true, true, true, true };
 		Boolean flag = true;
 		for (Int32 i = 0; i < this.expValue.Length && flag; i++)
 			if (this.expValue[i].value != 0u)
@@ -466,7 +460,7 @@ public class BattleResultUI : UIScene
 			{
 				BONUS individualBonus = new BONUS();
 				individualBonus.ap = (UInt16)this.defaultAp;
-				individualBonus.card = (Byte)this.defaultCard;
+				individualBonus.card = this.defaultCard;
 				individualBonus.exp = this.defaultExp;
 				individualBonus.gil = this.defaultGil;
 				foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
@@ -488,11 +482,9 @@ public class BattleResultUI : UIScene
 					else
 					{
 						battleEndValue.step = (UInt32)BattleResultUI.EXPDefaultAdd;
-						UInt32 num = battleEndValue.value / battleEndValue.step;
-						if ((UInt64)num > (UInt64)((Int64)BattleResultUI.EXPTickMax))
-						{
-							battleEndValue.step = (UInt32)(((UInt64)battleEndValue.value + (UInt64)((Int64)BattleResultUI.EXPTickMax) - 1UL) / (UInt64)((Int64)BattleResultUI.EXPTickMax));
-						}
+						UInt32 expTick = battleEndValue.value / battleEndValue.step;
+						if (expTick > BattleResultUI.EXPTickMax)
+							battleEndValue.step = (UInt32)((battleEndValue.value + (UInt64)BattleResultUI.EXPTickMax - 1UL) / (UInt64)BattleResultUI.EXPTickMax);
 					}
 					battleEndValue.current = 0u;
 					this.expValue[i] = battleEndValue;
@@ -508,18 +500,12 @@ public class BattleResultUI : UIScene
 			}
 		}
 		this.gilValue.value = (UInt32)this.defaultGil;
-		if ((UInt64)this.gilValue.value < (UInt64)((Int64)BattleResultUI.GilCountTick))
-		{
+		if (this.gilValue.value < (UInt64)BattleResultUI.GilCountTick)
 			this.gilValue.step = 1u;
-		}
-		else if ((UInt64)this.gilValue.value < (UInt64)((Int64)(BattleResultUI.GilCountTick * BattleResultUI.GilDefaultAdd)))
-		{
-			this.gilValue.step = (UInt32)(((UInt64)this.gilValue.value + (UInt64)((Int64)BattleResultUI.GilCountTick) - 1UL) / (UInt64)((Int64)BattleResultUI.GilCountTick));
-		}
+		else if ((UInt64)this.gilValue.value < (UInt64)(BattleResultUI.GilCountTick * BattleResultUI.GilDefaultAdd))
+			this.gilValue.step = (UInt32)((this.gilValue.value + (UInt64)BattleResultUI.GilCountTick - 1UL) / (UInt64)BattleResultUI.GilCountTick);
 		else
-		{
 			this.gilValue.step = (UInt32)BattleResultUI.GilDefaultAdd;
-		}
 		this.gilValue.current = 0u;
 	}
 
@@ -560,10 +546,10 @@ public class BattleResultUI : UIScene
 	private void AnalyzeArgument()
 	{
 		this.AnalyzeParty();
-		this.defaultExp = (UInt32)((this.remainPlayerCounter == 0) ? 0UL : ((UInt64)battle.btl_bonus.exp / (UInt64)((Int64)this.remainPlayerCounter)));
-		this.defaultAp = (UInt32)battle.btl_bonus.ap;
+		this.defaultExp = (UInt32)(this.remainPlayerCounter == 0 ? 0u : battle.btl_bonus.exp / this.remainPlayerCounter);
+		this.defaultAp = battle.btl_bonus.ap;
 		this.defaultGil = battle.btl_bonus.gil;
-		this.defaultCard = (Int32)((QuadMistDatabase.MiniGame_GetAllCardCount() < 100) ? battle.btl_bonus.card : Byte.MaxValue);
+		this.defaultCard = QuadMistDatabase.MiniGame_GetAllCardCount() < Configuration.TetraMaster.MaxCardCount ? battle.btl_bonus.card : TetraMasterCardId.NONE;
 	}
 
 	private void UpdateExp()
@@ -753,9 +739,9 @@ public class BattleResultUI : UIScene
 				gainedItem = true;
 			}
 		}
-		if (this.defaultCard != Byte.MaxValue)
+		if (this.defaultCard != TetraMasterCardId.NONE)
 			QuadMistDatabase.MiniGame_SetCard(this.defaultCard);
-		if (gainedItem && (this.itemList.Count != 0 || this.defaultCard != Byte.MaxValue))
+		if (gainedItem && (this.itemList.Count != 0 || this.defaultCard != TetraMasterCardId.NONE))
 			FF9Sfx.FF9SFX_Play(108);
 		return !gainedItem;
 	}
@@ -868,166 +854,96 @@ public class BattleResultUI : UIScene
 		{
 			this.AllPanel.GetChild(3).GetChild(0).GetComponent<UILocalize>().key = "TouchToConfirm";
 		}
-        GameObject child2 = this.GilAndItemPhrasePanel.GetChild(0);
-        GameObject child3 = this.GilAndItemPhrasePanel.GetChild(0).GetChild(0);
-        child2.GetComponent<UIPanel>().depth = 2;
-        child3.GetComponent<UIPanel>().depth = 3;
-    }
+		GameObject child2 = this.GilAndItemPhrasePanel.GetChild(0);
+		GameObject child3 = this.GilAndItemPhrasePanel.GetChild(0).GetChild(0);
+		child2.GetComponent<UIPanel>().depth = 2;
+		child3.GetComponent<UIPanel>().depth = 3;
+	}
 
 	public GameObject AllPanel;
-
 	public GameObject EXPAndAPPhrasePanel;
-
 	public GameObject GilAndItemPhrasePanel;
-
 	public GameObject CharacterInfoPanel;
-
 	public GameObject EXPPanel;
-
 	public GameObject APPanel;
-
 	public GameObject ReceiveGilPanel;
-
 	public GameObject CurrentGilPanel;
-
 	public GameObject ItemListPanel;
-
 	public GameObject InfoPanel;
-
 	public GameObject TransitionPanel;
-
 	public GameObject ScreenFadeGameObject;
 
 	public static Int32 ItemMax = 6;
-
 	private static Int32 ItemArgMax = 16;
-
 	private static Int32 EXPMinTick = 16;
-
 	private static Int32 EXPDefaultAdd = 32;
-
 	private static Int32 EXPTickMax = 192;
-
 	private static Int32 GilCountTick = 32;
-
 	private static Int32 GilDefaultAdd = 1;
 
 	private List<BattleResultUI.CharacterBattleResultInfoHUD> characterBRInfoHudList = new List<BattleResultUI.CharacterBattleResultInfoHUD>();
 
 	private UILabel expReceiveLabel;
-
 	private UILabel apReceiveLabel;
-
 	private UILabel receiveGilLabel;
-
 	private UILabel currentGilLabel;
 
 	private List<ItemListDetailWithIconHUD> itemHudList = new List<ItemListDetailWithIconHUD>();
-
 	private ItemListDetailWithIconHUD cardHud = new ItemListDetailWithIconHUD();
 
 	private GameObject infoLabelGameObject;
-
 	private UIPanel screenFadePanel;
-
 	private GameObject noItemLabel;
-
 	private GameObject ItemDetailPanel;
 
 	private HonoTweenPosition expLeftSideTween;
-
 	private HonoTweenPosition expRightSideTween;
-
 	private HonoTweenPosition infoPanelTween;
-
 	private HonoTweenPosition helpPanelTween;
-
 	private HonoTweenClipping ItemOverflowPanelTween;
-
 	private HonoTweenClipping ItemPanelTween;
-
 	private HonoTweenPosition[] levelUpSpriteTween;
-
 	private HonoTweenClipping[] abilityLearnedPanelTween;
 
 	private UInt32 defaultExp;
-
 	private UInt32 defaultAp;
-
 	private Int32 defaultGil;
-
-	private Int32 defaultCard;
+	private TetraMasterCardId defaultCard;
 
 	private Int32 remainPlayerCounter;
-
 	private BattleResultUI.ResultState currentState;
 
 	private BattleEndValue[] expValue = new BattleEndValue[4];
-
 	private BattleEndValue[] apValue = new BattleEndValue[4];
-
 	private BattleEndValue gilValue = new BattleEndValue();
 
 	private List<FF9ITEM> itemList = new List<FF9ITEM>();
-
 	private List<Boolean> isRecieveExpList = new List<Boolean>();
 
 	private Boolean[] isNeedExp = new Boolean[4];
-
 	private Boolean[] isNeedAp = new Boolean[4];
-
 	private Boolean isItemOverflow;
 
 	private Int32[] totalLevelUp = new Int32[4];
-
 	private Int32[] finishedLevelUpAnimation = new Int32[4];
-
 	private List<Int32>[] abilityLearned = new List<Int32>[4];
 
-	private Boolean[] isReadyToShowNextAbil = new Boolean[]
-	{
-		true,
-		true,
-		true,
-		true
-	};
+	private Boolean[] isReadyToShowNextAbil = new Boolean[] { true, true, true, true };
 
 	private Boolean expEndTick;
-
 	private Boolean apEndTick;
 
 	private Boolean isTimerDisplay;
 
 	public static Dictionary<UInt32, Byte> BadIconDict = new Dictionary<UInt32, Byte>
 	{
-		{
-			1u,
-			154
-		},
-		{
-			2u,
-			153
-		},
-		{
-			4u,
-			152
-		},
-		{
-			8u,
-			151
-		},
-		{
-			16u,
-			150
-		},
-		{
-			32u,
-			149
-		},
-		{
-			64u,
-			148
-		}
+		{ 1u, 154 },
+		{ 2u, 153 },
+		{ 4u, 152 },
+		{ 8u, 151 },
+		{ 16u, 150 },
+		{ 32u, 149 },
+		{ 64u, 148 }
 	};
 
 	private class CharacterBattleResultInfoHUD
@@ -1057,34 +973,23 @@ public class BattleResultUI : UIScene
 		}
 
 		public GameObject Self;
-
 		public GameObject Content;
-
 		public GameObject DimPanel;
 
 		public UILabel NameLabel;
-
 		public UILabel LevelLabel;
-
 		public UILabel ExpLabel;
-
 		public UILabel NextLvLabel;
-
 		public UISprite AvatarSprite;
-
 		public UISprite[] StatusesSpriteList;
-
 		public UISprite AbiltySprite;
-
 		public UILabel AbilityLabel;
 	}
 
 	private class BattleEndValue
 	{
 		public UInt32 value;
-
 		public UInt32 step;
-
 		public UInt32 current;
 	}
 

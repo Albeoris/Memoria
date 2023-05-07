@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
 using UnityEngine;
@@ -127,7 +128,7 @@ public class CardUI : UIScene
 	{
 		PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
 		FF9Sfx.FF9SFX_Play(103);
-		QuadMistDatabase.MiniGame_AwayCard(deleteCardId, offset[deleteCardId]);
+		QuadMistDatabase.MiniGame_AwayCard((TetraMasterCardId)deleteCardId, offset[deleteCardId]);
 		count[deleteCardId]--;
 		offset[deleteCardId] = Math.Min(offset[deleteCardId], count[deleteCardId] - 1);
 		DisplayHelp();
@@ -380,8 +381,8 @@ public class CardUI : UIScene
 		{
 			cardInfoContentGameObject.SetActive(true);
 			ShowCardDetailHudNumber(num);
-			FF9UIDataTool.DisplayCard(QuadMistDatabase.MiniGame_GetCardInfoPtr(currentCardId, offset[currentCardId]), cardDetailHudList[0], false);
-			cardNameLabel.text = FF9TextTool.CardName(currentCardId);
+			FF9UIDataTool.DisplayCard(QuadMistDatabase.MiniGame_GetCardInfoPtr((TetraMasterCardId)currentCardId, offset[currentCardId]), cardDetailHudList[0], false);
+			cardNameLabel.text = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
 			if (num > 1)
 			{
 				cardNumberGameObject.SetActive(true);
@@ -389,7 +390,7 @@ public class CardUI : UIScene
 				totalCardNumberLabel.text = num.ToString();
 				for (Int32 i = 1; i < Math.Min(num, 5); i++)
 				{
-					FF9UIDataTool.DisplayCard(QuadMistDatabase.MiniGame_GetCardInfoPtr(currentCardId, 0), cardDetailHudList[i], true);
+					FF9UIDataTool.DisplayCard(QuadMistDatabase.MiniGame_GetCardInfoPtr((TetraMasterCardId)currentCardId, 0), cardDetailHudList[i], true);
 				}
 			}
 			else
@@ -418,42 +419,6 @@ public class CardUI : UIScene
 
 	private void FF9FCard_Build()
 	{
-		Int16[] levelThresholds = new Int16[]
-		{
-			0,
-			300,
-			400,
-			500,
-			600,
-			700,
-			800,
-			900,
-			1000,
-			1100,
-			1200,
-			1250,
-			1300,
-			1320,
-			1330,
-			1340,
-			1350,
-			1360,
-			1370,
-			1380,
-			1390,
-			1400,
-			1420,
-			1470,
-			1510,
-			1550,
-			1600,
-			1650,
-			1680,
-			1690,
-			1698,
-			1700
-		};
-
 		for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
 		{
 			count[i] = 0;
@@ -464,36 +429,12 @@ public class CardUI : UIScene
 			count[(Int32)quadMistCard.id]++;
 
 		FF9FCard_GetPoint();
-		lv_collector = CardUI.FF9FCAZRD_LV_MAX - 1;
-		for (Int32 i = 1; i < CardUI.FF9FCAZRD_LV_MAX; i++)
-		{
-			if (point < levelThresholds[i])
-			{
-				lv_collector = i - 1;
-				break;
-			}
-		}
 	}
 
 	private void FF9FCard_GetPoint()
 	{
-		Byte[] typePtsWorth = new Byte[] { 0, 0, 1, 2 };
-		Boolean[] arrowPatternUsed = new Boolean[CardUI.FF9FCARD_ARROW_TYPE_MAX];
-		Int32 typePts = 0;
-		Int32 arrowPts = 0;
-		Int32 idPts = QuadMistDatabase.MiniGame_GetCardKindCount() * 10;
-		for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
-		{
-			for (Int32 j = 0; j < count[i]; j++)
-			{
-				QuadMistCard quadMistCard = QuadMistDatabase.MiniGame_GetCardInfoPtr(i, j);
-				if (!arrowPatternUsed[quadMistCard.arrow])
-					arrowPts += 5;
-				arrowPatternUsed[quadMistCard.arrow] = true;
-				typePts += typePtsWorth[(Int32)quadMistCard.type];
-			}
-		}
-		point = idPts + typePts + arrowPts;
+		point = QuadMistDatabase.MiniGame_GetPlayerPoints();
+		lv_collector = QuadMistDatabase.MiniGame_GetCollectorLevel();
 	}
 
 	private void ShowCardDetailHudNumber(Int32 number)

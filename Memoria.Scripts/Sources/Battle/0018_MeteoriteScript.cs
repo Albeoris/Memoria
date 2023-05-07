@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
             _v.PenaltyCommandDividedAttack();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
 
             if (_v.CanAttackMagic())
             {

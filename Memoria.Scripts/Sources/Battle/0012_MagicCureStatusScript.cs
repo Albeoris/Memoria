@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.TargetCommand.TryRemoveAbilityStatuses();
+            _v.TryRemoveAbilityStatuses();
         }
 
         public Single RateTarget()

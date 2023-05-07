@@ -506,8 +506,8 @@ public class EquipUI : UIScene
 		this.parameterHud.ParameterLabel[2].text = player.elem.mgc.ToString();
 		this.parameterHud.ParameterLabel[3].text = player.elem.wpr.ToString();
 		this.parameterHud.ParameterLabel[4].text = ff9item.GetItemWeapon(player.equip[0]).Ref.Power.ToString();
-		this.parameterHud.ParameterLabel[5].text = player.defence.PhisicalDefence.ToString();
-		this.parameterHud.ParameterLabel[6].text = player.defence.PhisicalEvade.ToString();
+		this.parameterHud.ParameterLabel[5].text = player.defence.PhysicalDefence.ToString();
+		this.parameterHud.ParameterLabel[6].text = player.defence.PhysicalEvade.ToString();
 		this.parameterHud.ParameterLabel[7].text = player.defence.MagicalDefence.ToString();
 		this.parameterHud.ParameterLabel[8].text = player.defence.MagicalEvade.ToString();
 		if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton || (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == SubMenu.Off))
@@ -545,8 +545,8 @@ public class EquipUI : UIScene
 			ff9PLAY_SKILL.Base[2] = player.elem.mgc;
 			ff9PLAY_SKILL.Base[3] = player.elem.wpr;
 			ff9PLAY_SKILL.defParam[0] = ff9item.GetItemWeapon(player.equip[0]).Ref.Power;
-			ff9PLAY_SKILL.defParam[1] = player.defence.PhisicalDefence;
-			ff9PLAY_SKILL.defParam[2] = player.defence.PhisicalEvade;
+			ff9PLAY_SKILL.defParam[1] = player.defence.PhysicalDefence;
+			ff9PLAY_SKILL.defParam[2] = player.defence.PhysicalEvade;
 			ff9PLAY_SKILL.defParam[3] = player.defence.MagicalDefence;
 			ff9PLAY_SKILL.defParam[4] = player.defence.MagicalEvade;
 			Int32 j;

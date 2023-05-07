@@ -111,7 +111,7 @@ public class BTL_SCENE
 				sb2_MON_PARM.ShadowX = binaryReader.ReadUInt16();
 				sb2_MON_PARM.ShadowZ = binaryReader.ReadUInt16();
 				sb2_MON_PARM.ShadowBone = binaryReader.ReadByte();
-				sb2_MON_PARM.WinCard = binaryReader.ReadByte();
+				sb2_MON_PARM.WinCard = (TetraMasterCardId)binaryReader.ReadByte();
 				sb2_MON_PARM.WinCardRate = SB2_MON_PARM.DefaultWinCardRate;
 				sb2_MON_PARM.ShadowOfsX = binaryReader.ReadInt16();
 				sb2_MON_PARM.ShadowOfsZ = binaryReader.ReadInt16();

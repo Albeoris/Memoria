@@ -10,7 +10,9 @@ namespace Memoria
         {
             private static readonly HashSet<Int32> DefaultExclusions = new HashSet<Int32>(new[] {56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100});
 
+            public readonly IniValue<Int32> TripleTriad;
             public readonly IniValue<Int32> ReduceRandom;
+            public readonly IniValue<Int32> MaxCardCount;
 
             public readonly IniValue<Boolean> DiscardAutoButton;
             public readonly IniValue<Boolean> DiscardAssaultCards;
@@ -23,11 +25,12 @@ namespace Memoria
             public readonly IniValue<Int32> DiscardKeepSameType;
             public readonly IniValue<Int32> DiscardKeepSameArrow;
             public readonly IniSet<Int32> DiscardExclusions;
-            public readonly IniValue<Int32> TripleTriad;
 
             public TetraMasterSection() : base(nameof(TetraMasterSection), true)
             {
-                ReduceRandom = BindInt32(nameof(ReduceRandom), 1);
+                TripleTriad = BindInt32(nameof(TripleTriad), 0);
+                ReduceRandom = BindInt32(nameof(ReduceRandom), 0);
+                MaxCardCount = BindInt32(nameof(MaxCardCount), 100);
 
                 DiscardAutoButton = BindBoolean(nameof(DiscardAutoButton), true);
                 DiscardAssaultCards = BindBoolean(nameof(DiscardAssaultCards), false);
@@ -40,7 +43,6 @@ namespace Memoria
                 DiscardKeepSameType = BindInt32(nameof(DiscardKeepSameType), 1);
                 DiscardKeepSameArrow = BindInt32(nameof(DiscardKeepSameArrow), 0);
                 DiscardExclusions = BindInt32Set(nameof(DiscardExclusions), DefaultExclusions);
-                TripleTriad = BindInt32(nameof(TripleTriad), 0);
             }
         }
     }

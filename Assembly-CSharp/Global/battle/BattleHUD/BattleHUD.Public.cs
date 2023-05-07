@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
 
@@ -160,13 +161,11 @@ public partial class BattleHUD : UIScene
         return FF9TextTool.BattleFollowText(id);
     }
 
-    public void SetBattleLibra(BattleUnit pBtl, Boolean showSteals = false)
+    public void SetBattleLibra(BattleUnit pBtl, LibraInformation infos = LibraInformation.Default)
     {
         _currentLibraMessageNumber = 1;
         _libraBtlData = pBtl;
-        _libraDisabledMessage.Clear();
-        if (!showSteals)
-            _libraDisabledMessage.Add(5);
+        _libraEnabledMessage = infos;
         DisplayMessageLibra();
     }
 
@@ -327,6 +326,7 @@ public partial class BattleHUD : UIScene
             detailPos.y -= partyItemHeight * (_partyDetail.Characters.Count - partyCount);
             Int32 linePerPage = Configuration.Interface.PSXBattleMenu ? 4 : 5;
             Int32 lineHeight = (Int32)Math.Round(menuSize.y / linePerPage);
+            Single lineFontFactor = (linePerPage == 4 ? 0.85f : 1f) / Configuration.Interface.BattleColumnCount;
             Single cellWidth = (menuSize.x + 32f) / Configuration.Interface.BattleColumnCount;
             _partyDetail.Widget.SetRawRect(detailPos.x, detailPos.y, detailSize.x, detailSize.y);
             _partyDetail.Captions.Widget.topAnchor.absolute = 20;
@@ -386,12 +386,19 @@ public partial class BattleHUD : UIScene
                 }
             }
             _commandPanel.Widget.SetAnchor(target: null);
-            _commandPanel.Widget.SetRawRect(menuPos.x, menuPos.y, Configuration.Interface.PSXBattleMenu ? menuSize.x * 0.5f : menuSize.x, menuSize.y);
+            if (Configuration.Interface.PSXBattleMenu)
+                _commandPanel.Widget.SetRawRect(menuPos.x - menuSize.x * 0.25f, menuPos.y, menuSize.x * 0.5f, menuSize.y);
+            else
+                _commandPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
+            _commandPanel.Caption.Border.Sprite.SetAnchor(target: _commandPanel.Caption.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
             Transform commandPanelTransform = _commandPanel.Transform;
+            Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null && Configuration.Battle.AccessMenus > 0;
+            Boolean wrapMenus = Configuration.Interface.PSXBattleMenu && Configuration.Control.WrapSomeMenus;
+            Single menuButtonHeight;
             if (Configuration.Interface.PSXBattleMenu)
             {
-                Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null && Configuration.Battle.AccessMenus > 0;
                 Single buttonHeight = hasAccessMenuButton ? 0.2f : 0.25f;
+                menuButtonHeight = buttonHeight * menuSize.y;
                 _commandPanel.Change.KeyNavigation.constraint = UIKeyNavigation.Constraint.Vertical;
                 _commandPanel.Defend.KeyNavigation.constraint = UIKeyNavigation.Constraint.Vertical;
                 _commandPanel.Change.IsActive = _buttonSliding == _commandPanel.Change;
@@ -402,16 +409,12 @@ public partial class BattleHUD : UIScene
                 _commandPanel.Skill1.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 2f * buttonHeight, relTop: 1f - buttonHeight);
                 _commandPanel.Skill2.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 3f * buttonHeight, relTop: 1f - 2f * buttonHeight);
                 _commandPanel.Item.Widget.SetAnchor(target: commandPanelTransform, relBottom: 1f - 4f * buttonHeight, relTop: 1f - 3f * buttonHeight);
-                _commandPanel.Attack.KeyNavigation.wrapUpDown = Configuration.Control.WrapSomeMenus;
-                _commandPanel.Item.KeyNavigation.wrapUpDown = Configuration.Control.WrapSomeMenus;
                 if (hasAccessMenuButton)
-                {
                     _commandPanel.AccessMenu.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: buttonHeight);
-                    _commandPanel.AccessMenu.KeyNavigation.wrapUpDown = Configuration.Control.WrapSomeMenus;
-                }
             }
             else
             {
+                menuButtonHeight = menuSize.y / 3f;
                 _commandPanel.Defend.KeyNavigation.constraint = UIKeyNavigation.Constraint.None;
                 _commandPanel.Change.KeyNavigation.constraint = UIKeyNavigation.Constraint.None;
                 _commandPanel.Change.IsActive = true;
@@ -424,8 +427,11 @@ public partial class BattleHUD : UIScene
                 _commandPanel.Skill2.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0.3333333f, relTop: 0.6666667f, relLeft: 0.5f, relRight: 1f);
                 _commandPanel.Item.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: 0.3333333f, relLeft: 0f, relRight: 0.5f);
                 _commandPanel.Change.Widget.SetAnchor(target: commandPanelTransform, relBottom: 0f, relTop: 0.3333333f, relLeft: 0.5f, relRight: 1f);
-                _commandPanel.Attack.KeyNavigation.wrapUpDown = false;
-                _commandPanel.Item.KeyNavigation.wrapUpDown = false;
+            }
+            foreach (GONavigationButton button in _commandPanel.EnumerateButtons(hasAccessMenuButton))
+            {
+                button.KeyNavigation.wrapUpDown = wrapMenus;
+                button.Name.Label.fontSize = (Int32)Math.Round(36f * menuButtonHeight / 79f);
             }
             _abilityPanel.Widget.SetAnchor(target: null);
             _abilityPanel.Widget.SetRawRect(menuPos.x - 1f, menuPos.y - 8f, cellWidth * Configuration.Interface.BattleColumnCount, lineHeight * linePerPage);
@@ -434,8 +440,8 @@ public partial class BattleHUD : UIScene
             _abilityPanel.Background.Panel.Info.Label.SetAnchor(target: _abilityPanel.Background.Transform, relRight: 0.9f, relBottom: 1f, bottom: -5f, top: 20f);
             _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.12f, relRight: 0.9f);
             _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0f, relRight: 0.9f);
-            _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f / Configuration.Interface.BattleColumnCount);
-            _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f / Configuration.Interface.BattleColumnCount);
+            _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
+            _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
             _itemPanel.Widget.SetAnchor(target: null);
             _itemPanel.Widget.SetRawRect(menuPos.x - 1f, menuPos.y - 8f, cellWidth * Configuration.Interface.BattleColumnCount, lineHeight * linePerPage);
             _itemPanel.SubPanel.ChangeDims(Configuration.Interface.BattleColumnCount, linePerPage, cellWidth, lineHeight);
@@ -444,25 +450,26 @@ public partial class BattleHUD : UIScene
             _itemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.1f, relRight: 0.1f, right: lineHeight);
             _itemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relLeft: 0.1f, relRight: 0.9f, left: lineHeight);
             _itemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relRight: 0.9f);
-            _itemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f / Configuration.Interface.BattleColumnCount);
-            _itemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f / Configuration.Interface.BattleColumnCount);
+            _itemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
+            _itemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(32f * lineHeight / 50f * lineFontFactor);
             _targetPanel.Widget.SetAnchor(target: null);
             _targetPanel.Widget.SetRawRect(menuPos.x, menuPos.y, menuSize.x, menuSize.y);
-            _targetPanel.Captions.Caption1.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.1f, relRight: 0.5f, relBottom: 1f, bottom: -26f, top: 14f);
-            _targetPanel.Captions.Caption2.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.6f, relRight: 1f, relBottom: 1f, bottom: -26f, top: 14f);
+            _targetPanel.Captions.Border.Sprite.SetAnchor(target: _targetPanel.Captions.Transform, left: -3f, bottom: -3f, right: 3f, top: 3f);
+            _targetPanel.Captions.Caption1.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.075f, relRight: 0.5f, relBottom: 1f, bottom: -26f, top: 14f);
+            _targetPanel.Captions.Caption2.Label.SetAnchor(target: _targetPanel.Captions.Transform, relLeft: 0.585f, relRight: 1f, relBottom: 1f, bottom: -26f, top: 14f);
             Transform targetPanelTransform = _targetPanel.Transform;
             for (Int32 entryIndex = 0; entryIndex < _targetPanel.Enemies.Count; entryIndex++)
             {
                 if (!_targetPanel.Enemies[entryIndex].IsActive)
                     continue;
-                _targetPanel.Enemies[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0f, relRight: 0.5f);
+                _targetPanel.Enemies[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0f, relRight: 0.525f);
                 _targetPanel.Enemies[entryIndex].Name.Label.fontSize = (Int32)Math.Round(32f * menuSize.y / 228f);
             }
             for (Int32 entryIndex = 0; entryIndex < _targetPanel.Players.Count; entryIndex++)
             {
                 if (!_targetPanel.Players[entryIndex].IsActive)
                     continue;
-                _targetPanel.Players[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0.5f, relRight: 1f);
+                _targetPanel.Players[entryIndex].Widget.SetAnchor(target: targetPanelTransform, relBottom: 0.75f - entryIndex * 0.25f, relTop: 1f - entryIndex * 0.25f, relLeft: 0.525f, relRight: 1f);
                 _targetPanel.Players[entryIndex].Highlight.Sprite.SetAnchor(target: _targetPanel.Players[entryIndex].Transform);
                 _targetPanel.Players[entryIndex].Background.Widget.SetAnchor(target: _targetPanel.Players[entryIndex].Transform);
                 _targetPanel.Players[entryIndex].Background.Border.Sprite.SetAnchor(target: _targetPanel.Players[entryIndex].Background.Transform);
@@ -526,7 +533,7 @@ public partial class BattleHUD : UIScene
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
                     saFeature.TriggerOnBattleResult(player, battle.btl_bonus, new List<FF9ITEM>(), "BattleEnd", gil / 10U);
         }
-        if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != Byte.MaxValue))
+        if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
             battle.btl_bonus.escape_gil = true;
 
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.BattleResult));
@@ -737,6 +744,13 @@ public partial class BattleHUD : UIScene
     public void ClearCursorMemorize(Int32 playerIndex, BattleCommandId commandId)
     {
         _abilityCursorMemorize.Remove(new PairCharCommand(playerIndex, commandId));
+    }
+
+    public Boolean IsAbilityAvailable(BattleUnit unit, Int32 abilId)
+	{
+        if (!unit.IsPlayer)
+            return true;
+        return GetAbilityState(abilId, unit.GetIndex()) == AbilityStatus.Enable;
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
+using Memoria.Data;
 
 public class CardPreviewUI : MonoBehaviour
 {
@@ -48,10 +49,8 @@ public class CardPreviewUI : MonoBehaviour
 	{
 		set
 		{
-			for (Int32 i = 1; i < (Int32)stacks.Length; i++)
-			{
-				stacks[i].Data = CardPool.GetMaxStatCard(value);
-			}
+			for (Int32 i = 1; i < stacks.Length; i++)
+				stacks[i].Data = CardPool.GetMaxStatCard((TetraMasterCardId)value);
 		}
 	}
 
@@ -137,7 +136,7 @@ public class CardPreviewUI : MonoBehaviour
 	public void SetTextID(Int32 id)
 	{
 		no.text = "NO" + (id + 1);
-		cardName.text = FF9TextTool.CardName(id);
+		cardName.text = FF9TextTool.CardName((TetraMasterCardId)id);
 	}
 
 	public void SetTextSelect(Int32 cur, Int32 max)

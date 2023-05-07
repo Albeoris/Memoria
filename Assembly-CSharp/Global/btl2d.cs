@@ -429,8 +429,8 @@ public static class btl2d
     {
         btl2d.STAT_CNT_TBL[] statusTableList = new btl2d.STAT_CNT_TBL[]
         {
-            new btl2d.STAT_CNT_TBL(BattleStatus.Doom, 11, 0),
-            new btl2d.STAT_CNT_TBL(BattleStatus.GradualPetrify, 15, 1)
+            new btl2d.STAT_CNT_TBL(BattleStatus.Doom, (Int32)BattleStatusNumber.Doom - 1, 0),
+            new btl2d.STAT_CNT_TBL(BattleStatus.GradualPetrify, (Int32)BattleStatusNumber.GradualPetrify - 1, 1)
         };
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         BattleStatus counterStatus = BattleStatus.Doom | BattleStatus.GradualPetrify;

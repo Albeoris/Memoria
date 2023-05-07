@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.Target.IsUnderAnyStatus(BattleStatus.Mini))
             {
-                _v.TargetCommand.TryAlterCommandStatuses(_v.Caster);
+                _v.TryAlterCommandStatuses();
                 return;
             }
 
@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.PenaltyShellHitRate();
             _v.PenaltyCommandDividedHitRate();
             if (_v.TryMagicHit())
-                _v.TargetCommand.TryAlterCommandStatuses(_v.Caster);
+                _v.TryAlterCommandStatuses();
         }
     }
 }

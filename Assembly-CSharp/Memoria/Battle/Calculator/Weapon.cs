@@ -6,14 +6,14 @@ namespace Memoria
 {
     public sealed class Character
     {
-        internal readonly PLAYER Data;
+        public readonly PLAYER Data;
 
-        internal Character(PLAYER data)
+        public Character(PLAYER data)
         {
             Data = data;
         }
 
-        public PLAYER GetData => Data;
+        public static implicit operator PLAYER(Character character) => character.Data;
 
         public String Name => Data.Name;
         public CharacterId Index => Data.Index;
@@ -35,18 +35,20 @@ namespace Memoria
     {
         private readonly ItemAttack _data;
 
-        internal Weapon(ItemAttack data)
+        public Weapon(ItemAttack data)
         {
             _data = data;
         }
 
+        public static implicit operator ItemAttack(Weapon weap) => weap._data;
+
         public WeaponCategory Category => _data.Category;
         public BattleStatus Status => FF9StateSystem.Battle.FF9Battle.add_status[_data.StatusIndex].Value;
         public UInt16 ModelId => _data.ModelId;
-        public Byte ScriptId => _data.Ref.ScriptId;
-        public Byte Power => _data.Ref.Power;
+        public Int32 ScriptId => _data.Ref.ScriptId;
+        public Int32 Power => _data.Ref.Power;
         public EffectElement Element => (EffectElement)_data.Ref.Elements;
-        public Byte HitRate => _data.Ref.Rate;
+        public Int32 HitRate => _data.Ref.Rate;
 
         public static Weapon Find(RegularItem weaponId)
         {

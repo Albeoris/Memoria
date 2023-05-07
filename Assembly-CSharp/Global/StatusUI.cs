@@ -261,8 +261,8 @@ public class StatusUI : UIScene
         _parameterHud.MagicLabel.text = player.elem.mgc.ToString();
         _parameterHud.SpiritLabel.text = player.elem.wpr.ToString();
         _parameterHud.AttackLabel.text = ff9item.GetItemWeapon(player.equip[0]).Ref.Power.ToString();
-        _parameterHud.DefendLabel.text = player.defence.PhisicalDefence.ToString();
-        _parameterHud.EvadeLabel.text = player.defence.PhisicalEvade.ToString();
+        _parameterHud.DefendLabel.text = player.defence.PhysicalDefence.ToString();
+        _parameterHud.EvadeLabel.text = player.defence.PhysicalEvade.ToString();
         _parameterHud.MagicDefLabel.text = player.defence.MagicalDefence.ToString();
         _parameterHud.MagicEvaLabel.text = player.defence.MagicalEvade.ToString();
 

@@ -150,8 +150,8 @@ public static class btl_init
 		pBtl.stat.cur = pParm.InitialStatus;
 		pBtl.cur.hp = pParm.MaxHP;
 		pBtl.cur.mp = pParm.MaxMP;
-		pBtl.defence.PhisicalDefence = pParm.PhysicalDefence;
-		pBtl.defence.PhisicalEvade = pParm.PhysicalEvade;
+		pBtl.defence.PhysicalDefence = pParm.PhysicalDefence;
+		pBtl.defence.PhysicalEvade = pParm.PhysicalEvade;
 		pBtl.defence.MagicalDefence = pParm.MagicalDefence;
 		pBtl.defence.MagicalEvade = pParm.MagicalEvade;
 		pBtl.elem.dex = pParm.Element.Speed;
@@ -185,7 +185,6 @@ public static class btl_init
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
 		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
 		pBtl.special_status_old = false; // TRANCE SEEK - Old Status
-		pBtl.special_status_luna = false; // TRANCE SEEK - Luna Freyja
 	}
 
 	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int16 pNo)
@@ -450,8 +449,8 @@ public static class btl_init
 		btl_mot.SetPlayerDefMotion(btl, p.info.serial_no, btl_no);
 		BattlePlayerCharacter.InitAnimation(btl);
 		btl_eqp.InitWeapon(p, btl);
-		btl.defence.PhisicalDefence = p.defence.PhisicalDefence;
-		btl.defence.PhisicalEvade = p.defence.PhisicalEvade;
+		btl.defence.PhysicalDefence = p.defence.PhysicalDefence;
+		btl.defence.PhysicalEvade = p.defence.PhysicalEvade;
 		btl.defence.MagicalDefence = p.defence.MagicalDefence;
 		btl.defence.MagicalEvade = p.defence.MagicalEvade;
 		btl_eqp.InitEquipPrivilegeAttrib(p, btl);
@@ -592,6 +591,7 @@ public static class btl_init
 		btl.critical_rate_deal_bonus = 0;
 		btl.critical_rate_receive_bonus = 0;
 		btl.is_monster_transform = false;
+		btl.killer_track = null;
 	}
 
 	public static void SetBattleModel(BTL_DATA btl)

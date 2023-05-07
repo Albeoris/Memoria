@@ -27,7 +27,7 @@ public class CardPool : MonoBehaviour
 		}
 	}
 
-	public static QuadMistCard CreateQuadMistCard(Int32 id)
+	public static QuadMistCard CreateQuadMistCard(TetraMasterCardId id)
 	{
 		QuadMistCard newCard = new QuadMistCard(CardPool.GetMaxStatCard(id));
 		newCard.atk = (Byte)(newCard.atk / 2 + UnityEngine.Random.Range(0, newCard.atk / 2));
@@ -82,9 +82,9 @@ public class CardPool : MonoBehaviour
 		return b;
 	}
 
-	public static QuadMistCard GetMaxStatCard(Int32 id)
+	public static QuadMistCard GetMaxStatCard(TetraMasterCardId id)
 	{
-		return CardPool.main.cardData[id];
+		return CardPool.main.cardData[(Int32)id];
 	}
 
 	public static QuadMistCard GetBlockCard(Int32 id)

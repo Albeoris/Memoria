@@ -19,12 +19,12 @@ namespace Memoria
             _context.Attack = (Int16)(Magic + Comn.random16() % (1 + (Level + Magic >> 3)));
         }
 
-        public void SetPhisicalAttack()
+        public void SetPhysicalAttack()
         {
             _context.Attack = (Int16)(Strength + Comn.random16() % (1 + (Level + Strength >> 2)));
         }
 
-        public void SetLowPhisicalAttack()
+        public void SetLowPhysicalAttack()
         {
             _context.Attack = (Int16)(Strength + Comn.random16() % (1 + (Level + Strength >> 3)));
         }

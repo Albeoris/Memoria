@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.WeaponPhisicalParams(CalcAttackBonus.Simple);
+            _v.WeaponPhysicalParams(CalcAttackBonus.Simple);
             _v.Context.Attack = _v.Context.Attack * 3 >> 1;
 
             _v.Caster.PenaltyMini();

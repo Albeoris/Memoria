@@ -47,7 +47,7 @@ namespace FF9
             btlBonus.exp = 0U;
             btlBonus.ap = 0;
             btlBonus.item.Clear();
-            btlBonus.card = Byte.MaxValue;
+            btlBonus.card = TetraMasterCardId.NONE;
             btlBonus.escape_gil = false;
         }
 
@@ -249,13 +249,15 @@ namespace FF9
                 btlBonus.item.Add(et.bonus.item[0]);
                 et.bonus.item[0] = RegularItem.NoItem;
             }
-            if (btlBonus.card != Byte.MaxValue || et.bonus.card >= 100U || Comn.random8() >= et.bonus.card_rate)
+            if (btlBonus.card != TetraMasterCardId.NONE || (Int32)et.bonus.card >= CardPool.TOTAL_CARDS || Comn.random8() >= et.bonus.card_rate)
                 return;
-            btlBonus.card = (Byte)et.bonus.card;
+            btlBonus.card = et.bonus.card;
         }
 
         public static void SavePlayerData(BTL_DATA btl, Boolean removingUnit)
         {
+            if (btl.bi.player == 0)
+                return;
             BattleUnit unit = new BattleUnit(btl);
             PLAYER playerPtr = btl_util.getPlayerPtr(btl);
             playerPtr.trance = unit.IsUnderAnyStatus(BattleStatus.Trance) ? (Byte)0 : btl.trance;

@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             _v.Target.Flags |= CalcFlag.HpAlteration;
 
-            _v.WeaponPhisicalParams(CalcAttackBonus.Random);
+            _v.WeaponPhysicalParams(CalcAttackBonus.Random);
             _v.Context.Attack = _v.Context.Attack * 3 >> 1;
 
             _v.Caster.PenaltyMini();

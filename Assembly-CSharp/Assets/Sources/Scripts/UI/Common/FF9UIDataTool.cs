@@ -687,7 +687,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				if (Configuration.Graphics.GarnetHair == 2)
 					return "face03";
 			}
-			return btl_mot.BattleParameterList[serialNo].AvatarSprite;
+			return btl_mot.BattleParameterList.TryGetValue(serialNo, out CharacterBattleParameter param) ? param.AvatarSprite : "face_unkown";
 		}
 
 		public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)

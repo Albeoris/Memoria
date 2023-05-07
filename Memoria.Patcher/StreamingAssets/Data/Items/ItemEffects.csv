@@ -3,7 +3,7 @@
 # You must set at least 32 different items.
 # -----------------------------------------------
 # Id;Targets;DefaultAlly;Display;AnimationId;Dead;DefaultDead;ScriptId;Power;Rate;Element;Status
-# Int32;UInt8;Bit;UInt8;Int16;Bit;Bit;UInt8;UInt8;UInt8;UInt8;UInt32
+# Int32;UInt8;Bit;UInt8;Int16;Bit;Bit;Int32;Int32;Int32;UInt8;UInt32
 # -----------------------------------------------
 0;0;1;1;292;0;0;74;12;0;0;0;# 224 - Garnet
 1;0;1;1;292;0;0;74;20;0;0;0;# 225 - Amethyst

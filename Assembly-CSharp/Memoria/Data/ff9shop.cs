@@ -8,7 +8,7 @@ namespace FF9
 	    public static Int32 FF9Shop_GetDefence(Int32 part, CharacterEquipment equip)
 	    {
 	        Int32 result = 0;
-	        for (Int32 i = 1; i < 5; i++)
+	        for (Int32 i = 0; i < 5; i++)
 	        {
 				if (equip[i] != RegularItem.NoItem && ff9item.HasItemArmor(equip[i]))
 				{
@@ -19,10 +19,10 @@ namespace FF9
 							result += equipArmor.MagicalDefence;
 							break;
 						case 2:
-							result += equipArmor.PhisicalEvade;
+							result += equipArmor.PhysicalEvade;
 							break;
 						case 3:
-							result += equipArmor.PhisicalDefence;
+							result += equipArmor.PhysicalDefence;
 							break;
 						case 4:
 							break;

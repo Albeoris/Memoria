@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
                     {
                         if (!BattleState.IsBattleStateEnabled || caster.CurrentHp == 0)
                             return;
-                        caster.Kill();
+                        caster.Kill(caster);
                     }
                 );
             }

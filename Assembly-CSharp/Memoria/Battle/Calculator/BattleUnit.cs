@@ -16,20 +16,18 @@ namespace Memoria
         public Int32 HpDamage;
         public Int32 MpDamage;
 
-        internal BTL_DATA Data;
+        public BTL_DATA Data;
 
-        internal BattleUnit(BTL_DATA data)
+        public BattleUnit(BTL_DATA data)
         {
             Data = data;
         }
 
-        public BTL_DATA GetData
-        {
-            get => Data;
-        }
+        public static implicit operator BTL_DATA(BattleUnit unit) => unit.Data;
+
         public UInt16 Id => Data.btl_id;
         public Boolean IsPlayer => Data.bi.player != 0;
-        public Boolean IsSelected => Data.bi.target != 0;
+        public Boolean IsTargetable => Data.bi.target != 0;
         public Boolean IsSlave => Data.bi.slave != 0;
         public Boolean IsOutOfReach
         {
@@ -88,40 +86,40 @@ namespace Memoria
             set => Data.cur.at = value;
         }
 
+        public Int32 PhysicalDefence
+        {
+            get => Data.special_status_old ? Data.defence.PhysicalDefence >> 3 : Data.defence.PhysicalDefence;
+            set => Data.defence.PhysicalDefence = value;
+        }
+
+        public Int32 PhysicalEvade
+        {
+            get => Data.special_status_old ? Data.defence.PhysicalEvade >> 3 : Data.defence.PhysicalEvade;
+            set => Data.defence.PhysicalEvade = value;
+        }
+
+        public Int32 MagicDefence
+        {
+            get => Data.special_status_old ? Data.defence.MagicalDefence >> 3 : Data.defence.MagicalDefence;
+            set => Data.defence.MagicalDefence = value;
+        }
+
+        public Int32 MagicEvade
+        {
+            get => Data.special_status_old ? Data.defence.MagicalEvade >> 3 : Data.defence.MagicalEvade;
+            set => Data.defence.MagicalEvade = value;
+        }
+
         public Byte Strength
         {
             get => Data.special_status_old ? ((Byte)(Data.elem.str >> 3)) : Data.elem.str;
             set => Data.elem.str = value;
         }
 
-        public Byte PhisicalDefence
-        {
-            get => Data.special_status_old ? ((Byte)(Data.defence.PhisicalDefence >> 3)) : Data.defence.PhisicalDefence;
-            set => Data.defence.PhisicalDefence = value;
-        }
-
-        public Byte PhisicalEvade
-        {
-            get => Data.special_status_old ? ((Byte)(Data.defence.PhisicalEvade >> 3)) : Data.defence.PhisicalEvade;
-            set => Data.defence.PhisicalEvade = value;
-        }
-
         public Byte Magic
         {
             get => Data.special_status_old ? ((Byte)(Data.elem.mgc >> 3)) : Data.elem.mgc;
             set => Data.elem.mgc = value;
-        }
-
-        public Byte MagicDefence
-        {
-            get => Data.special_status_old ? ((Byte)(Data.defence.MagicalDefence >> 3)) : Data.defence.MagicalDefence;
-            set => Data.defence.MagicalDefence = value;
-        }
-
-        public Byte MagicEvade
-        {
-            get => Data.special_status_old ? ((Byte)(Data.defence.MagicalEvade >> 3)) : Data.defence.MagicalEvade;
-            set => Data.defence.MagicalEvade = value;
         }
 
         public Byte Dexterity
@@ -172,14 +170,14 @@ namespace Memoria
             get => Data.fig_info;
             set => Data.fig_info = value;
         }
-        public Byte WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : (Byte)0;
-        public Byte WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : (Byte)0;
+        public Int32 WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : 0;
+        public Int32 WeaponPower => Data.weapon != null ? Data.weapon.Ref.Power : 0;
         public EffectElement WeaponElement => (EffectElement)(Data.weapon != null ? Data.weapon.Ref.Elements : 0);
         public BattleStatus WeaponStatus => Data.weapon != null ? FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value : 0;
-        public Byte GetWeaponPower(BattleCommand cmd)
+        public Int32 GetWeaponPower(BattleCommand cmd)
         {
-            return Data.weapon == null ? (Byte)0
-              : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack && cmd != null && (cmd.AbilityType & 0x8) != 0 ? (Byte)Math.Max(1, 60 - Data.weapon.Ref.Power)
+            return Data.weapon == null ? 0
+              : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack && cmd != null && (cmd.AbilityType & 0x8) != 0 ? Math.Max(1, 60 - Data.weapon.Ref.Power)
               : Data.weapon.Ref.Power;
         }
 
@@ -250,7 +248,12 @@ namespace Memoria
         public RegularItem Accessory => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Accessory : RegularItem.NoItem;
         public Boolean IsHealingRod => IsPlayer && Weapon == RegularItem.HealingRod;
 
-        public Boolean[] StatModifier => this.Data.stat_modifier;
+        public Boolean[] StatModifier => Data.stat_modifier;
+
+        public BattleUnit GetKiller()
+		{
+            return Data.killer_track != null ? new BattleUnit(Data.killer_track) : null;
+		}
 
         public void AddDelayedModifier(BTL_DATA.DelayedModifier.IsDelayedDelegate delayDelegate, BTL_DATA.DelayedModifier.ApplyDelegate applyDelegate)
         {
@@ -412,12 +415,17 @@ namespace Memoria
             btl_stat.AlterStatus(Data, status, inflicter?.Data);
         }
 
-        public void Kill()
+        public void Kill(BattleUnit killer)
+		{
+            Kill(killer.Data);
+        }
+        public void Kill(BTL_DATA killer = null)
         {
             CurrentHp = 0; // When using the 10 000 HP enemy threshold system (with CustomBattleFlagsMeaning == 1), Kill only set the enemy's HP to 1 assuming it will trigger its dying sequence
             if (Data.cur.hp > 0) // Also, let the script handle the animations and sounds in that case
                 return;
 
+            Data.killer_track = killer;
             Data.bi.death_f = 1;
             if (!IsPlayer && btl_util.getEnemyPtr(Data).info.die_atk == 0)
             {
@@ -474,9 +482,9 @@ namespace Memoria
             Data = unit.Data;
         }
 
-        public void Libra(Boolean showSteals = false)
+        public void Libra(BattleHUD.LibraInformation infos = BattleHUD.LibraInformation.Default)
         {
-            UIManager.Battle.SetBattleLibra(this, showSteals);
+            UIManager.Battle.SetBattleLibra(this, infos);
         }
 
         public void Detect(Boolean reverseOrder = true)
@@ -492,6 +500,16 @@ namespace Memoria
                 ++index;
 
             return index;
+        }
+
+        public Boolean IsAbilityAvailable(BattleAbilityId abilId)
+        {
+            return UIManager.Battle.IsAbilityAvailable(this, ff9abil.GetAbilityIdFromActiveAbility(abilId));
+        }
+
+        public Boolean IsAbilityAvailable(SupportAbility abilId)
+        {
+            return UIManager.Battle.IsAbilityAvailable(this, ff9abil.GetAbilityIdFromSupportAbility(abilId));
         }
 
         public void ChangeToMonster(String btlName, Int32 monsterIndex, BattleCommandId commandToReplace, BattleCommandId commandAsMonster, Boolean cancelOnDeath, Boolean updatePts, Boolean updateStat, Boolean updateDef, Boolean updateElement, List<BattleCommandId> disableCommands = null)
@@ -524,8 +542,8 @@ namespace Memoria
             }
             if (updateDef)
             {
-                Data.defence.PhisicalDefence = monsterParam.PhysicalDefence;
-                Data.defence.PhisicalEvade = monsterParam.PhysicalEvade;
+                Data.defence.PhysicalDefence = monsterParam.PhysicalDefence;
+                Data.defence.PhysicalEvade = monsterParam.PhysicalEvade;
                 Data.defence.MagicalDefence = monsterParam.MagicalDefence;
                 Data.defence.MagicalEvade = monsterParam.MagicalEvade;
             }
@@ -552,7 +570,6 @@ namespace Memoria
                 battleRawText = new String[0];
             Int32 sequenceSfx;
             Boolean sequenceChannel, sequenceContact;
-            // In order to have more than 1 character transformation, one needs to rewrite the way the new AA are handled (either by rewriting BattleHUD thoroughly or using a better way to insert new AA in the FF9Battle.aa_data list)
             for (i = 0; i < scene.header.AtkCount && aaList.Count < 63; i++)
             {
                 if (seqreader.GetEnemyIndexOfSequence(i) != monsterIndex)
@@ -756,8 +773,8 @@ namespace Memoria
             }
             if (Data.monster_transform.replace_defence)
             {
-                Data.defence.PhisicalDefence = p.defence.PhisicalDefence;
-                Data.defence.PhisicalEvade = p.defence.PhisicalEvade;
+                Data.defence.PhysicalDefence = p.defence.PhysicalDefence;
+                Data.defence.PhysicalEvade = p.defence.PhysicalEvade;
                 Data.defence.MagicalDefence = p.defence.MagicalDefence;
                 Data.defence.MagicalEvade = p.defence.MagicalEvade;
             }
@@ -791,6 +808,7 @@ namespace Memoria
             Data.gameObject.SetActive(true);
             btl_mot.HideMesh(Data, UInt16.MaxValue);
             Data.monster_transform.fade_counter = 2;
+            UIManager.Battle.ClearCursorMemorize(Position, Data.monster_transform.new_command);
             Data.is_monster_transform = false;
         }
     }

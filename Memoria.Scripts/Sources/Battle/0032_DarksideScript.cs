@@ -20,10 +20,10 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (_v.Caster.IsPlayer)
-                _v.WeaponPhisicalParams();
+                _v.WeaponPhysicalParams();
             else
-                _v.NormalPhisicalParams();
-            _v.CasterCommand.BonusElement();
+                _v.NormalPhysicalParams();
+            _v.BonusElement();
             if (!_v.CanAttackElementalCommand())
                 return;
 

@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if ((_v.Target.PlayerCategory & CharacterCategory.Female) == 0)
-                _v.TargetCommand.TryAlterCommandStatuses(_v.Caster);
+                _v.TryAlterCommandStatuses();
             else
                 _v.Context.Flags |= BattleCalcFlags.Miss;
         }

@@ -283,10 +283,10 @@ public static class ff9play
         play.elem.str = skill.Base[1];
         play.elem.mgc = skill.Base[2];
         play.elem.wpr = skill.Base[3];
-        play.defence.PhisicalDefence = (Byte)skill.defParam[1];
-        play.defence.PhisicalEvade = (Byte)skill.defParam[2];
-        play.defence.MagicalDefence = (Byte)skill.defParam[3];
-        play.defence.MagicalEvade = (Byte)skill.defParam[4];
+        play.defence.PhysicalDefence = skill.defParam[1];
+        play.defence.PhysicalEvade = skill.defParam[2];
+        play.defence.MagicalDefence = skill.defParam[3];
+        play.defence.MagicalEvade = skill.defParam[4];
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
         play.mpCostFactor = 100;
@@ -324,24 +324,20 @@ public static class ff9play
         };
         if (info.equip[0] != RegularItem.NoItem)
             skill.defParam[0] = ff9item.GetItemWeapon(info.equip[0]).Ref.Power;
-        for (Int32 i = 1; i < 5; ++i)
-        {
-            RegularItem itemId = info.equip[i];
-            if (itemId != RegularItem.NoItem && ff9item.HasItemArmor(itemId))
-            {
-                ItemDefence defParams = ff9item.GetItemArmor(itemId);
-                skill.defParam[1] += defParams.PhisicalDefence;
-                skill.defParam[2] += defParams.PhisicalEvade;
-                skill.defParam[3] += defParams.MagicalDefence;
-                skill.defParam[4] += defParams.MagicalEvade;
-            }
-        }
         for (Int32 i = 0; i < 5; ++i)
         {
-            if (info.equip[i] != RegularItem.NoItem)
+            RegularItem itemId = info.equip[i];
+            if (itemId != RegularItem.NoItem)
             {
-                FF9ITEM_DATA ff9ItemData = ff9item._FF9Item_Data[info.equip[i]];
-                ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9ItemData.bonus];
+                if (ff9item.HasItemArmor(itemId))
+                {
+                    ItemDefence defParams = ff9item.GetItemArmor(itemId);
+                    skill.defParam[1] += defParams.PhysicalDefence;
+                    skill.defParam[2] += defParams.PhysicalEvade;
+                    skill.defParam[3] += defParams.MagicalDefence;
+                    skill.defParam[4] += defParams.MagicalEvade;
+                }
+                ItemStats equipPrivilege = ff9equip.ItemStatsData[ff9item._FF9Item_Data[itemId].bonus];
                 skill.Base[0] += equipPrivilege.dex;
                 skill.Base[1] += equipPrivilege.str;
                 skill.Base[2] += equipPrivilege.mgc;
@@ -406,9 +402,24 @@ public static class ff9play
     public static void FF9Play_SetDefEquips(CharacterEquipment target, EquipmentSetId equipmentId, Boolean isNewPlayer)
     {
         CharacterEquipment newSet = DefaultEquipment[equipmentId];
+        CharacterEquipment characterInitialSet = null;
+        if (!isNewPlayer)
+		{
+            if (equipmentId == EquipmentSetId.Blank2)
+                characterInitialSet = DefaultEquipment[EquipmentSetId.Blank];
+            else if (equipmentId == EquipmentSetId.Marcus2)
+                characterInitialSet = DefaultEquipment[EquipmentSetId.Marcus];
+            else if (equipmentId == EquipmentSetId.Beatrix2)
+                characterInitialSet = DefaultEquipment[EquipmentSetId.Beatrix];
+        }
+        Boolean isCharacterReequip = characterInitialSet != null;
+        if (isCharacterReequip)
+            for (Int32 i = 0; i < 5; i++)
+                if (characterInitialSet[i] != target[i])
+                    isCharacterReequip = false;
         for (Int32 i = 0; i < 5; i++)
         {
-            if (Configuration.Hacks.DisableEquipmentLoss && target[i] != RegularItem.NoItem && target[i] != newSet[i])
+            if (!isNewPlayer && !isCharacterReequip && target[i] != RegularItem.NoItem && target[i] != newSet[i])
             {
                 if (target[i] == RegularItem.Moonstone)
                     ff9item.DecreaseMoonStoneCount();

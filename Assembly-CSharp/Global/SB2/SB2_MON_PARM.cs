@@ -92,16 +92,16 @@ public class SB2_MON_PARM
 	public Byte HitRate;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte PhysicalDefence;
+	public Int32 PhysicalDefence;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte PhysicalEvade;
+	public Int32 PhysicalEvade;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte MagicalDefence;
+	public Int32 MagicalDefence;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte MagicalEvade;
+	public Int32 MagicalEvade;
 
 	[Memoria.PatchableFieldAttribute]
 	public Int32 BlueMagic;
@@ -129,7 +129,7 @@ public class SB2_MON_PARM
 	public Byte ShadowBone;
 
 	[Memoria.PatchableFieldAttribute]
-	public Byte WinCard;
+	public TetraMasterCardId WinCard;
 	[Memoria.PatchableFieldAttribute]
 	public UInt16 WinCardRate;
 

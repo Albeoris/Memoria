@@ -15,6 +15,7 @@ namespace Memoria.Data
         public BTL_REF Ref;
         public Int16 Offset1;
         public Int16 Offset2;
+        public Byte HitSfx;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -29,14 +30,18 @@ namespace Memoria.Data
             else
                 ModelId = UInt16.MaxValue;
 
-            Byte scriptId = CsvParser.Byte(raw[5]);
-            Byte power = CsvParser.Byte(raw[6]);
+            Int32 scriptId = CsvParser.Int32(raw[5]);
+            Int32 power = CsvParser.Int32(raw[6]);
             Byte elements = CsvParser.Byte(raw[7]);
-            Byte rate = CsvParser.Byte(raw[8]);
+            Int32 rate = CsvParser.Int32(raw[8]);
             Ref = new BTL_REF(scriptId, power, elements, rate);
 
             Offset1 = Int16.Parse(raw[9]);
             Offset2 = Int16.Parse(raw[10]);
+            if (metadata.HasOption($"Include{nameof(HitSfx)}"))
+                HitSfx = Byte.Parse(raw[11]);
+            else
+                HitSfx = (Byte)Id;
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -49,13 +54,15 @@ namespace Memoria.Data
             sw.String(ModelName);
 
             BTL_REF btl = Ref;
-            sw.Byte(btl.ScriptId);
-            sw.Byte(btl.Power);
+            sw.Int32(btl.ScriptId);
+            sw.Int32(btl.Power);
             sw.Byte(btl.Elements);
-            sw.Byte(btl.Rate);
+            sw.Int32(btl.Rate);
 
             sw.Int16(Offset1);
             sw.Int16(Offset2);
+            if (metadata.HasOption($"Include{nameof(HitSfx)}"))
+                sw.Byte(HitSfx);
         }
     }
 }

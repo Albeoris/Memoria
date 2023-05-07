@@ -68,6 +68,24 @@ public partial class BattleHUD : UIScene
         Slide,
     }
 
+    [Flags]
+    public enum LibraInformation : uint
+    {
+        Name            = 0x1,
+        Level           = 0x2,
+        HP              = 0x4,
+        MP              = 0x8,
+        Category        = 0x10,
+        ElementWeak     = 0x20,
+        ItemSteal       = 0x40,
+        BlueLearn       = 0x80,
+
+        NameLevel = Name | Level,
+        HPMP = HP | MP,
+
+        Default = NameLevel | HPMP | Category | ElementWeak
+    }
+
     private class AbilityPlayerDetail
     {
         public Character Player;
@@ -75,12 +93,14 @@ public partial class BattleHUD : UIScene
         public readonly Dictionary<Int32, Boolean> AbilityEquipList;
         public readonly Dictionary<Int32, Int32> AbilityPaList;
         public readonly Dictionary<Int32, Int32> AbilityMaxPaList;
+        public readonly Dictionary<Int32, Boolean> AbilityTranceList;
 
         public AbilityPlayerDetail()
         {
             AbilityEquipList = new Dictionary<Int32, Boolean>();
             AbilityPaList = new Dictionary<Int32, Int32>();
             AbilityMaxPaList = new Dictionary<Int32, Int32>();
+            AbilityTranceList = new Dictionary<Int32, Boolean>();
         }
 
         public void Clear()
@@ -88,6 +108,7 @@ public partial class BattleHUD : UIScene
             AbilityEquipList.Clear();
             AbilityPaList.Clear();
             AbilityMaxPaList.Clear();
+            AbilityTranceList.Clear();
         }
     }
 
@@ -158,8 +179,8 @@ public partial class BattleHUD : UIScene
             elem.mgc = p.elem.mgc;
             elem.wpr = p.elem.wpr;
             defence = new ItemDefence();
-            defence.PhisicalDefence = p.defence.PhisicalDefence;
-            defence.PhisicalEvade = p.defence.PhisicalEvade;
+            defence.PhysicalDefence = p.defence.PhysicalDefence;
+            defence.PhysicalEvade = p.defence.PhysicalEvade;
             defence.MagicalDefence = p.defence.MagicalDefence;
             defence.MagicalEvade = p.defence.MagicalEvade;
             saExtended = new HashSet<SupportAbility>(p.saExtended);

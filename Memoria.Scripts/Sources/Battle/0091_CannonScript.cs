@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.SetCommandAttack();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
             if (!_v.CanAttackMagic())
                 return;
 
