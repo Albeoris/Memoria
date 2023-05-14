@@ -137,6 +137,7 @@ public static class ff9play
         play.info = new PLAYER_INFO(parameter.Id, CharacterSerialNumber.ZIDANE_DAGGER, parameter.DefaultRow, parameter.DefaultWinPose, 0, parameter.DefaultMenuType);
         play.pa = new Byte[ff9abil._FF9Abil_PaData.ContainsKey(play.info.menu_type) ? ff9abil._FF9Abil_PaData[play.info.menu_type].Length : 0];
         play.status = 0;
+        play.permanent_status = 0;
         play.category = parameter.DefaultCategory;
         play.bonus = new FF9LEVEL_BONUS();
         play.Name = FF9TextTool.CharacterDefaultName(play.info.slot_no);

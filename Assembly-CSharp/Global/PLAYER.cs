@@ -31,14 +31,14 @@ public class PLAYER
 
     public CharacterPresetId PresetId
     {
-        get { return info.menu_type; }
-        set { info.menu_type = value; }
+        get => info.menu_type;
+        set => info.menu_type = value;
     }
 
     public CharacterCategory Category
     {
-        get { return (CharacterCategory)category; }
-        set { category = (Byte)value; }
+        get => (CharacterCategory)category;
+        set => category = (Byte)value;
     }
 
     public void ValidateSupportAbility()
@@ -94,6 +94,13 @@ public class PLAYER
 		return gemCount;
 	}
 
+	public void SetPermanentStatus(BattleStatus newPerm)
+	{
+		BattleStatus oldPerm = permanent_status;
+		permanent_status = newPerm;
+		status = (status | permanent_status) & ~(oldPerm & ~permanent_status);
+	}
+
 	public String Name
 	{
 		get
@@ -102,10 +109,7 @@ public class PLAYER
 				_name = FF9TextTool.CharacterDefaultName(info.slot_no);
 			return _name;
 		}
-		set
-		{
-			_name = value;
-		}
+		set => _name = value;
 	}
 
 	public const Byte PLAYER_CATEGORY_MALE = 1;
@@ -152,7 +156,8 @@ public class PLAYER
 	public PLAYER_BASE basis;
 	public PLAYER_INFO info;
 
-	public Byte status;
+	public BattleStatus status;
+	public BattleStatus permanent_status;
 
 	public CharacterEquipment equip;
 	public FF9LEVEL_BONUS bonus;

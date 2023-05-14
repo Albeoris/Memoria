@@ -526,7 +526,7 @@ namespace FF9
 			BattlePlayerCharacter.PlayerMotionIndex currentAnim = btl_mot.getMotion(btl);
 			if (btl_stat.CheckStatus(btl, BattleStatusConst.Immobilized))
 			{
-				if (btl.bi.player != 0 && !btl.is_monster_transform && btl_stat.CheckStatus(btl, BattleStatus.Venom))
+				if (btl.bi.player != 0 && !btl.is_monster_transform && btl_stat.CheckStatus(btl, BattleStatus.Venom & BattleStatusConst.IdleDying))
 				{
 					btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
 					btl.evt.animFrame = 0;

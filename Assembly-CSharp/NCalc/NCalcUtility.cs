@@ -221,6 +221,8 @@ namespace NCalc
             expr.Parameters["Spirit"] = (Int32)play.basis.wpr;
             expr.Parameters["Defence"] = play.defence.PhysicalDefence;
             expr.Parameters["Evade"] = play.defence.PhysicalEvade;
+            expr.Parameters["PlayerStatus"] = (UInt32)play.status;
+            expr.Parameters["PlayerPermanentStatus"] = (UInt32)play.permanent_status;
             expr.Parameters["MagicDefence"] = play.defence.MagicalDefence;
             expr.Parameters["MagicEvade"] = play.defence.MagicalEvade;
             expr.Parameters["MaxHPLimit"] = play.maxHpLimit;

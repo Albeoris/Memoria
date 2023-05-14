@@ -76,6 +76,16 @@ public class AbilityUI : UIScene
     private Dictionary<Int32, Int32> equipmentPartInAbilityDict;
     private Dictionary<Int32, RegularItem[]> equipmentIdInAbilityDict;
 
+    private static Color[] BoostedAbilityColor = new Color[]
+    {
+        new Color(1f, 1f, 1f),
+        new Color(0.7f, 1f, 0.7f),
+        new Color(1f, 0.2f, 0.5f),
+        new Color(0.6f, 0.6f, 1f),
+        new Color(0.4f, 0.4f, 0.8f),
+        new Color(0.2f, 0.2f, 0.6f)
+    };
+
     public Int32 CurrentPartyIndex
     {
         set { this.currentPartyIndex = value; }
@@ -251,11 +261,12 @@ public class AbilityUI : UIScene
                         Int32 abilityId = this.saIdList[this.currentAbilityIndex];
                         AbilityType abilityType = this.CheckSAType(abilityId, player);
                         CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityId);
+                        SupportAbility supportId = ff9abil.GetSupportAbilityFromAbilityId(abilityId);
                         if (abilityType == AbilityType.Enable)
                         {
                             PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                             FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Data, ff9abil.GetSupportAbilityFromAbilityId(abilityId), true);
+                            ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, true);
                             player.Data.cur.capa -= saData.GemsCount;
                             ff9play.FF9Play_Update(player.Data);
                             this.DisplaySA();
@@ -265,8 +276,42 @@ public class AbilityUI : UIScene
                         {
                             PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                             FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Data, ff9abil.GetSupportAbilityFromAbilityId(abilityId), false);
-                            player.Data.cur.capa += saData.GemsCount;
+                            Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
+                            if (boostMaxLevel > 0)
+                            {
+                                Int32 boostLevel = Math.Min(boostMaxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
+                                List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
+                                Boolean enableNext = boostLevel < boostMaxLevel;
+                                if (enableNext)
+								{
+                                    CharacterAbilityGems nextBoost = ff9abil._FF9Abil_SaData[boostedList[boostLevel]];
+                                    enableNext = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(nextBoost.Id), player) == AbilityType.Enable;
+                                    if (enableNext)
+                                    {
+                                        ff9abil.FF9Abil_SetEnableSA(player.Data, nextBoost.Id, true);
+                                        player.Data.cur.capa -= nextBoost.GemsCount;
+                                    }
+                                }
+                                if (!enableNext)
+                                {
+                                    foreach (SupportAbility boosted in boostedList)
+									{
+                                        if (ff9abil.FF9Abil_IsEnableSA(player.Data.saExtended, boosted))
+                                        {
+                                            CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
+                                            ff9abil.FF9Abil_SetEnableSA(player.Data, boosted, false);
+                                            player.Data.cur.capa += boostedGem.GemsCount;
+                                        }
+									}
+                                    ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
+                                    player.Data.cur.capa += saData.GemsCount;
+                                }
+                            }
+                            else
+                            {
+                                ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
+                                player.Data.cur.capa += saData.GemsCount;
+                            }
                             ff9play.FF9Play_Update(player.Data);
                             this.DisplaySA();
                             this.DisplayCharacter(true);
@@ -827,10 +872,12 @@ public class AbilityUI : UIScene
         }
         else
         {
+            SupportAbility supportId = ff9abil.GetSupportAbilityFromAbilityId(abilityListData.Id);
             detailWithIconHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(detailWithIconHud.Self, true);
-            detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(abilityListData.Id));
+            detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(supportId);
             detailWithIconHud.NumberLabel.text = saData.GemsCount.ToString();
+            detailWithIconHud.IconSprite.color = Color.white;
             if (abilityListData.Type == AbilityType.CantSpell)
             {
                 detailWithIconHud.NameLabel.color = FF9TextTool.Gray;
@@ -849,11 +896,26 @@ public class AbilityUI : UIScene
             }
             else if (abilityListData.Type == AbilityType.Selected)
             {
+                Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
                 detailWithIconHud.NameLabel.color = FF9TextTool.White;
                 detailWithIconHud.NumberLabel.color = FF9TextTool.White;
                 detailWithIconHud.IconSprite.atlas = FF9UIDataTool.IconAtlas;
                 detailWithIconHud.IconSpriteAnimation.namePrefix = "skill_stone_gem_";
                 detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
+                Int32 maxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
+                if (maxLevel > 0)
+                {
+                    List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
+                    Int32 level = Math.Min(maxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
+                    Int32 stoneCost = saData.GemsCount;
+                    for (Int32 i = 0; i < level; i++)
+                        stoneCost += ff9abil._FF9Abil_SaData[boostedList[i]].GemsCount;
+                    if (level > 0)
+                        supportId = boostedList[level - 1];
+                    detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(supportId);
+                    detailWithIconHud.NumberLabel.text = stoneCost.ToString();
+                    detailWithIconHud.IconSprite.color = BoostedAbilityColor[Math.Min(maxLevel - level, BoostedAbilityColor.Length - 1)];
+                }
             }
             else if (abilityListData.Type == AbilityType.CantDisable)
             {
@@ -864,7 +926,7 @@ public class AbilityUI : UIScene
                 detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
             }
             detailWithIconHud.Button.Help.Enable = true;
-            detailWithIconHud.Button.Help.Text = FF9TextTool.SupportAbilityHelpDescription(ff9abil.GetSupportAbilityFromAbilityId(abilityListData.Id));
+            detailWithIconHud.Button.Help.Text = FF9TextTool.SupportAbilityHelpDescription(supportId);
         }
     }
 
@@ -949,7 +1011,7 @@ public class AbilityUI : UIScene
             }
         }
 
-        return (player.Data.status & (Int32)(BattleStatus.Petrify | BattleStatus.Silence)) != 0 || (aa_data.Type & 1) == 0 || GetMp(aa_data) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
+        return (player.Data.status & BattleStatusConst.CannotUseAbilityInMenu) != 0 || (aa_data.Type & 1) == 0 || GetMp(aa_data) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
     }
 
     private AbilityType CheckSAType(Int32 abilityId, Character player)
@@ -1089,6 +1151,7 @@ public class AbilityUI : UIScene
 
     private void InitialData()
     {
+        List<SupportAbility> boostedList = new List<SupportAbility>();
         this.aaIdList.Clear();
         this.saIdList.Clear();
         this.equipmentPartInAbilityDict.Clear();
@@ -1096,17 +1159,30 @@ public class AbilityUI : UIScene
         Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
         if (ff9abil._FF9Abil_PaData.ContainsKey(player.PresetId))
         {
-            foreach (CharacterAbility paData in ff9abil._FF9Abil_PaData[player.PresetId])
+            CharacterAbility[] charAbil = ff9abil._FF9Abil_PaData[player.PresetId];
+            foreach (CharacterAbility paData in charAbil)
             {
                 if (paData.Id != 0)
                 {
                     if (paData.IsPassive)
+                    {
                         this.saIdList.Add(paData.Id);
+                        foreach (SupportAbility boosted in ff9abil.GetBoostedAbilityList(paData.PassiveId))
+                        {
+                            if (charAbil.Any(abil => abil.IsPassive && abil.PassiveId == boosted))
+                                boostedList.Add(boosted);
+                            else
+                                break;
+                        }
+                    }
                     else
+                    {
                         this.aaIdList.Add(paData.Id);
+                    }
                 }
             }
         }
+        this.saIdList.RemoveAll(id => boostedList.Contains(ff9abil.GetSupportAbilityFromAbilityId(id)));
         for (Int32 i = 0; i < 5; ++i)
         {
             RegularItem itemId = player.Equipment[i];
@@ -1123,7 +1199,7 @@ public class AbilityUI : UIScene
                 }
             }
         }
-        this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.Data.cur.hp > 0 && (player.Data.status & (Int32)(BattleStatus.Petrify | BattleStatus.Silence)) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
+        this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.Data.cur.hp > 0 && (player.Data.status & BattleStatusConst.CannotUseAbilityInMenu) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
         this.isSAEnable = !IsSubMenuDisabledByMainMenu(false) && ff9abil.FF9Abil_HasSA(player);
         this.useSubMenuLabel.color = !this.isAAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         this.equipSubMenuLabel.color = !this.isSAEnable ? FF9TextTool.Gray : FF9TextTool.White;

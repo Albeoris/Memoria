@@ -1001,9 +1001,9 @@ public partial class BattleHUD : UIScene
         playerHud.MP.SetColor(CheckMPState(bd) == ParameterStatus.Critical ? FF9TextTool.Yellow : FF9TextTool.White);
         String spriteName = ATENormal;
 
-        if (bd.IsUnderAnyStatus(BattleStatus.Slow | BattleStatus.Stop))
+        if (bd.IsUnderAnyStatus(BattleStatusConst.ATBGrey))
             spriteName = ATEGray;
-        else if (bd.IsUnderAnyStatus(BattleStatus.Haste))
+        else if (bd.IsUnderAnyStatus(BattleStatusConst.ATBOrange))
             spriteName = ATEOrange;
 
         playerHud.ATBBar.Foreground.Foreground.Sprite.spriteName = spriteName;
@@ -2340,7 +2340,7 @@ public partial class BattleHUD : UIScene
                 PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
                 unit.Trance = player.trance;
                 btl_init.CopyPoints(btl.cur, player.cur);
-                BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~(BattleStatus)player.status;
+                BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~player.status;
                 btl_stat.RemoveStatuses(btl, statusesToRemove);
                 if ((unit.CurrentStatus & BattleStatus.Death) != 0 && player.cur.hp > 0)
                     btl_stat.RemoveStatus(btl, BattleStatus.Death);

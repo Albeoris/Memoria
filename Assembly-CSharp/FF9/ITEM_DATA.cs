@@ -1,10 +1,11 @@
 ﻿using System;
+using Memoria.Data;
 
 namespace FF9
 {
 	public class ITEM_DATA
 	{
-		public ITEM_DATA(BattleCommandInfo info, BTL_REF Ref, UInt32 status)
+		public ITEM_DATA(BattleCommandInfo info, BTL_REF Ref, BattleStatus status)
 		{
 			this.info = info;
 			this.Ref = Ref;
@@ -15,6 +16,6 @@ namespace FF9
 
 		public BTL_REF Ref;
 
-		public UInt32 status;
+		public BattleStatus status;
 	}
 }

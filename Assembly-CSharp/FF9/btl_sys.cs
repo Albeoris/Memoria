@@ -265,11 +265,6 @@ namespace FF9
             if (removingUnit)
                 if (btl.cur.hp == 0)
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
-            if (battle.GARNET_DEPRESS_FLAG != 0 && unit.IsPlayer && unit.PlayerIndex == CharacterId.Garnet)
-            {
-                btl.stat.permanent &= ~BattleStatus.Silence;
-                btl_stat.RemoveStatuses(btl, BattleStatus.Silence);
-            }
             btl_stat.SaveStatus(playerPtr, btl);
         }
 

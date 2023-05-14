@@ -238,14 +238,14 @@ public class BattleResultUI : UIScene
 					uisprite.alpha = 0f;
 				}
 				Int32 spriteSlot = 0;
-				foreach (KeyValuePair<UInt32, Byte> keyValuePair in BattleResultUI.BadIconDict)
+				foreach (KeyValuePair<BattleStatus, Byte> kvp in BattleResultUI.BadIconDict)
 				{
 					if (spriteSlot >= characterBattleResultInfoHUD.StatusesSpriteList.Length)
 						break;
-					if ((player.status & keyValuePair.Key) != 0u)
+					if ((player.status & kvp.Key) != 0u)
 					{
 						characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
-						characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].spriteName = FF9UIDataTool.IconSpriteName[keyValuePair.Value];
+						characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].spriteName = FF9UIDataTool.IconSpriteName[kvp.Value];
 						spriteSlot++;
 					}
 				}
@@ -350,7 +350,7 @@ public class BattleResultUI : UIScene
 
 	private Boolean IsEnable(PLAYER play)
 	{
-		return play != null && play.cur.hp > 0 && (play.status & 69) == 0;
+		return play != null && play.cur.hp > 0 && (play.status & BattleStatusConst.DisableRewards) == 0;
 	}
 
 	private void InitialNormal()
@@ -935,15 +935,15 @@ public class BattleResultUI : UIScene
 
 	private Boolean isTimerDisplay;
 
-	public static Dictionary<UInt32, Byte> BadIconDict = new Dictionary<UInt32, Byte>
+	public static Dictionary<BattleStatus, Byte> BadIconDict = new Dictionary<BattleStatus, Byte>
 	{
-		{ 1u, 154 },
-		{ 2u, 153 },
-		{ 4u, 152 },
-		{ 8u, 151 },
-		{ 16u, 150 },
-		{ 32u, 149 },
-		{ 64u, 148 }
+		{ BattleStatus.Petrify, 154 },
+		{ BattleStatus.Venom, 153 },
+		{ BattleStatus.Virus, 152 },
+		{ BattleStatus.Silence, 151 },
+		{ BattleStatus.Blind, 150 },
+		{ BattleStatus.Trouble, 149 },
+		{ BattleStatus.Zombie, 148 }
 	};
 
 	private class CharacterBattleResultInfoHUD

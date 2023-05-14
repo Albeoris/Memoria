@@ -2294,11 +2294,11 @@ public class SFX
             return true;
         if (FF9StateSystem.Settings.cfg.camera == 1UL || Comn.random8() >= 128)
             return false;
-        BattleStatus pStat = cmd.regist.stat.cur;
+        BattleStatus pStat = cmd.regist.stat.cur | cmd.regist.stat.permanent;
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             if ((next.btl_id & cmd.tar_id) != 0)
-                pStat |= next.stat.cur;
-        return (pStat & (BattleStatus.Vanish | BattleStatus.Mini)) == 0u;
+                pStat |= next.stat.cur | next.stat.permanent;
+        return (pStat & BattleStatusConst.PreventAlternateCamera) == 0u;
     }
 
     public const Int32 DEBUG_EFFECT_ID = 126;

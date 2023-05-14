@@ -1,70 +1,70 @@
 # This file contains a number of gems, which are required for the activation of passive abilities.
 # You must set at least 64 different items.
 # -----------------------------------------------
-# Comment;Id;Gems
-# ;Int32;UInt8
+# Comment;Id;Gems;BoostedVersion(s)
+# ;Int32;UInt8;Int32[]
 # -----------------------------------------------
-Auto-Reflect;0;15
-Auto-Float;1;6
-Auto-Haste;2;9
-Auto-Regen;3;10
-Auto-Life;4;12
-HP+10%;5;4
-HP+20%;6;8
-MP+10%;7;4
-MP+20%;8;8
-Accuracy+;9;2
-Distract;10;5
-Long Reach;11;16
-MP Attack;12;5
-Bird Killer;13;3
-Bug Killer;14;2
-Stone Killer;15;4
-Undead Killer;16;2
-Dragon Killer;17;3
-Devil Killer;18;2
-Beast Killer;19;4
-Man Eater;20;2
-High Jump;21;4
-Master Thief;22;5
-Steal Gil;23;5
-Healer;24;2
-Add Status;25;3
-Gamble Defence;26;1
-Chemist;27;4
-Power Throw;28;19
-Power Up;29;3
-Reflect-Null;30;7
-Reflectx2;31;17
-Mag Elem Null;32;13
-Concentrate;33;10
-Half MP;34;11
-High Tide;35;8
-Counter;36;8
-Cover;37;6
-Protect Girls;38;4
-Eye 4 Eye;39;5
-Body Temp;40;4
-Alert;41;4
-Initiative;42;5
-Level Up;43;7
-Ability Up;44;3
-Millionaire;45;5
-Flee-Gil;46;3
-Guardian Mog;47;3
-Insomniac;48;5
-Antibody;49;4
-Bright Eyes;50;4
-Loudmouth;51;4
-Restore HP;52;8
-Jelly;53;4
-Return Magic;54;9
-Absorb MP;55;6
-Auto-Potion;56;3
-Locomotion;57;4
-Clear Headed;58;5
-Boost;59;12
-Odin’s Sword;60;5
-Mug;61;3
-Bandit;62;5
-Void;63;20
+Auto-Reflect;0;15;
+Auto-Float;1;6;
+Auto-Haste;2;9;
+Auto-Regen;3;10;
+Auto-Life;4;12;
+HP+10%;5;4;
+HP+20%;6;8;
+MP+10%;7;4;
+MP+20%;8;8;
+Accuracy+;9;2;
+Distract;10;5;
+Long Reach;11;16;
+MP Attack;12;5;
+Bird Killer;13;3;
+Bug Killer;14;2;
+Stone Killer;15;4;
+Undead Killer;16;2;
+Dragon Killer;17;3;
+Devil Killer;18;2;
+Beast Killer;19;4;
+Man Eater;20;2;
+High Jump;21;4;
+Master Thief;22;5;
+Steal Gil;23;5;
+Healer;24;2;
+Add Status;25;3;
+Gamble Defence;26;1;
+Chemist;27;4;
+Power Throw;28;19;
+Power Up;29;3;
+Reflect-Null;30;7;
+Reflectx2;31;17;
+Mag Elem Null;32;13;
+Concentrate;33;10;
+Half MP;34;11;
+High Tide;35;8;
+Counter;36;8;
+Cover;37;6;
+Protect Girls;38;4;
+Eye 4 Eye;39;5;
+Body Temp;40;4;
+Alert;41;4;
+Initiative;42;5;
+Level Up;43;7;
+Ability Up;44;3;
+Millionaire;45;5;
+Flee-Gil;46;3;
+Guardian Mog;47;3;
+Insomniac;48;5;
+Antibody;49;4;
+Bright Eyes;50;4;
+Loudmouth;51;4;
+Restore HP;52;8;
+Jelly;53;4;
+Return Magic;54;9;
+Absorb MP;55;6;
+Auto-Potion;56;3;
+Locomotion;57;4;
+Clear Headed;58;5;
+Boost;59;12;
+Odin’s Sword;60;5;
+Mug;61;3;
+Bandit;62;5;
+Void;63;20;

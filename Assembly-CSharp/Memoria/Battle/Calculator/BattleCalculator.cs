@@ -271,8 +271,7 @@ namespace Memoria
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
                 BattleUnit unit = new BattleUnit(next);
-                const BattleStatus status = BattleStatus.Petrify | BattleStatus.Poison | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
-                if (next.bi.player != 0 && !unit.IsUnderAnyStatus(status))
+                if (next.bi.player != 0 && !unit.IsUnderAnyStatus(BattleStatusConst.CannotEscape))
                     return true;
             }
 
@@ -619,43 +618,6 @@ namespace Memoria
             // Note that there are two weapon categories: SHORT_RANGE and LONG_RANGE
             // LONG_RANGE is used for this penalty while SHORT_RANGE is used both for that and for "out of range" enemies
             if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange)
-                Context.Attack /= 2;
-        }
-
-        public void BonusBackstabAndPenaltyLongDistanceTranceSeek()
-        {
-            if (IsCasterSameDirectionTarget() || Target.IsRunningAway())
-                Context.Attack = Context.Attack * 3 >> 1;
-
-            Boolean longDistance = false;
-            if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange && Caster.IsPlayer)
-            {
-                Context.Attack /= 2;
-                return;
-            }
-            using (IEnumerator<BattleUnit> enumerator = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().GetEnumerator())
-            {
-                while (enumerator.MoveNext())
-                {
-                    if (enumerator.Current.IsPlayer)
-                    {
-                        int index = Target.GetIndex();
-                        if (index < 3)
-                        {
-                            BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(index + 1);
-                            if (Mathf.Abs(Caster.Row - unit.Row) <= 1 && !unit.IsUnderStatus(BattleStatusConst.NoReaction))
-                                longDistance = true;
-                        }
-                        if (index > 0)
-                        {
-                            BattleUnit unit2 = FF9StateSystem.Battle.FF9Battle.GetUnit(index - 1);
-                            if (Mathf.Abs(Caster.Row - unit2.Row) <= 1 && !unit2.IsUnderStatus(BattleStatusConst.NoReaction))
-                                longDistance = true;
-                        }
-                    }
-                }
-            }
-            if (longDistance)
                 Context.Attack /= 2;
         }
 

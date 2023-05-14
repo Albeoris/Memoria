@@ -765,7 +765,7 @@ public class JsonParser : ISharedDataParser
 				{ "menu_type", ((Byte)p.info.menu_type).ToString() },
 				{ "sub_replaced", p.info.sub_replaced.ToString() }
 			});
-			playerClass.Add("status", p.status.ToString());
+			playerClass.Add("status", ((Int32)p.status).ToString());
 			JSONArray equipClass = new JSONArray();
 			for (Int32 j = 0; j < 5; j++)
 				equipClass.Add(((Int32)p.equip[j]).ToString());
@@ -1102,7 +1102,7 @@ public class JsonParser : ISharedDataParser
 				if (playerInfoClass["menu_type"] != null)
 					player.info.menu_type = (CharacterPresetId)playerInfoClass["menu_type"].AsInt;
 				if (playerClass["status"] != null)
-					player.status = (Byte)playerClass["status"].AsInt;
+					player.status = (BattleStatus)playerClass["status"].AsInt;
 				if (playerClass["equip"] != null)
 					for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
 						player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;

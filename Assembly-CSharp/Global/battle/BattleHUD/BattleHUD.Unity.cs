@@ -197,7 +197,7 @@ public partial class BattleHUD : UIScene
                 continue;
 
             BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(character.PlayerId);
-            if ((player.IsUnderAnyStatus(BattleStatus.Confuse) || player.IsUnderAnyStatus(BattleStatus.Berserk)) && character.ATBBlink)
+            if (player.IsUnderAnyStatus(BattleStatus.Confuse | BattleStatus.Berserk) && character.ATBBlink)
                 character.ATBBlink = false;
             if (IsEnableInput(player) && !_isAutoAttack)
             {

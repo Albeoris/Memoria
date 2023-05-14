@@ -17,7 +17,8 @@ public static class btl_stat
 {
     public static void SaveStatus(PLAYER p, BTL_DATA btl)
     {
-        p.status = (Byte)(btl.stat.cur & BattleStatusConst.OutOfBattle);
+        p.status = btl.stat.cur & BattleStatusConst.OutOfBattle;
+        p.status |= p.permanent_status;
     }
 
     public static void InitCountDownStatus(BTL_DATA btl)

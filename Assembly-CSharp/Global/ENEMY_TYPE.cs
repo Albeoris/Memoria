@@ -30,7 +30,7 @@ public class ENEMY_TYPE
 
 	public Int32 blue_magic_no;
 
-	public Byte mes;
+	public Int32 mes;
 
 	public Byte[] cam_bone;
 

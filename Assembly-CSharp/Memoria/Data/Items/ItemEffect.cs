@@ -39,7 +39,7 @@ namespace Memoria.Data
                 Element = (EffectElement)data.Ref.Elements,
                 Rate = data.Ref.Rate,
 
-                Status = (BattleStatus)data.status
+                Status = data.status
             };
         }
 
@@ -92,7 +92,7 @@ namespace Memoria.Data
             return new ITEM_DATA(
                 new BattleCommandInfo(Targets, DefaultAlly, Display, AnimationId, Dead, false, DefaultDead),
                 new BTL_REF(ScriptId, Power, (Byte)Element, Rate),
-                (UInt32)Status);
+                Status);
         }
     }
 }

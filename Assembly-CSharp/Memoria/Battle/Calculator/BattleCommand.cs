@@ -24,7 +24,7 @@ namespace Memoria
         public Int32 ScriptId => _data.Ref.ScriptId;
         public Int32 HitRate => _data.Ref.Rate;
         public Int32 Power => _data.Ref.Power;
-        public BattleStatus Status => (BattleStatus)_data.status;
+        public BattleStatus Status => _data.status;
 
         public static void AddToInventory(RegularItem itemId)
         {

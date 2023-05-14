@@ -533,33 +533,21 @@ public static class btl2d
     public const Byte BTL2D_NUM = 16;
 
     public const Byte BTL2D_TYPE_HP = 0;
-
     public const Byte BTL2D_TYPE_MP = 1;
-
     public const Byte BTL2D_TYPE_SYM = 2;
-
     public const Byte BTL2D_TYPE_MAX = 2;
 
     public const Byte DMG_COL_WHITE = 0;
-
     public const Byte DMG_COL_RED = 64;
-
     public const Byte DMG_COL_YELLOW = 128;
-
     public const Byte DMG_COL_GREEN = 192;
 
     public const BattleStatus STATUS_2D_ICON = BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Reflect;
 
-    public const UInt32 STATUS_2D_ICON_MASK = 588974138u;
-
     public const Byte ABR_OFF = 255;
-
     public const Byte ABR_50ADD = 0;
-
     public const Byte ABR_ADD = 1;
-
     public const Byte ABR_SUB = 2;
-
     public const Byte ABR_25ADD = 3;
 
     public const Int16 STAT_ICON_NUM = 12;

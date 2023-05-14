@@ -281,7 +281,7 @@ public class btl_para
             damage = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
             if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 damage >>= 2;
-            if (btl_stat.CheckStatus(btl, BattleStatus.Venom) && Configuration.Mod.TranceSeek)
+            if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.Venom))
                 damage = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {

@@ -100,50 +100,45 @@ public static class btl_init
 
 	public static void SetupBattleEnemy()
 	{
-		SB2_PATTERN[] patAddr = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr;
-		SB2_HEAD header = FF9StateSystem.Battle.FF9Battle.btl_scene.header;
-		BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+		BTL_SCENE scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+		SB2_HEAD header = scene.header;
 		if (FF9StateSystem.Battle.isDebug)
-			btl_scene.Info.StartType = FF9StateSystem.Battle.debugStartType;
+			scene.Info.StartType = FF9StateSystem.Battle.debugStartType;
 		else
-			btl_scene.Info.StartType = btl_sys.StartType(btl_scene.Info);
-		SB2_MON_PARM[] monAddr = FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr;
-		AA_DATA[] atk = FF9StateSystem.Battle.FF9Battle.btl_scene.atk;
-		Int16 num = (Int16)(header.TypCount + header.AtkCount);
-		UInt16 num2 = 0;
-		SB2_MON_PARM[] array = monAddr;
-		ENEMY_TYPE[] enemy_type = FF9StateSystem.Battle.FF9Battle.enemy_type;
-		Int16 num3;
-		for (num3 = 0; num3 < (Int16)header.TypCount; num3 = (Int16)(num3 + 1))
+			scene.Info.StartType = btl_sys.StartType(scene.Info);
+		SB2_PATTERN[] scenePatternList = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr;
+		SB2_MON_PARM[] sceneMonsterList = FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr;
+		AA_DATA[] sceneAttackList = FF9StateSystem.Battle.FF9Battle.btl_scene.atk;
+		List<ENEMY_TYPE> monsterList = FF9StateSystem.Battle.FF9Battle.enemy_type;
+		Int32 messageIndex = header.TypCount + header.AtkCount;
+		Int32 nameIndex = 0;
+		for (Int32 i = 0; i < header.TypCount; i++)
 		{
-			btl_init.SetMonsterParameter(array[num3], ref enemy_type[num3]);
-			enemy_type[num3].name = FF9TextTool.BattleText(num2);
-			enemy_type[num3].mes = (Byte)num;
-			num = (Int16)(num + array[num3].MesCnt);
-			num2++;
+			if (i >= monsterList.Count)
+				monsterList.Add(new ENEMY_TYPE());
+			btl_init.SetMonsterParameter(sceneMonsterList[i], monsterList[i]);
+			monsterList[i].name = FF9TextTool.BattleText(nameIndex++);
+			monsterList[i].mes = messageIndex;
+			messageIndex += sceneMonsterList[i].MesCnt;
 		}
-		AA_DATA[] array2 = atk;
-		FF9StateSystem.Battle.FF9Battle.enemy_attack = new AA_DATA[header.AtkCount];
-		AA_DATA[] enemy_attack = FF9StateSystem.Battle.FF9Battle.enemy_attack;
-		for (num3 = 0; num3 < (Int16)header.AtkCount; num3 = (Int16)(num3 + 1))
+		List<AA_DATA> attackList = FF9StateSystem.Battle.FF9Battle.enemy_attack;
+		attackList.Clear();
+		for (Int32 i = 0; i < header.AtkCount; i++)
 		{
-			btl_init.SetAttackData(ref array2[num3], ref enemy_attack[num3]);
-			enemy_attack[num3].Name = FF9TextTool.BattleText(num2);
-			num2++;
+			attackList.Add(sceneAttackList[i]);
+			attackList[i].Name = FF9TextTool.BattleText(nameIndex++);
 		}
 		BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
-		SB2_PATTERN sb2_PATTERN = patAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-		num3 = 0;
-		while (num3 < sb2_PATTERN.MonsterCount && next != null)
+		SB2_PATTERN patternPicked = scenePatternList[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+		for (Int32 i = 0; i < patternPicked.MonsterCount && next != null; i++)
 		{
-			btl_init.PutMonster(sb2_PATTERN.Monster[num3], next, btl_scene, num3);
-			btl_init.SetMonsterData(monAddr[sb2_PATTERN.Monster[num3].TypeNo], next, num3);
-			num3++;
+			btl_init.PutMonster(patternPicked.Monster[i], next, scene, i);
+			btl_init.SetMonsterData(sceneMonsterList[patternPicked.Monster[i].TypeNo], next, i);
 			next = next.next;
 		}
 	}
 
-	public static void SetMonsterData(SB2_MON_PARM pParm, BTL_DATA pBtl, Int16 pNo)
+	public static void SetMonsterData(SB2_MON_PARM pParm, BTL_DATA pBtl, Int32 pNo)
 	{
 		pBtl.stat.invalid = pParm.ResistStatus;
 		pBtl.stat.permanent = pParm.AutoStatus;
@@ -187,7 +182,7 @@ public static class btl_init
 		pBtl.special_status_old = false; // TRANCE SEEK - Old Status
 	}
 
-	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int16 pNo)
+	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int32 pNo)
 	{
 		Int16 startTypeAngle = (Int16)(pScene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK ? 180 : 0);
 		ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
@@ -200,28 +195,14 @@ public static class btl_init
 		enemy.info.multiple = (Byte)(((pPut.Flags & 2) == 0) ? 0 : 1);
 		if (enemy.info.slave == 0)
 		{
-			Single num = pPut.Xpos;
-			pBtl.evt.posBattle[0] = num;
-			pBtl.original_pos[0] = num;
-			pBtl.base_pos[0] = num;
-			pBtl.pos[0] = num;
-			num = pPut.Ypos * -1;
-			pBtl.evt.posBattle[1] = num;
-			pBtl.original_pos[1] = num;
-			pBtl.base_pos[1] = num;
-			pBtl.pos[1] = num;
-			num = pPut.Zpos;
-			pBtl.evt.posBattle[2] = num;
-			pBtl.original_pos[2] = num;
-			pBtl.base_pos[2] = num;
-			pBtl.pos[2] = num;
-			pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, (Single)(pPut.Rot & 4095), 180f));
-			pBtl.rot = Quaternion.Euler(new Vector3(0f, (Single)(pPut.Rot + startTypeAngle & 4095), 180f));
-			//pBtl.rot = (pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, pPut.Rot + 180 & 4095, 180f)));
+			pBtl.evt.posBattle = pBtl.original_pos = pBtl.base_pos = pBtl.pos = new Vector3(pPut.Xpos, pPut.Ypos * -1, pPut.Zpos);
+			pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, pPut.Rot & 4095, 180f));
+			pBtl.rot = Quaternion.Euler(new Vector3(0f, pPut.Rot + startTypeAngle & 4095, 180f));
+			//pBtl.rot = pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, pPut.Rot + 180 & 4095, 180f));
 		}
 		else
 		{
-			pBtl.rot = (pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 0f, 180f)));
+			pBtl.rot = pBtl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 0f, 180f));
 		}
 		pBtl.gameObject.transform.localPosition = pBtl.pos;
 		pBtl.gameObject.transform.localRotation = pBtl.rot;
@@ -232,12 +213,7 @@ public static class btl_init
 		pBtl.animEndFrame = enemy.info.slave == 0;
 	}
 
-	public static void SetAttackData(ref AA_DATA pAttk, ref AA_DATA pEatk)
-	{
-		pEatk = pAttk;
-	}
-
-	public static void SetMonsterParameter(SB2_MON_PARM pParm, ref ENEMY_TYPE pType)
+	public static void SetMonsterParameter(SB2_MON_PARM pParm, ENEMY_TYPE pType)
 	{
 		pType.radius = pParm.Radius;
 		pType.category = pParm.Category;
@@ -458,8 +434,8 @@ public static class btl_init
 		if (btl.cur.hp * 6 < btl.max.hp)
 			btl.stat.cur |= BattleStatus.LowHP;
 
-		btl_stat.AlterStatuses(btl, (BattleStatus)p.status & ~BattleStatus.Petrify);
-		if ((p.status & 1) != 0)
+		btl_stat.AlterStatuses(btl, p.status & ~BattleStatus.Petrify);
+		if ((p.status & BattleStatus.Petrify) != 0)
 			btl_stat.AlterStatus(btl, BattleStatus.Petrify);
 		btl_abil.CheckStatusAbility(new BattleUnit(btl));
 		BattleStatus resist_stat = btl.stat.invalid;
