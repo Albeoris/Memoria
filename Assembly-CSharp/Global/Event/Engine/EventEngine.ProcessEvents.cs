@@ -289,12 +289,12 @@ public partial class EventEngine
                     if (this.sExternalFieldChangeField >= 0)
                     {
                         this.sExternalFieldNum = this.sExternalFieldChangeField;
+                        FF9StateSystem.Common.FF9.fldMapNo = this.sExternalFieldList[this.sExternalFieldNum];
                         this.fieldmap.ChangeFieldMap(EventEngineUtils.eventIDToFBGID[this.sExternalFieldList[this.sExternalFieldNum]]);
                         if (this.sExternalFieldChangeCamera < 0)
                             this.fieldmap.SetCurrentCameraIndex(this.fieldmap.scene.cameraList.Count - 1);
                         else
                             this.fieldmap.SetCurrentCameraIndex(this.sExternalFieldChangeCamera);
-                        FF9StateSystem.Common.FF9.fldMapNo = this.sExternalFieldList[this.sExternalFieldNum];
                     }
                     else if (this.sExternalFieldChangeCamera >= 0)
                     {
@@ -329,11 +329,11 @@ public partial class EventEngine
                     this.sExternalFieldFade += 25;
                 }
                 if (this.sExternalFieldFade < 0)
-                    SceneDirector.FadeEventSetColor(FadeMode.Add, Color.black);
+                    SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
                 else if (this.sExternalFieldFade < 256)
-                    SceneDirector.FadeEventSetColor(FadeMode.Add, new Color(this.sExternalFieldFade / 255f, this.sExternalFieldFade / 255f, this.sExternalFieldFade / 255f));
+                    SceneDirector.FadeEventSetColor(FadeMode.Sub, new Color(this.sExternalFieldFade / 255f, this.sExternalFieldFade / 255f, this.sExternalFieldFade / 255f));
                 else
-                    SceneDirector.FadeEventSetColor(FadeMode.Add, new Color((510 - this.sExternalFieldFade) / 255f, (510 - this.sExternalFieldFade) / 255f, (510 - this.sExternalFieldFade) / 255f));
+                    SceneDirector.FadeEventSetColor(FadeMode.Sub, new Color((510 - this.sExternalFieldFade) / 255f, (510 - this.sExternalFieldFade) / 255f, (510 - this.sExternalFieldFade) / 255f));
             }
             else
             {
@@ -409,8 +409,9 @@ public partial class EventEngine
                 {
                     Vector2 new_camera_position = this.fieldmap.curVRP;
                     Vector2 cameraMove;
-                    new_camera_position[0] += 160f + this.fieldmap.scene.cameraList[this.fieldmap.camIdx].centerOffset[0];
-                    new_camera_position[1] += 112f - this.fieldmap.scene.cameraList[this.fieldmap.camIdx].centerOffset[1];
+                    BGCAM_DEF bgCamera = this.fieldmap.scene.cameraList[this.fieldmap.camIdx];
+                    new_camera_position[0] += FieldMap.HalfFieldWidth + bgCamera.centerOffset[0];
+                    new_camera_position[1] += FieldMap.HalfFieldHeight - bgCamera.centerOffset[1];
                     if (FF9StateSystem.MobilePlatform)
                         cameraMove = VirtualAnalog.HasInput() ? VirtualAnalog.GetAnalogValue() : PersistenSingleton<HonoInputManager>.Instance.GetAxis();
                     else
@@ -427,14 +428,8 @@ public partial class EventEngine
                         new_camera_position.y -= cameraMove.y * 5f;
                     if (Mathf.Abs(cameraMove.x) > 0.1f)
                         new_camera_position.x += cameraMove.x * 5f;
-                    if (new_camera_position.x < this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMinX)
-                        new_camera_position.x = this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMinX;
-                    else if (new_camera_position.x > this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMaxX)
-                        new_camera_position.x = this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMaxX;
-                    if (new_camera_position.y < this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMinY)
-                        new_camera_position.y = this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMinY;
-                    else if (new_camera_position.y > this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMaxY)
-                        new_camera_position.y = this.fieldmap.scene.cameraList[this.fieldmap.camIdx].vrpMaxY;
+                    new_camera_position.x = Mathf.Clamp(new_camera_position.x, bgCamera.vrpMinX, bgCamera.vrpMaxX);
+                    new_camera_position.y = Mathf.Clamp(new_camera_position.y, bgCamera.vrpMinY, bgCamera.vrpMaxY);
                     this.fieldmap.EBG_scene2DScroll((Int16)new_camera_position[0], (Int16)new_camera_position[1], 1, 0);
                 }
             }

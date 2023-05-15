@@ -81,7 +81,7 @@
     <Compile Include="Sources\Battle\0007_LevelWeaponScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0008_EnemyPhisicalAttackScript.cs">
+    <Compile Include="Sources\Battle\0008_EnemyPhysicalAttackScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0009_MagicAttackScript.cs">
@@ -108,13 +108,13 @@
     <Compile Include="Sources\Battle\0016_DrainHpScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0017_MagicProportionHpDmageScript.cs">
+    <Compile Include="Sources\Battle\0017_MagicGravityDamageScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0018_MeteoriteScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0019_PhisicalAttackScript.cs">
+    <Compile Include="Sources\Battle\0019_PhysicalAttackScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0020_OriginalMagicAttackScript.cs">
@@ -123,22 +123,22 @@
     <Compile Include="Sources\Battle\0021_GoblinPunchScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0022_InstantKillScript.cs">
+    <Compile Include="Sources\Battle\0022_LvDirectHPDamageScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0023_Lv4HolyScript.cs">
+    <Compile Include="Sources\Battle\0023_LvHolyScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0024_ReduceDefenceScript.cs">
+    <Compile Include="Sources\Battle\0024_LvReduceDefenceScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0025_InstantKillUnsafetyScript.cs">
+    <Compile Include="Sources\Battle\0025_PreciseDirectHPDamageScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0026_ThousandNeedlesScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0027_InstantKillUnsafetyHitScript.cs">
+    <Compile Include="Sources\Battle\0027_DirectHPDamageScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0028_LimitGloveScript.cs">
@@ -264,7 +264,7 @@
     <Compile Include="Sources\Battle\0070_ItemEtherScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0071_ItemElexirScript.cs">
+    <Compile Include="Sources\Battle\0071_ItemElixirScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0072_ItemPhoenixScript.cs">
@@ -339,7 +339,7 @@
     <Compile Include="Sources\Battle\0099_FlareStarScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0100_PreciseEnemyPhisicalAttackScript.cs">
+    <Compile Include="Sources\Battle\0100_PreciseEnemyPhysicalAttackScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0101_EnemyStealScript.cs">
@@ -351,7 +351,7 @@
     <Compile Include="Sources\Battle\0103_MagicApplyPositiveStatusScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0104_TonberiKarmaScript.cs">
+    <Compile Include="Sources\Battle\0104_TonberryKarmaScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0105_GrandCrossScript.cs">
@@ -360,7 +360,7 @@
     <Compile Include="Sources\Battle\0106_SwallowScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Sources\Battle\0107_PreciseEnemyPhisicalAttackAndChangeRowScript.cs">
+    <Compile Include="Sources\Battle\0107_PreciseEnemyPhysicalAttackAndChangeRowScript.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Sources\Battle\0108_IaiStrikeScript.cs">

@@ -23,12 +23,12 @@ namespace Memoria.Scripts.Battle
             _v.MagicAccuracy();
             _v.Target.PenaltyShellHitRate();
             if (_v.TryMagicHit())
-                _v.Target.PhisicalDefence /= 2;
+                _v.Target.PhysicalDefence /= 2;
         }
 
         public Single RateTarget()
         {
-            Int32 defenceDiff = _v.Target.PhisicalDefence / 2;
+            Int32 defenceDiff = _v.Target.PhysicalDefence / 2;
 
             Single result = defenceDiff * BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
 

@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// LV4 Holy
     /// </summary>
     [BattleScript(Id)]
-    public sealed class Lv4HolyScript : IBattleScript
+    public sealed class LvHolyScript : IBattleScript
     {
         public const Int32 Id = 0023;
 
         private readonly BattleCalculator _v;
 
-        public Lv4HolyScript(BattleCalculator v)
+        public LvHolyScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -24,7 +24,7 @@ namespace Memoria.Scripts.Battle
                 _v.NormalMagicParams();
                 _v.Caster.PenaltyMini();
                 _v.Target.PenaltyShellAttack();
-                _v.CasterCommand.BonusElement();
+                _v.BonusElement();
 
                 if (_v.CanAttackElementalCommand())
                     _v.CalcHpDamage();

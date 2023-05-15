@@ -19,7 +19,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.TargetCommand.TryAlterCommandStatuses(_v.Caster);
+            _v.TryAlterCommandStatuses();
         }
     }
 }

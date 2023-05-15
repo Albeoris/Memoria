@@ -99,7 +99,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				for (Int32 i = 0; i < statusesSpriteList.Length; i++)
 				{
 					UISprite uisprite = statusesSpriteList[i];
-					if ((player.status & (1 << statusIndex)) != 0)
+					if ((player.status & (BattleStatus)(1 << statusIndex)) != 0)
 					{
 						uisprite.spriteName = FF9UIDataTool.IconSpriteName[FF9UIDataTool.status_id[statusIndex]];
 						uisprite.alpha = 1f;
@@ -687,7 +687,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				if (Configuration.Graphics.GarnetHair == 2)
 					return "face03";
 			}
-			return btl_mot.BattleParameterList[serialNo].AvatarSprite;
+			return btl_mot.BattleParameterList.TryGetValue(serialNo, out CharacterBattleParameter param) ? param.AvatarSprite : "face_unkown";
 		}
 
 		public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)

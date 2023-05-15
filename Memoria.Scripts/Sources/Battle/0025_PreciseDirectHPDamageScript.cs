@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// Roulette, Photon
     /// </summary>
     [BattleScript(Id)]
-    public sealed class InstantKillUnsafetyScript : IBattleScript
+    public sealed class PreciseDirectHPDamageScript : IBattleScript
     {
         public const Int32 Id = 0025;
 
         private readonly BattleCalculator _v;
 
-        public InstantKillUnsafetyScript(BattleCalculator v)
+        public PreciseDirectHPDamageScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (_v.Target.CheckUnsafetyOrMiss() && _v.Target.CanBeAttacked())
-                _v.TargetCommand.InstantKill();
+                _v.TryDirectHPDamage();
         }
     }
 }

@@ -32,6 +32,11 @@ public static class UnifiedBattleSequencer
 			{
 				if (runningActions[i].ExecuteLoop())
 				{
+					if (FF9StateSystem.Battle.FF9Battle.btl_phase == 4 && runningActions[i].useCameraTarget)
+					{
+						SFX.SFX_SendIntData(4, 0, 0, 0);
+						btlseq.instance.seq_work_set.CameraNo = 0;
+					}
 					UnifiedBattleSequencer.ReleaseRunningAction(i);
 					i--;
 				}
@@ -76,6 +81,7 @@ public static class UnifiedBattleSequencer
 		public Int32 reflectStartThreadIndex;
 		public Boolean reflectEffectLoaded;
 		public Boolean reflectTriggered;
+		public Boolean useCameraTarget;
 		public UInt16 reflectingBtl;
 
 		public List<SFXData> sfxList = new List<SFXData>();
@@ -93,7 +99,6 @@ public static class UnifiedBattleSequencer
 		private UInt16 turningChar;
 		private UInt16 scalingChar;
 		private Boolean cancel;
-		private Boolean useCameraTarget;
 
 		public BattleAction(EffectType type, Int32 eff)
 		{
@@ -155,9 +160,9 @@ public static class UnifiedBattleSequencer
 			threadList.Add(new BattleActionThread(threadList[0], true));
 			reflectEffectLoaded = false;
 			reflectTriggered = false;
+			useCameraTarget = false;
 			reflectingBtl = 0;
 			cancel = false;
-			useCameraTarget = false;
 			runningActions.Add(this);
 		}
 

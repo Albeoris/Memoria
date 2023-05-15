@@ -70,17 +70,11 @@ public class JsonParser : ISharedDataParser
 		this.AddReservedBuffer(rootMainClass, schemaMainClass, "95000_Setting", 512);
 		rootMainClass.Add("95000_Setting", new JSONClass
 		{
-			{
-				"00001_time",
-				FF9StateSystem.Settings.time.ToString()
-			}
+			{ "00001_time", FF9StateSystem.Settings.time.ToString() }
 		});
 		schemaMainClass.Add("95000_Setting", new JSONClass
 		{
-			{
-				"00001_time",
-				typeof(Double).ToString()
-			}
+			{ "00001_time", typeof(Double).ToString() }
 		});
 		this.AddReservedBuffer(rootMainClass["95000_Setting"].AsObject, schemaMainClass["95000_Setting"].AsObject, "99999_ReservedBuffer", 504);
 		this.AddReservedBuffer(rootMainClass, schemaMainClass, "96000_Sound", 512);
@@ -240,6 +234,7 @@ public class JsonParser : ISharedDataParser
 		});
 		this.ParseEventDataToJson(FF9StateSystem.EventState, rootMemoriaClass, schemaMemoriaClass, false);
 		this.ParseCommonDataToJson(FF9StateSystem.Common.FF9, rootMemoriaClass, schemaMemoriaClass, false);
+		this.ParseQuadMistDataToJson(FF9StateSystem.MiniGame.SavedData, rootMemoriaClass, schemaMemoriaClass, false);
 	}
 
 	public void StoreData(JSONClass rootNode)
@@ -335,6 +330,8 @@ public class JsonParser : ISharedDataParser
 				this.ParseEventJsonToData(memoriaClass["20000_Event"], false);
 			if (memoriaClass["40000_Common"] != null)
 				this.ParseCommonJsonToData(memoriaClass["40000_Common"], false);
+			if (memoriaClass["30000_MiniGame"] != null)
+				FF9StateSystem.MiniGame.SavedData = this.ParseQuadMistJsonToData(memoriaClass["30000_MiniGame"], false);
 		}
 		foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
 		{
@@ -560,7 +557,7 @@ public class JsonParser : ISharedDataParser
 		});
 	}
 
-	private FF9SAVE_MINIGAME ParseQuadMistJsonToData(JSONNode jsonData)
+	private FF9SAVE_MINIGAME ParseQuadMistJsonToData(JSONNode jsonData, Boolean oldSaveFormat = true)
 	{
 		FF9SAVE_MINIGAME tetraMasterProfile = new FF9SAVE_MINIGAME();
 		if (jsonData["sWin"] != null)
@@ -575,7 +572,7 @@ public class JsonParser : ISharedDataParser
 			for (Int32 i = 0; i < count; i++)
 			{
 				JSONClass asObject = jsonData["MiniGameCard"][i].AsObject;
-				if ((Byte)asObject["id"].AsInt != 255)
+				if (asObject["id"] != null && (TetraMasterCardId)asObject["id"].AsInt != TetraMasterCardId.NONE)
 				{
 					QuadMistCard card = new QuadMistCard();
 					if (asObject["id"] != null)
@@ -612,14 +609,15 @@ public class JsonParser : ISharedDataParser
 		return tetraMasterProfile;
 	}
 
-	private void ParseQuadMistDataToJson(FF9SAVE_MINIGAME data, JSONClass dataNode, JSONClass schemaNode)
+	private void ParseQuadMistDataToJson(FF9SAVE_MINIGAME data, JSONClass dataNode, JSONClass schemaNode, Boolean oldSaveFormat = true)
 	{
 		JSONClass dataProfileClass = new JSONClass();
 		dataProfileClass.Add("sWin", data.sWin.ToString());
 		dataProfileClass.Add("sLose", data.sLose.ToString());
 		dataProfileClass.Add("sDraw", data.sDraw.ToString());
 		JSONArray dataProfileArray = new JSONArray();
-		for (Int32 i = 0; i < 100; i++)
+		Int32 count = oldSaveFormat ? 100 : data.MiniGameCard.Count;
+		for (Int32 i = 0; i < count; i++)
 		{
 			if (i < data.MiniGameCard.Count)
 			{
@@ -639,43 +637,21 @@ public class JsonParser : ISharedDataParser
 			{
 				dataProfileArray.Add(new JSONClass
 				{
-					{
-						"id",
-						"255"
-					},
-					{
-						"side",
-						"255"
-					},
-					{
-						"atk",
-						"255"
-					},
-					{
-						"type",
-						"255"
-					},
-					{
-						"pdef",
-						"255"
-					},
-					{
-						"mdef",
-						"255"
-					},
-					{
-						"cpoint",
-						"255"
-					},
-					{
-						"arrow",
-						"255"
-					}
+					{ "id", "255" },
+					{ "side", "255" },
+					{ "atk", "255" },
+					{ "type", "255" },
+					{ "pdef", "255" },
+					{ "mdef", "255" },
+					{ "cpoint", "255" },
+					{ "arrow", "255" }
 				});
 			}
 		}
 		dataProfileClass.Add("MiniGameCard", dataProfileArray);
 		dataNode.Add("30000_MiniGame", dataProfileClass);
+		if (!oldSaveFormat)
+			return;
 		JSONClass schemaProfileClass = new JSONClass();
 		schemaProfileClass.Add("sWin", typeof(Int16).ToString());
 		schemaProfileClass.Add("sLose", typeof(Int16).ToString());
@@ -686,38 +662,14 @@ public class JsonParser : ISharedDataParser
 			QuadMistCard card = new QuadMistCard();
 			schemaProfileArray.Add(new JSONClass
 			{
-				{
-					"id",
-					typeof(Byte).ToString()
-				},
-				{
-					"side",
-					typeof(Byte).ToString()
-				},
-				{
-					"atk",
-					typeof(Byte).ToString()
-				},
-				{
-					"type",
-					typeof(Int32).ToString()
-				},
-				{
-					"pdef",
-					typeof(Byte).ToString()
-				},
-				{
-					"mdef",
-					typeof(Byte).ToString()
-				},
-				{
-					"cpoint",
-					typeof(Byte).ToString()
-				},
-				{
-					"arrow",
-					typeof(Byte).ToString()
-				}
+				{ "id", typeof(Byte).ToString() },
+				{ "side", typeof(Byte).ToString() },
+				{ "atk", typeof(Byte).ToString() },
+				{ "type", typeof(Int32).ToString() },
+				{ "pdef", typeof(Byte).ToString() },
+				{ "mdef", typeof(Byte).ToString() },
+				{ "cpoint", typeof(Byte).ToString() },
+				{ "arrow", typeof(Byte).ToString() }
 			});
 		}
 		schemaProfileClass.Add("MiniGameCard", schemaProfileArray);
@@ -756,16 +708,16 @@ public class JsonParser : ISharedDataParser
 			playerClass.Add("exp", p.exp.ToString());
 			playerClass.Add("cur", new JSONClass
 			{
-				{ "hp", ((UInt16)p.cur.hp).ToString() }, // In order to avoid saves to change format, we keep 16-bit datas instead of 32-bits
-				{ "mp", ((Int16)p.cur.mp).ToString() },
+				{ "hp", p.cur.hp.ToString() },
+				{ "mp", p.cur.mp.ToString() },
 				{ "at", p.cur.at.ToString() },
 				{ "at_coef", p.cur.at_coef.ToString() },
 				{ "capa", p.cur.capa.ToString() }
 			});
 			playerClass.Add("max", new JSONClass
 			{
-				{ "hp", ((UInt16)p.max.hp).ToString() },
-				{ "mp", ((Int16)p.max.mp).ToString() },
+				{ "hp", p.max.hp.ToString() },
+				{ "mp", p.max.mp.ToString() },
 				{ "at", p.max.at.ToString() },
 				{ "at_coef", p.max.at_coef.ToString() },
 				{ "capa", p.max.capa.ToString() }
@@ -781,15 +733,15 @@ public class JsonParser : ISharedDataParser
 			});
 			playerClass.Add("defence", new JSONClass
 			{
-				{ "p_def", p.defence.PhisicalDefence.ToString() },
-				{ "p_ev", p.defence.PhisicalEvade.ToString() },
+				{ "p_def", p.defence.PhysicalDefence.ToString() },
+				{ "p_ev", p.defence.PhysicalEvade.ToString() },
 				{ "m_def", p.defence.MagicalDefence.ToString() },
 				{ "m_ev", p.defence.MagicalEvade.ToString() }
 			});
 			playerClass.Add("basis", new JSONClass
 			{
-				{ "max_hp", ((Int16)p.basis.max_hp).ToString() },
-				{ "max_mp", ((Int16)p.basis.max_mp).ToString() },
+				{ "max_hp", p.basis.max_hp.ToString() },
+				{ "max_mp", p.basis.max_mp.ToString() },
 				{ "dex", p.basis.dex.ToString() },
 				{ "str", p.basis.str.ToString() },
 				{ "mgc", p.basis.mgc.ToString() },
@@ -805,15 +757,15 @@ public class JsonParser : ISharedDataParser
 				{ "menu_type", ((Byte)p.info.menu_type).ToString() }
 			} : new JSONClass
 			{
-				{ "slot_no", ((Byte)p.info.slot_no).ToString() },
-				{ "serial_no", ((Byte)p.info.serial_no).ToString() },
+				{ "slot_no", ((Int32)p.info.slot_no).ToString() },
+				{ "serial_no", ((Int32)p.info.serial_no).ToString() },
 				{ "row", p.info.row.ToString() },
 				{ "win_pose", p.info.win_pose.ToString() },
 				{ "party", p.info.party.ToString() },
 				{ "menu_type", ((Byte)p.info.menu_type).ToString() },
 				{ "sub_replaced", p.info.sub_replaced.ToString() }
 			});
-			playerClass.Add("status", p.status.ToString());
+			playerClass.Add("status", ((Int32)p.status).ToString());
 			JSONArray equipClass = new JSONArray();
 			for (Int32 j = 0; j < 5; j++)
 				equipClass.Add(((Int32)p.equip[j]).ToString());
@@ -877,7 +829,7 @@ public class JsonParser : ISharedDataParser
 		for (Int32 i = 0; i < 4; i++)
 		{
 			if (party.member[i] != null)
-				dataMemberArray.Add((oldSaveFormat ? unchecked((Byte)SelectOldSaveSlot(party.member[i])) : (Byte)party.member[i].info.slot_no).ToString());
+				dataMemberArray.Add((oldSaveFormat ? unchecked((Byte)SelectOldSaveSlot(party.member[i])) : (Int32)party.member[i].info.slot_no).ToString());
 			else
 				dataMemberArray.Add("255");
 		}
@@ -937,7 +889,10 @@ public class JsonParser : ISharedDataParser
 		}
 		dataNode.Add("40000_Common", dataProfileClass);
 		if (!oldSaveFormat)
+		{
+			dataProfileClass.Add("battle_no", party.battle_no.ToString());
 			return;
+		}
 		JSONClass schemaProfileClass = new JSONClass();
 		JSONArray schemaPlayerArray = new JSONArray();
 		for (Int32 i = 0; i < 9; i++)
@@ -1116,13 +1071,13 @@ public class JsonParser : ISharedDataParser
 					player.elem.wpr = (Byte)playerElemClass["wpr"].AsInt;
 				JSONClass playerDefClass = playerClass["defence"].AsObject;
 				if (playerDefClass["p_def"] != null)
-					player.defence.PhisicalDefence = (Byte)playerDefClass["p_def"].AsInt;
+					player.defence.PhysicalDefence = playerDefClass["p_def"].AsInt;
 				if (playerDefClass["p_ev"] != null)
-					player.defence.PhisicalEvade = (Byte)playerDefClass["p_ev"].AsInt;
+					player.defence.PhysicalEvade = playerDefClass["p_ev"].AsInt;
 				if (playerDefClass["m_def"] != null)
-					player.defence.MagicalDefence = (Byte)playerDefClass["m_def"].AsInt;
+					player.defence.MagicalDefence = playerDefClass["m_def"].AsInt;
 				if (playerDefClass["m_ev"] != null)
-					player.defence.MagicalEvade = (Byte)playerDefClass["m_ev"].AsInt;
+					player.defence.MagicalEvade = playerDefClass["m_ev"].AsInt;
 				JSONClass playerBasisClass = playerClass["basis"].AsObject;
 				if (playerBasisClass["max_hp"] != null)
 					player.basis.max_hp = (UInt32)playerBasisClass["max_hp"].AsInt;
@@ -1147,7 +1102,7 @@ public class JsonParser : ISharedDataParser
 				if (playerInfoClass["menu_type"] != null)
 					player.info.menu_type = (CharacterPresetId)playerInfoClass["menu_type"].AsInt;
 				if (playerClass["status"] != null)
-					player.status = (Byte)playerClass["status"].AsInt;
+					player.status = (BattleStatus)playerClass["status"].AsInt;
 				if (playerClass["equip"] != null)
 					for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
 						player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
@@ -1278,6 +1233,8 @@ public class JsonParser : ISharedDataParser
 				}
 			}
 		}
+		if (jsonData["battle_no"] != null)
+			ffglobal.party.battle_no = jsonData["battle_no"].AsInt;
 	}
 
 	private void ParseSettingDataToJson(SettingsState data, JSONClass dataNode, JSONClass schemaNode)

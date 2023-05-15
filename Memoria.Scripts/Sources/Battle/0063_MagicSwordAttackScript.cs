@@ -19,10 +19,10 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Caster.SetLowPhisicalAttack();
-            _v.CasterCommand.SetWeaponPowerSum();
-            _v.Target.SetPhisicalDefense();
-            _v.CasterCommand.BonusElement();
+            _v.Caster.SetLowPhysicalAttack();
+            _v.SetWeaponPowerSum();
+            _v.Target.SetPhysicalDefense();
+            _v.BonusElement();
             if (_v.CanAttackMagic())
                 _v.CalcHpDamage();
         }

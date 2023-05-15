@@ -30,7 +30,7 @@ public class ENEMY_TYPE
 
 	public Int32 blue_magic_no;
 
-	public Byte mes;
+	public Int32 mes;
 
 	public Byte[] cam_bone;
 
@@ -61,7 +61,7 @@ public class ENEMY_TYPE
 		public RegularItem[] item;
 		public UInt16[] item_rate;
 
-		public UInt32 card;
+		public TetraMasterCardId card;
 		public UInt16 card_rate;
 	}
 }

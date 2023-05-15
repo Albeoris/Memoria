@@ -353,13 +353,13 @@ public class PartySettingUI : UIScene
             uISprite.alpha = 0f;
         }
         Int32 statusSlot = 0;
-        if ((player.status & (Int32)BattleStatus.Venom) != 0)
+        if ((player.status & BattleStatus.Venom) != 0)
         {
             avatarStatusAlignment[statusSlot].spriteName = Localization.Get("PartyStatusTextPoison");
             avatarStatusAlignment[statusSlot].alpha = 1f;
             statusSlot++;
         }
-        if ((player.status & (Int32)BattleStatus.Petrify) != 0)
+        if ((player.status & BattleStatus.Petrify) != 0)
         {
             avatarStatusAlignment[statusSlot].spriteName = Localization.Get("PartyStatusTextStone");
             avatarStatusAlignment[statusSlot].alpha = 1f;
@@ -383,7 +383,7 @@ public class PartySettingUI : UIScene
             {
                 charCnt++;
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(this.info.menu[i]);
-                if (player.cur.hp != 0 && (player.status & (Byte)BattleStatusConst.CannotActInMenu) == 0)
+                if (player.cur.hp != 0 && (player.status & BattleStatusConst.BattleEndInMenu) == 0)
                     healthyCnt++;
             }
         }
@@ -504,5 +504,6 @@ public class PartySettingUI : UIScene
         }
 
         partyInfo.select = selectList.ToArray();
+        partyInfo.party_ct = 1;
     }
 }

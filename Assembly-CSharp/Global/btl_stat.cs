@@ -17,7 +17,8 @@ public static class btl_stat
 {
     public static void SaveStatus(PLAYER p, BTL_DATA btl)
     {
-        p.status = (Byte)(btl.stat.cur & BattleStatusConst.OutOfBattle);
+        p.status = btl.stat.cur & BattleStatusConst.OutOfBattle;
+        p.status |= p.permanent_status;
     }
 
     public static void InitCountDownStatus(BTL_DATA btl)
@@ -95,7 +96,7 @@ public static class btl_stat
                 if (unit.CurrentHp > 0)
                 {
                     btl.fig_info |= Param.FIG_INFO_DEATH;
-                    new BattleUnit(btl).Kill();
+                    new BattleUnit(btl).Kill(inflicter);
                 }
                 else
                 {
@@ -191,7 +192,7 @@ public static class btl_stat
         {
             Int16 defaultFactor = (status & BattleStatusConst.ContiBad) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
                                   (status & BattleStatusConst.ContiGood) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
-            btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor);
+            btl.stat.cnt.conti[statusIndex] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor);
             if (Configuration.Battle.StatusDurationFormula.Length > 0)
             {
                 Expression e = new Expression(Configuration.Battle.StatusDurationFormula);
@@ -206,19 +207,19 @@ public static class btl_stat
                 NCalcUtility.InitializeExpressionNullableUnit(ref e, inflicter != null ? new BattleUnit(inflicter) : null, "Inflicter");
                 Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                 if (val >= 0)
-                    btl.stat.cnt.conti[statusIndex - 16U] = (Int16)Math.Min(val, Int16.MaxValue);
+                    btl.stat.cnt.conti[statusIndex] = (Int16)Math.Min(val, Int16.MaxValue);
             }
-            btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(btl.stat_duration_factor[status] * btl.stat.cnt.conti[statusIndex - 16U]);
+            btl.stat.cnt.conti[statusIndex] = (Int16)(btl.stat_duration_factor[status] * btl.stat.cnt.conti[statusIndex]);
             if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
             {
                 if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen))
                 {
-                    btl.stat.cnt.conti[statusIndex - 16U] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor * 2);
-                    btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusIndex - 16U] / 2);
+                    btl.stat.cnt.conti[statusIndex] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor * 2);
+                    btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusIndex] / 2);
                 }
                 else
                 {
-                    btl.stat.cnt.cdown_max = Math.Max((Int16)1, btl.stat.cnt.conti[statusIndex - 16U]);
+                    btl.stat.cnt.cdown_max = Math.Max((Int16)1, btl.stat.cnt.conti[statusIndex]);
                 }
             }
         }
@@ -274,6 +275,7 @@ public static class btl_stat
                 btl.bi.death_f = 0;
                 btl.bi.stop_anim = 0;
                 btl.escape_key = 0;
+                btl.killer_track = null;
                 if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
                 {
                     GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
@@ -525,8 +527,8 @@ public static class btl_stat
                 btl.elem.str = unit.Player.Data.elem.str;
                 btl.elem.wpr = unit.Player.Data.elem.wpr;
                 btl.elem.mgc = unit.Player.Data.elem.mgc;
-                btl.defence.PhisicalDefence = unit.Player.Data.defence.PhisicalDefence;
-                btl.defence.PhisicalEvade = unit.Player.Data.defence.PhisicalEvade;
+                btl.defence.PhysicalDefence = unit.Player.Data.defence.PhysicalDefence;
+                btl.defence.PhysicalEvade = unit.Player.Data.defence.PhysicalEvade;
                 btl.defence.MagicalDefence = unit.Player.Data.defence.MagicalDefence;
                 btl.defence.MagicalEvade = unit.Player.Data.defence.MagicalEvade;
             }
@@ -551,7 +553,7 @@ public static class btl_stat
 
         if (btl.bi.atb == 0)
         {
-            if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[14] -= btl.cur.at_coef) < 0)
+            if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[(Int32)BattleStatusNumber.Jump - 1] -= btl.cur.at_coef) < 0)
             {
                 if (btl.cmd[3].cmd_no == BattleCommandId.Jump)
                     btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpAttack, (Int32)BattleAbilityId.Spear1, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
@@ -790,7 +792,7 @@ public static class btl_stat
             data.pos = pos;
         }
         // Prevent auto-floating enemies to have the hovering movement
-        if (Status.checkCurStat(data, BattleStatus.Float) && ((data.stat.permanent & BattleStatus.Float) == 0 || data.bi.player != 0))
+        if ((data.stat.cur & BattleStatus.Float) != 0u && ((data.stat.permanent & BattleStatus.Float) == 0 || data.bi.player != 0))
         {
             Single y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
             Vector3 vector = data.base_pos;
@@ -944,12 +946,12 @@ public static class btl_stat
     }
     private static void ActiveTimeStatus(BTL_DATA btl)
     {
-        for (Int32 index = 0; index < 16; ++index)
+        for (Int32 index = 0; index < 32; ++index)
         {
-            BattleStatus status = (BattleStatus)(65536 << index);
-            if ((btl.stat.cur & Status.STATUS_MASK & status) != 0 && (btl.stat.cnt.conti[index] -= btl.cur.at_coef) < 0)
+            BattleStatus status = (BattleStatus)(1 << index);
+            if ((btl.stat.cur & BattleStatusConst.ContiCount & status) != 0 && (btl.stat.cnt.conti[index] -= btl.cur.at_coef) < 0)
             {
-                if (((Int32)status & Int32.MinValue) != 0)
+                if ((status & BattleStatus.GradualPetrify) != 0)
                 {
                     if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
                     {
@@ -967,7 +969,7 @@ public static class btl_stat
                 }
                 else if ((status & BattleStatus.Doom) != 0)
                 {
-                    if (Status.checkCurStat(btl, BattleStatus.EasyKill))
+                    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                     {
                         // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
                         // Might want to add a Configuration option for that effect...
@@ -1007,9 +1009,9 @@ public static class btl_stat
     {
         STAT_CNT cnt = btl.stat.cnt;
         btl.stat.invalid = btl.stat.permanent = btl.stat.cur = 0U;
-        for (UInt32 index = 0; index < 3U; ++index)
+        for (Int32 index = 0; index < 3; ++index)
             cnt.opr[index] = 0;
-        for (UInt32 index = 0; index < 14U; ++index)
+        for (Int32 index = 0; index < 32; ++index)
             cnt.conti[index] = 0;
     }
 }

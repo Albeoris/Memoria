@@ -291,10 +291,10 @@ namespace Memoria.Assets
                 writer.WriteByte("level", enemy.Level);
                 writer.WriteByte("category", enemy.Category);
                 writer.WriteByte("hitRate", enemy.HitRate);
-                writer.WriteByte("pdp", enemy.PhysicalDefence);
-                writer.WriteByte("pav", enemy.PhysicalEvade);
-                writer.WriteByte("mdp", enemy.MagicalDefence);
-                writer.WriteByte("mav", enemy.MagicalEvade);
+                writer.WriteInt32("pdp", enemy.PhysicalDefence);
+                writer.WriteInt32("pav", enemy.PhysicalEvade);
+                writer.WriteInt32("mdp", enemy.MagicalDefence);
+                writer.WriteInt32("mav", enemy.MagicalEvade);
                 writer.WriteInt32("blue", enemy.BlueMagic);
 
                 writer.BeginArray("bones"); // 4
@@ -314,7 +314,7 @@ namespace Memoria.Assets
                 writer.WriteUInt16("shadowX", enemy.ShadowX);
                 writer.WriteUInt16("shadowZ", enemy.ShadowZ);
                 writer.WriteByte("shadowBone", enemy.ShadowBone);
-                writer.WriteByteOrMinusOne("card", enemy.WinCard);
+                writer.WriteInt32("card", (Int32)enemy.WinCard);
                 writer.WriteByte("shadowBone2", enemy.ShadowBone2);
 
                 writer.BeginComplexArray("messages");
@@ -349,10 +349,10 @@ namespace Memoria.Assets
                 writer.WriteBoolean("defaultCamera", action.Info.DefaultCamera);
                 writer.WriteInt16("animationId1", action.Info.VfxIndex);
                 writer.WriteUInt16("animationId2", action.Vfx2);
-                writer.WriteByte("scriptId", action.Ref.ScriptId);
-                writer.WriteByte("power", action.Ref.Power);
+                writer.WriteInt32("scriptId", action.Ref.ScriptId);
+                writer.WriteInt32("power", action.Ref.Power);
                 writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
-                writer.WriteByte("rate", action.Ref.Rate);
+                writer.WriteInt32("rate", action.Ref.Rate);
                 writer.WriteByte("category", action.Category);
                 writer.WriteEnum("addNo", action.AddStatusNo);
                 writer.WriteInt32("mp", action.MP);
@@ -592,13 +592,13 @@ namespace Memoria.Assets
                             if (baseValue.HitRate != enemy.HitRate)
                                 writer.WriteByte("hitRate", enemy.HitRate);
                             if (baseValue.PhysicalDefence != enemy.PhysicalDefence)
-                                writer.WriteByte("pdp", enemy.PhysicalDefence);
+                                writer.WriteInt32("pdp", enemy.PhysicalDefence);
                             if (baseValue.PhysicalEvade != enemy.PhysicalEvade)
-                                writer.WriteByte("pav", enemy.PhysicalEvade);
+                                writer.WriteInt32("pav", enemy.PhysicalEvade);
                             if (baseValue.MagicalDefence != enemy.MagicalDefence)
-                                writer.WriteByte("mdp", enemy.MagicalDefence);
+                                writer.WriteInt32("mdp", enemy.MagicalDefence);
                             if (baseValue.MagicalEvade != enemy.MagicalEvade)
-                                writer.WriteByte("mav", enemy.MagicalEvade);
+                                writer.WriteInt32("mav", enemy.MagicalEvade);
                             if (baseValue.BlueMagic != enemy.BlueMagic)
                                 writer.WriteInt32("blue", enemy.BlueMagic);
 
@@ -641,7 +641,7 @@ namespace Memoria.Assets
                             if (baseValue.ShadowBone != enemy.ShadowBone)
                                 writer.WriteByte("shadowBone", enemy.ShadowBone);
                             if (baseValue.WinCard != enemy.WinCard)
-                                writer.WriteByteOrMinusOne("card", enemy.WinCard);
+                                writer.WriteInt32("card", (Int32)enemy.WinCard);
                             if (baseValue.ShadowBone2 != enemy.ShadowBone2)
                                 writer.WriteByte("shadowBone2", enemy.ShadowBone2);
 
@@ -730,13 +730,13 @@ namespace Memoria.Assets
                                 writer.WriteUInt16("animationId2", action.Vfx2);
 
                             if (baseItem.Value.Ref.ScriptId != action.Ref.ScriptId)
-                                writer.WriteByte("scriptId", action.Ref.ScriptId);
+                                writer.WriteInt32("scriptId", action.Ref.ScriptId);
                             if (baseItem.Value.Ref.Power != action.Ref.Power)
-                                writer.WriteByte("power", action.Ref.Power);
+                                writer.WriteInt32("power", action.Ref.Power);
                             if (baseItem.Value.Ref.Elements != action.Ref.Elements)
                                 writer.WriteFlags("elements", (EffectElement)action.Ref.Elements);
                             if (baseItem.Value.Ref.Rate != action.Ref.Rate)
-                                writer.WriteByte("rate", action.Ref.Rate);
+                                writer.WriteInt32("rate", action.Ref.Rate);
 
                             if (baseItem.Value.Category != action.Category)
                                 writer.WriteByte("category", action.Category);
@@ -805,10 +805,10 @@ namespace Memoria.Assets
                 sw.Boolean(cmdInfo.DefaultCamera);
                 sw.Int16(cmdInfo.VfxIndex);
                 sw.UInt16(_aaData.Vfx2);
-                sw.Byte(btlRef.ScriptId);
-                sw.Byte(btlRef.Power);
+                sw.Int32(btlRef.ScriptId);
+                sw.Int32(btlRef.Power);
                 sw.Byte(btlRef.Elements);
-                sw.Byte(btlRef.Rate);
+                sw.Int32(btlRef.Rate);
                 sw.Byte(_aaData.Category);
                 sw.EnumValue(_aaData.AddStatusNo);
                 sw.Int32(_aaData.MP);
@@ -903,10 +903,10 @@ namespace Memoria.Assets
                 sw.Byte(_enData.Level);
                 sw.Byte(_enData.Category);
                 sw.Byte(_enData.HitRate);
-                sw.Byte(_enData.PhysicalDefence);
-                sw.Byte(_enData.PhysicalEvade);
-                sw.Byte(_enData.MagicalDefence);
-                sw.Byte(_enData.MagicalEvade);
+                sw.Int32(_enData.PhysicalDefence);
+                sw.Int32(_enData.PhysicalEvade);
+                sw.Int32(_enData.MagicalDefence);
+                sw.Int32(_enData.MagicalEvade);
                 sw.Int32(_enData.BlueMagic);
 
                 // 4
@@ -924,7 +924,7 @@ namespace Memoria.Assets
                 sw.UInt16(_enData.ShadowX);
                 sw.UInt16(_enData.ShadowZ);
                 sw.Byte(_enData.ShadowBone);
-                sw.ByteOrMinusOne(_enData.WinCard);
+                sw.Int32((Int32)_enData.WinCard);
                 sw.Byte(_enData.ShadowBone2);
             }
         }

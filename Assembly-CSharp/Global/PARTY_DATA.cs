@@ -12,13 +12,10 @@ public class PARTY_DATA
 	public PLAYER[] member;
 
 	public UInt16 escape_no;
-
 	public UInt16 summon_flag;
-
 	public UInt32 gil;
+	public Int32 battle_no;
 
-	public UInt32 pad;
-
-    public Character GetCharacter(Int32 index) => new Character(member[index]);
+	public Character GetCharacter(Int32 index) => new Character(member[index]);
 	public CharacterId GetCharacterId(Int32 index) => member[index] == null ? CharacterId.NONE : member[index].info.slot_no;
 }

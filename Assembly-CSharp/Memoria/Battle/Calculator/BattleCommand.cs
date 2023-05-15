@@ -9,22 +9,22 @@ namespace Memoria
     {
         private readonly ITEM_DATA _data;
 
-        internal BattleItem(ITEM_DATA data)
+        public BattleItem(ITEM_DATA data)
         {
             _data = data;
         }
 
-        public ITEM_DATA GetData => _data;
+        public static implicit operator ITEM_DATA(BattleItem item) => item._data;
 
         public static BattleItem Find(RegularItem itemId)
         {
             return new BattleItem(ff9item.GetItemEffect(itemId));
         }
 
-        public Byte ScriptId => _data.Ref.ScriptId;
-        public Byte HitRate => _data.Ref.Rate;
-        public Byte Power => _data.Ref.Power;
-        public BattleStatus Status => (BattleStatus)_data.status;
+        public Int32 ScriptId => _data.Ref.ScriptId;
+        public Int32 HitRate => _data.Ref.Rate;
+        public Int32 Power => _data.Ref.Power;
+        public BattleStatus Status => _data.status;
 
         public static void AddToInventory(RegularItem itemId)
         {
@@ -39,21 +39,21 @@ namespace Memoria
 
     public sealed class BattleEnemy
     {
-        internal readonly ENEMY Data;
+        public readonly ENEMY Data;
 
-        internal BattleEnemy(ENEMY data)
+        public BattleEnemy(ENEMY data)
         {
             Data = data;
         }
 
-        public ENEMY GetData => Data;
+        public static implicit operator ENEMY(BattleEnemy enemy) => enemy.Data;
 
         public String Name => Data.et.name;
         public RegularItem[] StealableItems => Data.steal_item;
         public UInt16[] StealableItemRates => Data.steal_item_rate;
         public RegularItem[] DroppableItems => Data.et.bonus.item;
         public UInt16[] DroppableItemRates => Data.et.bonus.item_rate;
-        public UInt32 DroppableCard => Data.et.bonus.card;
+        public TetraMasterCardId DroppableCard => Data.et.bonus.card;
         public UInt16 DroppableCardRate => Data.et.bonus.card_rate;
 
         public static BattleEnemy Find(BattleUnit unit)
@@ -67,10 +67,12 @@ namespace Memoria
     {
         private readonly ENEMY_TYPE _data;
 
-        internal BattleEnemyPrototype(ENEMY_TYPE data)
+        public BattleEnemyPrototype(ENEMY_TYPE data)
         {
             _data = data;
         }
+
+        public static implicit operator ENEMY_TYPE(BattleEnemyPrototype enemy) => enemy._data;
 
         public Int32 BlueMagicId => _data.blue_magic_no;
 
@@ -83,16 +85,16 @@ namespace Memoria
 
     public class BattleCommand
     {
-        internal readonly CMD_DATA Data;
+        public readonly CMD_DATA Data;
 
         // Maybe move all these inside CMD_DATA...?
 
-        internal BattleCommand(CMD_DATA data)
+        public BattleCommand(CMD_DATA data)
         {
             Data = data;
         }
 
-        public CMD_DATA GetData => Data;
+        public static implicit operator CMD_DATA(BattleCommand cmd) => cmd.Data;
 
         public BattleCommandId Id => Data.cmd_no;
         public String AbilityName => AbilityId != BattleAbilityId.Void ? FF9TextTool.ActionAbilityName(AbilityId) : ItemId != RegularItem.NoItem ? FF9TextTool.ItemName(ItemId) : Data.aa.Name;
@@ -133,17 +135,17 @@ namespace Memoria
             get => Data.info.ReflectNull;
             set => Data.info.ReflectNull = value;
         }
-        public Byte Power
+        public Int32 Power
         {
             get => Data.Power;
             set => Data.Power = value;
         }
-        public Byte ScriptId
+        public Int32 ScriptId
         {
             get => Data.ScriptId;
             set => Data.ScriptId = value;
         }
-        public Byte HitRate
+        public Int32 HitRate
         {
             get => Data.HitRate;
             set => Data.HitRate = value;

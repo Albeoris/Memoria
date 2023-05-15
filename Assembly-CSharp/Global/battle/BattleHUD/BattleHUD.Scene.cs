@@ -67,16 +67,17 @@ public partial class BattleHUD : UIScene
         Boolean leftPressed = (ETb.sKey0 & (EventInput.Lleft | EventInput.Pleft)) != 0;
         Boolean rightPressed = (ETb.sKey0 & (EventInput.Lright | EventInput.Pright)) != 0;
         if (_buttonSliding == null)
-		{
+        {
+            BTL_DATA currentBtl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Data;
             GONavigationButton nextSlidingButton = null;
-            if (leftPressed)
+            if (leftPressed && CommandIsEnabled(currentBtl, BattleCommandId.Change))
                 nextSlidingButton = _commandPanel.Change;
-            else if (rightPressed)
+            else if (rightPressed && CommandIsEnabled(currentBtl, BattleCommandId.Defend))
                 nextSlidingButton = _commandPanel.Defend;
             if (nextSlidingButton != null)
             {
                 Single rowCount = _commandPanel.AccessMenu == null ? 4f : 5f;
-                Single row = 0f;
+                Single row;
                 if (_currentCommandIndex == CommandMenu.Attack)
                     row = 0f;
                 else if (_currentCommandIndex == CommandMenu.Ability1)

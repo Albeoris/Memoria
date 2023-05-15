@@ -59,26 +59,17 @@ public class QuadMistCardNameDialogSlider : MonoBehaviour
 	private IEnumerator ShowDialogWithCoroutine(Hand playerHand)
 	{
 		this.isReady = false;
-		if (this.dialog != (UnityEngine.Object)null)
-		{
+		if (this.dialog != null)
 			Singleton<DialogManager>.Instance.ReleaseDialogToPool(this.dialog);
-		}
-		String text = FF9TextTool.CardName((Int32)playerHand.SelectedUI.Data.id);
+		String cardName = FF9TextTool.CardName(playerHand.SelectedUI.Data.id);
 		UILabel dialogLabel = Singleton<DialogManager>.Instance.GetDialogLabel();
 		Int32 oldWidth = dialogLabel.width;
 		dialogLabel.width = Convert.ToInt32(UIManager.UIContentSize.x);
 		dialogLabel.ProcessText();
 		dialogLabel.UpdateNGUIText();
-		Int32 width = Convert.ToInt32((NGUIText.CalculatePrintedSize2(text).x + Dialog.DialogPhraseXPadding * 2f) / UIManager.ResourceXMultipier) + 1;
+		Int32 width = Convert.ToInt32((NGUIText.CalculatePrintedSize2(cardName).x + Dialog.DialogPhraseXPadding * 2f) / UIManager.ResourceXMultipier) + 1;
 		dialogLabel.width = oldWidth;
-		this.dialog = Singleton<DialogManager>.Instance.AttachDialog(String.Concat(new Object[]
-		{
-			"[STRT=",
-			width,
-			",1][CENT][NANI][IMME]",
-			text,
-			"[TIME=-1]"
-		}), 0, 1, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, new Vector2(10000f, 10000f), Dialog.CaptionType.None);
+		this.dialog = Singleton<DialogManager>.Instance.AttachDialog($"[STRT={width},1][CENT][NANI][IMME]{cardName}[TIME=-1]", 0, 1, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, new Vector2(10000f, 10000f), Dialog.CaptionType.None);
 		this.dialog.Panel.depth -= 2;
 		this.dialog.phrasePanel.depth -= 2;
 		while (this.dialog.CurrentState != Dialog.State.CompleteAnimation)
@@ -87,10 +78,8 @@ public class QuadMistCardNameDialogSlider : MonoBehaviour
 		}
 		Vector2 targetPosition = this.CalculateDialogTargetPosition(playerHand.Select, playerHand.Count);
 		TweenPosition tweenPos = this.dialog.GetComponent<TweenPosition>();
-		if (tweenPos == (UnityEngine.Object)null)
-		{
+		if (tweenPos == null)
 			tweenPos = this.dialog.gameObject.AddComponent<TweenPosition>();
-		}
 		tweenPos.ignoreTimeScale = false;
 		tweenPos.from = new Vector3(targetPosition.x + 800f, targetPosition.y);
 		tweenPos.to = targetPosition;

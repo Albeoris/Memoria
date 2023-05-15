@@ -36,15 +36,15 @@ namespace Memoria.Scripts.Battle
 
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
-            _v.Target.Kill();
+            _v.Target.Kill(_v.Caster);
 
-            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player.GetData, blueMagicId))
+            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
             {
                 UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
                 return;
             }
 
-            ff9abil.FF9Abil_SetMaster(_v.Caster.Player.GetData, blueMagicId);
+            ff9abil.FF9Abil_SetMaster(_v.Caster.Player, blueMagicId);
             BattleState.RaiseAbilitiesAchievement(blueMagicId);
             if (ff9abil.IsAbilityActive(blueMagicId))
                 UiState.SetBattleFollowFormatMessage(BattleMesages.Learned, FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(blueMagicId)));
@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
 
             BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(_v.Target);
             Int32 blueMagicId = enemyPrototype.BlueMagicId;
-            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player.GetData, blueMagicId))
+            if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
                 return 0;
 
             return 1;

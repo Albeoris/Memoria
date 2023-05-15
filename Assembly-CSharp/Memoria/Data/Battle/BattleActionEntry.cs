@@ -25,10 +25,10 @@ namespace Memoria.Data
             Boolean defaultCamera = CsvParser.Boolean(raw[index++]);
             Int16 animation1 = CsvParser.Int16(raw[index++]);
             UInt16 animation2 = CsvParser.UInt16(raw[index++]);
-            Byte scriptId = CsvParser.Byte(raw[index++]);
-            Byte power = CsvParser.Byte(raw[index++]);
+            Int32 scriptId = CsvParser.Int32(raw[index++]);
+            Int32 power = CsvParser.Int32(raw[index++]);
             Byte elements = CsvParser.Byte(raw[index++]);
-            Byte rate = CsvParser.ByteOrMinusOne(raw[index++]);
+            Int32 rate = CsvParser.Int32(raw[index++]);
             Byte category = CsvParser.Byte(raw[index++]);
             BattleStatusIndex statusIndex = (BattleStatusIndex)CsvParser.Int32(raw[index++]);
             Int32 mp = CsvParser.Int32(raw[index++]);
@@ -57,10 +57,10 @@ namespace Memoria.Data
             sw.Boolean(cmdInfo.DefaultCamera);
             sw.Int16(cmdInfo.VfxIndex);
             sw.UInt16(ActionData.Vfx2);
-            sw.Byte(btlRef.ScriptId);
-            sw.Byte(btlRef.Power);
+            sw.Int32(btlRef.ScriptId);
+            sw.Int32(btlRef.Power);
             sw.Byte(btlRef.Elements);
-            sw.ByteOrMinusOne(btlRef.Rate);
+            sw.Int32(btlRef.Rate);
             sw.Byte(ActionData.Category);
             sw.Int32((Int32)ActionData.AddStatusNo);
             sw.Int32(ActionData.MP);

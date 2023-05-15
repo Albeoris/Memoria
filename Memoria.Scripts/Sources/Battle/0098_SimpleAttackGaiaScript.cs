@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if ((_v.Target.PlayerCategory & CharacterCategory.Terra) == 0)
             {
-                _v.NormalPhisicalParams();
+                _v.NormalPhysicalParams();
                 _v.CalcHpDamage();
             }
             else

@@ -157,7 +157,7 @@ namespace FF9
         /// <returns>Instance of an object which holds the outcome of executed script.</returns>
         private static BattleCalculator PerformScriptOnPotion(BattleTarget defender, RegularItem potionId)
         {
-            const Byte potionScriptId = 069;
+            const Int32 potionScriptId = 069;
 
             // Making empty command does not trigger any animations. Useful for purely calculation purposes.
             BattleCommand command = MakeAutoPotionCommandWithoutAnimations(defender, potionId);

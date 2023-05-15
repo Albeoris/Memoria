@@ -41,8 +41,9 @@ namespace Memoria.Data
 
 	public static class BattleStatusConst
 	{
-		public static BattleStatus CannotActInMenu = BattleStatus.Petrify | BattleStatus.Venom;
 		public static BattleStatus OutOfBattle = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie; // Death is not a status out of battles but only a HP check
+		public static BattleStatus AnyPositive = BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Vanish | BattleStatus.Reflect;
+		public static BattleStatus AnyNegative = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Slow | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.GradualPetrify;
 		public static BattleStatus Achievement = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify;
 		public static BattleStatus ContiGood = BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Vanish | BattleStatus.Reflect; // 0x24EC0000
 		public static BattleStatus ContiBad = BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Slow | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.GradualPetrify; // 0x9B130000
@@ -71,10 +72,15 @@ namespace Memoria.Data
 		public static BattleStatus PreventEnemyCmd = Immobilized | BattleStatus.Death | BattleStatus.Sleep; // 0x2021103
 		public static BattleStatus PreventCounter = PreventEnemyCmd; // 0x2021103
 		public static BattleStatus CannotAct = Immobilized | BattleStatus.Jump | BattleStatus.Death | BattleStatus.Sleep;
-		public static BattleStatus VictoryClear = BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify;
+		public static BattleStatus PenaltyEvade = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze;
 		public static BattleStatus PreventATBConfirm = BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze;
-		public static BattleStatus AnyPositive = BattleStatus.AutoLife | BattleStatus.Trance | BattleStatus.Defend | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Vanish | BattleStatus.Reflect;
-		public static BattleStatus AnyNegative = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Slow | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.GradualPetrify;
+		public static BattleStatus ATBGrey = BattleStatus.Slow | BattleStatus.Stop;
+		public static BattleStatus ATBOrange = BattleStatus.Haste;
+		public static BattleStatus PreventAlternateCamera = BattleStatus.Vanish | BattleStatus.Mini;
+		public static BattleStatus VictoryClear = BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify;
+		public static BattleStatus BattleEndInMenu = BattleEnd & OutOfBattle;
+		public static BattleStatus CannotUseAbilityInMenu = BattleStatus.Petrify | BattleStatus.Silence;
+		public static BattleStatus DisableRewards = BattleStatus.Petrify | BattleStatus.Virus | BattleStatus.Zombie;
 		public static BattleStatus CannotSpeak = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
 
 		public static void Update()
@@ -88,6 +94,7 @@ namespace Memoria.Data
 			PreventEnemyCmd |= Immobilized;
 			PreventCounter |= Immobilized;
 			CannotAct |= Immobilized;
+			BattleEndInMenu = BattleEnd & OutOfBattle;
 		}
 	}
 }

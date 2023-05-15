@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
             _v.OriginalMagicParams();
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
 
             if (_v.CanAttackMagic())
             {

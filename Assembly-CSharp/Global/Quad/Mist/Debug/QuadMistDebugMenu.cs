@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
 using UnityEngine;
+using Memoria.Data;
 
 public class QuadMistDebugMenu : MonoBehaviour
 {
@@ -164,7 +165,7 @@ public class QuadMistDebugMenu : MonoBehaviour
 			QuadMistDatabase.LoadData();
 			Int32 id = Convert.ToInt32(this.cardStr);
 			List<QuadMistCard> cardList2 = QuadMistDatabase.GetCardList();
-			QuadMistCard item = CardPool.CreateQuadMistCard(id);
+			QuadMistCard item = CardPool.CreateQuadMistCard((TetraMasterCardId)id);
 			cardList2.Add(item);
 			QuadMistDatabase.SetCardList(cardList2);
 			QuadMistDatabase.SaveData();
@@ -197,9 +198,9 @@ public class QuadMistDebugMenu : MonoBehaviour
 			QuadMistDatabase.LoadData();
 			List<QuadMistCard> cardList4 = QuadMistDatabase.GetCardList();
 			cardList4.Clear();
-			for (Int32 i = 0; i < 100; i++)
+			for (Int32 i = 0; i < CardPool.TOTAL_CARDS; i++)
 			{
-				QuadMistCard item3 = CardPool.CreateQuadMistCard(i);
+				QuadMistCard item3 = CardPool.CreateQuadMistCard((TetraMasterCardId)i);
 				cardList4.Add(item3);
 			}
 			QuadMistDatabase.SetCardList(cardList4);

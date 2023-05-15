@@ -447,21 +447,19 @@ public class ff9item
         return poolNum * 1000 + idInPool + 256;
     }
 
-    public static Int32 GetCardIdFromItemId(Int32 itemId)
+    public static TetraMasterCardId GetCardIdFromItemId(Int32 itemId)
     {
         if (!IsItemCard(itemId))
-            return -1;
+            return TetraMasterCardId.NONE;
         Int32 poolNum = itemId / 1000;
         Int32 idInPool = itemId % 1000 - 512;
-        return poolNum * 100 + idInPool;
+        return (TetraMasterCardId)(poolNum * 100 + idInPool);
     }
 
-    public static Int32 GetItemIdFromCardId(Int32 cardId)
+    public static Int32 GetItemIdFromCardId(TetraMasterCardId cardId)
     {
-        if (cardId < 0)
-            return Byte.MaxValue;
-        Int32 poolNum = cardId / 100;
-        Int32 idInPool = cardId % 100;
+        Int32 poolNum = (Int32)cardId / 100;
+        Int32 idInPool = (Int32)cardId % 100;
         return poolNum * 1000 + idInPool + 512;
     }
 

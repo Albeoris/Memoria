@@ -3,16 +3,16 @@ using System;
 namespace Memoria.Scripts.Battle
 {
     /// <summary>
-    /// Aerial Slash, Whirlwind, Flame Slash, Fire Blades, Jet Fire, Virus Crunch, Psychokinesis, Curse, Sandstorm, High Wind, Virus Fly, !!!, Leaf Swirl, Sweep, Fin, Boomerang, Paper Storm, Spin, Shockwave, Cleave, Raining Swords, Neutron Ring
+    /// Weapon: Blood Sword
     /// </summary>
     [BattleScript(Id)]
-    public sealed class PreciseEnemyPhisicalAttackScript : IBattleScript
+    public sealed class EnemyPhysicalAttackScript : IBattleScript
     {
-        public const Int32 Id = 0100;
+        public const Int32 Id = 0008;
 
         private readonly BattleCalculator _v;
 
-        public PreciseEnemyPhisicalAttackScript(BattleCalculator v)
+        public EnemyPhysicalAttackScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -22,15 +22,21 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.TryKillFrozen())
                 return;
 
-            _v.NormalPhisicalParams();
+            _v.PhysicalAccuracy();
+            if (!_v.TryPhysicalHit())
+                return;
+
+            _v.NormalPhysicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
             if (!_v.CanAttackElementalCommand())
                 return;
 
-            _v.CalcHpDamage();
+            _v.TryCriticalHit();
+            _v.CalcPhysicalHpDamage();
+            _v.RaiseTrouble();
             _v.TryAlterMagicStatuses();
         }
     }

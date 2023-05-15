@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// LV3 Def-less
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ReduceDefenceScript : IBattleScript
+    public sealed class LvReduceDefenceScript : IBattleScript
     {
         public const Int32 Id = 0024;
 
         private readonly BattleCalculator _v;
 
-        public ReduceDefenceScript(BattleCalculator v)
+        public LvReduceDefenceScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -21,10 +21,10 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
-                if (_v.Target.PhisicalDefence != 0)
-                    _v.Target.PhisicalDefence = (Byte)((UInt32)GameRandom.Next16() % _v.Target.PhisicalDefence);
+                if (_v.Target.PhysicalDefence != 0)
+                    _v.Target.PhysicalDefence = GameRandom.Next16() % _v.Target.PhysicalDefence;
                 if (_v.Target.MagicDefence != 0)
-                    _v.Target.MagicDefence = (Byte)((UInt32)GameRandom.Next16() % _v.Target.MagicDefence);
+                    _v.Target.MagicDefence = GameRandom.Next16() % _v.Target.MagicDefence;
             }
         }
     }

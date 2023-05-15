@@ -2253,18 +2253,18 @@ public partial class EventEngine
             case EBin.event_code_binary.CLEARSTATUS:
             {
                 CharacterId charId = this.chr2slot(this.getv1());
-                Int32 statusList = this.getv1();
+                BattleStatus statusList = (BattleStatus)this.getv1();
                 if (charId == CharacterId.NONE)
                     return 0;
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                SFieldCalculator.FieldRemoveStatus(player, (Byte)statusList);
+                SFieldCalculator.FieldRemoveStatus(player, statusList);
                 // https://github.com/Albeoris/Memoria/issues/22
                 if (!player.info.sub_replaced)
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), (Byte)statusList);
+                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
                 if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
                         if (play.Index > CharacterId.Beatrix)
-                            SFieldCalculator.FieldRemoveStatus(play, (Byte)statusList);
+                            SFieldCalculator.FieldRemoveStatus(play, statusList);
                 return 0;
             }
             case EBin.event_code_binary.SPS2:

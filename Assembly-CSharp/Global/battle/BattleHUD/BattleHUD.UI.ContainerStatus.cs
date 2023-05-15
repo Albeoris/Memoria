@@ -133,7 +133,7 @@ public partial class BattleHUD : UIScene
                 hud.IsActive = true;
                 hud.Value.SetText(bd.CurrentHp.ToString());
                 hud.MaxValue.SetText(bd.MaximumHp.ToString());
-                if (!bd.IsSelected)
+                if (!bd.IsTargetable)
                 {
                     hud.SetColor(FF9TextTool.Gray);
                 }
@@ -160,7 +160,7 @@ public partial class BattleHUD : UIScene
                 numberSubModeHud.IsActive = true;
                 numberSubModeHud.Value.SetText(bd.CurrentMp.ToString());
                 numberSubModeHud.MaxValue.SetText(bd.MaximumMp.ToString());
-                if (!bd.IsSelected)
+                if (!bd.IsTargetable)
                     numberSubModeHud.SetColor(FF9TextTool.Gray);
                 else if (CheckMPState(bd) == ParameterStatus.Dead)
                     numberSubModeHud.SetColor(FF9TextTool.Yellow);

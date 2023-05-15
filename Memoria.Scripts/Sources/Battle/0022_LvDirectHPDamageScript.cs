@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// LV5 Death, Smash, Climhazzard(Story), Stock Break
     /// </summary>
     [BattleScript(Id)]
-    public sealed class InstantKillScript : IBattleScript
+    public sealed class LvDirectHPDamageScript : IBattleScript
     {
         public const Int32 Id = 0022;
 
         private readonly BattleCalculator _v;
 
-        public InstantKillScript(BattleCalculator v)
+        public LvDirectHPDamageScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -20,7 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
-                _v.TargetCommand.InstantKill();
+                _v.TryDirectHPDamage();
         }
     }
 }

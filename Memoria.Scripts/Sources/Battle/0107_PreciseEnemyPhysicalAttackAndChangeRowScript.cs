@@ -6,24 +6,24 @@ namespace Memoria.Scripts.Battle
     /// ???
     /// </summary>
     [BattleScript(Id)]
-    public sealed class PreciseEnemyPhisicalAttackAndChangeRowScript : IBattleScript
+    public sealed class PreciseEnemyPhysicalAttackAndChangeRowScript : IBattleScript
     {
         public const Int32 Id = 0107;
 
         private readonly BattleCalculator _v;
 
-        public PreciseEnemyPhisicalAttackAndChangeRowScript(BattleCalculator v)
+        public PreciseEnemyPhysicalAttackAndChangeRowScript(BattleCalculator v)
         {
             _v = v;
         }
 
         public void Perform()
         {
-            _v.NormalPhisicalParams();
+            _v.NormalPhysicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
             if (!_v.CanAttackElementalCommand())
                 return;
 

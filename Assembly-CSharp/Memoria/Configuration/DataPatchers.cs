@@ -179,7 +179,7 @@ namespace Memoria
 						BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
 						if (BattleResultUI.BadIconDict == null || FF9UIDataTool.status_id == null)
 							continue;
-						BattleResultUI.BadIconDict[(UInt32)(1 << ID)] = (Byte)iconID;
+						BattleResultUI.BadIconDict[(BattleStatus)(1 << ID)] = (Byte)iconID;
 						if (ID < FF9UIDataTool.status_id.Length)
 							FF9UIDataTool.status_id[ID] = iconID;
 						// Todo: debuff icons in the main menus (status menu, items...) are UISprite components of CharacterDetailHUD and are enabled/disabled in FF9UIDataTool.DisplayCharacterDetail

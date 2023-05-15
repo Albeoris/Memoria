@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using Memoria.Prime;
+using Memoria.Data;
 
 public class EnemyData : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class EnemyData : MonoBehaviour
 		enemyData = AssetManager.LoadBytes(cardLevelDataPath);
 	}
 
-	public Int32 GetCardID()
+	public TetraMasterCardId GetCardID()
 	{
 		Int32 rnd = UnityEngine.Random.Range(0, 256);
 		Int32 cardIndex = 15;
@@ -31,7 +31,7 @@ public class EnemyData : MonoBehaviour
 			
 			cardIndex = i;
 		}
-		return enemyData[cardLevel * 16 + cardIndex];
+		return (TetraMasterCardId)enemyData[cardLevel * 16 + cardIndex];
 	}
 
 	public void Initialize(Hand hand)

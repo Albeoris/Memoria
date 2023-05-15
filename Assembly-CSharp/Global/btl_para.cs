@@ -122,7 +122,9 @@ public class btl_para
         if (dmg_mot != 0)
             btl_mot.SetDamageMotion(btl, cmd);
         else if (btl.CurrentHp == 0)
-            btl.Kill();
+            btl.Kill(cmd?.regist);
+        if (btl.CurrentHp == 0)
+            btl.Data.killer_track = cmd?.regist;
         return damage;
     }
 
@@ -205,7 +207,7 @@ public class btl_para
             {
                 damage = GetLogicalHP(btl, true) >> 4;
             }
-            if (Status.checkCurStat(btl, BattleStatus.EasyKill))
+            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 damage >>= 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
@@ -277,9 +279,9 @@ public class btl_para
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
             damage = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
-            if (Status.checkCurStat(btl, BattleStatus.EasyKill))
+            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 damage >>= 2;
-            if (Status.checkCurStat(btl, BattleStatus.Venom) && Configuration.Mod.TranceSeek)
+            if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.Venom))
                 damage = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {
@@ -297,7 +299,7 @@ public class btl_para
     {
         foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (next.IsPlayer == btl.IsPlayer && next.Id != btl.Id && next.IsSelected)
+            if (next.IsPlayer == btl.IsPlayer && next.Id != btl.Id && next.IsTargetable)
             {
                 next.Data.fig_info = Param.FIG_INFO_DISP_HP;
                 SetDamage(next, dmg, 0);

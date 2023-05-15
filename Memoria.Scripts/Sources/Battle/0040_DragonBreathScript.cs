@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             {
                 _v.Target.Change(unit);
 
-                if (!_v.Target.IsPlayer && _v.Target.IsSelected)
+                if (!_v.Target.IsPlayer && _v.Target.IsTargetable)
                 {
                     SBattleCalculator.CalcResult(_v);
                     BattleState.Unit2DReq(unit);

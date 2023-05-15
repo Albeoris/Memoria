@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// Demi, Aqua Breath, Demi Shock, Worm Hole
     /// </summary>
     [BattleScript(Id)]
-    public sealed class MagicProportionHpDmageScript : IBattleScript
+    public sealed class MagicGravityDamageScript : IBattleScript
     {
         public const Int32 Id = 0017;
 
         private readonly BattleCalculator _v;
 
-        public MagicProportionHpDmageScript(BattleCalculator v)
+        public MagicGravityDamageScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -29,7 +29,7 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.SetCommandAttack();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
             if (_v.CanAttackMagic())
                 _v.CalcProportionDamage();
         }

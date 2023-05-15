@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// Everyone's Grudge (Karma)
     /// </summary>
     [BattleScript(Id)]
-    public sealed class TonberiKarmaScript : IBattleScript
+    public sealed class TonberryKarmaScript : IBattleScript
     {
         public const Int32 Id = 0104;
 
         private readonly BattleCalculator _v;
 
-        public TonberiKarmaScript(BattleCalculator v)
+        public TonberryKarmaScript(BattleCalculator v)
         {
             _v = v;
         }

@@ -144,7 +144,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
@@ -280,6 +280,8 @@ public class btl_cmd
         if (commandId == BattleCommandId.SummonGarnet || commandId == BattleCommandId.Phantom || commandId == BattleCommandId.SummonEiko)
             caster.summon_count++;
         BattleAbilityHelper.SetCustomPriority(cmd);
+        if (forcePriority)
+            cmd.info.priority = 1;
         if (caster != null && cmd == caster.cmd[0])
             BattleVoice.TriggerOnBattleAct(caster, "CommandInput", cmd);
         EnqueueCommand(cmd);
@@ -291,7 +293,7 @@ public class btl_cmd
             return;
         if (btl_util.IsCommandMonsterTransformAttack(btl, commandId, sub_no) && btl.monster_transform.attack == null)
             return;
-        SetCommand(btl.cmd[1], commandId, sub_no, tar_id, Comn.countBits(tar_id) > 1 ? 1u : 0u);
+        SetCommand(btl.cmd[1], commandId, sub_no, tar_id, Comn.countBits(tar_id) > 1 ? 1u : 0u, true);
     }
 
     public static Int16 GetPhantomCount(BattleUnit btl)

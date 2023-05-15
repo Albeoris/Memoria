@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.NormalPhisicalParams();
+            _v.NormalPhysicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.BonusBackstabAndPenaltyLongDistance();

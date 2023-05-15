@@ -52,19 +52,19 @@ namespace Memoria
             set => Data.sub_no = (Int32)value;
         }
 
-        public new Byte ScriptId
+        public new Int32 ScriptId
         {
             get => base.ScriptId;
             set => Data.ScriptId = value;
         }
 
-        public new Byte HitRate
+        public new Int32 HitRate
         {
             get => base.HitRate;
             set => Data.HitRate = value;
         }
 
-        public new Byte Power
+        public new Int32 Power
         {
             get => base.Power;
             set => Data.Power = value;

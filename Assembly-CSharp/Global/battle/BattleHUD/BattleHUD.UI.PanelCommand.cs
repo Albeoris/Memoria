@@ -67,6 +67,19 @@ public partial class BattleHUD : UIScene
                 Caption.Caption.Label.text = text;
             }
 
+            public IEnumerable<GONavigationButton> EnumerateButtons(Boolean includeMenuIfPossible = true)
+            {
+                yield return Attack;
+                yield return Defend;
+                yield return Skill1;
+                yield return Skill2;
+                yield return Item;
+                yield return Change;
+                if (includeMenuIfPossible && AccessMenu != null)
+                    yield return AccessMenu;
+                yield break;
+            }
+
             public GameObject GetCommandButton(CommandMenu menu)
             {
                 switch (menu)
@@ -92,14 +105,8 @@ public partial class BattleHUD : UIScene
 
             private void SubscribeOnClick()
             {
-                Attack.EventListener.Click += _scene.onClick;
-                Defend.EventListener.Click += _scene.onClick;
-                Skill1.EventListener.Click += _scene.onClick;
-                Skill2.EventListener.Click += _scene.onClick;
-                Item.EventListener.Click += _scene.onClick;
-                Change.EventListener.Click += _scene.onClick;
-                if (AccessMenu != null)
-                    AccessMenu.EventListener.Click += _scene.onClick;
+                foreach (GONavigationButton button in EnumerateButtons())
+                    button.EventListener.Click += _scene.onClick;
             }
 
             internal sealed class CaptionBackground : GOThinSpriteBackground

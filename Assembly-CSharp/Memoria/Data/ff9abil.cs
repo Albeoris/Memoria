@@ -170,6 +170,32 @@ namespace FF9
             return true;
         }
 
+        public static List<SupportAbility> GetBoostedAbilityList(SupportAbility baseAbil)
+        {
+            return ff9abil._FF9Abil_SaData[baseAbil].Boosted;
+        }
+
+        public static Int32 GetBoostedAbilityMaxLevel(PLAYER player, SupportAbility baseAbil)
+        {
+            if (!_FF9Abil_PaData.TryGetValue(player.PresetId, out CharacterAbility[] paArray))
+                return 0;
+            List<SupportAbility> boosted = GetBoostedAbilityList(baseAbil);
+            for (Int32 level = 0; level < boosted.Count; level++)
+                if (!paArray.Any(charAbil => charAbil.Id == GetAbilityIdFromSupportAbility(boosted[level])))
+                    return level;
+            return boosted.Count;
+        }
+
+        public static Int32 GetBoostedAbilityLevel(PLAYER player, SupportAbility baseAbil)
+        {
+            // Note: Level might be higher than MaxLevel if a supporting ability was enabled by special means (eg. a save editor)
+            List<SupportAbility> boosted = GetBoostedAbilityList(baseAbil);
+            for (Int32 level = 0; level < boosted.Count; level++)
+                if (!FF9Abil_IsEnableSA(player.saExtended, boosted[level]))
+                    return level;
+            return boosted.Count;
+        }
+
         // The followings are also used by CsvParser and CsvWriter, so any change of behaviour should be reflected there as well
         public static Boolean IsAbilityActive(Int32 abilId)
         {

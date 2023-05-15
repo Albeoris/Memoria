@@ -43,7 +43,7 @@ namespace Memoria.Scripts.Battle
                 if (randomEnemy == 0)
                     return;
 
-                BattleState.EnqueueConter(unit, BattleCommandId.RushAttack, BattleAbilityId.Attack, randomEnemy);
+                BattleState.EnqueueCounter(unit, BattleCommandId.RushAttack, BattleAbilityId.Attack, randomEnemy);
             }
 
             if (canAttack == false)

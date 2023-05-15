@@ -6,13 +6,13 @@ namespace Memoria.Scripts.Battle
     /// Free Energy, Tidal Flame, Scoop Art, Shift Break, Stellar Circle 5, Meo Twister, Solution 9, Grand Lethal, No Mercy, Stock Break, Shock
     /// </summary>
     [BattleScript(Id)]
-    public sealed class PhisicalAttackScript : IBattleScript
+    public sealed class PhysicalAttackScript : IBattleScript
     {
         public const Int32 Id = 0019;
 
         private readonly BattleCalculator _v;
 
-        public PhisicalAttackScript(BattleCalculator v)
+        public PhysicalAttackScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -20,12 +20,12 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (_v.Caster.IsPlayer)
-                _v.WeaponPhisicalParams();
+                _v.WeaponPhysicalParams();
             else
-                _v.NormalPhisicalParams();
+                _v.NormalPhysicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
-            _v.CasterCommand.BonusElement();
+            _v.BonusElement();
             if (_v.CanAttackWeaponElementalCommand())
             {
                 _v.CalcHpDamage();

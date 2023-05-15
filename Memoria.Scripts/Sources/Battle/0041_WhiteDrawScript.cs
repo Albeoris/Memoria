@@ -27,7 +27,7 @@ namespace Memoria.Scripts.Battle
 
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                if (!unit.IsPlayer || !unit.IsSelected)
+                if (!unit.IsPlayer || !unit.IsTargetable)
                     continue;
 
                 _v.Caster.Change(unit);

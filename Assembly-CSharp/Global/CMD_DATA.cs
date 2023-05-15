@@ -22,9 +22,9 @@ public class CMD_DATA
 
 	// Having duplicates allow to modify these fields (eg. SA features) without modifying the base AA's fields
 	public Boolean IsShortRange;
-	public Byte HitRate;
-	public Byte Power;
-	public Byte ScriptId;
+	public Int32 HitRate;
+	public Int32 Power;
+	public Int32 ScriptId;
 	public EffectElement Element;
 	public EffectElement ElementForBonus;
 	public BattleStatus AbilityStatus;

@@ -6,19 +6,19 @@ namespace Memoria.Field
 {
     public static class SFieldCalculator
     {
-        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, AA_DATA tbl, Byte scriptId, UInt32 cursor)
+        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, AA_DATA tbl, Int32 scriptId, UInt32 cursor)
         {
             ItemActionData tbl1 = new ItemActionData(tbl);
             return FieldCalcMain(caster, target, tbl1, scriptId, cursor);
         }
 
-        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ITEM_DATA tbl, Byte scriptId, UInt32 cursor)
+        public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ITEM_DATA tbl, Int32 scriptId, UInt32 cursor)
         {
             ItemActionData tbl1 = new ItemActionData(tbl);
             return FieldCalcMain(caster, target, tbl1, scriptId, cursor);
         }
 
-        private static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ItemActionData tbl, Byte scriptId, UInt32 cursor)
+        private static Boolean FieldCalcMain(PLAYER caster, PLAYER target, ItemActionData tbl, Int32 scriptId, UInt32 cursor)
         {
             Context v = new Context
             {
@@ -214,13 +214,13 @@ namespace Memoria.Field
         {
             // Use the status set list initialized through CSV reading
             // Might use "....Value & 127" instead of the plain Value although that doesn't seem required
-            if (FieldRemoveStatuses(v.Target, (Byte)FF9BattleDB.StatusSets[v.Tbl.AddNo].Value) != 2)
+            if (FieldRemoveStatuses(v.Target, FF9BattleDB.StatusSets[v.Tbl.AddNo].Value) != 2)
                 v.Flags |= BattleCalcFlags.Miss;
         }
 
         private static void CureItemStatus(Context v)
         {
-            if (FieldRemoveStatuses(v.Target, (Byte)v.Tbl.Status) != 2)
+            if (FieldRemoveStatuses(v.Target, v.Tbl.Status) != 2)
                 v.Flags |= BattleCalcFlags.Miss;
         }
 
@@ -238,20 +238,22 @@ namespace Memoria.Field
             player.cur.mp = Math.Min(player.cur.mp + recover, player.max.mp);
         }
 
-        public static Int32 FieldRemoveStatus(PLAYER player, Byte status)
+        public static Int32 FieldRemoveStatus(PLAYER player, BattleStatus status)
         {
+            if ((player.permanent_status & status) != 0)
+                return 0;
             if ((player.status & status) == 0)
                 return 1;
-            player.status &= unchecked((Byte)~status);
+            player.status &= ~status;
             return 2;
         }
 
-        private static Int32 FieldRemoveStatuses(PLAYER player, Byte statuses)
+        private static Int32 FieldRemoveStatuses(PLAYER player, BattleStatus statuses)
         {
             Int32 success = 1;
             for (Int32 i = 0; i < 8; ++i)
             {
-                Byte status = (Byte)(1 << i);
+                BattleStatus status = (BattleStatus)(1 << i);
                 if ((statuses & status) != 0 && FieldRemoveStatus(player, status) == 2)
                     success = 2;
             }
@@ -260,7 +262,7 @@ namespace Memoria.Field
 
         private static Boolean FieldCheckStatus(PLAYER player, BattleStatus status)
         {
-            return (player.status & (Int32)status) != 0;
+            return (player.status & status) != 0;
         }
 
         private sealed class ItemActionData
@@ -273,7 +275,7 @@ namespace Memoria.Field
             public Byte Type;
             public UInt16 Vfx2;
             public String Name;
-            public UInt32 Status;
+            public BattleStatus Status;
 
             public ItemActionData(ITEM_DATA item)
             {

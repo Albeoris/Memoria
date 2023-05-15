@@ -7,13 +7,13 @@ namespace Memoria.Scripts.Battle
     /// Elexir
     /// </summary>
     [BattleScript(Id)]
-    public sealed class ItemElexirScript : IBattleScript, IEstimateBattleScript
+    public sealed class ItemElixirScript : IBattleScript, IEstimateBattleScript
     {
         public const Int32 Id = 0071;
 
         private readonly BattleCalculator _v;
 
-        public ItemElexirScript(BattleCalculator v)
+        public ItemElixirScript(BattleCalculator v)
         {
             _v = v;
         }
@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.IsZombie)
             {
                 _v.Target.CurrentMp = 0;
-                _v.Target.Kill();
+                _v.Target.Kill(_v.Caster);
             }
             else
             {

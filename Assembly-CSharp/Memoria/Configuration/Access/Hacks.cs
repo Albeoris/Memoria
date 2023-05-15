@@ -13,7 +13,6 @@ namespace Memoria
             public static Int32 HippaulRacingViviSpeed => Instance._hacks.HippaulRacingViviSpeed;
             public static Int32 StealingAlwaysWorks => Instance._hacks.StealingAlwaysWorks;
             public static Boolean DisableNameChoice => Instance._hacks.DisableNameChoice;
-            public static Boolean DisableEquipmentLoss => Instance._hacks.DisableEquipmentLoss;
         }
     }
 }

@@ -2,7 +2,7 @@
 # You must set at least 136 different items.
 # -----------------------------------------------
 # Comment;Id;P.Def;P.Eva;M.Def;M.Eva
-# ;Int32;Byte;Byte;Byte;Byte
+# ;Int32;Int32;Int32;Int32;Int32
 # -----------------------------------------------
 Wrist;0;0;5;0;3
 Leather Wrist;1;0;7;0;5

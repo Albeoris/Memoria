@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                _v.Target.Kill();
+                _v.Target.Kill(_v.Caster);
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace Memoria.Scripts.Battle
 
             _v.Target.Flags |= CalcFlag.HpAlteration | CalcFlag.HpRecovery;
             _v.Target.HpDamage = (Int32)(_v.Target.MaximumHp * (_v.Target.Will + _v.Command.Power) / 100);
-            _v.TargetCommand.TryRemoveAbilityStatuses();
+            _v.TryRemoveAbilityStatuses();
         }
 
         private Boolean HitRateForZombie()

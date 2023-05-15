@@ -126,7 +126,8 @@
 ##  Permanent:
 ##    MaxHP, MaxMP, Speed, Strength, Magic, Spirit, Defence, Evade,
 ##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor,
-##    MaxHPLimit, MaxMPLimit, MaxDamageLimit, MaxMPDamageLimit
+##    MaxHPLimit, MaxMPLimit, MaxDamageLimit, MaxMPDamageLimit,
+##    PlayerPermanentStatus
 ##  
 ##  BattleStart:
 ##    BackAttack (chances of having a back attack, with 0 for 0% and 255 for 100%)
@@ -349,9 +350,9 @@
 ##   EffectElement_Aqua			EffectElement_Wind		EffectElement_Holy			EffectElement_Darkness
 ##  
 ##  The followings can be used for "CharacterIndex":
-##   CharacterIndex_Zidane		CharacterIndex_Vivi		CharacterIndex_Garnet		CharacterIndex_Steiner
-##   CharacterIndex_Freya		CharacterIndex_Quina	CharacterIndex_Eiko			CharacterIndex_Amarant
-##   CharacterIndex_Cinna		CharacterIndex_Marcus	CharacterIndex_Blank		CharacterIndex_Beatrix
+##   CharacterId_Zidane			CharacterId_Vivi		CharacterId_Garnet			CharacterId_Steiner
+##   CharacterId_Freya			CharacterId_Quina		CharacterId_Eiko			CharacterId_Amarant
+##   CharacterId_Cinna			CharacterId_Marcus		CharacterId_Blank			CharacterId_Beatrix
 ##  
 ##  The followings can be used for "PlayerCategory":
 ##   CharacterCategory_Male				CharacterCategory_Female

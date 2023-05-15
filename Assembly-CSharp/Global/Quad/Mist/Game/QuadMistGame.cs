@@ -498,11 +498,11 @@ public class QuadMistGame : MonoBehaviour
                     QuadMistDatabase.DrawCount++;
                 }
                 if (matchResult.type == MatchResult.Type.WIN)
-                    QuadMistDatabase.MiniGame_SetLastBattleResult(0);
+                    QuadMistDatabase.MiniGame_SetLastBattleResult(QuadMistDatabase.MINIGAME_LASTBATTLE_WIN);
                 else if (matchResult.type == MatchResult.Type.LOSE)
-                    QuadMistDatabase.MiniGame_SetLastBattleResult(1);
+                    QuadMistDatabase.MiniGame_SetLastBattleResult(QuadMistDatabase.MINIGAME_LASTBATTLE_LOSE);
                 else if (matchResult.type == MatchResult.Type.DRAW)
-                    QuadMistDatabase.MiniGame_SetLastBattleResult(2);
+                    QuadMistDatabase.MiniGame_SetLastBattleResult(QuadMistDatabase.MINIGAME_LASTBATTLE_DRAW);
                 AnimCoroutine(ResultText(matchResult));
                 EndState = END_STATE.CONFIRM;
                 break;
@@ -724,7 +724,7 @@ public class QuadMistGame : MonoBehaviour
             dialog.AfterDialogHidden = onRematchDialogHidden;
             dialog.Id = 1;
         }
-        else if (QuadMistDatabase.MiniGame_GetAllCardCount() > 100)
+        else if (QuadMistDatabase.MiniGame_GetAllCardCount() > Configuration.TetraMaster.MaxCardCount)
         {
             PersistenSingleton<UIManager>.Instance.QuadMistScene.State = QuadMistUI.CardState.CardDestroy;
             PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.QuadMist);
@@ -997,8 +997,8 @@ public class QuadMistGame : MonoBehaviour
         }
         else if (Configuration.TetraMaster.IsReduceRandom)
         {
-            Single ak = 1 - attacker.ArrowNumber / 10.0f; // The attack is 20% less susceptible to randomness.
-            Single dk = 1 - defender.ArrowNumber / 8.0f;
+            Single ak = 1f - attacker.ArrowNumber / 10f; // The attack is 20% less susceptible to randomness.
+            Single dk = 1f - defender.ArrowNumber / 8f;
 
             Int32 lowestAttack = (Int32)(battleCalculation.atkStart * ak);
             Int32 lowestDefense = (Int32)(battleCalculation.defStart * dk);
@@ -1225,7 +1225,7 @@ public class QuadMistGame : MonoBehaviour
         }
         if (resultTypeText != String.Empty)
         {
-            String monsterName = FF9TextTool.CardName((Int32)result.selectedCard.id);
+            String monsterName = FF9TextTool.CardName(result.selectedCard.id);
             resultTypeText = resultTypeText.Replace("[CARD]", monsterName);
         }
         QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), resultTypeText);
@@ -1283,7 +1283,7 @@ public class QuadMistGame : MonoBehaviour
         }
         if (resultTypeText != String.Empty)
         {
-            String monsterName = FF9TextTool.CardName((Int32)result.selectedCard.id);
+            String monsterName = FF9TextTool.CardName(result.selectedCard.id);
             resultTypeText = resultTypeText.Replace("[CARD]", monsterName);
         }
         QuadMistGetCardDialog.Show(new Vector3(0f, -0.6f, 0f), resultTypeText);

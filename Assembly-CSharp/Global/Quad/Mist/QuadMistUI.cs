@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
@@ -355,8 +357,8 @@ public class QuadMistUI : UIScene
 		ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
 		if (choice == 0)
 		{
-			QuadMistDatabase.MiniGame_AwayCard(deleteCardId, currentCardOffset);
-			if (QuadMistDatabase.MiniGame_GetAllCardCount() > 100)
+			QuadMistDatabase.MiniGame_AwayCard((TetraMasterCardId)deleteCardId, currentCardOffset);
+			if (QuadMistDatabase.MiniGame_GetAllCardCount() > Configuration.TetraMaster.MaxCardCount)
 			{
 				QuadMistUI.allCardList.Remove(GetCardInfo(currentCardId, currentCardOffset));
 				count[deleteCardId]--;
@@ -384,25 +386,19 @@ public class QuadMistUI : UIScene
 	private void DisplayCardList()
 	{
 		Int32 id;
-		for (id = 0; id < 100; id++)
+		for (id = 0; id < CardPool.TOTAL_CARDS; id++)
 		{
-			Byte b = count[id];
+			Byte kindCount = count[id];
 			QuadMistUI.CardListHUD cardListHUD = cardHudList.First((QuadMistUI.CardListHUD hud) => hud.Id == id);
-			if (b > 0)
+			if (kindCount > 0)
 			{
 				CardIcon.Attribute attribute = QuadMistDatabase.MiniGame_GetCardAttribute(id);
-				String spriteName = String.Concat(new Object[]
-				{
-					"card_type",
-					(Int32)attribute,
-					"_",
-					(b <= 1) ? "normal" : "select"
-				});
+				String spriteName = $"card_type{(Int32)attribute}_{(kindCount <= 1 ? "normal" : "select")}";
 				cardListHUD.CardIconSprite.spriteName = spriteName;
-				if (b > 1)
+				if (kindCount > 1)
 				{
 					cardListHUD.CardAmountLabel.gameObject.SetActive(true);
-					cardListHUD.CardAmountLabel.text = b.ToString();
+					cardListHUD.CardAmountLabel.text = kindCount.ToString();
 				}
 				else
 				{
@@ -419,23 +415,21 @@ public class QuadMistUI : UIScene
 
 	private void DisplayCardDetail()
 	{
-		Int32 num = (Int32)count[currentCardId];
+		Int32 num = count[currentCardId];
 		if (num > 0)
 		{
 			cardInfoContentGameObject.SetActive(true);
 			ShowCardDetailHudAmount(num);
 			cardIdLabel.text = "No" + (currentCardId + 1).ToString("0#");
 			FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, currentCardOffset), cardDetailHudList[0], false);
-			cardNameLabel.text = FF9TextTool.CardName(currentCardId);
+			cardNameLabel.text = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
 			if (num > 1)
 			{
 				cardNumberGameObject.SetActive(true);
 				currentCardNumberLabel.text = (currentCardOffset + 1).ToString();
 				totalCardNumberLabel.text = num.ToString();
 				for (Int32 i = 1; i < Math.Min(num, 5); i++)
-				{
 					FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, 0), cardDetailHudList[i], true);
-				}
 			}
 			else
 			{
@@ -479,7 +473,7 @@ public class QuadMistUI : UIScene
 		QuadMistUI.allCardList = fullList;
 		selectedCardList.Clear();
 		for (Int32 j = 0; j < CardPool.TOTAL_CARDS; j++)
-			count[j] = (Byte)QuadMistDatabase.MiniGame_GetCardCount(j);
+			count[j] = (Byte)QuadMistDatabase.MiniGame_GetCardCount((TetraMasterCardId)j);
 	}
 
 	private QuadMistCard GetCardInfo(Int32 id, Int32 offset)
@@ -588,65 +582,46 @@ public class QuadMistUI : UIScene
 	}
 
 	private static String CardGroupButton = "QuadMist.Card";
-
 	private static Int32 FF9FCARD_ARROW_TYPE_MAX = 256;
-
 	private static Int32 FF9FCAZRD_LV_MAX = 32;
 
 	public GameObject CardSelectionListPanel;
-
 	public GameObject CardSelectedPanel;
-
 	public GameObject PlayerInfoPanel;
-
 	public GameObject CardInfoPanel;
-
 	public GameObject TransitionPanel;
 
 	public UISprite TitleSprite;
 
 	public GameObject DiscardTitle;
-
 	public GameObject ScreenFadeGameObject;
-
 	public GameObject BackButton;
 
 	private UISprite discardTitleSprite;
 
 	private UISprite[] discardTitleBulletSprite;
-
 	private UIWidget[] discardTitleBulletWidget;
 
 	private UILabel winCountLabel;
-
 	private UILabel loseCountLabel;
-
 	private UILabel drawCountLabel;
-
 	private UILabel stockCountLabel;
-
 	private UILabel typeCountLabel;
 
 	private GameObject cardInfoContentGameObject;
-
 	private GameObject cardNumberGameObject;
 
 	private UILabel cardIdLabel;
-
 	private UILabel currentCardNumberLabel;
-
 	private UILabel totalCardNumberLabel;
-
 	private UILabel cardNameLabel;
 
 	private BoxCollider prevOffsetButton;
-
 	private BoxCollider nextOffsetButton;
 
 	private HonoTweenPosition cardDetailTransition;
 
 	private List<QuadMistUI.CardListHUD> cardHudList = new List<QuadMistUI.CardListHUD>();
-
 	private List<CardDetailHUD> cardDetailHudList = new List<CardDetailHUD>();
 
 	private UIAtlas textAtlas;
@@ -656,18 +631,15 @@ public class QuadMistUI : UIScene
 	private QuadMistUI.CardState currentState;
 
 	private Int32 currentCardId;
-
 	private Int32 currentCardOffset;
-
 	private Int32 deleteCardId;
 
 	private Boolean isDialogShowing;
 
 	private List<QuadMistCard> selectedCardList = new List<QuadMistCard>();
-
 	public static List<QuadMistCard> allCardList = new List<QuadMistCard>();
 
-	private Byte[] count = new Byte[100];
+	private Byte[] count = new Byte[CardPool.TOTAL_CARDS];
 
 	public class CardListHUD
 	{

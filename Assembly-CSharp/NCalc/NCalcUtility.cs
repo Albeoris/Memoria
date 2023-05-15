@@ -105,6 +105,13 @@ namespace NCalc
                     v2 |= (UInt64)NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), 0);
                 args.Result = name == "CombineStatuses" ? v1 | v2 : v1 & ~v2;
             }
+            else if (name == "HasKilledCharacter" && args.Parameters.Length >= 2)
+			{
+                UInt16 killerId = (UInt16)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
+                BattleUnit killed = Memoria.BattleState.GetPlayerUnit((CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), (Int64)CharacterId.NONE));
+                BattleUnit killer = killed?.GetKiller();
+                args.Result = killer != null && killer.Id == killerId;
+            }
             else if (name == "BattleFilter" && args.Parameters.Length >= 1)
             {
                 UInt16 btlId = (UInt16)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
@@ -127,7 +134,7 @@ namespace NCalc
                 foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
                     if ((unit.Id & btlId) != 0
                       && (playerFilter == null || playerFilter.Value == unit.IsPlayer)
-                      && (targetableFilter == null || targetableFilter.Value == unit.IsSelected)
+                      && (targetableFilter == null || targetableFilter.Value == unit.IsTargetable)
                       && !unit.IsUnderAnyStatus((BattleStatus)statusFilter))
                         btlIdFiltered |= unit.Id;
                 args.Result = btlIdFiltered;
@@ -155,11 +162,14 @@ namespace NCalc
             else if (name == "FrogCount") args.Result = (Int32)GameState.Frogs;
             else if (name == "StealCount") args.Result = (Int32)GameState.Thefts;
             else if (name == "EscapeCount") args.Result = (Int32)GameState.EscapeCount;
+            else if (name == "BattleCount") args.Result = (Int32)GameState.BattleCount;
             else if (name == "StepCount") args.Result = (Int32)GameState.StepCount; // TODO: not currently tracked
             else if (name == "TonberryCount") args.Result = (Int32)GameState.Tonberies;
             else if (name == "TetraMasterWinCount") args.Result = (Int32)GameState.TetraMasterWin;
             else if (name == "TetraMasterLossCount") args.Result = (Int32)GameState.TetraMasterLoss;
             else if (name == "TetraMasterDrawCount") args.Result = (Int32)GameState.TetraMasterDraw;
+            else if (name == "TetraMasterCardCount") args.Result = (Int32)GameState.TetraMasterCardCount;
+            else if (name == "TetraMasterPlayerPoints") args.Result = (Int32)GameState.TetraMasterPlayerPoints;
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
@@ -209,10 +219,12 @@ namespace NCalc
             expr.Parameters["Strength"] = (Int32)play.basis.str;
             expr.Parameters["Magic"] = (Int32)play.basis.mgc;
             expr.Parameters["Spirit"] = (Int32)play.basis.wpr;
-            expr.Parameters["Defence"] = (Int32)play.defence.PhisicalDefence;
-            expr.Parameters["Evade"] = (Int32)play.defence.PhisicalEvade;
-            expr.Parameters["MagicDefence"] = (Int32)play.defence.MagicalDefence;
-            expr.Parameters["MagicEvade"] = (Int32)play.defence.MagicalEvade;
+            expr.Parameters["Defence"] = play.defence.PhysicalDefence;
+            expr.Parameters["Evade"] = play.defence.PhysicalEvade;
+            expr.Parameters["PlayerStatus"] = (UInt32)play.status;
+            expr.Parameters["PlayerPermanentStatus"] = (UInt32)play.permanent_status;
+            expr.Parameters["MagicDefence"] = play.defence.MagicalDefence;
+            expr.Parameters["MagicEvade"] = play.defence.MagicalEvade;
             expr.Parameters["MaxHPLimit"] = play.maxHpLimit;
             expr.Parameters["MaxMPLimit"] = play.maxMpLimit;
             expr.Parameters["MaxDamageLimit"] = play.maxDamageLimit;
@@ -294,10 +306,10 @@ namespace NCalc
             expr.Parameters[prefix + "Strength"] = (Int32)unit.Strength;
             expr.Parameters[prefix + "Magic"] = (Int32)unit.Magic;
             expr.Parameters[prefix + "Spirit"] = (Int32)unit.Will;
-            expr.Parameters[prefix + "Defence"] = (Int32)unit.PhisicalDefence;
-            expr.Parameters[prefix + "Evade"] = (Int32)unit.PhisicalEvade;
-            expr.Parameters[prefix + "MagicDefence"] = (Int32)unit.MagicDefence;
-            expr.Parameters[prefix + "MagicEvade"] = (Int32)unit.MagicEvade;
+            expr.Parameters[prefix + "Defence"] = unit.PhysicalDefence;
+            expr.Parameters[prefix + "Evade"] = unit.PhysicalEvade;
+            expr.Parameters[prefix + "MagicDefence"] = unit.MagicDefence;
+            expr.Parameters[prefix + "MagicEvade"] = unit.MagicEvade;
             expr.Parameters[prefix + "PlayerCategory"] = (Int32)unit.PlayerCategory;
             expr.Parameters[prefix + "Category"] = (Int32)unit.Category;
             expr.Parameters[prefix + "CharacterIndex"] = (Int32)unit.PlayerIndex;
@@ -417,9 +429,9 @@ namespace NCalc
             expr.Parameters["Attack"] = context.Attack;
             expr.Parameters["AttackPower"] = context.AttackPower;
             expr.Parameters["DefencePower"] = context.DefensePower;
-            expr.Parameters["StatusRate"] = (Int32)context.StatusRate;
-            expr.Parameters["HitRate"] = (Int32)context.HitRate;
-            expr.Parameters["Evade"] = (Int32)context.Evade;
+            expr.Parameters["StatusRate"] = context.StatusRate;
+            expr.Parameters["HitRate"] = context.HitRate;
+            expr.Parameters["Evade"] = context.Evade;
             expr.Parameters["EffectFlags"] = (UInt16)context.Flags;
             expr.Parameters["StatusesInflicted"] = (UInt32)context.AddedStatuses;
             expr.Parameters["DamageModifierCount"] = (Int32)context.DamageModifierCount;
@@ -433,13 +445,13 @@ namespace NCalc
         {
             expr.Parameters["CommandId"] = (Int32)command.Id;
             expr.Parameters["AbilityId"] = (Int32)command.AbilityId;
-            expr.Parameters["ScriptId"] = (Int32)command.ScriptId;
-            expr.Parameters["Power"] = (Int32)command.Power;
+            expr.Parameters["ScriptId"] = command.ScriptId;
+            expr.Parameters["Power"] = command.Power;
             expr.Parameters["AbilityStatus"] = (UInt32)command.AbilityStatus;
             expr.Parameters["AbilityElement"] = (Int32)command.Element;
             expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
             expr.Parameters["ItemUseId"] = (Int32)command.ItemId;
-            expr.Parameters["WeaponThrowShape"] = (Int32)(command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].shape : -1);
+            expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].shape : -1;
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
             expr.Parameters["TargetType"] = (Int32)command.TargetType;
             expr.Parameters["IsATBCommand"] = command.IsATBCommand;

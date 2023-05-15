@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using Memoria.Prime.Collections;
 using UnityEngine;
 
 public class FF9StateBattleSystem
@@ -20,9 +19,8 @@ public class FF9StateBattleSystem
 		this.enemy = new ENEMY[4];
 		for (Int32 i = 0; i < this.enemy.Length; i++)
 			this.enemy[i] = new ENEMY();
-		this.enemy_type = new ENEMY_TYPE[4];
-		for (Int32 i = 0; i < this.enemy_type.Length; i++)
-			this.enemy_type[i] = new ENEMY_TYPE();
+		this.enemy_type = new List<ENEMY_TYPE>();
+		this.enemy_attack = new List<AA_DATA>();
 		this.btl_list = new BTL_DATA();
 		this.btl_data = new BTL_DATA[8];
 		for (Int32 i = 0; i < this.btl_data.Length; i++)
@@ -50,9 +48,9 @@ public class FF9StateBattleSystem
 
 	public ENEMY[] enemy;
 
-	public ENEMY_TYPE[] enemy_type;
+	public List<ENEMY_TYPE> enemy_type;
 
-	public AA_DATA[] enemy_attack;
+	public List<AA_DATA> enemy_attack;
 
 	public BTL_DATA btl_list;
 

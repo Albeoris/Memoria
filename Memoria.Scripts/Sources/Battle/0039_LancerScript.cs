@@ -20,9 +20,9 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             if (_v.Caster.IsPlayer)
-                _v.WeaponPhisicalParams();
+                _v.WeaponPhysicalParams();
             else
-                _v.NormalPhisicalParams();
+                _v.NormalPhysicalParams();
             _v.Caster.PhysicalPenaltyAndBonusAttack();
             _v.Target.PhysicalPenaltyAndBonusAttack();
             _v.CalcHpDamage();

@@ -1222,10 +1222,8 @@
     <Compile Include="Memoria\Battle\Calculator\BattleTarget.cs" />
     <Compile Include="Memoria\Battle\Calculator\BattleUnit.cs" />
     <Compile Include="Memoria\Battle\Calculator\CalcAttackBonus.cs" />
-    <Compile Include="Memoria\Battle\Calculator\CalcCasterCommand.cs" />
     <Compile Include="Memoria\Battle\Calculator\CalcContext.cs" />
     <Compile Include="Memoria\Battle\Calculator\CalcFlag.cs" />
-    <Compile Include="Memoria\Battle\Calculator\CalcTargetCommand.cs" />
     <Compile Include="Memoria\Battle\Calculator\GameRandom.cs" />
     <Compile Include="Memoria\Battle\Calculator\MutableBattleCommand.cs" />
     <Compile Include="Memoria\Battle\Calculator\SBattleCalculator.cs" />

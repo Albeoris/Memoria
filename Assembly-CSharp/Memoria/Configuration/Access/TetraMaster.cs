@@ -8,8 +8,10 @@ namespace Memoria
         public static class TetraMaster
         {
             public static Boolean IsEnabled => Instance._tetraMaster.Enabled;
+            public static Int32 TripleTriad => Instance._tetraMaster.TripleTriad;
             public static Boolean IsEasyWin => IsEnabled && Instance._tetraMaster.ReduceRandom == 2;
             public static Boolean IsReduceRandom => IsEnabled && Instance._tetraMaster.ReduceRandom == 1;
+            public static Int32 MaxCardCount => Instance._tetraMaster.MaxCardCount;
 
             public static Boolean DiscardAutoButton => Instance._tetraMaster.DiscardAutoButton;
             public static Boolean DiscardAssaultCards => Instance._tetraMaster.DiscardAssaultCards;
@@ -21,7 +23,6 @@ namespace Memoria
             public static Int32 DiscardMinDeckSize => Instance._tetraMaster.DiscardMinDeckSize;
             public static Int32 DiscardKeepSameType => Instance._tetraMaster.DiscardKeepSameType;
             public static Int32 DiscardKeepSameArrow => Instance._tetraMaster.DiscardKeepSameArrow;
-            public static Int32 TripleTriad => Instance._tetraMaster.TripleTriad;
             public static HashSet<Int32> DiscardExclusions => Instance._tetraMaster.DiscardExclusions;
         }
     }

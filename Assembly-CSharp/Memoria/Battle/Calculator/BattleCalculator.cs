@@ -32,10 +32,13 @@ namespace Memoria
         public static Int16 Dragons => FF9StateSystem.Common.FF9.dragon_no;
         public static Byte Tonberies => battle.TONBERI_COUNT;
         public static UInt16 EscapeCount => FF9StateSystem.Common.FF9.party.escape_no;
+        public static Int32 BattleCount => FF9StateSystem.Common.FF9.party.battle_no;
         public static Int32 StepCount => FF9StateSystem.EventState.gStepCount;
         public static Int16 TetraMasterWin => FF9StateSystem.MiniGame.SavedData.sWin;
         public static Int16 TetraMasterLoss => FF9StateSystem.MiniGame.SavedData.sLose;
         public static Int16 TetraMasterDraw => FF9StateSystem.MiniGame.SavedData.sDraw;
+        public static Int32 TetraMasterCardCount => QuadMistDatabase.MiniGame_GetAllCardCount();
+        public static Int32 TetraMasterPlayerPoints => QuadMistDatabase.MiniGame_GetPlayerPoints();
         public static Int32 GameTime => Convert.ToInt32(FF9StateSystem.Settings.time);
         public static Int32 AbilityUsage(BattleAbilityId index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
         public static Int32 ItemCount(Int32 id) => ff9item.FF9Item_GetCount_Generic(id);
@@ -97,7 +100,7 @@ namespace Memoria
             btl_cmd.SetCommand(escapeCommand.Data, commandId, (Int32)abilityId, targetId, isManyTarget ? 1u : 0u);
         }
 
-        public static void EnqueueConter(BattleUnit unit, BattleCommandId commandId, BattleAbilityId abilityId, UInt16 target)
+        public static void EnqueueCounter(BattleUnit unit, BattleCommandId commandId, BattleAbilityId abilityId, UInt16 target)
         {
             btl_cmd.SetCounter(unit.Data, commandId, (Int32)abilityId, target);
         }
@@ -107,11 +110,11 @@ namespace Memoria
             return btl_util.GetRandomBtlID(isPlayer ? 1U : 0U);
         }
 
-        public static UInt16 GetUnitIdsUnderStatus(Boolean? isPlayer, BattleStatus dying)
+        public static UInt16 GetUnitIdsUnderStatus(Boolean? isEnemy, BattleStatus dying)
         {
-            if (isPlayer == false)
+            if (isEnemy == false)
                 return btl_util.GetStatusBtlID(0, dying);
-            if (isPlayer == true)
+            if (isEnemy == true)
                 return btl_util.GetStatusBtlID(1, dying);
 
             return btl_util.GetStatusBtlID(2, dying);
@@ -120,6 +123,14 @@ namespace Memoria
         public static void RaiseAbilitiesAchievement(Int32 abilityId)
         {
             BattleAchievement.UpdateAbilitiesAchievement(abilityId, true);
+        }
+
+        public static BattleUnit GetPlayerUnit(CharacterId id)
+        {
+            foreach (BattleUnit unit in EnumerateUnits())
+                if (unit.PlayerIndex == id)
+                    return unit;
+            return null;
         }
     }
 
@@ -131,8 +142,6 @@ namespace Memoria
         public readonly BattleCommand Command;
         public readonly BattleCaster Caster;
         public readonly BattleTarget Target;
-        public readonly CalcCasterCommand CasterCommand;
-        public readonly CalcTargetCommand TargetCommand;
         public Boolean PerformCalcResult = true;
 
         public BattleCalculator()
@@ -141,8 +150,6 @@ namespace Memoria
             Command = null;
             Caster = null;
             Target = null;
-            CasterCommand = null;
-            TargetCommand = null;
         }
 
         public BattleCalculator(BTL_DATA caster, BTL_DATA target, BattleCommand command)
@@ -151,8 +158,6 @@ namespace Memoria
             Command = command;
             Caster = new BattleCaster(caster, Context);
             Target = new BattleTarget(target, Context);
-            CasterCommand = new CalcCasterCommand(Caster, Command, Context);
-            TargetCommand = new CalcTargetCommand(Target, Command, Context);
             Context.TranceIncrease = (Int16)(Comn.random16() % Target.Will);
         }
 
@@ -165,30 +170,30 @@ namespace Memoria
 
         public void OriginalMagicParams()
         {
-            CasterCommand.SetWeaponPower();
-            Caster.SetLowPhisicalAttack();
+            SetWeaponPower();
+            Caster.SetLowPhysicalAttack();
             Target.SetMagicDefense();
         }
 
-        public void NormalPhisicalParams()
+        public void NormalPhysicalParams()
         {
             SetCommandPower();
-            Caster.SetPhisicalAttack();
-            Target.SetPhisicalDefense();
+            Caster.SetPhysicalAttack();
+            Target.SetPhysicalDefense();
         }
 
-        public void WeaponPhisicalParams()
+        public void WeaponPhysicalParams()
         {
-            CasterCommand.SetWeaponPower();
-            Caster.SetLowPhisicalAttack();
-            Target.SetPhisicalDefense();
+            SetWeaponPower();
+            Caster.SetLowPhysicalAttack();
+            Target.SetPhysicalDefense();
         }
 
-        public void WeaponPhisicalParams(CalcAttackBonus bonus)
+        public void WeaponPhysicalParams(CalcAttackBonus bonus)
         {
             Int32 baseDamage = Comn.random16() % (1 + (Caster.Level + Caster.Strength >> 3));
             Context.AttackPower = Caster.GetWeaponPower(Command);
-            Target.SetPhisicalDefense();
+            Target.SetPhysicalDefense();
             switch (bonus)
             {
                 case CalcAttackBonus.Simple:
@@ -228,12 +233,12 @@ namespace Memoria
         public void PhysicalAccuracy()
         {
             Context.HitRate = 100;
-            Context.Evade = Target.PhisicalEvade;
+            Context.Evade = Target.PhysicalEvade;
         }
 
         public Boolean CanAttackMagic()
         {
-            return CanAttackElementalCommand() && TargetCommand.CanUseCommandForFlight();
+            return CanAttackElementalCommand() && CanUseCommandForFlight();
         }
 
         public Boolean CanAttackElementalCommand()
@@ -246,6 +251,17 @@ namespace Memoria
             return Target.CanAttackElement(Caster.WeaponElement);
         }
 
+        public Boolean CanUseCommandForFlight()
+        {
+            if (Target.IsLevitate && Command.IsGround)
+            {
+                Context.Flags |= BattleCalcFlags.Miss;
+                return false;
+            }
+
+            return true;
+        }
+
         public Boolean CanEscape()
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
@@ -255,8 +271,7 @@ namespace Memoria
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
                 BattleUnit unit = new BattleUnit(next);
-                const BattleStatus status = BattleStatus.Petrify | BattleStatus.Poison | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
-                if (next.bi.player != 0 && !unit.IsUnderAnyStatus(status))
+                if (next.bi.player != 0 && !unit.IsUnderAnyStatus(BattleStatusConst.CannotEscape))
                     return true;
             }
 
@@ -370,17 +385,6 @@ namespace Memoria
             return false;
         }
 
-        public void TryAlterMagicStatuses()
-        {
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
-                saFeature.TriggerOnAbility(this, "HitRateSetup", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
-                saFeature.TriggerOnAbility(this, "HitRateSetup", true);
-
-            if (Command.HitRate > Comn.random16() % 100)
-                Target.TryAlterStatuses(Command.AbilityStatus, false, Caster);
-        }
-
         public Boolean TryMagicHit()
         {
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
@@ -401,6 +405,69 @@ namespace Memoria
             }
 
             return true;
+        }
+
+        public void TryDirectHPDamage()
+        {
+            if (Command.Power == 0)
+            {
+                if (Target.IsZombie)
+                {
+                    if (Target.CanBeAttacked())
+                        Target.CurrentHp = Target.MaximumHp;
+                }
+                else if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                {
+                    Context.Flags |= BattleCalcFlags.Guard;
+                }
+                else
+                {
+                    Target.Kill(Caster.Data);
+                }
+                return;
+            }
+
+            if (Target.IsUnderStatus(BattleStatus.Death))
+            {
+                Context.Flags |= BattleCalcFlags.Miss;
+                return;
+            }
+
+            Context.Flags |= BattleCalcFlags.DirectHP;
+            Target.CurrentHp = (UInt32)Command.Power;
+            Target.FaceTheEnemy();
+        }
+
+        public void TryAlterMagicStatuses()
+        {
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster.Data.saExtended))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", false);
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Target.Data.saExtended))
+                saFeature.TriggerOnAbility(this, "HitRateSetup", true);
+
+            if (Command.HitRate > Comn.random16() % 100)
+                Target.TryAlterStatuses(Command.AbilityStatus, false, Caster);
+        }
+
+        public void TryAlterCommandStatuses()
+        {
+            BattleStatus status = Command.AbilityStatus;
+            if (!Command.IsShortSummon && Command.Id == BattleCommandId.SummonEiko)
+                status |= BattleStatus.Protect;
+
+            Target.TryAlterStatuses(status, true, Caster);
+        }
+
+        public void TryRemoveAbilityStatuses()
+        {
+            if (!Target.TryRemoveStatuses(Command.AbilityStatus))
+                Context.Flags |= BattleCalcFlags.Miss;
+        }
+
+        public void TryRemoveItemStatuses()
+        {
+            if (!Target.TryRemoveStatuses(Command.ItemStatus))
+                Context.Flags |= BattleCalcFlags.Miss;
         }
 
         public Boolean IsTargetLevelMultipleOfCommandRate()
@@ -554,43 +621,6 @@ namespace Memoria
                 Context.Attack /= 2;
         }
 
-        public void BonusBackstabAndPenaltyLongDistanceTranceSeek()
-        {
-            if (IsCasterSameDirectionTarget() || Target.IsRunningAway())
-                Context.Attack = Context.Attack * 3 >> 1;
-
-            Boolean longDistance = false;
-            if (Mathf.Abs(Caster.Row - Target.Row) > 1 && !Caster.HasLongRangeWeapon && Command.IsShortRange && Caster.IsPlayer)
-            {
-                Context.Attack /= 2;
-                return;
-            }
-            using (IEnumerator<BattleUnit> enumerator = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().GetEnumerator())
-            {
-                while (enumerator.MoveNext())
-                {
-                    if (enumerator.Current.IsPlayer)
-                    {
-                        int index = Target.GetIndex();
-                        if (index < 3)
-                        {
-                            BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(index + 1);
-                            if (Mathf.Abs(Caster.Row - unit.Row) <= 1 && !unit.IsUnderStatus(BattleStatusConst.NoReaction))
-                                longDistance = true;
-                        }
-                        if (index > 0)
-                        {
-                            BattleUnit unit2 = FF9StateSystem.Battle.FF9Battle.GetUnit(index - 1);
-                            if (Mathf.Abs(Caster.Row - unit2.Row) <= 1 && !unit2.IsUnderStatus(BattleStatusConst.NoReaction))
-                                longDistance = true;
-                        }
-                    }
-                }
-            }
-            if (longDistance)
-                Context.Attack /= 2;
-        }
-
         public void BonusBackstabAndPenaltyLongDistanceAsDamageModifiers()
         {
             if (IsCasterVisuallySameDirectionTarget())
@@ -623,20 +653,6 @@ namespace Memoria
             }
         }
 
-        public void TryCriticalHitDragon()
-        {
-            BTL_DATA unit = Target.Data;
-            Int32 quarterWill = Caster.Data.elem.wpr >> 2;
-            if (quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.Data.critical_rate_deal_bonus + Target.Data.critical_rate_receive_bonus > Comn.random16() % 100 || unit.special_status_luna)
-            {
-                Context.Attack *= 2; // In case TryCriticalHit is called before "Calc...HpDamage"
-                Target.HpDamage *= 2; // In case TryCriticalHit is called after "Calc...HpDamage"
-                Target.MpDamage *= 2;
-                Target.Flags |= CalcFlag.Critical;
-                unit.special_status_luna = false;
-            }
-        }
-
         public void ConsumeMpAttack()
         {
             if ((Context.Flags & BattleCalcFlags.MpAttack) != 0)
@@ -646,6 +662,16 @@ namespace Memoria
         public void SetCommandPower()
         {
             Context.AttackPower = Command.Power;
+        }
+
+        public void SetWeaponPower()
+        {
+            Context.AttackPower = (Int16)(Caster.GetWeaponPower(Command) * Command.Power / 10);
+        }
+
+        public void SetWeaponPowerSum()
+        {
+            Context.AttackPower = (Int16)(Caster.GetWeaponPower(Command) + Command.Power);
         }
 
         public void SetCommandAttack()
@@ -700,6 +726,12 @@ namespace Memoria
             Context.DamageModifierCount += (SByte)Comn.countBits((UInt16)(Target.WeakElement & element));
             Context.DamageModifierCount -= (SByte)Comn.countBits((UInt16)(Target.HalfElement & element));
             return true;
+        }
+
+        public void BonusElement()
+        {
+            if ((Command.ElementForBonus & Caster.BonusElement) != 0)
+                Context.Attack = (Int16)(Context.Attack * 3 >> 1);
         }
 
         public void StealItem(BattleEnemy enemy, Int32 slot)

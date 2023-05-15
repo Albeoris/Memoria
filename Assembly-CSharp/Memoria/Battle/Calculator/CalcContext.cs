@@ -6,12 +6,12 @@ namespace Memoria
 {
     public sealed class CalcContext
     {
-        public Int16 StatusRate;
+        public Int32 StatusRate;
         public Int32 AttackPower;
         public Int32 DefensePower;
-        public Int16 Evade;
+        public Int32 Evade;
         public Int32 Attack;
-        public Int16 HitRate;
+        public Int32 HitRate;
         public BattleCalcFlags Flags;
         public SByte DamageModifierCount = 0; // By default, damage bonus/malus is done by multiplying Attack by 1.5 or 0.5 (it stacks multiplicatively). Using DamageModifierCount, bonus/malus are computed at the end of the effect and stacks much less (additively, with decreasing bonus if there are many)
         public BattleStatus AddedStatuses = 0; // A list of statuses added to the target (through "BattleTarget.TryAlterStatuses")

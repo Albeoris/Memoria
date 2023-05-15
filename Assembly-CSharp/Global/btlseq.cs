@@ -722,8 +722,8 @@ public class btlseq
 	public static Int32 SeqExecMessage(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecMessage");
-		UInt16 messId = (UInt16)instance.sequenceReader.ReadByte();
-		if ((messId & 128) != 0)
+		Int32 messId = instance.sequenceReader.ReadByte();
+		if ((messId & 0x80) != 0)
 		{
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			Int32 cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqWork.CmdPtr.sub_no;

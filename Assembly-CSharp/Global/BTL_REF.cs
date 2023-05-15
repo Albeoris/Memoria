@@ -3,13 +3,13 @@
 public class BTL_REF
 {
 	[Memoria.PatchableFieldAttribute]
-	public Byte ScriptId;
+	public Int32 ScriptId;
 	[Memoria.PatchableFieldAttribute]
-	public Byte Power;
+	public Int32 Power;
 	[Memoria.PatchableFieldAttribute]
 	public Byte Elements;
 	[Memoria.PatchableFieldAttribute]
-	public Byte Rate;
+	public Int32 Rate;
 
     public BTL_REF()
 	{
@@ -19,7 +19,7 @@ public class BTL_REF
 		Rate = 0;
 	}
 
-	public BTL_REF(Byte scriptId, Byte power, Byte elements, Byte rate)
+	public BTL_REF(Int32 scriptId, Int32 power, Byte elements, Int32 rate)
 	{
 		ScriptId = scriptId;
 		Power = power;

@@ -23,9 +23,7 @@ public class QuadMistDatabase : MonoBehaviour
 	{
 		QuadMistDatabase.instance.data = QuadMistDatabase.ReadDataFromSharedData();
 		if (QuadMistDatabase.instance.data == null)
-		{
 			QuadMistDatabase.instance.data = new FF9SAVE_MINIGAME();
-		}
 	}
 
 	public static void SaveData()
@@ -38,12 +36,8 @@ public class QuadMistDatabase : MonoBehaviour
 		if (QuadMistDatabase.instance.data.MiniGameCard.Count < 5)
 		{
 			for (Int32 i = 0; i < 8; i++)
-			{
-				if (QuadMistDatabase.instance.data.MiniGameCard.Count < 100)
-				{
-					QuadMistDatabase.instance.data.MiniGameCard.Add(CardPool.CreateQuadMistCard(UnityEngine.Random.Range(0, 100)));
-				}
-			}
+				if (QuadMistDatabase.instance.data.MiniGameCard.Count < Configuration.TetraMaster.MaxCardCount)
+					QuadMistDatabase.instance.data.MiniGameCard.Add(CardPool.CreateQuadMistCard((TetraMasterCardId)UnityEngine.Random.Range(0, CardPool.TOTAL_CARDS)));
 			QuadMistDatabase.SaveData();
 		}
 	}
@@ -60,15 +54,7 @@ public class QuadMistDatabase : MonoBehaviour
 
 	public static Int32 GetCardCount(QuadMistCard card)
 	{
-		Int32 num = 0;
-		foreach (QuadMistCard quadMistCard in QuadMistDatabase.instance.data.MiniGameCard)
-		{
-			if (quadMistCard.id == card.id)
-			{
-				num++;
-			}
-		}
-		return num;
+		return QuadMistDatabase.instance.data.MiniGameCard.Count(deckCard => deckCard.id == card.id);
 	}
 
 	public static void Add(QuadMistCard card)
@@ -88,7 +74,7 @@ public class QuadMistDatabase : MonoBehaviour
 		}
 	}
 
-	public static Int32 Remove(Int32 cardId, Int32 count)
+	public static Int32 Remove(TetraMasterCardId cardId, Int32 count)
 	{
 		Int32 countDiscarded = 0;
 		while (count > 0 && MiniGame_AwayCard(cardId, 0))
@@ -124,24 +110,10 @@ public class QuadMistDatabase : MonoBehaviour
 
 	public static Int32 MiniGame_GetCardKindCount()
 	{
-		Int32[] array = new Int32[100];
-		for (Int32 i = 0; i < 100; i++)
-		{
-			array[i] = 0;
-		}
+		HashSet<TetraMasterCardId> kindOwned = new HashSet<TetraMasterCardId>();
 		foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
-		{
-			array[(Int32)quadMistCard.id]++;
-		}
-		Int32 num = 0;
-		for (Int32 j = 0; j < 100; j++)
-		{
-			if (array[j] != 0)
-			{
-				num++;
-			}
-		}
-		return num;
+			kindOwned.Add(quadMistCard.id);
+		return kindOwned.Count;
 	}
 
 	public static Int32 MiniGame_GetAllCardCount()
@@ -164,12 +136,12 @@ public class QuadMistDatabase : MonoBehaviour
 		return (Int32)FF9StateSystem.MiniGame.SavedData.sDraw;
 	}
 
-	public static QuadMistCard MiniGame_GetCardInfoPtr(Int32 ID, Int32 Offset)
+	public static QuadMistCard MiniGame_GetCardInfoPtr(TetraMasterCardId ID, Int32 Offset)
 	{
 		Int32 num = 0;
 		foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
 		{
-			if ((Int32)quadMistCard.id == ID)
+			if (quadMistCard.id == ID)
 			{
 				if (Offset == num)
 					return quadMistCard;
@@ -179,27 +151,19 @@ public class QuadMistDatabase : MonoBehaviour
 		return null;
 	}
 
-	public static Int32 MiniGame_GetCardCount(Int32 ID)
+	public static Int32 MiniGame_GetCardCount(TetraMasterCardId ID)
 	{
-		Int32 num = 0;
-		foreach (QuadMistCard quadMistCard in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
-		{
-			if ((Int32)quadMistCard.id == ID)
-			{
-				num++;
-			}
-		}
-		return num;
+		return FF9StateSystem.MiniGame.SavedData.MiniGameCard.Count(deckCard => deckCard.id == ID);
 	}
 
-	public static Boolean MiniGame_AwayCard(Int32 cardId, Int32 cardIndex)
+	public static Boolean MiniGame_AwayCard(TetraMasterCardId cardId, Int32 cardIndex)
 	{
 		List<QuadMistCard> miniGameCard = FF9StateSystem.MiniGame.SavedData.MiniGameCard;
 		QuadMistCard removedCard = null;
 		Int32 num = 0;
 		foreach (QuadMistCard card in miniGameCard)
 		{
-			if ((Int32)card.id == cardId)
+			if (card.id == cardId)
 			{
 				if (num == cardIndex)
 				{
@@ -216,6 +180,67 @@ public class QuadMistDatabase : MonoBehaviour
 			return true;
 		}
 		return false;
+	}
+
+	public static Int32 MiniGame_GetPlayerPoints()
+	{
+		Byte[] typePtsWorth = new Byte[] { 0, 0, 1, 2 };
+		HashSet<Byte> arrowPatternUsed = new HashSet<Byte>();
+		Int32 typePts = 0;
+		Int32 arrowPts = 0;
+		Int32 idPts = QuadMistDatabase.MiniGame_GetCardKindCount() * 10;
+		foreach (QuadMistCard card in FF9StateSystem.MiniGame.SavedData.MiniGameCard)
+		{
+			if (!arrowPatternUsed.Contains(card.arrow))
+				arrowPts += 5;
+			arrowPatternUsed.Add(card.arrow);
+			typePts += typePtsWorth[(Int32)card.type];
+		}
+		return idPts + typePts + arrowPts;
+	}
+
+	public static Int32 MiniGame_GetCollectorLevel()
+	{
+		Int16[] levelThresholds = new Int16[]
+		{
+			0,
+			300,
+			400,
+			500,
+			600,
+			700,
+			800,
+			900,
+			1000,
+			1100,
+			1200,
+			1250,
+			1300,
+			1320,
+			1330,
+			1340,
+			1350,
+			1360,
+			1370,
+			1380,
+			1390,
+			1400,
+			1420,
+			1470,
+			1510,
+			1550,
+			1600,
+			1650,
+			1680,
+			1690,
+			1698,
+			1700
+		};
+		Int32 points = MiniGame_GetPlayerPoints();
+		for (Int32 i = 1; i < FF9SAVE_MINIGAME.CollectorLevelMax; i++)
+			if (points < levelThresholds[i])
+				return i - 1;
+		return FF9SAVE_MINIGAME.CollectorLevelMax - 1;
 	}
 
 	public static void DiscardUnnecessaryCards()
@@ -377,7 +402,7 @@ public class QuadMistDatabase : MonoBehaviour
 
 	private static void LogDiscardingCard(QuadMistCard card)
 	{
-		String cardName = FF9TextTool.CardName((Int32)card.id);
+		String cardName = FF9TextTool.CardName(card.id);
 		String displayInfo = card.ToString();
 		Int32 arrowCount = MathEx.BitCount(card.arrow);
 
@@ -433,9 +458,9 @@ public class QuadMistDatabase : MonoBehaviour
 		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Clear();
 	}
 
-	public static Int32 MiniGame_SetCard(Int32 cardId)
+	public static Int32 MiniGame_SetCard(TetraMasterCardId cardId)
 	{
-		if (QuadMistDatabase.MiniGame_GetAllCardCount() >= 100)
+		if (QuadMistDatabase.MiniGame_GetAllCardCount() >= Configuration.TetraMaster.MaxCardCount)
 			return 0;
 		QuadMistCard item = CardPool.CreateQuadMistCard(cardId);
 		FF9StateSystem.MiniGame.SavedData.MiniGameCard.Add(item);
@@ -444,7 +469,7 @@ public class QuadMistDatabase : MonoBehaviour
 
 	public static void MiniGame_ContinueInit()
 	{
-		QuadMistDatabase.MiniGame_LastBattleResult = 1;
+		QuadMistDatabase.MiniGame_LastBattleResult = MINIGAME_LASTBATTLE_LOSE;
 	}
 
 	public static void MiniGame_SetLastBattleResult(Int32 Result)
@@ -488,7 +513,7 @@ public class QuadMistDatabase : MonoBehaviour
 		}
 		return ff9SAVE_MINIGAME;
 	}
-
+	
 	public const Int32 MINIGAME_CARDMAX = 100;
 	public const Int32 MINIGAME_NO_CARD = 255;
 

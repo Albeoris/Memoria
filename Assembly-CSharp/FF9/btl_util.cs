@@ -343,7 +343,7 @@ namespace FF9
 			return FF9StateSystem.Battle.FF9Battle.aa_data[GetCommandMainActionIndex(cmd)];
 		}
 
-		public static Byte GetCommandScriptId(CMD_DATA cmd)
+		public static Int32 GetCommandScriptId(CMD_DATA cmd)
 		{
 			switch (cmd.cmd_no)
 			{
