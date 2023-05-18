@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BTL2D_ENT
@@ -24,7 +25,13 @@ public class BTL2D_ENT
 
 	public Byte NoClip;
 
-	public BTL2D_ENT.UnionNumSym Work;
+    public String CustomMessage;
+
+    public String CustomColor;
+
+    public HUDMessage.MessageStyle CustomStyle;
+
+    public BTL2D_ENT.UnionNumSym Work;
 
 	public class UnionNumSym
 	{

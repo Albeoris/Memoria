@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Unity.IO.Compression;
 using UnityEngine;
 
 public static class btl2d
@@ -186,6 +188,17 @@ public static class btl2d
         return freeEntry;
     }
 
+    public static BTL2D_ENT Btl2dReqSymbolMessage(BTL_DATA pBtl, String messageColor, Dictionary<String, String> multiLangMessage, HUDMessage.MessageStyle style, Byte pDelay)
+    {
+        BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
+        freeEntry.Type = 3;
+        freeEntry.Delay = pDelay;
+        freeEntry.CustomColor = messageColor;
+        multiLangMessage.TryGetValue(Localization.GetSymbol(), out freeEntry.CustomMessage);
+        freeEntry.CustomStyle = style;
+        return freeEntry;
+    }
+
     public static void Btl2dMain()
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
@@ -196,7 +209,7 @@ public static class btl2d
             BTL2D_ENT btl2dMessage = workSet.Entry[entryIndex];
             if (btl2dMessage.BtlPtr != null)
             {
-                if (btl2dMessage.Type > 2)
+                if (btl2dMessage.Type > 3)
                 {
                     btl2dMessage.BtlPtr = null;
                 }
@@ -267,6 +280,11 @@ public static class btl2d
                             message = NGUIText.FF9PinkColor + "DLL Error!\nCheck Memoria.log";
                             style = HUDMessage.MessageStyle.DAMAGE;
                         }
+                    }
+                    else if (btl2dMessage.Type == 3)
+                    {
+                        message = btl2dMessage.CustomColor + btl2dMessage.CustomMessage;
+                        style = btl2dMessage.CustomStyle;
                     }
                     Singleton<HUDMessage>.Instance.Show(btl2dMessage.trans, message, style, new Vector3(0f, btl2dMessage.Yofs, 0f), 0);
                     UIManager.Battle.DisplayParty();
