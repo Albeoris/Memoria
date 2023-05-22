@@ -1,95 +1,98 @@
 #! IncludeHitSfx
+#! IncludeCustomTexture
 # This file contains a set of game weapons.
 # You must set at least 88 different items.
 # -----------------------------------------------
-# Comment;Id;Category;StatusIndex;Model;ScriptId;Power;Elements;Rate;Offset1;Offset2;HitSfx
-# ;Int32;Byte;Int32;Byte;Int32;Int32;Byte;Int32;Int16;Int16;Byte
+# Comment;Id;Category;StatusIndex;Model;ScriptId;Power;Elements;Rate;Offset1;Offset2;HitSfx;CustomTexture
+# ;Int32;Byte;Int32;String;Int32;Int32;Byte;Int32;Int16;Int16;Byte;String[]
 # -----------------------------------------------
-Hammer;0;1;0;GEO_WEP_B1_011;5;12;0;0;0;0;0
-Dagger;1;5;0;GEO_WEP_B1_012;1;12;0;0;17;200;1
-Mage Masher;2;5;9;GEO_WEP_B1_013;1;14;0;20;81;166;2
-Mythril Dagger;3;5;0;GEO_WEP_B1_014;1;18;0;0;17;200;3
-Gladius;4;5;18;GEO_WEP_B1_015;1;30;0;35;-32;200;4
-Zorlin Shape;5;5;0;GEO_WEP_B1_016;1;42;0;0;5;201;5
-Orichalcon;6;5;0;GEO_WEP_B1_017;1;71;0;0;0;199;6
-Butterfly Sword;7;5;9;GEO_WEP_B1_018;2;21;0;0;0;385;7
-The Ogre;8;5;14;GEO_WEP_B1_019;2;24;0;0;29;385;8
-Exploda;9;5;31;GEO_WEP_B1_020;2;31;0;0;0;376;9
-Rune Tooth;10;5;20;GEO_WEP_B1_021;2;37;0;0;0;380;10
-Angel Bless;11;5;12;GEO_WEP_B1_022;2;44;0;0;0;381;11
-Sargatanas;12;13;22;GEO_WEP_B1_023;2;53;0;0;-5;388;12
-Masamune;13;5;25;GEO_WEP_B1_024;2;62;0;0;-17;383;13
-The Tower;14;5;10;GEO_WEP_B1_025;2;86;0;0;0;352;14
-Ultima Weapon;15;5;17;GEO_WEP_B1_026;2;100;0;0;0;376;15
-Broadsword;16;5;0;GEO_WEP_B1_027;1;12;0;0;0;324;16
-Iron Sword;17;5;0;GEO_WEP_B1_028;1;16;0;0;0;324;17
-Mythril Sword;18;5;0;GEO_WEP_B1_029;1;20;0;0;0;324;18
-Blood Sword;19;5;0;GEO_WEP_B1_030;6;24;0;0;39;311;19
-Ice Brand;20;5;28;GEO_WEP_B1_031;1;35;2;10;0;315;20
-Coral Sword;21;5;0;GEO_WEP_B1_032;1;38;4;0;0;324;21
-Diamond Sword;22;5;0;GEO_WEP_B1_033;1;42;0;0;0;324;22
-Flame Sabre;23;5;29;GEO_WEP_B1_034;1;46;1;10;39;311;23
-Rune Blade;24;5;14;GEO_WEP_B1_035;1;57;0;25;0;327;24
-Defender;25;5;0;GEO_WEP_B1_036;1;65;0;0;82;274;25
-Save the Queen;26;5;0;GEO_WEP_B1_037;7;23;0;0;0;352;26
-Ultima Sword;27;5;17;GEO_WEP_B1_038;2;74;0;20;0;430;27
-Excalibur;28;5;0;GEO_WEP_B1_039;2;77;64;0;0;413;28
-Ragnarok;29;5;18;GEO_WEP_B1_040;2;87;0;30;0;445;29
-Excalibur II;30;5;0;GEO_WEP_B1_041;2;108;64;0;0;413;30
-Javelin;31;5;0;GEO_WEP_B1_042;1;18;0;0;0;524;31
-Mythril Spear;32;5;0;GEO_WEP_B1_043;1;20;0;0;0;524;32
-Partisan;33;5;0;GEO_WEP_B1_044;1;25;0;0;-3;483;33
-Ice Lance;34;5;28;GEO_WEP_B1_045;1;31;2;10;0;524;34
-Trident;35;5;14;GEO_WEP_B1_046;1;37;0;20;0;398;35
-Heavy Lance;36;5;19;GEO_WEP_B1_047;1;42;0;10;0;539;36
-Obelisk;37;5;22;GEO_WEP_B1_048;1;52;0;10;0;521;37
-Holy Lance;38;5;0;GEO_WEP_B1_049;1;62;64;0;0;519;38
-Kain’s Lance;39;5;12;GEO_WEP_B1_050;1;71;0;15;0;647;39
-Dragon’s Hair;40;5;0;GEO_WEP_B1_051;1;77;0;0;-1;648;40
-Cat’s Claws;41;5;0;GEO_WEP_B1_052;1;23;0;0;-39;257;41
-Poison Knuckles;42;5;20;GEO_WEP_B1_053;1;33;0;40;-39;257;42
-Mythril Claws;43;5;0;GEO_WEP_B1_054;1;39;0;0;-39;257;43
-Scissor Fangs;44;5;37;GEO_WEP_B1_055;1;45;0;15;-93;254;44
-Dragon’s Claws;45;5;0;GEO_WEP_B1_056;1;53;16;0;-64;203;45
-Tiger Fangs;46;5;0;GEO_WEP_B1_057;1;62;0;0;-39;257;46
-Avenger;47;5;21;GEO_WEP_B1_058;1;70;0;15;-78;237;47
-Kaiser Knuckles;48;5;31;GEO_WEP_B1_059;1;75;32;15;32;158;48
-Duel Claws;49;5;13;GEO_WEP_B1_060;1;79;0;25;-54;190;49
-Rune Claws;50;5;14;GEO_WEP_B1_061;1;83;0;30;-3;260;50
-Air Racket;51;6;0;GEO_WEP_B1_062;3;13;32;0;79;262;51
-Multina Racket;52;6;0;GEO_WEP_B1_063;3;17;32;0;79;262;52
-Magic Racket;53;6;0;GEO_WEP_B1_064;3;23;32;0;98;246;53
-Mythril Racket;54;6;0;GEO_WEP_B1_065;3;27;32;0;127;245;54
-Priest’s Racket;55;6;0;GEO_WEP_B1_066;3;35;32;0;86;254;55
-Tiger Racket;56;6;0;GEO_WEP_B1_067;3;45;32;0;53;305;56
-Rod;57;5;0;GEO_WEP_B1_068;1;11;0;0;-1;177;57
-Mythril Rod;58;5;0;GEO_WEP_B1_069;1;14;0;0;-1;177;58
-Stardust Rod;59;5;0;GEO_WEP_B1_070;1;16;0;0;-1;177;59
-Healing Rod;60;5;0;GEO_WEP_B1_071;1;23;0;0;-1;177;60
-Asura’s Rod;61;5;0;GEO_WEP_B1_072;1;27;64;0;0;193;61
-Wizard Rod;62;5;0;GEO_WEP_B1_073;1;31;0;0;0;172;62
-Whale Whisker;63;5;0;GEO_WEP_B1_074;1;36;0;0;0;222;63
-Golem’s Flute;64;5;0;GEO_WEP_B1_075;1;17;0;0;0;118;64
-Lamia’s Flute;65;5;0;GEO_WEP_B1_076;1;21;0;0;0;118;65
-Fairy Flute;66;5;0;GEO_WEP_B1_077;1;24;0;0;15;194;66
-Hamelin;67;5;0;GEO_WEP_B1_078;1;27;0;0;-50;157;67
-Siren’s Flute;68;5;0;GEO_WEP_B1_079;1;30;0;0;0;118;68
-Angel Flute;69;5;0;GEO_WEP_B1_080;1;33;0;0;61;170;69
-Mage Staff;70;5;0;GEO_WEP_B1_081;1;12;0;0;-12;175;70
-Flame Staff;71;5;0;GEO_WEP_B1_082;1;16;1;0;-12;175;71
-Ice Staff;72;5;0;GEO_WEP_B1_083;1;16;2;0;-12;175;72
-Lightning Staff;73;5;0;GEO_WEP_B1_084;1;16;4;0;-12;175;73
-Oak Staff;74;5;18;GEO_WEP_B1_085;1;23;0;20;-24;171;74
-Cypress Pile;75;5;12;GEO_WEP_B1_086;1;27;0;20;0;153;75
-Octagon Rod;76;5;31;GEO_WEP_B1_087;1;29;0;10;0;184;76
-High Mage Staff;77;5;9;GEO_WEP_B1_088;1;32;0;15;-1;200;77
-Mace of Zeus;78;5;10;GEO_WEP_B1_089;1;35;0;15;0;166;78
-Fork;79;5;0;GEO_WEP_B1_090;5;21;0;0;0;226;79
-Needle Fork;80;5;22;GEO_WEP_B1_091;5;34;0;10;0;226;80
-Mythril Fork;81;5;0;GEO_WEP_B1_092;5;42;0;0;0;226;81
-Silver Fork;82;5;18;GEO_WEP_B1_093;5;53;0;15;0;226;82
-Bistro Fork;83;13;17;GEO_WEP_B1_094;5;68;0;20;-20;227;83
-Gastro Fork;84;13;19;GEO_WEP_B1_095;5;77;0;10;-5;239;84
-Pinwheel;85;6;0;<null>;0;25;0;0;0;0;85
-Rising Sun;86;6;0;<null>;0;36;0;0;0;0;86
-Wing Edge;87;6;0;<null>;0;64;0;0;0;0;87
+Hammer;0;1;0;GEO_WEP_B1_011;5;12;0;0;0;0;0;
+Dagger;1;5;0;GEO_WEP_B1_012;1;12;0;0;17;200;1;
+Mage Masher;2;5;9;GEO_WEP_B1_013;1;14;0;20;81;166;2;
+Mythril Dagger;3;5;0;GEO_WEP_B1_014;1;18;0;0;17;200;3;
+Gladius;4;5;18;GEO_WEP_B1_015;1;30;0;35;-32;200;4;
+Zorlin Shape;5;5;0;GEO_WEP_B1_016;1;42;0;0;5;201;5;
+Orichalcon;6;5;0;GEO_WEP_B1_017;1;71;0;0;0;199;6;
+Butterfly Sword;7;5;9;GEO_WEP_B1_018;2;21;0;0;0;385;7;
+The Ogre;8;5;14;GEO_WEP_B1_019;2;24;0;0;29;385;8;
+Exploda;9;5;31;GEO_WEP_B1_020;2;31;0;0;0;376;9;
+Rune Tooth;10;5;20;GEO_WEP_B1_021;2;37;0;0;0;380;10;
+Angel Bless;11;5;12;GEO_WEP_B1_022;2;44;0;0;0;381;11;
+Sargatanas;12;13;22;GEO_WEP_B1_023;2;53;0;0;-5;388;12;
+Masamune;13;5;25;GEO_WEP_B1_024;2;62;0;0;-17;383;13;
+The Tower;14;5;10;GEO_WEP_B1_025;2;86;0;0;0;352;14;
+Ultima Weapon;15;5;17;GEO_WEP_B1_026;2;100;0;0;0;376;15;
+Broadsword;16;5;0;GEO_WEP_B1_027;1;12;0;0;0;324;16;
+Iron Sword;17;5;0;GEO_WEP_B1_028;1;16;0;0;0;324;17;
+Mythril Sword;18;5;0;GEO_WEP_B1_029;1;20;0;0;0;324;18;
+Blood Sword;19;5;0;GEO_WEP_B1_030;6;24;0;0;39;311;19;
+Ice Brand;20;5;28;GEO_WEP_B1_031;1;35;2;10;0;315;20;
+Coral Sword;21;5;0;GEO_WEP_B1_032;1;38;4;0;0;324;21;
+Diamond Sword;22;5;0;GEO_WEP_B1_033;1;42;0;0;0;324;22;
+Flame Sabre;23;5;29;GEO_WEP_B1_034;1;46;1;10;39;311;23;
+Rune Blade;24;5;14;GEO_WEP_B1_035;1;57;0;25;0;327;24;
+Defender;25;5;0;GEO_WEP_B1_036;1;65;0;0;82;274;25;
+Save the Queen;26;5;0;GEO_WEP_B1_037;7;23;0;0;0;352;26;
+Ultima Sword;27;5;17;GEO_WEP_B1_038;2;74;0;20;0;430;27;
+Excalibur;28;5;0;GEO_WEP_B1_039;2;77;64;0;0;413;28;
+Ragnarok;29;5;18;GEO_WEP_B1_040;2;87;0;30;0;445;29;
+Excalibur II;30;5;0;GEO_WEP_B1_041;2;108;64;0;0;413;30;
+Javelin;31;5;0;GEO_WEP_B1_042;1;18;0;0;0;524;31;
+Mythril Spear;32;5;0;GEO_WEP_B1_043;1;20;0;0;0;524;32;
+Partisan;33;5;0;GEO_WEP_B1_044;1;25;0;0;-3;483;33;
+Ice Lance;34;5;28;GEO_WEP_B1_045;1;31;2;10;0;524;34;
+Trident;35;5;14;GEO_WEP_B1_046;1;37;0;20;0;398;35;
+Heavy Lance;36;5;19;GEO_WEP_B1_047;1;42;0;10;0;539;36;
+Obelisk;37;5;22;GEO_WEP_B1_048;1;52;0;10;0;521;37;
+Holy Lance;38;5;0;GEO_WEP_B1_049;1;62;64;0;0;519;38;
+Kain’s Lance;39;5;12;GEO_WEP_B1_050;1;71;0;15;0;647;39;
+Dragon’s Hair;40;5;0;GEO_WEP_B1_051;1;77;0;0;-1;648;40;
+Cat’s Claws;41;5;0;GEO_WEP_B1_052;1;23;0;0;-39;257;41;
+Poison Knuckles;42;5;20;GEO_WEP_B1_053;1;33;0;40;-39;257;42;
+Mythril Claws;43;5;0;GEO_WEP_B1_054;1;39;0;0;-39;257;43;
+Scissor Fangs;44;5;37;GEO_WEP_B1_055;1;45;0;15;-93;254;44;
+Dragon’s Claws;45;5;0;GEO_WEP_B1_056;1;53;16;0;-64;203;45;
+Tiger Fangs;46;5;0;GEO_WEP_B1_057;1;62;0;0;-39;257;46;
+Avenger;47;5;21;GEO_WEP_B1_058;1;70;0;15;-78;237;47;
+Kaiser Knuckles;48;5;31;GEO_WEP_B1_059;1;75;32;15;32;158;48;
+Duel Claws;49;5;13;GEO_WEP_B1_060;1;79;0;25;-54;190;49;
+Rune Claws;50;5;14;GEO_WEP_B1_061;1;83;0;30;-3;260;50;
+Air Racket;51;6;0;GEO_WEP_B1_062;3;13;32;0;79;262;51;
+Multina Racket;52;6;0;GEO_WEP_B1_063;3;17;32;0;79;262;52;
+Magic Racket;53;6;0;GEO_WEP_B1_064;3;23;32;0;98;246;53;
+Mythril Racket;54;6;0;GEO_WEP_B1_065;3;27;32;0;127;245;54;
+Priest’s Racket;55;6;0;GEO_WEP_B1_066;3;35;32;0;86;254;55;
+Tiger Racket;56;6;0;GEO_WEP_B1_067;3;45;32;0;53;305;56;
+Rod;57;5;0;GEO_WEP_B1_068;1;11;0;0;-1;177;57;
+Mythril Rod;58;5;0;GEO_WEP_B1_069;1;14;0;0;-1;177;58;
+Stardust Rod;59;5;0;GEO_WEP_B1_070;1;16;0;0;-1;177;59;
+Healing Rod;60;5;0;GEO_WEP_B1_071;1;23;0;0;-1;177;60;
+Asura’s Rod;61;5;0;GEO_WEP_B1_072;1;27;64;0;0;193;61;
+Wizard Rod;62;5;0;GEO_WEP_B1_073;1;31;0;0;0;172;62;
+Whale Whisker;63;5;0;GEO_WEP_B1_074;1;36;0;0;0;222;63;
+Golem’s Flute;64;5;0;GEO_WEP_B1_075;1;17;0;0;0;118;64;
+Lamia’s Flute;65;5;0;GEO_WEP_B1_076;1;21;0;0;0;118;65;
+Fairy Flute;66;5;0;GEO_WEP_B1_077;1;24;0;0;15;194;66;
+Hamelin;67;5;0;GEO_WEP_B1_078;1;27;0;0;-50;157;67;
+Siren’s Flute;68;5;0;GEO_WEP_B1_079;1;30;0;0;0;118;68;
+Angel Flute;69;5;0;GEO_WEP_B1_080;1;33;0;0;61;170;69;
+Mage Staff;70;5;0;GEO_WEP_B1_081;1;12;0;0;-12;175;70;
+Flame Staff;71;5;0;GEO_WEP_B1_082;1;16;1;0;-12;175;71;
+Ice Staff;72;5;0;GEO_WEP_B1_083;1;16;2;0;-12;175;72;
+Lightning Staff;73;5;0;GEO_WEP_B1_084;1;16;4;0;-12;175;73;
+Oak Staff;74;5;18;GEO_WEP_B1_085;1;23;0;20;-24;171;74;
+Cypress Pile;75;5;12;GEO_WEP_B1_086;1;27;0;20;0;153;75;
+Octagon Rod;76;5;31;GEO_WEP_B1_087;1;29;0;10;0;184;76;
+High Mage Staff;77;5;9;GEO_WEP_B1_088;1;32;0;15;-1;200;77;
+Mace of Zeus;78;5;10;GEO_WEP_B1_089;1;35;0;15;0;166;78;
+Fork;79;5;0;GEO_WEP_B1_090;5;21;0;0;0;226;79;
+Needle Fork;80;5;22;GEO_WEP_B1_091;5;34;0;10;0;226;80;
+Mythril Fork;81;5;0;GEO_WEP_B1_092;5;42;0;0;0;226;81;
+Silver Fork;82;5;18;GEO_WEP_B1_093;5;53;0;15;0;226;82;
+Bistro Fork;83;13;17;GEO_WEP_B1_094;5;68;0;20;-20;227;83;
+Gastro Fork;84;13;19;GEO_WEP_B1_095;5;77;0;10;-5;239;84;
+Pinwheel;85;6;0;<null>;0;25;0;0;0;0;85;
+Rising Sun;86;6;0;<null>;0;36;0;0;0;0;86;
+Wing Edge;87;6;0;<null>;0;64;0;0;0;0;87;
+Sargatanas_Dagger;1012;5;0;GEO_WEP_B1_016;1;48;0;0;5;201;5;EmbeddedAsset/CustomWeapon/Sargatanas_Dagger.png
+Excalipoor II;1100;5;0;GEO_WEP_B1_041;2;108;64;0;0;413;30;EmbeddedAsset/CustomWeapon/Excalipoor_II.png
