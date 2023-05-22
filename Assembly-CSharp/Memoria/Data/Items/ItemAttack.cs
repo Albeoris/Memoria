@@ -16,6 +16,7 @@ namespace Memoria.Data
         public Int16 Offset1;
         public Int16 Offset2;
         public Byte HitSfx;
+        public String[] CustomTexture;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -42,6 +43,11 @@ namespace Memoria.Data
                 HitSfx = Byte.Parse(raw[11]);
             else
                 HitSfx = (Byte)Id;
+            if (metadata.HasOption($"Include{nameof(CustomTexture)}"))
+            {
+                var StringTexture = CsvParser.String(raw[12]);
+                CustomTexture = StringTexture.Split(',');
+            }
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -63,6 +69,8 @@ namespace Memoria.Data
             sw.Int16(Offset2);
             if (metadata.HasOption($"Include{nameof(HitSfx)}"))
                 sw.Byte(HitSfx);
+            if (metadata.HasOption($"Include{nameof(CustomTexture)}"))
+                sw.String(String.Join(",", CustomTexture));
         }
     }
 }
