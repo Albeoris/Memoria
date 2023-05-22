@@ -36,16 +36,14 @@ namespace FF9
 
 		public static Byte countBits(UInt64 bitList)
 		{
-			// Same as "EventEngine.Count": count the number of bits set in "bitList"
-			Byte count = 0;
-			UInt64 bit = 1;
-			while (bit != 0)
-			{
-				count += (bitList & bit) == 0 ? (Byte)0 : (Byte)1;
-				bit <<= 1;
-			}
-			return count;
-		}
+            Byte count = 0;
+            while (bitList != 0)
+            {
+                count++;
+                bitList &= bitList - 1;
+            }
+            return count;
+        }
 
 		public static UInt64 firstBitSet(UInt64 bitList)
 		{
