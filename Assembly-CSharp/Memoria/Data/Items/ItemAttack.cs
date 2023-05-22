@@ -47,7 +47,13 @@ namespace Memoria.Data
             {
                 var StringTexture = CsvParser.String(raw[12]);
                 CustomTexture = StringTexture.Split(',');
+				for (Int32 i = 0; i < CustomTexture.Length; i++)
+					CustomTexture[i] = CustomTexture[i].Trim();
             }
+			else
+			{
+                CustomTexture = new String[0];
+			}
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -70,7 +76,7 @@ namespace Memoria.Data
             if (metadata.HasOption($"Include{nameof(HitSfx)}"))
                 sw.Byte(HitSfx);
             if (metadata.HasOption($"Include{nameof(CustomTexture)}"))
-                sw.String(String.Join(",", CustomTexture));
+                sw.String(String.Join(", ", CustomTexture));
         }
     }
 }

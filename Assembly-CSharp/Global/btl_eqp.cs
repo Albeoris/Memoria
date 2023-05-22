@@ -2,7 +2,6 @@
 using FF9;
 using UnityEngine;
 using Memoria.Data;
-using System.IO;
 
 public class btl_eqp
 {
@@ -24,16 +23,13 @@ public class btl_eqp
 		btl.weaponRenderer = new Renderer[btl.weaponMeshCount];
 		for (Int32 i = 0; i < btl.weaponMeshCount; i++)
 		{
-            btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-            if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > 0)
-            {
-                if (!String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
-                    btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
-            }
-        }		
+			btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
+			if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
+				btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
+		}
 		btl_util.SetBBGColor(btl.weapon_geo);
 		geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
-    }
+	}
 
 	public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)
 	{
