@@ -34,7 +34,13 @@ namespace FF9
 			return 1u << numArray[index];
 		}
 
-		public static Byte countBits(UInt64 bitList)
+        /// <summary>
+        /// Counts number of set bits (ones) in a bit list.
+        /// </summary>
+        /// <param name="bitList">Value to count bits in.</param>
+        /// <returns>Count of set bits.</returns>
+        // Implementation 'stolen' from this StackOverflow post https://stackoverflow.com/a/12171691/9774758
+        public static Byte countBits(UInt64 bitList)
 		{
             Byte count = 0;
             while (bitList != 0)
