@@ -34,7 +34,12 @@ namespace FF9
 			return 1u << numArray[index];
 		}
 
-		public static Byte countBits(UInt64 bitList)
+        /// <summary>
+        /// Counts the number of set bits (bits with a value of 1) in an unsigned 64-bit integer.
+        /// </summary>
+        /// <param name="bitList">The unsigned 64-bit integer to count the set bits in.</param>
+        /// <returns>The count of set bits in the input integer.</returns>
+        public static Byte countBits(UInt64 bitList)
 		{
             Byte count = 0;
             while (bitList != 0)
