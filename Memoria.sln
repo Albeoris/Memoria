@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.6.33712.159
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp\Assembly-CSharp.csproj", "{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}"
 EndProject
@@ -73,8 +73,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{9A4F68D4
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.SteamFix", "Memoria.SteamFix\Memoria.SteamFix.csproj", "{8E82C124-FFC6-4B99-B5A9-F65B657E3822}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Tests", "Memoria.Tests\Memoria.Tests.csproj", "{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -224,18 +222,6 @@ Global
 		{8E82C124-FFC6-4B99-B5A9-F65B657E3822}.Release|x64.Build.0 = Release|Any CPU
 		{8E82C124-FFC6-4B99-B5A9-F65B657E3822}.Release|x86.ActiveCfg = Release|Any CPU
 		{8E82C124-FFC6-4B99-B5A9-F65B657E3822}.Release|x86.Build.0 = Release|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Debug|x64.Build.0 = Debug|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Debug|x86.Build.0 = Debug|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Release|x64.ActiveCfg = Release|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Release|x64.Build.0 = Release|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Release|x86.ActiveCfg = Release|Any CPU
-		{B7C2C117-66FC-4423-BD2E-4ABEB21F16A6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
