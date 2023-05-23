@@ -76,14 +76,14 @@ public class AbilityUI : UIScene
     private Dictionary<Int32, Int32> equipmentPartInAbilityDict;
     private Dictionary<Int32, RegularItem[]> equipmentIdInAbilityDict;
 
-    private static Color[] BoostedAbilityColor = new Color[]
+    public static Color[] BoostedAbilityColor = new Color[]
     {
         new Color(1f, 1f, 1f),
         new Color(0.7f, 1f, 0.7f),
         new Color(1f, 0.2f, 0.5f),
         new Color(0.6f, 0.6f, 1f),
-        new Color(0.4f, 0.4f, 0.8f),
-        new Color(0.2f, 0.2f, 0.6f)
+        new Color(1f, 1f, 0.4f),
+        new Color(1f, 0.5f, 0.2f)
     };
 
     public Int32 CurrentPartyIndex
@@ -441,6 +441,78 @@ public class AbilityUI : UIScene
             else
             {
                 FF9Sfx.FF9SFX_Play(102);
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+        {
+            if (ButtonGroupState.ContainButtonInGroup(go, SupportAbilityGroupButton))
+            {
+                Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+                this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+                if (go.GetChild(0).activeSelf)
+                {
+                    Int32 abilityId = this.saIdList[this.currentAbilityIndex];
+                    AbilityType abilityType = this.CheckSAType(abilityId, player);
+                    CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityId);
+                    SupportAbility supportId = ff9abil.GetSupportAbilityFromAbilityId(abilityId);
+                    if (abilityType == AbilityType.Enable)
+                    {
+                        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+                        FF9Sfx.FF9SFX_Play(107);
+                        ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, true);
+                        player.Data.cur.capa -= saData.GemsCount;
+                        Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
+                        if (boostMaxLevel > 0)
+                        {
+                            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
+                            foreach (SupportAbility boosted in boostedList)
+                            {
+                                if (this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(boosted), player) == AbilityType.Enable)
+                                {
+                                    CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
+                                    ff9abil.FF9Abil_SetEnableSA(player.Data, boosted, true);
+                                    player.Data.cur.capa -= boostedGem.GemsCount;
+                                }
+                                else
+								{
+                                    break;
+								}
+                            }
+                        }
+                        ff9play.FF9Play_Update(player.Data);
+                        this.DisplaySA();
+                        this.DisplayCharacter(true);
+                    }
+                    else if (abilityType == AbilityType.Selected)
+                    {
+                        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+                        FF9Sfx.FF9SFX_Play(107);
+                        Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
+                        if (boostMaxLevel > 0)
+                        {
+                            Int32 boostLevel = Math.Min(boostMaxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
+                            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
+                            if (boostLevel > 0)
+                            {
+                                supportId = boostedList[boostLevel - 1];
+                                saData = ff9abil._FF9Abil_SaData[supportId];
+                            }
+                        }
+                        ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
+                        player.Data.cur.capa += saData.GemsCount;
+                        ff9play.FF9Play_Update(player.Data);
+                        this.DisplaySA();
+                        this.DisplayCharacter(true);
+                    }
+                    else
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                    }
+                }
+                else
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                }
             }
         }
         return true;
@@ -894,11 +966,13 @@ public class AbilityUI : UIScene
                 detailWithIconHud.IconSprite.spriteName = "skill_stone_gem_slot";
                 detailWithIconHud.IconSpriteAnimation.Pause();
             }
-            else if (abilityListData.Type == AbilityType.Selected)
+            else if (abilityListData.Type == AbilityType.Selected || abilityListData.Type == AbilityType.CantDisable)
             {
+                Color labelColor = abilityListData.Type == AbilityType.Selected ? FF9TextTool.White : FF9TextTool.Gray;
                 Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-                detailWithIconHud.NameLabel.color = FF9TextTool.White;
-                detailWithIconHud.NumberLabel.color = FF9TextTool.White;
+                detailWithIconHud.NameLabel.color = labelColor;
+                detailWithIconHud.NumberLabel.color = labelColor;
+                detailWithIconHud.IconSprite.color = BoostedAbilityColor[0];
                 detailWithIconHud.IconSprite.atlas = FF9UIDataTool.IconAtlas;
                 detailWithIconHud.IconSpriteAnimation.namePrefix = "skill_stone_gem_";
                 detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
@@ -914,19 +988,12 @@ public class AbilityUI : UIScene
                         supportId = boostedList[level - 1];
                     detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(supportId);
                     detailWithIconHud.NumberLabel.text = stoneCost.ToString();
-                    detailWithIconHud.IconSprite.color = BoostedAbilityColor[Math.Min(maxLevel - level, BoostedAbilityColor.Length - 1)];
+                    detailWithIconHud.IconSprite.color = BoostedAbilityColor[Math.Min(level, BoostedAbilityColor.Length - 1)];
                 }
-            }
-            else if (abilityListData.Type == AbilityType.CantDisable)
-            {
-                detailWithIconHud.NameLabel.color = FF9TextTool.Gray;
-                detailWithIconHud.NumberLabel.color = FF9TextTool.Gray;
-                detailWithIconHud.IconSprite.atlas = FF9UIDataTool.IconAtlas;
-                detailWithIconHud.IconSpriteAnimation.namePrefix = "skill_stone_gem_";
-                detailWithIconHud.IconSpriteAnimation.ResetToBeginning();
             }
             detailWithIconHud.Button.Help.Enable = true;
             detailWithIconHud.Button.Help.Text = FF9TextTool.SupportAbilityHelpDescription(supportId);
+            ButtonGroupState.RefreshHelpDialog();
         }
     }
 

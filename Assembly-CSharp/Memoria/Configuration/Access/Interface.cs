@@ -18,6 +18,16 @@ namespace Memoria
                 get => Instance._interface.PSXBattleMenu;
                 set => Instance._interface.PSXBattleMenu.Value = value;
             }
+            public static Boolean ScanDisplay
+            {
+                get => Instance._interface.ScanDisplay;
+                set => Instance._interface.ScanDisplay.Value = value;
+            }
+            public static Int32 BattleRowCount
+            {
+                get => Math.Max(1, Instance._interface.BattleRowCount);
+                set => Instance._interface.BattleRowCount.Value = value;
+            }
             public static Int32 BattleColumnCount
             {
                 get => Math.Max(1, Instance._interface.BattleColumnCount);
@@ -69,6 +79,8 @@ namespace Memoria
             {
                 SaveValue(Instance._interface.Name, Instance._interface.Enabled);
                 SaveValue(Instance._interface.Name, Instance._interface.PSXBattleMenu);
+                SaveValue(Instance._interface.Name, Instance._interface.ScanDisplay);
+                SaveValue(Instance._interface.Name, Instance._interface.BattleRowCount);
                 SaveValue(Instance._interface.Name, Instance._interface.BattleColumnCount);
                 SaveValue(Instance._interface.Name, Instance._interface.BattleMenuPosX);
                 SaveValue(Instance._interface.Name, Instance._interface.BattleMenuPosY);

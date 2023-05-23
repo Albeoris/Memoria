@@ -35,6 +35,8 @@ namespace Memoria.Scenes
 
 			//controlEnabled = AddToggleOption("Use Custom Interface", Configuration.Interface.IsEnabled, SetEnabled);
 			controlPSXMenu = AddToggleOption("Legacy Interface", Configuration.Interface.PSXBattleMenu, SetPSXBattleMenu);
+			controlRowCount = AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(3), sel => $"{sel + 4} rows", SetRowCount);
+			controlRowCount.Selection = Configuration.Interface.BattleRowCount - 4;
 			controlColumnCount = AddRollOption(ControlRoll<Int32>.GetNonEmptyIndexList(3), sel => $"{sel + 1} column{(sel > 0 ? "s" : "")}", SetColumnCount);
 			controlColumnCount.Selection = Configuration.Interface.BattleColumnCount - 1;
 			PanelAddRow();
@@ -58,6 +60,7 @@ namespace Memoria.Scenes
 		{
 			Configuration.Interface.IsEnabled = enabled;
 			controlPSXMenu.IsEnabled = enabled;
+			controlRowCount.IsEnabled = enabled;
 			controlColumnCount.IsEnabled = enabled;
 			controlMenuX.IsEnabled = enabled;
 			controlMenuY.IsEnabled = enabled;
@@ -73,6 +76,12 @@ namespace Memoria.Scenes
 		private void SetPSXBattleMenu(Boolean psx)
 		{
 			Configuration.Interface.PSXBattleMenu = psx;
+			Scene.UpdateUserInterface(true);
+		}
+
+		private void SetRowCount(Int32 count)
+		{
+			Configuration.Interface.BattleRowCount = count + 4;
 			Scene.UpdateUserInterface(true);
 		}
 
@@ -132,6 +141,7 @@ namespace Memoria.Scenes
 
 		private ControlToggle controlEnabled;
 		private ControlToggle controlPSXMenu;
+		private ControlRoll<Int32> controlRowCount;
 		private ControlRoll<Int32> controlColumnCount;
 		private ControlSlider controlMenuX;
 		private ControlSlider controlMenuY;

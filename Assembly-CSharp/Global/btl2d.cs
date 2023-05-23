@@ -5,7 +5,6 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Unity.IO.Compression;
 using UnityEngine;
 
 public static class btl2d
@@ -194,7 +193,8 @@ public static class btl2d
         freeEntry.Type = 3;
         freeEntry.Delay = pDelay;
         freeEntry.CustomColor = messageColor;
-        multiLangMessage.TryGetValue(Localization.GetSymbol(), out freeEntry.CustomMessage);
+        if (!multiLangMessage.TryGetValue(Localization.GetSymbol(), out freeEntry.CustomMessage))
+            multiLangMessage.TryGetValue("US", out freeEntry.CustomMessage);
         freeEntry.CustomStyle = style;
         return freeEntry;
     }
@@ -308,12 +308,11 @@ public static class btl2d
 
     private static void Btl2dStatIcon()
     {
-        FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        BTL2D_WORK btl2d_work_set = ff9Battle.btl2d_work_set;
+        BTL2D_WORK btl2d_work_set = FF9StateSystem.Battle.FF9Battle.btl2d_work_set;
         Vector3 rot;
         rot.x = 0f;
         rot.z = 0f;
-        for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.bi.disappear == 0)
             {
@@ -330,32 +329,7 @@ public static class btl2d
                                 {
                                     Int32 angledx = ff9.rsin((Int32)(btl.rot.eulerAngles.y / 360f * 4096f));
                                     Int32 angledz = ff9.rcos((Int32)(btl.rot.eulerAngles.y / 360f * 4096f));
-                                    Byte[] iconBone;
-                                    SByte[] iconOffY;
-                                    SByte[] iconOffZ;
-                                    if (btl.bi.player != 0)
-                                    {
-                                        if (btl.is_monster_transform)
-                                        {
-                                            iconBone = btl.monster_transform.icon_bone;
-                                            iconOffY = btl.monster_transform.icon_y;
-                                            iconOffZ = btl.monster_transform.icon_z;
-                                        }
-                                        else
-                                        {
-                                            CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
-                                            iconBone = param.StatusBone;
-                                            iconOffY = param.StatusOffsetY;
-                                            iconOffZ = param.StatusOffsetZ;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        ENEMY_TYPE et = ff9Battle.enemy[btl.bi.slot_no].et;
-                                        iconBone = et.icon_bone;
-                                        iconOffY = et.icon_y;
-                                        iconOffZ = et.icon_z;
-                                    }
+                                    btl2d.GetIconPosition(btl, out Byte[] iconBones, out SByte[] iconOffsY, out SByte[] iconOffsZ);
                                     for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
                                     {
                                         btl2d.STAT_ICON_TBL statTable = btl2d.wStatIconTbl[i];
@@ -363,14 +337,14 @@ public static class btl2d
                                         {
                                             if ((statusOn & statTable.Mask2) == 0)
                                             {
-                                                Int16 dy = (Int16)(iconOffY[statTable.Pos] << 4);
-                                                Int16 dz = (Int16)(iconOffZ[statTable.Pos] << 4);
+                                                Int16 dy = (Int16)(iconOffsY[statTable.Pos] << 4);
+                                                Int16 dz = (Int16)(iconOffsZ[statTable.Pos] << 4);
                                                 if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
                                                 {
                                                     dy = (Int16)(dy * btl.gameObject.transform.localScale.y);
                                                     dz = (Int16)(dz * btl.gameObject.transform.localScale.z);
                                                 }
-                                                Vector3 pos = btl.gameObject.transform.GetChildByName("bone" + iconBone[statTable.Pos].ToString("D3")).position;
+                                                Vector3 pos = btl.gameObject.transform.GetChildByName("bone" + iconBones[statTable.Pos].ToString("D3")).position;
                                                 pos.x += dz * angledx >> 12;
                                                 pos.y -= dy;
                                                 pos.z += dz * angledz >> 12;
@@ -465,20 +439,9 @@ public static class btl2d
                         {
                             if ((statusOn & counterStatus) != 0)
                             {
-                                Int16 iconBone;
-                                Int16 iconOffY;
-                                if (btl.bi.player != 0)
-                                {
-                                    CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
-                                    iconBone = param.StatusBone[5];
-                                    iconOffY = param.StatusOffsetY[5];
-                                }
-                                else
-                                {
-                                    ENEMY_TYPE et = ff9Battle.enemy[btl.bi.slot_no].et;
-                                    iconBone = et.icon_bone[5];
-                                    iconOffY = et.icon_y[5];
-                                }
+                                btl2d.GetIconPosition(btl, out Byte[] iconBones, out SByte[] iconOffsY, out _);
+                                Int16 iconBone = iconBones[5];
+                                Int16 iconOffY = iconOffsY[5];
                                 if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
                                     iconOffY = (Int16)(iconOffY * btl.gameObject.transform.localScale.y);
                                 Transform attachTransf = btl.gameObject.transform.GetChildByName("bone" + iconBone.ToString("D3"));
@@ -545,6 +508,33 @@ public static class btl2d
                     }
                 }
             }
+        }
+    }
+
+    public static void GetIconPosition(BTL_DATA btl, out Byte[] iconBone, out SByte[] iconOffY, out SByte[] iconOffZ)
+    {
+        if (btl.bi.player != 0)
+        {
+            if (btl.is_monster_transform)
+            {
+                iconBone = btl.monster_transform.icon_bone;
+                iconOffY = btl.monster_transform.icon_y;
+                iconOffZ = btl.monster_transform.icon_z;
+            }
+            else
+            {
+                CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
+                iconBone = param.StatusBone;
+                iconOffY = param.StatusOffsetY;
+                iconOffZ = param.StatusOffsetZ;
+            }
+        }
+        else
+        {
+            ENEMY_TYPE et = FF9StateSystem.Battle.FF9Battle.enemy[btl.bi.slot_no].et;
+            iconBone = et.icon_bone;
+            iconOffY = et.icon_y;
+            iconOffZ = et.icon_z;
         }
     }
 

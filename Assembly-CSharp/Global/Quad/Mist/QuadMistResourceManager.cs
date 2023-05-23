@@ -20,50 +20,43 @@ public class QuadMistResourceManager : MonoBehaviour
 
 	private void InitAtlasPath()
 	{
-		String text = String.Empty;
-		String language = Localization.CurrentLanguage;
-		switch (language)
+		String textAtlas = String.Empty;
+		switch (Localization.CurrentLanguage)
 		{
 			case "English(US)":
-				text = "quadmist_text_us";
+				textAtlas = "quadmist_text_us";
 				break;
 			case "Japanese":
-				text = "quadmist_text_jp";
+				textAtlas = "quadmist_text_jp";
 				break;
 			case "German":
-				text = "quadmist_text_gr";
+				textAtlas = "quadmist_text_gr";
 				break;
 			case "Spanish":
-				text = "quadmist_text_es";
+				textAtlas = "quadmist_text_es";
 				break;
 			case "Italian":
-				text = "quadmist_text_it";
+				textAtlas = "quadmist_text_it";
 				break;
 			case "French":
-				text = "quadmist_text_fr";
+				textAtlas = "quadmist_text_fr";
 				break;
 			case "English(UK)":
-				text = "quadmist_text_uk";
+				textAtlas = "quadmist_text_uk";
 				break;
 		}
 		atlasPathList[0] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image0";
 		atlasPathList[1] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image1";
-		atlasPathList[2] = "EmbeddedAsset/QuadMist/Atlas/" + text;
+		atlasPathList[2] = "EmbeddedAsset/QuadMist/Atlas/" + textAtlas;
 		atlasNameList[0] = "quadmist_image0";
 		atlasNameList[1] = "quadmist_image1";
-		atlasNameList[2] = text;
+		atlasNameList[2] = textAtlas;
 	}
 
 	private void AddCenterTable(List<String> centerTable)
 	{
-		for (Int32 i = 1; i <= 9; i++)
-		{
-			centerTable.Add("bomb_0" + i + ".png");
-		}
-		for (Int32 j = 10; j <= 24; j++)
-		{
-			centerTable.Add("bomb_" + j + ".png");
-		}
+		for (Int32 i = 1; i <= 24; i++)
+			centerTable.Add($"bomb_{i:D2}.png");
 		centerTable.Add("quadmist_dialog.png");
 		centerTable.Add("quadmist_dialog_stock.png");
 		centerTable.Add("quadmist_dialog_cardname.png");
@@ -73,326 +66,210 @@ public class QuadMistResourceManager : MonoBehaviour
 
 	private void LoadSprite()
 	{
-		spriteData = new Dictionary<String, Dictionary<String, Sprite>>();
-		String[] atlasArray = atlasPathList;
-		for (Int32 i = 0; i < (Int32)atlasArray.Length; i++)
+		allAtlasSprites = new Dictionary<String, Dictionary<String, Sprite>>();
+		for (Int32 i = 0; i < atlasPathList.Length; i++)
 		{
-			String text = atlasArray[i];
-			Sprite[] spriteArray = Resources.LoadAll<Sprite>(text);
-			Texture2D moddedAtlas = null;
-			String atlasOnDisc = AssetManager.SearchAssetOnDisc(text, true, false);
-			if (!String.IsNullOrEmpty(atlasOnDisc))
-			{
-				moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
-			}
-			Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
-			List<String> list = new List<String>();
-			AddCenterTable(list);
+			String atlasPath = atlasPathList[i];
+			Sprite[] spriteArray = Resources.LoadAll<Sprite>(atlasPath);
+			Dictionary<String, Sprite> atlasSprites = new Dictionary<String, Sprite>();
+			List<String> excludeList = new List<String>();
+			AddCenterTable(excludeList);
 			for (Int32 j = 0; j < spriteArray.Length; j++)
 			{
 				Sprite sprite = spriteArray[j];
-				if (list.Contains(sprite.name))
+				if (excludeList.Contains(sprite.name))
 				{
-					// Todo: use moddedAtlas for these
-					dictionary.Add(sprite.name, sprite);
+					// TODO: use moddedAtlas for these
+					atlasSprites.Add(sprite.name, sprite);
 				}
 				else
 				{
-					Sprite value = Sprite.Create(moddedAtlas != null ? moddedAtlas : sprite.texture, sprite.rect, new Vector2(0f, 1f), 482f);
-					dictionary.Add(sprite.name, value);
+					Sprite spriteFromTexture = Sprite.Create(sprite.texture, sprite.rect, new Vector2(0f, 1f), 482f);
+					atlasSprites.Add(sprite.name, spriteFromTexture);
 				}
 			}
-			spriteData.Add(text, dictionary);
+			foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+			{
+				if (String.IsNullOrEmpty(folder.FolderPath))
+					continue;
+				if (folder.TryFindAssetInModOnDisc(atlasPath, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+					UIAtlas.ReadRawSpritesFromDisc(fullPath, atlasSprites, excludeList);
+			}
+			allAtlasSprites.Add(atlasPath, atlasSprites);
 		}
 	}
 
 	private void CreateUpScaleMapperData()
 	{
-		mapperData = new Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>>();
-		if (mapperData.ContainsKey("BattleNum"))
+		mapperData = new Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>>()
 		{
-			mapperData.Remove("BattleNum");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_0.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_1.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_2.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_3.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_4.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_5.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_6.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_7.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_8.png"));
-		list.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_9.png"));
-		mapperData.Add("BattleNum", list);
-		if (mapperData.ContainsKey("CardIconCounter"))
-		{
-			mapperData.Remove("CardIconCounter");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list2 = new List<QuadMistResourceManager.QuadMistMapperData>();
+			{ "BattleNum", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_0.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_1.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_2.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_3.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_4.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_5.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_6.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_7.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_8.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_digit_9.png")
+				}
+			},
+			{ "CardArrow", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_top.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_righttop.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_right.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_rightbuttom.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_buttom.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_leftbuttom.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_left.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_arrow_lefttop.png")
+				}
+			},
+			{ "CardBackground", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_player_bg.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_opponent_bg.png"),
+					new QuadMistResourceManager.QuadMistMapperData("block_a.png"),
+					new QuadMistResourceManager.QuadMistMapperData("block_b.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_back.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_player_frame.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_opponent_frame.png"),
+					new QuadMistResourceManager.QuadMistMapperData("goldenbluecardframe"),
+					new QuadMistResourceManager.QuadMistMapperData("goldenredcardframe")
+				}
+			},
+			{ "CardBlock", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("block_a.png"),
+					new QuadMistResourceManager.QuadMistMapperData("block_b.png")
+				}
+			},
+			{ "CardSelect", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("text_select.png")
+				}
+			},
+			{ "CursorPreBoard", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("cursor_hand_choice.png")
+				}
+			},
+			{ "GetCardMessage", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_notice_new.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_notice_last.png")
+				}
+			},
+			{ "LRButton", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("button_previous.png"),
+					new QuadMistResourceManager.QuadMistMapperData("button_next.png")
+				}
+			},
+			{ "PreBoardTitle", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("text_card.png"),
+					new QuadMistResourceManager.QuadMistMapperData("text_selection.png")
+				}
+			},
+			{ "Result", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_win.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_lose.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_draw.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_perfect.png")
+				}
+			},
+			{ "ResultShadow", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_win_shadow.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_lose_shadow.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_draw_shadow.png"),
+					new QuadMistResourceManager.QuadMistMapperData("card_perfect_shadow.png")
+				}
+			},
+			{ "ScoreDivider", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("arrow.png")
+				}
+			},
+			{ "CardNameToggle", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("text_name.png"),
+					new QuadMistResourceManager.QuadMistMapperData("text_name_hilight.png")
+				}
+			},
+			{ "Background", new List<QuadMistMapperData>()
+				{
+					new QuadMistResourceManager.QuadMistMapperData("card_bg.png"),
+					new QuadMistResourceManager.QuadMistMapperData(Localization.CurrentLanguage == "Japanese" ? "card_mg_jp.png" : "card_mg.png")
+				}
+			}
+		};
+		List<QuadMistResourceManager.QuadMistMapperData> cardIconCounter = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 i = 0; i <= 9; i++)
-		{
-			list2.Add(new QuadMistResourceManager.QuadMistMapperData("card_digit_total_" + i + ".png"));
-		}
-		mapperData.Add("CardIconCounter", list2);
-		if (mapperData.ContainsKey("CardStat"))
-		{
-			mapperData.Remove("CardStat");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list3 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 j = 0; j <= 9; j++)
-		{
-			list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_" + j + ".png"));
-		}
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_a.png"));
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_b.png"));
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_c.png"));
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_d.png"));
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_e.png"));
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_f.png"));
-		for (Int32 k = 0; k < 6; k++)
-		{
-			list3.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
-		}
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_m.png"));
-		for (Int32 l = 0; l < 2; l++)
-		{
-			list3.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
-		}
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_p.png"));
-		for (Int32 m = 0; m < 7; m++)
-		{
-			list3.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
-		}
-		list3.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_x.png"));
-		for (Int32 n = 0; n < 2; n++)
-		{
-			list3.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
-		}
-		mapperData.Add("CardStat", list3);
-		if (mapperData.ContainsKey("Combo"))
-		{
-			mapperData.Remove("Combo");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list4 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num = 0; num <= 9; num++)
-		{
-			list4.Add(new QuadMistResourceManager.QuadMistMapperData("text_combo_" + num + ".png"));
-		}
-		mapperData.Add("Combo", list4);
-		if (mapperData.ContainsKey("EnemyScore"))
-		{
-			mapperData.Remove("EnemyScore");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list5 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num2 = 0; num2 <= 10; num2++)
-		{
-			list5.Add(new QuadMistResourceManager.QuadMistMapperData("card_score_digit_" + num2 + "_red.png"));
-		}
-		mapperData.Add("EnemyScore", list5);
-		if (mapperData.ContainsKey("PlayerScore"))
-		{
-			mapperData.Remove("PlayerScore");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list6 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num3 = 0; num3 <= 10; num3++)
-		{
-			list6.Add(new QuadMistResourceManager.QuadMistMapperData("card_score_digit_" + num3 + "_blue.png"));
-		}
-		mapperData.Add("PlayerScore", list6);
-		if (mapperData.ContainsKey("Background"))
-		{
-			mapperData.Remove("Background");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list7 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_bg.png"));
-		if (Localization.CurrentLanguage == "Japanese")
-		{
-			list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_mg_jp.png"));
-		}
-		else
-		{
-			list7.Add(new QuadMistResourceManager.QuadMistMapperData("card_mg.png"));
-		}
-		mapperData.Add("Background", list7);
-		if (mapperData.ContainsKey("Card"))
-		{
-			mapperData.Remove("Card");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list8 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num4 = 0; num4 <= 9; num4++)
-		{
-			list8.Add(new QuadMistResourceManager.QuadMistMapperData("card_0" + num4 + ".png"));
-		}
-		for (Int32 num5 = 10; num5 <= 65; num5++)
-		{
-			list8.Add(new QuadMistResourceManager.QuadMistMapperData("card_" + num5 + ".png"));
-		}
-		for (Int32 num6 = 66; num6 <= 99; num6++)
-		{
-			list8.Add(new QuadMistResourceManager.QuadMistMapperData("card_" + num6 + ".png"));
-		}
-		mapperData.Add("Card", list8);
-		if (mapperData.ContainsKey("CardArrow"))
-		{
-			mapperData.Remove("CardArrow");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list9 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_top.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_righttop.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_right.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_rightbuttom.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_buttom.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_leftbuttom.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_left.png"));
-		list9.Add(new QuadMistResourceManager.QuadMistMapperData("card_arrow_lefttop.png"));
-		mapperData.Add("CardArrow", list9);
-		if (mapperData.ContainsKey("CardBackground"))
-		{
-			mapperData.Remove("CardBackground");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list10 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_player_bg.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_opponent_bg.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("block_a.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("block_b.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_back.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_player_frame.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("card_opponent_frame.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("goldenbluecardframe.png"));
-		list10.Add(new QuadMistResourceManager.QuadMistMapperData("goldenredcardframe.png"));
-		mapperData.Add("CardBackground", list10);
-		if (mapperData.ContainsKey("CardBlock"))
-		{
-			mapperData.Remove("CardBlock");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list11 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list11.Add(new QuadMistResourceManager.QuadMistMapperData("block_a.png"));
-		list11.Add(new QuadMistResourceManager.QuadMistMapperData("block_b.png"));
-		mapperData.Add("CardBlock", list11);
-		if (mapperData.ContainsKey("CardIcon"))
-		{
-			mapperData.Remove("CardIcon");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list12 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list12.Add(new QuadMistResourceManager.QuadMistMapperData("card_slot.png"));
-		for (Int32 num7 = 0; num7 <= 6; num7++)
-		{
-			list12.Add(new QuadMistResourceManager.QuadMistMapperData("card_type" + num7 + "_normal.png"));
-		}
-		for (Int32 num8 = 0; num8 <= 6; num8++)
-		{
-			list12.Add(new QuadMistResourceManager.QuadMistMapperData("card_type" + num8 + "_select.png"));
-		}
-		mapperData.Add("CardIcon", list12);
-		if (mapperData.ContainsKey("CardSelect"))
-		{
-			mapperData.Remove("CardSelect");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list13 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list13.Add(new QuadMistResourceManager.QuadMistMapperData("text_select.png"));
-		mapperData.Add("CardSelect", list13);
-		if (mapperData.ContainsKey("Coin"))
-		{
-			mapperData.Remove("Coin");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list14 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num9 = 8; num9 >= 1; num9--)
-		{
-			list14.Add(new QuadMistResourceManager.QuadMistMapperData("coin_0" + num9 + ".png"));
-		}
-		mapperData.Add("Coin", list14);
-		if (mapperData.ContainsKey("Cursor"))
-		{
-			mapperData.Remove("Cursor");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list15 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num10 = 0; num10 <= 6; num10++)
-		{
-			list15.Add(new QuadMistResourceManager.QuadMistMapperData("card_cursor_" + num10 + ".png"));
-		}
-		mapperData.Add("Cursor", list15);
-		if (mapperData.ContainsKey("CursorPreBoard"))
-		{
-			mapperData.Remove("CursorPreBoard");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list16 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list16.Add(new QuadMistResourceManager.QuadMistMapperData("cursor_hand_choice.png"));
-		mapperData.Add("CursorPreBoard", list16);
-		if (mapperData.ContainsKey("Explosion"))
-		{
-			mapperData.Remove("Explosion");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list17 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		for (Int32 num11 = 0; num11 <= 8; num11++)
-		{
-			list17.Add(new QuadMistResourceManager.QuadMistMapperData("bomb_0" + (num11 + 1) + ".png"));
-		}
-		for (Int32 num12 = 9; num12 <= 13; num12++)
-		{
-			list17.Add(new QuadMistResourceManager.QuadMistMapperData("bomb_" + (num12 + 1) + ".png"));
-		}
-		mapperData.Add("Explosion", list17);
-		if (mapperData.ContainsKey("GetCardMessage"))
-		{
-			mapperData.Remove("GetCardMessage");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list18 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list18.Add(new QuadMistResourceManager.QuadMistMapperData("card_notice_new.png"));
-		list18.Add(new QuadMistResourceManager.QuadMistMapperData("card_notice_last.png"));
-		mapperData.Add("GetCardMessage", list18);
-		if (mapperData.ContainsKey("LRButton"))
-		{
-			mapperData.Remove("LRButton");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list19 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list19.Add(new QuadMistResourceManager.QuadMistMapperData("button_previous.png"));
-		list19.Add(new QuadMistResourceManager.QuadMistMapperData("button_next.png"));
-		mapperData.Add("LRButton", list19);
-		if (mapperData.ContainsKey("PreBoardTitle"))
-		{
-			mapperData.Remove("PreBoardTitle");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list20 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list20.Add(new QuadMistResourceManager.QuadMistMapperData("text_card.png"));
-		list20.Add(new QuadMistResourceManager.QuadMistMapperData("text_selection.png"));
-		mapperData.Add("PreBoardTitle", list20);
-		if (mapperData.ContainsKey("Result"))
-		{
-			mapperData.Remove("Result");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list21 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_win.png"));
-		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_lose.png"));
-		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_draw.png"));
-		list21.Add(new QuadMistResourceManager.QuadMistMapperData("card_perfect.png"));
-		mapperData.Add("Result", list21);
-		if (mapperData.ContainsKey("ResultShadow"))
-		{
-			mapperData.Remove("ResultShadow");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list22 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_win_shadow.png"));
-		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_lose_shadow.png"));
-		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_draw_shadow.png"));
-		list22.Add(new QuadMistResourceManager.QuadMistMapperData("card_perfect_shadow.png"));
-		mapperData.Add("ResultShadow", list22);
-		if (mapperData.ContainsKey("ScoreDivider"))
-		{
-			mapperData.Remove("ScoreDivider");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list23 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list23.Add(new QuadMistResourceManager.QuadMistMapperData("arrow.png"));
-		if (Configuration.TetraMaster.TripleTriad <= 1)
-			mapperData.Add("ScoreDivider", list23);
-		if (mapperData.ContainsKey("CardNameToggle"))
-		{
-			mapperData.Remove("CardNameToggle");
-		}
-		List<QuadMistResourceManager.QuadMistMapperData> list24 = new List<QuadMistResourceManager.QuadMistMapperData>();
-		list24.Add(new QuadMistResourceManager.QuadMistMapperData("text_name.png"));
-		list24.Add(new QuadMistResourceManager.QuadMistMapperData("text_name_hilight.png"));
-		mapperData.Add("CardNameToggle", list24);
+			cardIconCounter.Add(new QuadMistResourceManager.QuadMistMapperData($"card_digit_total_{i}.png"));
+		mapperData["CardIconCounter"] = cardIconCounter;
+		List<QuadMistResourceManager.QuadMistMapperData> cardStat = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 0; i <= 9; i++)
+			cardStat.Add(new QuadMistResourceManager.QuadMistMapperData($"card_point_{i}.png"));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_a.png"));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_b.png"));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_c.png"));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_d.png"));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_e.png"));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_f.png"));
+		for (Int32 i = 0; i < 6; i++)
+			cardStat.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_m.png"));
+		for (Int32 i = 0; i < 2; i++)
+			cardStat.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_p.png"));
+		for (Int32 i = 0; i < 7; i++)
+			cardStat.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
+		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_x.png"));
+		for (Int32 i = 0; i < 2; i++)
+			cardStat.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
+		mapperData["CardStat"] = cardStat;
+		List<QuadMistResourceManager.QuadMistMapperData> combo = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 0; i <= 9; i++)
+			combo.Add(new QuadMistResourceManager.QuadMistMapperData($"text_combo_{i}.png"));
+		mapperData["Combo"] = combo;
+		List<QuadMistResourceManager.QuadMistMapperData> enemyScore = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 0; i <= 10; i++)
+			enemyScore.Add(new QuadMistResourceManager.QuadMistMapperData($"card_score_digit_{i}_red.png"));
+		mapperData["EnemyScore"] = enemyScore;
+		List<QuadMistResourceManager.QuadMistMapperData> playerScore = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 0; i <= 10; i++)
+			playerScore.Add(new QuadMistResourceManager.QuadMistMapperData($"card_score_digit_{i}_blue.png"));
+		mapperData["PlayerScore"] = playerScore;
+		List<QuadMistResourceManager.QuadMistMapperData> card = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 0; i <= 99; i++)
+			card.Add(new QuadMistResourceManager.QuadMistMapperData($"card_{i:D2}.png"));
+		mapperData["Card"] = card;
+		List<QuadMistResourceManager.QuadMistMapperData> cardIcon = new List<QuadMistResourceManager.QuadMistMapperData>();
+		cardIcon.Add(new QuadMistResourceManager.QuadMistMapperData("card_slot.png"));
+		for (Int32 i = 0; i <= 6; i++)
+			cardIcon.Add(new QuadMistResourceManager.QuadMistMapperData($"card_type{i}_normal.png"));
+		for (Int32 i = 0; i <= 6; i++)
+			cardIcon.Add(new QuadMistResourceManager.QuadMistMapperData($"card_type{i}_select.png"));
+		mapperData["CardIcon"] = cardIcon;
+		List<QuadMistResourceManager.QuadMistMapperData> coin = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 8; i >= 1; i--)
+			coin.Add(new QuadMistResourceManager.QuadMistMapperData($"coin_0{i}.png"));
+		mapperData["Coin"] = coin;
+		List<QuadMistResourceManager.QuadMistMapperData> cursor = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 0; i <= 6; i++)
+			cursor.Add(new QuadMistResourceManager.QuadMistMapperData($"card_cursor_{i}.png"));
+		mapperData["Cursor"] = cursor;
+		List<QuadMistResourceManager.QuadMistMapperData> explosion = new List<QuadMistResourceManager.QuadMistMapperData>();
+		for (Int32 i = 1; i <= 14; i++)
+			explosion.Add(new QuadMistResourceManager.QuadMistMapperData($"bomb_{i:D2}.png"));
+		mapperData["Explosion"] = explosion;
 	}
 
 	private void CreateAssetData()
@@ -404,20 +281,12 @@ public class QuadMistResourceManager : MonoBehaviour
 			for (Int32 i = 0; i < keyValuePair.Value.Count; i++)
 			{
 				QuadMistResourceManager.QuadMistMapperData quadMistMapperData = keyValuePair.Value[i];
-				String spriteName = quadMistMapperData.SpriteName;
-				QuadMistAssetData quadMistAssetData = (QuadMistAssetData)null;
+				QuadMistAssetData quadMistAssetData = null;
 				for (Int32 j = 0; j < 3; j++)
-				{
-					if (!String.IsNullOrEmpty(quadMistMapperData.SpriteName) && spriteData.ContainsKey(atlasPathList[j]) && spriteData[atlasPathList[j]].ContainsKey(quadMistMapperData.SpriteName))
-					{
-						Sprite sprite = spriteData[atlasPathList[j]][quadMistMapperData.SpriteName];
+					if (!String.IsNullOrEmpty(quadMistMapperData.SpriteName) && allAtlasSprites.TryGetValue(atlasPathList[j], out Dictionary<String, Sprite> altasSprites) && altasSprites.TryGetValue(quadMistMapperData.SpriteName, out Sprite sprite))
 						quadMistAssetData = new QuadMistAssetData(keyValuePair.Key, i, sprite);
-					}
-				}
 				if (quadMistAssetData == null)
-				{
-					quadMistAssetData = new QuadMistAssetData(String.Empty, i, (Sprite)null);
-				}
+					quadMistAssetData = new QuadMistAssetData(String.Empty, i, null);
 				list.Add(quadMistAssetData);
 			}
 			assetData.Add(keyValuePair.Key, list);
@@ -426,84 +295,64 @@ public class QuadMistResourceManager : MonoBehaviour
 
 	private void CreateFontMap()
 	{
+		const Int32 zeroChar = '0';
 		fontMap = new Dictionary<String, Dictionary<Char, Int32>>();
-		Int32 num = 48;
-		Dictionary<Char, Int32> dictionary = new Dictionary<Char, Int32>();
+		Dictionary<Char, Int32> battleNum = new Dictionary<Char, Int32>();
 		for (Int32 i = 0; i <= 9; i++)
-		{
-			dictionary.Add((Char)(i + num), i);
-		}
-		fontMap.Add("BattleNum", dictionary);
-		Dictionary<Char, Int32> dictionary2 = new Dictionary<Char, Int32>();
-		for (Int32 j = 0; j <= 9; j++)
-		{
-			dictionary2.Add((Char)(j + num), j);
-		}
-		fontMap.Add("CardIconCounter", dictionary2);
-		Dictionary<Char, Int32> dictionary3 = new Dictionary<Char, Int32>();
-		for (Int32 k = 0; k <= 9; k++)
-		{
-			dictionary3.Add((Char)(k + num), k);
-		}
-		dictionary3.Add('a', 10);
-		dictionary3.Add('b', 11);
-		dictionary3.Add('c', 12);
-		dictionary3.Add('d', 13);
-		dictionary3.Add('e', 14);
-		dictionary3.Add('f', 15);
-		dictionary3.Add('m', 22);
-		dictionary3.Add('p', 25);
-		dictionary3.Add('x', 33);
-		fontMap.Add("CardStat", dictionary3);
-		Dictionary<Char, Int32> dictionary4 = new Dictionary<Char, Int32>();
-		for (Int32 l = 0; l <= 9; l++)
-		{
-			dictionary4.Add((Char)(l + num), l);
-		}
-		fontMap.Add("Combo", dictionary4);
-		Dictionary<Char, Int32> dictionary5 = new Dictionary<Char, Int32>();
-		for (Int32 m = 0; m <= 9; m++)
-		{
-			dictionary5.Add((Char)(m + num), m);
-		}
-		dictionary5.Add('a', 10);
-		fontMap.Add("EnemyScore", dictionary5);
-		Dictionary<Char, Int32> dictionary6 = new Dictionary<Char, Int32>();
-		for (Int32 n = 0; n <= 9; n++)
-		{
-			dictionary6.Add((Char)(n + num), n);
-		}
-		dictionary6.Add('a', 10);
-		fontMap.Add("PlayerScore", dictionary6);
+			battleNum.Add((Char)(i + zeroChar), i);
+		fontMap.Add("BattleNum", battleNum);
+		Dictionary<Char, Int32> cardIcon = new Dictionary<Char, Int32>();
+		for (Int32 i = 0; i <= 9; i++)
+			cardIcon.Add((Char)(i + zeroChar), i);
+		fontMap.Add("CardIconCounter", cardIcon);
+		Dictionary<Char, Int32> cardStat = new Dictionary<Char, Int32>();
+		for (Int32 i = 0; i <= 9; i++)
+			cardStat.Add((Char)(i + zeroChar), i);
+		cardStat.Add('a', 10);
+		cardStat.Add('b', 11);
+		cardStat.Add('c', 12);
+		cardStat.Add('d', 13);
+		cardStat.Add('e', 14);
+		cardStat.Add('f', 15);
+		cardStat.Add('m', 22);
+		cardStat.Add('p', 25);
+		cardStat.Add('x', 33);
+		fontMap.Add("CardStat", cardStat);
+		Dictionary<Char, Int32> combo = new Dictionary<Char, Int32>();
+		for (Int32 i = 0; i <= 9; i++)
+			combo.Add((Char)(i + zeroChar), i);
+		fontMap.Add("Combo", combo);
+		Dictionary<Char, Int32> enemyScore = new Dictionary<Char, Int32>();
+		for (Int32 i = 0; i <= 9; i++)
+			enemyScore.Add((Char)(i + zeroChar), i);
+		enemyScore.Add('a', 10);
+		fontMap.Add("EnemyScore", enemyScore);
+		Dictionary<Char, Int32> playerScore = new Dictionary<Char, Int32>();
+		for (Int32 i = 0; i <= 9; i++)
+			playerScore.Add((Char)(i + zeroChar), i);
+		playerScore.Add('a', 10);
+		fontMap.Add("PlayerScore", playerScore);
 	}
 
 	public QuadMistAssetData GetFont(String sheetAssetName, Char character)
 	{
-		Dictionary<Char, Int32> dictionary = fontMap[sheetAssetName];
 		return GetResource(sheetAssetName, fontMap[sheetAssetName][character]);
 	}
 
 	public QuadMistAssetData GetResource(String sheetAssetName, Int32 spriteIndex)
 	{
-		Int32 count = assetData[sheetAssetName].Count;
 		return assetData[sheetAssetName][spriteIndex];
 	}
 
 	public Sprite GetSprite(String spriteName)
 	{
-		Sprite result = (Sprite)null;
-		foreach (KeyValuePair<String, Dictionary<String, Sprite>> keyValuePair in spriteData)
-		{
-			if (keyValuePair.Value.ContainsKey(spriteName))
-			{
-				result = keyValuePair.Value[spriteName];
-				break;
-			}
-		}
-		return result;
+		foreach (KeyValuePair<String, Dictionary<String, Sprite>> keyValuePair in allAtlasSprites)
+			if (keyValuePair.Value.TryGetValue(spriteName, out Sprite result))
+				return result;
+		return null;
 	}
 
-	private Dictionary<String, Dictionary<String, Sprite>> spriteData;
+	private Dictionary<String, Dictionary<String, Sprite>> allAtlasSprites;
 	private Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>> mapperData;
 	private Dictionary<String, List<QuadMistAssetData>> assetData;
 	private Dictionary<String, Dictionary<Char, Int32>> fontMap;

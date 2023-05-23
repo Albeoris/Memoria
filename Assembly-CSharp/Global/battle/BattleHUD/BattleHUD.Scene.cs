@@ -215,7 +215,7 @@ public partial class BattleHUD : UIScene
                     }
                     break;
                 case CommandMenu.AccessMenu:
-                    OpenMainMenu(FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player?.Data);
+                    OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player?.Data : null);
                     break;
             }
         }
@@ -401,7 +401,7 @@ public partial class BattleHUD : UIScene
 
     public override Boolean OnKeyPause(GameObject go)
     {
-        if (base.OnKeyPause(go) && FF9StateSystem.Battle.FF9Battle.btl_seq != 2 && FF9StateSystem.Battle.FF9Battle.btl_seq != 1)
+        if (base.OnKeyPause(go) && FF9StateSystem.Battle.FF9Battle.btl_seq != 2 && FF9StateSystem.Battle.FF9Battle.btl_seq != 1 && !battle.isSpecialTutorialWindow)
         {
             NextSceneIsModal = true;
             _isFromPause = true;

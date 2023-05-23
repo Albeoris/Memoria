@@ -221,7 +221,7 @@ public partial class BattleHUD : UIScene
             {
                 RegularItem itemId = RegularItem.NoItem;
                 BattleEnemy enemy = _libraBtlData.Enemy;
-                while (_currentLibraMessageCount < enemy.StealableItems.Length && (itemId = enemy.StealableItems[_currentLibraMessageCount]) != RegularItem.NoItem)
+                while (_currentLibraMessageCount < enemy.StealableItems.Length && (itemId = enemy.StealableItems[_currentLibraMessageCount]) == RegularItem.NoItem)
                     _currentLibraMessageCount++;
                 if (itemId != RegularItem.NoItem)
                 {
@@ -241,7 +241,7 @@ public partial class BattleHUD : UIScene
                 String str;
                 if (blueMagicId != 0)
                 {
-                    str = FF9TextTool.BattleLibraText(8); // "Carries "
+                    str = FF9TextTool.CommandName(BattleCommandId.BlueMagic) + ": ";
                     if (ff9abil.IsAbilityActive(blueMagicId))
                         str += FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(blueMagicId));
                     else if (ff9abil.IsAbilitySupport(blueMagicId))
@@ -249,7 +249,7 @@ public partial class BattleHUD : UIScene
                 }
                 else
 				{
-                    str = FF9TextTool.BattleLibraText(9); // "Isn’t carrying anything."
+                    str = FF9TextTool.CommandName(BattleCommandId.BlueMagic) + ": -";
                 }
                 SetBattleMessage(str, 3);
                 AdvanceLibraMessageNumber();
@@ -2305,18 +2305,26 @@ public partial class BattleHUD : UIScene
 
     private void UpdatePlayersForMainMenu()
     {
+        Dictionary<PLAYER, BattleStatus> statusLockDict = new Dictionary<PLAYER, BattleStatus>();
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (!unit.IsPlayer)
                 continue;
-            Character playerPtr = unit.Player;
-            playerPtr.Data.trance = unit.Trance;
-            btl_init.CopyPoints(playerPtr.Data.cur, unit.Data.cur);
-            btl_stat.SaveStatus(playerPtr.Data, unit.Data);
+            PLAYER player = unit.Player.Data;
+            BattleStatus battlePermanent = unit.PermanentStatus & BattleStatusConst.OutOfBattle & ~player.permanent_status;
+            statusLockDict[player] = battlePermanent;
+            player.permanent_status |= battlePermanent;
+            player.trance = unit.Trance;
+            btl_init.CopyPoints(player.cur, unit.Data.cur);
+            btl_stat.SaveStatus(player, unit.Data);
         }
         _mainMenuPlayerMemo.Clear();
         for (Int32 i = 0; i < 4; i++)
+        {
             _mainMenuPlayerMemo.Add(new PlayerMemo(FF9StateSystem.Common.FF9.party.member[i], true));
+            if (FF9StateSystem.Common.FF9.party.member[i] != null)
+                statusLockDict.TryGetValue(FF9StateSystem.Common.FF9.party.member[i], out _mainMenuPlayerMemo[i].battlePermanentStatus);
+        }
         if (_mainMenuSinglePlayer != null)
             for (Int32 i = 0; i < 4; i++)
                 if (_mainMenuSinglePlayer != FF9StateSystem.Common.FF9.party.member[i])
@@ -2340,6 +2348,7 @@ public partial class BattleHUD : UIScene
                 PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
                 unit.Trance = player.trance;
                 btl_init.CopyPoints(btl.cur, player.cur);
+                player.permanent_status &= ~beforeMenu.battlePermanentStatus;
                 BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~player.status;
                 btl_stat.RemoveStatuses(btl, statusesToRemove);
                 if ((unit.CurrentStatus & BattleStatus.Death) != 0 && player.cur.hp > 0)

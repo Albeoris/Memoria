@@ -296,6 +296,11 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
+			Int32 paramType = 0xD000;
+			Int32 attr = 0;
+			Int32 sndPos = 0;
+			Int32 volume = (Int32)(soundVolume * 127);
+			FF9Snd.ParameterChanger(ref paramType, ref soundIndex, ref attr, ref sndPos, ref volume);
 			SoundLib.soundEffectPlayer.PlaySoundEffect(soundIndex, soundVolume, panning, pitch);
 		}
 		catch (Exception message)

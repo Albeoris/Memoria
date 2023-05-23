@@ -815,7 +815,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private static Boolean IsPaused
     {
-        get => (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.NOPUTDISPENV) == ff9btl.ATTR.NOPUTDISPENV;
+        get => (FF9StateSystem.Battle.FF9Battle.attr & ff9btl.ATTR.NOPUTDISPENV) == ff9btl.ATTR.NOPUTDISPENV || battle.isSpecialTutorialWindow;
         set
         {
             if (value)

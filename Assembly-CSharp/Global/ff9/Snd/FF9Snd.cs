@@ -198,41 +198,27 @@ public static class FF9Snd
 		return allSoundDispatchPlayer.GetCurrentMusicId();
 	}
 
-	private static void ParameterChanger(ref Int32 ParmType, ref Int32 ObjNo, ref Int32 Arg1, ref Int32 Arg2, ref Int32 Arg3)
+	public static void ParameterChanger(ref Int32 ParmType, ref Int32 ObjNo, ref Int32 Arg1, ref Int32 Arg2, ref Int32 Arg3)
 	{
 		if ((ParmType >> 12 & 3) == 0)
 		{
 			if (ObjNo == 93)
-			{
 				ObjNo = 5;
-			}
 			else if (ObjNo == 137)
-			{
 				ObjNo = 10;
-			}
 			else if (ObjNo == 78)
-			{
 				ObjNo = 22;
-			}
 		}
 		if ((ParmType >> 12 & 3) == 1)
 		{
 			if (ObjNo == 3067 || ObjNo == 3068)
-			{
 				ObjNo = 1748;
-			}
 			else if (ObjNo == 293)
-			{
 				ObjNo = 633;
-			}
 			else if (ObjNo == 1545)
-			{
 				ObjNo = 58;
-			}
 			else if (ObjNo == 679)
-			{
 				ObjNo = 9010197;
-			}
 			else if (ObjNo == 1230 || ObjNo == 1231)
 			{
 				FF9Snd.FF9AllSoundDispatch(ParmType, 9000023, Arg1, Arg2, Arg3);
@@ -240,21 +226,13 @@ public static class FF9Snd
 				FF9Snd.FF9AllSoundDispatch(ParmType, 9000025, Arg1, Arg2, Arg3);
 			}
 			else if (ObjNo == 681)
-			{
 				ObjNo = 3092;
-			}
 			else if (ObjNo == 672)
-			{
 				ObjNo = 9010138;
-			}
 			else if (ObjNo == 678)
-			{
 				ObjNo = 725;
-			}
 			else if (ObjNo == 3084)
-			{
 				ObjNo = 370;
-			}
 		}
 	}
 

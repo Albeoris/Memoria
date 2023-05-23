@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using Memoria.Prime;
@@ -213,6 +214,26 @@ namespace Memoria
 					{
 						BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = entry[2];
 					}
+				}
+				else if (String.Compare(entry[0], "BoostedAbilityColor") == 0 && entry.Length >= 5)
+				{
+					// eg.: BoostedAbilityColor 3 0.2 1.0 0.8
+					if (AbilityUI.BoostedAbilityColor == null)
+						continue;
+					Int32 index;
+					Single r, g, b;
+					if (!Int32.TryParse(entry[1], out index))
+						continue;
+					if (!Single.TryParse(entry[2], out r) || !Single.TryParse(entry[3], out g) || !Single.TryParse(entry[4], out b))
+						continue;
+					if (index >= AbilityUI.BoostedAbilityColor.Length)
+					{
+						Int32 oldLength = AbilityUI.BoostedAbilityColor.Length;
+						Array.Resize(ref AbilityUI.BoostedAbilityColor, index + 1);
+						for (Int32 i = oldLength; i < index; i++)
+							AbilityUI.BoostedAbilityColor[i] = new Color(1f, 1f, 1f);
+					}
+					AbilityUI.BoostedAbilityColor[index] = new Color(r, g, b);
 				}
 				else if (String.Compare(entry[0], "BattleStatus") == 0)
 				{

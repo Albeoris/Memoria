@@ -227,7 +227,6 @@ public static class Math3D
 		for (Int32 i = 0; i < rowCount; i++)
 			for (Int32 j = 0; j < colCount; j++)
 				str += echelonForm[i, j] + (j + 1 < colCount ? ", " : "\n");
-		Memoria.Prime.Log.Message($"[MATRIX] echelonForm\n{str}");
 		Single[] result = new Single[colCount];
 		if (initialSolution != null && initialSolution.Length != colCount)
 			throw new RankException();
@@ -245,7 +244,6 @@ public static class Math3D
 			solIndex--;
 			while (nextSolIndex < solIndex)
 			{
-				Memoria.Prime.Log.Message($"[MATRIX] Result[{solIndex}] = initialSolution");
 				result[solIndex] = initialSolution != null ? initialSolution[solIndex] : 1f;
 				solIndex--;
 			}
@@ -256,7 +254,6 @@ public static class Math3D
 				str2 += $" - Result[{col}] * echelonForm[{row}, {col}]";
 			}
 			result[solIndex] = val / echelonForm[row, solIndex];
-			Memoria.Prime.Log.Message($"[MATRIX] Result[{solIndex}] = {str2}) / echelonForm[{row}, {solIndex}]");
 		}
 		while (solIndex > 0)
 		{

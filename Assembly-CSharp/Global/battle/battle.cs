@@ -16,7 +16,7 @@ using Memoria.Data;
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable ClassNeverInstantiated.Global
 
-public class battle
+public static class battle
 {
     public const SByte BTL_SYSTEM_FADE_RATE = 32;
     public const Byte BTL_MAP_JUMP_ON = 1;
@@ -30,6 +30,7 @@ public class battle
     public const Byte BTL_FADE_OUT_COUNT = 32;
     public static BONUS btl_bonus;
     public static Boolean isAlreadyShowTutorial;
+    public static Boolean isSpecialTutorialWindow;
 
     public static Byte TRANCE_GAUGE_FLAG => FF9StateSystem.EventState.gEventGlobal[16];
 
@@ -47,10 +48,6 @@ public class battle
     {
         battle.btl_bonus = new BONUS();
         battle.isAlreadyShowTutorial = false;
-    }
-
-    public battle()
-    {
     }
 
     public static void InitBattle()
@@ -79,6 +76,7 @@ public class battle
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
         SceneDirector.FF9Wipe_FadeInEx(32);
         ff9Battle.btl_phase = 2;
+        battle.isSpecialTutorialWindow = false;
     }
 
     public static UInt32 BattleMain()

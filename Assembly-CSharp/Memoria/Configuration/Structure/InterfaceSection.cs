@@ -9,6 +9,8 @@ namespace Memoria
         private sealed class InterfaceSection : IniSection
         {
             public readonly IniValue<Boolean> PSXBattleMenu;
+            public readonly IniValue<Boolean> ScanDisplay;
+            public readonly IniValue<Int32> BattleRowCount;
             public readonly IniValue<Int32> BattleColumnCount;
             public readonly IniValue<Int32> BattleMenuPosX;
             public readonly IniValue<Int32> BattleMenuPosY;
@@ -23,9 +25,11 @@ namespace Memoria
             public readonly IniValue<String> BattleMPDamageTextFormat;
             public readonly IniValue<String> BattleMPRestoreTextFormat;
 
-            public InterfaceSection() : base(nameof(InterfaceSection), false)
+            public InterfaceSection() : base(nameof(InterfaceSection), true)
             {
                 PSXBattleMenu = BindBoolean(nameof(PSXBattleMenu), false);
+                ScanDisplay = BindBoolean(nameof(ScanDisplay), false);
+                BattleRowCount = BindInt32(nameof(BattleRowCount), 5);
                 BattleColumnCount = BindInt32(nameof(BattleColumnCount), 1);
                 BattleMenuPosX = BindInt32(nameof(BattleMenuPosX), -400);
                 BattleMenuPosY = BindInt32(nameof(BattleMenuPosY), -362);

@@ -5,8 +5,8 @@ using System.Linq;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
+using Memoria.Database;
 using UnityEngine;
-using NCalc;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -142,6 +142,8 @@ public class btl_cmd
             ClearCommand(btl.cmd[i]);
             ClearReflecData(btl.cmd[i]);
         }
+        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Zidane mechanic switch weapon.
+            CharacterCommands.CommandSets[CharacterPresetId.Zidane].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)1001;
     }
 
     public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false)

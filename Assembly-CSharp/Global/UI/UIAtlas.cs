@@ -16,6 +16,49 @@ public class UIAtlas : MonoBehaviour
 		GameLoopManager.Start += OverrideAtlas;
 	}
 
+	public static Boolean ReadRawSpritesFromDisc(String inputPath, Dictionary<String, UnityEngine.Sprite> atlasSprites, List<String> excludeList = null)
+	{
+		try
+		{
+			if (!File.Exists(inputPath))
+				return false;
+
+			Byte[] raw = File.ReadAllBytes(inputPath);
+			Texture2D newFullAtlas = AssetManager.LoadTextureGeneric(raw);
+			if (newFullAtlas == null)
+				newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
+
+			ReadRawSpriteTPSheetFromDisc(newFullAtlas, inputPath + ".tpsheet", atlasSprites, excludeList);
+
+			return true;
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"[UIAtlas] Failed to override sprites with '{inputPath}'.");
+			return false;
+		}
+	}
+
+	private static void ReadRawSpriteTPSheetFromDisc(Texture2D atlasTexture, String tpsheetPath, Dictionary<String, UnityEngine.Sprite> atlasSprites, List<String> excludeList)
+	{
+		List<KeyValuePair<String, Rect>> processingSprites = new List<KeyValuePair<String, Rect>>();
+		if (File.Exists(tpsheetPath))
+		{
+			TPSpriteSheetLoader loader = new TPSpriteSheetLoader(tpsheetPath);
+			SpriteSheet external = loader.Load(atlasTexture);
+			foreach (UnityEngine.Sprite sprite in external.sheet)
+				processingSprites.Add(new KeyValuePair<String, Rect>(sprite.name, sprite.rect));
+		}
+		else
+		{
+			foreach (KeyValuePair<String, UnityEngine.Sprite> kvp in atlasSprites)
+				processingSprites.Add(new KeyValuePair<String, Rect>(kvp.Key, kvp.Value.rect));
+		}
+		foreach (KeyValuePair<String, Rect> kvp in processingSprites)
+			if ((excludeList == null || !excludeList.Contains(kvp.Key)) && atlasTexture.width >= kvp.Value.x + kvp.Value.width && atlasTexture.height >= kvp.Value.y + kvp.Value.height)
+				atlasSprites[kvp.Key] = UnityEngine.Sprite.Create(atlasTexture, kvp.Value, new Vector2(0f, 1f), 482f);
+	}
+
 	private void OverrideAtlas()
 	{
 		GameLoopManager.Start -= OverrideAtlas;
@@ -51,7 +94,7 @@ public class UIAtlas : MonoBehaviour
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "[UIAtlas] Failed to overide atlas.");
+			Log.Error(ex, "[UIAtlas] Failed to override atlas.");
 			return false;
 		}
 	}

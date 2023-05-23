@@ -60,7 +60,7 @@ namespace Assets.Sources.Scripts.UI.Common
 					itemLabel += "\n";
 				itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
 				if (kvp.Value > 1)
-					itemLabel += $" ×{kvp.Value}";
+					itemLabel += $" × {kvp.Value}";
 			}
 			if (itemIcon != null)
 				itemIcon.spriteName = spriteName;

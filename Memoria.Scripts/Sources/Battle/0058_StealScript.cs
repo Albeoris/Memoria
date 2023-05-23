@@ -41,7 +41,6 @@ namespace Memoria.Scripts.Battle
 
             if (Configuration.Hacks.StealingAlwaysWorks >= 1) // cheat
             {
-
                 if (enemy.StealableItems[3] != RegularItem.NoItem)
                     _v.StealItem(enemy, 3);
                 else if (enemy.StealableItems[2] != RegularItem.NoItem)

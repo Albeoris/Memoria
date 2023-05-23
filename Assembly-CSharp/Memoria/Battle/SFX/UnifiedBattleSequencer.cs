@@ -82,7 +82,7 @@ public static class UnifiedBattleSequencer
 		public Boolean reflectEffectLoaded;
 		public Boolean reflectTriggered;
 		public Boolean useCameraTarget;
-		public UInt16 reflectingBtl;
+		public UInt16 originalTargetId;
 
 		public List<SFXData> sfxList = new List<SFXData>();
 		public List<SequenceMove> move = new List<SequenceMove>();
@@ -161,7 +161,7 @@ public static class UnifiedBattleSequencer
 			reflectEffectLoaded = false;
 			reflectTriggered = false;
 			useCameraTarget = false;
-			reflectingBtl = 0;
+			originalTargetId = cmd.tar_id;
 			cancel = false;
 			runningActions.Add(this);
 		}
@@ -330,10 +330,10 @@ public static class UnifiedBattleSequencer
 						}
 						if (!code.TryGetArgBoolean("UseCamera", out tmpBool))
 							tmpBool = Configuration.Battle.Speed < 3 || FF9StateSystem.Battle.FF9Battle.btl_phase != 4 || !UIManager.Battle.FF9BMenu_IsEnable();
-						if (useCameraTarget)
-							tmpBool = true;
-						else if (SFXData.IsShortSpecialEffect(tmpSfx))
+						if (SFXData.IsShortSpecialEffect(tmpSfx))
 							tmpBool = false;
+						else if (useCameraTarget)
+							tmpBool = true;
 						sfxData.LoadSFX(tmpSfx, cmd, customRequest, tmpBool);
 						runningThread.defaultSFXIndex = sfxList.Count;
 						sfxList.Add(sfxData);
@@ -975,7 +975,7 @@ public static class UnifiedBattleSequencer
 							tmpInt = 30;
 						else
 							code.TryGetArgInt32("Delay", out tmpInt);
-						reflectingBtl = btl_cmd.CheckReflec(cmd);
+						UInt16 reflectingBtl = btl_cmd.CheckReflec(cmd);
 						runningThread.targetId = cmd.tar_id;
 						SFXChannel.PlayReflectEffect(reflectingBtl, tmpInt);
 					}
@@ -1003,13 +1003,12 @@ public static class UnifiedBattleSequencer
 							NCalcUtility.InitializeExpressionUnit(ref c, caster, "Caster");
 							NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
 							NCalcUtility.InitializeExpressionCommand(ref c, new BattleCommand(cmd));
-							UInt16 selectedTargets = (UInt16)(cmd.tar_id | reflectingBtl);
 							c.Parameters["IsSingleTarget"] = Comn.countBits(runningThread.targetId) == 1;
 							c.Parameters["AreCasterAndTargetsEnemies"] = caster.IsPlayer && (runningThread.targetId & 0xF0) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId;
 							c.Parameters["AreCasterAndTargetsAllies"] = caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0x0F) == runningThread.targetId;
-							c.Parameters["IsSingleSelectedTarget"] = Comn.countBits(selectedTargets) == 1;
-							c.Parameters["AreCasterAndSelectedTargetsEnemies"] = caster.IsPlayer && (selectedTargets & 0xF0) == selectedTargets || !caster.IsPlayer && (selectedTargets & 0xF) == selectedTargets;
-							c.Parameters["AreCasterAndSelectedTargetsAllies"] = caster.IsPlayer && (selectedTargets & 0xF) == selectedTargets || !caster.IsPlayer && (selectedTargets & 0x0F) == selectedTargets;
+							c.Parameters["IsSingleSelectedTarget"] = Comn.countBits(originalTargetId) == 1;
+							c.Parameters["AreCasterAndSelectedTargetsEnemies"] = caster.IsPlayer && (originalTargetId & 0xF0) == originalTargetId || !caster.IsPlayer && (originalTargetId & 0xF) == originalTargetId;
+							c.Parameters["AreCasterAndSelectedTargetsAllies"] = caster.IsPlayer && (originalTargetId & 0xF) == originalTargetId || !caster.IsPlayer && (originalTargetId & 0x0F) == originalTargetId;
 							c.Parameters["SFXUseCamera"] = isSFXThread ? runningThread.parentSFX.useCamera : false;
 							List<BTL_DATA> allTrgt = btl_util.findAllBtlData(runningThread.targetId);
 							Btl2dParam figParam;

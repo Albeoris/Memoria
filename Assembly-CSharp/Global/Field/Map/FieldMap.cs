@@ -701,9 +701,9 @@ public class FieldMap : HonoBehavior
                 localPosition.x = (Int32)Math.Max(threshmargin, localPosition.x);
                 localPosition.x = (Int32)Math.Min(threshright, localPosition.x);
             }
-            else if (map == 1205 || map == 154 || map == 1214 || map == 1807 || map == 1652 || map == 2552)
+            else if (map == 1205 || map == 1652 || map == 2552)
             {
-                // A. Castle/Chapel, A. Castle/Hallway (x3), Iifa Tree/Roots or Earth Shrine/Interior
+                // A. Castle/Chapel, Iifa Tree/Roots or Earth Shrine/Interior
                 if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
                     threshmargin += 16;
 

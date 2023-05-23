@@ -45,17 +45,6 @@ namespace Assets.Sources.Scripts.UI.Common
                 MagicDefParamSprite.TopAnchorPosition = new UIRect.Position(1f, 0);
                 MagicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
                 MagicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, 30);
-				if (QuadMistResourceManager.UseArrowGoldenFrame && CardBorderSprite.atlas.spriteList.Find(sprt => sprt.name == "goldenbluecardframe") == null)
-				{
-                    CardBorderSprite.atlas.spriteList.Add(new UISpriteData
-                    {
-                        name = "goldenbluecardframe",
-                        x = 1842,
-                        y = 1798,
-                        width = 204,
-                        height = 247,
-                    });
-                }
             }
 		}
 

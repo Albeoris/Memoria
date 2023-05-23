@@ -1,16 +1,25 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 public static class NarrowMapList
 {
-    public static Boolean IsCurrentMapNarrow() => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo);
-    public static Boolean IsNarrowMap(Int32 mapId) => Array.BinarySearch(List, mapId) >= 0;
+    public static Boolean IsCurrentMapNarrow() => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1);
+    public static Boolean IsNarrowMap(Int32 mapId, Int32 camId) => ListFullNarrow.Contains(mapId) || (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId));
 
-    private static readonly Int32[] List = new[]
+    private static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
+    {
+        // Not yet implemented
+        // For now, using this "per camera" narrow list bugs, surely because of the camera position shift in FieldMap.CenterCameraOnPlayer
+        //{ 0154, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
+        //{ 1215, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
+        //{ 1807, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
+    };
+
+    private static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
     {
         0052, // Prima Vista/Meeting Rm
         0053, // Prima Vista/Meeting Rm
-        0055,
+        0055, // Prima Vista/Music Room
         0056, // S. Gate
         0058, // Prima Vista/Storage
         0059, // Prima Vista/Interior
@@ -24,18 +33,17 @@ public static class NarrowMapList
         0068, // A. Castle/Throne
         0069, // A. Castle/Throne
         0100, // Alexandria/Main Street
-        0102,
+        0102, // Alexandria/Main Street
         0104, // Alexandria/Shop
         0105, // Alexandria/Alley
         0108, // Alexandria/Item Shop
-        0109,
-        0114,
+        0109, // Alexandria/Wpn. Shop
+        0114, // Alexandria/Residence
         0116, // Alexandria/Rooftop
         0150, // A. Castle/Guardhouse
-        0151,
+        0151, // A. Castle/Throne
         0153, // A. Castle/Hallway
-        0154, // A. Castle/Hallway
-        0157,
+        0157, // A. Castle/Kitchen
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
         0162, // A. Castle/West Tower
@@ -47,18 +55,18 @@ public static class NarrowMapList
         0201, // Prima Vista/Bridge
         0203, // Prima Vista/Meeting Rm
         0205, // Prima Vista/Hallway
-        0206,
-        0207,
+        0206, // Prima Vista/Crash Site
+        0207, // Prima Vista/Cabin
         0209, // Prima Vista/Event
-        0251,
-        0252,
-        0254,
+        0251, // Evil Forest/Trail
+        0252, // Evil Forest/Trail
+        0254, // Evil Forest/Swamp
         0255, // Evil Forest/Riverbank
         0256, // Evil Forest/Trail
         0259, // Evil Forest/Trail
         0261, // Evil Forest/Exit
-        0262,
-        0300,
+        0262, // Evil Forest/Exit
+        0300, // Ice Cavern/Entrance
         0301, // Ice Cavern/Ice Path
         0305, // Ice Cavern/Ice Path
         0306, // Ice Cavern/Cave
@@ -168,7 +176,6 @@ public static class NarrowMapList
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
-        1215, // A. Castle/Hallway
         1216,
         1218,
         1221, // A. Castle/Courtyard
@@ -256,7 +263,6 @@ public static class NarrowMapList
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
-        1807, // A. Castle/Hallway
         1808,
         1810,
         1813, // A. Castle/Courtyard
@@ -413,5 +419,5 @@ public static class NarrowMapList
         3057,
         3058, // Mage Village/Water Mil
         3100,
-    }.OrderBy(a => a).ToArray();
+    };
 }

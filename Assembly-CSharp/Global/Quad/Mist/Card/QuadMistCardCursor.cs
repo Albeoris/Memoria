@@ -6,12 +6,19 @@ public class QuadMistCardCursor : MonoBehaviour
 {
 	private void Start()
 	{
-		LoadSprites("EmbeddedAsset/QuadMist/Atlas/quadmist_image0");
-		gameObjects[0].GetComponent<Renderer>().enabled = true;
-		for (Int32 i = 1; i < CURSOR_COUNT; i++)
-			gameObjects[i].GetComponent<Renderer>().enabled = false;
-		SetNormalState();
-		Hide();
+		try
+		{
+			LoadSprites("EmbeddedAsset/QuadMist/Atlas/quadmist_image0");
+			gameObjects[0].GetComponent<Renderer>().enabled = true;
+			for (Int32 i = 1; i < CURSOR_COUNT; i++)
+				gameObjects[i].GetComponent<Renderer>().enabled = false;
+			SetNormalState();
+			Hide();
+		}
+		catch (Exception err)
+		{
+			Memoria.Prime.Log.Error(err);
+		}
 	}
 
 	private void Update()
@@ -83,31 +90,25 @@ public class QuadMistCardCursor : MonoBehaviour
 		Sprite[] spriteArray = Resources.LoadAll<Sprite>(atlasName);
 		Dictionary<String, Sprite> nameToSprite = new Dictionary<String, Sprite>();
 		List<String> cursorSpriteNames = new List<String>();
-		Texture2D moddedAtlas = null;
-		String atlasOnDisc = AssetManager.SearchAssetOnDisc(atlasName, true, false);
-		if (!String.IsNullOrEmpty(atlasOnDisc))
-			moddedAtlas = AssetManager.LoadFromDisc<Texture2D>(atlasOnDisc, "");
 		for (Int32 i = 0; i < CURSOR_COUNT; i++)
 			cursorSpriteNames.Add($"card_cursor_{i}.png");
-		for (Int32 i = 0; i < spriteArray.Length; i++)
+		foreach (Sprite sprite in spriteArray)
 		{
-			Sprite sprite = spriteArray[i];
 			if (cursorSpriteNames.Contains(sprite.name))
 			{
-				Sprite value = Sprite.Create(moddedAtlas != null ? moddedAtlas : sprite.texture, sprite.rect, new Vector2(0f, 0f), 482f);
+				Sprite value = Sprite.Create(sprite.texture, sprite.rect, new Vector2(0f, 0f), 482f);
 				nameToSprite.Add(sprite.name, value);
 			}
 		}
-		for (Int32 i = 0; i < spriteArray.Length; i++)
+		foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
 		{
-			Sprite sprite = spriteArray[i];
-			if (sprite.name == "card_cursor_0.png")
-			{
-				Sprite value = Sprite.Create(moddedAtlas != null ? moddedAtlas : sprite.texture, sprite.rect, new Vector2(0f, 0f), 482f);
-				nameToSprite.Add("card_effect", value);
-				break;
-			}
+			if (String.IsNullOrEmpty(folder.FolderPath))
+				continue;
+			if (folder.TryFindAssetInModOnDisc(atlasName, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				UIAtlas.ReadRawSpritesFromDisc(fullPath, nameToSprite);
 		}
+		if (nameToSprite.TryGetValue("card_cursor_0.png", out Sprite effectSprite))
+			nameToSprite["card_effect"] = effectSprite;
 		gameObjects = new GameObject[CURSOR_COUNT];
 		for (Int32 i = 0; i < CURSOR_COUNT; i++)
 		{

@@ -94,17 +94,25 @@ public class VoicePlayer : SoundPlayer
 		if (!Configuration.VoiceActing.Enabled)
 			return;
 
+		String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FieldZoneId, messageNumber);
 		Boolean useAlternatePath = false;
 		String vaAlternatePath = null;
-		if (dialog.ChoiceNumber <= 0 && dialog.SubPage.Count <= 1 && dialog.Po != null)
+		if (dialog.Po != null)
 		{
 			vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid);
 			if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".ogg", true, false))
+			{
+				vaPath = vaAlternatePath;
 				useAlternatePath = true;
+			}
 		}
-		String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FieldZoneId, messageNumber);
 		if (dialog.SubPage.Count > 1)
-			vaPath += "_" + Math.Max(0, dialog.CurrentPage - 1).ToString();
+		{
+			String pageIndex = "_" + Math.Max(0, dialog.CurrentPage - 1).ToString();
+			vaPath += pageIndex;
+			if (!String.IsNullOrEmpty(vaAlternatePath))
+				vaAlternatePath += pageIndex;
+		}
 
 		String[] msgStrings = dialog.Phrase.Split(new String[] { "[CHOO]" }, StringSplitOptions.None);
 		String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
@@ -152,7 +160,7 @@ public class VoicePlayer : SoundPlayer
 				if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
 					return;
 
-				String vaOptionPath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, optionIndex);
+				String vaOptionPath = vaPath + "_" + optionIndex;
 				String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : new String[0];
 				Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
 				String optString = selectedVisibleOption < options.Length ? messageOpcodeRegex.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; }) : "[Invalid option index]";
