@@ -28,7 +28,7 @@ namespace Memoria
             public InterfaceSection() : base(nameof(InterfaceSection), true)
             {
                 PSXBattleMenu = BindBoolean(nameof(PSXBattleMenu), false);
-                ScanDisplay = BindBoolean(nameof(ScanDisplay), false);
+                ScanDisplay = BindBoolean(nameof(ScanDisplay), true);
                 BattleRowCount = BindInt32(nameof(BattleRowCount), 5);
                 BattleColumnCount = BindInt32(nameof(BattleColumnCount), 1);
                 BattleMenuPosX = BindInt32(nameof(BattleMenuPosX), -400);

@@ -210,7 +210,7 @@ public partial class BattleHUD : UIScene
                     if (enemy.StealableItems[i] != RegularItem.NoItem)
                         libraMessage += (Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(enemy.StealableItems[i]) : FF9TextTool.ItemName(enemy.StealableItems[i]) + FF9TextTool.BattleLibraText(8)) + "\n";
             }
-            if ((infos & LibraInformation.ItemSteal) != 0 && !pBtl.IsPlayer)
+            if ((infos & LibraInformation.BlueLearn) != 0 && !pBtl.IsPlayer)
             {
                 Int32 blueMagicId = BattleEnemyPrototype.Find(pBtl).BlueMagicId;
                 libraMessage += FF9TextTool.CommandName(BattleCommandId.BlueMagic) + ": ";
