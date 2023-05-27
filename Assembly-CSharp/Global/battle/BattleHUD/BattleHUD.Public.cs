@@ -100,7 +100,11 @@ public partial class BattleHUD : UIScene
     public String GetBattleCommandTitle(CMD_DATA pCmd)
     {
         if (pCmd.regist != null && pCmd.regist.bi.player == 0)
-            return pCmd.aa.Name;
+        { // TODO : I will improve that
+            BTL_DATA caster = pCmd.regist;
+            BattleUnit unit = new BattleUnit(caster);
+            return (unit.IsUnderStatus(BattleStatus.Trance) & !String.IsNullOrEmpty(Configuration.TranceMonster.ColorTextTranceCMD)) ? "["+Configuration.TranceMonster.ColorTextTranceCMD+ "][HSHD]" + pCmd.aa.Name + "[383838][HSHD]" : pCmd.aa.Name;
+        }
         if (btl_util.IsCommandMonsterTransform(pCmd))
         {
             AA_DATA aaData = btl_util.GetCommandMonsterAttack(pCmd);

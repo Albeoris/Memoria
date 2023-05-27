@@ -421,7 +421,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         Int32 battleSpeed = Configuration.Battle.Speed;
 
         BTL_DATA source = btl;
-        Boolean canContinute = false;
+        Boolean canContinue = false;
         Boolean needContinue = battleSpeed == 1 || battleSpeed == 2;
         do
         {
@@ -452,7 +452,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (current.at < maximum.at)
                 {
                     if (btl.bi.player != 0)
-                        canContinute = true;
+                        canContinue = true;
 
                     changed = true;
                     current.at += (Int16)Math.Max(1, current.at_coef * 4 );
@@ -533,7 +533,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         break;
                 }
             }
-        } while (canContinute && needContinue);
+        } while (canContinue && needContinue);
     }
 
     private void Update()

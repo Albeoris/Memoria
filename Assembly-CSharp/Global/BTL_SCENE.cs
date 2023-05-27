@@ -1,8 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using Memoria;
 using Memoria.Data;
-using UnityEngine;
 
 public class BTL_SCENE
 {
@@ -119,7 +119,17 @@ public class BTL_SCENE
 				sb2_MON_PARM.Pad0 = binaryReader.ReadByte();
 				sb2_MON_PARM.Pad1 = binaryReader.ReadUInt16();
 				sb2_MON_PARM.Pad2 = binaryReader.ReadUInt16();
-			}
+                sb2_MON_PARM.TranceGlowColor = new byte[] { 255, 96, 96 };
+                if (Configuration.TranceMonster.ColorTranceMonster.Length > 0)
+                {
+					byte[] NewTranceGlowColor = Configuration.TranceMonster.ColorTranceMonster.Split(' ').Select(byte.Parse).ToArray();
+					for (Int32 j = 0; j < NewTranceGlowColor.Length; j++)
+					{
+                        sb2_MON_PARM.TranceGlowColor[j] = NewTranceGlowColor[j];
+                    }
+						
+                }
+            }
 			binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount + 116 * this.header.TypCount, SeekOrigin.Begin);
 			for (Int32 i = 0; i < this.header.AtkCount; i++)
 			{
@@ -160,7 +170,13 @@ public class BTL_SCENE
 					if (sequenceText != null)
 						aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
 				}
-			}
+                if (!String.IsNullOrEmpty(aa.Info.TranceSequenceFile))
+                {
+                    String TrancesequenceText = AssetManager.LoadString(aa.Info.TranceSequenceFile);
+                    if (TrancesequenceText != null)
+                        aa.Info.VfxTranceAction = new UnifiedBattleSequencer.BattleAction(TrancesequenceText);
+                }
+            }
 		}
 	}
 

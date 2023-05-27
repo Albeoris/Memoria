@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
@@ -121,7 +120,7 @@ namespace Memoria
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
             v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
-                target.fig_info |= Param.FIG_INFO_GUARD;
+            target.fig_info |= Param.FIG_INFO_GUARD;
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
             {
                 target.fig_info |= Param.FIG_INFO_MISS;
@@ -325,11 +324,8 @@ namespace Memoria
         {
             if (!UIManager.Battle.FF9BMenu_IsEnable())
                 return;
-            if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
+            if ((v.Caster.Data.bi.player != 0 && v.Target.Data.bi.player != 0) || v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance))
                 return;
-            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // TRANCE SEEK - VENOM
-                return;
-
             if (v.Target.Trance + v.Context.TranceIncrease < 0)
             {
                 v.Target.Trance = 0;

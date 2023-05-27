@@ -22,7 +22,11 @@ public class BattleCommandInfo
 	public String SequenceFile;
 	public UnifiedBattleSequencer.BattleAction VfxAction;
 
-	public BattleCommandInfo()
+    [Memoria.PatchableFieldAttribute]
+    public String TranceSequenceFile;
+    public UnifiedBattleSequencer.BattleAction VfxTranceAction;
+
+    public BattleCommandInfo()
 	{
 		Target = 0;
 		DefaultAlly = false;
@@ -33,7 +37,9 @@ public class BattleCommandInfo
 		DefaultOnDead = false;
 		SequenceFile = null;
 		VfxAction = null;
-	}
+        TranceSequenceFile = null;
+        VfxTranceAction = null;
+    }
 
 	public BattleCommandInfo(TargetType target, Boolean defaultAlly, TargetDisplay displayStats, Int16 vfxIndex, Boolean forDead, Boolean defaultCamera, Boolean defaultOnDead)
 	{
@@ -46,5 +52,7 @@ public class BattleCommandInfo
 		DefaultOnDead = defaultOnDead;
 		SequenceFile = null;
 		VfxAction = null;
-	}
+        TranceSequenceFile = null;
+        VfxTranceAction = null;
+    }
 }

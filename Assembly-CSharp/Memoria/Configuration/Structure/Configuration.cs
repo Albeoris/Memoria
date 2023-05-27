@@ -19,6 +19,7 @@ namespace Memoria
         private volatile FixesSection _fixes;
         private volatile HacksSection _hacks;
         private volatile BattleSection _battle;
+        private volatile TranceMonsterSection _trancemonster;
         private volatile IconsSection _icons;
         private volatile AudioSection _audio;
         private volatile VoiceActingSection _voiceActing;
@@ -41,6 +42,7 @@ namespace Memoria
             BindingSection(out _fixes, v => _fixes = v);
             BindingSection(out _hacks, v => _hacks = v);
             BindingSection(out _battle, v => _battle = v);
+            BindingSection(out _trancemonster, v => _trancemonster = v);
             BindingSection(out _icons, v => _icons = v);
             BindingSection(out _audio, v => _audio = v);
             BindingSection(out _voiceActing, v => _voiceActing = v);

@@ -547,7 +547,7 @@ public class BattleResultUI : UIScene
 	{
 		this.AnalyzeParty();
 		this.defaultExp = (UInt32)(this.remainPlayerCounter == 0 ? 0u : battle.btl_bonus.exp / this.remainPlayerCounter);
-		this.defaultAp = battle.btl_bonus.ap;
+		this.defaultAp = battle.btl_bonus.monsterovertrance ? (uint)(battle.btl_bonus.ap * Configuration.TranceMonster.BonusOverTranceAP) : battle.btl_bonus.ap;
 		this.defaultGil = battle.btl_bonus.gil;
 		this.defaultCard = QuadMistDatabase.MiniGame_GetAllCardCount() < Configuration.TetraMaster.MaxCardCount ? battle.btl_bonus.card : TetraMasterCardId.NONE;
 	}

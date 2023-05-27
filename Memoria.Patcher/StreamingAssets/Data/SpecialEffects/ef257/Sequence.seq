@@ -5,15 +5,23 @@ PlaySound: Sound=926
 PlaySound: Sound=927
 PlaySound: Sound=928
 Wait: Time=16
-ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+StartThread: CasterIsPlayer
+	ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
+EndThread
 Wait: Time=19
 PlaySound: Sound=929
 PlaySound: Sound=930
 PlaySound: Sound=931
-ShowMesh: Char=Caster ; Enable=False ; IsDisappear=True
-EffectPoint: Char=AllTargets ; Type=Effect
+StartThread: CasterIsPlayer
+	EffectPoint: Char=AllTargets ; Type=Effect
+EndThread
+StartThread: !CasterIsPlayer
+	EffectPoint: Char=AllTargets ; Type=Effect ; EffectGlow=True
+EndThread
 Wait: Time=1
-ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+StartThread: CasterIsPlayer
+	ShowMesh: Char=Caster ; Enable=True ; IsDisappear=True
+EndThread
 Wait: Time=26
 SetBackgroundIntensity: Intensity=1 ; Time=16
 Wait: Time=19

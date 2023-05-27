@@ -7,6 +7,7 @@ using Memoria.Data;
 using Memoria.Scripts;
 using Memoria.Database;
 using UnityEngine;
+using NCalc;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -142,8 +143,6 @@ public class btl_cmd
             ClearCommand(btl.cmd[i]);
             ClearReflecData(btl.cmd[i]);
         }
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Zidane mechanic switch weapon.
-            CharacterCommands.CommandSets[CharacterPresetId.Zidane].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)1001;
     }
 
     public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false)
@@ -153,6 +152,7 @@ public class btl_cmd
         cmd.cmd_no = commandId;
         cmd.sub_no = sub_no;
         BTL_DATA caster = cmd.regist;
+        BattleUnit unit = new BattleUnit(caster);
         switch (commandId)
         {
             case BattleCommandId.SysEscape:
@@ -244,7 +244,6 @@ public class btl_cmd
             btl_cmd.SetCommand(second_cmd, commandId, cmd.HitRate, second_tar_id, second_cursor);
             return;
         }
-
         cmd.tar_id = tar_id;
         cmd.info.cursor = (Byte)cursor;
         cmd.info.cover = 0;
@@ -286,6 +285,13 @@ public class btl_cmd
             cmd.info.priority = 1;
         if (caster != null && cmd == caster.cmd[0])
             BattleVoice.TriggerOnBattleAct(caster, "CommandInput", cmd);
+        if (caster.bi.player == 0 && commandId == BattleCommandId.SysTrans) // Trigger Trance for Monster (using a null AA created in btl_init)
+        {
+            cmd.SetAAData(FF9StateSystem.Battle.FF9Battle.enemy_attack[FF9StateSystem.Battle.FF9Battle.btl_scene.header.AtkCount]);
+            cmd.ScriptId = 64;
+            int eff = unit.IsUnderAnyStatus(BattleStatus.Trance) ? 257 : 489;
+            cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.SpecialEffect, eff);
+        }
         EnqueueCommand(cmd);
     }
 
@@ -1057,11 +1063,13 @@ public class btl_cmd
                 if (caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
                     UIManager.Battle.SetBattleFollowMessage(BattleMesages.Trance);
-                    caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), true);
+                    if (caster.IsPlayer)
+                        caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), true);
                 }
                 else
                 {
-                    caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), false);
+                    if (caster.IsPlayer)
+                        caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), false);
                 }
                 return true;
             case BattleCommandId.SysDead: // Unused anymore
@@ -1299,7 +1307,18 @@ public class btl_cmd
             if (IsNeedToDecreaseTrance(caster, commandId, cmd))
             {
                 Byte tranceDelta = (Byte)((300 - caster.Level) / caster.Will * 10);
-
+                if (!caster.IsPlayer && Configuration.TranceMonster.DeltaTranceMonster.Length > 0)
+                {
+                    Expression e = new Expression(Configuration.TranceMonster.DeltaTranceMonster);
+                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(caster), "Caster");
+                    Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                    if (val >= 0)
+                        tranceDelta = (Byte)Math.Min(val, 255);
+                }
+                if (!caster.IsPlayer && Configuration.TranceMonster.OverTrance)
+                    tranceDelta = 0;
                 if (btl_cmd.half_trance_cmd_list.Contains(cmd.cmd_no))
                     tranceDelta /= 2;
 

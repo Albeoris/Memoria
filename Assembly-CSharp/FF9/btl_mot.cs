@@ -5,9 +5,8 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Assets;
 using Memoria.Prime;
-using Memoria.Prime.CSV;
-using Memoria.Prime.Collections;
 using UnityEngine;
+using NCalc;
 
 namespace FF9
 {
@@ -358,7 +357,30 @@ namespace FF9
 								if (btl_util.CheckEnemyCategory(btl, 8) && ff.dragon_no < 9999)
 									ff.dragon_no++;
 								if (ff.btl_result != 4)
-									btl_sys.SetBonus(enemyPtr.et);
+								{
+                                    if (Configuration.TranceMonster.OverTrance && btl.tranceglowenabled)
+                                    {
+                                        if (Configuration.TranceMonster.BonusOverTranceEXP.Length > 0)
+                                        {
+                                            Expression e = new Expression(Configuration.TranceMonster.BonusOverTranceEXP);
+                                            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                            e.Parameters["EXP"] = enemyPtr.et.bonus.exp;
+                                            Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                                            if (val >= 0)
+                                                enemyPtr.et.bonus.exp = (uint)val;
+                                        }
+                                        if (Configuration.TranceMonster.BonusOverTranceGils.Length > 0)
+                                        {
+                                            Expression e = new Expression(Configuration.TranceMonster.BonusOverTranceGils);
+                                            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                            e.Parameters["Gils"] = enemyPtr.et.bonus.gil;
+                                            Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                                            if (val >= 0)
+                                                enemyPtr.et.bonus.gil = (uint)val;
+                                        }
+                                    }
+                                    btl_sys.SetBonus(enemyPtr.et);
+                                }		
 								btl.die_seq++;
 								if (ff9Battle.btl_phase != 5 || (ff9Battle.btl_seq != 3 && ff9Battle.btl_seq != 2))
 									btl_sys.CheckBattlePhase(btl);

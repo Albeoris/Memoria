@@ -119,8 +119,10 @@ public partial class BTL_DATA
 	public ItemAttack weapon = null;
 
 	public Byte trance;
+	public Byte[] trancecolor;
+	public Boolean tranceglowenabled;
 
-	public Byte p_up_attr;
+    public Byte p_up_attr;
 
 	public Byte level;
 

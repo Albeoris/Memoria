@@ -72,7 +72,7 @@ public class BattleActionCode
 		{ "ResetCamera", null },
 		{ "PlaySound", new String[]{ "Sound", "SoundType", "Volume", "Pitch", "Panning", "Start" } },
 		{ "StopSound", new String[]{ "Sound", "SoundType" } },
-		{ "EffectPoint", new String[]{ "Char", "Type" } },
+		{ "EffectPoint", new String[]{ "Char", "Type", "EffectGlow" } },
 		{ "Message", new String[]{ "Text", "Title", "Priority" } },
 		{ "SetBackgroundIntensity", new String[]{ "Intensity", "Time", "HoldDuration" } },
 		{ "SetVariable", new String[]{ "Variable", "Value", "Index" } },
@@ -80,7 +80,7 @@ public class BattleActionCode
 		{ "ActivateReflect", null },
 		{ "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } },
 		{ "MOVE_WATER", new String[]{ "Char", "Type", "Time" } }
-	};
+    };
 
 	public Boolean TryGetArgSingle(String key, out Single value)
 	{

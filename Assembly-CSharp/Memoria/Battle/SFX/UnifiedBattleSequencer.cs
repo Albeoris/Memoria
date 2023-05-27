@@ -918,7 +918,17 @@ public static class UnifiedBattleSequencer
 								c.fig_info = 0;
 								c.fig = c.m_fig = 0;
 							}
-						}
+                            if (code.TryGetArgBoolean("EffectGlow", out tmpBool))
+							{
+                                if (btl.bi.player == 0)
+                                {
+                                    BONUS btlBonus = battle.btl_bonus;
+                                    btlBonus.monsterovertrance = true;
+
+                                }
+                                btl.tranceglowenabled = tmpBool;
+                            }
+                        }
 					}
 					if (tmpStr == "Figure" || tmpStr == "Both")
 					{
@@ -985,7 +995,7 @@ public static class UnifiedBattleSequencer
 						break;
 					ActivateReflect();
 					break;
-				case "RunThread":
+                case "RunThread":
 					if (code.TryGetArgInt32("Thread", out tmpInt) && tmpInt >= 0)
 					{
 						Boolean dontCopyThread;

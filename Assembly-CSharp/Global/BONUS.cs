@@ -19,4 +19,5 @@ public class BONUS
 	public List<RegularItem> item;
 	public TetraMasterCardId card;
 	public Boolean escape_gil;
+    public Boolean monsterovertrance;
 }

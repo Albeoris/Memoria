@@ -6,6 +6,8 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using NCalc;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class btl_init
@@ -59,7 +61,7 @@ public static class btl_init
 			monBtl.bi.player = 0;
 			monBtl.bi.slot_no = (Byte)enemyIndex;
 			monBtl.bi.line_no = (Byte)(4 + enemyIndex);
-			monBtl.bi.t_gauge = 0;
+			monBtl.bi.t_gauge = (byte)(Configuration.TranceMonster.Enabled ? 1 : 0);
 			monBtl.bi.slave = enemy.info.slave;
 			BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
 			SB2_PATTERN battlePattern = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
@@ -127,8 +129,10 @@ public static class btl_init
 		{
 			attackList.Add(sceneAttackList[i]);
 			attackList[i].Name = FF9TextTool.BattleText(nameIndex++);
-		}
-		BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
+        }
+		if (Configuration.TranceMonster.Enabled)
+			attackList.Add(new AA_DATA()); // Add a new attack to trigger Trance (on/off).
+        BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next;
 		SB2_PATTERN patternPicked = scenePatternList[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
 		for (Int32 i = 0; i < patternPicked.MonsterCount && next != null; i++)
 		{
@@ -136,7 +140,7 @@ public static class btl_init
 			btl_init.SetMonsterData(sceneMonsterList[patternPicked.Monster[i].TypeNo], next, i);
 			next = next.next;
 		}
-	}
+    }
 
 	public static void SetMonsterData(SB2_MON_PARM pParm, BTL_DATA pBtl, Int32 pNo)
 	{
@@ -180,7 +184,37 @@ public static class btl_init
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
 		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
 		pBtl.special_status_old = false; // TRANCE SEEK - Old Status
-	}
+		pBtl.trance = 0;
+        if (Configuration.TranceMonster.TranceValueInit.Length > 0)
+        {
+            Expression e = new Expression(Configuration.TranceMonster.TranceValueInit);
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+            if (val >= 0)
+                pBtl.trance = (Byte)Math.Min(val, 255);
+        }
+        if (Configuration.TranceMonster.ActiveTranceAllMobs)
+        {
+            pBtl.stat.invalid &= ~BattleStatus.Trance;
+        }
+		if ((Configuration.TranceMonster.TranceMobsExclusion.Contains("EasyKill")) && ((pBtl.stat.cur & BattleStatus.EasyKill) != 0))
+		{
+			pBtl.bi.t_gauge = 0;
+		}
+		else
+		{
+			string TranceMobsExclusionID = Regex.Replace(Configuration.TranceMonster.TranceMobsExclusion, "[^0-9.]", "");
+			if (!String.IsNullOrEmpty(TranceMobsExclusionID))
+			{
+                if (TranceMobsExclusionID.Split(' ').Select(int.Parse).ToArray().Contains((int)pBtl.dms_geo_id))
+                {
+                    pBtl.bi.t_gauge = 0;
+                }
+            }
+        }
+        pBtl.trancecolor = pParm.TranceGlowColor; // 255 96 96 Bright red by default (equivalent to Zidane)
+    }
 
 	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int32 pNo)
 	{
@@ -466,7 +500,7 @@ public static class btl_init
 		btl.bi.def_idle = Convert.ToByte(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying));
 		btl_mot.setMotion(btl, btl.bi.def_idle);
 		btl.evt.animFrame = 0;
-	}
+    }
 
 	public static void OrganizeEnemyData(FF9StateBattleSystem btlsys)
 	{
@@ -568,7 +602,8 @@ public static class btl_init
 		btl.critical_rate_receive_bonus = 0;
 		btl.is_monster_transform = false;
 		btl.killer_track = null;
-	}
+        btl.tranceglowenabled = bi.player !=0 ? true : false; // A small detail to precisely trigger the glow effect (check Sequence.seq in ef257 and ef489)
+    }
 
 	public static void SetBattleModel(BTL_DATA btl)
 	{

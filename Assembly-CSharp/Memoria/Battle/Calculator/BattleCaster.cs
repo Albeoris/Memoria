@@ -33,7 +33,7 @@ namespace Memoria
         {
             if (IsUnderAnyStatus(BattleStatus.Mini))
                 _context.Attack = 1;
-            else if (IsUnderAnyStatus(BattleStatus.Berserk | BattleStatus.Trance))
+            else if (IsUnderAnyStatus(BattleStatus.Berserk) || (IsUnderAnyStatus(BattleStatus.Trance) && Data.bi.player != 0))
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }
 

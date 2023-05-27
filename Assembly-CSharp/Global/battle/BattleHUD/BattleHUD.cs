@@ -346,6 +346,8 @@ public partial class BattleHUD : UIScene
             _commandPanel.SetCaptionColor(FF9TextTool.White);
             _isTranceMenu = false;
         }
+        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Zidane mechanic switch weapon.
+            CharacterCommands.CommandSets[CharacterPresetId.Zidane].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)1001;
 
         if (btl.Data.is_monster_transform && transform.base_command == command1)
             command1 = transform.new_command;

@@ -5,6 +5,7 @@ using Memoria.Data;
 using UnityEngine;
 using Object = System.Object;
 using Assets.Sources.Scripts.UI.Common;
+using NCalc;
 
 namespace Memoria
 {
@@ -159,6 +160,22 @@ namespace Memoria
             Caster = new BattleCaster(caster, Context);
             Target = new BattleTarget(target, Context);
             Context.TranceIncrease = (Int16)(Comn.random16() % Target.Will);
+            if (target.bi.player == 0 && target.bi.t_gauge != 0) // target.bi.t_gauge defines in btl_init with TranceMobsExclusion
+            {
+                if (Configuration.TranceMonster.TranceIncreaseMonster.Length > 0)
+                {
+                    Expression e = new Expression(Configuration.TranceMonster.TranceIncreaseMonster);
+                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(caster), "Caster");
+                    NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(target), "Target");
+                    Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                    if (val >= 0)
+                        Context.TranceIncrease = (Int16)Math.Min(val, 255);
+                }
+                if (Configuration.TranceMonster.OverTrance)
+                    Context.TranceIncrease = 0;
+            }
         }
 
         public void NormalMagicParams()
@@ -481,6 +498,16 @@ namespace Memoria
 
         public void CalcDamageCommon()
         {
+            if ((Configuration.TranceMonster.BonusDamageTranceMonster.Length > 0) && Caster.IsUnderStatus(BattleStatus.Trance) && Caster.Data.bi.player == 0)
+            {
+                Expression e = new Expression(Configuration.TranceMonster.BonusDamageTranceMonster);
+                e.Parameters["Attack"] = Context.Attack;
+                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
+                if (val >= 0)
+                    Context.Attack += (int)val;
+            }
+
             Target.Flags |= CalcFlag.HpAlteration;
             if (Context.IsAbsorb)
                 Target.Flags |= CalcFlag.HpRecovery;

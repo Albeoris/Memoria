@@ -129,6 +129,8 @@ public static class btl_stat
                 break;
             case BattleStatus.Trance:
                 btl.special_status_old = false;
+                if (btl.bi.player == 0)
+                    unit.Trance = byte.MaxValue; // For OverTrance purpose
                 btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
                 break;
             case BattleStatus.Sleep:
@@ -302,18 +304,26 @@ public static class btl_stat
                     SetStatusPolyColor(btl);
                 break;
             case BattleStatus.Trance:
-                if (!Configuration.Mod.TranceSeek || btl.gameObject == btl.tranceGo) // TRANCE SEEK - other usage of trance
+                if (btl.bi.player == 0)
                 {
                     btl.trance = 0;
-                    if (Status.checkCurStat(btl, BattleStatus.Jump))
-                    {
-                        RemoveStatus(btl, BattleStatus.Jump);
-                        btl.SetDisappear(false, 2);
-                        btl_mot.setBasePos(btl);
-                        btl_mot.setMotion(btl, btl.bi.def_idle);
-                        btl.evt.animFrame = 0;
-                    }
                     btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
+                }
+                else
+                {
+                    if (!Configuration.Mod.TranceSeek || btl.gameObject == btl.tranceGo) // TRANCE SEEK - other usage of trance
+                    {
+                        btl.trance = 0;
+                        if (Status.checkCurStat(btl, BattleStatus.Jump))
+                        {
+                            RemoveStatus(btl, BattleStatus.Jump);
+                            btl.SetDisappear(false, 2);
+                            btl_mot.setBasePos(btl);
+                            btl_mot.setMotion(btl, btl.bi.def_idle);
+                            btl.evt.animFrame = 0;
+                        }
+                        btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
+                    }
                 }
                 break;
             case BattleStatus.Haste:
@@ -517,7 +527,7 @@ public static class btl_stat
         {
             if (Configuration.Mod.TranceSeek && unit.IsPlayer)
             {
-                if (unit.Trance == 255 && unit.IsUnderStatus(BattleStatus.Trance) && btl.gameObject != btl.tranceGo)
+                if (unit.Trance == 255 && unit.IsUnderStatus(BattleStatus.Trance) && btl.gameObject != btl.tranceGo) // TRANCE SEEK - Prevent trance if character die in "combo"
                 {
                     btl_cmd.KillSpecificCommand(unit.Data, BattleCommandId.SysTrans);
                     unit.RemoveStatus(BattleStatus.Trance);
@@ -535,7 +545,7 @@ public static class btl_stat
             btl_mot.DieSequence(btl);
             return;
         }
-        if (Configuration.Mod.TranceSeek && !unit.IsUnderStatus(BattleStatus.Death | BattleStatus.Trance) && unit.Trance == 255)
+        if (Configuration.Mod.TranceSeek && !unit.IsUnderStatus(BattleStatus.Death | BattleStatus.Trance) && unit.Trance == 255) // TRANCE SEEK - Trance removes Petrify
         {
             unit.RemoveStatus(BattleStatus.Petrify);
             unit.AlterStatus(BattleStatus.Trance);
@@ -551,6 +561,14 @@ public static class btl_stat
         if (!ignoreAtb && !UIManager.Battle.FF9BMenu_IsEnableAtb())
             return;
 
+        if ((Configuration.TranceMonster.OverTrance) && btl.bi.player == 0 && btl.bi.t_gauge != 0 && !CheckStatus(btl, BattleStatus.Trance))
+        {
+            if  (UnityEngine.Random.Range(0, Configuration.TranceMonster.OverTranceChance) == 0)
+            {
+                unit.AlterStatus(BattleStatus.Trance);
+                unit.Trance = byte.MaxValue;
+            }
+        }
         if (btl.bi.atb == 0)
         {
             if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[(Int32)BattleStatusNumber.Jump - 1] -= btl.cur.at_coef) < 0)
@@ -608,25 +626,12 @@ public static class btl_stat
         }
         if (Configuration.Mod.TranceSeek)
         {
-            if (unit.IsUnderAnyStatus(BattleStatus.Virus))
+            if (unit.IsUnderAnyStatus(BattleStatus.Virus)) // TRANCE SEEK - Virus mechanic
             {
                 if (btl.cur.hp > 0U)
                     btl.cur.hp -= 1U;
                 else
                     new BattleUnit(btl).Kill();
-            }
-            if (unit.IsUnderStatus(BattleStatus.Trance)) // TRANCE SEEK - TODO - Move to AbilityFeatures
-            {
-                if (unit.PlayerIndex == CharacterId.Zidane && !unit.IsUnderStatus(BattleStatus.Haste))
-                    unit.AlterStatus(BattleStatus.Haste);
-                if (unit.PlayerIndex == CharacterId.Steiner && !unit.IsUnderStatus(BattleStatus.Protect))
-                    unit.AlterStatus(BattleStatus.Protect);
-                if (unit.PlayerIndex == CharacterId.Garnet && !unit.IsUnderStatus(BattleStatus.Shell))
-                    unit.AlterStatus(BattleStatus.Shell);
-                if (unit.PlayerIndex == CharacterId.Freya && !unit.IsUnderStatus(BattleStatus.Float))
-                    unit.AlterStatus(BattleStatus.Float);
-                if (unit.PlayerIndex == CharacterId.Eiko && !unit.IsUnderStatus(BattleStatus.Regen))
-                    unit.AlterStatus(BattleStatus.Regen);
             }
         }
         if (unit.IsUnderAnyStatus(BattleStatus.Trance) && btl.bi.slot_no == (Byte)CharacterId.Garnet && (ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0)
@@ -677,38 +682,6 @@ public static class btl_stat
             {
                 btl_util.GeoSetColor2DrawPacket(data.gameObject, 255, 255, 255);
             }
-            else if (Configuration.Mod.TranceSeek && unit.IsUnderStatus(BattleStatus.EasyKill) && unit.IsUnderStatus(BattleStatus.AutoLife)) // TRANCE SEEK - Boss Trance (TODO Improved)
-            {
-                if (!FF9StateSystem.Battle.isFade)
-                {
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                }
-                byte b = (byte)(ff9Battle.btl_cnt % 24);
-                short num;
-                short num2;
-                short num3;
-                if (unit.MaximumHp == 34436U && unit.Level == 30) // Lamie
-                {
-                    num = (short)((int)bbgInfoPtr.chr_r - -255);
-                    num2 = (short)(bbgInfoPtr.chr_g - byte.MaxValue);
-                    num3 = (short)(bbgInfoPtr.chr_b - byte.MaxValue);
-                }
-                else // Beatrix 3rd
-                {
-                    num = (short)((int)bbgInfoPtr.chr_r - -255);
-                    num2 = (short)((int)bbgInfoPtr.chr_g - -255);
-                    num3 = (short)((int)bbgInfoPtr.chr_b - -255);
-                }
-                byte b2 = (byte)((b >= 8) ? ((b >= 16) ? (24 - b) : 8) : b);
-                short r = (short)(num * (short)b2 >> 2);
-                short g = (short)(num2 * (short)b2 >> 2);
-                short b3 = (short)(num3 * (short)b2 >> 2);
-                btl_stat.GeoAddColor2DrawPacket(data.gameObject, r, g, b3);
-                if (data.weapon_geo)
-                {
-                    btl_stat.GeoAddColor2DrawPacket(data.weapon_geo, r, g, b3);
-                }
-            }
             else if (CheckStatus(data, BattleStatus.Shell | BattleStatus.Protect))
             {
                 if (!FF9StateSystem.Battle.isFade)
@@ -737,12 +710,13 @@ public static class btl_stat
                 if (data.weapon_geo)
                     GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
             }
-            else if (unit.IsUnderAnyStatus(BattleStatus.Trance) && !unit.IsUnderStatus(BattleStatus.Death))
+            else if (unit.IsUnderAnyStatus(BattleStatus.Trance) && !unit.IsUnderStatus(BattleStatus.Death) && data.tranceglowenabled)
             {
                 if (!FF9StateSystem.Battle.isFade)
                     btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
                 Byte counter = (Byte)(ff9Battle.btl_cnt % 16);
-                Byte[] glowingColor = btl_mot.BattleParameterList[unit.SerialNumber].TranceGlowingColor;
+                Byte[] glowingColor = new Byte[3];
+                glowingColor = unit.IsPlayer ? btl_mot.BattleParameterList[unit.SerialNumber].TranceGlowingColor : data.trancecolor ;
                 Int16 r = (Int16)(bbgInfoPtr.chr_r - (128 - glowingColor[0]));
                 Int16 g = (Int16)(bbgInfoPtr.chr_g - (128 - glowingColor[1]));
                 Int16 b = (Int16)(bbgInfoPtr.chr_b - (128 - glowingColor[2]));
@@ -753,7 +727,7 @@ public static class btl_stat
             }
             else
             {
-                // TRANCE SEEK - Friendly Ladybug (Miskoxy), swap wings colors
+                // TRANCE SEEK - Friendly Ladybug (Miskoxy), swap wings colors (TODO - Transfert it to Memoria Scripts.DLL ?)
                 SetDefaultShader(data);
                 if (Configuration.Mod.TranceSeek && data.dms_geo_id == 405)
                 {

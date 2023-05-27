@@ -131,6 +131,12 @@ public static class btl_vfx
         {
             if (cmd.cmd_no != BattleCommandId.MagicCounter)
             {
+                if ((cmd.aa.Info.VfxTranceAction != null) && ((regist.stat.cur & BattleStatus.Trance) != 0) && !String.IsNullOrEmpty(cmd.aa.Info.TranceSequenceFile))
+                {
+                    UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(cmd.aa.Info.VfxTranceAction);
+                    action.Execute(cmd);
+                    return;
+                }
                 if (cmd.aa.Info.VfxAction == null && !String.IsNullOrEmpty(cmd.aa.Info.SequenceFile))
                 {
                     String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile);
@@ -199,6 +205,10 @@ public static class btl_vfx
     public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
     {
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
+        if (serialNo == CharacterSerialNumber.NONE)
+        {
+            return;
+        }
         if (isTrance)
         {
             btl.battleModelIsRendering = true;

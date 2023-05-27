@@ -144,8 +144,10 @@ public class SB2_MON_PARM
 	public UInt16 Pad1;
 
 	public UInt16 Pad2;
+    [Memoria.PatchableFieldAttribute]
+    public Byte[] TranceGlowColor;
 
-	[Memoria.PatchableFieldAttribute]
+    [Memoria.PatchableFieldAttribute]
 	public Boolean OutOfReach;
 
 	[Memoria.PatchableFieldAttribute]
