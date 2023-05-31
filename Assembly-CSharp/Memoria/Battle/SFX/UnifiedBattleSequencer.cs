@@ -486,7 +486,7 @@ public static class UnifiedBattleSequencer
 					code.TryGetArgBoolean("Alternate", out tmpBool);
 					code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
 					foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
-						btl.bi.def_idle = tmpBool ? (Byte)1 : (Byte)0;
+						btl_mot.ToggleIdleAnimation(btl, tmpBool);
 					break;
 				case "MoveToTarget":
 					Boolean relativeDistance, useTargetRadius;

@@ -169,6 +169,7 @@ public partial class BTL_DATA
 
 	public UInt32[] sa;
 	public HashSet<SupportAbility> saExtended;
+	public List<SupportingAbilityFeature> saMonster;
 
 	public Int32 fig_regene_hp;
 	public Int32 fig_poison_hp;
@@ -242,6 +243,7 @@ public partial class BTL_DATA
 	public Int32 geo_scale_y;
 	public Int32 geo_scale_z;
 	public Int32 geo_scale_default;
+	public Boolean enable_trance_glow;
 
 	public Boolean animEndFrame;
 	public String endedAnimationName;
@@ -262,7 +264,7 @@ public partial class BTL_DATA
 	{
 		public BattleCommandId base_command;
 		public BattleCommandId new_command;
-		public AA_DATA attack;
+		public AA_DATA[] attack;
 		public List<AA_DATA> spell;
 		public Boolean replace_point;
 		public Boolean replace_stat;
@@ -277,6 +279,8 @@ public partial class BTL_DATA
 		public UInt16 death_sound;
 		public Int32 fade_counter;
 		public List<BattleCommandId> disable_commands;
+		public String[] motion_normal;
+		public String[] motion_alternate;
 	}
 
 	public class DelayedModifier

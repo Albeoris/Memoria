@@ -28,7 +28,10 @@ public class btl_eqp
 				btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
 		}
 		btl_util.SetBBGColor(btl.weapon_geo);
-		geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
+		if (btl.is_monster_transform)
+			geo.geoAttach(btl.weapon_geo, btl.originalGo, p.wep_bone);
+		else
+			geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
 	}
 
 	public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)

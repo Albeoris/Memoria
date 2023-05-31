@@ -80,7 +80,7 @@ public static class ff9level
 			bonus.dex += (UInt16)(capaBonus + equipBonus);
 		}
 		Int32 speed = Math.Min(50, baseStats.Dexterity + lv / 10 + (bonus.dex >> 5));
-		if (Configuration.Battle.SpeedStatFormula.Length > 0)
+		if (!String.IsNullOrEmpty(Configuration.Battle.SpeedStatFormula))
 		{
 			Expression e = new Expression(Configuration.Battle.SpeedStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
@@ -107,7 +107,7 @@ public static class ff9level
 			bonus.str += (UInt16)(capaBonus + equipBonus);
 		}
 		Int32 strength = Math.Min(99, baseStats.Strength + lv * 3 / 10 + (bonus.str >> 5));
-		if (Configuration.Battle.StrengthStatFormula.Length > 0)
+		if (!String.IsNullOrEmpty(Configuration.Battle.StrengthStatFormula))
 		{
 			Expression e = new Expression(Configuration.Battle.StrengthStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
@@ -134,7 +134,7 @@ public static class ff9level
 			bonus.mgc += (UInt16)(capaBonus + equipBonus);
 		}
 		Int32 magic = Math.Min(99, baseStats.Magic + lv * 3 / 10 + (bonus.mgc >> 5));
-		if (Configuration.Battle.MagicStatFormula.Length > 0)
+		if (!String.IsNullOrEmpty(Configuration.Battle.MagicStatFormula))
 		{
 			Expression e = new Expression(Configuration.Battle.MagicStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
@@ -161,7 +161,7 @@ public static class ff9level
 			bonus.wpr += (UInt16)(capaBonus + equipBonus);
 		}
 		Int32 spirit = Math.Min(50, baseStats.Will + lv * 3 / 20 + (bonus.wpr >> 5));
-		if (Configuration.Battle.SpiritStatFormula.Length > 0)
+		if (!String.IsNullOrEmpty(Configuration.Battle.SpiritStatFormula))
 		{
 			Expression e = new Expression(Configuration.Battle.SpiritStatFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);
@@ -192,7 +192,7 @@ public static class ff9level
 			bonus.cap += (UInt16)(capaBonus + equipBonus);
 		}
 		Int32 gemCount = Math.Min(99, baseStats.Gems + lv * 4 / 10 + (bonus.cap >> 5));
-		if (Configuration.Battle.MagicStoneStockFormula.Length > 0)
+		if (!String.IsNullOrEmpty(Configuration.Battle.MagicStoneStockFormula))
 		{
 			Expression e = new Expression(Configuration.Battle.MagicStoneStockFormula);
 			NCalcUtility.InitializeExpressionPlayer(ref e, player);

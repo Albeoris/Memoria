@@ -28,6 +28,7 @@ namespace Memoria.Scripts.Battle
 
             InitializeAttackParams();
 
+            _v.Caster.EnemyTranceBonusAttack();
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
             _v.PenaltyCommandDividedAttack();

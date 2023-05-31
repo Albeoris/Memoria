@@ -21,6 +21,7 @@ namespace Memoria.Scripts.Battle
         {
             _v.Caster.SetLowPhysicalAttack();
             _v.SetWeaponPowerSum();
+            _v.Caster.EnemyTranceBonusAttack();
             _v.Target.SetPhysicalDefense();
             _v.BonusElement();
             if (_v.CanAttackMagic())

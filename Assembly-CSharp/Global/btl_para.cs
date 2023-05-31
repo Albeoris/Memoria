@@ -81,7 +81,7 @@ public class btl_para
                 btl_stat.AlterStatus(btl, BattleStatus.LowHP);
         }
         btl.cur.mp = btl.cur.mp <= btl.max.mp ? btl.cur.mp : btl.max.mp;
-        if (btl.bi.player != 0)
+        if (btl.bi.player != 0 && !btl.is_monster_transform)
             btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying) || btl.special_status_old ? 1 : 0);
     }
 

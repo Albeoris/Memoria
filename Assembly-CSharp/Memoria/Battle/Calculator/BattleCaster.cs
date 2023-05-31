@@ -33,8 +33,15 @@ namespace Memoria
         {
             if (IsUnderAnyStatus(BattleStatus.Mini))
                 _context.Attack = 1;
-            else if (IsUnderAnyStatus(BattleStatus.Berserk | BattleStatus.Trance))
+            else if (IsUnderAnyStatus(BattleStatus.Berserk) || (IsPlayer && IsUnderAnyStatus(BattleStatus.Trance)))
                 _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+        }
+
+        public void EnemyTranceBonusAttack()
+        {
+            // Enemies get +25% damage for most attacks under trance, on top of the accuracy given by "BonusPhysicalEvade"
+            if (!IsPlayer && IsUnderAnyStatus(BattleStatus.Trance))
+                _context.Attack = (Int16)(_context.Attack * 5 >> 2);
         }
 
         public void PenaltyMini()

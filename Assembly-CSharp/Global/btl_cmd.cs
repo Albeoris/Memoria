@@ -5,8 +5,8 @@ using System.Linq;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
-using Memoria.Database;
 using UnityEngine;
+using NCalc;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -142,8 +142,6 @@ public class btl_cmd
             ClearCommand(btl.cmd[i]);
             ClearReflecData(btl.cmd[i]);
         }
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Zidane mechanic switch weapon.
-            CharacterCommands.CommandSets[CharacterPresetId.Zidane].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)1001;
     }
 
     public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false)
@@ -293,7 +291,7 @@ public class btl_cmd
     {
         if (btl_stat.CheckStatus(btl, BattleStatusConst.PreventCounter) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
             return;
-        if (btl_util.IsCommandMonsterTransformAttack(btl, commandId, sub_no) && btl.monster_transform.attack == null)
+        if (btl_util.IsCommandMonsterTransformAttack(btl, commandId, sub_no) && btl.monster_transform.attack[btl.bi.def_idle] == null)
             return;
         SetCommand(btl.cmd[1], commandId, sub_no, tar_id, Comn.countBits(tar_id) > 1 ? 1u : 0u, true);
     }
@@ -637,7 +635,7 @@ public class btl_cmd
                         break;
                     UInt16 tryCover = 0;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(next.saExtended))
+                        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(next))
                             saFeature.TriggerOnCommand(new BattleUnit(next), new BattleCommand(cmd), ref tryCover);
                     if (tryCover != 0)
                     {
@@ -717,6 +715,23 @@ public class btl_cmd
         }
     }
 
+    public static void KillMainCommand(BTL_DATA btl)
+    {
+        for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
+        {
+            if (cmd.next == btl.cmd[0])
+            {
+                Int32 btlNum = 0;
+                while (1 << btlNum != btl.btl_id)
+                    ++btlNum;
+                btl.bi.cmd_idle = 0;
+                DequeueCommand(cmd, false);
+                UIManager.Battle.InputFinishList.Remove(btlNum);
+                break;
+            }
+        }
+    }
+
     public static Boolean KillCommand2(BTL_DATA btl)
     {
         Boolean cancelMainCmd = false;
@@ -738,6 +753,37 @@ public class btl_cmd
             }
         }
         return cancelMainCmd;
+    }
+
+    public static void KillCommand3(BTL_DATA btl)
+    {
+        CMD_DATA cmd1 = FF9StateSystem.Battle.FF9Battle.cmd_queue;
+        while (cmd1 != null)
+        {
+            CMD_DATA cmd2 = cmd1.next;
+            if (cmd2 != null && cmd2.regist == btl)
+            {
+                ResetItemCount(cmd2);
+                DequeueCommand(cmd1, true);
+            }
+            else
+                cmd1 = cmd2;
+        }
+    }
+
+    public static void KillSpecificCommand(BTL_DATA btl, BattleCommandId cmd_no)
+    {
+        for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
+        {
+            if (cmd.next != null && cmd.next.regist == btl && cmd.next.cmd_no == cmd_no)
+            {
+                if (cmd == btl.cmd[0])
+                    KillMainCommand(btl);
+                else
+                    DequeueCommand(cmd, true);
+                break;
+            }
+        }
     }
 
     private static Boolean ConfirmValidTarget(CMD_DATA cmd)
@@ -907,34 +953,6 @@ public class btl_cmd
         return reflectingBtl;
     }
 
-    public static void KillCommand3(BTL_DATA btl)
-    {
-        CMD_DATA cmd1 = FF9StateSystem.Battle.FF9Battle.cmd_queue;
-        while (cmd1 != null)
-        {
-            CMD_DATA cmd2 = cmd1.next;
-            if (cmd2 != null && cmd2.regist == btl)
-            {
-                ResetItemCount(cmd2);
-                DequeueCommand(cmd1, true);
-            }
-            else
-                cmd1 = cmd2;
-        }
-    }
-
-    public static void KillSpecificCommand(BTL_DATA btl, BattleCommandId cmd_no)
-    {
-        for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
-        {
-            if (cmd.next != null && cmd.next.regist == btl && cmd.next.cmd_no == cmd_no)
-            {
-                DequeueCommand(cmd, true);
-                break;
-            }
-        }
-    }
-
     // ReSharper disable PossibleNullReferenceException
     public static Boolean CheckCommandCondition(FF9StateBattleSystem btlsys, CMD_DATA cmd)
     {
@@ -1057,11 +1075,13 @@ public class btl_cmd
                 if (caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
                     UIManager.Battle.SetBattleFollowMessage(BattleMesages.Trance);
-                    caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), true);
+                    if (caster.IsPlayer)
+                        caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), true);
                 }
                 else
                 {
-                    caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), false);
+                    if (caster.IsPlayer)
+                        caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), false);
                 }
                 return true;
             case BattleCommandId.SysDead: // Unused anymore
@@ -1298,18 +1318,43 @@ public class btl_cmd
 
             if (IsNeedToDecreaseTrance(caster, commandId, cmd))
             {
-                Byte tranceDelta = (Byte)((300 - caster.Level) / caster.Will * 10);
+                // Note: there is a bug in the base game that is documented here
+                // https://gamefaqs.gamespot.com/boards/197338-final-fantasy-ix/64320031
+                // Because "tranceDelta" was originally a Byte, the formula could overflow
+                // resulting in Quina at low level that could stay in trance for up to 64 turns
+                // The bug is now fixed; if someone wants to put it back for any reason, it can be done with:
+                //  TranceDecreaseFormula = ((300 - caster.Level) / caster.Will * 10) % 256
+                Int32 tranceDelta = (300 - caster.Level) / caster.Will * 10;
+                if (!String.IsNullOrEmpty(Configuration.Battle.TranceDecreaseFormula))
+                {
+                    Expression e = new Expression(Configuration.Battle.TranceDecreaseFormula);
+                    e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    NCalcUtility.InitializeExpressionUnit(ref e, caster);
+                    NCalcUtility.InitializeExpressionCommand(ref e, new BattleCommand(cmd));
+                    tranceDelta = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), tranceDelta);
+                }
 
                 if (btl_cmd.half_trance_cmd_list.Contains(cmd.cmd_no))
                     tranceDelta /= 2;
 
-                if (FF9StateSystem.Settings.IsTranceFull)
+                if (caster.IsPlayer && FF9StateSystem.Settings.IsTranceFull)
                     tranceDelta = 0;
 
-                if (caster.Trance > tranceDelta)
-                    caster.Trance -= tranceDelta;
-                else if (!FF9StateSystem.Battle.isDebug)
-                    caster.RemoveStatus(BattleStatus.Trance);
+                if (tranceDelta >= 0)
+                {
+                    if (caster.Trance > tranceDelta)
+                        caster.Trance -= (Byte)tranceDelta;
+                    else if (!FF9StateSystem.Battle.isDebug)
+                        caster.RemoveStatus(BattleStatus.Trance);
+                }
+                else
+				{
+                    if (caster.Trance - tranceDelta < Byte.MaxValue)
+                        caster.Trance += (Byte)(-tranceDelta);
+                    else
+                        caster.Trance = Byte.MaxValue;
+                }
 
                 if (cmd.cmd_no == BattleCommandId.Phantom && btlsys.phantom_no != BattleAbilityId.Void)
                 {
@@ -1384,7 +1429,9 @@ public class btl_cmd
 
     private static Boolean IsNeedToDecreaseTrance(BattleUnit caster, BattleCommandId commandId, CMD_DATA cmd)
     {
-        if (!caster.IsUnderAnyStatus(BattleStatus.Trance))
+        if (!caster.IsUnderStatus(BattleStatus.Trance))
+            return false;
+        if (caster.IsUnderPermanentStatus(BattleStatus.Trance))
             return false;
 
         if (commandId == BattleCommandId.Jump || commandId == BattleCommandId.Jump2)
@@ -1419,14 +1466,13 @@ public class btl_cmd
         {
             if (!Configuration.Battle.SFXRework && cmd.cmd_no == BattleCommandId.SysTrans && SFX.frameIndex == 75)
             {
-                if (btl_stat.CheckStatus(cmd.regist, BattleStatus.Trance))
+                Boolean toTrance = btl_stat.CheckStatus(cmd.regist, BattleStatus.Trance);
+                cmd.regist.enable_trance_glow = toTrance;
+                if (cmd.regist.bi.player != 0)
                 {
-                    btl_vfx.SetTranceModel(cmd.regist, true);
-                    BattleAchievement.UpdateTranceStatus();
-                }
-                else
-                {
-                    btl_vfx.SetTranceModel(cmd.regist, false);
+                    btl_vfx.SetTranceModel(cmd.regist, toTrance);
+                    if (toTrance)
+                        BattleAchievement.UpdateTranceStatus();
                 }
             }
         }
@@ -1534,16 +1580,26 @@ public class btl_cmd
                 SBattleCalculator.CalcMain(caster, target, cmd);
                 return;
             case BattleCommandId.SysTrans:
-                if (btl_stat.CheckStatus(cmd.regist, BattleStatus.Trance))
+            {
+                BattleCommand command = new BattleCommand(cmd);
+                BattleCalculator v = new BattleCalculator(caster, target, command);
+                Boolean toTrance = btl_stat.CheckStatus(cmd.regist, BattleStatus.Trance);
+                cmd.regist.enable_trance_glow = toTrance;
+                command.ScriptId = 0;
+                if (cmd.regist.bi.player != 0)
                 {
-                    btl_vfx.SetTranceModel(cmd.regist, true);
-                    BattleAchievement.UpdateTranceStatus();
+                    btl_vfx.SetTranceModel(cmd.regist, toTrance);
+                    if (toTrance)
+                        BattleAchievement.UpdateTranceStatus();
                 }
-                else
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
                 {
-                    btl_vfx.SetTranceModel(cmd.regist, false);
+                    saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
+                    saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
+                    saFeature.TriggerOnAbility(v, "EffectDone", true);
                 }
                 return;
+            }
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
             default:

@@ -318,7 +318,7 @@ public partial class BattleHUD : UIScene
         BTL_DATA.MONSTER_TRANSFORM transform = btl.monster_transform;
         if (transform.base_command == cmdId)
             return true;
-        if (cmdId == BattleCommandId.Attack && transform.attack == null)
+        if (cmdId == BattleCommandId.Attack && transform.attack[btl.bi.def_idle] == null)
             return false;
         return !transform.disable_commands.Contains(cmdId);
     }
@@ -346,6 +346,9 @@ public partial class BattleHUD : UIScene
             _commandPanel.SetCaptionColor(FF9TextTool.White);
             _isTranceMenu = false;
         }
+
+        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Zidane mechanic switch weapon.
+            CharacterCommands.CommandSets[CharacterPresetId.Zidane].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)1001;
 
         if (btl.Data.is_monster_transform && transform.base_command == command1)
             command1 = transform.new_command;
@@ -660,12 +663,12 @@ public partial class BattleHUD : UIScene
 
     private AA_DATA GetSelectedActiveAbility(Int32 playerIndex, BattleCommandId cmdId, Int32 abilityIndex, out Int32 subNo)
     {
+        CharacterCommand ff9Command = CharacterCommands.Commands[cmdId];
         if (CommandIsMonsterTransformCommand(playerIndex, cmdId, out BTL_DATA.MONSTER_TRANSFORM transform))
         {
-            subNo = abilityIndex;
-            return transform.spell[abilityIndex];
+            subNo = ff9Command.ListEntry[abilityIndex];
+            return transform.spell[subNo];
         }
-        CharacterCommand ff9Command = CharacterCommands.Commands[cmdId];
         BattleAbilityId abilityId = PatchAbility(ff9Command.GetAbilityId(abilityIndex));
         subNo = (Int32)abilityId;
         return FF9StateSystem.Battle.FF9Battle.aa_data[abilityId];
@@ -674,14 +677,14 @@ public partial class BattleHUD : UIScene
     private void DisplayAbility()
     {
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
+        CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
         if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out BTL_DATA.MONSTER_TRANSFORM transform))
         {
-            for (Int32 i = 0; i < transform.spell.Count; i++)
-                inDataList.Add(new BattleAbilityListData { Id = i });
+            for (Int32 i = 0; i < ff9Command.ListEntry.Length; i++)
+                inDataList.Add(new BattleAbilityListData { Id = ff9Command.ListEntry[i] });
         }
         else
         {
-            CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
             SetAbilityAp(_abilityDetailDict[CurrentPlayerIndex]);
             foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
                 inDataList.Add(new BattleAbilityListData { Id = ff9abil.GetAbilityIdFromActiveAbility(abilId) });
@@ -708,21 +711,9 @@ public partial class BattleHUD : UIScene
         if (isInit)
             DisplayWindowBackground(item.gameObject, null);
 
-        if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out BTL_DATA.MONSTER_TRANSFORM transform))
-        {
-            AA_DATA aaData = transform.spell[battleAbilityListData.Id];
-            itemListDetailHud.NameLabel.text = aaData.Name;
-            Int32 mp = GetActionMpCost(aaData, curUnit);
-            itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
-            itemListDetailHud.NameLabel.color = FF9TextTool.White;
-            itemListDetailHud.NumberLabel.color = FF9TextTool.White;
-            ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, true);
-            itemListDetailHud.Button.Help.TextKey = String.Empty;
-            itemListDetailHud.Button.Help.Text = String.Empty;
-            return;
-        }
+        Boolean isMonsterTransformCommand = CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out BTL_DATA.MONSTER_TRANSFORM transform);
+        AbilityStatus abilityState = isMonsterTransformCommand ? GetMonsterTransformAbilityState(battleAbilityListData.Id) : GetAbilityState(battleAbilityListData.Id);
 
-        AbilityStatus abilityState = GetAbilityState(battleAbilityListData.Id);
         if (abilityState == AbilityStatus.None)
         {
             itemListDetailHud.Content.SetActive(false);
@@ -733,10 +724,23 @@ public partial class BattleHUD : UIScene
         else
         {
             itemListDetailHud.Content.SetActive(true);
+            itemListDetailHud.Button.Help.TextKey = String.Empty;
 
-            BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(battleAbilityListData.Id));
-            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
-            Int32 mp = GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], curUnit);
+            Int32 mp;
+            if (isMonsterTransformCommand)
+            {
+                AA_DATA aaData = transform.spell[battleAbilityListData.Id];
+                mp = GetActionMpCost(aaData, curUnit);
+                itemListDetailHud.NameLabel.text = aaData.Name;
+                itemListDetailHud.Button.Help.Text = String.Empty;
+            }
+            else
+            {
+                BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(battleAbilityListData.Id));
+                mp = GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], curUnit);
+                itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
+                itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedID);
+            }
             itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
 
             if (abilityState == AbilityStatus.Disable)
@@ -751,9 +755,6 @@ public partial class BattleHUD : UIScene
                 itemListDetailHud.NumberLabel.color = FF9TextTool.White;
                 ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, true);
             }
-
-            itemListDetailHud.Button.Help.TextKey = String.Empty;
-            itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedID);
         }
     }
 
@@ -1147,6 +1148,33 @@ public partial class BattleHUD : UIScene
         mpCost = mpCost * unit.Player.Data.mpCostFactor / 100;
 
         return mpCost;
+    }
+
+    private AbilityStatus GetMonsterTransformAbilityState(Int32 abilId, Int32 playerIndex = -1)
+    {
+        if (playerIndex < 0)
+            playerIndex = CurrentPlayerIndex;
+        BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
+        if (!unit.IsMonsterTransform)
+            return AbilityStatus.None;
+        AA_DATA aaData = unit.Data.monster_transform.spell[abilId];
+
+        if (aaData.AlternateIdleAccess != (unit.Data.bi.def_idle == 1))
+            return AbilityStatus.Disable;
+
+        if ((aaData.Category & 2) != 0)
+        {
+            if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoMagical)
+                return AbilityStatus.Disable;
+
+            if (unit.IsUnderAnyStatus(BattleStatus.Silence))
+                return AbilityStatus.Disable;
+        }
+
+        if (GetActionMpCost(aaData, unit) > unit.CurrentMp)
+            return AbilityStatus.Disable;
+
+        return AbilityStatus.Enable;
     }
 
     private AbilityStatus GetAbilityState(Int32 abilId, Int32 playerIndex = -1)
@@ -2361,7 +2389,7 @@ public partial class BattleHUD : UIScene
                     oldPermanent |= permanent;
                     oldResist |= resist;
                 }
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player))
                 {
                     saFeature.GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partial, out StatusModifier duration, out Int16 atb);
                     newPermanent |= permanent;

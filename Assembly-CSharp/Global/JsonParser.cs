@@ -839,7 +839,31 @@ public class JsonParser : ISharedDataParser
 		dataProfileClass.Add("gil", party.gil.ToString());
 		dataProfileClass.Add("frog_no", data.Frogs.Number.ToString());
 		dataProfileClass.Add("steal_no", data.steal_no.ToString());
-		dataProfileClass.Add("dragon_no", data.dragon_no.ToString());
+		if (oldSaveFormat)
+		{
+			dataProfileClass.Add("dragon_no", data.categoryKillCount[3].ToString());
+		}
+		else
+		{
+			dataProfileClass.Add("humanoid_no", data.categoryKillCount[0].ToString());
+			dataProfileClass.Add("beast_no", data.categoryKillCount[1].ToString());
+			dataProfileClass.Add("devil_no", data.categoryKillCount[2].ToString());
+			dataProfileClass.Add("dragon_no", data.categoryKillCount[3].ToString());
+			dataProfileClass.Add("undead_no", data.categoryKillCount[4].ToString());
+			dataProfileClass.Add("stone_no", data.categoryKillCount[5].ToString());
+			dataProfileClass.Add("soul_no", data.categoryKillCount[6].ToString());
+			dataProfileClass.Add("flight_no", data.categoryKillCount[7].ToString());
+			JSONArray dataKillArray = new JSONArray();
+			foreach (KeyValuePair<Int16, Int16> kvp in data.modelKillCount)
+			{
+				dataKillArray.Add(new JSONClass
+				{
+					{ "id", kvp.Key.ToString() },
+					{ "count", kvp.Value.ToString() }
+				});
+			}
+			dataProfileClass.Add("kills_per_model", dataKillArray);
+		}
 		JSONArray dataItemClass = new JSONArray();
 		Int32 itemCount = oldSaveFormat ? 256 : data.item.Count;
 		for (Int32 i = 0; i < itemCount; i++)
@@ -1193,8 +1217,33 @@ public class JsonParser : ISharedDataParser
 		    ffglobal.Frogs.Initialize((Int16)jsonData["frog_no"].AsInt);
 		if (jsonData["steal_no"] != null)
 			ffglobal.steal_no = (Int16)jsonData["steal_no"].AsInt;
+		if (jsonData["humanoid_no"] != null)
+			ffglobal.categoryKillCount[0] = (Int16)jsonData["humanoid_no"].AsInt;
+		if (jsonData["beast_no"] != null)
+			ffglobal.categoryKillCount[1] = (Int16)jsonData["beast_no"].AsInt;
+		if (jsonData["devil_no"] != null)
+			ffglobal.categoryKillCount[2] = (Int16)jsonData["devil_no"].AsInt;
 		if (jsonData["dragon_no"] != null)
-			ffglobal.dragon_no = (Int16)jsonData["dragon_no"].AsInt;
+			ffglobal.categoryKillCount[3] = (Int16)jsonData["dragon_no"].AsInt;
+		if (jsonData["undead_no"] != null)
+			ffglobal.categoryKillCount[4] = (Int16)jsonData["undead_no"].AsInt;
+		if (jsonData["stone_no"] != null)
+			ffglobal.categoryKillCount[5] = (Int16)jsonData["stone_no"].AsInt;
+		if (jsonData["soul_no"] != null)
+			ffglobal.categoryKillCount[6] = (Int16)jsonData["soul_no"].AsInt;
+		if (jsonData["flight_no"] != null)
+			ffglobal.categoryKillCount[7] = (Int16)jsonData["flight_no"].AsInt;
+		if (jsonData["kills_per_model"] != null)
+		{
+			JSONArray killArray = jsonData["kills_per_model"].AsArray;
+			ffglobal.modelKillCount.Clear();
+			for (Int32 i = 0; i < killArray.Count; i++)
+			{
+				JSONClass killEntry = killArray[i].AsObject;
+				if (killEntry != null && killEntry["id"] != null && killEntry["count"] != null)
+					ffglobal.modelKillCount[(Int16)killEntry["id"].AsInt] = (Int16)killEntry["count"].AsInt;
+			}
+		}
 		if (jsonData["items"] != null)
 		{
 			ffglobal.item.Clear();

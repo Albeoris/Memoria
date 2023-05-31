@@ -10,12 +10,8 @@ using Memoria.Data;
 using Memoria.Prime;
 using UnityEngine;
 
-public class SFX
+public static class SFX
 {
-    public SFX()
-    {
-    }
-
     static SFX()
     {
         SFX.fxNearZ = 100f;

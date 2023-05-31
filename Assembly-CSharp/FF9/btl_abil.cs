@@ -243,7 +243,7 @@ namespace FF9
 
         public static void CheckStatusAbility(BattleUnit btl)
         {
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(btl.Data.saExtended))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(btl))
                 saFeature.TriggerOnStatusInit(btl);
 
             /*if (btl.HasSupportAbility(SupportAbility1.AutoReflect))

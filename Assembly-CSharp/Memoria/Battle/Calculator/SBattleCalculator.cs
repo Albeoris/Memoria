@@ -43,9 +43,9 @@ namespace Memoria
                 command.ScriptId = scriptId;
                 BattleCalculator v = new BattleCalculator(caster, target, command);
                 BattleScriptFactory factory = FindScriptFactory(scriptId);
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster.Data.saExtended))
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
-                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target.Data.saExtended))
+                foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
                 if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
@@ -115,9 +115,9 @@ namespace Memoria
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
             CMD_DATA cmd = v.Command.Data;
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.saExtended))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.saExtended))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
             v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
@@ -287,9 +287,9 @@ namespace Memoria
                     target.cur.mp = target.max.mp;
                 }
             }
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster.saExtended))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "EffectDone", false);
-            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target.saExtended))
+            foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
                 saFeature.TriggerOnAbility(v, "EffectDone", true);
             BattleVoice.TriggerOnBattleAct(caster, "HitEffect", cmd, v);
             BattleVoice.TriggerOnHitted(target, v);
@@ -325,9 +325,9 @@ namespace Memoria
         {
             if (!UIManager.Battle.FF9BMenu_IsEnable())
                 return;
-            if (v.Target.Data.bi.player == 0 || v.Caster.Data.bi.player != 0)
+            if (v.Target.IsPlayer == v.Caster.IsPlayer)
                 return;
-            if (v.Target.Data.bi.t_gauge == 0 || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance)) // TRANCE SEEK - VENOM
+            if (!v.Target.HasTrance || v.Target.Data.cur.hp <= 0 || btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.CannotTrance))
                 return;
 
             if (v.Target.Trance + v.Context.TranceIncrease < 0)

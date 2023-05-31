@@ -196,7 +196,7 @@ namespace FF9
             {
                 PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
                 if (player != null)
-                    foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
+                    foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player))
                         saFeature.TriggerOnBattleStart(ref backAttackChance, ref preemptiveChance, ref preemptivePriority);
             }
             if (!info.SpecialStart && !info.BackAttack && !info.Preemptive)
@@ -224,34 +224,41 @@ namespace FF9
             return start_type;
         }
 
-        public static void SetBonus(ENEMY_TYPE et)
+        public static void SetBonus(ENEMY enemy)
         {
+            // Notes about item drops:
+            // - Each defeated enemy can drop the item from the first item slot (100% by default) + 1 item out of the other slots (37.5%, 12.5% or 0.39% by default)
+            // - Also, the first item slot is "per enemy" (each enemy can drop one independently) while the other slots are "per enemy type" (even with multiple enemies of the same type, only 1 item can be dropped from these slots)
+            // (eg. a fight against 2 Red Dragons always drop 2 Ethers, but it can never drop more than 1 Sapphire)
+            FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             BONUS btlBonus = battle.btl_bonus;
-            btlBonus.gil += (Int32)et.bonus.gil;
-            btlBonus.exp += et.bonus.exp;
-            if (Comn.random8() < et.bonus.item_rate[3] && et.bonus.item[3] != RegularItem.NoItem)
+            btlBonus.gil += (Int32)enemy.bonus_gil;
+            btlBonus.exp += enemy.bonus_exp;
+            if (enemy.bonus_item[3] != RegularItem.NoItem && Comn.random8() < enemy.bonus_item_rate[3])
             {
-                btlBonus.item.Add(et.bonus.item[3]);
-                et.bonus.item[3] = RegularItem.NoItem;
+                btlBonus.item.Add(enemy.bonus_item[3]);
+                for (Int32 i = 4; i < 8; i++)
+                    if (ff9Battle.btl_data[i].btl_id != 0 && ff9Battle.btl_data[i].bi.player == 0 && btl_util.getEnemyTypePtr(ff9Battle.btl_data[i]) == enemy.et)
+                        btl_util.getEnemyPtr(ff9Battle.btl_data[i]).bonus_item[3] = RegularItem.NoItem;
             }
-            else if (Comn.random8() < et.bonus.item_rate[2] && et.bonus.item[2] != RegularItem.NoItem)
+            else if (enemy.bonus_item[2] != RegularItem.NoItem && Comn.random8() < enemy.bonus_item_rate[2])
             {
-                btlBonus.item.Add(et.bonus.item[2]);
-                et.bonus.item[2] = RegularItem.NoItem;
+                btlBonus.item.Add(enemy.bonus_item[2]);
+                for (Int32 i = 4; i < 8; i++)
+                    if (ff9Battle.btl_data[i].btl_id != 0 && ff9Battle.btl_data[i].bi.player == 0 && btl_util.getEnemyTypePtr(ff9Battle.btl_data[i]) == enemy.et)
+                        btl_util.getEnemyPtr(ff9Battle.btl_data[i]).bonus_item[2] = RegularItem.NoItem;
             }
-            else if (Comn.random8() < et.bonus.item_rate[1] && et.bonus.item[1] != RegularItem.NoItem)
+            else if (enemy.bonus_item[1] != RegularItem.NoItem && Comn.random8() < enemy.bonus_item_rate[1])
             {
-                btlBonus.item.Add(et.bonus.item[1]);
-                et.bonus.item[1] = RegularItem.NoItem;
+                btlBonus.item.Add(enemy.bonus_item[1]);
+                for (Int32 i = 4; i < 8; i++)
+                    if (ff9Battle.btl_data[i].btl_id != 0 && ff9Battle.btl_data[i].bi.player == 0 && btl_util.getEnemyTypePtr(ff9Battle.btl_data[i]) == enemy.et)
+                        btl_util.getEnemyPtr(ff9Battle.btl_data[i]).bonus_item[1] = RegularItem.NoItem;
             }
-            if (Comn.random8() < et.bonus.item_rate[0] && et.bonus.item[0] != RegularItem.NoItem)
-            {
-                btlBonus.item.Add(et.bonus.item[0]);
-                et.bonus.item[0] = RegularItem.NoItem;
-            }
-            if (btlBonus.card != TetraMasterCardId.NONE || (Int32)et.bonus.card >= CardPool.TOTAL_CARDS || Comn.random8() >= et.bonus.card_rate)
-                return;
-            btlBonus.card = et.bonus.card;
+            if (enemy.bonus_item[0] != RegularItem.NoItem && Comn.random8() < enemy.bonus_item_rate[0])
+                btlBonus.item.Add(enemy.bonus_item[0]);
+            if (btlBonus.card == TetraMasterCardId.NONE && enemy.bonus_card != TetraMasterCardId.NONE && Comn.random8() < enemy.bonus_card_rate)
+                btlBonus.card = enemy.bonus_card;
         }
 
         public static void SavePlayerData(BTL_DATA btl, Boolean removingUnit)
@@ -259,13 +266,15 @@ namespace FF9
             if (btl.bi.player == 0)
                 return;
             BattleUnit unit = new BattleUnit(btl);
-            PLAYER playerPtr = btl_util.getPlayerPtr(btl);
-            playerPtr.trance = unit.IsUnderAnyStatus(BattleStatus.Trance) ? (Byte)0 : btl.trance;
-            btl_init.CopyPoints(playerPtr.cur, btl.cur);
+            PLAYER player = btl_util.getPlayerPtr(btl);
+            player.trance = unit.IsUnderAnyStatus(BattleStatus.Trance) ? (Byte)0 : btl.trance;
+            btl_init.CopyPoints(player.cur, btl.cur);
+            player.cur.hp = Math.Min(player.cur.hp, player.max.hp);
+            player.cur.mp = Math.Min(player.cur.mp, player.max.mp);
             if (removingUnit)
                 if (btl.cur.hp == 0)
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
-            btl_stat.SaveStatus(playerPtr, btl);
+            btl_stat.SaveStatus(player, btl);
         }
 
         public static void DelCharacter(BTL_DATA btl)

@@ -51,10 +51,12 @@ namespace Memoria
         public String Name => Data.et.name;
         public RegularItem[] StealableItems => Data.steal_item;
         public UInt16[] StealableItemRates => Data.steal_item_rate;
-        public RegularItem[] DroppableItems => Data.et.bonus.item;
-        public UInt16[] DroppableItemRates => Data.et.bonus.item_rate;
-        public TetraMasterCardId DroppableCard => Data.et.bonus.card;
-        public UInt16 DroppableCardRate => Data.et.bonus.card_rate;
+        public RegularItem[] DroppableItems => Data.bonus_item;
+        public UInt16[] DroppableItemRates => Data.bonus_item_rate;
+        public TetraMasterCardId DroppableCard => Data.bonus_card;
+        public UInt16 DroppableCardRate => Data.bonus_card_rate;
+        public UInt32 BonusExperience => Data.bonus_exp;
+        public UInt32 BonusGil => Data.bonus_gil;
 
         public static BattleEnemy Find(BattleUnit unit)
         {

@@ -518,6 +518,7 @@ public partial class BattleHUD : UIScene
 
     private static void OpenMainMenuAfterHide()
     {
+        btl2d.ReleaseBtl2dStatCount();
         PersistenSingleton<UIManager>.Instance.MainMenuScene.EnabledSubMenus = new HashSet<String>(Configuration.Battle.AvailableMenus);
         PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = PersistenSingleton<UIManager>.Instance.MainMenuScene.GetFirstAvailableSubMenu();
         PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = true;
@@ -542,9 +543,9 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus CheckAbilityStatus(Int32 subMenuIndex)
     {
-        if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
-            return AbilityStatus.Enable;
         CharacterCommand command = CharacterCommands.Commands[_currentCommandId];
+        if (CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
+            return GetMonsterTransformAbilityState(command.ListEntry[subMenuIndex]);
         BattleAbilityId abilId = command.GetAbilityId(subMenuIndex);
         if (abilId == BattleAbilityId.Void)
             return AbilityStatus.None;

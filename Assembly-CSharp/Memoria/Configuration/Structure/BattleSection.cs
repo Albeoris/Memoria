@@ -53,6 +53,7 @@ namespace Memoria
             public readonly IniValue<String> MagicStatFormula;
             public readonly IniValue<String> SpiritStatFormula;
             public readonly IniValue<String> MagicStoneStockFormula;
+            public readonly IniValue<String> TranceDecreaseFormula;
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -84,6 +85,7 @@ namespace Memoria
                 MagicStatFormula = BindString(nameof(MagicStatFormula), "");
                 SpiritStatFormula = BindString(nameof(SpiritStatFormula), "");
                 MagicStoneStockFormula = BindString(nameof(MagicStoneStockFormula), "");
+                TranceDecreaseFormula = BindString(nameof(TranceDecreaseFormula), "");
             }
         }
     }

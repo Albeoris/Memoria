@@ -444,7 +444,7 @@ public class BattleResultUI : UIScene
 		{
 			if (party[playIndex] == null)
 				continue;
-			foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(party[playIndex].saExtended))
+			foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(party[playIndex]))
 			{
 				if (triggeredSA.Contains(saFeature.Id))
 					continue;
@@ -463,7 +463,7 @@ public class BattleResultUI : UIScene
 				individualBonus.card = this.defaultCard;
 				individualBonus.exp = this.defaultExp;
 				individualBonus.gil = this.defaultGil;
-				foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player.saExtended))
+				foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player))
 					saFeature.TriggerOnBattleResult(player, individualBonus, this.itemList, "RewardSingle", 0U);
 				this.defaultCard = individualBonus.card;
 				this.defaultGil = individualBonus.gil;

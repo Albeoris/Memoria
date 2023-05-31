@@ -371,12 +371,14 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.CLOSE:
             {
-                // For the stage
-                if (IsAlexandriaStageScene())
-                {
-                    DialogManager.Instance.ForceControlByEvent(false);
-                    goto case EBin.event_code_binary.WAITMES;
-                }
+                // Do not handle stage dialogs specifically
+                // - When the "IsAlexandriaStageScene" block is disabled, the dialogs concerned automatically close after the time defined in their [TIME=X] text opcode
+                // - When the "IsAlexandriaStageScene" block is enabled, these dialogs must be closed by a player input but only after [TIME=X] has passed
+                //if (IsAlexandriaStageScene())
+                //{
+                //    DialogManager.Instance.ForceControlByEvent(false);
+                //    goto case EBin.event_code_binary.WAITMES;
+                //}
 
                 var v1 = this.getv1();
                 this.eTb.DisposWindowByID(v1, true);

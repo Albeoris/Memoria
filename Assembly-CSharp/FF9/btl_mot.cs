@@ -303,6 +303,19 @@ namespace FF9
 				|| (btl_util.getEnemyPtr(btl).info.die_dmg != 0 && anim == btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2]);
 		}
 
+		public static void ToggleIdleAnimation(BTL_DATA btl, Boolean alternateOn)
+		{
+			if (btl.bi.player != 0 && !btl.is_monster_transform)
+				return;
+			if (alternateOn == (btl.bi.def_idle != 0))
+				return;
+			btl.bi.def_idle = (Byte)(alternateOn ? 1 : 0);
+			if (!btl.is_monster_transform)
+				return;
+			btl.mot = alternateOn ? btl.monster_transform.motion_alternate : btl.monster_transform.motion_normal;
+			btl_cmd.KillMainCommand(btl);
+		}
+
 		public static void DieSequence(BTL_DATA btl)
 		{
 			if (btl.die_seq != 0)
@@ -355,10 +368,13 @@ namespace FF9
 							if (!btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))
 							{
 								FF9StateGlobal ff = FF9StateSystem.Common.FF9;
-								if (btl_util.CheckEnemyCategory(btl, 8) && ff.dragon_no < 9999)
-									ff.dragon_no++;
+								for (Int32 category = 0; category < 8; category++)
+									if (btl_util.CheckEnemyCategory(btl, (Byte)(1 << category)) && ff.categoryKillCount[category] < 9999)
+										ff.categoryKillCount[category]++;
+								if (btl.dms_geo_id >= 0)
+									ff.modelKillCount[btl.dms_geo_id]++;
 								if (ff.btl_result != 4)
-									btl_sys.SetBonus(enemyPtr.et);
+									btl_sys.SetBonus(enemyPtr);
 								btl.die_seq++;
 								if (ff9Battle.btl_phase != 5 || (ff9Battle.btl_seq != 3 && ff9Battle.btl_seq != 2))
 									btl_sys.CheckBattlePhase(btl);
@@ -473,6 +489,11 @@ namespace FF9
 				return false;
 			}
 			btl.die_seq = 6;
+			if (btl.is_monster_transform && !btl.monster_transform.cancel_on_death)
+			{
+				btl.evt.animFrame = (Byte)GeoAnim.geoAnimGetNumFrames(btl);
+				btl.bi.stop_anim = 1;
+			}
 			return true;
 		}
 
@@ -609,6 +630,12 @@ namespace FF9
 				btl.evt.animFrame = 0;
 				return;
 			}
+			if (btl.is_monster_transform && ((previousStance == BattlePlayerCharacter.PlayerMotionStance.NORMAL && nextStance == BattlePlayerCharacter.PlayerMotionStance.DYING) || (previousStance == BattlePlayerCharacter.PlayerMotionStance.DYING && nextStance == BattlePlayerCharacter.PlayerMotionStance.NORMAL)))
+			{
+				btl_mot.setMotion(btl, targetAnim);
+				btl.evt.animFrame = 0;
+				return;
+			}
 			BattlePlayerCharacter.PlayerMotionIndex transition = btl_mot.StanceTransition(previousStance, nextStance);
 			if (transition == BattlePlayerCharacter.PlayerMotionIndex.MP_MAX)
 			{
@@ -690,7 +717,7 @@ namespace FF9
 
 			if (btl.IsPlayer)
 			{
-				if (cmd != null && (cmd.AbilityType & 129) == 129)
+				if (cmd != null && (cmd.AbilityType & 129) == 129 && !btl.IsMonsterTransform)
 				{
 					btl_mot.setMotion(btl.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2);
 					if (btl.Data.cur.hp == 0)

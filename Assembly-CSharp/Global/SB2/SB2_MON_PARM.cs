@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Memoria.Data;
 
 public class SB2_MON_PARM
@@ -15,6 +16,7 @@ public class SB2_MON_PARM
 		this.IconBone = new Byte[6];
 		this.IconY = new SByte[6];
 		this.IconZ = new SByte[6];
+		this.SupportingAbilityFeatures = new List<SupportingAbilityFeature>();
 		this.MaxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
 		this.MaxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 	}
@@ -152,9 +154,16 @@ public class SB2_MON_PARM
 	public String[] TextureFiles;
 
 	[Memoria.PatchableFieldAttribute]
+	public String SupportingAbilityFile;
+	public List<SupportingAbilityFeature> SupportingAbilityFeatures;
+
+	[Memoria.PatchableFieldAttribute]
 	public String WeaponModel;
 	[Memoria.PatchableFieldAttribute]
 	public Int32 WeaponAttachment;
+
+	[Memoria.PatchableFieldAttribute]
+	public Byte[] TranceGlowingColor;
 
 	[Memoria.PatchableFieldAttribute]
 	public UInt32 MaxDamageLimit;

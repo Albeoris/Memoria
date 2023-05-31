@@ -61,12 +61,9 @@ public class btlseq
 			for (Int32 i = 0; i < seqCount; i++)
 			{
 				binaryReader.BaseStream.Seek(seqOffset[i] + 4, SeekOrigin.Begin);
-				Byte b = binaryReader.ReadByte();
-				Byte b2 = binaryReader.ReadByte();
-				if ((b != 24 && b != 7) || b2 != 0)
-					for (Int32 j = 0; j < seqDistinctIndices.Length; j++)
-						if (inst.sequenceProperty[j].Montype == seqDistinctMonType[i])
-							inst.sequenceProperty[j].PlayableSequence.Add(i);
+				for (Int32 j = 0; j < seqDistinctIndices.Length; j++)
+					if (inst.sequenceProperty[j].Montype == seqDistinctMonType[i])
+						inst.sequenceProperty[j].PlayableSequence.Add(i);
 			}
 		}
 	}
@@ -766,7 +763,7 @@ public class btlseq
 	public static Int32 SeqExecDefaultIdle(SEQ_WORK pSeqWork, BTL_DATA pMe)
 	{
 		btlseq.BattleLog("SeqExecDefaultIdle");
-		pMe.bi.def_idle = instance.sequenceReader.ReadByte();
+		btl_mot.ToggleIdleAnimation(pMe, instance.sequenceReader.ReadByte() != 0);
 		pSeqWork.CurPtr += 2;
 		return 1;
 	}
@@ -1037,10 +1034,10 @@ public class btlseq
 			using (sequenceReader = new BinaryReader(new MemoryStream(data)))
 			{
 				sequenceReader.BaseStream.Seek(seq_work_set.SeqData[pSeqNo] + 4, SeekOrigin.Begin);
-				wSeqCode = (Int32)sequenceReader.ReadByte();
+				wSeqCode = sequenceReader.ReadByte();
 				while (wSeqCode != 0 && wSeqCode != 0x18)
 				{
-					if (wSeqCode > (Int32)btlseq.gSeqProg.Length)
+					if (wSeqCode > btlseq.gSeqProg.Length)
 						wSeqCode = 0;
 					switch (wSeqCode)
 					{
@@ -1092,7 +1089,7 @@ public class btlseq
 							sequenceReader.BaseStream.Seek(7, SeekOrigin.Current);
 							break;
 					}
-					wSeqCode = (Int32)sequenceReader.ReadByte();
+					wSeqCode = sequenceReader.ReadByte();
 				}
 			}
 			return -1;
@@ -1100,6 +1097,78 @@ public class btlseq
 		public Int32 GetSFXOfSequence(Int32 pSeqNo)
 		{
 			return GetSFXOfSequence(pSeqNo, out _, out _);
+		}
+
+		public List<Int32> GetAnimationsOfSequence(Int32 pSeqNo)
+		{
+			List<Int32> animList = new List<Int32>();
+			if (seq_work_set.SeqData[pSeqNo] == 0)
+				return animList;
+			using (sequenceReader = new BinaryReader(new MemoryStream(data)))
+			{
+				sequenceReader.BaseStream.Seek(seq_work_set.SeqData[pSeqNo] + 4, SeekOrigin.Begin);
+				wSeqCode = sequenceReader.ReadByte();
+				while (wSeqCode != 0 && wSeqCode != 0x18)
+				{
+					if (wSeqCode > btlseq.gSeqProg.Length)
+						wSeqCode = 0;
+					switch (wSeqCode)
+					{
+						case 5:
+							animList.Add(sequenceReader.ReadByte());
+							break;
+						case 2:
+						case 7:
+						case 9:
+						case 0xA:
+						case 0xB:
+						case 0x18:
+							break;
+						case 1:
+						case 4:
+						case 0xE:
+						case 0x10:
+						case 0x11:
+						case 0x12:
+						case 0x15:
+						case 0x16:
+						case 0x17:
+						case 0x1C:
+						case 0x1D:
+						case 0x1F:
+						case 0x20:
+						case 0x21:
+							sequenceReader.BaseStream.Seek(1, SeekOrigin.Current);
+							break;
+						case 0xD:
+						case 0xF:
+							sequenceReader.BaseStream.Seek(2, SeekOrigin.Current);
+							break;
+						case 3:
+						case 0xC:
+						case 0x1E:
+							sequenceReader.BaseStream.Seek(3, SeekOrigin.Current);
+							break;
+						case 0x6:
+							sequenceReader.BaseStream.Seek(4, SeekOrigin.Current);
+							break;
+						case 0x14:
+						case 0x19:
+							sequenceReader.BaseStream.Seek(5, SeekOrigin.Current);
+							break;
+						case 0x13:
+						case 0x1B:
+							sequenceReader.BaseStream.Seek(7, SeekOrigin.Current);
+							break;
+						case 0x8:
+						case 0x1A:
+							sequenceReader.BaseStream.Seek(8, SeekOrigin.Current);
+							break;
+					}
+					wSeqCode = sequenceReader.ReadByte();
+				}
+			}
+			return animList;
 		}
 
 		public void FixBuggedAnimations(BTL_SCENE scene)

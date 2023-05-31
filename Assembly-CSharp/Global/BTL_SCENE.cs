@@ -1,8 +1,9 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
-using UnityEngine;
+using FF9;
 
 public class BTL_SCENE
 {
@@ -27,125 +28,125 @@ public class BTL_SCENE
 			binaryReader.BaseStream.Seek(8L, SeekOrigin.Begin);
 			for (Int32 i = 0; i < this.header.PatCount; i++)
 			{
-				SB2_PATTERN sb2_PATTERN = this.PatAddr[i] = new SB2_PATTERN();
-				sb2_PATTERN.Rate = binaryReader.ReadByte();
-				sb2_PATTERN.MonsterCount = binaryReader.ReadByte();
-				sb2_PATTERN.Camera = binaryReader.ReadByte();
-				sb2_PATTERN.Pad0 = binaryReader.ReadByte();
-				sb2_PATTERN.AP = binaryReader.ReadUInt32();
+				SB2_PATTERN pattern = this.PatAddr[i] = new SB2_PATTERN();
+				pattern.Rate = binaryReader.ReadByte();
+				pattern.MonsterCount = binaryReader.ReadByte();
+				pattern.Camera = binaryReader.ReadByte();
+				pattern.Pad0 = binaryReader.ReadByte();
+				pattern.AP = binaryReader.ReadUInt32();
 				for (Int32 j = 0; j < 4; j++)
 				{
-					SB2_PUT sb2_PUT = sb2_PATTERN.Monster[j] = new SB2_PUT();
-					sb2_PUT.TypeNo = binaryReader.ReadByte();
-					sb2_PUT.Flags = binaryReader.ReadByte();
-					sb2_PUT.Pease = binaryReader.ReadByte();
-					sb2_PUT.Pad = binaryReader.ReadByte();
-					sb2_PUT.Xpos = binaryReader.ReadInt16();
-					sb2_PUT.Ypos = binaryReader.ReadInt16();
-					sb2_PUT.Zpos = binaryReader.ReadInt16();
-					sb2_PUT.Rot = binaryReader.ReadInt16();
+					SB2_PUT placement = pattern.Monster[j] = new SB2_PUT();
+					placement.TypeNo = binaryReader.ReadByte();
+					placement.Flags = binaryReader.ReadByte();
+					placement.Pease = binaryReader.ReadByte();
+					placement.Pad = binaryReader.ReadByte();
+					placement.Xpos = binaryReader.ReadInt16();
+					placement.Ypos = binaryReader.ReadInt16();
+					placement.Zpos = binaryReader.ReadInt16();
+					placement.Rot = binaryReader.ReadInt16();
 				}
 			}
 			binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount, SeekOrigin.Begin);
 			for (Int32 i = 0; i < this.header.TypCount; i++)
 			{
-				SB2_MON_PARM sb2_MON_PARM = this.MonAddr[i] = new SB2_MON_PARM();
-				sb2_MON_PARM.ResistStatus = (BattleStatus)binaryReader.ReadUInt32();
-				sb2_MON_PARM.AutoStatus = (BattleStatus)binaryReader.ReadUInt32();
-				sb2_MON_PARM.InitialStatus = (BattleStatus)binaryReader.ReadUInt32();
-				sb2_MON_PARM.MaxHP = binaryReader.ReadUInt16();
-				sb2_MON_PARM.MaxMP = binaryReader.ReadUInt16();
-				sb2_MON_PARM.WinGil = binaryReader.ReadUInt16();
-				sb2_MON_PARM.WinExp = binaryReader.ReadUInt16();
+				SB2_MON_PARM monParam = this.MonAddr[i] = new SB2_MON_PARM();
+				monParam.ResistStatus = (BattleStatus)binaryReader.ReadUInt32();
+				monParam.AutoStatus = (BattleStatus)binaryReader.ReadUInt32();
+				monParam.InitialStatus = (BattleStatus)binaryReader.ReadUInt32();
+				monParam.MaxHP = binaryReader.ReadUInt16();
+				monParam.MaxMP = binaryReader.ReadUInt16();
+				monParam.WinGil = binaryReader.ReadUInt16();
+				monParam.WinExp = binaryReader.ReadUInt16();
 				for (Int32 j = 0; j < 4; j++)
 				{
-					sb2_MON_PARM.WinItems[j] = (RegularItem)binaryReader.ReadByte();
-					sb2_MON_PARM.WinItemRates[j] = SB2_MON_PARM.DefaultWinItemRates[j];
+					monParam.WinItems[j] = (RegularItem)binaryReader.ReadByte();
+					monParam.WinItemRates[j] = SB2_MON_PARM.DefaultWinItemRates[j];
 				}
 				for (Int32 j = 0; j < 4; j++)
 				{
-					sb2_MON_PARM.StealItems[j] = (RegularItem)binaryReader.ReadByte();
-					sb2_MON_PARM.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
+					monParam.StealItems[j] = (RegularItem)binaryReader.ReadByte();
+					monParam.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
 				}
-				sb2_MON_PARM.Radius = binaryReader.ReadUInt16();
-				sb2_MON_PARM.Geo = binaryReader.ReadUInt16();
+				monParam.Radius = binaryReader.ReadUInt16();
+				monParam.Geo = binaryReader.ReadUInt16();
 				for (Int32 j = 0; j < 6; j++)
-					sb2_MON_PARM.Mot[j] = binaryReader.ReadUInt16();
+					monParam.Mot[j] = binaryReader.ReadUInt16();
 				for (Int32 j = 0; j < 2; j++)
-					sb2_MON_PARM.Mesh[j] = binaryReader.ReadUInt16();
-				sb2_MON_PARM.Flags = binaryReader.ReadUInt16();
-				sb2_MON_PARM.AP = binaryReader.ReadUInt16();
-				SB2_ELEMENT sb2_ELEMENT = sb2_MON_PARM.Element = new SB2_ELEMENT();
-				sb2_ELEMENT.Speed = binaryReader.ReadByte();
-				sb2_ELEMENT.Strength = binaryReader.ReadByte();
-				sb2_ELEMENT.Magic = binaryReader.ReadByte();
-				sb2_ELEMENT.Spirit = binaryReader.ReadByte();
-				sb2_ELEMENT.pad = binaryReader.ReadByte();
-				sb2_ELEMENT.trans = binaryReader.ReadByte();
-				sb2_ELEMENT.cur_capa = binaryReader.ReadByte();
-				sb2_ELEMENT.max_capa = binaryReader.ReadByte();
-				sb2_MON_PARM.GuardElement = binaryReader.ReadByte();
-				sb2_MON_PARM.AbsorbElement = binaryReader.ReadByte();
-				sb2_MON_PARM.HalfElement = binaryReader.ReadByte();
-				sb2_MON_PARM.WeakElement = binaryReader.ReadByte();
-				sb2_MON_PARM.Level = binaryReader.ReadByte();
-				sb2_MON_PARM.Category = binaryReader.ReadByte();
-				sb2_MON_PARM.HitRate = binaryReader.ReadByte();
-				sb2_MON_PARM.PhysicalDefence = binaryReader.ReadByte();
-				sb2_MON_PARM.PhysicalEvade = binaryReader.ReadByte();
-				sb2_MON_PARM.MagicalDefence = binaryReader.ReadByte();
-				sb2_MON_PARM.MagicalEvade = binaryReader.ReadByte();
-				sb2_MON_PARM.BlueMagic = binaryReader.ReadByte();
+					monParam.Mesh[j] = binaryReader.ReadUInt16();
+				monParam.Flags = binaryReader.ReadUInt16();
+				monParam.AP = binaryReader.ReadUInt16();
+				SB2_ELEMENT monStats = monParam.Element = new SB2_ELEMENT();
+				monStats.Speed = binaryReader.ReadByte();
+				monStats.Strength = binaryReader.ReadByte();
+				monStats.Magic = binaryReader.ReadByte();
+				monStats.Spirit = binaryReader.ReadByte();
+				monStats.pad = binaryReader.ReadByte();
+				monStats.trans = binaryReader.ReadByte();
+				monStats.cur_capa = binaryReader.ReadByte();
+				monStats.max_capa = binaryReader.ReadByte();
+				monParam.GuardElement = binaryReader.ReadByte();
+				monParam.AbsorbElement = binaryReader.ReadByte();
+				monParam.HalfElement = binaryReader.ReadByte();
+				monParam.WeakElement = binaryReader.ReadByte();
+				monParam.Level = binaryReader.ReadByte();
+				monParam.Category = binaryReader.ReadByte();
+				monParam.HitRate = binaryReader.ReadByte();
+				monParam.PhysicalDefence = binaryReader.ReadByte();
+				monParam.PhysicalEvade = binaryReader.ReadByte();
+				monParam.MagicalDefence = binaryReader.ReadByte();
+				monParam.MagicalEvade = binaryReader.ReadByte();
+				monParam.BlueMagic = binaryReader.ReadByte();
 				for (Int32 j = 0; j < 4; j++)
-					sb2_MON_PARM.Bone[j] = binaryReader.ReadByte();
-				sb2_MON_PARM.DieSfx = binaryReader.ReadUInt16();
-				sb2_MON_PARM.Konran = binaryReader.ReadByte();
-				sb2_MON_PARM.MesCnt = binaryReader.ReadByte();
+					monParam.Bone[j] = binaryReader.ReadByte();
+				monParam.DieSfx = binaryReader.ReadUInt16();
+				monParam.Konran = binaryReader.ReadByte();
+				monParam.MesCnt = binaryReader.ReadByte();
 				for (Int32 j = 0; j < 6; j++)
-					sb2_MON_PARM.IconBone[j] = binaryReader.ReadByte();
+					monParam.IconBone[j] = binaryReader.ReadByte();
 				for (Int32 j = 0; j < 6; j++)
-					sb2_MON_PARM.IconY[j] = binaryReader.ReadSByte();
+					monParam.IconY[j] = binaryReader.ReadSByte();
 				for (Int32 j = 0; j < 6; j++)
-					sb2_MON_PARM.IconZ[j] = binaryReader.ReadSByte();
-				sb2_MON_PARM.StartSfx = binaryReader.ReadUInt16();
-				sb2_MON_PARM.ShadowX = binaryReader.ReadUInt16();
-				sb2_MON_PARM.ShadowZ = binaryReader.ReadUInt16();
-				sb2_MON_PARM.ShadowBone = binaryReader.ReadByte();
-				sb2_MON_PARM.WinCard = (TetraMasterCardId)binaryReader.ReadByte();
-				sb2_MON_PARM.WinCardRate = SB2_MON_PARM.DefaultWinCardRate;
-				sb2_MON_PARM.ShadowOfsX = binaryReader.ReadInt16();
-				sb2_MON_PARM.ShadowOfsZ = binaryReader.ReadInt16();
-				sb2_MON_PARM.ShadowBone2 = binaryReader.ReadByte();
-				sb2_MON_PARM.Pad0 = binaryReader.ReadByte();
-				sb2_MON_PARM.Pad1 = binaryReader.ReadUInt16();
-				sb2_MON_PARM.Pad2 = binaryReader.ReadUInt16();
+					monParam.IconZ[j] = binaryReader.ReadSByte();
+				monParam.StartSfx = binaryReader.ReadUInt16();
+				monParam.ShadowX = binaryReader.ReadUInt16();
+				monParam.ShadowZ = binaryReader.ReadUInt16();
+				monParam.ShadowBone = binaryReader.ReadByte();
+				monParam.WinCard = (TetraMasterCardId)binaryReader.ReadByte();
+				monParam.WinCardRate = SB2_MON_PARM.DefaultWinCardRate;
+				monParam.ShadowOfsX = binaryReader.ReadInt16();
+				monParam.ShadowOfsZ = binaryReader.ReadInt16();
+				monParam.ShadowBone2 = binaryReader.ReadByte();
+				monParam.Pad0 = binaryReader.ReadByte();
+				monParam.Pad1 = binaryReader.ReadUInt16();
+				monParam.Pad2 = binaryReader.ReadUInt16();
 			}
 			binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount + 116 * this.header.TypCount, SeekOrigin.Begin);
 			for (Int32 i = 0; i < this.header.AtkCount; i++)
 			{
-				AA_DATA aa_DATA = this.atk[i] = new AA_DATA();
-				BattleCommandInfo cmd_INFO = aa_DATA.Info = new BattleCommandInfo();
-				BTL_REF btl_REF = aa_DATA.Ref = new BTL_REF();
+				AA_DATA monAbility = this.atk[i] = new AA_DATA();
+				BattleCommandInfo abilInfo = monAbility.Info = new BattleCommandInfo();
+				BTL_REF abilRef = monAbility.Ref = new BTL_REF();
 				UInt32 input = binaryReader.ReadUInt32();
-				Byte b = 0;
-				cmd_INFO.Target = (TargetType)BitUtil.ReadBits(input, ref b, 4);
-				cmd_INFO.DefaultAlly = BitUtil.ReadBits(input, ref b, 1) != 0;
-				cmd_INFO.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref b, 3);
-				cmd_INFO.VfxIndex = (Int16)BitUtil.ReadBits(input, ref b, 9);
-				/*cmd_INFO.sfx_no = (Int16)*/ BitUtil.ReadBits(input, ref b, 12);
-				cmd_INFO.ForDead = BitUtil.ReadBits(input, ref b, 1) != 0;
-				cmd_INFO.DefaultCamera = BitUtil.ReadBits(input, ref b, 1) != 0;
-				cmd_INFO.DefaultOnDead = BitUtil.ReadBits(input, ref b, 1) != 0;
-				btl_REF.ScriptId = binaryReader.ReadByte();
-				btl_REF.Power = binaryReader.ReadByte();
-				btl_REF.Elements = binaryReader.ReadByte();
-				btl_REF.Rate = binaryReader.ReadByte();
-				aa_DATA.Category = binaryReader.ReadByte();
-				aa_DATA.AddStatusNo = (BattleStatusIndex)binaryReader.ReadByte();
-				aa_DATA.MP = binaryReader.ReadByte();
-				aa_DATA.Type = binaryReader.ReadByte();
-				aa_DATA.Vfx2 = binaryReader.ReadUInt16();
-				aa_DATA.Name = binaryReader.ReadUInt16().ToString();
+				Byte bitPos = 0;
+				abilInfo.Target = (TargetType)BitUtil.ReadBits(input, ref bitPos, 4);
+				abilInfo.DefaultAlly = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+				abilInfo.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref bitPos, 3);
+				abilInfo.VfxIndex = (Int16)BitUtil.ReadBits(input, ref bitPos, 9);
+				/*cmd_INFO.sfx_no = (Int16)*/ BitUtil.ReadBits(input, ref bitPos, 12);
+				abilInfo.ForDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+				abilInfo.DefaultCamera = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+				abilInfo.DefaultOnDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
+				abilRef.ScriptId = binaryReader.ReadByte();
+				abilRef.Power = binaryReader.ReadByte();
+				abilRef.Elements = binaryReader.ReadByte();
+				abilRef.Rate = binaryReader.ReadByte();
+				monAbility.Category = binaryReader.ReadByte();
+				monAbility.AddStatusNo = (BattleStatusIndex)binaryReader.ReadByte();
+				monAbility.MP = binaryReader.ReadByte();
+				monAbility.Type = binaryReader.ReadByte();
+				monAbility.Vfx2 = binaryReader.ReadUInt16();
+				monAbility.Name = binaryReader.ReadUInt16().ToString();
 			}
 		}
 		SetupSceneInfo();
@@ -162,29 +163,42 @@ public class BTL_SCENE
 				}
 			}
 		}
+		foreach (SB2_MON_PARM monParam in this.MonAddr)
+		{
+			if (!String.IsNullOrEmpty(monParam.SupportingAbilityFile))
+			{
+				String abilText = AssetManager.LoadString(monParam.SupportingAbilityFile);
+				if (abilText != null)
+				{
+					Dictionary<SupportAbility, SupportingAbilityFeature> saAsDictionary = new Dictionary<SupportAbility, SupportingAbilityFeature>();
+					ff9abil.LoadAbilityFeatureFile(ref saAsDictionary, abilText);
+					monParam.SupportingAbilityFeatures = new List<SupportingAbilityFeature>(saAsDictionary.Values);
+				}
+			}
+		}
 	}
 
 	public static Int16 GetMonGeoID(Int32 pNum)
 	{
-		SB2_PUT sb2_PUT = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[pNum];
+		SB2_PUT placement = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[pNum];
 		Int16 result;
-		if (pNum > 0 && (sb2_PUT.Flags & 2) != 0)
+		if (pNum > 0 && (placement.Flags & 2) != 0)
 			result = -1;
 		else
-			result = (Int16)FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[(Int32)sb2_PUT.TypeNo].Geo;
+			result = (Int16)FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[placement.TypeNo].Geo;
 		return result;
 	}
 
 	public static UInt16 BtlGetStartSFX()
 	{
 		Byte patNum = FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
-		UInt16 typeNo = (UInt16)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)patNum].Monster[0].TypeNo;
-		return FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[(Int32)typeNo].StartSfx;
+		UInt16 typeNo = (UInt16)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[patNum].Monster[0].TypeNo;
+		return FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[typeNo].StartSfx;
 	}
 
 	public static Int32 GetMonCount()
 	{
-		return (Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[(Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
+		return FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].MonsterCount;
 	}
 
 	private void SetupSceneInfo()

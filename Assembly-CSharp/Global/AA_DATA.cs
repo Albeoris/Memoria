@@ -39,6 +39,14 @@ public class AA_DATA
 	public UInt16 Vfx2;
 	public Byte CastingTitleType;
 
-    // Delayed initialization
-    public String Name;
+	// Enable or disable availability when using BattleUnit.ChangeToMonster
+	[Memoria.PatchableFieldAttribute]
+	public Boolean MorphForceAccess;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean MorphDisableAccess;
+	[Memoria.PatchableFieldAttribute]
+	public Boolean AlternateIdleAccess;
+
+	// Delayed initialization
+	public String Name;
 }

@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Memoria.Prime.Collections
 {
-    public class EntryCollection<TKey, TValue>
+    public class EntryCollection<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {
         private readonly Dictionary<TKey, TValue> _dic;
         private readonly TValue _defaultElement;
@@ -16,6 +17,7 @@ namespace Memoria.Prime.Collections
 
         public Boolean Contains(TKey key) => _dic.ContainsKey(key);
         public Boolean TryGet(TKey key, out TValue value) => _dic.TryGetValue(key, out value);
+        public void Clear() => _dic.Clear();
         public TValue this[TKey key]
         {
             get
@@ -27,6 +29,16 @@ namespace Memoria.Prime.Collections
                 return _defaultElement;
             }
             set => _dic[key] = value;
+        }
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+		{
+            return _dic.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _dic.GetEnumerator();
         }
     }
 }

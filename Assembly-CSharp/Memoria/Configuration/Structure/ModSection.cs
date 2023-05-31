@@ -15,7 +15,7 @@ namespace Memoria
             {
                 FolderNames = BindStringArray(nameof(FolderNames), new String[0]);
                 Priorities = BindStringArray(nameof(Priorities), new String[0]);
-                UseFileList = BindInt32(nameof(UseFileList), 0);
+                UseFileList = BindInt32(nameof(UseFileList), 1);
             }
         }
     }

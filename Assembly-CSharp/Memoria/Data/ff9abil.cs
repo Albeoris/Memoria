@@ -68,6 +68,27 @@ namespace FF9
             return FF9Abil_IsEnableSA(player.saExtended, saIndex);
         }
 
+        public static List<SupportingAbilityFeature> GetEnabledSA(BTL_DATA btl)
+        {
+            List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
+            HashSet<SupportAbility> saExtended = btl.saExtended;
+            SupportAbility global = (SupportAbility)(btl.bi.player != 0 ? -1 : -3);
+            SupportAbility globalLast = (SupportAbility)(btl.bi.player != 0 ? -2 : -4);
+            if (_FF9Abil_SaFeature.ContainsKey(global))
+                result.Add(_FF9Abil_SaFeature[global]);
+            result.AddRange(btl.saMonster);
+            foreach (SupportAbility saIndex in saExtended)
+                result.Add(_FF9Abil_SaFeature[saIndex]);
+            if (_FF9Abil_SaFeature.ContainsKey(globalLast))
+                result.Add(_FF9Abil_SaFeature[globalLast]);
+            return result;
+        }
+
+        public static List<SupportingAbilityFeature> GetEnabledSA(PLAYER player)
+        {
+            return GetEnabledSA(player.saExtended);
+        }
+
         public static List<SupportingAbilityFeature> GetEnabledSA(HashSet<SupportAbility> saExtended)
         {
             List<SupportingAbilityFeature> result = new List<SupportingAbilityFeature>();
@@ -394,9 +415,9 @@ namespace FF9
             }
         }
 
-        private static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
+        public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
 		{
-            MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|Global|GlobalLast)(\+?).*()", RegexOptions.Multiline).Matches(input);
+            MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
 			{
                 Int32 abilIndex;
@@ -404,6 +425,10 @@ namespace FF9
                     abilIndex = -1;
                 else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalLast") == 0)
                     abilIndex = -2;
+                else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalEnemy") == 0)
+                    abilIndex = -3;
+                else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalEnemyLast") == 0)
+                    abilIndex = -4;
                 else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
                     continue;
                 Boolean cumulate = String.Compare(abilMatches[i].Groups[3].Value, "+") == 0;
@@ -418,7 +443,7 @@ namespace FF9
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
-                else
+                else if (abilIndex >= 0)
 				{
                     if (!cumulate)
                         BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);

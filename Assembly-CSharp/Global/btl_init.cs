@@ -42,6 +42,9 @@ public static class btl_init
 		{
 			ENEMY enemy = btlsys.enemy[enemyIndex];
 			BTL_DATA monBtl = btlsys.btl_data[btlIndex];
+			BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+			SB2_PATTERN battlePattern = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
+			SB2_MON_PARM monParam = btl_scene.MonAddr[battlePattern.Monster[enemyIndex].TypeNo];
 			btlshadow.ff9battleShadowInit(monBtl);
 			enemy.info.die_fade_rate = 32;
 			if ((monBtl.dms_geo_id = BTL_SCENE.GetMonGeoID(enemyIndex)) < 0)
@@ -59,12 +62,8 @@ public static class btl_init
 			monBtl.bi.player = 0;
 			monBtl.bi.slot_no = (Byte)enemyIndex;
 			monBtl.bi.line_no = (Byte)(4 + enemyIndex);
-			monBtl.bi.t_gauge = 0;
+			monBtl.bi.t_gauge = (Byte)((monParam.ResistStatus & BattleStatus.Trance) == 0 ? 1 : 0); // Enemies can have trance when they are not immune to it
 			monBtl.bi.slave = enemy.info.slave;
-			BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
-			SB2_PATTERN battlePattern = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-			SB2_MON_PARM monParam = btl_scene.MonAddr[battlePattern.Monster[enemyIndex].TypeNo];
-			UInt16 geoID = monParam.Geo;
 			monBtl.height = 0;
 			monBtl.radius_effect = 0;
 			monBtl.radius_collision = monParam.Radius;
@@ -75,10 +74,14 @@ public static class btl_init
 			String path = (monBtl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(monBtl.dms_geo_id);
 			if (!ModelFactory.IsUseAsEnemyCharacter(path))
 				monBtl.weapon_geo = null;
-			monBtl.sa = btl_init.enemy_dummy_sa; // Might want to use "= new UInt32[2]" for letting enemies use SA... doesn't seem to be useful for now though
+			monBtl.sa = btl_init.enemy_dummy_sa;
 			monBtl.saExtended = new HashSet<SupportAbility>();
+			monBtl.saMonster = new List<SupportingAbilityFeature>();
+			foreach (SupportingAbilityFeature feature in monParam.SupportingAbilityFeatures)
+				if (feature.EnableAsEnemy)
+					monBtl.saMonster.Add(feature);
 
-			FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(geoID, ref monBtl.height, ref monBtl.radius_effect);
+			FF9BattleDBHeightAndRadius.TryFindHeightAndRadius(monParam.Geo, ref monBtl.height, ref monBtl.radius_effect);
 
 			if (monLastBtl != null)
 				monLastBtl.next = monBtl;
@@ -166,11 +169,23 @@ public static class btl_init
 		// New field "out_of_reach"
 		pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
 		ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
+		enemy.bonus_gil = pParm.WinGil;
+		enemy.bonus_exp = pParm.WinExp;
+		for (Int32 i = 0; i < pParm.WinItems.Length; i++)
+		{
+			enemy.bonus_item[i] = pParm.WinItems[i];
+			enemy.bonus_item_rate[i] = pParm.WinItemRates[i];
+		}
+		enemy.bonus_card = pParm.WinCard;
+		enemy.bonus_card_rate = pParm.WinCardRate;
 		for (Int32 i = 0; i < pParm.StealItems.Length; i++)
 		{
 			enemy.steal_item[i] = pParm.StealItems[i];
 			enemy.steal_item_rate[i] = pParm.StealItemRates[i];
 		}
+		enemy.trance_glowing_color[0] = pParm.TranceGlowingColor != null && pParm.TranceGlowingColor.Length > 0 ? pParm.TranceGlowingColor[0] : (Byte)0xFF;
+		enemy.trance_glowing_color[1] = pParm.TranceGlowingColor != null && pParm.TranceGlowingColor.Length > 1 ? pParm.TranceGlowingColor[1] : (Byte)0x60;
+		enemy.trance_glowing_color[2] = pParm.TranceGlowingColor != null && pParm.TranceGlowingColor.Length > 2 ? pParm.TranceGlowingColor[2] : (Byte)0x60;
 		enemy.steal_unsuccessful_counter = 0; // New field used for counting unsuccessful steals and force a successful steal when it becomes high enough
 		enemy.info.die_atk = (Byte)(((pParm.Flags & 1) == 0) ? 0 : 1);
 		enemy.info.die_dmg = (Byte)(((pParm.Flags & 2) == 0) ? 0 : 1);
@@ -180,6 +195,7 @@ public static class btl_init
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
 		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
 		pBtl.special_status_old = false; // TRANCE SEEK - Old Status
+		btl_abil.CheckStatusAbility(new BattleUnit(pBtl));
 	}
 
 	public static void PutMonster(SB2_PUT pPut, BTL_DATA pBtl, BTL_SCENE pScene, Int32 pNo)
@@ -221,15 +237,6 @@ public static class btl_init
 		pType.blue_magic_no = pParm.BlueMagic;
 		pType.max.hp = pParm.MaxHP;
 		pType.max.mp = pParm.MaxMP;
-		pType.bonus.gil = pParm.WinGil;
-		pType.bonus.exp = pParm.WinExp;
-		pType.bonus.card = pParm.WinCard;
-		pType.bonus.card_rate = pParm.WinCardRate;
-		for (Int16 i = 0; i < 4; i++)
-		{
-			pType.bonus.item[i] = pParm.WinItems[i];
-			pType.bonus.item_rate[i] = pParm.WinItemRates[i];
-		}
 		for (Int16 i = 0; i < 6; i++)
 			pType.mot[i] = FF9BattleDB.Animation[pParm.Mot[i]];
 		for (Int16 i = 0; i < 3; i++)
@@ -395,6 +402,7 @@ public static class btl_init
 		btl.tar_bone = 0;
 		btl.sa = p.sa;
 		btl.saExtended = p.saExtended;
+		btl.saMonster = new List<SupportingAbilityFeature>();
 		btl.elem.dex = p.elem.dex;
 		btl.elem.str = p.elem.str;
 		btl.elem.mgc = p.elem.mgc;
@@ -463,7 +471,7 @@ public static class btl_init
 			//btl_mot.DecidePlayerDieSequence(btl);
 			return;
 		}
-		btl.bi.def_idle = Convert.ToByte(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying));
+		btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying) ? 1 : 0);
 		btl_mot.setMotion(btl, btl.bi.def_idle);
 		btl.evt.animFrame = 0;
 	}
@@ -568,6 +576,7 @@ public static class btl_init
 		btl.critical_rate_receive_bonus = 0;
 		btl.is_monster_transform = false;
 		btl.killer_track = null;
+		btl.enable_trance_glow = false;
 	}
 
 	public static void SetBattleModel(BTL_DATA btl)

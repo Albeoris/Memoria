@@ -295,7 +295,7 @@ public static class ff9play
         play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
         play.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
-        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play.saExtended))
+        foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(play))
             saFeature.TriggerOnEnable(play);
         if (play.max.hp > play.maxHpLimit)
             play.max.hp = play.maxHpLimit;

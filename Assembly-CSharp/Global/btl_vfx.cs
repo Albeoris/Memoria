@@ -143,7 +143,7 @@ public static class btl_vfx
                     action.Execute(cmd);
                     return;
                 }
-                if (regist != null && regist.bi.player == 0)
+                if (regist != null && regist.bi.player == 0 && cmd.cmd_no != BattleCommandId.SysTrans)
                 {
                     UnifiedBattleSequencer.BattleAction action = new UnifiedBattleSequencer.BattleAction(UnifiedBattleSequencer.EffectType.EnemySequence, cmd.sub_no);
                     action.Execute(cmd);

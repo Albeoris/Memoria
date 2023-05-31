@@ -474,31 +474,30 @@ public static class btl2d
                                             color = 0x1000000;
                                         }
                                         color |= abrCode << 24;
-                                        figureNb++;
-                                        if (figureNb > 10)
-                                            figureNb = 10;
+                                        figureNb = Math.Min(figureNb + 1, 10);
+                                        String figStr = statusTable.Col != 0 ? $"[{color & 0xFFFFFF:X6}]{figureNb}" : $"{figureNb}";
                                         if (statusTable.Mask == BattleStatus.Doom)
                                         {
                                             if (btl.deathMessage == null)
                                             {
-                                                btl.deathMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, "10", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, dy), 0);
+                                                btl.deathMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, dy), 0);
                                                 UIManager.Battle.DisplayParty();
                                             }
                                             else
                                             {
-                                                btl.deathMessage.Label = figureNb.ToString();
+                                                btl.deathMessage.Label = figStr;
                                             }
                                         }
                                         else if (statusTable.Mask == BattleStatus.GradualPetrify)
                                         {
                                             if (btl.petrifyMessage == null)
                                             {
-                                                btl.petrifyMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, "10", HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, dy), 0);
+                                                btl.petrifyMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, dy), 0);
                                                 UIManager.Battle.DisplayParty();
                                             }
                                             else
                                             {
-                                                btl.petrifyMessage.Label = "[" + (color & 0xFFFFFF).ToString("X6") + "]" + figureNb.ToString();
+                                                btl.petrifyMessage.Label = figStr;
                                             }
                                         }
                                     }
@@ -507,6 +506,23 @@ public static class btl2d
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public static void ReleaseBtl2dStatCount()
+    {
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+		{
+            if (btl.deathMessage != null)
+            {
+                Singleton<HUDMessage>.Instance.ReleaseObject(btl.deathMessage);
+                btl.deathMessage = null;
+            }
+            if (btl.petrifyMessage != null)
+            {
+                Singleton<HUDMessage>.Instance.ReleaseObject(btl.petrifyMessage);
+                btl.petrifyMessage = null;
             }
         }
     }

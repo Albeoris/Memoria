@@ -22,6 +22,7 @@ namespace Memoria.Scripts.Battle
             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
                 _v.NormalMagicParams();
+                _v.Caster.EnemyTranceBonusAttack();
                 _v.Caster.PenaltyMini();
                 _v.Target.PenaltyShellAttack();
                 _v.BonusElement();

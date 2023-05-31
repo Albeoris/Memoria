@@ -21,10 +21,13 @@
 ##  However, only a part of them can be present in AbilityFeatures.txt of mod folders
 ##  
 ##  A special group of features can be optionally defined using ">SA Global" or ">SA GlobalLast"
-##  Features in these global blocks will always apply,
-##  even when no Supporting Ability is active, even for enemies
+##  Features in these global blocks will always apply, even when no Supporting Ability is active
 ##  These Global feature blocks can be used to link features with pieces of equipment
 ##  The "Global" block applies before other supporting abilities while "GlobalLast" applies after
+##  
+##  Similarly, other specialfeatures can be optionally defined using ">SA GlobalEnemy" or ">SA GlobalEnemyLast"
+##  Features in these global blocks will be used by enemies instead of player characters
+##  Enemy features can be only of type "StatusInit", "Ability" or "Command"
 ##  
 ##  Features of active abilities are optional; there can be features for each one of them or for none
 ##  
@@ -140,12 +143,13 @@
 ##    CasterEvade, CasterMagicDefence, CasterMagicEvade, CasterIsStrengthModified, CasterIsMagicModified,
 ##    CasterIsDefenceModified, CasterIsEvadeModified, CasterIsMagicDefenceModified,
 ##    CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
-##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit, CasterBonusExp, CasterBonusGil, CasterBonusCard,
 ##    (+ same as above for the target, eg. TargetHP),
 ##    EffectCasterFlags, CasterHPDamage, CasterMPDamage, EffectTargetFlags, HPDamage, MPDamage,
 ##    FigureInfo, Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged,
 ##    AbilityCategory, AbilityFlags, Attack, AttackPower, DefencePower, StatusRate, HitRate,
 ##    Evade, EffectFlags, DamageModifierCount, TranceIncrease, ItemSteal, Gil, IsDrain,
+##    BattleBonusAP,
 ##    Counter (formula defines the Ability ID of the counter),
 ##    ReturnMagic (formula should return 0),
 ##    AutoItem (formula defines the Item ID of the counter)
@@ -153,10 +157,11 @@
 ##  Command:
 ##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
 ##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate,
-##    CommandTargetId
+##    CommandTargetId,
+##    (+ same as Ability modifiable properties for the ability user, eg. HP or CurrentStatus)
 ##  
 ##  BattleResult:
-##    Status, BonusAP, BonusCard, BonusExp, BonusGil, BonusItem1, BonusItemCount1,
+##    HP, MP, Status, BonusAP, BonusCard, BonusExp, BonusGil, BonusItem1, BonusItemCount1,
 ##    BonusItem2, BonusItemCount2, BonusItem3, BonusItemCount3, BonusItem4, BonusItemCount4,
 ##    BonusItem5, BonusItemCount5, BonusItem6, BonusItemCount6,
 ##    FleeGil (Gil reward of all the enemies, even not killed, divided by 10)
@@ -183,6 +188,10 @@
 ##                                   "player flag" must be 0 for keeping only enemies, 1 for allies or -1 for both
 ##                                   "targetable" must be 1 for keeping only targetable units
 ##                                   "status filter" must be a list of filtering out statuses (eg. BattleStatus_Death will filter out dead units)
+##    GetPartyMemberLevel(number)      -> Return the level of the n-th party member, with n being between 0 and 3 inclusively
+##    GetPartyMemberIndex(number)      -> Return the Character Index of the n-th party member (see the different "CharacterId" below)
+##    GetCategoryKillCount(category)   -> Return the number of enemies of the specified category that were defeated by the player
+##    GetModelKillCount(model ID)      -> Return the number of enemies with a specific model that were defeated by the player
 ##    Gil                              -> The number of gil owned by the player
 ##    DragonCount                      -> The number of dragon-type enemies killed
 ##    FrogCount                        -> The number of frogs catched
@@ -200,14 +209,16 @@
 ##    IsRagtimeBattle                  -> Whether the current battle is a Ragtime encounter
 ##    CurrentPartyCount                -> The total number of player characters in the battle
 ##    CurrentEnemyCount                -> The total number of enemies in the battle
+##    CurrentPartyAverageLevel         -> The average level of the fighting party members
 ##    IsBattlePreemptive               -> Whether the current battle started as a preemptive
 ##    IsBattleBackAttack               -> Whether the current battle started as a back attack
 ##    ScenarioCounter                  -> The scenario counter, see https://github.com/Albeoris/Memoria/wiki/Scenario-counter
 ##    IsGarnetDepressed                -> Whether Garnet is in a depression state
+##    BattleBonusAP                    -> The AP given by the current battle
 ##    UseSFXRework                     -> Whether the SFX Rework system is activated or not
 ##  
 ##  Permanent:
-##    Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
+##    HP, MP, Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
 ##    HasSA(support ability ID),
 ##    (+ modifiable properties)
 ##  
@@ -221,6 +232,7 @@
 ##    Speed, Strength, Magic, Spirit, Defence, Evade, MagicDefence, MagicEvade, PlayerCategory, Category,
 ##    CharacterIndex, IsStrengthModified, IsMagicModified, IsEvadeModified, IsDefenceModified,
 ##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
+##    IsAlternateStand,
 ##    HasSA(support ability ID)
 ##  
 ##  Ability:
@@ -234,7 +246,7 @@
 ##    All those of "StatusInit" for both the caster and the target, except in the condition formula,
 ##    All those of "StatusInit" for the SA user (that can be neither the caster nor a target),
 ##    CommandId, AbilityId, ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand,
-##    IsAbilityMultiTarget, IsSpellReflected, IsCovered, IsDodged, MPCost, CalcMainCounter,
+##    IsAbilityMultiTarget, IsSpellReflected, IsCovered, IsDodged, IsCounterableCommand, MPCost, CalcMainCounter,
 ##    IsCasterWellDefined, IsTargeted, IsSingleTarget, IsSelfTarget, IsTheCaster, IsAllyOfTarget,
 ##    IsAllyOfCaster, IsEnemyOfTarget, IsEnemyOfCaster, AreCasterAndTargetEnemies, AreCasterAndTargetAllies,
 ##    (+ the other modifiable properties)
@@ -263,7 +275,7 @@
 ##  >SA Global+
 ##  StatusInit [code=Condition] WeaponId == RegularItem_Avenger [/code] InitialStatus Doom
 ##  Ability AsTarget
-##   [code=Condition] TargetWeaponId == RegularItem_Defender && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) && CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
+##   [code=Condition] TargetWeaponId == RegularItem_Defender && CheckAnyStatus(TargetCurrentStatus, BattleStatus_Defend) && IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 [/code]
 ##   [code=Counter] BattleAbilityId_Attack [/code]
 ##   DisableSA 36 54 56
 ##  Permanent [code=Condition] WeaponId == RegularItem_MaceOfZeus [/code] [code=MPCostFactor] 0 [/code]
@@ -271,6 +283,16 @@
 ##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Blind) [/code]
 ##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) [/code]
 ##  StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] [code=PartialResistHeat] 0.5 [/code] [code=DurationFactorHeat] 0.5 [/code]
+##  
+##  
+##  Make all the enemies start with Haste if the party average level is above 50
+##  Also scale their damage according to the number of enemies of the same kind that were defeated by the player
+##  
+##  >SA GlobalEnemy+
+##  StatusInit [code=Condition] CurrentPartyAverageLevel >= 50.0 [/code] InitialStatus Haste
+##  Ability WhenCalcDamage EvenImmobilized
+##   [code=Condition] CasterIsPlayer != TargetIsPlayer [/code]
+##   [code=Attack] Attack + Attack * GetModelKillCount(CasterModelId) / 50 [/code]
 ##  
 ##  
 ##  Give Auto-Shell or Auto-Protect depending on which one is the most useful
@@ -377,6 +399,11 @@
 ##   RegularItem_Hammer			RegularItem_Dagger		RegularItem_MageMasher		RegularItem_MythrilDagger
 ##   etc...
 ##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/Battle/RegularItem.cs
+##  
+##  The different Tetra Master (or Triple Triad) cards are:
+##   TetraMasterCardId_Goblin	TetraMasterCardId_Fang	TetraMasterCardId_Skeleton	TetraMasterCardId_Flan
+##   etc...
+##   see https://github.com/Albeoris/Memoria/blob/main/Assembly-CSharp/Memoria/Data/TetraMaster/TetraMasterCardId.cs
 ##  
 ##  The different "EffectCasterFlags" and "EffectTargetFlags" are:
 ##   CalcFlag_HpAlteration	-> Ability deals HP damage
@@ -693,7 +720,7 @@ Ability AsTarget WhenBattleScriptStart EvenImmobilized
 
 >SA 36 Counter
 Ability AsTarget
-[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && (TargetHasSA(39) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) [/code]
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 8) != 0 && (TargetHasSA(39) ? 2 * TargetSpirit : TargetSpirit) > GetRandom(0, 100) [/code]
 [code=Counter] 176 [/code]
 DisableSA 36 54 56
 
@@ -757,7 +784,7 @@ StatusInit ResistStatus Petrify ResistStatus GradualPetrify
 
 >SA 54 Return Magic
 Ability AsTarget
-[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 128) != 0 [/code]
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (AbilityCategory & 128) != 0 [/code]
 [code=ReturnMagic] 0 [/code]
 DisableSA 36 54 56
 
@@ -768,7 +795,7 @@ Ability AsTarget
 
 >SA 56 Auto-Potion
 Ability AsTarget
-[code=Condition] CommandId < BattleCommandId_BoundaryCheck && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
+[code=Condition] IsCounterableCommand && CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) [/code]
 [code=AutoItem] GetItemCount(RegularItem_Potion) != 0 ? RegularItem_Potion : RegularItem_HiPotion [/code]
 DisableSA 36 54 56
 

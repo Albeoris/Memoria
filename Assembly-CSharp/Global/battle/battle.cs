@@ -385,7 +385,8 @@ public static class battle
                                     {
                                         Int32 num3 = btl_mot.GetDirection(next);
                                         next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                        next.bi.def_idle = !btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)0 : (Byte)1;
+                                        if (!next.is_monster_transform)
+                                            next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) || next.special_status_old ? (Byte)1 : (Byte)0;
                                         next.bi.cmd_idle = 0;
                                         btl_mot.SetDefaultIdle(next);
                                         //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
@@ -435,7 +436,7 @@ public static class battle
                     sys.btl_flag |= 64;
                     for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                         if (next.bi.player == 0)
-                            gil += btl_util.getEnemyTypePtr(next).bonus.gil;
+                            gil += btl_util.getEnemyPtr(next).bonus_gil;
                     if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
                         sys.btl_flag |= 8;
                     sys.btl_result = 4;

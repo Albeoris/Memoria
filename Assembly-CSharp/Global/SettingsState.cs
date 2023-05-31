@@ -341,7 +341,7 @@ public class SettingsState : MonoBehaviour
             return;
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-            if (unit.IsUnderAnyStatus(BattleStatus.Trance))
+            if (unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance))
                 unit.Trance = Byte.MaxValue;
     }
 

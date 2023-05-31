@@ -319,23 +319,23 @@ public class btl_scrp
 			break;
 		case 104u: // access/modify an enemy's item to drop with SV_FunctionEnemy[104] and followings
 			if (btl.bi.player == 0)
-				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[0];
+				result = (Int32)btl_util.getEnemyPtr(btl).bonus_item[0];
 			break;
 		case 105u:
 			if (btl.bi.player == 0)
-				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[1];
+				result = (Int32)btl_util.getEnemyPtr(btl).bonus_item[1];
 			break;
 		case 106u:
 			if (btl.bi.player == 0)
-				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[2];
+				result = (Int32)btl_util.getEnemyPtr(btl).bonus_item[2];
 			break;
 		case 107u:
 			if (btl.bi.player == 0)
-				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.item[3];
+				result = (Int32)btl_util.getEnemyPtr(btl).bonus_item[3];
 			break;
 		case 108u:
 			if (btl.bi.player == 0)
-				result = (Int32)btl_util.getEnemyTypePtr(btl).bonus.card;
+				result = (Int32)btl_util.getEnemyPtr(btl).bonus_card;
 			break;
 		case 109u: // flags (die_atk, die_dmg, then 6 custom flags)
 			if (btl.bi.player == 0)
@@ -356,7 +356,7 @@ public class btl_scrp
 			if (btl.bi.player == 0)
 				result = btl_util.getEnemyTypePtr(btl).category;
 			else
-				result = ENEMY.ENEMY_CATEGORY_HUMANOID;
+				result = (Int32)EnemyCategory.Humanoid;
 			break;
 		case 114u:
 		{
@@ -526,7 +526,7 @@ public class btl_scrp
 			btl.bi.def_idle = (Byte)val;
 			break;
 		case 71u:
-			btl_sys.SetBonus(btl_util.getEnemyTypePtr(btl));
+			btl_sys.SetBonus(btl_util.getEnemyPtr(btl));
 			break;
 		case 72u:
 			btl.elem.str = (Byte)val;
@@ -577,23 +577,23 @@ public class btl_scrp
 			break;
 		case 104u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[0] = (RegularItem)val;
+				btl_util.getEnemyPtr(btl).bonus_item[0] = (RegularItem)val;
 			break;
 		case 105u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[1] = (RegularItem)val;
+				btl_util.getEnemyPtr(btl).bonus_item[1] = (RegularItem)val;
 			break;
 		case 106u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[2] = (RegularItem)val;
+				btl_util.getEnemyPtr(btl).bonus_item[2] = (RegularItem)val;
 			break;
 		case 107u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.item[3] = (RegularItem)val;
+				btl_util.getEnemyPtr(btl).bonus_item[3] = (RegularItem)val;
 			break;
 		case 108u:
 			if (btl.bi.player == 0)
-				btl_util.getEnemyTypePtr(btl).bonus.card = (TetraMasterCardId)val;
+				btl_util.getEnemyPtr(btl).bonus_card = (TetraMasterCardId)val;
 			break;
 		case 109u:
 			if (btl.bi.player == 0)
@@ -825,8 +825,8 @@ public class btl_scrp
 				ff.party.gil = 9999999u;
 			break;
 		case 39u:
-			if (ff.dragon_no < 9999)
-				ff.dragon_no++;
+			if (ff.categoryKillCount[3] < 9999)
+				ff.categoryKillCount[3]++; // Manually increase the counter of dragons killed
 			break;
 		case 40u:
 		{

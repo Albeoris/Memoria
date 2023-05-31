@@ -27,6 +27,7 @@ namespace Memoria
 
         public UInt16 Id => Data.btl_id;
         public Boolean IsPlayer => Data.bi.player != 0;
+        public Boolean IsNonMorphedPlayer => Data.bi.player != 0 && !Data.is_monster_transform;
         public Boolean IsTargetable => Data.bi.target != 0;
         public Boolean IsSlave => Data.bi.slave != 0;
         public Boolean IsOutOfReach
@@ -205,7 +206,12 @@ namespace Memoria
         public BattleStatus ResistStatus
         {
             get => Data.stat.invalid;
-            set => Data.stat.invalid = value;
+            set
+            {
+                Data.stat.invalid = value;
+                if (!IsPlayer)
+                    Data.bi.t_gauge = (Byte)((value & BattleStatus.Trance) == 0 ? 1 : 0);
+            }
         }
 
         public StatusModifier PartialResistStatus => Data.stat_partial_resist;
@@ -524,8 +530,8 @@ namespace Memoria
                 monsterIndex = Comn.random8() % scene.header.TypCount;
             if (monsterIndex >= scene.header.TypCount)
                 return;
-            Int32 i;
             SB2_MON_PARM monsterParam = scene.MonAddr[monsterIndex];
+            Int32 i;
             if (updatePts)
             {
                 Data.max.hp = monsterParam.MaxHP;
@@ -560,93 +566,99 @@ namespace Memoria
             Data.shadow_bone[0] = monsterParam.ShadowBone;
             Data.shadow_bone[1] = monsterParam.ShadowBone2;
             btl_util.SetShadow(Data, monsterParam.ShadowX, monsterParam.ShadowZ);
+            foreach (SupportingAbilityFeature feature in monsterParam.SupportingAbilityFeatures)
+                if (feature.EnableAsMonsterTransform)
+                    Data.saMonster.Add(feature);
             btlseq.btlseqinstance seqreader = new btlseq.btlseqinstance();
             btlseq.ReadBattleSequence(btlName, ref seqreader);
             seqreader.FixBuggedAnimations(scene);
             List<AA_DATA> aaList = new List<AA_DATA>();
-            AA_DATA attackAA = null;
+            List<Int32> usableAbilList = new List<Int32>();
+            AA_DATA[] attackAA = new AA_DATA[] { null, null };
+            List<Int32>[] attackAnims = new List<Int32>[] { null, null };
+            Int32 animOffset = 0;
             String[] battleRawText = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + btlName]);
             if (battleRawText == null)
                 battleRawText = new String[0];
-            Int32 sequenceSfx;
-            Boolean sequenceChannel, sequenceContact;
-            for (i = 0; i < scene.header.AtkCount && aaList.Count < 63; i++)
+            for (i = 0; i < scene.header.AtkCount; i++)
             {
                 if (seqreader.GetEnemyIndexOfSequence(i) != monsterIndex)
                     continue;
-                if (scene.atk[i].Ref.ScriptId == 64) // Usually scripted dialogs
-                    continue;
+                AA_DATA ability = scene.atk[i];
+                aaList.Add(ability);
+                // Swap the TargetType but keep the DefaultAlly flag since it is on by default only for curative/buffing enemy spells
+                if (ability.Info.Target == TargetType.AllAlly)
+                    ability.Info.Target = TargetType.AllEnemy;
+                else if (ability.Info.Target == TargetType.AllEnemy)
+                    ability.Info.Target = TargetType.AllAlly;
+                else if (ability.Info.Target == TargetType.ManyAlly)
+                    ability.Info.Target = TargetType.ManyEnemy;
+                else if (ability.Info.Target == TargetType.ManyEnemy)
+                    ability.Info.Target = TargetType.ManyAlly;
+                else if (ability.Info.Target == TargetType.RandomAlly)
+                    ability.Info.Target = TargetType.RandomEnemy;
+                else if (ability.Info.Target == TargetType.RandomEnemy)
+                    ability.Info.Target = TargetType.RandomAlly;
+                else if (ability.Info.Target == TargetType.SingleAlly)
+                    ability.Info.Target = TargetType.SingleEnemy;
+                else if (ability.Info.Target == TargetType.SingleEnemy)
+                    ability.Info.Target = TargetType.SingleAlly;
                 if (scene.header.TypCount + i < battleRawText.Length)
-                    scene.atk[i].Name = battleRawText[scene.header.TypCount + i];
-                sequenceSfx = seqreader.GetSFXOfSequence(i, out sequenceChannel, out sequenceContact);
+                    ability.Name = battleRawText[scene.header.TypCount + i];
+                animOffset = seqreader.seq_work_set.AnmOfsList[i];
+                Int32 sequenceSfx = seqreader.GetSFXOfSequence(i, out Boolean sequenceChannel, out Boolean sequenceContact);
                 if (sequenceSfx >= 0)
+                    ability.Info.VfxIndex = (Int16)sequenceSfx;
+                if (Configuration.Battle.SFXRework && ability.Info.VfxAction == null)
+                    ability.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], i);
+                if (!ability.MorphDisableAccess && (ability.MorphForceAccess || ability.Ref.ScriptId != 64)) // 64 (no effect) is usually scripted dialogs
                 {
-                    scene.atk[i].Info.VfxIndex = (Int16)sequenceSfx;
-                    if (Configuration.Battle.SFXRework && scene.atk[i].Info.VfxAction == null)
-                        scene.atk[i].Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], i);
-                    if (sequenceContact)
+                    if (sequenceSfx >= 0 && sequenceContact)
                     {
-                        attackAA = scene.atk[i];
-                        continue;
+                        attackAA[ability.AlternateIdleAccess ? 1 : 0] = ability;
+                        attackAnims[ability.AlternateIdleAccess ? 1 : 0] = seqreader.GetAnimationsOfSequence(i);
+                    }
+                    else
+                    {
+                        usableAbilList.Add(aaList.Count - 1);
                     }
                 }
-                // Swap the TargetType but keep the DefaultAlly flag since it is on by default only for curative/buffing enemy spells
-                if (scene.atk[i].Info.Target == TargetType.AllAlly)
-                    scene.atk[i].Info.Target = TargetType.AllEnemy;
-                else if (scene.atk[i].Info.Target == TargetType.AllEnemy)
-                    scene.atk[i].Info.Target = TargetType.AllAlly;
-                else if (scene.atk[i].Info.Target == TargetType.ManyAlly)
-                    scene.atk[i].Info.Target = TargetType.ManyEnemy;
-                else if (scene.atk[i].Info.Target == TargetType.ManyEnemy)
-                    scene.atk[i].Info.Target = TargetType.ManyAlly;
-                else if (scene.atk[i].Info.Target == TargetType.RandomAlly)
-                    scene.atk[i].Info.Target = TargetType.RandomEnemy;
-                else if (scene.atk[i].Info.Target == TargetType.RandomEnemy)
-                    scene.atk[i].Info.Target = TargetType.RandomAlly;
-                else if (scene.atk[i].Info.Target == TargetType.SingleAlly)
-                    scene.atk[i].Info.Target = TargetType.SingleEnemy;
-                else if (scene.atk[i].Info.Target == TargetType.SingleEnemy)
-                    scene.atk[i].Info.Target = TargetType.SingleAlly;
-                aaList.Add(scene.atk[i]);
             }
             CharacterCommands.Commands[commandAsMonster].Type = CharacterCommandType.Ability;
-            CharacterCommands.Commands[commandAsMonster].ListEntry = new Int32[aaList.Count];
-            for (i = 0; i < aaList.Count; i++)
-                CharacterCommands.Commands[commandAsMonster].ListEntry[i] = i;
+            CharacterCommands.Commands[commandAsMonster].ListEntry = usableAbilList.ToArray();
             Data.is_monster_transform = true;
             UIManager.Battle.ClearCursorMemorize(Position, commandAsMonster);
-            if (attackAA == null)
-                btl_cmd.KillSpecificCommand(Data, BattleCommandId.Attack);
-            Data.monster_transform = new BTL_DATA.MONSTER_TRANSFORM();
-            Data.monster_transform.base_command = commandToReplace;
-            Data.monster_transform.new_command = commandAsMonster;
-            Data.monster_transform.attack = attackAA;
-            Data.monster_transform.spell = aaList;
-            Data.monster_transform.replace_point = updatePts;
-            Data.monster_transform.replace_stat = updateStat;
-            Data.monster_transform.replace_defence = updateDef;
-            Data.monster_transform.replace_element = updateElement;
-            Data.monster_transform.cancel_on_death = cancelOnDeath;
-            Data.monster_transform.death_sound = monsterParam.DieSfx;
-            Data.monster_transform.fade_counter = 0;
+            btl_cmd.KillSpecificCommand(Data, BattleCommandId.Attack);
+            BTL_DATA.MONSTER_TRANSFORM monsterTransform = (Data.monster_transform = new BTL_DATA.MONSTER_TRANSFORM());
+            monsterTransform.base_command = commandToReplace;
+            monsterTransform.new_command = commandAsMonster;
+            monsterTransform.attack = attackAA;
+            monsterTransform.spell = aaList;
+            monsterTransform.replace_point = updatePts;
+            monsterTransform.replace_stat = updateStat;
+            monsterTransform.replace_defence = updateDef;
+            monsterTransform.replace_element = updateElement;
+            monsterTransform.cancel_on_death = cancelOnDeath;
+            monsterTransform.death_sound = monsterParam.DieSfx;
+            monsterTransform.fade_counter = 0;
             for (i = 0; i < 3; i++)
-                Data.monster_transform.cam_bone[i] = monsterParam.Bone[i];
+                monsterTransform.cam_bone[i] = monsterParam.Bone[i];
             for (i = 0; i < 6; i++)
             {
-                Data.monster_transform.icon_bone[i] = monsterParam.IconBone[i];
-                Data.monster_transform.icon_y[i] = monsterParam.IconY[i];
-                Data.monster_transform.icon_z[i] = monsterParam.IconZ[i];
+                monsterTransform.icon_bone[i] = monsterParam.IconBone[i];
+                monsterTransform.icon_y[i] = monsterParam.IconY[i];
+                monsterTransform.icon_z[i] = monsterParam.IconZ[i];
             }
             if (disableCommands == null)
-                Data.monster_transform.disable_commands = new List<BattleCommandId>();
+                monsterTransform.disable_commands = new List<BattleCommandId>();
             else
-                Data.monster_transform.disable_commands = disableCommands;
-            Data.monster_transform.resist_added = 0;
-            if (attackAA == null)
-                Data.monster_transform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
-            btl_stat.RemoveStatuses(Data, Data.monster_transform.resist_added);
-            Data.monster_transform.resist_added &= ~ResistStatus;
-            ResistStatus |= Data.monster_transform.resist_added;
+                monsterTransform.disable_commands = disableCommands;
+            monsterTransform.resist_added = 0;
+            if (attackAA[0] == null)
+                monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
+            btl_stat.RemoveStatuses(Data, monsterTransform.resist_added);
+            monsterTransform.resist_added &= ~ResistStatus;
+            ResistStatus |= monsterTransform.resist_added;
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
@@ -661,97 +673,156 @@ namespace Memoria
             }
             //Data.SetActiveBtlData(true);
             geoName = geoName.Substring(4);
-            for (i = 0; i < Data.mot.Length; i++)
-                Data.mot[i] = String.Empty;
-            Boolean useAlternateAnim = geoName.CompareTo("MON_B3_072") == 0; // Gargoyle (to be completed)
+            monsterTransform.motion_normal = Data.mot;
+            monsterTransform.motion_alternate = new String[34];
+            for (i = 0; i < 34; i++)
+            {
+                monsterTransform.motion_normal[i] = String.Empty;
+                monsterTransform.motion_alternate[i] = String.Empty;
+            }
             Boolean useDieDmg = (monsterParam.Flags & 2) != 0;
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL] = FF9BattleDB.Animation[monsterParam.Mot[useAlternateAnim ? 1 : 0]];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1] = FF9BattleDB.Animation[monsterParam.Mot[useAlternateAnim ? 3 : 2]];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2] = Data.mot[2];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE] = String.Empty;
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE] = FF9BattleDB.Animation[monsterParam.Mot[useDieDmg ? 3 : useAlternateAnim ? 5 : 4]];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_COVER] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_FORWARD] = Data.mot[0];
-            Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_BACK] = Data.mot[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL] = FF9BattleDB.Animation[monsterParam.Mot[0]];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1] = FF9BattleDB.Animation[monsterParam.Mot[2]];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2] = monsterTransform.motion_normal[2];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE] = String.Empty;
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE] = FF9BattleDB.Animation[monsterParam.Mot[useDieDmg ? 3 : 4]];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_COVER] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_FORWARD] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_BACK] = monsterTransform.motion_normal[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL] = FF9BattleDB.Animation[monsterParam.Mot[1]];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1] = FF9BattleDB.Animation[monsterParam.Mot[3]];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2] = monsterTransform.motion_alternate[2];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE] = String.Empty;
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE] = FF9BattleDB.Animation[monsterParam.Mot[4]];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_COVER] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_FORWARD] = monsterTransform.motion_alternate[0];
+            monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_STEP_BACK] = monsterTransform.motion_alternate[0];
             // Try to automatically get a few animations
             // Physical attack
-            if (geoName.CompareTo("MON_B3_147") == 0 && Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_040") != null)
+            for (i = 0; i < 6; i++)
             {
-                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_040"; // Deathguise's Spin
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_041") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN] = "ANH_" + geoName + "_041";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_042") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK] = "ANH_" + geoName + "_042";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_043") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK] = "ANH_" + geoName + "_043";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_044") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK] = "ANH_" + geoName + "_044";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_045") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL] = "ANH_" + geoName + "_045";
+                if (attackAnims[0] != null && i < attackAnims[0].Count)
+                    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET + i] = attackAnims[0][i] == 0xFF ? monsterTransform.motion_normal[0] : FF9BattleDB.Animation[seqreader.seq_work_set.AnmAddrList[animOffset + attackAnims[0][i]]];
+                if (attackAnims[1] != null && i < attackAnims[1].Count)
+                    monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET + i] = attackAnims[1][i] == 0xFF ? monsterTransform.motion_alternate[0] : FF9BattleDB.Animation[seqreader.seq_work_set.AnmAddrList[animOffset + attackAnims[1][i]]];
             }
-            else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_010") != null)
-            {
-                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_010";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_011") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN] = "ANH_" + geoName + "_011";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_012") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK] = "ANH_" + geoName + "_012";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_013") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK] = "ANH_" + geoName + "_013";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_014") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK] = "ANH_" + geoName + "_014";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_015") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL] = "ANH_" + geoName + "_015";
-            }
-            else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_030") != null)
-            {
-                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_030";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_031") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN] = "ANH_" + geoName + "_031";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_032") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK] = "ANH_" + geoName + "_032";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_033") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK] = "ANH_" + geoName + "_033";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_034") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK] = "ANH_" + geoName + "_034";
-                if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_035") != null)
-                    Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL] = "ANH_" + geoName + "_035";
-            }
+            //if (geoName.CompareTo("MON_B3_147") == 0 && Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_040") != null)
+            //{
+            //    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_040"; // Deathguise's Spin
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_041", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_042", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_043", BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_044", BattlePlayerCharacter.PlayerMotionIndex.MP_BACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_045", BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL);
+            //}
+            //else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_010") != null)
+            //{
+            //    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_010";
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_011", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_012", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_013", BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_014", BattlePlayerCharacter.PlayerMotionIndex.MP_BACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_015", BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL);
+            //}
+            //else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_030") != null)
+            //{
+            //    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_030";
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_031", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_032", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_033", BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_034", BattlePlayerCharacter.PlayerMotionIndex.MP_BACK);
+            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_035", BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL);
+            //}
             // Cast Init / Loop / End
-            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_020") != null)
-                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT] = "ANH_" + geoName + "_020";
-            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_021") != null)
-                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT] = "ANH_" + geoName + "_021";
-            if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_022") != null)
-                Data.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC] = "ANH_" + geoName + "_022";
-            // Duplicate existing animations or create dummy ones but have different names for btl_mot.checkMotion proper functioning
-            HashSet<String> uniqueAnimList = new HashSet<String>();
-            for (i = 0; i < Data.mot.Length; i++)
+            if (geoName.CompareTo("MON_B3_199") == 0) // Necron
             {
-                if (String.IsNullOrEmpty(Data.mot[i]) || uniqueAnimList.Contains(Data.mot[i]))
+                ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_030", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_031", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_032", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
+                ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_020", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_021", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_022", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
+            }
+            else
+            {
+                ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_020", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_021", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_022", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
+                if (geoName.CompareTo("MON_B3_050") == 0 || geoName.CompareTo("MON_B3_051") == 0 || geoName.CompareTo("MON_B3_061") == 0 || geoName.CompareTo("MON_B3_115") == 0 || geoName.CompareTo("MON_B3_119") == 0 || geoName.CompareTo("MON_B3_120") == 0)
                 {
-                    String newName = "ANH_" + geoName + "_DUMMY_" + i;
-                    if (!String.IsNullOrEmpty(Data.mot[i]) && Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) != null)
-                        Data.gameObject.GetComponent<Animation>().AddClip(Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]), newName);
-                    else
-                        AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, newName);
-                    Data.mot[i] = newName;
+                    // Xylomid [MON_B3_050], Movers [MON_B3_051], Pampa [MON_B3_061], Black Waltz 3 [MON_B3_115], Zorn [MON_B3_119], Thorn [MON_B3_120]
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_040", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_041", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_042", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
+                }
+                else if (geoName.CompareTo("MON_B3_126") == 0 || geoName.CompareTo("MON_B3_167") == 0)
+                {
+                    // Tantarian [MON_B3_126], Gimme Cat [MON_B3_167]
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_050", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_051", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_052", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
+                }
+                else if (geoName.CompareTo("MON_B3_146") == 0)
+                {
+                    // Hades [MON_B3_146]
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_080", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_081", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_082", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
                 }
                 else
                 {
-                    if (Data.gameObject.GetComponent<Animation>().GetClip(Data.mot[i]) == null)
-                        AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, Data.mot[i]);
-                    uniqueAnimList.Add(Data.mot[i]);
+                    // Serpion [MON_B3_046], Torama [MON_B3_082], Lich [MON_B3_140], Crystal Lich [MON_B3_191], Deathguise [MON_B3_147], Gargoyle (?) [MON_B3_072]
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_030", BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_TO_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_031", BattlePlayerCharacter.PlayerMotionIndex.MP_CHANT);
+                    ChangeToMonster_SetClip(monsterTransform.motion_alternate, "ANH_" + geoName + "_032", BattlePlayerCharacter.PlayerMotionIndex.MP_MAGIC);
                 }
             }
+            // Duplicate existing animations or create dummy ones but have different names for btl_mot.checkMotion proper functioning
+            HashSet<String> uniqueAnimList = new HashSet<String>();
+            for (i = 0; i < 68; i++)
+            {
+                String baseName = i < 34 ? monsterTransform.motion_normal[i] : monsterTransform.motion_alternate[i - 34];
+                if (String.IsNullOrEmpty(baseName) || uniqueAnimList.Contains(baseName))
+                {
+                    String newName = "ANH_" + geoName + "_DUMMY_" + i;
+                    if (!String.IsNullOrEmpty(baseName) && Data.gameObject.GetComponent<Animation>().GetClip(baseName) != null)
+                        Data.gameObject.GetComponent<Animation>().AddClip(Data.gameObject.GetComponent<Animation>().GetClip(baseName), newName);
+                    else
+                        AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, newName);
+                    if (i < 34)
+                        monsterTransform.motion_normal[i] = newName;
+                    else
+                        monsterTransform.motion_alternate[i - 34] = newName;
+                }
+                else
+                {
+                    if (Data.gameObject.GetComponent<Animation>().GetClip(baseName) == null)
+                        AnimationClipReader.CreateDummyAnimationClip(Data.gameObject, baseName);
+                    uniqueAnimList.Add(baseName);
+                }
+            }
+            Data.bi.def_idle = 0;
             btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+        }
+
+        private void ChangeToMonster_SetClip(String[] array, String animName, BattlePlayerCharacter.PlayerMotionIndex motion)
+        {
+            if (Data.gameObject.GetComponent<Animation>().GetClip(animName) != null)
+                array[(Int32)motion] = animName;
         }
 
         public void ReleaseChangeToMonster()
@@ -788,6 +859,9 @@ namespace Memoria
             Data.shadow_bone[0] = btlParam.ShadowData[0];
             Data.shadow_bone[1] = btlParam.ShadowData[1];
             btl_util.SetShadow(Data, btlParam.ShadowData[2], btlParam.ShadowData[3]);
+            Data.saMonster.Clear();
+            btl_cmd.KillSpecificCommand(Data, Data.monster_transform.new_command);
+            btl_cmd.KillSpecificCommand(Data, BattleCommandId.EnemyCounter);
             Data.gameObject.SetActive(false);
             Data.gameObject = Data.originalGo;
             Data.geo_scale_default = 4096;
@@ -798,6 +872,7 @@ namespace Memoria
             Data.pos.x = (Data.evt.posBattle.x = (Data.evt.pos[0] = (Data.base_pos.x = Data.original_pos.x)));
             Data.pos.y = (Data.evt.posBattle.y = (Data.evt.pos[1] = (Data.base_pos.y = (Data.original_pos.y + (!btl_stat.CheckStatus(Data, BattleStatus.Float) ? 0 : -200)))));
             Data.pos.z = (Data.evt.posBattle.z = (Data.evt.pos[2] = (Data.base_pos.z = (Data.original_pos.z + (Data.bi.row == 0 ? -400 : 0)))));
+            Data.mot = Data.monster_transform.motion_normal;
             for (Int32 i = 0; i < 34; i++)
                 Data.mot[i] = btlParam.AnimationId[i];
             if (Data.cur.hp == 0)

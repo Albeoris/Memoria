@@ -262,7 +262,7 @@ namespace FF9
 
 		public static Boolean IsCommandMonsterTransform(CMD_DATA cmd)
 		{
-			return cmd.regist != null && cmd.regist.is_monster_transform && cmd.regist.monster_transform.new_command == cmd.cmd_no;
+			return cmd.regist != null && cmd.regist.is_monster_transform && (cmd.cmd_no == cmd.regist.monster_transform.new_command || cmd.cmd_no == BattleCommandId.EnemyCounter);
 		}
 
 		public static Boolean IsCommandMonsterTransformAttack(CMD_DATA cmd)
@@ -272,7 +272,7 @@ namespace FF9
 
 		public static Boolean IsCommandMonsterTransformAttack(BTL_DATA btl, BattleCommandId commandId, Int32 sub_no)
 		{
-			return btl != null && btl.is_monster_transform && (commandId == BattleCommandId.Attack || commandId == BattleCommandId.Counter || commandId == BattleCommandId.RushAttack) && sub_no == (Int32)BattleAbilityId.Attack;
+			return btl != null && btl.is_monster_transform && (commandId == BattleCommandId.Attack || commandId == BattleCommandId.Counter || commandId == BattleCommandId.EnemyCounter || commandId == BattleCommandId.RushAttack) && sub_no == (Int32)BattleAbilityId.Attack;
 		}
 
 		public static Boolean IsCommandDeclarable(BattleCommandId cmdNo)
@@ -329,12 +329,14 @@ namespace FF9
 			if (IsCommandMonsterTransform(cmd))
 				return cmd.regist.monster_transform.spell[cmd.sub_no];
 			if (IsCommandMonsterTransformAttack(cmd))
-				return cmd.regist.monster_transform.attack;
+				return cmd.regist.monster_transform.attack[cmd.regist.bi.def_idle];
 			return null;
 		}
 
 		public static AA_DATA GetCommandAction(CMD_DATA cmd)
 		{
+			if (cmd.cmd_no == BattleCommandId.SysTrans)
+				return FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void];
 			if ((cmd.regist != null && cmd.regist.bi.player == 0) || cmd.cmd_no == BattleCommandId.MagicCounter)
 				return FF9StateSystem.Battle.FF9Battle.enemy_attack[cmd.sub_no];
 			AA_DATA monsterAA = GetCommandMonsterAttack(cmd);

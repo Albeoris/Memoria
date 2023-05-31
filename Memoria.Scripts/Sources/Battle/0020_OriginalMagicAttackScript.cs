@@ -20,6 +20,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.OriginalMagicParams();
+            _v.Caster.EnemyTranceBonusAttack();
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
             _v.BonusElement();
