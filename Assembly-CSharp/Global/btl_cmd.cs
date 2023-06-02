@@ -1415,6 +1415,10 @@ public class btl_cmd
             if (caster.IsPlayer && FF9StateSystem.Settings.IsATBFull)
                 caster.CurrentAtb = (Int16)(caster.MaximumAtb - 1);
 
+            if (Configuration.Mod.TranceSeek && btl_util.GetCommandMainActionIndex(cmd) == (BattleAbilityId)1005) // TRANCE SEEK - Quick Attack
+            {
+                caster.CurrentAtb = (short)(caster.MaximumAtb / 2);
+            }
             btl_para.CheckPointData(cmd.regist);
         }
 
