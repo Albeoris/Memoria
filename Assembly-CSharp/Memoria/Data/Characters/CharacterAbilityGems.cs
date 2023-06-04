@@ -593,6 +593,7 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "BonusExp") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_exp);
                             else if (String.Compare(formula.Key, "BonusGil") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_gil);
                             else if (String.Compare(formula.Key, "BonusCard") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)abilityUser.Enemy.Data.bonus_card);
+                            else if (String.Compare(formula.Key, "BattleBonusAP") == 0) battle.btl_bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), battle.btl_bonus.ap);
                         }
                         UpdateUnitStatuses(abilityUser, uCurStat, uAutoStat, uResistStat);
                     }

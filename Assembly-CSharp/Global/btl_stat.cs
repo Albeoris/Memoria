@@ -118,7 +118,16 @@ public static class btl_stat
                         btl_sys.CheckForecastMenuOff(btl);
                     }
                 }
-                //btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
+                if ((stat.cur & BattleStatus.Trance) != 0 && btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans))
+                {
+                    Byte tranceValue = btl.trance;
+                    btl_stat.RemoveStatus(btl, BattleStatus.Trance);
+                    btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
+                    if (tranceValue == 255)
+                        btl.trance = 254;
+                    else
+                        btl.trance = tranceValue;
+                }
                 break;
             case BattleStatus.Berserk:
             case BattleStatus.Heat:
@@ -302,19 +311,16 @@ public static class btl_stat
                     SetStatusPolyColor(btl);
                 break;
             case BattleStatus.Trance:
-                if (!Configuration.Mod.TranceSeek || btl.gameObject == btl.tranceGo) // TRANCE SEEK - other usage of trance
+                btl.trance = 0;
+                if (Status.checkCurStat(btl, BattleStatus.Jump))
                 {
-                    btl.trance = 0;
-                    if (Status.checkCurStat(btl, BattleStatus.Jump))
-                    {
-                        RemoveStatus(btl, BattleStatus.Jump);
-                        btl.SetDisappear(false, 2);
-                        btl_mot.setBasePos(btl);
-                        btl_mot.setMotion(btl, btl.bi.def_idle);
-                        btl.evt.animFrame = 0;
-                    }
-                    btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
+                    RemoveStatus(btl, BattleStatus.Jump);
+                    btl.SetDisappear(false, 2);
+                    btl_mot.setBasePos(btl);
+                    btl_mot.setMotion(btl, btl.bi.def_idle);
+                    btl.evt.animFrame = 0;
                 }
+                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
                 break;
             case BattleStatus.Haste:
             case BattleStatus.Slow:
@@ -517,12 +523,6 @@ public static class btl_stat
         {
             if (Configuration.Mod.TranceSeek && unit.IsPlayer)
             {
-                if (unit.Trance == 255 && unit.IsUnderStatus(BattleStatus.Trance) && btl.gameObject != btl.tranceGo)
-                {
-                    btl_cmd.KillSpecificCommand(unit.Data, BattleCommandId.SysTrans);
-                    unit.RemoveStatus(BattleStatus.Trance);
-                    unit.Trance = 254;
-                }
                 // TRANCE SEEK - Refresh stats on Death
                 btl.elem.str = unit.Player.Data.elem.str;
                 btl.elem.wpr = unit.Player.Data.elem.wpr;
@@ -614,19 +614,6 @@ public static class btl_stat
                     btl.cur.hp -= 1U;
                 else
                     new BattleUnit(btl).Kill();
-            }
-            if (unit.IsUnderStatus(BattleStatus.Trance)) // TRANCE SEEK - TODO - Move to AbilityFeatures
-            {
-                if (unit.PlayerIndex == CharacterId.Zidane && !unit.IsUnderStatus(BattleStatus.Haste))
-                    unit.AlterStatus(BattleStatus.Haste);
-                if (unit.PlayerIndex == CharacterId.Steiner && !unit.IsUnderStatus(BattleStatus.Protect))
-                    unit.AlterStatus(BattleStatus.Protect);
-                if (unit.PlayerIndex == CharacterId.Garnet && !unit.IsUnderStatus(BattleStatus.Shell))
-                    unit.AlterStatus(BattleStatus.Shell);
-                if (unit.PlayerIndex == CharacterId.Freya && !unit.IsUnderStatus(BattleStatus.Float))
-                    unit.AlterStatus(BattleStatus.Float);
-                if (unit.PlayerIndex == CharacterId.Eiko && !unit.IsUnderStatus(BattleStatus.Regen))
-                    unit.AlterStatus(BattleStatus.Regen);
             }
         }
         if (unit.IsUnderAnyStatus(BattleStatus.Trance) && btl.bi.slot_no == (Byte)CharacterId.Garnet && (ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0)
@@ -748,8 +735,8 @@ public static class btl_stat
             }
             data.pos = pos;
         }
-        // Prevent auto-floating enemies to have the hovering movement
-        if ((data.stat.cur & BattleStatus.Float) != 0u && ((data.stat.permanent & BattleStatus.Float) == 0 || data.bi.player != 0))
+        // Hovering movement, except for auto-floating enemies
+        if ((data.stat.cur & BattleStatus.Float) != 0u && ((data.stat.permanent & BattleStatus.Float) == 0 || unit.IsNonMorphedPlayer))
         {
             Single y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
             Vector3 vector = data.base_pos;

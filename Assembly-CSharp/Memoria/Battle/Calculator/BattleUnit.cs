@@ -613,7 +613,7 @@ namespace Memoria
                     ability.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(scene, seqreader, textid => battleRawText[textid], i);
                 if (!ability.MorphDisableAccess && (ability.MorphForceAccess || ability.Ref.ScriptId != 64)) // 64 (no effect) is usually scripted dialogs
                 {
-                    if (sequenceSfx >= 0 && sequenceContact)
+                    if (sequenceSfx >= 0 && sequenceContact && !ability.MorphForceAccess)
                     {
                         attackAA[ability.AlternateIdleAccess ? 1 : 0] = ability;
                         attackAnims[ability.AlternateIdleAccess ? 1 : 0] = seqreader.GetAnimationsOfSequence(i);
@@ -653,12 +653,6 @@ namespace Memoria
                 monsterTransform.disable_commands = new List<BattleCommandId>();
             else
                 monsterTransform.disable_commands = disableCommands;
-            monsterTransform.resist_added = 0;
-            if (attackAA[0] == null)
-                monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
-            btl_stat.RemoveStatuses(Data, monsterTransform.resist_added);
-            monsterTransform.resist_added &= ~ResistStatus;
-            ResistStatus |= monsterTransform.resist_added;
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
@@ -720,33 +714,6 @@ namespace Memoria
                 if (attackAnims[1] != null && i < attackAnims[1].Count)
                     monsterTransform.motion_alternate[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET + i] = attackAnims[1][i] == 0xFF ? monsterTransform.motion_alternate[0] : FF9BattleDB.Animation[seqreader.seq_work_set.AnmAddrList[animOffset + attackAnims[1][i]]];
             }
-            //if (geoName.CompareTo("MON_B3_147") == 0 && Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_040") != null)
-            //{
-            //    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_040"; // Deathguise's Spin
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_041", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_042", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_043", BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_044", BattlePlayerCharacter.PlayerMotionIndex.MP_BACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_045", BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL);
-            //}
-            //else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_010") != null)
-            //{
-            //    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_010";
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_011", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_012", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_013", BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_014", BattlePlayerCharacter.PlayerMotionIndex.MP_BACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_015", BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL);
-            //}
-            //else if (Data.gameObject.GetComponent<Animation>().GetClip("ANH_" + geoName + "_030") != null)
-            //{
-            //    monsterTransform.motion_normal[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_SET] = "ANH_" + geoName + "_030";
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_031", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_032", BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_033", BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_034", BattlePlayerCharacter.PlayerMotionIndex.MP_BACK);
-            //    ChangeToMonster_SetClip(monsterTransform.motion_normal, "ANH_" + geoName + "_035", BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL);
-            //}
             // Cast Init / Loop / End
             if (geoName.CompareTo("MON_B3_199") == 0) // Necron
             {
@@ -817,6 +784,27 @@ namespace Memoria
             }
             Data.bi.def_idle = 0;
             btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+            // Add monster statuses and status resistances
+            BattleStatus current_added = 0;
+            monsterTransform.resist_added = 0;
+            monsterTransform.auto_added = 0;
+            if (attackAA[0] == null)
+                monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
+            foreach (SupportingAbilityFeature saFeature in Data.saMonster)
+			{
+                saFeature.GetStatusInitQuietly(this, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
+                current_added |= initial;
+                monsterTransform.resist_added |= resist;
+                monsterTransform.auto_added |= permanent;
+            }
+            btl_stat.RemoveStatuses(Data, monsterTransform.resist_added);
+            monsterTransform.resist_added &= ~ResistStatus;
+            monsterTransform.auto_added &= ~PermanentStatus;
+            ResistStatus |= monsterTransform.resist_added;
+            monsterTransform.auto_added &= ~ResistStatus;
+            btl_stat.AlterStatuses(Data, current_added);
+            btl_stat.MakeStatusesPermanent(Data, monsterTransform.auto_added, true);
+            // TODO: handle "partialResist" and "durationFactor" properly (now, they are most likely applied but persist after "ReleaseChangeToMonster")
         }
 
         private void ChangeToMonster_SetClip(String[] array, String animName, BattlePlayerCharacter.PlayerMotionIndex motion)
@@ -852,6 +840,7 @@ namespace Memoria
             if (Data.monster_transform.replace_element)
                 btl_eqp.InitEquipPrivilegeAttrib(p, Data);
             ResistStatus &= ~Data.monster_transform.resist_added;
+            btl_stat.MakeStatusesPermanent(Data, Data.monster_transform.auto_added, false);
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;

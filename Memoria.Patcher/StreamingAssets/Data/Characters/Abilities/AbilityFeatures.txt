@@ -143,7 +143,7 @@
 ##    CasterEvade, CasterMagicDefence, CasterMagicEvade, CasterIsStrengthModified, CasterIsMagicModified,
 ##    CasterIsDefenceModified, CasterIsEvadeModified, CasterIsMagicDefenceModified,
 ##    CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
-##    CasterMaxDamageLimit, CasterMaxMPDamageLimit, CasterBonusExp, CasterBonusGil, CasterBonusCard,
+##    CasterMaxDamageLimit, CasterMaxMPDamageLimit, CasterBonusExp, CasterBonusGil, CasterBonusCard
 ##    (+ same as above for the target, eg. TargetHP),
 ##    EffectCasterFlags, CasterHPDamage, CasterMPDamage, EffectTargetFlags, HPDamage, MPDamage,
 ##    FigureInfo, Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged,
@@ -157,7 +157,7 @@
 ##  Command:
 ##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
 ##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate,
-##    CommandTargetId,
+##    CommandTargetId, BattleBonusAP,
 ##    (+ same as Ability modifiable properties for the ability user, eg. HP or CurrentStatus)
 ##  
 ##  BattleResult:
@@ -191,9 +191,10 @@
 ##    GetPartyMemberLevel(number)      -> Return the level of the n-th party member, with n being between 0 and 3 inclusively
 ##    GetPartyMemberIndex(number)      -> Return the Character Index of the n-th party member (see the different "CharacterId" below)
 ##    GetCategoryKillCount(category)   -> Return the number of enemies of the specified category that were defeated by the player
+##                                   0 for Humanoids, 1 for Beasts, 2 for Devils,     3 for Dragons,
+##                                   4 for Undeads,   5 for Stones, 6 for Souls/Bugs, 7 for Flying/Birds
 ##    GetModelKillCount(model ID)      -> Return the number of enemies with a specific model that were defeated by the player
 ##    Gil                              -> The number of gil owned by the player
-##    DragonCount                      -> The number of dragon-type enemies killed
 ##    FrogCount                        -> The number of frogs catched
 ##    StealCount                       -> The number of successful steals
 ##    EscapeCount                      -> The number of successful flees (either way)
@@ -220,6 +221,7 @@
 ##  Permanent:
 ##    HP, MP, Level, Exp, CharacterIndex, SerialNumber, WeaponId, HeadId, WristId, ArmorId, AccessoryId
 ##    HasSA(support ability ID),
+##    CanUseAbility(ability ID),
 ##    (+ modifiable properties)
 ##  
 ##  BattleStart: only the common informations
@@ -233,7 +235,8 @@
 ##    CharacterIndex, IsStrengthModified, IsMagicModified, IsEvadeModified, IsDefenceModified,
 ##    IsMagicDefenceModified, IsMagicEvadeModified, CriticalRateBonus, CriticalRateWeakening,
 ##    IsAlternateStand,
-##    HasSA(support ability ID)
+##    HasSA(support ability ID),
+##    CanUseAbility(ability ID)
 ##  
 ##  Ability:
 ##    All those of "StatusInit" for both the caster and the target (eg. CasterMaxHP or TargetMaxHP),
@@ -259,6 +262,7 @@
 ##    MagicDefence, MagicEvade, PlayerCategory, MPCostFactor, WeaponId, HeadId, WristId, ArmorId,
 ##    AccessoryId, IsFlee, IsFleeByLuck,
 ##    HasSA(support ability ID),
+##    CanUseAbility(ability ID),
 ##    (+ modifiable properties)
 ##  
 #####################################################################################################
@@ -481,7 +485,8 @@
 ##    CasterIsStrengthModified, CasterIsMagicModified, CasterIsEvadeModified, CasterIsDefenceModified,
 ##    CasterIsMagicDefenceModified, CasterIsMagicEvadeModified, CasterCriticalRateBonus, CasterCriticalRateWeakening,
 ##    CasterMaxDamageLimit, CasterMaxMPDamageLimit,
-##    CasterHasSA(support ability ID)
+##    CasterHasSA(support ability ID),
+##    CasterCanUseAbility(ability ID),
 ##    CommandId, AbilityId, ScriptId, Power, AbilityStatus, AbilityElement, AbilityElementForBonus,
 ##    ItemUseId, WeaponThrowShape, SpecialEffectId, TargetType, IsATBCommand, IsAbilityMultiTarget, IsShortSummon,
 ##    IsSpellReflected, IsCovered, IsDodged, IsShortRanged, IsReflectNull, IsMeteorMiss, AbilityCategory, MPCost,

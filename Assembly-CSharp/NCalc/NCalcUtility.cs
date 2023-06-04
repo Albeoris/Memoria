@@ -70,6 +70,12 @@ namespace NCalc
             return ConvertNCalcResult(obj, defaultResult ? 1 : 0) != 0;
         }
 
+        public static String EvaluateNCalcString(Object obj, String defaultResult = "")
+        {
+            if (obj is String) return (String)obj;
+            return defaultResult;
+        }
+
         public static EvaluateFunctionHandler commonNCalcFunctions = delegate (String name, FunctionArgs args)
         {
             if (name == "GetRandom" && args.Parameters.Length == 0)
@@ -230,6 +236,7 @@ namespace NCalc
 
         public static void InitializeExpressionPlayer(ref Expression expr, PLAYER play)
         {
+            expr.Parameters["Name"] = play.Name;
             expr.Parameters["HP"] = play.cur.hp;
             expr.Parameters["MP"] = play.cur.mp;
             expr.Parameters["MaxHP"] = play.max.hp;
@@ -294,6 +301,7 @@ namespace NCalc
         public static void InitializeExpressionUnit(ref Expression expr, BattleUnit unit, String prefix = "")
         {
             ENEMY enemy = unit.IsPlayer ? null : unit.Enemy.Data;
+            expr.Parameters[prefix + "Name"] = unit.Name;
             expr.Parameters[prefix + "MaxHP"] = unit.MaximumHp;
             expr.Parameters[prefix + "MaxMP"] = unit.MaximumMp;
             expr.Parameters[prefix + "MaxATB"] = (Int32)unit.MaximumAtb;
@@ -359,8 +367,13 @@ namespace NCalc
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
                 {
-                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 63);
+                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
                     args.Result = unit.HasSupportAbilityByIndex((SupportAbility)saIndex);
+                }
+                else if (name == prefix + "CanUseAbility" && args.Parameters.Length == 1)
+                {
+                    Int32 aaIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)BattleAbilityId.Void);
+                    args.Result = unit.IsAbilityAvailable((BattleAbilityId)aaIndex);
                 }
             };
         }
@@ -372,6 +385,7 @@ namespace NCalc
                 InitializeExpressionUnit(ref expr, unit, prefix);
                 return;
             }
+            expr.Parameters[prefix + "Name"] = String.Empty;
             expr.Parameters[prefix + "MaxHP"] = 0;
             expr.Parameters[prefix + "MaxMP"] = 0;
             expr.Parameters[prefix + "MaxATB"] = 0;
@@ -436,6 +450,8 @@ namespace NCalc
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
+                    args.Result = false;
+                else if (name == prefix + "CanUseAbility" && args.Parameters.Length == 1)
                     args.Result = false;
             };
         }

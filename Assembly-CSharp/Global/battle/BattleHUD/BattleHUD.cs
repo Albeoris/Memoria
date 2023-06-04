@@ -9,6 +9,7 @@ using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scenes;
+using NCalc;
 using UnityEngine;
 
 public partial class BattleHUD : UIScene
@@ -98,14 +99,34 @@ public partial class BattleHUD : UIScene
     private GONavigationButton _buttonSliding;
     private Int32 CurrentBattlePlayerIndex => _matchBattleIdPlayerList.IndexOf(CurrentPlayerIndex);
 
-    private void DisplayBattleMessage(String str, Boolean isRect)
+    private void DisplayBattleMessage(Message message)
     {
+        String str = message.message;
+        Boolean isRect = message.isRect;
+        CMD_DATA cmd = message.titleCmd;
         BattleDialogGameObject.SetActive(false);
         if (isRect)
         {
             _battleDialogWidget.width = (Int32)(128.0 * UIManager.ResourceXMultipier);
             _battleDialogWidget.height = 120;
             _battleDialogWidget.transform.localPosition = new Vector3(0.0f, 445f, 0.0f);
+            if (cmd != null && cmd.regist != null && !String.IsNullOrEmpty(Configuration.Interface.BattleCommandTitleFormat))
+            {
+                try
+                {
+                    Expression expr = new Expression(Configuration.Interface.BattleCommandTitleFormat);
+                    NCalcUtility.InitializeExpressionUnit(ref expr, new BattleUnit(cmd.regist), "Caster");
+                    NCalcUtility.InitializeExpressionCommand(ref expr, new BattleCommand(cmd));
+                    expr.Parameters["CommandTitle"] = str;
+                    expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    str = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), str);
+                }
+                catch (Exception err)
+                {
+                    Log.Error(err);
+                }
+            }
         }
         else
         {
@@ -955,6 +976,8 @@ public partial class BattleHUD : UIScene
             }
         }
 
+        if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+            SetTargetAvailability(_targetCursor);
         if ((enemyCountOld != enemyCount || playerCountOld != playerCount) && ButtonGroupState.ActiveGroup == TargetGroupButton)
         {
             SetTargetDefault();
@@ -965,7 +988,7 @@ public partial class BattleHUD : UIScene
             ButtonGroupState.ActiveGroup = TargetGroupButton;
         }
 
-        if (currentTargetLabel != null && _cursorType == CursorGroup.Individual && currentTargetLabel.activeSelf)
+        if (_cursorType == CursorGroup.Individual && currentTargetLabel != null && currentTargetLabel.activeSelf)
             ButtonGroupState.ActiveButton = currentTargetLabel;
         else
             DisplayTargetPointer();
@@ -1048,14 +1071,11 @@ public partial class BattleHUD : UIScene
 
     private static ParameterStatus CheckHPState(BattleUnit bd)
     {
-        if (bd.CurrentHp == 0)
+        if (bd.IsUnderStatus(BattleStatus.Death))
             return ParameterStatus.Dead;
 
-        if (bd.IsPlayer)
-        {
-            if (bd.CurrentHp <= bd.MaximumHp / 6.0)
-                return ParameterStatus.Critical;
-        }
+        if (bd.IsPlayer && bd.CurrentHp <= bd.MaximumHp / 6.0)
+            return ParameterStatus.Critical;
 
         return ParameterStatus.Normal;
     }
@@ -1778,37 +1798,37 @@ public partial class BattleHUD : UIScene
         {
             _cursorType = CursorGroup.Individual;
 
-            ChangeTargetAvalability(player: true, enemy: true, all: false, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: true, enemy: true, all: false, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.SingleEnemy)
         {
             _cursorType = CursorGroup.Individual;
 
-            ChangeTargetAvalability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.SingleAlly)
         {
             _cursorType = CursorGroup.Individual;
 
-            ChangeTargetAvalability(player: true, enemy: false, all: false, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: true, enemy: false, all: false, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.ManyAny)
         {
-            ChangeTargetAvalability(player: true, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: true, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.ManyEnemy)
         {
-            ChangeTargetAvalability(player: false, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: false, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.ManyAlly)
         {
-            ChangeTargetAvalability(player: true, enemy: false, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: true, enemy: false, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.AllEnemy || cursor == TargetType.RandomEnemy)
         {
             _cursorType = CursorGroup.AllEnemy;
 
-            ChangeTargetAvalability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: true);
+            ChangeTargetAvailability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: true);
 
             _isAllTarget = true;
         }
@@ -1816,7 +1836,7 @@ public partial class BattleHUD : UIScene
         {
             _cursorType = CursorGroup.AllPlayer;
 
-            ChangeTargetAvalability(player: true, enemy: false, all: false, allPlayers: true, allEnemies: false);
+            ChangeTargetAvailability(player: true, enemy: false, all: false, allPlayers: true, allEnemies: false);
 
             _isAllTarget = true;
         }
@@ -1834,7 +1854,7 @@ public partial class BattleHUD : UIScene
                 _cursorType = CursorGroup.All;
             }
 
-            ChangeTargetAvalability(player: true, enemy: true, all: false, allPlayers: true, allEnemies: true);
+            ChangeTargetAvailability(player: true, enemy: true, all: false, allPlayers: true, allEnemies: true);
 
             _isAllTarget = true;
         }
@@ -1842,14 +1862,14 @@ public partial class BattleHUD : UIScene
         {
             _cursorType = CursorGroup.Individual;
 
-            ChangeTargetAvalability(player: false, enemy: false, all: false, allPlayers: false, allEnemies: false);
+            ChangeTargetAvailability(player: false, enemy: false, all: false, allPlayers: false, allEnemies: false);
 
             GONavigationButton currentPlayer = _targetPanel.Players[CurrentBattlePlayerIndex];
             ButtonGroupState.SetButtonEnable(currentPlayer, true);
         }
     }
 
-    private void ChangeTargetAvalability(Boolean player, Boolean enemy, Boolean all, Boolean allPlayers, Boolean allEnemies)
+    private void ChangeTargetAvailability(Boolean player, Boolean enemy, Boolean all, Boolean allPlayers, Boolean allEnemies)
     {
         foreach (GONavigationButton button in _targetPanel.Players.Entries)
             ButtonGroupState.SetButtonEnable(button, player);
@@ -1860,15 +1880,11 @@ public partial class BattleHUD : UIScene
         AllTargetButton.SetActive(all);
         _targetPanel.Buttons.Player.IsActive = allPlayers;
         _targetPanel.Buttons.Enemy.IsActive = allEnemies;
-    }
 
-    private void SetTargetDefault()
-    {
         if (!_targetDead)
         {
             Int32 playerIndex = 0;
             Int32 enemyIndex = 0;
-
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
             {
                 if (unit.Id == 0 || !unit.IsTargetable)
@@ -1876,19 +1892,22 @@ public partial class BattleHUD : UIScene
 
                 if (unit.IsPlayer)
                 {
-                    if (unit.IsUnderAnyStatus(BattleStatus.Death))
+                    if (_currentCharacterHp[playerIndex] == ParameterStatus.Dead)
                         ButtonGroupState.SetButtonEnable(_targetPanel.Players[playerIndex], false);
                     playerIndex++;
                 }
                 else
                 {
-                    if (unit.IsUnderAnyStatus(BattleStatus.Death))
+                    if (_currentEnemyDieState[enemyIndex])
                         ButtonGroupState.SetButtonEnable(_targetPanel.Enemies[enemyIndex], false);
                     enemyIndex++;
                 }
             }
         }
+    }
 
+    private void SetTargetDefault()
+    {
         if (_targetCursor == TargetType.SingleAny
             || _targetCursor == TargetType.SingleAlly
             || _targetCursor == TargetType.SingleEnemy

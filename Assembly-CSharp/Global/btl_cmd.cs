@@ -1,4 +1,5 @@
-﻿using FF9;
+﻿using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -715,7 +716,7 @@ public class btl_cmd
         }
     }
 
-    public static void KillMainCommand(BTL_DATA btl)
+    public static Boolean KillMainCommand(BTL_DATA btl)
     {
         for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
         {
@@ -727,9 +728,10 @@ public class btl_cmd
                 btl.bi.cmd_idle = 0;
                 DequeueCommand(cmd, false);
                 UIManager.Battle.InputFinishList.Remove(btlNum);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public static Boolean KillCommand2(BTL_DATA btl)
@@ -757,33 +759,36 @@ public class btl_cmd
 
     public static void KillCommand3(BTL_DATA btl)
     {
-        CMD_DATA cmd1 = FF9StateSystem.Battle.FF9Battle.cmd_queue;
-        while (cmd1 != null)
+        CMD_DATA parentCmd = FF9StateSystem.Battle.FF9Battle.cmd_queue;
+        while (parentCmd != null)
         {
-            CMD_DATA cmd2 = cmd1.next;
-            if (cmd2 != null && cmd2.regist == btl)
+            CMD_DATA cmd = parentCmd.next;
+            if (cmd != null && cmd.regist == btl)
             {
-                ResetItemCount(cmd2);
-                DequeueCommand(cmd1, true);
+                ResetItemCount(cmd);
+                DequeueCommand(parentCmd, true);
             }
             else
-                cmd1 = cmd2;
+            {
+                parentCmd = cmd;
+            }
         }
     }
 
-    public static void KillSpecificCommand(BTL_DATA btl, BattleCommandId cmd_no)
+    public static Boolean KillSpecificCommand(BTL_DATA btl, BattleCommandId cmd_no)
     {
-        for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; cmd != null; cmd = cmd.next)
+        for (CMD_DATA parentCmd = FF9StateSystem.Battle.FF9Battle.cmd_queue; parentCmd != null; parentCmd = parentCmd.next)
         {
-            if (cmd.next != null && cmd.next.regist == btl && cmd.next.cmd_no == cmd_no)
+            CMD_DATA cmd = parentCmd.next;
+            if (cmd != null && cmd.regist == btl && cmd.cmd_no == cmd_no)
             {
                 if (cmd == btl.cmd[0])
-                    KillMainCommand(btl);
-                else
-                    DequeueCommand(cmd, true);
-                break;
+                    return KillMainCommand(btl);
+                DequeueCommand(parentCmd, true);
+                return true;
             }
         }
+        return false;
     }
 
     private static Boolean ConfirmValidTarget(CMD_DATA cmd)
@@ -1074,7 +1079,15 @@ public class btl_cmd
             case BattleCommandId.SysTrans:
                 if (caster.IsUnderAnyStatus(BattleStatus.Trance))
                 {
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.Trance);
+                    BattleMesages tranceMessage = BattleMesages.Trance;
+                    if (caster.IsUnderPermanentStatus(BattleStatus.Trance))
+					{
+                        tranceMessage = BattleMesages.PermanentTrance;
+                        String permTrance = FF9TextTool.BattleFollowText((Int32)tranceMessage + 7);
+                        if (String.IsNullOrEmpty(permTrance) || permTrance.Length <= 1)
+                            tranceMessage = BattleMesages.Trance;
+                    }
+                    UIManager.Battle.SetBattleFollowMessage(tranceMessage);
                     if (caster.IsPlayer)
                         caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), true);
                 }

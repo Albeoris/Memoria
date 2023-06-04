@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Memoria.Prime.Ini
@@ -33,18 +34,23 @@ namespace Memoria.Prime.Ini
                 return;
             }
 
-            MatchCollection argMatches = new Regex(@"""([^""]*)""\s*(,|$)").Matches(rawString);
-            T[] result = new T[argMatches.Count];
-            for (int i = 0; i < argMatches.Count; i++)
+            MatchCollection argMatches = new Regex(typeof(T) == typeof(String) ? @"""([^""]*)""\s*(,|$)" : @"([^,]*)\s*(,|$)").Matches(rawString);
+            List<T> result = new List<T>();
+            for (Int32 i = 0; i < argMatches.Count; i++)
             {
                 T value;
-                if (!_parser(argMatches[i].Groups[1].Value, out value))
+                String token = argMatches[i].Groups[1].Value;
+                if (typeof(T) != typeof(String))
+                    token = token.Trim();
+                if (token.Length == 0)
+                    continue;
+                if (!_parser(token, out value))
                     return;
 
-                result[i] = value;
+                result.Add(value);
             }
 
-            Value = result;
+            Value = result.ToArray();
         }
 
         public override void WriteValue(StreamWriter sw)
@@ -52,9 +58,10 @@ namespace Memoria.Prime.Ini
             if (Value.IsNullOrEmpty())
                 return;
 
-            sw.Write('"');
-            sw.Write(string.Join("\", \"", Value.Select(v => _formatter(v)).ToArray()));
-            sw.Write('"');
+            String enclose = typeof(T) == typeof(String) ? "\"" : string.Empty;
+            sw.Write(enclose);
+            sw.Write(string.Join($"{enclose}, {enclose}", Value.Select(v => _formatter(v)).ToArray()));
+            sw.Write(enclose);
         }
 
         public static implicit operator T[](IniArray<T> handler)

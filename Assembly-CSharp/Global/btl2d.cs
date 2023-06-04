@@ -4,7 +4,9 @@ using System.IO;
 using FF9;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Prime;
 using Memoria.Data;
+using NCalc;
 using UnityEngine;
 
 public static class btl2d
@@ -221,21 +223,22 @@ public static class btl2d
                 {
                     HUDMessage.MessageStyle style = HUDMessage.MessageStyle.DAMAGE;
                     String message = String.Empty;
+                    String format = String.Empty;
                     if (btl2dMessage.Type == 0)
                     {
                         if (btl2dMessage.Work.Num.Color == 0)
                         {
                             style = HUDMessage.MessageStyle.DAMAGE;
                             if (!String.IsNullOrEmpty(Configuration.Interface.BattleDamageTextFormat))
-                                message = Configuration.Interface.BattleDamageTextFormat;
+                                format = Configuration.Interface.BattleDamageTextFormat;
                         }
                         else
                         {
                             style = HUDMessage.MessageStyle.RESTORE_HP;
                             if (!String.IsNullOrEmpty(Configuration.Interface.BattleRestoreTextFormat))
-                                message = Configuration.Interface.BattleRestoreTextFormat;
+                                format = Configuration.Interface.BattleRestoreTextFormat;
                         }
-                        message += btl2dMessage.Work.Num.Value.ToString();
+                        message = btl2dMessage.Work.Num.Value.ToString();
                     }
                     else if (btl2dMessage.Type == 1)
                     {
@@ -243,15 +246,15 @@ public static class btl2d
                         {
                             style = HUDMessage.MessageStyle.DAMAGE;
                             if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPDamageTextFormat))
-                                message = Configuration.Interface.BattleMPDamageTextFormat;
+                                format = Configuration.Interface.BattleMPDamageTextFormat;
                         }
                         else
                         {
                             style = HUDMessage.MessageStyle.RESTORE_MP;
                             if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPRestoreTextFormat))
-                                message = Configuration.Interface.BattleMPRestoreTextFormat;
+                                format = Configuration.Interface.BattleMPRestoreTextFormat;
                         }
-                        message += btl2dMessage.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
+                        message = btl2dMessage.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
                     }
                     else if (btl2dMessage.Type == 2)
                     {
@@ -285,6 +288,24 @@ public static class btl2d
                     {
                         message = btl2dMessage.CustomColor + btl2dMessage.CustomMessage;
                         style = btl2dMessage.CustomStyle;
+                    }
+                    if (!String.IsNullOrEmpty(format))
+                    {
+                        try
+                        {
+                            Expression expr = new Expression(format);
+                            NCalcUtility.InitializeExpressionUnit(ref expr, new BattleUnit(btl2dMessage.BtlPtr), "Target");
+                            expr.Parameters["DamageValue"] = btl2dMessage.Work.Num.Value;
+                            expr.Parameters["HealValue"] = btl2dMessage.Work.Num.Value;
+                            expr.Parameters["BaseText"] = message;
+                            expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                            expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                            message = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), message);
+                        }
+                        catch (Exception err)
+                        {
+                            Log.Error(err);
+                        }
                     }
                     Singleton<HUDMessage>.Instance.Show(btl2dMessage.trans, message, style, new Vector3(0f, btl2dMessage.Yofs, 0f), 0);
                     UIManager.Battle.DisplayParty();

@@ -8,8 +8,8 @@
         ///<summary>1Back attack!</summary>
         BackAttack = 0002,
 
-        ///<summary>1</summary>
-        Empty1 = 0003,
+        ///<summary>[Empty by default, used by Memoria for a custom "Trance" message for permanent trance]</summary>
+        PermanentTrance = 0003,
 
         ///<summary>0Can’t escape!</summary>
         CannotEscape = 0004,
@@ -84,7 +84,7 @@
         DaggerCannotConcentrate = 0027,
 
         ///<summary>1</summary>
-        Empty2 = 0028,
+        Empty = 0028,
 
         ///<summary>1I no can eat!</summary>
         CannotEat = 0029,

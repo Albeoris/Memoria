@@ -411,7 +411,7 @@ public class QuadMistDatabase : MonoBehaviour
 
 	private static Boolean CanDiscard(QuadMistCard card)
 	{
-		if (Configuration.TetraMaster.DiscardExclusions.Contains((Int32)card.id))
+		if (Configuration.TetraMaster.DiscardExclusions.Contains((Int32)card.id + 1))
 			return false;
 
 		if (card.type == QuadMistCard.Type.ASSAULT && !Configuration.TetraMaster.DiscardAssaultCards)

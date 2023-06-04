@@ -493,6 +493,8 @@ namespace Memoria
 			_selectedBattleId = -1;
 			foreach (String s in patchCode)
 			{
+				if (s.StartsWith("//"))
+					continue;
 				String[] entry = s.Trim(new char[] { ' ', '\t', '\r', '\n', '=' }).Split(new char[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
 				if (entry.Length != 2)
 					continue;

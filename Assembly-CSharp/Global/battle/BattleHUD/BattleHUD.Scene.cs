@@ -577,6 +577,7 @@ public partial class BattleHUD : UIScene
             _cursorType = _currentTargetIndex >= HonoluluBattleMain.EnemyStartIndex ? CursorGroup.AllEnemy : CursorGroup.AllPlayer;
             _targetPanel.ActivateButtons(true);
         }
+        UpdateTargetStates();
         SetTargetHelp();
         DisplayTargetPointer();
     }

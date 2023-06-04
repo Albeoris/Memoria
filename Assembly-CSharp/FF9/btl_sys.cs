@@ -275,6 +275,7 @@ namespace FF9
                 if (btl.cur.hp == 0)
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
             btl_stat.SaveStatus(player, btl);
+            ff9play.FF9Play_UpdateSerialNumber(player);
         }
 
         public static void DelCharacter(BTL_DATA btl)
