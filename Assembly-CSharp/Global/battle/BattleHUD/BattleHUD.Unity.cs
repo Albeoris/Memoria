@@ -162,24 +162,20 @@ public partial class BattleHUD : UIScene
         }
 
         Byte maxPriority = 0;
-        String maxMess = null;
-        Single maxCounter = 0f;
-        Boolean maxIsRect = false;
+        Message maxMess = null;
         foreach (Message mess in _messageQueue.Values)
         {
             if (mess.priority >= maxPriority)
             {
                 maxPriority = mess.priority;
-                maxMess = mess.message;
-                maxCounter = mess.counter;
-                maxIsRect = mess.isRect;
+                maxMess = mess;
             }
         }
-        if (!String.IsNullOrEmpty(maxMess))
+        if (maxMess != null)
         {
             _currentMessagePriority = maxPriority;
-            _battleMessageCounter = maxCounter;
-            DisplayBattleMessage(maxMess, maxIsRect);
+            _battleMessageCounter = maxMess.counter;
+            DisplayBattleMessage(maxMess);
         }
     }
 

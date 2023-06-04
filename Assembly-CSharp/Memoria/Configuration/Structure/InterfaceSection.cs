@@ -24,6 +24,7 @@ namespace Memoria
             public readonly IniValue<String> BattleRestoreTextFormat;
             public readonly IniValue<String> BattleMPDamageTextFormat;
             public readonly IniValue<String> BattleMPRestoreTextFormat;
+            public readonly IniValue<String> BattleCommandTitleFormat;
 
             public InterfaceSection() : base(nameof(InterfaceSection), true)
             {
@@ -43,6 +44,7 @@ namespace Memoria
                 BattleRestoreTextFormat = BindString(nameof(BattleRestoreTextFormat), String.Empty);
                 BattleMPDamageTextFormat = BindString(nameof(BattleMPDamageTextFormat), String.Empty);
                 BattleMPRestoreTextFormat = BindString(nameof(BattleMPRestoreTextFormat), String.Empty);
+                BattleCommandTitleFormat = BindString(nameof(BattleCommandTitleFormat), String.Empty);
             }
         }
     }

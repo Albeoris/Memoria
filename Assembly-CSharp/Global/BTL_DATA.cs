@@ -276,6 +276,7 @@ public partial class BTL_DATA
 		public SByte[] icon_y = new SByte[6];
 		public SByte[] icon_z = new SByte[6];
 		public BattleStatus resist_added;
+		public BattleStatus auto_added;
 		public UInt16 death_sound;
 		public Int32 fade_counter;
 		public List<BattleCommandId> disable_commands;

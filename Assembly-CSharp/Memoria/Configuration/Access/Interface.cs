@@ -74,6 +74,7 @@ namespace Memoria
             public static String BattleRestoreTextFormat => Instance._interface.BattleRestoreTextFormat;
             public static String BattleMPDamageTextFormat => Instance._interface.BattleMPDamageTextFormat;
             public static String BattleMPRestoreTextFormat => Instance._interface.BattleMPRestoreTextFormat;
+            public static String BattleCommandTitleFormat => Instance._interface.BattleCommandTitleFormat;
 
             public static void SaveValues()
             {

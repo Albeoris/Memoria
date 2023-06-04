@@ -725,7 +725,7 @@ public class btlseq
 			btlseq.BattleLog("wOfs " + pSeqWork.CmdPtr.aa.Name);
 			Int32 cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqWork.CmdPtr.sub_no;
 			VoicePlayer.PlayBattleVoice(cmdNameIndex, pSeqWork.CmdPtr.aa.Name);
-			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr.aa.Name, 1);
+			UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr, pSeqWork.CmdPtr.aa.Name, 1);
 		}
 		else
 		{
@@ -733,7 +733,7 @@ public class btlseq
 			String btlMessage = FF9TextTool.BattleText(messId);
 			VoicePlayer.PlayBattleVoice(messId, btlMessage);
 			if (instance.wSeqCode == 33)
-				UIManager.Battle.SetBattleTitle(btlMessage, 4);
+				UIManager.Battle.SetBattleTitle(pSeqWork.CmdPtr, btlMessage, 4);
 			else
 				UIManager.Battle.SetBattleMessage(btlMessage, 4);
 		}

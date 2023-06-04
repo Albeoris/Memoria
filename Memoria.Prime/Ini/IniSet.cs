@@ -1,7 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Memoria.Prime.Ini
 {
@@ -33,12 +34,17 @@ namespace Memoria.Prime.Ini
                 return;
             }
 
-            String[] list = rawString.Trim('"').Split(new[] {"\", \""}, StringSplitOptions.None);
+            MatchCollection argMatches = new Regex(typeof(T) == typeof(String) ? @"""([^""]*)""\s*(,|$)" : @"([^,]*)\s*(,|$)").Matches(rawString);
             HashSet<T> result = new HashSet<T>();
-            for (int i = 0; i < list.Length; i++)
+            for (Int32 i = 0; i < argMatches.Count; i++)
             {
                 T value;
-                if (!_parser(list[i], out value))
+                String token = argMatches[i].Groups[1].Value;
+                if (typeof(T) != typeof(String))
+                    token = token.Trim();
+                if (token.Length == 0)
+                    continue;
+                if (!_parser(token, out value))
                     return;
 
                 result.Add(value);
@@ -52,9 +58,10 @@ namespace Memoria.Prime.Ini
             if (Value.Count == 0)
                 return;
 
-            sw.Write('"');
-            sw.Write(string.Join("\", \"", Value.Select(v => _formatter(v)).ToArray()));
-            sw.Write('"');
+            String enclose = typeof(T) == typeof(String) ? "\"" : string.Empty;
+            sw.Write(enclose);
+            sw.Write(string.Join($"{enclose}, {enclose}", Value.Select(v => _formatter(v)).ToArray()));
+            sw.Write(enclose);
         }
 
         public static implicit operator HashSet<T>(IniSet<T> handler)

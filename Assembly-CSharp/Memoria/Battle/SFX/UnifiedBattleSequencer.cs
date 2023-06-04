@@ -939,7 +939,7 @@ public static class UnifiedBattleSequencer
 					if (code.TryGetArgMessage("Text", cmd, out tmpStr) && tmpStr.Length > 0)
 					{
 						if (tmpBool)
-							UIManager.Battle.SetBattleTitle(tmpStr, (Byte)tmpInt);
+							UIManager.Battle.SetBattleTitle(cmd, tmpStr, (Byte)tmpInt);
 						else
 							UIManager.Battle.SetBattleMessage(tmpStr, (Byte)tmpInt);
 					}

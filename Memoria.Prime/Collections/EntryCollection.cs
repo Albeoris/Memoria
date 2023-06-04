@@ -1,44 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Memoria.Prime.Collections
 {
-    public class EntryCollection<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+    public class EntryCollection<TKey, TValue> : Dictionary<TKey, TValue>
     {
-        private readonly Dictionary<TKey, TValue> _dic;
         private readonly TValue _defaultElement;
 
-        public EntryCollection(TValue defaultValue)
+        public EntryCollection(TValue defaultValue) : base()
         {
-            _dic = new Dictionary<TKey, TValue>();
             _defaultElement = defaultValue;
         }
 
-        public Boolean Contains(TKey key) => _dic.ContainsKey(key);
-        public Boolean TryGet(TKey key, out TValue value) => _dic.TryGetValue(key, out value);
-        public void Clear() => _dic.Clear();
-        public TValue this[TKey key]
+        new public TValue this[TKey key]
         {
-            get
-            {
-                TValue value;
-                if (_dic.TryGetValue(key, out value))
-                    return value;
-
-                return _defaultElement;
-            }
-            set => _dic[key] = value;
-        }
-
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-		{
-            return _dic.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _dic.GetEnumerator();
+            get => TryGetValue(key, out TValue value) ? value : _defaultElement;
+            set => base[key] = value;
         }
     }
 }

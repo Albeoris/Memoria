@@ -9,10 +9,10 @@ public partial class EventEngine
     {
         if (!Configuration.Battle.PersistentDangerValue)
         {
-            this._encountTimer = (Single)Configuration.Battle.EncounterInitial;
+            this._encountTimer = Configuration.Battle.EncounterInitial;
             this._encountBase = 0;
         }
-        this._context.encratio = (Byte)0;
+        this._context.encratio = 0;
         this._encountReserved = false;
     }
 
@@ -45,6 +45,8 @@ public partial class EventEngine
         FF9StateSystem.Common.FF9.fldMapNo = (Int16)70; // Opening-For FMV
         FF9StateSystem.Common.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[70];
         FF9StateSystem.Settings.time = 0.0;
+        this._encountTimer = Configuration.Battle.EncounterInitial;
+        this._encountBase = 0;
         this.ReplaceFieldMap();
     }
 

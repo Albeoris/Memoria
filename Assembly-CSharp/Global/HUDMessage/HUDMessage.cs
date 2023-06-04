@@ -1,31 +1,17 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using Memoria;
 
 public class HUDMessage : Singleton<HUDMessage>
 {
-	public Single Speed
-	{
-		get
-		{
-			return (!FF9StateSystem.Settings.IsFastForward) ? this.speed : (this.speed * (Single)FF9StateSystem.Settings.FastForwardFactor);
-		}
-	}
+	public Single Speed => FF9StateSystem.Settings.IsFastForward ? this.speed * (Single)FF9StateSystem.Settings.FastForwardFactor : this.speed;
 
-	public Boolean Ready
-	{
-		get
-		{
-			return this.ready;
-		}
-	}
+	public Boolean Ready => this.ready;
 
 	public Camera WorldCamera
 	{
-		set
-		{
-			this.worldCamera = value;
-		}
+		set => this.worldCamera = value;
 	}
 
 	private void Start()
@@ -167,13 +153,13 @@ public class HUDMessage : Singleton<HUDMessage>
 	private IEnumerator WaitForOriginalDelay(Byte delay)
 	{
 		Single cumulativeTime = 0f;
-		Single frameTime = 0f;
+		Single frameTime = 1f / Configuration.Graphics.BattleTPS;
 		Boolean exitLoop = false;
 		while (!exitLoop)
 		{
 			if (!PersistenSingleton<UIManager>.Instance.IsPause)
 			{
-				cumulativeTime += ((!FF9StateSystem.Settings.IsFastForward) ? Time.deltaTime : ((Single)FF9StateSystem.Settings.FastForwardFactor * Time.deltaTime));
+				cumulativeTime += FF9StateSystem.Settings.IsFastForward ? FF9StateSystem.Settings.FastForwardFactor * Time.deltaTime : Time.deltaTime;
 				while (cumulativeTime >= frameTime)
 				{
 					cumulativeTime -= frameTime;
@@ -182,7 +168,7 @@ public class HUDMessage : Singleton<HUDMessage>
 						exitLoop = true;
 						break;
 					}
-					delay = (Byte)(delay - 1);
+					delay--;
 				}
 			}
 			yield return new WaitForEndOfFrame();

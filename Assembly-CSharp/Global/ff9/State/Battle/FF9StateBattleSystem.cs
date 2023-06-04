@@ -129,18 +129,9 @@ public class FF9StateBattleSystem
             yield return new BattleUnit(data);
     }
 
-    public BattleUnit GetUnit(Int32 index)
-    {
-		try
-		{
-			BTL_DATA data = btl_data[index];
-			return new BattleUnit(data);
-		}
-		catch (Exception err)
-		{
-			// DEBUG
-			Memoria.Prime.Log.Error($"GetUnit({index}) fail: " + err);
-			return null;
-		}
-    }
+	public BattleUnit GetUnit(Int32 index)
+	{
+		BTL_DATA data = btl_data[index];
+		return new BattleUnit(data);
+	}
 }

@@ -150,7 +150,7 @@ public partial class BattleHUD : UIScene
         if (String.IsNullOrEmpty(title))
             return;
 
-        SetBattleTitle(title, 1);
+        SetBattleTitle(pCmd, title, 1);
     }
 
     public String BtlGetAttrName(Int32 pAttr)
@@ -213,7 +213,7 @@ public partial class BattleHUD : UIScene
             if ((infos & LibraInformation.BlueLearn) != 0 && !pBtl.IsPlayer)
             {
                 Int32 blueMagicId = BattleEnemyPrototype.Find(pBtl).BlueMagicId;
-                libraMessage += FF9TextTool.CommandName(BattleCommandId.BlueMagic) + ": ";
+                libraMessage += FF9TextTool.CommandName(BattleCommandId.BlueMagic) + (Localization.GetSymbol() == "FR" ? " : " : ": ");
                 if (blueMagicId != 0)
                 {
                     if (ff9abil.IsAbilityActive(blueMagicId))
@@ -297,40 +297,44 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    public void SetBattleTitle(String str, Byte strPriority)
+    public void SetBattleTitle(CMD_DATA cmd, String str, Byte strPriority)
     {
-        _messageQueue[str] = new Message()
+        Message asMessage = new Message()
         {
             message = str,
             priority = strPriority,
             counter = 0f,
-            isRect = true
+            isRect = true,
+            titleCmd = cmd
         };
+        _messageQueue[str] = asMessage;
 
         if (_currentMessagePriority > strPriority)
             return;
 
         _currentMessagePriority = strPriority;
         _battleMessageCounter = 0.0f;
-        DisplayBattleMessage(str, true);
+        DisplayBattleMessage(asMessage);
     }
 
     public void SetBattleMessage(String str, Byte strPriority)
     {
-        _messageQueue[str] = new Message()
+        Message asMessage = new Message()
         {
             message = str,
             priority = strPriority,
             counter = 0f,
-            isRect = false
+            isRect = false,
+            titleCmd = null
         };
+        _messageQueue[str] = asMessage;
 
         if (_currentMessagePriority > strPriority)
             return;
 
         _currentMessagePriority = strPriority;
         _battleMessageCounter = 0.0f;
-        DisplayBattleMessage(str, false);
+        DisplayBattleMessage(asMessage);
     }
 
     public Boolean IsMessageQueued(String str)
@@ -451,7 +455,7 @@ public partial class BattleHUD : UIScene
             statusSubPanel.Widget.SetRawRect(0f, 0f, detailSize.x, detailSize.y);
             statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
             statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
-            statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 70f);
+            statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
             for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
             {
                 var statusDetail = statusSubPanel.Array[i];
@@ -470,7 +474,7 @@ public partial class BattleHUD : UIScene
             statusSubPanel.Widget.SetRawRect(0f, 0f, detailSize.x, detailSize.y);
             statusSubPanel.Caption.Widget.SetAnchor(target: statusSubPanel.Transform, relLeft: 0.4f);
             statusSubPanel.Caption.Body.Sprite.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f - (Single)partyCount / _partyDetail.Characters.Count);
-            statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, top: 25f);
+            statusSubPanel.Caption.Content.Label.SetAnchor(target: statusSubPanel.Caption.Transform, relBottom: 1f, bottom: -13f, top: 50f);
             for (Int32 i = 0; i < statusSubPanel.Array.Count; i++)
             {
                 var statusDetail = statusSubPanel.Array[i];

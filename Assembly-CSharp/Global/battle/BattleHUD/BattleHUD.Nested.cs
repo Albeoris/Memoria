@@ -162,6 +162,7 @@ public partial class BattleHUD : UIScene
         public Byte priority;
         public Single counter;
         public Boolean isRect;
+        public CMD_DATA titleCmd;
     }
 
     private class PlayerMemo
