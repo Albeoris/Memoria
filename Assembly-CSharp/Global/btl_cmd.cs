@@ -1428,6 +1428,7 @@ public class btl_cmd
             if (caster.IsPlayer && FF9StateSystem.Settings.IsATBFull)
                 caster.CurrentAtb = (Int16)(caster.MaximumAtb - 1);
 
+            btl_para.CheckPointData(cmd.regist);
         }
 
         btlsys.cur_cmd_list.Remove(cmd);
