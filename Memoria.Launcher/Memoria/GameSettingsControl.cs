@@ -353,14 +353,14 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Settings", propertyName, WindowMode ?? Lang.Settings.Window);
                         break;
                     case nameof(IsDebugMode):
-                        iniFile.WriteValue("Memoria", propertyName, (IsDebugMode).ToString());
+                        iniFile.WriteValue("Memoria", propertyName, IsDebugMode.ToString());
                         break;
                     case nameof(IsX64):
-                        iniFile.WriteValue("Memoria", propertyName, (IsX64).ToString());
+                        iniFile.WriteValue("Memoria", propertyName, IsX64.ToString());
                         break;
                     case nameof(CheckUpdates):
                     {
-                        iniFile.WriteValue("Memoria", propertyName, (CheckUpdates).ToString());
+                        iniFile.WriteValue("Memoria", propertyName, CheckUpdates.ToString());
                         if (CheckUpdates)
                         {
                             using (ManualResetEvent evt = new ManualResetEvent(false))
@@ -475,7 +475,15 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Memoria", nameof(DownloadMirrors));
                 if (String.IsNullOrEmpty(value))
                 {
-                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")
+                    if (true)
+					{
+                        // Use Github repository
+                        _downloadMirrors = new[]
+                        {
+                            "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"
+                        };
+                    }
+                    else if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")
                     {
                         _downloadMirrors = new[]
                         {

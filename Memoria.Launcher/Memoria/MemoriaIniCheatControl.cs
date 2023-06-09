@@ -26,10 +26,9 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(24);
+            SetRows(15);
             SetCols(8);
             
-
             Width = 200;
             VerticalAlignment = VerticalAlignment.Top;
             HorizontalAlignment = HorizontalAlignment.Left;
@@ -37,41 +36,63 @@ namespace Memoria.Launcher
 
             DataContext = this;
 
-            Thickness rowMargin = new Thickness(8, 0, 3, 0);
+            Thickness rowMargin = new Thickness(8, 2, 3, 2);
 
-
-            UiTextBlock cheatOptionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniCheats), row: 0, col: 0, rowSpan: 3, colSpan: 8);
+            UiTextBlock cheatOptionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniCheats), 0, 0, 2, 8);
             cheatOptionsText.Padding = new Thickness(0, 4, 0, 0);
             cheatOptionsText.Foreground = Brushes.White;
             cheatOptionsText.FontSize = 14;
             cheatOptionsText.FontWeight = FontWeights.Bold;
             cheatOptionsText.Margin = rowMargin;
+            Int32 row = 2;
 
-            UiCheckBox stealingAlwaysWorks = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxStealRate, null), 3, 0, 2, 8);
+            UiCheckBox stealingAlwaysWorks = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxStealRate, null), row++, 0, 1, 8);
             stealingAlwaysWorks.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(StealingAlwaysWorks)) { Mode = BindingMode.TwoWay });
             stealingAlwaysWorks.Foreground = Brushes.White;
             stealingAlwaysWorks.Margin = rowMargin;
 
-
-            UiCheckBox garnetConcentrate = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.DisableCantConcentrate, null), 5, 0, 2, 8);
+            UiCheckBox garnetConcentrate = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.DisableCantConcentrate, null), row++, 0, 1, 8);
             garnetConcentrate.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(GarnetConcentrate)) { Mode = BindingMode.TwoWay });
             garnetConcentrate.Foreground = Brushes.White;
             garnetConcentrate.Margin = rowMargin;
 
-            UiCheckBox speedMode = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SpeedMode, null), 7, 0, 2, 8);
+            UiCheckBox breakDamageLimit = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BreakDamageLimit, null), row++, 0, 1, 8);
+            breakDamageLimit.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BreakDamageLimit)) { Mode = BindingMode.TwoWay });
+            breakDamageLimit.Foreground = Brushes.White;
+            breakDamageLimit.Margin = rowMargin;
+
+            UiTextBlock accessBattleMenuText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AccessBattleMenu), row, 0, 2, 3);
+            accessBattleMenuText.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
+            accessBattleMenuText.Foreground = Brushes.White;
+            accessBattleMenuText.Margin = rowMargin;
+            accessBattleMenuText.TextWrapping = TextWrapping.WrapWithOverflow;
+            UiComboBox accessBattleMenuBox = AddUiElement(UiComboBoxFactory.Create(), row, 3, 2, 5);
+            accessBattleMenuBox.ItemsSource = new String[]{
+                Lang.Settings.AccessBattleMenuType0,
+                Lang.Settings.AccessBattleMenuType1,
+                Lang.Settings.AccessBattleMenuType2,
+                Lang.Settings.AccessBattleMenuType3
+            };
+            accessBattleMenuBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(AccessBattleMenu)) { Mode = BindingMode.TwoWay });
+            accessBattleMenuBox.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
+            accessBattleMenuBox.Height = 22;
+            accessBattleMenuBox.Margin = rowMargin;
+            row += 2;
+
+            UiCheckBox speedMode = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SpeedMode, null), row++, 0, 1, 8);
             speedMode.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SpeedMode)) { Mode = BindingMode.TwoWay });
             speedMode.Foreground = Brushes.White;
             speedMode.Margin = rowMargin;
 
-            UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row: 9, col: 0, rowSpan: 2, colSpan: 2);
+            UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row, 0, 1, 2);
             speedFactorText.Foreground = Brushes.White;
             speedFactorText.Margin = rowMargin;
 
-            UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row: 9, col: 2, rowSpan: 2, colSpan: 1);
+            UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
             speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactorTextindex.Foreground = Brushes.White;
 
-            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row: 9, col: 3, rowSpan: 1, colSpan: 5);
+            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row++, 3, 1, 5);
             speedFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactor.TickFrequency = 1;
             speedFactor.IsSnapToTickEnabled = true;
@@ -79,36 +100,38 @@ namespace Memoria.Launcher
             speedFactor.Maximum = 12;
             speedFactor.Margin = new Thickness(0, 0, 3, 0);
 
-            UiCheckBox battleAssistance = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.PermanentTranse, null), 11, 0, 2, 8);
+            UiCheckBox battleAssistance = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BattleAssistance, null), row++, 0, 1, 8);
             battleAssistance.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleAssistance)) { Mode = BindingMode.TwoWay });
             battleAssistance.Foreground = Brushes.White;
             battleAssistance.Margin = rowMargin;
 
-            UiCheckBox attack9999 = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxDamage, null), 13, 0, 2, 8);
+            /*UiCheckBox attack9999 = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxDamage, null), row++, 0, 1, 8);
             attack9999.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Attack9999)) { Mode = BindingMode.TwoWay });
             attack9999.Foreground = Brushes.White;
-            attack9999.Margin = rowMargin;
+            attack9999.Margin = rowMargin;*/
 
-            UiCheckBox noRandomEncounter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.NoRandomBattles, null), 15, 0, 2, 8);
+            UiCheckBox noRandomEncounter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.NoRandomBattles, null), row++, 0, 1, 8);
             noRandomEncounter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(NoRandomEncounter)) { Mode = BindingMode.TwoWay });
             noRandomEncounter.Foreground = Brushes.White;
             noRandomEncounter.Margin = rowMargin;
 
-            UiCheckBox masterSkill = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.PermanentCheats, null), 17, 0, 2, 8);
+            UiCheckBox masterSkill = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.PermanentCheats, null), row++, 0, 1, 8);
             masterSkill.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(MasterSkill)) { Mode = BindingMode.TwoWay });
             masterSkill.Foreground = Brushes.White;
             masterSkill.Margin = rowMargin;
 
-            UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row: 19, col: 0, rowSpan: 2, colSpan: 8);
+            AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;
+
+            UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row++, 0, 1, 8);
             sharedFpsText.Foreground = Brushes.White;
             sharedFpsText.Margin = rowMargin;
 
-            UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row: 21, col: 0, rowSpan: 2, colSpan: 2);
+            UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 2);
             sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
             sharedFpsIndex.Foreground = Brushes.White;
             sharedFpsIndex.Margin = rowMargin;
 
-            Slider sharedFps = AddUiElement(UiSliderFactory.Create(0), row: 21, col: 2, rowSpan: 1, colSpan: 6);
+            Slider sharedFps = AddUiElement(UiSliderFactory.Create(0), row++, 2, 1, 6);
             sharedFps.SetBinding(Slider.ValueProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
             sharedFps.TickFrequency = 1;
             sharedFps.IsSnapToTickEnabled = true;
@@ -143,6 +166,31 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 BreakDamageLimit
+        {
+            get { return _breakDamageLimit; }
+            set
+            {
+                if (_breakDamageLimit != value)
+                {
+                    _breakDamageLimit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 AccessBattleMenu
+        {
+            get { return _accessBattleMenu; }
+            set
+            {
+                if (_accessBattleMenu != value)
+                {
+                    _accessBattleMenu = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public String AvailableBattleMenus => AccessBattleMenu < 3 ? " \"Equip\", \"SupportingAbility\"" : "";
         public Int16 SpeedMode
         {
             get { return _speedmode; }
@@ -229,7 +277,7 @@ namespace Memoria.Launcher
             }
         }
 
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _sharedfps;
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _sharedfps;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -257,6 +305,24 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _garnetconcentrate))
                     _garnetconcentrate = 0;
+
+                value = iniFile.ReadValue("Battle", nameof(BreakDamageLimit));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = "0";
+                    OnPropertyChanged(nameof(BreakDamageLimit));
+                }
+                if (!Int16.TryParse(value, out _breakDamageLimit))
+                    _breakDamageLimit = 0;
+
+                value = iniFile.ReadValue("Battle", "AccessMenus");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = "0";
+                    OnPropertyChanged(nameof(AccessBattleMenu));
+                }
+                if (!Int16.TryParse(value, out _accessBattleMenu))
+                    _accessBattleMenu = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(SpeedMode));
                 if (String.IsNullOrEmpty(value))
@@ -327,9 +393,10 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _sharedfps))
                     _sharedfps = 30;
 
-
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(GarnetConcentrate));
+                Refresh(nameof(BreakDamageLimit));
+                Refresh(nameof(AccessBattleMenu));
                 Refresh(nameof(SpeedMode));
                 Refresh(nameof(SpeedFactor));
                 Refresh(nameof(BattleAssistance));
@@ -342,7 +409,6 @@ namespace Memoria.Launcher
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
 
         private async void Refresh([CallerMemberName] String propertyName = null)
         {
@@ -366,7 +432,7 @@ namespace Memoria.Launcher
                 switch (propertyName)
                 {
                     case nameof(StealingAlwaysWorks):
-                        iniFile.WriteValue("Hacks", propertyName, " " + (StealingAlwaysWorks).ToString());
+                        iniFile.WriteValue("Hacks", propertyName, " " + StealingAlwaysWorks);
                         if (StealingAlwaysWorks == 0)
                         {
                             iniFile.WriteValue("Hacks", propertyName, " 0");
@@ -378,59 +444,57 @@ namespace Memoria.Launcher
                         }
                         break;
                     case nameof(GarnetConcentrate):
-                        iniFile.WriteValue("Battle", propertyName, " " + (GarnetConcentrate).ToString());
+                        iniFile.WriteValue("Battle", propertyName, " " + GarnetConcentrate);
                         if (GarnetConcentrate == 1)
-                        {
                             iniFile.WriteValue("Battle", "Enabled", " 1");
-                        }
+                        break;
+                    case nameof(BreakDamageLimit):
+                        iniFile.WriteValue("Battle", propertyName, " " + BreakDamageLimit);
+                        if (BreakDamageLimit == 1)
+                            iniFile.WriteValue("Battle", "Enabled", " 1");
+                        break;
+                    case nameof(AccessBattleMenu):
+                        iniFile.WriteValue("Battle", "AccessMenus", " " + AccessBattleMenu);
+                        iniFile.WriteValue("Battle", "AvailableMenus", AvailableBattleMenus);
+                        if (AccessBattleMenu > 0)
+                            iniFile.WriteValue("Battle", "Enabled", " 1");
                         break;
                     case nameof(SpeedMode):
-                        iniFile.WriteValue("Cheats", propertyName, " " + (SpeedMode).ToString());
+                        iniFile.WriteValue("Cheats", propertyName, " " + SpeedMode);
                         if (SpeedMode == 1)
-                        {
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
-                        }
                         break;
                     case nameof(SpeedFactor):
                         if (SpeedFactor < 13)
-                        {
-                            iniFile.WriteValue("Cheats", propertyName, " " + (SpeedFactor).ToString());
-                        }
+                            iniFile.WriteValue("Cheats", propertyName, " " + SpeedFactor);
                         break;
                     case nameof(BattleAssistance):
-                        iniFile.WriteValue("Cheats", propertyName, " " + (BattleAssistance).ToString());
+                        iniFile.WriteValue("Cheats", propertyName, " " + BattleAssistance);
+                        iniFile.WriteValue("Cheats", "Attack9999", " " + BattleAssistance); // Merged
                         if (BattleAssistance == 1)
-                        {
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
-                        }
                         break;
                     case nameof(Attack9999):
-                        iniFile.WriteValue("Cheats", propertyName, " " + (Attack9999).ToString());
+                        iniFile.WriteValue("Cheats", propertyName, " " + Attack9999);
                         if (Attack9999 == 1)
-                        {
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
-                        }
                         break;
                     case nameof(NoRandomEncounter):
-                        iniFile.WriteValue("Cheats", propertyName, " " + (NoRandomEncounter).ToString());
+                        iniFile.WriteValue("Cheats", propertyName, " " + NoRandomEncounter);
                         if (NoRandomEncounter == 1)
-                        {
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
-                        }
                         break;
                     case nameof(MasterSkill):
-                        iniFile.WriteValue("Cheats", propertyName, " " + (MasterSkill).ToString());
-                        iniFile.WriteValue("Cheats", "LvMax", " " + (MasterSkill).ToString());
-                        iniFile.WriteValue("Cheats", "GilMax", " " + (MasterSkill).ToString());
+                        iniFile.WriteValue("Cheats", propertyName, " " + MasterSkill);
+                        iniFile.WriteValue("Cheats", "LvMax", " " + MasterSkill);
+                        iniFile.WriteValue("Cheats", "GilMax", " " + MasterSkill);
                         if (MasterSkill == 1)
-                        {
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
-                        }
                         break;
                     case nameof(SharedFPS):
-                        iniFile.WriteValue("Graphics", "BattleFPS", " " + (SharedFPS).ToString());
-                        iniFile.WriteValue("Graphics", "FieldFPS", " " + (SharedFPS).ToString());
-                        iniFile.WriteValue("Graphics", "WorldFPS", " " + (SharedFPS).ToString());
+                        iniFile.WriteValue("Graphics", "BattleFPS", " " + SharedFPS);
+                        iniFile.WriteValue("Graphics", "FieldFPS", " " + SharedFPS);
+                        iniFile.WriteValue("Graphics", "WorldFPS", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "Enabled", " 1");
                         break;
                 }
@@ -440,6 +504,5 @@ namespace Memoria.Launcher
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
-
     }
 }

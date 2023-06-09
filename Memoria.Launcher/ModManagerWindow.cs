@@ -314,8 +314,9 @@ namespace Memoria.Launcher
             downloadingPath = "";
             Dispatcher.BeginInvoke((MethodInvoker)delegate
             {
+                String downloadingModName = downloadingMod.Name;
+                String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
-                String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingMod.Name);
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || downloadingMod.DownloadFormat == "Zip")
                 {
                     Directory.CreateDirectory(path);
@@ -346,17 +347,17 @@ namespace Memoria.Launcher
                                 moveDesc = true;
                                 proceedNext = true;
                             }
-                            else if (Directory.Exists(path + "/" + (downloadingMod.InstallationPath ?? downloadingMod.Name)))
+                            else if (Directory.Exists(path + "/" + (downloadingMod.InstallationPath ?? downloadingModName)))
                             {
-                                sourcePath = path + "/" + (downloadingMod.InstallationPath ?? downloadingMod.Name);
-                                destPath = downloadingMod.InstallationPath ?? downloadingMod.Name;
+                                sourcePath = path + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
+                                destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                 proceedNext = true;
                                 moveDesc = true;
                             }
                             else if (Mod.LooksLikeAModFolder(path))
                             {
                                 sourcePath = path;
-                                destPath = downloadingMod.InstallationPath ?? downloadingMod.Name;
+                                destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                 proceedNext = true;
                             }
                             else
@@ -367,16 +368,16 @@ namespace Memoria.Launcher
                         }
                         else
                         {
-                            if (Directory.Exists(path + "/" + (downloadingMod.InstallationPath ?? downloadingMod.Name)))
+                            if (Directory.Exists(path + "/" + (downloadingMod.InstallationPath ?? downloadingModName)))
                             {
                                 sourcePath = path + "/" + downloadingMod.InstallationPath;
-                                destPath = downloadingMod.InstallationPath ?? downloadingMod.Name;
+                                destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                 proceedNext = true;
                             }
                             else if (Mod.LooksLikeAModFolder(path))
                             {
                                 sourcePath = path;
-                                destPath = downloadingMod.InstallationPath ?? downloadingMod.Name;
+                                destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                 proceedNext = true;
                             }
                             else
@@ -386,7 +387,7 @@ namespace Memoria.Launcher
                                     if (Mod.LooksLikeAModFolder(sd))
                                     {
                                         sourcePath = sd;
-                                        destPath = downloadingMod.InstallationPath ?? downloadingMod.Name;
+                                        destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                         proceedNext = true;
                                         break;
 									}
@@ -432,7 +433,7 @@ namespace Memoria.Launcher
                 else if (downloadingMod.DownloadFormat.StartsWith("SingleFileWithPath:"))
                 {
                     Boolean proceedNext = true;
-                    String modInstallPath = downloadingMod.InstallationPath ?? downloadingMod.Name;
+                    String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
                     if (Directory.Exists(modInstallPath))
                     {
                         if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
@@ -464,13 +465,17 @@ namespace Memoria.Launcher
                         success = true;
                     }
                 }
+                Boolean activateTheNewMod = success;
                 if (success)
 				{
                     if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
                         Directory.Delete(Mod.INSTALLATION_TMP);
-                    Mod previousMod = Mod.SearchWithName(modListInstalled, downloadingMod.Name);
+                    Mod previousMod = Mod.SearchWithName(modListInstalled, downloadingModName);
                     if (previousMod != null)
+                    {
                         previousMod.CurrentVersion = null;
+                        activateTheNewMod = false;
+                    }
                 }
                 downloadList.Remove(downloadingMod);
                 downloadingMod = null;
@@ -478,6 +483,12 @@ namespace Memoria.Launcher
                     DownloadStart(downloadList[0]);
                 CheckForValidModFolder();
                 UpdateCatalogInstallationState();
+                if (activateTheNewMod)
+				{
+                    Mod newMod = Mod.SearchWithName(modListInstalled, downloadingModName);
+                    if (newMod != null)
+                        newMod.IsActive = true;
+                }
             });
         }
         private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)
@@ -499,7 +510,6 @@ namespace Memoria.Launcher
 
         private void UpdateCatalog()
         {
-            // TODO: TehMighty's Scaled UI is painfully missing; it can't be implemented only with a mod folder for now
             modListCatalog.Clear();
             ReadCatalog();
             downloadCatalogThread = new Thread(() =>

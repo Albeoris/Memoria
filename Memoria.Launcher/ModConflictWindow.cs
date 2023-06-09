@@ -2,19 +2,10 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 namespace Memoria.Launcher
 {
@@ -71,7 +62,7 @@ namespace Memoria.Launcher
         {
             // It doesn't seem possible to deal with UnityEngine.AssetBundle in the launcher, even using Reflection
             // Besides, it's probably not a good idea to add a DLL dependancy to UnityEngine (or worse to Assembly-CSharp) inside the launcher, that should remain with minimal resource needs
-            // Thus, AssetManager.GenerateFileList is called when starting the game and deals with the AssetBundle if any
+            // Thus, when there's a AssetBundle, let Assembly-CSharp's AssetManager.GenerateFileList create the mod file list
             Dictionary<Mod, Dictionary<String, String>> allLists = new Dictionary<Mod, Dictionary<String, String>>();
             List<Mod> modAndSubs = new List<Mod>(mod.SubMod);
             modAndSubs.Add(mod);
@@ -144,16 +135,16 @@ namespace Memoria.Launcher
                 if (!ModConflictList[i].HasFileList)
 				{
                     ModConflictList[i].Label = $"? {ModFullList[i].Name}";
-                    noteStr += $"{ModFullList[i].Name}'s file list '{ModFullList[i].FullInstallationPath + "/" + Mod.MOD_CONTENT_FILE}' is missing: start the game with that mod enabled and check again afterwards\n";
+                    noteStr += $"[{ModFullList[i].Name}] File list is missing and cannot be automatically generated: the details of file-by-file potential conflicts is not displayed.\n";
                 }
                 if (!String.IsNullOrEmpty(ModFullList[i].CompatibilityNotes.GenericNotes))
                     noteStr += ModFullList[i].CompatibilityNotes.GenericNotes + "\n";
                 for (Int32 j = 0; j < i; j++)
                 {
                     if (ModFullList[i].CompatibilityNotes.OtherModHigh.TryGetValue(ModFullList[j].InstallationPath, out String specificNoteHigh))
-                        noteStr += $"[{ModFullList[i].Name}'s note about {ModFullList[j].Name}] {specificNoteHigh}\n";
+                        noteStr += $"[{ModFullList[i].Name}/{ModFullList[j].Name}] {specificNoteHigh}\n";
                     if (ModFullList[j].CompatibilityNotes.OtherModLow.TryGetValue(ModFullList[i].InstallationPath, out String specificNoteLow))
-                        noteStr += $"[{ModFullList[j].Name}'s note about {ModFullList[i].Name}] {specificNoteLow}\n";
+                        noteStr += $"[{ModFullList[j].Name}/{ModFullList[i].Name}] {specificNoteLow}\n";
                     if (ModFullList[i].ParentMod == ModFullList[j] || ModFullList[j].ParentMod == ModFullList[i])
                         continue;
                     List<String> commonFiles = new List<String>(ComputeFilesWithConflict(ModFullList[i], ModFullList[j]).Where(path => !overwrittenFiles.Contains(path)));
@@ -172,6 +163,8 @@ namespace Memoria.Launcher
                         else if (String.Compare(pathLower, "dictionarypatch.txt") == 0 || String.Compare(pathLower, "battlepatch.txt") == 0 || String.Compare(pathLower, "battlevoiceeffects.txt") == 0)
 						{
                             // TODO
+                            hasConflict = true;
+                            ModConflictList[i].DetailedInfo += $"{ModFullList[j].Name} might override options of '{path}'\n";
                         }
                         else if (String.Compare(pathLower, "data/text/localizationpatch.txt") == 0)
                         {
@@ -186,7 +179,7 @@ namespace Memoria.Launcher
                             if (HandleSpecialFileConflicts(ModFullList[i].FullInstallationPath + "/StreamingAssets/" + path, ModFullList[j].FullInstallationPath + "/StreamingAssets/" + path, EnumerateCsvConflicts, 5, out String entryStr))
 							{
                                 hasConflict = true;
-                                ModConflictList[i].DetailedInfo += $"{ModFullList[j].Name} supplants the '{pathLower}' entry(ies) {entryStr}\n";
+                                ModConflictList[i].DetailedInfo += $"{ModFullList[j].Name} supplants the '{path}' entry(ies) {entryStr}\n";
                             }
                         }
                         else
@@ -416,6 +409,7 @@ namespace Memoria.Launcher
         private static readonly HashSet<String> CsvWithPartialData = new HashSet<String>()
         {
             "data/battle/actions.csv",
+            "data/battle/magicswordsets.csv",
             "data/battle/statusdata.csv",
             "data/battle/statussets.csv",
             "data/characters/abilities/abilitygems.csv",
@@ -438,6 +432,7 @@ namespace Memoria.Launcher
         private static readonly Dictionary<String, Int32> DefaultCsvIdIndex = new Dictionary<String, Int32>()
         {
             { "actions.csv", 1 },
+            { "magicswordsets.csv", 0 },
             { "statusdata.csv", 1 },
             { "statussets.csv", 1 },
             { "abilitygems.csv", 1 },
