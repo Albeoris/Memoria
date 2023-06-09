@@ -7,6 +7,8 @@ using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Assets;
+using Memoria;
+using NCalc;
 
 public class BattleActionCode
 {
@@ -417,7 +419,7 @@ public class BattleActionCode
 				value = (UInt16)Comn.randomID(target);
 				return true;
 			}
-			if (args == "Caster")
+            if (args == "Caster")
 			{
 				value = caster;
 				return true;
@@ -432,12 +434,29 @@ public class BattleActionCode
 				value = btl_scrp.GetBattleID(1);
 				return true;
 			}
-			if (args == "Everyone")
+            if (args == "Everyone")
 			{
 				value = btl_scrp.GetBattleID(2);
 				return true;
 			}
-			Dictionary<CharacterId, String> partyNames = CharacterNamesFormatter.CharacterScriptNames();
+            if (args.StartsWith("MatchingCondition(") && args.EndsWith(")"))
+            {
+                value = 0;
+                String conditionStr = args.Substring("MatchingCondition(".Length, args.Length - "MatchingCondition()".Length);
+                Expression c = new Expression(conditionStr);
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                foreach (BattleUnit unit in Memoria.BattleState.EnumerateUnits())
+                {
+                    c.Parameters["IsTargeted"] = (unit.Id & target) != 0;
+                    c.Parameters["IsTheCaster"] = (unit.Id & caster) != 0;
+                    NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                    if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate(), false))
+                        value |= unit.Id;
+                }
+                return true;
+            }
+            Dictionary<CharacterId, String> partyNames = CharacterNamesFormatter.CharacterScriptNames();
 			foreach (KeyValuePair<CharacterId, String> pair in partyNames)
 				if (args == pair.Value)
 					for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)

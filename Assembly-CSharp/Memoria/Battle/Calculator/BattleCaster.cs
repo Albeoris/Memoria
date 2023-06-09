@@ -39,9 +39,9 @@ namespace Memoria
 
         public void EnemyTranceBonusAttack()
         {
-            // Enemies get +25% damage for most attacks under trance, on top of the accuracy given by "BonusPhysicalEvade"
+            // Enemies get +50% damage for most attacks under trance, on top of the accuracy given by "BonusPhysicalEvade"
             if (!IsPlayer && IsUnderAnyStatus(BattleStatus.Trance))
-                _context.Attack = (Int16)(_context.Attack * 5 >> 2);
+                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
         }
 
         public void PenaltyMini()

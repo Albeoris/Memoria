@@ -302,8 +302,20 @@ public class QuadMistGame : MonoBehaviour
                 board.Clear();
                 playGame.gameObject.SetActive(true);
                 ++StartState;
-                PlayerScore = (Configuration.TetraMaster.TripleTriad <= 1) ? 0 : playerHand.Count;
-                EnemyScore = (Configuration.TetraMaster.TripleTriad <= 1) ? 0 : enemyHand.Count;
+                // Child(1) is "divider" and has components SpriteRenderer / SpriteDisplay
+                SpriteRenderer dividerSprite = score.transform.GetChild(1).GetComponent<SpriteRenderer>();
+                if (Configuration.TetraMaster.TripleTriad <= 1)
+                {
+                    PlayerScore = 0;
+                    EnemyScore = 0;
+                    dividerSprite?.gameObject?.SetActive(true);
+                }
+                else
+                {
+                    PlayerScore = playerHand.Count;
+                    EnemyScore = enemyHand.Count;
+                    dividerSprite?.gameObject?.SetActive(false);
+                }
                 break;
             case START_STATE.SETUP_BOARD:
                 AnimCoroutine(Anim.Enable(board.gameObject), board.FadeInBoard());

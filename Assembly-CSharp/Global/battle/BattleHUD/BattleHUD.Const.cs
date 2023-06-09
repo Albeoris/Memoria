@@ -212,6 +212,13 @@ public partial class BattleHUD : UIScene
                 break;
             case CommandMenu.Defend:
                 result = BattleCommandId.Defend;
+                if (Configuration.Mod.TranceSeek)
+                {
+                    if (presetId == CharacterPresetId.Steiner)
+                    result = (BattleCommandId)10015;
+                    else if (presetId == CharacterPresetId.Amarant)
+                    result = (BattleCommandId)10016;
+                }
                 break;
             case CommandMenu.Ability1:
             {

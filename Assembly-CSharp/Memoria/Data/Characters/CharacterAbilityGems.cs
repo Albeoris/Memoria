@@ -362,6 +362,7 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "CasterMagicDefence") == 0) caster.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicDefence);
                             else if (String.Compare(formula.Key, "CasterMagicEvade") == 0) caster.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicEvade);
                             else if (String.Compare(formula.Key, "CasterRow") == 0) caster.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Row);
+                            else if (String.Compare(formula.Key, "CasterSummonCount") == 0) caster.SummonCount = (ushort)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.SummonCount);
                             else if (String.Compare(formula.Key, "CasterIsStrengthModified") == 0) caster.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[0]);
                             else if (String.Compare(formula.Key, "CasterIsMagicModified") == 0) caster.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[1]);
                             else if (String.Compare(formula.Key, "CasterIsDefenceModified") == 0) caster.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[2]);
@@ -396,6 +397,7 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "TargetMagicDefence") == 0) target.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicDefence);
                             else if (String.Compare(formula.Key, "TargetMagicEvade") == 0) target.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicEvade);
                             else if (String.Compare(formula.Key, "TargetRow") == 0) target.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Row);
+                            else if (String.Compare(formula.Key, "TargetSummonCount") == 0) target.SummonCount = (ushort)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.SummonCount);
                             else if (String.Compare(formula.Key, "TargetIsStrengthModified") == 0) target.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[0]);
                             else if (String.Compare(formula.Key, "TargetIsMagicModified") == 0) target.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[1]);
                             else if (String.Compare(formula.Key, "TargetIsDefenceModified") == 0) target.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[2]);
