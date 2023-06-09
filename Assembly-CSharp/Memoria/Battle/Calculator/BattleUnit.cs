@@ -257,9 +257,9 @@ namespace Memoria
         public Boolean[] StatModifier => Data.stat_modifier;
 
         public BattleUnit GetKiller()
-		{
+        {
             return Data.killer_track != null ? new BattleUnit(Data.killer_track) : null;
-		}
+        }
 
         public void AddDelayedModifier(BTL_DATA.DelayedModifier.IsDelayedDelegate delayDelegate, BTL_DATA.DelayedModifier.ApplyDelegate applyDelegate)
         {
@@ -289,7 +289,11 @@ namespace Memoria
         public Boolean IsPlayingMotion(BattlePlayerCharacter.PlayerMotionIndex motionIndex) => btl_mot.checkMotion(Data, motionIndex);
         public Boolean IsPlayingIdleMotion() => btl_mot.checkMotion(Data, Data.bi.def_idle);
 
-        public UInt16 SummonCount => Data.summon_count;
+        public UInt16 SummonCount
+        {
+            get => Data.summon_count;
+            set => Data.summon_count = value;
+        }
         public Int16 CriticalRateBonus
         {
             get => Data.critical_rate_deal_bonus;

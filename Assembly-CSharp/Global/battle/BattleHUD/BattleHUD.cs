@@ -368,9 +368,6 @@ public partial class BattleHUD : UIScene
             _isTranceMenu = false;
         }
 
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Zidane mechanic switch weapon.
-            CharacterCommands.CommandSets[CharacterPresetId.Zidane].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)1001;
-
         if (btl.Data.is_monster_transform && transform.base_command == command1)
             command1 = transform.new_command;
         if (btl.Data.is_monster_transform && transform.base_command == command2)
@@ -414,6 +411,19 @@ public partial class BattleHUD : UIScene
         {
             SetupCommandButton(_commandPanel.Change, changeCmdId, changeIsEnable);
             _isManualTrance = false;
+        }
+
+        if (Configuration.Mod.TranceSeek) // TRANCE SEEK
+        {
+            if (presetId == CharacterPresetId.Zidane)
+            {
+            CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+            command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+            }
+            else if (presetId == CharacterPresetId.Steiner)
+                defendCmdId = (BattleCommandId)10015; // Gardien
+            else if (presetId == CharacterPresetId.Amarant)
+                defendCmdId = (BattleCommandId)10016; // Duel
         }
 
         SetupCommandButton(_commandPanel.Skill1, command1, command1IsEnable);
