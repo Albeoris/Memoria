@@ -199,8 +199,10 @@ namespace Memoria.Launcher
                             failed.Add(filePath);
                         }
                     }
+                    progress.Close();
                 }
 
+                Boolean runPatcher = false;
                 if (failed.Count > 0)
                 {
                     MessageBox.Show(rootElement,
@@ -211,6 +213,15 @@ namespace Memoria.Launcher
                 }
 
                 if (success.Count > 0)
+                {
+                    runPatcher = MessageBox.Show(rootElement,
+                        "Download successful!\nRun the patcher?",
+                        Lang.Message.Question.Title,
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) == MessageBoxResult.Yes;
+                }
+
+                if (runPatcher)
                 {
                     String main = success.First();
                     if (success.Count > 1)
