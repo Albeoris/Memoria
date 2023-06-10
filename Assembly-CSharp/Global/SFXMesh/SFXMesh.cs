@@ -259,7 +259,10 @@ public class SFXMesh : SFXMeshBase
 			_material.mainTexture.wrapMode = TextureWrapMode.Clamp;
 			_material.SetVector(TexParam, new Vector4(HALF_PIXEL, HALF_PIXEL, 256f, 256f));
 		}
-		_material.SetColor(Color, ColorData[SFX.colIntensity]);
+		if (SFXDataMesh.SFXColor.HasValue)
+			_material.SetColor(Color, ColorData[SFX.colIntensity] * SFXDataMesh.SFXColor.Value);
+		else
+			_material.SetColor(Color, ColorData[SFX.colIntensity]);
 		_material.SetFloat(Threshold, (SFX.colThreshold != 0) ? 0.05f : 0.0295f);
 		_material.SetPass(0);
 		Graphics.DrawMeshNow(_mesh, Matrix4x4.identity);

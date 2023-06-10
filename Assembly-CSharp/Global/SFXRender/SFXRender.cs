@@ -121,6 +121,7 @@ public class SFXRender
 		PSXTextureMgr.BeginRender();
 		PSXTextureMgr.CaptureBG();
 		camera.worldToCameraMatrix = Matrix4x4.identity;
+		SFXDataMesh.SFXColor = null;
 		for (Int32 i = 0; i < SFXRender.commandBuffer.Count; i++)
 			SFXRender.commandBuffer[i].Render(i);
 		SFXMesh.DummyRender();

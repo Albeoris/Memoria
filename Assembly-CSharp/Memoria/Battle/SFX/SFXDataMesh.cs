@@ -14,6 +14,7 @@ public abstract class SFXDataMesh
 {
 	public static Mesh sharedUnityMesh;
 	public static Material sharedUnityMaterial;
+	public static Color? SFXColor;
 	protected BTL_DATA caster = null;
 	protected BTL_DATA target = null;
 	protected Vector3 averageTarget = default(Vector3);
@@ -23,6 +24,7 @@ public abstract class SFXDataMesh
 		sharedUnityMesh = new Mesh();
 		sharedUnityMesh.MarkDynamic();
 		sharedUnityMaterial = new Material(ShadersLoader.Find(SFXMesh.shaderNames[0]));
+		SFXColor = null;
 	}
 
 	public virtual void SetupPositions(BTL_DATA c, BTL_DATA t, Vector3 at)
@@ -90,7 +92,10 @@ public abstract class SFXDataMesh
 		public void StoreInUnityMaterial(Int32 frame, Material mat)
 		{
 			mat.shader = ShadersLoader.Find(shaderName);
-			mat.SetColor(SFXMesh.Color, colorIntensity);
+			if (SFXDataMesh.SFXColor.HasValue)
+				mat.SetColor(SFXMesh.Color, colorIntensity * SFXDataMesh.SFXColor.Value);
+			else
+				mat.SetColor(SFXMesh.Color, colorIntensity);
 			mat.SetFloat(SFXMesh.Threshold, threshold);
 			for (Int32 i = 0; i < textureChanger.Count; i++)
 				if (frame >= textureChanger[i].frame && textureFrameLoaded < textureChanger[i].frame)
@@ -298,7 +303,7 @@ public abstract class SFXDataMesh
 					RMesh.Frame meshFrame;
 					if (!p.Value.raw.TryGetValue(frame, out meshFrame))
 						continue;
-					meshFrame.Render(frame, p.Key, p.Value.isPolyline);
+					meshFrame.Render(frame, p.Key, p.Value.isPolyline, run);
 				}
 				SFX.ResetViewPort();
 			}
@@ -318,6 +323,8 @@ public abstract class SFXDataMesh
 						{
 							if (run.preventedMeshIndices.Contains((UInt32)run.meshKeyList.Count))
 								run.preventedMeshKeys.Add(p.Key.meshKey);
+							if (run.coloredMeshIndices.TryGetValue((UInt32)run.meshKeyList.Count, out Color color))
+								run.coloredMeshes[p.Key.meshKey] = color;
 							run.meshKeyList.Add(p.Key.meshKey);
 						}
 						if (run.preventedMeshKeys.Contains(p.Key.meshKey))
@@ -325,7 +332,7 @@ public abstract class SFXDataMesh
 					}
 					if (p.Key.textureKind == TextureKind.GENERATED)
 						p.Key.AddTextureChanger(frame, TextureKind.IMAGE, "", genTexture);
-					meshFrame.Render(frame, p.Key, p.Value.isPolyline);
+					meshFrame.Render(frame, p.Key, p.Value.isPolyline, run);
 					renderSomething = true;
 				}
 			RenderTexture.active = activeRender;
@@ -433,7 +440,7 @@ public abstract class SFXDataMesh
 				public Vector2[] uv;
 				public Int32[] index;
 
-				public void Render(Int32 frame, EffectMaterial material, Boolean isPolyline)
+				public void Render(Int32 frame, EffectMaterial material, Boolean isPolyline, SFXData.RunningInstance run)
 				{
 					sharedUnityMesh.Clear();
 					sharedUnityMesh.vertices = vertex;
@@ -443,6 +450,7 @@ public abstract class SFXDataMesh
 						sharedUnityMesh.SetIndices(index, MeshTopology.Lines, 0);
 					else
 						sharedUnityMesh.triangles = index;
+					SFXDataMesh.SFXColor = run?.TryGetCustomColor(material.meshKey);
 					material.StoreInUnityMaterial(frame, sharedUnityMaterial);
 					sharedUnityMaterial.SetPass(0);
 					Graphics.DrawMeshNow(sharedUnityMesh, Matrix4x4.identity);
@@ -604,6 +612,8 @@ public abstract class SFXDataMesh
 							{
 								if (run.preventedMeshIndices.Contains((UInt32)run.meshKeyList.Count))
 									run.preventedMeshKeys.Add(mesh._key);
+								if (run.coloredMeshIndices.TryGetValue((UInt32)run.meshKeyList.Count, out Color color))
+									run.coloredMeshes[mesh._key] = color;
 								run.meshKeyList.Add(mesh._key);
 							}
 						}
@@ -615,8 +625,21 @@ public abstract class SFXDataMesh
 			PSXTextureMgr.CaptureBG();
 			//camera.worldToCameraMatrix = Matrix4x4.identity;
 			for (Int32 i = 0; i < SFXRender.commandBuffer.Count; i++)
-				if (SFXRender.commandBuffer[i] is not SFXMesh || !run.preventedMeshKeys.Contains((SFXRender.commandBuffer[i] as SFXMesh)._key))
+			{
+				if (SFXRender.commandBuffer[i] is SFXMesh)
+				{
+					SFXMesh sfxMesh = SFXRender.commandBuffer[i] as SFXMesh;
+					if (run == null || !run.preventedMeshKeys.Contains(sfxMesh._key))
+					{
+						SFXDataMesh.SFXColor = run?.TryGetCustomColor(sfxMesh._key);
+						SFXRender.commandBuffer[i].Render(i);
+					}
+				}
+				else
+				{
 					SFXRender.commandBuffer[i].Render(i);
+				}
+			}
 			RenderTexture.active = activeRender;
 			camera.worldToCameraMatrix = worldToCameraMatrix;
 			if (run != null && run.cancel && SFXRender.commandBuffer.Count == 0)
@@ -743,8 +766,11 @@ public abstract class SFXDataMesh
 				ModelSequence mseq = model[modelIndex];
 				if (run != null)
 				{
-					if (mseq.key != 0 && run.meshKeyList.Contains(mseq.key))
-						run.preventedMeshIndices.Add((UInt32)modelIndex);
+					if (mseq.key != 0)
+					{
+						if (run.meshKeyList.Contains(mseq.key))
+							run.preventedMeshIndices.Add((UInt32)modelIndex);
+					}
 					if (run.preventedMeshIndices.Contains((UInt32)modelIndex))
 						continue;
 				}
@@ -818,6 +844,7 @@ public abstract class SFXDataMesh
 						umeshtmp.colors32 = meshColor;
 						umeshtmp.triangles = meshIndex;
 						Material umattmp = new Material(ShadersLoader.Find(tok.material.shaderName));
+						SFXDataMesh.SFXColor = run?.TryGetCustomColor(tok.material.meshKey);
 						tok.material.StoreInUnityMaterial(frame, umattmp);
 						umattmp.SetPass(0);
 						Graphics.DrawMeshNow(umeshtmp, Matrix4x4.identity);

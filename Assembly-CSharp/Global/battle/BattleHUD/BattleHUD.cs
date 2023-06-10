@@ -170,10 +170,10 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private void DisplayMessageLibra()
+    private Boolean DisplayMessageLibra()
     {
         if (_libraBtlData == null)
-            return;
+            return false;
 
         if (_currentLibraMessageNumber == 1)
         {
@@ -184,7 +184,7 @@ public partial class BattleHUD : UIScene
                 str += FF9TextTool.BattleLibraText(10) + _libraBtlData.Level.ToString();
             SetBattleMessage(str, 3);
             AdvanceLibraMessageNumber();
-            return;
+            return true;
         }
         if (_currentLibraMessageNumber == 2)
         {
@@ -205,7 +205,7 @@ public partial class BattleHUD : UIScene
             }
             SetBattleMessage(str, 3);
             AdvanceLibraMessageNumber();
-            return;
+            return true;
         }
         if (_currentLibraMessageNumber == 3)
         {
@@ -218,7 +218,7 @@ public partial class BattleHUD : UIScene
                 {
                     SetBattleMessage(FF9TextTool.BattleLibraText(_currentLibraMessageCount), 3);
                     _currentLibraMessageCount++;
-                    return;
+                    return true;
                 }
             }
             AdvanceLibraMessageNumber();
@@ -232,7 +232,7 @@ public partial class BattleHUD : UIScene
             {
                 SetBattleMessage(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(14 + _currentLibraMessageCount) : BtlGetAttrName(1 << _currentLibraMessageCount) + FF9TextTool.BattleLibraText(14), 3);
                 _currentLibraMessageCount++;
-                return;
+                return true;
             }
             AdvanceLibraMessageNumber();
         }
@@ -248,7 +248,7 @@ public partial class BattleHUD : UIScene
                 {
                     SetBattleMessage(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(itemId) : FF9TextTool.ItemName(itemId) + FF9TextTool.BattleLibraText(8), 2);
                     _currentLibraMessageCount++;
-                    return;
+                    return true;
                 }
             }
             AdvanceLibraMessageNumber();
@@ -274,7 +274,7 @@ public partial class BattleHUD : UIScene
                 }
                 SetBattleMessage(str, 3);
                 AdvanceLibraMessageNumber();
-                return;
+                return true;
             }
             AdvanceLibraMessageNumber();
         }
@@ -284,12 +284,13 @@ public partial class BattleHUD : UIScene
             _currentLibraMessageCount = 0;
             _currentLibraMessageNumber = 0;
         }
+        return false;
     }
 
-    private void DisplayMessagePeeping()
+    private Boolean DisplayMessagePeeping()
     {
         if (_peepingEnmData == null)
-            return;
+            return false;
 
         RegularItem id;
         do
@@ -299,7 +300,7 @@ public partial class BattleHUD : UIScene
             {
                 _peepingEnmData = null;
                 _currentPeepingMessageCount = 0;
-                return;
+                return false;
             }
             id = _peepingEnmData.StealableItems[_currentPeepingReverseOrder ? _peepingEnmData.StealableItems.Length - stealIndex : stealIndex - 1];
         } while (id == RegularItem.NoItem);
@@ -307,6 +308,7 @@ public partial class BattleHUD : UIScene
         SetBattleMessage(Localization.GetSymbol() != "JP"
             ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id)
             : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
+        return true;
     }
 
     private void SetupCommandButton(GONavigationButton button, BattleCommandId cmdId, Boolean enabled, Boolean hardDisable = false)
@@ -417,8 +419,8 @@ public partial class BattleHUD : UIScene
         {
             if (presetId == CharacterPresetId.Zidane)
             {
-            CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-            command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+                CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+                command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
             }
             else if (presetId == CharacterPresetId.Steiner)
                 defendCmdId = (BattleCommandId)10015; // Gardien
@@ -735,6 +737,9 @@ public partial class BattleHUD : UIScene
 
     private void DisplayAbilityDetail(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
     {
+        if (CurrentPlayerIndex < 0) // Note: I think this situation may happen for a frame when a character dies
+            return;
+
         BattleAbilityListData battleAbilityListData = (BattleAbilityListData)data;
         BattleUnit curUnit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
 
@@ -1450,13 +1455,13 @@ public partial class BattleHUD : UIScene
                 commandDetail.TargetId = (UInt16)(1 << targetIndex);
                 break;
             case CursorGroup.AllPlayer:
-                commandDetail.TargetId = 15;
+                commandDetail.TargetId = 0x0F;
                 break;
             case CursorGroup.AllEnemy:
-                commandDetail.TargetId = 240;
+                commandDetail.TargetId = 0xF0;
                 break;
             case CursorGroup.All:
-                commandDetail.TargetId = Byte.MaxValue;
+                commandDetail.TargetId = 0xFF;
                 break;
         }
 

@@ -23,6 +23,7 @@ namespace Memoria.Scripts.Battle
                 return;
 
             _v.NormalMagicParams();
+            _v.Caster.EnemyTranceBonusAttack();
             _v.Caster.PenaltyMini();
             _v.Target.PenaltyShellAttack();
             _v.PrepareHpDraining();

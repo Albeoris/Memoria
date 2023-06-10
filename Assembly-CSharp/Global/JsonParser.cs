@@ -1539,13 +1539,21 @@ public class JsonParser : ISharedDataParser
 		dataAchievementClass.Add("trance_no", data.trance_no.ToString());
 		JSONArray dataAbilitiesArray = new JSONArray();
 		foreach (Int32 abil in data.abilities)
+		{
+			if (dataAbilitiesArray.Count >= 221)
+				break;
 			dataAbilitiesArray.Add(abil.ToString());
+		}
 		for (Int32 i = data.abilities.Count; i < 221; i++)
 			dataAbilitiesArray.Add("-1");
 		dataAchievementClass.Add("abilities", dataAbilitiesArray);
 		JSONArray dataPassiveArray = new JSONArray();
 		foreach (Int32 abil in data.passiveAbilities)
+		{
+			if (dataPassiveArray.Count >= 63)
+				break;
 			dataPassiveArray.Add(abil.ToString());
+		}
 		for (Int32 i = data.passiveAbilities.Count; i < 63; i++)
 			dataPassiveArray.Add("-1");
 		dataAchievementClass.Add("passiveAbilities", dataPassiveArray);
@@ -1554,7 +1562,11 @@ public class JsonParser : ISharedDataParser
 		dataAchievementClass.Add("StiltzkinBuy", data.StiltzkinBuy.ToString());
 		JSONArray dataCardArray = new JSONArray();
 		foreach (Int32 card in data.QuadmistWinList)
+		{
+			if (dataCardArray.Count >= 300)
+				break;
 			dataCardArray.Add(card.ToString());
+		}
 		for (Int32 i = data.QuadmistWinList.Count; i < 300; i++)
 			dataCardArray.Add("-1");
 		dataAchievementClass.Add("QuadmistWinList", dataCardArray);

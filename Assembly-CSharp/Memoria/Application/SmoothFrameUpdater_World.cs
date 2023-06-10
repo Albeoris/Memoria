@@ -97,10 +97,13 @@ namespace Memoria
 							GameObject go = wmActor.originalActor.go;
 							String animName = FF9DBAll.AnimationDB.GetValue(wmActor.originalActor.anim);
 							AnimationState anim = go.GetComponent<Animation>()[animName];
-							Single animTime = Mathf.LerpUnclamped(wmActor._smoothUpdateAnimTimePrevious, wmActor._smoothUpdateAnimTimeActual, unclampedFactor);
-							animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
-							anim.time = animTime;
-							go.GetComponent<Animation>().Sample();
+							if (anim != null)
+							{
+								Single animTime = Mathf.LerpUnclamped(wmActor._smoothUpdateAnimTimePrevious, wmActor._smoothUpdateAnimTimeActual, unclampedFactor);
+								animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
+								anim.time = animTime;
+								go.GetComponent<Animation>().Sample();
+							}
 						}
 					}
 				}
@@ -128,7 +131,11 @@ namespace Memoria
 						if (wmActor._smoothUpdateRegistered && ff9.objIsVisible(obj))
 							wmActor.transform.position = wmActor._smoothUpdatePosActual;
 						if (wmActor._smoothUpdatePlayingAnim)
-							wmActor.originalActor.go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue(wmActor.originalActor.anim)].time = wmActor._smoothUpdateAnimTimeActual;
+						{
+							AnimationState anim = wmActor.originalActor.go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue(wmActor.originalActor.anim)];
+							if (anim != null)
+								anim.time = wmActor._smoothUpdateAnimTimeActual;
+						}
 					}
 				}
 			}

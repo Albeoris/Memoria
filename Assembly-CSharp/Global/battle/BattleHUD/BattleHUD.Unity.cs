@@ -150,16 +150,10 @@ public partial class BattleHUD : UIScene
         BattleDialogGameObject.SetActive(false);
         _currentMessagePriority = 0;
 
-        if (_currentLibraMessageNumber > 0)
-        {
-            DisplayMessageLibra();
+        if (_currentLibraMessageNumber > 0 && DisplayMessageLibra())
             return;
-        }
-        if (_currentPeepingMessageCount > 0)
-        {
-            DisplayMessagePeeping();
+        if (_currentPeepingMessageCount > 0 && DisplayMessagePeeping())
             return;
-        }
 
         Byte maxPriority = 0;
         Message maxMess = null;

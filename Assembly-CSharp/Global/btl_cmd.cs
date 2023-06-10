@@ -288,6 +288,29 @@ public class btl_cmd
         EnqueueCommand(cmd);
     }
 
+    public static UInt16 GetRandomTargetForCommand(BTL_DATA caster, BattleCommandId commandId, Int32 subNo)
+	{
+        CMD_DATA testCmd = new CMD_DATA
+        {
+            regist = caster,
+            cmd_no = commandId,
+            sub_no = subNo
+        };
+        AA_DATA aaData = btl_util.GetCommandAction(testCmd);
+        if (aaData.Info.Target == TargetType.All)
+            return 0xFF;
+        if (aaData.Info.Target == TargetType.Self)
+            return caster.btl_id;
+        UInt16 targetId = (UInt16)(aaData.Info.DefaultAlly ? 0x0F : 0xF0);
+        if (!aaData.Info.ForDead)
+            for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+                if ((btl.btl_id & targetId) != 0 && btl_stat.CheckStatus(btl, BattleStatus.Death))
+                    targetId &= (UInt16)~btl.btl_id;
+        if (aaData.Info.Target != TargetType.All && aaData.Info.Target != TargetType.AllAlly && aaData.Info.Target != TargetType.AllEnemy)
+            targetId = (UInt16)Comn.randomID(targetId);
+        return targetId;
+    }
+
     public static void SetCounter(BTL_DATA btl, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id)
     {
         if (btl_stat.CheckStatus(btl, BattleStatusConst.PreventCounter) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
@@ -1323,9 +1346,16 @@ public class btl_cmd
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
-                caster.AlterStatus(BattleStatus.Jump);
-                caster.Data.tar_mode = 2;
-                caster.Data.SetDisappear(true, 2);
+                if (Configuration.Mod.TranceSeek)
+                {
+                    caster.RemoveStatus(BattleStatus.Jump);
+                }
+                else
+                {
+                    caster.AlterStatus(BattleStatus.Jump);
+                    caster.Data.tar_mode = 2;
+                    caster.Data.SetDisappear(true, 2);
+                }
                 FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
             }
 

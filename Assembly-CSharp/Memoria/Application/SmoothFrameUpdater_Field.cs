@@ -124,10 +124,13 @@ namespace Memoria
 							continue;
 						String animName = FF9DBAll.AnimationDB.GetValue(actor.originalActor.anim);
 						AnimationState anim = go.GetComponent<Animation>()[animName];
-						Single animTime = Mathf.LerpUnclamped(actor._smoothUpdateAnimTimePrevious, actor._smoothUpdateAnimTimeActual, unclampedFactor);
-						animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
-						anim.time = animTime;
-						go.GetComponent<Animation>().Sample();
+						if (anim != null)
+						{
+							Single animTime = Mathf.LerpUnclamped(actor._smoothUpdateAnimTimePrevious, actor._smoothUpdateAnimTimeActual, unclampedFactor);
+							animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
+							anim.time = animTime;
+							go.GetComponent<Animation>().Sample();
+						}
 					}
 				}
 			}
@@ -173,7 +176,11 @@ namespace Memoria
 							go.transform.rotation = actor._smoothUpdateRotActual;
 						}
 						if (actor._smoothUpdatePlayingAnim)
-							go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue(actor.originalActor.anim)].time = actor._smoothUpdateAnimTimeActual;
+						{
+							AnimationState anim = go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue(actor.originalActor.anim)];
+							if (anim != null)
+								anim.time = actor._smoothUpdateAnimTimeActual;
+						}
 					}
 				}
 			}

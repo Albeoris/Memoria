@@ -139,10 +139,13 @@ namespace Memoria
 					{
 						GameObject go = next.gameObject;
 						AnimationState anim = go.GetComponent<Animation>()[next.currentAnimationName];
-						Single animTime = Mathf.LerpUnclamped(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, unclampedFactor);
-						animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
-						anim.time = animTime;
-						go.GetComponent<Animation>().Sample();
+						if (anim != null)
+						{
+							Single animTime = Mathf.LerpUnclamped(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, unclampedFactor);
+							animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
+							anim.time = animTime;
+							go.GetComponent<Animation>().Sample();
+						}
 					}
 				}
 			}
@@ -175,7 +178,11 @@ namespace Memoria
 						next.gameObject.transform.localScale = next._smoothUpdateScaleActual;
 					}
 					if (next._smoothUpdatePlayingAnim)
-						next.gameObject.GetComponent<Animation>()[next.currentAnimationName].time = next._smoothUpdateAnimTimeActual;
+					{
+						AnimationState anim = next.gameObject.GetComponent<Animation>()[next.currentAnimationName];
+						if (anim != null)
+							anim.time = next._smoothUpdateAnimTimeActual;
+					}
 				}
 			}
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();

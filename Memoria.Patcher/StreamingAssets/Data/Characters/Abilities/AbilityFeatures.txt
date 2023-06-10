@@ -158,6 +158,7 @@
 ##    Power, AbilityStatus, AbilityElement, AbilityElementForBonus, IsShortRanged, AbilityCategory,
 ##    AbilityFlags, IsReflectNull, IsMeteorMiss, IsShortSummon, TryCover, ScriptId, HitRate,
 ##    CommandTargetId, BattleBonusAP,
+##    Counter (formula defines the Ability ID of the counter),
 ##    (+ same as Ability modifiable properties for the ability user, eg. HP or CurrentStatus)
 ##  
 ##  BattleResult:

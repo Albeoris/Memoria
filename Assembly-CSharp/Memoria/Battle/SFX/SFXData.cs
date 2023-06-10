@@ -88,7 +88,7 @@ public class SFXData
         }
     }
 
-    public void PlaySFX(Int32 frameStart, List<UInt32> preventMeshByKey = null, List<UInt32> preventMeshByIndex = null)
+    public void PlaySFX(Int32 frameStart, List<UInt32> preventMeshByKey = null, List<UInt32> preventMeshByIndex = null, Dictionary<UInt32, Color> colorsByKey = null, Dictionary<UInt32, Color> colorsByIndex = null)
     {
         SFXData.sfxLoadedNotPlayed.Remove(this);
         if (cancel)
@@ -97,11 +97,15 @@ public class SFXData
             preventMeshByKey = new List<UInt32>();
         if (preventMeshByIndex == null)
             preventMeshByIndex = new List<UInt32>();
+        if (colorsByKey == null)
+            colorsByKey = new Dictionary<UInt32, Color>();
+        if (colorsByIndex == null)
+            colorsByIndex = new Dictionary<UInt32, Color>();
         mesh.SetupPositions(sfxRequest.exe, sfxRequest.trgno == 1 ? sfxRequest.trg[0] : null, new Vector3(sfxRequest.trgcpos.vx, sfxRequest.trgcpos.vy, sfxRequest.trgcpos.vz));
         if (runningSFX.Count == 0)
             mesh.Begin();
         frameStart += firstMeshFrame;
-        runningSFX.Add(new RunningInstance(frameStart, preventMeshByKey, preventMeshByIndex));
+        runningSFX.Add(new RunningInstance(frameStart, preventMeshByKey, preventMeshByIndex, colorsByKey, colorsByIndex));
     }
 
     public void LoadSFX(SpecialEffect effNum, CMD_DATA cmd, BTL_VFX_REQ request, Boolean applyCamera)
@@ -1292,16 +1296,29 @@ public class SFXData
         public Int32 frame;
         public HashSet<UInt32> preventedMeshKeys;
         public List<UInt32> preventedMeshIndices;
+        public Dictionary<UInt32, Color> coloredMeshes;
+        public Dictionary<UInt32, Color> coloredMeshIndices;
         public List<UInt32> meshKeyList;
         public Boolean cancel;
 
-        public RunningInstance(Int32 f, List<UInt32> pmk, List<UInt32> pmi)
+        public RunningInstance(Int32 f, List<UInt32> pmk, List<UInt32> pmi, Dictionary<UInt32, Color> cbk, Dictionary<UInt32, Color> cbi)
         {
             frame = f;
             preventedMeshKeys = new HashSet<UInt32>(pmk);
             preventedMeshIndices = pmi;
+            coloredMeshes = cbk;
+            coloredMeshIndices = cbi;
             meshKeyList = new List<UInt32>();
             cancel = false;
+        }
+
+        public Color? TryGetCustomColor(UInt32 meshKey)
+        {
+            if (coloredMeshes.TryGetValue(meshKey, out Color col))
+                return col;
+            if (coloredMeshes.TryGetValue(0, out col))
+                return col;
+            return null;
         }
     }
 }

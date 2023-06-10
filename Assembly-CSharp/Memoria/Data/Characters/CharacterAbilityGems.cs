@@ -362,7 +362,7 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "CasterMagicDefence") == 0) caster.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicDefence);
                             else if (String.Compare(formula.Key, "CasterMagicEvade") == 0) caster.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicEvade);
                             else if (String.Compare(formula.Key, "CasterRow") == 0) caster.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Row);
-                            else if (String.Compare(formula.Key, "CasterSummonCount") == 0) caster.SummonCount = (ushort)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.SummonCount);
+                            else if (String.Compare(formula.Key, "CasterSummonCount") == 0) caster.SummonCount = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.SummonCount);
                             else if (String.Compare(formula.Key, "CasterIsStrengthModified") == 0) caster.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[0]);
                             else if (String.Compare(formula.Key, "CasterIsMagicModified") == 0) caster.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[1]);
                             else if (String.Compare(formula.Key, "CasterIsDefenceModified") == 0) caster.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[2]);
@@ -397,7 +397,7 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "TargetMagicDefence") == 0) target.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicDefence);
                             else if (String.Compare(formula.Key, "TargetMagicEvade") == 0) target.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicEvade);
                             else if (String.Compare(formula.Key, "TargetRow") == 0) target.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Row);
-                            else if (String.Compare(formula.Key, "TargetSummonCount") == 0) target.SummonCount = (ushort)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.SummonCount);
+                            else if (String.Compare(formula.Key, "TargetSummonCount") == 0) target.SummonCount = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.SummonCount);
                             else if (String.Compare(formula.Key, "TargetIsStrengthModified") == 0) target.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[0]);
                             else if (String.Compare(formula.Key, "TargetIsMagicModified") == 0) target.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[1]);
                             else if (String.Compare(formula.Key, "TargetIsDefenceModified") == 0) target.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[2]);
@@ -441,6 +441,8 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "Counter") == 0)
                             {
                                 Int32 attackId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)BattleAbilityId.Attack);
+                                if (attackId == (Int32)BattleAbilityId.Void && !EnableAsEnemy && !EnableAsMonsterTransform)
+                                    continue;
                                 BTL_DATA counterer = asTarget ? target.Data : caster.Data;
                                 UInt16 countered = asTarget ? caster.Id : target.Id;
                                 if (EnableAsEnemy || EnableAsMonsterTransform)
@@ -596,6 +598,15 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "BonusGil") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_gil);
                             else if (String.Compare(formula.Key, "BonusCard") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)abilityUser.Enemy.Data.bonus_card);
                             else if (String.Compare(formula.Key, "BattleBonusAP") == 0) battle.btl_bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), battle.btl_bonus.ap);
+                            else if (String.Compare(formula.Key, "Counter") == 0)
+                            {
+                                Int32 attackId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)BattleAbilityId.Attack);
+                                if (attackId == (Int32)BattleAbilityId.Void && !EnableAsEnemy && !EnableAsMonsterTransform)
+                                    continue;
+                                BattleCommandId commandId = EnableAsEnemy || EnableAsMonsterTransform ? BattleCommandId.EnemyCounter : BattleCommandId.Counter;
+                                UInt16 counterTarget = btl_cmd.GetRandomTargetForCommand(abilityUser, commandId, attackId);
+                                btl_cmd.SetCounter(abilityUser, commandId, attackId, counterTarget);
+                            }
                         }
                         UpdateUnitStatuses(abilityUser, uCurStat, uAutoStat, uResistStat);
                     }

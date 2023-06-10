@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
 using FF9;
+using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Assets;
-using Memoria;
 using NCalc;
 
 public class BattleActionCode
@@ -59,7 +60,7 @@ public class BattleActionCode
 		{ "LoadMonsterSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
 		{ "PlayMonsterSFX", new String[]{ "SFX", "Instance" } },
 		{ "LoadSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
-		{ "PlaySFX", new String[]{ "SFX", "Instance", "JumpToFrame", "HideMeshes", "SkipSequence" } },
+		{ "PlaySFX", new String[]{ "SFX", "Instance", "JumpToFrame", "SkipSequence", "HideMeshes", "MeshColors" } },
 		{ "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch" } },
 		{ "PlayAnimation", new String[]{ "Char", "Anim", "Speed", "Loop", "Palindrome", "Frame" } },
 		{ "PlayTextureAnimation", new String[]{ "Char", "Anim", "Once", "Stop" } },
@@ -341,6 +342,24 @@ public class BattleActionCode
 		return false;
 	}
 
+	private Boolean ParseStringToColor(String str, out Color value)
+	{
+		value = Color.white;
+		str = str.Trim();
+		if (str.StartsWith("(") && str.EndsWith(")"))
+			str = str.Substring(1, str.Length - 2);
+		String[] coords = str.Split(',');
+		if (coords.Length >= 3)
+		{
+			if (!Single.TryParse(coords[0], out value.r) || !Single.TryParse(coords[1], out value.g) || !Single.TryParse(coords[2], out value.b))
+				return false;
+			if (coords.Length >= 4 && !Single.TryParse(coords[3], out value.a))
+				return false;
+			return true;
+		}
+		return false;
+	}
+
 	public Boolean TryGetArgMeshList(String key, out List<UInt32> keyList, out List<UInt32> indexList)
 	{
 		String args;
@@ -362,6 +381,43 @@ public class BattleActionCode
 				}
 				else if (UInt32.TryParse(meshId, out num))
 					indexList.Add(num);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public Boolean TryGetArgMeshColors(String key, out Dictionary<UInt32, Color> meshKeyColors, out Dictionary<UInt32, Color> meshIndexColors)
+	{
+		String args;
+		meshKeyColors = new Dictionary<UInt32, Color>();
+		meshIndexColors = new Dictionary<UInt32, Color>();
+		if (argument.TryGetValue(key, out args))
+		{
+			if (args.StartsWith("(") && args.EndsWith(")"))
+			{
+				args = args.Substring(1, args.Length - 2);
+				if (!ParseStringToColor(args, out Color sharedColor))
+					return false;
+				meshKeyColors[0] = sharedColor;
+				return true;
+			}
+			foreach (Match meshPattern in new Regex(@"([^:]*):\s*\(([^\)]*)\)\s*(,|$)").Matches(args))
+			{
+				String keyCode = meshPattern.Groups[1].Value.Trim();
+				String colorCode = meshPattern.Groups[2].Value.Trim();
+				if (keyCode.StartsWith("0x"))
+				{
+					if (!UInt32.TryParse(keyCode.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out UInt32 meshKey) || !ParseStringToColor(colorCode, out Color meshColor))
+						return false;
+					meshKeyColors[meshKey] = meshColor;
+				}
+				else
+				{
+					if (!UInt32.TryParse(keyCode, out UInt32 index) || !ParseStringToColor(colorCode, out Color meshColor))
+						return false;
+					meshIndexColors[index] = meshColor;
+				}
 			}
 			return true;
 		}
@@ -409,6 +465,24 @@ public class BattleActionCode
 		value = 0;
 		if (argument.TryGetValue(key, out args))
 		{
+			if (args.StartsWith("MatchingCondition(") && args.EndsWith(")"))
+			{
+				value = 0;
+				String conditionStr = args.Substring("MatchingCondition(".Length, args.Length - "MatchingCondition()".Length);
+				Expression c = new Expression(conditionStr);
+				c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+				c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+				NCalcUtility.InitializeExpressionUnit(ref c, btl_scrp.FindBattleUnit(caster), "Caster");
+				foreach (BattleUnit unit in Memoria.BattleState.EnumerateUnits())
+				{
+					c.Parameters["IsTargeted"] = (unit.Id & target) != 0;
+					c.Parameters["IsTheCaster"] = (unit.Id & caster) != 0;
+					NCalcUtility.InitializeExpressionUnit(ref c, unit);
+					if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate(), false))
+						value |= unit.Id;
+				}
+				return true;
+			}
 			if (args == "AllTargets")
 			{
 				value = target;
@@ -419,7 +493,7 @@ public class BattleActionCode
 				value = (UInt16)Comn.randomID(target);
 				return true;
 			}
-            if (args == "Caster")
+			if (args == "Caster")
 			{
 				value = caster;
 				return true;
@@ -434,29 +508,12 @@ public class BattleActionCode
 				value = btl_scrp.GetBattleID(1);
 				return true;
 			}
-            if (args == "Everyone")
+			if (args == "Everyone")
 			{
 				value = btl_scrp.GetBattleID(2);
 				return true;
 			}
-            if (args.StartsWith("MatchingCondition(") && args.EndsWith(")"))
-            {
-                value = 0;
-                String conditionStr = args.Substring("MatchingCondition(".Length, args.Length - "MatchingCondition()".Length);
-                Expression c = new Expression(conditionStr);
-                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                foreach (BattleUnit unit in Memoria.BattleState.EnumerateUnits())
-                {
-                    c.Parameters["IsTargeted"] = (unit.Id & target) != 0;
-                    c.Parameters["IsTheCaster"] = (unit.Id & caster) != 0;
-                    NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                    if (NCalcUtility.EvaluateNCalcCondition(c.Evaluate(), false))
-                        value |= unit.Id;
-                }
-                return true;
-            }
-            Dictionary<CharacterId, String> partyNames = CharacterNamesFormatter.CharacterScriptNames();
+			Dictionary<CharacterId, String> partyNames = CharacterNamesFormatter.CharacterScriptNames();
 			foreach (KeyValuePair<CharacterId, String> pair in partyNames)
 				if (args == pair.Value)
 					for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)

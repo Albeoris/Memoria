@@ -386,7 +386,7 @@ public partial class BattleHUD : UIScene
             }
             if (Configuration.Battle.AccessMenus <= 0)
                 return true;
-            Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null;
+            Boolean hasAccessMenuButton = _commandPanel.AccessMenu != null && _commandPanel.AccessMenu.IsActive;
             Boolean canOpen = true;
             BattleUnit selectedChar = CurrentPlayerIndex >= 0 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex) : null;
             if (Configuration.Battle.AccessMenus == 1 || Configuration.Battle.AccessMenus == 2)

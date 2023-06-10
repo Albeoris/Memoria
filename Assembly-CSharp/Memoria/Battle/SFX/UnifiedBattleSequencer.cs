@@ -34,7 +34,7 @@ public static class UnifiedBattleSequencer
 				{
 					if (FF9StateSystem.Battle.FF9Battle.btl_phase == 4 && runningActions[i].useCameraTarget)
 					{
-						SFX.SFX_SendIntData(4, 0, 0, 0);
+						//SFX.SFX_SendIntData(4, 0, 0, 0);
 						btlseq.instance.seq_work_set.CameraNo = 0;
 					}
 					UnifiedBattleSequencer.ReleaseRunningAction(i);
@@ -347,11 +347,13 @@ public static class UnifiedBattleSequencer
 						foreach (SFXData sfx in (tmpInt < 0 ? sfxList.ToArray() : new SFXData[] { sfxList[tmpInt] }))
 						{
 							List<UInt32> meshKeyList, meshIndexList;
+							Dictionary<UInt32, Color> meshKeyColors, meshIndexColors;
 							Int32 frameStart = 0;
 							if (code.TryGetArgInt32("JumpToFrame", out tmpInt))
 								frameStart += tmpInt;
 							code.TryGetArgMeshList("HideMeshes", out meshKeyList, out meshIndexList);
-							sfx.PlaySFX(frameStart, meshKeyList, meshIndexList);
+							code.TryGetArgMeshColors("MeshColors", out meshKeyColors, out meshIndexColors);
+							sfx.PlaySFX(frameStart, meshKeyList, meshIndexList, meshKeyColors, meshIndexColors);
 							if (cancel)
 								continue;
 							if (sfx.sfxthread.Count > 0 && (!code.TryGetArgBoolean("SkipSequence", out tmpBool) || !tmpBool))
@@ -762,7 +764,8 @@ public static class UnifiedBattleSequencer
 						BTL_DATA camTrg = btlseq.SeqSubGetTarget(tmpChar);
 						SFX.SetCameraTarget(trgCPos, cmd.regist, camTrg);
 						btlseq.instance.seq_work_set.CameraNo = (Byte)tmpInt;
-						SFX.SetEnemyCamera(cmd.regist);
+						if (!tmpBool || cmd.aa.Info.DefaultCamera)
+							SFX.SetEnemyCamera(cmd.regist); // DEBUG: in order to avoid getting cameras stuck in some situations, don't call the optional enemy cameras
 						useCameraTarget = true;
 					}
 					else

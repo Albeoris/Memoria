@@ -148,7 +148,7 @@ public class btlseq
 			pCmd.regist.rot.eulerAngles = new Vector3(eulerAngles.x, pCmd.regist.evt.rotBattle.eulerAngles.y, eulerAngles.z);
 		}
 	}
-	public static Int32 debugCounter = 0;
+
 	public static SEQ_WORK EntrySequence(CMD_DATA pCmd)
 	{
 		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
@@ -171,13 +171,11 @@ public class btlseq
 		seqWork[num].SVfxTime = 0;
 		seqWork[num].FadeTotal = 0;
 		FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = 0;
-		debugCounter = 0;
 		return seqWork[num];
 	}
 
 	public static void Sequencer()
 	{
-		debugCounter++;
 		instance.wSeqCode = 0;
 		SEQ_WORK[] seqWork = instance.seq_work_set.SeqWork;
 		for (Int32 i = 0; i < 4; i++)
