@@ -626,7 +626,10 @@ public class ShopUI : UIScene
 					ingrNum++;
 				}
 				for (Int32 i = 0; i < 2; i++)
+				{
+					hud[i].Self.SetActive(true);
 					FF9UIDataTool.DisplayMultipleItems(ingrSplit[i], hud[i].IconSprite, hud[i].NameLabel, ingrEnabled[i]);
+				}
 			}
 		}
 	}
