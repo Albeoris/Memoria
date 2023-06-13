@@ -373,13 +373,13 @@ public class BattleActionCode
 			String[] meshIdList = args.Split(',');
 			foreach (String meshId in meshIdList)
 			{
-				meshId.Trim();
-				if (meshId.StartsWith("0x"))
+				String trimmed = meshId.Trim();
+				if (trimmed.StartsWith("0x"))
 				{
-					if (UInt32.TryParse(meshId.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out num))
+					if (UInt32.TryParse(trimmed.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out num))
 						keyList.Add(num);
 				}
-				else if (UInt32.TryParse(meshId, out num))
+				else if (UInt32.TryParse(trimmed, out num))
 					indexList.Add(num);
 			}
 			return true;

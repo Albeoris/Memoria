@@ -193,7 +193,7 @@ public class ff9item
             return FF9Item_Remove(GetRegularIdFromItemId(id), count);
         if (IsItemImportant(id))
         {
-            if (count > 0 && FF9Item_IsExistImportant(id))
+            if (count > 0 && FF9Item_IsExistImportant(GetImportantIdFromItemId(id)))
 			{
                 FF9Item_RemoveImportant(GetImportantIdFromItemId(id));
                 return 1;
