@@ -110,7 +110,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Category>Character Swap</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20257</Website>
 	<!-- Download URL: https://drive.google.com/uc?export=download&amp;id=1kAPolYDiKDgfeYOuLbjRzBFkeNOFcWGo&amp;confirm=t -->
-  <!-- Can't automatically install yet just because it's a .rar and not a .zip -->
+	<!-- Can't automatically install yet just because it's a .rar and not a .zip -->
 	<PreviewFile>FreyaGame+_Logo.png</PreviewFile>
 </Mod>
 
@@ -170,36 +170,34 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>2.71</Version>
+	<Version>2.9</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>21 Nov 2022, 10:14PM</ReleaseDate>
+	<ReleaseDate>20 June 2023, 4:23PM</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>Easy to install UI enhancements for Final Fantasy IX.
-Version 2.7 uses the submod capability of Memoria Mod Manager to activate mods.
+	<Description>Easy to install UI enhancements for Final Fantasy IX Steam. 
+:: Requirements :: 
+- Memoria version  v2022.11.11 or higher 
 
 :: Features ::
-Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts , Ability Gems = 1, Half exp to level up
-Portrait option : Default with extended cast, Opera Omnia and Upscaled PS1 Portrait Artworks
-Button Prompts Options: PlayStation Vanilla prompts, PS Gloss , PS5 , Pixel Style
-UI : Default , Darker UI and Flat
+Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts , Ability Gems = 1, Half exp to level up   
+Portrait option : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artworks 
+Button Prompts Options: PlayStation Vanilla prompts, PS Gloss , PS5 , Pixel Style 
+UI : Default , Darker UI and Flat 
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like
+Use the Mod Manager UI to activate each submods you like 
 
-:: Requirements ::
-- Memoria version v2022.11.11 or higher
-
-:: 2.7 Log ::
-- applied some fixes
-- Switched to SubMod capability of Memoria
-- Added Compatibility with new mods by Tirtilili (Playable Character Pack)
+:: 2.9  Log ::
+- Added requested custom Blank DFFOO portrait , replaced  Marcus and  Cinna 
+- Bump compatibility to the recent version of memoria 
 
 :: Compatibility ::
-- Not compatible for older versions of the games and repacks.</Description>
+- Not compatible for older versions of the game and repacks.
+	</Description>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1632468409-614055669.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1687258501-1210392332.png</PreviewFileUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
 	<SubMod>
 		<Name>Buttons : PS5</Name>
@@ -214,13 +212,19 @@ Use the Mod Manager UI to activate each submods you like
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : Vanilla PS </Name>
+		<Name>Buttons : Simple PS</Name>
 		<InstallationPath>Features/Buttons/ButtonsPSX</InstallationPath>
-		<Description>Same Style as the default xbox prompts</Description>
+		<Description>PS prompts in the same Style as the default xbox prompts</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : Pixels </Name>
+		<Name>Buttons : Default Xbox</Name>
+		<InstallationPath>Features/Buttons/ButtonsXbox</InstallationPath>
+		<Description>Restores Default Xbox Prompts</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : Pixels</Name>
 		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
 		<Description>Pixelated Prompts if that is your thing</Description>
 		<Priority>1</Priority>
@@ -259,6 +263,12 @@ Use the Mod Manager UI to activate each submods you like
 		<Name>Dialogue Box : Flat </Name>
 		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
 		<Description>Just a Full Solid colors like the old games </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Disable : 1 Gem Ability and Halved EXP </Name>
+		<InstallationPath>Features/default/AbilityExp</InstallationPath>
+		<Description>Disables 1 gem and halved exp requirement feature </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
