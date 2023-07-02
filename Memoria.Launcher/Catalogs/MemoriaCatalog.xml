@@ -170,9 +170,9 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>2.9</Version>
+	<Version>3.0</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>20 June 2023, 4:23PM</ReleaseDate>
+	<ReleaseDate>02 July 2023, 12:32PM</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>Easy to install UI enhancements for Final Fantasy IX Steam. 
 :: Requirements :: 
@@ -187,9 +187,10 @@ UI : Default , Darker UI and Flat
 :: Submod activation ::
 Use the Mod Manager UI to activate each submods you like 
 
-:: 2.9  Log ::
-- Added requested custom Blank DFFOO portrait , replaced  Marcus and  Cinna 
-- Bump compatibility to the recent version of memoria 
+:: 3.0  Log ::
+- Split default feature of halved EXP and 1 Gem passive ability to two different submods
+- Replaced Preview file on local folders 
+- Bump compatibility Upto the v2023.06.11 version of memoria 
 
 :: Compatibility ::
 - Not compatible for older versions of the game and repacks.
@@ -266,9 +267,15 @@ Use the Mod Manager UI to activate each submods you like
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Disable : 1 Gem Ability and Halved EXP </Name>
-		<InstallationPath>Features/default/AbilityExp</InstallationPath>
-		<Description>Disables 1 gem and halved exp requirement feature </Description>
+		<Name>Tweak Enable : 1 Gem Ability </Name>
+		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
+		<Description>Enables 1 gem for passive abilities to be enabled </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak Enable :  Halved EXP </Name>
+		<InstallationPath>Features/Tweaks/Exp</InstallationPath>
+		<Description>Cuts the EXP requirement feature to level up by Half </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
