@@ -17,9 +17,7 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
-            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
-                if (folder.TryFindAssetInModOnDisc(BattleVoicePath, out String fullPath))
-                    ParseEffect(File.ReadAllText(fullPath));
+            LoadEffects();
         }
 
         public static void InitBattle()
@@ -130,6 +128,45 @@ namespace Memoria.Data
 
         private static Dictionary<BTL_DATA, KeyValuePair<Int32, SoundProfile>> _currentVoicePlay = new Dictionary<BTL_DATA, KeyValuePair<Int32, SoundProfile>>();
 
+        private static Boolean isDirty = true;
+        private static List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
+
+        private static void LoadEffects()
+        {
+            isDirty = false;
+
+            foreach (FileSystemWatcher watcher in _watchers)
+                watcher.Dispose();
+            _watchers.Clear();
+
+            InOutEffect.Clear();
+            ActEffect.Clear();
+            HittedEffect.Clear();
+            StatusChangeEffect.Clear();
+
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+            {
+                if (folder.TryFindAssetInModOnDisc(BattleVoicePath, out String fullPath))
+                {
+                    SoundLib.VALog($"Parsing: '{fullPath}'");
+                    ParseEffect(File.ReadAllText(fullPath));
+
+                    FileSystemWatcher watcher = new FileSystemWatcher();
+                    watcher.Path = Path.GetDirectoryName(fullPath);
+                    watcher.Filter = Path.GetFileName(fullPath);
+                    watcher.NotifyFilter = NotifyFilters.LastWrite;
+                    watcher.Changed += (sender, e) =>
+                    {
+                        if (e.ChangeType != WatcherChangeTypes.Changed) return;
+                        SoundLib.VALog($"File changed: '{fullPath}'");
+                        isDirty = true;
+                    };
+                    watcher.EnableRaisingEvents = true;
+                    _watchers.Add(watcher);
+                }
+            }
+        }
+
         private static void PlayVoiceEffect(GenericVoiceEffect voiceEffect)
         {
             List<BTL_DATA> speakerBtlList = new List<BTL_DATA>();
@@ -173,6 +210,8 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            if (isDirty) LoadEffects();
+
             try
             {
                 List<BattleInOut> retainedEffects = new List<BattleInOut>();
@@ -212,6 +251,8 @@ namespace Memoria.Data
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
+
+            if (isDirty) LoadEffects();
 
             try
             {
@@ -257,6 +298,8 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            if (isDirty) LoadEffects();
+
             try
             {
                 List<BattleHitted> retainedEffects = new List<BattleHitted>();
@@ -298,6 +341,8 @@ namespace Memoria.Data
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
+
+            if (isDirty) LoadEffects();
 
             try
             {
