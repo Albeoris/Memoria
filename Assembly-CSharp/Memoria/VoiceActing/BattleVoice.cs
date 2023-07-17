@@ -268,6 +268,12 @@ namespace Memoria.Data
                         BattleUnit unit = new BattleUnit(actingChar);
                         BattleCommand cmd = new BattleCommand(cmdUsed);
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                        List<BTL_DATA> t = FF9.btl_util.findAllBtlData(cmdUsed.tar_id);
+                        if (t.Count > 0)
+                        {
+                            BattleUnit target = new BattleUnit(t[0]);
+                            NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
+                        }
                         NCalcUtility.InitializeExpressionCommand(ref c, cmd);
                         if (calc != null) // Should be the case only when "HitEffect"
                             NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
@@ -313,6 +319,7 @@ namespace Memoria.Data
                         Expression c = new Expression(effect.Condition);
                         BattleUnit unit = new BattleUnit(hittedChar);
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                        NCalcUtility.InitializeExpressionUnit(ref c, calc.Caster, "Caster");
                         NCalcUtility.InitializeExpressionCommand(ref c, calc.Command);
                         NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
