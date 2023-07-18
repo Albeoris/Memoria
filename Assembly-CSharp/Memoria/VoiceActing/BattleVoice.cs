@@ -131,6 +131,8 @@ namespace Memoria.Data
         private static Boolean isDirty = true;
         private static List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
 
+        private static Int32 ActedLastIndex = (Int32)CharacterId.NONE;
+
         private static void LoadEffects()
         {
             isDirty = false;
@@ -225,6 +227,7 @@ namespace Memoria.Data
                         Expression c = new Expression(effect.Condition);
                         BattleUnit unit = new BattleUnit(effect.Speakers[0].FindBtlUnlimited());
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                        c.Parameters["ActedLastIndex"] = ActedLastIndex;
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
@@ -256,6 +259,9 @@ namespace Memoria.Data
 
             try
             {
+                if ((CharacterId)actingChar.bi.slot_no != CharacterId.NONE)
+                    ActedLastIndex = actingChar.bi.slot_no;
+
                 List<BattleAct> retainedEffects = new List<BattleAct>();
                 Int32 retainedPriority = Int32.MinValue;
                 foreach (BattleAct effect in ActEffect)
@@ -355,11 +361,11 @@ namespace Memoria.Data
             {
                 List<BattleStatusChange> retainedEffects = new List<BattleStatusChange>();
                 Int32 retainedPriority = Int32.MinValue;
+                Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
                 foreach (BattleStatusChange effect in StatusChangeEffect)
                 {
                     if (String.Compare(effect.When, when) != 0 || (whichStatus & effect.Status) == 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
                         continue;
-                    Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
                     if (discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar, effect.Status))
                         continue;
                     if (!discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar))
