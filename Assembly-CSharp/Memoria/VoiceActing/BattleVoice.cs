@@ -17,6 +17,17 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            FileSystemWatcher watcher = new FileSystemWatcher("./", "*" + BattleVoicePath);
+            watcher.IncludeSubdirectories = true;
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += (sender, e) =>
+            {
+                if (e.ChangeType != WatcherChangeTypes.Changed) return;
+                SoundLib.VALog($"File changed: '{e.FullPath}'");
+                isDirty = true;
+            };
+            watcher.EnableRaisingEvents = true;
+
             LoadEffects();
         }
 
@@ -129,17 +140,13 @@ namespace Memoria.Data
         private static Dictionary<BTL_DATA, KeyValuePair<Int32, SoundProfile>> _currentVoicePlay = new Dictionary<BTL_DATA, KeyValuePair<Int32, SoundProfile>>();
 
         private static Boolean isDirty = true;
-        private static List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
+        private static FileSystemWatcher _watcher = null;
 
         private static Int32 ActedLastIndex = (Int32)CharacterId.NONE;
 
         private static void LoadEffects()
         {
             isDirty = false;
-
-            foreach (FileSystemWatcher watcher in _watchers)
-                watcher.Dispose();
-            _watchers.Clear();
 
             InOutEffect.Clear();
             ActEffect.Clear();
@@ -152,19 +159,6 @@ namespace Memoria.Data
                 {
                     SoundLib.VALog($"Parsing: '{fullPath}'");
                     ParseEffect(File.ReadAllText(fullPath));
-
-                    FileSystemWatcher watcher = new FileSystemWatcher();
-                    watcher.Path = Path.GetDirectoryName(fullPath);
-                    watcher.Filter = Path.GetFileName(fullPath);
-                    watcher.NotifyFilter = NotifyFilters.LastWrite;
-                    watcher.Changed += (sender, e) =>
-                    {
-                        if (e.ChangeType != WatcherChangeTypes.Changed) return;
-                        SoundLib.VALog($"File changed: '{fullPath}'");
-                        isDirty = true;
-                    };
-                    watcher.EnableRaisingEvents = true;
-                    _watchers.Add(watcher);
                 }
             }
         }
