@@ -180,7 +180,8 @@ namespace NCalc
             else if (name == "Output" && args.Parameters.Length == 1)
             {
                 object result = args.Parameters[0].Evaluate();
-                Memoria.Prime.Log.Message(String.Format("[Output] Param:{0}, Type:{1}, Value:{2}", args.Parameters[0].ParsedExpression, result.GetType().Name, result));
+                if(Configuration.Debug.EnableOutputLogging)
+                    Memoria.Prime.Log.Message(String.Format("[Output] Param:{0}, Type:{1}, Value:{2}", args.Parameters[0].ParsedExpression, result.GetType().Name, result));
                 args.Result = result;
             }
         };

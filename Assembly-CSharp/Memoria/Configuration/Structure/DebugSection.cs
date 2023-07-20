@@ -11,6 +11,7 @@ namespace Memoria
             public readonly IniValue<Boolean> StartModelViewer;
             public readonly IniValue<Boolean> StartFieldCreator;
             public readonly IniValue<Boolean> RenderWalkmeshes;
+            public readonly IniValue<Boolean> EnableOutputLogging;
 
             public DebugSection() : base(nameof(DebugSection), false)
             {
@@ -18,6 +19,7 @@ namespace Memoria
                 StartModelViewer = BindBoolean(nameof(StartModelViewer), false);
                 StartFieldCreator = BindBoolean(nameof(StartFieldCreator), false);
                 RenderWalkmeshes = BindBoolean(nameof(RenderWalkmeshes), false);
+                EnableOutputLogging = BindBoolean(nameof(EnableOutputLogging), false);
             }
         }
     }

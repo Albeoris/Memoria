@@ -17,7 +17,7 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
-            FileSystemWatcher watcher = new FileSystemWatcher("./", "*" + BattleVoicePath);
+            FileSystemWatcher watcher = new FileSystemWatcher("./", $"*{BattleVoicePath}");
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Changed += (sender, e) =>
