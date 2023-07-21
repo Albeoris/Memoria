@@ -177,6 +177,12 @@ namespace NCalc
                 if (v1 != Int64.MinValue || v2 != Int64.MinValue)
                     args.Result = Math.Max(v1, v2);
             }
+            else if (name == "MemoriaLog" && args.Parameters.Length == 1)
+            {
+                Object result = args.Parameters[0].Evaluate();
+                Memoria.Prime.Log.Message($"[{nameof(NCalcUtility)}] Expression '{args.Parameters[0].ParsedExpression}' evaluates to '{result}' ({result.GetType().Name})");
+                args.Result = result;
+            }
         };
 
         public static EvaluateParameterHandler commonNCalcParameters = delegate (String name, ParameterArgs args)

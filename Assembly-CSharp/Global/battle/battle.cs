@@ -349,6 +349,7 @@ public static class battle
                                 btlsnd.ff9btlsnd_sndeffect_play(2907, 0, SByte.MaxValue, 128);
                                 btlsnd.ff9btlsnd_sndeffect_play(2908, 0, SByte.MaxValue, 128);
                                 btlsys.btl_escape_fade -= 2;
+                                BattleVoice.TriggerOnBattleInOut("Flee");
                             }
                         }
                         break;
@@ -455,7 +456,6 @@ public static class battle
                         }
                         UIManager.Battle.SetBattleFollowMessage(BattleMesages.DroppedGil, gilLost);
                     }
-                    BattleVoice.TriggerOnBattleInOut("Flee");
                     break;
             }
             if (btlsys.btl_phase != 5)

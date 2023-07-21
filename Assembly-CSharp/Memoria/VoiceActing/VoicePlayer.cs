@@ -117,7 +117,9 @@ public class VoicePlayer : SoundPlayer
 		String[] msgStrings = dialog.Phrase.Split(new String[] { "[CHOO]" }, StringSplitOptions.None);
 		String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
 
-		Boolean shouldDismiss = Configuration.VoiceActing.AutoDismissDialogAfterCompletion && dialog.ChoiceNumber <= 0;
+		Boolean hasChoices = dialog.ChoiceNumber > 0;
+		Boolean isMsgEmpty = msgString.Length == 0;
+		Boolean shouldDismiss = Configuration.VoiceActing.AutoDismissDialogAfterCompletion && !hasChoices;
 		Action nonDismissAction = () => { soundOfDialog.Remove(dialog); };
 		Action dismissAction =
 			() =>
@@ -134,16 +136,24 @@ public class VoicePlayer : SoundPlayer
 				else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
 					EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
 			};
+		Action playSelectChoiceAction =
+			() =>
+			{
+				soundOfDialog.Remove(dialog);
+				while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
+					Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
+				dialog.OnOptionChange?.Invoke(dialog.Id, dialog.SelectChoice); // Simulate a choice change so the default selected line plays
+			};
 
 		if (useAlternatePath)
 		{
 			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaAlternatePath));
-			soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaAlternatePath.GetHashCode(), vaAlternatePath, shouldDismiss ? dismissAction : nonDismissAction);
+			soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaAlternatePath.GetHashCode(), vaAlternatePath, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
 		}
 		else if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
 		{
 			SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaPath));
-			soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaPath.GetHashCode(), vaPath, shouldDismiss ? dismissAction : nonDismissAction);
+			soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaPath.GetHashCode(), vaPath, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
 		}
 		else
 		{
@@ -151,9 +161,10 @@ public class VoicePlayer : SoundPlayer
 				SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
 			else
 				SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath));
+			isMsgEmpty = true;
 		}
 
-		if (dialog.ChoiceNumber > 0)
+		if (hasChoices)
 		{
 			dialog.OnOptionChange = (Int32 msg, Int32 optionIndex) =>
 			{
@@ -176,7 +187,9 @@ public class VoicePlayer : SoundPlayer
 					soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPath.GetHashCode(), vaOptionPath, nonDismissAction);
 				}
 			};
-        }
+
+			if (isMsgEmpty) new Thread(() => { playSelectChoiceAction(); }).Start();
+		}
 	}
 
 	public static void FieldZoneDialogClosed(Dialog dialog)
@@ -202,7 +215,7 @@ public class VoicePlayer : SoundPlayer
 	}
 
 	public static SoundProfile CreateLoadThenPlayVoice(Int32 soundIndex, String vaPath, Action onFinished = null)
-    {
+	{
 		SoundProfile soundProfile = new SoundProfile
 		{
 			Code = soundIndex.ToString(),

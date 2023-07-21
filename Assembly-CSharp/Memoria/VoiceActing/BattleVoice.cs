@@ -17,24 +17,33 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
-            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
-                if (folder.TryFindAssetInModOnDisc(BattleVoicePath, out String fullPath))
-                    ParseEffect(File.ReadAllText(fullPath));
+            FileSystemWatcher watcher = new FileSystemWatcher("./", $"*{BattleVoicePath}");
+            watcher.IncludeSubdirectories = true;
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += (sender, e) =>
+            {
+                if (e.ChangeType != WatcherChangeTypes.Changed) return;
+                SoundLib.VALog($"File changed: '{e.FullPath}'");
+                isDirty = true;
+            };
+            watcher.EnableRaisingEvents = true;
+
+            LoadEffects();
         }
 
         public static void InitBattle()
-		{
+        {
             _currentVoicePlay.Clear();
         }
 
         private class BattleSpeaker
-		{
+        {
             public CharacterId playerId = CharacterId.NONE;
             public String enemyModel = null;
             public Int32 enemyBattleId = -1;
 
             public Boolean CheckIsCharacter(BTL_DATA btl)
-			{
+            {
                 if (btl.bi.player != 0)
                     return playerId != CharacterId.NONE && (CharacterId)btl.bi.slot_no == playerId;
                 if (playerId != CharacterId.NONE)
@@ -44,7 +53,7 @@ namespace Memoria.Data
             }
 
             public BTL_DATA FindBtlUnlimited()
-			{
+            {
                 FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
                 for (Int32 i = 0; i < 8; i++)
                     if (CheckIsCharacter(ff9Battle.btl_data[i]))
@@ -62,15 +71,16 @@ namespace Memoria.Data
                 if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
                     return voicePriority > playingVoice.Key;
                 return true;
-			}
+            }
         }
 
         private class GenericVoiceEffect
         {
             public List<BattleSpeaker> Speakers = new List<BattleSpeaker>();
             public String Condition = "";
-            public String AudioPath = "";
+            public String[] AudioPaths;
             public Int32 Priority = 0;
+            public Int32 lastPlayed = -1;
 
             public Boolean CheckSpeakerAll(BTL_DATA statusExceptionBtl = null, BattleStatus statusException = 0)
             {
@@ -129,18 +139,62 @@ namespace Memoria.Data
 
         private static Dictionary<BTL_DATA, KeyValuePair<Int32, SoundProfile>> _currentVoicePlay = new Dictionary<BTL_DATA, KeyValuePair<Int32, SoundProfile>>();
 
+        private static Boolean isDirty = true;
+        private static FileSystemWatcher _watcher = null;
+
+        private static CharacterId VictoryFocusIndex => SFX.lastPlayedExeId != 0 && SFX.lastPlayedExeId < 16 ? btl_scrp.FindBattleUnit(SFX.lastPlayedExeId)?.PlayerIndex ?? CharacterId.NONE : CharacterId.NONE;
+
+        private static void LoadEffects()
+        {
+            isDirty = false;
+
+            InOutEffect.Clear();
+            ActEffect.Clear();
+            HittedEffect.Clear();
+            StatusChangeEffect.Clear();
+
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+            {
+                if (folder.TryFindAssetInModOnDisc(BattleVoicePath, out String fullPath))
+                {
+                    SoundLib.VALog($"Parsing: '{fullPath}'");
+                    ParseEffect(File.ReadAllText(fullPath));
+                }
+            }
+        }
+
         private static void PlayVoiceEffect(GenericVoiceEffect voiceEffect)
-		{
+        {
             List<BTL_DATA> speakerBtlList = new List<BTL_DATA>();
             foreach (BattleSpeaker speaker in voiceEffect.Speakers)
-			{
+            {
                 BTL_DATA btl = speaker.FindBtlUnlimited();
                 if (btl != null)
                     speakerBtlList.Add(btl);
             }
-            String soundPath = $"Voices/{Localization.GetSymbol()}/{voiceEffect.AudioPath}";
+
+            Int32 audioIndex = 0;
+            if (voiceEffect.AudioPaths.Length > 1)
+            {
+                // Pick a random audio excluding the last one that was played in that situation
+                if (voiceEffect.lastPlayed >= 0 && voiceEffect.lastPlayed < voiceEffect.AudioPaths.Length)
+                {
+                    audioIndex = UnityEngine.Random.Range(0, voiceEffect.AudioPaths.Length - 1);
+                    if (audioIndex >= voiceEffect.lastPlayed)
+                        audioIndex++;
+                }
+                else
+                {
+                    audioIndex = UnityEngine.Random.Range(0, voiceEffect.AudioPaths.Length);
+                }
+            }
+            voiceEffect.lastPlayed = audioIndex;
+
+            String soundPath = $"Voices/{Localization.GetSymbol()}/{voiceEffect.AudioPaths[audioIndex]}";
             Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
             SoundLib.VALog($"battlevoice:{voiceEffect.GetType()} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
+            if (!soundExists) return;
+
             SoundProfile audioProfile = VoicePlayer.CreateLoadThenPlayVoice(soundPath.GetHashCode(), soundPath,
             () =>
             {
@@ -149,7 +203,7 @@ namespace Memoria.Data
             });
             KeyValuePair<Int32, SoundProfile> playingVoice;
             foreach (BTL_DATA btl in speakerBtlList)
-			{
+            {
                 if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
                     SoundLib.voicePlayer.StopSound(playingVoice.Value);
                 _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(voiceEffect.Priority, audioProfile);
@@ -160,6 +214,8 @@ namespace Memoria.Data
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
+
+            if (isDirty) LoadEffects();
 
             try
             {
@@ -174,6 +230,7 @@ namespace Memoria.Data
                         Expression c = new Expression(effect.Condition);
                         BattleUnit unit = new BattleUnit(effect.Speakers[0].FindBtlUnlimited());
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                        c.Parameters["VictoryFocusIndex"] = (UInt32)VictoryFocusIndex;
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
@@ -201,6 +258,8 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            if (isDirty) LoadEffects();
+
             try
             {
                 List<BattleAct> retainedEffects = new List<BattleAct>();
@@ -215,6 +274,16 @@ namespace Memoria.Data
                         BattleUnit unit = new BattleUnit(actingChar);
                         BattleCommand cmd = new BattleCommand(cmdUsed);
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                        List<BTL_DATA> t = FF9.btl_util.findAllBtlData(cmdUsed.tar_id);
+                        if (t.Count > 0)
+                        {
+                            BattleUnit target = new BattleUnit(t[0]);
+                            NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
+                        }
+                        else
+                        {
+                            NCalcUtility.InitializeExpressionNullableUnit(ref c, null, "Target");
+                        }
                         NCalcUtility.InitializeExpressionCommand(ref c, cmd);
                         if (calc != null) // Should be the case only when "HitEffect"
                             NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
@@ -235,15 +304,17 @@ namespace Memoria.Data
                 PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
             }
             catch (Exception err)
-			{
+            {
                 Log.Error(err);
-			}
+            }
         }
 
         public static void TriggerOnHitted(BTL_DATA hittedChar, BattleCalculator calc)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
+
+            if (isDirty) LoadEffects();
 
             try
             {
@@ -258,6 +329,7 @@ namespace Memoria.Data
                         Expression c = new Expression(effect.Condition);
                         BattleUnit unit = new BattleUnit(hittedChar);
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                        NCalcUtility.InitializeExpressionUnit(ref c, calc.Caster, "Caster");
                         NCalcUtility.InitializeExpressionCommand(ref c, calc.Command);
                         NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -287,15 +359,17 @@ namespace Memoria.Data
             if (!Configuration.VoiceActing.Enabled)
                 return;
 
+            if (isDirty) LoadEffects();
+
             try
             {
                 List<BattleStatusChange> retainedEffects = new List<BattleStatusChange>();
                 Int32 retainedPriority = Int32.MinValue;
+                Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
                 foreach (BattleStatusChange effect in StatusChangeEffect)
                 {
                     if (String.Compare(effect.When, when) != 0 || (whichStatus & effect.Status) == 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
                         continue;
-                    Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
                     if (discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar, effect.Status))
                         continue;
                     if (!discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar))
@@ -351,7 +425,7 @@ namespace Memoria.Data
                         continue;
                     String[] charArgToken = charArg.Trim().Split(':');
                     if (charArgToken.Length == 1)
-					{
+                    {
                         // The speaker is a player character identified by its CharacterId
                         try
                         {
@@ -360,12 +434,12 @@ namespace Memoria.Data
                             newSpeakers.Add(speak);
                         }
                         catch (Exception err)
-						{
+                        {
                             Log.Warning($"[{nameof(BattleVoice)}] Unrecognized player character {charArgToken[0]}");
-						}
+                        }
                     }
                     else if (charArgToken.Length == 2)
-					{
+                    {
                         // The speaker is an enemy identified by its battle ID and/or its model name
                         BattleSpeaker speak = new BattleSpeaker();
                         if (charArgToken[0].Length > 0)
@@ -380,15 +454,31 @@ namespace Memoria.Data
                     Log.Warning($"[{nameof(BattleVoice)}] Expected a speaker for the effect {bvCode}");
                     continue;
                 }
-                String path = null;
-                Match pathMatch = new Regex(@"\bVoicePath:(\S+)").Match(bvArgs);
-                if (pathMatch.Success)
-                    path = pathMatch.Groups[1].Value;
-                if (String.IsNullOrEmpty(path))
+                String[] paths = null;
+                Match pathsMatch = new Regex(@"\bVoicePath:(.*)").Match(bvArgs);
+                if (pathsMatch.Success)
                 {
-                    Log.Warning($"[{nameof(BattleVoice)}] Expected a voice audio path for the effect {bvCode}");
+                    String pathsValue = pathsMatch.Groups[1].Value.Trim();
+                    if (pathsValue.IndexOf(',') > 0)
+                    {
+                        Int32 p = pathsValue.LastIndexOf('/');
+                        String folder = (p < 0) ? "" : folder = pathsValue.Substring(0, p + 1);
+                        String[] files = (p < 0) ? pathsValue.Split(',') : pathsValue.Substring(p + 1).Split(',');
+                        paths = new String[files.Length];
+                        for (Int32 j = 0; j < files.Length; j++)
+                            paths[j] = folder + files[j].Trim();
+                    }
+                    else if (!String.IsNullOrEmpty(pathsValue))
+                    {
+                        paths = new String[] { pathsValue };
+                    }
+                }
+                if (paths == null)
+                {
+                    Log.Warning($"[{nameof(BattleVoice)}] Expected voice audio path(s) for the effect {bvCode}");
                     continue;
                 }
+
                 String condition = null;
                 Match conditionMatch = new Regex(@"\[Condition\](.*?)\[/Condition\]").Match(bvArgs);
                 if (conditionMatch.Success)
@@ -401,7 +491,7 @@ namespace Memoria.Data
                 {
                     BattleInOut newEffect = new BattleInOut();
                     newEffect.Speakers = newSpeakers;
-                    newEffect.AudioPath = path;
+                    newEffect.AudioPaths = paths;
                     newEffect.Condition = condition;
                     newEffect.Priority = priority;
                     Match whenMatch = new Regex(@"\bWhen(\w+)\b").Match(bvArgs);
@@ -413,7 +503,7 @@ namespace Memoria.Data
                 {
                     BattleAct newEffect = new BattleAct();
                     newEffect.Speakers = newSpeakers;
-                    newEffect.AudioPath = path;
+                    newEffect.AudioPaths = paths;
                     newEffect.Condition = condition;
                     newEffect.Priority = priority;
                     Match whenMatch = new Regex(@"\bWhen(\w+)\b").Match(bvArgs);
@@ -425,7 +515,7 @@ namespace Memoria.Data
                 {
                     BattleHitted newEffect = new BattleHitted();
                     newEffect.Speakers = newSpeakers;
-                    newEffect.AudioPath = path;
+                    newEffect.AudioPaths = paths;
                     newEffect.Condition = condition;
                     newEffect.Priority = priority;
                     HittedEffect.Add(newEffect);
@@ -434,7 +524,7 @@ namespace Memoria.Data
                 {
                     BattleStatusChange newEffect = new BattleStatusChange();
                     newEffect.Speakers = newSpeakers;
-                    newEffect.AudioPath = path;
+                    newEffect.AudioPaths = paths;
                     newEffect.Condition = condition;
                     newEffect.Priority = priority;
                     Match whenMatch = new Regex(@"\bWhen(\w+)\b").Match(bvArgs);
