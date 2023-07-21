@@ -142,7 +142,7 @@ namespace Memoria.Data
         private static Boolean isDirty = true;
         private static FileSystemWatcher _watcher = null;
 
-        private static Int32 ActedLastIndex = (Int32)CharacterId.NONE;
+        private static CharacterId VictoryFocusIndex => SFX.lastPlayedExeId != 0 && SFX.lastPlayedExeId < 16 ? btl_scrp.FindBattleUnit(SFX.lastPlayedExeId)?.PlayerIndex ?? CharacterId.NONE : CharacterId.NONE;
 
         private static void LoadEffects()
         {
@@ -173,15 +173,24 @@ namespace Memoria.Data
                     speakerBtlList.Add(btl);
             }
 
-            Int32 rng = UnityEngine.Random.Range(0, voiceEffect.AudioPaths.Length);
-            if (voiceEffect.AudioPaths.Length > 2)
+            Int32 audioIndex = 0;
+            if (voiceEffect.AudioPaths.Length > 1)
             {
-                while (rng == voiceEffect.lastPlayed)
-                    rng = UnityEngine.Random.Range(0, voiceEffect.AudioPaths.Length);
-                voiceEffect.lastPlayed = rng;
+                // Pick a random audio excluding the last one that was played in that situation
+                if (voiceEffect.lastPlayed >= 0 && voiceEffect.lastPlayed < voiceEffect.AudioPaths.Length)
+                {
+                    audioIndex = UnityEngine.Random.Range(0, voiceEffect.AudioPaths.Length - 1);
+                    if (audioIndex >= voiceEffect.lastPlayed)
+                        audioIndex++;
+                }
+                else
+                {
+                    audioIndex = UnityEngine.Random.Range(0, voiceEffect.AudioPaths.Length);
+                }
             }
+            voiceEffect.lastPlayed = audioIndex;
 
-            String soundPath = $"Voices/{Localization.GetSymbol()}/{voiceEffect.AudioPaths[rng]}";
+            String soundPath = $"Voices/{Localization.GetSymbol()}/{voiceEffect.AudioPaths[audioIndex]}";
             Boolean soundExists = AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + soundPath + ".ogg", true, false);
             SoundLib.VALog($"battlevoice:{voiceEffect.GetType()} character:{(speakerBtlList.Count > 0 ? new BattleUnit(speakerBtlList[0]).Name : "no speaker")} path:{soundPath}" + (soundExists ? "" : " (not found)"));
             if (!soundExists) return;
@@ -221,7 +230,7 @@ namespace Memoria.Data
                         Expression c = new Expression(effect.Condition);
                         BattleUnit unit = new BattleUnit(effect.Speakers[0].FindBtlUnlimited());
                         NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                        c.Parameters["ActedLastIndex"] = ActedLastIndex;
+                        c.Parameters["VictoryFocusIndex"] = (UInt32)VictoryFocusIndex;
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
@@ -253,9 +262,6 @@ namespace Memoria.Data
 
             try
             {
-                if ((CharacterId)actingChar.bi.slot_no != CharacterId.NONE)
-                    ActedLastIndex = actingChar.bi.slot_no;
-
                 List<BattleAct> retainedEffects = new List<BattleAct>();
                 Int32 retainedPriority = Int32.MinValue;
                 foreach (BattleAct effect in ActEffect)
@@ -273,6 +279,10 @@ namespace Memoria.Data
                         {
                             BattleUnit target = new BattleUnit(t[0]);
                             NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
+                        }
+                        else
+                        {
+                            NCalcUtility.InitializeExpressionNullableUnit(ref c, null, "Target");
                         }
                         NCalcUtility.InitializeExpressionCommand(ref c, cmd);
                         if (calc != null) // Should be the case only when "HitEffect"
@@ -445,33 +455,28 @@ namespace Memoria.Data
                     continue;
                 }
                 String[] paths = null;
-                Match pathsMatch = new Regex(@"\bVoicePath:(\S+)").Match(bvArgs);
+                Match pathsMatch = new Regex(@"\bVoicePath:(.*)").Match(bvArgs);
                 if (pathsMatch.Success)
                 {
-                    String pathsValue = pathsMatch.Groups[1].Value;
-                    if (String.IsNullOrEmpty(pathsValue))
-                    {
-                        Log.Warning($"[{nameof(BattleVoice)}] Expected a voice audio path for the effect {bvCode}");
-                        continue;
-                    }
-
+                    String pathsValue = pathsMatch.Groups[1].Value.Trim();
                     if (pathsValue.IndexOf(',') > 0)
                     {
                         Int32 p = pathsValue.LastIndexOf('/');
                         String folder = (p < 0) ? "" : folder = pathsValue.Substring(0, p + 1);
                         String[] files = (p < 0) ? pathsValue.Split(',') : pathsValue.Substring(p + 1).Split(',');
-
                         paths = new String[files.Length];
                         for (Int32 j = 0; j < files.Length; j++)
-                        {
                             paths[j] = folder + files[j].Trim();
-                        }
-
                     }
-                    else
+                    else if (!String.IsNullOrEmpty(pathsValue))
                     {
                         paths = new String[] { pathsValue };
                     }
+                }
+                if (paths == null)
+                {
+                    Log.Warning($"[{nameof(BattleVoice)}] Expected voice audio path(s) for the effect {bvCode}");
+                    continue;
                 }
 
                 String condition = null;

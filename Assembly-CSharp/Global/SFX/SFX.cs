@@ -1643,6 +1643,7 @@ public static class SFX
             SFX.SFX_InitSystem(SFX.BattleCallback);
         }
         SFX.isSystemRun = true;
+        SFX.lastPlayedExeId = 0;
     }
 
     public static void EndDebugRoom()
@@ -1942,6 +1943,8 @@ public static class SFX
         SFX.isRunning = true;
         SFX.frameIndex = 0;
         SFX.effectPointFrame = -1;
+        if (SFX.request.exe.btl_id <= 8)
+            SFX.lastPlayedExeId = SFX.request.exe.btl_id;
         PSXTextureMgr.Reset();
         SFXMesh.DetectEyeFrameStart = -1;
         Int32 num3 = Marshal.SizeOf(SFX.request);
@@ -2521,4 +2524,6 @@ public static class SFX
     public static Int32 preventStepInOut = -1;
 
     public static Int32 effectPointFrame = -1;
+
+    public static UInt16 lastPlayedExeId = 0;
 }
