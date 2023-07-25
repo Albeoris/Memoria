@@ -76,6 +76,20 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 </Mod>
 
 <Mod>
+	<Name>Dualsense Buttons</Name>
+	<InstallationPath>DualsenseButtons</InstallationPath>
+	<ReleaseDate>19 July 2023</ReleaseDate>
+	<Author>SamsamTS</Author>
+	<Description>Replace Xbox buttons with the Playstation Dualsense buttons.</Description>
+	<Category>User Interface</Category>
+	<Version>1.0</Version>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/52</Website>
+	<DownloadUrl>https://github.com/SamsamTS/FF9-DualsenseButtons/releases/download/Main/DualsenseButtons.zip</DownloadUrl>
+	<PreviewFileUrl>https://raw.githubusercontent.com/SamsamTS/FF9-DualsenseButtons/main/PreviewImage.jpg</PreviewFileUrl>
+	<PreviewFile>PreviewImage.jpg</PreviewFile>
+</Mod>
+
+<Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
 	<InstallationPath>NoCutsceneMemoria</InstallationPath>
