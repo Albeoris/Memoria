@@ -453,13 +453,16 @@ public static class ff9play
         play.cur.capa = play.max.capa;
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
             return;
+        HashSet<SupportAbility> disableSet = new HashSet<SupportAbility>();
         foreach (SupportAbility saIndex in play.saExtended)
         {
             if (play.cur.capa >= ff9abil._FF9Abil_SaData[saIndex].GemsCount)
                 play.cur.capa -= ff9abil._FF9Abil_SaData[saIndex].GemsCount;
             else
-                ff9abil.FF9Abil_SetEnableSA(play, saIndex, false);
+                disableSet.Add(saIndex);
         }
+        foreach (SupportAbility saIndex in disableSet)
+            ff9abil.FF9Abil_SetEnableSA(play, saIndex, false);
     }
 
     public static void FF9Play_Change(PLAYER play, Boolean update_lv, EquipmentSetId equipSetId)
