@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 using FF9;
 using Memoria;
 using Memoria.Data;
@@ -91,7 +92,12 @@ namespace NCalc
             else if (name == "GetPartyMemberLevel" && args.Parameters.Length == 1)
                 args.Result = GameState.PartyLevel((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetPartyMemberIndex" && args.Parameters.Length == 1)
-                args.Result = GameState.PartyCharacterId((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
+                args.Result = (Int32)GameState.PartyCharacterId((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
+            else if (name == "IsCharacterInParty" && args.Parameters.Length == 1)
+            {
+                CharacterId index = (CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue);
+                args.Result = index != CharacterId.NONE && FF9StateSystem.Common.FF9.party.member.Any(p => p.Index == index);
+            }
             else if (name == "GetCategoryKillCount" && args.Parameters.Length == 1)
             {
                 Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
