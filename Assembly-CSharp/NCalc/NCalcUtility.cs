@@ -497,6 +497,7 @@ namespace NCalc
             expr.Parameters["DamageModifierCount"] = (Int32)context.DamageModifierCount;
             expr.Parameters["TranceIncrease"] = (Int32)context.TranceIncrease;
             expr.Parameters["ItemSteal"] = (Int32)context.ItemSteal;
+            expr.Parameters["StealableItemCount"] = target.IsPlayer ? 0 : target.Enemy.StealableItems.Count(p => p != RegularItem.NoItem);
             expr.Parameters["IsDrain"] = context.IsDrain;
             InitializeExpressionCommand(ref expr, calc.Command);
         }
