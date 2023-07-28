@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 using FF9;
 using Memoria;
 using Memoria.Data;
@@ -95,18 +96,7 @@ namespace NCalc
             else if (name == "IsCharacterInParty" && args.Parameters.Length == 1)
             {
                 CharacterId index = (CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue);
-                args.Result = 0;
-                if (index != CharacterId.NONE)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (FF9StateSystem.Common.FF9.party.GetCharacterId(i) == index)
-                        {
-                            args.Result = 1;
-                            break;
-                        }
-                    }
-                }
+                args.Result = index != CharacterId.NONE && FF9StateSystem.Common.FF9.party.member.Any(p => p.Index == index);
             }
             else if (name == "GetCategoryKillCount" && args.Parameters.Length == 1)
             {
