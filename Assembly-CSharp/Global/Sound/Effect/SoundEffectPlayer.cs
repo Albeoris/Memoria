@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class SoundEffectPlayer : SoundPlayer
 {
-	public void SetVolume(Single volume)
+	public void UpdateVolume()
 	{
 		SoundDatabase[] array = new SoundDatabase[]
 		{
@@ -21,7 +21,7 @@ public class SoundEffectPlayer : SoundPlayer
 				Int32 soundID = value.SoundID;
 				if (this.playedEffectSet.Contains(soundID))
 				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundID, volume, 0);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundID, value.SoundVolume * this.Volume, 0);
 					SoundLib.Log("Set volume to soundID: " + soundID + " finished");
 				}
 				else
@@ -30,7 +30,6 @@ public class SoundEffectPlayer : SoundPlayer
 				}
 			}
 		}
-		this.playerVolume = volume;
 	}
 
 	public void StopAllSoundEffects()
@@ -141,7 +140,7 @@ public class SoundEffectPlayer : SoundPlayer
 		}
 		if (soundProfile != null)
 		{
-			soundProfile.SoundVolume = soundVolume * this.playerVolume;
+			soundProfile.SoundVolume = soundVolume;
 			soundProfile.Panning = panning;
 			soundProfile.Pitch = pitch;
 			this.activeSoundEffect = soundProfile;
@@ -165,7 +164,7 @@ public class SoundEffectPlayer : SoundPlayer
 			{
 				soundProfile = SoundMetaData.GetSoundProfile(soundIndex, type);
 			}
-			soundProfile.SoundVolume = soundVolume * this.playerVolume;
+			soundProfile.SoundVolume = soundVolume;
 			soundProfile.Panning = panning;
 			soundProfile.Pitch = pitch;
 			if (soundProfile == null)
@@ -275,5 +274,5 @@ public class SoundEffectPlayer : SoundPlayer
 
 	private SoundProfile activeSoundEffect;
 
-	private Single playerVolume = 1f;
+	public override Single Volume => FF9StateSystem.Settings.cfg.IsSoundEnabled ? Memoria.Configuration.Audio.SoundVolume / 100f : 0f;
 }

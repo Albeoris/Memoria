@@ -205,7 +205,7 @@ namespace Memoria.Data
             foreach (BTL_DATA btl in speakerBtlList)
             {
                 if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
-                    SoundLib.voicePlayer.StopSound(playingVoice.Value);
+                    SoundLib.VoicePlayer.StopSound(playingVoice.Value);
                 _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(voiceEffect.Priority, audioProfile);
             }
         }

@@ -215,6 +215,8 @@ public abstract class SoundPlayer
 		}
 	}
 
+	public abstract Single Volume { get; }
+
 	private Boolean m_isInitialized;
 
 	private Int32 resourceLoadingCounter;
