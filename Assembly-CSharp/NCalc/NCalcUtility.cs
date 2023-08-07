@@ -375,6 +375,7 @@ namespace NCalc
             expr.Parameters[prefix + "BonusExp"] = (Int32)(unit.IsPlayer ? 0 : enemy.bonus_exp);
             expr.Parameters[prefix + "BonusGil"] = (Int32)(unit.IsPlayer ? 0 : enemy.bonus_gil);
             expr.Parameters[prefix + "BonusCard"] = (Int32)(unit.IsPlayer ? 0 : enemy.bonus_card);
+            expr.Parameters[prefix + "StealableItemCount"] = unit.IsPlayer ? 0 : enemy.steal_item.Count(p => p != RegularItem.NoItem);
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
@@ -459,6 +460,7 @@ namespace NCalc
             expr.Parameters[prefix + "BonusExp"] = 0;
             expr.Parameters[prefix + "BonusGil"] = 0;
             expr.Parameters[prefix + "BonusCard"] = (Int32)TetraMasterCardId.NONE;
+            expr.Parameters[prefix + "StealableItemCount"] = 0;
             expr.EvaluateFunction += delegate (String name, FunctionArgs args)
             {
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
