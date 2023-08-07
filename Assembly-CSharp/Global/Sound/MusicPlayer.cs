@@ -257,9 +257,9 @@ public class MusicPlayer : SoundPlayer
 	private void SetMusicVolumeWhileFade(Single oldPlayerVolume, Single newPlayerVolume, SoundProfile soundProfile)
 	{
 		Single volume = 0f;
-		if (newPlayerVolume != 0f)
+		if (oldPlayerVolume != 0f)
 		{
-			Single factor = oldPlayerVolume / newPlayerVolume;
+			Single factor =  newPlayerVolume / oldPlayerVolume;
 			volume = factor * ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
 		}
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * volume, 0);
