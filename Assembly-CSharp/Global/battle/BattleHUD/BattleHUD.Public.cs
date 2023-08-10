@@ -650,56 +650,19 @@ public partial class BattleHUD : UIScene
         return _commandEnable;
     }
 
-    public static Boolean ForceNextTurn;
-
     public Boolean FF9BMenu_IsEnableAtb()
     {
         if (!IsNativeEnableAtb())
             return false;
 
-        if (Configuration.Battle.Speed != 2)
+        if (Configuration.Battle.Speed != 2 || FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0)
             return true;
 
-        if (FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0)
-            return true;
-
-        if (FF9StateSystem.Battle.FF9Battle.cur_cmd != null)
-            return false;
-
-        for (CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.cmd_queue.next; cmd != null; cmd = cmd.next)
-        {
-            BTL_DATA btl = cmd.regist;
-            if (btl == null)
-                continue;
-
-            BattleUnit unit = new BattleUnit(btl);
-            if (unit.CurrentHp == 0 || !unit.CanMove || !unit.IsPlayer)
-                continue;
-
-            if (unit.IsUnderAnyStatus(BattleStatus.Freeze))
-                continue;
-
-            return false;
-        }
-
-        if (UIManager.Battle.CurrentPlayerIndex == -1)
-            return true;
-
-        if (!ForceNextTurn)
-            return false;
-
-        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-        {
-            BTL_DATA btl = unit.Data;
-
-            if (btl.sel_mode != 0 || btl.sel_menu != 0 || unit.CurrentHp == 0 || btl.bi.atb == 0 || !unit.IsPlayer)
-                continue;
-
-            if (unit.CurrentAtb < unit.MaximumAtb)
-                return true;
-        }
-
-        return false;
+        // Stops the ATB if any of these are true
+        Boolean isMenuing = _commandPanel.IsActive || _targetPanel.IsActive || _itemPanel.IsActive || _abilityPanel.IsActive;
+        Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
+        Boolean hasQueue = FF9StateSystem.Battle.FF9Battle.cmd_queue.next != null;
+        return !(isMenuing || hasQueue || isEnemyActing);
     }
 
     internal Boolean IsNativeEnableAtb()

@@ -542,7 +542,6 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || keyCommand == Control.LeftTrigger)
             {
-                BattleHUD.ForceNextTurn = true;
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftTrigger(activeButton);
                 return true;
