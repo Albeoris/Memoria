@@ -542,41 +542,44 @@ public class btl_cmd
         else if (!admitNewCommand && Configuration.Battle.Speed > 0 && btlsys.cur_cmd_list.Count < 2 && btlsys.cmd_queue?.next != null && btlsys.cur_cmd.info.effect_counter > 0)
         {
             // Camera might get stuck if target dies during camera animation so we skip it
-            // But only if target isn't a player, skipping while entering trance hard-locks the game
+            // But only if target isn't self, skipping while entering trance hard-locks the game
             // Maybe there is  a safer way? Can we speed it somehow?
             // Alternative: UseCamera set to false in UnifiedBattleSequencer.ExecuteSingleCode at "LoadSFX"
             // But then we lose the cool camera animations (like it's the case for speeds higher than 2)
-            if (btlsys.cur_cmd.regist.bi.player == 0 || (btlsys.cur_cmd.tar_id & 0xF) == 0) SFX.SkipCameraAnimation(-1);
+            if (btlsys.cur_cmd.regist?.btl_id != btlsys.cur_cmd.tar_id)
+            {
+                SFX.SkipCameraAnimation(-1);
 
-            // Reset background intensity so it doesn't get stuck
-            if (UnifiedBattleSequencer.BattleAction.bbgIntensity.Count > 0)
-            {
-                UnifiedBattleSequencer.BattleAction.bbgIntensity.Clear();
-                battlebg.nf_SetBbgIntensity(128);
-            }
-            
-            // Removing wait time
-            foreach (var action in UnifiedBattleSequencer.runningActions)
-            {
-                if (action.cmd == btlsys.cur_cmd)
+                // Reset background intensity so it doesn't get stuck
+                if (UnifiedBattleSequencer.BattleAction.bbgIntensity.Count > 0)
                 {
-                    foreach (var th in action.threadList)
+                    UnifiedBattleSequencer.BattleAction.bbgIntensity.Clear();
+                    battlebg.nf_SetBbgIntensity(128);
+                }
+
+                // Removing wait time
+                foreach (var action in UnifiedBattleSequencer.runningActions)
+                {
+                    if (action.cmd == btlsys.cur_cmd)
                     {
-                        th.waitFrame = 0;
-                        th.waitSFX = -1;
-                        var toRemove = new List<BattleActionCode>();
-                        foreach (var c in th.code)
+                        foreach (var th in action.threadList)
                         {
-                            switch (c.operation)
+                            th.waitFrame = 0;
+                            th.waitSFX = -1;
+                            var toRemove = new List<BattleActionCode>();
+                            foreach (var c in th.code)
                             {
-                                case "Wait":
-                                case "WaitMonsterSFXDone":
-                                case "WaitSFXDone":
-                                    toRemove.Add(c);
-                                    break;
+                                switch (c.operation)
+                                {
+                                    case "Wait":
+                                    case "WaitMonsterSFXDone":
+                                    case "WaitSFXDone":
+                                        toRemove.Add(c);
+                                        break;
+                                }
                             }
+                            foreach (var c in toRemove) th.code.Remove(c);
                         }
-                        foreach (var c in toRemove) th.code.Remove(c);
                     }
                 }
             }
