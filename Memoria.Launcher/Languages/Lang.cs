@@ -180,8 +180,10 @@ namespace Memoria.Launcher
             public static readonly string TripleTriadType0 = GetSettings(nameof(TripleTriadType0));
             public static readonly string TripleTriadType1 = GetSettings(nameof(TripleTriadType1));
             public static readonly string TripleTriadType2 = GetSettings(nameof(TripleTriadType2));
+            public static readonly string Volume = GetSettings(nameof(Volume));
             public static readonly string SoundVolume = GetSettings(nameof(SoundVolume));
             public static readonly string MusicVolume = GetSettings(nameof(MusicVolume));
+            public static readonly string MovieVolume = GetSettings(nameof(MovieVolume));
             public static readonly string IniCheats = GetSettings(nameof(IniCheats));
             public static readonly string MaxStealRate = GetSettings(nameof(MaxStealRate));
             public static readonly string DisableCantConcentrate = GetSettings(nameof(DisableCantConcentrate));
