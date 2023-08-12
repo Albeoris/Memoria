@@ -8,6 +8,6 @@ public class MovieAudioPlayer : MusicPlayer
 		return this.activeSoundProfile;
 	}
 
-	public override Single Volume => Configuration.VoiceActing.Enabled ? Configuration.VoiceActing.MovieVolume / 100f : (FF9StateSystem.Settings.cfg.IsMusicEnabled ? Configuration.Audio.MusicVolume / 100f : 0f);
+	public override Single Volume => Configuration.Audio.MovieVolume / 100f;
 
 }

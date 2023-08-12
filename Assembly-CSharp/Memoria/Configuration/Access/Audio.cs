@@ -19,6 +19,12 @@ namespace Memoria
                 set => Instance._audio.MusicVolume.Value = value;
             }
 
+            public static Int32 MovieVolume
+            {
+                get => Instance._audio.MovieVolume;
+                set => Instance._audio.MovieVolume.Value = value;
+            }
+
             public static Boolean PriorityToOGG => Instance._audio.PriorityToOGG;
 
             public static void SaveSoundVolume()
