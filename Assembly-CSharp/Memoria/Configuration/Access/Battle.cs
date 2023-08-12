@@ -6,7 +6,7 @@ namespace Memoria
     {
         public static class Battle
         {
-            public static Boolean SFXRework => Instance._battle.SFXRework || Speed >= 3;
+            public static Boolean SFXRework => Instance._battle.SFXRework || Speed > 0;
             public static Int32 Speed => GetBattleSpeed();
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
