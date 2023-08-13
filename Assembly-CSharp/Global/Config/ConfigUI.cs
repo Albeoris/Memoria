@@ -37,8 +37,6 @@ using UnityEngine;
 
 public class ConfigUI : UIScene
 {
-    private const Int32 VIBRATION_CONFIG_INDEX = 12;
-
     private enum TriggerState
     {
         Idle,
@@ -699,8 +697,7 @@ public class ConfigUI : UIScene
 
     private void RemoveCursorMemorize()
     {
-        ConfigField configField = ConfigFieldList.First(field => field.Configurator == Configurator.Sound);
-        ButtonGroupState.SetCursorStartSelect(configField.ConfigParent, ConfigGroupButton);
+        ButtonGroupState.SetCursorStartSelect(ConfigFieldList[0].ConfigParent, ConfigGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ConfigGroupButton);
     }
 
@@ -722,8 +719,8 @@ public class ConfigUI : UIScene
             }
             else
             {
-                Int32 siblingIndex = go.transform.GetSiblingIndex();
-                if (siblingIndex == 2)
+                Configurator config = ConfigFieldList.First(field => field.ConfigParent == go)?.Configurator ?? (Configurator)(-1);
+                if (config == Configurator.Controller)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -732,7 +729,7 @@ public class ConfigUI : UIScene
                         CheckAndDisplayCustomControllerPanel();
                     }
                 }
-                else if (siblingIndex == 15)
+                else if (config == Configurator.Title)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.None;
@@ -746,7 +743,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (siblingIndex == 13)
+                else if (config == Configurator.ControlTutorial)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.Confirm;
@@ -762,7 +759,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (siblingIndex == 14)
+                else if (config == Configurator.CombatTutorial)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     NextSceneIsModal = true;
@@ -775,7 +772,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (siblingIndex == 16)
+                else if (config == Configurator.QuitGame)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     UIManager.Input.OnQuitCommandDetected();
@@ -784,23 +781,19 @@ public class ConfigUI : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == WarningMenuGroupButton)
         {
-            Int32 siblingIndex2 = go.transform.GetSiblingIndex();
-            Int32 num = siblingIndex2;
-            if (num != 2)
+            Int32 num = go.transform.GetSiblingIndex();
+            if (num == 3)
             {
-                if (num == 3)
+                FF9Sfx.FF9SFX_Play(101);
+                Loading = true;
+                WarningDialogHitPoint.SetActive(false);
+                warningTransition.TweenOut(delegate
                 {
-                    FF9Sfx.FF9SFX_Play(101);
-                    Loading = true;
-                    WarningDialogHitPoint.SetActive(false);
-                    warningTransition.TweenOut(delegate
-                    {
-                        Loading = false;
-                    });
-                    ButtonGroupState.ActiveGroup = ConfigGroupButton;
-                }
+                    Loading = false;
+                });
+                ButtonGroupState.ActiveGroup = ConfigGroupButton;
             }
-            else
+            else if (num == 2)
             {
                 FF9Sfx.FF9SFX_Play(103);
                 WarningDialogHitPoint.SetActive(false);
@@ -1315,7 +1308,7 @@ public class ConfigUI : UIScene
     {
         ValidateKeyboard();
         ValidateController();
-        
+
         // TODO Check Native: #147 - Will incombaitble with Android and PC with Controller? O.o
         // this.currentControllerType = ControllerType.Keyboard;
         if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
@@ -1459,33 +1452,24 @@ public class ConfigUI : UIScene
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         ConfigFieldList = new List<ConfigField>();
-		// If the cheats of the Configuration menu are disabled, hide them and expand the ConfigList menu
-		if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
-			ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
-        Int32 configCount = ConfigList.GetChild(1).GetChild(0).transform.childCount;
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
             ConfigField configField = new ConfigField();
             GameObject configTopObj = trans.gameObject;
-            Int32 id = configTopObj.GetComponent<ScrollItemKeyNavigation>().ID;
-            
-            // Hide vibration settings from menu
-            if (!FF9StateSystem.IsPlatformVibration)
+            Configurator id = (Configurator)configTopObj.GetComponent<ScrollItemKeyNavigation>().ID;
+
+            // Remove vibration settings from menu
+            if (id == Configurator.Vibration && !FF9StateSystem.IsPlatformVibration)
             {
-                if (id == VIBRATION_CONFIG_INDEX) // Configurator.Vibration
-                {
-                    configCount--;
-                    gameObject.SetActive(false);
-                }
-                else if (id > VIBRATION_CONFIG_INDEX) //  ControlTutorial, CombatTutorial, Title, QuitGame
-                {
-                    gameObject.GetComponent<ScrollItemKeyNavigation>().ID = id - 1;
-                }
+                configTopObj.SetActive(false);
+                Destroy(configTopObj);
+                continue;
             }
-            
+
+            configTopObj.GetComponent<ScrollItemKeyNavigation>().ID = ConfigFieldList.Count;
             configField.ConfigParent = configTopObj;
             configField.Button = configTopObj.GetComponent<ButtonGroupState>();
-            configField.Configurator = (Configurator)id;
+            configField.Configurator = id;
             if (ConfigSliderIdList.Contains(configField.Configurator))
             {
                 configField.ConfigChoice.Add(trans.GetChild(1).GetChild(1).gameObject);
@@ -1512,16 +1496,23 @@ public class ConfigUI : UIScene
             UIEventListener.Get(trans.gameObject).onNavigate += OnKeyChoice;
             ConfigFieldList.Add(configField);
         }
-        
-        if (!FF9StateSystem.IsPlatformVibration)
+
+        // Update onUp and onDown
+        for (int i = 0; i < ConfigFieldList.Count; i++)
         {
-            this.ConfigFieldList[VIBRATION_CONFIG_INDEX - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = this.ConfigFieldList[VIBRATION_CONFIG_INDEX + 1].ConfigParent;
-            this.ConfigFieldList[VIBRATION_CONFIG_INDEX + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = this.ConfigFieldList[VIBRATION_CONFIG_INDEX - 1].ConfigParent;
+            var navig = ConfigFieldList[i].ConfigParent.GetComponent<UIKeyNavigation>();
+            navig.onUp = null;
+            if (i > 1) navig.onUp = ConfigFieldList[i - 1].ConfigParent;
+            navig.onDown = null;
+            if (i < ConfigFieldList.Count - 2) navig.onDown = ConfigFieldList[i + 1].ConfigParent;
         }
-        
+
+        // Put the cursor on first field
+        ButtonGroupState.SetCursorStartSelect(ConfigFieldList[0].ConfigParent, ConfigGroupButton);
+
         configScrollButton = ConfigList.GetChild(0).GetComponent<ScrollButton>();
         configScrollView = ConfigList.GetChild(1).GetComponent<SnapDragScrollView>();
-        configScrollView.MaxItem = configCount;
+        configScrollView.MaxItem = ConfigFieldList.Count;
         UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).onClick += onClick;
         UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).onClick += onClick;
         warningTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenClipping>();
@@ -1543,7 +1534,14 @@ public class ConfigUI : UIScene
         configScrollButton.DisplayScrollButton(false, false);
         transform.GetChild(3).GetChild(4).gameObject.SetActive(false);
         backButtonGameObject = ControlPanelGroup.GetChild(1);
-		if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
-			BoosterPanel.SetActive(false);
+
+        // If the cheats of the Configuration menu are disabled, remove them and expand the ConfigList menu
+        if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
+        {
+            ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
+            BoosterPanel.SetActive(false);
+            Destroy(BoosterPanel);
+            configScrollView.VisibleItem += 2;
+        }
     }
 }
