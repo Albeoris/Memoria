@@ -36,6 +36,11 @@ namespace Memoria
             {
                 SaveValue(Instance._audio.Name, Instance._audio.MusicVolume);
             }
+
+            public static void SaveMovieVolume()
+            {
+                SaveValue(Instance._audio.Name, Instance._audio.MovieVolume);
+            }
         }
     }
 }
