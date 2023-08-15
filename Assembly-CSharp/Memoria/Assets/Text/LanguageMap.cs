@@ -57,7 +57,7 @@ namespace Memoria.Assets
             _failback = _languages[_failbackLanguage];
             _current = _failback;
 
-            LoadLocalizationExtention(cellLanguages);
+            LoadLocalizationExtension(cellLanguages);
             LoadModText(cellLanguages);
             LoadExternalText();
         }
@@ -177,7 +177,7 @@ namespace Memoria.Assets
             }
         }
 
-        private void LoadLocalizationExtention(Dictionary<Int32, String> cellLanguages)
+        private void LoadLocalizationExtension(Dictionary<Int32, String> cellLanguages)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Assembly-CSharp.Memoria.Assets.Text.LocalizationExtension.csv";
