@@ -329,7 +329,7 @@ public class MusicPlayer : SoundPlayer
 		}
 	}
 
-	public override Single Volume => FF9StateSystem.Settings.cfg.IsMusicEnabled ? Configuration.Audio.MusicVolume / 100f : 0f;
+	public override Single Volume => Configuration.Audio.MusicVolume / 100f;
 
 	public SoundDatabase soundDatabase = new SoundDatabase();
 

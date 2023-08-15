@@ -274,5 +274,5 @@ public class SoundEffectPlayer : SoundPlayer
 
 	private SoundProfile activeSoundEffect;
 
-	public override Single Volume => FF9StateSystem.Settings.cfg.IsSoundEnabled ? Memoria.Configuration.Audio.SoundVolume / 100f : 0f;
+	public override Single Volume => Memoria.Configuration.Audio.SoundVolume / 100f;
 }

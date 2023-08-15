@@ -392,7 +392,7 @@ public class SfxSoundPlayer : SoundPlayer
 
     private Int32 playingAtFrameCount;
 
-    public override Single Volume => FF9StateSystem.Settings.cfg.IsSoundEnabled ? Configuration.Audio.SoundVolume / 100f : 0f;
+    public override Single Volume => Configuration.Audio.SoundVolume / 100f;
 
 	private SoundProfile loadingSoundProfile;
 }
