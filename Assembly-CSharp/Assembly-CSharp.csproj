@@ -1365,6 +1365,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Memoria\Assets\Text\LocalizationExtention.csv" />
     <None Include="Memoria\Characters\AnimationList.csv" />
     <EmbeddedResource Include="Memoria\Configuration\Memoria.ini" />
     <None Include="NCalc\Grammar\NCalc.g" />

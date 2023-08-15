@@ -1511,7 +1511,7 @@ public class ConfigUI : UIScene
         }
     }*/
 
-    private GameObject CreateVolumeSlider(GameObject template, string name, Configurator id, int siblingIndex)
+    private GameObject CreateVolumeSlider(GameObject template, Configurator id, int siblingIndex)
     {
         try
         {
@@ -1523,12 +1523,12 @@ public class ConfigUI : UIScene
             go.name = $"{name} Panel - Slider";
             go.GetComponent<ScrollItemKeyNavigation>().ID = (int)id;
 
-            var locales = go.GetComponentsInChildren<UILocalize>();
-            foreach (var l in locales) DestroyImmediate(l);
+            var locs = go.GetComponentsInChildren<UILocalize>();
+            locs[0].key = id.ToString();
+            DestroyImmediate(locs[1]);
+            DestroyImmediate(locs[2]);
 
             var labels = go.GetComponentsInChildren<UILabel>();
-            labels[0].text = name; // TODO: localization
-            labels[1].text = "0";
             Destroy(labels[2]);
 
             var slider = go.GetComponentInChildren<UISlider>();
@@ -1552,11 +1552,11 @@ public class ConfigUI : UIScene
         // Adding the volume sliders
         UITable table = ConfigList.GetChild(1).GetChild(0).GetComponent<UITable>();
         GameObject template = table.gameObject.GetChild((int)Configurator.FieldMessage);
-        CreateVolumeSlider(template, "Sound Volume", Configurator.SoundVolume, 0);
-        CreateVolumeSlider(template, "Music Volume", Configurator.MusicVolume, 1);
-        CreateVolumeSlider(template, "Movie Volume", Configurator.MovieVolume, 2);
+        CreateVolumeSlider(template, Configurator.SoundVolume, 0);
+        CreateVolumeSlider(template, Configurator.MusicVolume, 1);
+        CreateVolumeSlider(template, Configurator.MovieVolume, 2);
         if (Configuration.VoiceActing.Enabled)
-            CreateVolumeSlider(template, "Voice Volume", Configurator.VoiceVolume, 3);
+            CreateVolumeSlider(template, Configurator.VoiceVolume, 3);
 
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
