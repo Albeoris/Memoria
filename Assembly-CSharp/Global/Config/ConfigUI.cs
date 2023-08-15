@@ -1040,7 +1040,7 @@ public class ConfigUI : UIScene
             ConfigField configField = ConfigFieldList.First(field => field.ConfigParent == go);
             if (configField.IsSlider)
             {
-                var step = configField.ConfigChoice[0].GetComponent<UISlider>().numberOfSteps;
+                var step = configField.ConfigChoice[0].GetComponent<UISlider>().numberOfSteps - 1;
                 if (key == KeyCode.LeftArrow)
                 {
                     setConfigValue(configField.ConfigParent, configField.Value - 1f / step, false);
