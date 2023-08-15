@@ -180,7 +180,7 @@ namespace Memoria.Assets
         private void LoadLocalizationExtention(Dictionary<Int32, String> cellLanguages)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Assembly-CSharp.Memoria.Assets.Text.LocalizationExtention.csv";
+            var resourceName = "Assembly-CSharp.Memoria.Assets.Text.LocalizationExtension.csv";
 
             using Stream stream = assembly.GetManifestResourceStream(resourceName);
             Byte[] tableData = new Byte[stream.Length];
