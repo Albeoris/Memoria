@@ -356,13 +356,7 @@ public partial class BattleHUD : UIScene
                 return true;
             if (!_hidingHud && ButtonGroupState.ActiveGroup == CommandGroupButton)
             {
-                if(Configuration.Battle.Speed == 2)
-                {
-                    // After many considerations I came to the conclusion that trying to
-                    // switch character when playing turn-based should just defend.
-                    OnKeyConfirm(_commandPanel.Defend.GameObject);
-                }
-                else if (ReadyQueue.Count > 1)
+                if (ReadyQueue.Count > 1)
                 {
                     Int32 postponed = ReadyQueue[0];
                     ReadyQueue.RemoveAt(0);
@@ -387,7 +381,11 @@ public partial class BattleHUD : UIScene
                 }
                 else if (ReadyQueue.Count == 1)
                 {
-                    SwitchPlayer(ReadyQueue[0]);
+                    if (Configuration.Battle.Speed == 2)
+                        // In turn-based we defend if no other players are ready
+                        OnKeyConfirm(_commandPanel.Defend.GameObject);
+                    else
+                        SwitchPlayer(ReadyQueue[0]);
                 }
             }
             if (Configuration.Battle.AccessMenus <= 0)
