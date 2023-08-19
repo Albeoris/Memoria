@@ -290,7 +290,7 @@ namespace Memoria.Data
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
-                            continue;
+                                continue;
                     }
                     if (effect.Priority > retainedPriority)
                     {
@@ -462,7 +462,7 @@ namespace Memoria.Data
                     if (pathsValue.IndexOf(',') > 0)
                     {
                         Int32 p = pathsValue.LastIndexOf('/');
-                        String folder = (p < 0) ? "" : folder = pathsValue.Substring(0, p + 1);
+                        String folder = (p < 0) ? "" : pathsValue.Substring(0, p + 1);
                         String[] files = (p < 0) ? pathsValue.Split(',') : pathsValue.Substring(p + 1).Split(',');
                         paths = new String[files.Length];
                         for (Int32 j = 0; j < files.Length; j++)

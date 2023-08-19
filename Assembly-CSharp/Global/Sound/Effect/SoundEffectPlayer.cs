@@ -200,7 +200,7 @@ public class SoundEffectPlayer : SoundPlayer
 	private void PlaySoundEffect(SoundProfile soundProfile)
 	{
 		base.CreateSound(soundProfile);
-		base.StartSound(soundProfile, 1f);
+		base.StartSound(soundProfile, Volume);
 		this.playedEffectSet.Add(soundProfile.SoundID);
 		soundProfile.SoundProfileState = SoundProfileState.Released;
 		this.gameSoundDatabase.Update(soundProfile);
