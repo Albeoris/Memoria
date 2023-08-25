@@ -46,7 +46,6 @@ public class ConfigUI : UIScene
 
     public enum Configurator
     {
-        Invalid = -1,
         Sound,
         SoundEffect,
         Controller,
@@ -728,17 +727,17 @@ public class ConfigUI : UIScene
             }
             else
             {
-                Configurator config = ConfigFieldList.First(field => field.ConfigParent == go)?.Configurator ?? Configurator.Invalid;
-                if (config == Configurator.Controller)
+                ConfigField config = ConfigFieldList.First(field => field.ConfigParent == go);
+                if (config?.Configurator == Configurator.Controller)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    if (ConfigFieldList[2].Value == 1f)
+                    if (config.Value == 1f)
                     {
                         CheckAndDisplayCustomControllerPanel();
                     }
                 }
-                else if (config == Configurator.Title)
+                else if (config?.Configurator == Configurator.Title)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.None;
@@ -752,7 +751,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (config == Configurator.ControlTutorial)
+                else if (config?.Configurator == Configurator.ControlTutorial)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.Confirm;
@@ -768,7 +767,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (config == Configurator.CombatTutorial)
+                else if (config?.Configurator == Configurator.CombatTutorial)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     NextSceneIsModal = true;
@@ -781,7 +780,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (config == Configurator.QuitGame)
+                else if (config?.Configurator == Configurator.QuitGame)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     UIManager.Input.OnQuitCommandDetected();
