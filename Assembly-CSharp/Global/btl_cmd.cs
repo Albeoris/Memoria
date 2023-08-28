@@ -546,7 +546,8 @@ public class btl_cmd
             Int16 px, pz;
             btlseq.SeqSubTargetAveragePos(btlsys.cur_cmd.tar_id, out px, out pz);
             BTL_DATA camTrg = btlseq.SeqSubGetTarget(btlsys.cur_cmd.tar_id);
-            SFX.SetCameraTarget(new Vector3(px, 0f, pz), btlsys.cur_cmd.regist, camTrg);
+            if(btlsys.cur_cmd.regist != null && camTrg != null)
+                SFX.SetCameraTarget(new Vector3(px, 0f, pz), btlsys.cur_cmd.regist, camTrg);
 
             // Reset background intensity so it doesn't get stuck
             if (UnifiedBattleSequencer.BattleAction.bbgIntensity.Count > 0)
