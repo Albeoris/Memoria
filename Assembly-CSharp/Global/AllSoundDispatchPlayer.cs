@@ -135,6 +135,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					this.CreateSound(soundProfile);
 					soundProfile.SoundVolume = 1f;
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.MusicPlayer.Volume, 0);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
 					Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 					if (fldMapNo == 503 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2970 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 11 && ObjNo == 35)
@@ -460,7 +461,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
 				soundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
-				Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.MusicPlayer.Volume, offsetTimeMSec);
 			}
 		});
 	}
@@ -523,7 +525,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		if (ObjNo == 1748)
 		{
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.6f, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.6f * SoundLib.SoundEffectPlayer.Volume, 0);
 			soundProfile.Pitch *= 0.6f;
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 			return 1;
@@ -880,6 +882,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				base.CreateSound(soundProfile);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.SoundEffectPlayer.Volume, 0);
 				this.currentSongID = soundProfile.SoundIndex;
 			});
 		}

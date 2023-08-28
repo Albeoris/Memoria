@@ -816,7 +816,7 @@ public static class UnifiedBattleSequencer
 										if (pr == null)
 											throw new NullReferenceException();
 										SoundPlayer.StaticCreateSound(pr);
-										SoundPlayer.StaticStartSound(pr);
+										SoundPlayer.StaticStartSound(pr, SoundLib.SoundEffectPlayer.Volume);
 									}, null);
 							}
 							catch (Exception err)
