@@ -4,8 +4,7 @@ Final Fantasy IX Engine
 # Updates
 1. Update the game to the **latest** version.
 2. Update Memoria to the **latest** version.
-3. **Delete** "Memoria.ini" from the game directory (otherwise you will not see any new settings).
-4. Patch again
+3. Patch again
 
 
 # Build
