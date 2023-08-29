@@ -7,20 +7,14 @@ using UnityEngine;
 
 public class SfxSoundPlayer : SoundPlayer
 {
-	public void SetVolume(Int32 volume)
-	{
-		this.playerVolume = volume / 100f;
-		this.UpdatePlayingSoundVolume();
-	}
-
-	private void UpdatePlayingSoundVolume()
+	public void UpdateVolume()
 	{
 		foreach (Int32 key in this.playingDict.Keys)
 		{
 			SoundProfile soundProfile = this.playingDict[key];
 			if (this.residentSoundDatabase.Read(soundProfile.SoundIndex) != null)
 			{
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.playerVolume, 0);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
 			}
 		}
 	}
@@ -145,7 +139,7 @@ public class SfxSoundPlayer : SoundPlayer
         ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
         if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
         {
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.playerVolume, 0);
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
             SoundLib.Log("Panning: " + soundProfile.Panning);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
             Int32 fastForwardFactor = HonoBehaviorSystem.Instance.GetFastForwardFactor();
@@ -398,7 +392,7 @@ public class SfxSoundPlayer : SoundPlayer
 
     private Int32 playingAtFrameCount;
 
-    private Single playerVolume = 1f;
+    public override Single Volume => Configuration.Audio.SoundVolume / 100f;
 
 	private SoundProfile loadingSoundProfile;
 }

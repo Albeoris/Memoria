@@ -6,7 +6,7 @@ public class MusicPlayer : SoundPlayer
 {
 	public MusicPlayer()
 	{
-		this.playerVolume = Configuration.Audio.MusicVolume / 100f;
+		this.previousPlayerVolume = this.Volume;
 		this.playerPitch = 1f;
 		this.playerPanning = 0f;
 		this.fadeInDuration = 0f;
@@ -40,12 +40,7 @@ public class MusicPlayer : SoundPlayer
 		base.UnloadResource(this.soundDatabase);
 	}
 
-	public void PlayMusic(Int32 soundIndex)
-	{
-		this.PlayMusic(soundIndex, 0, SoundProfileType.Music);
-	}
-
-	public void PlayMusic(Int32 soundIndex, Int32 fadeIn, SoundProfileType type = SoundProfileType.Music)
+	public void PlayMusic(Int32 soundIndex, Int32 fadeIn = 0, SoundProfileType type = SoundProfileType.Music)
 	{
 		SoundProfile soundProfile = this.soundDatabase.Read(soundIndex);
 		if (soundProfile == null)
@@ -111,7 +106,7 @@ public class MusicPlayer : SoundPlayer
 			if (this.activeSoundProfile.SoundProfileState == SoundProfileState.Paused)
 			{
 				this.stateTransition.Transition(soundProfileFromIndex, new SdLibSoundProfileStateGraph.TransitionDelegate(base.ResumeSound));
-				this.SetMusicVolume(this.playerVolume * this.optionVolume, soundProfileFromIndex);
+				this.SetMusicVolume(this.Volume, soundProfileFromIndex);
 				this.SetMusicPanning(this.playerPanning, soundProfileFromIndex);
 				this.SetMusicPitch(this.playerPitch, soundProfileFromIndex);
 			}
@@ -125,8 +120,7 @@ public class MusicPlayer : SoundPlayer
 			if (this.upcomingSoundProfile != null && (this.upcomingSoundProfile.SoundProfileState == SoundProfileState.CrossfadeIn || this.upcomingSoundProfile.SoundProfileState == SoundProfileState.Paused))
 			{
 				this.stateTransition.Transition(this.upcomingSoundProfile, new SdLibSoundProfileStateGraph.TransitionDelegate(base.ResumeSound));
-				this.upcomingSoundProfile.SoundVolume = this.playerVolume * this.optionVolume;
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.upcomingSoundProfile.SoundID, this.playerVolume * this.optionVolume, (Int32)(this.fadeInTimeRemain * 1000f));
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.upcomingSoundProfile.SoundID, this.upcomingSoundProfile.SoundVolume * this.Volume, (Int32)(this.fadeInTimeRemain * 1000f));
 				this.SetMusicPanning(this.playerPanning, this.upcomingSoundProfile);
 				this.SetMusicPitch(this.playerPitch, this.upcomingSoundProfile);
 				this.activeSoundProfile = this.upcomingSoundProfile;
@@ -177,8 +171,7 @@ public class MusicPlayer : SoundPlayer
 			return;
 		}
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-		soundProfile.SoundVolume = this.playerVolume * this.optionVolume;
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, this.playerVolume * this.optionVolume, (Int32)(this.fadeInDuration * 1000f));
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, (Int32)(this.fadeInDuration * 1000f));
 		this.SetMusicPanning(this.playerPanning, soundProfile);
 		this.SetMusicPitch(this.playerPitch, soundProfile);
 		this.upcomingSoundProfile = soundProfile;
@@ -237,44 +230,39 @@ public class MusicPlayer : SoundPlayer
 		}
 	}
 
-	public void SetOptionVolume(Int32 volume)
+	public void UpdateVolume()
 	{
-		this.optionVolume = volume / 100f;
-		this.SetMusicVolume(this.playerVolume);
+		this.SetMusicVolume(this.Volume);
+		this.previousPlayerVolume = this.Volume;
 	}
 
 	public void SetMusicVolume(Single volume)
 	{
-		Single oldPlayerVolume = this.playerVolume;
-		this.playerVolume = volume;
 		if (this.activeSoundProfile != null && this.activeSoundProfile.SoundProfileState == SoundProfileState.Played)
 		{
 			this.SetMusicVolume(volume, this.activeSoundProfile);
 		}
 		if (this.upcomingSoundProfile != null && this.upcomingSoundProfile.SoundProfileState == SoundProfileState.CrossfadeIn)
 		{
-			this.SetMusicVolumeWhileFade(oldPlayerVolume, volume, this.upcomingSoundProfile);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.upcomingSoundProfile.SoundID, volume, (Int32)(this.fadeInTimeRemain * 1000f));
+			this.SetMusicVolumeWhileFade(this.previousPlayerVolume, volume, this.upcomingSoundProfile);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.upcomingSoundProfile.SoundID, this.upcomingSoundProfile.SoundVolume * volume, (Int32)(this.fadeInTimeRemain * 1000f));
 		}
 	}
 
 	private void SetMusicVolume(Single volume, SoundProfile soundProfile)
 	{
-		soundProfile.SoundVolume = this.optionVolume * volume;
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * volume, 0);
 	}
 
 	private void SetMusicVolumeWhileFade(Single oldPlayerVolume, Single newPlayerVolume, SoundProfile soundProfile)
 	{
-		Single num = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
 		Single volume = 0f;
 		if (oldPlayerVolume != 0f)
 		{
-			Single num2 = num / oldPlayerVolume;
-			Single num3 = newPlayerVolume - oldPlayerVolume;
-			volume = num + num3 * num2;
+			Single factor =  newPlayerVolume / oldPlayerVolume;
+			volume = factor * ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
 		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, volume, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * volume, 0);
 	}
 
 	public void SetMusicPanning(Single panning)
@@ -327,7 +315,6 @@ public class MusicPlayer : SoundPlayer
 	{
 		if (this.upcomingSoundProfile != null)
 		{
-			Single num = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(this.upcomingSoundProfile.SoundID);
 			this.fadeInTimeRemain -= Time.deltaTime;
 			if (this.fadeInTimeRemain <= 0f)
 			{
@@ -342,6 +329,8 @@ public class MusicPlayer : SoundPlayer
 		}
 	}
 
+	public override Single Volume => Configuration.Audio.MusicVolume / 100f;
+
 	public SoundDatabase soundDatabase = new SoundDatabase();
 
 	private SoundDatabase onTheFlySoundDatabase = new SoundDatabase();
@@ -352,8 +341,7 @@ public class MusicPlayer : SoundPlayer
 
 	private SoundProfile upcomingSoundProfile;
 
-	private Single playerVolume;
-
+	private Single previousPlayerVolume;
 	private Single playerPitch;
 
 	private Single playerPanning;
@@ -367,6 +355,4 @@ public class MusicPlayer : SoundPlayer
 	private SoundProfile onTheFlyLoadedSoundProfile;
 
 	private Int32 onTheFlyLoadedFadeIn;
-
-	private Single optionVolume = 1f;
 }

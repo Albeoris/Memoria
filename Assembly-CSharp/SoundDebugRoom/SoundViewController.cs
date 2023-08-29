@@ -133,7 +133,7 @@ namespace SoundDebugRoom
 			}
 			else if (this.activeSound.SoundProfileType == SoundProfileType.MovieAudio)
 			{
-				SoundLib.movieAudioPlayer.SetMusicPitch(pitch);
+				SoundLib.MovieAudioPlayer.SetMusicPitch(pitch);
 			}
 		}
 

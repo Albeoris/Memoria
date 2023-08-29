@@ -139,15 +139,19 @@ namespace Memoria.Launcher
             tripleTriadBox.FontSize = 10;
             tripleTriadBox.Margin = rowMargin;
 
-            UiTextBlock soundVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SoundVolume), row++, 0, 1, 8);
+            UiTextBlock volumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Volume), row++, 0, 1, 8);
+            volumeText.Foreground = Brushes.White;
+            volumeText.Margin = rowMargin;
+
+            UiTextBlock soundVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SoundVolume), row, 0, 1, 3);
             soundVolumeText.Foreground = Brushes.White;
             soundVolumeText.Margin = rowMargin;
-            UiTextBlock soundVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 2);
+            UiTextBlock soundVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
             soundVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
             soundVolumeTextIndex.Foreground = Brushes.White;
             soundVolumeTextIndex.Margin = rowMargin;
-            //soundVolumeTextIndex.TextAlignment = TextAlignment.Right;
-            Slider soundVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row++, 2, 1, 6);
+            soundVolumeTextIndex.TextAlignment = TextAlignment.Right;
+            Slider soundVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row++, 3, 1, 6);
             soundVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
             soundVolumeSlider.TickFrequency = 5;
             soundVolumeSlider.IsSnapToTickEnabled = true;
@@ -155,20 +159,37 @@ namespace Memoria.Launcher
             soundVolumeSlider.Maximum = 100;
             soundVolumeSlider.Margin = rowMargin;
 
-            UiTextBlock musicVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MusicVolume), row++, 0, 1, 8);
+            UiTextBlock musicVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MusicVolume), row, 0, 1, 3);
             musicVolumeText.Foreground = Brushes.White;
             musicVolumeText.Margin = rowMargin;
-            UiTextBlock musicVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 2);
+            UiTextBlock musicVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
             musicVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
             musicVolumeTextIndex.Foreground = Brushes.White;
             musicVolumeTextIndex.Margin = rowMargin;
-            Slider musicVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row++, 2, 1, 6);
+            musicVolumeTextIndex.TextAlignment = TextAlignment.Right;
+            Slider musicVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row++, 3, 1, 6);
             musicVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
             musicVolumeSlider.TickFrequency = 5;
             musicVolumeSlider.IsSnapToTickEnabled = true;
             musicVolumeSlider.Minimum = 0;
             musicVolumeSlider.Maximum = 100;
             musicVolumeSlider.Margin = rowMargin;
+
+            UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 6);
+            movieVolumeText.Foreground = Brushes.White;
+            movieVolumeText.Margin = rowMargin;
+            UiTextBlock movieVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
+            movieVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
+            movieVolumeTextIndex.Foreground = Brushes.White;
+            movieVolumeTextIndex.Margin = rowMargin;
+            movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
+            Slider movieVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row++, 3, 1, 6);
+            movieVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
+            movieVolumeSlider.TickFrequency = 5;
+            movieVolumeSlider.IsSnapToTickEnabled = true;
+            movieVolumeSlider.Minimum = 0;
+            movieVolumeSlider.Maximum = 100;
+            movieVolumeSlider.Margin = rowMargin;
 
             if (PsxFontInstalled)
             {
@@ -360,6 +381,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 MovieVolume
+        {
+            get { return _movievolume; }
+            set
+            {
+                if (_movievolume != value)
+                {
+                    _movievolume = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 UseGarnetFont
         {
             get { return _usegarnetfont; }
@@ -421,7 +454,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _soundvolume, _musicvolume, _usegarnetfont, _scaledbattleui;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -533,6 +566,15 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _musicvolume))
                     _musicvolume = 100;
 
+                value = iniFile.ReadValue("Audio", nameof(MovieVolume));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = "100";
+                    OnPropertyChanged(nameof(MovieVolume));
+                }
+                if (!Int16.TryParse(value, out _movievolume))
+                    _movievolume = 100;
+
                 Refresh(nameof(WidescreenSupport));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(SkipIntros));
@@ -542,6 +584,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(BattleSwirlFrames));
                 Refresh(nameof(SoundVolume));
                 Refresh(nameof(MusicVolume));
+                Refresh(nameof(MovieVolume));
 
                 if (PsxFontInstalled) {
                     value = iniFile.ReadValue("Font", "Enabled");
@@ -670,6 +713,9 @@ namespace Memoria.Launcher
                         break;
                     case nameof(MusicVolume):
                         iniFile.WriteValue("Audio", propertyName, " " + MusicVolume);
+                        break;
+                    case nameof(MovieVolume):
+                        iniFile.WriteValue("Audio", propertyName, " " + MovieVolume);
                         break;
                     case nameof(UseGarnetFont):
                         iniFile.WriteValue("Graphics", propertyName, " " + UseGarnetFont);

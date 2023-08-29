@@ -1,0 +1,8 @@
+SoundVolume,Sound Volume,Sound Volume,サウンド音量,Volumen de sonidos,Volume des sons,Lautstärke der Geräusche,Volume dei suoni
+MusicVolume,Music Volume,Music Volume,音楽の音量,Volumen de la música,Volume de la musique,Musiklautstärke,Volume della musica
+MovieVolume,Movie Volume,Movie Volume,動画の音量,Volumen de la película,Volume des films,Filmlautstärke,Volume di film
+VoiceVolume,Voice Volume,Voice Volume,音声音量,Volumen de voz,Volume des voix,Stimmen Lautstärke,Volume della voce
+ATBModeNormal,Mode: Normal,Mode: Normal,ATBモード: 通常,Modo: Normal,Mode : Normal,Modus: Normaler,Modalità: Normale
+ATBModeFast,Mode: Fast,Mode: Fast,ATBモード: 高速,Modo: Rápido,Mode : Rapide,Modus: Schneller,Modalità: Veloce
+ATBModeTurnBased,Mode: Turn-Based,Mode: Turn-Based,ATBモード: ターン制,Modo: Por Turnos,Mode : Par Tour,Modus: Turn,Modalità: A Turni
+ATBModeDynamic,Mode: Dynamic,Mode: Dynamic,ATBモード: 動的,Modo: Dinámico,Mode: Dynamique,Modus: Dynamischer,Modalità: Dinamica
