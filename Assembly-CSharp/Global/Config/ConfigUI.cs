@@ -1650,5 +1650,9 @@ public class ConfigUI : UIScene
             Destroy(BoosterPanel);
             configScrollView.VisibleItem += 2;
         }
+        else
+        {
+            ConfigFieldList[ConfigFieldList.Count - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = masterSkillButtonGameObject;
+        }
     }
 }

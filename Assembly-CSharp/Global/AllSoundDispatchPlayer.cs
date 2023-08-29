@@ -462,7 +462,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
 				soundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.MusicPlayer.Volume, offsetTimeMSec);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.MusicPlayer.Volume, 0);
 			}
 		});
 	}

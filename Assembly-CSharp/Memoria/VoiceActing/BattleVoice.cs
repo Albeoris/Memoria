@@ -290,7 +290,7 @@ namespace Memoria.Data
                         c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
-                                continue;
+                            continue;
                     }
                     if (effect.Priority > retainedPriority)
                     {

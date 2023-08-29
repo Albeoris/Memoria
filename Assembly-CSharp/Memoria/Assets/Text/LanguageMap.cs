@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
 using UnityEngine;
@@ -57,7 +56,6 @@ namespace Memoria.Assets
             _failback = _languages[_failbackLanguage];
             _current = _failback;
 
-            LoadLocalizationExtension(cellLanguages);
             LoadModText(cellLanguages);
             LoadExternalText();
         }
@@ -166,7 +164,7 @@ namespace Memoria.Assets
         private void LoadModText(Dictionary<Int32, String> cellLanguages)
         {
             String inputPath = DataResources.Text.PureDirectory + DataResources.Text.LocalizationPatchFile;
-            foreach(AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
             {
                 if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                 {
@@ -175,18 +173,6 @@ namespace Memoria.Assets
                     ReadText(reader, cellLanguages, false);
                 }
             }
-        }
-
-        private void LoadLocalizationExtension(Dictionary<Int32, String> cellLanguages)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Assembly-CSharp.Memoria.Assets.Text.LocalizationExtension.csv";
-
-            using Stream stream = assembly.GetManifestResourceStream(resourceName);
-            Byte[] tableData = new Byte[stream.Length];
-            stream.Read(tableData, 0, (int)stream.Length);
-            ByteReader reader = new ByteReader(tableData);
-            ReadText(reader, cellLanguages, false);
         }
 
         private void LoadExternalText()
