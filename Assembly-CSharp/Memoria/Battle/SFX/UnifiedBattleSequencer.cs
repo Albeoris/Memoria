@@ -206,6 +206,12 @@ public static class UnifiedBattleSequencer
 				case "WaitAnimation":
 					code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
 					runningThread.waitAnimId |= (UInt16)(tmpChar & animatedChar);
+					if(btl_cmd.cmdSkipFirstWaitAnim == cmd)
+                    {
+						// Skip the very first wait that prevent immediate action in fast and turn-based
+						runningThread.waitAnimId = 0;
+						btl_cmd.cmdSkipFirstWaitAnim = null;
+					}
 					break;
 				case "WaitMove":
 					code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
@@ -1087,6 +1093,7 @@ public static class UnifiedBattleSequencer
 					}
 					break;
 			}
+			if (btl_cmd.cmdSkipFirstWaitAnim == cmd) btl_cmd.cmdSkipFirstWaitAnim = null;
 		}
 
 		public Boolean ExecuteLoop()
