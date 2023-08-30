@@ -541,46 +541,21 @@ public class btl_cmd
         }
         else if (!admitNewCommand && Configuration.Battle.Speed > 0 && btlsys.cur_cmd_list.Count < 2 && btlsys.cmd_queue?.next != null && btlsys.cur_cmd.info.effect_counter > 0)
         {
-            // Move the camera to a wide shot
-            // Unlike SkipCameraAnimation, SetCameraTarget doesn't seem to cause issues
-            Int16 px, pz;
-            btlseq.SeqSubTargetAveragePos(btlsys.cur_cmd.tar_id, out px, out pz);
-            BTL_DATA camTrg = btlseq.SeqSubGetTarget(btlsys.cur_cmd.tar_id);
-            if(btlsys.cur_cmd.regist != null && camTrg != null)
-                SFX.SetCameraTarget(new Vector3(px, 0f, pz), btlsys.cur_cmd.regist, camTrg);
-
-            // Reset background intensity so it doesn't get stuck
-            if (UnifiedBattleSequencer.BattleAction.bbgIntensity.Count > 0)
-            {
-                UnifiedBattleSequencer.BattleAction.bbgIntensity.Clear();
-                battlebg.nf_SetBbgIntensity(128);
-            }
-
-            // Removing wait time
             foreach (var action in UnifiedBattleSequencer.runningActions)
             {
                 if (action.cmd != btlsys.cur_cmd) continue;
 
+                admitNewCommand = true;
                 foreach (var th in action.threadList)
                 {
-                    th.waitFrame = 0;
-                    th.waitSFX = -1;
-                    var toRemove = new List<BattleActionCode>();
+                    if (!th.active) continue;
                     foreach (var c in th.code)
                     {
-                        switch (c.operation)
-                        {
-                            case "Wait":
-                            case "WaitMonsterSFXDone":
-                            case "WaitSFXDone":
-                                toRemove.Add(c);
-                                break;
-                        }
+                        if (waitOperations.Contains(c.operation)) return;
                     }
-                    foreach (var c in toRemove) th.code.Remove(c);
                 }
             }
-            admitNewCommand = true;
+            if (admitNewCommand) cmdSkipFirstWaitAnim = btlsys.cmd_queue.next;
         }
         if (!admitNewCommand)
             return;
@@ -650,7 +625,7 @@ public class btl_cmd
                 if (!Configuration.Mod.TranceSeek || btl.dms_geo_id != 512) // TRANCE SEEK - Ark overheat
                 {
                     /*int num = (int)*/
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
+            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
                     return;
                 }
@@ -1793,4 +1768,9 @@ public class btl_cmd
 
     public const Int32 cmd_delay_max = 10;
     public static Int32 next_cmd_delay;
+
+    public static CMD_DATA cmdSkipFirstWaitAnim = null;
+    // "WaitMonsterSFXDone" and "WaitReflect" are always present for enemies :'(
+    private static readonly String[] waitOperations = { "EffectPoint", "WaitSFXDone", "WaitMonsterSFXDone", "WaitReflect" };
+
 }

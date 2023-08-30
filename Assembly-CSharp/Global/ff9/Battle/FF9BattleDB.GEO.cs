@@ -205,7 +205,7 @@ public static partial class FF9BattleDB
 		{154, "GEO_MON_B3_006"},
 		{153, "GEO_MON_B3_007"},
 		{157, "GEO_MON_B3_008"},
-		{156, "GEO_MON_B3_009"},
+		{156, "GEO_MON_B3_009"}, // Ghost
 		{159, "GEO_MON_B3_010"},
 		{5458, "GEO_MON_B3_011"},
 		{158, "GEO_MON_B3_012"},
@@ -291,12 +291,12 @@ public static partial class FF9BattleDB
 		{379, "GEO_MON_B3_102"},
 		{344, "GEO_MON_B3_103"},
 		{301, "GEO_MON_B3_105"},
-		{359, "GEO_MON_B3_106"},
-		{428, "GEO_MON_B3_107"},
+		{359, "GEO_MON_B3_106"}, // Baku (On stage)
+		{428, "GEO_MON_B3_107"}, // Baku (First fight)
 		{345, "GEO_MON_B3_108"},
 		{5461, "GEO_MON_F0_EFM"},
 		{347, "GEO_MON_F2_EFM"},
-		{450, "GEO_MON_B3_111"},
+		{450, "GEO_MON_B3_111"}, // Black Waltz No 1
 		{346, "GEO_MON_B3_112"},
 		{125, "GEO_MON_B3_113"},
 		{349, "GEO_MON_B3_114"},
@@ -328,7 +328,7 @@ public static partial class FF9BattleDB
 		{566, "GEO_MON_B3_145"},
 		{576, "GEO_MON_B3_146"},
 		{0, "GEO_MON_B3_147"},
-		{298, "GEO_MON_B3_148"},
+		{298, "GEO_MON_B3_148"}, // Steiner as enemy
 		{557, "GEO_MON_B3_149"},
 		{558, "GEO_MON_B3_151"},
 		{299, "GEO_MON_B3_152"},
@@ -367,7 +367,7 @@ public static partial class FF9BattleDB
 		{1, "GEO_MON_B3_186"},
 		{356, "GEO_MON_B3_187"},
 		{357, "GEO_MON_B3_188"},
-		{546, "GEO_MON_B3_189"},
+		{546, "GEO_MON_B3_189"}, // Cave Imp
 		{451, "GEO_MON_B3_190"},
 		{620, "GEO_MON_B3_191"},
 		{619, "GEO_MON_B3_192"},
