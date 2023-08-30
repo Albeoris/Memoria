@@ -373,7 +373,11 @@ public partial class BattleHUD : UIScene
                                     ReadyQueue.Remove(current);
                                     ReadyQueue.Insert(0, current);
                                 }
-                                SwitchPlayer(current);
+                                if (Configuration.Battle.Speed == 2 && current == postponed)
+                                    // We defend if we end up with the same player
+                                    return OnKeyConfirm(_commandPanel.Defend.GameObject);
+                                else
+                                    SwitchPlayer(current);
                                 break;
                             }
                         }
@@ -382,8 +386,8 @@ public partial class BattleHUD : UIScene
                 else if (ReadyQueue.Count == 1)
                 {
                     if (Configuration.Battle.Speed == 2)
-                        // In turn-based we defend if no other players are ready
-                        OnKeyConfirm(_commandPanel.Defend.GameObject);
+                        // We defend if no other players are ready
+                        return OnKeyConfirm(_commandPanel.Defend.GameObject);
                     else
                         SwitchPlayer(ReadyQueue[0]);
                 }
