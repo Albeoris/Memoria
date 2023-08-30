@@ -17,7 +17,7 @@ namespace Memoria
                 LogVoiceActing = BindBoolean(nameof(LogVoiceActing), false);
                 StopVoiceWhenDialogDismissed = BindBoolean(nameof(StopVoiceWhenDialogDismissed), false);
                 AutoDismissDialogAfterCompletion = BindBoolean(nameof(AutoDismissDialogAfterCompletion), false);
-                Volume = BindInt32(nameof(Volume), 80);
+                Volume = BindInt32(nameof(Volume), 100);
             }
         }
     }

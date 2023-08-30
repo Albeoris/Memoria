@@ -37,8 +37,6 @@ using UnityEngine;
 
 public class ConfigUI : UIScene
 {
-    private const Int32 VIBRATION_CONFIG_INDEX = 12;
-
     private enum TriggerState
     {
         Idle,
@@ -64,7 +62,11 @@ public class ConfigUI : UIScene
         ControlTutorial,
         CombatTutorial,
         Title,
-        QuitGame
+        QuitGame,
+        SoundVolume,
+        MusicVolume,
+        MovieVolume,
+        VoiceVolume
     }
 
     public GameObject KeyboardButton;
@@ -174,7 +176,11 @@ public class ConfigUI : UIScene
     private static List<Configurator> ConfigSliderIdList = new List<Configurator>(new[]
     {
         Configurator.FieldMessage,
-        Configurator.BattleSpeed
+        Configurator.BattleSpeed,
+        Configurator.SoundVolume,
+        Configurator.MusicVolume,
+        Configurator.MovieVolume,
+        Configurator.VoiceVolume
     });
 
     private List<ConfigField> ConfigFieldList;
@@ -699,8 +705,7 @@ public class ConfigUI : UIScene
 
     private void RemoveCursorMemorize()
     {
-        ConfigField configField = ConfigFieldList.First(field => field.Configurator == Configurator.Sound);
-        ButtonGroupState.SetCursorStartSelect(configField.ConfigParent, ConfigGroupButton);
+        ButtonGroupState.SetCursorStartSelect(ConfigFieldList[0].ConfigParent, ConfigGroupButton);
         ButtonGroupState.RemoveCursorMemorize(ConfigGroupButton);
     }
 
@@ -722,17 +727,17 @@ public class ConfigUI : UIScene
             }
             else
             {
-                Int32 siblingIndex = go.transform.GetSiblingIndex();
-                if (siblingIndex == 2)
+                ConfigField config = ConfigFieldList.First(field => field.ConfigParent == go);
+                if (config?.Configurator == Configurator.Controller)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    if (ConfigFieldList[2].Value == 1f)
+                    if (config.Value == 1f)
                     {
                         CheckAndDisplayCustomControllerPanel();
                     }
                 }
-                else if (siblingIndex == 15)
+                else if (config?.Configurator == Configurator.Title)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.None;
@@ -746,7 +751,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (siblingIndex == 13)
+                else if (config?.Configurator == Configurator.ControlTutorial)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.Confirm;
@@ -762,7 +767,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (siblingIndex == 14)
+                else if (config?.Configurator == Configurator.CombatTutorial)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     NextSceneIsModal = true;
@@ -775,7 +780,7 @@ public class ConfigUI : UIScene
                         ButtonGroupState.HoldActiveStateOnGroup(ConfigGroupButton);
                     });
                 }
-                else if (siblingIndex == 16)
+                else if (config?.Configurator == Configurator.QuitGame)
                 {
                     FF9Sfx.FF9SFX_Play(103);
                     UIManager.Input.OnQuitCommandDetected();
@@ -784,23 +789,19 @@ public class ConfigUI : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == WarningMenuGroupButton)
         {
-            Int32 siblingIndex2 = go.transform.GetSiblingIndex();
-            Int32 num = siblingIndex2;
-            if (num != 2)
+            Int32 num = go.transform.GetSiblingIndex();
+            if (num == 3)
             {
-                if (num == 3)
+                FF9Sfx.FF9SFX_Play(101);
+                Loading = true;
+                WarningDialogHitPoint.SetActive(false);
+                warningTransition.TweenOut(delegate
                 {
-                    FF9Sfx.FF9SFX_Play(101);
-                    Loading = true;
-                    WarningDialogHitPoint.SetActive(false);
-                    warningTransition.TweenOut(delegate
-                    {
-                        Loading = false;
-                    });
-                    ButtonGroupState.ActiveGroup = ConfigGroupButton;
-                }
+                    Loading = false;
+                });
+                ButtonGroupState.ActiveGroup = ConfigGroupButton;
             }
-            else
+            else if (num == 2)
             {
                 FF9Sfx.FF9SFX_Play(103);
                 WarningDialogHitPoint.SetActive(false);
@@ -1038,27 +1039,14 @@ public class ConfigUI : UIScene
             ConfigField configField = ConfigFieldList.First(field => field.ConfigParent == go);
             if (configField.IsSlider)
             {
+                var step = configField.ConfigChoice[0].GetComponent<UISlider>().numberOfSteps - 1;
                 if (key == KeyCode.LeftArrow)
                 {
-                    if (configField.Configurator == Configurator.FieldMessage)
-                    {
-                        setConfigValue(configField.ConfigParent, configField.Value - 1f / fieldMessageSliderStep, false);
-                    }
-                    else if (configField.Configurator == Configurator.BattleSpeed)
-                    {
-                        setConfigValue(configField.ConfigParent, configField.Value - 1f / battleSpeedSliderStep, false);
-                    }
+                    setConfigValue(configField.ConfigParent, configField.Value - 1f / step, false);
                 }
                 else if (key == KeyCode.RightArrow)
                 {
-                    if (configField.Configurator == Configurator.FieldMessage)
-                    {
-                        setConfigValue(configField.ConfigParent, configField.Value + 1f / fieldMessageSliderStep, false);
-                    }
-                    else if (configField.Configurator == Configurator.BattleSpeed)
-                    {
-                        setConfigValue(configField.ConfigParent, configField.Value + 1f / battleSpeedSliderStep, false);
-                    }
+                    setConfigValue(configField.ConfigParent, configField.Value + 1f / step, false);
                 }
             }
             else if (configField.Configurator != Configurator.CombatTutorial && configField.Configurator != Configurator.ControlTutorial && configField.Configurator != Configurator.Title && configField.Configurator != Configurator.QuitGame && (key == KeyCode.LeftArrow || key == KeyCode.RightArrow))
@@ -1281,6 +1269,18 @@ public class ConfigUI : UIScene
                 case Configurator.Vibration:
                     current.Value = FF9StateSystem.Settings.cfg.vibe;
                     break;
+                case Configurator.SoundVolume:
+                    current.Value = Configuration.Audio.SoundVolume / 100f;
+                    break;
+                case Configurator.MusicVolume:
+                    current.Value = Configuration.Audio.MusicVolume / 100f;
+                    break;
+                case Configurator.MovieVolume:
+                    current.Value = Configuration.Audio.MovieVolume / 100f;
+                    break;
+                case Configurator.VoiceVolume:
+                    current.Value = Configuration.VoiceActing.Volume / 100f;
+                    break;
                 default:
                     current.Value = 0f;
                     break;
@@ -1315,7 +1315,7 @@ public class ConfigUI : UIScene
     {
         ValidateKeyboard();
         ValidateController();
-        
+
         // TODO Check Native: #147 - Will incombaitble with Android and PC with Controller? O.o
         // this.currentControllerType = ControllerType.Keyboard;
         if (PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect || FF9StateSystem.aaaaPlatform || FF9StateSystem.IOSPlatform) // aaaa is Vita
@@ -1346,6 +1346,11 @@ public class ConfigUI : UIScene
             {
                 configField.Value = Mathf.Clamp(value, 0f, 1f);
                 configField.ConfigChoice[0].GetComponent<UISlider>().value = configField.Value;
+                if(configField.Configurator >= Configurator.SoundVolume)
+                {
+                    // Update the label with the volume value
+                    configField.ConfigParent.GetChild(1).GetChild(0).GetComponent<UILabel>().text = ((Int32)Math.Round(configField.Value * 20) * 5).ToString();
+                }
                 if (configField.Value == value2)
                 {
                     flag = false;
@@ -1426,6 +1431,26 @@ public class ConfigUI : UIScene
                             vib.VIB_actuatorSet(1, 0.003921569f, 1f);
                         }
                         break;
+                    case Configurator.SoundVolume:
+                        FF9StateSystem.Settings.cfg.sound_effect = 0; // Useless setting now
+                        Configuration.Audio.SoundVolume = (Int32)Math.Round(configField.Value * 20) * 5;
+                        SoundLib.TryUpdateSoundVolume();
+                        Configuration.Audio.SaveSoundVolume();
+                        break;
+                    case Configurator.MusicVolume:
+                        FF9StateSystem.Settings.cfg.sound = 0; // Useless setting now
+                        Configuration.Audio.MusicVolume = (Int32)Math.Round(configField.Value * 20) * 5;
+                        SoundLib.TryUpdateMusicVolume();
+                        Configuration.Audio.SaveMusicVolume();
+                        break;
+                    case Configurator.MovieVolume:
+                        Configuration.Audio.MovieVolume = (Int32)Math.Round(configField.Value * 20) * 5;
+                        Configuration.Audio.SaveMovieVolume();
+                        break;
+                    case Configurator.VoiceVolume:
+                        Configuration.VoiceActing.Volume = (Int32)Math.Round(configField.Value * 20) * 5;
+                        Configuration.VoiceActing.SaveVolume();
+                        break;
                     default:
                         configField.Value = 0f;
                         break;
@@ -1455,37 +1480,103 @@ public class ConfigUI : UIScene
         }
     }
 
+    /*
+     * This was very useful for debugging
+     * Leaving it as a comment
+     * 
+    private void ListComponents(GameObject go, int indent = 0)
+    {
+        Log.Message($"[DEBUG] {new string(' ', indent * 4)}> {go.name} position: {go.transform.localPosition}");
+        var comps = go.GetComponents<Component>();
+        if (comps != null && comps.Length > 0)
+        {
+            foreach (Component c in comps)
+            {
+                if (c is Transform) continue;
+                if (c is UIWidget)
+                {
+                    var w = c as UIWidget;
+                    Log.Message($"[DEBUG]   {new string(' ', indent * 4)}{c} {c.GetType()} w: {w.width} h: {w.height}");
+                }
+                else
+                {
+                    Log.Message($"[DEBUG]   {new string(' ', indent * 4)}{c} {c.GetType()}");
+                }
+            }
+            foreach (Transform child in go.transform)
+            {
+                if (child.gameObject != go) ListComponents(child.gameObject, indent + 1);
+            }
+        }
+    }*/
+
+    private GameObject CreateVolumeSlider(GameObject template, Configurator id, int siblingIndex)
+    {
+        try
+        {
+            GameObject go = Instantiate(template);
+            go.transform.parent = template.transform.parent;
+            go.transform.localPosition = template.transform.localPosition;
+            go.transform.localScale = template.transform.localScale;
+            go.transform.SetSiblingIndex(siblingIndex);
+            go.name = $"{name} Panel - Slider";
+            go.GetComponent<ScrollItemKeyNavigation>().ID = (int)id;
+
+            var locs = go.GetComponentsInChildren<UILocalize>();
+            locs[0].key = id.ToString();
+            DestroyImmediate(locs[1]);
+            DestroyImmediate(locs[2]);
+
+            var labels = go.GetComponentsInChildren<UILabel>();
+            Destroy(labels[2]);
+
+            var slider = go.GetComponentInChildren<UISlider>();
+            slider.numberOfSteps = 21;
+            slider.value = 0f;
+
+            return go;
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[ConfigUI] Couldn't create volume silder\n{ex.Message}\n{ex.StackTrace}");
+        }
+        return null;
+    }
+
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         ConfigFieldList = new List<ConfigField>();
-		// If the cheats of the Configuration menu are disabled, hide them and expand the ConfigList menu
-		if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
-			ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
-        Int32 configCount = ConfigList.GetChild(1).GetChild(0).transform.childCount;
+
+        // Adding the volume sliders
+        UITable table = ConfigList.GetChild(1).GetChild(0).GetComponent<UITable>();
+        GameObject template = table.gameObject.GetChild((int)Configurator.FieldMessage);
+        CreateVolumeSlider(template, Configurator.SoundVolume, 0);
+        CreateVolumeSlider(template, Configurator.MusicVolume, 1);
+        CreateVolumeSlider(template, Configurator.MovieVolume, 2);
+        if (Configuration.VoiceActing.Enabled)
+            CreateVolumeSlider(template, Configurator.VoiceVolume, 3);
+
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
             ConfigField configField = new ConfigField();
             GameObject configTopObj = trans.gameObject;
-            Int32 id = configTopObj.GetComponent<ScrollItemKeyNavigation>().ID;
-            
-            // Hide vibration settings from menu
-            if (!FF9StateSystem.IsPlatformVibration)
+            Configurator id = (Configurator)configTopObj.GetComponent<ScrollItemKeyNavigation>().ID;
+
+            // Remove unused settings from menu
+            if ((id == Configurator.Vibration && !FF9StateSystem.IsPlatformVibration)
+                || id == Configurator.Sound
+                || id == Configurator.SoundEffect)
             {
-                if (id == VIBRATION_CONFIG_INDEX) // Configurator.Vibration
-                {
-                    configCount--;
-                    gameObject.SetActive(false);
-                }
-                else if (id > VIBRATION_CONFIG_INDEX) //  ControlTutorial, CombatTutorial, Title, QuitGame
-                {
-                    gameObject.GetComponent<ScrollItemKeyNavigation>().ID = id - 1;
-                }
+                configTopObj.SetActive(false);
+                Destroy(configTopObj);
+                continue;
             }
-            
+
+            configTopObj.GetComponent<ScrollItemKeyNavigation>().ID = ConfigFieldList.Count;
             configField.ConfigParent = configTopObj;
             configField.Button = configTopObj.GetComponent<ButtonGroupState>();
-            configField.Configurator = (Configurator)id;
+            configField.Configurator = id;
             if (ConfigSliderIdList.Contains(configField.Configurator))
             {
                 configField.ConfigChoice.Add(trans.GetChild(1).GetChild(1).gameObject);
@@ -1512,16 +1603,23 @@ public class ConfigUI : UIScene
             UIEventListener.Get(trans.gameObject).onNavigate += OnKeyChoice;
             ConfigFieldList.Add(configField);
         }
-        
-        if (!FF9StateSystem.IsPlatformVibration)
+
+        // Update onUp and onDown
+        for (int i = 0; i < ConfigFieldList.Count; i++)
         {
-            this.ConfigFieldList[VIBRATION_CONFIG_INDEX - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = this.ConfigFieldList[VIBRATION_CONFIG_INDEX + 1].ConfigParent;
-            this.ConfigFieldList[VIBRATION_CONFIG_INDEX + 1].ConfigParent.GetComponent<UIKeyNavigation>().onUp = this.ConfigFieldList[VIBRATION_CONFIG_INDEX - 1].ConfigParent;
+            var navig = ConfigFieldList[i].ConfigParent.GetComponent<UIKeyNavigation>();
+            navig.onUp = null;
+            if (i > 1) navig.onUp = ConfigFieldList[i - 1].ConfigParent;
+            navig.onDown = null;
+            if (i < ConfigFieldList.Count - 2) navig.onDown = ConfigFieldList[i + 1].ConfigParent;
         }
-        
+
+        // Put the cursor on first field
+        ButtonGroupState.SetCursorStartSelect(ConfigFieldList[0].ConfigParent, ConfigGroupButton);
+
         configScrollButton = ConfigList.GetChild(0).GetComponent<ScrollButton>();
         configScrollView = ConfigList.GetChild(1).GetComponent<SnapDragScrollView>();
-        configScrollView.MaxItem = configCount;
+        configScrollView.MaxItem = ConfigFieldList.Count;
         UIEventListener.Get(WarningDialog.GetChild(0).GetChild(2)).onClick += onClick;
         UIEventListener.Get(WarningDialog.GetChild(0).GetChild(3)).onClick += onClick;
         warningTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenClipping>();
@@ -1543,7 +1641,18 @@ public class ConfigUI : UIScene
         configScrollButton.DisplayScrollButton(false, false);
         transform.GetChild(3).GetChild(4).gameObject.SetActive(false);
         backButtonGameObject = ControlPanelGroup.GetChild(1);
-		if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
-			BoosterPanel.SetActive(false);
+
+        // If the cheats of the Configuration menu are disabled, remove them and expand the ConfigList menu
+        if (!Configuration.Cheats.MasterSkill && !Configuration.Cheats.LvMax && !Configuration.Cheats.GilMax)
+        {
+            ConfigList.GetComponent<UIWidget>().bottomAnchor.SetVertical(this.ConfigList.GetComponent<UIWidget>().cachedTransform.parent, -940f);
+            BoosterPanel.SetActive(false);
+            Destroy(BoosterPanel);
+            configScrollView.VisibleItem += 2;
+        }
+        else
+        {
+            ConfigFieldList[ConfigFieldList.Count - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = masterSkillButtonGameObject;
+        }
     }
 }

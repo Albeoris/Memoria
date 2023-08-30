@@ -164,7 +164,7 @@ namespace Memoria.Assets
         private void LoadModText(Dictionary<Int32, String> cellLanguages)
         {
             String inputPath = DataResources.Text.PureDirectory + DataResources.Text.LocalizationPatchFile;
-            foreach(AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+            foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
             {
                 if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                 {

@@ -21,7 +21,7 @@ public class SoundLib : MonoBehaviour
 		Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex(movieName);
 		if (movieSoundIndex != -1)
 		{
-			SoundLib.movieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
 		}
 		else
 		{
@@ -31,7 +31,7 @@ public class SoundLib : MonoBehaviour
 
 	public static SoundProfile GetActiveMovieAudioSoundProfile()
 	{
-		return SoundLib.movieAudioPlayer.GetActiveSoundProfile();
+		return SoundLib.MovieAudioPlayer.GetActiveSoundProfile();
 	}
 
 	public static Int32 GetMovieSoundIndex(String movieName)
@@ -124,7 +124,7 @@ public class SoundLib : MonoBehaviour
 		{
 			return;
 		}
-		SoundLib.movieAudioPlayer.PauseMusic();
+		SoundLib.MovieAudioPlayer.PauseMusic();
 	}
 
 	public static void StopMovieMusic(String movieName, Boolean isForceStop = false)
@@ -141,18 +141,18 @@ public class SoundLib : MonoBehaviour
 			}
 			else
 			{
-				SoundLib.movieAudioPlayer.StopMusic();
+				SoundLib.MovieAudioPlayer.StopMusic();
 			}
 		}
 		else if (String.Equals(movieName, "FMV000"))
 		{
 			Int32 ticks = 90;
 			Int32 fadeOut = AllSoundDispatchPlayer.ConvertTickToMillisec(ticks);
-			SoundLib.movieAudioPlayer.StopMusic(fadeOut);
+			SoundLib.MovieAudioPlayer.StopMusic(fadeOut);
 		}
 		else
 		{
-			SoundLib.movieAudioPlayer.StopMusic();
+			SoundLib.MovieAudioPlayer.StopMusic();
 		}
 	}
 
@@ -163,12 +163,12 @@ public class SoundLib : MonoBehaviour
 
 	public static void SeekMovieAudio(String movieName, Single time)
 	{
-		SoundLib.movieAudioPlayer.SeekActiveSound((Int32)(time * 1000f));
+		SoundLib.MovieAudioPlayer.SeekActiveSound((Int32)(time * 1000f));
 	}
 
 	public static void SeekMusic(Single time)
 	{
-		SoundLib.musicPlayer.SeekActiveSound((Int32)(time * 1000f));
+		SoundLib.MusicPlayer.SeekActiveSound((Int32)(time * 1000f));
 	}
 
 	public static void LoadMovieResources(String basePath, String[] movies)
@@ -210,7 +210,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.soundEffectPlayer.LoadGameSoundEffect(jsonMetaData);
+			SoundLib.SoundEffectPlayer.LoadGameSoundEffect(jsonMetaData);
 		}
 		catch (Exception message)
 		{
@@ -222,7 +222,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.soundEffectPlayer.LoadSceneSoundEffect(jsonMetaData);
+			SoundLib.SoundEffectPlayer.LoadSceneSoundEffect(jsonMetaData);
 		}
 		catch (Exception message)
 		{
@@ -234,7 +234,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.soundEffectPlayer.UnloadSoundEffect();
+			SoundLib.SoundEffectPlayer.UnloadSoundEffect();
 		}
 		catch (Exception message)
 		{
@@ -246,7 +246,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.soundEffectPlayer.UnloadAllSoundEffect();
+			SoundLib.SoundEffectPlayer.UnloadAllSoundEffect();
 		}
 		catch (Exception message)
 		{
@@ -258,7 +258,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			return SoundLib.soundEffectPlayer.IsSoundEffectPlaying(soundIndex);
+			return SoundLib.SoundEffectPlayer.IsSoundEffectPlaying(soundIndex);
 		}
 		catch (Exception message)
 		{
@@ -271,7 +271,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.soundEffectPlayer.StopSoundEffect(soundIndex);
+			SoundLib.SoundEffectPlayer.StopSoundEffect(soundIndex);
 		}
 		catch (Exception message)
 		{
@@ -283,8 +283,8 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.soundEffectPlayer.StopAllSoundEffects();
-			SoundLib.songPlayer.StopAllSoundEffects();
+			SoundLib.SoundEffectPlayer.StopAllSoundEffects();
+			SoundLib.SongPlayer.StopAllSoundEffects();
 		}
 		catch (Exception message)
 		{
@@ -301,7 +301,7 @@ public class SoundLib : MonoBehaviour
 			Int32 sndPos = 0;
 			Int32 volume = (Int32)(soundVolume * 127);
 			FF9Snd.ParameterChanger(ref paramType, ref soundIndex, ref attr, ref sndPos, ref volume);
-			SoundLib.soundEffectPlayer.PlaySoundEffect(soundIndex, soundVolume, panning, pitch);
+			SoundLib.SoundEffectPlayer.PlaySoundEffect(soundIndex, soundVolume, panning, pitch);
 		}
 		catch (Exception message)
 		{
@@ -318,7 +318,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.sfxSoundPlayer.LoadAllResidentSoundData();
+			SoundLib.SfxSoundPlayer.LoadAllResidentSoundData();
 		}
 		catch (Exception message)
 		{
@@ -330,7 +330,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.sfxSoundPlayer.UnloadAllResidentSoundData();
+			SoundLib.SfxSoundPlayer.UnloadAllResidentSoundData();
 		}
 		catch (Exception message)
 		{
@@ -342,7 +342,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.sfxSoundPlayer.LoadSoundData(specialEffectID);
+			SoundLib.SfxSoundPlayer.LoadSoundData(specialEffectID);
 		}
 		catch (Exception message)
 		{
@@ -355,7 +355,7 @@ public class SoundLib : MonoBehaviour
 		SoundProfile result;
 		try
 		{
-			result = SoundLib.sfxSoundPlayer.PlaySfxSound(soundIndexInSpecialEffect, soundVolume, panning, pitch);
+			result = SoundLib.SfxSoundPlayer.PlaySfxSound(soundIndexInSpecialEffect, soundVolume, panning, pitch);
 		}
 		catch (Exception message)
 		{
@@ -370,7 +370,7 @@ public class SoundLib : MonoBehaviour
 		Boolean result;
 		try
 		{
-			result = SoundLib.sfxSoundPlayer.IsPlaying(soundIndexInSpecialEffect);
+			result = SoundLib.SfxSoundPlayer.IsPlaying(soundIndexInSpecialEffect);
 		}
 		catch (Exception message)
 		{
@@ -384,7 +384,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.sfxSoundPlayer.StopSound(soundIndexInSpecialEffect);
+			SoundLib.SfxSoundPlayer.StopSound(soundIndexInSpecialEffect);
 		}
 		catch (Exception message)
 		{
@@ -396,7 +396,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.sfxSoundPlayer.StopAllSounds();
+			SoundLib.SfxSoundPlayer.StopAllSounds();
 		}
 		catch (Exception message)
 		{
@@ -408,7 +408,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.songPlayer.PlaySong(soundIndex, 1f, 0f, 1f);
+			SoundLib.SongPlayer.PlaySong(soundIndex, 1f, 0f, 1f);
 		}
 		catch (Exception message)
 		{
@@ -420,7 +420,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.songPlayer.StopSong(soundIndex);
+			SoundLib.SongPlayer.StopSong(soundIndex);
 		}
 		catch (Exception message)
 		{
@@ -432,7 +432,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.songPlayer.StopAllSongs();
+			SoundLib.SongPlayer.StopAllSongs();
 		}
 		catch (Exception message)
 		{
@@ -444,7 +444,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.songPlayer.PlaySong(soundIndex, soundVolume, panning, pitch);
+			SoundLib.SongPlayer.PlaySong(soundIndex, soundVolume, panning, pitch);
 		}
 		catch (Exception message)
 		{
@@ -474,7 +474,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.LoadMusic(jsonMetaData);
+			SoundLib.MusicPlayer.LoadMusic(jsonMetaData);
 		}
 		catch (Exception message)
 		{
@@ -486,7 +486,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.UnloadMusic();
+			SoundLib.MusicPlayer.UnloadMusic();
 		}
 		catch (Exception message)
 		{
@@ -498,7 +498,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.movieAudioPlayer.LoadMusic(jsonMetaData);
+			SoundLib.MovieAudioPlayer.LoadMusic(jsonMetaData);
 		}
 		catch (Exception message)
 		{
@@ -510,7 +510,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.movieAudioPlayer.UnloadMusic();
+			SoundLib.MovieAudioPlayer.UnloadMusic();
 		}
 		catch (Exception message)
 		{
@@ -522,7 +522,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.PlayMusic(soundIndex);
+			SoundLib.MusicPlayer.PlayMusic(soundIndex);
 		}
 		catch (Exception message)
 		{
@@ -534,7 +534,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.NextLoopRegion(soundIndex);
+			SoundLib.MusicPlayer.NextLoopRegion(soundIndex);
 		}
 		catch (Exception message)
 		{
@@ -546,7 +546,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.PlayMusic(soundIndex, fadeIn, SoundProfileType.Music);
+			SoundLib.MusicPlayer.PlayMusic(soundIndex, fadeIn, SoundProfileType.Music);
 		}
 		catch (Exception message)
 		{
@@ -558,7 +558,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.PauseMusic();
+			SoundLib.MusicPlayer.PauseMusic();
 		}
 		catch (Exception message)
 		{
@@ -570,7 +570,7 @@ public class SoundLib : MonoBehaviour
     {
         try
         {
-            SoundLib.musicPlayer.ResumeMusic();
+            SoundLib.MusicPlayer.ResumeMusic();
         }
         catch (Exception message)
         {
@@ -582,7 +582,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			return SoundLib.musicPlayer.GetActiveSoundID();
+			return SoundLib.MusicPlayer.GetActiveSoundID();
 		}
 		catch (Exception message)
 		{
@@ -595,7 +595,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.StopMusic();
+			SoundLib.MusicPlayer.StopMusic();
 		}
 		catch (Exception message)
 		{
@@ -607,7 +607,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.StopMusic(fadeOut);
+			SoundLib.MusicPlayer.StopMusic(fadeOut);
 		}
 		catch (Exception message)
 		{
@@ -619,7 +619,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.SetMusicVolume(volume);
+			SoundLib.MusicPlayer.SetMusicVolume(volume);
 		}
 		catch (Exception message)
 		{
@@ -631,7 +631,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.SetMusicPanning(panning);
+			SoundLib.MusicPlayer.SetMusicPanning(panning);
 		}
 		catch (Exception message)
 		{
@@ -643,7 +643,7 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.musicPlayer.SetMusicPitch(pitch);
+			SoundLib.MusicPlayer.SetMusicPitch(pitch);
 		}
 		catch (Exception message)
 		{
@@ -661,9 +661,9 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.SetMusicVolume(Configuration.Audio.MusicVolume);
-			SoundLib.musicPlayer.SetOptionVolume(Configuration.Audio.MusicVolume);
-			SoundLib.movieAudioPlayer.SetOptionVolume(Configuration.Audio.MusicVolume);
+			SoundLib.AllSoundDispatchPlayer.UpdatePlayingMusicVolume();
+			SoundLib.MusicPlayer.UpdateVolume();
+			SoundLib.MovieAudioPlayer.UpdateVolume();
 			SoundLib.MusicIsMute = false;
 		}
 		catch (Exception message)
@@ -676,10 +676,9 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.SetMusicVolume(0);
-			SoundLib.allSoundDispatchPlayer.SetMusicVolume(0);
-			SoundLib.musicPlayer.SetOptionVolume(0);
-			SoundLib.movieAudioPlayer.SetOptionVolume(0);
+			SoundLib.AllSoundDispatchPlayer.UpdatePlayingMusicVolume();
+			SoundLib.MusicPlayer.UpdateVolume();
+			SoundLib.MovieAudioPlayer.UpdateVolume();
 			SoundLib.MusicIsMute = true;
 		}
 		catch (Exception message)
@@ -699,10 +698,10 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.SetSoundEffectVolume(Configuration.Audio.SoundVolume);
-			SoundLib.sfxSoundPlayer.SetVolume(Configuration.Audio.SoundVolume);
-			SoundLib.soundEffectPlayer.SetVolume(Configuration.Audio.SoundVolume / 100f);
-			SoundLib.songPlayer.SetVolume(Configuration.Audio.SoundVolume / 100f);
+			SoundLib.AllSoundDispatchPlayer.UpdatePlayingSoundEffectVolume();
+			SoundLib.SfxSoundPlayer.UpdateVolume();
+			SoundLib.SoundEffectPlayer.UpdateVolume();
+			SoundLib.SongPlayer.UpdateVolume();
 			SoundLib.SoundEffectIsMute = false;
 		}
 		catch (Exception message)
@@ -715,10 +714,10 @@ public class SoundLib : MonoBehaviour
 	{
 		try
 		{
-			SoundLib.allSoundDispatchPlayer.SetSoundEffectVolume(0);
-			SoundLib.sfxSoundPlayer.SetVolume(0);
-			SoundLib.soundEffectPlayer.SetVolume(0f);
-			SoundLib.songPlayer.SetVolume(0f);
+			SoundLib.AllSoundDispatchPlayer.UpdatePlayingSoundEffectVolume();
+			SoundLib.SfxSoundPlayer.UpdateVolume();
+			SoundLib.SoundEffectPlayer.UpdateVolume();
+			SoundLib.SongPlayer.UpdateVolume();
 			SoundLib.SoundEffectIsMute = true;
 		}
 		catch (Exception message)
@@ -729,31 +728,31 @@ public class SoundLib : MonoBehaviour
 
 	public static AllSoundDispatchPlayer GetAllSoundDispatchPlayer()
 	{
-		return SoundLib.allSoundDispatchPlayer;
+		return SoundLib.AllSoundDispatchPlayer;
 	}
 
 	public static void UpdatePlayingSoundEffectPitchByGameSpeed()
 	{
-		SoundLib.allSoundDispatchPlayer.UpdatePlayingSoundEffectPitchFollowingGameSpeed();
+		SoundLib.AllSoundDispatchPlayer.UpdatePlayingSoundEffectPitchFollowingGameSpeed();
 	}
 
 	public static void StopAllSounds(Boolean isAll = true)
 	{
 		try
 		{
-			SoundLib.musicPlayer.StopMusic();
-			SoundLib.soundEffectPlayer.StopAllSoundEffects();
-			SoundLib.songPlayer.StopAllSoundEffects();
-			SoundLib.movieAudioPlayer.StopMusic();
+			SoundLib.MusicPlayer.StopMusic();
+			SoundLib.SoundEffectPlayer.StopAllSoundEffects();
+			SoundLib.SongPlayer.StopAllSoundEffects();
+			SoundLib.MovieAudioPlayer.StopMusic();
 			if (isAll)
 			{
-				SoundLib.allSoundDispatchPlayer.StopAllSounds();
+				SoundLib.AllSoundDispatchPlayer.StopAllSounds();
 			}
 			else
 			{
-				SoundLib.allSoundDispatchPlayer.PauseAllSounds();
+				SoundLib.AllSoundDispatchPlayer.PauseAllSounds();
 			}
-			SoundLib.sfxSoundPlayer.StopAllSounds();
+			SoundLib.SfxSoundPlayer.StopAllSounds();
 		}
 		catch (Exception message)
 		{
@@ -763,17 +762,17 @@ public class SoundLib : MonoBehaviour
 
 	public static void ClearSuspendedSounds()
 	{
-		SoundLib.allSoundDispatchPlayer.ClearSuspendedSounds();
+		SoundLib.AllSoundDispatchPlayer.ClearSuspendedSounds();
 	}
 
 	public static void SuspendSoundSystem()
 	{
 		if (!SoundLib.isSuspendAllSounds)
 		{
-			SoundLib.movieAudioPlayer.PauseMusic();
-			SoundLib.allSoundDispatchPlayer.PauseAllSounds();
-			SoundLib.sfxSoundPlayer.PauseAllSounds();
-			SoundLib.voicePlayer.PauseAllSounds();
+			SoundLib.MovieAudioPlayer.PauseMusic();
+			SoundLib.AllSoundDispatchPlayer.PauseAllSounds();
+			SoundLib.SfxSoundPlayer.PauseAllSounds();
+			SoundLib.VoicePlayer.PauseAllSounds();
 			SoundLib.isSuspendAllSounds = true;
 		}
 	}
@@ -782,10 +781,10 @@ public class SoundLib : MonoBehaviour
 	{
 		if (SoundLib.isSuspendAllSounds)
 		{
-			SoundLib.movieAudioPlayer.ResumeMusic();
-			SoundLib.allSoundDispatchPlayer.ResumeAllSounds();
-			SoundLib.sfxSoundPlayer.ResumeAllSounds();
-			SoundLib.voicePlayer.ResumeAllSounds();
+			SoundLib.MovieAudioPlayer.ResumeMusic();
+			SoundLib.AllSoundDispatchPlayer.ResumeAllSounds();
+			SoundLib.SfxSoundPlayer.ResumeAllSounds();
+			SoundLib.VoicePlayer.ResumeAllSounds();
 			SoundLib.isSuspendAllSounds = false;
 		}
 	}
@@ -884,38 +883,38 @@ public class SoundLib : MonoBehaviour
 
 	private void InitializeSoundPlayer()
 	{
-		SoundLib.soundEffectPlayer = new SoundEffectPlayer();
-		SoundLib.musicPlayer = new MusicPlayer();
-		SoundLib.movieAudioPlayer = new MovieAudioPlayer();
-		SoundLib.songPlayer = new SongPlayer();
-		SoundLib.allSoundDispatchPlayer = new AllSoundDispatchPlayer();
-		SoundLib.sfxSoundPlayer = new SfxSoundPlayer();
-		SoundLib.voicePlayer = new VoicePlayer();
+		SoundLib.SoundEffectPlayer = new SoundEffectPlayer();
+		SoundLib.MusicPlayer = new MusicPlayer();
+		SoundLib.MovieAudioPlayer = new MovieAudioPlayer();
+		SoundLib.SongPlayer = new SongPlayer();
+		SoundLib.AllSoundDispatchPlayer = new AllSoundDispatchPlayer();
+		SoundLib.SfxSoundPlayer = new SfxSoundPlayer();
+		SoundLib.VoicePlayer = new VoicePlayer();
 		this.soundPlayerList = new List<SoundPlayer>();
-		this.soundPlayerList.Add(SoundLib.soundEffectPlayer);
-		this.soundPlayerList.Add(SoundLib.musicPlayer);
-		this.soundPlayerList.Add(SoundLib.movieAudioPlayer);
-		this.soundPlayerList.Add(SoundLib.songPlayer);
-		this.soundPlayerList.Add(SoundLib.allSoundDispatchPlayer);
-		this.soundPlayerList.Add(SoundLib.sfxSoundPlayer);
-		this.soundPlayerList.Add(SoundLib.voicePlayer);
+		this.soundPlayerList.Add(SoundLib.SoundEffectPlayer);
+		this.soundPlayerList.Add(SoundLib.MusicPlayer);
+		this.soundPlayerList.Add(SoundLib.MovieAudioPlayer);
+		this.soundPlayerList.Add(SoundLib.SongPlayer);
+		this.soundPlayerList.Add(SoundLib.AllSoundDispatchPlayer);
+		this.soundPlayerList.Add(SoundLib.SfxSoundPlayer);
+		this.soundPlayerList.Add(SoundLib.VoicePlayer);
 	}
 
 	private Boolean m_isInitialized;
 
-	private static SoundEffectPlayer soundEffectPlayer;
+	public static SoundEffectPlayer SoundEffectPlayer { get; private set; }
+	
+	public static VoicePlayer VoicePlayer { get; private set; }
 
-	public static VoicePlayer voicePlayer;
+	public static MusicPlayer MusicPlayer { get; private set; }
 
-	private static MusicPlayer musicPlayer;
+	public static MovieAudioPlayer MovieAudioPlayer { get; private set; }
 
-	public static MovieAudioPlayer movieAudioPlayer;
+	public static SongPlayer SongPlayer { get; private set; }
 
-	private static SongPlayer songPlayer;
+	public static AllSoundDispatchPlayer AllSoundDispatchPlayer { get; private set; }
 
-	private static AllSoundDispatchPlayer allSoundDispatchPlayer;
-
-	private static SfxSoundPlayer sfxSoundPlayer;
+	public static SfxSoundPlayer SfxSoundPlayer { get; private set; }
 
 	private List<SoundPlayer> soundPlayerList;
 

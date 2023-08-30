@@ -4,14 +4,13 @@ Final Fantasy IX Engine
 # Updates
 1. Update the game to the **latest** version.
 2. Update Memoria to the **latest** version.
-3. **Delete** "Memoria.ini" from the game directory (otherwise you will not see new settings).
-4. Patch again
+3. Patch again
 
 
 # Build
 1. Use Visual Studio 2019 or JetBrains Rider.
 2. Copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
-3. Resture NuGet packages manualy or enable automaticaly package downloads.
+3. Restore NuGet packages manually or enable automatically  package downloads.
 
 
 # Patch:
@@ -32,19 +31,19 @@ Final Fantasy IX Engine
 
 # Features:
 1. Widescreen support (just select any 16:9 resolution)
-2. Disable/Enable cheats
+2. Disable/enable cheats
 3. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
-4. Save/Load anywhere (Alt+F5, Alt+F9) 
+4. Save/load anywhere (Alt+F5, Alt+F9) 
 5. Edit game data (look at the "StreamingAssets\Data" folder)
 6. Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
 7. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-8. Easy rope jumping, frog catching, hippaul racing
+8. Easy rope jumping, frog catching, Hippaul racing
 9. Auto discard cards
 10. Change the game font
-11. [Change audio volume](https://github.com/Albeoris/Memoria/issues/36) (Ctrl+Alt+Shift+M to show configuration menu)
+11. [Change audio volume](https://github.com/Albeoris/Memoria/issues/36#issuecomment-626098739) (Ctrl+Alt+Shift+M to show configuration menu)
 12. Export/import text resources
 13. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
-14. [Bypass the Launcher](https://github.com/Albeoris/Memoria/issues/70) 
+14. [Bypass the Launcher](https://github.com/Albeoris/Memoria/issues/70#issuecomment-626077188)
 
 
 # Configuration:

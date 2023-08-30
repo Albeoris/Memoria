@@ -728,7 +728,7 @@
     <Compile Include="Global\Movie\MovieAudioPlayer.cs" />
     <Compile Include="Global\Movie\MovieMaterialProcessor.cs" />
     <Compile Include="Global\Movie\MovieTestScript.cs" />
-    <Compile Include="Global\MusicPlayer.cs" />
+    <Compile Include="Global\Sound\MusicPlayer.cs" />
     <Compile Include="Global\NameSettingUI.cs" />
     <Compile Include="Global\NewIconAnimation.cs" />
     <Compile Include="Global\NGUIDebug.cs" />

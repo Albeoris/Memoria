@@ -11,11 +11,9 @@ public class VoicePlayer : SoundPlayer
 {
 	public VoicePlayer()
 	{
-		this.playerVolume = Configuration.VoiceActing.Volume / 10f;
 		this.playerPitch = 1f;
 		this.playerPanning = 0f;
 		this.fadeInDuration = 0f;
-		this.fadeOutDuration = 0f;
 		this.fadeInTimeRemain = 0f;
 		this.stateTransition = new SdLibSoundProfileStateGraph();
 		this.stateTransition.Add(new SdLibSoundProfileStateGraph.TransitionDelegate(base.CreateSound), SoundProfileState.Idle, SoundProfileState.Created);
@@ -41,10 +39,7 @@ public class VoicePlayer : SoundPlayer
 		return false;
 	}
 
-	public new void StartSound(SoundProfile soundProfile, Single playerVolume = 1f) => StaticStartSound(soundProfile, playerVolume);
-	public void StartSound(SoundProfile soundProfile, Single playerVolume = 1f, Action onFinished = null) => StaticStartSound(soundProfile, playerVolume, onFinished);
-
-	public static void StaticStartSound(SoundProfile soundProfile, Single playerVolume = 1f, Action onFinished = null)
+	public void StartSound(SoundProfile soundProfile, Action onFinished = null)
 	{
 		if (onFinished != null)
 		{
@@ -81,7 +76,7 @@ public class VoicePlayer : SoundPlayer
 			soundProfile.SoundID = 0;
 			return;
 		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, Configuration.VoiceActing.Volume / 10f * soundProfile.SoundVolume, 0);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
 		SoundLib.Log("Panning: " + soundProfile.Panning);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
@@ -203,7 +198,7 @@ public class VoicePlayer : SoundPlayer
 		if (soundOfDialog.TryGetValue(dialog, out attachedVoice))
 		{
 			if (stopSound && ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(attachedVoice.SoundID) == 1)
-				SoundLib.voicePlayer.StopSound(attachedVoice);
+				SoundLib.VoicePlayer.StopSound(attachedVoice);
 			Thread soundWatcher;
 			if (watcherOfSound.TryGetValue(attachedVoice, out soundWatcher))
 			{
@@ -233,8 +228,8 @@ public class VoicePlayer : SoundPlayer
 		{
 			if (soundProfile != null)
 			{
-				SoundLib.voicePlayer.CreateSound(soundProfile);
-				SoundLib.voicePlayer.StartSound(soundProfile, 1, onFinished);
+				SoundLib.VoicePlayer.CreateSound(soundProfile);
+				SoundLib.VoicePlayer.StartSound(soundProfile, onFinished);
 				if (db.ReadAll().ContainsKey(soundProfile.SoundIndex))
 					db.Update(soundProfile);
 				else
@@ -296,8 +291,7 @@ public class VoicePlayer : SoundPlayer
 			return;
 		}
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-		soundProfile.SoundVolume = this.playerVolume * this.optionVolume;
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, this.playerVolume * this.optionVolume, (Int32)(this.fadeInDuration * 1000f));
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, (Int32)(this.fadeInDuration * 1000f));
 		this.SetMusicPanning(this.playerPanning, soundProfile);
 		this.SetMusicPitch(this.playerPitch, soundProfile);
 		this.upcomingSoundProfile = soundProfile;
@@ -351,15 +345,13 @@ public class VoicePlayer : SoundPlayer
 
 	public SoundDatabase soundDatabase = new SoundDatabase();
 
-	private SoundDatabase onTheFlySoundDatabase = new SoundDatabase();
-
 	private SdLibSoundProfileStateGraph stateTransition;
 
 	protected SoundProfile activeSoundProfile;
 
 	private SoundProfile upcomingSoundProfile;
 
-	private Single playerVolume;
+	public override Single Volume => Configuration.VoiceActing.Volume / 100f;
 
 	private Single playerPitch;
 
@@ -370,10 +362,4 @@ public class VoicePlayer : SoundPlayer
 	private Single fadeOutDuration;
 
 	private Single fadeInTimeRemain;
-
-	private SoundProfile onTheFlyLoadedSoundProfile;
-
-	private Int32 onTheFlyLoadedFadeIn;
-
-	private Single optionVolume = 1f;
 }

@@ -204,7 +204,7 @@ namespace Memoria.Data
             foreach (BTL_DATA btl in speakerBtlList)
             {
                 if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
-                    SoundLib.voicePlayer.StopSound(playingVoice.Value);
+                    SoundLib.VoicePlayer.StopSound(playingVoice.Value);
                 _currentVoicePlay[btl] = new KeyValuePair<Int32, SoundProfile>(voiceEffect.Priority, audioProfile);
             }
         }
@@ -461,7 +461,7 @@ namespace Memoria.Data
                     if (pathsValue.IndexOf(',') > 0)
                     {
                         Int32 p = pathsValue.LastIndexOf('/');
-                        String folder = (p < 0) ? "" : folder = pathsValue.Substring(0, p + 1);
+                        String folder = (p < 0) ? "" : pathsValue.Substring(0, p + 1);
                         String[] files = (p < 0) ? pathsValue.Split(',') : pathsValue.Substring(p + 1).Split(',');
                         paths = new String[files.Length];
                         for (Int32 j = 0; j < files.Length; j++)
