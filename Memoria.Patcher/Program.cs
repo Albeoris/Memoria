@@ -66,8 +66,9 @@ namespace Memoria.Patcher
                 Console.WriteLine("---------------------------");
             }
 
-            Console.WriteLine(Lang.Message.Done.PressEnterToExit);
-            Console.ReadLine();
+            //
+            //Console.WriteLine(Lang.Message.Done.PressEnterToExit);
+            //Console.ReadLine();
         }
 
         private static void Run(String[] args)

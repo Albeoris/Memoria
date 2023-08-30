@@ -4,7 +4,7 @@ using Memoria.Prime.Collections;
 public static partial class FF9BattleDB
 {
 	public static readonly TwoWayDictionary<Int32, String> GEO = new TwoWayDictionary<Int32, String>(true)
-	{
+    {
 		{240, "GEO_ACC_F0_BBT"},
 		{238, "GEO_ACC_F0_BBX"},
 		{227, "GEO_ACC_F0_BIN"},

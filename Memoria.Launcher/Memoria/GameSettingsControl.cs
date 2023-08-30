@@ -480,7 +480,8 @@ namespace Memoria.Launcher
                         // Use Github repository
                         _downloadMirrors = new[]
                         {
-                            "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"
+                            "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe",
+                            "https://github.com/SamsamTS/Memoria/releases/latest/download/Memoria.Patcher.exe"
                         };
                     }
                     else if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")

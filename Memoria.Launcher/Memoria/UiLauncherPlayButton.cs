@@ -119,6 +119,9 @@ namespace Memoria.Launcher
                     }
                 }
 
+                if (!File.Exists(".\\autorun")) File.Create(".\\autorun").Close();
+                Application.Current.MainWindow.Hide();
+
                 String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == Lang.Settings.Window ^ GameSettings.WindowMode == Lang.Settings.BorderlessFullscreen) ? "0" : "1")} {(GameSettings.WindowMode == Lang.Settings.BorderlessFullscreen ? "-popupwindow" : "")}";
                 await Task.Factory.StartNew(
                     () =>
@@ -143,6 +146,9 @@ namespace Memoria.Launcher
                                 debuggerProcess.Start();
                             }
                         }
+
+                        Thread.Sleep(5000);
+                        if (File.Exists(".\\autorun")) File.Delete(".\\autorun");
                     }
                 );
                 Application.Current.Shutdown();
