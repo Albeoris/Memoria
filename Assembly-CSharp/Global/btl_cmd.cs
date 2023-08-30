@@ -625,7 +625,7 @@ public class btl_cmd
                 if (!Configuration.Mod.TranceSeek || btl.dms_geo_id != 512) // TRANCE SEEK - Ark overheat
                 {
                     /*int num = (int)*/
-            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
+                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
                     btl_stat.AlterStatus(btl, BattleStatus.Death);
                     return;
                 }
