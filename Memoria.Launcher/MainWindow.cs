@@ -52,11 +52,6 @@ namespace Memoria.Launcher
                 File.WriteAllText("MoguriFiles/Memoria.ini", "[Graphics]\nEnabled = 1\nTileSize = 64\n");
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
-            if(File.Exists(".\\autorun"))
-            {
-                File.Delete(".\\autorun");
-                PlayButton.Click();
-            }
         }
 
         private void TryLoadImage()
