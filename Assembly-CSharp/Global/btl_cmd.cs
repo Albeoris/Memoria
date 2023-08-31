@@ -528,6 +528,37 @@ public class btl_cmd
         EnqueueCommand(cmd);
     }
 
+    public static CMD_DATA GetFirstCommandReadyToDequeue(FF9StateBattleSystem btlsys)
+    {
+        CMD_DATA cmd = btlsys.cmd_queue.next;
+        HashSet<BTL_DATA> busyCasters = new HashSet<BTL_DATA>();
+        if (Configuration.Battle.Speed == 4)
+            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                if (btl_util.IsBtlBusy(next, btl_util.BusyMode.ANY_CURRENT))
+                    busyCasters.Add(next);
+        while (cmd != null)
+        {
+            if (cmd.regist != null && busyCasters.Contains(cmd.regist) && cmd.cmd_no != BattleCommandId.SysPhantom
+                || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
+                || Status.checkCurStat(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
+                || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
+                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
+            {
+                if (Configuration.Battle.Speed == 4)
+                {
+                    if (cmd.regist != null)
+                        busyCasters.Add(cmd.regist);
+                    foreach (BTL_DATA next in btl_util.findAllBtlData(cmd.tar_id))
+                        busyCasters.Add(next);
+                }
+                cmd = cmd.next;
+                continue;
+            }
+            break;
+        }
+        return cmd;
+    }
+
     private static void RunCommandFromQueue(FF9StateBattleSystem btlsys)
     {
         Boolean admitNewCommand = btlsys.cur_cmd == null;
@@ -568,32 +599,7 @@ public class btl_cmd
                 if (next.die_seq > 0 && next.die_seq < 6 && btl_stat.CheckStatus(next, BattleStatus.AutoLife))
                     return;
 
-        CMD_DATA cmd = btlsys.cmd_queue.next;
-        HashSet<BTL_DATA> busyCasters = new HashSet<BTL_DATA>();
-        if (Configuration.Battle.Speed == 4)
-            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                if (btl_util.IsBtlBusy(next, btl_util.BusyMode.ANY_CURRENT))
-                    busyCasters.Add(next);
-        while (cmd != null)
-        {
-            if (cmd.regist != null && busyCasters.Contains(cmd.regist) && cmd.cmd_no != BattleCommandId.SysPhantom
-                || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
-                || Status.checkCurStat(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
-                || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
-                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
-            {
-                if (Configuration.Battle.Speed == 4)
-                {
-                    if (cmd.regist != null)
-                        busyCasters.Add(cmd.regist);
-                    foreach (BTL_DATA next in btl_util.findAllBtlData(cmd.tar_id))
-                        busyCasters.Add(next);
-                }
-                cmd = cmd.next;
-                continue;
-            }
-            break;
-        }
+        CMD_DATA cmd = GetFirstCommandReadyToDequeue(btlsys);
         if (cmd == null || !FF9StateSystem.Battle.isDebug && !UIManager.Battle.IsNativeEnableAtb() && btl_util.IsCommandDeclarable(cmd.cmd_no))
             return;
         if (Configuration.Battle.Speed == 3 && cmd.regist != null && btl_util.IsBtlBusy(cmd.regist, btl_util.BusyMode.ANY_CURRENT))

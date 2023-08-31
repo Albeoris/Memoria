@@ -373,15 +373,14 @@ public partial class BattleHUD : UIScene
                                     ReadyQueue.Remove(current);
                                     ReadyQueue.Insert(0, current);
                                 }
-                                if (Configuration.Battle.Speed == 2 && current == postponed)
-                                    // We defend if we end up with the same player
-                                    return OnKeyConfirm(_commandPanel.Defend.GameObject);
-                                else
-                                    SwitchPlayer(current);
-                                break;
+                                SwitchPlayer(current);
+                                return true;
                             }
                         }
                     }
+                    if (Configuration.Battle.Speed == 2)
+                        // We defend if we end up with the same player
+                        return OnKeyConfirm(_commandPanel.Defend.GameObject);
                 }
                 else if (ReadyQueue.Count == 1)
                 {
