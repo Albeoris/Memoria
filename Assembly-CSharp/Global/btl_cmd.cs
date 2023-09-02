@@ -570,24 +570,6 @@ public class btl_cmd
             if (btl_cmd.next_cmd_delay <= 0)
                 admitNewCommand = true;
         }
-        else if (!admitNewCommand && Configuration.Battle.Speed > 0 && btlsys.cur_cmd_list.Count < 2 && btlsys.cmd_queue?.next != null && btlsys.cur_cmd.info.effect_counter > 0)
-        {
-            foreach (var action in UnifiedBattleSequencer.runningActions)
-            {
-                if (action.cmd != btlsys.cur_cmd) continue;
-
-                admitNewCommand = true;
-                foreach (var th in action.threadList)
-                {
-                    if (!th.active) continue;
-                    foreach (var c in th.code)
-                    {
-                        if (waitOperations.Contains(c.operation)) return;
-                    }
-                }
-            }
-            if (admitNewCommand) cmdSkipFirstWaitAnim = btlsys.cmd_queue.next;
-        }
         if (!admitNewCommand)
             return;
         if (btlsys.cmd_queue.next == null)
@@ -1774,9 +1756,4 @@ public class btl_cmd
 
     public const Int32 cmd_delay_max = 10;
     public static Int32 next_cmd_delay;
-
-    public static CMD_DATA cmdSkipFirstWaitAnim = null;
-    // "WaitMonsterSFXDone" and "WaitReflect" are always present for enemies :'(
-    private static readonly String[] waitOperations = { "EffectPoint", "WaitSFXDone", "WaitMonsterSFXDone", "WaitReflect" };
-
 }
