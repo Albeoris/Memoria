@@ -475,7 +475,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     {
                         if (changed)
                         {
-                            BattleHUD.ForceNextTurn = false;
                             needContinue = false;
                         }
                     }

@@ -528,28 +528,8 @@ public class btl_cmd
         EnqueueCommand(cmd);
     }
 
-    private static void RunCommandFromQueue(FF9StateBattleSystem btlsys)
+    public static CMD_DATA GetFirstCommandReadyToDequeue(FF9StateBattleSystem btlsys)
     {
-        Boolean admitNewCommand = btlsys.cur_cmd == null;
-        if (admitNewCommand)
-            btl_cmd.next_cmd_delay = 0;
-        if (!admitNewCommand && Configuration.Battle.Speed >= 3)
-        {
-            btl_cmd.next_cmd_delay--;
-            if (btl_cmd.next_cmd_delay <= 0)
-                admitNewCommand = true;
-        }
-        if (!admitNewCommand)
-            return;
-        if (btlsys.cmd_queue.next == null)
-            return;
-        if (btlsys.cur_cmd_list.Contains(btlsys.cmd_escape))
-            return;
-        if (Configuration.Battle.Speed < 3)
-            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                if (next.die_seq > 0 && next.die_seq < 6 && btl_stat.CheckStatus(next, BattleStatus.AutoLife))
-                    return;
-
         CMD_DATA cmd = btlsys.cmd_queue.next;
         HashSet<BTL_DATA> busyCasters = new HashSet<BTL_DATA>();
         if (Configuration.Battle.Speed == 4)
@@ -576,6 +556,32 @@ public class btl_cmd
             }
             break;
         }
+        return cmd;
+    }
+
+    private static void RunCommandFromQueue(FF9StateBattleSystem btlsys)
+    {
+        Boolean admitNewCommand = btlsys.cur_cmd == null;
+        if (admitNewCommand)
+            btl_cmd.next_cmd_delay = 0;
+        if (!admitNewCommand && Configuration.Battle.Speed >= 3)
+        {
+            btl_cmd.next_cmd_delay--;
+            if (btl_cmd.next_cmd_delay <= 0)
+                admitNewCommand = true;
+        }
+        if (!admitNewCommand)
+            return;
+        if (btlsys.cmd_queue.next == null)
+            return;
+        if (btlsys.cur_cmd_list.Contains(btlsys.cmd_escape))
+            return;
+        if (Configuration.Battle.Speed < 3)
+            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                if (next.die_seq > 0 && next.die_seq < 6 && btl_stat.CheckStatus(next, BattleStatus.AutoLife))
+                    return;
+
+        CMD_DATA cmd = GetFirstCommandReadyToDequeue(btlsys);
         if (cmd == null || !FF9StateSystem.Battle.isDebug && !UIManager.Battle.IsNativeEnableAtb() && btl_util.IsCommandDeclarable(cmd.cmd_no))
             return;
         if (Configuration.Battle.Speed == 3 && cmd.regist != null && btl_util.IsBtlBusy(cmd.regist, btl_util.BusyMode.ANY_CURRENT))

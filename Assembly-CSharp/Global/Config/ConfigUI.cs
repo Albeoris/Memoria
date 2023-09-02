@@ -66,7 +66,16 @@ public class ConfigUI : UIScene
         SoundVolume,
         MusicVolume,
         MovieVolume,
-        VoiceVolume
+        VoiceVolume,
+        ATBMode
+    }
+
+    public enum ATBMode
+    {
+        ATBModeNormal,
+        ATBModeFast,
+        ATBModeTurnBased,
+        ATBModeDynamic
     }
 
     public GameObject KeyboardButton;
@@ -180,7 +189,8 @@ public class ConfigUI : UIScene
         Configurator.SoundVolume,
         Configurator.MusicVolume,
         Configurator.MovieVolume,
-        Configurator.VoiceVolume
+        Configurator.VoiceVolume,
+        Configurator.ATBMode
     });
 
     private List<ConfigField> ConfigFieldList;
@@ -1281,6 +1291,10 @@ public class ConfigUI : UIScene
                 case Configurator.VoiceVolume:
                     current.Value = Configuration.VoiceActing.Volume / 100f;
                     break;
+                case Configurator.ATBMode:
+                    int mode = Configuration.Battle.ATBMode >= 3 ? 3 : Configuration.Battle.ATBMode;
+                    current.Value = mode / 3f;
+                    break;
                 default:
                     current.Value = 0f;
                     break;
@@ -1346,7 +1360,14 @@ public class ConfigUI : UIScene
             {
                 configField.Value = Mathf.Clamp(value, 0f, 1f);
                 configField.ConfigChoice[0].GetComponent<UISlider>().value = configField.Value;
-                if(configField.Configurator >= Configurator.SoundVolume)
+                if (configField.Configurator == Configurator.ATBMode)
+                {
+                    // Update the label with the ATB mode
+                    var l = configField.ConfigParent.GetComponentInChildren<UILocalize>();
+                    l.key = ((ATBMode)(configField.Value * 3)).ToString();
+                    l.OnLocalize();
+                }
+                else if (configField.Configurator >= Configurator.SoundVolume)
                 {
                     // Update the label with the volume value
                     configField.ConfigParent.GetChild(1).GetChild(0).GetComponent<UILabel>().text = ((Int32)Math.Round(configField.Value * 20) * 5).ToString();
@@ -1451,6 +1472,11 @@ public class ConfigUI : UIScene
                         Configuration.VoiceActing.Volume = (Int32)Math.Round(configField.Value * 20) * 5;
                         Configuration.VoiceActing.SaveVolume();
                         break;
+                    case Configurator.ATBMode:
+                        Int32 mode = (Int32)(configField.Value * 3);
+                        Configuration.Battle.ATBMode = mode >= 3 ? 5 : mode;
+                        Configuration.Battle.SaveBattleSpeed();
+                        break;
                     default:
                         configField.Value = 0f;
                         break;
@@ -1510,7 +1536,7 @@ public class ConfigUI : UIScene
         }
     }*/
 
-    private GameObject CreateVolumeSlider(GameObject template, Configurator id, int siblingIndex)
+    private GameObject CreateSlider(GameObject template, Configurator id, int siblingIndex)
     {
         try
         {
@@ -1519,28 +1545,51 @@ public class ConfigUI : UIScene
             go.transform.localPosition = template.transform.localPosition;
             go.transform.localScale = template.transform.localScale;
             go.transform.SetSiblingIndex(siblingIndex);
-            go.name = $"{name} Panel - Slider";
+            go.name = $"{id} Panel - Slider";
             go.GetComponent<ScrollItemKeyNavigation>().ID = (int)id;
-
-            var locs = go.GetComponentsInChildren<UILocalize>();
-            locs[0].key = id.ToString();
-            DestroyImmediate(locs[1]);
-            DestroyImmediate(locs[2]);
-
-            var labels = go.GetComponentsInChildren<UILabel>();
-            Destroy(labels[2]);
-
-            var slider = go.GetComponentInChildren<UISlider>();
-            slider.numberOfSteps = 21;
-            slider.value = 0f;
-
             return go;
         }
         catch (Exception ex)
         {
-            Log.Error($"[ConfigUI] Couldn't create volume silder\n{ex.Message}\n{ex.StackTrace}");
+            Log.Error($"[ConfigUI] Couldn't create silder\n{ex.Message}\n{ex.StackTrace}");
         }
         return null;
+    }
+
+    private void CreateVolumeSlider(GameObject template, Configurator id, int siblingIndex)
+    {
+        var go = CreateSlider(template, id, siblingIndex);
+
+        var locs = go.GetComponentsInChildren<UILocalize>();
+        locs[0].key = id.ToString();
+        DestroyImmediate(locs[1]);
+        DestroyImmediate(locs[2]);
+
+        var labels = go.GetComponentsInChildren<UILabel>();
+        Destroy(labels[2]);
+
+        var slider = go.GetComponentInChildren<UISlider>();
+        slider.numberOfSteps = 21;
+        slider.value = 0f;
+    }
+
+    private void CreateATBModeSlider(GameObject template, Configurator id, int siblingIndex)
+    {
+        var go = CreateSlider(template, id, siblingIndex);
+
+        var locs = go.GetComponentsInChildren<UILocalize>();
+        locs[0].key = id.ToString();
+        DestroyImmediate(locs[1]);
+        DestroyImmediate(locs[2]);
+
+        var labels = go.GetComponentsInChildren<UILabel>();
+        Destroy(labels[1]);
+        Destroy(labels[2]);
+
+        var slider = go.GetComponentInChildren<UISlider>();
+        slider.numberOfSteps = 4;
+        slider.value = 0f;
+
     }
 
     private void Awake()
@@ -1556,6 +1605,8 @@ public class ConfigUI : UIScene
         CreateVolumeSlider(template, Configurator.MovieVolume, 2);
         if (Configuration.VoiceActing.Enabled)
             CreateVolumeSlider(template, Configurator.VoiceVolume, 3);
+
+        CreateATBModeSlider(template, Configurator.ATBMode, 9);
 
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {

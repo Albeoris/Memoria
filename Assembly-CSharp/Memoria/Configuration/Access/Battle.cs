@@ -8,6 +8,11 @@ namespace Memoria
         {
             public static Boolean SFXRework => Instance._battle.SFXRework || Speed >= 3;
             public static Int32 Speed => GetBattleSpeed();
+            public static Int32 ATBMode
+            {
+                get => Instance._battle.Speed;
+                set => Instance._battle.Speed.Value = value;
+            }
             public static Boolean NoAutoTrance => Instance._battle.NoAutoTrance;
             public static Int32 EncounterInterval => Instance._battle.EncounterInterval;
             public static Int32 EncounterInitial => Instance._battle.EncounterInitial;
@@ -49,6 +54,14 @@ namespace Memoria
                     return 0;
 
                 return value;
+            }
+
+            public static void SaveBattleSpeed()
+            {
+                // Battle needs to be enabled for the setting to be applied
+                Instance._battle.Enabled.Value = true;
+                SaveValue(Instance._battle.Name, Instance._battle.Enabled);
+                SaveValue(Instance._battle.Name, Instance._battle.Speed);
             }
         }
     }
