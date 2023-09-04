@@ -754,21 +754,20 @@ public partial class FieldMapActorController : HonoBehavior
 		if (movingUp || movingDown || movingLeft || movingRight || this.hasTarget && actualMoveVec != Vector3.zero)
 		{
 			Single moveAngle = Mathf.Atan2(-this.moveVec.x, -this.moveVec.z) * 57.29578f;
-			Single actorRot = Mathf.Lerp(this.actor.actor.rotAngle[1], moveAngle, 0.4f);
 			if (Mathf.Abs(moveAngle - this.actor.actor.rotAngle[1]) > 180f)
 			{
 				if (moveAngle > this.actor.actor.rotAngle[1])
-					actorRot += 180f;
+					moveAngle -= 360f;
 				else
-					actorRot -= 180f;
+					moveAngle += 360f;
 			}
-			if (actorRot > 180f)
+			Single actorRot = Mathf.Lerp(this.actor.actor.rotAngle[1], moveAngle, 0.4f);
+			while (actorRot > 180f)
 				actorRot -= 360f;
-			else if (actorRot < -180f)
+			while (actorRot < -180f)
 				actorRot += 360f;
 			this.actor.actor.rotAngle[1] = actorRot;
-			Single collDist;
-			PosObj posObj = this.walkMesh.Collision(this, 0, out collDist);
+			PosObj posObj = this.walkMesh.Collision(this, 0, out Single collDist);
 			if (posObj != null)
 			{
 				instance.sLockFree = (Int64)(((posObj.flags & 16) != 0) ? 0L : 1L);

@@ -1729,6 +1729,7 @@ public class TitleUI : UIScene
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, new UICamera.KeyCodeDelegate(this.OnKeyNavigate));
 
         DataPatchers.Initialize();
+        QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
     }
 
     private class SlideShow

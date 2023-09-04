@@ -32,6 +32,7 @@ namespace Memoria
         public static Int16 Frogs => FF9StateSystem.Common.FF9.Frogs.Number;
         public static Int16[] CategoryKillCount => FF9StateSystem.Common.FF9.categoryKillCount;
         public static Int16 ModelKillCount(Int16 modelId) => FF9StateSystem.Common.FF9.modelKillCount[modelId];
+        public static Int32 TotalKillCount => FF9StateSystem.Common.FF9.modelKillCount.Values.Sum(count => count);
         public static Byte Tonberies => battle.TONBERI_COUNT;
         public static UInt16 EscapeCount => FF9StateSystem.Common.FF9.party.escape_no;
         public static Int32 BattleCount => FF9StateSystem.Common.FF9.party.battle_no;
@@ -43,7 +44,9 @@ namespace Memoria
         public static Int32 TetraMasterPlayerPoints => QuadMistDatabase.MiniGame_GetPlayerPoints();
         public static Int32 GameTime => Convert.ToInt32(FF9StateSystem.Settings.time);
         public static Int32 AbilityUsage(BattleAbilityId index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
-        public static Int32 ItemCount(Int32 id) => ff9item.FF9Item_GetCount_Generic(id);
+        public static Int32 ItemCount(RegularItem id) => ff9item.FF9Item_GetCount(id);
+        public static Boolean HasKeyItem(Int32 id) => ff9item.FF9Item_IsExistImportant(id);
+        public static Int32 GetCardCountOfType(TetraMasterCardId id) => QuadMistDatabase.MiniGame_GetCardCount(id);
         public static Int32 PartyLevel(Int32 index) => index < 0 || index >= 4 ? 0 : FF9StateSystem.Common.FF9.party.member[index]?.level ?? 0;
         public static Single PartyAverageLevel => (Single)(FF9StateSystem.Common.FF9.party.member.Average(p => p?.level) ?? 0);
         public static CharacterId PartyCharacterId(Int32 index) => index < 0 || index >= 4 ? CharacterId.NONE : FF9StateSystem.Common.FF9.party.GetCharacterId(index);

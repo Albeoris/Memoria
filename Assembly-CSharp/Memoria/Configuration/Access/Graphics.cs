@@ -19,6 +19,7 @@ namespace Memoria
             public static Int32 SkipIntros = Instance._graphics.SkipIntros;
             public static Int32 GarnetHair => Instance._graphics.GarnetHair;
             public static Int32 TileSize => Instance._graphics.TileSize;
+            public static Int32 AntiAliasing => Instance._graphics.AntiAliasing;
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 

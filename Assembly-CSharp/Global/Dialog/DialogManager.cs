@@ -441,16 +441,9 @@ public class DialogManager : Singleton<DialogManager>
 			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index];
 			if (ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && UIManager.World.CurrentState != WorldHUD.State.FullMap && !this.HasChocoboMenu && !ff9.w_isMogActive)
 			{
-				Boolean hasUIDialog = false;
-				foreach (Dialog dialog in this.activeDialogList)
-				{
-					if (dialog.Id == DialogManager.UIDialogId)
-					{
-						hasUIDialog = true;
-						break;
-					}
-				}
-				shouldActivate = hasUIDialog;
+				Boolean closableDialogIsShown = this.activeDialogList.Any(dial => dial.TextId == 87); // "Watched the waves around the world and relaxed!"
+				Boolean hasUIDialog = this.activeDialogList.Any(dial => dial.Id == DialogManager.UIDialogId);
+				shouldActivate = hasUIDialog || closableDialogIsShown;
 			}
 		}
 		if (shouldActivate)
@@ -465,8 +458,9 @@ public class DialogManager : Singleton<DialogManager>
 		Boolean shouldDeactivate = this.activeDialogList.Count == 0;
 		if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD)
 		{
+			Boolean closableDialogIsShown = this.activeDialogList.Any(dial => dial.TextId == 87); // "Watched the waves around the world and relaxed!"
 			ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[ff9.w_moveActorPtr.originalActor.index];
-			if (ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && UIManager.World.CurrentState != WorldHUD.State.FullMap && !this.HasChocoboMenu && !ff9.w_isMogActive)
+			if (!closableDialogIsShown && ff9.m_GetIDEvent(s_moveCHRStatus.id) != 0 && UIManager.World.CurrentState != WorldHUD.State.FullMap && !this.HasChocoboMenu && !ff9.w_isMogActive)
 				shouldDeactivate = true;
 		}
 		if (shouldDeactivate)

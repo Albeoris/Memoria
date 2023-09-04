@@ -307,7 +307,7 @@ namespace Memoria.Data
 
         public void TriggerOnAbility(BattleCalculator calc, String when, Boolean asTarget)
         {
-            if (Id >= 0 && calc.Context.DisabledSA.Contains(Id))
+            if (!EnableAsEnemy && !EnableAsMonsterTransform && Id >= 0 && calc.Context.DisabledSA.Contains(Id))
                 return;
             try
             {
@@ -343,6 +343,8 @@ namespace Memoria.Data
                             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                             if (String.Compare(formula.Key, "CasterHP") == 0) caster.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentHp);
                             else if (String.Compare(formula.Key, "CasterMP") == 0) caster.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentMp);
+                            else if (String.Compare(formula.Key, "CasterMaxHP") == 0) caster.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaximumHp);
+                            else if (String.Compare(formula.Key, "CasterMaxMP") == 0) caster.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaximumMp);
                             else if (String.Compare(formula.Key, "CasterATB") == 0) caster.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentAtb);
                             else if (String.Compare(formula.Key, "CasterTrance") == 0) caster.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Trance);
                             else if (String.Compare(formula.Key, "CasterCurrentStatus") == 0) cCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cCurStat);
@@ -378,6 +380,8 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "CasterBonusCard") == 0 && !caster.IsPlayer) caster.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)caster.Enemy.Data.bonus_card);
                             else if (String.Compare(formula.Key, "TargetHP") == 0) target.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentHp);
                             else if (String.Compare(formula.Key, "TargetMP") == 0) target.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentMp);
+                            else if (String.Compare(formula.Key, "TargetMaxHP") == 0) target.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaximumHp);
+                            else if (String.Compare(formula.Key, "TargetMaxMP") == 0) target.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaximumMp);
                             else if (String.Compare(formula.Key, "TargetATB") == 0) target.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentAtb);
                             else if (String.Compare(formula.Key, "TargetTrance") == 0) target.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Trance);
                             else if (String.Compare(formula.Key, "TargetCurrentStatus") == 0) tCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tCurStat);
@@ -565,6 +569,8 @@ namespace Memoria.Data
                             else if (String.Compare(formula.Key, "CommandTargetId") == 0) command.Data.tar_id = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Data.tar_id);
                             else if (String.Compare(formula.Key, "HP") == 0) abilityUser.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentHp);
                             else if (String.Compare(formula.Key, "MP") == 0) abilityUser.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentMp);
+                            else if (String.Compare(formula.Key, "MaxHP") == 0) abilityUser.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaximumHp);
+                            else if (String.Compare(formula.Key, "MaxMP") == 0) abilityUser.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaximumMp);
                             else if (String.Compare(formula.Key, "ATB") == 0) abilityUser.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentAtb);
                             else if (String.Compare(formula.Key, "Trance") == 0) abilityUser.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Trance);
                             else if (String.Compare(formula.Key, "CurrentStatus") == 0) uCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uCurStat);

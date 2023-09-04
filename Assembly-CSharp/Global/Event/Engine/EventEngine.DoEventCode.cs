@@ -2265,7 +2265,7 @@ public partial class EventEngine
                     SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
                 if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                        if (play.Index > CharacterId.Beatrix)
+                        if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
                             SFieldCalculator.FieldRemoveStatus(play, statusList);
                 return 0;
             }
@@ -2472,7 +2472,7 @@ public partial class EventEngine
                     }
                     if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
                         foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Beatrix)
+                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
                                 play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
                 }
                 return 0;
@@ -2499,7 +2499,7 @@ public partial class EventEngine
                     }
                     if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
                         foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Beatrix)
+                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
                                 play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
                 }
                 return 0;

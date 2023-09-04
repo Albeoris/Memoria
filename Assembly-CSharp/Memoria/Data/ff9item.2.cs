@@ -359,7 +359,7 @@ public class ff9item
             case RegularItem.RuneClaws:
                 AchievementManager.ReportAchievement(AcheivementKey.RuneClaws, count);
                 break;
-            case RegularItem.TigerFangs:
+            case RegularItem.TigerRacket:
                 AchievementManager.ReportAchievement(AcheivementKey.TigerHands, count);
                 break;
             case RegularItem.WhaleWhisker:

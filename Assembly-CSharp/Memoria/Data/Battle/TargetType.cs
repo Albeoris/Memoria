@@ -15,6 +15,8 @@
         RandomAlly = 10,
         RandomEnemy = 11,
         Everyone = 12,
-        Self = 13
+        Self = 13,
+        Automatic = 14,
+        Special = 15
     }
 }

@@ -591,6 +591,7 @@ Ability WhenHitRateSetup EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack [/code]
 [code=HitRate] 100 [/code]
 [code=Evade] 0 [/code]
+DisableSA 10
 
 >SA 10 Distract
 Ability AsTarget WhenHitRateSetup EvenImmobilized

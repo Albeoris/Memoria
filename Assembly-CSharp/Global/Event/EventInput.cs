@@ -67,7 +67,7 @@ public class EventInput
 		else
 			EventInput.SetOtherLangLayout();
 		EventInput.ConfirmMask = EventInput.Lcircle | EventInput.Pcircle;
-        CancelMask = EventInput.Lx | EventInput.Px;
+		EventInput.CancelMask = EventInput.Lx | EventInput.Px;
 	}
 
 	private static void SetJapaneseLayput()

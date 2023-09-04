@@ -28,7 +28,7 @@ public class btl_para
 
     public static void SetLogicalHP(BTL_DATA btl, UInt32 newHP, Boolean max)
     {
-        if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & 0x4) != 0)
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & 0x4) != 0)
         {
             if (newHP == 0)
                 newHP = 1;

@@ -88,7 +88,7 @@ namespace NCalc
             else if (name == "GetAbilityUsageCount" && args.Parameters.Length == 1)
                 args.Result = GameState.AbilityUsage((BattleAbilityId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
-                args.Result = GameState.ItemCount((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue));
+                args.Result = GameState.ItemCount((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem));
             else if (name == "GetPartyMemberLevel" && args.Parameters.Length == 1)
                 args.Result = GameState.PartyLevel((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetPartyMemberIndex" && args.Parameters.Length == 1)
@@ -198,6 +198,7 @@ namespace NCalc
             else if (name == "StealCount") args.Result = (Int32)GameState.Thefts;
             else if (name == "EscapeCount") args.Result = (Int32)GameState.EscapeCount;
             else if (name == "BattleCount") args.Result = (Int32)GameState.BattleCount;
+            else if (name == "TotalKillCount") args.Result = (Int32)GameState.TotalKillCount;
             else if (name == "StepCount") args.Result = (Int32)GameState.StepCount; // TODO: not currently tracked
             else if (name == "TonberryCount") args.Result = (Int32)GameState.Tonberies;
             else if (name == "TetraMasterWinCount") args.Result = (Int32)GameState.TetraMasterWin;
@@ -223,11 +224,11 @@ namespace NCalc
             else if (name == "BattleBonusAP") args.Result = battle.btl_bonus.ap;
             else if (name == "UseSFXRework") args.Result = Configuration.Battle.SFXRework;
             else
-			{
+            {
                 foreach (Type t in UsableEnumTypes)
                 {
                     if (name.StartsWith(t.Name + "_"))
-					{
+                    {
                         String enumValueStr = name.Substring(t.Name.Length + 1);
                         if (t == typeof(BattleStatus) && enumValueStr.TryStaticFieldParse(typeof(BattleStatusConst), out FieldInfo field))
                         {
@@ -237,7 +238,7 @@ namespace NCalc
                         args.Result = Convert.ToInt32(Enum.Parse(t, enumValueStr));
                         return;
                     }
-				}
+                }
             }
         };
 
