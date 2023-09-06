@@ -470,7 +470,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Memoria", nameof(AutoRunGame));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
-                AutoRunGame = Boolean.TryParse(value, out var autoRunGame) && autoRunGame;
+                AutoRunGame = App.AutoRunGame || (Boolean.TryParse(value, out var autoRunGame) && autoRunGame);
 
                 value = iniFile.ReadValue("Memoria", nameof(DownloadMirrors));
                 if (String.IsNullOrEmpty(value))
