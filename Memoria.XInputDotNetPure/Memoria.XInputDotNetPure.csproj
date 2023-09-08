@@ -46,7 +46,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="JoyShockLibrary\LICENSE.md" />
+    <None Include="JoyShockLibrary\README.md" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="JoyShockLibrary\x64\JoyShockLibrary.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
