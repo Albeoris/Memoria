@@ -407,13 +407,11 @@ namespace XInputDotNetPure
             Imports.XInputGamePadSetState((uint)playerIndex, leftMotor, rightMotor);
             try
             {
-                int count = JSL.ConnectDevices();
-                if (count > 0)
+                if (jslDevices.Length > 0)
                 {
-                    int[] devices = new int[count];
-                    JSL.GetConnectedDeviceHandles(devices, count);
-                    foreach (int device in devices)
+                    foreach (int device in jslDevices)
                     {
+                        if (!JSL.StillConnected(device)) continue;
                         JSL.SetRumble(device, (int)(leftMotor * byte.MaxValue), (int)(rightMotor * byte.MaxValue));
                     }
                 }
