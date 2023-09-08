@@ -96,7 +96,7 @@ namespace NCalc
             else if (name == "IsCharacterInParty" && args.Parameters.Length == 1)
             {
                 CharacterId index = (CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue);
-                args.Result = index != CharacterId.NONE && FF9StateSystem.Common.FF9.party.member.Any(p => p.Index == index);
+                args.Result = index != CharacterId.NONE && FF9StateSystem.Common.FF9.party.member.Any(p => p?.Index == index);
             }
             else if (name == "GetCategoryKillCount" && args.Parameters.Length == 1)
             {
