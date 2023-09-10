@@ -62,7 +62,9 @@ namespace Memoria.MSBuild
                     PackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
-
+                    PackOptionalFile("XInputDotNetPure.dll", "{PLATFORM}\\FF9_Data\\Managed\\XInputDotNetPure.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("JoyShockLibrary\\x64\\JoyShockLibrary.dll", "x64\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("JoyShockLibrary\\x86\\JoyShockLibrary.dll", "x86\\FF9_Data\\Plugins\\JoyShockLibrary.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
 
                     bw.Flush();
                     Int64 compressedDataSize = executableFile.Position - compressedDataPosition;

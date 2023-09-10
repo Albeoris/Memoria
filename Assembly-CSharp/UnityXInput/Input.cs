@@ -275,41 +275,28 @@ namespace UnityXInput
 
         public static Single GetAxis(String axisName)
         {
-            Single axis = UnityEngine.Input.GetAxis(axisName);
-            if ((Double)axis != 0.0)
-                return axis;
-            return Input.GetXAxis(axisName);
+            return Input.GetAxisRaw(axisName);
         }
 
         public static Single GetAxisRaw(String axisName)
         {
-            Single axisRaw = UnityEngine.Input.GetAxisRaw(axisName);
-            if ((Double)axisRaw != 0.0)
-                return axisRaw;
-            return Input.GetXAxis(axisName);
+            float axisRaw = UnityEngine.Input.GetAxisRaw(axisName);
+            axisRaw += Input.GetXAxis(axisName);
+            return Mathf.Clamp(axisRaw, -1f, 1f);
         }
 
         public static Boolean GetButtonUp(String keyName)
         {
-            Boolean buttonUp = UnityEngine.Input.GetButtonUp(keyName);
-            if (buttonUp)
-                return buttonUp;
             return Input.GetXButtonUp(keyName);
         }
 
         public static Boolean GetButtonDown(String keyName)
         {
-            Boolean buttonDown = UnityEngine.Input.GetButtonDown(keyName);
-            if (buttonDown)
-                return buttonDown;
             return Input.GetXButtonDown(keyName);
         }
 
         public static Boolean GetButton(String keyName)
         {
-            Boolean button = UnityEngine.Input.GetButton(keyName);
-            if (button)
-                return button;
             return Input.GetXButton(keyName);
         }
 

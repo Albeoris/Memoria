@@ -216,40 +216,42 @@ namespace Memoria.Data
 
             if (isDirty) LoadEffects();
 
-            try
+            List<BattleInOut> retainedEffects = new List<BattleInOut>();
+            Int32 retainedPriority = Int32.MinValue;
+            foreach (BattleInOut effect in InOutEffect)
             {
-                List<BattleInOut> retainedEffects = new List<BattleInOut>();
-                Int32 retainedPriority = Int32.MinValue;
-                foreach (BattleInOut effect in InOutEffect)
+                if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll())
+                    continue;
+                if (!String.IsNullOrEmpty(effect.Condition))
                 {
-                    if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll())
-                        continue;
-                    if (!String.IsNullOrEmpty(effect.Condition))
+                    Expression c = new Expression(effect.Condition);
+                    BattleUnit unit = new BattleUnit(effect.Speakers[0].FindBtlUnlimited());
+                    NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                    c.Parameters["VictoryFocusIndex"] = (UInt32)VictoryFocusIndex;
+                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+
+                    try
                     {
-                        Expression c = new Expression(effect.Condition);
-                        BattleUnit unit = new BattleUnit(effect.Speakers[0].FindBtlUnlimited());
-                        NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                        c.Parameters["VictoryFocusIndex"] = (UInt32)VictoryFocusIndex;
-                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                             continue;
                     }
-                    if (effect.Priority > retainedPriority)
+                    catch (Exception err)
                     {
-                        retainedEffects.Clear();
-                        retainedPriority = effect.Priority;
+                        Log.Error(err);
+                        continue;
                     }
-                    retainedEffects.Add(effect);
                 }
-                if (retainedEffects.Count == 0)
-                    return;
-                PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
+                if (effect.Priority > retainedPriority)
+                {
+                    retainedEffects.Clear();
+                    retainedPriority = effect.Priority;
+                }
+                retainedEffects.Add(effect);
             }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
+            if (retainedEffects.Count == 0)
+                return;
+            PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
         public static void TriggerOnBattleAct(BTL_DATA actingChar, String when, CMD_DATA cmdUsed, BattleCalculator calc = null)
@@ -259,53 +261,54 @@ namespace Memoria.Data
 
             if (isDirty) LoadEffects();
 
-            try
+            List<BattleAct> retainedEffects = new List<BattleAct>();
+            Int32 retainedPriority = Int32.MinValue;
+            foreach (BattleAct effect in ActEffect)
             {
-                List<BattleAct> retainedEffects = new List<BattleAct>();
-                Int32 retainedPriority = Int32.MinValue;
-                foreach (BattleAct effect in ActEffect)
+                if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(actingChar))
+                    continue;
+                if (!String.IsNullOrEmpty(effect.Condition))
                 {
-                    if (String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(actingChar))
-                        continue;
-                    if (!String.IsNullOrEmpty(effect.Condition))
+                    Expression c = new Expression(effect.Condition);
+                    BattleUnit unit = new BattleUnit(actingChar);
+                    BattleCommand cmd = new BattleCommand(cmdUsed);
+                    NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                    List<BTL_DATA> t = FF9.btl_util.findAllBtlData(cmdUsed.tar_id);
+                    if (t.Count > 0)
                     {
-                        Expression c = new Expression(effect.Condition);
-                        BattleUnit unit = new BattleUnit(actingChar);
-                        BattleCommand cmd = new BattleCommand(cmdUsed);
-                        NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                        List<BTL_DATA> t = FF9.btl_util.findAllBtlData(cmdUsed.tar_id);
-                        if (t.Count > 0)
-                        {
-                            BattleUnit target = new BattleUnit(t[0]);
-                            NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
-                        }
-                        else
-                        {
-                            NCalcUtility.InitializeExpressionNullableUnit(ref c, null, "Target");
-                        }
-                        NCalcUtility.InitializeExpressionCommand(ref c, cmd);
-                        if (calc != null) // Should be the case only when "HitEffect"
-                            NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
-                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                        BattleUnit target = new BattleUnit(t[0]);
+                        NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
+                    }
+                    else
+                    {
+                        NCalcUtility.InitializeExpressionNullableUnit(ref c, null, "Target");
+                    }
+                    NCalcUtility.InitializeExpressionCommand(ref c, cmd);
+                    if (calc != null) // Should be the case only when "HitEffect"
+                        NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
+                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    try
+                    {
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                             continue;
                     }
-                    if (effect.Priority > retainedPriority)
+                    catch (Exception err)
                     {
-                        retainedEffects.Clear();
-                        retainedPriority = effect.Priority;
+                        Log.Error(err);
+                        continue;
                     }
-                    retainedEffects.Add(effect);
                 }
-                if (retainedEffects.Count == 0)
-                    return;
-                PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
+                if (effect.Priority > retainedPriority)
+                {
+                    retainedEffects.Clear();
+                    retainedPriority = effect.Priority;
+                }
+                retainedEffects.Add(effect);
             }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
+            if (retainedEffects.Count == 0)
+                return;
+            PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
         public static void TriggerOnHitted(BTL_DATA hittedChar, BattleCalculator calc)
@@ -315,42 +318,43 @@ namespace Memoria.Data
 
             if (isDirty) LoadEffects();
 
-            try
+            List<BattleHitted> retainedEffects = new List<BattleHitted>();
+            Int32 retainedPriority = Int32.MinValue;
+            foreach (BattleHitted effect in HittedEffect)
             {
-                List<BattleHitted> retainedEffects = new List<BattleHitted>();
-                Int32 retainedPriority = Int32.MinValue;
-                foreach (BattleHitted effect in HittedEffect)
+                if (effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(hittedChar))
+                    continue;
+                if (!String.IsNullOrEmpty(effect.Condition))
                 {
-                    if (effect.Priority < retainedPriority || !effect.CheckSpeakerAll() || !effect.CheckIsFirstSpeaker(hittedChar))
-                        continue;
-                    if (!String.IsNullOrEmpty(effect.Condition))
+                    Expression c = new Expression(effect.Condition);
+                    BattleUnit unit = new BattleUnit(hittedChar);
+                    NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                    NCalcUtility.InitializeExpressionUnit(ref c, calc.Caster, "Caster");
+                    NCalcUtility.InitializeExpressionCommand(ref c, calc.Command);
+                    NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
+                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    try
                     {
-                        Expression c = new Expression(effect.Condition);
-                        BattleUnit unit = new BattleUnit(hittedChar);
-                        NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                        NCalcUtility.InitializeExpressionUnit(ref c, calc.Caster, "Caster");
-                        NCalcUtility.InitializeExpressionCommand(ref c, calc.Command);
-                        NCalcUtility.InitializeExpressionAbilityContext(ref c, calc);
-                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                             continue;
                     }
-                    if (effect.Priority > retainedPriority)
+                    catch (Exception err)
                     {
-                        retainedEffects.Clear();
-                        retainedPriority = effect.Priority;
+                        Log.Error(err);
+                        continue;
                     }
-                    retainedEffects.Add(effect);
                 }
-                if (retainedEffects.Count == 0)
-                    return;
-                PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
+                if (effect.Priority > retainedPriority)
+                {
+                    retainedEffects.Clear();
+                    retainedPriority = effect.Priority;
+                }
+                retainedEffects.Add(effect);
             }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
+            if (retainedEffects.Count == 0)
+                return;
+            PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
         public static void TriggerOnStatusChange(BTL_DATA statusedChar, String when, BattleStatus whichStatus)
@@ -360,44 +364,45 @@ namespace Memoria.Data
 
             if (isDirty) LoadEffects();
 
-            try
+            List<BattleStatusChange> retainedEffects = new List<BattleStatusChange>();
+            Int32 retainedPriority = Int32.MinValue;
+            Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
+            foreach (BattleStatusChange effect in StatusChangeEffect)
             {
-                List<BattleStatusChange> retainedEffects = new List<BattleStatusChange>();
-                Int32 retainedPriority = Int32.MinValue;
-                Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
-                foreach (BattleStatusChange effect in StatusChangeEffect)
+                if (String.Compare(effect.When, when) != 0 || (whichStatus & effect.Status) == 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
+                    continue;
+                if (discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar, effect.Status))
+                    continue;
+                if (!discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar))
+                    continue;
+                if (!String.IsNullOrEmpty(effect.Condition))
                 {
-                    if (String.Compare(effect.When, when) != 0 || (whichStatus & effect.Status) == 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
-                        continue;
-                    if (discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar, effect.Status))
-                        continue;
-                    if (!discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar))
-                        continue;
-                    if (!String.IsNullOrEmpty(effect.Condition))
+                    Expression c = new Expression(effect.Condition);
+                    BattleUnit unit = new BattleUnit(statusedChar);
+                    NCalcUtility.InitializeExpressionUnit(ref c, unit);
+                    c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    try
                     {
-                        Expression c = new Expression(effect.Condition);
-                        BattleUnit unit = new BattleUnit(statusedChar);
-                        NCalcUtility.InitializeExpressionUnit(ref c, unit);
-                        c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
                             continue;
                     }
-                    if (effect.Priority > retainedPriority)
+                    catch (Exception err)
                     {
-                        retainedEffects.Clear();
-                        retainedPriority = effect.Priority;
+                        Log.Error(err);
+                        continue;
                     }
-                    retainedEffects.Add(effect);
                 }
-                if (retainedEffects.Count == 0)
-                    return;
-                PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
+                if (effect.Priority > retainedPriority)
+                {
+                    retainedEffects.Clear();
+                    retainedPriority = effect.Priority;
+                }
+                retainedEffects.Add(effect);
             }
-            catch (Exception err)
-            {
-                Log.Error(err);
-            }
+            if (retainedEffects.Count == 0)
+                return;
+            PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
         private static void ParseEffect(String effectCode)
