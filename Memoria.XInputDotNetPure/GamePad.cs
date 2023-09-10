@@ -368,6 +368,7 @@ namespace XInputDotNetPure
                         JSL.State jslState = JSL.GetSimpleState(device);
                         if ((jslState.buttons & (int)JSL.Button.Options) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Start;
                         if ((jslState.buttons & (int)JSL.Button.TouchpadClick) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Back;
+                        if ((jslState.buttons & (int)JSL.Button.Minus) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.Back;
                         if ((jslState.buttons & (int)JSL.Button.ZL) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.LeftThumb;
                         if ((jslState.buttons & (int)JSL.Button.ZR) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.RightThumb;
                         if ((jslState.buttons & (int)JSL.Button.L) != 0) rawState.Gamepad.wButtons |= (ushort)ButtonsConstants.LeftShoulder;
