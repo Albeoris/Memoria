@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
 
@@ -9,7 +11,7 @@ public class ChocographUI : UIScene
 {
 	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		UIScene.SceneVoidDelegate afterShowAction = delegate
 		{
 			ButtonGroupState.SetPointerDepthToGroup(4, ChocographUI.ItemGroupButton);
 			ButtonGroupState.SetPointerOffsetToGroup(new Vector2(30f, 0f), ChocographUI.ItemGroupButton);
@@ -19,24 +21,16 @@ public class ChocographUI : UIScene
 			ButtonGroupState.ActiveGroup = ChocographUI.SubMenuGroupButton;
 		};
 		if (afterFinished != null)
-		{
-			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-		}
+			afterShowAction += afterFinished;
 		SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-		base.Show(sceneVoidDelegate);
+		base.Show(afterShowAction);
+		this.UpdateUserInterface();
 		this.ClearLatestUI();
 		this.GetEventData();
 		this.DisplayChocoboAbilityInfo();
 		this.DisplayInventoryInfo();
 		this.DisplayChocographList();
-		if (FF9StateSystem.PCPlatform)
-		{
-			this.HelpDespLabelGameObject.SetActive(true);
-		}
-		else
-		{
-			this.HelpDespLabelGameObject.SetActive(false);
-		}
+		this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
 		if (ChocographUI.CurrentSelectedChocograph != -1)
 		{
 			ButtonGroupState.SetCursorStartSelect(this.chocographItemList[ChocographUI.CurrentSelectedChocograph].Self, ChocographUI.ItemGroupButton);
@@ -53,17 +47,36 @@ public class ChocographUI : UIScene
 		this.chocoboScrollButton.DisplayScrollButton(false, false);
 	}
 
+	public void UpdateUserInterface()
+	{
+		if (!Configuration.Interface.IsEnabled)
+			return;
+		const Int32 originalLineCount = 5;
+		const Single buttonOriginalHeight = 86f;
+		const Single panelOriginalWidth = 658f;
+		const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+		Int32 linePerPage = Configuration.Interface.MenuChocographRowCount;
+		Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
+		Single scaleFactor = lineHeight / buttonOriginalHeight;
+		_chocographPanel.SubPanel.ChangeDims(1, linePerPage, panelOriginalWidth, lineHeight);
+		foreach (GOButtonPrefab button in _chocographPanel.SubPanel.Table.Entries)
+		{
+			button.IconSprite.SetAnchor(target: button.Transform, relBottom: 0.5f, relTop: 0.5f, bottom: -36f * scaleFactor, top: 36f * scaleFactor, relLeft: 0.064f, relRight: 0.064f, right: 72f * scaleFactor);
+			button.NameLabel.SetAnchor(target: button.Transform, relBottom: 0.081f, relTop: 0.919f, relLeft: 0.064f, left: 90f * scaleFactor, relRight: 1f);
+			button.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		}
+	}
+
 	public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		UIScene.SceneVoidDelegate afterHideAction = delegate
 		{
+			MainMenuUI.UIControlPanel?.ExitMenu();
 			PersistenSingleton<UIManager>.Instance.ChangeUIState(PersistenSingleton<UIManager>.Instance.HUDState);
 		};
 		if (afterFinished != null)
-		{
-			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-		}
-		base.Hide(sceneVoidDelegate);
+			afterHideAction += afterFinished;
+		base.Hide(afterHideAction);
 		this.RemoveCursorMemorize();
 	}
 
@@ -218,15 +231,14 @@ public class ChocographUI : UIScene
 
 	public static void UpdateEquipedHintMap()
 	{
-		if (FF9StateSystem.Common.FF9.hintmap_id > 24)
+		if (FF9StateSystem.Common.FF9.hintmap_id > ChocographUI.HintMapMax)
 		{
 			FF9StateSystem.Common.FF9.hintmap_id = 0;
 			ChocographUI.CurrentSelectedChocograph = -1;
 		}
 		else
 		{
-			ChocographUI.CurrentSelectedChocograph = FF9StateSystem.Common.FF9.hintmap_id - 1;
-			ChocographUI.CurrentSelectedChocograph = (Int32)((ChocographUI.CurrentSelectedChocograph >= 0) ? ChocographUI.CurrentSelectedChocograph : -1);
+			ChocographUI.CurrentSelectedChocograph = Math.Max(FF9StateSystem.Common.FF9.hintmap_id, 0) - 1;
 		}
 	}
 
@@ -235,28 +247,24 @@ public class ChocographUI : UIScene
 		this.hasMap.Clear();
 		this.hasGem.Clear();
 		ChocographUI.UpdateEquipedHintMap();
-		Int32 num = 0;
-		Int32 num2 = 0;
-		this.ability = (Int32)FF9StateSystem.EventState.gEventGlobal[191];
+		Int32 chocographFound = 0;
+		Int32 chocographOpened = 0;
+		this.ability = FF9StateSystem.EventState.gEventGlobal[191];
 		this.mapCount = 0;
 		this.gemCount = 0;
 		for (Int32 i = 0; i < 3; i++)
 		{
-			num |= (Int32)FF9StateSystem.EventState.gEventGlobal[187 + i] << i * 8;
-			num2 |= (Int32)FF9StateSystem.EventState.gEventGlobal[184 + i] << i * 8;
+			chocographFound |= (Int32)FF9StateSystem.EventState.gEventGlobal[187 + i] << i * 8;
+			chocographOpened |= (Int32)FF9StateSystem.EventState.gEventGlobal[184 + i] << i * 8;
 		}
-		for (Int32 j = 0; j < 24; j++)
+		for (Int32 i = 0; i < ChocographUI.HintMapMax; i++)
 		{
-			this.hasMap.Add((num & 1 << j) != 0);
-			if (this.hasMap[j])
-			{
+			this.hasMap.Add((chocographFound & 1 << i) != 0);
+			if (this.hasMap[i])
 				this.mapCount++;
-			}
-			this.hasGem.Add((num2 & 1 << j) != 0);
-			if (this.hasGem[j])
-			{
+			this.hasGem.Add((chocographOpened & 1 << i) != 0);
+			if (this.hasGem[i])
 				this.gemCount++;
-			}
 		}
 	}
 
@@ -413,19 +421,16 @@ public class ChocographUI : UIScene
 	private void Awake()
 	{
 		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
-		UIEventListener uieventListener = UIEventListener.Get(this.SelectSubMenu);
-		uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener2 = UIEventListener.Get(this.CancelSubMenu);
-		uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		foreach (Object obj in this.ChocographListPanel.GetChild(1).GetChild(0).transform)
+		UIEventListener.Get(this.SelectSubMenu).onClick += this.onClick;
+		UIEventListener.Get(this.CancelSubMenu).onClick += this.onClick;
+		foreach (Transform t in this.ChocographListPanel.GetChild(1).GetChild(0).transform)
 		{
-			Transform transform = (Transform)obj;
-			this.chocographItemList.Add(new ChocographUI.ChocographItem(transform.gameObject));
-			UIEventListener uieventListener3 = UIEventListener.Get(transform.gameObject);
-			uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
+			this.chocographItemList.Add(new ChocographUI.ChocographItem(t.gameObject));
+			UIEventListener.Get(t.gameObject).onClick += this.onClick;
 		}
 		this.chocoboScrollButton = this.ChocographListPanel.GetChild(0).GetComponent<ScrollButton>();
 		this.chocographScrollList = this.ChocographListPanel.GetChild(1).GetComponent<SnapDragScrollView>();
+		this._chocographPanel = new GOScrollablePanel(this.ChocographListPanel);
 		this.ChocoboAbilityInfo = new ChocographUI.ChocoboAbility(this.ChocoboAbilityInfoPanel);
 		this.ChocoboAbilityInfo.ClearAbility();
 		this.HintAbilityRequired = new ChocographUI.ChocoboAbility(this.HintAbilityRequiredPanel);
@@ -437,35 +442,24 @@ public class ChocographUI : UIScene
 	public static Int32 CurrentSelectedChocograph = -1;
 
 	public GameObject ScreenFadeGameObject;
-
 	public GameObject HelpDespLabelGameObject;
-
 	public GameObject ChocographListPanel;
-
 	public GameObject SelectedContentPanel;
-
 	public GameObject HintContentPanel;
-
 	public GameObject ChocoboAbilityInfoPanel;
 
 	public UILabel InventoryNumber;
-
 	public UILabel LocationFoundNumber;
 
 	public UISprite SelectedMap;
-
 	public UILabel SelectedItemLabel;
-
 	public UISprite SelectedItemIcon;
 
 	public UISprite HintMap;
-
 	public UILabel HintText;
-
 	public GameObject HintAbilityRequiredPanel;
 
 	public GameObject SelectSubMenu;
-
 	public GameObject CancelSubMenu;
 
 	private ChocographUI.SubMenu currentMenu;
@@ -473,17 +467,15 @@ public class ChocographUI : UIScene
 	private Int32 currentSelectItemIndex;
 
 	private static String SubMenuGroupButton = "Chocograph.SubMenu";
-
 	private static String ItemGroupButton = "Chocograph.Item";
 
 	private ChocographUI.ChocoboAbility ChocoboAbilityInfo;
-
 	private ChocographUI.ChocoboAbility HintAbilityRequired;
 
 	private List<ChocographUI.ChocographItem> chocographItemList = new List<ChocographUI.ChocographItem>();
 
+	private GOScrollablePanel _chocographPanel;
 	private SnapDragScrollView chocographScrollList;
-
 	private ScrollButton chocoboScrollButton;
 
 	private Boolean hasSelectedItem;
@@ -491,11 +483,9 @@ public class ChocographUI : UIScene
 	private Int32 ability = 1;
 
 	private List<Boolean> hasMap = new List<Boolean>();
-
 	private List<Boolean> hasGem = new List<Boolean>();
 
 	private Int32 mapCount;
-
 	private Int32 gemCount;
 
 	public class ChocoboAbility
@@ -514,12 +504,8 @@ public class ChocographUI : UIScene
 
 		public void ClearAbility()
 		{
-			UISprite[] abilitySpriteList = this.AbilitySpriteList;
-			for (Int32 i = 0; i < (Int32)abilitySpriteList.Length; i++)
-			{
-				UISprite uisprite = abilitySpriteList[i];
-				uisprite.spriteName = String.Empty;
-			}
+			foreach (UISprite sprite in this.AbilitySpriteList)
+				sprite.spriteName = String.Empty;
 		}
 
 		public UISprite[] AbilitySpriteList;
@@ -537,13 +523,9 @@ public class ChocographUI : UIScene
 		}
 
 		public GameObject Self;
-
 		public GameObject Content;
-
 		public ButtonGroupState Button;
-
 		public UISprite IconSprite;
-
 		public UILabel ItemName;
 	}
 

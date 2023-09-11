@@ -15,7 +15,7 @@ public class EquipUI : UIScene
 {
 	public Int32 CurrentPartyIndex
 	{
-		set { this.currentPartyIndex = value; }
+		set => this.currentPartyIndex = value;
 	}
 
 	public void Update()
@@ -49,7 +49,7 @@ public class EquipUI : UIScene
 
 	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		UIScene.SceneVoidDelegate afterShowAction = delegate
 		{
 			PersistenSingleton<UIManager>.Instance.MainMenuScene.SubMenuPanel.SetActive(false);
 			ButtonGroupState.SetPointerOffsetToGroup(new Vector2(10f, 0f), EquipUI.InventoryGroupButton);
@@ -58,10 +58,11 @@ public class EquipUI : UIScene
 			ButtonGroupState.ActiveGroup = EquipUI.SubMenuGroupButton;
 		};
 		if (afterFinished != null)
-			sceneVoidDelegate += afterFinished;
+			afterShowAction += afterFinished;
 
 		SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-		base.Show(sceneVoidDelegate);
+		base.Show(afterShowAction);
+		this.UpdateUserInterface();
 		this.SwitchCharacter(true);
 		this.DisplaySubMenuArrow(true);
 		this.HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
@@ -69,9 +70,35 @@ public class EquipUI : UIScene
 		this.equipSelectScrollList.ScrollButton.DisplayScrollButton(false, false);
 	}
 
+	public void UpdateUserInterface()
+	{
+		if (!Configuration.Interface.IsEnabled)
+			return;
+		const Int32 originalLineCount = 5;
+		const Single buttonOriginalHeight = 90f;
+		const Single panelOriginalWidth = 752f;
+		const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+		Int32 linePerPage = Configuration.Interface.MenuEquipRowCount;
+		Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
+		Single scaleFactor = lineHeight / buttonOriginalHeight;
+		_equipSelectPanel.SubPanel.ChangeDims(1, linePerPage, panelOriginalWidth, lineHeight);
+		_equipSelectPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.044f, relRight: 0.13f);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.154f, relRight: 0.795f);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.8f, relRight: 0.92f);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_equipSelectPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+	}
+
 	public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		base.Hide(afterFinished);
+		UIScene.SceneVoidDelegate afterHideAction = delegate
+		{
+			MainMenuUI.UIControlPanel?.ExitMenu();
+		};
+		if (afterFinished != null)
+			afterHideAction += afterFinished;
+		base.Hide(afterHideAction);
 		if (!this.fastSwitch)
 		{
 			PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
@@ -830,9 +857,7 @@ public class EquipUI : UIScene
 
 			if (CanEquip(item, itemData, character, characterMask, equipSlotMask))
 			{
-				this.tempItemList[resultIndex].id = item.id;
-				this.tempItemList[resultIndex].count = item.count;
-				equipList.Add(this.tempItemList[resultIndex]);
+				equipList.Add(item);
 				resultIndex++;
 			}
 		}
@@ -1315,12 +1340,9 @@ public class EquipUI : UIScene
 	private void Awake()
 	{
 		base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
-		UIEventListener uieventListener = UIEventListener.Get(this.EquipSubMenu);
-		uieventListener.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener2 = UIEventListener.Get(this.OptimizeSubMenu);
-		uieventListener2.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		UIEventListener uieventListener3 = UIEventListener.Get(this.OffSubMenu);
-		uieventListener3.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
+		UIEventListener.Get(this.EquipSubMenu).onClick += this.onClick;
+		UIEventListener.Get(this.OptimizeSubMenu).onClick += this.onClick;
+		UIEventListener.Get(this.OffSubMenu).onClick += this.onClick;
 		this.characterHud = new CharacterDetailHUD(this.CharacterDetailPanel, false);
 		this.parameterHud = new ParameterDetailCompareHUD(this.CharacterParameterPanel);
 		this.equipmentHud = new EquipmentDetailHud(this.EquipmentPartListPanel.GetChild(0));
@@ -1332,15 +1354,12 @@ public class EquipUI : UIScene
 		this.equipmentAbilitySelectHudList[2] = new AbilityItemHUD(this.EquipmentAbilityPanel.GetChild(1).GetChild(2));
 		this.equipmentPartCaption = this.EquipmentPartListPanel.GetChild(1).GetChild(2);
 		this.equipmentListCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILabel>();
-		foreach (Object obj in this.EquipmentPartListPanel.GetChild(0).transform)
-		{
-			Transform tr = (Transform) obj;
-			UIEventListener uieventListener4 = UIEventListener.Get(tr.gameObject);
-			uieventListener4.onClick = (UIEventListener.VoidDelegate) Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
-		}
+		foreach (Transform t in this.EquipmentPartListPanel.GetChild(0).transform)
+			UIEventListener.Get(t.gameObject).onClick += this.onClick;
 
 		this.submenuArrowGameObject = this.SubMenuPanel.GetChild(0);
 		this.equipSelectScrollList = this.EquipmentInventoryListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
+		this._equipSelectPanel = new GOScrollablePanel(this.EquipmentInventoryListPanel);
 		this.equipmentSelectionTransition = this.TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
 		this.avatarTransition = this.CharacterDetailPanel.GetChild(0).GetChild(6).GetChild(0).GetComponent<HonoAvatarTweenPosition>();
 		this.itemIdList.Add(new List<FF9ITEM>());
@@ -1348,9 +1367,6 @@ public class EquipUI : UIScene
 		this.itemIdList.Add(new List<FF9ITEM>());
 		this.itemIdList.Add(new List<FF9ITEM>());
 		this.itemIdList.Add(new List<FF9ITEM>());
-		this.tempItemList = new FF9ITEM[45];
-		for (int i = 0; i < this.tempItemList.Length; i++)
-			this.tempItemList[i] = new FF9ITEM(RegularItem.NoItem, 0);
 
 		this.selectedCaption = this.EquipmentInventoryListPanel.GetChild(2).GetChild(4).GetChild(0).GetComponent<UILocalize>();
 
@@ -1397,13 +1413,13 @@ public class EquipUI : UIScene
 	private HonoAvatarTweenPosition avatarTransition;
 	private GameObject submenuArrowGameObject;
 	private RecycleListPopulator equipSelectScrollList;
+	private GOScrollablePanel _equipSelectPanel;
 
 	private static String SubMenuGroupButton = "Equip.SubMenu";
 	private static String EquipmentGroupButton = "Equip.Equipment";
 	private static String InventoryGroupButton = "Equip.Inventory";
 
 	private List<List<FF9ITEM>> itemIdList = new List<List<FF9ITEM>>();
-	private FF9ITEM[] tempItemList;
 	private Int32 currentPartyIndex;
 	private SubMenu currentMenu = SubMenu.None;
 	private Int32 currentEquipPart = -1;

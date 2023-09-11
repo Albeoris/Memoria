@@ -5,20 +5,17 @@ using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
 
 public class MainMenuUI : UIScene
 {
-	public Vector3 FrontRowPosition
-	{
-		get => new Vector3(-418f, 0f, 0f);
-	}
+	public static MenuUIControlPanel UIControlPanel { get; set; }
 
-	public Vector3 BackRowPosition
-	{
-		get => new Vector3(-392f, 0f, 0f);
-	}
+	public Vector3 FrontRowPosition => new Vector3(-418f, 0f, 0f);
+
+	public Vector3 BackRowPosition => new Vector3(-392f, 0f, 0f);
 
 	public MainMenuUI.SubMenu CurrentSubMenu
 	{
@@ -87,6 +84,7 @@ public class MainMenuUI : UIScene
 	{
 		UIScene.SceneVoidDelegate afterHideAction = delegate
 		{
+			MainMenuUI.UIControlPanel?.ExitMenu();
 			if (this.isNeedHideSubMenu)
 			{
 				SceneDirector.FF9Wipe_FadeInEx(12);

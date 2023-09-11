@@ -339,9 +339,21 @@ public class UIKeyTrigger : MonoBehaviour
                     break;
                 if (battleHUD.UIControlPanel == null)
                     battleHUD.UIControlPanel = new BattleUIControlPanel(battleHUD);
-                else if (battleHUD.UIControlPanel.Show)
-                    Configuration.Interface.SaveValues();
                 battleHUD.UIControlPanel.Show = !battleHUD.UIControlPanel.Show;
+                FF9Sfx.FF9SFX_Play(103);
+                return;
+            }
+            case UIManager.UIState.MainMenu:
+            case UIManager.UIState.Item:
+            case UIManager.UIState.Ability:
+            case UIManager.UIState.Equip:
+            case UIManager.UIState.Shop:
+            case UIManager.UIState.Chocograph:
+            {
+                if (MainMenuUI.UIControlPanel == null)
+                    MainMenuUI.UIControlPanel = new MenuUIControlPanel();
+                MainMenuUI.UIControlPanel.Scene = scene;
+                MainMenuUI.UIControlPanel.Show = !MainMenuUI.UIControlPanel.Show;
                 FF9Sfx.FF9SFX_Play(103);
                 return;
             }

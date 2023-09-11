@@ -288,38 +288,26 @@ public class UISprite : UIBasicSprite
 	public override void MakePixelPerfect()
 	{
 		if (!this.isValid)
-		{
 			return;
-		}
 		base.MakePixelPerfect();
-		if (this.mType == UIBasicSprite.Type.Tiled)
-		{
+		if (this.preventPixelPerfect || this.mType == UIBasicSprite.Type.Tiled)
 			return;
-		}
 		UISpriteData atlasSprite = this.GetAtlasSprite();
 		if (atlasSprite == null)
-		{
 			return;
-		}
 		Texture mainTexture = this.mainTexture;
-		if (mainTexture == (UnityEngine.Object)null)
-		{
+		if (mainTexture == null)
 			return;
-		}
-		if ((this.mType == UIBasicSprite.Type.Simple || this.mType == UIBasicSprite.Type.Filled || !atlasSprite.hasBorder) && mainTexture != (UnityEngine.Object)null)
+		if (this.mType == UIBasicSprite.Type.Simple || this.mType == UIBasicSprite.Type.Filled || !atlasSprite.hasBorder)
 		{
-			Int32 num = Mathf.RoundToInt(this.pixelSize * (Single)(atlasSprite.width + atlasSprite.paddingLeft + atlasSprite.paddingRight));
-			Int32 num2 = Mathf.RoundToInt(this.pixelSize * (Single)(atlasSprite.height + atlasSprite.paddingTop + atlasSprite.paddingBottom));
-			if ((num & 1) == 1)
-			{
-				num++;
-			}
-			if ((num2 & 1) == 1)
-			{
-				num2++;
-			}
-			base.width = num;
-			base.height = num2;
+			Int32 w = Mathf.RoundToInt(this.pixelSize * (Single)(atlasSprite.width + atlasSprite.paddingLeft + atlasSprite.paddingRight));
+			Int32 h = Mathf.RoundToInt(this.pixelSize * (Single)(atlasSprite.height + atlasSprite.paddingTop + atlasSprite.paddingBottom));
+			if ((w & 1) == 1)
+				w++;
+			if ((h & 1) == 1)
+				h++;
+			base.width = w;
+			base.height = h;
 		}
 	}
 
@@ -388,4 +376,7 @@ public class UISprite : UIBasicSprite
 
 	[NonSerialized]
 	private Boolean mSpriteSet;
+
+	[NonSerialized]
+	public Boolean preventPixelPerfect = false;
 }

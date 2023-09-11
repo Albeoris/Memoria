@@ -1444,40 +1444,38 @@ public class UIPanel : UIRect
 
 	public Boolean ConstrainTargetToBounds(Transform target, ref Bounds targetBounds, Boolean immediate)
 	{
-		Vector3 vector = targetBounds.min;
-		Vector3 vector2 = targetBounds.max;
-		Single num = 1f;
+		if (targetBounds.size.sqrMagnitude == 0f)
+			return false;
+		Vector3 minBounds = targetBounds.min;
+		Vector3 maxBounds = targetBounds.max;
+		Single pixelFactor = 1f;
 		if (this.mClipping == UIDrawCall.Clipping.None)
 		{
 			UIRoot root = base.root;
-			if (root != (UnityEngine.Object)null)
-			{
-				num = root.pixelSizeAdjustment;
-			}
+			if (root != null)
+				pixelFactor = root.pixelSizeAdjustment;
 		}
-		if (num != 1f)
+		if (pixelFactor != 1f)
 		{
-			vector /= num;
-			vector2 /= num;
+			minBounds /= pixelFactor;
+			maxBounds /= pixelFactor;
 		}
-		Vector3 b = this.CalculateConstrainOffset(vector, vector2) * num;
-		if (b.sqrMagnitude > 0f)
+		Vector3 constrainOffset = this.CalculateConstrainOffset(minBounds, maxBounds) * pixelFactor;
+		if (constrainOffset.sqrMagnitude > 0f)
 		{
 			if (immediate)
 			{
-				target.localPosition += b;
-				targetBounds.center += b;
-				SpringPosition component = target.GetComponent<SpringPosition>();
-				if (component != (UnityEngine.Object)null)
-				{
-					component.enabled = false;
-				}
+				target.localPosition += constrainOffset;
+				targetBounds.center += constrainOffset;
+				SpringPosition spring = target.GetComponent<SpringPosition>();
+				if (spring != null)
+					spring.enabled = false;
 			}
 			else
 			{
-				SpringPosition springPosition = SpringPosition.Begin(target.gameObject, target.localPosition + b, 13f);
-				springPosition.ignoreTimeScale = true;
-				springPosition.worldSpace = false;
+				SpringPosition spring = SpringPosition.Begin(target.gameObject, target.localPosition + constrainOffset, 13f);
+				spring.ignoreTimeScale = true;
+				spring.worldSpace = false;
 			}
 			return true;
 		}

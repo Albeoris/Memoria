@@ -79,21 +79,15 @@ public class ConfigUI : UIScene
     }
 
     public GameObject KeyboardButton;
-
     public GameObject JoystickButton;
-
     public GameObject CustomControllerKeyboardPanel;
-
     public GameObject CustomControllerJoystickPanel;
-
     public GameObject CustomControllerMobilePanel;
 
     private HonoTweenPosition controllerKeyboardTransition;
-
     private HonoTweenPosition controllerJoystickTransition;
 
     private List<ControllerField> ControllerKeyboardList = new List<ControllerField>();
-
     private List<ControllerField> ControllerJoystickList = new List<ControllerField>();
 
     private Boolean[] inputBool =
@@ -121,9 +115,7 @@ public class ConfigUI : UIScene
     };
 
     private Int32 customControllerCount = 8;
-
     private Int32 currentControllerIndex;
-
     private ControllerType currentControllerType;
 
     private String[] PCJoystickNormalButtons =
@@ -149,37 +141,24 @@ public class ConfigUI : UIScene
     };
 
     private ConfigUI.TriggerState leftTrigger;
-
     private ConfigUI.TriggerState rightTrigger;
 
     private float leftTriggerTime;
-
     private float rightTriggerTime;
-
     private float triggerDelay = 0.1f;
 
     public GameObject ConfigList;
-
     public GameObject HelpDespLabelGameObject;
-
     public GameObject ScreenFadeGameObject;
-
     public GameObject WarningDialog;
-
     public GameObject WarningDialogHitPoint;
-
     public GameObject BoosterPanel;
-
     public GameObject TransitionGroup;
-
     public GameObject ControlPanelGroup;
 
     private static String ConfigGroupButton = "Config.Config";
-
     private static String WarningMenuGroupButton = "Config.Warning";
-
     private static String CustomControllerGroupButton = "Config.Controller";
-
     private static String ControllerTypeGroupButton = "Config.ControllerType";
 
     private static List<Configurator> ConfigSliderIdList = new List<Configurator>(new[]
@@ -196,31 +175,23 @@ public class ConfigUI : UIScene
     private List<ConfigField> ConfigFieldList;
 
     private SnapDragScrollView configScrollView;
-
     private ScrollButton configScrollButton;
 
     private OnScreenButton hitpointScreenButton;
 
     private GameObject toTitleGameObject;
-
     private GameObject masterSkillButtonGameObject;
-
     private GameObject lvMaxButtonGameObject;
-
     private GameObject gilMaxButtonGameObject;
-
     private GameObject backButtonGameObject;
 
     private UILabel masterSkillLabel;
-
     private UILabel lvMaxLabel;
-
     private UILabel gilMaxLabel;
 
     private HonoTweenClipping warningTransition;
 
     private Single fieldMessageSliderStep = 6f;
-
     private Single battleSpeedSliderStep = 2f;
 
     private Boolean fastSwitch;
@@ -228,10 +199,13 @@ public class ConfigUI : UIScene
     private Boolean cursorInList = true;
 
     private Boolean is_vibe;
-
     private Int32 vibe_tick;
 
     private Boolean helpEnable;
+
+    [NonSerialized]
+    private Int32 fieldMessageConfigIndex = (Int32)Configurator.FieldMessage;
+    public GameObject SliderMenuTemplate => ConfigList.GetChild(1).GetChild(0).GetChild(fieldMessageConfigIndex);
 
     [DebuggerHidden]
     private IEnumerator ShowButtonGroupDalay()
@@ -1547,6 +1521,8 @@ public class ConfigUI : UIScene
             go.transform.SetSiblingIndex(siblingIndex);
             go.name = $"{id} Panel - Slider";
             go.GetComponent<ScrollItemKeyNavigation>().ID = (int)id;
+            if (siblingIndex <= fieldMessageConfigIndex)
+                fieldMessageConfigIndex++;
             return go;
         }
         catch (Exception ex)
@@ -1589,7 +1565,6 @@ public class ConfigUI : UIScene
         var slider = go.GetComponentInChildren<UISlider>();
         slider.numberOfSteps = 4;
         slider.value = 0f;
-
     }
 
     private void Awake()
@@ -1598,8 +1573,7 @@ public class ConfigUI : UIScene
         ConfigFieldList = new List<ConfigField>();
 
         // Adding the volume sliders
-        UITable table = ConfigList.GetChild(1).GetChild(0).GetComponent<UITable>();
-        GameObject template = table.gameObject.GetChild((int)Configurator.FieldMessage);
+        GameObject template = SliderMenuTemplate;
         CreateVolumeSlider(template, Configurator.SoundVolume, 0);
         CreateVolumeSlider(template, Configurator.MusicVolume, 1);
         CreateVolumeSlider(template, Configurator.MovieVolume, 2);
@@ -1619,6 +1593,8 @@ public class ConfigUI : UIScene
                 || id == Configurator.Sound
                 || id == Configurator.SoundEffect)
             {
+                if (configTopObj.transform.GetSiblingIndex() < fieldMessageConfigIndex)
+                    fieldMessageConfigIndex--;
                 configTopObj.SetActive(false);
                 Destroy(configTopObj);
                 continue;

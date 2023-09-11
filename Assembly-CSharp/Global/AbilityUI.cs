@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Scenes;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Field;
@@ -75,6 +76,8 @@ public class AbilityUI : UIScene
     private Boolean canMultiTarget;
     private Dictionary<Int32, Int32> equipmentPartInAbilityDict;
     private Dictionary<Int32, RegularItem[]> equipmentIdInAbilityDict;
+    private GOScrollablePanel _abilityPanel;
+    private GOScrollablePanel _supportPanel;
 
     public static Color[] BoostedAbilityColor = new Color[]
     {
@@ -88,7 +91,7 @@ public class AbilityUI : UIScene
 
     public Int32 CurrentPartyIndex
     {
-        set { this.currentPartyIndex = value; }
+        set => this.currentPartyIndex = value;
     }
 
     static AbilityUI()
@@ -113,7 +116,7 @@ public class AbilityUI : UIScene
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
-        SceneVoidDelegate action = () =>
+        SceneVoidDelegate afterShowAction = () =>
         {
             PersistenSingleton<UIManager>.Instance.MainMenuScene.SubMenuPanel.SetActive(false);
             ButtonGroupState.SetScrollButtonToGroup(this.activeAbilityScrollList.ScrollButton, ActionAbilityGroupButton);
@@ -129,7 +132,8 @@ public class AbilityUI : UIScene
         };
 
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-        base.Show(action);
+        base.Show(afterShowAction);
+        this.UpdateUserInterface();
         this.SwitchCharacter(true);
         this.DisplayHelp();
         this.DisplaySubMenuArrow(true);
@@ -138,9 +142,41 @@ public class AbilityUI : UIScene
         this.supportAbilityScrollList.ScrollButton.DisplayScrollButton(false, false);
     }
 
+    public void UpdateUserInterface()
+    {
+        if (!Configuration.Interface.IsEnabled)
+            return;
+        const Int32 originalLineCount = 6;
+        const Single buttonOriginalHeight = 92f;
+        const Single panelOriginalWidth = 1488f;
+        const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+        Int32 linePerPage = Configuration.Interface.MenuAbilityRowCount;
+        Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
+        Single scaleFactor = lineHeight / buttonOriginalHeight;
+        _abilityPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.091f, relRight: 0.795f);
+        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
+        _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _abilityPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+        _supportPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        _supportPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.09f, relRight: 0.176f);
+        _supportPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.24f, relRight: 0.795f);
+        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
+        _supportPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+    }
+
     public override void Hide(SceneVoidDelegate afterFinished = null)
     {
-        base.Hide(afterFinished);
+        UIScene.SceneVoidDelegate afterHideAction = delegate
+        {
+            MainMenuUI.UIControlPanel?.ExitMenu();
+        };
+        if (afterFinished != null)
+            afterHideAction += afterFinished;
+        base.Hide(afterHideAction);
         if (this.fastSwitch)
             return;
         PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
@@ -949,6 +985,7 @@ public class AbilityUI : UIScene
             ButtonGroupState.SetButtonAnimation(detailWithIconHud.Self, true);
             detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(supportId);
             detailWithIconHud.NumberLabel.text = saData.GemsCount.ToString();
+            detailWithIconHud.IconSprite.preventPixelPerfect = Configuration.Interface.IsEnabled;
             detailWithIconHud.IconSprite.color = Color.white;
             if (abilityListData.Type == AbilityType.CantSpell)
             {
@@ -1290,10 +1327,8 @@ public class AbilityUI : UIScene
     private void Awake()
     {
         this.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
-        UIEventListener uiEventListener1 = UIEventListener.Get(this.UseSubMenu);
-        uiEventListener1.Click += this.onClick;
-        UIEventListener uiEventListener2 = UIEventListener.Get(this.EquipSubMenu);
-        uiEventListener2.Click += this.onClick;
+        UIEventListener.Get(this.UseSubMenu).Click += this.onClick;
+        UIEventListener.Get(this.EquipSubMenu).Click += this.onClick;
         this.abilityInfoHud = new AbilityInfoHUD(this.AbilityDetailPanel);
         this.abilityInfoHud.ClearEquipmentIcon();
         this.characterHud = new CharacterDetailHUD(this.CharacterDetailPanel, false);
@@ -1301,8 +1336,7 @@ public class AbilityUI : UIScene
         foreach (Component component in this.TargetListPanel.transform.GetChild(0).transform)
         {
             GameObject obj = component.gameObject;
-            UIEventListener uiEventListener3 = UIEventListener.Get(obj);
-            uiEventListener3.Click += this.onClick;
+            UIEventListener.Get(obj).Click += this.onClick;
             this.targetHudList.Add(new CharacterDetailHUD(obj, true));
             if (FF9StateSystem.MobilePlatform)
                 gameObject.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
@@ -1314,8 +1348,7 @@ public class AbilityUI : UIScene
         this.allTargetButtonCollider = this.allTargetButton.GetComponent<BoxCollider>();
         this.allTargetButtonLabel = this.allTargetButton.GetChild(1).GetComponent<UILabel>();
         this.allTargetHitArea = this.TargetListPanel.GetChild(2);
-        UIEventListener uiEventListener4 = UIEventListener.Get(this.allTargetButton);
-        uiEventListener4.Click += OnAllTargetClick;
+        UIEventListener.Get(this.allTargetButton).Click += OnAllTargetClick;
         this.useSubMenuLabel = this.UseSubMenu.GetChild(1).GetComponent<UILabel>();
         this.equipSubMenuLabel = this.EquipSubMenu.GetChild(1).GetComponent<UILabel>();
         this.submenuArrowGameObject = this.SubMenuPanel.GetChild(0);
@@ -1323,6 +1356,8 @@ public class AbilityUI : UIScene
         this.supportAbilityScrollList = this.SupportAbilityListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
         this.targetTransition = this.TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
         this.avatarTransition = this.CharacterDetailPanel.GetChild(0).GetChild(6).GetChild(0).GetComponent<HonoAvatarTweenPosition>();
+        this._abilityPanel = new GOScrollablePanel(this.ActiveAbilityListPanel);
+        this._supportPanel = new GOScrollablePanel(this.SupportAbilityListPanel);
     }
 
     private Boolean IsSubMenuDisabledByMainMenu(Boolean useMenu)

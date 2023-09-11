@@ -227,7 +227,6 @@
     <Compile Include="Global\battle\BattleHUD\BattleHUD.cs" />
     <Compile Include="Global\battle\BattleHUD\BattleHUD.UI.HUDAutoAttack.cs" />
     <Compile Include="Global\battle\BattleHUD\BattleHUD.UI.PanelParty.cs" />
-    <Compile Include="Global\battle\BattleHUD\BattleHUD.UI.ScrollablePanel.cs" />
     <Compile Include="Global\battle\BattleHUD\BattleHUD.UI.PanelTarget.cs" />
     <Compile Include="Global\battle\BattleHUD\BattleHUD.UI.PanelCommand.cs" />
     <Compile Include="Global\battle\BattleHUD\BattleHUD.UI.ContainerStatus.cs" />
@@ -355,6 +354,8 @@
     <Compile Include="Memoria\Scenes\ControlPanel\ControlSlider.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlToggle.cs" />
     <Compile Include="Memoria\Scenes\GOButtonPrefab.cs" />
+    <Compile Include="Memoria\Scenes\MenuHUD\MenuUIControlPanel.cs" />
+    <Compile Include="Memoria\Scenes\GOScrollablePanel.cs" />
     <Compile Include="Memoria\Speedrun\AutoSplitterPipe.cs" />
     <Compile Include="Memoria\Speedrun\Split.cs" />
     <Compile Include="Memoria\Speedrun\SpeedrunSettings.cs" />

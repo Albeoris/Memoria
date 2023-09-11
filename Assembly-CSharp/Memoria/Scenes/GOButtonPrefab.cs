@@ -11,9 +11,9 @@ namespace Memoria.Scenes
         public readonly ButtonGroupState ButtonGroup;
         public readonly ScrollItemKeyNavigation ScrollKeyNavigation;
         public readonly UIDragScrollView DragScrollView;
-        public readonly RecycleListItem ListItem;
 
         // These can be null
+        public readonly RecycleListItem ListItem;
         public readonly UILabel NameLabel;
         public readonly UILabel NumberLabel;
         public readonly UISprite IconSprite;
@@ -30,8 +30,9 @@ namespace Memoria.Scenes
             ButtonGroup = obj.GetExactComponent<ButtonGroupState>();
             ScrollKeyNavigation = obj.GetExactComponent<ScrollItemKeyNavigation>();
             DragScrollView = obj.GetExactComponent<UIDragScrollView>();
-            ListItem = obj.GetExactComponent<RecycleListItem>();
             BoxCollider = obj.GetExactComponent<BoxCollider>();
+            if (obj.GetComponent<RecycleListItem>() != null)
+                ListItem = obj.GetExactComponent<RecycleListItem>();
 
             GameObject content = obj;
             if (obj.GetChild(0).transform.childCount > 0)

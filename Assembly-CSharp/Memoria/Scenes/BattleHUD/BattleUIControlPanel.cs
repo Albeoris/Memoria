@@ -54,6 +54,7 @@ namespace Memoria.Scenes
 			EndInitialization(UIWidget.Pivot.Bottom);
 
 			SetEnabled(true);
+			onHide = Configuration.Interface.SaveBattleValues;
 		}
 
 		private void SetEnabled(Boolean enabled)

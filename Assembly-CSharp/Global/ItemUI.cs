@@ -73,6 +73,8 @@ public class ItemUI : UIScene
     private Int32 _currentItemIndex;
     private Dialog _chocoboDialog;
     private Int32 _defaultSkinLabelSpacingY;
+    private GOScrollablePanel _itemPanel;
+    private GOScrollablePanel _keyItemPanel;
 
     static ItemUI()
     {
@@ -101,7 +103,7 @@ public class ItemUI : UIScene
 
     public override void Show(SceneVoidDelegate afterFinished = null)
     {
-        SceneVoidDelegate action = () =>
+        SceneVoidDelegate afterShowAction = () =>
         {
             PersistenSingleton<UIManager>.Instance.MainMenuScene.SubMenuPanel.SetActive(false);
             ButtonGroupState.SetPointerDepthToGroup(4, ItemGroupButton);
@@ -117,12 +119,13 @@ public class ItemUI : UIScene
             ButtonGroupState.SetPointerLimitRectToGroup(ItemListPanel.GetComponent<UIWidget>(), _itemScrollList.cellHeight, ItemArrangeGroupButton);
             ButtonGroupState.SetPointerLimitRectToGroup(KeyItemListPanel.GetComponent<UIWidget>(), _keyItemScrollList.cellHeight, KeyItemGroupButton);
             ButtonGroupState.ActiveGroup = SubMenuGroupButton;
-            StartCoroutine(Show_dalay());
+            StartCoroutine(Show_delay());
             afterFinished?.Invoke();
         };
 
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-        base.Show(action);
+        base.Show(afterShowAction);
+        UpdateUserInterface();
         ItemListPanel.SetActive(true);
         KeyItemListPanel.SetActive(false);
         DisplayItem();
@@ -131,8 +134,35 @@ public class ItemUI : UIScene
         _keyItemScrollList.ScrollButton.DisplayScrollButton(false, false);
     }
 
+    public void UpdateUserInterface()
+    {
+        if (!Configuration.Interface.IsEnabled)
+            return;
+        const Int32 originalLineCount = 8;
+        const Single buttonOriginalHeight = 98f;
+        const Single panelOriginalWidth = 1490f;
+        const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+        Int32 linePerPage = Configuration.Interface.MenuItemRowCount;
+        Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
+        Single scaleFactor = lineHeight / buttonOriginalHeight;
+        KeyItemDetailHUD keyItemPrefab = new KeyItemDetailHUD(_keyItemPanel.SubPanel.ButtonPrefab.GameObject);
+        _itemPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        _itemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.105f, relRight: 0.191f);
+        _itemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.215f, relRight: 0.795f);
+        _itemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.8f, relRight: 0.9f);
+        _itemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _itemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _itemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+        _keyItemPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        keyItemPrefab.NewIcon.SetDimensions((Int32)Math.Round(117f * scaleFactor), (Int32)Math.Round(64f * scaleFactor));
+        keyItemPrefab.NewIconSprite.SetDimensions((Int32)Math.Round(44f * scaleFactor), (Int32)Math.Round(58f * scaleFactor));
+        keyItemPrefab.NewIconLabelSprite.SetDimensions((Int32)Math.Round(90f * scaleFactor), (Int32)Math.Round(58f * scaleFactor));
+        keyItemPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _keyItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+    }
+
     [DebuggerHidden]
-    private IEnumerator Show_dalay()
+    private IEnumerator Show_delay()
     {
         yield return new WaitForEndOfFrame();
 
@@ -146,7 +176,13 @@ public class ItemUI : UIScene
 
     public override void Hide(SceneVoidDelegate afterFinished = null)
     {
-        base.Hide(afterFinished);
+        UIScene.SceneVoidDelegate afterHideAction = delegate
+        {
+            MainMenuUI.UIControlPanel?.ExitMenu();
+        };
+        if (afterFinished != null)
+            afterHideAction += afterFinished;
+        base.Hide(afterHideAction);
         if (_fastSwitch)
             return;
         PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
@@ -889,6 +925,8 @@ public class ItemUI : UIScene
         _defaultSkinLabelSpacingY = _keyItemDetailDescription.spacingY;
         _itemScrollList = ItemListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
         _keyItemScrollList = KeyItemListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
+        _itemPanel = new GOScrollablePanel(ItemListPanel);
+        _keyItemPanel = new GOScrollablePanel(KeyItemListPanel);
 
         RemoveLeftAnchorFromItemNumberLabels();
 
@@ -922,17 +960,19 @@ public class ItemUI : UIScene
 
     private struct KeyItemDetailHUD
     {
-        //public GameObject Self;
+        public GameObject Self;
         public ButtonGroupState Button;
         public UILabel NameLabel;
+        public UIWidget NewIcon;
         public UISprite NewIconSprite;
         public UISprite NewIconLabelSprite;
 
         public KeyItemDetailHUD(GameObject go)
         {
-            //Self = go;
+            Self = go;
             Button = go.GetComponent<ButtonGroupState>();
             NameLabel = go.GetChild(0).GetComponent<UILabel>();
+            NewIcon = go.GetChild(1).GetComponent<UIWidget>();
             NewIconSprite = go.GetChild(1).GetChild(0).GetComponent<UISprite>();
             NewIconLabelSprite = go.GetChild(1).GetChild(1).GetComponent<UISprite>();
         }

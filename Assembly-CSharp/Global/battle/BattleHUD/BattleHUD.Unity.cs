@@ -78,8 +78,8 @@ public partial class BattleHUD : UIScene
         _allTargetToggle.validator = OnAllTargetToggleValidate;
         _commandPanel = new UI.PanelCommand(this, CommandPanel);
         _targetPanel = new UI.PanelTarget(this, TargetPanel);
-        _abilityPanel = new UI.ScrollablePanel(AbilityPanel);
-        _itemPanel = new UI.ScrollablePanel(ItemPanel);
+        _abilityPanel = new GOScrollablePanel(AbilityPanel);
+        _itemPanel = new GOScrollablePanel(ItemPanel);
         _abilityScrollList = _abilityPanel.SubPanel.RecycleListPopulator;
         _itemScrollList = _itemPanel.SubPanel.RecycleListPopulator;
 

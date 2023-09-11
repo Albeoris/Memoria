@@ -14,8 +14,8 @@ public partial class BattleHUD : UIScene
             public readonly ContainerStatus StatusContainer;
             public readonly PanelCommand CommandPanel;
             public readonly PanelTarget TargetPanel;
-            public readonly ScrollablePanel AbilityPanel;
-            public readonly ScrollablePanel ItemPanel;
+            public readonly GOScrollablePanel AbilityPanel;
+            public readonly GOScrollablePanel ItemPanel;
             public readonly PanelParty PartyPanel;
             public readonly HUDAutoAttack AutoAttackHUD;
 
@@ -33,8 +33,8 @@ public partial class BattleHUD : UIScene
                 StatusContainer = new ContainerStatus(_scene, obj.GetChild(4));
                 CommandPanel = new PanelCommand(scene, obj.GetChild(5));
                 TargetPanel = new PanelTarget(scene, obj.GetChild(6));
-                AbilityPanel = new ScrollablePanel(obj.GetChild(7));
-                ItemPanel = new ScrollablePanel(obj.GetChild(8));
+                AbilityPanel = new GOScrollablePanel(obj.GetChild(7));
+                ItemPanel = new GOScrollablePanel(obj.GetChild(8));
                 PartyPanel = new PanelParty(scene, obj.GetChild(9));
                 AutoAttackHUD = new HUDAutoAttack(obj.GetChild(10));
             }

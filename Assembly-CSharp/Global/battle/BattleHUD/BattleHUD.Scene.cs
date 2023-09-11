@@ -51,10 +51,7 @@ public partial class BattleHUD : UIScene
         PauseButtonGameObject.SetActive(false);
         HelpButtonGameObject.SetActive(false);
         if ((!_isFromPause || _usingMainMenu) && UIControlPanel != null && UIControlPanel.Show)
-        {
-            Configuration.Interface.SaveValues();
             UIControlPanel.Show = false;
-        }
 
         if (!_isFromPause)
             RemoveCursorMemorize();

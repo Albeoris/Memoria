@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
-using Memoria.Launcher;
 
 namespace Memoria.Launcher
 {

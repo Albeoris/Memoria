@@ -8,6 +8,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Scenes;
 using UnityEngine;
 
 public class ShopUI : UIScene
@@ -26,7 +27,7 @@ public class ShopUI : UIScene
 
 	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		UIScene.SceneVoidDelegate afterShowAction = delegate
 		{
 			ButtonGroupState.SetPointerOffsetToGroup(new Vector2(50f, 0f), ShopUI.ItemGroupButton);
 			ButtonGroupState.SetPointerOffsetToGroup(new Vector2(50f, 0f), ShopUI.WeaponGroupButton);
@@ -44,9 +45,10 @@ public class ShopUI : UIScene
 				ButtonGroupState.ActiveGroup = ShopUI.SubMenuGroupButton;
 		};
 		if (afterFinished != null)
-			sceneVoidDelegate += afterFinished;
+			afterShowAction += afterFinished;
 		SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-		base.Show(sceneVoidDelegate);
+		base.Show(afterShowAction);
+		this.UpdateUserInterface();
 		this.InitializeData();
 		if (this.type != ShopUI.ShopType.Synthesis)
 		{
@@ -64,15 +66,53 @@ public class ShopUI : UIScene
 		this.shopSellItemScrollList.ScrollButton.DisplayScrollButton(false, false);
 	}
 
+	public void UpdateUserInterface()
+	{
+		if (!Configuration.Interface.IsEnabled)
+			return;
+		const Int32 originalLineCount = 8;
+		const Int32 reducedOriginalLineCount = 5;
+		const Single buttonOriginalHeight = 98f;
+		const Single buyPanelOriginalWidth = 916f;
+		const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+		const Single panelReducedOriginalHeight = reducedOriginalLineCount * buttonOriginalHeight;
+		Int32 linePerPage = Configuration.Interface.MenuItemRowCount;
+		Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
+		Int32 reducedLinePerPage = (Int32)Math.Round(linePerPage * 0.65f);
+		Int32 reducedLineHeight = (Int32)Math.Round(panelReducedOriginalHeight / reducedLinePerPage);
+		Single scaleFactor = lineHeight / buttonOriginalHeight;
+		_shopItemPanel.SubPanel.ChangeDims(1, linePerPage, buyPanelOriginalWidth, lineHeight);
+		_shopItemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.085f, relRight: 0.155f);
+		_shopItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.175f, relRight: 0.65f);
+		_shopItemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.65f, relRight: 0.92f);
+		_shopItemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_shopItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+		_shopWeaponPanel.SubPanel.ChangeDims(1, reducedLinePerPage, buyPanelOriginalWidth, reducedLineHeight);
+		_shopWeaponPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.085f, relRight: 0.155f);
+		_shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.175f, relRight: 0.65f);
+		_shopWeaponPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.65f, relRight: 0.92f);
+		_shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_shopWeaponPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+		const Single sellPanelOriginalWidth = 1490f;
+		_shopSellItemPanel.SubPanel.ChangeDims(2, linePerPage, sellPanelOriginalWidth / 2f, lineHeight);
+		_shopSellItemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.105f, relRight: 0.191f);
+		_shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.215f, relRight: 0.795f);
+		_shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.8f, relRight: 0.9f);
+		_shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_shopSellItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+	}
+
 	public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+		UIScene.SceneVoidDelegate afterHideAction = delegate
 		{
+			MainMenuUI.UIControlPanel?.ExitMenu();
 			PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
 		};
 		if (afterFinished != null)
-			sceneVoidDelegate += afterFinished;
-		base.Hide(sceneVoidDelegate);
+			afterHideAction += afterFinished;
+		base.Hide(afterHideAction);
 		this.RemoveCursorMemorize();
 		this.soldItemIdDict.Clear();
 	}
@@ -1136,6 +1176,9 @@ public class ShopUI : UIScene
 		this.shopItemScrollList = this.ItemListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
 		this.shopWeaponScrollList = this.WeaponListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
 		this.shopSellItemScrollList = this.SellItemListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
+		this._shopItemPanel = new GOScrollablePanel(this.ItemListPanel);
+		this._shopWeaponPanel = new GOScrollablePanel(this.WeaponListPanel);
+		this._shopSellItemPanel = new GOScrollablePanel(this.SellItemListPanel);
 		UIEventListener.Get(this.BuySubMenu).onClick += this.onClick;
 		UIEventListener.Get(this.SellSubMenu).onClick += this.onClick;
 		UIEventListener.Get(this.InputQuantityDialog.GetChild(2)).onNavigate += this.OnKeyQuantity;
@@ -1218,127 +1261,80 @@ public class ShopUI : UIScene
 	}
 
 	private const Single TRIGGER_DURATION = 0.115f;
-
 	private const Single CHANGE_QUANTITY_DURATION = 1f;
 
 	private static String SubMenuGroupButton = "Shop.SubMenu";
-
 	private static String ItemGroupButton = "Shop.Item";
-
 	private static String WeaponGroupButton = "Shop.Weapon";
-
 	private static String SellItemGroupButton = "Shop.Sell";
-
 	private static String QuantityGroupButton = "Shop.Quantity";
 
 	public GameObject BuySubMenu;
-
 	public GameObject SellSubMenu;
-
 	public GameObject ShopTitleLabel;
-
 	public GameObject HelpLabel;
-
 	public GameObject ItemShopPanel;
-
 	public GameObject WeaponAndSynthShopPanel;
-
 	public GameObject SellShopPanel;
-
 	public GameObject SynthesisPartInfoPanel;
-
 	public GameObject NonSynthesisControlPanel;
-
 	public GameObject NonSynthesisHelpDespLabelGo;
-
 	public GameObject SynthesisControlPanel;
-
 	public GameObject SynthesisHelpDespLabelGo;
-
 	public GameObject InputQuantityDialog;
-
 	public GameObject InfoDialog;
-
 	public GameObject ConfirmDialogHitPoint;
-
 	public GameObject ItemInfoPanel;
-
 	public GameObject WeaponInfoPanel;
-
 	public GameObject ItemListPanel;
-
 	public GameObject WeaponListPanel;
-
 	public GameObject SellItemListPanel;
-
 	public GameObject CharacterParamInfoPanel;
-
 	public GameObject RequiredItemPanel;
-
 	public GameObject ScreenFadeGameObject;
 
 	private UILabel itemFundLabel;
-
 	private UILabel itemCountLabel;
-
 	private UILabel weaponFundLabel;
-
 	private UILabel weaponCountLabel;
-
 	private UILabel weaponEquipTextLabel;
-
 	private UILabel weaponEquipLabel;
 
 	private ItemListDetailWithIconHUD requiredItem1Hud;
-
 	private ItemListDetailWithIconHUD requiredItem2Hud;
-
 	private ItemListDetailWithIconHUD confirmItemHud;
 
 	private UILabel confirmQuantityLabel;
-
 	private UILabel confirmPriceLabel;
-
 	private UILabel confirmFundLabel;
-
 	private UILabel confirmCountLabel;
-
 	private UILabel confirmEquipLabel;
-
 	private UILabel confirmEquipTextLabel;
-
 	private UILabel characterParamCaptionLabel;
 
 	private RecycleListPopulator shopItemScrollList;
-
 	private RecycleListPopulator shopWeaponScrollList;
-
 	private RecycleListPopulator shopSellItemScrollList;
+	private GOScrollablePanel _shopItemPanel;
+	private GOScrollablePanel _shopWeaponPanel;
+	private GOScrollablePanel _shopSellItemPanel;
 
 	private List<ShopUI.CharacterWeaponInfoHUD> charInfoHud = new List<ShopUI.CharacterWeaponInfoHUD>();
 
 	private Int32 id;
 
 	private List<RegularItem> itemIdList = new List<RegularItem>();
-
 	private List<Boolean> isItemEnableList = new List<Boolean>();
-
 	private List<FF9MIX_DATA> mixItemList = new List<FF9MIX_DATA>();
-
 	private List<Boolean> mixPartyList = new List<Boolean>();
-
 	private List<RegularItem> sellItemIdList = new List<RegularItem>();
-
 	private Dictionary<RegularItem, Int32> soldItemIdDict = new Dictionary<RegularItem, Int32>();
-
 	private List<CharacterId> availableCharaList = new List<CharacterId>();
 
 	private ShopUI.ShopType type;
-
 	private ShopUI.SubMenu currentMenu;
 
 	private Int32 currentItemIndex = -1;
-
 	private Int32 mixStartIndex = 0;
 
 	private Boolean isGrocery;
@@ -1346,17 +1342,12 @@ public class ShopUI : UIScene
 	private Int32 availableCharaStart;
 
 	private Int32 minCount;
-
 	private Int32 maxCount;
-
 	private Int32 count;
 
 	private Single triggerCounter;
-
 	private Boolean isPlusQuantity;
-
 	private Boolean isMinusQuantity;
-
 	private Single keepPressingTime;
 
 	private class CharacterWeaponInfoHUD
@@ -1371,13 +1362,9 @@ public class ShopUI : UIScene
 		}
 
 		public GameObject Self;
-
 		public UILabel ParamValueLabel;
-
 		public UISprite AvatarSprite;
-
 		public UISprite ChangeArrowSprite;
-
 		public UISprite EquipmentTypeSprite;
 	}
 
@@ -1400,16 +1387,13 @@ public class ShopUI : UIScene
 	public class ShopItemListData : ListDataTypeBase
 	{
 		public RegularItem Id;
-
 		public Boolean Enable;
-
 		public UInt32 Price;
 	}
 
 	public class ShopSellItemListData : ListDataTypeBase
 	{
 		public RegularItem Id;
-
 		public Int32 Count;
 	}
 }

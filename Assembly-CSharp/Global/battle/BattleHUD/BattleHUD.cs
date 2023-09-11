@@ -39,8 +39,8 @@ public partial class BattleHUD : UIScene
     private Byte _currentMessagePriority;
     private Single _battleMessageCounter;
     private UI.PanelCommand _commandPanel;
-    private UI.ScrollablePanel _abilityPanel;
-    private UI.ScrollablePanel _itemPanel;
+    private GOScrollablePanel _abilityPanel;
+    private GOScrollablePanel _itemPanel;
     private Int32 _enemyCount;
     private Int32 _playerCount;
     private Int32 _playerDetailCount;

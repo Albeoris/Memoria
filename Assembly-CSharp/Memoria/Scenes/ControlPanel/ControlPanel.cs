@@ -12,6 +12,8 @@ namespace Memoria.Scenes
 		public Int32 rowHeight = 50;
 		public Int32 rowSeparatorHeight = 10;
 		public Int32 elementSeparatorWidth = 10;
+		public Action onShow = null;
+		public Action onHide = null;
 
 		public UIWidget BasePanel => basePanel;
 		public List<UIWidget> AllPanels => allPanels;
@@ -19,7 +21,14 @@ namespace Memoria.Scenes
 		public Boolean Show
 		{
 			get => allPanels[activePanelIndex].gameObject.activeSelf;
-			set => allPanels[activePanelIndex].gameObject.SetActive(value);
+			set
+			{
+				allPanels[activePanelIndex].gameObject.SetActive(value);
+				if (value && onShow != null)
+					onShow();
+				else if (!value && onHide != null)
+					onHide();
+			}
 		}
 
 		public ControlPanel(Transform parent, String name)
@@ -288,7 +297,7 @@ namespace Memoria.Scenes
 			}
 			else if (typeof(T) == typeof(UISlider))
 			{
-				go = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.ConfigScene.ConfigList.GetChild(1).GetChild(0).GetChild(8).GetChild(1).GetChild(1).gameObject);
+				go = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.ConfigScene.SliderMenuTemplate.GetChild(1).GetChild(1).gameObject);
 				UISlider slider = go.GetComponent<UISlider>();
 				slider.numberOfSteps = 0;
 				defaultWidth = 350;
@@ -408,7 +417,7 @@ namespace Memoria.Scenes
 		private Dictionary<Int32, Int32> panelParentLink = new Dictionary<Int32, Int32>();
 		private Int32 activePanelIndex = 0;
 
-		private static void DebugLogComponents(GameObject startGo, Boolean recursive, Boolean recChild, Func<Component, String> logger)
+		public static void DebugLogComponents(GameObject startGo, Boolean recursive, Boolean recChild, Func<Component, String> logger)
 		{
 			foreach (Component comp in startGo.GetComponents<Component>())
 			{

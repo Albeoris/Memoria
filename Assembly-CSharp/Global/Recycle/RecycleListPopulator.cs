@@ -239,7 +239,7 @@ public class RecycleListPopulator : MonoBehaviour
 				afterVisibleIndex++;
 			}
 		}
-		base.Invoke("RepositionList", 0.02f);
+		base.Invoke("RepositionList", 0f);
 	}
 
 	private void UpdateTableViewImp(Boolean refreshSelection = true)
@@ -248,7 +248,15 @@ public class RecycleListPopulator : MonoBehaviour
 		{
 			Transform poolObj = this.itemsPool[kvp.Value];
 			if (refreshSelection && poolObj.GetComponent<UIKeyNavigation>())
+			{
 				poolObj.GetComponent<UIKeyNavigation>().startsSelected = this.activeNumber == kvp.Key;
+				if (ButtonGroupState.ActiveGroup == ItemUI.ItemArrangeGroupButton)
+				{
+					UIKeyNavigation subGroupNavig = poolObj.GetChild(1)?.GetComponent<UIKeyNavigation>();
+					if (subGroupNavig != null)
+						subGroupNavig.startsSelected = this.activeNumber == kvp.Key;
+				}
+			}
 			this.PopulateListItemWithData(poolObj, this.dataList[kvp.Key], kvp.Key, false);
 		}
 	}
@@ -257,13 +265,18 @@ public class RecycleListPopulator : MonoBehaviour
 	{
 		this.table.Reposition();
 		this.draggablePanel.SetDragAmount(0f, 0f, false);
+		// The "pivotOffset" pick is a bit hacky there... not sure on what it should be based instead
+		Vector2 pivotOffset = PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD ? new Vector2(0f, 0.5f) : new Vector2(0.5f, 0.5f);
 		foreach (KeyValuePair<Int32, Int32> kvp in this.dataTracker)
 		{
 			Int32 lineNo = kvp.Key / this.Column;
+			Int32 columnNo = kvp.Key % this.Column;
 			Transform poolObj = this.itemsPool[kvp.Value];
 			if (this.startNumber > 0)
 				lineNo -= this.startNumber / this.Column;
-			poolObj.localPosition = new Vector3(poolObj.localPosition.x, -(this.cellHeight / 2f + lineNo * this.cellHeight), poolObj.localPosition.z);
+			Single posX = this.table.padding.x + pivotOffset.x * poolObj.GetComponent<UIWidget>().width + columnNo * (2 * this.table.padding.x + poolObj.GetComponent<UIWidget>().width);
+			Single posY = this.table.padding.y + pivotOffset.y * this.cellHeight + lineNo * (2 * this.table.padding.y + this.cellHeight);
+			poolObj.localPosition = new Vector3(posX, -posY, poolObj.localPosition.z);
 		}
 		this.draggablePanel.SetDragAmount(0f, 0f, true);
 		if (this.ScrollButton)

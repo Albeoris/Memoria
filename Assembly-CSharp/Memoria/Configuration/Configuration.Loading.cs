@@ -18,11 +18,11 @@ namespace Memoria
         static Configuration()
         {
             Instance = new Configuration();
-            Watcher = CreareWatcher();
+            Watcher = CreateWatcher();
             LoadSafe();
         }
 
-        private static FileSystemWatcher CreareWatcher()
+        private static FileSystemWatcher CreateWatcher()
         {
             FileSystemWatcher watcher = new FileSystemWatcher();
             GameLoopManager.Quit += watcher.Dispose;
@@ -36,31 +36,45 @@ namespace Memoria
 
         public static void SaveValue<T>(String sectionName, IniValue<T> value)
         {
-            sectionName = $"[{sectionName}]";
-
-            String[] lines = File.ReadAllLines(ConfigurationFileName);
-            Int32 startSection = Array.IndexOf(lines, sectionName);
-            if (startSection < 0)
-            {
-                AppendSection(sectionName, value, lines);
+            if (!Monitor.TryEnter(Watcher))
                 return;
-            }
-            
-            Int32 index;
-            for (index = startSection + 1; index < lines.Length; index++)
-            {
-                var line = lines[index];
-                if (line == String.Empty || line[0] == '[')
-                    break;
 
-                if (line.StartsWith(value.Name))
+            try
+            {
+                sectionName = $"[{sectionName}]";
+
+                String[] lines = File.ReadAllLines(ConfigurationFileName);
+                Int32 startSection = Array.IndexOf(lines, sectionName);
+                if (startSection < 0)
                 {
-                    ChangeValue(value, index, lines);
+                    AppendSection(sectionName, value, lines);
                     return;
                 }
+
+                Int32 index;
+                for (index = startSection + 1; index < lines.Length; index++)
+                {
+                    var line = lines[index];
+                    if (line == String.Empty || line[0] == '[')
+                        break;
+
+                    if (line.StartsWith(value.Name))
+                    {
+                        ChangeValue(value, index, lines);
+                        return;
+                    }
+                }
+
+                AppendValue(value, index, lines);
             }
-            
-            AppendValue(value, index, lines);
+            catch (Exception err)
+            {
+                Log.Error(err, $"Failed to update a configuration value {sectionName} {value.Name}.");
+            }
+            finally
+            {
+                Monitor.Exit(Watcher);
+            }
         }
         
         private static void AppendSection<T>(String sectionName, IniValue<T> value, String[] lines)
