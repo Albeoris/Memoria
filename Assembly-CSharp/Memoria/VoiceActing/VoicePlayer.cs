@@ -92,6 +92,7 @@ public class VoicePlayer : SoundPlayer
 		String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FieldZoneId, messageNumber);
 		Boolean useAlternatePath = false;
 		String vaAlternatePath = null;
+		String vaAlternatePath2 = null;
 		if (dialog.Po != null)
 		{
 			vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid);
@@ -111,6 +112,17 @@ public class VoicePlayer : SoundPlayer
 
 		String[] msgStrings = dialog.Phrase.Split(new String[] { "[CHOO]" }, StringSplitOptions.None);
 		String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
+
+		if (!useAlternatePath && msgString.Length > 0 && msgString.Contains("\n“"))
+		{
+			string name = msgString.Split('\n')[0].Trim();
+			vaAlternatePath2 = string.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, name);
+			if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".ogg", true, false))
+			{
+				vaPath = vaAlternatePath = vaAlternatePath2;
+				useAlternatePath = true;
+			}
+		}
 
 		Boolean hasChoices = dialog.ChoiceNumber > 0;
 		Boolean isMsgEmpty = msgString.Length == 0;
@@ -154,8 +166,10 @@ public class VoicePlayer : SoundPlayer
 		{
 			if (String.IsNullOrEmpty(vaAlternatePath))
 				SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
-			else
+			else if (String.IsNullOrEmpty(vaAlternatePath2))
 				SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath));
+			else
+				SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} named-path:{5} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath, vaAlternatePath2));
 			isMsgEmpty = true;
 		}
 
