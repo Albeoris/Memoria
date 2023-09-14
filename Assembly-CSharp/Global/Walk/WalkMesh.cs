@@ -2476,6 +2476,25 @@ public class WalkMesh
 		return Math3D.PointInsideTriangleTest2D(pos, walkMeshTriangle.originalVertices[0], walkMeshTriangle.originalVertices[1], walkMeshTriangle.originalVertices[2], planarFactor);
 	}
 
+	public Boolean BGI_nearestWalkPosInVertical(Vector3 pos, out Single height)
+	{
+		BGI_DEF bgi = this.fieldMap.bgi;
+		height = Single.PositiveInfinity;
+		for (Int32 i = 0; i < bgi.triCount; i++)
+		{
+			BGI_TRI_DEF tri = bgi.triList[i];
+			if (this.BGI_pointAbovePoly(tri, pos))
+			{
+				WalkMeshTriangle wTri = this.tris[tri.triIdx];
+				Vector3 barCoord = Math3D.CalculateBarycentricRatio(pos, wTri.originalVertices[0], wTri.originalVertices[1], wTri.originalVertices[2]);
+				Single triangleY = wTri.originalVertices[0].y * barCoord.x + wTri.originalVertices[1].y * barCoord.y + wTri.originalVertices[2].y * barCoord.z;
+				if (Math.Abs(pos.y - triangleY) < Math.Abs(height))
+					height = pos.y - triangleY;
+			}
+		}
+		return height != Single.PositiveInfinity;
+	}
+
 	public Boolean BGI_pointInPoly(BGI_TRI_DEF tri, Vector3 pos)
 	{
 		WalkMeshTriangle walkMeshTriangle = this.tris[tri.triIdx];

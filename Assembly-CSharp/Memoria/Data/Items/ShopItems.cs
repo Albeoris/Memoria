@@ -10,17 +10,17 @@ namespace Memoria.Data
         public String Comment;
         public Int32 Id;
 
-        public RegularItem[] ItemIds;
+        public List<RegularItem> ItemIds = new List<RegularItem>();
 
         public RegularItem this[Int32 index] => ItemIds[index];
-        public Int32 Length => ItemIds.Length;
+        public Int32 Length => ItemIds.Count;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
             Id = CsvParser.Int32(raw[1]);
 
-            List<RegularItem> itemIds = new List<RegularItem>();
+            ItemIds.Clear();
             for (Int32 i = 2; i < raw.Length; i++)
             {
                 String value = raw[i];
@@ -37,12 +37,11 @@ namespace Memoria.Data
                         stop = true;
                         break;
                     }
-                    itemIds.Add(itemId);
+                    ItemIds.Add(itemId);
                 }
                 if (stop)
                     break;
             }
-            ItemIds = itemIds.ToArray();
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)

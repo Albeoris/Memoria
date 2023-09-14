@@ -4,9 +4,16 @@ using Memoria;
 
 public partial class EventEngine
 {
-    private bool MoveToward_mixed(Single x, Single y, Single z, Int32 flags, PosObj followPosObj)
+    private Boolean MoveToward_mixed(Single x, Single y, Single z, Int32 flags, PosObj followPosObj)
     {
-        Actor actor = (Actor)this.gCur;
+        Actor actor = this.gCur as Actor;
+        if (actor == null)
+            return false;
+        return MoveToward_mixed_ex(actor, actor.speed, x, y, z, flags, followPosObj);
+    }
+
+    private Boolean MoveToward_mixed_ex(Actor actor, Int32 speed, Single x, Single y, Single z, Int32 flags, PosObj followPosObj)
+    {
         if (FF9StateSystem.Common.FF9.fldMapNo == 1823 && actor.sid == 13 && x == -365 && z == -373)
         {
             // A. Castle/Hallway, Steiner, one of the mid-steps before saying "Princess, we are ready."
@@ -19,8 +26,7 @@ public partial class EventEngine
             x = -1155f;
             z = -1070f;
         }
-        GameObject go = this.gCur.go;
-        Single sqrSpeed = actor.speed * actor.speed;
+        Single sqrSpeed = speed * speed;
         Single moveDistance = 0f;
         PosObj posObj = null;
         FieldMapActorController actorController = null;
@@ -74,7 +80,7 @@ public partial class EventEngine
                     angleMoveFaceDiff += 360f;
                 if (angleMoveFaceDiff > 180f || EventEngineUtils.nearlyEqual(angleMoveFaceDiff, 180f))
                     angleMoveFaceDiff -= 360f;
-                if ((FF9StateSystem.Common.FF9.fldMapNo != 307 || this.gCur.sid != 11) && (FF9StateSystem.Common.FF9.fldMapNo != 610 || this.gCur.sid != 3) && EventEngineUtils.nearlyEqual(angleMoveFaceDiff, 0f))
+                if ((FF9StateSystem.Common.FF9.fldMapNo != 307 || actor.sid != 11) && (FF9StateSystem.Common.FF9.fldMapNo != 610 || actor.sid != 3) && EventEngineUtils.nearlyEqual(angleMoveFaceDiff, 0f))
                 {
                     // Always except (Ice Cavern/Ice Path, Zidane) and (L. Castle/Castle Station, Lindblum_OldAviator)
                     actor.actf |= (UInt16)EventEngine.actLockDir;
@@ -130,7 +136,7 @@ public partial class EventEngine
             deltaY = 0f;
         }
 
-        EventEngine.GetMoveVector(out Vector3 moveVec, movingPitch, movingAngle, actor.speed);
+        EventEngine.GetMoveVector(out Vector3 moveVec, movingPitch, movingAngle, speed);
         if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null)
             moveVec *= actorController.fieldMap.walkMesh.GetTriangleSlopeFactor(actorController.activeTri);
 

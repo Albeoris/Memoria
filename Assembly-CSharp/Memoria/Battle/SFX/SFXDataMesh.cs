@@ -91,6 +91,20 @@ public abstract class SFXDataMesh
 
 		public void StoreInUnityMaterial(Int32 frame, Material mat)
 		{
+			if (Assets.Scripts.Common.SceneDirector.IsFieldScene())
+			{
+				Dictionary<String, String> shaderReplacer = new Dictionary<String, String>
+				{
+					{ "SFX_OPA_GT", "Unlit/Transparent Cutout" },
+					{ "SFX_ADD_GT", "Unlit/Transparent Cutout" },
+					{ "SFX_SUB_GT", "Unlit/Transparent Cutout" },
+					{ "SFX_OPA_G", "Unlit/Transparent Cutout" },
+					{ "SFX_ADD_G", "Unlit/Transparent Cutout" },
+					{ "SFX_SUB_G", "Unlit/Transparent Cutout" },
+				};
+				if (shaderReplacer.TryGetValue(shaderName, out String rep))
+					shaderName = rep;
+			}
 			mat.shader = ShadersLoader.Find(shaderName);
 			if (SFXDataMesh.SFXColor.HasValue)
 				mat.SetColor(SFXMesh.Color, colorIntensity * SFXDataMesh.SFXColor.Value);
@@ -290,7 +304,9 @@ public abstract class SFXDataMesh
 		}
 		public override Boolean Render(int frame, SFXData.RunningInstance run = null)
 		{
-			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
+			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera")?.GetComponent<BattleMapCameraController>()?.GetComponent<Camera>();
+			if (camera == null)
+				camera = GameObject.Find("FieldMap Camera")?.GetComponent<Camera>();
 			Matrix4x4 worldToCameraMatrix = camera.worldToCameraMatrix;
 			RenderTexture activeRender = RenderTexture.active;
 			Boolean renderSomething = false;

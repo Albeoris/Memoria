@@ -41,8 +41,8 @@ public static class UnifiedBattleSequencer
 					i--;
 				}
 			}
+			SFXData.AdvanceEventSFXFrame();
 			SequenceBBGIntensity.Apply(true);
-			SFXData.LoadLoop();
 		}
 		catch (Exception err)
 		{
@@ -55,6 +55,7 @@ public static class UnifiedBattleSequencer
 		SFXChannel.Render();
 		for (Int32 i = 0; i < runningActions.Count; i++)
 			runningActions[i].Render();
+		SFXData.RenderEventSFX();
 	}
 
 	private static void ReleaseRunningAction(Int32 index)
@@ -182,11 +183,15 @@ public static class UnifiedBattleSequencer
 			BattleActionCode code = runningThread.code.First.Value;
 			runningThread.code.RemoveFirst();
 			Boolean isSFXThread = runningThread.parentSFX != null;
+			Boolean skipNextElse = false;
 			if (runningThread.isReflectThread && !isSFXThread && code.operation != "RunThread") // SFX thread code is always used for reflect even if not flagged "Reflect"
 			{
 				Boolean executeReflect;
 				if (!code.TryGetArgBoolean("Reflect", out executeReflect) || !executeReflect)
+				{
+					runningThread.skipNextElseThread = skipNextElse;
 					return;
+				}
 			}
 			Single tmpSingle;
 			Boolean tmpBool;
@@ -989,6 +994,11 @@ public static class UnifiedBattleSequencer
 					ActivateReflect();
 					break;
 				case "RunThread":
+					if (code.TryGetArgBoolean("AsElseThread", out tmpBool) && tmpBool && runningThread.skipNextElseThread)
+					{
+						skipNextElse = true;
+						break;
+					}
 					if (code.TryGetArgInt32("Thread", out tmpInt) && tmpInt >= 0)
 					{
 						Boolean dontCopyThread;
@@ -1047,6 +1057,7 @@ public static class UnifiedBattleSequencer
 							if (!NCalcUtility.EvaluateNCalcCondition(c.Evaluate()))
 								break;
 						}
+						skipNextElse = true;
 						Boolean loopTarget, chain, sync;
 						Int32 loopCount;
 						if (!code.TryGetArgInt32("LoopCount", out loopCount))
@@ -1087,6 +1098,7 @@ public static class UnifiedBattleSequencer
 					}
 					break;
 			}
+			runningThread.skipNextElseThread = skipNextElse;
 		}
 
 		public Boolean ExecuteLoop()

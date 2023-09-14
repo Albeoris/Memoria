@@ -15,6 +15,7 @@ public class BattleActionThread
 	public Boolean isReflectThread;
 	public Int32 defaultSFXIndex; // -1 until LoadSFX/LoadMonsterSFX is used, then point to the last one (inherit through RunThread)
 	public SFXData parentSFX; // null except for threads started with PlaySFX/PlayMonsterSFX (inherit through RunThread)
+	public Boolean skipNextElseThread;
 
 	public Int32 waitFrame;
 	public UInt16 waitAnimId;
@@ -34,6 +35,7 @@ public class BattleActionThread
 		isReflectThread = false;
 		defaultSFXIndex = -1;
 		parentSFX = null;
+		skipNextElseThread = false;
 		waitFrame = 0;
 		waitAnimId = 0;
 		waitMoveId = 0;
@@ -51,6 +53,7 @@ public class BattleActionThread
 		isReflectThread = asReflectThread;
 		defaultSFXIndex = -1;
 		parentSFX = thread.parentSFX;
+		skipNextElseThread = false;
 		waitFrame = 0;
 		waitAnimId = 0;
 		waitMoveId = 0;
@@ -144,7 +147,7 @@ public class BattleActionThread
 			Int32 argIndex = nonCommentedline.IndexOf(":");
 			String opCode = argIndex < 0 ? nonCommentedline : nonCommentedline.Substring(0, argIndex);
 			opCode = opCode.Trim();
-			if (opCode == "EndThread" && threadStack.Count > 1)
+			if ((opCode == "EndThread" || opCode == "ElseThread") && threadStack.Count > 1)
 			{
 				threadStack.Pop();
 				current = threadStack.Peek();
@@ -177,11 +180,12 @@ public class BattleActionThread
 						action.argument[argKey] = argValue;
 				}
 			}
-			if (opCode == "StartThread")
+			if (opCode == "StartThread" || opCode == "ElseThread")
 			{
 				BattleActionThread newThread = new BattleActionThread();
 				action.operation = "RunThread";
 				action.argument["Thread"] = result.Count.ToString();
+				action.argument["AsElseThread"] = (opCode == "ElseThread").ToString();
 				result[current].code.AddLast(action);
 				current = result.Count;
 				threadStack.Push(current);

@@ -19,6 +19,7 @@ public class SFXData
     public Boolean useCamera;
     public Int32 firstMeshFrame;
     public Boolean loadHasEnded;
+    public Boolean isEventSFX;
 
     public List<BattleActionThread> sfxthread;
     public List<SFXDataCamera> camera;
@@ -30,15 +31,17 @@ public class SFXData
 
     public static SFXData LoadCur;
     public static Boolean lockLoading;
+    public static Dictionary<Int32, SFXData> EventSFX = new Dictionary<Int32, SFXData>(); // TODO: Event SFX would be SFX tied to event scripts (battle scripts but also field/wm scripts). Loading these SFX and rendering them in fields is not possible yet. Note that PSXTextureMgr is already used for FieldSPS so it would conflict.
     private static Queue<SFXData> loadingQueue = new Queue<SFXData>();
     private static HashSet<SFXData> sfxLoadedNotPlayed = new HashSet<SFXData>();
 
     public const Int32 LoadingTimeAllocatedPerFrame = 25;
 
-    public static void InitBattle()
+    public static void Reinit()
     {
         SFXData.LoadCur = null;
         SFXData.lockLoading = false;
+        SFXData.EventSFX.Clear();
         SFXData.loadingQueue.Clear();
         SFXData.sfxLoadedNotPlayed.Clear();
         SFXDataMesh.Raw.RenderingCount = 0;
@@ -48,6 +51,8 @@ public class SFXData
 
     public static void LoadLoop()
     {
+        if (LoadCur == null && loadingQueue.Count == 0)
+            return;
         Stopwatch watch = new Stopwatch();
         watch.Start();
         Int32 maxLoadingTime = (Int32)Mathf.Floor(1000f / Configuration.Graphics.BattleFPS);
@@ -88,6 +93,46 @@ public class SFXData
         }
     }
 
+    public static void AdvanceEventSFXFrame()
+	{
+        try
+        {
+            foreach (SFXData sfx in SFXData.EventSFX.Values)
+                foreach (SFXData.RunningInstance run in sfx.runningSFX)
+                    run.frame++;
+            SFXData.LoadLoop();
+        }
+        catch (Exception err)
+        {
+            Log.Error(err);
+        }
+    }
+
+    public static void RenderEventSFX()
+	{
+        try
+        {
+            foreach (SFXData sfx in SFXData.EventSFX.Values)
+            {
+                for (Int32 i = 0; i < sfx.runningSFX.Count; i++)
+                {
+                    SFXData.RunningInstance run = sfx.runningSFX[i];
+                    if (sfx.mesh.Render(run.frame, run))
+                    {
+                        sfx.runningSFX.RemoveAt(i);
+                        if (sfx.runningSFX.Count == 0)
+                            sfx.mesh.End();
+                        i--;
+                    }
+                }
+            }
+        }
+        catch (Exception err)
+        {
+            Log.Error(err);
+        }
+    }
+
     public void PlaySFX(Int32 frameStart, List<UInt32> preventMeshByKey = null, List<UInt32> preventMeshByIndex = null, Dictionary<UInt32, Color> colorsByKey = null, Dictionary<UInt32, Color> colorsByIndex = null)
     {
         SFXData.sfxLoadedNotPlayed.Remove(this);
@@ -116,6 +161,7 @@ public class SFXData
         useCamera = applyCamera;
         firstMeshFrame = -1;
         loadHasEnded = false;
+        isEventSFX = false;
         cancel = false;
         sfxthread = new List<BattleActionThread>();
         camera = new List<SFXDataCamera>();
@@ -132,6 +178,43 @@ public class SFXData
             return;
         }
         loadingQueue.Enqueue(this);
+    }
+
+    public void LoadEventSFX(Int32 eventId, SpecialEffect effNum, BTL_VFX_REQ request)
+    {
+        if (SFXData.EventSFX.TryGetValue(eventId, out SFXData oldSFX))
+		{
+            oldSFX.Cancel();
+            if (oldSFX.runningSFX.Count > 0)
+			{
+                oldSFX.runningSFX.Clear();
+                oldSFX.mesh.End();
+            }
+        }
+        id = effNum;
+        cmdRef = null;
+        sfxRequest = request;
+        useCamera = false;
+        firstMeshFrame = -1;
+        loadHasEnded = false;
+        isEventSFX = true;
+        cancel = false;
+        sfxthread = new List<BattleActionThread>();
+        camera = new List<SFXDataCamera>();
+        mesh = null;
+        runningSFX = new List<RunningInstance>();
+        String defaultFolder = DataResources.PureDataDirectory + $"SpecialEffects/ef{(Int32)effNum:D3}/";
+        String sfxInfo = AssetManager.LoadString(defaultFolder + UnifiedBattleSequencer.INFORMATION_FILE, true);
+        if (sfxInfo != null)
+            LoadSFXFromInfo(sfxInfo, defaultFolder);
+        LoadSequenceFromFile(defaultFolder + UnifiedBattleSequencer.SEQUENCE_FILE);
+        if (mesh != null)
+        {
+            loadHasEnded = true;
+            return;
+        }
+        SFXData.loadingQueue.Enqueue(this);
+        SFXData.EventSFX[eventId] = this;
     }
 
     public void Cancel()
@@ -349,7 +432,7 @@ public class SFXData
 
     public void LoadSFXRawEnd()
     {
-        if (SFXData.BattleCallbackReaderExportSequence)
+        if (SFXData.BattleCallbackReaderExportSequence && cmdRef != null)
         {
             List<BattleActionThread> reworkedThreads = new List<BattleActionThread>();
             Single BbgIntensityFactor = 1f;

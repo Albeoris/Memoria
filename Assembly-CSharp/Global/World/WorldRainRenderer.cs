@@ -13,13 +13,10 @@ public class WorldRainRenderer : MonoBehaviour
 	private void OnPostRender()
 	{
 		if (PersistenSingleton<SceneDirector>.Instance.IsFading)
-		{
 			return;
-		}
+		SFXData.RenderEventSFX();
 		if (this.numRain == 0)
-		{
 			return;
-		}
 		GL.PushMatrix();
 		this.mat.SetPass(0);
 		GL.Begin(7);

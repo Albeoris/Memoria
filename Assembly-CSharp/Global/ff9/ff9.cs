@@ -9667,6 +9667,7 @@ public static class ff9
 		map.nextMapNo = (ff.wldMapNo = (Int16)MapNo);
 		if (!FF9StateSystem.World.IsBeeScene)
 		{
+			SFXData.Reinit();
 			EventEngine eventEngine = PersistenSingleton<EventEngine>.Instance;
 			String ebFileName = FF9DBAll.EventDB[MapNo];
 			map.evtPtr = EventEngineUtils.loadEventData(ebFileName, EventEngineUtils.ebSubFolderWorld);

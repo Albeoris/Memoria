@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
@@ -88,7 +89,19 @@ public class PartySettingUI : UIScene
 
     [NonSerialized]
     private Int32 currentFloor;
-    private Int32 FloorMax => this.info == null || this.info.select == null || this.info.select.Length <= 8 ? 0 : (this.info.select.Length - 5) / 4;
+    private Int32 TotalCharCount
+	{
+        get
+		{
+            if (this.info == null)
+                return 0;
+            Int32 count = this.info.menu.Sum(cId => cId != CharacterId.NONE ? 1 : 0);
+            if (this.info.select != null)
+                count += this.info.select.Sum(cId => cId != CharacterId.NONE ? 1 : 0);
+            return count;
+        }
+	}
+    private Int32 FloorMax => Math.Max(0, (TotalCharCount - 6) / 4);
 
     public FF9PARTY_INFO Info
     {
@@ -462,16 +475,16 @@ public class PartySettingUI : UIScene
         Int32 oldCount;
         if (this.info.select == null)
         {
-            oldCount = 0;
-            this.info.select = new CharacterId[8];
+            oldCount = 8;
+            this.info.select = new CharacterId[oldCount];
+            for (Int32 i = 0; i < oldCount; i++)
+                this.info.select[i] = CharacterId.NONE;
         }
         else
 		{
             oldCount = this.info.select.Length;
         }
-        Int32 count = Math.Max(8, oldCount);
-        if ((count % 4) != 0)
-            count += 4 - (count % 4);
+        Int32 count = 8 + FloorMax * 4;
         if (count != oldCount)
         {
             Array.Resize(ref this.info.select, count);

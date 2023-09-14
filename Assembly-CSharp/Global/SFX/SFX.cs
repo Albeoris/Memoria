@@ -1620,7 +1620,7 @@ public static class SFX
     {
         SFX.StartCommon(false);
         SFX.StartPlungeCamera();
-        SFXData.InitBattle();
+        SFXData.Reinit();
         SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
         if (Configuration.Battle.SFXRework)
             SFXChannel.LoadAll();

@@ -104,6 +104,7 @@ namespace Memoria
 		{
 			if (_skipCount > 0)
 				return;
+			SFXData.LoadLoop();
 			FieldMap fieldmap = PersistenSingleton<EventEngine>.Instance.fieldmap;
 			EventEngine eEngine = PersistenSingleton<EventEngine>.Instance;
 			Single unclampedFactor = 1f + smoothFactor;

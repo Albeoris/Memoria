@@ -375,6 +375,23 @@ public static class ff9play
         return (CharacterId)characterIndex;
     }
 
+    public static CharacterOldIndex CharacterIDToOldIndex(CharacterId charId)
+    {
+        if (charId <= CharacterId.Amarant)
+            return (CharacterOldIndex)charId;
+        if (charId == CharacterId.Beatrix)
+            return CharacterOldIndex.Beatrix;
+        if (charId == CharacterId.Cinna)
+            return CharacterOldIndex.Cinna;
+        if (charId == CharacterId.Marcus)
+            return CharacterOldIndex.Marcus;
+        if (charId == CharacterId.Blank)
+            return CharacterOldIndex.Blank;
+        if (charId == CharacterId.NONE)
+            return CharacterOldIndex.NONE;
+        return (CharacterOldIndex)charId;
+    }
+
     public static Int32 CharacterIDToEventId(CharacterId characterId)
     {
         if (characterId <= CharacterId.Amarant)
@@ -432,6 +449,7 @@ public static class ff9play
 
     public static void FF9Play_GrowLevel(PLAYER player, Int32 lv)
     {
+        BattleAchievement.GetReachLv99Achievement(lv);
         FF9Play_Build(player, lv, false, true);
     }
 

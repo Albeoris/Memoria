@@ -268,7 +268,6 @@ public class BattleResultUI : UIScene
 	private void DisplayLevelup(Int32 index)
 	{
 		PLAYER player = FF9StateSystem.Common.FF9.party.member[index];
-		BattleAchievement.GetReachLv99Achievement(player.level + 1);
 		ff9play.FF9Play_GrowLevel(player, player.level + 1);
 		this.totalLevelUp[index]++;
 		this.ShowLevelUpAnimation(index);

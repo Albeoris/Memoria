@@ -48,6 +48,27 @@ public class EventState : MonoBehaviour
 			gAbilityUsage[abilityId] = 1;
 	}
 
+	public Int32 GetTreasureHunterPoints()
+	{
+		// Rank H:   0-199 pts
+		// Rank G: 200-219 pts
+		// Rank F: 220-239 pts
+		// Rank E: 240-259 pts
+		// Rank D: 260-279 pts
+		// Rank C: 280-299 pts
+		// Rank B: 300-319 pts
+		// Rank A: 320-339 pts
+		// Rank S: 340+ pts
+		Int32 pts = 0;
+		for (Int32 index = 896; index <= 960; index++)
+			pts += FF9.Comn.countBits(gEventGlobal[index]);
+		for (Int32 index = 966; index <= 975; index++)
+			pts += FF9.Comn.countBits(gEventGlobal[index]);
+		for (Int32 index = 182; index <= 186; index++)
+			pts += 2 * FF9.Comn.countBits(gEventGlobal[index]);
+		return pts;
+	}
+
 	public List<Int32> FindVariableInFieldScriptUsage(List<Int32> variableIndex, List<Boolean> asBool = null)
 	{
 		List<Int32> fieldList = new List<Int32>();
