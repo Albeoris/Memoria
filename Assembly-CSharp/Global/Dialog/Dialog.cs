@@ -988,20 +988,16 @@ public class Dialog : MonoBehaviour
 
 	private void FollowTarget()
 	{
-		Single num;
-		Single num2;
-		ETb.GetMesPos(this.Po, out num, out num2);
-		Single num3 = num + Dialog.PosXOffset;
-		Single num4 = num2 + Dialog.PosYOffset;
-        Boolean flag = ((TailPosition)((Int32)this.tailPosition >> 1) & Dialog.TailPosition.LowerLeft) == Dialog.TailPosition.LowerLeft;
-        Boolean flag2 = (this.tailPosition & Dialog.TailPosition.LowerLeft) == Dialog.TailPosition.LowerLeft;
-		num3 = this.setPositionX(num3, this.size.x, flag2, true);
-		num4 = this.forceSetPositionY(num4, this.size.y, flag);
-		Dialog.CalculateDialogCenter(ref num3, ref num4, this.ClipSize);
-		this.tailMargin -= num3;
-		this.tailPosition = (Dialog.TailPosition)(Convert.ToInt32(flag) << 1 | Convert.ToInt32(flag2));
-		num4 = this.CalculateYPositionAfterHideTail(num4, flag);
-		this.setAutoPosition(num3, num4);
+		ETb.GetMesPos(this.Po, out Single poPosX, out Single poPosY);
+		Single posX = poPosX + Dialog.PosXOffset;
+		Single posY = poPosY + Dialog.PosYOffset;
+		posX = this.setPositionX(posX, this.size.x, (this.tailPosition & TailPosition.LowerLeft) != 0, true);
+		posY = this.forceSetPositionY(posY, this.size.y, (this.tailPosition & TailPosition.UpperRight) != 0);
+		Dialog.CalculateDialogCenter(ref posX, ref posY, this.ClipSize);
+		this.tailMargin -= posX;
+		this.tailPosition &= TailPosition.LowerLeft | TailPosition.UpperRight;
+		posY = this.CalculateYPositionAfterHideTail(posY, (this.tailPosition & TailPosition.UpperRight) != 0);
+		this.setAutoPosition(posX, posY);
 		this.setTailAutoPosition(this.tailPosition, true);
 	}
 
@@ -1019,47 +1015,40 @@ public class Dialog : MonoBehaviour
 
 	private Single setPositionX(Single posX, Single width, Boolean isLeft, Boolean isUpdate)
 	{
-		Single num;
-		Single num2;
-		Single num3;
+		Single tailX;
+		Single minX;
+		Single maxX;
+		if (isUpdate)
+		{
+			if (isLeft && posX - Dialog.DialogTailLeftRightOffset <= Dialog.DialogLimitLeft + Dialog.TailMagicNumber1)
+			{
+				isLeft = false;
+				this.tailPosition = this.tailPosition & TailPosition.UpperRight;
+				this.setTailPosition(this.tailPosition);
+			}
+			else if (!isLeft && posX + Dialog.DialogTailLeftRightOffset >= Dialog.DialogLimitRight - Dialog.TailMagicNumber1)
+			{
+				isLeft = true;
+				this.tailPosition = (this.tailPosition & TailPosition.UpperRight) | TailPosition.LowerLeft;
+				this.setTailPosition(this.tailPosition);
+			}
+		}
 		if (isLeft)
 		{
-			num = posX - (Single)Dialog.DialogTailLeftRightOffset;
-			if (num < (Single)Dialog.DialogLimitLeft + Dialog.TailMagicNumber1)
-			{
-				num = (Single)Dialog.DialogLimitLeft + Dialog.TailMagicNumber1;
-			}
-			if (num > (Single)Dialog.DialogLimitRight - Dialog.TailMagicNumber2)
-			{
-				num = (Single)Dialog.DialogLimitRight - Dialog.TailMagicNumber2;
-			}
-			num2 = num + Dialog.TailMagicNumber2 - width;
-			num3 = num - Dialog.TailMagicNumber1;
+			tailX = Mathf.Clamp(posX - Dialog.DialogTailLeftRightOffset, Dialog.DialogLimitLeft + Dialog.TailMagicNumber1, Dialog.DialogLimitRight - Dialog.TailMagicNumber2);
+			minX = tailX + Dialog.TailMagicNumber2 - width;
+			maxX = tailX - Dialog.TailMagicNumber1;
 		}
 		else
 		{
-			num = posX + (Single)Dialog.DialogTailLeftRightOffset;
-			if (num > (Single)Dialog.DialogLimitRight - Dialog.TailMagicNumber1)
-			{
-				num = (Single)Dialog.DialogLimitRight - Dialog.TailMagicNumber1;
-			}
-			if (num < (Single)Dialog.DialogLimitLeft + Dialog.TailMagicNumber2)
-			{
-				num = (Single)Dialog.DialogLimitLeft + Dialog.TailMagicNumber2;
-			}
-			num2 = num + Dialog.TailMagicNumber1 - width;
-			num3 = num - Dialog.TailMagicNumber2;
+			tailX = Mathf.Clamp(posX + Dialog.DialogTailLeftRightOffset, Dialog.DialogLimitLeft + Dialog.TailMagicNumber2, Dialog.DialogLimitRight - Dialog.TailMagicNumber1);
+			minX = tailX + Dialog.TailMagicNumber1 - width;
+			maxX = tailX - Dialog.TailMagicNumber2;
 		}
-		this.tailMargin = num;
-		if (num2 < (Single)Dialog.DialogLimitLeft)
-		{
-			num2 = (Single)Dialog.DialogLimitLeft;
-		}
-		if (num3 > (Single)Dialog.DialogLimitRight - width)
-		{
-			num3 = (Single)Dialog.DialogLimitRight - width;
-		}
-		return (num2 + num3) / 2f;
+		this.tailMargin = tailX;
+		minX = Math.Max(minX, Dialog.DialogLimitLeft);
+		maxX = Math.Min(maxX, Dialog.DialogLimitRight - width);
+		return (minX + maxX) / 2f;
 	}
 
 	private Single setPositionY(Single posY, Single height, ref Boolean isUpper)
@@ -1781,14 +1770,11 @@ public class Dialog : MonoBehaviour
 
 	[SerializeField]
 	private Int32 chooseMask;
-
 	private List<GameObject> choiceList;
-
 	private List<GameObject> maskChoiceList;
 
 	[SerializeField]
 	private List<Int32> disableIndexes;
-
 	private List<Int32> activeIndexes;
 
 	public static String DialogGroupButton;
@@ -1801,11 +1787,11 @@ public class Dialog : MonoBehaviour
 	private Boolean isChoiceReady;
 
 	public static Byte DialogMaximumDepth = 68;
-
 	public static Byte DialogAdditionalRaiseDepth = 22;
 
 	private static Byte[] DialogTextAnimationTick = new Byte[]
 	{
+		// The "Field Message" speed (eg. the slowest is the same as defaulting message speeds to [SPED=4])
 		4,
 		7,
 		10,
@@ -1817,67 +1803,47 @@ public class Dialog : MonoBehaviour
 	};
 
 	public Dialog.DialogIntDelegate AfterDialogHidden;
-
 	public Dialog.DialogIntDelegate AfterDialogShown;
-
 	public Dialog.DialogVoidDelegate AfterDialogSentenseShown;
 
 	[NonSerialized]
 	public Dialog.OnSelectedOptionChangeDelegate OnOptionChange = null;
 
 	public GameObject BodyGameObject;
-
 	public GameObject BorderGameObject;
-
 	public GameObject CaptionGameObject;
-
 	public GameObject PhraseGameObject;
-
 	public GameObject TailGameObject;
-
 	public GameObject ChooseContainerGameObject;
-
 	public UIPanel phrasePanel;
 
 	public static readonly Int32 WindowMinWidth = (Int32)(UIManager.ResourceXMultipier * 32f);
-
 	public static readonly Int32 AdjustWidth = (Int32)(UIManager.ResourceXMultipier * 3f);
 
 	public static readonly Int32 DialogOffsetY = (Int32)(UIManager.ResourceYMultipier * 20f);
 
 	public static readonly Int32 DialogLimitLeft = (Int32)(UIManager.ResourceXMultipier * 8f);
-
-	public static readonly Int32 DialogLimitRight = (Int32)(UIManager.ResourceXMultipier * 312f);
-
+	public static readonly Int32 DialogLimitRight = (Int32)(UIManager.ResourceXMultipier * (FieldMap.PsxScreenWidth - 8f));
 	public static readonly Int32 DialogLimitTop = (Int32)(UIManager.ResourceYMultipier * 8f);
-
 	public static readonly Int32 DialogLimitBottom = (Int32)(UIManager.ResourceYMultipier * 208f);
 
 	public static readonly Int32 DialogTailLeftRightOffset = (Int32)(UIManager.ResourceXMultipier * 6f);
-
 	public static readonly Int32 DialogTailTopOffset = (Int32)(UIManager.ResourceYMultipier * 16f);
-
 	public static readonly Int32 DialogTailBottomOffset = (Int32)(UIManager.ResourceYMultipier * 32f);
 
 	public static readonly Int32 kCenterX = (Int32)(UIManager.ResourceXMultipier * FieldMap.HalfScreenWidth);
-
 	public static readonly Int32 kCenterY = (Int32)(UIManager.ResourceYMultipier * FieldMap.HalfScreenHeight);
-
 	public static readonly Int32 kDialogY = (Int32)(UIManager.ResourceYMultipier * 150f);
 
-	public static readonly Single TailMagicNumber1 = (Single)((Int32)(24f * UIManager.ResourceXMultipier));
-
-	public static readonly Single TailMagicNumber2 = (Single)((Int32)(8f * UIManager.ResourceXMultipier));
+	public static readonly Single TailMagicNumber1 = (Int32)(24f * UIManager.ResourceXMultipier);
+	public static readonly Single TailMagicNumber2 = (Int32)(8f * UIManager.ResourceXMultipier);
 
 	public static readonly Single PosXOffset = -2f;
 
-	public static readonly Single kUpperOffset = (Single)Dialog.DialogTailTopOffset;
-
+	public static readonly Single kUpperOffset = Dialog.DialogTailTopOffset;
 	public static readonly Single kLimitTop = 24f;
-
-	public static readonly Single kLowerOffset = (Single)(Dialog.DialogTailBottomOffset * 3 / 4);
-
-	public static readonly Single kLimitBottom = (Single)(Dialog.DialogLimitBottom - 4);
+	public static readonly Single kLowerOffset = Dialog.DialogTailBottomOffset * 3 / 4;
+	public static readonly Single kLimitBottom = Dialog.DialogLimitBottom - 4;
 
 	public static readonly Single kMargin = UIManager.ResourceXMultipier * 5f;
 
@@ -1888,37 +1854,25 @@ public class Dialog : MonoBehaviour
 	public static readonly Single DialogLineHeight = 68f;
 
 	public static readonly Single DialogYPadding = 80f;
-
 	public static readonly Single DialogXPadding = 18f;
-
 	public static readonly Single BorderPadding = 18f;
 
 	public static readonly Single DialogPhraseXPadding = 16f;
-
 	public static readonly Single DialogPhraseYPadding = 20f;
 
 	public static readonly Int32 FF9TextSpeedRatio = 2;
 
 	private Transform bodyTransform;
-
 	private Transform tailTransform;
 
 	private UISprite bodySprite;
-
 	private UISprite borderSprite;
-
 	private UISprite tailSprite;
-
 	private UIPanel clipPanel;
-
 	private UIWidget phraseWidget;
-
 	private UILabel phraseLabel;
-
 	private UILabel captionLabel;
-
 	private TypewriterEffect phraseEffect;
-
 	private DialogAnimator dialogAnimator;
 
 	[SerializeField]
@@ -1940,11 +1894,8 @@ public class Dialog : MonoBehaviour
 	private Dialog.State currentState;
 
 	private Boolean isForceTailPosition;
-
 	private Single tailMargin;
-
 	private Single originalWidth;
-
 	private Int32 lineNumber;
 
 	private Vector2 size = Vector2.zero;
@@ -1957,14 +1908,12 @@ public class Dialog : MonoBehaviour
 
 	[SerializeField]
 	private String phrase = String.Empty;
-
 	private String phraseMessageValue = String.Empty;
 
 	[SerializeField]
 	private List<String> subPage = new List<String>();
 
 	private String caption = String.Empty;
-
 	private Dialog.CaptionType capType;
 
 	[SerializeField]
@@ -1979,7 +1928,6 @@ public class Dialog : MonoBehaviour
 	private Boolean isNeedResetChoice = true;
 
 	private Single dialogShowTime;
-
 	private Single dialogHideTime;
 
 	[NonSerialized]
@@ -1990,7 +1938,6 @@ public class Dialog : MonoBehaviour
 	private Boolean typeAnimationEffect = true;
 
 	private Dictionary<Int32, Single> messageSpeed = new Dictionary<Int32, Single>();
-
 	private Dictionary<Int32, Single> messageWait = new Dictionary<Int32, Single>();
 
 	[SerializeField]
@@ -2014,7 +1961,6 @@ public class Dialog : MonoBehaviour
 	private Boolean focusToActor = true;
 
 	private Int32 signalNumber;
-
 	private Int32 signalMode;
 
 	private Dictionary<Int32, Int32> messageValues = new Dictionary<Int32, Int32>();
@@ -2038,23 +1984,14 @@ public class Dialog : MonoBehaviour
 	public class DialogImage
 	{
 		public Int32 Id;
-
 		public Vector2 Size;
-
 		public Int32 TextPosition;
-
 		public Int32 PrintedLine;
-
 		public Vector3 LocalPosition;
-
 		public Vector3 Offset;
-
 		public Boolean IsShown;
-
 		public Boolean checkFromConfig = true;
-
 		public Boolean IsButton = true;
-
 		public String tag = String.Empty;
 	}
 
@@ -2116,8 +2053,6 @@ public class Dialog : MonoBehaviour
 	}
 
 	public delegate void DialogVoidDelegate();
-
 	public delegate void DialogIntDelegate(Int32 choice);
-
 	public delegate void OnSelectedOptionChangeDelegate(Int32 msg, Int32 optionIndex);
 }
