@@ -666,7 +666,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 Int32 memberIndex = 0;
                 ff9play.FF9Play_SetParty(memberIndex++, CharacterId.Zidane);
                 for (Int32 varIndex = 3536; varIndex <= 3542 && memberIndex < 4; varIndex++) // "VARL_GenBool_3536" etc.
-                    if (eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, varIndex, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
+                    if (eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, varIndex, EBin.VariableType.Bit, 0) == 0)
                         ff9play.FF9Play_SetParty(memberIndex++, variableToCharacter[varIndex - 3536]);
                 this.SetupPartyUID();
             }
@@ -684,7 +684,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 this.SetupPartyUID();
             }
             // Hotfix: force a normal team for the cutscene at the bottom of Gulug (field "Gulug/Path")
-            if (FF9StateSystem.Common.FF9.fldMapNo == 2362 && FF9StateSystem.EventState.ScenarioCounter == 9950 && eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, 3262, (Int32)EBin.VariableType.Bit << 3, 0) == 0)
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2362 && FF9StateSystem.EventState.ScenarioCounter == 9950 && eBin.GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, 3262, EBin.VariableType.Bit, 0) == 0)
             {
                 Boolean shouldHack = !partychk((Int32)CharacterOldIndex.Zidane) || !partychk((Int32)CharacterOldIndex.Vivi);
                 for (Int32 memberIndex = 0; memberIndex < 4; memberIndex++)
@@ -1274,47 +1274,70 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private Int32 getv1()
     {
-        Int32 num;
+        Int32 result;
         if ((this.gArgFlag & 1) != 0)
         {
             this.eBin.CalcExpr();
-            num = this.eBin.getv();
+            result = this.eBin.getv();
         }
         else
-            num = this.geti();
+        {
+            result = this.geti();
+        }
         this.gArgFlag >>= 1;
         this.gArgUsed = 1;
-        return num;
+        return result;
     }
 
     private Int32 getv2()
     {
-        Int32 num;
+        Int32 result;
         if ((this.gArgFlag & 1) != 0)
         {
             this.eBin.CalcExpr();
-            num = this.eBin.getv();
+            result = this.eBin.getv();
         }
         else
-            num = (this.geti() | this.geti() << 8) << 16 >> 16;
+        {
+            result = (this.geti() | this.geti() << 8) << 16 >> 16;
+        }
         this.gArgFlag >>= 1;
         this.gArgUsed = 1;
-        return num;
+        return result;
+    }
+
+    private UInt32 getv3u()
+    {
+        UInt32 result;
+        if ((this.gArgFlag & 1) != 0)
+        {
+            this.eBin.CalcExpr();
+            result = (UInt32)this.eBin.getv();
+        }
+        else
+        {
+            result = (UInt32)(this.geti() | this.geti() << 8 | this.geti() << 16);
+        }
+        this.gArgFlag >>= 1;
+        this.gArgUsed = 1;
+        return result;
     }
 
     private Int32 getv3()
     {
-        Int32 num;
+        Int32 result;
         if ((this.gArgFlag & 1) != 0)
         {
             this.eBin.CalcExpr();
-            num = this.eBin.getv();
+            result = this.eBin.getv();
         }
         else
-            num = this.geti() | this.geti() << 8 | this.geti() << 16;
+        {
+            result = (this.geti() | this.geti() << 8 | this.geti() << 16) << 8 >> 8;
+        }
         this.gArgFlag >>= 1;
         this.gArgUsed = 1;
-        return num;
+        return result;
     }
 
     private void ExecAnim(Actor p, Int32 anim)

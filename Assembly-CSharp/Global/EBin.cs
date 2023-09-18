@@ -1,7 +1,10 @@
 using System;
-using Assets.Sources.Scripts.EventEngine.Utils;
 using System.IO;
+using System.Linq;
+using Assets.Sources.Scripts.EventEngine.Utils;
+using FF9;
 using Memoria;
+using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 
@@ -357,7 +360,7 @@ public class EBin
         _exprLoop = true;
         while (_exprLoop)
         {
-            SByte b = (SByte)s1.getByteIP();
+            Byte varOperation = s1.getByteIP();
             if (s1.sid != 3 || s1.ip != 110)
             {
                 if (FF9StateSystem.Settings.IsFastTrophyMode)
@@ -379,89 +382,165 @@ public class EBin
             }
             EMinigame.ChanbaraBonusPoints(s1, this);
             EMinigame.SetViviSpeed(s1, this);
-            if (b < 0)
+            s1.ip++;
+            if (varOperation >= 0x80)
             {
-                s1.ip++;
-                _v0 = expr_varSpec(b);
-                _s7.push(_v0);
+                if (varOperation == 0xD3)
+                {
+                    expr_customSubCommand();
+                }
+                else
+                {
+                    _v0 = expr_varSpec(varOperation);
+                    _s7.push(_v0);
+                }
             }
             else
             {
-                s1.ip++;
-                expr_jumpToSubCommand((op_binary) b);
+                expr_jumpToSubCommand((op_binary)varOperation);
             }
         }
         return 0;
     }
 
-    private Int32 expr_varSpec(Int32 arg0)
+    private void expr_customSubCommand()
     {
-        _v0 = (arg0 & 3);
-        _v0 <<= 26;
-        int a1 = (arg0 & 28);
-        a1 <<= 27;
-        _v0 |= a1;
-        a1 = s1.getByteIP();
-        arg0 &= 32;
+        flexible_varfunc commandId = (flexible_varfunc)s1.getUShortIP();
+        s1.ip += 2;
+        Byte argCount = s1.getByteIP();
         s1.ip++;
-        if (arg0 != 0)
+        Int32[] args = new Int32[argCount];
+        for (Int32 i = argCount - 1; i >= 0; i--)
+            args[i] = EvaluateValueExpression();
+        _v0 = 0;
+        switch (commandId)
+		{
+			case flexible_varfunc.ITEM_REGULAR_TO_ID:
+				_v0 = ff9item.GetItemIdFromRegularId((RegularItem)args[0]);
+				break;
+            case flexible_varfunc.ITEM_ID_TO_REGULAR:
+                _v0 = (Int32)ff9item.GetRegularIdFromItemId(args[0]);
+                break;
+            case flexible_varfunc.ITEM_KEY_TO_ID:
+				_v0 = ff9item.GetItemIdFromImportantId(args[0]);
+				break;
+            case flexible_varfunc.ITEM_ID_TO_KEY:
+                _v0 = (Int32)ff9item.GetImportantIdFromItemId(args[0]);
+                break;
+            case flexible_varfunc.ITEM_CARD_TO_ID:
+				_v0 = ff9item.GetItemIdFromCardId((TetraMasterCardId)args[0]);
+				break;
+            case flexible_varfunc.ITEM_ID_TO_CARD:
+                _v0 = (Int32)ff9item.GetCardIdFromItemId(args[0]);
+                break;
+            case flexible_varfunc.ABILITY_ACTIVE_TO_ID:
+				_v0 = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)args[0]);
+				break;
+            case flexible_varfunc.ABILITY_ID_TO_ACTIVE:
+                _v0 = (Int32)ff9abil.GetActiveAbilityFromAbilityId(args[0]);
+                break;
+            case flexible_varfunc.ABILITY_SUPPORT_TO_ID:
+                _v0 = ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)args[0]);
+                break;
+            case flexible_varfunc.ABILITY_ID_TO_SUPPORT:
+				_v0 = (Int32)ff9abil.GetSupportAbilityFromAbilityId(args[0]);
+				break;
+			case flexible_varfunc.PARTY_MEMBER:
+				_v0 = (Int32)ff9play.CharacterIDToOldIndex(FF9StateSystem.Common.FF9.party.GetCharacterId(args[0]));
+				break;
+			case flexible_varfunc.ITEM_FULL_COUNT:
+				_v0 = ff9item.FF9Item_GetAnyCount((RegularItem)args[0]);
+				break;
+			case flexible_varfunc.PLAYER_EQUIP:
+				_v0 = (Int32)(FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.equip[args[1]] ?? RegularItem.NoItem);
+				break;
+			case flexible_varfunc.PLAYER_LEVEL:
+				_v0 = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.level ?? 0;
+				break;
+            case flexible_varfunc.PLAYER_EXP:
+                _v0 = (Int32)(FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.exp ?? 0);
+                break;
+            case flexible_varfunc.PLAYER_EXP_REQ:
+                if (args[0] <= 0)
+                    _v0 = 0;
+                else if (args[0] > ff9level.LEVEL_COUNT)
+                    _v0 = (Int32)9999999u;
+                else
+                    _v0 = (Int32)ff9level.CharacterLevelUps[args[0] - 1].ExperienceToLevel;
+                break;
+			case flexible_varfunc.PLAYER_ABILITY_LEARNT:
+            {
+                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
+                if (player == null || !ff9abil.FF9Abil_HasAp(new Character(player)))
+                    break;
+                Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, args[1]);
+                if (abilIndex < 0)
+                    break;
+                _v0 = player.pa[abilIndex] >= ff9abil._FF9Abil_PaData[player.PresetId][abilIndex].Ap ? 1 : 0;
+                if (_v0 == 0 && args[2] != 0)
+                    for (Int32 i = 0; i < 5; i++)
+                        if (player.equip[i] != RegularItem.NoItem && ff9item._FF9Item_Data[player.equip[i]].ability.Any(id => id == args[1]))
+                            _v0 = 1;
+                break;
+            }
+			case flexible_varfunc.PLAYER_SUPPORT_ENABLED:
+            {
+                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
+                _v0 = player != null && player.saExtended.Contains((SupportAbility)args[1]) ? 1 : 0;
+                break;
+            }
+			case flexible_varfunc.SHOP_ITEM:
+                _v0 = ff9buy.ShopItems.ContainsKey(args[0]) && ff9buy.ShopItems[args[0]].ItemIds.Contains((RegularItem)args[1]) ? 1 : 0;
+                break;
+			case flexible_varfunc.SHOP_SYNTH:
+                _v0 = ff9mix.SynthesisData.ContainsKey(args[1]) && ff9mix.SynthesisData[args[1]].Shops.Contains(args[0]) ? 1 : 0;
+                break;
+		}
+		expr_Push_v0_Int24();
+	}
+
+	private Int32 expr_varSpec(Int32 varOperation)
+    {
+        _v0 = (varOperation & 3) << 26 | (varOperation & 0x1C) << 27;
+        Int32 varArrayIndex = s1.getByteIP();
+        s1.ip++;
+        if ((varOperation & 0x20) != 0)
         {
-            _v0 |= a1;
-            a1 = s1.getByteIP();
+            _v0 |= varArrayIndex;
+            varArrayIndex = s1.getByteIP();
             s1.ip++;
-            a1 <<= 8;
+            varArrayIndex <<= 8;
         }
-        _v0 |= a1;
+        _v0 |= varArrayIndex;
         return _v0;
     }
 
-    public Int32 setVarManually(Int32 var, Int32 value)
+    public Int32 setVarManually(Int32 varOperation, Int32 value)
     {
-        Int32 num = var & 255;
-        Int32 num2 = num & 3;
-        num2 <<= 26;
-        Int32 num3 = num & 28;
-        num3 <<= 27;
-        num2 |= num3;
-        Int32 num4 = (var & 65280) >> 8;
-        num &= 32;
-        if (num != 0)
-        {
-            num2 |= num4;
-            num4 = (var & 16711680) >> 16;
-            num4 <<= 8;
-        }
-        num2 |= num4;
-        _s7.push(num2);
+        Int32 varCode = (varOperation & 3) << 26 | (varOperation & 0x1C) << 27;
+        Int32 varArrayIndex = (varOperation >> 8) & 0xFF;
+        if ((varOperation & 0x20) != 0)
+            varArrayIndex |= (varOperation >> 8) & 0xFF00;
+        varCode |= varArrayIndex;
+        _s7.push(varCode);
         SetVariableValue(value);
-        num3 = encodeTypeAndVarClass(7);
-        num2 |= num3;
-        _s7.push(num2);
+        varCode |= encodeTypeAndVarClass(7);
+        _s7.push(varCode);
 
-        return num2;
+        return varCode;
     }
 
-    public Int32 getVarManually(Int32 var)
+    public Int32 getVarManually(Int32 varOperation)
     {
         CalcStack calcStack = _s7;
         _s7 = _tempStack;
         _s7.emptyCalcStack();
-        Int32 num = var & 255;
-        Int32 num2 = num & 3;
-        num2 <<= 26;
-        Int32 num3 = num & 28;
-        num3 <<= 27;
-        num2 |= num3;
-        Int32 num4 = (var & 65280) >> 8;
-        num &= 32;
-        if (num != 0)
-        {
-            num2 |= num4;
-            num4 = (var & 16711680) >> 16;
-            num4 <<= 8;
-        }
-        num2 |= num4;
-        _s7.push(num2);
+        Int32 varCode = (varOperation & 3) << 26 | (varOperation & 0x1C) << 27;
+        Int32 varArrayIndex = (varOperation & 0xFF00) >> 8;
+        if ((varOperation & 0x20) != 0)
+            varArrayIndex |= (varOperation >> 8) & 0xFF00;
+        varCode |= varArrayIndex;
+        _s7.push(varCode);
         Int32 result = EvaluateValueExpression();
         _s7 = calcStack;
         return result;
@@ -1024,13 +1103,7 @@ public class EBin
             case op_binary.B_KEYON: // B_KEYON = 79
             {
                 VoicePlayer.scriptRequestedButtonPress = true;
-                Int32 keyOn = (Int32)ETb.KeyOn();
-                _v0 = EvaluateValueExpression();
-                _v0 &= keyOn;
-                if (s1.sid == 5)
-                {
-                }
-                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn()) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
@@ -1050,19 +1123,13 @@ public class EBin
             }
             case op_binary.B_KEYOFF:
             {
-                Int32 keyOff = (Int32)ETb.KeyOff();
-                _v0 = EvaluateValueExpression();
-                _v0 &= keyOff;
-                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff()) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
             case op_binary.B_KEY:
             {
-                Int32 padReadE = (Int32)_eTb.PadReadE();
-                _v0 = EvaluateValueExpression();
-                _v0 &= padReadE;
-                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & _eTb.PadReadE()) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
@@ -1070,19 +1137,11 @@ public class EBin
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
-                Obj gCur = _eventEngine.gCur;
-                Actor actor = (Actor)gCur;
+                Actor actor = (Actor)_eventEngine.gCur;
                 if (actor.fieldMapActorController == null)
                 {
                 }
-                Single num = actor.pos[0];
-                Single num2 = actor.pos[2];
-                num = _v0 - num;
-                num2 = t3 - num2;
-                Single floatAngle = angleAsm(num, num2);
-                Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
-                _v0 = 0;
-                _v0 = num3;
+                _v0 = ConvertFloatAngleToFixedPoint(angleAsm(_v0 - actor.pos[0], t3 - actor.pos[2]));
                 _v0 <<= 20;
                 _v0 >>= 24;
                 expr_Push_v0_Int24();
@@ -1092,14 +1151,8 @@ public class EBin
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
-                Obj gCur = _eventEngine.gCur;
-                Actor actor = (Actor)gCur;
-                Single x = actor.pos[0];
-                Single z = actor.pos[2];
-                x = _v0 - x;
-                z = t3 - z;
-                var y = 0;
-                _v0 = (Int32)distance(x, y, z);
+                Actor actor = (Actor)_eventEngine.gCur;
+                _v0 = (Int32)distance(_v0 - actor.pos[0], 0, t3 - actor.pos[2]);
                 expr_Push_v0_Int24();
                 break;
             }
@@ -1207,7 +1260,7 @@ public class EBin
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
                 _v0 = _eventEngine.GetSysvar(a0);
-                a0 = 0x3FFFFFF;
+                a0 = 0x3FFFFFF; // 26 bit (unsigned?)
                 a0 = _v0 & a0;
                 int a1 = encodeTypeAndVarClass(7);
                 a0 |= a1;
@@ -1227,7 +1280,7 @@ public class EBin
             {
                 Int32 a0 = s1.getIntIP();
                 s1.ip += 4;
-                a0 &= 0x3FFFFFF; // 26 bit
+                a0 &= 0x3FFFFFF; // 26 bit (unsigned?)
                 int a1 = encodeTypeAndVarClass(7);
                 a0 |= a1;
                 _s7.push(a0);
@@ -1396,16 +1449,17 @@ public class EBin
 
     public Int32 commandDefault2()
     {
-        Int32 ip = s1.ip;
         _v0 = _eventEngine.DoEventCode();
         _s2 = _v0;
-        Int32 a0 = _eventEngine.gArgUsed;
-        _nextCodeIndex = s1.ip;
-        s1.ip = ip;
-        a0 = ((0 >= a0) ? 0 : 1);
-        a0 ^= 1;
-        _nextCodeIndex -= a0;
-        s1.ip = _nextCodeIndex;
+        if (_eventEngine.gArgUsed > 0)
+        {
+            _nextCodeIndex = s1.ip;
+        }
+        else
+        {
+            _nextCodeIndex = s1.ip - 1;
+            s1.ip = _nextCodeIndex;
+        }
         return 0;
     }
 
@@ -1623,55 +1677,70 @@ public class EBin
     public Int32 EvaluateValueExpression()
     {
         _s7.pop(out var t0);
-        Int32 valType = getTypeAndVarClass(t0);
-        Int32 cls = getVarClass(t0);
-        switch ((VariableSource)cls)
+        VariableType varType = (VariableType)((getTypeAndVarClass(t0) >> 3) & 7);
+        VariableSource cls = (VariableSource)getVarClass(t0);
+        switch (cls)
         {
             case VariableSource.Global:
-            {
-                int ofs = (t0 & 65535);
-                return GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, ofs, valType, 0);
-            }
+                return GetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, t0 & 0xFFFF, varType, 0);
             case VariableSource.Map:
-            {
-                int ofs = (t0 & 65535);
-                return GetVariableValueInternal(_eventEngine.GetMapVar(), ofs, valType, 0);
-            }
+                return GetVariableValueInternal(_eventEngine.GetMapVar(), t0 & 0xFFFF, varType, 0);
             case VariableSource.Instance:
-            {
-                int ofs = (t0 & 65535);
-                return GetVariableValueInternal(_instance, ofs, valType, _instanceVOfs);
-            }
+                return GetVariableValueInternal(_instance, t0 & 0xFFFF, varType, _instanceVOfs);
+            case VariableSource.Null:
+                if (varType == VariableType.SBit)
+                    return GetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF));
+                return 0;
             case VariableSource.Object:
-                {
-                    cls = t0 >> 8;
-                    cls &= 255;
-                    Obj objUID = _eventEngine.GetObjUID(cls);
-                    int type = (t0 & 255);
-                    _v0 = getvobj(objUID, type);
-                    return _v0;
-                }
+                _v0 = getvobj(_eventEngine.GetObjUID((t0 >> 8) & 0xFF), t0 & 0xFF);
+                return _v0;
             case VariableSource.System:
-            {
-                cls = (t0 & 255);
-                _v0 = _eventEngine.GetSysList(cls);
+                _v0 = _eventEngine.GetSysList(t0 & 0xFF);
                 return _v0;
-            }
             case VariableSource.Member:
-            {
-                t0 <<= 6;
-                int type = t0 >> 6;
-                _v0 = getvobj(_eventEngine.gMemberTarget, type);
+                _v0 = getvobj(_eventEngine.gMemberTarget, (t0 << 6) >> 6);
                 return _v0;
-            }
             case VariableSource.Int26:
-            {
-                t0 <<= 6;
-                _v0 = t0 >> 6;
+                _v0 = (t0 << 6) >> 6;
                 return _v0;
-            }
         }
         return 0;
+    }
+
+    private Int32 GetMemoriaCustomVariable(memoria_variable varCode)
+	{
+		switch (varCode)
+        {
+            case memoria_variable.TETRA_MASTER_WIN:
+                return FF9StateSystem.MiniGame.SavedData.sWin;
+            case memoria_variable.TETRA_MASTER_LOSS:
+                return FF9StateSystem.MiniGame.SavedData.sLose;
+            case memoria_variable.TETRA_MASTER_DRAW:
+                return FF9StateSystem.MiniGame.SavedData.sDraw;
+            case memoria_variable.TETRA_MASTER_POINTS:
+				return QuadMistDatabase.MiniGame_GetPlayerPoints();
+			case memoria_variable.TETRA_MASTER_RANK:
+				return QuadMistDatabase.MiniGame_GetCollectorLevel();
+			case memoria_variable.TREASURE_HUNTER_POINTS:
+				return FF9StateSystem.EventState.GetTreasureHunterPoints();
+        }
+		return 0;
+    }
+
+    private void SetMemoriaCustomVariable(memoria_variable varCode, Int32 val)
+    {
+        switch (varCode)
+        {
+            case memoria_variable.TETRA_MASTER_WIN:
+                FF9StateSystem.MiniGame.SavedData.sWin = (Int16)val;
+                break;
+            case memoria_variable.TETRA_MASTER_LOSS:
+                FF9StateSystem.MiniGame.SavedData.sLose = (Int16)val;
+                break;
+            case memoria_variable.TETRA_MASTER_DRAW:
+                FF9StateSystem.MiniGame.SavedData.sDraw = (Int16)val;
+                break;
+        }
     }
 
     private Int32 getvobj(Obj obj, Int32 type)
@@ -1770,62 +1839,35 @@ public class EBin
         return Mathf.Sqrt(x * x + y * y + z * z);
     }
 
-    public Int32 GetVariableValueInternal(Byte[] buffer, Int32 ofs, Int32 type, Int32 bufferOffset = 0)
+    public Int32 GetVariableValueInternal(Byte[] buffer, Int32 ofs, VariableType type, Int32 bufferOffset = 0)
     {
-        _v0 = (type & 56) >> 3;
-        switch ((VariableType)_v0)
+        switch (type)
         {
             case VariableType.SBit:
             case VariableType.Bit:
             {
-                _v0 = ofs >> 3;  // (767 bit >> 3) == (767 bit / 8) == 95 byte 
-                Int32 a0 = (SByte)buffer[_v0 + bufferOffset];
-                _v0 = (ofs & 7); // (767 bit & 7) == 7 bit
-                a0 >>= _v0;      // (7 bit >> 7) => 1 bit
-                _v0 = (a0 & 1);  // (1 bit & 1) => result
+                Byte bitFlags = buffer[(ofs >> 3) + bufferOffset]; // (767 bit >> 3) == (767 bit / 8) == 95 byte 
+                _v0 = (bitFlags >> (ofs & 7)) & 1; // (1 bit & 1) => result
                 return _v0;
             }
             case VariableType.Int24:
             case VariableType.UInt24:
-            {
-                _v0 = (SByte)buffer[ofs + 2 + bufferOffset];
-                int a1 = buffer[ofs + 1 + bufferOffset];
-                _v0 = (_v0 << 8 | a1);
-                a1 = buffer[ofs + bufferOffset];
-                _v0 <<= 8;
-                _v0 |= a1;
+                _v0 = buffer[ofs + bufferOffset] | (buffer[ofs + 1 + bufferOffset] << 8) | ((SByte)buffer[ofs + 2 + bufferOffset] << 16);
                 return _v0;
-            }
             case VariableType.SByte:
-            {
                 _v0 = (SByte)buffer[ofs + bufferOffset];
                 return _v0;
-            }
             case VariableType.Byte:
-            {
                 _v0 = buffer[ofs + bufferOffset];
                 return _v0;
-            }
             case VariableType.Int16:
-            {
-                _v0 = (SByte)buffer[ofs + 1 + bufferOffset];
-                Int32 a0 = buffer[ofs + bufferOffset];
-                _v0 <<= 8;
-                _v0 |= a0;
+                _v0 = buffer[ofs + bufferOffset] | ((SByte)buffer[ofs + 1 + bufferOffset] << 8);
                 return _v0;
-            }
             case VariableType.UInt16:
-            {
-                _v0 = buffer[ofs + 1 + bufferOffset];
-                Int32 a0 = buffer[ofs + bufferOffset];
-                _v0 <<= 8;
-                _v0 |= a0;
+                _v0 = buffer[ofs + bufferOffset] | (buffer[ofs + 1 + bufferOffset] << 8);
                 return _v0;
-            }
             default:
-            {
                 return 0;
-            }
         }
     }
 
@@ -1848,95 +1890,66 @@ public class EBin
     {
         _s7.pop(out var t0);
         Int32 varValue = arg0;
-        Int32 varType = t0 >> 26;
-        switch ((VariableSource)(varType & 7))
+        VariableType varType = (VariableType)((getTypeAndVarClass(t0) >> 3) & 7);
+        VariableSource cls = (VariableSource)getVarClass(t0);
+        switch (cls)
         {
             case VariableSource.Global:
-            {
-                int ofs = (t0 & 65535);
-                SetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, ofs, varType, varValue, 0);
+                SetVariableValueInternal(FF9StateSystem.EventState.gEventGlobal, t0 & 0xFFFF, varType, varValue, 0);
                 break;
-            }
             case VariableSource.Map:
-            {
-                int ofs = (t0 & 65535);
-                SetVariableValueInternal(_eventEngine.GetMapVar(), ofs, varType, varValue, 0);
+                SetVariableValueInternal(_eventEngine.GetMapVar(), t0 & 0xFFFF, varType, varValue, 0);
                 break;
-            }
             case VariableSource.Instance:
-            {
-                int ofs = (t0 & 65535);
-                SetVariableValueInternal(_instance, ofs, varType, varValue, _instanceVOfs);
+                SetVariableValueInternal(_instance, t0 & 0xFFFF, varType, varValue, _instanceVOfs);
                 break;
-            }
+            case VariableSource.Null:
+                if (varType == VariableType.SBit)
+                    SetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF), varValue);
+                break;
             case VariableSource.System:
-            {
-                Int32 a0 = (t0 & 255);
-                int value = varValue;
-                _eventEngine.SetSysList(a0, value);
+                _eventEngine.SetSysList(t0 & 0xFF, varValue);
                 break;
-            }
             case VariableSource.Member:
-            {
-                int type = (t0 & 255);
-                varType = varValue;
-                _eventEngine.putvobj(_eventEngine.gMemberTarget, type, varType);
+                _eventEngine.putvobj(_eventEngine.gMemberTarget, t0 & 0xFF, varValue);
                 break;
-            }
         }
         return 0;
     }
 
-    public Int32 SetVariableValueInternal(Byte[] buffer, Int32 ofs, Int32 type, Int32 value, Int32 bufferOffset = 0)
+    public Int32 SetVariableValueInternal(Byte[] buffer, Int32 ofs, VariableType type, Int32 value, Int32 bufferOffset = 0)
     {
-        _v0 = (type & 56) >> 3;
-        switch ((VariableType)_v0)
+        switch (type)
         {
             case VariableType.SBit:
             case VariableType.Bit:
-                {
-                    _v0 = (ofs & 7);
-                    Int32 num = ofs >> 3;
-                    int a1 = (SByte)buffer[num + bufferOffset];
-                    Int32 a2 = 1;
-                    a2 <<= _v0;
-                    if (value == 0)
-                    {
-                        a2 ^= 255;
-                        a1 &= a2;
-                        buffer[num + bufferOffset] = (Byte)a1;
-                    }
-                    else
-                    {
-                        a1 |= a2;
-                        buffer[num + bufferOffset] = (Byte)a1;
-                    }
-                    break;
-                }
+            {
+                Int32 byteIndex = (ofs >> 3) + bufferOffset;
+                if (value == 0)
+                    buffer[byteIndex] &= (Byte)~(1 << (ofs & 7));
+                else
+                    buffer[byteIndex] |= (Byte)(1 << (ofs & 7));
+                break;
+            }
+
             case VariableType.Int24:
             case VariableType.UInt24:
-            {
                 if (EventHUD.CurrentHUD == MinigameHUD.JumpingRope && Configuration.Hacks.Enabled && (ofs == 43 || ofs == 59))
                     value = value - 1 + Configuration.Hacks.RopeJumpingIncrement;
-
-                buffer[ofs + bufferOffset] = (Byte)(value & 255);
-                buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
-                buffer[ofs + 2 + bufferOffset] = (Byte)((value & 16711680) >> 16);
+                buffer[ofs + bufferOffset] = (Byte)(value & 0xFF);
+                buffer[ofs + 1 + bufferOffset] = (Byte)((value >> 8) & 0xFF);
+                buffer[ofs + 2 + bufferOffset] = (Byte)((value >> 16) & 0xFF);
                 break;
-            }
+
             case VariableType.SByte:
             case VariableType.Byte:
-            {
                 buffer[ofs + bufferOffset] = (Byte)value;
                 break;
-            }
             case VariableType.Int16:
             case VariableType.UInt16:
-            {
-                buffer[ofs + bufferOffset] = (Byte)(value & 255);
-                buffer[ofs + 1 + bufferOffset] = (Byte)((value & 65280) >> 8);
+                buffer[ofs + bufferOffset] = (Byte)(value & 0xFF);
+                buffer[ofs + 1 + bufferOffset] = (Byte)((value >> 8) & 0xFF);
                 break;
-            }
         }
         return 0;
     }
@@ -2271,7 +2284,52 @@ public class EBin
         BAWAITALL,
         BAWAIT,
         BARANGE,
-        BAVISIBLE
+        BAVISIBLE,
+        // Custom Memoria codes
+        PLAYER_EQUIP,
+        PLAYER_LEVEL,
+        PLAYER_EXP,
+        SHOP_ITEM,
+        SHOP_SYNTH,
+        MOVE_EX,
+        TURN_OBJ_EX,
+        AANIM_EX,
+    }
+
+    public enum flexible_varfunc : ushort
+    {
+        // Custom Memoria codes
+        ITEM_REGULAR_TO_ID,
+        ITEM_ID_TO_REGULAR,
+        ITEM_KEY_TO_ID,
+        ITEM_ID_TO_KEY,
+        ITEM_CARD_TO_ID,
+        ITEM_ID_TO_CARD,
+        ABILITY_ACTIVE_TO_ID,
+        ABILITY_ID_TO_ACTIVE,
+        ABILITY_SUPPORT_TO_ID,
+        ABILITY_ID_TO_SUPPORT,
+        PARTY_MEMBER,
+        ITEM_FULL_COUNT,
+        PLAYER_EQUIP,
+        PLAYER_LEVEL,
+        PLAYER_EXP,
+        PLAYER_EXP_REQ,
+        PLAYER_ABILITY_LEARNT,
+        PLAYER_SUPPORT_ENABLED,
+        SHOP_ITEM,
+        SHOP_SYNTH,
+    }
+
+    public enum memoria_variable : ushort
+    {
+        // Custom Memoria codes
+        TETRA_MASTER_WIN,
+        TETRA_MASTER_LOSS,
+        TETRA_MASTER_DRAW,
+        TETRA_MASTER_POINTS,
+        TETRA_MASTER_RANK,
+        TREASURE_HUNTER_POINTS,
     }
 
     public enum op_binary
@@ -2398,7 +2456,7 @@ public class EBin
         B_CONST = 125,
         B_CONST4 = 126,
         B_EXPR_END = 127,
-        B_VAR = 192
+        B_VAR = 0xC0
     }
 
     public enum VariableSource
@@ -2406,6 +2464,7 @@ public class EBin
         Global = 0,
         Map = 1,
         Instance = 2,
+        Null = 3,
         Object = 4,
         System = 5,
         Member = 6,

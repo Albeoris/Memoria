@@ -42,6 +42,8 @@ namespace Memoria
         public static Int16 TetraMasterDraw => FF9StateSystem.MiniGame.SavedData.sDraw;
         public static Int32 TetraMasterCardCount => QuadMistDatabase.MiniGame_GetAllCardCount();
         public static Int32 TetraMasterPlayerPoints => QuadMistDatabase.MiniGame_GetPlayerPoints();
+        public static Int32 TetraMasterPlayerRank => QuadMistDatabase.MiniGame_GetCollectorLevel();
+        public static Int32 TreasureHunterPoints => FF9StateSystem.EventState.GetTreasureHunterPoints();
         public static Int32 GameTime => Convert.ToInt32(FF9StateSystem.Settings.time);
         public static Int32 AbilityUsage(BattleAbilityId index) => FF9StateSystem.EventState.GetAAUsageCounter(index);
         public static Int32 ItemCount(RegularItem id) => ff9item.FF9Item_GetCount(id);
@@ -71,7 +73,7 @@ namespace Memoria
         public static Boolean IsSpecialStart => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.SpecialStart;
         public static Boolean IsBattleStateEnabled => UIManager.Battle.FF9BMenu_IsEnable();
         public static Boolean IsATBEnabled => UIManager.Battle.FF9BMenu_IsEnable() && UIManager.Battle.FF9BMenu_IsEnableAtb();
-        public static Int32 ATBTickCount => HonoluluBattleMain.counterATB; // Number of times the ATB advanced this tick (there are >1 only in turn-based and fast speed modes)
+        public static Int32 ATBTickCount => HonoluluBattleMain.counterATB; // Number of times the ATB advanced this tick (there are 2 or more only in turn-based and fast speed modes)
         public static Int32 SharedATBSpeedCoef => btl_para.GetATBCoef(); // Default increment for each ATB advancement
         public static Boolean IsRandomBattle => FF9StateSystem.Battle.isRandomEncounter && !IsFriendlyBattle;
         public static Boolean IsFriendlyBattle => ff9.w_friendlyBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);

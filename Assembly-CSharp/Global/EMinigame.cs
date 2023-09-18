@@ -37,14 +37,12 @@ public class EMinigame
 		}
 	}
 
-	public static void StiltzkinAchievement(PosObj gCur, Int32 gilDecrease)
+	public static void StiltzkinAchievement(PosObj gCur, UInt32 gilDecrease)
 	{
 		if (gCur.model == 212)
 		{
 			if (gilDecrease == 333 || gilDecrease == 444 || gilDecrease == 555 || gilDecrease == 666 || gilDecrease == 777 || gilDecrease == 888 || gilDecrease == 2222 || gilDecrease == 5555)
-			{
 				FF9StateSystem.Achievement.StiltzkinBuy++;
-			}
 			AchievementManager.ReportAchievement(AcheivementKey.AllStiltzkinItem, FF9StateSystem.Achievement.StiltzkinBuy);
 		}
 	}

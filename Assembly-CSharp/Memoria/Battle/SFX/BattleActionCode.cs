@@ -82,6 +82,7 @@ public class BattleActionCode
 		{ "SetupReflect", new String[]{ "Delay" } },
 		{ "ActivateReflect", null },
 		{ "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } },
+		{ "ElseThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } },
 		{ "MOVE_WATER", new String[]{ "Char", "Type", "Time" } }
 	};
 

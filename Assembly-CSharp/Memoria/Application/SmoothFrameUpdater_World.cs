@@ -80,6 +80,7 @@ namespace Memoria
 		{
 			if (_skipCount > 0)
 				return;
+			SFXData.LoadLoop();
 			Single unclampedFactor = 1f + smoothFactor;
 			for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
 			{

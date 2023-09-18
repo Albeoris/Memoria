@@ -848,8 +848,7 @@ public partial class FF9StateGlobal
 
 	public PLAYER GetPlayer(CharacterId id)
 	{
-		PLAYER p;
-		if (player.TryGetValue(id, out p))
+		if (player.TryGetValue(id, out PLAYER p))
 			return p;
 		return null;
 	}

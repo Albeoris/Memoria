@@ -10,23 +10,30 @@ public class SFXRender
 	{
 		SFXKey.currentTexPage = 0u;
 		SFXKey.currentTexABR = 0u;
-		SFXRender.meshOrigin = new SFXMesh[SFXRender.MESH_MAX];
-		for (Int32 i = 0; i < (Int32)SFXRender.meshOrigin.Length; i++)
-			SFXRender.meshOrigin[i] = new SFXMesh();
-		SFXRender.commandBuffer = new List<SFXMeshBase>();
-		SFXRender.exportSFXDataMesh = new Dictionary<UInt32, SFXDataMeshConverter>();
+		if (SFXRender.meshOrigin == null)
+			SFXRender.meshOrigin = new SFXMesh[SFXRender.MESH_MAX];
+		for (Int32 i = 0; i < SFXRender.meshOrigin.Length; i++)
+			if (SFXRender.meshOrigin[i] == null)
+				SFXRender.meshOrigin[i] = new SFXMesh();
+		if (SFXRender.commandBuffer == null)
+			SFXRender.commandBuffer = new List<SFXMeshBase>();
+		if (SFXRender.exportSFXDataMesh == null)
+			SFXRender.exportSFXDataMesh = new Dictionary<UInt32, SFXDataMeshConverter>();
 	}
 
 	public static void Release()
 	{
-		for (Int32 i = 0; i < (Int32)SFXRender.meshOrigin.Length; i++)
-		{
-			SFXRender.meshOrigin[i].ClearObject();
-			SFXRender.meshOrigin[i] = (SFXMesh)null;
-		}
-		SFXRender.meshOrigin = null;
+		// Don't release these objects to allow their use in any module
+		//for (Int32 i = 0; i < SFXRender.meshOrigin.Length; i++)
+		//{
+		//	SFXRender.meshOrigin[i].ClearObject();
+		//	SFXRender.meshOrigin[i] = null;
+		//}
+		//SFXRender.meshOrigin = null;
+		//SFXRender.commandBuffer = null;
+		//SFXRender.exportSFXDataMesh = null;
+		SFXRender.commandBuffer.Clear();
 		SFXRender.meshEmpty = null;
-		SFXRender.commandBuffer = null;
 		SFXRender.meshOpa = null;
 		SFXRender.meshAdd = null;
 		SFXRender.meshSub = null;
@@ -38,7 +45,6 @@ public class SFXRender
 		SFXRender.meshLineAdd = null;
 		SFXRender.meshLineSub = null;
 		SFXRender.exportSFXDataMesh.Clear();
-		SFXRender.exportSFXDataMesh = null;
 	}
 
 	public unsafe static void Update()

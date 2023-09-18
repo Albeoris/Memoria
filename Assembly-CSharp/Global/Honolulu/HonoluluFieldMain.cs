@@ -122,6 +122,7 @@ public class HonoluluFieldMain : HonoBehavior
 		Int32 sndEffectResSoundID = allSoundDispatchPlayer.GetSndEffectResSoundID(0);
 		Int32 sndEffectResSoundID2 = allSoundDispatchPlayer.GetSndEffectResSoundID(1);
 		FF9Snd.BGMFieldSongCounter = 0;
+		SFXData.Reinit();
 		this.ee.StartEvents(map.evtPtr);
 		FF9StateSystem.Field.SetTwistAD(this.ee.GetTwistA(), this.ee.GetTwistD());
 		PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
@@ -197,6 +198,7 @@ public class HonoluluFieldMain : HonoBehavior
 			{
 				Int32 num = this.ee.ServiceEvents();
 				HonoluluFieldMain.eventEngineRunningCount++;
+				SFXData.AdvanceEventSFXFrame();
 				this.updatePlayerObj();
 				switch (num)
 				{
