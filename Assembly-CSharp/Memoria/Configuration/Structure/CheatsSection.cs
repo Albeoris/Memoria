@@ -28,7 +28,7 @@ namespace Memoria
                 Perspective = BindBoolean(nameof(Perspective), false);
 
                 SpeedMode = BindBoolean(nameof(SpeedMode), false);
-                SpeedFactor = BindInt32(nameof(SpeedFactor), 5);
+                SpeedFactor = BindInt32(nameof(SpeedFactor), 3);
                 SpeedTimer = BindBoolean(nameof(SpeedTimer), false);
 
                 BattleAssistance = BindBoolean(nameof(BattleAssistance), false);
