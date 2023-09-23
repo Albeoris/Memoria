@@ -42,6 +42,9 @@ public partial class EventEngine
     {
         FF9StateSystem.EventState.gStepCount = 0;
         FF9StateSystem.EventState.gEventGlobal = new Byte[2048];
+        FF9StateSystem.EventState.gAbilityUsage.Clear();
+        FF9StateSystem.EventState.gScriptVector.Clear();
+        FF9StateSystem.EventState.gScriptDictionary.Clear();
         FF9StateSystem.Common.FF9.fldMapNo = (Int16)70; // Opening-For FMV
         FF9StateSystem.Common.FF9.fldLocNo = (Int16)EventEngineUtils.eventIDToMESID[70];
         FF9StateSystem.Settings.time = 0.0;

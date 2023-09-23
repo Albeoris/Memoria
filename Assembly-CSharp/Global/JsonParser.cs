@@ -512,6 +512,8 @@ public class JsonParser : ISharedDataParser
 		if (jsonData["gEventGlobal"] != null)
 			eventState.gEventGlobal = Convert.FromBase64String(jsonData["gEventGlobal"].Value);
 		eventState.gAbilityUsage.Clear();
+		eventState.gScriptVector.Clear();
+		eventState.gScriptDictionary.Clear();
 		if (jsonData["gAbilityUsage"] != null)
 		{
 			for (Int32 i = 0; i < jsonData["gAbilityUsage"].Count; i++)
@@ -526,6 +528,38 @@ public class JsonParser : ISharedDataParser
 			// Ability usage count used to be stored in gEventGlobal
 			for (Int32 i = 1; i < 192; i++)
 				eventState.gAbilityUsage[(BattleAbilityId)i] = eventState.gEventGlobal[1100 + i];
+		}
+		if (jsonData["gScriptVector"] != null)
+		{
+			for (Int32 i = 0; i < jsonData["gScriptVector"].Count; i++)
+			{
+				JSONClass vectorClass = jsonData["gScriptVector"][i].AsObject;
+				if (vectorClass != null && vectorClass["id"] != null && vectorClass["entries"] != null && vectorClass["entries"].Count > 0)
+				{
+					List<Int32> vect = new List<Int32>();
+					for (Int32 j = 0; j < vectorClass["entries"].Count; j++)
+						vect.Add(vectorClass["entries"][j].AsInt);
+					eventState.gScriptVector[vectorClass["id"].AsInt] = vect;
+				}
+			}
+		}
+		if (jsonData["gScriptDictionary"] != null)
+		{
+			for (Int32 i = 0; i < jsonData["gScriptDictionary"].Count; i++)
+			{
+				JSONClass dictionaryClass = jsonData["gScriptDictionary"][i].AsObject;
+				if (dictionaryClass != null && dictionaryClass["id"] != null && dictionaryClass["entries"] != null && dictionaryClass["entries"].Count > 0)
+				{
+					Dictionary<Int32, Int32> dict = new Dictionary<Int32, Int32>();
+					for (Int32 j = 0; j < dictionaryClass["entries"].Count; j++)
+					{
+						JSONClass entry = dictionaryClass["entries"][j].AsObject;
+						if (entry != null && entry["id"] != null && entry["value"] != null)
+							dict[entry["id"].AsInt] = entry["value"].AsInt;
+					}
+					eventState.gScriptDictionary[dictionaryClass["id"].AsInt] = dict;
+				}
+			}
 		}
 	}
 
@@ -546,6 +580,38 @@ public class JsonParser : ISharedDataParser
 				});
 			}
 			dataProfileClass.Add("gAbilityUsage", abilArray);
+			JSONArray vectorArray = new JSONArray();
+			foreach (KeyValuePair<Int32, List<Int32>> kp in data.gScriptVector)
+			{
+				JSONArray entryArray = new JSONArray();
+				foreach (Int32 entry in kp.Value)
+					entryArray.Add(entry.ToString());
+				vectorArray.Add(new JSONClass
+				{
+					{ "id", kp.Key.ToString() },
+					{ "entries", entryArray }
+				});
+			}
+			dataProfileClass.Add("gScriptVector", vectorArray);
+			JSONArray dictionaryArray = new JSONArray();
+			foreach (KeyValuePair<Int32, Dictionary<Int32, Int32>> kp in data.gScriptDictionary)
+			{
+				JSONArray entryArray = new JSONArray();
+				foreach (KeyValuePair<Int32, Int32> entry in kp.Value)
+				{
+					entryArray.Add(new JSONClass
+					{
+						{ "id", entry.Key.ToString() },
+						{ "value", entry.Value.ToString() }
+					});
+				}
+				dictionaryArray.Add(new JSONClass
+				{
+					{ "id", kp.Key.ToString() },
+					{ "entries", entryArray }
+				});
+			}
+			dataProfileClass.Add("gScriptDictionary", dictionaryArray);
 		}
 		dataNode.Add("20000_Event", dataProfileClass);
 		if (!oldSaveFormat)
