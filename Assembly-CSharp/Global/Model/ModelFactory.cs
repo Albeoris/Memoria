@@ -82,7 +82,40 @@ public static class ModelFactory
 				renderer.material.SetTexture("_MainTex", texture);
 			}
 		}
-		Shader shader;
+        if (Configuration.Mod.TranceSeek)
+        {
+            if (modelNameId == "GEO_MON_B3_093" && FF9StateSystem.Common.FF9.fldMapNo == 2250) // Oeilvert Guardian
+            {
+                Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
+                {
+                    Renderer renderer = renderers[i];
+                    String name = renderer.material.mainTexture.name;
+                    Char textureId = name[name.Length - 1];
+                    String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
+                    String textureFileName = geoId + "_" + textureId;
+                    String texturePath = "CustomTextures/OeilvertGuardian/" + textureFileName + ".png";
+                    Texture texture = AssetManager.Load<Texture>(texturePath, false);
+                    renderer.material.SetTexture("_MainTex", texture);
+                }
+            }
+            if (modelNameId == "GEO_MON_B3_142" && FF9StateSystem.Common.FF9.fldMapNo == 2553) // Water Guardian
+            {
+                Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
+                {
+                    Renderer renderer = renderers[i];
+                    String name = renderer.material.mainTexture.name;
+                    Char textureId = name[name.Length - 1];
+                    String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
+                    String textureFileName = geoId + "_" + textureId;
+                    String texturePath = "CustomTextures/WaterGuardian/" + textureFileName + ".png";
+                    Texture texture = AssetManager.Load<Texture>(texturePath, false);
+                    renderer.material.SetTexture("_MainTex", texture);
+                }
+            }
+        }
+        Shader shader;
 		if (modelNameId.Contains("GEO_SUB_W0"))
 			shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");
 		else

@@ -279,6 +279,8 @@ public partial class BattleHUD : UIScene
 
             BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(ReadyQueue[index]);
             Boolean needToClearCommand = unit.IsUnderAnyStatus(BattleStatusConst.CmdCancel);
+            if (Configuration.Mod.TranceSeek && unit.IsUnderAnyStatus(BattleStatusConst.CmdCancel | BattleStatus.EasyKill)) // TRANCE SEEK - Avoid mobs/bosses to cancel their attack (specially for Sleep), prevent IA issues.
+                needToClearCommand = false;
             RemovePlayerFromAction(unit.Id, needToClearCommand);
         }
 

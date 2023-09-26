@@ -395,7 +395,22 @@ public class btl_scrp
 		case 145:
 			result = (Int32)btl.rot.eulerAngles.z;
 			break;
-		}
+        case 146:
+            if (btl.bi.player == 0)
+            {
+                result = (Int32)btl_util.getEnemyPtr(btl).bonus_exp;
+            }
+            break;
+        case 147:
+            if (btl.bi.player == 0)
+            {
+                result = (Int32)btl_util.getEnemyPtr(btl).bonus_gil;
+            }
+            break;
+        case 148:
+            result = battle.btl_bonus.ap;
+            break;
+        }
 		return result;
 	}
 
@@ -686,7 +701,18 @@ public class btl_scrp
 			btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
 			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
 			break;
-		}
+        case 146:
+            if (btl.bi.player == 0)
+                btl_util.getEnemyPtr(btl).bonus_exp = (uint)val;
+            break;
+        case 147:
+            if (btl.bi.player == 0)
+                btl_util.getEnemyPtr(btl).bonus_gil = (uint)val;
+            break;
+        case 148:
+            battle.btl_bonus.ap = (ushort)val;
+            break;
+        }
 	}
 
 	public static UInt32 GetBattleData(Int32 id)

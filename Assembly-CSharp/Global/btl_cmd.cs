@@ -610,13 +610,14 @@ public class btl_cmd
             //}
             if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
-                if (!Configuration.Mod.TranceSeek || btl.dms_geo_id != 512) // TRANCE SEEK - Ark overheat
+                if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 {
-                    /*int num = (int)*/
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
                     return;
                 }
+                /*int num = (int)*/
+                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
+                btl_stat.AlterStatus(btl, BattleStatus.Death);
+                return;
             }
         }
         btlsys.cur_cmd_list.Add(cmd);
@@ -1173,6 +1174,8 @@ public class btl_cmd
     public static Boolean CheckMagicCondition(CMD_DATA cmd)
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatus.Silence) || (cmd.AbilityCategory & 2) == 0)
+            return true;
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // Trance Seek - Bosses can use magic under silence but have malus.
             return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Silence);

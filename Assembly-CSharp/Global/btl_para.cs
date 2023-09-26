@@ -208,16 +208,23 @@ public class btl_para
                 damage = GetLogicalHP(btl, true) >> 4;
             }
             if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                damage >>= 2;
+                damage >>= Configuration.Mod.TranceSeek ? 3 : 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
                 if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
                 {
                     if (battleUnit.IsUnderStatus(BattleStatus.Poison))
                     {
-                        btl.cur.hp += damage;
                         btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
                         btl.fig_regene_hp = (Int32)damage;
+                        if (btl.cur.hp + damage < btl.max.hp)
+                        {
+                            btl.cur.hp += damage;
+                        }
+                        else
+                        {
+                            btl.cur.hp = btl.max.hp;
+                        }
                         return;
                     }
                     if (battleUnit.IsUnderStatus(BattleStatus.Venom))
@@ -251,6 +258,8 @@ public class btl_para
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
             recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? 5 : 4);
+            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) && Configuration.Mod.TranceSeek)
+                recover >>= 3;
             if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
                 btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
@@ -275,6 +284,8 @@ public class btl_para
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Venom didn't remove MP on bosses.
+            return;
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {

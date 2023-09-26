@@ -215,8 +215,8 @@ public static class FF9Snd
 				ObjNo = 1748;
 			else if (ObjNo == 293)
 				ObjNo = 633;
-			else if (ObjNo == 1545)
-				ObjNo = 58;
+			//else if (ObjNo == 1545)
+			//	ObjNo = 58;
 			else if (ObjNo == 679)
 				ObjNo = 9010197;
 			else if (ObjNo == 1230 || ObjNo == 1231)

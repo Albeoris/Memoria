@@ -415,12 +415,12 @@ public partial class BattleHUD : UIScene
             _isManualTrance = false;
         }
 
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK
+        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Special commands
         {
             if (presetId == CharacterPresetId.Zidane)
             {
                 CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-                command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+                command2 = btl.IsUnderAnyStatus(BattleStatus.Trance) ? CharacterCommands.CommandSets[presetId].Trance2 : btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
             }
             else if (presetId == CharacterPresetId.Steiner)
                 defendCmdId = (BattleCommandId)10015; // Gardien

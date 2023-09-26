@@ -285,6 +285,11 @@ namespace Memoria
             if (!ff9Battle.btl_scene.Info.Runaway)
                 return false;
 
+            if (Configuration.Mod.TranceSeek && btl_sys.CheckIfTranceSeekCustomBossBattle())
+            {
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
+            }
+
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
             {
                 BattleUnit unit = new BattleUnit(next);

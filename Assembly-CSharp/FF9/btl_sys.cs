@@ -213,11 +213,8 @@ namespace FF9
             if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
 
-            // TRANCE SEEK VERSION - Disable back/first attack from specific battles (custom ennemies)
-            if (Configuration.Mod.TranceSeek &&
-                (FF9StateSystem.Battle.battleMapIndex == 850 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
-                || FF9StateSystem.Battle.battleMapIndex == 849 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
-                || FF9StateSystem.Battle.battleMapIndex == 851 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2))
+            // TRANCE SEEK - Disable back/first attack from specific battles (custom ennemies)
+            if (Configuration.Mod.TranceSeek && CheckIfTranceSeekCustomBossBattle())
             {
                 start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
             }
@@ -317,11 +314,39 @@ namespace FF9
             {
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
             }
+            else if (Configuration.Mod.TranceSeek && CheckIfTranceSeekCustomBossBattle())
+            {
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
+            }
             else
             {
                 if (calc_check && UIManager.Battle.FF9BMenu_IsEnableAtb())
                     SBattleCalculator.CalcMain(null, null, null, fleeScriptId);
             }
+        }
+
+        public static Boolean CheckIfTranceSeekCustomBossBattle() // TRANCE SEEK - Prevent Escape + back attack for these battles using fields mixed with normal battles.
+        {
+            Int32[,] CheckTranceSeekBattle = new Int32[,]
+            {
+                { 850, 2 }, // Salamander
+		        { 849, 2 }, // Brother + Sister
+                { 849, 3 }, // Mad Alchemist
+                { 849, 4 }, // Onyx
+                { 849, 5 }, // Grenada
+		        { 851, 2 }, // Kelgar
+                { 1, 2 }, // Oeilvert Guardian
+                { 112, 2 }, // Lamie 2nd
+		        { 600, 1 },	// Fandalf (CD3 Ypsen)
+            };
+            for (Int32 i = 0; i < CheckTranceSeekBattle.GetLength(0); i++)
+            {
+                if (CheckTranceSeekBattle[i, 0] == FF9StateSystem.Battle.battleMapIndex && CheckTranceSeekBattle[i, 1] == FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

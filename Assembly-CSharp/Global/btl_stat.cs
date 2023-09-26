@@ -915,23 +915,38 @@ public static class btl_stat
                 {
                     if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                     {
-                        // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
-                        // Might want to add a Configuration option for that effect...
-                        Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
-                        if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
-                            doom_damage = (Int32)btl.cur.hp - 1;
-                        if (doom_damage > 0)
+                        if (Configuration.Mod.TranceSeek)
                         {
-                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
+                            // TRANCE SEEK - Add 2 random status at the end of countdown.
+                            BattleStatus[] statuschoosen = { BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
+                            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Virus};
+
+                            for (Int32 i = 0; i < 2; i++)
+                            {
+                                btl_stat.AlterStatus(btl, statuschoosen[GameRandom.Next16() % (statuschoosen.Length - 1)]);
+                            }
                             btl_stat.RemoveStatus(btl, status);
-                            btl.fig_info = Param.FIG_INFO_DISP_HP;
-                            btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
-                            btl2d.Btl2dReq(btl);
                         }
                         else
                         {
-                            btl.fig_info |= Param.FIG_INFO_MISS;
-                            btl2d.Btl2dReq(btl);
+                            // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
+                            // Might want to add a Configuration option for that effect...
+                            Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
+                            if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
+                                doom_damage = (Int32)btl.cur.hp - 1;
+                            if (doom_damage > 0)
+                            {
+                                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
+                                btl_stat.RemoveStatus(btl, status);
+                                btl.fig_info = Param.FIG_INFO_DISP_HP;
+                                btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
+                                btl2d.Btl2dReq(btl);
+                            }
+                            else
+                            {
+                                btl.fig_info |= Param.FIG_INFO_MISS;
+                                btl2d.Btl2dReq(btl);
+                            }
                         }
                     }
                     else
