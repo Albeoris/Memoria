@@ -25,10 +25,10 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 
 <Mod>
 	<Name>Alternate Fantasy</Name>
-	<Version>6.1</Version>
+	<Version>6.2</Version>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>11 Jun 2023</ReleaseDate>
+	<ReleaseDate>28 Sep 2023</ReleaseDate>
 	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
 	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
 It includes:
@@ -146,10 +146,10 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.0</Version>
+	<Version>1.1</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>11 Jun 2023</ReleaseDate>
+	<ReleaseDate>28 Sep 2023</ReleaseDate>
 	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
 	<Description>Add Kuja, Fratley and Lani as playable characters.
 You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
