@@ -118,16 +118,6 @@ public static class btl_stat
                         btl_sys.CheckForecastMenuOff(btl);
                     }
                 }
-                if ((stat.cur & BattleStatus.Trance) != 0 && btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans))
-                {
-                    Byte tranceValue = btl.trance;
-                    btl_stat.RemoveStatus(btl, BattleStatus.Trance);
-                    btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
-                    if (tranceValue == 255)
-                        btl.trance = 254;
-                    else
-                        btl.trance = tranceValue;
-                }
                 break;
             case BattleStatus.Berserk:
             case BattleStatus.Heat:
@@ -221,7 +211,7 @@ public static class btl_stat
             btl.stat.cnt.conti[statusIndex] = (Int16)(btl.stat_duration_factor[status] * btl.stat.cnt.conti[statusIndex]);
             if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
             {
-                if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen))
+                if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen)) // TRANCE SEEK - Resilience
                 {
                     btl.stat.cnt.conti[statusIndex] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor * 2);
                     btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusIndex] / 2);
@@ -521,24 +511,7 @@ public static class btl_stat
 
         if (unit.IsUnderStatus(BattleStatus.Death))
         {
-            if (Configuration.Mod.TranceSeek && unit.IsPlayer)
-            {
-                // TRANCE SEEK - Refresh stats on Death
-                btl.elem.str = unit.Player.Data.elem.str;
-                btl.elem.wpr = unit.Player.Data.elem.wpr;
-                btl.elem.mgc = unit.Player.Data.elem.mgc;
-                btl.defence.PhysicalDefence = unit.Player.Data.defence.PhysicalDefence;
-                btl.defence.PhysicalEvade = unit.Player.Data.defence.PhysicalEvade;
-                btl.defence.MagicalDefence = unit.Player.Data.defence.MagicalDefence;
-                btl.defence.MagicalEvade = unit.Player.Data.defence.MagicalEvade;
-            }
             btl_mot.DieSequence(btl);
-            return;
-        }
-        if (Configuration.Mod.TranceSeek && !unit.IsUnderStatus(BattleStatus.Death | BattleStatus.Trance) && unit.Trance == 255)
-        {
-            unit.RemoveStatus(BattleStatus.Petrify);
-            unit.AlterStatus(BattleStatus.Trance);
             return;
         }
 
@@ -697,27 +670,7 @@ public static class btl_stat
             }
             else
             {
-                // TRANCE SEEK - Friendly Ladybug (Miskoxy), swap wings colors
                 SetDefaultShader(data);
-                if (Configuration.Mod.TranceSeek && data.dms_geo_id == 405)
-                {
-                    if (unit.Strength == 31)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 255, 0, 0, true, 3);
-                    }
-                    else if (unit.Strength == 32)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 0, 255, 255, true, 3);
-                    }
-                    else if (unit.Strength == 33)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 255, 255, 0, true, 3);
-                    }
-                    else if (unit.Strength == 34)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 0, 0, 255, true, 3);
-                    }
-                }
             }
         }
         else if (CheckStatus(data, BattleStatus.Petrify))
@@ -811,83 +764,6 @@ public static class btl_stat
             }
         }
     }
-
-    public static void SetupCustomEnemyPartColor(GameObject go, short r, short g, short b, bool skinned, int partindex, bool uselight = true)
-    {
-        if (uselight)
-        {
-            BBGINFO bBGINFO = battlebg.nf_GetBbgInfoPtr(); // On prend en compte la lumière ambiante
-            r += (short)bBGINFO.chr_r;
-            g += (short)bBGINFO.chr_g;
-            b += (short)bBGINFO.chr_b;
-        }
-        if (r < 0)
-        {
-            r = 0;
-        }
-        if (g < 0)
-        {
-            g = 0;
-        }
-        if (b < 0)
-        {
-            b = 0;
-        }
-        if (r > 255)
-        {
-            r = 255;
-        }
-        if (g > 255)
-        {
-            g = 255;
-        }
-        if (b > 255)
-        {
-            b = 255;
-        }
-        if (skinned)
-        {
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            if (partindex < componentsInChildren.Length)
-            {
-                if (r == 0 && g == 0 && b == 0)
-                {
-                    componentsInChildren[partindex].tag = "RGBZero";
-                    componentsInChildren[partindex].enabled = false;
-                }
-                else
-                {
-                    if (!componentsInChildren[partindex].enabled && componentsInChildren[partindex].CompareTag("RGBZero"))
-                    {
-                        componentsInChildren[partindex].enabled = true;
-                        componentsInChildren[partindex].tag = string.Empty;
-                    }
-                    componentsInChildren[partindex].material.SetColor("_Color", new Color32((byte)r, (byte)g, (byte)b, 255));
-                }
-            }
-        }
-        else
-        {
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            if (partindex < componentsInChildren2.Length)
-            {
-                if (r == 0 && g == 0 && b == 0)
-                {
-                    componentsInChildren2[partindex].enabled = false;
-                }
-                else
-                {
-                    componentsInChildren2[partindex].enabled = true;
-                    Material[] materials = componentsInChildren2[partindex].materials;
-                    for (int i = 0; i < materials.Length; i++)
-                    {
-                        Material material = materials[i];
-                        material.SetColor("_Color", new Color32((byte)r, (byte)g, (byte)b, 255));
-                    }
-                }
-            }
-        }
-    }
     private static void ActiveTimeStatus(BTL_DATA btl)
     {
         for (Int32 index = 0; index < 32; ++index)
@@ -915,9 +791,8 @@ public static class btl_stat
                 {
                     if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                     {
-                        if (Configuration.Mod.TranceSeek)
+                        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Add 2 random status at the end of countdown.
                         {
-                            // TRANCE SEEK - Add 2 random status at the end of countdown.
                             BattleStatus[] statuschoosen = { BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
                             BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Virus};
 

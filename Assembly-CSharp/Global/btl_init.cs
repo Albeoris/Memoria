@@ -194,7 +194,8 @@ public static class btl_init
 		pBtl.shadow_bone[0] = pParm.ShadowBone;
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
 		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
-		pBtl.special_status_old = false; // TRANCE SEEK - Old Status
+        pBtl.VulnerableBoss = pParm.VulnerableBoss;
+        pBtl.special_status_old = false; // TRANCE SEEK - Old Status
 		btl_abil.CheckStatusAbility(new BattleUnit(pBtl));
 	}
 

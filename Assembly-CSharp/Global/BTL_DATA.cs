@@ -172,9 +172,10 @@ public partial class BTL_DATA
 	public List<SupportingAbilityFeature> saMonster;
 
 	public Int32 fig_regene_hp;
-	public Int32 fig_poison_hp;
+    public Int32 fig_regene_mp;
+    public Int32 fig_poison_hp;
 	public Int32 fig_poison_mp;
-	public Byte fig_stat_info;
+    public Byte fig_stat_info;
 
 	public Byte sel_menu;
 
@@ -252,8 +253,9 @@ public partial class BTL_DATA
 	public UInt32 maxMpDamageLimit;
 
 	public Boolean special_status_old; // TRANCE SEEK - Old Status
+	public Boolean VulnerableBoss; // Disable undying boss (from IsNonDyingVanillaBoss in btl_para)
 
-	public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
+    public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
 
 	public BTL_DATA killer_track;
 

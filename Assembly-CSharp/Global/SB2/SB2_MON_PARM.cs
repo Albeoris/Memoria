@@ -169,4 +169,6 @@ public class SB2_MON_PARM
 	public UInt32 MaxDamageLimit;
 	[Memoria.PatchableFieldAttribute]
 	public UInt32 MaxMpDamageLimit;
+    [Memoria.PatchableFieldAttribute]
+    public Boolean VulnerableBoss;
 }

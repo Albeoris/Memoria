@@ -3,6 +3,7 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Speedrun;
 using System.Collections.Generic;
+using NCalc;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable EmptyConstructor
@@ -86,16 +87,13 @@ namespace FF9
                             if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
                                 return;
                             Boolean procRebirthFlame = false;
-                            if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
+                            if (!String.IsNullOrEmpty(Configuration.Battle.RebirthFlame))
                             {
-                                BattleUnit unit = new BattleUnit(next);
-                                Character player = unit.Player;
-                                if (player.Equipment.Accessory == RegularItem.PhoenixDown && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > 9 && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > (Comn.random16() % 100))
-                                {
-                                    ff9item.FF9Item_Remove(RegularItem.PhoenixDown, 99);
-                                    ff9item.FF9Item_Add(RegularItem.PhoenixDown, Comn.random16() % 10);
-                                    procRebirthFlame = true;
-                                }
+                                Expression e = new Expression(Configuration.Battle.RebirthFlame);
+                                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Caster");
+                                procRebirthFlame = NCalcUtility.EvaluateNCalcCondition(e.Evaluate());
                             }
                             else
                             {
@@ -213,8 +211,7 @@ namespace FF9
             if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
 
-            // TRANCE SEEK - Disable back/first attack from specific battles (custom ennemies)
-            if (Configuration.Mod.TranceSeek && CheckIfTranceSeekCustomBossBattle())
+            if (!FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Runaway)
             {
                 start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
             }
@@ -314,7 +311,7 @@ namespace FF9
             {
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
             }
-            else if (Configuration.Mod.TranceSeek && CheckIfTranceSeekCustomBossBattle())
+            else if (!FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Runaway)
             {
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
             }
@@ -323,30 +320,6 @@ namespace FF9
                 if (calc_check && UIManager.Battle.FF9BMenu_IsEnableAtb())
                     SBattleCalculator.CalcMain(null, null, null, fleeScriptId);
             }
-        }
-
-        public static Boolean CheckIfTranceSeekCustomBossBattle() // TRANCE SEEK - Prevent Escape + back attack for these battles using fields mixed with normal battles.
-        {
-            Int32[,] CheckTranceSeekBattle = new Int32[,]
-            {
-                { 850, 2 }, // Salamander
-		        { 849, 2 }, // Brother + Sister
-                { 849, 3 }, // Mad Alchemist
-                { 849, 4 }, // Onyx
-                { 849, 5 }, // Grenada
-		        { 851, 2 }, // Kelgar
-                { 1, 2 }, // Oeilvert Guardian
-                { 112, 2 }, // Lamie 2nd
-		        { 600, 1 },	// Fandalf (CD3 Ypsen)
-            };
-            for (Int32 i = 0; i < CheckTranceSeekBattle.GetLength(0); i++)
-            {
-                if (CheckTranceSeekBattle[i, 0] == FF9StateSystem.Battle.battleMapIndex && CheckTranceSeekBattle[i, 1] == FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

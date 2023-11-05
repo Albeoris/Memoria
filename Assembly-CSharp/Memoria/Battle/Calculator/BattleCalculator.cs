@@ -285,9 +285,10 @@ namespace Memoria
             if (!ff9Battle.btl_scene.Info.Runaway)
                 return false;
 
-            if (Configuration.Mod.TranceSeek && btl_sys.CheckIfTranceSeekCustomBossBattle())
+            if (!FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Runaway)
             {
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
+                return false;
             }
 
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)

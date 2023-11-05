@@ -179,9 +179,9 @@ namespace Memoria
                     Single modifier_factor = 1.0f;
                     Single modifier_bonus = 0.5f;
                     Byte modifier_index = 0;
-                    if (Configuration.Mod.TranceSeek && v.Context.DamageModifierCount > 0)
+                    if (Configuration.Mod.TranceSeek && v.Context.DamageModifierCount > 0) // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
                     {
-                        modifier_factor = 1 + (float)(v.Context.DamageModifierCount * 0.25); // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
+                        modifier_factor = 1 + (float)(v.Context.DamageModifierCount * 0.25); 
                     }
                     else
                     {

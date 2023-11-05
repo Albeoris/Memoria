@@ -23,6 +23,9 @@ public class SB2_PATTERN
 	[Memoria.PatchableFieldAttribute]
 	public UInt32 AP;
 
-	//[Memoria.PatchableFieldAttribute]
-	public SB2_PUT[] Monster;
+    [Memoria.PatchableFieldAttribute]
+    public Boolean Runaway = true;
+
+    //[Memoria.PatchableFieldAttribute]
+    public SB2_PUT[] Monster;
 }

@@ -610,8 +610,10 @@ public class btl_cmd
             //}
             if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
-                if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
                 {
+                    btlsys.cur_cmd_list.Add(cmd);
+                    KillCommand(cmd);
                     return;
                 }
                 /*int num = (int)*/
@@ -1355,7 +1357,7 @@ public class btl_cmd
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
-                if (Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Freyja come back after Jump when in Trance
                 {
                     caster.RemoveStatus(BattleStatus.Jump);
                 }

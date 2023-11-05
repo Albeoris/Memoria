@@ -6,7 +6,9 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
+using Memoria.Prime;
 using UnityEngine;
+using System.Collections;
 
 public static class ModelFactory
 {
@@ -82,36 +84,22 @@ public static class ModelFactory
 				renderer.material.SetTexture("_MainTex", texture);
 			}
 		}
-        if (Configuration.Mod.TranceSeek)
+        if (CustomModelField.Count > 0 && !isBattle)
         {
-            if (modelNameId == "GEO_MON_B3_093" && FF9StateSystem.Common.FF9.fldMapNo == 2250) // Oeilvert Guardian
+            foreach (KeyValuePair<String, String[]> CustomModelFieldEntry in CustomModelField)
             {
-                Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                {
-                    Renderer renderer = renderers[i];
-                    String name = renderer.material.mainTexture.name;
-                    Char textureId = name[name.Length - 1];
-                    String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
-                    String textureFileName = geoId + "_" + textureId;
-                    String texturePath = "CustomTextures/OeilvertGuardian/" + textureFileName + ".png";
-                    Texture texture = AssetManager.Load<Texture>(texturePath, false);
-                    renderer.material.SetTexture("_MainTex", texture);
-                }
-            }
-            if (modelNameId == "GEO_MON_B3_142" && FF9StateSystem.Common.FF9.fldMapNo == 2553) // Water Guardian
-            {
-                Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                {
-                    Renderer renderer = renderers[i];
-                    String name = renderer.material.mainTexture.name;
-                    Char textureId = name[name.Length - 1];
-                    String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
-                    String textureFileName = geoId + "_" + textureId;
-                    String texturePath = "CustomTextures/WaterGuardian/" + textureFileName + ".png";
-                    Texture texture = AssetManager.Load<Texture>(texturePath, false);
-                    renderer.material.SetTexture("_MainTex", texture);
+                string[] SplitEntry = CustomModelFieldEntry.Key.Split('#');
+				string ModelID = SplitEntry[0];
+				Int32 FieldID = Int32.Parse(SplitEntry[1]);
+                if (modelNameId == ModelID && FF9StateSystem.Common.FF9.fldMapNo == FieldID)
+				{
+                    Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+                    for (Int32 i = 0; i < renderers.Length; i++)
+                    {
+                        Renderer renderer = renderers[i];
+                        Texture texture = AssetManager.Load<Texture>(CustomModelFieldEntry.Value[CustomModelFieldEntry.Value.Length - i - 1], false);
+                        renderer.material.SetTexture("_MainTex", texture);
+                    }
                 }
             }
         }
@@ -331,7 +319,7 @@ public static class ModelFactory
 
 	private static void ChangeModelTextureRecursion(Transform transf, String hierarchyPath, Texture[] newTextures)
 	{
-		Material mat = transf.GetComponent<Material>();
+        Material mat = transf.GetComponent<Material>();
 		if (mat == null)
 		{
 			SkinnedMeshRenderer skin = transf.GetComponent<SkinnedMeshRenderer>();
@@ -1717,4 +1705,6 @@ public static class ModelFactory
 		"GEO_MAIN_B0_026",
 		"GEO_MAIN_B0_027"
 	};
+
+	public static Dictionary<String, String[]> CustomModelField = new Dictionary<String, String[]>();
 }
