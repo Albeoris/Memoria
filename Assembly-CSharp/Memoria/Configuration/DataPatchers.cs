@@ -476,9 +476,9 @@ namespace Memoria
 						FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
 					}
 				}
-				else if (String.Compare(entry[0], "CustomFieldModel") == 0)
+				else if (String.Compare(entry[0], "SwapFieldModelTexture") == 0)
 				{
-					// eg.: CustomFieldModel GEO_MON_B3_093#2250 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
+                    // eg.: SwapFieldModelTexture GEO_MON_B3_093#2250 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
                     List<string> TexturesList = new List<string>();
                     if (entry[1] == null || !entry[1].Contains("#"))
 						continue;
