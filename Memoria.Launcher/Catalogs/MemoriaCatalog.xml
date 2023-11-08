@@ -184,9 +184,9 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.1</Version>
+	<Version>3.2</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>28 July 2023, 12:32PM</ReleaseDate>
+	<ReleaseDate>11 November 2023, 7:34PM</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>UI, Buttons , Portraits, and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
 :: Requirements :: 
@@ -200,12 +200,13 @@ UI : Default , Darker UI and Flat
 
 :: Submod activation ::
 Use the Mod Manager UI to activate each submods you like 
+::3.2 ::
+-Added double exp requirement and halved ability gems 
 
 :: 3.0 and 3.1  Log ::
 - Added 1 Gem Compatibility with Alternate Fantasy
 - Replaced Amaranth's Opera Omnia Portrait
 - Split default feature of halved EXP and 1 Gem passive ability to ech submod
-										 
 - Bump compatibility to the recent version of memoria 
 
 :: Compatibility ::
@@ -284,21 +285,33 @@ Use the Mod Manager UI to activate each submods you like
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak Enable : 1 Gem Ability </Name>
+		<Name>Tweak: 1 Gem Ability </Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
 		<Description>Enables 1 gem for passive abilities to be enabled </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak Enable : 1 Gem Ability for Alternate Fantasy  </Name>
+		<Name>Tweak: Halved Gem Ability </Name>
+		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
+		<Description>Cuts ability gems to half for passive abilities to be enabled </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 1 Gem Ability for Alternate Fantasy  </Name>
 		<InstallationPath>Features/Tweaks/AF Ability</InstallationPath>
 		<Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak Enable :  Halved EXP </Name>
-		<InstallationPath>Features/Tweaks/Exp</InstallationPath>
-		<Description>Cuts the EXP requirement feature to level up by Half </Description>
+		<Name>Tweak: Halved EXP Requirement </Name>
+		<InstallationPath>Features/Tweaks/ExpHalf</InstallationPath>
+		<Description>Cuts the EXP requirement to level up faster</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: Doubled EXP Requirement </Name>
+		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
+		<Description>More EXP requirement so you level up slower </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
