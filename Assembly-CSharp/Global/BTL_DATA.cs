@@ -253,7 +253,6 @@ public partial class BTL_DATA
 	public UInt32 maxMpDamageLimit;
 
 	public Boolean special_status_old; // TRANCE SEEK - Old Status
-	public Boolean VulnerableBoss; // Disable undying boss (from IsNonDyingVanillaBoss in btl_para)
 
     public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
 

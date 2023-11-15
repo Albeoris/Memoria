@@ -9,6 +9,8 @@ namespace Memoria
         private sealed class TetraMasterSection : IniSection
         {
             private static readonly HashSet<Int32> DefaultExclusions = new HashSet<Int32>(new[] {56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100});
+            private static readonly String DefaultProbabilityEnemyCards = "20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 252, 254, 255";
+            private static readonly HashSet<Int32> DefaultUniqueCard = new HashSet<Int32>();
 
             public readonly IniValue<Int32> TripleTriad;
             public readonly IniValue<Int32> ReduceRandom;
@@ -25,6 +27,12 @@ namespace Memoria
             public readonly IniValue<Int32> DiscardKeepSameType;
             public readonly IniValue<Int32> DiscardKeepSameArrow;
             public readonly IniSet<Int32> DiscardExclusions;
+            public readonly IniValue<String> ValueProbabilityCards; // [DV] Prefer string because hashset cannot have duplicate values.
+            public readonly IniValue<String> FormulaProbabilityCards;
+            public readonly IniValue<Int32> PreventDuplicateCard;
+            public readonly IniSet<Int32> UniqueCard;
+
+
 
             public TetraMasterSection() : base(nameof(TetraMasterSection), true)
             {
@@ -43,6 +51,10 @@ namespace Memoria
                 DiscardKeepSameType = BindInt32(nameof(DiscardKeepSameType), 1);
                 DiscardKeepSameArrow = BindInt32(nameof(DiscardKeepSameArrow), 0);
                 DiscardExclusions = BindInt32Set(nameof(DiscardExclusions), DefaultExclusions);
+                ValueProbabilityCards = BindString(nameof(ValueProbabilityCards), DefaultProbabilityEnemyCards);
+                FormulaProbabilityCards = BindString(nameof(FormulaProbabilityCards), "");
+                PreventDuplicateCard = BindInt32(nameof(PreventDuplicateCard), 0);
+                UniqueCard = BindInt32Set(nameof(UniqueCard), DefaultUniqueCard);
             }
         }
     }

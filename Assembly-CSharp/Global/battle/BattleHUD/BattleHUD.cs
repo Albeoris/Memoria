@@ -118,6 +118,7 @@ public partial class BattleHUD : UIScene
                     NCalcUtility.InitializeExpressionUnit(ref expr, new BattleUnit(cmd.regist), "Caster");
                     NCalcUtility.InitializeExpressionCommand(ref expr, new BattleCommand(cmd));
                     expr.Parameters["CommandTitle"] = str;
+                    expr.Parameters["IsEnemyCounter"] = cmd.cmd_no == BattleCommandId.EnemyCounter;
                     expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                     expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     str = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), str);

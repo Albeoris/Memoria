@@ -211,14 +211,16 @@ public class btl_para
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
-                if (val >= 0)
+                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
+                if (val != Int64.MinValue)
                 {
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-
+                    if (val < 0)
+                    {
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                        val = Math.Abs(val);
+                    }
+                    damage = (UInt32)val;
                 }
-                val = Math.Abs(val);
-                damage = (UInt32)Math.Max(1, val);
             }
             if (!FF9StateSystem.Battle.isDebug)
             {
@@ -267,14 +269,16 @@ public class btl_para
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
-                if (val >= 0)
+                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
+                if (val != Int64.MinValue)
                 {
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-
+                    if (val > 0)
+                    {
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                        val = Math.Abs(val);
+                    }
+                    recover = (UInt32)val;
                 }
-                val = Math.Abs(val);
-                recover = (UInt32)Math.Max(1, val);
                 if (!FF9StateSystem.Battle.isDebug)
                 {
                     if ((btl.fig_stat_info & Param.FIG_STAT_INFO_REGENE_HP) != 0)
@@ -339,14 +343,16 @@ public class btl_para
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
-                if (val >= 0)
+                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
+                if (val != Int64.MinValue)
                 {
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_MP;
-
+                    if (val < 0)
+                    {
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                        val = Math.Abs(val);
+                    }
+                    damage = (UInt32)val;
                 }
-                val = Math.Abs(val);
-                damage = (UInt32)Math.Max(1, val);
             }
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {
@@ -399,7 +405,7 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
 	{
-        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0 || btl.VulnerableBoss)
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_vulnerable == 1)
             return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
 		{

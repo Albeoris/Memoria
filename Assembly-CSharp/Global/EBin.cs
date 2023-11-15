@@ -1743,6 +1743,8 @@ public class EBin
 				return QuadMistDatabase.MiniGame_GetCollectorLevel();
 			case memoria_variable.TREASURE_HUNTER_POINTS:
 				return FF9StateSystem.EventState.GetTreasureHunterPoints();
+            case memoria_variable.BATTLE_RUNAWAY:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway ? 1 : 0;
         }
 		return 0;
     }
@@ -1759,6 +1761,12 @@ public class EBin
                 break;
             case memoria_variable.TETRA_MASTER_DRAW:
                 FF9StateSystem.MiniGame.SavedData.sDraw = (Int16)val;
+                break;
+            case memoria_variable.BATTLE_RUNAWAY:
+                if (val == 0)
+                    FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = false;
+                else
+                    FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = true;
                 break;
         }
     }
@@ -2425,6 +2433,7 @@ public class EBin
         TETRA_MASTER_POINTS,
         TETRA_MASTER_RANK,
         TREASURE_HUNTER_POINTS,
+        BATTLE_RUNAWAY,
     }
 
     public enum op_binary

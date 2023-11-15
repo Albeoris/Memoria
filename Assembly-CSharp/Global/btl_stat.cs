@@ -118,6 +118,16 @@ public static class btl_stat
                         btl_sys.CheckForecastMenuOff(btl);
                     }
                 }
+                if ((stat.cur & BattleStatus.Trance) != 0 && btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans))
+                {
+                    Byte tranceValue = btl.trance;
+                    btl_stat.RemoveStatus(btl, BattleStatus.Trance);
+                    btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
+                    if (tranceValue == 255)
+                        btl.trance = 254;
+                    else
+                        btl.trance = tranceValue;
+                }
                 break;
             case BattleStatus.Berserk:
             case BattleStatus.Heat:
@@ -798,7 +808,7 @@ public static class btl_stat
 
                             for (Int32 i = 0; i < 2; i++)
                             {
-                                btl_stat.AlterStatus(btl, statuschoosen[GameRandom.Next16() % (statuschoosen.Length - 1)]);
+                                btl_stat.AlterStatus(btl, statuschoosen[GameRandom.Next16() % (statuschoosen.Length)]);
                             }
                             btl_stat.RemoveStatus(btl, status);
                         }

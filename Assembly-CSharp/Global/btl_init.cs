@@ -189,12 +189,12 @@ public static class btl_init
 		enemy.steal_unsuccessful_counter = 0; // New field used for counting unsuccessful steals and force a successful steal when it becomes high enough
 		enemy.info.die_atk = (Byte)(((pParm.Flags & 1) == 0) ? 0 : 1);
 		enemy.info.die_dmg = (Byte)(((pParm.Flags & 2) == 0) ? 0 : 1);
-		enemy.info.flags = pParm.Flags;
-		btl_util.SetShadow(pBtl, pParm.ShadowX, pParm.ShadowZ);
+        enemy.info.die_vulnerable = (Byte)(((pParm.Flags & 4) == 0) ? 0 : 1);
+        enemy.info.flags = pParm.Flags;
+        btl_util.SetShadow(pBtl, pParm.ShadowX, pParm.ShadowZ);
 		pBtl.shadow_bone[0] = pParm.ShadowBone;
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;
 		pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
-        pBtl.VulnerableBoss = pParm.VulnerableBoss;
         pBtl.special_status_old = false; // TRANCE SEEK - Old Status
 		btl_abil.CheckStatusAbility(new BattleUnit(pBtl));
 	}

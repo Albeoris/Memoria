@@ -211,10 +211,6 @@ namespace FF9
             if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
 
-            if (!FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Runaway)
-            {
-                start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
-            }
             return start_type;
         }
 
@@ -308,10 +304,6 @@ namespace FF9
                 return;
 
             if (!ff9Battle.btl_scene.Info.Runaway)
-            {
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
-            }
-            else if (!FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Runaway)
             {
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotEscape);
             }

@@ -906,7 +906,7 @@ public class AbilityUI : UIScene
             itemListDetailHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, abilityListData.Type == AbilityType.Enable);
             BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
-            Int32 mp = patchedId != BattleAbilityId.Void ? GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[patchedId]) : GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[battleAbilId]);
+            Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[patchedId]);
             itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedId);
             itemListDetailHud.NumberLabel.text = mp != 0 ? mp.ToString() : String.Empty;
             if (abilityListData.Type == AbilityType.CantSpell)

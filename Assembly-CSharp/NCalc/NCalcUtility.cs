@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime.Text;
+using Memoria.Prime;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -210,6 +211,7 @@ namespace NCalc
             else if (name == "TreasureHunterPoints") args.Result = (Int32)GameState.TreasureHunterPoints;
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
+            else if (name == "BattleGroupId") args.Result = (Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
             else if (name == "IsRandomBattle") args.Result = Memoria.BattleState.IsRandomBattle;
             else if (name == "IsFriendlyBattle") args.Result = Memoria.BattleState.IsFriendlyBattle;

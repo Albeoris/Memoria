@@ -37,7 +37,8 @@ public class ENEMY
 		public Byte die_fade_rate;
 		public Byte die_atk;
 		public Byte die_dmg;
-		public Byte multiple;
+		public Byte die_vulnerable;
+        public Byte multiple;
 		public Byte slave;
 		public Int32 reserve;
 		public UInt16 flags;
