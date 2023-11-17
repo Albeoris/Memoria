@@ -12,6 +12,7 @@ namespace Memoria
             public static Boolean IsEasyWin => IsEnabled && Instance._tetraMaster.ReduceRandom == 2;
             public static Boolean IsReduceRandom => IsEnabled && Instance._tetraMaster.ReduceRandom == 1;
             public static Int32 MaxCardCount => Instance._tetraMaster.MaxCardCount;
+            public static Boolean ShowEnemyDeck => Instance._tetraMaster.ShowEnemyDeck;
 
             public static Boolean DiscardAutoButton => Instance._tetraMaster.DiscardAutoButton;
             public static Boolean DiscardAssaultCards => Instance._tetraMaster.DiscardAssaultCards;

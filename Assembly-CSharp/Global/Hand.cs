@@ -219,26 +219,29 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 		for (Int32 i = 0; i < (Int32)cardUIs.Length; i++)
 		{
 			QuadMistCardUI quadMistCardUI = cardUIs[i];
-			switch (newState)
+			Boolean Flip = !Configuration.TetraMaster.ShowEnemyDeck;  
+			if (Configuration.TetraMaster.TripleTriad >= 2) // [DV] TODO => The second condition will be replaced by Triple Triad special rules (called "Open")
+                Flip = false;
+            switch (newState)
 			{
 			case Hand.STATE.ENEMY_HIDE:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
+				quadMistCardUI.Flip = Flip;
 				transform.localPosition = Hand.ENEMY_POSITION;
 				quadMistCardUI.transform.localPosition = new Vector3(0f, -3.2f, 0f);
 				break;
 			case Hand.STATE.ENEMY_SHOW:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
+                quadMistCardUI.Flip = Flip;
+                    transform.localPosition = Hand.ENEMY_POSITION;
 				SlideToEnemyHand(quadMistCardUI.transform, Hand.ENEMY_TILING * i, i);
 				break;
 			case Hand.STATE.ENEMY_WAIT:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
+                quadMistCardUI.Flip = Flip;
+                    transform.localPosition = Hand.ENEMY_POSITION;
 				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
 				break;
 			case Hand.STATE.ENEMY_PLAY:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
+                quadMistCardUI.Flip = Flip;
+                    transform.localPosition = Hand.ENEMY_POSITION;
 				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
 				break;
 			case Hand.STATE.ENEMY_POSTGAME:

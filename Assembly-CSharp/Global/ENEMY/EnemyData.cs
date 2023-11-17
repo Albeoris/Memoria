@@ -24,28 +24,41 @@ public class EnemyData : MonoBehaviour
 		enemyData = AssetManager.LoadBytes(cardLevelDataPath);
 	}
 
-	public TetraMasterCardId GetCardID()
+	public TetraMasterCardId GetCardID(Hand hand)
 	{
-		Int32 rnd = UnityEngine.Random.Range(0, 256);
-		Int32 cardIndex = 15;
-
+        Int32 cardIndex = 15;
+        Int32 Random = UnityEngine.Random.Range(0, 256);
+        List<TetraMasterCardId> enemyHand = new List<TetraMasterCardId>();
+        for (Int32 i = 0; i < hand.Count; i++) // [DV] Add every cards from enemy's deck in a list
+        {
+            enemyHand.Add(hand[i].id);
+        }
         for (Int32 i = probability.Length - 1; i >= 0; i--)
 		{
-            Boolean ProcCard = rnd < probability[i];
+            Boolean ProcCard = Random >= probability[i];
+            QuadMistCard quadMistCard = CardPool.CreateQuadMistCard((TetraMasterCardId)enemyData[cardLevel * 16 + i]);
             if (!String.IsNullOrEmpty(Configuration.TetraMaster.FormulaProbabilityCards))
-            {
-                QuadMistCard quadMistCard = CardPool.CreateQuadMistCard((TetraMasterCardId)enemyData[cardLevel * 16 + cardIndex]);
+            { 
                 Expression e = new Expression(Configuration.TetraMaster.FormulaProbabilityCards);
                 e.Parameters["CardRank"] = TripleTriad.TripleTriadCardStats[(TetraMasterCardId)enemyData[cardLevel * 16 + i]].Rank;
                 e.Parameters["CardId"] = quadMistCard.id;
                 e.Parameters["ProbabilityCard"] = probability[i];
+                e.Parameters["Random"] = Random;
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 ProcCard = NCalcUtility.EvaluateNCalcCondition(e.Evaluate());
             }
-            if (!ProcCard)
-				break;
-			
+            if (Configuration.TetraMaster.UniqueCard.Contains((Int32)quadMistCard.id) && (enemyHand.Contains(quadMistCard.id) || QuadMistDatabase.MiniGame_GetCardCount(quadMistCard.id) != 0))
+            {
+                continue;
+            }
+
+            if (Configuration.TetraMaster.PreventDuplicateCard > 0 && enemyHand.Contains(quadMistCard.id))
+                continue;
+
+            if (ProcCard)
+                break;
+
 			cardIndex = i;
 		}
         return (TetraMasterCardId)enemyData[cardLevel * 16 + cardIndex];
@@ -53,71 +66,13 @@ public class EnemyData : MonoBehaviour
 
     public void Initialize(Hand hand)
 	{
-		hand.Clear();
-        if (Configuration.TetraMaster.PreventDuplicateCard > 0)
-		{
-            List<TetraMasterCardId> ListIdCard = new List<TetraMasterCardId>();
-            for (Int32 i = 0; i < 16; i++) // [DV] Add every cards from enemy's deck in a list
-            {
-                ListIdCard.Add((TetraMasterCardId)enemyData[cardLevel * 16 + i]);
-            }
-            ListIdCard.Sort();
-            List<TetraMasterCardId> ListNoDuplicateIdCard = ListIdCard.Distinct().ToList(); // [DV] Sort it by ID (from high to low)
-            if (Configuration.TetraMaster.TripleTriad >= 2)
-            {
-                ListNoDuplicateIdCard = ListNoDuplicateIdCard.OrderBy(card => TripleTriad.TripleTriadCardStats[card].Rank).ToList(); // [DV] Sort it by rank (from high to low)
-            }
-            Log.Message("probability.Length = " + probability.Length);
-            for (Int32 i = ListNoDuplicateIdCard.Count - 1; i > 0; i--)
-            {
-				if (hand.Count >= 5)
-					break;
-
-                Boolean ProcCard = true;
-                QuadMistCard quadMistCard = CardPool.CreateQuadMistCard(ListNoDuplicateIdCard[i]);
-                int probabilityindex = probability.Length - i;
-                if (probabilityindex < 0)
-                    probabilityindex = 0;
-                if (probabilityindex < 15)
-                {
-                    Log.Message("probabilityindex = " + probabilityindex);
-                    ProcCard = UnityEngine.Random.Range(0, 256) < probability[probabilityindex];
-                    Log.Message("probability[probabilityindex] = " + probability[probabilityindex]);
-                    if (!String.IsNullOrEmpty(Configuration.TetraMaster.FormulaProbabilityCards))
-                    {
-                        Expression e = new Expression(Configuration.TetraMaster.FormulaProbabilityCards);
-                        e.Parameters["CardRank"] = TripleTriad.TripleTriadCardStats[ListNoDuplicateIdCard[i]].Rank;
-                        e.Parameters["CardId"] = quadMistCard.id;
-                        e.Parameters["ProbabilityCard"] = probability[probabilityindex];
-                        e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                        e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                        ProcCard = NCalcUtility.EvaluateNCalcCondition(e.Evaluate());
-                    }
-                }
-                if (!ProcCard)
-					continue;
-
-                quadMistCard.side = 1;
-                hand.Add(quadMistCard);
-                if (Configuration.TetraMaster.UniqueCard.Contains((Int32)quadMistCard.id))
-                    ListNoDuplicateIdCard.Remove(ListNoDuplicateIdCard[i]);
-            }
-            while (hand.Count < 5) // [DV] If the card game is not fully completed with "PreventDuplicateCard", fill the hand based on "ListNoDuplicateIdCard".
-            {
-                QuadMistCard quadMistCard = CardPool.CreateQuadMistCard(ListNoDuplicateIdCard[UnityEngine.Random.Range(0, ListNoDuplicateIdCard.Count - 1)]);
-                quadMistCard.side = 1;
-                hand.Add(quadMistCard);
-            }
-        }
-		else
-		{
-            for (Int32 i = 0; i < 5; i++)
-            {
-                QuadMistCard quadMistCard = CardPool.CreateQuadMistCard(GetCardID());
-                quadMistCard.side = 1;
-                hand.Add(quadMistCard);
-            }
-        }
+		hand.Clear();      
+        for (Int32 i = 0; i < 5; i++)
+        {
+            QuadMistCard quadMistCard = CardPool.CreateQuadMistCard(GetCardID(hand));
+            quadMistCard.side = 1;
+            hand.Add(quadMistCard);
+        }      
 	}
 
 	public static void Setup(Hand hand)

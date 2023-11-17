@@ -15,6 +15,7 @@ namespace Memoria
             public readonly IniValue<Int32> TripleTriad;
             public readonly IniValue<Int32> ReduceRandom;
             public readonly IniValue<Int32> MaxCardCount;
+            public readonly IniValue<Boolean> ShowEnemyDeck;
 
             public readonly IniValue<Boolean> DiscardAutoButton;
             public readonly IniValue<Boolean> DiscardAssaultCards;
@@ -39,6 +40,7 @@ namespace Memoria
                 TripleTriad = BindInt32(nameof(TripleTriad), 0);
                 ReduceRandom = BindInt32(nameof(ReduceRandom), 0);
                 MaxCardCount = BindInt32(nameof(MaxCardCount), 100);
+                ShowEnemyDeck = BindBoolean(nameof(ShowEnemyDeck), false);
 
                 DiscardAutoButton = BindBoolean(nameof(DiscardAutoButton), true);
                 DiscardAssaultCards = BindBoolean(nameof(DiscardAssaultCards), false);

@@ -215,10 +215,10 @@ public class TimerUI : Singleton<TimerUI>
                     TimerUI.time -= diffTime * Configuration.Cheats.SpeedFactor * Speedtimer;
                 else if (Configuration.Cheats.SpeedTimer >= 0)
                     TimerUI.time -= diffTime * Speedtimer;
-                else
-                    TimerUI.time -= diffTime;
-                if (TimerUI.time < 0f)
+                else if (TimerUI.time < 0f)
                     TimerUI.time = 0f;
+				else
+					TimerUI.time -= diffTime;
             }
 			TimeSpan displayTime = TimeSpan.FromSeconds(TimerUI.time);
 			TimerUI.blinkState = displayTime.Milliseconds > 500;

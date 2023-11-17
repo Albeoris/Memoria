@@ -279,6 +279,12 @@ namespace Memoria.Assets
                     index += 5;
                     return;
                 }
+                if (a == "[" + NGUIText.NoTurboDialog + "]")
+                {
+                    UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog manually. (for Trance Seek purpose)
+                    index += 5;
+                    return;
+                }
             }
 
             Int32 newIndex = index;
