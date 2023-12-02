@@ -403,17 +403,17 @@ public static class btl_stat
     {
         UInt16 oprIndex;
         UInt16 defaultFactor;
-        if (statTblNo == 1)
+        if (statTblNo == 1) // Venom
         {
             oprIndex = 0;
             defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
         }
-        else if (statTblNo == 16)
+        else if (statTblNo == 16) // Poison
         {
             oprIndex = 1;
             defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
         }
-        else
+        else // Regen
         {
             oprIndex = 2;
             defaultFactor = (UInt16)(60 - btl.elem.wpr << 2);
@@ -778,8 +778,10 @@ public static class btl_stat
     {
         for (Int32 index = 0; index < 32; ++index)
         {
+            if (btl.stat.cnt.conti[index] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
+                btl.stat.cnt.conti[index] -= btl.cur.at_coef;
             BattleStatus status = (BattleStatus)(1 << index);
-            if ((btl.stat.cur & BattleStatusConst.ContiCount & status) != 0 && (btl.stat.cnt.conti[index] -= btl.cur.at_coef) < 0)
+            if ((btl.stat.cur & BattleStatusConst.ContiCount & status) != 0 && btl.stat.cnt.conti[index] < 0)
             {
                 if ((status & BattleStatus.GradualPetrify) != 0)
                 {

@@ -38,6 +38,11 @@ public class ENEMY
 		public Byte die_atk;
 		public Byte die_dmg;
 		public Byte die_vulnerable;
+        public Byte die_unused4;
+        public Byte die_unused5;
+        public Byte die_unused6;
+        public Byte die_unused7;
+        public Byte die_unused8;
         public Byte multiple;
 		public Byte slave;
 		public Int32 reserve;

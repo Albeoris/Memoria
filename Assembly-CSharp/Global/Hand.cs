@@ -220,7 +220,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 		{
 			QuadMistCardUI quadMistCardUI = cardUIs[i];
 			Boolean Flip = !Configuration.TetraMaster.ShowEnemyDeck;  
-			if (Configuration.TetraMaster.TripleTriad >= 2) // [DV] TODO => The second condition will be replaced by Triple Triad special rules (called "Open")
+			if (Configuration.TetraMaster.TripleTriad >= 2) // [DV] TODO => Will be replaced by Triple Triad special rules (called "Open")
                 Flip = false;
             switch (newState)
 			{
