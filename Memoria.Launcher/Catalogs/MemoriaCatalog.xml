@@ -184,24 +184,30 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.2</Version>
+	<Version>3.3</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>11 November 2023, 7:34PM</ReleaseDate>
+	<ReleaseDate>01 December 2023, 1:56PM</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>UI, Buttons , Portraits, and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
-:: Requirements :: 
-- Memoria version  v2022.11.11 or higher 
-
+	<Description>UI, Buttons , Portraits, Tweaks and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
 :: Features ::
 Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts 
+Tweaks : AP GAIN , EXP GAIN and Requirements 
 Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
 Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
 UI : Default , Darker UI and Flat 
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like 
+Use the Mod Manager UI to activate each submods you like and pick 
+
+::3.3 ::
+-Added 4x AP gain
+-Added 99 AP gain
+-Added 2x+ EXP gain
+-Added 4x+ EXP gain
+-Added NO EXP AND AP GAIN 
+
 ::3.2 ::
--Added double exp requirement and halved ability gems 
+-Added double exp and halved ability gems 
 
 :: 3.0 and 3.1  Log ::
 - Added 1 Gem Compatibility with Alternate Fantasy
@@ -213,6 +219,7 @@ Use the Mod Manager UI to activate each submods you like
 - Compatible with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
 	</Description>
+	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
@@ -303,15 +310,45 @@ Use the Mod Manager UI to activate each submods you like
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Halved EXP Requirement </Name>
+		<Name>Tweak: 4x AP Gain   </Name>
+		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
+		<Description>Gains 4x AP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 99 AP Gain   </Name>
+		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
+		<Description>Gains 99 AP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 2x+ EXP Gain   </Name>
+		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
+		<Description>Gains 2x+ EXP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 4x+ EXP Gain   </Name>
+		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
+		<Description>Gains 4x+ EXP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: No / Zero AP and EXP Gain   </Name>
+		<InstallationPath>Features/Tweaks/EXPAP0</InstallationPath>
+		<Description>If you like things hard. </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: Halved EXP </Name>
 		<InstallationPath>Features/Tweaks/ExpHalf</InstallationPath>
 		<Description>Cuts the EXP requirement to level up faster</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Doubled EXP Requirement </Name>
+		<Name>Tweak: Doubled EXP </Name>
 		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
-		<Description>More EXP requirement so you level up slower </Description>
+		<Description>Doubles EXP requirement so you level up slower </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
