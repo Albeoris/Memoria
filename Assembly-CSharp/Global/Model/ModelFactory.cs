@@ -9,6 +9,7 @@ using Memoria.Scripts;
 using Memoria.Prime;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking.Types;
 
 public static class ModelFactory
 {
@@ -88,21 +89,20 @@ public static class ModelFactory
         {
             foreach (KeyValuePair<String, String[]> CustomModelFieldEntry in CustomModelField)
             {
-                string[] SplitEntry = CustomModelFieldEntry.Key.Split('#');
-				string ModelID = SplitEntry[0];
-				Int32 FieldID = Int32.Parse(SplitEntry[1]);
-                if (modelNameId == ModelID && FF9StateSystem.Common.FF9.fldMapNo == FieldID)
+				if (CustomModelFieldEntry.Key.Contains(modelNameId))
 				{
+                    string[] SplitEntry = CustomModelFieldEntry.Key.Split('#');
+                    Int32 FieldID = Int32.Parse(SplitEntry[0]);
                     Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-                    for (Int32 i = 0; i < renderers.Length; i++)
+                    if (FF9StateSystem.Common.FF9.fldMapNo == FieldID)
                     {
-                        Renderer renderer = renderers[i];
-                        Texture texture = AssetManager.Load<Texture>(CustomModelFieldEntry.Value[CustomModelFieldEntry.Value.Length - i - 1], false);
-                        renderer.material.SetTexture("_MainTex", texture);
+						CustomModelField.TryGetValue(CustomModelFieldEntry.Key, out String[] NewTextures);
+                        ChangeModelTexture(gameObject, NewTextures);
                     }
                 }
             }
         }
+
         Shader shader;
 		if (modelNameId.Contains("GEO_SUB_W0"))
 			shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");

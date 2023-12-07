@@ -478,16 +478,18 @@ namespace Memoria
 				}
 				else if (String.Compare(entry[0], "SwapFieldModelTexture") == 0)
 				{
-                    // eg.: SwapFieldModelTexture GEO_MON_B3_093#2250 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
+                    // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
                     List<string> TexturesList = new List<string>();
-                    if (entry[1] == null || !entry[1].Contains("#"))
+                    if (!Int32.TryParse(entry[1], out Int32 FieldID))
+                        continue;
+                    if (entry[1] == null || entry[2] == null)
 						continue;
-					for (Int32 i = 2; i < entry.Length; i++)
+					for (Int32 i = 3; i < entry.Length; i++)
 					{
                         TexturesList.Add(entry[i]);
                     }
                     String[] TexturesCustomModel = TexturesList.ToArray();
-					ModelFactory.CustomModelField.Add(entry[1], TexturesCustomModel);
+					ModelFactory.CustomModelField.Add(entry[1]+"#"+entry[2], TexturesCustomModel);
                 }
             }
 			if (shouldUpdateBattleStatus)
