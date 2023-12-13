@@ -92,7 +92,7 @@ namespace FF9
                                 Expression e = new Expression(Configuration.Battle.RebirthFlame);
                                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Caster");
+                                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(next), "Caster");
                                 procRebirthFlame = NCalcUtility.EvaluateNCalcCondition(e.Evaluate());
                             }
                             else

@@ -1219,7 +1219,8 @@ public partial class BattleHUD : UIScene
             playerIndex = CurrentPlayerIndex;
         AbilityPlayerDetail abilityPlayerDetail = _abilityDetailDict[playerIndex];
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-        AA_DATA aaData = ff9abil.GetActionAbility(abilId);
+        BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilId));
+        AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedID];
 
         if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
             return AbilityStatus.None;
@@ -1243,6 +1244,11 @@ public partial class BattleHUD : UIScene
 
             if (unit.IsUnderAnyStatus(BattleStatus.Silence))
                 return AbilityStatus.Disable;
+        }
+
+        if ((aaData.Type & 16) != 0) // [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
+        {
+            return AbilityStatus.Disable;
         }
 
         if (GetActionMpCost(aaData, unit) > unit.CurrentMp)

@@ -332,6 +332,7 @@ namespace NCalc
             expr.Parameters[prefix + "CurrentStatus"] = (UInt32)unit.CurrentStatus;
             expr.Parameters[prefix + "PermanentStatus"] = (UInt32)unit.PermanentStatus;
             expr.Parameters[prefix + "ResistStatus"] = (UInt32)unit.ResistStatus;
+            expr.Parameters[prefix + "IsUnderOld"] = unit.Data.special_status_old;
             expr.Parameters[prefix + "HalfElement"] = (Int32)unit.HalfElement;
             expr.Parameters[prefix + "GuardElement"] = (Int32)unit.GuardElement;
             expr.Parameters[prefix + "AbsorbElement"] = (Int32)unit.AbsorbElement;

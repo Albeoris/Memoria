@@ -662,10 +662,10 @@ public class btl_scrp
 		case 130u: // Note: Very crafty. Creates elemental orbs (special SPS) rotating around the BTL_DATA...
 			if (val == 3)
 			{
-				UnityEngine.Vector3 btl_pos = btl.gameObject.transform.GetChildByName("bone000").position;
-				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(0, 12, btl_pos, 4.0f);
-				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(1, 13, btl_pos, 4.0f);
-				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(2, 14, btl_pos, 4.0f);
+				// UnityEngine.Vector3 btl_pos = btl.gameObject.transform.GetChildByName("bone000").position;
+				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(0, 12, btl, 4.0f, 0, out _, true);
+				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(1, 13, btl, 4.0f, 0, out _, true);
+				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(2, 14, btl, 4.0f, 0, out _, true);
 			}
 			else if (val == 2) // ... and remove them 1 by 1
 				HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(2);

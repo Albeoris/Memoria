@@ -234,7 +234,7 @@ public static class btl_stat
         }
         if ((status & BattleStatusConst.OprCount) != 0)
             SetOprStatusCount(btl, statusIndex);
-        HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit, status);
+        HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit.Data, status);
         if (btl.bi.player != 0)
             BattleAchievement.UpdateAbnormalStatus(status);
         BattleVoice.TriggerOnStatusChange(btl, "Added", status);
@@ -362,7 +362,7 @@ public static class btl_stat
                 btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 break;
         }
-        HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status);
+        HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status); // [DV] When we disable this, fix the issue when the Poison dissapearing in specific situation (conflict with HonoluluBattleMain.battleSPS.UpdateBtlStatus ?)
         BattleVoice.TriggerOnStatusChange(btl, "Removed", status);
         return 2;
     }
