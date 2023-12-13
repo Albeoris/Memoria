@@ -448,7 +448,7 @@ public class BattleSPSSystem : MonoBehaviour
 		}
 	}
 
-	public void AddSpecialSPSObj(int specialid, uint spstype, BTL_DATA btl, float scale, int bone, out int SPSid, Boolean rotate = false)
+	public void AddSpecialSPSObj(int specialid, uint spstype, BTL_DATA btl, int bone, float scale, out int SPSid, Boolean rotate = false)
 	{
 		BattleSPS special_sps;
 		if (specialid < 0 || specialid > _specialSpsList.Count)
