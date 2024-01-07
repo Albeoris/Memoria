@@ -441,12 +441,27 @@ many download links should be changed and several ones use the "[Import] Text" f
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
-	<Author>P.O.B.R.E. / Brigandier</Author>
-	<Description>Tradução do jogo em português do Brasil.
+	<Author>Harleyquinn / dkPsycho / JonasJTG</Author>
+	<Description>Tradução totalmente revisada e atualizada para ser usada somente com o Mod Moguri. O jogo está completamente traduzido, incluindo história principal, diálogos secundários, sidequests, informações e outras coisas.
+
+Informações Importantes
+- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
+- Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.
+- Alguns mods são imcompatíveis com a tradução pois susbstituem os arquivos de texto ou de textura. Então verifique bem antes de instala-los.
+- Para jogar a versão 60 FPS basta baixar e executar a útima versão do Memoria, encontrada aqui: (https://github.com/Albeoris/Memoria/releases/tag/v2023.06.11)
+
+Para ver o tutorial de como instalar a tradução e acompanhar atualizações e conteúdos de FFIX entrem no meu canal.
+(https://www.youtube.com/@dkpsycho/videos)
+
+Créditos:
+- Harleyquinn: Porte para versão Moguri
+- dkPsycho: Toda parte de tradução, revisão e melhoria
+- JonasJTG: Edição dos Gráficos
 
 Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
 	<Category>Translation</Category>
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
+	<PreviewFileUrl>https://i.imgur.com/wYsiAog.jpeg</PreviewFileUrl>
 </Mod>
 
 <Mod>
