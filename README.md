@@ -19,15 +19,16 @@
 - Support for:
     - Larger backgrounds resolution (e.g. Moguri)
     - Widescreen (select any 16:9 resolution)
+    - Configurable FPS 
     - Higher FMV framerate (e.g. Moguri)
     - Voice acting (e.g. WIP project ECHO-S)
-    - Font change (includes PSX font)
+    - Font change (includes original PSX font)
 - Cheats:
     - Enable/Disable vanilla cheats
     - Stealing 100% rate
     - Easy minigames (rope, frogs, racing)
 - Faster battles:
-    - Change FPS
+    - Speed change
     - Swirl duration
     - Waiting skip
     - Turn-based mode
