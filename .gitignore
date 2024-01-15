@@ -21,3 +21,4 @@ obj/
 *.meta
 /References
 *.log
+*.csproj
