@@ -1,80 +1,106 @@
-# Memoria
-Final Fantasy IX Engine
-
-# Updates
-1. Update the game to the **latest** version.
-2. Update Memoria to the **latest** version.
-3. Patch again
+# Memoria 
+    Final Fantasy IX Engine
 
 
-# Build
-1. Use Visual Studio 2019 or JetBrains Rider.
-2. Copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
-3. Restore NuGet packages manually or enable automatically  package downloads.
+## Features
+
+- New launcher with easy options (for not included options: Memoria.ini)
+- Mod Manager, with integrated community catalog and 1 click install
+- Support for:
+    - Larger backgrounds resolution (e.g. Moguri)
+    - Widescreen (select any 16:9 resolution)
+    - Configurable framerate (15, 30, 60fps...)
+    - Unlocks FMV framerate change (e.g. Moguri)
+    - Voice acting (e.g. WIP project ECHO-S)
+    - Font change (includes original PSX font)
+    - Combat HUD layouts (includes original PSX layout)
+    - Many limitations removed for mods
+    - Some bugfixes
+- Faster battles:
+    - Speed change
+    - Swirl duration
+    - Waiting skip
+    - Turn-based mode
+- QoL:
+    - Save/load anywhere (Alt+F5, Alt+F9)
+    - Full analog movement
+    - [LauncherBypass](https://github.com/Albeoris/Memoria/issues/70#issuecomment-626077188)
+    - [Change audio volume](https://github.com/Albeoris/Memoria/issues/36#issuecomment-626098739) (Ctrl+Alt+Shift+M)
+- Cheats:
+    - Stealing 100% rate
+    - Enable/Disable vanilla cheats
+    - Easy minigames (rope, frogs, racing)
+- Tetra Master (Card game):
+    - Choice to replace with a custom version of Triple Triad (FFVIII)
+    - Choice to replace with an hybrid of Tetra Master and Triple Triad
+    - Auto discard cards
+    - Ways to tweak the randomness
+- Edit game data (look at the "StreamingAssets\Data" folder)
+- Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
+- Make every character available (Alt+F2)
+- Export/import text/audio resources (Ctrl+Alt+Shift+S to debug)
 
 
-# Patch:
-1. Memoria.Patcher.exe - will patch game files using current directory or path from the windows registry
-2. Memoria.Patcher.exe gameDirectory - will patch game files using a provided path
+## Install
+- Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
+
+    > Automatically find the game path from Windows registry or current directory, you can provide a custom path as argument:
+    > Memoria.Patcher.exe gameDirectory
 
 
-# First run:
-1. Run game.
-2. If there is no error you will see "Memoria.ini" file in the game directory.
-3. If something went wrong you will see error in the "Memoria.log"
-4. If you not see "Memoria.log" try to run game with administrator rights
-5. If you see "Sharing violation on path" then close applications that hold this file
-6. If you see "at Memoria.CsvReader.Read" then fix files in the StreamingAssets\Data directory or delete them and patch again.
-7. If you see "at Memoria.ScriptsLoader.Initialize" then fix files in the StreamingAssets\Scripts directory and recompile scripts or delete them and patch again.
-8. If the error persists see "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt"
+## Update
+
+- Update the game to the **latest** version.
+- Patch with the latest [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
 
 
-# Features:
-1. Widescreen support (just select any 16:9 resolution)
-2. Disable/enable cheats
-3. Fast battles (Change FPS, a Swirl duration, skip waiting or turn-based)
-4. Save/load anywhere (Alt+F5, Alt+F9) 
-5. Edit game data (look at the "StreamingAssets\Data" folder)
-6. Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
-7. All of the characters available (Alt+F2 to show a party window) [be careful](https://github.com/Albeoris/Memoria/issues/3)!
-8. Easy rope jumping, frog catching, Hippaul racing
-9. Auto discard cards
-10. Change the game font
-11. [Change audio volume](https://github.com/Albeoris/Memoria/issues/36#issuecomment-626098739) (Ctrl+Alt+Shift+M to show configuration menu)
-12. Export/import text resources
-13. Export/import audio resources (Ctrl+Alt+Shift+S to debug)
-14. [Bypass the Launcher](https://github.com/Albeoris/Memoria/issues/70#issuecomment-626077188)
+## Debug
+- After first running the game, you should see "Memoria.ini" in the game directory.
+- If something went wrong, there will be errors in "Memoria.log".
+- If you can't see "Memoria.log", try running the game with administrator rights.
+- "Sharing violation on path" error: close applications holding the file.
+- "at Memoria.CsvReader.Read" error: delete files in (game)\StreamingAssets\Data and patch again.
+- "at Memoria.ScriptsLoader.Initialize" error: delete files in (game)\StreamingAssets\Scripts and patch again.
+- If an error persists, check "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt".
 
 
-# Configuration:
-1. Open Memoria.ini
-2. Change "Enabled" value from "0" to "1" for what you need
-3. Specify other params.
-4. Save your edits and try run the game.
+-----
 
 
-# Scripting (for modmakers)
+# DEVELOPERS
+
+
+## Build & Contribute
+- Use Visual Studio 2019 or JetBrains Rider.
+- Make sure you have [.NET 3.5 SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk).
+- Make a fork of the project and download it locally.
+- Install the game and copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
+- [Check this thread](https://github.com/Albeoris/Memoria/discussions/274).
+- Once you've commited your changes to your fork, make it a Pull Request to the main repository.
+
+
+## Scripting
 1. Make a copy of an existing item from the "StreamingAssets\Scripts" folder.
 2. Change a namespace to your own.
 3. Make some changes.
 4. Run Memoria.Compiler.exe from the "Compiler".
-5. Run the game, test all of you can and see Memoria.log and output_log.txt for errors.
+5. Run the game, test what you need and see Memoria.log and output_log.txt for errors.
 
-Now you can change mechanics of battle actions. In the future I will add more scriptable entries.
-Also you can use a Visual Studio project from the "Project" folder. It will load every .cs file from the "Sources\Battle" folder.
+Now you can change mechanics of battle actions. In the future, I will add more scriptable entries.
+Also, you can use a Visual Studio project from the "Project" folder. It will load every .cs file from the "Sources\Battle" folder.
 Be careful - future updates could remove your changes. Please make your own copies if it possible.
 https://www.youtube.com/watch?v=cU4T3GSIjxs
 
 
-# Restrictions (for developers)
+## Restrictions
 1. **Please** don't change any data that can be sent to the game server! We don't want any trouble.
 2. Don't change a serializable data that can be deserialized by the Unity Engine. The game will crash or corrupt.
 
 
-# Debugging (for developers)
+## Debug
 1. Check the "Debuggable" checkbox in the Launcher.
 2. Attach to the game process (Debug -> Attach Unity Debugger in the Visual Studio 2015/2017 Tools for Unity)
 
 
-# Knowledge base
+## Knowledge base
 Please [visit our knowledge base](../../wiki#knowledge-base) before using this software.

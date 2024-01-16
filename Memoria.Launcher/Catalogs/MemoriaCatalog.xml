@@ -199,27 +199,26 @@ UI : Default , Darker UI and Flat
 :: Submod activation ::
 Use the Mod Manager UI to activate each submods you like and pick 
 
+:: Compatibility ::
+- Compatible with Alternate Fantasy
+- Not compatible for older versions of the game and repacks.
+	</Description>
+	<PatchNotes>
+Requires Memoria v2023.06.11
 ::3.3 ::
 -Added 4x AP gain
 -Added 99 AP gain
 -Added 2x+ EXP gain
 -Added 4x+ EXP gain
--Added NO EXP AND AP GAIN 
-
+-Added NO EXP AND AP GAIN
 ::3.2 ::
--Added double exp and halved ability gems 
-
+-Added double exp and halved ability gems
 :: 3.0 and 3.1  Log ::
 - Added 1 Gem Compatibility with Alternate Fantasy
 - Replaced Amaranth's Opera Omnia Portrait
 - Split default feature of halved EXP and 1 Gem passive ability to ech submod
-- Bump compatibility to the recent version of memoria 
-
-:: Compatibility ::
-- Compatible with Alternate Fantasy
-- Not compatible for older versions of the game and repacks.
-	</Description>
-	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
+- Bump compatibility to the recent version of memoria
+	</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
@@ -364,7 +363,7 @@ Use the Mod Manager UI to activate each submods you like and pick
 	<Website>https://forums.qhimm.com/index.php?topic=20657.0</Website>
 	<DownloadUrl>https://i.imgur.com/tpdfrUQ.png</DownloadUrl>
 	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Chocograph Atlas</DownloadFormat>
-	<PreviewFileUrl>https://i.imgur.com/M4ce7hE.png</PreviewFileUrl>
+	<PreviewFileUrl>https://i.imgur.com/RCVuINt.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
@@ -385,13 +384,12 @@ Use the Mod Manager UI to activate each submods you like and pick
 	<Version>0.2.13</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<Author>DVlad666</Author>
-	<Description>
-		A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
-		A multitude of additional fights/bosses are also introduced.
-		(This is not an very hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.)
+	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
+A multitude of additional fights/bosses are also introduced.
+(This is not an very hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.)
 
-		It's currently a demo : CD1 and CD2 only available, CD3 WIP.
-		Don't hesitate to try!
+It's currently a demo : CD1 and CD2 only available, CD3 WIP.
+Don't hesitate to try!
 	</Description>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/5362100202713255072/</Website>
@@ -403,9 +401,8 @@ Use the Mod Manager UI to activate each submods you like and pick
 	<Version>2.0</Version>
 	<InstallationPath>PlaystationSounds</InstallationPath>
 	<Author>DVlad666</Author>
-	<Description>
-		Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous).
-		More than 1540 sound files fixed!
+	<Description>Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous).
+More than 1540 sound files fixed!
 	</Description>
 	<Category>Audio</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
@@ -417,9 +414,8 @@ Use the Mod Manager UI to activate each submods you like and pick
 	<Version>1.0</Version>
 	<InstallationPath>TripleTriad</InstallationPath>
 	<Author>DVlad666</Author>
-	<Description>
-		Change the music and background to the Triple Triad FF8 version (based on Tripod !)
-		Change some card textures (add boss + characters)
+	<Description>Change the music and background to the Triple Triad FF8 version (based on Tripod !)
+Change some card textures (add boss + characters)
 	</Description>
 	<Category>Visual</Category>
 	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1H2Z-a656qBdjht2h7UfhujzfW1znpJdU&amp;confirm=t</DownloadUrl>
