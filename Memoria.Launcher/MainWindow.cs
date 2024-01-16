@@ -50,6 +50,8 @@ namespace Memoria.Launcher
             // Hotfix for the Moguri mod
             if (Directory.Exists("MoguriFiles") && !File.Exists("MoguriFiles/Memoria.ini"))
                 File.WriteAllText("MoguriFiles/Memoria.ini", "[Graphics]\nEnabled = 1\nTileSize = 64\n");
+            if (Directory.Exists("MoguriFiles") && File.Exists("MoguriFiles/StreamingAssets/ma/mbg116.bytes")) 
+                File.Move("MoguriFiles/StreamingAssets/ma/mbg116.bytes", "MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes"); 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
