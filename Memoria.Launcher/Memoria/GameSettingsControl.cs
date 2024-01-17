@@ -100,6 +100,11 @@ namespace Memoria.Launcher
             steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
 
+            UiCheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), 22, 0, 3, 4);
+            isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
+            isSkipIntros.Foreground = Brushes.White;
+            isSkipIntros.Margin = rowMargin;
+
             foreach (FrameworkElement child in Children)
             {
                 //if (!ReferenceEquals(child, backround))
@@ -325,6 +330,23 @@ namespace Memoria.Launcher
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
             }
         }
+        public Int16 SkipIntros
+        {
+            get { return _isskipintros; }
+            set
+            {
+                if (_isskipintros == 0)
+                {
+                    _isskipintros = 3;
+                    OnPropertyChanged();
+                }
+                else if (_isskipintros != value)
+                {
+                    _isskipintros = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public Boolean AutoRunGame { get; private set; }
 
@@ -334,6 +356,17 @@ namespace Memoria.Launcher
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private async void Refresh([CallerMemberName] String propertyName = null)
+        {
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
             try
@@ -371,7 +404,18 @@ namespace Memoria.Launcher
                             }
                         }
                         break;
-                    }
+                        }
+                    case nameof(SkipIntros):
+                        if (SkipIntros == 3)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName, " 3");
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        }
+                        else if (SkipIntros == 0)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName, " 0");
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -387,6 +431,7 @@ namespace Memoria.Launcher
 
         private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
 
+        private Int16 _isskipintros;
         private String _resolution = "1280x960";
         private String _activeMonitor = "";
         private String _windowMode = "";
@@ -504,6 +549,15 @@ namespace Memoria.Launcher
                     _downloadMirrors = value.Split(',');
                 }
 
+                value = iniFile.ReadValue("Graphics", nameof(SkipIntros));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = "0";
+                    OnPropertyChanged(nameof(SkipIntros));
+                }
+                if (!Int16.TryParse(value, out _isskipintros))
+                    _isskipintros = 0;
+
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(WindowMode));
@@ -514,6 +568,7 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
+                Refresh(nameof(SkipIntros));
             }
             catch (Exception ex)
             {

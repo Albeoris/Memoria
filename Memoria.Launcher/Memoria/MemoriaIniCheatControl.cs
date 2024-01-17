@@ -46,7 +46,7 @@ namespace Memoria.Launcher
             cheatOptionsText.Margin = new Thickness(8, 2, 3, 2);
             Int32 row = 1;
 
-            AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row, 0, 1, 8).Foreground = Brushes.White;
+            /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row, 0, 1, 8).Foreground = Brushes.White;*/
             row++;
             UiCheckBox stealingAlwaysWorks = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxStealRate, null), row++, 0, 1, 8);
             stealingAlwaysWorks.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(StealingAlwaysWorks)) { Mode = BindingMode.TwoWay });
@@ -63,12 +63,12 @@ namespace Memoria.Launcher
             breakDamageLimit.Foreground = Brushes.White;
             breakDamageLimit.Margin = rowMargin;
 
-            UiTextBlock accessBattleMenuText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AccessBattleMenu), row, 0, 2, 3);
+            UiTextBlock accessBattleMenuText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AccessBattleMenu), row, 0, 2, 4);
             accessBattleMenuText.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
             accessBattleMenuText.Foreground = Brushes.White;
             accessBattleMenuText.Margin = rowMargin;
             accessBattleMenuText.TextWrapping = TextWrapping.WrapWithOverflow;
-            UiComboBox accessBattleMenuBox = AddUiElement(UiComboBoxFactory.Create(), row, 3, 2, 5);
+            UiComboBox accessBattleMenuBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 2, 4);
             accessBattleMenuBox.ItemsSource = new String[]{
                 Lang.Settings.AccessBattleMenuType0,
                 Lang.Settings.AccessBattleMenuType1,
@@ -77,7 +77,7 @@ namespace Memoria.Launcher
             };
             accessBattleMenuBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(AccessBattleMenu)) { Mode = BindingMode.TwoWay });
             accessBattleMenuBox.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
-            accessBattleMenuBox.Height = 22;
+            accessBattleMenuBox.Height = 20;
             accessBattleMenuBox.Margin = rowMargin;
             row += 2;
 
@@ -122,24 +122,9 @@ namespace Memoria.Launcher
             masterSkill.Foreground = Brushes.White;
             masterSkill.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;
+            /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
 
-            UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row++, 0, 1, 8);
-            sharedFpsText.Foreground = Brushes.White;
-            sharedFpsText.Margin = rowMargin;
-
-            UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 2);
-            sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
-            sharedFpsIndex.Foreground = Brushes.White;
-            sharedFpsIndex.Margin = rowMargin;
-
-            Slider sharedFps = AddUiElement(UiSliderFactory.Create(0), row++, 2, 1, 6);
-            sharedFps.SetBinding(Slider.ValueProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
-            sharedFps.TickFrequency = 5;
-            sharedFps.IsSnapToTickEnabled = true;
-            sharedFps.Minimum = 15;
-            sharedFps.Maximum = 120;
-            sharedFps.Margin = new Thickness(0, 0, 3, 0);
+            
 
             LoadSettings();
         }
@@ -266,20 +251,9 @@ namespace Memoria.Launcher
             }
         }
 
-        public Int16 SharedFPS
-        {
-            get { return _sharedfps; }
-            set
-            {
-                if (_sharedfps != value)
-                {
-                    _sharedfps = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        
 
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _sharedfps;
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -392,8 +366,6 @@ namespace Memoria.Launcher
                     value = "30";
                     //OnPropertyChanged(nameof(SharedFPS));
                 }
-                if (!Int16.TryParse(value, out _sharedfps))
-                    _sharedfps = 30;
 
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(GarnetConcentrate));
@@ -405,7 +377,6 @@ namespace Memoria.Launcher
                 Refresh(nameof(Attack9999));
                 Refresh(nameof(NoRandomEncounter));
                 Refresh(nameof(MasterSkill));
-                Refresh(nameof(SharedFPS));
             }
             catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
@@ -492,12 +463,6 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Cheats", "GilMax", " " + MasterSkill);
                         if (MasterSkill == 1)
                             iniFile.WriteValue("Cheats", "Enabled", " 1");
-                        break;
-                    case nameof(SharedFPS):
-                        iniFile.WriteValue("Graphics", "BattleFPS", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "FieldFPS", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "WorldFPS", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "Enabled", " 1");
                         break;
                 }
             }
