@@ -23,11 +23,11 @@
 			Rollback = "Revenir en arrière"
 			Inject = "Injecter"
 			SaveAs = "Enregistrer sous..."
-			Exit = "F E R M E R"
+			Exit = "FERMER"
 			Exiting = "Fermeture..."
-			Launch = "J O U E R"
+			Launch = "JOUER"
 			Launching = "Lancement..."
-      ModManager = "Mods"
+			ModManager = "MOD MANAGER"
 			/>
 
 	<Settings

@@ -23,11 +23,11 @@
 			Rollback = "Cancel"
 			Inject = "Inject"
 			SaveAs = "Save as..."
-			Exit = "E X I T"
+			Exit = "EXIT"
 			Exiting = "Exiting..."
-			Launch = "P L A Y"
+			Launch = "PLAY"
 			Launching = "Launching..."
-      ModManager = "Install Mods"
+      ModManager = "MOD MANAGER"
 			/>
 
 	<Settings
