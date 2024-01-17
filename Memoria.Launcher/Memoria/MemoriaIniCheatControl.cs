@@ -29,7 +29,7 @@ namespace Memoria.Launcher
             SetRows(15);
             SetCols(8);
             
-            Width = 200;
+            Width = 240;
             VerticalAlignment = VerticalAlignment.Top;
             HorizontalAlignment = HorizontalAlignment.Left;
             Margin = new Thickness(0);
@@ -39,17 +39,19 @@ namespace Memoria.Launcher
             Thickness rowMargin = new Thickness(8, 2, 3, 2);
 
             UiTextBlock cheatOptionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniCheats), 0, 0, 2, 8);
-            cheatOptionsText.Padding = new Thickness(0, 4, 0, 0);
+            cheatOptionsText.Padding = new Thickness(0, 4, 0, 2);
             cheatOptionsText.Foreground = Brushes.White;
             cheatOptionsText.FontSize = 14;
             cheatOptionsText.FontWeight = FontWeights.Bold;
-            cheatOptionsText.Margin = rowMargin;
-            Int32 row = 2;
+            cheatOptionsText.Margin = new Thickness(8, 2, 3, 2);
+            Int32 row = 1;
 
+            AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row, 0, 1, 8).Foreground = Brushes.White;
+            row++;
             UiCheckBox stealingAlwaysWorks = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxStealRate, null), row++, 0, 1, 8);
             stealingAlwaysWorks.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(StealingAlwaysWorks)) { Mode = BindingMode.TwoWay });
             stealingAlwaysWorks.Foreground = Brushes.White;
-            stealingAlwaysWorks.Margin = rowMargin;
+            stealingAlwaysWorks.Margin = new Thickness(8, 2, 3, 2);
 
             UiCheckBox garnetConcentrate = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.DisableCantConcentrate, null), row++, 0, 1, 8);
             garnetConcentrate.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(GarnetConcentrate)) { Mode = BindingMode.TwoWay });
@@ -133,7 +135,7 @@ namespace Memoria.Launcher
 
             Slider sharedFps = AddUiElement(UiSliderFactory.Create(0), row++, 2, 1, 6);
             sharedFps.SetBinding(Slider.ValueProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
-            sharedFps.TickFrequency = 1;
+            sharedFps.TickFrequency = 5;
             sharedFps.IsSnapToTickEnabled = true;
             sharedFps.Minimum = 15;
             sharedFps.Maximum = 120;

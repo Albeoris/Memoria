@@ -21,24 +21,38 @@
 
         <launcher:GameSettingsControl
             x:Name="GameSettings"
-            Width="Auto"
-            Height="326"
-            Margin="27,0,573,-43"
-            HorizontalAlignment="Stretch"
+            Width="240"
+            Height="auto"
+            Margin="27,0,0,22"
+            HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
-        <launcher:MemoriaIniControl
-            x:Name="MemoriaIniControl"
-            Width="Auto"
-            Height="290"
-            Margin="265,0,305,24"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom" />
+
+        <!--<Rectangle Width="1" Height="300" Fill="WhiteSmoke" Margin="269,336,524,10" />-->
+
+
+        <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
+            Width="240"
+            Height="auto"
+            Margin="272,0,0,22"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" >
+        </launcher:MemoriaIniControl>
+        <!--<Rectangle Margin="519,261,274,10">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="WhiteSmoke" />
+                    <Setter Property="Width" Value="1" />
+                            <Setter Property="Height" Value="300" />
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>-->
+
         <launcher:MemoriaIniCheatControl
             x:Name="MemoriaIniCheatControl"
-            Width="228"
-            Height="290"
-            Margin="0,0,32,25"
-            HorizontalAlignment="Right"
+            Width="240"
+            Height="auto"
+            Margin="525,0,0,22"
+            HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
         <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiModManagerButton}}}" Margin="491,30,36,396">

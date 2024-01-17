@@ -40,7 +40,7 @@ namespace Memoria.Launcher
             SetRows(numberOfRows);
             SetCols(8);
             
-            Width = 200;
+            Width = 240;
             VerticalAlignment = VerticalAlignment.Top;
             HorizontalAlignment = HorizontalAlignment.Left;
             Margin = new Thickness(0);
@@ -49,24 +49,24 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(8, 2, 3, 2);
 
-            UiTextBlock optionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniOptions), 0, 0, 2, 8);
+            /*UiTextBlock optionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniOptions), 0, 0, 2, 8);
             optionsText.Padding = new Thickness(0, 4, 0, 0);
             optionsText.Foreground = Brushes.White;
             optionsText.FontSize = 14;
             optionsText.FontWeight = FontWeights.Bold;
-            optionsText.Margin = rowMargin;
-            Int32 row = 2;
+            optionsText.Margin = new Thickness(8, 2, 3, 10);*/
+            Int32 row = 0;
 
             UiCheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row++, 0, 1, 8);
             isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
             isWidescreenSupport.Foreground = Brushes.White;
             isWidescreenSupport.Margin = rowMargin;
 
-            UiTextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 3);
+            UiTextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 4);
             battleInterfaceText.ToolTip = Lang.Settings.BattleInterfaceTooltip;
             battleInterfaceText.Foreground = Brushes.White;
             battleInterfaceText.Margin = rowMargin;
-            UiComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), row++, 3, 1, 5);
+            UiComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), row++, 4, 1, 4);
             battleInterfaceBox.ItemsSource = new String[]{
                 Lang.Settings.BattleInterfaceType0,
                 Lang.Settings.BattleInterfaceType1,
@@ -74,7 +74,7 @@ namespace Memoria.Launcher
             };
             battleInterfaceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(BattleInterface)) { Mode = BindingMode.TwoWay });
             battleInterfaceBox.ToolTip = Lang.Settings.BattleInterfaceTooltip;
-            battleInterfaceBox.Height = 22;
+            battleInterfaceBox.Height = 20;
             battleInterfaceBox.FontSize = 10;
             battleInterfaceBox.Margin = rowMargin;
 
@@ -121,7 +121,7 @@ namespace Memoria.Launcher
             };
             speedChoiceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(Speed)) { Mode = BindingMode.TwoWay });
             speedChoiceBox.ToolTip = Lang.Settings.SpeedChoiceTooltip;
-            speedChoiceBox.Height = 22;
+            speedChoiceBox.Height = 20;
             speedChoiceBox.FontSize = 10;
             speedChoiceBox.Margin = rowMargin;
 
@@ -135,13 +135,14 @@ namespace Memoria.Launcher
                 Lang.Settings.TripleTriadType2
             };
             tripleTriadBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(TripleTriad)) { Mode = BindingMode.TwoWay });
-            tripleTriadBox.Height = 22;
+            tripleTriadBox.Height = 20;
             tripleTriadBox.FontSize = 10;
             tripleTriadBox.Margin = rowMargin;
 
-            UiTextBlock volumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Volume), row++, 0, 1, 8);
+            /*UiTextBlock volumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Volume), row++, 0, 1, 8);
             volumeText.Foreground = Brushes.White;
             volumeText.Margin = rowMargin;
+            volumeText.TextAlignment = TextAlignment.Center;*/
 
             UiTextBlock soundVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SoundVolume), row, 0, 1, 3);
             soundVolumeText.Foreground = Brushes.White;
@@ -205,7 +206,7 @@ namespace Memoria.Launcher
                     fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
                 _fontChoiceBox.ItemsSource = fontNames;
                 _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
-                _fontChoiceBox.Height = 22;
+                _fontChoiceBox.Height = 20;
                 _fontChoiceBox.FontSize = 10;
                 _fontChoiceBox.Margin = rowMargin;
             }

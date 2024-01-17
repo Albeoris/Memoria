@@ -46,7 +46,7 @@ namespace Memoria.Launcher
             SetRows(28);
             SetCols(4);
             
-            Width = 200;
+            Width = 240;
             VerticalAlignment = VerticalAlignment.Top;
             HorizontalAlignment = HorizontalAlignment.Left;
             Margin = new Thickness(5);
@@ -72,7 +72,7 @@ namespace Memoria.Launcher
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
-            UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
+            /*UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
             _audioText.FontSize *= 0.8;
             _audioText.TextWrapping = TextWrapping.WrapWithOverflow;
             AddUiElement(_audioText, row: 13, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
@@ -81,7 +81,7 @@ namespace Memoria.Launcher
             audio.ItemsSource = EnumerateAudioSettings().ToArray();
             audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
-            audio.Margin = rowMargin;
+            audio.Margin = rowMargin;*/
 
             UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 2);
             x64.Margin = rowMargin;
