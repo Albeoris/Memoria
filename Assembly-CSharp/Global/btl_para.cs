@@ -263,6 +263,7 @@ public class btl_para
             recover = GetLogicalHP(btl, true) >> 4;
             if (!String.IsNullOrEmpty(Configuration.Battle.RegenHPRecovery))
             {
+                btl.fig_stat_info = Param.FIG_STAT_INFO_REGENE_HP;
                 Expression e = new Expression(Configuration.Battle.RegenHPRecovery);
                 e.Parameters["IsZombie"] = ((btl.stat.cur & BattleStatus.Zombie) != 0 || (btl.stat.permanent & BattleStatus.Zombie) != 0);
                 e.Parameters["IsEasyKill"] = ((btl.stat.cur & BattleStatus.EasyKill) != 0 || (btl.stat.permanent & BattleStatus.EasyKill) != 0);
@@ -272,23 +273,16 @@ public class btl_para
                 Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
                 if (val != Int64.MinValue)
                 {
-                    if (val > 0)
+                    if (val < 0)
                     {
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
                         val = Math.Abs(val);
                     }
                     recover = (UInt32)val;
                 }
                 if (!FF9StateSystem.Battle.isDebug)
                 {
-                    if ((btl.fig_stat_info & Param.FIG_STAT_INFO_REGENE_HP) != 0)
-                    {
-                        if (btl.cur.hp + recover < btl.max.hp)
-                            btl.cur.hp += recover;
-                        else
-                            btl.cur.hp = btl.max.hp;
-                    }
-                    else
+                    if ((btl.fig_stat_info & Param.FIG_STAT_INFO_REGENE_DMG) != 0)
                     {
                         btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
                         if (GetLogicalHP(btl, false) > recover)
@@ -296,7 +290,13 @@ public class btl_para
                         else
                             new BattleUnit(btl).Kill();
                     }
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                    else
+                    {
+                        if (btl.cur.hp + recover < btl.max.hp)
+                            btl.cur.hp += recover;
+                        else
+                            btl.cur.hp = btl.max.hp;
+                    }
                     btl.fig_regene_hp = (Int32)recover;
                 }
             }

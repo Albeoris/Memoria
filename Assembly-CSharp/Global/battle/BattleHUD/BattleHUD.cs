@@ -11,6 +11,7 @@ using Memoria.Prime;
 using Memoria.Scenes;
 using NCalc;
 using UnityEngine;
+using static Memoria.Assets.DataResources;
 
 public partial class BattleHUD : UIScene
 {
@@ -1703,6 +1704,29 @@ public partial class BattleHUD : UIScene
                 };
                 testCommand.SetAAData(aaData);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+
+                if (_currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                { // Or i can make it with the DictionaryPatch.txt instead ?
+                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0)) 
+                    { 
+                        switch (weapon.Offset2)
+                        {
+                            case 1:
+                                targetType = TargetType.SingleAlly;
+                                break;
+                            case 6:
+                                targetType = TargetType.All;
+                                break;
+                            case 7:
+                                targetType = TargetType.AllAlly;
+                                break;
+                            case 8:
+                                targetType = TargetType.AllEnemy;
+                                break;
+                        }
+                    }
+                }
 
                 SelectBestTarget(targetType, testCommand);
             }

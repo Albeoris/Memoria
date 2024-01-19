@@ -14,6 +14,7 @@ namespace Memoria.Data
         public Byte pdef;
         public String icon;
         public UInt16 Rank;
+        public String element;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -29,6 +30,10 @@ namespace Memoria.Data
                 Rank = UInt16.Parse(raw[7]);
             else
                 Rank = 1;
+            if (metadata.HasOption($"Include{nameof(element)}"))
+                element = CsvParser.String(raw[8]);
+            else
+                element = "";
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -41,6 +46,8 @@ namespace Memoria.Data
             sw.Byte(matk);
             sw.Byte(pdef);
             sw.String(icon);
+            sw.UInt16(Rank);
+            sw.String(element);
         }
     }
 }

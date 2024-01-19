@@ -8,6 +8,7 @@ using Memoria.Prime;
 using Memoria.Data;
 using NCalc;
 using UnityEngine;
+using static SiliconStudio.Social.ResponseData;
 
 public static class btl2d
 {
@@ -125,6 +126,7 @@ public static class btl2d
                 BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_poison_hp, 0, b);
                 btl2D_ENT.NoClip = 1;
                 btl2D_ENT.Yofs = -12;
+                // HonoluluBattleMain.battleSPS.ResetBtlSPSObj(pBtl, BattleStatus.Poison); // [DV] Reset the poison display every time it tick, as it tends to disappear randomly...
                 b += 4;
             }
             if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_MP) != 0)

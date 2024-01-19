@@ -1,4 +1,5 @@
-﻿using Memoria;
+﻿using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using System;
 using UnityEngine;
 
@@ -63,8 +64,25 @@ public class CardDisplay : MonoBehaviour
 			}
 		}
 	}
+	
+    public Int32 Element
+    {
+        set
+        {
+			// Memoria.Prime.Log.Message("spriteArray = " + spriteArray.Length);
+            // if (gameObject.transform.childCount < 7)
+            // {
+            //    GameObject CardElement = new GameObject("CardElement");
+            //    CardElement.transform.SetParent(gameObject.transform);
+            //    element = gameObject.GetChild(6).AddComponent<SpriteDisplay>();
+            // }
+            // element.GetComponent<SpriteRenderer>().sprite = QuadMistResourceManager.Instance.GetSprite("fire_element");
+            // element.gameObject.transform.localPosition = new Vector3(0.28f, -0.07f, -0.02f);
+            //            Memoria.Scenes.ControlPanel.DebugLogComponents(gameObject, true, true, c => $" (child of {c.transform}) has component of type {c.GetType()}");
+        }
+    }
 
-	public Boolean Flip
+    public Boolean Flip
 	{
 		get
 		{
@@ -135,4 +153,6 @@ public class CardDisplay : MonoBehaviour
 	public SpriteDisplay background;
 
 	public SpriteDisplay block;
+
+	public SpriteDisplay element;
 }

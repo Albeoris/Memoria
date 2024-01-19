@@ -5,6 +5,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using NCalc;
+using System.Linq;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable EmptyConstructor
@@ -29,10 +30,14 @@ public static class btl_stat
 
     public static void StatusCommandCancel(BTL_DATA btl, BattleStatus status)
     {
+        if (Configuration.Mod.TranceSeek && CheckStatus(btl, BattleStatus.EasyKill) && (status & BattleStatus.Sleep) != 0) // [DV] Prevent command cancel for boss.
+            return;
         if (btl.bi.player != 0)
             UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
+
         if (!btl_cmd.KillCommand2(btl))
             return;
+
         btl.bi.atb = 0;
         if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
             btl.cur.at = 0;
@@ -362,7 +367,7 @@ public static class btl_stat
                 btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 break;
         }
-        HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status); // [DV] When we disable this, fix the issue when the Poison dissapearing in specific situation (conflict with HonoluluBattleMain.battleSPS.UpdateBtlStatus ?)
+        // HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status); // [DV] When we disable this, fix the issue when the Poison dissapearing in specific situation (conflict with HonoluluBattleMain.battleSPS.UpdateBtlStatus ?)
         BattleVoice.TriggerOnStatusChange(btl, "Removed", status);
         return 2;
     }
@@ -645,7 +650,17 @@ public static class btl_stat
             }
             else if (data.special_status_old)
             {
-                btl_util.GeoSetColor2DrawPacket(data.gameObject, 255, 255, 255);
+                if (!FF9StateSystem.Battle.isFade)
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
+                Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : (counter + 2));
+                Int32 OldGlow = -192;
+                Int16 r = (Int16)((bbgInfoPtr.chr_r - OldGlow) * strength >> 3);
+                Int16 g = (Int16)((bbgInfoPtr.chr_g - OldGlow) * strength >> 3);
+                Int16 b = (Int16)((bbgInfoPtr.chr_b - OldGlow) * strength >> 3);
+                GeoAddColor2DrawPacket(data.gameObject, r, g, b);
+                if (data.weapon_geo)
+                    GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
             }
             else if (CheckStatus(data, BattleStatus.Shell | BattleStatus.Protect))
             {
@@ -801,18 +816,27 @@ public static class btl_stat
                 }
                 else if ((status & BattleStatus.Doom) != 0)
                 {
-                    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                    if (CheckStatus(btl, BattleStatus.EasyKill))
                     {
                         if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Add 2 random status at the end of countdown.
                         {
-                            BattleStatus[] statuschoosen = { BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
-                            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Virus};
+                            List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
+                            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
+                            BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
+
+                            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
+                            {
+                                if ((statuschoosen[i] & btl.stat.invalid) != 0)
+                                {
+                                    statuschoosen.Remove(statuschoosen[i]);
+                                }
+                            }
 
                             for (Int32 i = 0; i < 2; i++)
                             {
-                                btl_stat.AlterStatus(btl, statuschoosen[GameRandom.Next16() % (statuschoosen.Length)]);
+                                AlterStatus(btl, statuschoosen[GameRandom.Next16() % statuschoosen.Count]);
                             }
-                            btl_stat.RemoveStatus(btl, status);
+                            RemoveStatus(btl, status);
                         }
                         else
                         {
