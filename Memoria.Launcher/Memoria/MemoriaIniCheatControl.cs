@@ -361,11 +361,6 @@ namespace Memoria.Launcher
                     if (!String.IsNullOrEmpty(value))
                         break;
                 }
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = "30";
-                    //OnPropertyChanged(nameof(SharedFPS));
-                }
 
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(GarnetConcentrate));

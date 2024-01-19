@@ -54,7 +54,7 @@ namespace Memoria.Launcher
             optionsText.Foreground = Brushes.White;
             optionsText.FontSize = 14;
             optionsText.FontWeight = FontWeights.Bold;
-            optionsText.Margin = new Thickness(8, 2, 3, 10);*/
+            optionsText.Margin = rowMargin;*/
             Int32 row = 0;
 
             UiCheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row++, 0, 1, 8);
@@ -92,6 +92,11 @@ namespace Memoria.Launcher
             battleInterfaceBox.Height = 20;
             battleInterfaceBox.FontSize = 10;
             battleInterfaceBox.Margin = rowMargin;
+
+            UiCheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), row++, 0, 1, 8);
+            isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
+            isSkipIntros.Foreground = Brushes.White;
+            isSkipIntros.Margin = rowMargin;
 
             /*UiTextBlock battleSwirlFramesText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SkipBattleLoading), row++, 0, 1, 8);
             battleSwirlFramesText.Foreground = Brushes.White;
@@ -316,6 +321,23 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 SkipIntros
+        {
+            get { return _isskipintros; }
+            set
+            {   
+                if (_isskipintros == 0)
+                {
+                    _isskipintros = 3;
+                    OnPropertyChanged();
+                }
+                else if (_isskipintros != value)
+                {
+                    _isskipintros = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 HideCards
         {
             get { return _ishidecards; }
@@ -461,7 +483,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -489,11 +511,12 @@ namespace Memoria.Launcher
                     OnPropertyChanged(nameof(WidescreenSupport));
                 }
                 if (!Int16.TryParse(value, out _iswidescreensupport))
-                    _iswidescreensupport = 1; 
+                    _iswidescreensupport = 1;
+                value = null;
                 if (String.IsNullOrEmpty(value))
                 {
                     value = "30";
-                    //OnPropertyChanged(nameof(SharedFPS));
+                    OnPropertyChanged(nameof(SharedFPS));
                 }
                 if (!Int16.TryParse(value, out _sharedfps))
                     _sharedfps = 30;
@@ -513,6 +536,15 @@ namespace Memoria.Launcher
                     _battleInterface = 1;
                 else
                     _battleInterface = 0;
+
+                value = iniFile.ReadValue("Graphics", nameof(SkipIntros));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = "0";
+                    OnPropertyChanged(nameof(SkipIntros));
+                }
+                if (!Int16.TryParse(value, out _isskipintros))
+                    _isskipintros = 0;
 
                 value = iniFile.ReadValue("Icons", nameof(HideCards));
                 if (String.IsNullOrEmpty(value))
@@ -582,6 +614,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(WidescreenSupport));
                 Refresh(nameof(SharedFPS));
                 Refresh(nameof(BattleInterface));
+                Refresh(nameof(SkipIntros));
                 Refresh(nameof(HideCards));
                 Refresh(nameof(Speed));
                 Refresh(nameof(TripleTriad));
@@ -686,6 +719,17 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Interface", "BattleRowCount", " " + (BattleInterface == 2 ? 4 : 5));
                         iniFile.WriteValue("Interface", "BattleColumnCount", " " + (BattleInterface == 2 ? 1 : 1));
                         iniFile.WriteValue("Interface", "PSXBattleMenu", " " + (BattleInterface == 2 ? 1 : 0));
+                        break;
+                    case nameof(SkipIntros):
+                        if (SkipIntros == 3)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName, " 3");
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        }
+                        else if (SkipIntros == 0)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName, " 0");
+                        }
                         break;
                     case nameof(HideCards):
                         iniFile.WriteValue("Icons", propertyName, " " + HideCards);

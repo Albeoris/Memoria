@@ -44,7 +44,7 @@ namespace Memoria.Launcher
                 _validSamplingFrequency.Add(frequency);
 
             SetRows(28);
-            SetCols(4);
+            SetCols(8);
             
             Width = 240;
             VerticalAlignment = VerticalAlignment.Top;
@@ -54,20 +54,20 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(0, 7, 0, 3);
             
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 4).Margin = rowMargin;
-            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 4);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
+            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
             monitor.ItemsSource = GetAvailableMonitors();
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 4).Margin = rowMargin;
-            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 4);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
+            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 8);
             windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
             windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
             windowMode.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
-            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 2, rowSpan: 3, colSpan: 2);
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
+            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
             resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
@@ -83,27 +83,22 @@ namespace Memoria.Launcher
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;*/
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 2);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 4);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 1, 3, 3);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 3, 3, 5);
             debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
 
-            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 4);
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 8);
             checkUpdates.Margin = rowMargin;
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
             
-            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 4);
+            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 8);
             steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
-
-            UiCheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), 22, 0, 3, 4);
-            isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
-            isSkipIntros.Foreground = Brushes.White;
-            isSkipIntros.Margin = rowMargin;
 
             foreach (FrameworkElement child in Children)
             {
@@ -330,23 +325,6 @@ namespace Memoria.Launcher
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
             }
         }
-        public Int16 SkipIntros
-        {
-            get { return _isskipintros; }
-            set
-            {
-                if (_isskipintros == 0)
-                {
-                    _isskipintros = 3;
-                    OnPropertyChanged();
-                }
-                else if (_isskipintros != value)
-                {
-                    _isskipintros = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         public Boolean AutoRunGame { get; private set; }
 
@@ -356,17 +334,6 @@ namespace Memoria.Launcher
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private async void Refresh([CallerMemberName] String propertyName = null)
-        {
-            try
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-            catch (Exception ex)
-            {
-                UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
-        }
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
             try
@@ -404,18 +371,7 @@ namespace Memoria.Launcher
                             }
                         }
                         break;
-                        }
-                    case nameof(SkipIntros):
-                        if (SkipIntros == 3)
-                        {
-                            iniFile.WriteValue("Graphics", propertyName, " 3");
-                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        }
-                        else if (SkipIntros == 0)
-                        {
-                            iniFile.WriteValue("Graphics", propertyName, " 0");
-                        }
-                        break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -431,11 +387,10 @@ namespace Memoria.Launcher
 
         private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
 
-        private Int16 _isskipintros;
         private String _resolution = "1280x960";
         private String _activeMonitor = "";
         private String _windowMode = "";
-        private UInt16 _audioFrequency = 32000;
+        private UInt16 _audioFrequency = 44100;
         private Boolean _audioFrequencyEnabled = true;
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
@@ -487,7 +442,7 @@ namespace Memoria.Launcher
                 Boolean? x86SamplingReaded = TryReadAudioSamplingFrequency(@"x86\FF9_Data\Plugins\SdLib.dll", out x86SamplingFrequency);
                 if (x64SamplingReaded != true && x86SamplingReaded != true)
                 {
-                    _audioFrequency = 32000;
+                    _audioFrequency = 44100;
                     _audioFrequencyEnabled = false;
                 }
                 else
@@ -549,15 +504,6 @@ namespace Memoria.Launcher
                     _downloadMirrors = value.Split(',');
                 }
 
-                value = iniFile.ReadValue("Graphics", nameof(SkipIntros));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = "0";
-                    OnPropertyChanged(nameof(SkipIntros));
-                }
-                if (!Int16.TryParse(value, out _isskipintros))
-                    _isskipintros = 0;
-
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(WindowMode));
@@ -568,7 +514,6 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
-                Refresh(nameof(SkipIntros));
             }
             catch (Exception ex)
             {
