@@ -267,7 +267,7 @@ namespace Memoria.Launcher
                 String value = iniFile.ReadValue("Hacks", nameof(StealingAlwaysWorks));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(StealingAlwaysWorks));
                 }
                 if (!Int16.TryParse(value, out _stealingalwaysworks))
@@ -276,7 +276,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Battle", nameof(GarnetConcentrate));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(GarnetConcentrate));
                 }
                 if (!Int16.TryParse(value, out _garnetconcentrate))
@@ -285,7 +285,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Battle", nameof(BreakDamageLimit));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(BreakDamageLimit));
                 }
                 if (!Int16.TryParse(value, out _breakDamageLimit))
@@ -294,7 +294,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Battle", "AccessMenus");
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(AccessBattleMenu));
                 }
                 if (!Int16.TryParse(value, out _accessBattleMenu))
@@ -303,7 +303,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Cheats", nameof(SpeedMode));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(SpeedMode));
                 }
                 if (!Int16.TryParse(value, out _speedmode))
@@ -312,7 +312,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Cheats", nameof(SpeedFactor));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "2";
+                    value = " 2";
                     OnPropertyChanged(nameof(SpeedFactor));
                 }
                 if (!Int16.TryParse(value, out _speedfactor))
@@ -321,7 +321,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(BattleAssistance));
                 }
                 if (!Int16.TryParse(value, out _battleassistance))
@@ -330,7 +330,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Cheats", nameof(Attack9999));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(Attack9999));
                 }
                 if (!Int16.TryParse(value, out _attack9999))
@@ -339,7 +339,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Cheats", nameof(NoRandomEncounter));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(NoRandomEncounter));
                 }
                 if (!Int16.TryParse(value, out _norandomencounter))
@@ -348,7 +348,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Cheats", nameof(MasterSkill));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(MasterSkill));
                 }
                 if (!Int16.TryParse(value, out _masterskill))
@@ -400,64 +400,64 @@ namespace Memoria.Launcher
                 switch (propertyName)
                 {
                     case nameof(StealingAlwaysWorks):
-                        iniFile.WriteValue("Hacks", propertyName, " " + StealingAlwaysWorks);
+                        iniFile.WriteValue("Hacks", propertyName + " ", " " + StealingAlwaysWorks);
                         if (StealingAlwaysWorks == 0)
                         {
-                            iniFile.WriteValue("Hacks", propertyName, " 0");
+                            iniFile.WriteValue("Hacks", propertyName + " ", " 0");
                         }
                         else if (StealingAlwaysWorks == 1)
                         {
-                            iniFile.WriteValue("Hacks", "Enabled", " 1");
-                            iniFile.WriteValue("Hacks", propertyName, " 2");
+                            iniFile.WriteValue("Hacks", "Enabled ", " 1");
+                            iniFile.WriteValue("Hacks", propertyName + " ", " 2");
                         }
                         break;
                     case nameof(GarnetConcentrate):
-                        iniFile.WriteValue("Battle", propertyName, " " + GarnetConcentrate);
+                        iniFile.WriteValue("Battle", propertyName + " ", " " + GarnetConcentrate);
                         if (GarnetConcentrate == 1)
-                            iniFile.WriteValue("Battle", "Enabled", " 1");
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
                         break;
                     case nameof(BreakDamageLimit):
-                        iniFile.WriteValue("Battle", propertyName, " " + BreakDamageLimit);
+                        iniFile.WriteValue("Battle", propertyName + " ", " " + BreakDamageLimit);
                         if (BreakDamageLimit == 1)
-                            iniFile.WriteValue("Battle", "Enabled", " 1");
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
                         break;
                     case nameof(AccessBattleMenu):
-                        iniFile.WriteValue("Battle", "AccessMenus", " " + AccessBattleMenu);
-                        iniFile.WriteValue("Battle", "AvailableMenus", AvailableBattleMenus);
+                        iniFile.WriteValue("Battle", "AccessMenus ", " " + AccessBattleMenu);
+                        iniFile.WriteValue("Battle", "AvailableMenus ", AvailableBattleMenus);
                         if (AccessBattleMenu > 0)
-                            iniFile.WriteValue("Battle", "Enabled", " 1");
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
                         break;
                     case nameof(SpeedMode):
-                        iniFile.WriteValue("Cheats", propertyName, " " + SpeedMode);
+                        iniFile.WriteValue("Cheats", propertyName + " ", " " + SpeedMode);
                         if (SpeedMode == 1)
-                            iniFile.WriteValue("Cheats", "Enabled", " 1");
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
                         break;
                     case nameof(SpeedFactor):
                         if (SpeedFactor < 13)
-                            iniFile.WriteValue("Cheats", propertyName, " " + SpeedFactor);
+                            iniFile.WriteValue("Cheats", propertyName + " ", " " + SpeedFactor);
                         break;
                     case nameof(BattleAssistance):
-                        iniFile.WriteValue("Cheats", propertyName, " " + BattleAssistance);
-                        iniFile.WriteValue("Cheats", "Attack9999", " " + BattleAssistance); // Merged
+                        iniFile.WriteValue("Cheats", propertyName + " ", " " + BattleAssistance);
+                        iniFile.WriteValue("Cheats", "Attack9999 ", " " + BattleAssistance); // Merged
                         if (BattleAssistance == 1)
-                            iniFile.WriteValue("Cheats", "Enabled", " 1");
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
                         break;
                     case nameof(Attack9999):
-                        iniFile.WriteValue("Cheats", propertyName, " " + Attack9999);
+                        iniFile.WriteValue("Cheats", propertyName + " ", " " + Attack9999);
                         if (Attack9999 == 1)
-                            iniFile.WriteValue("Cheats", "Enabled", " 1");
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
                         break;
                     case nameof(NoRandomEncounter):
-                        iniFile.WriteValue("Cheats", propertyName, " " + NoRandomEncounter);
+                        iniFile.WriteValue("Cheats", propertyName + " ", " " + NoRandomEncounter);
                         if (NoRandomEncounter == 1)
-                            iniFile.WriteValue("Cheats", "Enabled", " 1");
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
                         break;
                     case nameof(MasterSkill):
-                        iniFile.WriteValue("Cheats", propertyName, " " + MasterSkill);
-                        iniFile.WriteValue("Cheats", "LvMax", " " + MasterSkill);
-                        iniFile.WriteValue("Cheats", "GilMax", " " + MasterSkill);
+                        iniFile.WriteValue("Cheats", propertyName + " ", " " + MasterSkill);
+                        iniFile.WriteValue("Cheats", "LvMax ", " " + MasterSkill);
+                        iniFile.WriteValue("Cheats", "GilMax ", " " + MasterSkill);
                         if (MasterSkill == 1)
-                            iniFile.WriteValue("Cheats", "Enabled", " 1");
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
                         break;
                 }
             }

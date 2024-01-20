@@ -507,7 +507,7 @@ namespace Memoria.Launcher
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "1";
+                    value = " 1";
                     OnPropertyChanged(nameof(WidescreenSupport));
                 }
                 if (!Int16.TryParse(value, out _iswidescreensupport))
@@ -515,7 +515,7 @@ namespace Memoria.Launcher
                 value = null;
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "30";
+                    value = " 30";
                     OnPropertyChanged(nameof(SharedFPS));
                 }
                 if (!Int16.TryParse(value, out _sharedfps))
@@ -540,7 +540,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Graphics", nameof(SkipIntros));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(SkipIntros));
                 }
                 if (!Int16.TryParse(value, out _isskipintros))
@@ -549,7 +549,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Icons", nameof(HideCards));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(HideCards));
                 }
                 if (!Int16.TryParse(value, out _ishidecards))
@@ -558,7 +558,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Battle", nameof(Speed));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(Speed));
                 }
                 if (!Int16.TryParse(value, out _speed))
@@ -569,7 +569,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("TetraMaster", nameof(TripleTriad));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "0";
+                    value = " 0";
                     OnPropertyChanged(nameof(TripleTriad));
                 }
                 if (!Int16.TryParse(value, out _tripleTriad))
@@ -578,7 +578,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "115";
+                    value = " 115";
                     OnPropertyChanged(nameof(BattleSwirlFrames));
                 }
                 if (!Int16.TryParse(value, out _battleswirlframes))
@@ -587,7 +587,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Audio", nameof(SoundVolume));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "100";
+                    value = " 100";
                     OnPropertyChanged(nameof(SoundVolume));
                 }
                 if (!Int16.TryParse(value, out _soundvolume))
@@ -596,7 +596,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Audio", nameof(MusicVolume));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "100";
+                    value = " 100";
                     OnPropertyChanged(nameof(MusicVolume));
                 }
                 if (!Int16.TryParse(value, out _musicvolume))
@@ -605,7 +605,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Audio", nameof(MovieVolume));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = "100";
+                    value = " 100";
                     OnPropertyChanged(nameof(MovieVolume));
                 }
                 if (!Int16.TryParse(value, out _movievolume))
@@ -652,7 +652,7 @@ namespace Memoria.Launcher
                     value = iniFile.ReadValue("Graphics", nameof(ScaledBattleUI));
                     if (String.IsNullOrEmpty(value))
                     {
-                        value = "1";
+                        value = " 1";
                         OnPropertyChanged(nameof(ScaledBattleUI));
                     }
                     if (!Int16.TryParse(value, out _scaledbattleui))
@@ -662,7 +662,7 @@ namespace Memoria.Launcher
                     value = iniFile.ReadValue("Graphics", nameof(ScaleUIFactor));
                     if (String.IsNullOrEmpty(value))
                     {
-                        value = "0.6";
+                        value = " 0.6";
                         OnPropertyChanged(nameof(ScaleUIFactor));
                     }
                     if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _scaledbattleuiscale))
@@ -697,71 +697,72 @@ namespace Memoria.Launcher
                 switch (propertyName)
                 {
                     case nameof(WidescreenSupport):
-                        iniFile.WriteValue("Graphics", propertyName, " " + WidescreenSupport.ToString());
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + WidescreenSupport.ToString());
                         if (WidescreenSupport == 1)
-                            iniFile.WriteValue("Graphics", "Enabled", " 1");
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
                     case nameof(SharedFPS):
-                        iniFile.WriteValue("Graphics", "BattleFPS", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "FieldFPS", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "WorldFPS", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "Enabled", " 1");
+                        iniFile.WriteValue("Graphics", "BattleFPS ", " " + SharedFPS);
+                        iniFile.WriteValue("Graphics", "FieldFPS ", " " + SharedFPS);
+                        iniFile.WriteValue("Graphics", "WorldFPS ", " " + SharedFPS);
+                        iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
                     case nameof(BattleInterface):
-                        iniFile.WriteValue("Interface", "BattleMenuPosX", " " + (Int32)BattleInterfaceMenu.X);
-                        iniFile.WriteValue("Interface", "BattleMenuPosY", " " + (Int32)BattleInterfaceMenu.Y);
-                        iniFile.WriteValue("Interface", "BattleMenuWidth", " " + (Int32)BattleInterfaceMenu.Width);
-                        iniFile.WriteValue("Interface", "BattleMenuHeight", " " + (Int32)BattleInterfaceMenu.Height);
-                        iniFile.WriteValue("Interface", "BattleDetailPosX", " " + (Int32)BattleInterfaceDetail.X);
-                        iniFile.WriteValue("Interface", "BattleDetailPosY", " " + (Int32)BattleInterfaceDetail.Y);
-                        iniFile.WriteValue("Interface", "BattleDetailWidth", " " + (Int32)BattleInterfaceDetail.Width);
-                        iniFile.WriteValue("Interface", "BattleDetailHeight", " " + (Int32)BattleInterfaceDetail.Height);
-                        iniFile.WriteValue("Interface", "BattleRowCount", " " + (BattleInterface == 2 ? 4 : 5));
-                        iniFile.WriteValue("Interface", "BattleColumnCount", " " + (BattleInterface == 2 ? 1 : 1));
-                        iniFile.WriteValue("Interface", "PSXBattleMenu", " " + (BattleInterface == 2 ? 1 : 0));
+                        iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
+                        iniFile.WriteValue("Interface", "BattleMenuPosY ", " " + (Int32)BattleInterfaceMenu.Y);
+                        iniFile.WriteValue("Interface", "BattleMenuWidth ", " " + (Int32)BattleInterfaceMenu.Width);
+                        iniFile.WriteValue("Interface", "BattleMenuHeight ", " " + (Int32)BattleInterfaceMenu.Height);
+                        iniFile.WriteValue("Interface", "BattleDetailPosX ", " " + (Int32)BattleInterfaceDetail.X);
+                        iniFile.WriteValue("Interface", "BattleDetailPosY ", " " + (Int32)BattleInterfaceDetail.Y);
+                        iniFile.WriteValue("Interface", "BattleDetailWidth ", " " + (Int32)BattleInterfaceDetail.Width);
+                        iniFile.WriteValue("Interface", "BattleDetailHeight ", " " + (Int32)BattleInterfaceDetail.Height);
+                        iniFile.WriteValue("Interface", "BattleRowCount ", " " + (BattleInterface == 2 ? 4 : 5));
+                        iniFile.WriteValue("Interface", "BattleColumnCount ", " " + (BattleInterface == 2 ? 1 : 1));
+                        iniFile.WriteValue("Interface", "PSXBattleMenu ", " " + (BattleInterface == 2 ? 1 : 0));
                         break;
                     case nameof(SkipIntros):
                         if (SkipIntros == 3)
                         {
-                            iniFile.WriteValue("Graphics", propertyName, " 3");
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 3");
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         }
                         else if (SkipIntros == 0)
                         {
-                            iniFile.WriteValue("Graphics", propertyName, " 0");
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 0");
                         }
                         break;
                     case nameof(HideCards):
-                        iniFile.WriteValue("Icons", propertyName, " " + HideCards);
-                        iniFile.WriteValue("Icons", "HideBeach", " " + HideCards); // Merged
-                        iniFile.WriteValue("Icons", "HideSteam", " " + HideCards); // Merged
+                        iniFile.WriteValue("Icons", propertyName + " ", " " + HideCards);
+                        iniFile.WriteValue("Icons", "HideBeach ", " " + HideCards); // Merged
+                        iniFile.WriteValue("Icons", "HideSteam ", " " + HideCards); // Merged
                         if (HideCards == 1)
                             iniFile.WriteValue("Icons", "Enabled ", " 1");
                         break;
                     case nameof(Speed):
-                        iniFile.WriteValue("Battle", propertyName, " " + (Speed < 3 ? Speed : 5));
+                        iniFile.WriteValue("Battle", propertyName + " ", " " + (Speed < 3 ? Speed : 5));
                         if (Speed != 0)
                             iniFile.WriteValue("Battle", "Enabled ", " 1");
                         break;
                     case nameof(TripleTriad):
-                        iniFile.WriteValue("TetraMaster", propertyName, " " + TripleTriad);
+                        iniFile.WriteValue("TetraMaster", propertyName + " ", " " + TripleTriad);
                         if (TripleTriad > 0)
-                            iniFile.WriteValue("TetraMaster", "Enabled", " 1");
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
                         break;
                     case nameof(BattleSwirlFrames):
-                        iniFile.WriteValue("Graphics", propertyName, " " + BattleSwirlFrames);
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + BattleSwirlFrames);
+                        iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
                     case nameof(SoundVolume):
-                        iniFile.WriteValue("Audio", propertyName, " " + SoundVolume);
+                        iniFile.WriteValue("Audio", propertyName + " ", " " + SoundVolume);
                         break;
                     case nameof(MusicVolume):
-                        iniFile.WriteValue("Audio", propertyName, " " + MusicVolume);
+                        iniFile.WriteValue("Audio", propertyName + " ", " " + MusicVolume);
                         break;
                     case nameof(MovieVolume):
-                        iniFile.WriteValue("Audio", propertyName, " " + MovieVolume);
+                        iniFile.WriteValue("Audio", propertyName + " ", " " + MovieVolume);
                         break;
                     case nameof(UseGarnetFont):
-                        iniFile.WriteValue("Graphics", propertyName, " " + UseGarnetFont);
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + UseGarnetFont);
                         if (UseGarnetFont == 1)
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
@@ -771,21 +772,21 @@ namespace Memoria.Launcher
                         else if (FontChoice.CompareTo(_fontDefaultPSX) == 0)
                         {
                             iniFile.WriteValue("Font", "Enabled ", " 1");
-                            iniFile.WriteValue("Font", "Names", " \"Alexandria\", \"Garnet\"");
+                            iniFile.WriteValue("Font", "Names ", " \"Alexandria\", \"Garnet\"");
                         }
                         else
                         {
                             iniFile.WriteValue("Font", "Enabled ", " 1");
-                            iniFile.WriteValue("Font", "Names", " \"" + FontChoice + "\", \"Times Bold\"");
+                            iniFile.WriteValue("Font", "Names ", " \"" + FontChoice + "\", \"Times Bold\"");
                         }
                         break;
                     case nameof(ScaledBattleUI):
-                        iniFile.WriteValue("Graphics", propertyName, " " + ScaledBattleUI);
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + ScaledBattleUI);
                         if (ScaledBattleUI == 1)
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
                     case nameof(ScaleUIFactor):
-                        iniFile.WriteValue("Graphics", propertyName, " " + ScaleUIFactor.ToString().Replace(',', '.'));
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + ScaleUIFactor.ToString().Replace(',', '.'));
                         break;
                 }
             }
