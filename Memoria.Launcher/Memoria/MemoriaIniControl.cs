@@ -328,7 +328,7 @@ namespace Memoria.Launcher
             {   
                 if (_isskipintros == 0)
                 {
-                    _isskipintros = 3;
+                    _isskipintros = 2;
                     OnPropertyChanged();
                 }
                 else if (_isskipintros != value)
@@ -721,9 +721,9 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Interface", "PSXBattleMenu ", " " + (BattleInterface == 2 ? 1 : 0));
                         break;
                     case nameof(SkipIntros):
-                        if (SkipIntros == 3)
+                        if (SkipIntros == 2)
                         {
-                            iniFile.WriteValue("Graphics", propertyName + " ", " 3");
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 2");
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         }
                         else if (SkipIntros == 0)
