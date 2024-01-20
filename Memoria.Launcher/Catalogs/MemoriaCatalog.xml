@@ -21,6 +21,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<!-- Download URL: https://www.moddb.com/downloads/mirror/216757/122/3381820ec0869d559baf7ca59abcc388 -->
 	<CompatibilityNotes>In most situations, it is better to keep 'MoguriFiles' at the lowest priority</CompatibilityNotes>
+	<PreviewFileUrl>https://i.imgur.com/nddT44g.jpg</PreviewFileUrl>
 </Mod>
 
 <Mod>
@@ -103,7 +104,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Name>Garnet is Main Character</Name>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
 	<Author>piano221</Author>
-	<ReleaseDate>5 Apr 2021</ReleaseDate>
+	<ReleaseDate>2021-04-05</ReleaseDate>
 	<Description>This mod allow you to change Zidane for Garnet as the field main character.</Description>
 	<Category>Character Swap</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20605.0</Website>
@@ -116,7 +117,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Version>0.5</Version>
 	<InstallationPath>FreyaGamePlus</InstallationPath>
 	<Author>ChikoLad</Author>
-	<ReleaseDate>30 Jul 2020</ReleaseDate>
+	<ReleaseDate>2020-07-30</ReleaseDate>
 	<Description>Freya Game+ is a Final Fantasy IX mod that allows you to have Freya in your party at almost all times throughout the game.
 This mod removes the need to do any save editing or setting personal restrictions if you want to do a Freya Solo Run.
 
@@ -133,7 +134,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Version>0.1</Version>
 	<InstallationPath>PlayAsKuja</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>17 Apr 2021</ReleaseDate>
+	<ReleaseDate>2021-04-17</ReleaseDate>
 	<PatchNotes>Requires Memoria between v2021.05.10 and v2022.09.09 to work in battles</PatchNotes>
 	<Description>Turn Zidane's 3D model on the field and in battles into Kuja's 3D model.
 The animations on the field are messed up.
@@ -149,7 +150,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<Version>1.1</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>28 Sep 2023</ReleaseDate>
+	<ReleaseDate>2023-09-28</ReleaseDate>
 	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
 	<Description>Add Kuja, Fratley and Lani as playable characters.
 You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
@@ -175,7 +176,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<Name>David Bowie Edition</Name>
 	<InstallationPath>DavidBowie</InstallationPath>
 	<Author>Clem Fandango</Author>
-	<ReleaseDate>18 Mar 2020</ReleaseDate>
+	<ReleaseDate>2020-03-18</ReleaseDate>
 	<Description>Final Fantasy IX: David Bowie Edition (DBE) is a gameplay mod that is meant to function as a rebalance, or better yet a remix of the original game. This mod includes new skills, items, enemy behavior, Chocograph rewards and a number of smaller tweaks.</Description>
 	<Category>Gameplay</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=19499.0</Website>
@@ -186,7 +187,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<Name>Mog Add-ons</Name>
 	<Version>3.3</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>01 December 2023, 1:56PM</ReleaseDate>
+	<ReleaseDate>2023-12-01</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>UI, Buttons , Portraits, Tweaks and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
 :: Features ::
@@ -202,10 +203,9 @@ Use the Mod Manager UI to activate each submods you like and pick
 :: Compatibility ::
 - Compatible with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
-	</Description>
-	<PatchNotes>
 Requires Memoria v2023.06.11
-::3.3 ::
+	</Description>
+	<PatchNotes>::3.3 ::
 -Added 4x AP gain
 -Added 99 AP gain
 -Added 2x+ EXP gain
@@ -356,7 +356,7 @@ Requires Memoria v2023.06.11
 	<Name>High-Res Chocographs</Name>
 	<InstallationPath>HDChocographs</InstallationPath>
 	<Author>Caledor</Author>
-	<ReleaseDate>12 May 2021</ReleaseDate>
+	<ReleaseDate>2021-05-12</ReleaseDate>
 	<Description>Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.
 (English layout only)</Description>
 	<Category>Visual</Category>
@@ -370,7 +370,7 @@ Requires Memoria v2023.06.11
 	<Name>Tweaked Portraits</Name>
 	<InstallationPath>TweakedPortraits</InstallationPath>
 	<Author>Lykon</Author>
-	<ReleaseDate>16 May 2020</ReleaseDate>
+	<ReleaseDate>2020-05-16</ReleaseDate>
 	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
 	<Category>Visual</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=19964.0</Website>
