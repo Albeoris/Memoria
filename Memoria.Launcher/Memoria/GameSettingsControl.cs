@@ -68,7 +68,7 @@ namespace Memoria.Launcher
 
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
             UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
-            resolution.ItemsSource = EnumerateDisplaySettings().ToArray();
+            resolution.ItemsSource = EnumerateDisplaySettings().ToArray().Reverse();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
@@ -692,6 +692,10 @@ namespace Memoria.Launcher
                 if (devMode.dmPelsWidth >= 640 && devMode.dmPelsHeight >= 480)
                 {
                     String result = $"{devMode.dmPelsWidth.ToString(CultureInfo.InvariantCulture)}x{devMode.dmPelsHeight.ToString(CultureInfo.InvariantCulture)}";
+                    if ((devMode.dmPelsWidth / 16) == (devMode.dmPelsHeight / 9))
+                    {
+                        result = $"{devMode.dmPelsWidth.ToString(CultureInfo.InvariantCulture)}x{devMode.dmPelsHeight.ToString(CultureInfo.InvariantCulture)} (HD)";
+                    }
                     if (set.Add(result))
                         yield return result;
                 }
