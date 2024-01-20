@@ -830,12 +830,12 @@
                                 x:Name="PreviewModName"
                                 MinWidth="20"
                                 Style="{StaticResource ModTitleStyle}"
-                                Text="Moguri Mod" />
+                                Text="" />
                             <TextBlock
                                 x:Name="PreviewModVersion"
                                 Margin="0"
                                 Style="{StaticResource ModVersionStyle}"
-                                Text="v3.3" />
+                                Text="" />
                             </WrapPanel>
                     </ScrollViewer>
                     <ScrollViewer
@@ -884,7 +884,7 @@
                                 <TextBlock
                                 x:Name="PreviewModAuthor"
                                 Style="{StaticResource ModInfoDetailsStyle}"
-                                Text="Snouz" />
+                                Text="" />
 
                             </WrapPanel>
 
@@ -940,11 +940,7 @@
                                 x:Name="PreviewModDescription"
                                 Style="{StaticResource ModInfoDetailsStyle}"
                                 Margin="0,0,6,0"
-                                Text="- Não foram traduzidos os nomes dos Itens, equipa- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-- Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.mentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-- Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-- Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-- Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar." />
+                                Text="" />
                             </WrapPanel>
                             <WrapPanel
                             x:Name="PreviewSubModPanel"
@@ -1023,18 +1019,13 @@
                                         x:Name="PreviewModRelease" 
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         Margin="5"
-                                        Text="2024-01-15" />
+                                        Text="" />
                                     </DockPanel>
                                         <TextBlock
                                         x:Name="PreviewModReleaseNotes"
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         Margin="5,0,5,5"
-                                        Text="Informações Importantes
-    - Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e inicia- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-    - Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.ntes.
-    - Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usa- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-    - Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.r.- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
-    - Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar." />
+                                        Text="" />
                             
                             </WrapPanel>
                             </ScrollViewer>
