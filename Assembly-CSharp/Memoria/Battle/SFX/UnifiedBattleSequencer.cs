@@ -52,17 +52,10 @@ public static class UnifiedBattleSequencer
 
 	public static void LoopRender()
 	{
-		try
-		{
-			SFXChannel.Render();
-			for (Int32 i = 0; i < runningActions.Count; i++)
-				runningActions[i].Render();
-			SFXData.RenderEventSFX();
-		}
-		catch (Exception err)
-		{
-			Log.Error(err);
-		}
+		SFXChannel.Render();
+		for (Int32 i = 0; i < runningActions.Count; i++)
+			runningActions[i].Render();
+		SFXData.RenderEventSFX();
 	}
 
 	private static void ReleaseRunningAction(Int32 index)
