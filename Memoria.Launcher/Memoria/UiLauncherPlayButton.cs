@@ -63,7 +63,7 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                String[] strArray = GameSettings.ScreenResolution.Split('x');
+                String[] strArray = GameSettings.ScreenResolution.Split(' ')[0].Split('x');
                 Int32 screenWidth;
                 Int32 screenHeight;
                 if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
