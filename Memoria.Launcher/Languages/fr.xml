@@ -53,7 +53,7 @@
 			SkipBattleLoading = "Frames avant les combats"
 			HideCardsBubbles = " Cacher les bulles 'cartes'"
 			HideSteamBubbles = " Afficher uniquement les bulles PSX"
-      HideSteamBubblesTooltip = "Désactive les bulles 'cartes', 'plage'&#xA;ainsi que les bulles d'interaction avec les PNJ"
+			HideSteamBubblesTooltip = "Désactive les bulles 'cartes', 'plage'&#xA;ainsi que les bulles d'interaction avec les PNJ"
 			TurnBasedBattles = " Combat au tour-par-tour"
 			SpeedChoice = "Mode ATB"
 			SpeedChoiceType0 = "Normal"
@@ -62,7 +62,7 @@
 			SpeedChoiceType3 = "Dynamique (1)"
 			SpeedChoiceType4 = "Dynamique (2)"
 			SpeedChoiceType5 = "Dynamique"
-      SpeedChoiceTooltip = "Normal : mode par défaut&#xA;Rapide : l'ATB se remplit immédiatement pendant les moments d'attente&#xA;Tour par tour : l'ATB se bloque à chaque tour d'un personnage&#xA;Dynamique : les personnages et les ennemis peuvent agir simultanément"
+			SpeedChoiceTooltip = "Normal : mode par défaut&#xA;Rapide : l'ATB se remplit immédiatement pendant les moments d'attente&#xA;Tour par tour : l'ATB se bloque à chaque tour d'un personnage&#xA;Dynamique : les personnages et les ennemis peuvent agir simultanément"
 			TripleTriad = "Cartes"
 			TripleTriadType0 = "Tetra Master"
 			TripleTriadType1 = "Tetra Triad"
@@ -80,7 +80,7 @@
 			AccessBattleMenuType1 = "Accès limité"
 			AccessBattleMenuType2 = "Accès individuel"
 			AccessBattleMenuType3 = "Accès illimité"
-      AccessBattleMenuTooltip = "Si la commande 'Menu' n'apparait pas, accédez au menu&#xA;avec la touche △/Y depuis la commande des objets&#xA;En accès limité, l'utilisation du menu coûte un tour"
+			AccessBattleMenuTooltip = "Si la commande 'Menu' n'apparait pas, accédez au menu&#xA;avec la touche △/Y depuis la commande des objets&#xA;En accès limité, l'utilisation du menu coûte un tour"
 			SpeedMode = " Mode rapide | F1"
 			SpeedFactor = "Vit."
 			BattleAssistance = " Aide au combat | F2 F3"
@@ -180,8 +180,8 @@
 				>
 
 			<Ykd
-					ResourceRemovingTitle = "Removing"
-					ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
+				ResourceRemovingTitle = "Removing"
+				ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
 					/>
 
 		</GameFilePreview>

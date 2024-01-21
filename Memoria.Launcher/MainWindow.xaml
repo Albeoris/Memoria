@@ -23,7 +23,7 @@
             x:Name="GameSettings"
             Width="240"
             Height="auto"
-            Margin="27,0,0,22"
+            Margin="25,0,0,24"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
@@ -33,7 +33,7 @@
         <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
             Width="240"
             Height="auto"
-            Margin="272,0,0,22"
+            Margin="270,0,0,24"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
@@ -51,11 +51,11 @@
             x:Name="MemoriaIniCheatControl"
             Width="240"
             Height="auto"
-            Margin="525,0,0,22"
+            Margin="523,0,0,24"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
-        <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiModManagerButton}}}" Margin="491,30,36,396">
+        <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiModManagerButton}}}" Margin="508,25,19,401">
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
                     <Setter Property="Fill" Value="#bb111111"/>
@@ -66,13 +66,13 @@
             x:Name="PlayButton"
             Width="240"
             Height="72"
-            Margin="0,0,44,451"
+            Margin="0,0,27,456"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" />
         <launcher:UiLauncherModManagerButton
             Width="240"
             Height="36"
-            Margin="0,0,44,407"
+            Margin="0,0,27,412"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Content="" />

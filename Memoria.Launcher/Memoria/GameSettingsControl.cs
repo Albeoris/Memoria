@@ -52,7 +52,7 @@ namespace Memoria.Launcher
             Margin = new Thickness(5);
             DataContext = this;
 
-            Thickness rowMargin = new Thickness(0, 7, 0, 3);
+            Thickness rowMargin = new Thickness(0, 7, 0, 5);
             
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
             UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
