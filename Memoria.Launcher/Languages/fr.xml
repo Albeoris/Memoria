@@ -50,6 +50,7 @@
 			BattleInterfaceType2 = "Modèle PSX"
 			BattleInterfaceTooltip = "Vous pouvez personnaliser l'interface dans le jeu en appuyant sur Alt+F1"
 			SkipIntrosToMainMenu = " Passer les intros > menu"
+			SkipBattleSwirl = " Passer le chargement de combat"
 			SkipBattleLoading = "Frames avant les combats"
 			HideCardsBubbles = " Cacher les bulles 'cartes'"
 			HideSteamBubbles = " Afficher uniquement les bulles PSX"

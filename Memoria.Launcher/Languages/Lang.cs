@@ -163,6 +163,7 @@ namespace Memoria.Launcher
             public static readonly string BattleInterfaceType2 = GetSettings(nameof(BattleInterfaceType2));
             public static readonly string BattleInterfaceTooltip = GetSettings(nameof(BattleInterfaceTooltip));
             public static readonly string SkipIntrosToMainMenu = GetSettings(nameof(SkipIntrosToMainMenu));
+            public static readonly string SkipBattleSwirl = GetSettings(nameof(SkipBattleSwirl));
             public static readonly string SkipBattleLoading = GetSettings(nameof(SkipBattleLoading));
             public static readonly string HideCardsBubbles = GetSettings(nameof(HideCardsBubbles));
             public static readonly string HideSteamBubbles = GetSettings(nameof(HideSteamBubbles));

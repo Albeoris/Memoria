@@ -49,6 +49,7 @@
 			BattleInterfaceType2 = "Модель PSX"
 			BattleInterfaceTooltip = "Вы можете настроить интерфейс в игре, нажав Alt+F1"
 			SkipIntrosToMainMenu = " Пропуск заставки"
+			SkipBattleSwirl = " Время загрузки битвы"
 			SkipBattleLoading = "Время загрузки битвы"
 			HideCardsBubbles = " Скрыть пузыри карт"
 			HideSteamBubbles = " Только пузыри PSX"

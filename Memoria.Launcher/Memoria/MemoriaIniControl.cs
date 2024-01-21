@@ -31,7 +31,7 @@ namespace Memoria.Launcher
         {
             PsxFontInstalled = true || IsOptionPresentInIni("Graphics", "UseGarnetFont");
             SBUIInstalled = false && IsOptionPresentInIni("Graphics", "ScaledBattleUI");
-            Int16 numberOfRows = 12;
+            Int16 numberOfRows = 15;
             if (PsxFontInstalled)
                 numberOfRows += 1;
             if (SBUIInstalled)
@@ -109,9 +109,17 @@ namespace Memoria.Launcher
 
             row++;
 
-            /*UiTextBlock battleSwirlFramesText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SkipBattleLoading), row++, 0, 1, 8);
+            UiCheckBox isSkipBattleSwirl = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipBattleSwirl, null), row, 0, 1, 8);
+            isSkipBattleSwirl.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
+            isSkipBattleSwirl.Foreground = Brushes.White;
+            isSkipBattleSwirl.Margin = rowMargin;
+
+            row++;
+            /*
+            UiTextBlock battleSwirlFramesText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SkipBattleLoading), row, 0, 1, 8);
             battleSwirlFramesText.Foreground = Brushes.White;
             battleSwirlFramesText.Margin = rowMargin;
+            row++;
             UiTextBlock battleSwirlFramesTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 2);
             battleSwirlFramesTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
             battleSwirlFramesTextindex.Foreground = Brushes.White;
@@ -119,12 +127,16 @@ namespace Memoria.Launcher
             Slider battleSwirlFrames = AddUiElement(UiSliderFactory.Create(0), row++, 1, 1, 6);
             battleSwirlFrames.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
             battleSwirlFrames.TickFrequency = 5;
+            */
+
+            /*
             //soundVolumeSlider.TickPlacement = TickPlacement.BottomRight;
             battleSwirlFrames.IsSnapToTickEnabled = true;
             battleSwirlFrames.Minimum = 0;
             battleSwirlFrames.Maximum = 120;
             battleSwirlFrames.Margin = rowMargin;
-            //soundVolumeSlider.Height = 4;*/
+            //soundVolumeSlider.Height = 4;
+            */
 
             UiCheckBox isHideCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.HideSteamBubbles, null), row, 0, 1, 8);
             isHideCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HideCards)) { Mode = BindingMode.TwoWay });
@@ -361,6 +373,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 BattleSwirlFrames
+        {
+            get { return _battleswirlframes; }
+            set
+            {
+                if (_battleswirlframes != value)
+                {
+                    _battleswirlframes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 HideCards
         {
             get { return _ishidecards; }
@@ -397,7 +421,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-        public Int16 BattleSwirlFrames
+        /*public Int16 BattleSwirlFrames
         {
             get { return _battleswirlframes; }
             set
@@ -408,7 +432,7 @@ namespace Memoria.Launcher
                     OnPropertyChanged();
                 }
             }
-        }
+        }*/
         public Int16 SoundVolume
         {
             get { return _soundvolume; }
@@ -569,6 +593,15 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _isskipintros))
                     _isskipintros = 0;
 
+                value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 1";
+                    OnPropertyChanged(nameof(BattleSwirlFrames));
+                }
+                if (!Int16.TryParse(value, out _battleswirlframes))
+                    _battleswirlframes = 1;
+
                 value = iniFile.ReadValue("Icons", nameof(HideCards));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -598,7 +631,7 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _tripleTriad))
                     _tripleTriad = 0;
 
-                value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
+                /*value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 115";
@@ -606,7 +639,7 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _battleswirlframes))
                     _battleswirlframes = 115;
-
+                */
                 value = iniFile.ReadValue("Audio", nameof(SoundVolume));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -772,9 +805,20 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
                         break;
                     case nameof(BattleSwirlFrames):
+                        if (BattleSwirlFrames == 1)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 0");
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        }
+                        else if (BattleSwirlFrames == 0)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 90");
+                        }
+                        break;
+                    /*case nameof(BattleSwirlFrames):
                         iniFile.WriteValue("Graphics", propertyName + " ", " " + BattleSwirlFrames);
                         iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;
+                        break;*/
                     case nameof(SoundVolume):
                         iniFile.WriteValue("Audio", propertyName + " ", " " + SoundVolume);
                         break;
