@@ -12,7 +12,7 @@
 			TByteAbbr = "To"
 			PByteAbbr = "Po"
 			EByteAbbr = "Eo"
-			/>
+	/>
 
 	<Button
 			OK = "OK"
@@ -23,12 +23,12 @@
 			Rollback = "Revenir en arrière"
 			Inject = "Injecter"
 			SaveAs = "Enregistrer sous..."
-			Exit = "F E R M E R"
+			Exit = "FERMER"
 			Exiting = "Fermeture..."
-			Launch = "J O U E R"
+			Launch = "JOUER"
 			Launching = "Lancement..."
-      ModManager = "Mods"
-			/>
+			ModManager = "MOD MANAGER"
+	/>
 
 	<Settings
 			ActiveMonitor = "Écran actif"
@@ -50,10 +50,11 @@
 			BattleInterfaceType2 = "Modèle PSX"
 			BattleInterfaceTooltip = "Vous pouvez personnaliser l'interface dans le jeu en appuyant sur Alt+F1"
 			SkipIntrosToMainMenu = " Passer les intros > menu"
+			SkipBattleSwirl = " Passer le chargement de combat"
 			SkipBattleLoading = "Frames avant les combats"
 			HideCardsBubbles = " Cacher les bulles 'cartes'"
 			HideSteamBubbles = " Afficher uniquement les bulles PSX"
-      HideSteamBubblesTooltip = "Désactive les bulles 'cartes', 'plage'&#xA;ainsi que les bulles d'interaction avec les PNJ"
+			HideSteamBubblesTooltip = "Désactive les bulles 'cartes', 'plage'&#xA;ainsi que les bulles d'interaction avec les PNJ"
 			TurnBasedBattles = " Combat au tour-par-tour"
 			SpeedChoice = "Mode ATB"
 			SpeedChoiceType0 = "Normal"
@@ -62,15 +63,15 @@
 			SpeedChoiceType3 = "Dynamique (1)"
 			SpeedChoiceType4 = "Dynamique (2)"
 			SpeedChoiceType5 = "Dynamique"
-      SpeedChoiceTooltip = "Normal : mode par défaut&#xA;Rapide : l'ATB se remplit immédiatement pendant les moments d'attente&#xA;Tour par tour : l'ATB se bloque à chaque tour d'un personnage&#xA;Dynamique : les personnages et les ennemis peuvent agir simultanément"
+			SpeedChoiceTooltip = "Normal : mode par défaut&#xA;Rapide : l'ATB se remplit immédiatement pendant les moments d'attente&#xA;Tour par tour : l'ATB se bloque à chaque tour d'un personnage&#xA;Dynamique : les personnages et les ennemis peuvent agir simultanément"
 			TripleTriad = "Cartes"
 			TripleTriadType0 = "Tetra Master"
 			TripleTriadType1 = "Tetra Triad"
 			TripleTriadType2 = "Triple Triad"
 			Volume = "Volume :"
-			SoundVolume = "Bruitages"
-			MusicVolume = "Musique"
-			MovieVolume = "Films"
+			SoundVolume = "🔊Bruitages"
+			MusicVolume = "🔊Musique"
+			MovieVolume = "🔊Films"
 			IniCheats = "Triche"
 			MaxStealRate = " Voler ne rate jamais"
 			DisableCantConcentrate = " Désactiver 'déconcentration'"
@@ -80,7 +81,7 @@
 			AccessBattleMenuType1 = "Accès limité"
 			AccessBattleMenuType2 = "Accès individuel"
 			AccessBattleMenuType3 = "Accès illimité"
-      AccessBattleMenuTooltip = "Si la commande 'Menu' n'apparait pas, accédez au menu&#xA;avec la touche △/Y depuis la commande des objets&#xA;En accès limité, l'utilisation du menu coûte un tour"
+			AccessBattleMenuTooltip = "Si la commande 'Menu' n'apparait pas, accédez au menu&#xA;avec la touche △/Y depuis la commande des objets&#xA;En accès limité, l'utilisation du menu coûte un tour"
 			SpeedMode = " Mode rapide | F1"
 			SpeedFactor = "Vit."
 			BattleAssistance = " Aide au combat | F2 F3"
@@ -93,7 +94,7 @@
 			SBUIenabled = " Scaled Battle UI"
 			BattleTPS = "Vitesse combats (déf. 15)"
 			SharedFPS = "Fréquence d'images / seconde"
-			/>
+	/>
 
 	<SdLib
 			Caption = "Patcher SdLib.dll"
@@ -104,7 +105,7 @@
 			Fail = "Unfortunately, we could not patch the SdLib.dll. Please share your version of this file."
 			CannotRead = "Cannot read audio sampling frequency from the file:"
 			CannotWrite = "Cannot read audio sampling frequency from the SdLib.dll"
-			/>
+	/>
 
 	<SteamOverlay
 			OptionLabel = " Correction de Steam Overlay"
@@ -116,51 +117,51 @@
 	<InfoProvider>
 
 		<ApplicationConfig
-				Title = "Settings"
-				Description = "Various settings of the application."
-				NewTitle = "New"
-				NewDescription = "Initialize all settings default values."
-				FileTitle = "From file"
-				FileDescription = "Reads the application configuration file {0}"
-				/>
+			Title = "Settings"
+			Description = "Various settings of the application."
+			NewTitle = "New"
+			NewDescription = "Initialize all settings default values."
+			FileTitle = "From file"
+			FileDescription = "Reads the application configuration file {0}"
+		/>
 
 		<GameLocation
-				Title = "Game Directory"
-				Description = "Location of the game files."
-				ConfigurationTitle = "Settings"
-				ConfigurationDescription = "Uses the information stored in the configuration file."
-				SteamRegistryTitle = "From registry (Steam)"
-				SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
-				UserTitle = "Manual"
-				UserDescription = "Allows you to manually select the directory to which you have installed the game."
-				/>
+			Title = "Game Directory"
+			Description = "Location of the game files."
+			ConfigurationTitle = "Settings"
+			ConfigurationDescription = "Uses the information stored in the configuration file."
+			SteamRegistryTitle = "From registry (Steam)"
+			SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
+			UserTitle = "Manual"
+			UserDescription = "Allows you to manually select the directory to which you have installed the game."
+		/>
 
 		<WorkingLocation
-				Title = "Working Directory"
-				Description = "The directory to store the results of the application."
-				ConfigurationTitle = "Settings"
-				ConfigurationDescription = "Uses the information stored in the configuration file."
-				UserTitle = "Manual"
-				UserDescription = "Allows you to manually select a working directory."
-				/>
+			Title = "Working Directory"
+			Description = "The directory to store the results of the application."
+			ConfigurationTitle = "Settings"
+			ConfigurationDescription = "Uses the information stored in the configuration file."
+			UserTitle = "Manual"
+			UserDescription = "Allows you to manually select a working directory."
+		/>
 
 		<TextEncoding
-				Title = "Encoding"
-				Description = "Encoding for unpacking and packing the game text."
-				NewTitle = "New"
-				NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
-				WorkingLocationTitle = "Working directory"
-				WorkingLocationDescription = "Reads the encoding from the working directory."
-				UserTitle = "Edit"
-				UserDescription = "Change the current encoding."
-				/>
+			Title = "Encoding"
+			Description = "Encoding for unpacking and packing the game text."
+			NewTitle = "New"
+			NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
+			WorkingLocationTitle = "Working directory"
+			WorkingLocationDescription = "Reads the encoding from the working directory."
+			UserTitle = "Edit"
+			UserDescription = "Change the current encoding."
+		/>
 
 		<AudioSettings
-				Title="Audio Settings"
-				Description="Settings of audio device."
-				NewTitle="New"
-				NewDescription="Initialize all settings default values."
-				/>
+			Title="Audio Settings"
+			Description="Settings of audio device."
+			NewTitle="New"
+			NewDescription="Initialize all settings default values."
+		/>
 
 	</InfoProvider>
 
@@ -169,137 +170,113 @@
 		<DataSources Header = "Data Sources" />
 
 		<GameFileCommander
-				Header = "Game Resources"
-				Unpack = "Unpack"
-				Pack = "Pack"
-				ArchivesNode ="Archives"
-				/>
+			Header = "Game Resources"
+			Unpack = "Unpack"
+			Pack = "Pack"
+			ArchivesNode ="Archives"
+		/>
 
 		<GameFilePreview
-				Header="Preview"
-				>
-
-			<Ykd
-					ResourceRemovingTitle = "Removing"
-					ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
-					/>
-
+			Header="Preview" >
+		<Ykd
+			ResourceRemovingTitle = "Removing"
+			ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
+		/>
 		</GameFilePreview>
-
 	</Dockable>
-
 	<EncodingEditor>
-
 		<List
-				Name = "Name"
-				Pattern = "Pattern"
-				Encoding = "Encoding"
-				Font = "Font"
-				Edit = "Edit"
-				/>
-
+			Name = "Name"
+			Pattern = "Pattern"
+			Encoding = "Encoding"
+			Font = "Font"
+			Edit = "Edit"
+		/>
 		<EncodingSelectDialog
-				Title = "Choose the encoding"
-				Watermark = "Enter the encoding name..."
-				ConfirmMessageFormat = "You have chosen [{0}]. Right?"
-				ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
-				/>
+			Title = "Choose the encoding"
+			Watermark = "Enter the encoding name..."
+			ConfirmMessageFormat = "You have chosen [{0}]. Right?"
+			ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
+		/>
 
 		<EncodingEditDialog
-				Title = "Encoding edit"
-				/>
-
+			Title = "Encoding edit"
+		/>
 		<Main
-				Before = "Before:"
-				Width = "Width:"
-				After = "After:"
-				FromText = "From text:"
-				ToText = "To text:"
-				/>
-
+			Before = "Before:"
+			Width = "Width:"
+			After = "After:"
+			FromText = "From text:"
+			ToText = "To text:"
+		/>
 		<Extra
-				Row = "Row:"
-				Column = "Column:"
-				FromText = "From text:"
-				ToText = "To text:"
-				/>
-
+			Row = "Row:"
+			Column = "Column:"
+			FromText = "From text:"
+			ToText = "To text:"
+		/>
 	</EncodingEditor>
-
-  <ModEditor
-    WindowTitle="Configuration des Mods"
-    ModInfos = "Informations"
-    TabMyMods = "Mods Installés"
-    TabCatalog = "Catalogue"
-    Mod = "Mod"
-    Name = "Nom"
-    Website = "Site Web"
-    Author = "Auteur"
-    Release = "Date de sortie"
-    Category = "Catégorie"
-    Version = "Version"
-    Description = "Description"
-    ReleaseNotes = "Notes de version"
-    SubModPanel = "Options facultatives"
-    Priority = "Priorité"
-    Installed = "Installé"
-    Active = "Activé"
-    Progress = "Téléchargement"
-    Speed = "Vitesse"
-    TimeLeft = "Temps Restant"
-    PreviewImageMissing = "Illustration Manquante"
-    TooltipMoveUp = "Déplacer vers le Haut (clic gauche) / En 1ère Position (clic droit)"
-    TooltipMoveDown = "Déplacer vers le Bas (clic gauche) / En dernière Position (clic droit)"
-    TooltipCheckCompatibility = "Vérifier la Compatibilité des Mods activés (clic gauche) / De tous les Mods installés (clic droit)"
-    TooltipActivateAll = "Activer Tous les Mods"
-    TooltipDeactivateAll = "Désactiver Tous les Mods"
-    TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"
-    TooltipDownload = "Télécharger le(s) mod(s) sélectionné(s)"
-    TooltipCancel = "Annuler le Téléchargement du Mod en cours (clic gauche) / De Tous les Mods (clic droit)"
-    />
-
+	<ModEditor
+		WindowTitle="Configuration des Mods"
+		ModInfos = "Informations"
+		TabMyMods = "Mods Installés"
+		TabCatalog = "Catalogue"
+		Mod = "Mod"
+		Name = "Nom"
+		Website = "Site Web"
+		Author = "Auteur"
+		Release = "Date de sortie"
+		Category = "Catégorie"
+		Version = "Version"
+		Description = "Description"
+		ReleaseNotes = "Notes de version"
+		SubModPanel = "Options facultatives"
+		Priority = "Priorité"
+		Installed = "Installé"
+		Active = "Activé"
+		Progress = "Téléchargement"
+		Speed = "Vitesse"
+		TimeLeft = "Temps Restant"
+		PreviewImageMissing = "Illustration Manquante"
+		TooltipMoveUp = "Déplacer vers le Haut (clic gauche) / En 1ère Position (clic droit)"
+		TooltipMoveDown = "Déplacer vers le Bas (clic gauche) / En dernière Position (clic droit)"
+		TooltipCheckCompatibility = "Vérifier la Compatibilité des Mods activés (clic gauche) / De tous les Mods installés (clic droit)"
+		TooltipActivateAll = "Activer Tous les Mods"
+		TooltipDeactivateAll = "Désactiver Tous les Mods"
+		TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"
+		TooltipDownload = "Télécharger le(s) mod(s) sélectionné(s)"
+		TooltipCancel = "Annuler le Téléchargement du Mod en cours (clic gauche) / De Tous les Mods (clic droit)"
+	/>
 	<Dialogue>
-
 		<SaveAs
-				Title = "Save as..."
-				/>
-
+			Title = "Save as..."
+		/>
 	</Dialogue>
-
 	<Message>
-
 		<Done
-				Title = "Done!"
-				ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
-				InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
-				/>
-
+			Title = "Done!"
+			ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
+			InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
+		/>
 		<Question
-				Title = "Question"
-				AreYouSureTitle = "Are you sure?"
-				NewVersionIsAvailable = "A new version is available, download now?"
-				/>
-
+			Title = "Question"
+			AreYouSureTitle = "Are you sure?"
+			NewVersionIsAvailable = "A new version is available, download now?"
+		/>
 		<Error
-				Title = "Error!"
-				/>
-
+			Title = "Error!"
+		/>
 	</Message>
-
 	<Error>
-
 		<File
-				UnknownFormat = "Unknown file format."
-				/>
-
+			UnknownFormat = "Unknown file format."
+			/>
 		<Process
-				CannotGetExecutablePath = "Cannot get a path of the executable assembly."
-				/>
+			CannotGetExecutablePath = "Cannot get a path of the executable assembly."
+			/>
 
 		<Text
-				TooLongTagNameFormat = "Too long name of tag: {0}"
-				/>
-
+			TooLongTagNameFormat = "Too long name of tag: {0}"
+			/>
 	</Error>
-
 </Data>

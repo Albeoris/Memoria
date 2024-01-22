@@ -267,7 +267,7 @@ namespace Memoria.Launcher
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
         {
             if (PreviewModImage.Source == sender)
-                PreviewModImageMissing.Text = String.Empty;
+                return;
         }
 
         private void DownloadStart(Mod mod)
@@ -571,7 +571,7 @@ namespace Memoria.Launcher
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
         {
-            if (!Directory.Exists(folderName) || File.Exists(folderName + "/" + Mod.DESCRIPTION_FILE))
+            if (!Directory.Exists(folderName))
                 return false;
             Mod catalogVersion = Mod.SearchWithPath(modListCatalog, folderName);
             if (catalogVersion != null)
@@ -580,6 +580,9 @@ namespace Memoria.Launcher
                 return true;
             }
             String name = null;
+            String description = null;
+            String author = null;
+            String category = null;
             if (folderName == "MoguriFiles")
                 name = "Moguri Mod";
             else if (folderName == "MoguriSoundtrack")
@@ -616,7 +619,7 @@ namespace Memoria.Launcher
             {
                 Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
                 PreviewModName.Text = mod.Name;
-                PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "Unknown version";
+                PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "Unknown date";
                 PreviewModAuthor.Text = mod.Author ?? "Unknown author";
                 PreviewModDescription.Text = mod.Description ?? "No description.";
@@ -624,6 +627,7 @@ namespace Memoria.Launcher
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
+                PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
                 if (hasSubMod)
 				{
@@ -665,17 +669,14 @@ namespace Memoria.Launcher
                 }
                 if (mod.PreviewImage == null)
                 {
-                    PreviewModImageMissing.Text = Lang.ModEditor.PreviewImageMissing;
                     PreviewModImage.Source = null;
                 }
                 else if (mod.PreviewImage.IsDownloading)
                 {
-                    PreviewModImageMissing.Text = "🔄";
                     PreviewModImage.Source = mod.PreviewImage;
                 }
                 else
                 {
-                    PreviewModImageMissing.Text = String.Empty;
                     PreviewModImage.Source = mod.PreviewImage;
                 }
             }
@@ -820,14 +821,10 @@ namespace Memoria.Launcher
             Title = Lang.ModEditor.WindowTitle + " - " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("Y", CultureInfo.GetCultureInfo(Lang.LangName));
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
-            CaptionModName.Text = Lang.ModEditor.Name + ":";
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
-            CaptionModRelease.Text = Lang.ModEditor.Release + ":";
             CaptionModCategory.Text = Lang.ModEditor.Category + ":";
-            CaptionModVersion.Text = Lang.ModEditor.Version + ":";
             CaptionModDescription.Text = Lang.ModEditor.Description + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
-            PreviewModImageMissing.Text = Lang.ModEditor.PreviewImageMissing;
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
             tabMyMods.Text = Lang.ModEditor.TabMyMods;

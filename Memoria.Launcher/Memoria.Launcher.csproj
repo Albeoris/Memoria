@@ -1,157 +1,171 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ProjectGuid>{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}</ProjectGuid>
-		<OutputType>WinExe</OutputType>
-		<AssemblyName>Memoria.Launcher</AssemblyName>
-		<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-		<FileAlignment>512</FileAlignment>
-		<TargetFrameworkProfile />
-		<LangVersion>latest</LangVersion>
-		<IsWebBootstrapper>false</IsWebBootstrapper>
-		<PublishUrl>publish\</PublishUrl>
-		<Install>true</Install>
-		<InstallFrom>Disk</InstallFrom>
-		<UpdateEnabled>false</UpdateEnabled>
-		<UpdateMode>Foreground</UpdateMode>
-		<UpdateInterval>7</UpdateInterval>
-		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-		<UpdatePeriodically>false</UpdatePeriodically>
-		<UpdateRequired>false</UpdateRequired>
-		<MapFileExtensions>true</MapFileExtensions>
-		<ApplicationRevision>0</ApplicationRevision>
-		<ApplicationVersion>1.0.0.0</ApplicationVersion>
-		<UseApplicationTrust>false</UseApplicationTrust>
-		<BootstrapperEnabled>true</BootstrapperEnabled>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>..\Output\Launcher\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-		<NoWarn>CS1998</NoWarn>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<DebugType>pdbonly</DebugType>
-		<Optimize>true</Optimize>
-		<OutputPath>..\Output\Launcher\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<PropertyGroup>
-		<ApplicationIcon>ff9.ico</ApplicationIcon>
-	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="PresentationFramework" />
-		<Reference Include="System.Configuration" />
-		<Reference Include="System.Drawing" />
-		<Reference Include="System.Net.Http" />
-		<Reference Include="System.IO.Compression.FileSystem" />
-		<Reference Include="System.Web.Extensions" />
-		<Reference Include="System.Xaml" />
-		<Reference Include="System" />
-		<Reference Include="PresentationCore" />
-		<Reference Include="System.XML" />
-		<Reference Include="UIAutomationProvider" />
-		<Reference Include="WindowsBase" />
-		<Reference Include="System.Windows.Forms" />
-		<Reference Include="WindowsFormsIntegration" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Languages\Lang.cs" />
-		<Compile Include="Languages\XmlDocumentExm.cs" />
-		<Compile Include="Languages\XmlHelper.cs" />
-		<Compile Include="Memoria\MemoriaIniCheatControl.cs" />
-		<Compile Include="Memoria\MemoriaIniControl.cs" />
-		<Compile Include="Memoria\Mod.cs" />
-		<Compile Include="Memoria\UiLauncherModManagerButton.cs" />
-		<Compile Include="Memoria\UiSlider.cs" />
-		<Compile Include="Memoria\UiSliderFactory.cs" />
-		<Compile Include="Memoria\UiTextBox.cs" />
-		<Compile Include="Memoria\ScreenInterrogatory.cs" />
-		<Compile Include="Memoria\FrameworkElementExm.cs" />
-		<Compile Include="App.cs" />
-		<Compile Include="MainWindow.cs" />
-		<Compile Include="Ini\IniFile.cs" />
-		<Compile Include="AssemblyInfo.cs" />
-		<Compile Include="Memoria\GameSettingsControl.cs" />
-		<Compile Include="Memoria\JunctionPoint.cs" />
-		<Compile Include="Memoria\UiButton.cs" />
-		<Compile Include="Memoria\UiCheckBox.cs" />
-		<Compile Include="Memoria\UiCheckBoxFactory.cs" />
-		<Compile Include="Memoria\UiComboBox.cs" />
-		<Compile Include="Memoria\UiComboBoxFactory.cs" />
-		<Compile Include="Memoria\UiGrid.cs" />
-		<Compile Include="Memoria\UiHelper.cs" />
-		<Compile Include="Memoria\UiLauncherExitButton.cs" />
-		<Compile Include="Memoria\UiLauncherPlayButton.cs" />
-		<Compile Include="Memoria\UiLauncherButton.xaml.cs">
-			<DependentUpon>UiLauncherButton.xaml</DependentUpon>
-		</Compile>
-		<Compile Include="Memoria\UiRadioButton.cs" />
-		<Compile Include="Memoria\UiRadioButtonFactory.cs" />
-		<Compile Include="Memoria\UiTextBlock.cs" />
-		<Compile Include="Memoria\UiTextBlockFactory.cs" />
-		<Compile Include="Memoria\UiTextBoxFactory.cs" />
-		<Compile Include="ModConflictWindow.cs" />
-		<Compile Include="ModManagerWindow.cs" />
-	</ItemGroup>
-	<ItemGroup>
-		<Resource Include="Images\pc_launcher_bg.png" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Include="MainWindow.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Include="Memoria\UiLauncherButton.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Include="ModConflictWindow.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Include="ModManagerWindow.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Languages\fr.xml" />
-		<None Include="app.config" />
-		<ContentWithTargetPath Include="Ini\Memoria.ini">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>Memoria.ini</TargetPath>
-		</ContentWithTargetPath>
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="Catalogs\MemoriaCatalog.xml" />
-		<Content Include="ff9.ico" />
-		<Resource Include="Images\new_launcher_bg.png" />
-		<EmbeddedResource Include="Languages\en.xml" />
-		<EmbeddedResource Include="Languages\ru.xml" />
-	</ItemGroup>
-	<ItemGroup>
-		<BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-			<Visible>False</Visible>
-			<ProductName>Microsoft .NET Framework 4.6.1 %28x86 et x64%29</ProductName>
-			<Install>true</Install>
-		</BootstrapperPackage>
-		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-			<Visible>False</Visible>
-			<ProductName>.NET Framework 3.5 SP1</ProductName>
-			<Install>false</Install>
-		</BootstrapperPackage>
-	</ItemGroup>
-	<ItemGroup />
-	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{95BC3C2C-0C8B-41B6-92E8-49D301119BE8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>Memoria.Launcher</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <LangVersion>latest</LangVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Output\Launcher\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS1998</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Output\Launcher\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ff9.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="System.XML" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Languages\Lang.cs" />
+    <Compile Include="Languages\XmlDocumentExm.cs" />
+    <Compile Include="Languages\XmlHelper.cs" />
+    <Compile Include="Memoria\MemoriaIniCheatControl.cs" />
+    <Compile Include="Memoria\MemoriaIniControl.cs" />
+    <Compile Include="Memoria\Mod.cs" />
+    <Compile Include="Memoria\UiModManagerButton.xaml.cs">
+      <DependentUpon>UiModManagerButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Memoria\UiLauncherModManagerButton.cs" />
+    <Compile Include="Memoria\UiSlider.cs" />
+    <Compile Include="Memoria\UiSliderFactory.cs" />
+    <Compile Include="Memoria\UiTextBox.cs" />
+    <Compile Include="Memoria\ScreenInterrogatory.cs" />
+    <Compile Include="Memoria\FrameworkElementExm.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="Ini\IniFile.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Memoria\GameSettingsControl.cs" />
+    <Compile Include="Memoria\JunctionPoint.cs" />
+    <Compile Include="Memoria\UiButton.cs" />
+    <Compile Include="Memoria\UiCheckBox.cs" />
+    <Compile Include="Memoria\UiCheckBoxFactory.cs" />
+    <Compile Include="Memoria\UiComboBox.cs" />
+    <Compile Include="Memoria\UiComboBoxFactory.cs" />
+    <Compile Include="Memoria\UiGrid.cs" />
+    <Compile Include="Memoria\UiHelper.cs" />
+    <Compile Include="Memoria\UiLauncherPlayButton.cs" />
+    <Compile Include="Memoria\UiLauncherButton.xaml.cs">
+      <DependentUpon>UiLauncherButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Memoria\UiRadioButton.cs" />
+    <Compile Include="Memoria\UiRadioButtonFactory.cs" />
+    <Compile Include="Memoria\UiTextBlock.cs" />
+    <Compile Include="Memoria\UiTextBlockFactory.cs" />
+    <Compile Include="Memoria\UiTextBoxFactory.cs" />
+    <Compile Include="ModConflictWindow.cs" />
+    <Compile Include="ModManagerWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pc_launcher_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Memoria\UiModManagerButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Memoria\UiLauncherButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ModConflictWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ModManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\fr.xml" />
+    <None Include="app.config" />
+    <ContentWithTargetPath Include="Ini\Memoria.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Memoria.ini</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\btnActivateAllimg.png" />
+    <Resource Include="Images\btnCancelimg.png" />
+    <Resource Include="Images\btnCheckCompatibilityimg.png" />
+    <Resource Include="Images\btnDeactivateAllimg.png" />
+    <Resource Include="Images\btnDownloadimg.png" />
+    <Resource Include="Images\btnMoveDownimg.png" />
+    <Resource Include="Images\btnMoveUpimg.png" />
+    <Resource Include="Images\btnUninstallimg.png" />
+    <None Include="Catalogs\MemoriaCatalog.xml" />
+    <Content Include="ff9.ico" />
+    <Resource Include="Images\new_launcher_bg.png" />
+    <EmbeddedResource Include="Languages\en.xml" />
+    <EmbeddedResource Include="Languages\ru.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 et x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
