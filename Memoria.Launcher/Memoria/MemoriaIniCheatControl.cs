@@ -38,30 +38,41 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(8, 2, 3, 2);
 
-            UiTextBlock cheatOptionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniCheats), 0, 0, 2, 8);
+            Int32 row = 0;
+
+            UiTextBlock cheatOptionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniCheats), row, 0, 2, 8);
             cheatOptionsText.Padding = new Thickness(0, 4, 0, 2);
             cheatOptionsText.Foreground = Brushes.White;
             cheatOptionsText.FontSize = 14;
             cheatOptionsText.FontWeight = FontWeights.Bold;
-            cheatOptionsText.Margin = new Thickness(8, 2, 3, 2);
-            Int32 row = 1;
-
-            /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row, 0, 1, 8).Foreground = Brushes.White;*/
+            cheatOptionsText.Margin = rowMargin;
+            
             row++;
-            UiCheckBox stealingAlwaysWorks = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxStealRate, null), row++, 0, 1, 8);
+            row++;
+            /*
+            AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row, 0, 1, 8).Foreground = Brushes.White;
+            */
+
+            UiCheckBox stealingAlwaysWorks = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxStealRate, null), row, 0, 1, 8);
             stealingAlwaysWorks.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(StealingAlwaysWorks)) { Mode = BindingMode.TwoWay });
             stealingAlwaysWorks.Foreground = Brushes.White;
-            stealingAlwaysWorks.Margin = new Thickness(8, 2, 3, 2);
+            stealingAlwaysWorks.Margin = rowMargin;
 
-            UiCheckBox garnetConcentrate = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.DisableCantConcentrate, null), row++, 0, 1, 8);
+            row++;
+
+            UiCheckBox garnetConcentrate = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.DisableCantConcentrate, null), row, 0, 1, 8);
             garnetConcentrate.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(GarnetConcentrate)) { Mode = BindingMode.TwoWay });
             garnetConcentrate.Foreground = Brushes.White;
             garnetConcentrate.Margin = rowMargin;
 
-            UiCheckBox breakDamageLimit = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BreakDamageLimit, null), row++, 0, 1, 8);
+            row++;
+
+            UiCheckBox breakDamageLimit = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BreakDamageLimit, null), row, 0, 1, 8);
             breakDamageLimit.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BreakDamageLimit)) { Mode = BindingMode.TwoWay });
             breakDamageLimit.Foreground = Brushes.White;
             breakDamageLimit.Margin = rowMargin;
+
+            row++;
 
             UiTextBlock accessBattleMenuText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AccessBattleMenu), row, 0, 2, 4);
             accessBattleMenuText.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
@@ -79,22 +90,24 @@ namespace Memoria.Launcher
             accessBattleMenuBox.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
             accessBattleMenuBox.Height = 20;
             accessBattleMenuBox.Margin = rowMargin;
-            row += 2;
 
-            UiCheckBox speedMode = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SpeedMode, null), row++, 0, 1, 8);
+            row++;
+            row++;
+
+            UiCheckBox speedMode = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SpeedMode, null), row, 0, 1, 8);
             speedMode.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SpeedMode)) { Mode = BindingMode.TwoWay });
             speedMode.Foreground = Brushes.White;
             speedMode.Margin = rowMargin;
 
+            row++;
+
             UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row, 0, 1, 2);
             speedFactorText.Foreground = Brushes.White;
             speedFactorText.Margin = rowMargin;
-
             UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
             speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactorTextindex.Foreground = Brushes.White;
-
-            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row++, 3, 1, 5);
+            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 5);
             speedFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactor.TickFrequency = 1;
             speedFactor.IsSnapToTickEnabled = true;
@@ -102,29 +115,36 @@ namespace Memoria.Launcher
             speedFactor.Maximum = 12;
             speedFactor.Margin = new Thickness(0, 0, 3, 0);
 
-            UiCheckBox battleAssistance = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BattleAssistance, null), row++, 0, 1, 8);
+            row++;
+
+            UiCheckBox battleAssistance = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BattleAssistance, null), row, 0, 1, 8);
             battleAssistance.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleAssistance)) { Mode = BindingMode.TwoWay });
             battleAssistance.Foreground = Brushes.White;
             battleAssistance.Margin = rowMargin;
+
+            row++;
 
             /*UiCheckBox attack9999 = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxDamage, null), row++, 0, 1, 8);
             attack9999.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Attack9999)) { Mode = BindingMode.TwoWay });
             attack9999.Foreground = Brushes.White;
             attack9999.Margin = rowMargin;*/
 
-            UiCheckBox noRandomEncounter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.NoRandomBattles, null), row++, 0, 1, 8);
+            UiCheckBox noRandomEncounter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.NoRandomBattles, null), row, 0, 1, 8);
             noRandomEncounter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(NoRandomEncounter)) { Mode = BindingMode.TwoWay });
             noRandomEncounter.Foreground = Brushes.White;
             noRandomEncounter.Margin = rowMargin;
 
-            UiCheckBox masterSkill = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.PermanentCheats, null), row++, 0, 1, 8);
+            row++;
+
+            UiCheckBox masterSkill = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.PermanentCheats, null), row, 0, 1, 8);
             masterSkill.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(MasterSkill)) { Mode = BindingMode.TwoWay });
             masterSkill.Foreground = Brushes.White;
             masterSkill.Margin = rowMargin;
 
+
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
 
-            
+
 
             LoadSettings();
         }
