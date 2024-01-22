@@ -347,7 +347,6 @@ public static class NarrowMapList
         2501, // I. Castle/Entrance
         2502, // I. Castle/Hall
         2503,
-        2504, // I. Castle/Small Room
         2505, // I. Castle/Inverted Roo
         2510, // I. Castle/Mural Room
         2512, // I. Castle/Mural Room
