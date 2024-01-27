@@ -68,7 +68,7 @@ namespace Memoria.Launcher
 
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
             UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
-            resolution.ItemsSource = EnumerateDisplaySettings().ToArray().Reverse();
+            resolution.ItemsSource = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
             resolution.Margin = rowMargin;
 
@@ -403,11 +403,11 @@ namespace Memoria.Launcher
             try
             {
                 IniFile iniFile = new IniFile(IniPath);
+                String resolutionBest = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
                 String value = iniFile.ReadValue("Settings", nameof(ScreenResolution));
                 if (String.IsNullOrEmpty(value))
-                    value = "1280x960";
-                _resolution = value;
+                    _resolution = resolutionBest ?? "1280x960";
 
                 value = iniFile.ReadValue("Settings", nameof(ActiveMonitor));
                 if (!String.IsNullOrEmpty(value))
