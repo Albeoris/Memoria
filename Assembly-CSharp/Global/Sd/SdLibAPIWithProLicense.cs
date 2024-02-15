@@ -19,7 +19,7 @@ public class SdLibAPIWithProLicense : ISdLibAPI
     private static extern Int32 DLLSdSoundSystem_GetSoundsLimit();
 
 	[DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_SoundCtrl_IsLoop")]
-    private static extern bool DLLSdSoundSystem_SoundCtrl_IsLoop();
+    private static extern bool DLLSdSoundSystem_SoundCtrl_IsLoop(Int32 SoundID);
 
     public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
     {
