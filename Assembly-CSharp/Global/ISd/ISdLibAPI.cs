@@ -25,7 +25,25 @@ public class ISdLibAPI
 		return 0;
 	}
 
-	public virtual Int32 SdSoundSystem_AddData(IntPtr akb)
+	public virtual Int32 SdSoundSystem_GetSoundsCount()
+    {
+        SoundLib.Log("No Implementation");
+        return 0;
+    }
+
+    public virtual Int32 SdSoundSystem_GetSoundsLimit()
+    {
+        SoundLib.Log("No Implementation");
+        return 0;
+    }
+
+    public virtual Int32 SdSoundSystem_Akb_GetNumSounds(IntPtr akb)
+    {
+        SoundLib.Log("No Implementation");
+        return 0;
+    }
+
+    public virtual Int32 SdSoundSystem_AddData(IntPtr akb)
 	{
 		SoundLib.Log("No Implementation");
 		return 0;
