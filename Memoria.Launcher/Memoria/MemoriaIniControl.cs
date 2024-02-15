@@ -559,7 +559,8 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _iswidescreensupport))
                     _iswidescreensupport = 1;
-                value = null;
+
+                value = iniFile.ReadValue("Graphics", "FieldFPS");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 30";
@@ -567,6 +568,7 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _sharedfps))
                     _sharedfps = 30;
+
                 String valueMenuPos = iniFile.ReadValue("Interface", "BattleMenuPosX");
                 String valuePSXMenu = iniFile.ReadValue("Interface", "PSXBattleMenu");
                 Int32 menuPosX = -400;
