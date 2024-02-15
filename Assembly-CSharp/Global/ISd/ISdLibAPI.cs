@@ -67,7 +67,14 @@ public class ISdLibAPI
 		return 0;
 	}
 
-	public virtual Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
+	public virtual bool SdSoundSystem_SoundCtrl_IsLoop(Int32 SoundID)
+	{
+        SoundLib.Log("No Implementation");
+        return false;
+    }
+
+
+    public virtual Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
 	{
 		SoundLib.Log("No Implementation");
 		return 0;

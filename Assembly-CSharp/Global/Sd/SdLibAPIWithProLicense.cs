@@ -18,6 +18,9 @@ public class SdLibAPIWithProLicense : ISdLibAPI
     [DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_GetSoundsLimit")]
     private static extern Int32 DLLSdSoundSystem_GetSoundsLimit();
 
+	[DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_SoundCtrl_IsLoop")]
+    private static extern bool DLLSdSoundSystem_SoundCtrl_IsLoop();
+
     public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
     {
 		// The duration during which the sound has played; it turns back to 0 when the sound stops
@@ -84,7 +87,14 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 		return SdLibAPI.SdSoundSystem_CreateSound(bankID, 0);
 	}
 
-	public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
+	public override bool SdSoundSystem_SoundCtrl_IsLoop(Int32 SoundID)
+	{
+		return DLLSdSoundSystem_SoundCtrl_IsLoop(SoundID);
+
+    }
+
+
+    public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
 	{
 		return SdLibAPI.SdSoundSystem_SoundCtrl_Start(soundID, offsetTimeMSec);
 	}
