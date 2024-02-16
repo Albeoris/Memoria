@@ -1,10 +1,23 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using Memoria;
 public static class NarrowMapList
 {
     public static Boolean IsCurrentMapNarrow() => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1);
-    public static Boolean IsNarrowMap(Int32 mapId, Int32 camId) => ListFullNarrow.Contains(mapId) || (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId));
+    public static Boolean IsNarrowMap(Int32 mapId, Int32 camId)
+    {
+        if (_ScreenIs16to10 && ListWideWhen16to10.Contains(mapId))
+            return false;
+        if (ListFullNarrow.Contains(mapId))
+            return true;
+        
+        if (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId))
+            return true;
+        return false;
+    }
+
+    private static readonly Boolean _ScreenIs16to10 = Configuration.Graphics.ScreenIs16to10();
 
     private static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
     {
@@ -417,6 +430,138 @@ public static class NarrowMapList
         3056, // Mage Village/Rooftop
         3057,
         3058, // Mage Village/Water Mil
+        3100,
+    };
+
+    private static readonly HashSet<Int32> ListWideWhen16to10 = new HashSet<Int32>()
+    {
+        55,
+        60,
+        102,
+        109,
+        150,
+        157,
+        161,
+        162,
+        201,
+        206,
+        207,
+        251,
+        252,
+        262,
+        405,
+        407,
+        456,
+        505,
+        553,
+        556,
+        561,
+        565,
+        566,
+        568,
+        569,
+        571,
+        613,
+        656,
+        657,
+        658,
+        659,
+        663,
+        705,
+        751,
+        753,
+        755,
+        806,
+        813,
+        851,
+        855,
+        901,
+        911,
+        913,
+        950,
+        1017,
+        1018,
+        1054,
+        1058,
+        1104,
+        1108,
+        1153,
+        1201,
+        1205,
+        1210,
+        1213,
+        1218,
+        1222,
+        1251,
+        1254,
+        1303,
+        1312,
+        1313,
+        1363,
+        1403,
+        1404,
+        1408,
+        1414,
+        1424,
+        1452,
+        1453,
+        1456,
+        1509,
+        1600,
+        1601,
+        1602,
+        1656,
+        1700,
+        1701,
+        1702,
+        1803,
+        1810,
+        1814,
+        1817,
+        1820,
+        1852,
+        1858,
+        1901,
+        1911,
+        1913,
+        1953,
+        2002,
+        2004,
+        2006,
+        2052,
+        2103,
+        2112,
+        2113,
+        2163,
+        2200,
+        2212,
+        2213,
+        2222,
+        2352,
+        2353,
+        2355,
+        2400,
+        2406,
+        2451,
+        2502,
+        2503,
+        2551,
+        2601,
+        2650,
+        2657,
+        2658,
+        2706,
+        2851,
+        2855,
+        2856,
+        2904,
+        2906,
+        2913,
+        2915,
+        2928,
+        3005,
+        3052,
+        3055,
         3100,
     };
 }
