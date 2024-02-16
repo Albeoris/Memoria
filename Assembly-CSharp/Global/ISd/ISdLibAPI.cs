@@ -73,6 +73,12 @@ public class ISdLibAPI
         return false;
     }
 
+	public virtual Int32 SdSoundSystem_Akb_GetSoundPlayTime(IntPtr akb, Int32 offset)// is this an offset?
+    {
+        SoundLib.Log("No Implementation");
+        return 0;
+    }
+
 
     public virtual Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
 	{

@@ -21,19 +21,24 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 	[DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_SoundCtrl_IsLoop")]
     private static extern bool DLLSdSoundSystem_SoundCtrl_IsLoop(Int32 SoundID);
 
-    public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
-    {
-		// The duration during which the sound has played; it turns back to 0 when the sound stops
-		return DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID);
-	}
+    [DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_Akb_GetSoundPlayTime")]
+	private static extern Int32 DLLSdSoundSystem_Akb_GetSoundPlayTime(IntPtr akb, Int32 offset);
 
-	public override Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID)
-	{
-		// Some loop duration (either the time at which the sound loops or the loop duration); 0 if it doesn't loop
-		return DLLSdSoundSystem_SoundCtrl_GetPlayTime(soundID);
-	}
+	public override Int32 SdSoundSystem_Akb_GetSoundPlayTime(IntPtr akb, Int32 offset) => DLLSdSoundSystem_Akb_GetSoundPlayTime(akb, offset);
 
-	public override Int32 SdSoundSystem_Create(String config)
+    public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID) => DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID);
+
+	public override Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID) => DLLSdSoundSystem_SoundCtrl_GetPlayTime(soundID);
+
+    public override Int32 SdSoundSystem_GetSoundsCount() => DLLSdSoundSystem_GetSoundsCount();
+
+    public override Int32 SdSoundSystem_GetSoundsLimit() => DLLSdSoundSystem_GetSoundsLimit();
+
+    public override Int32 SdSoundSystem_Akb_GetNumSounds(IntPtr akb) => DLLSdSoundSystem_Akb_GetNumSounds(akb);
+
+    public override bool SdSoundSystem_SoundCtrl_IsLoop(Int32 SoundID) => DLLSdSoundSystem_SoundCtrl_IsLoop(SoundID);
+
+    public override Int32 SdSoundSystem_Create(String config)
 	{
 		return SdLibAPI.SdSoundSystem_Create(config);
 	}
@@ -58,20 +63,6 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 		return SdLibAPI.SdSoundSystem_AddData(akb);
 	}
 
-    public override Int32 SdSoundSystem_GetSoundsCount()
-    {
-        return DLLSdSoundSystem_GetSoundsCount();
-    }
-
-    public override Int32 SdSoundSystem_GetSoundsLimit()
-    {
-		return DLLSdSoundSystem_GetSoundsLimit();
-    }
-
-    public override Int32 SdSoundSystem_Akb_GetNumSounds(IntPtr akb)
-    {
-		return DLLSdSoundSystem_Akb_GetNumSounds(akb);
-    }
     public override Int32 SdSoundSystem_AddStreamDataFromPath(String akbpath)
 	{
 		return SdLibAPI.SdSoundSystem_AddStreamDataFromPath(akbpath);
@@ -86,13 +77,6 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 	{
 		return SdLibAPI.SdSoundSystem_CreateSound(bankID, 0);
 	}
-
-	public override bool SdSoundSystem_SoundCtrl_IsLoop(Int32 SoundID)
-	{
-		return DLLSdSoundSystem_SoundCtrl_IsLoop(SoundID);
-
-    }
-
 
     public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
 	{
