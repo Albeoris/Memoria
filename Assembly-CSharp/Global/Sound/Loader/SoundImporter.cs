@@ -193,7 +193,8 @@ namespace Memoria
 
             using (VorbisReader vorbis = new VorbisReader(input, false))
             {
-                //header->SampleCount = checked((UInt32)vorbis.TotalSamples);
+                header->SampleCount = checked((UInt32)vorbis.TotalSamples);
+                header->LengthMS = checked((Double)vorbis.TotalTime.TotalMilliseconds);
                 header->SampleRate = checked((UInt16)vorbis.SampleRate);
 
                 foreach (String comment in vorbis.Comments)

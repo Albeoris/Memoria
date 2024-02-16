@@ -5,58 +5,61 @@ namespace Memoria.Prime.AKB2
 {
     public struct AKB2Header
     {
-        public UInt32 Signature;
-        public UInt32 Constant01;
-        public UInt32 FileSize;
-        public UInt32 Constant02;
+        public UInt32 Signature;    //0x0
+        public UInt32 Constant01;   //0x4
+        public UInt32 FileSize;     //0x8
+        public UInt32 Constant02;   //0xc
 
-        public UInt32 Constant03;
-        public UInt32 Constant04;
-        public UInt32 Zero05;
-        public UInt32 Zero06;
 
-        public UInt32 Constant07;
-        public UInt32 Constant08;
-        public UInt32 Unknown09; // looks like a sound ID
-        public UInt32 Constant10;
+        public UInt32 Constant03;   //0x10
+        public UInt32 Constant04;   //0x14
+        public UInt32 Zero05;       //0x18
+        public UInt32 Zero06;       //0x1c
 
-        public UInt32 Constant11;
-        public UInt32 Constant12;
-        public UInt32 Zero13;
-        public UInt32 Constant14;
+        public UInt32 Constant07;   //0x20
+        public UInt32 Constant08;   //0x24
+        public UInt32 Unknown09;    //0x28 // looks like a sound ID
+        public UInt32 Constant10;   //0x2c
 
-        public UInt32 Zero15;
-        public UInt32 Zero16;
-        public UInt32 Zero17;
-        public UInt32 Zero18;
+        public UInt32 Constant11;   //0x30
+        public UInt32 Constant12;   //0x34
+        public UInt32 Zero13;       //0x38
+        public UInt32 Constant14;   //0x3c
 
-        public UInt32 Constant19;
-        public UInt32 Constant20;
-        public UInt32 Zero21;
-        public UInt32 Zero22;
+        public double LengthMS;     //0x40
+        public UInt32 Zero17;       //0x48
+        public UInt32 Zero18;       //0x4c
 
-        public UInt32 Constant23;
-        public UInt32 Zero24;
-        public UInt32 Zero25;
-        public UInt32 Zero26;
+        public UInt32 Constant19;   //0x50
+        public UInt32 Constant20;   //0x54
+        public UInt32 Zero21;       //0x58
+        public UInt32 Zero22;       //0x5c
 
-        public UInt32 Zero27;
-        public UInt32 Zero28;
-        public UInt32 Zero29;
+        public UInt32 Constant23;   //0x60
+        public UInt32 Zero24;       //0x64
+        public UInt32 Zero25;       //0x68
+        public UInt32 Zero26;       //0x6c
 
-        public AKB2UnknownSection Section1;
-        public AKB2UnknownSection Section2;
-        public AKB2UnknownSection Section3;
-        public AKB2UnknownSection Section4;
+        public UInt32 Zero27;        //0x70
+        public UInt32 Zero28;        //0x74
+        public UInt32 Zero29;        //0x78
 
-        public UInt32 Zero31;
-        public UInt16 Constant32;
-        public UInt16 Unknown33;
-        public UInt16 Constant34;
-        public UInt16 SampleRate;
-        public UInt32 ContentSize;
-        public UInt32 SampleCount; // Ignored?
-        public UInt32 LoopStart; // Samples
+        public AKB2UnknownSection Section1;   //0x7c
+        public AKB2UnknownSection Section2;   //0x94
+        public AKB2UnknownSection Section3;   //0xAC
+        public AKB2UnknownSection Section4;   //0xC4
+
+        public UInt32 Zero31;        //0xDC
+
+
+        public UInt16 Constant32;    //0xE0
+        public UInt16 Unknown33;     //0xE2
+        public UInt16 Constant34;    //0xE4
+        public UInt16 SampleRate;    //0xE6
+        public UInt32 ContentSize;   //0xE8
+        public UInt32 SampleCount;   //0xEC   // Ignored?
+
+        public UInt32 LoopStart;     //0xF0   // Samples
         public UInt32 LoopEnd; // Samples
         public UInt16 Constant36;
         public UInt32 LoopStartAlternate; // Samples; used when there are several loop regions (Final Battle)
@@ -72,6 +75,12 @@ namespace Memoria.Prime.AKB2
         public UInt32 Optional46; // Loop?
         public UInt32 Optional47; // Can be zero
         public UInt32 Zero48;
+
+        public UInt32 LengthInSeconds { get
+            {
+                return SampleCount / SampleRate;
+            } 
+        }
 
         public static unsafe void Initialize(AKB2Header* header)
         {
