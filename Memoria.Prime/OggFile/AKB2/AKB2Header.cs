@@ -26,7 +26,7 @@ namespace Memoria.Prime.AKB2
         public UInt32 Zero13;       //0x38
         public UInt32 Constant14;   //0x3c
 
-        public double LengthMS;     //0x40
+        public Double LengthMS;     //0x40
         public UInt32 Zero17;       //0x48
         public UInt32 Zero18;       //0x4c
 

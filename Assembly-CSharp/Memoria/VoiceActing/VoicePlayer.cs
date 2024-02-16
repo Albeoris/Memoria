@@ -76,6 +76,7 @@ public class VoicePlayer : SoundPlayer
 			soundProfile.SoundID = 0;
 			return;
 		}
+
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
 		SoundLib.Log("Panning: " + soundProfile.Panning);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
