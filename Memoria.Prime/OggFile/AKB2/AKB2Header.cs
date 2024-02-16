@@ -142,8 +142,7 @@ namespace Memoria.Prime.AKB2
                 this.Constant12 = binaryReader.ReadUInt32();
                 this.Zero13 = binaryReader.ReadUInt32();
                 this.Constant14 = binaryReader.ReadUInt32();
-                this.Zero15 = binaryReader.ReadUInt32();
-                this.Zero16 = binaryReader.ReadUInt32();
+                this.LengthMS = binaryReader.ReadDouble();
                 this.Zero17 = binaryReader.ReadUInt32();
                 this.Zero18 = binaryReader.ReadUInt32();
                 this.Constant19 = binaryReader.ReadUInt32();
@@ -228,8 +227,7 @@ namespace Memoria.Prime.AKB2
                 binaryWriter.Write(this.Constant12);
                 binaryWriter.Write(this.Zero13);
                 binaryWriter.Write(this.Constant14);
-                binaryWriter.Write(this.Zero15);
-                binaryWriter.Write(this.Zero16);
+                binaryWriter.Write(this.LengthMS);
                 binaryWriter.Write(this.Zero17);
                 binaryWriter.Write(this.Zero18);
                 binaryWriter.Write(this.Constant19);
