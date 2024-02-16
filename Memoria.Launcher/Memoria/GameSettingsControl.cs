@@ -396,14 +396,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Memoria", nameof(DownloadMirrors));
                 if (String.IsNullOrEmpty(value))
                 {
-                    if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")
-                    {
-                        _downloadMirrors = ["https://ff9.ffrtt.ru/rus/FF9RU.exe", "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"];
-                    }
-                    else
-                    {
-                        _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];
-                    }
+                    _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];
                 }
                 else
                 {
