@@ -43,7 +43,7 @@
 			Debuggable = " Déboguable"
 			CheckUpdates = " Vérifier les mises à jour"
 			IniOptions = "Options"
-			Widescreen = " Écran large (16:9)"
+			Widescreen = " Écran large (16:9 ou 16:10)"
 			BattleInterface = "ATH de combat"
 			BattleInterfaceType0 = "Grande taille"
 			BattleInterfaceType1 = "Petite taille"

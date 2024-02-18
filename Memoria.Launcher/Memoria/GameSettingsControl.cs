@@ -39,8 +39,96 @@ namespace Memoria.Launcher
 {
     public sealed class GameSettingsControl : UiGrid, INotifyPropertyChanged
     {
-        
-        
+        public GameSettingsControl()
+        {
+            foreach (UInt16 frequency in EnumerateAudioSettings())
+                _validSamplingFrequency.Add(frequency);
+
+            SetRows(28);
+            SetCols(8);
+
+            Width = 240;
+            VerticalAlignment = VerticalAlignment.Top;
+            HorizontalAlignment = HorizontalAlignment.Left;
+            Margin = new Thickness(5);
+            DataContext = this;
+
+            Thickness rowMargin = new Thickness(0, 7, 0, 5);
+
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
+            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
+            monitor.ItemsSource = GetAvailableMonitors();
+            monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) { Mode = BindingMode.TwoWay });
+            monitor.Margin = rowMargin;
+
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
+            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 8);
+            windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
+            windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
+            windowMode.Margin = rowMargin;
+
+            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
+            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
+            resolution.ItemsSource = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
+            resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) { Mode = BindingMode.TwoWay });
+            resolution.Margin = rowMargin;
+
+            /*UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
+            _audioText.FontSize *= 0.8;
+            _audioText.TextWrapping = TextWrapping.WrapWithOverflow;
+            AddUiElement(_audioText, row: 13, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
+            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), row: 13, col: 2, rowSpan: 3, colSpan: 2);
+            audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
+            audio.ItemsSource = EnumerateAudioSettings().ToArray();
+            audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
+            audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
+            audio.Margin = rowMargin;*/
+
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 4);
+            x64.Margin = rowMargin;
+            x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
+            x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
+
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 3, 3, 5);
+            debuggableCheckBox.Margin = rowMargin;
+            debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) { Mode = BindingMode.TwoWay });
+
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 8);
+            checkUpdates.Margin = rowMargin;
+            checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
+
+            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 8);
+            steamOverlayFix.Margin = rowMargin;
+            steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
+
+            foreach (FrameworkElement child in Children)
+            {
+                //if (!ReferenceEquals(child, backround))
+                child.Margin = new Thickness(child.Margin.Left + 8, child.Margin.Top, child.Margin.Right + 8, child.Margin.Bottom);
+
+                TextBlock textblock = child as TextBlock;
+                if (textblock != null)
+                {
+                    textblock.Foreground = Brushes.WhiteSmoke;
+                    textblock.FontWeight = FontWeight.FromOpenTypeWeight(500);
+                    continue;
+                }
+
+                Control control = child as Control;
+                if (control != null && !(control is ComboBox))
+                    control.Foreground = Brushes.WhiteSmoke;
+            }
+            try
+            {
+                LoadSettings();
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+            //LoadSettings("");
+        }
+
         #region Properties
 
         public String ScreenResolution
@@ -317,13 +405,13 @@ namespace Memoria.Launcher
         private Boolean _checkUpdates;
         private String[] _downloadMirrors;
 
-        public void LoadSettings(string value)
+        private void LoadSettings()
         {
             try
             {
                 IniFile iniFile = new IniFile(IniPath);
 
-                value = iniFile.ReadValue("Settings", nameof(ScreenResolution));
+                String value = iniFile.ReadValue("Settings", nameof(ScreenResolution));
                 //if res in settings.ini exists AND corresponds to something in the res list
                 if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings().ToArray().Any(value.Contains)) 
                     _resolution = value;
@@ -397,6 +485,7 @@ namespace Memoria.Launcher
                 if (String.IsNullOrEmpty(value))
                 {
                     _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];
+                    //if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru") _downloadMirrors = ["https://ff9.ffrtt.ru/rus/FF9RU.exe", "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"];
                 }
                 else
                 {
@@ -413,96 +502,6 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
-            }
-            catch (Exception ex)
-            {
-                UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
-        }
-
-        public GameSettingsControl()
-        {
-            foreach (UInt16 frequency in EnumerateAudioSettings())
-                _validSamplingFrequency.Add(frequency);
-
-            SetRows(28);
-            SetCols(8);
-
-            Width = 240;
-            VerticalAlignment = VerticalAlignment.Top;
-            HorizontalAlignment = HorizontalAlignment.Left;
-            Margin = new Thickness(5);
-            DataContext = this;
-
-            Thickness rowMargin = new Thickness(0, 7, 0, 5);
-
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
-            UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
-            monitor.ItemsSource = GetAvailableMonitors();
-            monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) { Mode = BindingMode.TwoWay });
-            monitor.Margin = rowMargin;
-
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
-            UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 8);
-            windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
-            windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
-            windowMode.Margin = rowMargin;
-
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
-            UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
-            resolution.ItemsSource = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) { Mode = BindingMode.TwoWay });
-            resolution.Margin = rowMargin;
-
-            /*UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
-            _audioText.FontSize *= 0.8;
-            _audioText.TextWrapping = TextWrapping.WrapWithOverflow;
-            AddUiElement(_audioText, row: 13, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
-            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), row: 13, col: 2, rowSpan: 3, colSpan: 2);
-            audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
-            audio.ItemsSource = EnumerateAudioSettings().ToArray();
-            audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
-            audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
-            audio.Margin = rowMargin;*/
-
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 4);
-            x64.Margin = rowMargin;
-            x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
-            x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
-
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 3, 3, 5);
-            debuggableCheckBox.Margin = rowMargin;
-            debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) { Mode = BindingMode.TwoWay });
-
-            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 8);
-            checkUpdates.Margin = rowMargin;
-            checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
-
-            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 8);
-            steamOverlayFix.Margin = rowMargin;
-            steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
-
-            foreach (FrameworkElement child in Children)
-            {
-                //if (!ReferenceEquals(child, backround))
-                child.Margin = new Thickness(child.Margin.Left + 8, child.Margin.Top, child.Margin.Right + 8, child.Margin.Bottom);
-
-                TextBlock textblock = child as TextBlock;
-                if (textblock != null)
-                {
-                    textblock.Foreground = Brushes.WhiteSmoke;
-                    textblock.FontWeight = FontWeight.FromOpenTypeWeight(500);
-                    continue;
-                }
-
-                Control control = child as Control;
-                if (control != null && !(control is ComboBox))
-                    control.Foreground = Brushes.WhiteSmoke;
-            }
-
-            try
-            {
-                LoadSettings("");
             }
             catch (Exception ex)
             {

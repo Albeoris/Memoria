@@ -43,7 +43,7 @@
 			Debuggable = " Debuggable"
 			CheckUpdates = " Check for updates"
 			IniOptions = "Options"
-			Widescreen = " Widescreen (16:9)"
+			Widescreen = " Widescreen (16:9 or 16:10)"
 			BattleInterface = "Battle HUD"
 			BattleInterfaceType0 = "Big"
 			BattleInterfaceType1 = "Small"

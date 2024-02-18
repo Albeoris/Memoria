@@ -580,20 +580,40 @@ namespace Memoria.Launcher
                 return true;
             }
             String name = null;
-            String description = null;
             String author = null;
             String category = null;
+            String description = null;
             if (folderName == "MoguriFiles")
+            {
                 name = "Moguri Mod";
+                author = "ZePilot, Snouz";
+                category = "Visual";
+                description = "";
+            }
+                
             else if (folderName == "MoguriSoundtrack")
+            {
                 name = "Moguri Soundtrack";
+                author = "Pontus Hultgren, ZePilot";
+                category = "Music";
+                description = "";
+            }
+            
             else if (folderName == "MoguriVideo")
-                name = "Moguri Video";
+            {
+                name = "Moguri 30fps FMVs";
+                author = "Snouz, Lykon";
+                category = "Visual";
+                description = "";
+            }
+            
             File.WriteAllText(folderName + "/" + Mod.DESCRIPTION_FILE,
                 "<Mod>\n" +
                 "    <Name>" + (name ?? folderName) + "</Name>\n" +
+                "    <Author>" + (author ?? "Unknown") + " </Author>\n" +
                 "    <InstallationPath>" + folderName + "</InstallationPath>\n" +
-                "    <Category>Unknown</Category>\n" +
+                "    <Category>" + (category ?? "Unknown") + "</Category>\n" +
+                "    <Description>" + (description ?? "")  + "<Description>\n" +
                 "</Mod>");
             return true;
         }

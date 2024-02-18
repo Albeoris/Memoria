@@ -42,7 +42,7 @@
 			Debuggable = "Отладка"
 			CheckUpdates = "Проверка обновлений"
 			IniOptions = "Options"
-			Widescreen = " Widescreen (16:9)"
+			Widescreen = " Widescreen (16:9 / 16:10)"
 			BattleInterface = "Боевой интерфейс"
 			BattleInterfaceType0 = "Большой"
 			BattleInterfaceType1 = "Маленький"

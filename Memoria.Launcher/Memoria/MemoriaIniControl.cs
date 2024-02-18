@@ -281,7 +281,9 @@ namespace Memoria.Launcher
                 sBUIScaleTextindex.Margin = new Thickness(8, 0, 0, 0);
             }
 
+            SanitizeMemoriaIni();
             LoadSettings();
+            //SanitizeMemoriaIni();
         }
 
         public bool PsxFontInstalled = false;
@@ -728,7 +730,10 @@ namespace Memoria.Launcher
                     OnPropertyChanged(nameof(ScaleUIFactor));
                 }
             }
-            catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -857,6 +862,24 @@ namespace Memoria.Launcher
                     case nameof(ScaleUIFactor):
                         iniFile.WriteValue("Graphics", propertyName + " ", " " + ScaleUIFactor.ToString().Replace(',', '.'));
                         break;
+                }
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
+        private async void SanitizeMemoriaIni()
+        {
+            try
+            {
+                if (File.Exists(_iniPath))
+                {
+                    string wholeFile = File.ReadAllText(_iniPath);
+                    wholeFile = wholeFile.Replace("=", " = ");
+                    wholeFile = wholeFile.Replace("  ", " ");
+                    wholeFile = wholeFile.Replace("  ", " ");
+                    File.WriteAllText(_iniPath, wholeFile);
                 }
             }
             catch (Exception ex)
