@@ -249,7 +249,7 @@ public class ParametricMovement
 			t = (InterpolateType)Enum.Parse(typeof(InterpolateType), s);
 			return true;
 		}
-		catch (Exception err)
+		catch (Exception)
 		{
 			t = InterpolateType.Constant;
 			return false;

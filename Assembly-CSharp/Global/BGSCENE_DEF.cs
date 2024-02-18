@@ -450,7 +450,7 @@ public class BGSCENE_DEF
 		{
             Color firstPixel = this.atlas.GetPixel(0, 0);
         }
-        catch (Exception err)
+        catch (Exception)
 		{
             atlasIsReadable = false;
         }

@@ -82,7 +82,7 @@ namespace Memoria.Launcher
                 if (InstallationPath == null)
                     InstallationPath = folderPath;
             }
-            catch (Exception err)
+            catch (Exception)
 			{
 			}
         }

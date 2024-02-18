@@ -134,32 +134,32 @@ public class SFXBinaryFile
 		} while (sequence[sequence.Count - 1].code != SequenceCode.CODE.END);
 
 
-		// DEBUG
-		if (false)
+        // DEBUG
+        /*if (false)
 		{
 			String[] EffectPointType = new String[] { "Effect", "Figure" };
 			Dictionary<Int32, String> CharacterCode = new Dictionary<Int32, String>{
-			{ 0, "FirstTarget" },
-			{ 1, "SecondTarget" },
-			{ 2, "ThirdTarget" },
-			{ 3, "FourthTarget" },
-			{ 4, "FifthTarget" },
-			{ 5, "SixthTarget" },
-			{ 6, "SeventhTarget" },
-			{ 7, "EighthTarget" },
-			{ 0x10, "Caster" },
-			{ 0xFF, "AllTargets" }
-		};
+				{ 0, "FirstTarget" },
+				{ 1, "SecondTarget" },
+				{ 2, "ThirdTarget" },
+				{ 3, "FourthTarget" },
+				{ 4, "FifthTarget" },
+				{ 5, "SixthTarget" },
+				{ 6, "SeventhTarget" },
+				{ 7, "EighthTarget" },
+				{ 0x10, "Caster" },
+				{ 0xFF, "AllTargets" }
+			};
 			Dictionary<Int32, String> ShowHideCode = new Dictionary<Int32, String>{
-			{ 0, "Char=AllPlayers ; Enable=True" },
-			{ 1, "Char=AllEnemies ; Enable=True" },
-			{ 2, "Char=Everyone ; Enable=True" },
-			{ 4, "Char=AllPlayers ; Enable=False" },
-			{ 5, "Char=AllEnemies ; Enable=False" },
-			{ 6, "Char=Everyone ; Enable=False" },
-			{ 9, "Char=Caster ; Enable=True" },
-			{ 13, "Char=Caster ; Enable=False" }
-		};
+				{ 0, "Char=AllPlayers ; Enable=True" },
+				{ 1, "Char=AllEnemies ; Enable=True" },
+				{ 2, "Char=Everyone ; Enable=True" },
+				{ 4, "Char=AllPlayers ; Enable=False" },
+				{ 5, "Char=AllEnemies ; Enable=False" },
+				{ 6, "Char=Everyone ; Enable=False" },
+				{ 9, "Char=Caster ; Enable=True" },
+				{ 13, "Char=Caster ; Enable=False" }
+			};
 			String sequenceString = "";
 			List<Int32> randomCameras = new List<Int32>();
 			for (Int32 i = 0; i < sequence.Count; i++)
@@ -222,10 +222,10 @@ public class SFXBinaryFile
 					Log.Message(ress);
 				}
 			}
-		}
-	}
+		}*/
+    }
 
-	public class SequenceCode
+    public class SequenceCode
 	{
 		public CODE code;
 		public Byte arg1;

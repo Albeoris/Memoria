@@ -437,7 +437,7 @@ namespace Memoria.Data
                             speak.playerId = (CharacterId)Enum.Parse(typeof(CharacterId), charArgToken[0]);
                             newSpeakers.Add(speak);
                         }
-                        catch (Exception err)
+                        catch (Exception)
                         {
                             Log.Warning($"[{nameof(BattleVoice)}] Unrecognized player character {charArgToken[0]}");
                         }
@@ -540,7 +540,7 @@ namespace Memoria.Data
                         if (statusMatch.Success)
                             newEffect.Status = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusMatch.Groups[1].Value);
                     }
-                    catch (Exception err)
+                    catch (Exception)
                     {
                     }
                     if (newEffect.Status == 0)

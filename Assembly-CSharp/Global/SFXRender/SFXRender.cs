@@ -146,7 +146,7 @@ public class SFXRender
 			foreach (Int32 sfxFrameNum in data.frameMesh.Keys)
 				if (lastFrame < sfxFrameNum)
 					lastFrame = sfxFrameNum;
-			if (false) // last 2 saves: from camera above with units far away (y) and bone positions artificially splitted (x), find where pieces are placed wrt. caster and target
+			/*if (false) // last 2 saves: from camera above with units far away (y) and bone positions artificially splitted (x), find where pieces are placed wrt. caster and target
 			{
 				data.SwitchToWorldCoordinates();
 				foreach (SFXDataMeshConverter.Frame sfxFrame in data.frameMesh.Values)
@@ -179,7 +179,7 @@ public class SFXRender
 				data.TryFixDepth();
 				data.SwitchToWorldCoordinates();
 				//data.ComputePositionInformations();
-			}
+			}*/
 			//if (File.Exists(outputFName))
 			//{
 			//	SFXDataMeshConverter previousCaption = new SFXDataMeshConverter();
