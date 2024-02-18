@@ -232,7 +232,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            /*UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 6);
+            UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 6);
             movieVolumeText.Foreground = Brushes.White;
             movieVolumeText.Margin = rowMargin;
             Slider movieVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
@@ -248,7 +248,7 @@ namespace Memoria.Launcher
             movieVolumeTextIndex.Margin = rowMargin;
             movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
 
-            row++;*/
+            row++;
 
             if (PsxFontInstalled)
             {
@@ -711,7 +711,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(AntiAliasing));
                 Refresh(nameof(SoundVolume));
                 Refresh(nameof(MusicVolume));
-                //Refresh(nameof(MovieVolume));
+                Refresh(nameof(MovieVolume));
 
                 if (PsxFontInstalled) {
                     value = iniFile.ReadValue("Font", "Enabled");
@@ -869,14 +869,14 @@ namespace Memoria.Launcher
                         break;*/
                     case nameof(SoundVolume):
                         iniFile.WriteValue("Audio", propertyName + " ", " " + SoundVolume);
-                        iniFile.WriteValue("Audio", "MovieVolume" + " ", " " + SoundVolume);
+                        //iniFile.WriteValue("Audio", "MovieVolume" + " ", " " + SoundVolume);
                         break;
                     case nameof(MusicVolume):
                         iniFile.WriteValue("Audio", propertyName + " ", " " + MusicVolume);
                         break;
-                    /*case nameof(MovieVolume):
+                    case nameof(MovieVolume):
                         iniFile.WriteValue("Audio", propertyName + " ", " " + MovieVolume);
-                        break;*/
+                        break;
                     case nameof(UseGarnetFont):
                         iniFile.WriteValue("Graphics", propertyName + " ", " " + UseGarnetFont);
                         if (UseGarnetFont == 1)
