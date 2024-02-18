@@ -50,6 +50,7 @@
 			BattleInterfaceTooltip = "Вы можете настроить интерфейс в игре, нажав Alt+F1"
 			SkipIntrosToMainMenu = " Пропуск заставки"
 			SkipBattleSwirl = " Время загрузки битвы"
+			AntiAliasing = " Anti-aliasing"
 			SkipBattleLoading = "Время загрузки битвы"
 			HideCardsBubbles = " Скрыть пузыри карт"
 			HideSteamBubbles = " Только пузыри PSX"

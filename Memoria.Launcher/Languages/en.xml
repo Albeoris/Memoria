@@ -51,6 +51,7 @@
 			BattleInterfaceTooltip = "You may customize the interface in-game by pressing Alt+F1"
 			SkipIntrosToMainMenu = " Skip intros to main menu"
 			SkipBattleSwirl = " Skip battle swirl"
+			AntiAliasing = " Anti-aliasing"
 			SkipBattleLoading = "Frames to load battle"
 			HideCardsBubbles = " Hide cards bubbles"
 			HideSteamBubbles = " Show only PSX bubbles"

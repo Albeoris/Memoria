@@ -115,6 +115,14 @@ namespace Memoria.Launcher
             isSkipBattleSwirl.Margin = rowMargin;
 
             row++;
+
+            UiCheckBox isAntiAliasing = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.AntiAliasing, null), row, 0, 1, 8);
+            isAntiAliasing.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(AntiAliasing)) { Mode = BindingMode.TwoWay });
+            isAntiAliasing.Foreground = Brushes.White;
+            isAntiAliasing.Margin = rowMargin;
+
+            row++;
+
             /*
             UiTextBlock battleSwirlFramesText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SkipBattleLoading), row, 0, 1, 8);
             battleSwirlFramesText.Foreground = Brushes.White;
@@ -387,6 +395,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 AntiAliasing
+        {
+            get { return _antialiasing; }
+            set
+            {
+                if (_antialiasing != value)
+                {
+                    _antialiasing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 HideCards
         {
             get { return _ishidecards; }
@@ -532,7 +552,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -605,6 +625,15 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _battleswirlframes))
                     _battleswirlframes = 1;
+
+                value = iniFile.ReadValue("Graphics", nameof(AntiAliasing));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 1";
+                    OnPropertyChanged(nameof(AntiAliasing));
+                }
+                if (!Int16.TryParse(value, out _antialiasing))
+                    _antialiasing = 1;
 
                 value = iniFile.ReadValue("Icons", nameof(HideCards));
                 if (String.IsNullOrEmpty(value))
@@ -679,6 +708,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(Speed));
                 Refresh(nameof(TripleTriad));
                 Refresh(nameof(BattleSwirlFrames));
+                Refresh(nameof(AntiAliasing));
                 Refresh(nameof(SoundVolume));
                 Refresh(nameof(MusicVolume));
                 Refresh(nameof(MovieVolume));
@@ -820,6 +850,17 @@ namespace Memoria.Launcher
                         else if (BattleSwirlFrames == 0)
                         {
                             iniFile.WriteValue("Graphics", propertyName + " ", " 90");
+                        }
+                        break;
+                    case nameof(AntiAliasing):
+                        if (AntiAliasing == 1)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 8");
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        }
+                        else if (AntiAliasing == 0)
+                        {
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 0");
                         }
                         break;
                     /*case nameof(BattleSwirlFrames):

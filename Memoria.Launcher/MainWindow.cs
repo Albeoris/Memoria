@@ -32,7 +32,7 @@ namespace Memoria.Launcher
                 Directory.SetCurrentDirectory(launcherDirectory);
                 MemoriaAssemblyCompileDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 Directory.SetCurrentDirectory(launcherDirectory);
                 MemoriaAssemblyCompileDate = new DateTime(2000, 1, 1);
@@ -50,8 +50,11 @@ namespace Memoria.Launcher
             // Hotfix for the Moguri mod
             if (Directory.Exists("MoguriFiles") && !File.Exists("MoguriFiles/Memoria.ini"))
                 File.WriteAllText("MoguriFiles/Memoria.ini", "[Graphics]\nEnabled = 1\nTileSize = 64\n");
-            if (Directory.Exists("MoguriFiles") && File.Exists("MoguriFiles/StreamingAssets/ma/mbg116.bytes")) 
-                File.Move("MoguriFiles/StreamingAssets/ma/mbg116.bytes", "MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes"); 
+            if (Directory.Exists("MoguriFiles") && File.Exists("MoguriFiles/StreamingAssets/ma/mbg116.bytes"))
+                if (File.Exists("MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes")) // already copied
+                    File.Delete("MoguriFiles/StreamingAssets/ma/mbg116.bytes");
+                else
+                    File.Move("MoguriFiles/StreamingAssets/ma/mbg116.bytes", "MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes"); 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
