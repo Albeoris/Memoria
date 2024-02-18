@@ -26,6 +26,7 @@
     - Full analog movement
     - [LauncherBypass](https://github.com/Albeoris/Memoria/issues/70#issuecomment-626077188)
     - [Change audio volume](https://github.com/Albeoris/Memoria/issues/36#issuecomment-626098739) (Ctrl+Alt+Shift+M)
+    - Anti-aliasing
 - Cheats:
     - Stealing 100% rate
     - Enable/Disable vanilla cheats
@@ -44,8 +45,9 @@
 ## Install
 - Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
 
-    > Automatically find the game path from Windows registry or current directory, you can provide a custom path as argument:
+    > Automatically finds the game path from Windows registry or current directory, you can provide a custom path as argument:
     > Memoria.Patcher.exe gameDirectory
+- Note: if you want Moguri Mod, use Memoria patcher after.
 
 
 ## Update
@@ -71,10 +73,10 @@
 
 
 ## Build & Contribute
-- Use Visual Studio 2019 or JetBrains Rider.
-- Make sure you have [.NET 3.5 SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk).
+- Use Visual Studio Community (2019 or above) or JetBrains Rider.
+- Make sure you have [.NET 3.5 SDK and .NET Framework 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk) installed.
 - Make a fork of the project and download it locally.
-- Install the game and copy "*.dll" from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
+- Install the game and copy all ".dll" files from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
 - [Check this thread](https://github.com/Albeoris/Memoria/discussions/274).
 - Once you've commited your changes to your fork, make it a Pull Request to the main repository.
 
