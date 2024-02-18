@@ -165,11 +165,17 @@ namespace Assets.Sources.Graphics.Movie
 				{
                     if (this.advance)
                     {
-                        double elapsedTime = this.m_elapsedTime;
-                        float num = Mathf.Max(this.playSpeed, 0f);
-                        bool flag = false;
-                        flag |= this.isFMV;
-                        if (flag)
+                        int soundID = SoundLib.MovieAudioPlayer.GetActiveSoundID();
+                        double elapsedTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID) / 1000.0;
+
+						// We allow +/- 66ms of delay
+                        if (elapsedTime > 0 && Math.Abs(elapsedTime - m_elapsedTime) > 0.066)
+                        {
+                            // Forces sync with audio
+                            this.m_elapsedTime = elapsedTime;
+                        }
+
+                        if (this.isFMV)
                         {
                             if (this.preciseTimeCycleCounter == 0)
                             {
@@ -190,9 +196,9 @@ namespace Assets.Sources.Graphics.Movie
                         }
                         else
                         {
-                            this.m_elapsedTime += (double)(Mathf.Min(Time.deltaTime, 0.067f) * num);
+                            this.m_elapsedTime += (double)(Mathf.Min(Time.deltaTime, 0.067f) * Mathf.Max(this.playSpeed, 0f));
                         }
-                        if (this.shouldSync)
+                        /*if (this.shouldSync)
                         {
                             SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
                             this.shouldSync = false;
@@ -205,7 +211,7 @@ namespace Assets.Sources.Graphics.Movie
                                 SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
                                 this.syncElapsed = 0f;
                             }
-                        }
+                        }*/
                     }
                 }
 				else
