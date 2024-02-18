@@ -63,12 +63,12 @@ namespace Memoria.Launcher
 
         private void OnClosing(Object sender, CancelEventArgs e)
         {
-            if (downloadList.Count > 0 || downloadingMod !=null)
-			{
+            if (downloadList.Count > 0 || downloadingMod != null)
+            {
                 e.Cancel = true;
                 MessageBox.Show($"Do NOT close this window while downloads are on their way.", "Error", MessageBoxButtons.OK);
                 return;
-			}
+            }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
@@ -140,7 +140,7 @@ namespace Memoria.Launcher
             UpdateCatalogInstallationState();
         }
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
-		{
+        {
             if (lstMods.SelectedIndex > 0)
             {
                 Int32 sel = lstMods.SelectedIndex;
@@ -192,7 +192,7 @@ namespace Memoria.Launcher
             }
         }
         private void OnClickActivateAll(Object sender, RoutedEventArgs e)
-		{
+        {
             foreach (Mod mod in modListInstalled)
                 mod.IsActive = true;
             lstMods.Items.Refresh();
@@ -215,7 +215,7 @@ namespace Memoria.Launcher
             }
             lstCatalogMods.Items.Refresh();
         }
-		private void OnClickCancel(Object sender, RoutedEventArgs e)
+        private void OnClickCancel(Object sender, RoutedEventArgs e)
         {
             if (downloadThread != null)
                 downloadThread.Abort();
@@ -381,7 +381,7 @@ namespace Memoria.Launcher
                                 proceedNext = true;
                             }
                             else
-							{
+                            {
                                 String[] subDirectories = Directory.GetDirectories(path);
                                 foreach (String sd in subDirectories)
                                     if (Mod.LooksLikeAModFolder(sd))
@@ -390,7 +390,7 @@ namespace Memoria.Launcher
                                         destPath = downloadingMod.InstallationPath ?? downloadingModName;
                                         proceedNext = true;
                                         break;
-									}
+                                    }
                                 if (!proceedNext)
                                 {
                                     MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButtons.OK);
@@ -467,7 +467,7 @@ namespace Memoria.Launcher
                 }
                 Boolean activateTheNewMod = success;
                 if (success)
-				{
+                {
                     if (!Directory.EnumerateFileSystemEntries(Mod.INSTALLATION_TMP).GetEnumerator().MoveNext())
                         Directory.Delete(Mod.INSTALLATION_TMP);
                     Mod previousMod = Mod.SearchWithName(modListInstalled, downloadingModName);
@@ -484,7 +484,7 @@ namespace Memoria.Launcher
                 CheckForValidModFolder();
                 UpdateCatalogInstallationState();
                 if (activateTheNewMod)
-				{
+                {
                     Mod newMod = Mod.SearchWithName(modListInstalled, downloadingModName);
                     if (newMod != null)
                         newMod.IsActive = true;
@@ -522,7 +522,7 @@ namespace Memoria.Launcher
         }
 
         private void ReadCatalog()
-		{
+        {
             if (!File.Exists(CATALOG_PATH))
                 return;
             try
@@ -579,41 +579,43 @@ namespace Memoria.Launcher
                 catalogVersion.GenerateDescription(folderName);
                 return true;
             }
-            String name = null;
-            String author = null;
-            String category = null;
-            String description = null;
+
+            String name = "";
+            String author = "";
+            String category = "";
+            String description = "";
+
             if (folderName == "MoguriFiles")
             {
                 name = "Moguri Mod";
-                author = "ZePilot, Snouz";
+                author = "ZePilot / Snouz";
                 category = "Visual";
                 description = "";
             }
-                
-            else if (folderName == "MoguriSoundtrack")
+
+            if (folderName == "MoguriSoundtrack")
             {
                 name = "Moguri Soundtrack";
                 author = "Pontus Hultgren, ZePilot";
                 category = "Music";
                 description = "";
             }
-            
-            else if (folderName == "MoguriVideo")
+
+            if (folderName == "MoguriVideo")
             {
-                name = "Moguri 30fps FMVs";
+                name = "Moguri Video";
                 author = "Snouz, Lykon";
                 category = "Visual";
                 description = "";
             }
-            
+
             File.WriteAllText(folderName + "/" + Mod.DESCRIPTION_FILE,
                 "<Mod>\n" +
                 "    <Name>" + (name ?? folderName) + "</Name>\n" +
-                "    <Author>" + (author ?? "Unknown") + " </Author>\n" +
+                "    <Author>" + (author ?? "Unknown") + "</Author>\n" +
                 "    <InstallationPath>" + folderName + "</InstallationPath>\n" +
                 "    <Category>" + (category ?? "Unknown") + "</Category>\n" +
-                "    <Description>" + (description ?? "")  + "<Description>\n" +
+                "    <Description>" + (description ?? "") + "</Description>\n" +
                 "</Mod>");
             return true;
         }
@@ -630,7 +632,7 @@ namespace Memoria.Launcher
         }
 
         private void UpdateModDetails(Mod mod)
-		{
+        {
             currentMod = mod;
             if (mod == null || mod.Name == null)
             {
@@ -650,20 +652,20 @@ namespace Memoria.Launcher
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
                 if (hasSubMod)
-				{
+                {
                     if (modListCatalog.Contains(mod))
-					{
+                    {
                         Mod installedVersion = Mod.SearchWithName(modListInstalled, mod.Name);
                         if (installedVersion != null)
-						{
+                        {
                             foreach (Mod subMod in mod.SubMod)
                             {
                                 Mod installedSub = Mod.SearchWithPath(installedVersion.SubMod, subMod.InstallationPath);
                                 if (installedSub != null)
                                     subMod.IsActive = installedSub.IsActive;
                             }
-						}
-					}
+                        }
+                    }
                     PreviewSubModList.ItemsSource = mod.SubMod;
                     PreviewSubModList.SelectedItem = mod.SubMod[0];
                     UpdateSubModDetails(mod.SubMod[0]);
@@ -703,7 +705,7 @@ namespace Memoria.Launcher
         }
 
         private void UpdateSubModDetails(Mod subMod)
-		{
+        {
             if (subMod == null)
                 return;
             PreviewSubModActive.IsEnabled = tabCtrlMain.SelectedIndex == 0;
@@ -712,9 +714,9 @@ namespace Memoria.Launcher
         }
 
         private void UpdateCatalogInstallationState()
-		{
+        {
             foreach (Mod mod in modListCatalog)
-			{
+            {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
                     mod.Installed = "...";
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
@@ -733,7 +735,7 @@ namespace Memoria.Launcher
         }
 
         private void SortCatalog(MethodInfo sortGetter, Boolean ascending)
-		{
+        {
             if (sortGetter == null || sortGetter.DeclaringType != typeof(Mod) || sortGetter.ReturnType.GetInterface(nameof(IComparable)) == null || sortGetter.GetParameters().Length > 0)
                 return;
             List<Mod> catalogList = new List<Mod>(modListCatalog);
@@ -780,7 +782,7 @@ namespace Memoria.Launcher
                         if (!Directory.Exists(listCouple[listI][i]))
                             continue;
                         if (listCouple[listI][i].Contains('/'))
-						{
+                        {
                             if (listI == 1)
                                 subModList.Add(listCouple[listI][i]);
                             continue;
@@ -803,7 +805,7 @@ namespace Memoria.Launcher
                     }
                 }
                 foreach (String path in subModList)
-				{
+                {
                     Int32 sepIndex = path.IndexOf("/");
                     String mainModPath = path.Substring(0, sepIndex);
                     String subModPath = path.Substring(sepIndex + 1);
@@ -819,13 +821,13 @@ namespace Memoria.Launcher
         }
 
         private void UpdateSettings()
-		{
+        {
             try
             {
                 List<String> iniModActiveList = new List<String>();
                 List<String> iniModPriorityList = new List<String>();
                 foreach (Mod mod in modListInstalled)
-				{
+                {
                     iniModActiveList.AddRange(mod.EnumerateModAndSubModFoldersOrdered(true));
                     iniModPriorityList.Add(mod.InstallationPath);
                 }
@@ -837,7 +839,7 @@ namespace Memoria.Launcher
         }
 
         private void SetupFrameLang()
-		{
+        {
             Title = Lang.ModEditor.WindowTitle + " - " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("Y", CultureInfo.GetCultureInfo(Lang.LangName));
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
