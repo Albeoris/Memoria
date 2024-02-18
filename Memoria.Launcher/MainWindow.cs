@@ -47,16 +47,47 @@ namespace Memoria.Launcher
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
-            // Hotfix for the Moguri mod
-            if (Directory.Exists("MoguriFiles") && !File.Exists("MoguriFiles/Memoria.ini"))
-                File.WriteAllText("MoguriFiles/Memoria.ini", "[Graphics]\nEnabled = 1\nTileSize = 64\n");
-            if (Directory.Exists("MoguriFiles") && File.Exists("MoguriFiles/StreamingAssets/ma/mbg116.bytes"))
-                if (File.Exists("MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes")) // already copied
-                    File.Delete("MoguriFiles/StreamingAssets/ma/mbg116.bytes");
-                else
-                    File.Move("MoguriFiles/StreamingAssets/ma/mbg116.bytes", "MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes"); 
+            HotfixForMoguriMod();
+
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
+        }
+        private void HotfixForMoguriMod()
+        {
+            // Make sure tiles are set to 64
+            if (Directory.Exists("MoguriFiles") && !File.Exists("MoguriFiles/Memoria.ini"))
+                File.WriteAllText("MoguriFiles/Memoria.ini", "[Graphics]\nEnabled = 1\nTileSize = 64\n");
+
+            // Make sure mbg116.bytes doesn't exist - for crash at the end
+            if (Directory.Exists("MoguriFiles"))
+            {
+                if (File.Exists("MoguriFiles/StreamingAssets/ma/mbg116.bytes"))
+                {
+                    if (File.Exists("MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes")) // already copied
+                        File.Delete("MoguriFiles/StreamingAssets/ma/mbg116.bytes");
+                    else
+                        File.Move("MoguriFiles/StreamingAssets/ma/mbg116.bytes", "MoguriFiles/StreamingAssets/ma/mbg116 - bugged.bytes");
+                }
+            }
+
+            // Make sure FMV059.bytes and FMV060.bytes don't exist: slightly bugged for minimal impact
+            if (Directory.Exists("MoguriVideo"))
+            {
+                if (File.Exists("MoguriVideo/StreamingAssets/ma/FMV059.bytes"))
+                {
+                    if (File.Exists("MoguriVideo/StreamingAssets/ma/FMV059 - bugged.bytes")) // already copied
+                        File.Delete("MoguriVideo/StreamingAssets/ma/FMV059.bytes");
+                    else
+                        File.Move("MoguriVideo/StreamingAssets/ma/FMV059.bytes", "MoguriVideo/StreamingAssets/ma/FMV059 - bugged.bytes");
+                }
+                if (File.Exists("MoguriVideo/StreamingAssets/ma/FMV060.bytes"))
+                {
+                    if (File.Exists("MoguriVideo/StreamingAssets/ma/FMV060 - bugged.bytes")) // already copied
+                        File.Delete("MoguriVideo/StreamingAssets/ma/FMV060.bytes");
+                    else
+                        File.Move("MoguriVideo/StreamingAssets/ma/FMV060.bytes", "MoguriVideo/StreamingAssets/ma/FMV060 - bugged.bytes");
+                }
+            }
         }
 
         private void TryLoadImage()
