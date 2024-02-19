@@ -572,7 +572,7 @@ namespace Memoria.Launcher
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
         {
-            if (!Directory.Exists(folderName))
+            if (!Directory.Exists(folderName) || File.Exists(folderName + "/" + Mod.DESCRIPTION_FILE))
                 return false;
             Mod catalogVersion = Mod.SearchWithPath(modListCatalog, folderName);
             if (catalogVersion != null)
