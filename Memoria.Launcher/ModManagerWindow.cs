@@ -66,13 +66,14 @@ namespace Memoria.Launcher
             if (downloadList.Count > 0 || downloadingMod != null)
             {
                 e.Cancel = true;
-                MessageBox.Show($"Do NOT close this window while downloads are on their way.", "Error", MessageBoxButtons.OK);
+                MessageBox.Show($"Please don't close this window while downloads are on their way.", "Error", MessageBoxButtons.OK);
                 return;
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
             ((MainWindow)this.Owner).ModdingWindow = null;
+            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherFromModManager();
         }
 
         [DllImport("user32.dll")]

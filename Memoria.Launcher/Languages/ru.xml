@@ -54,7 +54,7 @@
 			SkipBattleLoading = "Время загрузки битвы"
 			HideCardsBubbles = " Скрыть пузыри карт"
 			HideSteamBubbles = " Только пузыри PSX"
-      HideSteamBubblesTooltip = "Отключить пузыри «карта», «пляж»&#xA;и пузыри взаимодействия с NPC."
+			HideSteamBubblesTooltip = "Отключить пузыри «карта», «пляж»&#xA;и пузыри взаимодействия с NPC."
 			TurnBasedBattles = " Пошаговые бои"
 			SpeedChoice = "Боевой"
 			SpeedChoiceType0 = "Нормальный"
@@ -63,7 +63,7 @@
 			SpeedChoiceType3 = "Динамический (1)"
 			SpeedChoiceType4 = "Динамический (2)"
 			SpeedChoiceType5 = "Динамический"
-      SpeedChoiceTooltip = "Нормальный: режим по умолчанию&#xA;Быстро: ATB сразу же заполняется во время простоя&#xA;Пошаговый: ATB останавливается во время хода персонажа&#xA;Динамичность: персонажи и враги могут действовать одновременно"
+			SpeedChoiceTooltip = "Нормальный: режим по умолчанию&#xA;Быстро: ATB сразу же заполняется во время простоя&#xA;Пошаговый: ATB останавливается во время хода персонажа&#xA;Динамичность: персонажи и враги могут действовать одновременно"
 			TripleTriad = "Карты"
 			TripleTriadType0 = "Tetra Master"
 			TripleTriadType1 = "Tetra Triad"
@@ -81,7 +81,7 @@
 			AccessBattleMenuType1 = " Ограниченный"
 			AccessBattleMenuType2 = " Индивидуальный"
 			AccessBattleMenuType3 = " Неограниченный"
-      AccessBattleMenuTooltip = "Если команда «Меню» не появляется, войдите в меню&#xA;с помощью кнопки △/Y из команды «Элемент»&#xA;В ограниченном доступе использование меню стоит один ход"
+			AccessBattleMenuTooltip = "Если команда «Меню» не появляется, войдите в меню&#xA;с помощью кнопки △/Y из команды «Элемент»&#xA;В ограниченном доступе использование меню стоит один ход"
 			SpeedMode = " Ускорение | F1"
 			SpeedFactor = "Множитель ускорения"
 			BattleAssistance = " Боевая помощь | F2 F3"
@@ -94,6 +94,8 @@
 			SBUIenabled = "Масштабированный UI битвы"
 			BattleTPS = "Скорость анимации в бою (реком. 22)"
 			SharedFPS = "Кадровая частота"
+			UseOrchestralMusic = "Оркестровая музыка (Moguri)"
+			Use30FpsVideo = "30 FPS видео (Moguri)"
 			/>
 
 	<SdLib

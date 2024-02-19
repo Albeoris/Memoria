@@ -9,11 +9,14 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Globalization;
+using System.Collections.Generic;
 using System.Drawing.Text;
 using Ini;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 
 // ReSharper disable UnusedMember.Local
@@ -31,13 +34,8 @@ namespace Memoria.Launcher
         {
             PsxFontInstalled = true || IsOptionPresentInIni("Graphics", "UseGarnetFont");
             SBUIInstalled = false && IsOptionPresentInIni("Graphics", "ScaledBattleUI");
-            Int16 numberOfRows = 15;
-            if (PsxFontInstalled)
-                numberOfRows += 1;
-            if (SBUIInstalled)
-                numberOfRows += 2;
 
-            SetRows(numberOfRows);
+            SetRows(17);
             SetCols(8);
             
             Width = 240;
@@ -47,7 +45,7 @@ namespace Memoria.Launcher
 
             DataContext = this;
 
-            Thickness rowMargin = new Thickness(8, 2, 3, 2);
+            Thickness rowMargin = new(8, 2, 3, 2);
 
             /*UiTextBlock optionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniOptions), 0, 0, 2, 8);
             optionsText.Padding = new Thickness(0, 4, 0, 0);
@@ -57,6 +55,26 @@ namespace Memoria.Launcher
             optionsText.Margin = rowMargin;*/
             Int32 row = 0;
 
+            if (Directory.Exists("MoguriSoundtrack"))
+            {
+                UiCheckBox isUsingOrchestralMusic = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UseOrchestralMusic, null), row, 0, 1, 8);
+                isUsingOrchestralMusic.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OrchestralMusic)) { Mode = BindingMode.TwoWay });
+                isUsingOrchestralMusic.Foreground = Brushes.White;
+                isUsingOrchestralMusic.Margin = rowMargin;
+
+                row++;
+            }
+
+            if (Directory.Exists("MoguriVideo"))
+            {
+                UiCheckBox isUsing30fpsVideo = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Use30FpsVideo, null), row, 0, 1, 8);
+                isUsing30fpsVideo.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HighFpsVideo)) { Mode = BindingMode.TwoWay });
+                isUsing30fpsVideo.Foreground = Brushes.White;
+                isUsing30fpsVideo.Margin = rowMargin;
+
+                row++;
+            }
+            
             UiCheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row, 0, 1, 8);
             isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
             isWidescreenSupport.Foreground = Brushes.White;
@@ -407,6 +425,31 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 OrchestralMusic
+        {
+            get { return _isusingorchestralmusic; }
+            set
+            {
+                if (_isusingorchestralmusic != value)
+                {
+                    _isusingorchestralmusic = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Int16 HighFpsVideo
+        {
+            get { return _isusin30fpsvideo; }
+            set
+            {
+                if (_isusin30fpsvideo != value)
+                {
+                    _isusin30fpsvideo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 HideCards
         {
             get { return _ishidecards; }
@@ -552,7 +595,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -560,6 +603,12 @@ namespace Memoria.Launcher
         private readonly String _fontDefaultPSX = "Final Fantasy IX PSX";
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
 
+        public void ComeBackToLauncherFromModManager()
+        {
+            LoadSettings();
+            //OnPropertyChanged(nameof(OrchestralMusic));
+            //OnPropertyChanged(nameof(HighFpsVideo));
+        }
         private void LoadSettings()
         {
             try
@@ -572,6 +621,36 @@ namespace Memoria.Launcher
                 }
 
                 IniFile iniFile = new IniFile(_iniPath);
+
+                String modstring = iniFile.ReadValue("Mod", "FolderNames");
+
+                if (String.IsNullOrEmpty(modstring))
+                {
+                    _isusingorchestralmusic = 0;
+                    _isusin30fpsvideo = 1;
+                    OnPropertyChanged(nameof(OrchestralMusic));
+                    OnPropertyChanged(nameof(HighFpsVideo));
+                }
+
+                string[] mods = modstring.Split(',');
+                char[] charsToTrim = { ' ', '\"' };
+                _isusingorchestralmusic = 0;
+                _isusin30fpsvideo = 0;
+                foreach (string mod in mods)
+                {
+                    string cleanmodString = mod.Trim(charsToTrim);
+                    if (cleanmodString == "MoguriSoundtrack")
+                    {
+                        _isusingorchestralmusic = 1;
+                        OnPropertyChanged(nameof(OrchestralMusic));
+                    }
+                    if (cleanmodString == "MoguriVideo")
+                    {
+                        _isusin30fpsvideo = 1;
+                        OnPropertyChanged(nameof(HighFpsVideo));
+                    }
+                        
+                }
 
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
@@ -704,6 +783,8 @@ namespace Memoria.Launcher
                 Refresh(nameof(SharedFPS));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(SkipIntros));
+                Refresh(nameof(OrchestralMusic));
+                Refresh(nameof(HighFpsVideo));
                 Refresh(nameof(HideCards));
                 Refresh(nameof(Speed));
                 Refresh(nameof(TripleTriad));
@@ -780,6 +861,42 @@ namespace Memoria.Launcher
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
+        private string UpdateModList()
+        {
+            //List<string> modList = new List<string>();
+            IniFile iniFile = new IniFile(_iniPath);
+            String str = iniFile.ReadValue("Mod", "FolderNames");
+            if (String.IsNullOrEmpty(str))
+                str = "";
+            else
+            {
+                str = str.Replace(" ", "").Replace("\"", "").Replace("MoguriSoundtrack", "").Replace("MoguriVideo", "");
+            }
+            
+            if (Directory.Exists("MoguriSoundtrack") && OrchestralMusic == 1)
+                str = str + ",MoguriSoundtrack";
+            if (Directory.Exists("MoguriVideo") && HighFpsVideo == 1)
+                str = str + ",MoguriVideo";
+
+            String[] modList = Regex.Split(str, ",");
+            String modList2 = null;
+
+            for (Int32 i = 0; i < modList.Length; i++)
+            {
+                if (!String.IsNullOrEmpty(modList[i]))
+                {
+                    if (String.IsNullOrEmpty(modList2))
+                        modList2 = "\"" + modList[i] + "\"";
+                    else
+                    {
+                        modList2 = modList2 + ", \"" + modList[i] + "\"";
+                    }
+
+                }
+            }
+            return modList2;
+        }
+
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
             try
@@ -789,6 +906,10 @@ namespace Memoria.Launcher
                 IniFile iniFile = new IniFile(_iniPath);
                 switch (propertyName)
                 {
+                    case nameof(OrchestralMusic):
+                    case nameof(HighFpsVideo):
+                        iniFile.WriteValue("Mod", "FolderNames ", " " + UpdateModList());
+                        break;
                     case nameof(WidescreenSupport):
                         iniFile.WriteValue("Graphics", propertyName + " ", " " + WidescreenSupport.ToString());
                         if (WidescreenSupport == 1)

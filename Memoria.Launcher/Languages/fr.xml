@@ -95,6 +95,8 @@
 			SBUIenabled = " Scaled Battle UI"
 			BattleTPS = "Vitesse combats (déf. 15)"
 			SharedFPS = "Fréquence d'images / seconde"
+			UseOrchestralMusic = "Musique orchestrale (Moguri)"
+			Use30FpsVideo = "Video 30 FPS (Moguri)"
 	/>
 
 	<SdLib
