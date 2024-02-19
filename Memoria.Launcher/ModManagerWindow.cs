@@ -596,7 +596,7 @@ namespace Memoria.Launcher
             if (folderName == "MoguriSoundtrack")
             {
                 name = "Moguri Soundtrack";
-                author = "Pontus Hultgren, ZePilot";
+                author = "Pontus Hultgren / ZePilot";
                 category = "Music";
                 description = "";
             }
@@ -604,7 +604,7 @@ namespace Memoria.Launcher
             if (folderName == "MoguriVideo")
             {
                 name = "Moguri Video";
-                author = "Snouz, Lykon";
+                author = "Snouz / Lykon";
                 category = "Visual";
                 description = "";
             }
