@@ -135,12 +135,22 @@ namespace Memoria.Launcher
                             Process debuggerProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.StartsWith("Memoria.Debugger"));
                             if (debuggerProcess == null)
                             {
-                                String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
-                                String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
-                                String debuggerArgs = "10000"; // Timeout: 10 seconds
-                                ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) {WorkingDirectory = debuggerDirectory};
-                                debuggerProcess = new Process {StartInfo = debuggerStartInfo};
-                                debuggerProcess.Start();
+                                try
+                                {
+                                    String debuggerDirectory = Path.Combine(Path.GetFullPath("Debugger"), (GameSettings.IsX64 ? "x64" : "x86"));
+                                    String debuggerPath = Path.Combine(debuggerDirectory, "Memoria.Debugger.exe");
+                                    String debuggerArgs = "10000"; // Timeout: 10 seconds
+                                    if (Directory.Exists(debuggerDirectory) && File.Exists(debuggerPath))
+                                    {
+                                        ProcessStartInfo debuggerStartInfo = new ProcessStartInfo(debuggerPath, debuggerArgs) { WorkingDirectory = debuggerDirectory };
+                                        debuggerProcess = new Process { StartInfo = debuggerStartInfo };
+                                        debuggerProcess.Start();
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                }
+                                
                             }
                         }
                     }
