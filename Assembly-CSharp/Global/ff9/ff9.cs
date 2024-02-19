@@ -3878,8 +3878,8 @@ public static class ff9
 					}
 					else if (no == 25)
 					{
-						if (worldSPS.frame >= 3)
-							;
+						//if (worldSPS.frame >= 3)
+						//	;
 					}
 					else if (no == 32)
 					{

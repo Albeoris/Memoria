@@ -43,7 +43,7 @@
 			Debuggable = " Déboguable"
 			CheckUpdates = " Vérifier les mises à jour"
 			IniOptions = "Options"
-			Widescreen = " Écran large (16:9)"
+			Widescreen = " Écran large (16:9 ou 16:10)"
 			BattleInterface = "ATH de combat"
 			BattleInterfaceType0 = "Grande taille"
 			BattleInterfaceType1 = "Petite taille"
@@ -51,6 +51,7 @@
 			BattleInterfaceTooltip = "Vous pouvez personnaliser l'interface dans le jeu en appuyant sur Alt+F1"
 			SkipIntrosToMainMenu = " Passer les intros > menu"
 			SkipBattleSwirl = " Passer le chargement de combat"
+			AntiAliasing = " Anti-aliasing"
 			SkipBattleLoading = "Frames avant les combats"
 			HideCardsBubbles = " Cacher les bulles 'cartes'"
 			HideSteamBubbles = " Afficher uniquement les bulles PSX"
@@ -70,7 +71,7 @@
 			TripleTriadType2 = "Triple Triad"
 			Volume = "Volume :"
 			SoundVolume = "🔊Bruitages"
-			MusicVolume = "🔊Musique"
+			MusicVolume = "🎵Musique"
 			MovieVolume = "🔊Films"
 			IniCheats = "Triche"
 			MaxStealRate = " Voler ne rate jamais"
@@ -94,6 +95,8 @@
 			SBUIenabled = " Scaled Battle UI"
 			BattleTPS = "Vitesse combats (déf. 15)"
 			SharedFPS = "Fréquence d'images / seconde"
+			UseOrchestralMusic = "Musique orchestrale (Moguri)"
+			Use30FpsVideo = "Video 30 FPS (Moguri)"
 	/>
 
 	<SdLib

@@ -61,7 +61,7 @@ public class VoicePlayer : SoundPlayer
 					}
 					watcherOfSound.Remove(soundProfile);
 				}
-				catch (Exception err)
+				catch (Exception)
 				{
 					watcherOfSound.Remove(soundProfile);
 				}

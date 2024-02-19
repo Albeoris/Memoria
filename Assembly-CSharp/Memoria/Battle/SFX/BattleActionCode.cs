@@ -163,7 +163,7 @@ public class BattleActionCode
 				value = (SoundProfileType)Enum.Parse(typeof(SoundProfileType), args);
 				return true;
 			}
-			catch (Exception err)
+			catch (Exception)
 			{
 				return false;
 			}
@@ -195,7 +195,7 @@ public class BattleActionCode
 				value = (SpecialEffect)Enum.Parse(typeof(SpecialEffect), args);
 				return true;
 			}
-			catch (Exception err)
+			catch (Exception)
 			{
 				return false;
 			}
@@ -294,7 +294,7 @@ public class BattleActionCode
 					else
 						return false;
 				}
-				catch (Exception err)
+				catch (Exception)
 				{
 					value = args;
 					try

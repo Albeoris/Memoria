@@ -61,7 +61,6 @@ namespace Antlr.Runtime
          *  as its moving window moves through the input.  This list captures
          *  everything so we can access complete input text.
          */
-        [CLSCompliant(false)]
         protected List<IToken> _tokens = new List<IToken>(100);
 
         /** Track the last mark() call result value for use in rewind(). */
@@ -72,7 +71,6 @@ namespace Antlr.Runtime
          *  to initialize with first token.  The ctor doesn't get a token.
          *  First call to LT(1) or whatever gets the first token and sets p=0;
          */
-        [CLSCompliant(false)]
         protected int _p = -1;
 
         public BufferedTokenStream()

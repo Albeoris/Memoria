@@ -732,6 +732,23 @@ public class FieldMap : HonoBehavior
                         break;
                 }
             }
+            if (Configuration.Graphics.ScreenIs16to10())
+            {
+                switch (map) // offsets for scrolling maps stretched to WS
+                {
+                    case 456: // Dali Mountain/Summit
+                        localPosition.x = 160 + 35;
+                        break;
+                    case 505: // Cargo ship offset
+                        localPosition.x = 105 - 35;
+                        break;
+                    case 1153: // Rose Rouge cockpit offset
+                        localPosition.x = 175 - 35;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         camera.transform.localPosition = localPosition;
@@ -743,6 +760,7 @@ public class FieldMap : HonoBehavior
         //{mapNo,pixels on each side to crop because of scrollable}
         {1051,8},
         {1057,16},
+        {1058,16},
         {1060,16},
         {1652,16},
         {1653,16},
@@ -978,13 +996,6 @@ public class FieldMap : HonoBehavior
         FieldMap.FF9FieldAttr.ff9[0, 0] = 67;
         FieldMap.FF9FieldAttr.ff9[0, 2] = 60;
         FieldMap.FF9FieldAttr.field[0, 2] = 6425;
-    }
-
-    private void PSVSet(ref ff9.SVECTOR vRot, Int16 thetaX, Int32 b, Int16 thetaZ)
-    {
-        vRot.vx = thetaX;
-        vRot.vy = (Int16)b;
-        vRot.vz = thetaZ;
     }
 
     private void EBG_init()
@@ -1597,10 +1608,6 @@ public class FieldMap : HonoBehavior
         }
         overlayPtr.scrX = num;
         overlayPtr.scrY = num2;
-    }
-
-    public void UpdateSortingOrder(BGOVERLAY_DEF overlayPtr, BGSPRITE_LOC_DEF sprite, Int32 i)
-    {
     }
 
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)

@@ -40,6 +40,7 @@ public class SoundLib : MonoBehaviour
 		if (String.Equals(movieName, "FMV000"))
 		{
 			soundName = "Sounds01/BGM_/music033";
+			return SoundMetaData.GetSoundIndex(soundName, SoundProfileType.Music);
 		}
 		else if (String.Equals(movieName, "FMV059"))
 		{

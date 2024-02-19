@@ -772,7 +772,7 @@ namespace Global.TileSystem
             {
                 return _overlays[num];
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

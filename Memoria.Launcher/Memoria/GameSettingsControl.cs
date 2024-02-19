@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Ini;
 using Microsoft.Win32;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using ComboBox = System.Windows.Controls.ComboBox;
@@ -45,7 +46,7 @@ namespace Memoria.Launcher
 
             SetRows(28);
             SetCols(8);
-            
+
             Width = 240;
             VerticalAlignment = VerticalAlignment.Top;
             HorizontalAlignment = HorizontalAlignment.Left;
@@ -53,11 +54,11 @@ namespace Memoria.Launcher
             DataContext = this;
 
             Thickness rowMargin = new Thickness(0, 7, 0, 5);
-            
+
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
             UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
             monitor.ItemsSource = GetAvailableMonitors();
-            monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) {Mode = BindingMode.TwoWay});
+            monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) { Mode = BindingMode.TwoWay });
             monitor.Margin = rowMargin;
 
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
@@ -69,7 +70,7 @@ namespace Memoria.Launcher
             AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
             UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
             resolution.ItemsSource = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) {Mode = BindingMode.TwoWay});
+            resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) { Mode = BindingMode.TwoWay });
             resolution.Margin = rowMargin;
 
             /*UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
@@ -85,17 +86,17 @@ namespace Memoria.Launcher
 
             UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 4);
             x64.Margin = rowMargin;
-            x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) {Mode = BindingMode.TwoWay});
-            x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) {Mode = BindingMode.TwoWay});
+            x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
+            x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
 
             UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 3, 3, 5);
             debuggableCheckBox.Margin = rowMargin;
-            debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) {Mode = BindingMode.TwoWay});
+            debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) { Mode = BindingMode.TwoWay });
 
             UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 8);
             checkUpdates.Margin = rowMargin;
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
-            
+
             UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 8);
             steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
@@ -117,11 +118,17 @@ namespace Memoria.Launcher
                 if (control != null && !(control is ComboBox))
                     control.Foreground = Brushes.WhiteSmoke;
             }
-
-
-            LoadSettings();
+            try
+            {
+                LoadSettings();
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+            //LoadSettings("");
         }
-        
+
         #region Properties
 
         public String ScreenResolution
@@ -170,32 +177,32 @@ namespace Memoria.Launcher
             {
                 if (_audioFrequency != value)
                 {
-                    if (MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.AreYouSure, Lang.SdLib.Caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    if (MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.AreYouSure, Lang.SdLib.Caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         Boolean? x64 = TryWriteAudioSamplingFrequency(true, value, false);
                         Boolean? x86 = TryWriteAudioSamplingFrequency(false, value, false);
                         if (x64 == true && x86 == true)
                         {
-                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.SuccessBoth, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Information);
+                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessBoth, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Information);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
                         else if (x64 == true)
                         {
-                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.SuccessX64 , Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessX64 , Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
                         else if (x86 == true)
                         {
-                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.SuccessX86, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessX86, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
                         else
                         {
                             Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
-                            MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.Fail, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.Fail, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else
@@ -291,7 +298,7 @@ namespace Memoria.Launcher
             {
                 MessageBoxResult ShowMessage(String message, MessageBoxButton button, MessageBoxImage image)
                 {
-                    return MessageBox.Show((Window) this.GetRootElement(), message, Lang.SteamOverlay.Caption, button, image);
+                    return MessageBox.Show((System.Windows.Window) this.GetRootElement(), message, Lang.SteamOverlay.Caption, button, image);
                 }
 
                 if (IsSteamOverlayFixed() == value)
@@ -365,7 +372,7 @@ namespace Memoria.Launcher
                         {
                             using (ManualResetEvent evt = new ManualResetEvent(false))
                             {
-                                Window root = this.GetRootElement() as Window;
+                                System.Windows.Window root = this.GetRootElement() as System.Windows.Window;
                                 if (root != null)
                                     await UiLauncherPlayButton.CheckUpdates(root, evt, this);
                             }
@@ -387,10 +394,10 @@ namespace Memoria.Launcher
 
         private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
 
-        private String _resolution = "1280x960";
+        private String _resolution = "";
         private String _activeMonitor = "";
         private String _windowMode = "";
-        private UInt16 _audioFrequency = 44100;
+        private UInt16 _audioFrequency = 48000;
         private Boolean _audioFrequencyEnabled = true;
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
@@ -398,16 +405,19 @@ namespace Memoria.Launcher
         private Boolean _checkUpdates;
         private String[] _downloadMirrors;
 
-		private void LoadSettings()
+        private void LoadSettings()
         {
             try
             {
                 IniFile iniFile = new IniFile(IniPath);
-                String resolutionBest = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
                 String value = iniFile.ReadValue("Settings", nameof(ScreenResolution));
-                if (String.IsNullOrEmpty(value))
-                    _resolution = resolutionBest ?? "1280x960";
+                //if res in settings.ini exists AND corresponds to something in the res list
+                if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings().ToArray().Any(value.Contains)) 
+                    _resolution = value;
+                //else we choose the largest available one
+                else
+                    _resolution = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
                 value = iniFile.ReadValue("Settings", nameof(ActiveMonitor));
                 if (!String.IsNullOrEmpty(value))
@@ -424,7 +434,6 @@ namespace Memoria.Launcher
                     value = "true";
                 if (!Boolean.TryParse(value, out _isX64))
                     _isX64 = true;
-
                 if (!Environment.Is64BitOperatingSystem || !Directory.Exists("x64"))
                 {
                     _isX64 = false;
@@ -442,7 +451,7 @@ namespace Memoria.Launcher
                 Boolean? x86SamplingReaded = TryReadAudioSamplingFrequency(@"x86\FF9_Data\Plugins\SdLib.dll", out x86SamplingFrequency);
                 if (x64SamplingReaded != true && x86SamplingReaded != true)
                 {
-                    _audioFrequency = 44100;
+                    _audioFrequency = 48000;
                     _audioFrequencyEnabled = false;
                 }
                 else
@@ -475,29 +484,8 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Memoria", nameof(DownloadMirrors));
                 if (String.IsNullOrEmpty(value))
                 {
-                    if (true)
-					{
-                        // Use Github repository
-                        _downloadMirrors = new[]
-                        {
-                            "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"
-                        };
-                    }
-                    else if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")
-                    {
-                        _downloadMirrors = new[]
-                        {
-                            "https://ff9.ffrtt.ru/rus/FF9RU.exe",
-                            "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"
-                        };
-                    }
-                    else
-                    {
-                        _downloadMirrors = new[]
-                        {
-                            "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"
-                        };
-                    }
+                    _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];
+                    //if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru") _downloadMirrors = ["https://ff9.ffrtt.ru/rus/FF9RU.exe", "https://ff9.ffrtt.ru/rus/Memoria.Patcher.exe"];
                 }
                 else
                 {
@@ -600,7 +588,7 @@ namespace Memoria.Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show((Window) this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show((System.Windows.Window) this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                 samplingFrequency = 0;
                 return false;
             }
@@ -672,7 +660,7 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 if (!quiet)
-                    MessageBox.Show((Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 samplingFrequency = 0;
                 return false;
@@ -691,13 +679,25 @@ namespace Memoria.Launcher
             {
                 if (devMode.dmPelsWidth >= 640 && devMode.dmPelsHeight >= 480)
                 {
-                    String result = $"{devMode.dmPelsWidth.ToString(CultureInfo.InvariantCulture)}x{devMode.dmPelsHeight.ToString(CultureInfo.InvariantCulture)}";
-                    if ((devMode.dmPelsWidth / 16) == (devMode.dmPelsHeight / 9))
-                    {
-                        result = $"{devMode.dmPelsWidth.ToString(CultureInfo.InvariantCulture)}x{devMode.dmPelsHeight.ToString(CultureInfo.InvariantCulture)} (HD)";
-                    }
-                    if (set.Add(result))
-                        yield return result;
+                    String resolution = $"{devMode.dmPelsWidth.ToString(CultureInfo.InvariantCulture)}x{devMode.dmPelsHeight.ToString(CultureInfo.InvariantCulture)}";
+                    String ratio = "";
+
+                    if ((devMode.dmPelsWidth / 16) == (devMode.dmPelsHeight / 9)) ratio = " | 16:9";
+                    else if ((devMode.dmPelsWidth / 8) == (devMode.dmPelsHeight / 5)) ratio = " | 16:10";
+                    else if ((devMode.dmPelsWidth / 4) == (devMode.dmPelsHeight / 3)) ratio = " | 4:3";
+                    else if ((devMode.dmPelsWidth / 14) == (devMode.dmPelsHeight / 9)) ratio = " | 14:9";
+                    else if ((devMode.dmPelsWidth / 32) == (devMode.dmPelsHeight / 9)) ratio = " | 32:9";
+                    else if ((devMode.dmPelsWidth / 64) == (devMode.dmPelsHeight / 27)) ratio = " | 64:27";
+                    else if ((devMode.dmPelsWidth / 3) == (devMode.dmPelsHeight / 2)) ratio = " | 3:2";
+                    else if ((devMode.dmPelsWidth / 5) == (devMode.dmPelsHeight / 4)) ratio = " | 5:4";
+                    else if ((devMode.dmPelsWidth / 256) == (devMode.dmPelsHeight / 135)) ratio = " | 256:135";
+                    else if ((devMode.dmPelsWidth / 25) == (devMode.dmPelsHeight / 16)) ratio = " | 25:16";
+                    else if ((devMode.dmPelsWidth) == (devMode.dmPelsHeight)) ratio = " | 1:1";
+
+                    resolution += ratio; 
+
+                    if (set.Add(resolution))
+                        yield return resolution;
                 }
             }
         }

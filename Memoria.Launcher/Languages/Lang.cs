@@ -164,6 +164,7 @@ namespace Memoria.Launcher
             public static readonly string BattleInterfaceTooltip = GetSettings(nameof(BattleInterfaceTooltip));
             public static readonly string SkipIntrosToMainMenu = GetSettings(nameof(SkipIntrosToMainMenu));
             public static readonly string SkipBattleSwirl = GetSettings(nameof(SkipBattleSwirl));
+            public static readonly string AntiAliasing = GetSettings(nameof(AntiAliasing));
             public static readonly string SkipBattleLoading = GetSettings(nameof(SkipBattleLoading));
             public static readonly string HideCardsBubbles = GetSettings(nameof(HideCardsBubbles));
             public static readonly string HideSteamBubbles = GetSettings(nameof(HideSteamBubbles));
@@ -207,7 +208,8 @@ namespace Memoria.Launcher
             public static readonly string SBUIenabled = GetSettings(nameof(SBUIenabled));
             public static readonly string BattleTPS = GetSettings(nameof(BattleTPS));
             public static readonly string SharedFPS = GetSettings(nameof(SharedFPS));
-
+            public static readonly string UseOrchestralMusic = GetSettings(nameof(UseOrchestralMusic));
+            public static readonly string Use30FpsVideo = GetSettings(nameof(Use30FpsVideo));
         }
 
         public static class SdLib
