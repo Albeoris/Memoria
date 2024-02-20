@@ -606,8 +606,6 @@ namespace Memoria.Launcher
         public void ComeBackToLauncherFromModManager()
         {
             LoadSettings();
-            //OnPropertyChanged(nameof(OrchestralMusic));
-            //OnPropertyChanged(nameof(HighFpsVideo));
         }
         private void LoadSettings()
         {
@@ -870,7 +868,7 @@ namespace Memoria.Launcher
                 str = "";
             else
             {
-                str = str.Replace(" ", "").Replace("\"", "").Replace("MoguriSoundtrack", "").Replace("MoguriVideo", "");
+                str = str.Replace("\"", "").Replace("MoguriSoundtrack", "").Replace("MoguriVideo", "");
             }
             
             if (Directory.Exists("MoguriSoundtrack") && OrchestralMusic == 1)
@@ -883,6 +881,7 @@ namespace Memoria.Launcher
 
             for (Int32 i = 0; i < modList.Length; i++)
             {
+                modList[i] = modList[i].Trim(' ');
                 if (!String.IsNullOrEmpty(modList[i]))
                 {
                     if (String.IsNullOrEmpty(modList2))
