@@ -161,14 +161,12 @@ namespace Memoria.Launcher
             public static readonly string BattleInterfaceType0 = GetSettings(nameof(BattleInterfaceType0));
             public static readonly string BattleInterfaceType1 = GetSettings(nameof(BattleInterfaceType1));
             public static readonly string BattleInterfaceType2 = GetSettings(nameof(BattleInterfaceType2));
-            public static readonly string BattleInterfaceTooltip = GetSettings(nameof(BattleInterfaceTooltip));
             public static readonly string SkipIntrosToMainMenu = GetSettings(nameof(SkipIntrosToMainMenu));
             public static readonly string SkipBattleSwirl = GetSettings(nameof(SkipBattleSwirl));
             public static readonly string AntiAliasing = GetSettings(nameof(AntiAliasing));
             public static readonly string SkipBattleLoading = GetSettings(nameof(SkipBattleLoading));
             public static readonly string HideCardsBubbles = GetSettings(nameof(HideCardsBubbles));
             public static readonly string HideSteamBubbles = GetSettings(nameof(HideSteamBubbles));
-            public static readonly string HideSteamBubblesTooltip = GetSettings(nameof(HideSteamBubblesTooltip));
             public static readonly string TurnBasedBattles = GetSettings(nameof(TurnBasedBattles));
             public static readonly string SpeedChoice = GetSettings(nameof(SpeedChoice));
             public static readonly string SpeedChoiceType0 = GetSettings(nameof(SpeedChoiceType0));
@@ -177,7 +175,6 @@ namespace Memoria.Launcher
             public static readonly string SpeedChoiceType3 = GetSettings(nameof(SpeedChoiceType3));
             public static readonly string SpeedChoiceType4 = GetSettings(nameof(SpeedChoiceType4));
             public static readonly string SpeedChoiceType5 = GetSettings(nameof(SpeedChoiceType5));
-            public static readonly string SpeedChoiceTooltip = GetSettings(nameof(SpeedChoiceTooltip));
             public static readonly string TripleTriad = GetSettings(nameof(TripleTriad));
             public static readonly string TripleTriadType0 = GetSettings(nameof(TripleTriadType0));
             public static readonly string TripleTriadType1 = GetSettings(nameof(TripleTriadType1));
@@ -195,7 +192,6 @@ namespace Memoria.Launcher
             public static readonly string AccessBattleMenuType1 = GetSettings(nameof(AccessBattleMenuType1));
             public static readonly string AccessBattleMenuType2 = GetSettings(nameof(AccessBattleMenuType2));
             public static readonly string AccessBattleMenuType3 = GetSettings(nameof(AccessBattleMenuType3));
-            public static readonly string AccessBattleMenuTooltip = GetSettings(nameof(AccessBattleMenuTooltip));
             public static readonly string SpeedMode = GetSettings(nameof(SpeedMode));
             public static readonly string SpeedFactor = GetSettings(nameof(SpeedFactor));
             public static readonly string BattleAssistance = GetSettings(nameof(BattleAssistance));
@@ -210,7 +206,48 @@ namespace Memoria.Launcher
             public static readonly string SharedFPS = GetSettings(nameof(SharedFPS));
             public static readonly string UseOrchestralMusic = GetSettings(nameof(UseOrchestralMusic));
             public static readonly string Use30FpsVideo = GetSettings(nameof(Use30FpsVideo));
+
+            // Settings.ini Tooltips
+            public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
+            public static readonly string WindowMode_Tooltip = GetSettings(nameof(WindowMode_Tooltip));
+            public static readonly string Resolution_Tooltip = GetSettings(nameof(Resolution_Tooltip));
+            public static readonly string Xsixfour_Tooltip = GetSettings(nameof(Xsixfour_Tooltip));
+            public static readonly string Debuggable_Tooltip = GetSettings(nameof(Debuggable_Tooltip));
+            public static readonly string CheckUpdates_Tooltip = GetSettings(nameof(CheckUpdates_Tooltip));
+            public static readonly string SteamOverlayFix_Tooltip = GetSettings(nameof(SteamOverlayFix_Tooltip));
+
+            // Memoria.ini Tooltips
+            public static readonly string UseOrchestralMusic_Tooltip = GetSettings(nameof(UseOrchestralMusic_Tooltip));
+            public static readonly string Use30FpsVideo_Tooltip = GetSettings(nameof(Use30FpsVideo_Tooltip));
+            public static readonly string Widescreen_Tooltip = GetSettings(nameof(Widescreen_Tooltip));
+            public static readonly string AntiAliasing_Tooltip = GetSettings(nameof(AntiAliasing_Tooltip));
+            public static readonly string SharedFPS_Tooltip = GetSettings(nameof(SharedFPS_Tooltip));
+            public static readonly string BattleInterface_Tooltip = GetSettings(nameof(BattleInterface_Tooltip));
+            public static readonly string SkipIntrosToMainMenu_Tooltip = GetSettings(nameof(SkipIntrosToMainMenu_Tooltip));
+            public static readonly string SkipBattleSwirl_Tooltip = GetSettings(nameof(SkipBattleSwirl_Tooltip));
+            public static readonly string HideSteamBubbles_Tooltip = GetSettings(nameof(HideSteamBubbles_Tooltip));
+            public static readonly string SpeedChoice_Tooltip = GetSettings(nameof(SpeedChoice_Tooltip));
+            public static readonly string TripleTriad_Tooltip = GetSettings(nameof(TripleTriad_Tooltip));
+            public static readonly string SoundVolume_Tooltip = GetSettings(nameof(SoundVolume_Tooltip));
+            public static readonly string MusicVolume_Tooltip = GetSettings(nameof(MusicVolume_Tooltip));
+            public static readonly string MovieVolume_Tooltip = GetSettings(nameof(MovieVolume_Tooltip));
+            public static readonly string FontChoice_Tooltip = GetSettings(nameof(FontChoice_Tooltip));
+
+            // Memoria.ini Cheats tooltips
+            public static readonly string MaxStealRate_Tooltip = GetSettings(nameof(MaxStealRate_Tooltip));
+            public static readonly string DisableCantConcentrate_Tooltip = GetSettings(nameof(DisableCantConcentrate_Tooltip));
+            public static readonly string BreakDamageLimit_Tooltip = GetSettings(nameof(BreakDamageLimit_Tooltip));
+            public static readonly string AccessBattleMenu_Tooltip = GetSettings(nameof(AccessBattleMenu_Tooltip));
+            public static readonly string SpeedMode_Tooltip = GetSettings(nameof(SpeedMode_Tooltip));
+            public static readonly string SpeedFactor_Tooltip = GetSettings(nameof(SpeedFactor_Tooltip));
+            public static readonly string BattleAssistance_Tooltip = GetSettings(nameof(BattleAssistance_Tooltip));
+            public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
+            public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
+            
+
+
         }
+
 
         public static class SdLib
         {

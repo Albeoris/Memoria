@@ -61,6 +61,7 @@ namespace Memoria.Launcher
                 isUsingOrchestralMusic.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OrchestralMusic)) { Mode = BindingMode.TwoWay });
                 isUsingOrchestralMusic.Foreground = Brushes.White;
                 isUsingOrchestralMusic.Margin = rowMargin;
+                isUsingOrchestralMusic.ToolTip = Lang.Settings.UseOrchestralMusic_Tooltip;
 
                 row++;
             }
@@ -71,6 +72,7 @@ namespace Memoria.Launcher
                 isUsing30fpsVideo.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HighFpsVideo)) { Mode = BindingMode.TwoWay });
                 isUsing30fpsVideo.Foreground = Brushes.White;
                 isUsing30fpsVideo.Margin = rowMargin;
+                isUsing30fpsVideo.ToolTip = Lang.Settings.Use30FpsVideo_Tooltip;
 
                 row++;
             }
@@ -79,6 +81,7 @@ namespace Memoria.Launcher
             isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
             isWidescreenSupport.Foreground = Brushes.White;
             isWidescreenSupport.Margin = rowMargin;
+            isWidescreenSupport.ToolTip = Lang.Settings.Widescreen_Tooltip;
 
             row++;
 
@@ -86,12 +89,14 @@ namespace Memoria.Launcher
             isAntiAliasing.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(AntiAliasing)) { Mode = BindingMode.TwoWay });
             isAntiAliasing.Foreground = Brushes.White;
             isAntiAliasing.Margin = rowMargin;
+            isAntiAliasing.ToolTip = Lang.Settings.AntiAliasing_Tooltip;
 
             row++;
 
             UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row, 0, 1, 8);
             sharedFpsText.Foreground = Brushes.White;
             sharedFpsText.Margin = rowMargin;
+            sharedFpsText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
 
             row++;
 
@@ -110,9 +115,9 @@ namespace Memoria.Launcher
             row++;
 
             UiTextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 4);
-            battleInterfaceText.ToolTip = Lang.Settings.BattleInterfaceTooltip;
             battleInterfaceText.Foreground = Brushes.White;
             battleInterfaceText.Margin = rowMargin;
+            battleInterfaceText.ToolTip = Lang.Settings.BattleInterface_Tooltip;
             UiComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 4);
             battleInterfaceBox.ItemsSource = new String[]{
                 Lang.Settings.BattleInterfaceType0,
@@ -120,7 +125,6 @@ namespace Memoria.Launcher
                 Lang.Settings.BattleInterfaceType2
             };
             battleInterfaceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(BattleInterface)) { Mode = BindingMode.TwoWay });
-            battleInterfaceBox.ToolTip = Lang.Settings.BattleInterfaceTooltip;
             battleInterfaceBox.Height = 20;
             battleInterfaceBox.FontSize = 10;
             battleInterfaceBox.Margin = rowMargin;
@@ -131,6 +135,7 @@ namespace Memoria.Launcher
             isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
             isSkipIntros.Foreground = Brushes.White;
             isSkipIntros.Margin = rowMargin;
+            isSkipIntros.ToolTip = Lang.Settings.SkipIntrosToMainMenu_Tooltip;
 
             row++;
 
@@ -138,6 +143,7 @@ namespace Memoria.Launcher
             isSkipBattleSwirl.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
             isSkipBattleSwirl.Foreground = Brushes.White;
             isSkipBattleSwirl.Margin = rowMargin;
+            isSkipBattleSwirl.ToolTip = Lang.Settings.SkipBattleSwirl_Tooltip;
 
             row++;
 
@@ -161,21 +167,20 @@ namespace Memoria.Launcher
             battleSwirlFrames.Minimum = 0;
             battleSwirlFrames.Maximum = 120;
             battleSwirlFrames.Margin = rowMargin;
-            //soundVolumeSlider.Height = 4;
             */
 
             UiCheckBox isHideCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.HideSteamBubbles, null), row, 0, 1, 8);
             isHideCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HideCards)) { Mode = BindingMode.TwoWay });
-            isHideCards.ToolTip = Lang.Settings.HideSteamBubblesTooltip;
             isHideCards.Foreground = Brushes.White;
             isHideCards.Margin = rowMargin;
+            isHideCards.ToolTip = Lang.Settings.HideSteamBubbles_Tooltip;
 
             row++;
 
             UiTextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row, 0, 1, 3);
-            speedChoiceText.ToolTip = Lang.Settings.SpeedChoiceTooltip;
             speedChoiceText.Foreground = Brushes.White;
             speedChoiceText.Margin = rowMargin;
+            speedChoiceText.ToolTip = Lang.Settings.SpeedChoice_Tooltip;
             UiComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 3, 1, 5);
             speedChoiceBox.ItemsSource = new String[]{
                 Lang.Settings.SpeedChoiceType0,
@@ -186,7 +191,6 @@ namespace Memoria.Launcher
                 Lang.Settings.SpeedChoiceType5
             };
             speedChoiceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(Speed)) { Mode = BindingMode.TwoWay });
-            speedChoiceBox.ToolTip = Lang.Settings.SpeedChoiceTooltip;
             speedChoiceBox.Height = 20;
             speedChoiceBox.FontSize = 10;
             speedChoiceBox.Margin = rowMargin;
@@ -196,6 +200,7 @@ namespace Memoria.Launcher
             UiTextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), row, 0, 1, 3);
             tripleTriadText.Foreground = Brushes.White;
             tripleTriadText.Margin = rowMargin;
+            tripleTriadText.ToolTip = Lang.Settings.TripleTriad_Tooltip;
             UiComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), row, 3, 1, 5);
             tripleTriadBox.ItemsSource = new String[]{
                 Lang.Settings.TripleTriadType0,
@@ -217,6 +222,7 @@ namespace Memoria.Launcher
             UiTextBlock soundVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SoundVolume), row, 0, 1, 3);
             soundVolumeText.Foreground = Brushes.White;
             soundVolumeText.Margin = rowMargin;
+            soundVolumeText.ToolTip = Lang.Settings.SoundVolume_Tooltip;
             Slider soundVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
             soundVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
             soundVolumeSlider.TickFrequency = 5;
@@ -235,13 +241,14 @@ namespace Memoria.Launcher
             UiTextBlock musicVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MusicVolume), row, 0, 1, 3);
             musicVolumeText.Foreground = Brushes.White;
             musicVolumeText.Margin = rowMargin;
+            musicVolumeText.ToolTip = Lang.Settings.MusicVolume_Tooltip;
             Slider musicVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
             musicVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
             musicVolumeSlider.TickFrequency = 5;
             musicVolumeSlider.IsSnapToTickEnabled = true;
             musicVolumeSlider.Minimum = 0;
             musicVolumeSlider.Maximum = 100;
-            musicVolumeSlider.Margin = rowMargin; 
+            musicVolumeSlider.Margin = rowMargin;
             UiTextBlock musicVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
             musicVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
             musicVolumeTextIndex.Foreground = Brushes.White;
@@ -253,6 +260,7 @@ namespace Memoria.Launcher
             UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 6);
             movieVolumeText.Foreground = Brushes.White;
             movieVolumeText.Margin = rowMargin;
+            movieVolumeText.ToolTip = Lang.Settings.MovieVolume_Tooltip;
             Slider movieVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
             movieVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
             movieVolumeSlider.TickFrequency = 5;
@@ -266,14 +274,19 @@ namespace Memoria.Launcher
             movieVolumeTextIndex.Margin = rowMargin;
             movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
 
-            row++;
-
             if (PsxFontInstalled)
             {
+                row++;
+
                 UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
                 fontChoiceText.Foreground = Brushes.White;
                 fontChoiceText.Margin = rowMargin;
-                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row++, 2, 1, 6);
+                fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
+                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 2, 1, 6);
+                _fontChoiceBox.Height = 20;
+                _fontChoiceBox.FontSize = 10;
+                _fontChoiceBox.Margin = rowMargin;
+
                 FontCollection installedFonts = new InstalledFontCollection();
                 String[] fontNames = new String[installedFonts.Families.Length + 2];
                 fontNames[0] = _fontDefaultPC;
@@ -282,13 +295,12 @@ namespace Memoria.Launcher
                     fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
                 _fontChoiceBox.ItemsSource = fontNames;
                 _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
-                _fontChoiceBox.Height = 20;
-                _fontChoiceBox.FontSize = 10;
-                _fontChoiceBox.Margin = rowMargin;
             }
 
             if (SBUIInstalled)
             {
+                row++;
+
                 UiCheckBox useSBUI = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SBUIenabled, null), row++, 0, 2, 8);
                 useSBUI.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ScaledBattleUI)) { Mode = BindingMode.TwoWay });
                 useSBUI.Foreground = Brushes.White;
@@ -296,7 +308,6 @@ namespace Memoria.Launcher
                 Slider sBUIScale = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
                 sBUIScale.SetBinding(Slider.ValueProperty, new Binding(nameof(ScaleUIFactor)) { Mode = BindingMode.TwoWay });
                 sBUIScale.TickFrequency = 0.1;
-                //musicVolumeSlider.TickPlacement = TickPlacement.BottomRight;
                 sBUIScale.IsSnapToTickEnabled = true;
                 sBUIScale.Minimum = 0.1;
                 sBUIScale.Maximum = 3.0;
@@ -309,7 +320,6 @@ namespace Memoria.Launcher
 
             SanitizeMemoriaIni();
             LoadSettings();
-            //SanitizeMemoriaIni();
         }
 
         public bool PsxFontInstalled = false;

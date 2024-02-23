@@ -55,19 +55,25 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(0, 7, 0, 5);
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
+            UiTextBlock monitortext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8);
+            monitortext.Margin = rowMargin;
+            monitortext.ToolTip = Lang.Settings.ActiveMonitor_Tooltip;
             UiComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
             monitor.ItemsSource = GetAvailableMonitors();
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) { Mode = BindingMode.TwoWay });
             monitor.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8).Margin = rowMargin;
+            UiTextBlock windowModetext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8);
+            windowModetext.Margin = rowMargin;
+            windowModetext.ToolTip = Lang.Settings.WindowMode_Tooltip;
             UiComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 8);
             windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
             windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
             windowMode.Margin = rowMargin;
 
-            AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3).Margin = rowMargin;
+            UiTextBlock resolutiontext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3);
+            resolutiontext.Margin = rowMargin;
+            resolutiontext.ToolTip = Lang.Settings.Resolution_Tooltip;
             UiComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
             resolution.ItemsSource = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) { Mode = BindingMode.TwoWay });
@@ -88,18 +94,22 @@ namespace Memoria.Launcher
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
+            x64.ToolTip = Lang.Settings.Xsixfour_Tooltip;
 
             UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 3, 3, 5);
             debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) { Mode = BindingMode.TwoWay });
+            debuggableCheckBox.ToolTip = Lang.Settings.Debuggable_Tooltip;
 
             UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 8);
             checkUpdates.Margin = rowMargin;
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
+            checkUpdates.ToolTip = Lang.Settings.CheckUpdates_Tooltip;
 
             UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 8);
             steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
+            steamOverlayFix.ToolTip = Lang.Settings.SteamOverlayFix_Tooltip;
 
             foreach (FrameworkElement child in Children)
             {
