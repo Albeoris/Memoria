@@ -1,6 +1,8 @@
-﻿using SoLoud;
+﻿using Memoria.Prime.AKB2;
+using SoLoud;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Global.Sound.SoLoud
 {
@@ -10,14 +12,30 @@ namespace Global.Sound.SoLoud
 
         private Soloud soloud;
         private Dictionary<Int32, WavStream> streams = new Dictionary<Int32, WavStream>();
+        private Dictionary<Int32, Single> sounds = new Dictionary<Int32, Single>();
+
+        private void CleanUpSounds()
+        {
+            List<Int32> toRemove = new List<Int32>();
+            foreach (var id in sounds.Keys)
+            {
+                if (soloud.isValidVoiceHandle((uint)id) == 0) toRemove.Add(id);
+            }
+            foreach (var id in toRemove)
+            {
+                sounds.Remove(id);
+            }
+            SoundLib.Log($"Total sounds: {sounds.Count}");
+        }
 
         public override Int32 SdSoundSystem_Create(String config)
         {
+            SoundLib.Log("Create");
             // Initialize SoLoud
             soloud = new Soloud();
             soloud.init(1, 0, 48000);
-            SoundLib.Log($"Create backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
-            
+            SoundLib.Log($"backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
+
             return 0;
         }
 
@@ -43,15 +61,24 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_AddData(IntPtr akb)
         {
-            SoundLib.Log("AddData");
+            SoundLib.Log($"AddData({akb})");
             unsafe
             {
-                // Get the file size from the akb header (3rd Int32)
-                Int32 size = *(((Int32*)akb) + 2);
-                //Log.Message($"[DEBUG] size: {size}");
+                // Get the akb header
+                Byte[] akbBin = new byte[304];
+                Marshal.Copy(akb, akbBin, 0, 304);
+                AKB2Header akbHeader = new AKB2Header();
+                akbHeader.ReadFromBytes(akbBin);
+
+                // Is it a loop?
+                if (akbHeader.LoopEnd > 0)
+                {
+                    // TODO: Looping
+                    SoundLib.Log($"SampleCount: {akbHeader.SampleCount} SampleRate: {akbHeader.SampleRate} LoopStart: {akbHeader.LoopStart} LoopEnd: {akbHeader.LoopEnd} LoopStartAlternate: {akbHeader.LoopStartAlternate} LoopEndAlternate: {akbHeader.LoopEndAlternate} ");
+                }
+
                 WavStream stream = new WavStream();
-                SoundLib.Log($"size {(uint)(size - AkbHeaderSize)} IntPtr {akb} OggPtr {(IntPtr)((Byte*)akb + AkbHeaderSize)}");
-                stream.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)(size - AkbHeaderSize));
+                stream.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)akbHeader.ContentSize, true, true);
 
                 Int32 bankID = (Int32)stream.objhandle;
                 streams.Add(bankID, stream);
@@ -61,37 +88,42 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_AddStreamDataFromPath(String akbpath)
         {
-            SoundLib.Log("No Implementation - AddStreamDataFromPath");
+            // Doesn't seem to be used
+            SoundLib.Log($"No Implementation - AddStreamDataFromPath({akbpath})");
             return 0;
         }
 
         public override Int32 SdSoundSystem_RemoveData(Int32 bankID)
         {
-            SoundLib.Log("RemoveData");
-            return streams.Remove(bankID) ? 1 : 0;
+            SoundLib.Log($"RemoveData({bankID})");
+            return sounds.Remove(bankID) ? 1 : 0;
         }
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
         {
-            SoundLib.Log("CreateSound");
-            return (Int32)soloud.play(streams[bankID], 1, 0, 1);
+            SoundLib.Log($"CreateSound({bankID})");
+            CleanUpSounds();
+            Int32 soundID = (Int32)soloud.play(streams[bankID], 1, 0, 1);
+            sounds.Add(soundID, 1f);
+            return soundID;
         }
 
         public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
         {
-            SoundLib.Log("SoundCtrl_GetElapsedPlaybackTime");
+            //SoundLib.Log($"SoundCtrl_GetElapsedPlaybackTime({soundID})");
             return (Int32)(soloud.getStreamTime((uint)soundID) * 1000);
         }
 
         public override Int32 SdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID)
         {
-            SoundLib.Log("No Implementation - SoundCtrl_GetPlayTime");
+            // Doesn't seem to be used
+            SoundLib.Log($"No Implementation - SoundCtrl_GetPlayTime({soundID}");
             return 0;
         }
 
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
         {
-            SoundLib.Log("SoundCtrl_Start");
+            SoundLib.Log($"SoundCtrl_Start({soundID}, {offsetTimeMSec})");
             if (offsetTimeMSec > 0)
             {
                 soloud.seek((uint)soundID, offsetTimeMSec / 1000d);
@@ -102,22 +134,45 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_Stop(Int32 soundID, Int32 transTimeMSec)
         {
-            SoundLib.Log("SoundCtrl_Stop");
-            // TODO: fade if transTimeMSec > 0
-            soloud.stop((uint)soundID);
+            SoundLib.Log($"SoundCtrl_Stop({soundID}, {transTimeMSec})");
+
+            if (transTimeMSec <= 0) transTimeMSec = 100; // Add a small fade
+
+            soloud.fadeVolume((uint)soundID, 0, transTimeMSec / 1000d);
+            soloud.scheduleStop((uint)soundID, transTimeMSec / 1000d);
         }
 
         public override Int32 SdSoundSystem_SoundCtrl_IsExist(Int32 soundID)
         {
-            SoundLib.Log("SoundCtrl_IsExist");
-            return soloud.isValidVoiceHandle((uint)soundID);
+            //SoundLib.Log("SoundCtrl_IsExist");
+            return soloud.isValidVoiceHandle((uint)soundID); ;
         }
 
         public override void SdSoundSystem_SoundCtrl_SetPause(Int32 soundID, Int32 pauseOn, Int32 transTimeMSec)
         {
-            SoundLib.Log("SoundCtrl_SetPause");
-            // TODO: fade if transTimeMSec > 0
-            soloud.setPause((uint)soundID, pauseOn);
+            SoundLib.Log($"SoundCtrl_SetPause({soundID}, {pauseOn}, {transTimeMSec})");
+            uint h = (uint)soundID;
+            double t = transTimeMSec / 1000d;
+
+            if (transTimeMSec > 0)
+            {
+                if (pauseOn != 0)
+                {
+                    soloud.fadeVolume(h, 0, t);
+                    soloud.schedulePause(h, t);
+                }
+                else
+                {
+                    soloud.setPause(h, pauseOn);
+                    soloud.setVolume(h, 0);
+                    soloud.fadeVolume(h, sounds[soundID], t);
+                }
+            }
+            else
+            {
+                //Should a small fade (100ms) be added?
+                soloud.setPause(h, pauseOn);
+            }
         }
 
         public override Int32 SdSoundSystem_SoundCtrl_IsPaused(Int32 soundID)
@@ -128,7 +183,10 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetVolume(Int32 soundID, Single volume, Int32 transTimeMSec)
         {
-            SoundLib.Log("SoundCtrl_SetVolume");
+            SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
+
+            sounds[soundID] = volume;
+
             if (transTimeMSec > 0)
             {
                 soloud.fadeVolume((uint)soundID, volume, transTimeMSec / 1000d);
@@ -141,18 +199,19 @@ namespace Global.Sound.SoLoud
 
         public override Single SdSoundSystem_SoundCtrl_GetVolume(Int32 soundID)
         {
-            SoundLib.Log("SoundCtrl_GetVolume");
+            SoundLib.Log($"SoundCtrl_GetVolume({soundID})");
             return soloud.getVolume((uint)soundID);
         }
 
         public override void SdSoundSystem_SoundCtrl_SetPitch(Int32 soundID, Single pitch, Int32 transTimeMSec)
         {
-            SoundLib.Log("No Implementation - SoundCtrl_SetPitch");
+            // Soloud doesn't handle pitch
+            SoundLib.Log($"No Implementation - SoundCtrl_SetPitch({soundID}, {pitch}, {transTimeMSec})");
         }
 
         public override void SdSoundSystem_SoundCtrl_SetPanning(Int32 soundID, Single panning, Int32 transTimeMSec)
         {
-            SoundLib.Log("SoundCtrl_SetPanning");
+            SoundLib.Log($"SoundCtrl_SetPanning({soundID}, {panning}, {transTimeMSec})");
             if (transTimeMSec > 0)
             {
                 soloud.fadePan((uint)soundID, panning, transTimeMSec / 1000d);
@@ -165,12 +224,14 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetNextLoopRegion(Int32 soundID)
         {
-            SoundLib.Log("No Implementation - SoundCtrl_SetNextLoopRegion");
+            //TODO: looping
+            SoundLib.Log($"No Implementation - SoundCtrl_SetNextLoopRegion({soundID})");
         }
 
         public override Int32 SdSoundSystem_BankCtrl_IsLoop(Int32 bankID, Int32 soundID)
         {
-            SoundLib.Log("No Implementation - BankCtrl_IsLoop");
+            // Doesn't seem to be used
+            SoundLib.Log($"No Implementation - BankCtrl_IsLoop({bankID}, {soundID})");
             return 0;
         }
     }
