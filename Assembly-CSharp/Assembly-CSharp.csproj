@@ -1396,6 +1396,14 @@
     <None Include="NCalc\Grammar\NCalc.g" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Global\Sound\SoLoud\x64\soloud.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Global\Sound\SoLoud\x86\soloud.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <Deploy SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />
