@@ -57,6 +57,7 @@ namespace Memoria.Launcher
             stealingAlwaysWorks.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(StealingAlwaysWorks)) { Mode = BindingMode.TwoWay });
             stealingAlwaysWorks.Foreground = Brushes.White;
             stealingAlwaysWorks.Margin = rowMargin;
+            stealingAlwaysWorks.ToolTip = Lang.Settings.MaxStealRate_Tooltip;
 
             row++;
 
@@ -64,6 +65,7 @@ namespace Memoria.Launcher
             garnetConcentrate.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(GarnetConcentrate)) { Mode = BindingMode.TwoWay });
             garnetConcentrate.Foreground = Brushes.White;
             garnetConcentrate.Margin = rowMargin;
+            garnetConcentrate.ToolTip = Lang.Settings.DisableCantConcentrate_Tooltip;
 
             row++;
 
@@ -71,14 +73,15 @@ namespace Memoria.Launcher
             breakDamageLimit.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BreakDamageLimit)) { Mode = BindingMode.TwoWay });
             breakDamageLimit.Foreground = Brushes.White;
             breakDamageLimit.Margin = rowMargin;
+            breakDamageLimit.ToolTip = Lang.Settings.BreakDamageLimit_Tooltip;
 
             row++;
 
             UiTextBlock accessBattleMenuText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AccessBattleMenu), row, 0, 2, 4);
-            accessBattleMenuText.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
             accessBattleMenuText.Foreground = Brushes.White;
             accessBattleMenuText.Margin = rowMargin;
             accessBattleMenuText.TextWrapping = TextWrapping.WrapWithOverflow;
+            accessBattleMenuText.ToolTip = Lang.Settings.AccessBattleMenu_Tooltip;
             UiComboBox accessBattleMenuBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 2, 4);
             accessBattleMenuBox.ItemsSource = new String[]{
                 Lang.Settings.AccessBattleMenuType0,
@@ -87,7 +90,6 @@ namespace Memoria.Launcher
                 Lang.Settings.AccessBattleMenuType3
             };
             accessBattleMenuBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(AccessBattleMenu)) { Mode = BindingMode.TwoWay });
-            accessBattleMenuBox.ToolTip = Lang.Settings.AccessBattleMenuTooltip;
             accessBattleMenuBox.Height = 20;
             accessBattleMenuBox.Margin = rowMargin;
 
@@ -98,12 +100,14 @@ namespace Memoria.Launcher
             speedMode.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SpeedMode)) { Mode = BindingMode.TwoWay });
             speedMode.Foreground = Brushes.White;
             speedMode.Margin = rowMargin;
+            speedMode.ToolTip = Lang.Settings.SpeedMode_Tooltip;
 
             row++;
 
             UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row, 0, 1, 2);
             speedFactorText.Foreground = Brushes.White;
             speedFactorText.Margin = rowMargin;
+            speedFactorText.ToolTip = Lang.Settings.SpeedFactor_Tooltip;
             UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
             speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactorTextindex.Foreground = Brushes.White;
@@ -121,6 +125,7 @@ namespace Memoria.Launcher
             battleAssistance.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleAssistance)) { Mode = BindingMode.TwoWay });
             battleAssistance.Foreground = Brushes.White;
             battleAssistance.Margin = rowMargin;
+            battleAssistance.ToolTip = Lang.Settings.BattleAssistance_Tooltip;
 
             row++;
 
@@ -133,6 +138,7 @@ namespace Memoria.Launcher
             noRandomEncounter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(NoRandomEncounter)) { Mode = BindingMode.TwoWay });
             noRandomEncounter.Foreground = Brushes.White;
             noRandomEncounter.Margin = rowMargin;
+            noRandomEncounter.ToolTip = Lang.Settings.NoRandomBattles_Tooltip;
 
             row++;
 
@@ -140,6 +146,7 @@ namespace Memoria.Launcher
             masterSkill.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(MasterSkill)) { Mode = BindingMode.TwoWay });
             masterSkill.Foreground = Brushes.White;
             masterSkill.Margin = rowMargin;
+            masterSkill.ToolTip = Lang.Settings.PermanentCheats_Tooltip;
 
 
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
