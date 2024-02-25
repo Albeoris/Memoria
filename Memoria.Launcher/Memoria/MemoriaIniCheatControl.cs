@@ -78,7 +78,6 @@ namespace Memoria.Launcher
             row++;
 
             UiTextBlock accessBattleMenuText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.AccessBattleMenu), row, 0, 2, 4);
-            accessBattleMenuText.ToolTip = Lang.Settings.AccessBattleMenu_Tooltip;
             accessBattleMenuText.Foreground = Brushes.White;
             accessBattleMenuText.Margin = rowMargin;
             accessBattleMenuText.TextWrapping = TextWrapping.WrapWithOverflow;
