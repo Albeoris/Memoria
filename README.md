@@ -74,10 +74,10 @@
 
 ## Build & Contribute
 - Use Visual Studio Community (2019 or above) or JetBrains Rider.
-- Make sure you have [.NET 3.5 SDK and .NET Framework 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk) installed.
+- Make sure you have [.NET 3.5 Developer Tools and .NET Framework 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk) installed.
 - Make a fork of the project and download it locally.
-- Install the game and copy all ".dll" files from "\FINAL FANTASY IX\x64\FF9_Data\Managed" to the "\References" folder in the solution directory.
-- [Check this thread](https://github.com/Albeoris/Memoria/discussions/274).
+- Open Powershell as administrator `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
+- Change directory to your Memoria Fork download location and run powershell script `.\SetupProjectEnvironment.ps1`
 - Once you've commited your changes to your fork, make it a Pull Request to the main repository.
 
 
