@@ -2,9 +2,7 @@
 using SoLoud;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace Global.Sound.SoLoud
 {
@@ -53,7 +51,7 @@ namespace Global.Sound.SoLoud
             // Initialize SoLoud
             soloud = new Soloud();
             soloud.init(1, 0, 48000);
-            SoundLib.Log($"backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
+            Memoria.Prime.Log.Message($"[Soloud] backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
 
             return 0;
         }
@@ -124,8 +122,13 @@ namespace Global.Sound.SoLoud
             // Is it a loop?
             if (stream.akbHeader.LoopEnd > 0)
             {
-                soloud.setLoopStartPoint((uint)soundID ,stream.akbHeader.LoopStart / (double)stream.akbHeader.SampleRate);
-                soloud.setLoopEndPoint((uint)soundID, stream.akbHeader.LoopEnd / (double)stream.akbHeader.SampleRate);
+                double start = stream.akbHeader.LoopStart / (double)stream.akbHeader.SampleRate;
+                double end = stream.akbHeader.LoopEnd / (double)stream.akbHeader.SampleRate;
+
+                SoundLib.Log($"LoopStart: ({start}) LoopEnd: {end}");
+
+                soloud.setLoopStartPoint((uint)soundID, start);
+                soloud.setLoopEndPoint((uint)soundID, end);
             }
 
             return soundID;
@@ -250,8 +253,13 @@ namespace Global.Sound.SoLoud
             StreamInfo stream = streams[sounds[soundID].bankID];
             if (stream.akbHeader.LoopEndAlternate > 0)
             {
-                soloud.setLoopStartPoint((uint)soundID, stream.akbHeader.LoopStartAlternate / (double)stream.akbHeader.SampleRate);
-                soloud.setLoopEndPoint((uint)soundID, stream.akbHeader.LoopEndAlternate / (double)stream.akbHeader.SampleRate);
+                double start = stream.akbHeader.LoopStartAlternate / (double)stream.akbHeader.SampleRate;
+                double end = stream.akbHeader.LoopEndAlternate / (double)stream.akbHeader.SampleRate;
+
+                SoundLib.Log($"LoopStart: ({start}) LoopEnd: {end}");
+
+                soloud.setLoopStartPoint((uint)soundID, start);
+                soloud.setLoopEndPoint((uint)soundID, end);
             }
         }
 
