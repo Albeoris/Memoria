@@ -134,17 +134,31 @@ namespace Global.Sound.SoLoud
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void WavStream_setLoopPoint(IntPtr aObjHandle, double aLoopPoint);
-        public void setLoopPoint(double aLoopPoint)
+        internal static extern void WavStream_setLoopStartPoint(IntPtr aObjHandle, double aLoopPoint);
+        public void setLoopStartPoint(double aLoopPoint)
         {
-            WavStream_setLoopPoint(objhandle, aLoopPoint);
+            WavStream_setLoopStartPoint(objhandle, aLoopPoint);
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern double WavStream_getLoopPoint(IntPtr aObjHandle);
-        public double getLoopPoint()
+        internal static extern void WavStream_setLoopEndPoint(IntPtr aObjHandle, double aLoopPoint);
+        public void setLoopEndPoint(double aLoopPoint)
         {
-            return WavStream_getLoopPoint(objhandle);
+            WavStream_setLoopEndPoint(objhandle, aLoopPoint);
+        }
+
+        [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern double WavStream_getLoopStartPoint(IntPtr aObjHandle);
+        public double getLoopStartPoint()
+        {
+            return WavStream_getLoopStartPoint(objhandle);
+        }
+
+        [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern double WavStream_getLoopEndPoint(IntPtr aObjHandle);
+        public double getLoopEndPoint()
+        {
+            return WavStream_getLoopEndPoint(objhandle);
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]

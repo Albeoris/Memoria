@@ -349,10 +349,17 @@ namespace SoLoud
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void Soloud_setLoopPoint(IntPtr aObjHandle, uint aVoiceHandle, double aLoopPoint);
-        public void setLoopPoint(uint aVoiceHandle, double aLoopPoint)
+        internal static extern void Soloud_setLoopStartPoint(IntPtr aObjHandle, uint aVoiceHandle, double aLoopPoint);
+        public void setLoopStartPoint(uint aVoiceHandle, double aLoopPoint)
         {
-            Soloud_setLoopPoint(objhandle, aVoiceHandle, aLoopPoint);
+            Soloud_setLoopStartPoint(objhandle, aVoiceHandle, aLoopPoint);
+        }
+
+        [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void Soloud_setLoopEndPoint(IntPtr aObjHandle, uint aVoiceHandle, double aLoopPoint);
+        public void setLoopEndPoint(uint aVoiceHandle, double aLoopPoint)
+        {
+            Soloud_setLoopEndPoint(objhandle, aVoiceHandle, aLoopPoint);
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]

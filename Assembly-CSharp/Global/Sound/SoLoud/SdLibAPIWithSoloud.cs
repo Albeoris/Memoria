@@ -2,7 +2,9 @@
 using SoLoud;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Global.Sound.SoLoud
 {
@@ -11,8 +13,25 @@ namespace Global.Sound.SoLoud
         private const Int32 AkbHeaderSize = 304;
 
         private Soloud soloud;
-        private Dictionary<Int32, WavStream> streams = new Dictionary<Int32, WavStream>();
-        private Dictionary<Int32, Single> sounds = new Dictionary<Int32, Single>();
+        private class StreamInfo
+        {
+            public AKB2Header akbHeader;
+            public WavStream data;
+        }
+
+        private class Sound
+        {
+            public Sound(Int32 BankID)
+            {
+                bankID = BankID;
+            }
+            public Int32 bankID;
+            public Single volume = 1f;
+        }
+
+        private Dictionary<Int32, StreamInfo> streams = new Dictionary<Int32, StreamInfo>();
+        private Dictionary<Int32, Sound> sounds = new Dictionary<Int32, Sound>();
+
 
         private void CleanUpSounds()
         {
@@ -67,20 +86,13 @@ namespace Global.Sound.SoLoud
                 // Get the akb header
                 Byte[] akbBin = new byte[304];
                 Marshal.Copy(akb, akbBin, 0, 304);
-                AKB2Header akbHeader = new AKB2Header();
-                akbHeader.ReadFromBytes(akbBin);
 
-                // Is it a loop?
-                if (akbHeader.LoopEnd > 0)
-                {
-                    // TODO: Looping
-                    SoundLib.Log($"SampleCount: {akbHeader.SampleCount} SampleRate: {akbHeader.SampleRate} LoopStart: {akbHeader.LoopStart} LoopEnd: {akbHeader.LoopEnd} LoopStartAlternate: {akbHeader.LoopStartAlternate} LoopEndAlternate: {akbHeader.LoopEndAlternate} ");
-                }
+                StreamInfo stream = new StreamInfo();
+                stream.akbHeader.ReadFromBytes(akbBin);
+                stream.data = new WavStream();
+                stream.data.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)stream.akbHeader.ContentSize, true, true);
 
-                WavStream stream = new WavStream();
-                stream.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)akbHeader.ContentSize, true, true);
-
-                Int32 bankID = (Int32)stream.objhandle;
+                Int32 bankID = (Int32)stream.data.objhandle;
                 streams.Add(bankID, stream);
                 return bankID;
             }
@@ -103,8 +115,19 @@ namespace Global.Sound.SoLoud
         {
             SoundLib.Log($"CreateSound({bankID})");
             CleanUpSounds();
-            Int32 soundID = (Int32)soloud.play(streams[bankID], 1, 0, 1);
-            sounds.Add(soundID, 1f);
+            Int32 soundID = (Int32)soloud.play(streams[bankID].data, 1, 0, 1);
+
+            Sound voice = new Sound(bankID);
+            sounds.Add(soundID, voice);
+
+            StreamInfo stream = streams[bankID];
+            // Is it a loop?
+            if (stream.akbHeader.LoopEnd > 0)
+            {
+                soloud.setLoopStartPoint((uint)soundID ,stream.akbHeader.LoopStart / (double)stream.akbHeader.SampleRate);
+                soloud.setLoopEndPoint((uint)soundID, stream.akbHeader.LoopEnd / (double)stream.akbHeader.SampleRate);
+            }
+
             return soundID;
         }
 
@@ -144,7 +167,6 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_SoundCtrl_IsExist(Int32 soundID)
         {
-            //SoundLib.Log("SoundCtrl_IsExist");
             return soloud.isValidVoiceHandle((uint)soundID); ;
         }
 
@@ -165,7 +187,7 @@ namespace Global.Sound.SoLoud
                 {
                     soloud.setPause(h, pauseOn);
                     soloud.setVolume(h, 0);
-                    soloud.fadeVolume(h, sounds[soundID], t);
+                    soloud.fadeVolume(h, sounds[soundID].volume, t);
                 }
             }
             else
@@ -185,7 +207,7 @@ namespace Global.Sound.SoLoud
         {
             SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
 
-            sounds[soundID] = volume;
+            sounds[soundID].volume = volume;
 
             if (transTimeMSec > 0)
             {
@@ -224,8 +246,13 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetNextLoopRegion(Int32 soundID)
         {
-            //TODO: looping
-            SoundLib.Log($"No Implementation - SoundCtrl_SetNextLoopRegion({soundID})");
+            SoundLib.Log($"SoundCtrl_SetNextLoopRegion({soundID})");
+            StreamInfo stream = streams[sounds[soundID].bankID];
+            if (stream.akbHeader.LoopEndAlternate > 0)
+            {
+                soloud.setLoopStartPoint((uint)soundID, stream.akbHeader.LoopStartAlternate / (double)stream.akbHeader.SampleRate);
+                soloud.setLoopEndPoint((uint)soundID, stream.akbHeader.LoopEndAlternate / (double)stream.akbHeader.SampleRate);
+            }
         }
 
         public override Int32 SdSoundSystem_BankCtrl_IsLoop(Int32 bankID, Int32 soundID)
