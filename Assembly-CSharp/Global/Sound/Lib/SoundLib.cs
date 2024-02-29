@@ -22,9 +22,13 @@ public class SoundLib : MonoBehaviour
 		if (movieSoundIndex != -1)
 		{
 			if (movieName == "FMV000")
-                SoundLib.MusicPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			{
+				SoundLib.MusicPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			}
 			else
+			{
 				SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			}
 		}
 		else
 		{
