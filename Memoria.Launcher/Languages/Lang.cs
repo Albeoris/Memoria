@@ -144,6 +144,8 @@ namespace Memoria.Launcher
                 return Instance.Value.GetString(name, nameof(Settings));
             }
 
+            public static readonly string LauncherWindowTitle = GetSettings(nameof(LauncherWindowTitle));
+
             public static readonly string ActiveMonitor = GetSettings(nameof(ActiveMonitor));
             public static readonly string PrimaryMonitor = GetSettings(nameof(PrimaryMonitor));
             public static readonly string Resolution = GetSettings(nameof(Resolution));

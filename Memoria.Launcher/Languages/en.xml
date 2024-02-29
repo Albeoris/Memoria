@@ -30,6 +30,7 @@
 	/>
 
 	<Settings
+	LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
 	ActiveMonitor = "Active monitor"
 	PrimaryMonitor = " [Primary]"
 	Resolution = "Resolution"
@@ -281,7 +282,7 @@
 	TooltipDownload = "Download Selected Mod(s)"
 	TooltipCancel = "Cancel Current Download/Right-Click to Cancel All"
 	/>
-
+	
 	<Dialogue>
 
 		<SaveAs Title = "Save as..." />

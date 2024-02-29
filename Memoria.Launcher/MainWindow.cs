@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -48,6 +49,7 @@ namespace Memoria.Launcher
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
             HotfixForMoguriMod();
+            Title = Lang.Settings.LauncherWindowTitle + " | " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
