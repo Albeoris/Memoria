@@ -21,10 +21,10 @@ public class SoundLib : MonoBehaviour
 		Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex(movieName);
 		if (movieSoundIndex != -1)
 		{
-			//if (movieName == "FMV000")
-            //    SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
-			//else
-            SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			if (movieName == "FMV000")
+                SoundLib.MusicPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			else
+				SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
 		}
 		else
 		{
