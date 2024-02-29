@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:launcher="clr-namespace:Memoria.Launcher"
-    Title="Final Fantasy IX | Memoria Launcher"
+    Title="{Binding LauncherWindowTitle, FallbackValue='Final Fantasy IX | Memoria Launcher'}"
     Width="800"
     Height="610"
     BorderThickness="0"

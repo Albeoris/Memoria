@@ -31,6 +31,7 @@
 	/>
 
 	<Settings
+	LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
 	ActiveMonitor = "Écran actif"
 	PrimaryMonitor = " [Principal]"
 	Resolution = "Résolution"
