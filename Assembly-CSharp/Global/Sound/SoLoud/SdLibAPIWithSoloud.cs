@@ -151,6 +151,8 @@ namespace Global.Sound.SoLoud
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
         {
             SoundLib.Log($"SoundCtrl_Start({soundID}, {offsetTimeMSec})");
+            if (!sounds.ContainsKey(soundID)) return 0;
+
             if (offsetTimeMSec > 0)
             {
                 soloud.seek((uint)soundID, offsetTimeMSec / 1000d);
@@ -162,6 +164,7 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_SoundCtrl_Stop(Int32 soundID, Int32 transTimeMSec)
         {
             SoundLib.Log($"SoundCtrl_Stop({soundID}, {transTimeMSec})");
+            if (!sounds.ContainsKey(soundID)) return;
 
             if (transTimeMSec <= 0) transTimeMSec = 100; // Add a small fade
 
@@ -177,6 +180,8 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_SoundCtrl_SetPause(Int32 soundID, Int32 pauseOn, Int32 transTimeMSec)
         {
             SoundLib.Log($"SoundCtrl_SetPause({soundID}, {pauseOn}, {transTimeMSec})");
+            if (!sounds.ContainsKey(soundID)) return;
+
             uint h = (uint)soundID;
             double t = transTimeMSec / 1000d;
 
@@ -210,6 +215,7 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_SoundCtrl_SetVolume(Int32 soundID, Single volume, Int32 transTimeMSec)
         {
             SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
+            if (!sounds.ContainsKey(soundID)) return;
 
             if (volume < 0f || volume > 1f) Memoria.Prime.Log.Message($"[SoLoud] Warning! Unexpected volume value. Volume = {volume} SoundID = {soundID}\n{Environment.StackTrace}");
             volume = Mathf.Clamp01(volume);
@@ -240,6 +246,8 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_SoundCtrl_SetPanning(Int32 soundID, Single panning, Int32 transTimeMSec)
         {
             SoundLib.Log($"SoundCtrl_SetPanning({soundID}, {panning}, {transTimeMSec})");
+            if (!sounds.ContainsKey(soundID)) return;
+
             if (transTimeMSec > 0)
             {
                 soloud.fadePan((uint)soundID, panning, transTimeMSec / 1000d);
@@ -253,6 +261,8 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_SoundCtrl_SetNextLoopRegion(Int32 soundID)
         {
             SoundLib.Log($"SoundCtrl_SetNextLoopRegion({soundID})");
+            if (!sounds.ContainsKey(soundID)) return;
+
             StreamInfo stream = streams[sounds[soundID].bankID];
             if (stream.akbHeader.LoopEndAlternate > 0)
             {
