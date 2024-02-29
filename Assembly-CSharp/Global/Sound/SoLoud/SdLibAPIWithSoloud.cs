@@ -3,6 +3,7 @@ using SoLoud;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Global.Sound.SoLoud
 {
@@ -210,6 +211,8 @@ namespace Global.Sound.SoLoud
         {
             SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
 
+            if (volume < 0f || volume > 1f) Memoria.Prime.Log.Message($"[SoLoud] Warning! Unexpected volume value. Volume = {volume} SoundID = {soundID}\n{Environment.StackTrace}");
+            volume = Mathf.Clamp01(volume);
             sounds[soundID].volume = volume;
 
             if (transTimeMSec > 0)

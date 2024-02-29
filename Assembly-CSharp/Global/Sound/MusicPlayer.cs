@@ -163,14 +163,14 @@ public class MusicPlayer : SoundPlayer
 
 	private void StartSoundCrossfadeIn(SoundProfile soundProfile)
 	{
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
 		{
 			SoundLib.Log("failed to play sound");
 			soundProfile.SoundID = 0;
 			return;
-		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
+        }
+        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, (Int32)(this.fadeInDuration * 1000f));
 		this.SetMusicPanning(this.playerPanning, soundProfile);
 		this.SetMusicPitch(this.playerPitch, soundProfile);
@@ -302,13 +302,19 @@ public class MusicPlayer : SoundPlayer
 			SoundLib.Log("(activeSoundProfile == null");
 			return;
 		}
-		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, 0);
-		this.activeSoundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(this.activeSoundProfile.BankID);
-		Int32 num = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
-		if (num != 0)
+		if (Configuration.Audio.Backend == 0)
 		{
-			SoundLib.LogError("startSoundErrno errors with value: " + num);
-		}
+			Single volume = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(this.activeSoundProfile.SoundID);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, 0);
+            this.activeSoundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(this.activeSoundProfile.BankID);
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.activeSoundProfile.SoundID, volume, 0);
+        }
+		else
+        {
+			// This will seek with Soloud
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
+        }
 	}
 
 	public override void Update()

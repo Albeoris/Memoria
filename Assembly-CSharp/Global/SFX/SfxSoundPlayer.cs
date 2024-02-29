@@ -136,11 +136,10 @@ public class SfxSoundPlayer : SoundPlayer
 			return soundProfile;
 		}
 		base.CreateSound(soundProfile);
-        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
         if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
         {
+            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
-            SoundLib.Log("Panning: " + soundProfile.Panning);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
             Int32 fastForwardFactor = HonoBehaviorSystem.Instance.GetFastForwardFactor();
             if (fastForwardFactor != 1)
