@@ -8,8 +8,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 {
 	public static Single NormalizeVolume(Int32 originalVolume)
 	{
-        return Mathf.Clamp01((Single)originalVolume / 127f);
-    }
+		return Mathf.Clamp01((Single)originalVolume / 127f);
+	}
 
 	public static Int32 ReverseNormalizeVolume(Single normalizedVolume)
 	{
@@ -140,11 +140,11 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 					if (fldMapNo == 503 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2970 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 11 && ObjNo == 35)
 					{
-                        // What is this for ? - SamsamTS
-                        // Cargo Ship/Bridge
-                        soundProfile.SoundVolume = 0f;
-                        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-                    }
+						// What is this for ? - SamsamTS
+						// Cargo Ship/Bridge
+						soundProfile.SoundVolume = 0f;
+						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
+					}
 					this.currentMusicID = ObjNo;
 					this.StopAndClearSuspendBGM(ObjNo, true);
 				});
@@ -349,8 +349,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			if (soundProfile != null)
 			{
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, AllSoundDispatchPlayer.NormalizeVolume(from) * SoundLib.MusicPlayer.Volume, 0);
-                soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(to);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, AllSoundDispatchPlayer.NormalizeVolume(from) * SoundLib.MusicPlayer.Volume, 0);
+				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(to);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, AllSoundDispatchPlayer.ConvertTickToMillisec(ticks));
 			}
 		});
@@ -458,23 +458,23 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
 		{
-            if (soundProfile != null)
-            {
-                if (Configuration.Audio.Backend == 0)
-                {
-                    Single volume = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
-                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
-                    soundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
-                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
-                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, volume, 0);
-                }
-                else
-                {
-                    // This will seek with Soloud
-                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
-                }
-            }
-        });
+			if (soundProfile != null)
+			{
+				if (Configuration.Audio.Backend == 0)
+				{
+					Single volume = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+					soundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, volume, 0);
+				}
+				else
+				{
+					// This will seek with Soloud
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
+				}
+			}
+		});
 	}
 
 	public void FF9SOUND_SNDEFFECT_PLAY(Int32 ObjNo, Int32 attr, Int32 pos, Int32 vol)
@@ -537,30 +537,30 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.6f * SoundLib.SoundEffectPlayer.Volume, 0);
 			soundProfile.Pitch *= 0.6f; // Can't do that with Soloud yet - SamsamTS
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 			return 1;
 		}
-        // TODO: This special way to handle this sound (Fire effect) seems to crash the game when the INI option "[Import] Audio" is used
-        // We remove this "volume fading" effect and play this sound normally, but a better understanding of the bug would be nice
-        //if (ObjNo == 58)
-        //{
-        //	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
-        //	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-        //	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f, 300);
-        //	soundProfile.Pitch *= 0.8f;
-        //	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-        //	return 1;
-        //}
-        if (ObjNo == 58 && Configuration.Audio.Backend > 0)
-        {
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f * SoundLib.SoundEffectPlayer.Volume, 300);
-            soundProfile.Pitch *= 0.8f; // Can't do that with Soloud yet - SamsamTS
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-            return 1;
-        }
-        return 0;
+		// TODO: This special way to handle this sound (Fire effect) seems to crash the game when the INI option "[Import] Audio" is used
+		// We remove this "volume fading" effect and play this sound normally, but a better understanding of the bug would be nice
+		//if (ObjNo == 58)
+		//{
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f, 300);
+		//	soundProfile.Pitch *= 0.8f;
+		//	ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+		//	return 1;
+		//}
+		if (ObjNo == 58 && Configuration.Audio.Backend > 0)
+		{
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f * SoundLib.SoundEffectPlayer.Volume, 300);
+			soundProfile.Pitch *= 0.8f; // Can't do that with Soloud yet - SamsamTS
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+			return 1;
+		}
+		return 0;
 	}
 
 	private void ShiftPitchIfFastForward(SoundProfile soundProfile)
@@ -1416,9 +1416,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 	}
 
-    public override Single Volume => throw new NotImplementedException();
+	public override Single Volume => throw new NotImplementedException();
 
-    public const Int32 VOLUME_MAX = 127;
+	public const Int32 VOLUME_MAX = 127;
 
 	public const Int32 SNDEFFECTRES_SLOT_MAX = 2;
 
