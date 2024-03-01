@@ -841,7 +841,7 @@ namespace Memoria.Launcher
 
         private void SetupFrameLang()
         {
-            Title = Lang.ModEditor.WindowTitle + " - " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("Y", CultureInfo.GetCultureInfo(Lang.LangName));
+            Title = Lang.ModEditor.WindowTitle + " | " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";

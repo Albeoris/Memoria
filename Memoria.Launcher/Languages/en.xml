@@ -1,309 +1,318 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Data>
-
 	<Measurement
-			Elapsed = "Elapsed"
-			Remaining = "Remaining"
-			SecondAbbr = "sec"
-			ByteAbbr = "B"
-			KByteAbbr = "KB"
-			MByteAbbr = "MB"
-			GByteAbbr = "GB"
-			TByteAbbr = "TB"
-			PByteAbbr = "PB"
-			EByteAbbr = "EB"
-			/>
+	Elapsed = "Elapsed"
+	Remaining = "Remaining"
+	SecondAbbr = "sec"
+	ByteAbbr = "B"
+	KByteAbbr = "KB"
+	MByteAbbr = "MB"
+	GByteAbbr = "GB"
+	TByteAbbr = "TB"
+	PByteAbbr = "PB"
+	EByteAbbr = "EB"
+	/>
 
 	<Button
-			OK = "OK"
-			Cancel = "Cancel"
-			Continue = "Continue"
-			Clone = "Clone"
-			Remove = "Remove"
-			Rollback = "Cancel"
-			Inject = "Inject"
-			SaveAs = "Save as..."
-			Exit = "EXIT"
-			Exiting = "Exiting..."
-			Launch = "PLAY"
-			Launching = "Launching..."
-      ModManager = "MOD MANAGER"
-			/>
+	OK = "OK"
+	Cancel = "Cancel"
+	Continue = "Continue"
+	Clone = "Clone"
+	Remove = "Remove"
+	Rollback = "Cancel"
+	Inject = "Inject"
+	SaveAs = "Save as..."
+	Exit = "EXIT"
+	Exiting = "Exiting..."
+	Launch = "PLAY"
+	Launching = "Launching..."
+	ModManager = "MOD MANAGER"
+	/>
 
 	<Settings
-			ActiveMonitor = "Active monitor"
-			PrimaryMonitor = " [Primary]"
-			Resolution = "Resolution"
-			WindowMode = "Window Mode"
-			Window = "Window"
-			ExclusiveFullscreen = "Exclusive Fullscreen"
-			BorderlessFullscreen = "Borderless Fullscreen"
-			AudioSamplingFrequency = "Audio sampling frequency"
-			AudioSamplingFrequencyFormat = "{0} Hz"
-			Debuggable = " Debuggable"
-			CheckUpdates = " Check for updates"
-			IniOptions = "Options"
-			Widescreen = " Widescreen (16:9 or 16:10)"
-			BattleInterface = "Battle HUD"
-			BattleInterfaceType0 = "Big"
-			BattleInterfaceType1 = "Small"
-			BattleInterfaceType2 = "PSX-like"
-			BattleInterfaceTooltip = "You may customize the interface in-game by pressing Alt+F1"
-			SkipIntrosToMainMenu = " Skip intros to main menu"
-			SkipBattleSwirl = " Skip battle swirl"
-			AntiAliasing = " Anti-aliasing"
-			SkipBattleLoading = "Frames to load battle"
-			HideCardsBubbles = " Hide cards bubbles"
-			HideSteamBubbles = " Show only PSX bubbles"
-			HideSteamBubblesTooltip = "Disables 'card', 'beach' bubbles&#xA;and NPC interaction bubbles"
-			TurnBasedBattles = " Turn-based battles"
-			SpeedChoice = "ATB Mode"
-			SpeedChoiceType0 = "Normal"
-			SpeedChoiceType1 = "Fast"
-			SpeedChoiceType2 = "Turn-Based"
-			SpeedChoiceType3 = "Dynamic (1)"
-			SpeedChoiceType4 = "Dynamic (2)"
-			SpeedChoiceType5 = "Dynamic"
-			SpeedChoiceTooltip = "Normal: default mode&#xA;Fast: the ATB fills up immediately during idling times&#xA;Turn-based: ATB stops during a character turn&#xA;Dynamic: characters and enemies can act simultaneously"
-			TripleTriad = "Card game"
-			TripleTriadType0 = "Tetra Master"
-			TripleTriadType1 = "Tetra Triad"
-			TripleTriadType2 = "Triple Triad"
-			Volume = "Volume:"
-			SoundVolume = "🔊Sound"
-			MusicVolume = "🎵Music"
-			MovieVolume = "🔊Movie"
-			IniCheats = "Cheats"
-			MaxStealRate = " 100% steal rate"
-			DisableCantConcentrate = " Disable 'can't concentrate'"
-			BreakDamageLimit = " Break damage limit"
-			AccessBattleMenu = "Menu in battles"
-			AccessBattleMenuType0 = "No access"
-			AccessBattleMenuType1 = "Limited access"
-			AccessBattleMenuType2 = "Individual access"
-			AccessBattleMenuType3 = "Unlimited access"
-			AccessBattleMenuTooltip = "If the 'Menu' command does not appear, access&#xA;the menu with the button △/Y from the 'Item' command&#xA;In limited access, using the menu costs a turn"
-			SpeedMode = " Speed mode | F1"
-			SpeedFactor = "Speed"
-			BattleAssistance = " Battle cheats | F2 F3"
-			PermanentTranse = " Permanent transe | F2"
-			MaxDamage = " Max damage | F3"
-			NoRandomBattles = " No random battles | F4"
-			PermanentCheats = " Permanent cheats | F5 F6 F7"
-			UsePsxFont = "Use PSX font"
-			FontChoice = "Font"
-			SBUIenabled = "Scaled Battle UI"
-			BattleTPS = "Battle speed (def. 15)"
-			SharedFPS = "Frames Per Second"
-			UseOrchestralMusic = "Orchestral music (Moguri)"
-			Use30FpsVideo = "30 FPS video (Moguri)"
-			/>
+	LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
+	ActiveMonitor = "Active monitor"
+	PrimaryMonitor = " [Primary]"
+	Resolution = "Resolution"
+	WindowMode = "Window Mode"
+	Window = "Windowed"
+	ExclusiveFullscreen = "Fullscreen"
+	BorderlessFullscreen = "Borderless Fullscreen"
+	AudioSamplingFrequency = "Audio sampling frequency"
+	AudioSamplingFrequencyFormat = "{0} Hz"
+	Debuggable = " Debuggable"
+	CheckUpdates = " Check for updates"
+	IniOptions = "Options"
+	Widescreen = " Widescreen (16:9 or 16:10)"
+	BattleInterface = "Battle HUD"
+	BattleInterfaceType0 = "Big"
+	BattleInterfaceType1 = "Small"
+	BattleInterfaceType2 = "PSX-like"
+	SkipIntrosToMainMenu = " Skip intros to main menu"
+	SkipBattleSwirl = " Skip battle swirl"
+	AntiAliasing = " Anti-aliasing"
+	SkipBattleLoading = "Frames to load battle"
+	HideCardsBubbles = " Hide cards bubbles"
+	HideSteamBubbles = " Show only PSX bubbles"
+	TurnBasedBattles = " Turn-based battles"
+	SpeedChoice = "ATB Mode"
+	SpeedChoiceType0 = "Normal"
+	SpeedChoiceType1 = "Fast"
+	SpeedChoiceType2 = "Turn-Based"
+	SpeedChoiceType3 = "Dynamic (1)"
+	SpeedChoiceType4 = "Dynamic (2)"
+	SpeedChoiceType5 = "Dynamic"
+	TripleTriad = "Card game"
+	TripleTriadType0 = "Tetra Master"
+	TripleTriadType1 = "Tetra Triad"
+	TripleTriadType2 = "Triple Triad"
+	Volume = "Volume:"
+	SoundVolume = "🔊Sound"
+	MusicVolume = "🎵Music"
+	MovieVolume = "🔊Movie"
+	IniCheats = "Cheats"
+	MaxStealRate = " 100% steal rate"
+	DisableCantConcentrate = " Disable 'can't concentrate'"
+	BreakDamageLimit = " Break damage limit"
+	AccessBattleMenu = "Menu in battles"
+	AccessBattleMenuType0 = "No access"
+	AccessBattleMenuType1 = "Limited access"
+	AccessBattleMenuType2 = "Individual access"
+	AccessBattleMenuType3 = "Unlimited access"
+	SpeedMode = " Speed mode | F1"
+	SpeedFactor = "Speed"
+	BattleAssistance = " Battle cheats | F2 F3"
+	PermanentTranse = " Permanent transe | F2"
+	MaxDamage = " Max damage | F3"
+	NoRandomBattles = " No random battles | F4"
+	PermanentCheats = " Permanent cheats | F5 F6 F7"
+	UsePsxFont = "Use PSX font"
+	FontChoice = "Font"
+	SBUIenabled = "Scaled Battle UI"
+	BattleTPS = "Battle speed (def. 15)"
+	SharedFPS = "Frames Per Second"
+	UseOrchestralMusic = "Orchestral music (Moguri)"
+	Use30FpsVideo = "30 FPS videos (Moguri)"
+	ActiveMonitor_Tooltip = "Choose a screen"
+	WindowMode_Tooltip = "-Windowed: run the game in a window&#xA;-Fullscreen: Game takes the whole display&#xA;-Borderless Fullscreen: Takes the whole display but as a windowed process"
+	Resolution_Tooltip = "Screen resolution&#xA;Only 16:9 and 16:10 support Widescreen"
+	Xsixfour_Tooltip = "-X64 (recommanded)&#xA;-X86 (legacy)"
+	Debuggable_Tooltip = "For developers"
+	CheckUpdates_Tooltip = "Will ask you if you want to automatically download&#xA;the latest Memoria from github when you press play"
+	SteamOverlayFix_Tooltip = "Will patch the launcher for people&#xA;having problems displaying the Steam overlay&#xA;(Steam achievements also depend on it)"
+	UseOrchestralMusic_Tooltip = "Moguri mod: orchestral soundtrack by Pontus Hultgren,&#xA;not recommended for people who want the original experience"
+	Use30FpsVideo_Tooltip = "Moguri mod: 30fps FMVs (from original 15fps)&#xA;Inbetween images created by AI"
+	Widescreen_Tooltip = "Supported on 16:9 and 16:10 resolutions&#xA;Removes side bars when possible,&#xA;Shows a wider part of the backgrounds/worldmap/battles&#xA;Note: some backgrounds will still be displayed with black bars,&#xA;as the original game did not have more pixels"
+	AntiAliasing_Tooltip = "Activate anti-aliasing"
+	SharedFPS_Tooltip = "Game FPS (frequency of images)&#xA;original was between 15 and 30&#xA;Standard of screens: 60"
+	BattleInterface_Tooltip = "Big (default)&#xA;Small: smaller&#xA;PSX-like: brings back the classic look and structure of the battle menu&#xA;Customize the battle UI in-game with Alt+F1"
+	SkipIntrosToMainMenu_Tooltip = "Skip logos and warnings to main menu"
+	SkipBattleSwirl_Tooltip = "On: battle start instantly (default)&#xA;Off: slight delay before battles, like the original"
+	HideSteamBubbles_Tooltip = "Disable speech bubbles added by the FFIX 2016 re-release&#xA;('card', 'beach' and NPC interaction)"
+	SpeedChoice_Tooltip = "-Normal: (default)&#xA;-Fast: the ATB fills up immediately during idle times&#xA;-Turn-based: ATB stops during a character's turn but fills instantly&#xA;-Dynamic: characters and enemies can act simultaneously"
+	TripleTriad_Tooltip = "-Tetra Master (default)&#xA;-Tetra Triad: replaces Tetra Master with a mix between Tetra Master and Triple Triad&#xA;-Triple Triad: replaces Tetra Master with Triple Triad from FF8 adapted to FF9"
+	SoundVolume_Tooltip = "Interface and noises volume"
+	MusicVolume_Tooltip = "Music volume"
+	MovieVolume_Tooltip = "FMV and main menu volume"
+	FontChoice_Tooltip = "Game font"
+	MaxStealRate_Tooltip = "Cheat: always succeeds when stealing"
+	DisableCantConcentrate_Tooltip = "Cheat: removes Garnet concentration malus (later in the story)"
+	BreakDamageLimit_Tooltip = "Cheat: removes the damage limit of 9999"
+	AccessBattleMenu_Tooltip = "If the 'Menu' command does not appear, access&#xA;the menu with the button △/Y from the 'Item' command&#xA;In limited access, using the menu costs a turn"
+	SpeedMode_Tooltip = "(Non-mod cheats)&#xA;Fast game (F1)"
+	SpeedFactor_Tooltip = "Speed multiplier of above setting"
+	BattleAssistance_Tooltip = "(Non-mod cheats)&#xA;Instant transe (F2)&#xA;Max damage (F3)"
+	NoRandomBattles_Tooltip = "(Non-mod cheats)&#xA;no random encounters (F4)"
+	PermanentCheats_Tooltip = "(Non-mod cheats)&#xA;Maximum everything F5/F6/F7&#xA;(these cheats will stay on your save and disable achievements)"
+	/>
 
 	<SdLib
-			Caption = "Patch SdLib.dll"
-			AreYouSure = "Are you sure you want to patch SdLib.dll?"
-			SuccessBoth = "SdLib.dll is successfully patched for both platforms."
-			SuccessX64 = "SdLib.dll is successfully patched for the x64 platform only."
-			SuccessX86 = "SdLib.dll is successfully patched for the x86 platform only."
-			Fail = "Unfortunately, we could not patch the SdLib.dll. Please share your version of this file."
-			CannotRead = "Cannot read audio sampling frequency from the file:"
-			CannotWrite = "Cannot read audio sampling frequency from the SdLib.dll"
-			/>
+	Caption = "Patch SdLib.dll"
+	AreYouSure = "Are you sure you want to patch SdLib.dll?"
+	SuccessBoth = "SdLib.dll is successfully patched for both platforms."
+	SuccessX64 = "SdLib.dll is successfully patched for the x64 platform only."
+	SuccessX86 = "SdLib.dll is successfully patched for the x86 platform only."
+	Fail = "Unfortunately, we could not patch the SdLib.dll. Please share your version of this file."
+	CannotRead = "Cannot read audio sampling frequency from the file:"
+	CannotWrite = "Cannot read audio sampling frequency from the SdLib.dll"
+	/>
 
 	<SteamOverlay
-			OptionLabel = " Fix Steam Overlay"
-			Caption = "Steam Overlay"
-			FixAreYouSure = "Now we will install a hook into your OS that will launch FF9_Launcher.fix instead of the FF9_Launcher.exe file. In this case, all integrity checks of the Steam file will complete successfully. Thus, this will solve the problem that some users have periodically disabled Steam Overlay functionality, and related features: achievements and controller support.&#13;&#10;&#13;&#10;However, be careful and DO NOT DELETE the game, its folder or the FF9_Launcher.fix file without first rolling back the changes. Otherwise, the hook will remain in your system, and after a new installation of the game, you will not be able to launch it. You can roll back the changes in the launcher or manually by running Memoria.SteamFix.exe in the game folder.&#13;&#10;&#13;&#10;Are you sure you still want to continue?"
-			RollbackAreYouSure = "Now we will remove the changes made, after which the problem with Steam Overlay will return.&#13;&#10;&#13;&#10;This can lead to disabling achievements and controller issues.&#13;&#10;&#13;&#10;Are you sure you want to continue?"
+	OptionLabel = " Fix Steam Overlay"
+	Caption = "Steam Overlay"
+	FixAreYouSure = "Now we will install a hook into your OS that will launch FF9_Launcher.fix instead of the FF9_Launcher.exe file. In this case, all integrity checks of the Steam file will complete successfully. Thus, this will solve the problem that some users have periodically disabled Steam Overlay functionality, and related features: achievements and controller support.&#13;&#10;&#13;&#10;However, be careful and DO NOT DELETE the game, its folder or the FF9_Launcher.fix file without first rolling back the changes. Otherwise, the hook will remain in your system, and after a new installation of the game, you will not be able to launch it. You can roll back the changes in the launcher or manually by running Memoria.SteamFix.exe in the game folder.&#13;&#10;&#13;&#10;Are you sure you still want to continue?"
+	RollbackAreYouSure = "Now we will remove the changes made, after which the problem with Steam Overlay will return.&#13;&#10;&#13;&#10;This can lead to disabling achievements and controller issues.&#13;&#10;&#13;&#10;Are you sure you want to continue?"
 	/>
 
 	<InfoProvider>
 
 		<ApplicationConfig
-				Title = "Settings"
-				Description = "Various settings of the application."
-				NewTitle = "New"
-				NewDescription = "Initialize all settings default values."
-				FileTitle = "From file"
-				FileDescription = "Reads the application configuration file {0}"
-				/>
+		Title = "Settings"
+		Description = "Various settings of the application."
+		NewTitle = "New"
+		NewDescription = "Initialize all settings default values."
+		FileTitle = "From file"
+		FileDescription = "Reads the application configuration file {0}"
+		/>
 
 		<GameLocation
-				Title = "Game Directory"
-				Description = "Location of the game files."
-				ConfigurationTitle = "Settings"
-				ConfigurationDescription = "Uses the information stored in the configuration file."
-				SteamRegistryTitle = "From registry (Steam)"
-				SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
-				UserTitle = "Manual"
-				UserDescription = "Allows you to manually select the directory to which you have installed the game."
-				/>
+		Title = "Game Directory"
+		Description = "Location of the game files."
+		ConfigurationTitle = "Settings"
+		ConfigurationDescription = "Uses the information stored in the configuration file."
+		SteamRegistryTitle = "From registry (Steam)"
+		SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
+		UserTitle = "Manual"
+		UserDescription = "Allows you to manually select the directory to which you have installed the game."
+		/>
 
 		<WorkingLocation
-				Title = "Working Directory"
-				Description = "The directory to store the results of the application."
-				ConfigurationTitle = "Settings"
-				ConfigurationDescription = "Uses the information stored in the configuration file."
-				UserTitle = "Manual"
-				UserDescription = "Allows you to manually select a working directory."
-				/>
+		Title = "Working Directory"
+		Description = "The directory to store the results of the application."
+		ConfigurationTitle = "Settings"
+		ConfigurationDescription = "Uses the information stored in the configuration file."
+		UserTitle = "Manual"
+		UserDescription = "Allows you to manually select a working directory."
+		/>
 
 		<TextEncoding
-				Title = "Encoding"
-				Description = "Encoding for unpacking and packing the game text."
-				NewTitle = "New"
-				NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
-				WorkingLocationTitle = "Working directory"
-				WorkingLocationDescription = "Reads the encoding from the working directory."
-				UserTitle = "Edit"
-				UserDescription = "Change the current encoding."
-				/>
+		Title = "Encoding"
+		Description = "Encoding for unpacking and packing the game text."
+		NewTitle = "New"
+		NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
+		WorkingLocationTitle = "Working directory"
+		WorkingLocationDescription = "Reads the encoding from the working directory."
+		UserTitle = "Edit"
+		UserDescription = "Change the current encoding."
+		/>
 
 		<AudioSettings
-				Title="Audio Settings"
-				Description="Settings of audio device."
-				NewTitle="New"
-				NewDescription="Initialize all settings default values."
-				/>
+		Title="Audio Settings"
+		Description="Settings of audio device."
+		NewTitle="New"
+		NewDescription="Initialize all settings default values."
+		/>
 
 	</InfoProvider>
-
 	<Dockable>
-
 		<DataSources Header = "Data Sources" />
 
 		<GameFileCommander
-				Header = "Game Resources"
-				Unpack = "Unpack"
-				Pack = "Pack"
-				ArchivesNode ="Archives"
-				/>
+		Header = "Game Resources"
+		Unpack = "Unpack"
+		Pack = "Pack"
+		ArchivesNode ="Archives"
+		/>
 
-		<GameFilePreview
-				Header="Preview"
-				>
+		<GameFilePreview Header="Preview" >
 
 			<Ykd
-					ResourceRemovingTitle = "Removing"
-					ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
-					/>
+			ResourceRemovingTitle = "Removing"
+			ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
+			/>
 
 		</GameFilePreview>
-
 	</Dockable>
-
 	<EncodingEditor>
-
+		
 		<List
-				Name = "Name"
-				Pattern = "Pattern"
-				Encoding = "Encoding"
-				Font = "Font"
-				Edit = "Edit"
-				/>
+		Name = "Name"
+		Pattern = "Pattern"
+		Encoding = "Encoding"
+		Font = "Font"
+		Edit = "Edit"
+		/>
 
 		<EncodingSelectDialog
-				Title = "Choose the encoding"
-				Watermark = "Enter the encoding name..."
-				ConfirmMessageFormat = "You have chosen [{0}]. Right?"
-				ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
-				/>
+		Title = "Choose the encoding"
+		Watermark = "Enter the encoding name..."
+		ConfirmMessageFormat = "You have chosen [{0}]. Right?"
+		ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
+		/>
 
 		<EncodingEditDialog
-				Title = "Encoding edit"
-				/>
+		Title = "Encoding edit"
+		/>
 
 		<Main
-				Before = "Before:"
-				Width = "Width:"
-				After = "After:"
-				FromText = "From text:"
-				ToText = "To text:"
-				/>
+		Before = "Before:"
+		Width = "Width:"
+		After = "After:"
+		FromText = "From text:"
+		ToText = "To text:"
+		/>
 
 		<Extra
-				Row = "Row:"
-				Column = "Column:"
-				FromText = "From text:"
-				ToText = "To text:"
-				/>
+		Row = "Row:"
+		Column = "Column:"
+		FromText = "From text:"
+		ToText = "To text:"
+		/>
 
 	</EncodingEditor>
 
-  <ModEditor
-    WindowTitle="Memoria Mod Manager"
-    ModInfos = "Mod Infos"
-    TabMyMods = "Installed Mods"
-    TabCatalog = "Browse Catalog"
-    Mod = "Mod"
-    Name = "Name"
-    Website = "Website"
-    Author = "Author"
-    Release = "Released"
-    Category = "Category"
-    Version = "Version"
-    Description = "Description"
-    ReleaseNotes = "Release Notes"
-    SubModPanel = "Mod options"
-    Priority = "Priority"
-    Installed = "Installed"
-    Active = "Active"
-    Progress = "Progress"
-    Speed = "Speed"
-    TimeLeft = "Time Left"
-    PreviewImageMissing = "No Preview Image"
-    TooltipMoveUp = "Move Up/Right-Click to Move to Top"
-    TooltipMoveDown = "Move Down/Right-Click to Move to Bottom"
-    TooltipCheckCompatibility = "Check Mod Compatibilities/Right-Click to Check All"
-    TooltipActivateAll = "Activate All Mods"
-    TooltipDeactivateAll = "Deactivate All Mods"
-    TooltipUninstall = "Uninstall Mod(s)"
-    TooltipDownload = "Download Selected Mod(s)"
-    TooltipCancel = "Cancel Current Download/Right-Click to Cancel All"
-    />
-
+	<ModEditor
+	WindowTitle = "Memoria Mod Manager"
+	ModInfos = "Mod Infos"
+	TabMyMods = "Installed Mods"
+	TabCatalog = "Browse Catalog"
+	Mod = "Mod"
+	Name = "Name"
+	Website = "Website"
+	Author = "Author"
+	Release = "Released"
+	Category = "Category"
+	Version = "Version"
+	Description = "Description"
+	ReleaseNotes = "Release Notes"
+	SubModPanel = "Mod options"
+	Priority = "Priority"
+	Installed = "Installed"
+	Active = "Active"
+	Progress = "Progress"
+	Speed = "Speed"
+	TimeLeft = "Time Left"
+	PreviewImageMissing = "No Preview Image"
+	TooltipMoveUp = "Move Up/Right-Click to Move to Top"
+	TooltipMoveDown = "Move Down/Right-Click to Move to Bottom"
+	TooltipCheckCompatibility = "Check Mod Compatibilities/Right-Click to Check All"
+	TooltipActivateAll = "Activate All Mods"
+	TooltipDeactivateAll = "Deactivate All Mods"
+	TooltipUninstall = "Uninstall Mod(s)"
+	TooltipDownload = "Download Selected Mod(s)"
+	TooltipCancel = "Cancel Current Download/Right-Click to Cancel All"
+	/>
+	
 	<Dialogue>
 
-		<SaveAs
-				Title = "Save as..."
-				/>
+		<SaveAs Title = "Save as..." />
 
 	</Dialogue>
 
 	<Message>
 
 		<Done
-				Title = "Done!"
-				ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
-				InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
-				/>
+		Title = "Done!"
+		ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
+		InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
+		/>
 
 		<Question
-				Title = "Question"
-				AreYouSureTitle = "Are you sure?"
-				NewVersionIsAvailable = "A new version is available, download now?"
-				/>
+		Title = "Question"
+		AreYouSureTitle = "Are you sure?"
+		NewVersionIsAvailable = "A new version is available, download now?"
+		/>
 
 		<Error
-				Title = "Error!"
-				/>
+		Title = "Error!"
+		/>
 
 	</Message>
 
 	<Error>
-
-		<File
-				UnknownFormat = "Unknown file format."
-				/>
-
-		<Process
-				CannotGetExecutablePath = "Cannot get a path of the executable assembly."
-				/>
-
-		<Text
-				TooLongTagNameFormat = "Too long name of tag: {0}"
-				/>
-
+		<File UnknownFormat = "Unknown file format." />
+		<Process CannotGetExecutablePath = "Cannot get a path of the executable assembly." />
+		<Text TooLongTagNameFormat = "Too long name of tag: {0}" />
 	</Error>
 
 </Data>
