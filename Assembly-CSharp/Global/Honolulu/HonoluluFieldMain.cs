@@ -145,7 +145,7 @@ public class HonoluluFieldMain : HonoBehavior
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(0);
 		if (sndEffectResSoundID2 != -1 && sndEffectResSoundID2 == sndEffectResSoundID4)
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(1);
-		PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}, Loc: {FF9StateSystem.Common.FF9.fldLocNo} Name: {FF9StateSystem.Common.FF9.mapNameStr}");
+        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Seq: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
 		FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
 	}
 
