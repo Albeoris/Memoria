@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Scripts;
 using Object = System.Object;
+using Memoria.Prime;
 
 [Flags]
 public enum FieldMapFlags : uint
@@ -107,6 +108,7 @@ public class FieldMap : HonoBehavior
             this.rainRenderer = goCamera.AddComponent<FieldRainRenderer>();
         }
         this.camIdx = 0;
+        //Log.Message("HonoAwake() this.camIdx = 0;");
         this.curCamIdx = -1;
         this.charAimHeight = 324;
         this.mapName = FF9StateSystem.Field.SceneName;
@@ -203,8 +205,10 @@ public class FieldMap : HonoBehavior
 
     public void ChangeFieldMap(String name)
     {
+        //Log.Message("ChangeFieldMap new field is " + name);
         this.mapName = name;
         this.camIdx = 0;
+        //Log.Message("ChangeFieldMap() this.camIdx = 0;");
         this.curCamIdx = -1;
         foreach (Object obj in base.transform)
         {
@@ -413,6 +417,7 @@ public class FieldMap : HonoBehavior
         BGCAM_DEF bgCamera = this.scene.cameraList[this.camIdx];
         Vector2 centerOffset = bgCamera.GetCenterOffset();
         this.offset.x = centerOffset.x + bgCamera.w / 2 - HalfFieldWidth;
+        Log.Message("SetCurrentCameraIndex(" + newCamIdx + ") | this.offset.x(" + this.offset.x + ") = centerOffset.x(" + centerOffset.x + ") + bgCamera.w(" + bgCamera.w + ") / 2 - HalfFieldWidth(" + HalfFieldWidth + ")");
         this.offset.y = -centerOffset.y - bgCamera.h / 2 + HalfFieldHeight;
         Shader.SetGlobalFloat("_OffsetX", this.offset.x);
         Shader.SetGlobalFloat("_OffsetY", this.offset.y);
@@ -430,11 +435,12 @@ public class FieldMap : HonoBehavior
         this.flags |= FieldMapFlags.Unknown128;
         this.walkMesh.ProcessBGI();
         this.walkMesh.UpdateActiveCameraWalkmesh();
+        Log.Message("_ SetCurrentCameraIndex | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
 
     public static Boolean IsNarrowMap()
     {
-        return NarrowMapList.IsCurrentMapNarrow();
+        return NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxScreenWidth());
     }
 
     public void LoadFieldMap(String name)
@@ -451,7 +457,8 @@ public class FieldMap : HonoBehavior
             return;
         BGCAM_DEF bgCamera = this.scene.cameraList[this.camIdx];
         Vector2 centerOffset = bgCamera.GetCenterOffset();
-        this.offset.x = centerOffset.x + bgCamera.w / 2 - HalfFieldWidth;
+        this.offset.x = centerOffset.x + bgCamera.w / 2 - HalfFieldWidth; 
+        Log.Message("LoadFieldMap(" + FF9StateSystem.Common.FF9.fldMapNo + " | this.offset.x(" + this.offset.x + ") = centerOffset.x(" + centerOffset.x + ") + bgCamera.w(" + bgCamera.w + ") / 2 - HalfFieldWidth(" + HalfFieldWidth + ")");
         this.offset.y = -centerOffset.y - bgCamera.h / 2 + HalfFieldHeight;
         Shader.SetGlobalFloat("_OffsetX", this.offset.x);
         Shader.SetGlobalFloat("_OffsetY", this.offset.y);
@@ -469,6 +476,8 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
+        Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
+
     }
 
     public void ActivateCamera()
@@ -486,6 +495,7 @@ public class FieldMap : HonoBehavior
             BGCAM_DEF bgCamera = this.scene.cameraList[i];
             bgCamera.transform.gameObject.SetActive(i == this.camIdx);
         }
+
     }
 
     public void AddPlayer()
@@ -677,15 +687,18 @@ public class FieldMap : HonoBehavior
             return;
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
         Vector3 localPosition = camera.transform.localPosition;
-        localPosition.x = bgcam_DEF.centerOffset[0] + this.charOffset.x;
-        localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
+        float CamPosition = bgcam_DEF.centerOffset[0] + this.charOffset.x;
+        //Log.Message("bgcam_DEF.centerOffset[0] begin center camera on player " + bgcam_DEF.centerOffset[0]);
 
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
+            Int32 mapWidth = NarrowMapList.MapWidth(map);
+
             Int32 threshmargin = Math.Min(bgcam_DEF.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
-            if (!IsNarrowMap() && map != 507) // Cargo Ship/Deck
+            //Log.Message("PsxFieldWidth" + PsxFieldWidth);
+            if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
             {
-                foreach (KeyValuePair<Int32, Int32> entry in mapCameraMargin)
+                foreach (KeyValuePair<Int32, Int32> entry in NarrowMapList.mapCameraMargin)
                     if (map == entry.Key)
                         threshmargin = entry.Value;
 
@@ -698,8 +711,8 @@ public class FieldMap : HonoBehavior
                 else if (map == 2923) // Exception in crystal world
                     threshmargin += 20;
 
-                localPosition.x = (Int32)Math.Max(threshmargin, localPosition.x);
-                localPosition.x = (Int32)Math.Min(threshright, localPosition.x);
+                CamPosition = (Int32)Math.Max(threshmargin, CamPosition);
+                CamPosition = (Int32)Math.Min(threshright, CamPosition);
             }
             else if (map == 1205 || map == 1652 || map == 2552)
             {
@@ -708,25 +721,27 @@ public class FieldMap : HonoBehavior
                     threshmargin += 16;
 
                 Int32 threshright = bgcam_DEF.w - PsxFieldWidth - threshmargin;
-                
-                localPosition.x = (Int32)Math.Max(threshmargin, localPosition.x);
-                localPosition.x = (Int32)Math.Min(threshright, localPosition.x);
+
+                CamPosition = (Int32)Math.Max(threshmargin, CamPosition);
+                CamPosition = (Int32)Math.Min(threshright, CamPosition);
             }
             else if (IsNarrowMap())
             {
-                foreach (KeyValuePair<Int32, Int32> entry in actualNarrowMapWidthDict)
-                    if (map == entry.Key)
-                        localPosition.x = (Int32)((bgcam_DEF.w - entry.Value) / 2);
+                if (mapWidth <= PsxFieldWidth && mapWidth > 320)
+                {
+                    CamPosition = (Int32)((bgcam_DEF.w - mapWidth) / 2);
+                }
+                
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
                     case 456: // Dali Mountain/Summit
-                        localPosition.x = 160;
+                        CamPosition = 160;
                         break;
                     case 505: // Cargo ship offset
-                        localPosition.x = 105;
+                        CamPosition = 105;
                         break;
                     case 1153: // Rose Rouge cockpit offset
-                        localPosition.x = 175;
+                        CamPosition = 175;
                         break;
                     default:
                         break;
@@ -737,229 +752,32 @@ public class FieldMap : HonoBehavior
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
                     case 456: // Dali Mountain/Summit
-                        localPosition.x = 160 + 35;
+                        CamPosition = 160 + 35;
                         break;
                     case 505: // Cargo ship offset
-                        localPosition.x = 105 - 35;
+                        CamPosition = 105 - 35;
                         break;
                     case 1153: // Rose Rouge cockpit offset
-                        localPosition.x = 175 - 35;
+                        CamPosition = 175 - 35;
                         break;
                     default:
                         break;
                 }
             }
         }
+        localPosition.x = CamPosition;
+        localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
+        
+        
+        if (CamPosition != _debug_latest_camposition)
+        {
+            _debug_latest_camposition = (Int32)CamPosition;
+            Log.Message("CamPosition: " + CamPosition + " (curCamIdx: " + curCamIdx + " | camIdx: " + camIdx + ")");
+        }
 
         camera.transform.localPosition = localPosition;
     }
-
-
-    private static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
-    {
-        //{mapNo,pixels on each side to crop because of scrollable}
-        {1051,8},
-        {1057,16},
-        {1058,16},
-        {1060,16},
-        {1652,16},
-        {1653,16},
-    };
-
-    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
-    {
-        //{mapNo,(actualWidth - 2)}
-        {203,334},
-        {502,334},
-        {503,334},
-        {760,334},
-        {814,334},
-        {816,334},
-        {1151,334},
-        {1458,334},
-        {1500,334},
-        {1506,334},
-        {1605,334},
-        {1606,334},
-        {1608,334},
-        {1660,334},
-        {1661,334},
-        {1662,334},
-        {1705,334},
-        {1707,334},
-        {1751,334},
-        {2202,334},
-        {2204,334},
-        {2205,334},
-        {2208,334},
-        {2254,334},
-        {2257,334},
-        {2303,334},
-        {2365,334},
-        {2513,334},
-        {2756,334},
-        {2932,334},
-        {3057,334},
-        {114,350},
-        {550,350},
-        {620,350},
-        {802,350},
-        {803,350},
-        {1212,350},
-        {1300,350},
-        {1370,350},
-        {1508,350},
-        {1650,350},
-        {1752,350},
-        {1757,350},
-        {1863,350},
-        {1951,350},
-        {1952,350},
-        {2000,350},
-        {2055,350},
-        {2771,350},
-        {2203,350},
-        {2261,350},
-        {2356,350},
-        {2362,350},
-        {2500,350},
-        {2501,350},
-        {2654,350},
-        {60,366},
-        {150,366},
-        {161,366},
-        {201,366},
-        {262,366},
-        {565,366},
-        {911,366},
-        {1213,366},
-        {1222,366},
-        {1251,366},
-        {1254,366},
-        {1312,366},
-        {1403,366},
-        {1803,366},
-        {1814,366},
-        {1817,366},
-        {1911,366},
-        {1953,366},
-        {2002,366},
-        {2004,366},
-        {2006,366},
-        {2112,366},
-        {2400,366},
-        {2502,366},
-        {2503,366},
-        {2650,366},
-        {2904,366},
-        {2913,366},
-        {2928,366},
-        {3100,366},
-        {102,382},
-        {109,382},
-        {162,382},
-        {206,382},
-        {207,382},
-        {251,382},
-        {252,382},
-        {407,382},
-        {553,382},
-        {556,382},
-        {705,382},
-        {751,382},
-        {813,382},
-        {950,382},
-        {1017,382},
-        {1018,382},
-        {1058,380},
-        {1108,380},
-        {1201,382},
-        {1210,382},
-        {1303,382},
-        {1404,382},
-        {1452,382},
-        {1453,382},
-        {1509,382},
-        {1656,382},
-        {1820,382},
-        {1852,382},
-        {1858,382},
-        {2052,382},
-        {2103,382},
-        {2200,382},
-        {2222,382},
-        {2355,382},
-        {2406,382},
-        {2451,382},
-        {2657,382},
-        {2851,382},
-        {2855,382},
-        {2856,382},
-        {2915,382},
-        {3052,382},
-        {55,398},
-        {157,398},
-        {405,398},
-        {456,398},
-        {505,398},
-        {561,398},
-        {566,398},
-        {568,398},
-        {569,398},
-        {571,398},
-        {613,398},
-        {656,398},
-        {657,398},
-        {658,398},
-        {659,398},
-        {663,398},
-        {753,398},
-        {755,398},
-        {806,398},
-        {851,398},
-        {855,398},
-        {901,398},
-        {913,398},
-        {1054,398},
-        {1104,398},
-        {1153,398},
-        {1218,398},
-        {1313,398},
-        {1363,398},
-        {1408,398},
-        {1414,398},
-        {1424,398},
-        {1456,398},
-        {1600,398},
-        {1601,398},
-        {1602,398},
-        {1700,398},
-        {1701,398},
-        {1702,398},
-        {1810,398},
-        {1901,398},
-        {1913,398},
-        {2113,398},
-        {2163,398},
-        {2212,398},
-        {2213,398},
-        {2352,398},
-        {2353,398},
-        {2551,398},
-        {2601,398},
-        {2658,398},
-        {2706,398},
-        {2906,398},
-        {3005,398},
-        {3055,398},
-        {1205,384},
-        {154,352},
-        {1215,352},
-        {1805,352},
-        {1807,352},
-        {1652,336},
-        {2552,352},
-    };
+    private Int32 _debug_latest_camposition;
 
     public void ff9fieldInternalBattleEncountService()
     {
@@ -1094,6 +912,7 @@ public class FieldMap : HonoBehavior
         BGCAM_DEF bgCamera = this.scene.cameraList[this.curCamIdx];
         x = (Int16)(this.curVRP[0] + bgCamera.centerOffset[0] + HalfFieldWidth);
         y = (Int16)(this.curVRP[1] - bgCamera.centerOffset[1] + HalfFieldHeight);
+        //Log.Message("EBG_sceneGetVRP curVRP" + x);
         return 1;
     }
 
@@ -1300,6 +1119,7 @@ public class FieldMap : HonoBehavior
         bgCamera.vrpMaxX = (Int16)Math.Max(maxX - HalfFieldWidthNative, HalfFieldWidthNative);
         bgCamera.vrpMinY = (Int16)Math.Min(minY + HalfFieldHeight, bgCamera.h - HalfFieldHeight);
         bgCamera.vrpMaxY = (Int16)Math.Max(maxY - HalfFieldHeight, HalfFieldHeight);
+        //Log.Message("bgCamera.vrpMinX " + bgCamera.vrpMinX + " bgCamera.vrpMaxX " + bgCamera.vrpMaxX);
         return 1;
     }
 
@@ -2168,6 +1988,7 @@ public class FieldMap : HonoBehavior
             bgcam_DEF.vrpMinY = (Int16)this.SHRT_MIN;
             bgcam_DEF.vrpMaxY = (Int16)this.SHRT_MAX;
             IsLocked = false;
+            //Log.Message("EBG_charLookAtUnlock bgcam_DEF.vrpMinX " + bgcam_DEF.vrpMinX + " bgcam_DEF.vrpMaxX " + bgcam_DEF.vrpMaxX);
         }
     }
 
@@ -2185,6 +2006,7 @@ public class FieldMap : HonoBehavior
             bgcam_DEF.vrpMinY = this.origVRPMinY;
             bgcam_DEF.vrpMaxY = this.origVRPMaxY;
             IsLocked = true;
+            //Log.Message("EBG_charLookAtUnlock bgcam_DEF.vrpMinX " + bgcam_DEF.vrpMinX + " bgcam_DEF.vrpMaxX " + bgcam_DEF.vrpMaxX);
         }
     }
 
@@ -2991,7 +2813,7 @@ public class FieldMap : HonoBehavior
         }
     };
 
-    public static List<String> fieldMapNameWithAreaTitle = new List<String>
+    public static readonly List<String> fieldMapNameWithAreaTitle = new List<String>
     {
         "FBG_N01_ALXT_MAP016_AT_MSA_0",
         "FBG_N02_ALXC_MAP042_AC_GDR_0",
@@ -3073,15 +2895,16 @@ public class FieldMap : HonoBehavior
     {
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
-        if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
+        if (Configuration.Graphics.InitializeWidescreenSupport())
         {
-            foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+            int mapId = FF9StateSystem.Common.FF9.fldMapNo;
+            Int32 mapWidth = NarrowMapList.MapWidth(mapId);
+            //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height);
+            if (mapWidth <= PsxScreenWidth)
             {
-                if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
-                {
-                    PsxFieldWidth = (Int16)(entry.Value);
-                    PsxScreenWidth = PsxFieldWidth;
-                }
+                PsxFieldWidth = (Int16)mapWidth;
+                PsxScreenWidth = (Int16)mapWidth;
+                //Log.Message("PsxScreenWidth 2 " + PsxScreenWidth);
             }
         }
         HalfFieldWidth = (Int16)(PsxFieldWidth / 2);
@@ -3090,10 +2913,12 @@ public class FieldMap : HonoBehavior
         ShaderMulY = CalcShaderMulY();
         Shader.SetGlobalFloat("_MulX", ShaderMulX);
         Shader.SetGlobalFloat("_MulY", ShaderMulY);
+
+        Log.Message("HalfFieldWidth " + HalfFieldWidth + " HalfScreenWidth " + HalfScreenWidth + " ShaderMulX " + ShaderMulX + " PsxFieldWidth " + CalcShaderMulX() + " CalcShaderMulX() ");
     }
 
-    private static Int16 CalcPsxFieldWidth() => Configuration.Graphics.WidescreenSupport ? (Int16)(PsxFieldHeightNative * Screen.width / Screen.height) : PsxFieldWidthNative;
-    private static Int16 CalcPsxScreenWidth() => Configuration.Graphics.WidescreenSupport ? (Int16)(PsxScreenHeightNative * Screen.width / Screen.height) : PsxScreenWidthNative;
+    private static Int16 CalcPsxFieldWidth() => Configuration.Graphics.InitializeWidescreenSupport() ? (Int16)(PsxFieldHeightNative * Screen.width / Screen.height) : PsxFieldWidthNative;
+    private static Int16 CalcPsxScreenWidth() => Configuration.Graphics.InitializeWidescreenSupport() ? (Int16)(PsxScreenHeightNative * Screen.width / Screen.height) : PsxScreenWidthNative;
     private static Single CalcShaderMulX() => 1f / HalfFieldWidth;
     private static Single CalcShaderMulY() => 1f / HalfFieldHeight;
 
