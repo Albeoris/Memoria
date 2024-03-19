@@ -30,17 +30,10 @@ namespace Memoria
                 if (Instance._debug.Enabled && Instance._debug.StartFieldCreator)
                     return false;
 
-                if ((Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.01) || (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01))
-                    return true;
+                //if ((Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.01) || (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01))
+                //    return true;
 
-                return false;
-            }
-            public static Boolean ScreenIs16to10()
-            {
-                if (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01)
-                    return true;
-
-                return false;
+                return true;
             }
 
             public static Boolean WidescreenSupport
