@@ -581,11 +581,11 @@ public class FieldMap : HonoBehavior
 
     private void SetCharScale(Actor actorOfObj, int sx, int sy, int sz)
     {
-        int num = 18;
+        int scalingFactor = 18;
         if (actorOfObj != null)
         {
             if (actorOfObj.go != null)
-                geo.geoScaleSetXYZ(actorOfObj.go, sx << 24 >> num, sy << 24 >> num, sz << 24 >> num);
+                geo.geoScaleSetXYZ(actorOfObj.go, sx << 24 >> scalingFactor, sy << 24 >> scalingFactor, sz << 24 >> scalingFactor);
             actorOfObj.scaley = (byte)sy;
         }
     }
@@ -1051,16 +1051,16 @@ public class FieldMap : HonoBehavior
         if (FF9StateSystem.Common.FF9.fldMapNo == 70) // Opening-For FMV
             return 0;
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-        Single num = (Single)((bgcam_DEF.vrpMinX + bgcam_DEF.vrpMaxX) / 2 - bgcam_DEF.centerOffset[0]) - HalfFieldWidth;
-        Single num2 = (Single)((bgcam_DEF.vrpMinY + bgcam_DEF.vrpMaxY) / 2 + bgcam_DEF.centerOffset[1]) - HalfFieldHeight;
-        Int32 index = 0;
-        Single value = num;
-        this.parallaxOrg[0] = value;
-        this.curVRP[index] = value;
-        Int32 index2 = 1;
-        value = num2;
-        this.parallaxOrg[1] = value;
-        this.curVRP[index2] = value;
+        Single centerOffsetX = (Single)((bgcam_DEF.vrpMinX + bgcam_DEF.vrpMaxX) / 2 - bgcam_DEF.centerOffset[0]) - HalfFieldWidth;
+        Single centerOffsetY = (Single)((bgcam_DEF.vrpMinY + bgcam_DEF.vrpMaxY) / 2 + bgcam_DEF.centerOffset[1]) - HalfFieldHeight;
+        Int32 indexX = 0;
+        Single centerOffsetValue = centerOffsetX;
+        this.parallaxOrg[0] = centerOffsetValue;
+        this.curVRP[indexX] = centerOffsetValue;
+        Int32 indexY = 1;
+        centerOffsetValue = centerOffsetY;
+        this.parallaxOrg[1] = centerOffsetValue;
+        this.curVRP[indexY] = centerOffsetValue;
         this.scrollWindowPos = new Int16[4][];
         this.scrollWindowDim = new Int16[4][];
         this.scrollWindowAlphaX = new Int16[4];
@@ -1429,112 +1429,112 @@ public class FieldMap : HonoBehavior
         BGSCENE_DEF bgScene = this.scene;
         ushort spriteCount = overlayPtr.spriteCount;
         List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
-        short num = (short)(overlayPtr.curX + bgScene.scrX);
-        short num2 = (short)(overlayPtr.curY + bgScene.scrY);
-        short num3 = (short)(overlayPtr.curZ + (ushort)bgScene.curZ);
+        short screenX = (short)(overlayPtr.curX + bgScene.scrX);
+        short screenY = (short)(overlayPtr.curY + bgScene.scrY);
+        //short num3 = (short)(overlayPtr.curZ + (ushort)bgScene.curZ);
         if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
-            short num4;
-            short num5;
+            short anchorX;
+            short anchorY;
             if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                num4 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
-                num5 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
+                anchorX = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
+                anchorY = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
             }
             else
             {
-                num4 = (short)(HalfFieldWidth - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
-                num5 = (short)(HalfFieldHeight - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
+                anchorX = (short)(HalfFieldWidth - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
+                anchorY = (short)(HalfFieldHeight - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
             }
-            short num6 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
-            short num7 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][1];
+            short viewportWidth = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
+            short viewportHeight = this.scrollWindowDim[(int)overlayPtr.viewportNdx][1];
             if (overlayPtr.dX < 0)
             {
-                short num8 = (short)(256 - (overlayPtr.dX << 8 >> 8));
-                num = (short)((((int)overlayPtr.curX << 8 | (int)overlayPtr.fracX) + (int)num8 >> 8) + (int)bgScene.scrX);
+                short deltaX = (short)(256 - (overlayPtr.dX << 8 >> 8));
+                screenX = (short)((((int)overlayPtr.curX << 8 | (int)overlayPtr.fracX) + (int)deltaX >> 8) + (int)bgScene.scrX);
             }
             if (overlayPtr.dY < 0)
             {
-                short num9 = (short)(256 - (overlayPtr.dX << 8 >> 8));
-                num2 = (short)((((int)overlayPtr.curY << 8 | (int)overlayPtr.fracY) + (int)num9 >> 8) + (int)bgScene.scrY);
+                short deltaY = (short)(256 - (overlayPtr.dX << 8 >> 8));
+                screenY = (short)((((int)overlayPtr.curY << 8 | (int)overlayPtr.fracY) + (int)deltaY >> 8) + (int)bgScene.scrY);
             }
             if (overlayPtr.dX != 0)
             {
-                num = (short)((num - (num6 - (short)overlayPtr.w)) % (short)overlayPtr.w + (num6 - (short)overlayPtr.w));
+                screenX = (short)((screenX - (viewportWidth - (short)overlayPtr.w)) % (short)overlayPtr.w + (viewportWidth - (short)overlayPtr.w));
             }
             if (overlayPtr.dY != 0)
             {
-                num2 = (short)((num2 - (num7 - (short)overlayPtr.h)) % (short)overlayPtr.h + (num7 - (short)overlayPtr.h));
+                screenY = (short)((screenY - (viewportHeight - (short)overlayPtr.h)) % (short)overlayPtr.h + (viewportHeight - (short)overlayPtr.h));
             }
             bool flag = this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0";
-            for (short num10 = 0; num10 < (short)spriteCount; num10 = (short)(num10 + 1))
+            for (short i = 0; i < (short)spriteCount; i = (short)(i + 1))
             {
-                BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(int)num10];
+                BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(int)i];
                 Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
                 if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
-                    short num11 = (short)(num + (short)bgsprite_LOC_DEF.offX);
+                    short anchoredX = (short)(screenX + (short)bgsprite_LOC_DEF.offX);
                     if (overlayPtr.dX != 0)
                     {
-                        if (num11 + 16 >= (short)overlayPtr.w)
+                        if (anchoredX + 16 >= (short)overlayPtr.w)
                         {
-                            num11 = (short)(num11 - (short)overlayPtr.w);
+                            anchoredX = (short)(anchoredX - (short)overlayPtr.w);
                         }
-                        else if (num11 <= -16)
+                        else if (anchoredX <= -16)
                         {
-                            num11 = (short)(num11 + (short)overlayPtr.w);
+                            anchoredX = (short)(anchoredX + (short)overlayPtr.w);
                         }
                     }
-                    short num12 = (short)(num2 + (short)bgsprite_LOC_DEF.offY);
+                    short anchoredY = (short)(screenY + (short)bgsprite_LOC_DEF.offY);
                     if (overlayPtr.dY != 0)
                     {
-                        if (num12 + 16 >= (short)overlayPtr.h)
+                        if (anchoredY + 16 >= (short)overlayPtr.h)
                         {
-                            num12 = (short)(num12 - (short)overlayPtr.h);
+                            anchoredY = (short)(anchoredY - (short)overlayPtr.h);
                         }
-                        else if (num12 <= -16)
+                        else if (anchoredY <= -16)
                         {
-                            num12 = (short)(num12 + (short)overlayPtr.h);
+                            anchoredY = (short)(anchoredY + (short)overlayPtr.h);
                         }
                     }
-                    cacheLocalPos.x = (float)(num11 + num4);
-                    cacheLocalPos.y = (float)(num12 + num5);
+                    cacheLocalPos.x = (float)(anchoredX + anchorX);
+                    cacheLocalPos.y = (float)(anchoredY + anchorY);
                 }
                 else
                 {
-                    short num11 = (short)(num + (short)bgsprite_LOC_DEF.offX);
+                    short anchoredX = (short)(screenX + (short)bgsprite_LOC_DEF.offX);
                     if (overlayPtr.dX != 0)
                     {
-                        if (num11 + 16 >= (short)overlayPtr.w)
+                        if (anchoredX + 16 >= (short)overlayPtr.w)
                         {
-                            num11 = (short)(num11 - (short)overlayPtr.w);
+                            anchoredX = (short)(anchoredX - (short)overlayPtr.w);
                         }
-                        else if (num11 <= -16)
+                        else if (anchoredX <= -16)
                         {
-                            num11 = (short)(num11 + (short)overlayPtr.w);
+                            anchoredX = (short)(anchoredX + (short)overlayPtr.w);
                         }
-                        cacheLocalPos.x = (float)(num11 + num4);
+                        cacheLocalPos.x = (float)(anchoredX + anchorX);
                     }
                     else
                     {
-                        cacheLocalPos.x = (float)num11;
+                        cacheLocalPos.x = (float)anchoredX;
                     }
-                    short num12 = (short)(num2 + (short)bgsprite_LOC_DEF.offY);
+                    short anchoredY = (short)(screenY + (short)bgsprite_LOC_DEF.offY);
                     if (overlayPtr.dY != 0)
                     {
-                        if (num12 + 16 >= (short)overlayPtr.h)
+                        if (anchoredY + 16 >= (short)overlayPtr.h)
                         {
-                            num12 = (short)(num12 - (short)overlayPtr.h);
+                            anchoredY = (short)(anchoredY - (short)overlayPtr.h);
                         }
-                        else if (num12 <= -16)
+                        else if (anchoredY <= -16)
                         {
-                            num12 = (short)(num12 + (short)overlayPtr.h);
+                            anchoredY = (short)(anchoredY + (short)overlayPtr.h);
                         }
-                        cacheLocalPos.y = (float)(num12 + num5);
+                        cacheLocalPos.y = (float)(anchoredY + anchorY);
                     }
                     else
                     {
-                        cacheLocalPos.y = (float)num12;
+                        cacheLocalPos.y = (float)anchoredY;
                     }
                 }
                 cacheLocalPos.y += 16f;
@@ -1551,68 +1551,68 @@ public class FieldMap : HonoBehavior
         }
         else if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
-            short num4;
-            short num5;
+            short anchorX;
+            short anchorY;
             if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                num4 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
-                num5 = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
+                anchorX = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
+                anchorY = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
             }
             else
             {
-                num4 = (short)(HalfFieldWidth - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
-                num5 = (short)(HalfFieldHeight - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
+                anchorX = (short)(HalfFieldWidth - realVrp[0] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][0]);
+                anchorY = (short)(HalfFieldHeight - realVrp[1] + (float)this.scrollWindowPos[(int)overlayPtr.viewportNdx][1]);
             }
             short num6 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][0];
             short num7 = this.scrollWindowDim[(int)overlayPtr.viewportNdx][1];
             if (overlayPtr.isXOffset != 0)
             {
-                num2 = (short)((num2 - (num7 - (short)overlayPtr.h)) % (short)overlayPtr.h + (num7 - (short)overlayPtr.h));
-                num = (short)(num + num2 * overlayPtr.dX / (short)overlayPtr.h % (short)overlayPtr.w);
+                screenY = (short)((screenY - (num7 - (short)overlayPtr.h)) % (short)overlayPtr.h + (num7 - (short)overlayPtr.h));
+                screenX = (short)(screenX + screenY * overlayPtr.dX / (short)overlayPtr.h % (short)overlayPtr.w);
             }
             else
             {
-                num = (short)((num - (num6 - (short)overlayPtr.w)) % (short)overlayPtr.w + (num6 - (short)overlayPtr.w));
-                num2 = (short)(num2 + num * overlayPtr.dY / (short)overlayPtr.w % (short)overlayPtr.h);
+                screenX = (short)((screenX - (num6 - (short)overlayPtr.w)) % (short)overlayPtr.w + (num6 - (short)overlayPtr.w));
+                screenY = (short)(screenY + screenX * overlayPtr.dY / (short)overlayPtr.w % (short)overlayPtr.h);
             }
-            for (short num10 = 0; num10 < (short)spriteCount; num10 = (short)(num10 + 1))
+            for (short i = 0; i < (short)spriteCount; i = (short)(i + 1))
             {
-                BGSPRITE_LOC_DEF bgsprite_LOC_DEF2 = spriteList[(int)num10];
+                BGSPRITE_LOC_DEF bgsprite_LOC_DEF2 = spriteList[(int)i];
                 Vector3 localPosition = bgsprite_LOC_DEF2.transform.localPosition;
                 if (overlayPtr.isXOffset != 0)
                 {
-                    short num13 = 0;
-                    short num14 = (short)(num2 + (short)bgsprite_LOC_DEF2.offY);
-                    if (num14 + 16 >= (short)overlayPtr.h)
+                    short xOffset = 0;
+                    short yOffset = (short)(screenY + (short)bgsprite_LOC_DEF2.offY);
+                    if (yOffset + 16 >= (short)overlayPtr.h)
                     {
-                        num14 = (short)(num14 - (short)overlayPtr.h);
-                        num13 = (short)(-overlayPtr.dX);
+                        yOffset = (short)(yOffset - (short)overlayPtr.h);
+                        xOffset = (short)(-overlayPtr.dX);
                     }
-                    else if (num14 <= -16)
+                    else if (yOffset <= -16)
                     {
-                        num14 = (short)(num14 + (short)overlayPtr.h);
-                        num13 = overlayPtr.dX;
+                        yOffset = (short)(yOffset + (short)overlayPtr.h);
+                        xOffset = overlayPtr.dX;
                     }
-                    short num15 = (short)(num + (short)bgsprite_LOC_DEF2.offX + num13);
-                    localPosition.x = (float)num15;
-                    localPosition.y = (float)(num14 + num5);
+                    short xOffsetAdjusted = (short)(screenX + (short)bgsprite_LOC_DEF2.offX + xOffset);
+                    localPosition.x = (float)xOffsetAdjusted;
+                    localPosition.y = (float)(yOffset + anchorY);
                 }
                 else
                 {
-                    short num13 = 0;
-                    short num15 = (short)(num + (short)bgsprite_LOC_DEF2.offX);
-                    if (num15 + 16 >= (short)overlayPtr.w)
+                    short xOffset = 0;
+                    short xOffsetAdjusted = (short)(screenX + (short)bgsprite_LOC_DEF2.offX);
+                    if (xOffsetAdjusted + 16 >= (short)overlayPtr.w)
                     {
-                        num15 = (short)(num15 - (short)overlayPtr.w);
-                        num13 = (short)(-overlayPtr.dY);
+                        xOffsetAdjusted = (short)(xOffsetAdjusted - (short)overlayPtr.w);
+                        xOffset = (short)(-overlayPtr.dY);
                     }
-                    else if (num15 <= -16)
+                    else if (xOffsetAdjusted <= -16)
                     {
-                        num15 = (short)(num15 + (short)overlayPtr.w);
-                        num13 = overlayPtr.dY;
+                        xOffsetAdjusted = (short)(xOffsetAdjusted + (short)overlayPtr.w);
+                        xOffset = overlayPtr.dY;
                     }
-                    short num14 = (short)(num2 + (short)bgsprite_LOC_DEF2.offY + num13);
-                    localPosition.x = (float)(num15 + num4);
+                    short num14 = (short)(screenY + (short)bgsprite_LOC_DEF2.offY + xOffset);
+                    localPosition.x = (float)(xOffsetAdjusted + anchorX);
                     localPosition.y = (float)num14;
                 }
                 localPosition.y += 16f;
@@ -1624,22 +1624,22 @@ public class FieldMap : HonoBehavior
         }
         else
         {
-            float num16;
-            float num17;
+            float parallaxX;
+            float parallaxY;
             if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0 && overlayPtr.isSpecialParallax)
             {
-                num16 = overlayPtr.parallaxCurX;
-                num17 = overlayPtr.parallaxCurY;
+                parallaxX = overlayPtr.parallaxCurX;
+                parallaxY = overlayPtr.parallaxCurY;
             }
             else
             {
-                num16 = (float)overlayPtr.curX;
-                num17 = (float)overlayPtr.curY;
+                parallaxX = (float)overlayPtr.curX;
+                parallaxY = (float)overlayPtr.curY;
             }
-            overlayPtr.transform.localPosition = new Vector3(num16 * 1f, num17 * 1f, overlayPtr.transform.localPosition.z);
+            overlayPtr.transform.localPosition = new Vector3(parallaxX * 1f, parallaxY * 1f, overlayPtr.transform.localPosition.z);
         }
-        overlayPtr.scrX = num;
-        overlayPtr.scrY = num2;
+        overlayPtr.scrX = screenX;
+        overlayPtr.scrY = screenY;
     }
 
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
@@ -1700,23 +1700,23 @@ public class FieldMap : HonoBehavior
             vertex.x += this.offset.x;
             vertex.y += this.offset.y;
         }
-        Single num = (Int32)vertex.x;
-        Single num2 = (Int32)vertex.y;
-        Single num3 = (bgcam_DEF.w >> 1) + bgcam_DEF.centerOffset[0] + (num - HalfFieldWidth);
-        Single num4 = (bgcam_DEF.h >> 1) + bgcam_DEF.centerOffset[1] + (num2 - HalfFieldHeight);
-        num3 -= this.offset.x - HalfFieldWidth;
-        num4 += this.offset.y - HalfFieldHeight;
-        num4 *= -1f;
-        if (num3 < bgcam_DEF.vrpMinX)
-            num3 = bgcam_DEF.vrpMinX;
-        else if (num3 > bgcam_DEF.vrpMaxX)
-            num3 = bgcam_DEF.vrpMaxX;
-        if (num4 < bgcam_DEF.vrpMinY)
-            num4 = bgcam_DEF.vrpMinY;
-        else if (num4 > bgcam_DEF.vrpMaxY)
-            num4 = bgcam_DEF.vrpMaxY;
-        this.endPoint[0] = (Int16)num3;
-        this.endPoint[1] = (Int16)num4;
+        Single offsetX = (Int32)vertex.x;
+        Single offsetY = (Int32)vertex.y;
+        Single targetX = (bgcam_DEF.w >> 1) + bgcam_DEF.centerOffset[0] + (offsetX - HalfFieldWidth);
+        Single targetY = (bgcam_DEF.h >> 1) + bgcam_DEF.centerOffset[1] + (offsetY - HalfFieldHeight);
+        targetX -= this.offset.x - HalfFieldWidth;
+        targetY += this.offset.y - HalfFieldHeight;
+        targetY *= -1f;
+        if (targetX < bgcam_DEF.vrpMinX)
+            targetX = bgcam_DEF.vrpMinX;
+        else if (targetX > bgcam_DEF.vrpMaxX)
+            targetX = bgcam_DEF.vrpMaxX;
+        if (targetY < bgcam_DEF.vrpMinY)
+            targetY = bgcam_DEF.vrpMinY;
+        else if (targetY > bgcam_DEF.vrpMaxY)
+            targetY = bgcam_DEF.vrpMaxY;
+        this.endPoint[0] = (Int16)targetX;
+        this.endPoint[1] = (Int16)targetY;
         if (frameCount == -1)
             this.frameCount = 30;
         else

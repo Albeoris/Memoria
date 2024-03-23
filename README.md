@@ -7,8 +7,8 @@
 - New launcher with easy options (for not included options: Memoria.ini)
 - Mod Manager, with integrated community catalog and 1 click install
 - Support for:
-    - Larger backgrounds resolution (e.g. Moguri)
-    - Widescreen (select any 16:9 resolution)
+    - Larger backgrounds definition (e.g. Moguri)
+    - Widescreen (now for all resolutions)
     - Configurable framerate (15, 30, 60fps...)
     - Unlocks FMV framerate change (e.g. Moguri)
     - Voice acting (e.g. WIP project ECHO-S)
@@ -73,12 +73,14 @@
 
 
 ## Build & Contribute
-- Use Visual Studio Community (2019 or above) or JetBrains Rider.
-- Make sure you have [.NET 3.5 Developer Tools and .NET Framework 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk) installed.
+- Use Visual Studio Community (2019 or above). Install .NET dev tools when prompted.
+- In Visual Studio, install ".NET Framework 3.5 Development Tools" & "Visual Studio Tools for Unity" (in Tools > Get Tools and Functionalities > Individual Components <>)
+- Install [.NET Framework 3.5 SP1 and 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk).
 - Make a fork of the project and download it locally.
-- Open Powershell as administrator `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
+- Open Powershell as administrator and execute `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
 - Change directory to your Memoria Fork download location and run powershell script `.\SetupProjectEnvironment.ps1`
 - Once you've commited your changes to your fork, make it a Pull Request to the main repository.
+- I recommend Github Desktop for easy push to repository.
 
 
 ## Scripting
