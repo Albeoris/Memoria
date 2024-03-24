@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Prime;
 using UnityEngine;
 
 public class QuadMistResourceManager : MonoBehaviour
@@ -48,10 +49,10 @@ public class QuadMistResourceManager : MonoBehaviour
 		atlasPathList[0] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image0";
 		atlasPathList[1] = "EmbeddedAsset/QuadMist/Atlas/quadmist_image1";
 		atlasPathList[2] = "EmbeddedAsset/QuadMist/Atlas/" + textAtlas;
-		atlasNameList[0] = "quadmist_image0";
+        atlasNameList[0] = "quadmist_image0";
 		atlasNameList[1] = "quadmist_image1";
 		atlasNameList[2] = textAtlas;
-	}
+    }
 
 	private void AddCenterTable(List<String> centerTable)
 	{
@@ -139,8 +140,10 @@ public class QuadMistResourceManager : MonoBehaviour
 					new QuadMistResourceManager.QuadMistMapperData("card_player_frame.png"),
 					new QuadMistResourceManager.QuadMistMapperData("card_opponent_frame.png"),
 					new QuadMistResourceManager.QuadMistMapperData("goldenbluecardframe"),
-					new QuadMistResourceManager.QuadMistMapperData("goldenredcardframe")
-				}
+					new QuadMistResourceManager.QuadMistMapperData("goldenredcardframe"),
+                    new QuadMistResourceManager.QuadMistMapperData("fire_element"),
+                    new QuadMistResourceManager.QuadMistMapperData("ice_element")
+                }
 			},
 			{ "CardBlock", new List<QuadMistMapperData>()
 				{
@@ -181,7 +184,10 @@ public class QuadMistResourceManager : MonoBehaviour
 					new QuadMistResourceManager.QuadMistMapperData("card_win.png"),
 					new QuadMistResourceManager.QuadMistMapperData("card_lose.png"),
 					new QuadMistResourceManager.QuadMistMapperData("card_draw.png"),
-					new QuadMistResourceManager.QuadMistMapperData("card_perfect.png")
+					new QuadMistResourceManager.QuadMistMapperData("card_perfect.png"),
+					new QuadMistResourceManager.QuadMistMapperData("sametripletriad"),
+					new QuadMistResourceManager.QuadMistMapperData("plustripletriad"),
+					new QuadMistResourceManager.QuadMistMapperData("combotripletriad")
 				}
 			},
 			{ "ResultShadow", new List<QuadMistMapperData>()
@@ -189,7 +195,10 @@ public class QuadMistResourceManager : MonoBehaviour
 					new QuadMistResourceManager.QuadMistMapperData("card_win_shadow.png"),
 					new QuadMistResourceManager.QuadMistMapperData("card_lose_shadow.png"),
 					new QuadMistResourceManager.QuadMistMapperData("card_draw_shadow.png"),
-					new QuadMistResourceManager.QuadMistMapperData("card_perfect_shadow.png")
+					new QuadMistResourceManager.QuadMistMapperData("card_perfect_shadow.png"),
+					new QuadMistResourceManager.QuadMistMapperData("sametripletriad_shadow"),
+					new QuadMistResourceManager.QuadMistMapperData("plustripletriad_shadow"),
+					new QuadMistResourceManager.QuadMistMapperData("combotripletriad_shadow")
 				}
 			},
 			{ "ScoreDivider", new List<QuadMistMapperData>()
@@ -208,8 +217,8 @@ public class QuadMistResourceManager : MonoBehaviour
 					new QuadMistResourceManager.QuadMistMapperData("card_bg.png"),
 					new QuadMistResourceManager.QuadMistMapperData(Localization.CurrentLanguage == "Japanese" ? "card_mg_jp.png" : "card_mg.png")
 				}
-			}
-		};
+			},
+        };
 		List<QuadMistResourceManager.QuadMistMapperData> cardIconCounter = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 i = 0; i <= 9; i++)
 			cardIconCounter.Add(new QuadMistResourceManager.QuadMistMapperData($"card_digit_total_{i}.png"));
@@ -234,8 +243,8 @@ public class QuadMistResourceManager : MonoBehaviour
 		cardStat.Add(new QuadMistResourceManager.QuadMistMapperData("card_point_x.png"));
 		for (Int32 i = 0; i < 2; i++)
 			cardStat.Add(new QuadMistResourceManager.QuadMistMapperData(String.Empty));
-		mapperData["CardStat"] = cardStat;
-		List<QuadMistResourceManager.QuadMistMapperData> combo = new List<QuadMistResourceManager.QuadMistMapperData>();
+        mapperData["CardStat"] = cardStat;
+        List<QuadMistResourceManager.QuadMistMapperData> combo = new List<QuadMistResourceManager.QuadMistMapperData>();
 		for (Int32 i = 0; i <= 9; i++)
 			combo.Add(new QuadMistResourceManager.QuadMistMapperData($"text_combo_{i}.png"));
 		mapperData["Combo"] = combo;
@@ -284,10 +293,11 @@ public class QuadMistResourceManager : MonoBehaviour
 				QuadMistAssetData quadMistAssetData = null;
 				for (Int32 j = 0; j < 3; j++)
 					if (!String.IsNullOrEmpty(quadMistMapperData.SpriteName) && allAtlasSprites.TryGetValue(atlasPathList[j], out Dictionary<String, Sprite> altasSprites) && altasSprites.TryGetValue(quadMistMapperData.SpriteName, out Sprite sprite))
-						quadMistAssetData = new QuadMistAssetData(keyValuePair.Key, i, sprite);
+                        quadMistAssetData = new QuadMistAssetData(keyValuePair.Key, i, sprite);
 				if (quadMistAssetData == null)
 					quadMistAssetData = new QuadMistAssetData(String.Empty, i, null);
-				list.Add(quadMistAssetData);
+                list.Add(quadMistAssetData);
+//				Log.Message("keyValuePair.Key = " + keyValuePair.Key + " / quadMistMapperData.SpriteName = " + quadMistMapperData.SpriteName);
 			}
 			assetData.Add(keyValuePair.Key, list);
 		}
@@ -348,11 +358,11 @@ public class QuadMistResourceManager : MonoBehaviour
 	{
 		foreach (KeyValuePair<String, Dictionary<String, Sprite>> keyValuePair in allAtlasSprites)
 			if (keyValuePair.Value.TryGetValue(spriteName, out Sprite result))
-				return result;
-		return null;
+                return result;				
+        return null;
 	}
 
-	private Dictionary<String, Dictionary<String, Sprite>> allAtlasSprites;
+    private Dictionary<String, Dictionary<String, Sprite>> allAtlasSprites;
 	private Dictionary<String, List<QuadMistResourceManager.QuadMistMapperData>> mapperData;
 	private Dictionary<String, List<QuadMistAssetData>> assetData;
 	private Dictionary<String, Dictionary<Char, Int32>> fontMap;

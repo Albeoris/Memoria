@@ -166,7 +166,9 @@ public class QuadMistCard
 
 	public Byte arrow;
 
-	public enum Type
+    public Int32 elemental;
+
+    public enum Type
 	{
 		PHYSICAL,
 		MAGIC,

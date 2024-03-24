@@ -9,6 +9,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Assets;
 using Memoria.Prime.Text;
+using static Memoria.Assets.DataResources;
 
 namespace Memoria
 {
@@ -475,7 +476,45 @@ namespace Memoria
 						FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
 					}
 				}
-			}
+				else if (String.Compare(entry[0], "SwapFieldModelTexture") == 0)
+				{
+                    // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
+                    List<string> TexturesList = new List<string>();
+                    if (!Int32.TryParse(entry[1], out Int32 FieldID))
+                        continue;
+                    if (entry[1] == null || entry[2] == null)
+						continue;
+					for (Int32 i = 3; i < entry.Length; i++)
+					{
+                        TexturesList.Add(entry[i]);
+                    }
+                    String[] TexturesCustomModel = TexturesList.ToArray();
+					ModelFactory.CustomModelField.Add(entry[1]+"#"+entry[2], TexturesCustomModel);
+                }
+                else if (String.Compare(entry[0], "SPSTexture") == 0)
+                {
+					// eg.: SPSTexture customfireorb shp 3 400 0 0 5 5
+					if (entry[1] == null || entry[2] == null)
+						continue;
+
+                    if (!Int32.TryParse(entry[3], out Int32 numbertexture))
+                        continue;
+                    if (!float.TryParse(entry[4], out float posx))
+                        continue;
+                    if (!float.TryParse(entry[5], out float posy))
+                        continue;
+                    if (!float.TryParse(entry[6], out float posz))
+                        continue;
+
+                    if (!float.TryParse(entry[7], out float SPSScale))
+                        SPSScale = 4;
+                    if (!float.TryParse(entry[8], out float SPSDistance))
+                        SPSDistance = 5;
+
+                    Vector3 SPSpos = new Vector3(posx, posy, posz);
+                    BattleSPSSystem.statusTextures.Add(new BattleSPSSystem.SPSTexture(entry[1], entry[2], numbertexture, SPSpos, SPSScale, SPSDistance));
+                }
+            }
 			if (shouldUpdateBattleStatus)
 				BattleStatusConst.Update();
 		}

@@ -159,6 +159,8 @@ namespace Memoria.Assets
 
             public static String TripleTriadFile => "TripleTriad.csv";
 
+            public static String TripleTriadRulesFile => "TripleTriadRules.csv";
+
             public static String ModDirectory(String modFolder)
             {
                 if (String.IsNullOrEmpty(modFolder))

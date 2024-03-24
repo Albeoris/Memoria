@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Antlr.Runtime.Tree;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
@@ -381,6 +384,11 @@ public partial class BattleHUD : UIScene
         magicSwordCondition1.IsViviDead = _magicSwordCond.IsViviDead;
         magicSwordCondition1.IsSteinerMini = _magicSwordCond.IsSteinerMini;
 
+        CommandMPCondition commandMPcondition1 = new CommandMPCondition();
+        CommandMPCondition commandMPcondition2 = new CommandMPCondition();
+        commandMPcondition1.CantCastCommand1 = _commandMPCond.CantCastCommand1;
+        commandMPcondition1.CantCastCommand2 = _commandMPCond.CantCastCommand2;
+
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (!unit.IsPlayer)
@@ -398,12 +406,65 @@ public partial class BattleHUD : UIScene
             {
                 magicSwordCondition2.IsSteinerMini = unit.IsUnderAnyStatus(BattleStatus.Mini);
             }
+
+            CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(unit.Position).PresetId;
+            BattleCommandId command1;
+            BattleCommandId command2;
+
+            if (unit.IsUnderAnyStatus(BattleStatus.Trance))
+            {
+                command1 = CharacterCommands.CommandSets[presetId].Trance1;
+                command2 = CharacterCommands.CommandSets[presetId].Trance2;
+
+            }
+            else
+            {
+                command1 = CharacterCommands.CommandSets[presetId].Regular1;
+                command2 = CharacterCommands.CommandSets[presetId].Regular2;
+            }
+
+            CharacterCommandType commandType1 = CharacterCommands.Commands[command1].Type;
+            CharacterCommandType commandType2 = CharacterCommands.Commands[command2].Type;
+
+            if (command1 != BattleCommandId.None)
+            {
+                if (commandType1 == CharacterCommandType.Normal)
+                {
+                    if (CharacterCommands.Commands[command1].MainEntry > 0)
+                    {
+                        BattleAbilityId patchedID = BattleAbilityHelper.Patch(ff9abil.GetActiveAbilityFromAbilityId(CharacterCommands.Commands[command1].MainEntry), unit.Player.Data);
+                        if (GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], unit) > unit.CurrentMp)
+                            commandMPcondition2.CantCastCommand1 = true;
+                    }
+                }
+            }
+            if (command2 != BattleCommandId.None)
+            {
+                if (commandType2 == CharacterCommandType.Normal)
+                {
+                    if (CharacterCommands.Commands[command2].MainEntry > 0)
+                    {
+                        BattleAbilityId patchedID = BattleAbilityHelper.Patch(ff9abil.GetActiveAbilityFromAbilityId(CharacterCommands.Commands[command2].MainEntry), unit.Player.Data);
+                        if (GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], unit) > unit.CurrentMp)
+                            commandMPcondition2.CantCastCommand2 = true;
+                    }
+                }
+            }
         }
         if (magicSwordCondition1.Changed(magicSwordCondition2))
         {
             _magicSwordCond.IsViviExist = magicSwordCondition2.IsViviExist;
             _magicSwordCond.IsViviDead = magicSwordCondition2.IsViviDead;
             _magicSwordCond.IsSteinerMini = magicSwordCondition2.IsSteinerMini;
+            if (CurrentPlayerIndex == -1)
+                return;
+
+            DisplayCommand();
+        }
+        else if (commandMPcondition1.Changed(commandMPcondition2))
+        {
+            _commandMPCond.CantCastCommand1 = commandMPcondition2.CantCastCommand1;
+            _commandMPCond.CantCastCommand2 = commandMPcondition2.CantCastCommand2;
             if (CurrentPlayerIndex == -1)
                 return;
 

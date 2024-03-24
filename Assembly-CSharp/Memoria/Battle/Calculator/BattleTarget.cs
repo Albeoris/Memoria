@@ -269,6 +269,9 @@ namespace Memoria
             if (!IsUnderAnyStatus(BattleStatus.Freeze) || IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
 
+            if (Configuration.Mod.TranceSeek && IsUnderAnyStatus(BattleStatus.EasyKill)) // TRANCE SEEK - Boss can't die when freeze. Can't move in Memoria.Scripts because depending with SBattleCalculator :(
+                return false;
+
             BattleVoice.TriggerOnStatusChange(Data, "Used", BattleStatus.Freeze);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
             Kill();

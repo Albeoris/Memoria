@@ -291,6 +291,8 @@ public static class ff9play
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
         play.mpCostFactor = 100;
+        play.mpCostFactorSkill1 = 100;
+        play.mpCostFactorSkill2 = 100;
         play.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
         play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;

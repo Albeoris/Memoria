@@ -19,6 +19,7 @@ namespace Memoria
         public RegularItem ItemSteal = RegularItem.NoItem; // Just a variable to remember which item was stolen
         public HashSet<SupportAbility> DisabledSA = new HashSet<SupportAbility>(); // The support abilities that are disabled by successfully applied SA features
         public Boolean IsDrain = false; // Keep the Caster.Hp/MpDamage at the same value of Target.Hp/MpDamage even when modified by external effects
+        public BattleActionThread sfxThread; // Current sfxthreadn, based from the effect point (from UnifiedBattleSequencer)
 
         public Int32 PowerDifference => AttackPower - DefensePower;
         public Boolean IsAbsorb => (Flags & BattleCalcFlags.Absorb) != 0;

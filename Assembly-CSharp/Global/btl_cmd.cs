@@ -8,6 +8,8 @@ using Memoria.Data;
 using Memoria.Scripts;
 using UnityEngine;
 using NCalc;
+using static SFX;
+using Memoria.Database;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -542,7 +544,8 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
                 || Status.checkCurStat(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
-                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
+                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0
+                || (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep))) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -610,13 +613,16 @@ public class btl_cmd
             //}
             if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
-                if (!Configuration.Mod.TranceSeek || btl.dms_geo_id != 512) // TRANCE SEEK - Ark overheat
+                if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
                 {
-                    /*int num = (int)*/
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
+                    btlsys.cur_cmd_list.Add(cmd);
+                    KillCommand(cmd);
                     return;
                 }
+                /*int num = (int)*/
+                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
+                btl_stat.AlterStatus(btl, BattleStatus.Death);
+                return;
             }
         }
         btlsys.cur_cmd_list.Add(cmd);
@@ -1174,6 +1180,8 @@ public class btl_cmd
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatus.Silence) || (cmd.AbilityCategory & 2) == 0)
             return true;
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // Trance Seek - Bosses can use magic under silence but have malus.
+            return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Silence);
         return false;
@@ -1253,7 +1261,17 @@ public class btl_cmd
         if (cmd.regist != null)
         {
             if (cmd.regist.bi.player != 0)
-                mp = mp * FF9StateSystem.Common.FF9.player[(CharacterId)cmd.regist.bi.slot_no].mpCostFactor / 100;
+            {
+                BattleUnit caster = new BattleUnit(cmd.regist);
+                CharacterCommandSet command = CharacterCommands.CommandSets[FF9StateSystem.Common.FF9.party.GetCharacter(caster.Position).PresetId];
+                PLAYER player = FF9StateSystem.Common.FF9.player[(CharacterId)cmd.regist.bi.slot_no];
+                if ((cmd.cmd_no == command.Regular1 || cmd.cmd_no == command.Trance1) && player.mpCostFactorSkill1 != 100)
+                    mp = mp * player.mpCostFactorSkill1 / 100;
+                else if ((cmd.cmd_no == command.Regular2 || cmd.cmd_no == command.Trance2) && player.mpCostFactorSkill2 != 100)
+                    mp = mp * player.mpCostFactorSkill2 / 100;
+
+                mp = mp * player.mpCostFactor / 100;
+            }
             if (cmd.cmd_no == BattleCommandId.MagicCounter || ConsumeMp(cmd.regist, mp))
                 return true;
         }
@@ -1352,7 +1370,7 @@ public class btl_cmd
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
-                if (Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Freyja come back after Jump when in Trance
                 {
                     caster.RemoveStatus(BattleStatus.Jump);
                 }
@@ -1594,7 +1612,7 @@ public class btl_cmd
         }
     }
 
-    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null)
+    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null, BattleActionThread sfxThread = null)
     {
         if (cmd == null)
             cmd = btl_util.getCurCmdPtr();
@@ -1626,7 +1644,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                 }
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
             case BattleCommandId.SysTrans:
             {
@@ -1652,7 +1670,7 @@ public class btl_cmd
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
             default:
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
         }
     }

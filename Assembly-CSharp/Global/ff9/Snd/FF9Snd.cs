@@ -215,8 +215,8 @@ public static class FF9Snd
 				ObjNo = 1748;
 			else if (ObjNo == 293)
 				ObjNo = 633;
-			else if (ObjNo == 1545)
-				ObjNo = 58;
+//			else if (ObjNo == 1545) [DV] => When Vivi cast fire on Garnet's hood in CD1 (field n°67)
+//				ObjNo = 58; => Third sound file of SFX Fire_Sword (se020006)
 			else if (ObjNo == 679)
 				ObjNo = 9010197;
 			else if (ObjNo == 1230 || ObjNo == 1231)
@@ -229,9 +229,9 @@ public static class FF9Snd
 				ObjNo = 3092;
 			else if (ObjNo == 672)
 				ObjNo = 9010138;
-			else if (ObjNo == 678)
-				ObjNo = 725;
-			else if (ObjNo == 3084)
+//			else if (ObjNo == 678) // [DV] => Battle Sound Slam (ex : Edge from Tantarian)
+//				ObjNo = 725; => Battle Sound Slap (ex : Strike from Zombie)
+            else if (ObjNo == 3084)
 				ObjNo = 370;
 		}
 	}

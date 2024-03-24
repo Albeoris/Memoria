@@ -38,7 +38,7 @@ namespace Memoria
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
-        public Byte Level => Data.special_status_old ? ((byte)(Data.level << 3)) : Data.level;
+        public Byte Level => Data.special_status_old ? (byte)((Data.level >> 3) < 1 ? 1 : Data.level >> 3) : Data.level;
         public Byte Position => Data.bi.line_no;
 
         public Byte Row
@@ -89,49 +89,49 @@ namespace Memoria
 
         public Int32 PhysicalDefence
         {
-            get => Data.special_status_old ? Data.defence.PhysicalDefence >> 3 : Data.defence.PhysicalDefence;
+            get => Data.special_status_old ? ((Data.defence.PhysicalDefence >> 3) < 1 ? 1 : Data.defence.PhysicalDefence >> 3) : Data.defence.PhysicalDefence;
             set => Data.defence.PhysicalDefence = value;
         }
 
         public Int32 PhysicalEvade
         {
-            get => Data.special_status_old ? Data.defence.PhysicalEvade >> 3 : Data.defence.PhysicalEvade;
+            get => Data.special_status_old ? ((Data.defence.PhysicalEvade >> 3) < 1 ? 1 : Data.defence.PhysicalEvade >> 3) : Data.defence.PhysicalEvade;
             set => Data.defence.PhysicalEvade = value;
         }
 
         public Int32 MagicDefence
         {
-            get => Data.special_status_old ? Data.defence.MagicalDefence >> 3 : Data.defence.MagicalDefence;
+            get => Data.special_status_old ? ((Data.defence.MagicalDefence >> 3) < 1 ? 1 : Data.defence.MagicalDefence >> 3) : Data.defence.MagicalDefence;
             set => Data.defence.MagicalDefence = value;
         }
 
         public Int32 MagicEvade
         {
-            get => Data.special_status_old ? Data.defence.MagicalEvade >> 3 : Data.defence.MagicalEvade;
+            get => Data.special_status_old ? ((Data.defence.MagicalEvade >> 3) < 1 ? 1 : Data.defence.MagicalEvade >> 3) : Data.defence.MagicalEvade;
             set => Data.defence.MagicalEvade = value;
         }
 
         public Byte Strength
         {
-            get => Data.special_status_old ? ((Byte)(Data.elem.str >> 3)) : Data.elem.str;
+            get => Data.special_status_old ? (Byte)((Data.elem.str >> 3) < 1 ? 1 : Data.elem.str >> 3) : Data.elem.str;
             set => Data.elem.str = value;
         }
 
         public Byte Magic
         {
-            get => Data.special_status_old ? ((Byte)(Data.elem.mgc >> 3)) : Data.elem.mgc;
+            get => Data.special_status_old ? (Byte)((Data.elem.mgc >> 3) < 1 ? 1 : Data.elem.mgc >> 3) : Data.elem.mgc;
             set => Data.elem.mgc = value;
         }
 
         public Byte Dexterity
         {
-            get => Data.special_status_old ? ((Byte)(Data.elem.dex >> 3)) : Data.elem.dex;
+            get => Data.special_status_old ? (Byte)((Data.elem.dex >> 3) < 1 ? 1 : Data.elem.dex >> 3) : Data.elem.dex;
             set => Data.elem.dex = value;
         }
 
         public Byte Will
         {
-            get => Data.special_status_old ? ((Byte)(Data.elem.wpr >> 3)) : Data.elem.wpr;
+            get => Data.special_status_old ? (Byte)((Data.elem.wpr >> 3) < 1 ? 1 : Data.elem.wpr >> 3) : Data.elem.wpr;
             set => Data.elem.wpr = value;
         }
 
@@ -426,7 +426,7 @@ namespace Memoria
         }
 
         public void Kill(BattleUnit killer)
-		{
+        {
             Kill(killer.Data);
         }
         public void Kill(BTL_DATA killer = null)
@@ -795,7 +795,7 @@ namespace Memoria
             if (attackAA[0] == null)
                 monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
             foreach (SupportingAbilityFeature saFeature in Data.saMonster)
-			{
+            {
                 saFeature.GetStatusInitQuietly(this, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
                 current_added |= initial;
                 monsterTransform.resist_added |= resist;

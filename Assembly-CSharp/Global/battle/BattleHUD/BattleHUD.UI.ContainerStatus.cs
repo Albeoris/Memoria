@@ -189,7 +189,7 @@ public partial class BattleHUD : UIScene
                 Int32 index = 0;
                 foreach (KeyValuePair<BattleStatus, String> current in iconDic)
                 {
-                    if (!bd.IsUnderAnyStatus(current.Key))
+                    if (!bd.IsUnderAnyStatus(current.Key) || index >= 8)
                         continue;
 
                     GOSprite spriteObj = statusHud.Icons[index];

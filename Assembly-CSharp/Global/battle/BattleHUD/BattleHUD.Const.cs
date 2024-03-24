@@ -212,11 +212,11 @@ public partial class BattleHUD : UIScene
                 break;
             case CommandMenu.Defend:
                 result = BattleCommandId.Defend;
-                if (Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek) // Trance SEEK - Change Steiner/Amarant's Defend Command 
                 {
-                    if (presetId == CharacterPresetId.Steiner)
+                    if (presetId == CharacterPresetId.Steiner) // Sentinel
                         result = (BattleCommandId)10015;
-                    else if (presetId == CharacterPresetId.Amarant)
+                    else if (presetId == CharacterPresetId.Amarant) // Dual
                         result = (BattleCommandId)10016;
                 }
                 break;

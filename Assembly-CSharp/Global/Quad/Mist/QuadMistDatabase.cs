@@ -304,7 +304,7 @@ public class QuadMistDatabase : MonoBehaviour
 					}
 
 					List<QuadMistCard> sameCards = cardsById[card.id];
-					if (sameCards.Count <= Configuration.TetraMaster.DiscardKeepSameArrow)
+					if (sameCards.Count <= (Configuration.TetraMaster.TripleTriad < 2 ? Configuration.TetraMaster.DiscardKeepSameArrow : 1))
 					{
 						sameArrows--;
 						continue;

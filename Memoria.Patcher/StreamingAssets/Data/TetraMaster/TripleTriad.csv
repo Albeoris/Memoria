@@ -1,3 +1,4 @@
+#! IncludeRank
 # This file contains base stats of cards.
 # You must set at least 100 different items.
 # -----------------------------------------------
@@ -8,8 +9,8 @@
 #
 # Icon values available: MONSTER, SUMMON, WEAPON, SHIP, ANIMAL, CASTLE, MYSTERY
 # -----------------------------------------------
-# Comment;Id;ATK(UP);MDEF(RIGHT);MATK(DOWN);PDEF(LEFT);Icon
-# ;Int32;UInt8;UInt8;UInt8;UInt8;String
+# Comment;Id;ATK(UP);MDEF(RIGHT);MATK(DOWN);PDEF(LEFT);Icon;Rank
+# String;Int32;Byte;Byte;Byte;Byte;String;UInt16
 # -----------------------------------------------
 Goblin;0;2;5;1;3;MONSTER
 Fang;1;6;1;1;2;MONSTER

@@ -36,9 +36,11 @@ namespace FF9
 
 		public const Byte FIG_STAT_INFO_POISON_MP = 4;
 
-		public const Byte FIG_STAT_INFO_REGENE_DMG = 8;
+        public const Byte FIG_STAT_INFO_REGENE_DMG = 8;
 
-		public const Byte WPN_CATEGORY_SHORT_RANGE = 1;
+        public const Byte FIG_STAT_INFO_REGENE_MP = 16;
+
+        public const Byte WPN_CATEGORY_SHORT_RANGE = 1;
 
 		public const Byte WPN_CATEGORY_LONG_RANGE = 2;
 

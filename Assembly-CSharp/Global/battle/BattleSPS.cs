@@ -391,13 +391,19 @@ public class BattleSPS : MonoBehaviour
 
 	public Int32 frameRate;
 
-	public Vector3 pos;
+    public Vector3 pos;
 
 	public Int32 scale;
 
 	public Vector3 rot;
 
-	public Vector3 rotArg;
+    public Boolean rotate;
+
+    public BTL_DATA btl;
+
+    public Int32 bone;
+
+    public Vector3 rotArg;
 
 	public Vector3 posOffset;
 

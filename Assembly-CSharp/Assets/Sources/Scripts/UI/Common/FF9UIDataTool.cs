@@ -136,26 +136,28 @@ namespace Assets.Sources.Scripts.UI.Common
 			for (Int32 i = 0; i < 8; i++)
 				cardHud.CardArrowList[i].SetActive((Configuration.TetraMaster.TripleTriad <= 1) ? ((card.arrow & (1 << i)) != 0 && !subCard) : false); // HIDE ARROW
 			cardHud.CardImageSprite.spriteName = "card_" + ((Int32)card.id).ToString("0#");
-			if (subCard)
+            if (subCard)
 			{
 				cardHud.AtkParamSprite.gameObject.SetActive(false);
 				cardHud.PhysicDefParamSprite.gameObject.SetActive(false);
 				cardHud.MagicDefParamSprite.gameObject.SetActive(false);
 				cardHud.AtkTypeParamSprite.gameObject.SetActive(false);
-				return;
-			}
-			cardHud.AtkParamSprite.gameObject.SetActive(true);
+                //cardHud.CardElementSprite.gameObject.SetActive(false);
+                return;
+			}           
+            cardHud.AtkParamSprite.gameObject.SetActive(true);
 			cardHud.PhysicDefParamSprite.gameObject.SetActive(true);
 			cardHud.MagicDefParamSprite.gameObject.SetActive(true);
 			cardHud.AtkTypeParamSprite.gameObject.SetActive(true);
-			if (Configuration.TetraMaster.TripleTriad > 0)
+            if (Configuration.TetraMaster.TripleTriad > 0)
 			{
 				TripleTriadCard baseCard = TripleTriad.TripleTriadCardStats[card.id];
 				cardHud.AtkParamSprite.spriteName = "card_point_" + baseCard.atk.ToString("x");
 				cardHud.PhysicDefParamSprite.spriteName = "card_point_" + baseCard.pdef.ToString("x");
 				cardHud.MagicDefParamSprite.spriteName = "card_point_" + baseCard.mdef.ToString("x");
 				cardHud.AtkTypeParamSprite.spriteName = "card_point_" + baseCard.matk.ToString("x");
-			}
+                //cardHud.CardElementSprite.gameObject.SetActive(true);
+            }
 			else
 			{
 				cardHud.AtkParamSprite.spriteName = "card_point_" + (card.atk >> 4).ToString("x");
@@ -181,7 +183,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				cardHud.CardBorderSprite.spriteName = "goldenbluecardframe";
 			else
 				cardHud.CardBorderSprite.spriteName = "card_player_frame";
-		}
+        }
 
 		public static void DisplayAPBar(PLAYER player, Int32 abilityId, Boolean isShowText, APBarHUD apBar)
 		{
@@ -734,7 +736,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			return sprite;
 		}
 
-		public static readonly Int32 NewIconId = 400;
+        public static readonly Int32 NewIconId = 400;
 
 		private static UIAtlas generalAtlas;
 
@@ -748,13 +750,13 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static UIAtlas tutorialAtlas;
 
-		private static GameObject controllerSpritePrefab = null;
+        private static GameObject controllerSpritePrefab = null;
 
 		private static GameObject controllerKeyboardPrefab = null;
 
 		private static GameObject newIconPrefab = null;
 
-		private static List<GameObject> bitmapKeyboardPool = new List<GameObject>();
+        private static List<GameObject> bitmapKeyboardPool = new List<GameObject>();
 
 		private static List<GameObject> bitmapSpritePool = new List<GameObject>();
 
@@ -2531,7 +2533,9 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static Dictionary<String, Sprite> worldTitleSpriteList = new Dictionary<String, Sprite>();
 
-		private static readonly Dictionary<String, String> iconLocalizeList = new Dictionary<String, String>
+        public static Dictionary<String, Sprite> TripleTriadSpriteList = new Dictionary<String, Sprite>();
+
+        private static readonly Dictionary<String, String> iconLocalizeList = new Dictionary<String, String>
 		{
 			{
 				"keyboard_button_enter#French",

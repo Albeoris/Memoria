@@ -8,14 +8,20 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using System.IO;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using FF9;
+using System.Reflection;
+using System.Linq;
 
 public class QuadMistGame : MonoBehaviour
 {
     private readonly List<QuadMistCard> _selectableTargets = new List<QuadMistCard>();
     private readonly List<QuadMistCard> _beatableTargets = new List<QuadMistCard>();
+    private readonly List<QuadMistCard> _adjacentTargets_rules_same = new List<QuadMistCard>();
+    private readonly List<QuadMistCard> _adjacentTargets_rules_plus = new List<QuadMistCard>();
     private readonly BattleResult _battleResult = new BattleResult();
     private readonly Vector3 _selectedCardDeltaPos = new Vector3(0.12f, 0.0f, -1.5f);
     private QuadMistCard[] _adjacentTargets = new QuadMistCard[0];
@@ -74,6 +80,23 @@ public class QuadMistGame : MonoBehaviour
     private Boolean hasShowTutorial03;
     private QuadMistCard _t_selectedCard;
 
+    // [DV] Triple Triad special rules
+    public static Boolean HasTripleTrialRule_One; // [Trade Rule] Pick one card from the opponent card, regardless of his side.
+    public static Boolean HasTripleTrialRule_Direct; // [Trade Rule] Player and opponent win the cards they have turned over.
+    public static Boolean HasTripleTrialRule_Diff; // [Trade Rule] Recover a certain number of cards according to the score difference.
+    public static Boolean HasTripleTrialRule_All; // [Trade Rule] Earn every cards from the opponent card, regardless of the score.
+    public static Boolean HasTripleTrialRule_Open; // [Misc Rule] See the opponent's deck.
+    public static Boolean HasTripleTrialRule_Random; // [Misc Rule] The game choose randomly cards for the player.
+    public static Boolean HasTripleTrialRule_SuddenDeath; // [Misc Rule] When draw, start a new game with new hands depending the cards' side, from the previous game.
+    public static Boolean HasTripleTrialRule_Same; // [Gameplay Rule] When a card is placed touching two or more other cards and the touching sides are equal, activate a combo.
+    public static Boolean HasTripleTrialRule_Plus; // [Gameplay Rule] When a card is placed touching two or more other cards and the sum of touching sides are equal, activate a combo.
+    public static Boolean HasTripleTrialRule_SameWall; // [Gameplay Rule] The edges of the board count as A (value = 10) for the same rule
+    public static Boolean HasTripleTrialRule_Elemental; // [Gameplay Rule] Gives +1 stats on the card if the case has the same element as the card, otherwise give -1 stats.
+    private TripleTriadRulesID TripleTrialRuleActivated;
+    public static Boolean SkipTripleTriadRules;
+    public static Int32 remainingcardsdiff;
+    public static Boolean TriggerSuddenDeath;
+
     public PreBoard preBoard => preGame.preBoard;
     public Board board => playGame.board;
     public Coin coin => playGame.coin;
@@ -90,7 +113,7 @@ public class QuadMistGame : MonoBehaviour
         {
             score.PlayerScore = value;
             playerScore = value;
-            if (Board.USE_SMALL_BOARD)
+            if (Board.USE_TRIPLETRIAD_BOARD)
                 score.player.transform.localPosition = new Vector3(2.75f, -2f, -2f);
         }
     }
@@ -102,7 +125,7 @@ public class QuadMistGame : MonoBehaviour
         {
             score.EnemyScore = value;
             enemyScore = value;
-            if (Board.USE_SMALL_BOARD)
+            if (Board.USE_TRIPLETRIAD_BOARD)
                 score.enemy.transform.localPosition = new Vector3(0.3f, -2f, -8f);
         }
     }
@@ -135,6 +158,7 @@ public class QuadMistGame : MonoBehaviour
         ClearGameObjects();
         ClearStates();
         ClearInput();
+        InitTripleTriadResources();
         FF9Snd.ff9minisnd_song_play(66);
         StackCardInfo = new QuadMistCard();
         StackCardCount = 0;
@@ -148,6 +172,54 @@ public class QuadMistGame : MonoBehaviour
         go.transform.parent = transform;
         go.transform.localPosition = new Vector3(1.6f, -1.12f, 0.21865f);
         go.SetActive(false);
+    }
+
+    private void InitTripleTriadResources()
+    {
+        TriggerSuddenDeath = false;
+        SkipTripleTriadRules = false;
+        if (Configuration.TetraMaster.TripleTriad == 3 && TripleTriad.TripleTriadRules.Count > 0 && (TripleTriad.TripleTriadRules.ContainsKey((Int32)FF9StateSystem.Common.FF9.fldMapNo) || TripleTriad.TripleTriadRules.ContainsKey(0)))
+        {
+            int RandomTradesRules = Comn.random8() % 4;
+            byte RandomOtherRules = (byte)(1 + Comn.random8() % 7);
+            byte RandomGameplayRules = (byte)(1 + Comn.random8() % 15);
+            int fieldid = TripleTriad.TripleTriadRules.ContainsKey((Int32)FF9StateSystem.Common.FF9.fldMapNo) ? FF9StateSystem.Common.FF9.fldMapNo : (TripleTriad.TripleTriadRules.ContainsKey(0) ? 0 : -1);
+            if (fieldid > -1)
+            {
+                if (TripleTriad.TripleTriadRules[fieldid].RandomRules)
+                {
+                    HasTripleTrialRule_One = RandomTradesRules == 0 ? true : false;
+                    HasTripleTrialRule_Direct = RandomTradesRules == 1 ? true : false;
+                    HasTripleTrialRule_Diff = RandomTradesRules == 2 ? true : false;
+                    HasTripleTrialRule_All = RandomTradesRules == 3 ? true : false;
+                    HasTripleTrialRule_Open = (RandomOtherRules & 1) != 0 ? true : false;
+                    HasTripleTrialRule_Random = (RandomOtherRules & 2) != 0 ? true : false;
+                    HasTripleTrialRule_SuddenDeath = (RandomOtherRules & 4) != 0 ? true : false;
+                    HasTripleTrialRule_Same = (RandomGameplayRules & 1) != 0 ? true : false;
+                    HasTripleTrialRule_Plus = (RandomGameplayRules & 2) != 0 ? true : false;
+                    HasTripleTrialRule_SameWall = (RandomGameplayRules & 4) != 0 ? true : false;
+                    HasTripleTrialRule_Elemental = (RandomGameplayRules & 8) != 0 ? true : false;
+                }
+                else
+                {
+                    if (TripleTriad.TripleTriadRules[fieldid].One)
+                        HasTripleTrialRule_One = TripleTriad.TripleTriadRules[fieldid].One;
+                    else if (TripleTriad.TripleTriadRules[fieldid].Direct)
+                        HasTripleTrialRule_Direct = TripleTriad.TripleTriadRules[fieldid].Direct;
+                    else if (TripleTriad.TripleTriadRules[fieldid].Diff)
+                        HasTripleTrialRule_Diff = TripleTriad.TripleTriadRules[fieldid].Diff;
+                    else if (TripleTriad.TripleTriadRules[fieldid].All)
+                        HasTripleTrialRule_All = TripleTriad.TripleTriadRules[fieldid].All;
+                    HasTripleTrialRule_Open = TripleTriad.TripleTriadRules[fieldid].Open;
+                    HasTripleTrialRule_Random = TripleTriad.TripleTriadRules[fieldid].Random;
+                    HasTripleTrialRule_SuddenDeath = TripleTriad.TripleTriadRules[fieldid].SuddenDeath;
+                    HasTripleTrialRule_Same = TripleTriad.TripleTriadRules[fieldid].Same;
+                    HasTripleTrialRule_Plus = TripleTriad.TripleTriadRules[fieldid].Plus;
+                    HasTripleTrialRule_SameWall = TripleTriad.TripleTriadRules[fieldid].SameWall;
+                    HasTripleTrialRule_Elemental = TripleTriad.TripleTriadRules[fieldid].Elemental;
+                }
+            }
+        }
     }
 
     public void Pause()
@@ -279,7 +351,7 @@ public class QuadMistGame : MonoBehaviour
                     PreGameState = PREGAME_STATE.SELECT_COLLECTION;
                 QuadMistConfirmDialog.MessageHide();
                 break;
-        }
+        }          
     }
 
     private void StartGame()
@@ -291,9 +363,12 @@ public class QuadMistGame : MonoBehaviour
             case START_STATE.SETUP:
                 Int32 rnd = Random.Range(0, 100);
                 numberOfBlocks = rnd < 0 || rnd >= 3 ? (rnd < 3 || rnd >= 7 ? (rnd < 7 || rnd >= 12 ? (rnd < 12 || rnd >= 17 ? (rnd < 17 || rnd >= 27 ? (rnd < 27 || rnd >= 97 ? 6 : 5) : 4) : 3) : 2) : 1) : 0;
-                EnemyData.Setup(enemyHand);
-                if (StackCardCount != 0)
-                    EnemyData.RestorePlayerLostCard(enemyHand, Random.Range(0, 4), StackCardInfo);
+                if (!TriggerSuddenDeath)
+                {
+                    EnemyData.Setup(enemyHand);
+                    if (StackCardCount != 0)
+                        EnemyData.RestorePlayerLostCard(enemyHand, Random.Range(0, 4), StackCardInfo);
+                }
                 enemyHand.HideCardCursor();
                 matchCards = new QuadMistCard[10];
                 for (Int32 i = 0; i < matchCards.Length; ++i)
@@ -403,17 +478,33 @@ public class QuadMistGame : MonoBehaviour
                 {
                     QuadMistCard attacker = _battleResult.attacker;
                     QuadMistCard defender = _battleResult.defender;
-                    _battleResult.calculation = Calculate(attacker, defender);
-                    _battleResult.type = _battleResult.calculation.atkFinish <= _battleResult.calculation.defFinish ? BattleResult.Type.LOSE : BattleResult.Type.WIN;
-                    if (_battleResult.type == BattleResult.Type.WIN)
+                    if (Configuration.TetraMaster.TripleTriad < 2)
                     {
-                        _battleResult.combos = GenerateCombo(_battleResult.defender, attacker.side);
-                        RemoveComboFromBeatable(_battleResult.combos);
+                        _battleResult.calculation = Calculate(attacker, defender);
+                        _battleResult.type = _battleResult.calculation.atkFinish <= _battleResult.calculation.defFinish ? BattleResult.Type.LOSE : BattleResult.Type.WIN;
+                        if (_battleResult.type == BattleResult.Type.WIN)
+                        {
+                            _battleResult.combos = GenerateCombo(_battleResult.defender, attacker.side);
+                            RemoveComboFromBeatable(_battleResult.combos);
+                        }
+                        else
+                        {
+                            _battleResult.combos = GenerateCombo(_battleResult.attacker, defender.side);
+                            _beatableTargets.Clear();
+                        }
                     }
-                    else
+                    else if (Configuration.TetraMaster.TripleTriad == 3)
                     {
-                        _battleResult.combos = GenerateCombo(_battleResult.attacker, defender.side);
-                        _beatableTargets.Clear();
+                        if (_selectableTargets.Count > 0)
+                        {
+                            _battleResult.type = BattleResult.Type.WIN;
+                            _battleResult.calculation.atkFinish = 1;
+                            _battleResult.calculation.defFinish = 0;
+                            _battleResult.combos = GenerateComboTripleTriad(_battleResult.defender, attacker.side);
+                            if (TripleTrialRuleActivated != TripleTriadRulesID.COMBO)
+                                TripleTriadText(TripleTrialRuleActivated);
+                            RemoveComboFromBeatable(_battleResult.combos);
+                        }
                     }
                 }
                 else
@@ -425,7 +516,7 @@ public class QuadMistGame : MonoBehaviour
                 PlayState = PLAY_STATE.ANIMATE_BATTLE;
                 break;
             case PLAY_STATE.ANIMATE_BATTLE:
-                if (_battleResult.type == BattleResult.Type.WIN && _selectableTargets.Count > 1)
+                if (_battleResult.type == BattleResult.Type.WIN && _selectableTargets.Count > 0)
                 {
                     foreach (QuadMistCard card in _battleResult.combos)
                         _selectableTargets.Remove(card);
@@ -453,6 +544,11 @@ public class QuadMistGame : MonoBehaviour
                 }
                 else
                     enemyHand.State = Hand.STATE.ENEMY_PLAY;
+                if (Configuration.TetraMaster.TripleTriad == 3)
+                {
+                    resultText.gameObject.SetActive(false);
+                    TripleTrialRuleActivated = TripleTriadRulesID.NONE;
+                }
                 if (Configuration.TetraMaster.TripleTriad <= 1 ? EnemyScore + PlayerScore == 10 : enemyHand.Count + playerHand.Count == 1)
                     ++GameState;
                 playerHand.HideShadowCard();
@@ -467,14 +563,14 @@ public class QuadMistGame : MonoBehaviour
         {
             case END_STATE.RESULT:
                 Int32 perfectScore = Configuration.TetraMaster.TripleTriad <= 1 ? 10 : 9;
-                matchResult = new MatchResult { perfect = PlayerScore == perfectScore || EnemyScore == perfectScore };
-                PostState = matchResult.perfect ? POSTGAME_STATE.PERFECT_SELECT_CARD : POSTGAME_STATE.SELECT_CARD;
+                matchResult = new MatchResult { perfect = PlayerScore == perfectScore || EnemyScore == perfectScore || HasTripleTrialRule_All };
+                PostState = (matchResult.perfect || HasTripleTrialRule_All) ? POSTGAME_STATE.PERFECT_SELECT_CARD : POSTGAME_STATE.SELECT_CARD;
                 if (PlayerScore > EnemyScore)
                 {
                     matchResult.type = MatchResult.Type.WIN;
                     for (Int32 index = 5; index < 10; ++index)
                     {
-                        if (Configuration.TetraMaster.TripleTriad >= 2) // RULE ONE FOR TRIPLE TRIAD
+                        if (HasTripleTrialRule_One || HasTripleTrialRule_Diff)
                         {
                             matchResult.selectable.Add(index - 5);
                         }
@@ -491,7 +587,7 @@ public class QuadMistGame : MonoBehaviour
                     matchResult.type = MatchResult.Type.LOSE;
                     for (Int32 index = 0; index < 5; ++index)
                     {
-                        if (Configuration.TetraMaster.TripleTriad >= 2) // RULE ONE FOR TRIPLE TRIAD
+                        if (HasTripleTrialRule_One || HasTripleTrialRule_Diff)
                         {
                             matchResult.selectable.Add(index);
                         }
@@ -516,9 +612,51 @@ public class QuadMistGame : MonoBehaviour
                 else if (matchResult.type == MatchResult.Type.DRAW)
                     QuadMistDatabase.MiniGame_SetLastBattleResult(QuadMistDatabase.MINIGAME_LASTBATTLE_DRAW);
                 AnimCoroutine(ResultText(matchResult));
+                if (HasTripleTrialRule_Diff && matchResult.type != MatchResult.Type.DRAW)
+                {
+                    PostState = POSTGAME_STATE.TRIPLETRIAD_DIFF;
+                    remainingcardsdiff = Math.Abs(PlayerScore - EnemyScore);
+                    if (remainingcardsdiff > 5)
+                    {
+                        matchResult.perfect = true;
+                        PostState = POSTGAME_STATE.PERFECT_SELECT_CARD;
+                    }
+                }
+                else if (HasTripleTrialRule_Direct)
+                {
+                    PostState = POSTGAME_STATE.TRIPLETRIAD_DIRECT;
+                    matchResult.perfect = false;
+                }
                 EndState = END_STATE.CONFIRM;
                 break;
             case END_STATE.CONFIRM:
+                if (HasTripleTrialRule_SuddenDeath && matchResult.type == MatchResult.Type.DRAW)
+                {
+                    if (!isAnimating)
+                    {
+                        ClearHands();
+                        ClearGameObjects();
+                        ClearInput();
+                        ClearStates();
+                        for (Int32 i = 0; i < 10; i++)
+                        {
+                            QuadMistCard card = matchCards[i];
+                            if (card.side == 0)
+                            {
+                                playerHand.Add(card);
+                            }
+                            else
+                            {
+                                enemyHand.Add(card);
+                            }
+                        }
+                        TriggerSuddenDeath = true;
+                        preGame.gameObject.SetActive(false);
+                        GameState = GAME_STATE.START;
+                        resultText.gameObject.SetActive(false);
+                    }
+                    break;
+                }
                 playerInput.HandleConfirmation(ref inputResult);
                 if (!inputResult.IsValid())
                     break;
@@ -638,11 +776,128 @@ public class QuadMistGame : MonoBehaviour
                 }
                 PostState = POSTGAME_STATE.PRE_REMATCH;
                 break;
+            case POSTGAME_STATE.TRIPLETRIAD_DIFF:
+                if (remainingcardsdiff > 0)
+                {
+                    if (matchResult.type == MatchResult.Type.WIN)
+                    {
+                        playerInput.HandlePostSelection(enemyHand, matchResult.selectable, ref inputResult);
+                        enemyHand.ShowCardCursor();
+                        if (!inputResult.IsValid() && matchResult.selectable.Count != 1)
+                            break;
+                        if (matchResult.selectable.Count == 1)
+                        {
+                            inputResult.selectedCard = enemyHand[matchResult.selectable[0]];
+                            inputResult.selectedHandIndex = matchResult.selectable[0];
+                        }
+                        matchResult.selectedCard = inputResult.selectedCard;
+                        if (_t_selectedCard != null)
+                            enemyHand.GetCardUI(enemyHandSelectedCardIndex).transform.localPosition -= _selectedCardDeltaPos;
+                        enemyHandSelectedCardIndex = inputResult.selectedHandIndex;
+                        QuadMistCardUI cardUi = enemyHand.GetCardUI(enemyHandSelectedCardIndex);
+                        cardUi.transform.localPosition += _selectedCardDeltaPos;
+                        enemyHand.UpdateEnemyCardCursorToPosition(cardUi.transform.localPosition);
+                        if (_t_selectedCard != null && _t_selectedCard == inputResult.selectedCard)
+                        {
+                            enemyHand.HideCardCursor();
+                            AnimCoroutine(ChangeCardToCenter(matchResult));
+                            QuadMistDatabase.Add(inputResult.selectedCard);
+                            QuadMistStockDialog.Hide();
+                            _t_selectedCard = null;
+                            PostState = POSTGAME_STATE.CONFIRM;
+                            CheckAndClearStackCard();
+                            remainingcardsdiff--;
+                            break;
+                        }
+                        _t_selectedCard = inputResult.selectedCard;
+                        Int32 cardCount = QuadMistDatabase.GetCardCount(matchResult.selectedCard);
+                        Vector3 position = cardUi.transform.position;
+                        QuadMistStockDialog.Show(new Vector3(position.x + 0.9482538f, position.y - 0.2696013f, 0.0f), Localization.Get("QuadMistStock").Replace("[NUMBER]", cardCount.ToString()));  
+                        break;
+                    }
+                    enemyInput.HandlePostSelection(playerHand, matchResult.selectable, ref inputResult);
+                    matchResult.selectedCard = inputResult.selectedCard;
+                    AnimCoroutine(ChangeCardToCenter(matchResult));
+                    PostState = POSTGAME_STATE.CONFIRM;
+                    QuadMistDatabase.Remove(matchResult.selectedCard);
+                    QuadMistCard lostCard2 = matchResult.selectedCard;
+                    StackCardInfo.id = lostCard2.id;
+                    StackCardInfo.atk = lostCard2.atk;
+                    StackCardInfo.arrow = lostCard2.arrow;
+                    StackCardInfo.type = lostCard2.type;
+                    StackCardInfo.pdef = lostCard2.pdef;
+                    StackCardInfo.mdef = lostCard2.mdef;
+                    StackCardCount = 1;
+                    remainingcardsdiff--;
+                }                
+                break;
+            case POSTGAME_STATE.TRIPLETRIAD_DIRECT:
+                Boolean NoMorePlayerCards = true;
+                Boolean NoMoreEnemyCards = true;
+                int indexcard = 0;
+                for (Int32 index = 0; index < playerHand.Count; index++)
+                {
+                    if (playerHand[index].side == 1)
+                    {
+                        NoMoreEnemyCards = false;
+                        indexcard = index;
+                        break;
+                    }
+                }
+                if (!NoMoreEnemyCards)
+                {
+                    matchResult.type = MatchResult.Type.LOSE;
+                    matchResult.selectable.Add(indexcard);
+                    matchResult.selectedCard = playerHand[indexcard];
+                    AnimCoroutine(ChangeCardToCenter2(matchResult));
+                    PostState = POSTGAME_STATE.CONFIRM;
+                    QuadMistDatabase.Remove(matchResult.selectedCard);
+                    QuadMistCard lostCardLoop = matchResult.selectedCard;
+                    StackCardInfo.id = lostCardLoop.id;
+                    StackCardInfo.atk = lostCardLoop.atk;
+                    StackCardInfo.arrow = lostCardLoop.arrow;
+                    StackCardInfo.type = lostCardLoop.type;
+                    StackCardInfo.pdef = lostCardLoop.pdef;
+                    StackCardInfo.mdef = lostCardLoop.mdef;
+                    StackCardCount = 1;
+                    break;
+                }
+                for (Int32 index = 0; index < enemyHand.Count; index++)
+                {
+                    if (enemyHand[index].side == 0)
+                    {
+                        NoMorePlayerCards = false;
+                        indexcard = index;
+                        break;
+                    }
+                }
+                if (!NoMorePlayerCards)
+                {
+                    matchResult.type = MatchResult.Type.WIN;
+                    matchResult.selectedCard = enemyHand[indexcard];
+                    AnimCoroutine(ChangeCardToCenter2(matchResult));
+                    QuadMistDatabase.Add(matchResult.selectedCard);
+                    CheckAndClearStackCard();
+                    PostState = POSTGAME_STATE.CONFIRM;
+                    break;
+                }
+                PostState = POSTGAME_STATE.PRE_REMATCH;
+                break;
             case POSTGAME_STATE.CONFIRM:
                 playerInput.HandleConfirmation(ref inputResult);
                 if (!inputResult.IsValid())
                     break;
-                if (matchResult.perfect)
+                if (HasTripleTrialRule_Diff && remainingcardsdiff > 0 && !matchResult.perfect)
+                {
+                    AnimCoroutine(ChangeCardToHand(matchResult));
+                    PostState = POSTGAME_STATE.TRIPLETRIAD_DIFF;
+                }
+                else if (HasTripleTrialRule_Direct)
+                {
+                    AnimCoroutine(ChangeCardToHand(matchResult));
+                    PostState = POSTGAME_STATE.TRIPLETRIAD_DIRECT;
+                }
+                else if (matchResult.perfect)
                 {
                     AnimCoroutine(ChangeCardToHand(matchResult));
                     PostState = POSTGAME_STATE.PERFECT_SELECT_CARD;
@@ -825,12 +1080,21 @@ public class QuadMistGame : MonoBehaviour
                 if (!inputResult.IsValid())
                     break;
                 PlaceCard(inputResult.x, inputResult.y, inputResult.selectedCard);
-                GenerateTargetable(inputResult.x, inputResult.y);
+                if (Configuration.TetraMaster.TripleTriad >= 2)
+                    GenerateTargetableTripleTriad(inputResult.x, inputResult.y);
+                else
+                    GenerateTargetable(inputResult.x, inputResult.y);
                 _battleResult.attacker = inputResult.selectedCard;
                 ++InputState;
                 ++playerTurnCount;
                 break;
             case INPUT_STATE.SELECT_BATTLE_TARGET:
+                if (Configuration.TetraMaster.TripleTriad == 3 && _selectableTargets.Count > 0)
+                {
+                    _battleResult.defender = _selectableTargets[0];
+                    PlayState = PLAY_STATE.CALCULATE_BATTLE;
+                    break;
+                }
                 if (_selectableTargets.Count > 1)
                 {
                     playerInput.HandleTargetCardSelection(board, _battleResult.attacker, _selectableTargets, ref inputResult);
@@ -862,7 +1126,10 @@ public class QuadMistGame : MonoBehaviour
                 if (!inputResult.IsValid())
                     break;
                 PlaceCard(inputResult.x, inputResult.y, inputResult.selectedCard);
-                GenerateTargetable(inputResult.x, inputResult.y);
+                if (Configuration.TetraMaster.TripleTriad >= 2)
+                    GenerateTargetableTripleTriad(inputResult.x, inputResult.y);
+                else
+                    GenerateTargetable(inputResult.x, inputResult.y);
                 _battleResult.attacker = inputResult.selectedCard;
                 ++InputState;
                 break;
@@ -887,10 +1154,86 @@ public class QuadMistGame : MonoBehaviour
             QuadMistCard adjacentTarget = _adjacentTargets[index];
             if (adjacentTarget != null && adjacentTarget.side != inputResult.selectedCard.side)
             {
-                if (Configuration.TetraMaster.TripleTriad >= 2)
+                Int32 num = CardArrow.CheckDirection(inputResult.selectedCard.arrow, adjacentTarget.arrow, direction);
+
+                if (num == 2)
+                    _selectableTargets.Add(_adjacentTargets[index]);
+                if (num == 1)
+                    _beatableTargets.Add(_adjacentTargets[index]);
+            }
+        }
+    }
+
+    public void GenerateTargetableTripleTriad(Int32 x, Int32 y)
+    {
+        _adjacentTargets = board.GetAdjacentCards(x, y);
+        _selectableTargets.Clear();
+        _beatableTargets.Clear();
+        _adjacentTargets_rules_same.Clear();
+        _adjacentTargets_rules_plus.Clear();
+        int sumUP = 0;
+        int sumRIGHT = 0;
+        int sumDOWN = 0;
+        int sumLEFT = 0;
+        int TriggerRulePlus = 0;
+        for (Int32 index = 0; index < CardArrow.MAX_ARROWNUM; ++index)
+        {
+            QuadMistCard adjacentTarget = _adjacentTargets[index];           
+            if (adjacentTarget != null)
+            {
+                TripleTriadCard baseCardAttacker = TripleTriad.TripleTriadCardStats[inputResult.selectedCard.id];
+                TripleTriadCard baseCardDefender = TripleTriad.TripleTriadCardStats[adjacentTarget.id];
+                if (Configuration.TetraMaster.TripleTriad == 3)
+                {            
+                    if (HasTripleTrialRule_Plus)
+                    {           
+                        if (index == 0)
+                        {
+                            sumUP = baseCardAttacker.atk + baseCardDefender.matk;
+                            TriggerRulePlus++;
+                        }
+                        if (index == 2)
+                        {
+                            sumRIGHT = baseCardAttacker.mdef + baseCardDefender.pdef;
+                            TriggerRulePlus++;
+                        }
+                        if (index == 4)
+                        {
+                            sumDOWN = baseCardAttacker.matk + baseCardDefender.atk;
+                            TriggerRulePlus++;
+                        }
+                        if (index == 6)
+                        {
+                            sumLEFT = baseCardAttacker.pdef + baseCardDefender.mdef;
+                            TriggerRulePlus++;
+                        }
+
+                    }
+                    if (HasTripleTrialRule_Same)
+                    {
+                        if (index == 0 && (baseCardAttacker.atk == baseCardDefender.matk) || (HasTripleTrialRule_SameWall && inputResult.x == 0 && baseCardAttacker.atk == 10))
+                            _adjacentTargets_rules_same.Add(_adjacentTargets[index]);
+                        if (index == 2 && (baseCardAttacker.mdef == baseCardDefender.pdef) || (HasTripleTrialRule_SameWall && inputResult.y == 2 && baseCardAttacker.mdef == 10))
+                            _adjacentTargets_rules_same.Add(_adjacentTargets[index]);
+                        if (index == 4 && (baseCardAttacker.matk == baseCardDefender.atk) || (HasTripleTrialRule_SameWall && inputResult.x == 2 && baseCardAttacker.matk == 10))
+                            _adjacentTargets_rules_same.Add(_adjacentTargets[index]);
+                        if (index == 6 && (baseCardAttacker.pdef == baseCardDefender.mdef) || (HasTripleTrialRule_SameWall && inputResult.y == 0 && baseCardAttacker.pdef == 10))
+                            _adjacentTargets_rules_same.Add(_adjacentTargets[index]);
+                    }
+                    if (TriggerRulePlus > 1)
+                    {
+                        if ((sumUP == sumRIGHT || sumUP == sumDOWN || sumUP == sumLEFT) && sumUP > 0 && !_adjacentTargets_rules_plus.Contains(_adjacentTargets[0])) 
+                            _adjacentTargets_rules_plus.Add(_adjacentTargets[0]);
+                        if ((sumRIGHT == sumUP || sumRIGHT == sumDOWN || sumRIGHT == sumLEFT) && sumRIGHT > 0 && !_adjacentTargets_rules_plus.Contains(_adjacentTargets[2]))
+                            _adjacentTargets_rules_plus.Add(_adjacentTargets[2]);
+                        if ((sumDOWN == sumUP || sumDOWN == sumRIGHT || sumDOWN == sumLEFT) && sumDOWN > 0 && !_adjacentTargets_rules_plus.Contains(_adjacentTargets[4]))
+                            _adjacentTargets_rules_plus.Add(_adjacentTargets[4]);
+                        if ((sumLEFT == sumUP || sumLEFT == sumRIGHT || sumLEFT == sumDOWN) && sumLEFT > 0 && !_adjacentTargets_rules_plus.Contains(_adjacentTargets[6]))
+                            _adjacentTargets_rules_plus.Add(_adjacentTargets[6]);
+                    }
+                }
+                if (adjacentTarget.side != inputResult.selectedCard.side)
                 {
-                    TripleTriadCard baseCardAttacker = TripleTriad.TripleTriadCardStats[inputResult.selectedCard.id];
-                    TripleTriadCard baseCardDefender = TripleTriad.TripleTriadCardStats[adjacentTarget.id];
                     if (index == 0 && baseCardAttacker.atk > baseCardDefender.matk)
                         _beatableTargets.Add(_adjacentTargets[index]);
                     else if (index == 2 && baseCardAttacker.mdef > baseCardDefender.pdef)
@@ -900,15 +1243,30 @@ public class QuadMistGame : MonoBehaviour
                     else if (index == 6 && baseCardAttacker.pdef > baseCardDefender.mdef)
                         _beatableTargets.Add(_adjacentTargets[index]);
                 }
-                else
+            }
+        }
+        if (_adjacentTargets_rules_plus.Count >= 2)
+        {
+            if (TripleTrialRuleActivated != TripleTriadRulesID.COMBO)
+                TripleTrialRuleActivated = TripleTriadRulesID.PLUS;
+            for (Int32 cardindex = 0; cardindex < _adjacentTargets_rules_plus.Count; ++cardindex)
+            {
+                if (_adjacentTargets_rules_plus[cardindex].side != inputResult.selectedCard.side)
                 {
-                    Int32 num = CardArrow.CheckDirection(inputResult.selectedCard.arrow, adjacentTarget.arrow, direction);
-
-                    if (num == 2)
-                        _selectableTargets.Add(_adjacentTargets[index]);
-                    if (num == 1)
-                        _beatableTargets.Add(_adjacentTargets[index]);
+                    _selectableTargets.Add(_adjacentTargets_rules_plus[cardindex]);
                 }
+            }
+        }
+        if (_adjacentTargets_rules_same.Count >= 2)
+        {
+            if (TripleTrialRuleActivated != TripleTriadRulesID.COMBO)
+                TripleTrialRuleActivated = TripleTriadRulesID.SAME;
+            for (Int32 cardindex = 0; cardindex < _adjacentTargets_rules_same.Count; ++cardindex)
+            {
+                if (_adjacentTargets_rules_same[cardindex].side != inputResult.selectedCard.side)
+                {
+                    _selectableTargets.Add(_adjacentTargets_rules_same[cardindex]);
+                }                   
             }
         }
     }
@@ -936,6 +1294,20 @@ public class QuadMistGame : MonoBehaviour
             }
             else
                 adjacentCards[index] = null;
+        }
+        return adjacentCards;
+    }
+
+    public QuadMistCard[] GenerateComboTripleTriad(QuadMistCard card, Int32 sideOf)
+    {
+        QuadMistCard[] adjacentCards = board.GetAdjacentCardsTripleTriad(card);
+        for (Int32 index = 0; index < adjacentCards.Length; ++index)
+        {
+            QuadMistCard quadMistCard2 = adjacentCards[index];
+            if (quadMistCard2 == null || quadMistCard2.side == sideOf)
+            {
+                adjacentCards[index] = null;
+            }
         }
         return adjacentCards;
     }
@@ -1355,9 +1727,9 @@ public class QuadMistGame : MonoBehaviour
         switch (result.type)
         {
             case MatchResult.Type.WIN:
-                if (result.perfect)
+                if (result.perfect && !HasTripleTrialRule_All)
                 {
-                    sound = QuadMistSoundID.MINI_SE_PARFECT;
+                    sound = QuadMistSoundID.MINI_SE_PERFECT;
                     id = 3;
                 }
                 else
@@ -1395,6 +1767,45 @@ public class QuadMistGame : MonoBehaviour
         }
     }
 
+    private void TripleTriadText(TripleTriadRulesID rules)
+    {
+        Int32 id = 0;
+        switch (rules)
+        {
+            case TripleTriadRulesID.SAME:
+                id = 4;
+                break;
+            case TripleTriadRulesID.PLUS:
+                id = 5;
+                break;
+            case TripleTriadRulesID.COMBO:
+                id = 6;
+                break;
+        }
+        resultText.ID = id;
+
+        if (rules != TripleTriadRulesID.COMBO)
+        {
+            Single brightness = 0f;
+            resultText.Alpha = brightness;
+            resultText.gameObject.SetActive(true);
+
+            for (Int32 tick = 0; tick < 64; tick++)
+            {
+                brightness = (tick * 4) / 255f;
+                if (brightness > 1f)
+                {
+                    brightness = 1f;
+                }
+                if (tick == 31)
+                {
+                    SoundEffect.Play(QuadMistSoundID.MINI_SE_WIN);
+                }
+                resultText.Alpha = brightness;
+            }
+        }
+    }
+
     [DebuggerHidden]
     private IEnumerator BattleAnimation(BattleResult result)
     {
@@ -1404,11 +1815,15 @@ public class QuadMistGame : MonoBehaviour
         {
             QuadMistCardUI atkUi = board.GetCardUI(result.attacker);
             QuadMistCardUI defUi = board.GetCardUI(result.defender);
-            StartCoroutine(BattleNumberTextAnimation(result, BATTLE_NUMBER_TIME + 32, BATTLE_COUNTDOWN_TIME + BATTLE_NUMBER_TIME, 45));
-            yield return StartCoroutine(Anim.Tick(BATTLE_NUMBER_TIME));
+            if (Configuration.TetraMaster.TripleTriad != 3)
+            {
+                StartCoroutine(BattleNumberTextAnimation(result, BATTLE_NUMBER_TIME + 32, BATTLE_COUNTDOWN_TIME + BATTLE_NUMBER_TIME, 45));
+                yield return StartCoroutine(Anim.Tick(BATTLE_NUMBER_TIME));
 
-            StartCoroutine(BattleMotionAnimation(atkUi, defUi, 7, 15));
-            yield return StartCoroutine(BombAnimation(atkUi, defUi, 32));
+                StartCoroutine(BattleMotionAnimation(atkUi, defUi, 7, 15));
+                yield return StartCoroutine(BombAnimation(atkUi, defUi, 32));
+
+            }
 
             yield return StartCoroutine(Anim.Tick(53));
 
@@ -1477,6 +1892,11 @@ public class QuadMistGame : MonoBehaviour
             yield return StartCoroutine(loser.FlashArrow((Byte)arrowMask));
 
             i = 0;
+            if (Configuration.TetraMaster.TripleTriad == 3)
+            {
+                TripleTrialRuleActivated = TripleTriadRulesID.COMBO;
+                TripleTriadText(TripleTrialRuleActivated);
+            }
             while (i < result.combos.Length)
             {
                 if (result.combos[i] != null)

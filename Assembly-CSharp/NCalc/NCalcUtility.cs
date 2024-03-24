@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime.Text;
+using Memoria.Prime;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -210,6 +211,7 @@ namespace NCalc
             else if (name == "TreasureHunterPoints") args.Result = (Int32)GameState.TreasureHunterPoints;
             else if (name == "GameTime") args.Result = (Int32)GameState.GameTime;
             else if (name == "BattleId") args.Result = (Int32)FF9StateSystem.Battle.battleMapIndex;
+            else if (name == "BattleGroupId") args.Result = (Int32)FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum;
             else if (name == "FieldId") args.Result = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
             else if (name == "IsRandomBattle") args.Result = Memoria.BattleState.IsRandomBattle;
             else if (name == "IsFriendlyBattle") args.Result = Memoria.BattleState.IsFriendlyBattle;
@@ -274,6 +276,8 @@ namespace NCalc
             expr.Parameters["MaxMPDamageLimit"] = play.maxMpDamageLimit;
             expr.Parameters["PlayerCategory"] = (Int32)play.category;
             expr.Parameters["MPCostFactor"] = (Int32)play.mpCostFactor;
+            expr.Parameters["MPCostFactorSkill1"] = (Int32)play.mpCostFactorSkill1;
+            expr.Parameters["MPCostFactorSkill2"] = (Int32)play.mpCostFactorSkill2;
             expr.Parameters["CharacterIndex"] = (Int32)play.Index;
             expr.Parameters["SerialNumber"] = (Int32)play.info.serial_no;
             expr.Parameters["WeaponId"] = (Int32)play.equip.Weapon;
@@ -330,6 +334,7 @@ namespace NCalc
             expr.Parameters[prefix + "CurrentStatus"] = (UInt32)unit.CurrentStatus;
             expr.Parameters[prefix + "PermanentStatus"] = (UInt32)unit.PermanentStatus;
             expr.Parameters[prefix + "ResistStatus"] = (UInt32)unit.ResistStatus;
+            expr.Parameters[prefix + "IsUnderOld"] = unit.Data.special_status_old;
             expr.Parameters[prefix + "HalfElement"] = (Int32)unit.HalfElement;
             expr.Parameters[prefix + "GuardElement"] = (Int32)unit.GuardElement;
             expr.Parameters[prefix + "AbsorbElement"] = (Int32)unit.AbsorbElement;
@@ -517,6 +522,7 @@ namespace NCalc
             expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
             expr.Parameters["ItemUseId"] = (Int32)command.ItemId;
             expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].shape : -1;
+            expr.Parameters["WeaponThrowColor"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].color : -1;
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
             expr.Parameters["TargetType"] = (Int32)command.TargetType;
             expr.Parameters["IsATBCommand"] = command.IsATBCommand;

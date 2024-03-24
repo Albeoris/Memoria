@@ -361,20 +361,23 @@ public class TitleUI : UIScene
         {
             UI2DSprite sprite2D = this.MenuPanelObject.GetChild(0).GetComponent<UI2DSprite>();
             Sprite sprite = sprite2D.sprite2D;
-            String externalPath = "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png";
-            if (File.Exists(externalPath))
+            string pathTitleBG = null;
+            for (Int32 i = 0; i < Configuration.Mod.FolderNames.Length; ++i)
             {
-                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
-                sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
-                sprite2D.sprite2D.name = sprite.name;
+                pathTitleBG = Configuration.Mod.FolderNames[i] + "/FF9_Data/EmbeddedAsset/UI/Sprites/" + sprite.name + ".png";
+                if (File.Exists(pathTitleBG))
+                {
+                    pathTitleBG = "/EmbeddedAsset/UI/Sprites/" + sprite.name + ".png";
+                    sprite2D.sprite2D = AssetManager.Load<Sprite>(pathTitleBG, false);
+                    //sprite2D.sprite2D.name = sprite.name;
+                    break;
+                }
             }
-            else
-            {
-                //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(sprite.texture), "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png");
-            }
+            //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(sprite.texture), "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png");
+
             //
             UITexture logo = this.MenuPanelObject.GetChild(1).GetComponent<UITexture>();
-            externalPath = "StreamingAssets/UI/Sprites/US/" + logo.name + ".png";
+            string externalPath = "StreamingAssets/UI/Sprites/US/" + logo.name + ".png";
             if (File.Exists(externalPath))
             {
                 logo.mainTexture = StreamingResources.LoadTexture2D("StreamingAssets/UI/Sprites/US/" + logo.name + ".png");

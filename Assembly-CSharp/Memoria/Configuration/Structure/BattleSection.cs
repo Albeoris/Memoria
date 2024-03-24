@@ -48,12 +48,16 @@ namespace Memoria
             */
             public readonly IniValue<String> StatusDurationFormula;
             public readonly IniValue<String> StatusTickFormula;
+            public readonly IniValue<String> PoisonHPDamage;
+            public readonly IniValue<String> PoisonMPDamage;
+            public readonly IniValue<String> RegenHPRecovery;
             public readonly IniValue<String> SpeedStatFormula;
             public readonly IniValue<String> StrengthStatFormula;
             public readonly IniValue<String> MagicStatFormula;
             public readonly IniValue<String> SpiritStatFormula;
             public readonly IniValue<String> MagicStoneStockFormula;
             public readonly IniValue<String> TranceDecreaseFormula;
+            public readonly IniValue<String> RebirthFlame;
 
             public BattleSection() : base(nameof(BattleSection), false)
             {
@@ -80,12 +84,16 @@ namespace Memoria
                 SpareChangeGilSpentFormula = BindString(nameof(SpareChangeGilSpentFormula), "");
                 StatusDurationFormula = BindString(nameof(StatusDurationFormula), "");
                 StatusTickFormula = BindString(nameof(StatusTickFormula), "");
+                PoisonHPDamage = BindString(nameof(PoisonHPDamage), "");
+                PoisonMPDamage = BindString(nameof(PoisonMPDamage), "");
+                RegenHPRecovery = BindString(nameof(RegenHPRecovery), "");
                 SpeedStatFormula = BindString(nameof(SpeedStatFormula), "");
                 StrengthStatFormula = BindString(nameof(StrengthStatFormula), "");
                 MagicStatFormula = BindString(nameof(MagicStatFormula), "");
                 SpiritStatFormula = BindString(nameof(SpiritStatFormula), "");
                 MagicStoneStockFormula = BindString(nameof(MagicStoneStockFormula), "");
                 TranceDecreaseFormula = BindString(nameof(TranceDecreaseFormula), "");
+                RebirthFlame = BindString(nameof(RebirthFlame), "");
             }
         }
     }

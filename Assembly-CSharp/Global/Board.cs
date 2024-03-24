@@ -25,12 +25,12 @@ public class Board : MonoBehaviour
 		{
 			Int32 x = i % Board.SIZE_X;
 			Int32 y = i / Board.SIZE_X;
-			Single factor = Board.USE_SMALL_BOARD ? 0.0001f : 0.01f;
-			Single adjustementX = Board.USE_SMALL_BOARD ? 0.06f : 0f; // Adjust positions for Triple Triad.
-			Single adjustementY = Board.USE_SMALL_BOARD ? 0.08f : 0f; // Adjust positions for Triple Triad.
+			Single factor = Board.USE_TRIPLETRIAD_BOARD ? 0.0001f : 0.01f;
+			Single adjustementX = Board.USE_TRIPLETRIAD_BOARD ? 0.06f : 0f; // Adjust positions for Triple Triad.
+			Single adjustementY = Board.USE_TRIPLETRIAD_BOARD ? 0.08f : 0f; // Adjust positions for Triple Triad.
 			field[i].gameObject.SetActive(false);
 			field[i].transform.localPosition = new Vector3(x * (QuadMistCardUI.SIZE_W + Board.FIELD_LINE_W * factor) + adjustementX, -(y * (QuadMistCardUI.SIZE_H + Board.FIELD_LINE_H * factor)) - adjustementY, 0f);
-			if (Board.USE_SMALL_BOARD) // Resize Triple Triad cards
+			if (Board.USE_TRIPLETRIAD_BOARD) // Resize Triple Triad cards
 				field[i].transform.localScale = new Vector3(1.3f, 1.25f, 1f);
 			field[i].name = x + "," + y;
 		}
@@ -142,7 +142,30 @@ public class Board : MonoBehaviour
 		return array;
 	}
 
-	public Vector2 GetVectorByWorldPoint(Vector3 worldPoint, Boolean checkForFree = false)
+    public QuadMistCard[] GetAdjacentCardsTripleTriad(QuadMistCard card)
+    {
+        Vector2 cardLocation = GetCardLocation(card);
+        return GetAdjacentCardsTripleTriad((Int32)cardLocation.x, (Int32)cardLocation.y);
+    }
+
+    public QuadMistCard[] GetAdjacentCardsTripleTriad(Int32 x, Int32 y)
+    {
+        QuadMistCard[] array = new QuadMistCard[CardArrow.MAX_ARROWNUM];
+        for (Int32 i = 0; i < CardArrow.MAX_ARROWNUM; i++)
+        {
+			if (i % 2 == 1)
+				continue;
+            Vector3 vector = CardArrow.ToOffset((CardArrow.Type)i);
+            QuadMistCard quadMistCard = this[(Int32)(x + vector.x), (Int32)(y + vector.y)];
+            if (quadMistCard != null && !quadMistCard.IsBlock)
+                array[i] = quadMistCard;
+            else
+                array[i] = null;
+        }
+        return array;
+    }
+
+    public Vector2 GetVectorByWorldPoint(Vector3 worldPoint, Boolean checkForFree = false)
 	{
 		Int32 indexByWorldPoint = GetIndexByWorldPoint(worldPoint, checkForFree);
 		if (indexByWorldPoint == -1)
@@ -233,9 +256,9 @@ public class Board : MonoBehaviour
 		BoardCursor.Hide();
 	}
 
-	public static Boolean USE_SMALL_BOARD = Configuration.TetraMaster.TripleTriad >= 2;
-	public static Int32 SIZE_X = USE_SMALL_BOARD ? 3 : 4;
-	public static Int32 SIZE_Y = USE_SMALL_BOARD ? 3 : 4;
+	public static Boolean USE_TRIPLETRIAD_BOARD = Configuration.TetraMaster.TripleTriad >= 2;
+	public static Int32 SIZE_X = USE_TRIPLETRIAD_BOARD ? 3 : 4;
+	public static Int32 SIZE_Y = USE_TRIPLETRIAD_BOARD ? 3 : 4;
 	public static Int32 FIELD_LINE_W = 1;
 	public static Int32 FIELD_LINE_H = 1;
 

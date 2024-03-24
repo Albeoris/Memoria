@@ -897,7 +897,7 @@ public static class UnifiedBattleSequencer
 						tmpStr = "Both";
 					if (!code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar))
 						tmpChar = runningThread.targetId;
-					if (tmpStr == "Effect" || tmpStr == "Both")
+                    if (tmpStr == "Effect" || tmpStr == "Both")
 					{
 						cmd.info.effect_counter++;
 						foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
@@ -910,7 +910,7 @@ public static class UnifiedBattleSequencer
 								c.fig_info = 0;
 								c.fig = c.m_fig = 0;
 							}
-							btl_cmd.ExecVfxCommand(btl, cmd);
+							btl_cmd.ExecVfxCommand(btl, cmd, runningThread);
 							foreach (BTL_DATA c in allBtl)
 							{
 								if (c.fig_info != 0)
@@ -1069,8 +1069,8 @@ public static class UnifiedBattleSequencer
 						code.TryGetArgBoolean("Sync", out sync);
 						List<BTL_DATA> targList = btl_util.findAllBtlData(tmpChar);
 						if (targList.Count == 0)
-							break;
-						Int32 loopTargetCount = loopTarget ? targList.Count : 1;
+							break;						
+                        Int32 loopTargetCount = loopTarget ? targList.Count : 1;
 						for (Int32 i = 0; i < loopCount; i++)
 							for (Int32 j = 0; j < loopTargetCount; j++)
 							{

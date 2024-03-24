@@ -22,7 +22,7 @@ public static class SoundEffect
 		{ QuadMistSoundID.MINI_SE_CARD_MOVE,	1857 },
 		{ QuadMistSoundID.MINI_SE_COIN,			1858 },
 		{ QuadMistSoundID.MINI_SE_WALL,			1859 },
-		{ QuadMistSoundID.MINI_SE_PARFECT,		1852 },
+		{ QuadMistSoundID.MINI_SE_PERFECT,		1852 },
 		{ QuadMistSoundID.MINI_SE_FLASH,		1861 },
 		{ QuadMistSoundID.MINI_SE_COMB,			1862 },
 		{ QuadMistSoundID.MINI_SE_BOMB,			1863 },
