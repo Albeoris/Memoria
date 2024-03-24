@@ -6,14 +6,18 @@
 
 - New launcher with easy options (for not included options: Memoria.ini)
 - Mod Manager, with integrated community catalog and 1 click install
+- Optional features:
+    - Battle UI layouts (includes original PSX layout)
+    - Configurable framerate (15, 30, 60fps...)
+    - Font change (includes original PSX font)
+    - Volume control
+    - Anti-aliasing
+    - Full analog movement
 - Support for:
     - Larger backgrounds definition (e.g. Moguri)
     - Widescreen (now for all resolutions)
-    - Configurable framerate (15, 30, 60fps...)
     - Unlocks FMV framerate change (e.g. Moguri)
     - Voice acting (e.g. WIP project ECHO-S)
-    - Font change (includes original PSX font)
-    - Combat HUD layouts (includes original PSX layout)
     - Many limitations removed for mods
     - Some bugfixes
 - Faster battles:
@@ -21,21 +25,17 @@
     - Swirl duration
     - Waiting skip
     - Turn-based mode
-- QoL:
-    - Save/load anywhere (Alt+F5, Alt+F9)
-    - Full analog movement
-    - [LauncherBypass](https://github.com/Albeoris/Memoria/issues/70#issuecomment-626077188)
-    - [Change audio volume](https://github.com/Albeoris/Memoria/issues/36#issuecomment-626098739) (Ctrl+Alt+Shift+M)
-    - Anti-aliasing
-- Cheats:
-    - Stealing 100% rate
+- Optional Cheats:
+    - Stealing 100% success
     - Enable/Disable vanilla cheats
     - Easy minigames (rope, frogs, racing)
+    - Excalibur II time limit removal
 - Tetra Master (Card game):
-    - Choice to replace with a custom version of Triple Triad (FFVIII)
-    - Choice to replace with an hybrid of Tetra Master and Triple Triad
+    - (Option) replace with a custom version of Triple Triad (FFVIII) or Tetra Master/Triple Triad hybrid
+    - Raise card limit
     - Auto discard cards
     - Ways to tweak the randomness
+- Include individual mod assets in folders
 - Edit game data (look at the "StreamingAssets\Data" folder)
 - Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
 - Make every character available (Alt+F2)
