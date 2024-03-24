@@ -142,7 +142,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				cardHud.PhysicDefParamSprite.gameObject.SetActive(false);
 				cardHud.MagicDefParamSprite.gameObject.SetActive(false);
 				cardHud.AtkTypeParamSprite.gameObject.SetActive(false);
-                cardHud.CardElementSprite.gameObject.SetActive(false);
+                //cardHud.CardElementSprite.gameObject.SetActive(false);
                 return;
 			}           
             cardHud.AtkParamSprite.gameObject.SetActive(true);
@@ -156,7 +156,7 @@ namespace Assets.Sources.Scripts.UI.Common
 				cardHud.PhysicDefParamSprite.spriteName = "card_point_" + baseCard.pdef.ToString("x");
 				cardHud.MagicDefParamSprite.spriteName = "card_point_" + baseCard.mdef.ToString("x");
 				cardHud.AtkTypeParamSprite.spriteName = "card_point_" + baseCard.matk.ToString("x");
-                cardHud.CardElementSprite.gameObject.SetActive(true);
+                //cardHud.CardElementSprite.gameObject.SetActive(true);
             }
 			else
 			{
@@ -736,7 +736,7 @@ namespace Assets.Sources.Scripts.UI.Common
 			return sprite;
 		}
 
-		public static readonly Int32 NewIconId = 400;
+        public static readonly Int32 NewIconId = 400;
 
 		private static UIAtlas generalAtlas;
 
@@ -755,8 +755,6 @@ namespace Assets.Sources.Scripts.UI.Common
 		private static GameObject controllerKeyboardPrefab = null;
 
 		private static GameObject newIconPrefab = null;
-
-        public static Sprite CardElementSpriteGo;
 
         private static List<GameObject> bitmapKeyboardPool = new List<GameObject>();
 
@@ -2535,7 +2533,9 @@ namespace Assets.Sources.Scripts.UI.Common
 
 		private static Dictionary<String, Sprite> worldTitleSpriteList = new Dictionary<String, Sprite>();
 
-		private static readonly Dictionary<String, String> iconLocalizeList = new Dictionary<String, String>
+        public static Dictionary<String, Sprite> TripleTriadSpriteList = new Dictionary<String, Sprite>();
+
+        private static readonly Dictionary<String, String> iconLocalizeList = new Dictionary<String, String>
 		{
 			{
 				"keyboard_button_enter#French",

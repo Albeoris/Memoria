@@ -20,7 +20,9 @@ public class PLAYER
 		this.sa[1] = 0u;
 		this.saExtended = new HashSet<SupportAbility>();
 		this.mpCostFactor = 100;
-		this.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
+        this.mpCostFactorSkill1 = 100;
+        this.mpCostFactorSkill2 = 100;
+        this.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
 		this.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
 		this.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
 		this.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
@@ -169,7 +171,9 @@ public class PLAYER
 
 	// Custom fields
 	public Int16 mpCostFactor;
-	public UInt32 maxHpLimit;
+    public Int16 mpCostFactorSkill1;
+    public Int16 mpCostFactorSkill2;
+    public UInt32 maxHpLimit;
 	public UInt32 maxMpLimit;
 	public UInt32 maxDamageLimit;
 	public UInt32 maxMpDamageLimit;

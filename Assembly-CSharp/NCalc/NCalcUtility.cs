@@ -276,6 +276,8 @@ namespace NCalc
             expr.Parameters["MaxMPDamageLimit"] = play.maxMpDamageLimit;
             expr.Parameters["PlayerCategory"] = (Int32)play.category;
             expr.Parameters["MPCostFactor"] = (Int32)play.mpCostFactor;
+            expr.Parameters["MPCostFactorSkill1"] = (Int32)play.mpCostFactorSkill1;
+            expr.Parameters["MPCostFactorSkill2"] = (Int32)play.mpCostFactorSkill2;
             expr.Parameters["CharacterIndex"] = (Int32)play.Index;
             expr.Parameters["SerialNumber"] = (Int32)play.info.serial_no;
             expr.Parameters["WeaponId"] = (Int32)play.equip.Weapon;

@@ -40,7 +40,7 @@ public class EnemyData : MonoBehaviour
             if (!String.IsNullOrEmpty(Configuration.TetraMaster.FormulaProbabilityCards))
             { 
                 Expression e = new Expression(Configuration.TetraMaster.FormulaProbabilityCards);
-                e.Parameters["CardRank"] = TripleTriad.TripleTriadCardStats[(TetraMasterCardId)enemyData[cardLevel * 16 + i]].Rank;
+                e.Parameters["CardRank"] = TripleTriad.TripleTriadCardStats[(TetraMasterCardId)enemyData[cardLevel * 16 + i]].rank;
                 e.Parameters["CardId"] = quadMistCard.id;
                 e.Parameters["ProbabilityCard"] = probability[i];
                 e.Parameters["Random"] = Random;

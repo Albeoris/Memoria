@@ -80,9 +80,9 @@ public class QuadMistCardUI : MonoBehaviour
                 cardArrows.Arrow = Data.arrow;
                 if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
 					cardDisplay.frame.ID = 7 + Data.side;
-                // cardDisplay.Element = 0;
-				// cardDisplay.background.gameObject.SetActive(false);
-                // cardDisplay.character.gameObject.SetActive(false);
+                 // cardDisplay.Element = 0;
+				 //cardDisplay.background.gameObject.SetActive(false);
+                 //cardDisplay.character.gameObject.SetActive(false);
             }
 			else
 			{
@@ -155,7 +155,6 @@ public class QuadMistCardUI : MonoBehaviour
     public CardEffect cardEffect;
 	public CardDisplay cardDisplay;
 	public CardArrows cardArrows;
-    public UISprite CardElementUISprite;
     private Boolean isToDisplay;
 
 	private Vector3 farAwayPosition = new Vector3(-10000f, -10000f, -10000f);

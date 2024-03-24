@@ -46,18 +46,18 @@ namespace Assets.Sources.Scripts.UI.Common
                 MagicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
                 MagicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, 30);
             }
-            if (Configuration.TetraMaster.TripleTriad == 3 && false) // [DV] TODO => Not finished yet... otherwise, i will remove it for the release.
-            {
-                GameObject CardElement = UnityEngine.Object.Instantiate(AtkParamSprite.gameObject);
-                CardElement.transform.SetParent(Self.GetChild(1).transform);
-                CardElementSprite = Self.GetChild(1).GetChild(4).GetComponent<UISprite>();
-                CardElementSprite.GetComponent<UISprite>().atlas = FF9UIDataTool.IconAtlas;
-                CardElementSprite.GetComponent<UISprite>().spriteName = FF9UIDataTool.IconSpriteName[141]; // Heat
-                CardElementSprite.SetAnchor(CardImageSprite.gameObject, 0.96f, 0.97f, 0.59f, 0.59f);
-                CardElementSprite.transform.localScale /= 20; // [DV] TODO - Use a precise size instead but i don't know the function...
-                CardElementSprite.GetComponent<UISprite>().depth = 100;
+            //if (Configuration.TetraMaster.TripleTriad == 3) // [DV] TODO => Not finished yet... otherwise, i will remove it for the release.
+            //{
+            //    GameObject CardElement = UnityEngine.Object.Instantiate(AtkParamSprite.gameObject);
+            //    CardElement.transform.SetParent(Self.GetChild(1).transform);
+            //    CardElementSprite = Self.GetChild(1).GetChild(4).GetComponent<UISprite>();
+            //    CardElementSprite.GetComponent<UISprite>().atlas = FF9UIDataTool.IconAtlas;
+            //    CardElementSprite.GetComponent<UISprite>().spriteName = FF9UIDataTool.IconSpriteName[141]; // Heat
+            //    CardElementSprite.SetAnchor(CardImageSprite.gameObject, 0.96f, 0.97f, 0.59f, 0.59f);
+            //    CardElementSprite.transform.localScale /= 20; // [DV] TODO - Use a precise size instead but i don't know the function...
+            //    CardElementSprite.GetComponent<UISprite>().depth = 100;
                 // Memoria.Scenes.ControlPanel.DebugLogComponents(go, true, true, c => $" (child of {c.transform}) has component of type {c.GetType()}");
-            }
+            //}
         }
 
 		public GameObject Self;
@@ -68,7 +68,7 @@ namespace Assets.Sources.Scripts.UI.Common
 		public UISprite PhysicDefParamSprite;
 		public UISprite MagicDefParamSprite;
 		public UISprite CardBorderSprite;
-        public UISprite CardElementSprite;
+        //public UISprite CardElementSprite;
 
         public GameObject[] CardArrowList;
     }

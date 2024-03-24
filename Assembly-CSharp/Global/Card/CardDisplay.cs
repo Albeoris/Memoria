@@ -1,5 +1,6 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
+using Memoria.Assets;
 using System;
 using UnityEngine;
 
@@ -69,15 +70,18 @@ public class CardDisplay : MonoBehaviour
     {
         set
         {
-			// Memoria.Prime.Log.Message("spriteArray = " + spriteArray.Length);
-            // if (gameObject.transform.childCount < 7)
-            // {
+            //UISpriteData sprite = FF9UIDataTool.IconAtlas.GetSprite(FF9UIDataTool.IconSpriteName[141]);
+            //Sprite elementsprite = Sprite.Create((Texture2D)FF9UIDataTool.IconAtlas.texture, new Rect(sprite.x, sprite.y, sprite.width, sprite.height), new Vector2(0f, 1f), 482f);
+            //if (gameObject.transform.childCount < 7)
+            //{
             //    GameObject CardElement = new GameObject("CardElement");
             //    CardElement.transform.SetParent(gameObject.transform);
             //    element = gameObject.GetChild(6).AddComponent<SpriteDisplay>();
-            // }
-            // element.GetComponent<SpriteRenderer>().sprite = QuadMistResourceManager.Instance.GetSprite("fire_element");
-            // element.gameObject.transform.localPosition = new Vector3(0.28f, -0.07f, -0.02f);
+            //}
+            //element.GetComponent<SpriteRenderer>().sprite = elementsprite; // [DV] Can't read the sprite... ?
+            //element.gameObject.transform.localPosition = new Vector3(0.28f, -0.07f, -0.02f);
+            //element.GetComponent<SpriteRenderer>().enabled = true;
+            //element.gameObject.SetActive(true);
             //            Memoria.Scenes.ControlPanel.DebugLogComponents(gameObject, true, true, c => $" (child of {c.transform}) has component of type {c.GetType()}");
         }
     }
@@ -154,5 +158,5 @@ public class CardDisplay : MonoBehaviour
 
 	public SpriteDisplay block;
 
-	public SpriteDisplay element;
+	// public SpriteDisplay element;
 }

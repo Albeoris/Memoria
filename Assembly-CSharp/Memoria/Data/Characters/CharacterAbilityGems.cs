@@ -128,6 +128,8 @@ namespace Memoria.Data
                         else if (String.Compare(formula.Key, "MagicEvade") == 0) play.defence.MagicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalEvade);
                         else if (String.Compare(formula.Key, "PlayerCategory") == 0) play.category = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.category);
                         else if (String.Compare(formula.Key, "MPCostFactor") == 0) play.mpCostFactor = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.mpCostFactor);
+                        else if (String.Compare(formula.Key, "MPCostFactorSkill1") == 0) play.mpCostFactorSkill1 = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.mpCostFactorSkill1);
+                        else if (String.Compare(formula.Key, "MPCostFactorSkill2") == 0) play.mpCostFactorSkill2 = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.mpCostFactorSkill2);
                         else if (String.Compare(formula.Key, "MaxHPLimit") == 0) play.maxHpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxHpLimit);
                         else if (String.Compare(formula.Key, "MaxMPLimit") == 0) play.maxMpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpLimit);
                         else if (String.Compare(formula.Key, "MaxDamageLimit") == 0) play.maxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxDamageLimit);

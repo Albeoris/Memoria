@@ -11,6 +11,7 @@ using Memoria.Test;
 using Memoria.Speedrun;
 using UnityEngine;
 using System.Runtime.Remoting.Messaging;
+using FF9;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -273,7 +274,6 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             ButtonGroupState.DisableAllGroup(true);
             UIManager.Battle.FF9BMenu_EnableMenu(false);
-            Configuration.Graphics.SkipIntros = 3;
             PersistenSingleton<UIManager>.Instance.PauseScene.Hide(null);
             EventHUD.Cleanup();
             EventInput.ClearPadMask();
@@ -525,7 +525,7 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
             {
-                keyCommand = Control.None;
+                keyCommand = Control.None;             
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                     sceneFromState.OnKeyPause(activeButton);
                 return true;
@@ -650,7 +650,7 @@ public class UIKeyTrigger : MonoBehaviour
         foreach (String key in Configuration.Control.DialogProgressButtons)
             if (key.TryEnumParse<Control>(out Control ctrl))
                 dialogConfirmKeys.Add(ctrl);
-        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl) || TurboKey && !preventTurboKey)
+        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl) || TurboKey && !preventTurboKey && PreventTurboOnFields() && !TimerUI.Enable)
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyConfirm(activeButton);
@@ -788,6 +788,17 @@ public class UIKeyTrigger : MonoBehaviour
         {
         }
         return false;
+    }
+
+    public Boolean PreventTurboOnFields() // [DV] TODO: Make it compatible with DictionaryPatch
+    {
+        List<Int32> fieldidpreventturbo = new List<Int32> { 656, 657, 658, 659 , 2950, 2951, 2952 }; // Kwe Marsh + Chocobo Minigame places
+        foreach (Int32 id in fieldidpreventturbo)
+        {
+            if (FF9StateSystem.Common.FF9.fldMapNo == id)
+                return false;
+        }
+        return true;
     }
 
     private void Start()

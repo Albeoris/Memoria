@@ -17,12 +17,12 @@ namespace Memoria
             CalcMain(caster.Data, target.Data, command, command.ScriptId);
         }
 
-        public static void CalcMain(BTL_DATA caster, BTL_DATA target, CMD_DATA cmd)
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, CMD_DATA cmd, BattleActionThread sfxThread = null)
         {
-            CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
+            CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId, sfxThread);
         }
 
-        public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Int32 scriptId)
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Int32 scriptId, BattleActionThread sfxThread = null)
         {
             try
             {
@@ -42,6 +42,7 @@ namespace Memoria
                 }
                 command.ScriptId = scriptId;
                 BattleCalculator v = new BattleCalculator(caster, target, command);
+                v.Context.sfxThread = sfxThread;
                 BattleScriptFactory factory = FindScriptFactory(scriptId);
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", false);

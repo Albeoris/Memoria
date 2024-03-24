@@ -8,6 +8,8 @@ using Memoria.Data;
 using Memoria.Scripts;
 using UnityEngine;
 using NCalc;
+using static SFX;
+using Memoria.Database;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -1259,7 +1261,17 @@ public class btl_cmd
         if (cmd.regist != null)
         {
             if (cmd.regist.bi.player != 0)
-                mp = mp * FF9StateSystem.Common.FF9.player[(CharacterId)cmd.regist.bi.slot_no].mpCostFactor / 100;
+            {
+                BattleUnit caster = new BattleUnit(cmd.regist);
+                CharacterCommandSet command = CharacterCommands.CommandSets[FF9StateSystem.Common.FF9.party.GetCharacter(caster.Position).PresetId];
+                PLAYER player = FF9StateSystem.Common.FF9.player[(CharacterId)cmd.regist.bi.slot_no];
+                if ((cmd.cmd_no == command.Regular1 || cmd.cmd_no == command.Trance1) && player.mpCostFactorSkill1 != 100)
+                    mp = mp * player.mpCostFactorSkill1 / 100;
+                else if ((cmd.cmd_no == command.Regular2 || cmd.cmd_no == command.Trance2) && player.mpCostFactorSkill2 != 100)
+                    mp = mp * player.mpCostFactorSkill2 / 100;
+
+                mp = mp * player.mpCostFactor / 100;
+            }
             if (cmd.cmd_no == BattleCommandId.MagicCounter || ConsumeMp(cmd.regist, mp))
                 return true;
         }
@@ -1600,7 +1612,7 @@ public class btl_cmd
         }
     }
 
-    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null)
+    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null, BattleActionThread sfxThread = null)
     {
         if (cmd == null)
             cmd = btl_util.getCurCmdPtr();
@@ -1632,7 +1644,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                 }
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
             case BattleCommandId.SysTrans:
             {
@@ -1658,7 +1670,7 @@ public class btl_cmd
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
             default:
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
         }
     }
