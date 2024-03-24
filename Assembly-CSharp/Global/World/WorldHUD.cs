@@ -623,19 +623,29 @@ public class WorldHUD : UIScene
 	{
 		if (WMUIData.ActiveMapNo == 1)
 		{
-			Sprite sprite = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/world_map_full_all", false);
-			this.miniMapSprite.spriteName = "world_map_mini_all";
+            String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/world_map_full_all.png", true, false);
+            if (!String.IsNullOrEmpty(externalPath))
+                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_all.png";
+			else
+                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_all";
+            Sprite fullMapSprite = AssetManager.Load<Sprite>(externalPath, false);
+            this.miniMapSprite.spriteName = "world_map_mini_all";
 			this.miniMapButton.normalSprite = "world_map_mini_all";
-			this.mapSprite.sprite2D = sprite;
-			this.mapButton.normalSprite2D = sprite;
+			this.mapSprite.sprite2D = fullMapSprite;
+			this.mapButton.normalSprite2D = fullMapSprite;
 		}
 		else
 		{
-			Sprite sprite2 = AssetManager.Load<Sprite>("EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent", false);
+            String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent.png", true, false);
+            if (!String.IsNullOrEmpty(externalPath))
+                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent.png";
+            else
+                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent";
+            Sprite mistContinentMapSprite = AssetManager.Load<Sprite>(externalPath, false);
 			this.miniMapSprite.spriteName = "world_map_mini_mistcontinent";
 			this.miniMapButton.normalSprite = "world_map_mini_mistcontinent";
-			this.mapSprite.sprite2D = sprite2;
-			this.mapButton.normalSprite2D = sprite2;
+			this.mapSprite.sprite2D = mistContinentMapSprite;
+			this.mapButton.normalSprite2D = mistContinentMapSprite;
 		}
 	}
 
