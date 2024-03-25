@@ -14,6 +14,7 @@ using Memoria.Scenes;
 using Memoria.Speedrun;
 using UnityEngine;
 using UnityEngine.UI;
+using static AssetManager;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable NotAccessedField.Local
@@ -368,20 +369,31 @@ public class TitleUI : UIScene
                 sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
                 sprite2D.sprite2D.name = sprite.name;
             }
-            else
+
+            // Replace title screen with modded version if it exists
+            externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/title_bg", true, false);
+            if (!String.IsNullOrEmpty(externalPath))
             {
-                //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(sprite.texture), "StreamingAssets/UI/Sprites/US/" + sprite.name + ".png");
+                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
+                sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
+                sprite2D.sprite2D.name = sprite.name;
             }
-            //
-            UITexture logo = this.MenuPanelObject.GetChild(1).GetComponent<UITexture>();
-            externalPath = "StreamingAssets/UI/Sprites/US/" + logo.name + ".png";
-            if (File.Exists(externalPath))
+
+            externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/title_bg.png", true, false); // also check .png for simplicity
+            if (!String.IsNullOrEmpty(externalPath))
             {
-                logo.mainTexture = StreamingResources.LoadTexture2D("StreamingAssets/UI/Sprites/US/" + logo.name + ".png");
+                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
+                sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
+                sprite2D.sprite2D.name = sprite.name;
             }
-            else
+
+            // Replace title logo with modded version if it exists (advice: replace with transparent and include logo in title_bg.png)
+            UITexture texture2D = this.MenuPanelObject.GetChild(1).GetComponent<UITexture>();
+            externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Materials/title_logo", true, false);
+            if (!String.IsNullOrEmpty(externalPath))
             {
-                //TextureHelper.WriteTextureToFile(TextureHelper.CopyAsReadable(logo.mainTexture), "StreamingAssets/UI/Sprites/US/" + logo.name + ".png");
+                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
+                texture2D.mainTexture = texture;
             }
         }
         catch (Exception ex)
