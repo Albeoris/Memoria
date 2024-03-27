@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Data>
+	<Measurement
+	Elapsed = "Decorrido"
+	Remaining = "Restante"
+	SecondAbbr = "Segs"
+	ByteAbbr = "Bs"
+	KByteAbbr = "KBs"
+	MByteAbbr = "MBs"
+	GByteAbbr = "GBs"
+	TByteAbbr = "TBs"
+	PByteAbbr = "PBs"
+	EByteAbbr = "EBs"
+	/>
+
+	<Button
+	OK = "OK"
+	Cancel = "Cancelar"
+	Continue = "Continuar"
+	Clone = "Clonar"
+	Remove = "Remover"
+	Rollback = "Cancelar"
+	Inject = "Injetar"
+	SaveAs = "Salvar como..."
+	Exit = "SAIR"
+	Exiting = "Saindo..."
+	Launch = "JOGAR"
+	Launching = "Executando..."
+	ModManager = "GERENCIADOR DE MODS"
+	/>
+
+	<Settings
+	LauncherWindowTitle = "Final Fantasy IX | Executor do Memoria"
+	ActiveMonitor = "Monitor Ativo"
+	PrimaryMonitor = " [Primário]"
+	Resolution = "Resolução"
+	WindowMode = "Modo Janela"
+	Window = "Modo Janela"
+	ExclusiveFullscreen = "Tela Cheia"
+	BorderlessFullscreen = "Tela Cheia Sem Bordas"
+	AudioSamplingFrequency = "Frequência da Amostra do Áudio"
+	AudioSamplingFrequencyFormat = "{0} Hz"
+	Debuggable = " Debugável"
+	CheckUpdates = " Procurar Atualizações"
+	IniOptions = "Opções"
+	Widescreen = " Widescreen (16:9 ou 16:10)"
+	BattleInterface = "HUD de Batalha"
+	BattleInterfaceType0 = "Grande"
+	BattleInterfaceType1 = "Pequena"
+	BattleInterfaceType2 = "Tipo-PSX"
+	SkipIntrosToMainMenu = " Pular as intros pro menu principal"
+	SkipBattleSwirl = " Ignorar a espiral de batalha"
+	AntiAliasing = " Anti-aliasing"
+	SkipBattleLoading = "Frames pra carregar a batalha"
+	HideCardsBubbles = " Esconder as bolhas dos cartões"
+	HideSteamBubbles = " Só mostrar as bolhas do PSX"
+	TurnBasedBattles = " Batalhas baseadas em turnos"
+	SpeedChoice = "Modo ATB"
+	SpeedChoiceType0 = "Normal"
+	SpeedChoiceType1 = "Rápida"
+	SpeedChoiceType2 = "Baseado em Turnos"
+	SpeedChoiceType3 = "Dinâmica (1)"
+	SpeedChoiceType4 = "Dinâmica (2)"
+	SpeedChoiceType5 = "Dinâmica"
+	TripleTriad = "Jogo dos Cartões"
+	TripleTriadType0 = "Tetra Master"
+	TripleTriadType1 = "Tetra Triad"
+	TripleTriadType2 = "Triple Triad"
+	Volume = "Volume:"
+	SoundVolume = "🔊Som"
+	MusicVolume = "🎵Música"
+	MovieVolume = "🔊Filme"
+	IniCheats = "Trapaças"
+	MaxStealRate = " 100% da taxa de roubo"
+	DisableCantConcentrate = " Desativar 'não consegue concentrar'"
+	BreakDamageLimit = " Limite de dano dos Breaks"
+	AccessBattleMenu = "Menu nas batalhas"
+	AccessBattleMenuType0 = "Sem acesso"
+	AccessBattleMenuType1 = "Acesso limitado"
+	AccessBattleMenuType2 = "Acesso individual"
+	AccessBattleMenuType3 = "Acesso ilimitado"
+	SpeedMode = " Modo de velocidade | F1"
+	SpeedFactor = "Velocidade"
+	BattleAssistance = " Trapaças de batalha | F2 F3"
+	PermanentTranse = " Transe permanente | F2"
+	MaxDamage = " Dano máximo | F3"
+	NoRandomBattles = " Sem batalhas aleatórias | F4"
+	PermanentCheats = " Trapaças permanentes | F5 F6 F7"
+	UsePsxFont = "Usar fonte do PSX"
+	FontChoice = "Fonte"
+	SBUIenabled = "Interface de Batalha do Usuário Ampliada"
+	BattleTPS = "Velocidade da batalha (def. 15)"
+	SharedFPS = "Frames por Segundo"
+	UseOrchestralMusic = "Música orquestral (Moguri)"
+	Use30FpsVideo = "Vídeos de 30 FPS (Moguri)"
+	ActiveMonitor_Tooltip = "Escolha uma tela"
+	WindowMode_Tooltip = "-Modo Janela: Executa o jogo numa janela&#xA;-Tele Cheia: O jogo toma a tela inteira&#xA;-Tela Cheia Sem Borda: Toma a tela inteira mas como um processo de janela"
+	Resolution_Tooltip = "Resolução da tela&#xA;Suporte a Widescreen só em 16:9 e 16:10"
+	Xsixfour_Tooltip = "-X64 (recomendado)&#xA;-X86 (legado)"
+	Debuggable_Tooltip = "Pros desenvolvedores"
+	CheckUpdates_Tooltip = "Perguntará a você se você quer baixar automaticamente&#xA;o último Memoria do github quando você pressiona JOGAR"
+	SteamOverlayFix_Tooltip = "Aplicará o patch no executor pras pessoas&#xA;tendo problemas em exibir a sobreposição do Steam&#xA;(As realizações do Steam também dependem dele)"
+	UseOrchestralMusic_Tooltip = "Mod Moguri: Trilha sonora orquestral do Pontus Hultgren,&#xA;não é recomendado pras pessoas que querem a experiência original"
+	Use30FpsVideo_Tooltip = "Mod Moguri: FMVs de 30 fps (dos 15 fps originais)&#xA;Imagens intermediárias criadas pela IA"
+	Widescreen_Tooltip = "Suportado nas resoluções 16:9 e 16:10&#xA;Remove as barras laterais quando possível,&#xA;Mostra uma parte mais larga das telas de fundo/mapa-múndi/batalhas&#xA;Nota: algumas telas de fundo ainda serão exibidas com barras pretas,&#xA;porque o jogo original não tinha mais pixels"
+	AntiAliasing_Tooltip = "Ativar anti-aliasing"
+	SharedFPS_Tooltip = "FPS do Jogo (frequência das imagens)&#xA;o original estava entre 15 e 30&#xA;Padrão das telas: 60"
+	BattleInterface_Tooltip = "Grande (padrão)&#xA;Pequena: menor&#xA;Tipo-PSX: traz de volta a aparência e estrutura clássica do menu de batalha&#xA;Personaliza a interface de batalha do usuário dentro do jogo com Alt+F1"
+	SkipIntrosToMainMenu_Tooltip = "Pular os logos e avisos pro menu principal"
+	SkipBattleSwirl_Tooltip = "Ligado: a batalha inicia instantaneamente (padrão)&#xA;Desligado: leve atraso antes das batalhas igual ao original"
+	HideSteamBubbles_Tooltip = "Desativa as bolhas de diálogo adicionadas pelo re-relançamento do FF IX 2016&#xA;(interação do cartão, praia e NPCs)"
+	SpeedChoice_Tooltip = "-Normal: (padrão)&#xA;-Rápida: o ATB enche imediatamente durante os tempos inativos&#xA;-Baseada-em-turnos: O ATB para durante o turno de um personagem mas enche instantaneamente&#xA;-Dinâmica: os personagens e inimigos podem agir simultaneamente"
+	TripleTriad_Tooltip = "-Tetra Master (padrão)&#xA;-Tetra Triad: substitui o Tetra Master com uma mistura entre o Tetra Master e o Triple Triad&#xA;-Triple Triad: substitui o Tetra Master com o Triple Triad do FF 8 adaptado pro FF 9"
+	SoundVolume_Tooltip = "Volume da interface e barulhos"
+	MusicVolume_Tooltip = "Volume da música"
+	MovieVolume_Tooltip = "Volume dos FMVs e menu principal"
+	FontChoice_Tooltip = "Fonte do jogo"
+	MaxStealRate_Tooltip = "Trapaça: sempre tem sucesso quando rouba"
+	DisableCantConcentrate_Tooltip = "Trapaça: remove o mal de concentração da Garnet (mais tarde na estória)"
+	BreakDamageLimit_Tooltip = "Trapaça: remove o limite de dano de 9999"
+	AccessBattleMenu_Tooltip = "Se o comando 'Menu' não aparece acesse&#xA;o menu com o botão △/Y do comando 'Item'&#xA;No acesso limitado usar o menu custa um turno"
+	SpeedMode_Tooltip = "(Trapaças non-mod)&#xA;Jogo rápido (F1)"
+	SpeedFactor_Tooltip = "Multiplicador de velocidade da configuração acima"
+	BattleAssistance_Tooltip = "(Trapaças non-mod)&#xA;Transe instantâneo (F2)&#xA;Dano máximo (F3)"
+	NoRandomBattles_Tooltip = "(Trapaças non-mod)&#xA;Sem encontros aleatórios (F4)"
+	PermanentCheats_Tooltip = "(Trapaças non-mod)&#xA;Tudo no máximo F5/F6/F7&#xA;(estas trapaças ficarão no seu save e desativam as realizações do Steam)"
+	/>
+
+	<SdLib
+	Caption = "Aplicar o Patch no SdLib.dll"
+	AreYouSure = "Você tem certeza que você quer aplicar um patch no SdLib.dll?"
+	SuccessBoth = "O SdLib.dll teve um patch aplicado com sucesso nas duas platformas."
+	SuccessX64 = "O SdLib.dll teve um patch aplicado com sucesso apenas na plataforma x64."
+	SuccessX86 = "O SdLib.dll teve um patch aplicado com sucesso apenas na plataforma x86."
+	Fail = "Infelizmente nós não pudemos aplicar o patch no SdLib.dll. Por favor compartilhe sua versão deste arquivo."
+	CannotRead = "Não pôde ler a frequência da amostra de áudio no arquivo:"
+	CannotWrite = "Não pôde ler a frequência da amostra de áudio do SdLib.dll"
+	/>
+
+	<SteamOverlay
+	OptionLabel = " Consertar a Sobreposição do Steam"
+	Caption = "Sobreposição do Steam"
+	FixAreYouSure = "Agora nós instalaremos um gancho no seu SO que executará o FF9_Launcher.fix ao invés do arquivo FF9_Launcher.exe. Neste caso todas as verificações de integridade do arquivo do Steam completarão com sucesso. Assim isto resolverá o problema que alguns usuários tem com a funcionalidade da Sobreposição do Steam e funções relacionadas periodicamente desativadas: Suporte as realizações e controles.&#13;&#10;&#13;&#10;Contudo, seja cuidadoso e NÃO APAGUE o jogo, a pasta dele ou o arquivo FF9_Launcher.fix sem primeiro reverter as mudanças. De outro modo o gancho permanecerá no seu sistema e após uma nova instalação do jogo você não será capaz de executá-lo. Você pode reverter as mudanças no executor ou manualmente executando o Memoria.SteamFix.exe na pasta do jogo.&#13;&#10;&#13;&#10;Você tem certeza que você ainda quer continuar?"
+	RollbackAreYouSure = "Agora nós removeremos as mudanças feitas após as quais o problema com a Sobreposição do Steam retornará.&#13;&#10;&#13;&#10;Isto pode levar a problemas com desativações das realizações e controles.&#13;&#10;&#13;&#10;Você tem certeza que você quer continuar?"
+	/>
+
+	<InfoProvider>
+
+		<ApplicationConfig
+		Title = "Configurações"
+		Description = "Várias configurações do aplicativo."
+		NewTitle = "Novo"
+		NewDescription = "Inicializar todos os valores padrão das configurações."
+		FileTitle = "Do arquivo"
+		FileDescription = "Lê o arquivo de configuração do aplicativo {0}"
+		/>
+
+		<GameLocation
+		Title = "Diretório do Jogo"
+		Description = "Local dos arquivos do jogo."
+		ConfigurationTitle = "Configurações"
+		ConfigurationDescription = "Usa a informação armazenada no arquivo de configuração."
+		SteamRegistryTitle = "Do registro (Steam)"
+		SteamRegistryDescription = "Recupera a informação do registro do Windows usando os dados do Steam."
+		UserTitle = "Manual"
+		UserDescription = "Permite a você selecionar manualmente o diretório no qual você instalou o jogo."
+		/>
+
+		<WorkingLocation
+		Title = "Diretório de Trabalho"
+		Description = "O diretório pra armazenar os resultados do aplicativo."
+		ConfigurationTitle = "Configurações"
+		ConfigurationDescription = "Usa a informação armazenada no arquivo de configuração."
+		UserTitle = "Manual"
+		UserDescription = "Permite a você selecionar manualmente um diretório de trabalho."
+		/>
+
+		<TextEncoding
+		Title = "Codificação"
+		Description = "Codificação pra desempacotar e empacotar o texto do jogo."
+		NewTitle = "Novo"
+		NewDescription = "Inicializa a codificação padrão baseada na codificação Windows-1252."
+		WorkingLocationTitle = "Diretório de Trabalho"
+		WorkingLocationDescription = "Lê a codificação do diretório de trabalho."
+		UserTitle = "Editar"
+		UserDescription = "Muda a codificação atual."
+		/>
+
+		<AudioSettings
+		Title="Configurações do Áudio"
+		Description="Configurações do dispositivo de áudio."
+		NewTitle="Novo"
+		NewDescription="Inicializar todos os valores padrão das configurações."
+		/>
+
+	</InfoProvider>
+	<Dockable>
+		<DataSources Header = "Origens dos Dados" />
+
+		<GameFileCommander
+		Header = "Recursos do Jogo"
+		Unpack = "Desempacotar"
+		Pack = "Empacotar"
+		ArchivesNode ="Arquivos Compactados"
+		/>
+
+		<GameFilePreview Header="Pré-visualização" >
+
+			<Ykd
+			ResourceRemovingTitle = "Removendo"
+			ConfirmResourceRemoving = "Você tem certeza que você quer apagar este recurso?"
+			/>
+
+		</GameFilePreview>
+	</Dockable>
+	<EncodingEditor>
+		
+		<List
+		Name = "Nome"
+		Pattern = "Modelo"
+		Encoding = "Codificação"
+		Font = "Fonte"
+		Edit = "Editar"
+		/>
+
+		<EncodingSelectDialog
+		Title = "Escolher a codificação"
+		Watermark = "Insira o nome da codificação..."
+		ConfirmMessageFormat = "Você escolheu [{0}]. Correto?"
+		ErrorMessageFormat = "Falhou em reconhecer a codificação [{0}]."
+		/>
+
+		<EncodingEditDialog
+		Title = "Edição da codificação"
+		/>
+
+		<Main
+		Before = "Antes:"
+		Width = "Largura:"
+		After = "Depois:"
+		FromText = "Do texto:"
+		ToText = "Pro texto:"
+		/>
+
+		<Extra
+		Row = "Fileira:"
+		Column = "Coluna:"
+		FromText = "Do texto:"
+		ToText = "Pro texto:"
+		/>
+
+	</EncodingEditor>
+
+	<ModEditor
+	WindowTitle = "Gerenciador de Mods do Memoria"
+	ModInfos = "Informações do Mod"
+	TabMyMods = "Mods Instalados"
+	TabCatalog = "Explorar Catálogo"
+	Mod = "Mod"
+	Name = "Nome"
+	Website = "Site da Web"
+	Author = "Autor"
+	Release = "Lançado"
+	Category = "Categoria"
+	Version = "Versão"
+	Description = "Descrição"
+	ReleaseNotes = "Notas do Lançamento"
+	SubModPanel = "Opções do Mod"
+	Priority = "Prioridade"
+	Installed = "Instalado(s)"
+	Active = "Ativo"
+	Progress = "Progresso"
+	Speed = "Velocidade"
+	TimeLeft = "Tempo Restante"
+	PreviewImageMissing = "Nenhuma Imagem da Pré-Visualização"
+	TooltipMoveUp = "Mover pra Cima/Clique com o Botão Direito do Mouse pra Mover pro Topo"
+	TooltipMoveDown = "Mover pra Baixo/Clique com o Botão Direito de Mouse pra Mover pro Rodapé"
+	TooltipCheckCompatibility = "Verificar as Compatibilidades com o Mod/Clique com o Botão Direito do Mouse pra Verificar Tudo"
+	TooltipActivateAll = "Ativar Todos os Mods"
+	TooltipDeactivateAll = "Desativar Todos os Mods"
+	TooltipUninstall = "Desinstalar o(s) Mod(s)"
+	TooltipDownload = "Baixar o(s) Mod(s) Selecionado(s)"
+	TooltipCancel = "Cancelar o Download Atual/Clique com o Botão Direito do Mouse pra Cancelar Tudo"
+	/>
+	
+	<Dialogue>
+
+		<SaveAs Title = "Salvar como..." />
+
+	</Dialogue>
+
+	<Message>
+
+		<Done
+		Title = "Feito!"
+		ExtractionCompleteFormat = "Extração completa pra {0:hh\:mm\:ss}."
+		InjectionCompleteFormat = "Injeção completa pra {0:hh\:mm\:ss}."
+		/>
+
+		<Question
+		Title = "Pergunta"
+		AreYouSureTitle = "Você tem certeza?"
+		NewVersionIsAvailable = "Uma nova versão está disponível, baixar agora?"
+		/>
+
+		<Error
+		Title = "Erro!"
+		/>
+
+	</Message>
+
+	<Error>
+		<File UnknownFormat = "Formato de arquivo desconhecido." />
+		<Process CannotGetExecutablePath = "Não pôde obter um caminho do assembly executável." />
+		<Text TooLongTagNameFormat = "Nome muito longo da etiqueta: {0}" />
+	</Error>
+
+</Data>
