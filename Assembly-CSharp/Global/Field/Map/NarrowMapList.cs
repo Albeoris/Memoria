@@ -66,7 +66,7 @@ public static class NarrowMapList
             if (mapId == entry.Key)
                 width = Math.Min((Int32)entry.Value, width);
         }
-        Log.Message("smallest width:" + width);
+        //Log.Message("smallest width:" + width);
         return width;
     }
 
@@ -79,6 +79,10 @@ public static class NarrowMapList
         {153,325},  // meeting garnet
         //{153,328},  // steiner guards call // can't have twice the same key TOFIX
         {352,3},    // Arrival at Dali: vivi visible before sleeping
+        {355,18},   // Steiner to the barmaid
+        {600,32},   // Throne, meet cid
+        {606,0},   // telescope
+        {615,57},   // Meet garnet on Lindblum castle
         {1602,16},  // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
         {1823,331}, // Garnet coronation, garnet visible
         {1815,0},   // Love quiproquo at the docks
@@ -92,18 +96,19 @@ public static class NarrowMapList
 
     public static readonly Dictionary<int, int> WidthDictionary_cam2 = new Dictionary<int, int>
     {
+        
         //{map,width},
         {51,640},
         {52,320},
         //{63,800},
-        {65,320},
-        {66,320},
-        {116,320},
+        //{65,320},
+        //{66,320},
+        //{116,320}, //I GIVE UP
         {153,432},
         {154,640},
-        {355,320},
-        {600,320},
-        {615,320},
+        //{355,320},
+        //{600,320},
+        //{615,320},
         {801,336},
         {951,336},
         {953,336},
@@ -130,7 +135,7 @@ public static class NarrowMapList
         {2209,336},
         {2217,320},
         {2363,336},
-        {2510,464},
+        //{2510,448},//464},
         {2552,480},
         {2553,480},
         {2554,608},
@@ -177,7 +182,7 @@ public static class NarrowMapList
         {113,480},
         {114,352},
         {115,432},
-        {116,416},
+        {116,320},//416}, // I GIVE UP
         {117,416},
         {150,368},
         {151,320},
@@ -243,7 +248,7 @@ public static class NarrowMapList
         {358,320},
         {359,320},
         {400,320},
-        {401,640},
+        {401,410}, //640}, // people appearing
         {402,480},
         {403,640},
         {404,432},
@@ -252,21 +257,21 @@ public static class NarrowMapList
         {407,384},
         {408,448},
         {450,432},
-        {451,480},
+        {451,320}, //480},
         {452,320},
         {453,320},
         {454,320},
         {455,320},
-        {456,640},
+        {456,320}, //410},//640}, scrolling too far. // temp out
         {457,320},
         {500,320},
-        {501,512},
+        {501,320}, //512},
         {502,336},
         {503,336},
-        {504,432},
-        {505,640},
+        {504,430}, //432}, -2
+        {505,320}, //640},
         {506,352},
-        {507,512},
+        {507,320}, //512},
         {550,352},
         {551,320},
         {552,448},
@@ -300,7 +305,7 @@ public static class NarrowMapList
         {603,544},
         {604,448},
         {605,432},
-        {606,512},
+        {606,320},
         {607,320},
         {608,448},
         {609,320},
@@ -360,10 +365,10 @@ public static class NarrowMapList
         {802,352},
         {803,352},
         {804,432},
-        {805,608},
+        {805,320}, //480}, //608}, PARALLAX
         {806,400},
         {807,432},
-        {808,608},
+        {808,320}, //480}, //608}, PARALLAX
         {809,512},
         {810,576},
         {811,512},
@@ -387,7 +392,7 @@ public static class NarrowMapList
         {905,640},
         {906,512},
         {907,416},
-        {908,432},
+        {908,320}, //432}, //PARALLAX
         {909,592},
         {910,448},
         {911,368},
@@ -447,7 +452,7 @@ public static class NarrowMapList
         {1150,368},
         {1151,336},
         {1152,448},
-        {1153,800},
+        {1153,320}, //800},
         {1200,320},
         {1201,384},
         {1202,432},
@@ -627,7 +632,7 @@ public static class NarrowMapList
         {1905,640},
         {1906,512},
         {1907,416},
-        {1908,432},
+        {1908,320}, //432}, //PARALLAX
         {1909,592},
         {1910,448},
         {1911,368},
