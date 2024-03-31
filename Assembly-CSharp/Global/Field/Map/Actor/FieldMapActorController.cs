@@ -6,6 +6,8 @@ using FF9;
 using UnityEngine;
 using Memoria;
 using Object = System.Object;
+using Memoria.Prime;
+using static Memoria.Configuration;
 
 public partial class FieldMapActorController : HonoBehavior
 {
@@ -321,15 +323,15 @@ public partial class FieldMapActorController : HonoBehavior
 		this.isMoving = false;
 		if (this.isPlayer)
 		{
-			if (PersistenSingleton<EventEngine>.Instance.GetUserControl() || FF9StateSystem.Common.FF9.fldMapNo == 1751 || FF9StateSystem.Common.FF9.fldMapNo == 404 || (FF9StateSystem.Common.FF9.fldMapNo == 205 && this.originalActor.sid == 16) || (FF9StateSystem.Common.FF9.fldMapNo == 2150 && this.originalActor.sid == 13) || (FF9StateSystem.Common.FF9.fldMapNo == 900 && this.originalActor.sid == 13))
-			{
-				// Iifa Tree/Inner Roots (entrance after elevator)
-				// or Dali/Entrance
-				// or Prima Vista/Hallway (front of Steiner's cell), Steiner
-				// or L. Castle/Royal Chamber, Zidane
-				// or Treno/Pub, Dagger
-				if (copyLastPos)
-					this.CopyLastPos();
+            if (PersistenSingleton<EventEngine>.Instance.GetUserControl()
+                || FF9StateSystem.Common.FF9.fldMapNo == 1751 // Iifa Tree/Inner Roots (entrance after elevator)
+                || FF9StateSystem.Common.FF9.fldMapNo == 404 // Dali underground Entrance
+                || (FF9StateSystem.Common.FF9.fldMapNo == 205 && this.originalActor.sid == 16) //Prima Vista/ Hallway(front of Steiner's cell), Steiner
+                || (FF9StateSystem.Common.FF9.fldMapNo == 2150 && this.originalActor.sid == 13) //L. Castle/Royal Chamber, Zidane
+                || (FF9StateSystem.Common.FF9.fldMapNo == 900 && this.originalActor.sid == 13)) //Treno/Pub, Dagger
+            {
+                //if (copyLastPos)
+                this.CopyLastPos();
 			}
 			this.MovePC();
 			if (FF9StateSystem.Common.FF9.fldMapNo == 916 && this.originalActor.uid == 10 && this.curPos.z > -15900f && this.curPos.z < -15700f && this.curPos.x < 130f)
@@ -345,13 +347,12 @@ public partial class FieldMapActorController : HonoBehavior
 		}
 		else
 		{
-			if ((FF9StateSystem.Common.FF9.fldMapNo == 2050 && this.originalActor.sid == 5) || (FF9StateSystem.Common.FF9.fldMapNo == 350 && this.originalActor.sid == 11) || (FF9StateSystem.Common.FF9.fldMapNo == 1315 && this.originalActor.sid == 12))
-			{
-				// Alexandria/Main Street, Mistodon
-				// or Dali/Village Road, Dali_GirlA
-				// or Lindblum/Town Walls, Lindblum_Soldier
-				if (copyLastPos)
-					this.CopyLastPos();
+			if ((FF9StateSystem.Common.FF9.fldMapNo == 2050 && this.originalActor.sid == 5) // Alexandria/Main Street, Mistodon
+                || (FF9StateSystem.Common.FF9.fldMapNo == 350 && this.originalActor.sid == 11) // Dali/Village Road, Dali_GirlA
+                || (FF9StateSystem.Common.FF9.fldMapNo == 1315 && this.originalActor.sid == 12)) // Lindblum/Town Walls, Lindblum_Soldier
+            {
+				//if (copyLastPos)
+				this.CopyLastPos();
 			}
 			this.MoveNPC();
 		}
