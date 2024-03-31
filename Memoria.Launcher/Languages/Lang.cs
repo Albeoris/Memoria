@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Xml;
 using Ini;
@@ -28,8 +27,8 @@ namespace Memoria.Launcher
                 String forcedLang = iniFile.ReadValue("Memoria", "LauncherLanguage");
 
                 String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
-                    new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName } :
-                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName };
+                    new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName } :
+                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName,  };
                 foreach (String name in fileNames)
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");
@@ -40,7 +39,6 @@ namespace Memoria.Launcher
                     }
                 }
                 //File.AppendAllText("MBROutput2.txt", name + \n");
-                
                 return new Lang(def, cur ?? def);
             }
             catch (Exception ex)
