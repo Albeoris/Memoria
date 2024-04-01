@@ -330,8 +330,8 @@ public partial class FieldMapActorController : HonoBehavior
                 || (FF9StateSystem.Common.FF9.fldMapNo == 2150 && this.originalActor.sid == 13) //L. Castle/Royal Chamber, Zidane
                 || (FF9StateSystem.Common.FF9.fldMapNo == 900 && this.originalActor.sid == 13)) //Treno/Pub, Dagger
             {
-                //if (copyLastPos)
-                this.CopyLastPos();
+				if (!PersistenSingleton<EventEngine>.Instance.GetUserControl() || copyLastPos)
+                    this.CopyLastPos();
 			}
 			this.MovePC();
 			if (FF9StateSystem.Common.FF9.fldMapNo == 916 && this.originalActor.uid == 10 && this.curPos.z > -15900f && this.curPos.z < -15700f && this.curPos.x < 130f)
@@ -351,8 +351,8 @@ public partial class FieldMapActorController : HonoBehavior
                 || (FF9StateSystem.Common.FF9.fldMapNo == 350 && this.originalActor.sid == 11) // Dali/Village Road, Dali_GirlA
                 || (FF9StateSystem.Common.FF9.fldMapNo == 1315 && this.originalActor.sid == 12)) // Lindblum/Town Walls, Lindblum_Soldier
             {
-				//if (copyLastPos)
-				this.CopyLastPos();
+                if (!PersistenSingleton<EventEngine>.Instance.GetUserControl() || copyLastPos)
+                    this.CopyLastPos();
 			}
 			this.MoveNPC();
 		}

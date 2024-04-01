@@ -32,6 +32,9 @@ public static class NarrowMapList
         {
             if (mapId == entry.Key && currIndex == entry.Value)
                 return true;
+            // hall alexandria: meeting garnet, zorn thorn, steiner calling
+            if (mapId == 153 && (currIndex == 325 || currIndex == 328 || currIndex == 316)) 
+                return true;
         }
         return false;
     }
@@ -39,6 +42,10 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
     {
         // {mapNo,index}
+        {50,0},     // first scene
+        {150,325},  // Zidane infiltrate Alex Castle
+        {154,304},  // cutscene zorn&thorn
+        //{153,328},  // steiner guards call // can't have twice the same key TOFIX
         {352,3},    // Arrival at Dali: vivi visible before sleeping
         {1602,16},  // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
         {1823,331}, // Garnet coronation, garnet visible
