@@ -189,7 +189,7 @@ namespace Memoria.Prime.Text
                 value = (T)Enum.Parse(typeof(T), source);
                 return true;
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 value = default(T);
                 return false;

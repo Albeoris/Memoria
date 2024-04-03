@@ -57,7 +57,6 @@ namespace Antlr.Runtime
          */
         //public List<BitSet> following;
         public BitSet[] following;
-        [CLSCompliant( false )]
         public int _fsp;
 
         /** <summary>

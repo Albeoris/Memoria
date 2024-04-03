@@ -450,7 +450,7 @@ public class BGSCENE_DEF
 		{
             Color firstPixel = this.atlas.GetPixel(0, 0);
         }
-        catch (Exception err)
+        catch (Exception)
 		{
             atlasIsReadable = false;
         }
@@ -907,7 +907,7 @@ public class BGSCENE_DEF
         return this.useUpscaleFM;
     }
 
-    private static Rect CalculateExpectedTextureAtlasSize(Int32 spriteCount)
+    /*private static Rect CalculateExpectedTextureAtlasSize(Int32 spriteCount)
     {
         Rect[] array =
         {
@@ -936,7 +936,7 @@ public class BGSCENE_DEF
             }
         }
         throw new ArgumentException("Unexpected size of atlas texture");
-    }
+    }*/
 
     private void GenerateAtlasFromBinary()
     {

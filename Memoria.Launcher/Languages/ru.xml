@@ -2,165 +2,201 @@
 <Data>
 
 	<Measurement
-			Elapsed = "Прошло"
-			Remaining = "Осталось"
-			SecondAbbr = "сек"
-			ByteAbbr = "Б"
-			KByteAbbr = "КБ"
-			MByteAbbr = "МБ"
-			GByteAbbr = "ГБ"
-			TByteAbbr = "ТБ"
-			PByteAbbr = "ПБ"
-			EByteAbbr = "ЭБ"
-			/>
+	Elapsed = "Прошло"
+	Remaining = "Осталось"
+	SecondAbbr = "сек"
+	ByteAbbr = "Б"
+	KByteAbbr = "КБ"
+	MByteAbbr = "МБ"
+	GByteAbbr = "ГБ"
+	TByteAbbr = "ТБ"
+	PByteAbbr = "ПБ"
+	EByteAbbr = "ЭБ"
+	/>
 
 	<Button
-			OK = "OK"
-			Cancel = "Отмена"
-			Continue = "Продолжить"
-			Clone = "Сдублировать"
-			Remove = "Удалить"
-			Rollback = "Откатить"
-			Inject = "Внедрить"
-			SaveAs = "Сохранить как..."
-			Exit = "Выход"
-			Exiting = "Выходим..."
-			Launch = "Запуск"
-			Launching = "Запускаем..."
-      ModManager = "Установить Моды"
-			/>
+	OK = "OK"
+	Cancel = "Отмена"
+	Continue = "Продолжить"
+	Clone = "Сдублировать"
+	Remove = "Удалить"
+	Rollback = "Откатить"
+	Inject = "Внедрить"
+	SaveAs = "Сохранить как..."
+	Exit = "Выход"
+	Exiting = "Выходим..."
+	Launch = "Запуск"
+	Launching = "Запускаем..."
+	ModManager = "Установить Моды"
+	/>
 
 	<Settings
-			ActiveMonitor = "Активный монитор:"
-			Resolution = "Разрешение:"
-			WindowMode = "Режим экрана:"
-			Window = "Оконный"
-			ExclusiveFullscreen = "Полноэкранный"
-			BorderlessFullscreen = "Оконный (без рамок)"
-			AudioSamplingFrequency = "Частота дискретизации звука:"
-			AudioSamplingFrequencyFormat = "{0} Гц"
-			Debuggable = "Отладка"
-			CheckUpdates = "Проверка обновлений"
-			IniOptions = "Options"
-			Widescreen = " Widescreen (16:9)"
-			BattleInterface = "Боевой интерфейс"
-			BattleInterfaceType0 = "Большой"
-			BattleInterfaceType1 = "Маленький"
-			BattleInterfaceType2 = "Модель PSX"
-			BattleInterfaceTooltip = "Вы можете настроить интерфейс в игре, нажав Alt+F1"
-			SkipIntrosToMainMenu = " Пропуск заставки"
-			SkipBattleLoading = "Время загрузки битвы"
-			HideCardsBubbles = " Скрыть пузыри карт"
-			HideSteamBubbles = " Только пузыри PSX"
-      HideSteamBubblesTooltip = "Отключить пузыри «карта», «пляж»&#xA;и пузыри взаимодействия с NPC."
-			TurnBasedBattles = " Пошаговые бои"
-			SpeedChoice = "Боевой"
-			SpeedChoiceType0 = "Нормальный"
-			SpeedChoiceType1 = "Быстро"
-			SpeedChoiceType2 = "Пошаговые"
-			SpeedChoiceType3 = "Динамический (1)"
-			SpeedChoiceType4 = "Динамический (2)"
-			SpeedChoiceType5 = "Динамический"
-      SpeedChoiceTooltip = "Нормальный: режим по умолчанию&#xA;Быстро: ATB сразу же заполняется во время простоя&#xA;Пошаговый: ATB останавливается во время хода персонажа&#xA;Динамичность: персонажи и враги могут действовать одновременно"
-			TripleTriad = "Карты"
-			TripleTriadType0 = "Tetra Master"
-			TripleTriadType1 = "Tetra Triad"
-			TripleTriadType2 = "Triple Triad"
-			Volume = "Громкость:"
-			SoundVolume = "Звука"
-			MusicVolume = "Музыки"
-			MovieVolume = "Фильма"
-			IniCheats = "Читы"
-			MaxStealRate = " 100% кража"
-			DisableCantConcentrate = " Гарнет не теряет концентрацию"
-			BreakDamageLimit = " Удалить лимит урона"
-			AccessBattleMenu = " Меню в боях"
-			AccessBattleMenuType0 = " Нет доступа"
-			AccessBattleMenuType1 = " Ограниченный"
-			AccessBattleMenuType2 = " Индивидуальный"
-			AccessBattleMenuType3 = " Неограниченный"
-      AccessBattleMenuTooltip = "Если команда «Меню» не появляется, войдите в меню&#xA;с помощью кнопки △/Y из команды «Элемент»&#xA;В ограниченном доступе использование меню стоит один ход"
-			SpeedMode = " Ускорение | F1"
-			SpeedFactor = "Множитель ускорения"
-			BattleAssistance = " Боевая помощь | F2 F3"
-			PermanentTranse = " Постоянный транс | F2"
-			MaxDamage = " Максимальный урон | F3"
-			NoRandomBattles = " Без случайных битв | F4"
-			PermanentCheats = " Постоянные читы | F5 F6 F7"
-			UsePsxFont = "Использовать PSX-шрифт"
-			FontChoice = "шрифт"
-			SBUIenabled = "Масштабированный UI битвы"
-			BattleTPS = "Скорость анимации в бою (реком. 22)"
-			SharedFPS = "Кадровая частота"
-			/>
+	LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
+	ActiveMonitor = "Активный монитор:"
+	Resolution = "Разрешение:"
+	WindowMode = "Режим экрана:"
+	Window = "Оконный"
+	ExclusiveFullscreen = "Полноэкранный"
+	BorderlessFullscreen = "Оконный (без рамок)"
+	AudioSamplingFrequency = "Частота дискретизации звука:"
+	AudioSamplingFrequencyFormat = "{0} Гц"
+	Debuggable = "Отладка"
+	CheckUpdates = "Проверка обновлений"
+	IniOptions = "Options"
+	Widescreen = " Широкоэкранный"
+	BattleInterface = "Боевой интерфейс"
+	BattleInterfaceType0 = "Большой"
+	BattleInterfaceType1 = "Маленький"
+	BattleInterfaceType2 = "Модель PSX"
+	BattleInterfaceTooltip = "Вы можете настроить интерфейс в игре, нажав Alt+F1"
+	SkipIntrosToMainMenu = " Пропуск заставки"
+	SkipBattleSwirl = " Время загрузки битвы"
+	AntiAliasing = " Сглаживание"
+	SkipBattleLoading = "Время загрузки битвы"
+	HideCardsBubbles = " Скрыть пузыри карт"
+	HideSteamBubbles = " Только пузыри PSX"
+	HideSteamBubblesTooltip = "Отключить пузыри «карта», «пляж»&#xA;и пузыри взаимодействия с NPC."
+	TurnBasedBattles = " Пошаговые бои"
+	SpeedChoice = "Боевой"
+	SpeedChoiceType0 = "Нормальный"
+	SpeedChoiceType1 = "Быстро"
+	SpeedChoiceType2 = "Пошаговые"
+	SpeedChoiceType3 = "Динамический (1)"
+	SpeedChoiceType4 = "Динамический (2)"
+	SpeedChoiceType5 = "Динамический"
+	SpeedChoiceTooltip = "Нормальный: режим по умолчанию&#xA;Быстро: ATB сразу же заполняется во время простоя&#xA;Пошаговый: ATB останавливается во время хода персонажа&#xA;Динамичность: персонажи и враги могут действовать одновременно"
+	TripleTriad = "Карты"
+	TripleTriadType0 = "Tetra Master"
+	TripleTriadType1 = "Tetra Triad"
+	TripleTriadType2 = "Triple Triad"
+	Volume = "Громкость:"
+	SoundVolume = "🔊Звука"
+	MusicVolume = "🎵Музыки"
+	MovieVolume = "🔊Фильма"
+	IniCheats = "Читы"
+	MaxStealRate = " 100% кража"
+	DisableCantConcentrate = " Гарнет не теряет концентрацию"
+	BreakDamageLimit = " Удалить лимит урона"
+	AccessBattleMenu = " Меню в боях"
+	AccessBattleMenuType0 = " Нет доступа"
+	AccessBattleMenuType1 = " Ограниченный"
+	AccessBattleMenuType2 = " Индивидуальный"
+	AccessBattleMenuType3 = " Неограниченный"
+	AccessBattleMenuTooltip = "Если команда «Меню» не появляется, войдите в меню&#xA;с помощью кнопки △/Y из команды «Элемент»&#xA;В ограниченном доступе использование меню стоит один ход"
+	SpeedMode = " Ускорение | F1"
+	SpeedFactor = "Множитель ускорения"
+	BattleAssistance = " Боевая помощь | F2 F3"
+	PermanentTranse = " Постоянный транс | F2"
+	MaxDamage = " Максимальный урон | F3"
+	NoRandomBattles = " Без случайных битв | F4"
+	PermanentCheats = " Постоянные читы | F5 F6 F7"
+	UsePsxFont = "Использовать PSX-шрифт"
+	FontChoice = "шрифт"
+	SBUIenabled = "Масштабированный UI битвы"
+	BattleTPS = "Скорость анимации в бою (реком. 22)"
+	SharedFPS = "Кадровая частота"
+	UseOrchestralMusic = "Оркестровая музыка (Moguri)"
+	Use30FpsVideo = "30 FPS видео (Moguri)"
+	ActiveMonitor_Tooltip = "Choose a screen"
+	WindowMode_Tooltip = "-Windowed: run the game in a window&#xA;-Fullscreen: Game takes the whole display&#xA;-Borderless Fullscreen: Takes the whole display but as a windowed process"
+	Resolution_Tooltip = "Screen resolution&#xA;Only 16:9 and 16:10 support Widescreen"
+	Xsixfour_Tooltip = "-X64 (recommanded)&#xA;-X86 (legacy)"
+	Debuggable_Tooltip = "For developers"
+	CheckUpdates_Tooltip = "Will ask you if you want to automatically download&#xA;the latest Memoria from github when you press play"
+	SteamOverlayFix_Tooltip = "Will patch the launcher for people&#xA;having problems displaying the Steam overlay&#xA;(Steam achievements also depen"
+	UseOrchestralMusic_Tooltip = "Moguri mod: orchestral soundtrack by Pontus Hultgren,&#xA;not recommended for people who want the original experience"
+	Use30FpsVideo_Tooltip = "Moguri mod: 30fps FMVs (from original 15fps)&#xA;Inbetween images created by AI"
+	Widescreen_Tooltip = "Now supports every resolution&#xA;Removes side bars when possible,&#xA;Shows a wider part of the backgrounds&#xA;Note: some backgrounds will still be displayed with black bars,&#xA;as the original game did not have more pixels"
+	AntiAliasing_Tooltip = "Activate anti-aliasing"
+	SharedFPS_Tooltip = "Game FPS (frequency of images)&#xA;original was between 15 and 30&#xA;Standard of screens: 60"
+	BattleInterface_Tooltip = "Big (default)&#xA;Small: smaller&#xA;PSX-like: brings back the classic look and structure of the battle menu&#xA;Customize the battle UI in-game with Alt+F1"
+	SkipIntrosToMainMenu_Tooltip = "Skip logos and warnings to main menu"
+	SkipBattleSwirl_Tooltip = "On: battle start instantly (default)&#xA;Off: slight delay before battles, like the original"
+	HideSteamBubbles_Tooltip = "Disable speech bubbles added by the Steam version&#xA;('card', 'beach' and NPC interaction)"
+	SpeedChoice_Tooltip = "-Normal: (default)&#xA;-Fast: the ATB fills up immediately during idling times&#xA;-Turn-based: ATB stops during a character turn&#xA;-Dynamic: characters and enemies can act simultaneously"
+	TripleTriad_Tooltip = "Tetra Master (default)&#xA;Tetra Triad: replaces Tetra Master with a mix between Tetra Master and Triple Triad&#xA;Triple Triad: replaces Tetra Master with Triple Triad from FF8 adapted to FF9"
+	SoundVolume_Tooltip = "Interface and noises volume"
+	MusicVolume_Tooltip = "Music volume"
+	MovieVolume_Tooltip = "FMV and main menu volume"
+	FontChoice_Tooltip = "Game font"
+	MaxStealRate_Tooltip = "Cheat: always succeeds when stealing"
+	DisableCantConcentrate_Tooltip = "Cheat: removes Garnet concentration malus (later in the story)"
+	BreakDamageLimit_Tooltip = "Cheat: removes the damage limit of 9999"
+	AccessBattleMenu_Tooltip = "If the 'Menu' command does not appear, access&#xA;the menu with the button △/Y from the 'Item' command&#xA;In limited access, using the menu costs a turn"
+	SpeedMode_Tooltip = "(Non-mod cheats)&#xA;Fast game (F1)"
+	SpeedFactor_Tooltip = "Speed multiplier of above setting"
+	BattleAssistance_Tooltip = "(Non-mod cheats)&#xA;Instant transe (F2)&#xA;Max damage (F3)"
+	NoRandomBattles_Tooltip = "(Non-mod cheats)&#xA;no random encounters (F4)"
+	PermanentCheats_Tooltip = "(Non-mod cheats)&#xA;Maximum everything F5/F6/F7&#xA;(these cheats will stay on your save and disable achievements)"
+	/>
 
 	<SdLib
-			Caption = "Модификация SdLib.dll"
-			PrimaryMonitor = " [Основной]"
-			AreYouSure = "Вы уверены, что хотите модифицировать SdLib.dll?"
-			SuccessBoth = "SdLib.dll успешно модифицирована для обеих платформ."
-			SuccessX64 = "SdLib.dll успешно модифицирована, но только для x64 платформы."
-			SuccessX86 = "SdLib.dll успешно модифицирована, но только для x86 платформы."
-			Fail = "К сожалению, нам не удалось модифицировать SdLib.dll. Пожалуйста, поделитесь своей версией библиотеки, мы попробуем что-нибудь придумать."
-			CannotRead = "Не удалось прочитать текущее значение частоты дискретизации звука из файла:"
-			CannotWrite = "Не уадлось модифицировать текущее значение частоты дискретизации в файле SdLib.dll"
-			/>
+	Caption = "Модификация SdLib.dll"
+	PrimaryMonitor = " [Основной]"
+	AreYouSure = "Вы уверены, что хотите модифицировать SdLib.dll?"
+	SuccessBoth = "SdLib.dll успешно модифицирована для обеих платформ."
+	SuccessX64 = "SdLib.dll успешно модифицирована, но только для x64 платформы."
+	SuccessX86 = "SdLib.dll успешно модифицирована, но только для x86 платформы."
+	Fail = "К сожалению, нам не удалось модифицировать SdLib.dll. Пожалуйста, поделитесь своей версией библиотеки, мы попробуем что-нибудь придумать."
+	CannotRead = "Не удалось прочитать текущее значение частоты дискретизации звука из файла:"
+	CannotWrite = "Не уадлось модифицировать текущее значение частоты дискретизации в файле SdLib.dll"
+	/>
 
 	<SteamOverlay
-			OptionLabel = " Исправить Steam Overlay"
-			Caption = "Steam Overlay"
-			FixAreYouSure = "Сейчас в вашу ОС будет установлен хук, который вместо файла FF9_Launcher.exe будет запускать FF9_Launcher.fix. При этом все проверки целостности файла Steam будут завершаться успешно. Таким образом, это решит проблему того, что у некоторых пользователей периодически отключался функционал Steam Overlay, и связанные с ним фичи: достижения и поддержка контроллера.&#13;&#10;&#13;&#10;Однако, будьте внимательны, и НЕ УДАЛЯЙТЕ игру, её папку или файл FF9_Launcher.fix предварительно не откатив внесенные изменения. В противном случае, хук так и останется у вас в системе, и после новой установки игры вам не удастся её запустить. Откатить изменения вы можете в лаунчере или вручную запустив Memoria.SteamFix.exe в папке с игрой.&#13;&#10;&#13;&#10;Вы уверены, что хотите продолжить?"
-			RollbackAreYouSure = "Сейчас мы уберём внесённые изменения, после чего проблема со Steam Overlay вернётся.&#13;&#10;&#13;&#10;Это может привести к отключению достижений и проблемам с контроллером.&#13;&#10;&#13;&#10;Вы уверены, что хотите продолжить?"
+	OptionLabel = " Исправить Steam Overlay"
+	Caption = "Steam Overlay"
+	FixAreYouSure = "Сейчас в вашу ОС будет установлен хук, который вместо файла FF9_Launcher.exe будет запускать FF9_Launcher.fix. При этом все проверки целостности файла Steam будут завершаться успешно. Таким образом, это решит проблему того, что у некоторых пользователей периодически отключался функционал Steam Overlay, и связанные с ним фичи: достижения и поддержка контроллера.&#13;&#10;&#13;&#10;Однако, будьте внимательны, и НЕ УДАЛЯЙТЕ игру, её папку или файл FF9_Launcher.fix предварительно не откатив внесенные изменения. В противном случае, хук так и останется у вас в системе, и после новой установки игры вам не удастся её запустить. Откатить изменения вы можете в лаунчере или вручную запустив Memoria.SteamFix.exe в папке с игрой.&#13;&#10;&#13;&#10;Вы уверены, что хотите продолжить?"
+	RollbackAreYouSure = "Сейчас мы уберём внесённые изменения, после чего проблема со Steam Overlay вернётся.&#13;&#10;&#13;&#10;Это может привести к отключению достижений и проблемам с контроллером.&#13;&#10;&#13;&#10;Вы уверены, что хотите продолжить?"
 	/>
 
 	<InfoProvider>
 
 		<ApplicationConfig
-				Title="Настройки"
-				Description="Различные настройки приложения."
-				NewTitle="Новые"
-				NewDescription="Инициализирует все настройки значениями по умолчанию."
-				FileTitle="Из файла"
-				FileDescription="Считывает настройки приложения из файла {0}"
-				/>
+		Title="Настройки"
+		Description="Различные настройки приложения."
+		NewTitle="Новые"
+		NewDescription="Инициализирует все настройки значениями по умолчанию."
+		FileTitle="Из файла"
+		FileDescription="Считывает настройки приложения из файла {0}"
+		/>
 
 		<GameLocation
-				Title="Каталог игры"
-				Description="Местоположении игровых файлов."
-				ConfigurationTitle="Из настроек"
-				ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
-				SteamRegistryTitle="Из реестр (Steam)"
-				SteamRegistryDescription="Получает информацию из реестра Windows, используя данные Steam."
-				UserTitle="Ручной выбор"
-				UserDescription="Позволяет вручную выбрать каталог, в который была установлена игра."
-				/>
+		Title="Каталог игры"
+		Description="Местоположении игровых файлов."
+		ConfigurationTitle="Из настроек"
+		ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
+		SteamRegistryTitle="Из реестр (Steam)"
+		SteamRegistryDescription="Получает информацию из реестра Windows, используя данные Steam."
+		UserTitle="Ручной выбор"
+		UserDescription="Позволяет вручную выбрать каталог, в который была установлена игра."
+		/>
 
 		<WorkingLocation
-				Title="Рабочий каталог"
-				Description="Директория для хранения результатов работы приложения."
-				ConfigurationTitle="Из настроек"
-				ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
-				UserTitle="Ручной выбор"
-				UserDescription="Позволяет вручную выбрать рабочий каталог."
-				/>
+		Title="Рабочий каталог"
+		Description="Директория для хранения результатов работы приложения."
+		ConfigurationTitle="Из настроек"
+		ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
+		UserTitle="Ручной выбор"
+		UserDescription="Позволяет вручную выбрать рабочий каталог."
+		/>
 
 		<TextEncoding
-				Title="Кодировки"
-				Description="Кодировки для распаковки и упаковки игровых текстов."
-				NewTitle="Новая"
-				NewDescription="Инициализирует стандартную кодировку на основе Windows-1252 кодировки."
-				WorkingLocationTitle="Из рабочего каталога"
-				WorkingLocationDescription="Считывает кодировку из рабочего каталога."
-				UserTitle="Редактировать"
-				UserDescription="Изменить текущую кодировку."
-				/>
+		Title="Кодировки"
+		Description="Кодировки для распаковки и упаковки игровых текстов."
+		NewTitle="Новая"
+		NewDescription="Инициализирует стандартную кодировку на основе Windows-1252 кодировки."
+		WorkingLocationTitle="Из рабочего каталога"
+		WorkingLocationDescription="Считывает кодировку из рабочего каталога."
+		UserTitle="Редактировать"
+		UserDescription="Изменить текущую кодировку."
+		/>
 
 		<AudioSettings
-				Title="Настройки звука"
-				Description="Настройки аудио-устройства, используемого для воспроизведения звука."
-				NewTitle="Новые"
-				NewDescription="Инициализирует стандартные настройки аудио-устройства."
-				/>
+		Title="Настройки звука"
+		Description="Настройки аудио-устройства, используемого для воспроизведения звука."
+		NewTitle="Новые"
+		NewDescription="Инициализирует стандартные настройки аудио-устройства."
+		/>
 
 	</InfoProvider>
 
@@ -169,20 +205,18 @@
 		<DataSources Header="Источники данных"/>
 
 		<GameFileCommander
-				Header="Ресурсы игры"
-				Unpack="Распаковать"
-				Pack="Упаковать"
-				ArchivesNode ="Архивы"
-				/>
+		Header="Ресурсы игры"
+		Unpack="Распаковать"
+		Pack="Упаковать"
+		ArchivesNode ="Архивы"
+		/>
 
-		<GameFilePreview
-				Header="Предпросмотр"
-				>
+		<GameFilePreview Header="Предпросмотр" >
 
 			<Ykd
-					ResourceRemovingTitle = "Удаление"
-					ConfirmResourceRemoving = "Вы уверены, что хотите удалить этот ресурс?"
-					/>
+			ResourceRemovingTitle = "Удаление"
+			ConfirmResourceRemoving = "Вы уверены, что хотите удалить этот ресурс?"
+			/>
 
 		</GameFilePreview>
 
@@ -191,42 +225,40 @@
 	<EncodingEditor>
 
 		<List
-				Name = "Название"
-				Pattern = "Маска"
-				Encoding = "Кодировка"
-				Font = "Шрифт"
-				Edit = "Ред."
-				/>
+		Name = "Название"
+		Pattern = "Маска"
+		Encoding = "Кодировка"
+		Font = "Шрифт"
+		Edit = "Ред."
+		/>
 
 		<EncodingSelectDialog
-				Title = "Выбор кодировки"
-				Watermark = "Введите имя кодировки..."
-				ConfirmMessageFormat = "Вы выбрали [{0}]. Верно?"
-				ErrorMessageFormat = "Не удалось распознать кодировку [{0}]."
-				/>
+		Title = "Выбор кодировки"
+		Watermark = "Введите имя кодировки..."
+		ConfirmMessageFormat = "Вы выбрали [{0}]. Верно?"
+		ErrorMessageFormat = "Не удалось распознать кодировку [{0}]."
+		/>
 
-		<EncodingEditDialog
-				Title = "Настройка кодировки"
-				/>
+		<EncodingEditDialog Title = "Настройка кодировки" />
 
 		<Main
-				Before = "До:"
-				Width = "Ширина:"
-				After = "После:"
-				FromText = "Из текста:"
-				ToText = "В текст:"
-				/>
+		Before = "До:"
+		Width = "Ширина:"
+		After = "После:"
+		FromText = "Из текста:"
+		ToText = "В текст:"
+		/>
 
 		<Extra
-				Row = "Ряд:"
-				Column = "Колонка:"
-				FromText = "Из текста:"
-				ToText = "В текст:"
-				/>
+		Row = "Ряд:"
+		Column = "Колонка:"
+		FromText = "Из текста:"
+		ToText = "В текст:"
+		/>
 
 	</EncodingEditor>
 
-  <ModEditor
+	<ModEditor
     WindowTitle="Настройка Моды"
     ModInfos = "Информация о Мод"
     TabMyMods = "Установленные Моды"
@@ -260,45 +292,35 @@
 
 	<Dialogue>
 
-		<SaveAs
-				Title = "Сохранить как..."
-				/>
+		<SaveAs Title = "Сохранить как..." />
 
 	</Dialogue>
 
 	<Message>
 
 		<Done
-				Title = "Готово!"
-				ExtractionCompleteFormat = "Распаковка завершена за {0:hh\:mm\:ss}."
-				InjectionCompleteFormat = "Упаковка завершена за {0:hh\:mm\:ss}."
-				/>
+		Title = "Готово!"
+		ExtractionCompleteFormat = "Распаковка завершена за {0:hh\:mm\:ss}."
+		InjectionCompleteFormat = "Упаковка завершена за {0:hh\:mm\:ss}."
+		/>
 
 		<Question
-				Title = "Вопрос"
-				AreYouSureTitle = "Вы уверены?"
-				NewVersionIsAvailable = "Доступна новая версия. Скачать?"
-				/>
+		Title = "Вопрос"
+		AreYouSureTitle = "Вы уверены?"
+		NewVersionIsAvailable = "Доступна новая версия. Скачать?"
+		/>
 
-		<Error
-				Title = "Ошибка!"
-				/>
+		<Error Title = "Ошибка!" />
 
 	</Message>
 
 	<Error>
 
-		<File
-				UnknownFormat = "Неизвестный формат файла."
-				/>
+		<File UnknownFormat = "Неизвестный формат файла." />
 
-		<Process
-				CannotGetExecutablePath = "Не удаётся получить путь к исполняемому модулю процесса."
-				/>
+		<Process CannotGetExecutablePath = "Не удаётся получить путь к исполняемому модулю процесса." />
 
-		<Text
-				TooLongTagNameFormat = "Слишком длинное имя тэга: {0}"
-				/>
+		<Text TooLongTagNameFormat = "Слишком длинное имя тэга: {0}" />
 
 	</Error>
 

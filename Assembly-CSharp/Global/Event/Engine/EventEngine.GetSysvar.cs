@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using FF9;
 using Memoria;
 using UnityEngine;
+using Memoria;
 
 public partial class EventEngine
 {
@@ -85,6 +87,10 @@ public partial class EventEngine
                 break;
             case 20:
                 num = Convert.ToInt32(FF9StateSystem.Settings.time);
+                if (Configuration.Hacks.ExcaliburIINoTimeLimit && FF9StateSystem.Common.FF9.fldMapNo == 2919) {
+                    num = 0;
+                    break;
+                }
                 if (num > 8388607)
                 {
                     num = 8388607;

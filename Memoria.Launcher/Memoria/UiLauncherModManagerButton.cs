@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace Memoria.Launcher
 {
-    public sealed class UiLauncherModManagerButton : UiLauncherButton
+    public sealed class UiLauncherModManagerButton : UiModManagerButton
     {
         public UiLauncherModManagerButton()
         {
